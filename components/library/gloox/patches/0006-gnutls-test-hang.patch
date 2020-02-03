@@ -1,0 +1,33 @@
+The GNU TLS test fails to set up in OI:
+    GnuTLS error: No or insufficient priorities were set.
+
+which happens after test init is done and actual functions are used.
+
+Without a passed handshake, other routines just hang; avoid this and fast-fail.
+
+Part of compile fixes for OpenIndiana support in gloox-1.0.23 as of 2020-02-02
+
+Signed-off: Jim Klimov <jimklimov@gmail.com>
+
+diff -Naur gloox-1.0.23.orig/src/tests/tlsgnutls/tlsgnutls_test.cpp gloox-1.0.23/src/tests/tlsgnutls/tlsgnutls_test.cpp
+--- gloox-1.0.23.orig/src/tests/tlsgnutls/tlsgnutls_test.cpp	2019-12-08 20:14:09.000000000 +0000
++++ gloox-1.0.23/src/tests/tlsgnutls/tlsgnutls_test.cpp	2020-02-03 12:04:03.210168771 +0000
+@@ -197,6 +208,9 @@
+     fprintf( stderr, "test '%s' failed\n", name.c_str() );
+   }
+ 
++if (fail) {
++  fprintf(stderr, "Can not proceed with GnuTLS tests without a hadshake\n");
++} else {
+   // -------
+   name = "simple send";
+   std::string text( "text" );
+@@ -238,7 +253,7 @@
+     ++fail;
+     fprintf( stderr, "test '%s' failed\n", name.c_str() );
+   }
+-
++}
+ 
+ 
+ 
