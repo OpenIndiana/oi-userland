@@ -73,27 +73,18 @@ index 2758d6b2ea..0384c63de1 100644
 +cd $oldpwd
  rm -Rf $dir
 
-https://github.com/fish-shell/fish-shell/issues/6556#issuecomment-580900224
+https://github.com/fish-shell/fish-shell/issues/6556#issuecomment-580759905
 
---- fish-3.1b1/share/config.fish	2020-01-31 21:54:51.832672871 +0000
-+++ fish-3.1b1/share/config.fish	2020-01-31 21:55:20.473157369 +0000
-@@ -115,19 +115,6 @@ function : -d "no-op function"
-     true
- end
- 
--#
--# This is a Solaris-specific test to modify the PATH so that
--# Posix-conformant tools are used by default. It is separate from the
--# other PATH code because this directory needs to be prepended, not
--# appended, since it contains POSIX-compliant replacements for various
--# system utilities.
--#
--
+diff --git a/share/config.fish b/share/config.fish
+index 400556832..6157c7c1c 100644
+--- a/share/config.fish
++++ b/share/config.fish
+@@ -123,7 +123,7 @@ end
+ # system utilities.
+ #
+
 -if test -d /usr/xpg4/bin
--    not contains -- /usr/xpg4/bin $PATH
--    and set PATH /usr/xpg4/bin $PATH
--end
--
- # Add a handler for when fish_user_path changes, so we can apply the same changes to PATH
- function __fish_reconstruct_path -d "Update PATH when fish_user_paths changes" --on-variable fish_user_paths
-     set -l local_path $PATH
++if begin; not set -q FISH_UNIT_TESTS_RUNNING; and test -d /usr/xpg4/bin; end
+     not contains -- /usr/xpg4/bin $PATH
+     and set PATH /usr/xpg4/bin $PATH
+ end
