@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkimageview
 COMPONENT_VERSION=	1.6.4
-COMPONENT_REVISON=	2
+COMPONENT_REVISON=	3
 COMPONENT_PROJECT_URL=	http://trac.bjourne.webfactional.com
 COMPONENT_SUMMARY=	A simple image viewer widget for GTK+
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,6 +35,8 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
+
+CFLAGS+=-Wno-deprecated-declarations
 
 COMPONENT_PREP_ACTION =        ( cp files/* $(@D)/src && cd $(@D)  && \
 					libtoolize --copy --force &&\
