@@ -19,16 +19,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-intel
 COMPONENT_VERSION= 2.99.917
-COMPONENT_REVISION= 7
+COMPONENT_REVISION= 8
 COMPONENT_SUMMARY= xf86-video-intel - Intel integrated graphics chipset driver for the Xorg X server
 COMPONENT_GIT_DATE= 20171018
 COMPONENT_GIT_HASH= 4798e18b2b2c8b0a05dc967e6140fd9962bc1a73
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_GIT_HASH)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC)-$(COMPONENT_VERSION)-$(COMPONENT_GIT_DATE).tar.xz
+COMPONENT_ARCHIVE= $(COMPONENT_SRC)-$(COMPONENT_VERSION)-$(COMPONENT_GIT_DATE).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:7a6de97d5ce275cf56519da5905d1b597215772ebf826792c44998657dc76185
+  sha256:71afc36afaa9893c29ce937d09b464a54f0f56a6f13db9a8feb414e744b45fd7
 COMPONENT_ARCHIVE_URL= \
-  https://cgit.freedesktop.org/xorg/driver/xf86-video-intel/snapshot/$(COMPONENT_SRC).tar.xz
+  https://gitlab.freedesktop.org/xorg/driver/xf86-video-intel/-/archive/$(COMPONENT_GIT_HASH)/$(COMPONENT_SRC).tar.bz2
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 
 CONFIGURE_DEFAULT_DIRS = no
