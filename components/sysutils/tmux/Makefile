@@ -41,11 +41,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS +=	-I/usr/include/ncurses
 
-#CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
-
 CONFIGURE_OPTIONS +=	LIBS="-lncurses"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += system/library
