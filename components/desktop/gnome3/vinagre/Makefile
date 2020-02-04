@@ -57,10 +57,12 @@ install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk-vnc
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/vte-291
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += library/libxml2
