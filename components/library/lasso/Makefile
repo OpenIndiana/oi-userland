@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	lasso
 COMPONENT_VERSION=	2.6.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	library/lasso
 COMPONENT_SUMMARY=	Lasso - library implementing the SAML 2.0 and ID-FF 1.2 protocols
 COMPONENT_CLASSIFICATION=	System/Libraries
