@@ -41,7 +41,7 @@ RELEASE_MINOR ?= 0
 #
 # Release update number: 0, 1, 2, etc.
 #
-UPDATENUM ?= 0
+UPDATENUM ?= 1
 
 #
 # Component revision. Should be specified in the component's Makefile
