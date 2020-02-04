@@ -1,0 +1,41 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2020 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/include/enet/callbacks.h
+file path=usr/include/enet/enet.h
+file path=usr/include/enet/list.h
+file path=usr/include/enet/protocol.h
+file path=usr/include/enet/time.h
+file path=usr/include/enet/types.h
+file path=usr/include/enet/unix.h
+file path=usr/include/enet/utility.h
+file path=usr/include/enet/win32.h
+link path=usr/lib/$(MACH64)/libenet.so target=libenet.so.7.0.2
+link path=usr/lib/$(MACH64)/libenet.so.7 target=libenet.so.7.0.2
+file path=usr/lib/$(MACH64)/libenet.so.7.0.2
+file path=usr/lib/$(MACH64)/pkgconfig/libenet.pc
+link path=usr/lib/libenet.so target=libenet.so.7.0.2
+link path=usr/lib/libenet.so.7 target=libenet.so.7.0.2
+file path=usr/lib/libenet.so.7.0.2
+file path=usr/lib/pkgconfig/libenet.pc
