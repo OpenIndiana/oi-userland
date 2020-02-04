@@ -16,18 +16,19 @@
 BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= xf86-video-vbox
+COMPONENT_NAME= xf86-video-vboxvideo
+COMPONENT_VERSION= 1.0.0
 # Use version string from Xorg module
-COMPONENT_VERSION= 1.0.1
-COMPONENT_REVISION= 2
-COMPONENT_SUMMARY= xf86-video-vbox - VirtualBox UMS driver for the Xorg X server
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_GIT_HASH)
-COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
+IPS_COMPONENT_VERSION= 1.0.1
+COMPONENT_REVISION= 3
+COMPONENT_SUMMARY= xf86-video-vboxvideo - VirtualBox UMS driver for the Xorg X server
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_GIT_HASH=  ab07f97612d045d8c0a376174b39a294d028fef2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0b89efa6830fbf65b76482a98c06a95c027f49266725a7d4cf98e1a95b8e9467
+  sha256:7fb6a3bfbcbe95438617f55a2f7ace4c0edec8ea8b7007777f389438b40cbfa4
 COMPONENT_ARCHIVE_URL= \
-  https://cgit.freedesktop.org/xorg/driver/xf86-video-vbox/snapshot/$(COMPONENT_NAME)-$(COMPONENT_GIT_HASH).tar.xz
+  https://www.x.org/releases/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_CLASSIFICATION= Drivers/Display
 COMPONENT_LICENSE = MIT
