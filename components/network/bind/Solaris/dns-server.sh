@@ -244,7 +244,7 @@ case "$method" in
     fi
 
     if [ ${result} = ${SMF_EXIT_OK} ]; then
-	echo "$I: Executing: ${server} ${cmdopts}"
+	echo "$I: Executing: ${server} ${cmdopts} in '${PWD}'" >&2
 	# Execute named(1M) with relevant command line options.  Note
 	# the server forks before reading named.conf(4) and so a
 	# good exit code here does not mean the service is ready.

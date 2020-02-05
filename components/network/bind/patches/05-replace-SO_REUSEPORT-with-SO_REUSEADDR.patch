@@ -1,0 +1,11 @@
+--- bind-9.15.8/lib/isc/netmgr/udp.c	2020-01-16 09:49:13.000000000 +0000
++++ bind-9.15.8/lib/isc/netmgr/udp.c.old	2020-02-05 07:39:06.271928455 +0000
+@@ -90,7 +90,7 @@ isc_nm_listenudp(isc_nm_t *mgr, isc_nmif
+ 		 * the same host:port pair.
+ 		 * On Windows the same thing is achieved with SO_REUSEADDR
+ 		 */
+-#ifdef WIN32
++#if defined(WIN32) || defined(__sun)
+ 		res = setsockopt(csock->fd, SOL_SOCKET, SO_REUSEADDR,
+ 				 &(int){1}, sizeof(int));
+ #else
