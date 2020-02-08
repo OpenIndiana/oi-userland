@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2016, Adam Stevko. All rights reserved.
-# Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2020, Michal Nowak
 #
 
 BUILD_BITS=		64
@@ -28,14 +28,14 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		screen
-COMPONENT_VERSION=	4.7.0
+COMPONENT_VERSION=	4.8.0
 COMPONENT_SUMMARY=	GNU Screen terminal multiplexer
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/screen/
 COMPONENT_FMRI=		terminal/screen
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:da775328fa783bd2a787d722014dbd99c6093effc11f337827604c2efc5d20c1
+COMPONENT_ARCHIVE_HASH=	sha256:6e11b13d8489925fde25dfb0935bf6ed71f9eb47eff233a181e078fde5655aa1
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/screen/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig	
 COMPONENT_LICENSE= 	GPLv3+
