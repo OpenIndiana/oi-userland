@@ -1,0 +1,43 @@
+The verbatim "make" program on different OSes varies... to call the same
+implementation as the top-level make (e.g. GNU make here for autotools),
+normally the $(MAKE) variable should be used.
+
+Part of compile fixes for OpenIndiana support in gloox-1.0.23 as of 2020-02-02
+
+Signed-off: Jim Klimov <jimklimov@gmail.com>
+
+--- gloox-1.0.23.orig/Makefile.am	2015-08-11 16:37:51.000000000 +0000
++++ gloox-1.0.23/Makefile.am	2020-02-10 12:57:24.911506961 +0000
+@@ -17,12 +17,12 @@
+ check: test
+ 
+ test:
+-	make -C src test
++	$(MAKE) -C src test
+ 
+ leakcheck: leaktest
+ 
+ leaktest:
+-	make -C src leaktest
++	$(MAKE) -C src leaktest
+ 
+ includetest:
+-	make -C src includetest
++	$(MAKE) -C src includetest
+--- gloox-1.0.23.orig/src/Makefile.am	2017-02-26 18:40:40.000000000 +0000
++++ gloox-1.0.23/src/Makefile.am	2020-02-10 12:57:45.044572578 +0000
+@@ -117,12 +117,12 @@
+ EXTRA_DIST = version.rc
+ 
+ test:
+-	make -C tests test
++	$(MAKE) -C tests test
+ 
+ check: test
+ 
+ leaktest:
+-	make -C tests leaktest
++	$(MAKE) -C tests leaktest
+ 
+ leakcheck: leaktest
+ 
