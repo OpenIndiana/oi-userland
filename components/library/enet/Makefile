@@ -32,9 +32,7 @@ COMPONENT_LICENSE_FILE= LICENSE
 COMPONENT_DESCRIPTION=	ENet's purpose is to provide a relatively thin, simple and robust network communication layer on top of UDP (User Datagram Protocol).The primary feature it provides is optional reliable, in-order delivery of packets. ENet omits certain higher level networking features such as authentication, lobbying, server discovery, encryption, or other similar tasks that are particularly application specific so that the library remains flexible, portable, and easily embeddable.
 COMPONENT_SUMMARY=	ENet is a relatively thin, simple and robust network communication layer on top of UDP
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
         (cd $(@D) &&\
