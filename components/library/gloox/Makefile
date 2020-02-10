@@ -12,6 +12,8 @@
 # Copyright 2020 Jim Klimov
 #
 
+BUILD_BITS =			64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=        gloox
@@ -30,9 +32,7 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_LICENSE=     GPLv3
 COMPONENT_LICENSE_FILE=LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION= ( cd $(@D); autoreconf --install --force )
 
@@ -43,12 +43,6 @@ CONFIGURE_OPTIONS += --enable-mdns
 # and probably production code would not connect either.
 #REQUIRED_PACKAGES += library/gnutls-3
 CONFIGURE_OPTIONS += --without-gnutls
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
