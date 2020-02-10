@@ -12,6 +12,9 @@
 #
 # Copyright 2020 Jim Klimov
 #
+
+BUILD_BITS=			64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		enet
@@ -44,12 +47,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CONFIGURE_OPTIONS += --disable-static
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
 # Note: It seems the current sources do not have a "test" nor "check"
 # targets defined; maybe some would appear later?..
-test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += system/library
