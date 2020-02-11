@@ -22,11 +22,13 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		trousers
 COMPONENT_VERSION=	0.3.11.2
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/trousers/files/trousers/
@@ -34,9 +36,9 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:8a96f924836187e406161f797b709ea52ade6c89ceffe489f7254b51088938d5
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)0.3.11/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 LIBS = -lnsl -lsocket -lgen -lscf -lbsm -lresolv
 CFLAGS += -DSOLARIS -DBI_OPENSSL -D_REENTRANT
@@ -66,17 +68,6 @@ COMPONENT_POST_CONFIGURE_ACTION = (cd $(COMPONENT_SRC); \
 	for f in `ls src/include/*.h` ; do \
 		/usr/bin/dos2unix $$f $$f; \
 	done;)
-
-COMPONENT_TEST_TARGETS = 
-
-COMPONENT_BUILD_TARGETS = all
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
