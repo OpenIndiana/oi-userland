@@ -32,6 +32,8 @@ COMPONENT_LICENSE_FILE= LICENSE
 COMPONENT_DESCRIPTION=	ENet's purpose is to provide a relatively thin, simple and robust network communication layer on top of UDP (User Datagram Protocol).The primary feature it provides is optional reliable, in-order delivery of packets. ENet omits certain higher level networking features such as authentication, lobbying, server discovery, encryption, or other similar tasks that are particularly application specific so that the library remains flexible, portable, and easily embeddable.
 COMPONENT_SUMMARY=	ENet is a relatively thin, simple and robust network communication layer on top of UDP
 
+TEST_TARGET= $(NO_TESTS)
+
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
@@ -43,8 +45,5 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS += --disable-static
-
-# Note: It seems the current sources do not have a "test" nor "check"
-# targets defined; maybe some would appear later?..
 
 REQUIRED_PACKAGES += system/library
