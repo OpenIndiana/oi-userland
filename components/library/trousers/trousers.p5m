@@ -33,6 +33,13 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+#
+# libtspi needs to convert between codesets 646 and UTF-16LE, which are covered
+# by package system/library/iconv/utf-8. This is for function Trspi_Native_To_UNICODE()
+# which calls iconv_open().
+#
+depend type=require fmri=pkg:/system/library/iconv/utf-8
+
 license trousers.license license=CPL
 
 file dist/system.data.auth path=var/tpm/system/system.data.auth mode=0400 owner=root group=sys
