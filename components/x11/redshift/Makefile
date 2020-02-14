@@ -13,7 +13,7 @@
 # Copyright (c) 2019 Michal Nowak
 #
 
-PREFERRED_BITS=	64
+BUILD_BITS=	64
 
 include ../../../make-rules/shared-macros.mk
 
@@ -32,11 +32,10 @@ COMPONENT_ARCHIVE_URL=	https://github.com/jonls/redshift/releases/download/v$(CO
 COMPONENT_LICENSE=	GPL-3
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION	= 3.4
+PYTHON_VERSION	= 3.5
 
 CONFIGURE_ENV	+= XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV	+= MSGFMT=/usr/gnu/bin/msgfmt
@@ -53,19 +52,13 @@ COMPONENT_POST_INSTALL_ACTION = \
 		inkscape -z -e $(PROTOUSRSHAREDIR)/icons/hicolor/24x24/apps/$$img.png -w 24 -h 24 $(PROTOUSRSHAREDIR)/icons/hicolor/scalable/apps/$$img.svg ;\
 	done ;
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
 # Build dependencies
 REQUIRED_PACKAGES += image/editor/inkscape
 REQUIRED_PACKAGES += system/header/header-drm
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libdrm
