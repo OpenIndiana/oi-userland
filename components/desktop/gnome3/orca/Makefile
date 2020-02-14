@@ -13,10 +13,13 @@
 # Copyright (c) 2014 Ken Mays
 #
 
+BUILD_BITS=64
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         orca
 COMPONENT_VERSION=      3.24.0
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  http://www.gnome.org
 COMPONENT_SUMMARY=      Orca screen reader/magnifier
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,28 +32,20 @@ COMPONENT_CLASSIFICATION=Applications/Universal Access
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
 
-PYTHON_VERSION=	3.4
+include $(WS_MAKE_RULES)/common.mk
+
+PYTHON_VERSION=	3.5
 
 PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
-CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)"
-CONFIGURE_ENV+= am_cv_python_pyexecdir="$(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)"
+CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV+= am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
-REQUIRED_PACKAGES += library/python/pyatspi2-34
-REQUIRED_PACKAGES += library/python/pygobject-3-34
-REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += library/python/pyatspi2-35
+REQUIRED_PACKAGES += library/python/pygobject-3-35
+REQUIRED_PACKAGES += runtime/python-35
