@@ -1,0 +1,46 @@
+https://www.illumos.org/issues/12270 - Don't try to suspend or hibernate system by default - illumos often can't wake up from sleep.
+
+--- mate-power-manager-1.22.1/data/org.mate.power-manager.gschema.xml.in.~4~	2020-02-14 14:03:18.463482241 +0000
++++ mate-power-manager-1.22.1/data/org.mate.power-manager.gschema.xml.in	2020-02-14 14:07:08.889722587 +0000
+@@ -22,7 +22,7 @@
+   </enum>
+   <schema id="org.mate.power-manager" path="/org/mate/power-manager/">
+     <key name="action-sleep-type-battery" enum="org.mate.power-manager.ActionType">
+-      <default>'hibernate'</default>
++      <default>'nothing'</default>
+       <summary>Whether to hibernate, suspend or do nothing when inactive</summary>
+       <description>The type of sleeping that should be performed when the computer is inactive.</description>
+     </key>
+@@ -37,7 +37,7 @@
+       <description>If the battery lid close event should occur (for example 'Suspend when lid closed on battery') when the lid is previously shut and the AC power disconnected at a later time.</description>
+     </key>
+     <key name="action-sleep-type-ac" enum="org.mate.power-manager.ActionType">
+-      <default>'suspend'</default>
++      <default>'nothing'</default>
+       <summary>Whether to hibernate, suspend or do nothing when inactive</summary>
+       <description>The type of sleeping that should be performed when the computer is inactive.</description>
+     </key>
+@@ -47,7 +47,7 @@
+       <description>The action to take when the UPS is critically low.</description>
+     </key>
+     <key name="action-low-ups" enum="org.mate.power-manager.ActionType">
+-      <default>'hibernate'</default>
++      <default>'nothing'</default>
+       <summary>UPS low power action</summary>
+       <description>The action to take when the UPS is low.</description>
+     </key>
+@@ -137,12 +137,12 @@
+       <description>The action to take when the system power button is pressed.</description>
+     </key>
+     <key name="button-lid-battery" enum="org.mate.power-manager.ActionType">
+-      <default>'suspend'</default>
++      <default>'nothing'</default>
+       <summary>Laptop lid close action on battery</summary>
+       <description>The action to take when the laptop lid is closed and the laptop is on battery power.</description>
+     </key>
+     <key name="button-lid-ac" enum="org.mate.power-manager.ActionType">
+-      <default>'suspend'</default>
++      <default>'nothing'</default>
+       <summary>Laptop lid close action when on AC</summary>
+       <description>The action to take when the laptop lid is closed and the laptop is on AC power.</description>
+     </key>
