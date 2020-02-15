@@ -12,7 +12,7 @@
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
-# Copyright 2019 Michal Nowak
+# Copyright 2020 Michal Nowak
 #
 
 PREFERRED_BITS=		64
@@ -21,8 +21,8 @@ BUILD_BITS=		32_and_64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-desktop
-COMPONENT_MJR_VERSION=	1.22
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.24
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
@@ -30,7 +30,7 @@ COMPONENT_SUMMARY=	Additional UI API for MATE Desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:906673d5de5e6814e73c4448b8cb67c5b86e90f9a72ae131eefbe2356eca85a3
+	sha256:afa93116ad5bdf55091341ae5426e4418ff8980c5c17dc6cd1258c6f8d5c8b50
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE=	mate-desktop.license
@@ -48,7 +48,6 @@ COMPONENT_PREP_ACTION = cd $(@D) && NOCONFIGURE=1 ./autogen.sh
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
 CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --disable-scrollkeeper
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
