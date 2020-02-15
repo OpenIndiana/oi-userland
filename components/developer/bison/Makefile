@@ -21,7 +21,7 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2019, Michal Nowak
+# Copyright 2020, Michal Nowak
 #
 
 BUILD_BITS=		32_and_64
@@ -29,13 +29,13 @@ BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bison
-COMPONENT_VERSION=	3.5
+COMPONENT_VERSION=	3.5.2
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bison/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	bison - A YACC Replacement
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:55e4a023b1b4ad19095a5f8279f0dc048fa29f970759cea83224a6d5e7a3a641
+	sha256:24e273db9eb6da8bbb6f0648284d0724a5cbd6268a163db402f961350a4e50dd
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_FMRI=		developer/parser/bison
