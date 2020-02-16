@@ -21,7 +21,6 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
     value=pkg:/library/security/trousers@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
@@ -30,24 +29,30 @@ set name=pkg.description \
     value="The TrouSerS library provides a software stack from the Trusted Computer Group (TCG) that accesses a Trusted Platform Module (TPM) hardware device."
 set name=info.classification \
     value=org.opensolaris.category.2008:System/Security
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2008/725
 
-dir path=etc
-dir path=etc/security
-dir path=var
-dir path=var/tpm
+#
+# libtspi needs to convert between codesets 646 and UTF-16LE, which are covered
+# by package system/library/iconv/utf-8. This is for function Trspi_Native_To_UNICODE()
+# which calls iconv_open().
+#
+depend type=require fmri=pkg:/system/library/iconv/utf-8
+
+license trousers.license license=CPL
+
+file dist/system.data.auth path=var/tpm/system/system.data.auth mode=0400 owner=root group=sys
+file dist/system.data.noauth path=var/tpm/system/system.data.noauth mode=0400 owner=root group=sys
+link path=var/tpm/system/system.data target=system.data.auth
 dir path=var/tpm/pkcs11 group=sys mode=1777 owner=root
 dir path=var/tpm/system group=sys mode=0700 owner=root
 dir path=var/tpm/userps group=sys mode=1777 owner=root
-file auth_attr path=etc/security/auth_attr.d/trousers
-file prof_attr path=etc/security/prof_attr.d/trousers
+file files/auth_attr path=etc/security/auth_attr.d/trousers
+file files/prof_attr path=etc/security/prof_attr.d/trousers
+file files/tcsd.xml path=lib/svc/manifest/application/security/tcsd.xml
+file files/tcsd.sh path=lib/svc/method/tcsd.sh mode=0555
 file etc/tcsd.conf path=etc/security/tcsd.conf mode=0644 preserve=true original_name=SUNWtss-root:etc/security/tcsd.conf
-file tcsd.xml path=lib/svc/manifest/application/security/tcsd.xml
-file tcsd.sh path=lib/svc/method/tcsd.sh mode=555
 file path=usr/include/trousers/trousers.h
 file path=usr/include/trousers/tss.h
 file path=usr/include/tss/compat11b.h
@@ -73,17 +78,16 @@ file path=usr/include/tss/tss_error.h
 file path=usr/include/tss/tss_error_basics.h
 file path=usr/include/tss/tss_structs.h
 file path=usr/include/tss/tss_typedef.h
-
-file path=usr/lib/$(MACH64)/libtddl.a
-link path=usr/lib/$(MACH64)/libtspi.so target=libtspi.so.1.2.0 facet.devel=true
+#file path=usr/lib/$(MACH64)/libtddl.a
+link path=usr/lib/$(MACH64)/libtspi.so target=libtspi.so.1.2.0
 link path=usr/lib/$(MACH64)/libtspi.so.1 target=libtspi.so.1.2.0
 file path=usr/lib/$(MACH64)/libtspi.so.1.2.0
-file path=usr/lib/tcsd mode=0555 owner=root
-file path=usr/lib/libtddl.a
-link path=usr/lib/libtspi.so target=libtspi.so.1.2.0 facet.devel=true
+file path=usr/lib/$(MACH64)/tcsd mode=0555 owner=root
+#file path=usr/lib/libtddl.a
+link path=usr/lib/libtspi.so target=libtspi.so.1.2.0
 link path=usr/lib/libtspi.so.1 target=libtspi.so.1.2.0
 file path=usr/lib/libtspi.so.1.2.0
-
+file path=usr/lib/tcsd mode=0555 owner=root
 file path=usr/share/man/man3/Tspi_ChangeAuth.3
 file path=usr/share/man/man3/Tspi_ChangeAuthAsym.3
 file path=usr/share/man/man3/Tspi_Context_Close.3
@@ -165,13 +169,3 @@ file path=usr/share/man/man3/Tspi_TPM_StirRandom.3
 file path=usr/share/man/man3/Tspi_TPM_TakeOwnership.3
 file path=usr/share/man/man5/tcsd.conf.5
 file path=usr/share/man/man8/tcsd.8
-
-file dist/system.data.auth path=var/tpm/system/system.data.auth mode=0400 owner=root group=sys
-file dist/system.data.noauth path=var/tpm/system/system.data.noauth mode=0400 owner=root group=sys
-license trousers.license license=CPL
-link path=var/tpm/system/system.data target=system.data.auth
-#
-# libtspi requires 646%UTF-8.so in package utf-8. This is for function
-# Trspi_Native_To_UNICODE() which calls iconv_open() to open this library.
-#
-#depend fmri=pkg:/system/library/iconv/utf-8 type=require
