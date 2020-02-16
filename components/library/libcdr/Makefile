@@ -51,6 +51,10 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += developer/cppunit
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/imagemagick
 REQUIRED_PACKAGES += library/c++/librevenge
 REQUIRED_PACKAGES += library/icu
