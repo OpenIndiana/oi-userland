@@ -24,7 +24,7 @@
 # Copyright 2019 Rouven Weiler
 #
 
-BUILD_BITS =			64
+BUILD_BITS =			64_and_32
 BUILD_STYLE =			waf
 
 include ../../../make-rules/shared-macros.mk
@@ -32,6 +32,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		samba
 COMPONENT_FMRI =		service/network/samba
 COMPONENT_VERSION =		4.11.6
+COMPONENT_REVISION =		1
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		http://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
@@ -58,12 +59,15 @@ PKG_OPTIONS +=		-I$(COMPONENT_DIR)
 # Set the pkg... path to search files in ./Solaris/ dir (mainly the SMF manifests are there)
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)
 
+$(BUILD_DIR_32)/%:	MACHLIBDIR=
+$(BUILD_DIR_64)/%:	MACHLIBDIR=/$(MACH64)
+
 CFLAGS +=	$($(COMPILER)_C99_ENABLE) -D_POSIX_PTHREAD_SEMANTICS
 CPPFLAGS +=	$(CPP_LARGEFILES) $(CPP_XPG6MODE) 
 CPPFLAGS +=	-I/usr/include/openldap
 
-LDFLAGS +=	-L/usr/lib/samba/$(MACH64) -R/usr/lib/samba/$(MACH64)
-LDFLAGS +=	-L/usr/lib/samba/private/$(MACH64) -R/usr/lib/samba/private/$(MACH64)
+LDFLAGS +=	-R/usr/lib/samba$(MACHLIBDIR)
+LDFLAGS +=	-R/usr/lib/samba/private$(MACHLIBDIR)
 LDFLAGS +=	-L$(GNULIB.$(BITS)) -R$(GNULIB.$(BITS))
 
 LDFLAGS +=      -lrt -lsec -lcrypt -lmd5 -lsocket -lnsl -lsendfile
@@ -117,6 +121,20 @@ CONFIGURE_OPTIONS +=	--disable-rpath
 CONFIGURE_OPTIONS +=	--bundled-libraries=ALL
 CONFIGURE_OPTIONS +=	--python=$(PYTHON)
 
+$(BUILD_32):	COMPONENT_BUILD_TARGETS= --targets=nss_winbind,pamwinbind 
+$(BUILD_32):	PYTHON_VERSION=3.4
+
+# do not do waf install for winbind only - override the recipe
+$(INSTALL_32): $(BUILD_32)
+	/bin/sh -c "cd $(@D)  &&\
+	    $(INSTALL) -d $(PROTO_DIR)/usr/lib/samba$(MACHLIBDIR)  &&\
+	    $(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba$(MACHLIBDIR) bin/shared/!(pam_*).so* && \
+	    $(INSTALL) -d $(PROTO_DIR)/usr/lib/samba/security$(MACHLIBDIR) && \
+	    $(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba/security$(MACHLIBDIR) bin/shared/pam_*.so* && \
+	    $(INSTALL) -d $(PROTO_DIR)/usr/lib/samba/private$(MACHLIBDIR) && \
+	    $(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba/private$(MACHLIBDIR) bin/shared/private/*.so*"
+	$(TOUCH) $@
+
 #
 # set everything for target build.
 #
@@ -124,6 +142,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTO_DIR)$(ETCDIR)/samba ; \
 	(sed -f $(COMPONENT_DIR)/Solaris/smbconf.sed \
 		> $(PROTO_DIR)$(ETCDIR)/samba/smb.conf.default $(BUILD_DIR_64)/examples/smb.conf.default) 
+
+# Build dependencies
+# We need 32-bit python to build 32-bit libraries
+REQUIRED_PACKAGES += runtime/python-34
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
