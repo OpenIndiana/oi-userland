@@ -11,7 +11,7 @@
 #
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
-# Copyright 2019 Michal Nowak
+# Copyright 2020 Michal Nowak
 #
 
 BUILD_BITS=		64
@@ -19,20 +19,20 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		caja
-COMPONENT_MJR_VERSION=	1.22
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.24
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	File manager for the MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b09cfd068da3789fddd564afb7117ed874472e97c9d2f3ceb7a7fd8b16c9beb0
+	sha256:80e17a55739561b213197f547cc1b30ca977206980cfa1e2d892331810f1ceb2
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_FMRI = desktop/mate/$(COMPONENT_NAME)
+COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
+COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
 TEST_TARGET=		$(NO_TESTS)
 
@@ -43,11 +43,6 @@ PATH=$(PATH.gnu)
 COMPONENT_PREP_ACTION=	\
 	( cp $(COMPONENT_DIR)/files/icons/*.png $(@D)/icons && \
 		cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
-
-# Localization files should be updated
-#COMPONENT_PRE_CONFIGURE_ACTION = \
-#  ( cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
-#    cd $(@D)/po-sun && $(MAKE) all )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
