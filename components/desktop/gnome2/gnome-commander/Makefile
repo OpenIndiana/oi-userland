@@ -12,12 +12,15 @@
 # Copyright (c) 2017 Alexander Pyhalov
 #
 
+BUILD_BITS=		32
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-commander
 COMPONENT_MJR_VERSION=	1.10
 COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://gcmd.github.io/
 COMPONENT_SUMMARY=	gnome commander file manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,9 +33,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -46,13 +49,6 @@ CONFIGURE_OPTIONS+=	--without-unique
 
 CONFIGURE_ENV+=	PERL=$(PERL)
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/exiv2
