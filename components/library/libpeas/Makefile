@@ -23,6 +23,7 @@
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libpeas
@@ -30,7 +31,7 @@ COMPONENT_SUMMARY=	A gobject-based plugins engine for GNOME
 COMPONENT_DESCRIPTION=	libpeas is a gobject-based plugins engine, and is targeted\
  at giving every application the chance to assume its own extensibility.
 COMPONENT_VERSION=	1.20.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Libpeas
 COMPONENT_MAJOR_MINOR=        $(basename $(COMPONENT_VERSION))
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,23 +44,21 @@ COMPONENT_FMRI=	library/desktop/libpeas
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV.32 += PYTHON2=$(PYTHON.2.7.32)
 CONFIGURE_ENV.64 += PYTHON2=$(PYTHON.2.7.64)
-CONFIGURE_ENV.32 += PYTHON=$(PYTHON.3.4.32)
-CONFIGURE_ENV.64 += PYTHON=$(PYTHON.3.4.64)
-CONFIGURE_ENV.32 += PYTHON3_CONFIG=/usr/bin/python3.4-config
-CONFIGURE_ENV.64 += PYTHON3_CONFIG=/usr/bin/$(MACH64)/python3.4-config
+# Note, there's no 32-bit Python 3.5
+CONFIGURE_ENV.64 += PYTHON=$(PYTHON.3.5.64)
+CONFIGURE_ENV.64 += PYTHON3_CONFIG=/usr/bin/python3.5-config
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-gtk
 CONFIGURE_OPTIONS += --enable-lua5.2
 CONFIGURE_OPTIONS += --disable-luajit
 CONFIGURE_OPTIONS += --enable-python2
-CONFIGURE_OPTIONS += --enable-python3
+CONFIGURE_OPTIONS.32 += --disable-python3
+CONFIGURE_OPTIONS.64 += --enable-python3
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
 
@@ -85,11 +84,8 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/PASS:/p" ' \
         '-e "/FAIL:/p" '
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
+# Build dependencies
+REQUIRED_PACKAGES += developer/ui-designer/glade
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -100,6 +96,6 @@ REQUIRED_PACKAGES += library/lua/lgi-52
 REQUIRED_PACKAGES += library/python/pygobject-3
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += text/xmlto

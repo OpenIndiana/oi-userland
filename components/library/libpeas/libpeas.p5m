@@ -22,6 +22,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 depend type=require fmri=library/lua/lgi-52
 
+depend type=conditional fmri=$(COMPONENT_FMRI)/libpeas-pythonloader \
+    predicate=runtime/python-27
+
+depend type=conditional fmri=$(COMPONENT_FMRI)/libpeas-python3loader \
+    predicate=runtime/python-35
+
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/$(MACH64)/peas-demo
@@ -46,8 +52,6 @@ link path=usr/lib/$(MACH64)/libpeas-1.0.so target=libpeas-1.0.so.0.2000.0
 link path=usr/lib/$(MACH64)/libpeas-1.0.so.0 target=libpeas-1.0.so.0.2000.0
 file path=usr/lib/$(MACH64)/libpeas-1.0.so.0.2000.0
 file path=usr/lib/$(MACH64)/libpeas-1.0/loaders/liblua52loader.so
-file path=usr/lib/$(MACH64)/libpeas-1.0/loaders/libpython3loader.so
-file path=usr/lib/$(MACH64)/libpeas-1.0/loaders/libpythonloader.so
 link path=usr/lib/$(MACH64)/libpeas-gtk-1.0.so \
     target=libpeas-gtk-1.0.so.0.2000.0
 link path=usr/lib/$(MACH64)/libpeas-gtk-1.0.so.0 \
@@ -56,8 +60,6 @@ file path=usr/lib/$(MACH64)/libpeas-gtk-1.0.so.0.2000.0
 file path=usr/lib/$(MACH64)/peas-demo/plugins/helloworld/helloworld.plugin
 file path=usr/lib/$(MACH64)/peas-demo/plugins/helloworld/libhelloworld.so
 file path=usr/lib/$(MACH64)/peas-demo/plugins/luahello/luahello.plugin
-file path=usr/lib/$(MACH64)/peas-demo/plugins/pythonhello/pythonhello.plugin
-file path=usr/lib/$(MACH64)/peas-demo/plugins/pythonhello/pythonhello.py
 file path=usr/lib/$(MACH64)/peas-demo/plugins/secondtime/libsecondtime.so
 file path=usr/lib/$(MACH64)/peas-demo/plugins/secondtime/secondtime.plugin
 file path=usr/lib/$(MACH64)/pkgconfig/libpeas-1.0.pc
@@ -68,16 +70,12 @@ link path=usr/lib/libpeas-1.0.so target=libpeas-1.0.so.0.2000.0
 link path=usr/lib/libpeas-1.0.so.0 target=libpeas-1.0.so.0.2000.0
 file path=usr/lib/libpeas-1.0.so.0.2000.0
 file path=usr/lib/libpeas-1.0/loaders/liblua52loader.so
-file path=usr/lib/libpeas-1.0/loaders/libpython3loader.so
-file path=usr/lib/libpeas-1.0/loaders/libpythonloader.so
 link path=usr/lib/libpeas-gtk-1.0.so target=libpeas-gtk-1.0.so.0.2000.0
 link path=usr/lib/libpeas-gtk-1.0.so.0 target=libpeas-gtk-1.0.so.0.2000.0
 file path=usr/lib/libpeas-gtk-1.0.so.0.2000.0
 file path=usr/lib/peas-demo/plugins/helloworld/helloworld.plugin
 file path=usr/lib/peas-demo/plugins/helloworld/libhelloworld.so
 file path=usr/lib/peas-demo/plugins/luahello/luahello.plugin
-file path=usr/lib/peas-demo/plugins/pythonhello/pythonhello.plugin
-file path=usr/lib/peas-demo/plugins/pythonhello/pythonhello.py
 file path=usr/lib/peas-demo/plugins/secondtime/libsecondtime.so
 file path=usr/lib/peas-demo/plugins/secondtime/secondtime.plugin
 file path=usr/lib/pkgconfig/libpeas-1.0.pc
