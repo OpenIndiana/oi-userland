@@ -255,7 +255,7 @@ $(GENERATED).p5m:	install
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' -e '/^dir .*$$/d' \
 		-e '/\.la$$/d' -e '/\.pyo$$/d' -e '/usr\/lib\/python[23]\..*\.pyc$$/d' \
-		-e '/.*\/__pycache__\/.*/d'  | \
+		-e '/usr\/lib\/python3\..*\/__pycache__\/.*/d'  | \
 		$(PKGFMT) | \
 		cat $(METADATA_TEMPLATE) - | \
 		$(TEE) $@ $(SAMPLE_MANIFEST_FILE) >/dev/null
