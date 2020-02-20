@@ -1,0 +1,443 @@
+From 672a932784bd33f2b6397e80827dd1cdc3caabd7 Mon Sep 17 00:00:00 2001
+From: Alexander Pyhalov <apyhalov@gmail.com>
+Date: Thu, 20 Feb 2020 08:20:01 +0300
+Subject: [PATCH] Revert "all: Remove HAL"
+
+This reverts commit ce78295bbf068f8da27706666e693cbd007855cb.
+---
+ configure.ac                       |  25 +++-
+ doc/reference/Makefile.am          |   1 +
+ lib/libmediaplayerid/Makefile.am   |  15 ++-
+ lib/libmediaplayerid/mpid-device.c |   2 +-
+ lib/libmediaplayerid/mpid-util.c   |   4 +-
+ plugins/mtpdevice/Makefile.am      |   2 +
+ plugins/mtpdevice/rb-mtp-plugin.c  | 195 +++++++++++++++++++++++++++++
+ 7 files changed, 238 insertions(+), 6 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 9e1ffa42d..8b50b8410 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -147,6 +147,25 @@ else
+ fi
+ AM_CONDITIONAL(USE_GUDEV, test x"$use_gudev" = xyes)
+ 
++dnl hal remnants
++AC_ARG_WITH(hal,
++	      AC_HELP_STRING([--without-hal],
++			     [Disable HAL support]))
++if test "x$with_hal" != "xno"; then
++  PKG_CHECK_MODULES(HAL, hal >= 0.5 hal < 0.6 dbus-glib-1, enable_hal=yes, enable_hal=no)
++  if test "x$enable_hal" != "xyes" -a "x$with_hal" = "xyes"; then
++      AC_MSG_ERROR([HAL support explicitly requested but HAL couldn't be found])
++  fi
++
++  if test "x$enable_hal" = "xyes"; then
++    AC_DEFINE(HAVE_HAL, 1, [Define if you have HAL support])
++    AC_SUBST(HAL_CFLAGS)
++    AC_SUBST(HAL_LIBS)
++  fi	
++fi
++AM_CONDITIONAL(HAVE_HAL, test x"$enable_hal" = xyes)
++
++
+ dnl iPod support
+ AC_ARG_WITH(ipod,
+             AC_HELP_STRING([--with-ipod],
+@@ -178,7 +197,7 @@ AC_ARG_WITH(mtp,
+ 	      with_mtp=auto)
+ if test "x$with_mtp" != "xno"; then
+ 	can_use_mtp=no
+-	if test x"$use_gudev" = "xyes"; then
++	if test x"$use_gudev" = "xyes" -o x"$enable_hal" = "xyes"; then
+ 	  can_use_mtp=yes
+ 	fi
+ 
+@@ -188,7 +207,7 @@ if test "x$with_mtp" != "xno"; then
+ 	    AC_MSG_ERROR([MTP explicitly requested but libmtp is not available])
+ 	  fi
+ 	  if test x"$can_use_mtp" = "xno"; then
+-	    AC_MSG_ERROR([MTP explicitly requested but GUdev is not available])
++	    AC_MSG_ERROR([MTP explicitly requested but GUdev and HAL are not available])
+ 	  fi
+ 	fi
+ 	if test "x$have_libmtp" = "xyes" -a "x$can_use_mtp" = "xyes"; then
+@@ -773,6 +792,8 @@ else
+ fi
+ if test x"$use_gudev" = xyes; then
+ 	AC_MSG_NOTICE([** GUdev support enabled])
++elif test x"$enable_hal" = xyes; then
++	AC_MSG_NOTICE([** HAL support enabled])
+ else
+ 	AC_MSG_NOTICE([   GUdev support disabled])
+ fi
+diff --git a/doc/reference/Makefile.am b/doc/reference/Makefile.am
+index 5d3bb57c1..28678e5ca 100644
+--- a/doc/reference/Makefile.am
++++ b/doc/reference/Makefile.am
+@@ -186,6 +186,7 @@ GTKDOC_LIBS=\
+ 	$(top_builddir)/shell/librhythmbox-core.la        \
+ 	$(BINDING_LIBS)					\
+ 	$(TOTEM_PLPARSER_LIBS)				\
++	$(HAL_LIBS)					\
+ 	$(DBUS_LIBS)					\
+ 	$(RHYTHMBOX_LIBS)				\
+ 	$(MORE_GTKDOC_LIBS)
+diff --git a/lib/libmediaplayerid/Makefile.am b/lib/libmediaplayerid/Makefile.am
+index 2ccc6f90a..cda6e5fc3 100644
+--- a/lib/libmediaplayerid/Makefile.am
++++ b/lib/libmediaplayerid/Makefile.am
+@@ -16,7 +16,8 @@ AM_CPPFLAGS =				\
+ 	-I$(top_srcdir)			\
+ 	$(RHYTHMBOX_CFLAGS)
+ 
+-# use the GUdev/media-player-id implementation if possible.
++# use the GUdev/media-player-id implementation if possible,
++# otherwise HAL.
+ 
+ if USE_GUDEV
+ 
+@@ -28,8 +29,20 @@ libmediaplayerid_la_LIBADD = $(GUDEV_LIBS)
+ 
+ else
+ 
++if HAVE_HAL
++
++libmediaplayerid_la_SOURCES += mpid-hal.c
++EXTRA_DIST = mpid-udev.c mpid-dummy.c
++
++AM_CPPFLAGS += $(HAL_CFLAGS)
++libmediaplayerid_la_LIBADD = $(HAL_LIBS)
++
++else
++
+ libmediaplayerid_la_SOURCES += mpid-dummy.c
+ EXTRA_DIST = mpid-udev.c mpid-hal.c
+ 
++endif #  HAVE_HAL
++
+ endif #  HAVE_GUDEV
+ 
+diff --git a/lib/libmediaplayerid/mpid-device.c b/lib/libmediaplayerid/mpid-device.c
+index 7caf34d11..d0b8e2a59 100644
+--- a/lib/libmediaplayerid/mpid-device.c
++++ b/lib/libmediaplayerid/mpid-device.c
+@@ -30,7 +30,7 @@
+  *
+  * MPID provides access to device information, such as device and vendor names,
+  * supported formats, and audio folder locations, for USB mass storage media
+- * player devices.  It queries the operating system (udev) and reads
++ * player devices.  It queries the operating system (udev or HAL) and reads
+  * override files from the device filesystem and provides a simple set of
+  * properties.
+  */
+diff --git a/lib/libmediaplayerid/mpid-util.c b/lib/libmediaplayerid/mpid-util.c
+index b5bfd0dd9..5a821d5aa 100644
+--- a/lib/libmediaplayerid/mpid-util.c
++++ b/lib/libmediaplayerid/mpid-util.c
+@@ -31,7 +31,7 @@ static gboolean debug_enabled = FALSE;
+  * MPIDError:
+  * @MPID_ERROR_NONE: Indicates no error has occurred
+  * @MPID_ERROR_NO_DEVICE_PATH: Unable to find the device path
+- * @MPID_ERROR_MECHANISM_FAILED: The device detection mechanism (e.g. udev) failed
++ * @MPID_ERROR_MECHANISM_FAILED: The device detection mechanism (e.g. udev or HAL) failed
+  * @MPID_ERROR_NOT_MEDIA_PLAYER: The device is not a media player
+  * @MPID_ERROR_DEVICE_INFO_MISSING: The device detection mechanism identified the device
+  *   but was unable to locate its device information
+@@ -61,7 +61,7 @@ mpid_error_get_type (void)
+ /**
+  * MPIDSource:
+  * @MPID_SOURCE_NONE: No device information is available
+- * @MPID_SOURCE_SYSTEM: Device information provided by the operating system (e.g. udev)
++ * @MPID_SOURCE_SYSTEM: Device information provided by the operating system (e.g. udev or HAL)
+  * @MPID_SOURCE_OVERRIDE: Device information provided by an override file on the device itself.
+  */
+ 
+diff --git a/plugins/mtpdevice/Makefile.am b/plugins/mtpdevice/Makefile.am
+index b860cb696..cac9402c6 100644
+--- a/plugins/mtpdevice/Makefile.am
++++ b/plugins/mtpdevice/Makefile.am
+@@ -20,6 +20,7 @@ libmtpdevice_la_LIBTOOLFLAGS = --tag=disable-static
+ libmtpdevice_la_LIBADD = 				\
+ 	$(top_builddir)/shell/librhythmbox-core.la	\
+ 	$(GUDEV_LIBS)					\
++	$(HAL_LIBS)					\
+ 	$(MTP_LIBS)
+ 
+ AM_CPPFLAGS = 						\
+@@ -42,6 +43,7 @@ AM_CPPFLAGS = 						\
+ 	-DDATADIR=\""$(datadir)"\"			\
+ 	$(RHYTHMBOX_CFLAGS)				\
+ 	$(GUDEV_CFLAGS)					\
++	$(HAL_CFLAGS)					\
+ 	$(MTP_CFLAGS)
+ 
+ plugin_in_files = mtpdevice.plugin.in
+diff --git a/plugins/mtpdevice/rb-mtp-plugin.c b/plugins/mtpdevice/rb-mtp-plugin.c
+index 7e1d7fc82..52ecb083b 100644
+--- a/plugins/mtpdevice/rb-mtp-plugin.c
++++ b/plugins/mtpdevice/rb-mtp-plugin.c
+@@ -38,8 +38,15 @@
+ #include <glib-object.h>
+ #include <libmtp.h>
+ 
++#if defined(HAVE_GUDEV)
+ #define G_UDEV_API_IS_SUBJECT_TO_CHANGE
+ #include <gudev/gudev.h>
++#else
++#include <hal/libhal.h>
++#include <dbus/dbus.h>
++#include <dbus/dbus-glib.h>
++#include <dbus/dbus-glib-lowlevel.h>
++#endif
+ 
+ #include "rb-plugin-macros.h"
+ #include "rb-source.h"
+@@ -70,6 +77,11 @@ typedef struct
+ 	guint create_device_source_id;
+ 
+ 	GList *mtp_sources;
++
++#if !defined(HAVE_GUDEV)
++	LibHalContext *hal_context;
++	DBusConnection *dbus_connection;
++#endif
+ } RBMtpPlugin;
+ 
+ typedef struct
+@@ -82,7 +94,14 @@ G_MODULE_EXPORT void peas_register_types (PeasObjectModule *module);
+ 
+ static void rb_mtp_plugin_init (RBMtpPlugin *plugin);
+ 
++#if defined(HAVE_GUDEV)
+ static RBSource* create_source_device_cb (RBRemovableMediaManager *rmm, GObject *device, RBMtpPlugin *plugin);
++#else
++static void rb_mtp_plugin_maybe_add_source (RBMtpPlugin *plugin, const char *udi, LIBMTP_raw_device_t *raw_devices, int num);
++static void rb_mtp_plugin_device_added (LibHalContext *context, const char *udi);
++static void rb_mtp_plugin_device_removed (LibHalContext *context, const char *udi);
++static gboolean rb_mtp_plugin_setup_dbus_hal_connection (RBMtpPlugin *plugin);
++#endif
+ 
+ GType rb_mtp_src_get_type (void);
+ GType rb_mtp_sink_get_type (void);
+@@ -102,13 +121,19 @@ impl_activate (PeasActivatable *bplugin)
+ 	RBMtpPlugin *plugin = RB_MTP_PLUGIN (bplugin);
+ 	RBRemovableMediaManager *rmm;
+ 	RBShell *shell;
++#if defined(HAVE_GUDEV)
+ 	gboolean rmm_scanned = FALSE;
++#else
++	int num_mtp_devices;
++	LIBMTP_raw_device_t *mtp_devices;
++#endif
+ 
+ 	g_object_get (plugin, "object", &shell, NULL);
+ 	g_object_get (shell, "removable-media-manager", &rmm, NULL);
+ 	g_object_unref (shell);
+ 
+ 	/* device detection */
++#if defined(HAVE_GUDEV)
+ 	plugin->create_device_source_id =
+ 		g_signal_connect_object (rmm,
+ 					 "create-source-device",
+@@ -120,6 +145,34 @@ impl_activate (PeasActivatable *bplugin)
+ 	g_object_get (rmm, "scanned", &rmm_scanned, NULL);
+ 	if (rmm_scanned)
+ 		rb_removable_media_manager_scan (rmm);
++#else
++	if (rb_mtp_plugin_setup_dbus_hal_connection (plugin) == FALSE) {
++		rb_debug ("not scanning for MTP devices because we couldn't get a HAL context");
++		g_object_unref (rmm);
++		return;
++	}
++
++	rb_profile_start ("scanning for MTP devices");
++	LIBMTP_Detect_Raw_Devices (&mtp_devices, &num_mtp_devices);
++	if (num_mtp_devices > 0) {
++		int num_hal_devices;
++		char **hal_devices;
++		int i;
++
++		rb_debug ("%d MTP devices found", num_mtp_devices);
++
++		hal_devices = libhal_get_all_devices (plugin->hal_context, &num_hal_devices, NULL);
++		for (i = 0; i < num_hal_devices; i++) {
++			/* should narrow this down a bit - usb only, for a start */
++			rb_mtp_plugin_maybe_add_source (plugin, hal_devices[i], mtp_devices, num_mtp_devices);
++		}
++		libhal_free_string_array (hal_devices);
++	}
++	if (mtp_devices != NULL) {
++		free (mtp_devices);
++	}
++	rb_profile_end ("scanning for MTP devices");
++#endif
+ 
+ 	g_object_unref (rmm);
+ }
+@@ -140,13 +193,31 @@ impl_deactivate (PeasActivatable *bplugin)
+ 	g_list_free (plugin->mtp_sources);
+ 	plugin->mtp_sources = NULL;
+ 
++#if defined(HAVE_GUDEV)
+ 	g_signal_handler_disconnect (rmm, plugin->create_device_source_id);
+ 	plugin->create_device_source_id = 0;
++#else
++	if (plugin->hal_context != NULL) {
++		DBusError error;
++		dbus_error_init (&error);
++		libhal_ctx_shutdown (plugin->hal_context, &error);
++		libhal_ctx_free (plugin->hal_context);
++		dbus_error_free (&error);
++
++		plugin->hal_context = NULL;
++	}
++
++	if (plugin->dbus_connection != NULL) {
++		dbus_connection_unref (plugin->dbus_connection);
++		plugin->dbus_connection = NULL;
++	}
++#endif
+ 
+ 	g_object_unref (rmm);
+ 	g_object_unref (shell);
+ }
+ 
++#if defined(HAVE_GUDEV)
+ static void
+ source_deleted_cb (RBMtpSource *source, RBMtpPlugin *plugin)
+ {
+@@ -239,6 +310,130 @@ create_source_device_cb (RBRemovableMediaManager *rmm, GObject *device_obj, RBMt
+ 	return NULL;
+ }
+ 
++#else
++
++static void
++source_deleted_cb (RBMtpSource *source, RBMtpPlugin *plugin)
++{
++	plugin->mtp_sources = g_list_remove (plugin->mtp_sources, source);
++}
++
++static void
++rb_mtp_plugin_maybe_add_source (RBMtpPlugin *plugin, const char *udi, LIBMTP_raw_device_t *raw_devices, int num_raw_devices)
++{
++	int i;
++	int device_num = 0;
++	DBusError error;
++
++	rb_debug ("checking if UDI %s matches an MTP device", udi);
++
++	/* get device number */
++	dbus_error_init (&error);
++	device_num = libhal_device_get_property_int (plugin->hal_context, udi, "usb.linux.device_number", &error);
++	if (dbus_error_is_set (&error)) {
++		rb_debug ("unable to get USB device number: %s", error.message);
++		dbus_error_free (&error);
++		return;
++	}
++
++	rb_debug ("USB device number: %d", device_num);
++
++	for (i = 0; i < num_raw_devices; i++) {
++		rb_debug ("detected MTP device: device number %d (bus location %u)", raw_devices[i].devnum, raw_devices[i].bus_location);
++		if (raw_devices[i].devnum == device_num) {
++			RBSource *source;
++			RBShell *shell;
++
++			rb_debug ("device matched, creating a source");
++			g_object_get (plugin, "object", &shell, NULL);
++			source = RB_SOURCE (rb_mtp_source_new (shell, G_OBJECT (plugin), udi, &raw_devices[i]));
++
++			rb_shell_append_display_page (shell, RB_DISPLAY_PAGE (source), RB_DISPLAY_PAGE_GROUP_DEVICES);
++			plugin->mtp_sources = g_list_prepend (plugin->mtp_sources, source);
++			g_signal_connect_object (source,
++						"deleted", G_CALLBACK (source_deleted_cb),
++						plugin, 0);
++			g_object_unref (shell);
++		}
++	}
++}
++
++static void
++rb_mtp_plugin_device_added (LibHalContext *context, const char *udi)
++{
++	RBMtpPlugin *plugin = (RBMtpPlugin *) libhal_ctx_get_user_data (context);
++	LIBMTP_raw_device_t *mtp_devices;
++	int num_mtp_devices;
++
++	LIBMTP_Detect_Raw_Devices (&mtp_devices, &num_mtp_devices);
++	if (mtp_devices != NULL) {
++		rb_mtp_plugin_maybe_add_source (plugin, udi, mtp_devices, num_mtp_devices);
++		free (mtp_devices);
++	}
++}
++
++static void
++rb_mtp_plugin_device_removed (LibHalContext *context, const char *udi)
++{
++	RBMtpPlugin *plugin = (RBMtpPlugin *) libhal_ctx_get_user_data (context);
++	GList *list = plugin->mtp_sources;
++	GList *tmp;
++
++	for (tmp = list; tmp != NULL; tmp = tmp->next) {
++		RBSource *source = (RBSource *)tmp->data;
++		char *source_udi;
++
++		g_object_get (source, "udi", &source_udi, NULL);
++		if (strcmp (udi, source_udi) == 0) {
++			rb_debug ("removing device %s, %p", udi, source);
++			plugin->mtp_sources = g_list_remove (plugin->mtp_sources, source);
++			rb_display_page_delete_thyself (RB_DISPLAY_PAGE (source));
++		}
++		g_free (source_udi);
++	}
++}
++
++static gboolean
++rb_mtp_plugin_setup_dbus_hal_connection (RBMtpPlugin *plugin)
++{
++	DBusError error;
++
++	dbus_error_init (&error);
++	plugin->dbus_connection = dbus_bus_get (DBUS_BUS_SYSTEM, &error);
++	if (plugin->dbus_connection == NULL) {
++		rb_debug ("error: dbus_bus_get: %s: %s\n", error.name, error.message);
++		dbus_error_free (&error);
++		return FALSE;
++	}
++
++	dbus_connection_setup_with_g_main (plugin->dbus_connection, NULL);
++
++	rb_debug ("connected to: %s", dbus_bus_get_unique_name (plugin->dbus_connection));
++
++	plugin->hal_context = libhal_ctx_new ();
++	if (plugin->hal_context == NULL) {
++		dbus_error_free (&error);
++		return FALSE;
++	}
++	libhal_ctx_set_dbus_connection (plugin->hal_context, plugin->dbus_connection);
++
++	libhal_ctx_set_user_data (plugin->hal_context, (void *)plugin);
++	libhal_ctx_set_device_added (plugin->hal_context, rb_mtp_plugin_device_added);
++	libhal_ctx_set_device_removed (plugin->hal_context, rb_mtp_plugin_device_removed);
++	libhal_device_property_watch_all (plugin->hal_context, &error);
++
++	if (!libhal_ctx_init (plugin->hal_context, &error)) {
++		rb_debug ("error: libhal_ctx_init: %s: %s\n", error.name, error.message);
++		dbus_error_free (&error);
++		return FALSE;
++	}
++
++	dbus_error_free (&error);
++	return TRUE;
++}
++
++#endif
++
+ G_MODULE_EXPORT void
+ peas_register_types (PeasObjectModule *module)
+ {
+-- 
+2.25.0
+
