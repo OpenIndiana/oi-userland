@@ -23,7 +23,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/lib/.*/loaders/.* ->  default restart_fmri svc:/application/desktop-cache/pixbuf-loaders-installer:default>
+<transform file path=usr/lib/.*/loaders/.* ->  default refresh_fmri svc:/application/desktop-cache/pixbuf-loaders-installer:default>
+
+# This hack allows us to run pixbuf-loaders refresh on each package republish despite file changes.
+# See https://www.illumos.org/issues/12329 for details.
+<transform set name=userland.info.git-rev ->  default refresh_fmri svc:/application/desktop-cache/pixbuf-loaders-installer:default>
 
 depend type=require fmri=pkg:/service/gnome/desktop-cache@0.2.2,5.11-2014.0.1.0
 
