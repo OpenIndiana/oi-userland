@@ -14,11 +14,14 @@
 # Copyright 2018 Michal Nowak
 #
 
+BUILD_BITS=32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
-COMPONENT_MAJOR_VERSION=2.40
-COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).20
+COMPONENT_VERSION=	2.40.20
+COMPONENT_REVISION=	1
+COMPONENT_MAJOR_VERSION=$(basename $(COMPONENT_VERSION))
 COMPONENT_FMRI=		image/library/librsvg
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_SUMMARY=	Library for SVG support for GNOME
@@ -31,9 +34,7 @@ COMPONENT_ARCHIVE_URL= \
 COMPONENT_PROJECT_URL= https://www.gnome.org/
 COMPONENT_LICENSE= LGPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -43,9 +44,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 COMPONENT_PREP_ACTION = ( cd $(@D) && aclocal && \
 			libtoolize --force --copy && \
 			gtkdocize && \
-			autoheader && \
-			automake -a -f -c --gnu && \
-			autoconf )
+			autoreconf -fi )
 
 CONFIGURE_OPTIONS.32 =	--sysconfdir=/etc
 CONFIGURE_OPTIONS.64 =	--sysconfdir=/etc/$(MACH64)
@@ -61,12 +60,6 @@ COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
 
 # To prevent "ERROR: loading - missing test plan"
 unexport SHELLOPTS
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
