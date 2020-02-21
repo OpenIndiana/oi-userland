@@ -10,35 +10,41 @@
 #
 
 #
-# Copyright 2017 Alexander Pyhalov
+# Copyright 2020 Alexander Pyhalov
 #
+
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= totem
 # Later versions require clutter-gtk-1.0
 COMPONENT_VERSION= 3.0.1
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
+COMPONENT_COMMIT= b582e767ffb92fe4e57861a5e29f472ad025936f
 COMPONENT_SUMMARY= Totem Multimedia Player
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_COMMIT)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:013b6cfedac6ff264aa27de7346597d0b8da7f4ed1f91b2c966a13d3fdff679a
+  sha256:45d13f3ce77f6ce4fde66bfc9bb2dbade29f8e748e7d2b12aa10fca701c12ed4
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.0/$(COMPONENT_ARCHIVE)
+  https://github.com/OpenIndiana/totem/archive/$(COMPONENT_COMMIT).tar.gz
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI = gnome/media/totem
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_LICENSE = GPLv2 with plugins exception
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
+COMPONENT_PREP_ACTION = (cd $(@D) &&\
+			intltoolize &&\
+			gtkdocize &&\
+			gnome-doc-prepare &&\
+			autoreconf -fi)
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -49,15 +55,33 @@ CONFIGURE_OPTIONS+= --disable-browser-plugins
 CONFIGURE_OPTIONS+= --disable-nautilus
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --with-pic
-CONFIGURE_ENV    += PYTHON=$(PYTHON)
+
+CONFIGURE_OPTIONS+= --with-plugins='\
+		brasero-disc-recorder \
+		chapters \
+		dbusservice \
+		gromit \
+		im-status \
+		media-player-keys \
+		ontop \
+		opensubtitles \
+		properties \
+		pythonconsole \
+		samplepython \
+		sample-vala \
+		screensaver \
+		screenshot \
+		sidebar-test \
+		skipto \
+		thumbnail'
+
+CONFIGURE_ENV    += PYTHON=$(PYTHON.3.5.64)
 
 # gobject-introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
+REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
 
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
