@@ -12,29 +12,25 @@
 # Copyright (c) 2014 Alexander Pyhalov.  All rights reserved.
 #
 
+BUILD_STYLE=setup.py
+BUILD_BITS=NO_ARCH
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyxdg
-COMPONENT_VERSION=	0.25
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.26
 COMPONENT_PROJECT_URL=	http://freedesktop.org/wiki/Software/pyxdg/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:81e883e0b9517d624e8b0499eb267b82a815c0b7146d5269f364988ae031279d
-COMPONENT_ARCHIVE_URL=	http://people.freedesktop.org/~takluyver/$(COMPONENT_ARCHIVE)
+    sha256:fe2928d3f532ed32b39c32a482b54136fe766d19936afc96c8f00645f9da1a06
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET= $(NO_TESTS)
 
-# common targets
-build:          $(BUILD_NO_ARCH)
-
-install:        $(INSTALL_NO_ARCH)
-
-test:           $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
