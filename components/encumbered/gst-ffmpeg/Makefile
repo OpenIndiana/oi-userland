@@ -13,10 +13,13 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS=32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-ffmpeg
 COMPONENT_VERSION= 0.10.13
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -30,16 +33,12 @@ COMPONENT_FMRI = library/audio/gstreamer/plugin/ffmpeg
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/common.mk
 
 gcc_OPT = -O2
 
 PATH = /usr/gnu/bin:/usr/bin
-
-CFLAGS += -I/usr/sfw/include -I/usr/X11/include
 
 COMPONENT_PREP_ACTION =        ( cd $(SOURCE_DIR) && aclocal -I ./m4 -I./common/m4 &&\
 					autoheader &&\
@@ -56,12 +55,6 @@ CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(TEST_32)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
