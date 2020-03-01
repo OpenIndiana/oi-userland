@@ -1,0 +1,19 @@
+Primarily needed for running the suite with python 3.5, since the xattrs returned
+with that version on Solaris are reversed to previous versions. Not contributed
+upstream, but may be in future.
+
+--- xattr-0.9.7/xattr/tests/test_xattr.py
++++ xattr-0.9.7/xattr/tests/test_xattr.py
+@@ -53,8 +53,10 @@ class BaseTestXattr(object):
+         if sys.platform.startswith('linux') and 'security.selinux' in x:
+             d['security.selinux'] = x['security.selinux']
+ 
+-        self.assertEqual(list(x.keys()), list(d.keys()))
+-        self.assertEqual(list(x.list()), list(d.keys()))
++        listx = list(x.keys()).sort()
++        listd = list(d.keys()).sort()
++        self.assertEqual(listx, listd)
++        self.assertEqual(list(x.list()).sort(), listd)
+         self.assertEqual(dict(x), d)
+ 
+         x['user.sopal'] = b'foo'
