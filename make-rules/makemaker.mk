@@ -1,4 +1,4 @@
-#
+
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -101,7 +101,7 @@ COMPONENT_TEST_DIFFS =  $(COMPONENT_TEST_BUILD_DIR)/test-$(PERL_VERSION)-$(BITS)
 COMPONENT_TEST_SNAPSHOT = $(COMPONENT_TEST_BUILD_DIR)/results-$(PERL_VERSION)-$(BITS).snapshot
 COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PERL_VERSION)-$(BITS)-results
 
-COMPONENT_TEST_TARGETS =	check
+COMPONENT_TEST_TARGETS =	test
 COMPONENT_TEST_ENV +=	$(COMMON_PERL_ENV)
 
 # determine the type of tests we want to run.
