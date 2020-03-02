@@ -30,7 +30,7 @@ PATCH_EACH_ARCHIVE= 1
 
 COMPONENT_NAME=			golang
 COMPONENT_MAJOR_VERSION=	1.12
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).13
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).17
 COMPONENT_FMRI=			developer/golang
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_SUMMARY=		The Go Programming Language
@@ -38,7 +38,7 @@ COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://golang.org/
 COMPONENT_ARCHIVE=		go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=		https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:5383d3b8db4baa48284ffcb14606d9cad6f03e9db843fa6d835b94d63cccf5a7
+COMPONENT_ARCHIVE_HASH=		sha256:de878218c43aa3c3bad54c1c52d95e3b0e5d336e1285c647383e775541a28b25
 COMPONENT_LICENSE=		BSD-style, Patent Grant
 COMPONENT_LICENSE_FILE=		$(COMPONENT_NAME).license
 MEDIATEDUSRSHAREMAN1DIR=	$(PROTO_DIR)/usr/share/golang/$(COMPONENT_MAJOR_VERSION)/man/man1
@@ -123,8 +123,7 @@ define COMPONENT_INSTALL_ACTION=
 	($(MKDIR) -p $(MEDIATEDUSRSHAREMAN1DIR)); \
 	/usr/gnu/bin/find $(COMPONENT_TARGET_DIR)/src -type f \
        	| egrep -v '\.go|\.s|\.bash|\.txt|\.c|\.tmpl|\.h|\.pl|\.md|\.S|\.py|\.dist|\.rc|\.bat|README|Makefile|\.awk|\.rules|\.mod|\.json|LICENSE|PATENTS'\
-	| xargs rm; \
-	/usr/gnu/bin/find $(COMPONENT_TARGET_DIR)/src/cmd/vendor/github.com/google/pprof/internal/binutils/testdata -type f -exec rm \{\} \; ;
+	| xargs rm
 endef
 
 # common targets
