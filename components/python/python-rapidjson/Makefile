@@ -26,23 +26,23 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		rapidjson
+COMPONENT_NAME=		python-rapidjson
 COMPONENT_VERSION=	0.9.1
-COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	'JSON (Java Script Object Notation) encoder/decoder for Python'
 COMPONENT_PROJECT_URL=	https://pypi.org/project/python-rapidjson/
-COMPONENT_SRC=		python-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:ad80bd7e4bb15d9705227630037a433e2e2a7982b54b51de2ebabdd1611394a1
-#COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-# Replace once the archive is on dlc.openindiana.org
-COMPONENT_ARCHIVE_URL=https://mirrors.omnios.org/pymodules/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	python-mod/rapidjson
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_FMRI=	library/python/rapidjson
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_LICENSE=      MIT
 
 PYTHON_VERSIONS=	3.5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 CFLAGS+= -std=c99
@@ -53,11 +53,15 @@ COMPONENT_TEST_ARGS= ./setup.py test
 #ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:          $(BUILD_32_and_64)
+build:          $(BUILD_64)
 
-install:        $(INSTALL_32_and_64)
+install:        $(INSTALL_64)
 
-test:           $(TEST_32_and_64)
+test:           $(NO_TESTS)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
