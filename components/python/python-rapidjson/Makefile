@@ -47,8 +47,11 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS+= -std=c99
 
-COMPONENT_TEST_DIR= $(COMPONENT_SRC)
-COMPONENT_TEST_ARGS= ./setup.py test
+# Tests require the pytest package to be installed, our pytest is too old, so
+# we get some errors
+COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
+COMPONENT_TEST_CMD=	$(PYTHON) /usr/bin/py.test-$(PYTHON_VERSION)
+COMPONENT_TEST_ARGS=
 
 #ASLR_MODE = $(ASLR_ENABLE)
 
@@ -57,7 +60,7 @@ build:          $(BUILD_64)
 
 install:        $(INSTALL_64)
 
-test:           $(NO_TESTS)
+test:           $(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
