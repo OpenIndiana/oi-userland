@@ -20,8 +20,8 @@
 #
 
 # Copyright 2016 Aurelien Larcher
-# Copyright 2017 Till Wegmueller
 # Copyright 2019 Michal Nowak
+# Copyright 2020 Till Wegmueller
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -30,7 +30,7 @@ PATCH_EACH_ARCHIVE= 1
 
 COMPONENT_NAME=			golang
 COMPONENT_MAJOR_VERSION=	1.13
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).4
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).8
 COMPONENT_FMRI=			developer/golang
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_SUMMARY=		The Go Programming Language
@@ -38,7 +38,7 @@ COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://golang.org/
 COMPONENT_ARCHIVE=		go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=		https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:95dbeab442ee2746b9acf0934c8e2fc26414a0565c008631b04addb8c02e7624
+COMPONENT_ARCHIVE_HASH=		sha256:b13bf04633d4d8cf53226ebeaace8d4d2fd07ae6fa676d0844a688339debec34
 COMPONENT_LICENSE=		BSD-style, Patent Grant
 COMPONENT_LICENSE_FILE=		$(COMPONENT_NAME).license
 MEDIATEDUSRSHAREMAN1DIR=	$(PROTO_DIR)/usr/share/golang/$(COMPONENT_MAJOR_VERSION)/man/man1
