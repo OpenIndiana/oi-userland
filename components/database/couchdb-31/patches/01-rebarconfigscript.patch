@@ -1,0 +1,52 @@
+--- apache-couchdb-3.1.1/src/couch/rebar.config.script.~1~	2020-09-12 00:37:00.000000000 +0000
++++ apache-couchdb-3.1.1/src/couch/rebar.config.script	2021-05-14 21:01:16.083045752 +0000
+@@ -105,6 +105,21 @@
+             "/DXP_WIN",
+             "mozjs185-1.0.lib"
+         };
++    {unix, sunos} when SMVsn == "1.8.5" ->
++        {
++            "-DXP_UNIX -I/usr/include/js",
++            "-lmozjs185 -lm -m32"
++        };
++    {unix, sunos} when SMVsn == "60" ->
++        {
++            "-DXP_UNIX -I/usr/include/mozjs-60 -std=c++14 -m64",
++            "-L/usr/lib/amd64 -lmozjs-60 -lm -std=c++14 -m64"
++        };
++    {unix, sunos} when SMVsn == "68" ->
++        {
++            "-DXP_UNIX -I/usr/include/mozjs-68 -std=c++14 -m64",
++            "-L/usr/lib/amd64 -lmozjs-68 -lm -std=c++14 -m64"
++        };
+     {unix, _} when SMVsn == "1.8.5" ->
+         {
+             "-DXP_UNIX -I/usr/include/js -I/usr/local/include/js",
+         }
+ end.
+ 
+@@ -145,6 +160,11 @@
+                     "-DHAVE_CURL -I/usr/local/include",
+                     "-DHAVE_CURL -lcurl"
+                 };
++            {unix, sunos} ->
++                {
++                    "-DHAVE_CURL -I/usr/include",
++                    "-DHAVE_CURL -lcurl"
++                };
+             _ ->
+                 {
+                     "-DHAVE_CURL",
+@@ -194,10 +214,12 @@
+         % ICU
+         {"darwin", IcuPath, IcuSrc, [{env, IcuEnv ++ IcuDarwinEnv}]},
+         {"linux",  IcuPath, IcuSrc, [{env, IcuEnv}]},
++        {"solaris",  IcuPath, IcuSrc, [{env, IcuEnv}]},
+         {"bsd",   IcuPath, IcuSrc, [{env, IcuEnv ++ IcuBsdEnv}]},
+         {"win32",  IcuPath, IcuSrc, [{env, IcuWinEnv}]},
+         % ejson_compare
+         {"darwin", ComparePath, CompareSrc, [{env, IcuEnv ++ IcuDarwinEnv}]},
++        {"solaris",  ComparePath, CompareSrc, [{env, IcuEnv}]},
+         {"linux",  ComparePath, CompareSrc, [{env, IcuEnv}]},
+         {"bsd",   ComparePath, CompareSrc, [{env, IcuEnv ++ IcuBsdEnv}]},
+         {"win32",  ComparePath, CompareSrc, [{env, IcuWinEnv}]}
