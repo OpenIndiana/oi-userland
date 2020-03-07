@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2017 <contributor name>
+# Copyright 2020 <contributor name>
 #
 
 include ../../../make-rules/shared-macros.mk
