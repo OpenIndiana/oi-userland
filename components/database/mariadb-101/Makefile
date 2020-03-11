@@ -14,23 +14,22 @@
 # Copyright 2019, Michal Nowak
 #
 
+BUILD_BITS= 32_and_64
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
 COMPONENT_MAJOR_VERSION=10.1
-COMPONENT_MINOR_VERSION=40
+COMPONENT_MINOR_VERSION=44
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://www.mariadb.org/
-COMPONENT_ARCHIVE_HASH=	sha256:91757a7e52b88b8ddbf150ac55746e9dd1978b06c03303f114e57980ed2a67a4
+COMPONENT_ARCHIVE_HASH=	sha256:21f203d361ee8c6e0f5050f3d0c06f3c5a2b87ac28f39e9503b851084a335039
 COMPONENT_ARCHIVE_URL=	https://downloads.mariadb.com/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -I/usr/include/pcre
 
@@ -84,8 +83,9 @@ CMAKE_OPTIONS+= -DWITH_COMMENT="OpenIndiana MariaDB"
 CMAKE_OPTIONS+= -DWITH_XTRADB_STORAGE_ENGINE=1
 CMAKE_OPTIONS+= -DWITH_CSV_STORAGE_ENGINE=1
 CMAKE_OPTIONS+= -DCOMPILATION_COMMENT="OpenIndiana package"
-CMAKE_OPTIONS+= -DJAVA_AWT_LIBRARY=/usr/java/jre/lib/amd64/libjawt.so
-CMAKE_OPTIONS+= -DJAVA_JVM_LIBRARY=/usr/java/jre/lib/amd64/server/libjvm.so
+# CONNECT JDBC table type requires java libraries, so it is 64-bit-only
+CMAKE_OPTIONS.64+= -DJAVA_AWT_LIBRARY=/usr/java/jre/lib/amd64/libjawt.so
+CMAKE_OPTIONS.64+= -DJAVA_JVM_LIBRARY=/usr/java/jre/lib/amd64/server/libjvm.s0
 
 CMAKE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -110,12 +110,6 @@ COMPONENT_TEST_CMD= mysql-test/mtr \
 	--force-restart \
 	--max-test-fail=0 \
 	--skip-test-list=unstable-tests
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
