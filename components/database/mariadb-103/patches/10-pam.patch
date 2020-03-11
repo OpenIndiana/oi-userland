@@ -1,0 +1,17 @@
+
+See https://jira.mariadb.org/browse/MDEV-21592 for details.
+Hopefully this will be fixed in a future release (it also affects FreeBSD and
+MacOSX)
+
+diff -wpruN '--exclude=*.orig' a~/plugin/auth_pam/mapper/pam_user_map.c a/plugin/auth_pam/mapper/pam_user_map.c
+--- a~/plugin/auth_pam/mapper/pam_user_map.c	1970-01-01 00:00:00
++++ a/plugin/auth_pam/mapper/pam_user_map.c	1970-01-01 00:00:00
+@@ -39,7 +39,7 @@ and usually end up in /var/log/secure fi
+ #include <grp.h>
+ #include <pwd.h>
+ 
+-#include <security/pam_ext.h>
++#include <security/pam_appl.h>
+ #include <security/pam_modules.h>
+ 
+ #define FILENAME "/etc/security/user_map.conf"
