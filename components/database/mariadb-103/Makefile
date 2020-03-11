@@ -14,25 +14,24 @@
 # Copyright 2019, Michal Nowak
 #
 
+BUILD_BITS= 32_and_64
 PREFERRED_BITS=		64
+BUILD_STYLE=cmake
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
 COMPONENT_MAJOR_VERSION=10.3
-COMPONENT_MINOR_VERSION=14
+COMPONENT_MINOR_VERSION=22
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://www.mariadb.org/
-COMPONENT_ARCHIVE_HASH=	sha256:ba1c94d92fc8ebdf9b8a1d1b93ed6aeeead33da507efbbd4afcf49f32023e054
+COMPONENT_ARCHIVE_HASH=	sha256:3200055dbdc27746981b3bb4bc182e2cb79dcf28ea88014b641a5b81280ccec7
 COMPONENT_ARCHIVE_URL=	https://downloads.mariadb.com/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -I/usr/include/pcre
 # Prevents "Text relocation remains referenced against symbol offset
@@ -110,12 +109,6 @@ COMPONENT_TEST_CMD=	mysql-test/mtr \
 				--force-restart \
 				--max-test-fail=0 \
 				--skip-test-list=unstable-tests | sort
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
