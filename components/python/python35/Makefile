@@ -29,14 +29,14 @@ BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	3.5.8
+COMPONENT_VERSION=	3.5.9
 COMPONENT_PROJECT_URL=	https://www.python.org
 COMPONENT_SUMMARY=	The Python interpreter, libraries and utilities
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:55a345c78ee3afbc2e60678442aad7bcc384ddea5bb95f8d66edc4868d4847d4
+	sha256:c24a37c63a67f53bdd09c5f287b5cff8e8b98f857bf348c577d454d3f74db049
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	PSFv2
 
@@ -95,6 +95,8 @@ CONFIGURE_OPTIONS  +=		--with-system-ffi
 CONFIGURE_OPTIONS  +=		--without-gcc
 CONFIGURE_OPTIONS  +=		--without-ensurepip
 CONFIGURE_OPTIONS  +=		--enable-ipv6
+CONFIGURE_OPTIONS  +=		--with-c-locale-coercion
+CONFIGURE_OPTIONS  +=		--without-c-locale-warning
 CONFIGURE_OPTIONS  +=		--bindir=$(USRBINDIR)
 # https://bugs.python.org/issue25003
 # CONFIGURE_OPTIONS  +=		"ac_cv_func_getentropy=no"
