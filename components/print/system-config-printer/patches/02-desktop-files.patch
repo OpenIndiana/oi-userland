@@ -1,0 +1,42 @@
+diff -ur system-config-printer-1.5.12/Makefile.am system-config-printer-desktop/Makefile.am
+--- system-config-printer-1.5.12/Makefile.am	2019-09-16 14:55:16.000000000 +0000
++++ system-config-printer-desktop/Makefile.am	2020-03-11 13:52:37.756549200 +0000
+@@ -247,6 +247,7 @@
+ 	  --add-category HardwareSettings	\
+ 	  --add-category Printing		\
+ 	  --add-category GTK			\
++	  --add-only-show-in="MATE" 		\
+ 	  system-config-printer.desktop
+ 	desktop-file-install $(DESKTOP_VENDOR)	\
+ 	  --dir $(DESTDIR)$(autostartdir)	\
+diff -ur system-config-printer-1.5.12/print-applet.desktop.in system-config-printer-desktop/print-applet.desktop.in
+--- system-config-printer-1.5.12/print-applet.desktop.in	2019-09-16 14:55:16.000000000 +0000
++++ system-config-printer-desktop/print-applet.desktop.in	2020-03-11 13:53:56.317429755 +0000
+@@ -1,7 +1,7 @@
+ [Desktop Entry]
+ _Name=Print Queue Applet
+ _Comment=System tray icon for managing print jobs
+-Exec=system-config-printer-applet
++Exec=/usr/lib/system-config-printer/system-config-printer-applet
+ Terminal=false
+ Type=Application
+ Icon=printer
+diff -ur system-config-printer-1.5.12/system-config-printer.desktop.in system-config-printer-desktop/system-config-printer.desktop.in
+--- system-config-printer-1.5.12/system-config-printer.desktop.in	2019-09-16 14:55:16.000000000 +0000
++++ system-config-printer-desktop/system-config-printer.desktop.in	2020-03-11 13:55:29.572097761 +0000
+@@ -1,10 +1,11 @@
+ [Desktop Entry]
+-_Name=Print Settings
+-_GenericName=Print Settings
+-_X-GNOME-FullName=Print Settings
+-_Comment=Configure printers
++_Name=Print Manager
++_GenericName=Print Manager
++_X-GNOME-FullName=Print Manager
++_Comment=Manage your printer queues and jobs
+ Exec=system-config-printer
+ Terminal=false
+ Type=Application
+ Icon=printer
+ StartupNotify=true
++OnlyShowIn=MATE;
