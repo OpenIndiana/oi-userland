@@ -166,7 +166,7 @@ diff -ur Python-3.5.9-orig/Lib/test/support/script_helper.py Python-3.5.9/Lib/te
  def assert_python_ok(*args, **env_vars):
 --- /dev/null
 +++ b/Lib/test/test_c_locale_coercion.py
-@@ -0,0 +1,353 @@
+@@ -0,0 +1,359 @@
 +# Tests the attempted automatic coercion of the C locale to a UTF-8 locale
 +
 +import unittest
@@ -185,9 +185,15 @@ diff -ur Python-3.5.9-orig/Lib/test/support/script_helper.py Python-3.5.9/Lib/te
 +
 +# Set our expectation for the default encoding used in the C locale
 +# for the filesystem encoding and the standard streams
-+C_LOCALE_STREAM_ENCODING = "ascii"
++if sys.platform == "sunos5":
++    C_LOCALE_STREAM_ENCODING = "646"
++else:
++    C_LOCALE_STREAM_ENCODING = "ascii"
++
 +if sys.platform == "darwin":
 +    C_LOCALE_FS_ENCODING = "utf-8"
++elif sys.platform == "sunos5":
++    C_LOCALE_FS_ENCODING = "ascii"
 +else:
 +    C_LOCALE_FS_ENCODING = C_LOCALE_STREAM_ENCODING
 +
