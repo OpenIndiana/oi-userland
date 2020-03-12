@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 Aurelien Larcher
+# Copyright 2016-2020 Aurelien Larcher
 #
 
 X11_CATEGORY=APP
@@ -19,12 +19,11 @@ include $(WS_MAKE_RULES)/x11.mk
 BUILD_BITS=32_and_64
 
 COMPONENT_NAME=     xkbcomp
-COMPONENT_VERSION=  1.4.2
-COMPONENT_REVISION= 1
+COMPONENT_VERSION=  1.4.3
 COMPONENT_FMRI=     x11/keyboard/xkbcomp
 COMPONENT_SUMMARY=  xkbcomp - compile XKB keyboard description
 COMPONENT_ARCHIVE_HASH= \
-  sha256:6dd8bcb9be7e85bd7294abe261b8c7b0539d2fc93e41b80fb8bd013767ce8424
+  sha256:06242c169fc11caf601cac46d781d467748c6a330e15b36dce46520b8ac8d435
 
 include $(WS_MAKE_RULES)/common.mk
 
