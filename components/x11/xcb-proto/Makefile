@@ -18,34 +18,29 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013-2015, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2013-2020, Aurelien Larcher. All rights reserved.
 #
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xcb-proto
-COMPONENT_VERSION=        1.13
+COMPONENT_VERSION=        1.14
 COMPONENT_SUMMARY=        The X protocol C-language Binding (XCB): Protocol descriptions
 COMPONENT_PROJECT_URL=    http://xcb.freedesktop.org
 COMPONENT_FMRI=           x11/header/xcb-protocols
 COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:7b98721e669be80284e9bbfeab02d2d0d54cd11172b72271e47a2fe875e2bde1
+  sha256:186a3ceb26f9b4a015f5a44dcc814c93033a5fc39684f36f1ecc79834416a605
 COMPONENT_ARCHIVE_URL=    http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=        MIT
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
