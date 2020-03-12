@@ -21,34 +21,31 @@
 # Copyright 2012 Gary Mills
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+
+BUILD_BITS=32_and_64
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycups
-COMPONENT_VERSION=	1.9.73
+COMPONENT_VERSION=	1.9.74
 COMPONENT_PROJECT_URL=	http://cyberelk.net/tim/software/pycups/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c381be011889ca6f728598578c89c8ac9f7ab1e95b614474df9f2fa831ae5335
-COMPONENT_ARCHIVE_URL=	http://cyberelk.net/tim/data/pycups/$(COMPONENT_ARCHIVE)
+    sha256:d5b5e4058757d1c090c85ed2ee7e5c2c1785976dc934a6144dbf425398304850
+COMPONENT_ARCHIVE_URL=	https://github.com/OpenPrinting/pycups/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_BUGDB=	python-mod/pycups
 
-PYTHON_VERSIONS=2.7
+PYTHON_VERSIONS=2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # pycups requires VERSION to be defined. Originally set in the package Makefile
 CFLAGS += -DVERSION=\\\"$(COMPONENT_VERSION)\\\"
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
