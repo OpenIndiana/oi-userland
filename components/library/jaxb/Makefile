@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jaxb-ri
 COMPONENT_VERSION=	2.2.11
-COMPONENT_REVISIOM=	1
+COMPONENT_REVISIOM=	2
 COMPONENT_PROJECT_URL=	https://jaxb.java.net/
 COMPONENT_SUMMARY=      jaxb - Java Architecture for XML Binding
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,6 +35,8 @@ include $(WS_MAKE_RULES)/ips.mk
 UNPACK_ARGS= -r $(COMPONENT_SRC)
 
 COMPONENT_BUILD_ENV += JAVA_HOME=$(JAVA_HOME)
+# Build fails with some locales like french
+COMPONENT_BUILD_ENV += LC_ALL=C
 
 COMPONENT_BUILD_ACTION = \
 	cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) \
