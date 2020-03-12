@@ -31,6 +31,8 @@ COMPONENT_PROJECT_URL = http://pgbarman.org/
 
 PYTHON_VERSIONS=	3.5
 
+TEST_TARGET=$(NO_TESTS)
+
 include $(WS_TOP)/make-rules/common.mk
 
 COMPONENT_POST_INSTALL_ACTION += \
