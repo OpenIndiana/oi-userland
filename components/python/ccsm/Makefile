@@ -31,6 +31,7 @@ COMPONENT_FMRI=		desktop/compiz/ccsm
 PYTHON_VERSION = 3.5
 PYTHON_VERSIONS = 3.5
 
+TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
