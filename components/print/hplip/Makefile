@@ -21,15 +21,17 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+BUILD_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hplip
-COMPONENT_VERSION=      3.19.8
-COMPONENT_REVISION=     1
-COMPONENT_PROJECT_URL=	http://hplipopensource.com/hplip-web/index.html
+COMPONENT_VERSION=      3.19.12
+COMPONENT_PROJECT_URL=	https://developers.hp.com/hp-linux-imaging-and-printing
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a385fea00241592d148ef1a20082799fa45b36031742157db181d5d94a84ba32
+COMPONENT_ARCHIVE_HASH= sha256:b7f398502fb659e0de8e54976237e3c6a64fec0b3c36054a515876f7b006b255
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/hplip/files/hplip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2+ and MIT and BSD and IJG and Public Domain and GPLv2+ with exceptions and ISC
 COMPONENT_LICENSE_FILE=	COPYING
@@ -37,6 +39,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PYTHON_VERSION = 3.5
 
 PKG_OPTIONS += -I $(COMPONENT_DIR)
 
@@ -60,10 +64,13 @@ CONFIGURE_ENV +=	"ARCH=$(BITS)"
 
 LDFLAGS+= -lnsl
 
-HPLIP_VARIANT = $(BUILD_DIR)/$(MACH32)-hplip
-HPIJS_VARIANT = $(BUILD_DIR)/$(MACH32)-hpijs
+HPLIP_VARIANT = $(BUILD_DIR)/$(MACH64)-hplip
+HPIJS_VARIANT = $(BUILD_DIR)/$(MACH64)-hpijs
 
 VARIANTS = $(HPLIP_VARIANT) $(HPIJS_VARIANT)
+
+$(VARIANTS:%=%/.configured):	BITS=64
+$(VARIANTS:%=%/.installed):	BITS=64
 
 # We build two variants: for the CUPS/SANE support
 # and for the HPIJS only support
@@ -101,7 +108,7 @@ BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 $(BUILD_DIR)/.allvariantsinstalled: $(VARIANTS:%=%/.installed)
 	$(RM) $(ROOTPPDCACHE)
 	$(MKDIR) $(PROTO_DIR)/usr/lib/lp/caches
-	($(ENV) VER="$(BUILD_DIR)/$(MACH32)-hpijs" \
+	($(ENV) VER="$(BUILD_DIR)/$(MACH64)-hpijs" \
 		PPDSRC="$(PROTO_DIR)/usr/share/ppd/SUNWhpijs" \
 		DONOTINSTALL="/dev/null" \
 		CACHE="$(ROOTPPDCACHE)" \
@@ -142,7 +149,7 @@ REQUIRED_PACKAGES += image/scanner/xsane/sane-backends
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
