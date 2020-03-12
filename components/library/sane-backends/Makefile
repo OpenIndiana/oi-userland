@@ -22,7 +22,8 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS=		32
+PREFERRED_BITS=	64
+BUILD_BITS=	32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
@@ -50,12 +51,17 @@ CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
+SNMP_CONFIG_PATH.32 = /usr/bin/net-snmp-config
+SNMP_CONFIG_PATH.64 = /usr/bin/$(MACH64)/net-snmp-config
+
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--disable-locking
 CONFIGURE_OPTIONS +=	--enable-pthread
 CONFIGURE_OPTIONS +=	--with-gphoto2
 CONFIGURE_OPTIONS +=	--with-usb
 CONFIGURE_OPTIONS +=	--without-api-spec
+
+CONFIGURE_ENV += SNMP_CONFIG_PATH="$(SNMP_CONFIG_PATH.$(BITS))"
 
 COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
 
