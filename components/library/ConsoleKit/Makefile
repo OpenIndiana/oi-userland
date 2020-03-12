@@ -61,8 +61,7 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
 # Build dependencies
-REQUIRED_PACKAGES+= x11/header/xproto
-REQUIRED_PACKAGES+= x11/header/kbproto
+REQUIRED_PACKAGES+= x11/header/x11-protocols
 REQUIRED_PACKAGES+= x11/library/libpthread-stubs
 
 # Auto-generated dependencies
