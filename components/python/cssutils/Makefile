@@ -26,13 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cssutils
-COMPONENT_VERSION=	1.0.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.0.2
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/cssutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:d8a18b2848ea1011750231f1dd64fe9053dbec1be0b37563c582561e7a529063
+    sha256:a2fcf06467553038e98fea9cfe36af2bf14063eb147a70958cfcaa8f5786acaf
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/cssutils
 
@@ -42,13 +41,19 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_TEST_DIR= $(COMPONENT_SRC)
-COMPONENT_TEST_ARGS= ./setup.py test
+# Files for Python 3 are generated using 2to3, so Python 3 tests can't be run
+# out of the box.
+# Tests can sporadically pass or fail.
+
+TEST_NO_ARCH=$(BUILD_DIR)/$(MACH)-2.7/.tested
 
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
 COMPONENT_POST_INSTALL_ACTION += \
 	$(FIND) $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) -name *.py \
 		-exec $(GSED) -i -e 's|env python|python$(PYTHON_VERSION)|' "{}" \; ;
+
+COMPONENT_TEST_DIR= $(COMPONENT_SRC)
+COMPONENT_TEST_ARGS= ./setup.py test
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
