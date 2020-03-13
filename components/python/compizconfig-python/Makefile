@@ -41,6 +41,8 @@ BUILD_64 = $(VARIANTS_64:%=%/$(MACH64)/.built)
 
 INSTALL_64 = $(VARIANTS_64:%=%/$(MACH64)/.installed)
 
+TEST_64 = $(NO_TESTS)
+
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: BITS=64
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
