@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cryptography
 COMPONENT_VERSION=	2.6.1
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -44,26 +45,17 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-build:		$(BUILD_32_and_64)
+# 64-bit python loads *.so modules from 64-bit subdir,
+# but during tests libraries are installed to non-confirming path
+COMPONENT_PREP_ACTION += (cd $(SOURCE_DIR)/src/cryptography/hazmat/bindings &&  $(LN) -sf . 64)
 
-install:	$(INSTALL_32_and_64)
-
-#
-# The test suite requires several PyPI packages not in our distribution.
-# Install them for all Pythons in $(PYTHON_VERSION) like this (replace
-# Makefile variables, where appropriate; X and Y stand for Python minor
-# and, respectively, major version):
-#
-#   pipX.Y install --user cryptography-vectors==$(COMPONENT_VERSION) iso8601 pretend pytest hypothesis pyasn1-modules
-#
-# Results for Python 2.7.16, 3.4.9, and 3.5.6 for 32-bit and 64-bit:
-#
-#   96920 passed, 10057 skipped
-#
-COMPONENT_TEST_ENV +=   PYTHONPATH=$$HOME/.local/lib/python$(PYTHON_VERSION)/site-packages
 COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
 COMPONENT_TEST_CMD=	$(PYTHON) setup.py test
 COMPONENT_TEST_ARGS=
+
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
