@@ -1,0 +1,89 @@
+Some tests were broken by changes in OpenSSL behavior
+
+From: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Date: Tue, 24 Sep 2019 11:18:27 +0200
+Subject: [PATCH] tests: Skip test_load_ecdsa_no_named_curve
+
+The test_load_ecdsa_no_named_curve breaks with OpenSSL 1.1.1d which is
+due to to commit 9a43a733801bd ("[ec] Match built-in curves on
+EC_GROUP_new_from_ecparameters").
+
+Upstream is aware of the issue and it is tracked at
+	https://github.com/pyca/cryptography/issues/4998
+
+Signed-off-by: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+---
+ tests/x509/test_x509.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tests/x509/test_x509.py b/tests/x509/test_x509.py
+index 07a6019bd1394..c553636f27efe 100644
+--- a/tests/x509/test_x509.py
++++ b/tests/x509/test_x509.py
+@@ -4122,6 +4122,7 @@ ParsedCertificate = collections.namedtuple(
+             ec.ECDSA(cert.signature_hash_algorithm)
+         )
+ 
++    @pytest.mark.skip(reason="Breaks with openssl 1.1.1d, https://github.com/pyca/cryptography/issues/4998")
+     def test_load_ecdsa_no_named_curve(self, backend):
+         _skip_curve_unsupported(backend, ec.SECP256R1())
+         cert = _load_cert(
+
+From: Paul Kehrer <paul.l.kehrer@gmail.com>
+Date: Wed, 11 Sep 2019 12:12:30 +0800
+Subject: [PATCH] update our test to be more robust wrt some changes from
+ upstream (#4993)
+
+---
+ tests/hazmat/primitives/test_dh.py | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/tests/hazmat/primitives/test_dh.py b/tests/hazmat/primitives/test_dh.py
+index c667cd16e1..43f2ce5c03 100644
+--- a/tests/hazmat/primitives/test_dh.py
++++ b/tests/hazmat/primitives/test_dh.py
+@@ -157,8 +157,15 @@ def test_unsupported_generator_generate_dh(self, backend):
+             dh.generate_parameters(7, 512, backend)
+ 
+     def test_dh_parameters_supported(self, backend):
+-        assert backend.dh_parameters_supported(23, 5)
+-        assert not backend.dh_parameters_supported(23, 18)
++        valid_p = int(
++            b"907c7211ae61aaaba1825ff53b6cb71ac6df9f1a424c033f4a0a41ac42fad3a9"
++            b"bcfc7f938a269710ed69e330523e4039029b7900977c740990d46efed79b9bbe"
++            b"73505ae878808944ce4d9c6c52daecc0a87dc889c53499be93db8551ee685f30"
++            b"349bf1b443d4ebaee0d5e8b441a40d4e8178f8f612f657a5eb91e0a8e"
++            b"107755f", 16
++        )
++        assert backend.dh_parameters_supported(valid_p, 5)
++        assert not backend.dh_parameters_supported(23, 22)
+ 
+     @pytest.mark.parametrize(
+         "vector",
+
+From 97af501780534065739a251dc6bafd74b6bf7f19 Mon Sep 17 00:00:00 2001
+From: Paul Kehrer <paul.l.kehrer@gmail.com>
+Date: Sat, 18 May 2019 09:04:37 -0400
+Subject: [PATCH] use a random key for these tests (#4887)
+
+Using an all 0 key causes failures in OpenSSL master (and Fedora has
+cherry-picked the commit that causes it). The change requires that the
+key/tweak for XTS mode not be the same value, so let's just use a random
+key.
+---
+ tests/hazmat/primitives/test_aes.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/hazmat/primitives/test_aes.py b/tests/hazmat/primitives/test_aes.py
+index f083f31978ee7..565cc11dd4df5 100644
+--- a/tests/hazmat/primitives/test_aes.py
++++ b/tests/hazmat/primitives/test_aes.py
+@@ -490,7 +490,7 @@ from ...utils import load_nist_vectors
+ def test_buffer_protocol_alternate_modes(mode, backend):
+     data = bytearray(b"sixteen_byte_msg")
+     cipher = base.Cipher(
+-        algorithms.AES(bytearray(b"\x00" * 32)), mode, backend
++        algorithms.AES(bytearray(os.urandom(32))), mode, backend
+     )
+     enc = cipher.encryptor()
+     ct = enc.update(data) + enc.finalize()
