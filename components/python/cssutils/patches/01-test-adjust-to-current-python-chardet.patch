@@ -1,0 +1,25 @@
+From: Martin Pitt <mpitt@debian.org>
+Date: Sat, 19 Jan 2019 09:28:10 +0000
+Subject: test: Adjust to current python-chardet
+
+https://github.com/chardet/chardet/commit/b38520b46785243 changed
+'windows-1252' to 'Windows-1252', adjust the expected test output.
+
+https://bitbucket.org/cthedot/cssutils/issues/77
+---
+ src/cssutils/tests/test_encutils/__init__.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/cssutils/tests/test_encutils/__init__.py b/src/cssutils/tests/test_encutils/__init__.py
+index 3dc754d..4d0d7c9 100644
+--- a/src/cssutils/tests/test_encutils/__init__.py
++++ b/src/cssutils/tests/test_encutils/__init__.py
+@@ -191,7 +191,7 @@ class AutoEncodingTestCase(unittest.TestCase):
+             import chardet
+             tests = [
+                 ('ascii', u'abc'.encode('ascii')),
+-                ('windows-1252', u'€'.encode('windows-1252')),
++                ('Windows-1252', u'€'.encode('windows-1252')),
+                 ('ascii', u'1'.encode('utf-8'))
+                 ]
+         except ImportError:
