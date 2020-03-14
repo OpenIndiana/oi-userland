@@ -18,25 +18,24 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2017, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2017-2020, Aurelien Larcher. All rights reserved.
 #
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libvisio
-COMPONENT_VERSION=      0.1.6
+COMPONENT_VERSION=      0.1.7
 COMPONENT_FMRI=         library/c++/libvisio
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libvisio
 COMPONENT_SUMMARY=      libvisio - library for reading Microsoft Visio documents
 COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:fe1002d3671d53c09bc65e47ec948ec7b67e6fb112ed1cd10966e211a8bb50f9
+COMPONENT_ARCHIVE_HASH= sha256:8faf8df870cb27b09a787a1959d6c646faa44d0d8ab151883df408b7166bea4c
 COMPONENT_ARCHIVE_URL=  http://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Fix threading detection issue with boost 1.64
 CXXFLAGS+= -std=c++11 -pthread
@@ -45,12 +44,6 @@ CONFIGURE_OPTIONS+=  --enable-shared
 CONFIGURE_OPTIONS+=  --disable-static
 
 unexport SHELLOPTS
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/c++/librevenge
