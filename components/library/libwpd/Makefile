@@ -18,12 +18,13 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2015-2020, Aurelien Larcher. All rights reserved.
 #
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwpd
-COMPONENT_VERSION=	0.10.2
+COMPONENT_VERSION=	0.10.3
 COMPONENT_FMRI=     	library/c++/libwpd
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwpd
@@ -31,23 +32,16 @@ COMPONENT_SUMMARY=      libwpd - library for reading Corel WordPerfect(tm) docum
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:323f68beaf4f35e5a4d7daffb4703d0566698280109210fa4eaa90dea27d6610
+  sha256:2465b0b662fdc5d4e3bebcdc9a79027713fb629ca2bff04a3c9251fdec42dd09
 COMPONENT_ARCHIVE_URL=	\
   http://sourceforge.net/projects/libwpd/files/libwpd/libwpd-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/c++/librevenge
