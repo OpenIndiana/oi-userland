@@ -1,80 +1,57 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2020 Alexander Pyhalov
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/library/python/python-imaging-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Python's own image processing library"
-set name=pkg.description \
-    value="The Python Imaging Library (PIL) adds image processing capabilities to your Python interpreter. This library provides extensive file format support, an efficient internal representation, and powerful image processing capabilities."
-set name=com.oracle.info.description value="the Python imaging library"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Python
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2008/102
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file build/$(MACH32)-$(PYVER)/scripts-$(PYVER)/pilconvert.py \
-    path=usr/bin/pilconvert-$(PYVER).py pkg.tmp.autopyc=false
-link path=usr/bin/pilconvert.py target=pilconvert-$(PYVER).py mediator=python \
-    mediator-version=$(PYVER)
-file build/$(MACH32)-$(PYVER)/scripts-$(PYVER)/pildriver.py \
-    path=usr/bin/pildriver-$(PYVER).py pkg.depend.bypass-generate=.* \
-    pkg.tmp.autopyc=false
-link path=usr/bin/pildriver.py target=pildriver-$(PYVER).py mediator=python \
-    mediator-version=$(PYVER)
-file build/$(MACH32)-$(PYVER)/scripts-$(PYVER)/pilfile.py \
-    path=usr/bin/pilfile-$(PYVER).py pkg.tmp.autopyc=false
-link path=usr/bin/pilfile.py target=pilfile-$(PYVER).py mediator=python \
-    mediator-version=$(PYVER)
-file build/$(MACH32)-$(PYVER)/scripts-$(PYVER)/pilfont.py \
-    path=usr/bin/pilfont-$(PYVER).py pkg.tmp.autopyc=false
-link path=usr/bin/pilfont.py target=pilfont-$(PYVER).py mediator=python \
-    mediator-version=$(PYVER)
-file build/$(MACH32)-$(PYVER)/scripts-$(PYVER)/pilprint.py \
-    path=usr/bin/pilprint-$(PYVER).py pkg.tmp.autopyc=false
-link path=usr/bin/pilprint.py target=pilprint-$(PYVER).py mediator=python \
-    mediator-version=$(PYVER)
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL.pth
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on the pillow package
+depend type=require \
+    fmri=library/python/pillow@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/64/_imaging.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/64/_imagingcms.so
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/64/_imagingft.so
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/64/_imagingmath.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/64/_imagingmorph.so
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/64/_imagingtk.so
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ArgImagePlugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/64/_webp.so
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/BdfFontFile.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/BlpImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/BmpImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/BufrStubImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ContainerIO.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/CurImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/DcxImagePlugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/DdsImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/EpsImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ExifTags.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/FitsStubImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/FliImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/FontFile.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/FpxImagePlugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/FtexImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/GbrImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/GdImageFile.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/GifImagePlugin.py
@@ -93,13 +70,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageDraw.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageDraw2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageEnhance.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageFile.py
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageFileIO.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageFilter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageFont.py
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageGL.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageGrab.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageMath.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageMode.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageMorph.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageOps.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImagePalette.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImagePath.py
@@ -112,13 +88,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageTransform.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImageWin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/ImtImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/IptcImagePlugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/Jpeg2KImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/JpegImagePlugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/JpegPresets.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/McIdasImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/MicImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/MpegImagePlugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/MpoImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/MspImagePlugin.py
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL/OleFileIO.py
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PIL-1.1.7-py$(PYVER).egg-info
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PSDraw.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PaletteFile.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PalmImagePlugin.py
@@ -126,10 +103,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PcdImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PcfFontFile.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PcxImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PdfImagePlugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PdfParser.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PixarImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PngImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PpmImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PsdImagePlugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/PyAccess.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/SgiImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/SpiderImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/SunImagePlugin.py
@@ -138,26 +117,27 @@ file path=usr/lib/python$(PYVER)/vendor-packages/PIL/TgaImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/TiffImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/TiffTags.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/WalImageFile.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/WebPImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/WmfImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/XVThumbImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/XbmImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/XpmImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/__main__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_binary.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imaging.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingcms.so
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingft.so
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingmath.so
-license imaging.license license="Historical Permission Notice and Disclaimer"
-
-# python-imaging was previously in the 'desktop' consolidation. This optional
-# dependency is here to facilitate the safe transfer of the package
-# to the 'userland' consolidation.
-# depend type=optional \
-#   fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.14.0
-
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
-
-# force a dependency on the python-imaging package
-depend type=require \
-    fmri=library/python/python-imaging@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingmorph.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingtk.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_tkinter_finder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_webp.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/features.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pillow-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/Pillow-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/Pillow-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/Pillow-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/Pillow-$(COMPONENT_VERSION)-py$(PYVER).egg-info/zip-safe
