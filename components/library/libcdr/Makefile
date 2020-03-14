@@ -20,36 +20,28 @@
 #
 # Copyright (c) 2016, Aurelien Larcher. All rights reserved.
 #
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=					libcdr
-COMPONENT_VERSION=			0.1.4
-COMPONENT_FMRI=     		library/c++/libcdr
+COMPONENT_NAME=		libcdr
+COMPONENT_VERSION=	0.1.6
+COMPONENT_FMRI=     	library/c++/libcdr
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libcdr
 COMPONENT_SUMMARY=      libcdr - library for reading CorelDRAW documents
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:e7a7e8b00a3df5798110024d7061fe9d1c3330277d2e4fa9213294f966a4a66d
+COMPONENT_ARCHIVE_HASH=	sha256:01cd00b04a030977e544433c2d127c997205332cd9b8e35ec0ee17110da7f861
 COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MPLv2
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
 # Fix threading detection issue introduced with boost 1.64
 CXXFLAGS+= -std=c++11 -pthread
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/cppunit
