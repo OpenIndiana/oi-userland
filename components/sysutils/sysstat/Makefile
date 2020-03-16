@@ -12,10 +12,13 @@
 #
 # Copyright 2016, Jim Klimov
 #
+BUILD_BITS=32_and_64
+BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sysstat
 COMPONENT_VERSION=	20151012
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=		diagnostic/sysstat
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SUMMARY=	sysstat - tool for quick overview of various Solaris stats
@@ -29,9 +32,8 @@ COMPONENT_LICENSE_FILE=	LICENSE
 # Note: the website says the project is under GPLv2, but sources provide a
 # copy of GPLv3 explicitly. Probably the page was not updated in this regard.
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # WARNING: non-autoconf "configure" script here
 COMPONENT_PRE_BUILD_ACTION = \
@@ -43,10 +45,6 @@ COMPONENT_PRE_BUILD_ACTION = \
 			-K "$(MACH$(BITS))" \
 			--prefix "$(PROTOUSRDIR)" \
 	)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
 
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += SUNWcs
