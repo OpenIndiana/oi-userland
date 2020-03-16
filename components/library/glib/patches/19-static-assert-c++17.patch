@@ -1,0 +1,16 @@
+https://www.illumos.org/issues/12388
+https://gitlab.gnome.org/GNOME/glib/issues/2067
+
+_Static_assert() is not defined in C++
+
+--- glib-2.62.4/glib/gmacros.h.1	2020-03-16 11:27:11.903181306 +0000
++++ glib-2.62.4/glib/gmacros.h	2020-03-16 11:29:14.475584269 +0000
+@@ -734,7 +734,7 @@
+ #ifndef __GI_SCANNER__ /* The static assert macro really confuses the introspection parser */
+ #define G_PASTE_ARGS(identifier1,identifier2) identifier1 ## identifier2
+ #define G_PASTE(identifier1,identifier2)      G_PASTE_ARGS (identifier1, identifier2)
+-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
++#if !defined(__cplusplus) && defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+ #define G_STATIC_ASSERT(expr) _Static_assert (expr, "Expression evaluates to false")
+ #elif (defined(__cplusplus) && __cplusplus >= 201103L) || \
+       (defined(__cplusplus) && defined (_MSC_VER) && (_MSC_VER >= 1600)) || \
