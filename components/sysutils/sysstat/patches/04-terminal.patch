@@ -1,0 +1,20 @@
+--- sysstat-20151012/terminal.c.orig	2020-03-16 20:36:42.072089573 +0000
++++ sysstat-20151012/terminal.c	2020-03-16 20:38:03.324002868 +0000
+@@ -29,7 +29,7 @@
+ extern int Fslines, Showzfs, Showdisks, CPULines, Shownets;
+ 
+ static void
+-exit_curses(void)
++atexit_curses(void)
+ {
+ 	curs_set(Oldcurs);
+ 	endwin();
+@@ -138,7 +138,7 @@
+ 	assert(osig != SIG_ERR);
+ 	osig = signal(SIGTERM,sighandler);
+ 	assert(osig != SIG_ERR);
+-	atexit(exit_curses);
++	atexit(atexit_curses);
+ 	return 1;
+ }
+ 
