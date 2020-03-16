@@ -12,31 +12,23 @@
 # Copyright 2017 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
-
+BUILD_BITS=32
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		netifaces
-COMPONENT_VERSION=	0.10.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.10.9
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/netifaces
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9656a169cb83da34d732b0eb72b39373d48774aee009a3d1272b7ea2ce109cde
+    sha256:2dee9ffdd16292878336a58d04a20f0ffe95555465fee7c9bd23b3490ef2abf3
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/n/netifaces/$(COMPONENT_ARCHIVE)
 
 PYTHON_VERSIONS=	2.7
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:           $(NO_TEST)
+TEST_TARGET=$(NO_TEST)
+include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
