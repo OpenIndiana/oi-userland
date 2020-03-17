@@ -20,13 +20,13 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= totem
 # Later versions require clutter-gtk-1.0
 COMPONENT_VERSION= 3.0.1
-COMPONENT_REVISION= 5
-COMPONENT_COMMIT= b582e767ffb92fe4e57861a5e29f472ad025936f
+COMPONENT_REVISION= 6
+COMPONENT_COMMIT= bfc537c4cdcd51e747611a37fc3583d26e4d634f
 COMPONENT_SUMMARY= Totem Multimedia Player
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_COMMIT)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:45d13f3ce77f6ce4fde66bfc9bb2dbade29f8e748e7d2b12aa10fca701c12ed4
+  sha256:e97fc66d925ff4bfcc6422486fc58c86fbdbccf2a56ec2e031e916104160a0fc
 COMPONENT_ARCHIVE_URL= \
   https://github.com/OpenIndiana/totem/archive/$(COMPONENT_COMMIT).tar.gz
 COMPONENT_PROJECT_URL = http://www.gnome.org
