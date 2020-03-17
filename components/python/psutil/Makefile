@@ -23,15 +23,16 @@
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
 #
-
+BUILD_BITS=32_and_64
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		psutil
-COMPONENT_VERSION=	5.6.2
+COMPONENT_VERSION=	5.6.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:828e1c3ca6756c54ac00f1427fdac8b12e21b8a068c3bb9b631a1734cada25ed
+	sha256:ffad8eb2ac614518bbe3c0b8eb9dffdb3a8d2e3a7d5da51c5b974fb723a5c5aa
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/psutil/
 COMPONENT_CLASSIFICATION= Development/Python
@@ -41,15 +42,10 @@ COMPONENT_LICENSE_FILE=	LICENSE
 
 PYTHON_VERSIONS=	2.7 3.4 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
+CFLAGS+= $(CPP_XPG6MODE)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
