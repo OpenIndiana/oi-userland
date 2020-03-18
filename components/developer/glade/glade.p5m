@@ -22,7 +22,16 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/glade
+depend type=require fmri=library/desktop/gtk3/gtk3-nocsd
+
+link path=usr/bin/glade target=../lib/csd/glade \
+    mediator=nocsd mediator-implementation=disable
+link path=usr/bin/glade target=gtk3-nocsd \
+    mediator=nocsd mediator-implementation=gtk3-nocsd \
+    pkg.linted.userland.action002.0=true
+file usr/bin/glade path=usr/lib/csd/glade mode=0555
+
+#file path=usr/bin/glade
 file path=usr/bin/glade-previewer
 file path=usr/include/libgladeui-2.0/gladeui/glade-adaptor-chooser.h
 file path=usr/include/libgladeui-2.0/gladeui/glade-app.h
