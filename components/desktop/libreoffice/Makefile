@@ -231,6 +231,7 @@ CONFIGURE_OPTIONS += --enable-gio
 CONFIGURE_OPTIONS += --with-lang=ALL
 CONFIGURE_OPTIONS += --disable-firebird-sdbc
 CONFIGURE_OPTIONS += --disable-postgresql-sdbc
+CONFIGURE_OPTIONS += --disable-pdfium
 CONFIGURE_OPTIONS += --with-java=no
 CONFIGURE_OPTIONS += --without-help
 CONFIGURE_OPTIONS += --without-fonts
@@ -241,6 +242,8 @@ CONFIGURE_OPTIONS += --with-tls="openssl"
 CONFIGURE_OPTIONS += --with-system-openldap
 CONFIGURE_OPTIONS += --enable-python=no
 CONFIGURE_OPTIONS += --disable-cve-tests
+
+COMPONENT_BUILD_ENV += GMAKE_OPTIONS='VERBOSE=1'
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/assembler/nasm
