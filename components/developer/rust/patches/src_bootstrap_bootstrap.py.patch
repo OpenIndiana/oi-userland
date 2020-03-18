@@ -1,11 +1,11 @@
---- src/bootstrap/bootstrap.py.orig	2018-09-12 00:35:35.157538788 +0000
-+++ src/bootstrap/bootstrap.py	2018-09-12 00:40:19.323471689 +0000
-@@ -606,7 +606,7 @@
+--- rustc-1.40.0-src/src/bootstrap/bootstrap.py.orig	2018-09-12 00:35:35.157538788 +0000
++++ rustc-1.40.0-src/src/bootstrap/bootstrap.py	2018-09-12 00:40:19.323471689 +0000
+@@ -618,7 +625,7 @@ class RustBuild(object):
          env["LIBRARY_PATH"] = os.path.join(self.bin_root(), "lib") + \
              (os.pathsep + env["LIBRARY_PATH"]) \
              if "LIBRARY_PATH" in env else ""
 -        env["RUSTFLAGS"] = "-Cdebuginfo=2 "
-+        env["RUSTFLAGS"] += " -Cdebuginfo=2 "
++        env["RUSTFLAGS"] = "-Copt-level=2 "
  
          build_section = "target.{}".format(self.build_triple())
          target_features = []

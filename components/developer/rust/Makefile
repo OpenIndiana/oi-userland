@@ -30,25 +30,25 @@ PREFERRED_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.32.0
+COMPONENT_VERSION=	1.40.0
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4c594c7712a0e7e8eae6526c464bf6ea1d82f77b4f61717c3fc28fb27ba2224a
+COMPONENT_ARCHIVE_HASH=	sha256:dd97005578defc10a482bff3e4e728350d2099c60ffcf1f5e189540c39a549ad
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT or Apache-2.0
 
-RUST_STAGE0_VER=        1.32.0
+RUST_STAGE0_VER=        1.40.0
 RUST_ARCH:=             x86_64-sun-solaris
 
 COMPONENT_NAME_1=	rust
 COMPONENT_VERSION_1=	$(RUST_STAGE0_VER)
 COMPONENT_SRC_1=	$(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)-$(RUST_ARCH)
 COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
-COMPONENT_ARCHIVE_HASH_1=	sha256:689586af4297df329884239f5e82b09ac3f8ac9f425ffcbfdb5382b1c7465496
+COMPONENT_ARCHIVE_HASH_1=	sha256:454b68717a2b30a00eaf96b09cc6a79457ee4b82a778d374b3203f28e9c00176
 COMPONENT_ARCHIVE_URL_1=	https://us-east.manta.joyent.com/pkgsrc/public/pkg-bootstraps/$(COMPONENT_ARCHIVE_1)
 
 SOURCE_DIR_1=		$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
@@ -58,9 +58,12 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+#omnios uses gcc 7.
+GCC_VERSION =  7
+
 PATH=$(GCC_BINDIR):$(PATH.gnu)
 
-PATCH_LEVEL=0
+PATCH_LEVEL=1
 
 # Need some help to pick the correct ar binary
 GNUAR=$(GNUBIN)/ar
@@ -73,12 +76,16 @@ CXXFLAGS +=	-D_POSIX_PTHREAD_SEMANTICS
 PKG_MACROS+= RUST_ARCH="$(RUST_ARCH)"
 
 COMPONENT_PREP_ACTION = \
-	$(GSED) -i -e 's/9c6af198a2f80da827054784faf70bc404673d9568fb45664b4f73c46245fdbd/c3851969a854d6ccaa8a94369f1288025149d1ebdc74b36f224423f35b18f7a7/' \
+	$(GSED) -i -e 's/1e732c2e3b4bd1561f11e0979bf9d20669a96eae7afe0deff9dfbb980ee47bf1/55abd8100db14a076dedbf84ce0f2db08158e1bd33ff1d4978bd3c4ad978f281/' \
+		$(SOURCE_DIR)/vendor/rand-0.6.1/.cargo-checksum.json; \
+	$(GSED) -i -e 's/8e5369ed1e86c5be92831d290b9eeb77c537a2de728950a5086e77438a4f0f3a/dac34dab563a2ca03c1d43f0224736f30662c3bbf0c2f1c44e220a7172345f4f/' \
 		$(SOURCE_DIR)/vendor/libc/.cargo-checksum.json; \
-	$(GSED) -i -e 's/cb94a0b54e47022b2e9b58b45e0196785c61d083760333276226da435cc040d9/bcb195562cf830c9e2078757e6d0976f86ede59816ff305e21a2764a4a4cf43e/' \
-		$(SOURCE_DIR)/vendor/rand/.cargo-checksum.json;
+	$(GSED) -i -e 's/59763fc255248b54fba5d0761d61093a73d51fa4cb400b0df1b5f339b9c2f48a/ba66d192421fd536ceddb50616c4c4aea06f4e39450eb0bc2bbbaed0b1e684c1/' \
+		$(SOURCE_DIR)/vendor/backtrace-sys/.cargo-checksum.json; \
+	$(GSED) -i -e 's/51a9ca7a4576822dc4fa01b31bc4bbed21817777abb304f605ef5951f68c3ed2/807c3aa4b5a62a70ba790df151e9ecf19f4bb562f2858575d690908751262db3/' \
+		$(SOURCE_DIR)/vendor/lzma-sys/.cargo-checksum.json;
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = (rmdir $(@D); cp -a $(SOURCE_DIR) $(@D))
 
 # Rust expects the library path to be /usr/lib and is broken otherwise 
 RUSTC_LIBDIR= $(USRLIBDIR)
@@ -112,11 +119,13 @@ CONFIGURE_OPTIONS += --enable-rpath
 CONFIGURE_OPTIONS += --disable-codegen-tests
 CONFIGURE_OPTIONS += --disable-dist-src
 CONFIGURE_OPTIONS += --disable-llvm-static-stdcpp
-CONFIGURE_OPTIONS += --disable-ninja
+CONFIGURE_OPTIONS += --enable-ninja
 CONFIGURE_OPTIONS += --enable-vendor
 CONFIGURE_OPTIONS += --disable-docs
 CONFIGURE_OPTIONS += --release-channel=stable
 CONFIGURE_OPTIONS += --python=$(PYTHON)
+CONFIGURE_OPTIONS += --enable-llvm-link-shared
+CONFIGURE_OPTIONS += --llvm-root=/usr/clang/9.0
 
 # Cleanup standard environment!
 COMPONENT_BUILD_ENV =
@@ -148,7 +157,7 @@ COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
 COMPONENT_PRE_INSTALL_ACTION = mkdir -p $(PROTO_DIR)
 
 RUSTC_BIN_POST = cargo
-RUSTC_BIN_POST+= clippy-driver
+#RUSTC_BIN_POST+= clippy-driver
 RUSTC_BIN_POST+= rls
 RUSTC_BIN_POST+= rustc
 RUSTC_BIN_POST+= rustdoc
@@ -174,7 +183,7 @@ COMPONENT_POST_INSTALL_ACTION= \
     do \
       /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$$ORIGIN:$$ORIGIN/../../$(MACH64)"' $$file ; \
       /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$$ORIGIN:$$ORIGIN/../../$(MACH64)"' $$file ; \
-    done; )
+    done; cp $(@D)/build/x86_64-sun-solaris/stage2/lib/rustlib/x86_64-sun-solaris/lib/librustc_driver-*.so $(PROTODIR)/usr/lib/rustlib/x86_64-sun-solaris/lib/ )
 
 build:		$(BUILD_64)
 
@@ -184,6 +193,8 @@ install:	$(INSTALL_64)
 REQUIRED_PACKAGES += utility/bash-completion
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += developer/gcc-7
+REQUIRED_PACKAGES += developer/clang-90
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/http-parser
 # Auto-generated dependencies

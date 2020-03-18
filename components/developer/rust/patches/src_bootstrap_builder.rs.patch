@@ -1,0 +1,19 @@
+--- rustc-1.40.0-src/src/bootstrap/builder.rs.~1~	2020-01-31 21:34:25.887052554 +0000
++++ rustc-1.40.0-src/src/bootstrap/builder.rs	2020-01-31 21:37:09.700151078 +0000
+@@ -466,7 +466,6 @@
+                 install::Clippy,
+                 install::Miri,
+                 install::Analysis,
+-                install::Src,
+                 install::Rustc
+             ),
+         }
+@@ -994,7 +993,7 @@
+                       !target.contains("wasm32") &&
+                       !target.contains("emscripten") &&
+                       !target.contains("fuchsia") {
+-                Some("-Wl,-rpath,$ORIGIN/../lib")
++                Some("-Wl,-rpath,/usr/clang/9.0/lib")
+             } else {
+                 None
+             };

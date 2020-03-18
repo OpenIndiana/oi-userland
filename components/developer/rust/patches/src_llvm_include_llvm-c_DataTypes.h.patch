@@ -1,0 +1,35 @@
+$NetBSD: patch-src_llvm_include_llvm-c_DataTypes.h,v 1.1 2018/09/14 10:04:43 jperkin Exp $
+
+Don't implement sys/regset.h workaround, fix source instead.
+
+diff -wpruN '--exclude=*.orig' a~/src/llvm-project/llvm/include/llvm-c/DataTypes.h a/src/llvm-project/llvm/include/llvm-c/DataTypes.h
+--- rustc-1.40.0-src/src/llvm-project/llvm/include/llvm-c/DataTypes.h	1970-01-01 00:00:00
++++ rustc-1.40.0-src/src/llvm-project/llvm/include/llvm-c/DataTypes.h	1970-01-01 00:00:00
+@@ -87,4 +87,27 @@ typedef signed int ssize_t;
+ #define HUGE_VALF (float)HUGE_VAL
+ #endif
+ 
++#if defined(__sun)
++#include <sys/regset.h>
++#undef CS
++#undef DS
++#undef ES
++#undef FS
++#undef GS
++#undef SS
++#undef EAX
++#undef ECX
++#undef EDX
++#undef EBX
++#undef ESP
++#undef EBP
++#undef ESI
++#undef EDI
++#undef EIP
++#undef UESP
++#undef EFL
++#undef ERR
++#undef TRAPNO
++#endif
++
+ #endif /* LLVM_C_DATATYPES_H */
