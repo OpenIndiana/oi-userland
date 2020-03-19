@@ -85,7 +85,7 @@ COMPONENT_PREP_ACTION = \
 	$(GSED) -i -e 's/51a9ca7a4576822dc4fa01b31bc4bbed21817777abb304f605ef5951f68c3ed2/807c3aa4b5a62a70ba790df151e9ecf19f4bb562f2858575d690908751262db3/' \
 		$(SOURCE_DIR)/vendor/lzma-sys/.cargo-checksum.json;
 
-COMPONENT_PRE_CONFIGURE_ACTION = (rmdir $(@D); cp -a $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D))
 
 # Rust expects the library path to be /usr/lib and is broken otherwise 
 RUSTC_LIBDIR= $(USRLIBDIR)
