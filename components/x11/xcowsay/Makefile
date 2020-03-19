@@ -12,10 +12,12 @@
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xcowsay
 COMPONENT_VERSION=	1.4
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://www.doof.me.uk/xcowsay/
 COMPONENT_FMRI=		desktop/xcowsay
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -24,20 +26,12 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:c7e261ba0262c3821c106ccb6d6f984e3c2da999ad10151364e55d1c699f8e51
 COMPONENT_ARCHIVE_URL=	http://www.nickg.me.uk/files/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	xcowsay - displays a cute cow and message
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -vfi )
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
