@@ -13,35 +13,20 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xmag
 COMPONENT_VERSION=        1.0.6
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           x11/xmag
-COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  xmag - screen magnification utility
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:87a2bc23b251e2d8f8370d3283a4d6c8dac98a30cb5749a04336cdb55c14e161
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/xmag-1.0.6.tar.bz2
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xmag.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
