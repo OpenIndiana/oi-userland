@@ -20,10 +20,12 @@
 #
 # Copyright (c) 2012, Bayard G. Bell. All rights reserved.
 #
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xclip
 COMPONENT_VERSION=	0.13
+COMPONENT_REVISION=     1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://github.com/astrand/xclip
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -32,19 +34,12 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL= \
   https://github.com/astrand/xclip/archive/$(COMPONENT_VERSION).tar.gz
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D); autoreconf -f -i)
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
