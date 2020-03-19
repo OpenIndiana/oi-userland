@@ -13,30 +13,28 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+BUILD_BITS=64
+BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           accessx
-COMPONENT_VERSION=        7.5
-COMPONENT_FMRI=           x11/keyboard/accessx
+COMPONENT_NAME=     accessx
+COMPONENT_VERSION=  7.5
+COMPONENT_REVISION= 1
+COMPONENT_FMRI=     x11/keyboard/accessx
 COMPONENT_CLASSIFICATION= Applications/Universal Access
 COMPONENT_SUMMARY=  accessx - accessibility feature configuration utility
 COMPONENT_SRC=      src
-COMPONENT_PROJECT_URL = https://hg.java.net/hg/solaris-x11~x-s12-clone
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+COMPONENT_PROJECT_URL= https://hg.java.net/hg/solaris-x11~x-s12-clone
+COMPONENT_LICENSE=  MIT License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/bin
+PATH=$(USRBINDIR)
 
 COMPONENT_COMMON_ENV= CC=$(CC)
 COMPONENT_COMMON_ENV+= CFLAGS="$(CFLAGS)"
 COMPONENT_COMMON_ENV+= LDFLAGS="$(LDFLAGS)"
-
-ACCESSX_BINDIR.32 =	$(BINDIR)
-ACCESSX_BINDIR.64 =	$(BINDIR)/$(MACH64)
 
 COMPONENT_BUILD_ENV+= $(COMPONENT_COMMON_ENV)
 COMPONENT_BUILD_ENV+= PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
@@ -44,15 +42,10 @@ COMPONENT_BUILD_ARGS= VPATH=$(SOURCE_DIR) -f $(SOURCE_DIR)/Makefile
 COMPONENT_INSTALL_ENV+= INSTALL=$(INSTALL)
 COMPONENT_INSTALL_ENV+= DESTDIR=$(PROTO_DIR)
 COMPONENT_INSTALL_ENV+= PREFIX=$(USRDIR)
-COMPONENT_INSTALL_ENV+= bindir=$(ACCESSX_BINDIR.$(BITS))
+COMPONENT_INSTALL_ENV+= bindir=$(BINDIR)
 COMPONENT_INSTALL_ENV+= mandir=$(USRSHAREMANDIR)
 
-build: $(BUILD_32) $(BUILD_64)
-
-install: $(INSTALL_32) $(INSTALL_64)
-
-test: $(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/motif
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
