@@ -1,0 +1,35 @@
+reported upstream as
+https://unicode-org.atlassian.net/projects/ICU/issues/ICU-20241
+diff --git icu/source/test/intltest/numbertest.h.orig icu/source/test/intltest/numbertest.h
+--- icu/source/test/intltest/numbertest.h.orig
++++ icu/source/test/intltest/numbertest.h
+@@ -83,7 +83,7 @@ class NumberFormatterApiTest : public In
+     CurrencyUnit GBP;
+     CurrencyUnit CZK;
+     CurrencyUnit CAD;
+-    CurrencyUnit ESP;
++    CurrencyUnit __ESP;
+     CurrencyUnit PTE;
+ 
+     MeasureUnit METER;
+diff --git icu/source/test/intltest/numbertest_api.cpp.orig icu/source/test/intltest/numbertest_api.cpp
+--- icu/source/test/intltest/numbertest_api.cpp.orig
++++ icu/source/test/intltest/numbertest_api.cpp
+@@ -29,7 +29,7 @@ NumberFormatterApiTest::NumberFormatterA
+           GBP(u"GBP", status),
+           CZK(u"CZK", status),
+           CAD(u"CAD", status),
+-          ESP(u"ESP", status),
++          __ESP(u"ESP", status),
+           PTE(u"PTE", status),
+           FRENCH_SYMBOLS(Locale::getFrench(), status),
+           SWISS_SYMBOLS(Locale("de-CH"), status),
+@@ -721,7 +721,7 @@ void NumberFormatterApiTest::unitCurrenc
+     assertFormatSingle(
+             u"Currency-dependent format (Test)",
+             u"currency/ESP unit-width-short",
+-            NumberFormatter::with().unit(ESP).unitWidth(UNUM_UNIT_WIDTH_SHORT),
++            NumberFormatter::with().unit(__ESP).unitWidth(UNUM_UNIT_WIDTH_SHORT),
+             Locale("ca"),
+             444444.55,
+             u"₧ 444.445");
