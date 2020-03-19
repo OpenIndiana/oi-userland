@@ -11,6 +11,7 @@
 
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2020 Till Wegmüller
 #
 
 set name=pkg.fmri value=pkg:/library/icu@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,62 +24,54 @@ set name=pkg.description value="ICU is a set of C and C++ libraries that provide
 
 license icu.license license="X License"
 
+# Force dependency to ensure consistency across updates
+depend fmri=pkg:/developer/icu type=require
+
+link path=usr/lib/libicudata.so target=libicudata.so.$(COMPONENT_VERSION)
+file path=usr/lib/libicudata.so.$(COMPONENT_VERSION)
+link path=usr/lib/libicudata.so.66 target=libicudata.so.$(COMPONENT_VERSION)
+link path=usr/lib/libicui18n.so target=libicui18n.so.$(COMPONENT_VERSION)
+file path=usr/lib/libicui18n.so.$(COMPONENT_VERSION)
+link path=usr/lib/libicui18n.so.66 target=libicui18n.so.$(COMPONENT_VERSION)
+link path=usr/lib/libicuio.so target=libicuio.so.$(COMPONENT_VERSION)
+file path=usr/lib/libicuio.so.$(COMPONENT_VERSION)
+link path=usr/lib/libicuio.so.66 target=libicuio.so.$(COMPONENT_VERSION)
+link path=usr/lib/libicutest.so target=libicutest.so.$(COMPONENT_VERSION)
+file path=usr/lib/libicutest.so.$(COMPONENT_VERSION)
+link path=usr/lib/libicutest.so.66 target=libicutest.so.$(COMPONENT_VERSION)
+link path=usr/lib/libicutu.so target=libicutu.so.$(COMPONENT_VERSION)
+file path=usr/lib/libicutu.so.$(COMPONENT_VERSION)
+link path=usr/lib/libicutu.so.66 target=libicutu.so.$(COMPONENT_VERSION)
+link path=usr/lib/libicuuc.so target=libicuuc.so.$(COMPONENT_VERSION)
+file path=usr/lib/libicuuc.so.$(COMPONENT_VERSION)
+link path=usr/lib/libicuuc.so.66 target=libicuuc.so.$(COMPONENT_VERSION)
+
 link path=usr/lib/$(MACH64)/libicudata.so \
     target=libicudata.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/libicudata.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicudata.so.55 \
+link path=usr/lib/$(MACH64)/libicudata.so.66 \
     target=libicudata.so.$(COMPONENT_VERSION)
 link path=usr/lib/$(MACH64)/libicui18n.so \
     target=libicui18n.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/libicui18n.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicui18n.so.55 \
+link path=usr/lib/$(MACH64)/libicui18n.so.66 \
     target=libicui18n.so.$(COMPONENT_VERSION)
 link path=usr/lib/$(MACH64)/libicuio.so target=libicuio.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/libicuio.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicuio.so.55 \
+link path=usr/lib/$(MACH64)/libicuio.so.66 \
     target=libicuio.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicule.so target=libicule.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libicule.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicule.so.55 \
-    target=libicule.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libiculx.so target=libiculx.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libiculx.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libiculx.so.55 \
-    target=libiculx.so.$(COMPONENT_VERSION)
 link path=usr/lib/$(MACH64)/libicutest.so \
     target=libicutest.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/libicutest.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicutest.so.55 \
+link path=usr/lib/$(MACH64)/libicutest.so.66 \
     target=libicutest.so.$(COMPONENT_VERSION)
 link path=usr/lib/$(MACH64)/libicutu.so target=libicutu.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/libicutu.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicutu.so.55 \
+link path=usr/lib/$(MACH64)/libicutu.so.66 \
     target=libicutu.so.$(COMPONENT_VERSION)
 link path=usr/lib/$(MACH64)/libicuuc.so target=libicuuc.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/libicuuc.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicuuc.so.55 \
+link path=usr/lib/$(MACH64)/libicuuc.so.66 \
     target=libicuuc.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicudata.so target=libicudata.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicudata.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicudata.so.55 target=libicudata.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicui18n.so target=libicui18n.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicui18n.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicui18n.so.55 target=libicui18n.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicuio.so target=libicuio.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicuio.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicuio.so.55 target=libicuio.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicule.so target=libicule.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicule.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicule.so.55 target=libicule.so.$(COMPONENT_VERSION)
-link path=usr/lib/libiculx.so target=libiculx.so.$(COMPONENT_VERSION)
-file path=usr/lib/libiculx.so.$(COMPONENT_VERSION)
-link path=usr/lib/libiculx.so.55 target=libiculx.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicutest.so target=libicutest.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicutest.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicutest.so.55 target=libicutest.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicutu.so target=libicutu.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicutu.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicutu.so.55 target=libicutu.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicuuc.so target=libicuuc.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicuuc.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicuuc.so.55 target=libicuuc.so.$(COMPONENT_VERSION)
+
+
