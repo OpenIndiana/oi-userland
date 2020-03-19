@@ -183,7 +183,8 @@ COMPONENT_POST_INSTALL_ACTION= \
     do \
       /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$$ORIGIN:$$ORIGIN/../../$(MACH64)"' $$file ; \
       /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$$ORIGIN:$$ORIGIN/../../$(MACH64)"' $$file ; \
-    done; cp $(@D)/build/x86_64-sun-solaris/stage2/lib/rustlib/x86_64-sun-solaris/lib/librustc_driver-*.so $(PROTODIR)/usr/lib/rustlib/x86_64-sun-solaris/lib/ )
+    done; \
+    cp $(@D)/build/x86_64-sun-solaris/stage2/lib/rustlib/x86_64-sun-solaris/lib/librustc_driver-*.so $(PROTODIR)/usr/lib/rustlib/x86_64-sun-solaris/lib/ )
 
 build:		$(BUILD_64)
 
