@@ -14,10 +14,12 @@
 # Copyright 2016 Aurelien Larcher
 #
 
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xrestop
 COMPONENT_VERSION=        0.4
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           x11/xrestop
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  the xrestop X-Resource top utility
@@ -29,11 +31,9 @@ COMPONENT_ARCHIVE_URL= \
   http://downloads.yoctoproject.org/releases/xrestop/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xrestop.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
 
@@ -44,14 +44,6 @@ COMPONENT_PREP_ACTION = \
                  aclocal -I m4 &&\
                  automake -c -f -a &&\
                  autoconf )
-
-
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
