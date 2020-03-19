@@ -10,38 +10,34 @@
 #
 
 #
-# Copyright 2015 Ken Mays
+# Copyright 2017 Aurelien Larcher
 #
 
 X11_CATEGORY=DRIVER
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME= xf86-video-openchrome
-COMPONENT_VERSION= 0.6.0
-COMPONENT_REVISION= 3
-COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-openchrome
-COMPONENT_SUMMARY= xf86-video-openchrome - OpenChrome driver for the Xorg X server
+COMPONENT_NAME= xf86-video-vboxvideo
+COMPONENT_VERSION= 1.0.0
+# Use version string from Xorg module
+IPS_COMPONENT_VERSION= 1.0.1
+COMPONENT_REVISION= 4
+COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-vboxvideo
+COMPONENT_SUMMARY= xf86-video-vboxvideo - VirtualBox UMS driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \
-  sha256:da2975c6379358de52c1257710c67eb59139a7f0a1cd28d00cc64cc3e1c02f75
+  sha256:7fb6a3bfbcbe95438617f55a2f7ace4c0edec8ea8b7007777f389438b40cbfa4
 
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS+= -std=gnu99
 
-# Instead of allowing the default MODTYPE_LD_SHARED_OPTIONS to link all
-# the libraries against the Xorg server binary, ldflags.patch adds
-# $(openchrome_drv_la_LDFLAGS_add) to the link of just openchrome_drv.so,
-# but not to the client side XvMC libs.
-openchrome_drv_la_LDFLAGS_add = \
-        -L$(X11_SERVERMODS_DIR) -R$(X11_SERVERMODS_DIR) \
-        -L$(X11_SERVERLIBS_DIR) -R$(X11_SERVERLIBS_DIR) \
-        -Wl,-M$(COMPONENT_DIR)/mapfile.externs \
-        -lfb -lint10 -lpciaccess -lpixman-1 -lvbe \
-        -lexa -lvgahw -lm -ldrm -lshadow
+LD_OPTIONS+= \
+	     -L$(X11_SERVERMODS_DIR) -R$(X11_SERVERMODS_DIR) \
+	     -L$(MESA_XSERVERMODS_EXTENSIONS_DIR) -R$(MESA_XSERVERMODS_EXTENSIONS_DIR) \
+	     -L$(X11_SERVERMODS_EXTENSIONS_DIR) -R$(X11_SERVERMODS_EXTENSIONS_DIR) \
+	     -L$(X11_SERVERLIBS_DIR) -R$(X11_SERVERLIBS_DIR)
 
-COMPONENT_BUILD_ENV += \
-        openchrome_drv_la_LDFLAGS_add='$(openchrome_drv_la_LDFLAGS_add)'
+CONFIGURE_OPTIONS+= --with-xorg-module-dir=$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/x11-protocols

@@ -79,7 +79,7 @@ endif
 # Set defaults for X11 drivers
 #
 ifeq ($(strip $(X11_CATEGORY)),DRIVER)
-BUILD_BITS = 32_and_64
+BUILD_BITS = 64
 PATH=$(PATH.gnu)
 ifneq (,$(findstring video,$(COMPONENT_NAME)))
 COMPONENT_CLASSIFICATION = Drivers/Display

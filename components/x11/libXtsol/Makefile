@@ -13,7 +13,10 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+COMPONENT_X11_DEFAULTS=no
+
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= libXtsol
 COMPONENT_SRC= srcs
@@ -28,10 +31,6 @@ COMPONENT_FMRI = x11/trusted/libxtsol
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-SERVERMOD_SUBDIR.64=/$(MACH64)
-SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))
-X11_SERVERMODS_DIR=/usr/lib/xorg/modules
-
 CPPFLAGS += -I/usr/include/xorg
 
 MACHDIR.64=/$(MACH64)
@@ -43,7 +42,7 @@ COMPONENT_COMMON_ENV += LDFLAGS="$(LDFLAGS)"
 
 COMPONENT_BUILD_ENV += $(COMPONENT_COMMON_ENV)
 COMPONENT_INSTALL_ENV += INSTALL=$(INSTALL)
-COMPONENT_INSTALL_ENV += libdir=/usr/lib$(MACHDIR.$(BITS))
+COMPONENT_INSTALL_ENV += libdir=$(USRLIBDIR.$(BITS))
 COMPONENT_INSTALL_ENV += PREFIX=/usr
 
 download:
