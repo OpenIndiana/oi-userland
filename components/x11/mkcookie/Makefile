@@ -13,10 +13,15 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS=64
+BUILD_STYLE=justmake
+COMPONENT_X11_DEFAULTS=no
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= mkcookie
 COMPONENT_VERSION= 0.5.11
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= utility used to generate fresh 'Magic Cookies'
 COMPONENT_SRC= src
 COMPONENT_PROJECT_URL = https://hg.java.net/hg/solaris-x11~x-s12-clone
@@ -25,10 +30,9 @@ COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-LDFLAGS += -L/usr/lib/xorg -R/usr/lib/xorg
+LDFLAGS += -L$(XORG_LIBDIR) -R$(XORG_LIBDIR)
 
 COMPONENT_COMMON_ENV = CC=$(CC)
 COMPONENT_COMMON_ENV += CFLAGS="$(CFLAGS)"
@@ -37,24 +41,6 @@ COMPONENT_COMMON_ENV += LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV += $(COMPONENT_COMMON_ENV)
 COMPONENT_INSTALL_ENV += INSTALL=$(INSTALL)
 COMPONENT_INSTALL_ENV += PREFIX=/usr
-
-download:
-
-$(SOURCE_DIR)/.prep:
-	$(TOUCH) $@
-
-clobber: clean
-
-clean::
-	$(RM) $(SOURCE_DIR)/.prep
-
-$(BUILD_32):	Makefile
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxau
