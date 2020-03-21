@@ -46,6 +46,7 @@ CONFIGURE_OPTIONS+=	--disable-static
 # Build dependencies
 REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 REQUIRED_PACKAGES += library/desktop/mate/mate-common
+REQUIRED_PACKAGES += desktop/mate/mate-settings-daemon
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/marco
