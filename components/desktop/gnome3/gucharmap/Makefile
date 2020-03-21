@@ -83,6 +83,7 @@ test:           $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/c++/harfbuzz
+REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 
