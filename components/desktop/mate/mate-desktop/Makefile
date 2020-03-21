@@ -56,6 +56,7 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # Build dependencies
+REQUIRED_PACKAGES += data/iso-codes
 REQUIRED_PACKAGES += library/desktop/mate/mate-common
 
 # Auto-generated dependencies
