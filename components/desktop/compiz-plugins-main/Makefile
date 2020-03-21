@@ -52,6 +52,7 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
 
 # Build dependencies
+REQUIRED_PACKAGES += desktop/compiz
 REQUIRED_PACKAGES += desktop/compiz/bcop
 
 # Auto-generated dependencies
