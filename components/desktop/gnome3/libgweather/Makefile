@@ -58,6 +58,7 @@ test: $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/vala
+REQUIRED_PACKAGES += developer/ui-designer/glade
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
