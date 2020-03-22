@@ -47,6 +47,9 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--with-getopt=/usr/gnu/bin/getopt
 
+# Build dependencies
+REQUIRED_PACKAGES += desktop/compiz
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/bash
