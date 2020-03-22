@@ -134,3 +134,4 @@ PACKAGE_NAMES += system/library/install
 
 # Build dependencies
 REQUIRED_PACKAGES += system/library/install/libinstzones
+REQUIRED_PACKAGES += system/library/storage/ima/header-ima
