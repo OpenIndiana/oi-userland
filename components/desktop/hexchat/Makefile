@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexchat
 COMPONENT_VERSION=	2.12.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://hexchat.github.io/
 COMPONENT_SUMMARY=	HexChat IRC client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,10 +35,7 @@ include $(WS_MAKE_RULES)/ips.mk
 PATH=$(PATH.gnu)
 
 # This is a workaround for hexchat-2.12.4 packaging bugs
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-					$(TOUCH) aclocal.m4 Makefile.in && \
-					$(RM) build-aux/ltmain.sh && \
-					$(LN) -s /usr/share/libtool/build-aux/ltmain.sh build-aux/ltmain.sh)
+COMPONENT_PREP_ACTION =        ( cd $(@D) && autoreconf -vif )
 
 CONFIGURE_ENV += OBJC=$(CC)
 CONFIGURE_ENV += PERL=$(PERL)
