@@ -2,45 +2,14 @@
 COMPONENTS+= util-macros
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
-COMPONENTS+= xproto
+COMPONENTS+= x11-protocols
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
 COMPONENTS+= lndir
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
 # proto 
-COMPONENTS+= xproto
-COMPONENTS+= bigreqsproto
-COMPONENTS+= compositeproto
-COMPONENTS+= damageproto
-COMPONENTS+= dmxproto
-COMPONENTS+= dri2proto
-COMPONENTS+= dri3proto
-COMPONENTS+= evieext # evieproto in X11 gate
-COMPONENTS+= fixesproto
-COMPONENTS+= fontsproto
-COMPONENTS+= fontcacheproto
-COMPONENTS+= glproto
-COMPONENTS+= inputproto
-COMPONENTS+= kbproto
-COMPONENTS+= presentproto
-COMPONENTS+= printproto
-COMPONENTS+= randrproto
-COMPONENTS+= recordproto
-COMPONENTS+= renderproto
-COMPONENTS+= resourceproto
-COMPONENTS+= scrnsaverproto
-COMPONENTS+= videoproto
-COMPONENTS+= xcmiscproto
-COMPONENTS+= xextproto
-COMPONENTS+= xf86bigfontproto
-COMPONENTS+= xf86dgaproto
-COMPONENTS+= xf86driproto
-COMPONENTS+= xf86miscproto
-COMPONENTS+= xf86vidmodeproto
-COMPONENTS+= xineramaproto
 COMPONENTS+= xcb-proto # xcbproto in X11 gate
-COMPONENTS+= xproxymanagementprotocol
 COMPONENTS+= sun-ext-protos
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 

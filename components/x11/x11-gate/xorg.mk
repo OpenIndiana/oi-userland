@@ -25,6 +25,7 @@ COMPONENTS+= xf86-video-openchrome
 COMPONENTS+= xf86-video-r128
 COMPONENTS+= xf86-video-savage
 COMPONENTS+= xf86-video-trident
+COMPONENTS+= xf86-video-vboxvideo
 COMPONENTS+= xf86-video-vesa
 COMPONENTS+= xf86-video-vmware
 COMPONENTS+= ../meta-packages/xorg-video
