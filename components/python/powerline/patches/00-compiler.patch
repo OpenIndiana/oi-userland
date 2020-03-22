@@ -1,0 +1,11 @@
+--- powerline-status-2.7/setup.py.orig	2020-03-22 14:38:32.572031126 +0000
++++ powerline-status-2.7/setup.py	2020-03-22 14:38:37.356688467 +0000
+@@ -28,7 +28,7 @@
+ 		raise NotImplementedError()
+ 	else:
+ 		from distutils.ccompiler import new_compiler
+-		compiler = new_compiler().compiler
++		compiler = [os.environ.get('CC')]
+ 		cflags = os.environ.get('CFLAGS', str('-O3'))
+ 		# A normal split would do a split on each space which might be incorrect. The
+ 		# shlex will not split if a space occurs in an arguments value.
