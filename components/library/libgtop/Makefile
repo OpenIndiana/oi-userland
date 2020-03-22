@@ -53,6 +53,9 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+# Build dependencies
+REQUIRED_PACKAGES += developer/build/automake-111
+
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxau
