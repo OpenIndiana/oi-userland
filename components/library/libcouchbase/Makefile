@@ -15,6 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libcouchbase
 COMPONENT_VERSION=	2.6.2
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://developer.couchbase.com/documentation/server/4.0/sdks/c-2.4/c-intro.html
 COMPONENT_SUMMARY=	An library implementing Couchbase protocol
 COMPONENT_FMRI=         library/libcouchbase
@@ -34,6 +35,7 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 CMAKE_OPTIONS+=	-DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS+=	-DLCB_NO_TESTS=1
+CMAKE_OPTIONS+=	-DLCB_BUILD_LIBUV=0
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -42,6 +44,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += library/libuv
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libev
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += library/security/openssl
