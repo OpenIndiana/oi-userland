@@ -77,15 +77,15 @@ diff -urN hexchat-2.12.0.orig/src/common/util.c hexchat-2.12.0/src/common/util.c
  	get_cpu_info (&mhz, &cpus);
  	if (mhz && with_cpu)
  	{
-diff -urN hexchat-2.12.0.orig/src/fe-gtk/Makefile.in hexchat-2.12.0/src/fe-gtk/Makefile.in
---- hexchat-2.12.0.orig/src/fe-gtk/Makefile.in	2016-03-12 09:05:22.000000000 +0100
-+++ hexchat-2.12.0/src/fe-gtk/Makefile.in	2016-04-10 15:50:09.384508708 +0200
-@@ -577,7 +577,7 @@
+--- hexchat-2.12.4/src/fe-gtk/Makefile.am.orig	2020-03-22 14:57:18.684986137 +0000
++++ hexchat-2.12.4/src/fe-gtk/Makefile.am	2020-03-22 15:00:14.283254444 +0000
+@@ -7,7 +7,8 @@
  
- hexchat$(EXEEXT): $(hexchat_OBJECTS) $(hexchat_DEPENDENCIES) $(EXTRA_hexchat_DEPENDENCIES) 
- 	@rm -f hexchat$(EXEEXT)
--	$(AM_V_OBJCLD)$(hexchat_LINK) $(hexchat_OBJECTS) $(hexchat_LDADD) $(LIBS)
-+	$(AM_V_OBJCLD)$(hexchat_LINK) $(hexchat_OBJECTS) $(hexchat_LDADD) $(LIBS) -lkstat
+ AM_CPPFLAGS = $(GUI_CFLAGS) -DLOCALEDIR=\"$(localedir)\"
  
- mostlyclean-compile:
- 	-rm -f *.$(OBJEXT)
+-hexchat_LDADD = $(top_builddir)/src/common/libhexchatcommon.a $(GUI_LIBS)
++LIBS+= -lssp -lssp_nonshared
++hexchat_LDADD = $(top_builddir)/src/common/libhexchatcommon.a $(GUI_LIBS) -lkstat
+ 
+ EXTRA_DIST = \
+ 	ascii.h banlist.h chanlist.h chanview.h chanview-tabs.c \
