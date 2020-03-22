@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		powerline-status
 COMPONENT_VERSION=	2.7
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=	'The ultimate statusline/prompt utility'
 COMPONENT_PROJECT_URL=	https://github.com/powerline/powerline/
 COMPONENT_FMRI=		python/powerline
