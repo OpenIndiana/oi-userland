@@ -48,6 +48,7 @@ COMPONENT_TEST_TRANSFORMS+= '-e "s/[0-9. ]*sec//g"'
 
 # Build dependencies
 REQUIRED_PACKAGES+= library/c++/mdds
+REQUIRED_PACKAGES+= library/c++/spdlog
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
