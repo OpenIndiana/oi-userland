@@ -1,0 +1,22 @@
+Our iov_base is caddr_t, not void*
+
+--- memcached-1.6.2/memcached.c.1	2020-03-26 08:28:03.981372958 +0000
++++ memcached-1.6.2/memcached.c	2020-03-26 08:28:53.780496301 +0000
+@@ -3808,7 +3808,7 @@
+         }
+ 
+         // fill the header so we can get the full data + crc back.
+-        io->io.iov[0].iov_base = new_it;
++        io->io.iov[0].iov_base = (void *)new_it;
+         io->io.iov[0].iov_len = ITEM_ntotal(new_it) - new_it->nbytes;
+         ciovcnt++;
+ 
+@@ -6771,7 +6771,7 @@
+     msg.msg_namelen = resp->request_addr_size;
+ 
+     // First IOV is the custom UDP header.
+-    iovs[0].iov_base = udp_hdr;
++    iovs[0].iov_base = (void *)udp_hdr;
+     iovs[0].iov_len = UDP_HEADER_SIZE;
+     build_udp_header(udp_hdr, resp);
+     iovused++;
