@@ -23,29 +23,19 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.5.14
+COMPONENT_VERSION=	1.6.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://memcached.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9c5bdf29a780fb6c6f7c9eaaeeda0583efdf663193758c3e316c969a510af2a9
+    sha256:06720118c40689be0b85249b3dcb23c6e6d5e3ce53893aca9faced264145168b
 COMPONENT_ARCHIVE_URL=	http://www.memcached.org/files/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	database/memcached
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-COMPONENT_PREP_ACTION = \
-    (cd $(@D) && \
-	$(TOUCH) README &&\
-	libtoolize --copy --force &&\
-	aclocal -I m4 &&\
-	automake -c -f -a &&\
-	autoconf )
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -59,6 +49,8 @@ CONFIGURE_OPTIONS.64 +=	--with-libevent=/usr/lib/${MACH64}
 CONFIGURE_OPTIONS +=	--enable-dtrace
 CONFIGURE_OPTIONS +=	--disable-docs
 CONFIGURE_OPTIONS +=	--disable-coverage
+# Exstore has too many failed tests. Disabling for now.
+CONFIGURE_OPTIONS +=	--disable-extstore
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 
 ASLR_MODE = $(ASLR_ENABLE)
@@ -72,13 +64,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^All tests/p" ' \
 	'-e "/^Result/p" '
 
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += SUNWcs
