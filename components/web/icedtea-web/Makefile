@@ -46,6 +46,9 @@ CONFIGURE_OPTIONS+=        --without-rhino
 CONFIGURE_OPTIONS+=        --disable-docs
 CONFIGURE_OPTIONS+=        --with-itw-libs=BUNDLED
 
+# Build dependencies
+REQUIRED_PACKAGES += developer/lang/rustc
+
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
