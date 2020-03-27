@@ -31,6 +31,7 @@ COMPONENT_FMRI=	web/browser/firefox/plugin/firefox-java
 COMPONENT_CLASSIFICATION=	Applications/Plug-ins and Run-times
 COMPONENT_LICENSE=	GPLv2
 
+TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
@@ -45,13 +46,12 @@ CONFIGURE_OPTIONS+=        --with-jdk-home=$(JAVA_HOME)
 CONFIGURE_OPTIONS+=        --without-rhino
 CONFIGURE_OPTIONS+=        --disable-docs
 CONFIGURE_OPTIONS+=        --with-itw-libs=BUNDLED
+CONFIGURE_OPTIONS+=        --disable-native-plugin
 
 # Build dependencies
+REQUIRED_PACKAGES += developer/java/openjdk8
 REQUIRED_PACKAGES += developer/lang/rustc
 
-REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
