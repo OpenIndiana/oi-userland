@@ -23,46 +23,32 @@
 # Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS = NO_ARCH
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-memcached
-COMPONENT_VERSION=	1.53
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.59
+COMPONENT_SUMMARY=	'A Python memcached client library'
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7ae92b948d9a53d8d522fed1551eeb191f25879e34d533a59e7736ffaf2a7c14
-COMPONENT_ARCHIVE_URL=	https://github.com/linsomniac/$(COMPONENT_NAME)/archive/release-$(COMPONENT_VERSION).tar.gz
+    sha256:a2e28637be13ee0bf1a8b6843e7490f9456fd3f2a4cb60471733c7b5d5557e4f
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/linsomniac/python-memcached
-COMPONENT_BUGDB=	python-mod/memcached
+COMPONENT_FMRI=		library/python/python-memcached
+OMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_LICENSE=	PSFv2
 
-TPNO=			17839
+PYTHON_VERSIONS=	2.7 3.5
 
-# Syntax errors: not Python 3 ready
-PYTHON_VERSIONS=	2.7
+TEST_TARGET = $(NO_TESTS)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-COMPONENT_POST_UNPACK_ACTION = \
-	$(MV) python-memcached-release-1.53 \
-	    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-
-COMPONENT_TEST_ARGS=	test
-COMPONENT_TEST_CMD=	$(MAKE)
-COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
-# "make test" expects GNU Make as make(1)
-COMPONENT_TEST_ENV=	PATH=/usr/gnu/bin:/usr/bin
-
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-# tests require local, online svc:/application/database/memcached:default
-test:		$(TEST_NO_ARCH)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/six-27
+REQUIRED_PACKAGES += library/python/six-35
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
