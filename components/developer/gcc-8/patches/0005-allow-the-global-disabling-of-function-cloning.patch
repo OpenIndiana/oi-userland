@@ -1,4 +1,4 @@
-From f48d88297eb75a81e1fb88dc51993b139fbec4f1 Mon Sep 17 00:00:00 2001
+From 8df047c4fa46c5c6c69609dfc1840c3ee74c9595 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Sun, 30 Sep 2012 16:44:14 -0400
 Subject: [PATCH 05/16] allow the global disabling of function cloning
@@ -34,7 +34,7 @@ index 7354fa14f4f..a54089ef522 100644
  Common Report Var(flag_combine_stack_adjustments) Optimization
  Looks for opportunities to reduce stack adjustments and stack references.
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index 1cee9bb94dc..8ea816bf244 100644
+index 3745f7871ec..362fb3b3b0a 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
 @@ -371,7 +371,7 @@ Objective-C and Objective-C++ Dialects}.
@@ -46,7 +46,7 @@ index 1cee9bb94dc..8ea816bf244 100644
  -fcompare-elim  -fcprop-registers  -fcrossjumping @gol
  -fcse-follow-jumps  -fcse-skip-blocks  -fcx-fortran-rules @gol
  -fcx-limited-range @gol
-@@ -8519,6 +8519,15 @@ and then tries to find ways to combine them.
+@@ -8517,6 +8517,15 @@ and then tries to find ways to combine them.
  
  Enabled by default at @option{-O1} and higher.
  
@@ -63,10 +63,10 @@ index 1cee9bb94dc..8ea816bf244 100644
  @opindex fipa-ra
  Use caller save registers for allocation if those registers are not used by
 diff --git a/gcc/tree-inline.c b/gcc/tree-inline.c
-index 324c1682921..c560e191c39 100644
+index ff9da78d65d..e2af33be410 100644
 --- a/gcc/tree-inline.c
 +++ b/gcc/tree-inline.c
-@@ -5715,7 +5715,8 @@ bool
+@@ -5833,7 +5833,8 @@ bool
  tree_versionable_function_p (tree fndecl)
  {
    return (!lookup_attribute ("noclone", DECL_ATTRIBUTES (fndecl))
@@ -77,5 +77,5 @@ index 324c1682921..c560e191c39 100644
  
  /* Delete all unreachable basic blocks and update callgraph.
 -- 
-2.20.1
+2.25.0
 
