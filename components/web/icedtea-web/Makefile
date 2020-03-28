@@ -13,44 +13,45 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	icedtea-web
-COMPONENT_VERSION= 	1.5.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION= 	1.8.3
 COMPONENT_SUMMARY= 	Java browser plugin and Web Start launcher
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
+COMPONENT_SRC_NAME= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		IcedTea-Web-$(COMPONENT_SRC_NAME)
+COMPONENT_ARCHIVE= 	$(COMPONENT_SRC_NAME).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-   sha256:9b4b4477711930cb1d40bde752b17492fe8462a9c0cbd89bfe2c361b64d466b9
+   sha256:41b6f09a7b44ad6b85d5086c289557f6f6340baa51be71bc4361aa26a844e7af
 COMPONENT_ARCHIVE_URL= \
-   http://icedtea.wildebeest.org/download/source/$(COMPONENT_ARCHIVE)
+   https://github.com/AdoptOpenJDK/IcedTea-Web/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://icedtea.classpath.org/wiki/Main_Page
 COMPONENT_FMRI=	web/browser/firefox/plugin/firefox-java
 COMPONENT_CLASSIFICATION=	Applications/Plug-ins and Run-times
 COMPONENT_LICENSE=	GPLv2
 
-#Use Java 7
-JAVA_HOME=$(JAVA7_HOME)
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+PATH=$(PATH.gnu)
+
+CXXFLAGS+=-I$(COMPONENT_DIR)/files
 
 COMPONENT_POST_UNPACK_ACTION += ($(GSED) -i -e 's/mozilla-plugin/firefox-plugin/' $(SOURCE_DIR)/acinclude.m4)
-COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -if)
+COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -if \
+			 && cp -f $(COMPONENT_DIR)/files/*.h $(SOURCE_DIR)/plugin/icedteanp/)
 
 CONFIGURE_OPTIONS+=        --with-jdk-home=$(JAVA_HOME)
-CONFIGURE_OPTIONS+=        --with-rhino=$(JAVA_HOME)/jre/lib/rhino.jar
+CONFIGURE_OPTIONS+=        --without-rhino
 CONFIGURE_OPTIONS+=        --disable-docs
+CONFIGURE_OPTIONS+=        --with-itw-libs=BUNDLED
+CONFIGURE_OPTIONS+=        --disable-native-plugin
 
-build: $(BUILD_32)
+# Build dependencies
+REQUIRED_PACKAGES += developer/java/openjdk8
+REQUIRED_PACKAGES += developer/lang/rustc
 
-install: $(INSTALL_32)
-
-REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
