@@ -19,6 +19,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		marco
 COMPONENT_MJR_VERSION=	1.22
 COMPONENT_MNR_VERSION=	1
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE Window Manager
@@ -52,6 +53,7 @@ CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --enable-maintainer-mode
+CONFIGURE_OPTIONS+= --enable-compositor
 CONFIGURE_OPTIONS+= --enable-xinerama
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
@@ -92,5 +94,6 @@ REQUIRED_PACKAGES += x11/library/libxdamage
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxpresent
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
