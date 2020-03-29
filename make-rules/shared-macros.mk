@@ -728,9 +728,6 @@ JAVA7_HOME =	/usr/jdk/instances/openjdk1.7.0
 JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
 JAVA_HOME = $(JAVA8_HOME)
 
-# Location of pod2man, etc
-PERL5BINDIR = 	/usr/perl5/bin
-
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
 PERL_VERSION =  5.22
@@ -743,6 +740,11 @@ PERL.5.24 =	/usr/perl5/5.24/bin/perl
 POD2MAN.5.22 =	/usr/perl5/5.22/bin/pod2man
 POD2MAN.5.24 =	/usr/perl5/5.24/bin/pod2man
 
+# Location of pod2man, etc
+PERL5BINDIR.5.22 =	/usr/perl5/5.22/bin
+PERL5BINDIR.5.24 =	/usr/perl5/5.24/bin
+
+PERL5BINDIR = 	$(PERL5BINDIR.$(PERL_VERSION))
 PERL =		$(PERL.$(PERL_VERSION))
 POD2MAN =	$(POD2MAN.$(PERL_VERSION))
 
