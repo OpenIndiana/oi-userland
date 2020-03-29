@@ -1,0 +1,11 @@
+--- samba-4.12.0/wscript	2020-01-31 11:25:37.000000000 +0000
++++ samba-4.12.0/wscript	2020-03-29 11:44:31.913740803 +0000
+@@ -321,7 +321,7 @@
+     # allows us to find problems on our development hosts faster.
+     # It also results in faster load time.
+ 
+-    conf.add_as_needed()
++    conf.env.asneeded_ldflags = conf.ADD_LDFLAGS('-Wl,--as-needed', testflags=True)
+ 
+     if not conf.CHECK_NEED_LC("-lc not needed"):
+         conf.ADD_LDFLAGS('-lc', testflags=False)
