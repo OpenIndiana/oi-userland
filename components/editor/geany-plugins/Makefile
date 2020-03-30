@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= geany-plugins
 COMPONENT_VERSION= 1.34
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/geany/plugins
 COMPONENT_SUMMARY= Plugins for Geany editor
@@ -64,24 +64,25 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
+# Build dependencies
 REQUIRED_PACKAGES += developer/vala
-REQUIRED_PACKAGES += editor/geany
 REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/python/pygobject
+REQUIRED_PACKAGES += library/python/pygtk2 
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += editor/geany
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtkspell
-REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/vte
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libgit2
 REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/python/pygobject
-REQUIRED_PACKAGES += library/python/pygtk2 
 REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/spell-checking/enchant
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
