@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		build-essential
 COMPONENT_VERSION=	1.0
-COMPONENT_REVISION=	20
+COMPONENT_REVISION=	21
 
 include ../../../make-rules/ips.mk
 
