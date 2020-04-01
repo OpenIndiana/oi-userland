@@ -1,0 +1,55 @@
+From 3ba0ca0e2a4c96b6d7dea8e6304af7d1251836d8 Mon Sep 17 00:00:00 2001
+From: Petr Sumbera <petr.sumbera@oracle.com>
+Date: Wed, 13 Nov 2019 18:05:21 +0000
+Subject: [PATCH 25/29] gccgo should use GNU ar
+
+Fix following error message:
+
+$ /usr/gcc/9/bin/go build main.go
+ar: bad option: -D
+usage:
+    ar -d [-SvV] archive [file...]
+    ar -m [-SvV] [-{a|b|i} posname] archive [file...]
+    ar -p [-sSvV] archive [file ...]
+    ar -q [-cSvV] archive [file...]
+    ar -r [-cSuvV] [-{a|b|i} posname] archive [file...]
+    ar -t [-sSvV] archive [file...]
+    ar -x [-CsSTvV] archive [file...]
+    ar [-sSvV] archive
+
+The error is harmless, no functionality issue, GCCGO runs Solaris "ar" which
+doesn't know -D option, after failure, GCCGO runs it again without -D.
+---
+ libgo/go/cmd/go/internal/work/gccgo.go              | 2 +-
+ libgo/go/go/internal/gccgoimporter/importer_test.go | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libgo/go/cmd/go/internal/work/gccgo.go b/libgo/go/cmd/go/internal/work/gccgo.go
+index a0eb2d3a860..1d0296931c8 100644
+--- a/libgo/go/cmd/go/internal/work/gccgo.go
++++ b/libgo/go/cmd/go/internal/work/gccgo.go
+@@ -46,7 +46,7 @@ func (gccgoToolchain) linker() string {
+ func (gccgoToolchain) ar() string {
+ 	ar := os.Getenv("AR")
+ 	if ar == "" {
+-		ar = "ar"
++		ar = "/usr/bin/gar"
+ 	}
+ 	return ar
+ }
+diff --git a/libgo/go/go/internal/gccgoimporter/importer_test.go b/libgo/go/go/internal/gccgoimporter/importer_test.go
+index eb070c137ff..079b7194b7a 100644
+--- a/libgo/go/go/internal/gccgoimporter/importer_test.go
++++ b/libgo/go/go/internal/gccgoimporter/importer_test.go
+@@ -187,7 +187,7 @@ func TestObjImporter(t *testing.T) {
+ 
+ 		runImporterTest(t, imp, initmap, &test)
+ 
+-		cmd = exec.Command("ar", "cr", afile, ofile)
++		cmd = exec.Command("/usr/bin/gar", "cr", afile, ofile)
+ 		out, err = cmd.CombinedOutput()
+ 		if err != nil {
+ 			t.Logf("%s", out)
+-- 
+2.25.0
+

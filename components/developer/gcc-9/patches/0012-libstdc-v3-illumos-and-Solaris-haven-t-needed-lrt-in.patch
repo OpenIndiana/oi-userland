@@ -1,0 +1,39 @@
+From 1afe91f2df2ce13ef4f1c9c5ec81b646be5a5f33 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Mon, 29 Oct 2018 18:21:34 +0000
+Subject: [PATCH 12/29] libstdc++v3: illumos and Solaris haven't needed -lrt in
+ a long time
+
+Originally from Andy Fiddaman <andy@omniosce.org>
+---
+ libstdc++-v3/acinclude.m4 | 1 -
+ libstdc++-v3/configure    | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/libstdc++-v3/acinclude.m4 b/libstdc++-v3/acinclude.m4
+index d22e30230b3..60727149770 100644
+--- a/libstdc++-v3/acinclude.m4
++++ b/libstdc++-v3/acinclude.m4
+@@ -1429,7 +1429,6 @@ AC_DEFUN([GLIBCXX_ENABLE_LIBSTDCXX_TIME], [
+         ac_has_nanosleep=yes
+         ;;
+       solaris*)
+-        GLIBCXX_LIBS="$GLIBCXX_LIBS -lrt"
+         ac_has_clock_monotonic=yes
+         ac_has_clock_realtime=yes
+         ac_has_nanosleep=yes
+diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
+index 1225edc596b..5e1ba86d456 100755
+--- a/libstdc++-v3/configure
++++ b/libstdc++-v3/configure
+@@ -21120,7 +21120,6 @@ fi
+         ac_has_nanosleep=yes
+         ;;
+       solaris*)
+-        GLIBCXX_LIBS="$GLIBCXX_LIBS -lrt"
+         ac_has_clock_monotonic=yes
+         ac_has_clock_realtime=yes
+         ac_has_nanosleep=yes
+-- 
+2.25.0
+
