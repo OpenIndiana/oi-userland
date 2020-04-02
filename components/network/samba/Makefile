@@ -126,7 +126,6 @@ CONFIGURE_OPTIONS.32 +=	--disable-python
 CONFIGURE_OPTIONS.32 +=	--without-ad-dc
 
 $(BUILD_32):	COMPONENT_BUILD_TARGETS= --targets=nss_winbind,pamwinbind 
-$(BUILD_32):	PYTHON_VERSION=3.4
 
 # do not do waf install for winbind only - override the recipe
 $(INSTALL_32): $(BUILD_32)
@@ -148,10 +147,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 		> $(PROTO_DIR)$(ETCDIR)/samba/smb.conf.default $(BUILD_DIR_64)/examples/smb.conf.default) 
 
 # Build dependencies
-# We need 32-bit python to build 32-bit libraries
-REQUIRED_PACKAGES += runtime/python-34
-
-# Other build dependencies
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += library/perl-5/parse-yapp-524
 
@@ -160,6 +155,7 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/ncurses
