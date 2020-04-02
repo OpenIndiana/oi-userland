@@ -1,6 +1,6 @@
-diff -Naur samba-4.10.0.old/buildtools/wafsamba/samba_conftests.py samba-4.10.0/buildtools/wafsamba/samba_conftests.py
---- samba-4.10.0.old/buildtools/wafsamba/samba_conftests.py	2019-03-19 20:23:41.107626056 +0000
-+++ samba-4.10.0/buildtools/wafsamba/samba_conftests.py	2019-03-19 20:36:21.140815955 +0000
+diff -Naur samba-4.12.0/buildtools/wafsamba/samba_conftests.py samba-4.12.0.orig/buildtools/wafsamba/samba_conftests.py
+--- samba-4.12.0/buildtools/wafsamba/samba_conftests.py	2020-01-31 11:25:36.000000000 +0000
++++ samba-4.12.0.orig/buildtools/wafsamba/samba_conftests.py	2020-03-27 07:53:16.105300051 +0000
 @@ -75,7 +75,7 @@
  def CHECK_ICONV(conf, define='HAVE_NATIVE_ICONV'):
      '''check if the iconv library is installed
@@ -18,10 +18,10 @@ diff -Naur samba-4.10.0.old/buildtools/wafsamba/samba_conftests.py samba-4.10.0/
                             headers=headers)
  
  def find_config_dir(conf):
-diff -Naur samba-4.10.0.old/lib/replace/wscript samba-4.10.0/lib/replace/wscript
---- samba-4.10.0.old/lib/replace/wscript	2019-03-19 20:23:43.274232348 +0000
-+++ samba-4.10.0/lib/replace/wscript	2019-03-19 20:33:31.794070578 +0000
-@@ -511,14 +511,11 @@
+diff -Naur samba-4.12.0/lib/replace/wscript samba-4.12.0.orig/lib/replace/wscript
+--- samba-4.12.0/lib/replace/wscript	2020-02-28 09:59:35.000000000 +0000
++++ samba-4.12.0.orig/lib/replace/wscript	2020-03-27 07:55:09.793146137 +0000
+@@ -566,14 +566,11 @@
          else:
              # Some hosts need lib iconv for linking with lib intl
              # So we try with flags just in case it helps.
@@ -37,40 +37,39 @@ diff -Naur samba-4.10.0.old/lib/replace/wscript samba-4.10.0/lib/replace/wscript
  
      # did we find both prototypes and a library to link against?
      # if not, unset the detected values (see Bug #9911)
-diff -Naur samba-4.10.0.old/lib/util/charset/wscript_build samba-4.10.0/lib/util/charset/wscript_build
---- samba-4.10.0.old/lib/util/charset/wscript_build	2019-03-19 20:23:43.186930275 +0000
-+++ samba-4.10.0/lib/util/charset/wscript_build	2019-03-19 20:39:21.968728846 +0000
+diff -Naur samba-4.12.0/lib/util/charset/wscript_build samba-4.12.0.orig/lib/util/charset/wscript_build
+--- samba-4.12.0/lib/util/charset/wscript_build	2020-01-31 11:25:36.000000000 +0000
++++ samba-4.12.0.orig/lib/util/charset/wscript_build	2020-03-27 07:56:09.926354467 +0000
 @@ -2,7 +2,7 @@
  
  bld.SAMBA_SUBSYSTEM('ICONV_WRAPPER',
                      source='iconv.c',
--                    public_deps='iconv replace talloc')
-+                    public_deps='replace talloc')
+-                    public_deps='iconv replace talloc ' +  bld.env['icu-libs'])
++                    public_deps='replace talloc ' +  bld.env['icu-libs'])
  
  bld.SAMBA_SUBSYSTEM('charset',
                      public_headers='charset.h',
-diff -Naur samba-4.10.0.old/lib/util/charset/wscript_configure samba-4.10.0/lib/util/charset/wscript_configure
---- samba-4.10.0.old/lib/util/charset/wscript_configure	2019-03-19 20:23:43.187108094 +0000
-+++ samba-4.10.0/lib/util/charset/wscript_configure	2019-03-19 20:37:50.727448337 +0000
-@@ -8,12 +8,10 @@
+diff -Naur samba-4.12.0/lib/util/charset/wscript_configure samba-4.12.0.orig/lib/util/charset/wscript_configure
+--- samba-4.12.0/lib/util/charset/wscript_configure	2020-01-31 11:25:36.000000000 +0000
++++ samba-4.12.0.orig/lib/util/charset/wscript_configure	2020-03-27 07:58:45.505719809 +0000
+@@ -8,12 +8,8 @@
  # managed to link when specifying -liconv a executable even if there is no
  # libiconv.so or libiconv.a
  
 -conf.CHECK_LIB(libs="iconv", shlib=True)
-+#conf.CHECK_LIB(libs="iconv", shlib=True)
- 
+-
  #HP-UX can use libiconv as an add-on package, which has #define iconv_open libiconv_open
 -if (conf.CHECK_FUNCS_IN('iconv_open', 'iconv', checklibc=False, headers='iconv.h') or
 -    conf.CHECK_FUNCS_IN('libiconv_open', 'iconv', checklibc=False, headers='iconv.h') or 
 -    conf.CHECK_FUNCS('iconv_open', headers='iconv.h')):
-+if conf.CHECK_FUNCS('iconv_open', headers='iconv.h'): 
++if  conf.CHECK_FUNCS('iconv_open', headers='iconv.h'):
      
      conf.DEFINE('HAVE_NATIVE_ICONV', 1)
  
-diff -Naur samba-4.10.0.old/source3/wscript samba-4.10.0/source3/wscript
---- samba-4.10.0.old/source3/wscript	2019-03-19 20:23:41.757818428 +0000
-+++ samba-4.10.0/source3/wscript	2019-03-19 20:34:44.407242838 +0000
-@@ -838,7 +838,7 @@
+diff -Naur samba-4.12.0/source3/wscript samba-4.12.0.orig/source3/wscript
+--- samba-4.12.0/source3/wscript	2020-02-28 09:59:35.000000000 +0000
++++ samba-4.12.0.orig/source3/wscript	2020-03-27 08:00:05.016565143 +0000
+@@ -877,7 +877,7 @@
  
      if Options.options.with_iconv:
          conf.env.with_iconv = True
@@ -79,11 +78,11 @@ diff -Naur samba-4.10.0.old/source3/wscript samba-4.10.0/source3/wscript
              conf.env.with_iconv = False
          if conf.env.with_iconv:
              conf.DEFINE('HAVE_ICONV', 1)
-diff -Naur samba-4.10.0.old/source4/torture/local/wscript_build samba-4.10.0/source4/torture/local/wscript_build
---- samba-4.10.0.old/source4/torture/local/wscript_build	2019-03-19 20:23:42.650129535 +0000
-+++ samba-4.10.0/source4/torture/local/wscript_build	2019-03-19 20:38:42.005360933 +0000
-@@ -29,7 +29,7 @@
- 	nss_tests.c
+diff -Naur samba-4.12.0/source4/torture/local/wscript_build samba-4.12.0.orig/source4/torture/local/wscript_build
+--- samba-4.12.0/source4/torture/local/wscript_build	2020-01-31 11:25:37.000000000 +0000
++++ samba-4.12.0.orig/source4/torture/local/wscript_build	2020-03-27 08:00:52.688184419 +0000
+@@ -30,7 +30,7 @@
+         mdspkt.c
  	fsrvp_state.c'''
  
 -TORTURE_LOCAL_DEPS = 'RPC_NDR_ECHO TDR LIBCLI_SMB MESSAGING iconv POPT_CREDENTIALS TORTURE_AUTH TORTURE_UTIL TORTURE_NDR TORTURE_LIBCRYPTO share torture_registry %s ldb samdb replace-test RPC_FSS_STATE util_str_escape' % provision

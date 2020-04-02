@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2018 <contributor>
+# Copyright 2020 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -34,6 +34,7 @@ file path=usr/include/samba/core/werror_gen.h
 file path=usr/include/samba/credentials.h
 file path=usr/include/samba/dcerpc.h
 file path=usr/include/samba/dcerpc_server.h
+file path=usr/include/samba/dcesrv_core.h
 file path=usr/include/samba/domain_credentials.h
 file path=usr/include/samba/gen_ndr/atsvc.h
 file path=usr/include/samba/gen_ndr/auth.h
@@ -114,6 +115,7 @@ file path=usr/lib/python3.5/vendor-packages/samba/samba/__init__.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/_glue.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/samba/_ldb.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/samba/auth.cpython-35m.so
+file path=usr/lib/python3.5/vendor-packages/samba/samba/auth_util.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/colour.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/common.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/compat.py
@@ -138,6 +140,7 @@ file path=usr/lib/python3.5/vendor-packages/samba/samba/dcerpc/initshutdown.cpyt
 file path=usr/lib/python3.5/vendor-packages/samba/samba/dcerpc/irpc.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/samba/dcerpc/krb5pac.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/samba/dcerpc/lsa.cpython-35m.so
+file path=usr/lib/python3.5/vendor-packages/samba/samba/dcerpc/mdssvc.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/samba/dcerpc/messaging.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/samba/dcerpc/mgmt.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/samba/dcerpc/misc.cpython-35m.so
@@ -247,6 +250,7 @@ file path=usr/lib/python3.5/vendor-packages/samba/samba/registry.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/samba/remove_dc.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/samba3/__init__.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/samba3/libsmb_samba_internal.cpython-35m.so
+file path=usr/lib/python3.5/vendor-packages/samba/samba/samba3/mdscli.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/samba/samba3/param.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/samba/samba3/passdb.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/samba/samba3/smbd.cpython-35m.so
@@ -276,6 +280,7 @@ file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/blackbox/__init__.
 file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/blackbox/bug13653.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/blackbox/check_output.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/blackbox/downgradedatabase.py
+file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/blackbox/mdfind.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/blackbox/ndrdump.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/blackbox/netads_json.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/blackbox/samba_dnsupdate.py
@@ -293,6 +298,7 @@ file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/dcerpc/array.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/dcerpc/bare.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/dcerpc/dnsserver.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/dcerpc/integer.py
+file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/dcerpc/mdssvc.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/dcerpc/misc.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/dcerpc/raw_protocol.py
 file path=usr/lib/python3.5/vendor-packages/samba/samba/tests/dcerpc/raw_testcase.py
@@ -441,7 +447,6 @@ file path=usr/lib/python3.5/vendor-packages/samba/samba/xattr_tdb.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/talloc.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/tdb.cpython-35m.so
 file path=usr/lib/python3.5/vendor-packages/samba/tevent.py
-file path=usr/lib/samba/$(MACH64)/auth/script.so
 file path=usr/lib/samba/$(MACH64)/bind9/dlz_bind9.so
 file path=usr/lib/samba/$(MACH64)/bind9/dlz_bind9_10.so
 file path=usr/lib/samba/$(MACH64)/bind9/dlz_bind9_11.so
@@ -478,7 +483,6 @@ file path=usr/lib/samba/$(MACH64)/ldb/lazy_commit.so
 file path=usr/lib/samba/$(MACH64)/ldb/ldb.so
 file path=usr/lib/samba/$(MACH64)/ldb/ldbsamba_extensions.so
 file path=usr/lib/samba/$(MACH64)/ldb/linked_attributes.so
-file path=usr/lib/samba/$(MACH64)/ldb/local_password.so
 file path=usr/lib/samba/$(MACH64)/ldb/mdb.so
 file path=usr/lib/samba/$(MACH64)/ldb/new_partition.so
 file path=usr/lib/samba/$(MACH64)/ldb/objectclass.so
@@ -505,8 +509,6 @@ file path=usr/lib/samba/$(MACH64)/ldb/schema_load.so
 file path=usr/lib/samba/$(MACH64)/ldb/secrets_tdb_sync.so
 file path=usr/lib/samba/$(MACH64)/ldb/server_sort.so
 file path=usr/lib/samba/$(MACH64)/ldb/show_deleted.so
-file path=usr/lib/samba/$(MACH64)/ldb/simple_dn.so
-file path=usr/lib/samba/$(MACH64)/ldb/simple_ldap_map.so
 file path=usr/lib/samba/$(MACH64)/ldb/skel.so
 file path=usr/lib/samba/$(MACH64)/ldb/subtree_delete.so
 file path=usr/lib/samba/$(MACH64)/ldb/subtree_rename.so
@@ -526,6 +528,11 @@ link path=usr/lib/samba/$(MACH64)/libdcerpc-samr.so \
 link path=usr/lib/samba/$(MACH64)/libdcerpc-samr.so.0 \
     target=libdcerpc-samr.so.0.0.1
 file path=usr/lib/samba/$(MACH64)/libdcerpc-samr.so.0.0.1
+link path=usr/lib/samba/$(MACH64)/libdcerpc-server-core.so \
+    target=libdcerpc-server-core.so.0.0.1
+link path=usr/lib/samba/$(MACH64)/libdcerpc-server-core.so.0 \
+    target=libdcerpc-server-core.so.0.0.1
+file path=usr/lib/samba/$(MACH64)/libdcerpc-server-core.so.0.0.1
 link path=usr/lib/samba/$(MACH64)/libdcerpc-server.so \
     target=libdcerpc-server.so.0.0.1
 link path=usr/lib/samba/$(MACH64)/libdcerpc-server.so.0 \
@@ -547,9 +554,9 @@ link path=usr/lib/samba/$(MACH64)/libndr-standard.so \
 link path=usr/lib/samba/$(MACH64)/libndr-standard.so.0 \
     target=libndr-standard.so.0.0.1
 file path=usr/lib/samba/$(MACH64)/libndr-standard.so.0.0.1
-link path=usr/lib/samba/$(MACH64)/libndr.so target=libndr.so.0.2.0
-link path=usr/lib/samba/$(MACH64)/libndr.so.0 target=libndr.so.0.2.0
-file path=usr/lib/samba/$(MACH64)/libndr.so.0.2.0
+link path=usr/lib/samba/$(MACH64)/libndr.so target=libndr.so.1.0.0
+link path=usr/lib/samba/$(MACH64)/libndr.so.1 target=libndr.so.1.0.0
+file path=usr/lib/samba/$(MACH64)/libndr.so.1.0.0
 link path=usr/lib/samba/$(MACH64)/libnetapi.so target=libnetapi.so.0
 file path=usr/lib/samba/$(MACH64)/libnetapi.so.0
 link path=usr/lib/samba/$(MACH64)/libsamba-credentials.so \
@@ -581,9 +588,9 @@ file path=usr/lib/samba/$(MACH64)/libsamba-util.so.0.0.1
 link path=usr/lib/samba/$(MACH64)/libsamdb.so target=libsamdb.so.0.0.1
 link path=usr/lib/samba/$(MACH64)/libsamdb.so.0 target=libsamdb.so.0.0.1
 file path=usr/lib/samba/$(MACH64)/libsamdb.so.0.0.1
-link path=usr/lib/samba/$(MACH64)/libsmbclient.so target=libsmbclient.so.0.5.0
-link path=usr/lib/samba/$(MACH64)/libsmbclient.so.0 target=libsmbclient.so.0.5.0
-file path=usr/lib/samba/$(MACH64)/libsmbclient.so.0.5.0
+link path=usr/lib/samba/$(MACH64)/libsmbclient.so target=libsmbclient.so.0.6.0
+link path=usr/lib/samba/$(MACH64)/libsmbclient.so.0 target=libsmbclient.so.0.6.0
+file path=usr/lib/samba/$(MACH64)/libsmbclient.so.0.6.0
 link path=usr/lib/samba/$(MACH64)/libsmbconf.so target=libsmbconf.so.0
 file path=usr/lib/samba/$(MACH64)/libsmbconf.so.0
 link path=usr/lib/samba/$(MACH64)/libsmbldap.so target=libsmbldap.so.2
@@ -650,7 +657,6 @@ file path=usr/lib/samba/$(MACH64)/vfs/fruit.so
 file path=usr/lib/samba/$(MACH64)/vfs/full_audit.so
 file path=usr/lib/samba/$(MACH64)/vfs/linux_xfs_sgid.so
 file path=usr/lib/samba/$(MACH64)/vfs/media_harmony.so
-file path=usr/lib/samba/$(MACH64)/vfs/netatalk.so
 file path=usr/lib/samba/$(MACH64)/vfs/offline.so
 file path=usr/lib/samba/$(MACH64)/vfs/posix_eadb.so
 file path=usr/lib/samba/$(MACH64)/vfs/prealloc.so
@@ -683,6 +689,7 @@ file path=usr/lib/samba/bin/$(MACH64)/ldbrename
 file path=usr/lib/samba/bin/$(MACH64)/ldbsearch
 file path=usr/lib/samba/bin/$(MACH64)/locktest
 file path=usr/lib/samba/bin/$(MACH64)/masktest
+file path=usr/lib/samba/bin/$(MACH64)/mdfind
 file path=usr/lib/samba/bin/$(MACH64)/mvxattr
 file path=usr/lib/samba/bin/$(MACH64)/ndrdump
 file path=usr/lib/samba/bin/$(MACH64)/net
@@ -801,8 +808,8 @@ file path=usr/lib/samba/private/$(MACH64)/libldb-key-value-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/libldb-mdb-int-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/libldb-tdb-err-map-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/libldb-tdb-int-samba4.so
-link path=usr/lib/samba/private/$(MACH64)/libldb.so.2 target=libldb.so.2.0.8
-file path=usr/lib/samba/private/$(MACH64)/libldb.so.2.0.8
+link path=usr/lib/samba/private/$(MACH64)/libldb.so.2 target=libldb.so.2.1.1
+file path=usr/lib/samba/private/$(MACH64)/libldb.so.2.1.1
 file path=usr/lib/samba/private/$(MACH64)/libldbsamba-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/liblibcli-lsa3-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/liblibcli-netlogon3-samba4.so
@@ -826,11 +833,11 @@ file path=usr/lib/samba/private/$(MACH64)/libprinter-driver-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/libprinting-migrate-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/libprocess-model-samba4.so
 link path=usr/lib/samba/private/$(MACH64)/libpyldb-util.cpython-35m.so.2 \
-    target=libpyldb-util.cpython-35m.so.2.0.8
-file path=usr/lib/samba/private/$(MACH64)/libpyldb-util.cpython-35m.so.2.0.8
+    target=libpyldb-util.cpython-35m.so.2.1.1
+file path=usr/lib/samba/private/$(MACH64)/libpyldb-util.cpython-35m.so.2.1.1
 link path=usr/lib/samba/private/$(MACH64)/libpytalloc-util.cpython-35m.so.2 \
-    target=libpytalloc-util.cpython-35m.so.2.2.0
-file path=usr/lib/samba/private/$(MACH64)/libpytalloc-util.cpython-35m.so.2.2.0
+    target=libpytalloc-util.cpython-35m.so.2.3.1
+file path=usr/lib/samba/private/$(MACH64)/libpytalloc-util.cpython-35m.so.2.3.1
 file path=usr/lib/samba/private/$(MACH64)/libregistry-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/libreplace-samba4.so
 link path=usr/lib/samba/private/$(MACH64)/libroken-samba4.so.19 \
@@ -860,16 +867,17 @@ file path=usr/lib/samba/private/$(MACH64)/libsmbldaphelper-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/libsmbpasswdparser-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/libsocket-blocking-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/libsys-rw-samba4.so
+file path=usr/lib/samba/private/$(MACH64)/libtalloc-report-printf-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/libtalloc-report-samba4.so
 link path=usr/lib/samba/private/$(MACH64)/libtalloc.so.2 \
-    target=libtalloc.so.2.2.0
-file path=usr/lib/samba/private/$(MACH64)/libtalloc.so.2.2.0
+    target=libtalloc.so.2.3.1
+file path=usr/lib/samba/private/$(MACH64)/libtalloc.so.2.3.1
 file path=usr/lib/samba/private/$(MACH64)/libtdb-wrap-samba4.so
-link path=usr/lib/samba/private/$(MACH64)/libtdb.so.1 target=libtdb.so.1.4.2
-file path=usr/lib/samba/private/$(MACH64)/libtdb.so.1.4.2
+link path=usr/lib/samba/private/$(MACH64)/libtdb.so.1 target=libtdb.so.1.4.3
+file path=usr/lib/samba/private/$(MACH64)/libtdb.so.1.4.3
 link path=usr/lib/samba/private/$(MACH64)/libtevent.so.0 \
-    target=libtevent.so.0.10.0
-file path=usr/lib/samba/private/$(MACH64)/libtevent.so.0.10.0
+    target=libtevent.so.0.10.2
+file path=usr/lib/samba/private/$(MACH64)/libtevent.so.0.10.2
 file path=usr/lib/samba/private/$(MACH64)/libtime-basic-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/libtorture-samba4.so
 file path=usr/lib/samba/private/$(MACH64)/libtrusts-util-samba4.so
@@ -882,7 +890,6 @@ link path=usr/lib/samba/private/$(MACH64)/libwind-samba4.so.0 \
     target=libwind-samba4.so.0.0.0
 file path=usr/lib/samba/private/$(MACH64)/libwind-samba4.so.0.0.0
 file path=usr/lib/samba/private/$(MACH64)/libxattr-tdb-samba4.so
-file path=usr/lib/samba/private/$(MACH64)/libz-samba4.so
 file path=usr/lib/samba/private/libgenrand-samba4.so
 file path=usr/lib/samba/private/libiov-buf-samba4.so
 file path=usr/lib/samba/private/libreplace-samba4.so
@@ -938,17 +945,11 @@ file path=usr/lib/samba/setup/display-specifiers/DisplaySpecifiers-Win2k8.txt
 file path=usr/lib/samba/setup/display-specifiers/DisplaySpecifiers-Win2k8R2.txt
 file path=usr/lib/samba/setup/dns_update_list
 file path=usr/lib/samba/setup/extended-rights.ldif
-file path=usr/lib/samba/setup/fedora-ds-init.ldif
-file path=usr/lib/samba/setup/fedorads-dna.ldif
 file path=usr/lib/samba/setup/fedorads-index.ldif
 file path=usr/lib/samba/setup/fedorads-linked-attributes.ldif
 file path=usr/lib/samba/setup/fedorads-pam.ldif
-file path=usr/lib/samba/setup/fedorads-partitions.ldif
-file path=usr/lib/samba/setup/fedorads-refint-add.ldif
-file path=usr/lib/samba/setup/fedorads-refint-delete.ldif
 file path=usr/lib/samba/setup/fedorads-samba.ldif
 file path=usr/lib/samba/setup/fedorads-sasl.ldif
-file path=usr/lib/samba/setup/fedorads.inf
 file path=usr/lib/samba/setup/idmap_init.ldif
 file path=usr/lib/samba/setup/krb5.conf
 file path=usr/lib/samba/setup/memberof.conf
@@ -1010,7 +1011,6 @@ file path=usr/lib/samba/setup/secrets_init.ldif
 file path=usr/lib/samba/setup/secrets_sasl_ldap.ldif
 file path=usr/lib/samba/setup/secrets_simple_ldap.ldif
 file path=usr/lib/samba/setup/share.ldif
-file path=usr/lib/samba/setup/slapd.conf
 file path=usr/lib/samba/setup/spn_update_list
 file path=usr/lib/samba/setup/ypServ30.ldif
 file path=usr/share/man/man1/dbwrap_tool.1
@@ -1025,6 +1025,7 @@ file path=usr/share/man/man1/ldbsearch.1
 file path=usr/share/man/man1/locktest.1
 file path=usr/share/man/man1/log2pcap.1
 file path=usr/share/man/man1/masktest.1
+file path=usr/share/man/man1/mdfind.1
 file path=usr/share/man/man1/mvxattr.1
 file path=usr/share/man/man1/ndrdump.1
 file path=usr/share/man/man1/nmblookup.1
@@ -1107,7 +1108,6 @@ file path=usr/share/man/man8/vfs_fruit.8
 file path=usr/share/man/man8/vfs_full_audit.8
 file path=usr/share/man/man8/vfs_linux_xfs_sgid.8
 file path=usr/share/man/man8/vfs_media_harmony.8
-file path=usr/share/man/man8/vfs_netatalk.8
 file path=usr/share/man/man8/vfs_offline.8
 file path=usr/share/man/man8/vfs_prealloc.8
 file path=usr/share/man/man8/vfs_preopen.8
