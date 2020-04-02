@@ -58,12 +58,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-#omnios uses gcc 7.
-GCC_VERSION =  7
-
 PATH=$(GCC_BINDIR):$(PATH.gnu)
-
-PATCH_LEVEL=1
 
 # Need some help to pick the correct ar binary
 GNUAR=$(GNUBIN)/ar
@@ -194,7 +189,6 @@ install:	$(INSTALL_64)
 REQUIRED_PACKAGES += utility/bash-completion
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += developer/gcc-7
 REQUIRED_PACKAGES += developer/clang-90
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/http-parser
