@@ -319,8 +319,6 @@ FAIL: encoding-escapes.test: display output errors: tekniko
 FAIL: encoding-escapes.test: display output escapes: ultima
 FAIL: encoding-escapes.test: display output escapes: Rashomon
 FAIL: encoding-escapes.test: display output escapes: fake escape
-UNRESOLVED: encoding-escapes.test: input escapes: ?ltima
-UNRESOLVED: encoding-escapes.test: input escapes: ???
 Running encoding-iso88591.test
 Running encoding-iso88597.test
 FAIL: encoding-iso88597.test: characters: display A acute
@@ -346,47 +344,32 @@ UNRESOLVED: guardians.test: g2-garbage saved
 Running hash.test
 Running hooks.test
 Running i18n.test
-UNRESOLVED: i18n.test: text collation (French): string-locale<?
-UNRESOLVED: i18n.test: text collation (French): char-locale<?
-UNRESOLVED: i18n.test: text collation (French): string-locale-ci=?
-UNRESOLVED: i18n.test: text collation (French): string-locale-ci=? (2 args, wide strings)
-UNRESOLVED: i18n.test: text collation (French): string-locale-ci=? (3 args, wide strings)
-UNRESOLVED: i18n.test: text collation (French): string-locale-ci<>?
-UNRESOLVED: i18n.test: text collation (French): string-locale-ci<>? (wide strings)
-UNRESOLVED: i18n.test: text collation (French): string-locale-ci<>? (wide and narrow strings)
-UNRESOLVED: i18n.test: text collation (French): char-locale-ci<>?
-UNRESOLVED: i18n.test: text collation (French): char-locale-ci<>? (wide)
-UNRESOLVED: i18n.test: text collation (German): string-locale-ci=?
 UNRESOLVED: i18n.test: text collation (Greek): string-locale-ci=?
 UNRESOLVED: i18n.test: text collation (Czech): string-locale<? for 'ch'
 UNRESOLVED: i18n.test: character mapping: char-locale-upcase Turkish
 UNRESOLVED: i18n.test: character mapping: char-locale-downcase Turkish
-UNRESOLVED: i18n.test: string mapping: string-locale-upcase German
 UNRESOLVED: i18n.test: string mapping: string-locale-upcase Greek
 UNRESOLVED: i18n.test: string mapping: string-locale-upcase Greek (two sigmas)
 UNRESOLVED: i18n.test: string mapping: string-locale-downcase Greek
 UNRESOLVED: i18n.test: string mapping: string-locale-downcase Greek (two sigmas)
 UNRESOLVED: i18n.test: string mapping: string-locale-upcase Turkish
 UNRESOLVED: i18n.test: string mapping: string-locale-downcase Turkish
-UNRESOLVED: i18n.test: number parsing: locale-string->inexact (French)
-UNRESOLVED: i18n.test: nl-langinfo et al.: locale-day (French)
-UNRESOLVED: i18n.test: nl-langinfo et al.: locale-day (French, using `%global-locale')
-UNRESOLVED: i18n.test: nl-langinfo et al.: default locale
+FAIL: i18n.test: nl-langinfo et al.: default locale
 UNRESOLVED: i18n.test: nl-langinfo et al.: locale-am-string (greek)
 UNRESOLVED: i18n.test: nl-langinfo et al.: locale-pm-string (Greek)
 UNRESOLVED: i18n.test: nl-langinfo et al.: locale-digit-grouping (French)
 UNRESOLVED: i18n.test: nl-langinfo et al.: locale-monetary-grouping (French)
-UNRESOLVED: i18n.test: number->locale-string: French: integer
-UNRESOLVED: i18n.test: number->locale-string: French: negative integer
-UNRESOLVED: i18n.test: number->locale-string: French: fraction
-UNRESOLVED: i18n.test: number->locale-string: French: fraction, 1 digit
+FAIL: i18n.test: number->locale-string: French: integer
+FAIL: i18n.test: number->locale-string: French: negative integer
+FAIL: i18n.test: number->locale-string: French: fraction
+FAIL: i18n.test: number->locale-string: French: fraction, 1 digit
 UNRESOLVED: i18n.test: format ~h: French: 12345.678
 UNRESOLVED: i18n.test: format ~h: English: 12345.678
-UNRESOLVED: i18n.test: monetary-amount->locale-string: French: integer
-UNRESOLVED: i18n.test: monetary-amount->locale-string: French: fraction
-UNRESOLVED: i18n.test: monetary-amount->locale-string: French: positive inexact zero
-UNRESOLVED: i18n.test: monetary-amount->locale-string: French: one cent
-UNRESOLVED: i18n.test: monetary-amount->locale-string: French: very little money
+FAIL: i18n.test: monetary-amount->locale-string: French: integer
+FAIL: i18n.test: monetary-amount->locale-string: French: fraction
+FAIL: i18n.test: monetary-amount->locale-string: French: positive inexact zero - arguments: (expected-value "0,00 +EUR" actual-value "+EUR 0.00")
+FAIL: i18n.test: monetary-amount->locale-string: French: one cent - arguments: (expected-value "0,01 EUR " actual-value " +0.01")
+FAIL: i18n.test: monetary-amount->locale-string: French: very little money - arguments: (expected-value "0,00 EUR " actual-value " +0.00")
 Running iconv.test
 ERROR: iconv.test: ascii string: to latin1 bytevector - arguments: ((misc-error "open_iconv_descriptors" "invalid or unknown character encoding ~s" (LATIN1) #f))
 ERROR: iconv.test: narrow non-ascii string: to latin1 bytevector - arguments: ((misc-error "open_iconv_descriptors" "invalid or unknown character encoding ~s" (LATIN1) #f))
@@ -465,10 +448,7 @@ Running reader.test
 FAIL: reader.test: read-options: r6rs-hex-escapes: display R6RS string escapes
 Running receive.test
 Running records.test
-UNRESOLVED: records.test: records: printer: f??
 Running regexp.test
-UNRESOLVED: regexp.test: nonascii locales: match structures refer to char offsets
-UNRESOLVED: regexp.test: nonascii locales: match structures refer to char offsets, non-ASCII pattern
 Running rnrs-libraries.test
 Running rtl-compilation.test
 Running rtl.test
@@ -539,18 +519,14 @@ Running syncase.test
 Running syntax.test
 Running texinfo.docbook.test
 Running texinfo.html.test
+Running texinfo.plain-text.test
 Running texinfo.serialize.test
 Running texinfo.string-utils.test
 Running texinfo.test
 Running threads.test
 Running time.test
 FAIL: time.test: strftime: strftime %Z doesn't return garbage - arguments: (expected-value "ZOW" actual-value "GMT")
-UNRESOLVED: time.test: strftime: strftime passes wide characters
 FAIL: time.test: strftime: C99 %z format: EST+5 - arguments: (expected-value "-0500" actual-value "+0000")
-UNRESOLVED: time.test: strftime: C99 %z format: strftime fr_FR.utf8
-UNRESOLVED: time.test: strftime: C99 %z format: strftime fr_FR.iso88591
-UNRESOLVED: time.test: strptime: GNU %s format: strftime fr_FR.utf8
-UNRESOLVED: time.test: strptime: GNU %s format: strftime fr_FR.iso88591
 FAIL: time.test: strptime: GNU %s format: gmtoff on EST+5
 Running tree-il.test
 UNRESOLVED: tree-il.test: warnings: unused-toplevel: used by macro
@@ -568,15 +544,14 @@ Running web-request.test
 Running web-response.test
 Running web-server.test
 Running web-uri.test
-UNRESOLVED: web-uri.test: build-uri: http://ill?gal.com
 UNRESOLVED: web-uri.test: string->uri: http://www.example.com (sv_SE)
 
 Totals for this test run:
-passes:                 42331
-failures:               19
+passes:                 42365
+failures:               29
 unexpected passes:      0
 expected failures:      10
-unresolved test cases:  66
+unresolved test cases:  30
 untested test cases:    1
 unsupported test cases: 1
 errors:                 26
@@ -584,7 +559,7 @@ errors:                 26
 warning: call to primitive-fork while multiple threads are running;
          further behavior unspecified.  See "Processes" in the
          manual, for more information.
-;;; warning: max diff 2.666666666666667 > (sqrt 4.333333333333333)
+;;; warning: max diff 4.0 > (sqrt 6.0)
 warning: call to primitive-fork while multiple threads are running;
          further behavior unspecified.  See "Processes" in the
          manual, for more information.
