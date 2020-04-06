@@ -25,11 +25,12 @@
 # Copyright 2019 Andreas Wacknitz
 #
 
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdb
 COMPONENT_VERSION=	7.10.1
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_SUMMARY=	GDB: The GNU Project Debugger
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,9 +42,7 @@ COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gdb/
 
 CONFIGURE_DEFAULT_DIRS=no
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
 
@@ -72,9 +71,9 @@ CONFIGURE_ENV += LDFLAGS="`echo $(LDFLAGS)`"
 
 CONFIGURE_DEFAULT_DIRS=no
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS += --bindir=$(USRBINDIR$(BITS))
+CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --sbindir=$(USRSBINDIR$(BITS))
+CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_SBINDIR.$(BITS))
 
 CONFIGURE_OPTIONS += --with-x=no
 CONFIGURE_OPTIONS += --with-curses
@@ -85,6 +84,7 @@ CONFIGURE_OPTIONS += --without-auto-load-safe-path
 CONFIGURE_OPTIONS += --with-python=$(PYTHON)
 CONFIGURE_OPTIONS += --with-libexpat-prefix=/usr/lib
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --without-guile
 CONFIGURE_OPTIONS.32 += --disable-largefile
 
 COMPONENT_BUILD_ENV += $(CONFIGURE_ENV)
@@ -137,13 +137,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(PROTOUSRSHAREDIR)/info/ ; \
       $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/stabs.info  \
 	$(PROTOUSRSHAREDIR)/info/ )
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
