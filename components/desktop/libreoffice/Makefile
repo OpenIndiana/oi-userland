@@ -173,8 +173,6 @@ COMPONENT_ARCHIVE_URL_35 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHI
 
 NUM_EXTRA_ARCHIVES = $(shell seq 1 35)
 
-GCC_VERSION=7
-
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(GCC_ROOT)/bin:$(PATH.gnu)
@@ -254,6 +252,70 @@ CONFIGURE_OPTIONS += --disable-cve-tests
 
 COMPONENT_BUILD_ENV += GMAKE_OPTIONS='VERBOSE=1 gb_SUPPRESS_TESTS=x'
 
+LIBREOFFICE_PROGRAM_DIR = /usr/lib/libreoffice/program
+
+NSS_LIB_DIR=/usr/lib/mps
+
+COMPONENT_POST_INSTALL_ACTION  = \
+    for file in $(PROTO_DIR)$(LIBREOFFICE_PROGRAM_DIR)/*.so*; do \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR)"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR)"' $$file ; \
+    done ;
+
 # Build dependencies
 REQUIRED_PACKAGES += developer/assembler/nasm
 REQUIRED_PACKAGES += file/gnu-coreutils
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += gnome/config/dconf
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/c++/graphite2
+REQUIRED_PACKAGES += library/c++/harfbuzz
+REQUIRED_PACKAGES += library/c++/libcdr
+REQUIRED_PACKAGES += library/c++/libmspub
+REQUIRED_PACKAGES += library/c++/libodfgen
+REQUIRED_PACKAGES += library/c++/librevenge
+REQUIRED_PACKAGES += library/c++/libvisio
+REQUIRED_PACKAGES += library/c++/libwpd
+REQUIRED_PACKAGES += library/c++/libwpg
+REQUIRED_PACKAGES += library/c++/libwps
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/libpoppler
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += library/neon
+REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/raptor2
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/mozilla-nss
+REQUIRED_PACKAGES += text/hunspell
+REQUIRED_PACKAGES += web/curl
+REQUIRED_PACKAGES += x11/library/libepoxy
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxrandr
+REQUIRED_PACKAGES += x11/library/libxrender
