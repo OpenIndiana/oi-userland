@@ -167,7 +167,11 @@ COMPONENT_ARCHIVE_34 = libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH_34 = sha256:015678624c807c113ae65ef29f03860ee094cbd518046716b93a615ba21d05eb
 COMPONENT_ARCHIVE_URL_34 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_34)
 
-NUM_EXTRA_ARCHIVES = $(shell seq 1 34)
+COMPONENT_ARCHIVE_35 = boost_1_69_0.tar.bz2
+COMPONENT_ARCHIVE_HASH_35 = sha256:8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406
+COMPONENT_ARCHIVE_URL_35 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_35)
+
+NUM_EXTRA_ARCHIVES = $(shell seq 1 35)
 
 GCC_VERSION=7
 
@@ -190,9 +194,13 @@ COMPONENT_PREP_ACTION= ( mkdir -p $(@D)/external/tarballs && \
 
 
 # build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
+#CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+# LDFLAGS seems to be not always passed to lower levels
+CFLAGS  += $(JPEG_LDFLAGS)
+
+CFLAGS += -fstack-protector -lssp_nonshared
+
+CXXFLAGS = $(CFLAGS)
 
 CONFIGURE_OPTIONS += --with-myspell-dicts
 CONFIGURE_OPTIONS += --with-help=common
@@ -205,7 +213,8 @@ CONFIGURE_OPTIONS += --with-system-libxml
 CONFIGURE_OPTIONS += --with-system-icu
 CONFIGURE_OPTIONS += --with-system-poppler
 CONFIGURE_OPTIONS += --with-system-curl
-CONFIGURE_OPTIONS += --with-system-boost
+# Our boost is too old
+#CONFIGURE_OPTIONS += --with-system-boost
 CONFIGURE_OPTIONS += --with-system-nss
 CONFIGURE_OPTIONS += --with-system-apr
 CONFIGURE_OPTIONS += --with-system-neon
@@ -243,7 +252,7 @@ CONFIGURE_OPTIONS += --with-system-openldap
 CONFIGURE_OPTIONS += --enable-python=no
 CONFIGURE_OPTIONS += --disable-cve-tests
 
-COMPONENT_BUILD_ENV += GMAKE_OPTIONS='VERBOSE=1'
+COMPONENT_BUILD_ENV += GMAKE_OPTIONS='VERBOSE=1 gb_SUPPRESS_TESTS=x'
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/assembler/nasm

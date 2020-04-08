@@ -1,0 +1,19 @@
+libreoffice-6.4.2.2/vcl/unx/generic/app/i18n_ic.cxx: In constructor 'SalI18N_InputContext::SalI18N_InputContext(SalFrame*)':                                    
+libreoffice-6.4.2.2/vcl/unx/generic/app/i18n_ic.cxx:138:9: error: 'mnSupportedStatusStyle' was not declared in this scope                                       
+         mnSupportedStatusStyle &= ~XIMStatusCallbacks;                                                                                    
+
+--- libreoffice-6.4.2.2/vcl/unx/generic/app/i18n_ic.cxx.1	2020-03-18 09:06:22.213534257 +0000
++++ libreoffice-6.4.2.2/vcl/unx/generic/app/i18n_ic.cxx	2020-03-18 09:06:36.901242568 +0000
+@@ -132,12 +132,6 @@
+         mpStatusAttributes( nullptr ),
+         mpPreeditAttributes( nullptr )
+ {
+-#ifdef __sun
+-    static const char* pIIIMPEnable = getenv( "SAL_DISABLE_OWN_IM_STATUS" );
+-    if( pIIIMPEnable && *pIIIMPEnable )
+-        mnSupportedStatusStyle &= ~XIMStatusCallbacks;
+-#endif
+-
+     memset(&maPreeditStartCallback, 0, sizeof(maPreeditStartCallback));
+     memset(&maPreeditDoneCallback, 0, sizeof(maPreeditDoneCallback));
+     memset(&maPreeditDrawCallback, 0, sizeof(maPreeditDrawCallback));
