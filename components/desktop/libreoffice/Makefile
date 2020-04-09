@@ -29,7 +29,8 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL= https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_ARCHIVE_HASH= sha256:43b8e3b4680968903a3510de26bf7e816ba77eb26c84054646aad98403a94c19
-COMPONENT_LICENSE=
+COMPONENT_LICENSE= MPL2.0
+COMPONENT_LICENSE_FILE= COPYING.MPL
 
 COMPONENT_ARCHIVE_1 = 0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = sha256:983941d31ee8d366085cadf28db75eb1f5cb03ba1e5853b98f12f7f51c63b776
@@ -191,11 +192,8 @@ COMPONENT_PREP_ACTION= ( mkdir -p $(@D)/external/tarballs && \
        ln -s $(USERLAND_ARCHIVES)/$$i $(@D)/external/tarballs/$$i ; done )
 
 
-# build with the distribution preferred libjpeg implementation
-#CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-# LDFLAGS seems to be not always passed to lower levels
-CFLAGS  += $(JPEG_LDFLAGS)
-
+# LDFLAGS seem to be not always passed to lower levels
+CFLAGS += $(JPEG_CPPFLAGS) $(JPEG_LDFLAGS)
 CFLAGS += -fstack-protector -lssp_nonshared
 
 CXXFLAGS = $(CFLAGS)
@@ -251,6 +249,8 @@ CONFIGURE_OPTIONS += --enable-python=no
 CONFIGURE_OPTIONS += --disable-cve-tests
 
 COMPONENT_BUILD_ENV += GMAKE_OPTIONS='VERBOSE=1 gb_SUPPRESS_TESTS=x'
+
+COMPONENT_INSTALL_TARGETS = distro-pack-install
 
 LIBREOFFICE_PROGRAM_DIR = /usr/lib/libreoffice/program
 
