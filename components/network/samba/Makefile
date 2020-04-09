@@ -31,11 +31,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
 COMPONENT_FMRI =		service/network/samba
-COMPONENT_VERSION =		4.12.0
+COMPONENT_VERSION =		4.12.1
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		http://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:6ec0b70a567d3c3f4dd3cf2a90b515dcef03a3804b00abb5896eba382d9665fe
+COMPONENT_ARCHIVE_HASH = 	sha256:017cb68b66ada6a46abba31ebcedd6faa17c9805c453605e59a4d2504c726d75
 COMPONENT_ARCHIVE_URL =		http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_LICENSE =		GPLv3
