@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
 COMPONENT_VERSION=	2.13.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	https://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
 COMPONENT_FMRI=		communication/im/pidgin
