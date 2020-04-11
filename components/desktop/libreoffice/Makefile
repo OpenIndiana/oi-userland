@@ -84,95 +84,39 @@ COMPONENT_ARCHIVE_13 = language-subtag-registry-2019-09-16.tar.bz2
 COMPONENT_ARCHIVE_HASH_13 = sha256:07b66bc0f2786fde55f6bbcbcb4a455a846eb8e2351c8ce3d0a219a73693736a
 COMPONENT_ARCHIVE_URL_13 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_13)
 
-COMPONENT_ARCHIVE_14 = libabw-0.1.3.tar.xz
-COMPONENT_ARCHIVE_HASH_14 = sha256:e763a9dc21c3d2667402d66e202e3f8ef4db51b34b79ef41f56cacb86dcd6eed
+COMPONENT_ARCHIVE_14 = libexttextcat-3.4.5.tar.xz
+COMPONENT_ARCHIVE_HASH_14 = sha256:13fdbc9d4c489a4d0519e51933a1aa21fe3fb9eb7da191b87f7a63e82797dac8
 COMPONENT_ARCHIVE_URL_14 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_14)
 
-COMPONENT_ARCHIVE_15 = libcmis-0.5.2.tar.xz
-COMPONENT_ARCHIVE_HASH_15 = sha256:d7b18d9602190e10d437f8a964a32e983afd57e2db316a07d87477a79f5000a2
+COMPONENT_ARCHIVE_15 = libnumbertext-1.0.5.tar.xz
+COMPONENT_ARCHIVE_HASH_15 = sha256:e1c9086b4cecb6b25f180316f30740dfabe6a4dbaf70dddc34276fc839e4f4f7
 COMPONENT_ARCHIVE_URL_15 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_15)
 
-COMPONENT_ARCHIVE_16 = libe-book-0.1.3.tar.xz
-COMPONENT_ARCHIVE_HASH_16 = sha256:7e8d8ff34f27831aca3bc6f9cc532c2f90d2057c778963b884ff3d1e34dfe1f9
+COMPONENT_ARCHIVE_16 = liborcus-0.15.3.tar.gz
+COMPONENT_ARCHIVE_HASH_16 = sha256:0dd26f3f2e611c51df9ee02d6dbf08887989eaa417b73f6877cd0d94df795fc2
 COMPONENT_ARCHIVE_URL_16 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_16)
 
-COMPONENT_ARCHIVE_17 = libepubgen-0.1.1.tar.xz
-COMPONENT_ARCHIVE_HASH_17 = sha256:03e084b994cbeffc8c3dd13303b2cb805f44d8f2c3b79f7690d7e3fc7f6215ad
+COMPONENT_ARCHIVE_17 = QR-Code-generator-1.4.0.tar.gz
+COMPONENT_ARCHIVE_HASH_17 = sha256:fcdf9fd69fde07ae4dca2351d84271a9de8093002f733b77c70f52f1630f6e4a
 COMPONENT_ARCHIVE_URL_17 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_17)
 
-COMPONENT_ARCHIVE_18 = libetonyek-0.1.9.tar.xz
-COMPONENT_ARCHIVE_HASH_18 = sha256:e61677e8799ce6e55b25afc11aa5339113f6a49cff031f336e32fa58635b1a4a
+COMPONENT_ARCHIVE_18 = xmlsec1-1.2.28.tar.gz
+COMPONENT_ARCHIVE_HASH_18 = sha256:13eec4811ea30e3f0e16a734d1dbf7f9d246a71d540b48d143a07b489f6222d4
 COMPONENT_ARCHIVE_URL_18 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_18)
 
-COMPONENT_ARCHIVE_19 = libexttextcat-3.4.5.tar.xz
-COMPONENT_ARCHIVE_HASH_19 = sha256:13fdbc9d4c489a4d0519e51933a1aa21fe3fb9eb7da191b87f7a63e82797dac8
-COMPONENT_ARCHIVE_URL_19 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_19)
+COMPONENT_ARCHIVE_19 = libreoffice-translations-$(COMPONENT_FULL_VERSION).tar.xz
+COMPONENT_ARCHIVE_HASH_19 = sha256:0e20c35d8b39f6e0acd8f898b6ad308a364271e38b0ca65481f6548f888b3dce
+COMPONENT_ARCHIVE_URL_19 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_19)
 
-COMPONENT_ARCHIVE_20 = libfreehand-0.1.2.tar.xz
-COMPONENT_ARCHIVE_HASH_20 = sha256:0e422d1564a6dbf22a9af598535425271e583514c0f7ba7d9091676420de34ac
-COMPONENT_ARCHIVE_URL_20 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_20)
+COMPONENT_ARCHIVE_20 = libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.xz
+COMPONENT_ARCHIVE_HASH_20 = sha256:015678624c807c113ae65ef29f03860ee094cbd518046716b93a615ba21d05eb
+COMPONENT_ARCHIVE_URL_20 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_20)
 
-COMPONENT_ARCHIVE_21 = liblangtag-0.6.2.tar.bz2
-COMPONENT_ARCHIVE_HASH_21 = sha256:d6242790324f1432fb0a6fae71b6851f520b2c5a87675497cf8ea14c2924d52e
+COMPONENT_ARCHIVE_21 = boost_1_69_0.tar.bz2
+COMPONENT_ARCHIVE_HASH_21 = sha256:8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406
 COMPONENT_ARCHIVE_URL_21 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_21)
 
-COMPONENT_ARCHIVE_22 = libmwaw-0.3.15.tar.xz
-COMPONENT_ARCHIVE_HASH_22 = sha256:0440bb09f05e3419423d8dfa36ee847056ebfd837f9cbc091fdb5b057daab0b1
-COMPONENT_ARCHIVE_URL_22 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_22)
-
-COMPONENT_ARCHIVE_23 = libnumbertext-1.0.5.tar.xz
-COMPONENT_ARCHIVE_HASH_23 = sha256:e1c9086b4cecb6b25f180316f30740dfabe6a4dbaf70dddc34276fc839e4f4f7
-COMPONENT_ARCHIVE_URL_23 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_23)
-
-COMPONENT_ARCHIVE_24 = liborcus-0.15.3.tar.gz
-COMPONENT_ARCHIVE_HASH_24 = sha256:0dd26f3f2e611c51df9ee02d6dbf08887989eaa417b73f6877cd0d94df795fc2
-COMPONENT_ARCHIVE_URL_24 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_24)
-
-COMPONENT_ARCHIVE_25 = libpagemaker-0.0.4.tar.xz
-COMPONENT_ARCHIVE_HASH_25 = sha256:66adacd705a7d19895e08eac46d1e851332adf2e736c566bef1164e7a442519d
-COMPONENT_ARCHIVE_URL_25 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_25)
-
-COMPONENT_ARCHIVE_26 = libqxp-0.0.2.tar.xz
-COMPONENT_ARCHIVE_HASH_26 = sha256:e137b6b110120a52c98edd02ebdc4095ee08d0d5295a94316a981750095a945c
-COMPONENT_ARCHIVE_URL_26 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_26)
-
-COMPONENT_ARCHIVE_27 = libstaroffice-0.0.6.tar.xz
-COMPONENT_ARCHIVE_HASH_27 = sha256:6b00e1ed8194e6072be4441025d1b888e39365727ed5b23e0e8c92c4009d1ec4
-COMPONENT_ARCHIVE_URL_27 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_27)
-
-COMPONENT_ARCHIVE_28 = libzmf-0.0.2.tar.xz
-COMPONENT_ARCHIVE_HASH_28 = sha256:27051a30cb057fdb5d5de65a1f165c7153dc76e27fe62251cbb86639eb2caf22
-COMPONENT_ARCHIVE_URL_28 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_28)
-
-COMPONENT_ARCHIVE_29 = mdds-1.5.0.tar.bz2
-COMPONENT_ARCHIVE_HASH_29 = sha256:144d6debd7be32726f332eac14ef9f17e2d3cf89cb3250eb31a7127e0789680d
-COMPONENT_ARCHIVE_URL_29 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_29)
-
-COMPONENT_ARCHIVE_30 = pdfium-3963.tar.bz2
-COMPONENT_ARCHIVE_HASH_30 = sha256:80d4d6bd8faec226936fcde5521c6e92c0c645126ac3ae72dd2c160ca1749895
-COMPONENT_ARCHIVE_URL_30 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_30)
-
-COMPONENT_ARCHIVE_31 = QR-Code-generator-1.4.0.tar.gz
-COMPONENT_ARCHIVE_HASH_31 = sha256:fcdf9fd69fde07ae4dca2351d84271a9de8093002f733b77c70f52f1630f6e4a
-COMPONENT_ARCHIVE_URL_31 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_31)
-
-COMPONENT_ARCHIVE_32 = xmlsec1-1.2.28.tar.gz
-COMPONENT_ARCHIVE_HASH_32 = sha256:13eec4811ea30e3f0e16a734d1dbf7f9d246a71d540b48d143a07b489f6222d4
-COMPONENT_ARCHIVE_URL_32 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_32)
-
-COMPONENT_ARCHIVE_33 = libreoffice-translations-$(COMPONENT_FULL_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_33 = sha256:0e20c35d8b39f6e0acd8f898b6ad308a364271e38b0ca65481f6548f888b3dce
-COMPONENT_ARCHIVE_URL_33 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_33)
-
-COMPONENT_ARCHIVE_34 = libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_34 = sha256:015678624c807c113ae65ef29f03860ee094cbd518046716b93a615ba21d05eb
-COMPONENT_ARCHIVE_URL_34 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_34)
-
-COMPONENT_ARCHIVE_35 = boost_1_69_0.tar.bz2
-COMPONENT_ARCHIVE_HASH_35 = sha256:8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406
-COMPONENT_ARCHIVE_URL_35 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_35)
-
-NUM_EXTRA_ARCHIVES = $(shell seq 1 35)
+NUM_EXTRA_ARCHIVES = $(shell seq 1 21)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -180,7 +124,6 @@ PATH=$(GCC_ROOT)/bin:$(PATH.gnu)
 
 COMPONENT_BUILD_ENV=   CONFIG_SHELL="$(CONFIG_SHELL)"
 COMPONENT_BUILD_ENV+=  SHELL="$(CONFIG_SHELL)"
-#COMPONENT_BUILD_ENV+= PATH="$(PATH)"
 COMPONENT_BUILD_ENV+=  CC="$(CC)"
 COMPONENT_BUILD_ENV+=  CXX="$(CXX)"
 
@@ -224,14 +167,27 @@ CONFIGURE_OPTIONS += --with-system-lcms2
 CONFIGURE_OPTIONS += --with-system-dicts
 CONFIGURE_OPTIONS += --with-system-epoxy
 CONFIGURE_OPTIONS += --with-system-hunspell
-CONFIGURE_OPTIONS += --with-system-libwps
-CONFIGURE_OPTIONS += --with-system-libwpg
-CONFIGURE_OPTIONS += --with-system-libwpd
-CONFIGURE_OPTIONS += --with-system-libmspub
-CONFIGURE_OPTIONS += --with-system-librevenge
-CONFIGURE_OPTIONS += --with-system-libodfgen
-CONFIGURE_OPTIONS += --with-system-libvisio
+CONFIGURE_OPTIONS += --with-system-mdds
+CONFIGURE_OPTIONS += --with-system-libabw
 CONFIGURE_OPTIONS += --with-system-libcdr
+CONFIGURE_OPTIONS += --with-system-libcmis
+CONFIGURE_OPTIONS += --with-system-libetonyek
+CONFIGURE_OPTIONS += --with-system-libebook
+CONFIGURE_OPTIONS += --with-system-libepubgen
+CONFIGURE_OPTIONS += --with-system-libfreehand
+CONFIGURE_OPTIONS += --with-system-liblangtag
+CONFIGURE_OPTIONS += --with-system-libmspub
+CONFIGURE_OPTIONS += --with-system-libmwaw
+CONFIGURE_OPTIONS += --with-system-libodfgen
+CONFIGURE_OPTIONS += --with-system-libpagemaker
+CONFIGURE_OPTIONS += --with-system-libqxp
+CONFIGURE_OPTIONS += --with-system-librevenge
+CONFIGURE_OPTIONS += --with-system-libstaroffice
+CONFIGURE_OPTIONS += --with-system-libvisio
+CONFIGURE_OPTIONS += --with-system-libwpd
+CONFIGURE_OPTIONS += --with-system-libwpg
+CONFIGURE_OPTIONS += --with-system-libwps
+CONFIGURE_OPTIONS += --with-system-libzmf
 CONFIGURE_OPTIONS += --enable-gio
 CONFIGURE_OPTIONS += --with-lang=ALL
 CONFIGURE_OPTIONS += --disable-firebird-sdbc
@@ -265,6 +221,7 @@ COMPONENT_POST_INSTALL_ACTION  = \
 # Build dependencies
 REQUIRED_PACKAGES += developer/assembler/nasm
 REQUIRED_PACKAGES += file/gnu-coreutils
+REQUIRED_PACKAGES += library/c++/mdds
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -277,14 +234,25 @@ REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/c++/graphite2
 REQUIRED_PACKAGES += library/c++/harfbuzz
+REQUIRED_PACKAGES += library/c++/libabw
 REQUIRED_PACKAGES += library/c++/libcdr
+REQUIRED_PACKAGES += library/c++/libcmis
+REQUIRED_PACKAGES += library/c++/libe-book
+REQUIRED_PACKAGES += library/c++/libepubgen
+REQUIRED_PACKAGES += library/c++/libetonyek
+REQUIRED_PACKAGES += library/c++/libfreehand
 REQUIRED_PACKAGES += library/c++/libmspub
+REQUIRED_PACKAGES += library/c++/libmwaw
 REQUIRED_PACKAGES += library/c++/libodfgen
+REQUIRED_PACKAGES += library/c++/libpagemaker
+REQUIRED_PACKAGES += library/c++/libqxp
 REQUIRED_PACKAGES += library/c++/librevenge
+REQUIRED_PACKAGES += library/c++/libstaroffice
 REQUIRED_PACKAGES += library/c++/libvisio
 REQUIRED_PACKAGES += library/c++/libwpd
 REQUIRED_PACKAGES += library/c++/libwpg
 REQUIRED_PACKAGES += library/c++/libwps
+REQUIRED_PACKAGES += library/c++/libzmf
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -294,6 +262,7 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/liblangtag
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
@@ -301,9 +270,9 @@ REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
-REQUIRED_PACKAGES += library/raptor2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
