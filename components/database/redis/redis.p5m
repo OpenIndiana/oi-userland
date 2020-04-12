@@ -1,0 +1,43 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2020 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+group gid=58 groupname=redis
+user ftpuser=false gcos-field="Redis Reserved UID" group=redis password=NP uid=58 username=redis
+
+file redis.conf path=etc/redis.conf mode=0644 preserve=true
+
+dir path=var/redis owner=redis group=redis mode=0555
+dir path=var/redis/db owner=redis group=redis mode=0755
+dir path=var/redis/log owner=redis group=redis mode=0755
+
+file files/redis.xml \
+    path=lib/svc/manifest/application/database/redis.xml
+
+file usr/bin/redis-server path=usr/sbin/redis-server
+link path=usr/sbin/redis-sentinel target=redis-server
+
+file path=usr/bin/redis-benchmark
+file path=usr/bin/redis-check-aof
+file path=usr/bin/redis-check-rdb
+file path=usr/bin/redis-cli
