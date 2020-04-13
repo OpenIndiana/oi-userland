@@ -21,9 +21,9 @@ patches/manpage.patch" to regenerate the manpages with the updated text
 (found in rst.patch) with the patched hgmanpage.py, and updates the
 manpage.patch file.
 
---- mercurial.hg/doc/hgmanpage.py	2016-10-09 20:00:17.207404849 -0700
-+++ mercurial.hg/doc/hgmanpage.py	2016-10-10 10:04:03.695820057 -0700
-@@ -202,6 +202,7 @@
+--- mercurial-5.3.2/doc/hgmanpage.py.~1~	2020-04-02 19:05:39.000000000 +0000
++++ mercurial-5.3.2/doc/hgmanpage.py	2020-04-13 02:05:27.913807225 +0000
+@@ -213,6 +213,7 @@
          self._in_docinfo = None
          self._active_table = None
          self._in_literal = False
@@ -31,42 +31,42 @@ manpage.patch file.
          self.header_written = 0
          self._line_block = 0
          self.authors = []
-@@ -217,15 +218,15 @@
+@@ -228,13 +229,13 @@
          # ``B`` bold, ``I`` italic, ``R`` roman should be available.
          # Hopefully ``C`` courier too.
          self.defs = {
--                'indent' : ('.INDENT %.1f\n', '.UNINDENT\n'),
-+                'indent' : ('.RS %d\n', '.RE\n'),
-                 'definition_list_item' : ('.TP', ''),
-                 'field_name' : ('.TP\n.B ', '\n'),
-                 'literal' : ('\\fB', '\\fP'),
--                'literal_block' : ('.sp\n.nf\n.ft C\n', '\n.ft P\n.fi\n'),
-+                'literal_block' : ('.sp\n.nf\n.ft\n', '\n.ft\n.fi\n'),
- 
-                 'option_list_item' : ('.TP\n', ''),
- 
--                'reference' : (r'\%', r'\:'),
-+                'reference' : (r'', r''),
-                 'emphasis': ('\\fI', '\\fP'),
-                 'strong' : ('\\fB', '\\fP'),
-                 'term' : ('\n.B ', '\n'),
-@@ -272,6 +273,7 @@
-                     self.body[i - 2][:4] == '.TP\n'):
+-            'indent': ('.INDENT %.1f\n', '.UNINDENT\n'),
++            'indent' : ('.RS %d\n', '.RE\n'),
+             'definition_list_item': ('.TP', ''),
+             'field_name': ('.TP\n.B ', '\n'),
+             'literal': ('\\fB', '\\fP'),
+-            'literal_block': ('.sp\n.nf\n.ft C\n', '\n.ft P\n.fi\n'),
++            'literal_block' : ('.sp\n.nf\n.ft\n', '\n.ft\n.fi\n'),
+             'option_list_item': ('.TP\n', ''),
+-            'reference': (r'\%', r'\:'),
++            'reference' : (r'', r''),
+             'emphasis': ('\\fI', '\\fP'),
+             'strong': ('\\fB', '\\fP'),
+             'term': ('\n.B ', '\n'),
+@@ -281,7 +282,8 @@
+                 ):
                      self.body[i] = '.\n'
-                 elif (self.body[i - 1] == '\n' and
-+                    self.body[i - 2] and
-                     self.body[i - 2][0] != '.' and
-                     (self.body[i - 3][:7] == '.TP\n.B '
-                         or self.body[i - 3][:4] == '\n.B ')
-@@ -289,7 +291,6 @@
-         text = text.replace('\\','\\e')
+                 elif (
+-                    self.body[i - 1] == '\n'
++                    self.body[i - 1] == '\n' 
++                    and self.body[i - 2]
+                     and self.body[i - 2][0] != '.'
+                     and (
+                         self.body[i - 3][:7] == '.TP\n.B '
+@@ -301,7 +303,6 @@
+         text = text.replace('\\', '\\e')
          replace_pairs = [
              (u'-', u'\\-'),
 -            (u"'", u'\\(aq'),
              (u'´', u"\\'"),
              (u'`', u'\\(ga'),
-             ]
-@@ -302,6 +303,15 @@
+         ]
+@@ -314,6 +315,15 @@
              if text[0] == '.':
                  text = '\\&' + text
              text = text.replace('\n.', '\n\\&.')
@@ -82,7 +82,7 @@ manpage.patch file.
          self.body.append(text)
  
      def depart_Text(self, node):
-@@ -386,7 +396,6 @@
+@@ -404,7 +414,6 @@
          if self.header_written:
              return
          self.body.append(self.header())
@@ -90,7 +90,7 @@ manpage.patch file.
          self.header_written = 1
  
      def visit_address(self, node):
-@@ -800,8 +809,10 @@
+@@ -830,8 +839,10 @@
  
      def visit_literal(self, node):
          self.body.append(self.defs['literal'][0])
