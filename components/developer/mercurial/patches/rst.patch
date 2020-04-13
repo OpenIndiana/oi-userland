@@ -1,9 +1,9 @@
 Rewrite some sections of the documentation to match what we deliver on
 Solaris, or remove sections that are of no relevance to Solaris.
 
---- mercurial-2.7/hgext/hgk.py	Mon Aug 19 14:57:23 2013
-+++ mercurial-2.7/hgext/hgk.py	Mon Aug 19 15:04:11 2013
-@@ -13,13 +13,12 @@
+--- mercurial-5.1.1/hgext/hgk.py
++++ mercurial-5.1.1/hgext/hgk.py
+@@ -13,13 +13,12 @@ distributed with Mercurial.)
  
  hgk consists of two parts: a Tcl script that does the displaying and
  querying of information, and an extension to Mercurial named hgk.py,
@@ -21,23 +21,9 @@ Solaris, or remove sections that are of no relevance to Solaris.
 +file::
  
    [hgk]
-   path=/location/of/hgk
---- mercurial-2.7/mercurial/help/hg.1.txt	Thu Aug  1 20:37:39 2013
-+++ mercurial-2.7/mercurial/help/hg.1.txt	Mon Aug 19 15:14:00 2013
-@@ -85,6 +85,11 @@
-     repositories. The file format is the same as for ``.hgtags``, but it is
-     encoded using the local system encoding.
- 
-+``/usr/demo/mercurial``
-+    This directory contains assorted files which are part of the Mercurial
-+    distribution, but not core to its functionality.  They will generally
-+    need to be copied elsewhere to be of use.
-+
- Some commands (e.g. revert) produce backup files ending in ``.orig``,
- if the ``.orig`` file already exists and is not tracked by Mercurial,
- it will be overwritten.
---- mercurial-4.2.2/mercurial/help/config.txt.~1~	2017-07-05 18:24:17.000000000 +0000
-+++ mercurial-4.2.2/mercurial/help/config.txt	2017-07-14 15:09:24.311493151 +0000
+   path = /location/of/hgk
+--- mercurial-5.3.2/mercurial/helptext/config.txt.~1~	2020-04-02 19:05:39.000000000 +0000
++++ mercurial-5.3.2/mercurial/helptext/config.txt	2020-04-13 02:00:27.838425664 +0000
 @@ -36,10 +36,6 @@
  
  Global configuration like the username setting is typically put into:
@@ -58,9 +44,9 @@ Solaris, or remove sections that are of no relevance to Solaris.
  
    - ``<repo>/.hg/hgrc`` (per-repository)
    - ``$HOME/.hgrc`` (per-user)
-@@ -63,41 +59,6 @@
+@@ -63,40 +59,6 @@
    - ``/etc/mercurial/hgrc.d/*.rc`` (per-system)
-   - ``<internal>/default.d/*.rc`` (defaults)
+   - ``<internal>/*.rc`` (defaults)
  
 -.. container:: verbose.windows
 -
@@ -71,19 +57,18 @@ Solaris, or remove sections that are of no relevance to Solaris.
 -  - ``%USERPROFILE%\Mercurial.ini`` (per-user)
 -  - ``%HOME%\.hgrc`` (per-user)
 -  - ``%HOME%\Mercurial.ini`` (per-user)
--  - ``HKEY_LOCAL_MACHINE\SOFTWARE\Mercurial`` (per-installation)
+-  - ``HKEY_LOCAL_MACHINE\SOFTWARE\Mercurial`` (per-system)
 -  - ``<install-dir>\hgrc.d\*.rc`` (per-installation)
 -  - ``<install-dir>\Mercurial.ini`` (per-installation)
--  - ``<internal>/default.d/*.rc`` (defaults)
+-  - ``%PROGRAMDATA%\Mercurial\hgrc`` (per-system)
+-  - ``%PROGRAMDATA%\Mercurial\Mercurial.ini`` (per-system)
+-  - ``%PROGRAMDATA%\Mercurial\hgrc.d\*.rc`` (per-system)
+-  - ``<internal>/*.rc`` (defaults)
 -
 -  .. note::
 -
 -   The registry key ``HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Mercurial``
 -   is used when running 32-bit Python on 64-bit Windows.
--
--.. container:: windows
--
--  On Windows 9x, ``%HOME%`` is replaced by ``%APPDATA%``.
 -
 -.. container:: verbose.plan9
 -
@@ -95,12 +80,12 @@ Solaris, or remove sections that are of no relevance to Solaris.
 -  - ``<install-root>/lib/mercurial/hgrc.d/*.rc`` (per-installation)
 -  - ``/lib/mercurial/hgrc`` (per-system)
 -  - ``/lib/mercurial/hgrc.d/*.rc`` (per-system)
--  - ``<internal>/default.d/*.rc`` (defaults)
+-  - ``<internal>/*.rc`` (defaults)
 -
  Per-repository configuration options only apply in a
  particular repository. This file is not version-controlled, and
  will not get transferred during a "clone" operation. Options in
-@@ -105,7 +66,7 @@
+@@ -104,7 +66,7 @@
  
  .. container:: unix.plan9
  
@@ -109,7 +94,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
    belong to a trusted user or to a trusted group. See
    :hg:`help config.trusted` for more details.
  
-@@ -127,10 +88,8 @@
+@@ -126,10 +88,8 @@
  
  Per-installation configuration files are for the system on
  which Mercurial is running. Options in these files apply to all
@@ -122,7 +107,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
  order until one or more configuration files are detected.
  
  Per-system configuration files are for the system on which Mercurial
-@@ -616,14 +575,6 @@
+@@ -671,14 +631,6 @@
  of an empty temporary file, where the filtered data must be written by
  the command.
  
@@ -137,7 +122,31 @@ Solaris, or remove sections that are of no relevance to Solaris.
  This filter mechanism is used internally by the ``eol`` extension to
  translate line ending characters between Windows (CRLF) and Unix (LF)
  format. We suggest you use the ``eol`` extension for convenience.
-@@ -1036,13 +987,6 @@
+@@ -962,23 +914,6 @@
+ of the hook in the config, respectively. In the example above, this will
+ be ``$HG_HOOKTYPE=incoming`` and ``$HG_HOOKNAME=incoming.email``.
+ 
+-.. container:: windows
+-
+-  Some basic Unix syntax can be enabled for portability, including ``$VAR``
+-  and ``${VAR}`` style variables.  A ``~`` followed by ``\`` or ``/`` will
+-  be expanded to ``%USERPROFILE%`` to simulate a subset of tilde expansion
+-  on Unix.  To use a literal ``$`` or ``~``, it must be escaped with a back
+-  slash or inside of a strong quote.  Strong quotes will be replaced by
+-  double quotes after processing.
+-
+-  This feature is enabled by adding a prefix of ``tonative.`` to the hook
+-  name on a new line, and setting it to ``True``.  For example::
+-
+-    [hooks]
+-    incoming.autobuild = /my/build/hook
+-    # enable translation to cmd.exe syntax for autobuild hook
+-    tonative.incoming.autobuild = True
+-
+ ``changegroup``
+   Run after a changegroup has been added via push, pull or unbundle.  The ID of
+   the first new changeset is in ``$HG_NODE`` and last is in ``$HG_NODE_LAST``.
+@@ -1187,13 +1122,6 @@
     Also, hooks like "commit" will be called in all contexts that
     generate a commit (e.g. tag) and not just the commit command.
  
@@ -151,7 +160,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
  The syntax for Python hooks is as follows::
  
    hookname = python:modulename.submodule.callable
-@@ -1274,7 +1218,6 @@
+@@ -1452,7 +1380,6 @@
  
    # Define new tool
    myHtmlTool.args = -m $local $other $base $output
@@ -159,7 +168,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
    myHtmlTool.priority = 1
  
  Supported arguments:
-@@ -1286,11 +1229,6 @@
+@@ -1464,11 +1391,6 @@
  ``executable``
    Either just the name of the executable or its pathname.
  
@@ -171,9 +180,9 @@ Solaris, or remove sections that are of no relevance to Solaris.
    (default: the tool name)
  
  ``args``
-@@ -1338,30 +1276,6 @@
- ``gui``
-   This tool requires a graphical interface to run. (default: False)
+@@ -1536,30 +1458,6 @@
+   ``keep-merge3``. See the corresponding variable in ``[ui]`` for more
+   information.
  
 -.. container:: windows
 -
@@ -202,7 +211,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
  ``pager``
  ---------
  
-@@ -2001,10 +1915,6 @@
+@@ -2421,10 +2319,6 @@
      ``false``
        Alias for ``ignore``.
  
@@ -210,6 +219,20 @@ Solaris, or remove sections that are of no relevance to Solaris.
 -
 -      On Windows, this configuration option is ignored and the command aborted.
 -
- ``quiet``
-     Reduce the amount of output printed.
-     (default: False)
+ ``pre-merge-tool-output-template``
+     A template that is printed before executing an external merge tool. This can
+     be used to print out additional context that might be useful to have during
+--- mercurial-5.1.1/mercurial/helptext/hg.1.txt
++++ mercurial-5.1.1/mercurial/helptext/hg.1.txt
+@@ -85,6 +85,11 @@ This file can be used to define local ta
+     repositories. The file format is the same as for ``.hgtags``, but it is
+     encoded using the local system encoding.
+ 
++``/usr/demo/mercurial``
++    This directory contains assorted files which are part of the Mercurial
++    distribution, but not core to its functionality.  They will generally
++    need to be copied elsewhere to be of use.
++
+ Some commands (e.g. revert) produce backup files ending in ``.orig``,
+ if the ``.orig`` file already exists and is not tracked by Mercurial,
+ it will be overwritten.
