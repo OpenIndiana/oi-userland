@@ -1,0 +1,16 @@
+https://www.illumos.org/issues/12473
+5 seconds delay may be too short for Xorg to exit
+
+--- lightdm-1.28.0/src/process.c-orig	Sat Apr 11 19:09:08 2020
++++ lightdm-1.28.0/src/process.c	Mon Apr 13 14:53:16 2020
+@@ -342,8 +342,8 @@
+     if (priv->pid == 0)
+         return;
+ 
+-    /* Send SIGTERM, and then SIGKILL if no response */
+-    priv->quit_timeout = g_timeout_add (5000, (GSourceFunc) quit_timeout_cb, process);
++    /* Send SIGTERM, and then SIGKILL 60 seconds later if no response */
++    priv->quit_timeout = g_timeout_add (60000, (GSourceFunc) quit_timeout_cb, process);
+     process_signal (process, SIGTERM);
+ }
+ 
