@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphite2
 COMPONENT_VERSION=	1.3.13
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/c++/graphite2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=	Graphite2 - Library for rendering non-roman scripts
@@ -61,7 +62,11 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+# Manually added build dependencies
+# For some reason, the SPARC build is needing this, but x86 does not.
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
