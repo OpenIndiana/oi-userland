@@ -15,8 +15,10 @@
 
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gnome-connection-manager
+COMPONENT_NAME_LONG=	gnome-connection-manager
 COMPONENT_NAME_SHORT=	gcm
+# The value below should match the .p5m and .license filenames, in particular:
+COMPONENT_NAME=  		$(COMPONENT_NAME_LONG)
 COMPONENT_VERSION=	1.2.0
 COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://kuthulu.com/gcm
@@ -26,20 +28,20 @@ COMPONENT_PROJECT_URL=	http://kuthulu.com/gcm
 # hence the GitHub latest-commit fetching and tweaked definitions
 # of COMPONENT_SRC and COMPONENT_ARCHIVE below:
 COMPONENT_COMMIT_ID=	878d59ed3a77db55a6d22bbda5ce1ee1acac16a5
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_COMMIT_ID)
+COMPONENT_SRC=		$(COMPONENT_NAME_LONG)-$(COMPONENT_COMMIT_ID)
 ###COMPONENT_SRC=		$(COMPONENT_NAME_SHORT)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_HASH=	\
     sha256:92f0db50a31cee9bce271a3f85c269d604737edf139e0b55d52a36c0217876c1
 # Project site is gone, use a mirror for now
-#COMPONENT_ARCHIVE=	$(COMPONENT_NAME)_$(COMPONENT_VERSION)_all.tgz
+#COMPONENT_ARCHIVE=	$(COMPONENT_NAME_LONG)_$(COMPONENT_VERSION)_all.tgz
 #COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
-###COMPONENT_ARCHIVE=	$(COMPONENT_NAME)_$(COMPONENT_VERSION).orig.tar.gz
+###COMPONENT_ARCHIVE=	$(COMPONENT_NAME_LONG)_$(COMPONENT_VERSION).orig.tar.gz
 COMPONENT_ARCHIVE=	$(COMPONENT_COMMIT_ID).zip
-###COMPONENT_ARCHIVE_URL= http://ftp.heanet.ie/mirrors/www.getdeb.net/getdeb/ubuntu/pool/apps/g/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_URL=	https://github.com/kuthulux/$(COMPONENT_NAME)/archive/$(COMPONENT_ARCHIVE)
+###COMPONENT_ARCHIVE_URL= http://ftp.heanet.ie/mirrors/www.getdeb.net/getdeb/ubuntu/pool/apps/g/$(COMPONENT_NAME_LONG)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://github.com/kuthulux/$(COMPONENT_NAME_LONG)/archive/$(COMPONENT_ARCHIVE)
 
 COMPONENT_SUMMARY=	GCM - an Advanced SSH connections manager for X/Windows
-COMPONENT_FMRI=		terminal/gnome-connection-manager
+COMPONENT_FMRI=		terminal/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
