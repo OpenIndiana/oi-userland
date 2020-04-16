@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gutenprint
 COMPONENT_VERSION=	5.2.14
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=  Gutenprint - Drivers for Canon, Epson, Lexmark & PCL printers
 COMPONENT_PROJECT_URL=	http://www.gutenprint.org/software/gutenprint/
 COMPONENT_FMRI=     print/filter/gutenprint
