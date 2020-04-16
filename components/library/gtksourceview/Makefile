@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtksourceview
 COMPONENT_VERSION=	2.10.5
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME syntax highlighting text widget
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

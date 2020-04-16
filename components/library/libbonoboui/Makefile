@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= libbonoboui
 
 COMPONENT_VERSION= 2.24.5
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Bonobo Base User Interface Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2

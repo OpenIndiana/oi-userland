@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		drivel
 COMPONENT_VERSION=	3.0.5
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://drivel.sourceforge.net/
 COMPONENT_SUMMARY=	Drivel is a GNOME client for editing blog
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

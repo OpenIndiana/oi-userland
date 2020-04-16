@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkam
 COMPONENT_VERSION=	1.0
+COMPONENT_REVISION=	1
 # Version was bumped in JDS
 GIMP_GTKAM_VERSION=	2.30.0
 COMPONENT_PROJECT_URL=	http://libexif.sourceforge.net/
