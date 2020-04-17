@@ -220,6 +220,9 @@ COMPONENT_POST_INSTALL_ACTION  = \
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/assembler/nasm
+REQUIRED_PACKAGES += developer/cppunit
+REQUIRED_PACKAGES += developer/gperf
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/c++/mdds
 
