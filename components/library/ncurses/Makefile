@@ -32,6 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncurses
 COMPONENT_VERSION=	6.2
+COMPONENT_REVISION=	1
 COMPONENT_REV=		20200212
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_REV)
 COMPONENT_SUMMARY=	A CRT screen handling and optimization package.
@@ -84,7 +85,7 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 # We need ncurses.so in /usr/lib
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MV) $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/libncurses.so* $(PROTO_DIR)/usr/lib/ || \
-	$(MV) $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/amd64/libncurses.so* $(PROTO_DIR)/usr/lib/amd64/ ;
+	$(MV) $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/$(MACH64)/libncurses.so* $(PROTO_DIR)/usr/lib/$(MACH64)/ ;
 
 COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/test
 COMPONENT_TEST_TARGETS =
