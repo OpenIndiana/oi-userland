@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
 COMPONENT_VERSION=	3.5.9
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.python.org
 COMPONENT_SUMMARY=	The Python interpreter, libraries and utilities
 COMPONENT_CLASSIFICATION= Development/Python
