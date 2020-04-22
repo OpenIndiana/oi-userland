@@ -3000,8 +3000,8 @@ ok 2 - Git::I18N is located at $(@D)/t/../perl/build/lib/Git/I18N.pm
 ok 3 - sanity: Git::I18N has 3 export(s)
 ok 4 - sanity: Git::I18N exports everything by default
 ok 5 - sanity: __ has a $ prototype
-ok 6 - sanity: __n has a $$$ prototype
-ok 7 - sanity: N__ has a $ prototype
+ok 6 - sanity: N__ has a $ prototype
+ok 7 - sanity: __n has a $$$ prototype
 ok 8 - Passing a string through __() in the C locale works
 ok 9 - Get singular string through __n() in C locale
 ok 10 - Get plural string through __n() in C locale
@@ -3097,9 +3097,12 @@ ok 18 - pull username from config
 ok 19 - http paths can be part of context
 ok 20 - helpers can abort the process
 ok 21 - empty helper spec resets helper list
-ok 22 - url parser ignores embedded newlines
-# passed all 22 test(s)
-1..22
+ok 22 - url parser rejects embedded newlines
+ok 23 - host-less URLs are parsed as empty host
+ok 24 - credential system refuses to work with missing host
+ok 25 - credential system refuses to work with missing protocol
+# passed all 25 test(s)
+1..25
 *** t0301-credential-cache.sh ***
 ok 1 - helper (cache) has no existing data
 ok 2 - helper (cache) stores password
@@ -20400,9 +20403,17 @@ ok 4 - remove ./ protection from .gitmodules url
 ok 5 - clone rejects unprotected dash
 ok 6 - fsck rejects unprotected dash
 ok 7 - trailing backslash is handled correctly
-ok 8 - fsck rejects embedded newline in url
-# passed all 8 test(s)
-1..8
+ok 8 - fsck rejects missing URL scheme
+ok 9 - fsck rejects relative URL resolving to missing scheme
+ok 10 - fsck rejects empty URL scheme
+ok 11 - fsck rejects relative URL resolving to empty scheme
+ok 12 - fsck rejects empty hostname
+ok 13 - fsck rejects relative url that produced empty hostname
+ok 14 - fsck permits embedded newline with unrecognized scheme
+ok 15 - fsck rejects embedded newline in url
+ok 16 - fsck rejects embedded newline in relative url
+# passed all 16 test(s)
+1..16
 *** t7417-submodule-path-url.sh ***
 ok 1 - create submodule with dash in path
 ok 2 - clone rejects unprotected dash
@@ -24325,7 +24336,7 @@ ok 66 - prompt - hide if pwd ignored - inside gitdir
 failed test(s): t0204 t4210
 
 fixed   1
-success 20869
+success 20880
 failed  6
 broken  236
-total   21452
+total   21463
