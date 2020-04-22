@@ -23,6 +23,12 @@ fi
 	LANGUAGE="`echo "$LANGUAGE" | sed 's,^\(..\).*$,\1,'`"
 
 export LANGUAGE LANG LC_ALL DISPLAY
+
+# sun-color, xterm*, ansi, vt100, vt200 all had issues with different tools
+# executed in the VTE sessions. Use this least-evil value by default:
+TERM=screen-256color
+export TERM
+
 echo "Starting gnome-connection-manager with LANGUAGE=$LANGUAGE ..."
 locale 2>/dev/null
 exec /usr/share/gnome-connection-manager/gnome_connection_manager.py "$@"
