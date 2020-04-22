@@ -20,18 +20,18 @@ COMPONENT_NAME_SHORT=	gcm
 # The value below should match the .p5m and .license filenames, in particular:
 COMPONENT_NAME=  		$(COMPONENT_NAME_LONG)
 COMPONENT_VERSION=	1.2.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://kuthulu.com/gcm
 # The new GCM release should bring support for Gtk3 and Python3,
 # and is expected to work in OI unlike the venerable 1.1.0 made
 # for Gtk2 which just stopped working. So far it is unreleased,
 # hence the GitHub latest-commit fetching and tweaked definitions
 # of COMPONENT_SRC and COMPONENT_ARCHIVE below:
-COMPONENT_COMMIT_ID=	878d59ed3a77db55a6d22bbda5ce1ee1acac16a5
+COMPONENT_COMMIT_ID=	87ca05a933a35e6b14ab9dac68b2b1c3cb3bd52c
 COMPONENT_SRC=		$(COMPONENT_NAME_LONG)-$(COMPONENT_COMMIT_ID)
 ###COMPONENT_SRC=		$(COMPONENT_NAME_SHORT)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:92f0db50a31cee9bce271a3f85c269d604737edf139e0b55d52a36c0217876c1
+    sha256:a6b25be9ce15aaa4ee1cee1b823999f9e0af23bc60ac384d84d06490b9c46ef7
 
 ### How the original sites name the archive:
 #COMPONENT_ARCHIVE_ORIG=	$(COMPONENT_NAME_LONG)_$(COMPONENT_VERSION)_all.tgz
