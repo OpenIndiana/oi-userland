@@ -23,7 +23,7 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018 Norm Jacobs
 # Copyright (c) 2018 Ken Mays
-# Copyright (c) 2019 Michal Nowak
+# Copyright (c) 2020 Michal Nowak
 #
 
 BUILD_BITS=		32_and_64
@@ -31,14 +31,14 @@ BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.33.1
+COMPONENT_VERSION=	2.34
 COMPONENT_SUMMARY=	GNU collection of binary tools like ld, as
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:ab66fc2d1c3ec0359b8e08843c9f33b63e8707efdff5e4cc5c200eae24722cbf
+	sha256:f00b0e8803dc9bab1e2165bd568528135be734df3fabf8d0161828cd56028952
 COMPONENT_FMRI=		developer/gnu-binutils
 COMPONENT_CLASSIFICATION=Development/GNU
 
