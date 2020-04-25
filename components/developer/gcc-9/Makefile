@@ -18,6 +18,7 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 9.3.0
+COMPONENT_REVISION= 1
 COMPONENT_ARCHIVE_HASH= \
   sha256:71e197867611f6054aa1119b13a0c0abac12834765fe2d81f35ac57f84f742d1
 
@@ -54,7 +55,7 @@ CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib
 
 CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-objc-gc
-CONFIGURE_OPTIONS+= --enable-initfini-array
+CONFIGURE_OPTIONS.i386+= --enable-initfini-array
 CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
 CONFIGURE_OPTIONS+= --disable-libitm
 CONFIGURE_OPTIONS+= enable_frame_pointer=yes
