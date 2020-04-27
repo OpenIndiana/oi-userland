@@ -131,8 +131,11 @@ CONFIGURE_ENV = $(COMPONENT_BUILD_ENV)
 CONFIGURE_ENV += PYTHON=/usr/bin/python3.5
 
 COMPONENT_PREP_ACTION= ( mkdir -p $(@D)/external/tarballs && \
-       for i in $(ARCHIVES) ; do rm -f $(@D)/external/tarballs/$$i && \
-       ln -s $(USERLAND_ARCHIVES)/$$i $(@D)/external/tarballs/$$i ; done )
+	for i in $(ARCHIVES) ; do \
+		rm -f $(@D)/external/tarballs/$$i && \
+		ln -s $(USERLAND_ARCHIVES)/$$i $(@D)/external/tarballs/$$i ; \
+	done && \
+	cd $(@D) && autoconf )
 
 
 # LDFLAGS seem to be not always passed to lower levels
@@ -289,5 +292,6 @@ REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
