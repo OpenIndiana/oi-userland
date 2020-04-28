@@ -1,0 +1,11 @@
+--- libreoffice-6.4.2.2/vcl/Executable_visualbackendtest.mk.1	2020-04-08 17:18:21.242800448 +0000
++++ libreoffice-6.4.2.2/vcl/Executable_visualbackendtest.mk	2020-04-08 17:19:09.876440194 +0000
+@@ -41,7 +41,7 @@
+     vclmain \
+ ))
+ 
+-ifeq ($(OS),LINUX)
++ifeq ($(OS), $(filter LINUX %BSD SOLARIS, $(OS)))
+ $(eval $(call gb_Executable_add_libs,visualbackendtest,\
+ 	-lm \
+ 	-ldl \
