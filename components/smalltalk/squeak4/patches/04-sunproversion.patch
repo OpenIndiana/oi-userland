@@ -1,0 +1,15 @@
+--- squeak4-3775/platforms/unix/vm/config.cmake	Sun Apr 26 21:11:52 2020
++++ p0/squeak4-3775/platforms/unix/vm/config.cmake	Wed Apr  8 09:17:58 2020
+@@ -202,7 +202,11 @@
+ 
+ # sqUnixMain.c
+ 
+-SET (VM_BUILD_STRING "\"Unix built on \"__DATE__ \" \"__TIME__\" Compiler: \"__VERSION__")
++IF (CMAKE_C_COMPILER_ID MATCHES "SunPro") 
++  SET (VM_BUILD_STRING "\"Unix built on \"__DATE__ \" \"__TIME__\" Compiler: ${CMAKE_C_COMPILER_VERSION}\"") 
++ELSE ()
++  SET (VM_BUILD_STRING "\"Unix built on \"__DATE__ \" \"__TIME__\" Compiler: \"__VERSION__")
++ENDIF (CMAKE_C_COMPILER_ID MATCHES "SunPro")
+ 
+ CONFIG_DEFINE (VM_BUILD_STRING)
+ 

@@ -1,0 +1,17 @@
+--- squeak4-3775/platforms/unix/vm/build.cmake	Sun Apr 26 21:11:52 2020
++++ p0/squeak4-3775/platforms/unix/vm/build.cmake	Mon Apr 27 15:07:03 2020
+@@ -96,4 +96,14 @@
+ ADD_DEPENDENCIES (squeakvm${scriptsuffix} squeak.1)
+ INSTALL (FILES ${bld}/squeak.1 DESTINATION share/man/man1)
+ 
++# for oi-userland or solaris-userland packaging LICENSE is required
++# {docdir} is set in CMakeLists.txt
++
++ADD_CUSTOM_TARGET (LICENSE
++  DEPENDS ${unix}/doc/LICENSE
++  COMMAND sh ${bld}/config ${unix}/doc/LICENSE ${bld}/LICENSE
++)
++ADD_DEPENDENCIES (squeakvm${scriptsuffix} LICENSE)
++INSTALL (FILES ${bld}/LICENSE DESTINATION ${docdir})
++
+ ENDIF (NOT DEFINED OPT--vm-only)
