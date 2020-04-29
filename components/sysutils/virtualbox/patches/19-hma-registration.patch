@@ -1,0 +1,91 @@
+diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/SUPDrv.cpp a/src/VBox/HostDrivers/Support/SUPDrv.cpp
+--- a~/src/VBox/HostDrivers/Support/SUPDrv.cpp	1970-01-01 00:00:00
++++ a/src/VBox/HostDrivers/Support/SUPDrv.cpp	1970-01-01 00:00:00
+@@ -4049,7 +4049,7 @@ SUPR0DECL(RTCCUINTREG) SUPR0ChangeCR4(RT
+  */
+ SUPR0DECL(int) SUPR0EnableVTx(bool fEnable)
+ {
+-#ifdef RT_OS_DARWIN
++#if defined(RT_OS_DARWIN) || defined(RT_OS_SOLARIS)
+     return supdrvOSEnableVTx(fEnable);
+ #else
+     RT_NOREF1(fEnable);
+@@ -4067,7 +4067,7 @@ SUPR0DECL(int) SUPR0EnableVTx(bool fEnab
+  */
+ SUPR0DECL(bool) SUPR0SuspendVTxOnCpu(void)
+ {
+-#ifdef RT_OS_DARWIN
++#if defined(RT_OS_DARWIN) || defined(RT_OS_SOLARIS)
+     return supdrvOSSuspendVTxOnCpu();
+ #else
+     return false;
+@@ -4084,7 +4084,7 @@ SUPR0DECL(bool) SUPR0SuspendVTxOnCpu(voi
+  */
+ SUPR0DECL(void) SUPR0ResumeVTxOnCpu(bool fSuspended)
+ {
+-#ifdef RT_OS_DARWIN
++#if defined(RT_OS_DARWIN) || defined(RT_OS_SOLARIS)
+     supdrvOSResumeVTxOnCpu(fSuspended);
+ #else
+     RT_NOREF1(fSuspended);
+diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c a/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c
+--- VirtualBox-6.1.6/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c.~1~	2020-04-09 20:41:57.000000000 +0000
++++ VirtualBox-6.1.6/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c	2020-04-28 21:37:24.891100342 +0000
+@@ -47,6 +47,7 @@
+ #include <sys/priv_names.h>
+ #include <vm/hat.h>
+ #undef u /* /usr/include/sys/user.h:249:1 is where this is defined to (curproc->p_user). very cool. */
++#include <sys/hma.h>
+ 
+ #include "../SUPDrvInternal.h"
+ #include <VBox/log.h>
+@@ -976,6 +977,49 @@
+     return false;
+ }
+ 
++static const char *vbox_hma_ident = DEVICE_DESC;
++static hma_reg_t *vbox_hma_reg;
++
++int VBOXCALL supdrvOSEnableVTx(bool fEnable)
++{
++	hma_reg_t *reg;
++
++
++	if (fEnable) {
++		cmn_err(CE_NOTE, "!Registering hypervisor\n");
++		if (vbox_hma_reg)
++			return VINF_SUCCESS;
++
++		if ((reg = hma_register_exclusive(vbox_hma_ident)) == NULL)
++			return VERR_NOT_SUPPORTED;
++
++		cmn_err(CE_NOTE, "!Successfully registered '%s'\n",
++		    vbox_hma_ident);
++
++		vbox_hma_reg = reg;
++		return VINF_SUCCESS;
++	}
++
++	if (vbox_hma_reg) {
++		cmn_err(CE_NOTE, "!Unregistering hypervisor\n");
++		hma_unregister(vbox_hma_reg);
++		vbox_hma_reg = NULL;
++	}
++
++	return VINF_SUCCESS;
++}
++
++bool VBOXCALL supdrvOSSuspendVTxOnCpu(void)
++{
++	return false;
++}
++
++void VBOXCALL   supdrvOSResumeVTxOnCpu(bool fSuspended)
++{
++	RT_NOREF1(fSuspended);
++	Assert(!fSuspended);
++}
++
+ 
+ #if  defined(VBOX_WITH_NATIVE_SOLARIS_LOADING) \
+  && !defined(VBOX_WITHOUT_NATIVE_R0_LOADER)
