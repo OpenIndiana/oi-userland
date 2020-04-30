@@ -3,7 +3,15 @@ From: Daniele Pezzini <hyouko@gmail.com>
 Date: Mon, 10 Sep 2018 23:50:22 +0200
 Subject: [PATCH] solaris: fix handling of control transfers
 
-SunOS backend is 'completing' control transfers before a) libusb knows they're completed and b) libusb references the device to keep it alive for the completion, with the result that the device is unreferenced for the completion of the transfer before being referenced for it, and, if it's not already referenced in excess, it is destroyed, and the next call that tries to access that device... boom (segfault).
+SunOS backend is 'completing' control transfers before
+a) libusb knows they're completed and
+b) libusb references the device to keep it alive for the completion,
+
+with the result that the device is unreferenced for the completion of
+the transfer before being referenced for it, and, if it's not already
+referenced in excess, it is destroyed, and the next call that tries
+to access that device... boom (segfault).
+
 So, don't trigger the completion of the transfer, but only signal it.
 ---
  libusb/os/sunos_usb.c | 17 +++++++----------
