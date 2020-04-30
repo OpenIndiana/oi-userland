@@ -67,6 +67,7 @@ CFLAGS=			-g -DNDEBUG -DDEBUGVM=0
 CONFIGURE_SCRIPT= $(SOURCE_DIR)/platforms/unix/config/configure
 CONFIGURE_OPTIONS +=	--with-vmversion=5.0
 CONFIGURE_OPTIONS +=	--disable-dynamicopenssl
+CONFIGURE_OPTIONS +=	--without-libtls
 CONFIGURE_OPTIONS +=	--with-src=spurstack64src
 CONFIGURE_OPTIONS +=	--disable-cogit
 CONFIGURE_OPTIONS +=	--without-vm-display-fbdev
