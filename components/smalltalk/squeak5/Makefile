@@ -52,7 +52,7 @@ $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@cd $(SOURCE_DIR); $(GIT) checkout $(GIT_TAG); \
 	$(GIT) log -1 --format=%H > .downloaded
 
-# I don't understand the hack but I manually verify the download
+# to be checked what update-publish is supposed to do
 update-publish::
 
 download:: $(SOURCE_DIR)/.downloaded
