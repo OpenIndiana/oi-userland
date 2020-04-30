@@ -13,6 +13,8 @@ referenced in excess, it is destroyed, and the next call that tries
 to access that device... boom (segfault).
 
 So, don't trigger the completion of the transfer, but only signal it.
+
+Patch updated for libusb-1 v1.0.23
 ---
  libusb/os/sunos_usb.c | 17 +++++++----------
  1 file changed, 7 insertions(+), 10 deletions(-)
@@ -21,7 +23,7 @@ diff --git a/libusb/os/sunos_usb.c b/libusb/os/sunos_usb.c
 index 7150a3e..fc62897 100644
 --- a/libusb/os/sunos_usb.c
 +++ b/libusb/os/sunos_usb.c
-@@ -1354,17 +1354,14 @@ solaris_submit_ctrl_on_default(struct libusb_transfer *transfer)
+@@ -1370,23 +1370,14 @@ solaris_submit_ctrl_on_default(struct libusb_transfer *transfer)
  			wLength, READ, (int *)&transfer->status);
  	}
  
@@ -30,13 +32,19 @@ index 7150a3e..fc62897 100644
 -		LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer)->transferred = ret;
 -	}
 -	usbi_dbg("Done: ctrl data bytes %d", ret);
--
--	/* sync transfer handling */
--	ret = usbi_handle_transfer_completion(LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer),
--	    transfer->status);
 +	if (ret < 0)
 +		return (LIBUSB_ERROR_IO);
  
+-	/**
+-	 * Sync transfer handling.
+- 	 * We should release transfer lock here and later get it back
+-	 * as usbi_handle_transfer_completion() takes its own transfer lock.
+-	 */
+-	usbi_mutex_unlock(&LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer)->lock);
+-	ret = usbi_handle_transfer_completion(LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer),
+-	    transfer->status);
+-	usbi_mutex_lock(&LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer)->lock);
+-
 -	return (ret);
 +	usbi_dbg("Done: ctrl data bytes %d", ret);
 +	transfer->actual_length = ret;
@@ -46,6 +54,5 @@ index 7150a3e..fc62897 100644
  }
  
  int
--- 
+--
 2.18.0
-
