@@ -23,7 +23,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak4
 COMPONENT_VERSION=	4.16.7
-COMPONENT_SUMMARY=	The Squeak V4 Smalltalk System
+COMPONENT_SUMMARY=	The Squeak V4 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/squeak4
