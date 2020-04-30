@@ -61,8 +61,9 @@ download:: $(SOURCE_DIR)/.downloaded
 COMPONENT_PRE_CONFIGURE_ACTION = ( cp plugins.ext plugins.int $(BUILD_DIR_64); cd $(SOURCE_DIR); ./scripts/updateSCCSVersions  )
 
 # the default CFLAGS.gcc will be -m64 -O3 but this does not work for us
-# we have to compile opensmalltalk with -g and we must not -O2or higher
-CFLAGS=			-g -DNDEBUG -DDEBUGVM
+# opensmalltalk code is not compatible with the gcc optimizer -O2 or higher
+# also the -g (debug) flag is intentional, perhaps omit-frame-pointer issues
+CFLAGS=			-g -DNDEBUG -DDEBUGVM=0
 
 CONFIGURE_SCRIPT= $(SOURCE_DIR)/platforms/unix/config/configure
 CONFIGURE_OPTIONS +=	--with-vmversion=5.0
