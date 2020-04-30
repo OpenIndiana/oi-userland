@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak5
 COMPONENT_VERSION=	5.0.6
-COMPONENT_SUMMARY=	The Squeak V5 Smalltalk System
+COMPONENT_SUMMARY=	The Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak5
 COMPONENT_CLASSIFICATION=	Development/Other Languages
