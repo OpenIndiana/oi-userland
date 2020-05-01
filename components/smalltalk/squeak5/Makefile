@@ -19,43 +19,24 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak5
 COMPONENT_VERSION=	5.0.6
+GIT_TAG=		sun-v$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	The Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak5
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	squeak5.license
-COMPONENT_SRC=		opensmalltalk-vm
 
-GIT=			git
-GIT_REPO=		https://github.com/cstes/opensmalltalk-vm.git
-GIT_BRANCH=		sun
-GIT_TAG=		sun-v5.0.6
+COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:a08df5a0d4c048d3b04097dc9dce5e815e6c99021bd55acd26bd4250ccfed366
+COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
-
-# The ugly hack with update-publish target is necessary to update
-# source from git repository on each "gmake publish".
-publish: update-publish
-
-# the opensmalltalk README says to run scripts/updateSCCSVersions 
-# but I believe that we can't do this on unversioned git files
-# so we must build from git sources, I believe
-
-$(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
-	@[ -d $(SOURCE_DIR) ] || \
-	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
-	@cd $(SOURCE_DIR); $(GIT) checkout $(GIT_TAG); \
-	$(GIT) log -1 --format=%H > .downloaded
-
-# to be checked what update-publish is supposed to do
-update-publish::
-
-download:: $(SOURCE_DIR)/.downloaded
 
 # opensmalltalk configure script checks for plugins files in builddir
 COMPONENT_PRE_CONFIGURE_ACTION = ( cp plugins.ext plugins.int $(BUILD_DIR_64); cd $(SOURCE_DIR); ./scripts/updateSCCSVersions  )
