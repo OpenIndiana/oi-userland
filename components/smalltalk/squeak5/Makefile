@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		squeak5
 COMPONENT_VERSION=	5.0.6
 GIT_TAG=		sun-v$(COMPONENT_VERSION)
+PLUGIN_REV=		5.0-202005010835-sun
 COMPONENT_SUMMARY=	The Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak5
@@ -35,6 +36,8 @@ COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz
 TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
+
+PKG_OPTIONS += -D PLUGIN_REV="$(PLUGIN_REV)"
 
 PATH=$(PATH.gnu)
 
