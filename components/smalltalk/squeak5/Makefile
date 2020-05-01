@@ -23,7 +23,8 @@ COMPONENT_SUMMARY=	The Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak5
 COMPONENT_CLASSIFICATION=	Development/Other Languages
-COMPONENT_LICENSE=	LICENSE
+COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE_FILE=	squeak5.license
 COMPONENT_SRC=		opensmalltalk-vm
 
 GIT=			git
