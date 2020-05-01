@@ -39,7 +39,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH=$(PATH.gnu)
 
 # opensmalltalk configure script checks for plugins files in builddir
-COMPONENT_PRE_CONFIGURE_ACTION = ( cp plugins.ext plugins.int $(BUILD_DIR_64); cd $(SOURCE_DIR); ./scripts/updateSCCSVersions  )
+COMPONENT_PRE_CONFIGURE_ACTION = ( cp plugins.ext plugins.int $(BUILD_DIR_64); cd $(SOURCE_DIR) )
 
 # the default CFLAGS.gcc will be -m64 -O3 but this does not work for us
 # opensmalltalk code is not compatible with the gcc optimizer -O2 or higher
