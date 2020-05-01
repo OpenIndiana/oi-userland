@@ -42,7 +42,7 @@ PKG_OPTIONS += -D PLUGIN_REV="$(PLUGIN_REV)"
 PATH=$(PATH.gnu)
 
 # opensmalltalk configure script checks for plugins files in builddir
-COMPONENT_PRE_CONFIGURE_ACTION = ( cp plugins.ext plugins.int $(BUILD_DIR_64); cd $(SOURCE_DIR) )
+COMPONENT_PRE_CONFIGURE_ACTION = ( cp plugins.ext plugins.int $(BUILD_DIR_64) )
 
 # the default CFLAGS.gcc will be -m64 -O3 but this does not work for us
 # opensmalltalk code is not compatible with the gcc optimizer -O2 or higher
