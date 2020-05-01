@@ -29,7 +29,7 @@
 diff --git driver/lock.c driver/lock.c
 --- driver/lock.c
 +++ driver/lock.c
-@@ -918,6 +918,7 @@ new_passwd_window (saver_info *si)
+@@ -897,6 +897,7 @@
                 blurb(), pw->prompt_screen->number);
    }
  
@@ -37,7 +37,7 @@ diff --git driver/lock.c driver/lock.c
    /* Before mapping the window, save a pixmap of the current screen.
       When we lower the window, we restore these bits.  This works,
       because the running screenhack has already been sent SIGSTOP, so
-@@ -939,6 +940,7 @@ new_passwd_window (saver_info *si)
+@@ -918,6 +919,7 @@
  	       0, 0);
      XFreeGC (si->dpy, gc);
    }
@@ -45,15 +45,15 @@ diff --git driver/lock.c driver/lock.c
  
    si->pw_data = pw;
    return 0;
-@@ -3102,8 +3104,6 @@ unlock_p (saver_info *si)
+@@ -3109,8 +3111,6 @@
        return False;
      }
  
 -  raise_window (si, True, True, True);
 -
-   xss_authenticate(si, p->verbose_p);
- 
-   return (si->unlock_state == ul_success);
+   /* If your cat is sitting on the return key, don't thrash the window.
+      Only one failed/cancelled unlock per 2 seconds.
+    */
 diff --git driver/xscreensaver.c driver/xscreensaver.c
 --- driver/xscreensaver.c
 +++ driver/xscreensaver.c
