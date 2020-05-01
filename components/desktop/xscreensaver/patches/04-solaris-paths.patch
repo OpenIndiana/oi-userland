@@ -9,8 +9,6 @@ Various fixes to deal with where we install things on Solaris:
 
 - Find helper programs even though they are not in $PATH
 
-- Show author names when reading RSS feeds from sites like blogs.sun.com
-
 - Show Solaris package names in demo app when hacks are not installed
 
 - Use gnome-help to display man pages nicely, without requiring internet
@@ -247,39 +245,6 @@ index 9c31a9b..c04a331 100644
                                  <property name="use_underline">False</property>
                                  <property name="use_markup">False</property>
                                  <property name="justify">GTK_JUSTIFY_CENTER</property>
-diff --git a/driver/xscreensaver-text b/driver/xscreensaver-text
-index 8199829..921d5c7 100755
---- driver/xscreensaver-text
-+++ driver/xscreensaver-text
-@@ -569,12 +569,15 @@ sub reformat_rss($) {
-     $i++;
- 
-     my ($title, $body1, $body2, $body3);
-+    my $author;
-     
-     $title = $3 if (m@<((TITLE)       [^<>\s]*)[^<>]*>\s*(.*?)\s*</\1>@xsi);
-     $body1 = $3 if (m@<((DESCRIPTION) [^<>\s]*)[^<>]*>\s*(.*?)\s*</\1>@xsi);
-     $body2 = $3 if (m@<((CONTENT)     [^<>\s]*)[^<>]*>\s*(.*?)\s*</\1>@xsi);
-     $body3 = $3 if (m@<((SUMMARY)     [^<>\s]*)[^<>]*>\s*(.*?)\s*</\1>@xsi);
- 
-+    $author = $3 if (m@<((DC:CREATOR) [^<>\s]*)[^<>]*>\s*(.*?)\s*</\1>@xsi);
-+
-     # If there are both <description> and <content> or <content:encoded>,
-     # use whichever one contains more text.
-     #
-@@ -598,10 +601,11 @@ sub reformat_rss($) {
- 
-     $title = rss_field_to_html ($title || '');
-     $body1 = rss_field_to_html ($body1 || '');
-+    $author = rss_field_to_html ($author || '');
- 
-     $title = '' if ($body1 eq $title);  # Identical in Twitter's atom feed.
- 
--    $out .= reformat_html ("$title<P>$body1", $wiki_p ? 'wiki' : 'rss');
-+    $out .= reformat_html ("$title<BR>$author<P>$body1", $wiki_p ? 'wiki' : 'rss');
-     $out .= "\n";
-   }
- 
 --- driver/xscreensaver.man	2018-04-10 21:26:46.000000000 +0000
 +++ driver/xscreensaver.man	2018-06-04 08:22:25.429087341 +0000
 @@ -97,9 +97,8 @@ xscreensaver-command -restart

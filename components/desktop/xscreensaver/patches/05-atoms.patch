@@ -78,7 +78,7 @@ diff --git driver/Makefile.in driver/Makefile.in
  		  xscreensaver-text.man \
 --- /dev/null
 +++ driver/atoms.c
-@@ -0,0 +1,114 @@
+@@ -0,0 +1,115 @@
 +/* xscreensaver, Copyright (c) 1991-2010 Jamie Zawinski <jwz@jwz.org>
 + *
 + * Permission to use, copy, modify, distribute, and sell this software and its
@@ -111,7 +111,7 @@ diff --git driver/Makefile.in driver/Makefile.in
 +/* Atoms to send commands to remote daemon */
 +Atom XA_ACTIVATE, XA_BLANK, XA_CYCLE, XA_DEACTIVATE, XA_DEMO,
 +  XA_EXIT, XA_LOCK, XA_NEXT, XA_PREFS, XA_PREV, XA_RESTART,
-+  XA_SELECT, XA_THROTTLE, XA_UNTHROTTLE, XA_NET_WM_USER_TIME;
++  XA_SELECT, XA_SUSPEND, XA_THROTTLE, XA_UNTHROTTLE, XA_NET_WM_USER_TIME;
 +
 +static const struct atom_request remote_control_atom_list[] =
 +{
@@ -132,6 +132,7 @@ diff --git driver/Makefile.in driver/Makefile.in
 +    { &XA_PREV, "PREV" },
 +    { &XA_RESTART, "RESTART" },
 +    { &XA_SELECT, "SELECT" },
++    { &XA_SUSPEND, "SUSPEND" },
 +    { &XA_THROTTLE, "THROTTLE" },
 +    { &XA_UNTHROTTLE, "UNTHROTTLE" },
 +    { &XA_NET_WM_USER_TIME, "_NET_WM_USER_TIME" },
@@ -228,13 +229,13 @@ new file mode 100644
 +/* Atoms to send commands to remote daemon */
 +extern Atom XA_ACTIVATE, XA_BLANK, XA_CYCLE, XA_DEACTIVATE, XA_DEMO,
 +  XA_EXIT, XA_LOCK, XA_NEXT, XA_PREFS, XA_PREV, XA_RESTART,
-+  XA_SELECT, XA_THROTTLE, XA_UNTHROTTLE, XA_NET_WM_USER_TIME;
++  XA_SELECT, XA_SUSPEND, XA_THROTTLE, XA_UNTHROTTLE, XA_NET_WM_USER_TIME;
 +
 +#endif /* _XSCREENSAVER_ATOMS_H_ */
 diff --git driver/demo-Gtk.c driver/demo-Gtk.c
---- driver/demo-Gtk.c
-+++ driver/demo-Gtk.c
-@@ -118,6 +118,7 @@
+--- driver/demo-Gtk.c.~3~	2020-05-01 19:54:00.818785589 +0000
++++ driver/demo-Gtk.c	2020-05-01 19:55:06.937194585 +0000
+@@ -117,6 +117,7 @@
  #include "resources.h"		/* for parse_time() */
  #include "visual.h"		/* for has_writable_cells() */
  #include "remote.h"		/* for xscreensaver_command() */
@@ -242,20 +243,21 @@ diff --git driver/demo-Gtk.c driver/demo-Gtk.c
  #include "usleep.h"
  
  #include "logo-50.xpm"
-@@ -252,12 +253,6 @@ typedef struct {
+@@ -246,13 +247,6 @@
     a closure object of our own down into the various widget callbacks. */
  static state *global_state_kludge;
  
 -Atom XA_VROOT;
 -Atom XA_SCREENSAVER, XA_SCREENSAVER_RESPONSE, XA_SCREENSAVER_VERSION;
 -Atom XA_SCREENSAVER_ID, XA_SCREENSAVER_STATUS, XA_SELECT, XA_DEMO;
--Atom XA_ACTIVATE, XA_BLANK, XA_LOCK, XA_RESTART, XA_EXIT;
+-Atom XA_ACTIVATE, XA_SUSPEND, XA_BLANK, XA_LOCK, XA_RESTART, XA_EXIT;
+-Atom XA_NEXT, XA_PREV;
 -
 -
  static void populate_demo_window (state *, int list_elt);
  static void populate_prefs_page (state *);
  static void populate_popup_window (state *);
-@@ -5050,20 +5045,11 @@ main (int argc, char **argv)
+@@ -5069,22 +5063,11 @@
  
    /* Intern the atoms that xscreensaver_command() needs.
     */
@@ -268,22 +270,24 @@ diff --git driver/demo-Gtk.c driver/demo-Gtk.c
 -  XA_SELECT = XInternAtom (dpy, "SELECT", False);
 -  XA_DEMO = XInternAtom (dpy, "DEMO", False);
 -  XA_ACTIVATE = XInternAtom (dpy, "ACTIVATE", False);
+-  XA_SUSPEND = XInternAtom (dpy, "SUSPEND", False);
 -  XA_BLANK = XInternAtom (dpy, "BLANK", False);
 -  XA_LOCK = XInternAtom (dpy, "LOCK", False);
+-  XA_NEXT = XInternAtom (dpy, "NEXT", False);
+-  XA_PREV = XInternAtom (dpy, "PREV", False);
 -  XA_EXIT = XInternAtom (dpy, "EXIT", False);
 -  XA_RESTART = XInternAtom (dpy, "RESTART", False);
--
 +  {
 +    const struct atom_request *atom_lists[2] = { NULL, NULL };
 +    atom_lists[0] = remote_control_atoms;
 +    request_atoms (dpy, atom_lists);
 +  }
  
+ 
    /* Create the window and all its widgets.
-    */
 diff --git driver/demo-Xm.c driver/demo-Xm.c
---- driver/demo-Xm.c
-+++ driver/demo-Xm.c
+--- driver/demo-Xm.c.~1~	2019-06-04 01:52:44.000000000 +0000
++++ driver/demo-Xm.c	2020-05-01 19:53:00.167687999 +0000
 @@ -82,6 +82,7 @@
  #include "resources.h"		/* for parse_time() */
  #include "visual.h"		/* for has_writable_cells() */
@@ -292,20 +296,20 @@ diff --git driver/demo-Xm.c driver/demo-Xm.c
  #include "usleep.h"
  
  #include <stdio.h>
-@@ -110,12 +111,6 @@ extern const char *visual_menu[];
+@@ -110,12 +111,6 @@
  
  static char *short_version = 0;
  
 -Atom XA_VROOT;
 -Atom XA_SCREENSAVER, XA_SCREENSAVER_RESPONSE, XA_SCREENSAVER_VERSION;
 -Atom XA_SCREENSAVER_ID, XA_SCREENSAVER_STATUS, XA_SELECT, XA_DEMO;
--Atom XA_ACTIVATE, XA_BLANK, XA_LOCK, XA_RESTART, XA_EXIT;
+-Atom XA_ACTIVATE, XA_SUSPEND, XA_BLANK, XA_LOCK, XA_RESTART, XA_EXIT;
 -
 -
  static void populate_demo_window (Widget toplevel,
                                    int which, prefs_pair *pair);
  static void populate_prefs_page (Widget top, prefs_pair *pair);
-@@ -1791,19 +1786,11 @@ main (int argc, char **argv)
+@@ -1791,20 +1786,11 @@
  
    /* Intern the atoms that xscreensaver_command() needs.
     */
@@ -318,6 +322,7 @@ diff --git driver/demo-Xm.c driver/demo-Xm.c
 -  XA_SELECT = XInternAtom (dpy, "SELECT", False);
 -  XA_DEMO = XInternAtom (dpy, "DEMO", False);
 -  XA_ACTIVATE = XInternAtom (dpy, "ACTIVATE", False);
+-  XA_SUSPEND = XInternAtom (dpy, "SUSPEND", False);
 -  XA_BLANK = XInternAtom (dpy, "BLANK", False);
 -  XA_LOCK = XInternAtom (dpy, "LOCK", False);
 -  XA_EXIT = XInternAtom (dpy, "EXIT", False);
@@ -341,9 +346,9 @@ diff --git driver/demo-Xm.c driver/demo-Xm.c
  #undef ABS
  #define ABS(x)((x)<0?-(x):(x))
 diff --git driver/remote.c driver/remote.c
---- driver/remote.c
-+++ driver/remote.c
-@@ -34,15 +34,13 @@
+--- driver/remote.c.~1~	2020-05-01 19:59:02.063077824 +0000
++++ driver/remote.c	2020-05-01 20:00:35.059773302 +0000
+@@ -34,17 +34,13 @@
  #include <X11/Xos.h>
  
  #include "remote.h"
@@ -357,9 +362,11 @@ diff --git driver/remote.c driver/remote.c
 -extern Atom XA_SCREENSAVER, XA_SCREENSAVER_VERSION, XA_SCREENSAVER_RESPONSE;
 -extern Atom XA_SCREENSAVER_ID, XA_SCREENSAVER_STATUS, XA_EXIT;
 -extern Atom XA_VROOT, XA_SELECT, XA_DEMO, XA_BLANK, XA_LOCK;
- 
+-extern Atom XA_ACTIVATE, XA_SUSPEND, XA_NEXT, XA_PREV, XA_EXIT;
+-
  
  static XErrorHandler old_handler = 0;
+ static Bool got_badwindow = False;
 diff --git driver/windows.c driver/windows.c
 --- driver/windows.c
 +++ driver/windows.c
@@ -379,8 +386,8 @@ diff --git driver/windows.c driver/windows.c
  
  extern saver_info *global_si_kludge;	/* I hate C so much... */
  
---- driver/xscreensaver-command.c
-+++ driver/xscreensaver-command.c
+--- driver/xscreensaver-command.c.~1~	2019-06-04 01:01:59.000000000 +0000
++++ driver/xscreensaver-command.c	2020-05-01 20:18:20.899693388 +0000
 @@ -40,6 +40,7 @@
  typedef long PROP32;
  
@@ -389,21 +396,21 @@ diff --git driver/windows.c driver/windows.c
  #include "version.h"
  
  #ifdef _VROOT_H_
-@@ -48,13 +49,6 @@ ERROR! you must not include vroot.h in this file
+@@ -48,13 +49,6 @@
  
  char *progname;
  
 -Atom XA_VROOT;
 -Atom XA_SCREENSAVER, XA_SCREENSAVER_VERSION, XA_SCREENSAVER_RESPONSE;
 -Atom XA_SCREENSAVER_ID, XA_SCREENSAVER_STATUS, XA_SELECT, XA_DEMO, XA_EXIT;
--Atom XA_BLANK, XA_LOCK;
--static Atom XA_ACTIVATE, XA_DEACTIVATE, XA_CYCLE, XA_NEXT, XA_PREV;
+-Atom XA_BLANK, XA_LOCK, XA_ACTIVATE, XA_SUSPEND, XA_NEXT, XA_PREV;
+-static Atom XA_DEACTIVATE, XA_CYCLE;
 -static Atom XA_RESTART, XA_PREFS, XA_THROTTLE, XA_UNTHROTTLE;
 -
  static char *screensaver_version;
  # ifdef __GNUC__
    __extension__   /* don't warn about "string length is greater than the
-@@ -285,28 +279,11 @@ main (int argc, char **argv)
+@@ -298,29 +292,11 @@
        exit (1);
      }
  
@@ -415,6 +422,7 @@ diff --git driver/windows.c driver/windows.c
 -  XA_SCREENSAVER_RESPONSE = XInternAtom (dpy, "_SCREENSAVER_RESPONSE", False);
 -  XA_ACTIVATE = XInternAtom (dpy, "ACTIVATE", False);
 -  XA_DEACTIVATE = XInternAtom (dpy, "DEACTIVATE", False);
+-  XA_SUSPEND = XInternAtom (dpy, "SUSPEND", False);
 -  XA_RESTART = XInternAtom (dpy, "RESTART", False);
 -  XA_CYCLE = XInternAtom (dpy, "CYCLE", False);
 -  XA_NEXT = XInternAtom (dpy, "NEXT", False);
@@ -438,8 +446,8 @@ diff --git driver/windows.c driver/windows.c
    if (cmd == &XA_WATCH)
      {
 diff --git driver/xscreensaver.c driver/xscreensaver.c
---- driver/xscreensaver.c
-+++ driver/xscreensaver.c
+--- driver/xscreensaver.c.~1~	2020-03-19 23:38:00.000000000 +0000
++++ driver/xscreensaver.c	2020-05-01 19:36:16.064832824 +0000
 @@ -232,6 +232,7 @@
  #include "visual.h"
  #include "usleep.h"
@@ -453,7 +461,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  
  
 -static Atom XA_SCREENSAVER_RESPONSE;
--static Atom XA_ACTIVATE, XA_DEACTIVATE, XA_CYCLE, XA_NEXT, XA_PREV;
+-static Atom XA_ACTIVATE, XA_DEACTIVATE, XA_SUSPEND, XA_CYCLE, XA_NEXT, XA_PREV;
 -static Atom XA_RESTART, XA_SELECT;
 -static Atom XA_THROTTLE, XA_UNTHROTTLE;
 -Atom XA_DEMO, XA_PREFS, XA_EXIT, XA_LOCK, XA_BLANK;
@@ -461,7 +469,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  
  static XrmOptionDescRec options [] = {
  
-@@ -657,31 +652,20 @@
+@@ -673,32 +668,20 @@
  
    db = si->prefs.db;	/* resources.c needs this */
  
@@ -478,6 +486,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
 -  XA_NET_WM_USER_TIME = XInternAtom (si->dpy, "_NET_WM_USER_TIME", False);
 -  XA_ACTIVATE = XInternAtom (si->dpy, "ACTIVATE", False);
 -  XA_DEACTIVATE = XInternAtom (si->dpy, "DEACTIVATE", False);
+-  XA_SUSPEND = XInternAtom (si->dpy, "SUSPEND", False);
 -  XA_RESTART = XInternAtom (si->dpy, "RESTART", False);
 -  XA_CYCLE = XInternAtom (si->dpy, "CYCLE", False);
 -  XA_NEXT = XInternAtom (si->dpy, "NEXT", False);
