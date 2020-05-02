@@ -24,7 +24,7 @@ PLUGIN_REV=		5.0-202005010835-sun
 COMPONENT_SUMMARY=	The Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak5
-COMPONENT_CLASSIFICATION=	Development/Other Languages
+COMPONENT_CLASSIFICATION=	Development/Smalltalk
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	squeak5.license
 
