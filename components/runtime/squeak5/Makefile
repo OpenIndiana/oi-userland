@@ -24,7 +24,7 @@ PLUGIN_REV=		5.0-202005021055
 COMPONENT_SUMMARY=	The Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak5
-COMPONENT_CLASSIFICATION=	Development/Smalltalk
+COMPONENT_CLASSIFICATION=	Development/Other Languages
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
