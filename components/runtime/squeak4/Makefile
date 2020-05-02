@@ -31,7 +31,12 @@ COMPONENT_CLASSIFICATION=	Development/Smalltalk
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
 SVN_REV=		3775
 SVN_HASH=  sha256:1f40ae6a9ad05739c07d63f4e67bfd6afacbe76c4deb2802bba1be7332f373a7
-COMPONENT_LICENSE=      LICENSE
+
+# See http://wiki.squeak.org/squeak/933
+# See http://wiki.squeak.org/squeak/159
+COMPONENT_LICENSE=      MIT
+COMPONENT_LICENSE_FILE= squeak4.license
+
 
 TEST_TARGET= $(NO_TESTS)
 
