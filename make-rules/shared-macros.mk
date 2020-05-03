@@ -100,6 +100,14 @@ space := $(empty) $(empty)
 
 ROOT =			/
 
+# Distribution name and version
+# Note, this determines /etc/release file contents.
+# Some OI-specific software (like slim installer or openindiana-welcome) 
+# currently rely on format of first line in this file
+# to determine the distribution version
+# (it should look like OpenIndiana Hipster YYYY.MM).
+DISTRIBUTION_NAME = OpenIndiana Hipster
+DISTRIBUTION_VERSION = 2020.04
 # Native OS version
 OS_VERSION :=		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)

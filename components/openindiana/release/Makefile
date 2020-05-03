@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           release
 COMPONENT_VERSION=        0.$(PKG_SOLARIS_VERSION)	
-COMPONENT_REVISION=       9
+COMPONENT_REVISION=       10
 COMPONENT_SUMMARY=        OpenIndiana Release Files 
 COMPONENT_PROJECT_URL=    http://www.openindiana.org/
 COMPONENT_FMRI=           release
@@ -37,7 +37,10 @@ build:
 install:
 	[ -d $(PROTO_DIR) ] || mkdir -p $(PROTO_DIR)
 	mkdir -p $(PROTO_DIR)$(ETCDIR) && \
-	cat files/release | sed -e 's|\%\%DATE\%\%|$(RELEASE_DATE)|' > $(PROTO_DIR)$(ETCDIR)/release
+	cat files/release | \
+		sed -e 's|\%\%DATE\%\%|$(RELEASE_DATE)|' \
+		    -e 's|\%\%DISTRIBUTION_NAME\%\%|$(DISTRIBUTION_NAME)|' \
+		    -e 's|\%\%DISTRIBUTION_VERSION\%\%|$(DISTRIBUTION_VERSION)|' > $(PROTO_DIR)$(ETCDIR)/release
 
 clean:
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
