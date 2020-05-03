@@ -15,16 +15,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			salt
-COMPONENT_VERSION=		2018.3.2
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=		3000.2
 COMPONENT_SUMMARY=		Portable, distributed, remote execution and configuration management system
 COMPONENT_PROJECT_URL=		http://saltstack.com
 COMPONENT_FMRI=			system/management/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_SRC=          	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=		https://github.com/saltstack/salt/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:d86eeea2e5387f4a64bbf0a11d103bfc8aac1122e19d39cc0945d33efdc797bd
+COMPONENT_ARCHIVE_URL=		https://files.pythonhosted.org/packages/74/b7/c7f1ba7a787307c6013f07d506b062bfa2112a583ad58de5f37110e35895/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=		sha256:0e33429d094a6109dfed955c4b1c638baee9641eca2f7609bbc4adad21c620d9
 COMPONENT_LICENSE=		Apache License 2.0
 COMPONENT_LICENSE_FILE=		LICENSE
 
@@ -39,4 +38,6 @@ install:        $(INSTALL_NO_ARCH)
 test:           $(NO_TESTS)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += SUNWcs
