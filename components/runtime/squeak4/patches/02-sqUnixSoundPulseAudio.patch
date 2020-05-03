@@ -1,0 +1,15 @@
+--- squeak4-3775/platforms/unix/vm-sound-pulse/sqUnixSoundPulseAudio.c	Sun Apr 26 21:11:54 2020
++++ p0/squeak4-3775/platforms/unix/vm-sound-pulse/sqUnixSoundPulseAudio.c	Mon Apr 27 14:18:23 2020
+@@ -276,6 +276,12 @@
+ 
+ /* ================================== UTILS */
+ 
++#ifdef __sun
++/* MIN is not C stdlib - perhaps <sys/param.h> is defining it on Linux */
++static int MIN(int a,int b) { return (a<b)?a:b; }
++static int MAX(int a,int b) { return (a<b)?b:a; }
++#endif
++
+ /* RATE CONVERSION: from dsp code but not used (yet). Maybe not needed at all with AlSA */
+ /* RATE CONVERSION: fixed preset rates are used. TBD: choose nearest to requested */
+ /*
