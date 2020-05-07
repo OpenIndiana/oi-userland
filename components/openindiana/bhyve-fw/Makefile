@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		uefi-edk2
 COMPONENT_VERSION=	20180309
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		system/bhyve/firmware
 COMPONENT_CLASSIFICATION=System/Core
 COMPONENT_SUMMARY=	UEFI-EDK2(+CSM) firmware for bhyve
@@ -32,6 +33,8 @@ COMPONENT_LICENSE=	simplified-BSD
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+ENV = /usr/bin/env -i
 
 COMPONENT_BUILD_ENV =
 COMPONENT_BUILD_ENV += GCCVER=4.4.4
