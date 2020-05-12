@@ -12,11 +12,12 @@
 # Copyright 2016 Marcel Telka <marcel@telka.sk>
 #
 
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexchat
 COMPONENT_VERSION=	2.12.4
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	https://hexchat.github.io/
 COMPONENT_SUMMARY=	HexChat IRC client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,11 +29,12 @@ COMPONENT_ARCHIVE_URL=	https://dl.hexchat.net/hexchat/$(COMPONENT_ARCHIVE)
 # to download the source file.
 COMPONENT_FETCH_USER_AGENT= fetch
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
+
+PYTHON_VERSION=3.5
+PERL_VERSION=5.24
 
 # This is a workaround for hexchat-2.12.4 packaging bugs
 COMPONENT_PREP_ACTION =        ( cd $(@D) && autoreconf -vif )
@@ -41,15 +43,10 @@ CONFIGURE_ENV += OBJC=$(CC)
 CONFIGURE_ENV += PERL=$(PERL)
 CONFIGURE_ENV += INTLTOOL_PERL=$(PERL)
 
-CONFIGURE_OPTIONS += --enable-python=python2.7
+CONFIGURE_OPTIONS += --enable-python=$(PYTHON)
+CONFIGURE_OPTIONS += --enable-perl=$(PERL)
 # Avoid using luajit since static linking is broken
 CONFIGURE_OPTIONS += LUA="lua"
-
-build:          $(BUILD_32)
-
-install:        $(INSTALL_32)
-
-test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
@@ -63,5 +60,7 @@ REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus-glib
+# Bogus dependency due to libssp
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
