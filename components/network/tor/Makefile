@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tor
 COMPONENT_VERSION=	0.4.1.9
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.torproject.org
 COMPONENT_SUMMARY=	Anonymizing overlay network for TCP
 COMPONENT_FMRI=		network/tor
@@ -55,7 +56,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Tests require GNU diff
 REQUIRED_PACKAGES += text/gnu-diffutils
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
@@ -65,3 +66,5 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+# Bogus dependency due to libssp
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
