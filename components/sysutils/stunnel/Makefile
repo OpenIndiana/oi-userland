@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stunnel
 COMPONENT_VERSION=	4.56
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.stunnel.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -81,4 +81,6 @@ test:           $(NO_TESTS)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+# Bogus dependency due to libssp
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
