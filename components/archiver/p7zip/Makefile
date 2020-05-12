@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p7zip
 COMPONENT_VERSION=	16.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC_VERSION=	16.02
 COMPONENT_FMRI=	compress/p7zip
 COMPONENT_SUMMARY=	The p7zip compression and archiving utility
