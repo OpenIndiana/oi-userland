@@ -23,11 +23,12 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pixz
 COMPONENT_VERSION=	1.0.6
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://github.com/vasi/$(COMPONENT_NAME)/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -37,11 +38,7 @@ COMPONENT_ARCHIVE_URL=	\
     $(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pixz
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(CPP_LARGEFILES)
 
@@ -54,13 +51,6 @@ studio_MT =
 COMPONENT_PREP_ACTION = (cd $(SOURCE_DIR) && $(AUTORECONF) -if)
 
 ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 # Build dependencies added manually
 REQUIRED_PACKAGES += text/asciidoc
