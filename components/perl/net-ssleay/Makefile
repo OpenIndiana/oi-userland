@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Net-SSLeay
 COMPONENT_VERSION=	1.80
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://search.cpan.org/dist/Net-SSLeay/
@@ -56,4 +57,6 @@ test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+# Bogus dependency due to libssp
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
