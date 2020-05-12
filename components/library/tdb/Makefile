@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tdb
 COMPONENT_VERSION= 1.3.12
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Trivial Database Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -64,4 +65,6 @@ test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+# Bogus dependency due to libssp
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
