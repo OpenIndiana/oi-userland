@@ -32,7 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		perl
 COMPONENT_VERSION=	5.22.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Perl 5.22
 PERL_VERSION=		5.22
 COMPONENT_PROJECT_URL=	http://www.perl.org/
@@ -110,8 +110,12 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
+# Bogus dependency due to libssp
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+
