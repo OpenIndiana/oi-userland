@@ -32,6 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
 COMPONENT_VERSION=	2.34
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU collection of binary tools like ld, as
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -47,6 +48,9 @@ include $(WS_MAKE_RULES)/common.mk
 PATH=$(PATH.gnu)
 
 CONFIGURE_PREFIX =	/usr/gnu
+
+# Since gcc-9 the GNU triple is x86_64-pc-solaris2.11 instead of i386-pc-solaris2.11
+GNU_TRIPLET=$(shell $(CC) -dumpmachine)
 
 CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
