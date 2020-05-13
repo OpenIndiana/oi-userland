@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mrxvt
 COMPONENT_VERSION=	0.5.4
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_PROJECT_URL=	http://materm.sourceforge.net/wiki/pmwiki.php
 COMPONENT_SUMMARY=	Mrxvt - lightweight multi-tabbed terminal emulator
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
