@@ -17,7 +17,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=		xsel
 COMPONENT_VERSION=	1.2.0
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_PROJECT_URL=	http://www.vergenet.net/~conrad/software/xsel
 COMPONENT_SUMMARY=	A command-line program for getting and setting the contents of the X selection
 COMPONENT_FMRI=         x11/xsel
