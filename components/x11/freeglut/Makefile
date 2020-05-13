@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           freeglut
 COMPONENT_VERSION=        3.0.0
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=       2
 COMPONENT_FMRI=           x11/library/freeglut
 COMPONENT_SUMMARY= \
   freeglut - open-source alternative to the OpenGL Utility Toolkit (GLUT) library
