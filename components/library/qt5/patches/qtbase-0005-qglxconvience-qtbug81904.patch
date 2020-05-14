@@ -1,67 +1,35 @@
-diff --git a/qtbase/src/platformsupport/glxconvenience/qglxconvenience.cpp b/qtbase/src/platformsupport/glxconvenience/qglxconvenience.cpp
-index 4225beb..ba593fe 100644
+qglxconvenience: Avoid null pointer dereference
+glXGetVisualFromFBConfig according to documentation can return NULL [1].
+This may result in a crash when running Qt applications using ARGB windows
+with XLIB_SKIP_ARGB_VISUALS defined.
+
+Also guard QXlibScopedPointerDeleter against illegally calling XFree(nullptr).
+
+[1] https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glXGetVisualFromFBConfig.xml
+
+Task-number: QTBUG-58910
+a/qtbase/src/
+
+diff --git a/qtbase/src/platformsupport/glxconvenience/qglxconvenience.cpp b/src/platformsupport/glxconvenience/qglxconvenience.cpp
+index 8c26550c1e..74b7c63473 100644
 --- a/qtbase/src/platformsupport/glxconvenience/qglxconvenience.cpp
 +++ b/qtbase/src/platformsupport/glxconvenience/qglxconvenience.cpp
-@@ -183,7 +183,7 @@ GLXFBConfig qglx_findConfig(Display *display, int screen , QSurfaceFormat format
- {
-     QXcbSoftwareOpenGLEnforcer softwareOpenGLEnforcer;
+@@ -164,7 +164,8 @@ bool QXcbSoftwareOpenGLEnforcer::forceSoftwareOpenGL = false;
+ template <class T>
+ struct QXlibScopedPointerDeleter {
+     static inline void cleanup(T *pointer) {
+-        XFree(pointer);
++        if (pointer)
++            XFree(pointer);
+     }
+ };
  
--    GLXFBConfig config = 0;
-+    GLXFBConfig config = nullptr;
- 
-     do {
-         const QVector<int> spec = qglx_buildSpec(format, drawableBit);
-@@ -202,15 +202,34 @@ GLXFBConfig qglx_findConfig(Display *display, int screen , QSurfaceFormat format
-         const int requestedBlue = qMax(0, format.blueBufferSize());
-         const int requestedAlpha = qMax(0, format.alphaBufferSize());
- 
-+        GLXFBConfig compatibleCandidate = nullptr;
-         for (int i = 0; i < confcount; i++) {
+@@ -202,6 +203,8 @@ GLXFBConfig qglx_findConfig(Display *display, int screen , QSurfaceFormat format
              GLXFBConfig candidate = configs[i];
  
              QXlibPointer<XVisualInfo> visual(glXGetVisualFromFBConfig(display, candidate));
--
--            const int actualRed = qPopulationCount(visual->red_mask);
--            const int actualGreen = qPopulationCount(visual->green_mask);
--            const int actualBlue = qPopulationCount(visual->blue_mask);
--            const int actualAlpha = visual->depth - actualRed - actualGreen - actualBlue;
-+            if (!visual)
++            if (visual.isNull())
 +                continue;
-+            int actualRed;
-+            int actualGreen;
-+            int actualBlue;
-+            int actualAlpha;
-+            glXGetFBConfigAttrib(display, candidate, GLX_RED_SIZE, &actualRed);
-+            glXGetFBConfigAttrib(display, candidate, GLX_GREEN_SIZE, &actualGreen);
-+            glXGetFBConfigAttrib(display, candidate, GLX_BLUE_SIZE, &actualBlue);
-+            glXGetFBConfigAttrib(display, candidate, GLX_ALPHA_SIZE, &actualAlpha);
-+            // Sometimes the visuals don't have a depth that includes the alpha channel.
-+            actualAlpha = qMin(actualAlpha, visual->depth - actualRed - actualGreen - actualBlue);
-+
-+            if (requestedRed && actualRed < requestedRed)
-+                continue;
-+            if (requestedGreen && actualGreen < requestedGreen)
-+                continue;
-+            if (requestedBlue && actualBlue < requestedBlue)
-+                continue;
-+            if (requestedAlpha && actualAlpha < requestedAlpha)
-+                continue;
-+            if (!compatibleCandidate) // Only pick up the first compatible one offered by the server
-+                compatibleCandidate = candidate;
  
-             if (requestedRed && actualRed != requestedRed)
-                 continue;
-diff --git a/qtbase/src/plugins/platforms/xcb/qxcbconnection.cpp b/qtbase/src/plugins/platforms/xcb/qxcbconnection.cpp
-index 7bd233f..6c7fb09 100644
---- a/qtbase/src/plugins/platforms/xcb/qxcbconnection.cpp
-+++ b/qtbase/src/plugins/platforms/xcb/qxcbconnection.cpp
-@@ -614,7 +614,8 @@ QXcbConnection::QXcbConnection(QXcbNativeInterface *nativeInterface, bool canGra
-     for (xcb_extension_t **ext_it = extensions; *ext_it; ++ext_it)
-         xcb_prefetch_extension_data (m_connection, *ext_it);
- 
--    m_setup = xcb_get_setup(xcb_connection());
-+    xcb_connection_t * m_connection_tmp = xcb_connection();
-+    m_setup = xcb_get_setup(m_connection_tmp);
- 
-     initializeAllAtoms();
- 
+             const int actualRed = qPopulationCount(visual->red_mask);
+             const int actualGreen = qPopulationCount(visual->green_mask);
