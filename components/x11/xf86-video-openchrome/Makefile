@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-openchrome
 COMPONENT_VERSION= 0.6.0
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-openchrome
 COMPONENT_SUMMARY= xf86-video-openchrome - OpenChrome driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \
