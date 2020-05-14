@@ -44,6 +44,7 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/network/avahi
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcomposite
 REQUIRED_PACKAGES += x11/library/libxcursor
