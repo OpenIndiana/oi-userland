@@ -1,3 +1,10 @@
+XCB platform: Fix crash on X servers with BGR888 display
+If the native visual was BGR888, the XCB plugin would assert as soon as
+it needed to find the corresponding QImage format. Fix by adding the
+required mapping in qt_xcb_imageFormatForVisual().
+
+Task-number: QTBUG-62840
+
 diff --git a/src/plugins/platforms/xcb/qxcbimage.cpp b/src/plugins/platforms/xcb/qxcbimage.cpp
 index c0403d5..c419bd9 100644
 --- a/qtbase/src/plugins/platforms/xcb/qxcbimage.cpp
