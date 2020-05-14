@@ -20,7 +20,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-intel
 COMPONENT_VERSION= 2.99.917
-COMPONENT_REVISION= 9
+COMPONENT_REVISION= 10
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-intel
 COMPONENT_SUMMARY= xf86-video-intel - Intel integrated graphics chipset driver for the Xorg X server
 COMPONENT_GIT_DATE= 20171018
