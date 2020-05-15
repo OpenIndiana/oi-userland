@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fio
 COMPONENT_VERSION=	2.15
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Flexible I/O tester
 COMPONENT_FMRI=		system/test/fio
 COMPONENT_CLASSIFICATION=	Development/System
