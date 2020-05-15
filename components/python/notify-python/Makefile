@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		notify-python
 COMPONENT_VERSION=	0.1.1
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	http://www.galago-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -55,6 +55,8 @@ include $(WS_MAKE_RULES)/ips.mk
 CFLAGS += -I/usr/include/gtk-2.0
 CFLAGS += -I/usr/include/cairo
 CFLAGS += -I/usr/include/pango-1.0
+# Avoid duplicate _PyGObject_API symbol
+CFLAGS += -DNO_IMPORT_PYGOBJECT
 
 # There was reference to now unavailable http://trac.galago-project.org/ticket/121 
 # for the reason to remove the file
