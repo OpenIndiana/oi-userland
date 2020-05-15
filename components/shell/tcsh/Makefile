@@ -24,27 +24,25 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcsh
-COMPONENT_VERSION=	6.21.00
-IPS_COMPONENT_VERSION=	6.21.0
+COMPONENT_VERSION=	6.22.02
+IPS_COMPONENT_VERSION=	6.22.2
 COMPONENT_FMRI=		shell/tcsh
 COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_PROJECT_URL=	https://github.com/tcsh-org/tcsh
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:c438325448371f59b12a4c93bfd3f6982e6f79f8c5aef4bc83aac8f62766e972
+  sha256:ed287158ca1b00ba477e8ea57bac53609838ebcfd05fcb05ca95021b7ebe885b
 COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/tcsh/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	Copyright
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Default GCC opt -O3 fails on GCC 6 & 7: https://bugs.astron.com/view.php?id=80
 gcc_OPT = -O2
@@ -53,18 +51,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # Strip compilation lines from test output
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^.*$(CXX).*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "/^XXX_CC_XXX$$/d" '
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test: 		$(TEST_64)
+COMPONENT_TEST_TRANSFORMS = \
+	' -n "/^\s*[0-9]/p" ' 
 
 # configure needs gencat
 REQUIRED_PACKAGES += text/locale
