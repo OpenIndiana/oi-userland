@@ -15,7 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-gcc
 COMPONENT_VERSION=	4.4.4
-COMPONENT_REVISION=	7
+COMPONENT_REVISION=	8
 COMPONENT_SUMMARY=	GCC - 4.4.4 compilers patched for illumos
 COMPONENT_SRC=		illumos-gcc-0f5ed4c
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz

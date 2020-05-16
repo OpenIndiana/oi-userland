@@ -1,0 +1,40 @@
+
+Now that GNU binutils targets 64-bit by default, gcc needs to explicitly
+pass --32 to the assembler.
+
+diff -wpruN '--exclude=*.orig' a~/gcc/config/i386/sol2-10.h a/gcc/config/i386/sol2-10.h
+--- a~/gcc/config/i386/sol2-10.h	1970-01-01 00:00:00
++++ a/gcc/config/i386/sol2-10.h	1970-01-01 00:00:00
+@@ -26,7 +26,7 @@ along with GCC; see the file COPYING3.
+ #undef ASM_SPEC
+ #ifdef USE_GAS
+ #define ASM_SPEC "%{v:-V} %{Qy:} %{!Qn:-Qy} %{n} %{T} %{Ym,*} %{Yd,*} " \
+-		 "%{Wa,*:%*} %{m32:--32} %{m64:--64} -s %(asm_cpu)"
++		 "%{Wa,*:%*} %{!m64:--32} %{m64:--64} -s %(asm_cpu)"
+ #else
+ #define ASM_SPEC "%{v:-V} %{Qy:} %{!Qn:-Qy} %{n} %{T} %{Ym,*} %{Yd,*} " \
+ 		 "%{Wa,*:%*} %{m32:-xarch=generic} %{m64:-xarch=generic64} " \
+diff -wpruN '--exclude=*.orig' a~/gcc/configure a/gcc/configure
+--- a~/gcc/configure	1970-01-01 00:00:00
++++ a/gcc/configure	1970-01-01 00:00:00
+@@ -22108,7 +22108,7 @@ foo:	.long	25
+ 	leal	foo@NTPOFF(%ecx), %eax'
+ 	tls_first_major=2
+ 	tls_first_minor=14
+-	tls_as_opt=--fatal-warnings
++	tls_as_opt="-32 --fatal-warnings"
+ 	;;
+   x86_64-*-*)
+     conftest_s='
+diff -wpruN '--exclude=*.orig' a~/gcc/configure.ac a/gcc/configure.ac
+--- a~/gcc/configure.ac	1970-01-01 00:00:00
++++ a/gcc/configure.ac	1970-01-01 00:00:00
+@@ -2551,7 +2551,7 @@ foo:	.long	25
+ 	leal	foo@NTPOFF(%ecx), %eax'
+ 	tls_first_major=2
+ 	tls_first_minor=14
+-	tls_as_opt=--fatal-warnings
++	tls_as_opt="-32 --fatal-warnings"
+ 	;;
+   x86_64-*-*)
+     conftest_s='
