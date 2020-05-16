@@ -23,6 +23,7 @@ COMPONENT_VERSION=	3.1b
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
 IPS_COMPONENT_VERSION=	3.1.2
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		terminal/tmux
 COMPONENT_PROJECT_URL=	https://$(COMPONENT_NAME).github.io
 COMPONENT_SUMMARY=	tmux terminal multiplexer
@@ -41,6 +42,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS +=	-I/usr/include/ncurses
 
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
+
+CONFIGURE_OPTIONS +=	--enable-utempter
 CONFIGURE_OPTIONS +=	LIBS="-lncurses"
 
 # Auto-generated dependencies
@@ -48,3 +52,4 @@ REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libutempter

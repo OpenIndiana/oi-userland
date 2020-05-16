@@ -1,0 +1,21 @@
+--- tmux-3.1b/configure.ac.orig	2020-05-16 11:42:40.970691264 +0000
++++ tmux-3.1b/configure.ac	2020-05-16 11:43:38.239692530 +0000
+@@ -578,16 +578,8 @@
+ 	*solaris*)
+ 		AC_MSG_RESULT(sunos)
+ 		PLATFORM=sunos
+-		case `/usr/bin/nroff --version 2>&1` in
+-			*GNU*)
+-				# Solaris 11.4 and later use GNU groff.
+-				MANFORMAT=mdoc
+-				;;
+-			*)
+-				# Solaris 2.0 to 11.3 use AT&T nroff.
+-				MANFORMAT=man
+-				;;
+-		esac
++		# illumos should use GNU groff.
++		MANFORMAT=mdoc
+ 		;;
+ 	*hpux*)
+ 		AC_MSG_RESULT(hpux)
