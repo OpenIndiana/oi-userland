@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
 COMPONENT_VERSION=	4.4.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 IPS_COMPONENT_VERSION=	4.4.2.0.0
 COMPONENT_FMRI=		service/network/dhcp/isc-dhcp
 COMPONENT_SUMMARY=	ISC DHCP Server and Relay Agent
