@@ -22,12 +22,12 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		elinks
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_VERSION=	0.11.7
 COMPONENT_PROJECT_URL=	http://elinks.or.cz/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -37,9 +37,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/elinks
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS  +=		--enable-bittorrent
 CONFIGURE_OPTIONS  +=		--enable-html-highlight
@@ -47,13 +46,6 @@ CONFIGURE_OPTIONS  +=		--enable-256-colors
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
