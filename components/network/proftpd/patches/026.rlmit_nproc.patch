@@ -1,0 +1,22 @@
+#
+# There is no getrlimit() syscall on Oracle Solaris. It makes no
+# sense to attempt to run such test case on Oracle Solaris.
+# Patch has been sent to upstream:
+#	https://github.com/proftpd/proftpd/pull/716
+# The patch will die with future re-sync.
+#
+
+diff --git a/tests/api/rlimit.c b/tests/api/rlimit.c
+index c683081a8..936ad9a09 100644
+--- a/tests/api/rlimit.c
++++ b/tests/api/rlimit.c
+@@ -184,7 +184,9 @@ Suite *tests_get_rlimit_suite(void) {
+   tcase_add_test(testcase, rlimit_cpu_test);
+   tcase_add_test(testcase, rlimit_files_test);
+   tcase_add_test(testcase, rlimit_memory_test);
++#ifdef	RLIMIT_NPROC
+   tcase_add_test(testcase, rlimit_nproc_test);
++#endif	/* RLIMIT_NPROC */
+ 
+   suite_add_tcase(suite, testcase);
+   return suite;

@@ -1,0 +1,38 @@
+#
+# patch fixes CR 24747309 (passive mode should treat EACCES as EADDRINUSE)
+# fix has been sent to upstream master branch:
+#	https://github.com/proftpd/proftpd/pull/703
+#
+# It also contains a followup fix covered by CR 30455356.
+# The follow up fix has been offered to upstream as well:
+#	https://github.com/proftpd/proftpd/pull/853
+#
+
+diff --git a/src/inet.c b/src/inet.c
+index b01230d3e..f8b3ed0fb 100644
+--- a/src/inet.c
++++ b/src/inet.c
+@@ -433,7 +433,11 @@ static conn_t *init_conn(pool *p, int fd, const pr_netaddr_t *bind_addr,
+       }
+ 
+       if (res != -1 ||
++#ifdef	SOLARIS2
++          (hold_errno != EADDRINUSE && hold_errno != EACCES) ||
++#else	/* !SOLARIS2 */
+           hold_errno != EADDRINUSE ||
++#endif	/* SOLARIS2 */
+           (port != INPORT_ANY && !retry_bind)) {
+         break;
+       }
+@@ -601,7 +605,11 @@ conn_t *pr_inet_create_conn_portrange(pool *p, const pr_netaddr_t *bind_addr,
+       c = init_conn(p, -1, bind_addr, ports[i], FALSE, FALSE);
+ 
+       if (!c &&
++#ifdef	SOLARIS2
++          (inet_errno != EADDRINUSE && inet_errno != EACCES)) {
++#else	/* !SOLARIS2 */
+           inet_errno != EADDRINUSE) {
++#endif	/* SOLARIS2 */
+         pr_log_pri(PR_LOG_WARNING, "error initializing connection: %s",
+           strerror(inet_errno));
+         pr_session_disconnect(NULL, PR_SESS_DISCONNECT_BY_APPLICATION, NULL);
