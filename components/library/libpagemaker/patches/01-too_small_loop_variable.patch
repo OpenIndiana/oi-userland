@@ -1,0 +1,50 @@
+https://git.libreoffice.org/libpagemaker/+/01b940868cbafbf6791b651245c41474903be5ce%5E%21/
+
+--- libpagemaker-0.0.4/src/lib/PMDCollector.cpp.orig	2020-05-17 06:40:56.055929439 +0000
++++ libpagemaker-0.0.4/src/lib/PMDCollector.cpp	2020-05-17 06:42:04.549704650 +0000
+@@ -181,7 +181,7 @@
+   if (shape.shapeType() == SHAPE_TYPE_LINE || shape.shapeType() == SHAPE_TYPE_POLY || shape.shapeType() == SHAPE_TYPE_RECT)
+   {
+     librevenge::RVNGPropertyListVector vertices;
+-    for (unsigned i = 0; i < shape.numPoints(); ++i)
++    for (size_t i = 0; i < shape.numPoints(); ++i)
+     {
+       librevenge::RVNGPropertyList vertex;
+       vertex.insert("svg:x", shape.getPoint(i).m_x);
+@@ -651,12 +651,12 @@
+   InchPoint translateForLeftPage(centerToEdge_x * 2, centerToEdge_y);
+   InchPoint translateForRightPage(0, centerToEdge_y);
+ 
+-  for (unsigned i = 0; i < m_pages.size(); ++i)
++  for (size_t i = 0; i < m_pages.size(); ++i)
+   {
+     const bool leftPageExists = (i > 0);
+ 
+     const PMDPage &page = m_pages[i];
+-    for (unsigned j = 0; j < page.numShapes(); ++j)
++    for (size_t j = 0; j < page.numShapes(); ++j)
+     {
+       std::shared_ptr<const OutputShape> right = newOutputShape(page.getShape(j), translateForRightPage);
+       if (right->getBoundingBox().second.m_x >= 0)
+@@ -688,10 +688,10 @@
+   double centerToEdge_y = m_pageHeight.get().toInches() / 2;
+   InchPoint translateShapes(centerToEdge_x, centerToEdge_y);
+ 
+-  for (unsigned i = 0; i < m_pages.size(); ++i)
++  for (size_t i = 0; i < m_pages.size(); ++i)
+   {
+     const PMDPage &page = m_pages[i];
+-    for (unsigned j = 0; j < page.numShapes(); ++j)
++    for (size_t j = 0; j < page.numShapes(); ++j)
+     {
+       pageShapes[i].push_back(newOutputShape(page.getShape(j), translateShapes));
+     }
+@@ -713,7 +713,7 @@
+ 
+   PageShapesList_t shapesByPage;
+   fillOutputShapesByPage(shapesByPage);
+-  for (unsigned i = 0; i < m_pages.size(); ++i)
++  for (size_t i = 0; i < m_pages.size(); ++i)
+   {
+     PageShapes_t shapes = shapesByPage[i];
+     writePage(m_pages[i], painter, shapes);
