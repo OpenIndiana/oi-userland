@@ -12,12 +12,12 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
-
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libvisual-plugins
 COMPONENT_VERSION= 0.4.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Visualization plugins for the Libvisual library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -31,9 +31,8 @@ COMPONENT_LICENSE = GPLv2
 COMPONENT_FMRI = library/desktop/libvisual/plugins
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
@@ -44,12 +43,6 @@ CONFIGURE_OPTIONS += --disable-gforce
 CONFIGURE_OPTIONS += --disable-esd
 # Only 0.8 supported
 CONFIGURE_OPTIONS += --disable-gstreamer-plugin
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
