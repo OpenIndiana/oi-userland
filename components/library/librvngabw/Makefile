@@ -24,7 +24,7 @@ BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librvngabw
-COMPONENT_VERSION=	0.0.2
+COMPONENT_VERSION=	0.0.3
 COMPONENT_FMRI=     	library/c++/librvngabw
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/librvngabw/
@@ -32,7 +32,7 @@ COMPONENT_SUMMARY=      librvngabw - AbiWord generator for librevenge
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:e973ab7b67e6b2471c79fbaafb3befe31ab224221e29cbdd17a8cb3a31981a3b
+  sha256:c6fb7d0227327111cbb17fe0ab25fd8db04f7c063a9e6e03eef71d3ab7c8c1bc
 COMPONENT_ARCHIVE_URL=	\
   http://sourceforge.net/projects/librvngabw/files/librvngabw-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2, MPLv2
