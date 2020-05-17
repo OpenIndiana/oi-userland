@@ -12,26 +12,23 @@
 # Copyright 2016 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdns-recursor
-COMPONENT_VERSION=	4.0.8
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.3.0
 COMPONENT_PROJECT_URL=	https://www.powerdns.com/downloads.html
 COMPONENT_FMRI=		service/network/dns/powerdns-recursor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:9c6ff00f0e26044b0c81f1a8304743b4fc0f6699a356fce28cc8c2e6aaf16513
+	sha256:2bc130f287dfdb32e03d0b38a4ac24baf1117f96eca9b407611c847fa08a628f
 COMPONENT_ARCHIVE_URL=	http://downloads.powerdns.com/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	a DNS server
-COMPONENT_CLASSIFICATION="System/Services"
+COMPONENT_CLASSIFICATION=System/Services
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CXXFLAGS+=-g -pthread
 
@@ -46,20 +43,22 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc/powerdns
 CONFIGURE_OPTIONS += --without-luajit
 CONFIGURE_OPTIONS += --with-lua
 CONFIGURE_OPTIONS += --enable-reproducible
+CONFIGURE_OPTIONS += --enable-unit-tests
 
+COMPONENT_TEST_TRANSFORMS = $(CONFIGURE_TEST_TRANSFORMS)
 
-build:		$(BUILD_32)
+# Test dependencies
+REQUIRED_PACKAGES += system/library/boost
 
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/c++/protobuf
+REQUIRED_PACKAGES += library/security/libsodium
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/lua-53
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/boost
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/management/snmp/net-snmp
