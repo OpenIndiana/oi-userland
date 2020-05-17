@@ -78,35 +78,36 @@ MODRET set_solaris_priv(cmd_rec *cmd) {
   flags |= PRIV_USE_FILE_CHOWN;
 
   for (i = 1; i < cmd->argc; i++) {
+    char *cm = cmd->argv[i];
     char *cp = cmd->argv[i];
     cp++;
 
-    if (*cmd->argv[i] != '+' && *cmd->argv[i] != '-')
+    if (cm[0] != '+' && cm[0] != '-')
       CONF_ERROR(cmd, pstrcat(cmd->tmp_pool, ": bad option: '",
-        cmd->argv[i], "'", NULL));
+        cm, "'", NULL));
 
     if (strcasecmp(cp, "PRIV_USE_FILE_CHOWN") == 0) {
-      if (*cmd->argv[i] == '-')
+      if (cm[0] == '-')
         flags &= ~PRIV_USE_FILE_CHOWN;
 
     } else if (strcasecmp(cp, "PRIV_FILE_CHOWN_SELF") == 0) {
-      if (*cmd->argv[i] == '-')
+      if (cm[0] == '-')
         flags &= ~PRIV_USE_FILE_CHOWN_SELF;
 
     } else if (strcasecmp(cp, "PRIV_DAC_READ") == 0) {
-      if (*cmd->argv[i] == '+')
+      if (cm[0] == '+')
         flags |= PRIV_USE_DAC_READ;
 
     } else if (strcasecmp(cp, "PRIV_DAC_WRITE") == 0) {
-      if (*cmd->argv[i] == '+')
+      if (cm[0] == '+')
         flags |= PRIV_USE_DAC_WRITE;
 
     } else if (strcasecmp(cp, "PRIV_DAC_SEARCH") == 0) {
-      if (*cmd->argv[i] == '+')
+      if (cm[0] == '+')
         flags |= PRIV_USE_DAC_SEARCH;
 
     } else if (strcasecmp(cp, "PRIV_FILE_OWNER") == 0) {
-      if (*cmd->argv[i] == '+')
+      if (cm[0] == '+')
         flags |= PRIV_USE_FILE_OWNER;
 
     } else {
