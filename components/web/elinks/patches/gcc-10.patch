@@ -1,0 +1,22 @@
+--- elinks-0.11.7/src/protocol/bittorrent/common.h.orig	2020-05-17 15:47:00.421315009 +0000
++++ elinks-0.11.7/src/protocol/bittorrent/common.h	2020-05-17 15:47:09.278712796 +0000
+@@ -45,7 +45,7 @@
+ typedef sha1_digest_bin_T bittorrent_id_T;
+ 
+ /* Special peer ID used for determining whether an ID has been set. */
+-const bittorrent_id_T BITTORRENT_NULL_ID;
++extern const bittorrent_id_T BITTORRENT_NULL_ID;
+ 
+ #define bittorrent_id_is_empty(id) \
+ 	(!memcmp(id, BITTORRENT_NULL_ID, sizeof(bittorrent_id_T)))
+--- elinks-0.11.7/src/protocol/bittorrent/common.c.orig	2020-05-17 15:49:19.329010815 +0000
++++ elinks-0.11.7/src/protocol/bittorrent/common.c	2020-05-17 15:50:45.130958646 +0000
+@@ -21,6 +21,8 @@
+ #include "util/string.h"
+ #include "util/snprintf.h"
+ 
++const bittorrent_id_T BITTORRENT_NULL_ID;
++
+ /* Debug function which returns printable peer ID. */
+ unsigned char *
+ get_peer_id(bittorrent_id_T peer_id)
