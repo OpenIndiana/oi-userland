@@ -1,0 +1,11 @@
+--- VirtualBox-6.1.8/src/VBox/HostDrivers/Support/SUPDrvIOC.h.orig	2020-05-18 12:44:11.447670823 +0000
++++ VirtualBox-6.1.8/src/VBox/HostDrivers/Support/SUPDrvIOC.h	2020-05-18 12:57:23.537967671 +0000
+@@ -80,7 +80,7 @@
+ # define SUP_CTL_CODE_SIZE(Function, Size)      _IOWRN('V', (Function) | SUP_IOCTL_FLAG, sizeof(SUPREQHDR))
+ # define SUP_CTL_CODE_BIG(Function)             _IOWRN('V', (Function) | SUP_IOCTL_FLAG, sizeof(SUPREQHDR))
+ # define SUP_CTL_CODE_FAST(Function)            _IO(   'V', (Function) | SUP_IOCTL_FLAG)
+-# define SUP_CTL_CODE_NO_SIZE(uIOCtl)           (uIOCtl)
++# define SUP_CTL_CODE_NO_SIZE(uIOCtl)           (long unsigned int)(uIOCtl)
+ 
+ #elif defined(RT_OS_OS2)
+   /* No automatic buffering, size not encoded. */
