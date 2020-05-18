@@ -12,28 +12,28 @@
 # Copyright 2016 Carsten Grzemba cgrzemba@opencsw.org
 #
 
+BUILD_BITS=64
+BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	LibreCAD
-COMPONENT_VERSION =	2.1.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION =     2.2.0-rc1
+IPS_COMPONENT_VERSION = 2.2.0.1
 COMPONENT_PROJECT_URL =	https://github.com/LibreCAD
 COMPONENT_FMRI =	desktop/librecad
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-	sha256:74c4ede409b13d0365c65c0cd52dba04f1049530f6df706dc905443d5e60db06
+   sha256:2c937a9423ecf501902ef74c722ec413562e47c45125ac87257f02942d0676ea
 COMPONENT_ARCHIVE_URL=	https://github.com/LibreCAD/LibreCAD/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_SUMMARY=	LibreCAD is a 2D CAD drawing tool based on the community edition of QCAD.
 COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
 
-IPS_COMPONENT_VERSION = $(COMPONENT_VERSION)
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(GCC_ROOT)/bin:$(PATH.illumos)
+PATH.qt5 = /usr/lib/qt/5.8/bin/$(MACH64)
+PATH=$(GCC_BINDIR):$(PATH.qt5):$(PATH.illumos)
 
 COMPONENT_NAME_lc = $(shell echo $(COMPONENT_NAME) | tr '[A-Z]' '[a-z]')
 COMPONENT_INSTALL_ACTION = \
@@ -52,20 +52,17 @@ COMPONENT_INSTALL_ACTION = \
 	$(INSTALL) -Dpm 644 $(@D)/desktop/librecad.sharedmimeinfo $(PROTO_DIR)$(USRSHAREDIR)/mime/packages/librecad.xml ; \
 	$(INSTALL) -Dpm 644 $(@D)/desktop/librecad.1 $(PROTO_DIR)$(USRSHAREMANDIR)/man1/librecad.1 ; \
 	$(INSTALL) -Dpm 644 $(SOURCE_DIR)/ttf2lff.1 $(PROTO_DIR)$(USRSHAREMANDIR)/man1/ttf2lff.1 ; \
-	$(INSTALL) -Dpm 644  $(SOURCE_DIR)/LICENSE* $(SOURCE_DIR)/gpl-* $(SOURCE_DIR)/license* \
+	$(INSTALL) -Dpm 644  $(SOURCE_DIR)/licenses/* \
 	  $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME_lc)/doc
 
 COMPONENT_PRE_BUILD_ACTION = \
         (cd $(@D) && qmake $(COMPONENT_NAME_lc).pro 'CONFIG+=release')
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
+# Build dependencies
+REQUIRED_PACKAGES += system/library/boost
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/qt4
+REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
