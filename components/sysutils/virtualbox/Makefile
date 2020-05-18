@@ -12,13 +12,14 @@
 # Copyright 2017 Aurelien Larcher
 # Copyright 2020 Michal Nowak
 # Copyright 2019 Tim Mooney
+# Copyright 2020 Jim Klimov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      6.1.6
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      6.1.8
+#COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  http://www.virtualbox.org/
 COMPONENT_FMRI=         system/virtualbox
@@ -29,16 +30,16 @@ COMPONENT_DOWNLOAD_URL= \
 	http://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-	sha256:b031c30d770f28c5f884071ad933e8c1f83e65b93aaba03a4012077c1d90a54f
+	sha256:426888f83036b6b1f79c272d317a4e8ecf43781f6a266fd7209c03dca504eefc
 COMPONENT_LICENSE=      GPLv2
 
 COMPONENT_NAME_1=       VirtualBoxSDK
-COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-137129
+COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-137981
 COMPONENT_SRC_1=        $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).zip
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1= \
-	sha256:f1f718aa3cec3d23d43b589915dfdc05dd2fc9dd9f3bdd62f0145e768fa2bbea
+	sha256:db5c4b82054b8020ae9f4d19a9fda93a3881e77969a2e340f6dda1ec308f974a
 COMPONENT_LICENSE_1=      GPLv2
 
 UNPACK_ARGS_1=		-r $(COMPONENT_SRC_1)
@@ -135,6 +136,9 @@ VBOX_BUILD_PUBLISHER=OpenIndiana
 COMPONENT_PRE_CONFIGURE_ACTION= \
   ( cd $(@D); echo $(LOCAL_CONFIG) > LocalConfig.kmk; $(CP) -a $(SOURCE_DIR)/* $(@D) )
 
+# Note: VirtualBox does not use a fully featured autoconf-style script,
+# so we must define the full set of command line options here, not using
+# values set via our configure.mk. Same for .32/.64 values added below.
 CONFIGURE_OPTIONS = --with-gcc="$(CC)"
 CONFIGURE_OPTIONS+= --with-g++="$(CXX)"
 
@@ -152,9 +156,9 @@ CONFIGURE_OPTIONS+= --nofatal
 CONFIGURE_OPTIONS+= --enable-webservice
 CONFIGURE_OPTIONS+= --enable-vnc
 
-CONFIGURE_OPTIONS.32 += --only-additions
+CONFIGURE_OPTIONS.32 = --only-additions
 CONFIGURE_OPTIONS.32 += --target-arch=x86
-CONFIGURE_OPTIONS.64 += --enable-qt5
+CONFIGURE_OPTIONS.64 = --enable-qt5
 
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
@@ -194,10 +198,10 @@ $(INSTALL_ADDITIONS):	$(INSTALL_64)
 	done
 	for fl in $(VBOX_BINS); do \
 		cp $(VBOX_BINDIR)/$$fl $(PROTO_DIR)/usr/bin; \
-        done
+		done
 	for fl in $(VBOX_SBINS); do \
 		cp $(VBOX_BINDIR)/$$fl $(PROTO_DIR)/usr/sbin; \
-        done
+		done
 	cp $(VBOX_BINDIR)/1099.vboxclient $(PROTO_DIR)/usr/bin/VBoxClient-all
 	$(MKDIR) $(PROTO_DIR)/usr/lib/$(MACH64)
 	$(MKDIR) $(PROTO_DIR)/var/svc/manifest/application/virtualbox
@@ -242,7 +246,7 @@ REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG) 
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
