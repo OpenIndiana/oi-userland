@@ -27,14 +27,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		valgrind
-COMPONENT_VERSION=	3.15.0
+COMPONENT_VERSION=	3.16.0
 COMPONENT_FMRI=		developer/debug/valgrind
 COMPONENT_CLASSIFICATION=Development/System
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_SRC=		$(COMPONENT_NAME)
+#COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+#COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+#COMPONENT_ARCHIVE_HASH=	\
 	sha256:417c7a9da8f60dd05698b3a7bc6002e4ef996f14c13f0ff96679a16873e78ab1
-COMPONENT_ARCHIVE_URL=	ftp://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
+#COMPONENT_ARCHIVE_URL=	ftp://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
+# Testing 3.16.0rc1
+# git clone git://sourceware.org/git/valgrind.git
 COMPONENT_PROJECT_URL =	http://valgrind.org
 COMPONENT_SUMMARY=	Valgrind: instrumentation framework and tools to detect memory and threading problems
 COMPONENT_LICENSE=	GPLv2
@@ -72,6 +75,8 @@ COMPONENT_POST_CONFIGURE_ACTION += ( cp $(@D)/config.h $(SOURCE_DIR) )
 
 COMPONENT_POST_BUILD_ACTION += \
 	( cd $(@D)/docs && $(ENV) $(GMAKE) man-pages )
+
+unexport SHELLOPTS
 
 COMPONENT_TEST_TARGETS=	regtest
 

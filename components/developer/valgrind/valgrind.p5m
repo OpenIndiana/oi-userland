@@ -18,7 +18,7 @@ set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.source-url value=git://sourceware.org/git/valgrind.git
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
@@ -107,14 +107,17 @@ file path=usr/include/valgrind/vki/vki-arm-linux.h
 file path=usr/include/valgrind/vki/vki-arm64-linux.h
 file path=usr/include/valgrind/vki/vki-darwin.h
 file path=usr/include/valgrind/vki/vki-linux-drm.h
+file path=usr/include/valgrind/vki/vki-linux-io_uring.h
 file path=usr/include/valgrind/vki/vki-linux.h
 file path=usr/include/valgrind/vki/vki-mips32-linux.h
 file path=usr/include/valgrind/vki/vki-mips64-linux.h
+file path=usr/include/valgrind/vki/vki-nanomips-linux.h
 file path=usr/include/valgrind/vki/vki-posixtypes-amd64-linux.h
 file path=usr/include/valgrind/vki/vki-posixtypes-arm-linux.h
 file path=usr/include/valgrind/vki/vki-posixtypes-arm64-linux.h
 file path=usr/include/valgrind/vki/vki-posixtypes-mips32-linux.h
 file path=usr/include/valgrind/vki/vki-posixtypes-mips64-linux.h
+file path=usr/include/valgrind/vki/vki-posixtypes-nanomips-linux.h
 file path=usr/include/valgrind/vki/vki-posixtypes-ppc32-linux.h
 file path=usr/include/valgrind/vki/vki-posixtypes-ppc64-linux.h
 file path=usr/include/valgrind/vki/vki-posixtypes-s390x-linux.h
@@ -122,15 +125,18 @@ file path=usr/include/valgrind/vki/vki-posixtypes-x86-linux.h
 file path=usr/include/valgrind/vki/vki-ppc32-linux.h
 file path=usr/include/valgrind/vki/vki-ppc64-linux.h
 file path=usr/include/valgrind/vki/vki-s390x-linux.h
+file path=usr/include/valgrind/vki/vki-scnums-32bit-linux.h
 file path=usr/include/valgrind/vki/vki-scnums-amd64-linux.h
 file path=usr/include/valgrind/vki/vki-scnums-arm-linux.h
 file path=usr/include/valgrind/vki/vki-scnums-arm64-linux.h
 file path=usr/include/valgrind/vki/vki-scnums-darwin.h
 file path=usr/include/valgrind/vki/vki-scnums-mips32-linux.h
 file path=usr/include/valgrind/vki/vki-scnums-mips64-linux.h
+file path=usr/include/valgrind/vki/vki-scnums-nanomips-linux.h
 file path=usr/include/valgrind/vki/vki-scnums-ppc32-linux.h
 file path=usr/include/valgrind/vki/vki-scnums-ppc64-linux.h
 file path=usr/include/valgrind/vki/vki-scnums-s390x-linux.h
+file path=usr/include/valgrind/vki/vki-scnums-shared-linux.h
 file path=usr/include/valgrind/vki/vki-scnums-solaris.h
 file path=usr/include/valgrind/vki/vki-scnums-x86-linux.h
 file path=usr/include/valgrind/vki/vki-solaris-repcache.h
@@ -191,14 +197,15 @@ file path=usr/lib/$(MACH64)/valgrind/cachegrind-x86-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/callgrind-amd64-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/callgrind-x86-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/default.supp
+file path=usr/lib/$(MACH64)/valgrind/dh_view.css
+file path=usr/lib/$(MACH64)/valgrind/dh_view.html
+file path=usr/lib/$(MACH64)/valgrind/dh_view.js
 file path=usr/lib/$(MACH64)/valgrind/dhat-amd64-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/dhat-x86-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/drd-amd64-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/drd-x86-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/exp-bbv-amd64-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/exp-bbv-x86-solaris mode=0555
-file path=usr/lib/$(MACH64)/valgrind/exp-sgcheck-amd64-solaris mode=0555
-file path=usr/lib/$(MACH64)/valgrind/exp-sgcheck-x86-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/getoff-amd64-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/getoff-x86-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/helgrind-amd64-solaris mode=0555
@@ -209,6 +216,8 @@ file path=usr/lib/$(MACH64)/valgrind/lackey-amd64-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/lackey-x86-solaris mode=0555
 file path=usr/lib/$(MACH64)/valgrind/libcoregrind-amd64-solaris.a
 file path=usr/lib/$(MACH64)/valgrind/libcoregrind-x86-solaris.a
+file path=usr/lib/$(MACH64)/valgrind/libgcc-sup-amd64-solaris.a
+file path=usr/lib/$(MACH64)/valgrind/libgcc-sup-x86-solaris.a
 file path=usr/lib/$(MACH64)/valgrind/libreplacemalloc_toolpreload-amd64-solaris.a
 file path=usr/lib/$(MACH64)/valgrind/libreplacemalloc_toolpreload-x86-solaris.a
 file path=usr/lib/$(MACH64)/valgrind/libvex-amd64-solaris.a
@@ -295,8 +304,6 @@ file path=usr/lib/$(MACH64)/valgrind/vgpreload_dhat-amd64-solaris.so mode=0555
 file path=usr/lib/$(MACH64)/valgrind/vgpreload_dhat-x86-solaris.so mode=0555
 file path=usr/lib/$(MACH64)/valgrind/vgpreload_drd-amd64-solaris.so mode=0555
 file path=usr/lib/$(MACH64)/valgrind/vgpreload_drd-x86-solaris.so mode=0555
-file path=usr/lib/$(MACH64)/valgrind/vgpreload_exp-sgcheck-amd64-solaris.so mode=0555
-file path=usr/lib/$(MACH64)/valgrind/vgpreload_exp-sgcheck-x86-solaris.so mode=0555
 file path=usr/lib/$(MACH64)/valgrind/vgpreload_helgrind-amd64-solaris.so mode=0555
 file path=usr/lib/$(MACH64)/valgrind/vgpreload_helgrind-x86-solaris.so mode=0555
 file path=usr/lib/$(MACH64)/valgrind/vgpreload_massif-amd64-solaris.so mode=0555

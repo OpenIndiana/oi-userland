@@ -1,0 +1,1107 @@
+-- Running  tests in gdbserver_tests -----------------------------------
+hginfo:          valgrind   --tool=helgrind --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-hginfo -q  ./../helgrind/tests/hg01_all_ok  (progB: ./gdb --quiet -l 60 --nx ../helgrind/tests/hg01_all_ok)
+*** hginfo failed (stderrB) ***
+hgtls:           (skipping, prereq failed: test -e ../none/tests/tls && grep '^#define HAVE_TLS 1' ../config.h > /dev/null  && grep '^#define HAVE_DLINFO_RTLD_DI_TLS_MODID 1'  ../config.h > /dev/null)
+mcblocklistsearch: valgrind   --tool=memcheck --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mcblocklistsearch -q  ./../memcheck/tests/leak-tree  (progB: ./gdb --quiet -l 60 --nx 1>&2 ../memcheck/tests/leak-tree)
+mcbreak:         valgrind   --tool=memcheck --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mcbreak ./t  (progB: ./gdb --quiet -l 60 --nx ./t)
+mcclean_after_fork: valgrind   --tool=memcheck --vgdb=full --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mcclean_after_fork ./clean_after_fork  (progB: ./gdb --quiet -l 60 --nx ./clean_after_fork)
+mchelp:          valgrind   --tool=memcheck --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mchelp ./t  (progB: ./vgdb --wait=60 --vgdb-prefix=./vgdb-prefix-mchelp -c help -c help debug -c v.kill)
+mcinfcallRU:     valgrind   --tool=memcheck --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mcinfcallRU ./sleepers 1 0 2000000000 ------B- 1 (progB: ./gdb --quiet -l 60 --nx ./sleepers)
+mcinfcallWSRU:   valgrind   --tool=memcheck --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mcinfcallWSRU ./sleepers 100 100000000 1000000000 -S-S-SB- 1 (progB: ./gdb --quiet -l 60 --nx 1>&2 ./sleepers)
+mcinvokeRU:      valgrind   --tool=memcheck --vgdb=yes --vgdb-prefix=./vgdb-prefix-mcinvokeRU ./sleepers 1 0 1000000000 B-B-B-B- 1 (progB: ./invoker 10 --vgdb-prefix=./vgdb-prefix-mcinvokeRU --max-invoke-ms=0 --wait=60 -c v.wait 0)
+mcinvokeWS:      valgrind   --tool=memcheck --vgdb=yes --vgdb-prefix=./vgdb-prefix-mcinvokeWS ./sleepers 1 10000000 0 -S-S-S-S (progB: ./invoker 10 --vgdb-prefix=./vgdb-prefix-mcinvokeWS --wait=60 -c v.wait 0)
+*** mcinvokeWS failed (stdoutB) ***
+*** mcinvokeWS failed (stderrB) ***
+mcleak:          valgrind   --tool=memcheck --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mcleak -q --leak-check=yes --show-reachable=yes --leak-resolution=high ./../memcheck/tests/leak-delta  (progB: ./gdb --quiet -l 60 --nx ../memcheck/tests/leak-delta)
+mcmain_pic:      valgrind   --tool=memcheck --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mcmain_pic ./main_pic  (progB: ./gdb --quiet -l 60 --nx ./main_pic)
+mcsignopass:     valgrind   --tool=memcheck --vgdb=full --vex-iropt-register-updates=allregs-at-mem-access --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mcsignopass ./../none/tests/faultstatus  (progB: ./gdb --quiet -l 60 --nx ../none/tests/faultstatus)
+*** mcsignopass failed (stderr) ***
+*** mcsignopass failed (stdoutB) ***
+mcsigpass:       valgrind   --tool=memcheck --vgdb=full --vex-iropt-register-updates=allregs-at-mem-access --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mcsigpass ./../none/tests/faultstatus  (progB: ./gdb --quiet -l 60 --nx ../none/tests/faultstatus)
+*** mcsigpass failed (stderr) ***
+*** mcsigpass failed (stdoutB) ***
+mcvabits:        valgrind   --tool=memcheck --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mcvabits ./t  (progB: ./gdb --quiet -l 60 --nx ./t)
+mcwatchpoints:   valgrind   --tool=memcheck --vgdb=full --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mcwatchpoints ./watchpoints  (progB: ./gdb --quiet -l 60 --nx ./watchpoints)
+mssnapshot:      valgrind   --tool=massif --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-mssnapshot ./t  (progB: ./gdb --quiet -l 60 --nx ./t)
+nlcontrolc:      (skipping, prereq failed: test -e gdb -a -f vgdb.invoker && ! ../tests/arch_test arm64 && ! ../tests/os_test solaris)
+nlfork_chain:    valgrind   --tool=none --vgdb=yes --trace-children=yes --vgdb-prefix=./vgdb-prefix-nlfork_chain ./fork_chain
+nlgone_abrt:     valgrind   -q --tool=none --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-nlgone-abrt ./gone abort (progB: ./gdb --quiet -l 60 --nx ./gone)
+nlgone_exit:     valgrind   --tool=none --vgdb=yes --vgdb-stop-at=startup,exit --vgdb-prefix=./vgdb-prefix-nlgone-exit ./gone exit (progB: ./gdb --quiet -l 60 --nx ./gone)
+nlgone_return:   valgrind   --tool=none --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-nlgone-return ./gone return (progB: ./gdb --quiet -l 60 --nx ./gone)
+nlpasssigalrm:   valgrind   --tool=none --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-nlpasssigalrm ./passsigalrm  (progB: ./gdb --quiet -l 60 --nx ./passsigalrm)
+*** nlpasssigalrm failed (stderr) ***
+*** nlpasssigalrm failed (stdoutB) ***
+*** nlpasssigalrm failed (stderrB) ***
+nlself_invalidate: valgrind   --tool=none --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-nlself_invalidate ./self_invalidate  (progB: ./gdb --quiet -l 60 --nx ./self_invalidate)
+nlsigvgdb:       valgrind   --tool=none --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-nlsigvgdb ./sleepers 1 10000000 0 -S-S-S-S 1 (progB: ./gdb --quiet -l 60 --nx ./sleepers)
+nlvgdbsigqueue:  valgrind   --tool=none --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-nlvgdbsigqueue ./sleepers 1000000000 1000000000 1 BSBSBSBS 1 (progB: ./gdb --quiet -l 60 --nx ./sleepers)
+*** nlvgdbsigqueue failed (stderr) ***
+*** nlvgdbsigqueue failed (stdoutB) ***
+-- Running  tests in gdbserver_tests/solaris ---------------------------
+nlcontrolc:      valgrind   --tool=none --vgdb=yes --vgdb-error=0 --vgdb-prefix=./vgdb-prefix-solaris-nlcontrolc ./../sleepers 1000000000 5000 1000000000 BSBSBSBS 1 (progB: ./../gdb --quiet -l 60 --nx ../sleepers)
+*** nlcontrolc failed (stderr) ***
+*** nlcontrolc failed (stdoutB) ***
+-- Finished tests in gdbserver_tests/solaris ---------------------------
+-- Finished tests in gdbserver_tests -----------------------------------
+-- Running  tests in memcheck/tests ------------------------------------
+accounting:      valgrind   ./accounting
+addressable:     valgrind   ./addressable
+-- Running  tests in memcheck/tests/amd64 ------------------------------
+bt_everything:   valgrind   -q ./bt_everything
+bug132146:       valgrind   -q ./bug132146
+bug279698:       valgrind   -q ./bug279698
+fxsave-amd64:    valgrind   -q ./fxsave-amd64 x
+insn-bsfl:       valgrind   -q ./insn-bsfl
+insn-pcmpistri:  valgrind   -q ./insn-pcmpistri
+insn-pmovmskb:   valgrind   -q ./insn-pmovmskb
+insn_basic:      valgrind   -q ./../../../none/tests/amd64/insn_basic
+insn_fpu:        valgrind   -q ./../../../none/tests/amd64/insn_fpu
+insn_mmx:        valgrind   -q ./../../../none/tests/amd64/insn_mmx
+insn_sse:        valgrind   -q ./../../../none/tests/amd64/insn_sse
+insn_sse2:       valgrind   -q ./../../../none/tests/amd64/insn_sse2
+more_x87_fp:     valgrind   -q ./more_x87_fp
+sh-mem-vec128-plo-no: valgrind   --partial-loads-ok=no ./sh-mem-vec128 -q
+sh-mem-vec128-plo-yes: valgrind   --partial-loads-ok=yes ./sh-mem-vec128 -q
+sh-mem-vec256-plo-no: valgrind   --partial-loads-ok=no ./sh-mem-vec256 -q
+sh-mem-vec256-plo-yes: valgrind   --partial-loads-ok=yes ./sh-mem-vec256 -q
+shr_edx:         valgrind   -q ./shr_edx
+sse_memory:      valgrind   -q ./sse_memory all
+xor-undef-amd64: valgrind   -q ./xor-undef-amd64
+xsave-avx:       valgrind   -q ./xsave-avx x
+-- Finished tests in memcheck/tests/amd64 ------------------------------
+-- Running  tests in memcheck/tests/amd64-solaris ----------------------
+context_fpu:     valgrind   -q --track-origins=yes ./context_fpu
+*** context_fpu failed (stdout) ***
+*** context_fpu failed (stderr) ***
+context_gpr:     valgrind   -q --track-origins=yes ./context_gpr
+*** context_gpr failed (stdout) ***
+*** context_gpr failed (stderr) ***
+context_rflags:  valgrind   -q --track-origins=yes ./context_rflags
+*** context_rflags failed (stdout) ***
+context_rflags2: valgrind   -q --track-origins=yes ./context_rflags2
+*** context_rflags2 failed (stderr) ***
+context_sse:     valgrind   -q --track-origins=yes ./context_sse
+*** context_sse failed (stdout) ***
+*** context_sse failed (stderr) ***
+ldsoexec:        valgrind   -q /lib/64/ld.so.1 ./ldsoexec
+scalar:          valgrind   -q ./scalar
+-- Finished tests in memcheck/tests/amd64-solaris ----------------------
+atomic_incs:     valgrind   -q --track-origins=yes ./atomic_incs
+badaddrvalue:    valgrind   -q --error-markers=[[[,]]] ./badaddrvalue
+badfree-2trace:  valgrind   --num-callers=2 -q ./badfree
+badfree:         valgrind   -q ./badfree
+badfree3:        valgrind   -q --fullpath-after=memcheck/ --fullpath-after=coregrind/ ./badfree
+badjump:         valgrind   ./badjump
+*** badjump failed (stderr) ***
+badjump2:        valgrind   -q ./badjump2
+*** badjump2 failed (stderr) ***
+badloop:         valgrind   -q ./badloop
+badpoll:         valgrind   -q ./badpoll
+badrw:           valgrind   -q ./badrw
+big_blocks_freed_list: valgrind   --freelist-vol=1000000 --freelist-big-blocks=50000 ./big_blocks_freed_list
+big_debuginfo_symbol: valgrind   -q ./big_debuginfo_symbol
+*** big_debuginfo_symbol failed (stderr) ***
+brk2:            valgrind   ./brk2
+buflen_check:    valgrind   -q ./buflen_check
+bug155125:       valgrind   ./bug155125
+bug287260:       valgrind   ./bug287260
+bug340392:       valgrind   -q --expensive-definedness-checks=yes ./bug340392
+calloc-overflow: valgrind   -q ./calloc-overflow
+cdebug_zlib:     (skipping, prereq failed: test -e cdebug_zlib)
+cdebug_zlib_gnu: (skipping, prereq failed: test -e cdebug_zlib_gnu)
+client-msg-as-xml: valgrind   --xml=yes --xml-fd=2 --log-file=/dev/null ./client-msg
+client-msg:      valgrind   -q ./client-msg
+clientperm:      valgrind   -q ./clientperm
+clireq_nofill:   valgrind   -q --undef-value-errors=no --malloc-fill=0xaf --free-fill=0xdb ./clireq_nofill
+clo_redzone_128: valgrind   --leak-check=no -q --redzone-size=128 ./clo_redzone
+clo_redzone_default: valgrind   --leak-check=no -q ./clo_redzone
+cond_ld:         valgrind   -q --keep-stacktraces=alloc-then-free ./cond_ld_st loads
+cond_st:         valgrind   -q --keep-stacktraces=alloc-then-free ./cond_ld_st stores
+custom-overlap:  valgrind   --leak-check=summary -q ./custom-overlap
+custom_alloc:    valgrind   -q --keep-stacktraces=alloc-then-free ./custom_alloc
+deep-backtrace:  valgrind   -q --num-callers=500 ./deep-backtrace
+demangle:        valgrind   -q ./demangle
+*** demangle failed (stderr) ***
+descr_belowsp:   valgrind   -q ./descr_belowsp
+*** descr_belowsp failed (stderr) ***
+describe-block:  valgrind   ./describe-block
+doublefree:      valgrind   -q ./doublefree
+dw4:             valgrind   --read-var-info=yes -q ./dw4
+*** dw4 failed (stderr) ***
+err_disable1:    valgrind   -q ./err_disable1
+err_disable2:    valgrind   -q ./err_disable2
+err_disable3:    valgrind   -q ./err_disable3
+err_disable4:    valgrind   -q --num-callers=3 --valgrind-stacksize=131072 ./err_disable4
+err_disable_arange1: valgrind   -q --ignore-ranges=0x1000-0x1fff,0x0000-0x00ff ./err_disable_arange1
+erringfds:       valgrind   ./erringfds
+error_counts:    valgrind   --log-fd=-1 ./error_counts
+errs1:           valgrind   -q ./errs1
+execve1:         valgrind   -q ./execve1
+*** execve1 failed (stderr) ***
+execve2:         valgrind   -q --trace-children=yes ./execve2
+*** execve2 failed (stderr) ***
+exit_on_first_error: valgrind   --exit-on-first-error=yes --error-exitcode=3 ./badaddrvalue
+exit_on_first_error_with_xml: valgrind   --exit-on-first-error=yes --error-exitcode=3  --xml=yes --xml-fd=2 --log-file=/dev/null ./badaddrvalue
+exitprog:        valgrind   -q ./exitprog
+file_locking:    valgrind   -q --trace-children=yes ./file_locking
+fprw:            valgrind   -q --keep-stacktraces=alloc-then-free ./fprw
+fwrite:          valgrind   -q ./fwrite
+gone_abrt_xml:   valgrind   --xml=yes --xml-fd=2 --log-file=/dev/null ./../../gdbserver_tests/gone abort
+*** gone_abrt_xml failed (stderr) ***
+holey_buffer_too_small: valgrind   -q --track-origins=yes ./holey_buffer_too_small
+inits:           valgrind   -q ./inits
+inline:          valgrind   -q ./inline
+inlinfo:         valgrind   -q --read-inline-info=yes --gen-suppressions=all ./inlinfo
+inlinfosupp:     valgrind   -q --read-inline-info=yes --suppressions=inlinfosupp.supp ./inlinfo
+inlinfosuppobj:  valgrind   -q --read-inline-info=yes --suppressions=inlinfosuppobj.supp ./inlinfo
+inltemplate:     valgrind   -q --read-inline-info=yes ./inltemplate
+*** inltemplate failed (stderr) ***
+leak-0:          valgrind   -q ./leak-0
+leak-autofreepool-0: valgrind   --leak-check=full --show-possibly-lost=no --track-origins=yes ./leak-autofreepool 0
+leak-autofreepool-1: valgrind   --leak-check=full --show-possibly-lost=no --track-origins=yes ./leak-autofreepool 1
+leak-autofreepool-2: valgrind   --leak-check=full --show-possibly-lost=no --track-origins=yes ./leak-autofreepool 2
+leak-autofreepool-4: valgrind   --leak-check=full --show-possibly-lost=no --track-origins=yes ./leak-autofreepool 4
+leak-autofreepool-5: valgrind   --leak-check=full --show-possibly-lost=no --track-origins=yes ./leak-autofreepool 5
+leak-autofreepool-6: valgrind   --leak-check=full --show-possibly-lost=no --track-origins=yes ./leak-autofreepool 6
+leak-cases-full: valgrind   -q --leak-check=full --leak-resolution=high ./leak-cases
+leak-cases-possible: valgrind   -q --leak-check=full --leak-resolution=high --show-possibly-lost=no ./leak-cases
+leak-cases-summary: valgrind   -q --leak-check=summary --leak-resolution=high ./leak-cases
+leak-cycle:      valgrind   -q --leak-check=yes --leak-resolution=high ./leak-cycle
+leak-delta:      valgrind   -q --leak-check=yes --show-reachable=yes --leak-resolution=high ./leak-delta
+leak-pool-0:     valgrind   ./leak-pool 0
+leak-pool-1:     valgrind   ./leak-pool 1
+leak-pool-2:     valgrind   ./leak-pool 2
+leak-pool-3:     valgrind   ./leak-pool 3
+leak-pool-4:     valgrind   ./leak-pool 4
+leak-pool-5:     valgrind   ./leak-pool 5
+leak-segv-jmp:   valgrind   ./leak-segv-jmp
+leak-tree:       valgrind   -q --leak-check=full --leak-resolution=high ./leak-tree
+leak_cpp_interior: valgrind   --leak-check=summary --leak-check-heuristics=multipleinheritance,stdstring,newarray,length64 --suppressions=libstdc++.supp ./leak_cpp_interior
+*** leak_cpp_interior failed (stderr) ***
+lks:             valgrind   --leak-check=full --show-leak-kinds=definite,possible,indirect --errors-for-leak-kinds=definite,possible --suppressions=lks.supp ./leak-cases
+long-supps:      valgrind   --suppressions=long-supps.supp -q ./long-supps
+long_namespace_xml: valgrind   --xml=yes --xml-fd=2 --log-file=/dev/null ./long_namespace_xml
+*** long_namespace_xml failed (stdout) ***
+*** long_namespace_xml failed (stderr) ***
+mallinfo:        valgrind   ./mallinfo -q
+malloc1:         valgrind   -q ./malloc1
+malloc1_ks_alloc: valgrind   -q --keep-stacktraces=alloc ./malloc1
+malloc1_ks_alloc_and_free: valgrind   -q --keep-stacktraces=alloc-and-free ./malloc1
+malloc1_ks_free: valgrind   -q --keep-stacktraces=free ./malloc1
+malloc1_ks_none: valgrind   -q --keep-stacktraces=none ./malloc1
+malloc2:         valgrind   -q ./malloc2
+malloc3:         valgrind   -q ./malloc3
+malloc_free_fill: valgrind   -q --malloc-fill=0x55 --free-fill=0x77 ./malloc_free_fill
+malloc_usable:   valgrind   -q ./malloc_usable
+manuel1:         valgrind   -q --error-markers=[[[ ./manuel1
+manuel2:         valgrind   -q --error-markers=,]]] ./manuel2
+manuel3:         valgrind   -q --error-markers=, ./manuel3
+match-overrun:   valgrind   -q --suppressions=match-overrun.supp ./match-overrun
+memalign2:       valgrind   -q --freelist-vol=100000 --freelist-big-blocks=0 ./memalign2
+memalign_test:   valgrind   -q ./memalign_test
+memcmptest:      valgrind   -q ./memcmptest
+mempool:         valgrind   -q --leak-check=yes ./mempool
+mempool2:        valgrind   -q --leak-check=yes ./mempool2
+metadata:        valgrind   -q ./metadata
+mismatches:      valgrind   -q ./mismatches
+*** mismatches failed (stderr) ***
+mmaptest:        valgrind   -q ./mmaptest
+nanoleak2:       valgrind   --leak-check=yes --gen-suppressions=all --show-reachable=no -q ./nanoleak2
+nanoleak_dynsupp: valgrind   --leak-check=yes -q ./nanoleak_supp nanoleak.supp
+nanoleak_supp:   valgrind   --leak-check=yes --suppressions=nanoleak.supp -q ./nanoleak_supp
+new_nothrow:     valgrind   -q ./new_nothrow
+*** new_nothrow failed (stderr) ***
+new_override:    valgrind   --soname-synonyms=somalloc=nouseroverride ./new_override
+*** new_override failed (stdout) ***
+*** new_override failed (stderr) ***
+noisy_child:     valgrind   --child-silent-after-fork=yes ./noisy_child
+null_socket:     valgrind   -q ./null_socket
+origin1-yes:     valgrind   -q --track-origins=yes ./origin1-yes
+origin2-not-quite: valgrind   -q --track-origins=yes ./origin2-not-quite
+origin3-no:      valgrind   -q --track-origins=yes ./origin3-no
+origin4-many:    valgrind   -q --track-origins=yes ./origin4-many
+origin5-bz2:     valgrind   -q --track-origins=yes ./origin5-bz2 x
+origin6-fp:      valgrind   -q --track-origins=yes ./origin6-fp
+overlap:         valgrind   -q ./overlap
+partial_load_dflt: valgrind   --keep-stacktraces=alloc-then-free ./partial_load
+partial_load_ok: valgrind   --partial-loads-ok=yes --keep-stacktraces=alloc-then-free ./partial_load
+partiallydefinedeq: valgrind   ./partiallydefinedeq
+pdb-realloc:     valgrind   -q ./pdb-realloc
+pdb-realloc2:    valgrind   -q ./pdb-realloc2
+pipe:            valgrind   -q ./pipe
+pointer-trace:   valgrind   -q --leak-check=yes ./pointer-trace
+post-syscall:    valgrind   -q ./post-syscall
+*** post-syscall failed (stderr) ***
+reach_thread_register: valgrind   -q --leak-check=full --show-leak-kinds=definite ./reach_thread_register
+realloc1:        valgrind   -q ./realloc1
+realloc2:        valgrind   -q ./realloc2
+realloc3:        valgrind   -q ./realloc3
+recursive-merge: valgrind   -q --leak-check=full --merge-recursive-frames=1 ./recursive-merge a aa aaa aaaa abab abca abcda
+resvn_stack:     valgrind   -q ./resvn_stack
+sbfragment:      valgrind   ./sbfragment
+sem:             valgrind   ./../../none/tests/sem
+*** sem failed (stderr) ***
+sendmsg:         valgrind   -q ./sendmsg
+sh-mem-random:   valgrind   -q ./sh-mem-random
+sh-mem:          valgrind   -q ./sh-mem
+sigaltstack:     valgrind   -q ./sigaltstack
+*** sigaltstack failed (stderr) ***
+sigkill:         valgrind   ./sigkill
+signal2:         valgrind   -q ./signal2
+*** signal2 failed (stdout) ***
+sigprocmask:     valgrind   -q ./sigprocmask
+-- Running  tests in memcheck/tests/solaris ----------------------------
+brk:             valgrind   ./brk
+context_stack_die: valgrind   -q ./context_stack_die
+*** context_stack_die failed (stderr) ***
+door_data:       valgrind   -q --sim-hints=lax-doors ./door_data
+door_kill:       valgrind   -q ./door_kill
+*** door_kill failed (stdout) ***
+execx:           (skipping, prereq failed: test -e execx)
+gethrtime:       valgrind   -q ./gethrtime
+gethrusec:       (skipping, prereq failed: test -e gethrusec)
+getzoneoffset:   (skipping, prereq failed: test -e getzoneoffset)
+ioctl:           valgrind   -q ./ioctl
+ldynsym:         valgrind   -q --leak-check=yes ./ldynsym
+lsframe1:        valgrind   -q --main-stacksize=67200000 --max-stackframe=67200000 ./lsframe1
+lsframe2:        valgrind   -q --main-stacksize=68500000 ./lsframe2
+*** lsframe2 failed (stderr) ***
+mmapobj_bssonly: valgrind   -q ./mmapobj_bssonly
+name_service_door: (skipping, prereq failed: test -e /system/volatile/name_service_door -o -e /var/run/name_service_door)
+pkcs11:          valgrind   -q ./pkcs11
+scalar:          valgrind   -q --error-limit=no --sim-hints=lax-doors ./scalar
+scalar_auditon_stat: valgrind   -q ./scalar_auditon_stat
+scalar_frealpathat: (skipping, prereq failed: test -e scalar_frealpathat)
+scalar_getrandom: valgrind   -q ./scalar_getrandom
+*** scalar_getrandom failed (stderr) ***
+scalar_ioctl:    valgrind   -q --error-limit=no ./scalar_ioctl
+scalar_lwp_kill: valgrind   -q ./scalar_lwp_kill
+scalar_lwp_name: (skipping, prereq failed: test -e scalar_lwp_name)
+scalar_lwp_sigqueue: (skipping, prereq failed: test -e scalar_lwp_sigqueue)
+scalar_lwp_sigqueue_pid: (skipping, prereq failed: test -e scalar_lwp_sigqueue_pid)
+scalar_modctl_modnvl: (skipping, prereq failed: test -e scalar_modctl_modnvl)
+scalar_obsolete: valgrind   -q --error-limit=no ./scalar_obsolete
+scalar_shm_new:  (skipping, prereq failed: test -e scalar_shm_new)
+scalar_spawn:    (skipping, prereq failed: test -e scalar_spawn)
+scalar_system_stats: (skipping, prereq failed: test -e scalar_system_stats)
+scalar_tsol_clearance: (skipping, prereq failed: test -e scalar_tsol_clearance)
+scalar_utimensat: (skipping, prereq failed: test -e scalar_utimensat)
+scalar_utimesys: valgrind   -q ./scalar_utimesys
+scalar_uuidsys:  (skipping, prereq failed: test -e scalar_uuidsys)
+scalar_zone_defunct: (skipping, prereq failed: test -e scalar_zone_defunct)
+sendfilev:       valgrind   -q ./sendfilev
+shmat:           valgrind   -q ./shmat
+spawn:           (skipping, prereq failed: test -e spawn)
+strlcpy:         valgrind   -q ./strlcpy
+supponlyobj:     valgrind   -q --read-inline-info=no --suppressions=supponlyobj.supp ./inlinfo
+syscall_at:      valgrind   ./syscall_at
+thr_daemon_exit_libc: valgrind   -q ./thr_daemon_exit_libc
+thr_daemon_exit_standalone: valgrind   -q ./thr_daemon_exit_standalone
+-- Finished tests in memcheck/tests/solaris ----------------------------
+static_malloc:   valgrind   -q --leak-check=full --soname-synonyms=somalloc=NONE ./static_malloc
+stpncpy:         valgrind   -q ./stpncpy
+str_tester:      valgrind   -q ./str_tester
+strchr:          valgrind   -q ./strchr
+supp-dir:        valgrind   --suppressions=x86/ ./../../tests/true
+supp1:           valgrind   --suppressions=supp.supp -q ./supp1
+supp2:           valgrind   --suppressions=supp.supp -q ./supp2
+supp_unknown:    valgrind   -q --suppressions=supp_unknown.supp ./supp_unknown
+*** supp_unknown failed (stderr) ***
+suppfree:        valgrind   --suppressions=suppfree.supp -q ./suppfree
+suppfreecollision: valgrind   --suppressions=suppfreecollision.supp -q ./suppfree activatenondangerouserror
+supponlyobj:     (skipping, prereq failed: (! ../../tests/os_test solaris))
+suppsrc_lineno:  valgrind   --suppressions=suppsrc_lineno.supp -q ./suppfree
+suppsrc_sanlineno: valgrind   --suppressions=suppsrc_sanlineno.supp -q ./suppfree
+suppvarinfo5:    valgrind   -q --read-inline-info=no --suppressions=suppvarinfo5.supp ./varinfo5
+test-plo-no:     valgrind   -q --partial-loads-ok=no --keep-stacktraces=alloc-then-free ./test-plo
+test-plo-yes:    valgrind   -q --partial-loads-ok=yes  --keep-stacktraces=alloc-then-free ./test-plo
+thread_alloca:   valgrind   -q --trace-children=yes ./thread_alloca 30
+threadname:      valgrind   -q ./threadname
+*** threadname failed (stderr) ***
+threadname_xml:  valgrind   --xml=yes --xml-fd=2 --log-file=/dev/null ./threadname
+*** threadname_xml failed (stderr) ***
+trivialleak:     valgrind   --leak-check=yes -q --vex-iropt-register-updates=unwindregs-at-mem-access --px-default=unwindregs-at-mem-access --px-file-backed=unwindregs-at-mem-access ./trivialleak
+undef_malloc_args: valgrind   --leak-check=yes -q ./undef_malloc_args
+unit_libcbase:   valgrind   -q ./unit_libcbase
+unit_oset:       valgrind   -q ./unit_oset
+varinfo1:        valgrind   --read-var-info=yes -q ./varinfo1
+varinfo2:        valgrind   --read-var-info=yes -q ./varinfo2
+varinfo3:        valgrind   --read-var-info=yes -q ./varinfo3
+varinfo4:        valgrind   --read-var-info=yes -q ./varinfo4
+varinfo5:        valgrind   --fullpath-after=memcheck/  --fullpath-after=coregrind/ --read-var-info=yes --read-inline-info=yes -q ./varinfo5
+varinfo6:        valgrind   --read-var-info=yes -q ./varinfo6
+varinforestrict: valgrind   -q --read-var-info=yes ./varinforestrict
+-- Running  tests in memcheck/tests/vbit-test --------------------------
+vbit-test-sec:   valgrind   -q --expensive-definedness-checks=yes ./vbit-test-sec
+vbit-test:       valgrind   -q --expensive-definedness-checks=yes ./vbit-test
+-- Finished tests in memcheck/tests/vbit-test --------------------------
+vcpu_bz2:        valgrind   -q ./../../perf/bz2 x
+vcpu_fbench:     valgrind   -q ./vcpu_fbench
+vcpu_fnfns:      valgrind   -q ./vcpu_fnfns
+*** vcpu_fnfns failed (stdout) ***
+wcs:             valgrind   -q ./wcs
+wrap1:           valgrind   -q ./wrap1
+wrap2:           valgrind   -q ./wrap2
+wrap3:           valgrind   -q ./wrap3
+wrap4:           valgrind   -q ./wrap4
+wrap5:           valgrind   -q ./wrap5
+wrap6:           valgrind   -q ./wrap6
+wrap7:           valgrind   -q ./wrap7
+wrap8:           valgrind   -q ./wrap8
+wrapmalloc:      valgrind   -q ./wrapmalloc
+wrapmallocstatic: valgrind   -q ./wrapmallocstatic
+writev1:         valgrind   -q ./writev1
+-- Running  tests in memcheck/tests/x86 --------------------------------
+bug152022:       valgrind   -q ./bug152022
+espindola2:      valgrind   -q ./espindola2
+fpeflags:        valgrind   -q ./fpeflags
+fprem:           valgrind   -q ./fprem
+fxsave:          valgrind   -q ./fxsave x
+insn_basic:      valgrind   -q ./../../../none/tests/x86/insn_basic
+insn_cmov:       valgrind   -q ./../../../none/tests/x86/insn_cmov
+insn_fpu:        valgrind   -q ./../../../none/tests/x86/insn_fpu
+insn_mmx:        valgrind   -q ./../../../none/tests/x86/insn_mmx
+insn_mmxext:     valgrind   -q ./../../../none/tests/x86/insn_mmxext
+insn_sse:        valgrind   -q ./../../../none/tests/x86/insn_sse
+insn_sse2:       valgrind   -q ./../../../none/tests/x86/insn_sse2
+more_x86_fp:     valgrind   -q ./more_x86_fp
+pushfpopf:       valgrind   -q ./pushfpopf
+pushfw_x86:      valgrind   -q ./pushfw_x86
+pushpopmem:      valgrind   -q ./pushpopmem
+sh-mem-vec128-plo-no: valgrind   --partial-loads-ok=no ./sh-mem-vec128 -q
+sh-mem-vec128-plo-yes: valgrind   --partial-loads-ok=yes ./sh-mem-vec128 -q
+sse1_memory:     valgrind   -q ./sse_memory sse1
+sse2_memory:     valgrind   -q ./sse_memory sse2
+tronical:        valgrind   -q ./tronical
+xor-undef-x86:   valgrind   -q ./xor-undef-x86
+-- Finished tests in memcheck/tests/x86 --------------------------------
+-- Running  tests in memcheck/tests/x86-solaris ------------------------
+context_eflags:  valgrind   -q --track-origins=yes ./context_eflags
+context_eflags2: valgrind   -q --track-origins=yes ./context_eflags2
+context_fpu:     valgrind   -q --track-origins=yes ./context_fpu
+context_gpr:     valgrind   -q --track-origins=yes ./context_gpr
+context_sse:     valgrind   -q --track-origins=yes ./context_sse
+ldsoexec:        valgrind   -q /lib/ld.so.1 ./ldsoexec
+scalar:          valgrind   -q --error-limit=no ./scalar
+scalar_obsolete: valgrind   -q --error-limit=no ./scalar_obsolete
+-- Finished tests in memcheck/tests/x86-solaris ------------------------
+xml1:            valgrind   --xml=yes --xml-fd=2 --log-file=/dev/null --keep-stacktraces=alloc-then-free ./xml1
+-- Finished tests in memcheck/tests ------------------------------------
+-- Running  tests in cachegrind/tests ----------------------------------
+ann1:            valgrind   --cachegrind-out-file=cachegrind.out ./../../tests/true
+ann2:            valgrind   --cachegrind-out-file=cachegrind.out ./../../tests/true
+chdir:           valgrind   ./chdir
+clreq:           valgrind   -q ./clreq
+dlclose:         valgrind   ./dlclose
+notpower2:       valgrind   --I1=32768,8,64 --D1=24576,6,64 --LL=3145728,12,64 ./../../tests/true
+wrap5:           valgrind   ./../../memcheck/tests/wrap5
+-- Running  tests in cachegrind/tests/x86 ------------------------------
+fpu-28-108:      valgrind   ./fpu-28-108
+-- Finished tests in cachegrind/tests/x86 ------------------------------
+-- Finished tests in cachegrind/tests ----------------------------------
+-- Running  tests in callgrind/tests -----------------------------------
+ann1:            valgrind   --callgrind-out-file=callgrind.out ./../../tests/true
+ann2:            valgrind   --callgrind-out-file=callgrind.out ./../../tests/true
+clreq:           valgrind    ./clreq
+notpower2-hwpref: valgrind   --I1=32768,8,64 --D1=24576,6,64 --LL=3145728,12,64 --simulate-hwpref=yes ./../../tests/true
+notpower2-use:   valgrind   --I1=32768,8,64 --D1=24576,6,64 --LL=3145728,12,64 --cacheuse=yes ./../../tests/true
+notpower2-wb:    valgrind   --I1=32768,8,64 --D1=24576,6,64 --LL=3145728,12,64 --simulate-wb=yes ./../../tests/true
+notpower2:       valgrind   --I1=32768,8,64 --D1=24576,6,64 --LL=3145728,12,64 ./../../tests/true
+simwork-both:    valgrind   --cache-sim=yes --branch-sim=yes ./simwork
+simwork-branch:  valgrind   --branch-sim=yes ./simwork
+simwork-cache:   valgrind   --cache-sim=yes ./simwork
+simwork1:        valgrind   --simulate-hwpref=yes ./simwork
+simwork2:        valgrind   --simulate-wb=yes --simulate-hwpref=yes ./simwork
+simwork3:        valgrind   --cacheuse=yes ./simwork
+threads-use:     valgrind   --separate-threads=yes --cacheuse=yes --collect-bus=yes --collect-systime=yes ./threads
+threads:         valgrind   --separate-threads=yes --collect-bus=yes ./threads
+-- Finished tests in callgrind/tests -----------------------------------
+-- Running  tests in helgrind/tests ------------------------------------
+annotate_hbefore: valgrind   -q --fair-sched=try ./annotate_hbefore
+annotate_rwlock: valgrind   -q ./annotate_rwlock
+annotate_smart_pointer: (skipping, prereq failed: test -e ../../drd/tests/annotate_smart_pointer)
+bar_bad:         valgrind   -q --fair-sched=try ./bar_bad
+*** bar_bad failed (stderr) ***
+bar_trivial:     valgrind   -q ./bar_trivial
+*** bar_trivial failed (stderr) ***
+bug322621:       valgrind   -q ./bug322621
+*** bug322621 failed (stderr) ***
+cond_init_destroy: valgrind   ./cond_init_destroy
+cond_timedwait_invalid: valgrind   ./cond_timedwait_invalid
+cond_timedwait_test: valgrind   ./cond_timedwait_test
+free_is_write:   valgrind   --free-is-write=yes ./free_is_write
+*** free_is_write failed (stderr) ***
+hg01_all_ok:     valgrind   ./hg01_all_ok
+hg02_deadlock:   valgrind   ./hg02_deadlock
+hg03_inherit:    valgrind   --read-var-info=yes ./hg03_inherit
+hg04_race:       valgrind   --read-var-info=yes ./hg04_race
+hg05_race2:      valgrind   --read-var-info=yes ./hg05_race2
+hg06_readshared: valgrind   ./hg06_readshared
+locked_vs_unlocked1_fwd: valgrind   -q ./locked_vs_unlocked1
+locked_vs_unlocked1_rev: valgrind   -q ./locked_vs_unlocked1 x
+locked_vs_unlocked2: valgrind   -q ./locked_vs_unlocked2
+locked_vs_unlocked3: valgrind   -q ./locked_vs_unlocked3
+pth_barrier1:    valgrind   -q ./../../drd/tests/pth_barrier 2 1 1
+*** pth_barrier1 failed (stderr) ***
+pth_barrier2:    valgrind   -q --cmp-race-err-addrs=yes ./../../drd/tests/pth_barrier 2 32 1
+*** pth_barrier2 failed (stderr) ***
+pth_barrier3:    valgrind   -q ./../../drd/tests/pth_barrier 32 1 1
+*** pth_barrier3 failed (stderr) ***
+pth_cond_destroy_busy: valgrind   ./../../drd/tests/pth_cond_destroy_busy
+pth_destroy_cond: valgrind   -q ./pth_destroy_cond
+pth_spinlock:    (skipping, prereq failed: false)
+rwlock_race:     valgrind   --read-var-info=yes ./../../drd/tests/rwlock_race
+rwlock_test:     valgrind   ./../../drd/tests/rwlock_test
+shmem_abits:     valgrind   -q  ./shmem_abits
+stackteardown:   valgrind   ./stackteardown
+t2t_laog:        valgrind   ./t2t 30 10 4
+tc01_simple_race: valgrind   --read-var-info=yes ./tc01_simple_race
+tc02_simple_tls: valgrind   ./tc02_simple_tls
+tc03_re_excl:    valgrind   ./tc03_re_excl
+tc04_free_lock:  valgrind   ./tc04_free_lock
+tc05_simple_race: valgrind   --read-var-info=yes ./tc05_simple_race
+tc06_two_races:  valgrind   --read-var-info=yes ./tc06_two_races
+tc06_two_races_xml: valgrind   --read-var-info=yes --xml=yes --xml-fd=2 --log-file=/dev/null ./tc06_two_races
+tc07_hbl1:       valgrind   ./tc07_hbl1
+tc08_hbl2:       valgrind   ./tc08_hbl2
+tc09_bad_unlock: valgrind   --fair-sched=try ./tc09_bad_unlock
+tc10_rec_lock:   valgrind   ./tc10_rec_lock
+tc11_XCHG:       valgrind   ./tc11_XCHG
+tc12_rwl_trivial: valgrind   --sigill-diagnostics=no ./tc12_rwl_trivial
+tc13_laog1:      valgrind   ./tc13_laog1
+tc14_laog_dinphils: valgrind   ./tc14_laog_dinphils
+tc15_laog_lockdel: valgrind   ./tc15_laog_lockdel
+tc16_byterace:   valgrind   --read-var-info=yes ./tc16_byterace
+tc17_sembar:     valgrind   ./tc17_sembar
+tc18_semabuse:   valgrind   ./tc18_semabuse
+tc19_shadowmem:  valgrind   --cmp-race-err-addrs=yes --error-limit=no ./tc19_shadowmem
+tc20_verifywrap: valgrind   --read-var-info=yes --sigill-diagnostics=no ./tc20_verifywrap
+tc21_pthonce:    valgrind   --read-var-info=yes ./tc21_pthonce
+*** tc21_pthonce failed (stderr) ***
+tc22_exit_w_lock: valgrind   ./tc22_exit_w_lock
+*** tc22_exit_w_lock failed (stderr) ***
+tc23_bogus_condwait: valgrind   ./tc23_bogus_condwait
+tc24_nonzero_sem: valgrind   --hg-sanity-flags=111111 ./tc24_nonzero_sem
+tls_threads:     valgrind   -q --sim-hints=no-nptl-pthread-stackcache ./tls_threads
+-- Finished tests in helgrind/tests ------------------------------------
+-- Running  tests in drd/tests -----------------------------------------
+annotate_barrier: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no --num-callers=3 ./annotate_barrier 2 1 1
+annotate_barrier_xml: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no --num-callers=3 --xml=yes --xml-fd=2 ./annotate_barrier 2 1 1
+annotate_hb_err: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no ./annotate_hb_err
+annotate_hb_race: valgrind   --check-stack-var=yes --show-confl-seg=no ./annotate_hb_race
+annotate_hbefore: valgrind   --fair-sched=try --read-var-info=yes --check-stack-var=yes --show-confl-seg=no ./../../helgrind/tests/annotate_hbefore
+annotate_ignore_read: (skipping, prereq failed: test -e tsan_unittest && ./supported_libpthread)
+annotate_ignore_rw: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no ./annotate_ignore_rw
+annotate_ignore_rw2: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no ./annotate_ignore_rw -r
+annotate_ignore_write: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no ./annotate_ignore_write
+annotate_ignore_write2: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no ./annotate_ignore_write -r
+annotate_order_1: (skipping, prereq failed: test -e tsan_unittest && ./supported_libpthread)
+annotate_order_2: (skipping, prereq failed: test -e tsan_unittest && ./supported_libpthread)
+annotate_order_3: (skipping, prereq failed: test -e tsan_unittest && ./supported_libpthread)
+annotate_publish_hg: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no ./annotate_publish_hg
+annotate_rwlock: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no ./annotate_rwlock
+annotate_rwlock_hg: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no ./../../helgrind/tests/annotate_rwlock
+annotate_sem:    valgrind   --fair-sched=try --read-var-info=yes --check-stack-var=yes --show-confl-seg=no ./annotate_sem
+annotate_smart_pointer: (skipping, prereq failed: test -e annotate_smart_pointer && ./supported_libpthread)
+annotate_smart_pointer2: (skipping, prereq failed: test -e annotate_smart_pointer && ./supported_libpthread)
+annotate_spinlock: (skipping, prereq failed: test -e tsan_unittest && ./supported_libpthread)
+annotate_static: (skipping, prereq failed: test -e annotate_static && ./supported_libpthread)
+annotate_trace_memory: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no --num-callers=2 ./annotate_trace_memory
+annotate_trace_memory_xml: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no --num-callers=2 --xml=yes --xml-fd=2 ./annotate_trace_memory
+atomic_var:      valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no --num-callers=2 ./atomic_var
+bar_bad:         valgrind   --fair-sched=try ./../../helgrind/tests/bar_bad
+*** bar_bad failed (stderr) ***
+bar_bad_xml:     valgrind   --xml=yes --xml-fd=2 --fair-sched=try ./../../helgrind/tests/bar_bad
+*** bar_bad_xml failed (stderr) ***
+bar_trivial:     valgrind   ./../../helgrind/tests/bar_trivial
+boost_thread:    (skipping, prereq failed: test -e boost_thread)
+bug-235681:      valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no --num-callers=3 ./bug-235681 -q
+bug322621:       (skipping, prereq failed: test -e bug322621 && ./supported_libpthread)
+circular_buffer: valgrind   ./circular_buffer -q
+concurrent_close: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no --num-callers=3 ./concurrent_close
+*** concurrent_close failed (stderr) ***
+custom_alloc:    valgrind   ./custom_alloc
+custom_alloc_fiw: valgrind   --free-is-write=yes ./custom_alloc
+dlopen:          valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no ./dlopen_main ./dlopen_lib.so
+fork-parallel:   valgrind   --check-stack-var=yes --read-var-info=yes --show-confl-seg=no ./fork 1
+fork-serial:     valgrind   --check-stack-var=yes --read-var-info=yes --show-confl-seg=no ./fork
+fp_race:         valgrind   --read-var-info=yes ./fp_race
+fp_race2:        valgrind   ./fp_race -m
+fp_race_xml:     valgrind   --read-var-info=yes --xml=yes --xml-fd=2 --trace-fork-join=yes ./fp_race
+free_is_write:   valgrind   --read-var-info=yes --free-is-write=yes --show-confl-seg=no ./free_is_write -q
+free_is_write2:  valgrind   --read-var-info=yes --free-is-write=yes --check-stack-var=yes --show-confl-seg=no ./free_is_write -q
+hg01_all_ok:     valgrind   ./../../helgrind/tests/hg01_all_ok
+hg02_deadlock:   valgrind   ./../../helgrind/tests/hg02_deadlock
+hg03_inherit:    valgrind   --show-confl-seg=no --read-var-info=yes --num-callers=2 ./../../helgrind/tests/hg03_inherit
+hg04_race:       valgrind   --read-var-info=yes --num-callers=2 ./../../helgrind/tests/hg04_race
+hg05_race2:      valgrind   --read-var-info=yes --check-stack-var=yes --num-callers=2 ./../../helgrind/tests/hg05_race2
+hg06_readshared: valgrind   ./../../helgrind/tests/hg06_readshared
+hold_lock_1:     valgrind   --exclusive-threshold=500 --shared-threshold=2000 ./hold_lock -i 1000
+hold_lock_2:     valgrind   --exclusive-threshold=2000 --shared-threshold=500 ./hold_lock -i 1000
+linuxthreads_det: valgrind   --read-var-info=yes ./linuxthreads_det
+local_static:    (skipping, prereq failed: false && test -e local_static && ./supported_libpthread)
+matinv:          valgrind   ./matinv -t 15 -q 30
+memory_allocation: valgrind   ./memory_allocation
+monitor_example: valgrind   ./monitor_example
+*** monitor_example failed (stderr) ***
+new_delete:      valgrind   ./new_delete
+*** new_delete failed (stderr) ***
+omp_matinv:      valgrind   --check-stack-var=yes --read-var-info=yes ./omp_matinv -t 15 -q 30
+*** omp_matinv failed (stderr) ***
+omp_matinv_racy: valgrind   --check-stack-var=yes --read-var-info=yes ./omp_matinv -t 2 -q -r 3
+*** omp_matinv_racy failed (stderr) ***
+omp_prime_racy:  valgrind   --check-stack-var=yes --read-var-info=yes ./omp_prime -q 4
+omp_printf:      valgrind   --check-stack-var=yes --read-var-info=yes ./omp_printf -i 100 -q -t 10
+*** omp_printf failed (stderr) ***
+pth_barrier:     valgrind   ./pth_barrier 2 1 1
+pth_barrier2:    valgrind   ./pth_barrier 2 32 1
+pth_barrier3:    valgrind   ./pth_barrier 32 1 1
+pth_barrier_race: valgrind   --num-callers=3 ./pth_barrier_race
+pth_barrier_reinit: valgrind   ./pth_barrier_reinit
+pth_barrier_thr_cr: valgrind   --suppressions=pth_barrier_thr_cr.supp ./pth_barrier_thr_cr 50
+pth_broadcast:   valgrind   ./pth_broadcast
+pth_cancel_locked: valgrind   --read-var-info=yes --check-stack-var=yes ./pth_cancel_locked
+*** pth_cancel_locked failed (stderr) ***
+pth_cleanup_handler: valgrind   --read-var-info=yes --check-stack-var=yes ./pth_cleanup_handler
+pth_cond_destroy_busy: valgrind   ./pth_cond_destroy_busy
+pth_cond_race:   valgrind   --num-callers=3 ./pth_cond_race
+pth_cond_race2:  valgrind   ./pth_cond_race -m
+pth_cond_race3:  valgrind   --report-signal-unlocked=no ./pth_cond_race
+pth_create_chain: valgrind   ./pth_create_chain 100
+pth_create_glibc_2_0: (skipping, prereq failed: test -e pth_create_glibc_2_0 && ./supported_libpthread)
+pth_detached:    valgrind   ./pth_detached 1 1
+pth_detached2:   valgrind   --read-var-info=yes ./pth_detached 10 10
+pth_detached3:   valgrind   ./pth_detached3
+pth_detached_sem: valgrind   ./pth_detached_sem 10 10
+pth_inconsistent_cond_wait: valgrind   --num-callers=3 ./pth_inconsistent_cond_wait -q
+pth_mutex_reinit: valgrind   --read-var-info=yes --check-stack-var=yes ./pth_mutex_reinit
+pth_once:        (skipping, prereq failed: test -e tsan_unittest && ./supported_libpthread)
+pth_process_shared_mutex: valgrind   --read-var-info=yes --check-stack-var=yes ./pth_process_shared_mutex
+pth_spinlock:    valgrind   --read-var-info=yes --check-stack-var=yes ./pth_spinlock
+pth_uninitialized_cond: valgrind   --read-var-info=yes --check-stack-var=yes ./pth_uninitialized_cond
+read_and_free_race: valgrind   --free-is-write=yes --num-callers=3 --show-confl-seg=no ./../../helgrind/tests/free_is_write
+recursive_mutex: valgrind   --check-stack-var=yes --read-var-info=yes ./recursive_mutex
+rwlock_race:     valgrind   --show-confl-seg=no --read-var-info=yes --num-callers=2 ./rwlock_race
+rwlock_test:     valgrind   --check-stack-var=yes --read-var-info=yes --show-confl-seg=no ./rwlock_test
+rwlock_type_checking: valgrind   --read-var-info=yes --check-stack-var=yes --show-confl-seg=no ./rwlock_type_checking
+sem_as_mutex:    valgrind   --check-stack-var=yes --read-var-info=yes ./sem_as_mutex
+sem_as_mutex2:   valgrind   --check-stack-var=yes --read-var-info=yes ./sem_as_mutex -m
+sem_as_mutex3:   valgrind   --check-stack-var=yes --first-race-only=yes --read-var-info=yes ./sem_as_mutex
+sem_open:        valgrind   --check-stack-var=yes --read-var-info=yes ./sem_open
+sem_open2:       valgrind   --check-stack-var=yes --read-var-info=yes ./sem_open -m
+sem_open3:       valgrind   --check-stack-var=yes --first-race-only=yes --read-var-info=yes ./sem_open
+sem_open_traced: valgrind   --check-stack-var=yes --read-var-info=yes --trace-semaphore=yes ./sem_open -m
+sem_wait:        (skipping, prereq failed: ./supported_libpthread && [ -e sem_wait ])
+sigalrm:         valgrind   ./sigalrm
+*** sigalrm failed (stderr) ***
+sigaltstack:     valgrind   -q ./../../memcheck/tests/sigaltstack
+*** sigaltstack failed (stderr) ***
+std_atomic:      (skipping, prereq failed: test -e std_atomic && ./supported_libpthread)
+std_list:        (skipping, prereq failed: test -e std_list && ./supported_libpthread)
+std_mutex:       (skipping, prereq failed: test -e std_mutex && ./supported_libpthread)
+std_string:      (skipping, prereq failed: test -e std_string && ./supported_libpthread)
+std_thread:      (skipping, prereq failed: test -e std_thread && ./supported_libpthread)
+std_thread2:     (skipping, prereq failed: test -e std_thread2 && ./supported_libpthread)
+str_tester:      valgrind   ./../../memcheck/tests/str_tester
+tc01_simple_race: valgrind   --check-stack-var=yes --read-var-info=yes --show-confl-seg=no ./../../helgrind/tests/tc01_simple_race
+tc02_simple_tls: valgrind   ./../../helgrind/tests/tc02_simple_tls
+tc03_re_excl:    valgrind   ./../../helgrind/tests/tc03_re_excl
+tc04_free_lock:  valgrind   --check-stack-var=yes ./../../helgrind/tests/tc04_free_lock
+tc05_simple_race: valgrind   ./../../helgrind/tests/tc05_simple_race
+tc06_two_races:  valgrind   ./../../helgrind/tests/tc06_two_races
+tc07_hbl1:       valgrind   ./../../helgrind/tests/tc07_hbl1
+tc08_hbl2:       valgrind   ./../../helgrind/tests/tc08_hbl2
+tc09_bad_unlock: valgrind   --check-stack-var=yes --num-callers=3 ./../../helgrind/tests/tc09_bad_unlock
+tc10_rec_lock:   valgrind   ./../../helgrind/tests/tc10_rec_lock
+tc11_XCHG:       valgrind   ./../../helgrind/tests/tc11_XCHG
+tc12_rwl_trivial: valgrind   --sigill-diagnostics=no ./../../helgrind/tests/tc12_rwl_trivial
+tc13_laog1:      valgrind   ./../../helgrind/tests/tc13_laog1
+tc15_laog_lockdel: valgrind   ./../../helgrind/tests/tc15_laog_lockdel
+tc16_byterace:   valgrind   --check-stack-var=yes --read-var-info=yes --show-confl-seg=no ./../../helgrind/tests/tc16_byterace
+tc17_sembar:     valgrind   ./../../helgrind/tests/tc17_sembar
+tc18_semabuse:   valgrind   ./../../helgrind/tests/tc18_semabuse
+tc19_shadowmem:  valgrind   --error-limit=no --read-var-info=yes --show-confl-seg=no --num-callers=3 ./../../helgrind/tests/tc19_shadowmem
+tc21_pthonce:    valgrind   --num-callers=3 ./../../helgrind/tests/tc21_pthonce
+tc22_exit_w_lock: valgrind   --num-callers=3 -q ./../../helgrind/tests/tc22_exit_w_lock
+tc23_bogus_condwait: valgrind   --num-callers=3 ./../../helgrind/tests/tc23_bogus_condwait
+tc24_nonzero_sem: valgrind   --read-var-info=yes ./../../helgrind/tests/tc24_nonzero_sem
+thread_name:     valgrind   --read-var-info=yes --check-stack-var=yes --num-callers=3 ./thread_name
+thread_name_xml: valgrind   --read-var-info=yes --check-stack-var=yes --num-callers=3 --xml=yes --xml-fd=2 ./thread_name
+threaded-fork-vcs: valgrind   --verify-conflict-set=yes ./threaded-fork
+threaded-fork:   valgrind   ./threaded-fork
+tls_threads:     valgrind   -q ./../../helgrind/tests/tls_threads
+trylock:         valgrind   ./trylock
+unit_bitmap:     valgrind   -q --tool=memcheck --leak-check=full --show-reachable=yes ./unit_bitmap -s 93 -t 97 -q
+unit_vc:         valgrind   -q --tool=memcheck --leak-check=full --show-reachable=yes ./unit_vc
+-- Finished tests in drd/tests -----------------------------------------
+-- Running  tests in massif/tests --------------------------------------
+alloc-fns-A:     valgrind   --stacks=no --time-unit=B --heap-admin=0 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./alloc-fns
+alloc-fns-B:     valgrind   --stacks=no --time-unit=B --heap-admin=0 --alloc-fn=a4 --alloc-fn=b4 --alloc-fn=b3 --alloc-fn=c4 --alloc-fn=c3 --alloc-fn=c2 --alloc-fn=d4 --alloc-fn=d3 --alloc-fn=d2 --alloc-fn=d1 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./alloc-fns
+basic:           valgrind   --stacks=no --time-unit=B --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./basic
+basic2:          valgrind   --stacks=no --time-unit=B --massif-out-file=massif.out --detailed-freq=1 --max-snapshots=10 --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./basic
+big-alloc:       valgrind   --stacks=no --time-unit=B --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./big-alloc
+culling1:        valgrind   -v -v --stats=yes --stacks=no --time-unit=B --heap-admin=16 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./culling1
+culling2:        valgrind   -v -v --stats=yes --stacks=no --time-unit=B --heap-admin=16 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./culling2
+custom_alloc:    valgrind   --stacks=no --time-unit=B --heap-admin=16 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./custom_alloc
+deep-A:          valgrind   --stacks=no --time-unit=B --depth=8 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./deep
+deep-B:          valgrind   --stats=yes --stacks=no --time-unit=B --alloc-fn=a6 --alloc-fn=a7 --alloc-fn=a8 --alloc-fn=a9 --alloc-fn=a10 --alloc-fn=a11 --alloc-fn=a12 -v -v --depth=8 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./deep
+deep-C:          valgrind   --stacks=no --time-unit=B --alloc-fn=a3 --alloc-fn=a4 --alloc-fn=a5 --alloc-fn=a6 --alloc-fn=a7 --alloc-fn=a8 --alloc-fn=a9 --alloc-fn=a10 --alloc-fn=a11 --alloc-fn=a12 -v -v --stats=yes --depth=8 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./deep
+deep-D:          valgrind   --stacks=no --time-unit=B --alloc-fn=a1 --alloc-fn=a2 --alloc-fn=a3 --alloc-fn=a4 --alloc-fn=a5 --alloc-fn=a6 --alloc-fn=a7 --alloc-fn=a8 --alloc-fn=a9 --alloc-fn=a10 --alloc-fn=a11 --alloc-fn=a12 --alloc-fn=main --depth=20 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./deep
+*** deep-D failed (post) ***
+ignored:         valgrind   --stacks=no --time-unit=B --heap-admin=0 --massif-out-file=massif.out --ignore-fn=ignore1 --ignore-fn=ignore2 --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./ignored
+ignoring:        valgrind   --stacks=no --time-unit=B --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./ignoring
+inlinfomalloc:   valgrind   --stacks=no --heap-admin=0 --time-unit=B --threshold=0 --detailed-freq=6 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./inlinfomalloc
+insig:           valgrind   --stacks=no --time-unit=B --heap-admin=128 --massif-out-file=massif.out --threshold=0.99 --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./insig
+long-names:      valgrind   --stacks=no --time-unit=B --heap-admin=0 --massif-out-file=massif.out --detailed-freq=3 --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./long-names
+long-time:       valgrind   --stacks=no --time-unit=B --heap-admin=0 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./long-time
+malloc_usable:   valgrind   -q --massif-out-file=massif.out ./malloc_usable
+mmapunmap:       valgrind   --pages-as-heap=yes --threshold=30.0 -q --stacks=no --time-unit=B --depth=8 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./mmapunmap
+new-cpp:         valgrind   --stacks=no --time-unit=B --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element --ignore-fn=_GLOBAL__sub_I_eh_alloc.cc --ignore-fn=call_init.part.0 ./new-cpp
+*** new-cpp failed (stderr) ***
+Cannot open massif.out for reading
+*** new-cpp failed (post) ***
+rm: cannot remove 'massif.out': No such file or directory
+(cleanup operation failed: rm massif.out)
+no-stack-no-heap: valgrind   --stacks=no --heap=no --time-unit=B --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./basic
+null:            valgrind   --stacks=no --time-unit=B --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./null
+one:             valgrind   --stacks=no --time-unit=B --heap-admin=0 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./one
+overloaded-new:  valgrind   --stacks=no --time-unit=B --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element --ignore-fn=_GLOBAL__sub_I_eh_alloc.cc --ignore-fn=call_init.part.0 ./overloaded-new
+*** overloaded-new failed (stderr) ***
+Cannot open massif.out for reading
+*** overloaded-new failed (post) ***
+rm: cannot remove 'massif.out': No such file or directory
+(cleanup operation failed: rm massif.out)
+pages_as_heap:   valgrind   --stacks=no --time-unit=B --heap-admin=0 --pages-as-heap=yes --massif-out-file=massif.out --detailed-freq=3 --ignore-fn=mmap ./pages_as_heap
+peak:            valgrind   --stacks=no --time-unit=B --peak-inaccuracy=0 --heap-admin=128 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./peak
+peak2:           valgrind   --stacks=no --time-unit=B -v -v --stats=yes --peak-inaccuracy=10.0 --heap-admin=128 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./peak
+realloc:         valgrind   -v -v --stats=yes --stacks=no --heap-admin=0 --time-unit=B --threshold=0 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./realloc
+thresholds_0_0:  valgrind   --stacks=no --time-unit=B --heap-admin=0 --threshold=0 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./thresholds
+thresholds_0_10: valgrind   --stacks=no --time-unit=B --heap-admin=0 --threshold=0 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./thresholds
+thresholds_10_0: valgrind   --stacks=no --time-unit=B --heap-admin=0 --threshold=10 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./thresholds
+thresholds_10_10: valgrind   --stacks=no --time-unit=B --heap-admin=0 --threshold=10 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./thresholds
+thresholds_5_0:  valgrind   --stacks=no --time-unit=B --heap-admin=0 --threshold=5 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./thresholds
+thresholds_5_10: valgrind   --stacks=no --time-unit=B --heap-admin=0 --threshold=5 --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./thresholds
+zero1:           valgrind   --stacks=no --heap-admin=0 --time-unit=B --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./zero
+zero2:           valgrind   --stacks=no --heap-admin=0 --time-unit=B --massif-out-file=massif.out --ignore-fn=__part_load_locale --ignore-fn=__time_load_locale --ignore-fn=dwarf2_unwind_dyld_add_image_hook --ignore-fn=get_or_create_key_element ./zero
+-- Finished tests in massif/tests --------------------------------------
+-- Running  tests in dhat/tests ----------------------------------------
+acc:             valgrind   --dhat-out-file=dhat.out ./acc
+basic:           valgrind   --dhat-out-file=dhat.out ./basic
+big:             valgrind   --dhat-out-file=dhat.out ./big
+empty:           valgrind   --dhat-out-file=dhat.out ./empty
+sig:             valgrind   --dhat-out-file=dhat.out ./sig
+single:          valgrind   --dhat-out-file=dhat.out ./single
+-- Finished tests in dhat/tests ----------------------------------------
+-- Running  tests in lackey/tests --------------------------------------
+true:            valgrind   ./../../tests/true
+-- Finished tests in lackey/tests --------------------------------------
+-- Running  tests in none/tests ----------------------------------------
+allexec32:       valgrind   --trace-children=yes ./allexec32 exec
+allexec64:       valgrind   --trace-children=yes ./allexec64 exec
+-- Running  tests in none/tests/amd64 ----------------------------------
+aes:             valgrind   -q ./aes
+amd64locked:     valgrind   ./amd64locked
+asorep:          valgrind   ./asorep
+avx-1:           valgrind   -q ./avx-1
+avx2-1:          valgrind   -q ./avx2-1
+avx_estimate_insn: valgrind   -q ./avx_estimate_insn
+bmi:             valgrind   -q ./bmi
+bt_flags:        valgrind   ./bt_flags
+bug127521-64:    valgrind   ./bug127521-64
+bug132813-amd64: valgrind   ./bug132813-amd64
+bug132918:       valgrind   ./bug132918
+bug137714-amd64: valgrind   -q ./bug137714-amd64
+bug156404-amd64: valgrind   ./bug156404-amd64
+cet_nops:        valgrind   -q ./cet_nops
+clc:             valgrind   ./clc
+cmpxchg:         valgrind   ./cmpxchg
+crc32:           valgrind   -q ./crc32
+f16c:            valgrind   -q ./f16c
+fb_test_amd64:   valgrind   ./fb_test_amd64
+fcmovnu:         valgrind   ./fcmovnu
+fma:             valgrind   -q ./fma
+fma4:            valgrind   -q ./fma4
+fxtract:         valgrind   ./fxtract
+*** fxtract failed (stdout) ***
+getseg:          valgrind   -q ./getseg
+insn_basic:      valgrind   -q ./../../../none/tests/amd64/insn_basic
+insn_fpu:        valgrind   -q ./../../../none/tests/amd64/insn_fpu
+insn_mmx:        valgrind   -q ./../../../none/tests/amd64/insn_mmx
+insn_pclmulqdq:  valgrind   -q ./../../../none/tests/amd64/insn_pclmulqdq
+insn_sse:        valgrind   -q ./../../../none/tests/amd64/insn_sse
+insn_sse2:       valgrind   -q ./../../../none/tests/amd64/insn_sse2
+insn_sse3:       valgrind   -q ./../../../none/tests/amd64/insn_sse3
+insn_ssse3:      valgrind   -q ./../../../none/tests/amd64/insn_ssse3
+jrcxz:           valgrind   ./jrcxz
+looper:          valgrind   ./looper
+loopnel:         valgrind   ./loopnel
+lzcnt64:         (skipping, prereq failed: ../../../tests/x86_amd64_features amd64-lzcnt)
+movbe:           valgrind   -q ./movbe
+mpx:             (skipping, prereq failed: test -x mpx)
+nan80and64:      valgrind   ./nan80and64
+nibz_bennee_mmap: valgrind   ./nibz_bennee_mmap
+pcmpstr64:       valgrind   -q ./pcmpstr64
+pcmpstr64w:      valgrind   -q ./pcmpstr64w
+pcmpxstrx64:     valgrind   -q ./pcmpxstrx64
+pcmpxstrx64w:    valgrind   -q ./pcmpxstrx64w
+rcl-amd64:       valgrind   -q ./rcl-amd64
+rdrand:          valgrind   -q ./rdrand
+redundantRexW:   valgrind   ./redundantRexW
+sbbmisc:         valgrind   ./sbbmisc
+shrld:           valgrind   ./shrld
+slahf-amd64:     valgrind   -q ./slahf-amd64
+smc1:            valgrind   --smc-check=all ./smc1
+sse4-64:         valgrind   -q ./sse4-64
+ssse3_misaligned: valgrind   -q ./ssse3_misaligned
+*** ssse3_misaligned failed (stderr) ***
+tm1:             valgrind   ./tm1
+x87trigOOR:      valgrind   ./x87trigOOR
+xacq_xrel:       valgrind   ./xacq_xrel
+xadd:            valgrind   -q ./xadd
+-- Finished tests in none/tests/amd64 ----------------------------------
+-- Running  tests in none/tests/amd64-solaris --------------------------
+cet_nops_fs:     valgrind   -q ./cet_nops_fs
+coredump_single_thread: valgrind   -q ./coredump_single_thread
+*** coredump_single_thread failed (post) ***
+coredump_single_thread_sse: valgrind   -q ./coredump_single_thread_sse
+*** coredump_single_thread_sse failed (post) ***
+syscall_return_args: valgrind   -q ./syscall_return_args
+-- Finished tests in none/tests/amd64-solaris --------------------------
+ansi:            valgrind   ./ansi
+args:            valgrind   ./args a b "1 2 3"
+async-sigs:      valgrind   -q ./async-sigs
+*** async-sigs failed (stderr) ***
+bigcode:         valgrind   --num-transtab-sectors=2 --sanity-level=4 ./../../perf/bigcode 1
+bitfield1:       valgrind   ./bitfield1
+bug129866:       valgrind   ./bug129866
+bug234814:       valgrind   ./bug234814
+*** bug234814 failed (stdout) ***
+*** bug234814 failed (stderr) ***
+closeall:        valgrind   ./closeall
+cmd-with-special: valgrind   -q ./'a \<>b'
+cmdline0:        valgrind   --version
+cmdline1:        valgrind   --help --tool=none
+cmdline2:        valgrind   --help-debug --tool=none
+cmdline3:        valgrind
+cmdline4:        valgrind   --bad-bad-option ./../../tests/true
+cmdline5:        valgrind   ./no-such-program-my-friend
+cmdline6:        valgrind   ./cmdline6.vgtest
+coolo_sigaction: (skipping, prereq failed: (! ../../tests/os_test solaris))
+coolo_strlen:    valgrind   ./coolo_strlen
+discard:         valgrind   ./discard
+empty-exe:       valgrind    ./empty-exe
+exec-sigmask:    valgrind   ./exec-sigmask
+execve:          valgrind   ./execve
+faultstatus:     valgrind   ./faultstatus
+*** faultstatus failed (stderr) ***
+fcntl_setown:    valgrind   ./fcntl_setown
+fdleak_cmsg:     valgrind   --track-fds=yes ./fdleak_cmsg < /dev/null
+fdleak_creat:    valgrind   --track-fds=yes ./fdleak_creat < /dev/null
+fdleak_dup:      valgrind   --track-fds=yes ./fdleak_dup < /dev/null
+fdleak_dup2:     valgrind   --track-fds=yes ./fdleak_dup2 < /dev/null
+fdleak_fcntl:    valgrind   --track-fds=yes ./fdleak_fcntl < /dev/null
+fdleak_ipv4:     valgrind   --track-fds=yes ./fdleak_ipv4 < /dev/null
+fdleak_open:     valgrind   --track-fds=yes ./fdleak_open < /dev/null
+fdleak_pipe:     valgrind   --track-fds=yes ./fdleak_pipe < /dev/null
+fdleak_socketpair: valgrind   --track-fds=yes ./fdleak_socketpair < /dev/null
+floored:         valgrind   ./floored
+fork:            valgrind   -q ./fork
+fucomip:         valgrind   ./fucomip
+gxx304:          valgrind   ./gxx304
+*** gxx304 failed (stderr) ***
+ifunc:           (skipping, prereq failed: test -e ifunc)
+ioctl_moans:     valgrind   -q ./ioctl_moans
+libvex_test:     valgrind   -q ./libvex_test
+libvexmultiarch_test: valgrind   -q ./libvexmultiarch_test 1         0                    0
+manythreads:     valgrind   ./manythreads
+map_unaligned:   valgrind   ./map_unaligned
+map_unmap:       valgrind   --sanity-level=3 ./map_unmap
+mmap_fcntl_bug:  valgrind   -q ./mmap_fcntl_bug
+mq:              valgrind   ./mq
+munmap_exe:      valgrind   ./munmap_exe
+nestedfns:       valgrind   ./nestedfns
+nocwd:           valgrind   -q --trace-children=yes ./nocwd
+nodir:           valgrind   ./nodir.vgtest/foobar
+pending:         valgrind   ./pending
+*** pending failed (stdout) ***
+*** pending failed (stderr) ***
+ppoll_alarm:     valgrind   -q ./ppoll_alarm
+process_vm_readv_writev: valgrind   ./process_vm_readv_writev
+procfs-linux:    (skipping, prereq failed: [ $(uname) = Linux ])
+procfs-non-linux: (skipping, prereq failed: ! ../../tests/os_test linux && ! ../../tests/os_test solaris)
+pselect_alarm:   valgrind   -q ./pselect_alarm
+pselect_sigmask_null: valgrind   -q ./pselect_sigmask_null
+pth_2sig:        valgrind   -q ./pth_2sig
+pth_atfork1:     valgrind   ./pth_atfork1
+pth_blockedsig:  valgrind   ./pth_blockedsig
+pth_cancel1:     valgrind   ./pth_cancel1
+*** pth_cancel1 failed (stdout) ***
+*** pth_cancel1 failed (stderr) ***
+pth_cancel2:     valgrind   ./pth_cancel2
+*** pth_cancel2 failed (stderr) ***
+pth_cvsimple:    valgrind   ./pth_cvsimple
+pth_empty:       valgrind   ./pth_empty
+pth_exit:        valgrind   ./pth_exit
+pth_exit2:       valgrind   ./pth_exit2
+pth_mutexspeed:  valgrind   ./pth_mutexspeed
+pth_once:        valgrind   ./pth_once
+pth_rwlock:      valgrind   ./pth_rwlock
+pth_self_kill_15_other: valgrind   -q ./pth_self_kill 15 killotherthread
+pth_self_kill_9: valgrind   -q ./pth_self_kill 9
+pth_stackalign:  valgrind   ./pth_stackalign
+pth_term_signal: valgrind   -q ./pth_term_signal
+rcrl:            valgrind   ./rcrl
+readline1:       valgrind   ./readline1
+require-text-symbol-1: valgrind   -q "--require-text-symbol=:*libc.so*:strl?n" ./require-text-symbol
+require-text-symbol-2: valgrind   -q "--require-text-symbol=:*libc.so*:doesntexist" --vgdb-prefix=./vgdb-prefix-require-text-symbol-2 ./require-text-symbol
+res_search:      valgrind   -q ./res_search www.yahoo.com
+resolv:          (skipping, prereq failed: ! ../../tests/os_test solaris && ! ../../tests/os_test darwin)
+rlimit64_nofile: valgrind   ./rlimit64_nofile
+rlimit_nofile:   valgrind   ./rlimit_nofile
+-- Running  tests in none/tests/scripts --------------------------------
+bug231357:       valgrind   -q test.sh
+bug338606:       valgrind   -q ./bug338606
+nointerp1:       valgrind   -q ./nointerp1
+nointerp2:       valgrind   -q ./nointerp2
+nointerp3:       valgrind   -q ./nointerp3
+nointerp4:       valgrind   -q ./nointerp4
+nointerp5:       valgrind   -q ./nointerp5
+relative1:       valgrind   -q ./relative1
+relative2:       valgrind   -q ./relative2
+shell:           valgrind   -q ./shell
+shell_badinterp: valgrind   -q ./shell_badinterp
+shell_binaryfile: valgrind   -q ./shell_binaryfile
+shell_dir:       valgrind   -q ./x86/
+shell_nonexec:   valgrind   -q ./shell.vgtest
+shell_nosuchfile: valgrind   -q ./shell_nosuchfile
+shell_valid1:    valgrind   -q ./shell_valid1
+shell_valid4:    valgrind   -q ./shell_valid4
+shell_zerolength: valgrind   -q ./shell_zerolength
+-- Finished tests in none/tests/scripts --------------------------------
+selfrun:         (skipping, prereq failed: grep '^#define HAVE_PIE 1' ../../config.h > /dev/null)
+sem:             valgrind   ./sem
+*** sem failed (stderr) ***
+semlimit:        valgrind   ./semlimit
+sha1_test:       valgrind   ./sha1_test
+shortpush:       valgrind   ./shortpush
+shorts:          valgrind   ./shorts
+sigprocmask:     valgrind   -q ./sigprocmask
+sigstackgrowth:  valgrind   --sanity-level=3 ./sigstackgrowth
+*** sigstackgrowth failed (stdout) ***
+*** sigstackgrowth failed (stderr) ***
+sigsusp:         valgrind   -q ./sigsusp
+-- Running  tests in none/tests/solaris --------------------------------
+block_all_signals: valgrind   --trace-children=yes ./block_all_signals
+blockfault:      valgrind   ./blockfault
+context_link:    valgrind   -q ./context_link
+*** context_link failed (stdout) ***
+*** context_link failed (stderr) ***
+context_link2:   valgrind   -q ./context_link2
+context_null:    valgrind   -q ./context_null
+context_stack:   valgrind   -q ./context_stack
+coredump_many_threads: valgrind   -q ./coredump_many_threads
+*** coredump_many_threads failed (post) ***
+mmap_noreserve:  valgrind   -q --sanity-level=3 ./mmap_noreserve
+posix_spawn:     valgrind   -q ./posix_spawn
+proc-cmdline-exe: valgrind   ./../procfs-cmdline-exe arg1 "arg 2" arg3
+proc_aout:       valgrind   -q ./proc_aout
+proc_auxv:       valgrind   -q ./proc_auxv
+proc_auxv_multiple: valgrind   -q ./proc_auxv_multiple
+proc_psinfo:     valgrind   ./proc_psinfo arg1 "arg 2" arg3
+pthread-stack:   valgrind   -q ./pthread-stack
+*** pthread-stack failed (stderr) ***
+reserve_sysstat_addr: (skipping, prereq failed: test -e reserve_sysstat_addr)
+reserve_sysstat_zone_addr: (skipping, prereq failed: test -e reserve_sysstat_zone_addr)
+resolv:          valgrind   ./resolv
+sigresend:       valgrind   -q ./sigresend
+*** sigresend failed (stdout) ***
+stack-overflow:  valgrind   ./stack-overflow
+stack_prot:      valgrind   -q ./stack_prot
+threads_exitall: valgrind   -q ./threads_exitall
+-- Finished tests in none/tests/solaris --------------------------------
+stackgrowth:     valgrind   --sanity-level=3 ./stackgrowth
+syscall-restart1: valgrind   ./syscall-restart1
+*** syscall-restart1 failed (stderr) ***
+syscall-restart2: valgrind   ./syscall-restart2
+*** syscall-restart2 failed (stderr) ***
+syslog:          valgrind   -q ./syslog
+system:          valgrind   ./system
+thread-exits:    valgrind   ./thread-exits
+*** thread-exits failed (stdout) ***
+*** thread-exits failed (stderr) ***
+threaded-fork:   valgrind   ./threaded-fork
+threadederrno:   valgrind   -q ./threadederrno
+timestamp:       valgrind   --time-stamp=yes ./timestamp
+tls:             valgrind   ./tls
+unit_debuglog:   valgrind   -q ./unit_debuglog
+vgprintf:        valgrind   ./vgprintf
+vgprintf_nvalgrind: valgrind   ./vgprintf_nvalgrind
+-- Running  tests in none/tests/x86 ------------------------------------
+aad_aam:         valgrind   -q ./aad_aam
+badseg:          valgrind   ./badseg
+bswapw:          valgrind   -q ./bswapw
+bt_everything:   valgrind   ./bt_everything
+bt_literal:      valgrind   ./bt_literal
+bug125959-x86:   valgrind   ./bug125959-x86
+bug126147-x86:   valgrind   ./bug126147-x86
+bug132813-x86:   valgrind   ./bug132813-x86
+bug135421-x86:   valgrind   ./bug135421-x86
+bug137714-x86:   valgrind   -q ./bug137714-x86
+bug152818-x86:   valgrind   ./bug152818-x86
+cet_nops:        valgrind   -q ./cet_nops
+cmpxchg8b:       valgrind   ./cmpxchg8b
+cpuid:           valgrind   ./cpuid
+cse_fail:        valgrind   -q ./cse_fail
+fcmovnu:         valgrind   ./fcmovnu
+fpu_lazy_eflags: valgrind   ./fpu_lazy_eflags
+fxtract:         valgrind   ./fxtract
+*** fxtract failed (stdout) ***
+getseg:          valgrind   ./getseg
+incdec_alt:      valgrind   ./incdec_alt
+insn_basic:      valgrind   -q ./../../../none/tests/x86/insn_basic
+insn_cmov:       valgrind   -q ./../../../none/tests/x86/insn_cmov
+insn_fpu:        valgrind   -q ./../../../none/tests/x86/insn_fpu
+insn_mmx:        valgrind   -q ./../../../none/tests/x86/insn_mmx
+insn_mmxext:     valgrind   -q ./../../../none/tests/x86/insn_mmxext
+insn_sse:        valgrind   -q ./../../../none/tests/x86/insn_sse
+insn_sse2:       valgrind   -q ./../../../none/tests/x86/insn_sse2
+insn_sse3:       valgrind   -q ./../../../none/tests/x86/insn_sse3
+insn_ssse3:      valgrind   -q ./../../../none/tests/x86/insn_ssse3
+jcxz:            valgrind   -q ./jcxz
+lahf:            valgrind   ./lahf
+looper:          valgrind   ./looper
+lzcnt32:         (skipping, prereq failed: ../../../tests/x86_amd64_features x86-lzcnt)
+movbe:           valgrind   -q ./movbe
+movx:            valgrind   ./movx
+pushpopseg:      valgrind   ./pushpopseg
+sbbmisc:         valgrind   ./sbbmisc
+shift_ndep:      valgrind   ./shift_ndep
+smc1:            valgrind   --smc-check=all ./smc1
+ssse3_misaligned: valgrind   -q ./ssse3_misaligned
+x86locked:       valgrind   ./x86locked
+x87trigOOR:      valgrind   ./x87trigOOR
+xadd:            valgrind   -q ./xadd
+-- Finished tests in none/tests/x86 ------------------------------------
+-- Running  tests in none/tests/x86-solaris ----------------------------
+cet_nops_fs:     valgrind   -q ./cet_nops_fs
+coredump_single_thread: valgrind   -q ./coredump_single_thread
+*** coredump_single_thread failed (post) ***
+coredump_single_thread_sse: valgrind   -q ./coredump_single_thread_sse
+syscalls:        valgrind   -q ./syscalls
+-- Finished tests in none/tests/x86-solaris ----------------------------
+-- Finished tests in none/tests ----------------------------------------
+-- Running  tests in exp-bbv/tests/x86 ---------------------------------
+complex_rep:     valgrind   --interval-size=100000 --bb-out-file=complex_rep.out.bb ./complex_rep
+fldcw_check:     valgrind   --interval-size=10000 --bb-out-file=fldcw_check.out.bb ./fldcw_check
+million:         valgrind   --interval-size=100000 --bb-out-file=million.out.bb --pc-out-file=million.out.pc ./million
+rep_prefix:      valgrind   --interval-size=100000 --bb-out-file=rep_prefix.out.bb ./rep_prefix
+-- Finished tests in exp-bbv/tests/x86 ---------------------------------
+
+== 783 tests, 70 stderr failures, 18 stdout failures, 3 stderrB failures, 6 stdoutB failures, 7 post failures ==
+gdbserver_tests/hginfo                   (stderrB)
+gdbserver_tests/mcinvokeWS               (stdoutB)
+gdbserver_tests/mcinvokeWS               (stderrB)
+gdbserver_tests/mcsignopass              (stderr)
+gdbserver_tests/mcsignopass              (stdoutB)
+gdbserver_tests/mcsigpass                (stderr)
+gdbserver_tests/mcsigpass                (stdoutB)
+gdbserver_tests/nlpasssigalrm            (stderr)
+gdbserver_tests/nlpasssigalrm            (stdoutB)
+gdbserver_tests/nlpasssigalrm            (stderrB)
+gdbserver_tests/nlvgdbsigqueue           (stderr)
+gdbserver_tests/nlvgdbsigqueue           (stdoutB)
+gdbserver_tests/solaris/nlcontrolc       (stderr)
+gdbserver_tests/solaris/nlcontrolc       (stdoutB)
+memcheck/tests/amd64-solaris/context_fpu (stdout)
+memcheck/tests/amd64-solaris/context_fpu (stderr)
+memcheck/tests/amd64-solaris/context_gpr (stdout)
+memcheck/tests/amd64-solaris/context_gpr (stderr)
+memcheck/tests/amd64-solaris/context_rflags (stdout)
+memcheck/tests/amd64-solaris/context_rflags2 (stderr)
+memcheck/tests/amd64-solaris/context_sse (stdout)
+memcheck/tests/amd64-solaris/context_sse (stderr)
+memcheck/tests/badjump                   (stderr)
+memcheck/tests/badjump2                  (stderr)
+memcheck/tests/big_debuginfo_symbol      (stderr)
+memcheck/tests/demangle                  (stderr)
+memcheck/tests/descr_belowsp             (stderr)
+memcheck/tests/dw4                       (stderr)
+memcheck/tests/execve1                   (stderr)
+memcheck/tests/execve2                   (stderr)
+memcheck/tests/gone_abrt_xml             (stderr)
+memcheck/tests/inltemplate               (stderr)
+memcheck/tests/leak_cpp_interior         (stderr)
+memcheck/tests/long_namespace_xml        (stdout)
+memcheck/tests/long_namespace_xml        (stderr)
+memcheck/tests/mismatches                (stderr)
+memcheck/tests/new_nothrow               (stderr)
+memcheck/tests/new_override              (stdout)
+memcheck/tests/new_override              (stderr)
+memcheck/tests/post-syscall              (stderr)
+memcheck/tests/sem                       (stderr)
+memcheck/tests/sigaltstack               (stderr)
+memcheck/tests/signal2                   (stdout)
+memcheck/tests/solaris/context_stack_die (stderr)
+memcheck/tests/solaris/door_kill         (stdout)
+memcheck/tests/solaris/lsframe2          (stderr)
+memcheck/tests/solaris/scalar_getrandom  (stderr)
+memcheck/tests/supp_unknown              (stderr)
+memcheck/tests/threadname                (stderr)
+memcheck/tests/threadname_xml            (stderr)
+memcheck/tests/vcpu_fnfns                (stdout)
+helgrind/tests/bar_bad                   (stderr)
+helgrind/tests/bar_trivial               (stderr)
+helgrind/tests/bug322621                 (stderr)
+helgrind/tests/free_is_write             (stderr)
+helgrind/tests/pth_barrier1              (stderr)
+helgrind/tests/pth_barrier2              (stderr)
+helgrind/tests/pth_barrier3              (stderr)
+helgrind/tests/tc21_pthonce              (stderr)
+helgrind/tests/tc22_exit_w_lock          (stderr)
+drd/tests/bar_bad                        (stderr)
+drd/tests/bar_bad_xml                    (stderr)
+drd/tests/concurrent_close               (stderr)
+drd/tests/monitor_example                (stderr)
+drd/tests/new_delete                     (stderr)
+drd/tests/omp_matinv                     (stderr)
+drd/tests/omp_matinv_racy                (stderr)
+drd/tests/omp_printf                     (stderr)
+drd/tests/pth_cancel_locked              (stderr)
+drd/tests/sigalrm                        (stderr)
+drd/tests/sigaltstack                    (stderr)
+massif/tests/deep-D                      (post)
+massif/tests/new-cpp                     (stderr)
+massif/tests/new-cpp                     (post)
+massif/tests/overloaded-new              (stderr)
+massif/tests/overloaded-new              (post)
+none/tests/amd64/fxtract                 (stdout)
+none/tests/amd64/ssse3_misaligned        (stderr)
+none/tests/amd64-solaris/coredump_single_thread (post)
+none/tests/amd64-solaris/coredump_single_thread_sse (post)
+none/tests/async-sigs                    (stderr)
+none/tests/bug234814                     (stdout)
+none/tests/bug234814                     (stderr)
+none/tests/faultstatus                   (stderr)
+none/tests/gxx304                        (stderr)
+none/tests/pending                       (stdout)
+none/tests/pending                       (stderr)
+none/tests/pth_cancel1                   (stdout)
+none/tests/pth_cancel1                   (stderr)
+none/tests/pth_cancel2                   (stderr)
+none/tests/sem                           (stderr)
+none/tests/sigstackgrowth                (stdout)
+none/tests/sigstackgrowth                (stderr)
+none/tests/solaris/context_link          (stdout)
+none/tests/solaris/context_link          (stderr)
+none/tests/solaris/coredump_many_threads (post)
+none/tests/solaris/pthread-stack         (stderr)
+none/tests/solaris/sigresend             (stdout)
+none/tests/syscall-restart1              (stderr)
+none/tests/syscall-restart2              (stderr)
+none/tests/thread-exits                  (stdout)
+none/tests/thread-exits                  (stderr)
+none/tests/x86/fxtract                   (stdout)
+none/tests/x86-solaris/coredump_single_thread (post)
+
+...checking makefile consistency
+...checking header files and include directives
