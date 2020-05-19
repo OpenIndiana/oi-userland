@@ -1,0 +1,58 @@
+--- geeqie-1.5.1/src/options.c.orig	2020-05-19 16:36:03.708353773 +0000
++++ geeqie-1.5.1/src/options.c	2020-05-19 16:36:59.713926519 +0000
+@@ -32,6 +32,9 @@
+ #include "ui_fileops.h"
+ #include "window.h"
+ 
++ConfOptions *options;
++CommandLine *command_line;
++
+ ConfOptions *init_options(ConfOptions *options)
+ {
+ 	gint i;
+--- geeqie-1.5.1/src/bar_exif.h.orig	2020-05-19 16:33:33.730170230 +0000
++++ geeqie-1.5.1/src/bar_exif.h	2020-05-19 16:35:03.404920929 +0000
+@@ -29,8 +29,8 @@
+ 
+ /* these are exposed for when duplication of the exif bar's text is needed */
+ 
+-const gchar **bar_exif_key_list;
+-const gint bar_exif_key_count;
++extern const gchar **bar_exif_key_list;
++extern const gint bar_exif_key_count;
+ GList *bar_pane_exif_list();
+ 
+ #endif
+--- geeqie-1.5.1/src/options.h.orig	2020-05-19 16:24:41.961035393 +0000
++++ geeqie-1.5.1/src/options.h	2020-05-19 16:26:28.247115246 +0000
+@@ -321,8 +321,8 @@
+ 	GList *disabled_plugins;
+ };
+ 
+-ConfOptions *options;
+-CommandLine *command_line;
++extern ConfOptions *options;
++extern CommandLine *command_line;
+ 
+ ConfOptions *init_options(ConfOptions *options);
+ void setup_default_options(ConfOptions *options);
+--- geeqie-1.5.1/src/remote.c.orig	2020-05-19 16:44:46.498923438 +0000
++++ geeqie-1.5.1/src/remote.c	2020-05-19 16:44:52.275255441 +0000
+@@ -253,7 +253,7 @@
+ 	addr.sun_family = AF_UNIX;
+ 	sun_path_len = MIN(strlen(path) + 1, UNIX_PATH_MAX);
+ 	strncpy(addr.sun_path, path, sun_path_len);
+-	if (bind(fd, &addr, sizeof(addr)) == -1 ||
++	if (bind(fd, (const struct sockaddr *) &addr, sizeof(addr)) == -1 ||
+ 	    listen(fd, REMOTE_SERVER_BACKLOG) == -1)
+ 		{
+ 		log_printf("error subscribing to socket: %s\n", strerror(errno));
+@@ -302,7 +302,7 @@
+ 	addr.sun_family = AF_UNIX;
+ 	sun_path_len = MIN(strlen(path) + 1, UNIX_PATH_MAX);
+ 	strncpy(addr.sun_path, path, sun_path_len);
+-	if (connect(fd, &addr, sizeof(addr)) == -1)
++	if (connect(fd, (const struct sockaddr *) &addr, sizeof(addr)) == -1)
+ 		{
+ 		DEBUG_1("error connecting to socket: %s", strerror(errno));
+ 		close(fd);
