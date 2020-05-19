@@ -57,21 +57,21 @@ def FindComponentPaths(path, debug=False, subdir='components',
     workspace_path = os.path.join(path, subdir)
 
     if incremental:
-        cmd = ['git', 'log', '--diff-filter=AMR', '--name-only', '--pretty=format:',
+        cmd = ['git', '--no-pager', 'log', '--diff-filter=AMR', '--name-only', '--pretty=format:',
                '..'.join([begin_commit, end_commit])]
 
         proc = subprocess.Popen(cmd,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
+                                cwd=workspace_path,
                                 universal_newlines=True
                                 )
-
-        proc.wait()
+        stdout, stderr = proc.communicate()
         if debug:
             if proc.returncode != 0:
-                logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
+                logger.debug('exit: %d, %s', proc.returncode, stderr)
 
-        for line in proc.stdout:
+        for line in stdout.splitlines():
             line = line.rstrip()
             # git output might contain empty lines, so we skip them.
             if not line:
@@ -103,12 +103,12 @@ def FindComponentPaths(path, debug=False, subdir='components',
                                 universal_newlines=True
                                 )
 
-        proc.wait()
+        stdout, stderr = proc.communicate()
         if debug:
             if proc.returncode != 0:
-                logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
+                logger.debug('exit: %d, %s', proc.returncode, stderr)
 
-        for line in proc.stdout:
+        for line in stdout.splitlines():
             line = line.rstrip()
 
             # Only 'openindiana' category.
