@@ -26,6 +26,9 @@
 SVN =		/usr/bin/svn
 MKTEMP = 	/usr/gnu/bin/mktemp
 
+COMPONENT_PREP_SVN?=yes
+ifeq ($(strip $(COMPONENT_PREP_SVN)), yes)
+
 #
 # Anything that we pull from a Subversion repo must have a SVN_REPO{_[0-9]+} and
 # SVN_REV{_[0-9]+} to match.
@@ -77,3 +80,4 @@ endef
 $(eval $(call subversion-rules,))
 $(foreach suffix, $(SVN_SUFFIXES), $(eval $(call subversion-rules,_$(suffix))))
 
+endif
