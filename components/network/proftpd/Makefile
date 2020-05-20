@@ -64,7 +64,7 @@ LDFLAGS +=	-m$(BITS)
 # Remove -D_POSIX_PTHREAD_SEMANTICS and this comment after move to S12_45.
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER -D_POSIX_PTHREAD_SEMANTICS"
 # Force immediate binding because of chroot().
-CONFIGURE_OPTIONS +=	LDFLAGS="-z guidance=nolazyload -z nolazyload -lbsm"
+CONFIGURE_OPTIONS +=	LDFLAGS="$(CC_BITS) -z guidance=nolazyload -z nolazyload -lbsm"
 CONFIGURE_OPTIONS +=	install_user=`id -nu`
 CONFIGURE_OPTIONS +=	install_group=`groups | cut -f 1 -d ' '`
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
@@ -91,7 +91,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	cd $(COMPONENT_SRC_1) && \
 	$(CP) $(COMPONENT_DIR)/krb5-config $(BUILD_DIR) && \
 	chmod u+x $(BUILD_DIR)/krb5-config && \
-	./configure CC="$(CC)" CFLAGS="-I/usr/include/kerberosv5"  --with-krb5-config=$(BUILD_DIR)/krb5-config && \
+	./configure CC="$(CC)" CFLAGS="$(CC_BITS) -I/usr/include/kerberosv5"  --with-krb5-config=$(BUILD_DIR)/krb5-config && \
 	$(CP) mod_gss.c mod_auth_gss.c $(SOURCE_DIR)/contrib && \
 	$(CP) mod_gss.h $(SOURCE_DIR)/include && \
 	$(CP) mod_gss.html $(SOURCE_DIR)/doc/contrib && \
