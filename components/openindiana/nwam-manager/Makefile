@@ -35,6 +35,7 @@ GIT_CHANGESET=HEAD
 
 PATH = $(PATH.gnu)
 
+COMPONENT_PREP_GIT=no
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 

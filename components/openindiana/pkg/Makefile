@@ -32,6 +32,7 @@ DEVBOOK=$(SOURCE_DIR)/proto/dev-guide/book.pdf
 
 CLEAN_PATHS += $(BUILD_DIR)
 
+COMPONENT_PREP_GIT=no
 include $(WS_TOP)/make-rules/prep.mk
 
 #export CC 

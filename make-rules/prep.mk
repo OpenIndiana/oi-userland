@@ -24,6 +24,7 @@
 #
 
 include $(WS_MAKE_RULES)/prep-download.mk
+
 include $(WS_MAKE_RULES)/prep-hg.mk
 include $(WS_MAKE_RULES)/prep-svn.mk
 include $(WS_MAKE_RULES)/prep-unpack.mk
