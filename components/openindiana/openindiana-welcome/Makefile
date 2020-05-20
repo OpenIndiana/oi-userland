@@ -37,6 +37,7 @@ PATH=$(PATH.gnu)
 
 PYTHON_VERSION=3.5
 
+COMPONENT_PREP_GIT=no
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 

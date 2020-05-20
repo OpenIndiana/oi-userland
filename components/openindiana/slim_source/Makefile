@@ -33,6 +33,7 @@ PKG_REPO=$(SOURCE_DIR)/packages/$(MACH)/nightly-nd/repo.redist
 
 CLEAN_PATHS += $(BUILD_DIR)
 
+COMPONENT_PREP_GIT=no
 include $(WS_MAKE_RULES)/prep.mk
 
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
