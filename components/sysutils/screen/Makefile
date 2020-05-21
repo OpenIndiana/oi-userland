@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		screen
 COMPONENT_VERSION=	4.8.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU Screen terminal multiplexer
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/screen/
 COMPONENT_FMRI=		terminal/screen
@@ -44,6 +45,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
+
+LDFLAGS           +=    -lutempter
 
 CONFIGURE_OPTIONS +=	--enable-colors256
 CONFIGURE_OPTIONS +=	--with-sys-screenrc=/etc/screenrc
@@ -62,3 +65,4 @@ REQUIRED_PACKAGES += text/texinfo
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libutempter
