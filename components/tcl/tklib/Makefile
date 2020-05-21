@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tklib
 COMPONENT_VERSION=	0.6
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://core.tcl.tk/tklib/home
 COMPONENT_SUMMARY=	Collection of widgets and other packages for Tk
 COMPONENT_FMRI=         tcl/tklib
