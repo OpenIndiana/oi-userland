@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tcl
 COMPONENT_VERSION=      8.6.10
+COMPONENT_REVISION=	1
 COMPONENT_MINOR_VERSION= $(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.\([0-9]\+\)\.[0-9]\+/\1.\2/')
 COMPONENT_PROJECT_URL=	https://prdownloads.sourceforge.net/tcl/
 COMPONENT_SRC=          $(COMPONENT_NAME)$(COMPONENT_VERSION)
