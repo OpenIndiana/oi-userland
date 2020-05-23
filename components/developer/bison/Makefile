@@ -29,13 +29,13 @@ BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bison
-COMPONENT_VERSION=	3.5.2
+COMPONENT_VERSION=	3.5.3
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bison/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	bison - A YACC Replacement
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:24e273db9eb6da8bbb6f0648284d0724a5cbd6268a163db402f961350a4e50dd
+	sha256:2bf85b5f88a5f2fa8069aed2a2dfc3a9f8d15a97e59c713e3906e5fdd982a7c4
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_FMRI=		developer/parser/bison
@@ -70,25 +70,10 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 # and strange backslash lines. and random output,
 # including rm complaints over nfs
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^.*$(CXX).*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^config.status: .*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Nothing to be done for.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: .*is up to date.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^mv -f.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^.$$|XXX_CC_XXX|g" ' \
-	'-e "s|^updating examples.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|.*build-aux/ylwrap.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|.*examples/calc++/calc++-parser.stamp.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|.*tests/bison -o y.tab.c.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^rm:.*directory renamed.*$$|XXX_CC_XXX|g" ' \
-	'-e "/^rm /d" ' \
-	'-e "/^touch /d" ' \
-	'-e "/^XXX_CC_XXX$$/d" '
+	$(CONFIGURE_TEST_TRANSFORMS) \
+	' -e "/^\#/p" ' \
+	' -e "/^[\s]*[0-9][0-9]*:/p" ' \
+	' -e "/tests were/p" ' 
 
 $(INSTALL_32):	$(INSTALL_64)
 
