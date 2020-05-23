@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgtcl
 COMPONENT_VERSION= 	2.6.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	A Tcl client library for PostgreSQL
 COMPONENT_SRC= 		Pgtcl-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
