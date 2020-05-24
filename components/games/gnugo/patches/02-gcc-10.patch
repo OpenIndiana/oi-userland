@@ -1,0 +1,45 @@
+--- gnugo-3.8/engine/liberty.h.orig	2020-05-24 07:57:41.409312486 +0000
++++ gnugo-3.8/engine/liberty.h	2020-05-24 07:59:26.051372294 +0000
+@@ -57,7 +57,7 @@
+ struct dragon_data2 *dragon2_func(int pos);
+ 
+ /* Routine names used by persistent and non-persistent caching schemes. */
+-enum routine_id {
++typedef enum routine_id {
+   OWL_ATTACK,
+   OWL_DEFEND,
+   SEMEAI,
+@@ -119,7 +119,7 @@
+  * Also used for unconditional status in struct worm_data and for the
+  * final status computed by the aftermath code.
+  */
+-enum dragon_status {
++typedef enum dragon_status {
+   DEAD,
+   ALIVE,
+   CRITICAL,
+@@ -857,8 +857,8 @@
+ extern struct worm_data worm[BOARDMAX];
+ 
+ /* Unconditionally meaningless moves. */
+-int meaningless_black_moves[BOARDMAX];
+-int meaningless_white_moves[BOARDMAX];
++extern int meaningless_black_moves[BOARDMAX];
++extern int meaningless_white_moves[BOARDMAX];
+ 
+ /* Surround cache (see surround.c) */
+ 
+--- gnugo-3.8/engine/unconditional.c.orig	2020-05-24 08:02:20.489566472 +0000
++++ gnugo-3.8/engine/unconditional.c	2020-05-24 08:02:35.190954307 +0000
+@@ -29,6 +29,11 @@
+ 
+ #include "liberty.h"
+ 
++
++/* Unconditionally meaningless moves. */
++int meaningless_black_moves[BOARDMAX];
++int meaningless_white_moves[BOARDMAX];
++
+ /* Capture as many strings of the given color as we can. Played stones
+  * are left on the board and the number of played stones is returned.
+  * Strings marked in the exceptions array are excluded from capturing
