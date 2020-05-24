@@ -20,22 +20,21 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		foomatic-filters
 COMPONENT_VERSION=	4.0.17
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:a2e2e53e502571e88eeb9010c45a0d54671f15707ee104f5c9c22b59ea7a33e3
 COMPONENT_ARCHIVE_URL=	http://www.openprinting.org/download/foomatic/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
-COMPONENT_BUGDB=	utility/foomatic
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS +=	--prefix=$(USRLIBDIR)/lp
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/gnu
@@ -48,13 +47,6 @@ CONFIGURE_OPTIONS +=	PERL=$(PERL)
 CONFIGURE_OPTIONS +=	A2PS=$(USRBINDIR)/a2ps
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += print/filter/a2ps
