@@ -11,10 +11,11 @@
 #
 # Copyright (c) 2017 Dariusz Sendkowski
 #
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         global
-COMPONENT_VERSION=	6.5.7
+COMPONENT_VERSION=	6.6.4
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/global
 COMPONENT_SUMMARY=	A source code tagging system.
 COMPONENT_DESCRIPTION=	GNU GLOBAL is a source code tagging system that works the same way across diverse environments, such as Emacs editor, Vi editor, Less viewer, Bash shell, various web browsers, etc.
@@ -22,24 +23,15 @@ COMPONENT_FMRI=         developer/global
 COMPONENT_CLASSIFICATION=Development/Editors
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:d9c08fa524f9499b54241cb2d72f8a7df01453b6d5e012a63784ded08e3acd32
+COMPONENT_ARCHIVE_HASH= sha256:987e8cb956c53f8ebe4453b778a8fde2037b982613aba7f3e8e74bcd05312594
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/global/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV=	DEST_DIR=$(PROTO_DIR)
 COMPONENT_INSTALL_ENV=	DEST_DIR=$(PROTO_DIR)
-CONFIGURE_BINDIR.64=	$(CONFIGURE_BINDIR.32)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/ncurses
