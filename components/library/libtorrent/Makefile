@@ -21,23 +21,22 @@
 
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2020, Aurelien Larcher 
 #
 
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtorrent
-COMPONENT_VERSION=	0.13.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.13.8
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rakshasa.github.io/rtorrent/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:704e097119dc89e2ee4630396b25de1cd64b0549841347ea75b9ef9217084955
+    sha256:ed115a28f4ae8cfcd33b94a597c076ca74fd549867a26e4fac9505c27288e983
 COMPONENT_ARCHIVE_URL=	http://rtorrent.net/downloads/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
         (cd $(@D) && \
@@ -49,7 +48,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # this is needed or we can't compile the rak headers
 CC=$(CXX)
 
-CXXFLAGS += -std=c++98
+CXXFLAGS += -std=c++11
 CXXFLAGS += $(gcc_OPT)
 
 # Find issues with undefined symbols in build time
@@ -58,22 +57,18 @@ LD_OPTIONS += $(LD_Z_DEFS)
 LDFLAGS += -lnsl -lsocket
 LDFLAGS += -lz
 
+unexport SHELLOPTS
+
 CONFIGURE_OPTIONS  +=	--enable-shared
 CONFIGURE_OPTIONS  +=	--disable-debug
 CONFIGURE_OPTIONS  +=	--disable-static
 #CONFIGURE_OPTIONS  +=	--with-ports
 CONFIGURE_OPTIONS  +=	--disable-libtool-lock
-CONFIGURE_OPTIONS.32 +=	--srcdir=$(BUILD_DIR_32)
 CONFIGURE_OPTIONS.64 +=	--srcdir=$(BUILD_DIR_64)
 
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
 COMPONENT_TEST_ENV +=	"LDFLAGS=-lnsl -lcppunit -lsocket -lz"
-test:		$(TEST_32_and_64)
+COMPONENT_TEST_TRANSFORMS = $(CONFIGURE_TEST_TRANSFORMS)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
