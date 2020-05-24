@@ -11,11 +11,14 @@
 #
 # Copyright 2016-2017 Jim Klimov
 #
+BUILD_BITS=32
+BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groovy
 COMPONENT_MAJOR_VERSION=	2.4
 COMPONENT_MINOR_VERSION=	12
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_ARCHIVE=	apache-$(COMPONENT_NAME)-binary-$(COMPONENT_VERSION).zip
 COMPONENT_FMRI=		developer/groovy-24
@@ -30,25 +33,18 @@ COMPONENT_LICENSE=		Apache-2.0,BSD,MIT,Eclipse,PublicDomain
 COMPONENT_LICENSE_FILE= LICENSE
 COMPONENT_SUMMARY=	Groovy is a Java-based scripting language
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION += (cp $(COMPONENT_DIR)/files/Makefile $(SOURCE_DIR))
+COMPONENT_PREP_ACTION += ($(CP) $(COMPONENT_DIR)/files/Makefile $(SOURCE_DIR))
 
-COMPONENT_COPY_ACTION = cp -r $(SOURCE_DIR)/* $(@D)/
+COMPONENT_COPY_ACTION = $(CP) -r $(SOURCE_DIR)/* $(@D)/
 
 COMPONENT_INSTALL_ENV += GROOVY_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
 
 COMPONENT_POST_INSTALL_ACTION = $(FIND) $(PROTO_DIR) -name \*.bat -delete
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += developer/java/openjdk7
