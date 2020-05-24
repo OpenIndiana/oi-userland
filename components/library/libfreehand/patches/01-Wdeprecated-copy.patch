@@ -1,0 +1,56 @@
+From 28d9b20b58ad5a323c6099e1187c65b656c1ef72 Mon Sep 17 00:00:00 2001
+From: Albert Astals Cid <aacid@kde.org>
+Date: Thu, 10 Oct 2019 13:12:52 +0200
+Subject: [PATCH] Fix -Wdeprecated-copy warning
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+FHCollector.cpp: In member function ‘void libfreehand::FHCollector::collectXform(unsigned int, double, double, double, double, double, double)’:
+FHCollector.cpp:285:68: warning: implicitly-declared ‘constexpr libfreehand::FHTransform& libfreehand::FHTransform::operator=(const libfreehand::FHTransform&)’ is deprecated [-Wdeprecated-copy]
+  285 |   m_transforms[recordId] = FHTransform(m11, m21, m12, m22, m13, m23);
+      |                                                                    ^
+In file included from FHCollector.h:18,
+                 from FHCollector.cpp:14:
+FHTransform.h:22:3: note: because ‘libfreehand::FHTransform’ has user-provided ‘libfreehand::FHTransform::FHTransform(const libfreehand::FHTransform&)’
+   22 |   FHTransform(const FHTransform &trafo);
+      |   ^~~~~~~~~~~
+
+Change-Id: I8b3c7e00aff715662af13995aa4c623d33346b3c
+Reviewed-on: https://gerrit.libreoffice.org/80602
+Reviewed-by: Miklos Vajna <vmiklos@collabora.com>
+Tested-by: Miklos Vajna <vmiklos@collabora.com>
+---
+ src/lib/FHTransform.cpp | 6 ++----
+ src/lib/FHTransform.h   | 1 +
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/src/lib/FHTransform.cpp b/src/lib/FHTransform.cpp
+index bbe534c..3a5bdbc 100644
+--- a/src/lib/FHTransform.cpp
++++ b/src/lib/FHTransform.cpp
+@@ -22,10 +22,8 @@ libfreehand::FHTransform::FHTransform(double m11, double m21, double m12, double
+ {
+ }
+ 
+-libfreehand::FHTransform::FHTransform(const FHTransform &trafo)
+-  : m_m11(trafo.m_m11), m_m21(trafo.m_m21), m_m12(trafo.m_m12),
+-    m_m22(trafo.m_m22), m_m13(trafo.m_m13), m_m23(trafo.m_m23) {}
+-
++libfreehand::FHTransform::FHTransform(const FHTransform &trafo) = default;
++libfreehand::FHTransform &libfreehand::FHTransform::operator=(const FHTransform &trafo) = default;
+ 
+ void libfreehand::FHTransform::applyToPoint(double &x, double &y) const
+ {
+diff --git a/src/lib/FHTransform.h b/src/lib/FHTransform.h
+index a53e13a..58a7f6b 100644
+--- a/src/lib/FHTransform.h
++++ b/src/lib/FHTransform.h
+@@ -20,6 +20,7 @@ struct FHTransform
+   FHTransform();
+   FHTransform(double m11, double m21, double m12, double m22, double m13, double m23);
+   FHTransform(const FHTransform &trafo);
++  FHTransform &operator=(const FHTransform &trafo);
+ 
+   void applyToPoint(double &x, double &y) const;
+   void applyToArc(double &rx, double &ry, double &rotation, bool &sweep, double &endx, double &endy) const;
