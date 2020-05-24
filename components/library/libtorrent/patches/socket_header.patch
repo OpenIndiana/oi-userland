@@ -1,0 +1,12 @@
+--- libtorrent-0.13.8/src/torrent/net/socket_address_key.h.orig	2020-05-24 23:46:13.061817408 +0000
++++ libtorrent-0.13.8/src/torrent/net/socket_address_key.h	2020-05-24 23:46:50.283152580 +0000
+@@ -6,6 +6,9 @@
+ 
+ #include <cstring>
+ #include <inttypes.h>
++#if defined(__sun)
++#include <sys/socket.h>
++#endif
+ #include <netinet/in.h>
+ 
+ // Unique key for the socket address, excluding port numbers, etc.
