@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= openjade
 COMPONENT_VERSION= 1.3.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= OpenJade DSSSL-Engine for SGML documents
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -56,6 +57,7 @@ CONFIGURE_OPTIONS += --enable-splibdir=/usr/lib
 CONFIGURE_OPTIONS += --disable-http
 CONFIGURE_OPTIONS += --enable-mif
 CONFIGURE_OPTIONS += --enable-default-catalog="CATALOG:/etc/sgml/catalog:/usr/share/sgml/CATALOG"
+CONFIGURE_OPTIONS += LINKFLAGS="$(LDFLAGS)"
 
 COMPONENT_INSTALL_TARGETS = install install-man
 
