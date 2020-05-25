@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccl
 COMPONENT_VERSION=	1.11.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	ccl - Clozure Common Lisp
 COMPONENT_PROJECT_URL=	https://ccl.clozure.com/
 COMPONENT_SRC=		ccl
