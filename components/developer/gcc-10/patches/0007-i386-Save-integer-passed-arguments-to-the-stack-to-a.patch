@@ -1,4 +1,4 @@
-From 3a3fed70605df41b24056bd97b8764e61f43bf3e Mon Sep 17 00:00:00 2001
+From 95f46059311f91c59c750a75a655844dbe9fa8a1 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Sat, 23 Jan 2016 22:14:56 -0500
 Subject: [PATCH 07/28] i386: Save integer-passed arguments to the stack, to
@@ -58,7 +58,7 @@ index 5c21fce06a4..903ab992cb8 100644
       PREFERRED_STACK_BOUNDARY_DEFAULT.  */
    ix86_preferred_stack_boundary = PREFERRED_STACK_BOUNDARY_DEFAULT;
 diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
-index 23d9a2f8300..1ae0801c169 100644
+index 23d9a2f8300..56b2f89feff 100644
 --- a/gcc/config/i386/i386.c
 +++ b/gcc/config/i386/i386.c
 @@ -416,6 +416,8 @@ static bool i386_asm_output_addr_const_extra (FILE *, rtx);
@@ -75,7 +75,7 @@ index 23d9a2f8300..1ae0801c169 100644
    struct ix86_frame &frame = cfun->machine->frame;
    return (frame.stack_pointer_offset == UNITS_PER_WORD
 -	  && (frame.nregs + frame.nsseregs) == 0);
-+	  && (frame.nregs + frame.nsseregs + frame.nsseregs) == 0);
++	  && (frame.nmsave_args + frame.nregs + frame.nsseregs) == 0);
  }
  
  /* Return stack frame size.  get_frame_size () returns used stack slots
@@ -372,10 +372,10 @@ index 185a1d0686b..c5f7e6992d6 100644
  Target RejectNegative Negative(mtune=) Joined Var(ix86_tune_string)
  Schedule code for given CPU.
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index ec4c5bc6b36..148f146955e 100644
+index 0e347780441..fda643d377d 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
-@@ -16768,6 +16768,10 @@ addresses and sizes of sections.  Programs can be statically linked only.  The
+@@ -16769,6 +16769,10 @@ addresses and sizes of sections.  Programs can be statically linked only.  The
  @option{-mcmodel=large} option is incompatible with @option{-mabi=ilp32},
  @option{-fpic} and @option{-fPIC}.
  
