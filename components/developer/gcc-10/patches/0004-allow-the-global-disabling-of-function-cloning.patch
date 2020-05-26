@@ -1,4 +1,4 @@
-From 79cd611e0e2254d82adf5af509ffa4f4452afed4 Mon Sep 17 00:00:00 2001
+From 376a44547008208c644e51b0c4f532e004484377 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Sun, 30 Sep 2012 16:44:14 -0400
 Subject: [PATCH 04/28] allow the global disabling of function cloning
@@ -14,8 +14,8 @@ optimization ineffective, and our source safe for debuggers everywhere.
 ---
  gcc/attribs.c       |  9 +++++++++
  gcc/common.opt      |  5 +++++
- gcc/doc/invoke.texi | 12 ++++++++++--
- 3 files changed, 24 insertions(+), 2 deletions(-)
+ gcc/doc/invoke.texi | 11 ++++++++++-
+ 3 files changed, 24 insertions(+), 1 deletion(-)
 
 diff --git a/gcc/attribs.c b/gcc/attribs.c
 index 7d0f4b5b7b4..2d8f34d371a 100644
@@ -54,20 +54,19 @@ index a3b6bd2201f..98947bd28c9 100644
  Common Report Var(flag_combine_stack_adjustments) Optimization
  Looks for opportunities to reduce stack adjustments and stack references.
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index 4f28cc97357..ec4c5bc6b36 100644
+index 4f28cc97357..0e347780441 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
-@@ -460,8 +460,7 @@ Objective-C and Objective-C++ Dialects}.
- -fno-allocation-dce -fallow-store-data-races @gol
+@@ -461,7 +461,7 @@ Objective-C and Objective-C++ Dialects}.
  -fassociative-math  -fauto-profile  -fauto-profile[=@var{path}] @gol
  -fauto-inc-dec  -fbranch-probabilities @gol
---fcaller-saves @gol
+ -fcaller-saves @gol
 --fcombine-stack-adjustments  -fconserve-stack @gol
 +-fclone-functions -fcombine-stack-adjustments  -fconserve-stack @gol
  -fcompare-elim  -fcprop-registers  -fcrossjumping @gol
  -fcse-follow-jumps  -fcse-skip-blocks  -fcx-fortran-rules @gol
  -fcx-limited-range @gol
-@@ -10132,6 +10131,15 @@ and then tries to find ways to combine them.
+@@ -10132,6 +10132,15 @@ and then tries to find ways to combine them.
  
  Enabled by default at @option{-O1} and higher.
  
