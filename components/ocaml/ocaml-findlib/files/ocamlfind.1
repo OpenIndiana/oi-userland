@@ -1,0 +1,1712 @@
+'\" te
+.\" Adapted from the source manpage for the OpenIndiana Project
+.\"
+.TH OCAMLFIND 1 "May 26, 2020"
+
+.SH NAME
+ocamlfind \- The findlib package manager for OCaml
+
+.SH SYNOPSIS
+
+ocamlfind query
+[
+\-help | other options
+]
+.I package_name 
+\&...
+
+ocamlfind ocamlc
+[
+\-help | other options
+]
+.I file 
+\&...
+
+ocamlfind ocamlcp
+[
+\-help | other options
+]
+.I file 
+\&...
+
+ocamlfind ocamlmktop
+[
+\-help | other options
+]
+.I file 
+\&...
+
+ocamlfind ocamlopt
+[
+\-help
+]
+.I file 
+\&...
+
+ocamlfind ocamldoc
+[
+\-help | other options
+]
+.I file 
+\&...
+
+ocamlfind ocamldep
+[
+\-help | other options 
+]
+.I file 
+\&...
+
+ocamlfind ocamlmklib
+[
+\-help | other options
+]
+.I file 
+\&...
+
+ocamlfind ocamlbrowser
+[
+\-help | other options
+]
+
+ocamlfind install
+[
+\-help | other options
+]
+.I package_name file 
+\&...
+
+ocamlfind remove
+[
+\-help | other options 
+]
+.I package_name 
+\&...
+
+ocamlfind lint
+.I META
+
+ocamlfind list
+[
+\-describe
+]
+
+ocamlfind printppx
+[
+\-help | other options
+]
+.I package_name 
+\&...
+
+ocamlfind printconf
+[
+.I variable
+]
+
+ocamlfind
+.I package/command arg 
+\&...
+ 
+Optional toolchain selection by:
+
+ocamlfind \-toolchain
+.I name 
+\&...
+
+.SH THE SUBCOMMAND \[lq]query\[rq]
+.sp
+.LP
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR query [ \fB\-predicates\fR \fIp\fR |
+                  \fB\-format\fR \f |
+                  \fB\-long\-format\fR | \fB\-l\fR |
+                  \fB\-i\-format\fR |
+                  \fB\-l\-format\fR |
+                  \fB\-a\-format\fR |
+                  \fB\-o\-format\fR |
+                  \fB\-p\-format\fR |
+                  \fB\-prefix\fR \fIp\fR |
+                  \fB\-separator\fR \fIs\fR |
+                  \fB\-suffix\fR \fIs\fR |
+                  \fB\-pp\fR |
+                  \fB\-descendants\fR | \fB\-d\fR |
+                  \fB\-recursive\fR | \fB\-r\fR |
+                  \fB\-qe\fR |
+                  \fB\-qo\fR ] \fIpackage\fR \&...
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+This command looks packages up, sorts them optionally, and prints
+attributes of them.
+If the option \-recursive (short: \-r) is not specified, exactly the
+packages given on the command line are looked up; if \-recursive is
+present, the packages and all their ancestors, or if \-descendants
+(short: \-d) is present, too, all their descendants are printed.
+.PP
+Package lookup and the selection of the attributes of the packages can
+be modified by specifying predicates; without a \-predicates option the
+empty set of predicates is used.
+Note that even the lookup is influenced by the set of actual predicates
+as the \[lq]requires\[rq] variables may be conditional.
+.PP
+What is printed about a package depends on the specified format; there
+are a number of options that modify the format.
+Some formats denote sets of values (such as \-format %a), in which case
+multiple output records are printed for every package.
+(It is even possible to specify formats denoting the Cartesian product
+of sets, such as \-format %a%o, but this does not make sense.) Before
+the first output record the prefix is printed, and the suffix after the
+last record.
+Between two records the separator is printed.
+.RE
+ 
+.B Options
+.RS 4n
+.sp
+.ne 2
+.mk
+.na
+\fB\-predicates\fR \fIp\fR
+.ad
+.sp .6
+.RS 4n
+Sets the set of actual predicates.
+The argument \fIp\fR is a list of predicate names separated by commas and/or
+whitespace.
+If multiple \-predicates options are given, the union of all specified
+sets is effectively used.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\-format\fR \fIf\fR
+.ad
+.sp .6
+.RS 4n
+Sets the format to the string f.
+Characters preceded by a percent sign are interpreted as placeholders;
+all other characters mean themselves.
+The defined placeholders are listed below.
+The default format is \[lq]%d\[rq].
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-long\-format
+or
+.B \-l 
+.ad
+.sp .6
+.RS 4n
+Sets the format such that all relevant variables are printed.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-i\-format
+.ad
+.sp .6
+.RS 4n
+Same as \-format \[lq]\-I %d\[rq], i.e.\ directory options for ocamlc
+are printed.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-l\-format
+.ad
+.sp .6
+.RS 4n
+Same as \-format \[lq]\-ccopt \-L%d\[rq], i.e.\ directory options for
+the linker backend are printed.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-a\-format
+.ad
+.sp .6
+.RS 4n
+Same as \-format \[lq]%+a\[rq], i.e.\ archive file names are printed.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-o\-format
+.ad
+.sp .6
+.RS 4n
+Same as \-format \[lq]%o\[rq], i.e.\ linker options are printed.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-p\-format
+.ad
+.sp .6
+.RS 4n
+Same as \-format \[lq]%p\[rq], i.e.\ package names are printed.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-prefix
+.I p
+.ad
+.sp .6
+.RS 4n
+Sets the prefix that is printed before the first output record to the
+given string.
+The default prefix is the empty string.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-suffix
+.I s
+.ad
+.sp .6
+.RS 4n
+Sets the suffix that is printed after the last output record to the
+given string.
+The default suffix is the empty string.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-separator
+.I s
+.ad
+.sp .6
+.RS 4n
+Sets the separator that is printed between output records to the given
+string.
+The default separator is a linefeed character.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-recursive
+or
+.B \-r
+.ad
+.sp .6
+.RS 4n
+Not only the packages given on the command line are queried but also all
+ancestors or descendants.
+If the option \fB\-descendants\fR is specified, too, the descendants are
+printed, otherwise the ancestors.
+The packages are topologically sorted.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-descendants
+or
+.B \-d
+.ad
+.sp .6
+.RS 4n
+Instead of the ancestors the descendants of the given packages are
+queried.
+This option implies \fB\-recursive\fR.
+.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-pp
+.ad
+.sp .6
+.RS 4n
+Query preprocessor packages (camlp4 syntax extensions).
+Normally it is not needed to set \-predicates, except you need the
+archives (then add \-predicates byte).
+This option implies \-recursive.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-qe
+.ad
+.sp .6
+.RS 4n
+Do not print most errors to stderr, just set the exit code
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-qo
+.ad
+.sp .6
+.RS 4n
+Do not print the regular output.
+.RE
+
+.B Placeholders meaningful in the \-format option
+.RS 4n
+.sp
+.ne 2
+.mk
+.na
+.B %%
+.ad
+.sp .6
+.RS 4n
+Replaced by a single percent sign
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B %p
+.ad
+.sp .6
+.RS 4n
+Replaced by the package name
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B %d
+.ad
+.sp .6
+.RS 4n
+Replaced by the package directory
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B %m
+.ad
+.sp .6
+.RS 4n
+Replaced by the path to the META file (new since findlib\-1.6)
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B %D
+.ad
+.sp .6
+.RS 4n
+Replaced by the package description
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B %v
+.ad
+.sp .6
+.RS 4n
+Replaced by the version string
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B %a
+.ad
+.sp .6
+.RS 4n
+Replaced by the archive filename.
+If there is more than one archive, a separate output record is printed
+for every archive.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B %+a
+.ad
+.sp .6
+.RS 4n
+Like %a, but the filenames are converted to absolute paths (\[lq]+\[rq]
+and \[lq]\@\[rq] notations are resolved)
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B %A
+.ad
+.sp .6
+.RS 4n
+Replaced by the list of archive filenames.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B %+A
+.ad
+.sp .6
+.RS 4n
+Like %A, but the filenames are converted to absolute paths (\[lq]+\[rq]
+and \[lq]\@\[rq] notations are resolved)
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B %o
+.ad
+.sp .6
+.RS 4n
+Replaced by one linker option.
+If there is more than one option, a separate output record is printed
+for every option.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B %O
+.ad
+.sp .6
+.RS 4n
+Replaced by the list of linker options.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B %(property)
+.ad
+.sp .6
+.RS 4n
+Replaced by the value of the property named in parentheses, or the empty
+string if not defined.
+.RE
+.RE
+
+.SH THE SUBCOMMANDS \[lq]ocamlc\[rq], \[lq]ocamlcp\[rq],\[lq]ocamlopt\[rq], and \[lq]ocamlmktop\[rq]
+.sp
+.LP
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR ( ocamlc | ocamlcp | ocamlopt | ocamlmktop )
+          [ \fB\-package\fR \fIpackage\-name\-list\fR |
+            \fB\-linkpkg\fR |
+            \fB\-predicates\fR \fIpred\-name\-list\fR |
+            \fB\-dontlink\fR \fIpackage\-name\-list\fR |
+            \fB\-syntax\fR \fIpred\-name\-list\fR |
+            \fB\-ppopt\fR \fIcamlp4\-arg\fR |
+            \fB\-ppxopt\fR \fIpackage,arg\fR |
+            \fB\-dllpath\-pkg\fR \fIpackage\-name\-list\fR |
+            \fB\-dllpath\-all\fR |
+            \fB\-passopt\fR \fIarg\fR |
+            \fB\-passrest\fR \fIarg\fR \&... |
+            \fB\-only\-show\fR |
+            \fBstandard\-option\fR ] \fIfile\fR \&...
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+These subcommands are drivers for the compilers with the same names,
+i.e.
+\[lq]ocamlfind ocamlc\[rq] is a driver for \[lq]ocamlc\[rq], and so on.
+The subcommands understand all documented options of the compilers (here
+called standard\-options), but also a few more options.
+If these subcommands are invoked only with standard options, they behave
+as if the underlying compiler had been called directly.
+The extra options modify this.
+.PP
+Internally, these subcommands transform the given list of options and
+file arguments into an invocation of the driven compiler.
+This transformation only adds options and files, and the relative order
+of the options and files passed directly is unchanged.
+.PP
+If there are \-package options, additional directory search specifiers
+will be included (\[lq]\-I\[rq], and \[lq]\-ccopt \-I\[rq]), such that
+files of all named packages and all ancestors can be found.
+.PP
+The \-linkpkg option causes that the packages listed in the \-package
+options and all necessary ancestors are linked in.
+This means that the archive files implementing the packages are inserted
+into the list of file arguments.
+.PP
+As the package database is queried a set of predicates is needed.
+Most predicates are set automatically, see below, but additional
+predicates can be given by a \-predicates option.
+.PP
+If there is a \-syntax option, the drivers assume that a preprocessor is
+to be used.
+In this case, the preprocessor command is built first in a preprocessor
+stage, and this command is passed to the compiler using the \-pp option.
+The set of predicates in the preprocessor stage is different from the
+set in the compiler/linker stage.
+.RE
+
+.B Options for compiling and linking
+.RS 4n
+.sp
+Here, only the additional options not interpreted by the compiler but by
+the driver itself, and options with additional effects are explained.
+Some options are only meaningful for the preprocessor call, and are
+explained below.
+.sp
+.ne 2
+.mk
+.na
+.B \-package
+.I package\-name\-list
+.ad
+.sp .6
+.RS 4n
+Adds the listed package names to the set of included packages.
+The package names may be separated by commas and/or whitespace.
+In the transformed command, for every package of the set of included
+packages and for any ancestor a directory search option is inserted
+after the already given options.
+This means that \[lq]\-I\[rq] and \[lq]\-ccopt \-I\[rq] options are
+added for every package directory.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-linkpkg
+.ad
+.sp .6
+.RS 4n
+Causes that in the transformed command all archives of the packages
+specified by \-packages and all their ancestors are added to the file
+arguments.
+More precisely, these archives are inserted before the first given file
+argument.
+Furthermore, \[lq]\-ccopt \-L\[rq] options for all package directories,
+and the linker options of the selected packages are added, too.
+Note that the archives are inserted in topological order while the
+linker options are added in reverse toplogical order.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-predicates
+.I pred\-name\-list
+.ad
+.sp .6
+.RS 4n
+Adds the given predicates to the set of actual predicates.
+The predicates must be separated by commas and/or whitespace.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-dontlink
+.I package\-name\-list
+.ad
+.sp .6
+.RS 4n
+This option modifies the behaviour of \-linkpkg.
+Packages specified here and all ancestors are not linked in.
+Again the packages are separated by commas and/or whitespace.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-dllpath
+.I package\-name\-list
+.ad
+.sp .6
+.RS 4n
+For these packages \-dllpath options are added to the compiler command.
+This may be useful when the ld.conf file is not properly configured.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-dllpath\-all
+.ad
+.sp .6
+.RS 4n
+For all linked packages \-dllpath options are added to the compiler
+command.
+This may be useful when the ld.conf file is not properly configured.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-passopt
+.I arg
+.ad
+.sp .6
+.RS 4n
+The argument arg is passed directly to the underlying compiler.
+This is needed to specify undocumented compiler options.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-passrest
+.I arg
+\&...
+.ad
+.sp .6
+.RS 4n
+All following arguments arg\&... are passed directly to the underlying
+compiler.
+This is needed to specify undocumented compiler options.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-only\-show
+.ad
+.sp .6
+.RS 4n
+Only prints the constructed command (ocamlc/ocamlopt) to stdout, but
+does not execute the command.
+(This is for the unlikely event that you need a wrapper around
+ocamlfind.)
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-verbose
+.ad
+.sp .6
+.RS 4n
+This standard option is interpreted by the driver, too.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-thread
+.I package\-name\-list
+.ad
+.sp .6
+.RS 4n
+This standard option causes that the predicate \[lq]mt\[rq] is added to
+the set of actual predicates.
+If POSIX threads are available, the predicate \[lq]mt_posix\[rq] is
+selected, too.
+If only VM threads are available, the predicate \[lq]mt_vm\[rq] is
+included into the set, and the compiler switch is changed into \-vmthread.
+Note that the presence of the \[lq]mt\[rq] predicate triggers special
+fixup of the dependency graph (see below).
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-vmthread
+.ad
+.sp .6
+.RS 4n
+This standard option causes that the predicates \[lq]mt\[rq] and
+\[lq]mt_vm\[rq] are added to the set of actual predicates.
+Note that the presence of the \[lq]mt\[rq] predicate triggers special
+fixup of the dependency graph (see below).
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-p
+.ad
+.sp .6
+.RS 4n
+This standard option of \[lq]ocamlopt\[rq] causes that the predicate
+\[lq]gprof\[rq] is added to the set of actual predicates.
+.RE
+.RE
+
+.B Options for preprocessing
+.RS 4n
+.sp
+The options relevant for the preprocessor are the following:
+.sp
+.ne 2
+.mk
+.na
+.B \-package
+.I package\-name\-list
+.ad
+.sp .6
+.RS 4n
+These packages are considered while looking up the preprocessor
+arguments.
+(It does not cause problems that the same \-package option is used for
+this purpose, because the set of predicates is different.) It is
+recommended to mention at least camlp4 here if the preprocessor is going
+to be used.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-syntax
+.I pred\-name\-list
+.ad
+.sp .6
+.RS 4n
+These predicates are assumed to be true in addition to the standard
+preprocessor predicates.
+See below for a list.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-ppopt
+.I camlp4\-arg
+.ad
+.sp .6
+.RS 4n
+This argument is passed to the camlp4 call.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-ppxopt
+.I package,arg
+.ad
+.sp .6
+.RS 4n
+Add arg to the ppx preprocessor invocation specified via the
+\[lq]ppx\[rq] property in the META file of package.
+.RE
+.RE
+
+.B Predicates for compiling and linking
+.RS 4n
+.sp
+.ne 2
+.mk
+.na
+.B byte
+.ad
+.sp .6
+.RS 4n
+The \[lq]byte\[rq] predicate means that one of the bytecode compilers is
+used.
+It is automatically included into the predicate set if the
+\[lq]ocamlc\[rq], \[lq]ocamlcp\[rq], or \[lq]ocamlmktop\[rq] compiler is
+used.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B native
+.ad
+.sp .6
+.RS 4n
+The \[lq]native\[rq] predicate means that the native compiler is used.
+It is automatically included into the predicate set if the
+\[lq]ocamlopt\[rq] compiler is used.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B toploop
+.ad
+.sp .6
+.RS 4n
+The \[lq]toploop\[rq] predicate means that the toploop is available in
+the linked program.
+This predicate is only set when the toploop is actually being executed,
+not when the toploop is created (this changed in version 1.0.4 of
+findlib).
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B create_toploop
+.ad
+.sp .6
+.RS 4n
+This predicate means that a toploop is being created (using ocamlmktop).
+mt
+The \[lq]mt\[rq] predicate means that the program is multi\-threaded.
+It is automatically included into the predicate set if the \-thread
+option is given.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B mt_posix
+.ad
+.sp .6
+.RS 4n
+The \[lq]mt_posix\[rq] predicate means that in the case \[lq]mt\[rq] is
+set, too, the POSIX libraries are used to implement threads.
+\[lq]mt_posix\[rq] is automatically included into the predicate set if
+the variable \[lq]type_of_threads\[rq] in the META description of the
+\[lq]threads\[rq] package has the value \[lq]posix\[rq].
+This is normally the case if \[lq]findlib\[rq] is configured for POSIX
+threads.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B mt_vm
+.ad
+.sp .6
+.RS 4n
+The \[lq]mt_vm\[rq] predicate means that in the case \[lq]mt\[rq] is
+set, too, the VM thread emulation is used to implement multi\-threading.
+gprof
+The \[lq]gprof\[rq] predicate means that in the case \[lq]native\[rq] is
+set, too, the program is compiled for profiling.
+It is automatically included into the predicate set if
+\[lq]ocamlopt\[rq] is used and the \-p option is in effect.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B autolink
+.ad
+.sp .6
+.RS 4n
+The \[lq]autolink\[rq] predicate means that ocamlc is able to perform
+automatic linking.
+It is automatically included into the predicate set if ocamlc knows
+automatic linking (from version 3.00), but it is not set if the
+\-noautolink option is set.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B syntax
+.ad
+.sp .6
+.RS 4n
+This predicate is set if there is a \-syntax option.
+It is set both for the preprocessor and the compiler/linker stage, and
+it can be used to find out whether the preprocessor is enabled or not.
+.RE
+.RE
+
+.B Predicates for preprocessing
+.RS 4n
+.sp
+.ne 2
+.mk
+.na
+.B preprocessor
+.ad
+.sp .6
+.RS 4n
+This predicate is always set while looking up the preprocessor
+arguments.
+It can be used to distinguish between the preprocessor stage and the
+compiler/linker stage.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B syntax
+.ad
+.sp .6
+.RS 4n
+This predicate is set if there is a \-syntax option.
+It is set both for the preprocessor and the compiler/linker stage, and
+it can be used to find out whether the preprocessor is enabled or not.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B camlp4o
+.ad
+.sp .6
+.RS 4n
+This is the reserved predicate for the standard OCaml syntax.
+It can be used in the \-syntax predicate list.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B camlp4r
+.ad
+.sp .6
+.RS 4n
+This is the reserved predicate for the revised OCaml syntax.
+It can be used in the \-syntax predicate list.
+.RE
+.RE
+
+.B Special behaviour of \[lq]ocamlmktop\[rq]
+.RS 4n
+.sp
+As there is a special module Topfind that supports loading of packages
+in scripts, the \[lq]ocamlmktop\[rq] subcommand can add initialization
+code for this module.
+This extra code is linked into the executable if \[lq]findlib\[rq] is in
+the set of effectively linked packages.
+.RE
+
+.B Fixup of the dependency graph for multi\-threading
+.RS 4n
+.sp
+For a number of reasons the presence of the \[lq]mt\[rq] predicate
+triggers that (1) the package \[lq]threads\[rq] is added to the list of
+required packages and (2) the package \[lq]threads\[rq] becomes
+prerequisite of all other packages (except of itself and a few hardcoded
+exceptions).
+The effect is that the options \-thread and \-vmthread automatically
+select the \[lq]threads\[rq] package, and that \[lq]threads\[rq] is
+inserted at the right position in the package list.
+.RE
+
+.B Extended file naming
+.RS 4n
+.sp
+At a number of places one can not only refer to files by absolute or
+relative path names, but also by extended names.
+These have two major forms: \[lq]+name\[rq] refers to the subdirectory
+name of the standard library directory, and \[lq]\@name\[rq] refers to
+the package directory of the package name.
+Both forms can be continued by a path, e.g.
+\[lq]\@netstring/netstring_top.cma\[rq].
+.PP
+You can use extended names: (1) With \-I options, (2) as normal file
+arguments of the compiler, (3) in the \[lq]archive\[rq] property of
+packages.
+.RE
+
+.B How to set the names of the compiler executables
+.RS 4n
+.sp
+Normally, the OCaml bytecode compiler can be called under the name
+ocamlc.
+However, this is not always true; sometimes a different name is chosen.
+.PP
+You can instruct ocamlfind to call executables with other names than
+ocamlc, ocamlopt, ocamlmktop, and ocamlcp.
+If present, the environment variable OCAMLFIND_COMMANDS is interpreted
+as a mapping from the standard names to the actual names of the
+executables.
+It must have the following format:
+.RS 4n
+.sp
+\fIstandardname1\fR=\fIactualname1\fR \fIstandardname2\fR=\fIactualname2\fR \&...
+.RE
+
+Example: You may set OCAMLFIND_COMMANDS as follows:
+.RS 4n
+.sp
+.B OCAMLFIND_COMMANDS=`ocamlc=ocamlc\-3.00 ocamlopt=ocamlopt\-3.00'
+.B export OCAMLFIND_COMMANDS
+.RE
+
+Alternatively, you can change the configuration file findlib.conf.
+.RE
+
+.SH THE SUBCOMMAND \[lq]ocamlmklib\[rq]
+
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR ocamlmklib [ \fB\-package\fR \fIpackage\-name\-list\fR |
+                       \fB\-predicates\fR \fIpred\-name\-list\fR |
+                       \fB\-dllpath\-pkg\fR \fIpackage\-name\-list\fR |
+                       \fB\-dllpath\-all\fR |
+                       \fB\-passopt\fR \fIarg\fR |
+                       \fB\-passrest\fR \fIarg\&...\fR |
+                       \fBstandard\-option\fR ] \fIfile\fR \&...
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+This is a wrapper around ocamlmklib, and creates library archives and
+DLLs.
+In addition to the standard options, one can use \-package to add the
+search path of packages.
+Note that no predicates are set by default \- the wrapper does not know
+whether this is about byte or native code linking.
+.PP
+This wrapper is mostly provided for completeness.
+.RE
+
+.SH THE SUBCOMMAND \[lq]ocamldep\[rq]
+
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR ocamldep [ \fB\-package\fR \fIpackage\-name\-list\fR |
+                     \fB\-syntax\fR \fIpred\-name\-list\fR |
+                     \fB\-ppopt\fR \fIcamlp4\-arg\fR |
+                     \fB\-passopt\fR \fIarg\fR |
+                     \fB\-passrest\fR \fIarg\fR \&... |
+                     \fB\-verbose\fR |
+                     \fBstandard\-option\fR ] \fIfile\fR \&...
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+This command is a driver for the tool ocamldep of the OCaml
+distribution.
+This driver is only useful in conjunction with the preprocessor camlp4;
+otherwise it does not provide more functions than ocamldep itself.
+.RE
+
+.B Options
+.RS 4n
+.sp
+Here, only the additional options not interpreted by ocamldep but by the
+driver itself, and options with additional effects are explained.
+
+.sp
+.ne 2
+.mk
+.na
+.B \-package package\-name\-list
+.ad
+.sp .6
+.RS 4n
+The packages named here are only used to look up the preprocessor
+options.
+The package camlp4 should be specified anyway, but further packages that
+add capabilities to the preprocessor can also be passed.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-syntax pred\-name\-list
+.ad
+.sp .6
+.RS 4n
+The predicates that are in effect during the look\-up of the
+preprocessor options.
+At least, either camlp4o (selecting the normal syntax), or camlp4r
+(selecting the revised syntax) should be specified.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\-ppopt\fR \fIcamlp4\-arg\fR
+.ad
+.sp .6
+.RS 4n
+An option that is passed through to the camlp4 call.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\-passopt\fR \fIarg\fR
+.ad
+.sp .6
+.RS 4n
+An option that is passed through to the ocamldep call.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\-passrest\fR \fIarg\fR \&...
+.ad
+.sp .6
+.RS 4n
+All further arguments are passed down to ocamldep unprocessed
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B \-verbose
+.ad
+.sp .6
+.RS 4n
+Displays the resulting ocamldep command (for debugging)
+.RE
+.RE
+
+.B Example
+.RS 4n
+.sp
+A typical way of using this driver:
+.sp .6
+.RS 4n
+\fBocamlfind\fR ocamldep \fB\-package\fR \fIcamlp4,xstrp4\fR \fB\-syntax\fR \fIcamlp4r\fR file1.ml file2.ml
+.RE
+.sp
+This command outputs the dependencies of file1.ml and file2.ml, although
+these modules make use of the syntax extensions provided by xstrp4 and
+are written in revised syntax.
+.RE
+
+.SH THE SUBCOMMAND \[lq]ocamlbrowser\[rq]
+
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR ocamlbrowser [ \fB\-package package\-name\-list\fR |
+                         \fB\-all\fR |
+                         \fB\-passopt\fR \fIarg\fR \fB\-passrest\fR \fIargs\fR \&... ]
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+This driver calls the ocamlbrowser with package options.
+With \-package, the specified packages are included into the search path
+of the browser, and the modules of these packages become visible (in
+addition to the standard library).
+The option \-all causes that all packages are selected that are managed
+by findlib.
+.PP
+As for other drivers, the options \-passopt and \-passrest can be used
+to pass arguments directly to the ocamlbrowser program.
+.RE
+
+.SH THE SUBCOMMAND \[lq]ocamldoc\[rq]
+
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR ocamldoc [ \fB\-package\fR \fIpackage\-name\-list\fR |
+                     \fB\-predicates\fR \fIpred\-name\-list\fR |
+                     \fB\-syntax\fR \fIpred\-name\-list\fR |
+                     \fB\-ppopt\fR \fIcamlp4\-arg\fR |
+                      \fBstandard\-option\fR ] \fIfile \&...\fR
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+This subcommand is a driver for ocamldoc.
+It understands all options ocamldoc supports plus the mentioned findlib
+options.
+Basically, the \-package options are translated into \-I options, and
+the selected syntax options are translated into camlp4 options.
+.RE
+
+.B Options
+.RS 4n
+.sp
+Here, only the additional options not interpreted by ocamldep but by the
+driver itself, and options with additional effects are explained.
+.sp
+.ne 2
+.mk
+.na
+\fB\-package\fR \fIpackage\-name\-list\fR
+.ad
+.sp .6
+.RS 4n
+Adds the listed package names to the set of included packages.
+The package names may be separated by commas and/or whitespace.
+In the transformed command, for every package of the set of included
+packages and for any ancestor a directory search option is inserted
+after the already given options.
+This means that \[lq]\-I\[rq] options are added for every package
+directory.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\-predicates\fR \fIpred\-name\-list\fR
+.ad
+.sp .6
+.RS 4n
+Adds the given predicates to the set of actual predicates.
+The predicates must be separated by commas and/or whitespace.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\-syntax\fR \fIpred\-name\-list\fR
+.ad
+.sp .6
+.RS 4n
+The predicates that are in effect during the look\-up of the
+preprocessor options.
+At least, either camlp4o (selecting the normal syntax), or camlp4r
+(selecting the revised syntax) should be specified.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\-ppopt\fR \fIcamlp4\-arg\fR
+.ad
+.sp .6
+.RS 4n
+An option that is passed through to the camlp4 call.
+.RE
+.RE
+
+.SH THE SUBCOMMAND \[lq]install\[rq]
+
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR install [ \fB\-destdir\fR \fIdirectory\fR ]
+                  [ \fB\-metadir\fR \fIdirectory\fR ]
+                  [ \fB\-ldconf\fR \fIpath\fR ]
+                  [ \fB\-dont\-add\-directory\-directive\fR ]
+                  [ \fB\-patch\-version\fR \fIstring\fR ]
+                  [ \fB\-patch\-rmpkg\fR \fIname\fR ]
+                  [ \fB\-patch\-archives\fR ]
+                  [ \fB\-dll\fR ]
+                  [ \fB\-nodll\fR ]
+                  [ \fB\-optional\fR ]
+                  [ \fB\-add\fR ] \fIpackage_name\R \fIfile\fR \&...
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+This subcommand installs a new package either at the default location
+(see the variable destdir of findlib.conf), or in the directory
+specified by the \-destdir option.
+This means that a new package directory is created and that the files on
+the command line are copied to this directory.
+It is required that a META file is one of the files copied to the target
+directory.
+.PP
+Note that package directories should be flat (no subdirectories).
+Existing packages are never overwritten.
+.PP
+It is possible to have a separate directory for all the META files.
+If you want that, you have either to set the variable metadir of
+findlib.conf, or to specify the \-metadir option.
+In this case, the file called META is copied to the specified directory
+and renamed to META.p (where p is the package name), while all the other
+files are copied to the package directory as usual.
+Furthermore, the META file is modified such that the directory variable
+contains the path of the package directory.
+.PP
+The option \-dont\-add\-directory\-directive prevents the installer from
+adding a directory variable.
+.PP
+If there are files ending in the suffixes .so or .dll, the package
+directory will be added to the DLL configuration file ld.conf, such that
+the dynamic loader can find the DLL.
+The location of this file can be overriden by the \-ldconf option.
+To turn this feature off, use \[lq]\-ldconf ignore\[rq]; this causes
+that the ld.conf file is not modified.
+.PP
+However, if there is a stublibs directory in site\-lib, the DLLs are not
+installed in the package directory, but in this directory that is shared
+by all packages that are installed at the same location.
+In this case, the configuration file ld.conf is not modified, so you do
+not need to say \[lq]\-ldconf ignore\[rq] if you prefer this style of
+installation.
+.PP
+The options \-dll and \-nodll can be used to control exactly which files
+are considered as DLLs and which not.
+By default, the mentioned suffix rule is in effect: files ending in
+\[lq].so\[rq] (Unix) or \[lq].dll\[rq] (Windows) are DLLs.
+The switch \-dll changes this, and all following files are considered as
+DLLs, regardless of their suffix.
+The switch \-nodll expresses that the following files are not DLLs, even
+if they have a DLL\-like suffix.
+For example, in the following call the files \fIf1\fR and \fIf2\fR are handled by
+the suffix rule; \fIf3\fR and \fIf4\fR are DLLs anyway; and \fIf5\fR and \fIf6\fR are not DLLs:
+.sp .6
+.RS 4n
+\fBocamlfind\fR install \fIp\fR \fIf1\fR \fIf2\fR \fB\-dll\fR \fIf3\fR \fIf4\fR \fB\-nodll\fR \fIf5\fR \fIf6\fR
+.RE
+
+The switch \-optional declares that all following files are optional,
+i.e.\ the command will not fail if files do not exist.
+.PP
+The \-patch options may be used to change the contents of the META files
+while it is being installed.
+The option \-patch\-version changes the contents of the top\-level
+\[lq]version\[rq] variable.
+The option \-patch\-rmpkg removes the given subpackage.
+The option \-patch\-archives is experimental, in particular it removes
+all non\-existing files from \[lq]archive\[rq] variables, and even whole
+subpackages if the archives are missing.
+.PP
+The effect of \-add is to add further files to an already installed
+packages.
+.RE
+
+.SH THE SUBCOMMAND \[lq]remove\[rq]
+
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR remove [ \fB\-destdir\fR \fIdirectory\fR ] [ \fB\-metadir\fR \fIdirectory\fR ]
+                 [ \fB\-ldconf\fR \fIpath\fR ] \fIpackage_name\fR
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+The package will removed if it is installed at the default location (see
+the variable destdir of findlib.conf).
+If the package resides at a different location, it will not be removed
+by default; however, you can pass an alternate directory for packages by
+the \-destdir option.
+(This must be the same directory as specified at installation time.)
+.PP
+Note that package directories should be flat (no subdirectories); this
+subcommand cannot remove deep package directories.
+.PP
+If you have a separate directory for META files, you must either
+configure this directory by the metadir variable of findlib.conf, or by
+specifying the \-metadir option.
+.PP
+The command does not fail if the package and/or the META file cannot be
+located.
+You will get a warning only in this case.
+.PP
+If the package directory is mentioned in the ld.conf configuration file
+for DLLs, it will be tried to remove this entry from the file.
+The location of this file can be overriden by the \-ldconf option.
+To turn this feature off, use \[lq]\-ldconf ignore\[rq]; this causes
+that the ld.conf file is not modified.
+.PP
+If there is a stublibs directory, it is checked whether the package owns
+any of the files in this directory, and the owned files will be deleted.
+.RE
+
+.SH THE SUBCOMMAND \[lq]list\[rq]
+
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR list [ \fB\-describe\fR ]
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+This command lists all packages in the search path.
+The option \-describe outputs the package descriptions, too.
+.RE
+
+.SH THE SUBCOMMAND \[lq]printppx\[rq]
+
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR printppx [ \fB\-predicates\fR \fIpred\-name\-list\fR ] 
+                   [ \fB\-ppxopt\fR \fIpackage,arg\fR ] \fIpackage\fR \&...
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+This command prints the ppx preprocessor options as they would occur in
+an OCaml compiler invocation for the packages listed in the command.
+The output includes one \[lq]\-ppx\[rq] option for each preprocessor.
+The possible options have the same meaning as for \[lq]ocamlfind
+ocamlc\[rq].
+The option \[lq]\-predicates\[rq] adds assumed predicates and
+\[lq]\-ppxopt package,arg\[rq] adds \[lq]arg\[rq] to the ppx invocation
+of package package.
+.PP
+The output of \[lq]ocamlfind printppx\[rq] will contain quotes
+\[lq]\[rq]" for ppx commands that contain space\-separated arguments.
+In this case $(ocamlfind printppx \&...) won't work as naively expected,
+because many shells (including bash and dash) perform field splitting on
+the result of command substitutions without honoring quotes.
+.RE
+
+.SH THE SUBCOMMAND \[lq]lint\[rq]
+
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR lint \fIfile\fR
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+Checks the META file, and reports possible problems.
+.RE
+
+.SH THE SUBCOMMAND \[lq]printconf\[rq]
+
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR printconf [ \fBconf\fR | \fBpath\fR | \fBdestdir\fR | \fBmetadir\fR | \fBmetapath\fR |
+                      \fBstdlib\fR | \fBldconf\fR ]
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+This command prints the effective configuration after reading the
+configuration file, and after applying the various environment variables
+overriding settings.
+When called without arguments, the command prints all configuration
+options in a human\-readable form.
+When called with an argument, only the value of the requested option is
+printed without explaining texts:
+.sp
+.ne 2
+.mk
+.na
+.B conf
+.ad
+.sp .6
+.RS 4n
+Prints the location of the configuration file findlib.conf
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B path
+.ad
+.sp .6
+.RS 4n
+Prints the search path for packages.
+The members of the path are separated by linefeeds.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B destdir
+.ad
+.sp .6
+.RS 4n
+Prints the location where package are installed and removed by default.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B metadir
+.ad
+.sp .6
+.RS 4n
+Prints the location where META files are installed and removed (if the
+alternative layout is used).
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B metapath
+.ad
+.sp .6
+.RS 4n
+Prints the path where the META file is installed for a fictive package.
+The name of the package is marked with `%s' in the path.
+For instance, this command could output \[lq]/some/path/%s/META\[rq] or
+\[lq]/some/path/META.%s\[rq], depending on the layout.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B stdlib
+.ad
+.sp .6
+.RS 4n
+Prints the location of the standard library.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+.B ldconf
+.ad
+.sp .6
+.RS 4n
+Prints the location of the ld.conf file
+.RE
+.RE
+
+.SH THE SUBCOMMAND CALLING PACKAGE PROGRAMS
+
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind\fR pkg/cmd \fIargument\fR \&...
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+This subcommand is useful to call programs that are installed in package
+directories.
+It looks up the directory for pkg and calls the command named cmd in
+this directory.
+The remaining arguments are passed to this command.
+.PP
+argv(0) contains the absolute path to the command, and argv(1) and the
+following argv entries contain the arguments.
+The working directory is not changed.
+.PP
+Example: To call the program \[lq]x\[rq] that is installed in package
+\[lq]p\[rq], with arguments \[lq]y\[rq] and \[lq]z\[rq], run:
+.sp .6
+.RS 4n
+\fBocamlfind\fR \fIp/x\fR \fIy\fR \fIz\fR
+.RE
+.RE
+
+.SH CONFIGURATION FILE, ENVIRONMENT VARIABLES
+
+The configuration file and environment variables are documented in the
+manual page for findlib.conf.
+
+.SH HOW TO SET THE TOOLCHAIN
+
+.B Synopsis
+.RS 4n
+.sp
+.nf
+\fBocamlfind \-toolchain\fR \fIname\fR \&...
+.fi
+.RE
+
+.B Description
+.RS 4n
+.sp
+The \-toolchain option can be given before any other command, e.g.
+ocamlfind \-toolchain foo ocamlc \-c file.ml
+compiles file.ml with toolchain \[lq]foo\[rq].
+By selecting toolchains one can switch to different command sets.
+For instance, the toolchain \[lq]foo\[rq] may consist of a patched
+ocamlc compiler.
+.PP
+See findlib.conf how to configure toolchains.
+.RE
