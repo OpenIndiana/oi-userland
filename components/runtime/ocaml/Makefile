@@ -31,7 +31,7 @@ PATH= $(PATH.gnu)
 COMPONENT_NAME=		       ocaml
 COMPONENT_FMRI=          runtime/ocaml
 COMPONENT_VERSION_MAJOR= 4.06
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_VERSION=       $(COMPONENT_VERSION_MAJOR).0
 IPS_COMPONENT_VERSION=   4.0.6
 COMPONENT_PROJECT_URL=	 http://www.ocaml.org
@@ -70,6 +70,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 
 COMPONENT_BUILD_ARGS += -j1
+
+LD_Z_IGNORE=
+LDFLAGS+= -lnsl -lsocket
 
 # Set up some environment variables to make things look nicer.
 # We make an 64 build and use /usr/bin/ for the commands
@@ -145,6 +148,10 @@ install:	$(INSTALL_64)
 
 test:		  $(TEST_64)
 
+# Build dependencies
+REQUIRED_PACKAGES += editor/gnu-emacs
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += editor/gnu-emacs
+REQUIRED_PACKAGES += x11/library/libx11
