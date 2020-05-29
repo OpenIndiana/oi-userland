@@ -15,26 +15,26 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           freetype
-COMPONENT_VERSION=        2.10.1
+COMPONENT_VERSION=        2.10.2
 COMPONENT_FMRI=           system/library/freetype-2
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SUMMARY=  	FreeType 2 font engine
 COMPONENT_SRC=      	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:16dbfa488a21fe827dc27eaf708f42f7aa3bb997d745d31a19781628c36ba26f
+	sha256:1543d61025d2e6312e0a1c563652555f17378a204a61e99928c9fcef030a2d8b
 COMPONENT_ARCHIVE_URL= \
 	http://download.savannah.gnu.org/releases/freetype/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://freetype.org/
 COMPONENT_LICENSE=      The FreeType Project License
 COMPONENT_LICENSE_FILE= freetype-2.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -55,15 +55,10 @@ COMPONENT_PREP_ACTION = ( cd $(@D); \
 	$(GSED) -r 's:.*(\#.*SUBPIXEL_RENDERING) .*:\1:' \
 		-i include/freetype/config/ftoption.h ) 
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += SUNWcs
