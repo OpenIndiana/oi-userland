@@ -1,16 +1,16 @@
---- doc/CMakeLists.txt	2018-12-20 07:28:50.000000000 +0000
-+++ doc/CMakeLists.txt.new	2019-03-10 09:47:29.796512804 +0000
-@@ -12,11 +12,11 @@ if(A2X)
+--- doc/CMakeLists.txt.orig	2020-05-29 23:36:06.380768122 +0000
++++ doc/CMakeLists.txt	2020-05-29 23:36:20.499787632 +0000
+@@ -12,11 +12,11 @@
      if(DBLATEX)
          add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/manual.pdf
-                            DEPENDS ${PROJECT_SOURCE_DIR}/[a-z]*.txt
--                           COMMAND ${A2X} --icons -D ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/manual.txt)
-+                           COMMAND ${A2X} -D ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/manual.txt)
+                            DEPENDS ${PROJECT_SOURCE_DIR}/[a-z]*.asc
+-                           COMMAND ${A2X} --icons -D ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/manual.asc)
++                           COMMAND ${A2X} -D ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/manual.asc)
          add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/GTF.pdf
-                            DEPENDS ${PROJECT_SOURCE_DIR}/GTF.txt
-                                    ${PROJECT_SOURCE_DIR}/OpCodes.txt
--                           COMMAND ${A2X} --icons -D ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/GTF.txt)
-+                           COMMAND ${A2X} -D ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/GTF.txt)
+                            DEPENDS ${PROJECT_SOURCE_DIR}/GTF.asc
+                                    ${PROJECT_SOURCE_DIR}/OpCodes.asc
+-                           COMMAND ${A2X} --icons -D ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/GTF.asc)
++                           COMMAND ${A2X} -D ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/GTF.asc)
          set(DOC_DEPENDS ${PROJECT_BINARY_DIR}/manual.pdf ${PROJECT_BINARY_DIR}/GTF.pdf)
      endif()
      add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/manual.html
