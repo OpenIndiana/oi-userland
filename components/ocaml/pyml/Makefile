@@ -49,6 +49,5 @@ REQUIRED_PACKAGES+= library/ocaml/ocamlbuild
 REQUIRED_PACKAGES+= library/ocaml/ocaml-findlib
 REQUIRED_PACKAGES+= library/ocaml/stdcompat
 REQUIRED_PACKAGES+= runtime/ocaml
-REQUIRED_PACKAGES+= library/python/numpy-35
 
 # Auto-generated dependencies
