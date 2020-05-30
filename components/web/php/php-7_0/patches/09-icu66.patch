@@ -1,0 +1,60 @@
+https://bugs.php.net/bug.php?id=77126
+
+--- php-7.0.32/ext/intl/breakiterator/codepointiterator_internal.h.orig     2018-10-05 11:39:33.519829566 -0700
++++ php-7.0.32/ext/intl/breakiterator/codepointiterator_internal.h  2018-10-05 11:34:17.485817630 -0700
+@@ -19,6 +19,8 @@
+ 
+ #include <unicode/brkiter.h>
+ 
++using namespace icu;
++
+ using U_ICU_NAMESPACE::BreakIterator;
+ 
+ namespace PHP {
+--- php-7.0.32/ext/intl/intl_data.h.orig    2018-10-05 11:39:33.543829795 -0700
++++ php-7.0.32/ext/intl/intl_data.h 2018-10-05 11:34:23.161871764 -0700
+@@ -23,6 +23,10 @@
+ 
+ #include "intl_error.h"
+ 
++#ifdef __cplusplus
++using namespace icu;
++#endif
++
+ /* Mock object to generalize error handling in sub-modules.
+    Sub-module data structures should always have error as first element
+    for this to work!
+--- php-7.0.32/ext/intl/common/common_enum.h.orig   2018-10-05 11:39:33.600830338 -0700
++++ php-7.0.32/ext/intl/common/common_enum.h        2018-10-05 11:34:36.564999586 -0700
+@@ -29,6 +29,7 @@
+ #include "../intl_data.h"
+ #ifdef __cplusplus
+ }
++using namespace icu;
+ #endif
+ 
+ #define INTLITERATOR_ERROR(ii)                                         (ii)->err
+--- php-7.0.32/ext/intl/intl_convertcpp.h.orig      2018-10-05 11:39:33.640830719 -0700
++++ php-7.0.32/ext/intl/intl_convertcpp.h   2018-10-05 11:34:48.296111454 -0700
+@@ -26,6 +26,8 @@
+ #include <unicode/unistr.h>
+ #include <zend_types.h>
+ 
++using namespace icu;
++
+ int intl_stringFromChar(UnicodeString &ret, char *str, size_t str_len, UErrorCode *status);
+ 
+ zend_string* intl_charFromString(const UnicodeString &from, UErrorCode *status);
+--- php-7.0.32/ext/intl/php_intl.h.orig     2018-10-05 11:39:33.673831033 -0700
++++ php-7.0.32/ext/intl/php_intl.h  2018-10-05 11:34:55.517180312 -0700
+@@ -32,6 +32,10 @@
+ #include "intl_error.h"
+ #include "Zend/zend_exceptions.h"
+ 
++#ifdef __cplusplus
++using namespace icu;
++#endif
++
+ extern zend_module_entry intl_module_entry;
+ #define phpext_intl_ptr &intl_module_entry
+ 
