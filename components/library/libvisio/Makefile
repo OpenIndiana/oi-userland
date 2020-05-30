@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libvisio
 COMPONENT_VERSION=      0.1.7
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=         library/c++/libvisio
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libvisio
