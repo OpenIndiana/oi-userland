@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libe-book
 COMPONENT_VERSION=	0.1.3
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=     	library/c++/libe-book
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libebook
