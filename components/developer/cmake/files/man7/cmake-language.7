@@ -1,8 +1,35 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "CMAKE-LANGUAGE" "7" "October 14, 2015" "3.3.2" "CMake"
+.TH "CMAKE-LANGUAGE" "7" "August 09, 2019" "3.15.2" "CMake"
 .SH NAME
 cmake-language \- CMake Language Reference
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
 .
 .nr rst2man-indent-level 0
 .
@@ -86,7 +113,7 @@ be encoded as UTF\-8 on platforms with system APIs supporting this
 encoding.  In addition, CMake 3.2 and above support source files
 encoded in UTF\-8 on Windows (using UTF\-16 to call system APIs).
 Furthermore, CMake 3.0 and above allow a leading UTF\-8
-\fI\%Byte\-Order Mark\fP in source files.
+\fI\%Byte-Order Mark\fP in source files.
 .SS Source Files
 .sp
 A CMake Language source file consists of zero or more
@@ -177,16 +204,16 @@ same length:
 .sp
 .nf
 \fBbracket_argument\fP ::=  \fI\%bracket_open\fP \fI\%bracket_content\fP \fI\%bracket_close\fP
-\fBbracket_open    \fP ::=  \(aq[\(aq \(aq=\(aq{len} \(aq[\(aq
-\fBbracket_content \fP ::=  <any text not containing a \fI\%bracket_close\fP
-                       of the same {len} as the \fI\%bracket_open\fP>
-\fBbracket_close   \fP ::=  \(aq]\(aq \(aq=\(aq{len} \(aq]\(aq
+\fBbracket_open    \fP ::=  \(aq[\(aq \(aq=\(aq* \(aq[\(aq
+\fBbracket_content \fP ::=  <any text not containing a \fI\%bracket_close\fP with
+                       the same number of \(aq=\(aq as the \fI\%bracket_open\fP>
+\fBbracket_close   \fP ::=  \(aq]\(aq \(aq=\(aq* \(aq]\(aq
 
 .fi
 .sp
-An opening bracket of length \fIlen >= 0\fP is written \fB[\fP followed
-by \fIlen\fP \fB=\fP followed by \fB[\fP and the corresponding closing
-bracket is written \fB]\fP followed by \fIlen\fP \fB=\fP followed by \fB]\fP\&.
+An opening bracket is written \fB[\fP followed by zero or more \fB=\fP followed
+by \fB[\fP\&.  The corresponding closing bracket is written \fB]\fP followed
+by the same number of \fB=\fP followed by \fB]\fP\&.
 Brackets do not nest.  A unique length may always be chosen
 for the opening and closing brackets to contain closing brackets
 of other lengths.
@@ -333,10 +360,18 @@ endforeach()
 To support legacy CMake code, unquoted arguments may also contain
 double\-quoted strings (\fB"..."\fP, possibly enclosing horizontal
 whitespace), and make\-style variable references (\fB$(MAKEVAR)\fP).
+.sp
 Unescaped double\-quotes must balance, may not appear at the
 beginning of an unquoted argument, and are treated as part of the
 content.  For example, the unquoted arguments \fB\-Da="b c"\fP,
 \fB\-Da=$(v)\fP, and \fBa" "b"c"d\fP are each interpreted literally.
+They may instead be written as quoted arguments \fB"\-Da=\e"b c\e""\fP,
+\fB"\-Da=$(v)"\fP, and \fB"a\e" \e"b\e"c\e"d"\fP, respectively.
+.sp
+Make\-style references are treated literally as part of the content
+and do not undergo variable expansion.  They are treated as part
+of a single argument (rather than as separate \fB$\fP, \fB(\fP,
+\fBMAKEVAR\fP, and \fB)\fP arguments).
 .sp
 The above "unquoted_legacy" production represents such arguments.
 We do not recommend using legacy unquoted arguments in new code.
@@ -366,7 +401,7 @@ value on it.  A \fB\e;\fP inside \fI\%Variable References\fP encodes the literal
 historical considerations.)
 .SS Variable References
 .sp
-A \fIvariable reference\fP has the form \fB${variable_name}\fP and is
+A \fIvariable reference\fP has the form \fB${<variable>}\fP and is
 evaluated inside a \fI\%Quoted Argument\fP or an \fI\%Unquoted Argument\fP\&.
 A variable reference is replaced by the value of the variable,
 or by the empty string if the variable is not set.
@@ -375,14 +410,24 @@ inside out, e.g. \fB${outer_${inner_variable}_variable}\fP\&.
 .sp
 Literal variable references may consist of alphanumeric characters,
 the characters \fB/_.+\-\fP, and \fI\%Escape Sequences\fP\&.  Nested references
-may be used to evaluate variables of any name.  (See also policy
-\fBCMP0053\fP documentation for historical considerations.)
+may be used to evaluate variables of any name.  See also policy
+\fBCMP0053\fP documentation for historical considerations and reasons why
+the \fB$\fP is also technically permitted but is discouraged.
 .sp
 The \fI\%Variables\fP section documents the scope of variable names
 and how their values are set.
 .sp
-An \fIenvironment variable reference\fP has the form \fB$ENV{VAR}\fP and
-is evaluated in the same contexts as a normal variable reference.
+An \fIenvironment variable reference\fP has the form \fB$ENV{<variable>}\fP\&.
+See the \fI\%Environment Variables\fP section for more information.
+.sp
+A \fIcache variable reference\fP has the form \fB$CACHE{<variable>}\fP\&.
+See \fBCACHE\fP for more information.
+.sp
+The \fBif()\fP command has a special condition syntax that
+allows for variable references in the short form \fB<variable>\fP
+instead of \fB${<variable>}\fP\&.
+However, environment and cache variables always need to be
+referenced as \fB$ENV{<variable>}\fP or \fB$CACHE{<variable>}\fP\&.
 .SS Comments
 .sp
 A comment starts with a \fB#\fP character that is not inside a
@@ -391,7 +436,7 @@ as part of an \fI\%Unquoted Argument\fP\&.  There are two types of
 comments: a \fI\%Bracket Comment\fP and a \fI\%Line Comment\fP\&.
 .SS Bracket Comment
 .sp
-A \fB#\fP immediately followed by a \fI\%Bracket Argument\fP forms a
+A \fB#\fP immediately followed by a \fI\%bracket_open\fP forms a
 \fIbracket comment\fP consisting of the entire bracket enclosure:
 .sp
 .nf
@@ -422,11 +467,11 @@ They interpret the opening \fB#\fP as the start of a \fI\%Line Comment\fP\&.
 .UNINDENT
 .SS Line Comment
 .sp
-A \fB#\fP not immediately followed by a \fI\%Bracket Argument\fP forms a
+A \fB#\fP not immediately followed by a \fI\%bracket_open\fP forms a
 \fIline comment\fP that runs until the end of the line:
 .sp
 .nf
-\fBline_comment\fP ::=  \(aq#\(aq <any text not starting in a \fI\%bracket_argument\fP
+\fBline_comment\fP ::=  \(aq#\(aq <any text not starting in a \fI\%bracket_open\fP
                        and not containing a \fI\%newline\fP>
 
 .fi
@@ -483,7 +528,7 @@ creates a binding in the current scope:
 create commands that, when invoked, process the recorded commands
 in a new variable binding scope.  A variable "set" or "unset"
 binds in this scope and is visible for the current function and
-any nested calls, but not after the function returns.
+any nested calls within it, but not after the function returns.
 .TP
 .B Directory Scope
 Each of the \fI\%Directories\fP in a source tree has its own variable
@@ -511,10 +556,38 @@ to the binding in the current directory scope, if any.  If a
 is found, or no binding is found, CMake then searches for a
 cache entry.  If a cache entry is found, its value is used.
 Otherwise, the variable reference evaluates to an empty string.
+The \fB$CACHE{VAR}\fP syntax can be used to do direct cache entry
+lookups.
 .sp
-The \fBcmake\-variables(7)\fP manual documents many variables
+The \fBcmake\-variables(7)\fP manual documents the many variables
 that are provided by CMake or have meaning to CMake when set
 by project code.
+.SH ENVIRONMENT VARIABLES
+.sp
+Environment Variables are like ordinary \fI\%Variables\fP, with the
+following differences:
+.INDENT 0.0
+.TP
+.B Scope
+Environment variables have global scope in a CMake process.
+They are never cached.
+.TP
+.B References
+\fI\%Variable References\fP have the form \fB$ENV{<variable>}\fP\&.
+.TP
+.B Initialization
+Initial values of the CMake environment variables are those of
+the calling process.
+Values can be changed using the \fBset()\fP and \fBunset()\fP
+commands.
+These commands only affect the running CMake process,
+not the system environment at large.
+Changed values are not written back to the calling process,
+and they are not seen by subsequent build or test processes.
+.UNINDENT
+.sp
+The \fBcmake\-env\-variables(7)\fP manual documents environment
+variables that have special meaning to CMake.
 .SH LISTS
 .sp
 Although all values in CMake are stored as strings, a string
@@ -555,6 +628,6 @@ set(x a "b;c") # sets "x" to "a;b;c", not "a;b\e;c"
 .UNINDENT
 .UNINDENT
 .SH COPYRIGHT
-2000-2015 Kitware, Inc.
+2000-2019 Kitware, Inc. and Contributors
 .\" Generated by docutils manpage writer.
 .

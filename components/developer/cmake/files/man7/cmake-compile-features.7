@@ -1,8 +1,35 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "CMAKE-COMPILE-FEATURES" "7" "October 14, 2015" "3.3.2" "CMake"
+.TH "CMAKE-COMPILE-FEATURES" "7" "August 09, 2019" "3.15.2" "CMake"
 .SH NAME
 cmake-compile-features \- CMake Compile Features Reference
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
 .
 .nr rst2man-indent-level 0
 .
@@ -115,6 +142,35 @@ target_link_libraries(myexe mylib)
 Feature requirements are evaluated transitively by consuming the link
 implementation.  See \fBcmake\-buildsystem(7)\fP for more on
 transitive behavior of build properties and usage requirements.
+.SS Requiring Language Standards
+.sp
+In projects that use a large number of commonly available features from
+a particular language standard (e.g. C++ 11) one may specify a
+meta\-feature (e.g. \fBcxx_std_11\fP) that requires use of a compiler mode
+aware of that standard.  This is simpler than specifying all the
+features individually, but does not guarantee the existence of any
+particular feature.  Diagnosis of use of unsupported features will be
+delayed until compile time.
+.sp
+For example, if C++ 11 features are used extensively in a project\(aqs
+header files, then clients must use a compiler mode aware of C++ 11
+or above.  This can be requested with the code:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+target_compile_features(mylib PUBLIC cxx_std_11)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+In this example, CMake will ensure the compiler is invoked in a mode
+that is aware of C++ 11 (or above), adding flags such as
+\fB\-std=gnu++11\fP if necessary.  This applies to sources within \fBmylib\fP
+as well as any dependents (that may include headers from \fBmylib\fP).
+.SS Availability of Compiler Extensions
 .sp
 Because the \fBCXX_EXTENSIONS\fP target property is \fBON\fP by default,
 CMake uses extended variants of language dialects by default, such as
@@ -379,23 +435,68 @@ target_link_libraries(consumer_no foo)
 .UNINDENT
 .SH SUPPORTED COMPILERS
 .sp
-CMake is currently aware of the \fBlanguage standards\fP
+CMake is currently aware of the \fBC++ standards\fP
 and \fBcompile features\fP available from
 the following \fBcompiler ids\fP as of the
 versions specified for each:
 .INDENT 0.0
 .IP \(bu 2
-\fBAppleClang\fP: Apple Clang for Xcode versions 4.4 though 6.2.
+\fBAppleClang\fP: Apple Clang for Xcode versions 4.4 though 9.2.
 .IP \(bu 2
-\fBClang\fP: Clang compiler versions 2.9 through 3.4.
+\fBClang\fP: Clang compiler versions 2.9 through 6.0.
 .IP \(bu 2
-\fBGNU\fP: GNU compiler versions 4.4 through 5.0.
+\fBGNU\fP: GNU compiler versions 4.4 through 8.0.
 .IP \(bu 2
-\fBMSVC\fP: Microsoft Visual Studio versions 2010 through 2015.
+\fBMSVC\fP: Microsoft Visual Studio versions 2010 through 2017.
 .IP \(bu 2
-\fBSunPro\fP: Oracle SolarisStudio version 12.4.
+\fBSunPro\fP: Oracle SolarisStudio versions 12.4 through 12.6.
+.IP \(bu 2
+\fBIntel\fP: Intel compiler versions 12.1 through 17.0.
+.UNINDENT
+.sp
+CMake is currently aware of the \fBC standards\fP
+and \fBcompile features\fP available from
+the following \fBcompiler ids\fP as of the
+versions specified for each:
+.INDENT 0.0
+.IP \(bu 2
+all compilers and versions listed above for C++.
+.IP \(bu 2
+\fBGNU\fP: GNU compiler versions 3.4 through 8.0.
+.UNINDENT
+.sp
+CMake is currently aware of the \fBC++ standards\fP and
+their associated meta\-features (e.g. \fBcxx_std_11\fP) available from the
+following \fBcompiler ids\fP as of the
+versions specified for each:
+.INDENT 0.0
+.IP \(bu 2
+\fBCray\fP: Cray Compiler Environment version 8.1 through 8.5.8.
+.IP \(bu 2
+\fBPGI\fP: PGI version 12.10 through 17.5.
+.IP \(bu 2
+\fBXL\fP: IBM XL version 10.1 through 13.1.5.
+.UNINDENT
+.sp
+CMake is currently aware of the \fBC standards\fP and
+their associated meta\-features (e.g. \fBc_std_99\fP) available from the
+following \fBcompiler ids\fP as of the
+versions specified for each:
+.INDENT 0.0
+.IP \(bu 2
+all compilers and versions listed above with only meta\-features for C++.
+.IP \(bu 2
+\fBTI\fP: Texas Instruments compiler.
+.UNINDENT
+.sp
+CMake is currently aware of the \fBCUDA standards\fP
+from the following \fBcompiler ids\fP as of the
+versions specified for each:
+.INDENT 0.0
+.IP \(bu 2
+\fBNVIDIA\fP: NVIDIA nvcc compiler 7.5 though 9.1.
 .UNINDENT
 .SH COPYRIGHT
-2000-2015 Kitware, Inc.
+2000-2019 Kitware, Inc. and Contributors
 .\" Generated by docutils manpage writer.
 .
