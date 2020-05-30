@@ -1,0 +1,30 @@
+http://site.icu-project.org/download/66#TOC-Known-Issues
+
+Needs trailing semicolon
+
+--- webkitgtk-2.16.6/Source/WebCore/dom/Document.cpp.orig	2020-05-30 21:28:05.562021687 +0000
++++ webkitgtk-2.16.6/Source/WebCore/dom/Document.cpp	2020-05-30 21:28:48.404358675 +0000
+@@ -4411,12 +4411,12 @@
+     unsigned i = 0;
+ 
+     UChar32 c;
+-    U16_NEXT(characters, i, length, c)
++    U16_NEXT(characters, i, length, c);
+     if (!isValidNameStart(c))
+         return false;
+ 
+     while (i < length) {
+-        U16_NEXT(characters, i, length, c)
++        U16_NEXT(characters, i, length, c);
+         if (!isValidNamePart(c))
+             return false;
+     }
+@@ -4476,7 +4476,7 @@
+ 
+     for (unsigned i = 0; i < length; ) {
+         UChar32 c;
+-        U16_NEXT(qualifiedName, i, length, c)
++        U16_NEXT(qualifiedName, i, length, c);
+         if (c == ':') {
+             if (sawColon)
+                 return Exception { NAMESPACE_ERR };
