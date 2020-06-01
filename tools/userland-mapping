@@ -28,6 +28,8 @@ import logging
 import subprocess
 import multiprocessing
 
+from bass.component import BassComponent
+
 try:
     from scandir import walk
 except ImportError:
@@ -35,7 +37,7 @@ except ImportError:
 
 logger = logging.getLogger('userland-mapping')
 
-COMONENT_MAPPING_FILENAME = 'mapping.json'
+COMPONENT_MAPPING_FILENAME = 'mapping.json'
 
 
 def find_component_paths(path, subdir='components', debug=False):
@@ -56,18 +58,14 @@ def find_component_paths(path, subdir='components', debug=False):
 
 def generate_component_data(component_path, subdir='components'):
     result = []
+    component = BassComponent(path=component_path)
+    component_name = component.component_name
+    if not component_name:
+        raise ValueError('Component name is empty for path ' + component_path + '.')
+    component_fmris = component.supplied_packages
+    if not component_fmris:
+        raise ValueError('Component FMRIs is empty for path ' + component_path + '.')
 
-    proc = subprocess.Popen(['gmake', '-s', 'print-value-COMPONENT_NAME', 'print-package-names'],
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
-                            cwd=component_path,
-                            universal_newlines=True)
-
-    for out in proc.stdout:
-        result.append(out.rstrip())
-
-    component_name = result[0]
-    component_fmris = result[1:]
     component_relative_path = component_path.split(os.path.join(os.environ['WS_TOP'], subdir))[-1].replace('/', '', 1)
 
     return component_fmris, component_name, component_relative_path
@@ -82,11 +80,11 @@ def generate_userland_mapping(workspace_path, subdir='components'):
 
     for component_fmris, component_name, component_relative_path in results:
         for component_fmri in component_fmris:
-            mapping.append({'component_name': component_name,
-                            'component_fmri': component_fmri,
-                            'component_path': component_relative_path})
+            mapping.append({'name': component_name,
+                            'fmri': component_fmri,
+                            'path': component_relative_path})
 
-    component_mapping_file = os.path.join(workspace_path, subdir, COMONENT_MAPPING_FILENAME)
+    component_mapping_file = os.path.join(workspace_path, subdir, COMPONENT_MAPPING_FILENAME)
     with open(component_mapping_file, 'w') as f:
         f.write(json.dumps(mapping, sort_keys=True, indent=4))
 
@@ -103,7 +101,6 @@ def main():
     subdir = args.subdir
 
     generate_userland_mapping(workspace_path=workspace, subdir=subdir)
-
 
 if __name__ == '__main__':
     main()
