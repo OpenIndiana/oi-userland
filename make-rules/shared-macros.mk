@@ -146,7 +146,7 @@ PREFERRED_BITS=64
 endif
 # Unlike Solaris we still prefer 32bit
 ifeq ($(strip $(BUILD_BITS)),64_and_32)
-PREFERRED_BITS=32
+PREFERRED_BITS ?=32
 endif
 PREFERRED_BITS ?= 32
 
