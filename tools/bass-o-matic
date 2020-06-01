@@ -42,6 +42,8 @@ try:
 except ImportError:
     from os import walk
 
+from bass.component import BassComponent
+
 logger = logging.getLogger('bass-o-matic')
 
 # Locate SCM directories containing Userland components by searching from
@@ -148,57 +150,6 @@ def FindComponentPaths(path, debug=False, subdir='components',
     return sorted(paths)
 
 
-class BassComponent(object):
-    def __init__(self, path=None, debug=False):
-        self.debug = debug
-        self.path = path
-        if path:
-            # get supplied packages    (cd path ; gmake print-package-names)
-            self.supplied_packages = self.run_make(path, 'print-package-names')
-
-            # get dependencies
-            self.required_packages = self.run_make(path, 'print-required-packages')
-
-    def required(self, component):
-        result = False
-
-        s1 = set(self.required_packages)
-        s2 = set(component.supplied_packages)
-        if s1.intersection(s2):
-            result = True
-
-        return result
-
-    def run_make(self, path, targets):
-
-        result = []
-
-        if self.debug:
-            logger.debug('Executing \'gmake %s\' in %s', targets, path)
-
-        proc = subprocess.Popen(['gmake', '-s', targets],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
-                                cwd=path,
-                                universal_newlines=True)
-        for out in proc.stdout:
-            result.append(out.rstrip())
-
-        proc.wait()
-        if self.debug:
-            if proc.returncode != 0:
-                logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
-
-        return result
-
-    def __str__(self):
-        result = 'Component:\n\tPath: %s\n' % self.path
-        result += '\tProvides Package(s):\n\t\t%s\n' % '\t\t'.join(self.supplied_packages)
-        result += '\tRequired Package(s):\n\t\t%s\n' % '\t\t'.join(self.required_packages)
-
-        return result
-
-
 def main():
     sys.stdout.flush()
 
@@ -213,6 +164,7 @@ def main():
     parser.add_argument('-w', '--workspace', default=os.getenv('WS_TOP'), help='Path to workspace')
     parser.add_argument('-l', '--components', default=None, choices=COMPONENTS_ALLOWED_KEYWORDS)
     parser.add_argument('--make', help='Makefile target to invoke')
+    parser.add_argument('--pkg5', action='store_true',help='Invoke generation of metadata')
     parser.add_argument('--subdir', default='components', help='Directory holding components')
     parser.add_argument('-d', '--debug', action='store_true', default=False)
     parser.add_argument('--begin-commit', default=os.getenv('GIT_PREVIOUS_SUCCESSFUL_COMMIT', 'HEAD~1'))
@@ -222,8 +174,9 @@ def main():
 
     workspace = args.workspace
     components_arg = args.components
-    subdir = args.subdir
     make_arg = args.make
+    pkg5_arg = args.pkg5
+    subdir = args.subdir
     begin_commit = args.begin_commit
     end_commit = args.end_commit
     debug = args.debug
@@ -239,6 +192,14 @@ def main():
         proc = subprocess.Popen(['gmake'] + [make_arg])
         rc = proc.wait()
         sys.exit(rc)
+
+    if pkg5_arg:
+        component_path = os.getcwd().split(os.path.join(workspace, subdir))[-1].replace('/', '', 1)
+        component_pkg5 = os.path.join( os.getcwd(), 'pkg5')
+        if os.path.isfile(component_pkg5):
+            os.remove(component_pkg5)
+        BassComponent(FindComponentPaths(path=workspace, debug=debug, subdir=os.path.join(subdir, component_path))[0])
+        sys.exit(0)
 
     incremental = False
     if os.getenv('BASS_O_MATIC_MODE') == 'incremental':
@@ -269,9 +230,16 @@ def main():
             pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
             components = pool.map(BassComponent, component_paths)
 
+            with open(os.path.join(workspace, subdir, 'mapping.json'), "r") as f:
+                     data = json.loads(f.read())
+            component_path = {}
+            for entry in data:
+                component_path[entry['fmri']] = entry['path']
+
             for component in components:
                 for fmri in component.supplied_packages:
-                    dependencies[fmri] = component.required_packages
+                    paths = set([component_path[i] for i in component.required_packages])
+                    dependencies[fmri] = list(paths)
 
             dependencies_file = os.path.join(workspace, subdir, 'dependencies.json')
             with open(dependencies_file, 'w') as f:
