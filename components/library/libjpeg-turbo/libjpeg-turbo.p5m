@@ -25,22 +25,34 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 # Require package with default JPEG API
 depend fmri=image/library/libjpeg8-turbo type=require
 
+# Dependency on libjpeg6 with removed docs and symlinks
+depend fmri=image/library/libjpeg6@6.0.2-2020.0.1.1 type=optional
+
 # Only shipped by libjpeg-turbo
 file path=usr/share/doc/libjpeg-turbo/LICENSE.md
 file path=usr/share/doc/libjpeg-turbo/README.ijg
 file path=usr/share/doc/libjpeg-turbo/README.md
-file path=usr/share/doc/libjpeg-turbo/example.c
+file path=usr/share/doc/libjpeg-turbo/example.txt
 file path=usr/share/doc/libjpeg-turbo/libjpeg.txt
 file path=usr/share/doc/libjpeg-turbo/structure.txt
+file path=usr/share/doc/libjpeg-turbo/tjexample.c
 file path=usr/share/doc/libjpeg-turbo/usage.txt
 file path=usr/share/doc/libjpeg-turbo/wizard.txt
 
-# Already shipped by libjpeg6-ijg
-#file path=usr/share/man/man1/cjpeg.1
-#file path=usr/share/man/man1/djpeg.1
-#file path=usr/share/man/man1/jpegtran.1
-#file path=usr/share/man/man1/rdjpgcom.1
-#file path=usr/share/man/man1/wrjpgcom.1
+# Previously shipped by libjpeg6-ijg
+file path=usr/share/man/man1/cjpeg.1
+file path=usr/share/man/man1/djpeg.1
+file path=usr/share/man/man1/jpegtran.1
+file path=usr/share/man/man1/rdjpgcom.1
+file path=usr/share/man/man1/wrjpgcom.1
+
+# Add symlinks to default binaries
+link path=usr/bin/cjpeg target=../lib/libjpeg8-turbo/bin/$(MACH64)/cjpeg
+link path=usr/bin/djpeg target=../lib/libjpeg8-turbo/bin/$(MACH64)/djpeg
+link path=usr/bin/jpegtran target=../lib/libjpeg8-turbo/bin/$(MACH64)/jpegtran
+link path=usr/bin/rdjpgcom target=../lib/libjpeg8-turbo/bin/$(MACH64)/rdjpgcom
+link path=usr/bin/tjbench target=../lib/libjpeg8-turbo/bin/$(MACH64)/tjbench
+link path=usr/bin/wrjpgcom target=../lib/libjpeg8-turbo/bin/$(MACH64)/wrjpgcom
 
 # Add symlinks to default pkg-config files
 link path=usr/lib/pkgconfig/libjpeg.pc \
