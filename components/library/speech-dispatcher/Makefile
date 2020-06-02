@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= speech-dispatcher
 COMPONENT_VERSION= 0.8.7
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Speech Dispatcher
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -41,6 +41,10 @@ PATH=$(PATH.gnu)
 PYTHON_VERSION = 3.5
 
 LDFLAGS += -lnsl -lsocket
+
+# The split-version.sh script is called from the builddir by configure.
+# Version numbers are silently missing without this.
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-static
