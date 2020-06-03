@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		colorama
 COMPONENT_VERSION=	0.4.1
-COMPONENT_SUMMARY=	'Simple cross-platform colored terminal text in Python'
+COMPONENT_SUMMARY=	Simple cross-platform colored terminal text in Python
 COMPONENT_PROJECT_URL=	https://github.com/tartley/colorama
 COMPONENT_FMRI=		library/python/colorama
 COMPONENT_CLASSIFICATION= Development/Python 
@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)	
 COMPONENT_ARCHIVE_HASH= \
 	sha256:05eed71e2e327246ad6b38c540c4a3117230b19679b875190486ddd2d721422d
-COMPONENT_LICENSE=	'BSD 3 Clause'
+COMPONENT_LICENSE=	BSD 3 Clause
 COMPONENT_LICENSE_FILE=	LICENSE.txt
 
 PYTHON_VERSIONS=	3.5
