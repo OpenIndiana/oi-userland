@@ -236,6 +236,11 @@ def main():
     logging.basicConfig(level=log_level,
                         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',)
 
+    if make_arg:
+        proc = subprocess.Popen(['gmake'] + [make_arg])
+        rc = proc.wait()
+        sys.exit(rc)
+
     incremental = False
     if os.getenv('BASS_O_MATIC_MODE') == 'incremental':
         incremental = True
@@ -245,11 +250,6 @@ def main():
                                              incremental=incremental, begin_commit=begin_commit, end_commit=end_commit)
     else:
         component_paths = FindComponentPaths(path=workspace, debug=debug, subdir=subdir)
-
-    if make_arg:
-        proc = subprocess.Popen(['gmake'] + [make_arg])
-        rc = proc.wait()
-        sys.exit(rc)
 
     if components_arg:
         if components_arg in COMPONENTS_ALLOWED_PATHS:
