@@ -283,7 +283,7 @@ $(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_32_ONLY=\#
 endif
 
 $(MANIFEST_BASE)-%-$(2).p5m: %-PYVER.p5m
-	$(PKGMOGRIFY) -D PYVER=$(1) $(MANIFEST_LIMITING_VARS) -D PYV=$(2)  $$< > $$@
+	$(PKGMOGRIFY) -r -D PYVER=$(1) $(MANIFEST_LIMITING_VARS) -D PYV=$(2)  $$< > $$@
 endef
 $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver),$(shell echo $(ver)|tr -d .))))
 
@@ -298,7 +298,7 @@ $(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_
 
 # Build Python version-wrapping manifests from the generic version.
 $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
-	$(PKGMOGRIFY) -D PYV=### $(BUILD_DIR)/mkgeneric-python \
+	$(PKGMOGRIFY) -r -D PYV=### $(BUILD_DIR)/mkgeneric-python \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
@@ -306,7 +306,7 @@ $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
 # perl module specific to a particular version of the perl runtime.
 define perl-manifest-rule
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PERLVER.p5m
-	$(PKGMOGRIFY) -D PERLVER=$(1) -D PLV=$(shell echo $(1) | tr -d .) \
+	$(PKGMOGRIFY) -r -D PERLVER=$(1) -D PLV=$(shell echo $(1) | tr -d .) \
 		-D PERL_ARCH=$(call PERL_ARCH_FUNC,$(PERL.$(1))) $$< > $$@
 endef
 $(foreach ver,$(PERL_VERSIONS),$(eval $(call perl-manifest-rule,$(ver))))
@@ -322,7 +322,7 @@ $(BUILD_DIR)/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PR
 
 # Build Perl version-wrapping manifests from the generic version.
 $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(BUILD_DIR)/mkgeneric-perl
-	$(PKGMOGRIFY) -D PLV=### $(BUILD_DIR)/mkgeneric-perl \
+	$(PKGMOGRIFY) -r -D PLV=### $(BUILD_DIR)/mkgeneric-perl \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
@@ -347,7 +347,7 @@ $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-RUBYVER.p5m
 	if [ -f $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m ]; then \
 	        cat $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m >> $$@; \
 	fi
-	$(PKGMOGRIFY) -D RUBY_VERSION=$(1) -D RUBY_LIB_VERSION=$(2) \
+	$(PKGMOGRIFY) -r -D RUBY_VERSION=$(1) -D RUBY_LIB_VERSION=$(2) \
 	    -D RUBYV=$(shell echo $(1) | tr -d .) $$< > $$@
 endef
 $(foreach ver,$(RUBY_VERSIONS),\
@@ -368,7 +368,7 @@ $(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PR
 # Creates build/manifest-*-modulename.p5m file.
 #
 $(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
-	$(PKGMOGRIFY) -D RUBYV=### $(BUILD_DIR)/mkgeneric-ruby \
+	$(PKGMOGRIFY) -r -D RUBYV=### $(BUILD_DIR)/mkgeneric-ruby \
 	        $(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
