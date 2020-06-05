@@ -94,7 +94,7 @@ $$(SOURCE_DIR$(1))/.patched:	$$(PATCH_STAMPS$(1))
 
 patch::	$$(SOURCE_DIR$(1))/.patched
 
-REQUIRED_PACKAGES += text/gnu-patch
+USERLAND_REQUIRED_PACKAGES += text/gnu-patch
 
 endif
 endef

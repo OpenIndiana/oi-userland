@@ -42,7 +42,7 @@ URL_SUFFIXES = $(subst COMPONENT_ARCHIVE_URL_,, \
 # files, but not to remove mismatches; good to save traffic when initially
 # fetching a new archive just to learn what checksum to expect in Makefile.
 #FETCH_KEEP ?= --keep
-FETCH_KEEP ?= 
+FETCH_KEEP ?=
 
 # Template for download rules.
 define download-rules
@@ -64,7 +64,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 		$$(if $$(COMPONENT_FETCH_USER_AGENT$(1)),--user-agent $$(COMPONENT_FETCH_USER_AGENT$(1)))
 	$$(TOUCH) $$@
 
-REQUIRED_PACKAGES += runtime/python-27
+USERLAND_REQUIRED_PACKAGES += runtime/python-27
 
 endif
 endef
@@ -77,4 +77,4 @@ $(eval $(call download-rules,))
 $(foreach suffix, $(URL_SUFFIXES), $(eval $(call download-rules,_$(suffix))))
 
 # Needed for signature validation of downloads
-REQUIRED_PACKAGES += crypto/gnupg
+USERLAND_REQUIRED_PACKAGES += crypto/gnupg

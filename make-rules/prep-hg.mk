@@ -81,7 +81,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 		-e "s/\(HG_HASH$(1)[[:space:]]*=[[:space:]]*\).*/\1sha256:$$$${HG_HASH}/" \
 		Makefile)
 
-REQUIRED_PACKAGES += developer/versioning/mercurial
+USERLAND_REQUIRED_PACKAGES += developer/versioning/mercurial
 
 endif
 endif
