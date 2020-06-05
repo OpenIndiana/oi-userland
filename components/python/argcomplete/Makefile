@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	argcomplete
 COMPONENT_VERSION= 	1.10.2
-COMPONENT_SUMMARY= 	'Extensible command line tab completion for Python script arguments'
+COMPONENT_SUMMARY= 	Extensible command line tab completion for Python script arguments
 COMPONENT_PROJECT_URL = https://pypi.org/project/argcomplete/
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
