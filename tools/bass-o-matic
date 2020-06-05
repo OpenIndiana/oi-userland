@@ -34,6 +34,8 @@ import glob
 import subprocess
 import argparse
 import logging
+import json
+import multiprocessing
 
 try:
     from scandir import walk
@@ -86,13 +88,13 @@ def FindComponentPaths(path, debug=False, subdir='components',
             if filename == 'Makefile':
                 if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')):
                     paths.append(dirname)
-                    
+
         # Some components are using SCM checkout as a source code download method and
         # COMPONENT_REVISION is not bumped. With this, we will never rebuild them.
         # In order to rebuild them, we will look for such components and build them
         # every run. These components are located in openindiana category and we care
         # only about that category. One exception to this rule is meta-packages/history
-        # component, which holds obsoleted components. We add it to paths manually for 
+        # component, which holds obsoleted components. We add it to paths manually for
         # that reason.
         cmd = ['git', 'grep', '-l', 'GIT_REPO *=']
 
@@ -130,7 +132,7 @@ def FindComponentPaths(path, debug=False, subdir='components',
         # Add encumbered/meta-packages/history only if we build the encumbered repository
         if subdir is 'components/encumbered':
             paths.append('encumbered/meta-packages/history')
-                    
+
         paths = list(set(paths))
 
     else:
@@ -154,17 +156,14 @@ class BassComponent(object):
             # get supplied packages    (cd path ; gmake print-package-names)
             self.supplied_packages = self.run_make(path, 'print-package-names')
 
-            # get supplied paths    (cd path ; gmake print-package-paths)
-            self.supplied_paths = self.run_make(path, 'print-package-paths')
-
-            # get required paths    (cd path ; gmake print-required-paths)
-            self.required_paths = self.run_make(path, 'print-required-paths')
+            # get dependencies
+            self.required_packages = self.run_make(path, 'print-required-packages')
 
     def required(self, component):
         result = False
 
-        s1 = set(self.required_paths)
-        s2 = set(component.supplied_paths)
+        s1 = set(self.required_packages)
+        s2 = set(component.supplied_packages)
         if s1.intersection(s2):
             result = True
 
@@ -177,13 +176,13 @@ class BassComponent(object):
         if self.debug:
             logger.debug('Executing \'gmake %s\' in %s', targets, path)
 
-        proc = subprocess.Popen(['gmake', targets],
+        proc = subprocess.Popen(['gmake', '-s', targets],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
                                 cwd=path,
                                 universal_newlines=True)
         for out in proc.stdout:
-            result.append(out)
+            result.append(out.rstrip())
 
         proc.wait()
         if self.debug:
@@ -194,9 +193,8 @@ class BassComponent(object):
 
     def __str__(self):
         result = 'Component:\n\tPath: %s\n' % self.path
-        result = result + '\tProvides Package(s):\n\t\t%s\n' % '\t\t'.join(self.supplied_packages)
-        result = result + '\tProvides Path(s):\n\t\t%s\n' % '\t\t'.join(self.supplied_paths)
-        result = result + '\tRequired Path(s):\n\t\t%s\n' % '\t\t'.join(self.required_paths)
+        result += '\tProvides Package(s):\n\t\t%s\n' % '\t\t'.join(self.supplied_packages)
+        result += '\tRequired Package(s):\n\t\t%s\n' % '\t\t'.join(self.required_packages)
 
         return result
 
@@ -206,9 +204,10 @@ def main():
 
     components = {}
 
-    COMPONENTS_ALLOWED_PATHS = ['path', 'paths', 'dir', 'dirs', 'directories']
-    COMPONENTS_ALLOWED_DEPENDENCIES = ['depend', 'dependencies']
-    COMPONENTS_ALLOWED_KEYWORDS = COMPONENTS_ALLOWED_PATHS + COMPONENTS_ALLOWED_DEPENDENCIES
+    COMPONENTS_ALLOWED_PATHS = ['paths', 'dirs']
+    COMPONENTS_ALLOWED_FMRIS = ['fmris']
+    COMPONENTS_ALLOWED_DEPENDENCIES = ['dependencies']
+    COMPONENTS_ALLOWED_KEYWORDS = COMPONENTS_ALLOWED_PATHS + COMPONENTS_ALLOWED_FMRIS + COMPONENTS_ALLOWED_DEPENDENCIES
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-w', '--workspace', default=os.getenv('WS_TOP'), help='Path to workspace')
@@ -256,18 +255,27 @@ def main():
             for path in component_paths:
                 print('{0}'.format(path))
 
+        elif components_arg in COMPONENTS_ALLOWED_FMRIS:
+            pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+            components = pool.map(BassComponent, component_paths)
+
+            for component in components:
+                for fmri in component.supplied_packages:
+                    print('{0}'.format(fmri))
+
         elif components_arg in COMPONENTS_ALLOWED_DEPENDENCIES:
-            for path in component_paths:
-                components[path] = BassComponent(path, debug)
+            dependencies = {}
 
-            for c_path in components.keys():
-                component = components[c_path]
+            pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+            components = pool.map(BassComponent, component_paths)
 
-                for d_path in components.keys():
-                    if (c_path != d_path and
-                            component.required(components[d_path])):
-                        print('{0}: {1}'.format(c_path, d_path))
+            for component in components:
+                for fmri in component.supplied_packages:
+                    dependencies[fmri] = component.required_packages
 
+            dependencies_file = os.path.join(workspace, subdir, 'dependencies.json')
+            with open(dependencies_file, 'w') as f:
+                f.write(json.dumps(dependencies, sort_keys=True, indent=4))
         sys.exit(0)
 
     sys.exit(1)
