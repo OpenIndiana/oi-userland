@@ -59,5 +59,3 @@ test:	$(NO_TESTS)
 
 clean::
 	$(RM) -r $(BUILD_DIR)
-
-include ../../../make-rules/depend.mk

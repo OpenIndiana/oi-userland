@@ -41,7 +41,3 @@ COMPONENT_POST_UNPACK_ACTION = \
 
 build: prep
 install: build
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
