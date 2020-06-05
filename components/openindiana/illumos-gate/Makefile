@@ -623,6 +623,11 @@ clean::
 clobber::       clean
 	$(RM) -r $(CLOBBER_PATHS)
 
+print-package-names:
+	if test -d $(ON_REPO.NON_DEBUG); \
+	then pkgrepo list -H -F tsv -s $(ON_REPO.NON_DEBUG) | cut -f 2 | sort -u > pkg5.fmris; fi; \
+	cat pkg5.fmris
+ 
 REQUIRED_PACKAGES += developer/gcc-7
 REQUIRED_PACKAGES += developer/illumos-closed
 REQUIRED_PACKAGES += runtime/python-35
