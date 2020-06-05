@@ -104,4 +104,4 @@ $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
 
-REQUIRED_PACKAGES += runtime/ruby
+USERLAND_REQUIRED_PACKAGES += runtime/ruby

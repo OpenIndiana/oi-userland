@@ -67,7 +67,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 		-e "s/^SVN_HASH$(1)=.*/SVN_HASH$(1)=  sha256:$$$${SVN_HASH}/" \
 		Makefile)
 
-REQUIRED_PACKAGES += developer/versioning/subversion
+USERLAND_REQUIRED_PACKAGES += developer/versioning/subversion
 
 endif
 endif
