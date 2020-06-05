@@ -111,6 +111,11 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 
 publish: update $(BUILD_DIR)/$(MACH)/.published
 
+print-package-names:
+	if test -d $(PKG_REPO); \
+	then pkgrepo list -H -F tsv -s $(PKG_REPO) | cut -f 2 | sort -u > pkg5.fmris; fi; \
+	cat pkg5.fmris
+
 PACKAGE_NAMES  = consolidation/install/install-incorporation
 PACKAGE_NAMES += consolidation/install/install-redistributable
 PACKAGE_NAMES += install/distribution-constructor
