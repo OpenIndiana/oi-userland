@@ -34,5 +34,3 @@ include ../../../make-rules/ips.mk
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
-
-include ../../../make-rules/depend.mk

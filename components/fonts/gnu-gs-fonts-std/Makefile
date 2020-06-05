@@ -53,5 +53,3 @@ test:	$(NO_TESTS)
 
 clean::
 	$(RM) -r $(BUILD_DIR)
-
-include $(WS_TOP)/make-rules/depend.mk

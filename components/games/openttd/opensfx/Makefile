@@ -38,7 +38,3 @@ PKG_OPTIONS +=	-D COMPONENT_SRC="$(COMPONENT_SRC)"
 
 build: prep
 install: build
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

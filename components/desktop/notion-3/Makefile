@@ -56,5 +56,3 @@ REQUIRED_PACKAGES += x11/library/libxrandr
 
 # notion uses xmessage to display errors at run time
 REQUIRED_PACKAGES += x11/xmessage
-
-include ../../../make-rules/depend.mk

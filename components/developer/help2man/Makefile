@@ -36,9 +36,5 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/perl-522
