@@ -20,7 +20,7 @@ COMPONENT_NAME=		Pillow
 # Pillow 7 dropped Python 2.7 support
 COMPONENT_VERSION=	6.2.2
 COMPONENT_PROJECT_URL=	https://pypi.org/project/Pillow/
-COMPONENT_SUMMARY=	'Python image processing library'
+COMPONENT_SUMMARY=	Python image processing library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -28,7 +28,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_FMRI=		library/python/pillow
 COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=	'PIL software license'
+COMPONENT_LICENSE=	PIL software license
 COMPONENT_LICENSE_FILE=	LICENSE
 
 # 3.4 is not supported
