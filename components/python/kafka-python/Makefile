@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		kafka-python
 COMPONENT_VERSION=	2.0.1
-COMPONENT_SUMMARY=	'Python client for Apache Kafka'
+COMPONENT_SUMMARY=	Python client for Apache Kafka
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -28,7 +28,7 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/dpkp/kafka-python
 COMPONENT_FMRI=		library/python/kafka-python
 COMPONENT_CLASSIFICATION=Development/Python
-COMPONENT_LICENSE=	'Apache License 2.0'
+COMPONENT_LICENSE=	Apache License 2.0
 COMPONENT_LICENSE_FILE= LICENSE
 
 PYTHON_VERSIONS=	2.7 3.5
