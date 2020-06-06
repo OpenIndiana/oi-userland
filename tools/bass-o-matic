@@ -243,9 +243,12 @@ def main():
                 component_path[entry['fmri']] = entry['path']
 
             for component in components:
-                for fmri in component.supplied_packages:
-                    paths = set([component_path[i] for i in component.required_packages])
-                    dependencies[fmri] = list(paths)
+                selfpath = component.path.split(os.path.join(workspace, subdir))[-1].replace('/', '', 1)
+                # Some packages from OpenSolaris only exist in binary form in the pkg repository
+                paths = set([component_path.get(i, "https://pkg.openindiana.org/hipster") for i in component.required_packages])
+                # Remove self from the set of paths it depends on
+                paths.discard(selfpath)
+                dependencies[selfpath] = sorted(list(paths))
 
             dependencies_file = os.path.join(workspace, subdir, 'dependencies.json')
             with open(dependencies_file, 'w') as f:
