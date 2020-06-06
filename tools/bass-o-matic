@@ -88,7 +88,8 @@ def FindComponentPaths(path, debug=False, subdir='components',
             dirname = os.path.dirname(line).rsplit(subdir + '/')[-1]
 
             if filename == 'Makefile':
-                if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')):
+                if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')) and \
+                        not os.path.isfile(os.path.join(workspace_path, dirname, 'pkg5.ignore')):
                     paths.append(dirname)
 
         # Some components are using SCM checkout as a source code download method and
@@ -124,7 +125,8 @@ def FindComponentPaths(path, debug=False, subdir='components',
             dirname = os.path.dirname(line)
 
             if filename == 'Makefile':
-                if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')):
+                if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')) and \
+                        not os.path.isfile(os.path.join(workspace_path, dirname, 'pkg5.ignore')):
                     paths.append(os.path.dirname(line))
 
         # Add meta-packages/history only if we build the main repository, where
@@ -141,9 +143,10 @@ def FindComponentPaths(path, debug=False, subdir='components',
         for dirpath, dirnames, filenames in walk(workspace_path):
             for name in filenames:
                 if expression.match(name):
-                    if debug:
-                        logger.debug('found %s', dirpath)
-                    paths.append(dirpath)
+                    if not os.path.isfile(os.path.join( dirpath, 'pkg5.ignore')):
+                        if debug:
+                            logger.debug('found %s', dirpath)
+                        paths.append(dirpath)
                     del dirnames[:]
                     break
 
@@ -195,6 +198,9 @@ def main():
 
     if pkg5_arg:
         component_path = os.getcwd().split(os.path.join(workspace, subdir))[-1].replace('/', '', 1)
+        # the component may not be built directly but as a dependency of another component
+        if os.path.isfile(os.path.join( os.getcwd(), 'pkg5.ignore')):
+            sys.exit(0)
         component_pkg5 = os.path.join( os.getcwd(), 'pkg5')
         if os.path.isfile(component_pkg5):
             os.remove(component_pkg5)
