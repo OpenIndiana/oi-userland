@@ -49,7 +49,8 @@ def find_component_paths(path, subdir='components', debug=False):
     for dirpath, dirnames, filenames in walk(workspace_path):
         for name in filenames:
             if expression.match(name):
-                paths.append(dirpath)
+                if not os.path.isfile(os.path.join( dirpath, 'pkg5.ignore')):
+                    paths.append(dirpath)
                 del dirnames[:]
                 break
 
