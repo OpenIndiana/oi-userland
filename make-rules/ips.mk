@@ -151,6 +151,23 @@ ifneq ($(wildcard $(HISTORY)),)
 HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
 endif
 
+define ips-print-depend-require-rule
+$(shell cat $(1) $(WS_TOP)/transforms/print-depend-require |\
+	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
+	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u)
+endef
+
+define ips-print-depend-require-versioned-rule
+$(foreach v,$($(1)V_VALUES),\
+	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
+	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
+	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u))
+endef
+
+define ips-print-depend-require-type-rule
+$(foreach m,$($(1)_MANIFESTS),$(call ips-print-depend-require-versioned-rule,$(1),$(m)))
+endef
+
 define ips-print-names-rule
 $(shell cat $(1) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
@@ -523,6 +540,10 @@ $(BUILD_DIR)/.pre-published-$(MACH):	$(PRE_PUBLISHED)
 
 $(BUILD_DIR)/.published-$(MACH):	$(PUBLISHED)
 	$(TOUCH) $@
+
+print-depend-require:	canonical-manifests
+	@echo $(call ips-print-depend-require-rule,$(NONVER_MANIFESTS)) \
+		$(foreach t,$(VERSIONED_MANIFEST_TYPES),$(call ips-print-depend-require-type-rule,$(t))) | tr ' ' '\n'
 
 print-package-names:	canonical-manifests $(MKGENERIC_SCRIPTS)
 	@echo $(call ips-print-names-rule,$(NONVER_MANIFESTS)) \
