@@ -1,0 +1,193 @@
+#!/usr/bin/env python3
+
+import argparse
+import errno
+import logging
+import os
+import subprocess
+
+logger = logging.getLogger("userland-zone")
+
+BUILD_ZONE_NAME = "prbuilder"
+TEMPLATE_ZONE_NAME = "-".join([BUILD_ZONE_NAME, "template"])
+
+ETC_SYSDING_CONF = ["#!/usr/bin/ksh", "setup_timezone UTC", "setup_locale en_US.UTF-8"]
+
+
+class Zone:
+    def __init__(self, name, path, brand="nlipkg"):
+        self._name = name
+        self._path = path
+        self._brand = brand
+
+    def create(self, extra_args=None):
+        zonecfg_args = [
+            "create -b",
+            "set zonepath={path}".format(path=self._path),
+            "set zonename={name}".format(name=self._name),
+            "set brand={brand}".format(brand=self._brand),
+        ]
+
+        if extra_args:
+            zonecfg_args.extend(extra_args)
+        zonecfg_args.append("commit")
+
+        zonecfg_args = [";".join(zonecfg_args)]
+        return zonecfg(self._name, zonecfg_args)
+
+    def delete(self):
+        return zonecfg(self._name, ["delete", "-F"])
+
+    def install(self):
+        return zoneadm(self._name, ["install"])
+
+    def uninstall(self):
+        return zoneadm(self._name, ["uninstall", "-F"])
+
+    def halt(self):
+        return zoneadm(self._name, ["halt"])
+
+    def boot(self):
+        return zoneadm(self._name, ["boot"])
+
+    def clone(self, source_zone):
+        return zoneadm(self._name, ['clone', source_zone.name])
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def state(self):
+        output = zoneadm(self._name, ["list", "-p"], stdout=subprocess.PIPE)
+        # -:name:installed:/zones/name:22dae542-e5ce-c86a-e5c7-e34d74b696bf:nlipkg:shared
+        return output.split(":")[2]
+
+    @property
+    def is_running(self):
+        return self.state == "running"
+
+
+def execute(cmd, args, **kwargs):
+    ret, result = None, None
+
+    try:
+        logger.debug('Executing "%s"', " ".join([cmd] + args))
+        result = subprocess.run([cmd] + args, check=True, **kwargs)
+    except subprocess.CalledProcessError as e:
+        logger.error(
+            'Command "%s" exited with %s', " ".join([cmd] + args), e.returncode
+        )
+    except OSError as e:
+        if e.errno == errno.ENOENT:
+            raise ValueError("{} cannot be found".format(cmd))
+
+    if result and result.stdout:
+        ret = result.stdout.decode()
+        ret = ret.rstrip()
+
+    return ret
+
+
+def zonecfg(zone_name, args, **Kwargs):
+    zonecfg_args = ["-z", zone_name]
+    zonecfg_args.extend(args)
+    return execute("zonecfg", zonecfg_args, **Kwargs)
+
+
+def zoneadm(zone_name, args, **kwargs):
+    zoneadm_args = ["-z", zone_name]
+    zoneadm_args.extend(args)
+    return execute("zoneadm", zoneadm_args, **kwargs)
+
+
+# def sysding(zone_path):
+#    sysding_conf = os.path.join(zone_path, 'root', 'etc', 'sysding.conf')
+#    with open(sysding_conf, 'w') as f:
+#        f.write('\n'.join(ETC_SYSDING_CONF))
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
+
+    # create-template
+    ct_parser = subparsers.add_parser(
+        "create-template", help="Create template zone for userland builds"
+    )
+    ct_parser.add_argument(
+        "-p",
+        help="Zone path",
+        default="/zones/{}".format(TEMPLATE_ZONE_NAME),
+        dest="zone_path",
+    )
+
+    # update-template
+    _ = subparsers.add_parser(
+        "update-template", help="Update template zone for userland builds"
+    )
+
+    # destroy-template
+    _ = subparsers.add_parser(
+        "destroy-template", help="Destroy template zone for userland builds"
+    )
+
+    # spawn-zone
+    sz_parser = subparsers.add_parser(
+        "spawn-zone", help="Spawn build zone for userland builds"
+    )
+    sz_parser.add_argument('--id', required=True, help='Zone identifier that identifies build zone')
+
+    # destroy-zone
+    dz_parser = subparsers.add_parser("destroy-zone", help="Destroy build zone")
+
+    args = parser.parse_args()
+
+    if not args.subcommand:
+        parser.print_help()
+        exit(1)
+
+    return args
+
+
+def create_template(zone_path, zone_name=TEMPLATE_ZONE_NAME):
+    zone = Zone(path=zone_path, name=zone_name)
+    zone.create()
+    zone.install()
+    # sysding(zone_path=zone_path)
+
+
+def destroy_zone(zone_name=TEMPLATE_ZONE_NAME):
+    zone = Zone(path="/zones/" + zone_name, name=zone_name)
+    import pdb
+
+    pdb.set_trace()
+    if zone.is_running:
+        zone.halt()
+    zone.uninstall()
+    zone.delete()
+
+
+def spawn_zone(id):
+    name = '{}-{}'.format(BUILD_ZONE_NAME, id)
+    zone = Zone(name=name)
+
+    template_zone = Zone(name=TEMPLATE_ZONE_NAME)
+
+    zone.create()
+    zone.clone(template_zone.name)
+    zone.boot()
+
+def main():
+    args = parse_arguments()
+
+    if args.subcommand == "create-template":
+        create_template(zone_path=args.zone_path)
+    elif args.subcommand == "destroy-template":
+        destroy_zone(zone_name=TEMPLATE_ZONE_NAME)
+    elif args.subcommand == 'spawn-zone':
+        spawn_zone(id=args.id)
+
+
+if __name__ == "__main__":
+    main()
