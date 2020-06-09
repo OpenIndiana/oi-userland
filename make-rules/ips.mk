@@ -596,16 +596,15 @@ print-package-paths:	canonical-manifests
 		sed -e '/^$$/d' -e '/^#.*$$/d' | \
 		LANG=C LC_ALL=C sort -u
 
+PKG_INSTALL = /usr/bin/pkg install
+PKG_INSTALL_OPTIONS = --no-refresh --no-backup-be --no-index --accept -v -g $(WS_REPO)
+PKG_INSTALL_FMRIS = $(shell awk '{gsub(/\\n/," ")}1' $(MANIFEST_BASE)-*.fmri)
+
+
 install-packages:	publish
-	@if [ $(IS_GLOBAL_ZONE) = 0 -o x$(ROOT) != x ]; then \
-	    cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
-	    $(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
-	    sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | \
-	    LANG=C LC_ALL=C sort -u | \
-	    (cd $(PROTO_DIR) ; pfexec /bin/cpio -dump $(ROOT)) ; \
-	 else ; \
-	    echo "unsafe to install package(s) automatically" ; \
-	 fi
+	@( /usr/bin/pkgrepo list -H -s $(WS_REPO) $(PKG_INSTALL_FMRIS) > /dev/null || \
+		$(PKGREPO) refresh --no-index -s $(WS_REPO) ) && \
+	( $(PFEXEC)  $(PKG_INSTALL) $(PKG_INSTALL_OPTIONS) $(PKG_INSTALL_FMRIS) || [ $$? -eq 4 ] )
 
 $(RESOLVED):	install
 
