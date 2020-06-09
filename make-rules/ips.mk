@@ -571,7 +571,7 @@ $(MANIFEST_BASE)-%.pre-published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.li
 
 # Push to the repo
 $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.pre-published
-	$(PKGSEND) $(PKGSEND_PUBLISH_OPTIONS) $<
+	$(PKGSEND) $(PKGSEND_PUBLISH_OPTIONS) $< | $(GSED) '/pkg:/w $(<:%.pre-published=%.fmri)'
 	$(PKGFMT) <$< >$@
 
 $(BUILD_DIR)/.pre-published-$(MACH):	$(PRE_PUBLISHED)
