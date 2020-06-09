@@ -557,7 +557,7 @@ FRC:
 
 
 # published
-PKGSEND_PUBLISH_OPTIONS = -s $(WS_REPO) publish --fmri-in-manifest
+PKGSEND_PUBLISH_OPTIONS = -s $(WS_REPO) publish --fmri-in-manifest --no-catalog
 PKGSEND_PUBLISH_OPTIONS += $(PKG_PROTO_DIRS:%=-d %)
 PKGSEND_PUBLISH_OPTIONS += -T \*.py
 
