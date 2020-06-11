@@ -424,7 +424,12 @@ COMPONENT_TEST_BUILD_DIR =	$(BUILD_DIR)/test/$(MACH$(BITS))
 COMPONENT_TEST_RESULTS_DIR =	$(COMPONENT_DIR)/test
 
 # set the default master test results file
+USE_COMMON_TEST_MASTER?=no
+ifeq ($(strip $(USE_COMMON_TEST_MASTER)),yes)
+COMPONENT_TEST_MASTER =		$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+else
 COMPONENT_TEST_MASTER =		$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
+endif
 
 # set the default test results output file
 COMPONENT_TEST_OUTPUT =		$(COMPONENT_TEST_BUILD_DIR)/test-$(BITS)-results
