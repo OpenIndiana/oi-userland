@@ -1,0 +1,32 @@
+At optimization levels above O0, gcc generates unusable code on SPARC when
+profile guided optimization is enabled.  Disabling delay-slot instruction
+scheduling avoids this problem.  Problem is currently being investigated.
+(Bug. 29167790)
+
+This is done in configure rather than in Makefile, because here we can
+disable it in the profile generation phase and reenable in the final package.
+
+This patch is not suitable for upstream.
+
+--- Python-3.7.5/configure
++++ Python-3.7.5/configure
+@@ -6797,7 +6797,7 @@ case $CC in
+         fi
+         ;;
+       *)
+-        PGO_PROF_GEN_FLAG="-fprofile-generate"
++        PGO_PROF_GEN_FLAG="-fprofile-generate -fno-delayed-branch"
+         PGO_PROF_USE_FLAG="-fprofile-use -fprofile-correction"
+         LLVM_PROF_MERGER="true"
+         LLVM_PROF_FILE=""
+--- Python-3.7.5/configure.ac
++++ Python-3.7.5/configure.ac
+@@ -1459,7 +1459,7 @@ case $CC in
+         fi
+         ;;
+       *)
+-        PGO_PROF_GEN_FLAG="-fprofile-generate"
++        PGO_PROF_GEN_FLAG="-fprofile-generate -fno-delayed-branch"
+         PGO_PROF_USE_FLAG="-fprofile-use -fprofile-correction"
+         LLVM_PROF_MERGER="true"
+         LLVM_PROF_FILE=""
