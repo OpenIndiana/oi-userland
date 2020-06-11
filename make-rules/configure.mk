@@ -205,6 +205,11 @@ CONFIGURE_TEST_TRANSFORMS = \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
+USE_DEFAULT_TEST_TRANSFORMS?=no
+ifeq ($(strip $(USE_DEFAULT_TEST_TRANSFORMS)),yes)
+COMPONENT_TEST_TRANSFORMS+= $(CONFIGURE_TEST_TRANSFORMS)
+endif
+
 # test the built source
 $(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
