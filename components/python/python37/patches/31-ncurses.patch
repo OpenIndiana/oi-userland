@@ -1,0 +1,15 @@
+OmniOSCE
+
+diff -wpruN '--exclude=*.orig' a~/setup.py a/setup.py
+--- a~/setup.py	1970-01-01 00:00:00
++++ a/setup.py	1970-01-01 00:00:00
+@@ -1331,6 +1331,9 @@ class PyBuildExt(build_ext):
+         curses_defines = []
+         curses_includes = []
+         panel_library = 'panel'
++        if host_platform == 'sunos5':
++            curses_library = 'ncurses'
++
+         if curses_library == 'ncursesw':
+             curses_defines.append(('HAVE_NCURSESW', '1'))
+             curses_includes.append('/usr/include/ncursesw')

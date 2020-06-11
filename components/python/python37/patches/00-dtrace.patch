@@ -1,0 +1,84 @@
+This patch fixes several issues with dtrace on Solaris.
+
+Dtrace is hardcoded into compilers (and therefore works by default) on some
+platforms and needs additional steps on others. Configure script incorrectly
+detected this property.
+
+Rest of the Makefile wasn't entirely ready for dtrace compilation on Solaris.
+
+This patch was offered upstream:
+https://bugs.python.org/issue35520
+
+--- Python-3.7.5/configure
++++ Python-3.7.5/configure
+@@ -11376,7 +11376,7 @@ if ${ac_cv_dtrace_link+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+               ac_cv_dtrace_link=no
+-            echo 'BEGIN' > conftest.d
++            echo 'BEGIN{}' > conftest.d
+             "$DTRACE" -G -s conftest.d -o conftest.o > /dev/null 2>&1 && \
+                 ac_cv_dtrace_link=yes
+ 
+--- Python-3.7.5/configure.ac
++++ Python-3.7.5/configure.ac
+@@ -3490,7 +3490,7 @@ then
+     AC_CACHE_CHECK([whether DTrace probes require linking],
+         [ac_cv_dtrace_link], [dnl
+             ac_cv_dtrace_link=no
+-            echo 'BEGIN' > conftest.d
++            echo 'BEGIN{}' > conftest.d
+             "$DTRACE" -G -s conftest.d -o conftest.o > /dev/null 2>&1 && \
+                 ac_cv_dtrace_link=yes
+       ])
+--- Python-3.7.5/Makefile.pre.in
++++ Python-3.7.5/Makefile.pre.in
+@@ -454,8 +454,7 @@ LIBRARY_OBJS=	\
+ # On some systems, object files that reference DTrace probes need to be modified
+ # in-place by dtrace(1).
+ DTRACE_DEPS = \
+-	Python/ceval.o
+-# XXX: should gcmodule, etc. be here, too?
++	Python/ceval.o Python/import.o Modules/gcmodule.o
+ 
+ #########################################################################
+ # Rules
+@@ -631,7 +630,7 @@ $(LIBRARY): $(LIBRARY_OBJS)
+ 	-rm -f $@
+ 	$(AR) $(ARFLAGS) $@ $(LIBRARY_OBJS)
+ 
+-libpython$(LDVERSION).so: $(LIBRARY_OBJS)
++libpython$(LDVERSION).so: $(LIBRARY_OBJS) $(DTRACE_OBJS)
+ 	if test $(INSTSONAME) != $(LDLIBRARY); then \
+ 		$(BLDSHARED) -Wl,-h$(INSTSONAME) -o $(INSTSONAME) $(LIBRARY_OBJS) $(MODLIBS) $(SHLIBS) $(LIBC) $(LIBM) $(LDLAST); \
+ 		$(LN) -f $(INSTSONAME) $@; \
+@@ -642,8 +641,8 @@ libpython$(LDVERSION).so: $(LIBRARY_OBJS
+ libpython3.so:	libpython$(LDVERSION).so
+ 	$(BLDSHARED) $(NO_AS_NEEDED) -o $@ -Wl,-h$@ $^
+ 
+-libpython$(LDVERSION).dylib: $(LIBRARY_OBJS)
+-	 $(CC) -dynamiclib -Wl,-single_module $(PY_CORE_LDFLAGS) -undefined dynamic_lookup -Wl,-install_name,$(prefix)/lib/libpython$(LDVERSION).dylib -Wl,-compatibility_version,$(VERSION) -Wl,-current_version,$(VERSION) -o $@ $(LIBRARY_OBJS) $(SHLIBS) $(LIBC) $(LIBM) $(LDLAST); \
++libpython$(LDVERSION).dylib: $(LIBRARY_OBJS) $(DTRACE_OBJS)
++	 $(CC) -dynamiclib -Wl,-single_module $(PY_CORE_LDFLAGS) -undefined dynamic_lookup -Wl,-install_name,$(prefix)/lib/libpython$(LDVERSION).dylib -Wl,-compatibility_version,$(VERSION) -Wl,-current_version,$(VERSION) -o $@ $(LIBRARY_OBJS) $(DTRACE_OBJS) $(SHLIBS) $(LIBC) $(LIBM) $(LDLAST); \
+ 
+ 
+ libpython$(VERSION).sl: $(LIBRARY_OBJS)
+@@ -759,6 +758,7 @@ Modules/getbuildinfo.o: $(PARSER_OBJS) \
+ 		$(PYTHON_OBJS) \
+ 		$(MODULE_OBJS) \
+ 		$(MODOBJS) \
++		$(DTRACE_OBJS) \
+ 		$(srcdir)/Modules/getbuildinfo.c
+ 	$(CC) -c $(PY_CORE_CFLAGS) \
+ 	      -DGITVERSION="\"`LC_ALL=C $(GITVERSION)`\"" \
+@@ -929,6 +929,10 @@ Include/pydtrace_probes.h: $(srcdir)/Inc
+ 	sed 's/PYTHON_/PyDTrace_/' $@ > $@.tmp
+ 	mv $@.tmp $@
+ 
++Python/ceval.o: Include/pydtrace.h
++Python/import.o: Include/pydtrace.h
++Modules/gcmodule.o: Include/pydtrace.h
++
+ Python/pydtrace.o: $(srcdir)/Include/pydtrace.d $(DTRACE_DEPS)
+ 	$(DTRACE) $(DFLAGS) -o $@ -G -s $< $(DTRACE_DEPS)
+ 

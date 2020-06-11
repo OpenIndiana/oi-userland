@@ -1,0 +1,72 @@
+From OmniOSCE 
+
+By default, python places a zip file at the start of the module path
+
+>>> import sys; sys.path
+['', '/usr/lib/python35.zip', '/usr/lib/python3.5', ...
+
+We don't ship this or have any need to provide modules there, so remove it
+from the path. This also cleans up package dependency resolution output
+which frequently refers to this non-existent file.
+
+diff -wpruN '--exclude=*.orig' a~/Modules/getpath.c a/Modules/getpath.c
+--- a~/Modules/getpath.c	1970-01-01 00:00:00
++++ a/Modules/getpath.c	1970-01-01 00:00:00
+@@ -124,7 +124,9 @@ typedef struct {
+ 
+     wchar_t *lib_python;               /* "lib/pythonX.Y" */
+     wchar_t argv0_path[MAXPATHLEN+1];
++#ifndef SKIP_ZIP_PATH
+     wchar_t zip_path[MAXPATHLEN+1];    /* ".../lib/pythonXY.zip" */
++#endif
+ 
+     int prefix_found;         /* found platform independent libraries? */
+     int exec_prefix_found;    /* found the platform dependent libraries? */
+@@ -772,7 +774,7 @@ calculate_read_pyenv(PyCalculatePath *ca
+     fclose(env_file);
+ }
+ 
+-
++#ifndef SKIP_ZIP_PATH
+ static void
+ calculate_zip_path(PyCalculatePath *calculate, const wchar_t *prefix)
+ {
+@@ -794,6 +796,7 @@ calculate_zip_path(PyCalculatePath *calc
+     calculate->zip_path[bufsz - 6] = VERSION[0];
+     calculate->zip_path[bufsz - 5] = VERSION[2];
+ }
++#endif
+ 
+ 
+ static _PyInitError
+@@ -828,7 +831,9 @@ calculate_module_search_path(const _PyCo
+         defpath = delim + 1;
+     }
+ 
++#ifndef SKIP_ZIP_PATH
+     bufsz += wcslen(calculate->zip_path) + 1;
++#endif
+     bufsz += wcslen(exec_prefix) + 1;
+ 
+     /* Allocate the buffer */
+@@ -845,8 +850,10 @@ calculate_module_search_path(const _PyCo
+     }
+ 
+     /* Next is the default zip path */
++#ifndef SKIP_ZIP_PATH
+     wcscat(buf, calculate->zip_path);
+     wcscat(buf, delimiter);
++#endif
+ 
+     /* Next goes merge of compile-time $PYTHONPATH with
+      * dynamically located prefix.
+@@ -953,7 +960,9 @@ calculate_path_impl(const _PyCoreConfig
+     memset(prefix, 0, sizeof(prefix));
+     calculate_prefix(core_config, calculate, prefix);
+ 
++#ifndef SKIP_ZIP_PATH
+     calculate_zip_path(calculate, prefix);
++#endif
+ 
+     wchar_t exec_prefix[MAXPATHLEN+1];
+     memset(exec_prefix, 0, sizeof(exec_prefix));
