@@ -43,7 +43,7 @@ COMPONENT_FMRI= 	library/python/automat
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE= LICENSE
 
-PYTHON_VERSIONS = 2.7 3.4 3.5
+PYTHON_VERSIONS = 2.7 3.5
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -57,8 +57,6 @@ COMPONENT_TEST_ARGS =
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-34
 REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
