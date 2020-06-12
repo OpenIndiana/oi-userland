@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:a4ec1aff59b95a14b45eb2e23761a0179e98319da5a7eb76b56ea8cdc7b871c3
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/M/MarkupSafe/$(COMPONENT_ARCHIVE)
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -43,6 +43,5 @@ install:	$(INSTALL_32_and_64)
 test:           $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
