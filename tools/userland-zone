@@ -31,6 +31,7 @@ BUILD_ZONE_NAME = "prbuilder"
 TEMPLATE_ZONE_NAME = "-".join([BUILD_ZONE_NAME, "template"])
 ZONES_ROOT = "/zones"
 ARCHIVES_DIR = "/ws/archives"
+CODE_DIR = "/ws/code"
 
 ETC_SYSDING_CONF = ["#!/usr/bin/ksh", "setup_timezone UTC", "setup_locale en_US.UTF-8"]
 
@@ -186,6 +187,12 @@ def parse_arguments():
         type=dir_path,
         help="Path to userland archives",
     )
+    sz_parser.add_argument(
+        "--code-dir",
+        default=CODE_DIR,
+        type=dir_path,
+        help="Path to userland code repository checkoutt",
+    )
 
     # destroy-zone
     dz_parser = subparsers.add_parser("destroy-zone", help="Destroy build zone")
@@ -218,16 +225,33 @@ def destroy_zone(zone_name=TEMPLATE_ZONE_NAME):
     zone.delete()
 
 
-def spawn_zone(id, archive_dir=ARCHIVES_DIR):
+def spawn_zone(id, archive_dir=ARCHIVES_DIR, code_dir=CODE_DIR):
     name = "{}-{}".format(BUILD_ZONE_NAME, id)
     zone = Zone(name=name, path=os.path.join(ZONES_ROOT, name))
 
     template_zone = Zone(name=TEMPLATE_ZONE_NAME)
 
+    # To avoid zonecfg failure, we will check for existence of archive_dir and code_dir
+    if not os.path.exists(archive_dir):
+        raise ValueError(
+            "Userland archives dir {} has to exist in the global zone before we can clone the build zone!"
+        )
+
+    if not os.path.exists(code_dir):
+        raise ValueError(
+            "Userland archives dir {} has to exist in the global zone before we can clone the build zone!"
+        )
+
     extra_args = [
         "add fs",
         "set dir = {}".format(ARCHIVES_DIR),
         "set special = {}".format(archive_dir),
+        "set type  = lofs",
+        "add options [rw,nodevices]",
+        "end",
+        "add fs",
+        "set dir = {}".format(CODE_DIR),
+        "set special = {}".format(code_dir),
         "set type  = lofs",
         "add options [rw,nodevices]",
         "end",
@@ -252,7 +276,7 @@ def main():
     elif args.subcommand == "update-template":
         update_template()
     elif args.subcommand == "spawn-zone":
-        spawn_zone(id=args.id, archive_dir=args.archive_dir)
+        spawn_zone(id=args.id, archive_dir=args.archive_dir, code_dir=args.code_dir)
     elif args.subcommand == "destroy-zone":
         zone_name = "{}-{}".format(BUILD_ZONE_NAME, args.id)
         destroy_zone(zone_name=zone_name)
