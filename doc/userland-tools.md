@@ -25,7 +25,7 @@ zfs create -o mountpoint=/zones rpool/zones
   
 When working with _userland-zone_, use the following workflow:
 
-* **userland-zone create-template** - this create a template zone, which is used a golden image for other build zones. 
+* **userland-zone create-template** - this creates a template zone, which is used as a golden image for other build zones. 
 
 * **userland-zone spawn-zone --id 123** - this creates a build zone, _prbuilder-123_. Once the zone has been built,
 **/ws/archives** and **/ws/code** from the global zone will be mounted under the same location inside the build zone.
