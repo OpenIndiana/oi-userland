@@ -218,7 +218,7 @@ def destroy_zone(zone_name=TEMPLATE_ZONE_NAME):
     zone.delete()
 
 
-def spawn_zone(id, archive_dir="/ws/archives"):
+def spawn_zone(id, archive_dir=ARCHIVES_DIR):
     name = "{}-{}".format(BUILD_ZONE_NAME, id)
     zone = Zone(name=name, path=os.path.join(ZONES_ROOT, name))
 
@@ -226,7 +226,7 @@ def spawn_zone(id, archive_dir="/ws/archives"):
 
     extra_args = [
         "add fs",
-        "set dir = /ws/archives",
+        "set dir = {}".format(ARCHIVES_DIR),
         "set special = {}".format(archive_dir),
         "set type  = lofs",
         "add options [rw,nodevices]",
