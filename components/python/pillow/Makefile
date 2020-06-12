@@ -31,7 +31,7 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	PIL software license
 COMPONENT_LICENSE_FILE=	LICENSE
 
-# 3.4 is not supported
+# is not supported
 PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/common.mk
