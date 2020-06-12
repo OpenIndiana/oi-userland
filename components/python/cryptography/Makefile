@@ -39,7 +39,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://cryptography.io/
 
-PYTHON_VERSIONS = 2.7 3.4 3.5
+PYTHON_VERSIONS = 2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -60,10 +60,8 @@ install:	$(INSTALL_32_and_64)
 test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/python/pytest-27
-REQUIRED_PACKAGES += library/python/pytest-34
 REQUIRED_PACKAGES += library/python/pytest-35
 REQUIRED_PACKAGES += library/python/cffi
-REQUIRED_PACKAGES += runtime/python-34
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/python-27
