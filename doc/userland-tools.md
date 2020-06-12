@@ -6,7 +6,7 @@ these tools reside in tools/ directory.
 ## userland-zone
 
 _userland-zone_ is a tool to manage a lifecycle of build zones in oi-userland. 
-The intended and main use case for it are in continuous integration system and do build in a clean environment.
+The intended and main use case is the use in continuous integration system and doing builds in a clean environment.
 It works in a way that it creates a template zone and all build zones are cloned from it.
 To make it easier for new joiners, _userland-zone_ assumes certain things and set some defaults:
 
