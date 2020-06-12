@@ -29,7 +29,7 @@ COMPONENT_ARCHIVE_URL= \
   $(call pypi_url)
 COMPONENT_PROJECT_URL = https://pypi.python.org/python-dateutil/
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
