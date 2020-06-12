@@ -41,7 +41,7 @@ published to the local repository.
 *  When the build finished or the build zone is not needed, it can be safely destroyed 
 via **userland-zone destroy-zone --id 123**.
 
-* Before every build, it is recommend to update the template zone via **userland=zone update-template**. 
+* Before every build, it is recommend to update the template zone via **userland-zone update-template**. 
 This is especially in cases such as new compilers or libraries get updated and developers should always use the latest
 bits to build oi-userland components.
 
