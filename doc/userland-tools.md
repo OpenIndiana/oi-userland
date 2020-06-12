@@ -31,11 +31,12 @@ When working with _userland-zone_, use the following workflow:
 **/ws/archives** and **/ws/code** from the global zone will be mounted under the same location inside the build zone.
 
 * The build zone provides no networking, so source tarball will have to be downloaded in the global zone 
-in via **gmake download*.
+in via **gmake download**.
 
 * Once, the source tarball has been downloaded, the build inside the zone can happen via **zlogin prbuilder-123**. 
 Inside the zone, execute **cd /ws/code/components/CATEGORY/COMPONENT** and run **gmake publish**. 
-The build will proceed in as expected. The built package will be published to the local repository.
+The build will proceed in the clean environment of the build zone as expected and the built package will be 
+published to the local repository.
 
 *  When the build finished or the build zone is not needed, it can be safely destroyed 
 via **userland-zone destroy-zone --id 123**.
