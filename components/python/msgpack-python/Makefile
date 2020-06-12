@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:5e001229a54180a02dcdd59db23c9978351af55b1290c27bc549e381f43acd6b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 
-PYTHON_VERSIONS=        2.7 3.4 3.5
+PYTHON_VERSIONS=        2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -44,6 +44,5 @@ install:	$(INSTALL_32_and_64)
 test:           $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
