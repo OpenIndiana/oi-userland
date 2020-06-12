@@ -37,7 +37,6 @@ COMPONENT_ANITYA_ID=	6693
 
 TPNO=			29059
 
-# enum34 is superfluous in Python 3.4
 PYTHON_VERSIONS =	2.7
 
 include $(WS_MAKE_RULES)/prep.mk
