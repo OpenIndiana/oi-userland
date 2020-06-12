@@ -23,25 +23,23 @@
 # Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
-PREFERRED_BITS=64
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= smartmontools
 COMPONENT_SUMMARY= smartmontools contains utilities that control and monitor storage devices
-COMPONENT_VERSION= 7.0
+COMPONENT_VERSION= 7.1
 COMPONENT_FMRI= storage/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL= http://downloads.sourceforge.net/smartmontools
+COMPONENT_PROJECT_URL= https://downloads.sourceforge.net/smartmontools
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e5e1ac2786bc87fdbd6f92d0ee751b799fbb3e1a09c0a6a379f9eb64b3e8f61c
-COMPONENT_ARCHIVE_URL= http://sourceforge.net/projects/smartmontools/files/smartmontools/${COMPONENT_VERSION}/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:3f734d2c99deb1e4af62b25d944c6252de70ca64d766c4c7294545a2e659b846
+COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/smartmontools/files/smartmontools/${COMPONENT_VERSION}/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =  ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -56,13 +54,8 @@ CONFIGURE_OPTIONS += --with-nvme-devicescan=yes
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
-build:    $(BUILD_64)
-
-test:     $(TEST_64)
-
-install:  $(INSTALL_64)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
