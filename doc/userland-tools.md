@@ -1,7 +1,7 @@
 # userland-tools
 
 oi-userland comes with some tools used all over the build system and 
-these tools reside in tools/ directory.
+these tools reside in the [tools/](https://github.com/OpenIndiana/oi-userland/tree/oi/hipster/tools) directory.
 
 ## userland-zone
 
