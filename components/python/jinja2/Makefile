@@ -29,7 +29,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:bc1ff2ff88dbfacefde4ddde471d1417d3b304e8df103a7a9437d47269201bf4
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/J/Jinja2/$(COMPONENT_ARCHIVE)
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -43,5 +43,4 @@ install:	$(INSTALL_NO_ARCH)
 test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
