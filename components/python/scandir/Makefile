@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE_URL=	https://github.com/benhoyt/scandir/archive/v$(COMPONENT_V
 COMPONENT_ARCHIVE_HASH= sha256:006ff89c427b4b8269515a476d2b08881bb2c587d18aebc6a85d6d574d01ae84	
 COMPONENT_LICENSE=	BSD
 
-PYTHON_VERSIONS= 2.7 3.4 3.5
+PYTHON_VERSIONS= 2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -39,6 +39,5 @@ install:        $(INSTALL_32_and_64)
 test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
