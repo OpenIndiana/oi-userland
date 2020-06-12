@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:1298a2f1b2f4c4a7b921cccd159e4e42f6d7b0fb75c86c0cdecfc71f061833fa
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/j/jsonschema/$(COMPONENT_ARCHIVE)
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -43,8 +43,6 @@ install:	$(INSTALL_NO_ARCH)
 test:           $(NO_TEST)
 
 REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-34
 REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
