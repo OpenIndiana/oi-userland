@@ -21,7 +21,7 @@ zfs create -o mountpoint=/zones rpool/zones
 * **/ws/archives** is present in the global zone and hosts downloaded userland source archives
 * **/ws/code** is present in the global zone and has a working copy of oi-userland repository
 * template zone is called _prbuilder-template_ and is never running
-* build zones are called _prbuilder-ID_ where ID is an identifier passed as a argument
+* build zones are called _prbuilder-ID_ where ID is an identifier passed as an argument
   
 When working with _userland-zone_, use the following workflow:
 
