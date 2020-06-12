@@ -32,6 +32,7 @@ TEMPLATE_ZONE_NAME = "-".join([BUILD_ZONE_NAME, "template"])
 ZONES_ROOT = "/zones"
 ARCHIVES_DIR = "/ws/archives"
 CODE_DIR = "/ws/code"
+DEVELOPER_PACKAGES = ["build-essential"]
 
 ETC_SYSDING_CONF = ["#!/usr/bin/ksh", "setup_timezone UTC", "setup_locale en_US.UTF-8"]
 
@@ -96,7 +97,7 @@ class Zone:
         return self._zonecfg(["delete", "-F"])
 
     def install(self):
-        return self._zoneadm(["install"])
+        return self._zoneadm(["install", "-e"] + DEVELOPER_PACKAGES)
 
     def uninstall(self):
         return self._zoneadm(["uninstall", "-F"])
