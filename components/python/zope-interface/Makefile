@@ -41,7 +41,7 @@ COMPONENT_ARCHIVE_URL= \
   https://github.com/zopefoundation/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=      ZPL
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -55,6 +55,5 @@ COMPONENT_SYSTEM_TEST_ARGS =
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
