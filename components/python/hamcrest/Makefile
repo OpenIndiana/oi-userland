@@ -42,7 +42,7 @@ COMPONENT_FMRI=	library/python/python-hamcrest
 COMPONENT_LICENSE= BSD
 COMPONENT_LICENSE_FILE= LICENSE.txt
 
-PYTHON_VERSIONS = 2.7 3.4 3.5
+PYTHON_VERSIONS = 2.7 3.5
 
 TEST_TARGET = $(NO_TESTS)
 
@@ -50,5 +50,4 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
