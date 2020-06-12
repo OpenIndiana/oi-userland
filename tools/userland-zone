@@ -30,6 +30,7 @@ logger = logging.getLogger("userland-zone")
 BUILD_ZONE_NAME = "prbuilder"
 TEMPLATE_ZONE_NAME = "-".join([BUILD_ZONE_NAME, "template"])
 ZONES_ROOT = "/zones"
+ARCHIVES_DIR = "/ws/archives"
 
 ETC_SYSDING_CONF = ["#!/usr/bin/ksh", "setup_timezone UTC", "setup_locale en_US.UTF-8"]
 
@@ -112,10 +113,10 @@ class Zone:
         zone_root_path = os.path.join(self._path, "root")
         return self._pkg(["-R", zone_root_path, "update"])
 
-    def configure(self, sysding_conf=ETC_SYSDING_CONF):
+    def configure(self, sysding_lines=ETC_SYSDING_CONF):
         sysding_conf = os.path.join(self._path, "root", "etc", "sysding.conf")
         with open(sysding_conf, "w") as f:
-            f.write("\n".join(ETC_SYSDING_CONF))
+            f.write("\n".join(sysding_lines))
 
 
 def execute(cmd, args, **kwargs):
@@ -158,7 +159,7 @@ def parse_arguments():
     ct_parser.add_argument(
         "-p",
         help="Zone path",
-        default="/zones/{}".format(TEMPLATE_ZONE_NAME),
+        default=os.path.join(ZONES_ROOT, TEMPLATE_ZONE_NAME),
         dest="zone_path",
     )
 
@@ -181,9 +182,9 @@ def parse_arguments():
     )
     sz_parser.add_argument(
         "--archive-dir",
-        default="/ws/archives",
+        default=ARCHIVES_DIR,
         type=dir_path,
-        help="Path to userland achrives",
+        help="Path to userland archives",
     )
 
     # destroy-zone
