@@ -37,7 +37,7 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE.md
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -59,16 +59,12 @@ test:		$(TEST_NO_ARCH)
 
 # Test requirements
 REQUIRED_PACKAGES += library/python/nose-27
-REQUIRED_PACKAGES += library/python/nose-34
 REQUIRED_PACKAGES += library/python/nose-35
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-34
 REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += library/python/six-27
-REQUIRED_PACKAGES += library/python/six-34
 REQUIRED_PACKAGES += library/python/six-35
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
