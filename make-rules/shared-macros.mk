@@ -861,6 +861,15 @@ JPEG_LDFLAGS.32 =  -L$(JPEG_LIBDIR.32) -R$(JPEG_LIBDIR.32)
 JPEG_LDFLAGS.64 =  -L$(JPEG_LIBDIR.64) -R$(JPEG_LIBDIR.64)
 JPEG_LDFLAGS =     $(JPEG_LDFLAGS.$(BITS))
 
+NEED_LIBJPEG_FLAGS=no
+ifeq ($(strip $(NEED_LIBJPEG_FLAGS)),yes)
+# Build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
+endif
+
+
 # This is the default BUILD version of tcl
 # Not necessarily the system's default version, i.e. /usr/bin/tclsh
 TCL_VERSION =  8.6
