@@ -23,6 +23,8 @@
 # Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=64
+PYTHON_PYPI=mod_wsgi
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_wsgi
@@ -33,35 +35,28 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:d8205b1ebe6042e21a7a59fbfe10c4c5a12753bac531879758bdf2fa8e2bf301
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/aa/a5/909ecab8a101afb57de4815250d6fa23fcc1b94d095f6d56a9c15d7425fa/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://pypi.python.org/pypi/mod_wsgi/
-COMPONENT_BUGDB=	utility/apache
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSIONS = 2.7 3.4 3.5
+PYTHON_VERSIONS = 2.7 3.5
 
 APACHE_USR_PREFIX=/usr/apache2/2.4
-
-CFLAGS += -D__EXTENSIONS__
 
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fi)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CFLAGS+= -std=c99 $(CPP_XPG6MODE)
+CFLAGS+= $(CPP_XPG6MODE)
 
 # The following four paragraphs are copied from setup.py.mk
 # but since mod_wsgi doesn't use setup.py, we can't just include
 # setup.py.mk
 $(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
-$(BUILD_DIR)/%-3.4/.built:		PYTHON_VERSION=3.4
 $(BUILD_DIR)/%-3.5/.built:		PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
 $(BUILD_DIR)/%-2.7/.installed:  PYTHON_VERSION=2.7
-$(BUILD_DIR)/%-3.4/.installed:  PYTHON_VERSION=3.4
 $(BUILD_DIR)/%-3.5/.installed:  PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
@@ -73,13 +68,7 @@ CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/apxs --with-python=$(P
 
 COMPONENT_POST_INSTALL_ACTION = $(TOUCH) $(BUILD_DIR)
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/server/apache-24
