@@ -75,6 +75,11 @@ SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$(COMPONENT_SRC$(1))
 endif
 endef
 
+USE_GIT_SHALLOW_CLONE?=no
+ifeq ($(strip $(USE_GIT_SHALLOW_CLONE)),yes)
+GIT_DEPTH_FLAG=--depth=1
+endif
+
 define git-rules
 ifdef GIT_REPO$(1)
 download::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
@@ -95,7 +100,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 	$$(FETCH) --file $$@ $$(GIT_HASH$(1):%=--hash %) --url GIT || \
 	($$(FETCH) --file $$@ $$(COMPONENT_ARCHIVE_URL$(1):%=--url %) || \
 	(TMP_REPO=$$$$($(MKTEMP) --directory) && \
-	$(GIT) clone $$(GIT_REPO$(1)) $$(GIT_BRANCH_ARG$(1)) $$$${TMP_REPO} && \
+	$(GIT) clone $$(GIT_DEPTH_FLAG) $$(GIT_REPO$(1)) $$(GIT_BRANCH_ARG$(1)) $$$${TMP_REPO} && \
 	(cd $$$${TMP_REPO} ; $(GIT) checkout \
 	$$(GIT_COMMIT_ID$(1))) && \
 	(cd $$$${TMP_REPO} ; \
