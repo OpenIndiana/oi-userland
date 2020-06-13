@@ -36,7 +36,7 @@ COMPONENT_VERSION =	1.0.2u
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
 IPS_COMPONENT_VERSION = 1.0.2.21
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://www.openssl.org
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
@@ -66,6 +66,7 @@ ENGINESDIR_64 = /lib/openssl/engines/64
 CONFIGURE_OPTIONS =  -DSOLARIS_OPENSSL -DNO_WINDOWS_BRAINDEATH
 CONFIGURE_OPTIONS += --openssldir=/etc/openssl
 CONFIGURE_OPTIONS += --prefix=/usr
+CONFIGURE_OPTIONS += --libdir=lib/$(ARCHLIBSUBDIR)
 # We use OpenSSL install code for installing only manual pages and headers.
 CONFIGURE_OPTIONS += --install_prefix=$(PROTO_DIR)
 CONFIGURE_OPTIONS += no-rc3
