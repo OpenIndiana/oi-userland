@@ -24,57 +24,41 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS=		64
-
+BUILD_BITS= 64
+BUILD_STYLE= meson
+NEED_LIBJPEG_FLAGS=yes
+USE_GIT_SHALLOW_CLONE=yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		efl
-COMPONENT_VERSION=	1.18.5
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	1.24.2
 COMPONENT_SUMMARY=	Enlightenment Foundation Libraries
 COMPONENT_FMRI=		library/e/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.enlightenment.org
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
+GIT_REPO=		https://git.enlightenment.org/core/efl.git
+GIT_BRANCH=		master
+#COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+#COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+#COMPONENT_ARCHIVE_HASH= \
 	sha256:56f02aa6b2c4ca0252fb6547fa8d2fdfff842e245a93ae41adca7a191900bf73
-COMPONENT_ARCHIVE_URL= \
+#COMPONENT_ARCHIVE_URL= \
 	http://download.enlightenment.org/rel/libs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD 2-clause, GPLv2, LGPLv2.1, Small
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_BINDIR.64=$(USRBINDIR)
-CONFIGURE_SBINDIR.64=$(USRSBINDIR)
+gcc_OPT = -Og -g3 -ggdb3 -pipe
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
-
-CONFIGURE_OPTIONS+= CFLAGS="$(CFLAGS) -D__EXTENSIONS__"
-CONFIGURE_OPTIONS+= --with-opengl=full
-CONFIGURE_OPTIONS+= --with-profile=release
-CONFIGURE_OPTIONS+= --enable-debug
-CONFIGURE_OPTIONS+= --enable-fribidi
-CONFIGURE_OPTIONS+= --enable-harfbuzz
-CONFIGURE_OPTIONS+= --disable-libeeze
-CONFIGURE_OPTIONS+= --enable-lua-old
-CONFIGURE_OPTIONS+= --enable-pulseaudio
-CONFIGURE_OPTIONS+= --disable-cserve
-CONFIGURE_OPTIONS+= --enable-physics
-CONFIGURE_OPTIONS+= --enable-doc
-CONFIGURE_OPTIONS+= --disable-systemd
-CONFIGURE_OPTIONS+= --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb
+MESON_BUILDTYPE=debug
+CONFIGURE_OPTIONS+= -Dlua-interpreter=lua
+CONFIGURE_OPTIONS+= -Dv4l2=false
+CONFIGURE_OPTIONS+= -Dlibmount=false
+CONFIGURE_OPTIONS+= -Deeze=false
+CONFIGURE_OPTIONS+= -Devas-loaders-disabler=json
+CONFIGURE_OPTIONS+= -Decore-imf-loaders-disabler=xim,ibus,scim
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
-
-# Need to cleanup the configure since EINA_HAVE_BYTESWAP_H is not set properly
-COMPONENT_POST_CONFIGURE_ACTION=$(RM) $(SOURCE_DIR)/src/lib/eina/eina_config.h;
-
-# pkgdepend fails to resolve the python version if env is used
-COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/eina-bench-cmp;
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/library/mesa

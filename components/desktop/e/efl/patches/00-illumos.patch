@@ -1,0 +1,73 @@
+Work by Vincent Torri
+
+diff --git a/header_checks/meson.build b/header_checks/meson.build
+index 955c0082f2..eca0d9efee 100644
+--- a/header_checks/meson.build
++++ b/header_checks/meson.build
+@@ -157,6 +157,10 @@ m = cc.find_library('m')
+ dl = cc.find_library('dl', required: false)
+ rt = cc.find_library('rt', required: false)
+ 
++if sys_sun == true
++  socket = cc.find_library('socket', required: true)
++endif
++
+ thread_dep = dependency('threads')
+ 
+ #check for the headers
+diff --git a/meson.build b/meson.build
+index af9e8b031e..fb7ace8cbd 100644
+--- a/meson.build
++++ b/meson.build
+@@ -48,11 +48,13 @@ windows = ['windows', 'cygwin']
+ bsd = ['bsd', 'freebsd', 'dragonfly', 'netbsd', 'openbsd']
+ linux = ['linux']
+ osx = ['darwin']
++sun = ['sunos']
+ 
+ sys_linux = linux.contains(host_machine.system())
+ sys_bsd = bsd.contains(host_machine.system())
+ sys_windows = windows.contains(host_machine.system())
+ sys_osx = osx.contains(host_machine.system())
++sys_sun = sun.contains(host_machine.system())
+ 
+ module_files = []
+ evas_loader_map = []
+@@ -126,6 +128,13 @@ foreach lang : ['c', 'objc', 'cpp']
+   endif
+ endforeach
+ 
++if sys_sun == true
++# for getpwuid_r()
++  add_global_arguments('-D_POSIX_PTHREAD_SEMANTICS', language: 'c')
++# for socket API
++  add_global_arguments('-lsocket', language: 'c')
++endif
++
+ config_h = configuration_data()
+ config_h.set_quoted('MODULE_ARCH', version_name)
+ config_h.set_quoted('PACKAGE', meson.project_name())
+@@ -200,7 +209,7 @@ endif
+ config_dir = [include_directories('.')]
+ eolian_include_directories = []
+ 
+-if sys_linux == true or sys_bsd == true
++if sys_linux == true or sys_bsd == true or sys_sun == true
+   sys_lib_extension = 'so'
+   sys_exe_extension = ''
+   sys_mod_extension = 'so'
+diff --git a/src/lib/eina/meson.build b/src/lib/eina/meson.build
+index 7aa1afa7ba..758a72feb4 100644
+--- a/src/lib/eina/meson.build
++++ b/src/lib/eina/meson.build
+@@ -7,6 +7,10 @@ if sys_windows == true
+    eina_pub_deps += [evil]
+ endif
+ 
++if sys_sun == true
++   eina_pub_deps += [socket]
++endif
++
+ public_sub_headers = [
+ 'eina_promise.h',
+ 'eina_safety_checks.h',
