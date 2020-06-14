@@ -5,6 +5,17 @@ pipeline {
   }
 
   stages {
+    stage("Determine if PR contains component changes") {
+      when {
+        not {
+          changeset "components/**/Makefile"
+        }
+      }
+      steps {
+        sh "exit 0"
+      }
+    }
+    
     stage("Check out") {
       steps {
         cleanWs()
