@@ -26,7 +26,7 @@ pipeline {
   }
   post {
     always {
-      pullRequest.comment('This PR is highly illogical..')
+      script pullRequest.comment('This PR is highly illogical..')
     }
   }
 }
