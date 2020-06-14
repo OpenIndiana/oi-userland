@@ -24,4 +24,9 @@ pipeline {
       }
     }
   }
+  post {
+    always {
+      pullRequest.comment('This PR is highly illogical..')
+    }
+  }
 }
