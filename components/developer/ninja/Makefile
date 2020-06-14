@@ -11,12 +11,13 @@
 #
 # Copyright 2017-2018 Aurelien Larcher
 #
-PREFERRED_BITS=64
+BUILD_BITS=64
+BUILD_STYLE=justmake
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ninja
-COMPONENT_VERSION=      1.9.0
+COMPONENT_VERSION=      1.10.0
 COMPONENT_SUMMARY=      Ninja - a small build system with a focus on speed
 COMPONENT_PROJECT_URL=  https://ninja-build.org/
 COMPONENT_FMRI=         developer/build/ninja
@@ -26,12 +27,10 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= \
   https://github.com/ninja-build/ninja/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5d7ec75828f8d3fd1a0c2f31b5b0cea780cdfe1031359228c428c1a48bfcd5b9
+  sha256:3810318b08489435f8efc19c05525e80a993af5a55baa0dfeae0465a9d45f99f
 COMPONENT_LICENSE=      Apache License version 2.0
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(GCC_BINDIR):$(PATH.illumos)
 
@@ -41,9 +40,8 @@ COMPONENT_BUILD_ACTION = cd $(@D); \
   CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" ./configure.py --bootstrap --with-python=$(PYTHON.64)
 
 COMPONENT_TEST_CMD = cd $(@D); \
-  CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" ./configure.py && \
-  ./ninja ninja_test && \
-  ./ninja_test --gtest_filter=-SubprocessTest.SetWithLots
+  CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" ./configure.py && ./ninja ninja_test && ./ninja_test
+COMPONENT_TEST_TARGETS =
 
 COMPONENT_INSTALL_ACTION = cd $(@D); \
 	$(MKDIR) $(PROTO_DIR)/usr/bin && \
@@ -58,13 +56,7 @@ COMPONENT_INSTALL_ACTION = cd $(@D); \
   install -vDm644 misc/zsh-completion \
       $(PROTO_DIR)/usr/share/zsh-completions/_ninja
 
-COMPONENT_TEST_TRANSFORMS+= '-n -e "/^\[[0-9]*\/245\]/p"'
-
-build:    $(BUILD_64)
-
-install:  $(INSTALL_64)
-
-test:    $(TEST_64)
+COMPONENT_TEST_TRANSFORMS+= '-n -e "/^\[[0-9]*\/341\]/p"'
 
 # Build dependencies
 REQUIRED_PACKAGES += runtime/python-35
