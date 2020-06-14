@@ -14,7 +14,7 @@ pipeline {
 
     stage('Prepare build zone') {
       steps {
-        sh '/usr/bin/pfexec. ./tools/userland-zone spawn-zone --id ' + env.CHANGE_ID
+        sh '/usr/bin/pfexec ./tools/userland-zone spawn-zone --id ' + env.CHANGE_ID
       }
     }
 
