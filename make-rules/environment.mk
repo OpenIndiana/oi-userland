@@ -21,8 +21,12 @@
 
 #
 # Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2020, Adam Stevko
 #
-PFEXEC =               /usr/bin/pfexec
+
+PFEXEC =	/usr/bin/pfexec
+
+ZONE =	$(WS_TOOLS)/userland-zone
 
 define separator-line
        @$(PYTHON) -c 'l="="*(40-len("$1")/2); print("%s%s%s" % (l, "$1", l))'
@@ -47,6 +51,21 @@ component-environment-prep::
 	@/usr/bin/pkg list -vH $(USERLAND_REQUIRED_PACKAGES:%=/%) $(REQUIRED_PACKAGES:%=/%) >/dev/null || \
 		{ echo "Adding required packages to build environment..."; \
 		  $(PFEXEC) /usr/bin/pkg install --accept -v $(REQUIRED_PACKAGES:%=/%) || [ $$? -eq 4 ] ; }
+
+ZONENAME_PREFIX = bz
+ZONENAME_ID = $(shell echo "$(WS_TOP)" | sha1sum | cut -c0-7)-$(COMPONENT_NAME)
+ZONENAME = $(ZONENAME_PREFIX)-$(ZONENAME_ID)
+
+
+component-zone-build:
+	$(PFEXEC) $(ZONE) spawn-zone --id $(ZONENAME_ID)
+	$(PFEXEC) /usr/sbin/zloin $(ZONENAME) \
+		"cd $(COMPONENT_DIR); gmake install"
+
+component-zone-cleanup:
+	$(PFEXEC) $(ZONE) destroy-zone --id $(ZONENAME_ID)
+
+
 
 # Short aliases for user convenience
 env-check:: component-environment-check

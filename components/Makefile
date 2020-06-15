@@ -70,9 +70,9 @@ publish:		TARGET = publish
 clean:			TARGET = clean
 clobber:		TARGET = clobber
 test:			TARGET = test
+zone-build:		TARGET = component-zone-build
 component-hook:		TARGET = component-hook
-prep build install pre-publish publish test:	TEMPLATE_ZONE=$(ZONE)
-prep build install pre-publish publish test:	LOG = >$(WS_LOGS)/$(subst /,.,$@).$(TARGET).log 2>&1
+zone-build prep build install pre-publish publish test:	LOG = >$(WS_LOGS)/$(subst /,.,$@).$(TARGET).log 2>&1
 
 # turn off pkglint for the individual component builds.
 ifeq   ($(strip $(PKGLINT_COMPONENT)),)
@@ -81,7 +81,7 @@ endif
 
 .DEFAULT:	publish
 
-build install pre-publish publish test: $(COMPONENT_DIRS)
+zone-build build install pre-publish publish test: $(COMPONENT_DIRS)
 
 COMPONENT_DIRS.nosetup =	$(COMPONENT_DIRS:%=%.nosetup)
 
