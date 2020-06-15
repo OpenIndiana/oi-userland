@@ -245,7 +245,7 @@ PUBLISH_STAMP ?= $(BUILD_DIR)/.published-$(MACH)
 # Do all that is needed to ensure the package is consistent for publishing,
 # except actually pushing to a repo, separately from the push to the repo.
 pre-publish:	build install $(PRE_PUBLISH_STAMP)
-publish:		pre-publish $(PUBLISH_STAMP)
+publish:		pre-publish update-metadata $(PUBLISH_STAMP)
 
 sample-manifest:	$(GENERATED).p5m
 
