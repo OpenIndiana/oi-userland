@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	argh
 COMPONENT_VERSION= 	0.26.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	An unobtrusive argparse wrapper with natural syntax
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -29,12 +30,11 @@ COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/a/argh/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/argh
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 TEST_TARGET=$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
