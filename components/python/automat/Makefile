@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Automat
 COMPONENT_VERSION=	0.8.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	'Self-service finite-state machines for the programmer on the go'
 COMPONENT_DESCRIPTION=	'Automat is a library for concise, idiomatic Python expression of finite-state automata (particularly deterministic finite-state transducers)'
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,7 +44,7 @@ COMPONENT_FMRI= 	library/python/automat
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE= LICENSE
 
-PYTHON_VERSIONS = 2.7 3.4 3.5
+PYTHON_VERSIONS = 2.7 3.5
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -57,8 +58,6 @@ COMPONENT_TEST_ARGS =
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-34
 REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
