@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cffi
 COMPONENT_VERSION=	1.12.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -36,7 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://cffi.readthedocs.org/
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -47,7 +47,7 @@ CFLAGS += $(CC_BITS)
 CFLAGS += -pthread
 
 COMPONENT_TEST_DIR =	$(@D)/tests
-COMPONENT_TEST_ENV =	PYTHON_VERSIONS="2.7 3.4 3.5"
+COMPONENT_TEST_ENV =	PYTHON_VERSIONS="$(PYTHON_VERSIONS)"
 COMPONENT_TEST_ENV +=	$(PYTHON_ENV)
 COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
 COMPONENT_TEST_ENV +=	TESTOWNLIB_CC="$(CC) $(CC_PIC) %s $(CC_BITS) -shared -o '%s.so'"
@@ -76,9 +76,7 @@ install:	$(INSTALL_32_and_64)
 test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/python/pycparser-27
-REQUIRED_PACKAGES += library/python/pycparser-34
 REQUIRED_PACKAGES += library/python/pycparser-35
-REQUIRED_PACKAGES += runtime/python-34
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += runtime/python-27
