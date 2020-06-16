@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cryptography
 COMPONENT_VERSION=	2.6.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -39,7 +39,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://cryptography.io/
 
-PYTHON_VERSIONS = 2.7 3.4 3.5
+PYTHON_VERSIONS = 2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -47,7 +47,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 # 64-bit python loads *.so modules from 64-bit subdir,
 # but during tests libraries are installed to non-confirming path
-COMPONENT_PREP_ACTION += (cd $(SOURCE_DIR)/src/cryptography/hazmat/bindings &&  $(LN) -sf . 64)
+COMPONENT_PREP_ACTION += (cd $(SOURCE_DIR)/src/cryptography/hazmat/bindings && $(MKDIR) 64 &&  $(LN) -sf *.so 64/ )
 
 COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
 COMPONENT_TEST_CMD=	$(PYTHON) setup.py test
@@ -60,10 +60,8 @@ install:	$(INSTALL_32_and_64)
 test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/python/pytest-27
-REQUIRED_PACKAGES += library/python/pytest-34
 REQUIRED_PACKAGES += library/python/pytest-35
 REQUIRED_PACKAGES += library/python/cffi
-REQUIRED_PACKAGES += runtime/python-34
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/python-27
