@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=libArcus
 COMPONENT_VERSION=2.7.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=Communication library between internal components for Ultimaker software 
 COMPONENT_PROJECT_URL=https://github.com/Ultimaker/libArcus
 COMPONENT_FMRI=library/arcus
@@ -40,5 +41,5 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += library/c++/protobuf
+REQUIRED_PACKAGES += $(PYTHON3_RUNTIME_PKG)
