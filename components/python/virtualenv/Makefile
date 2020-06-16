@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		virtualenv
 COMPONENT_VERSION=	16.5.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/python/virtualenv
 COMPONENT_SUMMARY=	'A tool to create isolated Python environments'
 COMPONENT_PROJECT_URL=	https://virtualenv.pypa.io/en/latest/
@@ -28,7 +29,7 @@ COMPONENT_ARCHIVE_URL=	https://github.com/pypa/virtualenv/archive/$(COMPONENT_VE
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	virtualenv.license
 
-PYTHON_VERSIONS=        2.7 3.4 3.5
+PYTHON_VERSIONS= 2.7 3.5
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -54,9 +55,7 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(TEST_NO_ARCH)
 
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-34
 REQUIRED_PACKAGES += library/python/setuptools-35
