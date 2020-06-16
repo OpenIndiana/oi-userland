@@ -56,20 +56,38 @@ ZONENAME_PREFIX = bz
 ZONENAME_ID = $(shell echo "$(WS_TOP)" | sha1sum | cut -c0-7)-$(COMPONENT_NAME)
 ZONENAME = $(ZONENAME_PREFIX)-$(ZONENAME_ID)
 
-
 #component-zone-template:
 #	echo "Creating build zonee template..."
 #	$(PFEXEC) $(ZONE) --prefix $(ZONENAME_PREFIX) create-template -u $${USER} -i $$(id -u)
 
 component-zone-build:
 	echo "Creating zone $(ZONENAME)..."
-	$(PFEXEC) $(ZONE) --prefix $(ZONENAME_PREFIX)  spawn-zone --id $(ZONENAME_ID)
-	@while $$(true) ; do \
-		echo "Waiting for zone $(ZONENAME) to boot..." ; \
+	$(PFEXEC) $(ZONE) --prefix $(ZONENAME_PREFIX) spawn-zone --id $(ZONENAME_ID)
+
+	@while $$(true); do \
+		echo "Waiting for zone $(ZONENAME) to boot..."; \
 		$(PFEXEC) /usr/sbin/zlogin -l $${USER} $(ZONENAME) \
-				/bin/true >/dev/null 2>&1 && break ; \
-		sleep 10 ; \
+				/bin/true >/dev/null 2>&1 && break; \
+		sleep 10; \
 	done
+
+	# FIXME:
+	# - remove once we figure out a better way how to enable zoneproxy-client inside the nlipkg brand
+	@while $$(true); do \
+  		echo "Waiting for $(ZONENAME) config repository.."; \
+  		$(PFEXEC) /usr/bin/svcs -z $(ZONENAME) -a >/dev/null 2>&1 && break; \
+  		sleep 2; \
+  	done
+	$(PFEXEC) /usr/sbin/svcadm -z $(ZONENAME) \
+		enable svc:/application/pkg/zones-proxy-client:default
+	ZONEROOT="$$(/usr/sbin/zoneadm -z $(ZONENAME) list -p | cut -d: -f4)/root" && \
+		$(PFEXEC) /usr/bin/pkg -R $${ZONEROOT} set-property use-system-repo True
+
+	# We need to create door inside  after zone-proxy-client is running
+	sleep 10
+	$(PFEXEC) /usr/lib/zones/zoneproxy-adm $(ZONENAME)
+	sleep 10
+
 	echo "Building in zone $(ZONENAME)..."
 	$(PFEXEC) /usr/sbin/zlogin $(ZONENAME) \
 		"cd $(COMPONENT_DIR); gmake install"
