@@ -57,9 +57,21 @@ ZONENAME_ID = $(shell echo "$(WS_TOP)" | sha1sum | cut -c0-7)-$(COMPONENT_NAME)
 ZONENAME = $(ZONENAME_PREFIX)-$(ZONENAME_ID)
 
 
+#component-zone-template:
+#	echo "Creating build zonee template..."
+#	$(PFEXEC) $(ZONE) --prefix $(ZONENAME_PREFIX) create-template -u $${USER} -i $$(id -u)
+
 component-zone-build:
-	$(PFEXEC) $(ZONE) spawn-zone --id $(ZONENAME_ID)
-	$(PFEXEC) /usr/sbin/zloin $(ZONENAME) \
+	echo "Creating zone $(ZONENAME)..."
+	$(PFEXEC) $(ZONE) --prefix $(ZONENAME_PREFIX)  spawn-zone --id $(ZONENAME_ID)
+	@while $$(true) ; do \
+		echo "Waiting for zone $(ZONENAME) to boot..." ; \
+		$(PFEXEC) /usr/sbin/zlogin -l $${USER} $(ZONENAME) \
+				/bin/true >/dev/null 2>&1 && break ; \
+		sleep 10 ; \
+	done
+	echo "Building in zone $(ZONENAME)..."
+	$(PFEXEC) /usr/sbin/zlogin $(ZONENAME) \
 		"cd $(COMPONENT_DIR); gmake install"
 
 component-zone-cleanup:
