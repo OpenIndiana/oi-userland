@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Markdown
 COMPONENT_VERSION=	3.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	'Python implementation of Markdown'
 COMPONENT_FMRI=		library/python/markdown
 COMPONENT_PROJECT_URL=	https://python-markdown.github.io
@@ -37,7 +38,7 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE.md
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -52,5 +53,4 @@ test:		$(NO_TESTS)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
