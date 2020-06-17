@@ -56,46 +56,58 @@ ZONENAME_PREFIX = bz
 ZONENAME_ID = $(shell echo "$(WS_TOP)" | sha1sum | cut -c0-7)-$(COMPONENT_NAME)
 ZONENAME = $(ZONENAME_PREFIX)-$(ZONENAME_ID)
 
-#component-zone-template:
-#	echo "Creating build zonee template..."
-#	$(PFEXEC) $(ZONE) --prefix $(ZONENAME_PREFIX) create-template -u $${USER} -i $$(id -u)
+component-zone-template:
+	$(call separator-line)
+	$(call separator-line,Create template zone)
+	USER_ID=$$(id -u) && \
+	$(PFEXEC) $(ZONE) --prefix $(ZONENAME_PREFIX) create-template -u $${USER} -i $${USER_ID}
 
 component-zone-build:
-	echo "Creating zone $(ZONENAME)..."
+	$(call separator-line)
+	$(call separator-line,Create $(ZONENAME))
 	$(PFEXEC) $(ZONE) --prefix $(ZONENAME_PREFIX) spawn-zone --id $(ZONENAME_ID)
-
+	$(call separator-line,Boot $(ZONENAME))
 	@while $$(true); do \
 		echo "Waiting for zone $(ZONENAME) to boot..."; \
 		$(PFEXEC) /usr/sbin/zlogin -l $${USER} $(ZONENAME) \
 				/bin/true >/dev/null 2>&1 && break; \
 		sleep 10; \
 	done
-
 	# FIXME:
 	# - remove once we figure out a better way how to enable zoneproxy-client inside the nlipkg brand
 	@while $$(true); do \
   		echo "Waiting for $(ZONENAME) config repository.."; \
   		$(PFEXEC) /usr/bin/svcs -z $(ZONENAME) -a >/dev/null 2>&1 && break; \
-  		sleep 2; \
+  		sleep 10; \
+  	done
+	# We need to create door inside  after zone-proxy-client is running
+	$(call separator-line,Configure IPS for $(ZONENAME))
+	$(PFEXEC) /usr/lib/zones/zoneproxy-adm $(ZONENAME)
+	@while $$(true); do \
+  		echo "Waiting for zoneproxyd to be ready.."; \
+  		PROXY_PID=$$(/usr/bin/svcs -p svc:/application/pkg/zones-proxyd:default | \
+  			nawk '$$0 ~ /zoneproxyd/ {print $$2}') && \
+  			$(PFEXEC) /usr/bin/pfiles $${PROXY_PID} | \
+  			$(GNU_GREP) $(ZONENAME) >/dev/null 2>&1 && break; \
+  		sleep 10; \
   	done
 	$(PFEXEC) /usr/sbin/svcadm -z $(ZONENAME) \
 		enable svc:/application/pkg/zones-proxy-client:default
 	ZONEROOT="$$(/usr/sbin/zoneadm -z $(ZONENAME) list -p | cut -d: -f4)/root" && \
-		$(PFEXEC) /usr/bin/pkg -R $${ZONEROOT} set-property use-system-repo True
-
-	# We need to create door inside  after zone-proxy-client is running
-	sleep 10
-	$(PFEXEC) /usr/lib/zones/zoneproxy-adm $(ZONENAME)
-	sleep 10
-
-	echo "Building in zone $(ZONENAME)..."
-	$(PFEXEC) /usr/sbin/zlogin $(ZONENAME) \
+		$(PFEXEC) /usr/bin/pkg -R $${ZONEROOT} set-property use-system-repo True && \
+	while $$(true); do \
+		echo "Waiting for sysrepo to be ready..." && \
+		$(PFEXEC) /usr/bin/pkg -R $${ZONEROOT} publisher | \
+		$(GNU_GREP) syspub >/dev/null 2>&1 && break; \
+		sleep 10; \
+	done
+	$(call separator-line,Build in $(ZONENAME))
+	$(PFEXEC) /usr/sbin/zlogin -l $${USER} $(ZONENAME) \
 		"cd $(COMPONENT_DIR); gmake install"
+	$(call separator-line)
 
 component-zone-cleanup:
 	$(PFEXEC) $(ZONE) destroy-zone --id $(ZONENAME_ID)
-
-
 
 # Short aliases for user convenience
 env-check:: component-environment-check
