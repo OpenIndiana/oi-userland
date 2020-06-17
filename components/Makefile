@@ -61,6 +61,13 @@ rebuild-dependents: dependencies.json
 print-dependents: dependencies.json
 	@$(WS_TOOLS)/userland-bump -v --rebuild-dependents --dry-run --fmri $(FMRI)
 
+publish-branch:
+	@$(RM) $(WS_TOP)/components/$(ENCUMBERED)components.mk && \
+		( env BASS_O_MATIC_MODE=incremental \
+			GIT_PREVIOUS_SUCCESSFUL_COMMIT=origin/oi/hipster \
+			$(GMAKE) -s publish )
+
+
 download:		TARGET = download
 prep:			TARGET = prep
 build:			TARGET = build
