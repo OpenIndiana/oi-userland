@@ -29,7 +29,7 @@ PFEXEC =	/usr/bin/pfexec
 ZONE =	$(WS_TOOLS)/userland-zone
 
 define separator-line
-       @$(PYTHON) -c 'l="="*(40-len("$1")/2); print("%s%s%s" % (l, "$1", l))'
+       @$(PYTHON) -c 'l="="*int(40-len("$1")/2); print("%s%s%s" % (l, "$1", l))'
 endef
 
 component-environment-check::
