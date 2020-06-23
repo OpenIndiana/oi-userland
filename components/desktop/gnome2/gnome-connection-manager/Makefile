@@ -71,5 +71,6 @@ test:		$(NO_TESTS)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/vte-291
 REQUIRED_PACKAGES += library/python/pygobject-3-$(PYVER_SHORT)
+REQUIRED_PACKAGES += library/python/pycairo-$(PYVER_SHORT)
 REQUIRED_PACKAGES += runtime/python-$(PYVER_SHORT)
 REQUIRED_PACKAGES += shell/expect
