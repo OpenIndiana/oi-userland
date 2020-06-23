@@ -14,47 +14,29 @@
 # Copyright 2016 Jim Klimov
 #
 
-include ../../../../make-rules/shared-macros.mk
+BUILD_BITS=64_and_32
 
-COMPONENT_NAME= zeromq
+include ../../../make-rules/shared-macros.mk
 
-# See configure.ac for ABI version mapping to software version
-COMPONENT_VERSION_ABI= 3
-COMPONENT_VERSION_MAJ= 3
-COMPONENT_VERSION_MIN= 2
-COMPONENT_VERSION_PAT= 5
-COMPONENT_VERSION_MAJ_MIN= $(COMPONENT_VERSION_MAJ).$(COMPONENT_VERSION_MIN)
-COMPONENT_VERSION= $(COMPONENT_VERSION_MAJ_MIN).$(COMPONENT_VERSION_PAT)
-COMPONENT_REVISION= 3
-
+COMPONENT_NAME= libzmq
+COMPONENT_VERSION= 4.3.2
 COMPONENT_SUMMARY= Open source message queue optimised for performance
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:09653e56a466683edb2f87ee025c4de55b8740df69481b9d7da98748f0c92124
+  sha256:02ecc88466ae38cf2c8d79f09cfd2675ba299a439680b64ade733e26a349edeb
 COMPONENT_ARCHIVE_URL= \
-  http://download.zeromq.org/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL= http://zeromq.org/
+  https://github.com/zeromq/libzmq/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://zeromq.org/
+COMPONENT_FMRI= library/c++/zeromq
 # Two licenses in tarball, LGPLv3+ is referenced in their spec-file
 COMPONENT_LICENSE_FILE= COPYING.LESSER
 COMPONENT_LICENSE= LGPLv3+
 COMPONENT_CLASSIFICATION= System/Libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-# Note: This USR path is used in build prefix and in p5m manifest,
-# except where we mediate the links and the relative SUB path is used
-COMPONENT_SUB_DIR=zeromq-$(COMPONENT_VERSION_MAJ_MIN)
-COMPONENT_USR_DIR=$(USRDIR)/$(COMPONENT_SUB_DIR)
-
-PKG_OPTIONS +=	-D COMPONENT_VERSION_ABI="$(COMPONENT_VERSION_ABI)"
-PKG_OPTIONS +=	-D COMPONENT_VERSION_MAJ_MIN="$(COMPONENT_VERSION_MAJ_MIN)"
-PKG_OPTIONS +=	-D COMPONENT_SUB_DIR="$(COMPONENT_SUB_DIR)"
-PKG_OPTIONS +=	-D COMPONENT_USR_DIR="$(COMPONENT_USR_DIR)"
-
-COMPONENT_PREP_ACTION =	\
+COMPONENT_PREP_ACTION = \
 	( cd $(@D) && \
 	  libtoolize --copy --force && \
 	  aclocal -I m4 && \
@@ -71,17 +53,27 @@ CONFIGURE_OPTIONS.64 +=	--without-documentation --without-docs
 CONFIGURE_OPTIONS +=	--enable-static=no
 CONFIGURE_OPTIONS +=	--with-libsodium
 
-CONFIGURE_PREFIX   =	$(COMPONENT_USR_DIR)
-
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 
-build: $(BUILD_32_and_64)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-install: $(INSTALL_32_and_64)
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/TOTAL:/p" ' \
+	'-e "/SKIP:/p" ' \
+	'-e "/PASS:/p" ' \
+	'-e "/FAIL:/p" ' \
+	'-e "/ERROR:/p" '
 
-test: $(TEST_32_and_64)
+# Necessary for tests
+unexport SHELLOPTS
 
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Build time dependencies
+REQUIRED_PACKAGES +=text/asciidoc
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/security/libsodium
+REQUIRED_PACKAGES += system/library
