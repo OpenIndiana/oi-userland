@@ -19,24 +19,25 @@ COMPONENT_NAME_LONG=	gnome-connection-manager
 COMPONENT_NAME_SHORT=	gcm
 # The value below should match the .p5m and .license filenames, in particular:
 COMPONENT_NAME=  		$(COMPONENT_NAME_LONG)
-COMPONENT_VERSION=	1.2.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.2.1
 COMPONENT_PROJECT_URL=	http://kuthulu.com/gcm
 # The new GCM release should bring support for Gtk3 and Python3,
 # and is expected to work in OI unlike the venerable 1.1.0 made
 # for Gtk2 which just stopped working. So far it is unreleased,
 # hence the GitHub latest-commit fetching and tweaked definitions
 # of COMPONENT_SRC and COMPONENT_ARCHIVE below:
-COMPONENT_COMMIT_ID=	87ca05a933a35e6b14ab9dac68b2b1c3cb3bd52c
-COMPONENT_SRC=		$(COMPONENT_NAME_LONG)-$(COMPONENT_COMMIT_ID)
+###COMPONENT_COMMIT_ID=	87ca05a933a35e6b14ab9dac68b2b1c3cb3bd52c
+###COMPONENT_SRC=		$(COMPONENT_NAME_LONG)-$(COMPONENT_COMMIT_ID)
 ###COMPONENT_SRC=		$(COMPONENT_NAME_SHORT)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME_LONG)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a6b25be9ce15aaa4ee1cee1b823999f9e0af23bc60ac384d84d06490b9c46ef7
+    sha256:a78f90fc1b5ea5c3c0f068d51c5db75cfe5b77eff1bed0f910ac9d484b29f3a3
 
 ### How the original sites name the archive:
 #COMPONENT_ARCHIVE_ORIG=	$(COMPONENT_NAME_LONG)_$(COMPONENT_VERSION)_all.tgz
 ###COMPONENT_ARCHIVE_ORIG=	$(COMPONENT_NAME_LONG)_$(COMPONENT_VERSION).orig.tar.gz
-COMPONENT_ARCHIVE_ORIG=	$(COMPONENT_COMMIT_ID).zip
+COMPONENT_ARCHIVE_ORIG=	v$(COMPONENT_VERSION).tar.gz
+###COMPONENT_ARCHIVE_ORIG=	$(COMPONENT_COMMIT_ID).zip
 
 ### Project site is gone, use a mirror for now
 #COMPONENT_ARCHIVE_URL=	http://ftp.heanet.ie/mirrors/www.getdeb.net/getdeb/ubuntu/pool/apps/g/$(COMPONENT_NAME_LONG)/$(COMPONENT_ARCHIVE_ORIG)
@@ -45,7 +46,8 @@ COMPONENT_ARCHIVE_URL=	https://github.com/kuthulux/$(COMPONENT_NAME_LONG)/archiv
 
 ### How we name the archive to store on build hosts:
 #COMPONENT_ARCHIVE=	$(COMPONENT_ARCHIVE_ORIG)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_COMMIT_ID).zip
+#COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_COMMIT_ID).zip
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 
 COMPONENT_SUMMARY=	GCM - an Advanced SSH connections manager for X/Windows
 COMPONENT_FMRI=		terminal/$(COMPONENT_NAME)
