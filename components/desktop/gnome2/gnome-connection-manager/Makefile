@@ -44,6 +44,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PYTHON_VERSION =	3.5
 PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
+PKG_MACROS +=		PYVER_SHORT=$(subst .,,$(PYTHON_VERSION))
 
 CLEAN_PATHS+= $(BUILD_DIR)
 
@@ -68,6 +69,6 @@ test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/vte-291
-REQUIRED_PACKAGES += library/python/pygobject-3-35
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += library/python/pygobject-3-$(PYVER_SHORT)
+REQUIRED_PACKAGES += runtime/python-$(PYVER_SHORT)
 REQUIRED_PACKAGES += shell/expect
