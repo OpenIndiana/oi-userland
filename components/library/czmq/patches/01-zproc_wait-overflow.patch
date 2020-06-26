@@ -1,0 +1,13 @@
+https://github.com/zeromq/czmq/issues/2007
+
+--- czmq-4.2.0/src/zproc.c.1	2020-06-26 10:36:43.177382377 +0000
++++ czmq-4.2.0/src/zproc.c	2020-06-26 10:36:56.437050655 +0000
+@@ -844,7 +844,7 @@
+         return self->return_code;
+     } else {
+         // wait up to timeout
+-        int quit = zclock_mono () + timeout;
++        int64_t quit = zclock_mono () + timeout;
+         while (true) {
+             if (! zproc_running (self))
+                 break;
