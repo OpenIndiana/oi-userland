@@ -11,34 +11,30 @@
 
 #
 # Copyright 2016 Jim Klimov
+# Copyright 2020 Alexander Pyhalov
 #
+
+BUILD_BITS=64_and_32
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= czmq
-
-# See configure.ac for ABI version mapping to software version
-COMPONENT_VERSION_ABI= 3
-COMPONENT_VERSION= 3.0.2
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 4.2.0
 COMPONENT_SUMMARY= C bindings for 0MQ
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8bca39ab69375fa4e981daf87b3feae85384d5b40cef6adbe9d5eb063357699a
+  sha256:cfab29c2b3cc8a845749758a51e1dd5f5160c1ef57e2a41ea96e4c2dcc8feceb
 COMPONENT_ARCHIVE_URL= \
-  http://download.zeromq.org/$(COMPONENT_ARCHIVE)
+  https://github.com/zeromq/czmq/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= http://zeromq.org/
+COMPONENT_FMRI= library/c++/czmq
 # Two licenses in tarball, LGPLv3+ is referenced in their spec-file
 COMPONENT_LICENSE_FILE= LICENSE
 COMPONENT_LICENSE= MPLv2
 COMPONENT_CLASSIFICATION= System/Libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PKG_OPTIONS +=	-D COMPONENT_VERSION_ABI="$(COMPONENT_VERSION_ABI)"
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION =	\
 	( cd $(@D) && \
@@ -61,13 +57,20 @@ CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 
 CONFIGURE_OPTIONS +=	--enable-static=no
 
-build: $(BUILD_32_and_64)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-install: $(INSTALL_32_and_64)
-
-# test_shutdown_stress fails
-test: $(TEST_32_and_64)
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/TOTAL:/p" ' \
+	'-e "/SKIP:/p" ' \
+	'-e "/PASS:/p" ' \
+	'-e "/FAIL:/p" ' \
+	'-e "/ERROR:/p" ' \
+	'-e "/Running czmq selftests/,\$$p" '
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/c++/zeromq-3.2
+REQUIRED_PACKAGES += library/c++/zeromq
+REQUIRED_PACKAGES += library/libmicrohttpd
+REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += web/curl
