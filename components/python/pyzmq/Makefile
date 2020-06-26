@@ -9,36 +9,40 @@
 #
 
 #
-# Copyright (c) 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright (c) 2020 Alexander Pyhalov
 #
+
+BUILD_STYLE= setup.py
+BUILD_BITS= 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
+PATH=$(PATH.gnu)
 
 COMPONENT_NAME=		pyzmq
-COMPONENT_VERSION=	14.0.1
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	19.0.0
+COMPONENT_SUMMARY=	Python bindings for zeromq
 COMPONENT_PROJECT_URL=	https://github.com/zeromq/pyzmq
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:07c7f63aaa7709438345a5e5f4d90fe7decb147ff72d244acf4fa56f8801e5e0
-COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/p/pyzmq/$(COMPONENT_ARCHIVE)
+    sha256:5e1f65e576ab07aed83f444e201d86deb01cd27dcf3f37c727bc8729246a60a8
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_FMRI=	library/python/pyzmq
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_LICENSE= BSD
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-# common targets
-build:		$(BUILD_32_and_64)
+COMPONENT_TEST_DIR =    $(SOURCE_DIR)/zmq/tests
+COMPONENT_TEST_CMD =    $(PYTHON) -m pytest
+COMPONENT_TEST_ARGS =
 
-install:	$(INSTALL_32_and_64)
 
-test:           $(TEST_32_and_64)
-
-REQUIRED_PACKAGES += library/c++/zeromq-3.2
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/c++/zeromq
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
