@@ -12,13 +12,13 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-PREFERRED_BITS=64
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ekiga
 COMPONENT_VERSION=	4.0.1
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_FMRI= communication/conferencing/ekiga
 COMPONENT_CLASSIFICATION= Applications/Sound and Video
 COMPONENT_PROJECT_URL=	http://www.ekiga.org
@@ -30,9 +30,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/ekiga/4.0/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu):/usr/perl5/bin
 
@@ -58,13 +57,6 @@ CONFIGURE_OPTIONS+=	--enable-xv
 CONFIGURE_OPTIONS+=	--disable-gconf
 
 COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += gnome/theme/gnome-icon-theme
