@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
 COMPONENT_VERSION=	3.16.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.claws-mail.org
 COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
