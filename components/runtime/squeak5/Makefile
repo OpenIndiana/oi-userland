@@ -25,17 +25,13 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak-5
-COMPONENT_VERSION=	5.0.7
+COMPONENT_VERSION=	5.0.8
 GIT_TAG=		sun-v$(COMPONENT_VERSION)
-PLUGIN_REV=		5.0-202005021055
+PLUGIN_REV=		5.0-202007040853
 COMPONENT_SUMMARY=	The Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak-5
 COMPONENT_CLASSIFICATION=	Development/Other Languages
-
-# add profile Squeak for pthread_setschedparam failed: Not owner issue
-# run squeak via 'pfexec squeak' if 'userattr profiles' includes Squeak
-PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -45,7 +41,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:50c180b174048acd98a7d9705f0a40a3dc8bdc62b42d88eb7e20e71834184e4c
+COMPONENT_ARCHIVE_HASH=	sha256:a7539ef44566c10b48caf94d0f928c4b50f5799723d1b82efb58234a6d9a3661
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
