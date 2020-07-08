@@ -18,13 +18,13 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	argcomplete
-COMPONENT_VERSION= 	1.10.2
+COMPONENT_VERSION= 	1.10.3
 COMPONENT_SUMMARY= 	Extensible command line tab completion for Python script arguments
 COMPONENT_PROJECT_URL = https://pypi.org/project/argcomplete/
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ec88b5ccefe2d47d8f14916a006431d0afb756751ee5c46f28654a7d8a69be53
+  sha256:a37f522cf3b6a34abddfedb61c4546f60023b3799b22d1cd971eacdc0861530a
 COMPONENT_ARCHIVE_URL= \
   $(call pypi_url)
 COMPONENT_FMRI= library/python/argcomplete
