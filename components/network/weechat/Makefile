@@ -12,6 +12,8 @@
 # Copyright (c) 2020 Evgeny Litvinenko
 #
 
+BUILD_BITS=32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		weechat
@@ -32,16 +34,12 @@ COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION=	Applications/Internet
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && ./autogen.sh )
 
-CONFIGURE_PREFIX  = /usr
-# CONFIGURE_OPTIONS += --mandir=/usr/share/man
 CONFIGURE_OPTIONS += --enable-doc
 CONFIGURE_OPTIONS += --enable-man
 CONFIGURE_OPTIONS += --enable-tests
@@ -49,13 +47,6 @@ CONFIGURE_ENV += CA_FILE="/etc/certs/ca-certificates.crt"
 
 COMPONENT_TEST_CMD =    ctest -V
 COMPONENT_TEST_TARGETS =
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
