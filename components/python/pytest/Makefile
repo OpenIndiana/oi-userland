@@ -23,11 +23,13 @@
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest
 COMPONENT_VERSION=	2.9.1
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -38,9 +40,9 @@ COMPONENT_BUGDB=	python-mod/pytest
 
 PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+
+# Tests require the py package to be installed.
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/testing
 COMPONENT_TEST_CMD =	$(PROTOUSRBINDIR)/py.test
@@ -48,13 +50,6 @@ COMPONENT_TEST_ARGS =	test_assertion.py
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-# Tests require the py package to be installed.
-test:		$(TEST_NO_ARCH)
 
 # Build dependencies
 # py is required for tests to run

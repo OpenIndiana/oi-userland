@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zope.interface
 COMPONENT_VERSION=	4.6.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=         library/python/python-zope-interface
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_PROJECT_URL=	https://zope.org/

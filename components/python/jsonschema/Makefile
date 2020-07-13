@@ -13,11 +13,13 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jsonschema
 COMPONENT_VERSION=	2.4.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/jsonschema
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -27,21 +29,15 @@ COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/j/jsonschema/$(CO
 
 PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
         (cd $(PROTO_DIR)/usr/bin ; \
                 $(MV) jsonschema jsonschema-$(PYTHON_VERSION); )
 
-# common targets
-build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_NO_ARCH)
-
-test:           $(NO_TEST)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += runtime/python-27

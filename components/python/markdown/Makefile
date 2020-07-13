@@ -21,12 +21,15 @@
 # Copyright 2016, Aurelien Larcher.
 # Copyright 2019, Michal Nowak
 #
+
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 
 COMPONENT_NAME=		Markdown
 COMPONENT_VERSION=	3.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	'Python implementation of Markdown'
 COMPONENT_FMRI=		library/python/markdown
 COMPONENT_PROJECT_URL=	https://python-markdown.github.io
@@ -40,15 +43,9 @@ COMPONENT_LICENSE_FILE=	LICENSE.md
 
 PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-35
