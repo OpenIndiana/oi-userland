@@ -12,11 +12,13 @@
 # Copyright 2018 Alexander Pyhalov
 #
 
+BUILD_STYLE = setup.py
+BUILD_BITS = NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cheroot
 COMPONENT_VERSION=	6.5.2
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	'Cheroot - high-performance, pure-Python HTTP server'
 COMPONENT_PROJECT_URL=	https://github.com/cherrypy/cheroot
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,19 +36,11 @@ PYTHON_VERSIONS=	2.7 3.5
 COMPONENT_POST_INSTALL_ACTION = \
         (cd $(PROTO_DIR)/usr/bin ; $(MV) -f cheroot cheroot-$(PYTHON_VERSION))
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
 COMPONENT_INSTALL_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
-
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:           $(NO_TEST)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27

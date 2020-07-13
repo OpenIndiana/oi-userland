@@ -23,11 +23,13 @@
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=32_and_64
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SQLAlchemy
 COMPONENT_VERSION=	1.0.12
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -38,9 +40,10 @@ COMPONENT_BUGDB=	python-mod/sqlalchemy
 
 PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+
+# Tests depends on later pytest
+TEST_TARGET:		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -48,14 +51,4 @@ COMPONENT_TEST_DIR=	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS=	setup.py test
 COMPONENT_TEST_ENV=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
 
-# common targets
-build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32_and_64)
-
-# Tests depends on later pytest
-test:		$(NO_TESTS)
-
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += system/library

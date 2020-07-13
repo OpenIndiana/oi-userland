@@ -23,11 +23,13 @@
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytz
 COMPONENT_VERSION=	2016.6.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -38,9 +40,7 @@ COMPONENT_BUGDB=	python-mod/pytz
 
 PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -49,12 +49,6 @@ COMPONENT_TEST_CMD=	/bin/sh
 COMPONENT_TEST_DIR=	$(SOURCE_DIR)
 COMPONENT_TEST_ENV+=	PYTHON=$(PYTHON)
 
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:		$(TEST_NO_ARCH)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27

@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hyperlink
 COMPONENT_VERSION=	19.0.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	'A featureful, immutable, and correct URL for Python'
 COMPONENT_DESCRIPTION=	'Hyperlink provides a pure-Python implementation of immutable URLs. Based on RFC 3986 and 3987, the Hyperlink URL makes working with both URIs and IRIs easy'
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

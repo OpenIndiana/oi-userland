@@ -14,11 +14,13 @@
 # Copyright 2017 Gary Mills
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Jinja2
 COMPONENT_VERSION=	2.8
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_FMRI=		library/python/jinja2
 COMPONENT_SUMMARY=	Fast and easy to use stand-alone template engine
@@ -31,16 +33,9 @@ COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/J/Jinja2/$(COMPON
 
 PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:           $(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35

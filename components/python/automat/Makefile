@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Automat
 COMPONENT_VERSION=	0.8.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	'Self-service finite-state machines for the programmer on the go'
 COMPONENT_DESCRIPTION=	'Automat is a library for concise, idiomatic Python expression of finite-state automata (particularly deterministic finite-state transducers)'
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
