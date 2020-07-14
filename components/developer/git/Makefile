@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
 COMPONENT_VERSION=	2.25.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_FMRI=		developer/versioning/git
@@ -63,6 +64,12 @@ CONFIGURE_OPTIONS  +=	CPPFLAGS="-I/usr/include/pcre"
 COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1
 COMPONENT_BUILD_ENV+=	V=1
 COMPONENT_INSTALL_ENV+=	NO_PERL_MAKEMAKER=1
+
+#
+# perl's install path for sparc is based off the value of the
+# "arch" command.  So we must package that way also.
+#
+PKG_MACROS +=		P_ARCH=$(shell arch)
 
 # This runs configure but configure doesn't generate a Makefile.
 # Instead a Makefile comes with git.
