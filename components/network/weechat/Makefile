@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		weechat
 COMPONENT_VERSION=	2.8
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://weechat.org/
 COMPONENT_SUMMARY=	WeeChat - portable, fast, light and extensible IRC client
 COMPONENT_DESCRIPTION=	WeeChat (Wee Enhanced Environment for Chat) is a portable, fast, light and \
@@ -41,6 +42,7 @@ PATH= $(PATH.gnu)
 COMPONENT_PREP_ACTION = ( cd $(@D) && ./autogen.sh )
 
 CONFIGURE_OPTIONS += --enable-doc
+CONFIGURE_OPTIONS += --disable-ruby
 CONFIGURE_OPTIONS += --enable-man
 CONFIGURE_OPTIONS += --enable-tests
 CONFIGURE_ENV += CA_FILE="/etc/certs/ca-certificates.crt"
@@ -57,9 +59,9 @@ REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/ruby-23
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += text/aspell
 REQUIRED_PACKAGES += web/curl
