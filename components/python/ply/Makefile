@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ply
 COMPONENT_VERSION=	3.8
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -56,5 +56,6 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "s|\(^Ran 42 tests\).*|\1|" '
 
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35

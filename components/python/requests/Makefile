@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		requests
 COMPONENT_VERSION=	2.11.1
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -50,3 +50,6 @@ include $(WS_MAKE_RULES)/common.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35

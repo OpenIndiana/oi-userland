@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyOpenSSL
 COMPONENT_VERSION=	16.2.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -64,6 +64,9 @@ COMPONENT_TEST_ARGS = --result-log=$(COMPONENT_TEST_OUTPUT)
 # The pep8 and pyflakes output lines sometimes come in a different order.
 COMPONENT_TEST_COMPARE_CMD = sort -o $(COMPONENT_TEST_SNAPSHOT) $(COMPONENT_TEST_SNAPSHOT); $(GDIFF) -uN
 
+
+# Manually added dependencies
+REQUIRED_PACKAGES += library/security/openssl
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
