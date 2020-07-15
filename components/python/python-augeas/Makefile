@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-augeas
 COMPONENT_VERSION=	0.5.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	'Python bindings for Augeas'
 COMPONENT_PROJECT_URL=	http://augeas.net/
 COMPONENT_FMRI=		library/python/augeas
@@ -27,7 +28,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:67d59d66cdba8d624e0389b87b2a83a176f21f16a87553b50
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

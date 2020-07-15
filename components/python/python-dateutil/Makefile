@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	python-dateutil
 COMPONENT_VERSION= 	2.8.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	Extensions to standard Python datetime module
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -29,7 +30,7 @@ COMPONENT_ARCHIVE_URL= \
   $(call pypi_url)
 COMPONENT_PROJECT_URL = https://pypi.python.org/python-dateutil/
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk

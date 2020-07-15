@@ -15,7 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		prompt-toolkit
 COMPONENT_VERSION=	1.0.15
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Library for building powerful interactive command lines in Python
 COMPONENT_PROJECT_URL=	https://github.com/jonathanslenders/python-prompt-toolkit
 COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)-$(PYVER)

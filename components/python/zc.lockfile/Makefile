@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zc.lockfile
 COMPONENT_VERSION=	1.3.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	'Portable inter-process lock implementation'
 COMPONENT_PROJECT_URL=	https://pypi.org/project/zc.lockfile/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,7 +29,7 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	ZPL2.1
 COMPONENT_LICENSE_FILE=	LICENSE.txt
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

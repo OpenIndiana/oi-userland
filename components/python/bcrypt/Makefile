@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bcrypt
 COMPONENT_VERSION=	3.1.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	'Modern password hashing for your software and your servers'
 COMPONENT_PROJECT_URL=	https://github.com/pyca/bcrypt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -31,7 +32,7 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	Apache-2.0
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -53,7 +54,6 @@ test:           $(TEST_32_and_64)
 
 # Test dependencies
 REQUIRED_PACKAGES += library/python/pytest-27
-REQUIRED_PACKAGES += library/python/pytest-34
 REQUIRED_PACKAGES += library/python/pytest-35
 
 # Auto-generated dependencies

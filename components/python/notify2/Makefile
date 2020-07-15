@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		notify2
 COMPONENT_VERSION=	0.3.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	'pynotify replacement for differrent GUI toolkits'
 COMPONENT_PROJECT_URL=	https://bitbucket.org/takluyver/pynotify2
 COMPONENT_FMRI=	library/python/notify2
@@ -28,7 +29,7 @@ COMPONENT_LICENSE_FILE = LICENSE
 COMPONENT_LICENSE = BSD
 COMPONENT_CLASSIFICATION = Development/Python
 
-PYTHON_VERSIONS= 3.4 3.5
+PYTHON_VERSIONS= 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
