@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	ptyprocess
 COMPONENT_VERSION= 	0.6.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://github.com/pexpect/ptyprocess
 COMPONENT_FMRI=	library/python/ptyprocess
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

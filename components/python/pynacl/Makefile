@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		PyNaCl
 COMPONENT_VERSION=	1.3.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	'Python binding to libsodium'
 COMPONENT_PROJECT_URL=	https://github.com/pyca/pynacl/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

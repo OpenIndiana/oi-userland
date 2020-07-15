@@ -15,7 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		scandir
 COMPONENT_VERSION=	1.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Better directory iterator and faster os.walk(), now in the Python 3.5 stdlib
 COMPONENT_PROJECT_URL=	https://github.com/benhoyt/scandir
 COMPONENT_FMRI=		library/python/scandir-$(PYV)

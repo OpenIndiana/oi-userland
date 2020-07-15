@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyasn1
 COMPONENT_VERSION=	0.4.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	'ASN.1 types and DER/BER/CER codecs (X.208)'
 COMPONENT_PROJECT_URL=	https://github.com/etingof/pyasn1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,7 +29,7 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE.rst
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -47,5 +48,4 @@ test:           $(TEST_NO_ARCH)
 
 # Test dependencies
 REQUIRED_PACKAGES += library/python/pytest-27
-REQUIRED_PACKAGES += library/python/pytest-34
 REQUIRED_PACKAGES += library/python/pytest-35

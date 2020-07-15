@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	simplegeneric
 COMPONENT_VERSION= 	0.8.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://pypi.org/project/simplegeneric/
 COMPONENT_FMRI=	library/python/simplegeneric
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

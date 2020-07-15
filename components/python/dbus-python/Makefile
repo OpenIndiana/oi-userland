@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dbus-python
 COMPONENT_VERSION=	1.2.14
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/DBusBindings/
 COMPONENT_SUMMARY=	Python bindings for D-Bus
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
