@@ -25,17 +25,13 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak-5
-COMPONENT_VERSION=	5.0.7
+COMPONENT_VERSION=	5.0.9
 GIT_TAG=		sun-v$(COMPONENT_VERSION)
-PLUGIN_REV=		5.0-202005021055
+PLUGIN_REV=		5.0-202007160729
 COMPONENT_SUMMARY=	The Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak-5
 COMPONENT_CLASSIFICATION=	Development/Other Languages
-
-# add profile Squeak for pthread_setschedparam failed: Not owner issue
-# run squeak via 'pfexec squeak' if 'userattr profiles' includes Squeak
-PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -45,10 +41,13 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:50c180b174048acd98a7d9705f0a40a3dc8bdc62b42d88eb7e20e71834184e4c
+COMPONENT_ARCHIVE_HASH=	sha256:a7a9aa001e13390c76e13f282d975aea031c64936c9baa32b58261f72efc04cd
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
+
+# some builds seem to be broken with -Bdirect
+LD_B_DIRECT=
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -77,7 +76,8 @@ CONFIGURE_ENV +=	TARGET_ARCH="-m64"
 
 # the opensmalltalk Makefile does not use DESTDIR
 COMPONENT_INSTALL_ARGS=  	ROOT=$(PROTO_DIR)
-COMPONENT_INSTALL_TARGETS= 	install-squeak install-doc install-plugins
+COMPONENT_BUILD_TARGETS=        getversion squeak plugins
+COMPONENT_INSTALL_TARGETS=      install-squeak install-doc install-plugins
 
 # Makefile has no strip target
 COMPONENT_POST_INSTALL_ACTION = \
