@@ -13,33 +13,31 @@
 # Copyright 2016-2017 Predrag Zečević.  All rights reserved.
 #
 
+BUILD_BITS=			32
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= geany-plugins
-COMPONENT_VERSION= 1.34
-COMPONENT_REVISION= 2
+COMPONENT_NAME=		geany-plugins
+COMPONENT_VERSION=	1.36
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/geany/plugins
-COMPONENT_SUMMARY= Plugins for Geany editor
+COMPONENT_SUMMARY= 	Plugins for Geany editor
 COMPONENT_DESCRIPTION= Geany-Plugins is a collection of different plugins for Geany, a lightweight IDE.
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=sha256:158e276b79dcd6d66d6dca4366177b76bbd9ad46ea7047bf83187eba797bd02e 
-COMPONENT_ARCHIVE_URL= http://plugins.geany.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://plugins.geany.org/
+COMPONENT_ARCHIVE_HASH=sha256:9f79847c2dd979dbd392819090d6cbf170a6d4fee1888f98e27c65dc2d870bbe
+COMPONENT_ARCHIVE_URL= https://plugins.geany.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://plugins.geany.org/
 COMPONENT_LICENSE= GPLv2
 
 COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -f)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-CFLAGS+= -std=gnu99
+CFLAGS+= $(XPG6MODE)
 CFLAGS+= -D_FILE_OFFSET_BITS=64
-CFLAGS+= -D_XOPEN_SOURCE=600
 
 CONFIGURE_ENV+= CHECK_CFLAGS="-I/usr/include/check"
 
@@ -58,13 +56,7 @@ CONFIGURE_OPTIONS+= --disable-webhelper
 # no lipsum (www.lipsum.com) in OI yet
 CONFIGURE_OPTIONS+= --disable-lipsum
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
-
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/python/pygobject
