@@ -129,7 +129,6 @@ PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) \
 					-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION))"
 
 PKG_MACROS +=           PYTHON_2.7_ONLY=\#
-PKG_MACROS +=           PYTHON_3.4_ONLY=\#
 PKG_MACROS +=           PYTHON_3.5_ONLY=\#
 PKG_MACROS +=           PYTHON_32_ONLY=
 
