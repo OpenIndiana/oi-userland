@@ -166,7 +166,7 @@ PYTHON2_VERSIONS = 2.7
 PYTHON2_VERSION = 2.7
 PYTHON2_RUNTIME_PKG = runtime/python-$(subst .,,$(PYTHON2_VERSION))
 
-PYTHON3_VERSIONS = 3.4 3.5 3.7
+PYTHON3_VERSIONS = 3.5 3.7
 PYTHON3_VERSION	= 3.5
 PYTHON3_RUNTIME_PKG = runtime/python-$(subst .,,$(PYTHON3_VERSION))
 
@@ -679,10 +679,6 @@ PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
 PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
 PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
 
-PYTHON.3.4.VENDOR_PACKAGES.32 = /usr/lib/python3.4/vendor-packages
-PYTHON.3.4.VENDOR_PACKAGES.64 = /usr/lib/python3.4/vendor-packages/64
-PYTHON.3.4.VENDOR_PACKAGES = $(PYTHON.3.4.VENDOR_PACKAGES.$(BITS))
-
 PYTHON.3.5.VENDOR_PACKAGES.64 = /usr/lib/python3.5/vendor-packages
 PYTHON.3.5.VENDOR_PACKAGES.32 = /usr/lib/python3.5/vendor-packages
 PYTHON.3.5.VENDOR_PACKAGES = $(PYTHON.3.5.VENDOR_PACKAGES.$(BITS))
@@ -735,9 +731,6 @@ PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 
 PYTHON.2.7.32 =	/usr/bin/python2.7
 PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
-
-PYTHON.3.4.32 =	/usr/bin/python3.4
-PYTHON.3.4.64 =	/usr/bin/$(MACH64)/python3.4
 
 PYTHON.3.5.32 =	/usr/bin/python3.5
 PYTHON.3.5.64 =	/usr/bin/python3.5
