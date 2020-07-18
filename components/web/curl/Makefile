@@ -21,23 +21,20 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
 #
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
-COMPONENT_VERSION=      7.61.1
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=      7.71.1
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:3d5913d6a39bd22e68e34dff697fd6e4c3c81563f580c76fca2009315cd81891
+    sha256:40f83eda27cdbeb25cd4da48cefb639af1b9395d6026d2da1825bf059239658c
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=  	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE).asc
-COMPONENT_BUGDB=	library/curl
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/common.mk
 
 # Community code uses different defs
 $(BUILD_DIR_32)/.configured:   CPPFLAGS += -D__ILP32=32
@@ -89,11 +86,19 @@ COMPONENT_TEST_ENV += PATH="$(GCC_ROOT)/bin:$(GNUBIN):$(PATH)"
 COMPONENT_TEST_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_TEST_ARGS+= -k -i
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
+# Only the #'s of passed/failed tests are verified for change
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "s/ during [0-9][0-9]* seconds.//" ' \
+	'-e "/TESTDONE:/p" ' \
+	'-e "/TESTFAIL:/p" ' \
+	'-e "/ TOTAL:/p" ' \
+	'-e "/ PASS:/p" ' \
+	'-e "/ SKIP:/p" ' \
+	'-e "/ XFAIL:/p" ' \
+	'-e "/ FAIL:/p" ' \
+	'-e "/ XPASS:/p" ' \
+	'-e "/ ERROR:/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
