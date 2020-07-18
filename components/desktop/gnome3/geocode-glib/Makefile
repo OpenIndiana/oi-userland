@@ -19,6 +19,7 @@ COMPONENT_NAME= geocode-glib
 COMPONENT_MJR_VERSION= 3.24
 COMPONENT_MNR_VERSION= 0
 COMPONENT_VERSION=$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= A library for geocode and reverse geocoding
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -41,7 +42,7 @@ PATH=$(PATH.gnu)
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
 # Required for other components.
-CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS.64 += --enable-introspection
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
 
