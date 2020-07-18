@@ -15,6 +15,9 @@
 # Copyright 2019 Michal Nowak
 #
 
+PREFERED_BITS= 64
+BUILD_BITS= 64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gobject-introspection
@@ -24,6 +27,7 @@ COMPONENT_VERSION_MINOR=60
 COMPONENT_VERSION_MICRO=1
 COMPONENT_VERSION_DL=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
 COMPONENT_VERSION=	$(COMPONENT_VERSION_DL).$(COMPONENT_VERSION_MICRO)
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Introspection for GObject libraries
 COMPONENT_FMRI=		library/desktop/gobject/gobject-introspection
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,11 +40,11 @@ COMPONENT_PROJECT_URL=	http://live.gnome.org/GObjectIntrospection
 COMPONENT_LICENSE_FILE=	gobject-introspection.license
 COMPONENT_LICENSE=	GPLv2, LGPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION = 3.4
+PYTHON_VERSION = 3.5
+
+CPPFLAGS += $(CC_BITS)
 
 COMPONENT_POST_UNPACK_ACTION = \
         /usr/bin/find $(SOURCE_DIR) -name *.py \
@@ -56,18 +60,13 @@ COMPONENT_PREP_ACTION += \
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV += PYTHON=$(PYTHON.$(PYTHON_VERSION).$(BITS))
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
 unexport SHELLOPTS
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-REQUIRED_PACKAGES += library/python/markdown-34
+REQUIRED_PACKAGES += library/python/markdown-35
 REQUIRED_PACKAGES += developer/build/autoconf-archive
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
