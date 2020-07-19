@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsecret
 COMPONENT_VERSION= 0.18.5
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GObject based library for accessing the Secret Service API
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -42,6 +43,8 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
