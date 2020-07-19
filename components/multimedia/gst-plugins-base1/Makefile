@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-base1
 COMPONENT_VERSION= 1.16.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/base
@@ -49,7 +50,8 @@ CONFIGURE_OPTIONS += --enable-pango
 CONFIGURE_OPTIONS += --disable-gles2
 CONFIGURE_OPTIONS += --enable-external
 CONFIGURE_OPTIONS += --enable-experimental
-CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS.32 += --disable-introspection
+CONFIGURE_OPTIONS.64 += --enable-introspection
 CONFIGURE_OPTIONS += --disable-alsa
 CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
 CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink

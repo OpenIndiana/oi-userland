@@ -19,7 +19,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		brasero
 COMPONENT_VERSION=	3.12.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://projects.gnome.org/brasero/
 COMPONENT_SUMMARY=	Gnome CD/DVD burner
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -52,7 +52,7 @@ CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--enable-search
 CONFIGURE_OPTIONS+=	--enable-playlist
 CONFIGURE_OPTIONS+=	--disable-nautilus
-CONFIGURE_OPTIONS+=	--enable-introspection
+CONFIGURE_OPTIONS.64+=	--enable-introspection
 CONFIGURE_OPTIONS+=	--enable-libburnia
 CONFIGURE_OPTIONS+=	--disable-gtk-doc
 CONFIGURE_OPTIONS+=	--disable-inotify

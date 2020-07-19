@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk+
 COMPONENT_VERSION=	3.24.12
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -62,7 +63,7 @@ CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
 CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
 CONFIGURE_OPTIONS += --enable-explicit-deps=yes
 CONFIGURE_OPTIONS += --enable-cloudprint
-CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS.64 += --enable-introspection
 CONFIGURE_OPTIONS += --enable-man
 CONFIGURE_OPTIONS += --disable-glibtest
 CONFIGURE_OPTIONS += --disable-papi

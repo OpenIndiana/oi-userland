@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		gtksourceview
 COMPONENT_MAJOR_MINOR=	3.14
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_MINOR).4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Multiline text editing library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -52,7 +52,7 @@ CONFIGURE_OPTIONS += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS += --localstatedir=/var/lib
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS.64 += --enable-introspection
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
 # likely requires more fresh vala

@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= clutter-gtk
 COMPONENT_VERSION= 0.10.8
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GTK+ integration library for clutter
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2

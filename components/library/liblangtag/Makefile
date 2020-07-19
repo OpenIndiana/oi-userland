@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		liblangtag
 COMPONENT_VERSION=	0.6.3
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=     	library/liblangtag
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	http://tagoh.github.io/liblangtag/

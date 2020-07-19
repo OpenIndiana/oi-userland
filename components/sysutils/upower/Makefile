@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		upower
 COMPONENT_VERSION=	0.99.11
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://upower.freedesktop.org/
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		system/upower
