@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= rest
 COMPONENT_VERSION= 0.8.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= A library designed to make it easier to access web services that claim to be 'RESTful'
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -37,7 +38,7 @@ include $(WS_MAKE_RULES)/ips.mk
 PATH=/usr/gnu/bin:/usr/bin
 
 CONFIGURE_OPTIONS += --with-ca-certificates=/etc/certs/ca-certificates.crt
-CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS.64 += --enable-introspection
 
 # gobject introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
