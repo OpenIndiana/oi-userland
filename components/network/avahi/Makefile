@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= avahi
 COMPONENT_VERSION= 0.7
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Avahi client and bridge to pkg://service/network/dns/mdns
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
