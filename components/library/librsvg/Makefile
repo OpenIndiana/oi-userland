@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
 COMPONENT_VERSION=	2.40.20
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_MAJOR_VERSION=$(basename $(COMPONENT_VERSION))
 COMPONENT_FMRI=		image/library/librsvg
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -51,6 +51,7 @@ CONFIGURE_OPTIONS.64 =	--sysconfdir=/etc/$(MACH64)
 CONFIGURE_OPTIONS +=	--with-html-dir=/usr/share/gtk-doc/html/librsvg
 CONFIGURE_OPTIONS +=	--disable-Bsymbolic
 CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS.32 =	--disable-introspection
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
