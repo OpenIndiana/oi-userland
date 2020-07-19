@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gkrellm
 COMPONENT_VERSION=	2.3.10
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://gkrellm.srcbox.net/
 COMPONENT_SUMMARY=	Popular (ubiquitous) Gtk-based system monitor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,12 +33,15 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(PATH.gnu)
+PATH=/usr/bin/$(MACH64):$(PATH.gnu)
 
 COMPONENT_BUILD_ENV += enable_nls=1
 COMPONENT_BUILD_ENV += LOCALEDIR=/usr/share/locale
 COMPONENT_BUILD_ENV += LINK_FLAGS="-lsocket -lnsl -lkstat -lkvm -ldevinfo"
 COMPONENT_BUILD_ENV += CC=$(CC)
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
+COMPONENT_BUILD_ENV += PATH=$(PATH)
 
 COMPONENT_INSTALL_ENV += PREFIX=/usr
 
