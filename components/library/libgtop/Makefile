@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgtop
 COMPONENT_VERSION= 2.28.5
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 # Some historical artefact in package versioning
 IPS_COMPONENT_VERSION= 2.30.0
 COMPONENT_SUMMARY= Library to get system specific data
