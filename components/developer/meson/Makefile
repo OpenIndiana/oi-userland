@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meson
 COMPONENT_VERSION=	0.54.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The Meson Build system
 COMPONENT_PROJECT_URL=	http://mesonbuild.com/
 COMPONENT_FMRI=		developer/build/meson
