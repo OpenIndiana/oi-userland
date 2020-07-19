@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gcr
 COMPONENT_VERSION=	3.28.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/gcr/
 COMPONENT_SUMMARY=	A GNOME library for displaying certificates and crypto UI
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -59,9 +60,9 @@ COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 # Not available on Solaris.
 CONFIGURE_OPTIONS += --disable-valgrind
 # Required for other components.
-CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS.64 += --enable-introspection
 # Required for other components.
-CONFIGURE_OPTIONS += --enable-vala
+CONFIGURE_OPTIONS.64 += --enable-vala
 # Fix 64-bit builds.
 CONFIGURE_OPTIONS.64 += ac_cv_path_LIBGCRYPT_CONFIG=$(USRBINDIR64)/libgcrypt-config
 
