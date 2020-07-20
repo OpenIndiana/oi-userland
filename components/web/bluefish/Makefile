@@ -12,11 +12,11 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bluefish
-COMPONENT_VERSION=	2.2.8
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.2.11
 COMPONENT_PROJECT_URL=	http://bluefish.openoffice.nl/index.html
 COMPONENT_SUMMARY=	Bluefish, a powerful editor for experienced web designers
 COMPONENT_FMRI=		web/editor/bluefish
@@ -24,16 +24,15 @@ COMPONENT_CLASSIFICATION=	Development/Editors
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:32578f955cee3f43e5b3a86e2588e6a679df94438b21dcbe38e3c82282745000
+	sha256:454c877fc1dbddfcc65cc7ddaa3c5ceb17bc46e216baf7878f09dbf1dabdc2ff
 COMPONENT_ARCHIVE_URL=	http://www.bennewitz.com/bluefish/stable/source/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv3
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_TOP)/make-rules/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CFLAGS += -DANSICPP
 
@@ -43,13 +42,8 @@ CONFIGURE_OPTIONS+=	--disable-update-databases
 
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
-# common targets
-build:		$(BUILD_32)
 
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/character-map/gucharmap
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
