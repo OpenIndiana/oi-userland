@@ -1,0 +1,21 @@
+Fixes crash in gkrellm_disk_assign_data_by_name()
+--- gkrellm-2.3.10/src/sysdeps/solaris.c.~2~	2020-07-20 23:14:32.537403716 +0000
++++ gkrellm-2.3.10/src/sysdeps/solaris.c	2020-07-20 23:16:09.486411565 +0000
+@@ -262,7 +262,7 @@
+ static gint get_instance(gint); 
+ 
+ typedef struct {
+-    char name[8];
++    char name[KSTAT_STRLEN];
+ } probed_harddisk;
+ 
+ GList *hard_disk_list;
+@@ -301,6 +301,8 @@
+ 
+             if(strcmp(drive->name, ksp->ks_name))
+                 continue;
++            if(!isharddisk(ksp))
++                continue; 
+ 
+             memset((void *)&kios, 0, sizeof(kstat_io_t));
+             kstat_read(kc, ksp, &kios);

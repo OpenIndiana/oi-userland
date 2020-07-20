@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gkrellm
 COMPONENT_VERSION=	2.3.10
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://gkrellm.srcbox.net/
 COMPONENT_SUMMARY=	Popular (ubiquitous) Gtk-based system monitor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
