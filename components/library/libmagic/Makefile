@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		file
 COMPONENT_FMRI=		library/magic
 COMPONENT_VERSION=	5.38
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.darwinsys.com/file/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -38,6 +39,9 @@ COMPONENT_LICENSE=	BSD
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += library/magic
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
