@@ -23,11 +23,14 @@
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=				64
+BUILD_STYLE=			justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         lgi
 COMPONENT_VERSION=      0.9.1
-COMPONENT_SUMMARY=	Dynamic Lua binding to GObject libraries using GObject-Introspection
+COMPONENT_REVISION=		1
+COMPONENT_SUMMARY=		Dynamic Lua binding to GObject libraries using GObject-Introspection
 COMPONENT_PROJECT_URL=  https://github.com/pavouk/lgi
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -35,12 +38,11 @@ COMPONENT_ARCHIVE_HASH= sha256:0c70fb2b1ca17d333b7e2c18d5fc943944b5872e063de60df
 COMPONENT_ARCHIVE_URL=  https://github.com/pavouk/lgi/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/lua/lgi-53
 COMPONENT_CLASSIFICATION=Development/Other Languages
-COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE=		MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=			$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH.32=/usr/gnu/bin:/usr/bin
 PATH.64=/usr/gnu/bin/$(MACH64):/usr/bin/$(MACH64):/usr/gnu/bin:/usr/bin
@@ -56,15 +58,11 @@ COMPONENT_BUILD_ENV += PATH=$(PATH.$(BITS))
 COMPONENT_INSTALL_ARGS += LUA_VERSION=5.3 PREFIX=$(USRDIR)
 COMPONENT_INSTALL_ARGS.64 += LUA_LIBDIR=$(USRDIR)/lib/lua/5.3/64
 
-build: $(BUILD_32_and_64)
+# Manually added build dependencies
+REQUIRED_PACKAGES += runtime/lua-53
 
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += runtime/lua-53
