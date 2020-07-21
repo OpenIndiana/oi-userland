@@ -23,6 +23,8 @@
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=				64
+BUILD_STYLE=			justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         lgi
@@ -39,9 +41,8 @@ COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=			$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH.32=/usr/gnu/bin:/usr/bin
 PATH.64=/usr/gnu/bin/$(MACH64):/usr/bin/$(MACH64):/usr/gnu/bin:/usr/bin
@@ -56,14 +57,11 @@ COMPONENT_BUILD_ENV += PATH=$(PATH.$(BITS))
 COMPONENT_INSTALL_ARGS += LUA_VERSION=5.2 PREFIX=$(USRDIR)
 COMPONENT_INSTALL_ARGS.64 += LUA_LIBDIR=$(USRDIR)/lib/lua/5.2/64
 
-build: $(BUILD_32_and_64)
+# Manually added build dependencies
+REQUIRED_PACKAGES += runtime/lua
 
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
-REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += system/library
