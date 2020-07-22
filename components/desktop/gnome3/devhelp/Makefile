@@ -13,12 +13,13 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_BITS= 64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= devhelp
 COMPONENT_MJR_VERSION= 3.18
 COMPONENT_MNR_VERSION= 0
-COMPONENT_REVISION= 1 
+COMPONENT_REVISION= 2
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY= API documentation browser for GNOME
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,9 +34,9 @@ COMPONENT_CLASSIFICATION= Development/GNOME and GTK+
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 CXXFLAGS+= -std=gnu++0x
 
@@ -45,10 +46,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
 
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
