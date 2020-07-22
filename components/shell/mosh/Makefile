@@ -20,11 +20,12 @@
 #
 # Copyright (c) 2015, Predrag Zecevic. All rights reserved.
 #
+BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mosh
 COMPONENT_VERSION=	1.3.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=	service/network/mosh
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,29 +37,26 @@ COMPONENT_LICENSE=      GPLv3+
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license 
 COMPONENT_SUMMARY=	Mosh (mobile shell) - Remote terminal application that allows roaming, supports intermittent connectivity, and provides intelligent local echo and line editing of user keystrokes (replacement for SSH).
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-examples
 CONFIGURE_OPTIONS+=	--enable-completion
+CONFIGURE_OPTIONS+=	--with-utempter
 
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
-
+# Manually added build dependencies
 REQUIRED_PACKAGES += utility/bash-completion 
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/c++/protobuf
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library/libutempter
 REQUIRED_PACKAGES += system/library/math
