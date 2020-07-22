@@ -11,10 +11,12 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 #
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libetpan
 COMPONENT_VERSION=	1.7
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.etpan.org/libetpan.html
 COMPONENT_SUMMARY=	A portable, efficient framework for different kinds of mail access: IMAP, SMTP, POP and NNTP
 COMPONENT_FMRI=         library/libetpan
@@ -27,20 +29,11 @@ COMPONENT_ARCHIVE_URL=	https://github.com/dinhviethoa/libetpan/archive/$(COMPONE
 COMPONENT_LICENSE=	BSD-3-Clause
 COMPONENT_LICENSE_FILE=	COPYRIGHT
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION+= (cd $(@D) && NOCONFIGURE=1 ./autogen.sh)
 
 CONFIGURE_OPTIONS += --with-sasl
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
