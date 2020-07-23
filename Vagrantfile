@@ -36,28 +36,28 @@ Vagrant.configure("2") do |config|
   # https://stefanwrobel.com/how-to-make-vagrant-performance-not-suck.
   # We allocate 1/4 of available system memory and CPU core count of the host
   # to the VM, so performance does not suck.
+  host = RbConfig::CONFIG['host_os']
+
+	# Get memory size and CPU cores amount
+	if host =~ /darwin/
+	# sysctl returns Bytes
+	mem = `sysctl -n hw.memsize`.to_i
+	cpus = `sysctl -n hw.ncpu`.to_i
+	elsif host =~ /linux/
+	# meminfo shows size in kB; convert to Bytes
+	mem = `awk '/MemTotal/ {print $2}' /proc/meminfo`.to_i * 1024
+	cpus = `getconf _NPROCESSORS_ONLN`.to_i
+	elsif host =~ /mswin|mingw|cygwin/
+	# Windows code via https://github.com/rdsubhas/vagrant-faster
+	mem = `wmic computersystem Get TotalPhysicalMemory`.split[1].to_i
+	cpus = `echo %NUMBER_OF_PROCESSORS%`.to_i
+	end
+
+	# Give VM 1/4 system memory as well as CPU core count
+	mem /= 1024 ** 2 * 4
+	cpus /= 4
+
   config.vm.provider "virtualbox" do |v|
-    host = RbConfig::CONFIG['host_os']
-
-    # Get memory size and CPU cores amount
-    if host =~ /darwin/
-      # sysctl returns Bytes
-      mem = `sysctl -n hw.memsize`.to_i
-      cpus = `sysctl -n hw.ncpu`.to_i
-    elsif host =~ /linux/
-      # meminfo shows size in kB; convert to Bytes
-      mem = `awk '/MemTotal/ {print $2}' /proc/meminfo`.to_i * 1024
-      cpus = `getconf _NPROCESSORS_ONLN`.to_i
-    elsif host =~ /mswin|mingw|cygwin/
-      # Windows code via https://github.com/rdsubhas/vagrant-faster
-      mem = `wmic computersystem Get TotalPhysicalMemory`.split[1].to_i
-      cpus = `echo %NUMBER_OF_PROCESSORS%`.to_i
-    end
-
-    # Give VM 1/4 system memory as well as CPU core count
-    mem /= 1024 ** 2 * 4
-    cpus /= 4
-
     v.customize ["modifyvm", :id, "--memory", mem]
     v.customize ["modifyvm", :id, "--cpus", cpus]
     v.customize ["storagectl", :id, "--name", "SATA Controller", "--hostiocache", "on"]
@@ -74,6 +74,11 @@ Vagrant.configure("2") do |config|
     # Should we ever support `--discard` option, we need to switch to VDI
     # virtual disk format first.
     #v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", 0, "--discard", "on"]
+  end
+
+  config.vm.provider :libvirt do |libvirt|
+	libvirt.memory = mem
+        libvirt.cpus = cpus
   end
 
   # Once vagrant is able to chown files on OpenIndiana, chown line should be
