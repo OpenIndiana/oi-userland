@@ -29,13 +29,13 @@ BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bison
-COMPONENT_VERSION=	3.5.3
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bison/
+COMPONENT_VERSION=	3.5.4
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/bison/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	bison - A YACC Replacement
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:2bf85b5f88a5f2fa8069aed2a2dfc3a9f8d15a97e59c713e3906e5fdd982a7c4
+	sha256:4c17e99881978fa32c05933c5262457fa5b2b611668454f8dc2a695cd6b3720c
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_FMRI=		developer/parser/bison
