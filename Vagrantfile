@@ -83,6 +83,8 @@ Vagrant.configure("2") do |config|
     pfexec pkg install build-essential
 
     cd /vagrant && gmake setup
+    pfexec pkg set-publisher --non-sticky -g file://$HOME/oi-userland/i386/repo userland
+    pfexec pkg set-publisher --non-sticky openindiana.org
     echo "VM is ready, happy contributing!"
   SHELL
 end
