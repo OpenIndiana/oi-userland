@@ -10,21 +10,21 @@
 
 #
 # Copyright (c) 2016 Sergey Avseyev
+# Copyright (c) 2020 Andreas Wacknitz
 #
 BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libetpan
-COMPONENT_VERSION=	1.7
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.etpan.org/libetpan.html
+COMPONENT_VERSION=	1.9.4
+COMPONENT_PROJECT_URL=	https://www.etpan.org/libetpan.html
 COMPONENT_SUMMARY=	A portable, efficient framework for different kinds of mail access: IMAP, SMTP, POP and NNTP
 COMPONENT_FMRI=         library/libetpan
 COMPONENT_CLASSIFICATION=       System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:47d0c049d8adcdcfd0698e9f1fcb85416b0b2f476eed1f52aae72c2883cf05b0
+    sha256:82ec8ea11d239c9967dbd1717cac09c8330a558e025b3e4dc6a7594e80d13bb1
 COMPONENT_ARCHIVE_URL=	https://github.com/dinhviethoa/libetpan/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-3-Clause
 COMPONENT_LICENSE_FILE=	COPYRIGHT
@@ -34,6 +34,7 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PREP_ACTION+= (cd $(@D) && NOCONFIGURE=1 ./autogen.sh)
 
 CONFIGURE_OPTIONS += --with-sasl
+CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
