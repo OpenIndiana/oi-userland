@@ -621,13 +621,13 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
 +    if (!use_smallest)
 +      {
 +        if (date_format_pref == CAJA_DATE_FORMAT_LOCALE) {
-+          return eel_strdup_strftime ("%c", ttime);
++          return g_date_time_format (ttime, "%c");
 +        } else if (date_format_pref == CAJA_DATE_FORMAT_ISO) {
-+          return eel_strdup_strftime ("%Y-%m-%d %H:%M:%S",ttime);
++          return g_date_time_format (ttime, "%Y-%m-%d %H:%M:%S");
 +        }
 +      }
 +    
-+    date = eel_g_date_new_tm (ttime);
++    date = g_date_time_new_from_unix_local (time_raw);
 +    
 +    today = g_date_new ();
 +    g_date_set_time_t (today, time (NULL));
@@ -667,7 +667,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
 +          i++;
 +        format = _(formats[i-3]);
 +      }
-+    return eel_strdup_strftime (format, ttime);
++    return g_date_time_format (ttime, format);
 +}
 +
  static char *
