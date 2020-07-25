@@ -18,12 +18,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nss
-COMPONENT_VERSION=	3.47.1
+COMPONENT_VERSION=	3.51.1
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1ae3d1cb1de345b258788f2ef6b10a460068034c3fd64f42427a183d8342a6fb
-COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_47_1_RTM/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:085c5eaceef040eddea639e2e068e70f0e368f840327a678ef74ae3d6c15ca78
+COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_51_1_RTM/src/$(COMPONENT_ARCHIVE)
 
 # Enable compiler optimizations and disable debugging code
 COMPONENT_BUILD_ENV += BUILD_OPT=1
@@ -142,6 +142,7 @@ $(TEST_64):  $(BUILD_64)
 REQUIRED_PACKAGES += text/xmlto
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += system/library
