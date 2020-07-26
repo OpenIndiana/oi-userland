@@ -10,30 +10,31 @@
 
 #
 # Copyright 2019 Michal Nowak
+# Copyright 2020 Marco van Wieringen
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS= 64
+BUILD_STYLE= cmake
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		FreeRDP
-COMPONENT_VERSION=	2.0.0
-COMPONENT_COMMIT=	e873e4f0042dd157f68ae99adb4dc9dcd167ca29
+COMPONENT_NAME=		freerdp
+COMPONENT_VERSION=	2.2.0
 COMPONENT_SUMMARY=	Remote Desktop Viewer Client
-COMPONENT_PROJECT_URL=	http://www.freerdp.com
+COMPONENT_PROJECT_URL=	https://www.freerdp.com
 COMPONENT_FMRI=		desktop/remote-desktop/freerdp
 COMPONENT_CLASSIFICATION=	Applications/Internet
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_COMMIT)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_URL=	https://github.com/FreeRDP/FreeRDP/archive/$(COMPONENT_COMMIT).zip
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:12374e828745e13f707844c4fc4607094f16513b8b94e6728883690fdb9cdc8e
+	sha256:19b30759e324ce7a9767af880116a4c571761e9ad9c5d6c98c5b302ff8c24c6c
+COMPONENT_ARCHIVE_URL=  https://github.com/FreeRDP/FreeRDP/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # https://github.com/FreeRDP/FreeRDP/issues/5504
 CFLAGS += $(XPG6MODE)
@@ -84,22 +85,22 @@ CMAKE_OPTIONS += -DWITH_FFMPEG=OFF
 CMAKE_OPTIONS += -DWITH_KRB5=ON
 CMAKE_OPTIONS += -DWITH_GSSAPI=OFF
 
-build:		$(BUILD_64)
+LIBFREERDP2_LIBDIR = /usr/lib/$(MACH64)/freerdp2
 
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
+COMPONENT_POST_INSTALL_ACTION  = \
+    for file in $(PROTO_DIR)/usr/bin/freerdp-proxy $(PROTO_DIR)/usr/lib/$(MACH64)/freerdp2/liburbdrc-client-libusb.so; do \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(LIBFREERDP2_LIBDIR)"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(LIBFREERDP2_LIBDIR)"' $$file ; \
+    done ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += audio/lame
 REQUIRED_PACKAGES += image/library/libjpeg6
 REQUIRED_PACKAGES += image/library/libjpeg6-ijg
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
-REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
@@ -115,4 +116,3 @@ REQUIRED_PACKAGES += x11/library/libxkbfile
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxtst
-REQUIRED_PACKAGES += x11/library/libxv
