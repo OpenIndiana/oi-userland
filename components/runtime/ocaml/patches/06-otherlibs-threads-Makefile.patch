@@ -1,0 +1,32 @@
+
+Honor LDFLAGS.
+
+--- ocaml-4.07.1/otherlibs/threads/Makefile.orig	2018-10-04 15:38:56.000000000 +0000
++++ ocaml-4.07.1/otherlibs/threads/Makefile	2020-07-26 15:08:44.113960986 +0000
+@@ -35,6 +35,8 @@
+ 
+ LIB=../../stdlib
+ 
++LDOPTS=-ldopt "$(LDFLAGS)"
++
+ # Object file prefix
+ P=stdlib__
+ 
+@@ -64,7 +66,7 @@
+ allopt:
+ 
+ libvmthreads.a: $(C_OBJS)
+-	$(MKLIB) -o threads -oc vmthreads $(C_OBJS)
++	$(MKLIB) -o threads -oc vmthreads $(C_OBJS) $(LDOPTS)
+ 
+ threads.cma: $(CAML_OBJS)
+ 	$(MKLIB) -ocamlc '$(CAMLC)' -o threads -oc vmthreads $(CAML_OBJS)
+@@ -73,7 +75,7 @@
+ 	$(CAMLC) -a -o stdlib.cma $(LIB_OBJS)
+ 
+ unix.cma: $(UNIXLIB_OBJS)
+-	$(MKLIB) -ocamlc '$(CAMLC)' -o unix -linkall $(UNIXLIB_OBJS)
++	$(MKLIB) -ocamlc '$(CAMLC)' -o unix -linkall $(UNIXLIB_OBJS) $(LDOPTS)
+ 
+ stdlib.cmo: stdlib.mli stdlib.cmi stdlib.ml
+ 	$(CAMLC) ${COMPFLAGS} -nopervasives \
