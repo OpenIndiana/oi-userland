@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= stdcompat
 COMPONENT_VERSION= 14
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= stdcompat - Compatibility module for OCaml standard library 
 COMPONENT_PROJECT_URL= https://github.com/thierry-martinez/stdcompat/
 COMPONENT_FMRI= library/ocaml/stdcompat
