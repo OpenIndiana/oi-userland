@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pyml
 COMPONENT_VERSION= 20200518
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= pyml - OCaml bindings for Python
 COMPONENT_PROJECT_URL= https://github.com/thierry-martinez/pyml/
 COMPONENT_FMRI= library/ocaml/pyml
