@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ocamlbuild
 COMPONENT_VERSION= 0.14.0
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= ocamlbuild - OCaml build tool
 COMPONENT_PROJECT_URL= https://github.com/ocaml/num
 COMPONENT_FMRI= library/ocaml/ocamlbuild
@@ -37,6 +38,7 @@ PATH=$(PATH.gnu)
 COMPONENT_PRE_CONFIGURE_ACTION  +=  $(CLONEY) $(SOURCE_DIR) $(@D) ;
 
 COMPONENT_BUILD_ARGS+= PREFIX=$(USRDIR) MANDIR=$(USRSHAREMANDIR)
+COMPONENT_INSTALL_ARGS+= CHECK_IF_PREINSTALLED=false
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/ocaml
