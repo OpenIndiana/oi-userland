@@ -1,15 +1,18 @@
 make[1]: Entering directory '$(@D)'
 cd Test ; /usr/gnu/bin/make check
 make[2]: Entering directory '$(@D)/Test'
-if test -n "/usr/gcc/6/bin/gcc"; then \
+if test -n "/usr/gcc/7/bin/gcc"; then \
   cd .. && DESTDIR= \
   /usr/gnu/bin/make MODDIR=`pwd`/Test/Modules install.modules > /dev/null; \
 fi
+if test -z "$ZTST_handler"; then \
+  ZTST_handler=runtests.zsh; \
+fi; \
 if ZTST_testlist="`for f in $(SOURCE_DIR)/Test/*.ztst; \
            do echo $f; done`" \
  ZTST_srcdir="$(SOURCE_DIR)/Test" \
  ZTST_exe=../Src/zsh \
- ../Src/zsh +Z -f $(SOURCE_DIR)/Test/runtests.zsh; then \
+ ../Src/zsh +Z -f $(SOURCE_DIR)/Test/$ZTST_handler; then \
  stat=0; \
 else \
  stat=1; \
@@ -58,11 +61,19 @@ $(SOURCE_DIR)/Test/B10getopts.ztst: all tests successful.
 $(SOURCE_DIR)/Test/C01arith.ztst: starting.
 $(SOURCE_DIR)/Test/C01arith.ztst: all tests successful.
 $(SOURCE_DIR)/Test/C02cond.ztst: starting.
-Warning: Not testing [[ -b blockdevice ]] (no devices found)
-Warning: Not testing [[ -f blockdevice ]] (no devices found)
-This test takes up to 60 seconds...
-Test case skipped: [[ -N file ]] not supported with noatime file system
-$(SOURCE_DIR)/Test/C02cond.ztst: all tests successful.
+Test $(SOURCE_DIR)/Test/C02cond.ztst failed: bad status 1, expected 0 from:
+  if (( EUID == 0 )); then
+    print -u$ZTST_fd 'Warning: Not testing [[ ! -r file ]] (root reads anything)'
+    [[ -r zerolength && -r unmodish ]]
+  elif [[ $OSTYPE = cygwin ]]; then
+    print -u$ZTST_fd 'Warning: Not testing [[ ! -r file ]]
+   (all files created by user may be readable)'
+   [[ -r zerolength ]]
+  else
+    [[ -r zerolength && ! -r unmodish ]]
+  fi
+Was testing: -r cond
+$(SOURCE_DIR)/Test/C02cond.ztst: test failed.
 $(SOURCE_DIR)/Test/C03traps.ztst: starting.
 This test takes at least three seconds...
 This test, too, takes at least three seconds...
@@ -96,6 +107,8 @@ This test hangs the shell when it fails...
 $(SOURCE_DIR)/Test/E01options.ztst: all tests successful.
 $(SOURCE_DIR)/Test/E02xtrace.ztst: starting.
 $(SOURCE_DIR)/Test/E02xtrace.ztst: all tests successful.
+$(SOURCE_DIR)/Test/P01privileged.ztst: starting.
+$(SOURCE_DIR)/Test/P01privileged.ztst: skipped (PRIVILEGED tests require super-user privileges (or env var))
 $(SOURCE_DIR)/Test/V01zmodload.ztst: starting.
 $(SOURCE_DIR)/Test/V01zmodload.ztst: all tests successful.
 $(SOURCE_DIR)/Test/V02zregexparse.ztst: starting.
@@ -121,6 +134,8 @@ $(SOURCE_DIR)/Test/V10private.ztst: starting.
 $(SOURCE_DIR)/Test/V10private.ztst: all tests successful.
 $(SOURCE_DIR)/Test/V11db_gdbm.ztst: starting.
 $(SOURCE_DIR)/Test/V11db_gdbm.ztst: skipped (can't load zsh/db/gdbm module for testing)
+$(SOURCE_DIR)/Test/V12zparseopts.ztst: starting.
+$(SOURCE_DIR)/Test/V12zparseopts.ztst: all tests successful.
 $(SOURCE_DIR)/Test/W01history.ztst: starting.
 History tests write to /dev/tty
 $(SOURCE_DIR)/Test/W01history.ztst: all tests successful.
@@ -142,7 +157,9 @@ $(SOURCE_DIR)/Test/Y02compmatch.ztst: all tests successful.
 $(SOURCE_DIR)/Test/Y03arguments.ztst: starting.
 $(SOURCE_DIR)/Test/Y03arguments.ztst: all tests successful.
 **************************************
-51 successful test scripts, 0 failures, 1 skipped
+51 successful test scripts, 1 failure, 2 skipped
 **************************************
+make[2]: *** [Makefile:190: check] Error 1
 make[2]: Leaving directory '$(@D)/Test'
+make[1]: *** [Makefile:263: check] Error 2
 make[1]: Leaving directory '$(@D)'
