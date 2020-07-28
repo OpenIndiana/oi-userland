@@ -12,11 +12,12 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pygobject
 COMPONENT_VERSION=	3.18.2
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Python bindings for GObject
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,42 +31,33 @@ PYTHON_VERSIONS = 2.7 3.5
 VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
 VARIANT_PYTHON35 = $(BUILD_DIR)/python-35
 
-VARIANTS_32 = $(VARIANT_PYTHON27)
 VARIANTS_64 = $(VARIANT_PYTHON27) $(VARIANT_PYTHON35)
 
-BUILD_32 = $(VARIANTS_32:%=%/$(MACH32)/.built)
-BUILD_64 = $(VARIANTS_64:%=%/$(MACH64)/.built)
+BUILD_64 = $(VARIANTS_64:%=%/.built)
 
-INSTALL_32 = $(VARIANTS_32:%=%/$(MACH32)/.installed)
-INSTALL_64 = $(VARIANTS_64:%=%/$(MACH64)/.installed)
+INSTALL_64 = $(VARIANTS_64:%=%/.installed)
 
 # Avoid overwriting python2.7 files in /usr/share
-$(VARIANT_PYTHON27)/$(MACH32)/.installed:
-$(VARIANT_PYTHON27)/$(MACH64)/.installed:      $(VARIANT_PYTHON35)/$(MACH64)/.installed
+$(VARIANT_PYTHON27)/.installed:      $(VARIANT_PYTHON35)/.installed
 
-$(VARIANT_PYTHON27)/$(MACH32)/.installed:      PYTHON_VERSION=2.7
-$(VARIANT_PYTHON27)/$(MACH64)/.installed:      PYTHON_VERSION=2.7
+$(VARIANT_PYTHON27)/.installed:      PYTHON_VERSION=2.7
+$(VARIANT_PYTHON27)/.installed:      PYTHON_VERSION=2.7
+$(VARIANT_PYTHON27)/.installed:      
 
-$(VARIANT_PYTHON35)/$(MACH64)/.installed:      PYTHON_VERSION=3.5
+$(VARIANT_PYTHON35)/.installed:      PYTHON_VERSION=3.5
 
-$(VARIANT_PYTHON27)/$(MACH64)/.configured: BITS=64
-$(VARIANT_PYTHON27)/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
-$(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
-$(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
+$(VARIANT_PYTHON27)/.configured: BITS=64
+$(VARIANT_PYTHON27)/.configured: PYTHON=$(PYTHON.2.7.64)
+# Install modules to /usr/lib/python2.7/vendor-packages
+$(VARIANT_PYTHON27)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
+$(VARIANT_PYTHON27)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 
-$(VARIANT_PYTHON27)/$(MACH32)/.configured: BITS=32
-$(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
-$(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
-$(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
+$(VARIANT_PYTHON35)/.configured: BITS=64
+$(VARIANT_PYTHON35)/.configured: PYTHON=$(PYTHON.3.5.64)
+$(VARIANT_PYTHON35)/.configured: am_cv_python_pyexecdir=$(PYTHON.3.5.VENDOR_PACKAGES)
+$(VARIANT_PYTHON35)/.configured: am_cv_python_pythondir=$(PYTHON.3.5.VENDOR_PACKAGES)
 
-$(VARIANT_PYTHON35)/$(MACH64)/.configured: BITS=64
-$(VARIANT_PYTHON35)/$(MACH64)/.configured: PYTHON=$(PYTHON.3.5.64)
-$(VARIANT_PYTHON35)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.3.5.VENDOR_PACKAGES)
-$(VARIANT_PYTHON35)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.3.5.VENDOR_PACKAGES)
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -f -i)
 
@@ -77,20 +69,16 @@ CONFIGURE_ENV+=         PYTHON=$(PYTHON)
 CONFIGURE_ENV+=         am_cv_python_pythondir="$(am_cv_python_pythondir)"
 CONFIGURE_ENV+=         am_cv_python_pyexecdir="$(am_cv_python_pyexecdir)"
 
-COMPONENT_POST_BUILD_ACTION = ($(TOUCH) $(BUILD_DIR))
-COMPONENT_POST_INSTALL_ACTION = ( cd $(PROTO_DIR) && \
-				if [ -d usr/lib/python$(PYTHON_VERSION)/vendor-packages/64/gi/ ]; then   \
+COMPONENT_POST_INSTALL_ACTION.2.7 = ( cd $(PROTO_DIR) && \
 					$(MKDIR) usr/lib/python$(PYTHON_VERSION)/vendor-packages/gi/64;  \
-					$(MV) -f usr/lib/python$(PYTHON_VERSION)/vendor-packages/64/gi/*.so \
-			 			usr/lib/python$(PYTHON_VERSION)/vendor-packages/gi/64/;  \
-				fi )
+					$(MV) -f usr/lib/python$(PYTHON_VERSION)/vendor-packages/gi/*.so \
+			 			usr/lib/python$(PYTHON_VERSION)/vendor-packages/gi/64/ )
+COMPONENT_POST_INSTALL_ACTION.3.5 =
 
-# common targets
-build:		$(BUILD_32_and_64)
+COMPONENT_POST_INSTALL_ACTION = $(COMPONENT_POST_INSTALL_ACTION.$(PYTHON_VERSION))
 
-install:	$(INSTALL_32_and_64)
+COMPONENT_POST_BUILD_ACTION = ($(TOUCH) $(BUILD_DIR))
 
-test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/cairo
