@@ -12,11 +12,12 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xsane
 COMPONENT_VERSION=	0.999
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.xsane.org
 COMPONENT_SUMMARY=	Graphical scanning frontend for the SANE scanner interface
 COMPONENT_FMRI=		image/scanner/xsane
@@ -32,9 +33,7 @@ COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = xsane.COPYING
 
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
 
@@ -56,13 +55,6 @@ CONFIGURE_SCRIPT=$(@D)/configure
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/editor/gimp
