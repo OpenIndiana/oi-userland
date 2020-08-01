@@ -10,34 +10,32 @@
 #
 
 #
-# Copyright 2017 Alexander Pyhalov
+# Copyright 2020 Alexander Pyhalov
 # Copyright 2019 Tim Mooney
 #
 
+BUILD_BITS= 64
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
-COMPONENT_VERSION= 0.2.0
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 0.4.24
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:df2e6a0d9499afcbc4f9029c18d9d1e0dd5e8710a75e17c9b1d9a6480dd8d426
+  sha256:7765499f27341b0d16032e665319cbc12876483ff6a944fcdf24a9c58e3e254a
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gimp.org/pub/gegl/0.2/$(COMPONENT_ARCHIVE)
+  http://ftp.gimp.org/pub/gegl/0.4/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gegl.org/
+COMPONENT_LICENSE= GPLv3, LGPLv3
 
-GEGLDOCDIR = $(PROTO_DIR)/usr/share/doc/$(COMPONENT_NAME)
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CFLAGS += -std=gnu99
-CFLAGS.32 = -D_FILE_OFFSET_BITS=64
 CFLAGS += $(CFLAGS.$(BITS))
 
 # build with the distribution default libjpeg
@@ -45,44 +43,40 @@ CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS           +=    $(JPEG_LDFLAGS)
 
-COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fi)
-
-# Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS+= --infodir=$(USRSHAREDIR)/info
-CONFIGURE_OPTIONS+= --without-libspiro
-CONFIGURE_OPTIONS+= --without-libavformat
-CONFIGURE_OPTIONS+= --without-libv4l
-CONFIGURE_OPTIONS+= --enable-workshop
-CONFIGURE_OPTIONS+= --enable-mmx=no
-CONFIGURE_OPTIONS+= --enable-sse=no
+CONFIGURE_OPTIONS+= -Dworkshop=true
 
-CONFIGURE_ENV.64 += SDL_CONFIG=/usr/bin/$(MACH64)/sdl-config
+# gobject-introspection requires this
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-COMPONENT_POST_INSTALL_ACTION += \
-	$(MKDIR)  -p $(GEGLDOCDIR) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	$(CP)  $(COMPONENT_SRC)/{AUTHORS,README,ChangeLog,COPYING,NEWS,COPYING.LESSER} $(GEGLDOCDIR) ;
+# Without this we get issues with gobject-introspection
+LD_B_DIRECT=
+LD_Z_IGNORE=
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(BUILD_DIR_64)/gegl
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/babl
-REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
+REQUIRED_PACKAGES += image/library/gexiv2
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
+REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/sdl
-REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += library/ilmbase
+REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/libwebp
+REQUIRED_PACKAGES += library/openexr
+REQUIRED_PACKAGES += library/sdl2
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
