@@ -11,43 +11,49 @@
 
 #
 # Copyright 2017 Gary Mills
-# Copyright 2017 Alexander Pyhalov
+# Copyright 2020 Alexander Pyhalov
 #
+
+BUILD_BITS= 64
+BUILD_STYLE= meson
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= babl
-COMPONENT_VERSION= 0.1.18
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 0.1.78
 COMPONENT_SUMMARY= Babl is a dynamic, any to any, pixel format conversion library
 COMPONENT_FMRI = image/library/babl
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:483a495bc9fa68be624e27e72d2144ebfcbbf63e061eb986db1fb82b04b6fbf9
+  sha256:17d5493633bff5585d9f375bc4df5925157cd1c70ccd7c22a635be75c172523a
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gimp.org/pub/babl/0.1/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://gegl.org/babl/
 COMPONENT_LICENSE = LGLPv3
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Need GNU version of awk
 export AWK=gawk
 
-COMPONENT_PREP_ACTION = ( cd $(@D)  && \
-                                autoreconf -f -i -I m4)
-
+CPPFLAGS += -I/usr/include/lcms2
 
 CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS+= --infodir=$(USRSHAREDIR)/info
-CONFIGURE_OPTIONS+= --disable-mmx
-CONFIGURE_OPTIONS+= --disable-sse
+CONFIGURE_OPTIONS+= -Denable-mmx=false
+CONFIGURE_OPTIONS+= -Denable-sse=false
+
+# gobject-introspection requires this
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+
+# Without this we get issues with gobject-introspection
+LD_B_DIRECT=
+LD_Z_IGNORE=
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -57,11 +63,12 @@ CONFIGURE_OPTIONS+= --disable-sse
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
 
-build: $(BUILD_32_and_64)
+# Build dependencies
+REQUIRED_PACKAGES += image/library/librsvg
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+REQUIRED_PACKAGES += web/browser/w3m
 
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
