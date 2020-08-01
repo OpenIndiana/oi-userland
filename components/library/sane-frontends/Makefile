@@ -20,11 +20,13 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-frontends
 COMPONENT_VERSION=	1.0.14
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_PROJECT_URL=	http://www.sane-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -32,24 +34,16 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:e7839dac1b70b5bb39124615aba8a136f5275d0e78bafd3d52ed76964ffea4a9
 COMPONENT_ARCHIVE_URL=	https://fossies.org/linux/misc/old/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS+= -std=gnu89
+LDFLAGS+= -lsane
 
 CONFIGURE_OPTIONS +=	--with-sane-prefix=/usr
 CONFIGURE_OPTIONS +=	--disable-sanetest
 CONFIGURE_OPTIONS +=	--disable-gtktest
 CONFIGURE_OPTIONS +=	--disable-gimptest
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="-lsane"
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/editor/gimp
