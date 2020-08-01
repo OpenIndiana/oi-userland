@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
   # workaround. The problem with vagrant is that it creates folder as root:root,
   # but rsync connects as vagrant and thus fails to write.
   config.vm.synced_folder ".", "/vagrant", type: "rsync",
-    rsync__args: ["--verbose", "--archive", "--compress", "--copy-links"],
+    rsync__args: ["--verbose", "--archive", "-zz", "--copy-links"],
     rsync__rsync_path: "pfexec rsync", owner: "vagrant", group: "vagrant"
 
   # Autoconfigure resources for development VM. The snippet is taken from
@@ -83,7 +83,7 @@ Vagrant.configure("2") do |config|
     pfexec pkg install build-essential
 
     cd /vagrant && gmake setup
-    pfexec pkg set-publisher --non-sticky -g file://$HOME/oi-userland/i386/repo userland
+    pfexec pkg set-publisher --non-sticky -g file:///vagrant/i386/repo userland
     pfexec pkg set-publisher --non-sticky openindiana.org
     echo "VM is ready, happy contributing!"
   SHELL
