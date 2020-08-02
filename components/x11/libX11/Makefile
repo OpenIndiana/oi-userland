@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     libX11
-COMPONENT_VERSION=  1.6.9
+COMPONENT_VERSION=  1.6.10
 COMPONENT_FMRI =    x11/library/libx11
 COMPONENT_SUMMARY=  libX11 - X11 core protocol client library
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9cc7e8d000d6193fa5af580d50d689380b8287052270f5bb26a5fb6b58b2bed1
+  sha256:af48626989b8515c994777896bd7b7ba2bd5b1ef4e1efaee0a55d8852bbe6226
 COMPONENT_LICENSE_FILE = COPYING
 
 include $(WS_MAKE_RULES)/common.mk
