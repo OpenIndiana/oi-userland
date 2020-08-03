@@ -1,0 +1,78 @@
+Adding stub function to get clean builds on Solaris 
+contributed upstream for review - https://gitlab.gnome.org/GNOME/libgtop/issues/47
+
+Taken from the darwin changes, so leaving their Copyright in
+
+--- a/sysdeps/solaris/glibtop_server.h	2019-09-25 12:45:36.788121763 -0700
++++ b/sysdeps/solaris/glibtop_server.h	2019-09-25 12:46:01.849408898 -0700
+@@ -53,8 +53,9 @@
+ #define GLIBTOP_SUID_PROC_WD		0
+ #define GLIBTOP_SUID_PPP		0
+ #define GLIBTOP_SUID_PROC_AFFINITY	0
++#define GLIBTOP_SUID_PROC_OPEN_FILES   0
++#define GLIBTOP_SUID_PROC_IO    	0
+ 
+-
+ G_END_DECLS
+ 
+ #endif
+--- /dev/null	2019-09-25 18:40:51.520550102 -0700
++++ b/sysdeps/solaris/procio.c	2019-09-25 18:40:39.213705245 -0700
+@@ -0,0 +1,45 @@
++/* Copyright (C) 2018 Benoît Dejean
++   This file is part of LibGTop.
++
++   Contributed by Benoît Dejean <bdejean@gmail.com>, February 2018.
++
++   LibGTop is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published by
++   the Free Software Foundation; either version 2 of the License,
++   or (at your option) any later version.
++
++   LibGTop is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++   for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with LibGTop; see the file COPYING. If not, write to the
++   Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++   Boston, MA 02110-1301, USA.
++*/
++
++#include <config.h>
++#include <glibtop.h>
++#include <glibtop/error.h>
++#include <glibtop/procio.h>
++
++static const unsigned long _glibtop_sysdeps_proc_io;
++
++/* Init function. */
++
++void
++_glibtop_init_proc_io_s (glibtop *server)
++{
++	server->sysdeps.proc_io = _glibtop_sysdeps_proc_io;
++}
++
++/* Provides detailed information about a process. */
++
++void
++glibtop_get_proc_io_s (glibtop *server, glibtop_proc_io *buf, pid_t pid)
++{
++    memset (buf, 0, sizeof (glibtop_proc_io));
++    buf->flags = _glibtop_sysdeps_proc_io;
++}
++
+--- a/sysdeps/solaris/Makefile.am	2019-09-25 13:11:15.502663428 -0700
++++ b/sysdeps/solaris/Makefile.am	2019-09-25 13:15:01.986761006 -0700
+@@ -17,7 +17,8 @@
+ libgtop_sysdeps_2_0_la_LIBADD	= @DL_LIB@
+ 
+ libgtop_sysdeps_suid_2_0_la_SOURCES	= open_suid.c close_suid.c \
+-				  shm_limits.c msg_limits.c sem_limits.c
++				  shm_limits.c msg_limits.c sem_limits.c \
++			          procio.c
+ 
+ libgtop_sysdeps_suid_2_0_la_LDFLAGS	= $(LT_VERSION_INFO)
+ 

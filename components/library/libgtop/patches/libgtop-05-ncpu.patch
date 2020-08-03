@@ -1,0 +1,33 @@
+Fix for:
+Bug 26223817 - gnome Settings-Details dumps core on SPARC in build 121
+
+Makes size of cpu_stat_kstat array match the boundary check we use for it in
+glibtop_get_kstats() in sysdeps/solaris/open.c.  (64 was greater than the
+previous GLIBTOP_NCPU size of 32, but upstream raised GLIBTOP_NCPU from 32
+to 1024 in 2013 for libgtop 2.30 and the Solaris header wasn't kept in sync.)
+
+Needs to be submitted upstream once we fix upstream to build on Solaris again.
+
+--- libgtop-2.36.0/sysdeps/solaris/glibtop_machine.h
++++ libgtop-2.36.0/sysdeps/solaris/glibtop_machine.h
+@@ -34,6 +34,11 @@
+ #include <kvm.h>
+ #include <sys/sysinfo.h>
+ 
++#include <glibtop/cpu.h>
++#ifndef GLIBTOP_NCPU
++#define GLIBTOP_NCPU 1024
++#endif
++
+ G_BEGIN_DECLS
+ 
+ struct _glibtop_machine
+@@ -50,7 +55,7 @@ struct _glibtop_machine
+     hrtime_t vminfo_snaptime;
+     vminfo_t vminfo;
+ 
+-    kstat_t *cpu_stat_kstat [64];
++    kstat_t *cpu_stat_kstat [GLIBTOP_NCPU];
+ 
+     kstat_t *system;		/* boot_time & avenrun* where needed */
+     kstat_t *syspages;		/* memory usage */

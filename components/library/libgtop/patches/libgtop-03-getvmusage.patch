@@ -1,3 +1,7 @@
+Existing patch from desktop for building on Solaris - Needs reworking and cleanup so this can be contributed upstream.
+
+XXX file upstream enhancement
+
 --- libgtop-2.28.0/sysdeps/solaris/mem.c	2009-04-19 04:59:49.000000000 +0530
 +++ libgtop-2.28.0/sysdeps/solaris/mem.c.new	2009-11-24 14:42:33.575155966 +0530
 @@ -26,8 +26,42 @@
@@ -43,14 +47,18 @@
  /* Init function. */
  
  void
-@@ -97,37 +131,28 @@
+@@ -97,37 +131,29 @@
  	}
      }
  
 -    /* Bunyip module provides data in multiples of system page size */
--
--    if((ksp = server->machine.bunyip) && kstat_read(kc, ksp, NULL) >= 0)
--    {
++    vmusage64_t *result = (vmusage64_t*) malloc(sizeof(vmusage64_t));
++    vmusage32_t *vmu32;
++    vmusage64_t *vmu64;
+ 
+-    if((ksp = server->machine->bunyip) && kstat_read(kc, ksp, NULL) >= 0)
++    if(getvmusage(VMUSAGE_SYSTEM, 5, result, &nrec) != 0)
+     {
 -	kn = kstat_data_lookup(ksp, "pages_exec");
 -	if(kn)
 -	{
@@ -75,31 +83,26 @@
 -	    goto user_old_way;
 -    }
 -    else /* Bunyip is not available, let's compute buf->user the old way */
-+    vmusage64_t *result = (vmusage64_t*) malloc(sizeof(vmusage64_t));
-+    vmusage32_t *vmu32;
-+    vmusage64_t *vmu64;
-+	
-+    if(getvmusage(VMUSAGE_SYSTEM, 5, result, &nrec) != 0)
-     {
--    user_old_way:
+-    {
+     user_old_way:
 -	buf->user = buf->total - buf->free - buf->cached - buf->buffer;
 -	buf->flags |= (1 << GLIBTOP_MEM_USER);
-+	   buf->user = buf->total - buf->free - buf->cached - buf->buffer;
-+	   buf->flags |= (1 << GLIBTOP_MEM_USER);
-+	   free(result);
-+	   return;
++          buf->user = buf->total - buf->free - buf->cached - buf->buffer;
++          buf->flags |= (1 << GLIBTOP_MEM_USER);
++          free(result);
++          return;
      }
 +    else {
 +           if(sysinfo(SI_ARCHITECTURE_64, arch, sizeof(arch)) < 0)
-+	   {
-+	   	vmu32 = (vmusage32_t*) result;
-+		buf->user = vmu32->vmu_rss_all;
-+	   }
-+	   else {
-+		vmu64 = (vmusage64_t*) result;
-+		buf->user = vmu64->vmu_rss_all;
-+	   }
-+	   buf->flags |= (1 << GLIBTOP_MEM_USER);
++          {
++               vmu32 = (vmusage32_t*) result;
++               buf->user = vmu32->vmu_rss_all;
++          }
++         else {
++               vmu64 = (vmusage64_t*) result;
++               buf->user = vmu64->vmu_rss_all;
++          }
++          buf->flags |= (1 << GLIBTOP_MEM_USER);
 +           free(result);
-+    }	
++    }
  }
