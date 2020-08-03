@@ -12,29 +12,30 @@
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
 # Copyright 2019 Michal Nowak
+# Copyright 2020 Marco van Wieringen
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS=		64
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-themes
-COMPONENT_VERSION=	3.22.19
+COMPONENT_VERSION=	3.22.21
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE Themes
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:988b445079426edad15562b517d0297a946c7d2d239c43020c0d6990d1428bf9
+	sha256:d668c578fd10d6e2a46932df1cb8852f77923193f0b88fb327e89d80f0162f14
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/themes/3.22/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -46,12 +47,6 @@ CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/desktop/xdg/icon-naming-utils
 REQUIRED_PACKAGES += text/intltool
