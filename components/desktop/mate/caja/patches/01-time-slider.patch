@@ -174,14 +174,14 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory-private.h caja-1.22.0-patch
 diff -urN caja-1.22.0/libcaja-private/caja-directory.c caja-1.22.0-patched/libcaja-private/caja-directory.c
 --- caja-1.22.0/libcaja-private/caja-directory.c	2019-02-09 22:11:06.000000000 +0000
 +++ caja-1.22.0-patched/libcaja-private/caja-directory.c	2019-03-22 09:18:09.861621157 +0000
-@@ -35,6 +35,7 @@
+@@ -40,6 +40,7 @@
  #include "caja-metadata.h"
  #include "caja-desktop-directory.h"
  #include "caja-vfs-directory.h"
 +#include "caja-zfs.h"
- #include <eel/eel-glib-extensions.h>
- #include <eel/eel-gtk-macros.h>
- #include <gtk/gtk.h>
+
+ enum
+ {
 @@ -121,6 +122,8 @@
      directory->details->low_priority_queue = caja_file_queue_new ();
      directory->details->extension_queue = caja_file_queue_new ();
@@ -457,11 +457,11 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory.c caja-1.22.0-patched/libca
 diff -urN caja-1.22.0/libcaja-private/caja-directory.h caja-1.22.0-patched/libcaja-private/caja-directory.h
 --- caja-1.22.0/libcaja-private/caja-directory.h	2019-02-09 22:11:06.000000000 +0000
 +++ caja-1.22.0-patched/libcaja-private/caja-directory.h	2019-03-22 09:18:09.861775162 +0000
-@@ -28,6 +28,7 @@
- #include <gtk/gtk.h>
+@@ -29,6 +29,7 @@
  #include <gio/gio.h>
- #include <libcaja-private/caja-file-attributes.h>
-+#include <libcaja-private/caja-zfs.h>
+
+ #include "caja-file-attributes.h"
++#include "caja-zfs.h"
  
  G_BEGIN_DECLS
  
@@ -544,14 +544,14 @@ diff -urN caja-1.22.0/libcaja-private/caja-file-private.h caja-1.22.0-patched/li
 diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-private/caja-file.c
 --- caja-1.22.0/libcaja-private/caja-file.c	2019-02-09 22:11:06.000000000 +0000
 +++ caja-1.22.0-patched/libcaja-private/caja-file.c	2019-03-22 09:18:09.862436326 +0000
-@@ -46,6 +46,7 @@
+@@ -71,6 +71,7 @@
  #include "caja-ui-utilities.h"
  #include "caja-vfs-file.h"
  #include "caja-saved-search-file.h"
 +#include "caja-zfs.h"
- #include <eel/eel-debug.h>
- #include <eel/eel-glib-extensions.h>
- #include <eel/eel-gtk-extensions.h>
+
+ #ifdef HAVE_SELINUX
+ #include <selinux/selinux.h>
 @@ -153,7 +154,8 @@
  	attribute_where_q,
  	attribute_link_target_q,
@@ -2800,14 +2800,14 @@ diff -urN caja-1.22.0/src/caja-navigation-window-ui.xml caja-1.22.0-patched/src/
 diff -urN caja-1.22.0/src/caja-navigation-window.c caja-1.22.0-patched/src/caja-navigation-window.c
 --- caja-1.22.0/src/caja-navigation-window.c.~1~	2019-02-09 22:11:06.000000000 +0000
 +++ caja-1.22.0/src/caja-navigation-window.c	2019-04-07 10:52:11.141635362 +0000
-@@ -41,6 +41,7 @@
+@@ -71,6 +71,7 @@
  #include "caja-notebook.h"
  #include "caja-window-manage-views.h"
  #include "caja-navigation-window-pane.h"
 +#include "caja-zfs-bar.h"
- #include <eel/eel-gtk-extensions.h>
- #include <eel/eel-gtk-macros.h>
- #include <eel/eel-string.h>
+
+ #define MAX_TITLE_LENGTH 180
+
 @@ -104,6 +105,13 @@
  };
  
@@ -2985,43 +2985,27 @@ diff -urN caja-1.22.0/src/caja-shell-ui.xml caja-1.22.0-patched/src/caja-shell-u
 diff -urN caja-1.22.0/src/caja-window-manage-views.c caja-1.22.0-patched/src/caja-window-manage-views.c
 --- caja-1.22.0/src/caja-window-manage-views.c	2018-01-14 17:39:36.000000000 +0000
 +++ caja-1.22.0-patched/src/caja-window-manage-views.c	2019-03-22 09:18:09.834866380 +0000
-@@ -39,6 +39,7 @@
- #include "caja-trash-bar.h"
- #include "caja-x-content-bar.h"
- #include "caja-navigation-window-pane.h"
-+#include "caja-zfs-bar.h"
- #include <eel/eel-accessibility.h>
- #include <eel/eel-debug.h>
- #include <eel/eel-gdk-extensions.h>
-@@ -51,6 +52,7 @@
+@@ -30,6 +30,7 @@
  #include <gtk/gtk.h>
  #include <gdk/gdkx.h>
  #include <glib/gi18n.h>
 +#include <stdlib.h>
- #include <libcaja-extension/caja-location-widget-provider.h>
- #include <libcaja-private/caja-debug-log.h>
- #include <libcaja-private/caja-extensions.h>
-@@ -519,7 +521,7 @@
-     CajaWindowSlot *target_slot;
-     CajaWindowOpenFlags slot_flags;
-     gboolean existing = FALSE;
--    GFile *old_location;
-+    GFile *old_location = NULL;
-     char *old_uri, *new_uri;
-     int new_slot_position;
-     GList *l;
-@@ -896,6 +898,7 @@
-     CajaFile *file;
-     gboolean force_reload;
-     char *current_pos;
-+    GFile *old_file = NULL;
-     GFile *from_folder;
-     GFile *parent;
  
-@@ -930,12 +933,47 @@
+ #include <eel/eel-accessibility.h>
+ #include <eel/eel-debug.h>
+@@ -71,6 +72,7 @@
+ #include "caja-trash-bar.h"
+ #include "caja-x-content-bar.h"
+ #include "caja-navigation-window-pane.h"
++#include "caja-zfs-bar.h"
+
+ /* FIXME bugzilla.gnome.org 41243:
+  * We should use inheritance instead of these special cases
+@@ -930,12 +933,48 @@
  
      end_location_change (slot);
  
++    GFile *old_file = NULL;
 +    old_file = caja_window_slot_get_location (slot);
 +
 +    if (old_file)
@@ -3098,6 +3082,14 @@ diff -urN caja-1.22.0/src/caja-window-manage-views.c caja-1.22.0-patched/src/caj
              if (view_id != NULL &&
                      !caja_view_factory_view_supports_uri (view_id,
                              location,
+@@ -1847,6 +1847,7 @@ out:
+ static void
+ update_for_new_location (CajaWindowSlot *slot)
+ {
++    CajaDirectory *directory;
+     CajaWindow *window;
+     GFile *new_location;
+     CajaFile *file;
 @@ -1820,6 +1868,30 @@
          caja_window_load_extension_menus (window);
      }
@@ -3178,15 +3170,15 @@ diff -urN caja-1.22.0/src/caja-window-manage-views.c caja-1.22.0-patched/src/caj
 diff -urN caja-1.22.0/src/caja-window-menus.c caja-1.22.0-patched/src/caja-window-menus.c
 --- caja-1.22.0/src/caja-window-menus.c	2019-02-24 17:41:56.000000000 +0000
 +++ caja-1.22.0-patched/src/caja-window-menus.c	2019-03-22 09:18:09.835022025 +0000
-@@ -39,6 +39,8 @@
+@@ -57,6 +57,8 @@
  #include "caja-window-private.h"
  #include "caja-desktop-window.h"
  #include "caja-search-bar.h"
 +#include "caja-navigation-window.h"
 +#include "caja-zfs-bar.h"
- #include <gtk/gtk.h>
- #include <gio/gio.h>
- #include <glib/gi18n.h>
+
+ #define MENU_PATH_EXTENSION_ACTIONS                     "/MenuBar/File/Extension Actions"
+ #define POPUP_PATH_EXTENSION_ACTIONS                     "/background/Before Zoom Items/Extension Actions"
 @@ -363,6 +365,33 @@
  }
  
@@ -3293,10 +3285,10 @@ diff -urN caja-1.22.0/src/caja-window.c caja-1.22.0-patched/src/caja-window.c
      {
          GdkDisplay *display;
          GdkCursor * cursor;
-@@ -418,8 +430,19 @@
-     {
+@@ -474,7 +474,18 @@ caja_window_sync_allow_stop (CajaWindow
          if (slot == window->details->active_pane->active_slot)
          {
+             G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 +            if (!slot->allow_stop && slot->find_zfs_snapshots_cancellable != NULL)
 +            { 
 +                /* if slot want to stop and snap find is finished/cancel then disable */
@@ -3308,11 +3300,10 @@ diff -urN caja-1.22.0/src/caja-window.c caja-1.22.0-patched/src/caja-window.c
 +            else
 +            {
              gtk_action_set_sensitive (action, slot->allow_stop);
++	    }
+             G_GNUC_END_IGNORE_DEPRECATIONS;
          }
-+         }
  
-         if (gtk_widget_get_realized (GTK_WIDGET (window)))
-         {
 diff -urN caja-1.22.0/src/caja-window.h caja-1.22.0-patched/src/caja-window.h
 --- caja-1.22.0/src/caja-window.h	2019-02-09 22:11:06.000000000 +0000
 +++ caja-1.22.0-patched/src/caja-window.h	2019-03-22 09:18:09.835631755 +0000
