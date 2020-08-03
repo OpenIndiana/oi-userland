@@ -1,0 +1,43 @@
+--- mate-system-monitor-1.24.0/Makefile.am.orig	Sat Sep 12 22:28:19 2020
++++ mate-system-monitor-1.24.0/Makefile.am	Sat Sep 12 22:29:01 2020
+@@ -13,9 +13,6 @@
+ $(appdata_DATA): $(appdata_in_files)
+ 	$(AM_V_GEN) $(MSGFMT) --xml --template $< -d $(top_srcdir)/po -o $@
+ 
+-org.mate.mate-system-monitor.policy.in: org.mate.mate-system-monitor.policy.in.in Makefile
+-	$(AM_V_GEN) sed -e "s|\@pkglibexecdir\@|$(pkglibexecdir)|" $< > $@
+-
+ DISTCHECK_CONFIGURE_FLAGS = \
+ 	CFLAGS='-Wno-deprecated-declarations'
+ 
+@@ -23,17 +20,16 @@
+ 	autogen.sh \
+ 	$(man_MANS) \
+ 	$(appdata_in_files) \
+-	org.mate.mate-system-monitor.policy.in.in \
+ 	mate-system-monitor.desktop.in \
+ 	omf.make \
+ 	xmldocs.make
+ 
+ polkit_policydir = $(datadir)/polkit-1/actions
+-polkit_policy_in_files = org.mate.mate-system-monitor.policy.in
++polkit_policy_in_files = 
+ polkit_policy_DATA = $(polkit_policy_in_files:.policy.in=.policy)
+ 
+ $(polkit_policy_DATA): $(polkit_policy_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --xml --template $< -d $(top_srcdir)/po -o $@
++#	$(AM_V_GEN) $(MSGFMT) --xml --template $< -d $(top_srcdir)/po -o $@
+ 
+ Applicationsdir = $(datadir)/applications
+ Applications_in_files = mate-system-monitor.desktop.in
+@@ -47,9 +43,7 @@
+ CLEANFILES = mate-system-monitor.appdata.xml
+ 
+ DISTCLEANFILES = \
+-  mate-system-monitor.desktop \
+-  org.mate.mate-system-monitor.policy \
+-  org.mate.mate-system-monitor.policy.in
++  mate-system-monitor.desktop
+ 
+ # Build ChangeLog from GIT  history
+ ChangeLog:
