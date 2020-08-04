@@ -91,4 +91,5 @@ Vagrant.configure("2") do |config|
         pfexec pkg set-publisher --non-sticky -g file:///vagrant/i386/repo userland
         pfexec pkg set-publisher --non-sticky openindiana.org
         echo "VM is ready, happy contributing!"
+    SHELL
 end
