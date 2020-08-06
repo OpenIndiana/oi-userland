@@ -12,52 +12,48 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_STYLE= configure
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-python
-COMPONENT_VERSION=	0.10.22
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.16.2
+COMPONENT_SUMMARY=	Python bindings for the GStreamer streaming media framework
 COMPONENT_PROJECT_URL=	http://freedesktop.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8f26f519a5bccd770864317e098e5e307fc5ad1201eb96329634b6508b253178
+    sha256:208df3148d73d9f416d016564737585d8ea763d91201732d44b5fe688c6288a8
 COMPONENT_ARCHIVE_URL=	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
+COMPONENT_CLASSIFICATION= Development/Python
+COMPONENT_FMRI=	library/python/python-gst
+COMPONENT_LICENSE=	LGPL v2.1
+COMPONENT_LICENSE_FILE=	COPYING
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSION=		3.5
+PYTHON_VERSIONS=	3.5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
-
-VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
-
-VARIANTS = $(VARIANT_PYTHON27)
-
-BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
-
-INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
-
-$(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
-$(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
-$(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
-CONFIGURE_ENV+=		am_cv_python_pythondir="$(am_cv_python_pythondir)"
-CONFIGURE_ENV+=		am_cv_python_pyexecdir="$(am_cv_python_pyexecdir)"
+CONFIGURE_ENV+=		CPPFLAGS="$(CFLAGS)"
+CONFIGURE_ENV+=		am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_ENV+=		am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 
-# common targets
-build:		$(BUILD_32)
+# for the tests
+unexport SHELLOPTS
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-install:	$(INSTALL_32)
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/^Ran 39 tests/d" '
 
-test:		$(NO_TESTS)
+# Build dependencies
+REQUIRED_PACKAGES += library/python/pygobject-3
 
-REQUIRED_PACKAGES += library/audio/gstreamer
-REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/python/pygobject-27
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library

@@ -10,32 +10,19 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2020 Alexander Pyhalov
 #
 
-set name=pkg.fmri value=pkg:/library/python/python-gst-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Python bindings for the GStreamer streaming media framework"
-set name=info.classification value="org.opensolaris.category.2008:Development/Python"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license COPYING license="LGPL v2.1"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/_gst.so
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/audio.so
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/extend/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/extend/discoverer.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/extend/jukebox.py pkg.depend.bypass-generate=.*
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/extend/leveller.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/extend/pygobject.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/extend/sources.py pkg.depend.bypass-generate=.*
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/extend/utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/interfaces.so
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/pbutils.so
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/tag.so
-file path=usr/lib/python$(PYVER)/vendor-packages/gst-0.10/gst/video.so
-file path=usr/lib/python$(PYVER)/vendor-packages/gstoption.so
-file path=usr/lib/python$(PYVER)/vendor-packages/pygst.pth
-file path=usr/lib/python$(PYVER)/vendor-packages/pygst.py pkg.tmp.autopyc=false
+file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstpython.cpython-$(PYV)m.so
+file path=usr/lib/python$(PYVER)/vendor-packages/gi/overrides/Gst.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gi/overrides/GstPbutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/gi/overrides/_gi_gst.so
