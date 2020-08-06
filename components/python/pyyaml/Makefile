@@ -13,32 +13,37 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE=setup.py
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	PyYAML
-COMPONENT_VERSION= 	3.11
-COMPONENT_REVISION=	1
+COMPONENT_VERSION= 	5.3.1
 COMPONENT_SUMMARY= 	A YAML parser and emitter for the Python language
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c36c938a872e5ff494938b33b14aaa156cb439ec67548fcab3535bb78b0846e8
-COMPONENT_ARCHIVE_URL= \
-  http://pyyaml.org/download/pyyaml/PyYAML-3.11.tar.gz
-COMPONENT_PROJECT_URL = http://pyyaml.org/
+  sha256:b8eac752c5e14d3eca0e6dd9199cd627518cb5ec06add0de9d32baeee6fe645d
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_PROJECT_URL=	http://pyyaml.org/
+COMPONENT_FMRI=	library/python/pyyaml
+COMPONENT_CLASSIFICATION= Development/Python
+COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET= $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV += LDFLAGS=$(LDFLAGS)
 
-build: $(BUILD_32)
+COMPONENT_TEST_CMD =    $(PYTHON) -m pytest
+COMPONENT_TEST_ARGS =
 
-install: $(INSTALL_32)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libyaml
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
