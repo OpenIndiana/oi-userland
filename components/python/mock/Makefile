@@ -20,35 +20,30 @@
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_STYLE=setup.py
+BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mock
-COMPONENT_VERSION=	1.0.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.0.5
 COMPONENT_PROJECT_URL=	http://www.voidspace.org.uk/python/mock/
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b839dd2d9c117c701430c149956918a423a9863b48b09c90e30a6013e7d2f44f
-COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/m/mock/$(COMPONENT_ARCHIVE)
+    sha256:83657d894c90d5681d62155c82bda9c1187827525880eda8ff5df4ec813437c3
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/mock
 
-# mock has been subsumed into Python starting with 3.3, so no need to build
-# it for Python 3.
-PYTHON_VERSIONS=        2.7
+# mock has been subsumed into Python starting with 3.3. However, the community
+# is still using this package rather than the included one, mostly because it
+# has all the newest features even for older versions of Python.
+PYTHON_VERSIONS=        2.7 3.5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS =	setup.py test
 
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:		$(TEST_NO_ARCH)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
