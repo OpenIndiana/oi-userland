@@ -10,37 +10,30 @@
 
 #
 # Copyright (c) 2016 Sergey Avseyev
+# Copyright 2020 Andreas Wacknitz
 #
+BUILD_BITS=			64
+BUILD_STYLE=		justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dmenu
-COMPONENT_VERSION=	4.7
-COMPONENT_PROJECT_URL=	http://tools.suckless.org/dmenu/
+COMPONENT_VERSION=	4.9
+COMPONENT_PROJECT_URL=	https://tools.suckless.org/dmenu/
 COMPONENT_SUMMARY=	dmenu is a dynamic menu for X, originally designed for dwm
 COMPONENT_FMRI=		desktop/dmenu
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:a75635f8dc2cbc280deecb906ad9b7594c5c31620e4a01ba30dc83984881f7b9
-COMPONENT_ARCHIVE_URL=	http://dl.suckless.org/tools/$(COMPONENT_ARCHIVE)
+	sha256:b3971f4f354476a37b2afb498693649009b201550b0c7c88e866af8132b64945
+COMPONENT_ARCHIVE_URL=	https://dl.suckless.org/tools/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT/X
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET:		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_BUILD_ENV=	CC_BITS=$(CC_BITS) LD_BITS=$(LD_BITS)
-COMPONENT_BUILD_ARGS=	CC=$(CC)
-COMPONENT_INSTALL_ARGS.64=	MACH64=$(MACH64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
