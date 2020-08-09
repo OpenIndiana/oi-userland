@@ -18,13 +18,13 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libepoxy
-COMPONENT_VERSION= 1.5.2
+COMPONENT_VERSION= 1.5.4
 COMPONENT_FMRI=	   x11/library/libepoxy
 COMPONENT_SUMMARY= library for handling OpenGL function pointers
 COMPONENT_CLASSIFICATION=System/Hardware
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a9562386519eb3fd7f03209f279f697a8cba520d3c155d6e253c3e138beca7d8
+	sha256:0bd2cc681dfeffdef739cb29913f8c3caa47a88a451fd2bc6e606c02997289d2    
 COMPONENT_ARCHIVE_URL=	\
     https://github.com/anholt/libepoxy/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
