@@ -13,26 +13,26 @@
 # Copyright (c) 2019 Michal Nowak
 #
 
+BUILD_BITS=			32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dosbox
-COMPONENT_VERSION=	0.74-2
-IPS_COMPONENT_VERSION=	0.74.2
-COMPONENT_PROJECT_URL=	http://www.dosbox.com/
+COMPONENT_VERSION=	0.74-3
+IPS_COMPONENT_VERSION=	0.74.3
+COMPONENT_PROJECT_URL=	https://www.dosbox.com/
 COMPONENT_SUMMARY=	DosBox - DOS Emulator
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:7077303595bedd7cd0bb94227fa9a6b5609e7c90a3e6523af11bc4afcb0a57cf
-COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+	sha256:c0d13dd7ed2ed363b68de615475781e891cd582e8162b5c3669137502222260a
+COMPONENT_ARCHIVE_URL=	https://prdownloads.sourceforge.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_FMRI=		runtime/dosbox
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( \
 	cd $(@D) && \
@@ -46,12 +46,6 @@ CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 
 CONFIGURE_ENV +=	PERL=$(PERL)
 CONFIGURE_ENV +=	PYTHON=$(PYTHON)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
