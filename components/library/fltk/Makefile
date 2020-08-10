@@ -12,29 +12,27 @@
 # Copyright 2017 Aurelien Larcher
 #
 
+BUILD_BITS=				32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=        fltk
-COMPONENT_VERSION=     1.3.4
-COMPONENT_REL_VERSION=2
-COMPONENT_REVISION=    1
+COMPONENT_VERSION=     1.3.5
 COMPONENT_SUMMARY=     fltk - Fast Light Toolkit
-COMPONENT_PROJECT_URL= http://www.fltk.org
+COMPONENT_PROJECT_URL= https://www.fltk.org
 COMPONENT_FMRI=        library/fltk
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_REL_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
 COMPONENT_ARCHIVE_URL= \
-  http://fltk.org/pub/fltk/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	https://fltk.org/pub/fltk/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:25d349c18c99508737d48f225a2eb26a43338f9247551cab72a317fa42cda910
+	sha256:8729b2a055f38c1636ba20f749de0853384c1d3e9d1a6b8d4d1305143e115702
 COMPONENT_LICENSE= GPLv2
 
 CONFIGURE_FIX_LIBTOOL_RPATH= no
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=			$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -46,12 +44,6 @@ LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS+= --enable-shared
 CONFIGURE_OPTIONS+= --disable-static
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
