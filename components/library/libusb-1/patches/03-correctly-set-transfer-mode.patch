@@ -1,0 +1,132 @@
+From a45730f4339d5d6391757ee2d4c2f86b8411de5f Mon Sep 17 00:00:00 2001
+From: Kenjiro Tsuji <kenjiro.tsuji@oracle.com>
+Date: Wed, 25 Sep 2019 17:51:43 -0700
+Subject: [PATCH] Solaris backend is not correctly setting the one transfer
+ mode for Interrupt-In pipe
+
+In sunos_check_device_and_status_open() function, if the target is an Interrupt-In
+pipe, it opens the status endpoint first and writes USB_EP_INTR_ONE_XFER control
+to the status endpoint to enable the one transfer mode. And it then closes the
+status endpoint. After that, it opens the xfer endpoint and re-opens the status
+endpoint. This is not correct, because closing the status endpoint is implicitly
+disables the one tranfer mode.  As a result, an event notification won't be
+delivered to the client in timely manner.  According to the comment in the source,
+closing the status endpoint first and opening the xfer endpoint and status endpoint
+in this order is intentional to avoit an issue that may happen if the USB device
+has multiple configurations, which may be due to a ugen driver issue. To address
+both issues, it can open the xfer endpoint first and immediately close it, which
+will take care of the switch of configurations, if necessary.  Then, it can open
+the status endpoint, enable the one transfer mode, and re-open the xfer endpoint.
+This is a fix of libusb#620.
+
+Closes #629
+
+Signed-off-by: Nathan Hjelm <hjelmn@google.com>
+---
+ libusb/os/sunos_usb.c | 69 ++++++++++++++++++++++++++-----------------
+ libusb/version_nano.h |  2 +-
+ 2 files changed, 43 insertions(+), 28 deletions(-)
+
+diff --git a/libusb/os/sunos_usb.c b/libusb/os/sunos_usb.c
+index 6a3f633f..c9a16fac 100644
+--- a/libusb/os/sunos_usb.c
++++ b/libusb/os/sunos_usb.c
+@@ -901,18 +901,50 @@ sunos_check_device_and_status_open(struct libusb_device_handle *hdl,
+ 	(void) snprintf(statfilename, PATH_MAX, "%sstat", filename);
+ 
+ 	/*
+-	 * for interrupt IN endpoints, we need to enable one xfer
+-	 * mode before opening the endpoint
++	 * In case configuration has been switched, the xfer endpoint needs
++	 * to be opened before the status endpoint, due to a ugen issue.
++	 * However, to enable the one transfer mode for an Interrupt-In pipe,
++	 * the status endpoint needs to be opened before the xfer endpoint.
++	 * So, open the xfer mode first and close it immediately
++	 * as a workaround. This will handle the configuration switch.
++	 * Then, open the status endpoint.  If for an Interrupt-in pipe,
++	 * write the USB_EP_INTR_ONE_XFER control to the status endpoint
++	 * to enable the one transfer mode.  Then, re-open the xfer mode.
++	 */
++	if (ep_type == LIBUSB_TRANSFER_TYPE_ISOCHRONOUS) {
++		mode = O_RDWR;
++	} else if (ep_addr & LIBUSB_ENDPOINT_IN) {
++		mode = O_RDONLY;
++	} else {
++		mode = O_WRONLY;
++	}
++	/* Open the xfer endpoint first */
++	if ((fd = open(filename, mode)) == -1) {
++		usbi_dbg("can't open %s: %d(%s)", filename, errno,
++		    strerror(errno));
++
++		return (errno);
++	}
++	/* And immediately close the xfer endpoint */
++	(void) close(fd);
++
++	/*
++	 * Open the status endpoint.
++	 * If for an Interrupt-IN pipe, need to enable the one transfer mode
++	 * by writing USB_EP_INTR_ONE_XFER control to the status endpoint
++	 * before opening the xfer endpoint
+ 	 */
+ 	if ((ep_type == LIBUSB_TRANSFER_TYPE_INTERRUPT) &&
+ 	    (ep_addr & LIBUSB_ENDPOINT_IN)) {
+ 		char	control = USB_EP_INTR_ONE_XFER;
+ 		int	count;
+ 
+-		/* open the status device node for the ep first RDWR */
++		/* Open the status endpoint with RDWR */
+ 		if ((fdstat = open(statfilename, O_RDWR)) == -1) {
+ 			usbi_dbg("can't open %s RDWR: %d",
+ 				statfilename, errno);
++
++			return (errno);
+ 		} else {
+ 			count = write(fdstat, &control, sizeof (control));
+ 			if (count != 1) {
+@@ -923,37 +955,20 @@ sunos_check_device_and_status_open(struct libusb_device_handle *hdl,
+ 
+ 				return (errno);
+ 			}
+-			/* close status node and open xfer node first */
+-			close (fdstat);
+ 		}
+-	}
+-
+-	/* open the xfer node first in case alt needs to be changed */
+-	if (ep_type == LIBUSB_TRANSFER_TYPE_ISOCHRONOUS) {
+-		mode = O_RDWR;
+-	} else if (ep_addr & LIBUSB_ENDPOINT_IN) {
+-		mode = O_RDONLY;
+ 	} else {
+-		mode = O_WRONLY;
++		if ((fdstat = open(statfilename, O_RDONLY)) == -1) {
++			usbi_dbg("can't open %s: %d", statfilename, errno);
++
++			return (errno);
++		}
+ 	}
+ 
+-	/*
+-	 * IMPORTANT: must open data xfer node first and then open stat node
+-	 * Otherwise, it will fail on multi-config or multi-altsetting devices
+-	 * with "Device Busy" error. See ugen_epxs_switch_cfg_alt() and
+-	 * ugen_epxs_check_alt_switch() in ugen driver source code.
+-	 */
++	/* Re-open the xfer endpoint */
+ 	if ((fd = open(filename, mode)) == -1) {
+ 		usbi_dbg("can't open %s: %d(%s)", filename, errno,
+ 		    strerror(errno));
+-
+-		return (errno);
+-	}
+-	/* open the status node */
+-	if ((fdstat = open(statfilename, O_RDONLY)) == -1) {
+-		usbi_dbg("can't open %s: %d", statfilename, errno);
+-
+-		(void) close(fd);
++		(void) close(fdstat);
+ 
+ 		return (errno);
+ 	}
