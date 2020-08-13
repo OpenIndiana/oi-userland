@@ -20,20 +20,20 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2020, Andreas Wacknitz
 #
 
-BUILD_BITS=		32
+BUILD_BITS=			32
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
-COMPONENT_VERSION=	26.3
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	27.1
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:4d90e6751ad8967822c6e092db07466b9d383ef1653feb2f95c93e7de66d3485
+	sha256:4a4c128f915fc937d61edfc273c98106711b540c9be3cd5d2e2b9b5b2f172e41
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 
 TEST_TARGET=		$(NO_TESTS)
@@ -108,6 +108,7 @@ $(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3
 # facilitates the use of 'gmake sample-manifest'.
 PBIN=		$(PROTO_DIR)/usr/bin
 PETC=		$(PROTO_DIR)/usr/share/emacs/$(COMPONENT_VERSION)/etc
+PPDMP=		$(PROTO_DIR)/usr/lib/emacs/$(COMPONENT_VERSION)/$(GNU_TRIPLET)
 PGBIN=		$(PROTO_DIR)/usr/gnu/bin
 PGSHAREMAN1=	$(PROTO_DIR)/usr/gnu/share/man/man1
 PSHAREMAN1=	$(PROTO_DIR)/usr/share/man/man1
@@ -122,6 +123,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PBIN)/emacs-gtk ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(LN) $(PBIN)/emacs-gtk $(PBIN)/emacs-gtk-$(COMPONENT_VERSION) ;
+# Each emacs variant needs its own dump file:
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(BUILD_DIR)/$(MACH32)-gtk/src/emacs.pdmp \
+		$(PPDMP)/emacs-gtk.pdmp ;
 
 # Non-X11 binaries
 COMPONENT_POST_INSTALL_ACTION += \
@@ -129,6 +134,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PBIN)/emacs-nox ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(LN) $(PBIN)/emacs-nox $(PBIN)/emacs-nox-$(COMPONENT_VERSION) ;
+# Each emacs variant needs its own dump file:
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(BUILD_DIR)/$(MACH32)-nox/src/emacs.pdmp \
+		$(PPDMP)/emacs-nox.pdmp ;
 
 # X11 (Athena) binaries
 COMPONENT_POST_INSTALL_ACTION += \
@@ -136,6 +145,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PBIN)/emacs-x ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(LN) $(PBIN)/emacs-x $(PBIN)/emacs-x-$(COMPONENT_VERSION) ;
+# Each emacs variant needs its own dump file:
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(BUILD_DIR)/$(MACH32)-x/src/emacs.pdmp \
+		$(PPDMP)/emacs-x.pdmp ;
 
 # Emacs shell script that picks the right variant at runtime
 COMPONENT_POST_INSTALL_ACTION += $(CP) augment/emacs $(PBIN) ;
@@ -189,17 +202,20 @@ install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+#REQUIRED_PACKAGES += editor/gnu-emacs
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
