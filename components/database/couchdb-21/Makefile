@@ -12,28 +12,27 @@
 # Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
 #
 
+BUILD_BITS=					64
 include ../../../make-rules/shared-macros.mk
 
 PATH= $(USRBINDIR64):$(PATH.illumos)
 
-COMPONENT_NAME=           couchdb
-COMPONENT_VERSION=        2.1.1
-COMPONENT_VERSION_MAJOR=  2.1
-COMPONENT_REVISION=       1
-COMPONENT_FMRI=           database/$(COMPONENT_NAME)-21
-COMPONENT_CLASSIFICATION= System/Databases
-COMPONENT_PROJECT_URL=    http://couchdb.apache.org/
-COMPONENT_SRC=            apache-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE_HASH=   sha256:d5f255abc871ac44f30517e68c7b30d1503ec0f6453267d641e00452c04e7bcc
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=    http://apache.mirror.iphh.net/$(COMPONENT_NAME)/source/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_SUMMARY=        Apache CouchDB is a document-oriented database.
-COMPONENT_LICENSE=        Apache 2.0
-COMPONENT_LICENSE_FILE=   $(USRDIR)/couchdb/$(COMPONENT_VERSION_MAJOR)/LICENSE
+COMPONENT_NAME=				couchdb
+COMPONENT_VERSION=			2.1.1
+COMPONENT_VERSION_MAJOR=	2.1
+COMPONENT_REVISION=			2
+COMPONENT_FMRI=				database/$(COMPONENT_NAME)-21
+COMPONENT_CLASSIFICATION=	System/Databases
+COMPONENT_PROJECT_URL=		https://couchdb.apache.org/
+COMPONENT_SRC=				apache-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE_HASH=		sha256:d5f255abc871ac44f30517e68c7b30d1503ec0f6453267d641e00452c04e7bcc
+COMPONENT_ARCHIVE=			$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=		https://apache.mirror.iphh.net/$(COMPONENT_NAME)/source/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SUMMARY=			Apache CouchDB is a document-oriented database.
+COMPONENT_LICENSE=			Apache 2.0
+COMPONENT_LICENSE_FILE=		$(USRDIR)/couchdb/$(COMPONENT_VERSION_MAJOR)/LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS += COMPONENT_VERSION_MAJOR=$(COMPONENT_VERSION_MAJOR)
 
@@ -89,12 +88,6 @@ COMPONENT_POST_INSTALL_ACTION= \
 COMPONENT_TEST_ENV += http_proxy= https_proxy=
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = /OK/
-
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(TEST_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += runtime/erlang
