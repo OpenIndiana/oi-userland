@@ -16,7 +16,6 @@
 # to avoid ERROR userland.action001.2        32-bit object 'usr/lib/amd64/couchdb/$(COMPONENT_VERSION_MAJOR)/lib/couch-2.1.1/priv/couchjs' in 64-bit path
 <transform file path=usr/couchdb/$(COMPONENT_VERSION_MAJOR)/lib/(.+)/priv/(.+) -> default pkg.linted true >
 
-<transform file path=usr/couchdb/$(COMPONENT_VERSION_MAJOR)/bin/couchup -> default pkg.depend.bypass-generate .*>
 <transform file path=usr/couchdb/$(COMPONENT_VERSION_MAJOR)/lib/couch-$(COMPONENT_VERSION)/priv/couch(.+) -> set mode 0555 >
 <transform file path=usr/couchdb/$(COMPONENT_VERSION_MAJOR)/lib/couch-$(COMPONENT_VERSION)/priv/spawnkillable/couch(.+) -> set mode 0555 >
 
@@ -30,8 +29,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 depend type=require fmri=runtime/erlang
-depend type=require fmri=runtime/python-27
-depend type=require fmri=library/python/netaddr-27
 depend type=require fmri=database/couchdb-common
 
 link path=usr/couchdb/$(COMPONENT_VERSION_MAJOR)/etc target=../../../../../etc/couchdb/2.1
@@ -67,7 +64,8 @@ link path=usr/share/man/man1/couchdb.1 \
 file path=usr/couchdb/$(COMPONENT_VERSION_MAJOR)/LICENSE
 file path=usr/couchdb/$(COMPONENT_VERSION_MAJOR)/bin/couchdb
 file path=usr/couchdb/$(COMPONENT_VERSION_MAJOR)/bin/couchjs
-file path=usr/couchdb/$(COMPONENT_VERSION_MAJOR)/bin/couchup
+# progressbar import is optional`
+file path=usr/couchdb/$(COMPONENT_VERSION_MAJOR)/bin/couchup pkg.depend.bypass-generate='.*progressbar.*'
 file path=usr/couchdb/$(COMPONENT_VERSION_MAJOR)/bin/remsh
 
 file usr/share/man/man1/couchdb.1 \

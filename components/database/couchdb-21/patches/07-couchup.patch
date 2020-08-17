@@ -1,0 +1,13 @@
+--- apache-couchdb-2.1.1/rel/overlay/bin/couchup.1	2020-08-17 11:38:14.585965284 +0000
++++ apache-couchdb-2.1.1/rel/overlay/bin/couchup	2020-08-17 11:41:04.350247307 +0000
+@@ -474,6 +474,10 @@
+     parser_delete.set_defaults(func=_delete)
+ 
+     args = parser.parse_args(argv[1:])
++    if len(args.__dict__) == 0:
++        # No arguments or subcommands were given.
++        parser.print_help()
++        exit(1)
+     args.func(args)
+ 
+ if __name__ == '__main__':
