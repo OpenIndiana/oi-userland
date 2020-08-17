@@ -93,22 +93,22 @@ COMPONENT_TEST_TRANSFORMS = /OK/
 REQUIRED_PACKAGES += runtime/erlang
 REQUIRED_PACKAGES += developer/icu
 
-# only required for target test
-# this modules are in the repository
-# REQUIRED_PACKAGES += library/python/nose-27
-# REQUIRED_PACKAGES += library/python/requests-27
-# and install this via pip
-# pip install hypothesis
+# Required for test target
+REQUIRED_PACKAGES += library/python/hypothesis-35
+REQUIRED_PACKAGES += library/python/nose-35
+REQUIRED_PACKAGES += library/python/requests-35
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/python/requests-35
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/spidermonkey
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
