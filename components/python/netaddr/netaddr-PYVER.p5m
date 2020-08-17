@@ -37,15 +37,21 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/037
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-#
+
+license LICENSE license=BSD
+
+# force a dependency on the netaddr package
+depend type=require \
+    fmri=library/python/netaddr@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
 link path=usr/bin/netaddr target=netaddr-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
-#
+
 # since we have IPython > 0.11, skip dependencies for
 # IPython.Shell
 file path=usr/bin/netaddr-$(PYVER) \
     pkg.depend.bypass-generate=.*Shell.*
-file path=usr/lib/python$(PYVER)/vendor-packages/netaddr-$(IPS_COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr-$(COMPONENT_VERSION)-py$(PYVER).egg-info
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/core.py
@@ -58,12 +64,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/eui/oui.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/fbsocket.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/glob.py
-# urllib.request is not available in python 2.X
-file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/iana.py \
-    pkg.depend.bypass-generate=.*(urllib|request).*
-file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/intset.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/iana.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/ipv4-address-space.xml
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/ipv6-address-space.xml
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/ipv6-unicast-address-assignments.xml
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/multicast-addresses.xml
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/nmap.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/rfc1924.py
@@ -73,13 +77,3 @@ file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/strategy/eui48.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/strategy/eui64.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/strategy/ipv4.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/strategy/ipv6.py
-#
-license LICENSE license=BSD
-#
-
-# force the rename with an optional dependency on the old name
-depend type=optional \
-    fmri=library/python-2/netaddr-$(PYV)@0.7.10,5.11-2016.0.1.0
-# force a dependency on the netaddr package
-depend type=require \
-    fmri=library/python/netaddr@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
