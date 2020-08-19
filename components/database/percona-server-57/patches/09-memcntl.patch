@@ -1,0 +1,18 @@
+https://jira.percona.com/browse/PS-7251
+
+Revert https://github.com/percona/percona-server/commit/29cad3a82a199b28c83729ad5f0b73b456fde253
+
+--- percona-server-5.7.30-33/sql/mysqld.cc.1	2020-08-19 10:04:38.574183853 +0000
++++ percona-server-5.7.30-33/sql/mysqld.cc	2020-08-19 10:41:26.310262989 +0000
+@@ -194,6 +194,11 @@
+ # endif
+ #endif
+ 
++#if defined(HAVE_SOLARIS_LARGE_PAGES) && defined(__GNUC__)
++extern "C" int getpagesizes(size_t *, int);
++extern "C" int memcntl(caddr_t, size_t, int, caddr_t, int, int);
++#endif
++
+ inline void setup_fpu()
+ {
+ #ifdef HAVE_FEDISABLEEXCEPT
