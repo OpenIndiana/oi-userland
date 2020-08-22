@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2018 <contributor>
+# Copyright 2020 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -72,12 +72,15 @@ file path=usr/include/dns/geoip.h
 file path=usr/include/dns/ipkeylist.h
 file path=usr/include/dns/iptable.h
 file path=usr/include/dns/journal.h
+file path=usr/include/dns/kasp.h
 file path=usr/include/dns/keydata.h
 file path=usr/include/dns/keyflags.h
+file path=usr/include/dns/keymgr.h
 file path=usr/include/dns/keytable.h
 file path=usr/include/dns/keyvalues.h
 file path=usr/include/dns/lib.h
 file path=usr/include/dns/librpz.h
+file path=usr/include/dns/lmdb.h
 file path=usr/include/dns/log.h
 file path=usr/include/dns/lookup.h
 file path=usr/include/dns/master.h
@@ -145,6 +148,7 @@ file path=usr/include/irs/resconf.h
 file path=usr/include/irs/types.h
 file path=usr/include/irs/version.h
 file path=usr/include/isc/aes.h
+file path=usr/include/isc/align.h
 file path=usr/include/isc/app.h
 file path=usr/include/isc/assertions.h
 file path=usr/include/isc/astack.h
@@ -191,10 +195,12 @@ file path=usr/include/isc/md.h
 file path=usr/include/isc/mem.h
 file path=usr/include/isc/meminfo.h
 file path=usr/include/isc/mutex.h
+file path=usr/include/isc/mutexatomic.h
 file path=usr/include/isc/mutexblock.h
 file path=usr/include/isc/net.h
 file path=usr/include/isc/netaddr.h
 file path=usr/include/isc/netdb.h
+file path=usr/include/isc/netmgr.h
 file path=usr/include/isc/netscope.h
 file path=usr/include/isc/nonce.h
 file path=usr/include/isc/offset.h
@@ -238,6 +244,7 @@ file path=usr/include/isc/time.h
 file path=usr/include/isc/timer.h
 file path=usr/include/isc/tm.h
 file path=usr/include/isc/types.h
+file path=usr/include/isc/utf8.h
 file path=usr/include/isc/util.h
 file path=usr/include/isc/version.h
 file path=usr/include/isccc/alist.h
@@ -256,6 +263,7 @@ file path=usr/include/isccfg/aclconf.h
 file path=usr/include/isccfg/cfg.h
 file path=usr/include/isccfg/dnsconf.h
 file path=usr/include/isccfg/grammar.h
+file path=usr/include/isccfg/kaspconf.h
 file path=usr/include/isccfg/log.h
 file path=usr/include/isccfg/namedconf.h
 file path=usr/include/isccfg/version.h
@@ -279,29 +287,28 @@ file path=usr/include/pk11/internal.h
 file path=usr/include/pk11/pk11.h
 file path=usr/include/pk11/result.h
 file path=usr/include/pk11/site.h
-file path=usr/include/pkcs11/eddsa.h
 file path=usr/include/pkcs11/pkcs11.h
-link path=usr/lib/dns/$(MACH64)/libbind9.so target=libbind9.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libbind9.so.1600 target=libbind9.so.1600.0.0
-file path=usr/lib/dns/$(MACH64)/libbind9.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libdns.so target=libdns.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libdns.so.1600 target=libdns.so.1600.0.0
-file path=usr/lib/dns/$(MACH64)/libdns.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libirs.so target=libirs.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libirs.so.1600 target=libirs.so.1600.0.0
-file path=usr/lib/dns/$(MACH64)/libirs.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libisc.so target=libisc.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libisc.so.1600 target=libisc.so.1600.0.0
-file path=usr/lib/dns/$(MACH64)/libisc.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libisccc.so target=libisccc.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libisccc.so.1600 target=libisccc.so.1600.0.0
-file path=usr/lib/dns/$(MACH64)/libisccc.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libisccfg.so target=libisccfg.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libisccfg.so.1600 target=libisccfg.so.1600.0.0
-file path=usr/lib/dns/$(MACH64)/libisccfg.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libns.so target=libns.so.1600.0.0
-link path=usr/lib/dns/$(MACH64)/libns.so.1600 target=libns.so.1600.0.0
-file path=usr/lib/dns/$(MACH64)/libns.so.1600.0.0
+link path=usr/lib/dns/$(MACH64)/libbind9.so target=libbind9.so.1600.0.5
+link path=usr/lib/dns/$(MACH64)/libbind9.so.1600 target=libbind9.so.1600.0.5
+file path=usr/lib/dns/$(MACH64)/libbind9.so.1600.0.5
+link path=usr/lib/dns/$(MACH64)/libdns.so target=libdns.so.1605.1.0
+link path=usr/lib/dns/$(MACH64)/libdns.so.1605 target=libdns.so.1605.1.0
+file path=usr/lib/dns/$(MACH64)/libdns.so.1605.1.0
+link path=usr/lib/dns/$(MACH64)/libirs.so target=libirs.so.1601.0.0
+link path=usr/lib/dns/$(MACH64)/libirs.so.1601 target=libirs.so.1601.0.0
+file path=usr/lib/dns/$(MACH64)/libirs.so.1601.0.0
+link path=usr/lib/dns/$(MACH64)/libisc.so target=libisc.so.1606.0.0
+link path=usr/lib/dns/$(MACH64)/libisc.so.1606 target=libisc.so.1606.0.0
+file path=usr/lib/dns/$(MACH64)/libisc.so.1606.0.0
+link path=usr/lib/dns/$(MACH64)/libisccc.so target=libisccc.so.1600.0.2
+link path=usr/lib/dns/$(MACH64)/libisccc.so.1600 target=libisccc.so.1600.0.2
+file path=usr/lib/dns/$(MACH64)/libisccc.so.1600.0.2
+link path=usr/lib/dns/$(MACH64)/libisccfg.so target=libisccfg.so.1600.0.4
+link path=usr/lib/dns/$(MACH64)/libisccfg.so.1600 target=libisccfg.so.1600.0.4
+file path=usr/lib/dns/$(MACH64)/libisccfg.so.1600.0.4
+link path=usr/lib/dns/$(MACH64)/libns.so target=libns.so.1604.0.1
+link path=usr/lib/dns/$(MACH64)/libns.so.1604 target=libns.so.1604.0.1
+file path=usr/lib/dns/$(MACH64)/libns.so.1604.0.1
 file path=usr/lib/dns/$(MACH64)/named/filter-aaaa.so
 file path=usr/lib/python3.5/vendor-packages/isc-2.0-py3.5.egg-info
 file path=usr/lib/python3.5/vendor-packages/isc/__init__.py
