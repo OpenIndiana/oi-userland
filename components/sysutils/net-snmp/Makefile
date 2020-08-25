@@ -37,7 +37,7 @@ PATH=$(VPATH):$(PATH.gnu)
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.8
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_FMRI= system/management/snmp/net-snmp
 COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -168,3 +168,5 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
 # Bogus dependency due to libssp
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Without the picl headers, the build fails on a missing SPARC-specific file.
+REQUIRED_PACKAGES += system/header/header-picl
