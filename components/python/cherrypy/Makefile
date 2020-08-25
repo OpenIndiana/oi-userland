@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		CherryPy
 # This is the last version with Python 2.7 support
 COMPONENT_VERSION=	17.3.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	'Pythonic, object-oriented HTTP framework'
 COMPONENT_PROJECT_URL=	http://www.cherrypy.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -59,7 +59,9 @@ REQUIRED_PACKAGES += library/python/nose-35
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += library/python/setuptools_scm-27
 REQUIRED_PACKAGES += library/python/setuptools-35
+REQUIRED_PACKAGES += library/python/setuptools_scm-35
 REQUIRED_PACKAGES += library/python/six-27
 REQUIRED_PACKAGES += library/python/six-35
 REQUIRED_PACKAGES += runtime/python-27
