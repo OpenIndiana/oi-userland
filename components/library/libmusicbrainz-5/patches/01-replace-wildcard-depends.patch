@@ -1,0 +1,17 @@
+Newer cmake version fail with wildcard dependencies here.
+This has been taken from upstream where
+https://github.com/metabrainz/libmusicbrainz/commit/8be45b12a86bc0e46f2f836c8ac88e1e98d82aee
+has been integrated but no new release has been published since its integration.
+ 
+--- libmusicbrainz-5.1.0/src/CMakeLists.txt.orig	2014-11-13 14:12:24.000000000 +0000
++++ libmusicbrainz-5.1.0/src/CMakeLists.txt	2020-08-25 17:50:20.951200565 +0000
+@@ -36,7 +36,8 @@
+ 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/mb5_c.cc ${CMAKE_CURRENT_BINARY_DIR}/mb5_c.h ${CMAKE_CURRENT_BINARY_DIR}/../include/musicbrainz5/mb5_c.h
+ 	COMMAND make-c-interface ${CMAKE_CURRENT_SOURCE_DIR} cinterface.xml ${CMAKE_CURRENT_BINARY_DIR} mb5_c.cc mb5_c.h
+ 	COMMAND ${CMAKE_COMMAND} -E copy_if_different 	${CMAKE_CURRENT_BINARY_DIR}/mb5_c.h ${CMAKE_CURRENT_BINARY_DIR}/../include/musicbrainz5/mb5_c.h
+-	DEPENDS make-c-interface cinterface.xml *.inc
++    DEPENDS make-c-interface cinterface.xml c-int-medium-defines.inc c-int-query-source.inc c-int-source-funcs.inc
++        c-int-medium-source.inc c-int-release-defines.inc c-int-query-defines.inc c-int-release-source.inc
+ )
+ 
+ ADD_CUSTOM_TARGET(src_gen DEPENDS mb5_c.h)
