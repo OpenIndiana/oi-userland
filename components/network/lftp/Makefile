@@ -24,29 +24,28 @@
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
+BUILD_BITS=				64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		lftp
-COMPONENT_VERSION=	4.8.3
-COMPONENT_REVISION=     1
+COMPONENT_NAME=			lftp
+COMPONENT_VERSION=		4.9.2
 COMPONENT_FMRI=         network/ftp/lftp
 COMPONENT_SUMMARY=      lftp - Sophisticated file transfer program
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://lftp.yar.ru
+COMPONENT_PROJECT_URL=	https://lftp.yar.ru
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:de7aee451afaa1aa391f7076b5f602922c2da0e05524a8d8fea413eda83cc78b
-COMPONENT_ARCHIVE_URL=	http://lftp.yar.ru/ftp/$(COMPONENT_ARCHIVE)
+	sha256:c517c4f4f9c39bd415d7313088a2b1e313b2d386867fe40b7692b83a20f0670d
+COMPONENT_ARCHIVE_URL=	https://lftp.yar.ru/ftp/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=			$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL =   0
 
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+#CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
 
 CONFIGURE_OPTIONS +=	--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS +=	--with-openssl
@@ -57,22 +56,14 @@ CFLAGS += -std=gnu99 $(CPP_XPG6MODE)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
