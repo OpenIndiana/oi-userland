@@ -31,6 +31,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 # on my machine, vm-sound-Sun compiles, but it does not work
 
 file usr/bin/squeak path=usr/bin/squeak5c
+file usr/bin/ckformat path=usr/bin/ckformat5c
 file path=usr/lib/$(MACH64)/squeak/$(PLUGIN_REV)/B3DAcceleratorPlugin.so
 file path=usr/lib/$(MACH64)/squeak/$(PLUGIN_REV)/DESPlugin.so
 file path=usr/lib/$(MACH64)/squeak/$(PLUGIN_REV)/FileAttributesPlugin.so
@@ -58,6 +59,8 @@ file usr/share/man/man1/squeak.1 path=usr/share/man/man1/squeak5c.1
 # use hardlink (squeak wrapper script may have issue with symlink)
 
 hardlink path=usr/bin/squeak target=squeak5c mediator=squeak \
+    mediator-implementation=cog-spur mediator-version=5
+hardlink path=usr/bin/ckformat target=ckformat5c mediator=squeak \
     mediator-implementation=cog-spur mediator-version=5
 hardlink path=usr/share/man/man1/squeak.1 target=squeak5c.1 mediator=squeak \
     mediator-implementation=cog-spur mediator-version=5
