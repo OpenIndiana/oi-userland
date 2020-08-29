@@ -17,7 +17,7 @@ BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ninja
-COMPONENT_VERSION=      1.10.0
+COMPONENT_VERSION=      1.10.1
 COMPONENT_SUMMARY=      Ninja - a small build system with a focus on speed
 COMPONENT_PROJECT_URL=  https://ninja-build.org/
 COMPONENT_FMRI=         developer/build/ninja
@@ -25,9 +25,9 @@ COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/ninja-build/ninja/archive/v$(COMPONENT_VERSION).tar.gz
+	https://github.com/ninja-build/ninja/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3810318b08489435f8efc19c05525e80a993af5a55baa0dfeae0465a9d45f99f
+	sha256:a6b6f7ac360d4aabd54e299cc1d8fa7b234cd81b9401693da21221c62569a23e
 COMPONENT_LICENSE=      Apache License version 2.0
 
 include $(WS_MAKE_RULES)/common.mk
@@ -62,7 +62,7 @@ COMPONENT_TEST_TRANSFORMS+= '-n -e "/^\[[0-9]*\/341\]/p"'
 REQUIRED_PACKAGES += runtime/python-35
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
