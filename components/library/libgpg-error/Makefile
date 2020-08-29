@@ -26,14 +26,13 @@ BUILD_BITS = 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgpg-error
-COMPONENT_VERSION=	1.36
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.39
 COMPONENT_SUMMARY=	GnuPG Error Library
-COMPONENT_PROJECT_URL=	http://www.gnupg.org
+COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/libgpg-error/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:babd98437208c163175c29453f8681094bcaf92968a15cafb1a276076b33c97c
+	sha256:4a836edcae592094ef1c5a4834908f44986ab2b82e0824a0344b49df8cdb298f
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/security/libgpg-error
 COMPONENT_CLASSIFICATION=	System/Security
@@ -47,5 +46,7 @@ CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --enable-shared
 CONFIGURE_OPTIONS  +=           --enable-threads=posix
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/xopen/xcu4
