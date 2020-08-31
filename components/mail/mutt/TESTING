@@ -1,0 +1,23 @@
+EMAIL=your@email.com # set your email address
+HOST=your.server.com # your SMTP and IMAPS server
+# run mutt in read-only mode (R)
+LD_PRELOAD=libumem.so \
+	UMEM_DEBUG=adi_precise,default \
+	UMEM_LOGGING=transaction \
+	mutt -R -e 'set folder=/dev/null' \
+	-f "imaps://$EMAIL@$HOST" \
+	-F /dev/null \
+	-e "set smtp_url=smtps://$EMAIL@$HOST"
+
+1.  enter password
+2.  check emails in the INBOX
+3.  scroll (arrows up/down) and press enter to display an email
+4.  return to the index by pressing 'q'
+5.  press 'm' to send email
+6.  enter recipient email address (your email again probably)
+7.  enter subject
+8.  enter email body and quit editor
+9.  press 'y' to send the email
+10. enter SMTP password (likely the same as IMAP one)
+11. check the email was sent and received
+12. press 'q' to leave mutt
