@@ -1,8 +1,35 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "CMAKE-TOOLCHAINS" "7" "October 14, 2015" "3.3.2" "CMake"
+.TH "CMAKE-TOOLCHAINS" "7" "August 09, 2019" "3.15.2" "CMake"
 .SH NAME
 cmake-toolchains \- CMake Toolchains Reference
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
 .
 .nr rst2man-indent-level 0
 .
@@ -46,7 +73,7 @@ built\-in variables, such as
 \fBCMAKE_CXX_COMPILER_ID\fP etc are set by
 invoking the \fBproject()\fP command.  If no project command
 is in the top\-level CMakeLists file, one will be implicitly generated. By default
-the enabled languages are C and CXX:
+the enabled languages are \fBC\fP and \fBCXX\fP:
 .INDENT 0.0
 .INDENT 3.5
 .sp
@@ -58,7 +85,7 @@ project(C_Only C)
 .UNINDENT
 .UNINDENT
 .sp
-A special value of NONE can also be used with the \fBproject()\fP command
+A special value of \fBNONE\fP can also be used with the \fBproject()\fP command
 to enable no languages:
 .INDENT 0.0
 .INDENT 3.5
@@ -130,6 +157,14 @@ If \fBcmake(1)\fP is invoked with the command line parameter
 values for the compilers.
 The \fBCMAKE_CROSSCOMPILING\fP variable is set to true when CMake is
 cross\-compiling.
+.sp
+Note that using the \fBCMAKE_SOURCE_DIR\fP or \fBCMAKE_BINARY_DIR\fP
+variables inside a toolchain file is typically undesirable.  The toolchain
+file is used in contexts where these variables have different values when used
+in different places (e.g. as part of a call to \fBtry_compile()\fP).  In most
+cases, where there is a need to evaluate paths inside a toolchain file, the more
+appropriate variable to use would be \fBCMAKE_CURRENT_LIST_DIR\fP, since
+it always has an unambiguous, predictable value.
 .SS Cross Compiling for Linux
 .sp
 A typical cross\-compiling toolchain for Linux has content such
@@ -172,9 +207,10 @@ a path on the host to install to. The \fBCMAKE_INSTALL_PREFIX\fP is always
 the runtime installation location, even when cross\-compiling.
 .sp
 The \fBCMAKE_<LANG>_COMPILER\fP variables may be set to full paths, or to
-names of compilers to search for in standard locations. In cases where CMake does
-not have enough information to extract information from the compiler, the
-\fBCMakeForceCompiler\fP module can be used to bypass some of the checks.
+names of compilers to search for in standard locations.   For toolchains that
+do not support linking binaries without custom flags or scripts one may set
+the \fBCMAKE_TRY_COMPILE_TARGET_TYPE\fP variable to \fBSTATIC_LIBRARY\fP
+to tell CMake not to try to link executables during its checks.
 .sp
 CMake \fBfind_*\fP commands will look in the sysroot, and the \fBCMAKE_FIND_ROOT_PATH\fP
 entries by default in all cases, as well as looking in the host system root prefix.
@@ -184,6 +220,32 @@ artifacts. Generally, includes, libraries and packages should be found in the
 target system prefixes, whereas executables which must be run as part of the build
 should be found only on the host and not on the target. This is the purpose of
 the \fBCMAKE_FIND_ROOT_PATH_MODE_*\fP variables.
+.SS Cross Compiling for the Cray Linux Environment
+.sp
+Cross compiling for compute nodes in the Cray Linux Environment can be done
+without needing a separate toolchain file.  Specifying
+\fB\-DCMAKE_SYSTEM_NAME=CrayLinuxEnvironment\fP on the CMake command line will
+ensure that the appropriate build settings and search paths are configured.
+The platform will pull its configuration from the current environment
+variables and will configure a project to use the compiler wrappers from the
+Cray Programming Environment\(aqs \fBPrgEnv\-*\fP modules if present and loaded.
+.sp
+The default configuration of the Cray Programming Environment is to only
+support static libraries.  This can be overridden and shared libraries
+enabled by setting the \fBCRAYPE_LINK_TYPE\fP environment variable to
+\fBdynamic\fP\&.
+.sp
+Running CMake without specifying \fBCMAKE_SYSTEM_NAME\fP will
+run the configure step in host mode assuming a standard Linux environment.
+If not overridden, the \fBPrgEnv\-*\fP compiler wrappers will end up getting used,
+which if targeting the either the login node or compute node, is likely not the
+desired behavior.  The exception to this would be if you are building directly
+on a NID instead of cross\-compiling from a login node. If trying to build
+software for a login node, you will need to either first unload the
+currently loaded \fBPrgEnv\-*\fP module or explicitly tell CMake to use the
+system compilers in \fB/usr/bin\fP instead of the Cray wrappers.  If instead
+targeting a compute node is desired, just specify the
+\fBCMAKE_SYSTEM_NAME\fP as mentioned above.
 .SS Cross Compiling using Clang
 .sp
 Some compilers such as Clang are inherently cross compilers.
@@ -265,6 +327,27 @@ Further \fBCMAKE_SYSTEM_VERSION\fP tells the generator what version of
 Windows CE to use.  Currently version 8.0 (Windows Embedded Compact 2013) is
 supported out of the box.  Other versions may require one to set
 \fBCMAKE_GENERATOR_TOOLSET\fP to the correct value.
+.SS Cross Compiling for Windows 10 Universal Applications
+.sp
+A toolchain file to configure a Visual Studio generator for a
+Windows 10 Universal Application may look like this:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+set(CMAKE_SYSTEM_NAME WindowsStore)
+set(CMAKE_SYSTEM_VERSION 10.0)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+A Windows 10 Universal Application targets both Windows Store and
+Windows Phone.  Specify the \fBCMAKE_SYSTEM_VERSION\fP variable
+to be \fB10.0\fP to build with the latest available Windows 10 SDK.
+Specify a more specific version (e.g. \fB10.0.10240.0\fP for RTM)
+to build with the corresponding SDK.
 .SS Cross Compiling for Windows Phone
 .sp
 A toolchain file to configure a Visual Studio generator for
@@ -295,11 +378,235 @@ set(CMAKE_SYSTEM_VERSION 8.1)
 .fi
 .UNINDENT
 .UNINDENT
-.SS Cross Compiling using NVIDIA Nsight Tegra
+.SS Cross Compiling for Android
 .sp
-A toolchain file to configure a Visual Studio generator to
-build using NVIDIA Nsight Tegra targeting Android may look
-like this:
+A toolchain file may configure cross\-compiling for Android by setting the
+\fBCMAKE_SYSTEM_NAME\fP variable to \fBAndroid\fP\&.  Further configuration
+is specific to the Android development environment to be used.
+.sp
+For \fIVisual Studio Generators\fP, CMake expects \fI\%NVIDIA Nsight Tegra
+Visual Studio Edition\fP to be installed.  See that section for further
+configuration details.
+.sp
+For \fIMakefile Generators\fP and the \fBNinja\fP generator,
+CMake expects one of these environments:
+.INDENT 0.0
+.IP \(bu 2
+\fI\%NDK\fP
+.IP \(bu 2
+\fI\%Standalone Toolchain\fP
+.UNINDENT
+.sp
+CMake uses the following steps to select one of the environments:
+.INDENT 0.0
+.IP \(bu 2
+If the \fBCMAKE_ANDROID_NDK\fP variable is set, the NDK at the
+specified location will be used.
+.IP \(bu 2
+Else, if the \fBCMAKE_ANDROID_STANDALONE_TOOLCHAIN\fP variable
+is set, the Standalone Toolchain at the specified location will be used.
+.IP \(bu 2
+Else, if the \fBCMAKE_SYSROOT\fP variable is set to a directory
+of the form \fB<ndk>/platforms/android\-<api>/arch\-<arch>\fP, the \fB<ndk>\fP
+part will be used as the value of \fBCMAKE_ANDROID_NDK\fP and the
+NDK will be used.
+.IP \(bu 2
+Else, if the \fBCMAKE_SYSROOT\fP variable is set to a directory of the
+form \fB<standalone\-toolchain>/sysroot\fP, the \fB<standalone\-toolchain>\fP part
+will be used as the value of \fBCMAKE_ANDROID_STANDALONE_TOOLCHAIN\fP
+and the Standalone Toolchain will be used.
+.IP \(bu 2
+Else, if a cmake variable \fBANDROID_NDK\fP is set it will be used
+as the value of \fBCMAKE_ANDROID_NDK\fP, and the NDK will be used.
+.IP \(bu 2
+Else, if a cmake variable \fBANDROID_STANDALONE_TOOLCHAIN\fP is set, it will be
+used as the value of \fBCMAKE_ANDROID_STANDALONE_TOOLCHAIN\fP, and the
+Standalone Toolchain will be used.
+.IP \(bu 2
+Else, if an environment variable \fBANDROID_NDK_ROOT\fP or
+\fBANDROID_NDK\fP is set, it will be used as the value of
+\fBCMAKE_ANDROID_NDK\fP, and the NDK will be used.
+.IP \(bu 2
+Else, if an environment variable \fBANDROID_STANDALONE_TOOLCHAIN\fP is
+set then it will be used as the value of
+\fBCMAKE_ANDROID_STANDALONE_TOOLCHAIN\fP, and the Standalone
+Toolchain will be used.
+.IP \(bu 2
+Else, an error diagnostic will be issued that neither the NDK or
+Standalone Toolchain can be found.
+.UNINDENT
+.SS Cross Compiling for Android with the NDK
+.sp
+A toolchain file may configure \fIMakefile Generators\fP or the
+\fBNinja\fP generator to target Android for cross\-compiling.
+.sp
+Configure use of an Android NDK with the following variables:
+.INDENT 0.0
+.TP
+.B \fBCMAKE_SYSTEM_NAME\fP
+Set to \fBAndroid\fP\&.  Must be specified to enable cross compiling
+for Android.
+.TP
+.B \fBCMAKE_SYSTEM_VERSION\fP
+Set to the Android API level.  If not specified, the value is
+determined as follows:
+.INDENT 7.0
+.IP \(bu 2
+If the \fBCMAKE_ANDROID_API\fP variable is set, its value
+is used as the API level.
+.IP \(bu 2
+If the \fBCMAKE_SYSROOT\fP variable is set, the API level is
+detected from the NDK directory structure containing the sysroot.
+.IP \(bu 2
+Otherwise, the latest API level available in the NDK is used.
+.UNINDENT
+.TP
+.B \fBCMAKE_ANDROID_ARCH_ABI\fP
+Set to the Android ABI (architecture).  If not specified, this
+variable will default to \fBarmeabi\fP\&.
+The \fBCMAKE_ANDROID_ARCH\fP variable will be computed
+from \fBCMAKE_ANDROID_ARCH_ABI\fP automatically.
+Also see the \fBCMAKE_ANDROID_ARM_MODE\fP and
+\fBCMAKE_ANDROID_ARM_NEON\fP variables.
+.TP
+.B \fBCMAKE_ANDROID_NDK\fP
+Set to the absolute path to the Android NDK root directory.
+A \fB${CMAKE_ANDROID_NDK}/platforms\fP directory must exist.
+If not specified, a default for this variable will be chosen
+as specified \fI\%above\fP\&.
+.TP
+.B \fBCMAKE_ANDROID_NDK_DEPRECATED_HEADERS\fP
+Set to a true value to use the deprecated per\-api\-level headers
+instead of the unified headers.  If not specified, the default will
+be false unless using a NDK that does not provide unified headers.
+.TP
+.B \fBCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION\fP
+Set to the version of the NDK toolchain to be selected as the compiler.
+If not specified, the default will be the latest available GCC toolchain.
+.TP
+.B \fBCMAKE_ANDROID_STL_TYPE\fP
+Set to specify which C++ standard library to use.  If not specified,
+a default will be selected as described in the variable documentation.
+.UNINDENT
+.sp
+The following variables will be computed and provided automatically:
+.INDENT 0.0
+.TP
+.B \fBCMAKE_<LANG>_ANDROID_TOOLCHAIN_PREFIX\fP
+The absolute path prefix to the binutils in the NDK toolchain.
+.TP
+.B \fBCMAKE_<LANG>_ANDROID_TOOLCHAIN_SUFFIX\fP
+The host platform suffix of the binutils in the NDK toolchain.
+.UNINDENT
+.sp
+For example, a toolchain file might contain:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+set(CMAKE_SYSTEM_NAME Android)
+set(CMAKE_SYSTEM_VERSION 21) # API level
+set(CMAKE_ANDROID_ARCH_ABI arm64\-v8a)
+set(CMAKE_ANDROID_NDK /path/to/android\-ndk)
+set(CMAKE_ANDROID_STL_TYPE gnustl_static)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Alternatively one may specify the values without a toolchain file:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ cmake ../src \e
+  \-DCMAKE_SYSTEM_NAME=Android \e
+  \-DCMAKE_SYSTEM_VERSION=21 \e
+  \-DCMAKE_ANDROID_ARCH_ABI=arm64\-v8a \e
+  \-DCMAKE_ANDROID_NDK=/path/to/android\-ndk \e
+  \-DCMAKE_ANDROID_STL_TYPE=gnustl_static
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS Cross Compiling for Android with a Standalone Toolchain
+.sp
+A toolchain file may configure \fIMakefile Generators\fP or the
+\fBNinja\fP generator to target Android for cross\-compiling
+using a standalone toolchain.
+.sp
+Configure use of an Android standalone toolchain with the following variables:
+.INDENT 0.0
+.TP
+.B \fBCMAKE_SYSTEM_NAME\fP
+Set to \fBAndroid\fP\&.  Must be specified to enable cross compiling
+for Android.
+.TP
+.B \fBCMAKE_ANDROID_STANDALONE_TOOLCHAIN\fP
+Set to the absolute path to the standalone toolchain root directory.
+A \fB${CMAKE_ANDROID_STANDALONE_TOOLCHAIN}/sysroot\fP directory
+must exist.
+If not specified, a default for this variable will be chosen
+as specified \fI\%above\fP\&.
+.TP
+.B \fBCMAKE_ANDROID_ARM_MODE\fP
+When the standalone toolchain targets ARM, optionally set this to \fBON\fP
+to target 32\-bit ARM instead of 16\-bit Thumb.
+See variable documentation for details.
+.TP
+.B \fBCMAKE_ANDROID_ARM_NEON\fP
+When the standalone toolchain targets ARM v7, optionally set thisto \fBON\fP
+to target ARM NEON devices.  See variable documentation for details.
+.UNINDENT
+.sp
+The following variables will be computed and provided automatically:
+.INDENT 0.0
+.TP
+.B \fBCMAKE_SYSTEM_VERSION\fP
+The Android API level detected from the standalone toolchain.
+.TP
+.B \fBCMAKE_ANDROID_ARCH_ABI\fP
+The Android ABI detected from the standalone toolchain.
+.TP
+.B \fBCMAKE_<LANG>_ANDROID_TOOLCHAIN_PREFIX\fP
+The absolute path prefix to the \fBbinutils\fP in the standalone toolchain.
+.TP
+.B \fBCMAKE_<LANG>_ANDROID_TOOLCHAIN_SUFFIX\fP
+The host platform suffix of the \fBbinutils\fP in the standalone toolchain.
+.UNINDENT
+.sp
+For example, a toolchain file might contain:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+set(CMAKE_SYSTEM_NAME Android)
+set(CMAKE_ANDROID_STANDALONE_TOOLCHAIN /path/to/android\-toolchain)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Alternatively one may specify the values without a toolchain file:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ cmake ../src \e
+  \-DCMAKE_SYSTEM_NAME=Android \e
+  \-DCMAKE_ANDROID_STANDALONE_TOOLCHAIN=/path/to/android\-toolchain
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS Cross Compiling for Android with NVIDIA Nsight Tegra Visual Studio Edition
+.sp
+A toolchain file to configure one of the \fIVisual Studio Generators\fP
+to build using NVIDIA Nsight Tegra targeting Android may look like this:
 .INDENT 0.0
 .INDENT 3.5
 .sp
@@ -314,10 +621,244 @@ set(CMAKE_SYSTEM_NAME Android)
 The \fBCMAKE_GENERATOR_TOOLSET\fP may be set to select
 the Nsight Tegra "Toolchain Version" value.
 .sp
-See the \fBANDROID_API_MIN\fP, \fBANDROID_API\fP
-and \fBANDROID_GUI\fP target properties to configure
-targets within the project.
+See also target properties:
+.INDENT 0.0
+.IP \(bu 2
+\fBANDROID_ANT_ADDITIONAL_OPTIONS\fP
+.IP \(bu 2
+\fBANDROID_API_MIN\fP
+.IP \(bu 2
+\fBANDROID_API\fP
+.IP \(bu 2
+\fBANDROID_ARCH\fP
+.IP \(bu 2
+\fBANDROID_ASSETS_DIRECTORIES\fP
+.IP \(bu 2
+\fBANDROID_GUI\fP
+.IP \(bu 2
+\fBANDROID_JAR_DEPENDENCIES\fP
+.IP \(bu 2
+\fBANDROID_JAR_DIRECTORIES\fP
+.IP \(bu 2
+\fBANDROID_JAVA_SOURCE_DIR\fP
+.IP \(bu 2
+\fBANDROID_NATIVE_LIB_DEPENDENCIES\fP
+.IP \(bu 2
+\fBANDROID_NATIVE_LIB_DIRECTORIES\fP
+.IP \(bu 2
+\fBANDROID_PROCESS_MAX\fP
+.IP \(bu 2
+\fBANDROID_PROGUARD_CONFIG_PATH\fP
+.IP \(bu 2
+\fBANDROID_PROGUARD\fP
+.IP \(bu 2
+\fBANDROID_SECURE_PROPS_PATH\fP
+.IP \(bu 2
+\fBANDROID_SKIP_ANT_STEP\fP
+.IP \(bu 2
+\fBANDROID_STL_TYPE\fP
+.UNINDENT
+.SS Cross Compiling for iOS, tvOS, or watchOS
+.sp
+For cross\-compiling to iOS, tvOS, or watchOS, the \fBXcode\fP
+generator is recommended.  The \fBUnix Makefiles\fP or
+\fBNinja\fP generators can also be used, but they require the
+project to handle more areas like target CPU selection and code signing.
+.sp
+Any of the three systems can be targeted by setting the
+\fBCMAKE_SYSTEM_NAME\fP variable to a value from the table below.
+By default, the latest Device SDK is chosen.  As for all Apple platforms,
+a different SDK (e.g. a simulator) can be selected by setting the
+\fBCMAKE_OSX_SYSROOT\fP variable, although this should rarely be
+necessary (see \fI\%Switching Between Device and Simulator\fP below).
+A list of available SDKs can be obtained by running \fBxcodebuild \-showsdks\fP\&.
+.TS
+center;
+|l|l|l|l|.
+_
+T{
+OS
+T}	T{
+CMAKE_SYSTEM_NAME
+T}	T{
+Device SDK (default)
+T}	T{
+Simulator SDK
+T}
+_
+T{
+iOS
+T}	T{
+iOS
+T}	T{
+iphoneos
+T}	T{
+iphonesimulator
+T}
+_
+T{
+tvOS
+T}	T{
+tvOS
+T}	T{
+appletvos
+T}	T{
+appletvsimulator
+T}
+_
+T{
+watchOS
+T}	T{
+watchOS
+T}	T{
+watchos
+T}	T{
+watchsimulator
+T}
+_
+.TE
+.sp
+For example, to create a CMake configuration for iOS, the following
+command is sufficient:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+cmake .. \-GXcode \-DCMAKE_SYSTEM_NAME=iOS
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Variable \fBCMAKE_OSX_ARCHITECTURES\fP can be used to set architectures
+for both device and simulator. Variable \fBCMAKE_OSX_DEPLOYMENT_TARGET\fP
+can be used to set an iOS/tvOS/watchOS deployment target.
+.sp
+Next configuration will install fat 5 architectures iOS library
+and add the \fB\-miphoneos\-version\-min=9.3\fP/\fB\-mios\-simulator\-version\-min=9.3\fP
+flags to the compiler:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ cmake \-S. \-B_builds \-GXcode \e
+    \-DCMAKE_SYSTEM_NAME=iOS \e
+    "\-DCMAKE_OSX_ARCHITECTURES=armv7;armv7s;arm64;i386;x86_64" \e
+    \-DCMAKE_OSX_DEPLOYMENT_TARGET=9.3 \e
+    \-DCMAKE_INSTALL_PREFIX=\(gapwd\(ga/_install \e
+    \-DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \e
+    \-DCMAKE_IOS_INSTALL_COMBINED=YES
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Example:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+# CMakeLists.txt
+cmake_minimum_required(VERSION 3.14)
+project(foo)
+add_library(foo foo.cpp)
+install(TARGETS foo DESTINATION lib)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Install:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ cmake \-\-build _builds \-\-config Release \-\-target install
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Check library:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ lipo \-info _install/lib/libfoo.a
+Architectures in the fat file: _install/lib/libfoo.a are: i386 armv7 armv7s x86_64 arm64
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ otool \-l _install/lib/libfoo.a | grep \-A2 LC_VERSION_MIN_IPHONEOS
+      cmd LC_VERSION_MIN_IPHONEOS
+  cmdsize 16
+  version 9.3
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS Code Signing
+.sp
+Some build artifacts for the embedded Apple platforms require mandatory
+code signing.  If the \fBXcode\fP generator is being used and
+code signing is required or desired, the development team ID can be
+specified via the \fBCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM\fP CMake variable.
+This team ID will then be included in the generated Xcode project.
+By default, CMake avoids the need for code signing during the internal
+configuration phase (i.e compiler ID and feature detection).
+.SS Switching Between Device and Simulator
+.sp
+When configuring for any of the embedded platforms, one can target either
+real devices or the simulator.  Both have their own separate SDK, but CMake
+only supports specifying a single SDK for the configuration phase.  This
+means the developer must select one or the other at configuration time.
+When using the \fBXcode\fP generator, this is less of a limitation
+because Xcode still allows you to build for either a device or a simulator,
+even though configuration was only performed for one of the two.  From
+within the Xcode IDE, builds are performed for the selected "destination"
+platform.  When building from the command line, the desired sdk can be
+specified directly by passing a \fB\-sdk\fP option to the underlying build
+tool (\fBxcodebuild\fP).  For example:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ cmake \-\-build ... \-\- \-sdk iphonesimulator
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Please note that checks made during configuration were performed against
+the configure\-time SDK and might not hold true for other SDKs.  Commands
+like \fBfind_package()\fP, \fBfind_library()\fP, etc. store and use
+details only for the configured SDK/platform, so they can be problematic
+if wanting to switch between device and simulator builds. You can follow
+the next rules to make device + simulator configuration work:
+.INDENT 0.0
+.IP \(bu 2
+Use explicit \fB\-l\fP linker flag,
+e.g. \fBtarget_link_libraries(foo PUBLIC "\-lz")\fP
+.IP \(bu 2
+Use explicit \fB\-framework\fP linker flag,
+e.g. \fBtarget_link_libraries(foo PUBLIC "\-framework CoreFoundation")\fP
+.IP \(bu 2
+Use \fBfind_package()\fP only for libraries installed with
+\fBCMAKE_IOS_INSTALL_COMBINED\fP feature
+.UNINDENT
 .SH COPYRIGHT
-2000-2015 Kitware, Inc.
+2000-2019 Kitware, Inc. and Contributors
 .\" Generated by docutils manpage writer.
 .
