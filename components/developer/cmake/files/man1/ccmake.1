@@ -1,8 +1,35 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "CCMAKE" "1" "October 14, 2015" "3.3.2" "CMake"
+.TH "CCMAKE" "1" "August 09, 2019" "3.15.2" "CMake"
 .SH NAME
 ccmake \- CMake Curses Dialog Command-Line Reference
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
 .
 .nr rst2man-indent-level 0
 .
@@ -36,46 +63,54 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .sp
 .nf
 .ft C
-ccmake [<options>] (<path\-to\-source> | <path\-to\-existing\-build>)
+ccmake [<options>] {<path\-to\-source> | <path\-to\-existing\-build>}
 .ft P
 .fi
 .UNINDENT
 .UNINDENT
 .SH DESCRIPTION
 .sp
-The "ccmake" executable is the CMake curses interface.  Project
+The \fBccmake\fP executable is the CMake curses interface.  Project
 configuration settings may be specified interactively through this
 GUI.  Brief instructions are provided at the bottom of the terminal
 when the program is running.
 .sp
 CMake is a cross\-platform build system generator.  Projects specify
 their build process with platform\-independent CMake listfiles included
-in each directory of a source tree with the name CMakeLists.txt.
+in each directory of a source tree with the name \fBCMakeLists.txt\fP\&.
 Users build a project by using CMake to generate a build system for a
 native tool on their platform.
 .SH OPTIONS
 .INDENT 0.0
 .TP
+.B \fB\-S <path\-to\-source>\fP
+Path to root directory of the CMake project to build.
+.TP
+.B \fB\-B <path\-to\-build>\fP
+Path to directory which CMake will use as the root of build directory.
+.sp
+If the directory doesn\(aqt already exist CMake will make it.
+.TP
 .B \fB\-C <initial\-cache>\fP
 Pre\-load a script to populate the cache.
 .sp
-When cmake is first run in an empty build tree, it creates a
-CMakeCache.txt file and populates it with customizable settings for
+When CMake is first run in an empty build tree, it creates a
+\fBCMakeCache.txt\fP file and populates it with customizable settings for
 the project.  This option may be used to specify a file from which
 to load cache entries before the first pass through the project\(aqs
-cmake listfiles.  The loaded entries take priority over the
+CMake listfiles.  The loaded entries take priority over the
 project\(aqs default values.  The given file should be a CMake script
-containing SET commands that use the CACHE option, not a
+containing \fBset()\fP commands that use the \fBCACHE\fP option, not a
 cache\-format file.
 .TP
 .B \fB\-D <var>:<type>=<value>, \-D <var>=<value>\fP
-Create a cmake cache entry.
+Create or update a CMake \fBCACHE\fP entry.
 .sp
-When cmake is first run in an empty build tree, it creates a
-CMakeCache.txt file and populates it with customizable settings for
+When CMake is first run in an empty build tree, it creates a
+\fBCMakeCache.txt\fP file and populates it with customizable settings for
 the project.  This option may be used to specify a setting that
 takes priority over the project\(aqs default value.  The option may be
-repeated for as many cache entries as desired.
+repeated for as many \fBCACHE\fP entries as desired.
 .sp
 If the \fB:<type>\fP portion is given it must be one of the types
 specified by the \fBset()\fP command documentation for its
@@ -89,14 +124,14 @@ This option may also be given as a single argument:
 \fB\-D<var>:<type>=<value>\fP or \fB\-D<var>=<value>\fP\&.
 .TP
 .B \fB\-U <globbing_expr>\fP
-Remove matching entries from CMake cache.
+Remove matching entries from CMake \fBCACHE\fP\&.
 .sp
 This option may be used to remove one or more variables from the
-CMakeCache.txt file, globbing expressions using * and ? are
-supported.  The option may be repeated for as many cache entries as
+\fBCMakeCache.txt\fP file, globbing expressions using \fB*\fP and \fB?\fP are
+supported.  The option may be repeated for as many \fBCACHE\fP entries as
 desired.
 .sp
-Use with care, you can make your CMakeCache.txt non\-working.
+Use with care, you can make your \fBCMakeCache.txt\fP non\-working.
 .TP
 .B \fB\-G <generator\-name>\fP
 Specify a build system generator.
@@ -105,57 +140,72 @@ CMake may support multiple native build systems on certain
 platforms.  A generator is responsible for generating a particular
 build system.  Possible generator names are specified in the
 \fBcmake\-generators(7)\fP manual.
+.sp
+If not specified, CMake checks the \fBCMAKE_GENERATOR\fP environment
+variable and otherwise falls back to a builtin default selection.
 .TP
-.B \fB\-T <toolset\-name>\fP
-Specify toolset name if supported by generator.
+.B \fB\-T <toolset\-spec>\fP
+Toolset specification for the generator, if supported.
 .sp
-Some CMake generators support a toolset name to be given to the
-native build system to choose a compiler.  This is supported only on
-specific generators:
-.INDENT 7.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-Visual Studio >= 10
-Xcode >= 3.0
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
-.sp
-See native build system documentation for allowed toolset names.
+Some CMake generators support a toolset specification to tell
+the native build system how to choose a compiler.  See the
+\fBCMAKE_GENERATOR_TOOLSET\fP variable for details.
 .TP
 .B \fB\-A <platform\-name>\fP
 Specify platform name if supported by generator.
 .sp
 Some CMake generators support a platform name to be given to the
-native build system to choose a compiler or SDK.  This is supported only on
-specific generators:
-.INDENT 7.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-Visual Studio >= 8
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
-.sp
-See native build system documentation for allowed platform names.
+native build system to choose a compiler or SDK.  See the
+\fBCMAKE_GENERATOR_PLATFORM\fP variable for details.
 .TP
 .B \fB\-Wno\-dev\fP
 Suppress developer warnings.
 .sp
 Suppress warnings that are meant for the author of the
-CMakeLists.txt files.
+\fBCMakeLists.txt\fP files. By default this will also turn off
+deprecation warnings.
 .TP
 .B \fB\-Wdev\fP
 Enable developer warnings.
 .sp
-Enable warnings that are meant for the author of the CMakeLists.txt
-files.
+Enable warnings that are meant for the author of the \fBCMakeLists.txt\fP
+files. By default this will also turn on deprecation warnings.
+.TP
+.B \fB\-Werror=dev\fP
+Make developer warnings errors.
+.sp
+Make warnings that are meant for the author of the \fBCMakeLists.txt\fP files
+errors. By default this will also turn on deprecated warnings as errors.
+.TP
+.B \fB\-Wno\-error=dev\fP
+Make developer warnings not errors.
+.sp
+Make warnings that are meant for the author of the \fBCMakeLists.txt\fP files not
+errors. By default this will also turn off deprecated warnings as errors.
+.TP
+.B \fB\-Wdeprecated\fP
+Enable deprecated functionality warnings.
+.sp
+Enable warnings for usage of deprecated functionality, that are meant
+for the author of the \fBCMakeLists.txt\fP files.
+.TP
+.B \fB\-Wno\-deprecated\fP
+Suppress deprecated functionality warnings.
+.sp
+Suppress warnings for usage of deprecated functionality, that are meant
+for the author of the \fBCMakeLists.txt\fP files.
+.TP
+.B \fB\-Werror=deprecated\fP
+Make deprecated macro and function warnings errors.
+.sp
+Make warnings for usage of deprecated macros and functions, that are meant
+for the author of the \fBCMakeLists.txt\fP files, errors.
+.TP
+.B \fB\-Wno\-error=deprecated\fP
+Make deprecated macro and function warnings not errors.
+.sp
+Make warnings for usage of deprecated macros and functions, that are meant
+for the author of the \fBCMakeLists.txt\fP files, not errors.
 .UNINDENT
 .INDENT 0.0
 .TP
@@ -300,30 +350,26 @@ The following resources are available to get help using CMake:
 .INDENT 0.0
 .TP
 .B Home Page
-\fI\%http://www.cmake.org\fP
+\fI\%https://cmake.org\fP
 .sp
 The primary starting point for learning about CMake.
 .TP
-.B Frequently Asked Questions
-\fI\%http://www.cmake.org/Wiki/CMake_FAQ\fP
+.B Online Documentation and Community Resources
+\fI\%https://cmake.org/documentation\fP
 .sp
-A Wiki is provided containing answers to frequently asked questions.
-.TP
-.B Online Documentation
-\fI\%http://www.cmake.org/documentation\fP
-.sp
-Links to available documentation may be found on this web page.
+Links to available documentation and community resources may be
+found on this web page.
 .TP
 .B Mailing List
-\fI\%http://www.cmake.org/mailing\-lists\fP
+\fI\%https://cmake.org/mailing-lists\fP
 .sp
-For help and discussion about using cmake, a mailing list is
+For help and discussion about using CMake, a mailing list is
 provided at \fI\%cmake@cmake.org\fP\&.  The list is member\-post\-only but one
 may sign up on the CMake web page.  Please first read the full
-documentation at \fI\%http://www.cmake.org\fP before posting questions to
+documentation at \fI\%https://cmake.org\fP before posting questions to
 the list.
 .UNINDENT
 .SH COPYRIGHT
-2000-2015 Kitware, Inc.
+2000-2019 Kitware, Inc. and Contributors
 .\" Generated by docutils manpage writer.
 .

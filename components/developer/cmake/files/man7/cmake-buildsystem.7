@@ -1,8 +1,35 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "CMAKE-BUILDSYSTEM" "7" "October 14, 2015" "3.3.2" "CMake"
+.TH "CMAKE-BUILDSYSTEM" "7" "August 09, 2019" "3.15.2" "CMake"
 .SH NAME
 cmake-buildsystem \- CMake Buildsystem Reference
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
 .
 .nr rst2man-indent-level 0
 .
@@ -41,7 +68,7 @@ and the rules for regeneration in response to change.
 .sp
 Executables and libraries are defined using the \fBadd_executable()\fP
 and \fBadd_library()\fP commands.  The resulting binary files have
-appropriate prefixes, suffixes and extensions for the platform targeted.
+appropriate \fBPREFIX\fP, \fBSUFFIX\fP and extensions for the platform targeted.
 Dependencies between binary targets are expressed using the
 \fBtarget_link_libraries()\fP command:
 .INDENT 0.0
@@ -57,7 +84,7 @@ target_link_libraries(zipapp archive)
 .UNINDENT
 .UNINDENT
 .sp
-\fBarchive\fP is defined as a static library \-\- an archive containing objects
+\fBarchive\fP is defined as a \fBSTATIC\fP library \-\- an archive containing objects
 compiled from \fBarchive.cpp\fP, \fBzip.cpp\fP, and \fBlzma.cpp\fP\&.  \fBzipapp\fP
 is defined as an executable formed by compiling and linking \fBzipapp.cpp\fP\&.
 When linking the \fBzipapp\fP executable, the \fBarchive\fP static library is
@@ -83,7 +110,7 @@ the executable is built before attempting to run the command.
 .SS Binary Library Types
 .SS Normal Libraries
 .sp
-By default, the \fBadd_library()\fP command defines a static library,
+By default, the \fBadd_library()\fP command defines a \fBSTATIC\fP library,
 unless a type is specified.  A type may be specified when using the command:
 .INDENT 0.0
 .INDENT 3.5
@@ -116,6 +143,10 @@ regardless of the library type.  The \fBMODULE\fP library type is
 dissimilar in that it is generally not linked to \-\- it is not used in
 the right\-hand\-side of the \fBtarget_link_libraries()\fP command.
 It is a type which is loaded as a plugin using runtime techniques.
+If the library does not export any unmanaged symbols (e.g. Windows
+resource DLL, C++/CLI DLL), it is required that the library not be a
+\fBSHARED\fP library because CMake expects \fBSHARED\fP libraries to export
+at least one symbol.
 .INDENT 0.0
 .INDENT 3.5
 .sp
@@ -126,11 +157,32 @@ add_library(archive MODULE 7z.cpp)
 .fi
 .UNINDENT
 .UNINDENT
+.SS Apple Frameworks
+.sp
+A \fBSHARED\fP library may be marked with the \fBFRAMEWORK\fP
+target property to create an macOS or iOS Framework Bundle.
+The \fBMACOSX_FRAMEWORK_IDENTIFIER\fP sets \fBCFBundleIdentifier\fP key
+and it uniquely identifies the bundle.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+add_library(MyFramework SHARED MyFramework.cpp)
+set_target_properties(MyFramework PROPERTIES
+  FRAMEWORK TRUE
+  FRAMEWORK_VERSION A
+  MACOSX_FRAMEWORK_IDENTIFIER org.cmake.MyFramework
+)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
 .SS Object Libraries
 .sp
-The \fBOBJECT\fP library type is also not linked to. It defines a non\-archival
-collection of object files resulting from compiling the given source files.
-The object files collection can be used as source inputs to other targets:
+The \fBOBJECT\fP library type defines a non\-archival collection of object files
+resulting from compiling the given source files.  The object files collection
+may be used as source inputs to other targets:
 .INDENT 0.0
 .INDENT 3.5
 .sp
@@ -146,16 +198,37 @@ add_executable(test_exe $<TARGET_OBJECTS:archive> test.cpp)
 .UNINDENT
 .UNINDENT
 .sp
-\fBOBJECT\fP libraries may only be used locally as sources in a buildsystem \-\-
-they may not be installed, exported, or used in the right hand side of
-\fBtarget_link_libraries()\fP\&.  They also may not be used as the \fBTARGET\fP
-in a use of the \fBadd_custom_command(TARGET)\fP command signature.
+The link (or archiving) step of those other targets will use the object
+files collection in addition to those from their own sources.
 .sp
-Although object libraries may not be named directly in calls to
-the \fBtarget_link_libraries()\fP command, they can be "linked"
-indirectly by using an \fI\%Interface Library\fP
-whose \fBINTERFACE_SOURCES\fP target property is set to name
-\fB$<TARGET_OBJECTS:objlib>\fP\&.
+Alternatively, object libraries may be linked into other targets:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+add_library(archive OBJECT archive.cpp zip.cpp lzma.cpp)
+
+add_library(archiveExtras STATIC extras.cpp)
+target_link_libraries(archiveExtras PUBLIC archive)
+
+add_executable(test_exe test.cpp)
+target_link_libraries(test_exe archive)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The link (or archiving) step of those other targets will use the object
+files from \fBOBJECT\fP libraries that are \fIdirectly\fP linked.  Additionally,
+usage requirements of the \fBOBJECT\fP libraries will be honored when compiling
+sources in those other targets.  Furthermore, those usage requirements
+will propagate transitively to dependents of those other targets.
+.sp
+Object libraries may not be used as the \fBTARGET\fP in a use of the
+\fBadd_custom_command(TARGET)\fP command signature.  However,
+the list of objects can be used by \fBadd_custom_command(OUTPUT)\fP
+or \fBfile(GENERATE)\fP by using \fB$<TARGET_OBJECTS:objlib>\fP\&.
 .SH BUILD SPECIFICATION AND USAGE REQUIREMENTS
 .sp
 The \fBtarget_include_directories()\fP, \fBtarget_compile_definitions()\fP
@@ -169,7 +242,7 @@ and \fBINTERFACE_COMPILE_OPTIONS\fP target properties.
 Each of the commands has a \fBPRIVATE\fP, \fBPUBLIC\fP and \fBINTERFACE\fP mode.  The
 \fBPRIVATE\fP mode populates only the non\-\fBINTERFACE_\fP variant of the target
 property and the \fBINTERFACE\fP mode populates only the \fBINTERFACE_\fP variants.
-The \fBPUBLIC\fP mode populates both variants of the repective target property.
+The \fBPUBLIC\fP mode populates both variants of the respective target property.
 Each command may be invoked with multiple uses of each keyword:
 .INDENT 0.0
 .INDENT 3.5
@@ -191,7 +264,7 @@ use particular \fBCOMPILE_OPTIONS\fP or
 the properties must be \fBrequirements\fP, not merely recommendations or
 convenience.
 .sp
-See the Creating Relocatable Packages section of the
+See the \fICreating Relocatable Packages\fP section of the
 \fBcmake\-packages(7)\fP manual for discussion of additional care
 that must be taken when specifying usage requirements while creating
 packages for redistribution.
@@ -290,7 +363,7 @@ target_link_libraries(consumer archiveExtras)
 .sp
 Because \fBarchive\fP is a \fBPUBLIC\fP dependency of \fBarchiveExtras\fP, the
 usage requirements of it are propagated to \fBconsumer\fP too.  Because
-\fBserialization\fP is a \fBPRIVATE\fP dependency of \fBarchive\fP, the usage
+\fBserialization\fP is a \fBPRIVATE\fP dependency of \fBarchiveExtras\fP, the usage
 requirements of it are not propagated to \fBconsumer\fP\&.
 .sp
 Generally, a dependency should be specified in a use of
@@ -344,7 +417,7 @@ target_include_directories(myExe
 .sp
 Note that care must be taken when specifying usage requirements for targets
 which will be exported for installation using the \fBinstall(EXPORT)\fP
-command.  See Creating Packages for more.
+command.  See \fICreating Packages\fP for more.
 .SS Compatible Interface Properties
 .sp
 Some target properties are required to be compatible between a target and
@@ -400,8 +473,8 @@ target_link_libraries(exe2 lib1 lib2)
 .UNINDENT
 .sp
 The \fBlib1\fP requirement \fBINTERFACE_POSITION_INDEPENDENT_CODE\fP is not
-"compatible" with the \fBPOSITION_INDEPENDENT_CODE\fP property of the \fBexe1\fP
-target.  The library requires that consumers are built as
+"compatible" with the \fBPOSITION_INDEPENDENT_CODE\fP property of
+the \fBexe1\fP target.  The library requires that consumers are built as
 position\-independent\-code, while the executable specifies to not built as
 position\-independent\-code, so a diagnostic is issued.
 .sp
@@ -491,7 +564,7 @@ set_property(TARGET lib1Version2 APPEND PROPERTY
 )
 
 add_library(lib1Version3 SHARED lib1_v3.cpp)
-set_property(TARGET lib1Version2 PROPERTY INTERFACE_CONTAINER_SIZE_REQUIRED 1000)
+set_property(TARGET lib1Version3 PROPERTY INTERFACE_CONTAINER_SIZE_REQUIRED 1000)
 
 add_executable(exe1 exe1.cpp)
 # CONTAINER_SIZE_REQUIRED will be "200"
@@ -620,10 +693,10 @@ endif()
 .UNINDENT
 .UNINDENT
 .sp
-may appear to work for \fBMakefile\fP based and \fBNinja\fP generators, but is not
-portable to IDE generators.  Additionally, the \fBIMPORTED\fP
-configuration\-mappings are not accounted for with code like this, so it should
-be avoided.
+may appear to work for \fIMakefile Generators\fP and \fBNinja\fP
+generators, but is not portable to IDE generators.  Additionally,
+the \fBIMPORTED\fP configuration\-mappings are not accounted for
+with code like this, so it should be avoided.
 .sp
 The unary \fBTARGET_PROPERTY\fP generator expression and the \fBTARGET_POLICY\fP
 generator expression are evaluated with the consuming target context.  This
@@ -807,9 +880,10 @@ property are treated as \fBSYSTEM\fP include directories, as if they were
 listed in the \fBINTERFACE_SYSTEM_INCLUDE_DIRECTORIES\fP of the
 dependency. This can result in omission of compiler warnings for headers
 found in those directories.  This behavior for \fI\%Imported Targets\fP may
-be controlled with the \fBNO_SYSTEM_FROM_IMPORTED\fP target property.
+be controlled by setting the \fBNO_SYSTEM_FROM_IMPORTED\fP target
+property on the \fIconsumers\fP of imported targets.
 .sp
-If a binary target is linked transitively to a Mac OX framework, the
+If a binary target is linked transitively to a macOS \fBFRAMEWORK\fP, the
 \fBHeaders\fP directory of the framework is also treated as a usage requirement.
 This has the same effect as passing the framework directory as an include
 directory.
@@ -889,7 +963,7 @@ library target created by the \fBadd_library()\fP command
 with the \fBMODULE\fP option.
 .IP \(bu 2
 On non\-DLL platforms: the shared library file (e.g. \fB\&.so\fP or \fB\&.dylib\fP)
-of a shared shared library target created by the \fBadd_library()\fP
+of a shared library target created by the \fBadd_library()\fP
 command with the \fBSHARED\fP option.
 .UNINDENT
 .sp
@@ -907,7 +981,8 @@ with the \fBSTATIC\fP option.
 .IP \(bu 2
 On DLL platforms: the import library file (e.g. \fB\&.lib\fP) of a shared
 library target created by the \fBadd_library()\fP command
-with the \fBSHARED\fP option.
+with the \fBSHARED\fP option.  This file is only guaranteed to exist if
+the library exports at least one unmanaged symbol.
 .IP \(bu 2
 On DLL platforms: the import library file (e.g. \fB\&.lib\fP) of an
 executable target created by the \fBadd_executable()\fP command
@@ -922,7 +997,7 @@ and names in the build tree.
 The \fBtarget_include_directories()\fP,
 \fBtarget_compile_definitions()\fP and
 \fBtarget_compile_options()\fP commands have an effect on only one
-target at a time.  The commands \fBadd_definitions()\fP,
+target at a time.  The commands \fBadd_compile_definitions()\fP,
 \fBadd_compile_options()\fP and \fBinclude_directories()\fP have
 a similar function, but operate at directory scope instead of target
 scope for convenience.
@@ -935,12 +1010,11 @@ targets are not represented in the generated buildsystem.
 .sp
 An \fBIMPORTED\fP target represents a pre\-existing dependency.  Usually
 such targets are defined by an upstream package and should be treated as
-immutable.  It is not possible to use an \fBIMPORTED\fP target in the
-left\-hand\-side of the \fBtarget_compile_definitions()\fP,
-\fBtarget_include_directories()\fP, \fBtarget_compile_options()\fP or
-\fBtarget_link_libraries()\fP commands, as that would be an attempt to
-modify it.  \fBIMPORTED\fP targets are designed to be used only in the
-right\-hand\-side of those commands.
+immutable. After declaring an \fBIMPORTED\fP target one can adjust its
+target properties by using the customary commands such as
+\fBtarget_compile_definitions()\fP, \fBtarget_include_directories()\fP,
+\fBtarget_compile_options()\fP or \fBtarget_link_libraries()\fP just like
+with any other regular target.
 .sp
 \fBIMPORTED\fP targets may have the same usage requirement properties
 populated as binary targets, such as
@@ -967,7 +1041,7 @@ See the \fBcmake\-packages(7)\fP manual for more on creating packages
 with \fBIMPORTED\fP targets.
 .SS Alias Targets
 .sp
-An \fBALIAS\fP target is a name which may be used interchangably with
+An \fBALIAS\fP target is a name which may be used interchangeably with
 a binary target name in read\-only contexts.  A primary use\-case for \fBALIAS\fP
 targets is for example or unit test executables accompanying a library, which
 may be part of the same buildsystem or built separately based on user
@@ -1099,9 +1173,15 @@ Built\-in properties matching \fBCOMPATIBLE_INTERFACE_*\fP
 .IP \(bu 2
 \fBEXPORT_NAME\fP
 .IP \(bu 2
+\fBEXPORT_PROPERTIES\fP
+.IP \(bu 2
 \fBIMPORTED\fP
 .IP \(bu 2
+\fBMANUALLY_ADDED_DEPENDENCIES\fP
+.IP \(bu 2
 \fBNAME\fP
+.IP \(bu 2
+Properties matching \fBIMPORTED_LIBNAME_*\fP
 .IP \(bu 2
 Properties matching \fBMAP_IMPORTED_CONFIG_*\fP
 .UNINDENT
@@ -1134,6 +1214,6 @@ install(FILES
 .UNINDENT
 .UNINDENT
 .SH COPYRIGHT
-2000-2015 Kitware, Inc.
+2000-2019 Kitware, Inc. and Contributors
 .\" Generated by docutils manpage writer.
 .

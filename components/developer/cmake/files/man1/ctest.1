@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "CTEST" "1" "October 14, 2015" "3.3.2" "CMake"
+.TH "CTEST" "1" "August 09, 2019" "3.15.2" "CMake"
 .SH NAME
 ctest \- CTest Command-Line Reference
 .
@@ -30,6 +30,86 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .in \\n[rst2man-indent\\n[rst2man-indent-level]]u
 ..
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SS Contents
+.INDENT 0.0
+.IP \(bu 2
+\fI\%ctest(1)\fP
+.INDENT 2.0
+.IP \(bu 2
+\fI\%Synopsis\fP
+.IP \(bu 2
+\fI\%Description\fP
+.IP \(bu 2
+\fI\%Options\fP
+.IP \(bu 2
+\fI\%Label and Subproject Summary\fP
+.IP \(bu 2
+\fI\%Build and Test Mode\fP
+.IP \(bu 2
+\fI\%Dashboard Client\fP
+.INDENT 2.0
+.IP \(bu 2
+\fI\%Dashboard Client Steps\fP
+.IP \(bu 2
+\fI\%Dashboard Client Modes\fP
+.IP \(bu 2
+\fI\%Dashboard Client via CTest Command-Line\fP
+.IP \(bu 2
+\fI\%Dashboard Client via CTest Script\fP
+.UNINDENT
+.IP \(bu 2
+\fI\%Dashboard Client Configuration\fP
+.INDENT 2.0
+.IP \(bu 2
+\fI\%CTest Start Step\fP
+.IP \(bu 2
+\fI\%CTest Update Step\fP
+.IP \(bu 2
+\fI\%CTest Configure Step\fP
+.IP \(bu 2
+\fI\%CTest Build Step\fP
+.IP \(bu 2
+\fI\%CTest Test Step\fP
+.IP \(bu 2
+\fI\%CTest Coverage Step\fP
+.IP \(bu 2
+\fI\%CTest MemCheck Step\fP
+.IP \(bu 2
+\fI\%CTest Submit Step\fP
+.UNINDENT
+.IP \(bu 2
+\fI\%Show as JSON Object Model\fP
+.IP \(bu 2
+\fI\%See Also\fP
+.UNINDENT
+.UNINDENT
 .SH SYNOPSIS
 .INDENT 0.0
 .INDENT 3.5
@@ -37,16 +117,21 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .nf
 .ft C
 ctest [<options>]
+ctest \-\-build\-and\-test <path\-to\-source> <path\-to\-build>
+      \-\-build\-generator <generator> [<options>...]
+      [\-\-build\-options <opts>...] [\-\-test\-command <command> [<args>...]]
+ctest {\-D <dashboard> | \-M <model> \-T <action> | \-S <script> | \-SP <script>}
+      [\-\- <dashboard\-options>...]
 .ft P
 .fi
 .UNINDENT
 .UNINDENT
 .SH DESCRIPTION
 .sp
-The "ctest" executable is the CMake test driver program.
+The \fBctest\fP executable is the CMake test driver program.
 CMake\-generated build trees created for projects that use the
-ENABLE_TESTING and ADD_TEST commands have testing support.  This
-program will run the tests and report results.
+\fBenable_testing()\fP and \fBadd_test()\fP commands have testing support.
+This program will run the tests and report results.
 .SH OPTIONS
 .INDENT 0.0
 .TP
@@ -55,8 +140,21 @@ Choose configuration to test.
 .sp
 Some CMake\-generated build trees can have multiple build
 configurations in the same tree.  This option can be used to specify
-which one should be tested.  Example configurations are "Debug" and
-"Release".
+which one should be tested.  Example configurations are \fBDebug\fP and
+\fBRelease\fP\&.
+.TP
+.B \fB\-\-progress\fP
+Enable short progress output from tests.
+.sp
+When the output of \fBctest\fP is being sent directly to a terminal, the
+progress through the set of tests is reported by updating the same line
+rather than printing start and end messages for each test on new lines.
+This can significantly reduce the verbosity of the test output.
+Test completion messages are still output on their own line for failed
+tests and the final test summary will also still be logged.
+.sp
+This option can also be enabled by setting the environment variable
+\fBCTEST_PROGRESS_OUTPUT\fP\&.
 .TP
 .B \fB\-V,\-\-verbose\fP
 Enable verbose output from tests.
@@ -78,151 +176,193 @@ useful for debugging dashboard problems.
 .TP
 .B \fB\-\-output\-on\-failure\fP
 Output anything outputted by the test program if the test should fail.
-This option can also be enabled by setting the environment variable
-\fBCTEST_OUTPUT_ON_FAILURE\fP\&.
+This option can also be enabled by setting the
+\fBCTEST_OUTPUT_ON_FAILURE\fP environment variable
 .TP
 .B \fB\-F\fP
 Enable failover.
 .sp
-This option allows ctest to resume a test set execution that was
-previously interrupted.  If no interruption occurred, the \-F option
+This option allows CTest to resume a test set execution that was
+previously interrupted.  If no interruption occurred, the \fB\-F\fP option
 will have no effect.
 .TP
 .B \fB\-j <jobs>, \-\-parallel <jobs>\fP
 Run the tests in parallel using the given number of jobs.
 .sp
-This option tells ctest to run the tests in parallel using given
-number of jobs.  This option can also be set by setting the
-environment variable \fBCTEST_PARALLEL_LEVEL\fP\&.
+This option tells CTest to run the tests in parallel using given
+number of jobs. This option can also be set by setting the
+\fBCTEST_PARALLEL_LEVEL\fP environment variable.
+.sp
+This option can be used with the \fBPROCESSORS\fP test property.
+.sp
+See \fI\%Label and Subproject Summary\fP\&.
+.TP
+.B \fB\-\-test\-load <level>\fP
+While running tests in parallel (e.g. with \fB\-j\fP), try not to start
+tests when they may cause the CPU load to pass above a given threshold.
+.sp
+When \fBctest\fP is run as a \fI\%Dashboard Client\fP this sets the
+\fBTestLoad\fP option of the \fI\%CTest Test Step\fP\&.
 .TP
 .B \fB\-Q,\-\-quiet\fP
-Make ctest quiet.
+Make CTest quiet.
 .sp
 This option will suppress all the output.  The output log file will
-still be generated if the \-\-output\-log is specified.  Options such
-as \-\-verbose, \-\-extra\-verbose, and \-\-debug are ignored if \-\-quiet is
-specified.
+still be generated if the \fB\-\-output\-log\fP is specified.  Options such
+as \fB\-\-verbose\fP, \fB\-\-extra\-verbose\fP, and \fB\-\-debug\fP are ignored
+if \fB\-\-quiet\fP is specified.
 .TP
 .B \fB\-O <file>, \-\-output\-log <file>\fP
-Output to log file
+Output to log file.
 .sp
-This option tells ctest to write all its output to a log file.
+This option tells CTest to write all its output to a \fB<file>\fP log file.
 .TP
-.B \fB\-N,\-\-show\-only\fP
+.B \fB\-N,\-\-show\-only[=<format>]\fP
 Disable actual execution of tests.
 .sp
-This option tells ctest to list the tests that would be run but not
-actually run them.  Useful in conjunction with the \-R and \-E
+This option tells CTest to list the tests that would be run but not
+actually run them.  Useful in conjunction with the \fB\-R\fP and \fB\-E\fP
 options.
+.sp
+\fB<format>\fP can be one of the following values.
+.INDENT 7.0
+.INDENT 3.5
+.INDENT 0.0
+.TP
+.B \fBhuman\fP
+Human\-friendly output.  This is not guaranteed to be stable.
+This is the default.
+.TP
+.B \fBjson\-v1\fP
+Dump the test information in JSON format.
+See \fI\%Show as JSON Object Model\fP\&.
+.UNINDENT
+.UNINDENT
+.UNINDENT
 .TP
 .B \fB\-L <regex>, \-\-label\-regex <regex>\fP
 Run tests with labels matching regular expression.
 .sp
-This option tells ctest to run only the tests whose labels match the
+This option tells CTest to run only the tests whose labels match the
 given regular expression.
 .TP
 .B \fB\-R <regex>, \-\-tests\-regex <regex>\fP
 Run tests matching regular expression.
 .sp
-This option tells ctest to run only the tests whose names match the
+This option tells CTest to run only the tests whose names match the
 given regular expression.
 .TP
 .B \fB\-E <regex>, \-\-exclude\-regex <regex>\fP
 Exclude tests matching regular expression.
 .sp
-This option tells ctest to NOT run the tests whose names match the
+This option tells CTest to NOT run the tests whose names match the
 given regular expression.
 .TP
 .B \fB\-LE <regex>, \-\-label\-exclude <regex>\fP
 Exclude tests with labels matching regular expression.
 .sp
-This option tells ctest to NOT run the tests whose labels match the
+This option tells CTest to NOT run the tests whose labels match the
 given regular expression.
 .TP
-.B \fB\-D <dashboard>, \-\-dashboard <dashboard>\fP
-Execute dashboard test
+.B \fB\-FA <regex>, \-\-fixture\-exclude\-any <regex>\fP
+Exclude fixtures matching \fB<regex>\fP from automatically adding any tests to
+the test set.
 .sp
-This option tells ctest to act as a CDash client and perform a
-dashboard test.  All tests are <Mode><Test>, where Mode can be
-Experimental, Nightly, and Continuous, and Test can be Start,
-Update, Configure, Build, Test, Coverage, and Submit.
+If a test in the set of tests to be executed requires a particular fixture,
+that fixture\(aqs setup and cleanup tests would normally be added to the test set
+automatically. This option prevents adding setup or cleanup tests for fixtures
+matching the \fB<regex>\fP\&. Note that all other fixture behavior is retained,
+including test dependencies and skipping tests that have fixture setup tests
+that fail.
+.TP
+.B \fB\-FS <regex>, \-\-fixture\-exclude\-setup <regex>\fP
+Same as \fB\-FA\fP except only matching setup tests are excluded.
+.TP
+.B \fB\-FC <regex>, \-\-fixture\-exclude\-cleanup <regex>\fP
+Same as \fB\-FA\fP except only matching cleanup tests are excluded.
+.TP
+.B \fB\-D <dashboard>, \-\-dashboard <dashboard>\fP
+Execute dashboard test.
+.sp
+This option tells CTest to act as a CDash client and perform a
+dashboard test.  All tests are \fB<Mode><Test>\fP, where \fB<Mode>\fP can be
+\fBExperimental\fP, \fBNightly\fP, and \fBContinuous\fP, and \fB<Test>\fP can be
+\fBStart\fP, \fBUpdate\fP, \fBConfigure\fP, \fBBuild\fP, \fBTest\fP,
+\fBCoverage\fP, and \fBSubmit\fP\&.
+.sp
+See \fI\%Dashboard Client\fP\&.
 .TP
 .B \fB\-D <var>:<type>=<value>\fP
-Define a variable for script mode
+Define a variable for script mode.
 .sp
 Pass in variable values on the command line.  Use in conjunction
-with \-S to pass variable values to a dashboard script.  Parsing \-D
+with \fB\-S\fP to pass variable values to a dashboard script.  Parsing \fB\-D\fP
 arguments as variable values is only attempted if the value
-following \-D does not match any of the known dashboard types.
+following \fB\-D\fP does not match any of the known dashboard types.
 .TP
 .B \fB\-M <model>, \-\-test\-model <model>\fP
-Sets the model for a dashboard
+Sets the model for a dashboard.
 .sp
-This option tells ctest to act as a CDash client where the TestModel
-can be Experimental, Nightly, and Continuous.  Combining \-M and \-T
-is similar to \-D
+This option tells CTest to act as a CDash client where the \fB<model>\fP
+can be \fBExperimental\fP, \fBNightly\fP, and \fBContinuous\fP\&.
+Combining \fB\-M\fP and \fB\-T\fP is similar to \fB\-D\fP\&.
+.sp
+See \fI\%Dashboard Client\fP\&.
 .TP
 .B \fB\-T <action>, \-\-test\-action <action>\fP
-Sets the dashboard action to perform
+Sets the dashboard action to perform.
 .sp
-This option tells ctest to act as a CDash client and perform some
-action such as start, build, test etc.  Combining \-M and \-T is
-similar to \-D
-.TP
-.B \fB\-\-track <track>\fP
-Specify the track to submit dashboard to
+This option tells CTest to act as a CDash client and perform some
+action such as \fBstart\fP, \fBbuild\fP, \fBtest\fP etc. See
+\fI\%Dashboard Client Steps\fP for the full list of actions.
+Combining \fB\-M\fP and \fB\-T\fP is similar to \fB\-D\fP\&.
 .sp
-Submit dashboard to specified track instead of default one.  By
-default, the dashboard is submitted to Nightly, Experimental, or
-Continuous track, but by specifying this option, the track can be
-arbitrary.
+See \fI\%Dashboard Client\fP\&.
 .TP
 .B \fB\-S <script>, \-\-script <script>\fP
-Execute a dashboard for a configuration
+Execute a dashboard for a configuration.
 .sp
-This option tells ctest to load in a configuration script which sets
+This option tells CTest to load in a configuration script which sets
 a number of parameters such as the binary and source directories.
-Then ctest will do what is required to create and run a dashboard.
-This option basically sets up a dashboard and then runs ctest \-D
+Then CTest will do what is required to create and run a dashboard.
+This option basically sets up a dashboard and then runs \fBctest \-D\fP
 with the appropriate options.
+.sp
+See \fI\%Dashboard Client\fP\&.
 .TP
 .B \fB\-SP <script>, \-\-script\-new\-process <script>\fP
-Execute a dashboard for a configuration
+Execute a dashboard for a configuration.
 .sp
-This option does the same operations as \-S but it will do them in a
+This option does the same operations as \fB\-S\fP but it will do them in a
 separate process.  This is primarily useful in cases where the
 script may modify the environment and you do not want the modified
-environment to impact other \-S scripts.
-.TP
-.B \fB\-A <file>, \-\-add\-notes <file>\fP
-Add a notes file with submission
+environment to impact other \fB\-S\fP scripts.
 .sp
-This option tells ctest to include a notes file when submitting
-dashboard.
+See \fI\%Dashboard Client\fP\&.
 .TP
 .B \fB\-I [Start,End,Stride,test#,test#|Test file], \-\-tests\-information\fP
 Run a specific number of tests by number.
 .sp
-This option causes ctest to run tests starting at number Start,
-ending at number End, and incrementing by Stride.  Any additional
-numbers after Stride are considered individual test numbers.  Start,
-End,or stride can be empty.  Optionally a file can be given that
+This option causes CTest to run tests starting at number \fBStart\fP,
+ending at number \fBEnd\fP, and incrementing by \fBStride\fP\&.  Any additional
+numbers after \fBStride\fP are considered individual test numbers.  \fBStart\fP,
+\fBEnd\fP, or \fBStride\fP can be empty.  Optionally a file can be given that
 contains the same syntax as the command line.
 .TP
 .B \fB\-U, \-\-union\fP
-Take the Union of \-I and \-R
+Take the Union of \fB\-I\fP and \fB\-R\fP\&.
 .sp
-When both \-R and \-I are specified by default the intersection of
-tests are run.  By specifying \-U the union of tests is run instead.
+When both \fB\-R\fP and \fB\-I\fP are specified by default the intersection of
+tests are run.  By specifying \fB\-U\fP the union of tests is run instead.
 .TP
 .B \fB\-\-rerun\-failed\fP
-Run only the tests that failed previously
+Run only the tests that failed previously.
 .sp
-This option tells ctest to perform only the tests that failed during
-its previous run.  When this option is specified, ctest ignores all
-other options intended to modify the list of tests to run (\-L, \-R,
-\-E, \-LE, \-I, etc).  In the event that CTest runs and no tests fail,
-subsequent calls to ctest with the \-\-rerun\-failed option will run
+This option tells CTest to perform only the tests that failed during
+its previous run.  When this option is specified, CTest ignores all
+other options intended to modify the list of tests to run (\fB\-L\fP, \fB\-R\fP,
+\fB\-E\fP, \fB\-LE\fP, \fB\-I\fP, etc).  In the event that CTest runs and no tests
+fail, subsequent calls to CTest with the \fB\-\-rerun\-failed\fP option will run
 the set of tests that most recently failed (if any).
 .TP
 .B \fB\-\-repeat\-until\-fail <n>\fP
@@ -231,134 +371,66 @@ Require each test to run \fB<n>\fP times without failing in order to pass.
 This is useful in finding sporadic failures in test cases.
 .TP
 .B \fB\-\-max\-width <width>\fP
-Set the max width for a test name to output
+Set the max width for a test name to output.
 .sp
 Set the maximum width for each test name to show in the output.
 This allows the user to widen the output to avoid clipping the test
 name which can be very annoying.
 .TP
 .B \fB\-\-interactive\-debug\-mode [0|1]\fP
-Set the interactive mode to 0 or 1.
+Set the interactive mode to \fB0\fP or \fB1\fP\&.
 .sp
-This option causes ctest to run tests in either an interactive mode
+This option causes CTest to run tests in either an interactive mode
 or a non\-interactive mode.  On Windows this means that in
 non\-interactive mode, all system debug pop up windows are blocked.
-In dashboard mode (Experimental, Nightly, Continuous), the default
+In dashboard mode (\fBExperimental\fP, \fBNightly\fP, \fBContinuous\fP), the default
 is non\-interactive.  When just running tests not for a dashboard the
 default is to allow popups and interactive debugging.
 .TP
 .B \fB\-\-no\-label\-summary\fP
 Disable timing summary information for labels.
 .sp
-This option tells ctest not to print summary information for each
+This option tells CTest not to print summary information for each
 label associated with the tests run.  If there are no labels on the
 tests, nothing extra is printed.
-.TP
-.B \fB\-\-build\-and\-test\fP
-Configure, build and run a test.
 .sp
-This option tells ctest to configure (i.e.  run cmake on), build,
-and or execute a test.  The configure and test steps are optional.
-The arguments to this command line are the source and binary
-directories.  By default this will run CMake on the Source/Bin
-directories specified unless \-\-build\-nocmake is specified.
-The \-\-build\-generator option \fImust\fP be provided to use
-\-\-build\-and\-test.  If \-\-test\-command is specified then that will be
-run after the build is complete.  Other options that affect this
-mode are \-\-build\-target \-\-build\-nocmake, \-\-build\-run\-dir,
-\-\-build\-two\-config, \-\-build\-exe\-dir,
-\-\-build\-project,\-\-build\-noclean, \-\-build\-options
+See \fI\%Label and Subproject Summary\fP\&.
 .TP
-.B \fB\-\-build\-target\fP
-Specify a specific target to build.
+.B \fB\-\-no\-subproject\-summary\fP
+Disable timing summary information for subprojects.
 .sp
-This option goes with the \-\-build\-and\-test option, if left out the
-all target is built.
-.TP
-.B \fB\-\-build\-nocmake\fP
-Run the build without running cmake first.
+This option tells CTest not to print summary information for each
+subproject associated with the tests run.  If there are no subprojects on the
+tests, nothing extra is printed.
 .sp
-Skip the cmake step.
-.TP
-.B \fB\-\-build\-run\-dir\fP
-Specify directory to run programs from.
+See \fI\%Label and Subproject Summary\fP\&.
+.UNINDENT
 .sp
-Directory where programs will be after it has been compiled.
+\fB\-\-build\-and\-test\fP
+See \fI\%Build and Test Mode\fP\&.
+.INDENT 0.0
 .TP
-.B \fB\-\-build\-two\-config\fP
-Run CMake twice
+.B \fB\-\-test\-output\-size\-passed <size>\fP
+Limit the output for passed tests to \fB<size>\fP bytes.
 .TP
-.B \fB\-\-build\-exe\-dir\fP
-Specify the directory for the executable.
-.TP
-.B \fB\-\-build\-generator\fP
-Specify the generator to use.
-.TP
-.B \fB\-\-build\-generator\-platform\fP
-Specify the generator\-specific platform.
-.TP
-.B \fB\-\-build\-generator\-toolset\fP
-Specify the generator\-specific toolset.
-.TP
-.B \fB\-\-build\-project\fP
-Specify the name of the project to build.
-.TP
-.B \fB\-\-build\-makeprogram\fP
-Override the make program chosen by CTest with a given one.
-.TP
-.B \fB\-\-build\-noclean\fP
-Skip the make clean step.
-.TP
-.B \fB\-\-build\-config\-sample\fP
-A sample executable to use to determine the configuration
-.sp
-A sample executable to use to determine the configuration that
-should be used.  e.g.  Debug/Release/etc
-.TP
-.B \fB\-\-build\-options\fP
-Add extra options to the build step.
-.sp
-This option must be the last option with the exception of
-\-\-test\-command
-.TP
-.B \fB\-\-test\-command\fP
-The test to run with the \-\-build\-and\-test option.
-.TP
-.B \fB\-\-test\-timeout\fP
-The time limit in seconds, internal use only.
-.TP
-.B \fB\-\-tomorrow\-tag\fP
-Nightly or experimental starts with next day tag.
-.sp
-This is useful if the build will not finish in one day.
-.TP
-.B \fB\-\-ctest\-config\fP
-The configuration file used to initialize CTest state when submitting dashboards.
-.sp
-This option tells CTest to use different initialization file instead
-of CTestConfiguration.tcl.  This way multiple initialization files
-can be used for example to submit to multiple dashboards.
+.B \fB\-\-test\-output\-size\-failed <size>\fP
+Limit the output for failed tests to \fB<size>\fP bytes.
 .TP
 .B \fB\-\-overwrite\fP
 Overwrite CTest configuration option.
 .sp
-By default ctest uses configuration options from configuration file.
+By default CTest uses configuration options from configuration file.
 This option will overwrite the configuration option.
 .TP
-.B \fB\-\-extra\-submit <file>[;<file>]\fP
-Submit extra files to the dashboard.
-.sp
-This option will submit extra files to the dashboard.
-.TP
 .B \fB\-\-force\-new\-ctest\-process\fP
-Run child CTest instances as new processes
+Run child CTest instances as new processes.
 .sp
 By default CTest will run child CTest instances within the same
 process.  If this behavior is not desired, this argument will
 enforce new processes for child CTest processes.
 .TP
 .B \fB\-\-schedule\-random\fP
-Use a random order for scheduling tests
+Use a random order for scheduling tests.
 .sp
 This option will run the tests in a random order.  It is commonly
 used to detect implicit dependencies in a test suite.
@@ -368,30 +440,18 @@ Legacy option for old Dart2 dashboard server feature.
 Do not use.
 .TP
 .B \fB\-\-timeout <seconds>\fP
-Set a global timeout on all tests.
+Set the default test timeout.
 .sp
-This option will set a global timeout on all tests that do not
-already have a timeout set on them.
+This option effectively sets a timeout on all tests that do not
+already have a timeout set on them via the \fBTIMEOUT\fP
+property.
 .TP
 .B \fB\-\-stop\-time <time>\fP
 Set a time at which all tests should stop running.
 .sp
 Set a real time of day at which all tests should timeout.  Example:
-7:00:00 \-0400.  Any time format understood by the curl date parser
+\fB7:00:00 \-0400\fP\&.  Any time format understood by the curl date parser
 is accepted.  Local time is assumed if no timezone is specified.
-.TP
-.B \fB\-\-http1.0\fP
-Submit using HTTP 1.0.
-.sp
-This option will force CTest to use HTTP 1.0 to submit files to the
-dashboard, instead of HTTP 1.1.
-.TP
-.B \fB\-\-no\-compress\-output\fP
-Do not compress test output when submitting.
-.sp
-This flag will turn off automatic compression of test output.  Use
-this to maintain compatibility with an older version of CDash which
-doesn\(aqt support compressed test output.
 .TP
 .B \fB\-\-print\-labels\fP
 Print all available test labels.
@@ -536,12 +596,199 @@ The \fBcmake\-variables(7)\fP manual is printed in a
 human\-readable text format.
 The help is printed to a named <f>ile if given.
 .UNINDENT
+.SH LABEL AND SUBPROJECT SUMMARY
+.sp
+CTest prints timing summary information for each \fBLABEL\fP and subproject
+associated with the tests run. The label time summary will not include labels
+that are mapped to subprojects.
+.sp
+When the \fBPROCESSORS\fP test property is set, CTest will display a
+weighted test timing result in label and subproject summaries. The time is
+reported with \fIsec*proc\fP instead of just \fIsec\fP\&.
+.sp
+The weighted time summary reported for each label or subproject \fBj\fP
+is computed as:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+Weighted Time Summary for Label/Subproject j =
+    sum(raw_test_time[j,i] * num_processors[j,i], i=1...num_tests[j])
+
+for labels/subprojects j=1...total
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+where:
+.INDENT 0.0
+.IP \(bu 2
+\fBraw_test_time[j,i]\fP: Wall\-clock time for the \fBi\fP test
+for the \fBj\fP label or subproject
+.IP \(bu 2
+\fBnum_processors[j,i]\fP: Value of the CTest \fBPROCESSORS\fP property
+for the \fBi\fP test for the \fBj\fP label or subproject
+.IP \(bu 2
+\fBnum_tests[j]\fP: Number of tests associated with the \fBj\fP label or subproject
+.IP \(bu 2
+\fBtotal\fP: Total number of labels or subprojects that have at least one test run
+.UNINDENT
+.sp
+Therefore, the weighted time summary for each label or subproject represents
+the amount of time that CTest gave to run the tests for each label or
+subproject and gives a good representation of the total expense of the tests
+for each label or subproject when compared to other labels or subprojects.
+.sp
+For example, if \fBSubprojectA\fP showed \fB100 sec*proc\fP and \fBSubprojectB\fP showed
+\fB10 sec*proc\fP, then CTest allocated approximately 10 times the CPU/core time
+to run the tests for \fBSubprojectA\fP than for \fBSubprojectB\fP (e.g. so if effort
+is going to be expended to reduce the cost of the test suite for the whole
+project, then reducing the cost of the test suite for \fBSubprojectA\fP would
+likely have a larger impact than effort to reduce the cost of the test suite
+for \fBSubprojectB\fP).
+.SH BUILD AND TEST MODE
+.sp
+CTest provides a command\-line signature to configure (i.e. run cmake on),
+build, and/or execute a test:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+ctest \-\-build\-and\-test <path\-to\-source> <path\-to\-build>
+      \-\-build\-generator <generator>
+      [<options>...]
+      [\-\-build\-options <opts>...]
+      [\-\-test\-command <command> [<args>...]]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The configure and test steps are optional. The arguments to this command line
+are the source and binary directories.  The \fB\-\-build\-generator\fP option \fImust\fP
+be provided to use \fB\-\-build\-and\-test\fP\&.  If \fB\-\-test\-command\fP is specified
+then that will be run after the build is complete.  Other options that affect
+this mode include:
+.INDENT 0.0
+.TP
+.B \fB\-\-build\-target\fP
+Specify a specific target to build.
+.sp
+If left out the \fBall\fP target is built.
+.TP
+.B \fB\-\-build\-nocmake\fP
+Run the build without running cmake first.
+.sp
+Skip the cmake step.
+.TP
+.B \fB\-\-build\-run\-dir\fP
+Specify directory to run programs from.
+.sp
+Directory where programs will be after it has been compiled.
+.TP
+.B \fB\-\-build\-two\-config\fP
+Run CMake twice.
+.TP
+.B \fB\-\-build\-exe\-dir\fP
+Specify the directory for the executable.
+.TP
+.B \fB\-\-build\-generator\fP
+Specify the generator to use. See the \fBcmake\-generators(7)\fP manual.
+.TP
+.B \fB\-\-build\-generator\-platform\fP
+Specify the generator\-specific platform.
+.TP
+.B \fB\-\-build\-generator\-toolset\fP
+Specify the generator\-specific toolset.
+.TP
+.B \fB\-\-build\-project\fP
+Specify the name of the project to build.
+.TP
+.B \fB\-\-build\-makeprogram\fP
+Override the make program chosen by CTest with a given one.
+.TP
+.B \fB\-\-build\-noclean\fP
+Skip the make clean step.
+.TP
+.B \fB\-\-build\-config\-sample\fP
+A sample executable to use to determine the configuration that
+should be used.  e.g.  \fBDebug\fP, \fBRelease\fP etc.
+.TP
+.B \fB\-\-build\-options\fP
+Additional options for configuring the build (i.e. for CMake, not for
+the build tool).  Note that if this is specified, the \fB\-\-build\-options\fP
+keyword and its arguments must be the last option given on the command
+line, with the possible exception of \fB\-\-test\-command\fP\&.
+.TP
+.B \fB\-\-test\-command\fP
+The command to run as the test step with the \fB\-\-build\-and\-test\fP option.
+All arguments following this keyword will be assumed to be part of the
+test command line, so it must be the last option given.
+.TP
+.B \fB\-\-test\-timeout\fP
+The time limit in seconds
+.UNINDENT
 .SH DASHBOARD CLIENT
 .sp
 CTest can operate as a client for the \fI\%CDash\fP software quality dashboard
 application.  As a dashboard client, CTest performs a sequence of steps
 to configure, build, and test software, and then submits the results to
-a \fI\%CDash\fP server.
+a \fI\%CDash\fP server. The command\-line signature used to submit to \fI\%CDash\fP is:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+ctest (\-D <dashboard> | \-M <model> \-T <action> | \-S <script> | \-SP <script>)
+      [\-\- <dashboard\-options>...]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Options for Dashboard Client include:
+.INDENT 0.0
+.TP
+.B \fB\-\-track <track>\fP
+Specify the track to submit dashboard to
+.sp
+Submit dashboard to specified track instead of default one.  By
+default, the dashboard is submitted to Nightly, Experimental, or
+Continuous track, but by specifying this option, the track can be
+arbitrary.
+.TP
+.B \fB\-A <file>, \-\-add\-notes <file>\fP
+Add a notes file with submission.
+.sp
+This option tells CTest to include a notes file when submitting
+dashboard.
+.TP
+.B \fB\-\-tomorrow\-tag\fP
+\fBNightly\fP or \fBExperimental\fP starts with next day tag.
+.sp
+This is useful if the build will not finish in one day.
+.TP
+.B \fB\-\-extra\-submit <file>[;<file>]\fP
+Submit extra files to the dashboard.
+.sp
+This option will submit extra files to the dashboard.
+.TP
+.B \fB\-\-http1.0\fP
+Submit using \fIHTTP 1.0\fP\&.
+.sp
+This option will force CTest to use \fIHTTP 1.0\fP to submit files to the
+dashboard, instead of \fIHTTP 1.1\fP\&.
+.TP
+.B \fB\-\-no\-compress\-output\fP
+Do not compress test output when submitting.
+.sp
+This flag will turn off automatic compression of test output.  Use
+this to maintain compatibility with an older version of CDash which
+doesn\(aqt support compressed test output.
+.UNINDENT
 .SS Dashboard Client Steps
 .sp
 CTest defines an ordered list of testing steps of which some or all may
@@ -674,7 +921,7 @@ ctest \-SP <script>
 .UNINDENT
 .UNINDENT
 .sp
-The \fB<script>\fP file must call CTest Commands commands
+The \fB<script>\fP file must call \fICTest Commands\fP commands
 to run testing steps explicitly as documented below.  The commands
 obtain \fI\%Dashboard Client Configuration\fP settings from their
 arguments or from variables set in the script.
@@ -765,6 +1012,20 @@ Command\-line options to the \fBCVSCommand\fP when updating the source.
 \fI\%CTest Script\fP variable: \fBCTEST_GIT_COMMAND\fP
 .IP \(bu 2
 \fBCTest\fP module variable: \fBGITCOMMAND\fP
+.UNINDENT
+.sp
+The source tree is updated by \fBgit fetch\fP followed by
+\fBgit reset \-\-hard\fP to the \fBFETCH_HEAD\fP\&.  The result is the same
+as \fBgit pull\fP except that any local modifications are overwritten.
+Use \fBGITUpdateCustom\fP to specify a different approach.
+.TP
+.B \fBGITInitSubmodules\fP
+If set, CTest will update the repository\(aqs submodules before updating.
+.INDENT 7.0
+.IP \(bu 2
+\fI\%CTest Script\fP variable: \fBCTEST_GIT_INIT_SUBMODULES\fP
+.IP \(bu 2
+\fBCTest\fP module variable: \fBCTEST_GIT_INIT_SUBMODULES\fP
 .UNINDENT
 .TP
 .B \fBGITUpdateCustom\fP
@@ -912,6 +1173,8 @@ The value may be \fBbzr\fP, \fBcvs\fP, \fBgit\fP, \fBhg\fP,
 \fBCTest\fP module variable: \fBUPDATE_TYPE\fP if set,
 else \fBCTEST_UPDATE_TYPE\fP
 .UNINDENT
+.UNINDENT
+.INDENT 0.0
 .TP
 .B \fBUpdateVersionOnly\fP
 Specify that you want the version control update command to only
@@ -920,6 +1183,21 @@ to a different version.
 .INDENT 7.0
 .IP \(bu 2
 \fI\%CTest Script\fP variable: \fBCTEST_UPDATE_VERSION_ONLY\fP
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \fBUpdateVersionOverride\fP
+Specify the current version of your source tree.
+.sp
+When this variable is set to a non\-empty string, CTest will report the value
+you specified rather than using the update command to discover the current
+version that is checked out. Use of this variable supersedes
+\fBUpdateVersionOnly\fP\&. Like \fBUpdateVersionOnly\fP, using this variable tells
+CTest not to update the source tree to a different version.
+.INDENT 7.0
+.IP \(bu 2
+\fI\%CTest Script\fP variable: \fBCTEST_UPDATE_VERSION_OVERRIDE\fP
 .UNINDENT
 .UNINDENT
 .sp
@@ -960,6 +1238,19 @@ It will be executed in the location specified by the
 \fBCTest\fP module variable: \fBCMAKE_COMMAND\fP
 followed by \fBPROJECT_SOURCE_DIR\fP
 .UNINDENT
+.TP
+.B \fBLabelsForSubprojects\fP
+Specify a semicolon\-separated list of labels that will be treated as
+subprojects. This mapping will be passed on to CDash when configure, test or
+build results are submitted.
+.INDENT 7.0
+.IP \(bu 2
+\fI\%CTest Script\fP variable: \fBCTEST_LABELS_FOR_SUBPROJECTS\fP
+.IP \(bu 2
+\fBCTest\fP module variable: \fBCTEST_LABELS_FOR_SUBPROJECTS\fP
+.UNINDENT
+.sp
+See \fI\%Label and Subproject Summary\fP\&.
 .UNINDENT
 .SS CTest Build Step
 .sp
@@ -984,6 +1275,19 @@ the value of \fBMakeCommand\fP to replace the literal string
 initialized by the \fBCMAKE_CONFIG_TYPE\fP environment variable
 .UNINDENT
 .TP
+.B \fBLabelsForSubprojects\fP
+Specify a semicolon\-separated list of labels that will be treated as
+subprojects. This mapping will be passed on to CDash when configure, test or
+build results are submitted.
+.INDENT 7.0
+.IP \(bu 2
+\fI\%CTest Script\fP variable: \fBCTEST_LABELS_FOR_SUBPROJECTS\fP
+.IP \(bu 2
+\fBCTest\fP module variable: \fBCTEST_LABELS_FOR_SUBPROJECTS\fP
+.UNINDENT
+.sp
+See \fI\%Label and Subproject Summary\fP\&.
+.TP
 .B \fBMakeCommand\fP
 Command\-line to launch the software build process.
 It will be executed in the location specified by the
@@ -998,7 +1302,7 @@ initialized by the \fBbuild_command()\fP command
 .TP
 .B \fBUseLaunchers\fP
 For build trees generated by CMake using one of the
-Makefile Generators or the \fBNinja\fP
+\fIMakefile Generators\fP or the \fBNinja\fP
 generator, specify whether the
 \fBCTEST_USE_LAUNCHERS\fP feature is enabled by the
 \fBCTestUseLaunchers\fP module (also included by the
@@ -1022,6 +1326,29 @@ Arguments to the command may specify some of the step settings.
 .sp
 Configuration settings include:
 .INDENT 0.0
+.TP
+.B \fBLabelsForSubprojects\fP
+Specify a semicolon\-separated list of labels that will be treated as
+subprojects. This mapping will be passed on to CDash when configure, test or
+build results are submitted.
+.INDENT 7.0
+.IP \(bu 2
+\fI\%CTest Script\fP variable: \fBCTEST_LABELS_FOR_SUBPROJECTS\fP
+.IP \(bu 2
+\fBCTest\fP module variable: \fBCTEST_LABELS_FOR_SUBPROJECTS\fP
+.UNINDENT
+.sp
+See \fI\%Label and Subproject Summary\fP\&.
+.TP
+.B \fBTestLoad\fP
+While running tests in parallel (e.g. with \fB\-j\fP), try not to start
+tests when they may cause the CPU load to pass above a given threshold.
+.INDENT 7.0
+.IP \(bu 2
+\fI\%CTest Script\fP variable: \fBCTEST_TEST_LOAD\fP
+.IP \(bu 2
+\fBCTest\fP module variable: \fBCTEST_TEST_LOAD\fP
+.UNINDENT
 .TP
 .B \fBTimeOut\fP
 The default timeout for each test if not specified by the
@@ -1060,6 +1387,8 @@ Specify command\-line options to the \fBCoverageCommand\fP tool.
 .IP \(bu 2
 \fBCTest\fP module variable: \fBCOVERAGE_EXTRA_FLAGS\fP
 .UNINDENT
+.sp
+These options are the first arguments passed to \fBCoverageCommand\fP\&.
 .UNINDENT
 .SS CTest MemCheck Step
 .sp
@@ -1181,7 +1510,7 @@ Describe the dashboard client platform with a short string.
 .UNINDENT
 .TP
 .B \fBCDashVersion\fP
-Specify the version of \fI\%CDash\fP on the server.
+Legacy option.  Not used.
 .INDENT 7.0
 .IP \(bu 2
 \fI\%CTest Script\fP variable: none, detected from server
@@ -1222,7 +1551,9 @@ and \fBCURLOPT_SSL_VERIFYHOST_OFF\fP\&.
 .UNINDENT
 .TP
 .B \fBDropLocation\fP
-The path on the dashboard server to send the submission.
+Legacy option.  When \fBSubmitURL\fP is not set, it is constructed from
+\fBDropMethod\fP, \fBDropSiteUser\fP, \fBDropSitePassword\fP, \fBDropSite\fP, and
+\fBDropLocation\fP\&.
 .INDENT 7.0
 .IP \(bu 2
 \fI\%CTest Script\fP variable: \fBCTEST_DROP_LOCATION\fP
@@ -1232,10 +1563,9 @@ else \fBCTEST_DROP_LOCATION\fP
 .UNINDENT
 .TP
 .B \fBDropMethod\fP
-Specify the method by which results should be submitted to the
-dashboard server.  The value may be \fBcp\fP, \fBftp\fP, \fBhttp\fP,
-\fBhttps\fP, \fBscp\fP, or \fBxmlrpc\fP (if CMake was built with
-support for it).
+Legacy option.  When \fBSubmitURL\fP is not set, it is constructed from
+\fBDropMethod\fP, \fBDropSiteUser\fP, \fBDropSitePassword\fP, \fBDropSite\fP, and
+\fBDropLocation\fP\&.
 .INDENT 7.0
 .IP \(bu 2
 \fI\%CTest Script\fP variable: \fBCTEST_DROP_METHOD\fP
@@ -1245,8 +1575,9 @@ else \fBCTEST_DROP_METHOD\fP
 .UNINDENT
 .TP
 .B \fBDropSite\fP
-The dashboard server name
-(for \fBftp\fP, \fBhttp\fP, and \fBhttps\fP, \fBscp\fP, and \fBxmlrpc\fP).
+Legacy option.  When \fBSubmitURL\fP is not set, it is constructed from
+\fBDropMethod\fP, \fBDropSiteUser\fP, \fBDropSitePassword\fP, \fBDropSite\fP, and
+\fBDropLocation\fP\&.
 .INDENT 7.0
 .IP \(bu 2
 \fI\%CTest Script\fP variable: \fBCTEST_DROP_SITE\fP
@@ -1256,8 +1587,9 @@ else \fBCTEST_DROP_SITE\fP
 .UNINDENT
 .TP
 .B \fBDropSitePassword\fP
-The dashboard server login password, if any
-(for \fBftp\fP, \fBhttp\fP, and \fBhttps\fP).
+Legacy option.  When \fBSubmitURL\fP is not set, it is constructed from
+\fBDropMethod\fP, \fBDropSiteUser\fP, \fBDropSitePassword\fP, \fBDropSite\fP, and
+\fBDropLocation\fP\&.
 .INDENT 7.0
 .IP \(bu 2
 \fI\%CTest Script\fP variable: \fBCTEST_DROP_SITE_PASSWORD\fP
@@ -1267,8 +1599,9 @@ else \fBCTEST_DROP_SITE_PASWORD\fP
 .UNINDENT
 .TP
 .B \fBDropSiteUser\fP
-The dashboard server login user name, if any
-(for \fBftp\fP, \fBhttp\fP, and \fBhttps\fP).
+Legacy option.  When \fBSubmitURL\fP is not set, it is constructed from
+\fBDropMethod\fP, \fBDropSiteUser\fP, \fBDropSitePassword\fP, \fBDropSite\fP, and
+\fBDropLocation\fP\&.
 .INDENT 7.0
 .IP \(bu 2
 \fI\%CTest Script\fP variable: \fBCTEST_DROP_SITE_USER\fP
@@ -1278,8 +1611,7 @@ else \fBCTEST_DROP_SITE_USER\fP
 .UNINDENT
 .TP
 .B \fBIsCDash\fP
-Specify whether the dashboard server is \fI\%CDash\fP or an older
-dashboard server implementation requiring \fBTriggerSite\fP\&.
+Legacy option.  Not used.
 .INDENT 7.0
 .IP \(bu 2
 \fI\%CTest Script\fP variable: \fBCTEST_DROP_SITE_CDASH\fP
@@ -1288,7 +1620,7 @@ dashboard server implementation requiring \fBTriggerSite\fP\&.
 .UNINDENT
 .TP
 .B \fBScpCommand\fP
-\fBscp\fP command\-line tool to use when \fBDropMethod\fP is \fBscp\fP\&.
+Legacy option.  Not used.
 .INDENT 7.0
 .IP \(bu 2
 \fI\%CTest Script\fP variable: \fBCTEST_SCP_COMMAND\fP
@@ -1307,9 +1639,19 @@ Describe the dashboard client host site with a short string.
 initialized by the \fBsite_name()\fP command
 .UNINDENT
 .TP
+.B \fBSubmitURL\fP
+The \fBhttp\fP or \fBhttps\fP URL of the dashboard server to send the submission
+to.
+.INDENT 7.0
+.IP \(bu 2
+\fI\%CTest Script\fP variable: \fBCTEST_SUBMIT_URL\fP
+.IP \(bu 2
+\fBCTest\fP module variable: \fBSUBMIT_URL\fP if set,
+else \fBCTEST_SUBMIT_URL\fP
+.UNINDENT
+.TP
 .B \fBTriggerSite\fP
-Legacy option to support older dashboard server implementations.
-Not used when \fBIsCDash\fP is true.
+Legacy option.  Not used.
 .INDENT 7.0
 .IP \(bu 2
 \fI\%CTest Script\fP variable: \fBCTEST_TRIGGER_SITE\fP
@@ -1318,36 +1660,107 @@ Not used when \fBIsCDash\fP is true.
 else \fBCTEST_TRIGGER_SITE\fP
 .UNINDENT
 .UNINDENT
+.SH SHOW AS JSON OBJECT MODEL
+.sp
+When the \fB\-\-show\-only=json\-v1\fP command line option is given, the test
+information is output in JSON format.  Version 1.0 of the JSON object
+model is defined as follows:
+.INDENT 0.0
+.TP
+.B \fBkind\fP
+The string "ctestInfo".
+.TP
+.B \fBversion\fP
+A JSON object specifying the version components.  Its members are
+.INDENT 7.0
+.TP
+.B \fBmajor\fP
+A non\-negative integer specifying the major version component.
+.TP
+.B \fBminor\fP
+A non\-negative integer specifying the minor version component.
+.UNINDENT
+.TP
+.B \fBbacktraceGraph\fP
+JSON object representing backtrace information with the
+following members:
+.INDENT 7.0
+.TP
+.B \fBcommands\fP
+List of command names.
+.TP
+.B \fBfiles\fP
+List of file names.
+.TP
+.B \fBnodes\fP
+List of node JSON objects with members:
+.INDENT 7.0
+.TP
+.B \fBcommand\fP
+Index into the \fBcommands\fP member of the \fBbacktraceGraph\fP\&.
+.TP
+.B \fBfile\fP
+Index into the \fBfiles\fP member of the \fBbacktraceGraph\fP\&.
+.TP
+.B \fBline\fP
+Line number in the file where the backtrace was added.
+.TP
+.B \fBparent\fP
+Index into the \fBnodes\fP member of the \fBbacktraceGraph\fP
+representing the parent in the graph.
+.UNINDENT
+.UNINDENT
+.TP
+.B \fBtests\fP
+A JSON array listing information about each test.  Each entry
+is a JSON object with members:
+.INDENT 7.0
+.TP
+.B \fBname\fP
+Test name.
+.TP
+.B \fBconfig\fP
+Configuration that the test can run on.
+Empty string means any config.
+.TP
+.B \fBcommand\fP
+List where the first element is the test command and the
+remaining elements are the command arguments.
+.TP
+.B \fBbacktrace\fP
+Index into the \fBnodes\fP member of the \fBbacktraceGraph\fP\&.
+.TP
+.B \fBproperties\fP
+Test properties.
+Can contain keys for each of the supported test properties.
+.UNINDENT
+.UNINDENT
 .SH SEE ALSO
 .sp
 The following resources are available to get help using CMake:
 .INDENT 0.0
 .TP
 .B Home Page
-\fI\%http://www.cmake.org\fP
+\fI\%https://cmake.org\fP
 .sp
 The primary starting point for learning about CMake.
 .TP
-.B Frequently Asked Questions
-\fI\%http://www.cmake.org/Wiki/CMake_FAQ\fP
+.B Online Documentation and Community Resources
+\fI\%https://cmake.org/documentation\fP
 .sp
-A Wiki is provided containing answers to frequently asked questions.
-.TP
-.B Online Documentation
-\fI\%http://www.cmake.org/documentation\fP
-.sp
-Links to available documentation may be found on this web page.
+Links to available documentation and community resources may be
+found on this web page.
 .TP
 .B Mailing List
-\fI\%http://www.cmake.org/mailing\-lists\fP
+\fI\%https://cmake.org/mailing-lists\fP
 .sp
-For help and discussion about using cmake, a mailing list is
+For help and discussion about using CMake, a mailing list is
 provided at \fI\%cmake@cmake.org\fP\&.  The list is member\-post\-only but one
 may sign up on the CMake web page.  Please first read the full
-documentation at \fI\%http://www.cmake.org\fP before posting questions to
+documentation at \fI\%https://cmake.org\fP before posting questions to
 the list.
 .UNINDENT
 .SH COPYRIGHT
-2000-2015 Kitware, Inc.
+2000-2019 Kitware, Inc. and Contributors
 .\" Generated by docutils manpage writer.
 .

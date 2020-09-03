@@ -1,8 +1,35 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "CMAKE" "1" "October 14, 2015" "3.3.2" "CMake"
+.TH "CMAKE" "1" "August 09, 2019" "3.15.2" "CMake"
 .SH NAME
 cmake \- CMake Command-Line Reference
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
 .
 .nr rst2man-indent-level 0
 .
@@ -36,49 +63,218 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .sp
 .nf
 .ft C
-cmake [<options>] (<path\-to\-source> | <path\-to\-existing\-build>)
-cmake [(\-D <var>=<value>)...] \-P <cmake\-script\-file>
-cmake \-\-build <dir> [<options>] [\-\- <build\-tool\-options>...]
-cmake \-E <command> [<options>...]
-cmake \-\-find\-package <options>...
+\fI\%Generate a Project Buildsystem\fP
+ cmake [<options>] <path\-to\-source>
+ cmake [<options>] <path\-to\-existing\-build>
+ cmake [<options>] \-S <path\-to\-source> \-B <path\-to\-build>
+
+\fI\%Build a Project\fP
+ cmake \-\-build <dir> [<options>] [\-\- <build\-tool\-options>]
+
+\fI\%Install a Project\fP
+ cmake \-\-install <dir> [<options>]
+
+\fI\%Open a Project\fP
+ cmake \-\-open <dir>
+
+\fI\%Run a Script\fP
+ cmake [{\-D <var>=<value>}...] \-P <cmake\-script\-file>
+
+\fI\%Run a Command-Line Tool\fP
+ cmake \-E <command> [<options>]
+
+\fI\%Run the Find-Package Tool\fP
+ cmake \-\-find\-package [<options>]
+
+\fI\%View Help\fP
+ cmake \-\-help[\-<topic>]
 .ft P
 .fi
 .UNINDENT
 .UNINDENT
 .SH DESCRIPTION
 .sp
-The "cmake" executable is the CMake command\-line interface.  It may be
-used to configure projects in scripts.  Project configuration settings
-may be specified on the command line with the \-D option.
+The \fBcmake\fP executable is the command\-line interface of the cross\-platform
+buildsystem generator CMake.  The above \fI\%Synopsis\fP lists various actions
+the tool can perform as described in sections below.
 .sp
-CMake is a cross\-platform build system generator.  Projects specify
-their build process with platform\-independent CMake listfiles included
-in each directory of a source tree with the name CMakeLists.txt.
-Users build a project by using CMake to generate a build system for a
-native tool on their platform.
-.SH OPTIONS
+To build a software project with CMake, \fI\%Generate a Project Buildsystem\fP\&.
+Optionally use \fBcmake\fP to \fI\%Build a Project\fP, \fI\%Install a Project\fP or just
+run the corresponding build tool (e.g. \fBmake\fP) directly.  \fBcmake\fP can also
+be used to \fI\%View Help\fP\&.
+.sp
+The other actions are meant for use by software developers writing
+scripts in the \fBCMake language\fP to support
+their builds.
+.sp
+For graphical user interfaces that may be used in place of \fBcmake\fP,
+see \fBccmake\fP and \fBcmake\-gui\fP\&.
+For command\-line interfaces to the CMake testing and packaging facilities,
+see \fBctest\fP and \fBcpack\fP\&.
+.sp
+For more information on CMake at large, \fI\%see also\fP the links at the end
+of this manual.
+.SH INTRODUCTION TO CMAKE BUILDSYSTEMS
+.sp
+A \fIbuildsystem\fP describes how to build a project\(aqs executables and libraries
+from its source code using a \fIbuild tool\fP to automate the process.  For
+example, a buildsystem may be a \fBMakefile\fP for use with a command\-line
+\fBmake\fP tool or a project file for an Integrated Development Environment
+(IDE).  In order to avoid maintaining multiple such buildsystems, a project
+may specify its buildsystem abstractly using files written in the
+\fBCMake language\fP\&.  From these files CMake
+generates a preferred buildsystem locally for each user through a backend
+called a \fIgenerator\fP\&.
+.sp
+To generate a buildsystem with CMake, the following must be selected:
 .INDENT 0.0
+.TP
+.B Source Tree
+The top\-level directory containing source files provided by the project.
+The project specifies its buildsystem using files as described in the
+\fBcmake\-language(7)\fP manual, starting with a top\-level file named
+\fBCMakeLists.txt\fP\&.  These files specify build targets and their
+dependencies as described in the \fBcmake\-buildsystem(7)\fP manual.
+.TP
+.B Build Tree
+The top\-level directory in which buildsystem files and build output
+artifacts (e.g. executables and libraries) are to be stored.
+CMake will write a \fBCMakeCache.txt\fP file to identify the directory
+as a build tree and store persistent information such as buildsystem
+configuration options.
+.sp
+To maintain a pristine source tree, perform an \fIout\-of\-source\fP build
+by using a separate dedicated build tree.  An \fIin\-source\fP build in
+which the build tree is placed in the same directory as the source
+tree is also supported, but discouraged.
+.TP
+.B Generator
+This chooses the kind of buildsystem to generate.  See the
+\fBcmake\-generators(7)\fP manual for documentation of all generators.
+Run \fBcmake \-\-help\fP to see a list of generators available locally.
+Optionally use the \fB\-G\fP option below to specify a generator, or simply
+accept the default CMake chooses for the current platform.
+.sp
+When using one of the \fICommand\-Line Build Tool Generators\fP
+CMake expects that the environment needed by the compiler toolchain
+is already configured in the shell.  When using one of the
+\fIIDE Build Tool Generators\fP, no particular environment is needed.
+.UNINDENT
+.SH GENERATE A PROJECT BUILDSYSTEM
+.sp
+Run CMake with one of the following command signatures to specify the
+source and build trees and generate a buildsystem:
+.INDENT 0.0
+.TP
+.B \fBcmake [<options>] <path\-to\-source>\fP
+Uses the current working directory as the build tree, and
+\fB<path\-to\-source>\fP as the source tree.  The specified path may
+be absolute or relative to the current working directory.
+The source tree must contain a \fBCMakeLists.txt\fP file and must
+\fInot\fP contain a \fBCMakeCache.txt\fP file because the latter
+identifies an existing build tree.  For example:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ mkdir build ; cd build
+$ cmake ../src
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B \fBcmake [<options>] <path\-to\-existing\-build>\fP
+Uses \fB<path\-to\-existing\-build>\fP as the build tree, and loads the
+path to the source tree from its \fBCMakeCache.txt\fP file, which must
+have already been generated by a previous run of CMake.  The specified
+path may be absolute or relative to the current working directory.
+For example:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ cd build
+$ cmake .
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B \fBcmake [<options>] \-S <path\-to\-source> \-B <path\-to\-build>\fP
+Uses \fB<path\-to\-build>\fP as the build tree and \fB<path\-to\-source>\fP
+as the source tree.  The specified paths may be absolute or relative
+to the current working directory.  The source tree must contain a
+\fBCMakeLists.txt\fP file.  The build tree will be created automatically
+if it does not already exist.  For example:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ cmake \-S src \-B build
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+In all cases the \fB<options>\fP may be zero or more of the \fI\%Options\fP below.
+.sp
+After generating a buildsystem one may use the corresponding native
+build tool to build the project.  For example, after using the
+\fBUnix Makefiles\fP generator one may run \fBmake\fP directly:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ make
+$ make install
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+Alternatively, one may use \fBcmake\fP to \fI\%Build a Project\fP by
+automatically choosing and invoking the appropriate native build tool.
+.SS Options
+.INDENT 0.0
+.TP
+.B \fB\-S <path\-to\-source>\fP
+Path to root directory of the CMake project to build.
+.TP
+.B \fB\-B <path\-to\-build>\fP
+Path to directory which CMake will use as the root of build directory.
+.sp
+If the directory doesn\(aqt already exist CMake will make it.
 .TP
 .B \fB\-C <initial\-cache>\fP
 Pre\-load a script to populate the cache.
 .sp
-When cmake is first run in an empty build tree, it creates a
-CMakeCache.txt file and populates it with customizable settings for
+When CMake is first run in an empty build tree, it creates a
+\fBCMakeCache.txt\fP file and populates it with customizable settings for
 the project.  This option may be used to specify a file from which
 to load cache entries before the first pass through the project\(aqs
-cmake listfiles.  The loaded entries take priority over the
+CMake listfiles.  The loaded entries take priority over the
 project\(aqs default values.  The given file should be a CMake script
-containing SET commands that use the CACHE option, not a
+containing \fBset()\fP commands that use the \fBCACHE\fP option, not a
 cache\-format file.
 .TP
 .B \fB\-D <var>:<type>=<value>, \-D <var>=<value>\fP
-Create a cmake cache entry.
+Create or update a CMake \fBCACHE\fP entry.
 .sp
-When cmake is first run in an empty build tree, it creates a
-CMakeCache.txt file and populates it with customizable settings for
+When CMake is first run in an empty build tree, it creates a
+\fBCMakeCache.txt\fP file and populates it with customizable settings for
 the project.  This option may be used to specify a setting that
 takes priority over the project\(aqs default value.  The option may be
-repeated for as many cache entries as desired.
+repeated for as many \fBCACHE\fP entries as desired.
 .sp
 If the \fB:<type>\fP portion is given it must be one of the types
 specified by the \fBset()\fP command documentation for its
@@ -92,14 +288,14 @@ This option may also be given as a single argument:
 \fB\-D<var>:<type>=<value>\fP or \fB\-D<var>=<value>\fP\&.
 .TP
 .B \fB\-U <globbing_expr>\fP
-Remove matching entries from CMake cache.
+Remove matching entries from CMake \fBCACHE\fP\&.
 .sp
 This option may be used to remove one or more variables from the
-CMakeCache.txt file, globbing expressions using * and ? are
-supported.  The option may be repeated for as many cache entries as
+\fBCMakeCache.txt\fP file, globbing expressions using \fB*\fP and \fB?\fP are
+supported.  The option may be repeated for as many \fBCACHE\fP entries as
 desired.
 .sp
-Use with care, you can make your CMakeCache.txt non\-working.
+Use with care, you can make your \fBCMakeCache.txt\fP non\-working.
 .TP
 .B \fB\-G <generator\-name>\fP
 Specify a build system generator.
@@ -108,95 +304,83 @@ CMake may support multiple native build systems on certain
 platforms.  A generator is responsible for generating a particular
 build system.  Possible generator names are specified in the
 \fBcmake\-generators(7)\fP manual.
+.sp
+If not specified, CMake checks the \fBCMAKE_GENERATOR\fP environment
+variable and otherwise falls back to a builtin default selection.
 .TP
-.B \fB\-T <toolset\-name>\fP
-Specify toolset name if supported by generator.
+.B \fB\-T <toolset\-spec>\fP
+Toolset specification for the generator, if supported.
 .sp
-Some CMake generators support a toolset name to be given to the
-native build system to choose a compiler.  This is supported only on
-specific generators:
-.INDENT 7.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-Visual Studio >= 10
-Xcode >= 3.0
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
-.sp
-See native build system documentation for allowed toolset names.
+Some CMake generators support a toolset specification to tell
+the native build system how to choose a compiler.  See the
+\fBCMAKE_GENERATOR_TOOLSET\fP variable for details.
 .TP
 .B \fB\-A <platform\-name>\fP
 Specify platform name if supported by generator.
 .sp
 Some CMake generators support a platform name to be given to the
-native build system to choose a compiler or SDK.  This is supported only on
-specific generators:
-.INDENT 7.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-Visual Studio >= 8
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
-.sp
-See native build system documentation for allowed platform names.
+native build system to choose a compiler or SDK.  See the
+\fBCMAKE_GENERATOR_PLATFORM\fP variable for details.
 .TP
 .B \fB\-Wno\-dev\fP
 Suppress developer warnings.
 .sp
 Suppress warnings that are meant for the author of the
-CMakeLists.txt files.
+\fBCMakeLists.txt\fP files. By default this will also turn off
+deprecation warnings.
 .TP
 .B \fB\-Wdev\fP
 Enable developer warnings.
 .sp
-Enable warnings that are meant for the author of the CMakeLists.txt
-files.
+Enable warnings that are meant for the author of the \fBCMakeLists.txt\fP
+files. By default this will also turn on deprecation warnings.
 .TP
-.B \fB\-E <command> [<options>...]\fP
-See \fI\%Command\-Line Tool Mode\fP\&.
+.B \fB\-Werror=dev\fP
+Make developer warnings errors.
+.sp
+Make warnings that are meant for the author of the \fBCMakeLists.txt\fP files
+errors. By default this will also turn on deprecated warnings as errors.
+.TP
+.B \fB\-Wno\-error=dev\fP
+Make developer warnings not errors.
+.sp
+Make warnings that are meant for the author of the \fBCMakeLists.txt\fP files not
+errors. By default this will also turn off deprecated warnings as errors.
+.TP
+.B \fB\-Wdeprecated\fP
+Enable deprecated functionality warnings.
+.sp
+Enable warnings for usage of deprecated functionality, that are meant
+for the author of the \fBCMakeLists.txt\fP files.
+.TP
+.B \fB\-Wno\-deprecated\fP
+Suppress deprecated functionality warnings.
+.sp
+Suppress warnings for usage of deprecated functionality, that are meant
+for the author of the \fBCMakeLists.txt\fP files.
+.TP
+.B \fB\-Werror=deprecated\fP
+Make deprecated macro and function warnings errors.
+.sp
+Make warnings for usage of deprecated macros and functions, that are meant
+for the author of the \fBCMakeLists.txt\fP files, errors.
+.TP
+.B \fB\-Wno\-error=deprecated\fP
+Make deprecated macro and function warnings not errors.
+.sp
+Make warnings for usage of deprecated macros and functions, that are meant
+for the author of the \fBCMakeLists.txt\fP files, not errors.
 .TP
 .B \fB\-L[A][H]\fP
 List non\-advanced cached variables.
 .sp
-List cache variables will run CMake and list all the variables from
-the CMake cache that are not marked as INTERNAL or ADVANCED.  This
-will effectively display current CMake settings, which can then be
-changed with \-D option.  Changing some of the variables may result
-in more variables being created.  If A is specified, then it will
-display also advanced variables.  If H is specified, it will also
+List \fBCACHE\fP variables will run CMake and list all the variables from
+the CMake \fBCACHE\fP that are not marked as \fBINTERNAL\fP or \fBADVANCED\fP\&.
+This will effectively display current CMake settings, which can then be
+changed with \fB\-D\fP option.  Changing some of the variables may result
+in more variables being created.  If \fBA\fP is specified, then it will
+display also advanced variables.  If \fBH\fP is specified, it will also
 display help for each variable.
-.TP
-.B \fB\-\-build <dir>\fP
-Build a CMake\-generated project binary tree.
-.sp
-This abstracts a native build tool\(aqs command\-line interface with the
-following options:
-.INDENT 7.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-<dir>          = Project binary directory to be built.
-\-\-target <tgt> = Build <tgt> instead of default targets.
-\-\-config <cfg> = For multi\-configuration tools, choose <cfg>.
-\-\-clean\-first  = Build target \(aqclean\(aq first, then build.
-                 (To clean only, use \-\-target \(aqclean\(aq.)
-\-\-use\-stderr   = Ignored.  Behavior is default in CMake >= 3.0.
-\-\-             = Pass remaining options to the native tool.
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
-.sp
-Run cmake \-\-build with no options for quick help.
 .TP
 .B \fB\-N\fP
 View mode only.
@@ -204,28 +388,12 @@ View mode only.
 Only load the cache.  Do not actually run configure and generate
 steps.
 .TP
-.B \fB\-P <file>\fP
-Process script mode.
-.sp
-Process the given cmake file as a script written in the CMake
-language.  No configure or generate step is performed and the cache
-is not modified.  If variables are defined using \-D, this must be
-done before the \-P argument.
-.TP
-.B \fB\-\-find\-package\fP
-Run in pkg\-config like mode.
-.sp
-Search a package using find_package() and print the resulting flags
-to stdout.  This can be used to use cmake instead of pkg\-config to
-find installed libraries in plain Makefile\-based projects or in
-autoconf\-based projects (via share/aclocal/cmake.m4).
-.TP
 .B \fB\-\-graphviz=[file]\fP
-Generate graphviz of dependencies, see CMakeGraphVizOptions.cmake for more.
+Generate graphviz of dependencies, see \fBCMakeGraphVizOptions\fP for more.
 .sp
 Generate a graphviz input file that will contain all the library and
 executable dependencies in the project.  See the documentation for
-CMakeGraphVizOptions.cmake for more details.
+\fBCMakeGraphVizOptions\fP for more details.
 .TP
 .B \fB\-\-system\-information [file]\fP
 Dump information about this system.
@@ -234,10 +402,17 @@ Dump a wide range of information about the current system.  If run
 from the top of a binary tree for a CMake project it will dump
 additional information such as the cache, log files etc.
 .TP
-.B \fB\-\-debug\-trycompile\fP
-Do not delete the try_compile build tree. Only useful on one try_compile at a time.
+.B \fB\-\-loglevel=<ERROR|WARNING|NOTICE|STATUS|VERBOSE|DEBUG|TRACE>\fP
+Set the log level.
 .sp
-Do not delete the files and directories created for try_compile
+The \fBmessage()\fP command will only output messages of the specified
+log level or higher.  The default log level is \fBSTATUS\fP\&.
+.TP
+.B \fB\-\-debug\-trycompile\fP
+Do not delete the \fBtry_compile()\fP build tree.
+Only useful on one \fBtry_compile()\fP at a time.
+.sp
+Do not delete the files and directories created for \fBtry_compile()\fP
 calls.  This is useful in debugging failed try_compiles.  It may
 however change the results of the try\-compiles as old junk from a
 previous try\-compile may cause a different test to either pass or
@@ -247,14 +422,23 @@ time, and only when debugging.
 .B \fB\-\-debug\-output\fP
 Put cmake in a debug mode.
 .sp
-Print extra stuff during the cmake run like stack traces with
-message(send_error ) calls.
+Print extra information during the cmake run like stack traces with
+\fBmessage(SEND_ERROR)\fP calls.
 .TP
 .B \fB\-\-trace\fP
 Put cmake in trace mode.
 .sp
-Print a trace of all calls made and from where with
-message(send_error ) calls.
+Print a trace of all calls made and from where.
+.TP
+.B \fB\-\-trace\-expand\fP
+Put cmake in trace mode.
+.sp
+Like \fB\-\-trace\fP, but with variables expanded.
+.TP
+.B \fB\-\-trace\-source=<file>\fP
+Put cmake in trace mode, but output only lines of a specified file.
+.sp
+Multiple options are allowed.
 .TP
 .B \fB\-\-warn\-uninitialized\fP
 Warn about uninitialized values.
@@ -276,9 +460,513 @@ used.
 Find problems with variable usage in system files.
 .sp
 Normally, unused and uninitialized variables are searched for only
-in CMAKE_SOURCE_DIR and CMAKE_BINARY_DIR.  This flag tells CMake to
-warn about other files as well.
+in \fBCMAKE_SOURCE_DIR\fP and \fBCMAKE_BINARY_DIR\fP\&.
+This flag tells CMake to warn about other files as well.
 .UNINDENT
+.SH BUILD A PROJECT
+.sp
+CMake provides a command\-line signature to build an already\-generated
+project binary tree:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+cmake \-\-build <dir> [<options>] [\-\- <build\-tool\-options>]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+This abstracts a native build tool\(aqs command\-line interface with the
+following options:
+.INDENT 0.0
+.TP
+.B \fB\-\-build <dir>\fP
+Project binary directory to be built.  This is required and must be first.
+.TP
+.B \fB\-\-parallel [<jobs>], \-j [<jobs>]\fP
+The maximum number of concurrent processes to use when building.
+If \fB<jobs>\fP is omitted the native build tool\(aqs default number is used.
+.sp
+The \fBCMAKE_BUILD_PARALLEL_LEVEL\fP environment variable, if set,
+specifies a default parallel level when this option is not given.
+.sp
+Some native build tools always build in parallel.  The use of \fB<jobs>\fP
+value of \fB1\fP can be used to limit to a single job.
+.TP
+.B \fB\-\-target <tgt>..., \-t <tgt>...\fP
+Build \fB<tgt>\fP instead of the default target.  Multiple targets may be
+given, separated by spaces.
+.TP
+.B \fB\-\-config <cfg>\fP
+For multi\-configuration tools, choose configuration \fB<cfg>\fP\&.
+.TP
+.B \fB\-\-clean\-first\fP
+Build target \fBclean\fP first, then build.
+(To clean only, use \fB\-\-target clean\fP\&.)
+.TP
+.B \fB\-\-use\-stderr\fP
+Ignored.  Behavior is default in CMake >= 3.0.
+.TP
+.B \fB\-\-verbose, \-v\fP
+Enable verbose output \- if supported \- including the build commands to be
+executed.
+.sp
+This option can be omitted if \fBVERBOSE\fP environment variable or
+\fBCMAKE_VERBOSE_MAKEFILE\fP cached variable is set.
+.TP
+.B \fB\-\-\fP
+Pass remaining options to the native tool.
+.UNINDENT
+.sp
+Run \fBcmake \-\-build\fP with no options for quick help.
+.SH INSTALL A PROJECT
+.sp
+CMake provides a command\-line signature to install an already\-generated
+project binary tree:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+cmake \-\-install <dir> [<options>]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+This may be used after building a project to run installation without
+using the generated build system or the native build tool.
+The options are:
+.INDENT 0.0
+.TP
+.B \fB\-\-install <dir>\fP
+Project binary directory to install. This is required and must be first.
+.TP
+.B \fB\-\-config <cfg>\fP
+For multi\-configuration generators, choose configuration \fB<cfg>\fP\&.
+.TP
+.B \fB\-\-component <comp>\fP
+Component\-based install. Only install component \fB<comp>\fP\&.
+.TP
+.B \fB\-\-prefix <prefix>\fP
+Override the installation prefix, \fBCMAKE_INSTALL_PREFIX\fP\&.
+.TP
+.B \fB\-\-strip\fP
+Strip before installing.
+.TP
+.B \fB\-v, \-\-verbose\fP
+Enable verbose output.
+.sp
+This option can be omitted if \fBVERBOSE\fP environment variable is set.
+.UNINDENT
+.sp
+Run \fBcmake \-\-install\fP with no options for quick help.
+.SH OPEN A PROJECT
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+cmake \-\-open <dir>
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Open the generated project in the associated application.  This is only
+supported by some generators.
+.SH RUN A SCRIPT
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+cmake [{\-D <var>=<value>}...] \-P <cmake\-script\-file>
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Process the given cmake file as a script written in the CMake
+language.  No configure or generate step is performed and the cache
+is not modified.  If variables are defined using \fB\-D\fP, this must be
+done before the \fB\-P\fP argument.
+.SH RUN A COMMAND-LINE TOOL
+.sp
+CMake provides builtin command\-line tools through the signature
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+cmake \-E <command> [<options>]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Run \fBcmake \-E\fP or \fBcmake \-E help\fP for a summary of commands.
+Available commands are:
+.INDENT 0.0
+.TP
+.B \fBcapabilities\fP
+Report cmake capabilities in JSON format. The output is a JSON object
+with the following keys:
+.INDENT 7.0
+.TP
+.B \fBversion\fP
+A JSON object with version information. Keys are:
+.INDENT 7.0
+.TP
+.B \fBstring\fP
+The full version string as displayed by cmake \fB\-\-version\fP\&.
+.TP
+.B \fBmajor\fP
+The major version number in integer form.
+.TP
+.B \fBminor\fP
+The minor version number in integer form.
+.TP
+.B \fBpatch\fP
+The patch level in integer form.
+.TP
+.B \fBsuffix\fP
+The cmake version suffix string.
+.TP
+.B \fBisDirty\fP
+A bool that is set if the cmake build is from a dirty tree.
+.UNINDENT
+.TP
+.B \fBgenerators\fP
+A list available generators. Each generator is a JSON object with the
+following keys:
+.INDENT 7.0
+.TP
+.B \fBname\fP
+A string containing the name of the generator.
+.TP
+.B \fBtoolsetSupport\fP
+\fBtrue\fP if the generator supports toolsets and \fBfalse\fP otherwise.
+.TP
+.B \fBplatformSupport\fP
+\fBtrue\fP if the generator supports platforms and \fBfalse\fP otherwise.
+.TP
+.B \fBextraGenerators\fP
+A list of strings with all the extra generators compatible with
+the generator.
+.UNINDENT
+.TP
+.B \fBfileApi\fP
+Optional member that is present when the \fBcmake\-file\-api(7)\fP
+is available.  The value is a JSON object with one member:
+.INDENT 7.0
+.TP
+.B \fBrequests\fP
+A JSON array containing zero or more supported file\-api requests.
+Each request is a JSON object with members:
+.INDENT 7.0
+.TP
+.B \fBkind\fP
+Specifies one of the supported \fIfile\-api object kinds\fP\&.
+.TP
+.B \fBversion\fP
+A JSON array whose elements are each a JSON object containing
+\fBmajor\fP and \fBminor\fP members specifying non\-negative integer
+version components.
+.UNINDENT
+.UNINDENT
+.TP
+.B \fBserverMode\fP
+\fBtrue\fP if cmake supports server\-mode and \fBfalse\fP otherwise.
+.UNINDENT
+.TP
+.B \fBchdir <dir> <cmd> [<arg>...]\fP
+Change the current working directory and run a command.
+.TP
+.B \fBcompare_files [\-\-ignore\-eol] <file1> <file2>\fP
+Check if \fB<file1>\fP is same as \fB<file2>\fP\&. If files are the same,
+then returns \fB0\fP, if not it returns \fB1\fP\&.  The \fB\-\-ignore\-eol\fP option
+implies line\-wise comparison and ignores LF/CRLF differences.
+.TP
+.B \fBcopy <file>... <destination>\fP
+Copy files to \fB<destination>\fP (either file or directory).
+If multiple files are specified, the \fB<destination>\fP must be
+directory and it must exist. Wildcards are not supported.
+\fBcopy\fP does follow symlinks. That means it does not copy symlinks,
+but the files or directories it point to.
+.TP
+.B \fBcopy_directory <dir>... <destination>\fP
+Copy directories to \fB<destination>\fP directory.
+If \fB<destination>\fP directory does not exist it will be created.
+\fBcopy_directory\fP does follow symlinks.
+.TP
+.B \fBcopy_if_different <file>... <destination>\fP
+Copy files to \fB<destination>\fP (either file or directory) if
+they have changed.
+If multiple files are specified, the \fB<destination>\fP must be
+directory and it must exist.
+\fBcopy_if_different\fP does follow symlinks.
+.TP
+.B \fBecho [<string>...]\fP
+Displays arguments as text.
+.TP
+.B \fBecho_append [<string>...]\fP
+Displays arguments as text but no new line.
+.TP
+.B \fBenv [\-\-unset=NAME]... [NAME=VALUE]... COMMAND [ARG]...\fP
+Run command in a modified environment.
+.TP
+.B \fBenvironment\fP
+Display the current environment variables.
+.TP
+.B \fBmake_directory <dir>...\fP
+Create \fB<dir>\fP directories.  If necessary, create parent
+directories too.  If a directory already exists it will be
+silently ignored.
+.TP
+.B \fBmd5sum <file>...\fP
+Create MD5 checksum of files in \fBmd5sum\fP compatible format:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+351abe79cd3800b38cdfb25d45015a15  file1.txt
+052f86c15bbde68af55c7f7b340ab639  file2.txt
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B \fBsha1sum <file>...\fP
+Create SHA1 checksum of files in \fBsha1sum\fP compatible format:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+4bb7932a29e6f73c97bb9272f2bdc393122f86e0  file1.txt
+1df4c8f318665f9a5f2ed38f55adadb7ef9f559c  file2.txt
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B \fBsha224sum <file>...\fP
+Create SHA224 checksum of files in \fBsha224sum\fP compatible format:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+b9b9346bc8437bbda630b0b7ddfc5ea9ca157546dbbf4c613192f930  file1.txt
+6dfbe55f4d2edc5fe5c9197bca51ceaaf824e48eba0cc453088aee24  file2.txt
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B \fBsha256sum <file>...\fP
+Create SHA256 checksum of files in \fBsha256sum\fP compatible format:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+76713b23615d31680afeb0e9efe94d47d3d4229191198bb46d7485f9cb191acc  file1.txt
+15b682ead6c12dedb1baf91231e1e89cfc7974b3787c1e2e01b986bffadae0ea  file2.txt
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B \fBsha384sum <file>...\fP
+Create SHA384 checksum of files in \fBsha384sum\fP compatible format:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+acc049fedc091a22f5f2ce39a43b9057fd93c910e9afd76a6411a28a8f2b8a12c73d7129e292f94fc0329c309df49434  file1.txt
+668ddeb108710d271ee21c0f3acbd6a7517e2b78f9181c6a2ff3b8943af92b0195dcb7cce48aa3e17893173c0a39e23d  file2.txt
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B \fBsha512sum <file>...\fP
+Create SHA512 checksum of files in \fBsha512sum\fP compatible format:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+2a78d7a6c5328cfb1467c63beac8ff21794213901eaadafd48e7800289afbc08e5fb3e86aa31116c945ee3d7bf2a6194489ec6101051083d1108defc8e1dba89  file1.txt
+7a0b54896fe5e70cca6dd643ad6f672614b189bf26f8153061c4d219474b05dad08c4e729af9f4b009f1a1a280cb625454bf587c690f4617c27e3aebdf3b7a2d  file2.txt
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B \fBremove [\-f] <file>...\fP
+Remove the file(s). If any of the listed files already do not
+exist, the command returns a non\-zero exit code, but no message
+is logged. The \fB\-f\fP option changes the behavior to return a
+zero exit code (i.e. success) in such situations instead.
+\fBremove\fP does not follow symlinks. That means it remove only symlinks
+and not files it point to.
+.TP
+.B \fBremove_directory <dir>...\fP
+Remove \fB<dir>\fP directories and their contents.  If a directory does
+not exist it will be silently ignored.
+.TP
+.B \fBrename <oldname> <newname>\fP
+Rename a file or directory (on one volume). If file with the \fB<newname>\fP name
+already exists, then it will be silently replaced.
+.TP
+.B \fBserver\fP
+Launch \fBcmake\-server(7)\fP mode.
+.TP
+.B \fBsleep <number>...\fP
+Sleep for given number of seconds.
+.TP
+.B \fBtar [cxt][vf][zjJ] file.tar [<options>] [\-\-] [<pathname>...]\fP
+Create or extract a tar or zip archive.  Options are:
+.INDENT 7.0
+.TP
+.B \fBc\fP
+Create a new archive containing the specified files.
+If used, the \fB<pathname>...\fP argument is mandatory.
+.TP
+.B \fBx\fP
+Extract to disk from the archive.
+The \fB<pathname>...\fP argument could be used to extract only selected files
+or directories.
+When extracting selected files or directories, you must provide their exact
+names including the path, as printed by list (\fB\-t\fP).
+.TP
+.B \fBt\fP
+List archive contents.
+The \fB<pathname>...\fP argument could be used to list only selected files
+or directories.
+.TP
+.B \fBv\fP
+Produce verbose output.
+.TP
+.B \fBz\fP
+Compress the resulting archive with gzip.
+.TP
+.B \fBj\fP
+Compress the resulting archive with bzip2.
+.TP
+.B \fBJ\fP
+Compress the resulting archive with XZ.
+.TP
+.B \fB\-\-zstd\fP
+Compress the resulting archive with Zstandard.
+.TP
+.B \fB\-\-files\-from=<file>\fP
+Read file names from the given file, one per line.
+Blank lines are ignored.  Lines may not start in \fB\-\fP
+except for \fB\-\-add\-file=<name>\fP to add files whose
+names start in \fB\-\fP\&.
+.TP
+.B \fB\-\-format=<format>\fP
+Specify the format of the archive to be created.
+Supported formats are: \fB7zip\fP, \fBgnutar\fP, \fBpax\fP,
+\fBpaxr\fP (restricted pax, default), and \fBzip\fP\&.
+.TP
+.B \fB\-\-mtime=<date>\fP
+Specify modification time recorded in tarball entries.
+.TP
+.B \fB\-\-\fP
+Stop interpreting options and treat all remaining arguments
+as file names, even if they start with \fB\-\fP\&.
+.UNINDENT
+.TP
+.B \fBtime <command> [<args>...]\fP
+Run command and display elapsed time.
+.TP
+.B \fBtouch <file>...\fP
+Creates \fB<file>\fP if file do not exist.
+If \fB<file>\fP exists, it is changing \fB<file>\fP access and modification times.
+.TP
+.B \fBtouch_nocreate <file>...\fP
+Touch a file if it exists but do not create it.  If a file does
+not exist it will be silently ignored.
+.TP
+.B \fBcreate_symlink <old> <new>\fP
+Create a symbolic link \fB<new>\fP naming \fB<old>\fP\&.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+Path to where \fB<new>\fP symbolic link will be created has to exist beforehand.
+.UNINDENT
+.UNINDENT
+.SS Windows\-specific Command\-Line Tools
+.sp
+The following \fBcmake \-E\fP commands are available only on Windows:
+.INDENT 0.0
+.TP
+.B \fBdelete_regv <key>\fP
+Delete Windows registry value.
+.TP
+.B \fBenv_vs8_wince <sdkname>\fP
+Displays a batch file which sets the environment for the provided
+Windows CE SDK installed in VS2005.
+.TP
+.B \fBenv_vs9_wince <sdkname>\fP
+Displays a batch file which sets the environment for the provided
+Windows CE SDK installed in VS2008.
+.TP
+.B \fBwrite_regv <key> <value>\fP
+Write Windows registry value.
+.UNINDENT
+.SH RUN THE FIND-PACKAGE TOOL
+.sp
+CMake provides a pkg\-config like helper for Makefile\-based projects:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+cmake \-\-find\-package [<options>]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+It searches a package using \fBfind_package()\fP and prints the
+resulting flags to stdout.  This can be used instead of pkg\-config
+to find installed libraries in plain Makefile\-based projects or in
+autoconf\-based projects (via \fBshare/aclocal/cmake.m4\fP).
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+This mode is not well\-supported due to some technical limitations.
+It is kept for compatibility but should not be used in new projects.
+.UNINDENT
+.UNINDENT
+.SH VIEW HELP
+.sp
+To print selected pages from the CMake documentation, use
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+cmake \-\-help[\-<topic>]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+with one of the following options:
 .INDENT 0.0
 .TP
 .B \fB\-\-help,\-help,\-usage,\-h,\-H,/?\fP
@@ -416,158 +1104,32 @@ The \fBcmake\-variables(7)\fP manual is printed in a
 human\-readable text format.
 The help is printed to a named <f>ile if given.
 .UNINDENT
-.SH COMMAND-LINE TOOL MODE
-.sp
-CMake provides builtin command\-line tools through the signature:
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-cmake \-E <command> [<options>...]
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
-.sp
-Run \fBcmake \-E\fP or \fBcmake \-E help\fP for a summary of commands.
-Available commands are:
-.INDENT 0.0
-.TP
-.B \fBchdir <dir> <cmd> [<arg>...]\fP
-Change the current working directory and run a command.
-.TP
-.B \fBcompare_files <file1> <file2>\fP
-Check if file1 is same as file2.
-.TP
-.B \fBcopy <file> <destination>\fP
-Copy file to destination (either file or directory).
-.TP
-.B \fBcopy_directory <source> <destination>\fP
-Copy directory \(aqsource\(aq content to directory \(aqdestination\(aq.
-.TP
-.B \fBcopy_if_different <in\-file> <out\-file>\fP
-Copy file if input has changed.
-.TP
-.B \fBecho [<string>...]\fP
-Displays arguments as text.
-.TP
-.B \fBecho_append [<string>...]\fP
-Displays arguments as text but no new line.
-.TP
-.B \fBenv [\-\-unset=NAME]... [NAME=VALUE]... COMMAND [ARG]...\fP
-Run command in a modified environment.
-.TP
-.B \fBenvironment\fP
-Display the current environment.
-.TP
-.B \fBmake_directory <dir>\fP
-Create a directory.
-.TP
-.B \fBmd5sum [<file>...]\fP
-Compute md5sum of files.
-.TP
-.B \fBremove [\-f] [<file>...]\fP
-Remove the file(s), use \fB\-f\fP to force it.
-.TP
-.B \fBremove_directory <dir>\fP
-Remove a directory and its contents.
-.TP
-.B \fBrename <oldname> <newname>\fP
-Rename a file or directory (on one volume).
-.TP
-.B \fBsleep <number>...\fP
-Sleep for given number of seconds.
-.TP
-.B \fBtar [cxt][vf][zjJ] file.tar [<options>...] [\-\-] [<file>...]\fP
-Create or extract a tar or zip archive.  Options are:
-.INDENT 7.0
-.TP
-.B \fB\-\-\fP
-Stop interpreting options and treat all remaining arguments
-as file names even if they start in \fB\-\fP\&.
-.TP
-.B \fB\-\-files\-from=<file>\fP
-Read file names from the given file, one per line.
-Blank lines are ignored.  Lines may not start in \fB\-\fP
-except for \fB\-\-add\-file=<name>\fP to add files whose
-names start in \fB\-\fP\&.
-.TP
-.B \fB\-\-mtime=<date>\fP
-Specify modification time recorded in tarball entries.
-.TP
-.B \fB\-\-format=<format>\fP
-Specify the format of the archive to be created.
-Supported formats are: \fB7zip\fP, \fBgnutar\fP, \fBpax\fP,
-\fBpaxr\fP (restricted pax, default), and \fBzip\fP\&.
-.UNINDENT
-.TP
-.B \fBtime <command> [<args>...]\fP
-Run command and return elapsed time.
-.TP
-.B \fBtouch <file>\fP
-Touch a file.
-.TP
-.B \fBtouch_nocreate <file>\fP
-Touch a file if it exists but do not create it.
-.UNINDENT
-.SS UNIX\-specific Command\-Line Tools
-.sp
-The following \fBcmake \-E\fP commands are available only on UNIX:
-.INDENT 0.0
-.TP
-.B \fBcreate_symlink <old> <new>\fP
-Create a symbolic link \fB<new>\fP naming \fB<old>\fP\&.
-.UNINDENT
-.SS Windows\-specific Command\-Line Tools
-.sp
-The following \fBcmake \-E\fP commands are available only on Windows:
-.INDENT 0.0
-.TP
-.B \fBdelete_regv <key>\fP
-Delete Windows registry value.
-.TP
-.B \fBenv_vs8_wince <sdkname>\fP
-Displays a batch file which sets the environment for the provided
-Windows CE SDK installed in VS2005.
-.TP
-.B \fBenv_vs9_wince <sdkname>\fP
-Displays a batch file which sets the environment for the provided
-Windows CE SDK installed in VS2008.
-.TP
-.B \fBwrite_regv <key> <value>\fP
-Write Windows registry value.
-.UNINDENT
 .SH SEE ALSO
 .sp
 The following resources are available to get help using CMake:
 .INDENT 0.0
 .TP
 .B Home Page
-\fI\%http://www.cmake.org\fP
+\fI\%https://cmake.org\fP
 .sp
 The primary starting point for learning about CMake.
 .TP
-.B Frequently Asked Questions
-\fI\%http://www.cmake.org/Wiki/CMake_FAQ\fP
+.B Online Documentation and Community Resources
+\fI\%https://cmake.org/documentation\fP
 .sp
-A Wiki is provided containing answers to frequently asked questions.
-.TP
-.B Online Documentation
-\fI\%http://www.cmake.org/documentation\fP
-.sp
-Links to available documentation may be found on this web page.
+Links to available documentation and community resources may be
+found on this web page.
 .TP
 .B Mailing List
-\fI\%http://www.cmake.org/mailing\-lists\fP
+\fI\%https://cmake.org/mailing-lists\fP
 .sp
-For help and discussion about using cmake, a mailing list is
+For help and discussion about using CMake, a mailing list is
 provided at \fI\%cmake@cmake.org\fP\&.  The list is member\-post\-only but one
 may sign up on the CMake web page.  Please first read the full
-documentation at \fI\%http://www.cmake.org\fP before posting questions to
+documentation at \fI\%https://cmake.org\fP before posting questions to
 the list.
 .UNINDENT
 .SH COPYRIGHT
-2000-2015 Kitware, Inc.
+2000-2019 Kitware, Inc. and Contributors
 .\" Generated by docutils manpage writer.
 .
