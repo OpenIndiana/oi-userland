@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ocaml-num
 COMPONENT_VERSION= 1.3
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= ocaml-num - OCaml library for arbitrary-precision integer and rational arithmetic
 COMPONENT_PROJECT_URL= https://github.com/ocaml/num
 COMPONENT_FMRI= library/ocaml/ocaml-num
