@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= parmap
 COMPONENT_VERSION= 1.0-rc11
+COMPONENT_REVISION= 1
 IPS_COMPONENT_VERSION=1.0.11
 COMPONENT_SUMMARY= parmap - OCaml minimalistic library allowing to exploit multicore architecture
 COMPONENT_PROJECT_URL= https://github.com/rdicosmo/parmap
@@ -28,6 +29,8 @@ COMPONENT_ARCHIVE_URL= \
   https://github.com/rdicosmo/parmap/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:3420224919ce1a2910db5c40272b2a18a32e69491b55d49254cfb4a715081e5e
 COMPONENT_LICENSE= GPLv2
+
+COMPONENT_BUILD_ARGS= -j1
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
