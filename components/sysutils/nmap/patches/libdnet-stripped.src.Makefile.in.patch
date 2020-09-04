@@ -1,0 +1,13 @@
+Avoid hardcoding runpath
+
+--- nmap-7.80/libdnet-stripped/src/Makefile.in.1	2020-07-30 16:57:20.017444924 +0000
++++ nmap-7.80/libdnet-stripped/src/Makefile.in	2020-07-30 16:57:34.443645475 +0000
+@@ -265,7 +265,7 @@
+ 	  rm -f "$${dir}/so_locations"; \
+ 	done
+ libdnet.la: $(libdnet_la_OBJECTS) $(libdnet_la_DEPENDENCIES) 
+-	$(libdnet_la_LINK) -rpath $(libdir) $(libdnet_la_OBJECTS) $(libdnet_la_LIBADD) $(LIBS)
++	$(libdnet_la_LINK) $(libdnet_la_OBJECTS) $(libdnet_la_LIBADD) $(LIBS)
+ 
+ mostlyclean-compile:
+ 	-rm -f *.$(OBJEXT)

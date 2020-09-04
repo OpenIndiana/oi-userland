@@ -18,16 +18,15 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
-COMPONENT_VERSION=	3.16.0
-COMPONENT_REVISION=	3
-COMPONENT_PROJECT_URL=	http://www.claws-mail.org
+COMPONENT_VERSION=	3.17.6
+COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:c212133d3d962129d8c7995c1c7d973faef2a8914481c0c74578217bf4c897ab
-COMPONENT_ARCHIVE_URL=	http://www.claws-mail.org/releases/$(COMPONENT_ARCHIVE)
+	sha256:15e4c4344b0c0781d9bb99c71e69dc2d98b8a65c3ce7dde7de1c3f9001c705e8
+COMPONENT_ARCHIVE_URL=	https://www.claws-mail.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPL-3
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION= Applications/Internet
@@ -44,14 +43,15 @@ CONFIGURE_OPTIONS += --disable-fancy-plugin
 CONFIGURE_OPTIONS += --disable-ldap
 CONFIGURE_OPTIONS += --disable-perl-plugin
 CONFIGURE_OPTIONS += --disable-rssyl-plugin
+CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_ENV += PATH=/usr/bin/$(MACH64):/usr/bin
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-REQUIRED_PACKAGES += library/desktop/libgdata
 REQUIRED_PACKAGES += library/python/pygobject
 REQUIRED_PACKAGES += library/python/pygtk2
 REQUIRED_PACKAGES += library/libsoup
+REQUIRED_PACKAGES += runtime/python-27
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -67,10 +67,11 @@ REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/libetpan
 REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += library/libpoppler
+REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/spell-checking/enchant
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math

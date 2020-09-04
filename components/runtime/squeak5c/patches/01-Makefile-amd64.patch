@@ -1,6 +1,16 @@
---- opensmalltalk-vm-sun-v5.0.10/platforms/unix/config/Makefile.in	Tue Jul 21 08:25:34 2020
-+++ p0/opensmalltalk-vm-sun-v5.0.10/platforms/unix/config/Makefile.in	Tue Jul 21 07:55:41 2020
-@@ -77,10 +77,10 @@
+--- opensmalltalk-vm-sun-v5.0.11/platforms/unix/config/Makefile.in	Wed Aug 26 15:38:04 2020
++++ p0/opensmalltalk-vm-sun-v5.0.11/platforms/unix/config/Makefile.in	Thu Aug 27 07:33:34 2020
+@@ -67,6 +67,9 @@
+ getversion : ${cfgdir}/getversion.c ${topdir}/platforms/Cross/vm/sqSCCSVersion.h
+ 	$(LINK) getversion $(INCLUDES) ${cfgdir}/getversion.c
+ 
++ckformat : ${topdir}/src/ckformat.c
++	$(LINK) $@ $?
++
+ plugins : config.sh $(PLUGINS_LA)
+ 
+ # nuke everything but the mvm script; plugins.ext and plugins.int are assumed
+@@ -77,10 +80,10 @@
  
  # unix launch scripts
  squeak.sh: ${cfgdir}/squeak.sh.in getversion

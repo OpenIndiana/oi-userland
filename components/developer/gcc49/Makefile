@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
 COMPONENT_VERSION= 4.9.4
-COMPONENT_REVISION=6
+COMPONENT_REVISION= 7
 MPFR_NAME= mpfr
 MPFR_VERSION=3.1.3
 MPC_NAME=mpc
@@ -128,3 +128,5 @@ REQUIRED_PACKAGES += system/library/gcc-4-runtime
 REQUIRED_PACKAGES += system/library/gfortran-4-runtime
 REQUIRED_PACKAGES += system/library/gobjc-4-runtime
 REQUIRED_PACKAGES += system/library/math
+# GCC builds with itself:
+REQUIRED_PACKAGES += developer/gcc-49

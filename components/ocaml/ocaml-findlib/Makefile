@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ocaml-findlib
 COMPONENT_VERSION= 1.8.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= ocaml-find - OCaml library manager
 COMPONENT_PROJECT_URL= http://projects.camlcity.org/projects/findlib.html
 COMPONENT_FMRI= library/ocaml/ocaml-findlib

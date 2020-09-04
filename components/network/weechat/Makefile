@@ -12,13 +12,11 @@
 # Copyright (c) 2020 Evgeny Litvinenko
 #
 
-BUILD_BITS=32
-
+BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		weechat
-COMPONENT_VERSION=	2.8
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.9
 COMPONENT_PROJECT_URL=	https://weechat.org/
 COMPONENT_SUMMARY=	WeeChat - portable, fast, light and extensible IRC client
 COMPONENT_DESCRIPTION=	WeeChat (Wee Enhanced Environment for Chat) is a portable, fast, light and \
@@ -27,7 +25,7 @@ It is customizable and extensible with scripts.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha512:3bebb42118fca6b601f1de8f4d52378619a10e5c490f5b46f86d27a9680f00a56d48a1ade729e78d965cae589e6c80647c22414393000c7d3cfcc94a1e41c4df
+	sha256:eab406c385c3a10d0107ddc3aac6596ae8c59af99e9158c6d769e90ec9adfa0e
 COMPONENT_ARCHIVE_URL=	https://weechat.org/files/src/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=		network/chat/weechat
@@ -36,6 +34,9 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION=	Applications/Internet
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Use 64-bit perl
+PERL_VERSION = 5.24
 
 PATH= $(PATH.gnu)
 
@@ -46,6 +47,7 @@ CONFIGURE_OPTIONS += --disable-ruby
 CONFIGURE_OPTIONS += --enable-man
 CONFIGURE_OPTIONS += --enable-tests
 CONFIGURE_ENV += CA_FILE="/etc/certs/ca-certificates.crt"
+CONFIGURE_ENV += PERL=$(PERL)
 
 COMPONENT_TEST_CMD =    ctest -V
 COMPONENT_TEST_TARGETS =
@@ -58,7 +60,7 @@ REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

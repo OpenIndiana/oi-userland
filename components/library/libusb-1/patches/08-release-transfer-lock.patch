@@ -1,10 +1,58 @@
---- libusb-1.0.22/libusb/os/sunos_usb.c.~5~	2018-05-22 08:57:25.153943880 +0000
-+++ libusb-1.0.22/libusb/os/sunos_usb.c	2018-05-22 09:02:19.631926413 +0000
-@@ -1375,6 +1375,7 @@
- 	usbi_dbg("Done: ctrl data bytes %d", ret);
+From d256f7df30bfad3efc700cf080d82b540f70bc34 Mon Sep 17 00:00:00 2001
+From: Daniele Pezzini <hyouko@gmail.com>
+Date: Mon, 10 Sep 2018 23:50:22 +0200
+Subject: [PATCH] solaris: fix handling of control transfers
+
+SunOS backend is 'completing' control transfers before
+a) libusb knows they're completed and
+b) libusb references the device to keep it alive for the completion,
+
+with the result that the device is unreferenced for the completion of
+the transfer before being referenced for it, and, if it's not already
+referenced in excess, it is destroyed, and the next call that tries
+to access that device... boom (segfault).
+
+So, don't trigger the completion of the transfer, but only signal it.
+
+Patch updated for libusb-1 v1.0.23
+---
+ libusb/os/sunos_usb.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
+
+diff --git a/libusb/os/sunos_usb.c b/libusb/os/sunos_usb.c
+index 7150a3e..fc62897 100644
+--- a/libusb/os/sunos_usb.c
++++ b/libusb/os/sunos_usb.c
+@@ -1370,23 +1370,14 @@ solaris_submit_ctrl_on_default(struct libusb_transfer *transfer)
+ 			wLength, READ, (int *)&transfer->status);
+ 	}
  
- 	/* sync transfer handling */
-+	usbi_mutex_unlock(&LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer)->lock);
- 	ret = usbi_handle_transfer_completion(LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer),
- 	    transfer->status);
+-	if (ret >= 0) {
+-		transfer->actual_length = ret;
+-		LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer)->transferred = ret;
+-	}
+-	usbi_dbg("Done: ctrl data bytes %d", ret);
++	if (ret < 0)
++		return (LIBUSB_ERROR_IO);
  
+-	/**
+-	 * Sync transfer handling.
+- 	 * We should release transfer lock here and later get it back
+-	 * as usbi_handle_transfer_completion() takes its own transfer lock.
+-	 */
+-	usbi_mutex_unlock(&LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer)->lock);
+-	ret = usbi_handle_transfer_completion(LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer),
+-	    transfer->status);
+-	usbi_mutex_lock(&LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer)->lock);
+-
+-	return (ret);
++	usbi_dbg("Done: ctrl data bytes %d", ret);
++	transfer->actual_length = ret;
++	LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer)->transferred = ret;
++	usbi_signal_transfer_completion(LIBUSB_TRANSFER_TO_USBI_TRANSFER(transfer));
++	return LIBUSB_SUCCESS;
+ }
+ 
+ int
+--
+2.18.0

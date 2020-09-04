@@ -29,16 +29,16 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
-COMPONENT_VERSION=	4.8.24
+COMPONENT_VERSION=	4.8.25
 COMPONENT_FMRI=		file/mc
 COMPONENT_SUMMARY=	The GNU Midnight Commander file manager
 COMPONENT_DESCRIPTION=	GNU Midnight Commander is a full-screen text mode application that allows user to copy, move and delete files and whole directory trees, search for files and run commands in the subshell
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
-COMPONENT_PROJECT_URL=	http://www.midnight-commander.org/
+COMPONENT_PROJECT_URL=	https://www.midnight-commander.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:859f1cc070450bf6eb4d319ffcb6a5ac29deb0ac0d81559fb2e71242b1176d46
+	sha256:ffc19617f20ebb23330acd3998b7fd559a042d172fa55746d53d246697b2548a
 COMPONENT_ARCHIVE_URL=	http://ftp.midnight-commander.org/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 

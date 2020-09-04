@@ -1,0 +1,35 @@
+The patch ensures that install path of python modules
+can be changed by using am_cv_python_pythondir variable.
+
+Will be sent to upstream.
+
+--- nmap-7.80/Makefile.in	2019-09-25 11:03:16.543635096 +0000
++++ nmap-7.80/Makefile.in	2019-09-25 11:03:07.665602355 +0000
+@@ -8,6 +8,7 @@ exec_prefix = @exec_prefix@
+ bindir = @bindir@
+ sbindir = @sbindir@
+ mandir = @mandir@
++pythondir = @pythondir@
+ top_srcdir = @top_srcdir@
+ srcdir = @srcdir@
+ nmapdatadir = @datadir@/nmap
+@@ -377,7 +378,8 @@ build-zenmap: $(ZENMAPDIR)/setup.py $(ZE
+ 
+ install-zenmap: $(ZENMAPDIR)/setup.py
+ 	$(INSTALL) -d $(DESTDIR)$(bindir) $(DESTDIR)$(mandir)/man1
+-	cd $(ZENMAPDIR) && $(PYTHON) setup.py --quiet install --prefix "$(prefix)" --force $(if $(DESTDIR),--root "$(DESTDIR)")
++	cd $(ZENMAPDIR) && $(PYTHON) setup.py --quiet install --install-lib=$(pythondir) \
++		--prefix "$(prefix)" --force $(if $(DESTDIR),--root "$(DESTDIR)")
+ 	$(INSTALL) -c -m 644 docs/zenmap.1 $(DESTDIR)$(mandir)/man1/
+ # Create a symlink from nmapfe to zenmap if nmapfe doesn't exist or is
+ # already a link.
+@@ -394,7 +396,8 @@ build-nping: $(NPINGDIR)/Makefile build-
+ 	@cd $(NPINGDIR) && $(MAKE)
+ 
+ install-ndiff:
+-	cd $(NDIFFDIR) && $(PYTHON) setup.py install --prefix "$(prefix)" $(if $(DESTDIR),--root "$(DESTDIR)")
++	cd $(NDIFFDIR) && $(PYTHON) setup.py install --install-lib=$(pythondir) \
++		--prefix "$(prefix)" $(if $(DESTDIR),--root "$(DESTDIR)")
+ 
+ NSE_FILES = scripts/script.db scripts/*.nse
+ NSE_LIB_LUA_FILES = nselib/*.lua nselib/*.luadoc

@@ -13,13 +13,13 @@
 # Copyright 2019 Andreas Wacknitz <a.wacknitz@gmx.de>
 #
 
-BUILD_BITS=			32
+BUILD_BITS=			64
 BUILD_STYLE=		cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		keepassx
 COMPONENT_VERSION=	2.0.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://www.keepassx.org/
 COMPONENT_FMRI=		desktop/keepassx
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

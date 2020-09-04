@@ -17,13 +17,12 @@
 BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_VERSION= 10.1.0
-COMPONENT_REVISION=1
+COMPONENT_VERSION= 10.2.0
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0fd6876c022daa1fc84db88396ecf114ab3598c4408d2ffd28ca3cd9be7d3b16
+  sha256:033ae71e7956b52e41045bf680ba8ae3c1be699dfb001073ec2665443c6ba2e2
 
 MPFR_VERSION=4.0.2
 MPFR_ARCHIVE_HASH= \
@@ -65,5 +64,5 @@ CONFIGURE_OPTIONS+= --disable-libitm
 CONFIGURE_OPTIONS+= enable_frame_pointer=yes
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/gc
-

@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		gthumb
 # Later versions use symbolic icons
 COMPONENT_VERSION=	3.6.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/gthumb
 COMPONENT_SUMMARY=	GNOME image organizer (gthumb)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

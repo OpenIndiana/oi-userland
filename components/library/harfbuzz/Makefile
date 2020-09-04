@@ -22,21 +22,22 @@
 #
 # Copyright (c) 2015-2018, Aurelien Larcher. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2020, Andreas Wacknitz
 #
 
-BUILD_BITS=32_and_64
+BUILD_BITS=				32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         harfbuzz
-COMPONENT_VERSION=      2.6.6
+COMPONENT_VERSION=      2.7.2
 COMPONENT_FMRI=         library/c++/harfbuzz
 COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine. 
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://www.freedesktop.org/wiki/Software/HarfBuzz/
+COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/HarfBuzz/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:84d0f1fb4cf4b3ee398ac20eaa608ca9f7cd90d992a44540fdcb16469bb460e5
+	sha256:b8c048d7c2964a12f2c80deb6634dfc836b603dd12bf0d0a3df1627698e220ce
 COMPONENT_ARCHIVE_URL=	\
 	https://github.com/harfbuzz/harfbuzz/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
@@ -63,7 +64,6 @@ COMPONENT_TEST_TRANSFORMS += $(CONFIGURE_TEST_TRANSFORMS)
 REQUIRED_PACKAGES += developer/icu
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/graphite2
 REQUIRED_PACKAGES += library/desktop/cairo

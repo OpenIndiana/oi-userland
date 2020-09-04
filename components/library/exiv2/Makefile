@@ -13,50 +13,33 @@
 # Copyright 2017 Carsten Grzemba
 #
 
+BUILD_BITS= 64_and_32
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= exiv2
-COMPONENT_VERSION= 0.25
-COMPONENT_REVISION = 2
+COMPONENT_VERSION= 0.27.3
 COMPONENT_SUMMARY= Image metadata library and tools
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)-Source
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c80bfc778a15fdb06f71265db2c3d49d8493c382e516cb99b8c9f9cbde36efa4
+  sha256:a79f5613812aa21755d578a297874fb59a85101e793edc64ec2c6bd994e3e778
 COMPONENT_ARCHIVE_URL= \
-  http://www.exiv2.org/$(COMPONENT_ARCHIVE)
-
+  http://www.exiv2.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.exiv2.org
 COMPONENT_FMRI = image/library/exiv2
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 
-CONFIGURE_FIX_LIBTOOL_RPATH = no
+TEST_TARGET=$(NO_TESTS)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-COMPONENT_PREP_ACTION = (cd $(@D)/config && libtoolize -f && autoconf -o ../configure)
-
-COMPONENT_PRE_CONFIGURE_ACTION = \
-     $(CLONEY) $(SOURCE_DIR) $(@D)
-
-CONFIGURE_OPTIONS += --disable-rpath
-CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
-CONFIGURE_ENV.64 += lt_cv_sys_lib_dlsearch_path_spec="/lib/$(MACH64) /usr/lib/$(MACH64)"
+include $(WS_MAKE_RULES)/common.mk
 
 # mkdir option '-v' is used
 PATH=$(PATH.gnu)
 
-LDFLAGS += -lnsl -lsocket 
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+LDFLAGS += -lnsl -lsocket
 
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/zlib

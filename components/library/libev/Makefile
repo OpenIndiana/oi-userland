@@ -20,32 +20,23 @@
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
 #
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libev
-COMPONENT_VERSION=	4.15
-COMPONENT_PROJECT_URL=	http://software.schmorp.de/pkg/libev.html
+COMPONENT_VERSION=	4.33
+COMPONENT_PROJECT_URL=	https://software.schmorp.de/pkg/libev.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b2dd43a073556f5350cbed05b6ef444dcc4b563f4e0b1009d7bf448261606feb
+    sha256:507eb7b8d1015fbec5b935f34ebed15bf346bed04a11ab82b8eee848c4205aea
 COMPONENT_ARCHIVE_URL=	http://dist.schmorp.de/libev/Attic/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libev
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--enable-shared
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS +=	--enable-shared
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math

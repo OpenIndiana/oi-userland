@@ -15,10 +15,6 @@
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
-# Pull vendor-packages files from site-packages because nmap build installs
-# them there and doesn't offer an overide.
-<transform file path=(usr/lib/python.*)/vendor-packages/(.+) -> \
-    set action.hash %<\1>/site-packages/%<\2> >
 <transform file path=usr/share/applications/.* -> \
     default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
 <transform file path=usr/share/applications/.* -> \

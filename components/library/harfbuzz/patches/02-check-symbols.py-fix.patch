@@ -1,0 +1,21 @@
+--- harfbuzz-2.7.2/src/check-symbols.py.orig	2020-07-22 12:18:05.000000000 +0000
++++ harfbuzz-2.7.2/src/check-symbols.py	2020-09-01 18:24:15.445615386 +0000
+@@ -9,7 +9,8 @@
+ 
+ IGNORED_SYMBOLS = '|'.join(['_fini', '_init', '_fdata', '_ftext', '_fbss',
+ 	'__bss_start', '__bss_start__', '__bss_end__', '_edata', '_end', '_bss_end__',
+-	'__end__', '__gcov_.*', 'llvm_.*', 'flush_fn_list', 'writeout_fn_list', 'mangle_path'])
++        '__end__', '__gcov_flush.*', 'llvm_.*', '_DYNAMIC', '_GLOBAL_OFFSET_TABLE_',
++        '_PROCEDURE_LINKAGE_TABLE_', '_etext', '_lib_version'])
+ 
+ nm = shutil.which ('nm')
+ if not nm:
+@@ -30,7 +31,7 @@
+ 		symprefix = '_' if suffix == 'dylib' else ''
+ 
+ 		EXPORTED_SYMBOLS = [s.split ()[2]
+-							for s in re.findall (r'^.+ [BCDGIRST] .+$', subprocess.check_output ([nm, so]).decode ('utf-8'), re.MULTILINE)
++							for s in re.findall (r'^.+ [BCDGINRST] .+$', subprocess.check_output ([nm, so]).decode ('utf-8'), re.MULTILINE)
+ 							if not re.match (r'.* %s(%s)\b' % (symprefix, IGNORED_SYMBOLS), s)]
+ 
+ 		# run again c++flit also if is available

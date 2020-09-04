@@ -20,40 +20,43 @@
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
+
+BUILD_STYLE= setup.py
+BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		netaddr
-COMPONENT_VERSION=	0.7.10
+COMPONENT_VERSION=	0.7.18
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9b79763141a855079b0589717696a4ccb5c56c0b807b6e584bfe12333399e0b7
+    sha256:a1f5c9fcf75ac2579b9995c843dade33009543c04f218ff7c007b3c81695bd19
 COMPONENT_PROJECT_URL=  http://github.com/drkjam/netaddr/
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/n/netaddr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/netaddr
 
-PYTHON_VERSIONS=2.7
+PYTHON_VERSIONS=3.5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
+
+# Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
+COMPONENT_PRE_BUILD_ACTION = \
+        /usr/bin/find $(SOURCE_DIR) -name *.py \
+                -exec $(GSED) -i -e 's/env python/python$(PYTHON_VERSION)/' "{}" \; ;
+
 
 COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTOUSRBINDIR) ; $(MV) netaddr netaddr-$(PYTHON_VERSION))
 
-# common targets
-build:		$(BUILD_NO_ARCH)
+COMPONENT_TEST_DIR =    $(SOURCE_DIR)
+COMPONENT_TEST_CMD =    $(PYTHON) -m pytest
+COMPONENT_TEST_ARGS =
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-install:	$(INSTALL_NO_ARCH)
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^plugins:/d" ' \
+	'-e "s|in [0-9\.]* seconds ||g" '
 
-COMPONENT_TEST_DIR=	$(@D)/lib/netaddr
-COMPONENT_TEST_ARGS=	tests/__init__.py
-COMPONENT_PRE_TEST_ACTION= \
-	( cd $(COMPONENT_TEST_DIR)/tests ; \
-	  ln -s $(SOURCE_DIR)/netaddr/tests/2.x ; \
-	  ln -s $(SOURCE_DIR)/netaddr/tests/3.x )
-
-test:		$(TEST_NO_ARCH)
-
-REQUIRED_PACKAGES += library/python/ipython-27
-REQUIRED_PACKAGES += runtime/python-27
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/ipython-35
+REQUIRED_PACKAGES += runtime/python-35
