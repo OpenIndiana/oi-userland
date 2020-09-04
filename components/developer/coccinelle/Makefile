@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= coccinelle
 COMPONENT_VERSION= 1.0.8
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= coccinelle - program matching and transformation engine which provides the language SmPL
 COMPONENT_PROJECT_URL= http://coccinelle.lip6.fr/
 COMPONENT_FMRI= developer/coccinelle
