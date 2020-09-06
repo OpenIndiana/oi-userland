@@ -74,6 +74,7 @@ Vagrant.configure("2") do |config|
         # Should we ever support `--discard` option, we need to switch to VDI
         # virtual disk format first.
         #v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", 0, "--discard", "on"]
+	config.vm.synced_folder ".", "/vagrant_mounted"
     end
 
     config.vm.provider :libvirt do |libvirt|
