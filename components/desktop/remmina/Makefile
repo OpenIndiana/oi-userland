@@ -18,7 +18,7 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		remmina
-COMPONENT_VERSION=	1.4.7
+COMPONENT_VERSION=	1.4.8
 COMPONENT_SUMMARY=	Remmina remote desktop client
 COMPONENT_PROJECT_URL=	https://www.freerdp.com
 COMPONENT_FMRI=		desktop/remote-desktop/remmina
@@ -27,7 +27,7 @@ COMPONENT_SRC_NAME=	Remmina
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:6efb8fdbce15538b5958c9cce442b2aaa2bcfff7e692c25a83fcb3838286fce5
+	sha256:8963b18a1e77296a14b6876c8de1f7369969e716a856a8496bf5a0d2fffb9287
 COMPONENT_ARCHIVE_URL=  https://github.com/FreeRDP/Remmina/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -39,6 +39,8 @@ include $(WS_MAKE_RULES)/common.mk
 CMAKE_OPTIONS += -DWITH_AVAHI=OFF
 CMAKE_OPTIONS += -DWITH_LIBSSH=OFF
 CMAKE_OPTIONS += -DWITH_APPINDICATOR=OFF
+CMAKE_OPTIONS += -DGETTEXT_MSGMERGE_EXECUTABLE=/usr/bin/gmsgmerge
+CMAKE_OPTIONS += -DGETTEXT_MSGFMT_EXECUTABLE=/usr/bin/gmsgfmt
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/remote-desktop/freerdp
