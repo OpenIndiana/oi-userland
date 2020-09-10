@@ -20,6 +20,6 @@ print-required-packages::
 
 # update the metadata for current component
 update-metadata:
-	@echo "Generating component metadata..."
+	@echo "generating metadata: $(CURDIR:$(WS_TOP)/components/%=%)"
 	@$(BASS_O_MATIC) --workspace=$(WS_TOP) --pkg5
 

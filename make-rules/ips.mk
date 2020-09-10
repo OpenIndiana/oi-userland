@@ -159,8 +159,22 @@ $(foreach v,$($(1)V_VALUES),\
 	sed -e '/^$$/d' -e '/^#.*$$/d' | LANG=C LC_ALL=C sort -u))
 endef
 
+#
+# In addition to the concrete per-version packages, we also need to emit the
+# name of the generic package which pulls in the concrete packages.
+#
+define ips-print-names-generic-rule
+$(shell cat $(2) $(WS_TOP)/transforms/mkgeneric $(BUILD_DIR)/mkgeneric-python \
+    $(WS_TOP)/transforms/print-pkgs |\
+    $(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=\#\#\# /dev/fd/0 |\
+    sed -e '/^$$/d' -e '/^#.*$$/d' | LANG=C LC_ALL=C sort -u)
+endef
+
 define ips-print-names-type-rule
-$(foreach m,$($(1)_MANIFESTS),$(call ips-print-names-versioned-rule,$(1),$(m)))
+$(foreach m,$($(1)_MANIFESTS),\
+    $(call ips-print-names-versioned-rule,$(1),$(m))\
+    $(call ips-print-names-generic-rule,$(1),$(m))\
+)
 endef
 
 VERSIONED_MANIFEST_TYPES =
@@ -175,6 +189,7 @@ PYV_VALUES = $(shell echo $(PYTHON_VERSIONS) | tr -d .)
 PYV_FMRI_VERSION = PYV
 PYV_MANIFESTS = $(foreach v,$(PYV_VALUES),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
 PYNV_MANIFESTS = $(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER//')
+MKGENERIC_SCRIPTS += $(BUILD_DIR)/mkgeneric-python
 else
 NOPY_MANIFESTS = $(UNVERSIONED_MANIFESTS)
 endif
@@ -290,7 +305,7 @@ $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver),$(she
 # appropriate conditional dependencies into a python library's
 # runtime-version-generic package to pull in the version-specific bits when the
 # corresponding version of python is on the system.
-$(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PREREQ)
+$(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PREREQ) $(BUILD_DIR)
 	$(RM) $@
 	$(foreach ver,$(shell echo $(PYTHON_VERSIONS) | tr -d .), \
 		$(call mkgeneric,runtime/python,$(ver)))
@@ -499,9 +514,11 @@ $(BUILD_DIR)/.pre-published-$(MACH):	$(PRE_PUBLISHED)
 $(BUILD_DIR)/.published-$(MACH):	$(PUBLISHED)
 	$(TOUCH) $@
 
-print-package-names:	canonical-manifests
+print-package-names:	canonical-manifests $(MKGENERIC_SCRIPTS)
 	@echo $(call ips-print-names-rule,$(NONVER_MANIFESTS)) \
-		$(foreach t,$(VERSIONED_MANIFEST_TYPES),$(call ips-print-names-type-rule,$(t))) | tr ' ' '\n'
+	    $(foreach t,$(VERSIONED_MANIFEST_TYPES),\
+	        $(call ips-print-names-type-rule,$(t))) \
+	    | tr ' ' '\n'
 
 print-package-paths:	canonical-manifests
 	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
