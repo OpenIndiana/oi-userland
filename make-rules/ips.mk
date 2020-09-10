@@ -149,14 +149,14 @@ endif
 define ips-print-names-rule
 $(shell cat $(1) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u)
+	sed -e '/^$$/d' -e '/^#.*$$/d' | LANG=C LC_ALL=C sort -u)
 endef
 
 define ips-print-names-versioned-rule
 $(foreach v,$($(1)V_VALUES),\
 	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u))
+	sed -e '/^$$/d' -e '/^#.*$$/d' | LANG=C LC_ALL=C sort -u))
 endef
 
 define ips-print-names-type-rule
@@ -506,13 +506,15 @@ print-package-names:	canonical-manifests
 print-package-paths:	canonical-manifests
 	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
+		sed -e '/^$$/d' -e '/^#.*$$/d' | \
+		LANG=C LC_ALL=C sort -u
 
 install-packages:	publish
 	@if [ $(IS_GLOBAL_ZONE) = 0 -o x$(ROOT) != x ]; then \
 	    cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 	    $(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
-	    sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | sort -u | \
+	    sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | \
+	    LANG=C LC_ALL=C sort -u | \
 	    (cd $(PROTO_DIR) ; pfexec /bin/cpio -dump $(ROOT)) ; \
 	 else ; \
 	    echo "unsafe to install package(s) automatically" ; \

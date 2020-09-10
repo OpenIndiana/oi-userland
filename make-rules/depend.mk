@@ -16,7 +16,7 @@
 print-required-packages::
 	@for package in $(REQUIRED_PACKAGES) ; do \
 		echo $$package ;  \
-	done | sort -u
+	done | LANG=C LC_ALL=C sort -u
 
 # update the metadata for current component
 update-metadata:
