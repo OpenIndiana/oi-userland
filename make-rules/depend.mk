@@ -16,10 +16,10 @@
 print-required-packages::
 	@for package in $(REQUIRED_PACKAGES) ; do \
 		echo $$package ;  \
-	done | sort -u
+	done | LANG=C LC_ALL=C sort -u
 
 # update the metadata for current component
 update-metadata:
-	@echo "Generating component metadata..."
+	@echo "generating metadata: $(CURDIR:$(WS_TOP)/components/%=%)"
 	@$(BASS_O_MATIC) --workspace=$(WS_TOP) --pkg5
 
