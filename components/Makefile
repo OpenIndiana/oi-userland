@@ -69,6 +69,7 @@ publish-branch:
 
 
 download:		TARGET = download
+update-metadata:	TARGET = update-metadata
 prep:			TARGET = prep
 build:			TARGET = build
 install:		TARGET = install
@@ -91,8 +92,11 @@ endif
 build install pre-publish publish test: $(COMPONENT_DIRS)
 
 COMPONENT_DIRS.nosetup =	$(COMPONENT_DIRS:%=%.nosetup)
+COMPONENT_DIRS.nolog =		$(COMPONENT_DIRS:%=%.nolog)
 
 download prep:	$(COMPONENT_DIRS.nosetup)
+
+update-metadata:	$(COMPONENT_DIRS.nolog)
 
 component-hook:	$(COMPONENT_DIRS.nosetup)
 
@@ -175,5 +179,9 @@ endif
 $(COMPONENT_DIRS.nosetup):	$(WS_LOGS) FORCE
 	@cd $(@:%.nosetup=%) && echo "$(TARGET) $(@:%.nosetup=%)" && \
 	 $(BASS_O_MATIC) --make $(TARGET) $(LOG)
+
+.PHONY:
+$(COMPONENT_DIRS.nolog):
+	@$(MAKE) -s -C $(@:%.nolog=%) $(TARGET)
 
 FORCE:
