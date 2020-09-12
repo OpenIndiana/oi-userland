@@ -10,13 +10,16 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov
+# Copyright (c) 2020 Marco van Wieringen
 #
+
+BUILD_BITS= 32
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgksu
 COMPONENT_VERSION=	2.0.12
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_FMRI=		library/desktop/libgksu
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	http://www.nongnu.org/gksu/
@@ -28,9 +31,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://people.debian.org/~kov/gksu/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -46,13 +49,6 @@ CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
