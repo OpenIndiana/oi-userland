@@ -11,7 +11,7 @@
 #
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
-# Copyright 2019 Michal Nowak
+# Copyright 2020 Michal Nowak
 #
 
 BUILD_BITS=		64
@@ -19,15 +19,15 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-media
-COMPONENT_MJR_VERSION=	1.22
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.24
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Multimedia applications for the MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:fca9d080e9491aa3bf204a31a488472c4bb7346a5e0f23bd4070ffbe70161855
+	sha256:c3249d63f15be7a30f9247d571515f735b674701b0e596bb92f061e7d3e9adb4
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -52,6 +52,7 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel
 REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/mate/libmatemixer
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
