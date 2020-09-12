@@ -1,6 +1,6 @@
-diff -urN caja-1.22.0/configure.ac caja-1.22.0-patched/configure.ac
---- caja-1.22.0/configure.ac	2019-02-24 18:19:09.000000000 +0000
-+++ caja-1.22.0-patched/configure.ac	2019-03-22 09:18:09.760981716 +0000
+diff -ru --new-file caja-1.24.0/configure.ac caja-1.24.0-patched/configure.ac
+--- caja-1.24.0/configure.ac	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/configure.ac	2020-08-03 19:20:59.502963045 +0000
 @@ -144,6 +144,51 @@
  
  dnl ==========================================================================
@@ -53,9 +53,9 @@ diff -urN caja-1.22.0/configure.ac caja-1.22.0-patched/configure.ac
  dnl exempi checking
  
  AM_CONDITIONAL(HAVE_EXEMPI, false)
-diff -urN caja-1.22.0/icons/Makefile.am caja-1.22.0-patched/icons/Makefile.am
---- caja-1.22.0/icons/Makefile.am	2018-01-14 17:39:36.000000000 +0000
-+++ caja-1.22.0-patched/icons/Makefile.am	2019-03-22 09:18:10.041090015 +0000
+diff -ru --new-file caja-1.24.0/icons/Makefile.am caja-1.24.0-patched/icons/Makefile.am
+--- caja-1.24.0/icons/Makefile.am	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/icons/Makefile.am	2020-08-03 19:20:59.513897355 +0000
 @@ -11,6 +11,17 @@
  	erase.png \
  	knob.png \
@@ -74,10 +74,10 @@ diff -urN caja-1.22.0/icons/Makefile.am caja-1.22.0-patched/icons/Makefile.am
  	$(NULL)
  
  EXTRA_DIST = $(icon_DATA)
-diff -urN caja-1.22.0/libcaja-private/caja-column-utilities.c caja-1.22.0-patched/libcaja-private/caja-column-utilities.c
---- caja-1.22.0/libcaja-private/caja-column-utilities.c	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/caja-column-utilities.c	2019-03-22 09:18:09.860956662 +0000
-@@ -172,6 +172,14 @@
+diff -ru --new-file caja-1.24.0/libcaja-private/caja-column-utilities.c caja-1.24.0-patched/libcaja-private/caja-column-utilities.c
+--- caja-1.24.0/libcaja-private/caja-column-utilities.c	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/caja-column-utilities.c	2020-08-03 19:20:59.524325369 +0000
+@@ -174,6 +174,14 @@
  
      caja_module_extension_list_free (providers);
  
@@ -92,10 +92,10 @@ diff -urN caja-1.22.0/libcaja-private/caja-column-utilities.c caja-1.22.0-patche
      return columns;
  }
  
-diff -urN caja-1.22.0/libcaja-private/caja-directory-async.c caja-1.22.0-patched/libcaja-private/caja-directory-async.c
---- caja-1.22.0/libcaja-private/caja-directory-async.c	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/caja-directory-async.c	2019-03-22 09:18:09.861307465 +0000
-@@ -775,6 +775,11 @@
+diff -ru --new-file caja-1.24.0/libcaja-private/caja-directory-async.c caja-1.24.0-patched/libcaja-private/caja-directory-async.c
+--- caja-1.24.0/libcaja-private/caja-directory-async.c	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/caja-directory-async.c	2020-08-03 19:20:59.540399123 +0000
+@@ -777,6 +777,11 @@
          REQUEST_SET_TYPE (request, REQUEST_FILESYSTEM_INFO);
      }
  
@@ -107,7 +107,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory-async.c caja-1.22.0-patched
      return request;
  }
  
-@@ -5171,6 +5176,18 @@
+@@ -5189,6 +5194,18 @@
      }
  }
  
@@ -126,7 +126,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory-async.c caja-1.22.0-patched
  
  static void
  cancel_loading_attributes (CajaDirectory *directory,
-@@ -5224,6 +5241,11 @@
+@@ -5242,6 +5259,11 @@
          mount_cancel (directory);
      }
  
@@ -138,7 +138,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory-async.c caja-1.22.0-patched
      caja_directory_async_state_changed (directory);
  }
  
-@@ -5274,6 +5296,10 @@
+@@ -5292,6 +5314,10 @@
      {
          cancel_mount_for_file (directory, file);
      }
@@ -149,10 +149,10 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory-async.c caja-1.22.0-patched
  
      caja_directory_async_state_changed (directory);
  }
-diff -urN caja-1.22.0/libcaja-private/caja-directory-private.h caja-1.22.0-patched/libcaja-private/caja-directory-private.h
---- caja-1.22.0/libcaja-private/caja-directory-private.h	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/caja-directory-private.h	2019-03-22 09:18:09.861441502 +0000
-@@ -58,6 +58,7 @@
+diff -ru --new-file caja-1.24.0/libcaja-private/caja-directory-private.h caja-1.24.0-patched/libcaja-private/caja-directory-private.h
+--- caja-1.24.0/libcaja-private/caja-directory-private.h	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/caja-directory-private.h	2020-08-03 19:20:59.552149999 +0000
+@@ -61,6 +61,7 @@
      REQUEST_THUMBNAIL,
      REQUEST_MOUNT,
      REQUEST_FILESYSTEM_INFO,
@@ -160,7 +160,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory-private.h caja-1.22.0-patch
      REQUEST_TYPE_LAST
  } RequestType;
  
-@@ -138,6 +139,10 @@
+@@ -141,6 +142,10 @@
  
      guint64 free_space; /* (guint)-1 for unknown */
      time_t free_space_read; /* The time free_space was updated, or 0 for never */
@@ -171,18 +171,18 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory-private.h caja-1.22.0-patch
  };
  
  CajaDirectory *caja_directory_get_existing                    (GFile                     *location);
-diff -urN caja-1.22.0/libcaja-private/caja-directory.c caja-1.22.0-patched/libcaja-private/caja-directory.c
---- caja-1.22.0/libcaja-private/caja-directory.c	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/caja-directory.c	2019-03-22 09:18:09.861621157 +0000
-@@ -35,6 +35,7 @@
+diff -ru --new-file caja-1.24.0/libcaja-private/caja-directory.c caja-1.24.0-patched/libcaja-private/caja-directory.c
+--- caja-1.24.0/libcaja-private/caja-directory.c	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/caja-directory.c	2020-08-03 19:20:59.567477462 +0000
+@@ -40,6 +40,7 @@
  #include "caja-metadata.h"
  #include "caja-desktop-directory.h"
  #include "caja-vfs-directory.h"
 +#include "caja-zfs.h"
- #include <eel/eel-glib-extensions.h>
- #include <eel/eel-gtk-macros.h>
- #include <gtk/gtk.h>
-@@ -121,6 +122,8 @@
+ 
+ enum
+ {
+@@ -120,6 +121,8 @@
      directory->details->low_priority_queue = caja_file_queue_new ();
      directory->details->extension_queue = caja_file_queue_new ();
      directory->details->free_space = (guint64)-1;
@@ -191,7 +191,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory.c caja-1.22.0-patched/libca
  }
  
  CajaDirectory *
-@@ -192,6 +195,16 @@
+@@ -191,6 +194,16 @@
      g_assert (directory->details->file_list == NULL);
      g_hash_table_destroy (directory->details->file_hash);
  
@@ -208,7 +208,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory.c caja-1.22.0-patched/libca
      caja_file_queue_destroy (directory->details->high_priority_queue);
      caja_file_queue_destroy (directory->details->low_priority_queue);
      caja_file_queue_destroy (directory->details->extension_queue);
-@@ -220,6 +233,21 @@
+@@ -219,6 +232,21 @@
      caja_file_list_free (files);
  }
  
@@ -454,18 +454,18 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory.c caja-1.22.0-patched/libca
  gboolean
  caja_directory_is_in_trash (CajaDirectory *directory)
  {
-diff -urN caja-1.22.0/libcaja-private/caja-directory.h caja-1.22.0-patched/libcaja-private/caja-directory.h
---- caja-1.22.0/libcaja-private/caja-directory.h	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/caja-directory.h	2019-03-22 09:18:09.861775162 +0000
-@@ -28,6 +28,7 @@
- #include <gtk/gtk.h>
+diff -ru --new-file caja-1.24.0/libcaja-private/caja-directory.h caja-1.24.0-patched/libcaja-private/caja-directory.h
+--- caja-1.24.0/libcaja-private/caja-directory.h	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/caja-directory.h	2020-08-03 19:20:59.580274325 +0000
+@@ -29,6 +29,7 @@
  #include <gio/gio.h>
- #include <libcaja-private/caja-file-attributes.h>
-+#include <libcaja-private/caja-zfs.h>
+ 
+ #include "caja-file-attributes.h"
++#include "caja-zfs.h"
  
  G_BEGIN_DECLS
  
-@@ -216,6 +217,24 @@
+@@ -217,6 +218,24 @@
  
  gboolean           caja_directory_is_in_trash              (CajaDirectory         *directory);
  
@@ -490,7 +490,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory.h caja-1.22.0-patched/libca
  /* Return false if directory contains anything besides a Caja metafile.
   * Only valid if directory is monitored. Used by the Trash monitor.
   */
-@@ -235,6 +254,8 @@
+@@ -236,6 +255,8 @@
  
  gboolean           caja_directory_is_editable              (CajaDirectory         *directory);
  
@@ -499,9 +499,9 @@ diff -urN caja-1.22.0/libcaja-private/caja-directory.h caja-1.22.0-patched/libca
  G_END_DECLS
  
  #endif /* CAJA_DIRECTORY_H */
-diff -urN caja-1.22.0/libcaja-private/caja-file-attributes.h caja-1.22.0-patched/libcaja-private/caja-file-attributes.h
---- caja-1.22.0/libcaja-private/caja-file-attributes.h	2018-01-14 17:39:36.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/caja-file-attributes.h	2019-03-22 09:18:09.861922836 +0000
+diff -ru --new-file caja-1.24.0/libcaja-private/caja-file-attributes.h caja-1.24.0-patched/libcaja-private/caja-file-attributes.h
+--- caja-1.24.0/libcaja-private/caja-file-attributes.h	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/caja-file-attributes.h	2020-08-03 19:20:59.591754445 +0000
 @@ -42,6 +42,7 @@
      CAJA_FILE_ATTRIBUTE_THUMBNAIL = 1 << 8,
      CAJA_FILE_ATTRIBUTE_MOUNT = 1 << 9,
@@ -510,10 +510,10 @@ diff -urN caja-1.22.0/libcaja-private/caja-file-attributes.h caja-1.22.0-patched
  } CajaFileAttributes;
  
  #endif /* CAJA_FILE_ATTRIBUTES_H */
-diff -urN caja-1.22.0/libcaja-private/caja-file-private.h caja-1.22.0-patched/libcaja-private/caja-file-private.h
---- caja-1.22.0/libcaja-private/caja-file-private.h	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/caja-file-private.h	2019-03-22 09:18:09.862057286 +0000
-@@ -152,6 +152,13 @@
+diff -ru --new-file caja-1.24.0/libcaja-private/caja-file-private.h caja-1.24.0-patched/libcaja-private/caja-file-private.h
+--- caja-1.24.0/libcaja-private/caja-file-private.h	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/caja-file-private.h	2020-08-03 19:20:59.603942549 +0000
+@@ -153,6 +153,13 @@
      /* Mount for mountpoint or the references GMount for a "mountable" */
      GMount *mount;
  
@@ -527,7 +527,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-file-private.h caja-1.22.0-patched/li
      /* boolean fields: bitfield to save space, since there can be
             many CajaFile objects. */
  
-@@ -199,6 +206,13 @@
+@@ -200,6 +207,13 @@
  
      eel_boolean_bit is_thumbnailing               : 1;
  
@@ -541,17 +541,17 @@ diff -urN caja-1.22.0/libcaja-private/caja-file-private.h caja-1.22.0-patched/li
      /* TRUE if the file is open in a spatial window */
      eel_boolean_bit has_open_window               : 1;
  
-diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-private/caja-file.c
---- caja-1.22.0/libcaja-private/caja-file.c	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/caja-file.c	2019-03-22 09:18:09.862436326 +0000
-@@ -46,6 +46,7 @@
+diff -ru --new-file caja-1.24.0/libcaja-private/caja-file.c caja-1.24.0-patched/libcaja-private/caja-file.c
+--- caja-1.24.0/libcaja-private/caja-file.c	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/caja-file.c	2020-08-03 19:25:42.898164827 +0000
+@@ -71,6 +71,7 @@
  #include "caja-ui-utilities.h"
  #include "caja-vfs-file.h"
  #include "caja-saved-search-file.h"
 +#include "caja-zfs.h"
- #include <eel/eel-debug.h>
- #include <eel/eel-glib-extensions.h>
- #include <eel/eel-gtk-extensions.h>
+ 
+ #ifdef HAVE_SELINUX
+ #include <selinux/selinux.h>
 @@ -153,7 +154,8 @@
  	attribute_where_q,
  	attribute_link_target_q,
@@ -571,7 +571,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
  static void metadata_hash_free (GHashTable *hash);
  
 @@ -501,6 +504,15 @@
- 	eel_ref_str_unref (file->details->filesystem_id);
+ 	g_clear_pointer (&file->details->filesystem_id, g_ref_string_release);
  	file->details->filesystem_id = NULL;
  
 +        g_free (file->details->restore_info);
@@ -586,7 +586,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
  	clear_metadata (file);
  }
  
-@@ -818,6 +830,11 @@
+@@ -819,6 +831,11 @@
  	g_free (file->details->activation_uri);
  	g_free (file->details->compare_by_emblem_cache);
  
@@ -598,10 +598,179 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
  	if (file->details->thumbnail) {
  		g_object_unref (file->details->thumbnail);
  	}
-@@ -4799,6 +4816,74 @@
+@@ -4818,6 +4835,242 @@
  	NULL
  };
  
++/* Following code is copied from Rhythmbox rb-cut-and-paste-code.c */
++
++/* Legal conversion specifiers, as specified in the C standard. */
++#define C_STANDARD_STRFTIME_CHARACTERS "aAbBcdHIjmMpSUwWxXyYZ"
++#define C_STANDARD_NUMERIC_STRFTIME_CHARACTERS "dHIjmMSUwWyY"
++#define SUS_EXTENDED_STRFTIME_MODIFIERS "EO"
++
++/**
++ * eel_strdup_strftime:
++ *
++ * Cover for standard date-and-time-formatting routine strftime that returns
++ * a newly-allocated string of the correct size. The caller is responsible
++ * for g_free-ing the returned string.
++ *
++ * Besides the buffer management, there are two differences between this
++ * and the library strftime:
++ *
++ *   1) The modifiers "-" and "_" between a "%" and a numeric directive
++ *      are defined as for the GNU version of strftime. "-" means "do not
++ *      pad the field" and "_" means "pad with spaces instead of zeroes".
++ *   2) Non-ANSI extensions to strftime are flagged at runtime with a
++ *      warning, so it's easy to notice use of the extensions without
++ *      testing with multiple versions of the library.
++ *
++ * @format: format string to pass to strftime. See strftime documentation
++ * for details.
++ * @time_pieces: date/time, in struct format.
++ *
++ * Return value: Newly allocated string containing the formatted time.
++ **/
++
++static char *
++eel_strdup_strftime (const char *format, struct tm *time_pieces)
++{
++  g_autoptr(GString) string = NULL;
++  const char *remainder, *percent;
++  char code[4], buffer[512];
++  char *piece, *result;
++  g_autofree gchar *converted = NULL;
++  size_t string_length;
++  gboolean strip_leading_zeros, turn_leading_zeros_to_spaces;
++  char modifier;
++  int i;
++
++  /* Format could be translated, and contain UTF-8 chars,
++   * so convert to locale encoding which strftime uses */
++  converted = g_locale_from_utf8 (format, -1, NULL, NULL, NULL);
++  if (!converted)
++    converted = g_strdup (format);
++
++  string = g_string_new ("");
++  remainder = converted;
++
++  /* Walk from % character to % character. */
++  for (;;) {
++    percent = strchr (remainder, '%');
++    if (percent == NULL) {
++      g_string_append (string, remainder);
++      break;
++    }
++    g_string_append_len (string, remainder,
++                         percent - remainder);
++
++    /* Handle the "%" character. */
++    remainder = percent + 1;
++    switch (*remainder) {
++      case '-':
++        strip_leading_zeros = TRUE;
++        turn_leading_zeros_to_spaces = FALSE;
++        remainder++;
++        break;
++      case '_':
++        strip_leading_zeros = FALSE;
++        turn_leading_zeros_to_spaces = TRUE;
++        remainder++;
++        break;
++      case '%':
++        g_string_append_c (string, '%');
++        remainder++;
++        continue;
++      case '\0':
++        g_warning ("Trailing %% passed to eel_strdup_strftime");
++        g_string_append_c (string, '%');
++        continue;
++      default:
++        strip_leading_zeros = FALSE;
++        turn_leading_zeros_to_spaces = FALSE;
++        break;
++    }
++
++    modifier = 0;
++    if (strchr (SUS_EXTENDED_STRFTIME_MODIFIERS, *remainder) != NULL) {
++      modifier = *remainder;
++      remainder++;
++
++      if (*remainder == 0) {
++        g_warning ("Unfinished %%%c modifier passed to eel_strdup_strftime", modifier);
++        break;
++      }
++    }
++
++    if (strchr (C_STANDARD_STRFTIME_CHARACTERS, *remainder) == NULL) {
++      g_warning ("eel_strdup_strftime does not support "
++                 "non-standard escape code %%%c",
++                 *remainder);
++    }
++
++    /* Convert code to strftime format. We have a fixed
++     * limit here that each code can expand to a maximum
++     * of 512 bytes, which is probably OK. There's no
++     * limit on the total size of the result string.
++     */
++    i = 0;
++    code[i++] = '%';
++    if (modifier != 0) {
++#ifdef HAVE_STRFTIME_EXTENSION
++      code[i++] = modifier;
++#endif
++    }
++    code[i++] = *remainder;
++    code[i++] = '\0';
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wformat-nonliteral"
++    /* Format string under control of caller, since this is a wrapper for strftime. */
++    string_length = strftime (buffer, sizeof (buffer),
++                              code, time_pieces);
++#pragma GCC diagnostic pop
++    if (string_length == 0) {
++      /* We could put a warning here, but there's no
++       * way to tell a successful conversion to
++       * empty string from a failure.
++       */
++      buffer[0] = '\0';
++    }
++
++    /* Strip leading zeros if requested. */
++    piece = buffer;
++    if (strip_leading_zeros || turn_leading_zeros_to_spaces) {
++      if (strchr (C_STANDARD_NUMERIC_STRFTIME_CHARACTERS, *remainder) == NULL) {
++        g_warning ("eel_strdup_strftime does not support "
++                   "modifier for non-numeric escape code %%%c%c",
++                   remainder[-1],
++                   *remainder);
++      }
++      if (*piece == '0') {
++        do {
++          piece++;
++        } while (*piece == '0');
++        if (!g_ascii_isdigit (*piece)) {
++          piece--;
++        }
++      }
++      if (turn_leading_zeros_to_spaces) {
++        memset (buffer, ' ', piece - buffer);
++        piece = buffer;
++      }
++    }
++    remainder++;
++
++    /* Add this piece. */
++    g_string_append (string, piece);
++  }
++
++  /* Convert the string back into utf-8. */
++  result = g_locale_to_utf8 (string->str, -1, NULL, NULL, NULL);
++
++  return result;
++}
++
 +char *
 +caja_date_as_string (time_t time_raw, gboolean use_smallest)
 +{
@@ -618,23 +787,23 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
 +
 +    ttime = localtime (&time_raw);
 +
-+    if (!use_smallest)
-+      {
++    if (!use_smallest) {
 +        if (date_format_pref == CAJA_DATE_FORMAT_LOCALE) {
 +          return eel_strdup_strftime ("%c", ttime);
 +        } else if (date_format_pref == CAJA_DATE_FORMAT_ISO) {
 +          return eel_strdup_strftime ("%Y-%m-%d %H:%M:%S",ttime);
 +        }
-+      }
++    }
 +    
-+    date = eel_g_date_new_tm (ttime);
++    date = g_date_new ();
++    g_date_set_time_t (date, time_raw);
 +    
 +    today = g_date_new ();
 +    g_date_set_time_t (today, time (NULL));
 +
 +    /* Overflow results in a large number; fine for our purposes. */
 +    date_age = (g_date_get_julian (today) -
-+             g_date_get_julian (date));
++                g_date_get_julian (date));
 +
 +    g_date_free (date);
 +    g_date_free (today);
@@ -647,7 +816,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
 +     * internationalization's sake.
 +     */
 +
-+    if (date_age == 0)    {
++    if (date_age == 0) {
 +        formats = TODAY_TIME_FORMATS;
 +    } else if (date_age == 1) {
 +        formats = YESTERDAY_TIME_FORMATS;
@@ -656,7 +825,6 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
 +    } else {
 +        formats = CURRENT_WEEK_TIME_FORMATS;
 +    }
-+
 +
 +    if (!use_smallest)
 +      format = _(formats[1]);
@@ -673,7 +841,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
  static char *
  caja_file_fit_date_as_string (CajaFile *file,
  				  CajaDateType date_type,
-@@ -6569,6 +6654,9 @@
+@@ -6588,6 +6841,9 @@
  	if (attribute_q == attribute_free_space_q) {
  		return caja_file_get_volume_free_space (file);
  	}
@@ -683,7 +851,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
  
  	extension_attribute = NULL;
  
-@@ -7615,6 +7703,616 @@
+@@ -7639,6 +7895,616 @@
  
  }
  
@@ -1300,7 +1468,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
  void
  caja_file_mark_gone (CajaFile *file)
  {
-@@ -7882,6 +8580,12 @@
+@@ -7906,6 +8772,12 @@
  	file->details->mount_is_up_to_date = FALSE;
  }
  
@@ -1313,7 +1481,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
  void
  caja_file_invalidate_extension_info_internal (CajaFile *file)
  {
-@@ -7936,6 +8640,9 @@
+@@ -7960,6 +8832,9 @@
  	if (REQUEST_WANTS_TYPE (request, REQUEST_THUMBNAIL)) {
  		invalidate_thumbnail (file);
  	}
@@ -1323,7 +1491,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
  	if (REQUEST_WANTS_TYPE (request, REQUEST_MOUNT)) {
  		invalidate_mount (file);
  	}
-@@ -8018,7 +8725,8 @@
+@@ -8042,7 +8917,8 @@
  		CAJA_FILE_ATTRIBUTE_LARGE_TOP_LEFT_TEXT |
  		CAJA_FILE_ATTRIBUTE_EXTENSION_INFO |
  		CAJA_FILE_ATTRIBUTE_THUMBNAIL |
@@ -1333,7 +1501,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
  }
  
  void
-@@ -8586,6 +9294,7 @@
+@@ -8613,6 +9489,7 @@
  	attribute_link_target_q = g_quark_from_static_string ("link_target");
  	attribute_volume_q = g_quark_from_static_string ("volume");
  	attribute_free_space_q = g_quark_from_static_string ("free_space");
@@ -1341,10 +1509,10 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.c caja-1.22.0-patched/libcaja-pr
  
  	G_OBJECT_CLASS (class)->finalize = finalize;
  	G_OBJECT_CLASS (class)->constructor = caja_file_constructor;
-diff -urN caja-1.22.0/libcaja-private/caja-file.h caja-1.22.0-patched/libcaja-private/caja-file.h
---- caja-1.22.0/libcaja-private/caja-file.h	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/caja-file.h	2019-03-22 09:18:09.862623035 +0000
-@@ -193,6 +193,7 @@
+diff -ru --new-file caja-1.24.0/libcaja-private/caja-file.h caja-1.24.0-patched/libcaja-private/caja-file.h
+--- caja-1.24.0/libcaja-private/caja-file.h	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/caja-file.h	2020-08-03 19:20:59.642543003 +0000
+@@ -194,6 +194,7 @@
          const char                     *mime_type);
  gboolean                caja_file_is_launchable                     (CajaFile                   *file);
  gboolean                caja_file_is_symbolic_link                  (CajaFile                   *file);
@@ -1352,7 +1520,7 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.h caja-1.22.0-patched/libcaja-pr
  gboolean                caja_file_is_mountpoint                     (CajaFile                   *file);
  GMount *                caja_file_get_mount                         (CajaFile                   *file);
  char *                  caja_file_get_volume_free_space             (CajaFile                   *file);
-@@ -249,6 +250,27 @@
+@@ -250,6 +251,27 @@
  
  CajaFile *          caja_file_get_trash_original_file           (CajaFile                   *file);
  
@@ -1380,12 +1548,12 @@ diff -urN caja-1.22.0/libcaja-private/caja-file.h caja-1.22.0-patched/libcaja-pr
  /* Permissions. */
  gboolean                caja_file_can_get_permissions               (CajaFile                   *file);
  gboolean                caja_file_can_set_permissions               (CajaFile                   *file);
-diff -urN caja-1.22.0/libcaja-private/caja-global-preferences.h caja-1.22.0-patched/libcaja-private/caja-global-preferences.h
---- caja-1.22.0/libcaja-private/caja-global-preferences.h	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/caja-global-preferences.h	2019-03-22 09:18:09.862759232 +0000
-@@ -69,6 +69,9 @@
- #define CAJA_PREFERENCES_DATE_FORMAT			"date-format"
+diff -ru --new-file caja-1.24.0/libcaja-private/caja-global-preferences.h caja-1.24.0-patched/libcaja-private/caja-global-preferences.h
+--- caja-1.24.0/libcaja-private/caja-global-preferences.h	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/caja-global-preferences.h	2020-08-03 19:20:59.656577165 +0000
+@@ -70,6 +70,9 @@
  #define CAJA_PREFERENCES_USE_IEC_UNITS			"use-iec-units"
+ #define CAJA_PREFERENCES_SHOW_ICONS_IN_LIST_VIEW	"show-icons-in-list-view"
  
 +/* Time slider */
 +#define CAJA_PREFERENCES_ENABLE_TIME_SLIDER             "enable-time-slider"
@@ -1393,9 +1561,9 @@ diff -urN caja-1.22.0/libcaja-private/caja-global-preferences.h caja-1.22.0-patc
  /* Mouse */
  #define CAJA_PREFERENCES_MOUSE_USE_EXTRA_BUTTONS 	"mouse-use-extra-buttons"
  #define CAJA_PREFERENCES_MOUSE_FORWARD_BUTTON		"mouse-forward-button"
-diff -urN caja-1.22.0/libcaja-private/caja-zfs.c caja-1.22.0-patched/libcaja-private/caja-zfs.c
---- caja-1.22.0/libcaja-private/caja-zfs.c.~1~	2019-04-07 13:39:38.596029302 +0000
-+++ caja-1.22.0/libcaja-private/caja-zfs.c	2019-04-07 13:39:38.646046161 +0000
+diff -ru --new-file caja-1.24.0/libcaja-private/caja-zfs.c caja-1.24.0-patched/libcaja-private/caja-zfs.c
+--- caja-1.24.0/libcaja-private/caja-zfs.c	1970-01-01 01:00:00.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/caja-zfs.c	2020-08-03 19:20:59.669469955 +0000
 @@ -0,0 +1,1239 @@
 +/* 
 + * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
@@ -2636,9 +2804,9 @@ diff -urN caja-1.22.0/libcaja-private/caja-zfs.c caja-1.22.0-patched/libcaja-pri
 +
 +}
 +
-diff -urN caja-1.22.0/libcaja-private/caja-zfs.h caja-1.22.0-patched/libcaja-private/caja-zfs.h
---- caja-1.22.0/libcaja-private/caja-zfs.h	1970-01-01 03:00:00.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/caja-zfs.h	2019-03-22 09:18:09.863122312 +0000
+diff -ru --new-file caja-1.24.0/libcaja-private/caja-zfs.h caja-1.24.0-patched/libcaja-private/caja-zfs.h
+--- caja-1.24.0/libcaja-private/caja-zfs.h	1970-01-01 01:00:00.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/caja-zfs.h	2020-08-03 19:20:59.682761170 +0000
 @@ -0,0 +1,75 @@
 +#ifndef CAJA_ZFS_H
 +#define CAJA_ZFS_H
@@ -2715,9 +2883,9 @@ diff -urN caja-1.22.0/libcaja-private/caja-zfs.h caja-1.22.0-patched/libcaja-pri
 +                           ZfsDirChangeCallback change_callback,
 +                           gpointer            data);
 +#endif /* CAJA_ZFS_H */
-diff -urN caja-1.22.0/libcaja-private/Makefile.am caja-1.22.0-patched/libcaja-private/Makefile.am
---- caja-1.22.0/libcaja-private/Makefile.am	2018-02-14 12:56:05.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/Makefile.am	2019-03-22 09:18:09.863341920 +0000
+diff -ru --new-file caja-1.24.0/libcaja-private/Makefile.am caja-1.24.0-patched/libcaja-private/Makefile.am
+--- caja-1.24.0/libcaja-private/Makefile.am	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/Makefile.am	2020-08-03 19:20:59.697152829 +0000
 @@ -37,7 +37,10 @@
  	$(top_builddir)/eel/libeel-2.la \
  	$(top_builddir)/libcaja-extension/libcaja-extension.la \
@@ -2739,9 +2907,9 @@ diff -urN caja-1.22.0/libcaja-private/Makefile.am caja-1.22.0-patched/libcaja-pr
  	$(NULL)
  
  nodist_libcaja_private_la_SOURCES =\
-diff -urN caja-1.22.0/libcaja-private/org.mate.caja.gschema.xml caja-1.22.0-patched/libcaja-private/org.mate.caja.gschema.xml
---- caja-1.22.0/libcaja-private/org.mate.caja.gschema.xml	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/libcaja-private/org.mate.caja.gschema.xml	2019-03-22 09:18:09.863487072 +0000
+diff -ru --new-file caja-1.24.0/libcaja-private/org.mate.caja.gschema.xml caja-1.24.0-patched/libcaja-private/org.mate.caja.gschema.xml
+--- caja-1.24.0/libcaja-private/org.mate.caja.gschema.xml	2020-02-10 11:52:31.000000000 +0000
++++ caja-1.24.0-patched/libcaja-private/org.mate.caja.gschema.xml	2020-08-03 19:20:59.712093632 +0000
 @@ -81,6 +81,11 @@
        <summary>Switch tabs with [ctrl] + [tab]</summary>
        <description>If true, it enables the ability to switch tabs using [ctrl + tab] and [ctrl + shift + tab].</description>
@@ -2754,9 +2922,9 @@ diff -urN caja-1.22.0/libcaja-private/org.mate.caja.gschema.xml caja-1.22.0-patc
      <key name="exit-with-last-window" type="b">
        <default>false</default>
        <summary>Caja will exit when last window destroyed.</summary>
-diff -urN caja-1.22.0/src/caja-actions.h caja-1.22.0-patched/src/caja-actions.h
---- caja-1.22.0/src/caja-actions.h	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-actions.h	2019-03-22 09:18:09.833889337 +0000
+diff -ru --new-file caja-1.24.0/src/caja-actions.h caja-1.24.0-patched/src/caja-actions.h
+--- caja-1.24.0/src/caja-actions.h	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/caja-actions.h	2020-08-03 19:20:59.726283287 +0000
 @@ -28,6 +28,7 @@
  
  #define CAJA_ACTION_STOP "Stop"
@@ -2765,18 +2933,18 @@ diff -urN caja-1.22.0/src/caja-actions.h caja-1.22.0-patched/src/caja-actions.h
  #define CAJA_ACTION_BACK "Back"
  #define CAJA_ACTION_UP "Up"
  #define CAJA_ACTION_UP_ACCEL "UpAccel"
-diff -urN caja-1.22.0/src/caja-file-management-properties.c caja-1.22.0-patched/src/caja-file-management-properties.c
---- caja-1.22.0/src/caja-file-management-properties.c	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-file-management-properties.c	2019-03-22 09:18:09.834070352 +0000
+diff -ru --new-file caja-1.24.0/src/caja-file-management-properties.c caja-1.24.0-patched/src/caja-file-management-properties.c
+--- caja-1.24.0/src/caja-file-management-properties.c	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/caja-file-management-properties.c	2020-08-03 19:20:59.741277467 +0000
 @@ -72,6 +72,7 @@
  #define CAJA_FILE_MANAGEMENT_PROPERTIES_TREE_VIEW_FOLDERS_WIDGET "treeview_folders_checkbutton"
  #define CAJA_FILE_MANAGEMENT_PROPERTIES_MEDIA_AUTOMOUNT_OPEN "media_automount_open_checkbutton"
  #define CAJA_FILE_MANAGEMENT_PROPERTIES_MEDIA_AUTORUN_NEVER "media_autorun_never_checkbutton"
 +#define CAJA_FILE_MANAGEMENT_PROPERTIES_ENABLE_TIME_SLIDER "time_slider_enabled_checkbutton"
  #define CAJA_FILE_MANAGEMENT_PROPERTIES_USE_IEC_UNITS_WIDGET "use_iec_units"
+ #define CAJA_FILE_MANAGEMENT_PROPERTIES_SHOW_ICONS_IN_LIST_VIEW "show_icons_in_list_view"
  
- /* int enums */
-@@ -1182,6 +1183,9 @@
+@@ -1185,6 +1186,9 @@
      bind_builder_bool (builder, caja_preferences,
                         CAJA_FILE_MANAGEMENT_PROPERTIES_SHOW_BACKUP_WIDGET,
                         CAJA_PREFERENCES_SHOW_BACKUP_FILES);
@@ -2786,9 +2954,9 @@ diff -urN caja-1.22.0/src/caja-file-management-properties.c caja-1.22.0-patched/
      bind_builder_bool (builder, caja_tree_sidebar_preferences,
                         CAJA_FILE_MANAGEMENT_PROPERTIES_TREE_VIEW_FOLDERS_WIDGET,
                         CAJA_PREFERENCES_TREE_SHOW_ONLY_DIRECTORIES);
-diff -urN caja-1.22.0/src/caja-navigation-window-ui.xml caja-1.22.0-patched/src/caja-navigation-window-ui.xml
---- caja-1.22.0/src/caja-navigation-window-ui.xml	2018-01-14 17:39:36.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-navigation-window-ui.xml	2019-03-22 09:18:09.834205678 +0000
+diff -ru --new-file caja-1.24.0/src/caja-navigation-window-ui.xml caja-1.24.0-patched/src/caja-navigation-window-ui.xml
+--- caja-1.24.0/src/caja-navigation-window-ui.xml	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/caja-navigation-window-ui.xml	2020-08-03 19:20:59.753546316 +0000
 @@ -63,6 +63,7 @@
  	<toolitem name="Up" action="Up"/>
  	<toolitem name="Stop" action="Stop"/>
@@ -2797,18 +2965,18 @@ diff -urN caja-1.22.0/src/caja-navigation-window-ui.xml caja-1.22.0-patched/src/
  	<separator/>
  	<toolitem name="Home" action="Home"/>
  	<toolitem name="Computer" action="Go to Computer"/>
-diff -urN caja-1.22.0/src/caja-navigation-window.c caja-1.22.0-patched/src/caja-navigation-window.c
---- caja-1.22.0/src/caja-navigation-window.c.~1~	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0/src/caja-navigation-window.c	2019-04-07 10:52:11.141635362 +0000
-@@ -41,6 +41,7 @@
+diff -ru --new-file caja-1.24.0/src/caja-navigation-window.c caja-1.24.0-patched/src/caja-navigation-window.c
+--- caja-1.24.0/src/caja-navigation-window.c	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/caja-navigation-window.c	2020-08-03 19:20:59.768327889 +0000
+@@ -71,6 +71,7 @@
  #include "caja-notebook.h"
  #include "caja-window-manage-views.h"
  #include "caja-navigation-window-pane.h"
 +#include "caja-zfs-bar.h"
- #include <eel/eel-gtk-extensions.h>
- #include <eel/eel-gtk-macros.h>
- #include <eel/eel-string.h>
-@@ -104,6 +105,13 @@
+ 
+ #define MAX_TITLE_LENGTH 180
+ 
+@@ -108,6 +109,13 @@
  };
  
  static void
@@ -2822,7 +2990,7 @@ diff -urN caja-1.22.0/src/caja-navigation-window.c caja-1.22.0-patched/src/caja-
  caja_navigation_window_init (CajaNavigationWindow *window)
  {
      GtkUIManager *ui_manager;
-@@ -164,6 +172,16 @@
+@@ -168,6 +176,16 @@
  
      ui_manager = caja_window_get_ui_manager (CAJA_WINDOW (window));
      toolbar = gtk_ui_manager_get_widget (ui_manager, "/Toolbar");
@@ -2839,7 +3007,7 @@ diff -urN caja-1.22.0/src/caja-navigation-window.c caja-1.22.0-patched/src/caja-
      gtk_style_context_add_class (gtk_widget_get_style_context (toolbar), GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
      window->details->toolbar = toolbar;
      gtk_widget_set_hexpand (toolbar, TRUE);
-@@ -180,6 +198,12 @@
+@@ -184,6 +202,12 @@
      caja_navigation_window_allow_back (window, FALSE);
      caja_navigation_window_allow_forward (window, FALSE);
  
@@ -2852,7 +3020,7 @@ diff -urN caja-1.22.0/src/caja-navigation-window.c caja-1.22.0-patched/src/caja-
      g_signal_connect_swapped (caja_preferences,
                                "changed::" CAJA_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY,
                                G_CALLBACK(always_use_location_entry_changed),
-@@ -345,6 +369,59 @@
+@@ -349,6 +373,59 @@
      }
  }
  
@@ -2912,7 +3080,7 @@ diff -urN caja-1.22.0/src/caja-navigation-window.c caja-1.22.0-patched/src/caja-
  static void
  side_pane_close_requested_callback (GtkWidget *widget,
                                      gpointer user_data)
-@@ -1194,6 +1271,7 @@
+@@ -1209,6 +1286,7 @@
  static void
  real_window_close (CajaWindow *window)
  {
@@ -2920,7 +3088,7 @@ diff -urN caja-1.22.0/src/caja-navigation-window.c caja-1.22.0-patched/src/caja-
      caja_navigation_window_save_geometry (CAJA_NAVIGATION_WINDOW (window));
  }
  
-@@ -1412,6 +1490,19 @@
+@@ -1430,6 +1508,19 @@
      caja_navigation_window_update_split_view_actions_sensitivity (window);
  }
  
@@ -2940,10 +3108,10 @@ diff -urN caja-1.22.0/src/caja-navigation-window.c caja-1.22.0-patched/src/caja-
  gboolean
  caja_navigation_window_split_view_showing (CajaNavigationWindow *window)
  {
-diff -urN caja-1.22.0/src/caja-navigation-window.h caja-1.22.0-patched/src/caja-navigation-window.h
---- caja-1.22.0/src/caja-navigation-window.h	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-navigation-window.h	2019-03-22 09:18:09.834555447 +0000
-@@ -65,10 +65,17 @@
+diff -ru --new-file caja-1.24.0/src/caja-navigation-window.h caja-1.24.0-patched/src/caja-navigation-window.h
+--- caja-1.24.0/src/caja-navigation-window.h	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/caja-navigation-window.h	2020-08-03 19:20:59.781014876 +0000
+@@ -68,10 +68,17 @@
      /** UI stuff **/
      CajaSidePane *sidebar;
  
@@ -2961,7 +3129,7 @@ diff -urN caja-1.22.0/src/caja-navigation-window.h caja-1.22.0-patched/src/caja-
  
  struct _CajaNavigationWindowClass
  {
-@@ -90,6 +97,9 @@
+@@ -93,6 +100,9 @@
  void     caja_navigation_window_hide_sidebar         (CajaNavigationWindow *window);
  void     caja_navigation_window_show_sidebar         (CajaNavigationWindow *window);
  gboolean caja_navigation_window_sidebar_showing      (CajaNavigationWindow *window);
@@ -2971,9 +3139,9 @@ diff -urN caja-1.22.0/src/caja-navigation-window.h caja-1.22.0-patched/src/caja-
  void     caja_navigation_window_add_sidebar_panel    (CajaNavigationWindow *window,
          CajaSidebar          *sidebar_panel);
  void     caja_navigation_window_remove_sidebar_panel (CajaNavigationWindow *window,
-diff -urN caja-1.22.0/src/caja-shell-ui.xml caja-1.22.0-patched/src/caja-shell-ui.xml
---- caja-1.22.0/src/caja-shell-ui.xml	2018-01-14 17:39:36.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-shell-ui.xml	2019-03-22 09:18:09.834685735 +0000
+diff -ru --new-file caja-1.24.0/src/caja-shell-ui.xml caja-1.24.0-patched/src/caja-shell-ui.xml
+--- caja-1.24.0/src/caja-shell-ui.xml	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/caja-shell-ui.xml	2020-08-03 19:20:59.792985286 +0000
 @@ -45,6 +45,7 @@
  	<menu action="View">
  		<menuitem name="Stop" action="Stop"/>
@@ -2982,46 +3150,30 @@ diff -urN caja-1.22.0/src/caja-shell-ui.xml caja-1.22.0-patched/src/caja-shell-u
  		<separator/>
  		<placeholder name="Show Hide Placeholder"/>
  		<separator/>
-diff -urN caja-1.22.0/src/caja-window-manage-views.c caja-1.22.0-patched/src/caja-window-manage-views.c
---- caja-1.22.0/src/caja-window-manage-views.c	2018-01-14 17:39:36.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-window-manage-views.c	2019-03-22 09:18:09.834866380 +0000
-@@ -39,6 +39,7 @@
- #include "caja-trash-bar.h"
- #include "caja-x-content-bar.h"
- #include "caja-navigation-window-pane.h"
-+#include "caja-zfs-bar.h"
- #include <eel/eel-accessibility.h>
- #include <eel/eel-debug.h>
- #include <eel/eel-gdk-extensions.h>
-@@ -51,6 +52,7 @@
+diff -ru --new-file caja-1.24.0/src/caja-window-manage-views.c caja-1.24.0-patched/src/caja-window-manage-views.c
+--- caja-1.24.0/src/caja-window-manage-views.c	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/caja-window-manage-views.c	2020-08-03 19:20:59.808220780 +0000
+@@ -30,6 +30,7 @@
  #include <gtk/gtk.h>
  #include <gdk/gdkx.h>
  #include <glib/gi18n.h>
 +#include <stdlib.h>
- #include <libcaja-extension/caja-location-widget-provider.h>
- #include <libcaja-private/caja-debug-log.h>
- #include <libcaja-private/caja-extensions.h>
-@@ -519,7 +521,7 @@
-     CajaWindowSlot *target_slot;
-     CajaWindowOpenFlags slot_flags;
-     gboolean existing = FALSE;
--    GFile *old_location;
-+    GFile *old_location = NULL;
-     char *old_uri, *new_uri;
-     int new_slot_position;
-     GList *l;
-@@ -896,6 +898,7 @@
-     CajaFile *file;
-     gboolean force_reload;
-     char *current_pos;
-+    GFile *old_file = NULL;
-     GFile *from_folder;
-     GFile *parent;
  
-@@ -930,12 +933,47 @@
+ #include <eel/eel-accessibility.h>
+ #include <eel/eel-debug.h>
+@@ -71,6 +72,7 @@
+ #include "caja-trash-bar.h"
+ #include "caja-x-content-bar.h"
+ #include "caja-navigation-window-pane.h"
++#include "caja-zfs-bar.h"
+ 
+ /* FIXME bugzilla.gnome.org 41243:
+  * We should use inheritance instead of these special cases
+@@ -937,12 +939,48 @@
  
      end_location_change (slot);
  
++    GFile *old_file = NULL;
 +    old_file = caja_window_slot_get_location (slot);
 +
 +    if (old_file)
@@ -3066,7 +3218,7 @@ diff -urN caja-1.22.0/src/caja-window-manage-views.c caja-1.22.0-patched/src/caj
      slot->pending_location = g_object_ref (location);
      slot->location_change_type = type;
      slot->location_change_distance = distance;
-@@ -947,8 +985,6 @@
+@@ -954,8 +992,6 @@
      slot->open_callback = callback;
      slot->open_callback_user_data = user_data;
  
@@ -3075,7 +3227,7 @@ diff -urN caja-1.22.0/src/caja-window-manage-views.c caja-1.22.0-patched/src/caj
      /* The code to force a reload is here because if we do it
       * after determining an initial view (in the components), then
       * we end up fetching things twice.
-@@ -1235,8 +1271,20 @@
+@@ -1250,8 +1286,20 @@
          if (slot->location_change_type != CAJA_LOCATION_CHANGE_FALLBACK)
          {
              /* Look in metadata for view */
@@ -3098,7 +3250,15 @@ diff -urN caja-1.22.0/src/caja-window-manage-views.c caja-1.22.0-patched/src/caj
              if (view_id != NULL &&
                      !caja_view_factory_view_supports_uri (view_id,
                              location,
-@@ -1820,6 +1868,30 @@
+@@ -1799,6 +1847,7 @@
+ static void
+ update_for_new_location (CajaWindowSlot *slot)
+ {
++    CajaDirectory *directory;
+     CajaWindow *window;
+     GFile *new_location;
+     CajaFile *file;
+@@ -1852,6 +1901,30 @@
          caja_window_load_extension_menus (window);
      }
  
@@ -3128,8 +3288,8 @@ diff -urN caja-1.22.0/src/caja-window-manage-views.c caja-1.22.0-patched/src/caj
 +
      if (location_really_changed)
      {
-         caja_window_slot_remove_extra_location_widgets (slot);
-@@ -2190,12 +2262,22 @@
+         CajaDirectory *directory;
+@@ -2223,12 +2296,22 @@
  caja_window_slot_stop_loading (CajaWindowSlot *slot)
  {
      CajaWindow *window;
@@ -3152,7 +3312,7 @@ diff -urN caja-1.22.0/src/caja-window-manage-views.c caja-1.22.0-patched/src/caj
      if (slot->new_content_view != NULL)
      {
          window->details->temporarily_ignore_view_signals = TRUE;
-@@ -2256,11 +2338,22 @@
+@@ -2289,11 +2372,22 @@
  caja_window_manage_views_close_slot (CajaWindowPane *pane,
                                       CajaWindowSlot *slot)
  {
@@ -3175,19 +3335,19 @@ diff -urN caja-1.22.0/src/caja-window-manage-views.c caja-1.22.0-patched/src/caj
      free_location_change (slot);
      cancel_viewed_file_changed_callback (slot);
  }
-diff -urN caja-1.22.0/src/caja-window-menus.c caja-1.22.0-patched/src/caja-window-menus.c
---- caja-1.22.0/src/caja-window-menus.c	2019-02-24 17:41:56.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-window-menus.c	2019-03-22 09:18:09.835022025 +0000
-@@ -39,6 +39,8 @@
+diff -ru --new-file caja-1.24.0/src/caja-window-menus.c caja-1.24.0-patched/src/caja-window-menus.c
+--- caja-1.24.0/src/caja-window-menus.c	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/caja-window-menus.c	2020-08-03 19:20:59.822845377 +0000
+@@ -57,6 +57,8 @@
  #include "caja-window-private.h"
  #include "caja-desktop-window.h"
  #include "caja-search-bar.h"
 +#include "caja-navigation-window.h"
 +#include "caja-zfs-bar.h"
- #include <gtk/gtk.h>
- #include <gio/gio.h>
- #include <glib/gi18n.h>
-@@ -363,6 +365,33 @@
+ 
+ #define MENU_PATH_EXTENSION_ACTIONS                     "/MenuBar/File/Extension Actions"
+ #define POPUP_PATH_EXTENSION_ACTIONS                     "/background/Before Zoom Items/Extension Actions"
+@@ -370,6 +372,33 @@
  }
  
  static void
@@ -3221,7 +3381,7 @@ diff -urN caja-1.22.0/src/caja-window-menus.c caja-1.22.0-patched/src/caja-windo
  action_zoom_in_callback (GtkAction *action,
                           gpointer user_data)
  {
-@@ -937,6 +966,12 @@
+@@ -959,6 +988,12 @@
  
  static const GtkToggleActionEntry main_toggle_entries[] =
  {
@@ -3234,10 +3394,10 @@ diff -urN caja-1.22.0/src/caja-window-menus.c caja-1.22.0-patched/src/caja-windo
      /* name, icon name */        { "Show Hidden Files", NULL,
          /* label, accelerator */       N_("Show _Hidden Files"), "<control>H",
          /* tooltip */                  N_("Toggle the display of hidden files in the current window"),
-diff -urN caja-1.22.0/src/caja-window-slot.c caja-1.22.0-patched/src/caja-window-slot.c
---- caja-1.22.0/src/caja-window-slot.c	2018-02-14 12:56:05.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-window-slot.c	2019-03-22 09:18:09.835188045 +0000
-@@ -677,6 +677,13 @@
+diff -ru --new-file caja-1.24.0/src/caja-window-slot.c caja-1.24.0-patched/src/caja-window-slot.c
+--- caja-1.24.0/src/caja-window-slot.c	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/caja-window-slot.c	2020-08-03 19:20:59.835309500 +0000
+@@ -683,6 +683,13 @@
          slot->find_mount_cancellable = NULL;
      }
  
@@ -3251,9 +3411,9 @@ diff -urN caja-1.22.0/src/caja-window-slot.c caja-1.22.0-patched/src/caja-window
      slot->pane = NULL;
  
      g_free (slot->title);
-diff -urN caja-1.22.0/src/caja-window-slot.h caja-1.22.0-patched/src/caja-window-slot.h
---- caja-1.22.0/src/caja-window-slot.h	2018-01-14 17:39:36.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-window-slot.h	2019-03-22 09:18:09.835341746 +0000
+diff -ru --new-file caja-1.24.0/src/caja-window-slot.h caja-1.24.0-patched/src/caja-window-slot.h
+--- caja-1.24.0/src/caja-window-slot.h	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/caja-window-slot.h	2020-08-03 19:20:59.847207031 +0000
 @@ -113,6 +113,7 @@
      gpointer open_callback_user_data;
  
@@ -3262,10 +3422,10 @@ diff -urN caja-1.22.0/src/caja-window-slot.h caja-1.22.0-patched/src/caja-window
  
      gboolean visible;
  };
-diff -urN caja-1.22.0/src/caja-window.c caja-1.22.0-patched/src/caja-window.c
---- caja-1.22.0/src/caja-window.c	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-window.c	2019-03-22 09:18:09.835498960 +0000
-@@ -376,6 +376,18 @@
+diff -ru --new-file caja-1.24.0/src/caja-window.c caja-1.24.0-patched/src/caja-window.c
+--- caja-1.24.0/src/caja-window.c	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/caja-window.c	2020-08-03 19:20:59.863665693 +0000
+@@ -418,6 +418,18 @@
                       set_allow_up, (window, allow));
  }
  
@@ -3284,7 +3444,7 @@ diff -urN caja-1.22.0/src/caja-window.c caja-1.22.0-patched/src/caja-window.c
  static void
  update_cursor (CajaWindow *window)
  {
-@@ -384,7 +396,7 @@
+@@ -425,7 +437,7 @@
  
      slot = window->details->active_pane->active_slot;
  
@@ -3293,10 +3453,10 @@ diff -urN caja-1.22.0/src/caja-window.c caja-1.22.0-patched/src/caja-window.c
      {
          GdkDisplay *display;
          GdkCursor * cursor;
-@@ -418,8 +430,19 @@
-     {
+@@ -462,7 +474,18 @@
          if (slot == window->details->active_pane->active_slot)
          {
+             G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 +            if (!slot->allow_stop && slot->find_zfs_snapshots_cancellable != NULL)
 +            { 
 +                /* if slot want to stop and snap find is finished/cancel then disable */
@@ -3308,15 +3468,14 @@ diff -urN caja-1.22.0/src/caja-window.c caja-1.22.0-patched/src/caja-window.c
 +            else
 +            {
              gtk_action_set_sensitive (action, slot->allow_stop);
++	    }
+             G_GNUC_END_IGNORE_DEPRECATIONS;
          }
-+         }
  
-         if (gtk_widget_get_realized (GTK_WIDGET (window)))
-         {
-diff -urN caja-1.22.0/src/caja-window.h caja-1.22.0-patched/src/caja-window.h
---- caja-1.22.0/src/caja-window.h	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-window.h	2019-03-22 09:18:09.835631755 +0000
-@@ -155,7 +155,8 @@
+diff -ru --new-file caja-1.24.0/src/caja-window.h caja-1.24.0-patched/src/caja-window.h
+--- caja-1.24.0/src/caja-window.h	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/caja-window.h	2020-08-03 19:20:59.876714576 +0000
+@@ -157,7 +157,8 @@
  void             caja_window_display_error        (CajaWindow    *window,
          const char        *error_msg);
  void		 caja_window_reload		      (CajaWindow	 *window);
@@ -3326,9 +3485,9 @@ diff -urN caja-1.22.0/src/caja-window.h caja-1.22.0-patched/src/caja-window.h
  void             caja_window_allow_reload         (CajaWindow    *window,
          gboolean           allow);
  void             caja_window_allow_up             (CajaWindow    *window,
-diff -urN caja-1.22.0/src/caja-zfs-bar.c caja-1.22.0-patched/src/caja-zfs-bar.c
---- caja-1.22.0/src/caja-zfs-bar.c	1970-01-01 03:00:00.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-zfs-bar.c	2019-03-22 09:18:09.835810906 +0000
+diff -ru --new-file caja-1.24.0/src/caja-zfs-bar.c caja-1.24.0-patched/src/caja-zfs-bar.c
+--- caja-1.24.0/src/caja-zfs-bar.c	1970-01-01 01:00:00.000000000 +0000
++++ caja-1.24.0-patched/src/caja-zfs-bar.c	2020-08-03 19:20:59.888691553 +0000
 @@ -0,0 +1,851 @@
 +/* 
 + * Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
@@ -4181,9 +4340,9 @@ diff -urN caja-1.22.0/src/caja-zfs-bar.c caja-1.22.0-patched/src/caja-zfs-bar.c
 +    return GTK_WIDGET (bar);
 +}
 +
-diff -urN caja-1.22.0/src/caja-zfs-bar.h caja-1.22.0-patched/src/caja-zfs-bar.h
---- caja-1.22.0/src/caja-zfs-bar.h	1970-01-01 03:00:00.000000000 +0000
-+++ caja-1.22.0-patched/src/caja-zfs-bar.h	2019-03-22 09:18:09.836051102 +0000
+diff -ru --new-file caja-1.24.0/src/caja-zfs-bar.h caja-1.24.0-patched/src/caja-zfs-bar.h
+--- caja-1.24.0/src/caja-zfs-bar.h	1970-01-01 01:00:00.000000000 +0000
++++ caja-1.24.0-patched/src/caja-zfs-bar.h	2020-08-03 19:20:59.900040564 +0000
 @@ -0,0 +1,56 @@
 +#ifndef __CAJA_ZFS_BAR_H
 +#define __CAJA_ZFS_BAR_H
@@ -4241,9 +4400,9 @@ diff -urN caja-1.22.0/src/caja-zfs-bar.h caja-1.22.0-patched/src/caja-zfs-bar.h
 +G_END_DECLS
 +
 +#endif /* __CAJA_ZFS_BAR_H */
-diff -urN caja-1.22.0/src/file-manager/caja-directory-view-ui.xml caja-1.22.0-patched/src/file-manager/caja-directory-view-ui.xml
---- caja-1.22.0/src/file-manager/caja-directory-view-ui.xml	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/src/file-manager/caja-directory-view-ui.xml	2019-03-22 09:18:09.843969262 +0000
+diff -ru --new-file caja-1.24.0/src/file-manager/caja-directory-view-ui.xml caja-1.24.0-patched/src/file-manager/caja-directory-view-ui.xml
+--- caja-1.24.0/src/file-manager/caja-directory-view-ui.xml	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/file-manager/caja-directory-view-ui.xml	2020-08-03 19:20:59.914144901 +0000
 @@ -71,6 +71,9 @@
  			<menuitem name="Duplicate" action="Duplicate"/>
  			<menuitem name="Create Link" action="Create Link"/>
@@ -4272,9 +4431,9 @@ diff -urN caja-1.22.0/src/file-manager/caja-directory-view-ui.xml caja-1.22.0-pa
  		<menuitem name="Trash" action="LocationTrash"/>
  		<menuitem name="Delete" action="LocationDelete"/>
  		<menuitem name="Restore From Trash" action="LocationRestoreFromTrash"/>
-diff -urN caja-1.22.0/src/file-manager/fm-actions.h caja-1.22.0-patched/src/file-manager/fm-actions.h
---- caja-1.22.0/src/file-manager/fm-actions.h	2018-01-14 17:39:36.000000000 +0000
-+++ caja-1.22.0-patched/src/file-manager/fm-actions.h	2019-03-22 09:18:09.844103221 +0000
+diff -ru --new-file caja-1.24.0/src/file-manager/fm-actions.h caja-1.24.0-patched/src/file-manager/fm-actions.h
+--- caja-1.24.0/src/file-manager/fm-actions.h	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/file-manager/fm-actions.h	2020-08-03 19:20:59.925362287 +0000
 @@ -58,6 +58,9 @@
  #define FM_ACTION_NEW_LAUNCHER "New Launcher"
  #define FM_ACTION_NEW_LAUNCHER_DESKTOP "New Launcher Desktop"
@@ -4285,10 +4444,10 @@ diff -urN caja-1.22.0/src/file-manager/fm-actions.h caja-1.22.0-patched/src/file
  #define FM_ACTION_DUPLICATE "Duplicate"
  #define FM_ACTION_CREATE_LINK "Create Link"
  #define FM_ACTION_SELECT_ALL "Select All"
-diff -urN caja-1.22.0/src/file-manager/fm-directory-view.c caja-1.22.0-patched/src/file-manager/fm-directory-view.c
---- caja-1.22.0/src/file-manager/fm-directory-view.c	2019-02-09 22:11:06.000000000 +0000
-+++ caja-1.22.0-patched/src/file-manager/fm-directory-view.c	2019-03-22 09:18:09.844713488 +0000
-@@ -1005,6 +1005,77 @@
+diff -ru --new-file caja-1.24.0/src/file-manager/fm-directory-view.c caja-1.24.0-patched/src/file-manager/fm-directory-view.c
+--- caja-1.24.0/src/file-manager/fm-directory-view.c	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/file-manager/fm-directory-view.c	2020-08-03 19:20:59.945788760 +0000
+@@ -1009,6 +1009,77 @@
  	return FALSE;
  }
  
@@ -4366,7 +4525,7 @@ diff -urN caja-1.22.0/src/file-manager/fm-directory-view.c caja-1.22.0-patched/s
  static void
  action_trash_callback (GtkAction *action,
  		       gpointer callback_data)
-@@ -1686,20 +1757,20 @@
+@@ -1697,20 +1768,20 @@
  		scripts_directory_uri = g_filename_to_uri(scripts_directory_path, NULL, NULL);
  		scripts_directory_uri_length = strlen(scripts_directory_uri);
  
@@ -4395,7 +4554,7 @@ diff -urN caja-1.22.0/src/file-manager/fm-directory-view.c caja-1.22.0-patched/s
  
  				if (dir)
  				{
-@@ -1713,20 +1784,20 @@
+@@ -1724,20 +1795,20 @@
  
  					if (count > 0)
  					{
@@ -4421,7 +4580,7 @@ diff -urN caja-1.22.0/src/file-manager/fm-directory-view.c caja-1.22.0-patched/s
  	}
  
  	g_free(scripts_directory_path);
-@@ -7422,6 +7493,18 @@
+@@ -7495,6 +7566,18 @@
    /* label, accelerator */       "RenameSelectAll", "<shift>F2",
    /* tooltip */                  NULL,
                                   G_CALLBACK (action_rename_select_all_callback) },
@@ -4440,7 +4599,7 @@ diff -urN caja-1.22.0/src/file-manager/fm-directory-view.c caja-1.22.0-patched/s
    /* name, icon name */        { "Trash", NULL,
    /* label, accelerator */       N_("Mo_ve to Trash"), NULL,
    /* tooltip */                  N_("Move each selected item to the Trash"),
-@@ -8741,6 +8824,40 @@
+@@ -8856,6 +8939,40 @@
  	return FALSE;
  }
  
@@ -4481,9 +4640,9 @@ diff -urN caja-1.22.0/src/file-manager/fm-directory-view.c caja-1.22.0-patched/s
  static void
  real_update_menus (FMDirectoryView *view)
  {
-@@ -9104,6 +9221,75 @@
- 					      FM_ACTION_COPY);
+@@ -9235,6 +9352,75 @@
  	gtk_action_set_sensitive (action, can_copy_files);
+ 	G_GNUC_END_IGNORE_DEPRECATIONS;
  
 +        action = gtk_action_group_get_action (view->details->dir_action_group,
 +                                              FM_ACTION_RESTORE_TO);
@@ -4557,16 +4716,16 @@ diff -urN caja-1.22.0/src/file-manager/fm-directory-view.c caja-1.22.0-patched/s
  	real_update_paste_menu (view, selection, selection_count);
  
  	disable_command_line = g_settings_get_boolean (mate_lockdown_preferences, CAJA_PREFERENCES_LOCKDOWN_COMMAND_LINE);
-diff -urN caja-1.22.0/src/file-manager/fm-marshal.list caja-1.22.0-patched/src/file-manager/fm-marshal.list
---- caja-1.22.0/src/file-manager/fm-marshal.list	2019-02-24 18:29:19.000000000 +0000
-+++ caja-1.22.0-patched/src/file-manager/fm-marshal.list	1970-01-01 03:00:00.000000000 +0000
+diff -ru --new-file caja-1.24.0/src/file-manager/fm-marshal.list caja-1.24.0-patched/src/file-manager/fm-marshal.list
+--- caja-1.24.0/src/file-manager/fm-marshal.list	2020-02-10 11:59:40.000000000 +0000
++++ caja-1.24.0-patched/src/file-manager/fm-marshal.list	1970-01-01 01:00:00.000000000 +0000
 @@ -1,2 +0,0 @@
 -BOOLEAN:VOID
 -VOID:OBJECT,OBJECT
-diff -urN caja-1.22.0/src/Makefile.am caja-1.22.0-patched/src/Makefile.am
---- caja-1.22.0/src/Makefile.am	2019-02-24 17:41:56.000000000 +0000
-+++ caja-1.22.0-patched/src/Makefile.am	2019-03-22 09:18:09.857811444 +0000
-@@ -34,6 +34,8 @@
+diff -ru --new-file caja-1.24.0/src/Makefile.am caja-1.24.0-patched/src/Makefile.am
+--- caja-1.24.0/src/Makefile.am	2020-02-10 11:52:32.000000000 +0000
++++ caja-1.24.0-patched/src/Makefile.am	2020-08-03 19:20:59.962660492 +0000
+@@ -35,6 +35,8 @@
  	$(EXIF_LIBS) \
  	$(EXEMPI_LIBS) \
  	$(POPT_LIBS) \
@@ -4575,7 +4734,7 @@ diff -urN caja-1.22.0/src/Makefile.am caja-1.22.0-patched/src/Makefile.am
      -lnotify
  	$(NULL)
  
-@@ -152,6 +154,10 @@
+@@ -144,6 +146,10 @@
  	caja-zoom-action.h \
  	caja-zoom-control.c \
  	caja-zoom-control.h \
@@ -4586,9 +4745,9 @@ diff -urN caja-1.22.0/src/Makefile.am caja-1.22.0-patched/src/Makefile.am
  	$(NULL)
  
  nodist_caja_SOURCES = \
-diff -urN caja-1.22.0/src/timescale.c caja-1.22.0-patched/src/timescale.c
---- caja-1.22.0/src/timescale.c	1970-01-01 03:00:00.000000000 +0000
-+++ caja-1.22.0-patched/src/timescale.c	2019-03-22 09:18:09.857952942 +0000
+diff -ru --new-file caja-1.24.0/src/timescale.c caja-1.24.0-patched/src/timescale.c
+--- caja-1.24.0/src/timescale.c	1970-01-01 01:00:00.000000000 +0000
++++ caja-1.24.0-patched/src/timescale.c	2020-08-03 19:20:59.975269341 +0000
 @@ -0,0 +1,1286 @@
 +/* 
 + * Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
@@ -5876,9 +6035,9 @@ diff -urN caja-1.22.0/src/timescale.c caja-1.22.0-patched/src/timescale.c
 +                G_TYPE_NONE, 0);
 +}
 +
-diff -urN caja-1.22.0/src/timescale.h caja-1.22.0-patched/src/timescale.h
---- caja-1.22.0/src/timescale.h	1970-01-01 03:00:00.000000000 +0000
-+++ caja-1.22.0-patched/src/timescale.h	2019-03-22 09:18:09.858192039 +0000
+diff -ru --new-file caja-1.24.0/src/timescale.h caja-1.24.0-patched/src/timescale.h
+--- caja-1.24.0/src/timescale.h	1970-01-01 01:00:00.000000000 +0000
++++ caja-1.24.0-patched/src/timescale.h	2020-08-03 19:20:59.987816285 +0000
 @@ -0,0 +1,58 @@
 +#ifndef __TIMESCALE_H__
 +#define __TIMESCALE_H__
