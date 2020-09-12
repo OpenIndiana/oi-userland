@@ -11,7 +11,7 @@
 #
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
-# Copyright 2019 Michal Nowak
+# Copyright 2020 Michal Nowak
 #
 
 BUILD_BITS=		32_and_64
@@ -19,15 +19,15 @@ BUILD_BITS=		32_and_64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmateweather
-COMPONENT_MJR_VERSION=	1.22
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MJR_VERSION=	1.24
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Library to accessing online weather information
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:0386e31062dfb847f93fd2e46da51b67e80581f6d6b8e429fa061f56bd407ff8
+	sha256:0d6d18296a7011459c92785052ee9a8d695e7fd0bf9d8fa4cc2ce1fe19b59524
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
@@ -44,7 +44,6 @@ COMPONENT_PREP_ACTION = cd $(@D) && NOCONFIGURE=1 ./autogen.sh
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --disable-scrollkeeper
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
