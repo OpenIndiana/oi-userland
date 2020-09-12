@@ -1,3 +1,7 @@
+Existing patch from desktop for building on Solaris - Needs reworking and cleanup so this can be contributed upstream.
+
+XXX file upstream enhancement
+
 diff -urN libgtop-2.25.91/include/glibtop/procstate.h ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/include/glibtop/procstate.h
 --- libgtop-2.25.91/include/glibtop/procstate.h	2008-05-23 22:13:20.000000000 +0000
 +++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/include/glibtop/procstate.h	2009-02-25 17:16:38.052247000 +0000
@@ -276,7 +280,7 @@ diff -urN libgtop-2.25.91/sysdeps/common/fsusage.c ../SUNWlibgtop-2.25.91.hacked
 +++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/common/fsusage.c	2009-02-25 17:25:57.183257000 +0000
 @@ -149,6 +149,15 @@
  #define _glibtop_get_fsusage_read_write(S, B, P) \
- 	_glibtop_openbsd_get_fsusage_read_write(S, B, P)
+ 	_glibtop_freebsd_get_fsusage_read_write(S, B, P)
  
 +#elif (defined(sun) || defined(__sun))
 +G_GNUC_INTERNAL void
@@ -366,7 +370,7 @@ diff -urN libgtop-2.25.91/sysdeps/solaris/fsusage.c ../SUNWlibgtop-2.25.91.hacke
 +{
 +        struct statvfs64       statvfsbuf;
 +        char            ksname[KSTAT_STRLEN + 1];
-+    	kstat_ctl_t * const kctl = server->machine.kc;
++    	kstat_ctl_t * const kctl = server->machine->kc;
 +	kstat_t		*ksp;
 +     	kstat_io_t     	kio;
 +	kstat_named_t   *kread, *kwrite;
@@ -871,70 +875,6 @@ diff -urN libgtop-2.25.91/sysdeps/solaris/netload.c ../SUNWlibgtop-2.25.91.hacke
 +    get_ipv6(server, buf, interface);
 +#endif /* HAVE_IFADDRS_H */
  }
-diff -urN libgtop-2.25.91/sysdeps/solaris/open.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/open.c
---- libgtop-2.25.91/sysdeps/solaris/open.c	2008-05-23 22:13:24.000000000 +0000
-+++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/open.c	2009-02-25 17:16:38.060014000 +0000
-@@ -209,34 +209,34 @@
- 	    }
-     }
- 
--    /* Now let's have a bit of magic dust... */
-+// /* Now let's have a bit of magic dust... */
- 
--#if GLIBTOP_SOLARIS_RELEASE >= 50600
-+//#if GLIBTOP_SOLARIS_RELEASE >= 50600
- 
--    dl = dlopen("/usr/lib/libproc.so", RTLD_LAZY);
--    if(server->machine.libproc)
--    	dlclose(server->machine.libproc);
--    server->machine.libproc = dl;
--    if(dl)
--    {
--       void *func;
-+ //   dl = dlopen("/usr/lib/libproc.so", RTLD_LAZY);
-+  //  if(server->machine.libproc)
-+//   // 	dlclose(server->machine.libproc);
-+ //   server->machine.libproc = dl;
-+  //  if(dl)
-+   // {
-+    //   void *func;
- 
--       func = dlsym(dl, "Pobjname");		/* Solaris 8 */
--       if(!func)
--	  func = dlsym(dl, "proc_objname");	/* Solaris 7 */
--       server->machine.objname = (void (*)
--				 (void *, uintptr_t, const char *, size_t))func;
--       server->machine.pgrab = (struct ps_prochandle *(*)(pid_t, int, int *))
--	  		       dlsym(dl, "Pgrab");
--       server->machine.pfree = (void (*)(void *))dlsym(dl, "Pfree");
--       
--    }
--    else
--    {
--       server->machine.objname = NULL;
--       server->machine.pgrab = NULL;
--       server->machine.pfree = NULL;
--    }
--#endif
-+     //  func = dlsym(dl, "Pobjname");		/* Solaris 8 */
-+      // if(!func)
-+//	  func = dlsym(dl, "proc_objname");	/* Solaris 7 */
-+ //      server->machine.objname = (void (*)
-+//				 (void *, uintptr_t, const char *, size_t))func;
-+ //      server->machine.pgrab = (struct ps_prochandle *(*)(pid_t, int, int *))
-+//	  		       dlsym(dl, "Pgrab");
-+ //      server->machine.pfree = (void (*)(void *))dlsym(dl, "Pfree");
-+  //     
-+   // }
-+   // else
-+   // {
-+   //    server->machine.objname = NULL;
-+   //    server->machine.pgrab = NULL;
-+   //    server->machine.pfree = NULL;
-+   // }
-+//#endif
-     server->machine.me = getpid();
- }
 diff -urN libgtop-2.25.91/sysdeps/solaris/procaffinity.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procaffinity.c
 --- libgtop-2.25.91/sysdeps/solaris/procaffinity.c	1970-01-01 00:00:00.000000000 +0000
 +++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procaffinity.c	2009-02-25 17:16:38.060320000 +0000
@@ -1023,137 +963,6 @@ diff -urN libgtop-2.25.91/sysdeps/solaris/procaffinity.c ../SUNWlibgtop-2.25.91.
 +*/
 +}
 +
-diff -urN libgtop-2.25.91/sysdeps/solaris/procmap.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procmap.c
---- libgtop-2.25.91/sysdeps/solaris/procmap.c	2008-05-23 22:13:24.000000000 +0000
-+++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procmap.c	2009-02-25 17:16:38.061314000 +0000
-@@ -54,9 +54,16 @@
- glibtop_get_proc_map_s (glibtop *server, glibtop_proc_map *buf,	pid_t pid)
- {
-    	int fd, i, nmaps, pr_err, heap;
-+
-+        char filename [BUFSIZ];
-+	/* use flags as a check condition, if it is 1, check, or, not check... zhua */
-+	int check = buf->flags;
-+	/* set flags back to 0 */
-+	buf->flags = 0;
-+
- #if GLIBTOP_SOLARIS_RELEASE >= 50600
- 	prxmap_t *maps;
--	struct ps_prochandle *Pr = NULL;
-+//	struct ps_prochandle *Pr = NULL;
- #else
- 	prmap_t *maps;
- #endif
-@@ -123,16 +130,44 @@
- 	buf->total = nmaps * sizeof(glibtop_map_entry);
- 	entry = g_malloc0(buf->total);
- 
--#if GLIBTOP_SOLARIS_RELEASE >= 50600
-+//#if GLIBTOP_SOLARIS_RELEASE >= 50600
- 
--	if(server->machine.objname && server->machine.pgrab &&
--	   server->machine.pfree)
--	   Pr = (server->machine.pgrab)(pid, 1, &pr_err);
--#endif
-+//	if(server->machine.objname && server->machine.pgrab &&
-+//	   server->machine.pfree)
-+//	   Pr = (server->machine.pgrab)(pid, 1, &pr_err);
-+//#endif
- 	for(heap = 0,i = 0; i < nmaps; ++i)
- 	{
- 	   	int len;
- 
-+		/* take a check to see if we need all information, if not, just get what we need.. 
-+		   Also please see comments in get_process_memory_writable() of gnome-system-monitor zhua */
-+		if (check == 1)
-+		{
-+			if(maps[i].pr_mflags & MA_WRITE){
-+		   	entry[i].perm |= GLIBTOP_MAP_PERM_WRITE;
-+		   	entry[i].size = maps[i].pr_size;
-+			}
-+                if(maps[i].pr_mflags & MA_SHARED){
-+                        entry[i].perm |= GLIBTOP_MAP_PERM_SHARED;
-+			/* here use shared_clean to store Shared Memory */
-+                        entry[i].shared_clean = maps[i].pr_size; 
-+                	}
-+		}
-+                else
-+                if (check == 2)
-+                {
-+                       if(maps[i].pr_mflags & MA_SHARED){
-+                        entry[i].perm |= GLIBTOP_MAP_PERM_SHARED;
-+                       /* here use shared_clean to store Shared Memory */
-+                        entry[i].shared_clean = maps[i].pr_size;
-+                       }
-+                }
-+		else {
-+		
-+	   	int len, rv;
-+ 
-+
- 	   	entry[i].start = maps[i].pr_vaddr;
- 		entry[i].end = maps[i].pr_vaddr + maps[i].pr_size;
- 
-@@ -177,25 +212,40 @@
- 		   entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
- 		}
- 		else
--		   if(Pr)
--		   {
--		      server->machine.objname(Pr, maps[i].pr_vaddr, buffer,
--					      BUFSIZ);
--		      if((len = resolvepath(buffer, entry[i].filename,
--					    GLIBTOP_MAP_FILENAME_LEN)) > 0)
--		      {
--			 entry[i].filename[len] = 0;
--			 entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
--		      }
--		   }
--#endif
--	}
--
--#if GLIBTOP_SOLARIS_RELEASE >= 50600
--
--	if(Pr)
--	   	server->machine.pfree(Pr);
--#endif
-+//		   if(Pr)
-+//		   {
-+//		      server->machine.objname(Pr, maps[i].pr_vaddr, buffer,
-+//					      BUFSIZ);
-+//		      if((len = resolvepath(buffer, entry[i].filename,
-+//					    GLIBTOP_MAP_FILENAME_LEN)) > 0)
-+//		      {
-+//			 entry[i].filename[len] = 0;
-+//			 entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
-+//		      }
-+//		   }
-+               {
-+                        g_strlcpy(buffer, maps[i].pr_mapname,  sizeof buffer);
-+                        /* from /path get file name */
-+                        g_snprintf(filename, sizeof filename, "/proc/%d/path/%s",
-+                                pid, buffer);
-+ 
-+                        rv = readlink(filename, entry[i].filename, sizeof(entry[i].filename) - 1);
-+                        /* read object, if have not, set it as NULL */
-+                        if(rv < 0)
-+                                rv = 0;
-+                        entry[i].filename[rv] = '\0';
-+                        /* now set the flags */
-+                        entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
-+                }
-+#endif
-+	}
-+        }
-+
-+//#if GLIBTOP_SOLARIS_RELEASE >= 50600
-+
-+//	if(Pr)
-+//	   	server->machine.pfree(Pr);
-+//#endif
- 	buf->flags = _glibtop_sysdeps_proc_map;
- 	s_close(fd);
- 	return entry;
 diff -urN libgtop-2.25.91/sysdeps/solaris/procmem.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procmem.c
 --- libgtop-2.25.91/sysdeps/solaris/procmem.c	2008-05-23 22:13:24.000000000 +0000
 +++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procmem.c	2009-02-25 17:16:38.061600000 +0000
@@ -1562,3 +1371,204 @@ diff -urN libgtop-2.25.91/sysdeps/solaris/sysinfo.c ../SUNWlibgtop-2.25.91.hacke
 +	init_sysinfo (server);
 +	return &sysinfo;
 +}
+--- a/sysdeps/solaris/open.c	2017-10-27 23:27:47.201639710 -0700
++++ b/sysdeps/solaris/open.c	2017-10-27 23:29:13.969490610 -0700
+@@ -209,34 +209,34 @@
+ 	    }
+     }
+ 
+-    /* Now let's have a bit of magic dust... */
++//    /* Now let's have a bit of magic dust... */
+ 
+-#if GLIBTOP_SOLARIS_RELEASE >= 50600
+-
+-    dl = dlopen("/usr/lib/libproc.so", RTLD_LAZY);
+-    if(server->machine->libproc)
+-    	dlclose(server->machine->libproc);
+-    server->machine->libproc = dl;
+-    if(dl)
+-    {
+-       void *func;
+-
+-       func = dlsym(dl, "Pobjname");		/* Solaris 8 */
+-       if(!func)
+-	  func = dlsym(dl, "proc_objname");	/* Solaris 7 */
+-       server->machine->objname = (void (*)
+-				 (void *, uintptr_t, const char *, size_t))func;
+-       server->machine->pgrab = (struct ps_prochandle *(*)(pid_t, int, int *))
+-	  		       dlsym(dl, "Pgrab");
+-       server->machine->pfree = (void (*)(void *))dlsym(dl, "Pfree");
+-       
+-    }
+-    else
+-    {
+-       server->machine->objname = NULL;
+-       server->machine->pgrab = NULL;
+-       server->machine->pfree = NULL;
+-    }
+-#endif
++//#if GLIBTOP_SOLARIS_RELEASE >= 50600
++//
++//    dl = dlopen("/usr/lib/libproc.so", RTLD_LAZY);
++//    if(server->machine->libproc)
++//    	dlclose(server->machine->libproc);
++//    server->machine->libproc = dl;
++//    if(dl)
++//    {
++//       void *func;
++//
++//       func = dlsym(dl, "Pobjname");		/* Solaris 8 */
++//       if(!func)
++//	  func = dlsym(dl, "proc_objname");	/* Solaris 7 */
++//       server->machine->objname = (void (*)
++//				 (void *, uintptr_t, const char *, size_t))func;
++//       server->machine->pgrab = (struct ps_prochandle *(*)(pid_t, int, int *))
++//	  		       dlsym(dl, "Pgrab");
++//       server->machine->pfree = (void (*)(void *))dlsym(dl, "Pfree");
++//       
++//    }
++//    else
++//    {
++//       server->machine->objname = NULL;
++//       server->machine->pgrab = NULL;
++//       server->machine->pfree = NULL;
++//    }
++//#endif
+     server->machine->me = getpid();
+ }
+--- a/glibtop.h 2017-10-27 20:32:08.852858820 -0700
++++ b/glibtop.h 2017-10-27 20:32:18.170926960 -0700
+@@ -59,6 +59,7 @@
+ #include <glibtop/global.h>
+
+ #include <glibtop_server.h>
++#include <glibtop_machine.h>
+
+ #ifndef GLIBTOP_MOUNTENTRY_LEN
+ #define GLIBTOP_MOUNTENTRY_LEN 79
+--- a/sysdeps/solaris/procmap.c	2017-10-26 16:14:15.708456884 -0700
++++ b/sysdeps/solaris/procmap.c	2017-10-26 16:14:36.424701783 -0700
+@@ -54,9 +54,16 @@
+ glibtop_get_proc_map_s (glibtop *server, glibtop_proc_map *buf,	pid_t pid)
+ {
+    	int fd, i, nmaps, pr_err, heap;
++
++        char filename [BUFSIZ];
++	/* use flags as a check condition, if it is 1, check, or, not check... zhua */
++	int check = buf->flags;
++	/* set flags back to 0 */
++	buf->flags = 0;
++
+ #if GLIBTOP_SOLARIS_RELEASE >= 50600
+ 	prxmap_t *maps;
+-	struct ps_prochandle *Pr = NULL;
++//	struct ps_prochandle *Pr = NULL;
+ #else
+ 	prmap_t *maps;
+ #endif
+@@ -123,16 +130,44 @@
+ 	buf->total = nmaps * sizeof(glibtop_map_entry);
+ 	entry = g_malloc0(buf->total);
+ 
+-#if GLIBTOP_SOLARIS_RELEASE >= 50600
++//#if GLIBTOP_SOLARIS_RELEASE >= 50600
+ 
+-	if(server->machine->objname && server->machine->pgrab &&
+-	   server->machine->pfree)
+-	   Pr = (server->machine->pgrab)(pid, 1, &pr_err);
+-#endif
++//	if(server->machine.objname && server->machine.pgrab &&
++//	   server->machine.pfree)
++//	   Pr = (server->machine.pgrab)(pid, 1, &pr_err);
++//#endif
+ 	for(heap = 0,i = 0; i < nmaps; ++i)
+ 	{
+ 	   	int len;
+ 
++		/* take a check to see if we need all information, if not, just get what we need.. 
++		   Also please see comments in get_process_memory_writable() of gnome-system-monitor zhua */
++		if (check == 1)
++		{
++			if(maps[i].pr_mflags & MA_WRITE){
++		   	entry[i].perm |= GLIBTOP_MAP_PERM_WRITE;
++		   	entry[i].size = maps[i].pr_size;
++			}
++                if(maps[i].pr_mflags & MA_SHARED){
++                        entry[i].perm |= GLIBTOP_MAP_PERM_SHARED;
++			/* here use shared_clean to store Shared Memory */
++                        entry[i].shared_clean = maps[i].pr_size; 
++                	}
++		}
++                else
++                if (check == 2)
++                {
++                       if(maps[i].pr_mflags & MA_SHARED){
++                        entry[i].perm |= GLIBTOP_MAP_PERM_SHARED;
++                       /* here use shared_clean to store Shared Memory */
++                        entry[i].shared_clean = maps[i].pr_size;
++                       }
++                }
++		else {
++		
++	   	int len, rv;
++ 
++
+ 	   	entry[i].start = maps[i].pr_vaddr;
+ 		entry[i].end = maps[i].pr_vaddr + maps[i].pr_size;
+ 
+@@ -177,25 +212,40 @@
+ 		   entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
+ 		}
+ 		else
+-		   if(Pr)
+-		   {
+-		      server->machine->objname(Pr, maps[i].pr_vaddr, buffer,
+-					      BUFSIZ);
+-		      if((len = resolvepath(buffer, entry[i].filename,
+-					    GLIBTOP_MAP_FILENAME_LEN)) > 0)
+-		      {
+-			 entry[i].filename[len] = 0;
+-			 entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
+-		      }
+-		   }
++//		   if(Pr)
++//		   {
++//		      server->machine.objname(Pr, maps[i].pr_vaddr, buffer,
++//					      BUFSIZ);
++//		      if((len = resolvepath(buffer, entry[i].filename,
++//					    GLIBTOP_MAP_FILENAME_LEN)) > 0)
++//		      {
++//			 entry[i].filename[len] = 0;
++//			 entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
++//		      }
++//		   }
++               {
++                        g_strlcpy(buffer, maps[i].pr_mapname,  sizeof buffer);
++                        /* from /path get file name */
++                        g_snprintf(filename, sizeof filename, "/proc/%d/path/%s",
++                                pid, buffer);
++ 
++                        rv = readlink(filename, entry[i].filename, sizeof(entry[i].filename) - 1);
++                        /* read object, if have not, set it as NULL */
++                        if(rv < 0)
++                                rv = 0;
++                        entry[i].filename[rv] = '\0';
++                        /* now set the flags */
++                        entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
++                }
+ #endif
+ 	}
++        }
+ 
+-#if GLIBTOP_SOLARIS_RELEASE >= 50600
++//#if GLIBTOP_SOLARIS_RELEASE >= 50600
+ 
+-	if(Pr)
+-	   	server->machine->pfree(Pr);
+-#endif
++//	if(Pr)
++//	   	server->machine.pfree(Pr);
++//#endif
+ 	buf->flags = _glibtop_sysdeps_proc_map;
+ 	s_close(fd);
+ 	return entry;
