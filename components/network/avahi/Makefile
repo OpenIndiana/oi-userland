@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= avahi
 COMPONENT_VERSION= 0.7
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Avahi client and bridge to pkg://service/network/dns/mdns
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -61,6 +61,7 @@ CONFIGURE_OPTIONS+= --disable-compat-libdns_sd
 CONFIGURE_OPTIONS+= --disable-autoipd
 CONFIGURE_OPTIONS+= --disable-gdbm
 CONFIGURE_OPTIONS+= --enable-dbm
+CONFIGURE_OPTIONS.32+= --disable-pygobject
 
 CONFIGURE_ENV	+= XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV	+= MSGFMT=/usr/gnu/bin/msgfmt
@@ -72,10 +73,6 @@ CONFIGURE_ENV += PYTHON="$(PYTHON)"
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += text/xmltoman
