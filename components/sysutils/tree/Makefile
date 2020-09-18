@@ -21,7 +21,7 @@
 #
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS=			32
+BUILD_BITS=			64
 BUILD_STYLE=		justmake
 include ../../../make-rules/shared-macros.mk
 
