@@ -582,7 +582,19 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	    $(BUILD_DIR)/$(MACH)/publish.transforms; \
 	done
 
-$(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
+#
+# Generate the sed script for ignoring packages by fully qualified FMRI from a
+# list of bare package names (without publisher or version information, etc).
+# The list of FMRIs to ignore is also useful for other things, and is easier to
+# use when not phrased directly as a sed script.
+#
+$(BUILD_DIR)/$(MACH)/packages.ignore: packages.ignore.in
+	$(MKDIR) $(@D)
+	sed -e 's,/,\\/,g' -e 's,.*,/^pkg:\\/\\/on-nightly\\/&@.*/d,' $< > $@
+
+packages.ignore: $(BUILD_DIR)/$(MACH)/packages.ignore
+
+$(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/packages.ignore $(BUILD_DIR)/$(MACH)/publish.transforms
 	$(RM) -r $(@D)/pkgrecv.dir
 	$(MKDIR) $(@D)/pkgrecv.dir
 
@@ -597,11 +609,13 @@ ifeq ($(DEBUG),yes)
 
 	pkgrepo -s $(@D)/pkgrepo-merged.dir rebuild
 	pkgrecv -s $(@D)/pkgrepo-merged.dir -d $(@D)/pkgrecv.dir --raw \
-	  $$(pkgrecv -s $(@D)/pkgrepo-merged.dir --newest | sed -f packages.ignore)
+	  $$(pkgrecv -s $(@D)/pkgrepo-merged.dir --newest \
+	  | sed -f $(BUILD_DIR)/$(MACH)/packages.ignore)
 else
 	pkgrepo -s $(ON_REPO.NON_DEBUG) rebuild
 	pkgrecv -s $(ON_REPO.NON_DEBUG) -d $(@D)/pkgrecv.dir --raw \
-	  $$(pkgrecv -s $(ON_REPO.NON_DEBUG) --newest | sed -f packages.ignore)
+	  $$(pkgrecv -s $(ON_REPO.NON_DEBUG) --newest \
+	  | sed -f $(BUILD_DIR)/$(MACH)/packages.ignore)
 endif
 
 	for pkg in $$(echo $(@D)/pkgrecv.dir/*/*); do \
@@ -623,9 +637,22 @@ clean::
 clobber::       clean
 	$(RM) -r $(CLOBBER_PATHS)
 
+#
+# Ensure that when printing packages delivered by illumos, we ignore the
+# packages that will be dropped when publishing to the userland repository.
+#
+# Note that the "pkg5.complete.fmris" cache file should contain all packages
+# delivered by the gate, so that "packages.ignore.in" can be modified to apply
+# a new filter without rebuilding the gate or the cached list.
+#
 print-package-names:
-	if test -d $(ON_REPO.NON_DEBUG); \
-	then pkgrepo list -H -F tsv -s $(ON_REPO.NON_DEBUG) | cut -f 2 | sort -u > pkg5.fmris; fi; \
+	if test -d $(ON_REPO.NON_DEBUG); then \
+		pkgrepo list -H -F tsv -s $(ON_REPO.NON_DEBUG) \
+		    | cut -f 2 \
+		    | LANG=C LC_ALL=C sort -u \
+		    > pkg5.complete.fmris; \
+	fi
+	grep -v -x -F -f packages.ignore.in pkg5.complete.fmris > pkg5.fmris
 	cat pkg5.fmris
  
 REQUIRED_PACKAGES += developer/gcc-7
