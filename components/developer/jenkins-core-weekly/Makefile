@@ -24,28 +24,28 @@ include ../../../make-rules/shared-macros.mk
 # Note that for LTS it would make sense to define indexed "additional
 # source" variables below, see e.g. docbook for inspiration.
 
-COMPONENT_NAME=		jenkins
-JENKINS_RELEASE=weekly
+COMPONENT_NAME=				jenkins
+JENKINS_RELEASE=			weekly
 COMPONENT_MAJOR_VERSION=	2
-COMPONENT_MINOR_VERSION=	244
+COMPONENT_MINOR_VERSION=	257
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:91525d94e80f2cff29d5a43ebbf68a3e4e478810109b2947a79ea26a735a04b6
+	sha256:bbcd80de05364a76b7e6537f2db04f725875192882cff930c092781299498ed6
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
 # or for LTS
 #   wget -O - http://mirrors.jenkins.io/war-stable/latest/jenkins.war.sha256
 
-COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(JENKINS_RELEASE)-$(COMPONENT_VERSION).war
-COMPONENT_FMRI=		developer/jenkins-core-$(JENKINS_RELEASE)
+COMPONENT_VERSION=			$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
+COMPONENT_ARCHIVE=			$(COMPONENT_NAME)-$(JENKINS_RELEASE)-$(COMPONENT_VERSION).war
+COMPONENT_FMRI=				developer/jenkins-core-$(JENKINS_RELEASE)
 COMPONENT_CLASSIFICATION=	Development/Java
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	https://jenkins.io/changelog/
+COMPONENT_SRC=				$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=		https://jenkins.io/changelog/
 COMPONENT_ARCHIVE_URL=\
 	http://mirrors.jenkins-ci.org/war/$(COMPONENT_VERSION)/jenkins.war
-COMPONENT_LICENSE=		MIT
-COMPONENT_LICENSE_FILE= jenkins.license
-COMPONENT_SUMMARY=	Jenkins is a Java-based CI automation server
+COMPONENT_LICENSE=			MIT
+COMPONENT_LICENSE_FILE= 	jenkins.license
+COMPONENT_SUMMARY=			Jenkins is a Java-based CI automation server
 
 # Note: for the core, we only download a WAR - no unpacking, no building...
 include $(WS_MAKE_RULES)/prep-download.mk
