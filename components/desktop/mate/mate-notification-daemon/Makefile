@@ -21,15 +21,15 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-notification-daemon
 COMPONENT_MJR_VERSION=	1.24
-COMPONENT_MNR_VERSION=	0
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
+COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	Notification Daemon for Mate
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:2eb27d609eaae3eec0fdadf55c2c8bee42d4d3609814c199c0162d1aca126678
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+	sha256:4bf0bbe39b4bc77ea0feb5d8331f6d1c820c9a8e1643e4aeceef96682bca7ff9
+COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -61,11 +61,9 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libwnck3
-REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libnotify
+REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += x11/library/libx11
