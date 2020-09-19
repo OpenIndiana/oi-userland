@@ -23,23 +23,23 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 PATH=$(PATH.illumos)
 
 COMPONENT_NAME=		unixODBC
-COMPONENT_VERSION=	2.3.7
+COMPONENT_VERSION=	2.3.9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.unixodbc.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:45f169ba1f454a72b8fcbb82abd832630a3bf93baa84731cf2949f449e1e3e77
+	sha256:52833eac3d681c8b0c9a5a65f2ebd745b3a964f208fc748f977e44015a31b207
 COMPONENT_ARCHIVE_URL=	ftp://ftp.unixodbc.org/pub/unixODBC/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/unixodbc
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
@@ -86,12 +86,6 @@ CONFIGURE_OPTIONS  +=	--with-pic
 
 CONFIGURE_ENV  +=   LD="$(CC) $(CFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV  +=   INSTALL="$(INSTALL)"
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libtool/libltdl
