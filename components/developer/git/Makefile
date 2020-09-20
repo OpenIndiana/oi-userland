@@ -29,15 +29,14 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.25.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.28.0
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_FMRI=		developer/versioning/git
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:b8b7fb79f129cb1789d1ec69ff0cc60b3efaa1ac9a045328f5c1566e88365585
+COMPONENT_ARCHIVE_HASH=	sha256:dfa5d1a253aa451465478fe45c6a40ab8605b340fdb4c4e80b16d7f87708439d
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
@@ -46,7 +45,7 @@ COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control 
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:df8c25a36b7283feb8dfa9242dbd1b770d28f8e26aa52fe109bc195f91d685a5
+COMPONENT_ARCHIVE_HASH_1=	sha256:665a7fa41f9a39248e48422dcf533e1a0133a4a6eddfc25ee55e28e42fc07cb7
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -96,6 +95,8 @@ COMPONENT_INSTALL_ARGS+=        perllibdir=$(shell $(PERL) -MConfig -e 'print "$
 COMPONENT_INSTALL_ARGS+=        VENDORPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
 COMPONENT_INSTALL_ARGS+=        PERLPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
 COMPONENT_INSTALL_ARGS+=        INSTALLVENDORLIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
+
+COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
 # many failures; keep going; later versions of git are much cleaner
 COMPONENT_TEST_ARGS += -k -i
@@ -150,6 +151,7 @@ COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 install:	$(INSTALL_64) $(BUILD_DIR)/.manpages $(BUILD_DIR_64)/.contrib
 
 # Test dependencies
+REQUIRED_PACKAGES += developer/fakeroot
 REQUIRED_PACKAGES += system/library/iconv/extra
 REQUIRED_PACKAGES += system/library/iconv/unicode
 REQUIRED_PACKAGES += system/library/iconv/utf-8
