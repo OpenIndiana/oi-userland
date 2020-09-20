@@ -47,6 +47,10 @@ file path=kernel/drv/$(MACH64)/nvidia reboot-needed=true \
     variant.opensolaris.zone=global group=sys pkg.depend.bypass-generate=gfx_private
 file path=kernel/drv/nvidia.conf reboot-needed=false \
     variant.opensolaris.zone=global group=sys
+file path=kernel/drv/$(MACH64)/nvidia_modeset reboot-needed=true \
+     variant.opensolaris.zone=global group=sys pkg.depend.bypass-generate=nvidia 
+file path=kernel/drv/nvidia_modeset.conf reboot-needed=false \
+    variant.opensolaris.zone=global group=sys
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libEGL.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libGL.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libGLESv1_CM.so.1
@@ -165,6 +169,8 @@ link path=dev/nvidia7 target=fbs/nvidia7 variant.opensolaris.zone=global pkg.lin
 link path=dev/nvidia8 target=fbs/nvidia8 variant.opensolaris.zone=global pkg.linted=true
 link path=dev/nvidia9 target=fbs/nvidia9 variant.opensolaris.zone=global pkg.linted=true
 link path=dev/nvidiactl target=../devices/pseudo/nvidia@255:nvidiactl \
+    variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia-modeset target=../devices/pseudo/nvidia_modeset@0:ctl \
     variant.opensolaris.zone=global pkg.linted=true
 link path=usr/X11/lib/NVIDIA/$(MACH64)/libGL.so target=libGL.so.1
 link path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so \
@@ -602,4 +608,6 @@ driver name=nvidia perms="* 0666 root root" \
 	alias="pci10de,1db5" \
 	alias="pci10de,1db6" \
 	alias="pci10de,1db7" \
-	alias="pci10de,1dba" \
+	alias="pci10de,1dba" 
+
+driver name=nvidia_modeset perms="* 0666 root root"
