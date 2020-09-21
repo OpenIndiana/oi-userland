@@ -18,12 +18,12 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compizconfig-python
-COMPONENT_VERSION=	0.8.16
+COMPONENT_VERSION=	0.8.18
 COMPONENT_PROJECT_URL=	http://www.northfield.ws
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fff161859619b2f55aa99be79ecb3e91dc1b092886c9329c44a5e22b130a12a0
+	sha256:9a8bd0adb7e9a3893f9499fcfdaa354952f7ec2eb2eb4f39c43318f5b4cfc908
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
 COMPONENT_FMRI=		library/python/python-compizconfig
 
