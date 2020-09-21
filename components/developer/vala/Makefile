@@ -19,13 +19,14 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
-# Copyright (c) 2017 Andreas Wacknitz
+# Copyright (c) 2017, 2020 Andreas Wacknitz
 # Copyright (c) 2019 Jason Martin
-#
+
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     vala
-COMPONENT_VERSION=  0.40.15
+COMPONENT_VERSION=  0.40.23
 COMPONENT_LICENSE=  LGPL2.1
 COMPONENT_FMRI=     developer/vala
 COMPONENT_SUMMARY=  Vala programming language
@@ -34,12 +35,10 @@ COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Vala
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:2954c934f8ec7ad8675845bcabedc8951419087eda38b994e1dea71222f5ca55
+	sha256:6cd2b26345e63bb3313ceb82040a43c05fe601a706a2cdb14d23f9937bf13415
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/vala/0.40/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -66,15 +65,8 @@ COMPONENT_TEST_TRANSFORMS += \
     '-ne "/ tests passed/p" ' \
     '-ne "/ tests failed/p" '
 
-# common targets
-build:      $(BUILD_32_and_64)
-
-install:    $(INSTALL_32_and_64)
-
-test:       $(TEST_32_and_64)
-
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
