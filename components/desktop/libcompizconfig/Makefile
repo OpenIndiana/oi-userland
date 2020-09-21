@@ -19,7 +19,7 @@ BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=          libcompizconfig
-COMPONENT_VERSION=       0.8.16
+COMPONENT_VERSION=       0.8.18
 COMPONENT_FMRI=          desktop/compiz/library/libcompizconfig
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_PROJECT_URL=   http://www.northfield.ws
@@ -27,7 +27,7 @@ COMPONENT_SUMMARY=       compizconfig libraries - is an alternative configuratio
 COMPONENT_SRC=           $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=       $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:9e11abe100b50f1b9cfca47574e064773a28bd56bcbdc6a15688df9ecf36c88e
+	sha256:917f0cd146a97a42781366b7c992ef5a4ea62ca68247d977293bb1bdd932fcde
 COMPONENT_ARCHIVE_URL= \
     http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=    GPLv2
