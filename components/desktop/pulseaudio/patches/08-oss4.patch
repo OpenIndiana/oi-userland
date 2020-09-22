@@ -1,5 +1,5 @@
---- pulseaudio-10.0/src/modules/oss/module-oss.c.orig	2017-04-22 18:37:32.985739497 +0200
-+++ pulseaudio-10.0/src/modules/oss/module-oss.c	2017-04-22 18:38:02.222257971 +0200
+--- pulseaudio-13.0/src/modules/oss/module-oss.c-orig	Fri Sep 13 08:10:23 2019
++++ pulseaudio-13.0/src/modules/oss/module-oss.c	Fri Sep 11 14:44:33 2020
 @@ -32,6 +32,8 @@
   *
   */
@@ -9,7 +9,7 @@
  #ifdef HAVE_CONFIG_H
  #include <config.h>
  #endif
-@@ -123,7 +125,18 @@
+@@ -122,7 +124,18 @@
      int mode;
  
      int mixer_fd;
@@ -28,8 +28,22 @@
  
      int nfrags, frag_size, orig_frag_size;
  
-@@ -809,6 +822,160 @@
-     return ret;
+@@ -197,8 +210,13 @@
+     } else {
+ 
+         if (enable_bits)
++#ifdef HAVE_OSSV4
++            if (ioctl(u->fd, SNDCTL_DSP_SYNC, NULL) < 0)
++                pa_log_warn("SNDCTL_DSP_SYNC: %s", pa_cstrerror(errno));
++#else
+             if (ioctl(u->fd, SNDCTL_DSP_POST, NULL) < 0)
+                 pa_log_warn("SNDCTL_DSP_POST: %s", pa_cstrerror(errno));
++#endif
+ 
+         if (!quick) {
+             /*
+@@ -817,11 +835,165 @@
+     return 0;
  }
  
 +#ifdef HAVE_OSSV4
@@ -140,11 +154,11 @@
 +    return;
 +}
 +
-+static void sink_get_volume(pa_sink *s) {
-+    struct userdata *u;
-+
-+    pa_assert_se(u = s->userdata);
-+
+ static void sink_get_volume(pa_sink *s) {
+     struct userdata *u;
+ 
+     pa_assert_se(u = s->userdata);
+ 
 +    if (pa_oss_get_volume(u->mixer_dsp_fd, &(u->sink_mixext), &s->sample_spec, &s->real_volume) >= 0)
 +        return;
 +
@@ -186,10 +200,15 @@
 +
 +#else
 +
- static void sink_get_volume(pa_sink *s) {
-     struct userdata *u;
++static void sink_get_volume(pa_sink *s) {
++    struct userdata *u;
++
++    pa_assert_se(u = s->userdata);
++
+     pa_assert(u->mixer_devmask & (SOUND_MASK_VOLUME|SOUND_MASK_PCM));
  
-@@ -880,6 +1047,7 @@
+     if (u->mixer_devmask & SOUND_MASK_VOLUME)
+@@ -888,6 +1060,7 @@
  
      pa_log_info("Device doesn't support writing mixer settings: %s", pa_cstrerror(errno));
  }
@@ -197,7 +216,7 @@
  
  static void thread_func(void *userdata) {
      struct userdata *u = userdata;
-@@ -1162,6 +1330,11 @@
+@@ -1170,6 +1343,11 @@
  
  int pa__init(pa_module*m) {
  
@@ -209,7 +228,7 @@
      struct audio_buf_info info;
      struct userdata *u = NULL;
      const char *dev;
-@@ -1259,7 +1432,9 @@
+@@ -1267,7 +1445,9 @@
      m->userdata = u;
      u->fd = fd;
      u->mixer_fd = -1;
@@ -219,7 +238,7 @@
      u->use_getospace = u->use_getispace = true;
      u->use_getodelay = true;
      u->mode = mode;
-@@ -1431,6 +1606,194 @@
+@@ -1441,6 +1621,179 @@
      if ((u->mixer_fd = pa_oss_open_mixer_for_device(u->device_name)) >= 0) {
          bool do_close = true;
  
@@ -233,28 +252,13 @@
 +            pa_log_debug ("SNDCTL_SYSINFO failed");
 +            goto fail;
 +        }
-+        for (i = 0; i < si.nummixers; i++) {
++
++	i = pa_oss_get_device_number(u->device_name);
++	if (i >= 0 && i < si.nummixers) {
 +            mi.dev = i;
 +            if (ioctl (u->mixer_fd, SNDCTL_MIXERINFO, &mi) < 0) {
 +                pa_log_debug("SNDCTL_MIXERINFO failed");
 +                goto fail;
-+            }
-+            if (mi.enabled != 0) {
-+                /*
-+                 * There could be multiple mixers. First we only care about
-+                 * ones which are enabled.  In any case we should not touch
-+                 * disabled mixers!  But beyond that it may not be clear which
-+                 * one to use!  There is a way to relate the card number to the
-+                 * device node name. But there does not seem to be a real good
-+                 * way to chose which one to use.  So maybe an env. var. could
-+                 * be used to select a dsp device node name and then pick the
-+                 * correct mixer number.  (See load_devices() in audioctl).
-+                 * This code now will always pick the first enabled mixer
-+                 * found.  Which may be wrong for multiple mixers and/or sound
-+                 * cards.  It may be possible/desirable to control all mixers
-+                 * found at the same time???
-+                 */
-+                break;
 +            }
 +        }
 +
@@ -414,7 +418,7 @@
          if (ioctl(u->mixer_fd, SOUND_MIXER_READ_DEVMASK, &u->mixer_devmask) < 0)
              pa_log_warn("SOUND_MIXER_READ_DEVMASK failed: %s", pa_cstrerror(errno));
          else {
-@@ -1450,11 +1813,14 @@
+@@ -1460,11 +1813,14 @@
                  do_close = false;
              }
          }
@@ -429,7 +433,7 @@
          }
      }
  
-@@ -1573,6 +1939,10 @@
+@@ -1583,6 +1939,10 @@
      if (u->fd >= 0)
          pa_close(u->fd);
  
@@ -440,9 +444,9 @@
      if (u->mixer_fd >= 0)
          pa_close(u->mixer_fd);
  
---- pulseaudio-1.1/src/modules/oss/oss-util.c-orig	2011-12-08 16:37:16.783601951 -0600
-+++ pulseaudio-1.1/src/modules/oss/oss-util.c	2011-12-13 03:50:37.757290581 -0600
-@@ -257,6 +257,190 @@ int pa_oss_set_fragments(int fd, int nfr
+--- pulseaudio-13.0/src/modules/oss/oss-util.c-orig	Fri Jul 13 14:06:14 2018
++++ pulseaudio-13.0/src/modules/oss/oss-util.c	Tue Sep  8 10:19:33 2020
+@@ -246,6 +246,190 @@
      return 0;
  }
  
@@ -631,17 +635,82 @@
 +#else
 +
  int pa_oss_get_volume(int fd, unsigned long mixer, const pa_sample_spec *ss, pa_cvolume *volume) {
-     char cv[PA_CVOLUME_SNPRINT_MAX];
+     char cv[PA_CVOLUME_SNPRINT_VERBOSE_MAX];
      unsigned vol;
-@@ -299,6 +483,7 @@ int pa_oss_set_volume(int fd, unsigned l
+@@ -288,35 +472,35 @@
      pa_log_debug("Wrote mixer settings: %s", pa_cvolume_snprint(cv, sizeof(cv), volume));
      return 0;
  }
 +#endif
  
  static int get_device_number(const char *dev) {
-     const char *p, *e;
-@@ -397,9 +582,11 @@ int pa_oss_get_hw_description(const char
+-    const char *p, *e;
++    const char *p;
+     char *rp = NULL;
+     int r;
+ 
+-    if (!(p = rp = pa_readlink(dev))) {
++    p = strchr(dev, '\0') - 1;
++
++    if (*p >= '0' && *p <= '9') {
++        p = dev;
++    }
++    else {
++        /* We need to resolve the symlink */
++        if (!(p = rp = pa_readlink(dev))) {
+ #ifdef ENOLINK
+-        if (errno != EINVAL && errno != ENOLINK) {
++            if (errno != EINVAL && errno != ENOLINK) {
+ #else
+-        if (errno != EINVAL) {
++            if (errno != EINVAL) {
+ #endif
+-            r = -1;
+-            goto finish;
+-        }
++                r = -1;
++                goto finish;
++            }
+ 
+-        p = dev;
++        }
+     }
+ 
+-    if ((e = strrchr(p, '/')))
+-        p = e+1;
++    p = strchr(p, '\0') - 1;
+ 
+-    if (p == 0) {
+-        r = 0;
+-        goto finish;
+-    }
+-
+-    p = strchr(p, 0) -1;
+-
+     if (*p >= '0' && *p <= '9') {
+         r = *p - '0';
+         goto finish;
+@@ -329,6 +513,10 @@
+     return r;
+ }
+ 
++int pa_oss_get_device_number(const char *dev) {
++    return (get_device_number(dev));
++}
++
+ int pa_oss_get_hw_description(const char *dev, char *name, size_t l) {
+     FILE *f;
+     int n, r = -1;
+@@ -357,7 +545,7 @@
+         line[strcspn(line, "\r\n")] = 0;
+ 
+         if (!b) {
+-            b = pa_streq(line, "Audio devices:");
++            b = pa_streq(line, "Audio Devices:");
+             continue;
+         }
+ 
+@@ -386,9 +574,11 @@
      return r;
  }
  
@@ -654,35 +723,29 @@
      if ((fd = pa_open_cloexec(mixer, O_RDWR|O_NDELAY, 0)) >= 0)
          return fd;
  
-@@ -411,19 +598,22 @@ int pa_oss_open_mixer_for_device(const c
+@@ -400,15 +590,13 @@
      char *fn;
      int fd;
  
 -    if ((n = get_device_number(device)) < 0)
 +    if ((n = get_device_number(device)) < 0) {
-+        pa_log_debug ("Cannot find device");
++        pa_log_warn ("Cannot find number for device '%s'", device);
          return -1;
 +    }
  
-     if (n == 0)
+-    if (n == 0)
 -        if ((fd = open_mixer("/dev/mixer")) >= 0)
-+        if ((fd = pa_oss_open_mixer("/dev/mixer")) >= 0)
-             return fd;
- 
+-            return fd;
+-
      fn = pa_sprintf_malloc("/dev/mixer%i", n);
 -    fd = open_mixer(fn);
 +    fd = pa_oss_open_mixer(fn);
      pa_xfree(fn);
  
      if (fd < 0)
-         pa_log_warn("Failed to open mixer '%s': %s", device, pa_cstrerror(errno));
-+    else
- 
-     return fd;
- }
---- pulseaudio-1.1/src/modules/oss/oss-util.h-orig	2011-12-05 22:39:30.119276863 -0600
-+++ pulseaudio-1.1/src/modules/oss/oss-util.h	2011-12-13 01:22:45.351928881 -0600
-@@ -31,11 +31,21 @@ int pa_oss_auto_format(int fd, pa_sample
+--- pulseaudio-13.0/src/modules/oss/oss-util.h-orig	Fri Jul 13 14:06:14 2018
++++ pulseaudio-13.0/src/modules/oss/oss-util.h	Tue Sep  8 11:08:51 2020
+@@ -29,11 +29,22 @@
  
  int pa_oss_set_fragments(int fd, int frags, int frag_size);
  
@@ -700,18 +763,8 @@
  
  int pa_oss_get_hw_description(const char *dev, char *name, size_t l);
  
++int pa_oss_get_device_number(const char *dev);
  int pa_oss_open_mixer_for_device(const char *device);
 +int pa_oss_open_mixer(const char *device);
  
  #endif
---- pulseaudio-6.0/src/daemon/default.pa.in.1	2017-03-03 17:13:10.180695162 +0300
-+++ pulseaudio-6.0/src/daemon/default.pa.in	2017-03-03 17:13:29.027199326 +0300
-@@ -54,7 +54,7 @@
- #load-module module-alsa-source device=hw:1,0
- ])dnl
- ifelse(@HAVE_OSS_OUTPUT@, 1, [dnl
--#load-module module-oss device="/dev/dsp" sink_name=output source_name=input
-+load-module module-oss device="/dev/dsp" sink_name=output source_name=input
- #load-module module-oss-mmap device="/dev/dsp" sink_name=output source_name=input
- ])dnl
- ifelse(@HAVE_WAVEOUT@, 1, [dnl

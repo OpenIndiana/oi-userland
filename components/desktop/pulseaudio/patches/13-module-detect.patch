@@ -1,0 +1,130 @@
+--- pulseaudio-13.0/src/modules/module-detect.c-orig	Tue Nov 20 01:37:59 2018
++++ pulseaudio-13.0/src/modules/module-detect.c	Sat Aug 22 20:46:54 2020
+@@ -19,6 +19,10 @@
+   along with PulseAudio; if not, see <http://www.gnu.org/licenses/>.
+ ***/
+ 
++#if defined(__sun) || defined(__sun__)
++#define HAVE_OSSV4
++#endif
++
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+ #endif
+@@ -54,6 +58,54 @@
+     NULL
+ };
+ 
++#ifdef HAVE_OSSV4
++static int get_device_number(const char *dev) {
++    const char *p;
++    char *rp = NULL;
++    int r, n;
++
++    pa_log_debug ("Finding number for device %s", dev);
++
++    /* Ensure there is a trailing digit */
++    if ((n = (strlen(dev) - 1)) < 0) {
++        r = -1;
++        goto finish;
++    }
++    p = dev + n;
++    if (*p >= '0' && *p <= '9') {
++        p = dev;
++    }
++    else {
++        if (!(p = rp = pa_readlink(dev))) {
++            r = -1;
++            goto finish;
++        }
++    }
++
++    if ((n = (strlen(p) - 1)) < 0) {
++        r = -1;
++        goto finish;
++    }
++    p += n;
++
++    if (p == '/') {
++        r = 0;
++        goto finish;
++    }
++
++    if (*p >= '0' && *p <= '9') {
++        r = *p - '0';
++        goto finish;
++    }
++
++    r = -1;
++
++finish:
++    pa_xfree(rp);
++    return r;
++}
++#endif
++
+ #ifdef HAVE_ALSA
+ 
+ static int detect_alsa(pa_core *c, int just_one) {
+@@ -119,8 +171,50 @@
+ 
+ #ifdef HAVE_OSS_OUTPUT
+ static int detect_oss(pa_core *c, int just_one) {
++    int n = 0;
++
++#ifdef HAVE_OSSV4
++#undef HAVE_SOLARIS
++
++    struct stat s;
++    const char *dev;
++    int device;
++    char args[64];
++    pa_module *m = NULL;
++
++    /* Get the audio device name for Solaris/illumos */
++    dev = getenv("AUDIODEV");
++    if (!dev)
++        dev = "/dev/audio";
++
++    if (stat(dev, &s) < 0) {
++        if (errno != ENOENT)
++            pa_log_error("failed to open device %s: %s", dev, pa_cstrerror(errno));
++        return -1;
++    }
++
++    if (!S_ISCHR(s.st_mode)) {
++        pa_log_debug ("Is not a character device %s", dev);
++        return 0;
++    }
++
++    if ((device = get_device_number(dev)) < 0) {
++        pa_log_debug ("Cannot find number for device %s", dev);
++        return -1;
++    }
++
++    /* Use the corresponding dsp device name */
++    pa_snprintf(args, sizeof(args), "device=/dev/dsp%d", device);
++
++    if (pa_module_load(&m, c, "module-oss", args) < 0)
++        return 0;
++
++    n++;
++
++#else /* HAVE_OSSV4 */
++
+     FILE *f;
+-    int n = 0, b = 0;
++    int b = 0;
+ 
+     if (!(f = pa_fopen_cloexec("/dev/sndstat", "r")) &&
+         !(f = pa_fopen_cloexec("/proc/sndstat", "r")) &&
+@@ -174,6 +268,9 @@
+     }
+ 
+     fclose(f);
++
++#endif /* HAVE_OSSV4 */
++
+     return n;
+ }
+ #endif
