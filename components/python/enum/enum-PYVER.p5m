@@ -24,7 +24,7 @@
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python/enum-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Support for enumerations"
 set name=pkg.description \
     value="enum is the new Python stdlib enum module available in Python 3.4 backported for previous versions of Python. An enumeration is a set of symbolic names (members) bound to unique, constant values. Within an enumeration, the members can be compared by identity, and the enumeration itself can be iterated over."
@@ -45,12 +45,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/enum34-$(COMPONENT_VERSION)-py$
 file path=usr/lib/python$(PYVER)/vendor-packages/enum34-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/enum34-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 #
-license enum/LICENSE license=BSD
+license $(COMPONENT_LICENSE_FILE) license=BSD
 
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
-# force a dependency on the enum package
+# force a dependency on the unversioned package
 depend type=require \
-    fmri=library/python/enum@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
