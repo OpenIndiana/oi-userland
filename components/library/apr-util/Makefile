@@ -25,7 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr-util
 COMPONENT_VERSION=	1.5.4
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	http://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -78,6 +78,8 @@ REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += database/mariadb-101/library
+# The MariaDB client must be installed to get mysql_config:
+REQUIRED_PACKAGES += database/mariadb-101/client
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/expat
