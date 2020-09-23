@@ -19,7 +19,7 @@ COMPONENT_NAME= oppenjdk-7
 
 OPENJDK_BUILD_NUMBER=141
 COMPONENT_VERSION=1.7.$(OPENJDK_BUILD_NUMBER)
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
 COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20170813.tar.xz
@@ -147,3 +147,5 @@ REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxtst
+REQUIRED_PACKAGES += system/library/c++/sunpro
+REQUIRED_PACKAGES += system/header/header-audio
