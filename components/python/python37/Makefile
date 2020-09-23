@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
 COMPONENT_VERSION=      3.7.7
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=		runtime/python-37
 COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
@@ -180,9 +181,10 @@ COMPONENT_TEST_TARGETS = test < /dev/null
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS  = "'/tests OK./ {results = 1}; /Total duration/ {results = 0}; /Re-running failed tests in verbose mode/ {results = 0} {if (results) print $0 }'"
 
-
 # Required for dump(1)
 REQUIRED_PACKAGES += developer/object-file
+# Required to build ossaudiodev module
+REQUIRED_PACKAGES += system/header/header-audio
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
