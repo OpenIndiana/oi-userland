@@ -33,7 +33,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
 COMPONENT_MAJOR_VERSION=3.18
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).2
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).3
 COMPONENT_PROJECT_URL=  https://www.cmake.org/
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
@@ -47,7 +47,7 @@ workspaces that can be used in the compiler environment of your choice.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:5d4e40fc775d3d828c72e5c45906b4d9b59003c9433ff1b36a1cb552bbd51d7e
+	sha256:2c89f4e30af4914fd6fb5d00f863629812ada848eee4e2d29ec7e456d7fa32e5
 COMPONENT_ARCHIVE_URL= \
 	https://www.cmake.org/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD, MIT, GPLv2, Curl, PD
