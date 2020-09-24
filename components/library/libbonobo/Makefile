@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libbonobo
 COMPONENT_VERSION=	2.32.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Bonobo Base Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -56,3 +56,4 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/orbit2
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

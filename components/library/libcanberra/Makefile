@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libcanberra
 COMPONENT_VERSION= 0.26
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Event Sound API Using XDG Sound Theming Specification
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -70,3 +70,4 @@ REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/tdb
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
