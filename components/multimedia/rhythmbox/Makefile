@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= rhythmbox
 COMPONENT_VERSION= 3.4.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Rhythmbox Multimedia Player
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -82,3 +83,4 @@ REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libchamplain
 COMPONENT_VERSION=	0.8.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://projects.gnome.org/libchamplain/
 COMPONENT_SUMMARY=	libchamplain - a Clutter based widget to display rich, eye-candy and interactive maps
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -55,3 +55,4 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

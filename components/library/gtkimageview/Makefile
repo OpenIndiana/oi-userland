@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkimageview
 COMPONENT_VERSION=	1.6.4
-COMPONENT_REVISON=	4
+COMPONENT_REVISON=	5
 COMPONENT_PROJECT_URL=	http://trac.bjourne.webfactional.com
 COMPONENT_SUMMARY=	A simple image viewer widget for GTK+
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -67,3 +67,4 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

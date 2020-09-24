@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= schroedinger
 COMPONENT_VERSION= 1.0.11
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Library for decoding and encoding video in the Dirac format
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -51,3 +52,4 @@ install: $(INSTALL_32_and_64)
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/orc
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

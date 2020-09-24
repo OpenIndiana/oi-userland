@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tracker
 COMPONENT_VERSION= 1.8.3
-COMPONENT_REVISION= 5
+COMPONENT_REVISION= 6
 COMPONENT_SUMMARY= Desktop search tool
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -109,6 +109,8 @@ COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 # Build dependencies
 REQUIRED_PACKAGES += utility/bash-completion
 REQUIRED_PACKAGES += developer/icu
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/flac
