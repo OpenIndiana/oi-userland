@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgsf
 COMPONENT_VERSION= 1.14.45
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME Structured File Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -77,3 +78,4 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

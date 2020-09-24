@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
 COMPONENT_VERSION=	2.40.20
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_MAJOR_VERSION=$(basename $(COMPONENT_VERSION))
 COMPONENT_FMRI=		image/library/librsvg
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -63,8 +63,10 @@ COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
 unexport SHELLOPTS
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2

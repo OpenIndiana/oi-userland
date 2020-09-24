@@ -16,6 +16,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgnome-keyring
 COMPONENT_VERSION=	2.32.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME keyring libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -55,3 +56,4 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

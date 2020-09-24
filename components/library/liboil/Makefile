@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		liboil
 COMPONENT_VERSION=	0.3.17
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Library of Optimized Inner Loops 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -57,3 +57,4 @@ test: $(TEST_32_and_64)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
