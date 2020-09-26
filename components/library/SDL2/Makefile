@@ -10,20 +10,21 @@
 
 #
 # Copyright (c) 2016 Jim Klimov
+# Copyright (c) 2020 Andreas Wacknitz
 #
 
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL2
-COMPONENT_VERSION=	2.0.7
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.libsdl.org/
+COMPONENT_VERSION=	2.0.12
+COMPONENT_PROJECT_URL=	https://www.libsdl.org/
 COMPONENT_SUMMARY=	libsdl2 - Simple DirectMedia Layer 2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:490428b41c3231395d2774dd25cdd6e5e2bae308adc77ebb61219ad49d6537cc
-COMPONENT_ARCHIVE_URL=	http://www.libsdl.org/release/$(COMPONENT_ARCHIVE)
+	sha256:349268f695c02efbc9b9148a70b85e58cefbbf704abd3e91be654db7f1e2c863
+COMPONENT_ARCHIVE_URL=	https://www.libsdl.org/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =	library/sdl2
 # Note: license change from LGPL was significant in 2.x vs 1.x series, and now
 # static linking is permitted. See e.g. https://wiki.libsdl.org/Installation
@@ -31,9 +32,8 @@ COMPONENT_LICENSE=	ZLIB
 COMPONENT_LICENSE_FILE=	COPYING.txt
 COMPONENT_CLASSIFICATION =	System/Libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -42,13 +42,7 @@ COMPONENT_PREP_ACTION = \
 
 CONFIGURE_OPTIONS += --disable-rpath
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
