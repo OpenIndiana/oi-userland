@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
 COMPONENT_VERSION=	5.0
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_FMRI=		shell/bash
 COMPONENT_SUMMARY=	GNU Bourne-Again shell (bash)
 COMPONENT_CLASSIFICATION=	System/Shells
