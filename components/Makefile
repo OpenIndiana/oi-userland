@@ -44,7 +44,9 @@ $(WS_TOP)/components/$(ENCUMBERED)components.mk:	# Makefile # $(WS_TOP)/componen
 # between component path and component FMRI.
 $(WS_TOP)/components/mapping.json:
 	@echo "Generating component mapping..."
-	@$(WS_TOOLS)/userland-mapping --workspace=$(WS_TOP)
+	$(WS_TOOLS)/userland-mapping --workspace=$(WS_TOP) \
+	    --repo=$(PUBLISHER) \
+	    --repo-map=encumbered/=$(PUBLISHER)-encumbered
 mapping.json: $(WS_TOP)/components/mapping.json
 
 # dependencies.json is auto-generate by the build tools. It provides information
