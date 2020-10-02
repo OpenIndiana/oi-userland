@@ -23,33 +23,32 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=		32_and_64
+BUILD_SYSTEM=		configure
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		make
 COMPONENT_VERSION=	4.2.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/make/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:e40b8f018c1da64edd1cc9a6fce5fa63b2e707e404e20cad91fbae337c98a5b7
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/make/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnu-make
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  +=		--program-prefix=g
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -I config -fi )
+
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
+
+CONFIGURE_OPTIONS +=	--program-prefix=g
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS +=	--with-guile
 
 ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/guile

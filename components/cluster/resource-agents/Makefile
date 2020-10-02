@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= resource-agents
 COMPONENT_VERSION= 4.1.0
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -68,6 +69,8 @@ REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libnet
 REQUIRED_PACKAGES += text/gawk
+# Bogus dependency due to libssp
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

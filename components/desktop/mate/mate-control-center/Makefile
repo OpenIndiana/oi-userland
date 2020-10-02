@@ -11,6 +11,7 @@
 #
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2020 Marco van Wieringen
 #
 
 BUILD_BITS=		64
@@ -18,16 +19,16 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-control-center
-COMPONENT_MJR_VERSION=	1.22
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.24
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
+COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE desktop wide preference configuration tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:f0c92c5ba17a764f1dac5aeccd2aa17b6271fb64c6a883cab0f8711357946df9
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+	sha256:60c11731fbbe0c03e4c05787367b2422778d98b1e9454805a77d55ed0e896a21
+COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/mate/control-center
 COMPONENT_CLASSIFICATION=	Applications/Configuration and Preferences
 COMPONENT_LICENSE=	GPLv2
@@ -39,6 +40,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
+COMPONENT_PREP_ACTION=  cd $(@D) && NOCONFIGURE=1 ./autogen.sh
+
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
 CONFIGURE_OPTIONS+=	--disable-static
@@ -46,6 +49,7 @@ CONFIGURE_OPTIONS+=	--disable-static
 # Build dependencies
 REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 REQUIRED_PACKAGES += library/desktop/mate/mate-common
+REQUIRED_PACKAGES += desktop/mate/mate-settings-daemon
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/marco

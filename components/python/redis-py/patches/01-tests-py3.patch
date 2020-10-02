@@ -1,0 +1,28 @@
+diff -ur redis-3.4.1/tests/conftest.py redis-3.4.1-tested/tests/conftest.py
+--- redis-3.4.1/tests/conftest.py	2019-12-29 23:40:00.000000000 +0000
++++ redis-3.4.1-tested/tests/conftest.py	2020-04-12 13:48:19.655795001 +0000
+@@ -1,6 +1,9 @@
+ import pytest
+ import redis
+-from mock import Mock
++try:
++    from mock import Mock
++except ImportError as error:
++    from unittest.mock import Mock
+ 
+ from distutils.version import StrictVersion
+ 
+Only in redis-3.4.1-tested/tests: conftest.pyc
+diff -ur redis-3.4.1/tests/test_connection_pool.py redis-3.4.1-tested/tests/test_connection_pool.py
+--- redis-3.4.1/tests/test_connection_pool.py	2020-02-02 09:38:31.000000000 +0000
++++ redis-3.4.1-tested/tests/test_connection_pool.py	2020-04-12 13:47:41.957864591 +0000
+@@ -1,5 +1,8 @@
+ import os
+-import mock
++try:
++    import mock
++except ImportError as error:
++    from unittest import mock
+ import pytest
+ import re
+ import redis

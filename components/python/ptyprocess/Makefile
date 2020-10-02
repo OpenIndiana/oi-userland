@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	ptyprocess
 COMPONENT_VERSION= 	0.6.0
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://github.com/pexpect/ptyprocess
 COMPONENT_FMRI=	library/python/ptyprocess
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,7 +30,7 @@ COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_LICENSE=	ISC
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -43,5 +44,4 @@ test:	$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35

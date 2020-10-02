@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hyperlink
 COMPONENT_VERSION=	19.0.0
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	'A featureful, immutable, and correct URL for Python'
 COMPONENT_DESCRIPTION=	'Hyperlink provides a pure-Python implementation of immutable URLs. Based on RFC 3986 and 3987, the Hyperlink URL makes working with both URIs and IRIs easy'
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,7 +44,7 @@ COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= LICENSE
 
-PYTHON_VERSIONS = 2.7 3.4 3.5
+PYTHON_VERSIONS = 2.7 3.5
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -56,5 +57,4 @@ REQUIRED_PACKAGES += library/python/idna
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35

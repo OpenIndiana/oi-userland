@@ -15,13 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccl
-COMPONENT_VERSION=	1.11.5
+COMPONENT_VERSION=	1.12
 COMPONENT_SUMMARY=	ccl - Clozure Common Lisp
 COMPONENT_PROJECT_URL=	https://ccl.clozure.com/
 COMPONENT_SRC=		ccl
 COMPONENT_ARCHIVE=	ccl-$(COMPONENT_VERSION)-solarisx86.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:38141b262c5aa6dd6686978fe281e4df6b0ba18ce0d0a72b79d9bb6774f0b161
+	sha256:080fdcd415ee868986c95405690d43cce87c415b73931f4baa6889a53150ce98
 COMPONENT_ARCHIVE_URL=  https://github.com/Clozure/ccl/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	runtime/ccl
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -48,8 +48,6 @@ INST_FILES = bin compiler doc examples level-0  level-1
 INST_FILES += lib  library  objc-bridge  solarisx64-headers 
 INST_FILES += sx86-boot64 sx86cl64 sx86cl64.image  tools  xdump
 
-COMPONENT_POST_UNPACK_ACTION = ( rm $(COMPONENT_SRC)/sx86cl $(COMPONENT_SRC)/sx86cl64)
-
 COMPONENT_BUILD_ARGS += -C $(BUILD_DIR_$(BITS))/lisp-kernel/solarisx64
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
@@ -74,6 +72,7 @@ install: $(MY_INSTALL)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -1,0 +1,56 @@
+Python should always build modules pic. Bug 15780280
+
+This patch is a Solaris-specific hack; it will not be submitted upstream.
+
+--- Python-3.7.4/Lib/distutils/sysconfig.py
++++ Python-3.7.4/Lib/distutils/sysconfig.py
+@@ -225,6 +225,22 @@ def customize_compiler(compiler):
+         else:
+             archiver = ar + ' ' + ar_flags
+ 
++        # Force PIC compilation. Determine if GNU compiler or otherwise
++        # and set the PIC flag(s) accordingly. Defaults to Studio compiler.
++        if re.search('-.PIC', cflags) == None:
++            try:
++                out = os.popen(cc + ' --version 2>/dev/null', 'r')
++                out_string = out.read()
++                out.close()
++                result = re.search(' (\d+\.\d+(\.\d+)*)', out_string)
++                kpic_flags = "-fPIC -DPIC" if result else "-KPIC -DPIC"
++            except ImportError:
++                # The only time the above should fail is during boot-strapping
++                # when time (os imports subprocess which imports time) is not
++                # yet available.  Assume Studio compiler for that case.
++                kpic_flags = "-KPIC -DPIC"
++            cflags += ' ' + kpic_flags
++
+         cc_cmd = cc + ' ' + cflags
+         compiler.set_executables(
+             preprocessor=cpp,
+--- Python-3.7.4/Lib/distutils/tests/test_sysconfig.py
++++ Python-3.7.4/Lib/distutils/tests/test_sysconfig.py
+@@ -127,10 +127,10 @@ class SysconfigTestCase(support.EnvironG
+         self.assertEqual(comp.exes['preprocessor'],
+                          'env_cpp --env-cppflags')
+         self.assertEqual(comp.exes['compiler'],
+-                         'env_cc --sc-cflags --env-cflags --env-cppflags')
++                         'env_cc --sc-cflags --env-cflags --env-cppflags -KPIC -DPIC')
+         self.assertEqual(comp.exes['compiler_so'],
+                          ('env_cc --sc-cflags '
+-                          '--env-cflags ''--env-cppflags --sc-ccshared'))
++                          '--env-cflags ''--env-cppflags -KPIC -DPIC --sc-ccshared'))
+         self.assertEqual(comp.exes['compiler_cxx'],
+                          'env_cxx --env-cxx-flags')
+         self.assertEqual(comp.exes['linker_exe'],
+@@ -156,9 +156,9 @@ class SysconfigTestCase(support.EnvironG
+         self.assertEqual(comp.exes['preprocessor'],
+                          'sc_cc -E')
+         self.assertEqual(comp.exes['compiler'],
+-                         'sc_cc --sc-cflags')
++                         'sc_cc --sc-cflags -KPIC -DPIC')
+         self.assertEqual(comp.exes['compiler_so'],
+-                         'sc_cc --sc-cflags --sc-ccshared')
++                         'sc_cc --sc-cflags -KPIC -DPIC --sc-ccshared')
+         self.assertEqual(comp.exes['compiler_cxx'],
+                          'sc_cxx')
+         self.assertEqual(comp.exes['linker_exe'],

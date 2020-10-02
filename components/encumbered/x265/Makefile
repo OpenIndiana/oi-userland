@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		x265
 COMPONENT_VERSION=	3.1.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	High Efficiency Video Coding (HEVC)
 COMPONENT_PROJECT_URL=	http://x265.org/
 COMPONENT_FMRI=		library/video/x265

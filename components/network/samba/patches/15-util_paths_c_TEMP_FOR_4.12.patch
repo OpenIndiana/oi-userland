@@ -1,0 +1,54 @@
+--- samba-4.12.5/lib/util/util_paths.c	2020-07-22 12:58:04.393305372 +0000
++++ samba-4.12.5/lib/util/util_paths.c	2020-07-22 13:14:08.370277816 +0000
+@@ -68,25 +68,41 @@
+ {
+ 	struct passwd pwd = {0};
+ 	struct passwd *pwdbuf = NULL;
+-	char buf[NSS_BUFLEN_PASSWD] = {0};
++	char *buf = NULL;
++	char *out = NULL;
++	long int initlen;
++	size_t len;
+ 	int rc;
+ 
+-	rc = getpwuid_r(getuid(), &pwd, buf, NSS_BUFLEN_PASSWD, &pwdbuf);
++	initlen = sysconf(_SC_GETPW_R_SIZE_MAX);
++	if (initlen == -1) {
++		len = 1024;
++	} else {
++		len = (size_t)initlen;
++	}
++	buf = talloc_size(mem_ctx, len);
++	if (buf == NULL) {
++		return NULL;
++	}
++
++	rc = getpwuid_r(getuid(), &pwd, buf, len, &pwdbuf);
+ 	if (rc != 0 || pwdbuf == NULL ) {
+-		int len_written;
+ 		const char *szPath = getenv("HOME");
+ 		if (szPath == NULL) {
+-			return NULL;
++			goto done;
+ 		}
+-		len_written = snprintf(buf, sizeof(buf), "%s", szPath);
+-		if (len_written >= sizeof(buf) || len_written < 0) {
+-			/* Output was truncated or an error. */
+-			return NULL;
++		len = strnlen(szPath, PATH_MAX);
++		if (len >= PATH_MAX) {
++			goto done;
+ 		}
+-		return talloc_strdup(mem_ctx, buf);
++		out = talloc_strdup(mem_ctx, szPath);
++		goto done;
+ 	}
+ 
+-	return talloc_strdup(mem_ctx, pwd.pw_dir);
++	out = talloc_strdup(mem_ctx, pwd.pw_dir);
++done:
++	TALLOC_FREE(buf);
++	return out;
+ }
+ 
+ char *path_expand_tilde(TALLOC_CTX *mem_ctx, const char *d)

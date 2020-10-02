@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-input-acecad
 COMPONENT_VERSION= 1.5.0
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-acecad
 COMPONENT_SUMMARY= xf86-input-acecad - Acecad Flair input driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \

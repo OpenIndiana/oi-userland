@@ -11,6 +11,7 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2020 Marco van Wieringen
 #
 
 BUILD_BITS=		64
@@ -18,16 +19,16 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		caja-extensions
-COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MJR_VERSION=	1.24
 COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
+COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	Set of extensions for Caja, the MATE file manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:d0845b6f2921ee7b7c951d4490a4fd7166f90b85f60a22aef77c75b53fbcf077
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+	sha256:8533c3e0d3b0984eac284168744ecd12f8d0bdd914b908b4b71a496c95f5538e
+COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 COMPONENT_FMRI=		desktop/mate/caja/caja-extensions
 COMPONENT_LICENSE=	GPLv2

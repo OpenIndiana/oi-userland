@@ -2,22 +2,29 @@
 
 # Find the latest (tarball) release under original site
 #
-# Copyright 2016-2018 Jim Klimov
+# Copyright 2016-2020 Jim Klimov
 #
 
 BASE_URL="http://mirrors.jenkins-ci.org/war/"
+DL_PAGE_URL="https://www.jenkins.io/download/"
 
 echo "=== Checking latest numbered release under $BASE_URL..."
-VERSION="`wget -q -O - "$BASE_URL" 2>/dev/null | egrep 'DIR.*[0-9]*\.[0-9]*' | grep -vw latest | tail -1 | sed 's,^.*a href="\([0-9]*\.[0-9]*\)/*".*,\1,'`" \
-    && [ -n "$VERSION" ] && echo "Latest VERSION   = $VERSION" \
-    || echo "WARNING: Could not fetch a VERSION" >&2
+UPSTREAM_VERSION="`wget -q -O - "$BASE_URL" 2>/dev/null | egrep 'DIR.*[0-9]*\.[0-9]*' | grep -vw latest | tail -1 | sed 's,^.*a href="\([0-9]*\.[0-9]*\)/*".*,\1,'`" \
+    && [ -n "$UPSTREAM_VERSION" ] && echo "Latest UPSTREAM_VERSION   = $UPSTREAM_VERSION" \
+    || echo "WARNING: Could not fetch an UPSTREAM_VERSION, check manually at $DL_PAGE_URL " >&2
 
-CHECKSUM="`wget -O - "$BASE_URL/latest/jenkins.war.sha256" 2>/dev/null`" \
-    && [ -n "$CHECKSUM" ] && echo "Latest SHA256SUM = sha256:$CHECKSUM" \
-    || echo "WARNING: Could not fetch a CHECKSUM" >&2
+UPSTREAM_CHECKSUM="`wget -O - "$BASE_URL/latest/jenkins.war.sha256" 2>/dev/null | awk '{print $1}'`" \
+    && [ -n "$UPSTREAM_CHECKSUM" ] && echo "Latest SHA256SUM = sha256:$UPSTREAM_CHECKSUM" \
+    || echo "WARNING: Could not fetch an UPSTREAM_CHECKSUM" >&2
 
-echo "=== Data in current `dirname $0`/Makefile:"
-egrep '(^[\t\ ]*(COMPONENT_[A-Z]*_VERSION.*=|JENKINS_RELEASE.*=)|sha256:)' "`dirname $0`/Makefile"
+MF="`dirname $0`/Makefile"
+echo "=== Data in current ${MF}:"
+egrep '(^[\t\ ]*(COMPONENT_[A-Z]*_VERSION.*=|JENKINS_RELEASE.*=)|sha256:)' "${MF}"
+MAKEFILE_CHECKSUM="`grep 'sha256:' ${MF} | sed 's,^.*sha256:,,'`"
+
+if [ "$MAKEFILE_CHECKSUM" = "$UPSTREAM_CHECKSUM" ] ; then
+    echo "=== MAKEFILE_CHECKSUM matches the UPSTREAM_CHECKSUM currently"
+fi
 
 echo "=== Please edit the Makefile and commit like this:"
-echo "    git add -p Makefile; git commit -m 'Bump jenkins-core-weekly to v${VERSION}'"
+echo "    git add -p Makefile; git commit -m 'Bump jenkins-core-weekly to v${UPSTREAM_VERSION}'"

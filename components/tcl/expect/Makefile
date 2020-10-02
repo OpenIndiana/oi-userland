@@ -24,21 +24,20 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		expect
 COMPONENT_VERSION=	5.45.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://core.tcl.tk/expect/index
 COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:49a7da83b0bdd9f46d04a04deec19c7767bb9a323e40c4781f89caf760b92c34
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/expect/files/Expect/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_BUGDB=	utility/expect
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 SCRIPTS = timed-run timed-read ftp-rfc autopasswd lpunlock weather \
           passmass rftp kibitz rlogin-cwd xpstat tkpasswd dislocate xkibitz \
@@ -62,13 +61,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-ne "/Total/p"'
 
 COMPONENT_TEST_TARGETS = test
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64) 
-	
-test: 		$(TEST_32_and_64)
 
 # special targets due to tcl internals dependencies
 ../tcl/build/%/.built:

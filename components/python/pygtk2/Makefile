@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pygtk2
 COMPONENT_VERSION=	2.17.0
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	7
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Python bindings for GTK+
 COMPONENT_SRC=		pygtk-$(COMPONENT_VERSION)
@@ -81,3 +81,4 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

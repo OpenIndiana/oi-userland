@@ -11,30 +11,33 @@
 
 #
 # Copyright 2016-2017 Predrag Zečević.  All rights reserved.
+# Copyright 2020 Andreas Wacknitz
 #
 
+BUILD_BITS=			32
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= geany
-COMPONENT_VERSION= 1.34.1
+COMPONENT_NAME= 	geany
+COMPONENT_VERSION= 	1.36
 COMPONENT_CLASSIFICATION=System/Text Tools
-COMPONENT_FMRI=editor/geany
-COMPONENT_SUMMARY= A fast and lightweight IDE
+COMPONENT_FMRI=		editor/geany
+COMPONENT_SUMMARY= 	A fast and lightweight IDE
 COMPONENT_DESCRIPTION= Small and fast IDE, which has only a few dependencies from other package (independent on DE)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
- sha256:e765efd89e759defe3fd797d8a2052afbb4b23522efbcc72e3a72b7f1093ec11 
-COMPONENT_ARCHIVE_URL= http://download.geany.org/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.geany.org/Main/HomePage
+	sha256:9184dd3dd40b7b84fca70083284bb9dbf2ee8022bf2be066bdc36592d909d53e 
+COMPONENT_ARCHIVE_URL= https://download.geany.org/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.geany.org
 COMPONENT_LICENSE= GPLv2
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
+
+CFLAGS +=				-D_FILE_OFFSET_BITS=64
 
 CONFIGURE_OPTIONS    += --enable-vte
 CONFIGURE_OPTIONS    += --disable-html-docs
@@ -43,31 +46,19 @@ CONFIGURE_OPTIONS    += --enable-api-docs
 CONFIGURE_OPTIONS    += --enable-gtkdoc-header
 CONFIGURE_OPTIONS    += --enable-the-force
 
-build: $(BUILD_32)
 
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
-
+# Manually added build dependencies:
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/graphite2
 REQUIRED_PACKAGES += library/c++/harfbuzz
-REQUIRED_PACKAGES += library/desktop/atk
-REQUIRED_PACKAGES += library/desktop/cairo
-REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/expat
-REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxau
@@ -85,3 +76,15 @@ REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxscrnsaver
 REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

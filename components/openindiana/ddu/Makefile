@@ -34,6 +34,7 @@ GIT_REPO=https://github.com/OpenIndiana/ddu
 GIT_BRANCH=oi/hipster
 GIT_CHANGESET=HEAD
 
+COMPONENT_PREP_GIT=no
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/justmake.mk
 
@@ -66,7 +67,7 @@ COMPONENT_COPY_ACTION = \
 
 ENV=/usr/bin/env -i
 
-COMPONENT_BUILD_ARGS += CC=$(CC)
+COMPONENT_BUILD_ARGS += CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 build: $(BUILD_32)
 

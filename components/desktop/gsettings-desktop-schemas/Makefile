@@ -12,10 +12,12 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gsettings-desktop-schemas
 COMPONENT_VERSION=	3.28.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GSettings deskop-wide schemas
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -27,19 +29,12 @@ COMPONENT_FMRI=		gnome/config/gsettings-desktop-schemas
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2.1
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+include $(WS_MAKE_RULES)/common.mk
+
+PATH=$(PATH.gnu)
+
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-
-COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)

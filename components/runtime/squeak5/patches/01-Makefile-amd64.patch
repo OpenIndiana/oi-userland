@@ -1,0 +1,25 @@
+--- opensmalltalk-vm-sun-v5.0.11/platforms/unix/config/Makefile.in	Wed Aug 26 15:38:04 2020
++++ p0/opensmalltalk-vm-sun-v5.0.11/platforms/unix/config/Makefile.in	Thu Aug 27 07:33:34 2020
+@@ -67,6 +67,9 @@
+ getversion : ${cfgdir}/getversion.c ${topdir}/platforms/Cross/vm/sqSCCSVersion.h
+ 	$(LINK) getversion $(INCLUDES) ${cfgdir}/getversion.c
+ 
++ckformat : ${topdir}/src/ckformat.c
++	$(LINK) $@ $?
++
+ plugins : config.sh $(PLUGINS_LA)
+ 
+ # nuke everything but the mvm script; plugins.ext and plugins.int are assumed
+@@ -77,10 +80,10 @@
+ 
+ # unix launch scripts
+ squeak.sh: ${cfgdir}/squeak.sh.in getversion
+-	sed "s|.expanded_relative_imgdir.|lib/squeak/`./getversion VERSION_TAG`|" <${cfgdir}/squeak.sh.in >squeak.sh
++	sed "s|.expanded_relative_imgdir.|lib/amd64/squeak/`./getversion VERSION_TAG`|" <${cfgdir}/squeak.sh.in >squeak.sh
+ 
+ bin.squeak.sh: ${cfgdir}/bin.squeak.sh.in getversion
+-	sed "s|.expanded_relative_imgdir.|lib/squeak/`./getversion VERSION_TAG`|" <${cfgdir}/bin.squeak.sh.in >bin.squeak.sh
++	sed "s|.expanded_relative_imgdir.|lib/amd64/squeak/`./getversion VERSION_TAG`|" <${cfgdir}/bin.squeak.sh.in >bin.squeak.sh
+ 
+ # npsqueak
+ 

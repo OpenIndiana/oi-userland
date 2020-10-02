@@ -23,10 +23,13 @@
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_STYLE = setup.py
+BUILD_BITS = NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cssutils
 COMPONENT_VERSION=	1.0.2
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/cssutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -35,11 +38,10 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/cssutils
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Files for Python 3 are generated using 2to3, so Python 3 tests can't be run
 # out of the box.
@@ -57,12 +59,5 @@ COMPONENT_TEST_ARGS= ./setup.py test
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-build:          $(BUILD_NO_ARCH)
-
-install:        $(INSTALL_NO_ARCH)
-
-test:           $(TEST_NO_ARCH)
-
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35

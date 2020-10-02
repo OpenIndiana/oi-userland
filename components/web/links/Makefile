@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		links
 COMPONENT_VERSION=	2.20.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Text based web browser
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://links.twibright.com/
@@ -52,6 +53,7 @@ COMPONENT_PREP_ACTION=	( cd $(@D) ; autoconf )
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += library/security/openssl

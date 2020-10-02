@@ -23,11 +23,13 @@
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		py
 COMPONENT_VERSION=	1.4.31
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -36,11 +38,11 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://bitbucket.org/hpk42/py
 COMPONENT_BUGDB=	python-mod/py
 
-PYTHON_VERSIONS=		2.7 3.4 3.5
+PYTHON_VERSIONS=		2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+
+# Tests require the pytest package to be installed.
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/testing
 COMPONENT_TEST_CMD =	/usr/bin/py.test
@@ -48,15 +50,6 @@ COMPONENT_TEST_ARGS =	test_iniconfig.py
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-# Tests require the pytest package to be installed.
-test:		$(TEST_NO_ARCH)
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35

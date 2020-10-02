@@ -26,6 +26,9 @@
 HG =		/usr/bin/hg
 MKTEMP = 	/usr/gnu/bin/mktemp
 
+COMPONENT_PREP_HG?=yes
+ifeq ($(strip $(COMPONENT_PREP_HG)), yes)
+
 #
 # Anything that we pull from a Mercurial repo must have a HG_REPO{_[0-9]+} and
 # HG_REV{_[0-9]+} to match.
@@ -78,7 +81,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 		-e "s/\(HG_HASH$(1)[[:space:]]*=[[:space:]]*\).*/\1sha256:$$$${HG_HASH}/" \
 		Makefile)
 
-REQUIRED_PACKAGES += developer/versioning/mercurial
+USERLAND_REQUIRED_PACKAGES += developer/versioning/mercurial
 
 endif
 endif
@@ -90,3 +93,5 @@ $(foreach suffix, $(HG_SUFFIXES), $(eval $(call hg-variables,_$(suffix))))
 
 $(eval $(call hg-rules,))
 $(foreach suffix, $(HG_SUFFIXES), $(eval $(call hg-rules,_$(suffix))))
+
+endif

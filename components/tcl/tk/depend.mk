@@ -1,1 +1,0 @@
-tcl/tk:		tcl/tcl

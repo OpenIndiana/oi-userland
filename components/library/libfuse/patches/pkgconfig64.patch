@@ -1,0 +1,32 @@
+diff -urN libfuse-1/amd64/Makefile libfuse/amd64/Makefile
+--- libfuse-1/amd64/Makefile	2020-07-19 10:15:12.404493088 +0000
++++ libfuse/amd64/Makefile	2020-07-19 10:47:03.160200503 +0000
+@@ -27,11 +27,13 @@
+ include ../Makefile.com
+ 
+ DIRSAMD64 = $(ROOT)/usr/bin/amd64 \
+-		 $(ROOT)/usr/lib/amd64
++		 $(ROOT)/usr/lib/amd64 \
++		 $(ROOT)/usr/lib/amd64/pkgconfig
+ 
+ install:
+ 	mkdir -p $(DIRSAMD64)
+ 	$(INSTALL) -f $(ROOT)/usr/bin/amd64 ../fusermount
+ 	$(INSTALL) -f $(ROOT)/usr/bin/amd64 fusermount.bin
+ 	$(INSTALL) -f $(ROOT)/usr/lib/amd64 libfuse.so.2.7.1
++	cp ../fuse.pc.64 $(ROOT)/usr/lib/amd64/pkgconfig/fuse.pc
+ 
+diff -urN libfuse-1/fuse.pc.64 libfuse/fuse.pc.64
+--- libfuse-1/fuse.pc.64	1970-01-01 03:00:00.000000000 +0000
++++ libfuse/fuse.pc.64	2020-07-19 10:46:01.559500378 +0000
+@@ -0,0 +1,10 @@
++prefix=/usr
++exec_prefix=${prefix}
++libdir=${exec_prefix}/lib/amd64
++includedir=${prefix}/include
++
++Name: fuse
++Description: Filesystem in Userspace
++Version: 2.7.6
++Libs: -L${libdir} -lfuse -lxnet
++Cflags: -I${includedir}/fuse

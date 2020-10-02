@@ -1,0 +1,17 @@
+This ugly hack allows us to use libjpeg-turbo.
+Perhaps, one should find a better way to pass LDFLAGS to libvcllo.
+Without this, it uses libjpeg-turbo headers and links to default libjpeg.so and fails with 
+
+Undefined symbol jpeg_core_output_dimensions
+
+--- libreoffice-6.4.3.2/configure.ac.1	2020-04-21 10:53:07.830278273 +0000
++++ libreoffice-6.4.3.2/configure.ac	2020-04-21 10:53:48.903243819 +0000
+@@ -8115,7 +8115,7 @@
+     SYSTEM_LIBJPEG=TRUE
+     AC_CHECK_HEADER(jpeglib.h, [ LIBJPEG_CFLAGS= ],
+         [AC_MSG_ERROR(jpeg.h not found. install libjpeg)], [])
+-    AC_CHECK_LIB(jpeg, jpeg_resync_to_restart, [ LIBJPEG_LIBS="-ljpeg" ],
++    AC_CHECK_LIB(jpeg, jpeg_resync_to_restart, [ LIBJPEG_LIBS="-L/usr/lib/libjpeg8-turbo/lib -R/usr/lib/libjpeg8-turbo/lib -ljpeg" ],
+         [AC_MSG_ERROR(jpeg library not found or functional)], [])
+ else
+     SYSTEM_LIBJPEG=

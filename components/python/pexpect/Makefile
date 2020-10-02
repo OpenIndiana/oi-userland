@@ -13,10 +13,13 @@
 # Copyright 2018 Alexander Pyhalov
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pexpect
 COMPONENT_VERSION= 	4.6.0
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://github.com/pexpect/pexpect
 COMPONENT_FMRI=	library/python/pexpect
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,19 +32,12 @@ COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_LICENSE=	ISC
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-build: $(BUILD_NO_ARCH)
-
-install: $(INSTALL_NO_ARCH)
-
-test:	$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35

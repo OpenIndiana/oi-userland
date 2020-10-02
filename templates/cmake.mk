@@ -12,6 +12,8 @@
 # Copyright 2020 <contributor name>
 #
 
+BUILD_BITS=64 # for binaries or 32_and_64 for libraries
+BUILD_STYLE=cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=
@@ -26,12 +28,11 @@ COMPONENT_ARCHIVE_URL=
 COMPONENT_ARCHIVE_HASH=
 COMPONENT_LICENSE=
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
+include $(WS_MAKE_RULES)/common.mk
 
-build: $(BUILD_32)
+CMAKE_OPTIONS+= # add configuration options here
 
-install: $(INSTALL_32)
+# Build dependencies
+REQUIRED_PACKAGES+=
 
-test: $(NO_TESTS)

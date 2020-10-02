@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk-doc
 COMPONENT_VERSION=	1.25
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gtk.org/gtk-doc/
 COMPONENT_SUMMARY=	GTK+ DocBook Documentation Generator
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -48,3 +49,4 @@ REQUIRED_PACKAGES += text/itstool
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

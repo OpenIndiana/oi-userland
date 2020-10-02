@@ -12,6 +12,7 @@
 #
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2020 Marco van Wieringen
 #
 
 BUILD_BITS=		32_and_64
@@ -19,14 +20,14 @@ BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk+
-COMPONENT_VERSION=	3.24.12
+COMPONENT_VERSION=	3.24.23
 COMPONENT_SUMMARY=	GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:1384eba5614fed160044ae0d32369e3df7b4f517b03f4b1f24d383e528f4be83
+	sha256:5d864d248357a2251545b3387b35942de5f66e4c66013f0962eb5cb6f8dae2b1
 COMPONENT_ARCHIVE_URL= \
-	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.24/$(COMPONENT_ARCHIVE)
+	https://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gtk.org/
 COMPONENT_LICENSE=	LGPLv2
 COMPONENT_LICENSE_FILE=	COPYING
@@ -62,7 +63,7 @@ CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
 CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
 CONFIGURE_OPTIONS += --enable-explicit-deps=yes
 CONFIGURE_OPTIONS += --enable-cloudprint
-CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS.64 += --enable-introspection
 CONFIGURE_OPTIONS += --enable-man
 CONFIGURE_OPTIONS += --disable-glibtest
 CONFIGURE_OPTIONS += --disable-papi

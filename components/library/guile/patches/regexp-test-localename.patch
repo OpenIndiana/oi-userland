@@ -1,0 +1,35 @@
+From 342502cc25d5893c7dd1dcd064f90b57f75cc326 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Fri, 23 Aug 2019 19:27:29 -0400
+Subject: [PATCH] guile-2.2.6: Need to give a valid UTF-8 locale name to the
+ regexp tests
+
+---
+ .../guile/patches/regexp-test-localename.patch | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 components/library/guile/patches/regexp-test-localename.patch
+
+diff --git a/components/library/guile/patches/regexp-test-localename.patch b/components/library/guile/patches/regexp-test-localename.patch
+new file mode 100644
+index 0000000000..26b10efb80
+--- /dev/null
++++ b/components/library/guile/patches/regexp-test-localename.patch
+@@ -0,0 +1,18 @@
++--- guile-2.2.6/test-suite/tests/regexp.test.~1~	2019-08-23 19:24:28.420936713 +0000
+++++ guile-2.2.6/test-suite/tests/regexp.test	2019-08-23 19:24:31.031011624 +0000
++@@ -280,13 +280,13 @@
++ 
++ (with-test-prefix "nonascii locales"
++   (pass-if "match structures refer to char offsets"
++-    (with-locale "en_US.utf8"
+++    (with-locale "en_US.UTF-8"
++       ;; bug #31650
++       (equal? (match:substring (string-match ".*" "calçot") 0)
++               "calçot")))
++ 
++   (pass-if "match structures refer to char offsets, non-ASCII pattern"
++-    (with-locale "en_US.utf8"
+++    (with-locale "en_US.UTF-8"
++       ;; bug #31650
++       (equal? (match:substring (string-match "λ: The Ultimate (.*)"
++                                              "λ: The Ultimate GOTO")

@@ -9,35 +9,35 @@ This reverts commit 31a39c6ea8dfc9021436264d83dc07a4d799ff61.
  net/vnic.c | 246 ++++++++++++++++++++++---------------------------------------
  2 files changed, 88 insertions(+), 160 deletions(-)
 
-diff --git a/build.sh b/build.sh
-index 7c3907b..a273081 100755
---- a/build.sh
-+++ b/build.sh
-@@ -39,7 +39,7 @@ CC="${CC:-${DESTDIR}/usr/bin/gcc}"
- XCFLAGS="-fno-builtin -I${PNGINC} -isystem ${DESTDIR}/usr/include -msave-args"
- XLDFLAGS="-nodefaultlibs -L${PNGLIB} -L${DESTDIR}/usr/lib -L${DESTDIR}/lib"
+Updated to 20190827
+
+diff -ruN illumos-kvm-cmd-41e7c3e192eb39bb5ced7667fdc12ad2b33e646d.orig/build.sh illumos-kvm-cmd-41e7c3e192eb39bb5ced7667fdc12ad2b33e646d.patched/build.sh
+--- illumos-kvm-cmd-41e7c3e192eb39bb5ced7667fdc12ad2b33e646d.orig/build.sh	2020-03-19 21:53:41.308240253 +0000
++++ illumos-kvm-cmd-41e7c3e192eb39bb5ced7667fdc12ad2b33e646d.patched/build.sh	2020-03-19 21:55:18.480389342 +0000
+@@ -48,7 +48,7 @@
+ XCFLAGS="$XCFLAGS -fno-builtin -I${PNGINC} -isystem ${DESTDIR}/usr/include -msave-args"
+ XLDFLAGS="-nodefaultlibs -L${PNGLIB} -L${DESTDIR}/usr/lib/amd64 -L${DESTDIR}/lib/amd64"
  XLDFLAGS="${XLDFLAGS} -Wl,-zfatal-warnings -Wl,-zassert-deflib"
 -XLDFLAGS="${XLDFLAGS} -lz -lm -lc -lvnd"
 +XLDFLAGS="${XLDFLAGS} -lz -lm -lc"
  ./configure \
      --cc=$CC \
      --extra-cflags="${XCFLAGS}" \
-diff --git a/net/vnic.c b/net/vnic.c
-index af60741..d03ba32 100644
---- a/net/vnic.c
-+++ b/net/vnic.c
+diff -ruN illumos-kvm-cmd-41e7c3e192eb39bb5ced7667fdc12ad2b33e646d.orig/net/vnic.c illumos-kvm-cmd-41e7c3e192eb39bb5ced7667fdc12ad2b33e646d.patched/net/vnic.c
+--- illumos-kvm-cmd-41e7c3e192eb39bb5ced7667fdc12ad2b33e646d.orig/net/vnic.c	2020-03-19 21:53:41.379418566 +0000
++++ illumos-kvm-cmd-41e7c3e192eb39bb5ced7667fdc12ad2b33e646d.patched/net/vnic.c	2020-03-19 22:30:09.207208336 +0000
 @@ -1,6 +1,6 @@
  /*
   * QEMU System Emulator
 - * illumos VNIC/vnd support
 + * Solaris VNIC support
   *
-  * Copyright (c) 2014 Joyent, Inc.
+  * Copyright 2016 Joyent, Inc.
   *
-@@ -32,15 +32,12 @@
- #include <stdlib.h>
+@@ -33,15 +33,12 @@
  #include <unistd.h>
  
+ #include <netpacket/packet.h>
 -#include <assert.h>
  #include <net/if_dl.h>
  #include <sys/ethernet.h>
@@ -51,7 +51,7 @@ index af60741..d03ba32 100644
  
  #include "net/vnic.h"
  #include "net/vnic-dhcp.h"
-@@ -64,10 +61,8 @@ typedef struct VNICState {
+@@ -65,10 +62,8 @@
  	uint8_t		vns_buf[VNIC_BUFSIZE];
  	uint8_t		vns_txbuf[VNIC_BUFSIZE];
  	uint_t		vns_sap;
@@ -63,7 +63,7 @@ index af60741..d03ba32 100644
  } VNICState;
  
  static void vnic_update_fd_handler(VNICState *);
-@@ -94,37 +89,44 @@ vnic_poll(VLANClientState *ncp, bool enable)
+@@ -95,37 +90,44 @@
  	vnic_write_poll(vsp, 1);
  }
  
@@ -121,7 +121,7 @@ index af60741..d03ba32 100644
  	} while (ret == -1 && errno == EINTR);
  
  	if (ret == -1 && errno == EAGAIN) {
-@@ -132,7 +134,10 @@ vnic_write_packet(VNICState *vsp, const uint8_t *buf, int len)
+@@ -133,7 +135,10 @@
  		return (0);
  	}
  
@@ -133,22 +133,18 @@ index af60741..d03ba32 100644
  }
  
  static int
-@@ -185,9 +190,14 @@ vnic_receive(VLANClientState *ncp, const uint8_t *buf, size_t size)
- {
+@@ -187,6 +192,10 @@
+ 	uint16_t ethtype;
  	VNICState *vsp = DO_UPCAST(VNICState, vns_nc, ncp);
  
 +#if VNIC_DHCP_DEBUG
 +	debug_eth_frame(buf, size);
 +#endif
 +
- 	if (vsp->vns_ds.vnds_enabled && is_dhcp_request(buf, size)) {
+ 	if (vsp->vns_ds.vnds_enabled && get_ethertype(buf, size, &ethtype)) {
+ 		VNICDHCPState *vdsp = &vsp->vns_ds;
  		int ret;
- 
-+		// XXX: do we need to handle arp requests for the fake IP?
- 		ret = create_dhcp_response(buf, size, &vsp->vns_ds);
- 		if (!ret)
- 			return (size);
-@@ -203,99 +213,6 @@ vnic_receive(VLANClientState *ncp, const uint8_t *buf, size_t size)
+@@ -220,117 +229,6 @@
  	return (vnic_write_packet(vsp, buf, size));
  }
  
@@ -157,6 +153,7 @@ index af60741..d03ba32 100644
 -    int iovcnt)
 -{
 -	int ret, i;
+-	uint16_t ethtype;
 -	size_t total, altsize;
 -	VNICState *vsp = DO_UPCAST(VNICState, vns_nc, ncp);
 -
@@ -164,8 +161,7 @@ index af60741..d03ba32 100644
 -		total += (iov + i)->iov_len;
 -	}
 -
--	if (vsp->vns_ds.vnds_enabled &&
--	    is_dhcp_requestv(iov, iovcnt)) {
+-	if (vsp->vns_ds.vnds_enabled && get_ethertypev(iov, iovcnt, &ethtype)) {
 -		/*
 -		 * Basically drop the packet because we can't send a
 -		 * reply at this time. It's unfortunate, but we don't
@@ -174,13 +170,30 @@ index af60741..d03ba32 100644
 -		 */
 -		if (!vnic_can_send(vsp))
 -			return (total);
--		ret = create_dhcp_responsev(iov, iovcnt, &vsp->vns_ds);
+-
+-		VNICDHCPState *vdsp = &vsp->vns_ds;
+-
+-		switch (ethtype) {
+-		case ETH_P_ARP:
+-			if (!is_arp_requestv(iov, iovcnt, vdsp))
+-				goto send;
+-			ret = create_arp_responsev(iov, iovcnt, vdsp);
+-			break;
+-		case ETH_P_IP:
+-			if (!is_dhcp_requestv(iov, iovcnt))
+-				goto send;
+-			ret = create_dhcp_responsev(iov, iovcnt, vdsp);
+-			break;
+-		default:
+-			goto send;
+-		}
+-
 -		/* This failed, drop it and continue */
 -		if (ret == 0)
 -			return (total);
 -
 -		ret = qemu_send_packet_async(&vsp->vns_nc,
--		    vsp->vns_ds.vnds_buf, ret, vnic_send_completed);
+-		    vdsp->vnds_buf, ret, vnic_send_completed);
 -		/*
 -		 * qemu has told us that it can't receive any more data
 -		 * at this time for the guest (host->guest traffic) so
@@ -192,6 +205,7 @@ index af60741..d03ba32 100644
 -		return (total);
 -	}
 -
+-send:
 -	/*
 -	 * Copy the iovcs to our write frameio. Be on the lookout for someone
 -	 * giving us more vectors than we support in frameio. In that case,
@@ -248,7 +262,7 @@ index af60741..d03ba32 100644
  static void
  vnic_cleanup(VLANClientState *ncp)
  {
-@@ -305,7 +222,7 @@ vnic_cleanup(VLANClientState *ncp)
+@@ -340,7 +238,7 @@
  
  	qemu_purge_queued_packets(ncp);
  
@@ -257,7 +271,7 @@ index af60741..d03ba32 100644
  }
  
  static void
-@@ -322,41 +239,42 @@ static NetClientInfo net_vnic_info = {
+@@ -357,41 +255,42 @@
  	.type = NET_CLIENT_TYPE_VNIC,
  	.size = sizeof (VNICState),
  	.receive = vnic_receive,
@@ -319,7 +333,7 @@ index af60741..d03ba32 100644
  
  	if ((ifname = qemu_opt_get(opts, "ifname")) == NULL) {
  		error_report("missing ifname required for vnic\n");
-@@ -376,36 +294,48 @@ net_init_vnic(QemuOpts *opts, Monitor *mon, const char *name, VLANState *vlan)
+@@ -411,36 +310,48 @@
  	ncp = qemu_new_net_client(&net_vnic_info, vlan, NULL, "vnic", name);
  	vsp = DO_UPCAST(VNICState, vns_nc, ncp);
  
@@ -387,7 +401,7 @@ index af60741..d03ba32 100644
  	if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
  		error_report("vnic: failed to set fd on interface %s to "
  		    "non-blocking: %s\n", ifname, strerror(errno));
-@@ -420,11 +350,9 @@ net_init_vnic(QemuOpts *opts, Monitor *mon, const char *name, VLANState *vlan)
+@@ -455,11 +366,9 @@
  	if (vnic_dhcp_init(&vsp->vns_ds, opts) == 0)
  		return (-1);
  
@@ -402,6 +416,3 @@ index af60741..d03ba32 100644
  
  	/* We have to manually intialize the polling for read */
  	vnic_read_poll(vsp, 1);
--- 
-2.3.0
-

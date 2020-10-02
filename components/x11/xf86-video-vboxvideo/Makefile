@@ -21,7 +21,7 @@ COMPONENT_NAME= xf86-video-vboxvideo
 COMPONENT_VERSION= 1.0.0
 # Use version string from Xorg module
 IPS_COMPONENT_VERSION= 1.0.1
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-vboxvideo
 COMPONENT_SUMMARY= xf86-video-vboxvideo - VirtualBox UMS driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \

@@ -24,24 +24,10 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 depend fmri=image/library/libjpeg6-ijg type=require
 
-# Documentation provided by default implementation
-file path=usr/share/man/man1/cjpeg.1
-file path=usr/share/man/man1/djpeg.1
-file path=usr/share/man/man1/jpegtran.1
-file path=usr/share/man/man1/rdjpgcom.1
-file path=usr/share/man/man1/wrjpgcom.1
+# Documentation and executables should default to libjpeg-turbo
+depend fmri=image/library/libjpeg-turbo type=require
 
-# Set this version as default implementation for backward compatibility
-link path=usr/bin/cjpeg              target=../lib/$(COMPONENT_NAME)/bin/cjpeg
-link path=usr/bin/djpeg              target=../lib/$(COMPONENT_NAME)/bin/djpeg
-link path=usr/bin/jpegtran           target=../lib/$(COMPONENT_NAME)/bin/jpegtran
-link path=usr/bin/rdjpgcom           target=../lib/$(COMPONENT_NAME)/bin/rdjpgcom
-link path=usr/bin/wrjpgcom           target=../lib/$(COMPONENT_NAME)/bin/wrjpgcom
-link path=usr/bin/$(MACH64)/cjpeg    target=../../lib/$(COMPONENT_NAME)/bin/$(MACH64)/cjpeg
-link path=usr/bin/$(MACH64)/djpeg    target=../../lib/$(COMPONENT_NAME)/bin/$(MACH64)/djpeg
-link path=usr/bin/$(MACH64)/jpegtran target=../../lib/$(COMPONENT_NAME)/bin/$(MACH64)/jpegtran
-link path=usr/bin/$(MACH64)/rdjpgcom target=../../lib/$(COMPONENT_NAME)/bin/$(MACH64)/rdjpgcom
-link path=usr/bin/$(MACH64)/wrjpgcom target=../../lib/$(COMPONENT_NAME)/bin/$(MACH64)/wrjpgcom
+# Only provide headers and libraries for backward compatibility
 link path=usr/include/jconfig.h      target=$(COMPONENT_NAME)/jconfig.h
 link path=usr/include/jerror.h       target=$(COMPONENT_NAME)/jerror.h
 link path=usr/include/jmorecfg.h     target=$(COMPONENT_NAME)/jmorecfg.h

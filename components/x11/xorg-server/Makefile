@@ -20,7 +20,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xorg-server
 COMPONENT_VERSION= 1.19.7
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 7
 COMPONENT_SUMMARY= Xorg - X11R7 X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -120,6 +120,7 @@ REQUIRED_PACKAGES += x11/documentation/xorg-docs
 REQUIRED_PACKAGES += x11/documentation/xorg-sgml-doctools
 REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += x11/font-util
+REQUIRED_PACKAGES += x11/library/libxkbfile
 REQUIRED_PACKAGES += x11/library/libxres
 REQUIRED_PACKAGES += x11/library/xcb-util
 REQUIRED_PACKAGES += x11/library/xcb-util-cursor

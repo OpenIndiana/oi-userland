@@ -1,0 +1,36 @@
+From 7642928be19046680e3fb1f5ee1eb7b181aaba50 Mon Sep 17 00:00:00 2001
+From: Jelte Fennema <github-tech@jeltef.nl>
+Date: Fri, 27 Dec 2019 10:34:57 +0100
+Subject: [PATCH] Makefile fix DESTDIR together with cleanup (#3342)
+
+This should fix this build issue: redmine.postgresql.org/issues/5032
+---
+ Makefile                         | 1 -
+ src/backend/distributed/Makefile | 5 +++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index da8248964e..c076ba1696 100644
+--- a/Makefile
++++ b/Makefile
+@@ -17,7 +17,6 @@ all: extension
+ extension: $(citus_top_builddir)/src/include/citus_version.h
+ 	$(MAKE) -C src/backend/distributed/ all
+ install-extension: extension
+-	rm -f $(extension_dir)/citus*
+ 	$(MAKE) -C src/backend/distributed/ install
+ install-headers: extension
+ 	$(MKDIR_P) '$(DESTDIR)$(includedir_server)/distributed/'
+diff --git a/src/backend/distributed/Makefile b/src/backend/distributed/Makefile
+index 29b5b59970..76cf0acbbe 100644
+--- a/src/backend/distributed/Makefile
++++ b/src/backend/distributed/Makefile
+@@ -62,3 +62,8 @@ check-sql-snapshots:
+ 		latest_snapshot=$$(ls $$f | { grep -v latest.sql || true; } | sort -V | tail -n 1); \
+ 		diff -u $$f/latest.sql $$f/$$latest_snapshot; \
+ 	done'
++
++cleanup-before-install:
++	rm -f $(DESTDIR)$(datadir)/$(datamoduledir)/citus*
++
++install: cleanup-before-install

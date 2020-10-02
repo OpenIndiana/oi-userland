@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	DBI-SQLite
 COMPONENT_VERSION=	1.52
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	The DBI SQLite Interface for Perl
 COMPONENT_SRC=		DBD-SQLite-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -37,4 +38,6 @@ test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/perl-5/database
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+# Bogus dependency due to libssp
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

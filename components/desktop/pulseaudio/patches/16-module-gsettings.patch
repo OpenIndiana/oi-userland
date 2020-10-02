@@ -1,0 +1,43 @@
+--- pulseaudio-13.0/src/modules/gsettings/module-gsettings.c-orig	Fri Sep 13 08:10:23 2019
++++ pulseaudio-13.0/src/modules/gsettings/module-gsettings.c	Sun Aug  9 15:20:19 2020
+@@ -23,6 +23,8 @@
+ 
+ #include <sys/types.h>
+ #include <sys/wait.h>
++#include <unistd.h>
++#include <sys/fcntl.h>
+ 
+ #include <pulsecore/core-error.h>
+ #include <pulsecore/core-util.h>
+@@ -38,6 +40,7 @@
+ int pa__init(pa_module*m) {
+     struct userdata *u;
+     int r;
++    char *helper;
+ 
+     u = pa_xnew(struct userdata, 1);
+     u->core = m->core;
+@@ -50,12 +53,20 @@
+     u->io_event = NULL;
+     u->buf_fill = 0;
+ 
+-    if ((u->fd = pa_start_child_for_read(
++    helper =
+ #if defined(__linux__) && defined(HAVE_RUNNING_FROM_BUILD_TREE)
+-                              pa_run_from_build_tree() ? PA_BUILDDIR "/gsettings-helper" :
++	pa_run_from_build_tree() ? PA_BUILDDIR "/gsettings-helper" :
+ #endif
+-                 PA_GSETTINGS_HELPER, NULL, &u->pid)) < 0)
++	PA_GSETTINGS_HELPER;
++
++    if (access(helper, X_OK) != 0) {
++        pa_log_error("failed to access %s for execute: %s", helper,
++            pa_cstrerror(errno));
+         goto fail;
++    }
++ 
++    if ((u->fd = pa_start_child_for_read(helper, NULL, &u->pid)) < 0)
++        goto fail;
+ 
+     u->io_event = m->core->mainloop->io_new(
+             m->core->mainloop,

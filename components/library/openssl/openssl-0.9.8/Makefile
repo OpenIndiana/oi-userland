@@ -16,7 +16,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssl
 COMPONENT_VERSION=	0.9.8zh
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://openssl.org
 COMPONENT_SUMMARY=	Toolkit for SSL/TLS and general purpose cryptographic library.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -92,7 +92,3 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

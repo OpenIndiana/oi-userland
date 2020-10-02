@@ -1,0 +1,110 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2020 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=pkg:/runtime/ocaml type=require
+depend fmri=pkg:/library/ocaml/ocaml-findlib type=require
+depend fmri=pkg:/library/ocaml/ocaml-num type=require
+depend fmri=pkg:/library/ocaml/parmap type=require
+depend fmri=pkg:/library/ocaml/pyml type=require
+depend fmri=pkg:/library/ocaml/stdcompat type=require
+
+file path=usr/bin/spatch
+file path=usr/bin/spgen
+file path=usr/lib/$(MACH64)/coccinelle/dllpcre_stubs.so
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/ast0_cocci.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/ast0_cocci.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/ast_c.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/ast_c.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/ast_cocci.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/ast_cocci.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/coccilib.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/coccilib.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/commands.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/commands.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/common.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/common.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/config.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/config.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/dumper.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/dumper.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/exposed_modules.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/exposed_modules.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/externalanalysis.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/externalanalysis.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/flag.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/flag.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/flag_parsing_c.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/flag_parsing_c.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/iteration.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/iteration.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/lexer_c.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/lexer_c.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/lib_parsing_c.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/lib_parsing_c.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/no_prepare_ocamlcocci.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/no_prepare_ocamlcocci.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/ocamlcocci_aux.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/ocamlcocci_aux.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/parmap.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/parmap.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/parse_c.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/parse_c.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/parser_c.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/parser_c.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/prepare_ocamlcocci.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/prepare_ocamlcocci.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/pretty_print_c.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/pretty_print_c.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/regexp.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/regexp.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/run_ocamlcocci.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/run_ocamlcocci.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/token_c.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/token_c.cmx
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/visitor_c.cmi
+file path=usr/lib/$(MACH64)/coccinelle/ocaml/visitor_c.cmx
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/__init__.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/coccigui/__init__.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/coccigui/coccigui.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/coccigui/pycoccimodel.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/coccigui/pygui.glade
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/coccigui/pygui.gladep
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/coccigui/vim.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/coccigui/vimcom.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/coccigui/vimeditor.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/coccigui/vimembed.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/elems.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/iteration.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/org.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/output.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/report.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/trac.py
+file path=usr/lib/$(MACH64)/coccinelle/python/coccilib/xml_firehose.py
+file path=usr/lib/$(MACH64)/coccinelle/standard.h
+file path=usr/lib/$(MACH64)/coccinelle/standard.iso
+file path=usr/share/bash-completion/completions/spatch
+file path=usr/share/man/man1/pycocci.1
+file path=usr/share/man/man1/spatch.1
+file path=usr/share/man/man1/spgen.1
+file path=usr/share/man/man3/Coccilib.3cocci

@@ -12,10 +12,12 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkam
 COMPONENT_VERSION=	1.0
+COMPONENT_REVISION=	2
 # Version was bumped in JDS
 GIMP_GTKAM_VERSION=	2.30.0
 COMPONENT_PROJECT_URL=	http://libexif.sourceforge.net/
@@ -30,9 +32,9 @@ COMPONENT_FMRI = desktop/gtkam
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS += GIMP_GTKAM_VERSION=$(GIMP_GTKAM_VERSION)
 
@@ -40,13 +42,6 @@ PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --without-gnome
 CONFIGURE_OPTIONS += --without-bonobo
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += image/editor/gimp
 REQUIRED_PACKAGES += image/library/libexif

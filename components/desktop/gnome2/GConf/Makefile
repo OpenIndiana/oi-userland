@@ -10,14 +10,16 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2020 Alexander Pyhalov
 #
 
+PREFERRED_BITS=64
+BUILD_BITS= 32_and_64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= GConf
 COMPONENT_VERSION= 2.32.4
-COMPONENT_REVISION= 5
+COMPONENT_REVISION= 8
 COMPONENT_SUMMARY= GNOME Configuration Framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -27,35 +29,29 @@ COMPONENT_ARCHIVE_URL= \
   ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://projects.gnome.org/gconf/
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
 
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
+
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf --install --force)
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT =$(@D)/configure
 
+CONFIGURE_LIBEXECDIR.32  = $(CONFIGURE_PREFIX)/lib/$(MACH32)
+CONFIGURE_LIBEXECDIR.64  = $(CONFIGURE_PREFIX)/lib
+
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBEXECDIR.$(BITS))
 CONFIGURE_OPTIONS += --enable-defaults-service=no
 
 CONFIGURE_ENV+= INTLTOOL_PERL=$(PERL)
-CONFIGURE_ENV+= PYTHON=$(PYTHON)
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
-
-$(INSTALL_32): $(INSTALL_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
@@ -66,8 +62,8 @@ REQUIRED_PACKAGES += text/intltool
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/orbit2
-REQUIRED_PACKAGES += library/python/lxml-27
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/lxml-35
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib

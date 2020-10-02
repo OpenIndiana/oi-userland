@@ -12,6 +12,7 @@
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
 # Copyright 2019 Michal Nowak
+# Copyright 2020 Marco van Wieringen
 #
 
 BUILD_BITS=		64
@@ -19,16 +20,17 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-session-manager
-COMPONENT_MJR_VERSION=	1.22
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.24
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
+COMPONENT_REVISION=		2
+COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Session manager and session startup stuff
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:a814b07cbd42920ab86fe77c40f3e1ce7118cbc5da3251b1eb2ab9aa974c0aec
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+	sha256:a1c472a3da20c2c69b1de9f2746f23ceaf149bb633fb8b8496715c5fbd4698ff
+COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -68,3 +70,4 @@ REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxtst
+REQUIRED_PACKAGES += x11/library/libepoxy

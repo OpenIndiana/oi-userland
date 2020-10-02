@@ -14,25 +14,24 @@
 # Copyright 2019 Jason Martin
 #
 
+BUILD_BITS=64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libwebp
-COMPONENT_VERSION= 1.0.2
+COMPONENT_VERSION= 1.1.0
 COMPONENT_FMRI= library/libwebp
 COMPONENT_SUMMARY= WebP image format library
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3d47b48c40ed6476e8047b2ddb81d93835e0ca1b8d3e8c679afbb3004dd564b1
+  sha256:98a052268cc4d5ece27f76572a7f50293f439c17a98e67c4ea0c7ed6f50ef043
 COMPONENT_ARCHIVE_URL= \
   https://storage.googleapis.com/downloads.webmproject.org/releases/webp/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://developers.google.com/speed/webp/
 COMPONENT_LICENSE= BSD
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -50,12 +49,6 @@ CONFIGURE_OPTIONS += --enable-libwebpdemux
 CONFIGURE_OPTIONS += --enable-libwebpdecoder
 CONFIGURE_OPTIONS += --enable-libwebpextras
 CONFIGURE_OPTIONS += --enable-swap-16bit-csp
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo

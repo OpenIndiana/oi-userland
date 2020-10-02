@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		more-itertools
 COMPONENT_VERSION=	4.3.0
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	'more-itertools - More routines for operating on iterables'
 COMPONENT_PROJECT_URL=	https://pypi.org/project/more-itertools/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,7 +29,7 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

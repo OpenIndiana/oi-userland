@@ -61,9 +61,5 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += system/library

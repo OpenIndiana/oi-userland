@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gstreamer1
 COMPONENT_VERSION= 1.16.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME streaming media framework
 COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
 COMPONENT_FMRI= library/audio/gstreamer1
@@ -44,7 +45,8 @@ CFLAGS += -I/usr/X11/include
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-examples
-CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS.32 += --disable-introspection
+CONFIGURE_OPTIONS.64 += --enable-introspection
 CONFIGURE_OPTIONS += --program-suffix=""
 CONFIGURE_OPTIONS += --with-package-origin="https://github.com/OpenIndiana/oi-userland"
 

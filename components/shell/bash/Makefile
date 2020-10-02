@@ -21,16 +21,16 @@
 
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2020, Michal Nowak
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
 COMPONENT_VERSION=	5.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	6
 COMPONENT_FMRI=		shell/bash
 COMPONENT_SUMMARY=	GNU Bourne-Again shell (bash)
 COMPONENT_CLASSIFICATION=	System/Shells
@@ -38,13 +38,11 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bash/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:b4a80f2ac66170b2913efbfb9f2594f1f76c7b1afd11f799e22035d63077fb4d
+	sha256:b4a80f2ac66170b2913efbfb9f2594f1f76c7b1afd11f799e22035d63077fb4d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 BASH_PATCHLEVEL=$(shell grep -h "define PATCHLEVEL" $(COMPONENT_DIR)/patches/bash* | nawk '{print $$NF}' | sort -n | tail -1)
 IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).$(BASH_PATCHLEVEL)
@@ -117,22 +115,18 @@ COMPONENT_TEST_DIR =		$(BUILD_DIR_64)
 COMPONENT_TEST_ENV =		- $(TEST_PATH)
 
 COMPONENT_TEST_MASTER		= \
-    $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
+	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
 # The tests use /tmp/xx, and there can only be one user running
 # the them at a time. Need to remove /tmp/xx after testing to
 # avoid permission issues for other users running these tests
 COMPONENT_POST_TEST_ACTION =	rm -f /tmp/xx
 
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
+COMPONENT_POST_INSTALL_ACTION =  \
 	( cd $(PROTOUSRSHAREDIR)/locale ; \
 	    cp -Rp "en@boldquot" en ; \
 	    cp -Rp "en@boldquot" en_CA ; \
 	    cp -Rp "en@boldquot" en_GB )
-
-test:	$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses

@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtksourceview
 COMPONENT_VERSION=	2.10.5
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME syntax highlighting text widget
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -47,3 +48,4 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

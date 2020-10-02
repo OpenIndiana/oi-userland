@@ -37,6 +37,7 @@ PATH=$(VPATH):$(PATH.gnu)
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.8
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_FMRI= system/management/snmp/net-snmp
 COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -155,7 +156,7 @@ test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += runtime/python-27
@@ -165,3 +166,7 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
+# Bogus dependency due to libssp
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Without the picl headers, the build fails on a missing SPARC-specific file.
+REQUIRED_PACKAGES += system/header/header-picl

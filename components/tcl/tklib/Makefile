@@ -10,20 +10,22 @@
 
 #
 # Copyright (c) 2016 Sergey Avseyev
+# Copyright (c) 2018 Michal Nowak
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tklib
-COMPONENT_VERSION=	0.5
-COMPONENT_PROJECT_URL=	http://tcllib.sourceforge.net/
+COMPONENT_VERSION=	0.6
+COMPONENT_REVISION=	1
+COMPONENT_PROJECT_URL=	https://core.tcl.tk/tklib/home
 COMPONENT_SUMMARY=	Collection of widgets and other packages for Tk
 COMPONENT_FMRI=         tcl/tklib
 COMPONENT_CLASSIFICATION=       Development/Other Languages
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:65c0343a6629c98884d9ffd17e87994a3bd54c836195ab0f907c4dff12db66b0
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/tcllib/$(COMPONENT_ARCHIVE)
+    sha256:d2e0648bdaf1ab0f874136f1e5645bd68a8fe206f1905d9f08614d90ee2e3025
+COMPONENT_ARCHIVE_URL=	https://core.tcl.tk/tklib/raw/$(COMPONENT_ARCHIVE)?name=6a397dec6188148cf6a6fe290cf2bd92a9190c42
 COMPONENT_LICENSE=	TCL
 COMPONENT_LICENSE_FILE=	license.terms
 
@@ -47,5 +49,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-# Build dependencies
-REQUIRED_PACKAGES+= tcl/tcllib
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += SUNWcs

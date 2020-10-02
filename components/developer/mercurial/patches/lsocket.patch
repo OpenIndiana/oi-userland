@@ -1,0 +1,16 @@
+https://www.illumos.org/issues/12504
+
+osutil uses recvmsg()
+
+--- mercurial-5.3.2/setup.py.1	2020-04-13 08:55:22.777513691 +0000
++++ mercurial-5.3.2/setup.py	2020-04-13 08:57:10.653558883 +0000
+@@ -1276,6 +1276,9 @@
+ if sys.platform == 'darwin':
+     osutil_ldflags += ['-framework', 'ApplicationServices']
+ 
++if sys.platform == 'sunos5':
++    osutil_ldflags += ['-lsocket']
++
+ xdiff_srcs = [
+     'mercurial/thirdparty/xdiff/xdiffi.c',
+     'mercurial/thirdparty/xdiff/xprepare.c',

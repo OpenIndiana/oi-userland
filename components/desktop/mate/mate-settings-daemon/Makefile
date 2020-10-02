@@ -11,7 +11,7 @@
 #
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
-# Copyright 2019 Michal Nowak
+# Copyright 2020 Michal Nowak
 #
 
 BUILD_BITS=		64
@@ -19,16 +19,16 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-settings-daemon
-COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MJR_VERSION=	1.24
 COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
-COMPONENT_SUMMARY=	fork of gnome-settings-deamon
+COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
+COMPONENT_SUMMARY=	Fork of gnome-settings-deamon
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:37122a5aec96ebff25789be90e0a0f749eac096e8441babbbbe0c508be00bc45
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+	sha256:4bf92e6f0ebaae1db3ace4a8d12fc5d40302abe0ab7d75b419e5961c47e63e58
+COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries

@@ -1,0 +1,56 @@
+--- squeak4-3775/platforms/unix/vm/aio.c	Sun Apr 26 21:11:52 2020
++++ p0/squeak4-3775/platforms/unix/vm/aio.c	Tue Apr 28 09:32:48 2020
+@@ -82,7 +82,7 @@
+ #   define FASYNC O_ASYNC
+ # endif
+ 
+-#else /* !HAVE_CONFIG_H -- assume lowest common demoninator */
++#else /* !HAVE_CONFIG_H -- assume lowest common denominator */
+ 
+ # include <stdio.h>
+ # include <stdlib.h>
+@@ -95,9 +95,13 @@
+ # include <sys/ioctl.h>
+ # include <fcntl.h>
+ 
++#ifdef __sun
++#include <sys/file.h>  /* include FASYNC so that code defined(FASYNC) works */
+ #endif
+ 
++#endif
+ 
++
+ #undef	DEBUG
+ #undef	DEBUG_TICKER
+ 
+@@ -162,6 +166,11 @@
+ 
+ void aioInit(void)
+ {
++#ifdef __sun__
++  /* use sigaction to avoid frequent abort of the VM on 'Pollable Event' */
++  struct sigaction sigio_action;
++#endif
++
+   extern void forceInterruptCheck(int);	/* not really, but hey */
+ 
+   FD_ZERO(&fdMask);
+@@ -171,7 +180,18 @@
+   FD_ZERO(&xdMask);
+   maxFd= 0;
+   signal(SIGPIPE, SIG_IGN);
++
++#ifdef __sun__
++  sigio_action.sa_sigaction = forceInterruptCheck;
++  sigio_action.sa_flags = SA_RESTART | SA_SIGINFO;
++  sigemptyset(&sigio_action.sa_mask);
++  if (sigaction(SIGIO, &sigio_action, 0)) {
++    perror("aioInit sigaction SIGIO");
++    exit(1);
++  }
++#else
+   signal(SIGIO,   forceInterruptCheck);
++#endif
+ }
+ 
+ 

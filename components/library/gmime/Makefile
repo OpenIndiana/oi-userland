@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gmime
 COMPONENT_VERSION= 2.5.10
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Libraries and binaries to parse and index mail messages
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -51,3 +51,4 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

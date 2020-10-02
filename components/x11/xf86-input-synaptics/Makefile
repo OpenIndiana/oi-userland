@@ -27,9 +27,6 @@ COMPONENT_ARCHIVE_HASH= \
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_BINDIR.32=/usr/lib/xorg
-CONFIGURE_BINDIR.64=/usr/lib/xorg/$(MACH64)
-
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += x11/library/libpthread-stubs

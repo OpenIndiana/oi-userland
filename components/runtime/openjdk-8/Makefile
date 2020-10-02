@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		openjdk
 OPENJDK_BUILD_NUMBER=	232
 COMPONENT_VERSION=	jdk8u-jdk8u$(OPENJDK_BUILD_NUMBER)-b09.1
+COMPONENT_REVISION=	2
 IPS_COMPONENT_VERSION=	1.8.$(OPENJDK_BUILD_NUMBER)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -94,7 +95,7 @@ cacerts.out: $(BUILD_DIR_64)/.built $(CACERTS_INSTALLED)
                   -keystore $@                                  \
                   -alias `echo $$cert | $(GSED) -e 's,.*/\\([^/]*\\)\\.pem,\\1,'` \
                   -file $$cert                                          \
-                  -storepass openindiana;                                    \
+                  -storepass changeit;                                    \
         done
 
 build:		$(BUILD_64)
@@ -116,3 +117,5 @@ REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxtst
+REQUIRED_PACKAGES += system/library/c++/sunpro
+REQUIRED_PACKAGES += system/header/header-audio

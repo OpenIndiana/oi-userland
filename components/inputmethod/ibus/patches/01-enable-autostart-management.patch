@@ -10,7 +10,7 @@
  import sys
  import time
  
-@@ -506,35 +508,38 @@
+@@ -650,35 +652,38 @@
          model.set(iter, COLUMN_PRELOAD, data[DATA_PRELOAD])
  
      def __is_auto_start(self):
@@ -42,7 +42,7 @@
          try:
 -            os.unlink(link_file)
 +            if os.path.isfile(config_file):
-+	        im = subprocess.check_output(["/usr/bin/sh", config_file, "-name"])
++                im = subprocess.check_output(["/usr/bin/sh", config_file, "-name"], universal_newlines=True)
 +                if im.startswith("IBus "):
 +                    return True
          except:
@@ -75,9 +75,9 @@
  
      def __sigusr1_cb(self, *args):
          self.__window.present()
---- ibus-1.5.13/setup/setup.ui	2016-02-22 11:46:23.000000000 +0000
-+++ ibus-1.5.13/setup/setup.ui	2017-10-27 13:27:28.737335853 +0000
-@@ -635,6 +635,41 @@
+--- ibus-1.5.22/setup/setup.ui.~1~	2020-02-21 15:46:17.000000000 +0000
++++ ibus-1.5.22/setup/setup.ui	2020-07-19 15:20:33.266753285 +0000
+@@ -570,6 +570,41 @@
                      <property name="position">1</property>
                    </packing>
                  </child>
@@ -119,7 +119,7 @@
                </object>
              </child>
              <child type="tab">
-@@ -1057,42 +1092,6 @@
+@@ -1330,42 +1365,6 @@
                      <property name="position">1</property>
                    </packing>
                  </child>
@@ -141,7 +141,7 @@
 -                        <property name="halign">start</property>
 -                        <property name="draw_indicator">True</property>
 -                        <property name="margin_top">6</property>
--                        <property name="margin_left">12</property>
+-                        <property name="margin_start">12</property>
 -                      </object>
 -                    </child>
 -                    <child type="label">
@@ -161,4 +161,4 @@
 -                </child>
                </object>
                <packing>
-                 <property name="position">3</property>
+                 <property name="position">4</property>

@@ -13,29 +13,27 @@
 # Copyright 2015 Aurelien Larcher
 #
 
-PREFERRED_BITS=64
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
-COMPONENT_VERSION= 3.0.8
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 3.0.11.1
 COMPONENT_FMRI = media/vlc
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e0149ef4a20a19b9ecd87309c2d27787ee3f47dfd47c6639644bc1f6fd95bdf6
+	sha256:189311d28aa814f106a7b3645211ac52c0b3e2b9f4b348de2f63bab3218086b8
 COMPONENT_ARCHIVE_URL= \
-  http://download.videolan.org/pub/videolan/vlc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.videolan.org/vlc
+	https://download.videolan.org/pub/videolan/vlc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.videolan.org/vlc
 COMPONENT_LICENSE = GPLv2.0,LGPLv2.1
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/encumbered.mk
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -198,14 +196,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 	/usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(QT5_RPATH)"' $(PROTO_DIR)$(QT5_PLUGIN) &&\
         /usr/bin/elfedit -e 'dyn:value -s RPATH   "$(QT5_RPATH)"' $(PROTO_DIR)$(QT5_PLUGIN)
 
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += audio/faad2
+REQUIRED_PACKAGES += audio/mpg123
 REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/libtheora

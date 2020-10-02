@@ -31,12 +31,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
 COMPONENT_FMRI =		service/network/samba
-COMPONENT_VERSION =		4.11.6
-COMPONENT_REVISION =		1
+COMPONENT_VERSION =		4.12.5
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		http://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:91438f4d7b71f673421435fa7f26b03b613f214139636ce50af35bc2ff09ef38
+COMPONENT_ARCHIVE_HASH = 	sha256:54b41cc6378acae20dd155ba55d78ff171875c2eaa3f05f87b485d3d6891b815
 COMPONENT_ARCHIVE_URL =		http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_LICENSE =		GPLv3
@@ -115,14 +114,18 @@ CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-libldap=ldap_r
 CONFIGURE_OPTIONS +=	--without-systemd
 
+CONFIGURE_OPTIONS.64 += --python=$(PYTHON)
 CONFIGURE_OPTIONS +=	--nopyo
-CONFIGURE_OPTIONS +=    --nopycache
+CONFIGURE_OPTIONS +=	--nopycache
 CONFIGURE_OPTIONS +=	--disable-rpath
 CONFIGURE_OPTIONS +=	--bundled-libraries=ALL
-CONFIGURE_OPTIONS +=	--python=$(PYTHON)
+
+CONFIGURE_OPTIONS +=	--disable-spotlight
+
+CONFIGURE_OPTIONS.32 +=	--disable-python
+CONFIGURE_OPTIONS.32 +=	--without-ad-dc
 
 $(BUILD_32):	COMPONENT_BUILD_TARGETS= --targets=nss_winbind,pamwinbind 
-$(BUILD_32):	PYTHON_VERSION=3.4
 
 # do not do waf install for winbind only - override the recipe
 $(INSTALL_32): $(BUILD_32)
@@ -144,14 +147,15 @@ COMPONENT_POST_INSTALL_ACTION += \
 		> $(PROTO_DIR)$(ETCDIR)/samba/smb.conf.default $(BUILD_DIR_64)/examples/smb.conf.default) 
 
 # Build dependencies
-# We need 32-bit python to build 32-bit libraries
-REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += library/perl-5/parse-yapp-524
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/ncurses
@@ -160,7 +164,7 @@ REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

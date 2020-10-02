@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		upower
 COMPONENT_VERSION=	0.99.11
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://upower.freedesktop.org/
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		system/upower
@@ -65,6 +66,8 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

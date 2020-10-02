@@ -1,0 +1,15 @@
+Workaround for gtk3 plugin issues
+
+--- libreoffice-6.4.3.2/desktop/scripts/soffice.sh.1	2020-04-27 10:58:43.712730112 +0000
++++ libreoffice-6.4.3.2/desktop/scripts/soffice.sh	2020-04-27 11:03:59.109348940 +0000
+@@ -27,6 +27,10 @@
+ # export STAR_PROFILE_LOCKING_DISABLED
+ #
+ 
++# GTK3 plugin is not usable on OI and needs more work, so use gen plugin for now
++SAL_USE_VCLPLUGIN=${SAL_USE_VCLPLUGIN:-"gen"}
++export SAL_USE_VCLPLUGIN
++
+ # file locking now enabled by default
+ SAL_ENABLE_FILE_LOCKING=1
+ export SAL_ENABLE_FILE_LOCKING

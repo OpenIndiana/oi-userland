@@ -24,24 +24,23 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=32_and_64
+BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	4.6.1
+COMPONENT_VERSION=	5.3.2
 COMPONENT_PROJECT_URL=	http://mercurial-scm.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:89fa8ecbc8aa6e48e98f9803a1683ba91367124295dba2407b28c34ca621108d
+    sha256:fed24cbc314d31b0780309ee324c38d45476f00f555969551badcc2a1d5f1329
 COMPONENT_ARCHIVE_URL=	https://www.mercurial-scm.org/release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hg
 
-# Mercurial does not yet support Python 3.
-PYTHON_VERSIONS = 2.7
+PYTHON_VERSIONS = 2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f hg hg-$(PYTHON_VERSION))
@@ -112,14 +111,8 @@ patches/manpages.patch: $(SOURCE_DIR)/.unpacked \
 	fi || true
 
 # Install 64-bit first, so that the 32-bit hg is what's installed.
-$(INSTALL_32):	$(INSTALL_64)
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		install $(TEST_32_and_64)
+$(INSTALL_32): $(INSTALL_64)
 
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library

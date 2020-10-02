@@ -1,0 +1,103 @@
+This patch modifies the setup script to support Solaris.
+As it is Solaris-specific, it is not suitable for upstream.
+
+Bugs associated with following changes:
+
+Curses library fixes: Bug 22661864
+
+Changes to directory inclusion: Bug 20367692
+
+Libsocket tweaks: Bug 21959680
+
+--- Python-3.7.4/setup.py
++++ Python-3.7.4/setup.py
+@@ -581,12 +581,15 @@ class PyBuildExt(build_ext):
+             os.unlink(tmpfile)
+ 
+     def detect_modules(self):
+-        # Ensure that /usr/local is always used, but the local build
+-        # directories (i.e. '.' and 'Include') must be first.  See issue
+-        # 10520.
+         if not cross_compiling:
+-            add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
+-            add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
++            if host_platform != 'sunos5':
++                # Upstream notes the following for source builds:
++                #    Ensure that /usr/local is always used, but the local build
++                #    directories (i.e. '.' and 'Include') must be first.  See
++                #    issue 10520.
++                # But we skip that for Solaris system builds.
++                add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
++                add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
+         # only change this for cross builds for 3.3, issues on Mageia
+         if cross_compiling:
+             self.add_gcc_paths()
+@@ -894,6 +897,13 @@ class PyBuildExt(build_ext):
+                                                      ['/usr/lib/termcap'],
+                                                      'termcap'):
+                 readline_libs.append('termcap')
++
++            if host_platform == 'sunos5':
++                # insert '-zrecord' before the readline libraries that we
++                # want to link with to avoid rl_insert() elimination
++                readline_extra_link_args = ('-Wl,-zrecord','-lreadline','-lncurses')
++                readline_libs = ()
++
+             exts.append( Extension('readline', ['readline.c'],
+                                    library_dirs=['/usr/lib/termcap'],
+                                    extra_link_args=readline_extra_link_args,
+@@ -917,7 +927,8 @@ class PyBuildExt(build_ext):
+ 
+         # socket(2)
+         exts.append( Extension('_socket', ['socketmodule.c'],
+-                               depends = ['socketmodule.h']) )
++                               depends = ['socketmodule.h'],
++                               libraries = ['socket', 'nsl']) )
+         # Detect SSL support for the socket module (via _ssl)
+         ssl_ext, hashlib_ext = self._detect_openssl(inc_dirs, lib_dirs)
+         if ssl_ext is not None:
+@@ -1406,6 +1417,10 @@ class PyBuildExt(build_ext):
+             curses_defines.append(('_XOPEN_SOURCE_EXTENDED', '1'))
+ 
+         if curses_library.startswith('ncurses'):
++            if host_platform == 'sunos5':
++                curses_defines.append(('HAVE_NCURSESW', '1'))
++                curses_defines.append(('_XOPEN_SOURCE_EXTENDED', '1'))
++                curses_includes.append('/usr/include/ncurses')
+             curses_libs = [curses_library]
+             exts.append( Extension('_curses', ['_cursesmodule.c'],
+                                    include_dirs=curses_includes,
+@@ -1430,10 +1445,32 @@ class PyBuildExt(build_ext):
+         # If the curses module is enabled, check for the panel module
+         if (module_enabled(exts, '_curses') and
+             self.compiler.find_library_file(lib_dirs, panel_library)):
++            panel_lib_dirs = []
++            if host_platform == 'sunos5':
++                # Look for libpanel under /usr/gnu/lib on Solaris.
++                # os.uname() does not include the processor. platform.uname()
++                # does, but the platform module is not available in setup.
++                # Work around this by parsing os.system('uname -p') output.
++                tmpfile = os.path.join(self.build_temp, 'processor')
++                if not os.path.exists(self.build_temp):
++                    os.makedirs(self.build_temp)
++                os.system('/usr/bin/uname -p > %s 2> /dev/null' %tmpfile)
++                processor = ''
++                try:
++                    with open(tmpfile) as fp:
++                        processor = fp.readline().strip()
++                finally:
++                    os.unlink(tmpfile)
++                if processor == 'sparc':
++                    panel_lib_dirs.append('/usr/gnu/lib/sparcv9')
++                else:
++                    panel_lib_dirs.append('/usr/gnu/lib/amd64')
+             exts.append( Extension('_curses_panel', ['_curses_panel.c'],
+                                    include_dirs=curses_includes,
+                                    define_macros=curses_defines,
+-                                   libraries = [panel_library] + curses_libs) )
++                                   libraries = [panel_library] + curses_libs,
++                                   library_dirs = panel_lib_dirs,
++                                   runtime_library_dirs = panel_lib_dirs) )
+         else:
+             missing.append('_curses_panel')
+ 

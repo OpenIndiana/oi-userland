@@ -11,11 +11,12 @@
 #
 # Copyright 2014 Artem Shepelev. All rights reserved.
 #
-
+BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         arj
 COMPONENT_VERSION=      3.10.22
+COMPONENT_REVISION=     1
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	Arj archiver utility
 COMPONENT_PROJECT_URL=  http://arj.sourceforge.net/
@@ -24,9 +25,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:589e4c9bccc8669e7b6d8d6fcd64e01f6a2c21fe10aad56a83304ecc3b96a7db
 COMPONENT_ARCHIVE_URL=  http://arj.sourceforge.net/files/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = (cp -r $(SOURCE_DIR)/* $(BUILD_DIR_$(BITS))/) 
 
@@ -36,12 +35,8 @@ CONFIGURE_SCRIPT = $(SOURCE_DIR)/gnu/configure
 
 COMPONENT_BUILD_ARGS=
 COMPONENT_BUILD_ENV += CC=$(CC)
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(TEST_32)
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

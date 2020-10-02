@@ -13,25 +13,26 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS=64
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		borgbackup
-COMPONENT_VERSION=	1.1.10
+COMPONENT_VERSION=	1.1.13
 COMPONENT_PROJECT_URL=	https://borgbackup.readthedocs.org/en/stable/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:efb41416d24ff1d13c7952c7f4eaf41ef6fc5e1000354217db55cd62c905e7de
+	sha256:164a8666a61071ce2fa6c60627c7646f12e3a8e74cd38f046be72f5ea91b3821
 COMPONENT_ARCHIVE_URL=	https://github.com/borgbackup/borg/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		backup/borg
 COMPONENT_LICENSE=      BSD
 COMPONENT_LICENSE_FILE= LICENSE
 
-PYTHON_VERSIONS=	3.4 3.5
+PYTHON_VERSIONS=	3.5
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_FETCH_USER_AGENT=wget
 
@@ -40,21 +41,10 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(GSED) -i "1s|python.*|python${PYTHON_VERSION}|" $(PROTO_DIR)/usr/bin/borg-$(PYTHON_VERSION); \
 	$(RM) $(PROTO_DIR)/usr/bin/borg;
 
-# We want to deliver 32-bit borg version for Python 3.4 by default
-$(INSTALL_32): $(INSTALL_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:           $(NO_TESTS)
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/python/setuptools-34
 REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library

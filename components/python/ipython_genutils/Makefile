@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	ipython_genutils
 COMPONENT_VERSION= 	0.2.0
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://github.com/ipython/ipython_genutils
 COMPONENT_FMRI=	library/python/ipython_genutils
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,7 +30,7 @@ COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING.md
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -43,5 +44,4 @@ test:	$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35

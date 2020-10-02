@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     libgee
 COMPONENT_VERSION=  0.20.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=  GObject based collection and utility library
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Libgee

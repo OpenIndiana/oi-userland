@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =	mpich/$(COMPILER)
-COMPONENT_VERSION =	3.3.1
+COMPONENT_VERSION =	3.3.2
 COMPONENT_FMRI =	library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION = Development/High Performance Computing
 COMPONENT_PROJECT_URL =	http://www.mpich.org/
@@ -25,7 +25,7 @@ COMPONENT_SRC_NAME = mpich
 COMPONENT_SRC =		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:fe551ef29c8eea8978f679484441ed8bb1d943f6ad25b63c235d4b9243d551e5
+    sha256:4bfaf8837a54771d3e4922c84071ef80ffebddbb6971a006038d91ee7ef959b9
 COMPONENT_ARCHIVE_URL =	http://www.mpich.org/static/downloads/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 COMPONENT_SUMMARY =	High-performance and widely portable implementation of the MPI standard
@@ -39,6 +39,11 @@ include $(WS_MAKE_RULES)/ips.mk
 PATH=$(PATH.gnu)
 
 CONFIGURE_PREFIX =	$(MPI_PREFIX)
+
+ifeq ($(GCC_VERSION), 10)
+# GCC 10 does not allow this anymore
+FFLAGS+=-fallow-argument-mismatch
+endif
 
 CONFIGURE_OPTIONS+=	--bindir=$(MPI_BINDIR)
 CONFIGURE_OPTIONS+=	--datadir=$(MPI_DATADIR)
@@ -54,8 +59,7 @@ CONFIGURE_OPTIONS+=	--with-device=ch3:sock
 CONFIGURE_OPTIONS+=	--with-thread-package=posix
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--enable-rpath
-CONFIGURE_OPTIONS+=	--enable-f77
-CONFIGURE_OPTIONS+=	--enable-fc
+CONFIGURE_OPTIONS+=	--enable-fortran=all
 CONFIGURE_OPTIONS+=	--enable-cxx
 CONFIGURE_OPTIONS+=	--enable-mpe
 
@@ -102,3 +106,4 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GFORTRAN_RUNTIME_PKG)

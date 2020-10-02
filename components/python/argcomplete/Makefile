@@ -18,13 +18,14 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	argcomplete
-COMPONENT_VERSION= 	1.10.2
-COMPONENT_SUMMARY= 	'Extensible command line tab completion for Python script arguments'
+COMPONENT_VERSION= 	1.10.3
+COMPONENT_REVISION=	2
+COMPONENT_SUMMARY= 	Extensible command line tab completion for Python script arguments
 COMPONENT_PROJECT_URL = https://pypi.org/project/argcomplete/
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ec88b5ccefe2d47d8f14916a006431d0afb756751ee5c46f28654a7d8a69be53
+  sha256:a37f522cf3b6a34abddfedb61c4546f60023b3799b22d1cd971eacdc0861530a
 COMPONENT_ARCHIVE_URL= \
   $(call pypi_url)
 COMPONENT_FMRI= library/python/argcomplete
@@ -32,7 +33,7 @@ COMPONENT_CLASSIFICATION=       Development/Python
 COMPONENT_LICENSE=      Apache-2.0
 COMPONENT_LICENSE_FILE= LICENSE.rst
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 TEST_TARGET=$(NO_TESTS)
 
@@ -47,9 +48,7 @@ COMPONENT_POST_INSTALL_ACTION += ( cd $(PROTO_DIR)/usr/bin; \
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-34
 REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += SUNWcs

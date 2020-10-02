@@ -23,11 +23,13 @@
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pep8
 COMPONENT_VERSION=	1.7.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://pypi.python.org/pypi/pep8
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -36,13 +38,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/p/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/pep8
 
-TPNO=			27399
+PYTHON_VERSIONS=	2.7 3.5
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
 COMPONENT_PRE_BUILD_ACTION = \
@@ -73,16 +71,9 @@ COMPONENT_SYSTEM_TEST_ARGS =	pep8.py --testsuite testsuite
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_NO_ARCH)
-
-test:		$(TEST_NO_ARCH)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-34
 REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
-

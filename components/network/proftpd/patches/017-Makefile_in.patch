@@ -1,0 +1,35 @@
+#
+# patch teaches Makefile.in to use FIPS_CPPFLAGS, FIPS_LDFLAGS,
+# so it can build FIPSed mod_tls.so too.
+#
+# The patch has not been offered to upstream yet. I'd like to check
+# other proftpd vendors first. Just to judge how much generic vs.
+# Solaris specific change below is.
+#
+
+--- a/modules/Makefile.in
++++ b/modules/Makefile.in
+@@ -10,6 +10,9 @@ SHARED_CFLAGS=-DPR_SHARED_MODULE
+ SHARED_LDFLAGS=-avoid-version -export-dynamic -module
+ VPATH=@srcdir@
+ 
++FIPS_CPPFLAGS=@FIPS_CPPFLAGS@
++FIPS_LDFLAGS=@FIPS_LDFLAGS@
++
+ include ../Make.rules
+ 
+ .SUFFIXES: .la
+@@ -34,6 +37,13 @@ mod_dso.o: mod_dso.c
+ 	$(LIBTOOL) --mode=compile --tag=CC $(CC) $(CPPFLAGS) $(CFLAGS) $(SHARED_CFLAGS) -c $*.c
+ 	$(LIBTOOL) --mode=link --tag=CC $(CC) -o $@ -rpath $(LIBEXECDIR) $(LDFLAGS) $(SHARED_LDFLAGS) $*.lo `cat $(top_srcdir)/modules/$*.c | grep '$$Libraries:' | sed -e 's/^.*\$$Libraries: \(.*\)\\$$/\1/'`
+ 
++mod_tls-fips-140.o: mod_tls.c
++	$(CC) $(CPPFLAGS) $(FIPS_CPPFLAGS) $(CFLAGS) -c $< -o $@
++
++mod_tls-fips-140.la: mod_tls.c
++	$(LIBTOOL) --mode=compile --tag=CC $(CC) $(CPPFLAGS) $(FIPS_CPPFLAGS) $(CFLAGS) $(SHARED_CFLAGS) -c $< -o mod_tls-fips-140.lo
++	$(LIBTOOL) --mode=link --tag=CC $(CC) -o $@ -rpath $(LIBEXECDIR) $(FIPS_LDFLAGS) $(LDFLAGS) $(SHARED_LDFLAGS) mod_tls-fips-140.lo `cat $(top_srcdir)/modules/$< | grep '$$Libraries:' | sed -e 's/^.*\$$Libraries: \(.*\)\\$$/\1/'`
++
+ module_glue.c: module_glue.c.tmpl $(STATIC_MODULE_OBJS)
+ 	srcdir=$(srcdir) $(srcdir)/glue.sh $(GLUE_MODULE_OBJS)
+ 

@@ -19,7 +19,7 @@ COMPONENT_NAME= oppenjdk-7
 
 OPENJDK_BUILD_NUMBER=141
 COMPONENT_VERSION=1.7.$(OPENJDK_BUILD_NUMBER)
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
 COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20170813.tar.xz
@@ -107,7 +107,7 @@ cacerts.out: $(BUILD_32)
                   -keystore $@                                  \
                   -alias `echo $$cert | $(GSED) -e 's,.*/\\([^/]*\\)\\.crt,\\1,'` \
                   -file $$cert                                          \
-                  -storepass pkgsrc;                                    \
+                  -storepass changeit;                                    \
         done
 
 JAVA_MACH.32=i386
@@ -147,3 +147,5 @@ REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxtst
+REQUIRED_PACKAGES += system/library/c++/sunpro
+REQUIRED_PACKAGES += system/header/header-audio

@@ -1,13 +1,14 @@
+https://github.com/ansible/ansible/issues/62495
 https://github.com/ansible/ansible/issues/15642
 
---- ansible-2.7.5/lib/ansible/playbook/play_context.py	2018-12-14 00:14:40.000000000 +0000
-+++ ansible-2.7.5/lib/ansible/playbook/play_context.py	2018-12-14 10:19:21.980729611 +0000
-@@ -518,7 +518,7 @@
-             elif self.become_method == 'pfexec':
+--- ansible-2.9.11/lib/ansible/plugins/become/pfexec.py	2020-07-21 04:08:11.000000000 +0000
++++ ansible-2.9.11/lib/ansible/plugins/become/pfexec.py	2020-07-21 04:08:11.000000000 +0000
+@@ -99,6 +99,6 @@
+             return cmd
  
-                 # No user as it uses it's own exec_attr to figure it out
--                becomecmd = '%s %s "%s"' % (exe, flags, success_cmd)
-+                becomecmd = '%s %s /usr/bin/sh -c %s' % (exe, flags, success_cmd)
- 
-             elif self.become_method == 'runas':
-                 # become is handled inside the WinRM connection plugin
+         exe = self.get_option('become_exe') or self.name
+-        flags = self.get_option('become_flags')
++        flags = ''
+         noexe = not self.get_option('wrap_exe')
+-        return '%s %s "%s"' % (exe, flags, self._build_success_command(cmd, shell, noexe=noexe))
++        return '%s %s /usr/bin/sh -c %s' % (exe, flags, self._build_success_command(cmd, shell, noexe=noexe))

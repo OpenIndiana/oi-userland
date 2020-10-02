@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright (c) 2015 Jim Klimov
+# Copyright (c) 2015-2020 Jim Klimov
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -24,15 +24,15 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
 <transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/mime-types-cache:default>
 
-# Add-on files for this package
+# Add-on files for this package - wrapper script and resources
 file files/gcm path=usr/bin/gcm mode=555
 file files/gcm.desktop path=usr/share/applications/gcm.desktop
 file icon.png path=usr/share/pixmaps/gcm.png
 # Deliver the icon into the path expected by script as well
 # so it goes well into the window title bar (TODO: sym/hard-link?)
 file icon.png path=usr/share/gnome-connection-manager/icon.png
-# This is not from tarball but is compiled by our Makefile
-file gnome_connection_manager.pyc path=usr/share/gnome-connection-manager/gnome_connection_manager.pyc
+# PYC files here and below are not from tarball but compiled by our Makefile
+file __pycache__/gnome_connection_manager.cpython-$(PYV).pyc path=usr/share/gnome-connection-manager/__pycache__/gnome_connection_manager.cpython-$(PYV).pyc
 
 # Files delivered by source tarball, as of version 1.1.0, listed via:
 #   find . -type f | sed 's,^./\(.*\)$,file \1 path=usr/share/gnome-connection-manager/\1,'
@@ -56,8 +56,10 @@ file lang/pt/LC_MESSAGES/gcm-lang.mo path=usr/share/gnome-connection-manager/lan
 file lang/ru_RU.po path=usr/share/gnome-connection-manager/lang/ru_RU.po
 file lang/ru/LC_MESSAGES/gcm-lang.mo path=usr/share/gnome-connection-manager/lang/ru/LC_MESSAGES/gcm-lang.mo
 file pyAES.py path=usr/share/gnome-connection-manager/pyAES.py
-file pyAES.pyc path=usr/share/gnome-connection-manager/pyAES.pyc
-file README.txt path=usr/share/gnome-connection-manager/README.txt
+file __pycache__/pyAES.cpython-$(PYV).pyc path=usr/share/gnome-connection-manager/__pycache__/pyAES.cpython-$(PYV).pyc
+file files/README.txt path=usr/share/gnome-connection-manager/README.txt
 file SimpleGladeApp.py path=usr/share/gnome-connection-manager/SimpleGladeApp.py
-file SimpleGladeApp.pyc path=usr/share/gnome-connection-manager/SimpleGladeApp.pyc
+file __pycache__/SimpleGladeApp.cpython-$(PYV).pyc path=usr/share/gnome-connection-manager/__pycache__/SimpleGladeApp.cpython-$(PYV).pyc
+file urlregex.py path=usr/share/gnome-connection-manager/urlregex.py
+file __pycache__/urlregex.cpython-$(PYV).pyc path=usr/share/gnome-connection-manager/__pycache__/urlregex.cpython-$(PYV).pyc
 file ssh.expect path=usr/share/gnome-connection-manager/ssh.expect mode=0555

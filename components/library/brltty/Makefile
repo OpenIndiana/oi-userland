@@ -13,11 +13,13 @@
 # Copyright 2017 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= brltty
 COMPONENT_VERSION= 5.5
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY= Braille support
 COMPONENT_FMRI= library/accessibility/brltty
 COMPONENT_CLASSIFICATION= Applications/Universal Access
@@ -30,9 +32,8 @@ COMPONENT_ARCHIVE_URL= \
 COMPONENT_PROJECT_URL = http://www.mielke.cc/brltty/
 COMPONENT_LICENSE = GPLv2,LGPLv2.1
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         autoconf -f )
@@ -40,20 +41,15 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 # Missing files on install without this
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-ICU_CONFIG.32=/usr/bin/icu-config
-ICU_CONFIG.64=/usr/bin/$(MACH64)/icu-config
-
-# Orca uses python 3.4, so we need to match
-PYTHON_VERSION = 3.4
+# Orca uses python 3.5, so we need to match
+PYTHON_VERSION = 3.5
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 PKG_MACROS += PYVER="$(PYTHON_VERSION)"
 
-CYTHON.32 = /usr/bin/cython-$(PYTHON_VERSION)
-CYTHON.64 = /usr/bin/$(MACH64)/cython-$(PYTHON_VERSION)
-
 CFLAGS +=	$(CC_PIC)
 
-CONFIGURE_OPTIONS +=    --enable-python-bindings
+CONFIGURE_OPTIONS.32 +=    --disable-python-bindings
+CONFIGURE_OPTIONS.64 +=    --enable-python-bindings
 CONFIGURE_OPTIONS +=    --disable-java-bindings
 CONFIGURE_OPTIONS +=    --disable-lisp-bindings
 CONFIGURE_OPTIONS +=    --disable-ocaml-bindings
@@ -70,7 +66,6 @@ CONFIGURE_OPTIONS +=    --sysconfdir=/etc
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += CYTHON="$(CYTHON)"
-CONFIGURE_ENV += ICU_CONFIG="$(ICU_CONFIG.$(BITS))"
 CONFIGURE_ENV += ac_cv_path_MSGFMT="/usr/gnu/bin/msgfmt"
 
 PYTHON_ENV +=   CC="$(CC)"
@@ -83,20 +78,14 @@ COMPONENT_TEST_ENV += $(PYTHON_ENV)
 
 COMPONENT_INSTALL_ARGS += INSTALL_ROOT=$(PROTO_DIR)
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-ugen
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/icu
-REQUIRED_PACKAGES += library/python/cython-34
-REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += library/python/cython-35
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library

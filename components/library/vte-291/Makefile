@@ -21,6 +21,7 @@ COMPONENT_NAME=		vte
 COMPONENT_MJR_VERSION=	0.54
 COMPONENT_MNR_VERSION=	5
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Terminal emulation widget for GTK+
 COMPONENT_FMRI=		library/desktop/vte-291
@@ -51,6 +52,7 @@ CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--disable-Bsymbolic
 CONFIGURE_OPTIONS+=	--disable-vala
 CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS.32+=	--disable-introspection
 
 # gobject introspection
 COMPONENT_BUILD_ENV +=	CC="$(CC)"

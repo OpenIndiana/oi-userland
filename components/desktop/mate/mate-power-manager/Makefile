@@ -11,6 +11,7 @@
 #
 # Copyright (c) 2018 Alexander Pyhalov
 # Copyright (c) 2019 Michal Nowak
+# Copyright (c) 2020 Marco van Wieringen
 #
 
 BUILD_BITS=		64
@@ -18,17 +19,16 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-power-manager
-COMPONENT_MJR_VERSION=  1.22
+COMPONENT_MJR_VERSION=  1.24
 COMPONENT_MNR_VERSION=  2
-COMPONENT_REVISION=	1
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=  http://www.mate-desktop.org
+COMPONENT_PROJECT_URL=  https://www.mate-desktop.org
 COMPONENT_SUMMARY=      MATE Power Manager utilities for desktop users
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:76d1ce28b812ba0fd118d5aa529538072cef1336ae76aea1832ecc00fc91f68a
-COMPONENT_ARCHIVE_URL=  http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+	sha256:d24b9fce23b086817d5494f7e65e58f18367af6eb5d0d4ade45de5396e20d13a
+COMPONENT_ARCHIVE_URL=  https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/mate/mate-power-manager
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2

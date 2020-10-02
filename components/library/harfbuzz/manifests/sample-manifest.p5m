@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2018 <contributor>
+# Copyright 2020 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -36,6 +36,7 @@ file path=usr/include/harfbuzz/hb-blob.h
 file path=usr/include/harfbuzz/hb-buffer.h
 file path=usr/include/harfbuzz/hb-common.h
 file path=usr/include/harfbuzz/hb-deprecated.h
+file path=usr/include/harfbuzz/hb-draw.h
 file path=usr/include/harfbuzz/hb-face.h
 file path=usr/include/harfbuzz/hb-font.h
 file path=usr/include/harfbuzz/hb-ft.h
@@ -48,6 +49,8 @@ file path=usr/include/harfbuzz/hb-ot-deprecated.h
 file path=usr/include/harfbuzz/hb-ot-font.h
 file path=usr/include/harfbuzz/hb-ot-layout.h
 file path=usr/include/harfbuzz/hb-ot-math.h
+file path=usr/include/harfbuzz/hb-ot-meta.h
+file path=usr/include/harfbuzz/hb-ot-metrics.h
 file path=usr/include/harfbuzz/hb-ot-name.h
 file path=usr/include/harfbuzz/hb-ot-shape.h
 file path=usr/include/harfbuzz/hb-ot-var.h
@@ -55,44 +58,38 @@ file path=usr/include/harfbuzz/hb-ot.h
 file path=usr/include/harfbuzz/hb-set.h
 file path=usr/include/harfbuzz/hb-shape-plan.h
 file path=usr/include/harfbuzz/hb-shape.h
+file path=usr/include/harfbuzz/hb-style.h
 file path=usr/include/harfbuzz/hb-subset.h
 file path=usr/include/harfbuzz/hb-unicode.h
 file path=usr/include/harfbuzz/hb-version.h
 file path=usr/include/harfbuzz/hb.h
 file path=usr/lib/$(MACH64)/cmake/harfbuzz/harfbuzz-config.cmake
 link path=usr/lib/$(MACH64)/libharfbuzz-icu.so \
-    target=libharfbuzz-icu.so.0.$(COMPONENT_VERSION).0
+    target=libharfbuzz-icu.so.0.20702.0
 link path=usr/lib/$(MACH64)/libharfbuzz-icu.so.0 \
-    target=libharfbuzz-icu.so.0.$(COMPONENT_VERSION).0
-file path=usr/lib/$(MACH64)/libharfbuzz-icu.so.0.$(COMPONENT_VERSION).0
+    target=libharfbuzz-icu.so.0.20702.0
+file path=usr/lib/$(MACH64)/libharfbuzz-icu.so.0.20702.0
 link path=usr/lib/$(MACH64)/libharfbuzz-subset.so \
-    target=libharfbuzz-subset.so.0.$(COMPONENT_VERSION).0
+    target=libharfbuzz-subset.so.0.20702.0
 link path=usr/lib/$(MACH64)/libharfbuzz-subset.so.0 \
-    target=libharfbuzz-subset.so.0.$(COMPONENT_VERSION).0
-file path=usr/lib/$(MACH64)/libharfbuzz-subset.so.0.$(COMPONENT_VERSION).0
-link path=usr/lib/$(MACH64)/libharfbuzz.so \
-    target=libharfbuzz.so.0.$(COMPONENT_VERSION).0
-link path=usr/lib/$(MACH64)/libharfbuzz.so.0 \
-    target=libharfbuzz.so.0.$(COMPONENT_VERSION).0
-file path=usr/lib/$(MACH64)/libharfbuzz.so.0.$(COMPONENT_VERSION).0
+    target=libharfbuzz-subset.so.0.20702.0
+file path=usr/lib/$(MACH64)/libharfbuzz-subset.so.0.20702.0
+link path=usr/lib/$(MACH64)/libharfbuzz.so target=libharfbuzz.so.0.20702.0
+link path=usr/lib/$(MACH64)/libharfbuzz.so.0 target=libharfbuzz.so.0.20702.0
+file path=usr/lib/$(MACH64)/libharfbuzz.so.0.20702.0
 file path=usr/lib/$(MACH64)/pkgconfig/harfbuzz-icu.pc
 file path=usr/lib/$(MACH64)/pkgconfig/harfbuzz-subset.pc
 file path=usr/lib/$(MACH64)/pkgconfig/harfbuzz.pc
 file path=usr/lib/cmake/harfbuzz/harfbuzz-config.cmake
-link path=usr/lib/libharfbuzz-icu.so \
-    target=libharfbuzz-icu.so.0.$(COMPONENT_VERSION).0
-link path=usr/lib/libharfbuzz-icu.so.0 \
-    target=libharfbuzz-icu.so.0.$(COMPONENT_VERSION).0
-file path=usr/lib/libharfbuzz-icu.so.0.$(COMPONENT_VERSION).0
-link path=usr/lib/libharfbuzz-subset.so \
-    target=libharfbuzz-subset.so.0.$(COMPONENT_VERSION).0
-link path=usr/lib/libharfbuzz-subset.so.0 \
-    target=libharfbuzz-subset.so.0.$(COMPONENT_VERSION).0
-file path=usr/lib/libharfbuzz-subset.so.0.$(COMPONENT_VERSION).0
-link path=usr/lib/libharfbuzz.so target=libharfbuzz.so.0.$(COMPONENT_VERSION).0
-link path=usr/lib/libharfbuzz.so.0 \
-    target=libharfbuzz.so.0.$(COMPONENT_VERSION).0
-file path=usr/lib/libharfbuzz.so.0.$(COMPONENT_VERSION).0
+link path=usr/lib/libharfbuzz-icu.so target=libharfbuzz-icu.so.0.20702.0
+link path=usr/lib/libharfbuzz-icu.so.0 target=libharfbuzz-icu.so.0.20702.0
+file path=usr/lib/libharfbuzz-icu.so.0.20702.0
+link path=usr/lib/libharfbuzz-subset.so target=libharfbuzz-subset.so.0.20702.0
+link path=usr/lib/libharfbuzz-subset.so.0 target=libharfbuzz-subset.so.0.20702.0
+file path=usr/lib/libharfbuzz-subset.so.0.20702.0
+link path=usr/lib/libharfbuzz.so target=libharfbuzz.so.0.20702.0
+link path=usr/lib/libharfbuzz.so.0 target=libharfbuzz.so.0.20702.0
+file path=usr/lib/libharfbuzz.so.0.20702.0
 file path=usr/lib/pkgconfig/harfbuzz-icu.pc
 file path=usr/lib/pkgconfig/harfbuzz-subset.pc
 file path=usr/lib/pkgconfig/harfbuzz.pc

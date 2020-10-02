@@ -1,0 +1,13 @@
+--- x265_3.1.1/source/encoder/analysis.cpp.orig	2020-03-30 20:54:29.540016476 +0000
++++ x265_3.1.1/source/encoder/analysis.cpp	2020-03-30 20:54:56.698314298 +0000
+@@ -2674,8 +2674,8 @@
+             {
+                 offset = (depth * X265_REFINE_INTER_LEVELS) + i;
+                 /* Calculate distance values */
+-                diffRefine[i] = abs((int64_t)(trainData.cuVariance - m_frame->m_classifyVariance[offset]));
+-                diffRefineRd[i] = abs((int64_t)(cuCost - m_frame->m_classifyRd[offset]));
++                diffRefine[i] = labs((int64_t)(trainData.cuVariance - m_frame->m_classifyVariance[offset]));
++                diffRefineRd[i] = labs((int64_t)(cuCost - m_frame->m_classifyRd[offset]));
+ 
+                 /* Calculate prior probability - ranges between 0 and 1 */
+                 if (trainingCount)

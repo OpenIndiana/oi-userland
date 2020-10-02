@@ -59,11 +59,11 @@ $(SOURCE_DIR)/.prep:
 clean::
 	$(RM) $(SOURCE_DIR)/.prep
 
-$(BUILD_32_and_64):	Makefile
+$(BUILD_64):	Makefile
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 

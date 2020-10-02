@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		uhttpmock
 COMPONENT_VERSION=	0.5.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	A library for mocking web service APIs which use HTTP or HTTPS
 COMPONENT_PROJECT_URL=	https://gitlab.com/uhttpmock/
@@ -49,10 +50,10 @@ COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=""
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-gtk-doc
 # Required for other components.
-CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS.64 += --enable-introspection
 CONFIGURE_OPTIONS += --enable-shared
 # Required for other components.
-CONFIGURE_OPTIONS += --enable-vala
+CONFIGURE_OPTIONS.64 += --enable-vala
 CONFIGURE_OPTIONS += --with-pic
 
 COMPONENT_BUILD_ENV += CC="$(CC)"

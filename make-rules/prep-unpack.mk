@@ -52,17 +52,17 @@ $$(UNPACK_STAMP$(1)):	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)) $(MAKEFILE_
 
 unpack::	$$(UNPACK_STAMP$(1))
 
-REQUIRED_PACKAGES += archiver/gnu-tar
-REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += compress/gzip
-REQUIRED_PACKAGES += compress/p7zip
-REQUIRED_PACKAGES += compress/unzip
-REQUIRED_PACKAGES += compress/lzip
-REQUIRED_PACKAGES += compress/xz
-REQUIRED_PACKAGES += compress/zip
-REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += developer/java/jdk
-REQUIRED_PACKAGES += runtime/ruby
+USERLAND_REQUIRED_PACKAGES += archiver/gnu-tar
+USERLAND_REQUIRED_PACKAGES += compress/bzip2
+USERLAND_REQUIRED_PACKAGES += compress/gzip
+USERLAND_REQUIRED_PACKAGES += compress/p7zip
+USERLAND_REQUIRED_PACKAGES += compress/unzip
+USERLAND_REQUIRED_PACKAGES += compress/lzip
+USERLAND_REQUIRED_PACKAGES += compress/xz
+USERLAND_REQUIRED_PACKAGES += compress/zip
+USERLAND_REQUIRED_PACKAGES += compress/zstd
+USERLAND_REQUIRED_PACKAGES += developer/java/jdk
+USERLAND_REQUIRED_PACKAGES += runtime/ruby
 
 endif
 endif

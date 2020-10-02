@@ -1,0 +1,86 @@
+Use fdwalk(3c) within os.closerange() impl to close file descriptors if available.
+
+This patch was submitted and accepted by upstream and is part of the Python 3.8 and later.
+https://github.com/python/cpython/pull/15224
+https://bugs.python.org/issue38110
+
+--- Python-3.7.5/Modules/posixmodule.c
++++ Python-3.7.5/Modules/posixmodule.c
+@@ -7793,6 +7793,21 @@ os_close_impl(PyObject *module, int fd)
+ }
+ 
+ 
++#ifdef HAVE_FDWALK
++static int
++_fdwalk_close_func(void *lohi, int fd)
++{
++    int lo = ((int *)lohi)[0];
++    int hi = ((int *)lohi)[1];
++
++    if (fd >= hi)
++        return 1;
++    else if (fd >= lo)
++        close(fd);
++    return 0;
++}
++#endif /* HAVE_FDWALK */
++
+ /*[clinic input]
+ os.closerange
+ 
+@@ -7807,11 +7822,21 @@ static PyObject *
+ os_closerange_impl(PyObject *module, int fd_low, int fd_high)
+ /*[clinic end generated code: output=0ce5c20fcda681c2 input=5855a3d053ebd4ec]*/
+ {
++#ifdef HAVE_FDWALK
++    int lohi[2];
++#else
+     int i;
++#endif
+     Py_BEGIN_ALLOW_THREADS
+     _Py_BEGIN_SUPPRESS_IPH
++#ifdef HAVE_FDWALK
++    lohi[0] = Py_MAX(fd_low, 0);
++    lohi[1] = fd_high;
++    fdwalk(_fdwalk_close_func, lohi);
++#else
+     for (i = Py_MAX(fd_low, 0); i < fd_high; i++)
+         close(i);
++#endif
+     _Py_END_SUPPRESS_IPH
+     Py_END_ALLOW_THREADS
+     Py_RETURN_NONE;
+--- Python-3.7.5/configure
++++ Python-3.7.5/configure
+@@ -11462,7 +11462,7 @@ fi
+ # checks for library functions
+ for ac_func in alarm accept4 setitimer getitimer bind_textdomain_codeset chown \
+  clock confstr ctermid dup3 execv faccessat fchmod fchmodat fchown fchownat \
+- fexecve fdopendir fork fpathconf fstatat ftime ftruncate futimesat \
++ fdwalk fexecve fdopendir fork fpathconf fstatat ftime ftruncate futimesat \
+  futimens futimes gai_strerror getentropy \
+  getgrouplist getgroups getlogin getloadavg getpeername getpgid getpid \
+  getpriority getresuid getresgid getpwent getspnam getspent getsid getwd \
+--- Python-3.7.5/configure.ac
++++ Python-3.7.5/configure.ac
+@@ -3557,7 +3557,7 @@ fi
+ # checks for library functions
+ AC_CHECK_FUNCS(alarm accept4 setitimer getitimer bind_textdomain_codeset chown \
+  clock confstr ctermid dup3 execv faccessat fchmod fchmodat fchown fchownat \
+- fexecve fdopendir fork fpathconf fstatat ftime ftruncate futimesat \
++ fdwalk fexecve fdopendir fork fpathconf fstatat ftime ftruncate futimesat \
+  futimens futimes gai_strerror getentropy \
+  getgrouplist getgroups getlogin getloadavg getpeername getpgid getpid \
+  getpriority getresuid getresgid getpwent getspnam getspent getsid getwd \
+--- Python-3.7.5/pyconfig.h.in
++++ Python-3.7.5/pyconfig.h.in
+@@ -324,6 +324,9 @@
+ /* Define to 1 if you have the `fdopendir' function. */
+ #undef HAVE_FDOPENDIR
+ 
++/* Define to 1 if you have the `fdwalk' function. */
++#undef HAVE_FDWALK
++
+ /* Define to 1 if you have the `fexecve' function. */
+ #undef HAVE_FEXECVE
+ 

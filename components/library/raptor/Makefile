@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		raptor
 COMPONENT_VERSION=	1.4.21
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	RDF Parser Library - RDF parser utility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -55,3 +55,4 @@ REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

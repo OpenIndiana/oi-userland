@@ -14,16 +14,16 @@
 # Copyright 2018 Michal Nowak
 #
 
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libpqxx
-COMPONENT_VERSION= 6.2.4
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 6.2.5
 COMPONENT_SUMMARY= C++ binding library for PostgreSQL
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:91a295d9e06fc36db5d993970aa1928e053a57ec03bf6284a1c534844ed35ed3
+  sha256:36fcf8439ac7f7cc68b21e95b20e921ece4487cda1cc1d09b798a84e7cb3a4b7
 COMPONENT_ARCHIVE_URL= \
   https://github.com/jtv/libpqxx/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL= http://pqxx.org/development/libpqxx/
@@ -32,9 +32,8 @@ COMPONENT_CLASSIFICATION= Development/Databases
 COMPONENT_LICENSE= BSD
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Don't depend on host default pg_config
 PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
@@ -48,15 +47,7 @@ CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 
 COMPONENT_POST_INSTALL_ACTION.64= ( mkdir -p $(PROTO_DIR)/usr/share/doc/libpqxx-$(COMPONENT_VERSION) && \
-	cp -a $(BUILD_DIR)/amd64/doc/html/* $(PROTO_DIR)/usr/share/doc/libpqxx-$(COMPONENT_VERSION) )
-
-COMPONENT_POST_INSTALL_ACTION += $(COMPONENT_POST_INSTALL_ACTION.$(BITS))
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+	$(CP) -a $(BUILD_DIR)/$(MACH64)/doc/html/* $(PROTO_DIR)/usr/share/doc/libpqxx-$(COMPONENT_VERSION) )
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)

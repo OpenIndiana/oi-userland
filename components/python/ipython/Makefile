@@ -23,27 +23,27 @@
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ipython
-COMPONENT_VERSION=	5.0.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	5.10.0
 COMPONENT_PROJECT_URL=	http://ipython.org/
 COMPONENT_SUMMARY=	Enhanced interactive Python shell
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:7ec0737169c74056c7fc8298246db5478a2d6c90cfd19c3253222112357545df
+    sha256:d1f9e2d02bb0900ddef7b6af114aca3a5cf3dc43b9de1f19d37c4aedbc724fee
 COMPONENT_ARCHIVE_URL=	http://archive.ipython.org/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	library/python/ipython
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	BSD
 
-PYTHON_VERSIONS=2.7 3.4 3.5
+PYTHON_VERSIONS= 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
 COMPONENT_PRE_BUILD_ACTION = \
@@ -55,13 +55,6 @@ COMPONENT_POST_INSTALL_ACTION = \
                 $(MV) ipython ipython-$(PYTHON_VERSION);\
 		$(MV) iptest iptest-$(PYTHON_VERSION); )
 
-# common targets
-build:          $(BUILD_NO_ARCH)
 
-install:        $(INSTALL_NO_ARCH)
-
-test:           $(NO_TESTS)
-
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-35

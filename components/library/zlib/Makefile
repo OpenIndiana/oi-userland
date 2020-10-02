@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zlib
 COMPONENT_VERSION=	1.2.11
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	The Zip compression library
 COMPONENT_PROJECT_URL=	http://www.zlib.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,10 +57,10 @@ gcc_OPT="-O2"
 
 # Also, the x86 architecture does not require alignment for multi-byte
 # loads, so we can define UNALIGNED_OK for x86
-CFLAGS.32 += -DUNALIGNED_OK
+CFLAGS.i386.32 += -DUNALIGNED_OK
 
 CFLAGS += $(CC_PIC)
-CFLAGS += $(CFLAGS.$(BITS))
+CFLAGS += $(CFLAGS.$(MACH).$(BITS))
 
 # We need to reset configure options here because zlib is confused with
 # CC and CFLAGS definitions as configure parameters.

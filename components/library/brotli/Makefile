@@ -12,17 +12,20 @@
 #
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2020 Andreas Wacknitz
 #
 
+BUILD_BITS=			32_and_64
+BUILD_STYLE=		cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		brotli
-COMPONENT_VERSION=	1.0.7
+COMPONENT_VERSION=	1.0.9
 COMPONENT_SUMMARY=	Library for generic-purpose lossless compression algorithm
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:4c61bfb0faca87219ea587326c467b95acb25555b53d1a421ffa3c8a9296ee2c
+	sha256:f9e8d81d0405ba66d181529af42a3354f838c939095ff99930da6aa9cdf6fe46
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/google/brotli/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	https://github.com/google/brotli
@@ -31,9 +34,7 @@ COMPONENT_FMRI=		library/brotli
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_BINDIR.64=	$(CMAKE_BINDIR.32)
 
@@ -48,12 +49,6 @@ $(BUILD_64):	$(BUILD_32)
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 # Strip times from test output, since they're always different
 COMPONENT_TEST_TRANSFORMS += '-e "s%\([0-9\.]\)* sec%%"'
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

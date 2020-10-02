@@ -20,36 +20,35 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2019, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		proftpd
-COMPONENT_VERSION=	1.3.5
-COMPONENT_REVISION=	5
-COMPONENT_SUBVERSION=	d
+COMPONENT_VERSION=	1.3.6
+COMPONENT_SUBVERSION=	c
 HUMAN_VERSION=		$(COMPONENT_VERSION)$(COMPONENT_SUBVERSION)
 COMPONENT_PROJECT_URL=	http://www.proftpd.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f4e2997be7f22a5b31d7ac72497ed4f4471d24d32385978350410713e76129ac
+    sha256:fa3541c4b34136a7b80cb12a2f6f9a0cab5118a5b0a1653d40af49c6479c35ad
 COMPONENT_ARCHIVE_URL=	ftp://ftp.proftpd.org/distrib/source/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	service/ftp-server
+COMPONENT_LICENSE=	GPLv2
 
 # mod_gss subcomponent
 COMPONENT_NAME_1=	mod_gss
-COMPONENT_VERSION_1=	1.3.7
+COMPONENT_VERSION_1=	1.3.9
 COMPONENT_SRC_1=	$(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
-    sha256:ce407f47c1075bb6d0b854e5bc5693dfb953c92376d4dedaa9e1a396de07d310
+    sha256:de8babe0f13800da2142be74d82686af3984419a2ec09c86516467be58bce9a7
 COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/gssmod/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but it is not
 # enough for us. We need to include the $(COMPONENT_SUBVERSION) somehow.
@@ -57,13 +56,15 @@ include $(WS_MAKE_RULES)/ips.mk
 # instead of 'e'.
 IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION)
 
-CONFIGURE_BINDIR.32 =   $(USRLIBDIR)/proftpd/bin
-CONFIGURE_SBINDIR.32 =  $(USRLIBDIR)/proftpd/sbin
+CONFIGURE_BINDIR.64 =   $(USRLIBDIR)/proftpd/bin
+CONFIGURE_SBINDIR.64 =  $(USRLIBDIR)/proftpd/sbin
+
+LDFLAGS +=	-m$(BITS)
 
 # Remove -D_POSIX_PTHREAD_SEMANTICS and this comment after move to S12_45.
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER -D_POSIX_PTHREAD_SEMANTICS"
 # Force immediate binding because of chroot().
-CONFIGURE_OPTIONS +=	LDFLAGS="-z guidance=nolazyload -z nolazyload -lbsm"
+CONFIGURE_OPTIONS +=	LDFLAGS="$(CC_BITS) -z guidance=nolazyload -z nolazyload -lbsm"
 CONFIGURE_OPTIONS +=	install_user=`id -nu`
 CONFIGURE_OPTIONS +=	install_group=`groups | cut -f 1 -d ' '`
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
@@ -90,7 +91,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	cd $(COMPONENT_SRC_1) && \
 	$(CP) $(COMPONENT_DIR)/krb5-config $(BUILD_DIR) && \
 	chmod u+x $(BUILD_DIR)/krb5-config && \
-	./configure CC="$(CC)" CFLAGS="-I/usr/include/kerberosv5"  --with-krb5-config=$(BUILD_DIR)/krb5-config && \
+	./configure CC="$(CC)" CFLAGS="$(CC_BITS) -I/usr/include/kerberosv5"  --with-krb5-config=$(BUILD_DIR)/krb5-config && \
 	$(CP) mod_gss.c mod_auth_gss.c $(SOURCE_DIR)/contrib && \
 	$(CP) mod_gss.h $(SOURCE_DIR)/include && \
 	$(CP) mod_gss.html $(SOURCE_DIR)/doc/contrib && \
@@ -104,11 +105,6 @@ CONFIGURE_SCRIPT =	$(@D)/configure
 # attributes.
 LICENSE_TRANSFORMS =
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 # libcheck and specific Perl Test::Unit version is required for full test
 
 REQUIRED_PACKAGES += SUNWcs

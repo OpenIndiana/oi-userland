@@ -1,0 +1,24 @@
+--- pacemaker-Pacemaker-1.1.21/attrd/internal.h.orig	2020-05-14 06:07:14.033290360 +0000
++++ pacemaker-Pacemaker-1.1.21/attrd/internal.h	2020-05-14 06:08:07.271525144 +0000
+@@ -59,8 +59,8 @@
+         gboolean seen;
+ } attribute_value_t;
+ 
+-crm_cluster_t *attrd_cluster;
+-GHashTable *attributes;
++extern crm_cluster_t *attrd_cluster;
++extern GHashTable *attributes;
+ 
+ #define attrd_send_ack(client, id, flags) \
+     crm_ipcs_send_ack((client), (id), (flags), "ack", __FUNCTION__, __LINE__)
+--- pacemaker-Pacemaker-1.1.21/lrmd/lrmd_private.h.orig	2020-05-14 06:22:50.743042083 +0000
++++ pacemaker-Pacemaker-1.1.21/lrmd/lrmd_private.h	2020-05-14 06:23:01.544309991 +0000
+@@ -32,7 +32,7 @@
+ 
+ #define LRMD_ISOLATION_PROVIDER ".isolation"
+ 
+-GHashTable *rsc_list;
++extern GHashTable *rsc_list;
+ 
+ typedef struct lrmd_rsc_s {
+     char *rsc_id;

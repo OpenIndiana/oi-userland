@@ -11,30 +11,32 @@
 #
 # Copyright 2016 Ken Mays
 # Copyright 2016 Till Wegmueller
-# Copyright 2019 Michal Nowak
+# Copyright 2020 Michal Nowak
 #
+
+BUILD_BITS=		64
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		marco
-COMPONENT_MJR_VERSION=	1.22
+COMPONENT_MJR_VERSION=	1.24
 COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
+COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE Window Manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:4e20f5ea006142f3e5c8931e2b354e1838cb9291ba245825ea82fa6611def7c8
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+	sha256:a4bcafd92c418ebfc8fc9fed2450378465d8a6a2a16bc3a9262bb02c6f202b81
+COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -46,23 +48,16 @@ COMPONENT_PREP_ACTION = cd $(@D)  && NOCONFIGURE=1 ./autogen.sh;\
 CFLAGS+=-D__EXTENSIONS__
 CFLAGS+=-std=gnu99
 
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
-
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --enable-maintainer-mode
+CONFIGURE_OPTIONS+= --enable-compositor
 CONFIGURE_OPTIONS+= --enable-xinerama
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CPPFLAGS="$(CPPFLAGS)"
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += gnome/zenity
@@ -92,5 +87,6 @@ REQUIRED_PACKAGES += x11/library/libxdamage
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxpresent
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender

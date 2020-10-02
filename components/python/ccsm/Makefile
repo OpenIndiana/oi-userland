@@ -18,13 +18,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccsm
-COMPONENT_VERSION=	0.8.16
+COMPONENT_VERSION=	0.8.18
 COMPONENT_PROJECT_URL=	http://www.northfield.ws
 COMPONENT_SUMMARY=	ccsm settings manager for the CompizConfig system
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:446b4396808842f8ca712b82b6361d6a4fb58359c053193a3ad98355301a9764
+	sha256:341843735c03a55c3a37c9e542c897ea153fff020896f0980487a4c0e5c152fd
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
 COMPONENT_FMRI=		desktop/compiz/ccsm
 

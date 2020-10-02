@@ -1,0 +1,31 @@
+This would have made the racy build fail
+instead of producing missing and incorrect files
+
+https://bugzilla.opensuse.org/show_bug.cgi?id=1021353
+
+Index: autogen-5.18.16/agen5/agDep.c
+===================================================================
+--- autogen-5.18.16.orig/agen5/agDep.c
++++ autogen-5.18.16/agen5/agDep.c
+@@ -308,7 +308,7 @@ tidy_dep_file(void)
+         pzn[len] = NUL;
+ 
+         unlink(pzn);
+-        rename(dep_file, pzn);
++        if (rename(dep_file, pzn)) { exit(95); }
+         AGFREE(dep_file);
+         dep_file = pzn;
+     } while (false);
+Index: autogen-5.18.16/agen5/expOutput.c
+===================================================================
+--- autogen-5.18.16.orig/agen5/expOutput.c
++++ autogen-5.18.16/agen5/expOutput.c
+@@ -251,7 +251,7 @@ ag_scm_out_move(SCM new_file)
+ 
+     if (strcmp(pz, cur_fpstack->stk_fname) != 0) {
+ 
+-        rename(cur_fpstack->stk_fname, pz);
++        if (rename(cur_fpstack->stk_fname, pz)) { exit(94); }
+ 
+         if (dep_fp != NULL) {
+             rm_target_file(cur_fpstack->stk_fname);

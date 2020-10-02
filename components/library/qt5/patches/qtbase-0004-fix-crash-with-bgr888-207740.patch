@@ -1,0 +1,50 @@
+XCB platform: Fix crash on X servers with BGR888 display
+If the native visual was BGR888, the XCB plugin would assert as soon as
+it needed to find the corresponding QImage format. Fix by adding the
+required mapping in qt_xcb_imageFormatForVisual().
+
+Task-number: QTBUG-62840
+
+diff --git a/src/plugins/platforms/xcb/qxcbimage.cpp b/src/plugins/platforms/xcb/qxcbimage.cpp
+index c0403d5..c419bd9 100644
+--- a/qtbase/src/plugins/platforms/xcb/qxcbimage.cpp
++++ b/qtbase/src/plugins/platforms/xcb/qxcbimage.cpp
+@@ -78,6 +78,16 @@
+         && visual->green_mask == 0xff00 && visual->blue_mask == 0xff)
+         return QImage::Format_RGB32;
+ 
++    if (QSysInfo::ByteOrder == QSysInfo::LittleEndian) {
++        if (depth == 24 && format->bits_per_pixel == 32 && visual->blue_mask == 0xff0000
++            && visual->green_mask == 0xff00 && visual->red_mask == 0xff)
++            return QImage::Format_RGBX8888;
++    } else {
++        if (depth == 24 && format->bits_per_pixel == 32 && visual->blue_mask == 0xff00
++            && visual->green_mask == 0xff0000 && visual->red_mask == 0xff000000)
++            return QImage::Format_RGBX8888;
++    }
++
+     if (depth == 16 && format->bits_per_pixel == 16 && visual->red_mask == 0xf800
+         && visual->green_mask == 0x7e0 && visual->blue_mask == 0x1f)
+         return QImage::Format_RGB16;
+@@ -128,8 +138,9 @@
+                     }
+                     break;
+                 }
+-                case QImage::Format_RGB32: // fall-through
+-                case QImage::Format_ARGB32_Premultiplied: {
++                case QImage::Format_RGB32:
++                case QImage::Format_ARGB32_Premultiplied:
++                case QImage::Format_RGBX8888: {
+                     uint *p = (uint*)image.scanLine(i);
+                     uint *end = p + image.width();
+                     while (p < end) {
+@@ -146,7 +157,7 @@
+         }
+ 
+         // fix-up alpha channel
+-        if (format == QImage::Format_RGB32) {
++        if (format == QImage::Format_RGB32 || format == QImage::Format_RGBX8888) {
+             QRgb *p = (QRgb *)image.bits();
+             for (int y = 0; y < height; ++y) {
+                 for (int x = 0; x < width; ++x)
+

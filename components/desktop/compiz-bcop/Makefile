@@ -18,7 +18,7 @@ BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-bcop
-COMPONENT_VERSION=	0.8.16
+COMPONENT_VERSION=	0.8.18
 COMPONENT_FMRI=		desktop/compiz/bcop
 COMPONENT_CLASSIFICATION=Development/Other Languages
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
@@ -26,7 +26,7 @@ COMPONENT_SUMMARY=	beryl compiz XML option parser
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:22cc3a74023f14a11d880256c387a363889c9f37795589f7b118a9279e571277
+	sha256:59768aa1e01c58fea61848fe7277dc7714e0e0b9d79fd9bbad94262a5c8b63f7
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
 COMPONENT_LICENSE=	MIT, LGPLv2.1, GPLv2
 
@@ -46,6 +46,9 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--with-getopt=/usr/gnu/bin/getopt
+
+# Build dependencies
+REQUIRED_PACKAGES += desktop/compiz
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs

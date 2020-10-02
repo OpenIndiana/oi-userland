@@ -22,19 +22,19 @@
 # Copyright (c) 2020 Michal Nowak
 #
 
-BUILD_BITS=		32_and_64
+BUILD_BITS=			32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sqlite
-COMPONENT_VERSION=	3.30.1
-TARBALL_VERSION=	3300100
+COMPONENT_VERSION=	3.33.0
+TARBALL_VERSION=	3330000
 COMPONENT_SRC=		sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH	= \
-	sha256:4690370737189149c9e8344414aa371f89a70e3744ba317cef1a49fb0ee81ce1
+	sha256:90bf7604a5aa26deece551af7a665fd4ce3d854ea809899c0e4bb19a69d609b8
 COMPONENT_PROJECT_URL=	https://www.sqlite.org
-COMPONENT_ARCHIVE_URL=	https://www.sqlite.org/2019/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://www.sqlite.org/2020/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		database/sqlite-3
 COMPONENT_LICENSE=	PublicDomain
 
@@ -88,10 +88,8 @@ COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP)
 
 COMPONENT_TEST_TARGETS = test
 
-# Build dependencies
-REQUIRED_PACKAGES += library/libedit
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

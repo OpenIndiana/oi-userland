@@ -1,5 +1,10 @@
-diff --git a/include/glibc-glob.h b/include/glibc-glob.h
-index 422089a..a55899a 100644
+#
+# This is a Solaris specific patch. It was offered to
+# upstream, but upstream opted for fix, which sets the
+# GLOB_LIMIT at compile time. All details can be found
+# here:
+#	http://bugs.proftpd.org/show_bug.cgi?id=4082
+#
 --- a/include/glibc-glob.h
 +++ b/include/glibc-glob.h
 @@ -85,6 +85,7 @@ extern "C" {
@@ -10,8 +15,6 @@ index 422089a..a55899a 100644
  #ifdef _GNU_SOURCE
  /* Previous versions of this file defined GLOB_ABEND instead of
     GLOB_ABORTED.  Provide a compatibility definition here.  */
-diff --git a/lib/glibc-glob.c b/lib/glibc-glob.c
-index 43b02bc..92c2b94 100644
 --- a/lib/glibc-glob.c
 +++ b/lib/glibc-glob.c
 @@ -40,6 +40,15 @@ char *alloca ();
@@ -91,11 +94,9 @@ index 43b02bc..92c2b94 100644
    return nfound == 0 ? GLOB_NOMATCH : 0;
  
   memory_error:
-diff --git a/modules/mod_core.c b/modules/mod_core.c
-index e33ee11..1f6da19 100644
 --- a/modules/mod_core.c
 +++ b/modules/mod_core.c
-@@ -973,6 +973,26 @@ MODRET set_maxconnrate(cmd_rec *cmd) {
+@@ -1048,6 +1048,26 @@ MODRET set_maxconnrate(cmd_rec *cmd) {
    return PR_HANDLED(cmd);
  }
  
@@ -122,19 +123,18 @@ index e33ee11..1f6da19 100644
  MODRET set_timeoutidle(cmd_rec *cmd) {
    int timeout = -1;
    config_rec *c = NULL;
-@@ -6108,6 +6128,7 @@ static conftable core_conftab[] = {
-   { "DisplayConnect",		set_displayconnect,		NULL },
-   { "DisplayQuit",		set_displayquit,		NULL },
+@@ -6941,6 +6961,8 @@ static conftable core_conftab[] = {
    { "From",			add_from,			NULL },
+   { "FSCachePolicy",		set_fscachepolicy,		NULL },
+   { "FSOptions",		set_fsoptions,			NULL },
 +  { "GlobMaxResults",		set_globmaxresults,	        NULL },
++  { "Group",			set_group, 			NULL },
    { "Group",			set_group, 			NULL },
    { "GroupOwner",		add_groupowner,			NULL },
    { "HideFiles",		set_hidefiles,			NULL },
-diff --git a/modules/mod_ls.c b/modules/mod_ls.c
-index 5b95d2b..e8bbb74 100644
 --- a/modules/mod_ls.c
 +++ b/modules/mod_ls.c
-@@ -2015,6 +2015,8 @@ static int dolist(cmd_rec *cmd, const char *opt, int clearflags) {
+@@ -2181,6 +2181,8 @@ static int dolist(cmd_rec *cmd, const char *opt, const char *resp_code,
          pr_response_add(R_226, _("Read error during globbing of %s"),
            pr_fs_encode_path(cmd->tmp_pool, arg));
  
@@ -143,7 +143,7 @@ index 5b95d2b..e8bbb74 100644
        } else if (a != GLOB_NOMATCH) {
          pr_response_add(R_226, _("Unknown error during globbing of %s"),
            pr_fs_encode_path(cmd->tmp_pool, arg));
-@@ -2837,7 +2839,10 @@ MODRET ls_nlst(cmd_rec *cmd) {
+@@ -3146,7 +3148,10 @@ MODRET ls_nlst(cmd_rec *cmd) {
            return PR_HANDLED(cmd);
          }
  
@@ -152,6 +152,6 @@ index 5b95d2b..e8bbb74 100644
 +          pr_response_add_err(R_451, _("Too many files"));
 +        else
 +          pr_response_add_err(R_450, _("No files found"));
-         return PR_ERROR(cmd);
-       }
-     }
+ 
+         pr_cmd_set_errno(cmd, ENOENT);
+         errno = ENOENT;

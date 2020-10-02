@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sendmail
 COMPONENT_VERSION=	8.15.2
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	ftp://ftp.sendmail.org/pub/sendmail/
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME).$(COMPONENT_VERSION).tar.gz
@@ -135,7 +135,7 @@ $(SOURCE_DIR)/devtools/Site/site.config.m4:	unpack
 COMPONENT_POST_BUILD_ACTION = cd $(FILE_DIR)/aux ; \
     $(GMAKE) BITS=$(BITS) clean build
 
-COMPONENT_POST_INSTALL_ACTION += cd $(BUILD_DIR_$(BITS))/obj.SunOS.5.11.i86pc/mail.local \
+COMPONENT_POST_INSTALL_ACTION += cd $(BUILD_DIR_$(BITS))/obj.SunOS.5.11.$(ARCH)/mail.local \
 	&& $(ENV) $(COMPONENT_INSTALL_ENV) $(GMAKE) force-install DESTDIR=$(PROTO_DIR);
 COMPONENT_POST_INSTALL_ACTION += cd $(FILE_DIR)/aux ; $(GMAKE) install ;
 COMPONENT_POST_INSTALL_ACTION += \

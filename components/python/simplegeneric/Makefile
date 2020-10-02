@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	simplegeneric
 COMPONENT_VERSION= 	0.8.1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://pypi.org/project/simplegeneric/
 COMPONENT_FMRI=	library/python/simplegeneric
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,7 +29,7 @@ COMPONENT_ARCHIVE_URL= \
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_LICENSE=	ZPLv2.1
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -42,5 +43,4 @@ test:	$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35

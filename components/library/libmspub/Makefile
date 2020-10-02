@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmspub
 COMPONENT_VERSION=	0.1.4
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=     	library/c++/libmspub
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libmspub

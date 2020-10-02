@@ -26,8 +26,8 @@
 # whenever PATH is to be defined there:
 #     PATH = $(PATH.illumos)
 #     PATH = $(PATH.gnu)
-PATH.illumos=$(USRBINDIR):$(GNUBIN):$(USRSBINDIR):$(PERL5BINDIR)
-PATH.gnu=$(GNUBIN):$(USRBINDIR):$(USRSBINDIR):$(PERL5BINDIR)
+PATH.illumos=$(USRBINDIR$(BITS)):$(USRBINDIR):$(GNUBIN):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(PERL5BINDIR)
+PATH.gnu=$(GNUBIN):$(USRBINDIR$(BITS)):$(USRBINDIR):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(PERL5BINDIR)
 
 # Default PATH
 PATH = $(PATH.illumos)
@@ -100,6 +100,14 @@ space := $(empty) $(empty)
 
 ROOT =			/
 
+# Distribution name and version
+# Note, this determines /etc/release file contents.
+# Some OI-specific software (like slim installer or openindiana-welcome) 
+# currently rely on format of first line in this file
+# to determine the distribution version
+# (it should look like OpenIndiana Hipster YYYY.MM).
+DISTRIBUTION_NAME = OpenIndiana Hipster
+DISTRIBUTION_VERSION = 2020.04
 # Native OS version
 OS_VERSION :=		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
@@ -136,9 +144,9 @@ endif
 ifeq ($(strip $(BUILD_BITS)),64)
 PREFERRED_BITS=64
 endif
-# Unlike Solaris we still prefer 32bit
+# Now we prefer 64-bit
 ifeq ($(strip $(BUILD_BITS)),64_and_32)
-PREFERRED_BITS=32
+PREFERRED_BITS=64
 endif
 PREFERRED_BITS ?= 32
 
@@ -154,7 +162,18 @@ endif
 PYTHON_VERSION =	2.7
 PYTHON_VERSIONS =	2.7
 
-PYTHON_64_ONLY_VERSIONS = 3.5
+PYTHON2_VERSIONS = 2.7
+PYTHON2_VERSION = 2.7
+PYTHON2_RUNTIME_PKG = runtime/python-$(subst .,,$(PYTHON2_VERSION))
+
+PYTHON3_VERSIONS = 3.5 3.7
+PYTHON3_VERSION	= 3.5
+PYTHON3_RUNTIME_PKG = runtime/python-$(subst .,,$(PYTHON3_VERSION))
+
+PYTHON_DEFAULT_VERSIONS = $(PYTHON2_VERSION) $(PYTHON3_VERSION)
+PYTHON_ALL_VERSIONS = $(PYTHON2_VERSIONS) $(PYTHON3_VERSIONS)
+
+PYTHON_64_ONLY_VERSIONS = 3.5 3.7
 
 # PYTHON3_SOABI variable defines the naming scheme
 # of python3 extension libraries: cpython or abi3.
@@ -416,7 +435,12 @@ COMPONENT_TEST_BUILD_DIR =	$(BUILD_DIR)/test/$(MACH$(BITS))
 COMPONENT_TEST_RESULTS_DIR =	$(COMPONENT_DIR)/test
 
 # set the default master test results file
+USE_COMMON_TEST_MASTER?=no
+ifeq ($(strip $(USE_COMMON_TEST_MASTER)),yes)
+COMPONENT_TEST_MASTER =		$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+else
 COMPONENT_TEST_MASTER =		$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
+endif
 
 # set the default test results output file
 COMPONENT_TEST_OUTPUT =		$(COMPONENT_TEST_BUILD_DIR)/test-$(BITS)-results
@@ -655,13 +679,13 @@ PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
 PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
 PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
 
-PYTHON.3.4.VENDOR_PACKAGES.32 = /usr/lib/python3.4/vendor-packages
-PYTHON.3.4.VENDOR_PACKAGES.64 = /usr/lib/python3.4/vendor-packages/64
-PYTHON.3.4.VENDOR_PACKAGES = $(PYTHON.3.4.VENDOR_PACKAGES.$(BITS))
-
 PYTHON.3.5.VENDOR_PACKAGES.64 = /usr/lib/python3.5/vendor-packages
 PYTHON.3.5.VENDOR_PACKAGES.32 = /usr/lib/python3.5/vendor-packages
 PYTHON.3.5.VENDOR_PACKAGES = $(PYTHON.3.5.VENDOR_PACKAGES.$(BITS))
+
+PYTHON.3.7.VENDOR_PACKAGES.64 = /usr/lib/python3.7/vendor-packages
+PYTHON.3.7.VENDOR_PACKAGES.32 = /usr/lib/python3.7/vendor-packages
+PYTHON.3.7.VENDOR_PACKAGES = $(PYTHON.3.7.VENDOR_PACKAGES.$(BITS))
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CC.studio.32 =	$(WS_TOOLS)/parfait/cc
@@ -708,11 +732,11 @@ PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 PYTHON.2.7.32 =	/usr/bin/python2.7
 PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
 
-PYTHON.3.4.32 =	/usr/bin/python3.4
-PYTHON.3.4.64 =	/usr/bin/$(MACH64)/python3.4
-
 PYTHON.3.5.32 =	/usr/bin/python3.5
 PYTHON.3.5.64 =	/usr/bin/python3.5
+
+PYTHON.3.7.32 =	/usr/bin/python3.7
+PYTHON.3.7.64 =	/usr/bin/python3.7
 
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
@@ -728,9 +752,6 @@ JAVA7_HOME =	/usr/jdk/instances/openjdk1.7.0
 JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
 JAVA_HOME = $(JAVA8_HOME)
 
-# Location of pod2man, etc
-PERL5BINDIR = 	/usr/perl5/bin
-
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
 PERL_VERSION =  5.22
@@ -743,6 +764,11 @@ PERL.5.24 =	/usr/perl5/5.24/bin/perl
 POD2MAN.5.22 =	/usr/perl5/5.22/bin/pod2man
 POD2MAN.5.24 =	/usr/perl5/5.24/bin/pod2man
 
+# Location of pod2man, etc
+PERL5BINDIR.5.22 =	/usr/perl5/5.22/bin
+PERL5BINDIR.5.24 =	/usr/perl5/5.24/bin
+
+PERL5BINDIR = 	$(PERL5BINDIR.$(PERL_VERSION))
 PERL =		$(PERL.$(PERL_VERSION))
 POD2MAN =	$(POD2MAN.$(PERL_VERSION))
 
@@ -1247,7 +1273,7 @@ COMPONENT_INSTALL_ENV= \
 PERL_OPTIMIZE =$(gcc_OPT)
 
 # We need this to overwrite options of perl used to compile illumos-gate
-PERL_STUDIO_OVERWRITE = cc="$(CC)" cccdlflags="$(CC_PIC)" ld="$(CC)" ccname="$(shell basename $(CC))" optimize="$(gcc_OPT)"
+PERL_STUDIO_OVERWRITE = cc="$(CC)" cccdlflags="$(CC_BITS) $(CC_PIC)" ld="$(CC) $(CC_BITS)" ccname="$(shell basename $(CC))" optimize="$(gcc_OPT)"
 
 # Allow user to override default maximum number of archives
 NUM_EXTRA_ARCHIVES= 1 2 3 4 5 6 7 8 9 10
@@ -1317,7 +1343,7 @@ REQUIRED_PACKAGES += SUNWcs
 #
 # Packages with tools that are required to build Userland components
 #
-REQUIRED_PACKAGES += metapackages/build-essential
+USERLAND_REQUIRED_PACKAGES += metapackages/build-essential
 
 # Only a default dependency if component being built produces binaries.
 ifneq ($(strip $(BUILD_BITS)),NO_ARCH)
@@ -1335,6 +1361,7 @@ REQUIRED_PACKAGES_SUBST+= GFORTRAN_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GOBJC_RUNTIME_PKG
 
 include $(WS_MAKE_RULES)/environment.mk
+include $(WS_MAKE_RULES)/depend.mk
 
 # A simple rule to print the value of any macro.  Ex:
 #    $ gmake print-REQUIRED_PACKAGES

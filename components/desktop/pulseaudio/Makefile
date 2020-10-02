@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pulseaudio
 COMPONENT_VERSION=	13.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/audio/pulseaudio
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_SUMMARY=	Sample Rate Converter for audio

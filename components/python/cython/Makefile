@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Cython
 COMPONENT_VERSION=	0.28.5
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=		\
@@ -44,7 +45,7 @@ COMPONENT_LICENSE_FILE= LICENSE.txt
 CPPFLAGS +=		-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION
 CFLAGS +=		$(CPPFLAGS)
 
-PYTHON_VERSIONS = 2.7 3.4 3.5
+PYTHON_VERSIONS = 2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -56,7 +57,7 @@ include $(WS_MAKE_RULES)/setup.py.mk
 # suffix.
 COMPONENT_POST_INSTALL_ACTION += \
         (cd $(PROTO_DIR)/usr/bin ; \
-         if [ \( "$(PYTHON_VERSION)" = "2.7" -o "$(PYTHON_VERSION)" = "3.4" \) -a "$(BITS)" == "64" ]; then \
+         if [ \( "$(PYTHON_VERSION)" = "2.7" \) -a "$(BITS)" == "64" ]; then \
             $(MKDIR) $(PROTO_DIR)/usr/bin/$(MACH64); \
             for c in cython cythonize cygdb; do \
                 $(MV) $$c $(MACH64)/$$c-$(PYTHON_VERSION) ; \
@@ -80,9 +81,7 @@ test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += developer/debug/gdb
 REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-34
 REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library

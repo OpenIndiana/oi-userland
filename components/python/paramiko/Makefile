@@ -12,10 +12,13 @@
 # Copyright 2018 Alexander Pyhalov
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		paramiko
 COMPONENT_VERSION=	2.4.2
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	'Library for making SSH2 connections'
 COMPONENT_PROJECT_URL=	https://github.com/pyca/paramiko/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,27 +31,18 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+# Tests fail - depend on pytest-relaxed and pytest > 3
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =    $(COMPONENT_SRC)/tests
 COMPONENT_TEST_CMD =    $(PYTHON) /usr/bin/py.test-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS =
 
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-# Tests fail - depend on pytest-relaxed and pytest > 3
-test:           $(TEST_NO_ARCH)
 
 # Test dependencies
 REQUIRED_PACKAGES += library/python/pytest-27
-REQUIRED_PACKAGES += library/python/pytest-34
 REQUIRED_PACKAGES += library/python/pytest-35
 REQUIRED_PACKAGES += library/python/bcrypt
 REQUIRED_PACKAGES += library/python/cryptography
@@ -57,5 +51,4 @@ REQUIRED_PACKAGES += library/python/six
 
 # Build dependencies
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35

@@ -28,6 +28,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		gucharmap
 COMPONENT_MAJOR_MINOR=  3.18
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_MINOR).2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Unicode character map for the GNOME project
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -70,7 +71,8 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-Bsymbolic
 # Required for other components.
-CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS.32 += --disable-introspection
+CONFIGURE_OPTIONS.64 += --enable-introspection
 CONFIGURE_OPTIONS += --enable-shared
 # Required for other components.
 CONFIGURE_OPTIONS += --with-gtk=3.0
@@ -83,6 +85,7 @@ test:           $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/c++/harfbuzz
+REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 

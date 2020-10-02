@@ -12,10 +12,12 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gmtp
 COMPONENT_VERSION=	1.3.11
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://gmtp.sourceforge.net/
 COMPONENT_SUMMARY=	A simple MP3 and Media player client for UNIX and UNIX like systems
 COMPONENT_FMRI=		system/media/gmtp
@@ -29,21 +31,12 @@ COMPONENT_ARCHIVE_URL= \
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--with-gtk3
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += library/audio/libid3tag

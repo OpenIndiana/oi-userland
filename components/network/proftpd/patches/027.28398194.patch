@@ -1,0 +1,71 @@
+#
+# This patch is the ProFTPD part of CR 28398194. The mod_solaris_priv.c
+# makes the FTP session process privilege aware. As soon as
+# solaris_priv_post_pass() calls setreuid() to make a process privilege
+# aware, it sets 'session.disable_id_switching' to TRUE. Unfortunately
+# it's not enough, because mod_auth_pam.c overrides .disable_id_switching to
+# tell src/privs.c to operate as root. This is of course futile on Oracle
+# Solaris and makes src/privs.c complain loudly. All details were submitted
+# to upstream:
+#	https://github.com/proftpd/proftpd/pull/732
+#
+# The other part of the fix updates mod_solaris_priv.c to set
+# he priv_aware flag as soon as a session process is privilege aware.
+#
+# If the pull request is accepted, we can kill this patch
+# as soon as we get fixed proftpd from upstream. There is no ETA.
+#
+--- a/include/proftpd.h
++++ b/include/proftpd.h
+@@ -97,6 +97,9 @@ typedef struct {
+    */
+ 
+   int disable_id_switching;		/* Disable UID/GID switching */
++#ifdef SOLARIS2
++  int priv_aware;			/* process posses all privs it needs */
++#endif /* SOLARIS2 */
+   uid_t uid, ouid;                      /* Current and original UIDs */
+   gid_t gid;                            /* Current GID */
+ 
+diff --git a/src/privs.c b/src/privs.c
+index 8a86947d8..7f18af07b 100644
+--- a/src/privs.c
++++ b/src/privs.c
+@@ -185,7 +185,11 @@ int pr_privs_root(const char *file, int lineno) {
+ 
+   pr_signals_block();
+ 
++#ifdef SOLARIS2
++  if (!session.disable_id_switching && !session.priv_aware) {
++#else
+   if (!session.disable_id_switching) {
++#endif
+ 
+ #if defined(HAVE_SETEUID)
+     if (seteuid(PR_ROOT_UID) < 0) {
+@@ -247,7 +251,12 @@ int pr_privs_user(const char *file, int lineno) {
+ 
+   pr_signals_block();
+ 
++#ifdef SOLARIS2
++  if (!session.disable_id_switching && !session.priv_aware) {
++#else
+   if (!session.disable_id_switching) {
++#endif
++
+ #if defined(HAVE_SETEUID)
+     if (seteuid(PR_ROOT_UID) < 0) {
+       int priority = (errno == EPERM ? PR_LOG_NOTICE : PR_LOG_ERR);
+@@ -335,7 +344,12 @@ int pr_privs_relinquish(const char *file, int lineno) {
+ 
+   pr_signals_block();
+ 
++#ifdef SOLARIS2
++  if (!session.disable_id_switching && !session.priv_aware) {
++#else
+   if (!session.disable_id_switching) {
++#endif
++
+ #if defined(HAVE_SETEUID)
+     if (geteuid() != PR_ROOT_UID) {
+       if (seteuid(PR_ROOT_UID) < 0) {

@@ -15,6 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		prompt-toolkit
 COMPONENT_VERSION=	1.0.15
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Library for building powerful interactive command lines in Python
 COMPONENT_PROJECT_URL=	https://github.com/jonathanslenders/python-prompt-toolkit
 COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)-$(PYVER)
@@ -25,7 +26,7 @@ COMPONENT_ARCHIVE_URL=	https://github.com/jonathanslenders/python-prompt-toolkit
 COMPONENT_ARCHIVE_HASH=	sha256:e2f720a1e8149a2b56b776d68c8fb28c8211546d266301178fb982e69d0c9bed
 COMPONENT_LICENSE=	BSD
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -38,5 +39,4 @@ install:        $(INSTALL_NO_ARCH)
 test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES+= runtime/python-27
-REQUIRED_PACKAGES+= runtime/python-34
 REQUIRED_PACKAGES+= runtime/python-35

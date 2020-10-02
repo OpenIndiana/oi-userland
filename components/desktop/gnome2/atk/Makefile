@@ -17,6 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= atk
 COMPONENT_VERSION= 2.18.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME accesibility toolkit libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -35,8 +36,6 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f)
-
-gcc_OPT = -O2
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 # breaks gir-scanner

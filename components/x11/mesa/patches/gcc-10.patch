@@ -1,0 +1,43 @@
+--- src/mesa/drivers/dri/r200/radeon_debug.h.orig	2020-05-14 09:14:20.666137621 +0000
++++ src/mesa/drivers/dri/r200/radeon_debug.h	2020-05-14 09:19:13.774025674 +0000
+@@ -81,18 +81,18 @@
+        char indent[RADEON_MAX_INDENT];
+ };
+ 
+-extern radeon_debug_type_t radeon_enabled_debug_types;
++extern radeon_debug_type_t r200_enabled_debug_types;
+ 
+ /**
+  * Compabibility layer for old debug code
+  **/
+-#define RADEON_DEBUG radeon_enabled_debug_types
++#define RADEON_DEBUG r200_enabled_debug_types
+ 
+ static inline int radeon_is_debug_enabled(const radeon_debug_type_t type,
+ 	   const radeon_debug_level_t level)
+ {
+        return RADEON_DEBUG_LEVEL >= level
+-		&& (type & radeon_enabled_debug_types);
++		&& (type & r200_enabled_debug_types);
+ }
+ 
+ extern void _radeon_print(const radeon_debug_type_t type,
+--- src/mesa/drivers/dri/r200/radeon_debug.c.orig	2020-05-14 09:14:26.137015303 +0000
++++ src/mesa/drivers/dri/r200/radeon_debug.c	2020-05-14 09:19:19.876100909 +0000
+@@ -57,13 +57,13 @@
+ 	{NULL, 0}
+ };
+ 
+-radeon_debug_type_t radeon_enabled_debug_types;
++radeon_debug_type_t r200_enabled_debug_types;
+ 
+ void radeon_init_debug(void)
+ {
+-	radeon_enabled_debug_types = parse_debug_string(getenv("RADEON_DEBUG"), debug_control);
++	r200_enabled_debug_types = parse_debug_string(getenv("RADEON_DEBUG"), debug_control);
+ 
+-	radeon_enabled_debug_types |= RADEON_GENERAL;
++	r200_enabled_debug_types |= RADEON_GENERAL;
+ }
+ 
+ void _radeon_debug_add_indent(void)

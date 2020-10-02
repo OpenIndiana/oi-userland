@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncftp
 COMPONENT_VERSION=	3.2.6
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=         network/ftp/ncftp
 COMPONENT_SUMMARY=      NcFTP - client application implementing FTP
 COMPONENT_CLASSIFICATION=Applications/Internet

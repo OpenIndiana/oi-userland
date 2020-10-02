@@ -100,6 +100,9 @@ $(BUILD_DIR)/.published-$(MACH): $(BUILD_DIR)/.linted-$(MACH) $(PUBLISHED)
 
 publish: $(BUILD_DIR)/.published-$(MACH)
 
+print-package-names:
+	@cat history | cut -f 1 -d '@'
+
 %.p5m: 	%.p5m.$(MACH)
 	$(CP) $< $@
 	

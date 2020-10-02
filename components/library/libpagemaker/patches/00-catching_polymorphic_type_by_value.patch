@@ -1,0 +1,22 @@
+https://git.libreoffice.org/libpagemaker/+/87b6afa177096ffeea16eef401208c99dd6a2f9e%5E%21/
+
+--- libpagemaker-0.0.4/src/lib/PMDParser.cpp.orig	2020-05-17 06:39:07.745218351 +0000
++++ libpagemaker-0.0.4/src/lib/PMDParser.cpp	2020-05-17 06:39:48.780999935 +0000
+@@ -852,7 +852,7 @@
+     *tocLength = readU16(m_input, m_bigEndian);
+     PMD_DEBUG_MSG(("[Header] TOC length is %d\n", *tocLength));
+   }
+-  catch (PMDStreamException)
++  catch (const PMDStreamException &)
+   {
+     throw PMDParseException("Can't find the table of contents length in the header.");
+   }
+@@ -862,7 +862,7 @@
+     *tocOffset = readU32(m_input, m_bigEndian);
+     PMD_DEBUG_MSG(("[Header] TOC offset is 0x%x\n", *tocOffset));
+   }
+-  catch (PMDStreamException)
++  catch (const PMDStreamException &)
+   {
+     throw PMDParseException("Can't find the table of contents offset in the header.");
+   }

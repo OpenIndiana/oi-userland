@@ -19,22 +19,25 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019, Michal Nowak
 #
-BUILD_BITS=32_and_64
+
+BUILD_BITS=		32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autogen
-COMPONENT_VERSION=	5.16.2
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	5.18.16
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autogen/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:aa51f5adbf49c2cb48a7d6de3dbab15b89e0a04e7152195fe6fb3380e05c4991
+	sha256:e23c5bbd0ac83079ae2ef6eb3fd1948fecce718ac853025607a3ab0395538406
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autogen/rel$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/autogen
 
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -I config -fi)
 
 # build target is incorrect without this 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -45,30 +48,47 @@ COMPILER = gcc
 # strip the environment or install target fails
 ENV +=	-i
 
+CONFIGURE_OPTIONS += --disable-dependency-tracking
+
 # Replace all occurrences of "echo" with "/usr/gnu/bin/echo" in the two
 # scripts used by autogen that munge the man and mdoc output. This prevents
 # bogus conversions (like "\f" -> Control-L) happening.
+#
 # Adjust "tr" to "/usr/gnu/bin/tr" in the autoopts vendor.test.
 # These changes now allow the autoopts tests to successfully complete.
+#
+# Replace a GNU-specifix option for mktemp.
 COMPONENT_POST_UNPACK_ACTION = \
-	$(GSED) -i -e 's|echo|/usr/gnu/bin/echo|' \
-		$(SOURCE_DIR)/autoopts/tpl/mdoc2man.sh ; \
+	$(CHMOD) -R u+w $(SOURCE_DIR) ; \
 	$(GSED) -i -e 's|echo|/usr/gnu/bin/echo|' \
 		$(SOURCE_DIR)/autoopts/tpl/texi2mdoc.sh ; \
 	$(GSED) -i -e 's| tr | /usr/gnu/bin/tr |' \
-		$(SOURCE_DIR)/autoopts/test/vendor.test
+		$(SOURCE_DIR)/autoopts/test/vendor.test ; \
+	$(GSED) -i -e 's|mktemp --suffix=|g&|' $(SOURCE_DIR)/agen5/mk-stamps.sh \
+		$(SOURCE_DIR)/build-aux/run-ag.sh \
+		$(SOURCE_DIR)/config/mk-shdefs.in ;
 
 CONFIGURE_ENV.64 += PATH=/usr/bin/$(MACH64):/usr/bin
 
 AUTOGEN_PATH.32 = $(PATH.illumos)
 AUTOGEN_PATH.64 = /usr/bin/$(MACH64):$(PATH.illumos)
-COMPONENT_BUILD_ENV += PATH=$(AUTOGEN_PATH.$(BITS))
-COMPONENT_INSTALL_ENV += PATH=$(AUTOGEN_PATH.$(BITS))
+PERL.32 = $(PERL.5.22)
+PERL.64 = $(PERL.5.24)
+COMPONENT_BUILD_ENV += PATH=$(AUTOGEN_PATH.$(BITS)) PERL=$(PERL.$(BITS))
+COMPONENT_INSTALL_ENV += PATH=$(AUTOGEN_PATH.$(BITS)) PERL=$(PERL.$(BITS))
+COMPONENT_TEST_ENV += PATH=$(AUTOGEN_PATH.$(BITS)) PERL=$(PERL.$(BITS))
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" '
 
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += file/gnu-coreutils
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/guile
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += shell/bash

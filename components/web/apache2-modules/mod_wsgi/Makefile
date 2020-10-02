@@ -27,7 +27,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_wsgi
 COMPONENT_VERSION=	4.5.22
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:d8205b1ebe6042e21a7a59fbfe10c4c5a12753bac531879758bdf2fa8e2bf301
@@ -39,7 +39,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PYTHON_VERSIONS = 2.7 3.4 3.5
+PYTHON_VERSIONS = 2.7 3.5
 
 APACHE_USR_PREFIX=/usr/apache2/2.4
 
@@ -56,12 +56,10 @@ CFLAGS+= -std=c99 $(CPP_XPG6MODE)
 # but since mod_wsgi doesn't use setup.py, we can't just include
 # setup.py.mk
 $(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
-$(BUILD_DIR)/%-3.4/.built:		PYTHON_VERSION=3.4
 $(BUILD_DIR)/%-3.5/.built:		PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
 $(BUILD_DIR)/%-2.7/.installed:  PYTHON_VERSION=2.7
-$(BUILD_DIR)/%-3.4/.installed:  PYTHON_VERSION=3.4
 $(BUILD_DIR)/%-3.5/.installed:  PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
@@ -79,7 +77,6 @@ build:		$(BUILD_64)
 install:	$(INSTALL_64)
 
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/server/apache-24

@@ -11,11 +11,13 @@
 # Copyright 2016 Adam Stevko
 #
 
+BUILD_BITS=			32_and_64
+BUILD_STYLE=		setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		GeoIP
 COMPONENT_VERSION=	1.3.2
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	http://www.maxmind.com/
 COMPONENT_FMRI=		library/python/geoip
 COMPONENT_CLASSIFICATION=Development/Python
@@ -26,20 +28,13 @@ COMPONENT_ARCHIVE_HASH= sha256:a890da6a21574050692198f14b07aa4268a01371278dfc24f
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE= LICENSE	
 
-PYTHON_VERSIONS=2.7 3.4 3.5
+PYTHON_VERSIONS=2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += database/geoip
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library

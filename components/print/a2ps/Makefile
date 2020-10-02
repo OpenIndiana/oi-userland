@@ -23,11 +23,12 @@
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		a2ps
 COMPONENT_VERSION=	4.14
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/a2ps/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -35,9 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f3ae8d3d4564a41b6e2a21f237d2f2b104f48108591e8b83497500182a3ab3a4
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/a2ps/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # don't use LD_Z_IGNORE: causes linker problems
 LD_Z_IGNORE=
@@ -62,13 +61,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
 
 # Build dependency manually added
 REQUIRED_PACKAGES += developer/gperf 

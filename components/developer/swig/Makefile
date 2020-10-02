@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swig
 COMPONENT_VERSION=	3.0.10
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=	Simplified Wrapper and Interface Generator
 COMPONENT_PROJECT_URL=	http://www.swig.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

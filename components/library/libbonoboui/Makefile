@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= libbonoboui
 
 COMPONENT_VERSION= 2.24.5
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Bonobo Base User Interface Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -60,3 +61,4 @@ REQUIRED_PACKAGES += library/orbit2
 REQUIRED_PACKAGES += library/popt
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

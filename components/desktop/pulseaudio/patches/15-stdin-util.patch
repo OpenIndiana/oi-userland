@@ -1,0 +1,76 @@
+*** pulseaudio-12.2/src/modules/stdin-util.c-orig	Fri Jul 13 14:06:15 2018
+--- pulseaudio-12.2/src/modules/stdin-util.c	Tue Apr 16 08:55:30 2019
+***************
+*** 173,178 ****
+--- 173,179 ----
+          if ((opcode = read_byte(u)) < 0) {
+              if (errno == EINTR || errno == EAGAIN)
+                  break;
++             pa_log("read_byte() failed: %s", pa_cstrerror(errno));
+              goto fail;
+          }
+  
+***************
+*** 187,194 ****
+                  struct pa_module_info *m;
+                  unsigned i, j;
+  
+!                 if (!(name = read_string(u)))
+                      goto fail;
+  
+                  if (!(m = pa_hashmap_get(u->module_infos, name))) {
+                      m = pa_xnew(struct pa_module_info, 1);
+--- 188,197 ----
+                  struct pa_module_info *m;
+                  unsigned i, j;
+  
+!                 if (!(name = read_string(u))) {
+! 		    pa_log("read_string() #1 failed: %s", pa_cstrerror(errno));
+                      goto fail;
++ 		}
+  
+                  if (!(m = pa_hashmap_get(u->module_infos, name))) {
+                      m = pa_xnew(struct pa_module_info, 1);
+***************
+*** 205,210 ****
+--- 208,215 ----
+  
+                      if (!(module = read_string(u))) {
+                          if (i > m->n_items) m->n_items = i;
++ 			pa_log("read_string() #2 failed: %s",
++ 			    pa_cstrerror(errno));
+                          goto fail;
+                      }
+  
+***************
+*** 214,219 ****
+--- 219,226 ----
+                      }
+  
+                      if (!(args = read_string(u))) {
++ 			pa_log("read_string() #3 failed: %s",
++ 			    pa_cstrerror(errno));
+                          pa_xfree(module);
+  
+                          if (i > m->n_items) m->n_items = i;
+***************
+*** 240,247 ****
+              case '-': {
+                  char *name;
+  
+!                 if (!(name = read_string(u)))
+                      goto fail;
+  
+                  pa_hashmap_remove_and_free(u->module_infos, name);
+                  pa_xfree(name);
+--- 247,256 ----
+              case '-': {
+                  char *name;
+  
+!                 if (!(name = read_string(u))) {
+! 		    pa_log("read_string() #4 failed: %s", pa_cstrerror(errno));
+                      goto fail;
++ 		}
+  
+                  pa_hashmap_remove_and_free(u->module_infos, name);
+                  pa_xfree(name);

@@ -23,24 +23,23 @@
 # Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_STYLE = setup.py
+BUILD_BITS = NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		idna
 COMPONENT_VERSION=	2.8
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/kjd/idna
-COMPONENT_BUGDB=	python-mod/idna
-COMPONENT_ANITYA_ID=	5487
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR = $(SOURCE_DIR)/tests
 COMPONENT_TEST_ARGS = -m unittest discover --pattern=*.py
@@ -52,10 +51,3 @@ COMPONENT_TEST_ARGS = -m unittest discover --pattern=*.py
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/^Ran .+ / { sub(\" tests in .+s\", \" tests in\"); print }; /!NF/ { print }; /^OK/ { print };'"
 
-# common targets
-# Really it's no-arch
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:		$(TEST_NO_ARCH)

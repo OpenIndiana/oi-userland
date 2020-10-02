@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 7.5.0
 ILLUMOS_GCC_REVISION= 0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 3
 COMPONENT_SRC_NAME= gcc-$(COMPONENT_VERSION)-oi-$(ILLUMOS_GCC_REVISION)
 COMPONENT_SRC= gcc-$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC_NAME).tar.gz
@@ -46,7 +46,7 @@ include $(WS_MAKE_RULES)/gcc-component.mk
 
 CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-objc-gc
-CONFIGURE_OPTIONS+= --enable-initfini-array
+CONFIGURE_OPTIONS.i386+= --enable-initfini-array
 CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
 CONFIGURE_OPTIONS+= --disable-libitm
 CONFIGURE_OPTIONS+= enable_frame_pointer=yes

@@ -23,10 +23,13 @@
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jsonrpclib
 COMPONENT_VERSION=	0.4.0
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://github.com/tcalmant/jsonrpclib
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
@@ -35,13 +38,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=https://github.com/tcalmant/jsonrpclib/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/jsonrpclib
 
-TPNO=			24886
+PYTHON_VERSIONS=	2.7 3.5
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -49,15 +48,7 @@ COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
 COMPONENT_TEST_CMD= /usr/bin/nosetests
 COMPONENT_TEST_ARGS = tests
 
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-# Ran 51 tests, OK.
-test:		$(TEST_NO_ARCH)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/enum-27
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35

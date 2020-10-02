@@ -24,11 +24,13 @@
 # Copyright 2017, Aurelien Larcher.
 #
 
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 
 COMPONENT_NAME=		quilt
 COMPONENT_VERSION=	0.65
+COMPONENT_REVISION=	1
 COMPONENT_FMRI= developer/quilt
 COMPONENT_SUMMARY=  Quilt - tool to manage series of patches
 COMPONENT_CLASSIFICATION= Development/Source Code Management
@@ -41,9 +43,7 @@ COMPONENT_ARCHIVE_URL= \
   http://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2 
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -59,8 +59,6 @@ PATCH_LEVEL=	0
 # generated README and man pages.
 COMPONENT_BUILD_ARGS+=	--no-print-directory
 
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
-
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --with-cp=$(GNUBIN)/cp
 CONFIGURE_OPTIONS += --with-date=$(GNUBIN)/date
@@ -72,10 +70,13 @@ CONFIGURE_OPTIONS += --with-sed=$(GNUBIN)/sed
 CONFIGURE_OPTIONS += --with-diff=$(GNUBIN)/diff
 CONFIGURE_OPTIONS += --with-find=$(GNUBIN)/find
 CONFIGURE_OPTIONS += --with-patch=$(GNUBIN)/patch
+CONFIGURE_OPTIONS += --with-column=$(USRBINDIR)/column
+CONFIGURE_OPTIONS += --with-diffstat=$(USRBINDIR)/diffstat
 CONFIGURE_OPTIONS += --with-perl=$(PERL)
 CONFIGURE_OPTIONS += --with-pod2man=$(POD2MAN)
 CONFIGURE_OPTIONS += --with-xgettext=/usr/bin/gxgettext
 CONFIGURE_OPTIONS += --with-msgfmt=/usr/bin/gmsgfmt
+CONFIGURE_OPTIONS += --without-rpmbuild
 
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
@@ -85,12 +86,9 @@ COMPONENT_TEST_TRANSFORMS += \
  	'-n ' \
 	'-e "/commands/p" ' \
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
+# Build dependencies
+REQUIRED_PACKAGES += text/diffstat
+REQUIRED_PACKAGES += text/text-utilities
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += archiver/gnu-tar

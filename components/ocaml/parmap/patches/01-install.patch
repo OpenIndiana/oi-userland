@@ -1,0 +1,27 @@
+--- parmap-1.0-rc11/Makefile.in.orig	2020-05-29 00:53:56.990111159 +0000
++++ parmap-1.0-rc11/Makefile.in	2020-05-29 00:55:43.149207500 +0000
+@@ -12,21 +12,11 @@
+ prefix = @prefix@
+ exec_prefix = @exec_prefix@
+ 
+-ifeq ($(DESTDIR),)
+-LIBDIR=$(shell ocamlfind printconf destdir)
+-BINDIR=@bindir@
+-MANDIR=@mandir@/man3
+-INSTALL = $(OCAMLFIND) install
+-UNINSTALL = $(OCAMLFIND) remove
+-else
+-export OCAMLLIBDIR := lib/ocaml
+-LIBDIR=$(DESTDIR)/$(OCAMLLIBDIR)
+-BINDIR=$(DESTDIR)/bin
+-MANDIR=$(DESTDIR)/man/man3
++LIBDIR=$(DESTDIR)/$(shell ocamlfind printconf destdir)
++BINDIR=$(DESTDIR)/@bindir@
++MANDIR=$(DESTDIR)/@mandir@/man3
+ INSTALL = $(OCAMLFIND) install -destdir $(LIBDIR)
+ UNINSTALL = $(OCAMLFIND) remove -destdir $(LIBDIR)
+-endif
+-
+ 
+ ifeq ("@OCAMLBEST@","opt")
+   OCAMLBEST=native

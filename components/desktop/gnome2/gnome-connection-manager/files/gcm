@@ -1,8 +1,9 @@
 #!/bin/sh
 
-# Simple start wrapper (C) 2015 by Jim Klimov for gnome-connection-manager
+# Simple start wrapper (C) 2015-2020 by Jim Klimov for gnome-connection-manager
 # Install this script as /usr/bin/gcm
 # Requires the GCM itself: http://kuthulu.com/gcm/?module=download
+# or nowadays https://github.com/kuthulux/gnome-connection-manager
 # unpacked as /usr/share/gcm (may be a symlink to actual version)
 # and its dependencies (python v2.6+, glade, X11, etc.)
 
@@ -22,7 +23,12 @@ fi
 	LANGUAGE="`echo "$LANGUAGE" | sed 's,^\(..\).*$,\1,'`"
 
 export LANGUAGE LANG LC_ALL DISPLAY
+
+# sun-color, xterm*, ansi, vt100, vt200 all had issues with different tools
+# executed in the VTE sessions. Use this least-evil value by default:
+TERM=screen-256color
+export TERM
+
 echo "Starting gnome-connection-manager with LANGUAGE=$LANGUAGE ..."
 locale 2>/dev/null
 exec /usr/share/gnome-connection-manager/gnome_connection_manager.py "$@"
-

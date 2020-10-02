@@ -32,6 +32,7 @@ GIT_CHANGESET=HEAD
 
 PATH=/usr/gnu/bin:/usr/bin
 
+COMPONENT_PREP_GIT=no
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/justmake.mk
 

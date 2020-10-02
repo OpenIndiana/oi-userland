@@ -1,0 +1,37 @@
+From 9c37cf20a10941ea53a558c8b91b406378769dde Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Sun, 1 Dec 2019 00:28:49 +0000
+Subject: gcc configure must call gas with --32 for 32-bit
+
+---
+ gcc/configure    | 1 +
+ gcc/configure.ac | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/gcc/configure b/gcc/configure
+index 4a06c79924d..1ba738fe4b0 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -24008,6 +24008,7 @@ $as_echo "#define TLS_SECTION_ASM_FLAG 't'" >>confdefs.h
+     fi
+     case "$target" in
+       i[34567]86-*-*)
++	tls_as_opt="$tls_as_opt --32"
+ 	conftest_s="$conftest_s
+ foo:	.long	25
+ 	.text
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index 260ebc945b9..31b990c26ad 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -3247,6 +3247,7 @@ changequote(,)dnl
+     fi
+     case "$target" in
+       i[34567]86-*-*)
++	tls_as_opt="$tls_as_opt --32"
+ 	conftest_s="$conftest_s
+ foo:	.long	25
+ 	.text
+-- 
+2.23.0
+

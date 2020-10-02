@@ -37,6 +37,8 @@
 
 : logo ( x y -- ) \ color OpenIndiana logo
 
+	0 0 0 0 0 s" /boot/openindiana.png" fb-putimage if 2drop exit then
+
 	s"                 @[34m;;@[m                                    " logo+
         s"                 @[34m`@[m                                     " logo+
         s"         @[34m;;;;@[m    @[34m,@[m                             " logo+

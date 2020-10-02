@@ -12,11 +12,13 @@
 # Copyright (c) 2017 Predrag Zečević.  All rights reserved.
 #
 
+BUILD_BITS=			NO_ARCH
+BUILD_STYLE=		setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		import_profiler
 COMPONENT_VERSION=	0.0.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/import-profiler
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -28,25 +30,17 @@ COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_LICENSE=       MIT
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_FETCH_USER_AGENT=wget
 
 # setup.py needs README.md, but file is missing in archive?
 COMPONENT_PRE_BUILD_ACTION=cd $(SOURCE_DIR) && touch README.md
 
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:           $(NO_TEST)
-
+# Manually added build dependencies
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library

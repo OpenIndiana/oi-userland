@@ -29,8 +29,8 @@ unrar \- list, test and extract compressed files from RAR archive
 .B e
 Extract files to current directory
 .TP
-.B l[t|b]
-List archive [technical format, bare format]
+.B l[t[a]|b]
+List archive [technical [all] format, bare format]
 .TP
 .B p
 Print file to stdout
@@ -38,8 +38,8 @@ Print file to stdout
 .B t
 Test archive files
 .TP
-.B v[t|b]
-Verbosely list archive [technical format, bare format]
+.B v[t[a]|b]
+Verbosely list archive [technical [all] format, bare format]
 .TP
 .B x
 Extract files with full path
@@ -49,12 +49,18 @@ Extract files with full path
 .TP
 .B \-
 Stop switches scanning
-.\".TP
-.\".B \-ac
-.\"Clear Archive attribute after compression or extraction
+.TP
+.B \-@[+]
+Disable [enable] file lists
 .TP
 .B \-ad
 Append archive name to destination path
+.TP
+.B \-ag[format]
+Generate archive name using the current date
+.TP
+.B \-ai
+Ignore file attributes
 .TP
 .B \-ap<path>
 Set path inside archive
@@ -91,33 +97,26 @@ Send all messages to stderr
 .TP
 .B \-inul
 Disable all messages
-'\".TP
-'\".B \-isnd
-'\"Enable terminal bell
-.\" .TP
-.\" .B \-ioff
-.\" Turn PC off after completing an operation
-.TP
 .B \-kb
 Keep broken extracted files
 .TP
 .B \-n<file>
-Include only specified file
+Additionally filter included files
 .TP
 .B \-n@
-Read file names to include from stdin
+Read additional filter masks from stdin
 .TP
 .B \-n@<list>
-Include files in specified list file
+Read additional filter masks from list file
 .TP
 .B \-o+
 Overwrite existing files
 .TP
 .B \-o\-
 Do not overwrite existing files
-.\".TP
-.\".B \-oc
-.\"Set NTFS Compressed attribute
+.TP
+.B \-ol[a]
+Process symbolic links as the link [absolute paths]
 .TP
 .B \-or
 Rename files automatically
@@ -134,8 +133,8 @@ Do not query password
 .B \-r
 Recurse subdirectories
 .\".TP
-.\".B \-ri<P>[:<S>]
-.\"Set priority (0\-default,1\-min..15\-max) and sleep time in ms
+.\".B \-sc<chr>[obj]
+.\"Specify the character set
 .TP
 .B \-sl<size>
 Process files with size less than specified

@@ -1,0 +1,35 @@
+qglxconvenience: Avoid null pointer dereference
+glXGetVisualFromFBConfig according to documentation can return NULL [1].
+This may result in a crash when running Qt applications using ARGB windows
+with XLIB_SKIP_ARGB_VISUALS defined.
+
+Also guard QXlibScopedPointerDeleter against illegally calling XFree(nullptr).
+
+[1] https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glXGetVisualFromFBConfig.xml
+
+Task-number: QTBUG-58910
+a/qtbase/src/
+
+diff --git a/qtbase/src/platformsupport/glxconvenience/qglxconvenience.cpp b/src/platformsupport/glxconvenience/qglxconvenience.cpp
+index 8c26550c1e..74b7c63473 100644
+--- a/qtbase/src/platformsupport/glxconvenience/qglxconvenience.cpp
++++ b/qtbase/src/platformsupport/glxconvenience/qglxconvenience.cpp
+@@ -164,7 +164,8 @@ bool QXcbSoftwareOpenGLEnforcer::forceSoftwareOpenGL = false;
+ template <class T>
+ struct QXlibScopedPointerDeleter {
+     static inline void cleanup(T *pointer) {
+-        XFree(pointer);
++        if (pointer)
++            XFree(pointer);
+     }
+ };
+ 
+@@ -202,6 +203,8 @@ GLXFBConfig qglx_findConfig(Display *display, int screen , QSurfaceFormat format
+             GLXFBConfig candidate = configs[i];
+ 
+             QXlibPointer<XVisualInfo> visual(glXGetVisualFromFBConfig(display, candidate));
++            if (visual.isNull())
++                continue;
+ 
+             const int actualRed = qPopulationCount(visual->red_mask);
+             const int actualGreen = qPopulationCount(visual->green_mask);

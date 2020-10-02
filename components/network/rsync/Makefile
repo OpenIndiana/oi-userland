@@ -22,43 +22,44 @@
 #
 # Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2020, Andreas Wacknitz
 #
 
+BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsync
-COMPONENT_VERSION=	3.1.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.2.2
 COMPONENT_SUMMARY=	Utility that provides fast incremental file transfer and copy
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rsync.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:55cc554efec5fdaad70de921cd5a5eeb6c29a95524c715f3bbf849235b0800c0
+	sha256:644bd3841779507665211fd7db8359c8a10670c57e305b4aab61b4e40037afa8
 COMPONENT_ARCHIVE_URL=	https://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/rsync
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
-CONFIGURE_OPTIONS  +=		--with-included-popt
-CONFIGURE_OPTIONS  +=		--enable-xattr-support
+CONFIGURE_OPTIONS  +=	--with-included-popt
+CONFIGURE_OPTIONS  +=	--enable-xattr-support
+# disable xxHash until we provide a package for it (https://github.com/Cyan4973/xxHash)
+CONFIGURE_OPTIONS  +=	--disable-xxhash
 
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/^PASS|^SKIP|^FAIL|^XFAIL/'"
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
+# Manually added; needed during tests
+REQUIRED_PACKAGES += developer/fakeroot
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += library/lz4
+REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library

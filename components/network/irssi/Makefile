@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		irssi
 COMPONENT_VERSION=	1.2.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	irssi - a terminal based IRC client
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_FMRI=		network/chat/irssi
@@ -52,9 +53,11 @@ COMPONENT_POST_INSTALL_ACTION += ( for x in perllocal.pod .packlist '*.la' ; do 
 COMPONENT_POST_INSTALL_ACTION += ( for x in COPYING AUTHORS ChangeLog ; do cp $(SOURCE_DIR)/$$x $(PROTOUSRSHAREDOCDIR)/irssi/$$x ; done );
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library
+# Bogus dependency due to libssp
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

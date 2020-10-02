@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= libexif-gtk
 
 COMPONENT_VERSION= 0.4.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GTK widgets for viewing EXIF information
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2

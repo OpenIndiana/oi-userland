@@ -13,25 +13,26 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_BITS=64_and_32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ibus
-COMPONENT_VERSION= 1.5.13
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 1.5.22
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= iBus - Intelligent Input Bus
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ed73d80542dfdcca190b7958431048cd6830c2ce25c467384630b6a7e957a5f1
+  sha256:8170eba58c28aa4818970751ebdeada728ebb63d535967a5c5f5c21b0017be4a
 COMPONENT_PROJECT_URL = https://github.com/ibus/ibus
 COMPONENT_ARCHIVE_URL= \
   $(COMPONENT_PROJECT_URL)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
+PYTHON_VERSION = 3.5
 
 GTK_BIN_VER := $(shell pkg-config --variable=gtk_binary_version gtk+-2.0)
 
@@ -46,11 +47,14 @@ CONFIGURE_OPTIONS += --enable-gtk2
 CONFIGURE_OPTIONS += --enable-gtk3
 CONFIGURE_OPTIONS += --enable-xim
 CONFIGURE_OPTIONS += --disable-gtk-doc
-CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS.32 += --disable-introspection
+CONFIGURE_OPTIONS.64 += --enable-introspection
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib/ibus
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/ibus/$(MACH64)
 CONFIGURE_OPTIONS.64 += --with-gtk-im-module-dir=/usr/lib/$(MACH64)/gtk-2.0/$(GTK_BIN_VER)/immodules/
+CONFIGURE_OPTIONS += --disable-emoji-dict
+CONFIGURE_OPTIONS += --disable-unicode-dict
 
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
@@ -60,18 +64,12 @@ CONFIGURE_ENV += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
-$(INSTALL_32):  $(INSTALL_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango

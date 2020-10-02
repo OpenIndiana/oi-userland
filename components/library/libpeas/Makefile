@@ -23,7 +23,9 @@
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS = 32_and_64
+# requires gobject-introspection
+BUILD_BITS = 64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libpeas
@@ -31,7 +33,7 @@ COMPONENT_SUMMARY=	A gobject-based plugins engine for GNOME
 COMPONENT_DESCRIPTION=	libpeas is a gobject-based plugins engine, and is targeted\
  at giving every application the chance to assume its own extensibility.
 COMPONENT_VERSION=	1.20.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Libpeas
 COMPONENT_MAJOR_MINOR=        $(basename $(COMPONENT_VERSION))
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

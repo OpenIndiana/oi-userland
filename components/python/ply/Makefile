@@ -23,11 +23,14 @@
 # Copyright 2017 Gary Mills
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ply
 COMPONENT_VERSION=	3.8
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -36,16 +39,13 @@ COMPONENT_ARCHIVE_URL=	http://www.dabeaz.com/ply/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.dabeaz.com/ply/
 COMPONENT_BUGDB=	python-mod/ply
 
-TPNO=			28341
+PYTHON_VERSIONS=	2.7 3.5
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+# Run 42 tests, OK.
 COMPONENT_TEST_ENV = PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
 COMPONENT_TEST_CMD = $(PYTHON) testlex.py; \
                      $(PYTHON) testyacc.py
@@ -55,14 +55,7 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
     '-e "s|\(^Ran 42 tests\).*|\1|" '
 
-# common targets
-build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_NO_ARCH)
-
-# Run 42 tests, OK.
-test:		$(TEST_NO_ARCH)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35

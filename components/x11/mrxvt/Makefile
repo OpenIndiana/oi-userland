@@ -12,11 +12,12 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
+BUILD_BITS=			32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mrxvt
 COMPONENT_VERSION=	0.5.4
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     3
 COMPONENT_PROJECT_URL=	http://materm.sourceforge.net/wiki/pmwiki.php
 COMPONENT_SUMMARY=	Mrxvt - lightweight multi-tabbed terminal emulator
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,9 +30,8 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -40,20 +40,18 @@ CFLAGS            +=	$(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS          +=	$(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS           +=	$(JPEG_LDFLAGS)
 
+LDFLAGS			  +=	-lutempter
+
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--enable-everything
 CONFIGURE_OPTIONS +=	--disable-debug
 
-# common targets
-build:		$(BUILD_32)
 
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/libutempter
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11

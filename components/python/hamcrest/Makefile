@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		PyHamcrest
 COMPONENT_VERSION=	1.10.1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	'Hamcrest framework for matcher objects'
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -42,7 +43,7 @@ COMPONENT_FMRI=	library/python/python-hamcrest
 COMPONENT_LICENSE= BSD
 COMPONENT_LICENSE_FILE= LICENSE.txt
 
-PYTHON_VERSIONS = 2.7 3.4 3.5
+PYTHON_VERSIONS = 2.7 3.5
 
 TEST_TARGET = $(NO_TESTS)
 
@@ -50,5 +51,4 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35

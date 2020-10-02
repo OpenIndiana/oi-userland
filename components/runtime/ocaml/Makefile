@@ -24,24 +24,26 @@
 # Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
+BUILD_BITS=					64
 include ../../../make-rules/shared-macros.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_NAME=		       ocaml
-COMPONENT_FMRI=          runtime/ocaml
-COMPONENT_VERSION_MAJOR= 4.06
-COMPONENT_VERSION=       $(COMPONENT_VERSION_MAJOR).0
-IPS_COMPONENT_VERSION=   4.0.6
-COMPONENT_PROJECT_URL=	 http://www.ocaml.org
-COMPONENT_SRC=		       $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	     $(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=  sha256:011879c913e8f988ecdac020b205e2baa4023052efed25013bdb9a6b0d5c6a80
-COMPONENT_ARCHIVE_URL=   https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_SUMMARY=       Objective Caml compiler and programming environment
-COMPONENT_LICENSE=       QPLv1, GPLv2
-COMPONENT_LICENSE_FILE=  $(COMPONENT_NAME).license
-COMPONENT_CLASSIFICATION= Development/System
+COMPONENT_NAME=				ocaml
+COMPONENT_FMRI=				runtime/ocaml
+COMPONENT_VERSION_MAJOR=	4.07
+COMPONENT_VERSION=			$(COMPONENT_VERSION_MAJOR).1
+IPS_COMPONENT_VERSION=		4.0.7.1
+COMPONENT_PROJECT_URL=		https://ocaml.org
+COMPONENT_SRC=				$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=			$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_SRC=		$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=		sha256:83683ddad54bd23773591a9f757e702fa5cfa2ea1b124d8fe75a73729e592bfe
+COMPONENT_ARCHIVE_URL=		https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/$(COMPONENT_ARCHIVE_SRC)
+COMPONENT_SUMMARY=			Objective Caml compiler and programming environment
+COMPONENT_LICENSE=			QPLv1, GPLv2
+COMPONENT_LICENSE_FILE=		$(COMPONENT_NAME).license
+COMPONENT_CLASSIFICATION=	Development/System
 COMPONENT_DESCRIPTION= Objective Caml is a high-level, strongly-typed, functional and \
 object-oriented programming language from the ML family of languages. This package comprises \
 two batch compilers (a fast bytecode compiler and an optimizing native-code compiler), \
@@ -50,32 +52,33 @@ a documentation generator, and a comprehensive library.
 
 # Documentation sources
 #
-COMPONENT_ARCHIVE_1= ocaml-$(COMPONENT_VERSION_MAJOR)-refman-html.tar.gz
-COMPONENT_ARCHIVE_HASH_1= sha256:a9a0b94eaead064c525a62de6520b5092a0ea0467c2f03584d6fa462c9afaa7e
-COMPONENT_ARCHIVE_URL_1= https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_1=		ocaml-$(COMPONENT_VERSION_MAJOR)-refman-html.tar.gz
+COMPONENT_ARCHIVE_HASH_1=	sha256:6d97c1131a281aab57593602a19b2b4714dbf2663d513ae63abce2e5c02e8db8
+COMPONENT_ARCHIVE_URL_1=	https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_1)
 
-COMPONENT_ARCHIVE_2= ocaml-$(COMPONENT_VERSION_MAJOR)-refman.pdf
-COMPONENT_ARCHIVE_HASH_2= sha256:e6c13808ea06ef3de3e7708073fafa338e0354c5662a2bbc5847356cd354af71
-COMPONENT_ARCHIVE_URL_2= https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_2)
+COMPONENT_ARCHIVE_2=		ocaml-$(COMPONENT_VERSION_MAJOR)-refman.pdf
+COMPONENT_ARCHIVE_HASH_2=	sha256:99bfa85aefa0ee7a8be1f24a270fc5d778bb077cbc4e75282f69c479acf1e707
+COMPONENT_ARCHIVE_URL_2=	https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_2)
 
-COMPONENT_ARCHIVE_3= ocaml-$(COMPONENT_VERSION_MAJOR)-refman.info.tar.gz
-COMPONENT_ARCHIVE_HASH_3= sha256:28581838c61492ee20f5380a9cf240a692d430dfb32cbc75f611f6a29b55ccac
-COMPONENT_ARCHIVE_URL_3= https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_3)
+COMPONENT_ARCHIVE_3=		ocaml-$(COMPONENT_VERSION_MAJOR)-refman.info.tar.gz
+COMPONENT_ARCHIVE_HASH_3=	sha256:e2fca6c5267e176a5fd144a4332dd7cdb05086eab27533bdafd607bb63b51a0d
+COMPONENT_ARCHIVE_URL_3=	https://caml.inria.fr/distrib/ocaml-$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE_3)
 
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 
 COMPONENT_BUILD_ARGS += -j1
 
+LD_Z_IGNORE=
+LDFLAGS+= -lnsl -lsocket
+
 # Set up some environment variables to make things look nicer.
 # We make an 64 build and use /usr/bin/ for the commands
 UL_OCAML_PDFDOC     = $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_2)
-UL_OCAML_INCLUDES = -nostdlib -I stdlib -I utils -I parsing -I typing -I bytecomp -I asmcomp -I driver
+UL_OCAML_INCLUDES	= -nostdlib -I stdlib -I utils -I parsing -I typing -I bytecomp -I asmcomp -I driver
 UL_OCAML_ALLINCLUDES = $(UL_OCAML_INCLUDES) -I otherlibs/unix -I otherlibs/str -I otherlibs/dynlink
-UL_PROTO_BINDIR     = $(PROTO_DIR)/$(CONFIGURE_BINDIR.32)
+UL_PROTO_BINDIR     = $(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS))
 UL_PROTO_LIBDIR     = $(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
 UL_PROTO_INFODIR    = $(PROTO_DIR)/$(CONFIGURE_INFODIR)
 UL_PROTO_DATADIR    = $(PROTO_DIR)/$(CONFIGURE_PREFIX)/share
@@ -85,7 +88,7 @@ UL_PROTO_EXAM       = $(UL_PROTO_DOCDIR)/otherlibs/labltk
 # Ocaml does not use a standard configure script, but has its own handwritten
 # one.  So we must specify the arguments it accepts by hand.
 #
-CONFIGURE_OPTIONS  = --bindir $(CONFIGURE_BINDIR.32)
+CONFIGURE_OPTIONS  = --bindir $(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --libdir $(CONFIGURE_LIBDIR.$(BITS))/ocaml
 CONFIGURE_OPTIONS += --x11lib $(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --x11include $(CONFIGURE_INCLUDEDIR)
@@ -138,12 +141,12 @@ COMPONENT_TEST_TRANSFORMS  = "'/tests passed|tests skipped|tests failed|unexpect
 # ASLR should be enabled when 64-bit support is enabled
 # ASLR_MODE = $(ASLR_DISABLE)
 
-build:		$(BUILD_64)
+# Build dependencies
+REQUIRED_PACKAGES += editor/gnu-emacs
 
-install:	$(INSTALL_64)
-
-test:		  $(TEST_64)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += system/extended-system-utilities
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += editor/gnu-emacs
+REQUIRED_PACKAGES += x11/library/libx11

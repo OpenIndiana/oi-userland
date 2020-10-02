@@ -18,13 +18,13 @@ BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-plugins-main
-COMPONENT_VERSION=	0.8.16
+COMPONENT_VERSION=	0.8.18
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	main effects plugins for compiz
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c7272ea2161979cda90cced78896d60730c34c2bd578fe7b18d686b3fb490685
+	sha256:c7a427b8733e75f8f1319aca5c81f2726e2d1c4f37f368b4bf20b053bd52e5b3
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
 
 TEST_TARGET = $(NO_TESTS)
@@ -52,6 +52,7 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
 
 # Build dependencies
+REQUIRED_PACKAGES += desktop/compiz
 REQUIRED_PACKAGES += desktop/compiz/bcop
 
 # Auto-generated dependencies
@@ -62,6 +63,7 @@ REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus

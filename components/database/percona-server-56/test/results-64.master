@@ -1,3 +1,4 @@
+# try to connect with wrong '--ssl-ca' path : should fail
 auth_sec.access_credential_control pass
 auth_sec.cert_verify pass
 auth_sec.key_value_auth pass
@@ -10,8 +11,6 @@ auth_sec.secure_file_priv_error pass
 auth_sec.secure_file_priv_null pass
 auth_sec.secure_file_priv_warnings pass
 auth_sec.secure_file_priv_warnings_not_win pass
-auth_sec.server_withssl_client_withoutssl pass
-auth_sec.server_withssl_client_withssl pass
 binlog.binlog_base64_flag pass
 binlog.binlog_bug36391 pass
 binlog.binlog_checksum pass
@@ -38,6 +37,7 @@ binlog.binlog_row_mix_drop_tmp_tbl pass
 binlog.binlog_row_mix_enforce_gtid_consistency pass
 binlog.binlog_row_mix_tmp_table pass
 binlog.binlog_server_id pass
+binlog.binlog_spurious_ddl_errors pass
 binlog.binlog_sql_mode pass
 binlog.binlog_start_comment pass
 binlog.binlog_stm_ctype_cp932 pass
@@ -527,14 +527,14 @@ innodb_fts.innodb-fts-fic pass
 innodb_fts.innodb-fts-stopword pass
 innodb_fts.phrase pass
 innodb_fts.subexpr pass
-innodb_stress.innodb_stress fail
-innodb_stress.innodb_stress_blob fail
-innodb_stress.innodb_stress_blob_nocompress fail
-innodb_stress.innodb_stress_crash fail
-innodb_stress.innodb_stress_crash_blob fail
-innodb_stress.innodb_stress_crash_blob_nocompress fail
-innodb_stress.innodb_stress_crash_nocompress fail
-innodb_stress.innodb_stress_nocompress fail
+innodb_stress.innodb_stress pass
+innodb_stress.innodb_stress_blob pass
+innodb_stress.innodb_stress_blob_nocompress pass
+innodb_stress.innodb_stress_crash pass
+innodb_stress.innodb_stress_crash_blob pass
+innodb_stress.innodb_stress_crash_blob_nocompress pass
+innodb_stress.innodb_stress_crash_nocompress pass
+innodb_stress.innodb_stress_nocompress pass
 innodb_zip.innochecksum_2 pass
 innodb_zip.innodb_16k pass
 innodb_zip.innodb_bug36169 pass
@@ -573,6 +573,7 @@ innodb.events-merge-tmp-path pass
 innodb.foreign_key pass
 innodb.gap_lock_error pass
 innodb.import pass
+innodb.import_tablespace_schema_missmatch pass
 innodb.import_update_stats pass
 innodb.index_length pass
 innodb.index_tree_operation pass
@@ -669,6 +670,7 @@ innodb.innodb_stats_rename_table_if_exists pass
 innodb.innodb_stats_sample_pages pass
 innodb.innodb_stats_table_flag_auto_recalc pass
 innodb.innodb_stats_table_flag_sample_pages pass
+innodb.innodb_sys_var_valgrind pass
 innodb.innodb_timeout_rollback pass
 innodb.innodb_trx_weight pass
 innodb.innodb-alter pass
@@ -928,6 +930,7 @@ main.bug-74950 pass
 main.bug-76277 pass
 main.bug-76946 pass
 main.bug-82026 pass
+main.bug1011047 pass
 main.bug12427262 pass
 main.bug12969156 pass
 main.bug1380010 pass
@@ -936,6 +939,7 @@ main.bug1432494 pass
 main.bug17076131 pass
 main.bug33509 pass
 main.bug39022 pass
+main.bug46261 pass
 main.bug46760 pass
 main.bug47671 pass
 main.bug53588 pass
@@ -1431,6 +1435,7 @@ main.percona_enforce_storage_engine_alter_table pass
 main.percona_enhanced_options_modifiers pass
 main.percona_expand_fast_index_creation pass
 main.percona_heap_blob pass
+main.percona_heap_bug_ps1469 pass
 main.percona_heap_bug783366 pass
 main.percona_heap_bug783451 pass
 main.percona_heap_bug784464 pass
@@ -1502,6 +1507,10 @@ main.plugin_auth_sha256_2 pass
 main.plugin_auth_sha256_server_default pass
 main.plugin_auth_sha256_server_default_tls pass
 main.plugin_auth_sha256_tls pass
+main.plugin_load pass
+main.plugin_load_option pass
+main.plugin_not_embedded pass
+main.plugin-load-add-with-path pass
 main.pool_of_threads pass
 main.pool_of_threads_high_prio_tickets pass
 main.preload pass
@@ -1522,7 +1531,6 @@ main.ps_not_windows pass
 main.query_cache pass
 main.query_cache_28249 pass
 main.query_cache_disabled pass
-main.query_cache_merge pass
 main.query_cache_notembedded pass
 main.query_cache_ps_no_prot pass
 main.query_cache_size_functionality pass
@@ -1598,14 +1606,10 @@ main.ssl pass
 main.ssl_8k_key pass
 main.ssl_and_innodb pass
 main.ssl_bug75311 pass
-main.ssl_ca pass
+main.ssl_ca fail
 main.ssl_cipher pass
 main.ssl_compress pass
 main.ssl_connect pass
-main.ssl_crl pass
-main.ssl_crl_clients pass
-main.ssl_crl_clients_valid pass
-main.ssl_crl_crlpath pass
 main.ssl_ecdh pass
 main.ssl_mode pass
 main.ssl_mode_no_ssl pass
@@ -2202,7 +2206,9 @@ rpl.rpl_function_defaults pass
 rpl.rpl_general_log pass
 rpl.rpl_get_lock pass
 rpl.rpl_grant pass
+rpl.rpl_gtid_delete_memory_table_after_start_server pass
 rpl.rpl_gtid_deployment_step pass
+rpl.rpl_gtid_drop_mem_table pass
 rpl.rpl_gtid_empty_transaction pass
 rpl.rpl_gtid_failover pass
 rpl.rpl_gtid_mode pass
@@ -2269,6 +2275,7 @@ rpl.rpl_multi_update3 pass
 rpl.rpl_multi_update4 pass
 rpl.rpl_mysql_upgrade pass
 rpl.rpl_name_const pass
+rpl.rpl_no_gtid_delete_memory_table_after_start_server pass
 rpl.rpl_nondeterministic_functions pass
 rpl.rpl_optimize pass
 rpl.rpl_parallel pass
@@ -2279,6 +2286,7 @@ rpl.rpl_partition_memory pass
 rpl.rpl_partition_myisam pass
 rpl.rpl_percona_bug1092593 pass
 rpl.rpl_percona_userstat pass
+rpl.rpl_plugin_load pass
 rpl.rpl_ps pass
 rpl.rpl_rbr_to_sbr pass
 rpl.rpl_read_old_relay_log_info pass
@@ -2296,6 +2304,7 @@ rpl.rpl_report pass
 rpl.rpl_report_port pass
 rpl.rpl_reset_slave_fail pass
 rpl.rpl_rotate_logs pass
+rpl.rpl_row_image_check_for_insert_select pass
 rpl.rpl_row_reset_slave pass
 rpl.rpl_row_unsafe_funcs pass
 rpl.rpl_savepoint pass
@@ -2334,6 +2343,7 @@ rpl.rpl_stm_flsh_tbls pass
 rpl.rpl_stm_ignore pass
 rpl.rpl_stm_lcase_tblnames pass
 rpl.rpl_stm_max_relay_size pass
+rpl.rpl_stm_mix_mts_show_relaylog_events pass
 rpl.rpl_stm_mix_rollback_to_savepoint pass
 rpl.rpl_stm_mix_show_relaylog_events pass
 rpl.rpl_stm_multi_query pass

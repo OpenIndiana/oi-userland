@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fbreader
 COMPONENT_VERSION=	0.99.4
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Powerful e-book reader
 COMPONENT_PROJECT_URL=	http://www.fbreader.org/
 COMPONENT_FMRI=	desktop/fbreader
@@ -42,6 +42,7 @@ ENV += TARGET_ARCH=desktop
 ENV += UI_TYPE=qt4
 ENV += TARGET_STATUS=release
 ENV += CFLAGS="$(CFLAGS)"
+ENV += LDFLAGS="$(LDFLAGS)"
 ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH.$(BITS)):$(QT5_ROOT)/lib/pkgconfig"
 ENV += ZLSHARED=no
 

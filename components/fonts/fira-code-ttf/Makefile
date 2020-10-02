@@ -18,17 +18,17 @@ include ../../../make-rules/shared-macros.mk
 BUILD_BITS=					32
 COMPONENT_NAME=				fira-code-ttf
 COMPONENT_SUMMARY=			Monospaced font with programming ligatures
-COMPONENT_VERSION= 			2
+COMPONENT_VERSION= 			5.2
 COMPONENT_PROJECT_URL= 		https://github.com/tonsky/FiraCode
 COMPONENT_FMRI=				system/font/truetype/fira-code
 COMPONENT_CLASSIFICATION=	System/Fonts
-COMPONENT_SRC_NAME=			FiraCode
-COMPONENT_SRC=				$(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
+COMPONENT_SRC_NAME=			Fira_Code
+COMPONENT_SRC=				$(COMPONENT_SRC_NAME)_v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_URL=	\
 	https://github.com/tonsky/FiraCode/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-	sha256:60d5b1106b708cc134c521aae4e503bb1d2ec3c9bf8ad978f2c659820505d492
+	sha256:521a72be00dd22678d248e63f817c0c79c1b6f23a4fbd377eba73d30cdca5efd
 COMPONENT_LICENSE=			FiraCode License
 COMPONENT_LICENSE_FILE=		fira-code.license
 

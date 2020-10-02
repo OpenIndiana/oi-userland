@@ -34,11 +34,15 @@ import glob
 import subprocess
 import argparse
 import logging
+import json
+import multiprocessing
 
 try:
     from scandir import walk
 except ImportError:
     from os import walk
+
+from bass.component import BassComponent
 
 logger = logging.getLogger('bass-o-matic')
 
@@ -57,21 +61,21 @@ def FindComponentPaths(path, debug=False, subdir='components',
     workspace_path = os.path.join(path, subdir)
 
     if incremental:
-        cmd = ['git', 'log', '--diff-filter=AMR', '--name-only', '--pretty=format:',
+        cmd = ['git', '--no-pager', 'log', '--diff-filter=AMR', '--name-only', '--pretty=format:',
                '..'.join([begin_commit, end_commit])]
 
         proc = subprocess.Popen(cmd,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
+                                cwd=workspace_path,
                                 universal_newlines=True
                                 )
-
-        proc.wait()
+        stdout, stderr = proc.communicate()
         if debug:
             if proc.returncode != 0:
-                logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
+                logger.debug('exit: %d, %s', proc.returncode, stderr)
 
-        for line in proc.stdout:
+        for line in stdout.splitlines():
             line = line.rstrip()
             # git output might contain empty lines, so we skip them.
             if not line:
@@ -84,15 +88,16 @@ def FindComponentPaths(path, debug=False, subdir='components',
             dirname = os.path.dirname(line).rsplit(subdir + '/')[-1]
 
             if filename == 'Makefile':
-                if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')):
+                if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')) and \
+                        not os.path.isfile(os.path.join(workspace_path, dirname, 'pkg5.ignore')):
                     paths.append(dirname)
-                    
+
         # Some components are using SCM checkout as a source code download method and
         # COMPONENT_REVISION is not bumped. With this, we will never rebuild them.
         # In order to rebuild them, we will look for such components and build them
         # every run. These components are located in openindiana category and we care
         # only about that category. One exception to this rule is meta-packages/history
-        # component, which holds obsoleted components. We add it to paths manually for 
+        # component, which holds obsoleted components. We add it to paths manually for
         # that reason.
         cmd = ['git', 'grep', '-l', 'GIT_REPO *=']
 
@@ -103,12 +108,12 @@ def FindComponentPaths(path, debug=False, subdir='components',
                                 universal_newlines=True
                                 )
 
-        proc.wait()
+        stdout, stderr = proc.communicate()
         if debug:
             if proc.returncode != 0:
-                logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
+                logger.debug('exit: %d, %s', proc.returncode, stderr)
 
-        for line in proc.stdout:
+        for line in stdout.splitlines():
             line = line.rstrip()
 
             # Only 'openindiana' category.
@@ -120,7 +125,8 @@ def FindComponentPaths(path, debug=False, subdir='components',
             dirname = os.path.dirname(line)
 
             if filename == 'Makefile':
-                if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')):
+                if glob.glob(os.path.join(workspace_path, dirname, '*.p5m')) and \
+                        not os.path.isfile(os.path.join(workspace_path, dirname, 'pkg5.ignore')):
                     paths.append(os.path.dirname(line))
 
         # Add meta-packages/history only if we build the main repository, where
@@ -130,75 +136,21 @@ def FindComponentPaths(path, debug=False, subdir='components',
         # Add encumbered/meta-packages/history only if we build the encumbered repository
         if subdir is 'components/encumbered':
             paths.append('encumbered/meta-packages/history')
-                    
+
         paths = list(set(paths))
 
     else:
         for dirpath, dirnames, filenames in walk(workspace_path):
             for name in filenames:
                 if expression.match(name):
-                    if debug:
-                        logger.debug('found %s', dirpath)
-                    paths.append(dirpath)
+                    if not os.path.isfile(os.path.join( dirpath, 'pkg5.ignore')):
+                        if debug:
+                            logger.debug('found %s', dirpath)
+                        paths.append(dirpath)
                     del dirnames[:]
                     break
 
     return sorted(paths)
-
-
-class BassComponent(object):
-    def __init__(self, path=None, debug=False):
-        self.debug = debug
-        self.path = path
-        if path:
-            # get supplied packages    (cd path ; gmake print-package-names)
-            self.supplied_packages = self.run_make(path, 'print-package-names')
-
-            # get supplied paths    (cd path ; gmake print-package-paths)
-            self.supplied_paths = self.run_make(path, 'print-package-paths')
-
-            # get required paths    (cd path ; gmake print-required-paths)
-            self.required_paths = self.run_make(path, 'print-required-paths')
-
-    def required(self, component):
-        result = False
-
-        s1 = set(self.required_paths)
-        s2 = set(component.supplied_paths)
-        if s1.intersection(s2):
-            result = True
-
-        return result
-
-    def run_make(self, path, targets):
-
-        result = []
-
-        if self.debug:
-            logger.debug('Executing \'gmake %s\' in %s', targets, path)
-
-        proc = subprocess.Popen(['gmake', targets],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
-                                cwd=path,
-                                universal_newlines=True)
-        for out in proc.stdout:
-            result.append(out)
-
-        proc.wait()
-        if self.debug:
-            if proc.returncode != 0:
-                logger.debug('exit: %d, %s', proc.returncode, proc.stderr.read())
-
-        return result
-
-    def __str__(self):
-        result = 'Component:\n\tPath: %s\n' % self.path
-        result = result + '\tProvides Package(s):\n\t\t%s\n' % '\t\t'.join(self.supplied_packages)
-        result = result + '\tProvides Path(s):\n\t\t%s\n' % '\t\t'.join(self.supplied_paths)
-        result = result + '\tRequired Path(s):\n\t\t%s\n' % '\t\t'.join(self.required_paths)
-
-        return result
 
 
 def main():
@@ -206,14 +158,16 @@ def main():
 
     components = {}
 
-    COMPONENTS_ALLOWED_PATHS = ['path', 'paths', 'dir', 'dirs', 'directories']
-    COMPONENTS_ALLOWED_DEPENDENCIES = ['depend', 'dependencies']
-    COMPONENTS_ALLOWED_KEYWORDS = COMPONENTS_ALLOWED_PATHS + COMPONENTS_ALLOWED_DEPENDENCIES
+    COMPONENTS_ALLOWED_PATHS = ['paths', 'dirs']
+    COMPONENTS_ALLOWED_FMRIS = ['fmris']
+    COMPONENTS_ALLOWED_DEPENDENCIES = ['dependencies']
+    COMPONENTS_ALLOWED_KEYWORDS = COMPONENTS_ALLOWED_PATHS + COMPONENTS_ALLOWED_FMRIS + COMPONENTS_ALLOWED_DEPENDENCIES
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-w', '--workspace', default=os.getenv('WS_TOP'), help='Path to workspace')
     parser.add_argument('-l', '--components', default=None, choices=COMPONENTS_ALLOWED_KEYWORDS)
     parser.add_argument('--make', help='Makefile target to invoke')
+    parser.add_argument('--pkg5', action='store_true',help='Invoke generation of metadata')
     parser.add_argument('--subdir', default='components', help='Directory holding components')
     parser.add_argument('-d', '--debug', action='store_true', default=False)
     parser.add_argument('--begin-commit', default=os.getenv('GIT_PREVIOUS_SUCCESSFUL_COMMIT', 'HEAD~1'))
@@ -223,8 +177,9 @@ def main():
 
     workspace = args.workspace
     components_arg = args.components
-    subdir = args.subdir
     make_arg = args.make
+    pkg5_arg = args.pkg5
+    subdir = args.subdir
     begin_commit = args.begin_commit
     end_commit = args.end_commit
     debug = args.debug
@@ -236,6 +191,22 @@ def main():
     logging.basicConfig(level=log_level,
                         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',)
 
+    if make_arg:
+        proc = subprocess.Popen(['gmake', '-s'] + [make_arg])
+        rc = proc.wait()
+        sys.exit(rc)
+
+    if pkg5_arg:
+        component_path = os.getcwd().split(os.path.join(workspace, subdir))[-1].replace('/', '', 1)
+        # the component may not be built directly but as a dependency of another component
+        if os.path.isfile(os.path.join( os.getcwd(), 'pkg5.ignore')):
+            sys.exit(0)
+        component_pkg5 = os.path.join( os.getcwd(), 'pkg5')
+        if os.path.isfile(component_pkg5):
+            os.remove(component_pkg5)
+        BassComponent(FindComponentPaths(path=workspace, debug=debug, subdir=os.path.join(subdir, component_path))[0])
+        sys.exit(0)
+
     incremental = False
     if os.getenv('BASS_O_MATIC_MODE') == 'incremental':
         incremental = True
@@ -246,28 +217,42 @@ def main():
     else:
         component_paths = FindComponentPaths(path=workspace, debug=debug, subdir=subdir)
 
-    if make_arg:
-        proc = subprocess.Popen(['gmake'] + [make_arg])
-        rc = proc.wait()
-        sys.exit(rc)
-
     if components_arg:
         if components_arg in COMPONENTS_ALLOWED_PATHS:
             for path in component_paths:
                 print('{0}'.format(path))
 
+        elif components_arg in COMPONENTS_ALLOWED_FMRIS:
+            pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+            components = pool.map(BassComponent, component_paths)
+
+            for component in components:
+                for fmri in component.supplied_packages:
+                    print('{0}'.format(fmri))
+
         elif components_arg in COMPONENTS_ALLOWED_DEPENDENCIES:
-            for path in component_paths:
-                components[path] = BassComponent(path, debug)
+            dependencies = {}
 
-            for c_path in components.keys():
-                component = components[c_path]
+            pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+            components = pool.map(BassComponent, component_paths)
 
-                for d_path in components.keys():
-                    if (c_path != d_path and
-                            component.required(components[d_path])):
-                        print('{0}: {1}'.format(c_path, d_path))
+            with open(os.path.join(workspace, subdir, 'mapping.json'), "r") as f:
+                     data = json.loads(f.read())
+            component_path = {}
+            for entry in data:
+                component_path[entry['fmri']] = entry['path']
 
+            for component in components:
+                selfpath = component.path.split(os.path.join(workspace, subdir))[-1].replace('/', '', 1)
+                # Some packages from OpenSolaris only exist in binary form in the pkg repository
+                paths = set([component_path.get(i, "https://pkg.openindiana.org/hipster") for i in component.required_packages])
+                # Remove self from the set of paths it depends on
+                paths.discard(selfpath)
+                dependencies[selfpath] = sorted(list(paths))
+
+            dependencies_file = os.path.join(workspace, subdir, 'dependencies.json')
+            with open(dependencies_file, 'w') as f:
+                f.write(json.dumps(dependencies, sort_keys=True, indent=4))
         sys.exit(0)
 
     sys.exit(1)

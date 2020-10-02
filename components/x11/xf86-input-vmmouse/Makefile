@@ -27,16 +27,13 @@ COMPONENT_ARCHIVE_HASH= \
 
 include $(WS_MAKE_RULES)/common.mk
 
-HAL_CALLOUTS_DIR.32=/usr/lib/hal
-HAL_CALLOUTS_DIR.64=/usr/lib/hal/$(MACH64)
-
-CONFIGURE_BINDIR.32=/usr/lib/xorg
-CONFIGURE_BINDIR.64=/usr/lib/xorg/$(MACH64)
+CONFIGURE_BINDIR.32=$(XORG_LIBDIR)
+CONFIGURE_BINDIR.64=$(XORG_LIBDIR)
 
 CFLAGS+= -std=gnu99
 
 CONFIGURE_OPTIONS += --with-hal-bin-dir=/usr/sbin
-CONFIGURE_OPTIONS += --with-hal-callouts-dir=$(HAL_CALLOUTS_DIR.$(BITS))
+CONFIGURE_OPTIONS += --with-hal-callouts-dir=/usr/lib/hal
 CONFIGURE_OPTIONS += --with-hal-fdi-dir=/etc/hal/fdi/policy/10osvendor
 CONFIGURE_OPTIONS += --without-libudev
 CONFIGURE_OPTIONS += --with-udev-rules-dir=no

@@ -1,0 +1,287 @@
+#!/usr/bin/env python3
+
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2020 Adam Stevko
+#
+
+#
+# userland-zone - tool to manage userland template and build zone lifecycle
+#
+
+import argparse
+import errno
+import logging
+import os
+import subprocess
+
+logger = logging.getLogger("userland-zone")
+
+BUILD_ZONE_NAME = "prbuilder"
+TEMPLATE_ZONE_NAME = "-".join([BUILD_ZONE_NAME, "template"])
+ZONES_ROOT = "/zones"
+ARCHIVES_DIR = "/ws/archives"
+CODE_DIR = "/ws/code"
+DEVELOPER_PACKAGES = ["build-essential"]
+
+ETC_SYSDING_CONF = ["#!/usr/bin/ksh", "setup_timezone UTC", "setup_locale en_US.UTF-8"]
+
+
+class Zone:
+    def __init__(self, name, path=None, brand="nlipkg"):
+        self._name = name
+        self._path = path or self._get_zone_path()
+        self._brand = brand
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def state(self):
+        output = self._zoneadm(["list", "-p"], stdout=subprocess.PIPE)
+        # -:name:installed:/zones/name:22dae542-e5ce-c86a-e5c7-e34d74b696bf:nlipkg:shared
+        return output.split(":")[2]
+
+    @property
+    def is_running(self):
+        return self.state == "running"
+
+    def _zonecfg(self, args, **kwargs):
+        zonecfg_args = ["-z", self._name]
+        zonecfg_args.extend(args)
+        return execute("zonecfg", zonecfg_args, **kwargs)
+
+    def _zoneadm(self, args, **kwargs):
+        zoneadm_args = ["-z", self._name]
+        zoneadm_args.extend(args)
+        return execute("zoneadm", zoneadm_args, **kwargs)
+
+    def _pkg(self, args, **kwargs):
+        return execute("pkg", args, **kwargs)
+
+    def _get_zone_path(self):
+        output = self._zoneadm(["list", "-p"], stdout=subprocess.PIPE, check=False)
+        # -:name:installed:/zones/name:22dae542-e5ce-c86a-e5c7-e34d74b696bf:nlipkg:shared
+        return output.split(":")[3]
+
+    def create(self, extra_args=None):
+        if not self._path:
+            raise ValueError("Zone path is required when creating the zone")
+
+        zonecfg_args = [
+            "create -b",
+            "set zonepath={path}".format(path=self._path),
+            "set zonename={name}".format(name=self._name),
+            "set brand={brand}".format(brand=self._brand),
+        ]
+
+        if extra_args:
+            zonecfg_args.extend(extra_args)
+        zonecfg_args.append("commit")
+
+        zonecfg_args = [";".join(zonecfg_args)]
+        return self._zonecfg(zonecfg_args)
+
+    def delete(self):
+        return self._zonecfg(["delete", "-F"])
+
+    def install(self):
+        return self._zoneadm(["install", "-e"] + DEVELOPER_PACKAGES)
+
+    def uninstall(self):
+        return self._zoneadm(["uninstall", "-F"])
+
+    def halt(self):
+        return self._zoneadm(["halt"])
+
+    def boot(self):
+        return self._zoneadm(["boot"])
+
+    def clone(self, source_zone):
+        return self._zoneadm(["clone", source_zone.name])
+
+    def update(self):
+        zone_root_path = os.path.join(self._path, "root")
+        return self._pkg(["-R", zone_root_path, "update"])
+
+    def configure(self, sysding_lines=ETC_SYSDING_CONF):
+        sysding_conf = os.path.join(self._path, "root", "etc", "sysding.conf")
+        with open(sysding_conf, "w") as f:
+            f.write("\n".join(sysding_lines))
+
+
+def execute(cmd, args, **kwargs):
+    ret, result = None, None
+
+    if "check" not in kwargs:
+        kwargs["check"] = True
+
+    try:
+        logger.debug('Executing "%s"', " ".join([cmd] + args))
+        result = subprocess.run([cmd] + args, **kwargs)
+    except subprocess.CalledProcessError as e:
+        logger.error(
+            'Command "%s" exited with %s', " ".join([cmd] + args), e.returncode
+        )
+    except OSError as e:
+        if e.errno == errno.ENOENT:
+            raise ValueError("{} cannot be found".format(cmd))
+
+    if result and result.stdout:
+        ret = result.stdout.decode()
+        ret = ret.rstrip()
+
+    return ret
+
+
+def parse_arguments():
+    def dir_path(path):
+        if os.path.exists(path) and os.path.isdir(path):
+            return path
+        raise argparse.ArgumentTypeError("{} is not a valid path".format(path))
+
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
+
+    # create-template
+    ct_parser = subparsers.add_parser(
+        "create-template", help="Create template zone for userland builds"
+    )
+    ct_parser.add_argument(
+        "-p",
+        help="Zone path",
+        default=os.path.join(ZONES_ROOT, TEMPLATE_ZONE_NAME),
+        dest="zone_path",
+    )
+
+    # update-template
+    _ = subparsers.add_parser(
+        "update-template", help="Update template zone for userland builds"
+    )
+
+    # destroy-template
+    _ = subparsers.add_parser(
+        "destroy-template", help="Destroy template zone for userland builds"
+    )
+
+    # spawn-zone
+    sz_parser = subparsers.add_parser(
+        "spawn-zone", help="Spawn build zone for userland builds"
+    )
+    sz_parser.add_argument(
+        "--id", required=True, help="Zone identifier that identifies build zone"
+    )
+    sz_parser.add_argument(
+        "--archive-dir",
+        default=ARCHIVES_DIR,
+        type=dir_path,
+        help="Path to userland archives",
+    )
+    sz_parser.add_argument(
+        "--code-dir",
+        default=CODE_DIR,
+        type=dir_path,
+        help="Path to userland code repository checkoutt",
+    )
+
+    # destroy-zone
+    dz_parser = subparsers.add_parser("destroy-zone", help="Destroy build zone")
+    dz_parser.add_argument(
+        "--id", required=True, help="Zone identifier that identifies build zone"
+    )
+
+    args = parser.parse_args()
+
+    if not args.subcommand:
+        parser.print_help()
+        exit(1)
+
+    return args
+
+
+def create_template(zone_path, zone_name=TEMPLATE_ZONE_NAME):
+    zone = Zone(path=zone_path, name=zone_name)
+    zone.create()
+    zone.install()
+    zone.configure()
+
+
+def destroy_zone(zone_name=TEMPLATE_ZONE_NAME):
+    zone = Zone(path=os.path.join(ZONES_ROOT, zone_name), name=zone_name)
+
+    if zone.is_running:
+        zone.halt()
+    zone.uninstall()
+    zone.delete()
+
+
+def spawn_zone(id, archive_dir=ARCHIVES_DIR, code_dir=CODE_DIR):
+    name = "{}-{}".format(BUILD_ZONE_NAME, id)
+    zone = Zone(name=name, path=os.path.join(ZONES_ROOT, name))
+
+    template_zone = Zone(name=TEMPLATE_ZONE_NAME)
+
+    # To avoid zonecfg failure, we will check for existence of archive_dir and code_dir
+    if not os.path.exists(archive_dir):
+        raise ValueError(
+            "Userland archives dir {} has to exist in the global zone before we can clone the build zone!"
+        )
+
+    if not os.path.exists(code_dir):
+        raise ValueError(
+            "Userland archives dir {} has to exist in the global zone before we can clone the build zone!"
+        )
+
+    extra_args = [
+        "add fs",
+        "set dir = {}".format(ARCHIVES_DIR),
+        "set special = {}".format(archive_dir),
+        "set type  = lofs",
+        "add options [rw,nodevices]",
+        "end",
+        "add fs",
+        "set dir = {}".format(CODE_DIR),
+        "set special = {}".format(code_dir),
+        "set type  = lofs",
+        "add options [rw,nodevices]",
+        "end",
+    ]
+    zone.create(extra_args=extra_args)
+    zone.clone(template_zone)
+    zone.boot()
+
+
+def update_template():
+    zone = Zone(name=TEMPLATE_ZONE_NAME)
+    zone.update()
+
+
+def main():
+    args = parse_arguments()
+
+    if args.subcommand == "create-template":
+        create_template(zone_path=args.zone_path)
+    elif args.subcommand == "destroy-template":
+        destroy_zone(zone_name=TEMPLATE_ZONE_NAME)
+    elif args.subcommand == "update-template":
+        update_template()
+    elif args.subcommand == "spawn-zone":
+        spawn_zone(id=args.id, archive_dir=args.archive_dir, code_dir=args.code_dir)
+    elif args.subcommand == "destroy-zone":
+        zone_name = "{}-{}".format(BUILD_ZONE_NAME, args.id)
+        destroy_zone(zone_name=zone_name)
+
+
+if __name__ == "__main__":
+    main()

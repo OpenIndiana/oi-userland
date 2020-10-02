@@ -1,0 +1,55 @@
+From fbf71ec25a5986d9003ac16ee9e23675feac9053 Mon Sep 17 00:00:00 2001
+From: Paul Smith <psmith@gnu.org>
+Date: Sun, 16 Apr 2017 15:03:48 -0400
+Subject: [PATCH] * configure.ac: [SV 50648] Detect Guile 2.2 packages.
+
+---
+ configure.ac | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 1187ad4..a78fb93 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -160,22 +160,28 @@ AC_FUNC_ALLOCA
+ AC_FUNC_CLOSEDIR_VOID
+ 
+ # See if the user wants to add (or not) GNU Guile support
+-PKG_PROG_PKG_CONFIG
+ AC_ARG_WITH([guile], [AS_HELP_STRING([--with-guile],
+             [Support GNU Guile for embedded scripting])])
+ 
+-# For some strange reason, at least on Ubuntu, each version of Guile
+-# comes with it's own PC file so we have to specify them as individual
+-# packages.  Ugh.
++# Annoyingly, each version of Guile comes with it's own PC file so we have to
++# specify them as individual packages.  Ugh.
++PKG_PROG_PKG_CONFIG
++
+ AS_IF([test "x$with_guile" != xno],
+-[ PKG_CHECK_MODULES([GUILE], [guile-2.0], [have_guile=yes],
+-  [PKG_CHECK_MODULES([GUILE], [guile-1.8], [have_guile=yes],
+-    [have_guile=no])])
++[ guile_versions="2.2 2.0 1.8"
++  guile_version=no
++  have_guile=no
++  AC_MSG_CHECKING([for GNU Guile])
++  for v in $guile_versions; do
++    PKG_CHECK_EXISTS([guile-$v], [guile_version=$v; have_guile=yes; break], [])
++  done
++  AC_MSG_RESULT([$guile_version])
++  if test "$have_guile" = yes; then
++    PKG_CHECK_MODULES(GUILE, [guile-$guile_version])
++    AC_DEFINE([HAVE_GUILE], [1], [Embed GNU Guile support])
++  fi
+ ])
+ 
+-AS_IF([test "$have_guile" = yes],
+-      [AC_DEFINE([HAVE_GUILE], [1], [Embed GNU Guile support])])
+-
+ AM_CONDITIONAL([HAVE_GUILE], [test "$have_guile" = yes])
+ 
+ AC_FUNC_GETLOADAVG
+-- 
+2.21.0.rc1
+

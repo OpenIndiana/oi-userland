@@ -1,0 +1,31 @@
+#
+# patch explains configure.in where to find struct statfs
+# on Solaris (and similar OSes). Patch has been submitted
+# to upstream:
+#	https://github.com/proftpd/proftpd/pull/705
+#
+
+diff --git a/configure.in b/configure.in
+index 16832b979..a7ccd93e7 100644
+--- a/configure.in
++++ b/configure.in
+@@ -2056,6 +2050,9 @@ AC_CHECK_MEMBER(struct statfs.f_fstypename,
+     #if HAVE_SYS_VFS_H
+     # include <sys/vfs.h>
+     #endif
++    #if HAVE_SYS_STATFS_H
++    # include <sys/statfs.h>
++    #endif
+   ])
+ 
+ AC_CHECK_MEMBER(struct statfs.f_type,
+@@ -2073,6 +2070,9 @@ AC_CHECK_MEMBER(struct statfs.f_type,
+     #if HAVE_SYS_VFS_H
+     # include <sys/vfs.h>
+     #endif
++    #if HAVE_SYS_STATFS_H
++    # include <sys/statfs.h>
++    #endif
+   ])
+ 
+ dnl Largefile support

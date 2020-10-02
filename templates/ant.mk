@@ -12,6 +12,8 @@
 # Copyright 2020 <contributor name>
 #
 
+BUILD_BITS=32
+BUILD_STYLE=ant
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=
@@ -26,12 +28,5 @@ COMPONENT_ARCHIVE_URL=
 COMPONENT_ARCHIVE_HASH=
 COMPONENT_LICENSE=
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ant.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)

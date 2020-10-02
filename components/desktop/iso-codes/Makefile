@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iso-codes
 COMPONENT_VERSION=	4.2
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		data/iso-codes
 COMPONENT_SUMMARY=	ISO code lists and translations
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,6 +50,6 @@ install:	$(INSTALL_32)
 test:		$(TEST_32)
 
 # bin/xml_from_json.py script requires a Python 3 interpret
-REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES+= $(PYTHON3_RUNTIME_PKG)
 
 # Auto-generated dependencies

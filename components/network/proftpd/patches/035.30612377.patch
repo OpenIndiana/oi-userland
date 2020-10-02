@@ -1,0 +1,114 @@
+# change makes proftpd to comply with RFC 640/RFC 959.
+#  
+# RFC 640 defines format of multi-line responses. All the foundation
+# to produce proper multi-line error codes exists already in proftpd
+# code. The change allows proftpd to do the right thing.
+#
+# Patch has been submitted to upstream
+#	https://github.com/proftpd/proftpd/pull/874
+#
+
+--- a/modules/mod_facts.c
++++ b/modules/mod_facts.c
+@@ -1464,7 +1464,7 @@ MODRET facts_mlsd(cmd_rec *cmd) {
+ 
+     pr_fsio_closedir(dirh);
+ 
+-    pr_response_add_err(R_550, "%s: %s", (char *) cmd->argv[0],
++    pr_response_add_err(R_425, "%s: %s", (char *) cmd->argv[0],
+       strerror(xerrno));
+ 
+     pr_cmd_set_errno(cmd, xerrno);
+--- a/modules/mod_ls.c
++++ b/modules/mod_ls.c
+@@ -1960,7 +1960,7 @@ static int dolist(cmd_rec *cmd, const char *opt, const char *resp_code,
+       if (pr_data_open(NULL, "file list", PR_NETIO_IO_WR, 0) < 0) {
+         int xerrno = errno;
+ 
+-        pr_response_add_err(R_450, "%s: %s", (char *) cmd->argv[0],
++        pr_response_add_err(R_425, "%s: %s", (char *) cmd->argv[0],
+           strerror(xerrno));
+ 
+         pr_cmd_set_errno(cmd, xerrno);
+@@ -2205,7 +2205,7 @@ static int dolist(cmd_rec *cmd, const char *opt, const char *resp_code,
+       if (pr_data_open(NULL, "file list", PR_NETIO_IO_WR, 0) < 0) {
+         int xerrno = errno;
+ 
+-        pr_response_add_err(R_450, "%s: %s", (char *) cmd->argv[0], 
++        pr_response_add_err(R_425, "%s: %s", (char *) cmd->argv[0],
+           strerror(xerrno));
+ 
+         pr_cmd_set_errno(cmd, xerrno);
+@@ -3106,7 +3106,7 @@ MODRET ls_nlst(cmd_rec *cmd) {
+             if (pr_data_open(NULL, "file list", PR_NETIO_IO_WR, 0) < 0) {
+               int xerrno = errno;
+ 
+-              pr_response_add_err(R_450, "%s: %s", (char *) cmd->argv[0], 
++              pr_response_add_err(R_425, "%s: %s", (char *) cmd->argv[0],
+                 strerror(xerrno));
+ 
+               pr_cmd_set_errno(cmd, xerrno);
+@@ -3133,7 +3133,7 @@ MODRET ls_nlst(cmd_rec *cmd) {
+           if (pr_data_open(NULL, "file list", PR_NETIO_IO_WR, 0) < 0) {
+             int xerrno = errno;
+ 
+-            pr_response_add_err(R_450, "%s: %s", (char *) cmd->argv[0],
++            pr_response_add_err(R_425, "%s: %s", (char *) cmd->argv[0],
+               strerror(xerrno));
+ 
+             pr_cmd_set_errno(cmd, xerrno);
+@@ -3162,7 +3162,7 @@ MODRET ls_nlst(cmd_rec *cmd) {
+     if (pr_data_open(NULL, "file list", PR_NETIO_IO_WR, 0) < 0) {
+       int xerrno = errno;
+ 
+-      pr_response_add_err(R_450, "%s: %s", (char *) cmd->argv[0],
++      pr_response_add_err(R_425, "%s: %s", (char *) cmd->argv[0],
+         strerror(xerrno));
+ 
+       pr_cmd_set_errno(cmd, xerrno);
+@@ -3255,7 +3255,7 @@ MODRET ls_nlst(cmd_rec *cmd) {
+         if (pr_data_open(NULL, "file list", PR_NETIO_IO_WR, 0) < 0) {
+           xerrno = errno;
+ 
+-          pr_response_add_err(R_450, "%s: %s", (char *) cmd->argv[0],
++          pr_response_add_err(R_425, "%s: %s", (char *) cmd->argv[0],
+             strerror(xerrno));
+ 
+           pr_cmd_set_errno(cmd, xerrno);
+@@ -3292,7 +3292,7 @@ MODRET ls_nlst(cmd_rec *cmd) {
+             if (pr_data_open(NULL, "file list", PR_NETIO_IO_WR, 0) < 0) {
+               xerrno = errno;
+ 
+-              pr_response_add_err(R_450, "%s: %s", (char *) cmd->argv[0],
++              pr_response_add_err(R_425, "%s: %s", (char *) cmd->argv[0],
+                 strerror(xerrno));
+ 
+               pr_cmd_set_errno(cmd, xerrno);
+@@ -3333,7 +3333,7 @@ MODRET ls_nlst(cmd_rec *cmd) {
+         if (pr_data_open(NULL, "file list", PR_NETIO_IO_WR, 0) < 0) {
+           xerrno = errno;
+ 
+-          pr_response_add_err(R_450, "%s: %s", (char *) cmd->argv[0],
++          pr_response_add_err(R_425, "%s: %s", (char *) cmd->argv[0],
+             strerror(xerrno));
+ 
+           pr_cmd_set_errno(cmd, xerrno);
+@@ -3358,7 +3358,7 @@ MODRET ls_nlst(cmd_rec *cmd) {
+       if (pr_data_open(NULL, "file list", PR_NETIO_IO_WR, 0) < 0) {
+         int xerrno = errno;
+ 
+-        pr_response_add_err(R_450, "%s: %s", (char *) cmd->argv[0],
++        pr_response_add_err(R_425, "%s: %s", (char *) cmd->argv[0],
+           strerror(xerrno));
+ 
+         pr_cmd_set_errno(cmd, xerrno);
+@@ -3373,6 +3373,9 @@ MODRET ls_nlst(cmd_rec *cmd) {
+       if (pr_data_open(NULL, "file list", PR_NETIO_IO_WR, 0) < 0) {
+         int xerrno = errno;
+ 
++        pr_response_add_err(R_425, "%s: %s", (char *) cmd->argv[0],
++          strerror(xerrno));
++
+         pr_cmd_set_errno(cmd, xerrno);
+         errno = xerrno;
+         return PR_ERROR(cmd);

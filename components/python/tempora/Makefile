@@ -12,10 +12,13 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tempora
 COMPONENT_VERSION=	1.13
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	'Objects and routines pertaining to date and time'
 COMPONENT_PROJECT_URL=	https://pypi.org/project/tempora/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,11 +31,10 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET:        $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
 COMPONENT_INSTALL_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
@@ -41,22 +43,13 @@ COMPONENT_POST_INSTALL_ACTION += \
         (cd $(PROTO_DIR)/usr/bin && \
           $(MV) -f calc-prorate calc-prorate-$(PYTHON_VERSION))
 
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:           $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/python/setuptools_scm-27
-REQUIRED_PACKAGES += library/python/setuptools_scm-34
 REQUIRED_PACKAGES += library/python/setuptools_scm-35
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-34
 REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += runtime/python-35

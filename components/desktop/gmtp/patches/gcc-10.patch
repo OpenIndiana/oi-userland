@@ -1,0 +1,439 @@
+--- gmtp-1.3.11/src/prefs.h.orig	2020-05-23 13:31:03.302349967 +0000
++++ gmtp-1.3.11/src/prefs.h	2020-05-23 13:31:33.568830812 +0000
+@@ -61,7 +61,7 @@
+         gboolean retain_timestamp;
+     } Preferences_Struct;
+ 
+-    Preferences_Struct Preferences;
++    extern Preferences_Struct Preferences;
+ 
+     /**
+      * Set some default values for the application prefences.
+@@ -80,7 +80,7 @@
+     gboolean savePreferences();
+ 
+ #if HAVE_GTK3 == 0
+-    GConfClient *gconfconnect;
++    extern GConfClient *gconfconnect;
+     /**
+      * The callback function for GConf.
+      * @param client
+@@ -90,7 +90,7 @@
+      */
+     void gconf_callback_func(GConfClient *client, guint cnxn_id, GConfEntry *entry, gpointer user_data);
+ #else
+-    GSettings *gsettings_connect;
++    extern GSettings *gsettings_connect;
+     /**
+      * The callback for the GSettings database.
+      */
+--- gmtp-1.3.11/src/interface.h.orig	2020-05-23 12:48:23.976471657 +0000
++++ gmtp-1.3.11/src/interface.h	2020-05-23 13:39:42.338036228 +0000
+@@ -31,7 +31,7 @@
+ 
+     // Main Window List
+ 
+-    enum fileListID {
++    typedef enum fileListID {
+         COL_FILENAME = 0,
+         COL_FILENAME_HIDDEN,
+         COL_FILENAME_ACTUAL,
+@@ -54,7 +54,7 @@
+         NUM_COLUMNS
+     };
+ 
+-    enum folderListID {
++    typedef enum folderListID {
+         COL_FOL_NAME = 0,
+         COL_FOL_NAME_HIDDEN,
+         COL_FOL_ID,
+@@ -64,7 +64,7 @@
+ 
+     // Playlist windows lists.
+ 
+-    enum fileTrackID {
++    typedef enum fileTrackID {
+         COL_ARTIST = 0,
+         COL_ALBUM,
+         COL_TRACKID,
+@@ -73,7 +73,7 @@
+         NUM_TCOLUMNS
+     };
+ 
+-    enum filePlaylistID {
++    typedef enum filePlaylistID {
+         COL_PL_ORDER_NUM = 0,
+         COL_PL_ARTIST,
+         COL_PL_ALBUM,
+@@ -99,7 +99,7 @@
+ 
+     // File operation enums
+ 
+-    enum MTP_OVERWRITEOP {
++    typedef enum MTP_OVERWRITEOP {
+         MTP_ASK,
+         MTP_SKIP,
+         MTP_SKIP_ALL,
+@@ -108,12 +108,12 @@
+     };
+ 
+     // Main Window widgets
+-    GtkListStore *fileList;
+-    GtkTreeStore *folderList;
+-    GtkTreeSelection *fileSelection;
+-    GtkTreeSelection *folderSelection;
+-    gulong folderSelectHandler;
+-    gulong fileSelectHandler;
++    extern GtkListStore *fileList;
++    extern GtkTreeStore *folderList;
++    extern GtkTreeSelection *fileSelection;
++    extern GtkTreeSelection *folderSelection;
++    extern gulong folderSelectHandler;
++    extern gulong fileSelectHandler;
+ 
+ 
+     /**
+@@ -252,22 +252,22 @@
+     void __fileMove(GtkTreeRowReference *Row);
+ 
+     // Flags for overwriting files of host PC and device.
+-    gint fileoverwriteop;
++    extern gint fileoverwriteop;
+     // Flag to allow overwrite of files on device.
+-    gint deviceoverwriteop;
++    extern gint deviceoverwriteop;
+ 
+     // Find options and variables.
+-    gboolean inFindMode;
+-    GSList *searchList;
++    extern gboolean inFindMode;
++    extern GSList *searchList;
+ 
+     /**
+      * Destroys a file listing object.
+      * @param file - pointer to the FileListStruc object.
+      */
+     void g_free_search(FileListStruc *file);
+-    GtkWidget *FindToolbar_entry_FindText;
+-    GtkWidget *FindToolbar_checkbutton_FindFiles;
+-    GtkWidget *FindToolbar_checkbutton_TrackInformation;
++    extern GtkWidget *FindToolbar_entry_FindText;
++    extern GtkWidget *FindToolbar_checkbutton_FindFiles;
++    extern GtkWidget *FindToolbar_checkbutton_TrackInformation;
+ 
+     /**
+      * Add an individual file to the device.
+@@ -329,77 +329,77 @@
+     int32_t displayAddTrackPlaylistDialog(gboolean showNew /* = TRUE */);
+ 
+     // Widget for find toolbar
+-    GtkWidget *findToolbar;
++    extern GtkWidget *findToolbar;
+ 
+     // Parent container for the main toolbar.
+-    GtkWidget *handlebox1;
+-    GtkWidget *toolbarMain;
++    extern GtkWidget *handlebox1;
++    extern GtkWidget *toolbarMain;
+ 
+     // Widgets for menu items;
+-    GtkWidget *fileConnect;
+-    GtkWidget *fileAdd;
+-    GtkWidget *fileDownload;
+-    GtkWidget *fileRemove;
+-    GtkWidget *fileRename;
+-    GtkWidget *fileMove;
+-    GtkWidget *fileNewFolder;
+-    GtkWidget *fileRemoveFolder;
+-    GtkWidget *fileRescan;
+-    GtkWidget *editDeviceName;
+-    GtkWidget *editFormatDevice;
+-    GtkWidget *editAddAlbumArt;
+-    GtkWidget *editFind;
+-    GtkWidget *editSelectAll;
+-    GtkWidget *contextMenu;
+-    GtkWidget *contextMenuColumn;
+-    GtkWidget *contestMenuFolder;
+-    GtkWidget* cfileAdd;
+-    GtkWidget* cfileNewFolder;
+-    GtkWidget *toolbuttonAddFile;
++    extern GtkWidget *fileConnect;
++    extern GtkWidget *fileAdd;
++    extern GtkWidget *fileDownload;
++    extern GtkWidget *fileRemove;
++    extern GtkWidget *fileRename;
++    extern GtkWidget *fileMove;
++    extern GtkWidget *fileNewFolder;
++    extern GtkWidget *fileRemoveFolder;
++    extern GtkWidget *fileRescan;
++    extern GtkWidget *editDeviceName;
++    extern GtkWidget *editFormatDevice;
++    extern GtkWidget *editAddAlbumArt;
++    extern GtkWidget *editFind;
++    extern GtkWidget *editSelectAll;
++    extern GtkWidget *contextMenu;
++    extern GtkWidget *contextMenuColumn;
++    extern GtkWidget *contestMenuFolder;
++    extern GtkWidget* cfileAdd;
++    extern GtkWidget* cfileNewFolder;
++    extern GtkWidget *toolbuttonAddFile;
+ #if HAVE_GTK3 == 0
+-    GtkTooltips *tooltipsToolbar;
++    extern GtkTooltips *tooltipsToolbar;
+ #endif
+ 
+     // Columns in main file view;
+-    GtkTreeViewColumn *column_Size;
+-    GtkTreeViewColumn *column_Type;
+-    GtkTreeViewColumn *column_Track_Number;
+-    GtkTreeViewColumn *column_Title;
+-    GtkTreeViewColumn *column_Artist;
+-    GtkTreeViewColumn *column_Album;
+-    GtkTreeViewColumn *column_Year;
+-    GtkTreeViewColumn *column_Genre;
+-    GtkTreeViewColumn *column_Duration;
+-    GtkTreeViewColumn *column_Location;
++    extern GtkTreeViewColumn *column_Size;
++    extern GtkTreeViewColumn *column_Type;
++    extern GtkTreeViewColumn *column_Track_Number;
++    extern GtkTreeViewColumn *column_Title;
++    extern GtkTreeViewColumn *column_Artist;
++    extern GtkTreeViewColumn *column_Album;
++    extern GtkTreeViewColumn *column_Year;
++    extern GtkTreeViewColumn *column_Genre;
++    extern GtkTreeViewColumn *column_Duration;
++    extern GtkTreeViewColumn *column_Location;
+ 
+     // Main menu widgets
+-    GtkWidget *menu_view_filesize;
+-    GtkWidget *menu_view_filetype;
+-    GtkWidget *menu_view_track_number;
+-    GtkWidget *menu_view_title;
+-    GtkWidget *menu_view_artist;
+-    GtkWidget *menu_view_album;
+-    GtkWidget *menu_view_year;
+-    GtkWidget *menu_view_genre;
+-    GtkWidget *menu_view_duration;
+-    GtkWidget *menu_view_folders;
+-    GtkWidget *menu_view_toolbar;
++    extern GtkWidget *menu_view_filesize;
++    extern GtkWidget *menu_view_filetype;
++    extern GtkWidget *menu_view_track_number;
++    extern GtkWidget *menu_view_title;
++    extern GtkWidget *menu_view_artist;
++    extern GtkWidget *menu_view_album;
++    extern GtkWidget *menu_view_year;
++    extern GtkWidget *menu_view_genre;
++    extern GtkWidget *menu_view_duration;
++    extern GtkWidget *menu_view_folders;
++    extern GtkWidget *menu_view_toolbar;
+ 
+     // Column view context menu;
+-    GtkWidget* cViewSize;
+-    GtkWidget* cViewType;
+-    GtkWidget* cViewTrackName;
+-    GtkWidget* cViewTrackNumber;
+-    GtkWidget* cViewArtist;
+-    GtkWidget* cViewAlbum;
+-    GtkWidget* cViewYear;
+-    GtkWidget* cViewGenre;
+-    GtkWidget* cViewDuration;
++    extern GtkWidget* cViewSize;
++    extern GtkWidget* cViewType;
++    extern GtkWidget* cViewTrackName;
++    extern GtkWidget* cViewTrackNumber;
++    extern GtkWidget* cViewArtist;
++    extern GtkWidget* cViewAlbum;
++    extern GtkWidget* cViewYear;
++    extern GtkWidget* cViewGenre;
++    extern GtkWidget* cViewDuration;
+ 
+     // Combobox used in AddTrackPlaylist feature.
+-    GtkWidget *combobox_AddTrackPlaylist;
++    extern GtkWidget *combobox_AddTrackPlaylist;
+ 
+-    int64_t fileMoveTargetFolder;
++    extern int64_t fileMoveTargetFolder;
+ 
+ #ifdef  __cplusplus
+ }
+--- gmtp-1.3.11/src/main.h.orig	2020-05-23 12:53:30.377481914 +0000
++++ gmtp-1.3.11/src/main.h	2020-05-23 12:52:54.750425545 +0000
+@@ -68,46 +68,46 @@
+     } Device_Struct;
+ 
+     // Main Window Widgets.
+-    GtkWidget *windowMain;
+-    GtkWidget *scrolledwindowMain;
++    extern GtkWidget *windowMain;
++    extern GtkWidget *scrolledwindowMain;
+ 
+-    GtkWidget *windowStatusBar;
+-    GtkWidget *toolbuttonConnect;
+-    GtkWidget *treeviewFiles;
+-    GtkWidget *treeviewFolders;
++    extern GtkWidget *windowStatusBar;
++    extern GtkWidget *toolbuttonConnect;
++    extern GtkWidget *treeviewFiles;
++    extern GtkWidget *treeviewFolders;
+     // Folder view;
+-    GtkWidget *scrolledwindowFolders;
+-    GtkTreeSelection *folderSelection;
++    extern GtkWidget *scrolledwindowFolders;
++    extern GtkTreeSelection *folderSelection;
+ 
+     // Device information struct
+-    Device_Struct DeviceMgr;
++    extern Device_Struct DeviceMgr;
+ 
+     // File/Folder/Track/Playlist pointers
+-    LIBMTP_file_t *deviceFiles;
+-    LIBMTP_folder_t *deviceFolders;
+-    LIBMTP_track_t *deviceTracks;
+-    LIBMTP_playlist_t *devicePlayLists;
+-    uint32_t currentFolderID; // This is the ID of the current folder....
+-    int32_t addTrackPlaylistID;
++    extern LIBMTP_file_t *deviceFiles;
++    extern LIBMTP_folder_t *deviceFolders;
++    extern LIBMTP_track_t *deviceTracks;
++    extern LIBMTP_playlist_t *devicePlayLists;
++    extern uint32_t currentFolderID; // This is the ID of the current folder....
++    extern int32_t addTrackPlaylistID;
+ 
+-    GQueue *stackFolderIDs;
+-    GQueue *stackFolderNames;
++    extern GQueue *stackFolderIDs;
++    extern GQueue *stackFolderNames;
+ 
+     // Icon file locations.
+-    gchar *file_logo_png;
+-    gchar *file_icon48_png;
+-    gchar *file_icon16_png;
+-    gchar *file_about_png;
+-    gchar *file_format_png;
++    extern gchar *file_logo_png;
++    extern gchar *file_icon48_png;
++    extern gchar *file_icon16_png;
++    extern gchar *file_about_png;
++    extern gchar *file_format_png;
+     // File view Icons
+-    gchar *file_audio_png;
+-    gchar *file_video_png;
+-    gchar *file_playlist_png;
+-    gchar *file_album_png;
+-    gchar *file_textfile_png;
+-    gchar *file_generic_png;
+-    gchar *file_folder_png;
+-    gchar *file_image_png;
++    extern gchar *file_audio_png;
++    extern gchar *file_video_png;
++    extern gchar *file_playlist_png;
++    extern gchar *file_album_png;
++    extern gchar *file_textfile_png;
++    extern gchar *file_generic_png;
++    extern gchar *file_folder_png;
++    extern gchar *file_image_png;
+ 
+     /**
+      * setFilePaths - set paths for image used within gMTP
+--- gmtp-1.3.11/src/preferences.h.orig	2020-05-23 12:45:45.248603701 +0000
++++ gmtp-1.3.11/src/preferences.h	2020-05-23 12:46:26.064184414 +0000
+@@ -28,22 +28,22 @@
+ #include <gtk/gtk.h>
+ 
+     // Main preferences dialog if present.
+-    GtkWidget *windowPrefsDialog;
++    extern GtkWidget *windowPrefsDialog;
+ 
+     // Widgets for preferences buttons;
+-    GtkWidget *comboboxToolbarStyle;
+-    GtkWidget *checkbuttonDeviceConnect;
+-    GtkWidget *entryDownloadPath;
+-    GtkWidget *entryUploadPath;
+-    GtkWidget *checkbuttonDownloadPath;
+-    GtkWidget *checkbuttonConfirmFileOp;
+-    GtkWidget *checkbuttonConfirmOverWriteFileOp;
+-    GtkWidget *checkbuttonAutoAddTrackPlaylist;
+-    GtkWidget *checkbuttonIgnorePathInPlaylist;
+-    GtkWidget *checkbuttonSuppressAlbumErrors;
+-    GtkWidget *checkbuttonAltAccessMethod;
+-    GtkWidget *checkbuttonAllMediaAsFiles;
+-    GtkWidget *checkbuttonRetainTimeStamp;
++    extern GtkWidget *comboboxToolbarStyle;
++    extern GtkWidget *checkbuttonDeviceConnect;
++    extern GtkWidget *entryDownloadPath;
++    extern GtkWidget *entryUploadPath;
++    extern GtkWidget *checkbuttonDownloadPath;
++    extern GtkWidget *checkbuttonConfirmFileOp;
++    extern GtkWidget *checkbuttonConfirmOverWriteFileOp;
++    extern GtkWidget *checkbuttonAutoAddTrackPlaylist;
++    extern GtkWidget *checkbuttonIgnorePathInPlaylist;
++    extern GtkWidget *checkbuttonSuppressAlbumErrors;
++    extern GtkWidget *checkbuttonAltAccessMethod;
++    extern GtkWidget *checkbuttonAllMediaAsFiles;
++    extern GtkWidget *checkbuttonRetainTimeStamp;
+ 
+     /**
+      * Callback to show the Preferences Dialog Box.
+--- gmtp-1.3.11/src/progress.h.orig	2020-05-23 13:40:23.771502904 +0000
++++ gmtp-1.3.11/src/progress.h	2020-05-23 13:40:36.247552495 +0000
+@@ -27,7 +27,7 @@
+ #include <gtk/gtk.h>
+ #include <stdint.h>
+ 
+-    gboolean progressDialog_killed;
++    extern gboolean progressDialog_killed;
+ 
+     /**
+      * Create a Upload/Download Progress Window.
+--- gmtp-1.3.11/src/main.c.orig	2020-05-23 13:46:27.585049523 +0000
++++ gmtp-1.3.11/src/main.c	2020-05-23 13:47:22.158053704 +0000
+@@ -26,7 +26,7 @@
+ #include "mtp.h"
+ 
+ // Global Widgets needed by various functions.
+-GtkWidget *windowMain;
++extern GtkWidget *windowMain; // in interface.c
+ GtkWidget *windowStatusBar;
+ GtkWidget *toolbuttonConnect;
+ GtkWidget *treeviewFiles;
+--- gmtp-1.3.11/src/mtp.h.orig	2020-05-23 13:34:13.554291310 +0000
++++ gmtp-1.3.11/src/mtp.h	2020-05-23 13:38:29.901314327 +0000
+@@ -26,7 +26,7 @@
+ #include <glib.h>
+ #include <libmtp.h>
+ 
+-    enum MTP_ERROR {
++    typedef enum MTP_ERROR {
+         MTP_SUCCESS,
+         MTP_NO_DEVICE,
+         MTP_GENERAL_FAILURE,
+@@ -34,7 +34,7 @@
+         MTP_NO_MTP_DEVICE
+     };
+ 
+-    enum MTP_PLAYLIST_INSTANCES {
++    typedef enum MTP_PLAYLIST_INSTANCES {
+         MTP_PLAYLIST_ALL_INSTANCES,
+         MTP_PLAYLIST_FIRST_INSTANCE,
+         MTP_PLAYLIST_LAST_INSTANCE
+@@ -42,7 +42,7 @@
+ 
+ #define MTP_DEVICE_SINGLE_STORAGE -1
+ 
+-    gboolean AlbumErrorIgnore;
++    extern gboolean AlbumErrorIgnore;
+ 
+     typedef struct {
+         gchar* file_extension;
+--- gmtp-1.3.11/src/dnd.h.orig	2020-05-23 13:42:25.955640284 +0000
++++ gmtp-1.3.11/src/dnd.h	2020-05-23 13:42:43.774529263 +0000
+@@ -35,7 +35,7 @@
+     };
+ 
+     /* Drag data format listing for gtk_drag_dest_set() */
+-   GtkTargetEntry _gmtp_drop_types[3];
++   extern GtkTargetEntry _gmtp_drop_types[3];
+ 
+ #define gmtp_drag_dest_set(widget) gtk_drag_dest_set(widget, \
+ 		GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP, \

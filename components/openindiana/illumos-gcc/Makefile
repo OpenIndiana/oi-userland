@@ -15,7 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-gcc
 COMPONENT_VERSION=	4.4.4
-COMPONENT_REVISION=	6
+COMPONENT_REVISION=	8
 COMPONENT_SUMMARY=	GCC - 4.4.4 compilers patched for illumos
 COMPONENT_SRC=		illumos-gcc-0f5ed4c
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -66,7 +66,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-GCC_VERSION=4.9
+GCC_VERSION=4.4.4
+GCC_ROOT=/opt/gcc/4.4.4
 
 CC_BITS=
 CFLAGS=		-g -O2
@@ -93,18 +94,18 @@ COMPONENT_BUILD_TARGETS=	bootstrap
 
 COMPONENT_POST_INSTALL_ACTION= ( \
 	elfedit -e 'dyn:rpath /opt/gcc/4.4.4/lib' $(PROTO_DIR)/opt/gcc/4.4.4/lib/libgomp.so.1 ; \
-	elfedit -e 'dyn:rpath /opt/gcc/4.4.4/lib/amd64' $(PROTO_DIR)/opt/gcc/4.4.4/lib/amd64/libgomp.so.1 ; \
+	elfedit -e "dyn:rpath /opt/gcc/4.4.4/lib/$(MACH64)" $(PROTO_DIR)/opt/gcc/4.4.4/lib/$(MACH64)/libgomp.so.1 ; \
 	elfedit -e 'dyn:rpath /opt/gcc/4.4.4/lib' $(PROTO_DIR)/opt/gcc/4.4.4/lib/libssp.so.0 ; \
-	elfedit -e 'dyn:rpath /opt/gcc/4.4.4/lib/amd64' $(PROTO_DIR)/opt/gcc/4.4.4/lib/amd64/libssp.so.0 ; \
+	elfedit -e "dyn:rpath /opt/gcc/4.4.4/lib/$(MACH64)" $(PROTO_DIR)/opt/gcc/4.4.4/lib/$(MACH64)/libssp.so.0 ; \
 	elfedit -e 'dyn:rpath /opt/gcc/4.4.4/lib' $(PROTO_DIR)/opt/gcc/4.4.4/lib/libstdc++.so.6 ; \
-	elfedit -e 'dyn:rpath /opt/gcc/4.4.4/lib/amd64' $(PROTO_DIR)/opt/gcc/4.4.4/lib/amd64/libstdc++.so.6 )
+	elfedit -e "dyn:rpath /opt/gcc/4.4.4/lib/$(MACH64)" $(PROTO_DIR)/opt/gcc/4.4.4/lib/$(MACH64)/libstdc++.so.6 )
 
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
 # Build dependencies
-REQUIRED_PACKAGES += developer/gcc-49
+REQUIRED_PACKAGES += developer/illumos-gcc
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs

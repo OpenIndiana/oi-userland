@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	python-xlib
 COMPONENT_VERSION= 	0.26
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	'Python interface to the X11 protocol'
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.bz2
@@ -33,7 +34,7 @@ COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_FMRI=	library/python/python-xlib
 COMPONENT_CLASSIFICATION=	Development/Python
 
-PYTHON_VERSIONS=	2.7 3.4 3.5
+PYTHON_VERSIONS=	2.7 3.5
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk

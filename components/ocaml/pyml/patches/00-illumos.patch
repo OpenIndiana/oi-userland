@@ -1,0 +1,61 @@
+diff -ruN pyml-20200518/Makefile pyml-20200518.new/Makefile
+--- pyml-20200518/Makefile	2020-05-18 11:58:41.000000000 +0000
++++ pyml-20200518.new/Makefile	2020-05-29 17:47:32.471463471 +0000
+@@ -3,6 +3,10 @@
+ INSTALL := install
+ INSTALL_PROGRAM := $(INSTALL)
+ bindir := $(PREFIX)/bin
++LIBDIR=$(shell ocamlfind printconf destdir)
++ifneq ($(DESTDIR),)
++	LIBDIR=$(DESTDIR)/$(shell ocamlfind printconf destdir)
++endif
+ 
+ HAVE_OCAMLFIND := $(shell \
+ 	if $(OCAMLFIND) query -help >/dev/null 2>&1; then \
+@@ -129,6 +133,8 @@
+ 	PYML_ARCH := pyml_arch_cygwin.ml
+ else ifeq ($(UNAME_ARCH),FreeBSD)
+ 	PYML_ARCH := pyml_arch_freebsd.ml
++else ifeq ($(UNAME_ARCH),SunOS)
++	PYML_ARCH := pyml_arch_sunos.ml
+ else
+ 	$(error Unsupported OS $(UNAME_ARCH))
+ endif
+@@ -208,15 +214,15 @@
+ ifeq ($(HAVE_OCAMLFIND),no)
+ 	$(error ocamlfind is needed for 'make install')
+ endif
+-	$(OCAMLFIND) install pyml $(INSTALL_FILES)
+-	[ ! -f pymltop ] || $(INSTALL_PROGRAM) pymltop $(bindir)/pymltop
+-	[ ! -f pymlutop ] || $(INSTALL_PROGRAM) pymlutop $(bindir)/pymlutop
++	$(OCAMLFIND) install pyml $(INSTALL_FILES) -destdir $(LIBDIR)
++	[ ! -f pymltop ] || $(INSTALL_PROGRAM) pymltop $(DESTDIR)$(bindir)/pymltop
++	[ ! -f pymlutop ] || $(INSTALL_PROGRAM) pymlutop $(DESTDIR)$(bindir)/pymlutop
+ 
+ .PHONY : uninstall
+ uninstall :
+-	$(OCAMLFIND) remove pyml
+-	- rm $(bindir)/pymltop
+-	- rm $(bindir)/pymlutop
++	$(OCAMLFIND) remove pyml -destdir $(LIBDIR)
++	- rm $(DESTDIR)$(bindir)/pymltop
++	- rm $(DESTDIR)$(bindir)/pymlutop
+ 
+ .PHONY : clean
+ clean :
+diff -ruN pyml-20200518/pyml_arch_sunos.ml pyml-20200518.new/pyml_arch_sunos.ml
+--- pyml-20200518/pyml_arch_sunos.ml	1970-01-01 01:00:00.000000000 +0000
++++ pyml-20200518.new/pyml_arch_sunos.ml	2020-05-29 17:47:32.470025383 +0000
+@@ -0,0 +1,12 @@
++let library_patterns: (int -> int -> string, unit, string) format list =
++  ["libpython%d.%dm.so"; "libpython%d.%d.so"]
++
++let library_suffix = ".so"
++
++let ensure_executable_suffix executable = executable
++
++let which = "which"
++
++external fd_of_int: int -> Unix.file_descr = "%identity"
++
++let path_separator = ":"

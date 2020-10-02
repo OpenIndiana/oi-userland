@@ -1,13 +1,35 @@
-# Ensure that emacs uses GNU find. See components/emacs/README.
-#
---- emacs-25.2/lisp/progmodes/grep.el.~1~	2017-02-03 13:25:44.000000000 +0300
-+++ emacs-25.2/lisp/progmodes/grep.el	2017-04-25 15:46:10.922261876 +0300
-@@ -416,7 +416,7 @@
+Ensure that emacs uses GNU find. See components/emacs/README.
+
+--- emacs-27.1/lisp/loaddefs.el.orig	2020-08-04 21:50:06.000000000 +0000
++++ emacs-27.1/lisp/loaddefs.el	2020-08-15 11:07:57.225527052 +0000
+@@ -15065,7 +15065,7 @@
+ The default grep program for `grep-command' and `grep-find-command'.
+ This variable's value takes effect when `grep-compute-defaults' is called.")
+ 
+-(defvar find-program (purecopy "find") "\
++(defvar find-program (purecopy "/usr/gnu/bin/find") "\
+ The default find program.
+ This is used by commands like `grep-find-command', `find-dired'
+ and others.")
+--- emacs-27.1/lisp/ldefs-boot.el.orig	2020-08-04 21:59:53.000000000 +0000
++++ emacs-27.1/lisp/ldefs-boot.el	2020-08-15 11:08:30.652017347 +0000
+@@ -15065,7 +15065,7 @@
+ The default grep program for `grep-command' and `grep-find-command'.
+ This variable's value takes effect when `grep-compute-defaults' is called.")
+ 
+-(defvar find-program (purecopy "find") "\
++(defvar find-program (purecopy "/usr/gnu/bin/find") "\
+ The default find program.
+ This is used by commands like `grep-find-command', `find-dired'
+ and others.")
+--- emacs-27.1/lisp/progmodes/grep.el.orig	2020-07-29 23:40:41.000000000 +0000
++++ emacs-27.1/lisp/progmodes/grep.el	2020-08-15 11:09:19.101533184 +0000
+@@ -501,7 +501,7 @@
  This variable's value takes effect when `grep-compute-defaults' is called.")
  
  ;;;###autoload
 -(defvar find-program (purecopy "find")
-+(defvar find-program (purecopy "/usr/bin/gnu/find")
++(defvar find-program (purecopy "/usr/gnu/bin/find")
    "The default find program.
  This is used by commands like `grep-find-command', `find-dired'
  and others.")

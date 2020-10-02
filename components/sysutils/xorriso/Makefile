@@ -27,13 +27,13 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xorriso
-COMPONENT_VERSION=      1.5.1
+COMPONENT_VERSION=      1.5.3
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	command line ISO-9660 and Rock Ridge manipulation tool
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/xorriso/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:c100021e78b55e73a28826906e9d398ef1037b128ac0e1cc48faba8aa3dcdf15
+	sha256:bb8db9274caecd44993e8242e6acff4298b3508b83ac3c51c9fd970b9e765adc
 COMPONENT_ARCHIVE_URL=  https://www.gnu.org/software/xorriso/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		media/xorriso
 COMPONENT_CLASSIFICATION=	System/Media

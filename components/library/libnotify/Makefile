@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libnotify
 COMPONENT_VERSION= 0.7.7
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Library for desktop notifications
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -55,6 +56,8 @@ install: $(INSTALL_32_and_64)
 test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library

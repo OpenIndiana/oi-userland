@@ -5,9 +5,9 @@
  PKG_LIB := $(shell $(PKG_CONFIG) --libs glib-2.0 gmodule-2.0 gthread-2.0)
  
 -FLAGS = -O2 $(PKG_INCLUDE)
-+HAL_CFLAGS = -DDBUS_API_SUBJECT_TO_CHANGE -I/usr/include/hal -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
++HAL_CFLAGS = $(shell $(PKG_CONFIG) --cflags hal)
 +HAL_LIBS = -lhal -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0
-+DBUS_CFLAGS = -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
++DBUS_CFLAGS =  $(shell $(PKG_CONFIG) --cflags dbus-1)
 +DBUS_LIBS = -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0
 +
 +FLAGS = -O2 $(PKG_INCLUDE) $(HAL_CFLAGS) $(DBUS_CFLAGS)
@@ -173,7 +173,7 @@
 +               return ;
 +           }
 +
-+           key = "battery.rechargeable.is_discharging"; /* the battery is being used */
++           key = g_strdup("battery.rechargeable.is_discharging"); /* the battery is being used */
 +           discharging = libhal_device_get_property_bool( ctx, udi, key, &error );
 +           g_free(key);
 +
@@ -252,9 +252,9 @@
  PKG_INCLUDE = `$(PKG_CONFIG) --cflags gtk+-2.0 gthread-2.0 gmodule-2.0`
  PKG_LIB = `$(PKG_CONFIG) --libs gtk+-2.0 gthread-2.0 gmodule-2.0`
  
-+HAL_CFLAGS = -DDBUS_API_SUBJECT_TO_CHANGE -I/usr/include/hal -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
++HAL_CFLAGS = $(shell $(PKG_CONFIG) --cflags hal)
 +HAL_LIBS = -lhal -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0
-+DBUS_CFLAGS = -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
++DBUS_CFLAGS =  $(shell $(PKG_CONFIG) --cflags dbus-1)
 +DBUS_LIBS = -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0
 +
  FLAGS = -O2 -I.. -I$(SHARED_PATH) $(PKG_INCLUDE) $(GTOP_INCLUDE) $(PTHREAD_INC)\

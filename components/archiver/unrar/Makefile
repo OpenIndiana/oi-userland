@@ -23,27 +23,29 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
 #
-
+BUILD_BITS=				64
+BUILD_STYLE=			justmake
 include ../../../make-rules/shared-macros.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/sbin
+#PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/sbin
+PATH=$(PATH.gnu)
 
-COMPONENT_NAME=		unrar
-COMPONENT_VERSION=	5.6.8
+COMPONENT_NAME=			unrar
+COMPONENT_VERSION=		5.9.4
+IPS_COMPONENT_VERSION=	5.91
 COMPONENT_SRC=		$(COMPONENT_NAME)
-COMPONENT_SUMMARY=	Rar archives extractor utility
-COMPONENT_PROJECT_URL=	http://www.rarlabs.com/rar_add.htm
+COMPONENT_SUMMARY=		Rar archives extractor utility
+COMPONENT_PROJECT_URL=	https://www.rarlabs.com/rar_add.htm
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)src-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:a4cc0ac14a354827751912d2af4a0a09e2c2129df5766576fa7e151791dd3dff
-COMPONENT_ARCHIVE_URL=	http://www.rarlab.com/rar/$(COMPONENT_ARCHIVE)
+	sha256:3d010d14223e0c7a385ed740e8f046edcbe885e5c22c5ad5733d009596865300
+COMPONENT_ARCHIVE_URL=	https://www.rarlab.com/rar/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	archiver/unrar
 COMPONENT_CLASSIFICATION= Applications/System Utilities
-COMPONENT_LICENSE= UnRAR
+COMPONENT_LICENSE= 		UnRAR
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET:		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_PROTO_DIRS = $(MANGLED_DIR)
 PKG_PROTO_DIRS += $(BUILD_DIR_64)
@@ -60,14 +62,8 @@ COMPONENT_BUILD_ENV += DEFINES="$(CPP_LARGEFILES)"
 
 COMPONENT_BUILD_ARGS += STRIP="/bin/true"
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(BUILD_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library

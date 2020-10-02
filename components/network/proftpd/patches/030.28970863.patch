@@ -1,0 +1,46 @@
+#
+# proftpd trips over dead memory after SIGHUP
+#
+# dead memory is left behind tls_module. As soon as SIGHUP
+# is received tls_moudle gets re-initialized. If I understand
+# code right we do unload/load. The unload operation removes
+# all timers installed by module:
+#
+# 14388 #if defined(PR_SHARED_MODULE)
+# 14389 static void tls_mod_unload_ev(const void *event_data, void *user_data) {
+# 14390   if (strcmp("mod_tls.c", (const char *) event_data) == 0) {
+# 14391     /* Unregister ourselves from all events. */
+# 14392     pr_event_unregister(&tls_module, NULL, NULL);
+# 14393
+# 14394     pr_timer_remove(-1, &tls_module);
+# 14395 # if defined(TLS_USE_SESSION_TICKETS)
+# 14396     scrub_ticket_keys();
+# 14397 # endif /* TLS_USE_SESSION_TICKETS */
+#
+# line 14394 removes all timers installed by tls_module  except this
+# one:
+# 6248     pr_log_debug(DEBUG9, MOD_TLS_VERSION
+# 6249       ": scheduling new TLS session ticket key every %d %s",
+# 6250       new_ticket_key_intvl, new_ticket_key_intvl != 1 ? "secs" : "sec");
+# 6251
+# 6252     pr_timer_add(new_ticket_key_intvl, -1, NULL, new_ticket_key_timer_cb,
+# 6253       "New TLS Session Ticket Key");
+#
+# the Session Ticket Key timer is not removed, because it is not
+# bound to tls_module.
+#
+# I did same patch to upstream in pull request bellow:
+#	https://github.com/proftpd/proftpd/pull/770
+#
+
+--- a/contrib/mod_tls.c
++++ b/contrib/mod_tls.c
+@@ -5563,7 +5563,7 @@ static int tls_init_ctx(void) {
+       ": scheduling new TLS session ticket key every %d %s",
+       new_ticket_key_intvl, new_ticket_key_intvl != 1 ? "secs" : "sec");
+ 
+-    pr_timer_add(new_ticket_key_intvl, -1, NULL, new_ticket_key_timer_cb,
++    pr_timer_add(new_ticket_key_intvl, -1, &tls_module, new_ticket_key_timer_cb,
+       "New TLS Session Ticket Key");
+ 
+   } else {

@@ -1,0 +1,40 @@
+--- freeglut-3.0.0/src/fg_gl2.h.orig	2020-05-13 12:23:56.087417803 +0000
++++ freeglut-3.0.0/src/fg_gl2.h	2020-05-13 12:24:41.660841721 +0000
+@@ -67,13 +67,13 @@
+ typedef void (APIENTRY *FGH_PFNGLDISABLEVERTEXATTRIBARRAYPROC) (GLuint);
+ typedef void (APIENTRY *FGH_PFNGLVERTEXATTRIBPOINTERPROC) (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer);
+ 
+-FGH_PFNGLGENBUFFERSPROC fghGenBuffers;
+-FGH_PFNGLDELETEBUFFERSPROC fghDeleteBuffers;
+-FGH_PFNGLBINDBUFFERPROC fghBindBuffer;
+-FGH_PFNGLBUFFERDATAPROC fghBufferData;
+-FGH_PFNGLENABLEVERTEXATTRIBARRAYPROC fghEnableVertexAttribArray;
+-FGH_PFNGLDISABLEVERTEXATTRIBARRAYPROC fghDisableVertexAttribArray;
+-FGH_PFNGLVERTEXATTRIBPOINTERPROC fghVertexAttribPointer;
++extern FGH_PFNGLGENBUFFERSPROC fghGenBuffers;
++extern FGH_PFNGLDELETEBUFFERSPROC fghDeleteBuffers;
++extern FGH_PFNGLBINDBUFFERPROC fghBindBuffer;
++extern FGH_PFNGLBUFFERDATAPROC fghBufferData;
++extern FGH_PFNGLENABLEVERTEXATTRIBARRAYPROC fghEnableVertexAttribArray;
++extern FGH_PFNGLDISABLEVERTEXATTRIBARRAYPROC fghDisableVertexAttribArray;
++extern FGH_PFNGLVERTEXATTRIBPOINTERPROC fghVertexAttribPointer;
+ 
+ #    endif
+ 
+--- freeglut-3.0.0/src/fg_gl2.c.orig	2020-05-13 12:31:17.037698131 +0000
++++ freeglut-3.0.0/src/fg_gl2.c	2020-05-13 12:31:39.416314637 +0000
+@@ -27,6 +27,14 @@
+ #include "fg_internal.h"
+ #include "fg_gl2.h"
+ 
++FGH_PFNGLGENBUFFERSPROC fghGenBuffers;
++FGH_PFNGLDELETEBUFFERSPROC fghDeleteBuffers;
++FGH_PFNGLBINDBUFFERPROC fghBindBuffer;
++FGH_PFNGLBUFFERDATAPROC fghBufferData;
++FGH_PFNGLENABLEVERTEXATTRIBARRAYPROC fghEnableVertexAttribArray;
++FGH_PFNGLDISABLEVERTEXATTRIBARRAYPROC fghDisableVertexAttribArray;
++FGH_PFNGLVERTEXATTRIBPOINTERPROC fghVertexAttribPointer;
++
+ void FGAPIENTRY glutSetVertexAttribCoord3(GLint attrib) {
+   if (fgStructure.CurrentWindow != NULL)
+     fgStructure.CurrentWindow->Window.attribute_v_coord = attrib;

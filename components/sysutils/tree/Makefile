@@ -21,24 +21,22 @@
 #
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS=			64
+BUILD_STYLE=		justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tree
-COMPONENT_VERSION=	1.7.0
+COMPONENT_VERSION=	1.8.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6957c20e82561ac4231638996e74f4cfa4e6faabc5a2f511f0b4e3940e8f7b12
+	sha256:715d5d4b434321ce74706d0dd067505bb60c5ea83b5f0b3655dae40aa6f9b7c2
 COMPONENT_PROJECT_URL=	http://mama.indstate.edu/users/ice/tree/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	file/tree
 
-TPNO=			27186
-
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET:		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -52,12 +50,6 @@ COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRBINDIR)
 COMPONENT_INSTALL_ARGS += MANDIR=$(PROTOUSRSHAREMAN1DIR)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

@@ -1,0 +1,26 @@
+Index: autogen-5.18.16/autoopts/usage.c
+===================================================================
+--- autogen-5.18.16.orig/autoopts/usage.c
++++ autogen-5.18.16/autoopts/usage.c
+@@ -711,7 +711,7 @@ prt_vendor_opts(tOptions * opts, char co
+         OPTST_NO_USAGE_MASK | OPTST_DOCUMENT;
+ 
+     static char const vfmtfmt[] = "%%-%us %%s\n";
+-    char vfmt[sizeof(vfmtfmt)];
++    char vfmt[sizeof(vfmtfmt) + 9];
+ 
+     /*
+      *  Only handle client specified options.  The "vendor option" follows
+Index: autogen-5.18.16/getdefs/getdefs.c
+===================================================================
+--- autogen-5.18.16.orig/getdefs/getdefs.c
++++ autogen-5.18.16/getdefs/getdefs.c
+@@ -374,7 +374,7 @@ buildPreamble(char ** ppzDef, char ** pp
+     char * pzDef      = *ppzDef;
+     char * pzOut      = *ppzOut;
+ 
+-    char   def_bf[  MAXNAMELEN ];
++    char   def_bf[ 2 * MAXNAMELEN + 4 ];
+     char   name_bf[ MAXNAMELEN ];
+     char * def_str    = def_bf;
+     char * pzIfText   = NULL;

@@ -32,45 +32,25 @@ up automatically after running the tests, and we can emit those results to
 the master file.  This might be interesting to upstream, but is really
 specific to running the tests in an external framework.
 
---- git-2.19.0/t/Makefile	2018-09-24 10:56:27.954589694 +0000
-+++ git-2.19.0/t/Makefile.new	2018-09-24 11:00:26.172819681 +0000
-@@ -48,6 +48,9 @@ failed:
+--- git-2.28.0/t/Makefile.orig	2020-07-27 03:18:05.000000000 +0000
++++ git-2.28.0/t/Makefile	2020-08-01 10:33:59.918799274 +0000
+@@ -48,6 +48,9 @@
  		sed -n 's/\.counts$$/.sh/p') && \
  	test -z "$$failed" || $(MAKE) $$failed
- 
+
 +test-noclean: pre-clean $(TEST_LINT)
 +	$(MAKE) T
 +
  prove: pre-clean check-chainlint $(TEST_LINT)
  	@echo "*** prove ***"; $(PROVE) --exec '$(TEST_SHELL_PATH_SQ)' $(GIT_PROVE_OPTS) $(T) :: $(GIT_TEST_OPTS)
  	$(MAKE) clean-except-prove-cache
-@@ -93,6 +96,8 @@ test-lint-executable:
+@@ -93,6 +96,8 @@
  test-lint-shell-syntax:
  	@'$(PERL_PATH_SQ)' check-non-portable-shell.pl $(T) $(THELPERS)
- 
+
 +T: $(T)
 +
  test-lint-filenames:
  	@# We do *not* pass a glob to ls-files but use grep instead, to catch
  	@# non-ASCII characters (which are quoted within double-quotes)
---- git-2.22.0/t/t5703-upload-pack-ref-in-want.sh	2019-06-07 20:37:32.000000000 +0000
-+++ git-2.22.0/t/t5703-upload-pack-ref-in-want.sh	2019-06-11 10:23:22.233199623 +0000
-@@ -49,15 +49,15 @@ test_expect_success 'setup repository' '
- 
- test_expect_success 'config controls ref-in-want advertisement' '
- 	test-tool serve-v2 --advertise-capabilities >out &&
--	! grep -a ref-in-want out &&
-+	! ggrep -a ref-in-want out &&
- 
- 	git config uploadpack.allowRefInWant false &&
- 	test-tool serve-v2 --advertise-capabilities >out &&
--	! grep -a ref-in-want out &&
-+	! ggrep -a ref-in-want out &&
- 
- 	git config uploadpack.allowRefInWant true &&
- 	test-tool serve-v2 --advertise-capabilities >out &&
--	grep -a ref-in-want out
-+	ggrep -a ref-in-want out
- '
- 
- test_expect_success 'invalid want-ref line' '
+

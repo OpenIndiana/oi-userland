@@ -11,33 +11,35 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2020 Marco van Wieringen
 #
+
+BUILD_BITS= 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgtop
-COMPONENT_VERSION= 2.28.5
-COMPONENT_REVISION= 2
-# Some historical artefact in package versioning
-IPS_COMPONENT_VERSION= 2.30.0
+COMPONENT_VERSION= 2.40.0
 COMPONENT_SUMMARY= Library to get system specific data
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c812c174e44a8971a1f33265437cfd10f1e99869c7f5c05f8ee95846a70a3342
+  sha256:78f3274c0c79c434c03655c1b35edf7b95ec0421430897fb1345a98a265ed2d4
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.28/$(COMPONENT_ARCHIVE)
+  https://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.40/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/libgtop
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
 
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
+
+PATH=$(PATH.gnu)
+
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
@@ -47,11 +49,8 @@ CONFIGURE_ENV    += PYTHON=$(PYTHON)
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+# Build dependencies
+REQUIRED_PACKAGES += developer/build/automake-111
 
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library

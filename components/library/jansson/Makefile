@@ -12,24 +12,23 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jansson
-COMPONENT_VERSION=	2.10
+COMPONENT_VERSION=	2.13.1
 COMPONENT_SUMMARY=	C library for encoding, decoding and manipulating JSON data
-COMPONENT_PROJECT_URL=	http://www.digip.org/jansson
+COMPONENT_PROJECT_URL=	https://www.digip.org/jansson
 COMPONENT_FMRI=		library/jansson
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	http://www.digip.org/jansson/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:78215ad1e277b42681404c1d66870097a50eb084be9d771b1d15576575cf6447
+COMPONENT_ARCHIVE_URL=	https://www.digip.org/jansson/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:f4f377da17b10201a60c1108613e78ee15df6b12016b116b6de42209f47a474f
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/jansson
 CONFIGURE_OPTIONS += --disable-static
@@ -49,10 +48,5 @@ COMPONENT_TEST_TRANSFORMS= \
 	'-e "/XPASS/p" ' \
 	'-e "/ERROR/p" ' 
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

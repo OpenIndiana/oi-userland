@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		clutter
 COMPONENT_VERSION=	1.6.20
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY= clutter - a library for creating fast, visually rich and animated graphical user interfaces
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Clutter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

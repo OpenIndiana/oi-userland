@@ -12,46 +12,51 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libjpeg-turbo
-COMPONENT_VERSION= 1.5.2
+COMPONENT_VERSION= 2.0.5
 COMPONENT_FMRI= image/library/libjpeg-turbo
 COMPONENT_PROJECT_URL= http://www.libjpeg-turbo.org/
 COMPONENT_SUMMARY= libjpeg -JPEG Turbo libraries
 COMPONENT_SRC= libjpeg-turbo-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:9098943b270388727ae61de82adec73cf9f0dbb240b3bc8b172595ebf405b528
+	sha256:16f8f6f2715b3a38ab562a84357c793dd56ae9899ce130563c72cd93d8357b5d
 COMPONENT_ARCHIVE_URL= http://sourceforge.net/projects/libjpeg-turbo/files/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz/download
 COMPONENT_LICENSE= IJG,BSD,zlib
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 
-
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_DEFAULT_DIRS=no
+CMAKE_DEFAULT_DIRS=no
 
 # Warnings are normal: libtool:   error: ignoring unknown tag NASM
 
-CONFIGURE_OPTIONS.JPEG6= 
-CONFIGURE_OPTIONS.JPEG7= --with-jpeg7
-CONFIGURE_OPTIONS.JPEG8= --with-jpeg8
+CMAKE_OPTIONS.JPEG6= 
+CMAKE_OPTIONS.JPEG7= -DWITH_JPEG7=ON
+CMAKE_OPTIONS.JPEG8= -DWITH_JPEG8=ON
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
+LIBJPEG_TURBO_X_PREFIX=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo
+
+CMAKE_OPTIONS+=	-DENABLE_STATIC=FALSE
 # Allow for build with different API compliance
-CONFIGURE_OPTIONS+=	$(CONFIGURE_OPTIONS.JPEG$(JPEG_API_VERSION))
-CONFIGURE_OPTIONS+= --mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS+= --includedir=$(CONFIGURE_INCLUDEDIR)/libjpeg$(JPEG_API_VERSION)-turbo
-CONFIGURE_OPTIONS.32+= --bindir=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/bin
-CONFIGURE_OPTIONS.32+= --libdir=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/lib
-# Autoconf infers the build type incorrectly from the host triplet
-CONFIGURE_OPTIONS.64+= --build=x86_64-solaris2.11
-CONFIGURE_OPTIONS.64+= --bindir=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/bin/$(MACH64)
-CONFIGURE_OPTIONS.64+= --libdir=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/lib/$(MACH64)
+CMAKE_OPTIONS+=	$(CMAKE_OPTIONS.JPEG$(JPEG_API_VERSION))
+CMAKE_OPTIONS+=	-DCMAKE_INSTALL_PREFIX=$(LIBJPEG_TURBO_X_PREFIX)
+CMAKE_OPTIONS+= -DCMAKE_INSTALL_MANDIR=$(USRSHAREMANDIR)
+CMAKE_OPTIONS+= -DCMAKE_INSTALL_DOCDIR=$(USRSHAREDOCDIR)/libjpeg-turbo
+CMAKE_OPTIONS+= -DCMAKE_INSTALL_INCLUDEDIR=$(USRINCDIR)/libjpeg$(JPEG_API_VERSION)-turbo
+CMAKE_OPTIONS.32+= -DCMAKE_INSTALL_BINDIR=$(LIBJPEG_TURBO_X_PREFIX)/bin
+CMAKE_OPTIONS.32+= -DCMAKE_INSTALL_LIBDIR=$(LIBJPEG_TURBO_X_PREFIX)/lib
+CMAKE_OPTIONS.64+= -DCMAKE_INSTALL_BINDIR=$(LIBJPEG_TURBO_X_PREFIX)/bin/$(MACH64)
+CMAKE_OPTIONS.64+= -DCMAKE_INSTALL_LIBDIR=$(LIBJPEG_TURBO_X_PREFIX)/lib/$(MACH64)
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS+= '-e "s/[0-9. ]*sec//g"'
 
 # Define rules for each API build
 BUILD_DIR_32_6 =		$(BUILD_DIR)/$(MACH32)/6
@@ -84,20 +89,33 @@ $(BUILD_DIR)/%/6/.installed: JPEG_API_VERSION=6
 $(BUILD_DIR)/%/7/.installed: JPEG_API_VERSION=7
 $(BUILD_DIR)/%/8/.installed: JPEG_API_VERSION=8
 
-TEST_32 =		$(BUILD_DIR_32_6)/.tested $(BUILD_DIR_32_7)/.tested $(BUILD_DIR_32_8)/.tested
-TEST_64 =		$(BUILD_DIR_64_6)/.tested $(BUILD_DIR_64_7)/.tested $(BUILD_DIR_64_8)/.tested
-TEST_32_and_64 =	$(TEST_32) $(TEST_64)
+ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
+TEST_32 = $(BUILD_DIR_32_6)/.tested $(BUILD_DIR_32_7)/.tested $(BUILD_DIR_32_8)/.tested
+TEST_64 = $(BUILD_DIR_64_6)/.tested $(BUILD_DIR_64_7)/.tested $(BUILD_DIR_64_8)/.tested
 $(BUILD_DIR_32)/%/.tested:		BITS=32
 $(BUILD_DIR_64)/%/.tested:		BITS=64
 $(BUILD_DIR)/%/6/.tested: JPEG_API_VERSION=6
 $(BUILD_DIR)/%/7/.tested: JPEG_API_VERSION=7
 $(BUILD_DIR)/%/8/.tested: JPEG_API_VERSION=8
+else
+TEST_32 = $(BUILD_DIR_32_6)/.tested-and-compared $(BUILD_DIR_32_7)/.tested-and-compared $(BUILD_DIR_32_8)/.tested-and-compared
+TEST_64 = $(BUILD_DIR_64_6)/.tested-and-compared $(BUILD_DIR_64_7)/.tested-and-compared $(BUILD_DIR_64_8)/.tested-and-compared
+$(BUILD_DIR_32)/%/.tested-and-compared:	BITS=32
+$(BUILD_DIR_64)/%/.tested-and-compared:	BITS=64
+$(BUILD_DIR)/%/6/.tested-and-compared: JPEG_API_VERSION=6
+$(BUILD_DIR)/%/7/.tested-and-compared: JPEG_API_VERSION=7
+$(BUILD_DIR)/%/8/.tested-and-compared: JPEG_API_VERSION=8
+endif
 
-build:		$(BUILD_32_and_64)
+TEST_32_and_64 =	$(TEST_32) $(TEST_64)
 
-install:	$(INSTALL_32_and_64)
+build:         $(BUILD_32_and_64)
 
-test:		$(TEST_32_and_64)
+install:       $(INSTALL_32_and_64)
 
+test:          $(TEST_32_and_64)
+
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

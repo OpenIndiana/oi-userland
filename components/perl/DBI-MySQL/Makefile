@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	DBI-MySQL
 COMPONENT_VERSION=	4.0.41
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY= 	The DBI MySQL Interface for Perl
 COMPONENT_SRC=		DBD-mysql-4.041
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -60,4 +60,6 @@ REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += library/perl-5/database
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+# Bogus dependency due to libssp
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

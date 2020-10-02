@@ -18,7 +18,7 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		logrotate
-COMPONENT_VERSION=	3.15.1
+COMPONENT_VERSION=	3.16.0
 COMPONENT_PROJECT_URL=	https://github.com/logrotate/logrotate
 COMPONENT_SUMMARY=	Logrotate - Rotates and compresses log files
 COMPONENT_FMRI=		system/file/logrotate
@@ -26,7 +26,7 @@ COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:9eed6d9254f3e2313e15a44b4d1e5f209d35a4483b2c563c823050ec91ac67b8
+	sha256:e1bae2c72115cf16007bb98ea38752d1120010cfb70addd9867d952c7529de3b
 COMPONENT_ARCHIVE_URL=	https://github.com/logrotate/logrotate/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING

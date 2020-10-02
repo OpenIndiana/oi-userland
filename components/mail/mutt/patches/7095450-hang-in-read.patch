@@ -1,3 +1,30 @@
+This is internal patch, modified in accordance with the current mutt sources.
+The patch attempts to implement:
+Ticket #2064 wish: imap operations should be interruptable
+http://dev.mutt.org/trac/ticket/2064
+
+This link is no longer available as Mutt's issue ticketing system moved
+since the time of creating this issue from http://dev.mutt.org/hg/mutt/
+to https://gitlab.com/muttmua/mutt
+
+However, there is still at least the original discussion available at::
+http://www.does-not-exist.org/mail-archives/mutt-dev/msg11073.html
+
+"#2064: wish: imap operations should be interruptable
+
+Comment (by mlichvar):
+
+ The attached patch wraps the socket read and write functions in
+ mutt_allow_interrupt(). Seems to help, but I'm not sure it's the correct
+ fix."
+
+The attachment itself is not available but based on the text above it is
+safe to believe that is close to the implementation below.
+
+The original patch added the mutt_allow_interrupt() wrapping also to
+function mutt_socket_read. However, this function was removed on 2019-01-21
+as per the ChangeLog.
+
 --- mutt-1.5.21/mutt_socket.c.orig
 +++ mutt-1.5.21/mutt_socket.c
 @@ -78,7 +78,11 @@
