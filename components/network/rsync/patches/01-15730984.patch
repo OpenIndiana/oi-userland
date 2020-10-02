@@ -32,19 +32,6 @@ in the compiled binares (in particular in error messages).
  
  extern int dry_run;
  extern int am_daemon;
-@@ -887,10 +888,10 @@
- 		/* VANISHED is not an error, only a warning */
- 		if (code == RERR_VANISHED) {
- 			rprintf(FWARNING, "rsync warning: %s (code %d) at %s(%d) [%s=%s]\n",
--				name, code, file, line, who_am_i(), RSYNC_VERSION);
-+				name, code, basename((char *)file), line, who_am_i(), RSYNC_VERSION);
- 		} else {
- 			rprintf(FERROR, "rsync error: %s (code %d) at %s(%d) [%s=%s]\n",
--				name, code, file, line, who_am_i(), RSYNC_VERSION);
-+				name, code, basename((char *)file), line, who_am_i(), RSYNC_VERSION);
- 		}
- 	}
- }
 --- rsync-3.2.2/cleanup.c.orig	2020-06-28 08:14:35.000000000 +0000
 +++ rsync-3.2.2/cleanup.c	2020-07-23 18:13:38.184898463 +0000
 @@ -21,6 +21,7 @@
@@ -55,30 +42,4 @@ in the compiled binares (in particular in error messages).
 
  extern int dry_run;
  extern int am_server;
-@@ -137,7 +138,7 @@
- 		if (DEBUG_GTE(EXIT, 2)) {
- 			rprintf(FINFO,
- 				"[%s] _exit_cleanup(code=%d, file=%s, line=%d): entered\n",
--				who_am_i(), code, file, line);
-+				who_am_i(), code, basename((char *)file), line);
- 		}
-
- #include "case_N.h"
-@@ -226,7 +227,7 @@
- 			if (am_server && exit_code)
- 				usleep(50);
- #endif
--			log_exit(exit_code, exit_file, exit_line);
-+			log_exit(exit_code, basename((char *)exit_file), exit_line);
- 		}
-
- #include "case_N.h"
-@@ -236,7 +237,7 @@
- 			rprintf(FINFO,
- 				"[%s] _exit_cleanup(code=%d, file=%s, line=%d): "
- 				"about to call exit(%d)%s\n",
--				who_am_i(), first_code, exit_file, exit_line, exit_code,
-+				who_am_i(), first_code, basename((char *)exit_file), exit_line, exit_code,
- 				dry_run ? " (DRY RUN)" : "");
- 		}
  
