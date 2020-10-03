@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk3-nocsd
 COMPONENT_VERSION=	3
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_FMRI=		library/desktop/gtk3/gtk3-nocsd
 COMPONENT_SUMMARY=	A small module used to disable the client side decoration of Gtk+ 3
 COMPONENT_CLASSIFICATION=Applications/Plug-ins and Run-times
@@ -38,16 +38,10 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
 
-BINDIR.32 = /usr/bin
-BINDIR.64 = /usr/bin/$(MACH64)
-
-LIBDIR.32 = /usr/lib
-LIBDIR.64 = /usr/lib/$(MACH64)
-
-COMPONENT_INSTALL_ENV += mandir=/usr/share/man
-COMPONENT_INSTALL_ENV += bindir=$(BINDIR.$(BITS))
-COMPONENT_INSTALL_ENV += libdir=$(LIBDIR.$(BITS))
-COMPONENT_INSTALL_ENV += bashcompletiondir=/usr/share/bash-completion/completions
+COMPONENT_INSTALL_ENV += bindir=$(USRBINDIR)
+COMPONENT_INSTALL_ENV += libdir=$(USRLIBDIR.$(BITS))
+COMPONENT_INSTALL_ENV += mandir=$(USRSHAREMANDIR)
+COMPONENT_INSTALL_ENV += bashcompletiondir=$(BASH_COMPLETIONS_PATH)
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += library/desktop/gtk3
