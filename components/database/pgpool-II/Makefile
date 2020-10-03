@@ -18,15 +18,15 @@ include ../../../make-rules/shared-macros.mk
 BUILD_BITS=64
 
 COMPONENT_NAME= 	pgpool-II
-COMPONENT_VERSION= 	4.1.0
+COMPONENT_VERSION= 	4.1.4
 COMPONENT_SUMMARY= 	pgpool-II middle ware
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:a2515d3d046afda0612b34c2aeca14a2071020dafb1f32e745b4a3054c0018df
+	sha256:b793d516e21653e08b821af4816f69db262d876d9876372e9aa4f4539e1b6bb5
 COMPONENT_ARCHIVE_URL= \
-  http://www.pgpool.net/download.php?f=$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://pgpool.net/
+	https://www.pgpool.net/download.php?f=$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://pgpool.net/
 COMPONENT_FMRI=	database/postgres/pgpool-II
 COMPONENT_CLASSIFICATION=	System/Databases
 COMPONENT_LICENSE=	BSD
