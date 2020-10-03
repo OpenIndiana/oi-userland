@@ -12,28 +12,28 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2020 Andreas Wacknitz
 #
 
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dbus
-COMPONENT_VERSION=	1.12.16
+COMPONENT_VERSION=	1.12.20
 COMPONENT_SUMMARY=	Simple IPC library based on messages
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:54a22d2fa42f2eb2a871f32811c6005b531b9613b1b93a0d269b05e7549fec80
+	sha256:f77620140ecb4cdc67f37fb444f8a6bea70b5b6461f12f1cbe2cec60fa7de5fe
 COMPONENT_ARCHIVE_URL= \
-	http://dbus.freedesktop.org/releases/dbus/$(COMPONENT_ARCHIVE)
+	https://dbus.freedesktop.org/releases/dbus/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/dbus/
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2,AFLv2.1
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		system/library/dbus
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -58,20 +58,14 @@ COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
 # To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += developer/build/autoconf-archive
 REQUIRED_PACKAGES += library/gnome/yelp-tools
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += text/xmlto
-REQUIRED_PACKAGES += x11/library/libx11
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += system/library
+#REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += x11/library/libx11
