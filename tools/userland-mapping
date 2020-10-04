@@ -72,7 +72,7 @@ def generate_component_data(component_path, subdir='components'):
     return component_fmris, component_name, component_relative_path
 
 
-def generate_userland_mapping(workspace_path, subdir='components'):
+def generate_userland_mapping(workspace_path, subdir='components', repo='userland', repo_map=[]):
     mapping = []
 
     paths = find_component_paths(path=workspace_path, subdir=subdir)
@@ -81,9 +81,15 @@ def generate_userland_mapping(workspace_path, subdir='components'):
 
     for component_fmris, component_name, component_relative_path in results:
         for component_fmri in component_fmris:
+            component_repo = repo
+            for rm in repo_map:
+                if component_relative_path.startswith(rm['pfx']):
+                    component_repo = rm['repo']
+
             mapping.append({'name': component_name,
                             'fmri': component_fmri,
-                            'path': component_relative_path})
+                            'path': component_relative_path,
+                            'repo': component_repo})
 
     component_mapping_file = os.path.join(workspace_path, subdir, COMPONENT_MAPPING_FILENAME)
     with open(component_mapping_file, 'w') as f:
@@ -95,13 +101,24 @@ def main():
 
     parser.add_argument('-w', '--workspace', default=os.getenv('WS_TOP'), help='Path to workspace')
     parser.add_argument('--subdir', default='components', help='Directory holding components')
+    parser.add_argument('--repo', default='userland', help='Default target repository')
+    parser.add_argument('--repo-map', help='Target repository for this directory; e.g., encumbered/=userland-encumbered', action='append')
 
     args = parser.parse_args()
 
     workspace = args.workspace
     subdir = args.subdir
 
-    generate_userland_mapping(workspace_path=workspace, subdir=subdir)
+    repo = args.repo
+    repo_map = []
+    if args.repo_map:
+        for rm in args.repo_map:
+            l = rm.split("=")
+            if len(l) != 2:
+                raise ValueError('invalid --repo-map: ' + rm)
+            repo_map.append({'pfx': l[0], 'repo': l[1]})
+
+    generate_userland_mapping(workspace_path=workspace, subdir=subdir, repo=repo, repo_map=repo_map)
 
 if __name__ == '__main__':
     main()
