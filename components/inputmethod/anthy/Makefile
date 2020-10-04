@@ -19,16 +19,17 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=           anthy
 COMPONENT_VERSION=        9100h
 IPS_COMPONENT_VERSION=    0.9100.8
+COMPONENT_REVISION=		  1
 COMPONENT_SUMMARY=        libanthy - Japanese input method library
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=   sha256:d256f075f018b4a3cb0d165ed6151fda4ba7db1621727e0eb54569b6e2275547
-COMPONENT_ARCHIVE_URL=    http://jaist.dl.sourceforge.jp/anthy/37536/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=    https://jaist.dl.sourceforge.jp/anthy/37536/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=           system/input-method/library/libanthy
 COMPONENT_CLASSIFICATION= System/Localizations
 COMPONENT_LICENSE=        LGPL v2.1
 COMPONENT_LICENSE_FILE=   COPYING
-COMPONENT_PROJECT_URL=    http://anthy.osdn.jp/
+COMPONENT_PROJECT_URL=    https://anthy.osdn.jp/
 
 include $(WS_MAKE_RULES)/common.mk
 
