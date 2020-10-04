@@ -25,9 +25,9 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak-5
-COMPONENT_VERSION=	5.0.15
+COMPONENT_VERSION=	5.0.16
 GIT_TAG=		sun-v$(COMPONENT_VERSION)
-PLUGIN_REV=		5.0-202009251034
+PLUGIN_REV=		5.0-202010031025
 COMPONENT_SUMMARY=	The Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak-5
@@ -41,7 +41,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:00c7118edf4b8e0e31e6d4bcfea7b1bff0fa4ed5adb7a5e2787ad37c9a9f475d
+COMPONENT_ARCHIVE_HASH=	sha256:a478fb8905928b33295839909a6d5450dc3ab1e0515e6abb5eef2b63435c2a44
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
