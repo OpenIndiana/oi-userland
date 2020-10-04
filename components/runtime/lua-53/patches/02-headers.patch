@@ -44,36 +44,6 @@ diff -ruN lua-5.3.2.orig/src/lua.h lua-5.3.2/src/lua.h
 +#endif
 +
  #endif
-diff -ruN lua-5.3.2.orig/src/luaconf.h lua-5.3.2/src/luaconf.h
---- lua-5.3.2.orig/src/luaconf.h	2015-10-21 20:17:40.000000000 +0200
-+++ lua-5.3.2/src/luaconf.h	2016-04-26 02:25:40.468686522 +0200
-@@ -188,7 +188,7 @@
- 
- #else			/* }{ */
- 
--#define LUA_ROOT	"/usr/local/"
-+#define LUA_ROOT	"/usr/"
- #define LUA_LDIR	LUA_ROOT "share/lua/" LUA_VDIR "/"
- #define LUA_CDIR	LUA_ROOT "lib/lua/" LUA_VDIR "/"
- #define LUA_PATH_DEFAULT  \
-@@ -265,7 +265,7 @@
- */
- #if defined(__GNUC__) && ((__GNUC__*100 + __GNUC_MINOR__) >= 302) && \
-     defined(__ELF__)		/* { */
--#define LUAI_FUNC	__attribute__((visibility("hidden"))) extern
-+#define LUAI_FUNC	extern
- #else				/* }{ */
- #define LUAI_FUNC	extern
- #endif				/* } */
-@@ -606,7 +606,7 @@
- 
- 
- /*
--@@ lua_number2strx converts a float to an hexadecimal numeric string. 
-+@@ lua_number2strx converts a float to an hexadecimal numeric string.
- ** In C99, 'sprintf' (with format specifiers '%a'/'%A') does that.
- ** Otherwise, you can leave 'lua_number2strx' undefined and Lua will
- ** provide its own implementation.
 diff -ruN lua-5.3.2.orig/src/lualib.h lua-5.3.2/src/lualib.h
 --- lua-5.3.2.orig/src/lualib.h	2014-02-06 18:32:33.000000000 +0100
 +++ lua-5.3.2/src/lualib.h	2016-04-26 02:23:16.977614755 +0200
@@ -97,3 +67,23 @@ diff -ruN lua-5.3.2.orig/src/lualib.h lua-5.3.2/src/lualib.h
 +#endif
 +
  #endif
+--- lua-5.3.6/src/luaconf.h.orig	2020-09-14 17:34:01.000000000 +0000
++++ lua-5.3.6/src/luaconf.h	2020-10-04 17:28:27.998074413 +0000
+@@ -200,7 +200,7 @@
+ 
+ #else			/* }{ */
+ 
+-#define LUA_ROOT	"/usr/local/"
++#define LUA_ROOT	"/usr/"
+ #define LUA_LDIR	LUA_ROOT "share/lua/" LUA_VDIR "/"
+ #define LUA_CDIR	LUA_ROOT "lib/lua/" LUA_VDIR "/"
+ #define LUA_PATH_DEFAULT  \
+@@ -277,7 +277,7 @@
+ */
+ #if defined(__GNUC__) && ((__GNUC__*100 + __GNUC_MINOR__) >= 302) && \
+     defined(__ELF__)		/* { */
+-#define LUAI_FUNC	__attribute__((visibility("hidden"))) extern
++#define LUAI_FUNC	extern
+ #else				/* }{ */
+ #define LUAI_FUNC	extern
+ #endif				/* } */
