@@ -21,14 +21,14 @@ USE_DEFAULT_TEST_TRANSFORMS=yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fribidi
-COMPONENT_VERSION=	1.0.9
+COMPONENT_VERSION=	1.0.10
 COMPONENT_FMRI=		library/fribidi
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=	Free Implementation of the Unicode Bidirectional Algorithm
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:c5e47ea9026fb60da1944da9888b4e0a18854a0e2410bbfe7ad90a054d36e0c7
+	sha256:7f1c687c7831499bcacae5e8675945a39bacbad16ecaa945e9454a32df653c01
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/fribidi/fribidi/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/fribidi/fribidi
