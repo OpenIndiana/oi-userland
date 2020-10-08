@@ -1,25 +1,38 @@
 Disable epoll on illumos
 
---- percona-server-5.7.30-33/extra/libevent/CMakeLists.txt	2020-08-19 08:21:27.966761960 +0000
-+++ percona-server-5.7.30-33/extra/libevent/CMakeLists.txt	2020-08-19 08:21:05.908336944 +0000
-@@ -680,13 +680,13 @@
+--- percona-server-5.7.31-34/extra/libevent/libevent-2.1.11-stable/CMakeLists.txt.1	2020-10-08 22:14:00.038239787 +0000
++++ percona-server-5.7.31-34/extra/libevent/libevent-2.1.11-stable/CMakeLists.txt	2020-10-08 22:15:37.465107609 +0000
+@@ -837,13 +837,13 @@
      list(APPEND SRC_CORE devpoll.c)
  endif()
  
 -if(EVENT__HAVE_EPOLL)
--    list(APPEND SRC_CORE epoll_sub.c epoll.c)
+-    list(APPEND SRC_CORE epoll.c)
 -endif()
 -
 -if(EVENT__HAVE_EVENT_PORTS)
 -    list(APPEND SRC_CORE evport.c)
 -endif()
 +#if(EVENT__HAVE_EPOLL)
-+#    list(APPEND SRC_CORE epoll_sub.c epoll.c)
++#    list(APPEND SRC_CORE epoll.c)
 +#endif()
-+#
++
 +#if(EVENT__HAVE_EVENT_PORTS)
 +#    list(APPEND SRC_CORE evport.c)
 +#endif()
  
+ if (NOT EVENT__DISABLE_OPENSSL)
  #   SSL is configured in cmake/ssl.cmake
- #   find_package(OpenSSL REQUIRED)
+@@ -1202,9 +1202,9 @@
+     # Add event backends based on system introspection result.
+     set(BACKENDS "")
+ 
+-    if (EVENT__HAVE_EPOLL)
+-        list(APPEND BACKENDS EPOLL)
+-    endif()
++#    if (EVENT__HAVE_EPOLL)
++#        list(APPEND BACKENDS EPOLL)
++#    endif()
+ 
+     if (EVENT__HAVE_SELECT)
+         list(APPEND BACKENDS SELECT)
