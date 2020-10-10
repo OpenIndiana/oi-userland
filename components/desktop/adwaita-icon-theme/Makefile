@@ -10,34 +10,29 @@
 
 #
 # Copyright 2018 Michal Nowak
+# Copyright 2020 Andreas Wacknitz
 #
 
-PREFERRED_BITS=64
-
+BUILD_BITS=				64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		adwaita-icon-theme
-COMPONENT_VERSION=	3.30.0
+COMPONENT_NAME=			adwaita-icon-theme
+COMPONENT_MJR_VERSION=	3.38
+COMPONENT_MNR_VERSION=	0
+COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://github.com/GNOME/adwaita-icon-theme
-COMPONENT_SUMMARY=	GNOME Icon Theme
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:9106729174a3e6cc183d14f74454987f5378b46f213e698a6ab2702f70e4e64b
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.30/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		gnome/theme/adwaita-icon-theme
+COMPONENT_SUMMARY=		GNOME Icon Theme
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:6683a1aaf2430ccd9ea638dd4bfe1002bc92b412050c3dba20e480f979faaf97
+COMPONENT_ARCHIVE_URL=	https://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			gnome/theme/adwaita-icon-theme
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
+TEST_TARGET=			$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Build dependencies
 REQUIRED_PACKAGES += library/desktop/xdg/icon-naming-utils
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+
+# Auto-generated dependencies
