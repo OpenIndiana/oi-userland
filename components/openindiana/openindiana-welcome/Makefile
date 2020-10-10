@@ -41,6 +41,9 @@ COMPONENT_PREP_GIT=no
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 
+# Make sure the binaries will be in /usr/bin instead of /usr/bin/$(MACH64):
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 # The ugly hack with update-publish target is necessary to update
