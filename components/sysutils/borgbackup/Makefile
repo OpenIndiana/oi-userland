@@ -18,12 +18,12 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		borgbackup
-COMPONENT_VERSION=	1.1.13
+COMPONENT_VERSION=	1.1.14
 COMPONENT_PROJECT_URL=	https://borgbackup.readthedocs.org/en/stable/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:164a8666a61071ce2fa6c60627c7646f12e3a8e74cd38f046be72f5ea91b3821
+	sha256:7dbb0747cc948673f695cd6de284af215f810fed2eb2a615ef26ddc7c691edba
 COMPONENT_ARCHIVE_URL=	https://github.com/borgbackup/borg/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		backup/borg
 COMPONENT_LICENSE=      BSD
