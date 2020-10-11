@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		qt
 COMPONENT_VERSION=	5.8.0
 COMPONENT_VERSION_MJR=	5.8
-COMPONENT_REVISION=	11
+COMPONENT_REVISION=	12
 COMPONENT_FMRI=		library/qt5
 COMPONENT_PROJECT_URL=	https://www.qt.io/
 COMPONENT_SUMMARY=	Qt cross-platform application and UI framework
