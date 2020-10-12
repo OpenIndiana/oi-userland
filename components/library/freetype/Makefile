@@ -19,14 +19,14 @@ BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           freetype
-COMPONENT_VERSION=        2.10.2
+COMPONENT_VERSION=        2.10.3
 COMPONENT_FMRI=           system/library/freetype-2
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SUMMARY=  	FreeType 2 font engine
 COMPONENT_SRC=      	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:1543d61025d2e6312e0a1c563652555f17378a204a61e99928c9fcef030a2d8b
+	sha256:c22244bc766b2d8152f22db7370965431dcb1e408260428208c24984f78e6659
 COMPONENT_ARCHIVE_URL= \
 	http://download.savannah.gnu.org/releases/freetype/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://freetype.org/
