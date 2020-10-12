@@ -28,10 +28,10 @@ BUILD_STYLE=configure
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		font-misc-ethiopic
-COMPONENT_VERSION= 	1.0.3
+COMPONENT_VERSION= 	1.0.4
 COMPONENT_SUMMARY=      Ethiopic language fonts from the Ge'ez Frontiers Foundation
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:53cb1fd83afdbe7939c0eac34003676ee0e6023216892d98054db90b703c98a5
+	sha256:698c0f6ddf9ca482250bdafa08293893148393bb9cb23e0a9ca313c6dbfc4ae0
 COMPONENT_LICENSE=      MIT
 
 FONT_TYPE = X11MISC
