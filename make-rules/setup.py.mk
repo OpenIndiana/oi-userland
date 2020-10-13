@@ -21,27 +21,21 @@
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-$(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
-$(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
-$(BUILD_DIR)/%-3.5/.built:		PYTHON_VERSION=3.5
+define python-rule
+$(BUILD_DIR)/%-$(1)/.built:		PYTHON_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.installed:		PYTHON_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.tested:		PYTHON_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.tested-and-compared:	PYTHON_VERSION=$(1)
+endef
+
+$(foreach pyver, $(PYTHON_VERSIONS), $(eval $(call python-rule,$(pyver))))
+
 $(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
-
-$(BUILD_DIR)/%-2.6/.installed:		PYTHON_VERSION=2.6
-$(BUILD_DIR)/%-2.7/.installed:		PYTHON_VERSION=2.7
-$(BUILD_DIR)/%-3.5/.installed:		PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
-
-$(BUILD_DIR)/%-2.6/.tested:		PYTHON_VERSION=2.6
-$(BUILD_DIR)/%-2.7/.tested:		PYTHON_VERSION=2.7
-$(BUILD_DIR)/%-3.5/.tested:		PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH32)-%/.tested:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.tested:	BITS=64
-
-$(BUILD_DIR)/%-2.6/.tested-and-compared:	PYTHON_VERSION=2.6
-$(BUILD_DIR)/%-2.7/.tested-and-compared:	PYTHON_VERSION=2.7
-$(BUILD_DIR)/%-3.5/.tested-and-compared:	PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH32)-%/.tested-and-compared:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.tested-and-compared:	BITS=64
 
@@ -51,7 +45,7 @@ BUILD_32 = $(PYTHON_32_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
 BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
 BUILD_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.built)
 
-ifeq ($(PYTHON_VERSION),3.5)
+ifeq ($(filter-out $(PYTHON_64_ONLY_VERSIONS), $(PYTHON_VERSION)),)
 BUILD_32_and_64 = $(BUILD_64)
 endif
 
