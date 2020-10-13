@@ -24,7 +24,7 @@ BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xcb-proto
-COMPONENT_VERSION=        1.14
+COMPONENT_VERSION=        1.14.1
 COMPONENT_SUMMARY=        The X protocol C-language Binding (XCB): Protocol descriptions
 COMPONENT_PROJECT_URL=    http://xcb.freedesktop.org
 COMPONENT_FMRI=           x11/header/xcb-protocols
@@ -32,8 +32,8 @@ COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:186a3ceb26f9b4a015f5a44dcc814c93033a5fc39684f36f1ecc79834416a605
-COMPONENT_ARCHIVE_URL=    http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
+  sha256:f04add9a972ac334ea11d9d7eb4fc7f8883835da3e4859c9afa971efdf57fcc3
+COMPONENT_ARCHIVE_URL=    https://xorg.freedesktop.org/archive/individual/proto/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=        MIT
 
 TEST_TARGET = $(NO_TESTS)
