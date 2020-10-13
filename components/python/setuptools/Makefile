@@ -27,16 +27,15 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		setuptools
-COMPONENT_VERSION=	41.0.1
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	50.3.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:a222d126f5471598053c9a77f4b5d4f26eaa1f150ad6e01dcf1a42e185d05613
+	sha256:39060a59d91cf5cf403fa3bacbb52df4205a8c3585e0b9ba4b30e0e19d4c4b18
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/pypa/setuptools
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -46,5 +45,5 @@ COMPONENT_PREP_ACTION = (cd $(@D) ; $(PYTHON) bootstrap.py)
 
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
