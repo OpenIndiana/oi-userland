@@ -144,5 +144,5 @@ REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxkbcommon
 REQUIRED_PACKAGES += x11/library/mesa
-REQUIRED_PACKAGES += x11/library/libdrm
 REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += developer/clang-90
