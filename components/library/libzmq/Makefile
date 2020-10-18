@@ -19,14 +19,14 @@ BUILD_BITS=64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libzmq
-COMPONENT_VERSION= 4.3.2
+COMPONENT_VERSION= 4.3.3
 COMPONENT_SUMMARY= Open source message queue optimised for performance
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:02ecc88466ae38cf2c8d79f09cfd2675ba299a439680b64ade733e26a349edeb
+	sha256:c4fd999d67cd12872a8604162f2b1cf5b5a02fb807a88215f0f96bd50331b166
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/zeromq/libzmq/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	https://github.com/zeromq/libzmq/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://zeromq.org/
 COMPONENT_FMRI= library/c++/zeromq
 # Two licenses in tarball, LGPLv3+ is referenced in their spec-file
