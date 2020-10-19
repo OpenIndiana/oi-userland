@@ -25,7 +25,6 @@ GIT_REPO=https://github.com/OpenIndiana/slim_source.git
 GIT_BRANCH=oi/hipster
 GIT_CHANGESET=HEAD
 NIGHTLY_OPTIONS=-AWndmp +t
-LINT=/opt/sunstudio12.1/bin/lint
 DMAKE=/usr/bin/dmake
 ONNV_BUILDNUM=$(BRANCHID)
 
@@ -68,7 +67,6 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded Makefile
           echo export SPRO_ROOT=; \
           echo export ON_CLOSED_BINS=/tmp; \
           echo export CC=$(CC); \
-          echo export LINT=$(LINT); \
           echo export MAKE=$(DMAKE); \
           echo export ONNV_BUILDNUM=$(ONNV_BUILDNUM); \
           echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM)) > \
@@ -139,5 +137,6 @@ PACKAGE_NAMES += system/install/text-install
 PACKAGE_NAMES += system/library/install
 
 # Build dependencies
+REQUIRED_PACKAGES += system/install/text-install
 REQUIRED_PACKAGES += system/library/install/libinstzones
 REQUIRED_PACKAGES += system/library/storage/ima/header-ima
