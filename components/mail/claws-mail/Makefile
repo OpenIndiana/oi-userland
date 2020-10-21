@@ -18,14 +18,14 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
-COMPONENT_VERSION=	3.17.7
+COMPONENT_VERSION=	3.17.8
 COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:60b94649bc30ae79e057054e44afbe5fe29de0e77614b81505cff2204c02ddc8
+	sha256:cdb7b2814995d6f4a9c3b1f0bc1467ed5c3cf2a5e0da1730aaa25a8accafddaf
 COMPONENT_ARCHIVE_URL=	https://www.claws-mail.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPL-3
 COMPONENT_LICENSE_FILE=	COPYING
