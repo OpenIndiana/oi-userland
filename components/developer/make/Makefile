@@ -29,18 +29,17 @@ BUILD_SYSTEM=		configure
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		make
-COMPONENT_VERSION=	4.2.1
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/make/
+COMPONENT_VERSION=	4.3
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/make/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e40b8f018c1da64edd1cc9a6fce5fa63b2e707e404e20cad91fbae337c98a5b7
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/make/$(COMPONENT_ARCHIVE)
+	sha256:e05fdde47c5f7ca45cb697e973894ff4f5d79e13b750ed57d7b66d8defc78e19
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/make/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -I config -fi )
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
