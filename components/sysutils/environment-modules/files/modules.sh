@@ -22,10 +22,6 @@ case "$0" in
 	;;
 esac
 
-MANPATH='::'
-
-export MANPATH
-
 # Allow adding modules list in .modules
 if [ -r $HOME/.modules ]; then
 	. $HOME/.modules
