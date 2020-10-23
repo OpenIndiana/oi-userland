@@ -22,41 +22,35 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2020, Nona Hansel
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		less
-COMPONENT_VERSION=	551
+COMPONENT_VERSION=	563
 COMPONENT_SUMMARY=	Pager program similar to more
 COMPONENT_PROJECT_URL=	http://www.greenwoodsoftware.com/less/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:ff165275859381a63f19135a8f1f6c5a194d53ec3187f94121ecd8ef0795fe3d
+	sha256:ce5b6d2b9fc4442d7a07c93ab128d2dff2ce09a1d4f2d055b95cf28dd0dc9a9a
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/less
 COMPONENT_CLASSIFICATION=	Development/GNU
 COMPONENT_LICENSE_FILE=	less.license
 COMPONENT_LICENSE=	Less
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CC += $(CC_BITS)
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
