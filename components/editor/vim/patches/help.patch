@@ -1,15 +1,15 @@
---- a/src/ex_cmds.c	2016-09-21 15:16:13.032570431 -0700
-+++ b/src/ex_cmds.c	2016-09-21 15:16:13.055466074 -0700
-@@ -6276,6 +6276,8 @@
+--- vim-8.2.1897/src/help.c	2020-10-24 17:19:16.000000000 +0000
++++ vim-8.2.1897/src/help.c	2020-10-24 18:42:52.206685850 +0000
+@@ -38,6 +38,8 @@ ex_help(exarg_T *eap)
  #ifdef FEAT_FOLDING
      int		old_KeyTyped = KeyTyped;
  #endif
 +    int		nohelp = FALSE, nominhelp = FALSE;
 +    char_u	*mhf = NULL;
  
-     if (eap != NULL)
-     {
-@@ -6327,6 +6329,23 @@
+     if (ERROR_IF_ANY_POPUP_WINDOW)
+ 	return;
+@@ -88,6 +90,23 @@ ex_help(exarg_T *eap)
      n = find_help_tags(arg, &num_matches, &matches,
  						 eap != NULL && eap->forceit);
  
@@ -33,7 +33,7 @@
      i = 0;
  #ifdef FEAT_MULTI_LANG
      if (n != FAIL && lang != NULL)
-@@ -6339,7 +6358,7 @@
+@@ -100,7 +119,7 @@ ex_help(exarg_T *eap)
  		break;
  	}
  #endif
@@ -42,7 +42,7 @@
      {
  #ifdef FEAT_MULTI_LANG
  	if (lang != NULL)
-@@ -6352,9 +6371,11 @@
+@@ -113,9 +132,11 @@ ex_help(exarg_T *eap)
  	return;
      }
  
@@ -57,16 +57,14 @@
  
  #ifdef FEAT_GUI
      need_mouse_correct = TRUE;
-@@ -6424,12 +6424,14 @@ ex_help(exarg_T *eap)
- 	     * There is no help window yet.
- 	     * Try to open the file specified by the "helpfile" option.
- 	     */
+@@ -137,12 +158,14 @@ ex_help(exarg_T *eap)
+ 	{
+ 	    // There is no help window yet.
+ 	    // Try to open the file specified by the "helpfile" option.
 -	    if ((helpfd = mch_fopen((char *)p_hf, READBIN)) == NULL)
 -	    {
 -		smsg(_("Sorry, help file \"%s\" not found"), p_hf);
 -		goto erret;
--	    }
--	    fclose(helpfd);
 +	    if (!nohelp || nominhelp) {
 +		if ((helpfd = mch_fopen((char *)p_hf, READBIN)) == NULL)
 +		{
@@ -74,20 +72,21 @@
 +		    goto erret;
 +		}
 +		fclose(helpfd);
-+ 	    }
+ 	    }
+-	    fclose(helpfd);
  
- 	    /* Split off help window; put it at far top if no position
- 	     * specified, the current window is vertically split and
-@@ -6420,7 +6443,7 @@
- 	     * Set the alternate file to the previously edited file.
- 	     */
+ 	    // Split off help window; put it at far top if no position
+ 	    // specified, the current window is vertically split and
+@@ -161,7 +184,7 @@ ex_help(exarg_T *eap)
+ 	    // set b_p_ro flag).
+ 	    // Set the alternate file to the previously edited file.
  	    alt_fnum = curbuf->b_fnum;
 -	    (void)do_ecmd(0, NULL, NULL, NULL, ECMD_LASTL,
 +	    (void)do_ecmd(0, mhf, NULL, NULL, ECMD_LASTL,
  			  ECMD_HIDE + ECMD_SET_HELP,
- #ifdef FEAT_WINDOWS
- 			  NULL  /* buffer is still open, don't store info */
-@@ -6443,7 +6466,7 @@
+ 			  NULL);  // buffer is still open, don't store info
+ 	    if (!cmdmod.keepalt)
+@@ -179,7 +202,7 @@ ex_help(exarg_T *eap)
      KeyTyped = old_KeyTyped;
  #endif
  
@@ -95,8 +94,8 @@
 +    if (!nohelp && tag != NULL)
  	do_tag(tag, DT_HELP, 1, FALSE, TRUE);
  
-     /* Delete the empty buffer if we're not using it.  Careful: autocommands
-@@ -6461,7 +6484,8 @@
+     // Delete the empty buffer if we're not using it.  Careful: autocommands
+@@ -197,7 +220,8 @@ ex_help(exarg_T *eap)
  	curwin->w_alt_fnum = alt_fnum;
  
  erret:
