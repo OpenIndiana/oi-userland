@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freerdp
 COMPONENT_VERSION=	2.2.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Remote Desktop Viewer Client
 COMPONENT_PROJECT_URL=	https://www.freerdp.com
 COMPONENT_FMRI=		desktop/remote-desktop/freerdp
@@ -99,7 +100,6 @@ COMPONENT_POST_INSTALL_ACTION  = \
 REQUIRED_PACKAGES += audio/lame
 REQUIRED_PACKAGES += image/library/libjpeg6
 REQUIRED_PACKAGES += image/library/libjpeg6-ijg
-REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libusb-1
