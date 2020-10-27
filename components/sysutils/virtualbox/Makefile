@@ -70,7 +70,7 @@ VBOX_FS_MODULES= vboxfs
 VBOX_BINS= VBoxControl VBoxService VBoxClient
 VBOX_SBINS= vboxmslnk
 
-QT5_ROOT=/usr/lib/qt/5.8
+QT5_ROOT=/usr/lib/qt/5.12
 PATH=$(PATH.gnu):$(QT5_ROOT)/bin/$(MACH64)
 PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS)):$(QT5_ROOT)/lib/$(MACH64)/pkgconfig
 
