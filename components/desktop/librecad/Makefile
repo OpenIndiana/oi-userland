@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	LibreCAD
 COMPONENT_VERSION =     2.2.0-rc1
+COMPONENT_REVISION =     1
 IPS_COMPONENT_VERSION = 2.2.0.1
 COMPONENT_PROJECT_URL =	https://github.com/LibreCAD
 COMPONENT_FMRI =	desktop/librecad
