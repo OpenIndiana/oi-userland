@@ -32,7 +32,7 @@ COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH.qt5 = /usr/lib/qt/5.8/bin/$(MACH64)
+PATH.qt5 = /usr/lib/qt/5.12/bin/$(MACH64)
 PATH=$(GCC_BINDIR):$(PATH.qt5):$(PATH.illumos)
 
 COMPONENT_NAME_lc = $(shell echo $(COMPONENT_NAME) | tr '[A-Z]' '[a-z]')
