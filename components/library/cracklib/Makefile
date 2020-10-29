@@ -12,25 +12,25 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cracklib
-COMPONENT_VERSION=	2.9.6
+COMPONENT_VERSION=	2.9.7
 COMPONENT_PROJECT_URL=	https://github.com/cracklib/cracklib
 COMPONENT_SUMMARY=	CrackLib Library and Dictionaries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:17cf76943de272fd579ed831a1fd85339b393f8d00bf9e0d17c91e972f583343
-COMPONENT_ARCHIVE_URL=	https://github.com/cracklib/cracklib/releases/download/cracklib-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	sha256:fe82098509e4d60377b998662facf058dc405864a8947956718857dbb4bc35e6
+COMPONENT_ARCHIVE_URL=	https://github.com/cracklib/cracklib/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/security/cracklib
 COMPONENT_LICENSE_FILE=	COPYING.LIB
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_CLASSIFICATION=	System/Libraries
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 
@@ -42,11 +42,7 @@ $(BUILD_DIR)/.dicts:	$(INSTALL_32) $(INSTALL_64)
 	$(TOUCH) $@
 
 # common targets
-build:		$(BUILD_32_and_64)
-
 install:	$(INSTALL_32_and_64)	$(BUILD_DIR)/.dicts
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
