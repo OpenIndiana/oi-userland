@@ -1,0 +1,13 @@
+  Sunstudio provided c99 in /usr/bin. After its removal the check failed.
+
+--- vlc-3.0.11.1/configure.ac.orig	2020-10-29 19:10:53.886793814 +0000
++++ vlc-3.0.11.1/configure.ac	2020-10-29 19:11:14.787799389 +0000
+@@ -71,7 +71,7 @@
+ AC_ARG_VAR([DESKTOP_FILE_VALIDATE], [Validator for desktop entry files])
+ AC_CHECK_PROGS(DESKTOP_FILE_VALIDATE, [${DESKTOP_FILE_VALIDATE} desktop-file-validate], :)
+ AC_ARG_VAR([BUILDCC], [Build system C11 or C99 compiler command])
+-AC_CHECK_PROGS(BUILDCC, [c11-gcc c11 c99-gcc c99], [false])
++AC_CHECK_PROGS(BUILDCC, [c11-gcc c11 c99-gcc c99 gcc-7], [false])
+ AS_IF([test "$BUILDCC" = "false"], [
+   AC_MSG_ERROR([Cannot find native C99 compiler: please define BUILDCC.])
+ ])
