@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
 COMPONENT_VERSION= 3.0.11.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_FMRI = media/vlc
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
@@ -89,7 +89,6 @@ CONFIGURE_OPTIONS += --enable-screen
 CONFIGURE_OPTIONS += --disable-vnc
 CONFIGURE_OPTIONS += --disable-freerdp
 CONFIGURE_OPTIONS += --disable-realrtsp
-CONFIGURE_OPTIONS += BUILDCC=$(CC)
 
 # Mux/Demux
 CONFIGURE_OPTIONS += --enable-dvbpsi
