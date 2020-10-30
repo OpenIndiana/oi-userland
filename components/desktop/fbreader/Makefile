@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fbreader
 COMPONENT_VERSION=	0.99.4
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	Powerful e-book reader
 COMPONENT_PROJECT_URL=	http://www.fbreader.org/
 COMPONENT_FMRI=	desktop/fbreader
@@ -35,7 +35,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-QT5_ROOT=/usr/lib/qt/5.8
+QT5_ROOT=/usr/lib/qt/5.12
 PATH=$(GCC_ROOT)/bin:$(PATH.gnu):$(QT5_ROOT)/bin
 
 ENV += TARGET_ARCH=desktop

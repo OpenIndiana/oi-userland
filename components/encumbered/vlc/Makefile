@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
 COMPONENT_VERSION= 3.0.11.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_FMRI = media/vlc
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
@@ -52,7 +52,7 @@ CFLAGS+= -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 CXXFLAGS+= -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 
 # Use Qt5
-PKG_CONFIG_PATH+=:/usr/lib/qt/5.8/lib/$(MACH64)/pkgconfig
+PKG_CONFIG_PATH+=:/usr/lib/qt/5.12/lib/$(MACH64)/pkgconfig
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
@@ -187,7 +187,7 @@ CONFIGURE_OPTIONS += --enable-taglib
 CONFIGURE_OPTIONS += --enable-notify
 
 
-QT5_ROOT = /usr/lib/qt/5.8
+QT5_ROOT = /usr/lib/qt/5.12
 
 QT5_RPATH = $(GCC_LIBDIR):$(QT5_ROOT)/lib/$(MACH64)
 
