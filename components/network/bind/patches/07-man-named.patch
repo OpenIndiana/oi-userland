@@ -1,0 +1,121 @@
+--- bind-9.16.6/doc/man/named.8in-orig	Mon Aug 10 04:31:13 2020
++++ bind-9.16.6/doc/man/named.8in	Thu Oct 29 08:02:00 2020
+@@ -1,6 +1,6 @@
+ .\" Man page generated from reStructuredText.
+ .
+-.TH "NAMED" "8" "@RELEASE_DATE@" "@BIND9_VERSION@" "BIND 9"
++.TH "NAMED" "1M" "@RELEASE_DATE@" "@BIND9_VERSION@" "BIND 9"
+ .SH NAME
+ named \- Internet domain name server
+ .
+@@ -216,6 +216,100 @@
+ developers and may be removed or changed in a future release.
+ .UNINDENT
+ .UNINDENT
++.SH AUTOMATIC SERVICE MANAGEMENT (SMF)
++.sp
++The \fBDNS\fP service is managed by the service management facility, \fBsmf\fP(5), under the service identifier:
++.INDENT 0.0
++.INDENT 3.5
++.sp
++.nf
++.ft C
++svc:/network/dns/server:default
++.ft P
++.fi
++.UNINDENT
++.UNINDENT
++.LP
++Administrative actions on this service, such as enabling, disabling, or requesting restart, can be performed using \fBsvcadm\fP(1M). The service's status can
++be queried using the \fBsvcs\fP(1) command.
++.LP
++\fBDNS\fP on illumos is managed via the service management facility described in
++\fBsmf\fP(5). There are several options controlled by services properties which 
++can be set by the system administrator. The available options can be listed by
++executing the following command:
++.INDENT 0.0
++.INDENT 3.5
++.sp
++.nf
++.ft C
++svccfg -s svc:/network/dns/server:default listprop options
++.ft P
++.fi
++.UNINDENT
++.UNINDENT
++.sp
++Each of these properties can be set using this command:
++.INDENT 0.0
++.INDENT 3.5
++.sp
++.nf
++.ft C
++svccfg -s  svc:/network/dns/server:default setprop \fIpropname\fP = \fIvalue\fP
++.ft P
++.fi
++.UNINDENT
++.UNINDENT
++.sp
++The available options and their meanings are as follows:
++.TP
++.BR options/server
++A string that specifies an alternative server command.  If
++not specified the default /usr/sbin/named is used.
++.TP
++.BR options/configuration_file
++A string that specifies an alternative
++configuration file to be used. The property is similar
++to named(1M) command line option '-c <string>.
++.TP
++.BR options/ip_interfaces
++A string that specifies which IP transport BIND will
++transmit on. Possible values are 'IPv4' or 'IPv6'. Any
++other setting assumes 'all', the default.
++Equivalent to command line option '-4' or '-6'.
++.TP
++.BR options/listen_on_port
++An integer that specifies the default UDP and TCP port
++which will be used to listen for DNS requests.
++If not specified, the server listens on port 53.
++Equivalent to command line option '-p <integer>'.
++.TP 
++.BR options/debug_level
++An integer that specifies the default debug level.  The
++default is 0; no debugging. The higher the number the
++more verbose debug information becomes.
++Equivalent to command line option '-d <integer>'.
++.TP
++.BR options/threads
++An integer that specifies the number of cpu worker threads to
++create.  The default of 0 causes named to try to
++determine the number of CPUs present and create one
++thread per CPU.
++Equivalent to command line option '-n <integer>'.
++.TP
++.BR options/chroot_dir
++Change the root directory using chroot(2)
++to pathname after processing the command line
++arguments, but before reading the configuration file.
++The working directory must be below chroot_dir.
++This option should be used in conjunction with the user option.
++Equivalent to command line option '-t <pathname>'.
++.TP
++.BR options/user
++Change to user after completing privileged operations, such as
++creating sockets that listen on privileged ports.
++The default user is 'named'.
++The working directory must be writable by this user.
++Equivalent to command line option '-u user'.
+ .SH SIGNALS
+ .sp
+ In routine operation, signals should not be used to control the
+@@ -251,7 +345,8 @@
+ .UNINDENT
+ .SH SEE ALSO
+ .sp
+-\fI\%RFC 1033\fP, \fI\%RFC 1034\fP, \fI\%RFC 1035\fP, \fBnamed\-checkconf(8)\fP, \fBnamed\-checkzone(8)\fP, \fBrndc(8), :manpage:\(ganamed.conf(5)\fP, BIND 9 Administrator Reference Manual.
++\fI\%RFC 1033\fP, \fI\%RFC 1034\fP, \fI\%RFC 1035\fP, \fBnamed\-checkconf(1M)\fP, \fBnamed\-checkzone(1M)\fP, \fBrndc(1M)\fP, \fBnamed.conf(5)\fP, BIND 9 Administrator Reference Manual,
++\fBsmf\fP(5), \fBsvcadm\fP(1M), \fBsvcs\fP(1), \fBchroot\fP(2).
+ .SH AUTHOR
+ Internet Systems Consortium
+ .SH COPYRIGHT
