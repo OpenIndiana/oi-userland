@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2020, Nona Hansel
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -33,6 +34,8 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 dir path=etc/sudoers.d mode=0750 group=root
 
+file path=etc/sudo.conf
+file path=etc/sudo_logsrvd.conf
 file path=etc/sudoers original_name=SUNWsudo:etc/sudoers overlay=allow \
 	preserve=true mode=0440 group=root
 file path=usr/bin/cvtsudoers
@@ -40,13 +43,17 @@ file path=usr/bin/sudo mode=4511
 link path=usr/bin/sudoedit target=sudo
 file path=usr/bin/sudoreplay mode=0511
 file path=usr/include/sudo_plugin.h
+file path=usr/lib/$(MACH64)/sudo/audit_json.so
 file path=usr/lib/$(MACH64)/sudo/group_file.so
 link path=usr/lib/$(MACH64)/sudo/libsudo_util.so target=libsudo_util.so.0.0.0
 link path=usr/lib/$(MACH64)/sudo/libsudo_util.so.0 target=libsudo_util.so.0.0.0
 file path=usr/lib/$(MACH64)/sudo/libsudo_util.so.0.0.0
+file path=usr/lib/$(MACH64)/sudo/sample_approval.so
 file path=usr/lib/$(MACH64)/sudo/sudo_noexec.so
 file path=usr/lib/$(MACH64)/sudo/sudoers.so
 file path=usr/lib/$(MACH64)/sudo/system_group.so
+file path=usr/sbin/sudo_logsrvd
+file path=usr/sbin/sudo_sendlog
 file path=usr/sbin/visudo mode=0511
 file path=usr/share/doc/sudo/CONTRIBUTORS
 file path=usr/share/doc/sudo/ChangeLog
@@ -59,6 +66,7 @@ file path=usr/share/doc/sudo/TROUBLESHOOTING
 file path=usr/share/doc/sudo/UPGRADE
 file path=usr/share/doc/sudo/examples/pam.conf
 file path=usr/share/doc/sudo/examples/sudo.conf
+file path=usr/share/doc/sudo/examples/sudo_logsrvd.conf
 file path=usr/share/doc/sudo/examples/sudoers
 file path=usr/share/doc/sudo/examples/syslog.conf
 file path=usr/share/doc/sudo/schema.ActiveDirectory
@@ -135,6 +143,9 @@ file path=usr/share/locale/pt/LC_MESSAGES/sudoers.mo
 link path=usr/share/locale/pt_BR.UTF-8 target=pt_BR
 file path=usr/share/locale/pt_BR/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/ro.UTF-8 target=ro
+file path=usr/share/locale/ro/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/ro/LC_MESSAGES/sudoers.mo
 link path=usr/share/locale/ru.UTF-8 target=ru
 file path=usr/share/locale/ru/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/ru/LC_MESSAGES/sudoers.mo
@@ -167,11 +178,15 @@ file path=usr/share/locale/zh_TW/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/sudoers.mo
 file path=usr/share/man/man1/cvtsudoers.1
 file path=usr/share/man/man1m/sudo.1m
+file path=usr/share/man/man1m/sudo_logsrvd.1m
 file path=usr/share/man/man1m/sudo_plugin.1m
+file path=usr/share/man/man1m/sudo_sendlog.1m
 link path=usr/share/man/man1m/sudoedit.1m target=sudo.1m
 file path=usr/share/man/man1m/sudoreplay.1m
 file path=usr/share/man/man1m/visudo.1m
 file path=usr/share/man/man4/sudo.conf.4
+file path=usr/share/man/man4/sudo_logsrv.proto.4
+file path=usr/share/man/man4/sudo_logsrvd.conf.4
 file path=usr/share/man/man4/sudoers.4
 file path=usr/share/man/man4/sudoers.ldap.4
 file path=usr/share/man/man4/sudoers_timestamp.4
