@@ -11,6 +11,7 @@
 #
 # Copyright 2016 Adam Stevko
 #
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
@@ -27,9 +28,7 @@ COMPONENT_ARCHIVE_HASH= sha256:e8fbb9ff852556d72dfd9f1d0134ba075ce5b4c41289902a6
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION= \
 	$(CLONEY) $(SOURCE_DIR) $(@D)
@@ -40,12 +39,6 @@ CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --enable-geoip=legacy
 
 CFLAGS+= -std=gnu99
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 REQUIRED_PACKAGES += database/geoip
 REQUIRED_PACKAGES += library/ncurses
