@@ -33,8 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PRE_CONFIGURE_ACTION= \
 	$(CLONEY) $(SOURCE_DIR) $(@D)
 
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
-
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --enable-geoip=legacy
 
