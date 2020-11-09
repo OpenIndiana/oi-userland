@@ -21,15 +21,15 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2017, Aurelien Larcher
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2020, Nona Hansel
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=          gawk
-COMPONENT_VERSION=       5.0.1
-COMPONENT_REVISION=      1
+COMPONENT_VERSION=       5.1.0
 COMPONENT_SUMMARY=       GNU awk
 COMPONENT_PROJECT_URL=   https://www.gnu.org/software/gawk/
 COMPONENT_FMRI=          text/gawk
@@ -37,13 +37,11 @@ COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:8e4e86f04ed789648b66f757329743a0d6dfb5294c3b91b756a474f1ce05a794
+	sha256:cf5fea4ac5665fd5171af4716baab2effc76306a9572988d5ba1078f196382bd
 COMPONENT_ARCHIVE_URL=   http://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=       GPLv3, FDLv1.3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS+= $(gcc_C99_ENABLE) $(CPP_XPG6MODE)
 CFLAGS+= -I$(USRINCDIR)/mpfr -I$(USRINCDIR)/gmp
@@ -60,12 +58,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Making/d" ' \
 	'-e "/^--- _/d" ' \
 	'-e "s|\(\*\*\* \\$$(SOURCE_DIR)/test/[^[:space:]]*\).*|\1|g" '
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
