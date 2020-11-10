@@ -46,6 +46,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -I$(USRINCDIR)/gmp
 CFLAGS += -I$(USRINCDIR)/idn2
+CFLAGS += -fno-ipa-cp-clone
 
 MCS = mcs
 STRIP = strip
