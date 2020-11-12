@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
 COMPONENT_VERSION=	4.2.8p13
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	$(subst p,.,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
@@ -68,6 +69,8 @@ CONFIGURE_OPTIONS +=	--disable-debugging
 CONFIGURE_OPTIONS +=	--disable-optional-args
 CONFIGURE_OPTIONS +=	--enable-parse-clocks
 CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
+# To avoid arc4random_addrandom error
+CONFIGURE_OPTIONS +=	--without-sntp
 CONFIGURE_OPTIONS +=	--without-ntpsnmpd
 CONFIGURE_OPTIONS +=	--with-crypto=openssl
 CONFIGURE_OPTIONS +=	--with-openssl-incdir=$(USRINCDIR)
@@ -130,9 +133,6 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-# Required for SNTP but not auto-detected
-REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += runtime/perl-522
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl

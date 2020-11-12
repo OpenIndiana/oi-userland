@@ -1,0 +1,49 @@
+The patch fixes two test failures reported in bugs 31471551 and 31466240.
+
+1) fopen intentionally returns EINVAL instead of EEXIST if "ax" mode is used
+-> Appending to a file is deemed as invalid argument since
+   the exclusive open requires that the file does not exists.
+2) do_secret_stuff assumes that the stack layout does not change
+-> It is fragile since GCC's interprocedural constant propagation may divide
+   the function to two smaller ones based on the constant value.
+-> Signal invocations may also change the stack addresses.
+
+The patch will be sent to upstream.
+
+--- gnutls-3.6.14/gl/tests/test-fopen-gnu.c	2020-06-10 22:48:35.623343981 +0000
++++ gnutls-3.6.14/gl/tests/test-fopen-gnu.c	2020-06-10 22:47:57.066934251 +0000
+@@ -67,7 +67,7 @@ main (void)
+   /* Open the file and check the 'x' mode.  */
+   f = fopen (BASE "file", "ax");
+   ASSERT (f == NULL);
+-  ASSERT (errno == EEXIST);
++  ASSERT (errno == EEXIST || errno == EINVAL);
+ 
+   /* Open a binary file and check that the 'e' mode doesn't interfere.  */
+   f = fopen (BASE "binary", "wbe");
+--- gnutls-3.6.14/gl/tests/test-explicit_bzero.c	2020-06-10 22:58:14.202670144 +0000
++++ gnutls-3.6.14/gl/tests/test-explicit_bzero.c	2020-06-10 22:57:37.884698724 +0000
+@@ -128,7 +128,7 @@ test_heap (void)
+      2. Verify that the memory has been erased.
+    Implement them in the same function, so that they access the same memory
+    range on the stack.  */
+-static int _GL_ATTRIBUTE_NOINLINE
++static int _GL_ATTRIBUTE_NOINLINE _GL_ATTRIBUTE_NOIPA
+ do_secret_stuff (volatile int pass)
+ {
+   char stackbuf[SECRET_SIZE];
+--- gnutls-3.6.14/m4/gnulib-common.m4	2020-06-10 23:32:42.701468815 +0000
++++ gnutls-3.6.14/m4/gnulib-common.m4	2020-06-10 23:31:40.284523927 +0000
+@@ -213,6 +213,12 @@ AC_DEFUN([gl_COMMON_BODY], [
+ # define _GL_ATTRIBUTE_NOINLINE
+ #endif
+ 
++#if _GL_HAS_ATTRIBUTE (noipa)
++# define _GL_ATTRIBUTE_NOIPA __attribute__ ((__noipa__))
++#else
++# define _GL_ATTRIBUTE_NOIPA
++#endif
++
+ #if _GL_HAS_ATTRIBUTE (nonnull)
+ # define _GL_ATTRIBUTE_NONNULL(args) __attribute__ ((__nonnull__ args))
+ #else
