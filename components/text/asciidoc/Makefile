@@ -13,34 +13,73 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	asciidoc
-COMPONENT_VERSION= 	8.6.10
+COMPONENT_VERSION= 	9.0.4
 COMPONENT_SUMMARY= 	Text based document generation tool
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9e52f8578d891beaef25730a92a6e723596ddbd07bfe0d2a56486fcf63a0b983
+	sha256:400368a43f3eee656d7f197382cd3554b50fb370ef2aea6534f431692a356c66
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/asciidoc/asciidoc/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL = http://www.methods.co.nz/asciidoc/
+	https://github.com/asciidoc/asciidoc-py3/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://asciidoc.org/
+COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+PYTHON_VERSION=		3.7
 
-COMPONENT_PREP_ACTION = ( cd $(@D); autoreconf -vif )
-
-# Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CP) -a  $(SOURCE_DIR)/* $(@D))
-
-CONFIGURE_OPTIONS +=  --sysconfdir=/etc
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
-build: $(BUILD_32)
+COMPONENT_PRE_CONFIGURE_ACTION = \
+        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-install: $(INSTALL_32)
+# pkgdepend doesn't like the first line of a Python script to be:
+# '#!/usr/bin/env python' so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
+#
+COMPONENT_POST_INSTALL_ACTION += \
+        $(GSED) -i -e 's?env python3?python$(PYTHON_VERSION)?' \
+                $(PROTOUSRBINDIR)/asciidoc.py;
+COMPONENT_POST_INSTALL_ACTION += \
+        $(GSED) -i -e 's?env python3?python$(PYTHON_VERSION)?' \
+                $(PROTOUSRBINDIR)/a2x.py;
 
-REQUIRED_PACKAGES += runtime/python-27
+# AsciiDoc configuration and data files belong in /usr/share, not /etc based
+# (Following what Oracle does for Solaris
+CONFIGURE_OPTIONS +=    --sysconfdir=$(USRSHAREDIR)
+
+COMPONENT_TEST_DIR =    $(@D)/tests
+COMPONENT_TEST_ENV_CMD =
+COMPONENT_TEST_ENV =    export PATH=$(@D):$$PATH;
+COMPONENT_TEST_CMD =    \
+    $(PYTHON) ../asciidocapi.py; \
+    if [ $$? -eq 0 ] ; \
+        then print "asciidocapi test passed"; \
+        else print "asciidocapi test failed"; \
+    fi; \
+    $(PYTHON) ./testasciidoc.py update --force; \
+    $(PYTHON) ./testasciidoc.py run
+COMPONENT_TEST_TARGETS =
+
+COMPONENT_TEST_TRANSFORMS += \
+    '-n ' \
+    '-e "/passed/p" ' \
+    '-e "/^[1-9]: /p" ' \
+    '-e "/^[1-9][0-9]: /p" ' \
+    '-e "/^SOURCE/p" ' \
+    '-e "/^PASSED/p" ' \
+    '-e "/^FAILED/p" ' \
+    '-e "/^TOTAL/p" '
+
+# Manually added dependencies:
+REQUIRED_PACKAGES += image/graphviz
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += library/python/pygments
+REQUIRED_PACKAGES += web/browser/w3m
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/python-37
