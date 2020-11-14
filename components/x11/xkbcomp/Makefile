@@ -19,11 +19,11 @@ include $(WS_MAKE_RULES)/x11.mk
 BUILD_BITS=32_and_64
 
 COMPONENT_NAME=     xkbcomp
-COMPONENT_VERSION=  1.4.3
+COMPONENT_VERSION=  1.4.4
 COMPONENT_FMRI=     x11/keyboard/xkbcomp
 COMPONENT_SUMMARY=  xkbcomp - compile XKB keyboard description
 COMPONENT_ARCHIVE_HASH= \
-  sha256:06242c169fc11caf601cac46d781d467748c6a330e15b36dce46520b8ac8d435
+	sha256:59cce603a607a17722a0a1cf99010f4894e7812beb5d695abbc08474d59af27e
 
 include $(WS_MAKE_RULES)/common.mk
 
