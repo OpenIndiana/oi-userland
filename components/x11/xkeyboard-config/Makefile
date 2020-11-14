@@ -17,15 +17,15 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xkeyboard-config
-COMPONENT_VERSION=        2.27
+COMPONENT_VERSION=        2.30
 COMPONENT_FMRI=           x11/keyboard/data-xkb
 COMPONENT_SUMMARY=        X Keyboard Configuration Database
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_PROJECT_URL=    https://freedesktop.org/wiki/Software/XKeyboardConfig/
 COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/data/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+	https://www.x.org/releases/individual/data/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:690daec8fea63526c07620c90e6f3f10aae34e94b6db6e30906173480721901f
+	sha256:095a524f7b633ed257617202d06c9c71fe020c8897b106cf0dcdd0c6e8b797d4
 COMPONENT_LICENSE=        MIT
 
 
