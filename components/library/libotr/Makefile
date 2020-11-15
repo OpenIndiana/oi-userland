@@ -11,25 +11,27 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2020 Andreas Wacknitz
 #
 
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libotr
 
 COMPONENT_VERSION= 4.1.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Off-the-Record Messaging library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8b3b182424251067a952fb4e6c7b95a21e644fbb27fbd5f8af2b2ed87ca419f5
+	sha256:8b3b182424251067a952fb4e6c7b95a21e644fbb27fbd5f8af2b2ed87ca419f5
 COMPONENT_ARCHIVE_URL= \
-  http://www.cypherpunks.ca/otr/$(COMPONENT_ARCHIVE)
+	http://www.cypherpunks.ca/otr/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://otr.cypherpunks.ca/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET: $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         aclocal -I. && \
@@ -40,13 +42,10 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
+# Parallel builds hang on some systems:
+COMPONENT_BUILD_ARGS= -j1
+
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
