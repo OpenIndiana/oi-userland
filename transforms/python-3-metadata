@@ -1,0 +1,26 @@
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+
+# Copyright 2020 OmniOS Community Edition (OmniOSce) Association.
+
+# Newer setup tools creates entry point scripts which do:
+
+#        try:
+#            from importlib.metadata import distribution
+#        except ImportError:
+#            try:
+#                from importlib_metadata import distribution
+#            except ImportError:
+#                from pkg_resources import load_entry_point
+#
+# The IPS dependency resolver cannot process this and fails to find a
+# dependency for the 'metadata' requirement, which is only available from
+# python 3.8. Bypass this dependency globally.
+
+<transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
