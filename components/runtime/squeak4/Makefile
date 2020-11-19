@@ -31,15 +31,15 @@ BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak-4
-COMPONENT_VERSION=	4.16.7
+COMPONENT_VERSION=	4.19.2
 COMPONENT_SUMMARY=	The Squeak V4 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/squeak-4
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=		3775
-SVN_HASH=  sha256:918f3576a148bc41ae10a929f3ac53dfa6984208604a9c28d4a712f58db55748
+SVN_REV=		3790
+SVN_HASH=  sha256:60521172ecd055b182813893e18db9adff528ee5d42f4b1ddd0c5df83a33aaa2
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
