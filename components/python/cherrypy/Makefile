@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		CherryPy
 # This is the last version with Python 2.7 support
 COMPONENT_VERSION=	17.3.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	'Pythonic, object-oriented HTTP framework'
 COMPONENT_PROJECT_URL=	http://www.cherrypy.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
