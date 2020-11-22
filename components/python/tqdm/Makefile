@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tqdm
 COMPONENT_VERSION=	4.34.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	'Fast, extensible progress bar for Python and CLI'
 COMPONENT_PROJECT_URL=	https://github.com/tqdm/tqdm
 COMPONENT_FMRI=		library/python/tqdm		
