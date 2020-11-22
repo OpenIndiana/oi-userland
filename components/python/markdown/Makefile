@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Markdown
 COMPONENT_VERSION=	3.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	'Python implementation of Markdown'
 COMPONENT_FMRI=		library/python/markdown
 COMPONENT_PROJECT_URL=	https://python-markdown.github.io

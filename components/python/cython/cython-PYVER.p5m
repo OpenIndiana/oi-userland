@@ -22,6 +22,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+<transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
+
 $(PYTHON_32_ONLY)link path=usr/bin/$(MACH64)/cygdb target=cygdb-$(PYVER) \
   mediator=python mediator-version=$(PYVER)
 $(PYTHON_32_ONLY)link path=usr/bin/$(MACH64)/cython target=cython-$(PYVER) \
