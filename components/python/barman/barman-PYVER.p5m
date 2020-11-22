@@ -29,6 +29,8 @@ depend fmri=library/python/python-dateutil-$(PYV) type=require
 
 depend fmri=database/postgres/barman@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
+<transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
+
 file files/barman.conf.4 path=usr/lib/python$(PYVER)/vendor-packages/share/man/man4/barman.conf.4
 
 link path=usr/bin/barman target=barman-$(PYVER)
