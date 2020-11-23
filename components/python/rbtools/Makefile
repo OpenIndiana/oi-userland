@@ -10,14 +10,16 @@
 
 #
 # Copyright 2019 Michal Nowak
-# Copyright 2019 Nona Hansel
+# Copyright 2019-2020 Nona Hansel
 #
+
+BUILD_BITS=	NO_ARCH
+BUILD_STYLE=	setup.py
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		RBTools
-COMPONENT_VERSION=	1.0.2
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.0.3
 COMPONENT_SUMMARY=	'RBTools is a set of command line tools and a rich Python API for use with Review Board'
 COMPONENT_PROJECT_URL=	https://www.reviewboard.org/downloads/rbtools/
 COMPONENT_FMRI=		library/python/rbtools
@@ -26,25 +28,18 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_ARCHIVE_HASH= \
-	sha256:577c2f8bbf88f77bda84ee95af0310b59111c156f48a5aab56ca481e2f77eaf4
+	sha256:ff4cea3ad7b2d1b1666b811021cf5047f1fbe9417428fb5133a40ede81e3e83c
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
 
 PYTHON_VERSIONS=	3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET:	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =    $(SOURCE_DIR)
 COMPONENT_TEST_CMD =    nosetests-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS =	-v
-
-build:          $(BUILD_NO_ARCH)
-
-install:        $(INSTALL_NO_ARCH)
-
-test:           $(TEST_NO_ARCH)
+COMPONENT_TEST_ARGS =  -v
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-35
