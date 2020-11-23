@@ -9,14 +9,16 @@
 #
 
 #
-# Copyright 2019 Nona Hansel
+# Copyright 2019-2020 Nona Hansel
 #
+
+BUILD_BITS=	NO_ARCH
+BUILD_STYLE=	setup.py
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tqdm
-COMPONENT_VERSION=	4.34.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.53.0
 COMPONENT_SUMMARY=	'Fast, extensible progress bar for Python and CLI'
 COMPONENT_PROJECT_URL=	https://github.com/tqdm/tqdm
 COMPONENT_FMRI=		library/python/tqdm		
@@ -25,21 +27,14 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_ARCHIVE_HASH= \
-	sha256:ebc205051d79b49989140f5f6c73ec23fce5f590cbc4d9cd6e4c47f168fa0f10
+	sha256:3d3f1470d26642e88bd3f73353cb6ff4c51ef7d5d7efef763238f4bc1f7e4e81
 COMPONENT_LICENSE=	MPLv2.0,MIT
 COMPONENT_LICENSE_FILE=	LICENCE
 
 PYTHON_VERSIONS=	3.5
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-build:          $(BUILD_NO_ARCH)
-
-install:        $(INSTALL_NO_ARCH)
-
-test:           $(NO_TESTS)
+TEST_TARGET:	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-35
