@@ -28,7 +28,7 @@ BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xmlsec
-COMPONENT_VERSION=	1.2.29
+COMPONENT_VERSION=	1.2.31
 COMPONENT_PROJECT_URL=	https://www.aleksey.com/xmlsec
 COMPONENT_FMRI=		library/xmlsec
 COMPONENT_SUMMARY=	XML Security Library
@@ -36,8 +36,8 @@ COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_SRC=	$(COMPONENT_NAME)1-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:b1d1deba966019930f608d1f2b95c40ca3450f1393bcd3a3c001a8ba1d2839ab
-COMPONENT_ARCHIVE_URL=	http://www.aleksey.com/xmlsec/download/$(COMPONENT_ARCHIVE)
+	sha256:9b10bc52cc31e4f76162e3975e50db26b71ab49c571d810b311ca626be5a0b26
+COMPONENT_ARCHIVE_URL=	https://www.aleksey.com/xmlsec/download/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	Copyright
 
@@ -54,13 +54,13 @@ COMPONENT_PRE_CONFIGURE_ACTION= \
 CONFIGURE_OPTIONS +=	--enable-static=no
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/mozilla-nss
 REQUIRED_PACKAGES += system/library/security/libgcrypt
