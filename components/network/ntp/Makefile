@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
 COMPONENT_VERSION=	4.2.8p13
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 IPS_COMPONENT_VERSION=	$(subst p,.,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
