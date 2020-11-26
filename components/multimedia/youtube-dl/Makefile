@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		youtube-dl
 COMPONENT_VERSION=	2020.3.8
+COMPONENT_REVISION=	1
 COMPONENT_TMP_VERSION=	2020.03.08
 COMPONENT_SUMMARY=	Command-line program to download videos from YouTube.com and other video sites
 COMPONENT_PROJECT_URL=	https://youtube-dl.org/
