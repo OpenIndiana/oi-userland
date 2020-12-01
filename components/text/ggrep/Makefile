@@ -29,7 +29,7 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
-COMPONENT_VERSION=	3.5
+COMPONENT_VERSION=	3.6
 COMPONENT_FMRI=		text/gnu-grep
 COMPONENT_SUMMARY= 	GNU grep utilities
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -37,7 +37,7 @@ COMPONENT_PROJECT_URL=	http://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b82ac77707c2ab945520c8404c9fa9f890f7791a62cf2103cf6238acad87a44a
+	sha256:667e15e8afe189e93f9f21a7cd3a7b3f776202f417330b248c2ad4f997d9373e
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
@@ -74,7 +74,7 @@ REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += locale/tr
 REQUIRED_PACKAGES += locale/ru-extra
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libsigsegv
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
