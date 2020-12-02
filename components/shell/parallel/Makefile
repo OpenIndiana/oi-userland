@@ -22,22 +22,23 @@
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2019, Michal Nowak
+# Copyright 2020, Nona Hansel
 #
 
-PREFERRED_BITS=		64
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		parallel
-COMPONENT_VERSION=	20190622
+COMPONENT_VERSION=	20201122
 # A leading "0." is included to make it easier to upgrade the package, should
 # the maintainers decide to go to a more standard version numbering system.
-IPS_COMPONENT_VERSION=  0.2019.6.22
+IPS_COMPONENT_VERSION=  0.2020.11.22
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/parallel/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:3f1dfd8c450db7e70e44220e2edd4e214ba1540eebaabeeb5636d0c47b5eaeec
+	sha256:4da0bf42c466493b44dcbd8750e7bf99c31da4c701e8be272276c16ec4caff30
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	GNU parallel is a shell tool for executing jobs in parallel using one or more computers.
 COMPONENT_FMRI=		shell/parallel
@@ -45,22 +46,14 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_CLASSIFICATION=	System/Shells
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET:	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Set PATH to find /usr/perl5/bin/pod2man, so that the man pages can be
 # automatically generated
 COMPONENT_BUILD_ENV +=    PATH="$(PATH):/usr/perl5/bin"
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/which
 REQUIRED_PACKAGES += SUNWcs
