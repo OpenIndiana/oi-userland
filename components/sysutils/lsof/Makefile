@@ -12,60 +12,38 @@
 # Copyright 2017 Gary Mills
 # Copyright 2016 Jim Klimov. All rights reserved.
 # Copyright 2019 Michal Nowak
+# Copyright 2020 Nona Hansel
 #
 
+BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lsof
-COMPONENT_VERSION=	4.91
-COMPONENT_PROJECT_URL=	https://people.freebsd.org/~abe/
+COMPONENT_VERSION=	4.94.0
+COMPONENT_PROJECT_URL=	https://github.com/lsof-org/lsof
 COMPONENT_SUMMARY=	LSOF - lister of opened files
-COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-# Theoretical upstream is ftp://lsof.itap.purdue.edu/pub/tools/unix/lsof
-# but it is not available at the time of this writing
-COMPONENT_ARCHIVE_URL=	https://fossies.org/linux/misc/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=	https://github.com/lsof-org/lsof/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:c9da946a525fbf82ff80090b6d1879c38df090556f3fe0e6d782cb44172450a3
+	sha256:a9865eeb581c3abaac7426962ddb112ecfd86a5ae93086eb4581ce100f8fa8f4
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET:	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-# In oi_151a8, illumos version of yes ignores SIGPIPE, never exits
-PATH = $(PATH.gnu)
+COMPONENT_PRE_CONFIGURE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D))
 
-BINDIR.64 =	/usr/bin
-LIBDIR.64 =	/usr/lib
-
-COMPONENT_COMMON_ARGS += -C $(BUILD_DIR_$(BITS))
-COMPONENT_COMMON_ARGS += BINDIR=$(BINDIR.$(BITS))
-COMPONENT_COMMON_ARGS += LIBDIR=$(LIBDIR.$(BITS))
-
-COMPONENT_COMMON_ENV += CC=$(CC)
-COMPONENT_COMMON_ENV += CXX=$(CXX)
-COMPONENT_COMMON_ENV += CXXFLAGS="$(CXXFLAGS)"
-COMPONENT_COMMON_ENV += LDFLAGS="$(LDFLAGS)"
-
-COMPONENT_BUILD_ARGS += $(COMPONENT_COMMON_ARGS)
-COMPONENT_BUILD_ENV += $(COMPONENT_COMMON_ENV)
-COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
-COMPONENT_INSTALL_ENV += $(COMPONENT_COMMON_ENV)
-
-COMPONENT_PREP_ACTION = \
-	( cd $(SOURCE_DIR) && tar xf - < $(COMPONENT_SRC)_src.tar )
-
-COMPONENT_PRE_BUILD_ACTION = \
-	( cd $(@D) && cp -prf "$(SOURCE_DIR)/$(COMPONENT_SRC)_src"/./ ./ && \
-	  yes '' | SOLARIS_KERNBITS=$(BITS) ./Configure solaris )
-
-build:		$(BUILD_64)
+CONFIGURE_SCRIPT =	./Configure
+CONFIGURE_OPTIONS =	-n solaris
 
 # The p5m manifest directly pulls from source dirs (the "make install" action
-# for Solaris in LSOF sources only prints hints what/how should be set up)
-install:	$(INSTALL_64)
+# for Solaris in LSOF sources only prints hints what/how should be set up),
+# therefore the "sample-manifest" target does not work.
 
-test:		$(NO_TESTS)
+# Including version to the man page
+COMPONENT_POST_INSTALL_ACTION=	(cd $(@D) && soelim Lsof.8 > lsof.8)
 
-REQUIRED_PACKAGES += SUNWcs
+# Necessary for soelim
+REQUIRED_PACKAGES += text/doctools
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
