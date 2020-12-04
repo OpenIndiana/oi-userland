@@ -1,0 +1,45 @@
+From c73c0d7cbc081e59b88fee4079eb3a3a3ee7639d Mon Sep 17 00:00:00 2001
+From: SeekingMeaning <meaningseeking@protonmail.com>
+Date: Fri, 10 Jul 2020 11:35:58 -0700
+Subject: [PATCH] use getenv() on macOS and BSD
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+... where secure_getenv() is not available
+
+Reviewed-by: Christian Göttsche
+Closes: https://github.com/logrotate/logrotate/pull/344
+---
+ config.c     | 4 ++++
+ configure.ac | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/config.c b/config.c
+index d2488f1..3b90313 100644
+--- a/config.c
++++ b/config.c
+@@ -45,6 +45,10 @@ struct logInfoHead logs;
+ #include "asprintf.c"
+ #endif
+ 
++#if !defined(HAVE_SECURE_GETENV)
++#define secure_getenv getenv
++#endif
++
+ #if !defined(HAVE_ASPRINTF) && !defined(_FORTIFY_SOURCE)
+ #include <stdarg.h>
+ 
+diff --git a/configure.ac b/configure.ac
+index d95c10e..c937b4f 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -166,7 +166,7 @@ AC_SUBST(COMPRESS_EXT)
+ AC_DEFINE_UNQUOTED([ROOT_UID], [0], [Root user-id.])
+ AC_SUBST(ROOT_UID)
+ 
+-AC_CHECK_FUNCS([asprintf madvise qsort strndup strptime utimensat vsyslog])
++AC_CHECK_FUNCS([asprintf madvise qsort secure_getenv strndup strptime utimensat vsyslog])
+ AC_CONFIG_HEADERS([config.h])
+ 
+ AM_CFLAGS="\
