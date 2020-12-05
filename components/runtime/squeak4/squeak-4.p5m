@@ -26,41 +26,34 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
 
-file usr/bin/squeak path=usr/bin/squeak4
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/ckformat mode=0555
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.AioPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.B3DAcceleratorPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.ClipboardExtendedPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.DBusPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.FT2Plugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.FileCopyPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.GStreamerPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.HostWindowPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.ImmX11Plugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.KedamaPlugin2
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.Mpeg3Plugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.RomePlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.ScratchPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.Squeak3D
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.SqueakFFIPrims
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.SqueakSSL
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.UUIDPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.UnicodePlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.UnixOSProcessPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.XDisplayControlPlugin
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.vm-display-X11
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.vm-display-custom
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.vm-display-null
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.vm-sound-custom
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.vm-sound-null
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/so.vm-sound-pulse
-file path=usr/lib/squeak/$(COMPONENT_VERSION)-3790/squeakvm mode=0555
-file usr/share/man/man1/squeak.1 path=usr/share/man/man1/squeak4.1
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.AioPlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.B3DAcceleratorPlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.ClipboardExtendedPlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.DBusPlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.FT2Plugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.FileCopyPlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.GStreamerPlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.HostWindowPlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.ImmX11Plugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.KedamaPlugin2
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.Mpeg3Plugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.RomePlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.ScratchPlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.Squeak3D
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.SqueakFFIPrims
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.SqueakSSL
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.UUIDPlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.UnicodePlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.UnixOSProcessPlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.XDisplayControlPlugin
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.vm-display-X11
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.vm-display-custom
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.vm-sound-custom
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/so.vm-sound-pulse
 
-# the squeak script uses test -L (test for symbolic link) - use hardlink
+# the minimal installation consists of the squeak-4-nodisplay package
+# which can run "headless" squeak -nodisplay images
+# with only minimal installation requirements (only ksh, libc, math)
 
-hardlink path=usr/bin/squeak target=squeak4 mediator=squeak \
-    mediator-version=4
-hardlink path=usr/share/man/man1/squeak.1 target=squeak4.1 mediator=squeak \
-    mediator-version=4
+depend type=require fmri=pkg:/runtime/squeak-4-nodisplay@$(IPS_COMPONENT_VERSION)-$(BRANCHID)
 
