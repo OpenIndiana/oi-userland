@@ -1,5 +1,5 @@
---- /usr/tmp/clean/avahi-0.6.28/avahi-core/browse.c	2010-08-26 01:51:38.983153000 +0100
-+++ avahi-0.6.28/avahi-core/browse.c	2011-01-20 15:27:33.366236170 +0000
+--- avahi-0.8/avahi-core/browse.c.orig	2020-02-17 04:41:02.380380789 +0000
++++ avahi-0.8/avahi-core/browse.c	2020-12-06 17:16:15.268333833 +0000
 @@ -22,6 +22,7 @@
  #endif
  
@@ -8,13 +8,12 @@
  
  #include <avahi-common/timeval.h>
  #include <avahi-common/malloc.h>
-@@ -519,6 +520,91 @@
+@@ -519,6 +520,89 @@
      }
  }
  
 +#ifdef HAVE_BONJOUR
-+static void resolve_socket_event(AvahiWatch *w, int fd, AvahiWatchEvent events,
-+void *userdata) {
++static void resolve_socket_event(AvahiWatch *w, int fd, AvahiWatchEvent events, void *userdata) {
 +    AvahiSRecordBrowser *b = userdata;
 +    DNSServiceErrorType ret;
 +    DNSServiceRef client;
@@ -53,7 +52,7 @@
 +}
 +
 +static void browse_reply(DNSServiceRef client, DNSServiceFlags flags, uint32_t ifIndex, DNSServiceErrorType errorCode,
-+        const char *fullname, uint16_t rrtype, uint16_t rrclass, uint16_t rdlen, const void *rdata, uint32_t ttl, void *context) {
++        const char *fullname, uint16_t rrtype, uint16_t rrclass, uint16_t rdlen, const void *rdata, uint32_t ttl, void *context)
 +    AvahiSRecordBrowser *b = context;
 +    AvahiRecord *rr;
 +    AvahiKey *k;
@@ -88,19 +87,18 @@
 +                                browse_reply,
 +                                b);
 +    if (ret != kDNSServiceErr_NoError || !b->client) {
-+        b->defer_time_event = avahi_time_event_new(b->server->time_event_queue,
-+NULL, resolve_error_callback, b);
++        b->defer_time_event = avahi_time_event_new(b->server->time_event_queue, NULL, resolve_error_callback, b);
 +    } else {
 +        b->defer_time_event = NULL;
-+        b->watch = b->server->poll_api->watch_new(b->server->poll_api, DNSServiceRefSockFD(b->client), AVAHI_WATCH_IN, resolve_socket_event, b);
++        b->watch = b->server->poll_api->watch_new(b->server->poll_api, DNSServiceRefSockFD(b->client), AVAHI_WATCH_IN, resolve_so
 +    }
 +}
 +#endif
 +
- AvahiSRecordBrowser *avahi_s_record_browser_new(
+ AvahiSRecordBrowser *avahi_s_record_browser_prepare(
      AvahiServer *server,
      AvahiIfIndex interface,
-@@ -560,9 +646,15 @@
+@@ -561,6 +645,12 @@
  
      AVAHI_LLIST_PREPEND(AvahiSRecordBrowser, browser, server->record_browsers, b);
  
@@ -108,15 +106,12 @@
 +    b->watch = NULL;
 +    b->client = NULL;
 +    avahi_browse_record_start(b);
-+#else
-     /* The currently cached entries are scanned a bit later, and than we will start querying, too */
-     b->defer_time_event = avahi_time_event_new(server->time_event_queue, NULL, defer_callback, b);
-     assert(b->defer_time_event);
 +#endif
- 
++
      return b;
  }
-@@ -575,6 +667,13 @@
+ 
+@@ -587,6 +677,13 @@
      b->server->need_browser_cleanup = 1;
  
      browser_cancel(b);
@@ -130,7 +125,7 @@
  }
  
  void avahi_s_record_browser_destroy(AvahiSRecordBrowser *b) {
-@@ -608,6 +707,8 @@
+@@ -620,7 +717,9 @@
  
      if (server->wide_area_lookup_engine)
          avahi_wide_area_cleanup(server->wide_area_lookup_engine);
@@ -139,8 +134,9 @@
 +#endif
  }
  
---- /usr/tmp/clean/avahi-0.6.28/avahi-core/browse.h	2010-08-26 01:51:38.983153000 +0100
-+++ avahi-0.6.28/avahi-core/browse.h	2011-01-21 09:33:14.663164775 +0000
+ AvahiSRecordBrowser *avahi_s_record_browser_new(
+--- avahi-0.8/avahi-core/browse.h.orig	2015-04-01 06:58:14.149727123 +0000
++++ avahi-0.8/avahi-core/browse.h	2020-12-06 17:00:23.137154791 +0000
 @@ -50,6 +50,12 @@
      unsigned n_lookups;
  
