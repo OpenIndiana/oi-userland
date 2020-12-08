@@ -16,7 +16,7 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		goaccess
-COMPONENT_VERSION=	1.4
+COMPONENT_VERSION=	1.4.3
 COMPONENT_SUMMARY=	GoAccess is an open source real-time web log analyzer and interactive viewer that runs in a terminal in *nix systems or through your browser.
 COMPONENT_PROJECT_URL=	https://goaccess.io/
 COMPONENT_FMRI=		web/goaccess
@@ -24,7 +24,7 @@ COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://tar.goaccess.io/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:e8fbb9ff852556d72dfd9f1d0134ba075ce5b4c41289902a6f4e0d97c69377be
+COMPONENT_ARCHIVE_HASH= sha256:91fb13a194e1248188007f1bfb79e722faa001479c859ad34d2e5983406161c0
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
@@ -38,6 +38,7 @@ CONFIGURE_OPTIONS+= --enable-geoip=legacy
 
 CFLAGS+= -std=gnu99
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += database/geoip
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
