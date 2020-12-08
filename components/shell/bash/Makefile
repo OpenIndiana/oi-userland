@@ -29,22 +29,24 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
-COMPONENT_VERSION=	5.0
-COMPONENT_REVISION=	6
+COMPONENT_VERSION=	5.1
 COMPONENT_FMRI=		shell/bash
 COMPONENT_SUMMARY=	GNU Bourne-Again shell (bash)
 COMPONENT_CLASSIFICATION=	System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bash/
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/bash/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-	sha256:b4a80f2ac66170b2913efbfb9f2594f1f76c7b1afd11f799e22035d63077fb4d
+	sha256:cc012bc860406dcf42f64431bcd3d2fa7560c02915a601aba9cd597a39329baa
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.2
 
 include $(WS_MAKE_RULES)/common.mk
 
 BASH_PATCHLEVEL=$(shell grep -h "define PATCHLEVEL" $(COMPONENT_DIR)/patches/bash* | nawk '{print $$NF}' | sort -n | tail -1)
+ifeq ($(BASH_PATCHLEVEL),)
+BASH_PATCHLEVEL=0
+endif
 IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).$(BASH_PATCHLEVEL)
 PATCH_LEVEL = 0
 
@@ -107,7 +109,7 @@ CONFIGURE_OPTIONS += --enable-usg-echo-default=yes
 CONFIGURE_OPTIONS += --enable-xpg-echo-default=yes
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --with-bash-malloc=yes
+CONFIGURE_OPTIONS += --without-bash-malloc
 CONFIGURE_OPTIONS += --with-curses
 CONFIGURE_OPTIONS += --with-installed-readline=no
 
@@ -129,6 +131,6 @@ COMPONENT_POST_INSTALL_ACTION =  \
 	    cp -Rp "en@boldquot" en_GB )
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library

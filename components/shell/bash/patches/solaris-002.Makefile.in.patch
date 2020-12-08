@@ -1,12 +1,10 @@
-# We need $(CFLAGS) appended to SYSTEM_FLAGS. Otherwise things
-# end up being built with different CFLAGS.
-# Solaris-specific patch. Not for upstream.
---- Makefile.in	2014-01-25 13:27:30.000000000 -0800
-+++ Makefile.in	2015-04-02 11:18:58.143893640 -0700
-@@ -135,13 +135,14 @@
+--- Makefile.in.~1~	2020-12-04 15:51:19.000000000 +0000
++++ Makefile.in	2020-12-08 18:38:17.576538831 +0000
+@@ -137,14 +137,15 @@
+ 
  LOCALE_DEFS = -DLOCALEDIR='"$(localedir)"' -DPACKAGE='"$(PACKAGE)"'
  
- LOCAL_LIBS = @LOCAL_LIBS@
+-LOCAL_LIBS = @LOCAL_LIBS@
 -LIBS = $(BUILTINS_LIB) $(LIBRARIES) @LIBS@
 +LOCAL_LIBS += -lncurses
 +LIBS = $(BUILTINS_LIB) $(LIBRARIES) @LIBS@ @LOCAL_LIBS@
@@ -17,10 +15,11 @@
  
 -SYSTEM_FLAGS = -DPROGRAM='"$(Program)"' -DCONF_HOSTTYPE='"$(Machine)"' -DCONF_OSTYPE='"$(OS)"' -DCONF_MACHTYPE='"$(MACHTYPE)"' -DCONF_VENDOR='"$(VENDOR)"' $(LOCALE_DEFS)
 +SYSTEM_FLAGS = -DPROGRAM='"$(Program)"' -DCONF_HOSTTYPE='"$(Machine)"' -DCONF_OSTYPE='"$(OS)"' -DCONF_MACHTYPE='"$(MACHTYPE)"' -DCONF_VENDOR='"$(VENDOR)"' $(LOCALE_DEFS) $(CFLAGS)
++
  
- BASE_CCFLAGS = $(PROFILE_FLAGS) $(SYSTEM_FLAGS) $(LOCAL_DEFS) \
+ BASE_CCFLAGS = $(SYSTEM_FLAGS) $(LOCAL_DEFS) \
  	  $(DEFS) $(LOCAL_CFLAGS) $(INCLUDES)
-@@ -551,7 +552,7 @@
+@@ -580,7 +581,7 @@
  
  $(Program):  .build $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP)
  	$(RM) $@
@@ -29,21 +28,30 @@
  	ls -l $(Program)
  	-$(SIZE) $(Program)
  
-@@ -594,7 +594,7 @@ $(Program):  .build $(OBJECTS) $(BUILTIN
+@@ -594,7 +595,7 @@
  	@echo
  
- bashbug: $(SDIR)/bashbug.sh config.h Makefile $(VERSPROG)
+ bashbug: $(SDIR)/bashbug.sh $(VERSPROG)
 -	@sed -e "s%!PATCHLEVEL!%$(PatchLevel)%" \
 +	@sed -e "s^!PATCHLEVEL!^$(PatchLevel)^" \
  	     $(SDIR)/bashbug.sh > $@
  	@chmod a+rx bashbug
  
-@@ -863,7 +864,7 @@
+@@ -619,7 +620,7 @@
  	@-test -d tests || mkdir tests
  	@cp $(TESTS_SUPPORT) tests
  	@( cd $(srcdir)/tests && \
--		PATH=$(BUILD_DIR)/tests:$$PATH THIS_SH=$(THIS_SH) $(SHELL) ${TESTSCRIPT} )
-+	    PATH=/usr/gnu/bin:$(BUILD_DIR)/tests:$$PATH THIS_SH=$(THIS_SH) $(SHELL) ${TESTSCRIPT} )
+-		BUILD_DIR=$(BUILD_DIR) PATH=$(BUILD_DIR)/tests:$$PATH THIS_SH=$(THIS_SH) $(SHELL) ${TESTSCRIPT} )
++		BUILD_DIR=$(BUILD_DIR) PATH=/usr/gnu/bin:$(BUILD_DIR)/tests:$$PATH THIS_SH=$(THIS_SH) $(SHELL) ${TESTSCRIPT} )
+ 
+ profiling-tests:	${PROGRAM}
+ 	@test "X$$PROFILE_FLAGS" == "X" && { echo "profiling-tests: must be built with profiling enabled" >&2; exit 1; }
+@@ -958,7 +959,7 @@
+ 	@-test -d tests || mkdir tests
+ 	@cp $(TESTS_SUPPORT) tests
+ 	@( cd $(srcdir)/tests && \
+-		BUILD_DIR=$(BUILD_DIR) PATH=$(BUILD_DIR)/tests:$$PATH THIS_SH=$(THIS_SH) $(SHELL) ${TESTSCRIPT} )
++		BUILD_DIR=$(BUILD_DIR) PATH=/usr/gnu/bin:$(BUILD_DIR)/tests:$$PATH THIS_SH=$(THIS_SH) $(SHELL) ${TESTSCRIPT} )
  
  symlinks:
  	$(SHELL) $(SUPPORT_SRC)fixlinks -s $(srcdir)
