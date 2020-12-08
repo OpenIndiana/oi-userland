@@ -11,12 +11,15 @@
 #
 # Copyright 2018 Aurelien Larcher
 # Copyright 2018-2019 Michal Nowak
+# Copyright 2020 Nona Hansel
 #
 
+BUILD_BITS=	64
+BUILD_STYLE=	justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cpuid
-COMPONENT_VERSION=	1.7.2
+COMPONENT_VERSION=	1.7.6
 COMPONENT_SUMMARY=	A simple CPUID decoder/dumper for x86/x86_64
 COMPONENT_PROJECT_URL=	https://github.com/tycho/cpuid
 COMPONENT_FMRI=		diagnostic/cpuid
@@ -26,12 +29,11 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/tycho/cpuid/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:8120ffa5b0068810b44dfaf7f5e8a2a2002f2af23b5bfc9435912eac7e2049c0
+	sha256:a924d62c05160ddba82dde93572db472364f5faefc94594bfb70fefd0d27350e
 COMPONENT_LICENSE=	MIT
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET:	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ARGS +=		CC="$(CC) $(CC_BITS) "
 COMPONENT_BUILD_ARGS +=		prefix=$(USRDIR)
@@ -40,12 +42,6 @@ COMPONENT_INSTALL_ARGS +=	CC="$(CC) $(CC_BITS) "
 COMPONENT_INSTALL_ARGS +=	prefix=$(USRDIR)
 
 COMPONENT_POST_INSTALL_ACTION = $(INSTALL) -D files/cpuid.1 $(PROTOUSRDIR)/share/man/man1/cpuid.1
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
