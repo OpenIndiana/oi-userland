@@ -13,26 +13,26 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_BITS= 32_and_64
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= soxr
-COMPONENT_VERSION= 0.1.2
+COMPONENT_VERSION= 0.1.3
 COMPONENT_SUMMARY= The SoX Resampler library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)-Source
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:54e6f434f1c491388cd92f0e3c47f1ade082cc24327bdc43762f7d1eefe0c275
+	sha256:b111c15fdc8c029989330ff559184198c161100a59312f5dc19ddeb9b5a15889
 COMPONENT_ARCHIVE_URL= \
-  https://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://soxr.sourceforge.net/
+	https://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://soxr.sourceforge.net/
 COMPONENT_FMRI = library/audio/soxr
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING.LGPL
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_OPTIONS += -DLIB_INSTALL_DIR=$(CMAKE_LIBDIR.$(BITS))
 CMAKE_OPTIONS += -DBIN_INSTALL_DIR=$(CMAKE_BINDIR.$(BITS))
@@ -46,12 +46,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
-REQUIRED_PACKAGES += system/library
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
