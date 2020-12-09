@@ -1,0 +1,38 @@
+diff --git a/Makefile b/Makefile
+index c63ed1b..9b57402 100644
+--- a/Makefile
++++ b/Makefile
+@@ -10,7 +10,7 @@ CFLAGS	=	-O2 -fPIE -fstack-protector --param=ssp-buffer-size=4 \
+ 
+ LIBS	=	`./vsf_findlibs.sh`
+ LINK	=	-Wl,-s
+-LDFLAGS	=	-fPIE -pie -Wl,-z,relro -Wl,-z,now
++LDFLAGS	=	-fPIE -Wl,-z,now
+ 
+ OBJS	=	main.o utility.o prelogin.o ftpcmdio.o postlogin.o privsock.o \
+ 		tunables.o ftpdataio.o secbuf.o ls.o \
+diff --git a/Makefile b/Makefile
+index 9b5740209..2b2dd5013 100644
+--- a/Makefile
++++ b/Makefile
+@@ -9,6 +9,7 @@ CFLAGS	=	-O2 -fPIE -fstack-protector --param=ssp-buffer-size=4 \
+ 	#-pedantic -Wconversion
+ 
+ LIBS	=	`./vsf_findlibs.sh`
++LIBS	+=	-lssl -lcrypto -lpam
+ LINK	=	-Wl,-s
+ LDFLAGS	=	-fPIE -Wl,-z,now
+ 
+diff --git a/Makefile b/Makefile
+index dc9848b..25add99 100644
+--- a/Makefile
++++ b/Makefile
+@@ -4,7 +4,7 @@ INSTALL	=	install
+ IFLAGS  = -idirafter dummyinc
+ #CFLAGS = -g
+ CFLAGS	=	-O2 -fPIE -fstack-protector --param=ssp-buffer-size=4 \
+-	-Wall -W -Wshadow -Werror -Wformat-security \
++	-Wall -Wno-incompatible-pointer-types -Wshadow -Werror -Wformat-security \
+ 	-D_FORTIFY_SOURCE=2 \
+ 	#-pedantic -Wconversion
+ 
