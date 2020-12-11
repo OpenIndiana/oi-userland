@@ -1,0 +1,50 @@
+diff --git a/components/web/firefox/firefox-68.12.0/js/mapfile.IllumOS b/js/mapfile.IllumOS
+new file mode 100644
+index 000000000..410867ce7
+--- /dev/null
++++ b/js/mapfile.IllumOS
+@@ -0,0 +1,4 @@
++$mapfile_version 2
++CAPABILITY {
++        SF += ADDR32;
++};
+diff --git a/js/src/shell/moz.build b/js/src/shell/moz.build
+index 65e3c4e74..3b0698d26 100644
+--- a/js/src/shell/moz.build
++++ b/js/src/shell/moz.build
+@@ -51,3 +51,7 @@ OBJDIR_FILES.js.src.shell += ['!/dist/bin/js-gdb.py']
+ 
+ # People expect the js shell to wind up in the top-level JS dir.
+ OBJDIR_FILES.js.src += ['!/dist/bin/js%s' % CONFIG['BIN_SUFFIX']]
++
++if CONFIG['OS_ARCH'] == 'SunOS':
++    LDFLAGS += ['-Wl,-M%s/js/mapfile.IllumOS' % TOPSRCDIR]
++
+diff --git a/js/xpconnect/shell/moz.build b/js/xpconnect/shell/moz.build
+index a07087086..eaaeb17f9 100644
+--- a/js/xpconnect/shell/moz.build
++++ b/js/xpconnect/shell/moz.build
+@@ -26,6 +26,9 @@ if CONFIG['CC_TYPE'] == 'clang-cl':
+     # a console application.
+     WIN32_EXE_LDFLAGS += ['-ENTRY:wmainCRTStartup']
+ 
++if CONFIG['OS_ARCH'] == 'SunOS':
++    LDFLAGS += ['-Wl,-M%s/js/mapfile.IllumOS' % TOPSRCDIR]
++
+ # DELAYLOAD_DLLS in this block ensure that the DLL blocklist initializes
+ if CONFIG['OS_ARCH'] == 'WINNT':
+     RCINCLUDE = 'xpcshell.rc'
+diff --git a/cbrowser/app/moz.build b/browser/app/moz.build
+index ff9c25912..9a136ef5c 100644
+--- a/browser/app/moz.build
++++ b/browser/app/moz.build
+@@ -118,6 +118,9 @@ if CONFIG['MOZ_SANDBOX'] and CONFIG['OS_ARCH'] == 'WINNT':
+ if CONFIG['OS_ARCH'] == 'WINNT' and CONFIG['CC_TYPE'] not in ('clang', 'gcc'):
+     LDFLAGS += ['/HEAP:0x40000']
+ 
++if CONFIG['OS_ARCH'] == 'SunOS':
++    LDFLAGS += ['-Wl,-M%s/js/mapfile.IllumOS' % TOPSRCDIR]
++
+ DisableStlWrapping()
+ 
+ if CONFIG['MOZ_LINKER']:
