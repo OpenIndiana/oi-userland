@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2017 <contributor>
+# Copyright 2020 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -43,10 +43,12 @@ file path=usr/apr-util/include/apr_memcache.h
 file path=usr/apr-util/include/apr_optional.h
 file path=usr/apr-util/include/apr_optional_hooks.h
 file path=usr/apr-util/include/apr_queue.h
+file path=usr/apr-util/include/apr_redis.h
 file path=usr/apr-util/include/apr_reslist.h
 file path=usr/apr-util/include/apr_rmm.h
 file path=usr/apr-util/include/apr_sdbm.h
 file path=usr/apr-util/include/apr_sha1.h
+file path=usr/apr-util/include/apr_siphash.h
 file path=usr/apr-util/include/apr_strmatch.h
 file path=usr/apr-util/include/apr_thread_pool.h
 file path=usr/apr-util/include/apr_uri.h
@@ -57,53 +59,35 @@ file path=usr/apr-util/include/apu.h
 file path=usr/apr-util/include/apu_errno.h
 file path=usr/apr-util/include/apu_version.h
 file path=usr/apr-util/include/apu_want.h
-file path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_freetds-1.so
-file path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_freetds.a
-link path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_freetds.so \
-    target=apr_dbd_freetds-1.so
 file path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_mysql-1.so
-file path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_mysql.a
 link path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_mysql.so \
     target=apr_dbd_mysql-1.so
 file path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_pgsql-1.so
-file path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_pgsql.a
 link path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_pgsql.so \
     target=apr_dbd_pgsql-1.so
 file path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_sqlite3-1.so
-file path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_sqlite3.a
 link path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_dbd_sqlite3.so \
     target=apr_dbd_sqlite3-1.so
 file path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_ldap-1.so
-file path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_ldap.a
 link path=usr/apr-util/lib/$(MACH64)/apr-util-1/apr_ldap.so target=apr_ldap-1.so
 file path=usr/apr-util/lib/$(MACH64)/aprutil.exp
-file path=usr/apr-util/lib/$(MACH64)/libaprutil-1.a
 link path=usr/apr-util/lib/$(MACH64)/libaprutil-1.so \
-    target=libaprutil-1.so.0.5.4
+    target=libaprutil-1.so.0.6.1
 link path=usr/apr-util/lib/$(MACH64)/libaprutil-1.so.0 \
-    target=libaprutil-1.so.0.5.4
-file path=usr/apr-util/lib/$(MACH64)/libaprutil-1.so.0.5.4
+    target=libaprutil-1.so.0.6.1
+file path=usr/apr-util/lib/$(MACH64)/libaprutil-1.so.0.6.1
 file path=usr/apr-util/lib/$(MACH64)/pkgconfig/apr-util-1.pc
-file path=usr/apr-util/lib/apr-util-1/apr_dbd_freetds-1.so
-file path=usr/apr-util/lib/apr-util-1/apr_dbd_freetds.a
-link path=usr/apr-util/lib/apr-util-1/apr_dbd_freetds.so \
-    target=apr_dbd_freetds-1.so
 file path=usr/apr-util/lib/apr-util-1/apr_dbd_mysql-1.so
-file path=usr/apr-util/lib/apr-util-1/apr_dbd_mysql.a
 link path=usr/apr-util/lib/apr-util-1/apr_dbd_mysql.so target=apr_dbd_mysql-1.so
 file path=usr/apr-util/lib/apr-util-1/apr_dbd_pgsql-1.so
-file path=usr/apr-util/lib/apr-util-1/apr_dbd_pgsql.a
 link path=usr/apr-util/lib/apr-util-1/apr_dbd_pgsql.so target=apr_dbd_pgsql-1.so
 file path=usr/apr-util/lib/apr-util-1/apr_dbd_sqlite3-1.so
-file path=usr/apr-util/lib/apr-util-1/apr_dbd_sqlite3.a
 link path=usr/apr-util/lib/apr-util-1/apr_dbd_sqlite3.so \
     target=apr_dbd_sqlite3-1.so
 file path=usr/apr-util/lib/apr-util-1/apr_ldap-1.so
-file path=usr/apr-util/lib/apr-util-1/apr_ldap.a
 link path=usr/apr-util/lib/apr-util-1/apr_ldap.so target=apr_ldap-1.so
 file path=usr/apr-util/lib/aprutil.exp
-file path=usr/apr-util/lib/libaprutil-1.a
-link path=usr/apr-util/lib/libaprutil-1.so target=libaprutil-1.so.0.5.4
-link path=usr/apr-util/lib/libaprutil-1.so.0 target=libaprutil-1.so.0.5.4
-file path=usr/apr-util/lib/libaprutil-1.so.0.5.4
+link path=usr/apr-util/lib/libaprutil-1.so target=libaprutil-1.so.0.6.1
+link path=usr/apr-util/lib/libaprutil-1.so.0 target=libaprutil-1.so.0.6.1
+file path=usr/apr-util/lib/libaprutil-1.so.0.6.1
 file path=usr/apr-util/lib/pkgconfig/apr-util-1.pc
