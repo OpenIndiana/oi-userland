@@ -24,25 +24,23 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+BUILD_BITS=				32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mpfr
-COMPONENT_VERSION=      4.0.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      4.1.0
 COMPONENT_SUMMARY=      The GNU Multiple Precision with IEEE Rounding Floating-Point Library
-COMPONENT_PROJECT_URL=	http://www.mpfr.org/
+COMPONENT_PROJECT_URL=	https://www.mpfr.org/
 COMPONENT_FMRI=		library/mpfr
 COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-	sha256:c05e3f02d09e0e9019384cdd58e0f19c64e6db1fd6f5ecf77b4b1c61ca253acc
+	sha256:feced2d430dd5a97805fa289fed3fc8ff2b094c02d05287fd6133e7f1f0ec926
 COMPONENT_LICENSE=      LGPLv2.1,GPLv2,FDLv1.2	
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(dir $(CC)):$(PATH.illumos)
 
@@ -84,12 +82,6 @@ CONFIGURE_OPTIONS += --with-pic
 
 COMPONENT_POST_INSTALL_ACTION = \
       ( $(GSED) -i -e "s^\#include <gmp.h>^\#include <gmp/gmp.h>^g" $(PROTOUSRDIR)/include/mpfr/mpfr.h ; )
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
