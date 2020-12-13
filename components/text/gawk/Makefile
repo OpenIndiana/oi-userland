@@ -24,22 +24,23 @@
 # Copyright (c) 2020, Nona Hansel
 #
 
-BUILD_BITS=		64
+BUILD_BITS=				64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=          gawk
-COMPONENT_VERSION=       5.1.0
-COMPONENT_SUMMARY=       GNU awk
-COMPONENT_PROJECT_URL=   https://www.gnu.org/software/gawk/
-COMPONENT_FMRI=          text/gawk
+COMPONENT_NAME=			gawk
+COMPONENT_VERSION=		5.1.0
+COMPONENT_REVISION=		1
+COMPONENT_SUMMARY=		GNU awk
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gawk/
+COMPONENT_FMRI=			text/gawk
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:cf5fea4ac5665fd5171af4716baab2effc76306a9572988d5ba1078f196382bd
-COMPONENT_ARCHIVE_URL=   http://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=       GPLv3, FDLv1.3
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=		GPLv3, FDLv1.3
 
 include $(WS_MAKE_RULES)/common.mk
 
