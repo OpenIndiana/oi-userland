@@ -11,16 +11,18 @@
 
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
-#
+# Copyright 2020 Andreas Wacknitz
 
-set name=pkg.fmri value=pkg:/diagnostic/mrtg@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Applications/Internet"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license mrtg.license license="GPLv2"
+license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=usr/bin/+ -> default mode 0555>
@@ -29,8 +31,6 @@ depend type=require fmri=image/rrdtool@1.4.7
 
 file files/mrtg-traffic-sum.1 path=usr/share/man/man1/mrtg-traffic-sum.1
 file files/rateup.1 path=usr/share/man/man1/rateup.1
-
-# Generated section:
 
 file path=usr/bin/cfgmaker
 file path=usr/bin/indexmaker
@@ -53,42 +53,62 @@ file path=usr/share/doc/mrtg2/COPYING
 file path=usr/share/doc/mrtg2/COPYRIGHT
 file path=usr/share/doc/mrtg2/README
 file path=usr/share/doc/mrtg2/THANKS
+file path=usr/share/doc/mrtg2/cfgmaker.1
 file path=usr/share/doc/mrtg2/cfgmaker.pod
 file path=usr/share/doc/mrtg2/cfgmaker.txt
+file path=usr/share/doc/mrtg2/indexmaker.1
 file path=usr/share/doc/mrtg2/indexmaker.pod
 file path=usr/share/doc/mrtg2/indexmaker.txt
+file path=usr/share/doc/mrtg2/mrtg-contrib.1
 file path=usr/share/doc/mrtg2/mrtg-contrib.pod
 file path=usr/share/doc/mrtg2/mrtg-contrib.txt
+file path=usr/share/doc/mrtg2/mrtg-faq.1
 file path=usr/share/doc/mrtg2/mrtg-faq.pod
 file path=usr/share/doc/mrtg2/mrtg-faq.txt
+file path=usr/share/doc/mrtg2/mrtg-forum.1
 file path=usr/share/doc/mrtg2/mrtg-forum.pod
 file path=usr/share/doc/mrtg2/mrtg-forum.txt
+file path=usr/share/doc/mrtg2/mrtg-ipv6.1
 file path=usr/share/doc/mrtg2/mrtg-ipv6.pod
 file path=usr/share/doc/mrtg2/mrtg-ipv6.txt
+file path=usr/share/doc/mrtg2/mrtg-l.gif
 file path=usr/share/doc/mrtg2/mrtg-l.png
+file path=usr/share/doc/mrtg2/mrtg-logfile.1
 file path=usr/share/doc/mrtg2/mrtg-logfile.pod
 file path=usr/share/doc/mrtg2/mrtg-logfile.txt
+file path=usr/share/doc/mrtg2/mrtg-m.gif
 file path=usr/share/doc/mrtg2/mrtg-m.png
+file path=usr/share/doc/mrtg2/mrtg-mibhelp.1
 file path=usr/share/doc/mrtg2/mrtg-mibhelp.pod
 file path=usr/share/doc/mrtg2/mrtg-mibhelp.txt
+file path=usr/share/doc/mrtg2/mrtg-nt-guide.1
 file path=usr/share/doc/mrtg2/mrtg-nt-guide.pod
 file path=usr/share/doc/mrtg2/mrtg-nt-guide.txt
+file path=usr/share/doc/mrtg2/mrtg-nw-guide.1
 file path=usr/share/doc/mrtg2/mrtg-nw-guide.pod
 file path=usr/share/doc/mrtg2/mrtg-nw-guide.txt
+file path=usr/share/doc/mrtg2/mrtg-r.gif
 file path=usr/share/doc/mrtg2/mrtg-r.png
+file path=usr/share/doc/mrtg2/mrtg-reference.1
 file path=usr/share/doc/mrtg2/mrtg-reference.pod
 file path=usr/share/doc/mrtg2/mrtg-reference.txt
+file path=usr/share/doc/mrtg2/mrtg-rrd.1
 file path=usr/share/doc/mrtg2/mrtg-rrd.pod
 file path=usr/share/doc/mrtg2/mrtg-rrd.txt
+file path=usr/share/doc/mrtg2/mrtg-squid.1
 file path=usr/share/doc/mrtg2/mrtg-squid.pod
 file path=usr/share/doc/mrtg2/mrtg-squid.txt
 file path=usr/share/doc/mrtg2/mrtg-ti.png
+file path=usr/share/doc/mrtg2/mrtg-unix-guide.1
 file path=usr/share/doc/mrtg2/mrtg-unix-guide.pod
 file path=usr/share/doc/mrtg2/mrtg-unix-guide.txt
+file path=usr/share/doc/mrtg2/mrtg-webserver.1
 file path=usr/share/doc/mrtg2/mrtg-webserver.pod
 file path=usr/share/doc/mrtg2/mrtg-webserver.txt
+file path=usr/share/doc/mrtg2/mrtg.1
 file path=usr/share/doc/mrtg2/mrtg.pod
 file path=usr/share/doc/mrtg2/mrtg.txt
+file path=usr/share/doc/mrtg2/mrtglib.1
 file path=usr/share/doc/mrtg2/mrtglib.pod
 file path=usr/share/doc/mrtg2/mrtglib.txt
 file path=usr/share/man/man1/cfgmaker.1
