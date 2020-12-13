@@ -21,29 +21,28 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2016, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2020, Andreas Wacknitz
 #
 
+BUILD_BITS=				32_and_64
 include ../../../make-rules/shared-macros.mk
 
 PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=         gmp
-COMPONENT_VERSION=      6.1.2
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      6.2.1
 COMPONENT_SUMMARY=      GNU Multiple Precision Bignum Library
-COMPONENT_PROJECT_URL=  http://gmplib.org/
+COMPONENT_PROJECT_URL=  https://gmplib.org/
 COMPONENT_FMRI=         library/gmp    
 COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2
+	sha256:eae9326beb4158c386e39a356818031bd28f3124cf915f8c5b1dc4c7a36b4d7c
 COMPONENT_LICENSE=      LGPLv3,GPLv3,FDLv1.3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
 
@@ -142,12 +141,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 ENV += -i
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
