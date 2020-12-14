@@ -123,7 +123,7 @@ PASS: t/aclocal-dirlist.sh
 PASS: t/aclocal-dirlist-globbing.sh
 PASS: t/aclocal-dirlist-abspath.sh
 PASS: t/aclocal-install-absdir.sh
-PASS: t/aclocal-install-fail.sh
+SKIP: t/aclocal-install-fail.sh
 PASS: t/aclocal-install-mkdir.sh
 PASS: t/aclocal-m4-include-are-scanned-aclocal-amflags.sh
 PASS: t/aclocal-m4-include-are-scanned.sh
@@ -687,7 +687,7 @@ XFAIL: t/auxdir-computed.tap 2 - automake -a # TODO long-standing limitation
 XFAIL: t/auxdir-computed.tap 3 - automake # TODO long-standing limitation
 PASS: t/auxdir-misplaced.sh
 PASS: t/auxdir-nonexistent.sh
-XFAIL: t/auxdir-pr19311.sh
+SKIP: t/auxdir-pr19311.sh
 PASS: t/auxdir-unportable.tap 1 - automake exited 1
 PASS: t/auxdir-unportable.tap 2 - warn about non-existent unportable auxdir name
 PASS: t/auxdir-unportable.tap 3 - automake exited 1
@@ -706,6 +706,7 @@ PASS: t/built-sources-check.sh
 PASS: t/built-sources-cond.sh
 PASS: t/built-sources-fork-bomb.sh
 PASS: t/built-sources-install.sh
+PASS: t/built-sources-install-exec.sh
 PASS: t/built-sources-subdir.sh
 PASS: t/built-sources.sh
 PASS: t/candist.sh
@@ -853,24 +854,24 @@ PASS: t/confvar2.sh
 PASS: t/copy.sh
 PASS: t/cscope.tap 1 - [relative VPATH] configure
 PASS: t/cscope.tap 2 - [relative VPATH] make -n cscope
-SKIP: t/cscope.tap 3 # SKIP no proper cscope program available
-SKIP: t/cscope.tap 4 # SKIP no proper cscope program available
-SKIP: t/cscope.tap 5 # SKIP no proper cscope program available
+PASS: t/cscope.tap 3 - [relative VPATH] make cscope
+PASS: t/cscope.tap 4 - [relative VPATH] cscope.files looks correct
+PASS: t/cscope.tap 5 - [relative VPATH] second "make cscope" is consistent
 PASS: t/cscope.tap 6 - [relative VPATH] make distcheck
 PASS: t/cscope.tap 7 - [absolute VPATH] configure
 PASS: t/cscope.tap 8 - [absolute VPATH] make -n cscope
-SKIP: t/cscope.tap 9 # SKIP no proper cscope program available
-SKIP: t/cscope.tap 10 # SKIP no proper cscope program available
-SKIP: t/cscope.tap 11 # SKIP no proper cscope program available
+PASS: t/cscope.tap 9 - [absolute VPATH] make cscope
+PASS: t/cscope.tap 10 - [absolute VPATH] cscope.files looks correct
+PASS: t/cscope.tap 11 - [absolute VPATH] second "make cscope" is consistent
 PASS: t/cscope.tap 12 - [absolute VPATH] make distcheck
 PASS: t/cscope.tap 13 - [in-tree build] configure
 PASS: t/cscope.tap 14 - [in-tree build] make -n cscope
-SKIP: t/cscope.tap 15 # SKIP no proper cscope program available
-SKIP: t/cscope.tap 16 # SKIP no proper cscope program available
-SKIP: t/cscope.tap 17 # SKIP no proper cscope program available
+PASS: t/cscope.tap 15 - [in-tree build] make cscope
+PASS: t/cscope.tap 16 - [in-tree build] cscope.files looks correct
+PASS: t/cscope.tap 17 - [in-tree build] second "make cscope" is consistent
 PASS: t/cscope.tap 18 - [in-tree build] make distcheck
 PASS: t/cscope2.sh
-SKIP: t/cscope3.sh
+PASS: t/cscope3.sh
 PASS: t/c-demo.sh
 PASS: t/cxx.sh
 PASS: t/cxx2.sh
@@ -913,7 +914,7 @@ PASS: t/depend5.sh
 PASS: t/depend6.sh
 PASS: t/depend-postproc.sh
 PASS: t/deprecated-acinit.sh
-PASS: t/destdir.sh
+SKIP: t/destdir.sh
 PASS: t/dir-named-obj-is-bad.sh
 PASS: t/discover.sh
 PASS: t/dist-formats.tap 1 - default [automake]
@@ -1001,7 +1002,7 @@ PASS: t/dist-included-parent-dir.sh
 PASS: t/dist-missing-am.sh
 PASS: t/dist-missing-included-m4.sh
 PASS: t/dist-missing-m4.sh
-PASS: t/dist-readonly.sh
+SKIP: t/dist-readonly.sh
 PASS: t/dist-repeated.sh
 XFAIL: t/dist-pr109765.sh
 PASS: t/dist-vs-built-sources.sh
@@ -1025,6 +1026,7 @@ PASS: t/distcheck-writable-srcdir.sh
 PASS: t/distcheck-missing-m4.sh
 PASS: t/distcheck-outdated-m4.sh
 PASS: t/distcheck-no-prefix-or-srcdir-override.sh
+PASS: t/distcheck-override-dvi.sh
 SKIP: t/distcheck-override-infodir.sh
 PASS: t/distcheck-pr9579.sh
 SKIP: t/distcheck-pr10470.sh
@@ -1123,18 +1125,19 @@ PASS: t/implicit.sh
 PASS: t/init.sh
 PASS: t/init2.sh
 PASS: t/dist-install-sh.sh
-PASS: t/dist-with-unreadable-makefile-fails.sh
+SKIP: t/dist-with-unreadable-makefile-fails.sh
 PASS: t/installdir.sh
 PASS: t/add-missing-install-sh.sh
 PASS: t/install-sh-unittests.sh
-PASS: t/install-sh-option-C.sh
+SKIP: t/install-sh-option-C.sh
+SKIP: t/install-sh-option-S.sh
 PASS: t/instdat.sh
 PASS: t/instdat2.sh
 PASS: t/instdir.sh
 PASS: t/instdir2.sh
 PASS: t/instdir-cond.sh
 XFAIL: t/instdir-cond2.sh
-PASS: t/instdir-no-empty.sh
+SKIP: t/instdir-no-empty.sh
 PASS: t/instdir-java.sh
 PASS: t/instdir-lisp.sh
 PASS: t/instdir-ltlib.sh
@@ -1142,16 +1145,16 @@ PASS: t/instdir-prog.sh
 PASS: t/instdir-python.sh
 SKIP: t/instdir-texi.sh
 PASS: t/instexec.sh
-PASS: t/instfail.sh
-PASS: t/instfail-info.sh
-PASS: t/instfail-java.sh
-PASS: t/instfail-libtool.sh
+SKIP: t/instfail.sh
+SKIP: t/instfail-info.sh
+SKIP: t/instfail-java.sh
+SKIP: t/instfail-libtool.sh
 PASS: t/insthook.sh
 PASS: t/instman.sh
 PASS: t/instman2.sh
-PASS: t/instmany.sh
-PASS: t/instmany-mans.sh
-PASS: t/instmany-python.sh
+SKIP: t/instmany.sh
+SKIP: t/instmany-mans.sh
+SKIP: t/instmany-python.sh
 PASS: t/install-info-dir.sh
 PASS: t/interp.sh
 PASS: t/interp2.sh
@@ -1261,7 +1264,7 @@ PASS: t/lisp-loadpath.sh
 PASS: t/lisp-subdir.sh
 PASS: t/lisp-subdir2.sh
 PASS: t/lisp-subdir-mix.sh
-PASS: t/lispdry.sh
+SKIP: t/lispdry.sh
 PASS: t/lisp-pr11806.sh
 PASS: t/lisp-flags.sh
 PASS: t/listval.sh
@@ -1509,7 +1512,7 @@ PASS: t/parallel-tests-dry-run-2.sh
 PASS: t/parallel-tests-fd-redirect.sh
 PASS: t/parallel-tests-fd-redirect-exeext.sh
 PASS: t/parallel-tests-extra-programs.sh
-PASS: t/parallel-tests-unreadable.sh
+SKIP: t/parallel-tests-unreadable.sh
 PASS: t/parallel-tests-subdir.sh
 PASS: t/parallel-tests-interrupt.tap 1 - logfile created and readable [SIG 1]
 PASS: t/parallel-tests-interrupt.tap 2 - logfile contains output from test script [SIG 1]
@@ -1548,6 +1551,7 @@ PASS: t/tests-environment-backcompat.sh
 PASS: t/testsuite-summary-color.sh
 PASS: t/testsuite-summary-count.sh
 PASS: t/testsuite-summary-count-many.sh
+PASS: t/testsuite-summary-header.sh
 PASS: t/testsuite-summary-reference-log.sh
 PASS: t/test-driver-acsubst.sh
 PASS: t/test-driver-cond.sh
@@ -1562,6 +1566,7 @@ PASS: t/test-driver-strip-vpath.sh
 PASS: t/test-driver-trs-suffix-registered.sh
 PASS: t/test-driver-fail.sh
 PASS: t/test-driver-is-distributed.sh
+PASS: t/test-extensions-empty.sh
 PASS: t/test-harness-vpath-rewrite.sh
 PASS: t/test-log.sh
 PASS: t/test-logs-repeated.sh
@@ -1573,7 +1578,7 @@ PASS: t/test-missing.sh
 PASS: t/test-missing2.sh
 PASS: t/test-trs-basic.sh
 PASS: t/test-trs-recover.sh
-PASS: t/test-trs-recover2.sh
+SKIP: t/test-trs-recover2.sh
 PASS: t/test-extensions.sh
 PASS: t/test-extensions-cond.sh
 PASS: t/parse.sh
@@ -2227,7 +2232,7 @@ PASS: t/subobj-indir-pr13928.sh
 PASS: t/subobj-objname-clash.sh
 PASS: t/subobj-vpath-pr13928.sh
 PASS: t/subobj-pr13928-more-langs.sh
-FAIL: t/subpkg.sh
+PASS: t/subpkg.sh
 PASS: t/subpkg2.sh
 PASS: t/subpkg3.sh
 PASS: t/subpkg4.sh
@@ -2384,12 +2389,12 @@ PASS: t/tap-xfail-tests.sh
 PASS: t/tap-bad-prog.tap 1 - "make check" returns non-zero exit status
 PASS: t/tap-bad-prog.tap 2 - non-existent test is reported
 PASS: t/tap-bad-prog.tap 3 - non-executable test is reported
-PASS: t/tap-bad-prog.tap 4 - non-readable test is reported
+SKIP: t/tap-bad-prog.tap 4 - non-readable test is reported # SKIP any file is readable
 XFAIL: t/tap-bad-prog.tap 5 - no spurious "missing plan" message # TODO
 XFAIL: t/tap-bad-prog.tap 6 - no spurious results # TODO still get "missing plan"
 PASS: t/tap-basic.sh
 PASS: t/tap-diagnostic-custom.sh
-PASS: t/tap-driver-stderr.sh
+SKIP: t/tap-driver-stderr.sh
 PASS: t/tap-doc.sh
 PASS: t/tap-doc2.sh
 PASS: t/tap-more.sh
@@ -2413,7 +2418,7 @@ PASS: t/tests-environment-fd-redirect.sh
 PASS: t/tests-environment-and-log-compiler.sh
 PASS: t/txinfo-absolute-srcdir-pr408.sh
 PASS: t/txinfo-add-missing-and-dist.sh
-PASS: t/txinfo-bsd-make-recurs.sh
+SKIP: t/txinfo-bsd-make-recurs.sh
 SKIP: t/txinfo-builddir.sh
 SKIP: t/txinfo-clean.sh
 PASS: t/txinfo-dvi-recurs.sh
@@ -2450,7 +2455,7 @@ SKIP: t/txinfo28.sh
 PASS: t/transform.sh
 PASS: t/transform2.sh
 PASS: t/transform3.sh
-PASS: t/uninstall-fail.sh
+SKIP: t/uninstall-fail.sh
 PASS: t/uninstall-pr9578.sh
 PASS: t/unused.sh
 SKIP: t/upc.sh
@@ -2461,6 +2466,8 @@ PASS: t/vala-grepping.sh
 PASS: t/pkg-config-macros.sh
 PASS: t/vala-headers.sh
 PASS: t/vala-libs.sh
+PASS: t/vala-libs-distcheck.sh
+PASS: t/vala-libs-vpath.sh
 PASS: t/vala-mix.sh
 PASS: t/vala-mix2.sh
 PASS: t/vala-non-recursive-setup.sh
@@ -2558,7 +2565,8 @@ SKIP: t/compile5-w.sh
 PASS: t/compile6-w.sh
 SKIP: t/compile7-w.sh
 PASS: t/exeext4-w.sh
-PASS: t/install-sh-option-C-w.sh
+SKIP: t/install-sh-option-C-w.sh
+SKIP: t/install-sh-option-S-w.sh
 PASS: t/install-sh-unittests-w.sh
 PASS: t/maken3-w.sh
 PASS: t/mdate5-w.sh
@@ -2967,10 +2975,10 @@ PASS: contrib/t/parallel-tests-html.sh
 PASS: contrib/t/parallel-tests-html-recursive.sh
 PASS: contrib/t/help-multilib.sh
 PASS: contrib/t/multilib.sh
-# TOTAL: 2969
-# PASS:  2860
-# SKIP:  66
-# XFAIL: 40
-# FAIL:  3
+# TOTAL: 2977
+# PASS:  2856
+# SKIP:  80
+# XFAIL: 39
+# FAIL:  2
 # XPASS: 0
 # ERROR: 0
