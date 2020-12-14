@@ -32,14 +32,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak-4
 COMPONENT_VERSION=	4.19.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The Squeak V4 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/squeak-4
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=		3790
-SVN_HASH=  sha256:60521172ecd055b182813893e18db9adff528ee5d42f4b1ddd0c5df83a33aaa2
+SVN_REV=		3791
+SVN_HASH=  sha256:10087d6bfd42b49fc2fecc7268603326e30650fdb06cbf2d996c55d697a4d358
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -50,6 +51,9 @@ COMPONENT_LICENSE_FILE= squeak4.license
 TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
+
+PKG_OPTIONS += -DBRANCHID="$(BRANCHID)"
+PKG_OPTIONS += -DSVN_REV="$(SVN_REV)"
 
 PATH=$(PATH.gnu)
 
