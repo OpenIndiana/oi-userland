@@ -23,25 +23,28 @@ import argparse
 import errno
 import logging
 import os
+import pwd
 import subprocess
 
 logger = logging.getLogger("userland-zone")
 
-BUILD_ZONE_NAME = "prbuilder"
+BUILD_ZONE_NAME = "bz"
 TEMPLATE_ZONE_NAME = "-".join([BUILD_ZONE_NAME, "template"])
 ZONES_ROOT = "/zones"
 ARCHIVES_DIR = "/ws/archives"
 CODE_DIR = "/ws/code"
 DEVELOPER_PACKAGES = ["build-essential"]
 
-ETC_SYSDING_CONF = ["#!/usr/bin/ksh", "setup_timezone UTC", "setup_locale en_US.UTF-8"]
-
 
 class Zone:
-    def __init__(self, name, path=None, brand="nlipkg"):
+    def __init__(
+        self, name, path=None, brand="nlipkg", user="oi", user_id=1000,
+    ):
         self._name = name
         self._path = path or self._get_zone_path()
         self._brand = brand
+        self._user = user
+        self._user_id = user_id
 
     @property
     def name(self):
@@ -115,10 +118,31 @@ class Zone:
         zone_root_path = os.path.join(self._path, "root")
         return self._pkg(["-R", zone_root_path, "update"])
 
-    def configure(self, sysding_lines=ETC_SYSDING_CONF):
+    def configure(self, sysding_lines=None):
+        sysding_config = [
+            "#!/usr/bin/ksh",
+            "setup_timezone UTC",
+            "setup_locale en_US.UTF-8",
+            'setup_user_account {user} {uid} {gid} "{gecos}" {home} {shell}'.format(
+                user=self._user,
+                uid=self._user_id,
+                gid="10",
+                gecos="Build user",
+                home="/export/home/{}".format(self._user),
+                shell="/usr/bin/bash",
+            ),
+            "/usr/sbin/usermod -P'Primary Administrator' {user}".format(
+                user=self._user
+            ),
+        ]
+
+        if sysding_lines:
+            sysding_config.extend(sysding_lines)
+        sysding_config.append("\n")
+
         sysding_conf = os.path.join(self._path, "root", "etc", "sysding.conf")
         with open(sysding_conf, "w") as f:
-            f.write("\n".join(sysding_lines))
+            f.write("\n".join(sysding_config))
 
 
 def execute(cmd, args, **kwargs):
@@ -152,6 +176,7 @@ def parse_arguments():
         raise argparse.ArgumentTypeError("{} is not a valid path".format(path))
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("--prefix", default=BUILD_ZONE_NAME, help="Zone name prefix")
     subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
 
     # create-template
@@ -163,6 +188,18 @@ def parse_arguments():
         help="Zone path",
         default=os.path.join(ZONES_ROOT, TEMPLATE_ZONE_NAME),
         dest="zone_path",
+    )
+    ct_parser.add_argument(
+        "-u",
+        help="User ID to use for build user",
+        default=os.getuid(),
+        dest="uid",
+    )
+    ct_parser.add_argument(
+        "-l",
+        help="User name to use for build user",
+        default=pwd.getpwuid(os.getuid()).pw_name,
+        dest="user",
     )
 
     # update-template
@@ -210,8 +247,8 @@ def parse_arguments():
     return args
 
 
-def create_template(zone_path, zone_name=TEMPLATE_ZONE_NAME):
-    zone = Zone(path=zone_path, name=zone_name)
+def create_template(zone_path, zone_name=TEMPLATE_ZONE_NAME, user='oi', user_id=1000):
+    zone = Zone(path=zone_path, name=zone_name, user=user, user_id=user_id)
     zone.create()
     zone.install()
     zone.configure()
@@ -226,8 +263,8 @@ def destroy_zone(zone_name=TEMPLATE_ZONE_NAME):
     zone.delete()
 
 
-def spawn_zone(id, archive_dir=ARCHIVES_DIR, code_dir=CODE_DIR):
-    name = "{}-{}".format(BUILD_ZONE_NAME, id)
+def spawn_zone(id, prefix=BUILD_ZONE_NAME, archive_dir=ARCHIVES_DIR, code_dir=CODE_DIR):
+    name = "{}-{}".format(prefix, id)
     zone = Zone(name=name, path=os.path.join(ZONES_ROOT, name))
 
     template_zone = Zone(name=TEMPLATE_ZONE_NAME)
@@ -262,8 +299,8 @@ def spawn_zone(id, archive_dir=ARCHIVES_DIR, code_dir=CODE_DIR):
     zone.boot()
 
 
-def update_template():
-    zone = Zone(name=TEMPLATE_ZONE_NAME)
+def update_template(zone_name=TEMPLATE_ZONE_NAME):
+    zone = Zone(name=zone_name)
     zone.update()
 
 
@@ -271,15 +308,18 @@ def main():
     args = parse_arguments()
 
     if args.subcommand == "create-template":
-        create_template(zone_path=args.zone_path)
+        zone_name = '{}-{}'.format(args.prefix, 'template')
+        create_template(zone_path=args.zone_path, zone_name=zone_name, user=args.user, user_id=args.uid)
     elif args.subcommand == "destroy-template":
-        destroy_zone(zone_name=TEMPLATE_ZONE_NAME)
+        zone_name = '{}-{}'.format(args.prefix, 'template')
+        destroy_zone(zone_name=zone_name)
     elif args.subcommand == "update-template":
-        update_template()
+        zone_name = '{}-{}'.format(args.prefix, 'template')
+        update_template(zone_name=zone_name)
     elif args.subcommand == "spawn-zone":
-        spawn_zone(id=args.id, archive_dir=args.archive_dir, code_dir=args.code_dir)
+        spawn_zone(id=args.id, prefix=args.prefix, archive_dir=args.archive_dir, code_dir=args.code_dir)
     elif args.subcommand == "destroy-zone":
-        zone_name = "{}-{}".format(BUILD_ZONE_NAME, args.id)
+        zone_name = "{}-{}".format(args.prefix, args.id)
         destroy_zone(zone_name=zone_name)
 
 
