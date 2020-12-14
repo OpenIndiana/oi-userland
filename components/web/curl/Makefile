@@ -25,12 +25,12 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
-COMPONENT_VERSION=      7.73.0
+COMPONENT_VERSION=      7.74.0
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:7c4c7ca4ea88abe00fea4740dcf81075c031b1d0bb23aff2d5efde20a3c2408a
+	sha256:999d5f2c403cf6e25d58319fdd596611e455dd195208746bc6e6d197a77e878b
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=  	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE).asc
 
@@ -77,7 +77,7 @@ CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 LINT_FLAGS += -I$(SOURCE_DIR)/include
 
 # Generate configuration scripts form .am-files
-COMPONENT_PREP_ACTION = (cd $(@D) ; $(SHELL) buildconf )
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -fi)
 
 ENV = /usr/bin/env -i
 COMPONENT_TEST_ENV += CC="$(CC)"
