@@ -23,21 +23,22 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=			32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autoconf
-COMPONENT_VERSION=	2.69
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autoconf/
+COMPONENT_VERSION=	2.71
+COMPONENT_FMRI=		developer/build/autoconf
+COMPONENT_SUMMARY=	GNU autoconf utility
+COMPONENT_CLASSIFICATION= Development/GNU
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/autoconf/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:954bd69b391edc12d6a4a51a2dd1476543da5c6bbf05a95b59dc0dd6fd4c2969
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autoconf/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:431075ad0bf529ef13cb41e9042c542381103e80015686222b8a9d4abef42a1c
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/autoconf/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPLv2, GPLv3, autoconf exception
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -45,14 +46,7 @@ CONFIGURE_OPTIONS  +=		--srcdir=.
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
-
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += developer/macro/gnu-m4
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += SUNWcs
