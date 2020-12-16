@@ -21,35 +21,30 @@
 
 #
 # Copyright 2018 Aurelien Larcher
+# Copyright 2020 Andreas Wacknitz
 #
 
+BUILD_BITS=				32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         autoconf-archive
-COMPONENT_VERSION=      2018.03.13
-IPS_COMPONENT_VERSION=  2018.3.13
+COMPONENT_VERSION=      2019.01.06
+IPS_COMPONENT_VERSION=  2019.1.6
 COMPONENT_FMRI=         developer/build/autoconf-archive
 COMPONENT_SUMMARY=      GNU Autoconf Archive
 COMPONENT_CLASSIFICATION=Development/GNU
-COMPONENT_PROJECT_URL=  http://www.gnu.org/software/autoconf-archive/
+COMPONENT_PROJECT_URL=  https://www.gnu.org/software/autoconf-archive/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=  \
-  sha256:6175f90d9fa64c4d939bdbb3e8511ae0ee2134863a2c7bf8d9733819efa6e159
+	sha256:17195c833098da79de5778ee90948f4c5d90ed1a0cf8391b4ab348e2ec511e3f
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnu.org/gnu/autoconf-archive/$(COMPONENT_ARCHIVE)
+	https://ftp.gnu.org/gnu/autoconf-archive/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv3  
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
+CONFIGURE_OPTIONS += --docdir=$(USRSHAREDIR)/autoconf-archive
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/macro/gnu-m4
