@@ -24,28 +24,27 @@
 # Copyright 2017 Gary Mills
 # Copyright 2017 Aurelien Larcher
 # Copyright 2019 Michal Nowak
+# Copyright 2020 Nona Hansel
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         coreutils
-COMPONENT_VERSION=      8.31
+COMPONENT_VERSION=      8.32
 COMPONENT_FMRI=         file/gnu-coreutils	
 COMPONENT_SUMMARY=      GNU Core Utilities
 COMPONENT_DESCRIPTION= \
 	GNU Core Utilities are the basic file, shell and text manipulation utilities
 COMPONENT_CLASSIFICATION=Applications/System Utilities
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/coreutils/
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/coreutils/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:ff7a9c918edce6b4f4b2725e3f9b37b0c4d193531cac49a48b56c4d0d3a9e9fd
-COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
+	sha256:4458d8de7849df44ccab15e16b1548b285224dbba5f08fac070c1c0e0bcc4cfa
+COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv3, FDLv1.3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # We need the GNU grep command to configure/build.
 PATH = $(PATH.gnu)
