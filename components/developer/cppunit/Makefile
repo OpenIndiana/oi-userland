@@ -11,30 +11,30 @@
 
 #
 # Copyright (c) 2013, Igor Kozhukhov <ikozhukhov@gmail.com>.  All rights reserved.
+# Copyright (c) 2020, Andreas Wacknitz
 #
+BUILD_BITS=				32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=       cppunit
-COMPONENT_VERSION=	  1.14.0
-COMPONENT_FMRI=       developer/cppunit
-COMPONENT_SUMMARY=    Unit Testing Library for C++
+COMPONENT_NAME=			cppunit
+COMPONENT_VERSION=		1.15.1
+COMPONENT_FMRI=			developer/cppunit
+COMPONENT_SUMMARY=		Unit Testing Library for C++
 COMPONENT_CLASSIFICATION=Development/C++
-COMPONENT_PROJECT_URL=http://www.freedesktop.org/wiki/Software/cppunit/
-COMPONENT_SRC=        $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=    $(COMPONENT_SRC).tar.gz
+COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/cppunit/
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:3d569869d27b48860210c758c4f313082103a5e58219a7669b52bfd29d674780
+	sha256:89c5c6665337f56fd2db36bc3805a5619709d51fb136e51937072f63fcc717a7
 COMPONENT_ARCHIVE_URL= \
-  http://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=    LGPLv2.1
+	https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=		LGPLv2.1
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --disable-doxygen
 CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-doxygen
 
 # Tests failure
 unexport SHELLOPTS
@@ -50,15 +50,8 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|make.*: Nothing to be done.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "/^XXX_REMOVE_XXX$$/d" '
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
