@@ -11,11 +11,13 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 #
+BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		exuberant-ctags
 COMPONENT_VERSION=	5.8
-COMPONENT_PROJECT_URL=	http://ctags.sourceforge.net/
+COMPONENT_REVISION=	1
+COMPONENT_PROJECT_URL=	https://ctags.sourceforge.net/
 COMPONENT_SUMMARY=	A C programming language indexing and/or cross-reference tool
 COMPONENT_DESCRIPTION=	\
 Ctags generates an index (or tag) file of C language objects found in \
@@ -36,21 +38,15 @@ COMPONENT_CLASSIFICATION=	Development/Editors
 COMPONENT_SRC=		ctags-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:0e44b45dcabe969e0bbbb11e30c246f81abe5d32012db37395eb57d66e9e99c7
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/ctags/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/ctags/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2+ and LGPLv2+ and Public Domain
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV=	DEST_DIR=$(PROTO_DIR)
 COMPONENT_INSTALL_ENV=	DEST_DIR=$(PROTO_DIR)
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
