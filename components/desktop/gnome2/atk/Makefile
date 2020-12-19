@@ -11,47 +11,57 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2020 Andreas Wacknitz
 #
 
+BUILD_BITS= 32_and_64
+BUILD_STYLE= meson
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= atk
-COMPONENT_VERSION= 2.18.0
-COMPONENT_REVISION= 1
+COMPONENT_MJR_VERSION=2.36
+COMPONENT_MNR_VERSION=0
+COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY= GNOME accesibility toolkit libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ce6c48d77bf951083029d5a396dd552d836fff3c1715d3a7022e917e46d0c92b
+	sha256:fb76247e369402be23f1f5c65d38a9639c1164d934e40f6a9cf3c9e96b652788
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.18/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
+	https://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.gnome.org
 COMPONENT_FMRI= library/desktop/atk
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f)
+# gcc-7 fails to build atk:
+GCC_VERSION=	10
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-# breaks gir-scanner
-CONFIGURE_OPTIONS += --disable-fvisibility-hidden
+# gobject-introspection is 64-Bit-only
+CONFIGURE_OPTIONS.32 += -Dintrospection=false
 
-# CFLAGS are not passed to compiler when g-ir-scanner is used
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+# Workaround for build failures due to atk Makefiles not passing CFLAGS or
+# LDFLAGS, especially the -m32/64 flag, to g-ir-scanner
+COMPONENT_BUILD_ENV += CFLAGS="$(strip $(CFLAGS))"
+COMPONENT_BUILD_ENV += LDFLAGS="$(strip $(LDFLAGS))"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
-build: $(BUILD_32_and_64)
+COMPONENT_INSTALL_ENV += PATH="$(PATH.gnu)"
 
-install: $(INSTALL_32_and_64)
+# Upstream's "gmake test" target builds tests but does not run them,
+# so run them manually for now.
+COMPONENT_TEST_TARGETS += ; cd tests; ./testdocument; ./testrole ; \
+    ./testrelation ; ./teststateset ; ./testvalue
 
-test: $(NO_TESTS)
+# get rid of the timestamps from the test results
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
 
-# Build dependencies
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# Manually added build dependencies
 REQUIRED_PACKAGES+= library/desktop/gobject/gobject-introspection
 
 # Auto-generated dependencies
