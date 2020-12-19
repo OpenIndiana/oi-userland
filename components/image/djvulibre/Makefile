@@ -14,45 +14,40 @@
 # Copyright 2017 Aurelien Larcher.  All rights reserved.
 #
 
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= djvulibre
-COMPONENT_VERSION= 3.5.27
+COMPONENT_VERSION= 3.5.28
 COMPONENT_FMRI= image/djvulibre
 COMPONENT_SUMMARY= DjVu base libraries and utilities
 COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
-COMPONENT_PROJECT_URL = http://djvu.sourceforge.net/
+COMPONENT_PROJECT_URL = https://djvu.sourceforge.net/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e69668252565603875fb88500cde02bf93d12d48a3884e472696c896e81f505f
+	sha256:82e392a9cccfee94fa604126c67f06dbc43ed5f9f0905d15b6c8164f83ed5655
 COMPONENT_ARCHIVE_URL= \
-  http://downloads.sourceforge.net/project/djvu/DjVuLibre/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	https://sourceforge.net/projects/djvu/files/DjVuLibre/3%2C5%2C28/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE= GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
+
+CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
