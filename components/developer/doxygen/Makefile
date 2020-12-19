@@ -19,36 +19,34 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2020, Andreas Wacknitz
 #
 PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		doxygen
-COMPONENT_VERSION=	1.8.14
-COMPONENT_FMRI=		developer/documentation-tool/doxygen		
-COMPONENT_SUMMARY=	Doxygen - Source Code Documentation Tool 
+COMPONENT_NAME=			doxygen
+COMPONENT_VERSION=		1.8.20
+COMPONENT_FMRI=			developer/documentation-tool/doxygen		
+COMPONENT_SUMMARY=		Doxygen - Source Code Documentation Tool 
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
-COMPONENT_PROJECT_URL=	http://www.stack.nl/~dimitri/doxygen/index.html
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:d1757e02755ef6f56fd45f1f4398598b920381948d6fcfa58f5ca6aa56f59d4d
-COMPONENT_ARCHIVE_URL=	http://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv2
+COMPONENT_PROJECT_URL=	https://www.stack.nl/~dimitri/doxygen/index.html
+COMPONENT_SRC=			$(COMPONENT_NAME)-Release_1_8_20
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).src.tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:3dbdf8814d6e68233d5149239cb1f0b40b4e7b32eef2fd53de8828fedd7aca15
+COMPONENT_ARCHIVE_URL=	https://github.com/doxygen/doxygen/archive/Release_1_8_20.tar.gz
+COMPONENT_LICENSE=		GPLv2
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
-COMPONENT_ARCHIVE_HASH_1 =	\
-    sha256:6bd921de50719cc2ad5e6de65bf5d6c34b30a919e795d2d323cb197d5fb0aa26
-COMPONENT_ARCHIVE_URL_1 =	ftp://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_HASH_1 =	sha256:5f69a3270205959fe51e4caf48cb4b48f8e684c37fec2df5558e14d8d2a36cd6
+COMPONENT_ARCHIVE_URL_1 =	https://doxygen.nl/files/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# Necessary to find gcc during build
-PATH=$(GCC_ROOT)/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -59,7 +57,7 @@ CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=Release
 ASLR_MODE = $(ASLR_ENABLE)
 
 # Test 12 is a known failure (we don't have bibtex in Solaris).
-COMPONENT_TEST_ENV =		PATH="$(GNUBIN):$(PROTO_DIR)/usr/bin:$(PATH)"
+COMPONENT_TEST_ENV =		PATH="$(PROTO_DIR)/usr/bin:$(PATH)"
 COMPONENT_TEST_DIR =		$(BUILD_DIR_64)/testing
 COMPONENT_TEST_TARGETS =	tests
 
@@ -86,8 +84,8 @@ test:	$(TEST_64)
 # Build dependencies
 REQUIRED_PACKAGES+= developer/lexer/flex
 
-# Auto-generated contents below.  Please manually verify and remove this comment
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
