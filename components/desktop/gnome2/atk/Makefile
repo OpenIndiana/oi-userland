@@ -63,6 +63,7 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # Manually added build dependencies
 REQUIRED_PACKAGES+= library/desktop/gobject/gobject-introspection
+REQUIRED_PACKAGES+= developer/gcc-10
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
