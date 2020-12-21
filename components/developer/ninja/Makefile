@@ -17,7 +17,7 @@ BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ninja
-COMPONENT_VERSION=      1.10.1
+COMPONENT_VERSION=      1.10.2
 COMPONENT_SUMMARY=      Ninja - a small build system with a focus on speed
 COMPONENT_PROJECT_URL=  https://ninja-build.org/
 COMPONENT_FMRI=         developer/build/ninja
@@ -27,7 +27,7 @@ COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/ninja-build/ninja/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:a6b6f7ac360d4aabd54e299cc1d8fa7b234cd81b9401693da21221c62569a23e
+	sha256:ce35865411f0490368a8fc383f29071de6690cbadc27704734978221f25e2bed
 COMPONENT_LICENSE=      Apache License version 2.0
 
 include $(WS_MAKE_RULES)/common.mk
@@ -56,9 +56,16 @@ COMPONENT_INSTALL_ACTION = cd $(@D); \
   install -vDm644 misc/zsh-completion \
       $(PROTO_DIR)/usr/share/zsh-completions/_ninja
 
+COMPONENT_PRE_TEST_ACTION = \
+    cd $(BUILD_DIR_64); \
+    ./ninja all;
+
+COMPONENT_TEST_CMD = cd $(BUILD_DIR_64); ./ninja_test
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS+= '-n -e "/^\[[0-9]*\/341\]/p"'
 
 # Build dependencies
+REQUIRED_PACKAGES += developer/lexer/re2c
 REQUIRED_PACKAGES += runtime/python-35
 
 # Auto-generated dependencies
