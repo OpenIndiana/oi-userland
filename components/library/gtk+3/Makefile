@@ -20,12 +20,12 @@ BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk+
-COMPONENT_VERSION=	3.24.23
+COMPONENT_VERSION=	3.24.24
 COMPONENT_SUMMARY=	GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:5d864d248357a2251545b3387b35942de5f66e4c66013f0962eb5cb6f8dae2b1
+	sha256:cc9d4367c55b724832f6b09ab85481738ea456871f0381768a6a99335a98378a
 COMPONENT_ARCHIVE_URL= \
 	https://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gtk.org/
@@ -36,7 +36,7 @@ COMPONENT_FMRI=		library/desktop/gtk3
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include
 
