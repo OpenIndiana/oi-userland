@@ -23,6 +23,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+<transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
+
 # force dependency on Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 	pkg.debug.depend.path=usr/bin
