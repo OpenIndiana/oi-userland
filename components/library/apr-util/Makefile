@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr-util
 COMPONENT_VERSION=	1.6.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
