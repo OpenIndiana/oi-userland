@@ -30,7 +30,7 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		htop
-COMPONENT_VERSION=	3.0.3
+COMPONENT_VERSION=	3.0.4
 COMPONENT_FMRI=		diagnostic/htop
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SUMMARY=	htop - an interactive process viewer for Unix
@@ -38,7 +38,7 @@ COMPONENT_PROJECT_URL=	https://htop.dev/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:725103929c925a7252b4dedeb29b3a1da86a2f74e96c50eb9ea6c8fec1942cd2
+	sha256:d8a0536ce95e3d59f8e292e73ee037033a74a8cc118fd10d22048bd4aeb61324
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/htop-dev/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=  GPLv2 
