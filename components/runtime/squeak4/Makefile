@@ -31,16 +31,15 @@ BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak-4
-COMPONENT_VERSION=	4.19.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.19.3
 COMPONENT_SUMMARY=	The Squeak V4 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/squeak-4
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=		3791
-SVN_HASH=  sha256:10087d6bfd42b49fc2fecc7268603326e30650fdb06cbf2d996c55d697a4d358
+SVN_REV=		3792
+SVN_HASH=  sha256:46abb74efeac5ae9c8321ec30db5164211f6e3e2f7ff83209cf4cc8be2ca48f8
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -56,6 +55,21 @@ PKG_OPTIONS += -DBRANCHID="$(BRANCHID)"
 PKG_OPTIONS += -DSVN_REV="$(SVN_REV)"
 
 PATH=$(PATH.gnu)
+
+# override gcc_OPT (defaults to -O3) for the moment
+# squeak4 compiles with -O2 or -O3 but
+# KernelTests-Chronology with gcc 7.5 version 4.16.7 or 4.19.*
+# gcc -O : 438 pass tests
+# gcc -O2 : 20 failures 1 errors  #testAsDelay error
+# the system compiled with -O3 / -O2 is usable but has Chronology failures
+
+# the example squeak4 Makefile specifies _FILE_OFFSET_BITS=64
+# goal is large file support (as in man lfcompile)
+# lfcompile - large file compilation environment for 32-bit applications
+
+gcc_OPT=	-O
+gcc_OPT+=	-D_LARGEFILE_SOURCE
+gcc_OPT+=	-D_FILE_OFFSET_BITS=64
 
 # squeak4 configure looks for .svn or svnversion file, but
 # prep-svn.mk did a svn export and created an unversioned copy of the sources

@@ -24,10 +24,14 @@ BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
+# there is no official triplet version for opensmalltalk-vm
+# we use 5.0.<n> for VMMaker.oscog-eem.<n>
+# sometimes the Stack VM is generated from a different VMMaker as the Cog VM
+
 COMPONENT_NAME=		squeak-5c
-COMPONENT_VERSION=	5.0.2905
-GIT_TAG=		sun-v5.0.22
-PLUGIN_REV=		5.0-202012050741-cog
+COMPONENT_VERSION=	5.0.2908
+GIT_TAG=		sun-v5.0.23
+PLUGIN_REV=		5.0-202012230929-cog
 COMPONENT_SUMMARY=	The Cog Implementation of the Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak-5c
@@ -41,7 +45,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2457764d6a4b0f9d2a4330a090f0a80a68ea5e81f3439f133d3d434fea924163
+COMPONENT_ARCHIVE_HASH=	sha256:bd2c370117c72d03f2ee44c78d9f33be90b86a5177f2897c453520be5da952bc
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
