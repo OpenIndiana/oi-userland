@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=	libreoffice
 COMPONENT_VERSION= 6.4.3
 COMPONENT_RC_VERSION= 2
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION)
 COMPONENT_SUMMARY= LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL= https://www.libreoffice.org/
@@ -61,9 +61,9 @@ COMPONENT_ARCHIVE_7 = a233181e03d3c307668b4c722d881661-mariadb_client-2.0.0-src.
 COMPONENT_ARCHIVE_HASH_7 = sha256:fd2f751dea049c1907735eb236aeace1d811d6a8218118b00bbaa9b84dc5cd60
 COMPONENT_ARCHIVE_URL_7 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_7)
 
-COMPONENT_ARCHIVE_8 = a39f6c07ddb20d7dd2ff1f95fa21e2cd-raptor2-2.0.15.tar.gz
-COMPONENT_ARCHIVE_HASH_8 = sha256:ada7f0ba54787b33485d090d3d2680533520cd4426d2f7fb4782dd4a6a1480ed
-COMPONENT_ARCHIVE_URL_8 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_8)
+COMPONENT_ARCHIVE_8 = raptor2-2.0.15-patched.tar.bz2
+COMPONENT_ARCHIVE_HASH_8 = sha256:e0a4bbe6421c115fba4684f6fa009541ed041f64fca609569967805831b0a9db
+COMPONENT_ARCHIVE_URL_8 = http://dlc.openindiana.org/oi-userland/source-archives/$(COMPONENT_ARCHIVE_8)
 
 COMPONENT_ARCHIVE_9 = a8c2c5b8f09e7ede322d5c602ff6a4b6-mythes-1.2.4.tar.gz
 COMPONENT_ARCHIVE_HASH_9 = sha256:1e81f395d8c851c3e4e75b568e20fa2fa549354e75ab397f9de4b0e0790a305f
@@ -233,6 +233,7 @@ REQUIRED_PACKAGES += library/c++/mdds
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
@@ -279,7 +280,6 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2

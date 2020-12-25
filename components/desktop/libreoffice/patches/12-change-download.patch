@@ -1,0 +1,37 @@
+After #3763 Implement qsort_r(3C) had been integrated on Sep 23rd, 2020, raptor2 needs a patch to build.
+We need to provide a patched version of raptor-2.0.15 that is being used by libreoffice.
+Thus, we change the archive name, checksum and download location.
+
+--- libreoffice-6.4.3.2/Makefile.fetch.orig	2020-04-07 17:26:49.000000000 +0000
++++ libreoffice-6.4.3.2/Makefile.fetch	2020-12-25 20:00:50.398885813 +0000
+@@ -206,7 +206,6 @@
+ 		$(call fetch_Optional,POSTGRESQL,POSTGRESQL_TARBALL) \
+ 		$(call fetch_Optional,PYTHON,PYTHON_TARBALL) \
+ 		$(call fetch_Optional,QXP,QXP_TARBALL) \
+-		$(call fetch_Optional,REDLAND,RAPTOR_TARBALL) \
+ 		$(call fetch_Optional,REDLAND,RASQAL_TARBALL) \
+ 		$(call fetch_Optional,REDLAND,REDLAND_TARBALL) \
+ 		$(call fetch_Optional,REVENGE,REVENGE_TARBALL) \
+@@ -225,6 +224,9 @@
+ 		$(call fetch_Optional,ZMF,ZMF_TARBALL) \
+ 	,$(call fetch_Download_item,https://dev-www.libreoffice.org/src,$(item)))
+ 	$(foreach item, \
++		$(call fetch_Optional,REDLAND,RAPTOR_TARBALL) \
++	,$(call fetch_Download_item,http://dlc.openindiana.org/oi-userland/source-archives,$(item)))
++	$(foreach item, \
+ 		$(call fetch_Optional,ODK,UNOWINREG_DLL) \
+ 		$(call fetch_Optional,OPENSYMBOL,OPENSYMBOL_TTF) \
+ 		$(call fetch_Optional,ODFVALIDATOR,ODFVALIDATOR_JAR) \
+--- libreoffice-6.4.3.2/download.lst.orig	2020-04-07 17:26:49.000000000 +0000
++++ libreoffice-6.4.3.2/download.lst	2020-12-25 20:02:09.529275219 +0000
+@@ -218,8 +218,8 @@
+ export QRCODEGEN_TARBALL := QR-Code-generator-1.4.0.tar.gz
+ export QXP_SHA256SUM := e137b6b110120a52c98edd02ebdc4095ee08d0d5295a94316a981750095a945c
+ export QXP_TARBALL := libqxp-0.0.2.tar.xz
+-export RAPTOR_SHA256SUM := ada7f0ba54787b33485d090d3d2680533520cd4426d2f7fb4782dd4a6a1480ed
+-export RAPTOR_TARBALL := a39f6c07ddb20d7dd2ff1f95fa21e2cd-raptor2-2.0.15.tar.gz
++export RAPTOR_SHA256SUM := e0a4bbe6421c115fba4684f6fa009541ed041f64fca609569967805831b0a9db
++export RAPTOR_TARBALL := raptor2-2.0.15-patched.tar.bz2
+ export RASQAL_SHA256SUM := 6924c9ac6570bd241a9669f83b467c728a322470bf34f4b2da4f69492ccfd97c
+ export RASQAL_TARBALL := 1f5def51ca0026cd192958ef07228b52-rasqal-0.9.33.tar.gz
+ export REDLAND_SHA256SUM := de1847f7b59021c16bdc72abb4d8e2d9187cd6124d69156f3326dd34ee043681
