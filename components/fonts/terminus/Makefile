@@ -17,14 +17,14 @@ BUILD_BITS=			32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		terminus-font
-COMPONENT_VERSION=	4.48
+COMPONENT_VERSION=	4.49
 COMPONENT_PROJECT_URL=	https://terminus-font.sourceforge.net/
 COMPONENT_SUMMARY=	Terminus Font
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:34799c8dd5cec7db8016b4a615820dfb43b395575afbb24fc17ee19c869c94af
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/terminus-font/files/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)/download
+	sha256:db0a74551a23d2229db6ffea469ca8e390625ace4069dd1c1a3d05a16ed2634d
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/terminus-font/files/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=		system/font/terminus
 COMPONENT_LICENSE_FILE=	terminus.license
 COMPONENT_LICENSE=	OFL
