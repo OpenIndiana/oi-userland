@@ -11,38 +11,24 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2020 Andreas Wacknitz
 #
 
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libexif-gtk
-
-COMPONENT_VERSION= 0.4.0
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 0.5.0
 COMPONENT_SUMMARY= GTK widgets for viewing EXIF information
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:fd36a5b243f12a1ba31342acf7547491fe22f5409f3bf39ec1a11239316f3011
-COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/libexif/files/libexif-gtk/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_PROJECT_URL = http://sourceforge.net/projects/libexif
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:4f8da4def8794b32ac5c58d6bd5359633bb11f29052da2bb303f0fe433c705df
+COMPONENT_ARCHIVE_URL= https://github.com/libexif/libexif-gtk/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://libexif.github.io/
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-gcc_OPT = -O2
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-static
-
-COMPONENT_INSTALL_TARGETS = install-strip
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libexif
