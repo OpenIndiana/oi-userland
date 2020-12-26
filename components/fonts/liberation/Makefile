@@ -17,16 +17,15 @@ BUILD_STYLE = archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        liberation
-COMPONENT_VERSION=      2.00.5
-IPS_COMPONENT_VERSION=  2.0.5
+COMPONENT_VERSION=      2.1.2
 COMPONENT_SUMMARY=      The Liberation fonts
 COMPONENT_PROJECT_URL=  https://pagure.io/liberation-fonts/
 COMPONENT_SRC=          $(COMPONENT_NAME)-fonts-ttf-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/liberationfonts/liberation-fonts/files/2926169/$(COMPONENT_ARCHIVE).tar.gz
+	https://github.com/liberationfonts/liberation-fonts/files/5722233/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f14ff0a0be87b5aeb672e669363b5a699db76feb1144b06798261c0fdcd2b24d
+	sha256:14694930f28391675008c67b18889d1a7dfea74b16adf50394f8057b57eaf8e0
 COMPONENT_LICENSE=      SIL Open Font License Version 1.1
 
 FONT_TYPE = TTF
@@ -39,3 +38,4 @@ COMPONENT_FONT_FILES  += *.ttf
 COMPONENT_FONTCONF_SRC_DIR = 
 COMPONENT_FONTCONF_FILES   =
 
+# Auto-generated dependencies
