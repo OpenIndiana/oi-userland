@@ -11,40 +11,32 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2020 Andreas Wacknitz
 #
 
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libexif
-COMPONENT_VERSION= 0.6.21
-COMPONENT_REVISION= 1
+COMPONENT_RELEASE= 0.6
+COMPONENT_VERSION= $(COMPONENT_RELEASE).22
 COMPONENT_SUMMARY= EXIF tag parsing library for digital cameras
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:16cdaeb62eb3e6dfab2435f7d7bccd2f37438d21c5218ec4e58efa9157d4d41a
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:5048f1c8fc509cc636c2f97f4b40c293338b6041a5652082d5ee2cf54b530c56
 COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/libexif/files/libexif/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_PROJECT_URL = http://sourceforge.net/projects/libexif
-COMPONENT_FMRI = image/library/libexif
-COMPONENT_LICENSE = LGPLv2.1
-COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
+	https://github.com/libexif/libexif/releases/download/libexif-$(subst .,_,$(COMPONENT_VERSION))-release/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://sourceforge.net/projects/libexif
+COMPONENT_FMRI= image/library/libexif
+COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-gcc_OPT = -O2
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-docs
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
