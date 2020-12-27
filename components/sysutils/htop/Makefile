@@ -26,11 +26,11 @@
 #
 
 BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		htop
 COMPONENT_VERSION=	3.0.4
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		diagnostic/htop
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SUMMARY=	htop - an interactive process viewer for Unix
@@ -44,7 +44,6 @@ COMPONENT_ARCHIVE_URL= \
 COMPONENT_LICENSE=  GPLv2 
 
 TEST_TARGET=		$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(GNUBIN64):$(PATH.gnu)
