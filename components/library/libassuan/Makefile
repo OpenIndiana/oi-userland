@@ -23,27 +23,25 @@
 # Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2020, Andreas Wacknitz
 #
 
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libassuan
-COMPONENT_VERSION=	2.5.3
+COMPONENT_VERSION=	2.5.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/libassuan/
+COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/libassuan/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:91bcb0403866b4e7c4bc1cc52ed4c364a9b5414b3994f718c70303f7f765e702
+	sha256:c080ee96b3bd519edd696cfcebdecf19a3952189178db9887be713ccbcb5fbf0
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libassuan/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/security/libassuan
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
-
-CFLAGS += -std=gnu89
 
 CONFIGURE_OPTIONS  +=	--localstatedir=/var
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
@@ -53,12 +51,7 @@ CONFIGURE_OPTIONS  +=	--disable-silent-rules
 CONFIGURE_OPTIONS  +=	--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=	--with-pic
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += system/library
