@@ -11,41 +11,34 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2020 Andreas Wacknitz
 #
 
+BUILD_BITS= 32_and_64
+PREFERRED_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lame
-COMPONENT_VERSION= 3.99.5
-COMPONENT_REVISION= 3
-COMPONENT_SUMMARY= lame  MP3 encoder
+COMPONENT_VERSION= 3.100
+COMPONENT_SUMMARY= LAME is a high quality MPEG Audio Layer III (MP3) encoder licensed under the LGPL 
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:24346b4158e4af3bd9f2e194bb23eb473c75fb7377011523353196b19b9a23ff
-COMPONENT_ARCHIVE_URL= \
-  http://tenet.dl.sourceforge.net/project/lame/lame/3.99/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://lame.sourceforge.net/
+COMPONENT_ARCHIVE_HASH= sha256:ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e
+COMPONENT_ARCHIVE_URL= https://downloads.sourceforge.net/sourceforge/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://lame.sourceforge.io/
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = System/Media
 COMPONENT_FMRI = audio/lame
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --with-fileio=sndfile
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-rpath
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/ncurses
