@@ -1,38 +1,31 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 <transform file path=usr/lib/git-core/.* -> default mode 0555>
 
-license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # Needed at runtime for localization in shell scripts
 depend fmri=text/gnu-gettext type=require
@@ -101,6 +94,7 @@ hardlink path=usr/lib/git-core/git-fetch-pack target=git-upload-pack
 file path=usr/lib/git-core/git-filter-branch
 hardlink path=usr/lib/git-core/git-fmt-merge-msg target=git-upload-pack
 hardlink path=usr/lib/git-core/git-for-each-ref target=git-upload-pack
+hardlink path=usr/lib/git-core/git-for-each-repo target=git-upload-pack
 hardlink path=usr/lib/git-core/git-format-patch target=git-upload-pack
 hardlink path=usr/lib/git-core/git-fsck target=git-upload-pack
 hardlink path=usr/lib/git-core/git-fsck-objects target=git-upload-pack
@@ -126,6 +120,7 @@ hardlink path=usr/lib/git-core/git-ls-remote target=git-upload-pack
 hardlink path=usr/lib/git-core/git-ls-tree target=git-upload-pack
 hardlink path=usr/lib/git-core/git-mailinfo target=git-upload-pack
 hardlink path=usr/lib/git-core/git-mailsplit target=git-upload-pack
+hardlink path=usr/lib/git-core/git-maintenance target=git-upload-pack
 hardlink path=usr/lib/git-core/git-merge target=git-upload-pack
 hardlink path=usr/lib/git-core/git-merge-base target=git-upload-pack
 hardlink path=usr/lib/git-core/git-merge-file target=git-upload-pack
@@ -149,7 +144,6 @@ file path=usr/lib/git-core/git-p4
 hardlink path=usr/lib/git-core/git-pack-objects target=git-upload-pack
 hardlink path=usr/lib/git-core/git-pack-redundant target=git-upload-pack
 hardlink path=usr/lib/git-core/git-pack-refs target=git-upload-pack
-file path=usr/lib/git-core/git-parse-remote
 hardlink path=usr/lib/git-core/git-patch-id target=git-upload-pack
 hardlink path=usr/lib/git-core/git-prune target=git-upload-pack
 hardlink path=usr/lib/git-core/git-prune-packed target=git-upload-pack
@@ -227,10 +221,10 @@ file path=usr/lib/git-core/mergetools/emerge
 file path=usr/lib/git-core/mergetools/examdiff
 file path=usr/lib/git-core/mergetools/guiffy
 file path=usr/lib/git-core/mergetools/gvimdiff
-file path=usr/lib/git-core/mergetools/nvimdiff
 file path=usr/lib/git-core/mergetools/kdiff3
 file path=usr/lib/git-core/mergetools/kompare
 file path=usr/lib/git-core/mergetools/meld
+file path=usr/lib/git-core/mergetools/nvimdiff
 file path=usr/lib/git-core/mergetools/opendiff
 file path=usr/lib/git-core/mergetools/p4merge
 file path=usr/lib/git-core/mergetools/smerge
@@ -272,6 +266,7 @@ file path=usr/share/git-core/templates/hooks/pre-push.sample
 file path=usr/share/git-core/templates/hooks/pre-rebase.sample
 file path=usr/share/git-core/templates/hooks/pre-receive.sample
 file path=usr/share/git-core/templates/hooks/prepare-commit-msg.sample
+file path=usr/share/git-core/templates/hooks/push-to-checkout.sample
 file path=usr/share/git-core/templates/hooks/update.sample
 file path=usr/share/git-core/templates/info/exclude
 file path=usr/share/git-gui/lib/about.tcl
@@ -359,6 +354,7 @@ file path=usr/share/locale/fr/LC_MESSAGES/git.mo
 file path=usr/share/locale/is/LC_MESSAGES/git.mo
 file path=usr/share/locale/it/LC_MESSAGES/git.mo
 file path=usr/share/locale/ko/LC_MESSAGES/git.mo
+file path=usr/share/locale/pl/LC_MESSAGES/git.mo
 file path=usr/share/locale/pt_PT/LC_MESSAGES/git.mo
 file path=usr/share/locale/ru/LC_MESSAGES/git.mo
 file path=usr/share/locale/sv/LC_MESSAGES/git.mo
@@ -416,6 +412,7 @@ file path=usr/share/man/man1/git-fetch.1
 file path=usr/share/man/man1/git-filter-branch.1
 file path=usr/share/man/man1/git-fmt-merge-msg.1
 file path=usr/share/man/man1/git-for-each-ref.1
+file path=usr/share/man/man1/git-for-each-repo.1
 file path=usr/share/man/man1/git-format-patch.1
 file path=usr/share/man/man1/git-fsck-objects.1
 file path=usr/share/man/man1/git-fsck.1
@@ -459,7 +456,6 @@ file path=usr/share/man/man1/git-p4.1
 file path=usr/share/man/man1/git-pack-objects.1
 file path=usr/share/man/man1/git-pack-redundant.1
 file path=usr/share/man/man1/git-pack-refs.1
-file path=usr/share/man/man1/git-parse-remote.1
 file path=usr/share/man/man1/git-patch-id.1
 file path=usr/share/man/man1/git-prune-packed.1
 file path=usr/share/man/man1/git-prune.1
