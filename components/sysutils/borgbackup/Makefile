@@ -13,20 +13,18 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS=64
-BUILD_STYLE=setup.py
+BUILD_BITS=				64
+BUILD_STYLE=			setup.py
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		borgbackup
-COMPONENT_VERSION=	1.1.14
-COMPONENT_REVISION=	1
+COMPONENT_NAME=			borgbackup
+COMPONENT_VERSION=		1.1.15
 COMPONENT_PROJECT_URL=	https://borgbackup.readthedocs.org/en/stable/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:7dbb0747cc948673f695cd6de284af215f810fed2eb2a615ef26ddc7c691edba
+COMPONENT_ARCHIVE_HASH=	sha256:49cb9eed98b8e32ae3b97beaedf94cdff46f796445043f1923fd0fce7ed3c2bc
 COMPONENT_ARCHIVE_URL=	https://github.com/borgbackup/borg/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		backup/borg
+COMPONENT_FMRI=			backup/borg
 COMPONENT_LICENSE=      BSD
 COMPONENT_LICENSE_FILE= LICENSE
 
@@ -34,8 +32,6 @@ PYTHON_VERSIONS=	3.5
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-
-COMPONENT_FETCH_USER_AGENT=wget
 
 COMPONENT_POST_INSTALL_ACTION = \
 	$(CP) $(PROTO_DIR)/usr/bin/borg  $(PROTO_DIR)/usr/bin/borg-$(PYTHON_VERSION); \
