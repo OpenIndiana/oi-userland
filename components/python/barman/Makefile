@@ -19,16 +19,15 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	barman
-COMPONENT_VERSION= 	2.9
-COMPONENT_REVISION=	1
+COMPONENT_VERSION= 	2.12
 COMPONENT_SUMMARY= 	An administration tool for disaster recovery of PostgreSQL servers 
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:16cb4ad4bfc5d3fc5197bf70b40bf4390fe5081391ee11d853154cee3b4a6e0c
+	sha256:4ecf08ead94fd86469f7438820a5f2f9c4565af50edd29bceb3ab676d54fe581
 COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/pgbarman/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://pgbarman.org/
+	https://sourceforge.net/projects/pgbarman/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://pgbarman.org/
 
 PYTHON_VERSIONS=	3.5
 
