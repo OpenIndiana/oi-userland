@@ -19,15 +19,13 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
-COMPONENT_VERSION= 0.4.26
+COMPONENT_VERSION= 0.4.28
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:0f371e2ed2b92162fefd3dde743e648ca08a6a1b2b05004867fbddc7e211e424
-COMPONENT_ARCHIVE_URL= \
-	https://ftp.gimp.org/pub/gegl/0.4/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:1d110d8577d54cca3b34239315bd37c57ccb27dd4355655074a2d2b3fd897900
+COMPONENT_ARCHIVE_URL= https://ftp.gimp.org/pub/gegl/0.4/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.gegl.org/
 COMPONENT_LICENSE= GPLv3, LGPLv3
 
@@ -35,7 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-CFLAGS += -std=gnu99
 CFLAGS += $(CFLAGS.$(BITS))
 
 # build with the distribution default libjpeg
