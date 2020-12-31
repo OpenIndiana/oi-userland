@@ -12,24 +12,21 @@
 #
 # Copyright 2016 Jim Klimov
 # Copyright 2019 Michal Nowak
+# Copyright 2020 Andreas Wacknitz
 #
 
 BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openconnect
-# Commit timestamp and previous known release
-COMPONENT_VERSION=	8.05
-IPS_COMPONENT_VERSION=	8.0.5
+COMPONENT_VERSION=	8.10
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		network/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.infradead.org/openconnect/index.html
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:335c2952d0cb36822acb112eaaf5e3b4acffc6874985fb614fec0b76c4c12992
-COMPONENT_ARCHIVE_URL=	ftp://ftp.infradead.org/pub/openconnect/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.infradead.org/openconnect
+COMPONENT_ARCHIVE_HASH=	sha256:ae99d87585388098510c837e3db5f0a9ad13998464a91bd30275de58c0c995f3
+COMPONENT_ARCHIVE_URL=	https://github.com/openconnect/openconnect/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING.LGPL
 COMPONENT_SUMMARY=	An SSL VPN client (intended to be) compatible with Cisco AnyConnect and Juniper Pulse
@@ -44,6 +41,19 @@ COMPONENT_PREP_ACTION = \
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+# To prevent "libtool_install_magic: unbound variable"
+unexport SHELLOPTS
+
+COMPONENT_TEST_TRANSFORMS= \
+    '-n ' \
+    '-e "/TOTAL/p" ' \
+    '-e "/PASS/p" '  \
+    '-e "/SKIP/p" '  \
+    '-e "/XFAIL/p" ' \
+    '-e "/FAIL/p" '  \
+    '-e "/XPASS/p" ' \
+    '-e "/ERROR/p" '
+
 # Use OpenSSL, it allows more options on OI/Hipster that openconnect uses
 CONFIGURE_OPTIONS +=	--with-system-cafile=/etc/certs/ca-certificates.crt
 CONFIGURE_OPTIONS +=	--without-gnutls
@@ -53,6 +63,7 @@ REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += network/vpnc-scripts
 REQUIRED_PACKAGES += library/desktop/p11-kit
 REQUIRED_PACKAGES += driver/network/header-tun
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libproxy
 REQUIRED_PACKAGES += library/libxml2
