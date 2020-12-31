@@ -12,26 +12,24 @@
 #
 # Copyright 2016 Jim Klimov
 #
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libp11
-COMPONENT_VERSION=	0.4.2
+COMPONENT_VERSION=	0.4.11
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		library/security/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Security
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://github.com/OpenSC/$(COMPONENT_NAME)/wiki
 COMPONENT_ARCHIVE_URL=	https://github.com/OpenSC/$(COMPONENT_NAME)/releases/download/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:e2c3614a314b452a9b57e2914252df3ffee59e262dfb75b4fc73a2247f8ddebe
+COMPONENT_ARCHIVE_HASH=	sha256:57d47a12a76fd92664ae30032cf969284ebac1dfc25bf824999d74b016d51366
 COMPONENT_LICENSE=		LGPLv2.1+
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_DESCRIPTION=	libp11 is a library implementing a thin layer on top of PKCS11 API to make using PKCS11 implementations easier
 COMPONENT_SUMMARY=	libp11 is a library to make using PKCS11 implementations easier
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
         (cd $(@D) &&\
@@ -41,7 +39,9 @@ COMPONENT_PREP_ACTION = \
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-INDIR.32=/usr/bin
+CFLAGS += $(XPG6MODE)
+
+BINDIR.32=/usr/bin
 BINDIR.64=/usr/bin/$(MACH64)
 LIBDIR.32=/usr/lib
 LIBDIR.64=/usr/lib/$(MACH64)
@@ -60,10 +60,6 @@ COMPONENT_PRE_INSTALL_ACTION = (\
 	)
 
 CONFIGURE_OPTIONS +=	--with-enginesdir=$(DEFENGINESDIR_$(BITS))
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
