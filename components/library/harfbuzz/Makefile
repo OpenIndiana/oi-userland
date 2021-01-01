@@ -26,10 +26,12 @@
 #
 
 BUILD_BITS=				32_and_64
+BUILD_STYLE=			meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         harfbuzz
 COMPONENT_VERSION=      2.7.4
+COMPONENT_REVISION=		1
 COMPONENT_FMRI=         library/c++/harfbuzz
 COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine. 
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -37,32 +39,45 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/HarfBuzz/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:6ad11d653347bd25d8317589df4e431a2de372c0cf9be3543368e07ec23bb8e7
-COMPONENT_ARCHIVE_URL=	\
-	https://github.com/harfbuzz/harfbuzz/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://github.com/harfbuzz/harfbuzz/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--with-graphite2=yes
-CONFIGURE_OPTIONS+=	--with-freetype=yes
+# We want graphite2 support:
+CONFIGURE_OPTIONS	 += -Dgraphite=enabled
+# Creating documentation fails:
+CONFIGURE_OPTIONS	 += -Ddocs=disabled
+# We don't have gobject-introspection for 32-bit:
+CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
+# Building benchmark fails:
+CONFIGURE_OPTIONS.64 += -Dbenchmark=disabled
 
 LDFLAGS += -lm
+
+# Workaround for build failures due to pango Makefiles not passing CFLAGS or
+# LDFLAGS, especially the -m32/64 flag, to g-ir-scanner
+COMPONENT_BUILD_ENV += CC="$(strip $(CC))"
+COMPONENT_BUILD_ENV += CFLAGS="$(strip $(CFLAGS))"
+COMPONENT_BUILD_ENV += LDFLAGS="$(strip $(LDFLAGS))"
 
 unexport SHELLOPTS
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS += $(CONFIGURE_TEST_TRANSFORMS)
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS  = "'/Ok:|Expected Fail:|Fail:|Unexpected Pass:|Skipped:|Timeout:/'"
+# get rid of the timestamps from the test results
+#COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+#COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
 
 # Build dependencies
 # Make sure the following package is synchronized with library/icu at major version changes
 REQUIRED_PACKAGES += developer/icu
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/graphite2
 REQUIRED_PACKAGES += library/desktop/cairo
