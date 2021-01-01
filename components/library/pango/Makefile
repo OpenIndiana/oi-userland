@@ -74,6 +74,7 @@ REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/fribidi
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/input-method/library/libthai
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
