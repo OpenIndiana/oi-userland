@@ -20,25 +20,24 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2021, Nona Hansel
 #
+
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
-PREFERRED_BITS=64
-
 COMPONENT_NAME=		wget
-COMPONENT_VERSION=	1.20.3
+COMPONENT_VERSION=	1.21
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/wget/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.lz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:69607ce8216c2d1126b7a872db594b3f21e511e660e07ca1f81be96650932abb
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
+	sha256:87ae105e76e5b550e03e009ba94341143c66623a5ecbba047f6ef850608b6596
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wget
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # wget doesn't detect libidn2 include directory
 CPPFLAGS +=	-I/usr/include/idn2
@@ -60,12 +59,6 @@ COMPONENT_TEST_TRANSFORMS += '-ne "/^===/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^\# /p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^See/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^Please/p" '
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 # For the test suite
 REQUIRED_PACKAGES += library/perl-5/http-daemon
