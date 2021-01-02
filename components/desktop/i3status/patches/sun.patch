@@ -1,0 +1,35 @@
+diff --git a/configure.ac b/configure.ac
+index aadde5b..0a05966 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -131,7 +131,7 @@ AM_CONDITIONAL([BUILD_MANS], [test x$ax_mans = xyes && test x$PATH_ASCIIDOC != x
+ 
+ AM_PROG_AR
+ 
+-AX_FLAGS_WARN_ALL
++#AX_FLAGS_WARN_ALL
+ AX_CHECK_COMPILE_FLAG([-Wunused-value], [AX_APPEND_FLAG([-Wunused-value], [AM_CFLAGS])])
+ AC_SUBST(AM_CFLAGS)
+ 
+diff --git a/src/print_disk_info.c b/src/print_disk_info.c
+index d8cce1c..d5812cf 100644
+--- a/src/print_disk_info.c
++++ b/src/print_disk_info.c
+@@ -12,6 +12,8 @@
+ #include <sys/param.h>
+ #include <sys/mount.h>
+ #elif defined(__NetBSD__)
++#elif defined(__sun)
++#include <sys/statvfs.h>
+ #else
+ #include <mntent.h>
+ #endif
+@@ -131,7 +133,7 @@ void print_disk_info(yajl_gen json_gen, char *buffer, const char *path, const ch
+         return;
+ 
+     mounted = true;
+-#elif defined(__NetBSD__)
++#elif defined(__NetBSD__) || defined(__sun)
+     struct statvfs buf;
+ 
+     if (statvfs(path, &buf) == -1)
