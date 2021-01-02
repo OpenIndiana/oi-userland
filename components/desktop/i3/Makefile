@@ -37,6 +37,8 @@ LDFLAGS+= -lsocket -lnsl
 CONFIGURE_OPTIONS+= -Dmans=true
 
 REQUIRED_PACKAGES += desktop/dmenu
+REQUIRED_PACKAGES += text/asciidoc
+REQUIRED_PACKAGES += text/xmlto
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
