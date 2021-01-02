@@ -28,6 +28,7 @@ COMPONENT_CLASSIFICATION=System/X11
 COMPONENT_ARCHIVE_URL=https://i3wm.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=sha256:aca48b03c0c70607826a1a91333065ff44d61774c152ddc9210fbc1627355872
 COMPONENT_LICENSE=BSD-3
+PATCH_LEVEL=0
 
 TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
 include $(WS_MAKE_RULES)/common.mk
@@ -37,6 +38,7 @@ LDFLAGS+= -lsocket -lnsl
 CONFIGURE_OPTIONS+= -Dmans=true
 
 REQUIRED_PACKAGES += desktop/dmenu
+REQUIRED_PACKAGES += desktop/window-manager/i3/i3status
 REQUIRED_PACKAGES += text/asciidoc
 REQUIRED_PACKAGES += text/xmlto
 # Auto-generated dependencies

@@ -26,6 +26,7 @@ COMPONENT_CLASSIFICATION=System/X11
 COMPONENT_ARCHIVE_URL=https://github.com/i3/i3status/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=sha256:9d545df5c0053be5e05b7d196ec3c4a20deee102c39ef8b7f0eb816e85bae0ce
 COMPONENT_LICENSE=BSD-3
+PATCH_LEVEL=0
 
 TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
 include $(WS_MAKE_RULES)/common.mk
@@ -38,7 +39,6 @@ CFLAGS.studio+=-xspace
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += desktop/window-manager/i3
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/libconfuse
 REQUIRED_PACKAGES += library/libyajl2
