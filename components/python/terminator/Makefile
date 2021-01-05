@@ -10,21 +10,21 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov
+# Copyright (c) 2021 Nona Hansel
 #
 
-BUILD_STYLE= setup.py
-BUILD_BITS= 64
+BUILD_STYLE=		setup.py
+BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		terminator
-COMPONENT_VERSION=	1.92
+COMPONENT_VERSION=	2.1.0
 COMPONENT_PROJECT_URL=	https://gnome-terminator.org/
-COMPONENT_COMMIT=	0cbdbd89a23eaea52ae0fa30d3d6a6c6b9b3fbda
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_COMMIT)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9dea305337fba9e6c87f704b167ee12e3e32e063a9861b82817f04ef95af4f38
-COMPONENT_ARCHIVE_URL=	https://github.com/gnome-terminator/terminator/archive/$(COMPONENT_COMMIT).zip
+    sha256:5e2e1d33fb5bcc58f0afaca3e0b2aa8a3a24e1e668112c7e0c948828222557ed
+COMPONENT_ARCHIVE_URL=	https://github.com/gnome-terminator/terminator/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 PYTHON_VERSIONS=	3.5
 
