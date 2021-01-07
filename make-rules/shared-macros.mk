@@ -107,7 +107,7 @@ ROOT =			/
 # to determine the distribution version
 # (it should look like OpenIndiana Hipster YYYY.MM).
 DISTRIBUTION_NAME = OpenIndiana Hipster
-DISTRIBUTION_VERSION = 2020.10
+DISTRIBUTION_VERSION = 2021.04
 # Native OS version
 OS_VERSION :=		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
@@ -1142,8 +1142,8 @@ CFLAGS.studio +=	$(studio_OPT) $(studio_XBITS) $(studio_XREGS) \
 #
 
 # Control the GCC optimization level.
-gcc_OPT.sparc.32 =	-O3 -mcpu=ultrasparc
-gcc_OPT.sparc.64 =	-O3 -mcpu=ultrasparc
+gcc_OPT.sparc.32 =	-O3
+gcc_OPT.sparc.64 =	-O3
 gcc_OPT.i386.32 =	-O3
 gcc_OPT.i386.64 =	-O3
 gcc_OPT =		$(gcc_OPT.$(MACH).$(BITS))
