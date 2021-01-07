@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
 COMPONENT_VERSION=      3.7.7
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_FMRI=		runtime/python-37
 COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
