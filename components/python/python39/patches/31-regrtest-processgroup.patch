@@ -1,0 +1,19 @@
+https://raw.githubusercontent.com/omniosorg/omnios-build/master/build/python37/patches/regrtest-processgroup.patch
+
+Running some sub-tests in process groups causes tests to hang - the reason it
+not yet known.
+Disable the use of process groups for now.
+
+diff -wpruN '--exclude=*.orig' a~/Lib/test/libregrtest/runtest_mp.py a/Lib/test/libregrtest/runtest_mp.py
+--- a~/Lib/test/libregrtest/runtest_mp.py	1970-01-01 00:00:00
++++ a/Lib/test/libregrtest/runtest_mp.py	1970-01-01 00:00:00
+@@ -32,7 +32,8 @@ assert MAIN_PROCESS_TIMEOUT >= PROGRESS_
+ # Time to wait until a worker completes: should be immediate
+ JOIN_TIMEOUT = 30.0   # seconds
+ 
+-USE_PROCESS_GROUP = (hasattr(os, "setsid") and hasattr(os, "killpg"))
++USE_PROCESS_GROUP = (hasattr(os, "setsid") and hasattr(os, "killpg")
++	and not sys.platform.startswith("sunos"))
+ 
+ 
+ def must_stop(result, ns):

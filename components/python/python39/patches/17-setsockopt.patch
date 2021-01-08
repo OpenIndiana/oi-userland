@@ -1,0 +1,42 @@
+Fixes bug 30503749.
+
+socket.setsockopt sometimes raise Invalid argument error, because of differences
+between Linux and Solaris in socket layer. The reason is that the third argument
+length is different for the following socket options:
+
+IP_MULTICAST_TTL
+IP_MULTICAST_LOOP
+
+An integer is expected on Linux, single byte on Solaris. While this should be
+handled in the application code (with pack), we decided to patch this in runtime
+rather than in our application code (because upstream is generally aware of this).
+
+See the bug for more information.
+
+--- Python-3.9.0/Modules/socketmodule.c
++++ Python-3.9.0/Modules/socketmodule.c
+@@ -2989,6 +2989,7 @@ sock_setsockopt(PySocketSockObject *s, P
+     int optname;
+     int res;
+     Py_buffer optval;
++    int buflen;
+     int flag;
+     unsigned int optlen;
+     PyObject *none;
+@@ -3011,8 +3012,15 @@ sock_setsockopt(PySocketSockObject *s, P
+     /* setsockopt(level, opt, flag) */
+     if (PyArg_ParseTuple(args, "iii:setsockopt",
+                          &level, &optname, &flag)) {
++
++        buflen = sizeof flag;
++        /* Multi cast options take shorter arguments */
++        if (optname == IP_MULTICAST_TTL
++            || optname == IP_MULTICAST_LOOP)
++                buflen = sizeof(u_char);
++
+         res = setsockopt(s->sock_fd, level, optname,
+-                         (char*)&flag, sizeof flag);
++                         (char*)&flag, buflen);
+         goto done;
+     }
+ 
