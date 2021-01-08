@@ -1,0 +1,18 @@
+Since gid_t doesn't have its type standardized (it just has to be an integer
+of some kind), we should not assume the type to be 'unsigned long' (which it
+isn't on Solaris, and that causes issues).
+
+Was offered upstream:
+https://github.com/python/cpython/pull/23762
+
+--- Python-3.9.1/Modules/_posixsubprocess.c
++++ Python-3.9.1/Modules/_posixsubprocess.c
+@@ -753,7 +753,7 @@ subprocess_fork_exec(PyObject* self, PyO
+     if (groups_list != Py_None) {
+ #ifdef HAVE_SETGROUPS
+         Py_ssize_t i;
+-        unsigned long gid;
++        gid_t gid;
+ 
+         if (!PyList_Check(groups_list)) {
+             PyErr_SetString(PyExc_TypeError,
