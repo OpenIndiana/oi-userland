@@ -24,6 +24,8 @@
 # Copyright 2020 OmniOS Community Edition (OmniOSce) Association.
 #
 
+BUILD_BITS=			64
+BUILD_STYLE=		setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-rapidjson
@@ -38,14 +40,11 @@ COMPONENT_FMRI=	library/python/rapidjson
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=      MIT
 
-PYTHON_VERSIONS=	3.5
+PYTHON_VERSIONS=	3.5 3.7 3.9
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-
-CFLAGS+= -std=c99
+#CFLAGS+= -std=c99
 
 # Tests require the pytest package to be installed, our pytest is too old, so
 # we get some errors
@@ -54,13 +53,6 @@ COMPONENT_TEST_CMD=	$(PYTHON) /usr/bin/py.test-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS=
 
 #ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
