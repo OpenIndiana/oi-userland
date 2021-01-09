@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020 David Stes
+# Copyright 2020, 2021 David Stes
 #
 
 
@@ -30,16 +30,17 @@ BUILD_BITS=32
 
 include ../../../make-rules/shared-macros.mk
 
+# component version is the 'upstream' squeak VMMaker version
 COMPONENT_NAME=		squeak-4
-COMPONENT_VERSION=	4.19.3
+COMPONENT_VERSION=	4.19.5
 COMPONENT_SUMMARY=	The Squeak V4 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/squeak-4
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=		3792
-SVN_HASH=  sha256:46abb74efeac5ae9c8321ec30db5164211f6e3e2f7ff83209cf4cc8be2ca48f8
+SVN_REV=		3793
+SVN_HASH=  sha256:b7045475540ef540c4bbb8ba7b5c7351065a5fdef646d98ea2d17f10ae7805b5
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159

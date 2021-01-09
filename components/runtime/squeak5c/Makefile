@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020 David Stes
+# Copyright 2020, 2021 David Stes
 #
 
 
@@ -29,9 +29,9 @@ include ../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		squeak-5c
-COMPONENT_VERSION=	5.0.2908
-GIT_TAG=		sun-v5.0.23
-PLUGIN_REV=		5.0-202012230929-cog
+COMPONENT_VERSION=	5.0.2926
+GIT_TAG=		sun-v5.0.24
+PLUGIN_REV=		5.0-202101080807-cog
 COMPONENT_SUMMARY=	The Cog Implementation of the Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak-5c
@@ -45,7 +45,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:bd2c370117c72d03f2ee44c78d9f33be90b86a5177f2897c453520be5da952bc
+COMPONENT_ARCHIVE_HASH=	sha256:9aa9eaf123c5d4bb75f7dc5f3642a78e214e352706bad1d6fbb9378bb5af8917
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
@@ -56,6 +56,7 @@ LD_B_DIRECT=
 include $(WS_MAKE_RULES)/common.mk
 
 PKG_OPTIONS += -D PLUGIN_REV="$(PLUGIN_REV)"
+PKG_OPTIONS += -DBRANCHID="$(BRANCHID)"
 
 PATH=$(PATH.gnu)
 
