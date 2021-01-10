@@ -48,7 +48,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PERL_VERSION = 5.24
 PYTHON_VERSION = 3.5
-PY3_CYTHON_NAMING =\#
+PY3_CPYTHON_NAMING =\#
 
 # set WAF and adapt PATH for building
 WAF =	$(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf
