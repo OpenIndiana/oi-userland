@@ -181,10 +181,10 @@ PYTHON_64_ONLY_VERSIONS = 3.5 3.7 3.9
 # only python/xattr and python/cryptography require abi3 naming.
 PYTHON3_SOABI ?= cpython
 ifeq ($(PYTHON3_SOABI),cpython)
-PY3_CYTHON_NAMING=
+PY3_CPYTHON_NAMING=
 PY3_ABI3_NAMING=\#
 else ifeq ($(PYTHON3_SOABI),abi3)
-PY3_CYTHON_NAMING=\#
+PY3_CPYTHON_NAMING=\#
 PY3_ABI3_NAMING=
 else
 $(error "Invalid python naming scheme '$(PYTHON3_SOABI)' selected!")
