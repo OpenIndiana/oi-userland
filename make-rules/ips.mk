@@ -128,8 +128,12 @@ PKG_MACROS += COMPONENT_RE_VERSION=$(subst .,\\.,$(COMPONENT_VERSION))
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) \
 					-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION))"
 
-PKG_MACROS +=           PYTHON_2.7_ONLY=\#
-PKG_MACROS +=           PYTHON_3.5_ONLY=\#
+define python-generate-macros
+PKG_MACROS +=           PYTHON_$(1)_ONLY=\#
+PKG_MACROS +=           PYTHON_$(1)_EXCL=
+endef
+$(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-generate-macros,$(ver))))
+
 PKG_MACROS +=           PYTHON_32_ONLY=
 
 MANGLED_DIR =	$(PROTO_DIR)/mangled
@@ -296,7 +300,7 @@ mkgeneric = \
 # Define and execute a macro that generates a rule to create a manifest for a
 # python module specific to a particular version of the python runtime.
 define python-manifest-rule
-$(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_$(1)_ONLY=
+$(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_$(1)_ONLY= PYTHON_$(1)_EXCL=\#
 
 ifneq ($(filter $(1),$(PYTHON_64_ONLY_VERSIONS)),)
 $(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_32_ONLY=\#
