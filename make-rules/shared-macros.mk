@@ -1231,6 +1231,11 @@ ASLR_MODE = 		$(ASLR_DISABLE)
 # in that component's Makefile
 LD_Z_ASLR =		$(ASLR_MODE)
 
+# Define SSP library link flag for 32-bit objects
+LD_SSP.32 = -lssp_ns
+LD_SSP.64 =
+LD_SSP = $(LD_SSP.$(BITS))
+
 #
 # More Solaris linker flags that we want to be sure that everyone gets.  This
 # is automatically added to the calling environment during the 'build' and
