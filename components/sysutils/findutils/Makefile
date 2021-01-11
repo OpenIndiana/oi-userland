@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2021, Nona Hansel
 #
 
 BUILD_BITS=		64
@@ -29,7 +30,7 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         findutils
-COMPONENT_VERSION=      4.7.0
+COMPONENT_VERSION=      4.8.0
 COMPONENT_SUMMARY=      GNU findutils
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/findutils/
 COMPONENT_FMRI=         file/gnu-findutils
@@ -37,7 +38,7 @@ COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:c5fefbdf9858f7e4feb86f036e1247a54c79fc2d8e4b7064d5aaa1f47dfa789a
+	sha256:57127b7e97d91282c6ace556378d5455a9509898297e46e10443016ea1387164
 COMPONENT_ARCHIVE_URL= \
 	http://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
@@ -68,6 +69,7 @@ unexport SHELLOPTS
 # Test dependencies:
 REQUIRED_PACKAGES += developer/versioning/cvs
 REQUIRED_PACKAGES += developer/versioning/git
+REQUIRED_PACKAGES += locale/zh_cn-extra
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
