@@ -12,29 +12,28 @@
 # Copyright (c) 2017 Alexander Pyhalov
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018 Michal Nowak
+# Copyright (c) 2021 Andreas Wacknitz
 #
-
+BUILD_BITS= 32_and_64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-keyring
 COMPONENT_MJR_VERSION=	3.28
 COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnome.org
+COMPONENT_REVISION=		1
+COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SUMMARY=	GNOME Keyring
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:81171b7d07211b216b4c9bb79bf2deb3deca18fe8d56d46dda1c4549b4a2646a
+COMPONENT_ARCHIVE_HASH= sha256:81171b7d07211b216b4c9bb79bf2deb3deca18fe8d56d46dda1c4549b4a2646a
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Sessions
 COMPONENT_FMRI=		gnome/gnome-keyring
 COMPONENT_LICENSE=	GPLv2,LGPLv2
 COMPONENT_LICENSE_FILE= gnome-keyring.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -61,13 +60,6 @@ CONFIGURE_OPTIONS += --with-pam-dir=$(PAM_MODULE_DIR)
 CONFIGURE_OPTIONS += --with-pic
 # Linux-specific capabilities support.
 CONFIGURE_OPTIONS += --without-libcap-ng
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
