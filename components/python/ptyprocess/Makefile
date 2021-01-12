@@ -13,11 +13,13 @@
 # Copyright 2018 Alexander Pyhalov
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	ptyprocess
 COMPONENT_VERSION= 	0.6.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://github.com/pexpect/ptyprocess
 COMPONENT_FMRI=	library/python/ptyprocess
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,18 +32,16 @@ COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_LICENSE=	ISC
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	2.7 3.5 3.7 3.9
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-build: $(BUILD_NO_ARCH)
-
-install: $(INSTALL_NO_ARCH)
-
-test:	$(NO_TESTS)
+COMPONENT_TEST_DIR = $(SOURCE_DIR)/tests
+COMPONENT_TEST_CMD = $(PYTHON) -m pytest
+COMPONENT_TEST_ARGS =
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
