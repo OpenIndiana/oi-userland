@@ -16,16 +16,15 @@ BUILD_BITS = NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		chardet
-COMPONENT_VERSION=	3.0.4
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	4.0.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae
+    sha256:0d6f53a15db4120f2b08c94f11e7d93d2c911ee118b6b30a04ec3ee8310179fa
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/chardet/chardet
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	2.7 3.5 3.7 3.9
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -37,5 +36,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-35
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
