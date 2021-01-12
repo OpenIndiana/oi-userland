@@ -7,16 +7,14 @@
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 
-# Copyright 2020 Aurelien Larcher
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+# Copyright 2020 <contributor>
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
 file path=usr/lib/python$(PYVER)/vendor-packages/py-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/py-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/py-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
@@ -57,15 +55,3 @@ file path=usr/lib/python$(PYVER)/vendor-packages/py/_vendored_packages/iniconfig
 file path=usr/lib/python$(PYVER)/vendor-packages/py/_version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/py/_xmlgen.py
 file path=usr/lib/python$(PYVER)/vendor-packages/py/test.py
-
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
-
-# force a dependency on the py package
-depend type=require \
-    fmri=library/python/py@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# This creates a circular dependency
-# force a dependency on pytest; pkgdepend work is needed to flush this out.
-# depend type=require fmri=library/python/pytest-$(PYV)
