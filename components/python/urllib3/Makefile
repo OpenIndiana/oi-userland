@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		urllib3
 COMPONENT_VERSION=	1.25.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -37,10 +37,10 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/shazow/urllib3
 
-PYTHON_VERSIONS= 2.7 3.5
+PYTHON_VERSIONS= 2.7 3.5 3.7 3.9
 
 # Tests require Tornado 4.1
-TEST_TARGET:	$(NO_TESTS)
+TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
@@ -48,7 +48,11 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 REQUIRED_PACKAGES += library/python/setuptools_scm-27
 REQUIRED_PACKAGES += library/python/setuptools_scm-35
+REQUIRED_PACKAGES += library/python/setuptools_scm-37
+REQUIRED_PACKAGES += library/python/setuptools_scm-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
