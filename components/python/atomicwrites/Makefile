@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		atomicwrites
 COMPONENT_VERSION=	1.3.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/python/atomicwrites
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SUMMARY=	atomicwrites - Python Atomic File Writes
@@ -41,7 +42,7 @@ COMPONENT_PROJECT_URL=	https://github.com/untitaker/python-atomicwrites
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=$(PYTHON3_VERSIONS)
+PYTHON_VERSIONS=$(PYTHON2_VERSIONS) $(PYTHON3_VERSIONS)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -52,6 +53,7 @@ COMPONENT_TEST_ARGS =
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/python-39
