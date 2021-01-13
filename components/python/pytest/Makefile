@@ -28,21 +28,28 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest
-COMPONENT_VERSION=	2.9.1
-COMPONENT_REVISION=	5
+COMPONENT_VERSION=	4.6.11
+COMPONENT_FMRI=		library/python/pytest
+COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_SUMMARY=	pytest: simple powerful testing with Python
+COMPONENT_PROJECT_URL=	https://docs.pytest.org/en/latest/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0d48d27a127644fbe7c8158157e08b35f8255045d4476df694b91eb3a8147e65
+    sha256:50fa82392f2120cc3ec2ca0a75ee615be4c479e66669789771f1758332be4353
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://pytest.org/latest/
-COMPONENT_BUGDB=	python-mod/pytest
 
-PYTHON_VERSIONS=	2.7 3.5
-
+PYTHON_VERSIONS= $(PYTHON3_VERSIONS)
 
 # Tests require the py package to be installed.
 include $(WS_MAKE_RULES)/common.mk
+
+# New version of pytest no longer generates -$(PYVER) script for
+# each version.  Generate them now for backward compatibility.
+COMPONENT_POST_INSTALL_ACTION += \
+        ($(MV) $(PROTOUSRBINDIR)/py.test $(PROTOUSRBINDIR)/py.test-$(PYTHON_VERSION); \
+         $(MV) $(PROTOUSRBINDIR)/pytest $(PROTOUSRBINDIR)/pytest-$(PYTHON_VERSION))
+
 
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/testing
 COMPONENT_TEST_CMD =	$(PROTOUSRBINDIR)/py.test
@@ -53,11 +60,12 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Build dependencies
 # py is required for tests to run
-REQUIRED_PACKAGES += library/python/py-27
-REQUIRED_PACKAGES += library/python/py-35
+REQUIRED_PACKAGES += library/python/py
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39

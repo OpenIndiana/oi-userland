@@ -1,43 +1,22 @@
 #
-# CDDL HEADER START
-#
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 
-#
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
-#
-
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+# Copyright 2020 <contributor>
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-<transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
-#
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 file path=usr/bin/py.test-$(PYVER)
 file path=usr/bin/pytest-$(PYVER)
-link path=usr/bin/py.test target=py.test-$(PYVER) mediator=python \
-    mediator-version=$(PYVER)
-link path=usr/bin/pytest target=pytest-$(PYVER) mediator=python \
-    mediator-version=$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/_argcomplete.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/_code/__init__.py
@@ -102,22 +81,3 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pytest-$(COMPONENT_VERSION)-py$
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest.py
-#
-license pytest.license license=MIT
-
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
-
-# force a dependency on argparse; pkgdepend work is needed to flush this out.
-# depend type=require fmri=library/python/argparse-$(PYV)
-
-# force a dependency on py; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/py-$(PYV)
-
-# force a dependency on py; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/pluggy-$(PYV)
-
-# force a dependency on the pytest package
-depend type=require \
-    fmri=library/python/pytest@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
