@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= smartmontools
 COMPONENT_SUMMARY= smartmontools contains utilities that control and monitor storage devices
 COMPONENT_VERSION= 7.1
+COMPONENT_REVISION=	1
 COMPONENT_FMRI= storage/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
