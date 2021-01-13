@@ -49,9 +49,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/idna/intranges.py
 file path=usr/lib/python$(PYVER)/vendor-packages/idna/package_data.py
 file path=usr/lib/python$(PYVER)/vendor-packages/idna/uts46data.py
 license idna.license license=BSD-like
-# force a dependency on the Python runtime
-depend type=require fmri=runtime/python-$(PYV)
 
 # force a dependency on the idna package
 depend type=require \
     fmri=library/python/idna@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
