@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2020, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=NO_ARCH
@@ -28,20 +28,21 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		requests
-COMPONENT_VERSION=	2.11.1
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	2.22.0
+COMPONENT_FMRI=		library/python/requests
+COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_SUMMARY=	Python HTTP Requests for Humans
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e8e5710ae923a00e45631f0e47c30ebfc83b7a8c4a7a818f78bf820f9b607558
-COMPONENT_ARCHIVE_URL=  https://github.com/kennethreitz/requests/archive/v$(COMPONENT_VERSION).tar.gz	
+    sha256:c728735a3188683af00f1a2a9c8bc7e8d59747e065ed15b543d64c746a159281
+COMPONENT_ARCHIVE_URL=  $(call pypi_url)
 COMPONENT_PROJECT_URL=	http://python-requests.org/
 COMPONENT_SUMMARY= Python HTTP Requests for Humans
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_LICENSE= Apache 2
 
-PYTHON_VERSIONS= 2.7 3.5
-
+PYTHON_VERSIONS= 2.7 3.5 3.7 3.9
 
 # Tests require access to AWS services & the Internet
 TEST_TARGET=	$(NO_TESTS)
@@ -53,3 +54,5 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
