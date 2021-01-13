@@ -42,7 +42,7 @@ COMPONENT_FMRI=	library/python/incremental
 COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE = LICENSE
 
-PYTHON_VERSIONS = 2.7 3.5
+PYTHON_VERSIONS = 2.7 3.5 3.7 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -56,3 +56,5 @@ REQUIRED_PACKAGES += library/python/python-twisted
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
