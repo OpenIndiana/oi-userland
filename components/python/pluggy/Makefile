@@ -28,14 +28,14 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pluggy
-COMPONENT_VERSION=	0.9.0
+COMPONENT_VERSION=	0.13.1
 COMPONENT_FMRI=         library/python/pluggy
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SUMMARY=	A minimalist production ready plugin system
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:19ecf9ce9db2fce065a7a0586e07cfb4ac8614fe96edf628a264b1c70116cf8f
+    sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/pytest-dev/pluggy
 
