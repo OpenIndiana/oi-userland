@@ -21,6 +21,7 @@
 # Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2021, Nona Hansel
 #
 
 BUILD_BITS=		64
@@ -28,12 +29,12 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnupg
-COMPONENT_VERSION=	2.2.26
+COMPONENT_VERSION=	2.2.27
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:517569e6c9fad22175df16be5900f94c991c41e53612db63c14493e814cfff6d
+	sha256:34e60009014ea16402069136e0a5f63d9b65f90096244975db5cea74b3d02399
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gnupg/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -87,6 +88,13 @@ install:	$(INSTALL_64)
 	    if test -f $$f.8 ; then \
 	    $(MV) -f $$f.8 $$f.1m ; fi ; \
 	    done )
+
+COMPONENT_TEST_TRANSFORMS += \
+         '-n ' \
+         '-e "/^PASS:/p" ' \
+         '-e "/^FAIL:/p" ' \
+         '-e "/^SKIP:/p" ' \
+         '-e "/^\# /p" '
 
 # Missing dependencies for pinentry
 REQUIRED_PACKAGES += library/desktop/gtk2
