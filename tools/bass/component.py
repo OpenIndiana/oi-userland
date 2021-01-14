@@ -91,7 +91,7 @@ class Component(object):
         if self.debug:
             logger.debug('Executing \'gmake %s\' in %s', targets, path)
 
-        proc = subprocess.Popen(['gmake', '-s', targets],
+        proc = subprocess.Popen(['GNUMAKEFLAGS=--no-print-directory', 'gmake', '-s', targets],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.DEVNULL,
                                 cwd=path,
