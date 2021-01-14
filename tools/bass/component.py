@@ -39,7 +39,11 @@ class BassComponent(object):
             component_pkg5_file = os.path.join(self.path, 'pkg5')
             if not os.path.isfile(component_pkg5_file):
                 # get component name
-                self.component_name = self.run_make(path, 'print-value-COMPONENT_NAME')[0]
+                component_name = self.run_make(path, 'print-value-COMPONENT_NAME')
+                if not component_name:
+                    raise ValueError('Component returns empty name at ' + self.path + '.')
+                else:
+                    self.component_name = component_name[0]
                 # get supplied packages, this may trigger the creation of a pkg5.fmris file
                 self.supplied_packages = self.run_make(path, 'print-package-names')
                 # always update fmris if list is overriden
