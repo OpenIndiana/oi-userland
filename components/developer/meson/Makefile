@@ -18,8 +18,7 @@ BUILD_BITS=NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meson
-COMPONENT_VERSION=	0.54.2
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	0.56.1
 COMPONENT_SUMMARY=	The Meson Build system
 COMPONENT_PROJECT_URL=	https://mesonbuild.com/
 COMPONENT_FMRI=		developer/build/meson
@@ -29,15 +28,15 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/mesonbuild/meson/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-	sha256:a7716eeae8f8dff002e4147642589ab6496ff839e4376a5aed761f83c1fa0455
+	sha256:5780725304eaa28aac5e7de99d2d8d045112fbc10cf9f4181498b877de0ecf28
 COMPONENT_LICENSE=	APLv2
 
 PATCH_LEVEL= 0
 
 TEST_TARGET = $(TEST_64)
 
-PYTHON_VERSION =3.5
-PYTHON_VERSIONS=3.5
+PYTHON_VERSION =3.9
+PYTHON_VERSIONS=3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -66,5 +65,5 @@ COMPONENT_TEST_ARGS = run_tests.py
 REQUIRED_PACKAGES += developer/build/ninja
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += library/python/setuptools-39
+REQUIRED_PACKAGES += runtime/python-39
