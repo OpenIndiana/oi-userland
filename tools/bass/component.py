@@ -93,7 +93,7 @@ class Component(object):
 
         proc = subprocess.Popen(['gmake', '-s', targets],
                                 stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
+                                stderr=subprocess.DEVNULL,
                                 cwd=path,
                                 universal_newlines=True)
         stdout, stderr = proc.communicate()
