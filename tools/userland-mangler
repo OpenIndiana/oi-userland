@@ -263,9 +263,14 @@ def mangle_elf(manifest, action, src, dest):
                                 destdir = os.path.dirname(dest)
                                 if not os.path.exists(destdir):
                                         os.makedirs(destdir)
-                                # Create a copy to mangle if it doesn't exist yet.
-                                if os.path.isfile(dest) == False:
-                                        shutil.copy2(src, dest)
+                                # Create a copy to mangle
+                                # Earlier the code would check that the destination file does not exist
+                                # yet, however internal library versioning can be different while the
+                                # filename remains the same.
+                                # When publishing from a non-clean prototype directory older libraries
+                                # which may be ABI incompatible would then be republished in the new
+                                # package instead of the new version.
+                                shutil.copy2(src, dest)
 
                                 # Mangle the copy by deleting the tag if there is nothing left to keep
                                 # or replacing the value if there is something left.
