@@ -29,14 +29,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= smartmontools
 COMPONENT_SUMMARY= smartmontools contains utilities that control and monitor storage devices
-COMPONENT_VERSION= 7.1
-COMPONENT_REVISION=  1
+COMPONENT_VERSION= 7.2
 COMPONENT_FMRI= storage/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= https://downloads.sourceforge.net/smartmontools
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:3f734d2c99deb1e4af62b25d944c6252de70ca64d766c4c7294545a2e659b846
+COMPONENT_ARCHIVE_HASH= sha256:5cd98a27e6393168bc6aaea070d9e1cd551b0f898c52f66b2ff2e5d274118cd6
 COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/smartmontools/files/smartmontools/${COMPONENT_VERSION}/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2
 
