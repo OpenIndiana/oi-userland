@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ninja
 COMPONENT_VERSION=      1.10.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Ninja - a small build system with a focus on speed
 COMPONENT_PROJECT_URL=  https://ninja-build.org/
 COMPONENT_FMRI=         developer/build/ninja
@@ -34,7 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(GCC_BINDIR):$(PATH.illumos)
 
-PYTHON_VERSION= 3.5
+PYTHON_VERSION=3.9
 
 COMPONENT_BUILD_ACTION = cd $(@D); \
   CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" ./configure.py --bootstrap --with-python=$(PYTHON.64)
@@ -66,7 +67,7 @@ COMPONENT_TEST_TRANSFORMS+= '-n -e "/^\[[0-9]*\/341\]/p"'
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/lexer/re2c
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
