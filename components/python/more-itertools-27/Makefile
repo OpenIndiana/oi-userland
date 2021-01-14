@@ -15,20 +15,21 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		more-itertools
-COMPONENT_VERSION=	8.6.0
+COMPONENT_VERSION=	4.3.0
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	'more-itertools - More routines for operating on iterables'
 COMPONENT_PROJECT_URL=	https://pypi.org/project/more-itertools/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b3a9005928e5bed54076e6e549c792b306fddfe72b2d1d22dd63d42d5d3899cf
+    sha256:c476b5d3a34e12d40130bc2f935028b5f636df8f372dc2c1c01dc19681b2039e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_FMRI=	library/python/more-itertools
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
+PYTHON_VERSIONS=	2.7
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -42,6 +43,4 @@ install:	$(INSTALL_NO_ARCH)
 test:           $(NO_TEST)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+REQUIRED_PACKAGES += runtime/python-27
