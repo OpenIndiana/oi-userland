@@ -31,10 +31,13 @@ import os
 import subprocess
 import json
 
-class BassComponent(object):
+class Component(object):
     def __init__(self, path=None, debug=False):
         self.debug = debug
         self.path = path
+        self.name = None
+        self.supplied_packages = []
+        self.required_packages = []
         if path:
             component_pkg5_file = os.path.join(self.path, 'pkg5')
             if not os.path.isfile(component_pkg5_file):
@@ -43,7 +46,7 @@ class BassComponent(object):
                 if not component_name:
                     raise ValueError('Component returns empty name at ' + self.path + '.')
                 else:
-                    self.component_name = component_name[0]
+                    self.name = component_name[0]
                 # get supplied packages, this may trigger the creation of a pkg5.fmris file
                 self.supplied_packages = self.run_make(path, 'print-package-names')
                 # always update fmris if list is overriden
@@ -55,7 +58,7 @@ class BassComponent(object):
                 # get dependencies
                 self.required_packages = self.run_make(path, 'print-required-packages')
 
-                data = { 'name' : self.component_name,
+                data = { 'name' : self.name,
                          'fmris': self.supplied_packages,
                          'dependencies' : self.required_packages }
                 with open(component_pkg5_file, 'w') as f:
@@ -65,7 +68,7 @@ class BassComponent(object):
                     data = json.loads(f.read())
                 if not data:
                     raise ValueError('Component pkg5 data is empty for path ' + self.path + '.')
-                self.component_name = data['name']
+                self.name = data['name']
                 self.supplied_packages = data['fmris']
                 self.required_packages = data['dependencies']
             if not self.supplied_packages or not self.supplied_packages[0]:
