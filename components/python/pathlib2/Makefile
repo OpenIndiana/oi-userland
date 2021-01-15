@@ -13,36 +13,34 @@
 # Copyright 2018 Alexander Pyhalov
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pathlib2
-COMPONENT_VERSION= 	2.3.2
+COMPONENT_VERSION= 	2.3.5
 COMPONENT_PROJECT_URL=	https://github.com/mcmtroffaes/pathlib2
 COMPONENT_FMRI=	library/python/pathlib2
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8eb170f8d0d61825e09a95b38be068299ddeda82f35e96c3301a8a5e7604cb83
+  sha256:6cd9a47b597b37cc57de1c05e56fb1a1c9cc9fab04fe78c29acd090418529868
 COMPONENT_ARCHIVE_URL= \
   $(call pypi_url)
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE.rst
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	2.7 3.5 3.7 3.9
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR = $(SOURCE_DIR)/tests
 COMPONENT_TEST_ARGS = -m unittest discover --pattern=*.py
 
-build: $(BUILD_NO_ARCH)
-
-install: $(INSTALL_NO_ARCH)
-
-test:	$(TEST_NO_ARCH)
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
