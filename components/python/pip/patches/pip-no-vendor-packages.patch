@@ -1,0 +1,38 @@
+This is a Solaris specific workaround to reduce the risk of damage to IPS
+delivered Python packages by 'pip uninstall'
+
+This patch prevents pip from uninstalling anything from the vendor-packages
+folder (that should be done via pkg command). Pip can still see all packages
+in the vendor-packages folder (for dependency resolving) but cannot remove
+them. This prevents pip from uninstalling IPS related packages and thus
+breaking the system.
+
+Updating package via pip will result in new being installed (into the
+site-packages folder) and old forced to remain, which will give customer
+version he needed but still keep version required by the Solaris. Pip will
+further consider only the new version in site-packages (because it is earlier
+in the path) and Solaris python components will use the vendor-packages one
+(they are all patched such that they don't see other packages at all).
+
+All to-be-deleted paths are checked whether they start with the vendor-packages
+path. normalize_path is used mainly to correctly resolve symlinks.
+
+Not for upstream contribution
+
+--- pip-19.1.1/src/pip/_internal/req/req_uninstall.py
++++ pip-19.1.1/src/pip/_internal/req/req_uninstall.py
+@@ -329,6 +329,14 @@ class UninstallPathSet(object):
+         remove/modify, False otherwise.
+ 
+         """
++        # Omit the Solaris vendor-packages augmentation to site-packages
++        # only when uninstalling.  We want Solaris IPS delivered packages
++        # in vendor-packages to be able to satisfy install dependencies
++        # but pip should never remove them.
++        vendor_packages_path = '/usr/lib/python{}.{}/vendor-packages'.format(
++            sys.version_info.major, sys.version_info.minor)
++        if normalize_path(path).startswith(vendor_packages_path):
++            return False
+         return is_local(path)
+ 
+     def add(self, path):
