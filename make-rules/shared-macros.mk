@@ -175,6 +175,8 @@ PYTHON_ALL_VERSIONS = $(PYTHON2_VERSIONS) $(PYTHON3_VERSIONS)
 
 PYTHON_64_ONLY_VERSIONS = 3.5 3.7 3.9
 
+PYTHON_VERSIONS_ALL= $(PYTHON2_VERSIONS) $(PYTHON3_VERSIONS)
+
 # PYTHON3_SOABI variable defines the naming scheme
 # of python3 extension libraries: cpython or abi3.
 # Currently, most of the components use cpython naming scheme by default,
