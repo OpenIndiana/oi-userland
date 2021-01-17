@@ -22,10 +22,12 @@
 # Copyright 2019 Tim Mooney
 #
 
+BUILD_BITS=NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		itstool
 COMPONENT_VERSION=	2.0.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	ITS Tool allows you to translate your XML documents with PO files using rules from the W3C Internationalization Tag Set
 COMPONENT_PROJECT_URL=	http://itstool.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,11 +40,12 @@ COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING.GPL3
 COMPONENT_CLASSIFICATION=	System/Text Tools
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
+
+PYTHON_VERSION=3.9
 
 CFLAGS += $(CPP_LARGEFILES)
 CPPFLAGS += $(CPP_LARGEFILES)
@@ -51,13 +54,6 @@ CONFIGURE_ENV +=	PYTHON=$(PYTHON)
 
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 
-# common targets; no ARCH since this is just a script
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/libxml2-27
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/libxml2-39
+REQUIRED_PACKAGES += runtime/python-39
