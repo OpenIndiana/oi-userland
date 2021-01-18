@@ -28,14 +28,14 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		py
-COMPONENT_VERSION=	1.8.0
+COMPONENT_VERSION=	1.8.2
 COMPONENT_FMRI=		library/python/py
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SUMMARY=	py - library with cross-python path, ini-parsing, io, code, log facilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:dc639b046a6e2cff5bbe40194ad65936d6ba360b52b3c3fe1d08a82dd50b5e53
+    sha256:f3b3a4c36512a4c4f024041ab51866f11761cc169670204b235f6b20523d4e6b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://bitbucket.org/hpk42/py
 COMPONENT_LICENSE=	MIT
