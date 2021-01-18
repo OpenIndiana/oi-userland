@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		importlib_metadata
 COMPONENT_VERSION=	1.5.2
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/python/importlib-metadata
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SUMMARY=	Read metadata from Python packages
