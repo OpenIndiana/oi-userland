@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pathlib2
 COMPONENT_VERSION= 	2.3.5
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://github.com/mcmtroffaes/pathlib2
 COMPONENT_FMRI=	library/python/pathlib2
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -31,7 +32,7 @@ COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE.rst
 
-PYTHON_VERSIONS=	2.7 3.5 3.7 3.9
+PYTHON_VERSIONS=	2.7 3.5 3.7
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -43,4 +44,3 @@ COMPONENT_TEST_ARGS = -m unittest discover --pattern=*.py
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
