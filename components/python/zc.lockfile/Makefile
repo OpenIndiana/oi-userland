@@ -12,32 +12,31 @@
 # Copyright 2018 Alexander Pyhalov
 #
 
+BUILD_BITS=NO_ARCH
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zc.lockfile
-COMPONENT_VERSION=	1.3.0
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY=	'Portable inter-process lock implementation'
+COMPONENT_VERSION=	2.0
+COMPONENT_SUMMARY=	Basic inter-process locks
 COMPONENT_PROJECT_URL=	https://pypi.org/project/zc.lockfile/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:96cb13769e042988ea25d23d44cf09342ea0f887083d0f9736968f3617665853
+    sha256:307ad78227e48be260e64896ec8886edc7eae22d8ec53e4d528ab5537a83203b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_FMRI=	library/python/zc.lockfile
-COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_LICENSE=	ZPL2.1
 COMPONENT_LICENSE_FILE=	LICENSE.txt
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TEST)
+include $(WS_MAKE_RULES)/common.mk
 
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:           $(NO_TEST)
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
