@@ -1376,24 +1376,4 @@ REQUIRED_PACKAGES_SUBST+= GOBJC_RUNTIME_PKG
 
 include $(WS_MAKE_RULES)/environment.mk
 include $(WS_MAKE_RULES)/depend.mk
-
-# A simple rule to print the value of any macro.  Ex:
-#    $ gmake print-REQUIRED_PACKAGES
-# Note that some macros are set on a per target basis, so what you see
-# is not always what you get.
-print-%:
-	@echo '$(subst ','\'',$*=$($*)) (origin: $(origin $*), flavor: $(flavor $*))'
-
-# A simple rule to print only the value of any macro.
-print-value-%:
-	@echo '$(subst ','\'',$($*))'
-
-# Provide default print package targets for components that do not rely on IPS.
-# Define them implicitly so that the definitions do not collide with ips.mk
-define print-package-rule
-echo $(strip $(PACKAGE_$(1))) | tr ' ' '\n'
-endef
-
-print-package-%:
-	@$(call print-package-rule,$(shell tr '[a-z]' '[A-Z]' <<< $*))
-
+include $(WS_MAKE_RULES)/component.mk 
