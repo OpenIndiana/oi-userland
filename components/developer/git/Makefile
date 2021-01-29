@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2021, Nona Hansel
 #
 
 BUILD_BITS=		64
@@ -30,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
 COMPONENT_VERSION=	2.30.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_FMRI=		developer/versioning/git
@@ -48,6 +50,7 @@ COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH_1=	sha256:7b2b8405d5bdd149e3891617053de37f7e8d5a5b3834317a5af9f30ccc93cf76
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
+PYTHON_VERSION=	3.9
 include $(WS_MAKE_RULES)/common.mk
 
 # With PATH.gnu gmake test stalls at t6030, so don't use it!
@@ -155,9 +158,11 @@ install:	$(INSTALL_64) $(BUILD_DIR)/.manpages $(BUILD_DIR_64)/.contrib
 
 # Test dependencies
 REQUIRED_PACKAGES += developer/fakeroot
+REQUIRED_PACKAGES += developer/versioning/cvs
 REQUIRED_PACKAGES += system/library/iconv/extra
 REQUIRED_PACKAGES += system/library/iconv/unicode
 REQUIRED_PACKAGES += system/library/iconv/utf-8
+REQUIRED_PACKAGES += library/perl-5/database
 REQUIRED_PACKAGES += library/perl-5/sqlite-dbi
 REQUIRED_PACKAGES += library/perl-5/subversion
 REQUIRED_PACKAGES += locale/is
@@ -169,7 +174,7 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
