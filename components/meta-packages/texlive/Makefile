@@ -18,15 +18,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		texlive
 COMPONENT_FMRI=		meta-packages/texlive
-COMPONENT_VERSION=	1.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.0.0
 COMPONENT_SUMMARY=	Metapackage for the TeX typesetting system
 COMPONENT_CLASSIFICATION=	Meta Packages/Builds
 COMPONENT_SRC=          install-tl-20210128
 COMPONENT_ARCHIVE=      install-tl-unx.tar.gz
-CTAN_URL=               http://mirror.ctan.org/systems/texlive
+TEXLIVE_ARCHIVE=        https://texlive.info/tlnet-archive
 COMPONENT_PROJECT_URL=  https://tug.org/texlive/
-COMPONENT_ARCHIVE_URL=  $(CTAN_URL)/tlnet/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  $(TEXLIVE_ARCHIVE)/2021/01/28/tlnet/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      TL
 COMPONENT_LICENSE_FILE= LICENSE.TL
 COMPONENT_ARCHIVE_HASH= \
@@ -35,10 +34,10 @@ COMPONENT_ARCHIVE_HASH= \
 include ../../../make-rules/prep.mk
 include ../../../make-rules/ips.mk
 
-PKGLINT=/bin/true
+PKG_PROTO_DIRS += $(COMPONENT_DIR)/profiles
 
 # the install-tl scripts are just scripts, there is no build
-# we install the scripts under /usr/share/install-tl-<version>
+# install the scripts under $(USRSHAREDIR)
 
 # no-op
 $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
@@ -55,4 +54,7 @@ install: $(BUILD_DIR)/%/.installed
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 
