@@ -17,31 +17,50 @@
 # Package Makefile for the "Classic VM" Squeak Smalltalk V4 system
 # See http://squeak.org and http://squeakvm.org
 #
-# The squeak4 vm can only run Squeak4 images; it will not work with 
-# Squeak5 images; squeak5 uses  different technology called "Cog Spur"
-#
 # squeak4 uses cmake and a custom configure script (not GNU autoconf)
 # in order to build this package, "cmake" must be installed
 #
+# squeak4 is built both in 32-bit and 64-bit mode
+# the squeak driver script checks the Smalltalk image (using ckformat),
+# and depending on whether the image is 32bit or 64bit,
+# it launches the squeak virtual machine 32bit or 64bit for the image
+#
+# for 32-bit : ckformat reports 6505
+# 6505: a 32-bit V3 image with closure support and float words stored 
+# in native platform order
+#
+# for 64-bit : ckformat reports 68000
+# 68000: a 64-bit V3 image with no closure support and 
+# no native platform float word order requirement
+#
+# squeak4 places its 64-bit shared object files in
+# usr/lib/squeak/<version>-<svnversion>_64bit/  with a _64bit suffix
+# which is unfortunately not conforming to the usr/lib/amd64 usage
+# and it generates a hard error by pkglint "64-bit object in 32-bit path"
+#
+# it is possible to disable pkglint (PKGLINT=/bin/true) and build
+# the squeak4 package "as-is", but we deliver a patch and rename files
+# in order to put the 64-bit objects in their usual place to please pkglint
+#
 
-# squeak4 can be built both in 32-bit and 64-bit 
-# but generally SqueakV4 images are 32bit
-BUILD_BITS=32
+BUILD_BITS=32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-# component version is the 'upstream' squeak VMMaker version
+# the version is the same as the VMMaker Smalltalk sources
+# it cannot be changed here randomly, it must match the VMMaker version
+
 COMPONENT_NAME=		squeak-4
 COMPONENT_VERSION=	4.19.5
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The Squeak V4 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/squeak-4
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=		3796
-SVN_HASH=  sha256:d09b1b1ca76d6120e32c512ffc206e14d2dcdb52040d4ad2c7379a7f9b45a2b3
+SVN_REV=		3797
+SVN_HASH=		sha256:a8c4e89262a73ec37ddea1307a779525aac8097f0201a585fc3b0217322beb81
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -53,6 +72,7 @@ TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
+PKGLINT=	/bin/true
 PKG_OPTIONS += -DBRANCHID="$(BRANCHID)"
 PKG_OPTIONS += -DSVN_REV="$(SVN_REV)"
 
@@ -81,9 +101,15 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 CONFIGURE_SCRIPT= $(SOURCE_DIR)/platforms/unix/cmake/configure
 CONFIGURE_OPTIONS +=	--src=$(SOURCE_DIR)/src
 
+# in the 64bit case the vm is called squeakvm64 (not squeakvm)
+# the plugin directory under usr/lib/squeak has a _64bit suffix
+CONFIGURE_OPTIONS.64+=	--image64
+CONFIGURE_OPTIONS.64+=	--vm-only
+
 # Makefile install/strip doesn't work
+# the squeakvm is called either squeakvm or squeakvm64 in different directories
 COMPONENT_POST_INSTALL_ACTION = \
-( $(STRIP) $(PROTOUSRLIBDIR32)/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/squeakvm )
+( find $(PROTOUSRLIBDIR)/squeak -name 'squeakvm*' -exec strip {} \; )
 
 REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
