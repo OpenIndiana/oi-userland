@@ -134,3 +134,19 @@ env-prep::
 print-VAR
   This target will print contents of variable VAR and also provide information
   about variable origin and variable flavor.
+
+print-value-VAR
+  This target will print contents of variable VAR.
+
+format
+  This target will apply different refactoring rules to update the Makefile
+  to the current style: deprecation of macros, use of new target, autoindent...
+  The rules are implemented in the userland-component utility.
+
+update
+  This target will format the Makefile then bump the COMPONENT_REVISION variable
+  if no VERSION value is provided. If a VERSION value is provided it will set
+  the COMPONENT_VERSION to the given value and remove COMPONENT_REVISION.
+  For some supported build style it may peform additional actions like:
+  - infering the latest version if VERSION=latest is passed,
+  - updating the archive checksum.
