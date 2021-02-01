@@ -22,10 +22,12 @@
 # This is all very naive and will hurt pythonists' eyes.
 #
 
+import json
 import os
 import re
 import subprocess
 import warnings
+from urllib.request import urlopen
 
 from .component import Component
 
@@ -281,6 +283,15 @@ class Makefile(object):
 
         return result
 
+    def print_value(self, name):
+        return self.run('print-value-'+name)[0]
+
+    def build_style(self):
+        return self.variables['BUILD_STYLE'].value()
+
+    def build_bits(self):
+        return self.variables['BUILD_BITS'].value()
+
     def has_variable(self, variable):
         return variable in self.variables
 
@@ -331,6 +342,9 @@ class Makefile(object):
                 contents.extend(self.contents[line:])
                 self.update(contents)
 
+    def set_archive_hash(self, checksum):
+        self.set_variable('COMPONENT_ARCHIVE_HASH', "sha256:"+str(checksum))
+
     def variable_assignment(self, variable):
         return self.variables[variable].variable_assignment(variable)
 
@@ -342,6 +356,29 @@ class Makefile(object):
 
     def target_definition(self, target):
         return self.targets[target].target_definition(target)
+
+    def uses_pypi(self):
+        is_py = (self.build_style() == 'setup.py')
+        urlnone = (not self.has_variable('COMPONENT_ARCHIVE_URL'))
+        urlpipy = urlnone or (self.variable('COMPONENT_ARCHIVE_URL').value() == '$(call pypi_url)')
+        return is_py and urlpipy
+
+    def get_pypi_data(self):
+        name = self.print_value('COMPONENT_PYPI')
+        jsurl = "https://pypi.python.org/pypi/%s/json" % name
+        try:
+            f = urlopen(jsurl, data=None)
+        except HTTPError as e:
+            if e.getcode() == 404:
+                print("Unknown component '%s'" % name)
+            else:
+                printIOError(e, "Can't open PyPI JSON url %s" % jsurl)
+            return None
+        except IOError as e:
+            printIOError(e, "Can't open PyPI JSON url %s" % jsurl)
+            return None
+        content = f.read().decode("utf-8")
+        return json.loads(content)
 
     @staticmethod
     def value(variable):
