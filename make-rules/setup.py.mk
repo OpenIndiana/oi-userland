@@ -21,6 +21,9 @@
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+# Set default PyPI name
+COMPONENT_PYPI?=$(COMPONENT_NAME)
+
 define python-rule
 $(BUILD_DIR)/%-$(1)/.built:		PYTHON_VERSION=$(1)
 $(BUILD_DIR)/%-$(1)/.installed:		PYTHON_VERSION=$(1)
