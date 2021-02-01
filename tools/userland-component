@@ -190,6 +190,7 @@ def update_component(path, version, verbose):
         raise ValueError('COMPONENT_VERSION not found')
     newvers = str(version) 
     current = mk.variable('COMPONENT_VERSION').value()
+    version_has_changed = False
     # Bump revision only
     if newvers == '0' or newvers == current:
         print("Bump COMPONENT_REVISION")
@@ -205,12 +206,41 @@ def update_component(path, version, verbose):
             mk.set_variable('COMPONENT_REVISION', str(1), line=mk.variable('COMPONENT_VERSION').line()+1)
     # Update to given version and remove revision
     else:
+        if newvers == 'latest':
+            if mk.build_style() == 'setup.py':
+                print("Trying to get latest version from PyPI")
+                js = mk.get_pypi_data()
+                try:
+                    newvers = js['info']['version']
+                except KeyError:
+                    print("Unable to find version")
+                    return None
         print("Bump COMPONENT_VERSION to " + newvers)
+        version_has_changed = True
         mk.set_variable('COMPONENT_VERSION', newvers)
         if mk.has_variable('COMPONENT_REVISION'):
             mk.remove_variable('COMPONENT_REVISION')
     # Update makefile
     mk.write()
+
+    if not version_has_changed:
+        return
+
+    # Try to update archive checksum
+    if mk.uses_pypi():
+        print("Trying to get checksum from PyPI")
+        js = mk.get_pypi_data()
+        try:
+              verblock = js['releases'][newvers]
+        except KeyError:
+            print("Unknown version '%s'" % newvers)
+            return None
+        # Index 0 is for the pypi package and index 1 for the source archive
+        sha256 = verblock[1]['digests']['sha256']
+        print("Found: "+str(sha256))
+        mk.set_archive_hash(sha256)
+        # Update makefile
+        mk.write()
 
 
 def main():
