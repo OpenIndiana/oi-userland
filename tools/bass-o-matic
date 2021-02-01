@@ -42,7 +42,7 @@ try:
 except ImportError:
     from os import walk
 
-from bass.component import BassComponent
+from bass.component import Component
 
 logger = logging.getLogger('bass-o-matic')
 
@@ -204,7 +204,7 @@ def main():
         component_pkg5 = os.path.join( os.getcwd(), 'pkg5')
         if os.path.isfile(component_pkg5):
             os.remove(component_pkg5)
-        BassComponent(FindComponentPaths(path=workspace, debug=debug, subdir=os.path.join(subdir, component_path))[0])
+        Component(FindComponentPaths(path=workspace, debug=debug, subdir=os.path.join(subdir, component_path))[0])
         sys.exit(0)
 
     incremental = False
@@ -224,7 +224,7 @@ def main():
 
         elif components_arg in COMPONENTS_ALLOWED_FMRIS:
             pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-            components = pool.map(BassComponent, component_paths)
+            components = pool.map(Component, component_paths)
 
             for component in components:
                 for fmri in component.supplied_packages:
@@ -234,7 +234,7 @@ def main():
             dependencies = {}
 
             pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-            components = pool.map(BassComponent, component_paths)
+            components = pool.map(Component, component_paths)
 
             with open(os.path.join(workspace, subdir, 'mapping.json'), "r") as f:
                      data = json.loads(f.read())
