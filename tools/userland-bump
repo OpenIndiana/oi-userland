@@ -118,13 +118,17 @@ def build_plan(paths, data=None, verbose=False):
             'openindiana/illumos-gate', \
             'developer/gcc-7', \
             'python/python35', \
+            'python/python37', \
+            'python/python39', \
             ]
     wildcards = { \
             'desktop/gnome3/yelp-tools' : '*', \
             'desktop/gnome3/yelp-xsl'   : '*', \
+            'developer/gtk-doc' : '*', \
             'developer/autogen' : 'library/libxml2', \
             'library/freetype'  : 'library/harfbuzz', \
             'library/boost'     : '*', \
+            'library/tiff'      : '*', \
             'library/gamin'     : 'library/glib', \
             'python/incremental': 'python/twisted', \
             'network/avahi'     : 'library/gtk+', \
@@ -208,7 +212,7 @@ def build_plan(paths, data=None, verbose=False):
 
             if not putbacks:
                 for v in sorted(eremaining):
-                        print("{0:32} {1}".format(v, graph[v]) )
+                    print("{0:32} {1}".format(v, graph[v]) )
                 raise ValueError("Cycle found.")
                 break
 
