@@ -28,3 +28,6 @@ update:
 	else $(COMPONENT_TOOL) --path $(COMPONENT_DIR) --bump $(VERSION); \
 	fi;
 
+update-latest:
+	$(COMPONENT_TOOL) --path $(COMPONENT_DIR) --bump latest;
+
