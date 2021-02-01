@@ -23,6 +23,8 @@
 
 # Set default PyPI name
 COMPONENT_PYPI?=$(COMPONENT_NAME)
+# Set default to PyPI url
+COMPONENT_ARCHIVE_URL?=$(call pypi_url)
 
 define python-rule
 $(BUILD_DIR)/%-$(1)/.built:		PYTHON_VERSION=$(1)
