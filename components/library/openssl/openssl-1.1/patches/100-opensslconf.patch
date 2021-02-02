@@ -1,0 +1,26 @@
+--- openssl-1.1.1i/include/openssl/opensslconf.h.in.orig	2021-02-06 02:05:32.357066633 +0000
++++ openssl-1.1.1i/include/openssl/opensslconf.h.in	2021-02-06 02:08:58.486577040 +0000
+@@ -146,11 +146,19 @@
+  * The following are cipher-specific, but are part of the public API.
+  */
+ #if !defined(OPENSSL_SYS_UEFI)
+-{- $config{bn_ll} ? "# define" : "# undef" -} BN_LLONG
++#if defined(__x86_64)
++# undef BN_LLONG
+ /* Only one for the following should be defined */
+-{- $config{b64l} ? "# define" : "# undef" -} SIXTY_FOUR_BIT_LONG
+-{- $config{b64}  ? "# define" : "# undef" -} SIXTY_FOUR_BIT
+-{- $config{b32}  ? "# define" : "# undef" -} THIRTY_TWO_BIT
++# define SIXTY_FOUR_BIT_LONG
++# undef SIXTY_FOUR_BIT
++# undef THIRTY_TWO_BIT
++#else
++# define BN_LLONG
++/* Only one for the following should be defined */
++# undef SIXTY_FOUR_BIT_LONG
++# undef SIXTY_FOUR_BIT
++# define THIRTY_TWO_BIT
++#endif
+ #endif
+ 
+ #define RC4_INT {- $config{rc4_int} -}

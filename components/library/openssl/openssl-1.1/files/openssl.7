@@ -1,0 +1,86 @@
+'\" te
+.\" Copyright (c) 2009, 2019, Oracle and/or its affiliates. All rights reserved.
+.TH openssl 7 "2 Aug 2019" "Solaris 11.4" "Standards, Environments, and Macros"
+.SH NAME
+openssl \- OpenSSL cryptographic and Secure Sockets Layer toolkit
+.SH DESCRIPTION
+.sp
+.LP
+OpenSSL is a cryptography toolkit that implements the Transport Layer Security (TLS v1+) network protocols.  This version of OpenSSL no longer supports the Secure Sockets Layer (SSLv2/v3) network protocols.
+.sp
+.LP
+The following features are omitted from the binaries for issues including but not limited to patents, trademark, and US export restrictions: DES, RC2, RC4, RC5, MD2, MD4, MDC2, IDEA, Whirlpool, SEED. Also, there are no OpenSSL engines.
+.SS "The Dynamic Engine Support"
+.sp
+.LP
+The dynamic engine support has been enabled, which allows an external engine, in the form of a shared library, to be dynamically bound and used by an OpenSSL-based application.
+.sp
+.LP
+Run the following command to see if the dynamic engine is supported:
+.sp
+.in +2
+.nf
+$ \fBopenssl engine dynamic\fR
+(dynamic) Dynamic engine loading support
+.fi
+.in -2
+.sp
+
+.SS "FIPS Mode"
+.sp
+.LP
+There is no FIPS-140 mode for OpenSSL 1.1.
+.sp
+
+.SS "The PKCS#11 Engine"
+.sp
+.LP
+The PKCS#11 engine is not delivered with OpenSSL 1.1.
+.sp
+
+.SS "Building an OpenSSL Application"
+.sp
+.LP
+Assuming OpenSSL 1.1 was activated using the \fBpkg set-mediator\fR command,
+to build an OpenSSL application, use the following \fBcc\fR command line options:
+.sp
+.in +2
+.nf
+cc [ \fIflag\fR... ] \fIfile\fR... -lcrypto -lssl [ \fIlibrary\fR... ]
+.fi
+.in -2
+
+.SS "Additional Documentation"
+.sp
+.LP
+Extensive additional documentation for OpenSSL modules is available in the \fB/usr/share/man/man1openssl\fR, \fB/usr/share/man/man3openssl\fR, \fB/usr/share/man/man5openssl\fR, and \fB/usr/share/man/man7openssl\fR directories.
+.sp
+.LP
+To view the license terms, attribution, and copyright for OpenSSL, run \fBpkg info --license library/security/openssl\fR.
+
+.SH ATTRIBUTES
+.sp
+.LP
+See \fBattributes\fR(7) for a description of the following attributes:
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+ATTRIBUTE TYPEATTRIBUTE VALUE
+_
+Availabilitylibrary/security/openssl
+_
+Interface StabilityPass-through Uncommitted
+.TE
+
+.SH SEE ALSO
+.sp
+.LP
+\fBcrle\fR(1), \fBcryptoadm\fR(8), \fBattributes\fR(7), \fBprivileges\fR(7), \fBpkg\fR(1)
+.sp
+.LP
+\fB/usr/share/man/man1openssl/openssl.1openssl\fR

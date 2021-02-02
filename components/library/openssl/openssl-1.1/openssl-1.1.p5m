@@ -1,0 +1,243 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, 2020, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability "pass-through uncommitted">
+<transform link mediator=openssl -> default mediator-implementation openssl>
+<transform link mediator=openssl -> default mediator-version 1.1>
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=pkg.depend.runpath value=$PKGDEPEND_RUNPATH:/usr/openssl/1.1/lib
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+### Basic directories, links, and a configuration file.
+link path=etc/openssl/1.1/certs target=../certs pkg.linted.userland.action002.0=true
+file etc/openssl/1.1/openssl.cnf path=etc/openssl/1.1/openssl.cnf group=sys \
+    mode=0644 preserve=true
+dir  path=etc/openssl/1.1/private group=sys mode=0700
+# Mediated link
+link path=etc/openssl/default target=1.1 mediator=openssl
+
+### Libraries
+# Links
+link path=lib/$(MACH64)/libcrypto.so.1.1 target=../../usr/openssl/1.1/lib/$(MACH64)/libcrypto.so.1.1
+link path=lib/$(MACH64)/libssl.so.1.1 target=../../usr/openssl/1.1/lib/$(MACH64)/libssl.so.1.1
+link path=lib/libcrypto.so.1.1 target=../usr/openssl/1.1/lib/libcrypto.so.1.1
+link path=lib/libssl.so.1.1 target=../usr/openssl/1.1/lib/libssl.so.1.1
+link path=usr/lib/$(MACH64)/libcrypto.so.1.1 target=../../openssl/1.1/lib/$(MACH64)/libcrypto.so.1.1
+link path=usr/lib/$(MACH64)/libssl.so.1.1 target=../../openssl/1.1/lib/$(MACH64)/libssl.so.1.1
+link path=usr/lib/libcrypto.so.1.1 target=../openssl/1.1/lib/libcrypto.so.1.1
+link path=usr/lib/libssl.so.1.1 target=../openssl/1.1/lib/libssl.so.1.1
+# Mediated links in /lib
+link path=lib/$(MACH64)/libcrypto.so target=libcrypto.so.1.1 mediator=openssl
+link path=lib/$(MACH64)/libssl.so target=libssl.so.1.1 mediator=openssl
+link path=lib/libcrypto.so target=libcrypto.so.1.1 mediator=openssl
+link path=lib/libssl.so target=libssl.so.1.1 mediator=openssl
+# Mediated links in /usr/lib
+link path=usr/lib/$(MACH64)/libcrypto.so target=libcrypto.so.1.1 mediator=openssl
+link path=usr/lib/$(MACH64)/libssl.so target=libssl.so.1.1 mediator=openssl
+link path=usr/lib/libcrypto.so target=libcrypto.so.1.1 mediator=openssl
+link path=usr/lib/libssl.so target=libssl.so.1.1 mediator=openssl
+
+# OpenSSL binaries
+<transform file path=usr/openssl/1.1/bin/.* -> default mode 0555>
+<transform file path=usr/openssl/1.1/bin/.* -> default group bin>
+<transform file path=usr/openssl/1.1/bin/.* -> default owner root>
+file path=usr/openssl/1.1/bin/openssl
+file $(MACH32)/apps/openssl path=usr/openssl/1.1/bin/$(MACH32)/openssl
+file path=usr/openssl/1.1/bin/c_rehash
+file etc/openssl/1.1/misc//CA.pl path=usr/openssl/1.1/bin/CA.pl
+# Compatiblity link
+link path=usr/openssl/1.1/lib/CA.pl target=../bin/CA.pl
+
+# Mediator links for the tools 
+link path=usr/bin/$(MACH32)/openssl \
+    target=../../openssl/1.1/bin/$(MACH32)/openssl mediator=openssl
+link path=usr/bin/openssl target=../openssl/1.1/bin/openssl \
+    mediator=openssl
+link path=usr/bin/c_rehash target=../openssl/1.1/bin/c_rehash \
+    mediator=openssl
+link path=usr/bin/CA.pl target=../openssl/1.1/bin/CA.pl \
+    mediator=openssl
+
+# Header files
+link path=usr/include/openssl target=../openssl/1.1/include/openssl mediator=openssl
+
+# Headers
+file path=usr/openssl/1.1/include/openssl/aes.h
+file path=usr/openssl/1.1/include/openssl/asn1.h
+file path=usr/openssl/1.1/include/openssl/asn1_mac.h
+file path=usr/openssl/1.1/include/openssl/asn1err.h
+file path=usr/openssl/1.1/include/openssl/asn1t.h
+file path=usr/openssl/1.1/include/openssl/async.h
+file path=usr/openssl/1.1/include/openssl/asyncerr.h
+file path=usr/openssl/1.1/include/openssl/bio.h
+file path=usr/openssl/1.1/include/openssl/bioerr.h
+file path=usr/openssl/1.1/include/openssl/blowfish.h
+file path=usr/openssl/1.1/include/openssl/bn.h
+file path=usr/openssl/1.1/include/openssl/bnerr.h
+file path=usr/openssl/1.1/include/openssl/buffer.h
+file path=usr/openssl/1.1/include/openssl/buffererr.h
+file path=usr/openssl/1.1/include/openssl/camellia.h
+file path=usr/openssl/1.1/include/openssl/cast.h
+file path=usr/openssl/1.1/include/openssl/cmac.h
+file path=usr/openssl/1.1/include/openssl/cms.h
+file path=usr/openssl/1.1/include/openssl/cmserr.h
+file path=usr/openssl/1.1/include/openssl/comp.h
+file path=usr/openssl/1.1/include/openssl/comperr.h
+file path=usr/openssl/1.1/include/openssl/conf.h
+file path=usr/openssl/1.1/include/openssl/conf_api.h
+file path=usr/openssl/1.1/include/openssl/conferr.h
+file path=usr/openssl/1.1/include/openssl/crypto.h
+file path=usr/openssl/1.1/include/openssl/cryptoerr.h
+file path=usr/openssl/1.1/include/openssl/ct.h
+file path=usr/openssl/1.1/include/openssl/cterr.h
+file path=usr/openssl/1.1/include/openssl/des.h
+file path=usr/openssl/1.1/include/openssl/dh.h
+file path=usr/openssl/1.1/include/openssl/dherr.h
+file path=usr/openssl/1.1/include/openssl/dsa.h
+file path=usr/openssl/1.1/include/openssl/dsaerr.h
+file path=usr/openssl/1.1/include/openssl/dtls1.h
+file path=usr/openssl/1.1/include/openssl/e_os2.h
+file path=usr/openssl/1.1/include/openssl/ebcdic.h
+file path=usr/openssl/1.1/include/openssl/ec.h
+file path=usr/openssl/1.1/include/openssl/ecdh.h
+file path=usr/openssl/1.1/include/openssl/ecdsa.h
+file path=usr/openssl/1.1/include/openssl/ecerr.h
+file path=usr/openssl/1.1/include/openssl/engine.h
+file path=usr/openssl/1.1/include/openssl/engineerr.h
+file path=usr/openssl/1.1/include/openssl/err.h
+file path=usr/openssl/1.1/include/openssl/evp.h
+file path=usr/openssl/1.1/include/openssl/evperr.h
+file path=usr/openssl/1.1/include/openssl/hmac.h
+#file path=usr/openssl/1.1/include/openssl/idea#.h
+file path=usr/openssl/1.1/include/openssl/kdf.h
+file path=usr/openssl/1.1/include/openssl/kdferr.h
+file path=usr/openssl/1.1/include/openssl/lhash.h
+#file path=usr/openssl/1.1/include/openssl/md2#.h
+file path=usr/openssl/1.1/include/openssl/md4.h
+file path=usr/openssl/1.1/include/openssl/md5.h
+#file path=usr/openssl/1.1/include/openssl/mdc2#.h
+file path=usr/openssl/1.1/include/openssl/modes.h
+file path=usr/openssl/1.1/include/openssl/obj_mac.h
+file path=usr/openssl/1.1/include/openssl/objects.h
+file path=usr/openssl/1.1/include/openssl/objectserr.h
+file path=usr/openssl/1.1/include/openssl/ocsp.h
+file path=usr/openssl/1.1/include/openssl/ocsperr.h
+file path=usr/openssl/1.1/include/openssl/opensslconf.h
+file path=usr/openssl/1.1/include/openssl/opensslv.h
+file path=usr/openssl/1.1/include/openssl/ossl_typ.h
+file path=usr/openssl/1.1/include/openssl/pem.h
+file path=usr/openssl/1.1/include/openssl/pem2.h
+file path=usr/openssl/1.1/include/openssl/pemerr.h
+file path=usr/openssl/1.1/include/openssl/pkcs12.h
+file path=usr/openssl/1.1/include/openssl/pkcs12err.h
+file path=usr/openssl/1.1/include/openssl/pkcs7.h
+file path=usr/openssl/1.1/include/openssl/pkcs7err.h
+file path=usr/openssl/1.1/include/openssl/rand.h
+file path=usr/openssl/1.1/include/openssl/rand_drbg.h
+file path=usr/openssl/1.1/include/openssl/randerr.h
+#file path=usr/openssl/1.1/include/openssl/rc2#.h
+file path=usr/openssl/1.1/include/openssl/rc4.h
+#file path=usr/openssl/1.1/include/openssl/rc5#.h
+file path=usr/openssl/1.1/include/openssl/ripemd.h
+file path=usr/openssl/1.1/include/openssl/rsa.h
+file path=usr/openssl/1.1/include/openssl/rsaerr.h
+file path=usr/openssl/1.1/include/openssl/safestack.h
+#file path=usr/openssl/1.1/include/openssl/seed#.h
+file path=usr/openssl/1.1/include/openssl/sha.h
+file path=usr/openssl/1.1/include/openssl/srp.h
+file path=usr/openssl/1.1/include/openssl/srtp.h
+file path=usr/openssl/1.1/include/openssl/ssl.h
+file path=usr/openssl/1.1/include/openssl/ssl2.h
+file path=usr/openssl/1.1/include/openssl/ssl3.h
+file path=usr/openssl/1.1/include/openssl/sslerr.h
+file path=usr/openssl/1.1/include/openssl/stack.h
+file path=usr/openssl/1.1/include/openssl/store.h
+file path=usr/openssl/1.1/include/openssl/storeerr.h
+file path=usr/openssl/1.1/include/openssl/symhacks.h
+file path=usr/openssl/1.1/include/openssl/tls1.h
+file path=usr/openssl/1.1/include/openssl/ts.h
+file path=usr/openssl/1.1/include/openssl/tserr.h
+file path=usr/openssl/1.1/include/openssl/txt_db.h
+file path=usr/openssl/1.1/include/openssl/ui.h
+file path=usr/openssl/1.1/include/openssl/uierr.h
+#file path=usr/openssl/1.1/include/openssl/whrlpool#.h
+file path=usr/openssl/1.1/include/openssl/x509.h
+file path=usr/openssl/1.1/include/openssl/x509_vfy.h
+file path=usr/openssl/1.1/include/openssl/x509err.h
+file path=usr/openssl/1.1/include/openssl/x509v3.h
+file path=usr/openssl/1.1/include/openssl/x509v3err.h
+#file path=usr/openssl/1.1/lib/$(MACH64)/libcrypto.a
+link path=usr/openssl/1.1/lib/$(MACH64)/libcrypto.so target=libcrypto.so.1.1
+file path=usr/openssl/1.1/lib/$(MACH64)/libcrypto.so.1.1
+#file path=usr/openssl/1.1/lib/$(MACH64)/libssl.a
+link path=usr/openssl/1.1/lib/$(MACH64)/libssl.so target=libssl.so.1.1
+file path=usr/openssl/1.1/lib/$(MACH64)/libssl.so.1.1
+file path=usr/openssl/1.1/lib/$(MACH64)/pkgconfig/libcrypto.pc
+file path=usr/openssl/1.1/lib/$(MACH64)/pkgconfig/libssl.pc
+file path=usr/openssl/1.1/lib/$(MACH64)/pkgconfig/openssl.pc
+#file path=usr/openssl/1.1/lib/libcrypto.a
+link path=usr/openssl/1.1/lib/libcrypto.so target=libcrypto.so.1.1
+file path=usr/openssl/1.1/lib/libcrypto.so.1.1
+#file path=usr/openssl/1.1/lib/libssl.a
+link path=usr/openssl/1.1/lib/libssl.so target=libssl.so.1.1
+file path=usr/openssl/1.1/lib/libssl.so.1.1
+file path=usr/openssl/1.1/lib/pkgconfig/libcrypto.pc
+file path=usr/openssl/1.1/lib/pkgconfig/libssl.pc
+file path=usr/openssl/1.1/lib/pkgconfig/openssl.pc
+
+# Add symlink to subdirectories for compatibilty
+link path=usr/openssl/1.1/lib/32 target=.
+link path=usr/openssl/1.1/lib/64 target=$(MACH64)
+
+# Mediated pkg-config files links
+link path=usr/lib/$(MACH64)/pkgconfig/libcrypto.pc \
+	target=../../../openssl/1.1/lib/$(MACH64)/pkgconfig/libcrypto.pc mediator=openssl
+link path=usr/lib/$(MACH64)/pkgconfig/libssl.pc \
+	target=../../../openssl/1.1/lib/$(MACH64)/pkgconfig/libssl.pc mediator=openssl
+link path=usr/lib/$(MACH64)/pkgconfig/openssl.pc \
+	target=../../../openssl/1.1/lib/$(MACH64)/pkgconfig/openssl.pc mediator=openssl
+link path=usr/lib/pkgconfig/libcrypto.pc \
+	target=../../openssl/1.1/lib/pkgconfig/libcrypto.pc mediator=openssl
+link path=usr/lib/pkgconfig/libssl.pc \
+	target=../../openssl/1.1/lib/pkgconfig/libssl.pc mediator=openssl
+link path=usr/lib/pkgconfig/openssl.pc \
+	target=../../openssl/1.1/lib/pkgconfig/openssl.pc mediator=openssl
+
+# Do not deliver yet
+#depend type=optional \
+#    fmri=library/security/openssl/openssl-fips-140
+
+# Depend on version with mediator
+depend type=optional fmri=library/security/openssl@1.0.2.21-2020.0.1.3
+
+# Force a dependency on the Perl runtime. This is needed because of the CA.pl
+# and c_rehash scripts.
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/bin
