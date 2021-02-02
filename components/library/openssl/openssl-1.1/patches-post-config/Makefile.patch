@@ -1,0 +1,22 @@
+#
+# patch Makefile so that libssl is built with -znodelete
+#
+# This fixes:
+#   15663991 SUNBT6978791 6974208 needs an interim solution
+#
+# Basically, it short circuits unloading of libssl.so. This is necessary
+# because libcrypto.so builds the error strings tables and points to
+# static memory from libssl.  If libssl is dlclosed and libcrypto is not, the
+# pointers are no longer valid.
+#
+--- Makefile.orig	2021-02-01 22:41:51.684509478 +0000
++++ Makefile	2021-02-01 22:43:17.474476128 +0000
+@@ -5712,7 +5712,7 @@
+ 	$(AR) $(ARFLAGS) $@ $?
+ 	$(RANLIB) $@ || echo Never mind.
+ libssl$(SHLIB_EXT_SIMPLE) libssl$(SHLIB_EXT): ssl/bio_ssl.o ssl/d1_lib.o ssl/d1_msg.o ssl/d1_srtp.o ssl/methods.o ssl/packet.o ssl/pqueue.o ssl/record/dtls1_bitmap.o ssl/record/rec_layer_d1.o ssl/record/rec_layer_s3.o ssl/record/ssl3_buffer.o ssl/record/ssl3_record.o ssl/record/ssl3_record_tls13.o ssl/s3_cbc.o ssl/s3_enc.o ssl/s3_lib.o ssl/s3_msg.o ssl/ssl_asn1.o ssl/ssl_cert.o ssl/ssl_ciph.o ssl/ssl_conf.o ssl/ssl_err.o ssl/ssl_init.o ssl/ssl_lib.o ssl/ssl_mcnf.o ssl/ssl_rsa.o ssl/ssl_sess.o ssl/ssl_stat.o ssl/ssl_txt.o ssl/ssl_utst.o ssl/statem/extensions.o ssl/statem/extensions_clnt.o ssl/statem/extensions_cust.o ssl/statem/extensions_srvr.o ssl/statem/statem.o ssl/statem/statem_clnt.o ssl/statem/statem_dtls.o ssl/statem/statem_lib.o ssl/statem/statem_srvr.o ssl/t1_enc.o ssl/t1_lib.o ssl/t1_trce.o ssl/tls13_enc.o ssl/tls_srp.o libssl.map libcrypto$(SHLIB_EXT_SIMPLE)
+-	$(CC) $(LIB_CFLAGS) -L. $(LIB_LDFLAGS) -Wl,-h,libssl$(SHLIB_EXT) \
++	$(CC) $(LIB_CFLAGS) -L. $(LIB_LDFLAGS) -Wl,-h,libssl$(SHLIB_EXT) -znodelete \
+ 		-o libssl$(SHLIB_EXT) -Wl,-M,libssl.map ssl/bio_ssl.o ssl/d1_lib.o ssl/d1_msg.o ssl/d1_srtp.o ssl/methods.o ssl/packet.o ssl/pqueue.o ssl/record/dtls1_bitmap.o ssl/record/rec_layer_d1.o ssl/record/rec_layer_s3.o ssl/record/ssl3_buffer.o ssl/record/ssl3_record.o ssl/record/ssl3_record_tls13.o ssl/s3_cbc.o ssl/s3_enc.o ssl/s3_lib.o ssl/s3_msg.o ssl/ssl_asn1.o ssl/ssl_cert.o ssl/ssl_ciph.o ssl/ssl_conf.o ssl/ssl_err.o ssl/ssl_init.o ssl/ssl_lib.o ssl/ssl_mcnf.o ssl/ssl_rsa.o ssl/ssl_sess.o ssl/ssl_stat.o ssl/ssl_txt.o ssl/ssl_utst.o ssl/statem/extensions.o ssl/statem/extensions_clnt.o ssl/statem/extensions_cust.o ssl/statem/extensions_srvr.o ssl/statem/statem.o ssl/statem/statem_clnt.o ssl/statem/statem_dtls.o ssl/statem/statem_lib.o ssl/statem/statem_srvr.o ssl/t1_enc.o ssl/t1_lib.o ssl/t1_trce.o ssl/tls13_enc.o ssl/tls_srp.o \
+                  -lcrypto $(LIB_EX_LIBS)
+ 	if [ 'libssl$(SHLIB_EXT_SIMPLE)' != 'libssl$(SHLIB_EXT)' ]; then \

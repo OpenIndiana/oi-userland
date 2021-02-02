@@ -1,0 +1,32 @@
+#
+# This was developed in house to fix x86 compilation of hand crafted
+# assembler, namely optimized AES cipher implementations.
+# Otherwise, with Solaris assembler, the build will fail with errors
+# similar to this one:
+#
+#   "crypto/aes/aes-586.s", line 1002 : Illegal subtraction in ... "OPENSSL_ia32cap_P - .L004pic_point"
+#
+# The problem is the reference to global variable (OPENSSL_ia32cap_P)
+# which Oracle Developer Studio assembler cannot deal with. The assembler label references
+# are fine.
+#
+# There is an upstream bug that matches this:
+#   https://github.com/openssl/openssl/issues/1715
+#
+# However it was closed with advice to use newer/better (i.e. GNU) assembler.
+#
+# This is tracked as enhancement for Oracle Developer Studio:
+#
+#     30005149 treat undefined subtraction operand in leal instruction as relocation entry
+#
+--- openssl-1.0.2d/crypto/perlasm/x86gas.pl	Thu Jul  9 04:57:15 2015
++++ openssl-1.0.2d/crypto/perlasm/x86gas.pl.new	Thu Jul 30 15:17:14 2015
+@@ -196,8 +196,6 @@
+ 	    &::mov($dst,&::DWP("$indirect-$reflabel",$base));
+ 	    $non_lazy_ptr{"$nmdecor$sym"}=$indirect;
+ 	}
+-	elsif ($sym eq "OPENSSL_ia32cap_P" && $::elf>0)
+-	{   &::lea($dst,&::DWP("$sym-$reflabel",$base));   }
+ 	else
+ 	{   &::lea($dst,&::DWP("_GLOBAL_OFFSET_TABLE_+[.-$reflabel]",
+ 			    $base));
