@@ -20,6 +20,7 @@
 #
 # Copyright 2016, Aurelien Larcher.
 # Copyright 2019, Michal Nowak
+# Copyright 2021, Nona Hansel
 #
 
 BUILD_BITS=NO_ARCH
@@ -29,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Markdown
 COMPONENT_VERSION=	3.1
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	'Python implementation of Markdown'
 COMPONENT_FMRI=		library/python/markdown
 COMPONENT_PROJECT_URL=	https://python-markdown.github.io
@@ -41,13 +42,14 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE.md
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-35
+REQUIRED_PACKAGES += library/python/setuptools-39
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
