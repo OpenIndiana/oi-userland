@@ -1,0 +1,51 @@
+#
+# This was developed in house.  The change is internal to Solaris, and
+# it will not be contributed upstream.
+#
+# This patch will change the default cipher used to encrypt certificate
+# to 3DES as RC2 is considered weak cipher. The default cipher for 1.1 will
+# become 3DES.
+#
+--- openssl/apps/pkcs12.c	Tue May  3 06:44:42 2016
++++ openssl/apps/pkcs12.c.new	Wed May  4 15:11:00 2016
+@@ -142,12 +142,7 @@
+     if (!load_config(bio_err, NULL))
+         goto end;
+ 
+-# ifdef OPENSSL_FIPS
+-    if (FIPS_mode())
+-        cert_pbe = NID_pbe_WithSHA1And3_Key_TripleDES_CBC;
+-    else
+-# endif
+-        cert_pbe = NID_pbe_WithSHA1And40BitRC2_CBC;
++    cert_pbe = NID_pbe_WithSHA1And3_Key_TripleDES_CBC;
+ 
+     args = argv + 1;
+ 
+@@ -379,9 +374,9 @@
+         BIO_printf(bio_err,
+                    "-twopass      separate MAC, encryption passwords\n");
+         BIO_printf(bio_err,
+-                   "-descert      encrypt PKCS#12 certificates with triple DES (default RC2-40)\n");
++                   "-descert      encrypt PKCS#12 certificates with triple DES (default)\n");
+         BIO_printf(bio_err,
+-                   "-certpbe alg  specify certificate PBE algorithm (default RC2-40)\n");
++                   "-certpbe alg  specify certificate PBE algorithm (default 3DES)\n");
+         BIO_printf(bio_err,
+                    "-keypbe alg   specify private key PBE algorithm (default 3DES)\n");
+         BIO_printf(bio_err,
+--- openssl/doc/crypto/PKCS12_create.pod Fri May  6 09:10:00 2016
++++ openssl/doc/crypto/PKCS12_create.pod Fri May  6 09:14:16 2016
+@@ -30,9 +30,9 @@
+ The parameters B<nid_key>, B<nid_cert>, B<iter>, B<mac_iter> and B<keytype>
+ can all be set to zero and sensible defaults will be used.
+ 
+-These defaults are: 40 bit RC2 encryption for certificates, triple DES
+-encryption for private keys, a key iteration count of PKCS12_DEFAULT_ITER
+-(currently 2048) and a MAC iteration count of 1.
++These defaults are: triple DES encryption for certificates and private keys,
++a key iteration count of PKCS12_DEFAULT_ITER (currently 2048) and a MAC
++iteration count of 1.
+ 
+ The default MAC iteration count is 1 in order to retain compatibility with
+ old software which did not interpret MAC iteration counts. If such compatibility

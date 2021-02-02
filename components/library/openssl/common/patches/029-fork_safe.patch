@@ -1,0 +1,291 @@
+#
+# This file adds the code to setup internal mutexes and callback function.
+#	PSARC/2014/077
+#	PSARC/2015/043
+# This change was implemented in-house.  The issue was brought up to
+# the upstream engineers, but there was no commitment.
+#
+--- a/crypto/cryptlib.c	2016-05-03 06:44:42.000000000 -0700
++++ b/crypto/cryptlib.c	2016-09-02 08:47:23.640202700 -0700
+@@ -116,6 +116,7 @@
+ 
+ #include "cryptlib.h"
+ #include <openssl/safestack.h>
++#include <pthread.h>
+ 
+ #if defined(OPENSSL_SYS_WIN32) || defined(OPENSSL_SYS_WIN16)
+ static double SSLeay_MSVC5_hack = 0.0; /* and for VC1.5 */
+@@ -184,6 +185,8 @@
+  */
+ static STACK_OF(CRYPTO_dynlock) *dyn_locks = NULL;
+ 
++static pthread_mutex_t solaris_openssl_locks[CRYPTO_NUM_LOCKS];
++
+ static void (MS_FAR *locking_callback) (int mode, int type,
+                                         const char *file, int line) = 0;
+ static int (MS_FAR *add_lock_callback) (int *pointer, int amount,
+@@ -373,7 +376,10 @@
+ void CRYPTO_set_dynlock_create_callback(struct CRYPTO_dynlock_value *(*func)
+                                          (const char *file, int line))
+ {
+-    dynlock_create_callback = func;
++    /*
++     * we now setup our own dynamic locking callback, and disallow
++     * setting of another locking callback.
++     */
+ }
+ 
+ void CRYPTO_set_dynlock_lock_callback(void (*func) (int mode,
+@@ -382,7 +388,10 @@
+                                                     const char *file,
+                                                     int line))
+ {
+-    dynlock_lock_callback = func;
++    /*
++     * we now setup our own dynamic locking callback, and disallow
++     * setting of another locking callback.
++     */
+ }
+ 
+ void CRYPTO_set_dynlock_destroy_callback(void (*func)
+@@ -389,7 +398,10 @@
+                                           (struct CRYPTO_dynlock_value *l,
+                                            const char *file, int line))
+ {
+-    dynlock_destroy_callback = func;
++    /*
++     * we now setup our own dynamic locking callback, and disallow
++     * setting of another locking callback.
++     */
+ }
+ 
+ void (*CRYPTO_get_locking_callback(void)) (int mode, int type,
+@@ -402,6 +414,120 @@
+     return (add_lock_callback);
+ }
+ 
++/*
++ * This is the locking callback function which all applications will be
++ * using when CRYPTO_lock() is called.
++ */ 
++static void solaris_locking_callback(int mode, int type, const char *file,
++    int line)
++{
++    if (mode & CRYPTO_LOCK) {
++        (void) pthread_mutex_lock(&solaris_openssl_locks[type]);
++    } else {
++        (void) pthread_mutex_unlock(&solaris_openssl_locks[type]);
++    }
++}
++
++/*
++ * Implement Solaris's own dynamic locking routines.
++ */
++static struct CRYPTO_dynlock_value *
++solaris_dynlock_create(const char *file, int line)
++{
++    int                        ret;
++    pthread_mutex_t    *dynlock;
++
++    dynlock = OPENSSL_malloc(sizeof(pthread_mutex_t));
++    if (dynlock == NULL) {
++        return (NULL);
++    }
++
++    ret = pthread_mutex_init(dynlock, NULL);
++    OPENSSL_assert(ret == 0);
++
++    return ((struct CRYPTO_dynlock_value *)dynlock);
++}
++
++static void
++solaris_dynlock_lock(int mode, struct CRYPTO_dynlock_value *dynlock,
++    const char *file, int line)
++{
++    int        ret;
++
++    if (mode & CRYPTO_LOCK) {
++        ret = pthread_mutex_lock((pthread_mutex_t *)dynlock);
++    } else {
++        ret = pthread_mutex_unlock((pthread_mutex_t *)dynlock);
++    }
++
++    OPENSSL_assert(ret == 0);
++}
++
++static void
++solaris_dynlock_destroy(struct CRYPTO_dynlock_value *dynlock,
++    const char *file, int line)
++{
++    int ret;
++    ret = pthread_mutex_destroy((pthread_mutex_t *)dynlock);
++    OPENSSL_assert(ret == 0);
++}
++
++
++static void solaris_fork_prep(void)
++{
++    int i;
++
++    for (i = 0; i < CRYPTO_NUM_LOCKS; i++) {
++        (void) pthread_mutex_lock(&solaris_openssl_locks[i]);
++    }
++}
++
++static void solaris_fork_post(void)
++{
++    int i;
++
++    for (i = CRYPTO_NUM_LOCKS - 1; i >= 0; i--) {
++        (void) pthread_mutex_unlock(&solaris_openssl_locks[i]);
++    }
++
++    OPENSSL_assert(dynlock_create_callback == solaris_dynlock_create);
++    OPENSSL_assert(dynlock_lock_callback == solaris_dynlock_lock);
++    OPENSSL_assert(dynlock_destroy_callback == solaris_dynlock_destroy);
++    OPENSSL_assert(locking_callback == solaris_locking_callback);
++}
++
++/*
++ * This is called by the _init() function to setup locks used by OpenSSL
++ * and locking callback functions.
++ */
++void
++solaris_locking_setup()
++{
++    int i;
++
++    /* setup the dynlock callback if not already */
++    if (dynlock_create_callback == NULL) {
++        dynlock_create_callback = solaris_dynlock_create;
++    }
++    if (dynlock_lock_callback == NULL) {
++        dynlock_lock_callback = solaris_dynlock_lock;
++    }
++    if (dynlock_destroy_callback == NULL) {
++        dynlock_destroy_callback = solaris_dynlock_destroy;
++    }
++    if (locking_callback == NULL) {
++	    locking_callback = solaris_locking_callback;
++    }
++
++    /* initialize locks needed by OpenSSL  */
++    for (i = 0; i < CRYPTO_NUM_LOCKS; i++) {
++        (void) pthread_mutex_init(&solaris_openssl_locks[i], NULL);
++    }
++
++    (void) pthread_atfork(solaris_fork_prep, solaris_fork_post, solaris_fork_post);
++}
++
++
+ void CRYPTO_set_locking_callback(void (*func) (int mode, int type,
+                                                const char *file, int line))
+ {
+@@ -410,7 +543,11 @@
+      * started.
+      */
+     OPENSSL_init();
+-    locking_callback = func;
++
++    /*
++     * we now setup our own locking callback and mutexes, and disallow
++     * setting of another locking callback.
++     */
+ }
+ 
+ void CRYPTO_set_add_lock_callback(int (*func) (int *num, int mount, int type,
+@@ -471,12 +608,10 @@
+ 
+ int CRYPTO_THREADID_set_callback(void (*func) (CRYPTO_THREADID *))
+ {
+-    if (threadid_callback)
+-        return 0;
+-    threadid_callback = func;
+-#ifdef OPENSSL_FIPS
+-    FIPS_crypto_threadid_set_callback(func);
+-#endif
++    /*
++     * Setting a threadid callback is no longer allowed; the compiled-in
++     * platform-specific default is always used.
++     */
+     return 1;
+ }
+ 
+@@ -503,7 +641,7 @@
+     CRYPTO_THREADID_set_numeric(id, (unsigned long)find_thread(NULL));
+ #else
+-    /* For everything else, default to using the address of 'errno' */
+-    CRYPTO_THREADID_set_pointer(id, (void *)&errno);
++    /* For everything else, default to using pthread_self() */
++    CRYPTO_THREADID_set_numeric(id, (unsigned long)pthread_self());
+ #endif
+ }
+ 
+@@ -529,7 +667,10 @@
+ 
+ void CRYPTO_set_id_callback(unsigned long (*func) (void))
+ {
+-    id_callback = func;
++    /*
++     * Setting a threadid callback is no longer allowed; the compiled-in
++     * platform-specific default is always used.
++     */
+ }
+ 
+ unsigned long CRYPTO_thread_id(void)
+@@ -546,7 +687,7 @@
+ # elif defined(OPENSSL_SYS_BEOS)
+         ret = (unsigned long)find_thread(NULL);
+ # else
+-        ret = (unsigned long)getpid();
++        ret = (unsigned long)pthread_self();
+ # endif
+     } else
+         ret = id_callback();
+--- openssl-1.0.1f/crypto/cryptlib.h.~1~	Fri Feb  7 10:41:42 2014
++++ openssl-1.0.1f/crypto/cryptlib.h	Thu Feb  6 16:04:16 2014
+@@ -104,6 +104,8 @@
+ void *OPENSSL_stderr(void);
+ extern int OPENSSL_NONPIC_relocated;
+ 
++void solaris_locking_setup();
++
+ #ifdef  __cplusplus
+ }
+ #endif
+--- openssl-1.0.1f/crypto/sparccpuid.S.~1~	Fri Feb  7 10:41:37 2014
++++ openssl-1.0.1f/crypto/sparccpuid.S	Thu Feb  6 16:04:14 2014
+@@ -525,5 +525,7 @@
+ .size	_sparcv9_vis1_instrument_bus2,.-_sparcv9_vis1_instrument_bus2
+
+ .section	".init",#alloc,#execinstr
++	call	solaris_locking_setup
++	nop
+ 	call	OPENSSL_cpuid_setup
+ 	nop
+--- openssl-1.0.1f/crypto/x86_64cpuid.pl.~1~	Wed Feb 12 13:20:09 2014
++++ openssl-1.0.1f/crypto/x86_64cpuid.pl	Wed Feb 12 13:21:20 2014
+@@ -20,7 +20,10 @@
+ print<<___;
+ .extern		OPENSSL_cpuid_setup
+ .hidden		OPENSSL_cpuid_setup
++.extern		solaris_locking_setup
++.hidden		solaris_locking_setup
+ .section	.init
++	call	solaris_locking_setup
+ 	call	OPENSSL_cpuid_setup
+ 
+ .hidden	OPENSSL_ia32cap_P
+--- openssl-1.0.1f/crypto/x86cpuid.pl.~1~	Wed Feb 12 13:38:03 2014
++++ openssl-1.0.1f/crypto/x86cpuid.pl	Wed Feb 12 13:38:31 2014
+@@ -379,8 +379,10 @@
+ 	&ret	();
+ &function_end_B("OPENSSL_ia32_rdseed");
+ 
++&initseg("solaris_locking_setup");
+ &initseg("OPENSSL_cpuid_setup");
+ 
++&hidden("solaris_locking_setup");
+ &hidden("OPENSSL_cpuid_setup");
+ &hidden("OPENSSL_ia32cap_P");
+ 
