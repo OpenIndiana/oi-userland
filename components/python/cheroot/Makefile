@@ -12,38 +12,34 @@
 # Copyright 2018 Alexander Pyhalov
 #
 
-BUILD_STYLE = setup.py
-BUILD_BITS = NO_ARCH
+BUILD_STYLE=setup.py
+BUILD_BITS=NO_ARCH
+PYTHON3_ONLY=yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		cheroot
-COMPONENT_VERSION=	6.5.2
-COMPONENT_REVISION=	4
-COMPONENT_SUMMARY=	'Cheroot - high-performance, pure-Python HTTP server'
-COMPONENT_PROJECT_URL=	https://github.com/cherrypy/cheroot
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:ba2b9b0f59fcdcd920d51f61c19c4a8d65f8469741e634c04eaf6feca5b76837
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_FMRI=	library/python/cheroot
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=	BSD
-COMPONENT_LICENSE_FILE=	LICENSE.md
-
-PYTHON_VERSIONS=	2.7 3.5
-
-COMPONENT_POST_INSTALL_ACTION = \
-        (cd $(PROTO_DIR)/usr/bin ; $(MV) -f cheroot cheroot-$(PYTHON_VERSION))
+COMPONENT_NAME=         cheroot
+COMPONENT_VERSION=      8.5.2
+COMPONENT_SUMMARY=      'Cheroot - high-performance, pure-Python HTTP server'
+COMPONENT_PROJECT_URL=  https://github.com/cherrypy/cheroot
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:f137d03fd5155b1364bea557a7c98168665c239f6c8cedd8f80e81cdfac01567
+COMPONENT_ARCHIVE_URL=  $(call pypi_url)
+COMPONENT_FMRI=         library/python/cheroot
+COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_LICENSE=      BSD
+COMPONENT_LICENSE_FILE= LICENSE.md
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_BUILD_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
-COMPONENT_INSTALL_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
+COMPONENT_POST_INSTALL_ACTION = \
+        (cd $(PROTO_DIR)/usr/bin ; $(MV) -f cheroot cheroot-$(PYTHON_VERSION))
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
