@@ -23,28 +23,24 @@
 # Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_STYLE = setup.py
-BUILD_BITS = NO_ARCH
-
+BUILD_STYLE=setup.py
+BUILD_BITS=NO_ARCH
+PYTHON3_ONLY=yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		Automat
-COMPONENT_VERSION=	0.8.0
-COMPONENT_REVISION=	3
-COMPONENT_SUMMARY=	'Self-service finite-state machines for the programmer on the go'
+COMPONENT_NAME=         Automat
+COMPONENT_VERSION=      20.2.0
+COMPONENT_SUMMARY=      'Self-service finite-state machines for the programmer on the go'
 COMPONENT_DESCRIPTION=	'Automat is a library for concise, idiomatic Python expression of finite-state automata (particularly deterministic finite-state transducers)'
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:269a09dfb063a3b078983f4976d83f0a0d3e6e7aaf8e27d8df1095e09dc4a484
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://github.com/glyph/Automat
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_FMRI= 	library/python/automat
-COMPONENT_LICENSE=	MIT
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:7979803c74610e11ef0c0d68a2942b152df52da55336e0c9d58daf1831cbdf33
+COMPONENT_ARCHIVE_URL=  $(call pypi_url)
+COMPONENT_PROJECT_URL=  https://github.com/glyph/Automat
+COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_FMRI=         library/python/automat
+COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= LICENSE
-
-PYTHON_VERSIONS = 2.7 3.5
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -56,8 +52,12 @@ COMPONENT_TEST_DIR =	$(SOURCE_DIR)/automat
 COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
 
+COMPONENT_TEST_TRANSFORMS= '-n' '-e "/^_test/p"'
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
