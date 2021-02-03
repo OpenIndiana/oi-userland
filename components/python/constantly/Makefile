@@ -25,29 +25,29 @@
 
 BUILD_STYLE=setup.py
 BUILD_BITS=NO_ARCH
-
+PYTHON_ALL=yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		constantly
-COMPONENT_VERSION=	15.1.0
-COMPONENT_SUMMARY=	'Symbolic constants in Python'
-COMPONENT_DESCRIPTION=	'Constantly is a library that provides symbolic constant support. It includes collections and constants with text, numeric, and bit flag values.'
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:4e2d23bd0d0379710e238774aadfbcf79e5e19c145285cd007b66218631d6502
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://github.com/twisted/constantly
-COMPONENT_CLASSIFICATION= Development/Python
-COMPONENT_FMRI=	library/python/constantly
-COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	LICENSE
+COMPONENT_NAME=         constantly
+COMPONENT_VERSION=      15.1.0
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/python/constantly
+COMPONENT_SUMMARY=      Symbolic constants in Python
+COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:586372eb92059873e29eba4f9dec8381541b4d3834660707faf8ba59146dfc35
+COMPONENT_ARCHIVE_URL=  $(call pypi_url)
+COMPONENT_PROJECT_URL=  https://github.com/twisted/constantly
+COMPONENT_LICENSE=      MIT
+COMPONENT_LICENSE_FILE= LICENSE
 
-PYTHON_VERSIONS=	2.7 3.5
-
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
