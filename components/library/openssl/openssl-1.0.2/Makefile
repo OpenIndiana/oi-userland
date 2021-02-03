@@ -36,13 +36,18 @@ COMPONENT_VERSION =	1.0.2u
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
 IPS_COMPONENT_VERSION = 1.0.2.21
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
+COMPONENT_FMRI =	library/security/openssl
+COMPONENT_SUMMARY =	OpenSSL - a Toolkit for Secure Sockets Layer (SSL v2/v3) and Transport Layer (TLS v1) protocols and general purpose cryptographic library
+COMPONENT_CLASSIFICATION = System/Security
 COMPONENT_PROJECT_URL=	https://www.openssl.org
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:ecd0c6ffb493dd06707d38b14bb4d8c2288bb7033735606569d8f90f89669d16
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE =	OpenSSL, SSLeay
+COMPONENT_LICENSE_FILE = openssl-1.0.2.license
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -65,7 +70,7 @@ ENGINESDIR_64 = /lib/openssl/engines/64
 # Configure options common to OpenSSL
 CONFIGURE_OPTIONS =  -DSOLARIS_OPENSSL -DNO_WINDOWS_BRAINDEATH
 CONFIGURE_OPTIONS += --openssldir=/etc/openssl
-CONFIGURE_OPTIONS += --prefix=/usr
+CONFIGURE_OPTIONS += --prefix=/usr/openssl/1.0
 CONFIGURE_OPTIONS += --libdir=lib/$(ARCHLIBSUBDIR)
 # We use OpenSSL install code for installing only manual pages and headers.
 CONFIGURE_OPTIONS += --install_prefix=$(PROTO_DIR)
@@ -191,6 +196,9 @@ install:	$(INSTALL_32_and_64) $(PROTO_DIR)/.openssl-0.9.8
 # for regression testing. These internal tests are unit tests only.
 COMPONENT_TEST_TARGETS = test
 
+test:		$(TEST_32_and_64)
+
 REQUIRED_PACKAGES += developer/build/makedepend
 # Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library
