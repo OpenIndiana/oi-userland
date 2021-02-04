@@ -128,6 +128,17 @@ PKG_MACROS += COMPONENT_RE_VERSION=$(subst .,\\.,$(COMPONENT_VERSION))
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) \
 					-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION))"
 
+define mach-list-generate-macros
+ifeq ($(MACH),$(1))
+PKG_MACROS +=           $(1)_ONLY=
+PKG_MACROS +=           $(1)_EXCL=\#
+else
+PKG_MACROS +=           $(1)_ONLY=\#
+PKG_MACROS +=           $(1)_EXCL=
+endif
+endef
+$(foreach isa,$(MACH_LIST),$(eval $(call mach-list-generate-macros,$(isa))))
+
 define python-generate-macros
 PKG_MACROS +=           PYTHON_$(1)_ONLY=\#
 PKG_MACROS +=           PYTHON_$(1)_EXCL=
