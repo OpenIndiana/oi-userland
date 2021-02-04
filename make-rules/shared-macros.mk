@@ -393,6 +393,9 @@ CONSTANT_TIME =		LD_PRELOAD_32=$(WS_TOOLS)/time-$(MACH32).so
 CONSTANT_TIME +=	LD_PRELOAD_64=$(WS_TOOLS)/time-$(MACH64).so
 CONSTANT_TIME +=	TIME_CONSTANT=$(TIME_CONSTANT)
 
+# List known architectures
+MACH_LIST = sparc i386
+
 # set MACH from uname -p to either sparc or i386
 MACH :=		$(shell uname -p)
 
