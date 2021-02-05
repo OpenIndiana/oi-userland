@@ -292,6 +292,12 @@ class Makefile(object):
     def build_bits(self):
         return self.variables['BUILD_BITS'].value()
 
+    def has_mk_include(self, name):
+        for i in iter(self.includes):
+            if i.value() == Makefile.makefile_path(name):
+                return True
+        return False
+
     def has_variable(self, variable):
         return variable in self.variables
 
@@ -386,7 +392,7 @@ class Makefile(object):
 
     @staticmethod
     def directory_variable(subdir):
-        return self.value("WS_"+subdir.upper().replace("-","_"))
+        return Makefile.value("WS_"+subdir.upper().replace("-","_"))
 
     @staticmethod
     def makefile_path(name):
