@@ -44,11 +44,11 @@ def format_component(path, verbose):
 #       variable $(WS_RULES). Do the same for other variables.
 def refactor000(mk):
     for i in iter(mk.includes):
-        r = re.match(r"^\$\(WS_TOP\)\/(.*)\/(.*).mk", i.str[0])
+        r = re.match(r"^\$\(WS_TOP\)\/(.*)\/(.*).mk", i.value())
         if r is not None:
             subdir = r.group(1)
             mkfile = r.group(2)
-            print("000: Fix include " + i.str[0])
+            print("000: Fix include " + i.value())
             i.set_value(os.path.join(MK.directory_variable(subdir), mkfile+".mk"))
             mk.contents[i.line()] = i.include_line()
 
@@ -59,9 +59,10 @@ def refactor000(mk):
 #           1. infer the build system and set the BUILD_STYLE.
 #           2. set the BUILD_BITS from the existing targets.
 #           3. erase default target and keep the custom ones.
+#           4. fix known target typos
 def refactor001(mk):
     kw = Keywords()
-    if mk.has_variable('BUILD_STYLE'):
+    if mk.has_variable('BUILD_STYLE') or mk.has_mk_include('common'):
         return
     # Build style
     build_style = None
@@ -84,38 +85,47 @@ def refactor001(mk):
     else:
         print("001: Setting make bits to '" + mk_bits + "'")
     # Check targets
-    mk_bits_32_no_arch = False
+    new_mk_bits = None
     new_targets = {}
     for t, u in iter(mk.targets.items()):
         # We do not know how to handle target with defined steps yet
         if len(u.str) > 1:
             continue
+        # Amend typos
+        if t == 'test' and u.value() == MK.value('NO_TEST'): 
+            print("001: Fix typo $(NO_TEST) -> $(NO_TESTS)")
+            u.set_value(MK.value('NO_TESTS'))
         # Process target
         found = False
         for v in kw.targets[t]:
             v = MK.value(v.replace(MK.value("MK_BITS"), mk_bits))
             # If the target dependency is one of the default values
-            if u.str[0] == v:
+            if u.value() == v:
                 found = True
                 w = MK.target_value(t, mk_bits)
+                #print(w)
                 if v == w:
                     print("001: Use default target '"+t+"'")
                     u.str = None 
                 else:
-                    print("001: Define target '"+t+"': "+u.str[0])
+                    print("001: Define target '"+t+"': "+u.value())
                     new_targets[t] = u
                 break
         if not found:
             # Some Python/Perl makefiles actually use NO_ARCH target with MK_BITS=32
-            if mk_bits == '32' and u.str[0] == MK.value(t.upper()+"_NO_ARCH"):
-                if not mk_bits_32_no_arch:
-                    print("001: Changing make bits from '32' to 'NO_ARCH'")
-                    mk_bits_32_no_arch = True
-                u.str = None
+            if mk_bits == '32':
+                ok_bits = ( 'NO_ARCH', '64', '32_and_64', '64_and_32' )
+                for b in ok_bits:
+                    if u.value() == MK.target_value(t, b):
+                        if not new_mk_bits:
+                            print("001: Changing make bits from '32' to '"+b+"'")
+                            new_mk_bits = b
+                        elif b != new_mk_bits:
+                            raise ValueError("001: Inconsistent target '"+t+"': "+u.value())
+                        u.str = None
+                        break
             else:
-                raise ValueError("001: Inconsistent target '"+t+"': "+u.str[0])
-    if mk_bits_32_no_arch:
-        mk_bits = "NO_ARCH"
+                raise ValueError("001: Unknown target '"+t+"' bitness: "+u.value())
     # Collect items
     rem_lines = set()
     rem_includes = [ MK.makefile_path("prep"), MK.makefile_path("ips")]
@@ -127,7 +137,7 @@ def refactor001(mk):
             if i.value() == MK.makefile_path(build_style):
                 i.set_value(MK.makefile_path("common"))
                 include_common_mk = i
-            elif re.match(r".*/shared-macros.mk$", i.str[0]):
+            elif re.match(r".*/shared-macros.mk$", i.value()):
                 include_shared_mk = i
             new_includes.append(i)
         else:
@@ -154,7 +164,7 @@ def refactor001(mk):
     # Write new targets
     for t  in ["build", "install", "test"]:
         if t in new_targets.keys():
-            contents.append(Keywords.target_variable_assignment(t, new_targets[t].str[0]))
+            contents.append(Keywords.target_variable_assignment(t, new_targets[t].value()))
             rem_lines.add(new_targets[t].line())
     # Add common include
     contents.append(include_common_mk.include_line())
