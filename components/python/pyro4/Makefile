@@ -11,35 +11,34 @@
 
 #
 # Copyright 2013 Aurelien Larcher.  All rights reserved.
+# Copyright 2021 Nona Hansel.  All rights reserved.
 #
 
+BUILD_BITS=		NO_ARCH
+BUILD_STYLE=		setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	Pyro4
-COMPONENT_VERSION= 	4.22
-COMPONENT_REVISION=	1
+COMPONENT_VERSION= 	4.80
 COMPONENT_IPS_NAME= 	pyro4
 COMPONENT_FMRI= 	library/python/$(COMPONENT_IPS_NAME)
 COMPONENT_SUMMARY= 	Distributed object middleware for Python (RPC)
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d8f611f384edbd240006d8c0f56135e74199ab88e9416cfc78cf5472f1ff337d
+  sha256:46847ca703de3f483fbd0b2d22622f36eff03e6ef7ec7704d4ecaa3964cb2220
 COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/P/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://pythonhosted.org/Pyro4/
+COMPONENT_PROJECT_URL = https://github.com/irmen/Pyro4
 COMPONENT_LICENSE_FILE=	$(COMPONENT_IPS_NAME).license
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET:	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:           $(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
