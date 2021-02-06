@@ -294,9 +294,15 @@ class Makefile(object):
 
     def has_mk_include(self, name):
         for i in iter(self.includes):
-            if i.value() == Makefile.makefile_path(name):
+            if re.match('^.*/'+name+'.mk$', i.value()):
                 return True
         return False
+
+    def get_mk_include(self, name):
+        for i in iter(self.includes):
+            if re.match('^.*/'+name+'.mk$', i.value()):
+                return i
+        return None
 
     def has_variable(self, variable):
         return variable in self.variables
@@ -362,6 +368,9 @@ class Makefile(object):
 
     def target_definition(self, target):
         return self.targets[target].target_definition(target)
+
+    def required_packages(self):
+        return self.run("print-value-REQUIRED_PACKAGES")[0]
 
     def uses_pypi(self):
         is_py = (self.build_style() == 'setup.py')
