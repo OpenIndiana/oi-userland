@@ -51,6 +51,7 @@ def refactor000(mk):
             print("000: Fix include " + i.value())
             i.set_value(os.path.join(MK.directory_variable(subdir), mkfile+".mk"))
             mk.contents[i.line()] = i.include_line()
+    mk.update()
 
 
 #-----------------------------------------------------------------------------
@@ -188,6 +189,44 @@ def refactor002(mk):
     mk.update()
 
 
+# Update rules
+#-----------------------------------------------------------------------------
+# U000: Update to default OpenSSL
+#       If openssl is a dependency and the openssl package version is not set
+#           1. update the dependency to the next openssl X.Y
+#           2. add macros USE_OPENSSLXY to the makefile 
+def update000(mk):
+    curr_version = '1.0'
+    next_version = '1.1'
+    curr_macro = 'USE_OPENSSL'+curr_version.replace('.','')
+    next_macro = 'USE_OPENSSL'+next_version.replace('.','')
+    curr_openssl_pkg = 'library/security/openssl'
+    next_openssl_pkg = 'library/security/openssl-11'
+    reqs = mk.required_packages()
+    has_openssl_deps=False
+    for p in reqs.split():
+        if p == curr_openssl_pkg:
+            has_openssl_deps=True
+    if not has_openssl_deps:
+        return
+    # Check whether current version is enforced
+    for line in iter(mk.contents):
+        if re.match("^"+curr_macro+"[\s]*=[\s]*yes", line):
+            return
+    print("U000: update to next openssl")
+    # Replace dependency
+    for idx, line in enumerate(mk.contents):
+        if re.match(r"REQUIRED_PACKAGES(.*)"+curr_openssl_pkg+"[\s]*$", line):
+            mk.contents[idx] = line.replace(curr_openssl_pkg, next_openssl_pkg)
+            break
+    # Add macro before shared-macros
+    include_shared_macros_mk = mk.get_mk_include('shared-macros')
+    if not include_shared_macros_mk:
+        raise ValueError('include shared_macros.mk not found')
+    mk.set_variable(next_macro, 'yes', include_shared_macros_mk.line())
+    mk.update()
+
+
 #-----------------------------------------------------------------------------
 # Update component makefile for revision or version bump 
 def update_component(path, version, verbose):
@@ -196,6 +235,9 @@ def update_component(path, version, verbose):
     if version is None:
         return
     mk = MK(path)
+    # Apply default update rules
+    update000(mk)
+    # Check current version
     if not mk.has_variable('COMPONENT_VERSION'):
         raise ValueError('COMPONENT_VERSION not found')
     newvers = str(version) 
