@@ -121,10 +121,10 @@ class Item(object):
         if self.length() == 1:
             return ["{0:<24}{1}".format(variable+"=",self.str[0])]
         # Handle continuation lines
-        lines = ["{0:<24}{1}".format(variable+"=",self.str[0][:-2])]
+        lines = ["{0:<24}{1}".format(variable+"=",self.str[0])]
         for l in self.str[1:]:
             lines[-1] += "\\\n"
-            lines.append("\t"+l[:-2])
+            lines.append("\t"+l)
         lines[-1] += "\n"
         return lines
 
