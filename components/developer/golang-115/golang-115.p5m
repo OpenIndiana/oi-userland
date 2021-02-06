@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2020 Till Wegmueller
+# Copyright 2021 Till Wegmueller
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-115@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -224,6 +224,7 @@ file path=usr/lib/golang/1.15/lib/time/zoneinfo.zip
 file path=usr/lib/golang/1.15/misc/android/README
 file path=usr/lib/golang/1.15/misc/android/go_android_exec.go
 file path=usr/lib/golang/1.15/misc/arm/a
+file path=usr/lib/golang/1.15/misc/cgo/errors/badsym_test.go
 file path=usr/lib/golang/1.15/misc/cgo/errors/errors_test.go
 file path=usr/lib/golang/1.15/misc/cgo/errors/ptr_test.go
 file path=usr/lib/golang/1.15/misc/cgo/errors/testdata/err1.go
@@ -855,6 +856,7 @@ file path=usr/lib/golang/1.15/pkg/illumos_amd64/index/suffixarray.a
 file path=usr/lib/golang/1.15/pkg/illumos_amd64/internal/bytealg.a
 file path=usr/lib/golang/1.15/pkg/illumos_amd64/internal/cfg.a
 file path=usr/lib/golang/1.15/pkg/illumos_amd64/internal/cpu.a
+file path=usr/lib/golang/1.15/pkg/illumos_amd64/internal/execabs.a
 file path=usr/lib/golang/1.15/pkg/illumos_amd64/internal/fmtsort.a
 file path=usr/lib/golang/1.15/pkg/illumos_amd64/internal/goroot.a
 file path=usr/lib/golang/1.15/pkg/illumos_amd64/internal/goversion.a
@@ -1250,6 +1252,7 @@ file path=usr/lib/golang/1.15/pkg/solaris_amd64/index/suffixarray.a
 file path=usr/lib/golang/1.15/pkg/solaris_amd64/internal/bytealg.a
 file path=usr/lib/golang/1.15/pkg/solaris_amd64/internal/cfg.a
 file path=usr/lib/golang/1.15/pkg/solaris_amd64/internal/cpu.a
+file path=usr/lib/golang/1.15/pkg/solaris_amd64/internal/execabs.a
 file path=usr/lib/golang/1.15/pkg/solaris_amd64/internal/fmtsort.a
 file path=usr/lib/golang/1.15/pkg/solaris_amd64/internal/goroot.a
 file path=usr/lib/golang/1.15/pkg/solaris_amd64/internal/goversion.a
@@ -2334,6 +2337,8 @@ file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/cgo_asm_error.txt
 file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/cgo_bad_directives.txt
 file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/cgo_depends_on_syscall.txt
 file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/cgo_flag_contains_space.txt
+file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/cgo_path.txt
+file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/cgo_path_space.txt
 file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/cgo_syso_issue29253.txt
 file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/clean_cache_n.txt
 file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/clean_testcache.txt
@@ -2420,6 +2425,7 @@ file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/install_rebuild_removed
 file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/install_relative_gobin_fail.txt
 file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/install_shadow_gopath.txt
 file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/issue36000.txt
+file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/ldflag.txt
 file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/link_syso_issue33139.txt
 file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/linkname.txt
 file path=usr/lib/golang/1.15/src/cmd/go/testdata/script/list_ambiguous_path.txt
@@ -4733,6 +4739,8 @@ file path=usr/lib/golang/1.15/src/internal/cpu/cpu_x86.go
 file path=usr/lib/golang/1.15/src/internal/cpu/cpu_x86.s
 file path=usr/lib/golang/1.15/src/internal/cpu/cpu_x86_test.go
 file path=usr/lib/golang/1.15/src/internal/cpu/export_test.go
+file path=usr/lib/golang/1.15/src/internal/execabs/execabs.go
+file path=usr/lib/golang/1.15/src/internal/execabs/execabs_test.go
 file path=usr/lib/golang/1.15/src/internal/fmtsort/export_test.go
 file path=usr/lib/golang/1.15/src/internal/fmtsort/sort.go
 file path=usr/lib/golang/1.15/src/internal/fmtsort/sort_test.go
@@ -6498,6 +6506,7 @@ file path=usr/lib/golang/1.15/src/runtime/testdata/testprogcgo/exec.go
 file path=usr/lib/golang/1.15/src/runtime/testdata/testprogcgo/lockosthread.c
 file path=usr/lib/golang/1.15/src/runtime/testdata/testprogcgo/lockosthread.go
 file path=usr/lib/golang/1.15/src/runtime/testdata/testprogcgo/main.go
+file path=usr/lib/golang/1.15/src/runtime/testdata/testprogcgo/needmdeadlock.go
 file path=usr/lib/golang/1.15/src/runtime/testdata/testprogcgo/numgoroutine.go
 file path=usr/lib/golang/1.15/src/runtime/testdata/testprogcgo/pprof.go
 file path=usr/lib/golang/1.15/src/runtime/testdata/testprogcgo/raceprof.go
@@ -8869,6 +8878,7 @@ file path=usr/lib/golang/1.15/test/fixedbugs/issue4252.dir/a.go
 file path=usr/lib/golang/1.15/test/fixedbugs/issue4252.dir/main.go
 file path=usr/lib/golang/1.15/test/fixedbugs/issue4252.go
 file path=usr/lib/golang/1.15/test/fixedbugs/issue4264.go
+file path=usr/lib/golang/1.15/test/fixedbugs/issue42753.go
 file path=usr/lib/golang/1.15/test/fixedbugs/issue4283.go
 file path=usr/lib/golang/1.15/test/fixedbugs/issue4313.go
 file path=usr/lib/golang/1.15/test/fixedbugs/issue4316.go
@@ -8881,6 +8891,7 @@ file path=usr/lib/golang/1.15/test/fixedbugs/issue4326.dir/z.go
 file path=usr/lib/golang/1.15/test/fixedbugs/issue4326.go
 file path=usr/lib/golang/1.15/test/fixedbugs/issue4348.go
 file path=usr/lib/golang/1.15/test/fixedbugs/issue4353.go
+file path=usr/lib/golang/1.15/test/fixedbugs/issue43570.go
 file path=usr/lib/golang/1.15/test/fixedbugs/issue4359.go
 file path=usr/lib/golang/1.15/test/fixedbugs/issue4365.go
 file path=usr/lib/golang/1.15/test/fixedbugs/issue4370.dir/p1.go
