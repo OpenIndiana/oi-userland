@@ -373,6 +373,9 @@ class Makefile(object):
         return self.run("print-value-REQUIRED_PACKAGES")[0]
 
     def uses_pypi(self):
+        # Default build style is configure
+        if not self.has_variable('BUILD_STYLE'):
+            return False
         is_py = (self.build_style() == 'setup.py')
         urlnone = (not self.has_variable('COMPONENT_ARCHIVE_URL'))
         urlpipy = urlnone or (self.variable('COMPONENT_ARCHIVE_URL').value() == '$(call pypi_url)')
