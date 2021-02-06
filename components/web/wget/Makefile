@@ -24,17 +24,18 @@
 #
 
 BUILD_BITS=64
-
+USE_OPENSSL11=yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		wget
-COMPONENT_VERSION=	1.21.1
-COMPONENT_PROJECT_URL=	https://www.gnu.org/software/wget/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.lz
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_NAME=         wget
+COMPONENT_VERSION=      1.21.1
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  https://www.gnu.org/software/wget/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.lz
+COMPONENT_ARCHIVE_HASH= \
 	sha256:db9bbe5347e6faa06fc78805eeb808b268979455ead9003a608569c9d4fc90ad
-COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wget
 
 include $(WS_MAKE_RULES)/common.mk
@@ -67,6 +68,6 @@ REQUIRED_PACKAGES += library/perl-5/http-message
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
