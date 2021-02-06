@@ -119,7 +119,6 @@ def refactor001(mk):
                 for b in ok_bits:
                     if u.value() == MK.target_value(t, b):
                         if not new_mk_bits:
-                            print("001: Changing make bits from '32' to '"+b+"'")
                             new_mk_bits = b
                         elif b != new_mk_bits:
                             raise ValueError("001: Inconsistent target '"+t+"': "+u.value())
@@ -127,6 +126,9 @@ def refactor001(mk):
                         break
             else:
                 raise ValueError("001: Unknown target '"+t+"' bitness: "+u.value())
+    if new_mk_bits:
+        print("001: Changing make bits from "+mk_bits+" to '"+new_mk_bits+"'")
+        mk_bits = new_mk_bits
     # Collect items
     rem_lines = set()
     rem_includes = [ MK.makefile_path("prep"), MK.makefile_path("ips")]
