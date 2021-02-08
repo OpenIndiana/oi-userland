@@ -1,0 +1,59 @@
+The patch was taken from omnios-build:
+https://github.com/omniosorg/omnios-build/blob/master/build/gtar/patches/revert_check_return_value_from_xgetcwd.patch
+
+Bug was reported here: https://savannah.gnu.org/bugs/index.php?60020
+
+Revert the following patch (causes extrac09.at to fail):
+
+From 66162927ebdfe9dd4ef570a132663fd76217952f Mon Sep 17 00:00:00 2001
+From: Sergey Poznyakoff <gray@gnu.org>
+Date: Sun, 3 Mar 2019 09:02:20 +0200
+Subject: Check return value from xgetcwd
+
+* src/misc.c (chdir_arg,tar_getcdpath): Check for non-NULL
+return from xgetcwd. The function returns NULL for any
+error originating from getcwd.
+---
+ src/misc.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+(limited to 'src/misc.c')
+
+diff --git a/src/misc.c b/src/misc.c
+index cb7254f..49ab775 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -314,6 +314,8 @@ normalize_filename (int cdidx, const char *name)
+       size_t copylen;
+       bool need_separator;
+ 
++      if (!cdpath)
++	call_arg_fatal ("getcwd", ".");
+       copylen = strlen (cdpath);
+       need_separator = ! (DOUBLE_SLASH_IS_DISTINCT_ROOT
+ 			  && copylen == 2 && ISSLASH (cdpath[1]));
+@@ -922,8 +920,6 @@ chdir_arg (char const *dir)
+ 	{
+ 	  wd[wd_count].name = ".";
+ 	  wd[wd_count].abspath = xgetcwd ();
+-	  if (!wd[wd_count].abspath)
+-	    call_arg_fatal ("getcwd", ".");
+ 	  wd[wd_count].fd = AT_FDCWD;
+ 	  wd_count++;
+ 	}
+@@ -1047,11 +1047,7 @@ tar_getcdpath (int idx)
+     {
+       static char *cwd;
+       if (!cwd)
++	cwd = xgetcwd ();
+-	{
+-	  cwd = xgetcwd ();
+-	  if (!cwd)
+-	    call_arg_fatal ("getcwd", ".");
+-	}
+       return cwd;
+     }
+   return wd[idx].abspath;
+-- 
+cgit v1.2.1
+
