@@ -30,15 +30,14 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.30.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.30.1
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_FMRI=		developer/versioning/git
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:55735021109565721af805af382c45cce73c3cfaa59daad22443d1477d334d19
+COMPONENT_ARCHIVE_HASH=	sha256:f988a8a095089978dab2932af4edb22b4d7d67d67b81aaa1986fa29ef45d9467
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
@@ -47,7 +46,7 @@ COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control 
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:7b2b8405d5bdd149e3891617053de37f7e8d5a5b3834317a5af9f30ccc93cf76
+COMPONENT_ARCHIVE_HASH_1=	sha256:30fc7ecbd964bb19a2ca1a695fe7af430740e09bd1c134cd3730783abec5b904
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 PYTHON_VERSION=	3.9
@@ -103,6 +102,7 @@ COMPONENT_INSTALL_ARGS+=        PERLPREFIX=$(shell $(PERL) -MConfig -e 'print "$
 COMPONENT_INSTALL_ARGS+=        INSTALLVENDORLIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
 
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
+COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 
 # many failures; keep going; later versions of git are much cleaner
 COMPONENT_TEST_ARGS += -k -i
