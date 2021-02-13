@@ -19,8 +19,7 @@
 #
 
 # opensmalltalk-vm can be built both in 32 and 64bit
-# but generally SqueakV5 images are 64bit
-BUILD_BITS=64
+BUILD_BITS=32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
@@ -29,9 +28,9 @@ include ../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		squeak-5c
-COMPONENT_VERSION=	5.0.2934
-GIT_TAG=		sun-v5.0.25
-PLUGIN_REV=		5.0-202101150901-cog
+COMPONENT_VERSION=	5.0.2945
+GIT_TAG=		sun-v5.0.26
+PLUGIN_REV=		5.0-202102111620-cog
 COMPONENT_SUMMARY=	The Cog Implementation of the Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak-5c
@@ -45,13 +44,19 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f1961dafc1d3b45444053d2633408280be2cc37e5ece33f2d5c2e8641c825df1
+COMPONENT_ARCHIVE_HASH=	sha256:470a55c51da928bce248a6c1c239fa5c74cb5141b9a06119640c75602bbcf163
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
 
 # some builds seem to be broken with -Bdirect
-LD_B_DIRECT=
+# but issue is not reproducable
+# LD_B_DIRECT=
+
+# try to install the 32bit version before the 64bit version
+build : $(BUILD_32) $(INSTALL_32) $(BUILD_64)
+
+install : $(INSTALL_64)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -61,7 +66,17 @@ PKG_OPTIONS += -DBRANCHID="$(BRANCHID)"
 PATH=$(PATH.gnu)
 
 # opensmalltalk configure script checks for plugins files in builddir
-COMPONENT_PRE_CONFIGURE_ACTION = ( cp plugins.ext plugins.int $(BUILD_DIR_64) )
+COMPONENT_PRE_CONFIGURE_ACTION = ( \
+	$(MKDIR) $(BUILD_DIR_32); \
+	cp plugins.ext plugins.int $(BUILD_DIR_32); \
+	$(MKDIR) $(BUILD_DIR_64); \
+	cp plugins.ext plugins.int $(BUILD_DIR_64) \
+	)
+
+# the Squeak configure script detects the lfcompile flags
+# but unfortunately I think some files do not #include "config.h"
+# we have to make sure largefile support is enabled in the 32bit case
+CPPFLAGS += $(CPP_LARGEFILES)
 
 # the default CFLAGS.gcc will be -m64 -O3 but this does not work for us
 # opensmalltalk code is not compatible with the gcc optimizer -O2 or higher
@@ -73,9 +88,12 @@ CONFIGURE_OPTIONS +=	--without-npsqueak
 CONFIGURE_OPTIONS +=	--with-vmversion=5.0
 CONFIGURE_OPTIONS +=	--disable-dynamicopenssl
 CONFIGURE_OPTIONS +=	--without-libtls
-CONFIGURE_OPTIONS +=	--with-src=spur64src
+CONFIGURE_OPTIONS.64 +=	--with-src=spur64src
+CONFIGURE_OPTIONS.32 +=	--with-src=spursrc
 
-CONFIGURE_ENV +=	TARGET_ARCH="-m64"
+CONFIGURE_ENV    +=     CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV.32 +=	TARGET_ARCH="-m32"
+CONFIGURE_ENV.64 +=	TARGET_ARCH="-m64"
 
 # the opensmalltalk Makefile does not use DESTDIR
 COMPONENT_INSTALL_ARGS=  	ROOT=$(PROTO_DIR)
@@ -85,7 +103,7 @@ COMPONENT_INSTALL_TARGETS= 	install-squeak install-doc install-plugins \
 
 # Makefile has no strip target
 COMPONENT_POST_INSTALL_ACTION = \
-( $(STRIP) $(PROTOUSRLIBDIR64)/squeak/$(PLUGIN_REV)/squeak )
+( find $(PROTOUSRLIBDIR) -name 'squeak' -type f -exec strip {} \; )
 
 REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
