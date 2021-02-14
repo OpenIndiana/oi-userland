@@ -22,8 +22,12 @@
 #
 # Copyright (c) 2011, 2018, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2021, Andreas Wacknitz
 #
 
+# Alas openldap ignores the pkgconfig settings and instead uses the system default openssl version.
+# So the admin also needs to set the openssl mediator version to 1.1.
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openldap
@@ -93,6 +97,7 @@ CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-tls=openssl
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
+COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 COMPONENT_TEST_ARGS += -e
 
 # Otherwise --enable-modules fails
@@ -126,6 +131,6 @@ REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/libtool/libltdl
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl
