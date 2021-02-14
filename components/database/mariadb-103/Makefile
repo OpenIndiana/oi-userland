@@ -14,16 +14,17 @@
 # Copyright 2019, Michal Nowak
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS=			32_and_64
 PREFERRED_BITS=		64
-BUILD_STYLE=cmake
-
+BUILD_STYLE=		cmake
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
 COMPONENT_MAJOR_VERSION=10.3
 COMPONENT_MINOR_VERSION=24
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://www.mariadb.org/
@@ -113,21 +114,21 @@ COMPONENT_TEST_CMD=	mysql-test/mtr \
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
+#REQUIRED_PACKAGES += database/mariadb-103/client
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/lzo
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/cracklib
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
