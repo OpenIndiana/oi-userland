@@ -11,22 +11,26 @@
 #
 # Copyright 2016 EveryCity Ltd. All rights reserved.
 # Copyright 2016 Adam Stevko. All rights reserved.
+# Copyright 2021 Andreas Wacknitz
 #
 
 BUILD_BITS=			64
 BUILD_STYLE=		justmake
+# Alas openldap ignores the pkgconfig settings and instead uses the system default openssl version.
+# So the admin also needs to set the openssl mediator version to 1.1.
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		haproxy
 COMPONENT_FMRI=		web/loadbalancer/haproxy
 COMPONENT_VERSION_MJR=	2.2
-COMPONENT_VERSION_MNR=  8
+COMPONENT_VERSION_MNR=  9
 COMPONENT_VERSION=	$(COMPONENT_VERSION_MJR).$(COMPONENT_VERSION_MNR)
 COMPONENT_PROJECT_URL=	https://www.haproxy.org/
 COMPONENT_SUMMARY=	A reliable, high performance TCP/HTTP load balancer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:61f90e3e2a36bd8800a5bee31cba7eef37c9aa8a353b6c741edaa411510b14be
+COMPONENT_ARCHIVE_HASH=	sha256:21680459b08b9ba21c8cc9f5dbd0ee6e1842f57a3a67f87179871e1c13ebd4e3
 COMPONENT_ARCHIVE_URL=	https://haproxy.org/download/$(COMPONENT_VERSION_MJR)/src/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	System/Services
 COMPONENT_LICENSE=	HAPROXY
@@ -68,7 +72,7 @@ COMPONENT_POST_INSTALL_ACTION+= \
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += system/library
