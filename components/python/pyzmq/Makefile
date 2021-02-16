@@ -10,6 +10,7 @@
 
 #
 # Copyright (c) 2020 Alexander Pyhalov
+# Copyright (c) 2021 Nona Hansel
 #
 
 BUILD_STYLE= setup.py
@@ -21,6 +22,7 @@ PATH=$(PATH.gnu)
 
 COMPONENT_NAME=		pyzmq
 COMPONENT_VERSION=	19.0.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Python bindings for zeromq
 COMPONENT_PROJECT_URL=	https://github.com/zeromq/pyzmq
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,7 +34,7 @@ COMPONENT_FMRI=	library/python/pyzmq
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE= BSD
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -40,9 +42,10 @@ COMPONENT_TEST_DIR =    $(SOURCE_DIR)/zmq/tests
 COMPONENT_TEST_CMD =    $(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
 
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/c++/zeromq
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
