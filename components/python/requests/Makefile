@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		requests
 COMPONENT_VERSION=	2.22.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/python/requests
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SUMMARY=	Python HTTP Requests for Humans
