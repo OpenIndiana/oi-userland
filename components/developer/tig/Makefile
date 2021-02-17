@@ -11,6 +11,7 @@
 #
 # Copyright 2018 Harry Liebel
 # Copyright 2019 Michal Nowak
+# Copyright 2021 Nona Hansel
 #
 
 BUILD_BITS=		64
@@ -18,7 +19,7 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tig
-COMPONENT_VERSION=	2.5.1
+COMPONENT_VERSION=	2.5.2
 COMPONENT_FMRI=		developer/versioning/tig
 COMPONENT_PROJECT_URL=	https://jonas.github.io/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	Text-mode interface for git
@@ -27,7 +28,7 @@ COMPONENT_CLASSIFICATION= Development/Source Code Management
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:500d5d34524f6b856edd5cae01f1404d14f3b51a9a53fd7357f4cebb3d4c9e64
+	sha256:1e5a8175627231ba619686ec338b4ad2843a6526122ea4e9fde1739dd2b4830b
 COMPONENT_ARCHIVE_URL=	https://github.com/jonas/$(COMPONENT_NAME)/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
