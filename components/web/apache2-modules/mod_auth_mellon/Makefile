@@ -22,12 +22,12 @@
 #
 
 BUILD_BITS=		64
-
+USE_OPENSSL11=	yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_auth_mellon
 COMPONENT_VERSION=	0.14.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		web/server/apache-24/module/apache-mellon
 COMPONENT_SUMMARY=	SAML2.0 authentication module for Apache
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
@@ -57,10 +57,10 @@ CONFIGURE_OPTIONS+=	--enable-diagnostics
 
 REQUIRED_PACKAGES += web/server/apache-24
 
-#Auto-generated dependencies
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lasso
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
