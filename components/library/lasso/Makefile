@@ -24,12 +24,12 @@
 #
 
 BUILD_BITS=	64
-
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	lasso
 COMPONENT_VERSION=	2.6.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=	library/lasso
 COMPONENT_SUMMARY=	Lasso - library implementing the SAML 2.0 and ID-FF 1.2 protocols
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -55,7 +55,7 @@ CONFIGURE_OPTIONS +=	--with-pkg-config=$(PKG_CONFIG_PATH.$(BITS))
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/xmlsec
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
