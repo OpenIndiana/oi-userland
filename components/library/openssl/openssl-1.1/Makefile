@@ -29,18 +29,17 @@ COMPONENT_NAME =	openssl-$(COMPONENT_VERSION_SHORT)
 
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
 # and IPS_COMPONENT_VERSION.
-COMPONENT_VERSION =	1.1.1i
+COMPONENT_VERSION =	1.1.1j
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.1.1.9
+IPS_COMPONENT_VERSION = 1.1.1.10
 COMPONENT_FMRI=		library/security/openssl-11
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SUMMARY=	OpenSSL - a Toolkit for Transport Layer (TLS v1+) protocols and general purpose cryptographic library
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC =		openssl-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:e8be6a35fe41d10603c3cc635e93289ed00bf34b79671a3a4de64fcee00d5242
+COMPONENT_ARCHIVE_HASH=	sha256:aaf2fcb575cdf6491b98ab4829abf78a3dec8402b8b81efc8f23c00d443981bf
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =	OpenSSL, SSLeay
 
@@ -161,5 +160,9 @@ COMPONENT_TEST_TRANSFORMS = \
 
 REQUIRED_PACKAGES += developer/build/makedepend
 # Perl is needed for Configure, tests and the distributed CA.pl script.
-# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/perl-522
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += system/library
