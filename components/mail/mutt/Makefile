@@ -24,12 +24,13 @@
 # Copyright 2019, Michal Nowak
 #
 
-BUILD_BITS=		64
-
+BUILD_BITS=			64
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
 COMPONENT_VERSION=	2.0.5
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:e21d5aec0d3110f89d390929e56a38794a94f5843120d9ff59b21da78fd0004d
@@ -65,9 +66,9 @@ CONFIGURE_OPTIONS  +=		--with-sasl
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/libidn2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/slang
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl
