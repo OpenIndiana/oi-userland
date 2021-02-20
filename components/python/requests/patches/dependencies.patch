@@ -1,3 +1,6 @@
+We use a newer version of chardet, which is fully compatible but not allowed
+in our version yet.
+
 We are not using certifi package on Solaris as the location of the standard
 certs bundle is patched directly into requests.
 
@@ -8,9 +11,12 @@ of urllib3 (which is why we can allow 1.25.1).
 
 --- requests-2.22.0/setup.py
 +++ requests-2.22.0/setup.py
-@@ -44,8 +44,7 @@ packages = ['requests']
+@@ -42,10 +42,9 @@ if sys.argv[-1] == 'publish':
+ packages = ['requests']
+ 
  requires = [
-     'chardet>=3.0.2,<3.1.0',
+-    'chardet>=3.0.2,<3.1.0',
++    'chardet>=3.0.2,<5',
      'idna>=2.5,<2.9',
 -    'urllib3>=1.21.1,<1.26,!=1.25.0,!=1.25.1',
 -    'certifi>=2017.4.17'
@@ -21,7 +27,8 @@ of urllib3 (which is why we can allow 1.25.1).
 --- requests-2.22.0/requests.egg-info/requires.txt
 +++ requests-2.22.0/requests.egg-info/requires.txt
 @@ -1,7 +1,6 @@
- chardet<3.1.0,>=3.0.2
+-chardet<3.1.0,>=3.0.2
++chardet<5,>=3.0.2
  idna<2.9,>=2.5
 -urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1
 -certifi>=2017.4.17
@@ -29,3 +36,18 @@ of urllib3 (which is why we can allow 1.25.1).
  
  [security]
  pyOpenSSL>=0.14
+--- requests-2.22.0/requests/__init__.py
++++ requests-2.22.0/requests/__init__.py
+@@ -65,10 +65,8 @@ def check_compatibility(urllib3_version,
+     # Check chardet for compatibility.
+     major, minor, patch = chardet_version.split('.')[:3]
+     major, minor, patch = int(major), int(minor), int(patch)
+-    # chardet >= 3.0.2, < 3.1.0
+-    assert major == 3
+-    assert minor < 1
+-    assert patch >= 2
++    # chardet >= 3.0.2, < 5.0.0
++    assert (3, 0, 2) <= (major, minor, patch) < (5, 0, 0)
+ 
+ 
+ def _check_cryptography(cryptography_version):
