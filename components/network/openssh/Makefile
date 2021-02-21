@@ -24,13 +24,13 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS=		64
-
+BUILD_BITS=			64
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
 COMPONENT_VERSION=	8.1p1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
@@ -109,12 +109,12 @@ COMPONENT_TEST_TARGETS	= tests
 
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
 # Bogus dependency due to libssp
