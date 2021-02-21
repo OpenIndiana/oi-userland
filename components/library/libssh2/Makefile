@@ -25,16 +25,17 @@
 #
 
 BUILD_BITS=			32_and_64
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libssh2
 COMPONENT_VERSION=	1.9.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.libssh2.org/
 COMPONENT_SUMMARY=	libssh2 - client-side C library implementing the SSH2 protocol
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:d5fb8bd563305fd1074dda90bd053fb2d29fc4bce048d182f96eaa466dfadafd
+COMPONENT_ARCHIVE_HASH=	sha256:d5fb8bd563305fd1074dda90bd053fb2d29fc4bce048d182f96eaa466dfadafd
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	library/libssh2
 COMPONENT_LICENSE=	BSD
@@ -49,6 +50,6 @@ CONFIGURE_OPTIONS +=   --disable-static
 unexport SHELLOPTS
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
