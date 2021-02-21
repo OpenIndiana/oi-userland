@@ -16,11 +16,12 @@
 
 BUILD_BITS=			32_and_64
 BUILD_STYLE=		cmake
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgit2
 COMPONENT_VERSION=	0.28.5
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		library/libgit2
 COMPONENT_CLASSIFICATION=Development/Source Code Management
 COMPONENT_PROJECT_URL=	https://libgit2.github.com/
@@ -45,6 +46,6 @@ COMPONENT_TEST_TARGETS = ""
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/http-parser
 REQUIRED_PACKAGES += library/libssh2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
