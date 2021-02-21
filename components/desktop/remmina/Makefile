@@ -14,11 +14,12 @@
 
 BUILD_BITS= 64
 BUILD_STYLE= cmake
-
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		remmina
 COMPONENT_VERSION=	1.4.8
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Remmina remote desktop client
 COMPONENT_PROJECT_URL=	https://www.freerdp.com
 COMPONENT_FMRI=		desktop/remote-desktop/remmina
@@ -43,6 +44,7 @@ CMAKE_OPTIONS += -DGETTEXT_MSGMERGE_EXECUTABLE=/usr/bin/gmsgmerge
 CMAKE_OPTIONS += -DGETTEXT_MSGFMT_EXECUTABLE=/usr/bin/gmsgfmt
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += desktop/remote-desktop/freerdp
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -55,8 +57,7 @@ REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/libsodium
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt
 REQUIRED_PACKAGES += x11/library/libx11
