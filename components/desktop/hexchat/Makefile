@@ -13,19 +13,20 @@
 # Copyright 2020 Michal Nowak
 #
 
-BUILD_BITS=		32
+BUILD_BITS=			32
 BUILD_STYLE=		meson
+USE_OPENSSL11=		yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexchat
 COMPONENT_VERSION=	2.14.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://hexchat.github.io/
 COMPONENT_SUMMARY=	HexChat IRC client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:901a9d13db5a4da69b827f6093306bbd16863dc49016f7668bd3e4506512e882
+COMPONENT_ARCHIVE_HASH= sha256:901a9d13db5a4da69b827f6093306bbd16863dc49016f7668bd3e4506512e882
 COMPONENT_ARCHIVE_URL=	https://dl.hexchat.net/hexchat/$(COMPONENT_ARCHIVE)
 
 # We need to use non-default User-Agent for the fetch, otherwise we are denied
@@ -44,6 +45,7 @@ CONFIGURE_OPTIONS += -Dwith-appdata=false
 CONFIGURE_OPTIONS += -Dwith-plugin=false
 
 REQUIRED_PACKAGES += runtime/perl-522
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -53,7 +55,7 @@ REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += library/libproxy
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += x11/library/libx11
