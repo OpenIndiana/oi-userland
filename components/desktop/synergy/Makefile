@@ -11,13 +11,13 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
-
+USE_OPENSSL11=			yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		synergy
+COMPONENT_NAME=			synergy
 COMPONENT_VERSION=      1.7.6
-COMPONENT_REVISION=     2
-COMPONENT_PROJECT_URL=	http://synergy-project.org
+COMPONENT_REVISION=     3
+COMPONENT_PROJECT_URL=	https://synergy-project.org
 COMPONENT_SUMMARY=	Synergy: Mouse and Keyboard Sharing
 COMPONENT_SRC=		$(COMPONENT_NAME)-core-$(COMPONENT_VERSION)-stable
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -64,7 +64,7 @@ test:		$(NO_TESTS)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
