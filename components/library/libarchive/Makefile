@@ -24,12 +24,13 @@
 #
 
 PREFERRED_BITS=		64
-BUILD_BITS=		32_and_64
-
+BUILD_BITS=			32_and_64
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
 COMPONENT_VERSION=	3.5.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	multi-format archive and compression library
 COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
  interface for reading and writing archives in various formats such as\
@@ -111,6 +112,6 @@ REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
