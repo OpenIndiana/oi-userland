@@ -21,7 +21,7 @@
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2015 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
-# Copyright 2016, 2020 Andreas Wacknitz <a.wacknitz@gmx.de>
+# Copyright 2016, 2021 Andreas Wacknitz <a.wacknitz@gmx.de>
 #
 BUILD_BITS=				64
 
@@ -33,7 +33,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
 COMPONENT_MAJOR_VERSION=3.19
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).5
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).6
 COMPONENT_PROJECT_URL=  https://www.cmake.org/
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
@@ -46,7 +46,7 @@ CMake generates native makefiles and workspaces that can be used in the \
 workspaces that can be used in the compiler environment of your choice.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c432296eb5dec6d71eae15d140f6297d63df44e9ffe3e453628d1dc8fc4201ce
+COMPONENT_ARCHIVE_HASH=	sha256:ec87ab67c45f47c4285f204280c5cde48e1c920cfcfed1555b27fb3b1a1d20ba
 COMPONENT_ARCHIVE_URL=	https://www.cmake.org/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD, MIT, GPLv2, Curl, PD
 
