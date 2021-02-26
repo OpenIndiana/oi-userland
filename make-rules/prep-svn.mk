@@ -59,6 +59,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 	 $(SVN) export $$(SVN_REPO$(1)) $$(SVN_REV$(1):%=--revision %) \
 			$$$${TMP_REPO} && \
 	 /usr/gnu/bin/tar --create --file - --absolute-names \
+              --sort=name --mtime="2018-10-05 00:00Z" --owner=0 --group=0 --numeric-owner \
 	      --transform="s;$$$${TMP_REPO};$$(COMPONENT_SRC$(1));g" \
 	      --bzip2 $$$${TMP_REPO} >$$@ && \
 	 $(RM) -rf $$$${TMP_REPO} && \
