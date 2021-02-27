@@ -15,23 +15,21 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS=		32
-
+BUILD_BITS=			32
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		irssi
 COMPONENT_VERSION=	1.2.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	irssi - a terminal based IRC client
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_FMRI=		network/chat/irssi
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:6727060c918568ba2ff4295ad736128dba0b995d7b20491bca11f593bd857578
-COMPONENT_ARCHIVE_URL= \
-	https://github.com/irssi/irssi/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://irssi.org/
+COMPONENT_ARCHIVE_HASH= sha256:6727060c918568ba2ff4295ad736128dba0b995d7b20491bca11f593bd857578
+COMPONENT_ARCHIVE_URL= https://github.com/irssi/irssi/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://irssi.org/
 COMPONENT_LICENSE=	GPLv2+
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
@@ -52,12 +50,12 @@ COMPONENT_PRE_CONFIGURE_ACTION += $(CLONEY) $(SOURCE_DIR) $(@D)
 COMPONENT_POST_INSTALL_ACTION += ( for x in perllocal.pod .packlist '*.la' ; do find $(PROTO_DIR) -name $$x -exec rm -f {} \; ; done);
 COMPONENT_POST_INSTALL_ACTION += ( for x in COPYING AUTHORS ChangeLog ; do cp $(SOURCE_DIR)/$$x $(PROTOUSRSHAREDOCDIR)/irssi/$$x ; done );
 
-# Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += system/library
 # Bogus dependency due to libssp
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
