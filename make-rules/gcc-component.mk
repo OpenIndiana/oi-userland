@@ -150,6 +150,7 @@ unexport SHELLOPTS
 # With the soft stacksize limit set to 16384 we get reasonably good
 # test results.
 #
+ifeq   ($(strip $(MACH)),i386)
 COMPONENT_PRE_TEST_ACTION += \
 	(cd $(COMPONENT_TEST_DIR) ; \
 	 ulimit -Ss 16385 ; \
@@ -161,6 +162,19 @@ COMPONENT_PRE_TEST_ACTION += \
 	        gsed -e '/Summary ===$/,$p' -e  'd' $f >> $f.2; \
 	        mv $f.2 $f; done; \
 	 $(GMAKE) mail-report.log)
+else
+COMPONENT_PRE_TEST_ACTION += \
+	(cd $(COMPONENT_TEST_DIR) ; \
+	 ulimit -Ss 16385 ; \
+	 $(ENV) $(COMPONENT_PRE_TEST_ENV) \
+	        $(GMAKE) -k -i $(JOBS:%=-j%) check check-target RUNTESTFLAGS="--target_board=unix/-m64" ; \
+	 $(FIND) . -name  '*.sum' | while read f; do \
+	        gsed -e '1,/^Running target unix/p' -e  'd' $f > $f.2; \
+	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | sort -k 2 >> $f.2; \
+	        gsed -e '/Summary ===$/,$p' -e  'd' $f >> $f.2; \
+	        mv $f.2 $f; done; \
+	 $(GMAKE) mail-report.log)
+endif
 
 COMPONENT_TEST_CMD = $(CAT)
 COMPONENT_TEST_TARGETS = mail-report.log
