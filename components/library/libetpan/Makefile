@@ -10,21 +10,22 @@
 
 #
 # Copyright (c) 2016 Sergey Avseyev
-# Copyright (c) 2020 Andreas Wacknitz
+# Copyright (c) 2020, 2021 Andreas Wacknitz
 #
 BUILD_BITS=			32_and_64
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libetpan
 COMPONENT_VERSION=	1.9.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.etpan.org/libetpan.html
 COMPONENT_SUMMARY=	A portable, efficient framework for different kinds of mail access: IMAP, SMTP, POP and NNTP
 COMPONENT_FMRI=         library/libetpan
 COMPONENT_CLASSIFICATION=       System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:82ec8ea11d239c9967dbd1717cac09c8330a558e025b3e4dc6a7594e80d13bb1
+COMPONENT_ARCHIVE_HASH= sha256:82ec8ea11d239c9967dbd1717cac09c8330a558e025b3e4dc6a7594e80d13bb1
 COMPONENT_ARCHIVE_URL=	https://github.com/dinhviethoa/libetpan/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-3-Clause
 COMPONENT_LICENSE_FILE=	COPYRIGHT
@@ -37,10 +38,9 @@ CONFIGURE_OPTIONS += --with-sasl
 CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/expat
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl
