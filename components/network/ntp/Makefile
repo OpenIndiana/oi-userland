@@ -26,11 +26,13 @@
 #
 
 BUILD_BITS=			64
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
 COMPONENT_VERSION=	4.2.8p15
 IPS_COMPONENT_VERSION=	$(subst p,.,$(COMPONENT_VERSION))
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
 COMPONENT_PROJECT_URL=	https://www.ntp.org/
@@ -135,7 +137,7 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += system/library
