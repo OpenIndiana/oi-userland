@@ -22,22 +22,22 @@
 #
 # Copyright (c) 2010, 2018, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2021, Andreas Wacknitz
 #
 
+BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
-COMPONENT_VERSION=	4.2.8p13
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	4.2.8p15
 IPS_COMPONENT_VERSION=	$(subst p,.,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
-COMPONENT_PROJECT_URL=	http://www.ntp.org/
+COMPONENT_PROJECT_URL=	https://www.ntp.org/
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	 \
-	sha256:288772cecfcd9a53694ffab108d1825a31ba77f3a8466b0401baeca3bc232a38
-COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:f65840deab68614d5d7ceb2d0bb9304ff70dcdedd09abb79754a87536b849c19
+COMPONENT_ARCHIVE_URL=	https://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	service/network/ntp
 COMPONENT_CLASSIFICATION=	System/Services
 COMPONENT_LICENSE=	ntp license
@@ -46,31 +46,32 @@ PATCH_LEVEL = 0
 
 ASLR_MODE= $(ASLR_ENABLE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= build $(TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ARGS=
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf --force --install )
 
-CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
+CFLAGS += -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
 CONFIGURE_BINDIR.64 = $(USRSBINDIR)
 CONFIGURE_SBINDIR.64 = $(USRSBINDIR)
 
 CONFIGURE_OPTIONS +=	--with-binsubdir=sbin
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/inet
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc/inet
+CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR)/inet
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/inet
 CONFIGURE_OPTIONS +=	--enable-getifaddrs
 CONFIGURE_OPTIONS +=	--enable-all-clocks
 # debugging is enabled by default, causes 9705
-CONFIGURE_OPTIONS +=	--disable-debugging
+#CONFIGURE_OPTIONS +=   --disable-debugging
+CONFIGURE_OPTIONS +=	--enable-debugging
+CONFIGURE_OPTIONS +=	--enable-debugg-timing
 CONFIGURE_OPTIONS +=	--disable-optional-args
 CONFIGURE_OPTIONS +=	--enable-parse-clocks
 CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
 # To avoid arc4random_addrandom error
-CONFIGURE_OPTIONS +=	--without-sntp
+#CONFIGURE_OPTIONS +=   --without-sntp
 CONFIGURE_OPTIONS +=	--without-ntpsnmpd
 CONFIGURE_OPTIONS +=	--with-crypto=openssl
 CONFIGURE_OPTIONS +=	--with-openssl-incdir=$(USRINCDIR)
@@ -79,7 +80,7 @@ CONFIGURE_OPTIONS +=	--disable-problem-tests
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-COMPONENT_INSTALL_ENV += PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_INSTALL_ENV += PATH=$(PATH.gnu)
 
 # of the build and test and deleting the extra lines, it is easier to just
 # cat together all of the logs. The test TEST_PROGNAME3 tests the system
@@ -105,6 +106,10 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
 		print 'grep -v no-leap |  \\' \
 		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+		print 'grep -v add-leap |  \\' \
+		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+		print 'grep -v del-leap |  \\' \
+		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
 		print 'sed -e "s/4.2..p[0-9]*//" | \\' \
 		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
 		print 'sed -e "s/^.*\[[0-9]*\]: //" | \\' \
@@ -126,18 +131,12 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 		exit 2; \
 	fi
 
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/libedit
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += library/libevent2
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
