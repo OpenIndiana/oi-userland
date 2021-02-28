@@ -9,24 +9,23 @@
 #
 
 #
-# Copyright 2020, Andreas Wacknitz <a.wacknitz@gmx.de>
+# Copyright 2020, 2021, Andreas Wacknitz <a.wacknitz@gmx.de>
 #
 
 BUILD_BITS=		64
-
+USE_OPENSSL11=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			isync
-COMPONENT_VERSION=		1.3.2
+COMPONENT_VERSION=		1.4.1
 COMPONENT_FMRI=			mail/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL=	https://$(COMPONENT_NAME).sourceforge.net
 COMPONENT_SUMMARY=		isync is a command line application which synchronizes mailboxes
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9106d1428c912f421a659a22c3c4dbe9fe110f3f4da1498038e6ebf8d284e805
-COMPONENT_ARCHIVE_URL= \
-	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_HASH=	sha256:0d36dbb57bb06c8bbe10bb66f40ae543095b143443209b7037167be600420150
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=		GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
@@ -38,6 +37,6 @@ CFLAGS+= -std=c99 $(CPP_XPG6MODE)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
