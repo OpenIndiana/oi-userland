@@ -1,0 +1,16 @@
+This has been submitted to the NTP community as bug 3721.
+https://bugs.ntp.org/show_bug.cgi?id=3721
+
+--- ntpd/ntp_proto.c
++++ ntpd/ntp_proto.c
+@@ -2886,7 +2886,9 @@ clock_update(
+ 	 * Clock exceeds panic threshold. Life as we know it ends.
+ 	 */
+ 	case -1:
+-		msyslog(LOG_ERR, "Clock offset exceeds panic threshold.");
++		msyslog(LOG_ERR,
++		    "Clock offset %d seconds exceeds panic threshold.", 
++		    (int) sys_offset);
+ #ifdef HAVE_LIBSCF_H
+ 		/*
+ 		 * For Solaris enter the maintenance mode.
