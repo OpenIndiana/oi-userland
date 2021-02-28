@@ -1,44 +1,35 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 # PSARC/2011/088
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+
 set name=pkg.fmri \
-    value=pkg:/service/network/ftp/proftpd@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
-set name=pkg.summary value="FTP Server and Utilities"
-set name=info.classification value="org.opensolaris.category.2008:System/Core"
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2011/088
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend type=require fmri=pkg:/network/ftp/ftp-common
+
 # This package name has known conflicts with other packages in the WOS
 set pkg.linted.pkglint.manifest004=true
 
-<transform file path=usr/lib/proftpd/mod_.*\.so -> default pkg.linted.userland.action001.2 true >
+<transform file path=usr/lib/proftpd/$(MACH64)/mod_.*\.so -> default pkg.linted.userland.action001.2 true >
 
 link path=usr/bin/ftpasswd target=../lib/proftpd/bin/ftpasswd mediator=ftpd mediator-implementation=proftpd
 link path=usr/bin/ftpcount target=../lib/proftpd/bin/ftpcount mediator=ftpd mediator-implementation=proftpd
@@ -62,6 +53,7 @@ file auth_service-network-ftpd path=etc/security/auth_attr.d/service-network-ftp
 file prof_service-network-ftpd path=etc/security/prof_attr.d/service-network-ftpd
 file proftpd.xml path=lib/svc/manifest/network/proftpd.xml
 file svc-ftp path=lib/svc/method/svc-ftp
+
 file path=usr/include/proftpd/ascii.h
 file path=usr/include/proftpd/auth.h
 file path=usr/include/proftpd/bindings.h
@@ -133,7 +125,6 @@ file path=usr/include/proftpd/utf8.h
 file path=usr/include/proftpd/var.h
 file path=usr/include/proftpd/version.h
 file path=usr/include/proftpd/xferlog.h
-file ManageFTP.html path=usr/lib/help/auths/locale/C/ManageFTP.html
 file path=usr/lib/$(MACH64)/pkgconfig/proftpd.pc
 file path=usr/lib/proftpd/bin/ftpasswd
 file path=usr/lib/proftpd/bin/ftpcount
@@ -143,29 +134,15 @@ file path=usr/lib/proftpd/bin/ftpquota
 file path=usr/lib/proftpd/bin/ftptop
 file path=usr/lib/proftpd/bin/ftpwho
 file path=usr/lib/proftpd/bin/prxs
-file path=usr/lib/proftpd/mod_auth_gss.so
-file path=usr/lib/proftpd/mod_facl.so
-file path=usr/lib/proftpd/mod_gss.so
-file path=usr/lib/proftpd/mod_tls.so
-file path=usr/lib/proftpd/mod_wrap.so
+file path=usr/lib/proftpd/$(MACH64)/mod_auth_gss.so
+file path=usr/lib/proftpd/$(MACH64)/mod_facl.so
+file path=usr/lib/proftpd/$(MACH64)/mod_gss.so
+file path=usr/lib/proftpd/$(MACH64)/mod_tls.so
+file path=usr/lib/proftpd/$(MACH64)/mod_wrap.so
 file path=usr/lib/proftpd/sbin/ftpscrub
 file path=usr/lib/proftpd/sbin/ftpshut
 link path=usr/lib/proftpd/sbin/in.proftpd target=proftpd
 file path=usr/lib/proftpd/sbin/proftpd
-file proftpd_migration.txt path=usr/share/doc/proftpd/proftpd_migration.txt
-file doc/Configuration.html path=usr/share/doc/proftpd/Configuration.html
-file doc/modules/mod_auth_file.html path=usr/share/doc/proftpd/modules/mod_auth_file.html
-file doc/modules/mod_auth_pam.html path=usr/share/doc/proftpd/modules/mod_auth_pam.html
-file doc/modules/mod_ctrls.html path=usr/share/doc/proftpd/modules/mod_ctrls.html
-file doc/modules/mod_delay.html path=usr/share/doc/proftpd/modules/mod_delay.html
-file doc/modules/mod_dso.html path=usr/share/doc/proftpd/modules/mod_dso.html
-file doc/modules/mod_facl.html path=usr/share/doc/proftpd/modules/mod_facl.html
-file doc/modules/mod_facts.html path=usr/share/doc/proftpd/modules/mod_facts.html
-file doc/modules/mod_ident.html path=usr/share/doc/proftpd/modules/mod_ident.html
-file doc/modules/mod_lang.html path=usr/share/doc/proftpd/modules/mod_lang.html
-file doc/contrib/mod_gss.html path=usr/share/doc/proftpd/modules/mod_gss.html
-file doc/contrib/mod_tls.html path=usr/share/doc/proftpd/modules/mod_tls.html
-file doc/contrib/mod_wrap.html path=usr/share/doc/proftpd/modules/mod_wrap.html
 file path=usr/share/locale/bg_BG/LC_MESSAGES/proftpd.mo
 file path=usr/share/locale/en_US/LC_MESSAGES/proftpd.mo
 file path=usr/share/locale/es_ES/LC_MESSAGES/proftpd.mo
@@ -188,6 +165,3 @@ file path=usr/share/man/man8/ftpdctl.8
 file path=usr/share/man/man8/ftpscrub.8
 file path=usr/share/man/man8/ftpshut.8
 file path=usr/share/man/man8/proftpd.8
-
-depend type=require fmri=pkg:/network/ftp/ftp-common
-
