@@ -24,15 +24,16 @@
 #
 
 BUILD_BITS = 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
 COMPONENT_VERSION=	1.4.55
-COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
+COMPONENT_REVISION=	1
+COMPONENT_PROJECT_URL=	https://www.lighttpd.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:065259fb618774df516add13df22a52cac76a8f59e4561f143fe3ec810f4a03a
+COMPONENT_ARCHIVE_HASH= sha256:065259fb618774df516add13df22a52cac76a8f59e4561f143fe3ec810f4a03a
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lighttpd
 
@@ -68,12 +69,13 @@ CONFIGURE_OPTIONS +=	--with-ldap
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/fastcgi/spawn-fcgi
