@@ -24,28 +24,26 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-PREFERRED_BITS=		64
-
+BUILD_BITS=			64
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lynx
 COMPONENT_VERSION=	2.8.9rel.1
 IPS_COMPONENT_VERSION=	2.8.9
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		web/browser/lynx
 COMPONENT_SUMMARY=	Text-mode web browser
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_PROJECT_URL=	https://lynx.invisible-island.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)$(COMPONENT_VERSION).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:387f193d7792f9cfada14c60b0e5c0bff18f227d9257a39483e14fa1aaf79595
+COMPONENT_ARCHIVE_HASH= sha256:387f193d7792f9cfada14c60b0e5c0bff18f227d9257a39483e14fa1aaf79595
 COMPONENT_ARCHIVE_URL=	http://invisible-mirror.net/archives/$(COMPONENT_NAME)/tarballs/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Needed to successfully find lynx.pot.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -62,6 +60,8 @@ CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/lynx
 CONFIGURE_OPTIONS +=	--with-ssl
 CONFIGURE_OPTIONS +=	--with-screen=ncurses
 
+# lynx should be installed before running tests
+#
 # Use the HTML and CSS styling external test suite as referenced at
 # http://www.w3.org/2005/MWI/Tests/
 COMPONENT_TEST_CMD = $(@D)/src/lynx
@@ -74,15 +74,8 @@ COMPONENT_TEST_TARGETS =
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-# lynx should be installed before running tests
-test:		$(TEST_64)
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
