@@ -24,19 +24,19 @@
 #
 
 BUILD_BITS=	64
-
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xmlsec
 COMPONENT_VERSION=	1.2.31
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.aleksey.com/xmlsec
 COMPONENT_FMRI=		library/xmlsec
 COMPONENT_SUMMARY=	XML Security Library
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_SRC=	$(COMPONENT_NAME)1-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:9b10bc52cc31e4f76162e3975e50db26b71ab49c571d810b311ca626be5a0b26
+COMPONENT_ARCHIVE_HASH= sha256:9b10bc52cc31e4f76162e3975e50db26b71ab49c571d810b311ca626be5a0b26
 COMPONENT_ARCHIVE_URL=	https://www.aleksey.com/xmlsec/download/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	Copyright
@@ -60,7 +60,7 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/nspr
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/mozilla-nss
 REQUIRED_PACKAGES += system/library/security/libgcrypt
