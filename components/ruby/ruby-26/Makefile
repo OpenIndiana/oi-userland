@@ -25,19 +25,18 @@
 #
 
 BUILD_BITS=		64
-
+USE_OPENSSL11=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	2.6.6
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Ruby, RubyGems, and Rake
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://cache.ruby-lang.org/pub/ruby/2.6/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:5db187882b7ac34016cd48d7032e197f07e4968f406b0690e20193b9b424841f
+COMPONENT_ARCHIVE_HASH= sha256:5db187882b7ac34016cd48d7032e197f07e4968f406b0690e20193b9b424841f
 COMPONENT_FMRI=		runtime/ruby-26
 COMPONENT_CLASSIFICATION= Development/Ruby
 COMPONENT_LICENSE=	Ruby License
@@ -134,18 +133,18 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/Finished tests in Xs, X tests\/s, X assertions/p"' \
     '-e "/.* tests, X assertions, .* failures, .* errors, X skips/p"'
 
+# Bogus dependency due to libssp
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libyaml
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
