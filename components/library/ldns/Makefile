@@ -9,21 +9,27 @@
 #
 
 # Copyright (c) 2016, Adam Stevko <adam.stevko@gmail.com>
+# Copyright (c) 2021, Andreas Wacknitz
 
+BUILD_BITS= 32_and_64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ldns
-COMPONENT_VERSION=	1.6.17
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.7.1
+COMPONENT_SUMMARY=	ldns is a library to simplify DNS programming
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:8b88e059452118e8949a2752a55ce59bc71fa5bc414103e17f5b6b06f9bcc8cd
-COMPONENT_PROJECT_URL=	http://www.nlnetlabs.nl/projects/ldns/
-COMPONENT_ARCHIVE_URL=	http://www.nlnetlabs.nl/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:8ac84c16bdca60e710eea75782356f3ac3b55680d40e1530d7cea474ac208229
+COMPONENT_PROJECT_URL=	https://www.nlnetlabs.nl/projects/ldns/
+COMPONENT_ARCHIVE_URL=	https://www.nlnetlabs.nl/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_FMRI=		library/dns/ldns
+COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	ldns.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Missing files in build dir for tests without this.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -32,12 +38,8 @@ CONFIGURE_OPTIONS +=    --with-examples
 CONFIGURE_OPTIONS +=    --with-drill
 CONFIGURE_OPTIONS +=	--disable-static
 
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(NO_TESTS)
-
-REQUIRED_PACKAGES += library/security/openssl
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
