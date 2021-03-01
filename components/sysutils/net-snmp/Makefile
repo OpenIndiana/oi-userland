@@ -24,11 +24,11 @@
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
 #
 BUILD_BITS= 64_and_32
-
-DOXYGEN= /usr/bin/doxygen
+USE_OPENSSL11= yes
 
 include ../../../make-rules/shared-macros.mk
 
+DOXYGEN= /usr/bin/doxygen
 PERL_VERSION=5.24
 PERL=$(PERL.$(PERL_VERSION))
 PERL_ARCH=$(shell $(PERL) -e 'use Config; print $$Config{archname}')
@@ -37,13 +37,12 @@ PATH=$(VPATH):$(PATH.gnu)
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.8
-COMPONENT_REVISION=	3
-COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
+COMPONENT_REVISION=	4
+COMPONENT_PROJECT_URL=	https://www.net-snmp.org/
 COMPONENT_FMRI= system/management/snmp/net-snmp
 COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:b2fc3500840ebe532734c4786b0da4ef0a5f67e51ef4c86b3345d697e4976adf
+COMPONENT_ARCHIVE_HASH=	sha256:b2fc3500840ebe532734c4786b0da4ef0a5f67e51ef4c86b3345d697e4976adf
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/net-snmp/files/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Enterprise Management
 COMPONENT_SUMMARY= Net-SNMP Agent files and libraries
@@ -155,18 +154,19 @@ install:  build $(INSTALL_32_and_64)
 test: $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
-# Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += service/picl
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libpcap
-REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/management/snmp/net-snmp
+
 # Bogus dependency due to libssp
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 # Without the picl headers, the build fails on a missing SPARC-specific file.
 REQUIRED_PACKAGES += system/header/header-picl
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += service/picl
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libpcap
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/management/snmp/net-snmp
