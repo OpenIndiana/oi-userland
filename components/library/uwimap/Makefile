@@ -20,11 +20,13 @@
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 #
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		imap
 COMPONENT_VERSION=	2007f
 IPS_COMPONENT_VERSION=	0.2007.6
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.washington.edu/imap/
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -77,5 +79,6 @@ install:	$(INSTALL_COMMON)
 
 test:	$(NO_TESTS)
 
-REQUIRED_PACKAGES += library/security/openssl
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
