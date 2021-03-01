@@ -12,14 +12,15 @@
 # Copyright 2012-2013, EveryCity Ltd. All rights reserved.
 #
 
-BUILD_BITS = 64
-
+BUILD_BITS= 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nginx
 COMPONENT_VERSION=	1.18.0
+COMPONENT_REVISION=	1
 COMPONENT_LICENSE=	BSD
-COMPONENT_PROJECT_URL=	http://nginx.net/
+COMPONENT_PROJECT_URL=	https://nginx.net/
 COMPONENT_SUMMARY=	Nginx Webserver
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -70,11 +71,12 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 COMPONENT_POST_INSTALL_ACTION+= \
 	( $(MKDIR) $(PROTO_DIR)/var/nginx/logs )
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/geoip
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
