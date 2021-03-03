@@ -66,10 +66,10 @@ COMPONENT_INSTALL_ENV += GOROOT="$(PROTO_DIR)$(GOROOT_FINAL)"
 COMPONENT_INSTALL_ENV += GOCACHE="$(SOURCE_DIR)/gocache"
 COMPONENT_INSTALL_ENV += GOPATH="$(SOURCE_DIR)/gopath"
 
+BUILD_BITS= 64
+BUILD_STYLE= justmake
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # We have to fiddle with the package archives to get them into the same source
 # directory so that we can use the standard build targets.  We're effectively
@@ -115,13 +115,6 @@ define COMPONENT_INSTALL_ACTION=
        	| egrep -v '\.go|\.s|\.bash|\.txt|\.c|\.tmpl|\.h|\.pl|\.md|\.S|\.py|\.dist|\.rc|\.bat|README|Makefile|\.awk|\.rules|\.mod|\.json|LICENSE|PATENTS'\
 	| xargs rm;
 endef
-
-# common targets
-build:		$(BUILD_64)
-
-install:	build $(INSTALL_64)
-
-test:		$(TEST_64)
 
 REQUIRED_PACKAGES += developer/golang-115
 # Auto-generated dependencies
