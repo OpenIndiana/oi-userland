@@ -20,13 +20,13 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= babl
-COMPONENT_VERSION= 0.1.84
+COMPONENT_VERSION= 0.1.86
 COMPONENT_SUMMARY= Babl is a dynamic, any to any, pixel format conversion library
 COMPONENT_FMRI = image/library/babl
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:e7e38b8441f77feb9dc8231cb434a86190a21f2f3692c281457e99d35e9c34ea
+COMPONENT_ARCHIVE_HASH= sha256:0b3f595159ad1b216cd729c0504c3a5f6cf780c641f4dc63fc164f3c0382c8f0
 COMPONENT_ARCHIVE_URL= https://ftp.gimp.org/pub/babl/0.1/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://gegl.org/babl/
 COMPONENT_LICENSE = LGLPv3
@@ -62,6 +62,7 @@ LD_Z_IGNORE=
 unexport SHELLOPTS
 
 # Build dependencies
+REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += web/browser/w3m
