@@ -29,15 +29,6 @@
  end
  
  def pacemaker_remote_running?()
-@@ -1039,6 +1052,8 @@
-     sleep(10)
-     if ISSYSTEMCTL
-       exec("systemctl", "restart", "pcsd")
-+		elsif ISSOLARIS
-+		  exec("svcadm", "restart", "pcsd")	
-     else
-       exec("service", "pcsd", "restart")
-     end
 @@ -1803,7 +1818,11 @@
  end
  
