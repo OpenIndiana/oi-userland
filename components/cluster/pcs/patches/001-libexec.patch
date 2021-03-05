@@ -1,68 +1,17 @@
---- pcs-0.9.159/pcs/lib/test/test_resource_agent.py.orig	2017-09-22 17:13:01.563005951 +0000
-+++ pcs-0.9.159/pcs/lib/test/test_resource_agent.py	2017-09-22 17:15:10.869389866 +0000
-@@ -1449,7 +1449,7 @@
-         )
- 
-         self.mock_runner.run.assert_called_once_with(
--            ["/usr/libexec/pacemaker/stonithd", "metadata"]
-+            ["/usr/lib/pacemaker/stonithd", "metadata"]
-         )
- 
-     def test_failed_to_get_xml(self):
-@@ -1465,7 +1465,7 @@
-         )
- 
-         self.mock_runner.run.assert_called_once_with(
--            ["/usr/libexec/pacemaker/stonithd", "metadata"]
-+            ["/usr/lib/pacemaker/stonithd", "metadata"]
-         )
- 
-     def test_invalid_xml(self):
-@@ -1481,7 +1481,7 @@
-         )
- 
-         self.mock_runner.run.assert_called_once_with(
--            ["/usr/libexec/pacemaker/stonithd", "metadata"]
-+            ["/usr/lib/pacemaker/stonithd", "metadata"]
-         )
- 
- 
-@@ -1832,7 +1832,7 @@
-                  }
-             ),
-             mock.call(
--                ["/usr/libexec/pacemaker/stonithd", "metadata"]
-+                ["/usr/lib/pacemaker/stonithd", "metadata"]
-             ),
-         ])
- 
---- pcs-0.9.159/pcsd/settings.rb.orig	2017-09-22 17:19:31.985029048 +0000
-+++ pcs-0.9.159/pcsd/settings.rb	2017-09-22 17:20:00.996652123 +0000
-@@ -6,8 +6,8 @@
- KEY_FILE = PCSD_VAR_LOCATION + 'pcsd.key'
- COOKIE_FILE = PCSD_VAR_LOCATION + 'pcsd.cookiesecret'
- 
--PENGINE = "/usr/libexec/pacemaker/pengine"
--CIB_BINARY = '/usr/libexec/pacemaker/cib'
-+PENGINE = "/usr/lib/pacemaker/pengine"
-+CIB_BINARY = '/usr/lib/pacemaker/cib'
- CRM_MON = "/usr/sbin/crm_mon"
- CRM_NODE = "/usr/sbin/crm_node"
- CRM_ATTRIBUTE = "/usr/sbin/crm_attribute"
---- pcs-0.9.168/pcs/settings_default.py.~1~	2019-08-19 13:04:09.763453554 +0000
-+++ pcs-0.9.168/pcs/settings_default.py	2019-08-19 13:04:59.553895969 +0000
-@@ -25,10 +25,10 @@
- booth_authkey_file_mode = 0o600
+--- pcs-0.10.1/pcs/settings_default.py-orig	Fri Nov 23 06:57:53 2018
++++ pcs-0.10.1/pcs/settings_default.py	Thu Feb 11 17:00:17 2021
+@@ -29,10 +29,10 @@
+ booth_authkey_bytes = 64
  cluster_conf_file = "/etc/cluster/cluster.conf"
  fence_agent_binaries = "/usr/sbin/"
--pengine_binary = "/usr/libexec/pacemaker/pengine"
--crmd_binary = "/usr/libexec/pacemaker/crmd"
--cib_binary = "/usr/libexec/pacemaker/cib"
--stonithd_binary = "/usr/libexec/pacemaker/stonithd"
-+pengine_binary = "/usr/lib/pacemaker/pengine"
-+crmd_binary = "/usr/lib/pacemaker/crmd"
-+cib_binary = "/usr/lib/pacemaker/cib"
-+stonithd_binary = "/usr/lib/pacemaker/stonithd"
- pcs_version = "0.9.168"
- crm_report = pacemaker_binaries + "crm_report"
- crm_verify = pacemaker_binaries + "crm_verify"
+-pacemaker_schedulerd = "/usr/libexec/pacemaker/pacemaker-schedulerd"
+-pacemaker_controld = "/usr/libexec/pacemaker/pacemaker-controld"
+-pacemaker_based = "/usr/libexec/pacemaker/pacemaker-based"
+-pacemaker_fenced = "/usr/libexec/pacemaker/pacemaker-fenced"
++pacemaker_schedulerd = "/usr/lib/pacemaker/pacemaker-schedulerd"
++pacemaker_controld = "/usr/lib/pacemaker/pacemaker-controld"
++pacemaker_based = "/usr/lib/pacemaker/pacemaker-based"
++pacemaker_fenced = "/usr/lib/pacemaker/pacemaker-fenced"
+ pcs_version = "0.10.1"
+ crm_report = os.path.join(pacemaker_binaries, "crm_report")
+ crm_verify = os.path.join(pacemaker_binaries, "crm_verify")
