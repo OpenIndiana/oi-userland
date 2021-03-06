@@ -23,10 +23,11 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS= 32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		privoxy
-COMPONENT_VERSION=	3.0.29
+COMPONENT_VERSION=	3.0.32
 COMPONENT_SUMMARY=	Privacy-enhancing, ad-removing web proxy
 COMPONENT_DESCRIPTION=	Privoxy is a non-caching web proxy with advanced\
  filtering capabilities for enhancing privacy, modifying web page data\
@@ -35,17 +36,15 @@ COMPONENT_DESCRIPTION=	Privoxy is a non-caching web proxy with advanced\
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-stable
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_PROJECT_URL=	https://www.privoxy.org/
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:25c6069efdaf577d47c257da63b03cd6d063fb790e19cc39603d82e5db72489d
+COMPONENT_ARCHIVE_HASH= sha256:c61de4008c62445ec18f1f270407cbf2372eaba93beaccdc9e3238bb2defeed7
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/ijbswa/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	web/proxy/privoxy
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_LICENSE=	GPLv2,GPLv3
 COMPONENT_LICENSE_FILE=	privoxy.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -60,8 +59,6 @@ CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 
 # common targets
-build:		$(BUILD_32)
-
 install:	$(INSTALL_32)
 	$(CP) $(BUILD_DIR_32)/templates/* $(PROTOETCDIR)/templates
 
@@ -77,8 +74,6 @@ install:	$(INSTALL_32)
 #	# svcadm enable privoxy
 # You may need to set the forward address in /etc/privoxy/config to the 
 # Oracle proxy to access pages in your web browser with privoxy running. 
-
-test: 		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
