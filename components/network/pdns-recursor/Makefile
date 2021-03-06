@@ -12,17 +12,18 @@
 # Copyright 2016 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
-BUILD_BITS=64
+BUILD_BITS= 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdns-recursor
 COMPONENT_VERSION=	4.3.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.powerdns.com/downloads.html
 COMPONENT_FMRI=		service/network/dns/powerdns-recursor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:2bc130f287dfdb32e03d0b38a4ac24baf1117f96eca9b407611c847fa08a628f
+COMPONENT_ARCHIVE_HASH= sha256:2bc130f287dfdb32e03d0b38a4ac24baf1117f96eca9b407611c847fa08a628f
 COMPONENT_ARCHIVE_URL=	http://downloads.powerdns.com/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_SUMMARY=	a DNS server
@@ -56,7 +57,7 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/c++/protobuf
 REQUIRED_PACKAGES += library/security/libsodium
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/boost
