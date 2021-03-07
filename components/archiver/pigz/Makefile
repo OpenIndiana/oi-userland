@@ -21,37 +21,31 @@
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2016, Jim Klimov
 # Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2021, Andreas Wacknitz
 #
 
+BUILD_BITS= 64
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pigz
-COMPONENT_VERSION=	2.4
+COMPONENT_VERSION=	2.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://zlib.net/pigz/
+COMPONENT_PROJECT_URL=	https://zlib.net/pigz/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:a4f816222a7b4269bd232680590b579ccc72591f1bb5adafcd7208ca77e14f73
+COMPONENT_ARCHIVE_HASH= sha256:2eed7b0d7449d1d70903f2a62cd6005d262eb3a8c9e98687bc8cbb5809db2a7d
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pigz
 COMPONENT_TEST_TARGETS=	test
 COMPONENT_FMRI= 	compress/pigz
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -std=c99 $(CPP_LARGEFILES)
 
 COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
