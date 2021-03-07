@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2021, Andreas Wacknitz
 #
 
 BUILD_BITS=		32_and_64
@@ -29,15 +30,14 @@ BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p11-kit
-COMPONENT_VERSION=	0.23.17
+COMPONENT_VERSION=	0.23.22
 COMPONENT_FMRI=		library/desktop/p11-kit
 COMPONENT_SUMMARY=	p11-kit provides a way to load and enumerate PKCS\#11 modules
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_PROJECT_URL=	https://p11-glue.github.io/p11-glue/p11-kit.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:5447b25d66c05f86cce5bc8856f7a074be84c186730e32c74069ca03386d7c1e
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:8a8f40153dd5a3f8e7c03e641f8db400133fb2a6a9ab2aee1b6d0cb0495ec6b6
 COMPONENT_ARCHIVE_URL=	https://github.com/p11-glue/p11-kit/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-like
 COMPONENT_LICENSE_FILE= p11-kit.license
@@ -76,7 +76,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/ERROR:/p" '
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libtasn1
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
