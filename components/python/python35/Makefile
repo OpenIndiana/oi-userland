@@ -25,11 +25,12 @@
 #
 
 BUILD_BITS=	64
-
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
 COMPONENT_VERSION=	3.5.10
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.python.org
 COMPONENT_SUMMARY=	The Python interpreter, libraries and utilities
 COMPONENT_CLASSIFICATION= Development/Python
@@ -141,6 +142,7 @@ COMPONENT_TEST_TRANSFORMS = "'/tests OK/ { results = 1 }; /^Re-running failed te
 REQUIRED_PACKAGES += developer/object-file
 # Required to build ossaudiodev module
 REQUIRED_PACKAGES += system/header/header-audio
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
@@ -150,8 +152,9 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
+#REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
