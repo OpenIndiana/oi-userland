@@ -24,21 +24,19 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS = 64
-
+BUILD_BITS= 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
-COMPONENT_VERSION=      3.7.7
-COMPONENT_REVISION=     3
+COMPONENT_VERSION=      3.7.10
 COMPONENT_FMRI=		runtime/python-37
 COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:06a0a9f1bf0d8cd1e4121194d666c4e28ddae4dd54346de6c343206599f02136
+COMPONENT_ARCHIVE_HASH= sha256:f8d82e7572c86ec9d55c8627aae5040124fd2203af400c383c821b980306ee6b
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      PSFv2
 COMPONENT_LICENSE_FILE=	python37.license
@@ -185,6 +183,7 @@ COMPONENT_TEST_TRANSFORMS  = "'/tests OK./ {results = 1}; /Total duration/ {resu
 REQUIRED_PACKAGES += developer/object-file
 # Required to build ossaudiodev module
 REQUIRED_PACKAGES += system/header/header-audio
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
@@ -194,8 +193,9 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
+#REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
