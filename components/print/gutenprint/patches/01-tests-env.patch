@@ -1,0 +1,84 @@
+# Adds settings to setup test environment
+# Disables escp2-weavetest for the time being since this takes days to run
+# Patch source internal, not passing upstream.  This is just for Userland testing.
+
+--- gutenprint-5.3.3/src/cups/Makefile.am	2019-05-25 08:08:51.000000000 -0700
++++ gutenprint-5.3.3-mod/src/cups/Makefile.am	2020-10-13 22:54:20.506881422 -0700
+@@ -100,6 +100,7 @@
+ AM_TESTS_ENVIRONMENT=$(STP_ENV)
+ test-rastertogutenprint: min-pagesize
+ test-rastertogutenprint.test: test-rastertogutenprint
++TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ TESTS= test-ppds.test test-rastertogutenprint.test
+ test-rastertogutenprint.log: test-ppds.log
+ 
+--- gutenprint-5.3.3/src/cups/Makefile.in	2019-08-25 08:14:20.000000000 -0700
++++ gutenprint-5.3.3-mod/src/cups/Makefile.in	2020-10-21 23:51:05.335908905 -0700
+@@ -770,6 +770,7 @@
+ @BUILD_SIMPLIFIED_CUPS_PPDS_TRUE@BUILD_SIMPLE_PPDS = -DGENERATE_SIMPLIFIED_PPDS
+ @BUILD_CUPS_TRUE@sbin_SCRIPTS = cups-genppdupdate
+ @BUILD_CUPS_TRUE@AM_TESTS_ENVIRONMENT = $(STP_ENV)
++@BUILD_CUPS_TRUE@TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ @BUILD_CUPS_TRUE@TESTS = test-ppds.test test-rastertogutenprint.test
+ @BUILD_CUPS_TRUE@noinst_SCRIPTS = test-ppds.test \
+ @BUILD_CUPS_TRUE@	test-rastertogutenprint \
+--- gutenprint-5.3.3/src/cups/test-ppds.test.in	2018-10-13 12:08:09.000000000 -0700
++++ gutenprint-5.3.3-mod/src/cups/test-ppds.test.in	2020-10-13 22:54:20.514406097 -0700
+@@ -106,7 +106,7 @@
+ # Also, a number of our media sizes aren't named correctly, but we'll
+ # accept those issues rather than cluttering the namespace further and/or
+ # changing tag names.
+-cupstestppdopts='-r -I profiles -W sizes -I filters'
++cupstestppdopts='-I profiles -W sizes -I filters -W translations'
+ 
+ # This lets us report progress
+ testcmd="echo -n . 1>&2; cupstestppd $cupstestppdopts "'"$@"'
+--- gutenprint-5.3.3/src/testpattern/Makefile.am	2019-05-26 09:30:05.000000000 -0700
++++ gutenprint-5.3.3-mod/src/testpattern/Makefile.am	2020-10-13 22:54:20.465127214 -0700
+@@ -50,6 +50,7 @@
+ AM_TESTS_ENVIRONMENT=STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ run-testpattern-2.test: run-testpattern-2
+ 
++TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ TESTS = run-testpattern-1.test run-testpattern-2.test
+ run-testpattern-2.log: run-testpattern-1.log
+ 
+--- gutenprint-5.3.3/src/testpattern/Makefile.in	2019-08-25 08:14:20.000000000 -0700
++++ gutenprint-5.3.3-mod/src/testpattern/Makefile.in	2020-10-14 00:10:05.881454811 -0700
+@@ -666,6 +666,7 @@
+ testpattern_LDADD = $(GUTENPRINT_LIBS) $(LIBM)
+ printers_LDADD = $(GUTENPRINT_LIBS)
+ printer_options_LDADD = $(GUTENPRINT_LIBS)
++TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ @INSTALL_SAMPLES_TRUE@pkgdata_DATA = testpattern.sample extended.sample
+ @BUILD_TESTPATTERN_TRUE@AM_TESTS_ENVIRONMENT = STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ @BUILD_TESTPATTERN_TRUE@TESTS = run-testpattern-1.test run-testpattern-2.test
+--- gutenprint-5.3.3/test/Makefile.am	2018-10-07 09:21:50.000000000 -0700
++++ gutenprint-5.3.3-mod/test/Makefile.am	2020-10-13 22:54:20.569907717 -0700
+@@ -28,6 +28,7 @@
+ ## It is essentially a giant unit test for the weave code.
+ ## testdither doesn't actually test anything; there appears to be no way
+ ## for it to actually return anything.
++TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ TESTS = test-curve.test run-weavetest.test run-testdither.test
+ run-testdither.log: run-weavetest.log
+ test-curve.log: run-testdither.log
+--- gutenprint-5.3.3/test/Makefile.in	2019-08-25 08:14:21.000000000 -0700
++++ gutenprint-5.3.3-mod/test/Makefile.in	2020-10-13 22:54:20.580897287 -0700
+@@ -666,6 +666,7 @@
+ top_srcdir = @top_srcdir@
+ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_builddir)/include $(LOCAL_CPPFLAGS) $(GNUCFLAGS)
+ LOCAL_CPPFLAGS = -I$(top_srcdir)/src/main $(GUTENPRINT_CFLAGS)
++TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ TESTS = test-curve.test run-weavetest.test run-testdither.test
+ @BUILD_TEST_TRUE@AM_TESTS_ENVIRONMENT = STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
+ noinst_SCRIPTS = test-curve.test run-weavetest.test run-testdither.test
+@@ -690,7 +691,7 @@
+ #run-weavetest: escp2-weavetest
+ CLEANFILES = mixed-color-1bit.ppm
+ MAINTAINERCLEANFILES = Makefile.in
+-EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest.test run-testdither.test test-curve.test
++EXTRA_DIST = cyan-sweep.tif parse-escp2 run-testdither.test test-curve.test
+ all: all-am
+ 
+ .SUFFIXES:
