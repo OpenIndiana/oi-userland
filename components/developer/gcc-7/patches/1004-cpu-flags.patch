@@ -1,0 +1,55 @@
+--- gcc-gcc-7.5.0-oi-0/configure.orig	2021-02-23 09:42:49.269846701 +0000
++++ gcc-gcc-7.5.0-oi-0/configure	2021-02-23 09:44:57.981792282 +0000
+@@ -704,6 +704,7 @@
+ host_alias
+ build_alias
+ gmp_alias
++CPU_FLAGS
+ LIBS
+ ECHO_T
+ ECHO_N
+@@ -4579,12 +4580,15 @@
+ ac_test_CFLAGS=${CFLAGS+set}
+ ac_save_CFLAGS=$CFLAGS
+ # set --host/--target GMP configure flags, to use ASM code in gmp subdirs.
++# add CPU_FLAGS to speedup gcc.
+ case "${target}" in
+   *-*-solaris2.11) mycpu=`uname -p`
+     if [ "$mycpu" = "sparc" ]; then
+       gmp_alias=ultrasparc2-sun-solaris2.11
++      CPU_FLAGS="-mcpu=ultrasparc"
+     else
+       gmp_alias=i386-sun-solaris2.11
++      CPU_FLAGS="-mtune=generic"
+     fi
+   ;;
+ esac
+@@ -6715,7 +6719,7 @@
+   if test "x${is_cross_compiler}" = xyes; then
+     CFLAGS_FOR_TARGET="-g -O2"
+   else
+-    CFLAGS_FOR_TARGET=$CFLAGS
++    CFLAGS_FOR_TARGET="$CFLAGS $CPU_FLAGS"
+     case " $CFLAGS " in
+       *" -O2 "*) ;;
+       *) CFLAGS_FOR_TARGET="-O2 $CFLAGS_FOR_TARGET" ;;
+@@ -6732,7 +6736,7 @@
+   if test "x${is_cross_compiler}" = xyes; then
+     CXXFLAGS_FOR_TARGET="-g -O2"
+   else
+-    CXXFLAGS_FOR_TARGET=$CXXFLAGS
++    CXXFLAGS_FOR_TARGET="$CXXFLAGS $CPU_FLAGS"
+     case " $CXXFLAGS " in
+       *" -O2 "*) ;;
+       *) CXXFLAGS_FOR_TARGET="-O2 $CXXFLAGS_FOR_TARGET" ;;
+--- gcc-gcc-7.5.0-oi-0/Makefile.in.orig	2021-02-23 09:42:49.283116813 +0000
++++ gcc-gcc-7.5.0-oi-0/Makefile.in	2021-02-23 09:45:14.095253002 +0000
+@@ -356,7 +356,7 @@
+ 
+ # Flags to pass to stage2 and later makes.  They are defined
+ # here so that they can be overridden by Makefile fragments.
+-BOOT_CFLAGS= -g -O2
++BOOT_CFLAGS= -g -O2 @CPU_FLAGS@
+ BOOT_LDFLAGS=
+ BOOT_ADAFLAGS= -gnatpg
+ 
