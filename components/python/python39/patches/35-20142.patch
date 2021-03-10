@@ -18,11 +18,9 @@ signal occurred during an await.
  5 files changed, 44 insertions(+), 12 deletions(-)
  create mode 100644 Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
 
-diff --git a/Lib/asyncio/unix_events.py b/Lib/asyncio/unix_events.py
-index 19d713545e4cd..d2a32cb879b6b 100644
---- a/Lib/asyncio/unix_events.py
-+++ b/Lib/asyncio/unix_events.py
-@@ -78,6 +78,8 @@ def _process_self_data(self, data):
+--- Python-3.9.2/Lib/asyncio/unix_events.py.orig	2021-02-19 13:31:44.000000000 +0000
++++ Python-3.9.2/Lib/asyncio/unix_events.py	2021-02-27 22:27:23.974509830 +0000
+@@ -78,6 +78,8 @@
      def add_signal_handler(self, sig, callback, *args):
          """Add a handler for a signal.  UNIX only.
  
@@ -31,24 +29,24 @@ index 19d713545e4cd..d2a32cb879b6b 100644
          Raise ValueError if the signal number is invalid or uncatchable.
          Raise RuntimeError if there is a problem setting up the handler.
          """
-@@ -1232,10 +1234,15 @@ def close(self):
-         self._callbacks.clear()
-         if self._saved_sighandler is not None:
-             handler = signal.getsignal(signal.SIGCHLD)
--            if handler != self._sig_chld:
-+            # add_signal_handler() sets the handler to _sighandler_noop.
-+            if handler != _sighandler_noop:
-                 logger.warning("SIGCHLD handler was changed by outside code")
-             else:
-+                loop = self._loop
-+                # This clears the wakeup file descriptor if necessary.
-+                loop.remove_signal_handler(signal.SIGCHLD)
-                 signal.signal(signal.SIGCHLD, self._saved_sighandler)
+@@ -1234,10 +1236,15 @@
+             return
+ 
+         handler = signal.getsignal(signal.SIGCHLD)
+-        if handler != self._sig_chld:
++        # add_signal_handler() sets the handler to _sighandler_noop.
++        if handler != _sighandler_noop:
+             logger.warning("SIGCHLD handler was changed by outside code")
+         else:
++            loop = self._loop
++            # This clears the wakeup file descriptor if necessary.
++            loop.remove_signal_handler(signal.SIGCHLD)
+             signal.signal(signal.SIGCHLD, self._saved_sighandler)
 +
-             self._saved_sighandler = None
+         self._saved_sighandler = None
  
      def __enter__(self):
-@@ -1263,15 +1270,24 @@ def attach_loop(self, loop):
+@@ -1265,6 +1272,11 @@
          # The reason to do it here is that attach_loop() is called from
          # unix policy only for the main thread.
          # Main thread is required for subscription on SIGCHLD signal
@@ -57,18 +55,15 @@ index 19d713545e4cd..d2a32cb879b6b 100644
 +
 +        self._loop = loop
 +        self._saved_sighandler = signal.getsignal(signal.SIGCHLD)
-         if self._saved_sighandler is None:
--            self._saved_sighandler = signal.signal(signal.SIGCHLD, self._sig_chld)
--            if self._saved_sighandler is None:
--                logger.warning("Previous SIGCHLD handler was set by non-Python code, "
--                               "restore to default handler on watcher close.")
--                self._saved_sighandler = signal.SIG_DFL
-+            logger.warning("Previous SIGCHLD handler was set by non-Python code, "
-+                           "restore to default handler on watcher close.")
-+            self._saved_sighandler = signal.SIG_DFL
+         if self._saved_sighandler is not None:
+             return
  
--            # Set SA_RESTART to limit EINTR occurrences.
--            signal.siginterrupt(signal.SIGCHLD, False)
+@@ -1274,8 +1286,14 @@
+                            "restore to default handler on watcher close.")
+             self._saved_sighandler = signal.SIG_DFL
+ 
+-        # Set SA_RESTART to limit EINTR occurrences.
+-        signal.siginterrupt(signal.SIGCHLD, False)
 +        if self._callbacks:
 +            warnings.warn(
 +                'A loop is being detached '
@@ -80,7 +75,7 @@ index 19d713545e4cd..d2a32cb879b6b 100644
  
      def _do_waitpid_all(self):
          for pid in list(self._callbacks):
-@@ -1314,7 +1330,7 @@ def _do_waitpid(self, expected_pid):
+@@ -1318,7 +1336,7 @@
                                   expected_pid, returncode)
                  loop.call_soon_threadsafe(callback, pid, returncode, *args)
  
@@ -95,7 +90,7 @@ index 6657a88e657c2..b11a31a34a2c6 100644
 +++ b/Lib/test/test_asyncio/test_subprocess.py
 @@ -672,12 +672,13 @@ def setUp(self):
              policy.set_child_watcher(watcher)
- 
+
          def tearDown(self):
 -            super().tearDown()
              policy = asyncio.get_event_loop_policy()
@@ -105,7 +100,7 @@ index 6657a88e657c2..b11a31a34a2c6 100644
              watcher.close()
 +            # Since setUp() does super().setUp() first, do tearDown() last.
 +            super().tearDown()
- 
+
      class SubprocessThreadedWatcherTests(SubprocessWatcherMixin,
                                           test_utils.TestCase):
 diff --git a/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst b/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
@@ -132,7 +127,7 @@ index d2a32cb879b6b..17614c23c984c 100644
 +++ b/Lib/asyncio/unix_events.py
 @@ -1266,6 +1266,11 @@ def remove_child_handler(self, pid):
              return False
- 
+
      def attach_loop(self, loop):
 +        """
 +        This registers the SIGCHLD signal handler.
@@ -178,7 +173,7 @@ index b11a31a34a2c6..6657a88e657c2 100644
 +++ b/Lib/test/test_asyncio/test_subprocess.py
 @@ -672,13 +672,12 @@ def setUp(self):
              policy.set_child_watcher(watcher)
- 
+
          def tearDown(self):
 +            super().tearDown()
              policy = asyncio.get_event_loop_policy()
@@ -188,7 +183,7 @@ index b11a31a34a2c6..6657a88e657c2 100644
              watcher.close()
 -            # Since setUp() does super().setUp() first, do tearDown() last.
 -            super().tearDown()
- 
+
      class SubprocessThreadedWatcherTests(SubprocessWatcherMixin,
                                           test_utils.TestCase):
 

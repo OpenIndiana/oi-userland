@@ -25,20 +25,19 @@
 # Copyright (c) 2021, Aurelien Larcher
 #
 
-BUILD_BITS = 64
-
+BUILD_BITS= 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
-COMPONENT_VERSION=      3.9.1
+COMPONENT_VERSION=      3.9.2
 COMPONENT_FMRI=		runtime/python-39
 COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:991c3f8ac97992f3d308fefeb03a64db462574eadbff34ce8bc5bb583d9903ff
+COMPONENT_ARCHIVE_HASH= sha256:3c2034c54f811448f516668dce09d24008a0716c3a794dd8639b5388cbde247d
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      PSFv2
 COMPONENT_LICENSE_FILE=	python39.license
@@ -189,6 +188,7 @@ COMPONENT_TEST_TRANSFORMS  = "'/tests OK./ {results = 1}; /Total duration/ {resu
 REQUIRED_PACKAGES += developer/object-file
 # Required to build ossaudiodev module
 REQUIRED_PACKAGES += system/header/header-audio
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
@@ -198,7 +198,7 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
