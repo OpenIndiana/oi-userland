@@ -57,6 +57,8 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
+test:		$(NO_TESTS)
+
 clean::
 	if [ -d $(BUILD_DIR) ] ;  then \
 	  rm -rf $(BUILD_DIR) ; \
