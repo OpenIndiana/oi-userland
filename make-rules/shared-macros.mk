@@ -177,6 +177,24 @@ PYTHON_64_ONLY_VERSIONS = 3.5 3.7 3.9
 
 PYTHON_VERSIONS_ALL= $(PYTHON2_VERSIONS) $(PYTHON3_VERSIONS)
 
+PYTHON2_ONLY?=no
+PYTHON3_ONLY?=no
+PYTHON_ALL?=no
+
+ifneq ($(strip $(PYTHON2_ONLY)),no)
+PYTHON_VERSION	=	$(PYTHON2_VERSION)
+PYTHON_VERSIONS	=	$(PYTHON2_VERSIONS)
+else
+ifneq ($(strip $(PYTHON3_ONLY)),no)
+PYTHON_VERSION	=	$(PYTHON3_VERSION)
+PYTHON_VERSIONS	=	$(PYTHON3_VERSIONS)
+else
+ifneq ($(strip $(PYTHON_ALL)),no)
+PYTHON_VERSIONS	=	$(PYTHON_VERSIONS_ALL)
+endif
+endif
+endif
+
 # PYTHON3_SOABI variable defines the naming scheme
 # of python3 extension libraries: cpython or abi3.
 # Currently, most of the components use cpython naming scheme by default,
