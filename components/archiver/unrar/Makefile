@@ -27,23 +27,21 @@ BUILD_BITS=				64
 BUILD_STYLE=			justmake
 include ../../../make-rules/shared-macros.mk
 
-#PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/sbin
 PATH=$(PATH.gnu)
 
 COMPONENT_NAME=			unrar
-COMPONENT_VERSION=		6.0.3
+COMPONENT_VERSION=		6.0.4
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_SUMMARY=		Rar archives extractor utility
 COMPONENT_PROJECT_URL=	https://www.rarlabs.com/rar_add.htm
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)src-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:1def53392d879f9e304aa6eac1339cf41f9bce1111a2f5845071665738c4aca0
+COMPONENT_ARCHIVE_HASH= sha256:130197e495d6e2c2ee790a5beee123edeed642508be13f0159672e5397aca6c1
 COMPONENT_ARCHIVE_URL=	https://www.rarlab.com/rar/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	archiver/unrar
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE= 		UnRAR
 
-TEST_TARGET:		$(NO_TESTS)
+TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PKG_PROTO_DIRS = $(MANGLED_DIR)
