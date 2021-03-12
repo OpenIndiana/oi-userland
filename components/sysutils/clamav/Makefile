@@ -12,6 +12,8 @@
 # Copyright 2016, Jim Klimov. All rights reserved.
 #
 
+BUILD_BITS=			64
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		clamav
@@ -25,6 +27,7 @@ ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
 else
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
 endif
+COMPONENT_REVISION=	1
 ### Library files are tagged with unique per-version numbers
 COMPONENT_VERSION_LIB_MAJOR=	7
 COMPONENT_VERSION_LIB_FULL=	$(COMPONENT_VERSION_LIB_MAJOR).1.1
@@ -33,11 +36,9 @@ COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:4a2e4f0cd41e62adb5a713b4a1857c49145cd09a69957e6d946ecad575206dd6
-COMPONENT_PROJECT_URL=	http://www.clamav.net/
-COMPONENT_ARCHIVE_URL=	\
-	http://www.clamav.net/downloads/production/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:4a2e4f0cd41e62adb5a713b4a1857c49145cd09a69957e6d946ecad575206dd6
+COMPONENT_PROJECT_URL=	https://www.clamav.net/
+COMPONENT_ARCHIVE_URL=	https://www.clamav.net/downloads/production/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
@@ -45,9 +46,8 @@ COMPONENT_LICENSE=	GPLv2
 # to download the source file.
 COMPONENT_FETCH_USER_AGENT=	fetch
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_OPTIONS +=	-D COMPONENT_VERSION_LIB_MAJOR="$(COMPONENT_VERSION_LIB_MAJOR)"
 PKG_OPTIONS +=	-D COMPONENT_VERSION_LIB_FULL="$(COMPONENT_VERSION_LIB_FULL)"
@@ -141,12 +141,13 @@ CONFIGURE_OPTIONS +=	--without-system-llvm
 # Without this libclamunrar.so gets /usr/lib/$(MACH64) RPATH
 CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
-build:		$(BUILD_64)
+# Manually added dependencies
+REQUIRED_PACKAGES += service/network/smtp/sendmail
 
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libmilter
@@ -154,12 +155,8 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += service/network/smtp/sendmail
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
