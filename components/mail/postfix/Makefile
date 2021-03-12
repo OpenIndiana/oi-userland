@@ -12,27 +12,30 @@
 # Copyright 2016 Adam Stevko
 # Copyright 2017 Till Wegmueller
 # Copyright 2018 Michal Nowak
+# Copyricht 2021 Andreas Wacknitz
 #
 
+BUILD_BITS=			64
+BUILD_STYLE=		justmake
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
 COMPONENT_VERSION=	3.3.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Postfix is a free and open-source mail transfer agent (MTA) that routes and delivers electronic mail, intended as an alternative to Sendmail MTA.
-COMPONENT_PROJECT_URL=	http://www.postfix.org/
+COMPONENT_PROJECT_URL=	https://www.postfix.org/
 COMPONENT_FMRI=		service/network/smtp/postfix
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	http://cdn.postfix.johnriley.me/mirrors/postfix-release/official/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://cdn.postfix.johnriley.me/mirrors/postfix-release/official/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	sha256:3c93f31eee49a58e592c31e62a058701cadde11e8e066ea441da19fddad7b35b
 COMPONENT_LICENSE=	IBM PUBLIC LICENSE, Eclipse Public License 2.0
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CCARGS=		-DDEF_DAEMON_DIR=\\\"/usr/lib/postfix\\\"
 CCARGS+=	-DDEF_MANPAGE_DIR=\\\"/usr/share/man\\\"
@@ -61,17 +64,12 @@ COMPONENT_INSTALL_TARGETS = non-interactive-package install_root="$(PROTO_DIR)"
 PKG_HARDLINKS += usr/lib/postfix/qmgr
 PKG_HARDLINKS += usr/lib/postfix/lmtp
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-REQUIRED_PACKAGES += developer/icu
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl
