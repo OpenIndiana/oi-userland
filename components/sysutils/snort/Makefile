@@ -22,27 +22,27 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS=			32
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		snort
 COMPONENT_VERSION=	2.9.9.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	snort - Network Intrusion and Protection Detector
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:71b147125e96390a12f3d55796ed5073df77206bd3563d84d3e5a1f19e7d7a56
+COMPONENT_ARCHIVE_HASH= sha256:71b147125e96390a12f3d55796ed5073df77206bd3563d84d3e5a1f19e7d7a56
 COMPONENT_PROJECT_URL=	http://www.snort.org/
 COMPONENT_ARCHIVE_URL=	https://snort.org/downloads/archive/snort/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	diagnostic/snort
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2, BSD, LGPLv2.1
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 # Need to recreate the configure script for gethrtime checks.
 COMPONENT_PREP_ACTION +=	(cd $(@D); autoreconf -f -i);
@@ -60,18 +60,11 @@ CONFIGURE_ENV +=	ac_cv_lib_nghttp2_nghttp2_option_new=no
 #	$(MV) $(PROTOUSRLIBDIR)/snort_dynamicengine $(PROTOUSRLIBDIR64); \
 #	$(MV) $(PROTOUSRLIBDIR)/snort_dynamicpreprocessor $(PROTOUSRLIBDIR64) ;
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdaq
