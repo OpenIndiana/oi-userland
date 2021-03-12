@@ -24,12 +24,14 @@
 # Copyright 2016 Jim Klimov
 #
 
-BUILD_BITS=64
+BUILD_BITS= 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 		nmap
 COMPONENT_VERSION=		7.80
-COMPONENT_PROJECT_URL=	http://nmap.org/
+COMPONENT_REVISION=		1
+COMPONENT_PROJECT_URL=	https://nmap.org/
 COMPONENT_FMRI=			diagnostic/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_SUMMARY=		Network exploration tool and security / port scanner
@@ -37,8 +39,7 @@ COMPONENT_DESCRIPTION=	Nmap is useful for inventorying the network, managing \
 service upgrade schedules, and monitoring host or service uptime
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:fcfa5a0e42099e12e4bf7a68ebe6fde05553383a682e816a7ec9256ab4773faa
+COMPONENT_ARCHIVE_HASH= sha256:fcfa5a0e42099e12e4bf7a68ebe6fde05553383a682e816a7ec9256ab4773faa
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_PROJECT_URL)dist/sigs/$(COMPONENT_ARCHIVE).asc	
 COMPONENT_BUGDB=		utility/nmap
@@ -85,15 +86,15 @@ TEST_TARGET= $(NO_TESTS)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/python/pygobject-27
 REQUIRED_PACKAGES += library/python/pygtk2-27
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
