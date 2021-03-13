@@ -14,22 +14,23 @@
 #
 
 BUILD_BITS=			32
+BUILD_STYLE=		justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
-COMPONENT_VERSION=	2.1.1
+COMPONENT_VERSION=	2.1.2
 COMPONENT_PROJECT_URL=	http://www.sbcl.org/
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:a9ad892ea038b7155a60c1144801084fab3b2b8cbb0c5bde7e1f42a6b4318a97
+COMPONENT_ARCHIVE_HASH=	sha256:b7710550939855ed49598c4a014483ed120b6991658a2a3b6afa47713dce4c0b
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/sbcl/sbcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-PublicDomain
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	sbcl - Steel Bank Common Lisp
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 
-BUILD_STYLE=		justmake
+TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_ENV  =	PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/gnu/bin
