@@ -11,15 +11,17 @@
 
 #
 # Copyright 2018 Alexander Pyhalov
+# Copyright 2021 Nona Hansel
 #
 
 BUILD_BITS=NO_ARCH
 BUILD_STYLE=setup.py
+PYTHON_ALL=yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pexpect
 COMPONENT_VERSION= 	4.6.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://github.com/pexpect/pexpect
 COMPONENT_FMRI=	library/python/pexpect
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,12 +34,11 @@ COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_LICENSE=	ISC
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.5
-
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
