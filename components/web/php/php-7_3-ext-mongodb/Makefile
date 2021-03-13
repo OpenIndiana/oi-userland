@@ -12,25 +12,26 @@
 # Copyright (c) 2019 Alexander Pyhalov
 #
 
+BUILD_BITS=			64
+USE_OPENSSL11=		yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-7.3-ext-mongodb
 COMPONENT_VERSION=	1.5.3
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://pecl.php.net/package/mongodb
+COMPONENT_REVISION=	2
+COMPONENT_PROJECT_URL=	https://pecl.php.net/package/mongodb
 COMPONENT_SUMMARY=	MongoDB driver for PHP
 COMPONENT_SRC=		mongodb-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
 COMPONENT_ARCHIVE_HASH=	sha256:8def2c74aa28e64839dee4b878bc92ad9164a45d84f55b519ac92f338ff8e1ba
-COMPONENT_ARCHIVE_URL=	http://pecl.php.net/get/$(COMPONENT_SRC).tgz
+COMPONENT_ARCHIVE_URL=	https://pecl.php.net/get/$(COMPONENT_SRC).tgz
 COMPONENT_FMRI=		web/php-73/extension/php-mongodb
 COMPONENT_CLASSIFICATION=	Development/PHP
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CLEAN_PATHS +=  package.xml package2.xml
 
@@ -67,14 +68,11 @@ CONFIGURE_SCRIPT       =	$(@D)/configure
 COMPONENT_PRE_CONFIGURE_ACTION	 =	cp -R $(SOURCE_DIR)/* $(@D) ; cd $(@D) ; $(PHP_PREFIX)/bin/phpize
 COMPONENT_INSTALL_ARGS		+=	INSTALL_ROOT=$(PROTO_DIR)
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/icu
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/icu
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
