@@ -13,13 +13,14 @@
 #
 
 BUILD_BITS=		64
-
+USE_OPENSSL11=	yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
 COMPONENT_MJR_VERSION=	7.3
 COMPONENT_MNR_VERSION=	21
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=	https://www.php.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -211,14 +212,15 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/.*/d" '
 
 # Build dependencies
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += web/server/apache-24
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
@@ -228,13 +230,13 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/uw-imap
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/aspell
 REQUIRED_PACKAGES += text/tidy
 REQUIRED_PACKAGES += web/curl
+REQUIRED_PACKAGES += web/php-73/php-cli
