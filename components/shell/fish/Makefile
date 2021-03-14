@@ -11,6 +11,7 @@
 #
 # Copyright 2017, Longrin Wischnewski.
 # Copyright 2019, Michal Nowak
+# Copyright 2021, Nona Hansel
 #
 
 BUILD_BITS=			64
@@ -18,12 +19,12 @@ BUILD_STYLE=		cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fish
-COMPONENT_VERSION=	3.1.2
+COMPONENT_VERSION=	3.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://fishshell.com
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:d5b927203b5ca95da16f514969e2a91a537b2f75bec9b21a584c4cd1c7aa74ed
+	sha256:4f0293ed9f6a6b77e47d41efabe62f3319e86efc8bf83cc58733044fbc6f9211
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/fish-shell/fish-shell/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
@@ -40,12 +41,13 @@ CMAKE_OPTIONS += -DPCRE2_INCLUDE_DIR=/usr/include/pcre
 
 COMPONENT_TEST_CMD = gmake
 
-COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TARGETS = test_fishscript test_interactive
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += library/pcre2
+# test dependency
+REQUIRED_PACKAGES += library/python/pexpect-39
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
