@@ -11,22 +11,21 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=64
-
+BUILD_BITS= 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgbouncer
-COMPONENT_VERSION= 	1.12.0
+COMPONENT_VERSION= 	1.15.0
 COMPONENT_SUMMARY= 	pgBouncer connection pooler
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:1b3c6564376cafa0da98df3520f0e932bb2aebaf9a95ca5b9fa461e9eb7b273e
-COMPONENT_ARCHIVE_URL= \
-  https://pgbouncer.github.io/downloads/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.pgbouncer.org/
+COMPONENT_ARCHIVE_HASH= sha256:e05a9e158aa6256f60aacbcd9125d3109155c1001a1d1c15d33a37c685d31380
+COMPONENT_ARCHIVE_URL=	https://pgbouncer.github.io/downloads/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.pgbouncer.org/
 COMPONENT_FMRI=	database/postgres/pgbouncer
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_LICENSE=	BSD
@@ -44,7 +43,7 @@ CONFIGURE_ENV +=        "XMLTO=xmlto --skip-validation"
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/libevent2
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
