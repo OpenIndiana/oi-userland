@@ -13,28 +13,26 @@
 # Copyright 2018 Michal Nowak
 #
 
-PREFERRED_BITS=64
-
+BUILD_BITS= 64_and_32
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freetds
 COMPONENT_VERSION=	1.00.94
 IPS_COMPONENT_VERSION=	1.0.94
-COMPONENT_PROJECT_URL=	http://www.freetds.org/
+COMPONENT_REVISION=	1
+COMPONENT_PROJECT_URL=	https://www.freetds.org/
 COMPONENT_SUMMARY=	FreeTDS command-line utilities
 COMPONENT_CLASSIFICATION=	System/Databases
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:5fcf59a554eb3e72a09cc49c8dba5db8ad6dced07315ed775c4b8b2b81b603e4
+COMPONENT_ARCHIVE_HASH= sha256:5fcf59a554eb3e72a09cc49c8dba5db8ad6dced07315ed775c4b8b2b81b603e4
 COMPONENT_ARCHIVE_URL=	ftp://ftp.freetds.org/pub/freetds/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		database/freetds
 COMPONENT_LICENSE=	LGPLv2
 COMPONENT_LICENSE_FILE=	COPYING.LIB
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 LDFLAGS += -lsocket -lnsl
 CFLAGS += -I/usr/include/odbc
@@ -54,16 +52,10 @@ COMPONENT_POST_INSTALL_ACTION= \
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/freetds
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += system/library
