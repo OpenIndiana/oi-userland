@@ -13,22 +13,23 @@
 # Copyright 2019 Alexander Pyhalov
 #
 
-BUILD_BITS=64
-
+BUILD_BITS= 64
+USE_OPENSSL11 = yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =	citus
-COMPONENT_VERSION =	9.5.1
-COMPONENT_SUMMARY =	Citus Open Source PostgreSQL extension
-COMPONENT_SRC =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH = sha256:60fb578969f8802f37bf81f838a624a2fc2a2268db6cb353f052b80e0312479a
-COMPONENT_ARCHIVE_URL = https://github.com/citusdata/citus/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL =	https://www.citusdata.com/
-COMPONENT_FMRI =	database/postgres-$(PG_VERNUM)/citus
-COMPONENT_CLASSIFICATION =	System/Databases
-COMPONENT_LICENSE =	AGPLv3.0
-COMPONENT_LICENSE_FILE =	LICENSE
+COMPONENT_NAME=		citus
+COMPONENT_VERSION=	9.5.1
+COMPONENT_REVISIO=	1
+COMPONENT_SUMMARY=	Citus Open Source PostgreSQL extension
+COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:60fb578969f8802f37bf81f838a624a2fc2a2268db6cb353f052b80e0312479a
+COMPONENT_ARCHIVE_URL=	https://github.com/citusdata/citus/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_PROJECT_URL=	https://www.citusdata.com/
+COMPONENT_FMRI=			database/postgres-$(PG_VERNUM)/citus
+COMPONENT_CLASSIFICATION=	System/Databases
+COMPONENT_LICENSE=		AGPLv3.0
+COMPONENT_LICENSE_FILE=	LICENSE
 
 PG_VERSION=	12
 # Don't depend on host default pg_config
@@ -36,13 +37,13 @@ PG_VERSION=	12
 PATH=		$(PG_HOME)/bin:/usr/sbin:/usr/bin
 
 TEST_TARGET = $(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
+# Manually added build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
