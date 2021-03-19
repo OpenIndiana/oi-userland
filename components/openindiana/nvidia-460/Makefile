@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		driver-graphics-nvidia-460
-COMPONENT_VERSION=	460.56
+COMPONENT_VERSION=	460.67
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 COMPONENT_FMRI=		driver/graphics/nvidia-460
 COMPONENT_SUMMARY=	NVIDIA Graphics System Software
@@ -25,7 +25,7 @@ COMPONENT_PROJECT_URL=	https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC=		NVIDIA-Solaris-x86-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).run
 COMPONENT_ARCHIVE_HASH= \
-        sha256:8699cbc20ccf7af25ec00dddd00f651c1a96385bdcb9762f818f9d5ca593a8eb
+        sha256:5ca478ccac758592f18d4f8321bd0620d0ed157a102e53e2a3b88096ab34328f
 COMPONENT_ARCHIVE_URL=	http://us.download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
 COMPONENT_LICENSE=	NVIDIA
 COMPONENT_LICENSE_FILE=	driver-graphics-nvidia.license
