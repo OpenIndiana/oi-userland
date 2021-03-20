@@ -13,12 +13,13 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
-PREFERRED_BITS=		64
-
+BUILD_BITS=		64
+USE_OPENSSL11=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		socat
 COMPONENT_VERSION=	1.7.3.2
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= sha256:360c9d08b47b446cd88ee2f3465a19177c4d2099fc92d20e1c10b5cd51a27ebf
@@ -52,6 +53,7 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
