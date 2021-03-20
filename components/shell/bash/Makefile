@@ -29,22 +29,24 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
-COMPONENT_VERSION=	5.0
-COMPONENT_REVISION=	6
+COMPONENT_VERSION=	5.1
 COMPONENT_FMRI=		shell/bash
 COMPONENT_SUMMARY=	GNU Bourne-Again shell (bash)
 COMPONENT_CLASSIFICATION=	System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bash/
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/bash/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-	sha256:b4a80f2ac66170b2913efbfb9f2594f1f76c7b1afd11f799e22035d63077fb4d
+	sha256:cc012bc860406dcf42f64431bcd3d2fa7560c02915a601aba9cd597a39329baa
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.2
 
 include $(WS_MAKE_RULES)/common.mk
 
 BASH_PATCHLEVEL=$(shell grep -h "define PATCHLEVEL" $(COMPONENT_DIR)/patches/bash* | nawk '{print $$NF}' | sort -n | tail -1)
+ifeq ($(BASH_PATCHLEVEL),)
+BASH_PATCHLEVEL=0
+endif
 IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).$(BASH_PATCHLEVEL)
 PATCH_LEVEL = 0
 
@@ -60,10 +62,13 @@ LIBS =	-lc -lsocket -lgen
 # -z redlocsym -- let's shrink the SHT_SYMTAB as much as we can
 LDFLAGS =	$(LD_Z_REDLOCSYM)
 
-# The bash test harness needs the GNU userland utilities
-TEST_PATH = "PATH=$(BUILD_DIR_64):$(GNUBIN):$(USRBINDIR)"
-
 COMPONENT_PREP_ACTION = ( cd $(@D); autoconf -f -i )
+
+COMPONENT_POST_INSTALL_ACTION =  \
+	( cd $(PROTOUSRSHAREDIR)/locale ; \
+	    cp -Rp "en@boldquot" en ; \
+	    cp -Rp "en@boldquot" en_CA ; \
+	    cp -Rp "en@boldquot" en_GB )
 
 CONFIGURE_ENV += LIBS="$(LIBS)"
 CONFIGURE_ENV += LD_OPTIONS="-lc -lm -lgen -lsocket -lnsl -lresolv $(LD_Z_IGNORE)"
@@ -107,28 +112,40 @@ CONFIGURE_OPTIONS += --enable-usg-echo-default=yes
 CONFIGURE_OPTIONS += --enable-xpg-echo-default=yes
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --with-bash-malloc=yes
+CONFIGURE_OPTIONS += --without-bash-malloc
 CONFIGURE_OPTIONS += --with-curses
 CONFIGURE_OPTIONS += --with-installed-readline=no
 
-COMPONENT_TEST_DIR =		$(BUILD_DIR_64)
-COMPONENT_TEST_ENV =		- $(TEST_PATH)
+COMPONENT_TEST_DIR      = $(BUILD_DIR_64)
+COMPONENT_TEST_ENV      = - $(TEST_PATH)
+# The bash test harness needs the GNU userland utilities
+#TEST_PATH   = "PATH=$(PATH.gnu)"
+# The bash test harness needs the GNU userland utilities
+TEST_PATH = "PATH=$(BUILD_DIR_64):$(GNUBIN):$(USRBINDIR)"
 
-COMPONENT_TEST_MASTER		= \
-	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
+# Results output is slightly different on Intel vs. SPARC.
+COMPONENT_TEST_MASTER       = \
+    $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
-# The tests use /tmp/xx, and there can only be one user running
-# the them at a time. Need to remove /tmp/xx after testing to
-# avoid permission issues for other users running these tests
-COMPONENT_POST_TEST_ACTION =	rm -f /tmp/xx
+# Bash tests can't pass if they don't have tty available. This script makes
+# sure to provide a tty if we are missing one
+COMPONENT_TEST_CMD = $(COMPONENT_DIR)/bash_test_wrapper
 
-COMPONENT_POST_INSTALL_ACTION =  \
-	( cd $(PROTOUSRSHAREDIR)/locale ; \
-	    cp -Rp "en@boldquot" en ; \
-	    cp -Rp "en@boldquot" en_CA ; \
-	    cp -Rp "en@boldquot" en_GB )
+# Due to a bug in Makefile gmake tries to remake few targets after application
+# of upstream patches. Following transform removes build related lines from the
+# test output.
+COMPONENT_TEST_TRANSFORMS += "-e '/^rm -f/,/^[[:digit:]]\+[[:space:]].*bash$$/d'"
+
+# If the tests decided they need to execute itself in screen(1) then move the
+# resulting file to final location where the rest of userland infrastructure
+# will process it. Then remove files from the /tmp folder that have been used.
+COMPONENT_POST_TEST_ACTION += \
+    if [ -e "$(COMPONENT_TEST_DIR)/outfile" ]; then \
+    mv $(COMPONENT_TEST_DIR)/outfile $(COMPONENT_TEST_OUTPUT); \
+    fi && \
+	rm -f /tmp/bashtst*
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
