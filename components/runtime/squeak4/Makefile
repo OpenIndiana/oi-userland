@@ -52,15 +52,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak-4
 COMPONENT_VERSION=	4.19.5
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	The Squeak V4 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/squeak-4
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=		3797
-SVN_HASH=		sha256:a8c4e89262a73ec37ddea1307a779525aac8097f0201a585fc3b0217322beb81
+SVN_REV=		3798
+SVN_HASH=  sha256:d7c8aa40e36f5914469056864b85379149e37915547608f9eddc262c73e4dfba
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -110,6 +110,20 @@ CONFIGURE_OPTIONS.64+=	--vm-only
 # the squeakvm is called either squeakvm or squeakvm64 in different directories
 COMPONENT_POST_INSTALL_ACTION = \
 ( find $(PROTOUSRLIBDIR)/squeak -name 'squeakvm*' -exec strip {} \; )
+
+#
+# target to update the manifests from sample-manifest
+#
+
+rebuild-manifests::
+	cp manifests/squeak-4.p5m squeak-4.p5m
+	cp manifests/squeak-4-display-X11.p5m squeak-4-display-X11.p5m
+	cp manifests/squeak-4-nodisplay.p5m squeak-4-nodisplay.p5m
+	cp manifests/sample-manifest.p5m sample-manifest.p5m
+	tools/subversion.sh $(SVN_REV) <sample-manifest.p5m >sample.p5m
+	tools/classify.pl <sample.p5m
+	tools/amd64-p5m.sh
+	rm -f sample-manifest.p5m sample.p5m
 
 REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
