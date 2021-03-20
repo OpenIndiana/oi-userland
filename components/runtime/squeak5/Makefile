@@ -36,6 +36,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak-5
 COMPONENT_VERSION=	5.0.2945
+COMPONENT_REVISION=	1
 GIT_TAG=		sun-v5.0.26
 PLUGIN_REV=		5.0-202102111620
 COMPONENT_SUMMARY=	The Squeak V5 Smalltalk Virtual Machine
@@ -113,6 +114,19 @@ COMPONENT_INSTALL_TARGETS=      install-squeak install-doc install-plugins \
 # Makefile has no strip target
 COMPONENT_POST_INSTALL_ACTION = \
 ( find $(PROTOUSRLIBDIR) -name 'squeak' -type f -exec strip {} \; )
+
+#
+# target to update the manifests from sample-manifest
+#
+
+rebuild-manifests::
+	cp manifests/squeak-5.p5m squeak-5.p5m
+	cp manifests/squeak-5-display-X11.p5m squeak-5-display-X11.p5m
+	cp manifests/squeak-5-nodisplay.p5m squeak-5-nodisplay.p5m
+	cp manifests/sample-manifest.p5m sample-manifest.p5m
+	tools/pluginrev.sh $(PLUGIN_REV) <sample-manifest.p5m >sample.p5m
+	tools/classify.pl <sample.p5m
+	rm -f sample-manifest.p5m sample.p5m
 
 REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
