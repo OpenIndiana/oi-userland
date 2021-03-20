@@ -29,7 +29,7 @@ PATCH_EACH_ARCHIVE= 1
 
 COMPONENT_NAME=			golang
 COMPONENT_MAJOR_VERSION=	1.15
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).8
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).10
 COMPONENT_FMRI=			developer/golang
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_SUMMARY=		The Go Programming Language
@@ -37,7 +37,7 @@ COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://golang.org/
 COMPONENT_ARCHIVE=		go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=		https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:540c0ab7781084d124991321ed1458e479982de94454a98afab6acadf38497c2
+COMPONENT_ARCHIVE_HASH=		sha256:c1dbca6e0910b41d61a95bf9878f6d6e93d15d884c226b91d9d4b1113c10dd65
 COMPONENT_LICENSE=		BSD-style, Patent Grant
 COMPONENT_LICENSE_FILE=		$(COMPONENT_NAME).license
 MEDIATEDUSRSHAREMAN1DIR=	$(PROTO_DIR)/usr/share/golang/$(COMPONENT_MAJOR_VERSION)/man/man1
@@ -67,9 +67,10 @@ COMPONENT_INSTALL_ENV += GOCACHE="$(SOURCE_DIR)/gocache"
 COMPONENT_INSTALL_ENV += GOPATH="$(SOURCE_DIR)/gopath"
 
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_BITS= 64
+BUILD_STYLE= justmake
+ 
+include $(WS_MAKE_RULES)/common.mk
 
 # We have to fiddle with the package archives to get them into the same source
 # directory so that we can use the standard build targets.  We're effectively
@@ -115,13 +116,6 @@ define COMPONENT_INSTALL_ACTION=
        	| egrep -v '\.go|\.s|\.bash|\.txt|\.c|\.tmpl|\.h|\.pl|\.md|\.S|\.py|\.dist|\.rc|\.bat|README|Makefile|\.awk|\.rules|\.mod|\.json|LICENSE|PATENTS'\
 	| xargs rm;
 endef
-
-# common targets
-build:		$(BUILD_64)
-
-install:	build $(INSTALL_64)
-
-test:		$(TEST_64)
 
 REQUIRED_PACKAGES += developer/golang-114
 # Auto-generated dependencies
