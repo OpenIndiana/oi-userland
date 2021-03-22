@@ -27,7 +27,7 @@
 # image format 6521  : start VM 32bit 
 # image format 68021 : start VM 64bit
 BUILD_BITS=32_and_64
-
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 # there is no official triplet version for opensmalltalk-vm
@@ -36,7 +36,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak-5
 COMPONENT_VERSION=	5.0.2945
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 GIT_TAG=		sun-v5.0.26
 PLUGIN_REV=		5.0-202102111620
 COMPONENT_SUMMARY=	The Squeak V5 Smalltalk Virtual Machine
@@ -133,7 +133,6 @@ REQUIRED_PACKAGES += system/library/dbus
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxevie
 
 # Auto-generated dependencies
@@ -142,8 +141,11 @@ REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
+#REQUIRED_PACKAGES += runtime/squeak-5-display-X11
+#REQUIRED_PACKAGES += runtime/squeak-5-nodisplay
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxrender
