@@ -44,7 +44,7 @@
 #
 
 BUILD_BITS=32_and_64
-
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 # the version is the same as the VMMaker Smalltalk sources
@@ -52,6 +52,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak-4
 COMPONENT_VERSION=	4.19.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The Squeak V4 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -135,7 +136,9 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
+#REQUIRED_PACKAGES += runtime/squeak-4-display-X11
+#REQUIRED_PACKAGES += runtime/squeak-4-nodisplay
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/libdbus
