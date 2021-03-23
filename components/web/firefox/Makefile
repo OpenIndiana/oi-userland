@@ -15,6 +15,7 @@
 # Copyright 2013-2017 Alexander Pyhalov
 # Copyright 2019 Geoffrey Weiss
 # Copyright 2019 Michal Nowak
+# Copyright 2021 Carsten Grzemba
 #
 
 BUILD_BITS = 64
@@ -24,15 +25,15 @@ include ../../../make-rules/shared-macros.mk
 ESR = esr
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	78.8.0
-COMPONENT_REVISION=     1
+COMPONENT_VERSION =	78.9.0
+COMPONENT_REVISION=     0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	http://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:1cf2dfdee2e31fd0a5ecced6275a33fa11bee1d2a7c65e23350b26992584a110
+	sha256:8e03ac1dfc5ac804c8b13a529414a9387e0425e545bb2f4462d74c3175e64864
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -42,7 +43,11 @@ COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-LANG_LIST=	ar bg ca cs da de el es-AR es-CL es-ES et fi fr he hi-IN hr hu id is it ja kk ko lt lv mk nb-NO nl nn-NO pl pt-BR pt-PT ro ru sk sl sq sr sv-SE th tr uk vi zh-CN zh-TW
+LANG_LIST= ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA en-GB \
+ en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb \
+ hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN \
+ pl pt-BR pt-PT rm ro ru si sk sl son sq sr sv-SE ta te th tl tr trs uk ur uz vi xh zh-CN zh-TW
+
 ifdef CANDIDATE_BUILD
 LANG_FILES_LOCATION= \
 	http://ftp.mozilla.org/pub/mozilla.org/firefox/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi/
@@ -55,12 +60,7 @@ CONFIGURE_DEFAULT_DIRS=no
 
 include $(WS_MAKE_RULES)/common.mk
 
-#PATH=$(USRBINDIR.64):$(PATH.illumos)
-# /usr/gnu/bin needed to pick up the GNU version of tail and readelf.
-# /usr/sbin needed for dtrace.
-PATH = /usr/gnu/bin:/usr/bin:/usr/sbin
-
-GCC_VERSION= 7
+PATH = $(PATH.gnu):$(BUILD_DIR)/cargo/bin
 
 MOZCONFIG = $(SOURCE_DIR)/mozconfig
 GNU_ARCH=		x86_64-sun-solaris
@@ -87,15 +87,11 @@ COMPILER.clang= clang
 COMPILER = $(COMPILER.$(CC_TYPE))
 
 CXXFLAGS += -Wno-invalid-offsetof -fpermissive
-# not set in build 'js/xpconnect'
-CPPFLAGS += -I/usr/include/libevent2
 # type problem compiling ffvpx with clang 
 CFLAGS += -D__int8_t_defined
 
-FIREFOX_LIBDIR = /usr/lib/$(MACH64)
+FIREFOX_LIBDIR =	$(CONFIGURE_LIBDIR.$(BITS))
 
-#	echo "ac_add_options --disable-jemalloc" >> $(MOZCONFIG) ; \
-#	echo "ac_add_options PKG_CONFIG=/usr/bin/amd64/pkg-config" >> $(MOZCONFIG) ; 
 COMPONENT_PRE_CONFIGURE_ACTION += \
         rm -f  $(MOZCONFIG); \
 	echo "ac_add_options MOZILLA_OFFICIAL=1" >> $(MOZCONFIG) ; \
@@ -136,29 +132,22 @@ LD_Z_IGNORE=
 # missing symbols from gtk3 during Firefox start
 LD_B_DIRECT=
 
+# hope to get args data in stacks of core dumps
 LD_OPTIONS += -msave-args
 
 # because we touched old-configure.in and js/src/old-configure.in
-COMPONENT_PRE_CONFIGURE_ACTION += (cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); autoreconf; touch configure; cd js/src; autoreconf; touch configure);
+COMPONENT_PRE_CONFIGURE_ACTION += ( \
+	cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); \
+	autoreconf; \
+	touch configure; \
+	cd js/src; \
+	autoreconf; \
+	touch configure; \
+	cargo install --root=$(BUILD_DIR)/cargo cbindgen \
+	);
 
-
-#FIREFOX_LIBDIR =	$(CONFIGURE_LIBDIR.$(BITS))
-
-#ENV +=  PATH=$(PATH)
-#ENV +=	CC=$(CC)
 ENV +=	CFLAGS="$(CFLAGS)"
-#ENV +=	CXX=$(CXX)
 ENV +=	CXXFLAGS="$(CXXFLAGS)"
-#ENV +=	LDFLAGS="$(LDFLAGS) -lm"
-#ENV +=	MOZILLA_OFFICIAL=1
-#ENV +=	MOZ_TELEMETRY_REPORTING=1
-#ENV +=	MOZ_PACKAGE_JSSHELL=1
-#ENV +=	MOZ_PKG_FORMAT=XZ
-#ENV +=	PKG_SKIP_STRIP=1
-#ENV +=	MOZILLA_PKG_NAME=firefox
-#ENV +=	SHELL="/bin/bash"
-#ENV +=  LDFLAGS="-L$(BUILD_DIR_64)/dist/lib -L$(BUILD_DIR_64)/dist/bin"
-#ENV +=  PYTHON="$(PYTHON)"
 ENV += PKG_CONFIG=/usr/bin/amd64/pkg-config
 
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
@@ -181,14 +170,12 @@ COMPONENT_POST_BUILD_ACTION = \
 		$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
 
 COMPONENT_POST_INSTALL_ACTION  = \
-    for file in $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/*.so \
-          $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/plugin-container; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64:$$ORIGIN"' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64:$$ORIGIN"' $$file ; \
+    for file in `find $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/ -name "*.so"`; do \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
     done ;
 
-donothave_SIGNED_LIST = libsoftokn3.so libnssdbm3.so libfreebl3.so
-
+SIGNED_LIST = libsoftokn3.so libfreebl3.so
 
 COMPONENT_POST_INSTALL_ACTION += \
         slist='$(SIGNED_LIST)' ; for f in $$slist ; do \
@@ -209,18 +196,12 @@ COMPONENT_TEST_TRANSFORMS = \
 REQUIRED_PACKAGES += developer/build/autoconf-213
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += system/header/header-audio
-REQUIRED_PACKAGES += developer/clang-90
 REQUIRED_PACKAGES += developer/lang/rustc
 REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += library/python/psutil
 REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += system/library/mozilla-nss
-REQUIRED_PACKAGES += library/nspr
-REQUIRED_PACKAGES += library/nspr/header-nspr
-REQUIRED_PACKAGES += system/library/mozilla-nss/header-nss
 REQUIRED_PACKAGES += library/http-parser
-
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/c++/harfbuzz
