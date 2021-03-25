@@ -1,0 +1,21 @@
+# HG changeset patch
+# User Petr Sumbera <petr.sumbera@oracle.com>
+# Date 1560937184 -7200
+#      Wed Jun 19 11:39:44 2019 +0200
+# Node ID 1c2190cf70a58a6e9ad82f52da97b00abcc81a8d
+# Parent  0dff9f803849e1e95d097fb2a41167f56c2d22c7
+Workaround for Bug 1533760
+Solaris: Text relocation remains against symbol ff_cos_512 referenced in in file x86/fft.o
+
+diff -r 0dff9f803849 -r 1c2190cf70a5 toolkit/moz.configure
+--- a/toolkit/moz.configure	Tue Jun 18 18:33:22 2019 +0000
++++ b/toolkit/moz.configure	Wed Jun 19 11:39:44 2019 +0200
+@@ -1579,7 +1579,7 @@
+             flags = ['-DPIC', '-DWIN32']
+         elif target.kernel == 'WINNT' and target.cpu == 'aarch64':
+             flags = ['-DPIC', '-DWIN64']
+-        elif target.cpu == 'x86_64':
++        elif target.cpu == 'x86_64' and target.kernel != 'SunOS':
+             if target.kernel == 'Darwin':
+                 flags = ['-D__x86_64__', '-DPIC', '-DMACHO']
+             elif target.kernel == 'WINNT':
