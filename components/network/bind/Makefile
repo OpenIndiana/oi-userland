@@ -115,6 +115,6 @@ REQUIRED_PACKAGES += library/zlib
 #REQUIRED_PACKAGES += network/dns/bind
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += service/security/kerberos-5
-REQUIRED_PACKAGES += shell/ksh93
+#REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
