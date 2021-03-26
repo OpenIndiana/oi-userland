@@ -28,12 +28,11 @@ BUILD_BITS=			32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
-COMPONENT_VERSION=	27.1
+COMPONENT_VERSION=	27.2
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:4a4c128f915fc937d61edfc273c98106711b540c9be3cd5d2e2b9b5b2f172e41
+COMPONENT_ARCHIVE_HASH= sha256:b4a7cc4e78e63f378624e0919215b910af5bb2a0afc819fad298272e9f40c1b9
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 
 TEST_TARGET=		$(NO_TESTS)
@@ -201,7 +200,6 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
 install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 #REQUIRED_PACKAGES += editor/gnu-emacs
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
@@ -220,6 +218,7 @@ REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
+#REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
