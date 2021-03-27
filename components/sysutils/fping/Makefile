@@ -22,35 +22,26 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fping
-COMPONENT_VERSION=	2.4b2_to
-IPS_COMPONENT_VERSION=	2.4.2
-COMPONENT_PROJECT_URL=	http://fping.sourceforge.net/
+COMPONENT_VERSION=	5.0
+#IPS_COMPONENT_VERSION=	2.5.0
+COMPONENT_PROJECT_URL=	https://fping.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:9f3b3ed7c9fffccefefa9af432eee7244a65592118851f75b5897814cb79b86f
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:ed38c0b9b64686a05d1b3bc1d66066114a492e04e44eef1821d43b1263cd57b8
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/fping
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =  \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
