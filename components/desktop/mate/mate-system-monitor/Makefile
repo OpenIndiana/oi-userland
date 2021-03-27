@@ -20,14 +20,13 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-system-monitor
 COMPONENT_MJR_VERSION=	1.24
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE system monitor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:1fa384fae8be0384dbfa7bb32acdbda977745185e59570bd3869ea6e382559c4
+COMPONENT_ARCHIVE_HASH= 
 COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/system-monitor/mate-system-monitor
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -52,17 +51,14 @@ CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
 # Build dependencies
 REQUIRED_PACKAGES += library/desktop/mate/mate-common
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/c++/sigcpp
-REQUIRED_PACKAGES += library/desktop/atk
-REQUIRED_PACKAGES += library/desktop/c++/atkmm
-REQUIRED_PACKAGES += library/desktop/c++/cairomm
 REQUIRED_PACKAGES += library/desktop/c++/gtkmm3
-REQUIRED_PACKAGES += library/desktop/c++/pangomm
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
