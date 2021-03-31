@@ -1,15 +1,27 @@
---- opensmalltalk-vm-sun-v5.0.11/platforms/unix/config/Makefile.in	Wed Aug 26 15:38:04 2020
-+++ p0/opensmalltalk-vm-sun-v5.0.11/platforms/unix/config/Makefile.in	Thu Aug 27 07:33:34 2020
-@@ -67,6 +67,9 @@
+--- opensmalltalk-vm-sun-v5.0.26/platforms/unix/config/Makefile.in	Thu Feb 11 17:20:06 2021
++++ p0/opensmalltalk-vm-sun-v5.0.26/platforms/unix/config/Makefile.in	Mon Mar 29 16:48:16 2021
+@@ -49,7 +49,7 @@
+ 
+ # VM
+ 
+-$(squeak) : config.sh $(SQLIBS) version.o
++$(squeak) : $(SQLIBS) version.o
+ 	$(LINK) $(squeak) $(SQLIBS) version.o $(LIBS) [plibs] vm/vm.a
+ 	@echo
+ 	@size $(squeak)
+@@ -67,8 +67,11 @@
  getversion : ${cfgdir}/getversion.c ${topdir}/platforms/Cross/vm/sqSCCSVersion.h
  	$(LINK) getversion $(INCLUDES) ${cfgdir}/getversion.c
  
+-plugins : config.sh $(PLUGINS_LA)
 +ckformat : ${topdir}/src/ckformat.c
 +	$(LINK) $@ $?
-+
- plugins : config.sh $(PLUGINS_LA)
  
++plugins : $(PLUGINS_LA)
++
  # nuke everything but the mvm script; plugins.ext and plugins.int are assumed
+ # to be copied from the parent or grandparent directory
+ 
 @@ -77,10 +80,10 @@
  
  # unix launch scripts
@@ -23,3 +35,28 @@
  
  # npsqueak
  
+@@ -135,7 +138,7 @@
+ NPOBJS		= vm-display-Quartz/sqUnixSafari.o vm-sound-MacOSX/sqUnixSoundMacOSX.o vm-display-Quartz/sqUnixQuartz.o
+ NPLIBS		= $(NPOBJS) -framework CoreAudio -framework AudioToolbox
+ 
+-NPSqueak : config.sh $(SQLIBS) version.o $(NPOBJS)
++NPSqueak : $(SQLIBS) version.o $(NPOBJS)
+ 	gcc -bundle -flat_namespace -undefined suppress -o NPSqueak \
+ 	  $(NPLIBS) $(SQLIBS) version.o $(LIBS)  vm/vm.a
+ 
+@@ -153,15 +156,6 @@
+ @Makefile_rpm@
+ @Makefile_deb@
+ 
+-# VMM configuration changes
+-
+-config.sh : $(vmmcfg)/plugins.int $(vmmcfg)/plugins.ext libtool
+-	./config.status
+-	@echo
+-	@echo "configuration changed: please run make again"
+-	@echo
+-	@exit 1
+-
+ # bookkeeping
+ LIBTOOL_DEPS = @LIBTOOL_DEPS@
+ libtool: $(LIBTOOL_DEPS)

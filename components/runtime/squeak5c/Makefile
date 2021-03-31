@@ -28,10 +28,9 @@ include ../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		squeak-5c
-COMPONENT_VERSION=	5.0.2945
-COMPONENT_REVISION=	1
-GIT_TAG=		sun-v5.0.26
-PLUGIN_REV=		5.0-202102111620-cog
+COMPONENT_VERSION=	5.0.2948
+GIT_TAG=		sun-v5.0.27
+PLUGIN_REV=		5.0-202103291332-cog
 COMPONENT_SUMMARY=	The Cog Implementation of the Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak-5c
@@ -45,7 +44,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:470a55c51da928bce248a6c1c239fa5c74cb5141b9a06119640c75602bbcf163
+COMPONENT_ARCHIVE_HASH=	sha256:84d22bfba6a9f1b9dfbc8d3be14343a7fb5cbe09bb9c6146900f61a7ba37b2f8
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
@@ -53,11 +52,6 @@ TEST_TARGET= $(NO_TESTS)
 # some builds seem to be broken with -Bdirect
 # but issue is not reproducable
 # LD_B_DIRECT=
-
-# try to install the 32bit version before the 64bit version
-build : $(BUILD_32) $(INSTALL_32) $(BUILD_64)
-
-install : $(INSTALL_64)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -124,17 +118,17 @@ REQUIRED_PACKAGES += system/library/dbus
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxevie
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxrender
