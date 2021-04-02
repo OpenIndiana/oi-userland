@@ -1395,6 +1395,9 @@ component-hook:
 # Add default dependency to SUNWcs
 REQUIRED_PACKAGES += SUNWcs
 
+# Add default dependency to shell/ksh93 which has been separated from SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
+
 #
 # Packages with tools that are required to build Userland components
 #
