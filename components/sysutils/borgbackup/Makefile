@@ -15,10 +15,12 @@
 
 BUILD_BITS=				64
 BUILD_STYLE=			setup.py
+USE_OPENSSL11=			yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			borgbackup
 COMPONENT_VERSION=		1.1.16
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=	https://borgbackup.readthedocs.org/en/stable/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -42,6 +44,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
