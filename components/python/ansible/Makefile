@@ -17,13 +17,12 @@ BUILD_BITS=	NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ansible
-COMPONENT_VERSION=	2.9.11
+COMPONENT_VERSION=	2.9.19
 COMPONENT_SUMMARY=	Ansible is a radically simple IT automation system
 COMPONENT_PROJECT_URL=	https://ansible.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:88f9d033ece7fd51eca3abb4f02e13b63c924b97f9705a997d5a711c0cf42ab1
+COMPONENT_ARCHIVE_HASH=	sha256:64445d133b3d2f8e0924d196740da81971b2e0c3f9df4a4976206ae059288732
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_FMRI=	system/management/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
@@ -40,7 +39,12 @@ COMPONENT_TEST_CMD =    $(PYTHON) /usr/bin/py.test-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS =
 
 # Required for tests
+REQUIRED_PACKAGES += library/python/hypothesis-35
 REQUIRED_PACKAGES += library/python/mock-35
+REQUIRED_PACKAGES += library/python/pluggy-35
+REQUIRED_PACKAGES += library/python/py-35
+REQUIRED_PACKAGES += library/python/pytest-35
+REQUIRED_PACKAGES += library/python/sortedcontainers-35
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-35
