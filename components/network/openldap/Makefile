@@ -27,12 +27,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openldap
-COMPONENT_VERSION=	2.4.57
+COMPONENT_VERSION=	2.4.58
 COMPONENT_SUMMARY=	OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_PROJECT_URL=	https://www.openldap.org/
-COMPONENT_ARCHIVE_HASH=	sha256:c7ba47e1e6ecb5b436f3d43281df57abeffa99262141aec822628bc220f6b45a
+COMPONENT_ARCHIVE_HASH=	sha256:57b59254be15d0bf6a9ab3d514c1c05777b02123291533134a87c94468f8f47b
 COMPONENT_ARCHIVE_URL=	ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/openldap
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -127,5 +127,6 @@ REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl
