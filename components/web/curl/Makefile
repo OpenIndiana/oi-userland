@@ -22,14 +22,15 @@
 # Copyright (c) 2018, Michal Nowak
 #
 BUILD_BITS= 64_and_32
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
-COMPONENT_VERSION=      7.75.0
+COMPONENT_VERSION=      7.76.0
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:fe0c49d8468249000bda75bcfdf9e30ff7e9a86d35f1a21f428d79c389d55675
+COMPONENT_ARCHIVE_HASH=	sha256:6302e2d75c59cdc6b35ce3fbe716481dd4301841bbb5fd71854653652a014fc8
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=  	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE).asc
 
@@ -101,14 +102,15 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/ ERROR:/p" '
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/brotli
+REQUIRED_PACKAGES += library/libgsasl
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
