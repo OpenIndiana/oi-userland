@@ -1,3 +1,5 @@
+The patch was taken from solaris-userland.
+
 The logic here is that we want to (a) pass correct args to gcc [which would die
 horribly, otherwise], and (b) set up the correct RPATH so that we don't try to
 link 32- and 64-bit objects together.
@@ -5,16 +7,14 @@ link 32- and 64-bit objects together.
 Expected to be contributed upstream at some point.
 
 
---- cffi-1.11.4/testing/embedding/test_basic.py.orig	2018-02-19 18:22:47.498413176 -0800
-+++ cffi-1.11.4/testing/embedding/test_basic.py	2018-02-19 18:24:40.789997690 -0800
-@@ -1,14 +1,16 @@
+--- cffi-1.14.0/testing/embedding/test_basic.py
++++ cffi-1.14.0/testing/embedding/test_basic.py
+@@ -1,3 +1,4 @@
 +import platform
  import py
  import sys, os, re
  import shutil, subprocess, time
- from testing.udir import udir
- import cffi
- 
+@@ -7,6 +8,7 @@ import cffi
  
  local_dir = os.path.dirname(os.path.abspath(__file__))
  _link_error = '?'
@@ -22,20 +22,14 @@ Expected to be contributed upstream at some point.
  
  def check_lib_python_found(tmpdir):
      global _link_error
-     if _link_error == '?':
-         ffi = cffi.FFI()
-@@ -127,15 +129,27 @@
-                     libfiles.append('Release\\%s.lib' % m[:-4])
-                 modules = libfiles
+@@ -129,11 +131,19 @@ if sys.platform == 'win32':
                  extra_preargs.append('/MANIFEST')
                  debug = False    # you need to install extra stuff
                                   # for this to work
--            elif threads:
 +            elif sys.platform == 'sunos5':
 +                extra_preargs.append("-m%s" % bits)
-+            if sys.platform != 'sunos5' and threads:
+             elif threads:
                  extra_preargs.append('-pthread')
-+
              objects = c.compile([filename], macros=sorted(defines.items()),
 -                                debug=debug)
 -            c.link_executable(objects + modules, name, extra_preargs=extra_preargs)
@@ -43,15 +37,11 @@ Expected to be contributed upstream at some point.
 +
 +            if sys.platform == 'sunos5':
 +                library_dirs = os.path.join("/usr/lib", bits)
-+                c.link_executable(objects + modules, name,
-+                                  library_dirs=[library_dirs],
++                c.link_executable(objects + modules, name, library_dirs=[library_dirs],
 +                                  extra_preargs=extra_preargs)
 +            else:
-+                c.link_executable(objects + modules, name,
-+                                  extra_preargs=extra_preargs)
-+
++                c.link_executable(objects + modules, name, extra_preargs=extra_preargs)
          finally:
              os.chdir(curdir)
  
-     def patch_environment(self):
-         copy_away_env()
+
