@@ -28,11 +28,13 @@
 # Component uses ABI3 naming.
 PYTHON3_SOABI=abi3
 
+BUILD_BITS=				32_and_64
+BUILD_STYLE=			setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cryptography
 COMPONENT_VERSION=	2.6.1
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -40,11 +42,10 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://cryptography.io/
 
-PYTHON_VERSIONS = 2.7 3.5
+PYTHON_VERSIONS = $(PYTHON_VERSIONS_ALL)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=			$(TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
 # 64-bit python loads *.so modules from 64-bit subdir,
 # but during tests libraries are installed to non-confirming path
@@ -54,16 +55,14 @@ COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
 COMPONENT_TEST_CMD=	$(PYTHON) setup.py test
 COMPONENT_TEST_ARGS=
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 REQUIRED_PACKAGES += library/python/pytest-35
+REQUIRED_PACKAGES += library/python/pytest-37
+REQUIRED_PACKAGES += library/python/pytest-39
 REQUIRED_PACKAGES += library/python/cffi
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
