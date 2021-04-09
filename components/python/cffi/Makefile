@@ -22,25 +22,26 @@
 #
 # Copyright (c) 2014, 2018, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2021, Nona Hansel
 #
 
+BUILD_BITS=					32_and_64
+BUILD_STYLE=				setup.py
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		cffi
-COMPONENT_VERSION=	1.12.2
-COMPONENT_REVISION=	3
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_NAME=			cffi
+COMPONENT_VERSION=	1.14.0
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:e113878a446c6228669144ae8a56e268c91b7f1fafae927adc4879d9849e0ea7
+	sha256:2d384f4a127a15ba701207f7639d94106693b6cd64173d6c8988e2c25f3ac2b6
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://cffi.readthedocs.org/
+COMPONENT_PROJECT_URL=	https://cffi.readthedocs.org/
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=			$(TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS = -DXOPEN_SOURCE=700
 CFLAGS += $(CC_BITS)
@@ -52,7 +53,7 @@ COMPONENT_TEST_ENV +=	$(PYTHON_ENV)
 COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
 COMPONENT_TEST_ENV +=	TESTOWNLIB_CC="$(CC) $(CC_PIC) %s $(CC_BITS) -shared -o '%s.so'"
 COMPONENT_TEST_CMD =	$(PYTHON.$(BITS)) /usr/bin/py.test-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS =	--resultlog $(@D)/testresults
+COMPONENT_TEST_ARGS =  --log-file $(@D)/testresults
 COMPONENT_TEST_ARGS +=	-p no:codechecker
 COMPONENT_TEST_ARGS +=	-v
 COMPONENT_TEST_ARGS +=	c testing
@@ -69,16 +70,14 @@ COMPONENT_PRE_TEST_ACTION = \
 	    $(SOURCE_DIR)/doc/source/installation.rst \
 	    $(@D)/tests/doc/source
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 REQUIRED_PACKAGES += library/python/pycparser-27
 REQUIRED_PACKAGES += library/python/pycparser-35
+REQUIRED_PACKAGES += library/python/pycparser-37
+REQUIRED_PACKAGES += library/python/pycparser-39
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
