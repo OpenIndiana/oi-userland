@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2014, 2018, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2021, Nona Hansel
 #
 
 # Component uses ABI3 naming.
@@ -31,7 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cryptography
 COMPONENT_VERSION=	2.6.1
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -59,7 +60,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-REQUIRED_PACKAGES += library/python/pytest-27
 REQUIRED_PACKAGES += library/python/pytest-35
 REQUIRED_PACKAGES += library/python/cffi
 # Auto-generated dependencies
