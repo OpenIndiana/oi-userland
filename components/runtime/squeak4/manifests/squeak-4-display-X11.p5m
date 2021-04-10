@@ -24,6 +24,8 @@ license squeak.license license='MIT'
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
+# 32-bit objects in 64-bit multiarch build are rejected by lint
+<transform file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/* -> set pkg.linted.userland.action001.2 true>
 
 # the minimal installation consists of the squeak-4-nodisplay package
 # which can run "headless" squeak -nodisplay images
