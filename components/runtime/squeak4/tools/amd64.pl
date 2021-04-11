@@ -18,6 +18,9 @@ while (<>) {
 	} elsif (/squeakvm/) {
 	   # don't process cause _64bit is already processed
 	   print $_;
+	} elsif (/transform/) {
+	   # don't process cause _64bit is already processed
+	   print $_;
 	} elsif (/_64bit/) {
 		s/file path=//;
 		chomp;

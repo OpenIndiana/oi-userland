@@ -37,11 +37,8 @@
 # usr/lib/squeak/<version>-<svnversion>_64bit/  with a _64bit suffix
 # which is unfortunately not conforming to the usr/lib/amd64 usage
 # and it generates a hard error by pkglint "64-bit object in 32-bit path"
-#
-# it is possible to disable pkglint (PKGLINT=/bin/true) and build
-# the squeak4 package "as-is", but we deliver a patch and rename files
-# in order to put the 64-bit objects in their usual place to please pkglint
-#
+# so we deliver a patch and rename files
+# in order to put the 64-bit objects in their usual usr/lib/amd64 location
 
 BUILD_BITS=32_and_64
 
@@ -52,6 +49,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak-4
 COMPONENT_VERSION=	4.19.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The Squeak V4 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -71,7 +69,6 @@ TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PKGLINT=	/bin/true
 PKG_OPTIONS += -DBRANCHID="$(BRANCHID)"
 PKG_OPTIONS += -DSVN_REV="$(SVN_REV)"
 
@@ -128,7 +125,6 @@ REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -136,6 +132,9 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/squeak-4-display-X11
+REQUIRED_PACKAGES += runtime/squeak-4-nodisplay
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/libdbus
