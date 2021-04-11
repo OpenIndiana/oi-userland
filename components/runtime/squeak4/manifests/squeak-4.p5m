@@ -23,6 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license squeak.license license='MIT'
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# 64-bit objects in 32-bit multiarch build are rejected by lint
+<transform file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/* -> set pkg.linted.userland.action001.2 true>
+
 # the minimal installation consists of the squeak-4-nodisplay package
 # which can run "headless" squeak -nodisplay images
 # with only minimal installation requirements (only ksh, libc, math)
