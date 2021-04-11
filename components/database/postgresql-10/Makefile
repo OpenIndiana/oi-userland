@@ -12,6 +12,7 @@
 # Copyright 2012-2013, EveryCity Ltd. All rights reserved.
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2021 Gary Mills
 #
 
 BUILD_BITS=32_and_64
@@ -20,13 +21,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	10
-COMPONENT_MNR_VERSION=	15
+COMPONENT_MNR_VERSION=	16
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:5956bce0becffa77883c41594c95a23110b94f10cd66a1157e373c3575921f7e
+COMPONENT_ARCHIVE_HASH=	sha256:a35c718b1b6690e01c69626d467edb933784f8d1d6741e21fe6cce0738467bb3
 COMPONENT_ARCHIVE_URL=	http://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.postgresql.org
+
+# Set python version used by this product
+PYTHON_VERSION=3.7
 
 TEST_TARGET=$(TEST_64)
 
@@ -108,7 +112,7 @@ REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
