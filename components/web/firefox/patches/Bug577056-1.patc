@@ -1,0 +1,49 @@
+diff --git a/js/public/Value.h b/js/public/Value.h
+index b618d99..f2ede39 100644
+--- a/js/public/Value.h
++++ b/js/public/Value.h
+@@ -837,24 +837,39 @@ union alignas(8) Value {
+ #elif defined(JS_PUNBOX64)
+ # if defined(JS_UNALIGNED_PRIVATE_VALUES)
+     // ptr must be a valid user-mode pointer, with the top 16 bits clear.
+-    MOZ_ASSERT((uintptr_t(ptr) & 0xFFFF000000000000ULL) == 0);
++    if ((uintptr_t(ptr) & 0xFFFF000000000000ULL) != 0) {
++        fprintf( stderr, " setPrivate range error %lx", (uint64_t) ptr);
++    }
++    // MOZ_ASSERT((uintptr_t(ptr) & 0xFFFF000000000000ULL) == 0);
+     asBits_ = uintptr_t(ptr);
+ # else
+-    MOZ_ASSERT((uintptr_t(ptr) & 1) == 0);
++    if ((uintptr_t(ptr) & 1) != 0) {
++        fprintf( stderr, " setPrivate align error %lx", (uint64_t) ptr);
++    }
++    // MOZ_ASSERT((uintptr_t(ptr) & 1) == 0);
+     asBits_ = uintptr_t(ptr) >> 1;
+ # endif
+ #endif
+-    MOZ_ASSERT(isDouble());
++    if (!isDouble()) {
++        fprintf( stderr, " setPrivate isDouble error %lx", (uint64_t) ptr);
++    }
++    // MOZ_ASSERT(isDouble());
+   }
+ 
+   void* toPrivate() const {
+-    MOZ_ASSERT(isDouble());
++    if (!isDouble()) {
++        fprintf( stderr, " toPrivate isDouble error %lx", (uint64_t) asBits_);
++    }
++    // MOZ_ASSERT(isDouble());
+ #if defined(JS_NUNBOX32)
+     return s_.payload_.ptr_;
+ #elif defined(JS_PUNBOX64)
+ # if defined(JS_UNALIGNED_PRIVATE_VALUES)
+     // This must be a valid user-mode pointer, with the top 16 bits clear.
+-    MOZ_ASSERT((asBits_ & 0xFFFF000000000000ULL) == 0);
++    if ((uintptr_t(asBits_) & 0xFFFF000000000000ULL) != 0) {
++        fprintf( stderr, " toPrivate range error %lx", (uint64_t) asBits_);
++    }
++    // MOZ_ASSERT((asBits_ & 0xFFFF000000000000ULL) == 0);
+     return reinterpret_cast<void*>(asBits_);
+ # else
+     return reinterpret_cast<void*>(asBits_ << 1);

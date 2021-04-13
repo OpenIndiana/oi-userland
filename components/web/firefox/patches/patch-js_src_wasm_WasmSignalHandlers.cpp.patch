@@ -1,15 +1,12 @@
-$NetBSD: patch-js_src_wasm_WasmSignalHandlers.cpp,v 1.1 2018/06/28 14:04:10 ryoon Exp $
-
-Support SunOS.
-
-diff -Naur firefox-60.5.0/js/src/wasm/WasmSignalHandlers.cpp.old  firefox-60.5.0/js/src/wasm/WasmSignalHandlers.cpp
---- firefox-60.5.0/js/src/wasm/WasmSignalHandlers.cpp.old       2019-01-23 12:47:43.922224151 +0000
-+++ firefox-60.5.0/js/src/wasm/WasmSignalHandlers.cpp   2019-01-23 12:48:11.897644411 +0000
-@@ -133,6 +133,7 @@
- #define EBP_sig(p) ((p)->uc_mcontext.gregs[REG_EBP])
- #define ESP_sig(p) ((p)->uc_mcontext.gregs[REG_ESP])
- #else
-+#include <sys/regset.h>
- #define XMM_sig(p, i) ((p)->uc_mcontext.fpregs.fp_reg_set.fpchip_state.xmm[i])
- #define EIP_sig(p) ((p)->uc_mcontext.gregs[REG_PC])
- #define EBP_sig(p) ((p)->uc_mcontext.gregs[REG_EBP])
+diff --git a/js/src/wasm/WasmSignalHandlers.cpp b/js/src/wasm/WasmSignalHandlers.cpp
+index 86ab0f4..5f46b87 100644
+--- a/js/src/wasm/WasmSignalHandlers.cpp
++++ b/js/src/wasm/WasmSignalHandlers.cpp
+@@ -109,6 +109,7 @@ using mozilla::DebugOnly;
+ #    define R32_sig(p) ((p)->sc_frame.srr0)
+ #  endif
+ #elif defined(__linux__) || defined(__sun)
++#  include <sys/regset.h>
+ #  if defined(__linux__)
+ #    define EIP_sig(p) ((p)->uc_mcontext.gregs[REG_EIP])
+ #    define EBP_sig(p) ((p)->uc_mcontext.gregs[REG_EBP])
