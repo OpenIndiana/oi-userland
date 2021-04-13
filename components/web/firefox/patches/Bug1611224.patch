@@ -1,0 +1,28 @@
+# HG changeset patch
+# User Petr Sumbera <petr.sumbera@oracle.com>
+# Date 1579873951 -3600
+#      Fri Jan 24 14:52:31 2020 +0100
+# Node ID c65efa1f6ecf038ed1e2d02ebd5f5ae5e206c684
+# Parent  b961d82463ccc93fce3c8af9c291726127eb8388
+Bug 1611224 bindgen - clang error undeclared identifier '__builtin_isnanf(l)' wh
+en building with gcc
+
+diff -r b961d82463cc -r c65efa1f6ecf mfbt/MathAlgorithms.h
+--- a/mfbt/MathAlgorithms.h     Mon Oct 07 13:41:31 2019 +0200
++++ b/mfbt/MathAlgorithms.h     Fri Jan 24 14:52:31 2020 +0100
+@@ -11,6 +11,15 @@
+ 
+ #include "mozilla/Assertions.h"
+ 
++#if defined(__clang__)
++#ifndef _builtin_isnanf
++#define __builtin_isnanf __builtin_isnan
++#endif
++#ifndef _builtin_isnanl
++#define __builtin_isnanl __builtin_isnan
++#endif
++#endif
++
+ #include <cmath>
+ #include <limits.h>
+ #include <stdint.h>
