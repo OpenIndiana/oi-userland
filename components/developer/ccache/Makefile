@@ -10,13 +10,14 @@
 #
 
 #
-# Copyright (c) 2015-2016 Jim Klimov
+# Copyright (c) 2015-2021 Jim Klimov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccache
 COMPONENT_VERSION=	3.3.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://ccache.samba.org/
 COMPONENT_DOWNLOAD_URL=	http://samba.org/ftp/$(COMPONENT_NAME)/
 COMPONENT_DOCUMENTATION_URL =	http://ccache.samba.org/manual.html
