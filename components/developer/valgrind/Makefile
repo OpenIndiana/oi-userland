@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		valgrind
 COMPONENT_VERSION=	3.17.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		developer/debug/valgrind
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,10 +42,6 @@ COMPONENT_ARCHIVE_URL=	ftp://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	http://valgrind.org
 COMPONENT_SUMMARY=	Valgrind: instrumentation framework and tools to detect memory and threading problems
 COMPONENT_LICENSE=	GPLv2
-
-# currently the regtests fail
-# this needs further investigation and/or fixing
-TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -77,6 +74,14 @@ COMPONENT_POST_CONFIGURE_ACTION += ( cp $(@D)/config.h $(SOURCE_DIR) )
 
 COMPONENT_POST_BUILD_ACTION += \
 	( cd $(@D)/docs && $(ENV) $(GMAKE) man-pages )
+
+#
+# currently 3.17.0
+# == 787 tests, 95 stderr failures, 18 stdout failures, 3 stderrB failures, 6 stdoutB failures, 7 post failures ==
+#
+COMPONENT_TEST_TARGETS = regtest
+# check just overal test results
+COMPONENT_TEST_TRANSFORMS += '-n -e "/^== /p"'
 
 # Build dependencies
 # Auto-generated dependencies
