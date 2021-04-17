@@ -1,0 +1,151 @@
+<?xml version='1.0'?>
+<!--
+//
+//
+// This file and its contents are supplied under the terms of the
+// Common Development and Distribution License ("CDDL"), version 1.0.
+// You may only use this file in accordance with the terms of version
+// 1.0 of the CDDL.
+//
+// A full copy of the text of the CDDL should have accompanied this
+// source.  A copy of the CDDL is also available via the Internet at
+// http://www.illumos.org/license/CDDL.
+//
+//
+// Copyright 2016-2021 by Jim Klimov
+//
+-->
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type='manifest' name='jenkins-swarm-client'>
+  <service
+    name='application/jenkins-swarm-client'
+    type='service'
+    version='1'>
+
+    <!--
+        Different instances can be made, possibly running with different
+        user accounts and/or labeled for different purposes in the build
+        farm (e.g. infra worker with persistent storage vs. builder with
+        workspace in tmpfs).
+    -->
+    <create_default_instance enabled='true' />
+
+    <!--
+        Wait for network interfaces to be initialized.
+    -->
+    <dependency name='network'
+        grouping='require_all'
+        restart_on='error'
+        type='service'>
+            <service_fmri value='svc:/milestone/network:default'/>
+    </dependency>
+
+    <!--
+        Wait for all local filesystems to be mounted.
+    -->
+    <dependency name='filesystem-local'
+        grouping='require_all'
+        restart_on='none'
+        type='service'>
+            <service_fmri value='svc:/system/filesystem/local:default'/>
+    </dependency>
+
+    <!--
+        Wait for automounting to be available, as we may be
+        using data from home directories or other remote
+        filesystems (e.g. shared ccache, git reference repo).
+    -->
+    <dependency name='autofs'
+        grouping='optional_all'
+        restart_on='error'
+        type='service'>
+            <service_fmri value='svc:/system/filesystem/autofs:default'/>
+    </dependency>
+
+    <!-- Service instance properties can point to the configuration file
+         which is generally too complex and tuned to the worker and its
+         role in the build farm (and tools/dependencies present), to be
+         specified in properties easily. Usually an admin or deployment
+         script populates the config file. The file should be secured to
+         only be readable by the service user account, since it may contain
+         location and credentials of the Jenkins controller instance this
+         agent would connect to and serve its bidding.
+         Arguments in the command line below may be or not be honored by
+         the script. In particular, the value of --default-worker-dir is
+         intended to be used when the config file does not specify another.
+    -->
+    <exec_method type='method'
+                   name='start'
+                   exec='/lib/svc/method/jenkins-swarm-client.sh %m --instance=%i --config=%{swarm_client/config_file} --default-worker-dir=%{swarm_client/worker_dir} --agent-jar=%{swarm_client/agent_jar}'
+                   timeout_seconds='240'>
+        <method_context>
+            <method_credential user='abuild' group='abuild' privileges='basic,net_privaddr'/>
+        </method_context>
+    </exec_method>
+
+    <exec_method type='method'
+                   name='stop'
+                   exec=':kill -TERM'
+                   timeout_seconds='60'>
+        <method_context>
+            <method_credential user='abuild' group='abuild' />
+        </method_context>
+    </exec_method>
+
+<!-- At the bare minimum, we want to restart and redeploy the JAR file and
+     when the service is refreshed (e.g. package update).
+     So we just kill it (if running) and hope SMF restart would do the rest.
+     Note this would abort any running builds; holistic solution to "offline"
+     the worker in Jenkins configuration and wait for any remaining running
+     builds (if any) to complete can be scripted, but is out of scope here.
+-->
+    <exec_method type='method'
+                   name='refresh'
+                   exec=':kill -TERM'
+                   timeout_seconds='60'>
+        <method_context>
+            <method_credential user='abuild' group='abuild' />
+        </method_context>
+    </exec_method>
+
+<!-- Note: the jenkins.war startup options are documented at:
+     https://wiki.jenkins-ci.org/pages/viewpage.action?pageId=73533946
+     Parameters not recognized by the WAR are passed to Winstone container:
+     http://winstone.sourceforge.net/#commandLine
+     If you plan to shield the Jenkins application server by a reverse proxy
+     like nginx, apache mod_proxy, etc. running in the same zone - consider
+     setting httpHost=127.0.0.1 below. Conversely, to run Jenkins as "the"
+     webserver in this operating environment, note that this SMF service is
+     sufficiently privileged to use httpPort numbers under 1024 (e.g. 80).
+-->
+    <property_group name='swarm_client' type='application'>
+        <stability value='Evolving' />
+        <propval name='agent_jar' type='astring' value='/usr/share/jenkins/jar/jenkins-swarm-client.jar' />
+        <!-- Default directory (if not overridden by config file) in which
+             the agent's workspace and other data would be written. This
+             may be a persistent filesystem, maybe dedicated dataset or
+             an individual sub-directory in an NFS/LOFS shared filesystem,
+             or a sufficiently sized discardable temporary filesystem, which
+             should be properly mounted and owned before this service starts.
+        -->
+        <propval name='worker_dir' type='astring' value='/var/lib/jenkins/agent/swarm.%i' />
+        <propval name='config_file' type='astring' value='/var/lib/jenkins/agent/swarm.%i.conf' />
+    </property_group>
+
+    <property_group name='startd' type='framework'>
+        <!-- sub-process core dumps shouldn't restart session -->
+        <propval name='ignore_error' type='astring'
+                value='core,signal' />
+        <propval name='duration' type='astring' value='daemon' />
+    </property_group>
+
+    <template>
+        <common_name>
+            <loctext xml:lang='C'>Jenkins Swarm Client - self-registering build agent as a service</loctext>
+        </common_name>
+    </template>
+
+    <stability value='Evolving' />
+
+  </service>
+</service_bundle>

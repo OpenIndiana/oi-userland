@@ -1,0 +1,147 @@
+# Example configuration for the jenkins-swarm-client service.
+# Technically this is a sourcable bash script which populates SWARM_CONFIG array.
+
+# Tune this for your deployment!
+JENKINS_MASTER_ROOT_URL="https://jenkins.localdomain"
+#JENKINS_PREFERRED_PROXY="http://proxy.localdomain:3128"
+
+# Container deployment script can add something else to desired labels
+# If a "$CUSTOM_LABELS_FILE.exclusive" exists, it is used (along with
+# a "$CUSTOM_LABELS_FILE" if present) with no generated additions.
+CUSTOM_LABELS_FILE="/opt/jenkins-swarm-client/etc/client.labels"
+
+# Avoid guessing the name and use one provided by container deployer
+# if this file exists and has one token inside.
+CUSTOM_WORKERNAME_FILE="/opt/jenkins-swarm-client/etc/client.workername"
+
+# No default => no option, if not specified
+CUSTOM_WORKERDESC_FILE="/opt/jenkins-swarm-client/etc/client.description"
+
+# Override some of the settings used for the swarm client
+CUSTOM_NUMEXECUTORS_FILE="/opt/jenkins-swarm-client/etc/client.numexecutors"
+DEFAULT_NUMEXECUTORS=1
+CUSTOM_WORKDIR_FILE="/opt/jenkins-swarm-client/etc/client.workdir"
+DEFAULT_WORKDIR="/tmp/jenkins-swarm-client"
+if [ -d /dev/shm ] && [ -w /dev/shm ] ; then
+    # Make sure to use tmpfs by default
+    DEFAULT_WORKDIR="/dev/shm/jenkins-swarm-client"
+fi
+
+# This value is used by several routines below, so we determine it in advance
+WORKDIR="$DEFAULT_WORKDIR"
+if [ -s "${CUSTOM_WORKDIR_FILE}" ]; then
+    WORKDIR="`head -1 "${CUSTOM_WORKDIR_FILE}" | awk '{print $1}'`" \
+    && [ -n "$WORKDIR" ] \
+    || WORKDIR="$DEFAULT_WORKDIR"
+    # No special restrictions - may be a full path like '/tmp/workdir"
+    # or a "workdir" relative to user account home
+fi
+
+prepare_proxyvars() {
+    if [ -n "${JENKINS_PREFERRED_PROXY-}" ]; then
+        SWARM_CONFIG+=("--env")
+        SWARM_CONFIG+=("ftp_proxy=${JENKINS_PREFERRED_PROXY}")
+
+        SWARM_CONFIG+=("--env")
+        SWARM_CONFIG+=("ftps_proxy=${JENKINS_PREFERRED_PROXY}")
+
+        SWARM_CONFIG+=("--env")
+        SWARM_CONFIG+=("http_proxy=${JENKINS_PREFERRED_PROXY}")
+
+        SWARM_CONFIG+=("--env")
+        SWARM_CONFIG+=("https_proxy=${JENKINS_PREFERRED_PROXY}")
+    fi
+
+    SWARM_CONFIG+=("--env")
+    SWARM_CONFIG+=("no_proxy=localhost,127.0.0.0/8,::1")
+
+    SWARM_CONFIG+=("--env")
+    SWARM_CONFIG+=("NO_PROXY=localhost,127.0.0.0/8,::1")
+
+    SWARM_CONFIG+=("--env")
+    SWARM_CONFIG+=("CURL_NOPROXY=localhost,127.0.0.0/8,::1")
+}
+
+prepare_worker_config() {
+    WORKERNAME=""
+    if [ -s "${CUSTOM_WORKERNAME_FILE}" ]; then
+        WORKERNAME="`head -1 "${CUSTOM_WORKERNAME_FILE}" | awk '{print $1}'`"
+    fi
+
+    WORKERDESC=""
+    if [ -s "${CUSTOM_WORKERDESC_FILE}" ]; then
+        WORKERDESC="`cat "${CUSTOM_WORKERDESC_FILE}" | sed 's,$,\\n,g' | tr '\n' ' ' | sed -e 's,^[ \t\s]*,,' -e 's,[ \t\s]*$,,'`"
+    fi
+
+    NUMEXECUTORS="$DEFAULT_NUMEXECUTORS"
+    if [ -s "${CUSTOM_NUMEXECUTORS_FILE}" ]; then
+        NUMEXECUTORS="`head -1 "${CUSTOM_NUMEXECUTORS_FILE}" | awk '{print $1}'`" \
+        && [ -n "$NUMEXECUTORS" ] && [ "$NUMEXECUTORS" -gt 0 ] \
+        || NUMEXECUTORS="$DEFAULT_NUMEXECUTORS"
+    fi
+
+# From help at https://wiki.jenkins.io/display/JENKINS/Swarm+Plugin :
+#   The mode controlling how Jenkins allocates jobs to slaves. Can be
+#   either 'normal' (utilize this slave as much as possible) or 'exclusive'
+#   (leave this machine for tied jobs only). Default is 'normal'.
+# We do not limit the settings here (though we default to 'exclusive') to
+# allow supporting newer releases (which might define more) seamlessly.
+    WORKERMODE="${DEPLOY_JENKINS_SWARM_AUTOCONFIG_MODE-}"
+    if [ -z "${WORKERMODE}" ] ; then
+        WORKERMODE="exclusive"
+    fi
+
+    if [ -z "${WORKERNAME-}" ] ; then
+        WORKERNAME="`hostname`"
+        case "`hostname`" in
+            localhost*|"")
+                case "${HARDWARE_UUID-}" in
+                    *)
+                        WORKERNAME="swarm-client-`date -u +%s`" ;;
+                esac
+                ;;
+        esac
+    fi
+
+    SWARM_CONFIG+=("-name")
+    SWARM_CONFIG+=("$WORKERNAME")
+
+    SWARM_CONFIG+=("-disableClientsUniqueId")
+    SWARM_CONFIG+=("-deleteExistingClients")
+    SWARM_CONFIG+=("-disableSslVerification")
+
+    SWARM_CONFIG+=("-master")
+    SWARM_CONFIG+=("$JENKINS_MASTER_ROOT_URL")
+
+    SWARM_CONFIG+=("-username")
+    SWARM_CONFIG+=("ipmci-swarm")
+
+    SWARM_CONFIG+=("-passwordFile")
+    SWARM_CONFIG+=("${PASSWD_FILE}")
+
+    #SWARM_CONFIG+=("-logFile")
+    #SWARM_CONFIG+=("${WORKDIR}/jenkins-swarm-client.log")
+
+    SWARM_CONFIG+=("-executors")
+    SWARM_CONFIG+=("${NUMEXECUTORS}")
+
+    SWARM_CONFIG+=("-mode")
+    SWARM_CONFIG+=("${WORKERMODE}")
+
+    SWARM_CONFIG+=("-fsroot")
+    SWARM_CONFIG+=("${WORKDIR}")
+
+    SWARM_CONFIG+=("-labelsFile")
+    SWARM_CONFIG+=("${LABELS_FILE}")
+
+    SWARM_CONFIG+=("--env")
+    SWARM_CONFIG+=("PATH=/usr/lib/ccache:$PATH")
+
+    if [ -n "$WORKERDESC" ] ; then
+        SWARM_CONFIG+=("-description")
+        SWARM_CONFIG+=("${WORKERDESC}")
+    fi
+}
+
+prepare_worker_config
+prepare_proxyvars

@@ -1,0 +1,59 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016-2021 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Note: java8+ is required since 2017
+# This may be JRE8 for the server, though JDK8 also suffices :)
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/java type=require
+
+file files/jenkins-swarm-client.sh \
+     path=lib/svc/method/jenkins-swarm-client.sh mode=555
+
+file path=usr/share/jenkins/jar/$(COMPONENT_NAME)-$(COMPONENT_VERSION).jar
+
+# Note: as we deliver the new JAR file, we tell the method script to refresh
+# using the known SMF FMRIs and file name.
+link path=usr/share/jenkins/jar/$(COMPONENT_NAME).jar \
+     target=./$(COMPONENT_NAME)-$(COMPONENT_VERSION).jar \
+     mediator=$(COMPONENT_NAME) \
+     mediator-version=$(COMPONENT_VERSION) \
+     restart_fmri=svc:/application/$(COMPONENT_NAME):default
+
+# The abuild account with ID 399 is inherited from build farms also running
+# the SUSE Open Build Service. Having all build workers run with the same
+# uid/gid allows to easily benefit from NFS/LOFS shared resources such as
+# a common ccache index (be sure to use CCACHE_DIR for recording relative
+# paths to sources of objects) or reference git repositories.
+depend type=require \
+    fmri=pkg:/developer/abuild-common
+
+# The home-dir of abuild is where common system files like trusted SSH keys are
+# stored, for the (potentially numerous) use-cases for the "abuild" account.
+# The Jenkins (swarm) agent directory below should store configuration and
+# workspace data for the Jenkins agent in particular. Technically different
+# types of agents (swarm, SSH, ...) can co-exist in different sub-directories.
+dir   group=abuild owner=abuild mode=0755 path=var/lib/jenkins/agent
+
+# Example config. User should make and customize a copy with similar content.
+file  files/jenkins-swarm-client.sample-conf \
+      path=var/lib/jenkins/agent/jenkins-swarm-client.sample-conf mode=444
