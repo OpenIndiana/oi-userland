@@ -65,6 +65,7 @@ UID   | User name
 95    | svctag
 96    | unknown
 97    | pkg5srv
+399   | abuild
 60001 | nobody
 60002 | noaccess
 65534 | nobody4
@@ -130,6 +131,7 @@ GID   | Group name
 95    | mlocate
 96    | unknown
 97    | pkg5srv
+399   | abuild
 60001 | nobody
 60002 | noaccess
 65534 | nogroup
