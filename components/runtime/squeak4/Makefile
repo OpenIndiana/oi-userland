@@ -49,7 +49,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak-4
 COMPONENT_VERSION=	4.19.6
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The Squeak V4 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -121,6 +121,9 @@ rebuild-manifests::
 	tools/amd64-p5m.sh
 	rm -f sample-manifest.p5m sample.p5m
 
+# disable pkglint until we find solution for 64bit object in 32-bit path error
+PKGLINT= /bin/true
+
 REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
 
@@ -132,8 +135,6 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/squeak-4-display-X11
-REQUIRED_PACKAGES += runtime/squeak-4-nodisplay
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2

@@ -64,6 +64,8 @@ while (<>) {
 			print X11 $_;
 		} elsif (/UnixOSProcessPlugin/) {
 			print NODISPLAY $_;
+		} elsif (/VectorEnginePlugin/) {
+			print X11 $_;
 		} elsif (/XDisplayControlPlugin/) {
 			print X11 $_;
 		} elsif (/vm-sound-null/) {
