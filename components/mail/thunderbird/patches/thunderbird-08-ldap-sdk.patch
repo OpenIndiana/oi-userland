@@ -1,0 +1,52 @@
+Should investigate and send upstream.
+
+--- a/comm/ldap/ldap-sdk.mozbuild
++++ b/comm/ldap/ldap-sdk.mozbuild
+@@ -17,6 +17,9 @@
+     DEFINES[CONFIG['OS_TARGET'].upper()] = True
+ elif CONFIG['OS_ARCH'] == 'WINNT':
+     DEFINES['_WINDOWS'] = True
++elif CONFIG['OS_ARCH'] == 'SunOS':
++    DEFINES['SOLARIS'] = 1
++    DEFINES['_POSIX_PTHREAD_SEMANTICS'] = True
+ 
+ DEFINES['_PR_PTHREADS'] = True
+ DEFINES['NET_SSL'] = True
+--- a/comm/ldap/c-sdk/libraries/libldap/tmplout.c
++++ b/comm/ldap/c-sdk/libraries/libldap/tmplout.c
+@@ -48,11 +48,6 @@
+ #  include <time.h> /* for struct tm and ctime */
+ #endif
+ 
+-/* This is totally lame, since it should be coming from time.h, but isn't. */
+-#if defined(SOLARIS)
+-char* ctime_r(const time_t*, char*, int);
+-#endif
+-
+ static int do_entry2text(LDAP* ld, char* buf, char* base, LDAPMessage* entry,
+                          struct ldap_disptmpl* tmpl, char** defattrs,
+                          char*** defvals, writeptype writeproc, void* writeparm,
+--- a/comm/ldap/c-sdk/include/portable.h
++++ b/comm/ldap/c-sdk/include/portable.h
+@@ -316,7 +316,7 @@
+       defined(OSF1V4) || defined(AIX) || defined(UnixWare) || defined(hpux) || \
+       defined(HPUX11) || defined(NETBSD) || defined(IRIX6) ||                  \
+       defined(FREEBSD) || defined(VMS) || defined(NTO) || defined(OPENBSD) ||  \
+-      defined(DRAGONFLY)
++      defined(DRAGONFLY) || defined(SOLARIS)
+ #    define NSLDAPI_CTIME(c, b, l) ctime_r(c, b)
+ #  elif defined(OSF1V3)
+ #    define NSLDAPI_CTIME(c, b, l) (ctime_r(c, b, l) ? NULL : b)
+Fixes error: 'FIONBIO' undeclared
+
+--- a/comm/ldap/c-sdk/libraries/libldap/os-ip.c
++++ b/comm/ldap/c-sdk/libraries/libldap/os-ip.c
+@@ -64,6 +64,8 @@
+ /* XXX value for macintosh (if applicable)? */
+ #endif
+ 
++#include <sys/filio.h>
++
+ #include "ldap-int.h"
+ #ifdef NSLDAPI_CONNECT_MUST_NOT_BE_INTERRUPTED
+ #  include <signal.h>
