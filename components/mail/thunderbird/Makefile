@@ -1,156 +1,219 @@
 #
-# This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"), version 1.0.
-# You may only use this file in accordance with the terms of version
-# 1.0 of the CDDL.
+# CDDL HEADER START
 #
-# A full copy of the text of the CDDL should have accompanied this
-# source.  A copy of the CDDL is also available via the Internet at
-# http://www.illumos.org/license/CDDL.
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
 #
 
 #
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
+# Copyright (c) 2015, 2021, Oracle and/or its affiliates.
+# Copyright 2021, Carsten Grzemba
 #
 
+BUILD_BITS = 64
+COMPILER = gcc
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	thunderbird
-COMPONENT_VERSION= 	52.9.1
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY= 	Mozilla Thunderbird Email/Newsgroup Client
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).source.tar.xz
+COMPONENT_NAME =	thunderbird
+COMPONENT_VERSION =	78.8.1
+COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
+COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
+COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:286fa71504e7184f3a41bcbdebf591bebe8e04dccbad1c93a47c6e72a7125c4d
-COMPONENT_ARCHIVE_URL= \
-  https://ftp.mozilla.org/pub/thunderbird/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/thunderbird/
+	sha256:1a0b9cc1c314fdfdf7aa10246b8c5062385b62df3c9cef2358d1aa657e8a6f0f
+ifndef CANDIDATE_BUILD
+MOZILLA_FTP = 		http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
+else
+MOZILLA_FTP = 		http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)
+endif
+COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 
-LANG_LIST=	ar bg ca cs da de el es-AR es-ES et fi fr he hr hu id is it ja ko lt nl nn-NO pl pt-BR pt-PT ro ru sk sl sq sr sv-SE tr uk vi zh-CN zh-TW
-LANG_FILES_LOCATION=	http://ftp.mozilla.org/pub/mozilla.org/thunderbird/releases/$(COMPONENT_VERSION)/linux-i686/xpi/
+# There are a set of .xpi files (as given in the LANG_LIST definition
+# below) that we need. We could download and unpack them individually, but
+# they doesn't contain version in its file name and there is lot of them.
+# Therefore we will download them and archive them in Userland cache using
+# one file with version number.
 
-LIGHTNING_VERSION=5.4
-LIGHTNING_DIR="$(PROTO_DIR)/usr/lib/thunderbird-$(COMPONENT_VERSION)/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}"
-GDATA_PROVIDER_DIR="$(PROTO_DIR)/usr/lib/thunderbird/extensions/{a62ef8ec-5fdc-40c2-873c-223b8a6925cc}"
+LANG_LIST = af ar ast be bg br ca cak cs cy \
+       da de dsb el en-CA en-GB en-US es-AR es-ES et \
+       eu fa fi fr fy-NL ga-IE gd gl he hr hsb hu \
+       hy-AM id is it ja ka kab kk ko lt ms \
+       nb-NO nl nn-NO pa-IN pl pt-BR pt-PT rm ro ru si sk sl \
+       sq sr sv-SE th tr uk uz vi zh-CN zh-TW
 
-COMPONENT_ARCHIVE_1=		lightning-$(LIGHTNING_VERSION)-sm+tb-linux.xpi
-COMPONENT_ARCHIVE_HASH_1=	sha256:1dba9da346bf0a4755eb3466b754f3a0acb22f2ff8195d0c907c2afeb23115e8
-COMPONENT_ARCHIVE_URL_1=	https://addons.cdn.mozilla.net/user-media/addons/_attachments/2313/$(COMPONENT_ARCHIVE_1)
+LANG_FILES_LOCATION= \
+        http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)/linux-x86_64/xpi
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+CLEAN_PATHS += $(COMPONENT_DIR)/xpi
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoconf-2.13 &&\
-			  cd $(@D)/mozilla && autoconf-2.13 &&\
-                          cd $(@D)/mozilla/js/src && autoconf-2.13 )
+CONFIGURE_DEFAULT_DIRS=no
 
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp $(COMPONENT_DIR)/files/gld-wrapper  $(BUILD_DIR) && chmod +x $(BUILD_DIR)/gld-wrapper )
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH = $(PATH.gnu):$(BUILD_DIR)/cargo/bin
 
-CONFIGURE_OPTIONS =	--disable-alsa
-CONFIGURE_OPTIONS +=	--enable-dbus
-CONFIGURE_OPTIONS +=	--enable-gnomeui
-CONFIGURE_OPTIONS +=	--enable-jemalloc
-CONFIGURE_OPTIONS +=	--disable-debug
-CONFIGURE_OPTIONS +=	--disable-tests
-CONFIGURE_OPTIONS +=	--disable-debug-symbols
-CONFIGURE_OPTIONS +=	--enable-install-strip
-CONFIGURE_OPTIONS +=	--enable-optimize=-O2
-CONFIGURE_OPTIONS +=	--disable-webrtc
-CONFIGURE_OPTIONS +=	--enable-official-branding
-CONFIGURE_OPTIONS +=	--disable-updater
-CONFIGURE_OPTIONS +=	--enable-pulseaudio
-CONFIGURE_OPTIONS +=	--enable-system-ffi
-CONFIGURE_OPTIONS +=	--enable-system-pixman
-CONFIGURE_OPTIONS +=	--with-system-zlib
-CONFIGURE_OPTIONS +=	--with-system-bz2
-CONFIGURE_OPTIONS +=	--disable-crashreporter
-CONFIGURE_OPTIONS +=    --enable-startup-notification
-CONFIGURE_OPTIONS +=	--enable-calendar
-CONFIGURE_OPTIONS +=	--enable-application=mail
-CONFIGURE_OPTIONS +=    --enable-default-toolkit=cairo-gtk2
-CONFIGURE_OPTIONS +=	--prefix=/usr
-CONFIGURE_OPTIONS +=	--libdir=/usr/lib
+MOZCONFIG = $(SOURCE_DIR)/mozconfig
+GNU_ARCH=               x86_64-sun-solaris
 
-CXXFLAGS +=	-Wno-invalid-offsetof -fpermissive
+ifdef DEBUG
+# disable code optimization
+CFLAGS =
+CXXFLAGS =
 
-ENV +=  SHELL=/usr/bin/sh
-ENV +=	CC=$(CC)
-ENV +=	CXX=$(CXX)
-ENV +=	MOZILLA_OFFICIAL=1
-ENV +=	MOZ_PKG_FORMAT=BZ2
-ENV +=	PKG_SKIP_STRIP=1
-ENV +=	MOZILLA_PKG_NAME=thunderbird
-ENV +=	CXXFLAGS="$(CXXFLAGS)"
-ENV +=  OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
-ENV +=  GLD_WRAPPER=$(BUILD_DIR)/gld-wrapper
-ENV +=  LDFLAGS="-L$(BUILD_DIR_32)/dist/lib -L$(BUILD_DIR_32)/dist/bin"
+MOZCONFIG_DEBUG =	$(MOZCONFIG)
+MOZCONFIG_NON_DEBUG =	/dev/null
+else
+MOZCONFIG_DEBUG =	/dev/null
+MOZCONFIG_NON_DEBUG =	$(MOZCONFIG)
+endif
 
-CONFIGURE_ENV =	$(ENV)
-COMPONENT_BUILD_ENV =	$(ENV)
-COMPONENT_INSTALL_ENV += HOME=/tmp
+THUNDERBIRD_LIBDIR = /usr/lib/$(MACH64)
+
+COMPONENT_PRE_CONFIGURE_ACTION += \
+	echo "ac_add_options MOZILLA_OFFICIAL=1" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --prefix=/usr" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --libdir=$(THUNDERBIRD_LIBDIR)" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-av1" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-crashreporter" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-debug-symbols" >> $(MOZCONFIG_NON_DEBUG) ; \
+	echo "ac_add_options --disable-install-strip" >> $(MOZCONFIG_DEBUG) ; \
+	echo "ac_add_options --disable-optimize" >> $(MOZCONFIG_DEBUG) ; \
+	echo "ac_add_options --disable-tests" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-application=comm/mail" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-debug" >> $(MOZCONFIG_DEBUG) ; \
+	echo "ac_add_options --enable-js-shell" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-official-branding" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-optimize" >> $(MOZCONFIG_NON_DEBUG) ; \
+	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
+        echo "ac_add_options --host=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
+        echo "ac_add_options --target=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
+
+CXXFLAGS += -Wno-invalid-offsetof -fpermissive 
+
+# 28395728
+LD_MAP_NOEXBSS.sparc=
+
+# libmozgtk needs to link to gtk3 and others
+LD_Z_IGNORE=
+
+# missing symbols from gtk3 during Firefox start
+LD_B_DIRECT=
+
+# SPARC build seems to require more open files for "Reticulating splines" phase
+ENV := ulimit -n 16384; $(ENV)
 
 LANG_FILES=$(addsuffix .xpi,$(LANG_LIST))
 
 CLEAN_PATHS += $(LANG_FILES)
 
-COMPONENT_BUILD_ARGS =
-
 $(LANG_FILES): 
 	$(FETCH) --file $@  --url $(LANG_FILES_LOCATION)/$@
 
-COMPONENT_POST_INSTALL_ACTION += \
-	$(RM) -r $(LIGHTNING_DIR) ; \
-	$(CP) -r $(BUILD_DIR_32)/dist/bin/distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103} \
-	  $(LIGHTNING_DIR) ; \
-	unzip -u -d $(LIGHTNING_DIR) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1); \
-	for file in $(PROTO_DIR)/usr/lib/thunderbird-$(COMPONENT_VERSION)/*.so \
-          $(PROTO_DIR)/usr/lib/thunderbird-$(COMPONENT_VERSION)/plugin-container; do \
-	  /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_ROOT)/lib:/usr/lib/thunderbird"' $$file ;\
-	  /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_ROOT)/lib:/usr/lib/thunderbird"' $$file ;\
-	done ;
+download prep:: $(LANG_FILES)
 
+CONFIGURE_OPTIONS = CC=$(CC) CXX=$(CXX)
+COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
+
+# because we touched old-configure.in and js/src/old-configure.in
+COMPONENT_PRE_CONFIGURE_ACTION += ( \
+	cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); \
+	autoreconf; \
+	touch configure; \
+	cd js/src; autoreconf; \
+	touch configure; \
+        cargo install --root=$(BUILD_DIR)/cargo cbindgen; \
+	);
+
+# COMPONENT_POST_BUILD_ACTION = \
+# 	(cd $(@D)/mail/installer ; $(ENV) $(COMPONENT_BUILD_ENV) \
+# 		$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
+
+COMPONENT_POST_INSTALL_ACTION  += \
+    for file in `find $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird -name "*.so"`; \
+          do \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(THUNDERBIRD_LIBDIR)/thunderbird:$$ORIGIN"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(THUNDERBIRD_LIBDIR)/thunderbird:$$ORIGIN"' $$file ; \
+    done ; \
+    /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(THUNDERBIRD_LIBDIR)/thunderbird:$$ORIGIN"' $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/plugin-container ; \
+    
+COMPONENT_POST_INSTALL_ACTION += \
+        $(MKDIR) $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/extensions/; \
+        list1='$(LANG_LIST)' ; for f in $$list1 ; do \
+            $(CP) $$f.xpi \
+                $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/extensions/langpack-$$f@thunderbird.mozilla.org.xpi ; \
+        done ;
+
+license: install
+	@echo "regenerating license text"
+	unzip -c $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/$(COMPONENT_NAME)/omni.ja chrome/messenger/content/messenger/license.html \
+	    | lynx  -stdin --dump -nolist > $(COMPONENT_NAME).license
+
+SIGNED_LIST.i386 = libsoftokn3.so libnssdbm3.so libfreebl3.so
+SIGNED_LIST.sparc = libsoftokn3.so libnssdbm3.so libfreebl_64fpu_3.so libfreebl_64int_3.so
+SIGNED_LIST = $(SIGNED_LIST.$(MACH))
 
 COMPONENT_POST_INSTALL_ACTION += \
-	list1='$(LANG_LIST)' ; for f in $$list1 ; do \
-	  $(CP) $$f.xpi \
-	    $(PROTOUSRLIBDIR)/thunderbird-$(COMPONENT_VERSION)/extensions/langpack-$$f@thunderbird.mozilla.org.xpi ; \
-	done ;
+	slist='$(SIGNED_LIST)' ; for f in $$slist ; do \
+	    mcs -d $(PROT_DIR)$(THUNDERBIRD_LIBDIR)/$(COMPONENT_NAME)/$$f ; \
+	    LD_LIBRARY_PATH=$(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/$(COMPONENT_NAME) $(BUILD_DIR_64)/dist/bin/shlibsign -v -i $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/$(COMPONENT_NAME)/$$f ; \
+        done ;
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
 COMPONENT_TEST_DIR =    $(@D)/js/src
 COMPONENT_TEST_TARGETS=check-jit-test
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "/\(^TEST-PASS\).*/d" '
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "/^PASSED ALL/,/Failed:/p" ' \
+	'-e "/^FAILURES:/,/Failed:/p" ' \
+	'-e "/.*/d" '
 
-$(SOURCE_DIR)/.patched-firefox-%: GPATCH_FLAGS += -d $(@D)/mozilla
-
-download prep:: $(LANG_FILES)
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test:	$(TEST_32)
+# Build dependencies
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/build/autoconf-213
+REQUIRED_PACKAGES += developer/lang/rustc
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += library/http-parser
+REQUIRED_PACKAGES += library/python/psutil
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += system/header/header-audio
+REQUIRED_PACKAGES += web/browser/lynx
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += developer/build/autoconf-213
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
-REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/pixman
-REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
@@ -159,12 +222,6 @@ REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
-REQUIRED_PACKAGES += x11/library/libxcomposite
-REQUIRED_PACKAGES += x11/library/libxcursor
-REQUIRED_PACKAGES += x11/library/libxdamage
 REQUIRED_PACKAGES += x11/library/libxext
-REQUIRED_PACKAGES += x11/library/libxfixes
-REQUIRED_PACKAGES += x11/library/libxinerama
-REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
