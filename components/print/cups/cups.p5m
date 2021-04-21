@@ -124,6 +124,21 @@ file Solaris/tsol_banner.ps path=usr/lib/cups/filter/tsol_banner.ps
 file Solaris/tsol_separator.ps path=usr/lib/cups/filter/tsol_separator.ps
 file Solaris/tsol_trailer.ps path=usr/lib/cups/filter/tsol_trailer.ps
 
+# Resolving file conflicts with illumos lp
+# As witht the commands in /usr/bin cups commands are designed to replace lp
+# But as lp is still delivered by illumos-gate we need to rename all the commands
+# and their man pages and prefix them with cups so that both softwares can be installed simultaneously
+# There is two ways where we can go from here.
+# 1. Remove lp if it is not needed anymore and properly suceeded by cups
+# 2. Modify manifest in illumos-gate to provide mediators so users can properly choose 
+file usr/share/man/man1/lp.1 path=usr/share/man/man1/cupslp.1
+file usr/share/man/man1/lpoptions.1 path=usr/share/man/man1/cupslpoptions.1
+file usr/share/man/man1/lpq.1 path=usr/share/man/man1/cupslpq.1
+file usr/share/man/man1/lpr.1 path=usr/share/man/man1/cupslpr.1
+file usr/share/man/man1/lprm.1 path=usr/share/man/man1/cupslprm.1
+file usr/share/man/man1/lpstat.1 path=usr/share/man/man1/cupslpstat.1
+file usr/share/man/man1/cancel.1 path=usr/share/man/man1/cupscancel.1
+
 # file-objects from sample-manifest
 file path=etc/cups/cups-files.conf.default
 file path=etc/cups/cupsd.conf.default
@@ -853,19 +868,12 @@ file path=usr/share/locale/ja/cups_ja.po
 file path=usr/share/locale/pt_BR/cups_pt_BR.po
 file path=usr/share/locale/ru/cups_ru.po
 file path=usr/share/locale/zh_CN/cups_zh_CN.po
-file path=usr/share/man/man1/cancel.1
 file path=usr/share/man/man1/cups-config.1
 file path=usr/share/man/man1/cups.1
 file path=usr/share/man/man1/cupstestppd.1
 file path=usr/share/man/man1/ippeveprinter.1
 file path=usr/share/man/man1/ippfind.1
 file path=usr/share/man/man1/ipptool.1
-file path=usr/share/man/man1/lp.1
-file path=usr/share/man/man1/lpoptions.1
-file path=usr/share/man/man1/lpq.1
-file path=usr/share/man/man1/lpr.1
-file path=usr/share/man/man1/lprm.1
-file path=usr/share/man/man1/lpstat.1
 file path=usr/share/man/man1/ppdc.1
 file path=usr/share/man/man1/ppdhtml.1
 file path=usr/share/man/man1/ppdi.1
