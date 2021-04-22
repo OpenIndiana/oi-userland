@@ -11,6 +11,7 @@
 #
 # Copyright 2012-2013, EveryCity Ltd. All rights reserved.
 # Copyright 2019, Michal Nowak
+# Copyright 2021 Gary Mills
 #
 
 BUILD_BITS=32_and_64
@@ -18,16 +19,18 @@ BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postgresql
+# This release is now unsupported
 COMPONENT_MJR_VERSION=	9.5
-COMPONENT_MNR_VERSION=	24
+COMPONENT_MNR_VERSION=	25
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:065cfd3db9f5aca84e794e73e71a797c984b2e728e760f4f4226a9162a99c22a
+COMPONENT_ARCHIVE_HASH=	sha256:7628c55eb23768a2c799c018988d8f2ab48ee3d80f5e11259938f7a935f0d603
 COMPONENT_ARCHIVE_URL=	http://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.postgresql.org
 
-TEST_TARGET=$(TEST_32_and_64)
+# Set python version used by this product
+PYTHON_VERSION=3.7
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -53,7 +56,6 @@ CONFIGURE_OPTIONS += --htmldir=/usr/postgres/$(COMPONENT_MJR_VERSION)/doc
 CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --with-system-tzdata=/usr/share/lib/zoneinfo
 CONFIGURE_OPTIONS += --with-tcl
-CONFIGURE_OPTIONS += --with-python
 CONFIGURE_OPTIONS += --with-pam
 CONFIGURE_OPTIONS += --with-openssl
 CONFIGURE_OPTIONS += --with-libedit-preferred
@@ -74,6 +76,8 @@ CONFIGURE_OPTIONS.32 += --sbindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin
 CONFIGURE_OPTIONS.32 += --libdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/lib
 CONFIGURE_OPTIONS.32 += --with-libs=/lib:/usr/lib
 
+# Python is 64-bits now
+CONFIGURE_OPTIONS.64 += --with-python
 CONFIGURE_OPTIONS.64 += --bindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH64)
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH64)
 CONFIGURE_OPTIONS.64 += --sbindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH64)
@@ -109,7 +113,6 @@ COMPONENT_TEST_TRANSFORMS= \
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += database/postgres-95/library
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
@@ -117,7 +120,7 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
