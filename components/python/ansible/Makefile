@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ansible
 COMPONENT_VERSION=	2.9.19
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Ansible is a radically simple IT automation system
 COMPONENT_PROJECT_URL=	https://ansible.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,6 +44,7 @@ REQUIRED_PACKAGES += library/python/hypothesis-35
 REQUIRED_PACKAGES += library/python/mock-35
 REQUIRED_PACKAGES += library/python/pluggy-35
 REQUIRED_PACKAGES += library/python/py-35
+REQUIRED_PACKAGES += library/python/pyparsing-35
 REQUIRED_PACKAGES += library/python/pytest-35
 REQUIRED_PACKAGES += library/python/sortedcontainers-35
 
