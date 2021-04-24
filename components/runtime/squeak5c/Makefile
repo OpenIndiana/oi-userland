@@ -28,9 +28,9 @@ include ../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		squeak-5c
-COMPONENT_VERSION=	5.0.2948
-GIT_TAG=		sun-v5.0.27
-PLUGIN_REV=		5.0-202103291332-cog
+COMPONENT_VERSION=	5.0.2954
+GIT_TAG=		sun-v5.0.28
+PLUGIN_REV=		5.0-202104231732-cog
 COMPONENT_SUMMARY=	The Cog Implementation of the Squeak V5 Smalltalk Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/squeak-5c
@@ -44,7 +44,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:84d22bfba6a9f1b9dfbc8d3be14343a7fb5cbe09bb9c6146900f61a7ba37b2f8
+COMPONENT_ARCHIVE_HASH=	sha256:26ec608fdf69879bc8f8aae7c615af2a4888feaf7c26f9262b510ec08d147413
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
