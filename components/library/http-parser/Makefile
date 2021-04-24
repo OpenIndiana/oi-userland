@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		http-parser
 COMPONENT_VERSION=	2.9.4
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		library/http-parser
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://github.com/nodejs/http-parser
