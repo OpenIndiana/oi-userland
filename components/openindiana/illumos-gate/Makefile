@@ -90,6 +90,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	    -e 's|^export NIGHTLY_OPTIONS=.*|export NIGHTLY_OPTIONS=\"$(NIGHTLY_OPTIONS)\"|' \
 	    -e 's|^export VERSION=.*|export VERSION=\"$$(git log -1 --format=illumos-%h)\"|' \
 	    -e 's|^export CODEMGR_WS=.*|export CODEMGR_WS=\"$$PWD\"|' \
+	    -e 's|^export ENABLE_SMB_PRINTING=.*||' \
 	    -e 's|^export ENABLE_SMATCH=.*||' \
 	    -e 's|^export ON_CLOSED_BINS=.*|export ON_CLOSED_BINS=\"/opt/onbld/closed\"|' \
 	    -e 's|^export MULTI_PROTO=.*|export MULTI_PROTO=\"$(MULTI_PROTO)\"|' \
