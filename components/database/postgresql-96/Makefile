@@ -13,6 +13,7 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2018 Till Wegm√ller
 # Copyright 2019 Michal Nowak
+# Copyright 2021 Gary Mills
 #
 
 BUILD_BITS=32_and_64
@@ -21,15 +22,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	9.6
-COMPONENT_MNR_VERSION=	20
+COMPONENT_MNR_VERSION=	21
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:3d08cba409d45ab62d42b24431a0d55e7537bcd1db2d979f5f2eefe34d487bb6
+COMPONENT_ARCHIVE_HASH=	sha256:930feaef28885c97ec40c26ab6221903751eeb625de92b22602706d7d47d1634
 COMPONENT_ARCHIVE_URL=	http://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.postgresql.org
 
-TEST_TARGET=$(TEST_32_and_64)
+# Set python version used by this product
+PYTHON_VERSION=3.7
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -111,7 +113,7 @@ REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
