@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2017 Gary Mills
+# Copyright 2017,2021 Gary Mills
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -814,8 +814,8 @@ PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 
 # Config magic for Postgres/EnterpriseDB/...
-# Default DB version is the oldest one, for hopefully best built complatibility
-PG_VERSION ?=   9.5
+# Default DB version.  Can be overridden in component Makefile.
+PG_VERSION ?=   11
 PG_IMPLEM ?=    postgres
 PG_VERNUM =     $(subst .,,$(PG_VERSION))
 # For dependencies, including REQUIRED_PACKAGES if needed
@@ -827,8 +827,14 @@ REQUIRED_PACKAGES_SUBST+= PG_DEVELOPER_PKG
 REQUIRED_PACKAGES_SUBST+= PG_LIBRARY_PKG
 
 PG_HOME =       $(USRDIR)/$(PG_IMPLEM)/$(PG_VERSION)
+# Binary directories match reality now
+ifeq ($(strip $(PG_VERSION)),9.5)
 PG_BINDIR.32 =  $(PG_HOME)/bin
 PG_BINDIR.64 =  $(PG_HOME)/bin/$(MACH64)
+else
+PG_BINDIR.32 =  $(PG_HOME)/bin/$(MACH32)
+PG_BINDIR.64 =  $(PG_HOME)/bin
+endif
 PG_BINDIR =     $(PG_BINDIR.$(BITS))
 PG_INCDIR =     $(PG_HOME)/include
 PG_MANDIR =     $(PG_HOME)/man
