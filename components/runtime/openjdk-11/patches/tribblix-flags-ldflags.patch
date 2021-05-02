@@ -1,0 +1,18 @@
+--- openjdk-jdk11u-jdk-11.0.10-9-1/make/autoconf/flags-ldflags.m4.~1~	Sat May  1 13:37:08 2021
++++ openjdk-jdk11u-jdk-11.0.10-9-1/make/autoconf/flags-ldflags.m4	Sat May  1 13:46:41 2021
+@@ -77,9 +77,12 @@
+     fi
+ 
+     # Add -z defs, to forbid undefined symbols in object files.
+-    # add -z,relro (mark relocations read only) for all libs
+-    # add -z,now ("full relro" - more of the Global Offset Table GOT is marked read only)
+-    BASIC_LDFLAGS="$BASIC_LDFLAGS -Wl,-z,relro -Wl,-z,now"
++    if test "x$OPENJDK_TARGET_OS" = xsolaris; then
++      BASIC_LDFLAGS="$BASIC_LDFLAGS -Wl,-z,defs"
++    else
++      # add relro (mark relocations read only) for all libs
++      BASIC_LDFLAGS="$BASIC_LDFLAGS -Wl,-z,relro -Wl,-z,now"
++    fi
+     # s390x : remove unused code+data in link step
+     if test "x$OPENJDK_TARGET_CPU" = xs390x; then
+       BASIC_LDFLAGS="$BASIC_LDFLAGS -Wl,--gc-sections"
