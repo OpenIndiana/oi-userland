@@ -13,7 +13,8 @@
 # Copyright 2020, 2021 David Stes
 #
 
-set name=pkg.fmri value=pkg:/runtime/squeak-4-display-X11@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+set name=pkg.fmri value=pkg:/runtime/smalltalk/squeak-nodisplay@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -23,14 +24,23 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license squeak.license license='MIT'
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
 # 32-bit objects in 64-bit multiarch build are rejected by lint
 <transform file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/* -> set pkg.linted.userland.action001.2 true>
 
-# the minimal installation consists of the squeak-4-nodisplay package
-# which can run "headless" squeak -nodisplay images
-# with only minimal installation requirements (only ksh, libc, math)
+file inisqueak4 path=usr/bin/inisqueak4
+file usr/bin/squeak path=usr/bin/squeak4
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/ckformat mode=0555
+file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/squeakvm mode=0555
+file usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/squeakvm64 path=usr/lib/amd64/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/squeakvm64 mode=0555
 
-depend type=require fmri=pkg:/runtime/squeak-4-nodisplay@$(IPS_COMPONENT_VERSION)-$(BRANCHID)
+file usr/share/man/man1/squeak.1 path=usr/share/man/man1/squeak4.1
 
+# the squeak script uses test -L (test for symbolic link) - use hardlink
+
+hardlink path=usr/bin/squeak target=squeak4 mediator=squeak \
+    mediator-version=4
+hardlink path=usr/bin/inisqueak target=inisqueak4 mediator=squeak \
+    mediator-version=4
+hardlink path=usr/share/man/man1/squeak.1 target=squeak4.1 mediator=squeak \
+    mediator-version=4
 

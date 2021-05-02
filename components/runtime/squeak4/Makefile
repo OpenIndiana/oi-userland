@@ -33,7 +33,7 @@
 # 68000: a 64-bit V3 image with no closure support and 
 # no native platform float word order requirement
 #
-# squeak4 places its 64-bit shared object files in
+# squeak places its 64-bit shared object files in
 # usr/lib/squeak/<version>-<svnversion>_64bit/  with a _64bit suffix
 # which is unfortunately not conforming to the usr/lib/amd64 usage
 # and it generates a hard error by pkglint "64-bit object in 32-bit path"
@@ -47,17 +47,17 @@ include ../../../make-rules/shared-macros.mk
 # the version is the same as the VMMaker Smalltalk sources
 # it cannot be changed here randomly, it must match the VMMaker version
 
-COMPONENT_NAME=		squeak-4
+COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.19.6
-COMPONENT_REVISION=	3
-COMPONENT_SUMMARY=	The Squeak V4 Smalltalk Virtual Machine
+COMPONENT_REVISION=	4
+COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
-COMPONENT_FMRI=		runtime/squeak-4
+COMPONENT_FMRI=		runtime/smalltalk/squeak
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=                3800
-SVN_HASH=  sha256:9a0c9fceb0dec73218e0900d9864caf9eadbcbf060a14ba09bbe20d68283a003
+SVN_REV=                3801
+SVN_HASH=  sha256:8ae39a65af168616247be2ce37ef602a84443454abf7de9dc197393266335bce
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -112,9 +112,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 #
 
 rebuild-manifests::
-	cp manifests/squeak-4.p5m squeak-4.p5m
-	cp manifests/squeak-4-display-X11.p5m squeak-4-display-X11.p5m
-	cp manifests/squeak-4-nodisplay.p5m squeak-4-nodisplay.p5m
+	cp manifests/squeak.p5m squeak.p5m
+	cp manifests/squeak-display-X11.p5m squeak-display-X11.p5m
+	cp manifests/squeak-nodisplay.p5m squeak-nodisplay.p5m
 	cp manifests/sample-manifest.p5m sample-manifest.p5m
 	tools/subversion.sh $(SVN_REV) <sample-manifest.p5m >sample.p5m
 	tools/classify.pl <sample.p5m
