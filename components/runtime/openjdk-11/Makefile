@@ -93,6 +93,9 @@ COMPONENT_POST_BUILD_ACTION=	($(LN) -s server/libjvm.so $(@D)/build/images/jdk/l
 
 COMPONENT_BUILD_TARGETS = images
 
+# reset arguments from Jenkins
+COMPONENT_BUILD_ARGS=
+
 CACERTS_DIR=$(WS_TOP)/components/openindiana/ca-certificates
 CACERTS_INSTALLED=$(CACERTS_DIR)/build/$(MACH32)/.installed
 CACERTS_PROTO_DIR=$(CACERTS_DIR)/build/prototype/$(MACH)
@@ -123,6 +126,9 @@ install: $(BUILD_DIR_64)/.built	$(CACERTS_STORE)
 
 test:		$(NO_TESTS)
 
+# manually added to support audio
+REQUIRED_PACKAGES += system/header/header-audio
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
@@ -140,7 +146,5 @@ REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxtst
-REQUIRED_PACKAGES += system/library/c++/sunpro
-REQUIRED_PACKAGES += system/header/header-audio
 
 
