@@ -24,23 +24,23 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+BUILD_BITS= 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.4.46
-COMPONENT_PROJECT_URL=	http://httpd.apache.org/
+COMPONENT_VERSION=	2.4.47
+COMPONENT_PROJECT_URL=	https://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-   sha256:44b759ce932dc090c0e75c0210b4485ebf6983466fb8ca1b446c8168e1a1aec2
-COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:567d5ac72ea643e3828e8e54f32e06f1fad10095d33ae4071eeaec3c78b70a34
+COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
 
 CONFIGURE_DEFAULT_DIRS=no
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
@@ -85,14 +85,10 @@ CONFIGURE_OPTIONS +=	CC="$(CC) -m$(BITS)"
 CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/bin/$(MACH64)/apr-1-config
 CONFIGURE_OPTIONS.64 +=	--with-apr-util=/usr/apr-util/bin/$(MACH64)/apu-1-config
 
-build: $(BUILD_64)
-
 install: $(INSTALL_64)
 	# Some files installed in proto area need to be fixed.
 	$(KSH93) Solaris/customization.sh $(PROTO_DIR)
 	$(TOUCH) $(BUILD_DIR)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
@@ -106,11 +102,12 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/lua-53
+REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
