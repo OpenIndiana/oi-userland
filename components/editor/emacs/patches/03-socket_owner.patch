@@ -1,0 +1,16 @@
+There seems to be a bug in our fstat() implementation when called on a socket.
+The st_uid member always seems to be 0.
+NetBSD seems to have a similar problem see
+https://gnu.emacs.bug.narkive.com/cAVl8Cff/bug-43002-27-1-emacsclient-does-not-like-owner-of-socket-on-netbsd
+
+--- emacs-27.2/lib-src/emacsclient.c.~1~	2021-01-28 18:52:37.000000000 +0000
++++ emacs-27.2/lib-src/emacsclient.c	2021-05-02 11:15:53.047584874 +0000
+@@ -1478,7 +1478,7 @@
+       struct stat connect_stat;
+       if (fstat (s, &connect_stat) != 0)
+ 	sock_status = errno;
+-      else if (connect_stat.st_uid == uid)
++      else if ((connect_stat.st_uid == uid) || (connect_stat.st_uid == (uid_t)0))
+ 	return s;
+       else
+ 	sock_status = -1;
