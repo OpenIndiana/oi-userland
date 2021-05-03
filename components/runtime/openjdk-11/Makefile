@@ -26,7 +26,7 @@ COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	11
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
-COMPONENT_SRC=    $(COMPONENT_NAME)-jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).0.$(OPENJDK_UPDATE)-9-1
+COMPONENT_SRC=	$(COMPONENT_NAME)-jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).0.$(OPENJDK_UPDATE)-9-1
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:635656feec548f2dc90a16c634047980e3871fe995a4f7e8baa81743585872c1
@@ -61,6 +61,12 @@ COMPONENT_PRE_CONFIGURE_ACTION=	($(CP) -r $(SOURCE_DIR)/* $(@D); \
 COMPONENT_POST_CONFIGURE_ACTION= (cd $(@D); \
 																	$(CP) -r build/* .;)
 
+# read the number of jobs from the arguments for make
+JOBS=$(patsubst -j%,%,$(filter -j%,$(MAKEFLAGS)))
+
+CONFIGURE_OPTIONS+=        --with-jobs=$(JOBS)
+CONFIGURE_OPTIONS+=        --x-includes=$(USRDIR)
+CONFIGURE_OPTIONS+=        --x-libraries=$(USRLIBDIR64)
 CONFIGURE_OPTIONS+=        --with-version-pre=
 CONFIGURE_OPTIONS+=        --with-conf-name=oi
 CONFIGURE_OPTIONS+=        --with-boot-jdk=$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
@@ -121,6 +127,7 @@ install: $(BUILD_DIR_64)/.built	$(CACERTS_STORE)
 	$(RM) -r $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)
 	$(MKDIR) $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)
 	$(CP) -a $(BUILD_DIR_64)/build/images/jdk/* $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)
+	$(CHMOD) +x $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/jspawnhelper
 	$(CP) $(CACERTS_STORE) $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/cacerts
 	$(TOUCH) $@
 
@@ -128,6 +135,7 @@ test:		$(NO_TESTS)
 
 # manually added to support audio
 REQUIRED_PACKAGES += system/header/header-audio
+REQUIRED_PACKAGES += system/library/c++/sunpro
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
