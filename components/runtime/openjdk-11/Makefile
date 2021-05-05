@@ -118,6 +118,7 @@ $(CACERTS_STORE): $(BUILD_DIR_64)/.built $(CACERTS_INSTALLED)
                   -keystore $@                                         \
                   -alias `echo $$cert | $(GSED) -e 's,.*/\\([^/]*\\)\\.pem,\\1,'` \
                   -file $$cert                                         \
+                  -storetype jks                                       \
                   -storepass changeit;                                 \
         done
 
