@@ -7,18 +7,18 @@
 # this script is used
 #
 # the script "classifies" plugins into currently 3 categories:
-#  - squeak-5-nodisplay (only libc,libm math,libpthread, ksh)
-#  - squeak-5-display-X11 (only x11,xext,xrender)
-#  - squeak-5 (ssl,ffi,pulseaudio freetype2,gnome, everything else)
+#  - stack-spur-nodisplay (only libc,libm math,libpthread, ksh)
+#  - stack-spur-display-X11 (only x11,xext,xrender)
+#  - stack-spur (ssl,ffi,pulseaudio freetype2,gnome, everything else)
 #
 # ./classify.pl < sample2.p5m
 #
 
-open(NODISPLAY,">>","squeak-5-nodisplay.p5m") || die "Can't open squeak-5-nodisplay.p5m";
+open(NODISPLAY,">>","stack-spur-nodisplay.p5m") || die "Can't open stack-spur-nodisplay.p5m";
 
-open(X11,">>","squeak-5-display-X11.p5m") || die "Can't open squeak-5-display-X11.p5m";
+open(X11,">>","stack-spur-display-X11.p5m") || die "Can't open stack-spur-display-X11.p5m";
 
-open(REST,">>","squeak-5.p5m") || die "Can't open squeak-5.p5m";
+open(REST,">>","stack-spur.p5m") || die "Can't open stack-spur.p5m";
 
 while (<>) {
 	if (/^#/) {

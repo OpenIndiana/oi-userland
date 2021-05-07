@@ -14,7 +14,7 @@
 
 
 #
-# Package Makefile for the "OpenSmalltalk Cog Spur" Squeak Smalltalk V5 system
+# Package Makefile for the "OpenSmalltalk Cog Spur" Squeak Smalltalk system
 # See http://squeak.org and http://opensmalltalk.org
 #
 
@@ -27,13 +27,13 @@ include ../../../make-rules/shared-macros.mk
 # we use 5.0.<n> for VMMaker.oscog-eem.<n>
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
-COMPONENT_NAME=		squeak-5c
-COMPONENT_VERSION=	5.0.2954
-GIT_TAG=		sun-v5.0.28
-PLUGIN_REV=		5.0-202104231732-cog
-COMPONENT_SUMMARY=	The Cog Implementation of the Squeak V5 Smalltalk Virtual Machine
+COMPONENT_NAME=		cog-spur
+COMPONENT_VERSION=	5.0.2957
+GIT_TAG=		sun-v5.0.29
+PLUGIN_REV=		5.0-202105050900-cog
+COMPONENT_SUMMARY=	The Squeak OpenSmalltalk Cog Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
-COMPONENT_FMRI=		runtime/squeak-5c
+COMPONENT_FMRI=		runtime/smalltalk/cog-spur
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 
 # See http://wiki.squeak.org/squeak/933
@@ -44,7 +44,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:26ec608fdf69879bc8f8aae7c615af2a4888feaf7c26f9262b510ec08d147413
+COMPONENT_ARCHIVE_HASH=	sha256:6975d8be2d8f4cf80c6f5ca60f14550325b6406f3be7b1bcd3e16cead7c86210
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
@@ -105,9 +105,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 #
 
 rebuild-manifests::
-	cp manifests/squeak-5c.p5m squeak-5c.p5m
-	cp manifests/squeak-5c-display-X11.p5m squeak-5c-display-X11.p5m
-	cp manifests/squeak-5c-nodisplay.p5m squeak-5c-nodisplay.p5m
+	cp manifests/cog-spur.p5m cog-spur.p5m
+	cp manifests/cog-spur-display-X11.p5m cog-spur-display-X11.p5m
+	cp manifests/cog-spur-nodisplay.p5m cog-spur-nodisplay.p5m
 	cp manifests/sample-manifest.p5m sample-manifest.p5m
 	tools/pluginrev.sh $(PLUGIN_REV) <sample-manifest.p5m >sample.p5m
 	tools/classify.pl <sample.p5m
