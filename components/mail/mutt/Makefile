@@ -25,14 +25,13 @@
 #
 
 BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
-COMPONENT_VERSION=	2.0.6
+COMPONENT_VERSION=	2.0.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:81e31c45895fd624747f19106aa2697d2aa135049ff2e9e9db0a6ed876bcb598
+COMPONENT_ARCHIVE_HASH=	sha256:957688c6a521561992d4f2f27cf9feb239c7c6c0042c6061c0e474a7dd26cc91
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mutt.org/pub/mutt/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.mutt.org/
 COMPONENT_FMRI=		mail/mutt
@@ -40,7 +39,6 @@ COMPONENT_LICENSE_FILE=	mutt.license
 COMPONENT_LICENSE=	GPLv2
 
 TEST_TARGET=		$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS +=			-I$(USRINCDIR)/idn2
@@ -62,12 +60,12 @@ CONFIGURE_OPTIONS  +=		--with-wc-funcs
 CONFIGURE_OPTIONS  +=		--with-sasl
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/slang
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl
