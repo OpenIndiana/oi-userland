@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2015-2018, Aurelien Larcher. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
-# Copyright (c) 2020, Andreas Wacknitz
+# Copyright (c) 2021, Andreas Wacknitz
 #
 
 BUILD_BITS=				32_and_64
@@ -30,15 +30,14 @@ BUILD_STYLE=			meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         harfbuzz
-COMPONENT_VERSION=      2.7.4
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      2.8.1
 COMPONENT_FMRI=         library/c++/harfbuzz
 COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine. 
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/HarfBuzz/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:6ad11d653347bd25d8317589df4e431a2de372c0cf9be3543368e07ec23bb8e7
+COMPONENT_ARCHIVE_HASH= sha256:4124f663ec4bf4e294d9cf230668370b4249a48ff34deaf0f06e8fc82d891300
 COMPONENT_ARCHIVE_URL=	https://github.com/harfbuzz/harfbuzz/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 
