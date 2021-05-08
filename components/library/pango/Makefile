@@ -22,14 +22,13 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=			pango
 COMPONENT_VERSION_MAJOR=	1
 COMPONENT_VERSION_MINOR=	48
-COMPONENT_VERSION_MICRO=	0
-COMPONENT_REVISION=		1
+COMPONENT_VERSION_MICRO=	4
 COMPONENT_VERSION_DL=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
 COMPONENT_VERSION=		$(COMPONENT_VERSION_DL).$(COMPONENT_VERSION_MICRO)
 COMPONENT_SUMMARY=		GNOME core text and font handling libraries
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:391f26f3341c2d7053e0fb26a956bd42360dadd825efe7088b1e9340a65e74e6
+COMPONENT_ARCHIVE_HASH= sha256:418913fb062071a075846244989d4a67aa5c80bf0eae8ee4555a092fd566a37a
 COMPONENT_ARCHIVE_URL=	https://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_DL)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.pango.org/
 COMPONENT_FMRI=			library/desktop/pango
@@ -41,6 +40,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
+CONFIGURE_OPTIONS += -Denable_docs=true
+CONFIGURE_OPTIONS += -Dinstall-tests=true
+
+CONFIGURE_OPTIONS.32 += -Dgir=false
 CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
@@ -63,12 +66,25 @@ COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
 # For test suites to pass
 unexport SHELLOPTS
 
-# We need to copy the markups otherwise the tests fail:
-COMPONENT_PRE_TEST_ACTION = ( cp -R $(SOURCE_DIR)/tests/markups $(BUILD_DIR)/$(MACH$(BITS))/tests/ )
-
+# cp boundaries.utf8 to tests directory in the build area
+COMPONENT_PRE_TEST_ACTION += cp $(SOURCE_DIR)/tests/boundaries.utf8 \
+      $(BUILD_DIR_$(BITS))/tests/
 COMPONENT_TEST_TARGETS += ; cd tests; ./cxx-test; ./markup-parse; \
-        ./test-font ; ./test-ot-tags; ./testattributes; \
-        ./testboundaries; ./testcolor; ./testiter; ./testscript;
+        ./test-break; ./test-converage; ./test-font ; ./test-ot-tags; \
+        ./testboundaries; ./testcolor; ./testiter; ./testscript; \
+    ./test-ellipsize; ./test-harfbuzz; ./test-itemize; ./test-layout; \
+    ./test-pangocairo-threads; ./test-shape; ./testmisc; ./testattributes;
+COMPONENT_TEST_TRANSFORMS += '-e "s/      [0-9].[0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/      [0-9][0-9].[0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+    	'-e "/Failures/d" ' \
+        '-e "/OK/p" ' \
+        '-e "/Ok/p" ' \
+        '-e "/Fail/p" ' \
+        '-e "/Pass/p" ' \
+        '-e "/Skipped/p" '
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/c++/harfbuzz
