@@ -1,0 +1,17 @@
+$NetBSD$
+
+Support SunOS/gcc.
+
+diff -wpruN '--exclude=*.orig' a~/make/hotspot/gensrc/GensrcDtrace.gmk a/make/hotspot/gensrc/GensrcDtrace.gmk
+--- a~/make/hotspot/gensrc/GensrcDtrace.gmk	1970-01-01 00:00:00
++++ a/make/hotspot/gensrc/GensrcDtrace.gmk	1970-01-01 00:00:00
+@@ -31,6 +31,9 @@ ifeq ($(call check-jvm-feature, dtrace),
+   ifeq ($(OPENJDK_TARGET_OS), solaris)
+     DTRACE_FLAGS := -64
+     DTRACE_CPP_FLAGS := -D_LP64
++    ifeq ($(TOOLCHAIN_TYPE), gcc)
++      DTRACE_CPP_FLAGS += -x c
++    endif
+   else ifeq ($(OPENJDK_TARGET_OS), macosx)
+     DTRACE_CPP_FLAGS := -D_LP64 -x c
+   else ifeq ($(OPENJDK_TARGET_OS), linux)

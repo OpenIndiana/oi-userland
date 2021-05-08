@@ -1,0 +1,28 @@
+$NetBSD$
+
+Support SunOS/gcc.  XXX: retain solstudio support.
+
+diff -wpruN '--exclude=*.orig' a~/make/lib/Awt2dLibraries.gmk a/make/lib/Awt2dLibraries.gmk
+--- a~/make/lib/Awt2dLibraries.gmk	1970-01-01 00:00:00
++++ a/make/lib/Awt2dLibraries.gmk	1970-01-01 00:00:00
+@@ -384,7 +384,6 @@ $(eval $(call SetupJdkLibrary, BUILD_LIB
+     OPTIMIZATION := HIGHEST, \
+     CFLAGS := $(LCMS_CFLAGS_JDKLIB) \
+         $(LCMS_CFLAGS), \
+-    CFLAGS_solaris := -xc99=no_lib, \
+     CFLAGS_windows := -DCMS_IS_WINDOWS_, \
+     EXTRA_HEADER_DIRS := \
+         common/awt/debug \
+@@ -566,8 +565,12 @@ else
+     HARFBUZZ_CFLAGS += -DHAVE_INTEL_ATOMIC_PRIMITIVES
+   endif
+   ifeq ($(OPENJDK_TARGET_OS), solaris)
++   ifeq ($(TOOLCHAIN_TYPE), gcc)
++    HARFBUZZ_CFLAGS += -DHAVE_INTEL_ATOMIC_PRIMITIVES
++   else
+     HARFBUZZ_CFLAGS += -DHAVE_SOLARIS_ATOMIC_OPS
+   endif
++  endif
+   ifeq ($(OPENJDK_TARGET_OS), macosx)
+     HARFBUZZ_CFLAGS += -DHAVE_CORETEXT
+   endif
