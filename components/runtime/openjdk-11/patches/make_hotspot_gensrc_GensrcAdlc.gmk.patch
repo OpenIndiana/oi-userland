@@ -1,0 +1,31 @@
+$NetBSD$
+
+Support SunOS/gcc.
+
+diff -wpruN '--exclude=*.orig' a~/make/hotspot/gensrc/GensrcAdlc.gmk a/make/hotspot/gensrc/GensrcAdlc.gmk
+--- a~/make/hotspot/gensrc/GensrcAdlc.gmk	1970-01-01 00:00:00
++++ a/make/hotspot/gensrc/GensrcAdlc.gmk	1970-01-01 00:00:00
+@@ -39,7 +39,11 @@ ifeq ($(call check-jvm-feature, compiler
+   else ifeq ($(OPENJDK_BUILD_OS), solaris)
+     ADLC_LDFLAGS := -m64
+     ADLC_CFLAGS := -m64
++   ifeq ($(TOOLCHAIN_TYPE), solstudio)
+     ADLC_CFLAGS_WARNINGS := +w
++   else
++    ADLC_CFLAGS += -fpermissive
++   endif
+   else ifeq ($(OPENJDK_BUILD_OS), aix)
+     ADLC_LDFLAGS := -q64
+     ADLC_CFLAGS := -qnortti -qeh -q64 -DAIX
+@@ -94,7 +98,10 @@ ifeq ($(call check-jvm-feature, compiler
+   ifeq ($(OPENJDK_TARGET_OS), linux)
+     ADLCFLAGS += -DLINUX=1 -D_GNU_SOURCE=1
+   else ifeq ($(OPENJDK_TARGET_OS), solaris)
+-    ADLCFLAGS += -DSOLARIS=1 -DSPARC_WORKS=1
++    ADLCFLAGS += -DSOLARIS=1
++    ifeq ($(TOOLCHAIN_TYPE), solstudio)
++      ADLCFLAGS += -DSPARC_WORKS=1
++    endif
+   else ifeq ($(OPENJDK_TARGET_OS), aix)
+     ADLCFLAGS += -DAIX=1
+   else ifeq ($(OPENJDK_TARGET_OS), macosx)
