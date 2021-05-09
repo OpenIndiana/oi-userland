@@ -25,7 +25,6 @@
 #
 
 BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
@@ -36,8 +35,7 @@ COMPONENT_CLASSIFICATION=	System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/bash/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = \
-	sha256:cc012bc860406dcf42f64431bcd3d2fa7560c02915a601aba9cd597a39329baa
+COMPONENT_ARCHIVE_HASH = sha256:cc012bc860406dcf42f64431bcd3d2fa7560c02915a601aba9cd597a39329baa
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.2
 
@@ -146,6 +144,6 @@ COMPONENT_POST_TEST_ACTION += \
 	rm -f /tmp/bashtst*
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
