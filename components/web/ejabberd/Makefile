@@ -21,20 +21,23 @@
 
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
+# Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
 #
+
+BUILD_BITS= 64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ejabberd
 COMPONENT_FMRI= web/server/$(COMPONENT_NAME)
-COMPONENT_VERSION= 17.11
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 21.04
+IPS_COMPONENT_VERSION= 21.0.4
 COMPONENT_PROJECT_URL=	http://www.ejabberd.im/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= sha256:bd16b33a2f1345e5847fd05b70a5fa992181bac756cd6d5d621de9c18cb76801
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:2a5d22cd594ea2bd31adebcbcef9d9bdf46109803874fb336f8afba76fc08d8d
 COMPONENT_ARCHIVE_URL= https://www.process-one.net/downloads/ejabberd/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL= https://github.com/processone/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_BUGDB= service/ejabberd
 COMPONENT_SUMMARY= ejabberd - Jabber/XMPP instant messaging server
 COMPONENT_DESCRIPTION= the ejabberd Jabber/XMPP instant messaging server
@@ -42,9 +45,7 @@ COMPONENT_CLASSIFICATION= Web Services/Communications
 COMPONENT_LICENSE= GPL-2.0
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CXX      += $(CC_BITS)
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS) -I$(USRINCDIR)/gd2
@@ -56,6 +57,9 @@ CONFIGURE_ENV += "HOME=/tmp"
 CONFIGURE_ENV += "CPP=$(CC) -E"
 COMPONENT_BUILD_ENV += $(CONFIGURE_ENV)
 COMPONENT_INSTALL_ENV += "HOME=/tmp"
+
+COMPONENT_PRE_CONFIGURE_ACTION+= \
+  cd $(SOURCE_DIR); ./autogen.sh
 
 COMPONENT_PRE_BUILD_ACTION+= \
   $(CLONEY) $(SOURCE_DIR) $(@D)
@@ -70,6 +74,9 @@ CONFIGURE_OPTIONS +=	--enable-sqlite
 CONFIGURE_OPTIONS +=	--enable-pam
 CONFIGURE_OPTIONS +=	--enable-riak
 CONFIGURE_OPTIONS +=	--enable-redis
+CONFIGURE_OPTIONS +=	--enable-new-sql-schema
+CONFIGURE_OPTIONS +=	--enable-sip
+CONFIGURE_OPTIONS +=	--enable-tools
 
 CONFIGURE_SBINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
@@ -77,12 +84,6 @@ COMPONENT_BUILD_TARGETS = all
 
 COMPONENT_TEST_ARGS = "CT_BACKENDS=mnesia"
 COMPONENT_TEST_TARGETS = test
-
-build:    $(BUILD_64)
-
-install:  $(INSTALL_64)
-
-test:     $(TEST_64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/sqlite-3
