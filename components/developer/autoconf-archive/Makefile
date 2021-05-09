@@ -28,18 +28,16 @@ BUILD_BITS=				32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         autoconf-archive
-COMPONENT_VERSION=      2019.01.06
-IPS_COMPONENT_VERSION=  2019.1.6
+COMPONENT_VERSION=      2021.02.19
+IPS_COMPONENT_VERSION=  2021.2.19
 COMPONENT_FMRI=         developer/build/autoconf-archive
 COMPONENT_SUMMARY=      GNU Autoconf Archive
 COMPONENT_CLASSIFICATION=Development/GNU
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/autoconf-archive/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=  \
-	sha256:17195c833098da79de5778ee90948f4c5d90ed1a0cf8391b4ab348e2ec511e3f
-COMPONENT_ARCHIVE_URL= \
-	https://ftp.gnu.org/gnu/autoconf-archive/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:e8a6eb9d28ddcba8ffef3fa211653239e9bf239aba6a01a6b7cfc7ceaec69cbd
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/autoconf-archive/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv3  
 
 include $(WS_MAKE_RULES)/common.mk
