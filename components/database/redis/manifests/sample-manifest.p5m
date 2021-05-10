@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2020 <contributor>
+# Copyright 2021 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,8 +23,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/redis-benchmark
-file path=usr/bin/redis-check-aof
-file path=usr/bin/redis-check-rdb
+link path=usr/bin/redis-check-aof target=redis-server
+link path=usr/bin/redis-check-rdb target=redis-server
 file path=usr/bin/redis-cli
 link path=usr/bin/redis-sentinel target=redis-server
 file path=usr/bin/redis-server
