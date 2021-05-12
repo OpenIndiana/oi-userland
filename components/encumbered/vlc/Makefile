@@ -18,13 +18,13 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
-COMPONENT_VERSION= 3.0.13
+COMPONENT_VERSION= 3.0.14
 COMPONENT_FMRI = media/vlc
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:d5b43aa354dbe40f28099995e037bcf78896aa9b60862b17c5b7a19419be1ce5
+COMPONENT_ARCHIVE_HASH=	sha256:49b93e5b33deaa37060e6b24a98200cad70c407947f14eb2a8b6a0c64d8535a6
 COMPONENT_ARCHIVE_URL=	https://download.videolan.org/pub/videolan/vlc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.videolan.org/vlc
 COMPONENT_LICENSE = GPLv2.0,LGPLv2.1
@@ -195,6 +195,9 @@ COMPONENT_POST_INSTALL_ACTION = \
         /usr/bin/elfedit -e 'dyn:value -s RPATH   "$(QT5_RPATH)"' $(PROTO_DIR)$(QT5_PLUGIN)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += audio/mpg123
 REQUIRED_PACKAGES += audio/twolame
@@ -247,12 +250,10 @@ REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += library/video/x265
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libupnp
 REQUIRED_PACKAGES += system/library/math
