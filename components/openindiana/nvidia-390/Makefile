@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		driver-graphics-nvidia-390
-COMPONENT_VERSION=	390.141
+COMPONENT_VERSION=	390.143
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 COMPONENT_FMRI=		driver/graphics/nvidia-390
 COMPONENT_SUMMARY=	NVIDIA Graphics System Software
@@ -24,9 +24,8 @@ COMPONENT_CLASSIFICATION=Drivers/Display
 COMPONENT_PROJECT_URL=	https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC=		NVIDIA-Solaris-x86-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH= \
-        sha256:f15f5f92ef7803f1f0bb0439a1e9c60804d6ac91e33573ce692c6c55ca83b131
-COMPONENT_ARCHIVE_URL=	http://us.download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
+COMPONENT_ARCHIVE_HASH= sha256:8ec5cca23a326060ed99807a88387ed9cd04ee9128f17cd2cdaf010214965925
+COMPONENT_ARCHIVE_URL=	https://us.download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
 COMPONENT_LICENSE=	NVIDIA
 COMPONENT_LICENSE_FILE=	driver-graphics-nvidia.license
 
@@ -72,12 +71,13 @@ clean::
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/compatibility/links-xorg
