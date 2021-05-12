@@ -12,21 +12,21 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
-PREFERRED_BITS=64
-
+PREFERRED_BITS= 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ffmpeg
 COMPONENT_VERSION= 3.2.14
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= A very fast video and audio converter
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:d918bf3cec12e865f03eaf01c9a4b4d49bbd311217cb56f02fa7de95730ee096
 COMPONENT_ARCHIVE_URL= \
-  http://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.ffmpeg.org/
+  https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.ffmpeg.org/
 COMPONENT_LICENSE = GPLv2
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_FMRI = video/ffmpeg
@@ -120,7 +120,7 @@ REQUIRED_PACKAGES += library/audio/openal
 REQUIRED_PACKAGES += library/graphics/libvdpau
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/sdl2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libschroedinger
 REQUIRED_PACKAGES += library/video/libvpx
