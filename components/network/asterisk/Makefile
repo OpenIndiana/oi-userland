@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
 COMPONENT_VERSION=	15.1.4
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:8ce3ffbff473410ae0ed0472adea22b01a20f9ec784ebfec51393282028acc16
@@ -26,9 +26,7 @@ COMPONENT_ARCHIVE_URL=	http://downloads.asterisk.org/pub/telephony/asterisk/old-
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 
@@ -54,12 +52,6 @@ CONFIGURE_OPTIONS +=	--with-gsm=internal
 CONFIGURE_OPTIONS +=	--with-postgres=$(PG_HOME)
 
 COMPONENT_INSTALL_TARGETS += samples
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
