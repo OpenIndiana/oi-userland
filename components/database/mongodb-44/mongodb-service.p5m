@@ -1,0 +1,61 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2017 Alexander Pyhalov
+# Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/service/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - server"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.source-url value="$(COMPONENT_ARCHIVE_URL)"
+set name=info.upstream-url value="$(COMPONENT_PROJECT_URL)"
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license="$(COMPONENT_LICENSE)" must-display=true
+license ApacheV2.license license="Apache v2.0"
+license zlib.license     license="zlib"
+
+depend type=require fmri=database/mongodb-common
+depend type=require fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+ 
+dir  path=var/mongodb/4.4/data owner=mongodb group=mongodb mode=0755
+dir  path=var/mongodb/4.4/data/standalone  owner=mongodb group=mongodb mode=0755
+dir  path=var/mongodb/4.4/log              owner=mongodb group=mongodb mode=0755
+
+file files/mongod.conf        path=etc/mongodb/4.4/mongod.conf mode=0644 preserve=true
+file files/mongodb-44.xml \
+    path=lib/svc/manifest/application/database/mongodb-44.xml
+
+file files/mongos.conf        path=etc/mongodb/4.4/mongos.conf mode=0644 preserve=true
+file files/mongos-44.xml \
+    path=lib/svc/manifest/application/database/mongos-44.xml
+
+# mediators
+link path=usr/bin/mongod target=../mongodb/4.4/bin/mongod mediator=mongodb \
+    mediator-version=4.4
+link path=usr/bin/mongos target=../mongodb/4.4/bin/mongos mediator=mongodb \
+    mediator-version=4.4
+
+link path=usr/share/man/man1/mongod.1 \
+    target=../../../mongodb/4.4/man/man1/mongod.1 mediator=mongodb \
+    mediator-version=4.4
+link path=usr/share/man/man1/mongos.1 \
+    target=../../../mongodb/4.4/man/man1/mongos.1 mediator=mongodb \
+    mediator-version=4.4
+
+# man pages
+file debian/mongod.1 path=usr/mongodb/4.4/man/man1/mongod.1
+file debian/mongos.1 path=usr/mongodb/4.4/man/man1/mongos.1
+
+file path=usr/mongodb/4.4/bin/mongod
+file path=usr/mongodb/4.4/bin/mongos
