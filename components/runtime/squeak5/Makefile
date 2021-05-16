@@ -14,12 +14,11 @@
 
 
 #
-# Package Makefile for the "OpenSmalltalk Cog Spur" Squeak Smalltalk V5 system
+# Package Makefile for the "OpenSmalltalk" Squeak Smalltalk system
 # See http://squeak.org and http://opensmalltalk.org
 #
 
 # opensmalltalk-vm can be built both in 32 and 64bit
-# but unfortunately it does not deliver a driver script (like squeak-4 does)
 #
 # we deliver our own script squeak.ips as driver script
 #
@@ -34,14 +33,14 @@ include ../../../make-rules/shared-macros.mk
 # we use 5.0.<n> for VMMaker.oscog-eem.<n>
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
-COMPONENT_NAME=		squeak-5
-COMPONENT_VERSION=	5.0.2952
-GIT_TAG=		sun-v5.0.28
-PLUGIN_REV=		5.0-202104231732
-COMPONENT_SUMMARY=	The Squeak V5 Smalltalk Virtual Machine
+COMPONENT_NAME=		stack-spur
+COMPONENT_VERSION=	5.0.2957
+GIT_TAG=		sun-v5.0.29
+PLUGIN_REV=		5.0-202105050900
+COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
-COMPONENT_FMRI=		runtime/squeak-5
-COMPONENT_CLASSIFICATION=	Development/Other Languages
+COMPONENT_FMRI=		runtime/smalltalk/stack-spur
+COMPONENT_CLASSIFICATION=	Development/Smalltalk
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -51,7 +50,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:26ec608fdf69879bc8f8aae7c615af2a4888feaf7c26f9262b510ec08d147413
+COMPONENT_ARCHIVE_HASH=	sha256:6975d8be2d8f4cf80c6f5ca60f14550325b6406f3be7b1bcd3e16cead7c86210
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
@@ -114,9 +113,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 #
 
 rebuild-manifests::
-	cp manifests/squeak-5.p5m squeak-5.p5m
-	cp manifests/squeak-5-display-X11.p5m squeak-5-display-X11.p5m
-	cp manifests/squeak-5-nodisplay.p5m squeak-5-nodisplay.p5m
+	cp manifests/stack-spur.p5m stack-spur.p5m
+	cp manifests/stack-spur-display-X11.p5m stack-spur-display-X11.p5m
+	cp manifests/stack-spur-nodisplay.p5m stack-spur-nodisplay.p5m
 	cp manifests/sample-manifest.p5m sample-manifest.p5m
 	tools/pluginrev.sh $(PLUGIN_REV) <sample-manifest.p5m >sample.p5m
 	tools/classify.pl <sample.p5m

@@ -7,24 +7,24 @@
 # this script is used
 #
 # the script "classifies" plugins into currently 3 categories:
-#  - squeak-4-nodisplay (only libc,libm math,libpthread, ksh)
-#  - squeak-4-display-X11 (only x11,xext,xrender)
-#  - squeak-4 (ssl,ffi,pulseaudio freetype2,gnome, everything else)
+#  - squeak-nodisplay (only libc,libm math,libpthread, ksh)
+#  - squeak-display-X11 (only x11,xext,xrender)
+#  - squeak (ssl,ffi,pulseaudio freetype2,gnome, everything else)
 #
 # Usage: check the samplemanifest,
 # ./subversion.pl < ../manifests/sample-manifest.p5m > sample2.p5m
 # then classify the files as follows:
 # ./classify.pl < sample2.p5m
 # then alias the amd64 files (install in component directory)
-# ./amd64.pl < squeak-4.p5m > ../squeak-4.p5m
+# ./amd64.pl < squeak.p5m > ../squeak.p5m
 # or run ./amd64-p5m.sh
 #
 
-open(NODISPLAY,">>","squeak-4-nodisplay.p5m") || die "Can't open squeak-4-nodisplay.p5m";
+open(NODISPLAY,">>","squeak-nodisplay.p5m") || die "Can't open squeak-nodisplay.p5m";
 
-open(X11,">>","squeak-4-display-X11.p5m") || die "Can't open squeak-4-display-X11.p5m";
+open(X11,">>","squeak-display-X11.p5m") || die "Can't open squeak-display-X11.p5m";
 
-open(REST,">>","squeak-4.p5m") || die "Can't open squeak-4.p5m";
+open(REST,">>","squeak.p5m") || die "Can't open squeak.p5m";
 
 while (<>) {
 	if (/^#/) {
