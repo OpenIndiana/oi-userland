@@ -98,6 +98,11 @@ COMPONENT_PREP_ACTION += \
 COMPONENT_PRE_BUILD_ACTION += \
  ($(PYTHON) -m pip install -r $(@D)/etc/pip/compile-requirements.txt) 
 
+COMPONENT_POST_INSTALL_ACTION += ( \
+	$(MKDIR) $(PROTO_DIR)$(MONGO_PREFIX)/man/man1; \
+	$(CP) $(BUILD_DIR_64)/debian/*.1  $(PROTO_DIR)$(MONGO_PREFIX)/man/man1/; \
+	$(CP) $(BUILD_DIR_64)/debian/mongo{,d,s,ldap,kerberos}.1  $(PROTO_DIR)$(MONGO_PREFIX)/man/man1/; )
+
 $(BUILD_TOOLS):	$(BUILD_64)
 	($(MKDIR) $(BUILD_DIR_TOOLS)/src/github.com/mongodb; \
 	cd $(BUILD_DIR_TOOLS)/src/github.com/mongodb; \
@@ -136,9 +141,6 @@ $(TEST_64):     $(INSTALL_64) $(INSTALL_TOOLS)
 build:		$(BUILD_64) $(BUILD_TOOLS)
 
 install: $(INSTALL_TOOLS)
-	$(MKDIR) $(PROTO_DIR)$(MONGO_PREFIX)/man/man1
-	$(CP) $(BUILD_DIR_64)/debian/*.1  $(PROTO_DIR)$(MONGO_PREFIX)/man/man1/
-	$(CP) $(BUILD_DIR_64)/debian/mongo{,d,s,ldap,kerberos}.1  $(PROTO_DIR)$(MONGO_PREFIX)/man/man1/
 
 test:		$(TEST_64)
 
