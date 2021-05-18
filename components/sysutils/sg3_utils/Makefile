@@ -21,27 +21,28 @@
 
 #
 # Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
-PREFERRED_BITS=64
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
+GCC_VERSION= 10
+
 COMPONENT_NAME= sg3_utils
-COMPONENT_VERSION= 1.44
+COMPONENT_VERSION= 1.46
 COMPONENT_FMRI= system/storage/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL= http://sg.danny.cz/sg/sg3_utils.html
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= sha256:8dae684d22e71b11353a48b16c95597af90f0cbe9bbd57f98d7f5544da5cae7b
+COMPONENT_ARCHIVE_HASH= sha256:701dfa3c828867f97e904d25f280346d46da9e582a66e6afebe2b294ae4a6176
 COMPONENT_ARCHIVE_URL= http://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2+ and BSD 
 COMPONENT_SUMMARY= Utilities for devices that use SCSI command sets
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
 CFLAGS += -std=c99 $(CPP_XPG6MODE)
@@ -65,6 +66,11 @@ install:        $(INSTALL_64)
 
 test:           $(TEST_64)
 
+# build dependency
+REQUIRED_PACKAGES += developer/gcc-10
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
+
