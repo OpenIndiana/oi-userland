@@ -24,9 +24,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		clang-12
 LLVM_NAME=		llvm
 CLANG_NAME=		clang
-
 COMPONENT_VERSION=	12.0.0
-COMPONENT_REVISION=	1
 COMPONENT_MAJOR_VERSION= \
 	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\.[0-9]\+\).*/\1/')
 COMPONENT_PROJECT_URL=	http://llvm.org/
