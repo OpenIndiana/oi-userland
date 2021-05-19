@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright 2016, Aurelien Larcher.
+# Copyright 2021, Nona Hansel.
 #
 BUILD_STYLE= setup.py
 BUILD_BITS= NO_ARCH
@@ -28,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= python-certifi
 COMPONENT_VERSION= 2020.06.20
 IPS_COMPONENT_VERSION= 2020.6.20
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= library/python/certify
 COMPONENT_PROJECT_URL=  http://certifi.io/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,10 +40,12 @@ COMPONENT_ARCHIVE_URL= \
     https://github.com/certifi/python-certifi/archive/$(COMPONENT_VERSION).tar.gz
 
 TEST_TARGET= $(NO_TESTS)
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
