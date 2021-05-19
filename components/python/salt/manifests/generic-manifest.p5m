@@ -3,95 +3,32 @@
 # Common Development and Distribution License ("CDDL"), version 1.0.
 # You may only use this file in accordance with the terms of version
 # 1.0 of the CDDL.
-#
 # A full copy of the text of the CDDL should have accompanied this
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
-#
 
-#
-# Copyright 2018 Till Wegmueller
-# Copyright 2021 Nona Hansel
-#
-
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+# Copyright 2020 <contributor>
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-# Salt does a lot of try/import/except, making pkgdepend unhapyy
-# If one disables this line pkg will try to add a giant list of optional dependencies to the package
-# Salt uses try import on purpose. Salt requires the admin to add optional dependencies via it's states. 
-<transform path=usr/lib/python$(PYVER)/vendor-packages/salt/.*\.py -> default pkg.depend.bypass-generate .* >
-
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
-
-# dependencies
-depend type=require fmri=library/python/msgpack-$(PYV)
-depend type=require fmri=library/python/pyyaml-$(PYV)
-depend type=require fmri=library/python/jinja2-$(PYV)
-depend type=require fmri=library/python/markupsafe-$(PYV)
-depend type=require fmri=library/python/requests-$(PYV)
-depend type=require fmri=library/python/tornado-$(PYV)
-depend type=require fmri=library/python/pyzmq-$(PYV)
-depend type=require fmri=library/python/cryptography-$(PYV)
-depend type=require fmri=library/python/distro-$(PYV)
-
-# SMF Manifest and distribution directories
-dir  path=etc/salt owner=root group=root mode=0755
-dir  path=var/log/salt owner=root group=root mode=0755
-file files/salt.xml path=lib/svc/manifest/application/salt.xml
-
-# Create necessary links
-link path=usr/bin/salt target=./salt-$(PYV)
-link path=usr/bin/salt-api target=./salt-api-$(PYV)
-link path=usr/bin/salt-call target=./salt-call-$(PYV)
-link path=usr/bin/salt-cp target=./salt-cp-$(PYV)
-link path=usr/bin/salt-key target=./salt-key-$(PYV)
-link path=usr/bin/salt-master target=./salt-master-$(PYV)
-link path=usr/bin/salt-minion target=./salt-minion-$(PYV)
-link path=usr/bin/salt-proxy target=./salt-proxy-$(PYV)
-link path=usr/bin/salt-run target=./salt-run-$(PYV)
-link path=usr/bin/salt-ssh target=./salt-ssh-$(PYV)
-link path=usr/bin/salt-syndic target=./salt-syndic-$(PYV)
-link path=usr/bin/salt-unity target=./salt-unity-$(PYV)
-link path=usr/bin/spm target=./spm-$(PYV)
-
-# Create Symlinks for Manpages
-link path=usr/share/man/man1/salt.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt.1
-link path=usr/share/man/man1/salt-api.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-api.1
-link path=usr/share/man/man1/salt-cloud.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-cloud.1
-link path=usr/share/man/man1/salt-cp.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-cp.1
-link path=usr/share/man/man1/salt-key.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-key.1
-link path=usr/share/man/man1/salt-master.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-master.1
-link path=usr/share/man/man1/salt-minion.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-minion.1
-link path=usr/share/man/man1/salt-proxy.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-proxy.1
-link path=usr/share/man/man1/salt-run.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-run.1
-link path=usr/share/man/man1/salt-ssh.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-ssh.1
-link path=usr/share/man/man1/salt-syndic.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/salt-syndic.1
-link path=usr/share/man/man1/spm.1 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man1/spm.1
-link path=usr/share/man/man7/salt.7 target=../../../lib/python$(PYVER)/vendor-packages/share/man/man7/salt.7
-
-file usr/bin/salt path=usr/bin/salt-$(PYV)
-file usr/bin/salt-api path=usr/bin/salt-api-$(PYV)
-file usr/bin/salt-call path=usr/bin/salt-call-$(PYV)
-file usr/bin/salt-cloud path=usr/bin/salt-cloud-$(PYV)
-file usr/bin/salt-cp path=usr/bin/salt-cp-$(PYV)
-file usr/bin/salt-key path=usr/bin/salt-key-$(PYV)
-file usr/bin/salt-master path=usr/bin/salt-master-$(PYV)
-file usr/bin/salt-minion path=usr/bin/salt-minion-$(PYV)
-file usr/bin/salt-proxy path=usr/bin/salt-proxy-$(PYV)
-file usr/bin/salt-run path=usr/bin/salt-run-$(PYV)
-file usr/bin/salt-ssh path=usr/bin/salt-ssh-$(PYV)
-file usr/bin/salt-syndic path=usr/bin/salt-syndic-$(PYV)
-file usr/bin/salt-unity path=usr/bin/salt-unity-$(PYV)
-file usr/bin/spm path=usr/bin/spm-$(PYV)
+file path=usr/bin/salt
+file path=usr/bin/salt-api
+file path=usr/bin/salt-call
+file path=usr/bin/salt-cloud
+file path=usr/bin/salt-cp
+file path=usr/bin/salt-key
+file path=usr/bin/salt-master
+file path=usr/bin/salt-minion
+file path=usr/bin/salt-proxy
+file path=usr/bin/salt-run
+file path=usr/bin/salt-ssh
+file path=usr/bin/salt-syndic
+file path=usr/bin/salt-unity
+file path=usr/bin/spm
 file path=usr/lib/python$(PYVER)/vendor-packages/salt-$(COMPONENT_VERSION)-py$(PYVER).egg-info
 file path=usr/lib/python$(PYVER)/vendor-packages/salt/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/salt/_compat.py
