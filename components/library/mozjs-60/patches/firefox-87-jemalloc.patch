@@ -1,0 +1,27 @@
+We don't have malloc_usable_size. Therefore and probably for other reasons too we
+need to use jemalloc. Not sure now with enabling (is it needed with the patch below?).
+With this we don't have any warnings in about:memory.
+
+ac_add_options --enable-jemalloc
+ac_add_options --enable-replace-malloc
+diff -Naur mozjemalloc.cpp.old mozjemalloc.cpp
+--- firefox-60.5.0/memory/build/mozjemalloc.cpp.old 2019-01-22 18:48:59.477959810 +0000
++++ firefox-60.5.0/memory/build/mozjemalloc.cpp     2019-01-22 18:52:24.655702951 +0000
+@@ -1743,7 +1743,7 @@
+ #define JEMALLOC_MADV_PURGE MADV_FREE
+ #define JEMALLOC_MADV_ZEROS force_zero
+ #endif
+-  int err = madvise(addr, length, JEMALLOC_MADV_PURGE);
++  int err = posix_madvise(addr, length, JEMALLOC_MADV_PURGE);
+   return JEMALLOC_MADV_ZEROS && err == 0;
+ #undef JEMALLOC_MADV_PURGE
+ #undef JEMALLOC_MADV_ZEROS
+@@ -2451,7 +2451,7 @@
+         mStats.committed -= npages;
+ 
+ #ifndef MALLOC_DECOMMIT
+-        madvise((void*)(uintptr_t(chunk) + (i << gPageSize2Pow)),
++        posix_madvise((void*)(uintptr_t(chunk) + (i << gPageSize2Pow)),
+                 (npages << gPageSize2Pow), MADV_FREE);
+ #ifdef MALLOC_DOUBLE_PURGE
+         madvised = true;
