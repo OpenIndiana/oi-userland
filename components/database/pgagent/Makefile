@@ -13,11 +13,14 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_BITS = 64
+BUILD_STYLE = cmake
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgAgent
 COMPONENT_VERSION= 	3.4.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY= 	pgAgent job scheduler for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-Source
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -32,11 +35,9 @@ COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
 # Don't depend on host default pg_config
-PATH=		$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
+PATH=		$(PG_BINDIR.$(BITS)):/usr/bin/$(MACH64):/usr/bin
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CMAKE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
 
@@ -51,17 +52,11 @@ $(BUILD_DIR)/%/.configured:     $(SOURCE_DIR)/.prep
 
 CMAKE_OPTIONS = -D STATIC_BUILD=NO
 # Don't depend on host default pg_config
-CMAKE_OPTIONS += -D CMAKE_PROGRAM_PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
+CMAKE_OPTIONS += -D CMAKE_PROGRAM_PATH=$(PATH)
 CMAKE_OPTIONS += -D CMAKE_BUILD_WITH_INSTALL_RPATH="TRUE"
 CMAKE_OPTIONS += -D CMAKE_INSTALL_RPATH_USE_LINK_PATH="TRUE"
 
 CMAKE_OPTIONS += -D CMAKE_INSTALL_PREFIX=/usr
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
