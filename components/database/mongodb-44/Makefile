@@ -14,8 +14,11 @@
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
+# if gcc11 is available use openssl 1.1 and remove OPENSSL* from BUILD_ARGS
+
 BUILD_BITS= 64
 BUILD_STYLE= justmake
+USE_OPENSSL10= yes
 
 include ../../../make-rules/shared-macros.mk
 
@@ -50,6 +53,8 @@ GOROOT= $(shell go env | grep GOROOT | awk -F= '{ print $$2 }' | tr -d '"')
 
 ENV= /usr/bin/env -i
 
+COMPONENT_BUILD_ARGS += LIBPATH="$(OPENSSL_PREFIX)/lib/$(MACH64):$(USRLIBDIR.$(BITS))"
+COMPONENT_BUILD_ARGS +=	CPPPATH="$(OPENSSL_PREFIX)/include"
 COMPONENT_BUILD_ARGS += DESTDIR=$(PROTO_DIR)
 COMPONENT_BUILD_ARGS += PREFIX=$(MONGO_PREFIX)
 COMPONENT_BUILD_ARGS += TARGET_ARCH=x86_64
@@ -57,10 +62,9 @@ COMPONENT_BUILD_ARGS += CC="$(CC) -DSOLARIS"
 COMPONENT_BUILD_ARGS += CXX="$(CXX) -DSOLARIS"
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ARGS += CXXFLAGS="$(CXXFLAGS) -fpermissive"
-COMPONENT_BUILD_ARGS += LIBPATH=/usr/lib/$(MACH64)
 COMPONENT_BUILD_ARGS += LINKFLAGS="$(LDFLAGS) -lkstat"
 COMPONENT_BUILD_ARGS += AR=/usr/bin/gar
-COMPONENT_BUILD_ARGS += CCFLAGS=-I/usr/include/pcre 
+COMPONENT_BUILD_ARGS += CCFLAGS=-I$(USRINCDIR)/pcre 
 COMPONENT_BUILD_ARGS += --js-engine=mozjs
 COMPONENT_BUILD_ARGS += --use-system-pcre
 COMPONENT_BUILD_ARGS += --use-system-zlib

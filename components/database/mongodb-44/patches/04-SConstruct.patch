@@ -1,6 +1,6 @@
---- mongodb-src-r4.4.5/SConstruct.~1~	2021-03-31 17:15:37.000000000 +0000
-+++ mongodb-src-r4.4.5/SConstruct	2021-05-13 09:41:00.416155493 +0000
-@@ -351,6 +351,7 @@
+--- mongodb-src-r4.4.6/SConstruct.~1~	2021-05-03 09:41:41.000000000 +0000
++++ mongodb-src-r4.4.6/SConstruct	2021-05-21 08:44:04.285087409 +0000
+@@ -359,6 +359,7 @@
      ('icu', 'ICU'),
      ('intel_decimal128', 'intel decimal128'),
      ('kms-message',),
@@ -8,7 +8,7 @@
      ('pcre',),
      ('snappy',),
      ('stemmer',),
-@@ -407,6 +408,11 @@
+@@ -415,6 +416,11 @@
      nargs=0,
  )
  
@@ -20,7 +20,16 @@
  add_option('variables-help',
      help='Print the help text for SCons variables',
      nargs=0,
-@@ -2071,7 +2077,7 @@
+@@ -2059,7 +2065,7 @@
+     # define _GNU_SOURCE (because libstdc++ requires it), it seems
+     # prudent to explicitly add that too, so that C language checks
+     # see a consistent set of definitions.
+-    if env.TargetOSIs('linux'):
++    if env.TargetOSIs('linux') or env.TargetOSIs('solaris'):
+         env.AppendUnique(
+             CPPDEFINES=[
+                 ('_XOPEN_SOURCE', 700),
+@@ -2079,7 +2085,7 @@
          env['SHOBJSUFFIX'] = '.dyn${OBJSUFFIX}'
  
      # Everything on OS X is position independent by default.
@@ -29,7 +38,7 @@
          if get_option('runtime-hardening') == "on":
              # If runtime hardening is requested, then build anything
              # destined for an executable with the necessary flags for PIE.
-@@ -2084,16 +2090,20 @@
+@@ -2092,16 +2098,20 @@
      env.Append( CCFLAGS=["-fno-omit-frame-pointer",
                           "-fno-strict-aliasing",
                           "-fasynchronous-unwind-tables",
@@ -52,7 +61,7 @@
  
      env.Append( CXXFLAGS=["-Woverloaded-virtual"] )
      if env.ToolchainIs('clang'):
-@@ -2398,7 +2408,7 @@
+@@ -2413,7 +2423,7 @@
          # For GCC, we don't need anything since bad flags are already errors, but
          # adding -Werror won't hurt. For clang, bad flags are only warnings, so we need -Werror
          # to make them real errors.
@@ -61,7 +70,7 @@
          conf = Configure(cloned, help=False, custom_tests = {
                  'CheckFlag' : lambda ctx : CheckFlagTest(ctx, tool, extension, flag)
          })
-@@ -2547,13 +2557,13 @@
+@@ -2562,13 +2572,13 @@
              return ret
  
          myenvClone = myenv.Clone()
@@ -78,7 +87,7 @@
          conf.Finish()
  
          # As of XCode 9, this flag must be present (it is not enabled
-@@ -3541,8 +3551,11 @@
+@@ -3556,8 +3566,11 @@
      if use_system_version_of_library("stemmer"):
          conf.FindSysLibDep("stemmer", ["stemmer"])
  
