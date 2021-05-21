@@ -70,6 +70,8 @@ while (<>) {
 			print NODISPLAY $_;
 		} elsif (/XDisplayControlPlugin/) {
 			print X11 $_;
+		} elsif (/VectorEnginePlugin/) {
+			print X11 $_;
 		} elsif (/vm-sound-null/) {
 			print NODISPLAY $_;
 		} elsif (/vm-display-null/) {
