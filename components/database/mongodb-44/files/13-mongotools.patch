@@ -1,0 +1,59 @@
+diff --git a/common/password/pass_util.go b/common/password/pass_util.go
+index 930f846f..347a75a6 100644
+--- a/common/password/pass_util.go
++++ b/common/password/pass_util.go
+@@ -4,7 +4,6 @@
+ // not use this file except in compliance with the License. You may obtain
+ // a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ 
+-// +build !solaris
+ 
+ package password
+ 
+diff --git a/release/platform/platform.go b/release/platform/platform.go
+index 8d62de32..2d6a26c1 100644
+--- a/release/platform/platform.go
++++ b/release/platform/platform.go
+@@ -9,6 +9,7 @@ import (
+ )
+ 
+ const (
++	OSSolaris = "solaris"
+ 	OSWindows = "windows"
+ 	OSLinux   = "linux"
+ 	OSMac     = "mac"
+@@ -77,6 +78,12 @@ func DetectLocal() (Platform, error) {
+ 	}
+ 
+ 	switch kernelName {
++	case "SunOS":
++		pf, ok := GetByVariant(kernelName)
++		if !ok {
++			panic("SunOS platform name changed")
++		}
++		return pf, nil
+ 	case "Linux":
+ 		pf, ok := GetByVariant("ubuntu1804")
+ 		if !ok {
+@@ -126,6 +133,8 @@ func (p Platform) DebianArch() string {
+ 
+ func (p Platform) ArtifactExtensions() []string {
+ 	switch p.OS {
++	case OSSolaris:
++		return []string{"tgz"}
+ 	case OSLinux:
+ 		return []string{"tgz", "tgz.sig", p.Pkg}
+ 	case OSMac:
+@@ -138,6 +147,12 @@ func (p Platform) ArtifactExtensions() []string {
+ 
+ var platformsByVariant map[string]Platform
+ var platforms = []Platform{
++	{
++		Name:      "SunOS",
++		Arch:      "x86_64",
++		OS:        OSSolaris,
++		BuildTags: []string{"ssl", "sasl", "gssapi", "failpoints"},
++	},
+ 	{
+ 		Name:      "amazon",
+ 		Arch:      "x86_64",

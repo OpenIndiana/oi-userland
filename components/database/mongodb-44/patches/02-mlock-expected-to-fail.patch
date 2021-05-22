@@ -1,0 +1,34 @@
+--- mongodb-src-r4.4.5/src/mongo/base/secure_allocator.cpp.~1~	2021-05-10 10:37:41.099690572 +0000
++++ mongodb-src-r4.4.5/src/mongo/base/secure_allocator.cpp	2021-05-10 10:49:17.109968639 +0000
+@@ -242,11 +242,14 @@
+     }
+ 
+     if (mlock(ptr, bytes) != 0) {
++      // On illumos if mlock is run without PRIV_PROC_LOCK_MEMORY privilege, it will fail
++      if (errno != EPERM) {
+         auto str = errnoWithPrefix(
+             "Failed to mlock: Cannot allocate locked memory. For more details see: "
+             "https://dochub.mongodb.org/core/cannot-allocate-locked-memory");
+         LOGV2_FATAL(23715, "{str}", "str"_attr = str);
+         fassertFailed(28832);
++      }
+     }
+ 
+ #if defined(MADV_DONTDUMP)
+@@ -263,12 +266,14 @@
+     // See comment above madvise in systemAllocate().
+     (void)madvise(ptr, bytes, MADV_DODUMP);
+ #endif
+-
++    errno = 0;
+     if (munlock(ptr, bytes) != 0) {
+-        LOGV2_FATAL(28833,
++      if (errno != EPERM) {
++       LOGV2_FATAL(28833,
+                     "{errnoWithPrefix_Failed_to_munlock}",
+                     "errnoWithPrefix_Failed_to_munlock"_attr =
+                         errnoWithPrefix("Failed to munlock"));
++      }
+     }
+ 
+     if (munmap(ptr, bytes) != 0) {
