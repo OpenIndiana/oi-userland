@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libp11
 COMPONENT_VERSION=	0.4.11
+COMPONENT_REVISION=	1
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		library/security/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Security
@@ -61,6 +62,6 @@ COMPONENT_PRE_INSTALL_ACTION = (\
 
 CONFIGURE_OPTIONS +=	--with-enginesdir=$(DEFENGINESDIR_$(BITS))
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += system/library
