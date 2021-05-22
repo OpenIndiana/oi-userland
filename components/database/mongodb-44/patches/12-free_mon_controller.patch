@@ -1,0 +1,20 @@
+--- mongodb-src-r4.4.5/src/mongo/db/free_mon/free_mon_controller_test.cpp.orig	2021-05-11 18:14:14.557942419 +0000
++++ mongodb-src-r4.4.5/src/mongo/db/free_mon/free_mon_controller_test.cpp	2021-05-11 18:16:12.311420185 +0000
+@@ -473,7 +473,7 @@
+         for (int i = 1; i <= 10; ++i) {
+             ASSERT_TRUE(counter.incrementError());
+ 
+-            int64_t base = pow(2, i);
++            int64_t base = pow(2.0, i);
+             ASSERT_RANGE(Seconds(base), Seconds(2), Seconds(10));
+         }
+ 
+@@ -539,7 +539,7 @@
+         for (int i = 0; i <= 6; ++i) {
+             ASSERT_TRUE(counter.incrementError());
+ 
+-            int64_t base = pow(2, i);
++            int64_t base = pow(2.0, i);
+             ASSERT_RANGE(Seconds(base), Seconds(minTime / 2), Seconds(minTime));
+         }
+ 
