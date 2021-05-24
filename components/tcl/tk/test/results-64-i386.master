@@ -67,68 +67,7 @@ embed.test
 entry.test
 event.test
 filebox.test
-
-
-==== filebox-7.1-0 tk_getOpenFile - directory not readable FAILED
-==== Contents of test case:
-
-		ToEnterFileByKey .t1 NOTREADABLE $fileDir
-		ToPressButton .t1 ok
-		ToPressButton .t1 cancel
-		tk_getOpenFile -parent .t1  -title "Please select the NOTREADABLE directory"  -initialdir $fileDir
-		set gotmessage
-	    
----- Result was:
-
----- Result should have been (glob matching):
-*NOTREADABLE*
-==== filebox-7.1-0 FAILED
-
 focus.test
-
-
-==== focus-1.1 Tk_FocusCmd procedure FAILED
-==== Contents of test case:
-
-    focusClear
-    focus
-
----- Result was:
-.t
----- Result should have been (exact matching):
-
-==== focus-1.1 FAILED
-
-
-
-==== focus-1.3 Tk_FocusCmd procedure FAILED
-==== Contents of test case:
-
-    focusClear
-    focus .t.b3
-    focus
-
----- Result was:
-.t.b3
----- Result should have been (exact matching):
-
-==== focus-1.3 FAILED
-
-
-
-==== focus-1.12 Tk_FocusCmd procedure, -displayof option FAILED
-==== Contents of test case:
-
-    focusClear
-    focus .t
-    focus -displayof .t.b3
-
----- Result was:
-.t
----- Result should have been (exact matching):
-
-==== focus-1.12 FAILED
-
 
 
 ==== focus-2.6 TkFocusFilterEvent procedure, FocusIn events FAILED
@@ -188,146 +127,6 @@ focus.test
 
 
 
-==== focus-2.10 TkFocusFilterEvent procedure, Enter events FAILED
-==== Contents of test case:
-
-    set result {}
-    focus .t.b1
-    focusClear
-    foreach detail {NotifyAncestor NotifyInferior NotifyNonlinear
-	        NotifyNonlinearVirtual NotifyVirtual} {
-	    event gen [testwrapper .t] <Enter> -detail $detail -focus 1
-	    update
-	    lappend result [focus]
-	    event gen [testwrapper .t] <Leave> -detail NotifyAncestor
-	    update
-    }
-    return $result
-
----- Result was:
-.t.b1 .t.b1 .t.b1 .t.b1 .t.b1
----- Result should have been (exact matching):
-.t.b1 {} .t.b1 .t.b1 .t.b1
-==== focus-2.10 FAILED
-
-
-
-==== focus-2.15 TkFocusFilterEvent procedure, Leave events FAILED
-==== Contents of test case:
-
-    set result {}
-    focus .t.b1
-    foreach detail {NotifyAncestor NotifyInferior NotifyNonlinear
-	    NotifyNonlinearVirtual NotifyVirtual} {
-	    focusClear
-	    event gen [testwrapper .t] <Enter> -detail NotifyAncestor -focus 1
-	    update
-	    event gen [testwrapper .t] <Leave> -detail $detail
-	    update
-	    lappend result [focus]
-    }
-    return $result
-
----- Result was:
-.t.b1 .t.b1 .t.b1 .t.b1 .t.b1
----- Result should have been (exact matching):
-{} .t.b1 {} {} {}
-==== focus-2.15 FAILED
-
-
-
-==== focus-2.16 TkFocusFilterEvent procedure, Leave events FAILED
-==== Contents of test case:
-
-    focusClear
-    focus .t.b1
-    event gen [testwrapper .t] <Enter> -detail NotifyAncestor -focus 1
-    update
-    set focusInfo {}
-    event gen [testwrapper .t] <Leave> -detail NotifyAncestor
-    update
-    return $focusInfo
-
----- Result was:
-out .t.b1 NotifyAncestor
-out .t NotifyVirtual
-in .t NotifyVirtual
-in .t.b1 NotifyAncestor
-
----- Result should have been (exact matching):
-out .t.b1 NotifyAncestor
-out .t NotifyVirtual
-
-==== focus-2.16 FAILED
-
-
-
-==== focus-2.17 TkFocusFilterEvent procedure, Leave events FAILED
-==== Contents of test case:
-
-    focusClear
-    focus .t.b1
-    event gen [testwrapper .t] <Enter> -detail NotifyAncestor -focus 1
-    update
-    set focusInfo {}
-    event gen .t.b1 <Leave> -detail NotifyAncestor
-    event gen [testwrapper .] <Leave> -detail NotifyAncestor
-    update
-    list $focusInfo [focus]
-
----- Result was:
-{out .t.b1 NotifyAncestor
-out .t NotifyVirtual
-in .t NotifyVirtual
-in .t.b1 NotifyAncestor
-} .t.b1
----- Result should have been (exact matching):
-{out .t.b1 NotifyAncestor
-out .t NotifyVirtual
-} {}
-==== focus-2.17 FAILED
-
-
-
-==== focus-3.5 SetFocus procedure, generating events FAILED
-==== Contents of test case:
-
-    focusSetup
-    focusClear
-    set focusInfo {}
-    focus -force .t.b2
-    update
-    return $focusInfo
-
----- Result was:
-in .t.b2 NotifyAncestor
-
----- Result should have been (exact matching):
-in .t NotifyVirtual
-in .t.b2 NotifyAncestor
-
-==== focus-3.5 FAILED
-
-
-
-==== focus-4.1 TkFocusDeadWindow procedure FAILED
-==== Contents of test case:
-
-    focusSetup
-    update
-    focus -force .b
-    update
-    destroy .t
-    focus
-
----- Result was:
-
----- Result should have been (exact matching):
-.b
-==== focus-4.1 FAILED
-
-
-
 ==== focus-5.1 ChangeXFocus procedure, don't take focus unless have it FAILED
 ==== Contents of test case:
 
@@ -347,117 +146,6 @@ in .t.b2 NotifyAncestor
 ---- Result should have been (exact matching):
 .t {} {}
 ==== focus-5.1 FAILED
-
-
-
-==== focus-6.1 miscellaneous - embedded application in same process FAILED
-==== Contents of test case:
-
-    toplevel .t
-    wm geometry .t +0+0
-    frame .t.f1 -container 1
-    frame .t.f2
-    pack .t.f1 .t.f2
-    entry .t.f2.e1 -bg red
-    pack .t.f2.e1
-    bind all <FocusIn> {lappend x "focus in %W %d"}
-    bind all <FocusOut> {lappend x "focus out %W %d"}
-    interp create child
-    child eval "set argv {-use [winfo id .t.f1]}"
-    load {} Tk child
-    child eval {
-	    entry .e1 -bg lightBlue
-	    pack .e1
-	    bind all <FocusIn> {lappend x "focus in %W %d"}
-	    bind all <FocusOut> {lappend x "focus out %W %d"}
-	    set x {}
-    }
-
-    # Claim the focus and wait long enough for it to really arrive.
-
-    focus -force .t.f2.e1
-    after 300 {set timer 1}
-    vwait timer
-    set x {}
-    lappend x [focus] [child eval focus]
-
-    # See if a "focus" command will move the focus to the embedded
-    # application.
-
-    child eval {focus .e1}
-    after 300 {set timer 1}
-    vwait timer
-    lappend x |
-    child eval {lappend x |}
-
-    # Bring the focus back to the main application.
-
-    focus .t.f2.e1
-    after 300 {set timer 1}
-    vwait timer
-    set result [list $x [child eval {set x}]]
-    return $result
-
----- Result was:
-{.t.f2.e1 . |} {{focus in . NotifyAncestor} {focus in .e1 NotifyAncestor} |}
----- Result should have been (exact matching):
-{.t.f2.e1 {} {focus out .t.f2.e1 NotifyNonlinear} {focus out .t.f2 NotifyNonlinearVirtual} {focus in .t.f1 NotifyNonlinear} | {focus out .t.f1 NotifyNonlinear} {focus in .t.f2 NotifyNonlinearVirtual} {focus in .t.f2.e1 NotifyNonlinear}} {{focus in . NotifyVirtual} {focus in .e1 NotifyAncestor} | {focus out .e1 NotifyAncestor} {focus out . NotifyVirtual}}
-==== focus-6.1 FAILED
-
-
-
-==== focus-6.2 miscellaneous - embedded application in different process FAILED
-==== Contents of test case:
-
-    setupbg
-    toplevel .t
-    wm geometry .t +0+0
-    frame .t.f1 -container 1
-    frame .t.f2
-    pack .t.f1 .t.f2
-    entry .t.f2.e1 -bg red
-    pack .t.f2.e1
-    bind all <FocusIn> {lappend x "focus in %W %d"}
-    bind all <FocusOut> {lappend x "focus out %W %d"}
-    setupbg -use [winfo id .t.f1]
-    dobg {
-	    entry .e1 -bg lightBlue
-	    pack .e1
-	    bind all <FocusIn> {lappend x "focus in %W %d"}
-	    bind all <FocusOut> {lappend x "focus out %W %d"}
-	    set x {}
-    }
-
-    # Claim the focus and wait long enough for it to really arrive.
-
-    focus -force .t.f2.e1
-    after 300 {set timer 1}
-    vwait timer
-    set x {}
-    lappend x [focus] [dobg focus]
-
-    # See if a "focus" command will move the focus to the embedded
-    # application.
-
-    dobg {focus .e1}
-    after 300 {set timer 1}
-    vwait timer
-    lappend x |
-    dobg {lappend x |}
-
-    # Bring the focus back to the main application.
-
-    focus .t.f2.e1
-    after 300 {set timer 1}
-    vwait timer
-    set result [list $x [dobg {set x}]]
-    return $result
-
----- Result was:
-{.t.f2.e1 . |} {{focus in .e1 NotifyAncestor} |}
----- Result should have been (exact matching):
-{.t.f2.e1 {} {focus out .t.f2.e1 NotifyNonlinear} {focus out .t.f2 NotifyNonlinearVirtual} {focus in .t.f1 NotifyNonlinear} | {focus out .t.f1 NotifyNonlinear} {focus in .t.f2 NotifyNonlinearVirtual} {focus in .t.f2.e1 NotifyNonlinear}} {{focus in . NotifyVirtual} {focus in .e1 NotifyAncestor} | {focus out .e1 NotifyAncestor} {focus out . NotifyVirtual}}
-==== focus-6.2 FAILED
 
 focusTcl.test
 font.test
@@ -507,7 +195,7 @@ NewCenturySchlbk-Roman
 ==== font-44.1 TkFontGetPixels: size < 0 FAILED
 ==== Contents of test case:
 
-	tk scaling 0.5
+    tk scaling 0.5
     font actual {times -12} -size
 
 ---- Result was:
@@ -540,7 +228,7 @@ option.test
 pack.test
 
 
-==== pack-18.1 unmap slaves when master unmapped FAILED
+==== pack-18.1 unmap content when container unmapped FAILED
 ==== Contents of test case:
 
 
@@ -557,16 +245,15 @@ pack.test
     eval destroy [winfo child .pack]
     frame .pack.a -width 100 -height 50 -relief raised -bd 2
     pack .pack.a
-    update
+    update idletasks
     set result [winfo ismapped .pack.a]
     wm iconify .pack
-    update
     lappend result [winfo ismapped .pack.a]
     .pack.a configure -width 200 -height 75
-    update
+    update idletasks
     lappend result [winfo width .pack.a ] [winfo height .pack.a]  [winfo ismapped .pack.a]
     wm deiconify .pack
-    update
+    packUpdate
     lappend result [winfo ismapped .pack.a]
 
 ---- Result was:
@@ -577,7 +264,7 @@ pack.test
 
 
 
-==== pack-18.2 unmap slaves when master unmapped FAILED
+==== pack-18.2 unmap content when container unmapped FAILED
 ==== Contents of test case:
 
 
@@ -590,16 +277,15 @@ pack.test
     frame .pack.b -width 70 -height 30 -relief sunken -bd 2
     pack .pack.a
     pack .pack.b -in .pack.a
-    update
+    update idletasks
     set result [winfo ismapped .pack.b]
     wm iconify .pack
-    update
     lappend result [winfo ismapped .pack.b]
     .pack.b configure -width 100 -height 30
-    update
+    update idletasks
     lappend result [winfo width .pack.b ] [winfo height .pack.b]  [winfo ismapped .pack.b]
     wm deiconify .pack
-    update
+    packUpdate
     lappend result [winfo ismapped .pack.b]
 
 ---- Result was:
@@ -613,20 +299,19 @@ panedwindow.test
 place.test
 
 
-==== place-8.1 MasterStructureProc, mapping and unmapping slaves FAILED
+==== place-8.1 PlaceStructureProc, mapping and unmapping content FAILED
 ==== Contents of test case:
 
     place .t.f2 -relx 1.0 -rely 1.0 -anchor sw
-    update
+    update idletasks
     set result [winfo ismapped .t.f2]
     wm iconify .t
-    update
     lappend result [winfo ismapped .t.f2]
     place .t.f2 -x 40 -y 30 -relx 0 -rely 0 -anchor nw
-    update
+    update idletasks
     lappend result [winfo x .t.f2] [winfo y .t.f2] [winfo ismapped .t.f2]
     wm deiconify .t
-    update
+    placeUpdate
     lappend result [winfo ismapped .t.f2]
 
 ---- Result was:
@@ -637,21 +322,20 @@ place.test
 
 
 
-==== place-8.2 MasterStructureProc, mapping and unmapping slaves FAILED
+==== place-8.2 PlaceStructureProc, mapping and unmapping content FAILED
 ==== Contents of test case:
 
     place .t.f -x 0 -y 0 -width 200 -height 100
     place .t.f2 -in .t.f -relx 1.0 -rely 1.0 -anchor sw -width 50 -height 20
-    update
+    update idletasks
     set result [winfo ismapped .t.f2]
     wm iconify .t
-    update
     lappend result [winfo ismapped .t.f2]
     place .t.f2 -x 40 -y 30 -relx 0 -rely 0 -anchor nw
-    update
+    update idletasks
     lappend result [winfo x .t.f2] [winfo y .t.f2] [winfo ismapped .t.f2]
     wm deiconify .t
-    update
+    placeUpdate
     lappend result [winfo ismapped .t.f2]
 
 ---- Result was:
@@ -747,33 +431,33 @@ select.test
 send.test
 spinbox.test
 text.test
-
-
-==== text-27.15d <<Selection>> virtual event on <Delete> with cursor inside selection FAILED
-==== Contents of test case:
-
-    pack [text .t]
-    .t insert end "There is a selection in this text widget,\n"
-    .t insert end "and it will be impacted by the <Delete> event received.\n"
-    .t insert end "Therefore a <<Selection>> event must fire back."
-    .t tag add sel 1.0 1.28
-    bind .t <<Selection>> "set ::retval <<Selection>>_fired"
-    update
-    set ::retval no_<<Selection>>_event_fired
-    .t mark set insert 1.15
-    focus .t
-    event generate .t <Delete>
-    update
-    set ::retval
-
----- Result was:
-no_<<Selection>>_event_fired
----- Result should have been (exact matching):
-<<Selection>>_fired
-==== text-27.15d FAILED
-
 textBTree.test
 textDisp.test
+
+
+==== textDisp-19.17 count -ypixels with indices in elided lines FAILED
+==== Contents of test case:
+
+    .t configure -wrap none
+    .t delete 1.0 end
+    for {set i 1} {$i < 100} {incr i} {
+        .t insert end [string repeat "Line $i" 20]
+        .t insert end "\n"
+    }
+    .t tag add hidden 5.15 20.15
+    .t tag configure hidden -elide true
+    set res {}
+    update
+    lappend res  [.t count -ypixels 1.0 6.0]  [.t count -ypixels 2.0 7.5]  [.t count -ypixels 5.0 8.5]  [.t count -ypixels 6.1 6.2]  [.t count -ypixels 6.1 18.8]  [.t count -ypixels 18.0 20.50]  [.t count -ypixels 5.2 20.60]  [.t count -ypixels 20.60 20.70]  [.t count -ypixels 5.0 25.0]  [.t count -ypixels 25.0 5.0]  [.t count -ypixels 25.4 27.50]  [.t count -ypixels 35.0 38.0]
+    .t yview 35.0
+    lappend res [.t count -ypixels 5.0 25.0]
+
+---- Result was:
+60 45 0 0 0 0 0 0 300 -300 30 45 300
+---- Result should have been (exact matching):
+60 45 0 0 0 0 0 0 75 -75 30 45 75
+==== textDisp-19.17 FAILED
+
 
 
 ==== textDisp-19.18 count -ypixels with indices in elided lines FAILED
@@ -819,7 +503,7 @@ textDisp.test
 
 ==== textDisp-20.2 FindDLine FAILED
 ==== Contents of test case:
- 
+
     .t yview 100.0
     .t yview -pickplace 53.0
     list [.t dlineinfo 50.0] [.t dlineinfo 50.14] [.t dlineinfo 50.21]
@@ -933,6 +617,46 @@ unixEmbed.test
 ---- Result should have been (exact matching):
 {{} .t1} .f1
 ==== unixEmbed-8.1 FAILED
+
+
+
+==== unixEmbed-10.1 geometry propagation in tkUnixWm.c/UpdateGeometryInfo FAILED
+==== Contents of test case:
+
+    frame .f1 -container 1 -width 200 -height 50
+    pack .f1
+    update idletasks
+    toplevel .t1 -use [winfo id .f1] -width 150 -height 80
+    update idletasks
+    wm geometry .t1 +40+50
+    update idletasks
+    wm geometry .t1
+
+---- Result was:
+1x1+0+0
+---- Result should have been (exact matching):
+150x80+0+0
+==== unixEmbed-10.1 FAILED
+
+
+
+==== unixEmbed-10.2 geometry propagation in tkUnixWm.c/UpdateGeometryInfo FAILED
+==== Contents of test case:
+
+    frame .f1 -container 1 -width 200 -height 50
+    pack .f1
+    update idletasks
+    toplevel .t1 -use [winfo id .f1] -width 150 -height 80
+    update idletasks
+    wm geometry .t1 70x300+10+20
+    update idletasks
+    wm geometry .t1
+
+---- Result was:
+1x1+0+0
+---- Result should have been (exact matching):
+70x300+0+0
+==== unixEmbed-10.2 FAILED
 
 unixFont.test
 
@@ -1091,7 +815,7 @@ courier
     set x
 
 ---- Result was:
-24
+36
 ---- Result should have been (exact matching):
 78
 ==== unixfont-8.4 FAILED
@@ -1108,7 +832,7 @@ courier
     set x
 
 ---- Result was:
-18
+30
 ---- Result should have been (exact matching):
 60
 ==== unixfont-8.6 FAILED
@@ -1165,6 +889,7 @@ unixWm.test
     destroy .icon
     toplevel .t -width 100 -height 30
     wm geom .t +0+0
+    update idletasks
     set result [wm iconwindow .t]
     toplevel .icon -width 50 -height 50 -bg red
     wm iconwindow .t .icon
@@ -1174,7 +899,7 @@ unixWm.test
     update
     lappend result [winfo ismapped .t] [winfo ismapped .icon]
     wm iconify .t
-    update
+    update idletasks
     lappend result [winfo ismapped .t] [winfo ismapped .icon]
 
 ---- Result was:
@@ -1182,24 +907,6 @@ unixWm.test
 ---- Result should have been (exact matching):
 .icon icon {} withdrawn 1 0 0 0
 ==== unixWm-8.4 FAILED
-
-
-
-==== unixWm-9.3 TkWmMapWindow procedure, iconic windows FAILED
-==== Contents of test case:
-
-    destroy .t
-    toplevel .t -width 100 -height 300 -bg blue
-    wm geom .t +0+0
-    wm iconify .t
-    sleep 500
-    winfo ismapped .t
-
----- Result was:
-1
----- Result should have been (exact matching):
-0
-==== unixWm-9.3 FAILED
 
 
 
@@ -1226,9 +933,9 @@ unixWm.test
     destroy .t2
     toplevel .t2
     wm geom .t2 +0+0
-    update
+    update idletasks
     wm iconify .t2
-    update
+    update idletasks
     set result [winfo ismapped .t2]
     destroy .t2
     set result
@@ -1247,10 +954,10 @@ unixWm.test
     destroy .t2
     toplevel .t2
     wm geom .t2 -0+0
-    update
+    update idletasks
     set result [winfo ismapped .t2]
     wm iconify .t2
-    update
+    update idletasks
     lappend result [winfo ismapped .t2]
     destroy .t2
     set result
@@ -1275,11 +982,11 @@ unixWm.test
     bind .t <Unmap> {set x "unmapped"}
     set x {no event}
     wm iconify .t
-    animationDelay
+    update idletasks
     lappend result $x [winfo ismapped .t]
     set x {no event}
     wm deiconify .t
-    animationDelay
+    update idletasks
     lappend result $x [winfo ismapped .t]
 
 ---- Result was:
@@ -1359,7 +1066,6 @@ unmapped 0 mapped 1
 
     destroy .t
     destroy .t2
-    sleep 500		;# Give window manager time to catch up.
     toplevel .t -width 200 -height 200 -bg green
     wm geometry .t +0+0
     tkwait visibility .t
@@ -1368,7 +1074,7 @@ unmapped 0 mapped 1
     tkwait visibility .t2
     set result [list [winfo containing 100 100]]
     wm iconify .t2
-    animationDelay
+    update idletasks
     lappend result [winfo containing 100 100]
 
 ---- Result was:
@@ -1395,15 +1101,15 @@ winWm.test
 
     pack .t.f.x
     pack .t.f
-    lappend aid [after 2000 {set ::winwm92 timeout}] [after 100 {
+    lappend aid [after 5000 {set ::winwm92 timeout}] [after 500 {
         wm manage .t.f
         wm iconify .t
-        lappend aid [after 100 {
+        lappend aid [after 500 {
             wm forget .t.f
             wm deiconify .t
-            lappend aid [after 100 {
+            lappend aid [after 500 {
                 pack .t.f
-                lappend aid [after 100 {
+                lappend aid [after 500 {
 		    set ::winwm92 [expr {
 			    [winfo rooty .t.f.x] == 0 ? "failed" : "ok"}]}]
             }]
@@ -1416,7 +1122,7 @@ winWm.test
     set winwm92
 
 ---- Result was:
-timeout
+failed
 ---- Result should have been (exact matching):
 ok
 ==== winWm-9.2 FAILED
@@ -1464,10 +1170,10 @@ wm.test
 
     toplevel .t2
     wm geom .t2 -0+0
-    update
+    update idletasks
     set result [winfo ismapped .t2]
     wm iconify .t2
-    update
+    update idletasks
     lappend result [winfo ismapped .t2]
 
 ---- Result was:
@@ -1498,7 +1204,7 @@ wm.test
 ==== Contents of test case:
 
     toplevel .t
-    tkwait visibility .t	    
+    tkwait visibility .t
     wm overrideredirect .t 1
     raise .
     update
@@ -1514,14 +1220,14 @@ wm.test
 
 
 ==== wm-transient-4.1 transient toplevel is withdrawn
-        when mapped if master is iconic FAILED
+        when mapped if toplevel is iconic FAILED
 ==== Contents of test case:
 
-    toplevel .master
-    wm iconify .master
+    toplevel .top
+    wm iconify .top
     update
     toplevel .subject
-    wm transient .subject .master
+    wm transient .subject .top
     update
     list [wm state .subject] [winfo ismapped .subject]
 
@@ -1534,17 +1240,17 @@ withdrawn 0
 
 
 ==== wm-transient-4.2 already mapped transient toplevel
-        is withdrawn if master is iconic FAILED
+        is withdrawn if toplevel is iconic FAILED
 ==== Contents of test case:
 
-    toplevel .master
+    toplevel .top
     raiseDelay
-    wm iconify .master
-    update
+    wm iconify .top
+    update idletasks
     toplevel .subject
-    update
-    wm transient .subject .master
-    update
+    update idletasks
+    wm transient .subject .top
+    update idletasks
     list [wm state .subject] [winfo ismapped .subject]
 
 ---- Result was:
@@ -1555,19 +1261,19 @@ withdrawn 0
 
 
 
-==== wm-transient-4.3 iconify/deiconify on the master
+==== wm-transient-4.3 iconify/deiconify on the toplevel
         does a withdraw/deiconify on the transient FAILED
 ==== Contents of test case:
 
-    toplevel .master
+    toplevel .top
     toplevel .subject
-    update
-    wm transient .subject .master
-    wm iconify .master
-    update
+    update idletasks
+    wm transient .subject .top
+    wm iconify .top
+    update idletasks
     lappend results [wm state .subject] [winfo ismapped .subject]
-    wm deiconify .master
-    update
+    wm deiconify .top
+    update idletasks
     lappend results [wm state .subject] [winfo ismapped .subject]
 
 ---- Result was:
@@ -1581,8 +1287,8 @@ withdrawn 0 normal 1
 ==== wm-transient-8.1 transient to withdrawn window, Bug 1163496 FAILED
 ==== Contents of test case:
 
-    # Verifies that transients stay on top of their masters, even if they were
-    # made transients when those masters were withdrawn.
+    # Verifies that transients stay on top of their toplevels, even if they were
+    # made transients when those toplevels were withdrawn.
     toplevel .t1; wm withdraw  .t1;     update
     toplevel .t2; wm transient .t2 .t1; update
     lappend result [winfo ismapped .t1] [winfo ismapped .t2]
@@ -1631,19 +1337,20 @@ iconic
 
 xmfbox.test
 
-all.tcl:	Total	9629	Passed	8616	Skipped	936	Failed	77
+all.tcl:	Total	9650	Passed	8643	Skipped	941	Failed	66
 Sourced 92 Test Files.
-Files with failing tests: canvText.test clrpick.test filebox.test focus.test font.test pack.test place.test scrollbar.test text.test textDisp.test textWind.test unixEmbed.test unixFont.test unixWm.test winWm.test winfo.test wm.test
+Files with failing tests: canvText.test clrpick.test focus.test font.test pack.test place.test scrollbar.test textDisp.test textWind.test unixEmbed.test unixFont.test unixWm.test winWm.test winfo.test wm.test
 Number of tests skipped for each constraint:
 	1	
     !havePseudocolorVisual
 
 	14	altDisplay
-	25	aqua
+	29	aqua
 	5	aquaOrWin32
 	1	cliboardManagerPresent
 	10	emptyTest
 	125	fonts
+	1	fullutf
 	2	haveTruecolor24
 	7	knownBug
 	1	memory
@@ -1668,6 +1375,25 @@ Only running test files that match:  *.test
 checkbutton.test
 combobox.test
 entry.test
+
+
+==== entry-2.1.1 Create entry before scrollbar - scrollbar catches up FAILED
+==== Contents of test case:
+
+    pack [ttk::entry .te -xscrollcommand [list .tsb set]]  -expand true -fill both
+    .te insert end [string repeat "abc" 50]
+    catch {update} ; # error triggers because the -xscrollcommand callback
+                     # errors out: invalid command name ".tsb"
+    pack [ttk::scrollbar .tsb -orient horizontal -command [list .te xview]]  -expand false -fill x
+    update ; # no error
+    lappend res [expr [lindex [.tsb get] 1] < 1] ; # scrollbar did update
+
+---- Result was:
+0
+---- Result should have been (exact matching):
+1
+==== entry-2.1.1 FAILED
+
 image.test
 labelframe.test
 layout.test
@@ -1683,8 +1409,9 @@ ttk.test
 validate.test
 vsapi.test
 
-all.tcl:	Total	480	Passed	463	Skipped	17	Failed	0
+all.tcl:	Total	488	Passed	470	Skipped	17	Failed	1
 Sourced 17 Test Files.
+Files with failing tests: entry.test
 Number of tests skipped for each constraint:
 	2	NA
 	4	coreEntry
