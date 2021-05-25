@@ -22,63 +22,54 @@
 #
 # Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2017, Aurelien Larcher.
+# Copyright 2021, Andreas Wacknitz
 #
 
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnuplot
-COMPONENT_VERSION=	5.0.6
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	5.4.1
 COMPONENT_FMRI=	image/gnuplot
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SUMMARY=	gnuplot - plotting utility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://gnuplot.info/
+COMPONENT_PROJECT_URL=  https://gnuplot.info/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:5bbe4713e555c2e103b7d4ffd45fca69551fff09cf5c3f9cb17428aaacc9b460
-COMPONENT_ARCHIVE_URL=  \
-  http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_HASH=	sha256:6b690485567eaeb938c26936e5e0681cf70c856d273cc2c45fabf64d8bc6590e
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=	gnuplot License
-
-# When CONFIGURE_FIX_LIBTOOL_RPATH is integrated, we can remove local fix and enable it
-CONFIGURE_FIX_LIBTOOL_RPATH = no
 
 COMPONENT_BUILD_TARGETS = all info
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
+#QT5_ROOT=/usr/lib/qt/5.12
+#QT5_LIBS=$(QT5_ROOT)/lib/$(MACH64)
+
+#PATH=$(USRBINDIR.64):$(PATH.gnu):$(QT5_ROOT)/bin/$(MACH64)
 PATH=$(USRBINDIR.64):$(PATH.gnu)
 
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
-
-CONFIGURE_OPTIONS  += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS  += --libexecdir=$(CONFIGURE_LIBDIR.64)
 CONFIGURE_OPTIONS  += --sysconfdir=/etc/gnu
 CONFIGURE_OPTIONS  += --infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  += --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS  += --x-libraries=$(CONFIGURE_LIBDIR.64)
 CONFIGURE_OPTIONS  += --without-libcerf
+# qt5 is not yet properly detected and qt4 doesn't work:
 CONFIGURE_OPTIONS  += --with-qt=no
 CONFIGURE_OPTIONS  += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  += CXXFLAGS="$(CXXFLAGS)"
 
-CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
+#CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64):$(QT5_LIBS)"
+#CONFIGURE_ENV.64 += PKG_CONFIG_PATH="$(QT5_LIBS)/pkgconfig:$(PKG_CONFIG_PATH.64)"
 
 # Build dependencies
 REQUIRED_PACKAGES += editor/gnu-emacs
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
@@ -87,8 +78,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/wxwidgets
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
