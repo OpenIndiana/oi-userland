@@ -42,12 +42,19 @@ file README.md path=usr/share/doc/libp11/README.libp11
 file path=usr/share/doc/libp11/NEWS
 
 # OpenSSL engine:
-file path=lib/openssl/default/engines/$(MACH64)/pkcs11.so
-link path=lib/openssl/default/engines/$(MACH64)/libpkcs11.so target=pkcs11.so
-link path=lib/openssl/engines/$(MACH64)/pkcs11.so target=../../default/engines/$(MACH64)/pkcs11.so
-link path=lib/openssl/engines/$(MACH64)/libpkcs11.so target=pkcs11.so
+# Using the lib paths doesn't work because they are only symbolic links provided by the openssl-1.0 package.
+# IPS doesn't allow us to use them:
+#file path=lib/openssl/default/engines/$(MACH64)/pkcs11.so
+#link path=lib/openssl/default/engines/$(MACH64)/libpkcs11.so target=pkcs11.so
+#link path=lib/openssl/engines/$(MACH64)/pkcs11.so target=../../default/engines/$(MACH64)/pkcs11.so
+#link path=lib/openssl/engines/$(MACH64)/libpkcs11.so target=pkcs11.so
+#file path=lib/openssl/default/engines/pkcs11.so
+#link path=lib/openssl/default/engines/libpkcs11.so target=pkcs11.so
+#link path=lib/openssl/engines/pkcs11.so target=../default/engines/pkcs11.so
+#link path=lib/openssl/engines/libpkcs11.so target=pkcs11.so
+# Instead, we'll use the regular paths:
+file lib/openssl/default/engines/$(MACH64)/pkcs11.so path=usr/openssl/1.0/lib/$(MACH64)/engines/pkcs11.so
+link path=usr/openssl/1.0/lib/$(MACH64)/engines/libpkcs11.so target=pkcs11.so pkg.linted.userland.action002.0=true
 
-file path=lib/openssl/default/engines/pkcs11.so
-link path=lib/openssl/default/engines/libpkcs11.so target=pkcs11.so
-link path=lib/openssl/engines/pkcs11.so target=../default/engines/pkcs11.so
-link path=lib/openssl/engines/libpkcs11.so target=pkcs11.so
+file lib/openssl/default/engines/pkcs11.so path=usr/openssl/1.0/lib/engines/pcks11.so
+link path=usr/openssl/1.0/lib/engines/libpkcs11.so target=pkcs11.so pkg.linted.userland.action002.0=true

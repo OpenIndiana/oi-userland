@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr-util
 COMPONENT_VERSION=	1.6.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -62,7 +62,7 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/^teststatus=0;/,/make\[2\]: Leaving directory/p" ' \
     '-e "/.*/d" '
 
-COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -f)
+COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -fi)
 
 # We need this to keep doxygen happy (for include/ and docs/ contents).
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));

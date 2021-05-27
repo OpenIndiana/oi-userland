@@ -36,7 +36,7 @@ COMPONENT_VERSION =	1.0.2u
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
 IPS_COMPONENT_VERSION = 1.0.2.21
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_FMRI =	library/security/openssl
 COMPONENT_SUMMARY =	OpenSSL - a Toolkit for Secure Sockets Layer (SSL v2/v3) and Transport Layer (TLS v1) protocols and general purpose cryptographic library
 COMPONENT_CLASSIFICATION = System/Security
