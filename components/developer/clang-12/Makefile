@@ -103,13 +103,3 @@ REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-# Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/libedit
-REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
