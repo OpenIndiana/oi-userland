@@ -1,6 +1,8 @@
---- gdb-7.10.1/gdb/Makefile.in.~1~	Sat Dec  5 07:16:45 2015
-+++ gdb-7.10.1/gdb/Makefile.in	Sat Feb 20 21:26:58 2016
-@@ -160,7 +160,7 @@
+# Solaris-specific patch.  Not appropriate for upstream.
+
+--- gdb-8.0-orig/gdb/Makefile.in	2017-06-04 08:54:54.000000000 -0700
++++ gdb-8.0/gdb/Makefile.in	2017-06-14 10:54:54.891158275 -0700
+@@ -177,7 +177,7 @@ LIBDECNUMBER_CFLAGS = -I$(LIBDECNUMBER_D
  # Where is the READLINE library?  Typically in ../readline.
  READLINE_DIR = ../readline
  READLINE_SRC = $(srcdir)/$(READLINE_DIR)
@@ -9,7 +11,7 @@
  READLINE_DEPS = @READLINE_DEPS@
  READLINE_CFLAGS = @READLINE_CFLAGS@
  
-@@ -187,7 +187,7 @@
+@@ -204,7 +204,7 @@ GDB_WARN_CFLAGS_NO_FORMAT = `echo " $(GD
  GDB_WARN_CFLAGS_NO_DEFS = `echo " $(GDB_WARN_CFLAGS) " \
  		   | sed "s/ -Wold-style-definition / -Wno-old-style-definition /g"`
  
@@ -18,16 +20,16 @@
  
  # Where is the INTL library?  Typically in ../intl.
  INTL = @LIBINTL@
-@@ -524,7 +524,7 @@
- CONFIG_OBS= @CONFIG_OBS@
- CONFIG_SRCS= @CONFIG_SRCS@
- CONFIG_DEPS= @CONFIG_DEPS@
+@@ -616,7 +616,7 @@ SUBDIR_GDBTK_CFLAGS = -DGDBTK
+ CONFIG_OBS = @CONFIG_OBS@
+ CONFIG_SRCS = @CONFIG_SRCS@
+ CONFIG_DEPS = @CONFIG_DEPS@
 -CONFIG_LDFLAGS = @CONFIG_LDFLAGS@
 +CONFIG_LDFLAGS =
- ENABLE_CFLAGS= @ENABLE_CFLAGS@
- CONFIG_ALL= @CONFIG_ALL@
- CONFIG_CLEAN= @CONFIG_CLEAN@
-@@ -1088,7 +1088,7 @@
+ ENABLE_CFLAGS = @ENABLE_CFLAGS@
+ CONFIG_ALL = @CONFIG_ALL@
+ CONFIG_CLEAN = @CONFIG_CLEAN@
+@@ -1817,7 +1817,7 @@ COMMON_OBS = $(DEPFILES) $(CONFIG_OBS) $
  
  TSOBS = inflow.o
  
