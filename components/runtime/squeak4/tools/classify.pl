@@ -24,6 +24,8 @@ open(NODISPLAY,">>","squeak-nodisplay.p5m") || die "Can't open squeak-nodisplay.
 
 open(X11,">>","squeak-display-X11.p5m") || die "Can't open squeak-display-X11.p5m";
 
+open(SSL,">>","squeak-ssl.p5m") || die "Can't open squeak-ssl.p5m";
+
 open(REST,">>","squeak.p5m") || die "Can't open squeak.p5m";
 
 while (<>) {
@@ -60,6 +62,8 @@ while (<>) {
 			print X11 $_;
 		} elsif (/Squeak3D/) {
 			print X11 $_;
+		} elsif (/SqueakSSL/) {
+			print SSL $_;
 		} elsif (/B3DAcceleratorPlugin/) {
 			print X11 $_;
 		} elsif (/UnixOSProcessPlugin/) {
