@@ -18,6 +18,8 @@ open(NODISPLAY,">>","cog-spur-nodisplay.p5m") || die "Can't open cog-spur-nodisp
 
 open(X11,">>","cog-spur-display-X11.p5m") || die "Can't open cog-spur-display-X11.p5m";
 
+open(SSL,">>","cog-spur-ssl.p5m") || die "Can't open cog-spur-ssl.p5m";
+
 open(REST,">>","cog-spur.p5m") || die "Can't open cog-spur.p5m";
 
 while (<>) {
@@ -58,6 +60,8 @@ while (<>) {
 			print X11 $_;
 		} elsif (/Squeak3D/) {
 			print X11 $_;
+		} elsif (/SqueakSSL/) {
+			print SSL $_;
 		} elsif (/B3DAcceleratorPlugin/) {
 			print X11 $_;
 		} elsif (/UnixOSProcessPlugin/) {

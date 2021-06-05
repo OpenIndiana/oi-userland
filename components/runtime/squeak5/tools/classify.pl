@@ -18,6 +18,8 @@ open(NODISPLAY,">>","stack-spur-nodisplay.p5m") || die "Can't open stack-spur-no
 
 open(X11,">>","stack-spur-display-X11.p5m") || die "Can't open stack-spur-display-X11.p5m";
 
+open(SSL,">>","stack-spur-ssl.p5m") || die "Can't open stack-spur-ssl.p5m";
+
 open(REST,">>","stack-spur.p5m") || die "Can't open stack-spur.p5m";
 
 while (<>) {
@@ -58,6 +60,8 @@ while (<>) {
 			print X11 $_;
 		} elsif (/Squeak3D/) {
 			print X11 $_;
+		} elsif (/SqueakSSL/) {
+			print SSL $_;
 		} elsif (/B3DAcceleratorPlugin/) {
 			print X11 $_;
 		} elsif (/UnixOSProcessPlugin/) {

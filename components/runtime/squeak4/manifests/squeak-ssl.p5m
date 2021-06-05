@@ -13,8 +13,7 @@
 # Copyright 2020, 2021 David Stes
 #
 
-
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/runtime/smalltalk/squeak-ssl@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -24,14 +23,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license squeak.license license='MIT'
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# for the sound plugins, we only package vm-sound-pulse
-# we do not package vm-sound-OSS and vm-sound-Sun
-# on my machine, vm-sound-Sun compiles, but it does not work
+depend type=require fmri=pkg:/runtime/smalltalk/squeak-nodisplay@$(IPS_COMPONENT_VERSION)-$(BRANCHID)
 
-# the minimal installation consists of the stack-spur-nodisplay package
-# which can run "headless" squeak -nodisplay images
-# with only minimal installation requirements (only ksh, libc, math)
-
-depend type=require fmri=pkg:/runtime/smalltalk/stack-spur-ssl@$(IPS_COMPONENT_VERSION)-$(BRANCHID)
-depend type=require fmri=pkg:/runtime/smalltalk/stack-spur-display-X11@$(IPS_COMPONENT_VERSION)-$(BRANCHID)
 
