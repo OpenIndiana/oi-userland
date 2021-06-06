@@ -22,20 +22,24 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2021, Nona Hansel
+# Copyright (c) 2021, Andreas Wacknitz
 #
 
 BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnupg
-COMPONENT_VERSION=	2.2.27
+COMPONENT_VERSION=	2.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:34e60009014ea16402069136e0a5f63d9b65f90096244975db5cea74b3d02399
+COMPONENT_ARCHIVE_HASH= sha256:c498db346a9b9a4b399e514c8f56dfc0a888ce8f327f10376ff984452cd154ec
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gnupg/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		crypto/gnupg
+COMPONENT_SUMMARY=	GNU Privacy Guard
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_DESCRIPTION=		A complete and free implementation of the OpenPGP Standard as defined by RFC4880
+COMPONENT_LICENSE=	GPLv3, GPLv2, LGPLv3, LGPLv2.1, Creative Commons 1.0, others
 
 include $(WS_MAKE_RULES)/common.mk
 
