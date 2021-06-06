@@ -11,7 +11,7 @@
 #
 # Copyright (c) 2015 Alexander Pyhalov
 # Copyright (c) 2019 Michal Nowak
-# Copyright (c) 2020 Andreas Wacknitz
+# Copyright (c) 2021 Andreas Wacknitz
 #
 
 BUILD_BITS=				32_and_64
@@ -19,12 +19,12 @@ BUILD_STYLE=			cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libebml
-COMPONENT_VERSION=      1.4.1
+COMPONENT_VERSION=      1.4.2
 COMPONENT_PROJECT_URL=  https://matroska-org.github.io/libebml/
 COMPONENT_SUMMARY=      Extensible Binary Markup Language
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:6e94c669405061aa0d25a523b9f1bea8ac73536e37721a110b3372c7f8717032
+COMPONENT_ARCHIVE_HASH=	sha256:41c7237ce05828fb220f62086018b080af4db4bb142f31bec0022c925889b9f2
 COMPONENT_ARCHIVE_URL=	https://dl.matroska.org/downloads/libebml/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=		LGPLv2.1
 COMPONENT_LICENSE_FILE=	LICENSE.LGPL
