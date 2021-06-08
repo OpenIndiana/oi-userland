@@ -1,264 +1,43 @@
-*** VirtualBox-6.1.18/src/VBox/Installer/solaris/Makefile.kmk	Thu Jan  7 16:41:34 2021
---- VirtualBox-6.1.18/src/VBox/Installer/solaris/Makefile.kmk.orig	Fri Feb 12 22:06:39 2021
-***************
-*** 47,55 ****
-  
-  # Base package
-  PKGINFO_ARCH      = $(shell uname -p)
-! PKGINFO_DATE      = $(date %Y.%m.%d.%H.%M.%S)
-! PKGINFO_REVSTAMP  = $(PKGINFO_DATE).$(VBOX_SVN_REV)
-! PKGINFO_PSTAMP    = vbox_$(subst .,,$(PKGINFO_DATE))_r$(VBOX_SVN_REV)
-  PKG_FILENAME     := VirtualBox-$(VBOX_VERSION_STRING)-SunOS-$(KBUILD_TARGET_ARCH)-r$(VBOX_SVN_REV)
-  
-  
---- 47,53 ----
-  
-  # Base package
-  PKGINFO_ARCH      = $(shell uname -p)
-! PKGINFO_REVSTAMP  = $(date %Y.%m.%d.%H.%M)
-  PKG_FILENAME     := VirtualBox-$(VBOX_VERSION_STRING)-SunOS-$(KBUILD_TARGET_ARCH)-r$(VBOX_SVN_REV)
-  
-  
-***************
-*** 61,74 ****
-  BLDDIRS          += $(VBOX_PATH_SI_SCRATCH)
-  PACKING          += \
-  	$(PATH_STAGE_BIN)/$(PKG_FILENAME).tar.gz \
-- 	$(if $(VBOX_WITH_SOLARIS_IPS_PACKAGE),$(PATH_STAGE_BIN)/$(PKG_FILENAME).p5p,) \
-  	$(PATH_STAGE_BIN)/VirtualBoxDebug.tar.bz2
-  OTHER_CLEAN      += \
-  	$(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg \
-  	$(PATH_STAGE_BIN)/$(PKG_FILENAME).tar.gz \
-! 	$(PATH_STAGE_BIN)/$(PKG_FILENAME).p5p \
-! 	$(PATH_STAGE_BIN)/VirtualBoxDebug.tar.bz2 \
-! 	$(VBOX_PATH_SI_SCRATCH)/dist-copy.ts
-  
-  #
-  # VBoxZoneAccess
---- 59,69 ----
-  BLDDIRS          += $(VBOX_PATH_SI_SCRATCH)
-  PACKING          += \
-  	$(PATH_STAGE_BIN)/$(PKG_FILENAME).tar.gz \
-  	$(PATH_STAGE_BIN)/VirtualBoxDebug.tar.bz2
-  OTHER_CLEAN      += \
-  	$(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg \
-  	$(PATH_STAGE_BIN)/$(PKG_FILENAME).tar.gz \
-! 	$(PATH_STAGE_BIN)/VirtualBoxDebug.tar.bz2
-  
-  #
-  # VBoxZoneAccess
-***************
-*** 213,230 ****
-  SOLARIS_INSTALLER_FILES = \
-  	vbox.space
-  
-- ## @def SOLARIS_INSTALLER_LICENSE
-- # List of files that are copied directly from INST_BIN to VBOX_PATH_SI_SCRATCH_PKG (/).
-- # LICENSE is needed by IPS packaging only.
-- SOLARIS_FILE_LIST_VARS += SOLARIS_INSTALLER_LICENSE
-- SOLARIS_INSTALLER_LICENSE.SUBDIRS := no
-- SOLARIS_INSTALLER_LICENSE.STRIP   := no
-- SOLARIS_INSTALLER_LICENSE.MODE    := 0644
-- SOLARIS_INSTALLER_LICENSE.SRC     := $(PATH_STAGE_BIN)
-- SOLARIS_INSTALLER_LICENSE.DST     := $(VBOX_PATH_SI_SCRATCH_PKG)
-- SOLARIS_INSTALLER_LICENSE = \
-- 	LICENSE
-- 
-  ## @def SOLARIS_DRIVER_BINS
-  # List of kernel module files that are copied from INST_BIN to platform/i86pc/kernel/drv/[amd64/] and stripped of debug info.
-  SOLARIS_FILE_LIST_VARS += SOLARIS_DRIVER_BINS
---- 208,213 ----
-***************
-*** 430,435 ****
---- 413,419 ----
-  	vboxconfig.sh \
-  	VBox.sh \
-  	pkginstall.sh \
-+ 	$(if $(VBOX_WITH_PYTHON),vboxshell.py,) \
-  	smf-vboxballoonctrl.sh \
-  	smf-vboxautostart.sh \
-  	$(if $(VBOX_WITH_WEBSERVICES),smf-vboxwebsrv.sh,)
-***************
-*** 542,550 ****
-  endif
-  
-  #
-! # Copy all files needed for packaging into the final directory structure
-  #
-! $(VBOX_PATH_SI_SCRATCH)/dist-copy.ts: \
-  		$(VBOX_VERSION_STAMP) \
-  		\
-  		$(VBOX_PATH_INST_COMMON_SRC)/virtualbox.desktop.in \
---- 526,535 ----
-  endif
-  
-  #
-! # Creates the System V style installer package.
-  #
-! solaris-package:: $(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg
-! solaris-install:: \
-  		$(VBOX_VERSION_STAMP) \
-  		\
-  		$(VBOX_PATH_INST_COMMON_SRC)/virtualbox.desktop.in \
-***************
-*** 551,559 ****
-  		$(VBOX_PATH_INST_COMMON_SRC)/virtualbox.xml \
-  		$(VBOX_PATH_SOL_INST_SRC)/virtualbox.applications.in \
-  		$(VBOX_PATH_SOL_INST_SRC)/vbox.pkginfo \
-- 		$(VBOX_PATH_SOL_INST_SRC)/vbox-ips.mog \
-  		\
-- 		$(if-expr defined(VBOX_WITH_ADDITIONS_PACKING),$(PATH_STAGE_BIN)/additions/VBoxGuestAdditions.iso,) \
-  		$(if-expr !defined(VBOX_OSE) && defined(VBOX_WITH_VBOXSDL), $(PATH_DEVTOOLS_TRG)/libsdl/v1.2.13/lib/libSDL-1.2.so.0.11.2,) \
-  		\
-  		$(if $(VBOX_OSE),,$(foreach arch, x86 amd64, $(foreach lib, libgcc_s.so.1 libstdc++.so.6, \
---- 536,542 ----
-***************
-*** 569,575 ****
-  		\
-  		$(VBOX_SI_DEP_ON_MAKEFILE) \
-  		| $$(dir $$@)
-! 	$(call MSG_L1,Copying files to package staging area)
-  # Start with a clean slate, don't want to pick up random garbage.
-  	$(RM) -Rf -- "$(VBOX_PATH_SI_SCRATCH_PKG)/"
-  	$(QUIET)$(RM) -f -- "$@"
---- 552,558 ----
-  		\
-  		$(VBOX_SI_DEP_ON_MAKEFILE) \
-  		| $$(dir $$@)
-! 	$(call MSG_L1,Creating $(PKG_FILENAME).pkg: Copying files)
-  # Start with a clean slate, don't want to pick up random garbage.
-  	$(RM) -Rf -- "$(VBOX_PATH_SI_SCRATCH_PKG)/"
-  	$(QUIET)$(RM) -f -- "$@"
-***************
-*** 614,621 ****
-  		"$($(var).SRC)/$(file)" "$($(var).DST)/$(file)")))
-  
-  # VirtualBox: Common files.
-- 	$(if-expr defined(VBOX_WITH_ADDITIONS_PACKING) \
-- 	,$(INSTALL) -m 0644 $(PATH_STAGE_BIN)/additions/VBoxGuestAdditions.iso  $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/,)
-  	$(LN_SYMLINK) -f ./pkginstall.sh $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/ipsinstall.sh
-  	$(SED) -e "s/_HARDENED_/$(if $(VBOX_WITH_HARDENED),hardened,)/" \
-  		--output $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/vboxconfig.sh \
---- 597,602 ----
-***************
-*** 622,639 ****
-  		 $(VBOX_PATH_SOL_INST_SRC)/vboxconfig.sh
-  	$(CHMOD) 0755 $(VBOX_PATH_SOL_INST_SRC)/vboxconfig.sh
-  	$(INSTALL) -m 0644 $(VBOX_PATH_SOL_INST_SRC)/vbox.pkgresponse $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/autoresponse
-- 	$(if-expr defined(VBOX_WITH_PYTHON) \
-- 	,$(SED) -e "s@^#!.*@#!/usr/bin/python2@" \
-- 		--output $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/vboxshell.py \
-- 		$(PATH_STAGE_BIN)/vboxshell.py,)
-  
-  # VirtualBox: Arch specific files.
-  	$(if-expr defined(VBOX_WITH_QTGUI) \
-  	,$(NLTAB)$(LN_SYMLINK) ../rdesktop-vrdp-keymaps/ $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/rdesktop-vrdp-keymaps,)
-  
-- 	$(if-expr defined(VBOX_WITH_ADDITIONS_PACKING) \
-- 	,$(NLTAB)$(LN_SYMLINK) ../VBoxGuestAdditions.iso $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/,)
-- 
-  	$(if-expr !defined(VBOX_OSE) && defined(VBOX_WITH_VBOXSDL) \
-  	,$(INSTALL) -s -m 0644 $(PATH_DEVTOOLS_TRG)/libsdl/v1.2.13/lib/libSDL-1.2.so.0.11.2 \
-  		$(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/libSDL-1.2.so.0,)
---- 603,613 ----
-***************
-*** 682,711 ****
-  	$(SED) -e "s/@VBOX_PRODUCT@/$(VBOX_PRODUCT)/g" \
-  		-e "s/@VBOX_VENDOR@/$(VBOX_VENDOR)/g" \
-  		-e "s/@VBOX_VERSION_STRING@/$(VBOX_VERSION_STRING)/g" \
-  		-e "s/@VBOX_VERSION_REVSTAMP@/$(PKGINFO_REVSTAMP)/g" \
-  		-e "s/@UNAME_P@/$(PKGINFO_ARCH)/g" \
-- 		-e "s/@VBOX_PSTAMP@/$(PKGINFO_PSTAMP)/g" \
-  		--output $(VBOX_PATH_SI_SCRATCH_PKG)/vbox.pkginfo \
-  		$(VBOX_PATH_SOL_INST_SRC)/vbox.pkginfo
-! 	$(SED) -e "s/@VBOX_PRODUCT@/$(VBOX_PRODUCT)/g" \
-! 		-e "s/@VBOX_VENDOR@/$(VBOX_VENDOR)/g" \
-! 		-e "s/@VBOX_VERSION_STRING@/$(VBOX_VERSION_STRING)/g" \
-! 		-e "s/@VBOX_SVN_REV@/$(VBOX_SVN_REV)/g" \
-! 		-e "s/@UNAME_P@/$(PKGINFO_ARCH)/g" \
-! 		--output $(VBOX_PATH_SI_SCRATCH_PKG)/vbox-ips.mog \
-! 		$(VBOX_PATH_SOL_INST_SRC)/vbox-ips.mog
-! 	$(APPEND) -t $@ "done"
-  
-! #
-! # Creates the System V style installer package.
-! #
-! solaris-package:: $(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg
-! $(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg: \
-! 		$(VBOX_PATH_SI_SCRATCH)/dist-copy.ts \
-! 		$(VBOX_SI_DEP_ON_MAKEFILE) \
-! 		| $$(dir $$@)
-  	$(call MSG_L1,Creating install package: $(PKG_FILENAME).pkg)
-! 	$(VBOX_PATH_SI_SCRATCH_PKG)/makepackage.sh \
-  		$(if-expr defined(VBOX_WITH_HARDENING),--hardened,) \
-  		$(VBOX_PATH_SI_SCRATCH_PKG) \
-  		$(PKG_FILENAME) \
---- 656,672 ----
-  	$(SED)	-e "s/@VBOX_PRODUCT@/$(VBOX_PRODUCT)/g" \
-  		-e "s/@VBOX_VENDOR@/$(VBOX_VENDOR)/g" \
-  		-e "s/@VBOX_VERSION_STRING@/$(VBOX_VERSION_STRING)/g" \
-+ 		-e "s/@VBOX_SVN_REV@/$(VBOX_SVN_REV)/g" \
-  		-e "s/@VBOX_VERSION_REVSTAMP@/$(PKGINFO_REVSTAMP)/g" \
-  		-e "s/@UNAME_P@/$(PKGINFO_ARCH)/g" \
-  		--output $(VBOX_PATH_SI_SCRATCH_PKG)/vbox.pkginfo \
-  		$(VBOX_PATH_SOL_INST_SRC)/vbox.pkginfo
-! 	$(INSTALL) -m 0644 $(VBOX_PATH_SOL_INST_SRC)/vbox.pkgresponse	$(VBOX_PATH_SI_SCRATCH_PKG)/autoresponse
-  
-! $(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg: solaris-install
-! # Done copying file, create the package!
-  	$(call MSG_L1,Creating install package: $(PKG_FILENAME).pkg)
-! 	$(REDIRECT) -C $(VBOX_PATH_SOL_INST_SRC) -- $(VBOX_PATH_SI_SCRATCH_PKG)/makepackage.sh \
-  		$(if-expr defined(VBOX_WITH_HARDENING),--hardened,) \
-  		$(VBOX_PATH_SI_SCRATCH_PKG) \
-  		$(PKG_FILENAME) \
-***************
-*** 712,720 ****
-  		$(KBUILD_TARGET_ARCH) \
-  		$(VBOX_SVN_REV)
-  	$(MV) -- "$(VBOX_PATH_SI_SCRATCH_PKG)/$(PKG_FILENAME).pkg" "$@"
-  
-  #
-! # Creates the tar file containing license, readme and autoresponse file in addition to the System V package.
-  #
-  solaris-package-tar-gz:: $(PATH_STAGE_BIN)/$(PKG_FILENAME).tar.gz
-  $(PATH_STAGE_BIN)/$(PKG_FILENAME).tar.gz: \
---- 673,683 ----
-  		$(KBUILD_TARGET_ARCH) \
-  		$(VBOX_SVN_REV)
-  	$(MV) -- "$(VBOX_PATH_SI_SCRATCH_PKG)/$(PKG_FILENAME).pkg" "$@"
-+ 	$(RM) -Rf -- "$(VBOX_PATH_SI_SCRATCH_PKG)/"
-  
-+ 
-  #
-! # Creates the tar file containing license, readme and autoresponse file in addition to the system V package.
-  #
-  solaris-package-tar-gz:: $(PATH_STAGE_BIN)/$(PKG_FILENAME).tar.gz
-  $(PATH_STAGE_BIN)/$(PKG_FILENAME).tar.gz: \
-***************
-*** 743,767 ****
-  	$(QUIET)$(RM) -f -- $(VBOX_PATH_SI_SCRATCH)/ReadMe.txt
-  	$(call MSG_L1,Packaging $@ is completed.)
-  
-- #
-- # Creates the IPS style installer package.
-- #
-- solaris-package-ips:: $(PATH_STAGE_BIN)/$(PKG_FILENAME).p5p
-- $(PATH_STAGE_BIN)/$(PKG_FILENAME).p5p: \
-- 		$(VBOX_PATH_SI_SCRATCH)/dist-copy.ts \
-- 		$(VBOX_SI_DEP_ON_MAKEFILE) \
-- 		| $$(dir $$@)
-- 	$(call MSG_L1,Creating install package: $(PKG_FILENAME).p5p)
-- 	$(VBOX_PATH_SI_SCRATCH_PKG)/makepackage.sh \
-- 		--ips \
-- 		$(if-expr defined(VBOX_WITH_HARDENING),--hardened,) \
-- 		$(VBOX_PATH_SI_SCRATCH_PKG) \
-- 		$(PKG_FILENAME) \
-- 		$(KBUILD_TARGET_ARCH) \
-- 		$(VBOX_SVN_REV)
-- 	$(MV) -- "$(VBOX_PATH_SI_SCRATCH_PKG)/$(PKG_FILENAME).p5p" "$@"
-  
-- 
-  ## List of file list variable names relevant for debug info.
-  SOLARIS_FILE_LIST_DBGINFO_VARS := $(foreach var, $(SOLARIS_FILE_LIST_VARS), $(if-expr "$($(var).STRIP)" != "no",$(var),))
-  ## Adds a .DBGDST property to each of the debug info file lists. Simplifies our job below
---- 706,712 ----
+
+Split the SUNWvbox.pkg rule into two so that files can be installed into
+the default layout without building the package file.
+
+diff -wpruN '--exclude=*.orig' a~/src/VBox/Installer/solaris/Makefile.kmk a/src/VBox/Installer/solaris/Makefile.kmk
+--- a~/src/VBox/Installer/solaris/Makefile.kmk	1970-01-01 00:00:00
++++ a/src/VBox/Installer/solaris/Makefile.kmk	1970-01-01 00:00:00
+@@ -553,7 +553,6 @@
+ 		$(VBOX_PATH_SOL_INST_SRC)/vbox.pkginfo \
+ 		$(VBOX_PATH_SOL_INST_SRC)/vbox-ips.mog \
+ 		\
+-		$(if-expr defined(VBOX_WITH_ADDITIONS_PACKING),$(PATH_STAGE_BIN)/additions/VBoxGuestAdditions.iso,) \
+ 		$(if-expr !defined(VBOX_OSE) && defined(VBOX_WITH_VBOXSDL), $(PATH_DEVTOOLS_TRG)/libsdl/v1.2.13/lib/libSDL-1.2.so.0.11.2,) \
+ 		\
+ 		$(if $(VBOX_OSE),,$(foreach arch, x86 amd64, $(foreach lib, libgcc_s.so.1 libstdc++.so.6, \
+@@ -614,8 +613,6 @@
+ 		"$($(var).SRC)/$(file)" "$($(var).DST)/$(file)")))
+ 
+ # VirtualBox: Common files.
+-	$(if-expr defined(VBOX_WITH_ADDITIONS_PACKING) \
+-	,$(INSTALL) -m 0644 $(PATH_STAGE_BIN)/additions/VBoxGuestAdditions.iso  $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/,)
+ 	$(LN_SYMLINK) -f ./pkginstall.sh $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/ipsinstall.sh
+ 	$(SED) -e "s/_HARDENED_/$(if $(VBOX_WITH_HARDENED),hardened,)/" \
+ 		--output $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/vboxconfig.sh \
+@@ -631,9 +628,6 @@
+ 	$(if-expr defined(VBOX_WITH_QTGUI) \
+ 	,$(NLTAB)$(LN_SYMLINK) ../rdesktop-vrdp-keymaps/ $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/rdesktop-vrdp-keymaps,)
+ 
+-	$(if-expr defined(VBOX_WITH_ADDITIONS_PACKING) \
+-	,$(NLTAB)$(LN_SYMLINK) ../VBoxGuestAdditions.iso $(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/,)
+-
+ 	$(if-expr !defined(VBOX_OSE) && defined(VBOX_WITH_VBOXSDL) \
+ 	,$(INSTALL) -s -m 0644 $(PATH_DEVTOOLS_TRG)/libsdl/v1.2.13/lib/libSDL-1.2.so.0.11.2 \
+ 		$(VBOX_PATH_SI_SCRATCH_PKG)/opt/VirtualBox/$(VBOX_SI_ARCH)/libSDL-1.2.so.0,)
+@@ -700,7 +694,7 @@
+ # Creates the System V style installer package.
+ #
+ solaris-package:: $(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg
+-$(VBOX_PATH_SI_SCRATCH)/$(PKG_FILENAME).pkg: \
++solaris-install:: \
+ 		$(VBOX_PATH_SI_SCRATCH)/dist-copy.ts \
+ 		$(VBOX_SI_DEP_ON_MAKEFILE) \
+ 		| $$(dir $$@)

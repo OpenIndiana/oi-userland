@@ -1,34 +1,32 @@
-The t-protect test hangs forever in read or write to Unix Domain Sockets.
-
---- gnupg-2.2.23/agent/Makefile.am.orig	2020-08-20 10:55:36.000000000 +0000
-+++ gnupg-2.2.23/agent/Makefile.am	2020-09-12 15:46:30.918767550 +0000
-@@ -103,7 +103,8 @@
+--- gnupg-2.3.1/agent/Makefile.am.orig	2021-04-13 14:33:50.000000000 +0000
++++ gnupg-2.3.1/agent/Makefile.am	2021-05-13 13:09:43.920720412 +0000
+@@ -114,7 +114,7 @@
  if DISABLE_TESTS
  TESTS =
  else
 -TESTS = t-protect
-+#TESTS = t-protect
-+TESTS =
++TESTS = 
  endif
  
  t_common_ldadd = $(common_libs)  $(LIBGCRYPT_LIBS) $(GPG_ERROR_LIBS) \
---- gnupg-2.2.25/agent/Makefile.in.orig	2020-11-23 14:14:21.000000000 +0000
-+++ gnupg-2.2.25/agent/Makefile.in	2020-11-26 19:42:47.500622798 +0000
-@@ -145,7 +145,7 @@
- @GNUPG_DIRMNGR_PGM_TRUE@am__append_6 = -DGNUPG_DEFAULT_DIRMNGR="\"@GNUPG_DIRMNGR_PGM@\""
- @GNUPG_PROTECT_TOOL_PGM_TRUE@am__append_7 = -DGNUPG_DEFAULT_PROTECT_TOOL="\"@GNUPG_PROTECT_TOOL_PGM@\""
- @GNUPG_DIRMNGR_LDAP_PGM_TRUE@am__append_8 = -DGNUPG_DEFAULT_DIRMNGR_LDAP="\"@GNUPG_DIRMNGR_LDAP_PGM@\""
+
+--- gnupg-2.3.1/agent/Makefile.in.orig	2021-04-20 12:37:27.000000000 +0000
++++ gnupg-2.3.1/agent/Makefile.in	2021-05-13 13:13:47.283373752 +0000
+@@ -147,7 +147,7 @@
+ @GNUPG_PROTECT_TOOL_PGM_TRUE@am__append_8 = -DGNUPG_DEFAULT_PROTECT_TOOL="\"@GNUPG_PROTECT_TOOL_PGM@\""
+ @GNUPG_DIRMNGR_LDAP_PGM_TRUE@am__append_9 = -DGNUPG_DEFAULT_DIRMNGR_LDAP="\"@GNUPG_DIRMNGR_LDAP_PGM@\""
+ @HAVE_W32_SYSTEM_TRUE@am__append_10 = gpg-agent-w32info.o
 -@DISABLE_TESTS_FALSE@TESTS = t-protect$(EXEEXT)
 +#@DISABLE_TESTS_FALSE@TESTS = t-protect$(EXEEXT)
  subdir = agent
  ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
  am__aclocal_m4_deps = $(top_srcdir)/m4/autobuild.m4 \
-@@ -172,7 +172,7 @@
+@@ -173,7 +173,7 @@
  am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libexecdir)"
  @HAVE_W32CE_SYSTEM_FALSE@am__EXEEXT_1 =  \
  @HAVE_W32CE_SYSTEM_FALSE@	gpg-preset-passphrase$(EXEEXT)
 -@DISABLE_TESTS_FALSE@am__EXEEXT_2 = t-protect$(EXEEXT)
 +#@DISABLE_TESTS_FALSE@am__EXEEXT_2 = t-protect$(EXEEXT)
  PROGRAMS = $(bin_PROGRAMS) $(libexec_PROGRAMS) $(noinst_PROGRAMS)
- am_gpg_agent_OBJECTS = gpg_agent-gpg-agent.$(OBJEXT) \
- 	gpg_agent-command.$(OBJEXT) gpg_agent-command-ssh.$(OBJEXT) \
+ am__gpg_agent_SOURCES_DIST = gpg-agent.c agent.h command.c \
+ 	command-ssh.c call-pinentry.c cache.c trans.c findkey.c \
