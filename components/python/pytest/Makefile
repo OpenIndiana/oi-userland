@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest
 COMPONENT_VERSION=	6.1.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		library/python/pytest
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SUMMARY=	pytest: simple powerful testing with Python
