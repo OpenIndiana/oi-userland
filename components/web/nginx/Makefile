@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nginx
 COMPONENT_VERSION=	1.20.1
+COMPONENT_REVISION=	1
 COMPONENT_LICENSE=	BSD
 COMPONENT_PROJECT_URL=	https://nginx.net/
 COMPONENT_SUMMARY=	Nginx Webserver
@@ -30,6 +31,8 @@ COMPONENT_FMRI=	web/server/nginx
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 
 TEST_TARGET= $(NO_TESTS)
+
+NGX_FANCYINDEX_VERSION= 0.5.1
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -65,8 +68,13 @@ CONFIGURE_OPTIONS += --with-mail
 CONFIGURE_OPTIONS += --with-mail_ssl_module
 CONFIGURE_OPTIONS += --with-ipv6
 CONFIGURE_OPTIONS += --with-threads
+CONFIGURE_OPTIONS += --add-module=$(@D)/ngx-fancyindex
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D) && \
+   git clone https://github.com/aperezdc/ngx-fancyindex.git $(@D)/ngx-fancyindex && \
+   cd $(@D)/ngx-fancyindex && \
+   git checkout v$(NGX_FANCYINDEX_VERSION))
+
 COMPONENT_POST_INSTALL_ACTION+= \
 	( $(MKDIR) $(PROTO_DIR)/var/nginx/logs )
 
