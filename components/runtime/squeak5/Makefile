@@ -35,7 +35,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stack-spur
 COMPONENT_VERSION=	5.0.2957
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 GIT_TAG=		sun-v5.0.29
 PLUGIN_REV=		5.0-202105050900
 COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
@@ -76,6 +76,9 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( \
 # we have to make sure largefile support is enabled in the 32bit case
 CPPFLAGS += $(CPP_LARGEFILES)
 
+# Spur memory management sometimes not compatible with traditional malloc
+LIBS = "-lmapmalloc"
+
 # the default CFLAGS.gcc will be -m64 -O3 but this does not work for us
 # opensmalltalk code is not compatible with the gcc optimizer -O2 or higher
 gcc_OPT=		-DAIO_DEBUG -DNDEBUG -DDEBUGVM=0
@@ -91,6 +94,7 @@ CONFIGURE_OPTIONS +=	--without-vm-display-fbdev
 CONFIGURE_OPTIONS +=	--without-npsqueak
 
 CONFIGURE_ENV    +=     CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV    +=     LIBS="$(LIBS)"
 CONFIGURE_ENV.32 +=	TARGET_ARCH="-m32"
 CONFIGURE_ENV.64 +=	TARGET_ARCH="-m64"
 
