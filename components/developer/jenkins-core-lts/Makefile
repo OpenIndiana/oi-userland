@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016-2020 Jim Klimov
+# Copyright 2016-2021 Jim Klimov
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -27,9 +27,9 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=				jenkins
 JENKINS_RELEASE=			lts
 COMPONENT_MAJOR_VERSION=	2
-COMPONENT_MINOR_VERSION=	277
-COMPONENT_PATCH_VERSION=	4
-COMPONENT_ARCHIVE_HASH=		sha256:26b278064393befa74f543d23050ca08589a6c14207cac06a0fbf6994113e7a7
+COMPONENT_MINOR_VERSION=	289
+COMPONENT_PATCH_VERSION=	1
+COMPONENT_ARCHIVE_HASH=		sha256:70f9cc6ff1ac59aeeb831b980709a9ddb0ee70d216ee50625a8508b9840f75f2
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
 # or for LTS
