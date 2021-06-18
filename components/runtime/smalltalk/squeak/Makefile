@@ -42,14 +42,14 @@
 
 BUILD_BITS=32_and_64
 
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 # the version is the same as the VMMaker Smalltalk sources
 # it cannot be changed here randomly, it must match the VMMaker version
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.19.6
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
