@@ -14,27 +14,32 @@
 
 
 #
-# Package Makefile for the "OpenSmalltalk Cog Spur" Squeak Smalltalk system
+# Package Makefile for the "OpenSmalltalk" Squeak Smalltalk system
 # See http://squeak.org and http://opensmalltalk.org
 #
 
 # opensmalltalk-vm can be built both in 32 and 64bit
+#
+# we deliver our own script squeak.ips as driver script
+#
+# the driver script checks (with ckformat) the Smalltalk image
+# image format 6521  : start VM 32bit 
+# image format 68021 : start VM 64bit
 BUILD_BITS=32_and_64
 
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 # there is no official triplet version for opensmalltalk-vm
 # we use 5.0.<n> for VMMaker.oscog-eem.<n>
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
-COMPONENT_NAME=		cog-spur
-COMPONENT_VERSION=	5.0.2957
-COMPONENT_REVISION=	3
-GIT_TAG=		sun-v5.0.29
-PLUGIN_REV=		5.0-202105050900-cog
-COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
+COMPONENT_NAME=		stack-spur
+COMPONENT_VERSION=	5.0.2967
+GIT_TAG=		sun-v5.0.30
+PLUGIN_REV=		5.0-202106151423
+COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
-COMPONENT_FMRI=		runtime/smalltalk/cog-spur
+COMPONENT_FMRI=		runtime/smalltalk/stack-spur
 COMPONENT_CLASSIFICATION=	Development/Smalltalk
 
 # See http://wiki.squeak.org/squeak/933
@@ -45,7 +50,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:6975d8be2d8f4cf80c6f5ca60f14550325b6406f3be7b1bcd3e16cead7c86210
+COMPONENT_ARCHIVE_HASH=	sha256:f692245c66294bd8380dcd9664da865c19b4b3a55c420b20d2068551be049a3b
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
@@ -75,15 +80,17 @@ LIBS = "-lmapmalloc"
 
 # the default CFLAGS.gcc will be -m64 -O3 but this does not work for us
 # opensmalltalk code is not compatible with the gcc optimizer -O2 or higher
-gcc_OPT=		-DAIO_DEBUG -DNDEBUG -DDEBUGVM=0 -DCOGMTVM=0
+gcc_OPT=		-DAIO_DEBUG -DNDEBUG -DDEBUGVM=0
 
 CONFIGURE_SCRIPT= $(SOURCE_DIR)/platforms/unix/config/configure
-CONFIGURE_OPTIONS +=	--without-npsqueak
 CONFIGURE_OPTIONS +=	--with-vmversion=5.0
 CONFIGURE_OPTIONS +=	--disable-dynamicopenssl
 CONFIGURE_OPTIONS +=	--without-libtls
-CONFIGURE_OPTIONS.64 +=	--with-src=spur64src
-CONFIGURE_OPTIONS.32 +=	--with-src=spursrc
+CONFIGURE_OPTIONS.32 +=	--with-src=spurstacksrc
+CONFIGURE_OPTIONS.64 +=	--with-src=spurstack64src
+CONFIGURE_OPTIONS +=	--disable-cogit
+CONFIGURE_OPTIONS +=	--without-vm-display-fbdev
+CONFIGURE_OPTIONS +=	--without-npsqueak
 
 CONFIGURE_ENV    +=     CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV    +=     LIBS="$(LIBS)"
@@ -92,8 +99,8 @@ CONFIGURE_ENV.64 +=	TARGET_ARCH="-m64"
 
 # the opensmalltalk Makefile does not use DESTDIR
 COMPONENT_INSTALL_ARGS=  	ROOT=$(PROTO_DIR)
-COMPONENT_BUILD_TARGETS= 	getversion squeak plugins ckformat
-COMPONENT_INSTALL_TARGETS= 	install-squeak install-doc install-plugins \
+COMPONENT_BUILD_TARGETS=        getversion squeak plugins ckformat
+COMPONENT_INSTALL_TARGETS=      install-squeak install-doc install-plugins \
 	install-ckformat
 
 # Makefile has no strip target
@@ -105,10 +112,10 @@ COMPONENT_POST_INSTALL_ACTION = \
 #
 
 rebuild-manifests::
-	cp manifests/cog-spur.p5m cog-spur.p5m
-	cp manifests/cog-spur-ssl.p5m cog-spur-ssl.p5m
-	cp manifests/cog-spur-display-X11.p5m cog-spur-display-X11.p5m
-	cp manifests/cog-spur-nodisplay.p5m cog-spur-nodisplay.p5m
+	cp manifests/stack-spur.p5m stack-spur.p5m
+	cp manifests/stack-spur-ssl.p5m stack-spur-ssl.p5m
+	cp manifests/stack-spur-display-X11.p5m stack-spur-display-X11.p5m
+	cp manifests/stack-spur-nodisplay.p5m stack-spur-nodisplay.p5m
 	cp manifests/sample-manifest.p5m sample-manifest.p5m
 	tools/pluginrev.sh $(PLUGIN_REV) <sample-manifest.p5m >sample.p5m
 	tools/classify.pl <sample.p5m
