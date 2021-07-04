@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		m4
 COMPONENT_VERSION=	1.4.19
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	developer/macro/gnu-m4
 COMPONENT_SUMMARY=	GNU m4
 COMPONENT_CLASSIFICATION=	Development/GNU
@@ -66,7 +67,9 @@ COMPONENT_TEST_TRANSFORMS += \
     	'-e "/No differences/d"' \
     	'-e "/^PATH=/d"' \
     	'-e "/^m4/d"' \
-    	'-e "/^gmake/d"'
+    	'-e "/m4-tmp/d"' \
+    	'-e "/Killed/d"' \
+    	'-e "/^make/d"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
