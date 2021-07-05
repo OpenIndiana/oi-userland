@@ -13,14 +13,14 @@
 # Copyright 2020 Michal Nowak
 # Copyright 2019 Tim Mooney
 # Copyright 2020 Jim Klimov
-#
+# Copyright 2021 omnios.org wrt the ctx patches
 
 #USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
 COMPONENT_VERSION=      6.1.22
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
 COMPONENT_FMRI=         system/virtualbox
