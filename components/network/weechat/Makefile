@@ -16,7 +16,7 @@ BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		weechat
-COMPONENT_VERSION=	3.1
+COMPONENT_VERSION=	3.2
 COMPONENT_PROJECT_URL=	https://weechat.org/
 COMPONENT_SUMMARY=	WeeChat - portable, fast, light and extensible IRC client
 COMPONENT_DESCRIPTION=	WeeChat (Wee Enhanced Environment for Chat) is a portable, fast, light and \
@@ -24,7 +24,7 @@ extensible chat client. Everything can be done with a keyboard. \
 It is customizable and extensible with scripts.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:a55a2975aa119f76983412507e3ddb3fe68d0744e08739681ddc17744e77a4f7
+COMPONENT_ARCHIVE_HASH=	sha256:39a8adf374e80653c9dd2be06870341594ea081b3a9c3690132e556abf9d87a8
 COMPONENT_ARCHIVE_URL=	https://weechat.org/files/src/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=		network/chat/weechat
