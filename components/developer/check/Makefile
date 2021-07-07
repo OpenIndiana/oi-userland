@@ -15,21 +15,18 @@
 #
 
 BUILD_BITS=		32_and_64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		check
-COMPONENT_VERSION=	0.14.0
+COMPONENT_VERSION=	0.15.2
 COMPONENT_FMRI=		developer/check
 COMPONENT_SUMMARY=	Unit Testing Framework for C
 COMPONENT_PROJECT_URL=	https://libcheck.github.io/check
 COMPONENT_CLASSIFICATION=Development/C
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:bd0f0ca1be65b70238b32f8e9fe5d36dc2fbf7a759b7edf28e75323a7d74f30b
-COMPONENT_ARCHIVE_URL=\
-	https://github.com/libcheck/check/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:a8de4e0bacfb4d76dd1c618ded263523b53b85d92a146d8835eb1a52932fa20a
+COMPONENT_ARCHIVE_URL=	https://github.com/libcheck/check/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2
 
 include $(WS_MAKE_RULES)/common.mk
