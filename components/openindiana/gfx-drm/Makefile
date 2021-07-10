@@ -20,8 +20,8 @@ COMPONENT_NAME=		gfx-drm
 COMPONENT_SRC=		$(COMPONENT_NAME)
 
 GIT=git
-GIT_REPO=git://github.com/illumos/gfx-drm.git
-GIT_BRANCH=master
+GIT_REPO=git://github.com/OpenIndiana/gfx-drm.git
+GIT_BRANCH=oi/hipster
 GIT_CHANGESET=HEAD
 
 ONNV_BUILDNUM=$(BRANCHID)
