@@ -1,0 +1,49 @@
+From 60395e55a3602e5f1fbf7f77ff4db2bb24485577 Mon Sep 17 00:00:00 2001
+From: Aurelien Larcher <aurelien.larcher@gmail.com>
+Date: Tue, 24 Mar 2020 01:41:38 +0100
+Subject: [PATCH] Use -march=x86-64 -mtune=generic
+
+---
+ usr/src/lib/libshell/misc/buildksh93.sh | 2 +-
+ usr/src/tools/cw/cw.c                   | 5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/usr/src/lib/libshell/misc/buildksh93.sh b/usr/src/lib/libshell/misc/buildksh93.sh
+index d89941d278..3739959854 100644
+--- a/usr/src/lib/libshell/misc/buildksh93.sh
++++ b/usr/src/lib/libshell/misc/buildksh93.sh
+@@ -356,7 +356,7 @@ function build_shell
+                 *.sparc.64bit.suncc*) HOSTTYPE="sol11.sun4" CC="${bsunc99} -m64 -dalign -KPIC"    cc_sharedlib="-G" CCFLAGS="${bsuncc_ccflags}" bsuncc_app_ccflags="${bsuncc_app_ccflags_sparc}" ;;
+ 
+                 *.i386.32bit.gcc*)  HOSTTYPE="sol11.i386" CC="${bgcc99} -fPIC"                                            cc_sharedlib="-shared" CCFLAGS="${bgcc_ccflags}"  ;;
+-                *.i386.64bit.gcc*)  HOSTTYPE="sol11.i386" CC="${bgcc99} -m64 -mtune=opteron -Ui386 -U__i386 -fPIC"        cc_sharedlib="-shared" CCFLAGS="${bgcc_ccflags}"  ;;
++                *.i386.64bit.gcc*)  HOSTTYPE="sol11.i386" CC="${bgcc99} -m64 -march=x86-64 -mtune=generic -Ui386 -U__i386 -fPIC"        cc_sharedlib="-shared" CCFLAGS="${bgcc_ccflags}"  ;;
+                 *.sparc.32bit.gcc*) HOSTTYPE="sol11.sun4" CC="${bgcc99} -m32 -mcpu=v8 -fPIC"                              cc_sharedlib="-shared" CCFLAGS="${bgcc_ccflags}"  ;;
+                 *.sparc.64bit.gcc*) HOSTTYPE="sol11.sun4" CC="${bgcc99} -m64 -mcpu=v9 -fPIC"                              cc_sharedlib="-shared" CCFLAGS="${bgcc_ccflags}"  ;;
+                 *.s390.32bit.gcc*)  HOSTTYPE="sol11.s390" CC="${bgcc99} -m32          -fPIC"				  cc_sharedlib="-shared" CCFLAGS="${bgcc_ccflags}"  ;;
+diff --git a/usr/src/tools/cw/cw.c b/usr/src/tools/cw/cw.c
+index 31ba40cb85..6be7a9ae4f 100644
+--- a/usr/src/tools/cw/cw.c
++++ b/usr/src/tools/cw/cw.c
+@@ -345,7 +345,7 @@ typedef struct xarch_table {
+ static const xarch_table_t xtbl[] = {
+ #if defined(__x86)
+ 	{ "generic",	SS11, {NULL} },
+-	{ "generic64",	(SS11|M64), { "-m64", "-mtune=opteron" } },
++	{ "generic64",	(SS11|M64), { "-m64", "-march=x86-64 -mtune=generic" } },
+ 	{ "amd64",	(SS11|M64), { "-m64", "-mtune=opteron" } },
+ 	{ "386",	SS11,	{ "-march=i386" } },
+ 	{ "pentium_pro", SS11,	{ "-march=pentiumpro" } },
+@@ -884,7 +884,8 @@ do_gcc(cw_ictx_t *ctx)
+ 			if (strcmp(arg, "-m64") == 0) {
+ 				newae(ctx->i_ae, "-m64");
+ #if defined(__x86)
+-				newae(ctx->i_ae, "-mtune=opteron");
++				newae(ctx->i_ae, "-march=x86-64");
++				newae(ctx->i_ae, "-mtune=generic");
+ #endif
+ 				mflag |= M64;
+ 				break;
+-- 
+2.25.0
+
