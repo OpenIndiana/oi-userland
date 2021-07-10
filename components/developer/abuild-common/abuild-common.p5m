@@ -1,0 +1,40 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2021 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+#set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+#set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# The abuild account with ID 399 is inherited from build farms also running
+# the SUSE Open Build Service. Having all build workers run with the same
+# uid/gid allows to easily benefit from NFS/LOFS shared resources such as
+# a common ccache index (be sure to use CCACHE_DIR for recording relative
+# paths to sources of objects) or reference git repositories.
+# It is delivered by a separate package which may be used as the foundation
+# for different use-cases which boil down to automated builds (e.g. Jenkins
+# swarm-client agent, Jenkins SSH agent, builds in discardable zones, etc.)
+# The home-dir of abuild is where common system files like trusted SSH keys are
+# stored, for the (potentially numerous) use-cases for the "abuild" account.
+# Packages which deliver practical use-cases for automated builds may also
+# deliver (or create at run-time) a separate directory where that build agent
+# implementation would store build workspaces and similar data.
+group groupname=abuild gid=399
+user  ftpuser=false gcos-field="Automated build agent Reserved UID" password=NP \
+      username=abuild uid=399 group=abuild home-dir=/var/lib/abuild
