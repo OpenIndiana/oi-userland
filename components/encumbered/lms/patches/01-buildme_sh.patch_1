@@ -1,0 +1,12 @@
+--- slimserver-vendor-6265ea5b0ab9952af187602e848bbe318f4e3cc6/CPAN/buildme.sh	2019-11-18 06:46:18.000000000 +0000
++++ buildme.sh	2020-03-06 06:24:03.610944253 +0000
+@@ -1418,6 +1418,9 @@
+     if [[ "$ARCH" = "x86_64-linux-thread-multi" || "$ARCH" =~ "amd64-freebsd" || "$ARCH" = "i86pc-solaris-thread-multi-64int" ]]; then
+         FFOPTS="$FFOPTS --disable-mmx"
+     fi
++    if [ "$OS" = "SunOS" ]; then
++        FFOPTS="$FFOPTS --disable-asm"
++    fi
+     # FreeBSD amd64 needs arch option
+     if [[ "$ARCH" =~ "amd64-freebsd" ]]; then
+         FFOPTS="$FFOPTS --arch=x86"
