@@ -1,0 +1,14 @@
+Without the patch, setup.py finds /usr/include/openssl
+which points to /usr/openssl/1.0/include/openssl
+
+--- borgbackup-1.1.17/setup.py	2021-07-12 21:44:34.000000000 +0000
++++ borgbackup-1.1.17/setup.py	2021-07-15 13:10:00.075660816 +0000
+@@ -167,7 +167,7 @@ include_dirs = []
+ library_dirs = []
+ define_macros = []
+ 
+-possible_openssl_prefixes = ['/usr', '/usr/local', '/usr/local/opt/openssl', '/usr/local/ssl', '/usr/local/openssl',
++possible_openssl_prefixes = ['/usr/openssl/1.1', '/usr', '/usr/local', '/usr/local/opt/openssl', '/usr/local/ssl', '/usr/local/openssl',
+                              '/usr/local/borg', '/opt/local', '/opt/pkg', '/opt/homebrew/opt/openssl@1.1', ]
+ if os.environ.get('BORG_OPENSSL_PREFIX'):
+     possible_openssl_prefixes.insert(0, os.environ.get('BORG_OPENSSL_PREFIX'))
