@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openconnect
 COMPONENT_VERSION=	8.10
+COMPONENT_REVISION=	1
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		network/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -61,14 +62,12 @@ CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/$(MACH64)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += network/vpnc-scripts
-REQUIRED_PACKAGES += library/desktop/p11-kit
 REQUIRED_PACKAGES += driver/network/header-tun
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libproxy
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/security/libp11
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
