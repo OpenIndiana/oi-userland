@@ -28,23 +28,28 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nose
-COMPONENT_VERSION=	1.3.6
-COMPONENT_REVISION=	5
+COMPONENT_VERSION=	1.3.7
+COMPONENT_SUMMARY=	Nicer testing for Python
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_FMRI=		library/python/nose
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/nose-devs/nose
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f61e0909a743eed37b1207e38a8e7b4a2fe0a82185e36f2be252ef1b3f901758
+COMPONENT_ARCHIVE_HASH= sha256:f1bffef9cbc82628f6e7d7b40d7e255aefaa1adb6a1b1d26c69a8b79e6208a98
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/n/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	python-mod/nose
+COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_LICENSE_FILE= nose.license
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
 
 include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+# nose ships the tests in Python 2 syntax, and uses setup.py build_tests
+# to convert them to Python 3 syntax, but doing so requires running Python 3.
 $(SOURCE_DIR)/.prep:	PYTHON_VERSION=3.5
+
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS =	selftest.py
@@ -77,7 +82,7 @@ COMPONENT_PRE_TEST_ACTION = \
 # OK
 # stripping out the random portions (like time to complete the tests).
 COMPONENT_TEST_TRANSFORMER =	$(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/^ERROR: / { print }; /^Ran / { sub(\" tests in .+s\", \" tests in\"); print }; /^FAILED / { print }; /^OK / { print };'"
+COMPONENT_TEST_TRANSFORMS = "'/^ERROR: / { print }; /^Ran / { sub(\" test.+in .+s\", \" tests in\"); print }; /^FAILED / { print }; /^OK / { print };'"
 
 COMPONENT_SYSTEM_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_SYSTEM_TEST_ENV =
@@ -86,5 +91,9 @@ COMPONENT_SYSTEM_TEST_ARGS =	selftest.py
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-35
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
