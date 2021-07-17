@@ -1,17 +1,21 @@
---- putty-0.74/cmdgen.c.orig	2020-06-21 19:30:43.000000000 +0000
-+++ putty-0.74/cmdgen.c	2020-08-12 21:59:46.262592636 +0000
-@@ -219,8 +219,8 @@
-     Filename *infilename = NULL, *outfilename = NULL;
-     enum { NOKEYGEN, RSA1, RSA2, DSA, ECDSA, ED25519 } keytype = NOKEYGEN;
+Rename PRIVATE to PPRIVATE in order to avoid a name clash resulting in errors like this:
+    putty-0.75/cmdgen.c:228:12: error: expected identifier before numeric constant
+        enum { PRIVATE, PUBLIC, PUBLICO, FP, OPENSSH_AUTO,
+
+--- putty-0.75/cmdgen.c.orig	2021-05-02 09:20:48.000000000 +0000
++++ putty-0.75/cmdgen.c	2021-07-17 13:22:22.471146878 +0000
+@@ -225,8 +225,8 @@
+     BinarySource *infile_bs = NULL;
+     enum { NOKEYGEN, RSA1, RSA2, DSA, ECDSA, EDDSA } keytype = NOKEYGEN;
      char *outfile = NULL, *outfiletmp = NULL;
 -    enum { PRIVATE, PUBLIC, PUBLICO, FP, OPENSSH_AUTO,
--           OPENSSH_NEW, SSHCOM } outtype = PRIVATE;
+-           OPENSSH_NEW, SSHCOM, TEXT } outtype = PRIVATE;
 +    enum { PPRIVATE, PUBLIC, PUBLICO, FP, OPENSSH_AUTO,
-+           OPENSSH_NEW, SSHCOM } outtype = PPRIVATE;
++           OPENSSH_NEW, SSHCOM, TEXT } outtype = PPRIVATE;
      int bits = -1;
      const char *comment = NULL;
      char *origcomment = NULL;
-@@ -432,7 +432,7 @@
+@@ -558,7 +558,7 @@
                          else if (!strcmp(p, "public-openssh"))
                              outtype = PUBLICO;
                          else if (!strcmp(p, "private"))
@@ -20,16 +24,16 @@
                          else if (!strcmp(p, "fingerprint"))
                              outtype = FP;
                          else if (!strcmp(p, "private-openssh"))
-@@ -549,7 +549,7 @@
+@@ -703,7 +703,7 @@
       * We must save the private part when generating a new key.
       */
      if (keytype != NOKEYGEN &&
 -        (outtype != PRIVATE && outtype != OPENSSH_AUTO &&
 +        (outtype != PPRIVATE && outtype != OPENSSH_AUTO &&
-          outtype != OPENSSH_NEW && outtype != SSHCOM)) {
+          outtype != OPENSSH_NEW && outtype != SSHCOM && outtype != TEXT)) {
          fprintf(stderr, "puttygen: this would generate a new key but "
                  "discard the private part\n");
-@@ -612,8 +612,8 @@
+@@ -780,8 +780,8 @@
       * Also in this code, we bomb out if the input and output file
       * formats are the same and no other action is performed.
       */
@@ -40,7 +44,7 @@
          (intype == SSH_KEYTYPE_OPENSSH_PEM && outtype == OPENSSH_AUTO) ||
          (intype == SSH_KEYTYPE_OPENSSH_NEW && outtype == OPENSSH_NEW) ||
          (intype == SSH_KEYTYPE_SSHCOM && outtype == SSHCOM)) {
-@@ -633,7 +633,7 @@
+@@ -801,7 +801,7 @@
               * Bomb out rather than automatically choosing to write
               * a private key file to stdout.
               */
@@ -48,17 +52,17 @@
 +            if (outtype == PPRIVATE || outtype == OPENSSH_AUTO ||
                  outtype == OPENSSH_NEW || outtype == SSHCOM) {
                  fprintf(stderr, "puttygen: need to specify an output file\n");
-                 return 1;
-@@ -647,7 +647,7 @@
-      * out a private key format, or (b) the entire input key file
-      * is encrypted.
-      */
--    if (outtype == PRIVATE || outtype == OPENSSH_AUTO ||
-+    if (outtype == PPRIVATE || outtype == OPENSSH_AUTO ||
-         outtype == OPENSSH_NEW || outtype == SSHCOM ||
-         intype == SSH_KEYTYPE_OPENSSH_PEM ||
-         intype == SSH_KEYTYPE_OPENSSH_NEW ||
-@@ -950,7 +950,7 @@
+                 RETURN(1);
+@@ -826,7 +826,7 @@
+           intype == SSH_KEYTYPE_SSH2_PUBLIC_RFC4716 ||
+           intype == SSH_KEYTYPE_SSH2_PUBLIC_OPENSSH);
+     bool outtype_has_private =
+-        outtype == PRIVATE || outtype == OPENSSH_AUTO ||
++        outtype == PPRIVATE || outtype == OPENSSH_AUTO ||
+         outtype == OPENSSH_NEW || outtype == SSHCOM;
+     if (outtype_has_private || intype_entirely_encrypted ||
+         (outtype == TEXT && intype_has_private))
+@@ -1136,7 +1136,7 @@
          bool ret;
          int real_outtype;
  
