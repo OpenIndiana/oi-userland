@@ -29,7 +29,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cog-spur
 COMPONENT_VERSION=	5.0.2967
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 GIT_TAG=		sun-v5.0.30
 PLUGIN_REV=		5.0-202106151423-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
@@ -107,6 +107,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 rebuild-manifests::
 	cp manifests/cog-spur.p5m cog-spur.p5m
 	cp manifests/cog-spur-ssl.p5m cog-spur-ssl.p5m
+	cp manifests/cog-spur-vep.p5m cog-spur-vep.p5m
 	cp manifests/cog-spur-display-X11.p5m cog-spur-display-X11.p5m
 	cp manifests/cog-spur-nodisplay.p5m cog-spur-nodisplay.p5m
 	cp manifests/sample-manifest.p5m sample-manifest.p5m

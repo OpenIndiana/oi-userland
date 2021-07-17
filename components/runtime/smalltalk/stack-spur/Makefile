@@ -35,7 +35,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stack-spur
 COMPONENT_VERSION=	5.0.2967
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 GIT_TAG=		sun-v5.0.30
 PLUGIN_REV=		5.0-202106151423
 COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
@@ -115,6 +115,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 rebuild-manifests::
 	cp manifests/stack-spur.p5m stack-spur.p5m
 	cp manifests/stack-spur-ssl.p5m stack-spur-ssl.p5m
+	cp manifests/stack-spur-vep.p5m stack-spur-vep.p5m
 	cp manifests/stack-spur-display-X11.p5m stack-spur-display-X11.p5m
 	cp manifests/stack-spur-nodisplay.p5m stack-spur-nodisplay.p5m
 	cp manifests/sample-manifest.p5m sample-manifest.p5m

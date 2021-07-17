@@ -24,6 +24,8 @@ open(NODISPLAY,">>","squeak-nodisplay.p5m") || die "Can't open squeak-nodisplay.
 
 open(X11,">>","squeak-display-X11.p5m") || die "Can't open squeak-display-X11.p5m";
 
+open(VEP,">>","squeak-vep.p5m") || die "Can't open squeak-vep.p5m";
+
 open(SSL,">>","squeak-ssl.p5m") || die "Can't open squeak-ssl.p5m";
 
 open(REST,">>","squeak.p5m") || die "Can't open squeak.p5m";
@@ -69,7 +71,7 @@ while (<>) {
 		} elsif (/UnixOSProcessPlugin/) {
 			print NODISPLAY $_;
 		} elsif (/VectorEnginePlugin/) {
-			print X11 $_;
+			print VEP $_;
 		} elsif (/XDisplayControlPlugin/) {
 			print X11 $_;
 		} elsif (/vm-sound-null/) {
