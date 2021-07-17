@@ -49,7 +49,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.19.6
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -113,6 +113,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 rebuild-manifests::
 	cp manifests/squeak.p5m squeak.p5m
+	cp manifests/squeak-vep.p5m squeak-vep.p5m
 	cp manifests/squeak-ssl.p5m squeak-ssl.p5m
 	cp manifests/squeak-display-X11.p5m squeak-display-X11.p5m
 	cp manifests/squeak-nodisplay.p5m squeak-nodisplay.p5m

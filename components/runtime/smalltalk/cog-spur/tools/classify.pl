@@ -19,6 +19,7 @@ open(NODISPLAY,">>","cog-spur-nodisplay.p5m") || die "Can't open cog-spur-nodisp
 open(X11,">>","cog-spur-display-X11.p5m") || die "Can't open cog-spur-display-X11.p5m";
 
 open(SSL,">>","cog-spur-ssl.p5m") || die "Can't open cog-spur-ssl.p5m";
+open(VEP,">>","cog-spur-vep.p5m") || die "Can't open cog-spur-vep.p5m";
 
 open(REST,">>","cog-spur.p5m") || die "Can't open cog-spur.p5m";
 
@@ -75,7 +76,7 @@ while (<>) {
 		} elsif (/XDisplayControlPlugin/) {
 			print X11 $_;
 		} elsif (/VectorEnginePlugin/) {
-			print X11 $_;
+			print VEP $_;
 		} elsif (/vm-sound-null/) {
 			print NODISPLAY $_;
 		} elsif (/vm-display-null/) {
