@@ -27,13 +27,13 @@ PREFERRED_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
-COMPONENT_VERSION=	2.3.3
-COMPONENT_REVISION=	1
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.cups.org/
+COMPONENT_VERSION=	2.3.3.2
+HUMAN_VERSION=		2.3.3op2
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_PROJECT_URL=	https://openprinting.github.io/cups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:261fd948bce8647b6d5cb2a1784f0c24cc52b5c4e827b71d726020bcc502f3ee
-COMPONENT_ARCHIVE_URL=  https://github.com/apple/cups/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:5d7dc1f05cde3d5c31d3a2b3b54d519ca74e42c1b25df1add9a1802cd13c65ad
+COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_BUGDB=	utility/cups
 
 include $(WS_MAKE_RULES)/common.mk

@@ -1,24 +1,12 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 # This is the template for package manifest (.p5m) file
@@ -30,6 +18,9 @@
 # Significant portion of this file was created by hand-editing.
 # So please do not reformat/sort the lines of this file strip the
 # comments by using of the automate reformating tools.
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2021, Andreas Wacknitz
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 <transform file path=usr/lib/cups/.+ ->default mode 0555>
@@ -40,8 +31,8 @@ set name=com.oracle.info.description value="the Common Unix Print System (CUPS)"
 set name=info.classification value="org.opensolaris.category.2008:System/Printing"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2008/130
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 
 license cups-license license="CUPS, GPLv2, LGPLv2.1, Aladdin, Unicode"
 
@@ -59,12 +50,10 @@ dir group=lp path=etc/cups/ppd
 dir group=lp path=etc/cups/profiles
 dir group=lp path=etc/cups/ssl mode=0700
 
-
 #
 dir group=lp path=var/cache/cups mode=0775
 dir group=lp path=var/cache/cups/rss mode=0775
 dir group=lp path=var/log/cups
-
 
 #
 dir group=lp path=var/spool/cups mode=0710
@@ -91,6 +80,7 @@ file Solaris/ManageCUPS.html mode=0444 \
 
 file usr/bin/cancel path=usr/lib/cups/bin/cancel mode=0555
 file usr/bin/lp path=usr/lib/cups/bin/lp mode=0555
+file usr/bin/lpoptions path=usr/lib/cups/bin/lpoptions mode=0555
 file usr/bin/lpr path=usr/lib/cups/bin/lpr mode=0555
 file usr/bin/lpstat path=usr/lib/cups/bin/lpstat mode=0555
 file usr/bin/lpq path=usr/lib/cups/bin/lpq mode=0555
@@ -140,19 +130,49 @@ file usr/share/man/man1/lpstat.1 path=usr/share/man/man1/cupslpstat.1
 file usr/share/man/man1/cancel.1 path=usr/share/man/man1/cupscancel.1
 
 # file-objects from sample-manifest
+#file path=etc/cups/cups-files.conf
+#file path=etc/cups/cups-files.conf.N
 file path=etc/cups/cups-files.conf.default
+#file path=etc/cups/cupsd.conf
+#file path=etc/cups/cupsd.conf.N
 file path=etc/cups/cupsd.conf.default
 file path=etc/cups/snmp.conf
+#file path=etc/cups/snmp.conf.N
 file path=etc/cups/snmp.conf.default
 file path=etc/dbus-1/system.d/cups.conf
 file path=etc/pam.d/cups
-file path=usr/sbin/cupsctl
-file path=usr/sbin/cupsd
+#file path=etc/pam.d/cups.N
+#file path=lib/svc/manifest/application/cups.xml
+# We don't provide 32-bit apps but just libraries:
+#file path=usr/bin/$(MACH32)/cancel
+#file path=usr/bin/$(MACH32)/cups-config
+#file path=usr/bin/$(MACH32)/cupstestppd
+#file path=usr/bin/$(MACH32)/ippeveprinter
+#file path=usr/bin/$(MACH32)/ippfind
+#file path=usr/bin/$(MACH32)/ipptool
+#file path=usr/bin/$(MACH32)/lp
+#file path=usr/bin/$(MACH32)/lpoptions
+#file path=usr/bin/$(MACH32)/lpq
+#file path=usr/bin/$(MACH32)/lpr
+#file path=usr/bin/$(MACH32)/lprm
+#file path=usr/bin/$(MACH32)/lpstat
+#file path=usr/bin/$(MACH32)/ppdc
+#file path=usr/bin/$(MACH32)/ppdhtml
+#file path=usr/bin/$(MACH32)/ppdi
+#file path=usr/bin/$(MACH32)/ppdmerge
+#file path=usr/bin/$(MACH32)/ppdpo
+#file path=usr/bin/cancel
 file path=usr/bin/cups-config
 file path=usr/bin/cupstestppd
 file path=usr/bin/ippeveprinter
 file path=usr/bin/ippfind
 file path=usr/bin/ipptool
+#file path=usr/bin/lp
+#file path=usr/bin/lpoptions
+#file path=usr/bin/lpq
+#file path=usr/bin/lpr
+#file path=usr/bin/lprm
+#file path=usr/bin/lpstat
 file path=usr/bin/ppdc
 file path=usr/bin/ppdhtml
 file path=usr/bin/ppdi
@@ -173,13 +193,16 @@ file path=usr/include/cups/raster.h
 file path=usr/include/cups/sidechannel.h
 file path=usr/include/cups/transcode.h
 file path=usr/include/cups/versioning.h
+# Libraries are in a separate manifest:
+#link path=usr/lib/$(MACH64)/libcups.so target=libcups.so.2
+#file path=usr/lib/$(MACH64)/libcups.so.2
+#link path=usr/lib/$(MACH64)/libcupsimage.so target=libcupsimage.so.2
+#file path=usr/lib/$(MACH64)/libcupsimage.so.2
 file path=usr/lib/cups/backend/dnssd
-link \
-    path=usr/lib/cups/backend/http \
-    target=ipp
+link path=usr/lib/cups/backend/http target=ipp
 link path=usr/lib/cups/backend/https target=ipp
-link path=usr/lib/cups/backend/ipps target=ipp
 file path=usr/lib/cups/backend/ipp
+link path=usr/lib/cups/backend/ipps target=ipp
 file path=usr/lib/cups/backend/lpd
 file path=usr/lib/cups/backend/snmp
 file path=usr/lib/cups/backend/socket
@@ -207,9 +230,35 @@ file path=usr/lib/cups/monitor/tbcp
 file path=usr/lib/cups/notifier/dbus
 file path=usr/lib/cups/notifier/mailto
 file path=usr/lib/cups/notifier/rss
+# Libraries are in a separate manifest:
+#link path=usr/lib/libcups.so target=libcups.so.2
+#file path=usr/lib/libcups.so.2
+#link path=usr/lib/libcupsimage.so target=libcupsimage.so.2
+#file path=usr/lib/libcupsimage.so.2
 
-
-
+# We don't provide 32-bit binaries but only libraries:
+#file path=usr/sbin/$(MACH32)/cupsaccept
+#file path=usr/sbin/$(MACH32)/cupsctl
+#file path=usr/sbin/$(MACH32)/cupsd
+#link path=usr/sbin/$(MACH32)/cupsdisable target=cupsaccept
+#link path=usr/sbin/$(MACH32)/cupsenable target=cupsaccept
+#file path=usr/sbin/$(MACH32)/cupsfilter
+#link path=usr/sbin/$(MACH32)/cupsreject target=cupsaccept
+#file path=usr/sbin/$(MACH32)/lpadmin
+#file path=usr/sbin/$(MACH32)/lpc
+#file path=usr/sbin/$(MACH32)/lpinfo
+#file path=usr/sbin/$(MACH32)/lpmove
+file path=usr/sbin/cupsaccept
+file path=usr/sbin/cupsctl
+file path=usr/sbin/cupsd
+link path=usr/sbin/cupsdisable target=cupsaccept
+link path=usr/sbin/cupsenable target=cupsaccept
+file path=usr/sbin/cupsfilter
+link path=usr/sbin/cupsreject target=cupsaccept
+file path=usr/sbin/lpadmin
+file path=usr/sbin/lpc
+#file path=usr/sbin/lpinfo
+file path=usr/sbin/lpmove
 file path=usr/share/applications/cups.desktop
 file path=usr/share/cups/drv/sample.drv
 file path=usr/share/cups/examples/color.drv
@@ -290,7 +339,9 @@ file path=usr/share/cups/ipptool/testfile.ps
 file path=usr/share/cups/ipptool/testfile.txt
 file path=usr/share/cups/ipptool/validate-job.test
 file path=usr/share/cups/mime/mime.convs
+#file path=usr/share/cups/mime/mime.convs.O
 file path=usr/share/cups/mime/mime.types
+#file path=usr/share/cups/mime/mime.types.O
 file path=usr/share/cups/ppdc/epson.h
 file path=usr/share/cups/ppdc/font.defs
 file path=usr/share/cups/ppdc/hp.h
@@ -868,12 +919,19 @@ file path=usr/share/locale/ja/cups_ja.po
 file path=usr/share/locale/pt_BR/cups_pt_BR.po
 file path=usr/share/locale/ru/cups_ru.po
 file path=usr/share/locale/zh_CN/cups_zh_CN.po
+#file path=usr/share/man/man1/cancel.1
 file path=usr/share/man/man1/cups-config.1
 file path=usr/share/man/man1/cups.1
 file path=usr/share/man/man1/cupstestppd.1
 file path=usr/share/man/man1/ippeveprinter.1
 file path=usr/share/man/man1/ippfind.1
 file path=usr/share/man/man1/ipptool.1
+#file path=usr/share/man/man1/lp.1
+#file path=usr/share/man/man1/lpoptions.1
+#file path=usr/share/man/man1/lpq.1
+#file path=usr/share/man/man1/lpr.1
+#file path=usr/share/man/man1/lprm.1
+#file path=usr/share/man/man1/lpstat.1
 file path=usr/share/man/man1/ppdc.1
 file path=usr/share/man/man1/ppdhtml.1
 file path=usr/share/man/man1/ppdi.1
@@ -895,33 +953,21 @@ file path=usr/share/man/man5/subscriptions.conf.5
 file path=usr/share/man/man7/backend.7
 file path=usr/share/man/man7/filter.7
 file path=usr/share/man/man7/ippevepcl.7
-link \
-    path=usr/share/man/man7/ippeveps.7 \
-    target=ippevepcl.7
+link path=usr/share/man/man7/ippeveps.7 target=ippevepcl.7
 file path=usr/share/man/man7/notifier.7
-link \
-    path=usr/share/man/man8/cups-deviced.8 \
-    target=cupsd-helper.8
-link \
-    path=usr/share/man/man8/cups-driverd.8 \
-    target=cupsd-helper.8
-link \
-    path=usr/share/man/man8/cups-exec.8 \
-    target=cupsd-helper.8
+link path=usr/share/man/man8/cups-deviced.8 target=cupsd-helper.8
+link path=usr/share/man/man8/cups-driverd.8 target=cupsd-helper.8
+link path=usr/share/man/man8/cups-exec.8 target=cupsd-helper.8
 file path=usr/share/man/man8/cups-lpd.8
 file path=usr/share/man/man8/cups-snmp.8
 file path=usr/share/man/man8/cupsaccept.8
 file path=usr/share/man/man8/cupsctl.8
 file path=usr/share/man/man8/cupsd-helper.8
 file path=usr/share/man/man8/cupsd.8
-link \
-    path=usr/share/man/man8/cupsdisable.8 \
-    target=cupsenable.8
+link path=usr/share/man/man8/cupsdisable.8 target=cupsenable.8
 file path=usr/share/man/man8/cupsenable.8
 file path=usr/share/man/man8/cupsfilter.8
-link \
-    path=usr/share/man/man8/cupsreject.8 \
-    target=cupsaccept.8
+link path=usr/share/man/man8/cupsreject.8 target=cupsaccept.8
 file path=usr/share/man/man8/lpadmin.8
 file path=usr/share/man/man8/lpc.8
 file path=usr/share/man/man8/lpinfo.8
