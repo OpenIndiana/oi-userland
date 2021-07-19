@@ -29,7 +29,7 @@ PATCH_EACH_ARCHIVE= 1
 
 COMPONENT_NAME=			golang
 COMPONENT_MAJOR_VERSION=	1.15
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).13
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).14
 COMPONENT_FMRI=			developer/golang
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_SUMMARY=		The Go Programming Language
@@ -37,7 +37,7 @@ COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://golang.org/
 COMPONENT_ARCHIVE=		go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=		https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:99069e7223479cce4553f84f874b9345f6f4045f27cf5089489b546da619a244
+COMPONENT_ARCHIVE_HASH=		sha256:60a4a5c48d63d0a13eca8849009b624629ff429c8bc5d1a6a8c3c4da9f34e70a
 COMPONENT_LICENSE=		BSD-style, Patent Grant
 COMPONENT_LICENSE_FILE=		$(COMPONENT_NAME).license
 MEDIATEDUSRSHAREMAN1DIR=	$(PROTO_DIR)/usr/share/golang/$(COMPONENT_MAJOR_VERSION)/man/man1
@@ -95,6 +95,16 @@ COMPONENT_TEST_ENV +=	GOROOT="$(@D)"
 COMPONENT_TEST_DIR=	$(@D)/src
 COMPONENT_TEST_CMD=	./run.bash
 COMPONENT_TEST_TARGETS=
+# Remove measured times (eg. 11.106s, 0.312s or 1,16s):
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9][0-9].[0-9][0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
+# Remove occurrences of "(cached)":
+COMPONENT_TEST_TRANSFORMS += '-e "s/(cached)//" '
+# Replace port numbers with nnnnn on localhost:
+COMPONENT_TEST_TRANSFORMS += '-e "s/127.0.0.1\:[0-9]*/127.0.0.1\:nnnnn/" '
+# Remove trailing random numbers on TestReadOnlyWriteFile:
+COMPONENT_TEST_TRANSFORMS += '-e "s/TestReadOnlyWriteFile[0-9]*/TestReadOnlyWriteFile/" '
 
 # Use this Command to copy the Go Source tree into the proto area. In order to deliver the Go SDK under GOROOT
 # Additionally nuke all the funky binary files used for test suites. They keep bothering the packaging tools
