@@ -17,12 +17,11 @@ X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           fonttosfnt
-COMPONENT_VERSION=        1.2.1
-COMPONENT_SUMMARY=        fonttosfnt - Wrap a bitmap font in a sfnt (TrueType) wrapper
-COMPONENT_FMRI=           x11/fonttosfnt
-COMPONENT_ARCHIVE_HASH= \
-	sha256:07c835f1f98d7b462be8f1493d072b62418282421be18197e50579c70b0c259b
+COMPONENT_NAME=		fonttosfnt
+COMPONENT_VERSION=	1.2.2
+COMPONENT_SUMMARY=	fonttosfnt - Wrap a bitmap font in a sfnt (TrueType) wrapper
+COMPONENT_FMRI=		x11/fonttosfnt
+COMPONENT_ARCHIVE_HASH=	sha256:1a1bb4ef25856dea7de3d491ae7231493225b400bee0f6a1f949017ffd203a64
 
 include $(WS_MAKE_RULES)/common.mk
 
