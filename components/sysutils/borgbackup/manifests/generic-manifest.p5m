@@ -3,70 +3,49 @@
 # Common Development and Distribution License ("CDDL"), version 1.0.
 # You may only use this file in accordance with the terms of version
 # 1.0 of the CDDL.
-#
 # A full copy of the text of the CDDL should have accompanied this
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
-#
 
-#
-# Copyright 2017 Alexander Pyhalov
-# Copyright 2019 Michal Nowak
-# Copyright 2021 Nona Hansel
-#
-
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Deduplicating backup program with compression and authenticated encryption"
-set name=info.classification value="org.opensolaris.category.2008:Applications/System Utilities"
+# Copyright 2021 <contributor>
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-<transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
-
-# force dependency on Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-	pkg.debug.depend.path=usr/bin
-
-# force dependency on the borg package
-depend type=require \
-	fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
 file path=usr/bin/borg-$(PYVER)
-# Not mediated because we ship the default only
-link path=usr/bin/borg target=borg-$(PYVER)
-#file path=usr/bin/borgfs
+file path=usr/bin/borgfs
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/__main__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/_version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/checksums.so
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/checksums.cpython-39.so
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/_packer.cpp
-file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/_packer.so
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/_packer.cpython-39.so
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/_unpacker.cpp
-file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/_unpacker.so
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/_unpacker.cpython-39.so
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/_version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/algorithms/msgpack/fallback.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/archive.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/archiver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/cache.py
-file path=usr/lib/python$(PYVER)/vendor-packages/borg/chunker.so
-file path=usr/lib/python$(PYVER)/vendor-packages/borg/compress.so
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/chunker.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/compress.cpython-39.so
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/constants.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/crypto/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/crypto/file_integrity.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/crypto/key.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/crypto/keymanager.py
-file path=usr/lib/python$(PYVER)/vendor-packages/borg/crypto/low_level.so
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/crypto/low_level.cpython-39.so
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/crypto/nonces.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/fuse.py
-file path=usr/lib/python$(PYVER)/vendor-packages/borg/hashindex.so
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/hashindex.cpython-39.so
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/helpers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/borg/item.so
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/item.cpython-39.so
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/locking.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/logger.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/lrucache.py
@@ -75,7 +54,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/borg/paperkey.html
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/patterns.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/platform/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/platform/base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/borg/platform/posix.so
+file path=usr/lib/python$(PYVER)/vendor-packages/borg/platform/posix.cpython-39.so
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/remote.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/repository.py
 file path=usr/lib/python$(PYVER)/vendor-packages/borg/selftest.py
