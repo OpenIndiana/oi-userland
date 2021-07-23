@@ -18,7 +18,7 @@ BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= redis
-COMPONENT_VERSION= 6.2.4
+COMPONENT_VERSION= 6.2.5
 COMPONENT_SUMMARY= Redis in-memory data structure store
 COMPONENT_PROJECT_URL= https://redis.io/
 COMPONENT_FMRI= database/redis
@@ -26,7 +26,7 @@ COMPONENT_CLASSIFICATION= System/Databases
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  https://download.redis.io/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:ba32c406a10fc2c09426e2be2787d74ff204eb3a2e496d87cff76a476b6ae16e
+COMPONENT_ARCHIVE_HASH= sha256:4b9a75709a1b74b3785e20a6c158cab94cf52298aa381eea947a678a60d551ae
 COMPONENT_LICENSE= BSD
 COMPONENT_LICENSE_FILE= COPYING
 
@@ -41,6 +41,11 @@ COMPONENT_INSTALL_ENV += PREFIX=/usr
 
 # Tests are not reliable - replica tests often fail with
 # rdb child didn't terminate
+# Remove measured times (eg. 11 seconds:
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9]* seconds//" '
+# Remove trailing random numbers on server.
+COMPONENT_TEST_TRANSFORMS += '-e "s/server\.[0-9]*.[0-9]*/server\./" '
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
