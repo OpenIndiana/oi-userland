@@ -11,14 +11,16 @@
 #
 # Copyright 2013, Jon Tibble.
 # Copyright 2020, Nona Hansel.
+# Copyright 2021, Till Wegmueller.
 #
 
-BUILD_BITS=64_and_32
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         jq
 COMPONENT_VERSION=      1.6
+COMPONENT_REVISION= 	1
 COMPONENT_SUMMARY=      jq - lightweight and flexible command-line JSON processor
 COMPONENT_PROJECT_URL=	https://stedolan.github.io/jq/
 COMPONENT_FMRI=         text/jq
@@ -34,13 +36,13 @@ COMPONENT_LICENSE=      MIT
 include $(WS_MAKE_RULES)/common.mk
 
 # Tests are broken out of source
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D); cd $(@D))
+#COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D); cd $(@D); autoreconf -fi)
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS) $(CPP_XPG6MODE)"
 
-CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-valgrind
-CONFIGURE_OPTIONS += --without-oniguruma
+CONFIGURE_OPTIONS += --with-oniguruma=/usr
 
 COMPONENT_TEST_CMD = ./tests/jqtest
 COMPONENT_TEST_TARGETS = 
@@ -53,3 +55,5 @@ COMPONENT_TEST_TRANSFORMS += \
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += text/oniguruma
+
