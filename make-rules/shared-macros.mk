@@ -26,8 +26,8 @@
 # whenever PATH is to be defined there:
 #     PATH = $(PATH.illumos)
 #     PATH = $(PATH.gnu)
-PATH.illumos=$(USRBINDIR$(BITS)):$(USRBINDIR):$(GNUBIN):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(PERL5BINDIR)
-PATH.gnu=$(GNUBIN):$(USRBINDIR$(BITS)):$(USRBINDIR):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(PERL5BINDIR)
+PATH.illumos=$(PATH.prepend):$(USRBINDIR$(BITS)):$(USRBINDIR):$(GNUBIN):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(PERL5BINDIR)
+PATH.gnu=$(PATH.prepend):$(GNUBIN):$(USRBINDIR$(BITS)):$(USRBINDIR):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(PERL5BINDIR)
 
 # Default PATH
 PATH = $(PATH.illumos)
@@ -107,7 +107,7 @@ ROOT =			/
 # to determine the distribution version
 # (it should look like OpenIndiana Hipster YYYY.MM).
 DISTRIBUTION_NAME = OpenIndiana Hipster
-DISTRIBUTION_VERSION = 2020.04
+DISTRIBUTION_VERSION = 2021.04
 # Native OS version
 OS_VERSION :=		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
@@ -166,14 +166,34 @@ PYTHON2_VERSIONS = 2.7
 PYTHON2_VERSION = 2.7
 PYTHON2_RUNTIME_PKG = runtime/python-$(subst .,,$(PYTHON2_VERSION))
 
-PYTHON3_VERSIONS = 3.5 3.7
+PYTHON3_VERSIONS = 3.5 3.7 3.9
 PYTHON3_VERSION	= 3.5
 PYTHON3_RUNTIME_PKG = runtime/python-$(subst .,,$(PYTHON3_VERSION))
 
 PYTHON_DEFAULT_VERSIONS = $(PYTHON2_VERSION) $(PYTHON3_VERSION)
 PYTHON_ALL_VERSIONS = $(PYTHON2_VERSIONS) $(PYTHON3_VERSIONS)
 
-PYTHON_64_ONLY_VERSIONS = 3.5 3.7
+PYTHON_64_ONLY_VERSIONS = 3.5 3.7 3.9
+
+PYTHON_VERSIONS_ALL= $(PYTHON2_VERSIONS) $(PYTHON3_VERSIONS)
+
+PYTHON2_ONLY?=no
+PYTHON3_ONLY?=no
+PYTHON_ALL?=no
+
+ifneq ($(strip $(PYTHON2_ONLY)),no)
+PYTHON_VERSION	=	$(PYTHON2_VERSION)
+PYTHON_VERSIONS	=	$(PYTHON2_VERSIONS)
+else
+ifneq ($(strip $(PYTHON3_ONLY)),no)
+PYTHON_VERSION	=	$(PYTHON3_VERSION)
+PYTHON_VERSIONS	=	$(PYTHON3_VERSIONS)
+else
+ifneq ($(strip $(PYTHON_ALL)),no)
+PYTHON_VERSIONS	=	$(PYTHON_VERSIONS_ALL)
+endif
+endif
+endif
 
 # PYTHON3_SOABI variable defines the naming scheme
 # of python3 extension libraries: cpython or abi3.
@@ -181,10 +201,10 @@ PYTHON_64_ONLY_VERSIONS = 3.5 3.7
 # only python/xattr and python/cryptography require abi3 naming.
 PYTHON3_SOABI ?= cpython
 ifeq ($(PYTHON3_SOABI),cpython)
-PY3_CYTHON_NAMING=
+PY3_CPYTHON_NAMING=
 PY3_ABI3_NAMING=\#
 else ifeq ($(PYTHON3_SOABI),abi3)
-PY3_CYTHON_NAMING=\#
+PY3_CPYTHON_NAMING=\#
 PY3_ABI3_NAMING=
 else
 $(error "Invalid python naming scheme '$(PYTHON3_SOABI)' selected!")
@@ -390,6 +410,9 @@ PROTOGNULIB.64 =	$(PROTOGNULIB64)
 CONSTANT_TIME =		LD_PRELOAD_32=$(WS_TOOLS)/time-$(MACH32).so
 CONSTANT_TIME +=	LD_PRELOAD_64=$(WS_TOOLS)/time-$(MACH64).so
 CONSTANT_TIME +=	TIME_CONSTANT=$(TIME_CONSTANT)
+
+# List known architectures
+MACH_LIST = sparc i386
 
 # set MACH from uname -p to either sparc or i386
 MACH :=		$(shell uname -p)
@@ -687,6 +710,10 @@ PYTHON.3.7.VENDOR_PACKAGES.64 = /usr/lib/python3.7/vendor-packages
 PYTHON.3.7.VENDOR_PACKAGES.32 = /usr/lib/python3.7/vendor-packages
 PYTHON.3.7.VENDOR_PACKAGES = $(PYTHON.3.7.VENDOR_PACKAGES.$(BITS))
 
+PYTHON.3.9.VENDOR_PACKAGES.64 = /usr/lib/python3.9/vendor-packages
+PYTHON.3.9.VENDOR_PACKAGES.32 = /usr/lib/python3.9/vendor-packages
+PYTHON.3.9.VENDOR_PACKAGES = $(PYTHON.3.9.VENDOR_PACKAGES.$(BITS))
+
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CC.studio.32 =	$(WS_TOOLS)/parfait/cc
 CXX.studio.32 =	$(WS_TOOLS)/parfait/CC
@@ -738,6 +765,9 @@ PYTHON.3.5.64 =	/usr/bin/python3.5
 PYTHON.3.7.32 =	/usr/bin/python3.7
 PYTHON.3.7.64 =	/usr/bin/python3.7
 
+PYTHON.3.9.32 =	/usr/bin/python3.9
+PYTHON.3.9.64 =	/usr/bin/python3.9
+
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
 PYTHON =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
@@ -785,7 +815,7 @@ PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 
 # Config magic for Postgres/EnterpriseDB/...
 # Default DB version is the oldest one, for hopefully best built complatibility
-PG_VERSION ?=   9.5
+PG_VERSION ?=   9.6
 PG_IMPLEM ?=    postgres
 PG_VERNUM =     $(subst .,,$(PG_VERSION))
 # For dependencies, including REQUIRED_PACKAGES if needed
@@ -797,8 +827,8 @@ REQUIRED_PACKAGES_SUBST+= PG_DEVELOPER_PKG
 REQUIRED_PACKAGES_SUBST+= PG_LIBRARY_PKG
 
 PG_HOME =       $(USRDIR)/$(PG_IMPLEM)/$(PG_VERSION)
-PG_BINDIR.32 =  $(PG_HOME)/bin
-PG_BINDIR.64 =  $(PG_HOME)/bin/$(MACH64)
+PG_BINDIR.32 =  $(PG_HOME)/bin/$(MACH32)
+PG_BINDIR.64 =  $(PG_HOME)/bin
 PG_BINDIR =     $(PG_BINDIR.$(BITS))
 PG_INCDIR =     $(PG_HOME)/include
 PG_MANDIR =     $(PG_HOME)/man
@@ -921,9 +951,29 @@ IPS2TGZ = 	$(WS_TOOLS)/ips2tgz
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
 
+# OpenSSL macros
+OPENSSL_DEFAULT= 1.0
+ifeq ($(strip $(USE_OPENSSL11)),yes)
+OPENSSL_VERSION= 1.1
+PATH.prepend+=$(OPENSSL_BINDIR)
+else
+ifeq ($(strip $(USE_OPENSSL10)),yes)
+OPENSSL_VERSION= 1.0
+PATH.prepend+=$(OPENSSL_BINDIR)
+else
+OPENSSL_VERSION= $(OPENSSL_DEFAULT)
+endif
+endif
+OPENSSL_PREFIX= $(USRDIR)/openssl/$(OPENSSL_VERSION)
+OPENSSL_BINDIR.64=$(OPENSSL_PREFIX)/bin
+OPENSSL_BINDIR.32=$(OPENSSL_PREFIX)/bin/$(MACH32)
+OPENSSL_BINDIR=$(OPENSSL_BINDIR.$(BITS))
+OPENSSL_PKG_CONFIG_PATH= $(OPENSSL_PREFIX)/lib/$(BITS)/pkgconfig
+
+# Pkg-config paths
 PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
-PKG_CONFIG_PATH = $(PKG_CONFIG_PATH.$(BITS))
+PKG_CONFIG_PATH = $(OPENSSL_PKG_CONFIG_PATH):$(PKG_CONFIG_PATH.$(BITS))
 
 # Set default path for environment modules
 MODULE_VERSION =	3.2.10
@@ -1092,8 +1142,8 @@ CFLAGS.studio +=	$(studio_OPT) $(studio_XBITS) $(studio_XREGS) \
 #
 
 # Control the GCC optimization level.
-gcc_OPT.sparc.32 =	-O3
-gcc_OPT.sparc.64 =	-O3
+gcc_OPT.sparc.32 =	-O3 -mcpu=ultrasparc
+gcc_OPT.sparc.64 =	-O3 -mcpu=ultrasparc
 gcc_OPT.i386.32 =	-O3
 gcc_OPT.i386.64 =	-O3
 gcc_OPT =		$(gcc_OPT.$(MACH).$(BITS))
@@ -1224,6 +1274,11 @@ ASLR_MODE = 		$(ASLR_DISABLE)
 # in that component's Makefile
 LD_Z_ASLR =		$(ASLR_MODE)
 
+# Define SSP library link flag for 32-bit objects
+LD_SSP.32 = -lssp_ns
+LD_SSP.64 =
+LD_SSP = $(LD_SSP.$(BITS))
+
 #
 # More Solaris linker flags that we want to be sure that everyone gets.  This
 # is automatically added to the calling environment during the 'build' and
@@ -1286,16 +1341,16 @@ COMPONENT_BUILD_ENV += CCACHE="$(CCACHE)"
 COMPONENT_INSTALL_ENV += CCACHE="$(CCACHE)"
 COMPONENT_TEST_ENV += CCACHE="$(CCACHE)"
 COMPONENT_BUILD_ENV += CC_gcc_32="$(CC_gcc_32)"
-COMPONENT_BUILD_ENV += CC_gcc_64="$(CC_gcc_32)"
-COMPONENT_BUILD_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+COMPONENT_BUILD_ENV += CC_gcc_64="$(CC_gcc_64)"
+COMPONENT_BUILD_ENV += CXX_gcc_32="$(CXX_gcc_32)"
 COMPONENT_BUILD_ENV += CXX_gcc_64="$(CXX_gcc_64)"
 COMPONENT_INSTALL_ENV += CC_gcc_32="$(CC_gcc_32)"
-COMPONENT_INSTALL_ENV += CC_gcc_64="$(CC_gcc_32)"
-COMPONENT_INSTALL_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+COMPONENT_INSTALL_ENV += CC_gcc_64="$(CC_gcc_64)"
+COMPONENT_INSTALL_ENV += CXX_gcc_32="$(CXX_gcc_32)"
 COMPONENT_INSTALL_ENV += CXX_gcc_64="$(CXX_gcc_64)"
 COMPONENT_TEST_ENV += CC_gcc_32="$(CC_gcc_32)"
-COMPONENT_TEST_ENV += CC_gcc_64="$(CC_gcc_32)"
-COMPONENT_TEST_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+COMPONENT_TEST_ENV += CC_gcc_64="$(CC_gcc_64)"
+COMPONENT_TEST_ENV += CXX_gcc_32="$(CXX_gcc_32)"
 COMPONENT_TEST_ENV += CXX_gcc_64="$(CXX_gcc_64)"
 COMPONENT_BUILD_ENV.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
 COMPONENT_INSTALL_ENV.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
@@ -1340,6 +1395,9 @@ component-hook:
 # Add default dependency to SUNWcs
 REQUIRED_PACKAGES += SUNWcs
 
+# Add default dependency to shell/ksh93 which has been separated from SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
+
 #
 # Packages with tools that are required to build Userland components
 #
@@ -1362,24 +1420,4 @@ REQUIRED_PACKAGES_SUBST+= GOBJC_RUNTIME_PKG
 
 include $(WS_MAKE_RULES)/environment.mk
 include $(WS_MAKE_RULES)/depend.mk
-
-# A simple rule to print the value of any macro.  Ex:
-#    $ gmake print-REQUIRED_PACKAGES
-# Note that some macros are set on a per target basis, so what you see
-# is not always what you get.
-print-%:
-	@echo '$(subst ','\'',$*=$($*)) (origin: $(origin $*), flavor: $(flavor $*))'
-
-# A simple rule to print only the value of any macro.
-print-value-%:
-	@echo '$(subst ','\'',$($*))'
-
-# Provide default print package targets for components that do not rely on IPS.
-# Define them implicitly so that the definitions do not collide with ips.mk
-define print-package-rule
-echo $(strip $(PACKAGE_$(1))) | tr ' ' '\n'
-endef
-
-print-package-%:
-	@$(call print-package-rule,$(shell tr '[a-z]' '[A-Z]' <<< $*))
-
+include $(WS_MAKE_RULES)/component.mk 
