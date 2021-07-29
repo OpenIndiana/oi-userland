@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccache
 COMPONENT_VERSION=	3.3.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://ccache.samba.org/
 COMPONENT_DOWNLOAD_URL=	http://samba.org/ftp/$(COMPONENT_NAME)/
 COMPONENT_DOCUMENTATION_URL =	http://ccache.samba.org/manual.html
@@ -52,3 +52,4 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += file/gnu-coreutils
