@@ -28,9 +28,10 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		cog-spur
-COMPONENT_VERSION=	5.0.2985
-GIT_TAG=		sun-v5.0.31
-PLUGIN_REV=		5.0-202107231657-cog
+#COMPONENT_VERSION=	5.0.2967
+COMPONENT_VERSION=	5.0.3003
+GIT_TAG=		sun-v5.0.30
+PLUGIN_REV=		5.0-202106151423-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/cog-spur
@@ -44,7 +45,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:27b898ae03a36ee10ff3e00b4627213f78f563c43dca07d2397e5c9ea64f3be8
+COMPONENT_ARCHIVE_HASH=	sha256:f692245c66294bd8380dcd9664da865c19b4b3a55c420b20d2068551be049a3b
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
@@ -106,7 +107,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 rebuild-manifests::
 	cp manifests/cog-spur.p5m cog-spur.p5m
 	cp manifests/cog-spur-ssl.p5m cog-spur-ssl.p5m
-	cp manifests/cog-spur-vep.p5m cog-spur-vep.p5m
 	cp manifests/cog-spur-display-X11.p5m cog-spur-display-X11.p5m
 	cp manifests/cog-spur-nodisplay.p5m cog-spur-nodisplay.p5m
 	cp manifests/sample-manifest.p5m sample-manifest.p5m
