@@ -134,7 +134,7 @@ PASS: t/aclocal-macrodir.tap 3 - '-I' option wins over AC_CONFIG_MACRO_DIR
 PASS: t/aclocal-macrodir.tap 4 - AC_CONFIG_MACRO_DIR([foo]) can create directory 'foo'
 PASS: t/aclocal-macrodir.tap 5 - AC_CONFIG_MACRO_DIR([non-existent]) warns with -Wunsupported
 PASS: t/aclocal-macrodir.tap 6 - AC_CONFIG_MACRO_DIR([not-exist]) and ACLOCAL_AMFLAGS = -I not-exist
-SKIP: t/aclocal-macrodir.tap 7 # SKIP autoconf is too old (AC_CONFIG_MACRO_DIRS not defined)
+PASS: t/aclocal-macrodir.tap 7 - AC_CONFIG_MACRO_DIR interaction with AC_REQUIRE
 PASS: t/aclocal-macrodirs.tap 1 - AC_CONFIG_MACRO_DIRS is honored
 PASS: t/aclocal-macrodirs.tap 2 - AC_CONFIG_MACRO_DIRS several arguments
 PASS: t/aclocal-macrodirs.tap 3 - AC_CONFIG_MACRO_DIRS several calls
@@ -149,7 +149,7 @@ PASS: t/aclocal-macrodirs.tap 11 - AC_CONFIG_MACRO_DIRS([non-existent]) warns (1
 PASS: t/aclocal-macrodirs.tap 12 - AC_CONFIG_MACRO_DIRS([non-existent]) warns (2)
 PASS: t/aclocal-macrodirs.tap 13 - AC_CONFIG_MACRO_DIRS([existent non-existent]) errors out
 PASS: t/aclocal-macrodirs.tap 14 - AC_CONFIG_MACRO_DIRS([not-exist]) and ACLOCAL_AMFLAGS = -I not-exist
-SKIP: t/aclocal-macrodirs.tap 15 # SKIP autoconf is too old (AC_CONFIG_MACRO_DIRS not defined)
+PASS: t/aclocal-macrodirs.tap 15 - AC_CONFIG_MACRO_DIRS interaction with AC_REQUIRE
 PASS: t/aclocal-missing-macros.sh
 PASS: t/aclocal-no-extra-scan.sh
 PASS: t/aclocal-no-force.sh
@@ -687,7 +687,7 @@ XFAIL: t/auxdir-computed.tap 2 - automake -a # TODO long-standing limitation
 XFAIL: t/auxdir-computed.tap 3 - automake # TODO long-standing limitation
 PASS: t/auxdir-misplaced.sh
 PASS: t/auxdir-nonexistent.sh
-SKIP: t/auxdir-pr19311.sh
+PASS: t/auxdir-pr19311.sh
 PASS: t/auxdir-unportable.tap 1 - automake exited 1
 PASS: t/auxdir-unportable.tap 2 - warn about non-existent unportable auxdir name
 PASS: t/auxdir-unportable.tap 3 - automake exited 1
@@ -734,7 +734,7 @@ PASS: t/check7.sh
 PASS: t/check8.sh
 PASS: t/check10.sh
 PASS: t/check11.sh
-PASS: t/check12.sh
+SKIP: t/check12.sh
 PASS: t/check-subst.sh
 PASS: t/check-subst-prog.sh
 PASS: t/check-exported-srcdir.sh
@@ -888,14 +888,14 @@ PASS: t/defun.sh
 PASS: t/defun2.sh
 PASS: t/dejagnu.sh
 PASS: t/dejagnu2.sh
-PASS: t/dejagnu3.sh
-PASS: t/dejagnu4.sh
-PASS: t/dejagnu5.sh
-PASS: t/dejagnu6.sh
-PASS: t/dejagnu7.sh
-PASS: t/dejagnu-absolute-builddir.sh
-PASS: t/dejagnu-relative-srcdir.sh
-PASS: t/dejagnu-siteexp-extend.sh
+SKIP: t/dejagnu3.sh
+SKIP: t/dejagnu4.sh
+SKIP: t/dejagnu5.sh
+SKIP: t/dejagnu6.sh
+SKIP: t/dejagnu7.sh
+SKIP: t/dejagnu-absolute-builddir.sh
+SKIP: t/dejagnu-relative-srcdir.sh
+SKIP: t/dejagnu-siteexp-extend.sh
 PASS: t/dejagnu-siteexp-append.sh
 PASS: t/dejagnu-siteexp-useredit.sh
 PASS: t/deleted-am.sh
@@ -1005,6 +1005,7 @@ PASS: t/dist-missing-m4.sh
 SKIP: t/dist-readonly.sh
 PASS: t/dist-repeated.sh
 XFAIL: t/dist-pr109765.sh
+PASS: t/dist-no-built-sources.sh
 PASS: t/dist-vs-built-sources.sh
 PASS: t/distcleancheck.sh
 PASS: t/distcom2.sh
@@ -1581,6 +1582,7 @@ PASS: t/test-trs-recover.sh
 SKIP: t/test-trs-recover2.sh
 PASS: t/test-extensions.sh
 PASS: t/test-extensions-cond.sh
+PASS: t/toplevelmd.sh
 PASS: t/parse.sh
 PASS: t/percent.sh
 PASS: t/percent2.sh
@@ -1938,6 +1940,7 @@ PASS: t/python-am-path-iftrue.sh
 PASS: t/python-missing.sh
 PASS: t/python-too-old.sh
 PASS: t/python-dist.sh
+PASS: t/python-prefix.sh
 PASS: t/python-vars.sh
 SKIP: t/python-virtualenv.sh
 PASS: t/python-pr10995.sh
@@ -2414,7 +2417,7 @@ PASS: t/tar-ustar-id-too-high.sh
 PASS: t/tar-override.sh
 PASS: t/target-cflags.sh
 PASS: t/targetclash.sh
-PASS: t/tests-environment-fd-redirect.sh
+SKIP: t/tests-environment-fd-redirect.sh
 PASS: t/tests-environment-and-log-compiler.sh
 PASS: t/txinfo-absolute-srcdir-pr408.sh
 PASS: t/txinfo-add-missing-and-dist.sh
@@ -2548,7 +2551,7 @@ PASS: t/check-subst-w.sh
 PASS: t/check-tests-in-builddir-w.sh
 PASS: t/check-w.sh
 PASS: t/check11-w.sh
-PASS: t/check12-w.sh
+SKIP: t/check12-w.sh
 PASS: t/check2-w.sh
 PASS: t/check4-w.sh
 PASS: t/check5-w.sh
@@ -2975,9 +2978,9 @@ PASS: contrib/t/parallel-tests-html.sh
 PASS: contrib/t/parallel-tests-html-recursive.sh
 PASS: contrib/t/help-multilib.sh
 PASS: contrib/t/multilib.sh
-# TOTAL: 2977
-# PASS:  2856
-# SKIP:  80
+# TOTAL: 2980
+# PASS:  2851
+# SKIP:  88
 # XFAIL: 39
 # FAIL:  2
 # XPASS: 0
