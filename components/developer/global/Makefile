@@ -15,7 +15,7 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         global
-COMPONENT_VERSION=	6.6.5
+COMPONENT_VERSION=	6.6.7
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/global
 COMPONENT_SUMMARY=	A source code tagging system.
 COMPONENT_DESCRIPTION=	GNU GLOBAL is a source code tagging system that works the same way across diverse environments, such as Emacs editor, Vi editor, Less viewer, Bash shell, various web browsers, etc.
@@ -23,7 +23,7 @@ COMPONENT_FMRI=         developer/global
 COMPONENT_CLASSIFICATION=Development/Editors
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9c3730bd9e975d94231f3402d5526b79c0b23cc665d624c9829c948dfad37b83
+COMPONENT_ARCHIVE_HASH= sha256:69a0f77f53827c5568176c1d382166df361e74263a047f0b3058aa2f2ad58a3c
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/global/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE= COPYING
@@ -34,7 +34,7 @@ COMPONENT_BUILD_ENV=	DEST_DIR=$(PROTO_DIR)
 COMPONENT_INSTALL_ENV=	DEST_DIR=$(PROTO_DIR)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
