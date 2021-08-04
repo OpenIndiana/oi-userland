@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=	    libXft
-COMPONENT_VERSION=  2.3.3
-COMPONENT_REVISION= 1
+COMPONENT_VERSION=  2.3.4
 COMPONENT_FMRI=	    x11/library/libxft
 COMPONENT_SUMMARY=  libXft - X FreeType library
 COMPONENT_ARCHIVE_HASH= \
-	sha256:225c68e616dd29dbb27809e45e9eadf18e4d74c50be43020ef20015274529216
+	sha256:57dedaab20914002146bdae0cb0c769ba3f75214c4c91bd2613d6ef79fc9abdd
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
