@@ -1,0 +1,76 @@
+From 01fed75bce97d35b597fa51c3e5bbe1b0e1cd1bb Mon Sep 17 00:00:00 2001
+From: Aurelien Larcher <aurelien.larcher@gmail.com>
+Date: Tue, 12 Nov 2019 15:01:57 +0000
+Subject: [PATCH 25/34] Fix libsanitizer build for illumos
+
+---
+ .../sanitizer_platform_limits_solaris.h               | 11 +++++++++++
+ .../sanitizer_common/sanitizer_posix_libcdep.cpp      | 10 +++++-----
+ 2 files changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/libsanitizer/sanitizer_common/sanitizer_platform_limits_solaris.h b/libsanitizer/sanitizer_common/sanitizer_platform_limits_solaris.h
+index 77ae6e6a44d..25f11e00ef8 100644
+--- a/libsanitizer/sanitizer_common/sanitizer_platform_limits_solaris.h
++++ b/libsanitizer/sanitizer_common/sanitizer_platform_limits_solaris.h
+@@ -19,6 +19,9 @@
+ #include "sanitizer_internal_defs.h"
+ #include "sanitizer_platform.h"
+ 
++struct stat;
++struct dirent;
++
+ namespace __sanitizer {
+ extern unsigned struct_utsname_sz;
+ extern unsigned struct_stat_sz;
+@@ -336,6 +339,14 @@ struct __sanitizer_glob_t {
+   uptr gl_offs;
+   char **gl_pathp;
+   int gl_pathn;
++  int gl_matchc;
++  int gl_flags;
++  struct stat **gl_statv;
++  void (*gl_closedir)(void *);
++  struct dirent *(*gl_readdir)(void *);
++  void *(*gl_opendir)(const char *);
++  int (*gl_lstat)(const char *, struct stat *);
++  int (*gl_stat)(const char *, struct stat *);
+ };
+ 
+ extern int glob_nomatch;
+diff --git a/libsanitizer/sanitizer_common/sanitizer_posix_libcdep.cpp b/libsanitizer/sanitizer_common/sanitizer_posix_libcdep.cpp
+index 304b3a01a08..745753f0d8f 100644
+--- a/libsanitizer/sanitizer_common/sanitizer_posix_libcdep.cpp
++++ b/libsanitizer/sanitizer_common/sanitizer_posix_libcdep.cpp
+@@ -64,24 +64,24 @@ void ReleaseMemoryPagesToOS(uptr beg, uptr end) {
+     // In the default Solaris compilation environment, madvise() is declared
+     // to take a caddr_t arg; casting it to void * results in an invalid
+     // conversion error, so use char * instead.
+-    madvise((char *)beg_aligned, end_aligned - beg_aligned,
++    posix_madvise((char *)beg_aligned, end_aligned - beg_aligned,
+             SANITIZER_MADVISE_DONTNEED);
+ }
+ 
+ void SetShadowRegionHugePageMode(uptr addr, uptr size) {
+ #ifdef MADV_NOHUGEPAGE  // May not be defined on old systems.
+   if (common_flags()->no_huge_pages_for_shadow)
+-    madvise((char *)addr, size, MADV_NOHUGEPAGE);
++    posix_madvise((char *)addr, size, MADV_NOHUGEPAGE);
+   else
+-    madvise((char *)addr, size, MADV_HUGEPAGE);
++    posix_madvise((char *)addr, size, MADV_HUGEPAGE);
+ #endif  // MADV_NOHUGEPAGE
+ }
+ 
+ bool DontDumpShadowMemory(uptr addr, uptr length) {
+ #if defined(MADV_DONTDUMP)
+-  return madvise((char *)addr, length, MADV_DONTDUMP) == 0;
++  return posix_madvise((char *)addr, length, MADV_DONTDUMP) == 0;
+ #elif defined(MADV_NOCORE)
+-  return madvise((char *)addr, length, MADV_NOCORE) == 0;
++  return posix_madvise((char *)addr, length, MADV_NOCORE) == 0;
+ #else
+   return true;
+ #endif  // MADV_DONTDUMP
+-- 
+2.31.1
+
