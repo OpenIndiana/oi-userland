@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2020 <contributor>
+# Copyright 2021 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -26,13 +26,13 @@ hardlink path=usr/gcc/10/bin/c++ target=x86_64-pc-solaris2.11-g++
 file path=usr/gcc/10/bin/cpp
 hardlink path=usr/gcc/10/bin/g++ target=x86_64-pc-solaris2.11-g++
 hardlink path=usr/gcc/10/bin/gcc target=x86_64-pc-solaris2.11-gcc
-file path=usr/gcc/10/bin/gcc-ar
-hardlink path=usr/gcc/10/bin/gcc-nm target=x86_64-pc-solaris2.11-gcc-nm
+hardlink path=usr/gcc/10/bin/gcc-ar target=x86_64-pc-solaris2.11-gcc-ar
+file path=usr/gcc/10/bin/gcc-nm
 hardlink path=usr/gcc/10/bin/gcc-ranlib target=x86_64-pc-solaris2.11-gcc-ranlib
 file path=usr/gcc/10/bin/gcov
 file path=usr/gcc/10/bin/gcov-dump
 file path=usr/gcc/10/bin/gcov-tool
-file path=usr/gcc/10/bin/gfortran
+hardlink path=usr/gcc/10/bin/gfortran target=x86_64-pc-solaris2.11-gfortran
 file path=usr/gcc/10/bin/lto-dump
 hardlink path=usr/gcc/10/bin/x86_64-pc-solaris2.11-c++ \
     target=x86_64-pc-solaris2.11-g++
@@ -40,10 +40,10 @@ file path=usr/gcc/10/bin/x86_64-pc-solaris2.11-g++
 file path=usr/gcc/10/bin/x86_64-pc-solaris2.11-gcc
 hardlink path=usr/gcc/10/bin/x86_64-pc-solaris2.11-gcc-$(COMPONENT_VERSION) \
     target=x86_64-pc-solaris2.11-gcc
-hardlink path=usr/gcc/10/bin/x86_64-pc-solaris2.11-gcc-ar target=gcc-ar
-file path=usr/gcc/10/bin/x86_64-pc-solaris2.11-gcc-nm
+file path=usr/gcc/10/bin/x86_64-pc-solaris2.11-gcc-ar
+hardlink path=usr/gcc/10/bin/x86_64-pc-solaris2.11-gcc-nm target=gcc-nm
 file path=usr/gcc/10/bin/x86_64-pc-solaris2.11-gcc-ranlib
-hardlink path=usr/gcc/10/bin/x86_64-pc-solaris2.11-gfortran target=gfortran
+file path=usr/gcc/10/bin/x86_64-pc-solaris2.11-gfortran
 file path=usr/gcc/10/include/c++/$(COMPONENT_VERSION)/algorithm
 file path=usr/gcc/10/include/c++/$(COMPONENT_VERSION)/any
 file path=usr/gcc/10/include/c++/$(COMPONENT_VERSION)/array
@@ -98,7 +98,6 @@ file path=usr/gcc/10/include/c++/$(COMPONENT_VERSION)/bits/hash_bytes.h
 file path=usr/gcc/10/include/c++/$(COMPONENT_VERSION)/bits/hashtable.h
 file path=usr/gcc/10/include/c++/$(COMPONENT_VERSION)/bits/hashtable_policy.h
 file path=usr/gcc/10/include/c++/$(COMPONENT_VERSION)/bits/indirect_array.h
-file path=usr/gcc/10/include/c++/$(COMPONENT_VERSION)/bits/int_limits.h
 file path=usr/gcc/10/include/c++/$(COMPONENT_VERSION)/bits/invoke.h
 file path=usr/gcc/10/include/c++/$(COMPONENT_VERSION)/bits/ios_base.h
 file path=usr/gcc/10/include/c++/$(COMPONENT_VERSION)/bits/istream.tcc
@@ -1138,6 +1137,7 @@ file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/i
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/collect2-aix.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/collect2.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/color-macros.h
+file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/common/config/$(MACH)/i386-cpuinfo.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/conditions.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/config.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/att.h
@@ -1254,6 +1254,7 @@ file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/i
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/gimplify-me.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/gimplify.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/glimits.h
+file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/gomp-constants.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/graph.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/graphds.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/graphite.h
@@ -1288,6 +1289,7 @@ file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/i
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/insn-attr-common.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/insn-attr.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/insn-codes.h
+file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/insn-config.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/insn-constants.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/insn-flags.h
 file path=usr/gcc/10/lib/gcc/x86_64-pc-solaris2.11/$(COMPONENT_VERSION)/plugin/include/insn-modes-inline.h
