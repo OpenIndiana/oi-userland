@@ -128,9 +128,10 @@ GID   | Group name
 90    | postgres
 91    | barman
 92    | bacula
-95    | mlocate
+95    | slocate
 96    | unknown
 97    | pkg5srv
+98    | mlocate
 399   | abuild
 60001 | nobody
 60002 | noaccess

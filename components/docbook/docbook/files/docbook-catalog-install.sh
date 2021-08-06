@@ -258,6 +258,12 @@ CATALOG=/etc/xml/docbook-xmlcatalog
 
 if [ -w $CATALOG ]
 then
+	if [ ! -s $CATALOG ]
+	then
+		# Empty or missing file confuses further "add" operations
+		/usr/bin/xmlcatalog --create > $CATALOG
+	fi
+
 	# DocBook XML V4.1.2
 	/usr/bin/xmlcatalog --noout --add "public" \
 		"ISO 8879:1986//ENTITIES Publishing//EN" \

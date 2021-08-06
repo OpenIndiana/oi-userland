@@ -11,6 +11,7 @@
 #
 # Copyright 2019 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2021 Nona Hansel
 #
 
 BUILD_BITS=				64
@@ -18,17 +19,18 @@ BUILD_STYLE=			setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			borgbackup
-COMPONENT_VERSION=		1.1.16
+COMPONENT_VERSION=		1.1.17
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=	https://borgbackup.readthedocs.org/en/stable/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:bc569224d6320483e508c36ff2a651d01bbd0aaebf32305e2683a696b9c32d50
+COMPONENT_ARCHIVE_HASH=	sha256:7ab924fc017b24929bedceba0dcce16d56f9868bf9b5050d2aae2eb080671674
 COMPONENT_ARCHIVE_URL=	https://github.com/borgbackup/borg/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			backup/borg
 COMPONENT_LICENSE=      BSD
 COMPONENT_LICENSE_FILE= LICENSE
 
-PYTHON_VERSIONS=	3.5
+PYTHON_VERSIONS=	3.9
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -41,7 +43,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/python/setuptools-35
+REQUIRED_PACKAGES += library/python/setuptools-39
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library

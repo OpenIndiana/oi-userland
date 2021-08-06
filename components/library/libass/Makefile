@@ -12,22 +12,20 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
-# Copyright 2020 Andreas Wacknitz
+# Copyright 2020, 2021 Andreas Wacknitz
 #
 BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libass
-COMPONENT_VERSION=	0.15.0
+COMPONENT_VERSION=	0.15.1
 COMPONENT_FMRI=		library/video/libass
 COMPONENT_SUMMARY=	Portable renderer for the ASS/SSA (Substation Alpha) subtitle format
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:9cbddee5e8c87e43a5fe627a19cd2aa4c36552156eb4edcf6c5a30bd4934fe58
-COMPONENT_ARCHIVE_URL= \
-	https://github.com/libass/libass/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:101e2be1bf52e8fc265e7ca2225af8bd678839ba13720b969883eb9da43048a6
+COMPONENT_ARCHIVE_URL=	https://github.com/libass/libass/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/libass/libass
 COMPONENT_LICENSE=	ISC
 COMPONENT_LICENSE_FILE=	COPYING

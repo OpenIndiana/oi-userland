@@ -1,0 +1,28 @@
+From 0792d4cb1100d0fce63a3925b06e29251f55c702 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Wed, 7 Feb 2018 02:13:42 +0000
+Subject: [PATCH 28/34] i386: use the new-style retpoline thunk names for
+ external thunks, because nothing else will work
+
+---
+ gcc/config/i386/i386.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
+index 14152259bbe..ee7d5a56712 100644
+--- a/gcc/config/i386/i386.c
++++ b/gcc/config/i386/i386.c
+@@ -5353,7 +5353,9 @@ indirect_thunk_name (char name[32], unsigned int regno,
+   if (regno != INVALID_REGNUM && regno != CX_REG && ret_p)
+     gcc_unreachable ();
+ 
+-  if (USE_HIDDEN_LINKONCE)
++  if (USE_HIDDEN_LINKONCE ||
++      (cfun && cfun->machine->indirect_branch_type ==
++       indirect_branch_thunk_extern))
+     {
+       const char *prefix;
+ 
+-- 
+2.31.1
+

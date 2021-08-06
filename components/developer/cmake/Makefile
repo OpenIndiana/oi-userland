@@ -32,8 +32,8 @@ PARFAIT_BUILD=			no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
-COMPONENT_MAJOR_VERSION=3.20
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).3
+COMPONENT_MAJOR_VERSION=3.21
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).1
 COMPONENT_PROJECT_URL=  https://www.cmake.org/
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
@@ -46,7 +46,7 @@ CMake generates native makefiles and workspaces that can be used in the \
 workspaces that can be used in the compiler environment of your choice.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4d008ac3461e271fcfac26a05936f77fc7ab64402156fb371d41284851a651b8
+COMPONENT_ARCHIVE_HASH=	sha256:fac3915171d4dff25913975d712f76e69aef44bf738ba7b976793a458b4cfed4
 COMPONENT_ARCHIVE_URL=	https://www.cmake.org/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD, MIT, GPLv2, Curl, PD
 
@@ -69,6 +69,13 @@ COMPONENT_PREP_ACTION += \
 # Remove files polluting the generated manifest
 COMPONENT_PRE_INSTALL_ACTION = \
 	$(FIND) $(SOURCE_DIR) -name '*.~1~' -exec $(RM) {} \;
+
+# The default -O3 is *MUCH* too aggressive and will break things,
+# not just in CMake but everywhere.
+# CMake sets its own Language Standard flags in the Makefile it
+# generates for itself. The Userland default Language Standard flags
+# contradict cmake.
+gcc_OPT = -O2
 
 CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS +=	--datadir=/share/cmake-$(COMPONENT_MAJOR_VERSION)
@@ -109,6 +116,8 @@ COMPONENT_TEST_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_TEST_ENV += CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_TEST_ENV += FCFLAGS="$(FCFLAGS)"
 COMPONENT_TEST_ENV += LDFLAGS="$(LDFLAGS)"
+# Disable term colors to avoid test failures (actual and expected output mismatch).
+COMPONENT_TEST_ENV += CLICOLOR=0
 
 # Most Fortran tests fail because -m64 they do not pass compiler flags as they should.
 # Results output is different on Intel vs. SPARC.
