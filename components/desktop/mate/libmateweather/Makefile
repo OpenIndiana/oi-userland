@@ -12,44 +12,20 @@
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
 # Copyright 2020 Michal Nowak
+# Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=		32_and_64
-
+MATE_CATEGORY=	LIB
 include ../../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		libmateweather
-COMPONENT_MJR_VERSION=	1.24
-COMPONENT_MNR_VERSION=	1
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
+COMPONENT_MJR_VERSION=	1.26
+COMPONENT_MNR_VERSION=	0
 COMPONENT_SUMMARY=	Library to accessing online weather information
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:9b4cfdefcd368137b9300e19fd6ed31b26a56336b78ef3fa772156755361a709
-COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_FMRI=		library/desktop/mate/$(COMPONENT_NAME)
-
-TEST_TARGET=		$(NO_TESTS)
+COMPONENT_ARCHIVE_HASH= sha256:a7fd9713099c88826fb67249771cd0cdb92ee9d4784068b1a165840b84607b15
 
 include $(WS_MAKE_RULES)/common.mk
-
-PATH=$(PATH.gnu)
-
-COMPONENT_PREP_ACTION = cd $(@D) && NOCONFIGURE=1 ./autogen.sh
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-
-CONFIGURE_ENV+= PYTHON="$(PYTHON)"
-
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
