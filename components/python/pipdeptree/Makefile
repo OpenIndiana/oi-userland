@@ -21,6 +21,7 @@
 
 #
 # Copyright 2021 Aurelien Larcher
+# Copyright 2021 Nona Hansel
 #
 
 BUILD_BITS=NO_ARCH
@@ -29,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pipdeptree
 COMPONENT_VERSION=	2.0.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/python/pipdeptree
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SUMMARY=	Command line utility to show dependency tree of packages

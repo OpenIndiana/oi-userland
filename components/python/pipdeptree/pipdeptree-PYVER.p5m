@@ -8,6 +8,8 @@
 # http://www.illumos.org/license/CDDL.
 
 # Copyright 2021 Aurelien Larcher
+# Copyright 2021 Nona Hansel
+#
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
@@ -20,7 +22,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
 
 file path=usr/bin/pipdeptree-$(PYVER)
-link path=usr/bin/pipdeptree target=pipdeptree-$(PYVER) mediator=python \
+link path=usr/bin/pipdeptree target=pipdeptree-$(PYVER) mediator=python3 \
     mediator-version=$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/pipdeptree-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/pipdeptree-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
