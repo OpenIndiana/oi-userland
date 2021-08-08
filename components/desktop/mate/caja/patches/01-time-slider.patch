@@ -2983,7 +2983,7 @@ diff -ru --new-file caja-1.24.0/src/caja-navigation-window.c caja-1.24.0-patched
 +restore_pref_changed (CajaWindow *window)
 +{
 +    g_assert (CAJA_IS_WINDOW (window));
-+    caja_window_reload (window);
++    caja_window_reload (window, FALSE);
 +}
 +
 +static void
@@ -3371,7 +3371,7 @@ diff -ru --new-file caja-1.24.0/src/caja-window-menus.c caja-1.24.0-patched/src/
 +    else
 +    {
 +        caja_zfs_bar_hide (CAJA_ZFS_BAR (bar));
-+        caja_window_reload (CAJA_WINDOW (user_data));
++        caja_window_reload (CAJA_WINDOW (user_data), FALSE);
 +    }
 +    g_object_unref (n_dir);
 +    g_object_unref (directory);
@@ -3472,19 +3472,18 @@ diff -ru --new-file caja-1.24.0/src/caja-window.c caja-1.24.0-patched/src/caja-w
              G_GNUC_END_IGNORE_DEPRECATIONS;
          }
  
-diff -ru --new-file caja-1.24.0/src/caja-window.h caja-1.24.0-patched/src/caja-window.h
---- caja-1.24.0/src/caja-window.h	2020-02-10 11:52:32.000000000 +0000
-+++ caja-1.24.0-patched/src/caja-window.h	2020-08-03 19:20:59.876714576 +0000
-@@ -157,7 +157,8 @@
- void             caja_window_display_error        (CajaWindow    *window,
+--- caja-1.26.0/src/caja-window.h.orig	2021-08-08 21:54:03.878343263 +0000
++++ caja-1.26.0/src/caja-window.h	2021-08-08 21:56:35.644144055 +0000
+@@ -158,6 +158,8 @@
          const char        *error_msg);
- void		 caja_window_reload		      (CajaWindow	 *window);
--
-+void             caja_window_allow_restore        (CajaWindow    *window, 
-+                                                   gboolean       allow);
+ void             caja_window_reload               (CajaWindow    *window,
+         gboolean           new_tab);
++void             caja_window_allow_restore        (CajaWindow    *window,
++        gboolean           allow);
  void             caja_window_allow_reload         (CajaWindow    *window,
          gboolean           allow);
  void             caja_window_allow_up             (CajaWindow    *window,
+
 diff -ru --new-file caja-1.24.0/src/caja-zfs-bar.c caja-1.24.0-patched/src/caja-zfs-bar.c
 --- caja-1.24.0/src/caja-zfs-bar.c	1970-01-01 01:00:00.000000000 +0000
 +++ caja-1.24.0-patched/src/caja-zfs-bar.c	2020-08-03 19:20:59.888691553 +0000
