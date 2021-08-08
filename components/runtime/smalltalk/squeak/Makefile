@@ -48,16 +48,15 @@ include ../../../../make-rules/shared-macros.mk
 # it cannot be changed here randomly, it must match the VMMaker version
 
 COMPONENT_NAME=		squeak
-COMPONENT_VERSION=	4.19.6
-COMPONENT_REVISION=	5
+COMPONENT_VERSION=	4.19.9
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/smalltalk/squeak
 COMPONENT_CLASSIFICATION=	Development/Smalltalk
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=                3806
-SVN_HASH=  sha256:9fe73dba6be931a971b7d61e6ed631ee5f39a94959b2066f4715899e623eef59
+SVN_REV=                3808
+SVN_HASH=  sha256:777d09716883ff5a6c811e67f3dbb0f6e26fca2b197a03cb66d357145dbad4f5
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
