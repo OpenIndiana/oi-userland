@@ -109,16 +109,28 @@ if [ "$NAMES" = "$LINKS" ]; then
 fi
 
 # Link missing compilers to get wrapped by ccache for its consumers
+# Note: originally used `fgrep` but it misfired for substring matches
+# finding e.g. "gcc" or "gcc-4" in "gcc-4.9"; not a full-string match
 for N in $NAMES ; do
-    echo "$LINKS" | fgrep "$N" >/dev/null || \
-    { echo "ADDING LINK: $N" >&2; $DRYRUN ln -sf "$SYMLINK" "$LINKDIR/$N"; }
+    for L in $LINKS ; do
+        if [ "$N" = "$L" ]; then
+            continue 2
+        fi
+    done
+    echo "ADDING LINK: $N" >&2
+    $DRYRUN ln -sf "$SYMLINK" "$LINKDIR/$N"
 done
 
 # (optionally) Remove links to compilers that are not in PATH
 $ALLOW_DELETE || DRYRUN="echo Would exec:"
 for L in $LINKS ; do
-    echo "$NAMES" | fgrep "$L" >/dev/null || \
-    { echo "REMOVE LINK: $L" >&2; $DRYRUN rm -f "$LINKDIR/$L"; }
+    for N in $NAMES ; do
+        if [ "$N" = "$L" ]; then
+            continue 2
+        fi
+    done
+    echo "REMOVE LINK: $L" >&2
+    $DRYRUN rm -f "$LINKDIR/$L"
 done
 
 echo "CCACHE symlinks checked/rearranged to be up to date for current PATH='$PATH'" >&2
