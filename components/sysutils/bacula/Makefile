@@ -14,24 +14,26 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
+USE_OPENSSL11=          yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= bacula
+COMPONENT_NAME=         bacula
 
-COMPONENT_VERSION= 9.6.7
-COMPONENT_REVISION= 1
-COMPONENT_SUMMARY= Bacula (network backup solution)
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_VERSION=      9.6.7
+COMPONENT_REVISION=     2
+COMPONENT_SUMMARY=      Bacula (network backup solution)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:df0f8525ecdba380e74b537ca71adf3b7596593f02189b59ab0ebffc85ccc8de
-COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/bacula/files/bacula/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_PROJECT_URL = http://www.bacula.org
+	sha256:df0f8525ecdba380e74b537ca71adf3b7596593f02189b59ab0ebffc85ccc8de
+COMPONENT_ARCHIVE_URL=  \
+	http://sourceforge.net/projects/bacula/files/bacula/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_PROJECT_URL=  http://www.bacula.org
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -63,12 +65,6 @@ CONFIGURE_OPTIONS+= --disable-afs
 CONFIGURE_OPTIONS+= --disable-rpath
 CONFIGURE_ENV.64    += lt_cv_sys_lib_dlsearch_path_spec="/lib/$(MACH64) /usr/lib/$(MACH64)"
 
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
@@ -81,6 +77,7 @@ REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
