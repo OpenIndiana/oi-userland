@@ -21,20 +21,22 @@
 # Copyright (c) 2013-2020, Aurelien Larcher. All rights reserved.
 #
 BUILD_BITS=32_and_64
+PYTHON3_ONLY=yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           xcb-proto
-COMPONENT_VERSION=        1.14.1
-COMPONENT_SUMMARY=        The X protocol C-language Binding (XCB): Protocol descriptions
-COMPONENT_PROJECT_URL=    http://xcb.freedesktop.org
-COMPONENT_FMRI=           x11/header/xcb-protocols
-COMPONENT_CLASSIFICATION= Development/X11
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:f04add9a972ac334ea11d9d7eb4fc7f8883835da3e4859c9afa971efdf57fcc3
-COMPONENT_ARCHIVE_URL=    https://xorg.freedesktop.org/archive/individual/proto/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        MIT
+COMPONENT_NAME=         xcb-proto
+COMPONENT_VERSION=      1.14.1
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): Protocol descriptions
+COMPONENT_PROJECT_URL=  http://xcb.freedesktop.org
+COMPONENT_FMRI=         x11/header/xcb-protocols
+COMPONENT_CLASSIFICATION=Development/X11
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:f04add9a972ac334ea11d9d7eb4fc7f8883835da3e4859c9afa971efdf57fcc3
+COMPONENT_ARCHIVE_URL=  https://xorg.freedesktop.org/archive/individual/proto/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      MIT
 
 TEST_TARGET = $(NO_TESTS)
 
@@ -44,7 +46,6 @@ CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
-
-# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += runtime/python-27
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/python-37
