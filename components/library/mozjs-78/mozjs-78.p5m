@@ -1,0 +1,301 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2020, 2021, Oracle and/or its affiliates.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+
+# move js-config to correct location
+#<transform file path=usr/bin/js\$\(COMPONENT_VERSION\)-config -> \
+#    set action.hash %(path)>
+#<transform file path=usr/bin/js\$\(COMPONENT_VERSION\)-config -> \
+#    edit path bin/js bin/\$\(MACH64\)/js>
+#
+## allow 64-bit object in 32-bit path
+#<transform file path=usr/bin/js\$\(COMPONENT_VERSION\) -> \
+#    set pkg.linted.userland.action001.2 true>
+
+# drop static library (with a weird extension)
+<transform file path=usr/lib/\$\(MACH64\)/libjs_static.ajs$ -> drop>
+
+set name=pkg.fmri \
+    value=pkg:/library/libmozjs-78@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Mozilla's SpiderMonkey engine JavaScript library v78"
+set name=pkg.description \
+    value="SpiderMonkey is Mozilla's JavaScript engine written in C/C++. It is used in various Mozilla products, including Firefox"
+set name=pkg.linted.userland.action001.3 value=true
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/Other Languages"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+file usr/bin/js$(COMPONENT_VERSION)-config \
+    path=usr/bin/$(MACH64)/js$(COMPONENT_VERSION)-config
+file path=usr/bin/js$(COMPONENT_VERSION) pkg.linted.userland.action001.2=true
+file path=usr/include/mozjs-78/BaseProfiler.h
+file path=usr/include/mozjs-78/double-conversion/double-conversion.h
+file path=usr/include/mozjs-78/double-conversion/double-to-string.h
+file path=usr/include/mozjs-78/double-conversion/string-to-double.h
+file path=usr/include/mozjs-78/double-conversion/utils.h
+file path=usr/include/mozjs-78/encoding_rs_mem.h
+file path=usr/include/mozjs-78/fdlibm.h
+file path=usr/include/mozjs-78/js-config.h
+file path=usr/include/mozjs-78/js.msg
+file path=usr/include/mozjs-78/js/AllocPolicy.h
+file path=usr/include/mozjs-78/js/AllocationRecording.h
+file path=usr/include/mozjs-78/js/Array.h
+file path=usr/include/mozjs-78/js/ArrayBuffer.h
+file path=usr/include/mozjs-78/js/ArrayBufferMaybeShared.h
+file path=usr/include/mozjs-78/js/BigInt.h
+file path=usr/include/mozjs-78/js/BinASTFormat.h
+file path=usr/include/mozjs-78/js/BuildId.h
+file path=usr/include/mozjs-78/js/CallArgs.h
+file path=usr/include/mozjs-78/js/CallNonGenericMethod.h
+file path=usr/include/mozjs-78/js/CharacterEncoding.h
+file path=usr/include/mozjs-78/js/Class.h
+file path=usr/include/mozjs-78/js/ComparisonOperators.h
+file path=usr/include/mozjs-78/js/CompilationAndEvaluation.h
+file path=usr/include/mozjs-78/js/CompileOptions.h
+file path=usr/include/mozjs-78/js/ContextOptions.h
+file path=usr/include/mozjs-78/js/Conversions.h
+file path=usr/include/mozjs-78/js/Date.h
+file path=usr/include/mozjs-78/js/Debug.h
+file path=usr/include/mozjs-78/js/Equality.h
+file path=usr/include/mozjs-78/js/ErrorReport.h
+file path=usr/include/mozjs-78/js/Exception.h
+file path=usr/include/mozjs-78/js/ForOfIterator.h
+file path=usr/include/mozjs-78/js/GCAPI.h
+file path=usr/include/mozjs-78/js/GCAnnotations.h
+file path=usr/include/mozjs-78/js/GCHashTable.h
+file path=usr/include/mozjs-78/js/GCPolicyAPI.h
+file path=usr/include/mozjs-78/js/GCTypeMacros.h
+file path=usr/include/mozjs-78/js/GCVariant.h
+file path=usr/include/mozjs-78/js/GCVector.h
+file path=usr/include/mozjs-78/js/HashTable.h
+file path=usr/include/mozjs-78/js/HeapAPI.h
+file path=usr/include/mozjs-78/js/Id.h
+file path=usr/include/mozjs-78/js/Initialization.h
+file path=usr/include/mozjs-78/js/JSON.h
+file path=usr/include/mozjs-78/js/LocaleSensitive.h
+file path=usr/include/mozjs-78/js/MemoryFunctions.h
+file path=usr/include/mozjs-78/js/MemoryMetrics.h
+file path=usr/include/mozjs-78/js/Modules.h
+file path=usr/include/mozjs-78/js/OffThreadScriptCompilation.h
+file path=usr/include/mozjs-78/js/Principals.h
+file path=usr/include/mozjs-78/js/Printf.h
+file path=usr/include/mozjs-78/js/ProfilingCategory.h
+file path=usr/include/mozjs-78/js/ProfilingFrameIterator.h
+file path=usr/include/mozjs-78/js/ProfilingStack.h
+file path=usr/include/mozjs-78/js/Promise.h
+file path=usr/include/mozjs-78/js/PropertyDescriptor.h
+file path=usr/include/mozjs-78/js/PropertySpec.h
+file path=usr/include/mozjs-78/js/ProtoKey.h
+file path=usr/include/mozjs-78/js/Proxy.h
+file path=usr/include/mozjs-78/js/Realm.h
+file path=usr/include/mozjs-78/js/RealmOptions.h
+file path=usr/include/mozjs-78/js/RefCounted.h
+file path=usr/include/mozjs-78/js/RegExp.h
+file path=usr/include/mozjs-78/js/RegExpFlags.h
+file path=usr/include/mozjs-78/js/RequiredDefines.h
+file path=usr/include/mozjs-78/js/Result.h
+file path=usr/include/mozjs-78/js/RootingAPI.h
+file path=usr/include/mozjs-78/js/SavedFrameAPI.h
+file path=usr/include/mozjs-78/js/SharedArrayBuffer.h
+file path=usr/include/mozjs-78/js/SliceBudget.h
+file path=usr/include/mozjs-78/js/SourceText.h
+file path=usr/include/mozjs-78/js/StableStringChars.h
+file path=usr/include/mozjs-78/js/Stream.h
+file path=usr/include/mozjs-78/js/StructuredClone.h
+file path=usr/include/mozjs-78/js/SweepingAPI.h
+file path=usr/include/mozjs-78/js/Symbol.h
+file path=usr/include/mozjs-78/js/TraceKind.h
+file path=usr/include/mozjs-78/js/TraceLoggerAPI.h
+file path=usr/include/mozjs-78/js/TracingAPI.h
+file path=usr/include/mozjs-78/js/Transcoding.h
+file path=usr/include/mozjs-78/js/TypeDecls.h
+file path=usr/include/mozjs-78/js/UbiNode.h
+file path=usr/include/mozjs-78/js/UbiNodeBreadthFirst.h
+file path=usr/include/mozjs-78/js/UbiNodeCensus.h
+file path=usr/include/mozjs-78/js/UbiNodeDominatorTree.h
+file path=usr/include/mozjs-78/js/UbiNodePostOrder.h
+file path=usr/include/mozjs-78/js/UbiNodeShortestPaths.h
+file path=usr/include/mozjs-78/js/UbiNodeUtils.h
+file path=usr/include/mozjs-78/js/UniquePtr.h
+file path=usr/include/mozjs-78/js/Utility.h
+file path=usr/include/mozjs-78/js/Value.h
+file path=usr/include/mozjs-78/js/ValueArray.h
+file path=usr/include/mozjs-78/js/Vector.h
+file path=usr/include/mozjs-78/js/Warnings.h
+file path=usr/include/mozjs-78/js/WeakMapPtr.h
+file path=usr/include/mozjs-78/js/Wrapper.h
+file path=usr/include/mozjs-78/js/experimental/CodeCoverage.h
+file path=usr/include/mozjs-78/js/experimental/SourceHook.h
+file path=usr/include/mozjs-78/jsapi.h
+file path=usr/include/mozjs-78/jsfriendapi.h
+file path=usr/include/mozjs-78/jspubtd.h
+file path=usr/include/mozjs-78/jstypes.h
+file path=usr/include/mozjs-78/malloc_decls.h
+file path=usr/include/mozjs-78/mozilla/Algorithm.h
+file path=usr/include/mozjs-78/mozilla/Alignment.h
+file path=usr/include/mozjs-78/mozilla/AllocPolicy.h
+file path=usr/include/mozjs-78/mozilla/AlreadyAddRefed.h
+file path=usr/include/mozjs-78/mozilla/Array.h
+file path=usr/include/mozjs-78/mozilla/ArrayUtils.h
+file path=usr/include/mozjs-78/mozilla/Assertions.h
+file path=usr/include/mozjs-78/mozilla/Atomics.h
+file path=usr/include/mozjs-78/mozilla/Attributes.h
+file path=usr/include/mozjs-78/mozilla/AutoProfilerLabel.h
+file path=usr/include/mozjs-78/mozilla/BaseProfilerCounts.h
+file path=usr/include/mozjs-78/mozilla/BaseProfilerDetail.h
+file path=usr/include/mozjs-78/mozilla/BinarySearch.h
+file path=usr/include/mozjs-78/mozilla/BlocksRingBuffer.h
+file path=usr/include/mozjs-78/mozilla/BloomFilter.h
+file path=usr/include/mozjs-78/mozilla/Buffer.h
+file path=usr/include/mozjs-78/mozilla/BufferList.h
+file path=usr/include/mozjs-78/mozilla/Casting.h
+file path=usr/include/mozjs-78/mozilla/ChaosMode.h
+file path=usr/include/mozjs-78/mozilla/Char16.h
+file path=usr/include/mozjs-78/mozilla/CheckedInt.h
+file path=usr/include/mozjs-78/mozilla/CompactPair.h
+file path=usr/include/mozjs-78/mozilla/Compiler.h
+file path=usr/include/mozjs-78/mozilla/Compression.h
+file path=usr/include/mozjs-78/mozilla/DbgMacro.h
+file path=usr/include/mozjs-78/mozilla/DebugOnly.h
+file path=usr/include/mozjs-78/mozilla/Decimal.h
+file path=usr/include/mozjs-78/mozilla/DefineEnum.h
+file path=usr/include/mozjs-78/mozilla/DoubleConversion.h
+file path=usr/include/mozjs-78/mozilla/DoublyLinkedList.h
+file path=usr/include/mozjs-78/mozilla/EndianUtils.h
+file path=usr/include/mozjs-78/mozilla/EnumSet.h
+file path=usr/include/mozjs-78/mozilla/EnumTypeTraits.h
+file path=usr/include/mozjs-78/mozilla/EnumeratedArray.h
+file path=usr/include/mozjs-78/mozilla/EnumeratedRange.h
+file path=usr/include/mozjs-78/mozilla/FStream.h
+file path=usr/include/mozjs-78/mozilla/FastBernoulliTrial.h
+file path=usr/include/mozjs-78/mozilla/FloatingPoint.h
+file path=usr/include/mozjs-78/mozilla/FunctionRef.h
+file path=usr/include/mozjs-78/mozilla/FunctionTypeTraits.h
+file path=usr/include/mozjs-78/mozilla/GuardObjects.h
+file path=usr/include/mozjs-78/mozilla/HashFunctions.h
+file path=usr/include/mozjs-78/mozilla/HashTable.h
+file path=usr/include/mozjs-78/mozilla/HelperMacros.h
+file path=usr/include/mozjs-78/mozilla/InitializedOnce.h
+file path=usr/include/mozjs-78/mozilla/IntegerPrintfMacros.h
+file path=usr/include/mozjs-78/mozilla/IntegerRange.h
+file path=usr/include/mozjs-78/mozilla/IntegerTypeTraits.h
+file path=usr/include/mozjs-78/mozilla/JSONWriter.h
+file path=usr/include/mozjs-78/mozilla/JsRust.h
+file path=usr/include/mozjs-78/mozilla/Latin1.h
+file path=usr/include/mozjs-78/mozilla/Likely.h
+file path=usr/include/mozjs-78/mozilla/LinkedList.h
+file path=usr/include/mozjs-78/mozilla/MacroArgs.h
+file path=usr/include/mozjs-78/mozilla/MacroForEach.h
+file path=usr/include/mozjs-78/mozilla/MathAlgorithms.h
+file path=usr/include/mozjs-78/mozilla/Maybe.h
+file path=usr/include/mozjs-78/mozilla/MaybeOneOf.h
+file path=usr/include/mozjs-78/mozilla/MemoryChecking.h
+file path=usr/include/mozjs-78/mozilla/MemoryReporting.h
+file path=usr/include/mozjs-78/mozilla/MmapFaultHandler.h
+file path=usr/include/mozjs-78/mozilla/ModuloBuffer.h
+file path=usr/include/mozjs-78/mozilla/NonDereferenceable.h
+file path=usr/include/mozjs-78/mozilla/NotNull.h
+file path=usr/include/mozjs-78/mozilla/Opaque.h
+file path=usr/include/mozjs-78/mozilla/OperatorNewExtensions.h
+file path=usr/include/mozjs-78/mozilla/Path.h
+file path=usr/include/mozjs-78/mozilla/PlatformConditionVariable.h
+file path=usr/include/mozjs-78/mozilla/PlatformMutex.h
+file path=usr/include/mozjs-78/mozilla/PodOperations.h
+file path=usr/include/mozjs-78/mozilla/Poison.h
+file path=usr/include/mozjs-78/mozilla/PowerOfTwo.h
+file path=usr/include/mozjs-78/mozilla/Printf.h
+file path=usr/include/mozjs-78/mozilla/ProfileBufferChunk.h
+file path=usr/include/mozjs-78/mozilla/ProfileBufferChunkManager.h
+file path=usr/include/mozjs-78/mozilla/ProfileBufferChunkManagerSingle.h
+file path=usr/include/mozjs-78/mozilla/ProfileBufferChunkManagerWithLocalLimit.h
+file path=usr/include/mozjs-78/mozilla/ProfileBufferControlledChunkManager.h
+file path=usr/include/mozjs-78/mozilla/ProfileBufferEntrySerialization.h
+file path=usr/include/mozjs-78/mozilla/ProfileBufferIndex.h
+file path=usr/include/mozjs-78/mozilla/ProfileChunkedBuffer.h
+file path=usr/include/mozjs-78/mozilla/RandomNum.h
+file path=usr/include/mozjs-78/mozilla/Range.h
+file path=usr/include/mozjs-78/mozilla/RangedArray.h
+file path=usr/include/mozjs-78/mozilla/RangedPtr.h
+file path=usr/include/mozjs-78/mozilla/ReentrancyGuard.h
+file path=usr/include/mozjs-78/mozilla/RefCountType.h
+file path=usr/include/mozjs-78/mozilla/RefCounted.h
+file path=usr/include/mozjs-78/mozilla/RefPtr.h
+file path=usr/include/mozjs-78/mozilla/Result.h
+file path=usr/include/mozjs-78/mozilla/ResultExtensions.h
+file path=usr/include/mozjs-78/mozilla/ReverseIterator.h
+file path=usr/include/mozjs-78/mozilla/RollingMean.h
+file path=usr/include/mozjs-78/mozilla/SHA1.h
+file path=usr/include/mozjs-78/mozilla/SPSCQueue.h
+file path=usr/include/mozjs-78/mozilla/Saturate.h
+file path=usr/include/mozjs-78/mozilla/ScopeExit.h
+file path=usr/include/mozjs-78/mozilla/Scoped.h
+file path=usr/include/mozjs-78/mozilla/SegmentedVector.h
+file path=usr/include/mozjs-78/mozilla/SharedLibrary.h
+file path=usr/include/mozjs-78/mozilla/SmallPointerArray.h
+file path=usr/include/mozjs-78/mozilla/Span.h
+file path=usr/include/mozjs-78/mozilla/SplayTree.h
+file path=usr/include/mozjs-78/mozilla/Sprintf.h
+file path=usr/include/mozjs-78/mozilla/StackWalk.h
+file path=usr/include/mozjs-78/mozilla/StaticAnalysisFunctions.h
+file path=usr/include/mozjs-78/mozilla/TaggedAnonymousMemory.h
+file path=usr/include/mozjs-78/mozilla/Tainting.h
+file path=usr/include/mozjs-78/mozilla/TemplateLib.h
+file path=usr/include/mozjs-78/mozilla/TextUtils.h
+file path=usr/include/mozjs-78/mozilla/ThreadLocal.h
+file path=usr/include/mozjs-78/mozilla/ThreadSafeWeakPtr.h
+file path=usr/include/mozjs-78/mozilla/TimeStamp.h
+file path=usr/include/mozjs-78/mozilla/ToString.h
+file path=usr/include/mozjs-78/mozilla/Tuple.h
+file path=usr/include/mozjs-78/mozilla/TypeTraits.h
+file path=usr/include/mozjs-78/mozilla/TypedEnumBits.h
+file path=usr/include/mozjs-78/mozilla/Types.h
+file path=usr/include/mozjs-78/mozilla/UniquePtr.h
+file path=usr/include/mozjs-78/mozilla/UniquePtrExtensions.h
+file path=usr/include/mozjs-78/mozilla/Unused.h
+file path=usr/include/mozjs-78/mozilla/Utf8.h
+file path=usr/include/mozjs-78/mozilla/Variant.h
+file path=usr/include/mozjs-78/mozilla/Vector.h
+file path=usr/include/mozjs-78/mozilla/WeakPtr.h
+file path=usr/include/mozjs-78/mozilla/WrappingOperations.h
+file path=usr/include/mozjs-78/mozilla/XorShift128PlusRNG.h
+file path=usr/include/mozjs-78/mozilla/cxxalloc.h
+file path=usr/include/mozjs-78/mozilla/fallible.h
+file path=usr/include/mozjs-78/mozilla/glue/Debug.h
+file path=usr/include/mozjs-78/mozilla/glue/WinUtils.h
+file path=usr/include/mozjs-78/mozilla/leb128iterator.h
+file path=usr/include/mozjs-78/mozilla/mozalloc.h
+file path=usr/include/mozjs-78/mozilla/mozalloc_abort.h
+file path=usr/include/mozjs-78/mozilla/mozalloc_oom.h
+file path=usr/include/mozjs-78/mozjemalloc_types.h
+file path=usr/include/mozjs-78/mozmemory.h
+file path=usr/include/mozjs-78/mozmemory_wrap.h
+file path=usr/lib/$(MACH64)/libmozjs-78.so
+file path=usr/lib/$(MACH64)/pkgconfig/mozjs-78.pc
+license mozjs-78.license license="MPLv2, LGPLv2, BSD"

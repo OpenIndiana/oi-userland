@@ -1,0 +1,19 @@
+New rust x86_64-pc-solaris target issue.
+
+https://github.com/rust-lang/rust/issues/68214
+
+--- a/build/moz.configure/rust.configure
++++ b/build/moz.configure/rust.configure
+@@ -257,6 +257,12 @@
+             elif not candidates:
+                 return None
+ 
++            # There are two candidates after adding new alias via:
++            # https://github.com/rust-lang/rust/issues/40531
++            if host_or_target.kernel == 'SunOS':
++                if host_or_target.cpu == 'x86_64':
++                    return candidates[1].rust_target
++
+             # We have multiple candidates. There are two cases where we can try to
+             # narrow further down using extra information from the build system.
+             # - For windows targets, correlate with the C compiler type
