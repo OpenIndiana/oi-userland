@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+Add NULL checks to getBuffer calls
+http://bugs.icu-project.org/trac/ticket/12378
+diff --git a/icu/source/common/uts46.cpp b/icu/source/common/uts46.cpp
+index f25b4e1..80cb02e 100644
+--- a/icu/source/common/uts46.cpp
++++ b/icu/source/common/uts46.cpp
+@@ -50,6 +50,8 @@ const uint32_t severeErrors=
+ static inline UBool
+ isASCIIString(const UnicodeString &dest) {
+     const UChar *s=dest.getBuffer();
++    if(s==NULL)
++	return FALSE;
+     const UChar *limit=s+dest.length();
+     while(s<limit) {
+         if(*s++>0x7f) {
+@@ -934,7 +936,12 @@ UTS46::markBadACELabel(UnicodeString &dest,
+     UBool disallowNonLDHDot=(options&UIDNA_USE_STD3_RULES)!=0;
+     UBool isASCII=TRUE;
+     UBool onlyLDH=TRUE;
+-    const UChar *label=dest.getBuffer()+labelStart;
++    const UChar *l=dest.getBuffer();
++    if(l==NULL) {
++        info.labelErrors|=UIDNA_ERROR_LABEL_TOO_LONG;
++        return 0;
++    }
++    const UChar *label=l+labelStart;
+     const UChar *limit=label+labelLength;
+     // Start after the initial "xn--".
+     // Ok to cast away const because we own the UnicodeString.

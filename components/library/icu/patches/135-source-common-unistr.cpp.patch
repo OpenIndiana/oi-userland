@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+getBuffer handling is tracked upstream as
+http://www.icu-project.org/trac/ticket/12378
+diff --git a/icu/source/common/unistr.cpp b/icu/source/common/unistr.cpp
+index 077b4d6..38abbd2 100644
+--- a/icu/source/common/unistr.cpp
++++ b/icu/source/common/unistr.cpp
+@@ -626,6 +626,9 @@ UnicodeString UnicodeString::unescape() const {
+         return result;
+     }
+     const UChar *array = getBuffer();
++    if ( array == NULL ) {
++        return result;
++    }
+     int32_t len = length();
+     int32_t prev = 0;
+     for (int32_t i=0;;) {

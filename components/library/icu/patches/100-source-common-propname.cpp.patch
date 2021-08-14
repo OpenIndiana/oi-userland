@@ -1,0 +1,71 @@
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+Prevent buffer overrun in PropNameData::findPropertyValueNameGroup
+http://bugs.icu-project.org/trac/ticket/12385
+diff --git a/icu/source/common/propname.cpp b/icu/source/common/propname.cpp
+index a12eb7d..6302f9c 100644
+--- a/icu/source/common/propname.cpp
++++ b/icu/source/common/propname.cpp
+@@ -168,11 +168,17 @@ int32_t PropNameData::findPropertyValueNameGroup(int32_t valueMapIndex, int32_t
+         return 0;  // The property does not have named values.
+     }
+     ++valueMapIndex;  // Skip the BytesTrie offset.
++
++    int valueMapsSize=sizeof(valueMaps)/sizeof(valueMaps[0]);
++    if (valueMapIndex+1>=valueMapsSize || valueMapIndex+1<0)
++	 return 0;  // bug in the table
+     int32_t numRanges=valueMaps[valueMapIndex++];
+     if(numRanges<0x10) {
+         // Ranges of values.
+         for(; numRanges>0; --numRanges) {
+             // Read and skip the start and limit of this range.
++            if (valueMapIndex+1>=valueMapsSize || valueMapIndex+1<0)
++		return 0;  // bug in the table
+             int32_t start=valueMaps[valueMapIndex];
+             int32_t limit=valueMaps[valueMapIndex+1];
+             valueMapIndex+=2;
+@@ -180,6 +186,8 @@ int32_t PropNameData::findPropertyValueNameGroup(int32_t valueMapIndex, int32_t
+                 break;
+             }
+             if(value<limit) {
++		if (valueMapIndex+value-start>=valueMapsSize || valueMapIndex+value-start<0)
++			return 0;  // bug in the table
+                 return valueMaps[valueMapIndex+value-start];
+             }
+             valueMapIndex+=limit-start;  // Skip all entries for this range.
+@@ -189,11 +197,15 @@ int32_t PropNameData::findPropertyValueNameGroup(int32_t valueMapIndex, int32_t
+         int32_t valuesStart=valueMapIndex;
+         int32_t nameGroupOffsetsStart=valueMapIndex+numRanges-0x10;
+         do {
++	    if (valueMapIndex>=valueMapsSize || valueMapIndex<0)
++		return 0;  // bug in the table
+             int32_t v=valueMaps[valueMapIndex];
+             if(value<v) {
+                 break;
+             }
+             if(value==v) {
++		if (nameGroupOffsetsStart+valueMapIndex-valuesStart>=valueMapsSize || nameGroupOffsetsStart+valueMapIndex-valuesStart<0)
++			return 0;  // bug in the table
+                 return valueMaps[nameGroupOffsetsStart+valueMapIndex-valuesStart];
+             }
+         } while(++valueMapIndex<nameGroupOffsetsStart);
+@@ -274,12 +286,18 @@ int32_t PropNameData::getPropertyValueEnum(int32_t property, const char *alias)
+     if(valueMapIndex==0) {
+         return UCHAR_INVALID_CODE;  // Not a known property.
+     }
++
++    int valueMapsSize=sizeof(valueMaps)/sizeof(valueMaps[0]);
++    if (valueMapIndex+1>=valueMapsSize || valueMapIndex+1<0)
++	return UCHAR_INVALID_CODE;  // bug in the table
+     valueMapIndex=valueMaps[valueMapIndex+1];
+     if(valueMapIndex==0) {
+         return UCHAR_INVALID_CODE;  // The property does not have named values.
+     }
+     // valueMapIndex is the start of the property's valueMap,
+     // where the first word is the BytesTrie offset.
++    if (valueMapIndex>=valueMapsSize || valueMapIndex<0)
++	return UCHAR_INVALID_CODE;  // bug in the table
+     return getPropertyOrValueEnum(valueMaps[valueMapIndex], alias);
+ }
+ U_NAMESPACE_END

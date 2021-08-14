@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved.        
+#
+to silence a SPARC specific build warning
+https://ssl.icu-project.org/trac/ticket/13265
+diff --git a/icu/source/tools/toolutil/pkg_genc.cpp b/icu/source/tools/toolutil/pkg_genc.cpp
+index 17347ba..cb4d1d6 100644
+--- a/icu/source/tools/toolutil/pkg_genc.cpp
++++ b/icu/source/tools/toolutil/pkg_genc.cpp
+@@ -581,7 +581,7 @@ write32(FileStream *out, uint32_t bitField, uint32_t column) {
+ 
+         /* This creates a 32-bit field */
+ #if U_IS_BIG_ENDIAN
+-        for (i = 0; i < sizeof(uint32_t); i++)
++        for (i = 0; i < (int)sizeof(uint32_t); i++)
+ #else
+         for (i = sizeof(uint32_t)-1; i >= 0 ; i--)
+ #endif

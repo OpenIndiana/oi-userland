@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+Prevent buffer overflow in TimeZoneFormat::parse
+http://bugs.icu-project.org/trac/ticket/12375
+diff --git a/icu/source/i18n/tzfmt.cpp b/icu/source/i18n/tzfmt.cpp
+index f87f0f6..cc32817 100644
+--- a/icu/source/i18n/tzfmt.cpp
++++ b/icu/source/i18n/tzfmt.cpp
+@@ -1094,6 +1094,11 @@ TimeZoneFormat::parse(UTimeZoneFormatStyle style, const UnicodeString& text, Par
+             }
+             break;
+         }
++    default:
++	{
++		pos.setErrorIndex(startIdx);
++		return NULL;
++	}
+     }
+     evaluated |= STYLE_PARSE_FLAGS[style];
+ 

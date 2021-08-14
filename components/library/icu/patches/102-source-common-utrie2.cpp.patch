@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+avoid potential buffer overrun in enumEitherTrie
+http://bugs.icu-project.org/trac/ticket/12387
+diff --git a/icu/source/common/utrie2.cpp b/icu/source/common/utrie2.cpp
+index 24ef578..5e3d8ba 100644
+--- a/icu/source/common/utrie2.cpp
++++ b/icu/source/common/utrie2.cpp
+@@ -31,6 +31,7 @@
+ #include "unicode/utf.h"
+ #include "unicode/utf8.h"
+ #include "unicode/utf16.h"
++#include "unicode/uchar.h"
+ #include "cmemory.h"
+ #include "utrie2.h"
+ #include "utrie2_impl.h"
+@@ -450,6 +451,10 @@ enumEitherTrie(const UTrie2 *trie,
+     UChar32 c, prev, highStart;
+     int32_t j, i2Block, prevI2Block, index2NullOffset, block, prevBlock, nullBlock;
+ 
++    if(limit>UCHAR_MAX_VALUE+1) {
++	return;
++    }
++
+     if(enumRange==NULL) {
+         return;
+     }
