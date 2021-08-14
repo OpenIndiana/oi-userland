@@ -1,0 +1,16 @@
+Solaris specific changes for compiling
+
+--- polkit-0.113/test/mocklibc/src/netdb.c~	2014-01-14 14:42:25.000000000 -0800
++++ polkit-0.113/test/mocklibc/src/netdb.c	2015-10-03 17:14:18.150116510 -0700
+@@ -51,7 +51,11 @@
+   return 1;
+ }
+ 
++#ifdef __sun
++int endnetgrent(void) {
++#else
+ void endnetgrent(void) {
++#endif
+   netgroup_free_all(global_netgroup_head);
+   global_netgroup_head = NULL;
+ }

@@ -1,0 +1,18 @@
+Solaris specific changes for compiling
+
+--- polkit-0.118/src/programs/pkexec.c
++++ polkit-0.118/src/programs/pkexec.c
+@@ -244,6 +244,13 @@ set_close_on_exec (gint     fd,
+   return TRUE;
+ }
+ 
++/* Solaris already has a fdwalk() defined in <stdlib.h> so we need to avoid
++ * conflicting definitions.
++ */
++#ifdef HAVE_SOLARIS
++# define fdwalk pkfdwalk
++#endif
++
+ static gboolean
+ fdwalk (FdCallback callback,
+         gpointer   user_data)

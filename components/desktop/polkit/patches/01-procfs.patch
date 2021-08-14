@@ -1,0 +1,42 @@
+We shouldn't need this now -  should send upstream
+
+--- polkit-0.118/src/polkit/polkitunixprocess.c
++++ polkit-0.118/src/polkit/polkitunixprocess.c
+@@ -164,7 +164,7 @@ enum
+ 
+ static void subject_iface_init (PolkitSubjectIface *subject_iface);
+ 
+-static guint64 get_start_time_for_pid (gint    pid,
++static guint64 get_start_time_for_pid (pid_t    pid,
+                                        GError **error);
+ 
+ #if defined(HAVE_FREEBSD) || defined(HAVE_NETBSD) || defined(HAVE_OPENBSD)
+@@ -603,28 +603,6 @@ subject_iface_init (PolkitSubjectIface *
+   subject_iface->exists_sync   = polkit_unix_process_exists_sync;
+ }
+ 
+-#ifdef HAVE_SOLARIS
+-static int
+-get_pid_psinfo (pid_t pid, struct psinfo *ps)
+-{
+-  char pname[32];
+-  int  procfd;
+-
+-  (void) snprintf(pname, sizeof(pname), "/proc/%d/psinfo", pid);
+-  if ((procfd = open(pname, O_RDONLY)) == -1)
+-    {
+-      return -1;
+-    }
+-  if (read(procfd, ps, sizeof(struct psinfo)) < 0)
+-    {
+-      (void) close(procfd);
+-      return -1;
+-    }
+-  (void) close(procfd);
+-  return 0;
+-}
+-#endif
+-
+ #ifdef HAVE_FREEBSD
+ static gboolean
+ get_kinfo_proc (pid_t pid, struct kinfo_proc *p)
