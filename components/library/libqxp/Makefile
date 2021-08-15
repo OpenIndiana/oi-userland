@@ -25,7 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libqxp
 COMPONENT_VERSION=	0.0.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=     	library/c++/libqxp
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libqxp
