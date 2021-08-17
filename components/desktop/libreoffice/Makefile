@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=	libreoffice
 COMPONENT_VERSION= 6.4.3
 COMPONENT_RC_VERSION= 2
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION)
 COMPONENT_SUMMARY= LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL= https://www.libreoffice.org/
@@ -233,7 +233,6 @@ REQUIRED_PACKAGES += library/c++/mdds
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
@@ -280,6 +279,7 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
