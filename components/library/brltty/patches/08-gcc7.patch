@@ -1,0 +1,17 @@
+Workarounds following gcc7 issue. Need to be evaluated with upstream.
+
+cc1: error: -Wformat-security ignored without -Wformat [-Werror=format-security]
+
+We cannot add just -Wformat as CYTHON_CFLAGS is added later with -Wno-format.
+
+--- brltty-5.4/configure.ac
++++ brltty-5.4/configure.ac
+@@ -250,7 +250,7 @@
+ fi
+ AC_PROG_CXX
+ 
+-brltty_gcc_cflags="-std=gnu99 -Wall -Werror=format-security"
++brltty_gcc_cflags="-std=gnu99 -Wall"
+ brltty_gcc_cppflags=""
+ 
+ case "${host_os}"
