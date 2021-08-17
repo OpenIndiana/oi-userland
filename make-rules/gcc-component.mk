@@ -101,6 +101,8 @@ FCFLAGS= -O2
 COMMON_ENV=  LD_OPTIONS="-zignore -zcombreloc -i"
 COMMON_ENV+= LD_FOR_TARGET=/usr/bin/ld
 COMMON_ENV+= LD_FOR_HOST=/usr/bin/ld
+COMMON_ENV+= STRIP="/usr/bin/strip -x"
+COMMON_ENV+= STRIP_FOR_TARGET="/usr/bin/strip -x"
 COMMON_ENV+= LD=/usr/bin/ld
 
 CONFIGURE_ENV+= $(COMMON_ENV)
@@ -132,6 +134,9 @@ CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(MACH))
 
 # Set path to library install prefix
 CONFIGURE_OPTIONS+= LDFLAGS="-R$(CONFIGURE_PREFIX)/lib"
+
+# Strip the resulting binaries
+COMPONENT_INSTALL_TARGETS = install-strip
 
 COMPONENT_POST_INSTALL_ACTION = \
   $(RM) -r $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include-fixed
