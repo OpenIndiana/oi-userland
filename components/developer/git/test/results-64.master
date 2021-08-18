@@ -2963,6 +2963,11 @@ ok 1 - run based on configured value
 ok 2 - do nothing on empty config
 # passed all 2 test(s)
 1..2
+*** t0069-oidtree.sh ***
+ok 1 - oidtree insert and contains
+ok 2 - oidtree each
+# passed all 2 test(s)
+1..2
 *** t0070-fundamental.sh ***
 ok 1 - character classes (isspace, isalpha etc.)
 ok 2 - mktemp to nonexistent directory prints filename
@@ -3335,9 +3340,10 @@ ok 26 - gc does not repack promisor objects if there are none
 ok 27 - repack -d does not irreversibly delete promisor objects
 ok 28 - gc stops traversal when a missing but promised object is reached
 ok 29 - do not fetch when checking existence of tree we construct ourselves
-# passed all 29 test(s)
+ok 30 - lazy-fetch when accessing object not in the_repository
+# passed all 30 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
-1..29
+1..30
 *** t0500-progress-display.sh ***
 ok 1 - simple progress display
 ok 2 - progress display with total
@@ -3643,8 +3649,12 @@ ok 108 - git cat-file --batch-check --follow-symlink breaks loops
 ok 109 - git cat-file --batch --follow-symlink returns correct sha and mode
 ok 110 - cat-file --batch-all-objects shows all objects
 ok 111 - cat-file --unordered works
-# passed all 111 test(s)
-1..111
+ok 112 - set up object list for --batch-all-objects tests
+ok 113 - cat-file --batch="%(objectname)" with --batch-all-objects will work
+ok 114 - cat-file --batch="%(rest)" with --batch-all-objects will work
+ok 115 - cat-file --batch="batman" with --batch-all-objects will work
+# passed all 115 test(s)
+1..115
 *** t1007-hash-object.sh ***
 ok 1 - setup
 ok 2 - multiple '--stdin's are rejected
@@ -3652,6 +3662,7 @@ ok 3 - Can't use --stdin and --stdin-paths together
 ok 4 - Can't pass filenames as arguments with --stdin-paths
 ok 5 - Can't use --path with --stdin-paths
 ok 6 - Can't use --path with --no-filters
+Initialized empty Git repository in $(@D)/t/trash directory.t1007-hash-object/test/.git/
 ok 7 - hash a file
 ok 8 - blob does not exist in database
 ok 9 - hash from stdin
@@ -3665,14 +3676,18 @@ ok 16 - gitattributes also work in a subdirectory
 ok 17 - --path works in a subdirectory
 ok 18 - check that --no-filters option works
 ok 19 - check that --no-filters option works with --stdin-paths
+Initialized empty Git repository in $(@D)/t/trash directory.t1007-hash-object/test/.git/
 ok 20 - hash from stdin and write to database (-w --stdin)
 ok 21 - blob exists in database
+Initialized empty Git repository in $(@D)/t/trash directory.t1007-hash-object/test/.git/
 ok 22 - hash from stdin and write to database (--stdin -w)
 ok 23 - blob exists in database
 ok 24 - hash two files with names on stdin
+Initialized empty Git repository in $(@D)/t/trash directory.t1007-hash-object/test/.git/
 ok 25 - hash two files with names on stdin and write to database (-w --stdin-paths)
 ok 26 - blob exists in database
 ok 27 - blob exists in database
+Initialized empty Git repository in $(@D)/t/trash directory.t1007-hash-object/test/.git/
 ok 28 - hash two files with names on stdin and write to database (--stdin-paths -w)
 ok 29 - blob exists in database
 ok 30 - blob exists in database
@@ -3878,6 +3893,10 @@ not ok 3 - rerere in workdir (relative) # TODO known breakage
 # still have 1 known breakage(s)
 # passed all remaining 2 test(s)
 1..3
+*** t1022-read-tree-partial-clone.sh ***
+ok 1 - read-tree in partial clone prefetches in one batch
+# passed all 1 test(s)
+1..1
 *** t1050-large.sh ***
 ok 1 - setup
 ok 2 - add with -c core.compression=0
@@ -4000,23 +4019,33 @@ ok 1 - setup
 ok 2 - sparse-index contents
 ok 3 - expanded in-memory index matches full index
 ok 4 - status with options
-ok 5 - add, commit, checkout
-ok 6 - checkout and reset --hard
-ok 7 - diff --staged
-ok 8 - diff with renames
-ok 9 - log with pathspec outside sparse definition
-ok 10 - blame with pathspec inside sparse definition
-not ok 11 - blame with pathspec outside sparse definition # TODO known breakage
-not ok 12 - checkout and reset (mixed) # TODO known breakage
-ok 13 - checkout and reset (mixed) [sparse]
-ok 14 - merge
-ok 15 - merge with outside renames
-ok 16 - clean
-ok 17 - submodule handling
-ok 18 - sparse-index is expanded and converted back
+ok 5 - status reports sparse-checkout
+ok 6 - add, commit, checkout
+ok 7 - commit including unstaged changes
+ok 8 - status/add: outside sparse cone
+ok 9 - checkout and reset --hard
+ok 10 - diff --staged
+ok 11 - diff with renames and conflicts
+ok 12 - diff with directory/file conflicts
+ok 13 - log with pathspec outside sparse definition
+ok 14 - blame with pathspec inside sparse definition
+not ok 15 - blame with pathspec outside sparse definition # TODO known breakage
+not ok 16 - checkout and reset (mixed) # TODO known breakage
+ok 17 - checkout and reset (mixed) [sparse]
+ok 18 - merge
+ok 19 - merge with outside renames
+ok 20 - cherry-pick with conflicts
+ok 21 - clean
+ok 22 - submodule handling
+ok 23 - sparse-index is expanded and converted back
+ok 24 - sparse-index is not expanded
+ok 25 - reset mixed and checkout orphan
+ok 26 - add everything with deep new file
+ok 27 - checkout behaves oddly with df-conflict-1
+ok 28 - checkout behaves oddly with df-conflict-2
 # still have 2 known breakage(s)
-# passed all remaining 16 test(s)
-1..18
+# passed all remaining 26 test(s)
+1..28
 *** t1100-commit-tree-options.sh ***
 ok 1 - test preparation: write empty tree
 ok 2 - construct commit
@@ -4628,8 +4657,8 @@ ok 190 - directory not created deleting packed ref
 # passed all 190 test(s)
 1..190
 *** t1401-symbolic-ref.sh ***
-ok 1 - symbolic-ref writes HEAD
-ok 2 - symbolic-ref reads HEAD
+ok 1 - setup
+ok 2 - symbolic-ref read/write roundtrip
 ok 3 - symbolic-ref refuses non-ref for HEAD
 ok 4 - symbolic-ref refuses bare sha1
 ok 5 - HEAD cannot be removed
@@ -6461,68 +6490,70 @@ ok 6 - "add" refuses to checkout locked branch
 ok 7 - checking out paths not complaining about linked checkouts
 ok 8 - "add" worktree
 ok 9 - "add" worktree with lock
-ok 10 - "add" worktree from a subdir
-ok 11 - "add" from a linked checkout
-ok 12 - "add" worktree creating new branch
-ok 13 - die the same branch is already checked out
-ok 14 - die the same branch is already checked out (symlink)
-ok 15 - not die the same branch is already checked out
-ok 16 - not die on re-checking out current branch
-ok 17 - "add" from a bare repo
-ok 18 - checkout from a bare repo without "add"
-ok 19 - "add" default branch of a bare repo
-ok 20 - checkout with grafts
-ok 21 - "add" from relative HEAD
-ok 22 - "add -b" with <branch> omitted
-ok 23 - "add --detach" with <branch> omitted
-ok 24 - "add" with <branch> omitted
-ok 25 - "add" checks out existing branch of dwimd name
-ok 26 - "add <path>" dwim fails with checked out branch
-ok 27 - "add --force" with existing dwimd name doesnt die
-ok 28 - "add" no auto-vivify with --detach and <branch> omitted
-ok 29 - "add" -b/-B mutually exclusive
-ok 30 - "add" -b/--detach mutually exclusive
-ok 31 - "add" -B/--detach mutually exclusive
-ok 32 - "add -B" fails if the branch is checked out
-ok 33 - add -B
-ok 34 - add --quiet
-ok 35 - local clone from linked checkout
-ok 36 - local clone --shared from linked checkout
-ok 37 - "add" worktree with --no-checkout
-ok 38 - "add" worktree with --checkout
-ok 39 - put a worktree under rebase
-ok 40 - add a worktree, checking out a rebased branch
-ok 41 - checking out a rebased branch from another worktree
-ok 42 - not allow to delete a branch under rebase
-ok 43 - rename a branch under rebase not allowed
-ok 44 - check out from current worktree branch ok
-ok 45 - checkout a branch under bisect
-ok 46 - rename a branch under bisect not allowed
-ok 47 - --track sets up tracking
-ok 48 - --no-track avoids setting up tracking
-ok 49 - "add" <path> <non-existent-branch> fails
-ok 50 - "add" <path> <branch> dwims
-ok 51 - "add" <path> <branch> dwims with checkout.defaultRemote
-ok 52 - git worktree add does not match remote
-ok 53 - git worktree add --guess-remote sets up tracking
-ok 54 - git worktree add with worktree.guessRemote sets up tracking
-ok 55 - git worktree --no-guess-remote option overrides config
-ok 56 - "add" invokes post-checkout hook (branch)
-ok 57 - "add" invokes post-checkout hook (detached)
-ok 58 - "add --no-checkout" suppresses post-checkout hook
-ok 59 - "add" in other worktree invokes post-checkout hook
-ok 60 - "add" in bare repo invokes post-checkout hook
-ok 61 - "add" an existing but missing worktree
-ok 62 - "add" an existing locked but missing worktree
-ok 63 - "add" not tripped up by magic worktree matching"
-ok 64 - sanitize generated worktree name
-ok 65 - "add" should not fail because of another bad worktree
-ok 66 - "add" with uninitialized submodule, with submodule.recurse unset
-ok 67 - "add" with uninitialized submodule, with submodule.recurse set
-ok 68 - "add" with initialized submodule, with submodule.recurse unset
-ok 69 - "add" with initialized submodule, with submodule.recurse set
-# passed all 69 test(s)
-1..69
+ok 10 - "add" worktree with lock and reason
+ok 11 - "add" worktree with reason but no lock
+ok 12 - "add" worktree from a subdir
+ok 13 - "add" from a linked checkout
+ok 14 - "add" worktree creating new branch
+ok 15 - die the same branch is already checked out
+ok 16 - die the same branch is already checked out (symlink)
+ok 17 - not die the same branch is already checked out
+ok 18 - not die on re-checking out current branch
+ok 19 - "add" from a bare repo
+ok 20 - checkout from a bare repo without "add"
+ok 21 - "add" default branch of a bare repo
+ok 22 - checkout with grafts
+ok 23 - "add" from relative HEAD
+ok 24 - "add -b" with <branch> omitted
+ok 25 - "add --detach" with <branch> omitted
+ok 26 - "add" with <branch> omitted
+ok 27 - "add" checks out existing branch of dwimd name
+ok 28 - "add <path>" dwim fails with checked out branch
+ok 29 - "add --force" with existing dwimd name doesnt die
+ok 30 - "add" no auto-vivify with --detach and <branch> omitted
+ok 31 - "add" -b/-B mutually exclusive
+ok 32 - "add" -b/--detach mutually exclusive
+ok 33 - "add" -B/--detach mutually exclusive
+ok 34 - "add -B" fails if the branch is checked out
+ok 35 - add -B
+ok 36 - add --quiet
+ok 37 - local clone from linked checkout
+ok 38 - local clone --shared from linked checkout
+ok 39 - "add" worktree with --no-checkout
+ok 40 - "add" worktree with --checkout
+ok 41 - put a worktree under rebase
+ok 42 - add a worktree, checking out a rebased branch
+ok 43 - checking out a rebased branch from another worktree
+ok 44 - not allow to delete a branch under rebase
+ok 45 - rename a branch under rebase not allowed
+ok 46 - check out from current worktree branch ok
+ok 47 - checkout a branch under bisect
+ok 48 - rename a branch under bisect not allowed
+ok 49 - --track sets up tracking
+ok 50 - --no-track avoids setting up tracking
+ok 51 - "add" <path> <non-existent-branch> fails
+ok 52 - "add" <path> <branch> dwims
+ok 53 - "add" <path> <branch> dwims with checkout.defaultRemote
+ok 54 - git worktree add does not match remote
+ok 55 - git worktree add --guess-remote sets up tracking
+ok 56 - git worktree add with worktree.guessRemote sets up tracking
+ok 57 - git worktree --no-guess-remote option overrides config
+ok 58 - "add" invokes post-checkout hook (branch)
+ok 59 - "add" invokes post-checkout hook (detached)
+ok 60 - "add --no-checkout" suppresses post-checkout hook
+ok 61 - "add" in other worktree invokes post-checkout hook
+ok 62 - "add" in bare repo invokes post-checkout hook
+ok 63 - "add" an existing but missing worktree
+ok 64 - "add" an existing locked but missing worktree
+ok 65 - "add" not tripped up by magic worktree matching"
+ok 66 - sanitize generated worktree name
+ok 67 - "add" should not fail because of another bad worktree
+ok 68 - "add" with uninitialized submodule, with submodule.recurse unset
+ok 69 - "add" with uninitialized submodule, with submodule.recurse set
+ok 70 - "add" with initialized submodule, with submodule.recurse unset
+ok 71 - "add" with initialized submodule, with submodule.recurse set
+# passed all 71 test(s)
+1..71
 *** t2401-worktree-prune.sh ***
 ok 1 - initialize
 ok 2 - worktree prune on normal repo
@@ -8968,12 +8999,20 @@ ok 23 - branch --merged combined with --no-merged
 ok 24 - branch --merged with --verbose
 # passed all 24 test(s)
 1..24
-*** t3202-show-branch-octopus.sh ***
+*** t3202-show-branch.sh ***
 ok 1 - setup
 ok 2 - show-branch with more than 8 branches
 ok 3 - show-branch with showbranch.default
-# passed all 3 test(s)
-1..3
+ok 4 - show-branch --color output
+ok 5 - show branch --remotes
+ok 6 - setup show branch --list
+ok 7 - show branch --list
+ok 8 - show branch --list has no --color output
+ok 9 - show branch --merge-base with one argument
+ok 10 - show branch --merge-base with two arguments
+ok 11 - show branch --merge-base with N arguments
+# passed all 11 test(s)
+1..11
 *** t3203-branch-output.sh ***
 ok 1 - make commits
 ok 2 - make branches
@@ -9521,8 +9560,9 @@ ok 31 - rebase--merge.sh and --show-current-patch
 ok 32 - switch to branch checked out here
 ok 33 - switch to branch not checked out
 ok 34 - refuse to switch to branch checked out elsewhere
-# passed all 34 test(s)
-1..34
+ok 35 # skip rebase when .git/logs is a symlink (missing SYMLINKS_WINDOWS,MINGW of MINGW,SYMLINKS_WINDOWS)
+# passed all 35 test(s)
+1..35
 *** t3401-rebase-and-am-rename.sh ***
 ok 1 - setup testcase where directory rename should be detected
 ok 2 - rebase --interactive: directory rename detected
@@ -11088,42 +11128,157 @@ ok 16 - add obeys advice.updateSparsePath
 *** t3800-mktag.sh ***
 ok 1 - setup
 ok 2 - basic usage
-ok 3 - Tag object length check
-ok 4 - "object" line label check
-ok 5 - "object" line check
-ok 6 - "type" line label check
-ok 7 - "type" line eol check
-ok 8 - "tag" line label check #1
-ok 9 - "tag" line label check #2
-ok 10 - "type" line type-name length check
-ok 11 - verify object (hash/type) check -- correct type, nonexisting object
-ok 12 - verify object (hash/type) check -- made-up type, valid object
-ok 13 - verify object (hash/type) check -- made-up type, nonexisting object
-ok 14 - verify object (hash/type) check -- mismatched type, valid object
-ok 15 - setup replacement of commit -> commit and tree -> blob
-ok 16 - tag to a commit replaced by another commit
-ok 17 - verify object (hash/type) check -- mismatched type, valid object
-ok 18 - verify tag-name check
-ok 19 - "tagger" line label check #1
-ok 20 - "tagger" line label check #2
-ok 21 - allow missing tag author name
-ok 22 - disallow malformed tagger
-ok 23 - allow empty tag email
-ok 24 - allow spaces in tag email like fsck
-ok 25 - disallow missing tag timestamp
-ok 26 - detect invalid tag timestamp1
-ok 27 - detect invalid tag timestamp2
-ok 28 - detect invalid tag timezone1
-ok 29 - detect invalid tag timezone2
-ok 30 - allow invalid tag timezone
-ok 31 - detect invalid header entry
-ok 32 - invalid header entry config & fsck
-ok 33 - allow extra newlines at start of body
-ok 34 - allow a blank line before an empty body (1)
-ok 35 - allow no blank line before an empty body (2)
-ok 36 - create valid tag object
-# passed all 36 test(s)
-1..36
+ok 3 - fail with [--[no-]strict]: Tag object length check
+ok 4 - setup: Tag object length check
+ok 5 - hash-object & fsck unreachable: Tag object length check
+ok 6 - update-ref & fsck reachable: Tag object length check
+ok 7 - for-each-ref: Tag object length check
+ok 8 - fast-export & fast-import: Tag object length check
+ok 9 - fail with [--[no-]strict]: "object" line label check
+ok 10 - setup: "object" line label check
+ok 11 - hash-object & fsck unreachable: "object" line label check
+ok 12 - update-ref & fsck reachable: "object" line label check
+ok 13 - for-each-ref: "object" line label check
+ok 14 - fast-export & fast-import: "object" line label check
+ok 15 - fail with [--[no-]strict]: "object" line check
+ok 16 - setup: "object" line check
+ok 17 - hash-object & fsck unreachable: "object" line check
+ok 18 - update-ref & fsck reachable: "object" line check
+ok 19 - for-each-ref: "object" line check
+ok 20 - fast-export & fast-import: "object" line check
+ok 21 - fail with [--[no-]strict]: "type" line label check
+ok 22 - setup: "type" line label check
+ok 23 - hash-object & fsck unreachable: "type" line label check
+ok 24 - update-ref & fsck reachable: "type" line label check
+ok 25 - for-each-ref: "type" line label check
+ok 26 - fast-export & fast-import: "type" line label check
+ok 27 - fail with [--[no-]strict]: "type" line eol check
+ok 28 - setup: "type" line eol check
+ok 29 - hash-object & fsck unreachable: "type" line eol check
+ok 30 - update-ref & fsck reachable: "type" line eol check
+ok 31 - for-each-ref: "type" line eol check
+ok 32 - fast-export & fast-import: "type" line eol check
+ok 33 - fail with [--[no-]strict]: "tag" line label check #1
+ok 34 - setup: "tag" line label check #1
+ok 35 - hash-object & fsck unreachable: "tag" line label check #1
+ok 36 - update-ref & fsck reachable: "tag" line label check #1
+ok 37 - for-each-ref: "tag" line label check #1
+ok 38 - fast-export & fast-import: "tag" line label check #1
+ok 39 - fail with [--[no-]strict]: "tag" line label check #2
+ok 40 - setup: "tag" line label check #2
+ok 41 - hash-object & fsck unreachable: "tag" line label check #2
+ok 42 - update-ref & fsck reachable: "tag" line label check #2
+ok 43 - for-each-ref: "tag" line label check #2
+ok 44 - fast-export & fast-import: "tag" line label check #2
+ok 45 - fail with [--[no-]strict]: "type" line type-name length check
+ok 46 - setup: "type" line type-name length check
+ok 47 - hash-object & fsck unreachable: "type" line type-name length check
+ok 48 - update-ref & fsck reachable: "type" line type-name length check
+ok 49 - for-each-ref: "type" line type-name length check
+ok 50 - fast-export & fast-import: "type" line type-name length check
+ok 51 - fail with [--[no-]strict]: verify object (hash/type) check -- correct type, nonexisting object
+ok 52 - setup: verify object (hash/type) check -- correct type, nonexisting object
+ok 53 - hash-object & fsck unreachable: verify object (hash/type) check -- correct type, nonexisting object
+ok 54 - update-ref & fsck reachable: verify object (hash/type) check -- correct type, nonexisting object
+ok 55 - for-each-ref: verify object (hash/type) check -- correct type, nonexisting object
+ok 56 - fast-export & fast-import: verify object (hash/type) check -- correct type, nonexisting object
+ok 57 - fail with [--[no-]strict]: verify object (hash/type) check -- made-up type, valid object
+ok 58 - setup: verify object (hash/type) check -- made-up type, valid object
+ok 59 - hash-object & fsck unreachable: verify object (hash/type) check -- made-up type, valid object
+ok 60 - update-ref & fsck reachable: verify object (hash/type) check -- made-up type, valid object
+ok 61 - for-each-ref: verify object (hash/type) check -- made-up type, valid object
+ok 62 - fast-export & fast-import: verify object (hash/type) check -- made-up type, valid object
+ok 63 - fail with [--[no-]strict]: verify object (hash/type) check -- made-up type, nonexisting object
+ok 64 - setup: verify object (hash/type) check -- made-up type, nonexisting object
+ok 65 - hash-object & fsck unreachable: verify object (hash/type) check -- made-up type, nonexisting object
+ok 66 - update-ref & fsck reachable: verify object (hash/type) check -- made-up type, nonexisting object
+ok 67 - for-each-ref: verify object (hash/type) check -- made-up type, nonexisting object
+ok 68 - fast-export & fast-import: verify object (hash/type) check -- made-up type, nonexisting object
+ok 69 - fail with [--[no-]strict]: verify object (hash/type) check -- mismatched type, valid object
+ok 70 - setup: verify object (hash/type) check -- mismatched type, valid object
+ok 71 - hash-object & fsck unreachable: verify object (hash/type) check -- mismatched type, valid object
+ok 72 - update-ref & fsck reachable: verify object (hash/type) check -- mismatched type, valid object
+ok 73 - for-each-ref: verify object (hash/type) check -- mismatched type, valid object
+ok 74 - fast-export & fast-import: verify object (hash/type) check -- mismatched type, valid object
+ok 75 - setup replacement of commit -> commit and tree -> blob
+ok 76 - tag to a commit replaced by another commit
+ok 77 - fail with [--[no-]strict]: verify object (hash/type) check -- mismatched type, valid object
+ok 78 - setup: verify object (hash/type) check -- mismatched type, valid object
+ok 79 - hash-object & fsck unreachable: verify object (hash/type) check -- mismatched type, valid object
+ok 80 - update-ref & fsck reachable: verify object (hash/type) check -- mismatched type, valid object
+ok 81 - for-each-ref: verify object (hash/type) check -- mismatched type, valid object
+ok 82 - fast-export & fast-import: verify object (hash/type) check -- mismatched type, valid object
+ok 83 - fail with [--[no-]strict]: verify tag-name check
+ok 84 - setup: verify tag-name check
+ok 85 - hash-object & fsck unreachable: verify tag-name check
+ok 86 - update-ref & fsck reachable: verify tag-name check
+ok 87 - for-each-ref: verify tag-name check
+ok 88 - fast-export & fast-import: verify tag-name check
+ok 89 - fail with [--[no-]strict]: "tagger" line label check #1
+ok 90 - setup: "tagger" line label check #1
+ok 91 - hash-object & fsck unreachable: "tagger" line label check #1
+ok 92 - update-ref & fsck reachable: "tagger" line label check #1
+ok 93 - for-each-ref: "tagger" line label check #1
+ok 94 - fast-export & fast-import: "tagger" line label check #1
+ok 95 - fail with [--[no-]strict]: "tagger" line label check #2
+ok 96 - setup: "tagger" line label check #2
+ok 97 - hash-object & fsck unreachable: "tagger" line label check #2
+ok 98 - update-ref & fsck reachable: "tagger" line label check #2
+ok 99 - for-each-ref: "tagger" line label check #2
+ok 100 - fast-export & fast-import: "tagger" line label check #2
+ok 101 - allow missing tag author name
+ok 102 - fail with [--[no-]strict]: disallow malformed tagger
+ok 103 - setup: disallow malformed tagger
+ok 104 - hash-object & fsck unreachable: disallow malformed tagger
+ok 105 - update-ref & fsck reachable: disallow malformed tagger
+ok 106 - for-each-ref: disallow malformed tagger
+ok 107 - fast-export & fast-import: disallow malformed tagger
+ok 108 - allow empty tag email
+ok 109 - allow spaces in tag email like fsck
+ok 110 - fail with [--[no-]strict]: disallow missing tag timestamp
+ok 111 - setup: disallow missing tag timestamp
+ok 112 - hash-object & fsck unreachable: disallow missing tag timestamp
+ok 113 - update-ref & fsck reachable: disallow missing tag timestamp
+ok 114 - for-each-ref: disallow missing tag timestamp
+ok 115 - fast-export & fast-import: disallow missing tag timestamp
+ok 116 - fail with [--[no-]strict]: detect invalid tag timestamp1
+ok 117 - setup: detect invalid tag timestamp1
+ok 118 - hash-object & fsck unreachable: detect invalid tag timestamp1
+ok 119 - update-ref & fsck reachable: detect invalid tag timestamp1
+ok 120 - for-each-ref: detect invalid tag timestamp1
+ok 121 - fast-export & fast-import: detect invalid tag timestamp1
+ok 122 - fail with [--[no-]strict]: detect invalid tag timestamp2
+ok 123 - setup: detect invalid tag timestamp2
+ok 124 - hash-object & fsck unreachable: detect invalid tag timestamp2
+ok 125 - update-ref & fsck reachable: detect invalid tag timestamp2
+ok 126 - for-each-ref: detect invalid tag timestamp2
+ok 127 - fast-export & fast-import: detect invalid tag timestamp2
+ok 128 - fail with [--[no-]strict]: detect invalid tag timezone1
+ok 129 - setup: detect invalid tag timezone1
+ok 130 - hash-object & fsck unreachable: detect invalid tag timezone1
+ok 131 - update-ref & fsck reachable: detect invalid tag timezone1
+ok 132 - for-each-ref: detect invalid tag timezone1
+ok 133 - fast-export & fast-import: detect invalid tag timezone1
+ok 134 - fail with [--[no-]strict]: detect invalid tag timezone2
+ok 135 - setup: detect invalid tag timezone2
+ok 136 - hash-object & fsck unreachable: detect invalid tag timezone2
+ok 137 - update-ref & fsck reachable: detect invalid tag timezone2
+ok 138 - for-each-ref: detect invalid tag timezone2
+ok 139 - fast-export & fast-import: detect invalid tag timezone2
+ok 140 - allow invalid tag timezone
+ok 141 - fail with [--[no-]strict]: detect invalid header entry
+ok 142 - setup: detect invalid header entry
+ok 143 - hash-object & fsck unreachable: detect invalid header entry
+ok 144 - update-ref & fsck reachable: detect invalid header entry
+ok 145 - for-each-ref: detect invalid header entry
+ok 146 - fast-export & fast-import: detect invalid header entry
+ok 147 - invalid header entry config & fsck
+ok 148 - allow extra newlines at start of body
+ok 149 - allow a blank line before an empty body (1)
+ok 150 - allow no blank line before an empty body (2)
+ok 151 - create valid tag object
+# passed all 151 test(s)
+1..151
 *** t3900-i18n-commit.sh ***
 ok 1 - setup
 ok 2 - no encoding header for base case
@@ -11274,7 +11429,7 @@ ok 66 - store called with invalid commit
 ok 67 - store updates stash ref and reflog
 ok 68 - handle stash specification with spaces
 ok 69 - setup stash with index and worktree changes
-ok 70 - stash list implies --first-parent -m
+ok 70 - stash list -p shows simple diff
 ok 71 - stash list --cc shows combined diff
 ok 72 - stash is not confused by partial renames
 ok 73 - push -m shows right message
@@ -11800,159 +11955,164 @@ ok 49 - git diff-tree initial mode # magic is (not used)
 ok 50 - git diff-tree --stat initial mode # magic is (not used)
 ok 51 - git diff-tree --summary initial mode # magic is (not used)
 ok 52 - git diff-tree master # magic is (not used)
-ok 53 - git diff-tree -p master # magic is (not used)
-ok 54 - git diff-tree -p -m master # magic is (not used)
-ok 55 - git diff-tree -c master # magic is (not used)
-ok 56 - git diff-tree -c --abbrev master # magic is (not used)
-ok 57 - git diff-tree -c --abbrev master # magic is noellipses
-ok 58 - git diff-tree --cc master # magic is (not used)
-ok 59 - git diff-tree -c --stat master # magic is (not used)
-ok 60 - git diff-tree --cc --stat master # magic is (not used)
-ok 61 - git diff-tree -c --stat --summary master # magic is (not used)
-ok 62 - git diff-tree --cc --stat --summary master # magic is (not used)
-ok 63 - git diff-tree -c --stat --summary side # magic is (not used)
-ok 64 - git diff-tree --cc --stat --summary side # magic is (not used)
-ok 65 - git diff-tree --cc --shortstat master # magic is (not used)
-ok 66 - git diff-tree --cc --summary REVERSE # magic is (not used)
-ok 67 - git diff-tree --cc --patch-with-stat master # magic is (not used)
-ok 68 - git diff-tree --cc --patch-with-stat --summary master # magic is (not used)
-ok 69 - git diff-tree --cc --patch-with-stat --summary side # magic is (not used)
-ok 70 - git log master # magic is (not used)
-ok 71 - git log -p master # magic is (not used)
-ok 72 - git log --root master # magic is (not used)
-ok 73 - git log --root -p master # magic is (not used)
-ok 74 - git log --patch-with-stat master # magic is (not used)
-ok 75 - git log --root --patch-with-stat master # magic is (not used)
-ok 76 - git log --root --patch-with-stat --summary master # magic is (not used)
-ok 77 - git log --root -c --patch-with-stat --summary master # magic is (not used)
-ok 78 - git log --root --cc --patch-with-stat --summary master # magic is (not used)
-ok 79 - git log --no-diff-merges -p --first-parent master # magic is (not used)
-ok 80 - git log --diff-merges=off -p --first-parent master # magic is (not used)
-ok 81 - git log --first-parent --diff-merges=off -p master # magic is (not used)
-ok 82 - git log -p --first-parent master # magic is (not used)
-ok 83 - git log -p --diff-merges=first-parent master # magic is (not used)
-ok 84 - git log --diff-merges=first-parent master # magic is (not used)
-ok 85 - git log -m -p --first-parent master # magic is (not used)
-ok 86 - git log -m -p master # magic is (not used)
-ok 87 - git log --cc -m -p master # magic is (not used)
-ok 88 - git log -c -m -p master # magic is (not used)
-ok 89 - git log -SF master # magic is (not used)
-ok 90 - git log -S F master # magic is (not used)
-ok 91 - git log -SF -p master # magic is (not used)
-ok 92 - git log -SF master --max-count=0 # magic is (not used)
-ok 93 - git log -SF master --max-count=1 # magic is (not used)
-ok 94 - git log -SF master --max-count=2 # magic is (not used)
-ok 95 - git log -GF master # magic is (not used)
-ok 96 - git log -GF -p master # magic is (not used)
-ok 97 - git log -GF -p --pickaxe-all master # magic is (not used)
-ok 98 - git log -IA -IB -I1 -I2 -p master # magic is (not used)
-ok 99 - git log --decorate --all # magic is (not used)
-ok 100 - git log --decorate=full --all # magic is (not used)
-ok 101 - git rev-list --parents HEAD # magic is (not used)
-ok 102 - git rev-list --children HEAD # magic is (not used)
-ok 103 - git whatchanged master # magic is (not used)
-ok 104 - git whatchanged master # magic is noellipses
-ok 105 - git whatchanged -p master # magic is (not used)
-ok 106 - git whatchanged --root master # magic is (not used)
-ok 107 - git whatchanged --root master # magic is noellipses
-ok 108 - git whatchanged --root -p master # magic is (not used)
-ok 109 - git whatchanged --patch-with-stat master # magic is (not used)
-ok 110 - git whatchanged --root --patch-with-stat master # magic is (not used)
-ok 111 - git whatchanged --root --patch-with-stat --summary master # magic is (not used)
-ok 112 - git whatchanged --root -c --patch-with-stat --summary master # magic is (not used)
-ok 113 - git whatchanged --root --cc --patch-with-stat --summary master # magic is (not used)
-ok 114 - git whatchanged -SF master # magic is (not used)
-ok 115 - git whatchanged -SF master # magic is noellipses
-ok 116 - git whatchanged -SF -p master # magic is (not used)
-ok 117 - git log --patch-with-stat master -- dir/ # magic is (not used)
-ok 118 - git whatchanged --patch-with-stat master -- dir/ # magic is (not used)
-ok 119 - git log --patch-with-stat --summary master -- dir/ # magic is (not used)
-ok 120 - git whatchanged --patch-with-stat --summary master -- dir/ # magic is (not used)
-ok 121 - git show initial # magic is (not used)
-ok 122 - git show --root initial # magic is (not used)
-ok 123 - git show side # magic is (not used)
-ok 124 - git show master # magic is (not used)
-ok 125 - git show -c master # magic is (not used)
-ok 126 - git show -m master # magic is (not used)
-ok 127 - git show --first-parent master # magic is (not used)
-ok 128 - git show --stat side # magic is (not used)
-ok 129 - git show --stat --summary side # magic is (not used)
-ok 130 - git show --patch-with-stat side # magic is (not used)
-ok 131 - git show --patch-with-raw side # magic is (not used)
-ok 132 - git show --patch-with-raw side # magic is noellipses
-ok 133 - git show --patch-with-stat --summary side # magic is (not used)
-ok 134 - git format-patch --stdout initial..side # magic is (not used)
-ok 135 - git format-patch --stdout initial..master^ # magic is (not used)
-ok 136 - git format-patch --stdout initial..master # magic is (not used)
-ok 137 - git format-patch --stdout --no-numbered initial..master # magic is (not used)
-ok 138 - git format-patch --stdout --numbered initial..master # magic is (not used)
-ok 139 - git format-patch --attach --stdout initial..side # magic is (not used)
-ok 140 - git format-patch --attach --stdout --suffix=.diff initial..side # magic is (not used)
-ok 141 - git format-patch --attach --stdout initial..master^ # magic is (not used)
-ok 142 - git format-patch --attach --stdout initial..master # magic is (not used)
-ok 143 - git format-patch --inline --stdout initial..side # magic is (not used)
-ok 144 - git format-patch --inline --stdout initial..master^ # magic is (not used)
-ok 145 - git format-patch --inline --stdout --numbered-files initial..master # magic is (not used)
-ok 146 - git format-patch --inline --stdout initial..master # magic is (not used)
-ok 147 - git format-patch --inline --stdout --subject-prefix=TESTCASE initial..master # magic is (not used)
-ok 148 - git config format.subjectprefix DIFFERENT_PREFIX # magic is (not used)
-ok 149 - git format-patch --inline --stdout initial..master^^ # magic is (not used)
-ok 150 - git format-patch --stdout --cover-letter -n initial..master^ # magic is (not used)
-ok 151 - git diff --abbrev initial..side # magic is (not used)
-ok 152 - git diff -U initial..side # magic is (not used)
-ok 153 - git diff -U1 initial..side # magic is (not used)
-ok 154 - git diff -r initial..side # magic is (not used)
-ok 155 - git diff --stat initial..side # magic is (not used)
-ok 156 - git diff -r --stat initial..side # magic is (not used)
-ok 157 - git diff initial..side # magic is (not used)
-ok 158 - git diff --patch-with-stat initial..side # magic is (not used)
-ok 159 - git diff --patch-with-raw initial..side # magic is (not used)
-ok 160 - git diff --patch-with-raw initial..side # magic is noellipses
-ok 161 - git diff --patch-with-stat -r initial..side # magic is (not used)
-ok 162 - git diff --patch-with-raw -r initial..side # magic is (not used)
-ok 163 - git diff --patch-with-raw -r initial..side # magic is noellipses
-ok 164 - git diff --name-status dir2 dir # magic is (not used)
-ok 165 - git diff --no-index --name-status dir2 dir # magic is (not used)
-ok 166 - git diff --no-index --name-status -- dir2 dir # magic is (not used)
-ok 167 - git diff --no-index dir dir3 # magic is (not used)
-ok 168 - git diff master master^ side # magic is (not used)
-ok 169 - git diff --line-prefix=abc master master^ side # magic is (not used)
-ok 170 - git diff --dirstat master~1 master~2 # magic is (not used)
-ok 171 - git diff --dirstat initial rearrange # magic is (not used)
-ok 172 - git diff --dirstat-by-file initial rearrange # magic is (not used)
-ok 173 - git diff --dirstat --cc master~1 master # magic is (not used)
-ok 174 - git diff --raw initial # magic is (not used)
-ok 175 - git diff --raw initial # magic is noellipses
-ok 176 - git diff --raw --abbrev=4 initial # magic is (not used)
-ok 177 - git diff --raw --abbrev=4 initial # magic is noellipses
-ok 178 - git diff --raw --no-abbrev initial # magic is (not used)
-ok 179 - git diff --no-index --raw dir2 dir # magic is (not used)
-ok 180 - git diff --no-index --raw dir2 dir # magic is noellipses
-ok 181 - git diff --no-index --raw --abbrev=4 dir2 dir # magic is (not used)
-ok 182 - git diff --no-index --raw --abbrev=4 dir2 dir # magic is noellipses
-ok 183 - git diff --no-index --raw --no-abbrev dir2 dir # magic is (not used)
-ok 184 - git diff-tree --pretty --root --stat --compact-summary initial # magic is (not used)
-ok 185 - git diff-tree --pretty -R --root --stat --compact-summary initial # magic is (not used)
-ok 186 - git diff-tree --pretty note # magic is (not used)
-ok 187 - git diff-tree --pretty --notes note # magic is (not used)
-ok 188 - git diff-tree --format=%N note # magic is (not used)
-ok 189 - git diff-tree --stat --compact-summary initial mode # magic is (not used)
-ok 190 - git diff-tree -R --stat --compact-summary initial mode # magic is (not used)
-ok 191 - log --diff-merges=on matches --diff-merges=separate
-ok 192 - deny wrong log.diffMerges config
-ok 193 - git config log.diffMerges first-parent
-ok 194 - git config log.diffMerges first-parent vs -m
-ok 195 - log -S requires an argument
-ok 196 - diff --cached on unborn branch
-ok 197 - diff --cached -- file on unborn branch
-ok 198 - diff --line-prefix with spaces
-ok 199 - diff-tree --stdin with log formatting
-ok 200 - diff -I<regex>: setup
-ok 201 - diff -I<regex>
-ok 202 - diff -I<regex> --stat
-ok 203 - diff -I<regex>: detect malformed regex
-# passed all 203 test(s)
-1..203
+ok 53 - git diff-tree -m master # magic is (not used)
+ok 54 - git diff-tree -p master # magic is (not used)
+ok 55 - git diff-tree -p -m master # magic is (not used)
+ok 56 - git diff-tree -c master # magic is (not used)
+ok 57 - git diff-tree -c --abbrev master # magic is (not used)
+ok 58 - git diff-tree -c --abbrev master # magic is noellipses
+ok 59 - git diff-tree --cc master # magic is (not used)
+ok 60 - git diff-tree -c --stat master # magic is (not used)
+ok 61 - git diff-tree --cc --stat master # magic is (not used)
+ok 62 - git diff-tree -c --stat --summary master # magic is (not used)
+ok 63 - git diff-tree --cc --stat --summary master # magic is (not used)
+ok 64 - git diff-tree -c --stat --summary side # magic is (not used)
+ok 65 - git diff-tree --cc --stat --summary side # magic is (not used)
+ok 66 - git diff-tree --cc --shortstat master # magic is (not used)
+ok 67 - git diff-tree --cc --summary REVERSE # magic is (not used)
+ok 68 - git diff-tree --cc --patch-with-stat master # magic is (not used)
+ok 69 - git diff-tree --cc --patch-with-stat --summary master # magic is (not used)
+ok 70 - git diff-tree --cc --patch-with-stat --summary side # magic is (not used)
+ok 71 - git log master # magic is (not used)
+ok 72 - git log -p master # magic is (not used)
+ok 73 - git log --root master # magic is (not used)
+ok 74 - git log --root -p master # magic is (not used)
+ok 75 - git log --patch-with-stat master # magic is (not used)
+ok 76 - git log --root --patch-with-stat master # magic is (not used)
+ok 77 - git log --root --patch-with-stat --summary master # magic is (not used)
+ok 78 - git log --root -c --patch-with-stat --summary master # magic is (not used)
+ok 79 - git log --root --cc --patch-with-stat --summary master # magic is (not used)
+ok 80 - git log --no-diff-merges -p --first-parent master # magic is (not used)
+ok 81 - git log --diff-merges=off -p --first-parent master # magic is (not used)
+ok 82 - git log --first-parent --diff-merges=off -p master # magic is (not used)
+ok 83 - git log -p --first-parent master # magic is (not used)
+ok 84 - git log -p --diff-merges=first-parent master # magic is (not used)
+ok 85 - git log --diff-merges=first-parent master # magic is (not used)
+ok 86 - git log -m -p --first-parent master # magic is (not used)
+ok 87 - git log -m -p master # magic is (not used)
+ok 88 - git log --cc -m -p master # magic is (not used)
+ok 89 - git log -c -m -p master # magic is (not used)
+ok 90 - git log -m --raw master # magic is (not used)
+ok 91 - git log -m --stat master # magic is (not used)
+ok 92 - git log -SF master # magic is (not used)
+ok 93 - git log -S F master # magic is (not used)
+ok 94 - git log -SF -p master # magic is (not used)
+ok 95 - git log -SF master --max-count=0 # magic is (not used)
+ok 96 - git log -SF master --max-count=1 # magic is (not used)
+ok 97 - git log -SF master --max-count=2 # magic is (not used)
+ok 98 - git log -GF master # magic is (not used)
+ok 99 - git log -GF -p master # magic is (not used)
+ok 100 - git log -GF -p --pickaxe-all master # magic is (not used)
+ok 101 - git log -IA -IB -I1 -I2 -p master # magic is (not used)
+ok 102 - git log --decorate --all # magic is (not used)
+ok 103 - git log --decorate=full --all # magic is (not used)
+ok 104 - git rev-list --parents HEAD # magic is (not used)
+ok 105 - git rev-list --children HEAD # magic is (not used)
+ok 106 - git whatchanged master # magic is (not used)
+ok 107 - git whatchanged master # magic is noellipses
+ok 108 - git whatchanged -p master # magic is (not used)
+ok 109 - git whatchanged --root master # magic is (not used)
+ok 110 - git whatchanged --root master # magic is noellipses
+ok 111 - git whatchanged --root -p master # magic is (not used)
+ok 112 - git whatchanged --patch-with-stat master # magic is (not used)
+ok 113 - git whatchanged --root --patch-with-stat master # magic is (not used)
+ok 114 - git whatchanged --root --patch-with-stat --summary master # magic is (not used)
+ok 115 - git whatchanged --root -c --patch-with-stat --summary master # magic is (not used)
+ok 116 - git whatchanged --root --cc --patch-with-stat --summary master # magic is (not used)
+ok 117 - git whatchanged -SF master # magic is (not used)
+ok 118 - git whatchanged -SF master # magic is noellipses
+ok 119 - git whatchanged -SF -p master # magic is (not used)
+ok 120 - git log --patch-with-stat master -- dir/ # magic is (not used)
+ok 121 - git whatchanged --patch-with-stat master -- dir/ # magic is (not used)
+ok 122 - git log --patch-with-stat --summary master -- dir/ # magic is (not used)
+ok 123 - git whatchanged --patch-with-stat --summary master -- dir/ # magic is (not used)
+ok 124 - git show initial # magic is (not used)
+ok 125 - git show --root initial # magic is (not used)
+ok 126 - git show side # magic is (not used)
+ok 127 - git show master # magic is (not used)
+ok 128 - git show -c master # magic is (not used)
+ok 129 - git show -m master # magic is (not used)
+ok 130 - git show --first-parent master # magic is (not used)
+ok 131 - git show --stat side # magic is (not used)
+ok 132 - git show --stat --summary side # magic is (not used)
+ok 133 - git show --patch-with-stat side # magic is (not used)
+ok 134 - git show --patch-with-raw side # magic is (not used)
+ok 135 - git show --patch-with-raw side # magic is noellipses
+ok 136 - git show --patch-with-stat --summary side # magic is (not used)
+ok 137 - git format-patch --stdout initial..side # magic is (not used)
+ok 138 - git format-patch --stdout initial..master^ # magic is (not used)
+ok 139 - git format-patch --stdout initial..master # magic is (not used)
+ok 140 - git format-patch --stdout --no-numbered initial..master # magic is (not used)
+ok 141 - git format-patch --stdout --numbered initial..master # magic is (not used)
+ok 142 - git format-patch --attach --stdout initial..side # magic is (not used)
+ok 143 - git format-patch --attach --stdout --suffix=.diff initial..side # magic is (not used)
+ok 144 - git format-patch --attach --stdout initial..master^ # magic is (not used)
+ok 145 - git format-patch --attach --stdout initial..master # magic is (not used)
+ok 146 - git format-patch --inline --stdout initial..side # magic is (not used)
+ok 147 - git format-patch --inline --stdout initial..master^ # magic is (not used)
+ok 148 - git format-patch --inline --stdout --numbered-files initial..master # magic is (not used)
+ok 149 - git format-patch --inline --stdout initial..master # magic is (not used)
+ok 150 - git format-patch --inline --stdout --subject-prefix=TESTCASE initial..master # magic is (not used)
+ok 151 - git config format.subjectprefix DIFFERENT_PREFIX # magic is (not used)
+ok 152 - git format-patch --inline --stdout initial..master^^ # magic is (not used)
+ok 153 - git format-patch --stdout --cover-letter -n initial..master^ # magic is (not used)
+ok 154 - git diff --abbrev initial..side # magic is (not used)
+ok 155 - git diff -U initial..side # magic is (not used)
+ok 156 - git diff -U1 initial..side # magic is (not used)
+ok 157 - git diff -r initial..side # magic is (not used)
+ok 158 - git diff --stat initial..side # magic is (not used)
+ok 159 - git diff -r --stat initial..side # magic is (not used)
+ok 160 - git diff initial..side # magic is (not used)
+ok 161 - git diff --patch-with-stat initial..side # magic is (not used)
+ok 162 - git diff --patch-with-raw initial..side # magic is (not used)
+ok 163 - git diff --patch-with-raw initial..side # magic is noellipses
+ok 164 - git diff --patch-with-stat -r initial..side # magic is (not used)
+ok 165 - git diff --patch-with-raw -r initial..side # magic is (not used)
+ok 166 - git diff --patch-with-raw -r initial..side # magic is noellipses
+ok 167 - git diff --name-status dir2 dir # magic is (not used)
+ok 168 - git diff --no-index --name-status dir2 dir # magic is (not used)
+ok 169 - git diff --no-index --name-status -- dir2 dir # magic is (not used)
+ok 170 - git diff --no-index dir dir3 # magic is (not used)
+ok 171 - git diff master master^ side # magic is (not used)
+ok 172 - git diff --line-prefix=abc master master^ side # magic is (not used)
+ok 173 - git diff --dirstat master~1 master~2 # magic is (not used)
+ok 174 - git diff --dirstat initial rearrange # magic is (not used)
+ok 175 - git diff --dirstat-by-file initial rearrange # magic is (not used)
+ok 176 - git diff --dirstat --cc master~1 master # magic is (not used)
+ok 177 - git diff --raw initial # magic is (not used)
+ok 178 - git diff --raw initial # magic is noellipses
+ok 179 - git diff --raw --abbrev=4 initial # magic is (not used)
+ok 180 - git diff --raw --abbrev=4 initial # magic is noellipses
+ok 181 - git diff --raw --no-abbrev initial # magic is (not used)
+ok 182 - git diff --no-index --raw dir2 dir # magic is (not used)
+ok 183 - git diff --no-index --raw dir2 dir # magic is noellipses
+ok 184 - git diff --no-index --raw --abbrev=4 dir2 dir # magic is (not used)
+ok 185 - git diff --no-index --raw --abbrev=4 dir2 dir # magic is noellipses
+ok 186 - git diff --no-index --raw --no-abbrev dir2 dir # magic is (not used)
+ok 187 - git diff-tree --pretty --root --stat --compact-summary initial # magic is (not used)
+ok 188 - git diff-tree --pretty -R --root --stat --compact-summary initial # magic is (not used)
+ok 189 - git diff-tree --pretty note # magic is (not used)
+ok 190 - git diff-tree --pretty --notes note # magic is (not used)
+ok 191 - git diff-tree --format=%N note # magic is (not used)
+ok 192 - git diff-tree --stat --compact-summary initial mode # magic is (not used)
+ok 193 - git diff-tree -R --stat --compact-summary initial mode # magic is (not used)
+ok 194 - log -m matches pure log
+ok 195 - log --diff-merges=on matches --diff-merges=separate
+ok 196 - deny wrong log.diffMerges config
+ok 197 - git config log.diffMerges first-parent
+ok 198 - git config log.diffMerges first-parent vs -m
+ok 199 - git diff-index -m
+ok 200 - log -S requires an argument
+ok 201 - diff --cached on unborn branch
+ok 202 - diff --cached -- file on unborn branch
+ok 203 - diff --line-prefix with spaces
+ok 204 - diff-tree --stdin with log formatting
+ok 205 - diff -I<regex>: setup
+ok 206 - diff -I<regex>
+ok 207 - diff -I<regex> --stat
+ok 208 - diff -I<regex>: detect malformed regex
+# passed all 208 test(s)
+1..208
 *** t4014-format-patch.sh ***
 ok 1 - setup
 ok 2 - format-patch --ignore-if-in-upstream
@@ -12733,6 +12893,7 @@ ok 11 - diff-tree --diff-filter --quiet
 # passed all 11 test(s)
 1..11
 *** t4041-diff-submodule-option.sh ***
+Initialized empty Git repository in $(@D)/t/trash directory.t4041-diff-submodule-option/sm1/.git/
 ok 1 - added submodule
 ok 2 - added submodule, set diff.submodule
 ok 3 - --submodule=short overrides diff.submodule
@@ -12746,6 +12907,7 @@ ok 10 - modified submodule(backward and forward)
 ok 11 - typechanged submodule(submodule->blob), --cached
 ok 12 - typechanged submodule(submodule->blob)
 ok 13 - typechanged submodule(submodule->blob)
+Initialized empty Git repository in $(@D)/t/trash directory.t4041-diff-submodule-option/sm1/.git/
 ok 14 - nonexistent commit
 ok 15 - typechanged submodule(blob->submodule)
 ok 16 - submodule is up to date
@@ -13176,6 +13338,7 @@ ok 11 - modified submodule(backward and forward)
 ok 12 - typechanged submodule(submodule->blob), --cached
 ok 13 - typechanged submodule(submodule->blob)
 ok 14 - typechanged submodule(submodule->blob)
+Initialized empty Git repository in $(@D)/t/trash directory.t4060-diff-submodule-option-diff-format/sm1/.git/
 ok 15 - nonexistent commit
 ok 16 - typechanged submodule(blob->submodule)
 ok 17 - submodule is up to date
@@ -14164,18 +14327,21 @@ ok 85 # skip log.showsignature=true behaves like --show-signature (missing GPG)
 ok 86 # skip --no-show-signature overrides log.showsignature=true (missing GPG)
 ok 87 # skip --show-signature overrides log.showsignature=false (missing GPG)
 ok 88 - log --graph --no-walk is forbidden
-ok 89 - log diagnoses bogus HEAD
-ok 90 - log does not default to HEAD when rev input is given
-ok 91 - do not default to HEAD with ignored object on cmdline
-ok 92 - do not default to HEAD with ignored object on stdin
-ok 93 - set up --source tests
-ok 94 - log --source paints branch names
-ok 95 - log --source paints tag names
-ok 96 - log --source paints symmetric ranges
-ok 97 - --exclude-promisor-objects does not BUG-crash
-ok 98 - log --end-of-options
-# passed all 98 test(s)
-1..98
+ok 89 - log on empty repo fails
+ok 90 - log diagnoses bogus HEAD hash
+ok 91 - log diagnoses bogus HEAD symref
+ok 92 - log does not default to HEAD when rev input is given
+ok 93 - do not default to HEAD with ignored object on cmdline
+ok 94 - do not default to HEAD with ignored object on stdin
+ok 95 - set up --source tests
+ok 96 - log --source paints branch names
+ok 97 - log --source paints tag names
+ok 98 - log --source paints symmetric ranges
+ok 99 - --exclude-promisor-objects does not BUG-crash
+ok 100 - log --decorate includes all levels of tag annotated tags
+ok 101 - log --end-of-options
+# passed all 101 test(s)
+1..101
 *** t4203-mailmap.sh ***
 ok 1 - setup commits and contacts file
 ok 2 - check-mailmap no arguments
@@ -14408,47 +14574,54 @@ ok 21 - tree_entry_interesting does not match past submodule boundaries
 1..21
 *** t4209-log-pickaxe.sh ***
 ok 1 - setup
-ok 2 - log --grep (match)
-ok 3 - log --grep (nomatch)
-ok 4 - log --grep --regexp-ignore-case (match)
-ok 5 - log --grep -i (match)
-ok 6 - log --grep --regexp-ignore-case (nomatch)
-ok 7 - log --grep -i (nomatch)
-ok 8 - log --author (match)
-ok 9 - log --author (nomatch)
-ok 10 - log --author --regexp-ignore-case (match)
-ok 11 - log --author -i (match)
-ok 12 - log --author --regexp-ignore-case (nomatch)
-ok 13 - log --author -i (nomatch)
-ok 14 - log -G (nomatch)
-ok 15 - log -G (match)
-ok 16 - log -G --regexp-ignore-case (nomatch)
-ok 17 - log -G -i (nomatch)
-ok 18 - log -G --regexp-ignore-case (match)
-ok 19 - log -G -i (match)
-ok 20 - log -G --textconv (missing textconv tool)
-ok 21 - log -G --no-textconv (missing textconv tool)
-ok 22 - log -S (nomatch)
-ok 23 - log -S (match)
-ok 24 - log -S --regexp-ignore-case (match)
-ok 25 - log -S -i (match)
-ok 26 - log -S --regexp-ignore-case (nomatch)
-ok 27 - log -S -i (nomatch)
-ok 28 - log -S --pickaxe-regex (nomatch)
-ok 29 - log -S --pickaxe-regex (match)
-ok 30 - log -S --pickaxe-regex --regexp-ignore-case (match)
-ok 31 - log -S --pickaxe-regex -i (match)
-ok 32 - log -S --pickaxe-regex --regexp-ignore-case (nomatch)
-ok 33 - log -S --pickaxe-regex -i (nomatch)
-ok 34 - log -S --textconv (missing textconv tool)
-ok 35 - log -S --no-textconv (missing textconv tool)
-ok 36 - setup log -[GS] binary & --text
-ok 37 - log -G ignores binary files
-ok 38 - log -G looks into binary files with -a
-ok 39 - log -G looks into binary files with textconv filter
-ok 40 - log -S looks into binary files
-# passed all 40 test(s)
-1..40
+ok 2 - usage
+ok 3 - usage: --pickaxe-regex
+ok 4 - usage: --no-pickaxe-regex
+ok 5 - log --grep (match)
+ok 6 - log --grep (nomatch)
+ok 7 - log --grep --regexp-ignore-case (match)
+ok 8 - log --grep -i (match)
+ok 9 - log --grep --regexp-ignore-case (nomatch)
+ok 10 - log --grep -i (nomatch)
+ok 11 - log --author (match)
+ok 12 - log --author (nomatch)
+ok 13 - log --author --regexp-ignore-case (match)
+ok 14 - log --author -i (match)
+ok 15 - log --author --regexp-ignore-case (nomatch)
+ok 16 - log --author -i (nomatch)
+ok 17 - log -G (nomatch)
+ok 18 - log -G (match)
+ok 19 - log -G --regexp-ignore-case (nomatch)
+ok 20 - log -G -i (nomatch)
+ok 21 - log -G --regexp-ignore-case (match)
+ok 22 - log -G -i (match)
+ok 23 - log -G --textconv (missing textconv tool)
+ok 24 - log -G --no-textconv (missing textconv tool)
+ok 25 - log -S (nomatch)
+ok 26 - log -S (match)
+ok 27 - log -S --regexp-ignore-case (match)
+ok 28 - log -S -i (match)
+ok 29 - log -S --regexp-ignore-case (nomatch)
+ok 30 - log -S -i (nomatch)
+ok 31 - log -S --pickaxe-regex (nomatch)
+ok 32 - log -S --pickaxe-regex (match)
+ok 33 - log -S --pickaxe-regex --regexp-ignore-case (match)
+ok 34 - log -S --pickaxe-regex -i (match)
+ok 35 - log -S --pickaxe-regex --regexp-ignore-case (nomatch)
+ok 36 - log -S --pickaxe-regex -i (nomatch)
+ok 37 - log -S --textconv (missing textconv tool)
+ok 38 - log -S --no-textconv (missing textconv tool)
+ok 39 - setup log -[GS] plain & regex
+ok 40 - log -G trims diff new/old [-+]
+ok 41 - log -S<pat> is not a regex, but -S<pat> --pickaxe-regex is
+ok 42 - setup log -[GS] binary & --text
+ok 43 - log -G ignores binary files
+ok 44 - log -G looks into binary files with -a
+ok 45 - log -G looks into binary files with textconv filter
+ok 46 - log -S looks into binary files
+ok 47 - log -S --pickaxe-regex looks into binary files
+# passed all 47 test(s)
+1..47
 *** t4210-log-i18n.sh ***
 # lib-gettext: Found 'is_IS.UTF-8' as an is_IS UTF-8 locale
 # lib-gettext: Found 'is_IS.ISO8859-1' as an is_IS ISO-8859-1 locale
@@ -14802,7 +14975,7 @@ ok 4 - interactive am can resolve conflict
 ok 1 - setup
 ok 2 - am warn if quoted-cr is found
 ok 3 - am --quoted-cr=strip
-ok 4 - am with config mailinfo.quotecr=strip
+ok 4 - am with config mailinfo.quotedCr=strip
 # passed all 4 test(s)
 1..4
 *** t4300-merge-tree.sh ***
@@ -15658,37 +15831,40 @@ ok 35 - verify oid lookup out of order
 ok 36 - verify incorrect pack-int-id
 ok 37 - verify incorrect offset
 ok 38 - git-fsck incorrect offset
-ok 39 - repack progress off for redirected stderr
-ok 40 - repack force progress on for stderr
-ok 41 - repack with the --no-progress option
-ok 42 - repack removes multi-pack-index when deleting packs
-ok 43 - repack preserves multi-pack-index when creating packs
-ok 44 - check normal git operations: after repack
-ok 45 - multi-pack-index and pack-bitmap
-ok 46 - multi-pack-index and alternates
-ok 47 - check normal git operations: with alternate (local midx)
-ok 48 - multi-pack-index in an alternate
-ok 49 - check normal git operations: with alternate (remote midx)
-ok 50 - force some 64-bit offsets with pack-objects
-ok 51 - verify multi-pack-index with 64-bit offsets
-ok 52 - verify incorrect 64-bit offset
-ok 53 - setup expire tests
-ok 54 - expire does not remove any packs
-ok 55 - expire progress off for redirected stderr
-ok 56 - expire force progress on for stderr
-ok 57 - expire with the --no-progress option
-ok 58 - expire removes unreferenced packs
-ok 59 - repack with minimum size does not alter existing packs
-ok 60 - repack respects repack.packKeptObjects=false
-ok 61 - repack creates a new pack
-ok 62 - expire removes repacked packs
-ok 63 - expire works when adding new packs
-ok 64 - expire respects .keep files
-ok 65 - repack --batch-size=0 repacks everything
-ok 66 - repack --batch-size=<large> repacks everything
-ok 67 - load reverse index when missing .idx, .pack
-# passed all 67 test(s)
-1..67
+ok 39 - corrupt MIDX is not reused
+ok 40 - verify incorrect checksum
+ok 41 - repack progress off for redirected stderr
+ok 42 - repack force progress on for stderr
+ok 43 - repack with the --no-progress option
+ok 44 - repack removes multi-pack-index when deleting packs
+ok 45 - repack preserves multi-pack-index when creating packs
+ok 46 - check normal git operations: after repack
+ok 47 - multi-pack-index and pack-bitmap
+ok 48 - multi-pack-index and alternates
+ok 49 - check normal git operations: with alternate (local midx)
+ok 50 - multi-pack-index in an alternate
+ok 51 - check normal git operations: with alternate (remote midx)
+ok 52 - force some 64-bit offsets with pack-objects
+ok 53 - verify multi-pack-index with 64-bit offsets
+ok 54 - verify incorrect 64-bit offset
+ok 55 - setup expire tests
+ok 56 - expire does not remove any packs
+ok 57 - expire progress off for redirected stderr
+ok 58 - expire force progress on for stderr
+ok 59 - expire with the --no-progress option
+ok 60 - expire removes unreferenced packs
+ok 61 - repack with minimum size does not alter existing packs
+ok 62 - repack respects repack.packKeptObjects=false
+ok 63 - repack creates a new pack
+ok 64 - expire removes repacked packs
+ok 65 - expire works when adding new packs
+ok 66 - expire respects .keep files
+ok 67 - repack --batch-size=0 repacks everything
+ok 68 - repack --batch-size=<large> repacks everything
+ok 69 - load reverse index when missing .idx, .pack
+ok 70 - usage shown without sub-command
+# passed all 70 test(s)
+1..70
 *** t5320-delta-islands.sh ***
 ok 1 - setup commits
 ok 2 - vanilla repack deltas one against two
@@ -16555,7 +16731,7 @@ ok 9 - remove remote protects local branches
 ok 10 - remove errors out early when deleting non-existent branch
 ok 11 - remove remote with a branch without configured merge
 ok 12 - rename errors out early when deleting non-existent branch
-ok 13 - rename errors out early when when new name is invalid
+ok 13 - rename errors out early when new name is invalid
 ok 14 - add existing foreign_vcs remote
 ok 15 - add existing foreign_vcs remote
 ok 16 - add invalid foreign_vcs remote
@@ -17861,8 +18037,9 @@ ok 10 - failed clone into empty leaves directory (bare)
 ok 11 - failed clone into empty leaves directory (separate)
 ok 12 - failed clone into empty leaves directory (separate, git)
 ok 13 - failed clone into empty leaves directory (separate, wt)
-# passed all 13 test(s)
-1..13
+ok 14 - transport failure cleans up directory
+# passed all 14 test(s)
+1..14
 *** t5601-clone.sh ***
 ok 1 - setup
 ok 2 - clone with excess parameters (1)
@@ -18359,11 +18536,12 @@ ok 34 - fetch supports include-tag and tag following
 ok 35 - upload-pack respects client shallows
 ok 36 - ensure that multiple fetches in same process from a shallow repo works
 ok 37 - deepen-relative
-ok 38 - file:// --negotiate-only
-ok 39 - file:// --negotiate-only with protocol v0
-# passed all 39 test(s)
+ok 38 - usage: --negotiate-only without --negotiation-tip
+ok 39 - file:// --negotiate-only
+ok 40 - file:// --negotiate-only with protocol v0
+# passed all 40 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
-1..39
+1..40
 *** t5703-upload-pack-ref-in-want.sh ***
 ok 1 - setup repository
 ok 2 - config controls ref-in-want advertisement
@@ -18826,78 +19004,85 @@ ok 6 - --skip --max-count
 ok 1 - setup
 ok 2 - format percent
 ok 3 - format hash
-ok 4 - format tree
-ok 5 - format parents
-ok 6 - format author
-ok 7 - format committer
-ok 8 - format encoding
-ok 9 - format subject
-ok 10 - format subject-truncated
-ok 11 - format body
-ok 12 - format raw-body
-ok 13 - basic colors
-ok 14 - %S is not a placeholder for rev-list yet
-ok 15 - advanced colors
-ok 16 - %Cred does not enable color by default
-ok 17 - %Cred enables colors for color.diff
-ok 18 - %Cred enables colors for color.ui
-ok 19 - %Cred respects --color
-ok 20 - %Cred respects --no-color
-ok 21 # skip %Cred respects --color=auto (stdout is tty) (missing TTY)
-ok 22 - %Cred respects --color=auto (stdout not tty)
-ok 23 - %C(...) does not enable color by default
-ok 24 - %C(...) enables colors for color.diff
-ok 25 - %C(...) enables colors for color.ui
-ok 26 - %C(...) respects --color
-ok 27 - %C(...) respects --no-color
-ok 28 # skip %C(...) respects --color=auto (stdout is tty) (missing TTY)
-ok 29 - %C(...) respects --color=auto (stdout not tty)
-ok 30 - %C(auto,...) does not enable color by default
-ok 31 - %C(auto,...) enables colors for color.diff
-ok 32 - %C(auto,...) enables colors for color.ui
-ok 33 - %C(auto,...) respects --color
-ok 34 - %C(auto,...) respects --no-color
-ok 35 # skip %C(auto,...) respects --color=auto (stdout is tty) (missing TTY)
-ok 36 - %C(auto,...) respects --color=auto (stdout not tty)
-ok 37 - %C(always,...) enables color even without tty
-ok 38 - %C(auto) respects --color
-ok 39 - %C(auto) respects --no-color
-ok 40 - rev-list %C(auto,...) respects --color
-ok 41 - setup complex body
-ok 42 - format complex-encoding
-ok 43 - format complex-subject
-ok 44 - format complex-subject-trunc
-ok 45 - format complex-subject-mtrunc
-ok 46 - format complex-subject-ltrunc
-ok 47 - setup expected messages (for test %b)
-ok 48 - format complex-body
-ok 49 - format complex-subject-commitencoding-unset
-ok 50 - format complex-subject-commitencoding-unset-trunc
-ok 51 - format complex-subject-commitencoding-unset-mtrunc
-ok 52 - format complex-subject-commitencoding-unset-ltrunc
-ok 53 - format complex-body-commitencoding-unset
-ok 54 - %x00 shows NUL
-ok 55 - %ad respects --date=
-ok 56 - empty email
-ok 57 - del LF before empty (1)
-ok 58 - del LF before empty (2)
-ok 59 - add LF before non-empty (1)
-ok 60 - add LF before non-empty (2)
-ok 61 - add SP before non-empty (1)
-ok 62 - add SP before non-empty (2)
-ok 63 - --abbrev
-ok 64 - %H is not affected by --abbrev-commit
-ok 65 - %h is not affected by --abbrev-commit
-ok 66 - "%h %gD: %gs" is same as git-reflog
-ok 67 - "%h %gD: %gs" is same as git-reflog (with date)
-ok 68 - "%h %gD: %gs" is same as git-reflog (with --abbrev)
-ok 69 - %gd shortens ref name
-ok 70 - reflog identity
-ok 71 - oneline with empty message
-ok 72 - single-character name is parsed correctly
-ok 73 - unused %G placeholders are passed through
-# passed all 73 test(s)
-1..73
+ok 4 - format hash-no-header
+ok 5 - format hash-no-header-abbrev
+ok 6 - format tree
+ok 7 - format parents
+ok 8 - format author
+ok 9 - format committer
+ok 10 - format encoding
+ok 11 - format subject
+ok 12 - format subject-truncated
+ok 13 - format body
+ok 14 - format raw-body
+ok 15 - format raw-body-no-header
+ok 16 - pretty oneline (without --no-commit-header)
+ok 17 - pretty oneline (with --no-commit-header)
+ok 18 - pretty short (without --no-commit-header)
+ok 19 - pretty short (with --no-commit-header)
+ok 20 - basic colors
+ok 21 - %S is not a placeholder for rev-list yet
+ok 22 - advanced colors
+ok 23 - %Cred does not enable color by default
+ok 24 - %Cred enables colors for color.diff
+ok 25 - %Cred enables colors for color.ui
+ok 26 - %Cred respects --color
+ok 27 - %Cred respects --no-color
+ok 28 # skip %Cred respects --color=auto (stdout is tty) (missing TTY)
+ok 29 - %Cred respects --color=auto (stdout not tty)
+ok 30 - %C(...) does not enable color by default
+ok 31 - %C(...) enables colors for color.diff
+ok 32 - %C(...) enables colors for color.ui
+ok 33 - %C(...) respects --color
+ok 34 - %C(...) respects --no-color
+ok 35 # skip %C(...) respects --color=auto (stdout is tty) (missing TTY)
+ok 36 - %C(...) respects --color=auto (stdout not tty)
+ok 37 - %C(auto,...) does not enable color by default
+ok 38 - %C(auto,...) enables colors for color.diff
+ok 39 - %C(auto,...) enables colors for color.ui
+ok 40 - %C(auto,...) respects --color
+ok 41 - %C(auto,...) respects --no-color
+ok 42 # skip %C(auto,...) respects --color=auto (stdout is tty) (missing TTY)
+ok 43 - %C(auto,...) respects --color=auto (stdout not tty)
+ok 44 - %C(always,...) enables color even without tty
+ok 45 - %C(auto) respects --color
+ok 46 - %C(auto) respects --no-color
+ok 47 - rev-list %C(auto,...) respects --color
+ok 48 - setup complex body
+ok 49 - format complex-encoding
+ok 50 - format complex-subject
+ok 51 - format complex-subject-trunc
+ok 52 - format complex-subject-mtrunc
+ok 53 - format complex-subject-ltrunc
+ok 54 - setup expected messages (for test %b)
+ok 55 - format complex-body
+ok 56 - format complex-subject-commitencoding-unset
+ok 57 - format complex-subject-commitencoding-unset-trunc
+ok 58 - format complex-subject-commitencoding-unset-mtrunc
+ok 59 - format complex-subject-commitencoding-unset-ltrunc
+ok 60 - format complex-body-commitencoding-unset
+ok 61 - %x00 shows NUL
+ok 62 - %ad respects --date=
+ok 63 - empty email
+ok 64 - del LF before empty (1)
+ok 65 - del LF before empty (2)
+ok 66 - add LF before non-empty (1)
+ok 67 - add LF before non-empty (2)
+ok 68 - add SP before non-empty (1)
+ok 69 - add SP before non-empty (2)
+ok 70 - --abbrev
+ok 71 - %H is not affected by --abbrev-commit
+ok 72 - %h is not affected by --abbrev-commit
+ok 73 - "%h %gD: %gs" is same as git-reflog
+ok 74 - "%h %gD: %gs" is same as git-reflog (with date)
+ok 75 - "%h %gD: %gs" is same as git-reflog (with --abbrev)
+ok 76 - %gd shortens ref name
+ok 77 - reflog identity
+ok 78 - oneline with empty message
+ok 79 - single-character name is parsed correctly
+ok 80 - unused %G placeholders are passed through
+# passed all 80 test(s)
+1..80
 *** t6007-rev-list-cherry-pick-file.sh ***
 ok 1 - setup
 ok 2 - --left-right
@@ -19587,68 +19772,65 @@ ok 19 - describe --tags
 ok 20 - describe --first-parent --tags
 ok 21 - describe --contains defaults to HEAD without commit-ish
 ok 22 - describe --all A^0
-ok 23 - no warning was displayed for A
-ok 24 - rename tag A to Q locally
-ok 25 - describe HEAD
-ok 26 - warning was displayed for Q
-ok 27 - misnamed annotated tag forces long output
-ok 28 - abbrev=0 will not break misplaced tag (1)
-ok 29 - abbrev=0 will not break misplaced tag (2)
-ok 30 - rename tag Q back to A
-ok 31 - pack tag refs
-ok 32 - describe HEAD
-ok 33 - describe works from outside repo using --git-dir
-ok 34 - describe --dirty
-ok 35 - describe --dirty with --work-tree
-ok 36 - set-up dirty work tree
-ok 37 - describe --dirty
-ok 38 - describe --dirty with --work-tree (dirty)
-ok 39 - describe --dirty=.mod
-ok 40 - describe --dirty=.mod with --work-tree (dirty)
-ok 41 - describe --dirty HEAD
-ok 42 - set-up matching pattern tests
-ok 43 - describe --match=test-*
-ok 44 - describe --tags --match=test1-*
-ok 45 - describe --tags --match=test2-*
-ok 46 - describe --long --tags --match=test2-* HEAD^
-ok 47 - describe --long --tags --match=test1-* --match=test2-* HEAD^
-ok 48 - describe --long --tags --match=test1-* --no-match --match=test2-* HEAD^
-ok 49 - describe --long --tags --match=test1-* --match=test3-* HEAD
-ok 50 - describe --long --tags --match=test3-* --match=test1-* HEAD
-ok 51 - set-up branches
-ok 52 - describe --all --match=branch_* --exclude=branch_C HEAD
-ok 53 - describe --all --match=origin/remote_branch_* --exclude=origin/remote_branch_C HEAD
-ok 54 - describe --all test-annotated~1
-ok 55 - --match does not work for other types
-ok 56 - --exclude does not work for other types
-ok 57 - name-rev with exact tags
-ok 58 - name-rev --all
-ok 59 - name-rev --stdin
-ok 60 - describe --contains with the exact tags
-ok 61 - describe --contains and --match
-ok 62 - describe --exclude
-ok 63 - describe --contains and --no-match
-ok 64 - setup and absorb a submodule
-ok 65 - describe chokes on severely broken submodules
-ok 66 - describe ignoring a broken submodule
-ok 67 - describe with --work-tree ignoring a broken submodule
-ok 68 - describe a blob at a directly tagged commit
-ok 69 - describe a blob with its first introduction
-ok 70 - describe directly tagged blob
-ok 71 - describe tag object
-ok 72 - name-rev works in a deep repo
-ok 73 - describe works in a deep repo
-ok 74 - describe --all A
-ok 75 - describe --all c
-ok 76 - describe --all --match=branch_* branch_A
-ok 77 - describe complains about tree object
-ok 78 - describe complains about missing object
-ok 79 - name-rev a rev shortly after epoch
-ok 80 - name-rev covers all conditions while looking at parents
-ok 81 - describe commits with disjoint bases
-ok 82 - describe commits with disjoint bases 2
-# passed all 82 test(s)
-1..82
+ok 23 - renaming tag A to Q locally produces a warning
+ok 24 - misnamed annotated tag forces long output
+ok 25 - abbrev=0 will not break misplaced tag (1)
+ok 26 - abbrev=0 will not break misplaced tag (2)
+ok 27 - rename tag Q back to A
+ok 28 - pack tag refs
+ok 29 - describe HEAD
+ok 30 - describe works from outside repo using --git-dir
+ok 31 - describe --dirty
+ok 32 - describe --dirty with --work-tree
+ok 33 - set-up dirty work tree
+ok 34 - describe --dirty with --work-tree (dirty)
+ok 35 - describe --dirty=.mod with --work-tree (dirty)
+ok 36 - describe --dirty HEAD
+ok 37 - set-up matching pattern tests
+ok 38 - describe --match=test-*
+ok 39 - describe --tags --match=test1-*
+ok 40 - describe --tags --match=test2-*
+ok 41 - describe --long --tags --match=test2-* HEAD^
+ok 42 - describe --long --tags --match=test1-* --match=test2-* HEAD^
+ok 43 - describe --long --tags --match=test1-* --no-match --match=test2-* HEAD^
+ok 44 - describe --long --tags --match=test1-* --match=test3-* HEAD
+ok 45 - describe --long --tags --match=test3-* --match=test1-* HEAD
+ok 46 - set-up branches
+ok 47 - describe --all --match=branch_* --exclude=branch_C HEAD
+ok 48 - describe --all --match=origin/remote_branch_* --exclude=origin/remote_branch_C HEAD
+ok 49 - describe --all test-annotated~1
+ok 50 - --match does not work for other types
+ok 51 - --exclude does not work for other types
+ok 52 - name-rev with exact tags
+ok 53 - name-rev --all
+ok 54 - name-rev --stdin
+ok 55 - describe --contains with the exact tags
+ok 56 - describe --contains and --match
+ok 57 - describe --exclude
+ok 58 - describe --contains and --no-match
+ok 59 - setup and absorb a submodule
+ok 60 - describe chokes on severely broken submodules
+ok 61 - describe ignoring a broken submodule
+ok 62 - describe with --work-tree ignoring a broken submodule
+ok 63 - describe a blob at a directly tagged commit
+ok 64 - describe a blob with its first introduction
+ok 65 - describe directly tagged blob
+ok 66 - describe tag object
+ok 67 - name-rev works in a deep repo
+ok 68 - describe works in a deep repo
+ok 69 - describe --all A
+ok 70 - describe --all c
+ok 71 - describe --all --match=branch_* branch_A
+ok 72 - describe complains about tree object
+ok 73 - describe complains about missing object
+ok 74 - name-rev a rev shortly after epoch
+ok 75 - name-rev covers all conditions while looking at parents
+ok 76 - setup: describe commits with disjoint bases
+ok 77 - describe HEAD
+ok 78 - setup: describe commits with disjoint bases 2
+ok 79 - describe HEAD
+# passed all 79 test(s)
+1..79
 *** t6130-pathspec-noglob.sh ***
 ok 1 - create commits with glob characters
 ok 2 - vanilla pathspec matches literally
@@ -20276,8 +20458,9 @@ ok 6 - custom merge backend
 ok 7 - custom merge backend
 ok 8 - up-to-date merge without common ancestor
 ok 9 - custom merge does not lock index
-# passed all 9 test(s)
-1..9
+ok 10 - binary files with union attribute
+# passed all 10 test(s)
+1..10
 *** t6407-merge-binary.sh ***
 ok 1 - setup
 ok 2 - resolve
@@ -20453,6 +20636,12 @@ ok 10 - Test delete/normalize conflict
 1..10
 *** t6419-merge-ignorecase.sh ***
 1..0 # SKIP skipping case insensitive tests - case sensitive file system
+*** t6421-merge-partial-clone.sh ***
+ok 1 - Objects downloaded for single relevant rename
+ok 2 - Objects downloaded when a directory rename triggered
+ok 3 - Objects downloaded with lots of renames and modifications
+# passed all 3 test(s)
+1..3
 *** t6422-merge-rename-corner-cases.sh ***
 ok 1 - Does git preserve Gollum's precious artifact?
 not ok 2 - rename/modify/add-source conflict resolvable # TODO known breakage
@@ -20541,20 +20730,24 @@ ok 55 - 12c1: Moving one directory hierarchy into another w/ content merge
 ok 56 - 12c2: Moving one directory hierarchy into another w/ content merge
 ok 57 - 12d: Rename/merge subdir into the root, variant 1
 ok 58 - 12e: Rename/merge subdir into the root, variant 2
-not ok 59 - 12f: Trivial directory resolve, caching, all kinds of fun # TODO known breakage
+ok 59 - 12f: Trivial directory resolve, caching, all kinds of fun
 ok 60 - 12g: Testcase with two kinds of "relevant" renames
-ok 61 - 13a(conflict): messages for newly added files
-ok 62 - 13a(info): messages for newly added files
-ok 63 - 13b(conflict): messages for transitive rename with conflicted content
-ok 64 - 13b(info): messages for transitive rename with conflicted content
-ok 65 - 13c(conflict): messages for rename/rename(1to1) via transitive rename
-ok 66 - 13c(info): messages for rename/rename(1to1) via transitive rename
-ok 67 - 13d(conflict): messages for rename/rename(1to1) via dual transitive rename
-ok 68 - 13d(info): messages for rename/rename(1to1) via dual transitive rename
-ok 69 - 13e: directory rename detection in recursive case
+not ok 61 - 12h: renaming a file within a renamed directory # TODO known breakage
+ok 62 - 12i: Directory rename causes rename-to-self
+ok 63 - 12j: Directory rename to root causes rename-to-self
+ok 64 - 12k: Directory rename with sibling causes rename-to-self
+ok 65 - 13a(conflict): messages for newly added files
+ok 66 - 13a(info): messages for newly added files
+ok 67 - 13b(conflict): messages for transitive rename with conflicted content
+ok 68 - 13b(info): messages for transitive rename with conflicted content
+ok 69 - 13c(conflict): messages for rename/rename(1to1) via transitive rename
+ok 70 - 13c(info): messages for rename/rename(1to1) via transitive rename
+ok 71 - 13d(conflict): messages for rename/rename(1to1) via dual transitive rename
+ok 72 - 13d(info): messages for rename/rename(1to1) via dual transitive rename
+ok 73 - 13e: directory rename detection in recursive case
 # still have 2 known breakage(s)
-# passed all remaining 67 test(s)
-1..69
+# passed all remaining 71 test(s)
+1..73
 *** t6424-merge-unrelated-index-changes.sh ***
 ok 1 - setup trivial merges
 ok 2 - ff update
@@ -20609,6 +20802,18 @@ ok 1 - conflicting entries written to worktree even if sparse
 ok 2 - present-despite-SKIP_WORKTREE handled reasonably
 # passed all 2 test(s)
 1..2
+*** t6429-merge-sequence-rename-caching.sh ***
+ok 1 - caching renames does not preclude finding new ones
+ok 2 - cherry-pick both a commit and its immediate revert
+ok 3 - rename same file identically, then reintroduce it
+ok 4 - rename same file identically, then add file to old dir
+ok 5 - cached dir rename does not prevent noticing later conflict
+ok 6 - dir rename unneeded, then add new file to old dir
+ok 7 - dir rename unneeded, then rename existing file into old dir
+ok 8 - caching renames only on upstream side, part 1
+ok 9 - caching renames only on upstream side, part 2
+# passed all 9 test(s)
+1..9
 *** t6430-merge-recursive.sh ***
 ok 1 - setup 1
 ok 2 - setup 2
@@ -20845,16 +21050,17 @@ ok 4 - gc --gobbledegook
 ok 5 - gc -h with invalid configuration
 ok 6 - gc is not aborted due to a stale symref
 ok 7 - gc --keep-largest-pack
-ok 8 - auto gc with too many loose objects does not attempt to create bitmaps
-ok 9 - gc --no-quiet
-ok 10 # skip with TTY: gc --no-quiet (missing TTY)
-ok 11 - gc --quiet
-ok 12 - gc.reflogExpire{Unreachable,}=never skips "expire" via "gc"
-ok 13 - one of gc.reflogExpire{Unreachable,}=never does not skip "expire" via "gc"
-ok 14 - background auto gc does not run if gc.log is present and recent but does if it is old
-ok 15 - background auto gc respects lock for all operations
-# passed all 15 test(s)
-1..15
+ok 8 - pre-auto-gc hook can stop auto gc
+ok 9 - auto gc with too many loose objects does not attempt to create bitmaps
+ok 10 - gc --no-quiet
+ok 11 # skip with TTY: gc --no-quiet (missing TTY)
+ok 12 - gc --quiet
+ok 13 - gc.reflogExpire{Unreachable,}=never skips "expire" via "gc"
+ok 14 - one of gc.reflogExpire{Unreachable,}=never does not skip "expire" via "gc"
+ok 15 - background auto gc does not run if gc.log is present and recent but does if it is old
+ok 16 - background auto gc respects lock for all operations
+# passed all 16 test(s)
+1..16
 *** t6501-freshen-objects.sh ***
 ok 1 - make repo completely empty (loose)
 ok 2 - disable reflogs (loose)
@@ -22020,103 +22226,105 @@ ok 14 - redirected submodule add does not show progress
 ok 15 - redirected submodule add --progress does show progress
 ok 16 - submodule add to .gitignored path fails
 ok 17 - submodule add to .gitignored path with --force
-ok 18 - submodule add to reconfigure existing submodule with --force
-ok 19 - submodule add relays add --dry-run stderr
-ok 20 - submodule add --branch
-ok 21 - submodule add with ./ in path
-ok 22 - submodule add with /././ in path
-ok 23 - submodule add with // in path
-ok 24 - submodule add with /.. in path
-ok 25 - submodule add with ./, /.. and // in path
-ok 26 - submodule add with \\ in path
-ok 27 - submodule add in subdirectory
-ok 28 - submodule add in subdirectory with relative path should fail
-ok 29 - setup - add an example entry to .gitmodules
-ok 30 - status should fail for unmapped paths
-ok 31 - setup - map path in .gitmodules
-ok 32 - status should only print one line
-ok 33 - status from subdirectory should have the same SHA1
-ok 34 - setup - fetch commit name from submodule
-ok 35 - status should initially be "missing"
-ok 36 - init should register submodule url in .git/config
-ok 37 - status should still be "missing" after initializing
-ok 38 - init should fail with unknown submodule
-ok 39 - update should fail with unknown submodule
-ok 40 - status should fail with unknown submodule
-ok 41 - sync should fail with unknown submodule
-ok 42 - update should fail when path is used by a file
-ok 43 - update should fail when path is used by a nonempty directory
-ok 44 - update should work when path is an empty dir
-ok 45 - status should be "up-to-date" after update
-ok 46 - status "up-to-date" from subdirectory
-ok 47 - status "up-to-date" from subdirectory with path
-ok 48 - status should be "modified" after submodule commit
-ok 49 - the --cached sha1 should be rev1
-ok 50 - git diff should report the SHA1 of the new submodule commit
-ok 51 - update should checkout rev1
-ok 52 - status should be "up-to-date" after update
-ok 53 - checkout superproject with subproject already present
-ok 54 - apply submodule diff
-ok 55 - update --init
-ok 56 - update --init from subdirectory
-ok 57 - do not add files from a submodule
-ok 58 - gracefully add/reset submodule with a trailing slash
-ok 59 - ls-files gracefully handles trailing slash
-ok 60 - moving to a commit without submodule does not leave empty dir
-ok 61 - submodule <invalid-subcommand> fails
-ok 62 - add submodules without specifying an explicit path
-ok 63 - add should fail when path is used by a file
-ok 64 - add should fail when path is used by an existing directory
-ok 65 - use superproject as upstream when path is relative and no url is set there
-ok 66 - set up for relative path tests
-ok 67 - ../subrepo works with URL - ssh://hostname/repo
-ok 68 - ../subrepo works with port-qualified URL - ssh://hostname:22/repo
-ok 69 - ../subrepo path works with local path - //somewhere else/repo
-ok 70 - ../subrepo works with file URL - file:///tmp/repo
-ok 71 - ../subrepo works with helper URL- helper:://hostname/repo
-ok 72 - ../subrepo works with scp-style URL - user@host:repo
-ok 73 - ../subrepo works with scp-style URL - user@host:path/to/repo
-ok 74 - ../subrepo works with relative local path - foo
-ok 75 - ../subrepo works with relative local path - foo/bar
-ok 76 - ../subrepo works with relative local path - ./foo
-ok 77 - ../subrepo works with relative local path - ./foo/bar
-ok 78 - ../subrepo works with relative local path - ../foo
-ok 79 - ../subrepo works with relative local path - ../foo/bar
-ok 80 - ../bar/a/b/c works with relative local path - ../foo/bar.git
-ok 81 - moving the superproject does not break submodules
-ok 82 - moving the submodule does not break the superproject
-ok 83 - submodule add --name allows to replace a submodule with another at the same path
-ok 84 - recursive relative submodules stay relative
-ok 85 - submodule add with an existing name fails unless forced
-ok 86 - set up a second submodule
-ok 87 - submodule deinit works on repository without submodules
-ok 88 - submodule deinit should remove the whole submodule section from .git/config
-ok 89 - submodule deinit should unset core.worktree
-ok 90 - submodule deinit from subdirectory
-ok 91 - submodule deinit . deinits all initialized submodules
-ok 92 - submodule deinit --all deinits all initialized submodules
-ok 93 - submodule deinit deinits a submodule when its work tree is missing or empty
-ok 94 - submodule deinit fails when the submodule contains modifications unless forced
-ok 95 - submodule deinit fails when the submodule contains untracked files unless forced
-ok 96 - submodule deinit fails when the submodule HEAD does not match unless forced
-ok 97 - submodule deinit is silent when used on an uninitialized submodule
-ok 98 - submodule deinit fails when submodule has a .git directory even when forced
-ok 99 - submodule with UTF-8 name
-ok 100 - submodule add clone shallow submodule
-ok 101 - submodule helper list is not confused by common prefixes
-ok 102 - setup superproject with submodules
-ok 103 - submodule update --init with a specification
-ok 104 - submodule update --init with submodule.active set
-ok 105 - submodule update and setting submodule.<name>.active
-ok 106 - clone active submodule without submodule url set
-ok 107 - clone --recurse-submodules with a pathspec works
-ok 108 - clone with multiple --recurse-submodules options
-ok 109 - clone and subsequent updates correctly auto-initialize submodules
-ok 110 - init properly sets the config
-ok 111 - recursive clone respects -q
-# passed all 111 test(s)
-1..111
+ok 18 - submodule add to path with tracked content fails
+ok 19 - submodule add to reconfigure existing submodule with --force
+ok 20 - submodule add relays add --dry-run stderr
+ok 21 - submodule add --branch
+ok 22 - submodule add with ./ in path
+ok 23 - submodule add with /././ in path
+ok 24 - submodule add with // in path
+ok 25 - submodule add with /.. in path
+ok 26 - submodule add with ./, /.. and // in path
+ok 27 - submodule add with \\ in path
+ok 28 - submodule add in subdirectory
+ok 29 - submodule add in subdirectory with relative path should fail
+ok 30 - setup - add an example entry to .gitmodules
+ok 31 - status should fail for unmapped paths
+ok 32 - setup - map path in .gitmodules
+ok 33 - status should only print one line
+ok 34 - status from subdirectory should have the same SHA1
+ok 35 - setup - fetch commit name from submodule
+ok 36 - status should initially be "missing"
+ok 37 - init should register submodule url in .git/config
+ok 38 - status should still be "missing" after initializing
+ok 39 - init should fail with unknown submodule
+ok 40 - update should fail with unknown submodule
+ok 41 - status should fail with unknown submodule
+ok 42 - sync should fail with unknown submodule
+ok 43 - update should fail when path is used by a file
+ok 44 - update should fail when path is used by a nonempty directory
+ok 45 - update should work when path is an empty dir
+ok 46 - status should be "up-to-date" after update
+ok 47 - status "up-to-date" from subdirectory
+ok 48 - status "up-to-date" from subdirectory with path
+ok 49 - status should be "modified" after submodule commit
+ok 50 - the --cached sha1 should be rev1
+ok 51 - git diff should report the SHA1 of the new submodule commit
+ok 52 - update should checkout rev1
+ok 53 - status should be "up-to-date" after update
+ok 54 - checkout superproject with subproject already present
+ok 55 - apply submodule diff
+ok 56 - update --init
+ok 57 - update --init from subdirectory
+ok 58 - do not add files from a submodule
+ok 59 - gracefully add/reset submodule with a trailing slash
+ok 60 - ls-files gracefully handles trailing slash
+ok 61 - moving to a commit without submodule does not leave empty dir
+ok 62 - submodule <invalid-subcommand> fails
+ok 63 - add submodules without specifying an explicit path
+ok 64 - add should fail when path is used by a file
+ok 65 - add should fail when path is used by an existing directory
+ok 66 - use superproject as upstream when path is relative and no url is set there
+ok 67 - set up for relative path tests
+ok 68 - ../subrepo works with URL - ssh://hostname/repo
+ok 69 - ../subrepo works with port-qualified URL - ssh://hostname:22/repo
+ok 70 - ../subrepo path works with local path - //somewhere else/repo
+ok 71 - ../subrepo works with file URL - file:///tmp/repo
+ok 72 - ../subrepo works with helper URL- helper:://hostname/repo
+ok 73 - ../subrepo works with scp-style URL - user@host:repo
+ok 74 - ../subrepo works with scp-style URL - user@host:path/to/repo
+ok 75 - ../subrepo works with relative local path - foo
+ok 76 - ../subrepo works with relative local path - foo/bar
+ok 77 - ../subrepo works with relative local path - ./foo
+ok 78 - ../subrepo works with relative local path - ./foo/bar
+ok 79 - ../subrepo works with relative local path - ../foo
+ok 80 - ../subrepo works with relative local path - ../foo/bar
+ok 81 - ../bar/a/b/c works with relative local path - ../foo/bar.git
+ok 82 - moving the superproject does not break submodules
+ok 83 - moving the submodule does not break the superproject
+ok 84 - submodule add --name allows to replace a submodule with another at the same path
+ok 85 - recursive relative submodules stay relative
+ok 86 - submodule add with an existing name fails unless forced
+ok 87 - set up a second submodule
+ok 88 - submodule deinit works on repository without submodules
+ok 89 - submodule deinit should remove the whole submodule section from .git/config
+ok 90 - submodule deinit should unset core.worktree
+ok 91 - submodule deinit from subdirectory
+ok 92 - submodule deinit . deinits all initialized submodules
+ok 93 - submodule deinit --all deinits all initialized submodules
+ok 94 - submodule deinit deinits a submodule when its work tree is missing or empty
+ok 95 - submodule deinit fails when the submodule contains modifications unless forced
+ok 96 - submodule deinit fails when the submodule contains untracked files unless forced
+ok 97 - submodule deinit fails when the submodule HEAD does not match unless forced
+ok 98 - submodule deinit is silent when used on an uninitialized submodule
+ok 99 - submodule deinit fails when submodule has a .git directory even when forced
+ok 100 - submodule with UTF-8 name
+ok 101 - submodule add clone shallow submodule
+ok 102 - submodule helper list is not confused by common prefixes
+ok 103 - setup superproject with submodules
+ok 104 - submodule update --init with a specification
+ok 105 - submodule update --init with submodule.active set
+ok 106 - submodule update and setting submodule.<name>.active
+ok 107 - clone active submodule without submodule url set
+ok 108 - clone --recurse-submodules with a pathspec works
+ok 109 - clone with multiple --recurse-submodules options
+ok 110 - clone and subsequent updates correctly auto-initialize submodules
+ok 111 - init properly sets the config
+ok 112 - recursive clone respects -q
+# passed all 112 test(s)
+1..112
 *** t7401-submodule-summary.sh ***
+Initialized empty Git repository in $(@D)/t/trash directory.t7401-submodule-summary/sm1/.git/
 ok 1 - added submodule
 ok 2 - added submodule (subdirectory)
 ok 3 - added submodule (subdirectory only)
@@ -22130,6 +22338,7 @@ ok 10 - --summary-limit
 ok 11 - typechanged submodule(submodule->blob), --cached
 ok 12 - typechanged submodule(submodule->blob), --files
 ok 13 - typechanged submodule(submodule->blob)
+Initialized empty Git repository in $(@D)/t/trash directory.t7401-submodule-summary/sm1/.git/
 ok 14 - nonexistent commit
 ok 15 - typechanged submodule(blob->submodule)
 ok 16 - deleted submodule
@@ -22871,18 +23080,7 @@ ok 48 - status -s without relative paths
 ok 49 - status -s without relative paths
 ok 50 - dry-run of partial commit excluding new file in index
 ok 51 - status refreshes the index
-not ok 52 - status shows detached HEAD properly after checking out non-local upstream branch
-#	
-#		test_when_finished rm -rf upstream downstream actual &&
-#	
-#		test_create_repo upstream &&
-#		test_commit -C upstream foo &&
-#	
-#		git clone upstream downstream &&
-#		git -C downstream checkout @{u} &&
-#		git -C downstream status >actual &&
-#		test_i18ngrep "HEAD detached at [0-9a-f]\\+" actual
-#	
+ok 52 - status shows detached HEAD properly after checking out non-local upstream branch
 ok 53 - setup status submodule summary
 ok 54 - status submodule summary is disabled by default
 ok 55 - status --untracked-files=all does not show submodule
@@ -22945,7 +23143,7 @@ ok 111 - "No commits yet" should not be noted in status output
 ok 112 - "Initial commit" should be noted in commit template
 ok 113 - "Initial commit" should not be noted in commit template
 ok 114 - --no-optional-locks prevents index update
-# failed 1 among 114 test(s)
+# passed all 114 test(s)
 1..114
 *** t7509-commit-authorship.sh ***
 ok 1 - -C option copies authorship and message
@@ -23228,8 +23426,9 @@ ok 26 - splitting the index results in the same state
 ok 27 - ignore .git changes when invalidating UNTR
 ok 28 - discard_index() also discards fsmonitor info
 ok 29 - status succeeds after staging/unstaging
-# passed all 29 test(s)
-1..29
+ok 30 - status succeeds with sparse index
+# passed all 30 test(s)
+1..30
 *** t7520-ignored-hook-warning.sh ***
 ok 1 - setup
 ok 2 - no warning if hook is not ignored
@@ -23336,33 +23535,35 @@ ok 47 - refresh the index before merging
 ok 48 - merge with --autostash
 ok 49 - merge with merge.autoStash
 ok 50 - fast-forward merge with --autostash
-ok 51 - octopus merge with --autostash
-ok 52 - conflicted merge with --autostash, --abort restores stash
-ok 53 - completed merge (git commit) with --no-commit and --autostash
-ok 54 - completed merge (git merge --continue) with --no-commit and --autostash
-ok 55 - aborted merge (merge --abort) with --no-commit and --autostash
-ok 56 - aborted merge (reset --hard) with --no-commit and --autostash
-ok 57 - quit merge with --no-commit and --autostash
-ok 58 - merge with conflicted --autostash changes
-ok 59 - merge early part of c2
-ok 60 - merge --no-ff --no-commit && commit
-ok 61 - amending no-ff merge commit
-ok 62 - merge --no-ff --edit
-ok 63 - merge annotated/signed tag w/o tracking
-ok 64 - merge annotated/signed tag w/ tracking
-ok 65 # skip merge --ff-only tag (missing GPG)
-ok 66 # skip merge --no-edit tag should skip editor (missing GPG)
-ok 67 - set up mod-256 conflict scenario
-ok 68 - merge detects mod-256 conflicts (recursive)
-ok 69 - merge detects mod-256 conflicts (resolve)
-ok 70 - merge nothing into void
-ok 71 - merge can be completed with --continue
-ok 72 - killed merge can be completed with --continue
-ok 73 - merge --quit
-ok 74 - merge suggests matching remote refname
-ok 75 - suggested names are not ambiguous
-# passed all 75 test(s)
-1..75
+ok 51 - failed fast-forward merge with --autostash
+ok 52 - octopus merge with --autostash
+ok 53 - failed merge (exit 2) with --autostash
+ok 54 - conflicted merge with --autostash, --abort restores stash
+ok 55 - completed merge (git commit) with --no-commit and --autostash
+ok 56 - completed merge (git merge --continue) with --no-commit and --autostash
+ok 57 - aborted merge (merge --abort) with --no-commit and --autostash
+ok 58 - aborted merge (reset --hard) with --no-commit and --autostash
+ok 59 - quit merge with --no-commit and --autostash
+ok 60 - merge with conflicted --autostash changes
+ok 61 - merge early part of c2
+ok 62 - merge --no-ff --no-commit && commit
+ok 63 - amending no-ff merge commit
+ok 64 - merge --no-ff --edit
+ok 65 - merge annotated/signed tag w/o tracking
+ok 66 - merge annotated/signed tag w/ tracking
+ok 67 # skip merge --ff-only tag (missing GPG)
+ok 68 # skip merge --no-edit tag should skip editor (missing GPG)
+ok 69 - set up mod-256 conflict scenario
+ok 70 - merge detects mod-256 conflicts (recursive)
+ok 71 - merge detects mod-256 conflicts (resolve)
+ok 72 - merge nothing into void
+ok 73 - merge can be completed with --continue
+ok 74 - killed merge can be completed with --continue
+ok 75 - merge --quit
+ok 76 - merge suggests matching remote refname
+ok 77 - suggested names are not ambiguous
+# passed all 77 test(s)
+1..77
 *** t7601-merge-pull-config.sh ***
 ok 1 - setup
 ok 2 - pull.rebase not set
@@ -23663,235 +23864,236 @@ ok 78 - difftool --rotate/skip-to error condition
 *** t7810-grep.sh ***
 ok 1 - setup
 ok 2 - grep should not segfault with a bad input
-ok 3 - grep -w HEAD
-ok 4 - grep -w HEAD (with --column)
-ok 5 - grep -w HEAD (with --column, extended OR)
-ok 6 - grep -w HEAD (with --column, --invert-match)
-ok 7 - grep HEAD (with --column, --invert-match, extended OR)
-ok 8 - grep HEAD (with --column, --invert-match, extended AND)
-ok 9 - grep HEAD (with --column, double-negation)
-ok 10 - grep -w HEAD (with --column, -C)
-ok 11 - grep -w HEAD (with --line-number, --column)
-ok 12 - grep -w HEAD (with non-extended patterns, --column)
-ok 13 - grep -w HEAD
+ok 3 - invalid expression: grep --and -e A
+ok 4 - grep -w HEAD
+ok 5 - grep -w HEAD (with --column)
+ok 6 - grep -w HEAD (with --column, extended OR)
+ok 7 - grep -w HEAD (with --column, --invert-match)
+ok 8 - grep HEAD (with --column, --invert-match, extended OR)
+ok 9 - grep HEAD (with --column, --invert-match, extended AND)
+ok 10 - grep HEAD (with --column, double-negation)
+ok 11 - grep -w HEAD (with --column, -C)
+ok 12 - grep -w HEAD (with --line-number, --column)
+ok 13 - grep -w HEAD (with non-extended patterns, --column)
 ok 14 - grep -w HEAD
-ok 15 - grep -w HEAD (w)
-ok 16 - grep -w HEAD (x)
-ok 17 - grep -w HEAD (y-1)
-ok 18 - grep -w HEAD (y-2)
-ok 19 - grep -w HEAD (z)
-ok 20 - grep HEAD (with --column, --only-matching)
-ok 21 - grep HEAD (t-1)
-ok 22 - grep HEAD (t-2)
-ok 23 - grep HEAD (t-3)
-ok 24 - grep -c HEAD (no /dev/null)
-ok 25 - grep --max-depth -1 HEAD
-ok 26 - grep --max-depth 0 HEAD
-ok 27 - grep --max-depth 0 -- '*' HEAD
-ok 28 - grep --max-depth 1 HEAD
-ok 29 - grep --max-depth 0 -- t HEAD
-ok 30 - grep --max-depth 0 -- . t HEAD
-ok 31 - grep --max-depth 0 -- t . HEAD
-ok 32 - grep HEAD with grep.extendedRegexp=false
-ok 33 - grep HEAD with grep.extendedRegexp=true
-ok 34 - grep HEAD with grep.patterntype=basic
-ok 35 - grep HEAD with grep.patterntype=extended
-ok 36 - grep HEAD with grep.patterntype=fixed
-ok 37 - grep HEAD with grep.patterntype=perl
-ok 38 # skip grep HEAD with grep.patterntype=perl errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
-ok 39 - grep HEAD with grep.patternType=default and grep.extendedRegexp=true
-ok 40 - grep HEAD with grep.extendedRegexp=true and grep.patternType=default
-ok 41 - grep HEAD with grep.patternType=extended and grep.extendedRegexp=false
-ok 42 - grep HEAD with grep.patternType=basic and grep.extendedRegexp=true
-ok 43 - grep HEAD with grep.extendedRegexp=false and grep.patternType=extended
-ok 44 - grep HEAD with grep.extendedRegexp=true and grep.patternType=basic
-ok 45 - grep --count HEAD
-ok 46 - grep --count -h HEAD
-ok 47 - grep HEAD should quote unusual pathnames
-ok 48 - grep HEAD in subdir should quote unusual relative pathnames
-ok 49 - grep -z HEAD with unusual pathnames
-ok 50 - grep -z HEAD in subdir with unusual relative pathnames
-ok 51 - grep -w in working tree
-ok 52 - grep -w in working tree (with --column)
-ok 53 - grep -w in working tree (with --column, extended OR)
-ok 54 - grep -w in working tree (with --column, --invert-match)
-ok 55 - grep in working tree (with --column, --invert-match, extended OR)
-ok 56 - grep in working tree (with --column, --invert-match, extended AND)
-ok 57 - grep in working tree (with --column, double-negation)
-ok 58 - grep -w in working tree (with --column, -C)
-ok 59 - grep -w in working tree (with --line-number, --column)
-ok 60 - grep -w in working tree (with non-extended patterns, --column)
-ok 61 - grep -w in working tree
+ok 15 - grep -w HEAD
+ok 16 - grep -w HEAD (w)
+ok 17 - grep -w HEAD (x)
+ok 18 - grep -w HEAD (y-1)
+ok 19 - grep -w HEAD (y-2)
+ok 20 - grep -w HEAD (z)
+ok 21 - grep HEAD (with --column, --only-matching)
+ok 22 - grep HEAD (t-1)
+ok 23 - grep HEAD (t-2)
+ok 24 - grep HEAD (t-3)
+ok 25 - grep -c HEAD (no /dev/null)
+ok 26 - grep --max-depth -1 HEAD
+ok 27 - grep --max-depth 0 HEAD
+ok 28 - grep --max-depth 0 -- '*' HEAD
+ok 29 - grep --max-depth 1 HEAD
+ok 30 - grep --max-depth 0 -- t HEAD
+ok 31 - grep --max-depth 0 -- . t HEAD
+ok 32 - grep --max-depth 0 -- t . HEAD
+ok 33 - grep HEAD with grep.extendedRegexp=false
+ok 34 - grep HEAD with grep.extendedRegexp=true
+ok 35 - grep HEAD with grep.patterntype=basic
+ok 36 - grep HEAD with grep.patterntype=extended
+ok 37 - grep HEAD with grep.patterntype=fixed
+ok 38 - grep HEAD with grep.patterntype=perl
+ok 39 # skip grep HEAD with grep.patterntype=perl errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
+ok 40 - grep HEAD with grep.patternType=default and grep.extendedRegexp=true
+ok 41 - grep HEAD with grep.extendedRegexp=true and grep.patternType=default
+ok 42 - grep HEAD with grep.patternType=extended and grep.extendedRegexp=false
+ok 43 - grep HEAD with grep.patternType=basic and grep.extendedRegexp=true
+ok 44 - grep HEAD with grep.extendedRegexp=false and grep.patternType=extended
+ok 45 - grep HEAD with grep.extendedRegexp=true and grep.patternType=basic
+ok 46 - grep --count HEAD
+ok 47 - grep --count -h HEAD
+ok 48 - grep HEAD should quote unusual pathnames
+ok 49 - grep HEAD in subdir should quote unusual relative pathnames
+ok 50 - grep -z HEAD with unusual pathnames
+ok 51 - grep -z HEAD in subdir with unusual relative pathnames
+ok 52 - grep -w in working tree
+ok 53 - grep -w in working tree (with --column)
+ok 54 - grep -w in working tree (with --column, extended OR)
+ok 55 - grep -w in working tree (with --column, --invert-match)
+ok 56 - grep in working tree (with --column, --invert-match, extended OR)
+ok 57 - grep in working tree (with --column, --invert-match, extended AND)
+ok 58 - grep in working tree (with --column, double-negation)
+ok 59 - grep -w in working tree (with --column, -C)
+ok 60 - grep -w in working tree (with --line-number, --column)
+ok 61 - grep -w in working tree (with non-extended patterns, --column)
 ok 62 - grep -w in working tree
-ok 63 - grep -w in working tree (w)
-ok 64 - grep -w in working tree (x)
-ok 65 - grep -w in working tree (y-1)
-ok 66 - grep -w in working tree (y-2)
-ok 67 - grep -w in working tree (z)
-ok 68 - grep in working tree (with --column, --only-matching)
-ok 69 - grep in working tree (t-1)
-ok 70 - grep in working tree (t-2)
-ok 71 - grep in working tree (t-3)
-ok 72 - grep -c in working tree (no /dev/null)
-ok 73 - grep --max-depth -1 in working tree
-ok 74 - grep --max-depth 0 in working tree
-ok 75 - grep --max-depth 0 -- '*' in working tree
-ok 76 - grep --max-depth 1 in working tree
-ok 77 - grep --max-depth 0 -- t in working tree
-ok 78 - grep --max-depth 0 -- . t in working tree
-ok 79 - grep --max-depth 0 -- t . in working tree
-ok 80 - grep in working tree with grep.extendedRegexp=false
-ok 81 - grep in working tree with grep.extendedRegexp=true
-ok 82 - grep in working tree with grep.patterntype=basic
-ok 83 - grep in working tree with grep.patterntype=extended
-ok 84 - grep in working tree with grep.patterntype=fixed
-ok 85 - grep in working tree with grep.patterntype=perl
-ok 86 # skip grep in working tree with grep.patterntype=perl errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
-ok 87 - grep in working tree with grep.patternType=default and grep.extendedRegexp=true
-ok 88 - grep in working tree with grep.extendedRegexp=true and grep.patternType=default
-ok 89 - grep in working tree with grep.patternType=extended and grep.extendedRegexp=false
-ok 90 - grep in working tree with grep.patternType=basic and grep.extendedRegexp=true
-ok 91 - grep in working tree with grep.extendedRegexp=false and grep.patternType=extended
-ok 92 - grep in working tree with grep.extendedRegexp=true and grep.patternType=basic
-ok 93 - grep --count in working tree
-ok 94 - grep --count -h in working tree
-ok 95 - grep in working tree should quote unusual pathnames
-ok 96 - grep in working tree in subdir should quote unusual relative pathnames
-ok 97 - grep -z in working tree with unusual pathnames
-ok 98 - grep -z in working tree in subdir with unusual relative pathnames
-ok 99 - grep -l -C
-ok 100 - grep -c -C
-ok 101 - grep -L -C
-ok 102 - grep --files-without-match --quiet
-ok 103 - grep -e A --and -e B
-ok 104 - grep ( -e A --or -e B ) --and -e B
-ok 105 - grep -e A --and --not -e B
-ok 106 - grep should ignore GREP_OPTIONS
-ok 107 - grep -f, non-existent file
-ok 108 - grep -f, one pattern
-ok 109 - grep -f, multiple patterns
-ok 110 - grep, multiple patterns
-ok 111 - grep -f, ignore empty lines
-ok 112 - grep -f, ignore empty lines, read patterns from stdin
-ok 113 - grep -q, silently report matches
-ok 114 - grep -C1 hunk mark between files
-ok 115 - log grep setup
-ok 116 - log grep (1)
-ok 117 - log grep (2)
-ok 118 - log grep (3)
-ok 119 - log grep (4)
-ok 120 - log grep (5)
-ok 121 - log grep (6)
-ok 122 - log grep (7)
-ok 123 - log grep (8)
-ok 124 - log grep (9)
+ok 63 - grep -w in working tree
+ok 64 - grep -w in working tree (w)
+ok 65 - grep -w in working tree (x)
+ok 66 - grep -w in working tree (y-1)
+ok 67 - grep -w in working tree (y-2)
+ok 68 - grep -w in working tree (z)
+ok 69 - grep in working tree (with --column, --only-matching)
+ok 70 - grep in working tree (t-1)
+ok 71 - grep in working tree (t-2)
+ok 72 - grep in working tree (t-3)
+ok 73 - grep -c in working tree (no /dev/null)
+ok 74 - grep --max-depth -1 in working tree
+ok 75 - grep --max-depth 0 in working tree
+ok 76 - grep --max-depth 0 -- '*' in working tree
+ok 77 - grep --max-depth 1 in working tree
+ok 78 - grep --max-depth 0 -- t in working tree
+ok 79 - grep --max-depth 0 -- . t in working tree
+ok 80 - grep --max-depth 0 -- t . in working tree
+ok 81 - grep in working tree with grep.extendedRegexp=false
+ok 82 - grep in working tree with grep.extendedRegexp=true
+ok 83 - grep in working tree with grep.patterntype=basic
+ok 84 - grep in working tree with grep.patterntype=extended
+ok 85 - grep in working tree with grep.patterntype=fixed
+ok 86 - grep in working tree with grep.patterntype=perl
+ok 87 # skip grep in working tree with grep.patterntype=perl errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
+ok 88 - grep in working tree with grep.patternType=default and grep.extendedRegexp=true
+ok 89 - grep in working tree with grep.extendedRegexp=true and grep.patternType=default
+ok 90 - grep in working tree with grep.patternType=extended and grep.extendedRegexp=false
+ok 91 - grep in working tree with grep.patternType=basic and grep.extendedRegexp=true
+ok 92 - grep in working tree with grep.extendedRegexp=false and grep.patternType=extended
+ok 93 - grep in working tree with grep.extendedRegexp=true and grep.patternType=basic
+ok 94 - grep --count in working tree
+ok 95 - grep --count -h in working tree
+ok 96 - grep in working tree should quote unusual pathnames
+ok 97 - grep in working tree in subdir should quote unusual relative pathnames
+ok 98 - grep -z in working tree with unusual pathnames
+ok 99 - grep -z in working tree in subdir with unusual relative pathnames
+ok 100 - grep -l -C
+ok 101 - grep -c -C
+ok 102 - grep -L -C
+ok 103 - grep --files-without-match --quiet
+ok 104 - grep -e A --and -e B
+ok 105 - grep ( -e A --or -e B ) --and -e B
+ok 106 - grep -e A --and --not -e B
+ok 107 - grep should ignore GREP_OPTIONS
+ok 108 - grep -f, non-existent file
+ok 109 - grep -f, one pattern
+ok 110 - grep -f, multiple patterns
+ok 111 - grep, multiple patterns
+ok 112 - grep -f, ignore empty lines
+ok 113 - grep -f, ignore empty lines, read patterns from stdin
+ok 114 - grep -q, silently report matches
+ok 115 - grep -C1 hunk mark between files
+ok 116 - log grep setup
+ok 117 - log grep (1)
+ok 118 - log grep (2)
+ok 119 - log grep (3)
+ok 120 - log grep (4)
+ok 121 - log grep (5)
+ok 122 - log grep (6)
+ok 123 - log grep (7)
+ok 124 - log grep (8)
 ok 125 - log grep (9)
-ok 126 - log --grep-reflog can only be used under -g
-ok 127 - log with multiple --grep uses union
-ok 128 - log --all-match with multiple --grep uses intersection
-ok 129 - log with multiple --author uses union
-ok 130 - log --all-match with multiple --author still uses union
-ok 131 - log --grep --author uses intersection
-ok 132 - log --grep --grep --author takes union of greps and intersects with author
-ok 133 - log ---all-match -grep --author --author still takes union of authors and intersects with grep
-ok 134 - log --grep --author --author takes union of authors and intersects with grep
-ok 135 - log --all-match --grep --grep --author takes intersection
-ok 136 - log --author does not search in timestamp
-ok 137 - log --committer does not search in timestamp
-ok 138 - grep with CE_VALID file
-ok 139 - grep -p with userdiff
-ok 140 - grep -p
-ok 141 - grep -p -B5
-ok 142 - grep -W
-ok 143 - grep -W shows no trailing empty lines
-ok 144 - grep -W with userdiff
-ok 145 -  includes preceding comment
-ok 146 -  includes function line
-ok 147 -  includes matching line
-ok 148 -  includes last line of the function
-ok 149 - grep --threads=0 & -c grep.threads=0
-ok 150 - grep --threads=1 & -c grep.threads=1
-ok 151 - grep --threads=2 & -c grep.threads=2
-ok 152 - grep --threads=3 & -c grep.threads=3
-ok 153 - grep --threads=4 & -c grep.threads=4
-ok 154 - grep --threads=5 & -c grep.threads=5
-ok 155 - grep --threads=6 & -c grep.threads=6
-ok 156 - grep --threads=7 & -c grep.threads=7
-ok 157 - grep --threads=8 & -c grep.threads=8
-ok 158 - grep --threads=9 & -c grep.threads=9
-ok 159 - grep --threads=10 & -c grep.threads=10
-ok 160 # skip grep --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
-ok 161 - grep from a subdirectory to search wider area (1)
-ok 162 - grep from a subdirectory to search wider area (2)
-ok 163 - grep -Fi
-ok 164 - outside of git repository
-ok 165 - outside of git repository with fallbackToNoIndex
-ok 166 - inside git repository but with --no-index
-ok 167 - grep --no-index descends into repos, but not .git
-ok 168 - setup double-dash tests
-ok 169 - grep -- pattern
-ok 170 - grep -- pattern -- pathspec
-ok 171 - grep -e pattern -- path
-ok 172 - grep -e -- -- path
-ok 173 - dashdash disambiguates rev as rev
-ok 174 - dashdash disambiguates pathspec as pathspec
-ok 175 - report bogus arg without dashdash
-ok 176 - report bogus rev with dashdash
-ok 177 - allow non-existent path with dashdash
-ok 178 - grep --no-index pattern -- path
-ok 179 - grep --no-index complains of revs
-ok 180 - grep --no-index prefers paths to revs
-ok 181 - grep --no-index does not "diagnose" revs
-ok 182 - grep --perl-regexp pattern
-ok 183 # skip grep --perl-regexp pattern errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
-ok 184 - grep -P pattern
-ok 185 - grep -P with (*NO_JIT) doesn't error out
-ok 186 # skip grep -P pattern errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
-ok 187 - grep pattern with grep.extendedRegexp=true
-ok 188 - grep -P pattern with grep.extendedRegexp=true
-ok 189 - grep -P -v pattern
-ok 190 - grep -P -i pattern
-ok 191 - grep -P -w pattern
-ok 192 - grep -P backreferences work (the PCRE NO_AUTO_CAPTURE flag is not set)
-ok 193 - grep -G invalidpattern properly dies 
-ok 194 - grep invalidpattern properly dies with grep.patternType=basic
-ok 195 - grep -E invalidpattern properly dies 
-ok 196 - grep invalidpattern properly dies with grep.patternType=extended
-ok 197 - grep -P invalidpattern properly dies 
-ok 198 - grep invalidpattern properly dies with grep.patternType=perl
-ok 199 - grep -G -E -F pattern
-ok 200 - grep pattern with grep.patternType=basic, =extended, =fixed
-ok 201 - grep -E -F -G pattern
-ok 202 - grep pattern with grep.patternType=extended, =fixed, =basic
-ok 203 - grep -F -G -E pattern
-ok 204 - grep pattern with grep.patternType=fixed, =basic, =extended
-ok 205 - grep -G -F -P -E pattern
-ok 206 - grep pattern with grep.patternType=fixed, =basic, =perl, =extended
-ok 207 - grep -G -F -E -P pattern
-ok 208 - grep pattern with grep.patternType=fixed, =basic, =extended, =perl
-ok 209 - grep -P pattern with grep.patternType=fixed
-ok 210 - grep -F pattern with grep.patternType=basic
-ok 211 - grep -G pattern with grep.patternType=fixed
-ok 212 - grep -E pattern with grep.patternType=fixed
-ok 213 - grep --color, separator
-ok 214 - grep --break
-ok 215 - grep --break with context
-ok 216 - grep --heading
-ok 217 - mimic ack-grep --group
-ok 218 - grep -E "^ "
-ok 219 - grep -P "^ "
-ok 220 - grep --color -e A -e B with context
-ok 221 - grep --color -e A --and -e B with context
-ok 222 - grep --color -e A --and --not -e B with context
-ok 223 - grep --color -e A --and -e B -p with context
-ok 224 - grep can find things only in the work tree
-ok 225 - grep can find things only in the work tree (i-t-a)
-ok 226 - grep does not search work tree with assume unchanged
-ok 227 - grep can find things only in the index
-ok 228 - grep does not report i-t-a with -L --cached
-ok 229 - grep does not report i-t-a and assume unchanged with -L
-# passed all 229 test(s)
-1..229
+ok 126 - log grep (9)
+ok 127 - log --grep-reflog can only be used under -g
+ok 128 - log with multiple --grep uses union
+ok 129 - log --all-match with multiple --grep uses intersection
+ok 130 - log with multiple --author uses union
+ok 131 - log --all-match with multiple --author still uses union
+ok 132 - log --grep --author uses intersection
+ok 133 - log --grep --grep --author takes union of greps and intersects with author
+ok 134 - log ---all-match -grep --author --author still takes union of authors and intersects with grep
+ok 135 - log --grep --author --author takes union of authors and intersects with grep
+ok 136 - log --all-match --grep --grep --author takes intersection
+ok 137 - log --author does not search in timestamp
+ok 138 - log --committer does not search in timestamp
+ok 139 - grep with CE_VALID file
+ok 140 - grep -p with userdiff
+ok 141 - grep -p
+ok 142 - grep -p -B5
+ok 143 - grep -W
+ok 144 - grep -W shows no trailing empty lines
+ok 145 - grep -W with userdiff
+ok 146 -  includes preceding comment
+ok 147 -  includes function line
+ok 148 -  includes matching line
+ok 149 -  includes last line of the function
+ok 150 - grep --threads=0 & -c grep.threads=0
+ok 151 - grep --threads=1 & -c grep.threads=1
+ok 152 - grep --threads=2 & -c grep.threads=2
+ok 153 - grep --threads=3 & -c grep.threads=3
+ok 154 - grep --threads=4 & -c grep.threads=4
+ok 155 - grep --threads=5 & -c grep.threads=5
+ok 156 - grep --threads=6 & -c grep.threads=6
+ok 157 - grep --threads=7 & -c grep.threads=7
+ok 158 - grep --threads=8 & -c grep.threads=8
+ok 159 - grep --threads=9 & -c grep.threads=9
+ok 160 - grep --threads=10 & -c grep.threads=10
+ok 161 # skip grep --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
+ok 162 - grep from a subdirectory to search wider area (1)
+ok 163 - grep from a subdirectory to search wider area (2)
+ok 164 - grep -Fi
+ok 165 - outside of git repository
+ok 166 - outside of git repository with fallbackToNoIndex
+ok 167 - inside git repository but with --no-index
+ok 168 - grep --no-index descends into repos, but not .git
+ok 169 - setup double-dash tests
+ok 170 - grep -- pattern
+ok 171 - grep -- pattern -- pathspec
+ok 172 - grep -e pattern -- path
+ok 173 - grep -e -- -- path
+ok 174 - dashdash disambiguates rev as rev
+ok 175 - dashdash disambiguates pathspec as pathspec
+ok 176 - report bogus arg without dashdash
+ok 177 - report bogus rev with dashdash
+ok 178 - allow non-existent path with dashdash
+ok 179 - grep --no-index pattern -- path
+ok 180 - grep --no-index complains of revs
+ok 181 - grep --no-index prefers paths to revs
+ok 182 - grep --no-index does not "diagnose" revs
+ok 183 - grep --perl-regexp pattern
+ok 184 # skip grep --perl-regexp pattern errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
+ok 185 - grep -P pattern
+ok 186 - grep -P with (*NO_JIT) doesn't error out
+ok 187 # skip grep -P pattern errors without PCRE (missing !PCRE of !FAIL_PREREQS,!PCRE)
+ok 188 - grep pattern with grep.extendedRegexp=true
+ok 189 - grep -P pattern with grep.extendedRegexp=true
+ok 190 - grep -P -v pattern
+ok 191 - grep -P -i pattern
+ok 192 - grep -P -w pattern
+ok 193 - grep -P backreferences work (the PCRE NO_AUTO_CAPTURE flag is not set)
+ok 194 - grep -G invalidpattern properly dies 
+ok 195 - grep invalidpattern properly dies with grep.patternType=basic
+ok 196 - grep -E invalidpattern properly dies 
+ok 197 - grep invalidpattern properly dies with grep.patternType=extended
+ok 198 - grep -P invalidpattern properly dies 
+ok 199 - grep invalidpattern properly dies with grep.patternType=perl
+ok 200 - grep -G -E -F pattern
+ok 201 - grep pattern with grep.patternType=basic, =extended, =fixed
+ok 202 - grep -E -F -G pattern
+ok 203 - grep pattern with grep.patternType=extended, =fixed, =basic
+ok 204 - grep -F -G -E pattern
+ok 205 - grep pattern with grep.patternType=fixed, =basic, =extended
+ok 206 - grep -G -F -P -E pattern
+ok 207 - grep pattern with grep.patternType=fixed, =basic, =perl, =extended
+ok 208 - grep -G -F -E -P pattern
+ok 209 - grep pattern with grep.patternType=fixed, =basic, =extended, =perl
+ok 210 - grep -P pattern with grep.patternType=fixed
+ok 211 - grep -F pattern with grep.patternType=basic
+ok 212 - grep -G pattern with grep.patternType=fixed
+ok 213 - grep -E pattern with grep.patternType=fixed
+ok 214 - grep --color, separator
+ok 215 - grep --break
+ok 216 - grep --break with context
+ok 217 - grep --heading
+ok 218 - mimic ack-grep --group
+ok 219 - grep -E "^ "
+ok 220 - grep -P "^ "
+ok 221 - grep --color -e A -e B with context
+ok 222 - grep --color -e A --and -e B with context
+ok 223 - grep --color -e A --and --not -e B with context
+ok 224 - grep --color -e A --and -e B -p with context
+ok 225 - grep can find things only in the work tree
+ok 226 - grep can find things only in the work tree (i-t-a)
+ok 227 - grep does not search work tree with assume unchanged
+ok 228 - grep can find things only in the index
+ok 229 - grep does not report i-t-a with -L --cached
+ok 230 - grep does not report i-t-a and assume unchanged with -L
+# passed all 230 test(s)
+1..230
 *** t7811-grep-open.sh ***
 ok 1 - determine default pager
 ok 2 - setup
@@ -24800,77 +25002,83 @@ ok 106 - sendemail.identity: identity overrides sendemail.identity
 ok 107 - sendemail.identity: --no-identity clears previous identity
 ok 108 - sendemail.identity: bool identity variable existence overrides
 ok 109 - sendemail.identity: bool variable fallback
-ok 110 - --no-to overrides sendemail.to
-ok 111 - sendemail.cc works
-ok 112 - --no-cc overrides sendemail.cc
-ok 113 - sendemail.bcc works
-ok 114 - --no-bcc overrides sendemail.bcc
-ok 115 - patches To headers are used by default
-ok 116 - patches To headers are appended to
-ok 117 - To headers from files reset each patch
-ok 118 - setup expect
+ok 110 - sendemail.identity: bool variable without a value
+ok 111 - --no-to overrides sendemail.to
+ok 112 - sendemail.cc works
+ok 113 - --no-cc overrides sendemail.cc
+ok 114 - sendemail.bcc works
+ok 115 - --no-bcc overrides sendemail.bcc
+ok 116 - patches To headers are used by default
+ok 117 - patches To headers are appended to
+ok 118 - To headers from files reset each patch
 ok 119 - setup expect
-ok 120 - ASCII subject is not RFC2047 quoted
-ok 121 - setup expect
-ok 122 - asks about and fixes 8bit encodings
-ok 123 - sendemail.8bitEncoding works
-ok 124 - --8bit-encoding overrides sendemail.8bitEncoding
-ok 125 - setup expect
+ok 120 - setup expect
+ok 121 - ASCII subject is not RFC2047 quoted
+ok 122 - setup expect
+ok 123 - asks about and fixes 8bit encodings
+ok 124 - sendemail.8bitEncoding works
+ok 125 - --8bit-encoding overrides sendemail.8bitEncoding
 ok 126 - setup expect
-ok 127 - --8bit-encoding also treats subject
-ok 128 - setup expect
-ok 129 - --transfer-encoding overrides sendemail.transferEncoding
-ok 130 - sendemail.transferEncoding via config
-ok 131 - sendemail.transferEncoding via cli
-ok 132 - setup expect
-ok 133 - 8-bit and sendemail.transferencoding=quoted-printable
-ok 134 - setup expect
-ok 135 - 8-bit and sendemail.transferencoding=base64
-ok 136 - setup expect
-ok 137 - convert from quoted-printable to base64
-ok 138 - setup expect
+ok 127 - setup expect
+ok 128 - --8bit-encoding also treats subject
+ok 129 - setup expect
+ok 130 - --transfer-encoding overrides sendemail.transferEncoding
+ok 131 - sendemail.transferEncoding via config
+ok 132 - sendemail.transferEncoding via cli
+ok 133 - setup expect
+ok 134 - 8-bit and sendemail.transferencoding=quoted-printable
+ok 135 - setup expect
+ok 136 - 8-bit and sendemail.transferencoding=base64
+ok 137 - setup expect
+ok 138 - convert from quoted-printable to base64
 ok 139 - setup expect
-ok 140 - CRLF and sendemail.transferencoding=quoted-printable
-ok 141 - setup expect
-ok 142 - CRLF and sendemail.transferencoding=base64
-ok 143 - refusing to send cover letter template
-ok 144 - --force sends cover letter template anyway
-ok 145 - to-cover adds To to all mail
-ok 146 - cc-cover adds Cc to all mail
-ok 147 - tocover adds To to all mail
-ok 148 - cccover adds Cc to all mail
-ok 149 - escaped quotes in sendemail.aliasfiletype=mutt
-ok 150 - sendemail.aliasfiletype=mailrc
-ok 151 - sendemail.aliasfile=~/.mailrc
-ok 152 - --dump-aliases sendmail format
-ok 153 - --dump-aliases mutt format
-ok 154 - --dump-aliases mailrc format
-ok 155 - --dump-aliases pine format
-ok 156 - --dump-aliases gnus format
-ok 157 - --dump-aliases must be used alone
-ok 158 - aliases and sendemail.identity
-ok 159 - sendemail.aliasfiletype=sendmail
-ok 160 - sendmail aliases line folding
-ok 161 - sendmail aliases tolerate bogus line folding
-ok 162 - sendmail aliases empty
-ok 163 - alias support in To header
-ok 164 - alias support in Cc header
-ok 165 - tocmd works with aliases
-ok 166 - cccmd works with aliases
-ok 167 - --[no-]xmailer without any configuration
-ok 168 - --[no-]xmailer with sendemail.xmailer=true
-ok 169 - --[no-]xmailer with sendemail.xmailer=false
-ok 170 - setup expected-list
-ok 171 - use email list in --cc --to and --bcc
-ok 172 - aliases work with email list
-ok 173 - leading and trailing whitespaces are removed
-ok 174 - invoke hook
-ok 175 - test that send-email works outside a repo
-ok 176 - test that sendmail config is rejected
-ok 177 - test that sendmail config rejection is specific
-ok 178 - test forbidSendmailVariables behavior override
-# passed all 178 test(s)
-1..178
+ok 140 - setup expect
+ok 141 - CRLF and sendemail.transferencoding=quoted-printable
+ok 142 - setup expect
+ok 143 - CRLF and sendemail.transferencoding=base64
+ok 144 - refusing to send cover letter template
+ok 145 - --force sends cover letter template anyway
+ok 146 - to-cover adds To to all mail
+ok 147 - cc-cover adds Cc to all mail
+ok 148 - tocover adds To to all mail
+ok 149 - cccover adds Cc to all mail
+ok 150 - escaped quotes in sendemail.aliasfiletype=mutt
+ok 151 - sendemail.aliasfiletype=mailrc
+ok 152 - sendemail.aliasesfile=~/.mailrc
+ok 153 - --dump-aliases sendmail format
+ok 154 - --dump-aliases mutt format
+ok 155 - --dump-aliases mailrc format
+ok 156 - --dump-aliases pine format
+ok 157 - --dump-aliases gnus format
+ok 158 - --dump-aliases must be used alone
+ok 159 - aliases and sendemail.identity
+ok 160 - sendemail.aliasfiletype=sendmail
+ok 161 - sendmail aliases line folding
+ok 162 - sendmail aliases tolerate bogus line folding
+ok 163 - sendmail aliases empty
+ok 164 - alias support in To header
+ok 165 - alias support in Cc header
+ok 166 - tocmd works with aliases
+ok 167 - cccmd works with aliases
+ok 168 - --[no-]xmailer without any configuration
+ok 169 - --[no-]xmailer with sendemail.xmailer=true
+ok 170 - --[no-]xmailer with sendemail.xmailer
+ok 171 - --[no-]xmailer with sendemail.xmailer=false
+ok 172 - --[no-]xmailer with sendemail.xmailer=
+ok 173 - setup expected-list
+ok 174 - use email list in --cc --to and --bcc
+ok 175 - aliases work with email list
+ok 176 - leading and trailing whitespaces are removed
+ok 177 - test using command name with --sendmail-cmd
+ok 178 - test using arguments with --sendmail-cmd
+ok 179 - test shell expression with --sendmail-cmd
+ok 180 - invoke hook
+ok 181 - test that send-email works outside a repo
+ok 182 - test that sendmail config is rejected
+ok 183 - test that sendmail config rejection is specific
+ok 184 - test forbidSendmailVariables behavior override
+# passed all 184 test(s)
+1..184
 *** t9002-column.sh ***
 ok 1 - setup
 ok 2 - never
@@ -24928,7 +25136,7 @@ ok 24 - dcommit should not fail with a touched file
 ok 25 - rebase should not fail with a touched file
 ok 26 - able to set-tree to a subdirectory
 ok 27 - git-svn works in a bare repository
-ok 28 - git-svn works in in a repository with a gitdir: link
+ok 28 - git-svn works in a repository with a gitdir: link
 # passed all 28 test(s)
 1..28
 *** t9101-git-svn-props.sh ***
@@ -26359,10 +26567,12 @@ ok 204 - git clone --config= - value
 ok 205 - sourcing the completion script clears cached commands
 ok 206 - sourcing the completion script clears cached merge strategies
 ok 207 - sourcing the completion script clears cached --options
-ok 208 - __git_complete
+ok 208 - option aliases are not shown by default
+ok 209 - option aliases are shown with GIT_COMPLETION_SHOW_ALL
+ok 210 - __git_complete
 # still have 3 known breakage(s)
-# passed all remaining 205 test(s)
-1..208
+# passed all remaining 207 test(s)
+1..210
 *** t9903-bash-prompt.sh ***
 ok 1 - setup for prompt tests
 ok 2 - prompt - branch name
@@ -26433,10 +26643,10 @@ ok 66 - prompt - hide if pwd ignored - inside gitdir
 # passed all 66 test(s)
 1..66
 
-failed test(s): t0204 t3910 t7508
+failed test(s): t0204 t3910
 
 fixed   2
-success 22715
-failed  13
+success 22914
+failed  12
 broken  217
-total   23379
+total   23578
