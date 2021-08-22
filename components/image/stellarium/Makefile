@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stellarium
 COMPONENT_VERSION=	0.21.1
-COMPONENT_SUMMARY=	Stellarium Astronomy Software
+COMPONENT_SUMMARY=	Planetarium with realistic 3D sky just like seeing with naked eye, binoculars or telescope.
 COMPONENT_PROJECT_URL=	https://stellarium.org
 COMPONENT_FMRI=		image/stellarium
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
