@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Twisted
 COMPONENT_VERSION=	19.10.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	'Event-based framework for internet applications'
 COMPONENT_PROJECT_URL=	http://twistedmatrix.com/trac/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,7 +42,7 @@ COMPONENT_FMRI=	library/python/python-twisted
 COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= twisted.license
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	3.5
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -59,17 +60,12 @@ COMPONENT_POST_INSTALL_ACTION += ( cd $(PROTO_DIR)/usr/bin && \
 	do mv $$file $$file-$(PYTHON_VERSION); done)
 
 # Test dependency
-REQUIRED_PACKAGES += library/python/incremental-27
 REQUIRED_PACKAGES += library/python/incremental-35
 
 # Tests do not finish. Results are 
-# 2.7 32bit - 19 failed, 2053 passed, 901 skipped
-# 2.7 64bit - 19 failed, 2053 passed, 906 skipped
 # 3.5       - 18 failed, 2052 passed, 915 skipped
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
