@@ -20,6 +20,7 @@
 
  CDDL HEADER END
 
+ Copyright 2020 Gary Mills
  Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
 
  NOTE:  This service manifest is not editable; its contents will
@@ -51,13 +52,14 @@
 		    <service_fmri value='svc:/system/filesystem/minimal' />
 	</dependency>
 
-<!--	<dependent
-	    name='ntp_multi-user'
-	    grouping='optional_all'
-	    restart_on='none'>
-		<service_fmri value='svc:/milestone/multi-user' />
-	</dependent>
--->
+ 	<dependency
+		name='milestone'
+		grouping='require_all'
+		restart_on='refresh'
+		type='service'>
+		    <service_fmri value='svc:/milestone/name-services' />
+	</dependency>
+
 
 	<exec_method
 	    type='method'

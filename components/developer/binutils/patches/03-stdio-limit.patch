@@ -1,0 +1,30 @@
+From OmniOS
+
+diff -wpruN '--exclude=*.orig' a~/bfd/cache.c a/bfd/cache.c
+--- a~/bfd/cache.c	1970-01-01 00:00:00
++++ a/bfd/cache.c	1970-01-01 00:00:00
+@@ -97,7 +97,24 @@ bfd_cache_max_open (void)
+ 
+       if (getrlimit (RLIMIT_NOFILE, &rlim) == 0
+ 	  && rlim.rlim_cur != (rlim_t) RLIM_INFINITY)
++      {
++#if defined(__sun__) && defined(_ILP32)
++	/*
++	 * Solarish stdio for 32-bit has an ABI-constrained limit that
++	 * the UNIX file descriptor must be 255 or less.
++	 *
++	 * This can be corrected by enabling extended FILE stdio, which
++	 * we do here if the reported rlimit allows us to do so.
++	 */
++	if (rlim.rlim_cur > 256 &&
++		enable_extended_FILE_stdio(-1, -1) == -1) {
++	  perror("Can't enable extended FILE");
++	  /* Cap it at 250 to not break stdio. */
++	  max = 250;
++	} else
++#endif /* __sun__ */
+ 	max = rlim.rlim_cur / 8;
++      }
+       else
+ #endif
+ #ifdef _SC_OPEN_MAX

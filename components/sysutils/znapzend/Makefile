@@ -11,12 +11,16 @@
 
 #
 # Copyright 2016-2018 Jim Klimov
+# Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
+PERL_VERSION = 5.22
+GCC_VERSION= 10
+
 COMPONENT_NAME=	znapzend
-COMPONENT_VERSION=	0.19.1
+COMPONENT_VERSION=	0.20.0
 COMPONENT_SUMMARY=	zfs backup with remote capabilities and mbuffer integration
 COMPONENT_DESCRIPTION=	ZnapZend is a ZFS centric backup tool. It relies on snapshot,\
  send and receive to do its work. It has the built-in ability to manage both local\
@@ -26,7 +30,7 @@ COMPONENT_DESCRIPTION=	ZnapZend is a ZFS centric backup tool. It relies on snaps
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:93e3ec3c6f5cdf6973f72a6b764c49dc6545f2a0a2e0267a1382d471b930efea
+  sha256:c0a1ab9df5d6c4936560b5f8f08d393d4e99313da190fa404cd8ee5df420a7ca
 COMPONENT_ARCHIVE_URL=	\
   https://github.com/oetiker/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/oetiker/$(COMPONENT_NAME)
@@ -35,11 +39,11 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION =	( cd $(SOURCE_DIR) && autoreconf --force --install --verbose --make )
+COMPONENT_PREP_ACTION= ( cd $(SOURCE_DIR) \
+                     && mv thirdparty/cpanfile-5.26.1.snapshot thirdparty/cpanfile-5.22.4.snapshot \
+                     && autoreconf --force --install --verbose --make )
 
 COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
@@ -88,6 +92,10 @@ install: $(INSTALL_32)
 
 test: $(TEST_32)
 
+# build dependency
+REQUIRED_PACKAGES += developer/gcc-10
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

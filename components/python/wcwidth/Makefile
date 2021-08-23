@@ -11,32 +11,29 @@
 # Copyright 2016 Adam Stevko
 #
 
+BUILD_STYLE=setup.py
+BUILD_BITS=NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		wcwidth
-COMPONENT_VERSION=	0.1.7
-COMPONENT_REVISION=	6
-COMPONENT_SUMMARY=	Measures number of Terminal column cells of wide-character codes
-COMPONENT_PROJECT_URL=	https://github.com/jquast/wcwidth
-COMPONENT_FMRI=		library/python/wcwidth
-COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_NAME=         wcwidth
+COMPONENT_VERSION=      0.2.5
+COMPONENT_SUMMARY=      Measures number of Terminal column cells of wide-character codes
+COMPONENT_PROJECT_URL=  https://github.com/jquast/wcwidth
+COMPONENT_FMRI=         library/python/wcwidth
+COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	https://github.com/jquast/wcwidth/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c0122eb9a4ef7ab6489d0ef7c72db4143387b9466e27385cd5201950f49583b3
-COMPONENT_LICENSE=	MIT
+COMPONENT_ARCHIVE_URL=  $(call pypi_url)
+COMPONENT_ARCHIVE_HASH= sha256:c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83
+COMPONENT_LICENSE=      MIT
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-build:          $(BUILD_NO_ARCH)
-
-install:        $(INSTALL_NO_ARCH)
-
-test:           $(NO_TESTS)
-
-REQUIRED_PACKAGES+= runtime/python-27
-REQUIRED_PACKAGES+= runtime/python-35
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39

@@ -1,0 +1,30 @@
+test_bash fails when there are no set aliases.
+
+This was reported upstream:
+https://github.com/pexpect/pexpect/issues/568
+
+test_pager_as_cat fails because Solaris manual pages don't
+contain an uppercase name in the header.
+
+This was also reported/offered upstream:
+https://github.com/pexpect/pexpect/pull/663
+
+--- pexpect-4.8.0/tests/test_replwrap.py
++++ pexpect-4.8.0/tests/test_replwrap.py
+@@ -24,6 +24,7 @@ class REPLWrapTestCase(unittest.TestCase
+ 
+     def test_bash(self):
+         bash = replwrap.bash()
++        bash.run_command("alias yyy='xxx'")
+         res = bash.run_command("alias")
+         assert 'alias' in res, res
+ 
+@@ -38,7 +39,7 @@ class REPLWrapTestCase(unittest.TestCase
+         " PAGER is set to cat, to prevent timeout in ``man sleep``. "
+         bash = replwrap.bash()
+         res = bash.run_command('man sleep', timeout=5)
+-        assert 'SLEEP' in res, res
++        assert 'SLEEP' in res.upper(), res
+ 
+     def test_bash_env(self):
+         """env, which displays PS1=..., should not mess up finding the prompt.

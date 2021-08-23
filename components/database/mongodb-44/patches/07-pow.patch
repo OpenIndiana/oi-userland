@@ -1,0 +1,11 @@
+--- mongodb-src-r4.4.5/src/mongo/db/free_mon/free_mon_processor.cpp.~1~	2021-03-31 17:15:37.000000000 +0000
++++ mongodb-src-r4.4.5/src/mongo/db/free_mon/free_mon_processor.cpp	2021-05-10 11:09:37.079213245 +0000
+@@ -107,7 +107,7 @@
+ }
+ 
+ bool MetricsRetryCounter::incrementError() {
+-    _base = static_cast<int>(pow(2, std::min(6, static_cast<int>(_retryCount)))) * _min;
++    _base = static_cast<int>(pow(2.0, std::min(6.0, static_cast<double>(_retryCount)))) * _min;
+     _current = _base + Seconds(randomJitter(_random, _min.count() / 2, _min.count()));
+     ++_retryCount;
+ 

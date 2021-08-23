@@ -1,0 +1,86 @@
+From aeab512851bf6ed623d1c6c4305b6ce05e51a10c Mon Sep 17 00:00:00 2001
+From: Paul Koning <paul_koning@dell.com>
+Date: Fri, 8 Jun 2018 13:26:36 -0400
+Subject: [PATCH] Fix build issue with Python 3.7
+
+Originally reported in
+https://bugzilla.redhat.com/show_bug.cgi?id=1577396 -- gdb build fails
+with Python 3.7 due to references to a Python internal function whose
+declaration changed in 3.7.
+
+Backport to 8.0 by Gary Mills
+
+gdb/ChangeLog
+2018-06-08  Paul Koning  <paul_koning@dell.com>
+
+	    PR gdb/23252
+
+	    * python/python.c (do_start_initialization):
+	    Avoid call to internal Python API.
+	    (init__gdb_module): New function.
+---
+ gdb/ChangeLog       |  8 ++++++++
+ gdb/python/python.c | 18 +++++++++++++++---
+ 2 files changed, 23 insertions(+), 3 deletions(-)
+
+--- gdb-8.0/gdb/ChangeLog-orig	Sun Jun  4 10:54:54 2017
++++ gdb-8.0/gdb/ChangeLog	Tue May 18 21:52:20 2021
+@@ -1,3 +1,11 @@
++2018-06-08  Paul Koning  <paul_koning@dell.com>
++
++	PR gdb/23252
++
++	* python/python.c (do_start_initialization):
++	Avoid call to internal Python API.
++	(init__gdb_module): New function.
++
+ 2017-06-04  Joel Brobecker  <brobecker@adacore.com>
+ 
+ 	* version.in: Set GDB version number to 8.0.
+--- gdb-8.0/gdb/python/python.c-orig	Sun Jun  4 10:51:27 2017
++++ gdb-8.0/gdb/python/python.c	Wed May 19 12:27:14 2021
+@@ -1518,8 +1518,20 @@
+ 
+   restore_active_ext_lang (previous_active);
+ }
++
++#ifdef IS_PY3K
++/* This is called via the PyImport_AppendInittab mechanism called
++   during initialization, to make the built-in _gdb module known to
++   Python.  */
++PyMODINIT_FUNC
++init__gdb_module (void)
++{
++  return PyModule_Create (&python_GdbModuleDef);
++}
+ #endif
+ 
++#endif
++
+ /* Provide a prototype to silence -Wmissing-prototypes.  */
+ extern initialize_file_ftype _initialize_python;
+ 
+@@ -1570,6 +1582,9 @@
+      remain alive for the duration of the program's execution, so
+      it is not freed after this call.  */
+   Py_SetProgramName (progname_copy);
++
++  /* Define _gdb as a built-in module.  */
++  PyImport_AppendInittab ("_gdb", init__gdb_module);
+ #else
+   Py_SetProgramName (progname);
+ #endif
+@@ -1579,9 +1594,7 @@
+   PyEval_InitThreads ();
+ 
+ #ifdef IS_PY3K
+-  gdb_module = PyModule_Create (&python_GdbModuleDef);
+-  /* Add _gdb module to the list of known built-in modules.  */
+-  _PyImport_FixupBuiltin (gdb_module, "_gdb");
++  gdb_module = PyImport_ImportModule ("_gdb");
+ #else
+   gdb_module = Py_InitModule ("_gdb", python_GdbMethods);
+ #endif
+-- 
+2.27.0
+

@@ -1,0 +1,25 @@
+--- gnulib-tests/test-posixtm.c	2020-01-01 15:14:24.000000000 +0000
++++ gnulib-tests/test-posixtm.c	2020-12-14 21:46:43.456044517 +0000
+@@ -46,13 +46,17 @@ static struct posixtm_test const T[] =
+     { "12131415.16",     LY, 1,            0}, /* ??? Dec 13 14:15:16 ???? */
+     { "12131415",        LY, 1,            0}, /* ??? Dec 13 14:15:00 ???? */
+ 
+-    /* These two tests fail on 64-bit Solaris up through at least
+-       Solaris 10, which is off by one day for timestamps before
+-       0001-01-01 00:00:00 UTC.  */
+-    { "000001010000.00", LY, 1,
++    /* 64-bit Solaris up through at least Solaris 10 is off by one day 
++     * for timestamps before 0001-01-01 00:00:00 UTC.  */
++    #ifdef __sun__
++        { "000001010000.00", LY, 1,
++                      - INT64_C (62167132800)},/* Sat Jan  1 00:00:00 0    */
++    #else
++        { "000001010000.00", LY, 1,
+                       - INT64_C (62167219200)},/* Sat Jan  1 00:00:00 0    */
+-    { "000012312359.59", LY, 1,
++        { "000012312359.59", LY, 1,
+                       - INT64_C (62135596801)},/* Fri Dec 31 23:59:59 0    */
++    #endif
+ 
+     { "000101010000.00", LY, 1,
+                       - INT64_C (62135596800)},/* Sat Jan  1 00:00:00 1    */

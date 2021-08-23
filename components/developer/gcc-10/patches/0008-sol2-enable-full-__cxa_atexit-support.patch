@@ -1,0 +1,56 @@
+From 0e21e9938e242c08b49c6c7b71b4216879073507 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Tue, 4 Mar 2014 22:11:03 +0000
+Subject: [PATCH 08/34] sol2: enable full __cxa_atexit support
+
+---
+ gcc/config/sol2.h  | 4 ++--
+ libgcc/config.host | 3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/gcc/config/sol2.h b/gcc/config/sol2.h
+index 91b4602b49d..a60fcba2864 100644
+--- a/gcc/config/sol2.h
++++ b/gcc/config/sol2.h
+@@ -210,7 +210,7 @@ along with GCC; see the file COPYING3.  If not see
+ 				   shared|" PIE_SPEC ":crtbeginS.o%s; \
+ 				   :crtbegin.o%s}"
+ #else
+-#define STARTFILE_CRTBEGIN_SPEC	"crtbegin.o%s"
++#define STARTFILE_CRTBEGIN_SPEC	"%{shared:crtbeginS.o%s;:crtbegin.o%s}"
+ #endif
+ 
+ #if ENABLE_VTABLE_VERIFY
+@@ -290,7 +290,7 @@ along with GCC; see the file COPYING3.  If not see
+ 			       shared|" PIE_SPEC ":crtendS.o%s; \
+ 			       :crtend.o%s}"
+ #else
+-#define ENDFILE_CRTEND_SPEC "crtend.o%s"
++#define ENDFILE_CRTEND_SPEC "%{shared:crtendS.o%s;:crtend.o%s}"
+ #endif
+ 
+ #undef  ENDFILE_SPEC
+diff --git a/libgcc/config.host b/libgcc/config.host
+index c529cc40f0c..38cc1d5a7ad 100644
+--- a/libgcc/config.host
++++ b/libgcc/config.host
+@@ -280,7 +280,7 @@ case ${host} in
+ *-*-solaris2*)
+   # Unless linker support and dl_iterate_phdr are present,
+   # unwind-dw2-fde-dip.c automatically falls back to unwind-dw2-fde.c.
+-  tmake_file="$tmake_file sol2/t-sol2 t-eh-dw2-dip t-crtstuff-pic t-libgcc-pic t-slibgcc t-slibgcc-elf-ver"
++  tmake_file="$tmake_file sol2/t-sol2 t-eh-dw2-dip t-crtstuff-pic t-libgcc-pic t-slibgcc t-slibgcc-elf-ver t-crtstuff-pic"
+   if test $with_gnu_ld = yes; then
+     tmake_file="$tmake_file t-slibgcc-gld"
+   else
+@@ -300,6 +300,7 @@ case ${host} in
+       i?86-*-solaris2* | x86_64-*-solaris2*)
+         # Solaris 10+/x86 provides crt1.o, crti.o, crtn.o, and gcrt1.o as
+         # part of the base system.
++        extra_parts="$extra_parts crtbeginS.o crtendS.o"
+         ;;
+       sparc*-*-solaris2*)
+         # Solaris 10+/SPARC lacks crt1.o and gcrt1.o.
+-- 
+2.31.1
+

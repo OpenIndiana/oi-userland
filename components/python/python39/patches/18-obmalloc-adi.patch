@@ -1,0 +1,58 @@
+This patch was developed in house for Bug 21658934. Python PyObject_Free()
+implementation relies on being able to read memory that might not belong to
+the current buffer. When ADIHEAP is enabled, this is detected as a violation.
+Use an explicit nonfaulting load to ignore the ADI tag.
+
+This patch should now work with both Studio and gcc compilers (and possibly
+many others). It might be pushed upstream.
+
+--- Python-3.9.0/Objects/obmalloc.c
++++ Python-3.9.0/Objects/obmalloc.c
+@@ -1407,6 +1407,38 @@ obmalloc controls.  Since this test is n
+ extremely desirable that it be this fast.
+ */
+ 
++#ifdef __sparcv9
++/*
++ * Py_ADDRESS_IN_RANGE needs to access memory that might be arbitrarily
++ * tagged by an ADI aware allocator. The use of a nonfaulting load
++ * guarantees that the read will succeed.
++ */
++#ifdef __SUNPRO_C
++
++/* Studio can use built-in nonfaulting load instruction for vis.h */ 
++#include <vis.h>
++#define POOL_INDEX(x)   __vis_ldswa_ASI_PNF((void*)x)
++
++#else  /* __SUNPRO_C */
++/* 
++ * GCC doesn't have similar instruction built-in, but it can use
++ * following assembly code to do the same.
++ */
++
++static inline int vis_ldswa_ASI_PNF(void *arg);
++
++int vis_ldswa_ASI_PNF(void *arg) {
++  int res;
++  __asm__ ("ldswa  [%1]0x82,%0" : "=r" (res) : "r" (arg));
++  return res;
++}
++#define POOL_INDEX(x)   vis_ldswa_ASI_PNF((void*)x)
++
++#endif  /* __SUNPRO_C */
++#else   /* __sparcv9 */
++#define POOL_INDEX(x)   (*(x))
++#endif  /* __sparcv9 */
++
+ static bool _Py_NO_SANITIZE_ADDRESS
+             _Py_NO_SANITIZE_THREAD
+             _Py_NO_SANITIZE_MEMORY
+@@ -1417,7 +1449,7 @@ address_in_range(void *p, poolp pool)
+     // another thread may be concurrently modifying the value without holding
+     // the GIL. The following dance forces the compiler to read pool->arenaindex
+     // only once.
+-    uint arenaindex = *((volatile uint *)&pool->arenaindex);
++    uint arenaindex = (uint)POOL_INDEX((volatile uint *)&pool->arenaindex);
+     return arenaindex < maxarenas &&
+         (uintptr_t)p - arenas[arenaindex].address < ARENA_SIZE &&
+         arenas[arenaindex].address != 0;

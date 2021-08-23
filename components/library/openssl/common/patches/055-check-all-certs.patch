@@ -1,0 +1,75 @@
+#
+# The patch allows expired certs and valid certs to co-exist in
+# the trust store.
+# Developed in house.
+#
+# Fixed in OpenSSL 1.1 via https://github.com/openssl/openssl/commit/0930251d
+#
+--- a/crypto/x509/x509_vfy.c	2017-11-02 07:32:58.000000000 -0700
++++ b/crypto/x509/x509_vfy.c	2017-12-11 12:37:55.591835780 -0800
+@@ -185,6 +185,50 @@
+     return xtmp;
+ }
+ 
++/*
++ * Look through the trust store setup by get_issuer() and
++ * return the certificate which matches the server cert 'x'
++ * via 'xtmp'.
++ */
++static int
++solaris_X509_get_cert(X509 **xtmp, X509_STORE_CTX *ctx, X509 *x)
++{
++    X509_OBJECT    *tmp;
++    int            i;
++    int            ret = 0;
++
++    /*
++     * If the object returned by get_issuer() matches the server
++     * cert 'x', return success.
++     */
++    if (X509_cmp(*xtmp, x) == 0) {
++        return (1);
++    }
++
++    /* look for a matching object in the trust store */
++    CRYPTO_w_lock(CRYPTO_LOCK_X509_STORE);
++    for (i = 0; i < sk_X509_OBJECT_num(ctx->ctx->objs); i++) {
++        tmp = sk_X509_OBJECT_value(ctx->ctx->objs, i);
++        if (tmp == NULL) {
++            goto exit;
++        }
++        if (X509_cmp(tmp->data.x509, x) == 0) {
++            /*
++             * Found a matching cert. Release the cert found by get_issuer()
++             * and increment the ref count on the matching cert.
++             */
++            X509_free(*xtmp);
++            X509_OBJECT_up_ref_count(tmp);
++            *xtmp = tmp->data.x509;
++            ret = 1;
++            goto exit;
++        }
++    }
++exit:
++    CRYPTO_w_unlock(CRYPTO_LOCK_X509_STORE);
++    return ret;
++}
++
+ int X509_verify_cert(X509_STORE_CTX *ctx)
+ {
+     X509 *x, *xtmp, *xtmp2, *chain_ss = NULL;
+@@ -316,9 +360,13 @@
+                  * We have a single self signed certificate: see if we can
+                  * find it in the store. We must have an exact match to avoid
+                  * possible impersonation.
++                 * get_issuer() sets up the trust store for the subject and
++                 * returns the first cert via 'xtmp'. The first cert in the
++                 * trust store may not be the certificate that we are interested
++                 * in. Look through the trust store to see there is an exact match.
+                  */
+                 ok = ctx->get_issuer(&xtmp, ctx, x);
+-                if ((ok <= 0) || X509_cmp(x, xtmp)) {
++                if ((ok <= 0) || (solaris_X509_get_cert(&xtmp, ctx, x) != 1)) {
+                     ctx->error = X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT;
+                     ctx->current_cert = x;
+                     ctx->error_depth = i - 1;

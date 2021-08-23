@@ -1,21 +1,26 @@
---- babl-0.1.78/babl/meson.build.1	2020-08-01 09:29:37.668490108 +0000
-+++ babl-0.1.78/babl/meson.build	2020-08-01 09:33:29.885427574 +0000
-@@ -35,6 +35,8 @@
- elif host_machine.system() == 'darwin' and cc.has_multi_link_arguments('-Wl,-exported_symbols_list', babl_clang_sym_path)
-   # Clang on Darwin
-   babl_link_args = ['-Wl,-exported_symbols_list',version_script_clang]
-+elif cc.links('', name: '-Wl,-M', args: ['-shared', '-Wl,-M' + babl_gnu_sym_path])
-+  babl_link_args = ['-Wl,-M',version_script]
+--- babl-0.1.84/babl/meson.build.orig	2020-12-17 11:32:41.440923000 +0000
++++ babl-0.1.84/babl/meson.build	2020-12-30 10:18:57.483882525 +0000
+@@ -45,6 +45,13 @@
+     # Clang on msys/mingw
+     babl_link_args = []
+   endif
++elif cc.links('',
++      name: '-Wl,-M',
++      args: ['-shared', '-Wl,-M' + meson.current_source_dir() / 'test-gnu.map']
++  )
++  babl_link_args = [
++    '-Wl,-M', version_script[0].full_path()
++  ]
  else
-   error('Linker doesn\'t support --version-script or -exported_symbols_list')
- endif
---- babl-0.1.78/docs/meson.build.1	2020-08-01 10:27:35.077015064 +0000
-+++ babl-0.1.78/docs/meson.build	2020-08-01 10:28:26.390621846 +0000
-@@ -21,6 +21,7 @@
+   error(
+     'Linker doesn\'t support --version-script or -exported_symbols_list'
+--- babl-0.1.84/docs/meson.build.orig	2020-12-17 11:32:41.444923200 +0000
++++ babl-0.1.84/docs/meson.build	2020-12-30 10:19:53.021435766 +0000
+@@ -24,6 +24,7 @@
  
  index_html_tmp_env = [
-   'BABL_PATH='+ join_paths(meson.build_root(), 'extensions'),
+   'BABL_PATH=' + babl_extensions_build_dir,
 +  'LD_LIBRARY_PATH='+ join_paths(meson.build_root(), 'babl'),
  ]
  
- index_html_tmp = custom_target('index.html.tmp',
+ # Don't build babl ref if cannot run compiled objects in this env

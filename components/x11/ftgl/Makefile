@@ -11,46 +11,40 @@
 
 #
 # Copyright 2018 Harry Liebel <hliebel@gmail.com>
+# Copyright 2021 Andreas Wacknitz
 #
 
+BUILD_BITS=	32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ftgl
-COMPONENT_VERSION=	2.1.3.5
-HUMAN_VERSION=		2.1.3~rc5
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.4.0
 COMPONENT_FMRI=		library/x11/ftgl
-COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/ftgl
+COMPONENT_PROJECT_URL=	https://github.com/frankheckenbach/ftgl
 COMPONENT_SUMMARY=	OpenGL FreeType fonts rendering library
 COMPONENT_DESCRIPTION=	FTGL is a free cross-platform Open Source C++ library that uses Freetype2 to simplify rendering fonts in OpenGL applications. FTGL supports bitmaps, pixmaps, texture maps, outlines, polygon mesh, and extruded polygon rendering modes.
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-2.1.3-rc5.tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:5458d62122454869572d39f8aa85745fc05d5518001bcefa63bd6cbb8d26565b
-COMPONENT_ARCHIVE_URL= \
-  $(COMPONENT_PROJECT_URL)/files/FTGL%20Source/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:aa97da1c3442a8fd3941037655df18016d70b5266381c81d81e8b5335f196ea8
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+
 COMPONENT_LICENSE=	MIT
 COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PREP_ACTION += ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
 
 CONFIGURE_OPTIONS += --with-x
 CONFIGURE_ENV += LIBS="-lm"
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
 REQUIRED_PACKAGES += x11/library/freeglut
 
-# Build dependencies
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/glu

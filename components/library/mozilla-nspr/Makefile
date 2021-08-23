@@ -17,13 +17,13 @@
 BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		nspr
-COMPONENT_VERSION=	4.29
-COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:22286bdb8059d74632cc7c2865c139e63953ecfb33bf4362ab58827e86e92582
-COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=         nspr
+COMPONENT_VERSION=      4.32
+COMPONENT_PROJECT_URL=  https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:bb6bf4f534b9559cf123dcdc6f9cd8167de950314a90a88b2a329c16836e7f6c
+COMPONENT_ARCHIVE_URL=  https://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/common.mk
 

@@ -1,0 +1,180 @@
+#
+# Add deprecated attribute for legacy ciphers/digests so that
+# compiler produces a warning whenever it tries to compile code
+# that uses one of these symbols. Currently the list is:
+#   - DES
+#   - MD5
+#
+# There are also algorithms disabled totally via top level Makefile.
+#
+# This patch is not suitable for upstream because it reflects
+# internal policies.
+#
+# In the individual header files, concrete version of the macro is used
+# (DEPRECATEDIN_1_1_0) otherwise 01-test_symbol_presence.t would fail
+# due to errors reported by utils/mkdef.pl which has special parsing
+# code for the DEPRECATEDIN* macros but not for the generic DECLARE_DEPRECATED
+# macro.
+#
+--- openssl-1.1.1c/include/openssl/md5.h.orig	2019-07-22 14:14:17.690925565 +0200
++++ openssl-1.1.1c/include/openssl/md5.h	2019-07-22 14:14:52.644704947 +0200
+@@ -37,11 +37,11 @@
+     unsigned int num;
+ } MD5_CTX;
+ 
+-int MD5_Init(MD5_CTX *c);
+-int MD5_Update(MD5_CTX *c, const void *data, size_t len);
+-int MD5_Final(unsigned char *md, MD5_CTX *c);
+-unsigned char *MD5(const unsigned char *d, size_t n, unsigned char *md);
+-void MD5_Transform(MD5_CTX *c, const unsigned char *b);
++DEPRECATEDIN_1_1_0(int MD5_Init(MD5_CTX *c))
++DEPRECATEDIN_1_1_0(int MD5_Update(MD5_CTX *c, const void *data, size_t len))
++DEPRECATEDIN_1_1_0(int MD5_Final(unsigned char *md, MD5_CTX *c))
++DEPRECATEDIN_1_1_0(unsigned char *MD5(const unsigned char *d, size_t n, unsigned char *md))
++DEPRECATEDIN_1_1_0(void MD5_Transform(MD5_CTX *c, const unsigned char *b))
+ # ifdef  __cplusplus
+ }
+ # endif
+--- openssl-1.1.1c/include/openssl/evp.h.orig	2019-07-22 14:19:56.180081474 +0200
++++ openssl-1.1.1c/include/openssl/evp.h	2019-07-22 14:24:07.838230179 +0200
+@@ -695,7 +695,7 @@
+ const EVP_MD *EVP_md4(void);
+ # endif
+ # ifndef OPENSSL_NO_MD5
+-const EVP_MD *EVP_md5(void);
++DEPRECATEDIN_1_1_0(const EVP_MD *EVP_md5(void))
+ const EVP_MD *EVP_md5_sha1(void);
+ # endif
+ # ifndef OPENSSL_NO_BLAKE2
+@@ -729,28 +729,28 @@
+ # endif
+ const EVP_CIPHER *EVP_enc_null(void); /* does nothing :-) */
+ # ifndef OPENSSL_NO_DES
+-const EVP_CIPHER *EVP_des_ecb(void);
+-const EVP_CIPHER *EVP_des_ede(void);
+-const EVP_CIPHER *EVP_des_ede3(void);
+-const EVP_CIPHER *EVP_des_ede_ecb(void);
+-const EVP_CIPHER *EVP_des_ede3_ecb(void);
+-const EVP_CIPHER *EVP_des_cfb64(void);
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_ecb(void))
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_ede(void))
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_ede3(void))
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_ede_ecb(void))
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_ede3_ecb(void))
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_cfb64(void))
+ #  define EVP_des_cfb EVP_des_cfb64
+-const EVP_CIPHER *EVP_des_cfb1(void);
+-const EVP_CIPHER *EVP_des_cfb8(void);
+-const EVP_CIPHER *EVP_des_ede_cfb64(void);
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_cfb1(void))
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_cfb8(void))
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_ede_cfb64(void))
+ #  define EVP_des_ede_cfb EVP_des_ede_cfb64
+ const EVP_CIPHER *EVP_des_ede3_cfb64(void);
+ #  define EVP_des_ede3_cfb EVP_des_ede3_cfb64
+ const EVP_CIPHER *EVP_des_ede3_cfb1(void);
+ const EVP_CIPHER *EVP_des_ede3_cfb8(void);
+-const EVP_CIPHER *EVP_des_ofb(void);
+-const EVP_CIPHER *EVP_des_ede_ofb(void);
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_ofb(void))
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_ede_ofb(void))
+ const EVP_CIPHER *EVP_des_ede3_ofb(void);
+-const EVP_CIPHER *EVP_des_cbc(void);
+-const EVP_CIPHER *EVP_des_ede_cbc(void);
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_cbc(void))
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_des_ede_cbc(void))
+ const EVP_CIPHER *EVP_des_ede3_cbc(void);
+-const EVP_CIPHER *EVP_desx_cbc(void);
++DEPRECATEDIN_1_1_0(const EVP_CIPHER *EVP_desx_cbc(void))
+ const EVP_CIPHER *EVP_des_ede3_wrap(void);
+ /*
+  * This should now be supported through the dev_crypto ENGINE. But also, why
+--- openssl-1.1.1c/include/openssl/x509.h.orig	2019-07-22 14:25:45.561154609 +0200
++++ openssl-1.1.1c/include/openssl/x509.h	2019-07-22 14:26:12.039455397 +0200
+@@ -763,8 +763,8 @@
+ unsigned long X509_subject_name_hash(X509 *x);
+ 
+ # ifndef OPENSSL_NO_MD5
+-unsigned long X509_issuer_name_hash_old(X509 *a);
+-unsigned long X509_subject_name_hash_old(X509 *x);
++DEPRECATEDIN_1_1_0(unsigned long X509_issuer_name_hash_old(X509 *a))
++DEPRECATEDIN_1_1_0(unsigned long X509_subject_name_hash_old(X509 *x))
+ # endif
+ 
+ int X509_cmp(const X509 *a, const X509 *b);
+--- openssl-1.1.1c/include/openssl/des.h.~1~	2019-05-28 15:12:21.000000000 +0200
++++ openssl-1.1.1c/include/openssl/des.h	2019-07-22 14:53:37.572669582 +0200
+@@ -74,21 +74,21 @@
+                        long length, DES_key_schedule *schedule,
+                        const_DES_cblock *ivec);
+ /* DES_cbc_encrypt does not update the IV!  Use DES_ncbc_encrypt instead. */
+-void DES_cbc_encrypt(const unsigned char *input, unsigned char *output,
++DEPRECATEDIN_1_1_0(void DES_cbc_encrypt(const unsigned char *input, unsigned char *output,
+                      long length, DES_key_schedule *schedule,
+-                     DES_cblock *ivec, int enc);
+-void DES_ncbc_encrypt(const unsigned char *input, unsigned char *output,
++                     DES_cblock *ivec, int enc))
++DEPRECATEDIN_1_1_0(void DES_ncbc_encrypt(const unsigned char *input, unsigned char *output,
+                       long length, DES_key_schedule *schedule,
+-                      DES_cblock *ivec, int enc);
+-void DES_xcbc_encrypt(const unsigned char *input, unsigned char *output,
++                      DES_cblock *ivec, int enc))
++DEPRECATEDIN_1_1_0(void DES_xcbc_encrypt(const unsigned char *input, unsigned char *output,
+                       long length, DES_key_schedule *schedule,
+                       DES_cblock *ivec, const_DES_cblock *inw,
+-                      const_DES_cblock *outw, int enc);
+-void DES_cfb_encrypt(const unsigned char *in, unsigned char *out, int numbits,
++                      const_DES_cblock *outw, int enc))
++DEPRECATEDIN_1_1_0(void DES_cfb_encrypt(const unsigned char *in, unsigned char *out, int numbits,
+                      long length, DES_key_schedule *schedule,
+-                     DES_cblock *ivec, int enc);
+-void DES_ecb_encrypt(const_DES_cblock *input, DES_cblock *output,
+-                     DES_key_schedule *ks, int enc);
++                     DES_cblock *ivec, int enc))
++DEPRECATEDIN_1_1_0(void DES_ecb_encrypt(const_DES_cblock *input, DES_cblock *output,
++                     DES_key_schedule *ks, int enc))
+ 
+ /*
+  * This is the DES encryption function that gets called by just about every
+@@ -132,16 +132,16 @@
+                             long length, DES_key_schedule *ks1,
+                             DES_key_schedule *ks2, DES_key_schedule *ks3,
+                             DES_cblock *ivec, int *num);
+-char *DES_fcrypt(const char *buf, const char *salt, char *ret);
+-char *DES_crypt(const char *buf, const char *salt);
+-void DES_ofb_encrypt(const unsigned char *in, unsigned char *out, int numbits,
++DEPRECATEDIN_1_1_0(char *DES_fcrypt(const char *buf, const char *salt, char *ret))
++DEPRECATEDIN_1_1_0(char *DES_crypt(const char *buf, const char *salt))
++DEPRECATEDIN_1_1_0(void DES_ofb_encrypt(const unsigned char *in, unsigned char *out, int numbits,
+                      long length, DES_key_schedule *schedule,
+-                     DES_cblock *ivec);
+-void DES_pcbc_encrypt(const unsigned char *input, unsigned char *output,
++                     DES_cblock *ivec))
++DEPRECATEDIN_1_1_0(void DES_pcbc_encrypt(const unsigned char *input, unsigned char *output,
+                       long length, DES_key_schedule *schedule,
+-                      DES_cblock *ivec, int enc);
+-DES_LONG DES_quad_cksum(const unsigned char *input, DES_cblock output[],
+-                        long length, int out_count, DES_cblock *seed);
++                      DES_cblock *ivec, int enc))
++DEPRECATEDIN_1_1_0(DES_LONG DES_quad_cksum(const unsigned char *input, DES_cblock output[],
++                        long length, int out_count, DES_cblock *seed))
+ int DES_random_key(DES_cblock *ret);
+ void DES_set_odd_parity(DES_cblock *key);
+ int DES_check_key_parity(const_DES_cblock *key);
+@@ -157,12 +157,12 @@
+ void DES_set_key_unchecked(const_DES_cblock *key, DES_key_schedule *schedule);
+ void DES_string_to_key(const char *str, DES_cblock *key);
+ void DES_string_to_2keys(const char *str, DES_cblock *key1, DES_cblock *key2);
+-void DES_cfb64_encrypt(const unsigned char *in, unsigned char *out,
++DEPRECATEDIN_1_1_0(void DES_cfb64_encrypt(const unsigned char *in, unsigned char *out,
+                        long length, DES_key_schedule *schedule,
+-                       DES_cblock *ivec, int *num, int enc);
+-void DES_ofb64_encrypt(const unsigned char *in, unsigned char *out,
++                       DES_cblock *ivec, int *num, int enc))
++DEPRECATEDIN_1_1_0(void DES_ofb64_encrypt(const unsigned char *in, unsigned char *out,
+                        long length, DES_key_schedule *schedule,
+-                       DES_cblock *ivec, int *num);
++                       DES_cblock *ivec, int *num))
+ 
+ # define DES_fixup_key_parity DES_set_odd_parity
+ 

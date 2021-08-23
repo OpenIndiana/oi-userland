@@ -19,13 +19,17 @@
 # CDDL HEADER END
 #
 # Copyright 2016, Aurelien Larcher.
+# Copyright 2021, Nona Hansel.
 #
+
+BUILD_BITS=	NO_ARCH
+BUILD_STYLE=	setup.py
 include ../../../make-rules/shared-macros.mk
 
 
 COMPONENT_NAME= singledispatch
 COMPONENT_VERSION= 3.4.0.3
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_FMRI= library/python/singledispatch
 COMPONENT_PROJECT_URL= http://docs.python.org/3/library/functools.html#functools.singledispatch
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,21 +38,18 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:5b06af87df13818d14f08a028e42f566640aef80805c3b50c5056b086e3c2b9c
 COMPONENT_ARCHIVE_URL= $(call pypi_url)
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET:	$(NO_TESTS)
+include $(WS_TOP)/make-rules/common.mk
 
 COMPONENT_POST_INSTALL_ACTION= \
   gfind $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32) -type f \
     -exec gawk '/^\#!.*python/{print FILENAME}{nextfile}' {} + \
   | xargs gsed -i -e '1 s;^.*$$;\#!$(PYTHON.32);'
 
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39

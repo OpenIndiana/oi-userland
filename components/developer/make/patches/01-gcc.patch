@@ -1,0 +1,20 @@
+The native compiler on OpenIndiana is gcc. Modify GNU make to suit.
+We don't define GCC_IS_NATIVE since this also modifies the native
+lex and yacc defitions and makes the POSIX tests fail.
+
+This patch is taken from OmniOS on May 9th, 2021
+diff -wpruN '--exclude=*.orig' a~/src/default.c a/src/default.c
+--- a~/src/default.c	1970-01-01 00:00:00
++++ a/src/default.c	1970-01-01 00:00:00
+@@ -529,9 +529,9 @@ static const char *default_variables[] =
+ # endif /* __MSDOS__ */
+     "OBJC", "gcc",
+ #else
+-    "CC", "cc",
++    "CC", "gcc",
+     "CXX", "g++",
+-    "OBJC", "cc",
++    "OBJC", "gcc",
+ #endif
+ 
+     /* This expands to $(CO) $(COFLAGS) $< $@ if $@ does not exist,

@@ -1,0 +1,13 @@
+--- dnsmasq-2.82/src/dump.c.orig	2020-07-19 22:54:44.000000000 +0000
++++ dnsmasq-2.82/src/dump.c	2020-12-21 12:39:10.771636459 +0000
+@@ -148,6 +148,10 @@
+       ip.ip_v = IPVERSION;
+       ip.ip_hl = sizeof(struct ip) / 4;
+       ip.ip_len = htons(sizeof(struct ip) + sizeof(struct udphdr) + len); 
++#ifdef __sun
++    /* Linux uses 64; in order to find out the value for OpenIndiana use "pfexec ndd /dev/icmp icmp_ipv4_ttl" */
++    #define IPDEFTTL 255
++#endif
+       ip.ip_ttl = IPDEFTTL;
+       ip.ip_p = IPPROTO_UDP;
+       

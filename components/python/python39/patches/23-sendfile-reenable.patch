@@ -1,0 +1,29 @@
+All sendfile differences between Linux and Solaris were hopefully taken care
+of, and hence we can reenable it within the shutil module.
+
+This was requested upstream as well:
+https://bugs.python.org/issue41843
+
+--- Python-3.9.2/Lib/shutil.py
++++ Python-3.9.2/Lib/shutil.py
+@@ -50,7 +50,7 @@ elif _WINDOWS:
+     import nt
+ 
+ COPY_BUFSIZE = 1024 * 1024 if _WINDOWS else 64 * 1024
+-_USE_CP_SENDFILE = hasattr(os, "sendfile") and sys.platform.startswith("linux")
++_USE_CP_SENDFILE = hasattr(os, "sendfile")
+ _HAS_FCOPYFILE = posix and hasattr(posix, "_fcopyfile")  # macOS
+ 
+ # CMD defaults in Windows 10
+--- Python-3.9.2/Doc/library/shutil.rst
++++ Python-3.9.2/Doc/library/shutil.rst
+@@ -453,7 +453,8 @@ the use of userspace buffers in Python a
+ 
+ On macOS `fcopyfile`_ is used to copy the file content (not metadata).
+ 
+-On Linux :func:`os.sendfile` is used.
++On Linux, Solaris and other POSIX platforms where :func:`os.sendfile` supports
++copies between 2 regular file descriptors :func:`os.sendfile` is used.
+ 
+ On Windows :func:`shutil.copyfile` uses a bigger default buffer size (1 MiB
+ instead of 64 KiB) and a :func:`memoryview`-based variant of

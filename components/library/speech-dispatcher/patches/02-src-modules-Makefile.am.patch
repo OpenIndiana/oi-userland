@@ -1,0 +1,40 @@
+diff --git a/src/modules/Makefile.am b/src/modules/Makefile.am
+index a26b75f..b5685b1 100644
+--- a/src/modules/Makefile.am
++++ b/src/modules/Makefile.am
+@@ -87,7 +87,7 @@ sd_ibmtts_LDFLAGS = -Wl,-rpath=/opt/IBM/ibmtts/lib
+ EXTRA_sd_ibmtts_DEPENDENCIES = libibmeci.so
+ 
+ libibmeci.so: $(srcdir)/ibmtts_shim.c
+-	$(CC) -fPIC -shared $< -o $@
++	$(CC) $(CFLAGS) -fPIC -shared $< -o $@
+ 
+ CLEANFILES += $(EXTRA_sd_ibmtts_DEPENDENCIES)
+ endif
+@@ -143,7 +143,7 @@ sd_baratinoo_LDADD += -L.
+ EXTRA_sd_baratinoo_DEPENDENCIES = libbaratinoo.so
+ 
+ libbaratinoo.so: $(srcdir)/baratinoo_shim.c
+-	$(CC) -fPIC -shared $< -o $@
++	$(CC) $(CFLAGS) -fPIC -shared $< -o $@
+ 
+ CLEANFILES += $(EXTRA_sd_baratinoo_DEPENDENCIES)
+ endif
+@@ -168,7 +168,7 @@ noinst_HEADERS = kali_shim/kali/Kali/kali.h module_utils_speak_queue.h
+ EXTRA_sd_kali_DEPENDENCIES = libKali.so libKGlobal.so libKTrans.so libKParle.so libKAnalyse.so
+ 
+ lib%.so: $(srcdir)/kali_%_shim.cpp
+-	$(CXX) -fPIC -shared $< -o $@ -I$(srcdir)/kali_shim
++	$(CXX) $(CXXFLAGS) -fPIC -shared $< -o $@ -I$(srcdir)/kali_shim
+ 
+ CLEANFILES += $(EXTRA_sd_kali_DEPENDENCIES)
+ endif
+@@ -191,7 +191,7 @@ sd_voxin_LDADD += -L.
+ EXTRA_sd_voxin_DEPENDENCIES = libvoxin.so
+ 
+ libvoxin.so: $(srcdir)/voxin_shim.c
+-	$(CC) -fPIC -shared $< -o $@
++	$(CC) $(CFLAGS) -fPIC -shared $< -o $@
+ 
+ CLEANFILES += $(EXTRA_sd_voxin_DEPENDENCIES)
+ endif

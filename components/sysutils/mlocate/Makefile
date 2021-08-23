@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mlocate
 COMPONENT_VERSION=      0.26
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      mlocate - A utility for finding files by name quickly
 COMPONENT_FMRI=         file/mlocate 
 COMPONENT_CLASSIFICATION=Applications/System Utilities

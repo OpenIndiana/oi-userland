@@ -1,0 +1,15 @@
+--- node-v15.5.1/src/node_process_object.cc.orig	2021-01-04 14:19:54.000000000 +0000
++++ node-v15.5.1/src/node_process_object.cc	2021-01-13 14:30:42.835547052 +0000
+@@ -66,7 +66,11 @@
+ 
+ static void GetParentProcessId(Local<Name> property,
+                                const PropertyCallbackInfo<Value>& info) {
+-  info.GetReturnValue().Set(uv_os_getppid());
++#if defined(__sun__)
++   info.GetReturnValue().Set(static_cast<int32_t>(uv_os_getppid()));
++#else
++   info.GetReturnValue().Set(uv_os_getppid());
++#endif
+ }
+ 
+ MaybeLocal<Object> CreateProcessObject(Environment* env) {

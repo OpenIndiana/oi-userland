@@ -16,7 +16,7 @@ BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bluefish
-COMPONENT_VERSION=	2.2.11
+COMPONENT_VERSION=	2.2.12
 COMPONENT_PROJECT_URL=	http://bluefish.openoffice.nl/index.html
 COMPONENT_SUMMARY=	Bluefish, a powerful editor for experienced web designers
 COMPONENT_FMRI=		web/editor/bluefish
@@ -24,7 +24,7 @@ COMPONENT_CLASSIFICATION=	Development/Editors
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:454c877fc1dbddfcc65cc7ddaa3c5ceb17bc46e216baf7878f09dbf1dabdc2ff
+	sha256:0df9905ba2c601cd767fa53e147969e9c90bc0cc4c005c4011c150b248979e6a
 COMPONENT_ARCHIVE_URL=	http://www.bennewitz.com/bluefish/stable/source/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv3
@@ -40,8 +40,9 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+=	--disable-update-databases
 
-CONFIGURE_ENV+=	PYTHON=$(PYTHON)
+PYTHON_VERSION=	3.7
 
+CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/character-map/gucharmap
@@ -52,6 +53,6 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/spell-checking/enchant
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

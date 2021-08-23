@@ -20,25 +20,23 @@
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
 #
+
+BUILD_BITS=				32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libogg
-COMPONENT_VERSION=      1.3.3
+COMPONENT_VERSION=      1.3.4
 COMPONENT_FMRI=         library/libogg
 COMPONENT_SUMMARY=      libogg - general-purpose compressed audio format
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=  http://xiph.org/ogg
+COMPONENT_PROJECT_URL=  https://xiph.org/ogg
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:c2e8a485110b97550f453226ec644ebac6cb29d1caef2902c007edab4308d985
-COMPONENT_ARCHIVE_URL= \
-  http://downloads.xiph.org/releases/ogg/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:fe5670640bd49e828d64d2879c31cb4dde9758681bb664f9bdbf159a01b0c76e
+COMPONENT_ARCHIVE_URL=	https://downloads.xiph.org/releases/ogg/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
@@ -51,12 +49,6 @@ COMPONENT_TEST_TRANSFORMS += '-n -e "/ok.$$/p" '
 COMPONENT_POST_INSTALL_ACTION= \
             (cd $(PROTOUSRDIR) ;  \
              $(MV) include/ogg/config_types.h include/ogg/config_types-$(BITS).h )
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

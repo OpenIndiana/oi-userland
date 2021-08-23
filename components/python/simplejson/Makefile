@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2021 Nona Hansel
 #
 
 BUILD_BITS=32_and_64
@@ -29,15 +30,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		simplejson
 COMPONENT_VERSION=	3.8.2
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	http://undefined.org/python/#simplejson
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:d58439c548433adcda98e695be53e526ba940a4b9c44fb9a05d92cd495cdd47f
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_BUGDB=	python-mod/simplejson
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -52,4 +52,6 @@ COMPONENT_TEST_ARGS= ./setup.py test
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library

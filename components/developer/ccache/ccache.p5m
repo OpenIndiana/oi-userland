@@ -25,25 +25,11 @@ hardlink path=usr/bin/ccache target=../lib/isaexec pkg.linted.userland.action002
 file usr/bin/ccache path=usr/bin/$(MACH32)/ccache
 file path=usr/bin/$(MACH64)/ccache
 file usr/share/man/man1/ccache.1 path=usr/share/man/man1/ccache.1
+file files/ccache-update-symlinks.xml path=lib/svc/manifest/application/ccache-update-symlinks.xml restart_fmri=svc:/system/manifest-import:default
+file files/ccache-update-symlinks.sh path=lib/svc/method/ccache-update-symlinks.sh mode=0555
 
 # Files from tarball (HTMLs may be rebuilt)
 file MANUAL.txt path=usr/share/ccache/manual.txt
 file MANUAL.html path=usr/share/ccache/manual.html
 
-# Softlinks to simplify builds - just prepend /usr/lib/ccache to PATH
-# NOTE: Since these are softlinks, a certain relative directory structure
-# is expected (like rooting at /usr) when the package is installed.
-# You can turn off ccache without changing runtime PATHs by exporting
-# CCACHE_DISABLE=1 before a build
-link target=../../bin/ccache path=usr/lib/ccache/gcc
-link target=../../bin/ccache path=usr/lib/ccache/g++
-link target=../../bin/ccache path=usr/lib/ccache/cc
-link target=../../bin/ccache path=usr/lib/ccache/c++
-link target=../../bin/ccache path=usr/lib/ccache/cpp
-
-# A few links specifically to support gcc-4.4.4-il
-link target=../../bin/ccache path=usr/lib/ccache/i386-pc-solaris2.11-c++
-link target=../../bin/ccache path=usr/lib/ccache/i386-pc-solaris2.11-g++
-link target=../../bin/ccache path=usr/lib/ccache/i386-pc-solaris2.11-gcc
-link target=../../bin/ccache path=usr/lib/ccache/i386-pc-solaris2.11-gcc-4.4.4
-
+dir  path=usr/lib/ccache

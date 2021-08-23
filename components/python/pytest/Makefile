@@ -28,36 +28,48 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest
-COMPONENT_VERSION=	2.9.1
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	6.1.2
+COMPONENT_REVISION=	2
+COMPONENT_FMRI=		library/python/pytest
+COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_SUMMARY=	pytest: simple powerful testing with Python
+COMPONENT_PROJECT_URL=	https://docs.pytest.org/en/latest/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0d48d27a127644fbe7c8158157e08b35f8255045d4476df694b91eb3a8147e65
+    sha256:c0a7e94a8cdbc5422a51ccdad8e6f1024795939cc89159a0ae7f0b316ad3823e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://pytest.org/latest/
-COMPONENT_BUGDB=	python-mod/pytest
+COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS=	2.7 3.5
-
+PYTHON_VERSIONS= $(PYTHON3_VERSIONS)
 
 # Tests require the py package to be installed.
 include $(WS_MAKE_RULES)/common.mk
 
+# New version of pytest no longer generates -$(PYVER) script for
+# each version.  Generate them now for backward compatibility.
+COMPONENT_POST_INSTALL_ACTION += \
+        ($(MV) $(PROTOUSRBINDIR)/py.test $(PROTOUSRBINDIR)/py.test-$(PYTHON_VERSION); \
+         $(MV) $(PROTOUSRBINDIR)/pytest $(PROTOUSRBINDIR)/pytest-$(PYTHON_VERSION))
+
+
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/testing
-COMPONENT_TEST_CMD =	$(PROTOUSRBINDIR)/py.test
+COMPONENT_TEST_CMD =	$(PROTOUSRBINDIR)/pytest-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS =	test_assertion.py
+
+COMPONENT_TEST_TRANSFORMS += '-n -e "/\.\.\./p"'
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 
 # Build dependencies
 # py is required for tests to run
-REQUIRED_PACKAGES += library/python/py-27
-REQUIRED_PACKAGES += library/python/py-35
+REQUIRED_PACKAGES += library/python/py
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39

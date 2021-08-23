@@ -37,7 +37,7 @@ COMPONENT_BUGDB=	python-mod/mock
 # mock has been subsumed into Python starting with 3.3. However, the community
 # is still using this package rather than the included one, mostly because it
 # has all the newest features even for older versions of Python.
-PYTHON_VERSIONS=        2.7 3.5
+PYTHON_VERSIONS=        2.7 3.5 3.7 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -47,3 +47,5 @@ COMPONENT_TEST_ARGS =	setup.py test
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39

@@ -1,0 +1,10 @@
+--- mongodb-src-r4.4.6/src/third_party/SConscript.orig  2021-05-03 09:41:41.000000000 +0000
++++ mongodb-src-r4.4.6/src/third_party/SConscript  2021-05-13 19:05:59.758050961 +0000
+@@ -483,6 +483,7 @@
+     mozjsEnv = env.Clone()
+     mozjsEnv.SConscript('mozjs' + mozjsSuffix + '/SConscript', exports={'env' : mozjsEnv })
+     mozjsEnv = mozjsEnv.Clone(
++        SYSLIBDEPS=['curses'],
+         LIBDEPS_INTERFACE=[
+             'mozjs' + mozjsSuffix + '/mozjs',
+             'shim_zlib',

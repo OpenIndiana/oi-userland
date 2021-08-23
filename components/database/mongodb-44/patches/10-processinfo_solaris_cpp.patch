@@ -1,0 +1,26 @@
+--- mongodb-src-r4.4.5/src/mongo/util/processinfo_solaris.cpp.~1~	2021-03-31 17:15:37.000000000 +0000
++++ mongodb-src-r4.4.5/src/mongo/util/processinfo_solaris.cpp	2021-05-11 12:27:10.466353965 +0000
+@@ -148,7 +148,7 @@
+     char buf_native[32];
+     if (sysinfo(SI_ARCHITECTURE_64, buf_64, sizeof(buf_64)) != -1 &&
+         sysinfo(SI_ARCHITECTURE_NATIVE, buf_native, sizeof(buf_native)) != -1) {
+-        addrSize = str::equals(buf_64, buf_native) ? 64 : 32;
++        addrSize = std::strcmp(buf_64, buf_native) == 0 ? 64 : 32;
+     } else {
+         LOGV2(23357,
+               "Unable to determine system architecture: {strerror_errno}",
+@@ -156,7 +156,13 @@
+     }
+ 
+     osType = unameData.sysname;
+-    osName = str::ltrim(readLineFromFile("/etc/release"));
++    std::string str  = readLineFromFile("/etc/release");
++    size_t startpos = str.find_first_not_of(" ");
++    if( std::string::npos != startpos )
++    {
++       str = str.substr( startpos );
++    }
++		osName = str;
+     osVersion = unameData.version;
+     pageSize = static_cast<unsigned long long>(sysconf(_SC_PAGESIZE));
+     memSize = pageSize * static_cast<unsigned long long>(sysconf(_SC_PHYS_PAGES));

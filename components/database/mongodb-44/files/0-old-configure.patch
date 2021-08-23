@@ -1,0 +1,29 @@
+--- mozilla-release/js/src/old-configure.orig	2021-05-13 13:20:10.584035087 +0000
++++ mozilla-release/js/src/old-configure	2021-05-13 13:22:38.510850417 +0000
+@@ -5311,6 +5311,8 @@
+ 
+ *-solaris*)
+     MOZ_FIX_LINK_PATHS="-L${DIST}/bin"
++		 CFLAGS="$CFLAGS -DSOLARIS"
++    CXXFLAGS="$CXXFLAGS -DSOLARIS"
+     ;;
+ 
+ esac
+@@ -8818,7 +8820,7 @@
+   echo $ac_n "(cached) $ac_c" 1>&6
+ else
+   ac_save_LIBS="$LIBS"
+-LIBS="-lreadline  $LIBS"
++LIBS="-lreadline -lcurses $LIBS"
+ cat > conftest.$ac_ext <<EOF
+ #line 8824 "configure"
+ #include "confdefs.h"
+@@ -8846,7 +8848,7 @@
+ fi
+ if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
+   echo "$ac_t""yes" 1>&6
+-  EDITLINE_LIBS="-lreadline"
++  EDITLINE_LIBS="-lreadline -lcurses"
+ else
+   echo "$ac_t""no" 1>&6
+ { echo "configure: error: No system readline library found." 1>&2; echo "configure: error: No system readline library found." 1>&5; exit 1; }

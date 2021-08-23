@@ -1,0 +1,17 @@
+ 
+install:
+	mkdir -p  $(DESTDIR)$(USRDIR)$(COMPONENT_VERSION_FOLDER)
+	cp -L -r  rel/couchdb/* $(DESTDIR)$(USRDIR)$(COMPONENT_VERSION_FOLDER)/
+	/bin/rm -rf   $(DESTDIR)$(USRDIR)$(COMPONENT_VERSION_FOLDER)/var
+	/bin/mkdir -p $(DESTDIR)$(BINDIR)
+	/bin/mkdir -p $(DESTDIR)$(DOCDIR)$(COMPONENT_VERSION_FOLDER)
+	/bin/mkdir -p $(DESTDIR)$(ETCDIR)$(COMPONENT_VERSION_FOLDER)
+	/bin/mv -f    $(DESTDIR)$(USRDIR)$(COMPONENT_VERSION_FOLDER)/etc/*             $(DESTDIR)$(ETCDIR)$(COMPONENT_VERSION_FOLDER)/
+	/bin/mv -f    $(DESTDIR)$(USRDIR)$(COMPONENT_VERSION_FOLDER)/share/www/docs/*  $(DESTDIR)$(DOCDIR)$(COMPONENT_VERSION_FOLDER)/ 
+	/bin/rm -rf   $(DESTDIR)$(USRDIR)$(COMPONENT_VERSION_FOLDER)/etc
+	/bin/rm -rf   $(DESTDIR)$(USRDIR)$(COMPONENT_VERSION_FOLDER)/share/www/docs
+	/bin/rm       $(DESTDIR)$(USRDIR)$(COMPONENT_VERSION_FOLDER)/bin/couchdb.cmd
+	cp -f    local.ini                                $(DESTDIR)$(ETCDIR)$(COMPONENT_VERSION_FOLDER)
+	/bin/ln -fs ..$(COMPONENT_VERSION_FOLDER)/bin/couchdb         $(DESTDIR)$(BINDIR)/couchdb
+	/bin/ln -fs ..$(COMPONENT_VERSION_FOLDER)/bin/couchjs         $(DESTDIR)$(BINDIR)/couchjs
+	/bin/ln -fs ../../../etc$(COMPONENT_VERSION_FOLDER)           $(DESTDIR)$(USRDIR)$(COMPONENT_VERSION_FOLDER)/etc

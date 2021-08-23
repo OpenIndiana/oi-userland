@@ -1,0 +1,67 @@
+The customer oriented patch that adds an extra
+option to epmd daemon that disables logging
+to system logs.
+
+Generally, it is not a good idea to disable
+system logging, therefore, the patch is not
+suitable for upstream.
+
+--- a/erts/epmd/src/epmd_int.h	2020-02-26 06:17:36.283297108 +0000
++++ b/erts/epmd/src/epmd_int.h	2020-02-26 06:18:12.491616519 +0000
+@@ -333,6 +333,7 @@
+   int port;
+   int debug;
+   int silent; 
++  int logging;
+   int is_daemon;
+   int brutal_kill;
+   unsigned packet_timeout;
+--- a/erts/epmd/src/epmd.c	2020-02-26 06:06:12.061161231 +0000
++++ b/erts/epmd/src/epmd.c	2020-02-26 06:24:40.288002286 +0000
+@@ -166,6 +166,7 @@
+     g->debug          = 0;
+ 
+     g->silent         = 0; 
++    g->logging        = 1;
+     g->is_daemon      = 0;
+     g->brutal_kill    = check_relaxed();
+     g->packet_timeout = CLOSE_TIMEOUT; /* Default timeout */
+@@ -257,6 +258,9 @@
+             g->is_systemd = 1;
+             argv++; argc--;
+ #endif /* HAVE_SYSTEMD_DAEMON */
++	} else if (strcmp(argv[0], "-disable_syslog") == 0) {
++    g->logging = 0;
++    argv++; argc--;
+ 	} else
+ 	    usage(g);
+     }
+@@ -295,7 +299,8 @@
+     if (( child_pid = fork()) < 0)
+       {
+ #ifdef HAVE_SYSLOG_H
+-	syslog(LOG_ERR,"erlang mapper daemon cant fork %m");
++  if (g->logging)
++  	syslog(LOG_ERR,"erlang mapper daemon cant fork %m");
+ #endif
+ 	epmd_cleanup_exit(g,1);
+       }
+@@ -321,7 +326,8 @@
+     if ((child_pid = fork()) < 0)
+       {
+ #ifdef HAVE_SYSLOG_H
+-	syslog(LOG_ERR,"erlang mapper daemon cant fork 2'nd time %m");
++  if (g->logging)
++  	syslog(LOG_ERR,"erlang mapper daemon cant fork 2'nd time %m");
+ #endif
+ 	epmd_cleanup_exit(g,1);
+       }
+@@ -497,7 +503,7 @@
+   if (g->is_daemon)
+     {
+ #ifdef HAVE_SYSLOG_H
+-      if (onsyslog)
++      if (onsyslog && g->logging == 1)
+ 	{
+ 	  erts_vsnprintf(buf, DEBUG_BUFFER_SIZE, format, args);
+ 	  syslog(LOG_ERR,"epmd: %s",buf);

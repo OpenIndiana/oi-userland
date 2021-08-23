@@ -1,0 +1,35 @@
+From 3abfd6f911db757e8d389b13cdd920e469c0fe05 Mon Sep 17 00:00:00 2001
+From: Aurelien Larcher <aurelien.larcher@gmail.com>
+Date: Tue, 12 Nov 2019 15:01:22 +0000
+Subject: [PATCH 25/36] libsanitizer: work around lack of O_DIRECTORY
+
+---
+ libsanitizer/sanitizer_common/sanitizer_linux.cc | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/libsanitizer/sanitizer_common/sanitizer_linux.cc b/libsanitizer/sanitizer_common/sanitizer_linux.cc
+index b798de7a820..df580e20590 100644
+--- a/libsanitizer/sanitizer_common/sanitizer_linux.cc
++++ b/libsanitizer/sanitizer_common/sanitizer_linux.cc
+@@ -929,7 +929,18 @@ ThreadLister::ThreadLister(pid_t pid) : pid_(pid), buffer_(4096) {
+   char task_directory_path[80];
+   internal_snprintf(task_directory_path, sizeof(task_directory_path),
+                     "/proc/%d/task/", pid);
++#ifdef O_DIRECTORY
+   descriptor_ = internal_open(task_directory_path, O_RDONLY | O_DIRECTORY);
++#else
++  struct stat st;
++  stat(task_directory_path, &st);
++  if (S_ISDIR(st.st_mode)) {
++    descriptor_ = internal_open(task_directory_path, O_RDONLY);
++  }
++  else {
++    descriptor_ = (uptr)-1; // Set error value defined in internal_iserror
++  }
++#endif
+   if (internal_iserror(descriptor_)) {
+     Report("Can't open /proc/%d/task for reading.\n", pid);
+   }
+-- 
+2.31.1
+

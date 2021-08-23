@@ -1,0 +1,17 @@
+From OmniOS
+
+diff -wpruN '--exclude=*.orig' a~/gold/x86_64.cc a/gold/x86_64.cc
+--- a~/gold/x86_64.cc	1970-01-01 00:00:00
++++ a/gold/x86_64.cc	1970-01-01 00:00:00
+@@ -1407,7 +1407,11 @@ const Target::Target_info Target_x86_64<
+   true,			// is_default_stack_executable
+   true,			// can_icf_inline_merge_sections
+   '\0',			// wrap_char
++#if defined(__sun__)
++  "/lib/64/ld.so.1",
++#else
+   "/lib/ld64.so.1",     // program interpreter
++#endif
+   0x400000,		// default_text_segment_address
+   0x1000,		// abi_pagesize (overridable by -z max-page-size)
+   0x1000,		// common_pagesize (overridable by -z common-page-size)

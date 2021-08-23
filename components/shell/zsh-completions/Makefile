@@ -12,11 +12,11 @@
 # Copyright 2016 Adam Stevko
 # Copyright 2018 Michal Nowak
 #
-
+BUILD_BITS= 32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zsh-completions
-COMPONENT_VERSION=	0.32.0
+COMPONENT_VERSION=	0.33.0
 COMPONENT_SUMMARY=	Additional completion definitions for Zsh.
 COMPONENT_PROJECT_URL=	https://github.com/zsh-users/zsh-completions
 COMPONENT_FMRI=		utility/$(COMPONENT_NAME)
@@ -24,12 +24,12 @@ COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/zsh-users/zsh-completions/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:d2d20836fb60d2e5de11b08f1a8373484dc01260d224e64c6de9eec44137fa63
+COMPONENT_ARCHIVE_HASH= sha256:39452d383d0718aa2c830edba1aa32f0ee1e40002ef6932d88699a888bd58c29
 COMPONENT_LICENSE=	Various
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CLEAN_PATHS += $(BUILD_DIR)
 
@@ -45,8 +45,4 @@ $(INSTALL_32): $(BUILD_32)
 
 	$(TOUCH) $@
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
+# Auto-generated dependencies

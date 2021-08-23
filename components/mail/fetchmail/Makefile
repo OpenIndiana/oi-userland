@@ -22,54 +22,36 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2018, Michal Nowak
+# Copyright 2021, Nona Hansel
 #
 
-PREFERRED_BITS=64
-
+BUILD_BITS= 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
-COMPONENT_VERSION=	6.3.26
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	6.4.19
+COMPONENT_DESCRIPTION=	Full-featured, robust, well-documented remote-mail retrieval and forwarding utility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1c724a4e48c47e84981aef0da31cf01e0334c99b295d907d0d21d31674762a23
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME).berlios/files/$(COMPONENT_ARCHIVE)/download
+    sha256:cd8d11a3d103e50caa2ec64bcda6307eb3d0783a4d4dfd88e668b81aaf9d6b5f
+COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/$(COMPONENT_NAME)/files/branch_6.4/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz/download 
 COMPONENT_PROJECT_URL=	http://www.fetchmail.info/
-COMPONENT_BUGDB=	utility/fetchmail
 COMPONENT_FMRI=		mail/fetchmail
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  +=		am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_OPTIONS  +=		--with-kerberos5
-CONFIGURE_OPTIONS  +=		--with-ssl
+# configure detects OpenSSL 1.0 despite USE_OPENSSL11 being set
+CONFIGURE_OPTIONS  +=		--with-ssl=/usr/openssl/1.1/
 CONFIGURE_OPTIONS  +=		--enable-NTLM
 
-CONFIGURE_ENV += PYTHON=$(PYTHON)
+# Block the fetchmailconf build - this option is taken from configure.ac
+CONFIGURE_ENV += PYTHON=:
 
-# We don't have any .so files, so we want to ship the .py and .pyc files in
-# the same place as we would for 32-bit.
-PYTHON_VENDOR_PACKAGES.64 =	$(PYTHON_VENDOR_PACKAGES.32)
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-COMPONENT_POST_INSTALL_ACTION = \
-    $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/python-2/tkinter-27
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/python-27
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += system/library

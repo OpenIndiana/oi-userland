@@ -1,15 +1,16 @@
---- tor-0.4.1.7/configure.ac	2019-12-05 19:33:05.000000000 +0000
-+++ tor-0.4.1.7/configure.ac	2019-12-29 14:35:53.151012745 +0000
-@@ -756,7 +756,7 @@ if test "$enable_static_libevent" = "yes
+--- tor-0.4.5.7/configure.ac  2021-03-15 12:42:55.000000000 +0100
++++ tor-0.4.5.7/configure.ac  2021-03-17 12:42:55.000000000 +0100
+
+@@ -922,7 +922,7 @@ if test "$enable_static_libevent" = "yes
      fi
  fi
  
--TOR_SEARCH_LIBRARY(libevent, $trylibeventdir, [-levent $STATIC_LIBEVENT_FLAGS $TOR_LIB_WS32], [
-+TOR_SEARCH_LIBRARY(libevent, $trylibeventdir, [-levent-2.0 $STATIC_LIBEVENT_FLAGS $TOR_LIB_WS32], [
+-TOR_SEARCH_LIBRARY(libevent, $trylibeventdir, [-levent $STATIC_LIBEVENT_FLAGS $TOR_LIB_IPHLPAPI $TOR_LIB_BCRYPT $TOR_LIB_WS32], [
++TOR_SEARCH_LIBRARY(libevent, $trylibeventdir, [-levent-2.0 $STATIC_LIBEVENT_FLAGS $TOR_LIB_IPHLPAPI $TOR_LIB_BCRYPT $TOR_LIB_WS32], [
  #ifdef _WIN32
  #include <winsock2.h>
  #endif
-@@ -795,8 +795,8 @@ if test "$enable_static_libevent" = "yes
+@@ -959,8 +959,8 @@ if test "$enable_static_libevent" = "yes
     fi
  else
       if test "x$ac_cv_header_event2_event_h" = "xyes"; then

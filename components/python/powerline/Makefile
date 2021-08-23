@@ -10,31 +10,31 @@
 
 #
 # Copyright 2019 Michal Nowak
+# Copyright 2021 Nona Hansel
 #
 
+BUILD_BITS=		64
+BUILD_STYLE=		setup.py
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		powerline-status
-COMPONENT_VERSION=	2.7
-COMPONENT_REVISION=     1
+COMPONENT_NAME=		powerline
+COMPONENT_VERSION=	2.8.2
 COMPONENT_SUMMARY=	'The ultimate statusline/prompt utility'
 COMPONENT_PROJECT_URL=	https://github.com/powerline/powerline/
 COMPONENT_FMRI=		python/powerline
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_ARCHIVE_HASH=	sha256:8c7e7da45beb2332bc8226b166b732ef70db2cb0a1f3f0fdc3c539115522ecb6
+COMPONENT_ARCHIVE_URL=	https://github.com/powerline/powerline/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:ea4ca0df45b8ea3870ff135cd3c4623ba4b785630be81db7f13bf5e94b3753c7
 COMPONENT_LICENSE=	MIT
 
 CFLAGS += -lsocket
 
-PYTHON_VERSION=		3.5
-PYTHON_VERSIONS=	3.5
+PYTHON_VERSION=		3.9
+PYTHON_VERSIONS=	3.9
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION= \
 	$(GSED) -i -e "/TMUX_CONFIG_DIRECTORY/ s@BINDINGS_DIRECTORY@'/usr/share/powerline'@" $(SOURCE_DIR)/powerline/config.py
@@ -66,12 +66,6 @@ COMPONENT_POST_INSTALL_ACTION= \
 	$(MV) $(PROTOUSRLIBPOWERLINE)/bindings/vim/plugin/powerline.vim $(PROTOUSRSHAREVIM) ; \
 	find $(PROTO_DIR) -name '*.~*~' -exec rm -f {} \; ;
 
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(NO_TESTS)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library

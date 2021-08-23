@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
 COMPONENT_VERSION=	2.9.9
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -50,6 +50,9 @@ include $(WS_MAKE_RULES)/common.mk
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(CC_BITS) $(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
+PYVER.64=3.9
+PYV64=39
+
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-threads
@@ -61,23 +64,23 @@ CONFIGURE_OPTIONS += --with-python-install-dir=$(PYTHON_VENDOR_PACKAGES)
 COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if)
 
 # After we have configured, make a copy of the python bits so we
-# can build and test separate python 3.5 support.
+# can build and test separate python $(PYVER.64) support.
 COMPONENT_POST_CONFIGURE_ACTION = ( \
-    cd $(@D) ; cp -rp python python3.5 ; \
-    $(GSED) -i -e 's|-lpython2[.]7|-lpython3.5m|' \
-     -e 's|usr/bin/$(MACH64)/python2[.]7|usr/bin/python3.5m|' \
-     -e 's|usr/include/python2[.]7|usr/include/python3.5m|' \
-     -e 's/2[.]7/3.5/g' -e 's|vendor-packages/64|vendor-packages|' \
-     `find python3.5 -name Makefile`;)
+    cd $(@D) ; cp -rp python python$(PYVER.64) ; \
+    $(GSED) -i -e 's|-lpython2[.]7|-lpython$(PYVER.64)|' \
+     -e 's|usr/bin/$(MACH64)/python2[.]7|usr/bin/python$(PYVER.64)|' \
+     -e 's|usr/include/python2[.]7|usr/include/python$(PYVER.64)|' \
+     -e 's/2[.]7/$(PYVER.64)/g' -e 's|vendor-packages/64|vendor-packages|' \
+     `find python$(PYVER.64) -name Makefile`;)
 
 # After we have built/installed libxml2, build/install the python
-# support for python 3.5 
+# support for python $(PYVER.64) 
 COMPONENT_POST_INSTALL_ACTION.64 = \
-    cd $(@D)/python3.5 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install ;
+    cd $(@D)/python$(PYVER.64) ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install ;
 
-# It's nice to test also python 3.5 modules (LC_ALL is set to avoid test failure).
+# It's nice to test also python $(PYVER.64) modules (LC_ALL is set to avoid test failure).
 COMPONENT_POST_TEST_ACTION.64 = \
-    cd $(@D)/python3.5; \
+    cd $(@D)/python$(PYVER.64); \
     LC_ALL=en_US.UTF-8 $(GMAKE) $(COMPONENT_TEST_ARGS) test
 
 # We have patched our 64 bit python so it will search for modules only in
@@ -85,10 +88,9 @@ COMPONENT_POST_TEST_ACTION.64 = \
 # end up using libxml2mod.so installed on system.
 $(BUILD_DIR)/$(MACH64)/.tested: COMPONENT_PRE_TEST_ACTION = ( \
     $(MKDIR) $(@D)/python/.libs/64 \
-             $(@D)/python3.5/.libs/64; \
+             $(@D)/python$(PYVER.64)/.libs/64; \
     $(SYMLINK) ../libxml2mod.so $(@D)/python/.libs/64/libxml2mod.so; \
-    $(SYMLINK) ../libxml2mod.so $(@D)/python3.4/.libs/64/libxml2mod.so; \
-    $(SYMLINK) ../libxml2mod.so $(@D)/python3.5/.libs/64/libxml2mod.so );
+    $(SYMLINK) ../libxml2mod.so $(@D)/python$(PYVER.64)/.libs/64/libxml2mod.so );
 
 COMPONENT_PRE_TEST_ACTION += \
     (cd $(@D) ; gtar xf $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_1));
@@ -105,14 +107,14 @@ COMPONENT_POST_INSTALL_ACTION.32 += \
         $(PYTHON.2.7.32) -m compileall $(PROTOUSRLIBDIR)/python2.7/vendor-packages; \
 
 COMPONENT_POST_INSTALL_ACTION.64 += \
-        $(PYTHON.3.5.64) -m compileall $(PROTOUSRLIBDIR)/python3.5/vendor-packages;
+        $(PYTHON.$(PYVER.64).64) -m compileall $(PROTOUSRLIBDIR)/python$(PYVER.64)/vendor-packages;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-$(PYV64)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

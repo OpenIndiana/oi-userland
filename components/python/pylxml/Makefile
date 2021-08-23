@@ -21,26 +21,27 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2015, PALO Richard.
 #
+BUILD_BITS=32_and_64
+BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylxml
-COMPONENT_VERSION=	4.2.5
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	4.6.1
+COMPONENT_FMRI=		library/python/lxml
+COMPONENT_SUMMARY=	Pythonic $(PYVER) binding for the libxml2 and libxslt libraries
+COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_PROJECT_URL=	http://lxml.de/
 COMPONENT_SRC_NAME=	lxml
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:36720698c29e7a9626a0dc802ef8885f8f0239bfd1689628ecd459a061f2807f
-
+    sha256:c152b2e93b639d1f36ec5a8ca24cde4a8eefb2b6b83668fcd8e83a67badcb367
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	python-mod/lxml
+COMPONENT_LICENSE=	BSD, PSF, GPL
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -63,19 +64,11 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/^Ran.*/Ran/" ' \
 	'-ne "/^(Ran|FAIL)/,\\$$p" '
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-# Tests fail with
-# ERROR: test_xmlschema_parse_fixed_attributes (lxml.tests.test_xmlschema.ETreeXMLSchemaTestCase)
-# lxml.etree.XMLSyntaxError: Element 'b', attribute 'hardy': The value '(null)' does not match the fixed value constraint 'hey'.
-# https://bugs.launchpad.net/lxml/+bug/1608479
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library

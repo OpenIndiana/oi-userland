@@ -13,23 +13,26 @@
 #
 
 BUILD_BITS = 64
-
+#USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nginx
-COMPONENT_VERSION=	1.18.0
+COMPONENT_VERSION=	1.20.1
+COMPONENT_REVISION=	1
 COMPONENT_LICENSE=	BSD
-COMPONENT_PROJECT_URL=	http://nginx.net/
+COMPONENT_PROJECT_URL=	https://nginx.net/
 COMPONENT_SUMMARY=	Nginx Webserver
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4c373e7ab5bf91d34a4f11a0c9496561061ba5eee6020db272a17a7228d35f99
-COMPONENT_ARCHIVE_URL=	http://nginx.org/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:e462e11533d5c30baa05df7652160ff5979591d291736cfa5edb9fd2edb48c49
+COMPONENT_ARCHIVE_URL=	https://nginx.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=	web/server/nginx
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 
 TEST_TARGET= $(NO_TESTS)
+
+NGX_FANCYINDEX_VERSION= 0.5.1
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -65,16 +68,23 @@ CONFIGURE_OPTIONS += --with-mail
 CONFIGURE_OPTIONS += --with-mail_ssl_module
 CONFIGURE_OPTIONS += --with-ipv6
 CONFIGURE_OPTIONS += --with-threads
+CONFIGURE_OPTIONS += --add-module=$(@D)/ngx-fancyindex
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D) && \
+   git clone https://github.com/aperezdc/ngx-fancyindex.git $(@D)/ngx-fancyindex && \
+   cd $(@D)/ngx-fancyindex && \
+   git checkout v$(NGX_FANCYINDEX_VERSION))
+
 COMPONENT_POST_INSTALL_ACTION+= \
 	( $(MKDIR) $(PROTO_DIR)/var/nginx/logs )
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/geoip
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

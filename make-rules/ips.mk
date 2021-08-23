@@ -128,8 +128,23 @@ PKG_MACROS += COMPONENT_RE_VERSION=$(subst .,\\.,$(COMPONENT_VERSION))
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) \
 					-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION))"
 
-PKG_MACROS +=           PYTHON_2.7_ONLY=\#
-PKG_MACROS +=           PYTHON_3.5_ONLY=\#
+define mach-list-generate-macros
+ifeq ($(MACH),$(1))
+PKG_MACROS +=           $(1)_ONLY=
+PKG_MACROS +=           $(1)_EXCL=\#
+else
+PKG_MACROS +=           $(1)_ONLY=\#
+PKG_MACROS +=           $(1)_EXCL=
+endif
+endef
+$(foreach isa,$(MACH_LIST),$(eval $(call mach-list-generate-macros,$(isa))))
+
+define python-generate-macros
+PKG_MACROS +=           PYTHON_$(1)_ONLY=\#
+PKG_MACROS +=           PYTHON_$(1)_EXCL=
+endef
+$(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-generate-macros,$(ver))))
+
 PKG_MACROS +=           PYTHON_32_ONLY=
 
 MANGLED_DIR =	$(PROTO_DIR)/mangled
@@ -140,11 +155,29 @@ MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 
 SAMPLE_MANIFEST_DIR = 	$(COMPONENT_DIR)/manifests
 SAMPLE_MANIFEST_FILE =	$(SAMPLE_MANIFEST_DIR)/sample-manifest.p5m
+GENERIC_MANIFEST_FILE =	$(SAMPLE_MANIFEST_DIR)/generic-manifest.p5m
 
 CANONICAL_MANIFESTS =	$(wildcard *.p5m)
 ifneq ($(wildcard $(HISTORY)),)
 HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
 endif
+
+define ips-print-depend-require-rule
+$(shell cat $(1) $(WS_TOP)/transforms/print-depend-require |\
+	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
+	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u)
+endef
+
+define ips-print-depend-require-versioned-rule
+$(foreach v,$($(1)V_VALUES),\
+	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
+	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
+	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u))
+endef
+
+define ips-print-depend-require-type-rule
+$(foreach m,$($(1)_MANIFESTS),$(call ips-print-depend-require-versioned-rule,$(1),$(m)))
+endef
 
 define ips-print-names-rule
 $(shell cat $(1) $(WS_TOP)/transforms/print-pkgs |\
@@ -179,6 +212,7 @@ endef
 
 VERSIONED_MANIFEST_TYPES =
 UNVERSIONED_MANIFESTS = $(filter-out %-GENFRAG.p5m, $(CANONICAL_MANIFESTS))
+GENERATE_GENERIC_TRANSFORMS=
 
 # Look for manifests which need to be duplicated for each version of python.
 ifeq ($(findstring -PYVER,$(CANONICAL_MANIFESTS)),-PYVER)
@@ -190,6 +224,7 @@ PYV_FMRI_VERSION = PYV
 PYV_MANIFESTS = $(foreach v,$(PYV_VALUES),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
 PYNV_MANIFESTS = $(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER//')
 MKGENERIC_SCRIPTS += $(BUILD_DIR)/mkgeneric-python
+GENERATE_GENERIC_TRANSFORMS+=$(PYTHON_VERSIONS:%=-e 's/%/\$$\(PYVER\)/g')
 else
 NOPY_MANIFESTS = $(UNVERSIONED_MANIFESTS)
 endif
@@ -273,6 +308,9 @@ $(GENERATED).p5m:	install
 		$(PKGFMT) | \
 		cat $(METADATA_TEMPLATE) - | \
 		$(TEE) $@ $(SAMPLE_MANIFEST_FILE) >/dev/null
+	if [ "$(GENERATE_GENERIC_TRANSFORMS)X" != "X" ]; \
+	then sed $(GENERATE_GENERIC_TRANSFORMS) $(SAMPLE_MANIFEST_FILE) \
+		| gawk '!seen[$$0]++' > $(GENERIC_MANIFEST_FILE); fi;
 
 # copy the canonical manifest(s) to the build tree
 $(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
@@ -290,7 +328,7 @@ mkgeneric = \
 # Define and execute a macro that generates a rule to create a manifest for a
 # python module specific to a particular version of the python runtime.
 define python-manifest-rule
-$(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_$(1)_ONLY=
+$(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_$(1)_ONLY= PYTHON_$(1)_EXCL=\#
 
 ifneq ($(filter $(1),$(PYTHON_64_ONLY_VERSIONS)),)
 $(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_32_ONLY=\#
@@ -513,6 +551,10 @@ $(BUILD_DIR)/.pre-published-$(MACH):	$(PRE_PUBLISHED)
 
 $(BUILD_DIR)/.published-$(MACH):	$(PUBLISHED)
 	$(TOUCH) $@
+
+print-depend-require:	canonical-manifests
+	@echo $(call ips-print-depend-require-rule,$(NONVER_MANIFESTS)) \
+		$(foreach t,$(VERSIONED_MANIFEST_TYPES),$(call ips-print-depend-require-type-rule,$(t))) | tr ' ' '\n'
 
 print-package-names:	canonical-manifests $(MKGENERIC_SCRIPTS)
 	@echo $(call ips-print-names-rule,$(NONVER_MANIFESTS)) \

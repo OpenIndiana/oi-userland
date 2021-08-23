@@ -1,16 +1,16 @@
 
 	  ***********************************************************
 	  *                                                         *
-	  * GNU bash, version 5.0.0(1)-release (x86_64-pc-solaris2.11)
+	  * GNU bash, version 5.1.4(1)-release (i386-pc-solaris2.11)
 	  *                                                         *
 	  ***********************************************************
 
-Testing $(@D)/bash
-version: 5.0.0(1)-release
-versinfo: 5 0 0 1 release x86_64-pc-solaris2.11
-HOSTTYPE = x86_64
+Testing /oibuild/oi-userland/components/shell/bash/build/amd64/bash
+version: 5.1.4(1)-release
+versinfo: 5 1 4 1 release i386-pc-solaris2.11
+HOSTTYPE = i386
 OSTYPE = solaris2.11
-MACHTYPE = x86_64-pc-solaris2.11
+MACHTYPE = i386-pc-solaris2.11
 Any output from any test, unless otherwise noted, indicates a possible anomaly
 run-alias
 run-appendop
@@ -27,6 +27,24 @@ warning: been compiled into the shell
 run-assoc
 warning: all of these tests will fail if arrays have not
 warning: been compiled into the shell
+239c239
+< foo=( echo "\" "5" "@" "3" "holy hell this works" "4" "a b" "1" "spa ces" "2" )
+---
+> foo=( echo "\\" "5" "@" "3" "holy hell this works" "4" "a b" "1" "spa ces" "2" )
+244c244
+< foo=( "'" "squote" "\"" "dquote" "\" "bslash" "\`" "backquote" )
+---
+> foo=( "'" "squote" "\"" "dquote" "\\" "bslash" "\`" "backquote" )
+250c250
+< dict=( "?" "quest" "*" "star" "'" "squote" "\$" "dol" "\"" "dquote" "\" "bslash" "@" "at" "}" "rbrace" "{" "lbrace" "\`" "bquote" )
+---
+> dict=( "?" "quest" "*" "star" "'" "squote" "\$" "dol" "\"" "dquote" "\\" "bslash" "@" "at" "}" "rbrace" "{" "lbrace" "\`" "bquote" )
+255,256c255,256
+< ")" "rparen" "\"" "dquote" "]" "rbrace" "\" "bs"
+< declare -A a=([")"]="rparen" ["\""]="dquote" ["]"]="rbrace" ["\"]="bs" )
+---
+> ")" "rparen" "\"" "dquote" "]" "rbrace" "\\" "bs"
+> declare -A a=([")"]="rparen" ["\""]="dquote" ["]"]="rbrace" ["\\"]="bs" )
 run-attr
 run-braces
 run-builtins
@@ -35,6 +53,7 @@ warning: been compiled into the shell or if the OS does not provide
 warning: /dev/fd.
 run-case
 run-casemod
+run-complete
 run-comsub
 run-comsub-eof
 run-comsub-posix
@@ -59,8 +78,15 @@ warning: `/tmp/bash-notthere' not being found or `/' being a directory
 warning: produce diff output, please do not consider this a test failure
 warning: if diff output differing only in the location of the bash
 warning: binary appears, please do not consider this a test failure
+47,48d46
+< 0
+< 1
+50a49
+> 0
+52a52
+> 1
 run-exp-tests
-182c182
+185c185
 < \[\e[0;31m\]
 ---
 > \[[0;31m\]
@@ -75,18 +101,44 @@ warning: if so, please do not consider this a test failure
 run-getopts
 run-glob-test
 7,8c7
-< ./glob2.sub: line 23: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
+< ./glob2.sub: line 36: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
 < c
 ---
 > b
 16,20c15
-< ./glob2.sub: line 44: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
-< $(@D)/bash: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
-< $(@D)/bash: -c: line 0: conditional binary operator expected
-< $(@D)/bash: -c: line 0: syntax error near `]]'
-< $(@D)/bash: -c: line 0: `[[ £\ = £\ ]]'
+< ./glob2.sub: line 57: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
+< /oibuild/oi-userland/components/shell/bash/build/amd64/bash: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
+< /oibuild/oi-userland/components/shell/bash/build/amd64/bash: -c: line 1: conditional binary operator expected
+< /oibuild/oi-userland/components/shell/bash/build/amd64/bash: -c: line 1: syntax error near `]]'
+< /oibuild/oi-userland/components/shell/bash/build/amd64/bash: -c: line 1: `[[ £\ = £\ ]]'
 ---
 > ok 7
+86,87c81,82
+< argv[1] = <./tmp/a/b>
+< argv[1] = <./tmp/a/b>
+---
+> argv[1] = <./tmp/a/*>
+> argv[1] = <./tmp/a/*>
+89c84
+< argv[1] = <./tmp/a/b>
+---
+> argv[1] = <./tmp/a/*>
+91c86
+< argv[1] = <./tmp/a/b>
+---
+> argv[1] = <./t\mp/a/*>
+97c92
+< argv[1] = <./tmp/a/b>
+---
+> argv[1] = <./tmp/a/*>
+100c95
+< argv[1] = <./tmp/a/b>
+---
+> argv[1] = <./tmp/a/b*>
+102c97
+< argv[1] = <./tmp/a/b>
+---
+> argv[1] = <./tmp/a/b*>
 run-globstar
 run-heredoc
 warning: UNIX versions number signals and schedule processes differently.
@@ -170,6 +222,14 @@ run-set-x
 run-shopt
 run-strip
 run-test
+46c46
+< 0
+---
+> 1
+68c68
+< 0
+---
+> 1
 295c295
 < 1
 ---
@@ -182,12 +242,14 @@ warning: If output differing only in line numbers is produced, please
 warning: do not consider this a test failure.
 run-type
 run-varenv
-143,144c143
+warning: some of these tests will fail if arrays have not
+warning: been compiled into the shell
+145,146c145
 < -n inside: 
 < declare -- foo
 ---
 > inside: declare -- foo
-147,164c146,154
+149,180c148,163
 < -n inside: 
 < declare -x var="value"
 < -n outside: 
@@ -195,25 +257,74 @@ run-varenv
 < -n inside: 
 < declare -x var="value"
 < -n outside: 
-< declare -x var="value"
+< declare -- var="outside"
 < -n inside: 
-< declare -- var="local"
+< declare -x var="inside"
 < -n outside: 
-< declare -x var="global"
-< foo=<unset>-n  environment foo=
-< 
-< foo=foo-n  environment foo=
-< foo
-< foo=foo-n  environment foo=
-< foo
+< declare -- var="outside"
+< -n outside 1.0: 
+< var=one
+< -n outside 1.1: 
+< var=one
+< -n inside func: 
+< var=two
+< -n outside 2.0: 
+< var=<unset>
+< -n inside func: 
+< var=two
+< -n outside 2.1: 
+< var=global
+< -n inside func1: 
+< var=value
+< -n outside 3.0: 
+< var=value
+< -n inside func2: 
+< var=global
+< -n outside 4.0: 
+< var=outside
 ---
 > inside: declare -x var="value"
 > outside: declare -- var="one"
 > inside: declare -x var="value"
-> outside: declare -x var="value"
-> inside: declare -- var="local"
-> outside: declare -x var="global"
+> outside: declare -- var="outside"
+> inside: declare -x var="inside"
+> outside: declare -- var="outside"
+> outside 1.0: var=one
+> outside 1.1: var=one
+> inside func: var=two
+> outside 2.0: var=<unset>
+> inside func: var=two
+> outside 2.1: var=global
+> inside func1: var=value
+> outside 3.0: var=value
+> inside func2: var=global
+> outside 4.0: var=outside
+243,244c226
+< foo=showfoo-n  environment foo=
+< showfoo
+---
+> foo=showfoo environment foo=showfoo
+246,249c228,229
+< foo=showfoo-n  environment foo=
+< showfoo
+< foo=showfoo-n  environment foo=
+< showfoo
+---
+> foo=showfoo environment foo=showfoo
+> foo=showfoo environment foo=showfoo
+251,252c231
+< foo=<unset>-n  environment foo=
+< 
+---
 > foo=<unset> environment foo=
+254,257c233,234
+< foo=foo-n  environment foo=
+< foo
+< foo=<unset>-n  environment foo=
+< 
+---
 > foo=foo environment foo=foo
-> foo=foo environment foo=foo
+> foo=<unset> environment foo=
 run-vredir
+warning: the text of a system error message may vary between systems and
+warning: produce diff output.

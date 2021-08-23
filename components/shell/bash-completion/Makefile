@@ -11,6 +11,7 @@
 #
 # Copyright (c) 2013-2017, Aurelien Larcher. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2021, Nona Hansel
 # 
 
 BUILD_BITS=		32
@@ -18,8 +19,7 @@ BUILD_BITS=		32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bash-completion
-COMPONENT_VERSION=      2.10
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      2.11
 COMPONENT_FMRI=         utility/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=      Programmable completion functions for bash
 COMPONENT_CLASSIFICATION=System/Shells
@@ -27,7 +27,7 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/scop/bash-completion
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:123c17998e34b937ce57bb1b111cd817bc369309e9a8047c0bcf06ead4a3ec92
+	sha256:73a8894bad94dee83ab468fa09f628daffd567e8bef1a24277f1e9a0daf911ac
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/scop/bash-completion/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2

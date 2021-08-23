@@ -25,29 +25,28 @@
 
 Set default Xsession scripts/programs for Solaris/OpenSolaris.
 
-diff -urp -x '*~' -x '*.orig' config/Xsession.cpp config/Xsession.cpp
---- a/config/Xsession.cpp	2009-09-17 19:24:37.000000000 -0700
-+++ b/config/Xsession.cpp	2009-09-21 22:46:44.165111000 -0700
-@@ -47,6 +47,14 @@ case $# in
+--- a/config/Xsession.in	2020-09-22 08:10:04.022219142 -0700
++++ b/config/Xsession.in	2020-09-22 08:14:31.762399514 -0700
+@@ -47,6 +47,14 @@
  	esac
  esac
  
 +XCOMM Run system session script if present - these will do various setup,
 +XCOMM then run $HOME/.xsession if it exists, so we can just run them
 +if [[ -x /etc/X11/gdm/Xsession && -x /usr/bin/dtstart ]] ; then
-+	exec /etc/X11/gdm/Xsession /usr/bin/dtstart jds	
++        exec /etc/X11/gdm/Xsession /usr/bin/dtstart jds
 +elif [[ -x /usr/dt/config/Xsession.jds ]] ; then
-+	exec /usr/dt/config/Xsession.jds
++        exec /usr/dt/config/Xsession.jds
 +fi
-+ 
++
  XCOMM The startup script is not intended to have arguments.
  
  startup=$HOME/.xsession
-@@ -80,5 +88,6 @@ else
-                 exec `eval $XDESKTOP`
-         }
- #endif
+@@ -62,5 +70,6 @@
+ 	if [ -r "$resources" ]; then
+ 		BINDIR/xrdb -load "$resources"
+ 	fi
 -	exec BINDIR/xsm
-+	BINDIR/xterm -geometry 80x24+10+10 -ls &
-+	exec BINDIR/twm
++        BINDIR/xterm -geometry 80x24+10+10 -ls &
++        exec BINDIR/twm
  fi

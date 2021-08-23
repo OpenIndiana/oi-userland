@@ -29,16 +29,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jsonrpclib
 COMPONENT_VERSION=	0.4.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	https://github.com/tcalmant/jsonrpclib
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:dfe491c11ede2d2177625c1938aea91b36d01831d0676aa031d7131311fe51d5
 COMPONENT_ARCHIVE_URL=https://github.com/tcalmant/jsonrpclib/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	python-mod/jsonrpclib
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -52,3 +51,5 @@ COMPONENT_TEST_ARGS = tests
 REQUIRED_PACKAGES += library/python/enum-27
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39

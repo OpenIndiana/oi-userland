@@ -1,0 +1,77 @@
+From c62f37d335a62c490392cd24c567677319287992 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Oskar=20L=C3=B6fgren?= <islander.abroad@gmail.com>
+Date: Mon, 30 Nov 2020 03:40:44 +0100
+Subject: [PATCH] Print `warn()` message from beginning of line (#335)
+
+---
+ argcomplete/__init__.py |  5 ++++-
+ test/test.py            | 24 ++++++++++++++++++++++--
+ 2 files changed, 26 insertions(+), 3 deletions(-)
+
+diff --git a/argcomplete/__init__.py b/argcomplete/__init__.py
+index c7e986a..c2c8390 100644
+--- a/argcomplete/__init__.py
++++ b/argcomplete/__init__.py
+@@ -681,4 +681,7 @@ def warn(*args):
+     Prints **args** to standard error when running completions. This will interrupt the user's command line interaction;
+     use it to indicate an error condition that is preventing your completer from working.
+     """
+-    print("\n", file=debug_stream, *args)
++    # Don't be tempted to use `print("\n",..., *args)`,
++    # as that will indent **args** by one space character
++    print(file=debug_stream)
++    print(file=debug_stream, *args)
+diff --git a/test/test.py b/test/test.py
+index 21d9173..723f484 100755
+--- a/test/test.py
++++ b/test/test.py
+@@ -3,7 +3,7 @@
+ 
+ from __future__ import absolute_import, division, print_function, unicode_literals
+ 
+-import os, sys, shutil, argparse, subprocess, unittest, io
++import os, sys, shutil, argparse, subprocess, unittest, io, contextlib
+ import pexpect, pexpect.replwrap
+ from tempfile import TemporaryFile, NamedTemporaryFile, mkdtemp
+ 
+@@ -12,13 +12,15 @@
+ sys.path.insert(0, BASE_DIR)  # noqa
+ 
+ from argparse import ArgumentParser, SUPPRESS
++import argcomplete
+ from argcomplete import (
+     autocomplete,
+     CompletionFinder,
+     split_line,
+     ExclusiveCompletionFinder,
+     _check_module,
+-    shellcode
++    shellcode,
++    warn
+ )
+ from argcomplete.completers import FilesCompleter, DirectoriesCompleter, SuppressCompleter
+ from argcomplete.compat import USING_PYTHON2, str, sys_encoding, ensure_str, ensure_bytes
+@@ -1398,5 +1400,23 @@ def run_command(self, command):
+             self.child.sendline('\x03')
+ 
+ 
++class Warn(unittest.TestCase):
++    def test_warn(self):
++        @contextlib.contextmanager
++        def redirect_debug_stream(stream):
++            debug_stream = argcomplete.debug_stream
++            argcomplete.debug_stream = stream
++            try:
++                yield
++            finally:
++                argcomplete.debug_stream = debug_stream
++
++        test_stream = io.StringIO()
++        with redirect_debug_stream(test_stream):
++            warn("My hands are tied")
++
++        self.assertEqual("\nMy hands are tied\n", test_stream.getvalue())
++
++
+ if __name__ == "__main__":
+     unittest.main()

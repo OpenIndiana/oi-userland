@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2008, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2008, 2020, Oracle and/or its affiliates.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -20,19 +20,32 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 #
+
+Since libX11 has not broken backwards binary compatibility since libX11.so.4,
+Solaris still ships it as libX11.so.4, instead of forcing applications to
+recompile against libX11.so.6.
+
+We also apply our linker mapfile to set library versions for the public API
+and to hide the private APIs.
+
+Lastly, we record libXext.so.0 as a required dependency, even though it's not
+directly required, to avoid breaking binaries such as the Java 1.1 runtime that
+assumed libX11.so.6 would always load it (Sun bug 6192234, Oracle bug 15235619).
+
+For OpenIndiana we keep the separate mapfile for 64-bit builds
+
 diff --git a/src/Makefile.am b/src/Makefile.am
-index d46b493..ddad93c 100644
+index 7430bf4..965bace 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -364,7 +364,10 @@ if XKB
+@@ -367,7 +367,9 @@
  USE_XKB_LIBS = $(XKB_LIBS)
  endif
  
--libX11_la_LDFLAGS = -version-number 6:3:0 -no-undefined
-+libX11_la_LDFLAGS = -version-number 4 -no-undefined \
-+	$(ADD_libX11_LDFLAGS) \
-+	-Wl,-M$(top_srcdir)/../mapfile-vers \
-+	-Wl,-NlibXext.so.0
+-libX11_la_LDFLAGS = -version-number 6:4:0 -no-undefined
++libX11_la_LDFLAGS = -version-number 4 -no-undefined $(ADD_libX11_LDFLAGS) \
++       -Wl,-M,$(top_srcdir)/../mapfile-vers \
++       -Wl,-N,libXext.so.0
  
  libX11_la_LIBADD = \
- 	$(USE_I18N_LIBS) \
+ 	$(LTLIBOBJS) \

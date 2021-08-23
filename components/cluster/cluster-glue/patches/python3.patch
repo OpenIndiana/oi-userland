@@ -1,0 +1,151 @@
+--- cluster-glue-src/lib/plugins/stonith/external/riloe-orig	Thu Aug  3 03:41:13 2017
++++ cluster-glue-src/lib/plugins/stonith/external/riloe	Fri Feb  5 15:33:00 2021
+@@ -35,7 +35,7 @@
+ import socket
+ import subprocess
+ import xml.dom.minidom
+-import httplib
++import http.client as httplib
+ import time
+ import re
+ 
+@@ -163,12 +163,12 @@
+ }
+ 
+ if cmd in info:
+-    print info[cmd]
++    print(info[cmd])
+     sys.exit(0)
+ 
+ if cmd == 'getconfignames':
+     for arg in [ "hostlist", "ilo_hostname", "ilo_user", "ilo_password", "ilo_can_reset", "ilo_protocol", "ilo_powerdown_method", "ilo_proxyhost", "ilo_proxyport"]:
+-        print arg
++        print(arg)
+     sys.exit(0)
+ 
+ if not rihost:
+@@ -344,13 +344,13 @@
+             return h
+         else:
+             return httplib.HTTPSConnection(host)
+-    except socket.gaierror, msg:
++    except socket.gaierror as msg:
+         fatal("%s: %s" %(msg,host))
+-    except socket.sslerror, msg:
++    except socket.sslerror as msg:
+         fatal("%s for %s" %(msg,host))
+-    except socket.error, msg:
++    except socket.error as msg:
+         fatal("%s while talking to %s" %(msg,host))
+-    except ImportError, msg:
++    except ImportError as msg:
+         fatal("ssl support missing (%s)" %msg)
+ 
+ def send_request(req,proc_f):
+@@ -364,7 +364,7 @@
+     c = open_ilo(rihost)
+     try:
+         c.send(req+'\r\n')
+-    except socket.error, msg:
++    except socket.error as msg:
+         fatal("%s, while talking to %s" %(msg,rihost))
+     t_end = time.time()
+     my_debug("request sent in %0.2f s" % ((t_end-t_begin)))
+@@ -377,7 +377,7 @@
+             if not reply:
+                 break
+             result.append(reply)
+-        except socket.error, msg:
++        except socket.error as msg:
+             if msg[0] == 6: # connection closed
+                 break
+             my_err("%s, while talking to %s" %(msg,rihost))
+@@ -393,7 +393,7 @@
+             reply = re.sub("<(RIBCL.*)/>", r"<\1>", reply)
+         try:
+             doc = xml.dom.minidom.parseString(reply)
+-        except xml.parsers.expat.ExpatError,msg:
++        except xml.parsers.expat.ExpatError as msg:
+             fatal("malformed response: %s\n%s"%(msg,reply))
+         rc = proc_f(doc)
+         doc.unlink()
+--- cluster-glue-src/lib/plugins/stonith/ribcl.py.in-orig	Thu Aug  3 03:41:13 2017
++++ cluster-glue-src/lib/plugins/stonith/ribcl.py.in	Fri Feb  5 15:27:32 2021
+@@ -18,7 +18,7 @@
+ 
+ import sys
+ import socket
+-from httplib import *
++from http.client import *
+ from time import sleep
+ 
+ 
+@@ -29,7 +29,7 @@
+         host = argv[1].split('.')[0]+'-rm'
+         cmd = argv[2]
+ except IndexError:
+-        print "Not enough arguments"
++        print("Not enough arguments")
+         sys.exit(1)
+ 
+ 
+@@ -66,7 +66,7 @@
+         else:   
+                 acmds.append(login + todo[cmd] + logout)
+ except KeyError:
+-        print "Invalid command: "+ cmd
++        print("Invalid command: "+ cmd)
+         sys.exit(1)
+ 
+ 
+@@ -88,13 +88,13 @@
+                 sleep(1)
+ 
+ 
+-except socket.gaierror, msg:
+-        print msg
++except socket.gaierror as msg:
++        print(msg)
+         sys.exit(1)
+-except socket.sslerror, msg:
+-        print msg
++except socket.sslerror as msg:
++        print(msg)
+         sys.exit(1)
+-except socket.error, msg:
+-        print msg
++except socket.error as msg:
++        print(msg)
+         sys.exit(1)
+ 
+--- cluster-glue-src/lib/plugins/stonith/external/ibmrsa-telnet-orig	Wed Feb  3 10:14:20 2021
++++ cluster-glue-src/lib/plugins/stonith/external/ibmrsa-telnet	Thu Feb  4 11:04:05 2021
+@@ -305,7 +305,7 @@
+             func = getattr(self, cmd, self.not_implemented)
+             rc = func()
+             return(rc)
+-        except Exception, args:
++        except Exception as args:
+             self.echo_log("err", 'Exception raised:', str(args))
+             if self._connection:
+                 self.echo_log("err", self._connection.get_history())
+--- cluster-glue-src/lib/plugins/stonith/external/dracmc-telnet-orig	Wed Feb  3 10:14:20 2021
++++ cluster-glue-src/lib/plugins/stonith/external/dracmc-telnet	Thu Feb  4 11:12:57 2021
+@@ -200,7 +200,7 @@
+                            self._parameters['cyclades_port'])
+                     c.login(self._parameters['username'],
+                             self._parameters['password'])
+-                except Exception, args:
++                except Exception as args:
+                     if "Connection reset by peer" in str(args):
+                         self._echo_debug("Someone is already logged in... retry=%s" % tries)
+                         c.close()
+@@ -362,7 +362,7 @@
+             func = getattr(self, cmd, self.not_implemented)
+             rc = func()
+             return(rc)
+-        except Exception, args:
++        except Exception as args:
+             self.echo_log("err", 'Exception raised:', str(args))
+             if self._connection:
+                 self.echo_log("err", self._connection.get_history())

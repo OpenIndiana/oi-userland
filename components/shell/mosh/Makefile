@@ -21,11 +21,12 @@
 # Copyright (c) 2015, Predrag Zecevic. All rights reserved.
 #
 BUILD_BITS=			64
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mosh
 COMPONENT_VERSION=	1.3.2
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_FMRI=	service/network/mosh
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -55,7 +56,7 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/c++/protobuf
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libutempter

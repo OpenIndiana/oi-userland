@@ -34,12 +34,10 @@ For Example, in order for XIL 1.3 to be MT HOT, it must be able to
 make the call to XInitThreads, even if the client has already made
 other Xlib calls.
 
-diff --git a/include/X11/Xlibint.h b/include/X11/Xlibint.h
-index 4431559..bc32bdf 100644
---- a/include/X11/Xlibint.h
-+++ b/include/X11/Xlibint.h
-@@ -207,6 +207,10 @@ struct _XDisplay
- 	void *cookiejar;  /* cookie events returned but not claimed */
+--- libX11-1.7.2/include/X11/Xlibint.h
++++ libX11-1.7.2/include/X11/Xlibint.h
+@@ -209,6 +209,10 @@ XIOErrorExitHandler exit_handler;
+ 	void *exit_handler_data;
  };
  
 +#if defined(XTHREADS) && defined(SUNSOFT)
@@ -48,12 +46,10 @@ index 4431559..bc32bdf 100644
 +
  #define XAllocIDs(dpy,ids,n) (*(dpy)->idlist_alloc)(dpy,ids,n)
  
- #ifndef _XEVENT_
-diff --git a/src/OpenDis.c b/src/OpenDis.c
-index 3793814..a14d13b 100644
---- a/src/OpenDis.c
-+++ b/src/OpenDis.c
-@@ -38,6 +38,21 @@ in this Software without prior written authorization from The Open Group.
+ /*
+--- libX11-1.7.2/src/OpenDis.c
++++ libX11-1.7.2/src/OpenDis.c
+@@ -38,6 +38,21 @@ #ifdef XKB
  #include "XKBlib.h"
  #endif /* XKB */
  
@@ -75,7 +71,7 @@ index 3793814..a14d13b 100644
  #ifdef XTHREADS
  #include "locking.h"
  int  (*_XInitDisplayLock_fn)(Display *dpy) = NULL;
-@@ -208,6 +223,13 @@ XOpenDisplay (
+@@ -211,6 +226,13 @@ OutOfMemory (dpy);
  		return(NULL);
  	}
  
@@ -89,7 +85,7 @@ index 3793814..a14d13b 100644
  	if (!_XPollfdCacheInit(dpy)) {
  	        OutOfMemory (dpy);
  		return(NULL);
-@@ -576,6 +598,10 @@ XOpenDisplay (
+@@ -579,6 +601,10 @@ */
  
  void _XFreeDisplayStructure(Display *dpy)
  {
@@ -100,7 +96,7 @@ index 3793814..a14d13b 100644
  	/* move all cookies in the EQ to the jar, then free them. */
  	if (dpy->qfree) {
  	    _XQEvent *qelt = dpy->qfree;
-@@ -704,6 +730,103 @@ void _XFreeDisplayStructure(Display *dpy)
+@@ -699,6 +725,103 @@ _XFreeX11XCBStructure(dpy);
  	Xfree (dpy);
  }
  
@@ -204,11 +200,9 @@ index 3793814..a14d13b 100644
  /* OutOfMemory is called if malloc fails.  XOpenDisplay returns NULL
     after this returns. */
  
-diff --git a/src/locking.c b/src/locking.c
-index 9f4fe06..e4e0444 100644
---- a/src/locking.c
-+++ b/src/locking.c
-@@ -614,6 +614,11 @@ Status XInitThreads(void)
+--- libX11-1.7.2/src/locking.c
++++ libX11-1.7.2/src/locking.c
+@@ -640,6 +640,11 @@ setlinebuf(stdout);		/* for debugging me
  #endif
  #endif
  

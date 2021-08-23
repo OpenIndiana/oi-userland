@@ -11,52 +11,42 @@
 #
 # Copyright 2017, Longrin Wischnewski.
 # Copyright 2019, Michal Nowak
+# Copyright 2021, Nona Hansel
 #
 
-PREFERRED_BITS=		64
-
+BUILD_BITS=			64
+BUILD_STYLE=		cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fish
-COMPONENT_VERSION=	3.0.2
+COMPONENT_VERSION=	3.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://fishshell.com
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:14728ccc6b8e053d01526ebbd0822ca4eb0235e6487e832ec1d0d22f1395430e
-COMPONENT_ARCHIVE_URL= \
-	https://github.com/fish-shell/fish-shell/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:b5b4ee1a5269762cbbe993a4bd6507e675e4100ce9bbe84214a5eeb2b19fae89
+COMPONENT_ARCHIVE_URL= https://github.com/fish-shell/fish-shell/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_SUMMARY=	Fish is a smart and user-friendly command line shell
 COMPONENT_FMRI=		shell/fish
 COMPONENT_CLASSIFICATION=System/Shells
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
-
-COMPONENT_PRE_CMAKE_ACTION = ( \
-	$(MV) $(SOURCE_DIR)/tests/invocation/bad-switch.invoke $(SOURCE_DIR)/tests/invocation/bad-switch.invoke.disabled; )
 
 CMAKE_OPTIONS += -DCMAKE_INSTALL_SYSCONFDIR="/etc"
 CMAKE_OPTIONS += -DPCRE2_INCLUDE_DIR=/usr/include/pcre
 
 COMPONENT_TEST_CMD = gmake
 
-COMPONENT_TEST_TARGETS = test
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
+COMPONENT_TEST_TARGETS = test_fishscript test_interactive
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += library/pcre2
+# test dependency
+REQUIRED_PACKAGES += library/python/pexpect-39
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

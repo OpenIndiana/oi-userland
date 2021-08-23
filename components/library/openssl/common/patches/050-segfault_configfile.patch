@@ -1,0 +1,55 @@
+# This patch was developed in house.
+# The issue is fixed in the OpenSSL 1.1 release by the upstream,
+# but the code base has changed and the same fix can't be applied
+# without major code change.
+--- a/apps/ts.c	2016-06-21 13:43:24.299079900 -0700
++++ b/apps/ts.c	2016-06-21 14:06:28.055910010 -0700
+@@ -299,6 +299,9 @@
+             goto usage;
+         /* Load the config file for possible policy OIDs. */
+         conf = load_config_file(configfile);
++	 if (conf == NULL) {
++            goto cleanup;
++        }
+         ret = !query_command(data, digest, md, policy, no_nonce, cert,
+                              in, out, text);
+         break;
+@@ -401,6 +404,7 @@
+         else
+             BIO_printf(bio_err, "error on line %ld of config file "
+                        "'%s'\n", errorline, configfile);
++        goto errexit;
+     }
+ 
+     if (conf != NULL) {
+@@ -410,18 +414,27 @@
+         p = NCONF_get_string(conf, NULL, ENV_OID_FILE);
+         if (p != NULL) {
+             BIO *oid_bio = BIO_new_file(p, "r");
+-            if (!oid_bio)
++            if (!oid_bio) {
+                 ERR_print_errors(bio_err);
+-            else {
++                goto errexit;
++            } else {
+                 OBJ_create_objects(oid_bio);
+                 BIO_free_all(oid_bio);
+             }
+         } else
+             ERR_clear_error();
+-        if (!add_oid_section(bio_err, conf))
++        if (!add_oid_section(bio_err, conf)) {
+             ERR_print_errors(bio_err);
++            goto errexit;
++        }
+     }
+     return conf;
++
++errexit:
++    if (conf != NULL) {
++	NCONF_free(conf);
++    }
++    return (NULL);
+ }
+ 
+ /*

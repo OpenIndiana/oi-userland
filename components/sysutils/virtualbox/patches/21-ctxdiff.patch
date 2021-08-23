@@ -1,0 +1,121 @@
+--- VirtualBox-6.1.22/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c	1970-01-01 00:00:00
++++ VirtualBox-6.1.22/src/VBox/Runtime/r0drv/solaris/initterm-r0drv-solaris.c	1970-01-01 00:00:00
+@@ -68,6 +68,7 @@ bool                            g_frtSol
+ RTR0FNSOLXCCALL                 g_rtSolXcCall;
+ /** Whether to use the old-style installctx()/removectx() routines. */
+ bool                            g_frtSolOldThreadCtx = false;
++bool                            g_frtillumosNewThreadCtx = false;
+ /** The thread-context hooks callout table structure. */
+ RTR0FNSOLTHREADCTX              g_rtSolThreadCtx;
+ /** Thread preemption offset in the thread structure. */
+@@ -212,6 +213,15 @@ DECLHIDDEN(int) rtR0InitNative(void)
+         /*
+          * Mandatory: Thread-context hooks.
+          */
++        rc = RTR0DbgKrnlInfoQuerySymbol(g_hKrnlDbgInfo, NULL /* pszModule */, "installctx_preallocate",  NULL /* ppvSymbol */);
++        if (RT_SUCCESS(rc))
++        {
++            g_frtillumosNewThreadCtx = true;
++            g_rtSolThreadCtx.Install.pfnillumos_installctx = (void *)installctx;
++            g_rtSolThreadCtx.Remove.pfnillumos_removectx   = (void *)removectx;
++        }
++        else
++        {
+         rc = RTR0DbgKrnlInfoQuerySymbol(g_hKrnlDbgInfo, NULL /* pszModule */, "exitctx",  NULL /* ppvSymbol */);
+         if (RT_SUCCESS(rc))
+         {
+@@ -224,6 +234,7 @@ DECLHIDDEN(int) rtR0InitNative(void)
+             g_rtSolThreadCtx.Install.pfnSol_installctx_old = (void *)installctx;
+             g_rtSolThreadCtx.Remove.pfnSol_removectx_old   = (void *)removectx;
+         }
++        }
+ 
+         /*
+          * Mandatory: map_addr() hooks.
+diff -wpruN '--exclude=*.orig' a~/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h a/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h
+--- a~/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h	1970-01-01 00:00:00
++++ a/src/VBox/Runtime/r0drv/solaris/the-solaris-kernel.h	1970-01-01 00:00:00
+@@ -163,6 +163,15 @@ typedef struct RTR0FNSOLTHREADCTX
+ {
+     union
+     {
++        void *(*pfnillumos_installctx)    (kthread_t *pThread, void *pvArg,
++                                           void (*pfnSave)(void *pvArg),
++                                           void (*pfnRestore)(void *pvArg),
++                                           void (*pfnFork)(void *pvThread, void *pvThreadFork),
++                                           void (*pfnLwpCreate)(void *pvThread, void *pvThreadCreate),
++                                           void (*pfnExit)(void *pvThread),
++                                           void (*pfnFree)(void *pvArg, int fIsExec),
++                                           void *ctx);
++
+         void *(*pfnSol_installctx)        (kthread_t *pThread, void *pvArg,
+                                            void (*pfnSave)(void *pvArg),
+                                            void (*pfnRestore)(void *pvArg),
+@@ -181,6 +190,14 @@ typedef struct RTR0FNSOLTHREADCTX
+ 
+     union
+     {
++        int (*pfnillumos_removectx)           (kthread_t *pThread, void *pvArg,
++                                           void (*pfnSave)(void *pvArg),
++                                           void (*pfnRestore)(void *pvArg),
++                                           void (*pfnFork)(void *pvThread, void *pvThreadFork),
++                                           void (*pfnLwpCreate)(void *pvThread, void *pvThreadCreate),
++                                           void (*pfnExit)(void *pvThread),
++                                           void (*pfnFree)(void *pvArg, int fIsExec));
++
+         int (*pfnSol_removectx)           (kthread_t *pThread, void *pvArg,
+                                            void (*pfnSave)(void *pvArg),
+                                            void (*pfnRestore)(void *pvArg),
+@@ -201,6 +218,7 @@ typedef RTR0FNSOLTHREADCTX *PRTR0FNSOLTH
+ 
+ extern RTR0FNSOLTHREADCTX       g_rtSolThreadCtx;
+ extern bool                     g_frtSolOldThreadCtx;
++extern bool                     g_frtillumosNewThreadCtx;
+ 
+ /*
+  * Workaround for older Solaris versions which called map_addr()/choose_addr()/
+diff -wpruN '--exclude=*.orig' a~/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c a/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c
+--- a~/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c	1970-01-01 00:00:00
++++ a/src/VBox/Runtime/r0drv/solaris/threadctxhooks-r0drv-solaris.c	1970-01-01 00:00:00
+@@ -182,7 +182,19 @@ RTDECL(int) RTThreadCtxHookCreate(PRTTHR
+      * with preemption disabled. We allocate the context-hooks here and use 'fEnabled' to determine if we can
+      * invoke the consumer's hook or not.
+      */
+-    if (g_frtSolOldThreadCtx)
++    if (g_frtillumosNewThreadCtx)
++    {
++        g_rtSolThreadCtx.Install.pfnillumos_installctx(curthread,
++                                                   pThis,
++                                                   rtThreadCtxHookSolOut,       /* save */
++                                                   rtThreadCtxHookSolIn,        /* restore */
++                                                   NULL,                        /* fork */
++                                                   NULL,                        /* lwp_create */
++                                                   NULL,                        /* exit */
++                                                   rtThreadCtxHookSolFree,
++                                                   NULL);                       /* ctx */
++    }
++    else if (g_frtSolOldThreadCtx)
+     {
+         g_rtSolThreadCtx.Install.pfnSol_installctx_old(curthread,
+                                                        pThis,
+@@ -244,7 +256,18 @@ RTDECL(int) RTThreadCtxHookDestroy(RTTHR
+          * ring-0 thread dies, Solaris will call rtThreadCtxHookSolFree() which will free the hook object.
+          */
+         int rc;
+-        if (g_frtSolOldThreadCtx)
++        if (g_frtillumosNewThreadCtx)
++        {
++            rc = g_rtSolThreadCtx.Remove.pfnillumos_removectx(curthread,
++                                                          pThis,
++                                                          rtThreadCtxHookSolOut,        /* save */
++                                                          rtThreadCtxHookSolIn,         /* restore */
++                                                          NULL,                         /* fork */
++                                                          NULL,                         /* lwp_create */
++                                                          NULL,                         /* exit */
++                                                          rtThreadCtxHookSolFree);
++        }
++        else if (g_frtSolOldThreadCtx)
+         {
+             rc = g_rtSolThreadCtx.Remove.pfnSol_removectx_old(curthread,
+                                                               pThis,
+

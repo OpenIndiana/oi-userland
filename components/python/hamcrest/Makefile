@@ -25,30 +25,27 @@
 
 BUILD_STYLE = setup.py
 BUILD_BITS = NO_ARCH
-
+PYTHON3_ONLY = yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		PyHamcrest
-COMPONENT_VERSION=	1.10.1
-COMPONENT_REVISION=	2
-COMPONENT_SUMMARY=	'Hamcrest framework for matcher objects'
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f7ae19ddfd71f11a421bcec9608d708c0fab816db98b51fdbc672a6d99a30874
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://github.com/hamcrest/PyHamcrest
-COMPONENT_CLASSIFICATION= Development/Python
-COMPONENT_FMRI=	library/python/python-hamcrest
-COMPONENT_LICENSE= BSD
+COMPONENT_NAME=         PyHamcrest
+COMPONENT_VERSION=      2.0.2
+COMPONENT_SUMMARY=      Hamcrest framework for matcher objects
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:412e00137858f04bde0729913874a48485665f2d36fe9ee449f26be864af9316
+COMPONENT_ARCHIVE_URL=  $(call pypi_url)
+COMPONENT_PROJECT_URL=  https://github.com/hamcrest/PyHamcrest
+COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_FMRI=         library/python/python-hamcrest
+COMPONENT_LICENSE=      BSD
 COMPONENT_LICENSE_FILE= LICENSE.txt
-
-PYTHON_VERSIONS = 2.7 3.5
 
 TEST_TARGET = $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39

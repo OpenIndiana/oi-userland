@@ -10,14 +10,15 @@
 #
 
 #
-# Copyright 2016 Denys Rtveliashvili
+# Copyright 2020 Andreas Wacknitz
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
@@ -26,6 +27,10 @@ file path=usr/include/http_parser.h
 link path=usr/lib/$(MACH64)/libhttp_parser.so \
     target=libhttp_parser.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/libhttp_parser.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libhttp_parser.so.2.9 \
+    target=libhttp_parser.so.$(COMPONENT_VERSION)
 link path=usr/lib/libhttp_parser.so \
     target=libhttp_parser.so.$(COMPONENT_VERSION)
 file path=usr/lib/libhttp_parser.so.$(COMPONENT_VERSION)
+link path=usr/lib/libhttp_parser.so.2.9 \
+    target=libhttp_parser.so.$(COMPONENT_VERSION)

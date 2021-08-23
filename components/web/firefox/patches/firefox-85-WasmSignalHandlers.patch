@@ -1,0 +1,20 @@
+Avoids recursion during panic!?
+
+Similar to (but not the same):
+https://bugzilla.mozilla.org/show_bug.cgi?id=1435219
+
+diff -r 95fd9deac911 js/src/wasm/WasmSignalHandlers.cpp
+--- a/js/src/wasm/WasmSignalHandlers.cpp	Mon Feb 05 12:14:22 2018 +0100
++++ b/js/src/wasm/WasmSignalHandlers.cpp	Mon Feb 05 05:22:59 2018 -0800
+@@ -154,6 +154,11 @@
+ #    define R01_sig(p) ((p)->uc_mcontext.gp_regs[1])
+ #    define R32_sig(p) ((p)->uc_mcontext.gp_regs[32])
+ #  endif
++#  if defined(__sun__) && defined(__sparc__)
++#    define PC_sig(p) ((p)->uc_mcontext.gregs[REG_PC])
++#    define FP_sig(p) ((p)->uc_mcontext.gregs[REG_FPRS])
++#    define SP_sig(p) ((p)->uc_mcontext.gregs[REG_SP])
++#  endif
+ #elif defined(__NetBSD__)
+ #  define EIP_sig(p) ((p)->uc_mcontext.__gregs[_REG_EIP])
+ #  define EBP_sig(p) ((p)->uc_mcontext.__gregs[_REG_EBP])

@@ -27,13 +27,12 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pixz
-COMPONENT_VERSION=	1.0.6
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.0.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://github.com/vasi/$(COMPONENT_NAME)/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:02c50746b134fa1b1aae41fcc314d7c6f1919b3d48bcdea01bf11769f83f72e8
+	sha256:e5e32c6eb0bf112b98e74a5da8fb63b9f2cae71800f599d97ce540e150c8ddc5
 COMPONENT_ARCHIVE_URL=	\
     $(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pixz
@@ -55,9 +54,7 @@ ASLR_MODE = $(ASLR_ENABLE)
 # Build dependencies added manually
 REQUIRED_PACKAGES += text/asciidoc
 
-# Build dependencies generated
+# Auto-generated dependencies
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/libarchive
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math

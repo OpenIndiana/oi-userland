@@ -1,0 +1,52 @@
+This patch was developed in-house.  It has been submitted upstream:
+http://bugs.python.org/issue23287
+
+--- Python-3.9.1/Lib/ctypes/util.py
++++ Python-3.9.1/Lib/ctypes/util.py
+@@ -226,34 +226,15 @@ elif os.name == "posix":
+ 
+     elif sys.platform == "sunos5":
+ 
+-        def _findLib_crle(name, is64):
+-            if not os.path.exists('/usr/bin/crle'):
+-                return None
++        def _findLib_path(name, is64):
+ 
+             env = dict(os.environ)
+             env['LC_ALL'] = 'C'
+ 
+             if is64:
+-                args = ('/usr/bin/crle', '-64')
++                paths = "/lib/64:/usr/lib/64"
+             else:
+-                args = ('/usr/bin/crle',)
+-
+-            paths = None
+-            try:
+-                proc = subprocess.Popen(args,
+-                                        stdout=subprocess.PIPE,
+-                                        stderr=subprocess.DEVNULL,
+-                                        env=env)
+-            except OSError:  # E.g. bad executable
+-                return None
+-            with proc:
+-                for line in proc.stdout:
+-                    line = line.strip()
+-                    if line.startswith(b'Default Library Path (ELF):'):
+-                        paths = os.fsdecode(line).split()[4]
+-
+-            if not paths:
+-                return None
++                paths = "/lib:/usr/lib"
+ 
+             for dir in paths.split(":"):
+                 libfile = os.path.join(dir, "lib%s.so" % name)
+@@ -263,7 +244,7 @@ elif os.name == "posix":
+             return None
+ 
+         def find_library(name, is64 = False):
+-            return _get_soname(_findLib_crle(name, is64) or _findLib_gcc(name))
++            return _get_soname(_findLib_path(name, is64) or _findLib_gcc(name))
+ 
+     else:
+ 

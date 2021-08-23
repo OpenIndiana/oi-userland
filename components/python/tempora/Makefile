@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tempora
 COMPONENT_VERSION=	1.13
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	'Objects and routines pertaining to date and time'
 COMPONENT_PROJECT_URL=	https://pypi.org/project/tempora/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

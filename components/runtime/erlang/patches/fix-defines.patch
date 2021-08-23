@@ -9,9 +9,9 @@ This patch is suitable for contribution upstream.  It should be
 confirmed on at least Solaris 11, and possibly Solaris 10, if that's
 still a target by the upstream community.
 
---- otp_src_19.3/erts/emulator/sys/unix/sys_uds.h.orig	2017-03-14 13:10:54.000000000 -0700
-+++ otp_src_19.3/erts/emulator/sys/unix/sys_uds.h	2017-04-18 15:44:09.706006895 -0700
-@@ -25,10 +25,6 @@
+--- a/erts/emulator/sys/unix/sys_uds.c	2020-02-25 13:47:31.541171839 +0000
++++ b/erts/emulator/sys/unix/sys_uds.c	2020-02-25 13:47:39.905234136 +0000
+@@ -22,10 +22,6 @@
  #  include "config.h"
  #endif
  
@@ -22,15 +22,3 @@ still a target by the upstream community.
  #include <limits.h>
  
  #include <sys/types.h>
---- otp_src_19.3/erts/etc/unix/run_erl.c.orig	2017-03-14 13:10:54.000000000 -0700
-+++ otp_src_19.3/erts/etc/unix/run_erl.c	2017-04-18 15:44:31.698041163 -0700
-@@ -46,7 +46,7 @@
-      /* On OS X and BSD, we must leave _XOPEN_SOURCE undefined in order for
-       * the prototype of vsyslog() to be included.
-       */
--#    if !(defined(__APPLE__) || defined(__FreeBSD__) || defined(__DragonFly__))
-+#    if !(defined(__APPLE__) || defined(__FreeBSD__) || defined(__DragonFly__) || defined(sun))
- #      define _XOPEN_SOURCE 600
- #    endif
- #  endif
-

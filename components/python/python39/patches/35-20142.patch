@@ -1,0 +1,189 @@
+From 5d1013256c133b61587b6a80a0f9d509ac11d123 Mon Sep 17 00:00:00 2001
+From: Chris Jerdonek <chris.jerdonek@gmail.com>
+Date: Sat, 16 May 2020 15:57:27 -0700
+Subject: [PATCH 1/5] bpo-38323: Fix rare MultiLoopChildWatcher hangs.
+
+This changes asyncio.MultiLoopChildWatcher's attach_loop() method
+to call loop.add_signal_handler() instead of calling only
+signal.signal().  This should eliminate some rare hangs since
+loop.add_signal_handler() calls signal.set_wakeup_fd().  Without
+this, the main thread sometimes wasn't getting awakened if a
+signal occurred during an await.
+---
+ Doc/library/asyncio-eventloop.rst             |  4 ++-
+ Doc/library/asyncio-policy.rst                | 13 ++++++-
+ Lib/asyncio/unix_events.py                    | 34 ++++++++++++++-----
+ Lib/test/test_asyncio/test_subprocess.py      |  3 +-
+ .../2020-05-16-17-50-10.bpo-38323.Ar35np.rst  |  2 ++
+ 5 files changed, 44 insertions(+), 12 deletions(-)
+ create mode 100644 Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
+
+--- Python-3.9.2/Lib/asyncio/unix_events.py.orig	2021-02-19 13:31:44.000000000 +0000
++++ Python-3.9.2/Lib/asyncio/unix_events.py	2021-02-27 22:27:23.974509830 +0000
+@@ -78,6 +78,8 @@
+     def add_signal_handler(self, sig, callback, *args):
+         """Add a handler for a signal.  UNIX only.
+ 
++        This method can only be called from the main thread.
++
+         Raise ValueError if the signal number is invalid or uncatchable.
+         Raise RuntimeError if there is a problem setting up the handler.
+         """
+@@ -1234,10 +1236,15 @@
+             return
+ 
+         handler = signal.getsignal(signal.SIGCHLD)
+-        if handler != self._sig_chld:
++        # add_signal_handler() sets the handler to _sighandler_noop.
++        if handler != _sighandler_noop:
+             logger.warning("SIGCHLD handler was changed by outside code")
+         else:
++            loop = self._loop
++            # This clears the wakeup file descriptor if necessary.
++            loop.remove_signal_handler(signal.SIGCHLD)
+             signal.signal(signal.SIGCHLD, self._saved_sighandler)
++
+         self._saved_sighandler = None
+ 
+     def __enter__(self):
+@@ -1265,6 +1272,11 @@
+         # The reason to do it here is that attach_loop() is called from
+         # unix policy only for the main thread.
+         # Main thread is required for subscription on SIGCHLD signal
++        if loop is None or self._saved_sighandler is not None:
++            return
++
++        self._loop = loop
++        self._saved_sighandler = signal.getsignal(signal.SIGCHLD)
+         if self._saved_sighandler is not None:
+             return
+ 
+@@ -1274,8 +1286,14 @@
+                            "restore to default handler on watcher close.")
+             self._saved_sighandler = signal.SIG_DFL
+ 
+-        # Set SA_RESTART to limit EINTR occurrences.
+-        signal.siginterrupt(signal.SIGCHLD, False)
++        if self._callbacks:
++            warnings.warn(
++                'A loop is being detached '
++                'from a child watcher with pending handlers',
++                RuntimeWarning)
++
++        # This also sets up the wakeup file descriptor.
++        loop.add_signal_handler(signal.SIGCHLD, self._sig_chld)
+ 
+     def _do_waitpid_all(self):
+         for pid in list(self._callbacks):
+@@ -1318,7 +1336,7 @@
+                                  expected_pid, returncode)
+                 loop.call_soon_threadsafe(callback, pid, returncode, *args)
+ 
+-    def _sig_chld(self, signum, frame):
++    def _sig_chld(self, *args):
+         try:
+             self._do_waitpid_all()
+         except (SystemExit, KeyboardInterrupt):
+diff --git a/Lib/test/test_asyncio/test_subprocess.py b/Lib/test/test_asyncio/test_subprocess.py
+index 6657a88e657c2..b11a31a34a2c6 100644
+--- a/Lib/test/test_asyncio/test_subprocess.py
++++ b/Lib/test/test_asyncio/test_subprocess.py
+@@ -672,12 +672,13 @@ def setUp(self):
+             policy.set_child_watcher(watcher)
+
+         def tearDown(self):
+-            super().tearDown()
+             policy = asyncio.get_event_loop_policy()
+             watcher = policy.get_child_watcher()
+             policy.set_child_watcher(None)
+             watcher.attach_loop(None)
+             watcher.close()
++            # Since setUp() does super().setUp() first, do tearDown() last.
++            super().tearDown()
+
+     class SubprocessThreadedWatcherTests(SubprocessWatcherMixin,
+                                          test_utils.TestCase):
+diff --git a/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst b/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
+new file mode 100644
+index 0000000000000..556e08c69d7a5
+--- /dev/null
++++ b/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
+@@ -0,0 +1,2 @@
++Fix rare cases with ``MultiLoopChildWatcher`` where the event loop can
++fail to awaken in response to a :py:data:`SIGCHLD` signal.
+
+From 9618884446dc4a72e401b0f05b2992e34e39d700 Mon Sep 17 00:00:00 2001
+From: Chris Jerdonek <chris.jerdonek@gmail.com>
+Date: Sat, 16 May 2020 18:49:59 -0700
+Subject: [PATCH 2/5] Add docstring.
+
+---
+ Lib/asyncio/unix_events.py | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Lib/asyncio/unix_events.py b/Lib/asyncio/unix_events.py
+index d2a32cb879b6b..17614c23c984c 100644
+--- a/Lib/asyncio/unix_events.py
++++ b/Lib/asyncio/unix_events.py
+@@ -1266,6 +1266,11 @@ def remove_child_handler(self, pid):
+             return False
+
+     def attach_loop(self, loop):
++        """
++        This registers the SIGCHLD signal handler.
++
++        This method can only be called from the main thread.
++        """
+         # Don't save the loop but initialize itself if called first time
+         # The reason to do it here is that attach_loop() is called from
+         # unix policy only for the main thread.
+
+From 4d4c147b9bfe4ce7bb51aa4745ead8a422e98c14 Mon Sep 17 00:00:00 2001
+From: Chris Jerdonek <chris.jerdonek@gmail.com>
+Date: Fri, 16 Oct 2020 16:37:11 -0700
+Subject: [PATCH 3/5] Address a couple review comments.
+
+---
+ Doc/library/asyncio-policy.rst                                | 2 +-
+ .../next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst     | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst b/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
+index 556e08c69d7a5..e9401d6a2e486 100644
+--- a/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
++++ b/Misc/NEWS.d/next/Library/2020-05-16-17-50-10.bpo-38323.Ar35np.rst
+@@ -1,2 +1,2 @@
+-Fix rare cases with ``MultiLoopChildWatcher`` where the event loop can
+-fail to awaken in response to a :py:data:`SIGCHLD` signal.
++Fix rare cases with :class:`asyncio.MultiLoopChildWatcher` where the event
++loop can fail to awaken in response to a :py:data:`SIGCHLD` signal.
+
+From 14f6cfc20e77a349a22ced05352afd3ee200b403 Mon Sep 17 00:00:00 2001
+From: Chris Jerdonek <chris.jerdonek@gmail.com>
+Date: Fri, 16 Oct 2020 16:46:49 -0700
+Subject: [PATCH 4/5] Revert tearDown() change.
+
+---
+ Lib/test/test_asyncio/test_subprocess.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/Lib/test/test_asyncio/test_subprocess.py b/Lib/test/test_asyncio/test_subprocess.py
+index b11a31a34a2c6..6657a88e657c2 100644
+--- a/Lib/test/test_asyncio/test_subprocess.py
++++ b/Lib/test/test_asyncio/test_subprocess.py
+@@ -672,13 +672,12 @@ def setUp(self):
+             policy.set_child_watcher(watcher)
+
+         def tearDown(self):
++            super().tearDown()
+             policy = asyncio.get_event_loop_policy()
+             watcher = policy.get_child_watcher()
+             policy.set_child_watcher(None)
+             watcher.attach_loop(None)
+             watcher.close()
+-            # Since setUp() does super().setUp() first, do tearDown() last.
+-            super().tearDown()
+
+     class SubprocessThreadedWatcherTests(SubprocessWatcherMixin,
+                                          test_utils.TestCase):
+

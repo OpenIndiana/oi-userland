@@ -1,0 +1,17 @@
+see also solaris-userland Bug1651082.patch
+
+diff --git a/python/mozbuild/mozbuild/frontend/data.py b/python/mozbuild/mozbuild/frontend/d
+ata.py
+index cfc204a..98f4eeb 100644
+--- a/python/mozbuild/mozbuild/frontend/data.py
++++ b/python/mozbuild/mozbuild/frontend/data.py
+@@ -842,6 +842,9 @@ class SharedLibrary(Library):
+                     self.symbols_link_arg = '-DEF:' + self.symbols_file
+             elif context.config.substs.get('GCC_USE_GNU_LD'):
+                 self.symbols_link_arg = '-Wl,--version-script,' + self.symbols_file
++            else:
++                self.symbols_link_arg = '-Wl,-M,' + self.symbols_file
++                
+ 
+ 
+ class HostSharedLibrary(HostMixin, Library):

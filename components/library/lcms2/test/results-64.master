@@ -16,10 +16,6 @@ Making check in testbed
 /usr/gnu/bin/make  testcms
 depbase=`echo testcms2.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
 mv -f $depbase.Tpo $depbase.Po
-$(SOURCE_DIR)/testbed/testcms2.c: In function ‘DbgThread’:
-$(SOURCE_DIR)/testbed/testcms2.c:104:25: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-     return (cmsContext) (void*)(n++ % 0xff0);
-                         ^
 depbase=`echo testplugin.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
 mv -f $depbase.Tpo $depbase.Po
 depbase=`echo zoo_icc.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
@@ -44,7 +40,7 @@ Supported intents:
 	15 - Saturation preserving black plane
 
 Checking Base types ...Ok.
-Checking endianess ...Ok.
+Checking endianness ...Ok.
 Checking quick floor ...Ok.
 Checking quick floor word ...Ok.
 Checking Fixed point 15.16 representation ...Ok.
@@ -120,6 +116,7 @@ Checking HALF formatters ...Ok.
 Checking ChangeBuffersFormat ...Ok.
 Checking Multilocalized Unicode ...Ok.
 Checking Named color lists ...Ok.
+Checking Create named color profile ...Ok.
 Checking Profile creation .............................................Ok.
 Checking Header version ...Ok.
 Checking Multilocalized profile ...Ok.
@@ -159,7 +156,7 @@ Checking floating point tags on XYZ ...Ok.
 Checking RGB->Lab->RGB with alpha on FLT ...Ok.
 Checking Parametric curve on Rec709 ...Ok.
 Checking Floating Point sampled curve with non-zero start ...Ok.
-Checking Floating Point segmented curve with short sampled segement ...Ok.
+Checking Floating Point segmented curve with short sampled segment ...Ok.
 Checking Read RAW portions .....Ok.
 Checking Check MetaTag ...Ok.
 Checking Null transform on floats ...Ok.
@@ -170,6 +167,7 @@ Checking Swap endian feature ...Ok.
 Checking Transform line stride RGB ...Ok.
 Checking Forged MPE profile ...Ok.
 Checking Proofing intersection ...Ok.
+Checking Empty MLUC ...Ok.
 Checking Context memory handling ...Ok.
 Checking Simple context functionality ...Ok.
 Checking Alarm codes context ...Ok.
@@ -189,8 +187,17 @@ Checking Mutex plugin ...Ok.
 P E R F O R M A N C E   T E S T S
 =================================
 
+
+
+
+
+
+
+
+
+
 [Memory statistics]
 if [ $(SOURCE_DIR) != .. ]; then \
 	rm -f ../testbed/*.ic?; \
 fi
-/usr/gnu/bin/make  check-local
+make[2]: Nothing to be done for 'check-am'.

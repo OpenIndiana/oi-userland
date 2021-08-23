@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Override HOME. Bash processes $HOME/.profile.
+HOME=$(pwd)/home
+mkdir -p "$HOME"
+export HOME
+
+# Pre-set TMPDIR. The content of system tmp could collide with the tests.
+TMPDIR=$(pwd)/tmp
+mkdir -p "$TMPDIR"
+export TMPDIR
+
+if tty -s; then
+	# If we have a tty, just run the tests
+	gmake "$@"
+else
+	# If we don't have tty, run the tests in screen(1) to make the tests
+	# pass successfully. But screen needs some pty already, so create one
+	# using python. We can't run the tests directly in python as pty module
+	# does not simulate terminal, it merely provides pty device. Also we
+	# set the TERM environment variable to 'xterm' so that screen does not
+	# start confused setting TERM to 'dumb' which breaks the tests again.
+	# Also we have to collect the test output ourselves, since userland
+	# infrastructure captures the screen output which is full of terminal
+	# control codes. To offset anything user may have set in his .screenrc
+	# we use /dev/null as screen config. Last touch is to unset TSTP signal
+	# which is set if we run 'gmake test' via ssh. Unsetting it to default
+	# makes the tests pass even in this case.
+	python -c '
+import pty;
+import signal;
+import sys;
+
+signal.signal(signal.SIGTSTP, signal.SIG_DFL)
+pty.spawn(sys.argv[1:])
+' env TERM=xterm /usr/bin/screen -c /dev/null bash -c 'gmake '"$@"' 2>&1 | tee outfile'
+fi

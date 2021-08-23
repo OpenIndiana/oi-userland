@@ -8,8 +8,8 @@ IP address of an interface on which Dnsmasq process is listening.
 This patch was developed in-house. Since it is Solaris-specific it is not
 suitable for upstream.
 
---- dnsmasq-2.76/Makefile.orig	2016-07-11 17:16:44.577976921 -0400
-+++ dnsmasq-2.76/Makefile	2016-07-11 17:12:36.902671954 -0400
+--- dnsmasq-2.82/Makefile.orig	2020-07-19 22:54:44.000000000 +0000
++++ dnsmasq-2.82/Makefile	2020-12-21 13:09:26.780706319 +0000
 @@ -19,6 +19,7 @@
  # Variables you may well want to override.
  
@@ -26,19 +26,19 @@ suitable for upstream.
  
  #################################################################
  
-@@ -75,6 +77,8 @@
-        dhcp-common.o outpacket.o radv.o slaac.o auth.o ipset.o \
-        domain.o dnssec.o blockdata.o tables.o loop.o inotify.o poll.o
+@@ -79,6 +81,8 @@
+        domain.o dnssec.o blockdata.o tables.o loop.o inotify.o \
+        poll.o rrfilter.o edns0.o arp.o crypto.o dump.o ubus.o metrics.o
  
 +dhcp_release_objs = dhcp_release.o
 +
  hdrs = dnsmasq.h config.h dhcp-protocol.h dhcp6-protocol.h \
-        dns-protocol.h radv-protocol.h ip6addr.h
+        dns-protocol.h radv-protocol.h ip6addr.h metrics.h
  
-@@ -83,11 +87,12 @@
+@@ -87,11 +91,12 @@
   top="$(top)" \
-  build_cflags="$(version) $(dbus_cflags) $(idn2_flags) $(idn_cflags) $(ct_cflags) $(lua_cflags) $(nettle_cflags)" \
-  build_libs="$(dbus_libs) $(idn2_libs) $(idn_libs) $(ct_libs) $(lua_libs) $(sunos_libs) $(nettle_libs) $(gmp_libs)" \
+  build_cflags="$(version) $(dbus_cflags) $(idn2_cflags) $(idn_cflags) $(ct_cflags) $(lua_cflags) $(nettle_cflags)" \
+  build_libs="$(dbus_libs) $(idn2_libs) $(idn_libs) $(ct_libs) $(lua_libs) $(sunos_libs) $(nettle_libs) $(gmp_libs) $(ubus_libs)" \
 - -f $(top)/Makefile dnsmasq 
 + -f $(top)/Makefile dnsmasq dhcp_release
  
@@ -46,16 +46,16 @@ suitable for upstream.
  	rm -f $(BUILDDIR)/*.mo $(BUILDDIR)/*.pot 
 -	rm -f $(BUILDDIR)/.copts_* $(BUILDDIR)/*.o $(BUILDDIR)/dnsmasq.a $(BUILDDIR)/dnsmasq
 +	rm -f $(BUILDDIR)/.copts_* $(BUILDDIR)/*.o $(BUILDDIR)/dnsmasq.a $(BUILDDIR)/dnsmasq \
-+		$(BUILDDIR)/dhcp_release
++			$(BUILDDIR)dhcp_release
  
  clean : mostly_clean
  	rm -f $(BUILDDIR)/dnsmasq_baseline
-@@ -97,9 +102,11 @@
- install : all install-common
+@@ -102,9 +107,11 @@
  
  install-common :
--	$(INSTALL) -d $(DESTDIR)$(BINDIR) -d $(DESTDIR)$(MANDIR)/man8
-+	$(INSTALL) -d $(DESTDIR)$(BINDIR) -d $(DESTDIR)$(MANDIR)/man8 \
+ 	$(INSTALL) -d $(DESTDIR)$(BINDIR)
+-	$(INSTALL) -d $(DESTDIR)$(MANDIR)/man8
++	$(INSTALL) -d $(DESTDIR)$(MANDIR)/man8 \
 +		-d $(DESTDIR)/$(LIBDIR)
  	$(INSTALL) -m 644 $(MAN)/dnsmasq.8 $(DESTDIR)$(MANDIR)/man8 
  	$(INSTALL) -m 755 $(BUILDDIR)/dnsmasq $(DESTDIR)$(BINDIR)
@@ -63,16 +63,16 @@ suitable for upstream.
  
  all-i18n : $(BUILDDIR)
  	@cd $(BUILDDIR) && $(MAKE) \
-@@ -107,7 +114,7 @@
+@@ -112,7 +119,7 @@
   i18n=-DLOCALEDIR=\'\"$(LOCALEDIR)\"\' \
   build_cflags="$(version) $(dbus_cflags) $(idn2_cflags) $(idn_cflags) $(ct_cflags) $(lua_cflags) $(nettle_cflags)" \
-  build_libs="$(dbus_libs) $(idn2_libs) $(idn_libs) $(ct_libs) $(lua_libs) $(sunos_libs) $(nettle_libs) $(gmp_libs)"  \
+  build_libs="$(dbus_libs) $(idn2_libs) $(idn_libs) $(ct_libs) $(lua_libs) $(sunos_libs) $(nettle_libs) $(gmp_libs) $(ubus_libs)"  \
 - -f $(top)/Makefile dnsmasq
 + -f $(top)/Makefile dnsmasq dhcp_release
  	for f in `cd $(PO); echo *.po`; do \
  		cd $(top) && cd $(BUILDDIR) && $(MAKE) top="$(top)" -f $(top)/Makefile $${f%.po}.mo; \
  	done
-@@ -150,6 +157,9 @@
+@@ -155,6 +162,9 @@
  $(objs:.o=.c) $(hdrs):
  	ln -s $(top)/$(SRC)/$@ .
  
@@ -82,18 +82,18 @@ suitable for upstream.
  $(objs): $(copts_conf) $(hdrs)
  
  .c.o:
-@@ -158,6 +168,9 @@
+@@ -163,6 +173,9 @@
  dnsmasq : $(objs)
  	$(CC) $(LDFLAGS) -o $@ $(objs) $(build_libs) $(LIBS) 
  
 +dhcp_release : $(objs) $(dhcp_release_objs)
-+	$(CC) $(LDFLAGS) -o $@ $(dhcp_release_objs) $(build_libs) $(LIBS) 
++	$(CC) $(LDFLAGS) -o $@ $(dhcp_release_objs) $(build_libs) $(LIBS)
 +
  dnsmasq.pot : $(objs:.o=.c) $(hdrs)
  	$(XGETTEXT) -d dnsmasq --foreign-user --omit-header --keyword=_ -o $@ -i $(objs:.o=.c)
- 
---- dnsmasq-2.76/contrib/lease-tools/dhcp_release.c.orig	2016-07-11 17:17:15.545272241 -0400
-+++ dnsmasq-2.76/contrib/lease-tools/dhcp_release.c	2016-07-11 17:16:03.110231008 -0400
+
+--- dnsmasq-2.82/contrib/lease-tools/dhcp_release.c.orig	2020-07-19 22:54:44.000000000 +0000
++++ dnsmasq-2.82/contrib/lease-tools/dhcp_release.c	2020-12-21 11:41:34.443382712 +0000
 @@ -33,6 +33,10 @@
     The client-id is optional. If it is "*" then it treated as being missing.
  */
@@ -127,24 +127,23 @@ suitable for upstream.
  static struct iovec iov;
  
  static int expand_buf(struct iovec *iov, size_t size)
-@@ -139,6 +148,8 @@
+@@ -138,6 +147,7 @@
+   
    return rc;
  }
- 
 +#endif
-+
+ 
  static int parse_hex(char *in, unsigned char *out, int maxlen, int *mac_type)
  {
-   int i = 0;
-@@ -178,6 +189,7 @@
+@@ -178,6 +188,7 @@
    return (a.s_addr & mask.s_addr) == (b.s_addr & mask.s_addr);
  }
  
 +#if !defined(HAVE_SOLARIS_NETWORK)
- static struct in_addr find_interface(struct in_addr client, int fd, unsigned int index)
+ static struct in_addr find_interface(struct in_addr client, int fd, unsigned int index, int ifrfd, struct ifreq *ifr)
  {
    struct sockaddr_nl addr;
-@@ -244,6 +256,7 @@
+@@ -254,6 +265,7 @@
   
    exit(0);
  }
@@ -152,7 +151,7 @@ suitable for upstream.
  
  int main(int argc, char **argv)
  { 
-@@ -254,7 +267,11 @@
+@@ -264,7 +276,11 @@
    struct sockaddr_in dest;
    struct ifreq ifr;
    int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -164,7 +163,7 @@ suitable for upstream.
  
    if (argc < 4 || argc > 5)
      { 
-@@ -267,7 +284,8 @@
+@@ -277,7 +293,8 @@
        perror("cannot create socket");
        exit(1);
      }
@@ -173,16 +172,18 @@ suitable for upstream.
 +#if !defined(HAVE_SOLARIS_NETWORK)
    /* This voodoo fakes up a packet coming from the correct interface, which really matters for 
       a DHCP server */
-   strcpy(ifr.ifr_name, argv[1]);
-@@ -276,6 +294,7 @@
+   strncpy(ifr.ifr_name, argv[1], sizeof(ifr.ifr_name)-1);
+@@ -287,7 +304,8 @@
        perror("cannot setup interface");
        exit(1);
      }
+-  
 +#endif
-   
++
    if (inet_addr(argv[2]) == INADDR_NONE)
      {
-@@ -284,8 +303,40 @@
+       perror("invalid ip address");
+@@ -295,8 +313,40 @@
      }
    
    lease.s_addr = inet_addr(argv[2]);
@@ -198,7 +199,7 @@ suitable for upstream.
 +    if (ifp->ifa_addr->sa_family != AF_INET)
 +      continue;
 +    if (strcmp(ifp->ifa_name, argv[1]) == 0 &&
-+        is_same_net(lease, ((struct sockaddr_in *)ifp->ifa_addr)->sin_addr,
++      is_same_net(lease, ((struct sockaddr_in *)ifp->ifa_addr)->sin_addr,
 +	((struct sockaddr_in *)ifp->ifa_netmask)->sin_addr))
 +      break;
 +    }
@@ -217,7 +218,7 @@ suitable for upstream.
 +    }
 +  freeifaddrs(ifp_head);
 +#else
-   server = find_interface(lease, nl, if_nametoindex(argv[1]));
+   server = find_interface(lease, nl, if_nametoindex(argv[1]), fd, &ifr);
 -  
 +#endif
 +

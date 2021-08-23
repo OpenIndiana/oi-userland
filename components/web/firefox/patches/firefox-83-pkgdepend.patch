@@ -1,0 +1,24 @@
+Causes pkgdepend to fail. Should be investigated.
+
+--- firefox-68.2.0/old-configure.in	2019-10-23 07:42:27.724522785 +0000
++++ firefox-68.2.0/old-configure.in.new	2019-10-23 07:50:36.735736091 +0000
+@@ -908,7 +908,7 @@ case "$target" in
+     ;;
+ 
+ *-solaris*)
+-    MOZ_FIX_LINK_PATHS="-L${DIST}/bin"
++    MOZ_FIX_LINK_PATHS="-L${DIST}/bin -Wl,-R,'\$ORIGIN'"
+     CFLAGS="$CFLAGS -DSOLARIS"
+     CXXFLAGS="$CXXFLAGS -DSOLARIS"
+     ;;
+--- firefox-68.2.0/js/src/old-configure.in	2019-10-23 07:42:27.725077927 +0000
++++ firefox-68.2.0/js/src/old-configure.in.new	2019-10-23 07:51:37.443832653 +0000
+@@ -756,7 +756,7 @@ case "$target" in
+     ;;
+ 
+ *-solaris*)
+-    MOZ_FIX_LINK_PATHS="-L${DIST}/bin"
++    MOZ_FIX_LINK_PATHS="-L${DIST}/bin -Wl,-R,'\$ORIGIN'"
+     CFLAGS="$CFLAGS -DSOLARIS"
+     CXXFLAGS="$CXXFLAGS -DSOLARIS"
+     ;;

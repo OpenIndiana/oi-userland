@@ -1,0 +1,16 @@
+$NetBSD$
+
+Support SunOS/gcc.
+
+diff -wpruN '--exclude=*.orig' a~/make/hotspot/lib/CompileJvm.gmk a/make/hotspot/lib/CompileJvm.gmk
+--- a~/make/hotspot/lib/CompileJvm.gmk	1970-01-01 00:00:00
++++ a/make/hotspot/lib/CompileJvm.gmk	1970-01-01 00:00:00
+@@ -109,7 +109,7 @@ else ifeq ($(OPENJDK_TARGET_CPU), x86_64
+ endif
+ 
+ # Inline assembly for solaris
+-ifeq ($(OPENJDK_TARGET_OS), solaris)
++ifeq ($(TOOLCHAIN_TYPE), solstudio)
+   ifeq ($(OPENJDK_TARGET_CPU), x86_64)
+     JVM_CFLAGS += $(TOPDIR)/src/hotspot/os_cpu/solaris_x86/solaris_x86_64.il
+   else ifeq ($(OPENJDK_TARGET_CPU), sparcv9)

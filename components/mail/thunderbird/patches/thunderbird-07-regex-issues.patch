@@ -1,0 +1,22 @@
+Workaround for:
+
+https://bugzilla.mozilla.org/show_bug.cgi?id=1450912
+
+GCC libstdc++ should be fixed to support locales on Solaris so that
+std::regex functionality works.
+
+diff --git a/comm/mail/app/nsMailApp.cpp b/comm/mail/app/nsMailApp.cpp
+index b16b25a..cb84b69 100644
+--- a/comm/mail/app/nsMailApp.cpp
++++ b/comm/mail/app/nsMailApp.cpp
+@@ -246,6 +246,10 @@ uint32_t gBlocklistInitFlags = eDllBlocklistInitFlagDefault;
+ #endif
+ 
+ int main(int argc, char* argv[], char* envp[]) {
++
++  // Workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1450912
++  setenv("LC_ALL", "C", 1);
++
+ #if defined(MOZ_ENABLE_FORKSERVER)
+   if (strcmp(argv[argc - 1], "forkserver") == 0) {
+     nsresult rv = InitXPCOMGlue(LibLoadingStrategy::NoReadAhead);

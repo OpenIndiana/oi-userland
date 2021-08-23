@@ -16,13 +16,13 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdns-recursor
-COMPONENT_VERSION=	4.3.0
+COMPONENT_VERSION=	4.5.5
 COMPONENT_PROJECT_URL=	https://www.powerdns.com/downloads.html
 COMPONENT_FMRI=		service/network/dns/powerdns-recursor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:2bc130f287dfdb32e03d0b38a4ac24baf1117f96eca9b407611c847fa08a628f
+	sha256:a836a39b99fcc21873e4ba3a60aa9915a33fac7b44922696e9a257f551fe05fb
 COMPONENT_ARCHIVE_URL=	http://downloads.powerdns.com/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_SUMMARY=	a DNS server

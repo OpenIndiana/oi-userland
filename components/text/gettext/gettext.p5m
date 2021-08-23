@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2020, Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -34,6 +35,18 @@ set name=org.opensolaris.arc-caseid value=PSARC/2007/635
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 depend type=optional fmri=pkg:/developer/gnome/gettext@2.30.0,5.11-0.151.1.8.1
+
+license COPYING license="GPLv3"
+
+link path=usr/bin/ggettext target=../gnu/bin/gettext facet.compat.gnulinks=true
+link path=usr/bin/gmsgfmt target=../gnu/bin/msgfmt facet.compat.gnulinks=true
+link path=usr/bin/gxgettext target=../gnu/bin/xgettext facet.compat.gnulinks=true
+link path=usr/share/man/man1/ggettext.1 \
+    target=../../../gnu/share/man/man1/gettext.1 facet.compat.gnulinks=all
+link path=usr/share/man/man1/gmsgfmt.1 \
+    target=../../../gnu/share/man/man1/msgfmt.1 facet.compat.gnulinks=all
+link path=usr/share/man/man1/gxgettext.1 \
+    target=../../../gnu/share/man/man1/xgettext.1 facet.compat.gnulinks=all
 
 file path=usr/bin/$(MACH64)/autopoint
 file path=usr/bin/$(MACH64)/envsubst
@@ -92,15 +105,15 @@ file path=usr/lib/$(MACH64)/gettext/user-email mode=0555
 file path=usr/lib/$(MACH64)/libgettextlib-$(COMPONENT_VERSION).so
 link path=usr/lib/$(MACH64)/libgettextlib.so \
     target=libgettextlib-$(COMPONENT_VERSION).so
-link path=usr/lib/$(MACH64)/libgettextpo.so target=libgettextpo.so.0.5.5
-link path=usr/lib/$(MACH64)/libgettextpo.so.0 target=libgettextpo.so.0.5.5
-file path=usr/lib/$(MACH64)/libgettextpo.so.0.5.5
+link path=usr/lib/$(MACH64)/libgettextpo.so target=libgettextpo.so.0.5.7
+link path=usr/lib/$(MACH64)/libgettextpo.so.0 target=libgettextpo.so.0.5.7
+file path=usr/lib/$(MACH64)/libgettextpo.so.0.5.7
 file path=usr/lib/$(MACH64)/libgettextsrc-$(COMPONENT_VERSION).so
 link path=usr/lib/$(MACH64)/libgettextsrc.so \
     target=libgettextsrc-$(COMPONENT_VERSION).so
-link path=usr/lib/$(MACH64)/libtextstyle.so target=libtextstyle.so.0.0.0
-link path=usr/lib/$(MACH64)/libtextstyle.so.0 target=libtextstyle.so.0.0.0
-file path=usr/lib/$(MACH64)/libtextstyle.so.0.0.0
+link path=usr/lib/$(MACH64)/libtextstyle.so target=libtextstyle.so.0.1.1
+link path=usr/lib/$(MACH64)/libtextstyle.so.0 target=libtextstyle.so.0.1.1
+file path=usr/lib/$(MACH64)/libtextstyle.so.0.1.1
 file path=usr/lib/gettext/cldr-plurals mode=0555
 file path=usr/lib/gettext/hostname mode=0555
 file path=usr/lib/gettext/project-id mode=0555
@@ -108,14 +121,14 @@ file path=usr/lib/gettext/urlget mode=0555
 file path=usr/lib/gettext/user-email mode=0555
 file path=usr/lib/libgettextlib-$(COMPONENT_VERSION).so
 link path=usr/lib/libgettextlib.so target=libgettextlib-$(COMPONENT_VERSION).so
-link path=usr/lib/libgettextpo.so target=libgettextpo.so.0.5.5
-link path=usr/lib/libgettextpo.so.0 target=libgettextpo.so.0.5.5
-file path=usr/lib/libgettextpo.so.0.5.5
+link path=usr/lib/libgettextpo.so target=libgettextpo.so.0.5.7
+link path=usr/lib/libgettextpo.so.0 target=libgettextpo.so.0.5.7
+file path=usr/lib/libgettextpo.so.0.5.7
 file path=usr/lib/libgettextsrc-$(COMPONENT_VERSION).so
 link path=usr/lib/libgettextsrc.so target=libgettextsrc-$(COMPONENT_VERSION).so
-link path=usr/lib/libtextstyle.so target=libtextstyle.so.0.0.0
-link path=usr/lib/libtextstyle.so.0 target=libtextstyle.so.0.0.0
-file path=usr/lib/libtextstyle.so.0.0.0
+link path=usr/lib/libtextstyle.so target=libtextstyle.so.0.1.1
+link path=usr/lib/libtextstyle.so.0 target=libtextstyle.so.0.1.1
+file path=usr/lib/libtextstyle.so.0.1.1
 
 # Compatibility 
 dir  path=usr/lib/intltool/gettext-tools
@@ -138,14 +151,14 @@ file path=usr/share/aclocal/lib-prefix.m4
 file path=usr/share/aclocal/nls.m4
 file path=usr/share/aclocal/po.m4
 file path=usr/share/aclocal/progtest.m4
-file path=usr/share/gettext-0.20/its/glade.loc
-file path=usr/share/gettext-0.20/its/glade1.its
-file path=usr/share/gettext-0.20/its/glade2.its
-file path=usr/share/gettext-0.20/its/gsettings.its
-file path=usr/share/gettext-0.20/its/gsettings.loc
-file path=usr/share/gettext-0.20/its/gtkbuilder.its
-file path=usr/share/gettext-0.20/its/metainfo.its
-file path=usr/share/gettext-0.20/its/metainfo.loc
+file path=usr/share/gettext-$(COMPONENT_VERSION)/its/glade.loc
+file path=usr/share/gettext-$(COMPONENT_VERSION)/its/glade1.its
+file path=usr/share/gettext-$(COMPONENT_VERSION)/its/glade2.its
+file path=usr/share/gettext-$(COMPONENT_VERSION)/its/gsettings.its
+file path=usr/share/gettext-$(COMPONENT_VERSION)/its/gsettings.loc
+file path=usr/share/gettext-$(COMPONENT_VERSION)/its/gtkbuilder.its
+file path=usr/share/gettext-$(COMPONENT_VERSION)/its/metainfo.its
+file path=usr/share/gettext-$(COMPONENT_VERSION)/its/metainfo.loc
 file path=usr/share/gettext/ABOUT-NLS
 file path=usr/share/gettext/archive.dir.tar.xz
 file path=usr/share/gettext/config.rpath
@@ -283,14 +296,3 @@ file path=usr/share/man/man1/msguniq.1
 file path=usr/share/man/man1/ngettext.1
 file path=usr/share/man/man1/recode-sr-latin.1
 file usr/share/man/man1/xgettext.1 path=usr/gnu/share/man/man1/xgettext.1
-#
-license COPYING license="GPLv3"
-link path=usr/bin/ggettext target=../gnu/bin/gettext facet.compat.gnulinks=true
-link path=usr/bin/gmsgfmt target=../gnu/bin/msgfmt facet.compat.gnulinks=true
-link path=usr/bin/gxgettext target=../gnu/bin/xgettext facet.compat.gnulinks=true
-link path=usr/share/man/man1/ggettext.1 \
-    target=../../../gnu/share/man/man1/gettext.1 facet.compat.gnulinks=all
-link path=usr/share/man/man1/gmsgfmt.1 \
-    target=../../../gnu/share/man/man1/msgfmt.1 facet.compat.gnulinks=all
-link path=usr/share/man/man1/gxgettext.1 \
-    target=../../../gnu/share/man/man1/xgettext.1 facet.compat.gnulinks=all

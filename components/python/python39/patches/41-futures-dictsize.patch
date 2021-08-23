@@ -1,0 +1,20 @@
+
+From https://github.com/python/cpython/pull/24868
+
+This prevents RuntimeError: dictionary changed size during iteration which we
+recently encountered several times during make install.
+
+https://bugs.python.org/issue43498
+
+diff -wpruN '--exclude=*.orig' a~/Lib/concurrent/futures/process.py a/Lib/concurrent/futures/process.py
+--- a~/Lib/concurrent/futures/process.py	1970-01-01 00:00:00
++++ a/Lib/concurrent/futures/process.py	1970-01-01 00:00:00
+@@ -373,7 +373,7 @@ class _ExecutorManagerThread(threading.T
+         assert not self.thread_wakeup._closed
+         wakeup_reader = self.thread_wakeup._reader
+         readers = [result_reader, wakeup_reader]
+-        worker_sentinels = [p.sentinel for p in self.processes.values()]
++        worker_sentinels = [p.sentinel for p in self.processes.copy().values()]
+         ready = mp.connection.wait(readers + worker_sentinels)
+ 
+         cause = None

@@ -19,19 +19,19 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME= tigervnc
-COMPONENT_VERSION= 1.8.0
-COMPONENT_REVISION= 5
-COMPONENT_SUMMARY= TigerVNC X11/VNC server
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=         tigervnc
+COMPONENT_VERSION=      1.8.0
+COMPONENT_REVISION=     6
+COMPONENT_SUMMARY=      TigerVNC X11/VNC server
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9951dab0e10f8de03996ec94bec0d938da9f36d48dca8c954e8bbc95c16338f8
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/TigerVNC/tigervnc/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL = http://tigervnc.org/
+	sha256:9951dab0e10f8de03996ec94bec0d938da9f36d48dca8c954e8bbc95c16338f8
+COMPONENT_ARCHIVE_URL=  \
+	https://github.com/TigerVNC/tigervnc/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_PROJECT_URL=  http://tigervnc.org/
 COMPONENT_LICENSE_FILE= LICENCE.TXT
-COMPONENT_LICENSE= GPLv2
+COMPONENT_LICENSE=      GPLv2
 
 # Note that the xorg additional patch (tigervnc-xserver) does not fit this pattern. That is intentional
 PATCH_PATTERN = [0-9][0-9]*.patch
@@ -204,6 +204,8 @@ REQUIRED_PACKAGES += text/xmlto
 REQUIRED_PACKAGES += x11/server/xorg
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/fltk
 REQUIRED_PACKAGES += library/gnutls-3
@@ -211,8 +213,6 @@ REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxau

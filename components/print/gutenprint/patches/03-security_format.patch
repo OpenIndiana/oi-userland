@@ -1,0 +1,721 @@
+Fix printf and stp_eprintf, to avoid format string vulnerability. 
+Upstream candidate.
+
+--- gutenprint-5.3.4/src/main/print-raw.c	2021-04-26 14:22:53.949074993 +0000
++++ gutenprint-5.3.4/src/main/print-raw.c	2021-04-26 14:22:27.644115343 +0000
+@@ -240,14 +240,14 @@ raw_print(const stp_vars_t *v, stp_image
+ 
+   if (!stp_verify(nv))
+     {
+-      stp_eprintf(nv, _("Print options not verified; cannot print.\n"));
++      stp_eprintf(nv, "%s", _("Print options not verified; cannot print.\n"));
+       stp_vars_destroy(nv);
+       stp_image_conclude(image);
+       return 0;
+     }
+   if (width != stp_image_width(image) || height != stp_image_height(image))
+     {
+-      stp_eprintf(nv, _("Image dimensions must match paper dimensions"));
++      stp_eprintf(nv, "%s", _("Image dimensions must match paper dimensions"));
+       stp_vars_destroy(nv);
+       stp_image_conclude(image);
+       return 0;
+--- gutenprint-5.3.4/src/main/printers.c	2021-04-26 14:24:19.082410879 +0000
++++ gutenprint-5.3.4/src/main/printers.c	2021-04-26 14:23:47.430596650 +0000
+@@ -845,7 +845,7 @@ stp_verify_printer_params(stp_vars_t *v)
+ 	  stp_get_page_width(v) <= min_width || stp_get_page_width(v) > width)
+ 	{
+ 	  answer = 0;
+-	  stp_eprintf(v, _("Page size is not valid\n"));
++	  stp_eprintf(v, "%s", _("Page size is not valid\n"));
+ 	}
+       stp_dprintf(STP_DBG_PAPER, v,
+ 		  "page size max %f %f min %f %f actual %f %f\n",
+@@ -878,13 +878,13 @@ stp_verify_printer_params(stp_vars_t *v)
+   if (stp_get_height(v) <= 0)
+     {
+       answer = 0;
+-      stp_eprintf(v, _("Height must be greater than zero\n"));
++      stp_eprintf(v, "%s", _("Height must be greater than zero\n"));
+     }
+ 
+   if (stp_get_width(v) <= 0)
+     {
+       answer = 0;
+-      stp_eprintf(v, _("Width must be greater than zero\n"));
++      stp_eprintf(v, "%s", _("Width must be greater than zero\n"));
+     }
+ 
+   if (stp_get_left(v) + stp_get_width(v) > right)
+--- gutenprint-5.3.4/src/main/print-dyesub.c	2021-04-26 14:30:07.153421180 +0000
++++ gutenprint-5.3.4/src/main/print-dyesub.c	2021-04-26 14:29:48.604151073 +0000
+@@ -3960,7 +3960,7 @@ static int mitsu_p95d_parse_parameters(s
+   if (stp_check_raw_parameter(v, "UserComment", STP_PARAMETER_ACTIVE)) {
+     usercomment = stp_get_raw_parameter(v, "UserComment");
+     if (usercomment->bytes > 34) {
+-      stp_eprintf(v, _("StpUserComment must be between 0 and 34 bytes!\n"));
++      stp_eprintf(v, "%s", _("StpUserComment must be between 0 and 34 bytes!\n"));
+       return 0;
+     }
+   }
+@@ -3968,7 +3968,7 @@ static int mitsu_p95d_parse_parameters(s
+   if (stp_check_raw_parameter(v, "UserLUT", STP_PARAMETER_ACTIVE)) {
+     userlut = stp_get_raw_parameter(v, "UserLUT");
+     if (usercomment->bytes != 34) {
+-      stp_eprintf(v, _("StpUserLUT must be exactly 34 bytes!\n"));
++      stp_eprintf(v, "%s", _("StpUserLUT must be exactly 34 bytes!\n"));
+       return 0;
+     }
+   }
+@@ -4373,7 +4373,7 @@ static int mitsu_p93d_parse_parameters(s
+   if (stp_check_raw_parameter(v, "UserComment", STP_PARAMETER_ACTIVE)) {
+     usercomment = stp_get_raw_parameter(v, "UserComment");
+     if (usercomment->bytes > 40) {
+-      stp_eprintf(v, _("StpUserComment must be between 0 and 40 bytes!\n"));
++      stp_eprintf(v, "%s", _("StpUserComment must be between 0 and 40 bytes!\n"));
+       return 0;
+     }
+   }
+@@ -6638,7 +6638,7 @@ static int mitsu_cpm1_parse_parameters(s
+   const char *quality = stp_get_string_parameter(v, "PrintSpeed");
+ 
+   if (use_lut && matching) {
+-	  stp_eprintf(v, _("Cannot use Internal Correction and Color Matching together!\n"));
++	  stp_eprintf(v, "%s", _("Cannot use Internal Correction and Color Matching together!\n"));
+ 	  return 0;
+   } else if (use_lut && !matching) {
+ 	  matching = 0;
+@@ -7882,7 +7882,7 @@ static int dnpds80_parse_parameters(stp_
+   } else if (!strcmp(pagesize, "w576h842")) {
+     multicut = 21;
+   } else {
+-    stp_eprintf(v, _("Illegal print size selected for roll media!\n"));
++    stp_eprintf(v, "%s", _("Illegal print size selected for roll media!\n"));
+     return 0;
+   }
+ 
+@@ -7936,7 +7936,7 @@ static int dnpds80dx_parse_parameters(st
+ 
+   if (!strcmp(media->name, "Roll")) {
+     if (strcmp(duplex_mode, "None") && strcmp(duplex_mode, "Standard")) {
+-      stp_eprintf(v, _("Duplex not supported on roll media, switching to sheet media!\n"));
++      stp_eprintf(v, "%s", _("Duplex not supported on roll media, switching to sheet media!\n"));
+       stp_set_string_parameter(v, "MediaType", "Sheet");
+     } else {
+       /* If we're not using duplex and roll media, this is
+@@ -7970,7 +7970,7 @@ static int dnpds80dx_parse_parameters(st
+   } else if (!strcmp(pagesize, "w576h864-div3sheet")) {
+     multicut = 28;
+   } else {
+-    stp_eprintf(v, _("Illegal print size selected for sheet media!\n"));
++    stp_eprintf(v, "%s", _("Illegal print size selected for sheet media!\n"));
+     return 0;
+   }
+ 
+@@ -9633,7 +9633,7 @@ static int magicard_parse_parameters(stp
+   /* If overcoat is off, we can't use holokote or holopatch */
+   if (lpar && strcmp("On", lpar)) {
+     if ((holokote && strcmp(holokote, "Off")) || holopatch || overcoat_hole || holokote_custom) {
+-      stp_eprintf(v, _("Holokote, Holopatch, and Overcoat hole features require Overcoat to be enabled!\n"));
++      stp_eprintf(v, "%s", _("Holokote, Holopatch, and Overcoat hole features require Overcoat to be enabled!\n"));
+       return 0;
+     }
+   }
+@@ -9642,21 +9642,21 @@ static int magicard_parse_parameters(stp
+   if (stp_check_raw_parameter(v, "MagStripe1", STP_PARAMETER_ACTIVE)) {
+     magstripe1 = stp_get_raw_parameter(v, "MagStripe1");
+     if (magstripe1->bytes >= 79) {
+-      stp_eprintf(v, _("StpMagStripe1 must be between 0 and 78 bytes!\n"));
++      stp_eprintf(v, "%s", _("StpMagStripe1 must be between 0 and 78 bytes!\n"));
+       return 0;
+     }
+   }
+   if (stp_check_raw_parameter(v, "MagStripe2", STP_PARAMETER_ACTIVE)) {
+     magstripe2 = stp_get_raw_parameter(v, "MagStripe2");
+     if (magstripe2->bytes >= 40) {
+-      stp_eprintf(v, _("StpMagStripe2 must be between 0 and 39 bytes!\n"));
++      stp_eprintf(v, "%s", _("StpMagStripe2 must be between 0 and 39 bytes!\n"));
+       return 0;
+     }
+   }
+   if (stp_check_raw_parameter(v, "MagStripe3", STP_PARAMETER_ACTIVE)) {
+     magstripe1 = stp_get_raw_parameter(v, "MagStripe3");
+     if (magstripe1->bytes >= 107) {
+-      stp_eprintf(v, _("StpMagStripe3 must be between 0 and 106 bytes!\n"));
++      stp_eprintf(v, "%s", _("StpMagStripe3 must be between 0 and 106 bytes!\n"));
+       return 0;
+     }
+   }
+@@ -9703,16 +9703,16 @@ static int magicard_parse_parameters(stp
+     for (i = 0 ; i < magstripe1->bytes ; i++) {
+       if (pd->privdata.magicard.mag1[i] < 0x20 ||
+ 	  pd->privdata.magicard.mag1[i] > 0x5f) {
+-	stp_eprintf(v, _("Illegal Alphanumeric in Magstripe, 0x20->0x5F ASCII only\n"));
++	stp_eprintf(v, "%s", _("Illegal Alphanumeric in Magstripe, 0x20->0x5F ASCII only\n"));
+ 	return 0;
+       }
+     }
+     if (pd->privdata.magicard.mag1[0] != '%') {
+-      stp_eprintf(v, _("Magstripe alphanumeric data must start with '%%'\n"));
++      stp_eprintf(v, "%s", _("Magstripe alphanumeric data must start with '%%'\n"));
+       return 0;
+     }
+     if (pd->privdata.magicard.mag1[magstripe1->bytes - 1] != '?') {
+-      stp_eprintf(v, _("Magstripe string must end with '?'\n"));
++      stp_eprintf(v, "%s", _("Magstripe string must end with '?'\n"));
+       return 0;
+     }
+   }
+@@ -9723,16 +9723,16 @@ static int magicard_parse_parameters(stp
+     for (i = 0 ; i < magstripe2->bytes ; i++) {
+       if (pd->privdata.magicard.mag2[i] < 0x30 ||
+ 	  pd->privdata.magicard.mag2[i] > 0x3f) {
+-	stp_eprintf(v, _("Illegal Numeric in Magstripe, 0x30->0x3F ASCII only\n"));
++	stp_eprintf(v, "%s", _("Illegal Numeric in Magstripe, 0x30->0x3F ASCII only\n"));
+ 	return 0;
+       }
+     }
+     if (pd->privdata.magicard.mag2[0] != ';') {
+-      stp_eprintf(v, _("Magstripe numeric data must start with ';'\n"));
++      stp_eprintf(v, "%s", _("Magstripe numeric data must start with ';'\n"));
+       return 0;
+     }
+     if (pd->privdata.magicard.mag2[magstripe2->bytes - 1] != '?') {
+-      stp_eprintf(v, _("Magstripe data must end with '?'\n"));
++      stp_eprintf(v, "%s", _("Magstripe data must end with '?'\n"));
+       return 0;
+     }
+   }
+@@ -9743,16 +9743,16 @@ static int magicard_parse_parameters(stp
+     for (i = 0 ; i < magstripe3->bytes ; i++) {
+       if (pd->privdata.magicard.mag3[i] < 0x30 ||
+ 	  pd->privdata.magicard.mag3[i] > 0x3f) {
+-	stp_eprintf(v, _("Illegal Numeric in Magstripe, 0x30->0x3F ASCII only\n"));
++	stp_eprintf(v, "%s", _("Illegal Numeric in Magstripe, 0x30->0x3F ASCII only\n"));
+ 	return 0;
+       }
+     }
+     if (pd->privdata.magicard.mag3[0] != ';') {
+-      stp_eprintf(v, _("Magstripe numeric data must start with ';'\n"));
++      stp_eprintf(v, "%s", _("Magstripe numeric data must start with ';'\n"));
+       return 0;
+     }
+     if (pd->privdata.magicard.mag3[magstripe3->bytes - 1] != '?') {
+-      stp_eprintf(v, _("Magstripe data must end with '?'\n"));
++      stp_eprintf(v, "%s", _("Magstripe data must end with '?'\n"));
+       return 0;
+     }
+   }
+@@ -12163,7 +12163,7 @@ dyesub_do_print(stp_vars_t *v, stp_image
+ 
+   if (!stp_verify(v))
+     {
+-      stp_eprintf(v, _("Print options not verified; cannot print.\n"));
++      stp_eprintf(v, "%s", _("Print options not verified; cannot print.\n"));
+       return 0;
+     }
+ 
+--- gutenprint-5.3.4/src/main/print-escp2.c	2021-04-26 14:31:53.799910590 +0000
++++ gutenprint-5.3.4/src/main/print-escp2.c	2021-04-26 14:30:58.675023282 +0000
+@@ -4493,7 +4493,7 @@ escp2_do_print(stp_vars_t *v, stp_image_
+ 
+   if (!stp_verify(v))
+     {
+-      stp_eprintf(v, _("Print options not verified; cannot print.\n"));
++      stp_eprintf(v, "%s", _("Print options not verified; cannot print.\n"));
+       return 0;
+     }
+ 
+--- gutenprint-5.3.4/src/escputil/escputil.c	2021-04-26 14:45:19.173900244 +0000
++++ gutenprint-5.3.4/src/escputil/escputil.c	2021-04-26 14:45:05.066975885 +0000
+@@ -347,7 +347,7 @@ main(int argc, char **argv)
+ 	case 'P':
+ 	  if (the_printer || raw_device)
+ 	    {
+-	      printf(_("You may only specify one printer or raw device."));
++	      printf("%s", _("You may only specify one printer or raw device."));
+ 	      do_help(1);
+ 	    }
+ 	  the_printer = c_strdup(optarg);
+@@ -355,7 +355,7 @@ main(int argc, char **argv)
+ 	case 'r':
+ 	  if (the_printer || raw_device)
+ 	    {
+-	      printf(_("You may only specify one printer or raw device."));
++	      printf("%s", _("You may only specify one printer or raw device."));
+ 	      do_help(1);
+ 	    }
+ 	  raw_device = c_strdup(optarg);
+@@ -363,7 +363,7 @@ main(int argc, char **argv)
+ 	case 'm':
+ 	  if (printer_model)
+ 	    {
+-	      printf(_("You may only specify one printer model."));
++	      printf("%s", _("You may only specify one printer model."));
+ 	      do_help(1);
+ 	    }
+ 	  printer_model = c_strdup(optarg);
+@@ -387,7 +387,7 @@ main(int argc, char **argv)
+ 	  alignment_choices = atoi(optarg);
+ 	  if (alignment_choices < 1)
+ 	    {
+-	      printf(_("Alignment choices must be at least 1."));
++	      printf("%s", _("Alignment choices must be at least 1."));
+ 	      do_help(1);
+ 	    }
+ 	  break;
+@@ -395,7 +395,7 @@ main(int argc, char **argv)
+ 	  alignment_passes = atoi(optarg);
+ 	  if (alignment_passes < 1)
+ 	    {
+-	      printf(_("Alignment passes must be at least 1."));
++	      printf("%s", _("Alignment passes must be at least 1."));
+ 	      do_help(1);
+ 	    }
+ 	  break;
+@@ -521,7 +521,7 @@ do_print_cmd(void)
+ 	  retries++;
+ 	  if (retries > 2)
+ 	    {
+-	      fprintf(stderr, _("Unable to send command to printer\n"));
++	      fprintf(stderr, "%s", _("Unable to send command to printer\n"));
+ 	      if (raw_device)
+ 		fclose(pfile);
+ 	      else
+@@ -531,7 +531,7 @@ do_print_cmd(void)
+ 	}
+       else if (status == -1)
+ 	{
+-	  fprintf(stderr, _("Unable to send command to printer\n"));
++	  fprintf(stderr, "%s", _("Unable to send command to printer\n"));
+ 	  if (raw_device)
+ 	    fclose(pfile);
+ 	  else
+@@ -592,7 +592,7 @@ read_from_printer(int fd, char *buf, int
+   else if (status == 0 && retry == 0)
+     {
+       if (!quiet)
+-	fprintf(stderr, _("Read from printer timed out\n"));
++	fprintf(stderr, "%s", _("Read from printer timed out\n"));
+     }
+   else if (status < 0)
+     {
+@@ -777,7 +777,7 @@ open_raw_device(void)
+ 
+   if (!raw_device)
+    {
+-      fprintf(stderr, _("Please specify a raw device\n"));
++      fprintf(stderr, "%s", _("Please specify a raw device\n"));
+       exit(1);
+     }
+ 
+@@ -986,7 +986,7 @@ initialize_printer(int quiet, int fail_i
+ 	    {
+ 	      if (!quiet && fail_if_not_found)
+ 		{
+-		  fprintf(stderr, _("\nCannot detect printer type.\n"
++		  fprintf(stderr, "%s", _("\nCannot detect printer type.\n"
+ 				    "Please use -m to specify your printer model.\n"));
+ 		  do_help(1);
+ 		}
+@@ -1108,31 +1108,31 @@ print_status(int param)
+   switch (param)
+     {
+     case 0:
+-      printf(_("Status: Error\n"));
++      printf("%s", _("Status: Error\n"));
+       break;
+     case 1:
+-      printf(_("Status: Self-Printing\n"));
++      printf("%s", _("Status: Self-Printing\n"));
+       break;
+     case 2:
+-      printf(_("Status: Busy\n"));
++      printf("%s", _("Status: Busy\n"));
+       break;
+     case 3:
+-      printf(_("Status: Waiting\n"));
++      printf("%s", _("Status: Waiting\n"));
+       break;
+     case 4:
+-      printf(_("Status: Idle\n"));
++      printf("%s", _("Status: Idle\n"));
+       break;
+     case 5:
+-      printf(_("Status: Paused\n"));
++      printf("%s", _("Status: Paused\n"));
+       break;
+     case 7:
+-      printf(_("Status: Cleaning\n"));
++      printf("%s", _("Status: Cleaning\n"));
+       break;
+     case 8:
+-      printf(_("Status: Factory shipment\n"));
++      printf("%s", _("Status: Factory shipment\n"));
+       break;
+     case 0xa:
+-      printf(_("Status: Shutting down\n"));
++      printf("%s", _("Status: Shutting down\n"));
+       break;
+     default:
+       printf(_("Status: Unknown (%d)\n"), param);
+@@ -1146,67 +1146,67 @@ print_error(int param)
+   switch (param)
+     {
+     case 0:
+-      printf(_("Error: Fatal Error\n"));
++      printf("%s", _("Error: Fatal Error\n"));
+       break;
+     case 1:
+-      printf(_("Error: Other interface is selected\n"));
++      printf("%s", _("Error: Other interface is selected\n"));
+       break;
+     case 2:
+-      printf(_("Error: Cover Open\n"));
++      printf("%s", _("Error: Cover Open\n"));
+       break;
+     case 4:
+-      printf(_("Error: Paper jam\n"));
++      printf("%s", _("Error: Paper jam\n"));
+       break;
+     case 5:
+-      printf(_("Error: Ink out\n"));
++      printf("%s", _("Error: Ink out\n"));
+       break;
+     case 6:
+-      printf(_("Error: Paper out\n"));
++      printf("%s", _("Error: Paper out\n"));
+       break;
+     case 0xc:
+-      printf(_("Error: Miscellaneous paper error\n"));
++      printf("%s", _("Error: Miscellaneous paper error\n"));
+       break;
+     case 0x10:
+-      printf(_("Error: Maintenance cartridge overflow\n"));
++      printf("%s", _("Error: Maintenance cartridge overflow\n"));
+       break;
+     case 0x11:
+-      printf(_("Error: Wait return from the tear-off position\n"));
++      printf("%s", _("Error: Wait return from the tear-off position\n"));
+       break;
+     case 0x12:
+-      printf(_("Error: Double feed error\n"));
++      printf("%s", _("Error: Double feed error\n"));
+       break;
+     case 0x1a:
+-      printf(_("Error: Ink cartridge lever released\n\n"));
++      printf("%s", _("Error: Ink cartridge lever released\n\n"));
+       break;
+     case 0x1c:
+-      printf(_("Error: Unrecoverable cutter error\n"));
++      printf("%s", _("Error: Unrecoverable cutter error\n"));
+       break;
+     case 0x1d:
+-      printf(_("Error: Recoverable cutter jam\n"));
++      printf("%s", _("Error: Recoverable cutter jam\n"));
+       break;
+     case 0x22:
+-      printf(_("Error: No maintenance cartridge present\n"));
++      printf("%s", _("Error: No maintenance cartridge present\n"));
+       break;
+     case 0x25:
+-      printf(_("Error: Rear cover open\n"));
++      printf("%s", _("Error: Rear cover open\n"));
+       break;
+     case 0x29:
+-      printf(_("Error: CD Tray Out\n"));
++      printf("%s", _("Error: CD Tray Out\n"));
+       break;
+     case 0x2a:
+-      printf(_("Error: Card loading error\n"));
++      printf("%s", _("Error: Card loading error\n"));
+       break;
+     case 0x2b:
+-      printf(_("Error: Tray cover open\n"));
++      printf("%s", _("Error: Tray cover open\n"));
+       break;
+     case 0x36:
+-      printf(_("Error: Maintenance cartridge cover open\n"));
++      printf("%s", _("Error: Maintenance cartridge cover open\n"));
+       break;
+     case 0x37:
+-      printf(_("Error: Front cover open\n"));
++      printf("%s", _("Error: Front cover open\n"));
+       break;
+     case 0x41:
+-      printf(_("Error: Maintenance request\n"));
++      printf("%s", _("Error: Maintenance request\n"));
+       break;
+     default:
+       printf(_("Error: Unknown (%d)\n"), param);
+@@ -1240,10 +1240,10 @@ print_warning(int param, const stp_strin
+       switch (param)
+ 	{
+ 	case 0x20:
+-	  printf(_("Warning: Maintenance cartridge near full\n"));
++	  printf("%s", _("Warning: Maintenance cartridge near full\n"));
+ 	  break;
+ 	case 0x21:
+-	  printf(_("Warning: Maintenance request pending\n"));
++	  printf("%s", _("Warning: Maintenance request pending\n"));
+ 	  break;
+ 	default:
+ 	  printf(_("Warning: Unknown (%d)\n"), param);
+@@ -1258,7 +1258,7 @@ print_self_printing_state(int param)
+   switch (param)
+     {
+     case 0:
+-      printf(_("Printing nozzle self-test\n"));
++      printf("%s", _("Printing nozzle self-test\n"));
+       break;
+     default:
+       break;
+@@ -1360,7 +1360,7 @@ do_old_status(status_cmd_t cmd, const ch
+ 	    }
+ 
+ 	  if (cmd == CMD_STATUS)
+-	    printf(_("Ink Levels:\n"));
++	    printf("%s", _("Ink Levels:\n"));
+ 	  printf("%20s    %20s\n", _("Ink color"), _("Percent remaining"));
+ 	  print_old_ink_levels(ind, color_list);
+ 	  stp_string_list_destroy(color_list);
+@@ -1404,7 +1404,7 @@ do_new_status(status_cmd_t cmd, char *bu
+ 	  size_t count = (total_param_count - 1) / param;
+ 	  ind = buf + i + 3;
+ 	  if (cmd == CMD_STATUS)
+-	    printf(_("Ink Levels:\n"));
++	    printf("%s", _("Ink Levels:\n"));
+ 	  printf("%20s    %20s\n", _("Ink color"), _("Percent remaining"));
+ 	  for (j = 0; j < count; j++)
+ 	    {
+@@ -1460,7 +1460,7 @@ do_new_status(status_cmd_t cmd, char *bu
+ 	    case 0x19:	/* Job name */
+ 	      if (total_param_count > 5)
+ 		{
+-		  printf(_("Job Name: "));
++		  printf("%s", _("Job Name: "));
+ 		  for (j = 5; j < total_param_count; j++)
+ 		    putchar(buf[i + j + 2]);
+ 		  putchar('\n');
+@@ -1822,7 +1822,7 @@ do_extended_ink_info(void)
+ 
+   if (!raw_device)
+     {
+-      fprintf(stderr,_("Obtaining extended ink information requires using a raw device.\n"));
++      fprintf(stderr,"%s", _("Obtaining extended ink information requires using a raw device.\n"));
+       exit(1);
+     }
+ 
+@@ -1849,7 +1849,7 @@ do_reset_ink_levels(void)
+ 
+   if (!raw_device)
+     {
+-      fprintf(stderr,_("Resetting ink levels requires using a raw device.\n"));
++      fprintf(stderr,"%s", _("Resetting ink levels requires using a raw device.\n"));
+       exit(1);
+     }
+ 
+@@ -1897,7 +1897,7 @@ do_identify(void)
+   if (!raw_device)
+     {
+       fprintf(stderr,
+-	      _("Printer identification requires using a raw device.\n"));
++	      "%s", _("Printer identification requires using a raw device.\n"));
+       exit(1);
+     }
+   if (printer_model)
+@@ -1915,7 +1915,7 @@ do_identify(void)
+     printf("EPSON %s\n", printer_model);
+   else
+     {
+-      fprintf(stderr, _("Cannot identify printer model.\n"));
++      fprintf(stderr, "%s", _("Cannot identify printer model.\n"));
+       exit(1);
+     }
+ }
+@@ -1937,7 +1937,7 @@ do_head_clean(void)
+     (void) get_printer(1, 0);
+   initialize_print_cmd(1);
+   do_remote_cmd("CH", 2, 0, 0);
+-  printf(_("Cleaning heads...\n"));
++  printf("%s", _("Cleaning heads...\n"));
+   exit(do_print_cmd());
+ }
+ 
+@@ -1954,7 +1954,7 @@ do_nozzle_check(void)
+   do_remote_cmd_only("NC", 2, 0, 0x10);
+   do_remote_cmd_only("NC", 2, 0, 0);
+   end_remote_sequence();
+-  printf(_("Running nozzle check, please ensure paper is in the printer.\n"));
++  printf("%s", _("Running nozzle check, please ensure paper is in the printer.\n"));
+   exit(do_print_cmd());
+ }
+ 
+@@ -2037,7 +2037,7 @@ do_align_help(int passes, int choices)
+ static void
+ printer_error(void)
+ {
+-  printf(_("Unable to send command to the printer, exiting.\n"));
++  printf("%s", _("Unable to send command to the printer, exiting.\n"));
+   exit(1);
+ }
+ 
+@@ -2051,10 +2051,10 @@ do_final_alignment(void)
+       retry_count++;
+       if (retry_count > 10)
+ 	{
+-	  printf(_("Exiting\n"));
++	  printf("%s", _("Exiting\n"));
+ 	  exit(1);
+ 	}
+-      printf(_("Please inspect the final output very carefully to ensure that your\n"
++      printf("%s", _("Please inspect the final output very carefully to ensure that your\n"
+ 	       "printer is in proper alignment. You may now:\n"
+ 	       "  (s)ave the results in the printer,\n"
+ 	       "  (q)uit without saving the results, or\n"
+@@ -2069,21 +2069,21 @@ do_final_alignment(void)
+ 	{
+ 	case 'q':
+ 	case 'Q':
+-	  printf(_("Please confirm by typing 'q' again that you wish to quit without saving:\n"));
++	  printf("%s", _("Please confirm by typing 'q' again that you wish to quit without saving:\n"));
+ 	  fflush(stdout);
+ 	  inbuf = do_get_input (_("> "));
+ 	  if (!inbuf)
+ 	    continue;
+ 	  if (inbuf[0] == 'q' || inbuf[0] == 'Q')
+ 	    {
+-	      printf(_("OK, your printer is aligned, but the alignment has not been saved.\n"
++	      printf("%s", _("OK, your printer is aligned, but the alignment has not been saved.\n"
+ 		       "If you wish to save the alignment, you must repeat this process.\n"));
+ 	      return 1;
+ 	    }
+ 	  break;
+ 	case 'r':
+ 	case 'R':
+-	  printf(_("Please confirm by typing 'r' again that you wish to repeat the\n"
++	  printf("%s", _("Please confirm by typing 'r' again that you wish to repeat the\n"
+ 		   "alignment process:\n"));
+ 	  fflush(stdout);
+ 	  inbuf = do_get_input(_("> "));
+@@ -2091,13 +2091,13 @@ do_final_alignment(void)
+ 	    continue;
+ 	  if (inbuf[0] == 'r' || inbuf[0] == 'R')
+ 	    {
+-	      printf(_("Repeating the alignment process.\n"));
++	      printf("%s", _("Repeating the alignment process.\n"));
+ 	      return 0;
+ 	    }
+ 	  break;
+ 	case 's':
+ 	case 'S':
+-	  printf(_("This will permanently alter the configuration of your printer.\n"
++	  printf("%s", _("This will permanently alter the configuration of your printer.\n"
+ 		   "WARNING: this procedure has not been approved by Seiko Epson, and\n"
+ 		   "it may damage your printer. Proceed?\n"
+ 		   "Please confirm by typing 's' again that you wish to save the settings\n"
+@@ -2109,27 +2109,27 @@ do_final_alignment(void)
+ 	    continue;
+ 	  if (inbuf[0] == 's' || inbuf[0] == 'S')
+ 	    {
+-	      printf(_("About to save settings..."));
++	      printf("%s", _("About to save settings..."));
+ 	      fflush(stdout);
+ 	      initialize_print_cmd(1);
+ 	      do_remote_cmd("SV", 0);
+ 	      if (do_print_cmd())
+ 		{
+-		  printf(_("failed!\n"));
+-		  printf(_("Your settings were not saved successfully.  You must repeat the\n"
++		  printf("%s", _("failed!\n"));
++		  printf("%s", _("Your settings were not saved successfully.  You must repeat the\n"
+ 			   "alignment procedure.\n"));
+ 		  exit(1);
+ 		}
+-	      printf(_("succeeded!\n"));
+-	      printf(_("Your alignment settings have been saved to the printer.\n"));
++	      printf("%s", _("succeeded!\n"));
++	      printf("%s", _("Your alignment settings have been saved to the printer.\n"));
+ 	      return 1;
+ 	    }
+ 	  break;
+ 	default:
+-	  printf(_("Unrecognized command.\n"));
++	  printf("%s", _("Unrecognized command.\n"));
+ 	  continue;
+ 	}
+-      printf(_("Final command was not confirmed.\n"));
++      printf("%s", _("Final command was not confirmed.\n"));
+     }
+ }
+ 
+@@ -2210,7 +2210,7 @@ do_align(void)
+ 	do_remote_cmd("DT", 3, 0, curpass, 0);
+       if (do_print_cmd())
+ 	printer_error();
+-      printf(_("Please inspect the print, and choose the best pair of lines in each pattern.\n"
++      printf("%s", _("Please inspect the print, and choose the best pair of lines in each pattern.\n"
+ 	       "Type a pair number, '?' for help, or 'r' to repeat the procedure.\n"));
+       initialize_print_cmd(1);
+       for (curpass = 1; curpass <= alignment_passes; curpass ++)
+@@ -2220,7 +2220,7 @@ do_align(void)
+ 	  retry_count++;
+ 	  if (retry_count > 10)
+ 	    {
+-	      printf(_("Exiting\n"));
++	      printf("%s", _("Exiting\n"));
+ 	      return;
+ 	    }
+ 	  printf(_("Pass #%d"), curpass);
+@@ -2231,7 +2231,7 @@ do_align(void)
+ 	    {
+ 	    case 'r':
+ 	    case 'R':
+-	      printf(_("Please insert a fresh sheet of paper.\n"));
++	      printf("%s", _("Please insert a fresh sheet of paper.\n"));
+ 	      fflush(stdout);
+ 	      initialize_print_cmd(1);
+ 	      (void) do_get_input(_("Press enter to continue > "));
+@@ -2250,12 +2250,12 @@ do_align(void)
+ 	  answer = strtol(inbuf, &endptr, 10);
+ 	  if (errno == ERANGE)
+ 	    {
+-	      printf(_("Number out of range!\n"));
++	      printf("%s", _("Number out of range!\n"));
+ 	      goto reread;
+ 	    }
+ 	  if (endptr == inbuf)
+ 	    {
+-	      printf(_("I cannot understand what you typed!\n"));
++	      printf("%s", _("I cannot understand what you typed!\n"));
+ 	      fflush(stdout);
+ 	      goto reread;
+ 	    }
+@@ -2268,15 +2268,15 @@ do_align(void)
+ 	    }
+ 	  do_remote_cmd("DA", 4, 0, curpass - 1, 0, answer);
+ 	}
+-      printf(_("Attempting to set alignment..."));
++      printf("%s", _("Attempting to set alignment..."));
+       if (do_print_cmd())
+ 	printer_error();
+-      printf(_("succeeded.\n"));
++      printf("%s", _("succeeded.\n"));
+       printf(_("Please verify that the alignment is correct.  After the alignment pattern\n"
+ 	       "is printed again, please ensure that the best pattern for each line is\n"
+ 	       "pattern %d.  If it is not, you should repeat the process to get the best\n"
+ 	       "quality printing.\n"), (alignment_choices + 1) / 2);
+-      printf(_("Please insert a fresh sheet of paper.\n"));
++      printf("%s", _("Please insert a fresh sheet of paper.\n"));
+       (void) do_get_input(_("Press enter to continue > "));
+       initialize_print_cmd(1);
+       for (curpass = 0; curpass < alignment_passes; curpass++)
+@@ -2318,7 +2318,7 @@ do_get_input (const char *prompt)
+ 	fgets_status = fgets (input, BUFSIZ, stdin);
+ 	if (fgets_status == NULL)
+ 	{
+-		fprintf (stdout, _("Error in input\n"));
++		fprintf (stdout, "%s", _("Error in input\n"));
+ 		return (NULL);
+ 	}
+ 	else if (strlen (input) == 1 && input[0] == '\n')

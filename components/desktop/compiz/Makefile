@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz
 COMPONENT_VERSION=	0.8.18
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		desktop/compiz
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	OpenGL compositing window manager

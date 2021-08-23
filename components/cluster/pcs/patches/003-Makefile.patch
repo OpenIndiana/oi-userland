@@ -1,11 +1,7 @@
---- pcs-0.9.168/Makefile.~1~	2019-08-02 08:12:11.000000000 +0000
-+++ pcs-0.9.168/Makefile	2019-08-19 13:21:24.635540714 +0000
-@@ -109,10 +109,10 @@
- 	Overpass-Bold.ttf;Overpass:style=Bold
- 
- 
--install: install_bundled_libs
-+install: install_bundled_libs install_pcsd
+--- pcs-0.10.1/Makefile-orig	Fri Nov 23 06:57:53 2018
++++ pcs-0.10.1/Makefile	Sun Feb 21 08:51:28 2021
+@@ -208,7 +208,7 @@
+ install_python_part: install_bundled_libs
  	# make Python interpreter execution sane (via -Es flags)
  	printf "[build]\nexecutable = $(PYTHON) -Es\n" > setup.cfg
 -	$(PYTHON) setup.py install --root=$(or ${DESTDIR}, /) ${EXTRA_SETUP_OPTS}
@@ -13,44 +9,13 @@
  	# fix excessive script interpreting "executable" quoting with old setuptools:
  	# https://github.com/pypa/setuptools/issues/188
  	# https://bugzilla.redhat.com/1353934
-@@ -148,9 +148,9 @@
- 
- install_pcsd:
- ifeq ($(BUILD_GEMS),true)
--	make -C pcsd build_gems
-+	DESTDIR= make -C pcsd build_gems
+@@ -244,7 +244,8 @@
  endif
--	mkdir -p ${DESTDIR}/var/log/pcsd
-+	DESTDIR= mkdir -p ${DESTDIR}/var/log/pcsd
- ifeq ($(IS_DEBIAN),true)
- 	mkdir -p ${DESTDIR}/usr/share/
- 	cp -r pcsd ${DESTDIR}/usr/share/
-@@ -172,23 +172,23 @@
-   endif
- else
- 	mkdir -p ${DESTDIR}${PCSD_PARENT_DIR}/
--	cp -r pcsd ${DESTDIR}${PCSD_PARENT_DIR}/
-+	cp -L -r pcsd ${DESTDIR}${PCSD_PARENT_DIR}/
- 	install -m 644 -D pcsd/pcsd.conf ${DESTDIR}/etc/sysconfig/pcsd
+ 	install -d -m 700 ${DESTDIR}/var/log/pcsd
+ 	mkdir -p ${DEST_LIB}
+-	cp -r pcsd ${DEST_LIB}
++	# Copy files, not symlinks to files
++	cp -L -r pcsd ${DEST_LIB}
+ 	install -m 644 -D pcsd/pcsd.conf ${DEST_CONF}/pcsd
  	install -d ${DESTDIR}/etc/pam.d
  	install -m 644 pcsd/pcsd.pam ${DESTDIR}/etc/pam.d/pcsd
-   ifeq ($(IS_SYSTEMCTL),true)
--	install -d ${DESTDIR}/${systemddir}/system/
--	install -m 644 pcsd/pcsd.service ${DESTDIR}/${systemddir}/system/
-+	install -d ${DESTDIR}${systemddir}/system/
-+	install -m 644 pcsd/pcsd.service ${DESTDIR}${systemddir}/system/
- # ${DESTDIR}${PCSD_PARENT_DIR}/pcsd/pcsd holds the selinux context
- 	install -m 755 pcsd/pcsd.service-runner ${DESTDIR}${PCSD_PARENT_DIR}/pcsd/pcsd
- 	rm ${DESTDIR}${PCSD_PARENT_DIR}/pcsd/pcsd.service-runner
-   else
--	install -m 755 -D pcsd/pcsd ${DESTDIR}/${initdir}/pcsd
-+	install -m 755 -D pcsd/pcsd ${DESTDIR}${initdir}/pcsd
-   endif
- endif
- 	install -m 700 -d ${DESTDIR}/var/lib/pcsd
- 	install -m 644 -D pcsd/pcsd.logrotate ${DESTDIR}/etc/logrotate.d/pcsd
--	install -m644 -D pcsd/pcsd.8 ${DESTDIR}/${MANDIR}/man8/pcsd.8
-+	install -m644 -D pcsd/pcsd.8 ${DESTDIR}${MANDIR}/man8/pcsd.8
- 	$(foreach font,$(pcsd_fonts),\
- 		$(eval font_file = $(word 1,$(subst ;, ,$(font)))) \
- 		$(eval font_def = $(word 2,$(subst ;, ,$(font)))) \

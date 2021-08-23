@@ -28,28 +28,34 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		py
-COMPONENT_VERSION=	1.4.31
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	1.8.2
+COMPONENT_FMRI=		library/python/py
+COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_SUMMARY=	py - library with cross-python path, ini-parsing, io, code, log facilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a6501963c725fc2554dabfece8ae9a8fb5e149c0ac0a42fd2b02c5c1c57fc114
+    sha256:f3b3a4c36512a4c4f024041ab51866f11761cc169670204b235f6b20523d4e6b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://bitbucket.org/hpk42/py
-COMPONENT_BUGDB=	python-mod/py
+COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS=		2.7 3.5
+PYTHON_VERSIONS=	2.7 3.5 3.7 3.9
 
 
-# Tests require the pytest package to be installed.
+# Tests require the pytest package to be installed: circular dependency.
+TEST_TARGET=  $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_TEST_ENV += LC_ALL=en_US.UTF-8
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/testing
-COMPONENT_TEST_CMD =	/usr/bin/py.test
-COMPONENT_TEST_ARGS =	test_iniconfig.py
+COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
+COMPONENT_TEST_ARGS =
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39

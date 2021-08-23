@@ -1,0 +1,16 @@
+In some situations Emacs' default Pure Storage is not big enough. This leads to warnings like
+Warning Warning!!!  Pure space overflow    !!!Warning Warning
+
+The Lisp Manual at https://www.gnu.org/software/emacs/manual/html_node/elisp/Pure-Storage.html
+recommends to increase the pure storage size during compilation time which is what we do with this patch.
+--- emacs-27.2/src/puresize.h.orig	2021-01-28 18:52:20.000000000 +0000
++++ emacs-27.2/src/puresize.h	2021-03-26 20:38:22.128513814 +0000
+@@ -39,7 +39,7 @@
+    amount of storage.  This is a lot more update-robust that defining
+    BASE_PURESIZE or even PURESIZE directly.  */
+ #ifndef SYSTEM_PURESIZE_EXTRA
+-#define SYSTEM_PURESIZE_EXTRA 0
++#define SYSTEM_PURESIZE_EXTRA 1000000
+ #endif
+ 
+ #ifndef SITELOAD_PURESIZE_EXTRA

@@ -1,0 +1,14 @@
+The test_readline stalls for an unknown reason on OpenIndiana as of March 7th, 2021
+with readline-6.3. So we skip this test for now.
+
+--- Python-3.7.7/Lib/test/test_readline.py.orig	2020-03-10 07:11:12.000000000 +0000
++++ Python-3.7.7/Lib/test/test_readline.py	2021-03-07 14:24:39.840324562 +0000
+@@ -33,6 +33,8 @@
+             print(f"readline library version: {readline._READLINE_LIBRARY_VERSION!r}")
+         print(f"use libedit emulation? {is_editline}")
+ 
++if sys.platform.startswith("sunos"):
++    raise unittest.SkipTest("test doesn't work well on OpenIndiana with readline-6.3")
+ 
+ @unittest.skipUnless(hasattr(readline, "clear_history"),
+                      "The history update test cannot be run because the "

@@ -1,0 +1,102 @@
+--- mongodb-src-r4.4.6/SConstruct.~1~	2021-05-03 09:41:41.000000000 +0000
++++ mongodb-src-r4.4.6/SConstruct	2021-05-21 08:44:04.285087409 +0000
+@@ -359,6 +359,7 @@
+     ('icu', 'ICU'),
+     ('intel_decimal128', 'intel decimal128'),
+     ('kms-message',),
++    ('mozjs','mozjs 60'),
+     ('pcre',),
+     ('snappy',),
+     ('stemmer',),
+@@ -415,6 +416,11 @@
+     nargs=0,
+ )
+ 
++add_option('disable-ggdb',
++    help="Don't add -ggdb to compiler command line",
++    nargs=0,
++)
++
+ add_option('variables-help',
+     help='Print the help text for SCons variables',
+     nargs=0,
+@@ -2059,7 +2065,7 @@
+     # define _GNU_SOURCE (because libstdc++ requires it), it seems
+     # prudent to explicitly add that too, so that C language checks
+     # see a consistent set of definitions.
+-    if env.TargetOSIs('linux'):
++    if env.TargetOSIs('linux') or env.TargetOSIs('solaris'):
+         env.AppendUnique(
+             CPPDEFINES=[
+                 ('_XOPEN_SOURCE', 700),
+@@ -2079,7 +2085,7 @@
+         env['SHOBJSUFFIX'] = '.dyn${OBJSUFFIX}'
+ 
+     # Everything on OS X is position independent by default.
+-    if not env.TargetOSIs('darwin'):
++    if not (env.TargetOSIs('darwin') or env.TargetOSIs('solaris')):
+         if get_option('runtime-hardening') == "on":
+             # If runtime hardening is requested, then build anything
+             # destined for an executable with the necessary flags for PIE.
+@@ -2092,16 +2098,20 @@
+     env.Append( CCFLAGS=["-fno-omit-frame-pointer",
+                          "-fno-strict-aliasing",
+                          "-fasynchronous-unwind-tables",
+-                         "-ggdb" if not env.TargetOSIs('emscripten') else "-g",
+                          "-pthread",
+                          "-Wall",
+                          "-Wsign-compare",
+                          "-Wno-unknown-pragmas",
+                          "-Winvalid-pch"] )
+     # env.Append( " -Wconversion" ) TODO: this doesn't really work yet
++    if env.TargetOSIs('solaris'):
++        if not has_option("disable-ggdb"):
++            env.Append( CCFLAGS=["-ggdb"] )
++            env.Append( CCFLAGS=["-Wno-error=builtin-macro-redefined"] )
++
+     if env.TargetOSIs('linux', 'darwin', 'solaris'):
+         if not has_option("disable-warnings-as-errors"):
+-            env.Append( CCFLAGS=["-Werror"] )
++            env.Append( CCFLAGS=["-Werror=nix"] )
+ 
+     env.Append( CXXFLAGS=["-Woverloaded-virtual"] )
+     if env.ToolchainIs('clang'):
+@@ -2413,7 +2423,7 @@
+         # For GCC, we don't need anything since bad flags are already errors, but
+         # adding -Werror won't hurt. For clang, bad flags are only warnings, so we need -Werror
+         # to make them real errors.
+-        cloned.Append(CCFLAGS=['-Werror'])
++#        cloned.Append(CCFLAGS=['-Werror'])
+         conf = Configure(cloned, help=False, custom_tests = {
+                 'CheckFlag' : lambda ctx : CheckFlagTest(ctx, tool, extension, flag)
+         })
+@@ -2562,13 +2572,13 @@
+             return ret
+ 
+         myenvClone = myenv.Clone()
+-        myenvClone.Append( CCFLAGS=['-Werror'] )
++#        myenvClone.Append( CCFLAGS=['-Werror'] )
+         myenvClone.Append( CXXFLAGS=["-Wnon-virtual-dtor"] )
+         conf = Configure(myenvClone, help=False, custom_tests = {
+             'CheckNonVirtualDtor' : CheckNonVirtualDtor,
+         })
+-        if conf.CheckNonVirtualDtor():
+-            myenv.Append( CXXFLAGS=["-Wnon-virtual-dtor"] )
++#        if conf.CheckNonVirtualDtor():
++#            myenv.Append( CXXFLAGS=["-Wnon-virtual-dtor"] )
+         conf.Finish()
+ 
+         # As of XCode 9, this flag must be present (it is not enabled
+@@ -3556,8 +3566,11 @@
+     if use_system_version_of_library("stemmer"):
+         conf.FindSysLibDep("stemmer", ["stemmer"])
+ 
++    if use_system_version_of_library("mozjs"):
++        conf.FindSysLibDep("mozjs", ["mozjs-60"])
++
+     if use_system_version_of_library("yaml"):
+-        conf.FindSysLibDep("yaml", ["yaml-cpp"])
++        conf.FindSysLibDep("yaml", ["yaml"])
+ 
+     if use_system_version_of_library("fmt"):
+         conf.FindSysLibDep("fmt", ["fmt"])

@@ -20,26 +20,22 @@
 #
 # Copyright (c) 2015-2017, Aurelien Larcher 
 #
+BUILD_BITS=				32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms2
-COMPONENT_VERSION=      2.9
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      2.12
 COMPONENT_FMRI=         library/lcms2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=      The Little Color Management System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.littlecms.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:48c6fdf98396fa245ed86e622028caf49b96fa22f3e5734f853f806fbc8e7d20
-COMPONENT_ARCHIVE_URL=  \
-  http://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:18663985e864100455ac3e507625c438c3710354d85e5cbb7cd4043e11fe10f5
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS             +=           $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
@@ -79,12 +75,8 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "/^XXX_REMOVE_XXX$$/d" '
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
+# Auto-generated dependencies
+#REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += system/library

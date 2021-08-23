@@ -1,0 +1,14 @@
+On Solaris pyconfig.h is delivered in the normal python header directory.
+As this is Solaris-specific, it is not suitable for upstream.
+
+--- Python-3.9.0/Lib/distutils/sysconfig.py
++++ Python-3.9.0/Lib/distutils/sysconfig.py
+@@ -251,7 +251,7 @@ def get_config_h_filename():
+         else:
+             inc_dir = _sys_home or project_base
+     else:
+-        inc_dir = get_python_inc(plat_specific=1)
++        inc_dir = get_python_inc(plat_specific=0)
+ 
+     return os.path.join(inc_dir, 'pyconfig.h')
+ 

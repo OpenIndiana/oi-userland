@@ -2,14 +2,14 @@ $NetBSD: patch-Makefile.in,v 1.1 2018/01/15 08:51:55 adam Exp $
 
 Fix dynamic linking.
 
---- a/Makefile.in.orig	2018-01-15 08:41:01.000000000 +0000
-+++ b/Makefile.in
-@@ -681,7 +681,7 @@ include_HEADERS = jv.h jq.h
+--- jq-1.6/Makefile.in	2018-11-02 15:58:53.000000000 +0000
++++ jq-1.6/Makefile.in	2020-10-27 16:12:49.236875173 +0000
+@@ -725,7 +725,7 @@ include_HEADERS = src/jv.h src/jq.h
  @ENABLE_ERROR_INJECTION_TRUE@libinject_errors_la_LDFLAGS = -module
  generate_ver = ver="`{ $(srcdir)/scripts/version || echo '$(VERSION)' ; } | sed 's/.*/\#define JQ_VERSION \"&\"/'`"
- jq_SOURCES = main.c version.h
--jq_LDFLAGS = -static-libtool-libs $(am__append_3)
-+jq_LDFLAGS = @ENABLE_ALL_STATIC_TRUE@-static-libtool-libs $(am__append_3)
- jq_LDADD = libjq.la -lm
+ jq_SOURCES = src/main.c src/version.h
+-jq_LDFLAGS = -static-libtool-libs $(am__append_7)
++jq_LDFLAGS = @ENABLE_ALL_STATIC_TRUE@-static-libtool-libs $(am__append_7)
+ jq_LDADD = libjq.la -lm $(am__append_6)
  
  ### Tests (make check)

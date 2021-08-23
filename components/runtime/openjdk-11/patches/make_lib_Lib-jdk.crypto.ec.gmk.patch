@@ -1,0 +1,20 @@
+$NetBSD$
+
+Support SunOS/gcc.
+
+diff -wpruN '--exclude=*.orig' a~/make/lib/Lib-jdk.crypto.ec.gmk a/make/lib/Lib-jdk.crypto.ec.gmk
+--- a~/make/lib/Lib-jdk.crypto.ec.gmk	1970-01-01 00:00:00
++++ a/make/lib/Lib-jdk.crypto.ec.gmk	1970-01-01 00:00:00
+@@ -38,6 +38,12 @@ ifeq ($(ENABLE_INTREE_EC), true)
+     BUILD_LIBSUNEC_CXXFLAGS_JDKLIB := $(CXXFLAGS_JDKLIB)
+   endif
+ 
++  ifeq ($(OPENJDK_TARGET_OS), solaris)
++    ifeq ($(TOOLCHAIN_TYPE), gcc)
++      BUILD_LIBSUNEC_FLAGS += -D__EXTENSIONS__
++    endif
++  endif
++
+   $(eval $(call SetupJdkLibrary, BUILD_LIBSUNEC, \
+       NAME := sunec, \
+       TOOLCHAIN := TOOLCHAIN_LINK_CXX, \

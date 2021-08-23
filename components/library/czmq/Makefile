@@ -19,15 +19,13 @@ BUILD_BITS=64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= czmq
-COMPONENT_VERSION= 4.2.0
+COMPONENT_VERSION= 4.2.1
 COMPONENT_SUMMARY= C bindings for 0MQ
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:cfab29c2b3cc8a845749758a51e1dd5f5160c1ef57e2a41ea96e4c2dcc8feceb
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/zeromq/czmq/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL= http://zeromq.org/
+COMPONENT_ARCHIVE_HASH=	sha256:5d720a204c2a58645d6f7643af15d563a712dad98c9d32c1ed913377daa6ac39
+COMPONENT_ARCHIVE_URL=	https://github.com/zeromq/czmq/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://zeromq.org/
 COMPONENT_FMRI= library/c++/czmq
 # Two licenses in tarball, LGPLv3+ is referenced in their spec-file
 COMPONENT_LICENSE_FILE= LICENSE

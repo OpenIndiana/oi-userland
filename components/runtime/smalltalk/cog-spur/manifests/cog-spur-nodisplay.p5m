@@ -1,0 +1,48 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2020,2021 David Stes
+#
+
+
+set name=pkg.fmri value=pkg:/runtime/smalltalk/cog-spur-nodisplay@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license squeak.license license='MIT'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file inisqueak5c path=usr/bin/inisqueak5c
+file squeak.ips path=usr/bin/squeak5c
+file usr/bin/ckformat path=usr/bin/ckformat5c
+file path=usr/lib/squeak/$(PLUGIN_REV)/squeak mode=0555
+file path=usr/lib/$(MACH64)/squeak/$(PLUGIN_REV)/squeak mode=0555
+
+file usr/doc/squeak/COPYING path=usr/share/doc/squeak-cog-$(IPS_COMPONENT_VERSION)/COPYING
+file usr/doc/squeak/COPYRIGHT path=usr/share/doc/squeak-cog-$(IPS_COMPONENT_VERSION)/COPYRIGHT
+file usr/doc/squeak/LICENSE path=usr/share/doc/squeak-cog-$(IPS_COMPONENT_VERSION)/LICENSE
+file usr/share/man/man1/squeak.1 path=usr/share/man/man1/squeak5c.1
+
+# use hardlink (squeak wrapper script may have issue with symlink)
+
+hardlink path=usr/bin/squeak target=squeak5c mediator=squeak \
+    mediator-implementation=cog-spur mediator-version=5
+hardlink path=usr/bin/inisqueak target=inisqueak5c mediator=squeak \
+    mediator-implementation=cog-spur mediator-version=5
+hardlink path=usr/bin/ckformat target=ckformat5c mediator=squeak \
+    mediator-implementation=cog-spur mediator-version=5
+hardlink path=usr/share/man/man1/squeak.1 target=squeak5c.1 mediator=squeak \
+    mediator-implementation=cog-spur mediator-version=5
+

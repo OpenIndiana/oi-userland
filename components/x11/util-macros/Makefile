@@ -13,31 +13,29 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           util-macros
-COMPONENT_VERSION=        1.19.2
-COMPONENT_FMRI=           developer/build/autoconf/xorg-macros
-COMPONENT_SUMMARY=        GNU autoconf macros for X.Org software packages
-COMPONENT_PROJECT_URL = https://x.org
-COMPONENT_CLASSIFICATION= Development/X11
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=         util-macros
+COMPONENT_VERSION=      1.19.3
+COMPONENT_FMRI=         developer/build/autoconf/xorg-macros
+COMPONENT_SUMMARY=      GNU autoconf macros for X.Org software packages
+COMPONENT_PROJECT_URL=  https://x.org
+COMPONENT_CLASSIFICATION=Development/X11
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9225c45c3de60faf971979a55a5536f3562baa4b6f02246c23e98ac0c09a75b7
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.x.org/pub/individual/util/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        MIT License
-COMPONENT_LICENSE_FILE=   xorg-macros.license
+	sha256:624bb6c3a4613d18114a7e3849a3d70f2d7af9dc6eabeaba98060d87e3aef35b
+COMPONENT_ARCHIVE_URL=  \
+	http://ftp.x.org/pub/individual/util/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      MIT License
+COMPONENT_LICENSE_FILE= xorg-macros.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && autoreconf -f )
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
-build: $(BUILD_32)
 
-install: $(INSTALL_32)

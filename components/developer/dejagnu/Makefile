@@ -24,26 +24,22 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
-PREFERRED_BITS=64
-
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			dejagnu
-COMPONENT_VERSION=		1.6.2
+COMPONENT_VERSION=		1.6.3
 COMPONENT_FMRI=			developer/test/dejagnu
 COMPONENT_SUMMARY=		DejaGnu - a framework for testing other programs
 COMPONENT_CLASSIFICATION=	Development/GNU
 COMPONENT_PROJECT_URL=		https://www.gnu.org/software/dejagnu/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:0d0671e1b45189c5fc8ade4b3b01635fb9eeab45cf54f57db23e4c4c1a17d261
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:87daefacd7958b4a69f88c6856dbd1634261963c414079d0c371f589cd66a2e3
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_ENV +=	PATH="$(PATH.gnu)"
 COMPONENT_TEST_TRANSFORMS += \
@@ -53,13 +49,8 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
+# Manually added dependencies
+REQUIRED_PACKAGES += shell/expect
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += shell/expect
-REQUIRED_PACKAGES += SUNWcs
+

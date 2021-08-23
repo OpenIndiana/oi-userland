@@ -1,0 +1,39 @@
+From Thunderbird 78 there are more NSS tools built and they require to
+remove some old workarounds.
+
+To be investigated and sent to NSS upstream.
+
+--- thunderbird-78.0/security/nss/cmd/btoa/btoa.c
++++ thunderbird-78.0/security/nss/cmd/btoa/btoa.c
+@@ -7,13 +7,11 @@
+ #include "nssb64.h"
+ #include <errno.h>
+ 
+-#if defined(XP_WIN) || (defined(__sun) && !defined(SVR4))
+-#if !defined(WIN32)
++#if defined(XP_WIN) && !defined(WIN32)
+ extern int fread(char *, size_t, size_t, FILE *);
+ extern int fwrite(char *, size_t, size_t, FILE *);
+ extern int fprintf(FILE *, char *, ...);
+ #endif
+-#endif
+ 
+ #if defined(WIN32)
+ #include "fcntl.h"
+--- thunderbird-78.0/security/nss/cmd/atob/atob.c
++++ thunderbird-78.0/security/nss/cmd/atob/atob.c
+@@ -7,13 +7,11 @@
+ #include "nssb64.h"
+ #include <errno.h>
+ 
+-#if defined(XP_WIN) || (defined(__sun) && !defined(SVR4))
+-#if !defined(WIN32)
++#if defined(XP_WIN) && !defined(WIN32)
+ extern int fread(char *, size_t, size_t, FILE *);
+ extern int fwrite(char *, size_t, size_t, FILE *);
+ extern int fprintf(FILE *, char *, ...);
+ #endif
+-#endif
+ 
+ #if defined(WIN32)
+ #include "fcntl.h"

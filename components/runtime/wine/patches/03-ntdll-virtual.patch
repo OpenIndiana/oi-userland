@@ -1,0 +1,39 @@
+diff --git a/dlls/ntdll/virtual.c b/dlls/ntdll/virtual.c
+index d15b49f6fd..14a58d67cb 100644
+--- a/dlls/ntdll/virtual.c
++++ b/dlls/ntdll/virtual.c
+@@ -1894,15 +1894,23 @@ void virtual_init_threading(void)
+  */
+ void virtual_get_system_info( SYSTEM_BASIC_INFORMATION *info )
+ {
++#ifdef __sun
++    LONG64 phys_pages;
++#else
+ #ifdef HAVE_SYSINFO
+     struct sysinfo sinfo;
+ #endif
++#endif /* __sun */
+ 
+     info->unknown                 = 0;
+     info->KeMaximumIncrement      = 0;  /* FIXME */
+     info->PageSize                = page_size;
+     info->MmLowestPhysicalPage    = 1;
+     info->MmHighestPhysicalPage   = 0x7fffffff / page_size;
++#ifdef __sun
++    phys_pages = sysconf( _SC_PHYS_PAGES );
++    info->MmHighestPhysicalPage = max(1, phys_pages);
++#else
+ #ifdef HAVE_SYSINFO
+     if (!sysinfo(&sinfo))
+     {
+@@ -1910,6 +1918,7 @@ void virtual_get_system_info( SYSTEM_BASIC_INFORMATION *info )
+         info->MmHighestPhysicalPage = max(1, total / page_size);
+     }
+ #endif
++#endif /* __sun */
+     info->MmNumberOfPhysicalPages = info->MmHighestPhysicalPage - info->MmLowestPhysicalPage;
+     info->AllocationGranularity   = get_mask(0) + 1;
+     info->LowestUserAddress       = (void *)0x10000;
+-- 
+2.23.0
+

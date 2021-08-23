@@ -1,0 +1,101 @@
+From: Raphael Geissert <geissert@debian.org>
+Date: Thu, 13 Dec 2018 23:27:46 +0100
+Subject: make X509_verify_cert indicate that any certificate whose
+
+Forwarded: not-needed
+Origin: vendor
+Last-Update: 2011-09-08
+Bug: http://bugs.debian.org/639744
+Reviewed-by: Kurt Roeckx <kurt@roeckx.be>
+Reviewed-by: Dr Stephen N Henson <shenson@drh-consultancy.co.uk>
+
+name contains "DigiNotar" is revoked.
+This is not meant as final patch.
+---
+ crypto/x509/x509_vfy.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/crypto/x509/x509_vfy.c b/crypto/x509/x509_vfy.c
+index da778d47b1cc..77bdb18882ce 100644
+--- a/crypto/x509/x509_vfy.c
++++ b/crypto/x509/x509_vfy.c
+@@ -120,6 +120,7 @@ static int check_trust(X509_STORE_CTX *ctx);
+ static int check_revocation(X509_STORE_CTX *ctx);
+ static int check_cert(X509_STORE_CTX *ctx);
+ static int check_policy(X509_STORE_CTX *ctx);
++static int check_ca_blacklist(X509_STORE_CTX *ctx);
+ 
+ static int get_crl_score(X509_STORE_CTX *ctx, X509 **pissuer,
+                          unsigned int *preasons, X509_CRL *crl, X509 *x);
+@@ -502,6 +503,9 @@ int X509_verify_cert(X509_STORE_CTX *ctx)
+     if (!ok)
+         goto err;
+ 
++	ok = check_ca_blacklist(ctx);
++	if(!ok) goto err;
++
+ #ifndef OPENSSL_NO_RFC3779
+     /* RFC 3779 path validation, now that CRL check has been done */
+     ok = v3_asid_validate_path(ctx);
+@@ -1110,6 +1114,29 @@ static int check_crl_time(X509_STORE_CTX *ctx, X509_CRL *crl, int notify)
+     return 1;
+ }
+ 
++static int check_ca_blacklist(X509_STORE_CTX *ctx)
++	{
++	X509 *x;
++	int i;
++	/* Check all certificates against the blacklist */
++	for (i = sk_X509_num(ctx->chain) - 1; i >= 0; i--)
++		{
++		x = sk_X509_value(ctx->chain, i);
++		/* Mark DigiNotar certificates as revoked, no matter
++		 * where in the chain they are.
++		 */
++		if (x->name && strstr(x->name, "DigiNotar"))
++			{
++			ctx->error = X509_V_ERR_CERT_REVOKED;
++			ctx->error_depth = i;
++			ctx->current_cert = x;
++			if (!ctx->verify_cb(0,ctx))
++				return 0;
++			}
++		}
++	return 1;
++	}
++
+ static int get_crl_sk(X509_STORE_CTX *ctx, X509_CRL **pcrl, X509_CRL **pdcrl,
+                       X509 **pissuer, int *pscore, unsigned int *preasons,
+                       STACK_OF(X509_CRL) *crls)
+From: Raphael Geissert <geissert@debian.org>
+Date: Thu, 13 Dec 2018 23:27:47 +0100
+Subject: make X509_verify_cert indicate that any certificate whose
+
+Forwarded: not-needed
+Origin: vendor
+Last-Update: 2011-11-05
+
+name contains "Digicert Sdn. Bhd." (from Malaysia) is revoked.
+---
+ crypto/x509/x509_vfy.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/crypto/x509/x509_vfy.c b/crypto/x509/x509_vfy.c
+index 77bdb18882ce..f7f8ed76e05b 100644
+--- a/crypto/x509/x509_vfy.c
++++ b/crypto/x509/x509_vfy.c
+@@ -1122,10 +1122,11 @@ static int check_ca_blacklist(X509_STORE_CTX *ctx)
+ 	for (i = sk_X509_num(ctx->chain) - 1; i >= 0; i--)
+ 		{
+ 		x = sk_X509_value(ctx->chain, i);
+-		/* Mark DigiNotar certificates as revoked, no matter
+-		 * where in the chain they are.
++		/* Mark certificates containing the following names as
++		 * revoked, no matter where in the chain they are.
+ 		 */
+-		if (x->name && strstr(x->name, "DigiNotar"))
++		if (x->name && (strstr(x->name, "DigiNotar") ||
++			strstr(x->name, "Digicert Sdn. Bhd.")))
+ 			{
+ 			ctx->error = X509_V_ERR_CERT_REVOKED;
+ 			ctx->error_depth = i;

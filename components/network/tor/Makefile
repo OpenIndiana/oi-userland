@@ -15,10 +15,12 @@
 
 BUILD_BITS=		64
 
+USE_OPENSSL11=		no
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tor
-COMPONENT_VERSION=	0.4.4.5
+COMPONENT_VERSION=	0.4.5.9
 COMPONENT_PROJECT_URL=	https://www.torproject.org
 COMPONENT_SUMMARY=	Anonymizing overlay network for TCP
 COMPONENT_FMRI=		network/tor
@@ -26,7 +28,7 @@ COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:a45ca00afe765e3baa839767c9dd6ac9a46dd01720a3a8ff4d86558c12359926
+	sha256:f304e456102ed26c39e5f16ece2115585398cdb4e67455139c86ea43cdf70856
 COMPONENT_ARCHIVE_URL=	https://www.torproject.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc	
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -56,6 +58,10 @@ COMPONENT_TEST_TRANSFORMS += \
 # Tests require GNU diff
 REQUIRED_PACKAGES += text/gnu-diffutils
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+
+# Bogus dependency due to libssp
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
@@ -65,5 +71,3 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

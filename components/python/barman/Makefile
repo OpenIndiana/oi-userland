@@ -19,17 +19,15 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	barman
-COMPONENT_VERSION= 	2.9
+COMPONENT_VERSION= 	2.13
 COMPONENT_SUMMARY= 	An administration tool for disaster recovery of PostgreSQL servers 
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:16cb4ad4bfc5d3fc5197bf70b40bf4390fe5081391ee11d853154cee3b4a6e0c
-COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/pgbarman/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://pgbarman.org/
+COMPONENT_ARCHIVE_HASH=	sha256:b8454240984ef03e821e272ffc553c2d79ed7c6f776ecc96c17b78441293bc60
+COMPONENT_ARCHIVE_URL=	https://github.com/EnterpriseDB/barman/releases/download/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://pgbarman.org/
 
-PYTHON_VERSIONS=	3.5
+PYTHON_VERSIONS=	3.7
 
 TEST_TARGET=$(NO_TESTS)
 
@@ -52,5 +50,5 @@ COMPONENT_POST_INSTALL_ACTION += \
 	done
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += runtime/python-37

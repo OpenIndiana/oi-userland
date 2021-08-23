@@ -26,7 +26,7 @@ BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     vala
-COMPONENT_VERSION=  0.40.23
+COMPONENT_VERSION=  0.40.25
 COMPONENT_LICENSE=  LGPL2.1
 COMPONENT_FMRI=     developer/vala
 COMPONENT_SUMMARY=  Vala programming language
@@ -34,8 +34,7 @@ COMPONENT_CLASSIFICATION=   Development/Other Languages
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Vala
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:6cd2b26345e63bb3313ceb82040a43c05fe601a706a2cdb14d23f9937bf13415
+COMPONENT_ARCHIVE_HASH= sha256:870fc7af58bbcfc82de6d11a96308a7bec6c180484ec431ce5bee68c2653b7df
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/vala/0.40/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/common.mk

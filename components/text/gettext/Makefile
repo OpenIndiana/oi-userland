@@ -24,22 +24,20 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
-COMPONENT_VERSION=	0.20.1
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gettext/
+COMPONENT_VERSION=	0.21
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:53f02fbbec9e798b0faaf7c73272f83608e835c6288dd58be6c9bb54624a3800
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
+	sha256:d20fcbb537e02dcf1383197ba05bd0734ef7bf5db06bdb241eb69b7d16b73192
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/gnu-gettext
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS +=	--disable-java
 CONFIGURE_OPTIONS +=	--disable-libasprintf
@@ -64,13 +62,8 @@ COMPONENT_TEST_TRANSFORMS += \
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 REQUIRED_PACKAGES += library/libcroco
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += library/libunistring

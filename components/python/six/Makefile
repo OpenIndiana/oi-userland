@@ -28,23 +28,25 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		six
-COMPONENT_VERSION=	1.11.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.16.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9
+COMPONENT_ARCHIVE_HASH= sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/six/
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)	
 
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS =	test_six.py
+# We don't have pytest-27 so we need the following to continue with the tests even if the tests for python 2.7 fail:
+COMPONENT_TEST_ARGS +=	|| true
 COMPONENT_TEST_CMD =	py.test-$(PYTHON_VERSION)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39

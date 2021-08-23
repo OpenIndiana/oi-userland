@@ -22,23 +22,25 @@
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2021, Nona Hansel
 #
+
+BUILD_BITS=	64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffutils
-COMPONENT_VERSION=	3.7
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/diffutils/
+COMPONENT_VERSION=	3.8
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/diffutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b3a7a6221c3dc916085f0d205abf6b8e1ba443d4dd965118da364a1dc1cb3a26
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/diffutils/$(COMPONENT_ARCHIVE)
+	sha256:a6bdd7d1b31266d11c4f4de6c1b748d4607ab0231af5188fc2533d0ae2438fec
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/diffutils/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/gnu-diffutils
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGER=	$(TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 # Tests failure
 unexport SHELLOPTS
@@ -64,16 +66,11 @@ COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
 # Build dependencies
 REQUIRED_PACKAGES += text/gnu-gettext
 
+# Test dependency
+REQUIRED_PACKAGES += developer/debug/valgrind
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/libsigsegv
 REQUIRED_PACKAGES += system/library

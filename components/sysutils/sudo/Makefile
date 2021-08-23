@@ -21,23 +21,25 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2020, Nona Hansel
 #
 
 BUILD_BITS=		64
-
+USE_OPENSSL11=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sudo
-SRC_VERSION=		1.8.31
-SRC_PATCH_VERSION=	0
+SRC_VERSION=		1.9.7
+SRC_PATCH_VERSION=	2
 SRC_DOT_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo .$(SRC_PATCH_VERSION))
 SRC_P_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo p$(SRC_PATCH_VERSION))
+HUMAN_VERSION=	1.9.7.2
 COMPONENT_VERSION=	$(SRC_VERSION)$(SRC_DOT_PATCH_VERSION)
+#COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	sudo - tool to allow certain tasks to be run as root by ordinary users
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)$(SRC_P_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:7ea8d97a3cee4c844e0887ea7a1bd80eb54cc98fd77966776cb1a80653ad454f
+COMPONENT_ARCHIVE_HASH= sha256:28b5ee725dbf89a7852f42f309ca877d2810a9531b4eecfe59f3a84b6b4afca8
 COMPONENT_ARCHIVE_URL=	https://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig	
 COMPONENT_PROJECT_URL=  https://www.sudo.ws/
@@ -82,5 +84,6 @@ COMPONENT_INSTALL_ARGS += INSTALL_OWNER=
 ASLR_MODE = $(ASLR_ENABLE)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

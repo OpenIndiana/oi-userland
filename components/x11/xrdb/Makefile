@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2015-2021 Aurelien Larcher
 #
 
 X11_CATEGORY=APP
@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xrdb
-COMPONENT_VERSION=        1.2.0
+COMPONENT_VERSION=        1.2.1
 COMPONENT_SUMMARY=        xrdb - X server resource database utility
 COMPONENT_FMRI=           x11/xrdb
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f23a65cfa1f7126040d68b6cf1e4567523edac10f8dc06f23d840d330c7c6946
+  sha256:4f5d031c214ffb88a42ae7528492abde1178f5146351ceb3c05f3b8d5abee8b4
 
 include $(WS_MAKE_RULES)/common.mk
 

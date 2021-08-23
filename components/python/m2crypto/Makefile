@@ -23,11 +23,13 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=			32_and_64
+BUILD_STYLE=		setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		M2Crypto
 COMPONENT_VERSION=	0.24.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://chandlerproject.org/Projects/MeTooCrypto/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -39,9 +41,7 @@ COMPONENT_BUGDB=	python-mod/m2crypto
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	2.7
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -51,15 +51,10 @@ COMPONENT_TEST_ENV=	CC=$(CC)
 COMPONENT_TEST_ENV +=	PATH=/usr/bin
 COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
 # tests.test_x509.X509TestCase fails with
 # No such file or directory: 'tests/bad_date_cert.crt'
-test:		$(TEST_32_and_64)
 
-REQUIRED_PACKAGES += developer/swig
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library

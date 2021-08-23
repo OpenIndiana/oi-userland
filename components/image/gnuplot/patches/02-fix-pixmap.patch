@@ -1,0 +1,18 @@
+Running the pixmap.dem can lead to file not found errors if not called from within the demo folder.
+This patch makes it use absolute paths in order to avoid such problems.
+This is only suited for OpenIndiana.
+--- gnuplot-5.4.1/demo/pixmap.dem.orig	2020-10-13 23:14:48.000000000 +0000
++++ gnuplot-5.4.1/demo/pixmap.dem	2021-05-14 20:00:37.439164468 +0000
+@@ -2,9 +2,9 @@
+ # Demonstrate use of 'set pixmap' to provide a slide background,
+ # a project logo, and a plot element
+ #
+-set pixmap 1 'gradient.png' at screen 0,0 size screen 1,1 behind
+-set pixmap 2 'icon64x64.png' at screen 0.02, 0.02 width screen 0.05 back
+-set pixmap 3 'aries.png' at polar 29., 1.11, 0.0 center width char 2.5
++set pixmap 1 '/usr/demo/gnuplot/gradient.png' at screen 0,0 size screen 1,1 behind
++set pixmap 2 '/usr/demo/gnuplot/icon64x64.png' at screen 0.02, 0.02 width screen 0.05 back
++set pixmap 3 '/usr/demo/gnuplot/aries.png' at polar 29., 1.11, 0.0 center width char 2.5
+ 
+ set lmargin 20
+ 

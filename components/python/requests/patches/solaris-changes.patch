@@ -3,19 +3,13 @@ location of the standard certs bundle on Solaris.
 
 This change is only suitable for Solaris, and will not be sent upstream.
 
---- requests-2.6.0/requests/certs.py	Sun Aug  3 06:15:57 2014
-+++ requests-2.6.0/requests/certs.py	Mon Mar 16 11:54:13 2015
-@@ -13,13 +13,9 @@
+--- requests-2.21.0/requests/certs.py
++++ requests-2.21.0/requests/certs.py
+@@ -12,7 +12,9 @@ If you are packaging Requests, e.g., for
+ environment, you can change the definition of where() to return a separately
+ packaged CA bundle.
  """
- import os.path
- 
--try:
--    from certifi import where
--except ImportError:
--    def where():
--        """Return the preferred certificate bundle."""
--        # vendored bundle inside Requests
--        return os.path.join(os.path.dirname(__file__), 'cacert.pem')
+-from certifi import where
 +def where():
 +    """Return the preferred certificate bundle."""
 +    return "/etc/certs/ca-certificates.crt"

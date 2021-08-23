@@ -20,35 +20,29 @@
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
 # Copyright (c) 2018 Jason Martin
+# Copyright (c) 2021 Andreas Wacknitz
 #
+BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     libgee
-COMPONENT_VERSION=  0.20.1
-COMPONENT_REVISION= 1
+COMPONENT_VERSION=  0.20.4
 COMPONENT_SUMMARY=  GObject based collection and utility library
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Libgee
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:bb2802d29a518e8c6d2992884691f06ccfcc25792a5686178575c7111fea4630
+COMPONENT_ARCHIVE_HASH=	sha256:524c1bf390f9cdda4fbd9a47b269980dc64ab5280f0801b53bc69d782c72de0e
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libgee/0.20/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/desktop/libgee
 COMPONENT_CLASSIFICATION=	Development/GNOME and GTK+
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# Since GLib 2.62, gtester and gtester-report are deprecated. Thus, disable tests until ported:
+TEST_TARGET=		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS  +=       --disable-static
 CONFIGURE_OPTIONS  +=       --enable-shared
-
-build:      $(BUILD_32_and_64)
-
-install:    $(INSTALL_32_and_64)
-
-test:       $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2

@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgit2
 COMPONENT_VERSION=	0.28.5
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/libgit2
 COMPONENT_CLASSIFICATION=Development/Source Code Management
 COMPONENT_PROJECT_URL=	https://libgit2.github.com/

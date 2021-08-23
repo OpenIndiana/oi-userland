@@ -1,0 +1,40 @@
+# Solaris-specific patch.  Not appropriate for upstream.
+
+--- gdb-8.0-orig/gdb/Makefile.in	2017-06-04 08:54:54.000000000 -0700
++++ gdb-8.0/gdb/Makefile.in	2017-06-14 10:54:54.891158275 -0700
+@@ -177,7 +177,7 @@ LIBDECNUMBER_CFLAGS = -I$(LIBDECNUMBER_D
+ # Where is the READLINE library?  Typically in ../readline.
+ READLINE_DIR = ../readline
+ READLINE_SRC = $(srcdir)/$(READLINE_DIR)
+-READLINE = @READLINE@
++READLINE = $(READLINE_DIR)/libreadline.a $(READLINE_DIR)/libhistory.a
+ READLINE_DEPS = @READLINE_DEPS@
+ READLINE_CFLAGS = @READLINE_CFLAGS@
+ 
+@@ -204,7 +204,7 @@ GDB_WARN_CFLAGS_NO_FORMAT = `echo " $(GD
+ GDB_WARN_CFLAGS_NO_DEFS = `echo " $(GDB_WARN_CFLAGS) " \
+ 		   | sed "s/ -Wold-style-definition / -Wno-old-style-definition /g"`
+ 
+-RDYNAMIC = @RDYNAMIC@
++RDYNAMIC =
+ 
+ # Where is the INTL library?  Typically in ../intl.
+ INTL = @LIBINTL@
+@@ -616,7 +616,7 @@ SUBDIR_GDBTK_CFLAGS = -DGDBTK
+ CONFIG_OBS = @CONFIG_OBS@
+ CONFIG_SRCS = @CONFIG_SRCS@
+ CONFIG_DEPS = @CONFIG_DEPS@
+-CONFIG_LDFLAGS = @CONFIG_LDFLAGS@
++CONFIG_LDFLAGS =
+ ENABLE_CFLAGS = @ENABLE_CFLAGS@
+ CONFIG_ALL = @CONFIG_ALL@
+ CONFIG_CLEAN = @CONFIG_CLEAN@
+@@ -1817,7 +1817,7 @@ COMMON_OBS = $(DEPFILES) $(CONFIG_OBS) $
+ 
+ TSOBS = inflow.o
+ 
+-SUBDIRS = doc @subdirs@ data-directory $(GNULIB_BUILDDIR)
++SUBDIRS = @subdirs@ data-directory $(GNULIB_BUILDDIR)
+ CLEANDIRS = $(SUBDIRS)
+ 
+ # List of subdirectories in the build tree that must exist.

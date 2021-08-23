@@ -1,0 +1,43 @@
+--- privoxy-3.0.32-stable/privoxy.8.orig	2021-02-25 18:54:13.000000000 +0000
++++ privoxy-3.0.32-stable/privoxy.8	2021-03-06 14:28:15.513680340 +0000
+@@ -145,7 +145,7 @@
+ .SH "FILES"
+ 
+ .nf
+- \fI/usr/sbin/privoxy\fR
++ \fI/usr/lib/privoxy\fR
+  \fI/etc/privoxy/config\fR
+  \fI/etc/privoxy/match-all.action\fR
+  \fI/etc/privoxy/default.action\fR
+@@ -207,6 +207,31 @@
+  Roland Rosenfeld
+  Ian Silvester
+ .fi
++.RE
++.SH "AUTOMATIC SERVICE MANAGEMENT (SMF)"
++.PP
++The Privoxy service is disabled by default. You can
++check  the  status  of  the service by issuing the following
++command:
++.PP
++.nf
++\fB example% svcs privoxy\fR
++\fB STATE          STIME    FMRI
++\fB disabled       10:47:39 svc:/network/http:privoxy
++.fi
++.PP
++Enable the Privoxy service by issuing the following
++command :
++.PP
++\fB example% svcadm  enable privoxy\fR
++.PP
++The state of the service instance should change to "online".
++.PP
++.nf
++\fB example% svcs privoxy\fR
++\fB STATE          STIME    FMRI\fR
++\fB online         10:50:27 svc:/network/http:privoxy\fR
++.fi
+ .SH "COPYRIGHT AND LICENSE"
+ .SS "COPYRIGHT"
+ .PP

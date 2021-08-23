@@ -18,17 +18,16 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xrestop
-COMPONENT_VERSION=        0.4
-COMPONENT_REVISION=       1
+COMPONENT_VERSION=        0.5
 COMPONENT_FMRI=           x11/xrestop
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  the xrestop X-Resource top utility
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:67c2fc94a7ecedbaae0d1837e82e93d1d98f4a6d759828860e552119af3ce257
+  sha256:89d0a5d99d1f4b290a79c5ba0d6142d8591262f167165d1bc468abaa9c18d51b
 COMPONENT_ARCHIVE_URL= \
-  http://downloads.yoctoproject.org/releases/xrestop/$(COMPONENT_ARCHIVE)
+  https://xorg.freedesktop.org/archive/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 

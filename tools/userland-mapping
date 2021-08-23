@@ -28,7 +28,7 @@ import logging
 import subprocess
 import multiprocessing
 
-from bass.component import BassComponent
+from bass.component import Component
 
 try:
     from scandir import walk
@@ -59,8 +59,8 @@ def find_component_paths(path, subdir='components', debug=False):
 
 def generate_component_data(component_path, subdir='components'):
     result = []
-    component = BassComponent(path=component_path)
-    component_name = component.component_name
+    component = Component(path=component_path)
+    component_name = component.name
     if not component_name:
         raise ValueError('Component name is empty for path ' + component_path + '.')
     component_fmris = component.supplied_packages

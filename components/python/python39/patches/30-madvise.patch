@@ -1,0 +1,11 @@
+--- Python-3.9.1/Modules/mmapmodule.c.orig	2021-01-08 00:47:51.535788215 +0000
++++ Python-3.9.1/Modules/mmapmodule.c	2021-01-08 00:48:28.811370361 +0000
+@@ -784,7 +784,7 @@
+         length = self->size - start;
+     }
+ 
+-    if (madvise(self->data + start, length, option) != 0) {
++    if (posix_madvise(self->data + start, length, option) != 0) {
+         PyErr_SetFromErrno(PyExc_OSError);
+         return NULL;
+     }

@@ -17,17 +17,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	maven
-COMPONENT_VERSION= 3.6.3
+COMPONENT_VERSION= 3.8.1
 COMPONENT_FMRI= developer/build/maven
 COMPONENT_CLASSIFICATION = Development/Java
 COMPONENT_SUMMARY= Apache Maven is a software project management and comprehension tool
-COMPONENT_PROJECT_URL = http://maven.apache.org
+COMPONENT_PROJECT_URL = https://maven.apache.org
 COMPONENT_SRC= apache-maven-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC)-bin.tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:26ad91d751b3a9a53087aefa743f4e16a17741d3915b219cf74112bf87a438c5
-COMPONENT_ARCHIVE_URL= \
-  http://archive.apache.org/dist/maven/maven-3/$(COMPONENT_VERSION)/binaries/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:b98a1905eb554d07427b2e5509ff09bd53e2f1dd7a0afa38384968b113abef02
+COMPONENT_ARCHIVE_URL= http://archive.apache.org/dist/maven/maven-3/$(COMPONENT_VERSION)/binaries/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= Apache 2.0
 COMPONENT_LICENSE_FILE= LICENSE
 
@@ -44,4 +42,4 @@ clean::
 	rm -rf $(BUILD_DIR)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93

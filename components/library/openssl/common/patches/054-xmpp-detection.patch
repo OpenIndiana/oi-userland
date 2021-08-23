@@ -1,0 +1,17 @@
+# The patch is based on the following commit from the upstream:
+# https://github.com/openssl/openssl/commit/4e48c77572a9a96a301e362a3646cd3cc7eca0f9 
+# The fix is patched until the new version becomes available
+# from the upstream.
+--- a/apps/s_client.c
++++ b/apps/s_client.c
+@@ -1640,8 +1640,8 @@
+                    "xmlns='jabber:client' to='%s' version='1.0'>", host);
+         seen = BIO_read(sbio, mbuf, BUFSIZZ);
+         mbuf[seen] = 0;
+-        while (!strstr
+-               (mbuf, "<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'")) {
++        while (!strstr(mbuf, "<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'") &&
++               !strstr(mbuf, "<starttls xmlns=\"urn:ietf:params:xml:ns:xmpp-tls\"")) {
+             if (strstr(mbuf, "/stream:features>"))
+                 goto shut;
+             seen = BIO_read(sbio, mbuf, BUFSIZZ);

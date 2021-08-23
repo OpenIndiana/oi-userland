@@ -1,0 +1,17 @@
+$NetBSD$
+
+Support for SunOS/gcc.
+
+diff -wpruN '--exclude=*.orig' a~/make/launcher/Launcher-jdk.pack.gmk a/make/launcher/Launcher-jdk.pack.gmk
+--- a~/make/launcher/Launcher-jdk.pack.gmk	1970-01-01 00:00:00
++++ a/make/launcher/Launcher-jdk.pack.gmk	1970-01-01 00:00:00
+@@ -43,7 +43,9 @@ $(eval $(call SetupBuildLauncher, pack20
+ # Also provide an override for non-conformant libraries.
+ ifeq ($(TOOLCHAIN_TYPE), gcc)
+   CXXFLAGS_JDKEXE += -fvisibility=hidden
++ ifneq ($(OPENJDK_TARGET_OS), solaris)
+   LDFLAGS_JDKEXE += -Wl,--exclude-libs,ALL
++ endif
+ else ifeq ($(TOOLCHAIN_TYPE), clang)
+   ifneq ($(OPENJDK_TARGET_OS), macosx)
+     CXXFLAGS_JDKEXE += -fvisibility=hidden

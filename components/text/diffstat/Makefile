@@ -27,17 +27,15 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffstat
-COMPONENT_VERSION=	1.63
+COMPONENT_VERSION=	1.64
 COMPONENT_FMRI=		text/diffstat
 COMPONENT_SUMMARY=	A utility which provides statistics based on the output of diff
 COMPONENT_CLASSIFICATION= System/Text Tools
-COMPONENT_PROJECT_URL=	http://invisible-island.net/diffstat/
+COMPONENT_PROJECT_URL=	https://invisible-island.net/diffstat/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:7eddd53401b99b90bac3f7ebf23dd583d7d99c6106e67a4f1161b7a20110dc6f
-COMPONENT_ARCHIVE_URL= \
-	https://invisible-mirror.net/archives/diffstat/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:b8aee38d9d2e1d05926e6b55810a9d2c2dd407f24d6a267387563a4436e3f7fc
+COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/diffstat/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT
 
 include $(WS_MAKE_RULES)/common.mk

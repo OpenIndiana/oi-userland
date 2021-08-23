@@ -1,0 +1,54 @@
+#
+# This was developed in house to configure the engine dir.
+# Not suitable for upstream.
+#
+--- /tmp/18/Configure	Fri Feb 11 15:15:50 2011
++++ openssl-1.0.0d/Configure	Fri Feb 11 15:18:09 2011
+@@ -18,6 +18,8 @@
+ #               --prefix option is given; /usr/local/ssl otherwise)
+ # --prefix      prefix for the OpenSSL include, lib and bin directories
+ #               (Default: the OPENSSLDIR directory)
++# --enginesdir  engines shared library location
++#               (Default: $prefix/lib/engines)
+ #
+ # --pk11-libname  PKCS#11 library name.
+ #               (Default: none)
+@@ -741,6 +743,7 @@
+ my $prefix="";
+ my $libdir="";
+ my $openssldir="";
++my $enginesdir="";
+ my $exe_ext="";
+ my $install_prefix= "$ENV{'INSTALL_PREFIX'}";
+ my $cross_compile_prefix="";
+@@ -972,6 +975,10 @@
+ 				{
+ 				$openssldir=$1;
+ 				}
++			elsif (/^--enginesdir=(.*)$/)
++				{
++				$enginesdir=$1;
++				}
+ 			elsif (/^--install.prefix=(.*)$/)
+ 				{
+ 				$install_prefix=$1;
+@@ -1285,6 +1292,10 @@
+ # we're ready to tolerate, so don't...
+ $multilib="" if !-d "$prefix/lib$multilib";
+ 
++if ($enginesdir eq "") {
++	$enginesdir = "$prefix/lib/engines";
++}
++
+ $libdir="lib$multilib" if $libdir eq "";
+ 
+ $cflags = "$cflags$exp_cflags";
+@@ -1934,7 +1945,7 @@
+ 		}
+ 	elsif	(/^#define\s+ENGINESDIR/)
+ 		{
+-		my $foo = "$prefix/$libdir/engines";
++		my $foo = "$enginesdir";
+ 		$foo =~ s/\\/\\\\/g;
+ 		print OUT "#define ENGINESDIR \"$foo\"\n";
+ 		}

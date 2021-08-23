@@ -133,8 +133,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cryptography/x509/general_name.
 file path=usr/lib/python$(PYVER)/vendor-packages/cryptography/x509/name.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cryptography/x509/ocsp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cryptography/x509/oid.py
-# Dependencies on cffi must be incorporated.
-depend type=incorporate fmri=library/python/cffi-$(PYV)@1.12.2
 
 # force a dependency on asn1crypto; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/asn1crypto-$(PYV)
@@ -160,3 +158,8 @@ depend type=require fmri=library/python/setuptools-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+  pkg.debug.depend.path=usr/bin
+

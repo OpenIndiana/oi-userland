@@ -20,29 +20,67 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2017 Gary Mills
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2017, 2021 Gary Mills
 # Copyright 2019 Andreas Wacknitz
 #
 
 BUILD_BITS= 64
+# There are a large number of macros in the GCB code written
+# specifically for GCC's preprocessor. Studio does not expand
+# these macros the same way GCC does, and the resulting gdb is
+# not usable. Building gdb with a GCC >= 4.7.2 produces very
+# good results, even on SPARC.
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdb
-COMPONENT_VERSION=	7.10.1
-COMPONENT_REVISION=	6
+COMPONENT_VERSION=	8.0
+# COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=	GDB: The GNU Project Debugger
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-     sha256:ff14f8050e6484508c73cbfa63731e57901478490ca1672dc0b5e2b03f6af622
+     sha256:8968a19e14e176ee026f0ca777657c43456514ad41bb2bc7273e8c4219555ac9
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gdb/
 
 CONFIGURE_DEFAULT_DIRS=no
 
+# Set python version used by this product
+PYTHON_VERSION=3.7
+
 include $(WS_MAKE_RULES)/common.mk
+
+# The traditional output from gmake test omits some
+# test results information that is contained in the 
+# build/<arch>/gdb/testsuite/gdb.sum file, so use that file instead
+# for test results comparison.
+COMPONENT_POST_TEST_ACTION += \
+	( $(MV) $(COMPONENT_TEST_OUTPUT) $(COMPONENT_TEST_OUTPUT)-orig ; \
+	$(CP) $(BUILD_DIR_64)/gdb/testsuite/gdb.sum $(COMPONENT_TEST_OUTPUT) )
+
+# Results output is different on Intel vs. SPARC.
+# Note that comparisons against master results 
+# are not clean since results will still vary.
+COMPONENT_TEST_MASTER = \
+        $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-$(BITS).master
+
+# Test transforms retain only relevant results output.
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/^FAIL/p" ' \
+        '-e "/^KFAIL/p" ' \
+        '-e "/^PASS/p" ' \
+        '-e "/^UNRESOLVED/p" ' \
+        '-e "/^UNSUPPORTED/p" ' \
+        '-e "/^UNTESTED/p" ' \
+        '-e "/^XFAIL/p" ' \
+        '-e "/^\# of /p" '
+
+# Test results vary from run to run and machine to machine,
+# so master test results will not match, and are not
+# appropriate for a full Userland test run
 
 PATH = $(PATH.gnu)
 
@@ -54,11 +92,9 @@ CFLAGS_EXTRA = -Wall -Wno-long-long -Wcast-align -fno-omit-frame-pointer
 
 CFLAGS = $(CC_BITS) $(CFLAGS_EXTRA) $(CFLAGS_$(MACH))
 CXXFLAGS = $(CC_BITS) $(CFLAGS_EXTRA) $(CFLAGS_$(MACH))
-CPPFLAGS.32 = -D_STRUCTURED_PROC=1
-CPPFLAGS = -D_REENTRANT -I/usr/include/ncurses $(CPPFLAGS.$(BITS))
-LDFLAGS.32 = -L/usr/gnu/lib -R/usr/gnu/lib
-LDFLAGS.64 = -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
+CPPFLAGS = -D_REENTRANT -I$(USRINCDIR)/ncurses
+
+LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 
 # `echo $(CFLAGS)` and `echo $(LDFLAGS)` used to
 # work around problem with extra blank characters
@@ -84,18 +120,37 @@ CONFIGURE_OPTIONS += --without-auto-load-safe-path
 CONFIGURE_OPTIONS += --with-python=$(PYTHON)
 CONFIGURE_OPTIONS += --with-libexpat-prefix=/usr/lib
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --with-system-zlib
 CONFIGURE_OPTIONS += --without-guile
-CONFIGURE_OPTIONS.32 += --disable-largefile
 
 COMPONENT_BUILD_ENV += $(CONFIGURE_ENV)
+
+# Ensure PATH is set during build;
+# need /usr/perl5/$(PERL_VERSION)/bin from PATH to access 
+# pod2man perl script, used to create manpages
+COMPONENT_BUILD_ENV += PATH=$(PATH)
 
 # Generate the newly added Solaris instruction and
 # register tables which weren't there by default.
 COMPONENT_PRE_CONFIGURE_ACTION = \
   ( cd  $(SOURCE_DIR)/gdb/features ; \
-    $(GMAKE) all; \
-    cd $(SOURCE_DIR)/readline/ ; \
-    autoconf )
+    $(GMAKE) all; )
+
+# build the manpages
+COMPONENT_POST_BUILD_ACTION = \
+	( cd $(BUILD_DIR_64)/gdb/doc ; \
+	$(GMAKE) man )
+
+# Two tests hangs up the test run, so skip them.
+COMPONENT_PRE_TEST_ACTION += \
+  ( cd $(SOURCE_DIR)/gdb/testsuite; \
+    for F in gdb.mi/mi-exec-run.exp gdb.base/annota3.exp; \
+    do \
+      if test -e $$F; \
+      then \
+        $(MV) $$F $$F-save; \
+      fi; \
+    done )
 
 COMPONENT_POST_INSTALL_ACTION = \
   ( cd  $(PROTOUSRDIR)/share/gdb/python/gdb ; \
@@ -104,8 +159,6 @@ COMPONENT_POST_INSTALL_ACTION = \
       $(PYTHON) -m compileall . ; \
     cd  $(PROTOUSRDIR)/share/gdb/python/gdb/function ; \
       $(PYTHON) -m compileall . ; \
-    cd  $(PROTOUSRBINDIR64)/ ; \
-      /usr/bin/strip -x gdb ; \
     cd  $(PROTOUSRBINDIR)/ ; \
       /usr/bin/strip -x gdb ; \
     cd  $(COMPONENT_DIR) ; \
@@ -127,16 +180,18 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(PROTOUSRSHAREDIR)/info/ ; \
       $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/gdb.info-7  \
 	$(PROTOUSRSHAREDIR)/info/ ; \
-      $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/gdbint.info  \
-	$(PROTOUSRSHAREDIR)/info/ ; \
-      $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/gdbint.info-1  \
-	$(PROTOUSRSHAREDIR)/info/ ; \
-      $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/gdbint.info-2  \
-	$(PROTOUSRSHAREDIR)/info/ ; \
       $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/annotate.info  \
 	$(PROTOUSRSHAREDIR)/info/ ; \
       $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/stabs.info  \
-	$(PROTOUSRSHAREDIR)/info/ )
+	$(PROTOUSRSHAREDIR)/info/ ; \
+      $(MKDIR) $(PROTOGNUSHAREMAN1) ; \
+      $(MKDIR) $(PROTOUSRSHAREMAN1DIR) ; \
+      $(INSTALL) -m 0444 $(BUILD_DIR_64)/gdb/doc/gdb.1 \
+	$(PROTOUSRSHAREMAN1DIR) )
+
+# Disable ASLR: it's a debugger and we do not want to risk
+# altering the results of the debugging experiment.
+ASLR_MODE=$(ASLR_DISABLE)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
@@ -144,6 +199,12 @@ REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += developer/babeltrace
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library/g++-7-runtime
+REQUIRED_PACKAGES += system/library/gcc-7-runtime
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += text/texinfo

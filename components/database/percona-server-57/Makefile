@@ -13,26 +13,25 @@
 # Copyright 2019, Michal Nowak
 # 
 
+BUILD_BITS=			32_and_64
+BUILD_STYLE=		cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.7.31-34
-IPS_COMPONENT_VERSION=	5.7.31.34
+COMPONENT_VERSION=	5.7.33-36
+IPS_COMPONENT_VERSION=	5.7.33.36
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:60afa347e142077d96ce7f8e8d9c635a3b01b59d2a7487713817be3de5086000
+COMPONENT_ARCHIVE_HASH=	sha256:964e32f4a1e235421e26be81d2d24f9e659d8ef3cbd9ae6c3e85fe545bedfd5b
 COMPONENT_ARCHIVE_URL=	https://www.percona.com/downloads/Percona-Server-5.7/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
 # We need specific boost version
 COMPONENT_ARCHIVE_1= boost_1_59_0.tar.gz
-COMPONENT_ARCHIVE_HASH_1= \
-	sha256:47f11c8844e579d02691a607fbd32540104a9ac7a2534a8ddaef50daf502baac
-COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/project/boost/boost/1.59.0/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_HASH_1=	sha256:47f11c8844e579d02691a607fbd32540104a9ac7a2534a8ddaef50daf502baac
+COMPONENT_ARCHIVE_URL_1=	https://downloads.sourceforge.net/project/boost/boost/1.59.0/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_POST_UNPACK_ACTION = ( $(MKDIR) $(BUILD_DIR)/boost && /usr/gnu/bin/tar -C $(BUILD_DIR)/boost -xzf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1))
 
@@ -73,22 +72,19 @@ COMPONENT_POST_CMAKE_ACTION.64= find $(@D) -type f -name link.txt \
     -exec perl -pi -e 's/gcc\ \ -fPIC/\/gcc\ -m64\ -fPIC/' {} \;
 COMPONENT_POST_CMAKE_ACTION=$(COMPONENT_POST_CMAKE_ACTION.$(BITS))
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 REQUIRED_PACKAGES += runtime/perl-522
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
+#REQUIRED_PACKAGES += database/percona-server-57/client
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libsasl

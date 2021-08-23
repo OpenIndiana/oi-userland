@@ -18,13 +18,13 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	argcomplete
-COMPONENT_VERSION= 	1.12.1
+COMPONENT_VERSION= 	1.12.2
 COMPONENT_SUMMARY= 	Extensible command line tab completion for Python script arguments
 COMPONENT_PROJECT_URL = https://pypi.org/project/argcomplete/
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:849c2444c35bb2175aea74100ca5f644c29bf716429399c0f2203bb5d9a8e4e6
+  sha256:de0e1282330940d52ea92a80fea2e4b9e0da1932aaa570f84d268939d1897b04
 COMPONENT_ARCHIVE_URL= \
   $(call pypi_url)
 COMPONENT_FMRI= library/python/argcomplete
@@ -35,7 +35,6 @@ COMPONENT_LICENSE_FILE= LICENSE.rst
 PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
 
 TEST_TARGET=$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_POST_INSTALL_ACTION += ( cd $(PROTO_DIR)/usr/bin; \
@@ -44,12 +43,18 @@ COMPONENT_POST_INSTALL_ACTION += ( cd $(PROTO_DIR)/usr/bin; \
 			mv $$file $$file-$(PYTHON_VERSION); \
 	done )
 
+COMPONENT_TEST_ARGS = test.py
+
+# Test dependencies
+REQUIRED_PACKAGES += shell/fish
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += SUNWcs

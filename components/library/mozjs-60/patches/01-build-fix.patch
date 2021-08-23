@@ -1,0 +1,103 @@
+Changes required for building on Solaris
+
+Not suitable for upstream
+
+--- a/python/mozbuild/mozbuild/virtualenv.py	2019-09-03 12:11:00.201672221 -0700
++++ b/python/mozbuild/mozbuild/virtualenv.py	2019-09-03 12:11:22.606931177 -0700
+@@ -341,7 +341,7 @@
+         # configure or a mozconfig activated in the current shell. We trust
+         # Python is smart enough to find a proper compiler and to use the
+         # proper compiler flags. If it isn't your Python is likely broken.
+-        IGNORE_ENV_VARIABLES = ('CC', 'CXX', 'CFLAGS', 'CXXFLAGS', 'LDFLAGS',
++        IGNORE_ENV_VARIABLES = ('CFLAGS', 'CXXFLAGS', 'LDFLAGS',
+             'PYTHONDONTWRITEBYTECODE')
+ 
+         try:
+--- a/js/src/gc/Memory.cpp	2021-01-21 07:39:51.031912920 -0800
++++ b/js/src/gc/Memory.cpp	2021-01-21 07:40:06.317075808 -0800
+@@ -75,7 +75,7 @@
+   return uintptr_t(p) % alignment;
+ }
+ 
+-void* TestMapAlignedPagesLastDitch(size_t size, size_t alignment) {
++static void* TestMapAlignedPagesLastDitch(size_t size, size_t alignment) {
+   return MapAlignedPagesLastDitch(size, alignment);
+ }
+ 
+--- a/js/src/gc/Memory.h	2019-09-03 12:13:54.329641951 -0700
++++ b/js/src/gc/Memory.h	2019-09-03 12:14:02.775208969 -0700
+@@ -41,7 +41,7 @@
+ // Deallocate memory mapped content.
+ void DeallocateMappedContent(void* p, size_t length);
+ 
+-void* TestMapAlignedPagesLastDitch(size_t size, size_t alignment);
++static void* TestMapAlignedPagesLastDitch(size_t size, size_t alignment);
+ 
+ void ProtectPages(void* p, size_t size);
+ void MakePagesReadOnly(void* p, size_t size);
+--- a/config/rules.mk	2019-09-03 12:17:16.488809595 -0700
++++ b/config/rules.mk	2019-09-03 12:21:36.305144558 -0700
+@@ -326,7 +326,7 @@
+ ifdef MOZ_IOS
+ _LOADER_PATH := @rpath
+ else
+-_LOADER_PATH := @executable_path
++_LOADER_PATH := @(abspath$(prefix))/lib
+ endif
+ EXTRA_DSO_LDOPTS	+= -dynamiclib -install_name $(_LOADER_PATH)/$(SHARED_LIBRARY) -compatibility_version 1 -current_version 1 -single_module
+ endif
+--- a/js/src/old-configure	2019-09-03 14:09:43.678376289 -0700
++++ b/js/src/old-configure	2019-09-03 14:10:22.673543029 -0700
+@@ -8818,7 +8818,7 @@
+   echo $ac_n "(cached) $ac_c" 1>&6
+ else
+   ac_save_LIBS="$LIBS"
+-LIBS="-lreadline  $LIBS"
++LIBS="-lreadline -lcurses $LIBS"
+ cat > conftest.$ac_ext <<EOF
+ #line 8824 "configure"
+ #include "confdefs.h"
+@@ -8846,7 +8846,7 @@
+ fi
+ if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
+   echo "$ac_t""yes" 1>&6
+-  EDITLINE_LIBS="-lreadline"
++  EDITLINE_LIBS="-lreadline -lcurses"
+ else
+   echo "$ac_t""no" 1>&6
+ { echo "configure: error: No system readline library found." 1>&2; echo "configure: error: No system readline library found." 1>&5; exit 1; }
+--- a/python/mozbuild/mozbuild/configure/__init__.py	2019-09-03 14:19:18.649976840 -0700
++++ b/python/mozbuild/mozbuild/configure/__init__.py	2019-09-03 14:17:12.900697323 -0700
+@@ -421,7 +421,7 @@
+         # All options should have been removed (handled) by now.
+         for arg in self._helper:
+             without_value = arg.split('=', 1)[0]
+-            raise InvalidOptionError('Unknown option: %s' % without_value)
++            #raise InvalidOptionError('Unknown option: %s' % without_value)
+ 
+         # Run the execution queue
+         for func, args in self._execution_queue:
+--- mozjs-60.8.0/js/src/wasm/WasmSignalHandlers.cpp.~1~	2019-07-01 11:07:44.000000000 +0000
++++ mozjs-60.8.0/js/src/wasm/WasmSignalHandlers.cpp	2021-05-12 10:41:45.880159326 +0000
+@@ -46,6 +46,10 @@
+ #endif
+ #endif
+ 
++#if defined(__sun)
++#include <ucontext.h>  // for ucontext_t, mcontext_t
++#endif
++
+ // Crashing inside the signal handler can cause the handler to be recursively
+ // invoked, eventually blowing the stack without actually showing a crash
+ // report dialog via Breakpad. To guard against this we watch for such
+@@ -140,8 +144,8 @@
+ #else
+ #define XMM_sig(p, i) ((p)->uc_mcontext.fpregs.fp_reg_set.fpchip_state.xmm[i])
+ #define EIP_sig(p) ((p)->uc_mcontext.gregs[REG_PC])
+-#define EBP_sig(p) ((p)->uc_mcontext.gregs[REG_EBP])
+-#define ESP_sig(p) ((p)->uc_mcontext.gregs[REG_ESP])
++#define EBP_sig(p) ((p)->uc_mcontext.gregs[REG_FP])
++#define ESP_sig(p) ((p)->uc_mcontext.gregs[REG_SP])
+ #endif
+ #define RIP_sig(p) ((p)->uc_mcontext.gregs[REG_RIP])
+ #define RAX_sig(p) ((p)->uc_mcontext.gregs[REG_RAX])

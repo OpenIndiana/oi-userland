@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		virtualenv
 COMPONENT_VERSION=	16.5.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_FMRI=		library/python/virtualenv
 COMPONENT_SUMMARY=	'A tool to create isolated Python environments'
 COMPONENT_PROJECT_URL=	https://virtualenv.pypa.io/en/latest/

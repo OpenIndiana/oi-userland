@@ -24,26 +24,23 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS=		64
-
+BUILD_BITS=			64
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		links
-COMPONENT_VERSION=	2.20.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.23
 COMPONENT_SUMMARY=	Text based web browser
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://links.twibright.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:17619208e75bb45890982b37b834c70cf9c56b6f9f98aadb787efd6a88db7e86
+COMPONENT_ARCHIVE_HASH=	sha256:d7118bd9781608129f4ab5e56fcac1fdeeacfa5c2f404d29cbf89daab85b951d
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_FMRI=		web/browser/links
 COMPONENT_LICENSE=	GPLv2
 
 TEST_TARGET=	$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 # Configure in links does not understand CC, CXX, etc.  Need to generate a
@@ -56,6 +53,6 @@ REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/libevent
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

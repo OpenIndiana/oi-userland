@@ -1,0 +1,14 @@
+This patch prevents from compiler failures because mode_t is unsigned int for 32-bit and long unsigned int for 64-bit
+and long unsigned int needs %ul as a format specifier. The change should work for both, 32-bit and 64-bit.
+
+--- glib-2.66.4/gio/tests/file.c.orig	2020-12-17 12:47:11.440608300 +0000
++++ glib-2.66.4/gio/tests/file.c	2020-12-20 12:31:36.255715567 +0000
+@@ -881,7 +881,7 @@
+   /* Reset the umask after querying it above. There’s no way to query it without
+    * changing it. */
+   umask (current_umask);
+-  g_test_message ("Current umask: %u", current_umask);
++  g_test_message ("Current umask: %lu", (long unsigned int)current_umask);
+ 
+   for (i = 0; i < G_N_ELEMENTS (vectors); i++)
+     {

@@ -19,16 +19,14 @@ BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           freetype
-COMPONENT_VERSION=        2.10.4
+COMPONENT_VERSION=        2.11.0
 COMPONENT_FMRI=           system/library/freetype-2
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SUMMARY=  	FreeType 2 font engine
 COMPONENT_SRC=      	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:86a854d8905b19698bbc8f23b860bc104246ce4854dcea8e3b0fb21284f75784
-COMPONENT_ARCHIVE_URL= \
-	https://download.savannah.gnu.org/releases/freetype/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:8bee39bd3968c4804b70614a0a3ad597299ad0e824bc8aad5ce8aaf48067bde7
+COMPONENT_ARCHIVE_URL=	https://download.savannah.gnu.org/releases/freetype/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://freetype.org/
 COMPONENT_LICENSE=      The FreeType Project License
 COMPONENT_LICENSE_FILE= freetype-2.license
@@ -56,10 +54,10 @@ COMPONENT_PREP_ACTION = ( cd $(@D); \
 		-i include/freetype/config/ftoption.h ) 
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

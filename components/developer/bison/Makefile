@@ -29,14 +29,13 @@ BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bison
-COMPONENT_VERSION=	3.5.4
+COMPONENT_VERSION=	3.7.6
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/bison/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	bison - A YACC Replacement
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:4c17e99881978fa32c05933c5262457fa5b2b611668454f8dc2a695cd6b3720c
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:67d68ce1e22192050525643fc0a7a22297576682bef6a5c51446903f5aeef3cf
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_FMRI=		developer/parser/bison
 
@@ -62,7 +61,7 @@ COMPONENT_BUILD_ARGS += CC_PIC="$(CC_PIC)"
 # with, so they are 32-bit otherwise.
 CONFIGURE_OPTIONS +=	WARN_CXXFLAGS_TEST="$(CFLAGS)"
 
-CONFIGURE_ENV += 	M4="/usr/gnu/bin/m4"
+CONFIGURE_ENV += 	M4="/usr/bin/gm4"
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
@@ -79,6 +78,7 @@ $(INSTALL_32):	$(INSTALL_64)
 
 # Two test suite cases utilitize Doxygen
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/macro/gnu-m4
 REQUIRED_PACKAGES += system/library

@@ -1,0 +1,21 @@
+Some tests for toml are not available in the same
+repository as the toml itself; hence skip them.
+
+--- toml-0.10.2/tests/test_api.py
++++ toml-0.10.2/tests/test_api.py
+@@ -44,6 +44,7 @@ def test_bug_196():
+     assert round_trip_bug_dict['x'] == bug_dict['x']
+ 
+ 
++@pytest.mark.skip("toml-test repository is not available")
+ def test_valid_tests():
+     valid_dir = "toml-test/tests/valid/"
+     for f in os.listdir(valid_dir):
+@@ -160,6 +161,7 @@ def test_decimal():
+     assert Decimal(o["a"]).quantize(PLACES) == d["a"].quantize(PLACES)
+ 
+ 
++@pytest.mark.skip("toml-test repository is not available")
+ def test_invalid_tests():
+     invalid_dir = "toml-test/tests/invalid/"
+     for f in os.listdir(invalid_dir):

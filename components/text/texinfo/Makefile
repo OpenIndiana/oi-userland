@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2021, Nona Hansel
 #
 
 BUILD_BITS=		64
@@ -29,14 +30,13 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		texinfo
-COMPONENT_VERSION=	6.7
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/texinfo/
+COMPONENT_VERSION=	6.8
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/texinfo/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:988403c1542d15ad044600b909997ba3079b10e03224c61188117f3676b02caa
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/texinfo/$(COMPONENT_ARCHIVE)
+	sha256:8eb753ed28bca21f8f56c1a180362aed789229bd62fff58bf8368e9beb59fec4
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/texinfo/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/texinfo
 
 include $(WS_MAKE_RULES)/common.mk
@@ -72,5 +72,6 @@ REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

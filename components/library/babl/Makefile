@@ -12,25 +12,23 @@
 #
 # Copyright 2017 Gary Mills
 # Copyright 2020 Alexander Pyhalov
+# Copyright 2021 Andreas Wacknitz
 #
 
 BUILD_BITS= 64
 BUILD_STYLE= meson
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= babl
-COMPONENT_VERSION= 0.1.78
+COMPONENT_VERSION= 0.1.88
 COMPONENT_SUMMARY= Babl is a dynamic, any to any, pixel format conversion library
 COMPONENT_FMRI = image/library/babl
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:17d5493633bff5585d9f375bc4df5925157cd1c70ccd7c22a635be75c172523a
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.gimp.org/pub/babl/0.1/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://gegl.org/babl/
+COMPONENT_ARCHIVE_HASH= sha256:4f0d7f4aaa0bb2e725f349adf7b351a957d9fb26d555d9895a7af816b4167039
+COMPONENT_ARCHIVE_URL= https://ftp.gimp.org/pub/babl/0.1/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://gegl.org/babl/
 COMPONENT_LICENSE = LGLPv3
 COMPONENT_LICENSE_FILE = COPYING
 
@@ -63,7 +61,15 @@ LD_Z_IGNORE=
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
 
+# Remove irrelevant lines from test output:
+COMPONENT_TEST_TRANSFORMS += \
+	' -e "/Generating/d"' \
+	' -e "/Running/d"' \
+	' -e "/Full/d"' \
+	' -e "/OK/d" '
+
 # Build dependencies
+REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += web/browser/w3m

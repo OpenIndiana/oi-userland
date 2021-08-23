@@ -1,0 +1,183 @@
+--- VirtualBox-6.1.22/kBuild/tools/GCC3PLAIN.kmk	1970-01-01 00:00:00
++++ VirtualBox-6.1.22/kBuild/tools/GCC3PLAIN.kmk	1970-01-01 00:00:00
+@@ -66,9 +66,19 @@
+ # General Properties used by kBuild
+ TOOL_GCC3PLAIN_COBJSUFF         ?= .o
+ TOOL_GCC3PLAIN_CFLAGS           ?=
+-TOOL_GCC3PLAIN_CFLAGS.debug     ?= -g
++TOOL_GCC3PLAIN_CFLAGS.debug     ?= \
++	-gdwarf-2 -fno-inline-small-functions \
++	-fno-inline-functions-called-once \
++	-fno-ipa-cp -fno-ipa-icf \
++	-fno-clone-functions -fno-reorder-functions \
++	-fno-shrink-wrap -fno-aggressive-loop-optimizations
+ TOOL_GCC3PLAIN_CFLAGS.profile   ?= -O2 #-g -pg
+-TOOL_GCC3PLAIN_CFLAGS.release   ?= -O2
++TOOL_GCC3PLAIN_CFLAGS.release   ?= -O2 \
++	-gdwarf-2 -fno-inline-small-functions \
++	-fno-inline-functions-called-once \
++	-fno-ipa-cp -fno-ipa-icf \
++	-fno-clone-functions -fno-reorder-functions \
++	-fno-shrink-wrap -fno-aggressive-loop-optimizations
+ TOOL_GCC3PLAIN_CINCS            ?=
+ TOOL_GCC3PLAIN_CDEFS            ?=
+ 
+@@ -75,9 +85,18 @@
+ TOOL_GCC3PLAIN_CXXOBJSUFF       ?= .o
+ TOOL_GCC3PLAIN_CXXOBJSUFF       ?= .o
+ TOOL_GCC3PLAIN_CXXFLAGS         ?=
+-TOOL_GCC3PLAIN_CXXFLAGS.debug   ?= -g
++TOOL_GCC3PLAIN_CXXFLAGS.debug   ?= \
++	-gdwarf-2 -fno-inline-small-functions \
++	-fno-inline-functions-called-once \
++	-fno-ipa-cp -fno-ipa-icf \
++	-fno-clone-functions -fno-reorder-functions
+ TOOL_GCC3PLAIN_CXXFLAGS.profile ?= -O2 #-g -pg
+-TOOL_GCC3PLAIN_CXXFLAGS.release ?= -O2
++TOOL_GCC3PLAIN_CXXFLAGS.release ?= -O2 \
++	-gdwarf-2 -fno-inline-small-functions \
++	-fno-inline-functions-called-once \
++	-fno-ipa-cp -fno-ipa-icf \
++	-fno-clone-functions -fno-reorder-functions \
++	-fno-shrink-wrap -fno-aggressive-loop-optimizations
+ TOOL_GCC3PLAIN_CXXINCS          ?=
+ TOOL_GCC3PLAIN_CXXDEFS          ?=
+ 
+@@ -91,7 +110,11 @@
+ 
+ TOOL_GCC3PLAIN_LDFLAGS          ?=
+ 
++TOOL_CTFCONVERT			?= /opt/onbld/bin/i386/ctfconvert
++TOOL_CTFMERGE			?= /opt/onbld/bin/i386/ctfmerge
++TOOL_STRIP			?= /usr/bin/strip
+ 
++
+ ## Compile C source.
+ # @param    $(target)   Normalized main target name.
+ # @param    $(source)   Source filename (relative).
+@@ -257,6 +280,10 @@
+ 		$(filter %.def, $(othersrc))\
+ 		$(foreach p,$(libpath), -L$(p))\
+ 		$(foreach lib,$(libs), $(if $(findstring $(lib),$(subst /,x,$(lib))), -l$(patsubst lib%,%,$(lib)), $(lib)))
++	$(QUIET)cp $(out) $(out).ctf
++	-$(QUIET)$(TOOL_CTFMERGE) -m -l vbox -o $(out).ctf $(objs) && \
++	    cp $(out).ctf $(out)
++	$(QUIET)$(TOOL_STRIP) -x $(out)
+ endef
+ 
+ 
+@@ -285,6 +312,10 @@
+ 		$(filter %.def, $(othersrc))\
+ 		$(foreach p,$(libpath), -L$(p))\
+ 		$(foreach lib,$(libs), $(if $(findstring $(lib),$(subst /,x,$(lib))), -l$(patsubst lib%,%,$(lib)), $(lib)))
++	$(QUIET)cp $(out) $(out).ctf
++	-$(QUIET)$(TOOL_CTFMERGE) -m -l vbox -o $(out).ctf $(objs) && \
++	    cp $(out).ctf $(out)
++	$(QUIET)$(TOOL_STRIP) -x $(out)
+ endef
+ 
+ 
+@@ -316,5 +347,9 @@
+ 		$(filter %.def, $(othersrc))\
+ 		$(foreach p,$(libpath), -L$(p))\
+ 		$(foreach lib,$(libs), $(if $(findstring $(lib),$(subst /,x,$(lib))), -l$(patsubst lib%,%,$(lib)), $(lib)))
++	$(QUIET)cp $(out) $(out).ctf
++	-$(QUIET)$(TOOL_CTFMERGE) -m -l vbox -o $(out).ctf $(objs) && \
++	    cp $(out).ctf $(out)
++	$(QUIET)$(TOOL_STRIP) -x $(out)
+ endef
+ 
+--- VirtualBox-6.1.22/kBuild/tools/GXX3PLAIN.kmk	1970-01-01 00:00:00
++++ VirtualBox-6.1.22/kBuild/tools/GXX3PLAIN.kmk	1970-01-01 00:00:00
+@@ -67,17 +67,35 @@
+ # General Properties used by kBuild
+ TOOL_GXX3PLAIN_COBJSUFF         ?= .o
+ TOOL_GXX3PLAIN_CFLAGS           ?=
+-TOOL_GXX3PLAIN_CFLAGS.debug     ?= -g
++TOOL_GXX3PLAIN_CFLAGS.debug     ?= \
++	-gdwarf-2 -fno-inline-small-functions \
++	-fno-inline-functions-called-once \
++	-fno-ipa-cp -fno-ipa-icf \
++	-fno-clone-functions -fno-reorder-functions
+ TOOL_GXX3PLAIN_CFLAGS.profile   ?= -O2 #-g -pg
+-TOOL_GXX3PLAIN_CFLAGS.release   ?= -O2
++TOOL_GXX3PLAIN_CFLAGS.release   ?= -O2 \
++	-gdwarf-2 -fno-inline-small-functions \
++	-fno-inline-functions-called-once \
++	-fno-ipa-cp -fno-ipa-icf \
++	-fno-clone-functions -fno-reorder-functions \
++	-fno-shrink-wrap -fno-aggressive-loop-optimizations
+ TOOL_GXX3PLAIN_CINCS            ?=
+ TOOL_GXX3PLAIN_CDEFS            ?=
+ 
+ TOOL_GXX3PLAIN_CXXOBJSUFF       ?= .o
+ TOOL_GXX3PLAIN_CXXFLAGS         ?=
+-TOOL_GXX3PLAIN_CXXFLAGS.debug   ?= -g
++TOOL_GXX3PLAIN_CXXFLAGS.debug   ?= \
++	-gdwarf-2 -fno-inline-small-functions \
++	-fno-inline-functions-called-once \
++	-fno-ipa-cp -fno-ipa-icf \
++	-fno-clone-functions -fno-reorder-functions
+ TOOL_GXX3PLAIN_CXXFLAGS.profile ?= -O2 #-g -pg
+-TOOL_GXX3PLAIN_CXXFLAGS.release ?= -O2
++TOOL_GXX3PLAIN_CXXFLAGS.release ?= -O2 \
++	-gdwarf-2 -fno-inline-small-functions \
++	-fno-inline-functions-called-once \
++	-fno-ipa-cp -fno-ipa-icf \
++	-fno-clone-functions -fno-reorder-functions \
++	-fno-shrink-wrap -fno-aggressive-loop-optimizations
+ TOOL_GXX3PLAIN_CXXINCS          ?=
+ TOOL_GXX3PLAIN_CXXDEFS          ?=
+ 
+@@ -99,7 +117,11 @@
+ 
+ TOOL_GXX3PLAIN_LDFLAGS          ?=
+ 
++TOOL_CTFCONVERT			?= /opt/onbld/bin/i386/ctfconvert
++TOOL_CTFMERGE			?= /opt/onbld/bin/i386/ctfmerge
++TOOL_STRIP			?= /usr/bin/strip
+ 
++
+ ## Compile C source.
+ # @param    $(target)   Normalized main target name.
+ # @param    $(source)   Source filename (relative).
+@@ -231,6 +253,7 @@
+ 		-Wp,-MD,$(dep) -Wp,-MT,$(obj) -Wp,-MP\
+ 		-o $(obj)\
+ 		$(abspath $(source))
++	-$(QUIET)strip -x $(obj)
+ 	$(QUIET)$(APPEND) -n "$(dep)" "" "$(source):" ""
+ endef
+ 
+@@ -285,6 +308,10 @@
+ 		$(filter %.def, $(othersrc))\
+ 		$(foreach p,$(libpath), -L$(p))\
+ 		$(foreach lib,$(libs), $(if $(findstring $(lib),$(subst /,x,$(lib))), -l$(patsubst lib%,%,$(lib)), $(lib)))
++	$(QUIET)cp $(out) $(out).ctf
++	-$(QUIET)$(TOOL_CTFMERGE) -m -l vbox -o $(out).ctf $(objs) && \
++	    cp $(out).ctf $(out)
++	$(QUIET)$(TOOL_STRIP) -x $(out)
+ endef
+ 
+ 
+@@ -313,6 +340,10 @@
+ 		$(filter %.def, $(othersrc))\
+ 		$(foreach p,$(libpath), -L$(p))\
+ 		$(foreach lib,$(libs), $(if $(findstring $(lib),$(subst /,x,$(lib))), -l$(patsubst lib%,%,$(lib)), $(lib)))
++	$(QUIET)cp $(out) $(out).ctf
++	-$(QUIET)$(TOOL_CTFMERGE) -m -l vbox -o $(out).ctf $(objs) && \
++	    cp $(out).ctf $(out)
++	$(QUIET)$(TOOL_STRIP) -x $(out)
+ endef
+ 
+ 
+@@ -344,5 +375,9 @@
+ 		$(filter %.def, $(othersrc))\
+ 		$(foreach p,$(libpath), -L$(p))\
+ 		$(foreach lib,$(libs), $(if $(findstring $(lib),$(subst /,x,$(lib))), -l$(patsubst lib%,%,$(lib)), $(lib)))
++	$(QUIET)cp $(out) $(out).ctf
++	-$(QUIET)$(TOOL_CTFMERGE) -m -l vbox -o $(out).ctf $(objs) && \
++	    cp $(out).ctf $(out)
++	$(QUIET)$(TOOL_STRIP) -x $(out)
+ endef
+ 

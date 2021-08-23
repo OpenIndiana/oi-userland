@@ -1,0 +1,20 @@
+--- mongodb-src-r4.4.5/src/mongo/util/time_support.cpp.~1~	2021-03-31 17:15:37.000000000 +0000
++++ mongodb-src-r4.4.5/src/mongo/util/time_support.cpp	2021-05-10 10:36:48.112803785 +0000
+@@ -50,7 +50,7 @@
+ #include "mongo/util/system_tick_source.h"
+ #include "mongo/util/timer.h"
+ #include <mmsystem.h>
+-#elif defined(__linux__)
++#elif defined(__linux__) || defined(__sun__)
+ #include <time.h>
+ #elif defined(__APPLE__)
+ #include <mach/clock.h>
+@@ -846,7 +846,7 @@
+ // Find minimum timer resolution of OS
+ Nanoseconds getMinimumTimerResolution() {
+     Nanoseconds minTimerResolution;
+-#if defined(__linux__) || defined(__FreeBSD__) || defined(__EMSCRIPTEN__)
++#if defined(__linux__) || defined(__FreeBSD__) || defined(__EMSCRIPTEN__) || defined(__sun__)
+     struct timespec tp;
+     clock_getres(CLOCK_REALTIME, &tp);
+     minTimerResolution = Nanoseconds{tp.tv_nsec};

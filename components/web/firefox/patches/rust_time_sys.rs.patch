@@ -1,0 +1,57 @@
+diff --git a/third_party/rust/time/.cargo-checksum.json b/third_party/rust/time/.cargo-checksum.json
+index 5b3d7f0..d04ad6e 100644
+--- a/third_party/rust/time/.cargo-checksum.json
++++ b/third_party/rust/time/.cargo-checksum.json
+@@ -1 +1 @@
+-{"files":{"Cargo.toml":"3c15858858af40a4cfa78a73cea88ba2e4ff31a59e7c7d2fef17d2282c9aa6e7","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2","LICENSE-MIT":"6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb","README.md":"2c17f942c4a797f6f491c6d40570f904f35047531884ded3244438832b3d6f0a","appveyor.yml":"da991211b72fa6f231af7adb84c9fb72f5a9131d1c0a3d47b8ceffe5a82c8542","benches/precise_time_ns.rs":"06206c16764c6cef71da645ddb1aa7476dff7697e38d0742b3c907be9f00dadf","src/display.rs":"b79a81b4f068e44934ad3398ba0259120cc30cf0855ac5108c4569e320fd7f1d","src/duration.rs":"c227f6809f837996d24145843ba4972650d0fca7e2af7bbb0ebc0dbcec3358d9","src/lib.rs":"a07a09d4955fc92b85eb854e136a2732b94feff1c9be97fcf49accde6e704ee7","src/parse.rs":"717ae5735dfdaaba513f2a54a179e73bb2a48f8d4fb8787740d4662d6ff3389c","src/sys.rs":"14e3f57e7cf63167eda2f2fead3e01e59eb4cf71a5b15ae7563e962a43dbc659"},"package":"d825be0eb33fda1a7e68012d51e9c7f451dc1a69391e7fdc197060bb8c56667b"}
+\ No newline at end of file
++{"files":{"Cargo.toml":"3c15858858af40a4cfa78a73cea88ba2e4ff31a59e7c7d2fef17d2282c9aa6e7","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2","LICENSE-MIT":"6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb","README.md":"2c17f942c4a797f6f491c6d40570f904f35047531884ded3244438832b3d6f0a","appveyor.yml":"da991211b72fa6f231af7adb84c9fb72f5a9131d1c0a3d47b8ceffe5a82c8542","benches/precise_time_ns.rs":"06206c16764c6cef71da645ddb1aa7476dff7697e38d0742b3c907be9f00dadf","src/display.rs":"b79a81b4f068e44934ad3398ba0259120cc30cf0855ac5108c4569e320fd7f1d","src/duration.rs":"c227f6809f837996d24145843ba4972650d0fca7e2af7bbb0ebc0dbcec3358d9","src/lib.rs":"a07a09d4955fc92b85eb854e136a2732b94feff1c9be97fcf49accde6e704ee7","src/parse.rs":"717ae5735dfdaaba513f2a54a179e73bb2a48f8d4fb8787740d4662d6ff3389c","src/sys.rs":"95fb713c19c6eb29fa7a5cc0fd1003887a4b5753cfb78723cfc37305317ee769"},"package":"d825be0eb33fda1a7e68012d51e9c7f451dc1a69391e7fdc197060bb8c56667b"}
+diff --git a/third_party/rust/time/src/sys.rs b/third_party/rust/time/src/sys.rs
+index be7d894..d677e94 100644
+--- a/third_party/rust/time/src/sys.rs
++++ b/third_party/rust/time/src/sys.rs
+@@ -282,7 +282,7 @@ mod inner {
+     #[cfg(all(not(target_os = "macos"), not(target_os = "ios")))]
+     pub use self::unix::*;
+ 
+-    #[cfg(target_os = "solaris")]
++    #[cfg(any(target_os = "solaris", target_os = "illumos"))]
+     extern {
+         static timezone: time_t;
+         static altzone: time_t;
+@@ -313,7 +313,7 @@ mod inner {
+         rust_tm.tm_utcoff = utcoff;
+     }
+ 
+-    #[cfg(any(target_os = "nacl", target_os = "solaris"))]
++    #[cfg(any(target_os = "nacl", target_os = "solaris", target_os = "illumos"))]
+     unsafe fn timegm(tm: *mut libc::tm) -> time_t {
+         use std::env::{set_var, var_os, remove_var};
+         extern {
+@@ -356,7 +356,7 @@ mod inner {
+             if libc::localtime_r(&sec, &mut out).is_null() {
+                 panic!("localtime_r failed: {}", io::Error::last_os_error());
+             }
+-            #[cfg(target_os = "solaris")]
++            #[cfg(any(target_os = "solaris", target_os = "illumos"))]
+             let gmtoff = {
+                 ::tzset();
+                 // < 0 means we don't know; assume we're not in DST.
+@@ -369,7 +369,7 @@ mod inner {
+                     -timezone
+                 }
+             };
+-            #[cfg(not(target_os = "solaris"))]
++            #[cfg(not(any(target_os = "solaris", target_os = "illumos")))]
+             let gmtoff = out.tm_gmtoff;
+             tm_to_rust_tm(&out, gmtoff as i32, tm);
+         }
+@@ -378,7 +378,7 @@ mod inner {
+     pub fn utc_tm_to_time(rust_tm: &Tm) -> i64 {
+         #[cfg(all(target_os = "android", target_pointer_width = "32"))]
+         use libc::timegm64 as timegm;
+-        #[cfg(not(any(all(target_os = "android", target_pointer_width = "32"), target_os = "nacl", target_os = "solaris")))]
++        #[cfg(not(any(all(target_os = "android", target_pointer_width = "32"), target_os = "nacl", target_os = "solaris", target_os = "illumos")))]
+         use libc::timegm;
+ 
+         let mut tm = unsafe { mem::zeroed() };

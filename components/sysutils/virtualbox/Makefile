@@ -13,32 +13,31 @@
 # Copyright 2020 Michal Nowak
 # Copyright 2019 Tim Mooney
 # Copyright 2020 Jim Klimov
-#
+# Copyright 2021 omnios.org wrt the ctx patches
 
+#USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      6.1.16
+COMPONENT_VERSION=      6.1.22
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
 COMPONENT_FMRI=         system/virtualbox
 COMPONENT_CLASSIFICATION= System/Virtualization
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
-COMPONENT_DOWNLOAD_URL= \
-	https://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
+COMPONENT_DOWNLOAD_URL= https://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-	sha256:49c1990da16d8a3d5bda8cdb961ec8195a901e67e4c79aea44c1521a5fc2f9f1
+COMPONENT_ARCHIVE_HASH= sha256:99816d2a15205d49362a31e8ffeb8262d2fa0678c751dfd0a7c43b2faca8be49
 COMPONENT_LICENSE=      GPLv2
 
 COMPONENT_NAME_1=       VirtualBoxSDK
-COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-140961
+COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-144080
 COMPONENT_SRC_1=        $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).zip
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE_1)
-COMPONENT_ARCHIVE_HASH_1= \
-	sha256:0dc5a55fbf40e5120008a4148df1e9312bf0aa974cfb96f49e2947e20d408d47
+COMPONENT_ARCHIVE_HASH_1= sha256:15e0829259e2cb2a976da1957c69fabdfaf6e1d4b2a169ec7c243a6c757332b2
 COMPONENT_LICENSE_1=      GPLv2
 
 UNPACK_ARGS_1=		-r $(COMPONENT_SRC_1)
@@ -70,7 +69,7 @@ VBOX_FS_MODULES= vboxfs
 VBOX_BINS= VBoxControl VBoxService VBoxClient
 VBOX_SBINS= vboxmslnk
 
-QT5_ROOT=/usr/lib/qt/5.8
+QT5_ROOT=/usr/lib/qt/5.12
 PATH=$(PATH.gnu):$(QT5_ROOT)/bin/$(MACH64)
 PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS)):$(QT5_ROOT)/lib/$(MACH64)/pkgconfig
 
@@ -235,6 +234,8 @@ REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/header/header-usb
 REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += library/libvncserver
+REQUIRED_PACKAGES += developer/build/onbld
+REQUIRED_PACKAGES += developer/object-file
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -246,6 +247,7 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl

@@ -11,6 +11,7 @@
 
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2020 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/text/asciidoc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -20,102 +21,107 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license asciidoc.license license="GPLv2"
+license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
 
-file usr/bin/a2x.py path=usr/lib/python2.7/a2x.py mode=0555
-file usr/bin/asciidoc.py path=usr/lib/python2.7/asciidoc.py mode=0555
-link path=usr/bin/a2x target=../lib/python2.7/a2x.py
-link path=usr/bin/asciidoc target=../lib/python2.7/asciidoc.py
+file path=usr/share/asciidoc/asciidoc.conf preserve=renamenew
 
-file path=etc/asciidoc/asciidoc.conf preserve=renamenew
-
-file path=etc/asciidoc/dblatex/asciidoc-dblatex.sty
-file path=etc/asciidoc/dblatex/asciidoc-dblatex.xsl
-file path=etc/asciidoc/docbook-xsl/chunked.xsl
-file path=etc/asciidoc/docbook-xsl/common.xsl
-file path=etc/asciidoc/docbook-xsl/epub.xsl
-file path=etc/asciidoc/docbook-xsl/fo.xsl
-file path=etc/asciidoc/docbook-xsl/htmlhelp.xsl
-file path=etc/asciidoc/docbook-xsl/manpage.xsl
-file path=etc/asciidoc/docbook-xsl/text.xsl
-file path=etc/asciidoc/docbook-xsl/xhtml.xsl
-file path=etc/asciidoc/docbook45.conf
-file path=etc/asciidoc/filters/code/code-filter.conf
-file path=etc/asciidoc/filters/code/code-filter.py mode=0555
-file path=etc/asciidoc/filters/graphviz/graphviz-filter.conf
-file path=etc/asciidoc/filters/graphviz/graphviz2png.py mode=0555
-file path=etc/asciidoc/filters/latex/latex-filter.conf
-file path=etc/asciidoc/filters/latex/latex2img.py mode=0555
-file path=etc/asciidoc/filters/music/music-filter.conf
-file path=etc/asciidoc/filters/music/music2png.py mode=0555
-file path=etc/asciidoc/filters/source/source-highlight-filter.conf
-file path=etc/asciidoc/help.conf
-file path=etc/asciidoc/html4.conf
-file path=etc/asciidoc/html5.conf
-file path=etc/asciidoc/images/icons/README
-file path=etc/asciidoc/images/icons/callouts/1.png
-file path=etc/asciidoc/images/icons/callouts/10.png
-file path=etc/asciidoc/images/icons/callouts/11.png
-file path=etc/asciidoc/images/icons/callouts/12.png
-file path=etc/asciidoc/images/icons/callouts/13.png
-file path=etc/asciidoc/images/icons/callouts/14.png
-file path=etc/asciidoc/images/icons/callouts/15.png
-file path=etc/asciidoc/images/icons/callouts/2.png
-file path=etc/asciidoc/images/icons/callouts/3.png
-file path=etc/asciidoc/images/icons/callouts/4.png
-file path=etc/asciidoc/images/icons/callouts/5.png
-file path=etc/asciidoc/images/icons/callouts/6.png
-file path=etc/asciidoc/images/icons/callouts/7.png
-file path=etc/asciidoc/images/icons/callouts/8.png
-file path=etc/asciidoc/images/icons/callouts/9.png
-file path=etc/asciidoc/images/icons/caution.png
-file path=etc/asciidoc/images/icons/example.png
-file path=etc/asciidoc/images/icons/home.png
-file path=etc/asciidoc/images/icons/important.png
-file path=etc/asciidoc/images/icons/next.png
-file path=etc/asciidoc/images/icons/note.png
-file path=etc/asciidoc/images/icons/prev.png
-file path=etc/asciidoc/images/icons/tip.png
-file path=etc/asciidoc/images/icons/up.png
-file path=etc/asciidoc/images/icons/warning.png
-file path=etc/asciidoc/javascripts/ASCIIMathML.js
-file path=etc/asciidoc/javascripts/LaTeXMathML.js
-file path=etc/asciidoc/javascripts/asciidoc.js
-file path=etc/asciidoc/javascripts/slidy.js
-file path=etc/asciidoc/javascripts/toc.js
-file path=etc/asciidoc/lang-cs.conf
-file path=etc/asciidoc/lang-de.conf
-file path=etc/asciidoc/lang-el.conf
-file path=etc/asciidoc/lang-en.conf
-file path=etc/asciidoc/lang-es.conf
-file path=etc/asciidoc/lang-fi.conf
-file path=etc/asciidoc/lang-fr.conf
-file path=etc/asciidoc/lang-hu.conf
-file path=etc/asciidoc/lang-id.conf
-file path=etc/asciidoc/lang-it.conf
-file path=etc/asciidoc/lang-ja.conf
-file path=etc/asciidoc/lang-nl.conf
-file path=etc/asciidoc/lang-pl.conf
-file path=etc/asciidoc/lang-pt-BR.conf
-file path=etc/asciidoc/lang-ro.conf
-file path=etc/asciidoc/lang-ru.conf
-file path=etc/asciidoc/lang-sv.conf
-file path=etc/asciidoc/lang-uk.conf
-file path=etc/asciidoc/latex.conf
-file path=etc/asciidoc/slidy.conf
-file path=etc/asciidoc/stylesheets/asciidoc.css
-file path=etc/asciidoc/stylesheets/docbook-xsl.css
-file path=etc/asciidoc/stylesheets/pygments.css
-file path=etc/asciidoc/stylesheets/slidy.css
-file path=etc/asciidoc/stylesheets/toc2.css
-file path=etc/asciidoc/stylesheets/xhtml11-quirks.css
-file path=etc/asciidoc/text.conf
-file path=etc/asciidoc/themes/flask/flask.css
-file path=etc/asciidoc/themes/volnitsky/volnitsky.css
-file path=etc/asciidoc/xhtml11-quirks.conf
-file path=etc/asciidoc/xhtml11.conf
+link path=usr/bin/a2x target=a2x.py
+file path=usr/bin/a2x.py
+# Python module trans.py is optional and we don't have it yet so ignore the dependency:
+file usr/bin/asciidoc.py path=usr/bin/asciidoc \
+    pkg.depend.bypass-generate=.*trans.*
+file path=usr/share/asciidoc/dblatex/asciidoc-dblatex.sty
+file path=usr/share/asciidoc/dblatex/asciidoc-dblatex.xsl
+file path=usr/share/asciidoc/docbook-xsl/chunked.xsl
+file path=usr/share/asciidoc/docbook-xsl/common.xsl
+file path=usr/share/asciidoc/docbook-xsl/epub.xsl
+file path=usr/share/asciidoc/docbook-xsl/fo.xsl
+file path=usr/share/asciidoc/docbook-xsl/htmlhelp.xsl
+file path=usr/share/asciidoc/docbook-xsl/manpage.xsl
+file path=usr/share/asciidoc/docbook-xsl/text.xsl
+file path=usr/share/asciidoc/docbook-xsl/xhtml.xsl
+file path=usr/share/asciidoc/docbook45.conf
+file path=usr/share/asciidoc/docbook5.conf
+file path=usr/share/asciidoc/filters/code/code-filter.conf
+file path=usr/share/asciidoc/filters/code/code-filter.py
+file path=usr/share/asciidoc/filters/graphviz/graphviz-filter.conf
+file path=usr/share/asciidoc/filters/graphviz/graphviz2png.py
+file path=usr/share/asciidoc/filters/latex/latex-filter.conf
+file path=usr/share/asciidoc/filters/latex/latex2img.py
+file path=usr/share/asciidoc/filters/music/music-filter.conf
+file path=usr/share/asciidoc/filters/music/music2png.py
+file path=usr/share/asciidoc/filters/source/source-highlight-filter.conf
+file path=usr/share/asciidoc/filters/unwraplatex.py
+file path=usr/share/asciidoc/help.conf
+file path=usr/share/asciidoc/html4.conf
+file path=usr/share/asciidoc/html5.conf
+file path=usr/share/asciidoc/images/icons/README
+file path=usr/share/asciidoc/images/icons/callouts/1.png
+file path=usr/share/asciidoc/images/icons/callouts/10.png
+file path=usr/share/asciidoc/images/icons/callouts/11.png
+file path=usr/share/asciidoc/images/icons/callouts/12.png
+file path=usr/share/asciidoc/images/icons/callouts/13.png
+file path=usr/share/asciidoc/images/icons/callouts/14.png
+file path=usr/share/asciidoc/images/icons/callouts/15.png
+file path=usr/share/asciidoc/images/icons/callouts/2.png
+file path=usr/share/asciidoc/images/icons/callouts/3.png
+file path=usr/share/asciidoc/images/icons/callouts/4.png
+file path=usr/share/asciidoc/images/icons/callouts/5.png
+file path=usr/share/asciidoc/images/icons/callouts/6.png
+file path=usr/share/asciidoc/images/icons/callouts/7.png
+file path=usr/share/asciidoc/images/icons/callouts/8.png
+file path=usr/share/asciidoc/images/icons/callouts/9.png
+file path=usr/share/asciidoc/images/icons/caution.png
+file path=usr/share/asciidoc/images/icons/example.png
+file path=usr/share/asciidoc/images/icons/home.png
+file path=usr/share/asciidoc/images/icons/important.png
+file path=usr/share/asciidoc/images/icons/next.png
+file path=usr/share/asciidoc/images/icons/note.png
+file path=usr/share/asciidoc/images/icons/prev.png
+file path=usr/share/asciidoc/images/icons/tip.png
+file path=usr/share/asciidoc/images/icons/up.png
+file path=usr/share/asciidoc/images/icons/warning.png
+file path=usr/share/asciidoc/javascripts/ASCIIMathML.js
+file path=usr/share/asciidoc/javascripts/LaTeXMathML.js
+file path=usr/share/asciidoc/javascripts/asciidoc.js
+file path=usr/share/asciidoc/javascripts/slidy.js
+file path=usr/share/asciidoc/javascripts/toc.js
+file path=usr/share/asciidoc/lang-ca.conf
+file path=usr/share/asciidoc/lang-cs.conf
+file path=usr/share/asciidoc/lang-de.conf
+file path=usr/share/asciidoc/lang-el.conf
+file path=usr/share/asciidoc/lang-en.conf
+file path=usr/share/asciidoc/lang-es.conf
+file path=usr/share/asciidoc/lang-fi.conf
+file path=usr/share/asciidoc/lang-fr.conf
+file path=usr/share/asciidoc/lang-hu.conf
+file path=usr/share/asciidoc/lang-id.conf
+file path=usr/share/asciidoc/lang-it.conf
+file path=usr/share/asciidoc/lang-ja.conf
+file path=usr/share/asciidoc/lang-nl.conf
+file path=usr/share/asciidoc/lang-pl.conf
+file path=usr/share/asciidoc/lang-pt-BR.conf
+file path=usr/share/asciidoc/lang-ro.conf
+file path=usr/share/asciidoc/lang-ru.conf
+file path=usr/share/asciidoc/lang-sv.conf
+file path=usr/share/asciidoc/lang-uk.conf
+file path=usr/share/asciidoc/lang-zh-CN.conf
+file path=usr/share/asciidoc/latex.conf
+file path=usr/share/asciidoc/slidy.conf
+file path=usr/share/asciidoc/stylesheets/asciidoc.css
+file path=usr/share/asciidoc/stylesheets/docbook-xsl.css
+file path=usr/share/asciidoc/stylesheets/pygments.css
+file path=usr/share/asciidoc/stylesheets/slidy.css
+file path=usr/share/asciidoc/stylesheets/toc2.css
+file path=usr/share/asciidoc/stylesheets/xhtml11-quirks.css
+file path=usr/share/asciidoc/text.conf
+file path=usr/share/asciidoc/themes/flask/flask.css
+file path=usr/share/asciidoc/themes/volnitsky/volnitsky.css
+file path=usr/share/asciidoc/xhtml11-quirks.conf
+file path=usr/share/asciidoc/xhtml11.conf
 file path=usr/share/man/man1/a2x.1
 file path=usr/share/man/man1/asciidoc.1
+file path=usr/share/man/man1/testasciidoc.1

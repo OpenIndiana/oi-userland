@@ -1,0 +1,17 @@
+Asyncio watcher 'MultiLoopChildWatcher' currently doesn't work well
+on Solaris and can freeze the event loop indefinitely.
+
+This was reported upstream:
+https://bugs.python.org/issue37573
+
+--- Python-3.9.0/Lib/asyncio/unix_events.py
++++ Python-3.9.0/Lib/asyncio/unix_events.py
+@@ -30,7 +30,7 @@ __all__ = (
+     'SelectorEventLoop',
+     'AbstractChildWatcher', 'SafeChildWatcher',
+     'FastChildWatcher', 'PidfdChildWatcher',
+-    'MultiLoopChildWatcher', 'ThreadedChildWatcher',
++    'ThreadedChildWatcher',
+     'DefaultEventLoopPolicy',
+ )
+ 

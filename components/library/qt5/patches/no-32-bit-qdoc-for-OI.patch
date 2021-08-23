@@ -1,0 +1,18 @@
+--- qt-everywhere-src-5.12.9/qttools/src/qdoc/configure.old	Sat Oct 17 07:40:12 2020
++++ qt-everywhere-src-5.12.9/qttools/src/qdoc/configure.pri	Sat Oct 17 07:39:31 2020
+@@ -52,6 +52,14 @@
+             isEmpty(LLVM_INSTALL_DIR): LLVM_INSTALL_DIR = $$(LLVM_INSTALL_DIR_MINGW)
+         }
+     }
++    solaris-g++: {
++        qtLog("Clang on this platform is 64-bit only, not building qdoc")
++        return(false)
++    }
++    solaris-g++-64: {
++        qtLog("Building qdoc")
++        continue
++     } 
+     isEmpty(LLVM_INSTALL_DIR): LLVM_INSTALL_DIR = $$(LLVM_INSTALL_DIR)
+ 
+     # Assume libclang is installed on the target system
+ 

@@ -29,7 +29,7 @@ PATCH_EACH_ARCHIVE= 1
 
 COMPONENT_NAME=			golang
 COMPONENT_MAJOR_VERSION=	1.15
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).3
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).15
 COMPONENT_FMRI=			developer/golang
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_SUMMARY=		The Go Programming Language
@@ -37,7 +37,7 @@ COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://golang.org/
 COMPONENT_ARCHIVE=		go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=		https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:896a602570e54c8cdfc2c1348abd4ffd1016758d0bd086ccd9787dbfc9b64888
+COMPONENT_ARCHIVE_HASH=		sha256:0662ae3813330280d5f1a97a2ee23bbdbe3a5a7cfa6001b24a9873a19a0dc7ec
 COMPONENT_LICENSE=		BSD-style, Patent Grant
 COMPONENT_LICENSE_FILE=		$(COMPONENT_NAME).license
 MEDIATEDUSRSHAREMAN1DIR=	$(PROTO_DIR)/usr/share/golang/$(COMPONENT_MAJOR_VERSION)/man/man1
@@ -67,9 +67,10 @@ COMPONENT_INSTALL_ENV += GOCACHE="$(SOURCE_DIR)/gocache"
 COMPONENT_INSTALL_ENV += GOPATH="$(SOURCE_DIR)/gopath"
 
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_BITS= 64
+BUILD_STYLE= justmake
+ 
+include $(WS_MAKE_RULES)/common.mk
 
 # We have to fiddle with the package archives to get them into the same source
 # directory so that we can use the standard build targets.  We're effectively
@@ -94,6 +95,16 @@ COMPONENT_TEST_ENV +=	GOROOT="$(@D)"
 COMPONENT_TEST_DIR=	$(@D)/src
 COMPONENT_TEST_CMD=	./run.bash
 COMPONENT_TEST_TARGETS=
+# Remove measured times (eg. 11.106s, 0.312s or 1,16s):
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9][0-9].[0-9][0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
+# Remove occurrences of "(cached)":
+COMPONENT_TEST_TRANSFORMS += '-e "s/(cached)//" '
+# Replace port numbers with nnnnn on localhost:
+COMPONENT_TEST_TRANSFORMS += '-e "s/127.0.0.1\:[0-9]*/127.0.0.1\:nnnnn/" '
+# Remove trailing random numbers on TestReadOnlyWriteFile:
+COMPONENT_TEST_TRANSFORMS += '-e "s/TestReadOnlyWriteFile[0-9]*/TestReadOnlyWriteFile/" '
 
 # Use this Command to copy the Go Source tree into the proto area. In order to deliver the Go SDK under GOROOT
 # Additionally nuke all the funky binary files used for test suites. They keep bothering the packaging tools
@@ -115,13 +126,6 @@ define COMPONENT_INSTALL_ACTION=
        	| egrep -v '\.go|\.s|\.bash|\.txt|\.c|\.tmpl|\.h|\.pl|\.md|\.S|\.py|\.dist|\.rc|\.bat|README|Makefile|\.awk|\.rules|\.mod|\.json|LICENSE|PATENTS'\
 	| xargs rm;
 endef
-
-# common targets
-build:		$(BUILD_64)
-
-install:	build $(INSTALL_64)
-
-test:		$(TEST_64)
 
 REQUIRED_PACKAGES += developer/golang-114
 # Auto-generated dependencies

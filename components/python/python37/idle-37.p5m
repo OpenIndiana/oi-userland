@@ -1,0 +1,204 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2012, 2020, Oracle and/or its affiliates. All rights reserved.
+#
+# Dependency resolution works only if the version is already installed in the build zone
+<transform file path=.+\.py$ -> \
+    default pkg.depend.bypass-generate .* >
+<transform file path=.+\.pyc$ -> \
+    default pkg.depend.bypass-generate .* >
+<transform file path=usr/bin.*$ -> \
+    default pkg.depend.bypass-generate .* >
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=.*/(idle_)?tests?/.* -> default facet.optional.test true>
+
+set name=pkg.fmri value=pkg:/library/python/idle-37@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Python 3.7 IDLE"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=pkg:/library/python/tkinter-37 type=require
+#
+link path=usr/bin/idle target=idle3.7 mediator=python mediator-version=3.7
+link path=usr/bin/idle3 target=idle3.7 mediator=python mediator-version=3.7
+file path=usr/bin/idle3.7
+
+file path=usr/lib/python3.7/idlelib/CREDITS.txt
+file path=usr/lib/python3.7/idlelib/ChangeLog
+file path=usr/lib/python3.7/idlelib/HISTORY.txt
+file path=usr/lib/python3.7/idlelib/Icons/folder.gif
+file path=usr/lib/python3.7/idlelib/Icons/README.txt
+file path=usr/lib/python3.7/idlelib/Icons/idle.ico
+file path=usr/lib/python3.7/idlelib/Icons/idle_16.gif
+file path=usr/lib/python3.7/idlelib/Icons/idle_16.png
+file path=usr/lib/python3.7/idlelib/Icons/idle_256.png
+file path=usr/lib/python3.7/idlelib/Icons/idle_32.gif
+file path=usr/lib/python3.7/idlelib/Icons/idle_32.png
+file path=usr/lib/python3.7/idlelib/Icons/idle_48.gif
+file path=usr/lib/python3.7/idlelib/Icons/idle_48.png
+file path=usr/lib/python3.7/idlelib/Icons/minusnode.gif
+file path=usr/lib/python3.7/idlelib/Icons/openfolder.gif
+file path=usr/lib/python3.7/idlelib/Icons/plusnode.gif
+file path=usr/lib/python3.7/idlelib/Icons/python.gif
+file path=usr/lib/python3.7/idlelib/Icons/tk.gif
+file path=usr/lib/python3.7/idlelib/NEWS.txt
+file path=usr/lib/python3.7/idlelib/NEWS2x.txt
+file path=usr/lib/python3.7/idlelib/README.txt
+file path=usr/lib/python3.7/idlelib/TODO.txt
+file path=usr/lib/python3.7/idlelib/__init__.py
+file path=usr/lib/python3.7/idlelib/__main__.py
+file path=usr/lib/python3.7/idlelib/autocomplete.py
+file path=usr/lib/python3.7/idlelib/autocomplete_w.py
+file path=usr/lib/python3.7/idlelib/autoexpand.py
+file path=usr/lib/python3.7/idlelib/browser.py
+file path=usr/lib/python3.7/idlelib/calltip.py
+file path=usr/lib/python3.7/idlelib/calltip_w.py
+file path=usr/lib/python3.7/idlelib/codecontext.py
+file path=usr/lib/python3.7/idlelib/colorizer.py
+file path=usr/lib/python3.7/idlelib/config-extensions.def
+file path=usr/lib/python3.7/idlelib/config-highlight.def
+file path=usr/lib/python3.7/idlelib/config-keys.def
+file path=usr/lib/python3.7/idlelib/config-main.def
+file path=usr/lib/python3.7/idlelib/config.py
+file path=usr/lib/python3.7/idlelib/config_key.py
+file path=usr/lib/python3.7/idlelib/configdialog.py
+file path=usr/lib/python3.7/idlelib/debugger.py
+file path=usr/lib/python3.7/idlelib/debugger_r.py
+file path=usr/lib/python3.7/idlelib/debugobj.py
+file path=usr/lib/python3.7/idlelib/debugobj_r.py
+file path=usr/lib/python3.7/idlelib/delegator.py
+file path=usr/lib/python3.7/idlelib/dynoption.py
+file path=usr/lib/python3.7/idlelib/editor.py
+file path=usr/lib/python3.7/idlelib/extend.txt
+file path=usr/lib/python3.7/idlelib/filelist.py
+file path=usr/lib/python3.7/idlelib/format.py
+file path=usr/lib/python3.7/idlelib/grep.py
+file path=usr/lib/python3.7/idlelib/help.html
+file path=usr/lib/python3.7/idlelib/help.py
+file path=usr/lib/python3.7/idlelib/help_about.py
+file path=usr/lib/python3.7/idlelib/history.py
+file path=usr/lib/python3.7/idlelib/hyperparser.py
+file path=usr/lib/python3.7/idlelib/idle.bat
+file path=usr/lib/python3.7/idlelib/idle.py
+file path=usr/lib/python3.7/idlelib/idle.pyw
+file path=usr/lib/python3.7/idlelib/idle_test/README.txt
+file path=usr/lib/python3.7/idlelib/idle_test/__init__.py
+file path=usr/lib/python3.7/idlelib/idle_test/htest.py
+file path=usr/lib/python3.7/idlelib/idle_test/mock_idle.py
+file path=usr/lib/python3.7/idlelib/idle_test/mock_tk.py
+file path=usr/lib/python3.7/idlelib/idle_test/template.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_autocomplete.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_autocomplete_w.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_autoexpand.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_browser.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_calltip.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_calltip_w.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_codecontext.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_colorizer.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_config.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_config_key.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_configdialog.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_debugger.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_debugger_r.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_debugobj.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_debugobj_r.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_delegator.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_editmenu.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_editor.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_filelist.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_format.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_grep.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_help.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_help_about.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_history.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_hyperparser.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_iomenu.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_macosx.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_mainmenu.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_multicall.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_outwin.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_parenmatch.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_pathbrowser.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_percolator.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_pyparse.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_pyshell.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_query.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_redirector.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_replace.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_rpc.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_run.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_runscript.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_scrolledlist.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_search.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_searchbase.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_searchengine.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_sidebar.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_squeezer.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_stackviewer.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_statusbar.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_text.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_textview.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_tooltip.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_tree.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_undo.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_warning.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_window.py
+file path=usr/lib/python3.7/idlelib/idle_test/test_zoomheight.py
+file path=usr/lib/python3.7/idlelib/iomenu.py
+file path=usr/lib/python3.7/idlelib/macosx.py
+file path=usr/lib/python3.7/idlelib/mainmenu.py
+file path=usr/lib/python3.7/idlelib/multicall.py
+file path=usr/lib/python3.7/idlelib/outwin.py
+file path=usr/lib/python3.7/idlelib/parenmatch.py
+file path=usr/lib/python3.7/idlelib/pathbrowser.py
+file path=usr/lib/python3.7/idlelib/percolator.py
+file path=usr/lib/python3.7/idlelib/pyparse.py
+file path=usr/lib/python3.7/idlelib/pyshell.py
+file path=usr/lib/python3.7/idlelib/query.py
+file path=usr/lib/python3.7/idlelib/redirector.py
+file path=usr/lib/python3.7/idlelib/replace.py
+file path=usr/lib/python3.7/idlelib/rpc.py
+file path=usr/lib/python3.7/idlelib/run.py
+file path=usr/lib/python3.7/idlelib/runscript.py
+file path=usr/lib/python3.7/idlelib/scrolledlist.py
+file path=usr/lib/python3.7/idlelib/search.py
+file path=usr/lib/python3.7/idlelib/searchbase.py
+file path=usr/lib/python3.7/idlelib/searchengine.py
+file path=usr/lib/python3.7/idlelib/sidebar.py
+file path=usr/lib/python3.7/idlelib/squeezer.py
+file path=usr/lib/python3.7/idlelib/stackviewer.py
+file path=usr/lib/python3.7/idlelib/statusbar.py
+file path=usr/lib/python3.7/idlelib/textview.py
+file path=usr/lib/python3.7/idlelib/tooltip.py
+file path=usr/lib/python3.7/idlelib/tree.py
+file path=usr/lib/python3.7/idlelib/undo.py
+file path=usr/lib/python3.7/idlelib/window.py
+file path=usr/lib/python3.7/idlelib/zoomheight.py
+file path=usr/lib/python3.7/idlelib/zzdummy.py
+
+file path=usr/lib/python3.7/test/test_idle.py

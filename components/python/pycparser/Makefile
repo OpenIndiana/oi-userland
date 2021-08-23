@@ -21,13 +21,16 @@
 
 #
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2021 Nona Hansel 
 #
 
+BUILD_BITS=			NO_ARCH
+BUILD_STYLE=		setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycparser
 COMPONENT_VERSION=	2.14
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -36,11 +39,10 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/eliben/pycparser
 COMPONENT_BUGDB=	python-mod/pycparser
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=			$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -56,12 +58,10 @@ $(BUILD_DIR)/license.ply: $(SOURCE_DIR)/pycparser/ply/lex.py
 	nawk '/^# Copyright / {p=1} /^# ---/ {p=0} p == 1 {print substr($$0, 3)}' $< > $@
 
 # common targets
-build:		$(BUILD_NO_ARCH)
-
 install:	$(INSTALL_NO_ARCH) $(BUILD_DIR)/license.ply
-
-test:		$(TEST_NO_ARCH)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39

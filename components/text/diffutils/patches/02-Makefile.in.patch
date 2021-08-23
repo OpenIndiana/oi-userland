@@ -1,0 +1,14 @@
+Without this patch gdiff3 and gsdiff don't
+find diff - program that both of them call.
+
+--- diffutils-3.8/src/Makefile.in	2021-08-02 03:20:12.000000000 +0000
++++ diffutils-3.8/src/Makefile.in	2021-08-03 15:06:02.264532452 +0000
+@@ -1613,7 +1613,7 @@ noinst_HEADERS = \
+   system.h
+ 
+ MOSTLYCLEANFILES = paths.h paths.ht
+-gdiff = `echo diff|sed '$(transform)'`
++gdiff = /usr/gnu/bin/diff
+ BUILT_SOURCES = paths.h version.c version.h
+ noinst_LIBRARIES = libver.a
+ nodist_libver_a_SOURCES = version.c version.h

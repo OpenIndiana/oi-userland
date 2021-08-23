@@ -32,6 +32,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		samba
 COMPONENT_FMRI =		service/network/samba
 COMPONENT_VERSION =		4.12.5
+COMPONENT_REVISION =		1
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		http://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
@@ -48,7 +49,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PERL_VERSION = 5.24
 PYTHON_VERSION = 3.5
-PY3_CYTHON_NAMING =\#
+PY3_CPYTHON_NAMING =\#
 
 # set WAF and adapt PATH for building
 WAF =	$(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf
@@ -71,6 +72,9 @@ LDFLAGS +=	-L$(GNULIB.$(BITS)) -R$(GNULIB.$(BITS))
 
 LDFLAGS +=      -lrt -lsec -lcrypt -lmd5 -lsocket -lnsl -lsendfile
 LDFLAGS +=      -lldap_r -lsendfile -lavahi-common -lavahi-core 
+
+# Flag is not picked up for lib/replace
+LDFLAGS +=	$(LD_SSP)
 
 LD_OPTIONS +=	-B direct
 

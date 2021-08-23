@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gammu
 COMPONENT_VERSION=	1.37.4
-COMPONENT_REVISION=	6
+COMPONENT_REVISION=	7
 COMPONENT_PROJECT_URL=	https://wammu.eu/gammu/
 COMPONENT_SUMMARY=	Command line utility to control your phone
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

@@ -25,20 +25,17 @@
 #
 
 BUILD_BITS=			32_and_64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			tk
 COMPONENT_MAJOR_VERSION=	8.6
-COMPONENT_MINOR_VERSION=	10
-#COMPONENT_PATCH_VERSION=	.1
-COMPONENT_REVISION=	1
+COMPONENT_MINOR_VERSION=	11
+COMPONENT_PATCH_VERSION=	.1
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/tcl
 COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)$(COMPONENT_PATCH_VERSION)-src.tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:63df418a859d0a463347f95ded5cd88a3dd3aaa1ceecaeee362194bc30f3e386
+COMPONENT_ARCHIVE_HASH= sha256:006cab171beeca6a968b6d617588538176f27be232a2b334a0e96173e89909be
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/tcl/files/Tcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	library/libtk
 COMPONENT_LICENSE=	BSD-like
@@ -88,21 +85,21 @@ COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS)-$(MACH).master
 
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
-	'-e "s|^.*tcl/build/$(MACH$(BITS)).*$$|XXX_CC_XXX|g"' \
-	'-e "s|^cc: Warning: -xarch=v9 is deprecated.*$$|XXX_CC_XXX|g"' \
-	'-e "s|^cc: Warning: illegal use of -x.* option, .*$$|XXX_CC_XXX|g"' \
-	'-e "/Nothing to be done/d"' \
-	'-e "/Leaving directory/d"' \
-	'-e "/Entering directory/d"' \
-	'-e "/is deprecated/d"' \
-	'-e "/tk.*Init.o/d"' \
-	'-e "/^XXX_CC_XXX$$/d"' \
-	'-e "/^make.*$$/d"' \
-	'-e "/^rm .*$$/d"' \
-	'-e "/^mv .*$$/d"' \
-	'-e "/^Tests began at .*$$/d"' \
-	'-e "/^Tests ended at .*$$/d"'
+    '-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
+    '-e "s|^.*tcl/build/$(MACH$(BITS)).*$$|XXX_CC_XXX|g"' \
+    '-e "s|^cc: Warning: -xarch=v9 is deprecated.*$$|XXX_CC_XXX|g"' \
+    '-e "s|^cc: Warning: illegal use of -x.* option, .*$$|XXX_CC_XXX|g"' \
+    '-e "/Nothing to be done/d"' \
+    '-e "/Leaving directory/d"' \
+    '-e "/Entering directory/d"' \
+    '-e "/is deprecated/d"' \
+    '-e "/tk.*Init.o/d"' \
+    '-e "/^XXX_CC_XXX$$/d"' \
+    '-e "/^make.*$$/d"' \
+    '-e "/^rm .*$$/d"' \
+    '-e "/^mv .*$$/d"' \
+    '-e "/^Tests began at .*$$/d"' \
+    '-e "/^Tests ended at .*$$/d"'
 
 COMPONENT_POST_INSTALL_ACTION += \
 	sed -f $(COMPONENT_DIR)/files/tksed.$(BITS) \

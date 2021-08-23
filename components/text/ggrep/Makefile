@@ -21,6 +21,7 @@
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2020-2021, Nona Hansel
 #
 
 BUILD_BITS=		64
@@ -28,16 +29,16 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
-COMPONENT_VERSION=	3.4
+COMPONENT_VERSION=	3.7
 COMPONENT_FMRI=		text/gnu-grep
 COMPONENT_SUMMARY= 	GNU grep utilities
 COMPONENT_CLASSIFICATION= Applications/System Utilities
-COMPONENT_PROJECT_URL=	http://gnu.org/software/grep/
+COMPONENT_PROJECT_URL=	https://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:58e6751c41a7c25bfc6e9363a41786cff3ba5709cf11d5ad903cf7cce31cc3fb
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
+	sha256:5c10da312460aec721984d5d83246d24520ec438dd48d7ab5a05dbc0d6d6823c
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
 include $(WS_MAKE_RULES)/common.mk
@@ -70,10 +71,11 @@ COMPONENT_TEST_TRANSFORMS += \
 # Since version 3.4, GNU grep is needed for build.
 REQUIRED_PACKAGES += text/gnu-grep
 # Testsuite requirements
+REQUIRED_PACKAGES += developer/versioning/cvs
 REQUIRED_PACKAGES += locale/tr
 REQUIRED_PACKAGES += locale/ru-extra
+REQUIRED_PACKAGES += locale/zh_cn-extra
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/libsigsegv
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

@@ -35,11 +35,11 @@ COMPONENT_NAME= gcc
 COMPONENT_FMRI= developer/gcc-$(GCC_COMPONENT_VERSION_MAJOR)
 COMPONENT_SUMMARY= GNU Compiler Collection
 COMPONENT_CLASSIFICATION= Development/C
-COMPONENT_PROJECT_URL = http://gcc.gnu.org/
+COMPONENT_PROJECT_URL = https://gcc.gnu.org/
 COMPONENT_SRC ?= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE ?= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL ?= \
-  http://ftp.gnu.org/gnu/gcc/gcc-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+  https://ftp.gnu.org/gnu/gcc/gcc-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 PATCH_EACH_ARCHIVE=1
 PATCHDIR_PATCHES = $(shell find $(PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
@@ -54,7 +54,7 @@ $(error Empty MPFR archive hash)
 endif
 COMPONENT_SRC_1=    $(MPFR_NAME)-$(MPFR_VERSION)
 COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).tar.bz2
-COMPONENT_ARCHIVE_URL_1= http://www.mpfr.org/$(COMPONENT_SRC_1)/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_URL_1= https://www.mpfr.org/$(COMPONENT_SRC_1)/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1= $(MPFR_ARCHIVE_HASH)
 CLEAN_PATHS += $(COMPONENT_SRC_1)
 COMPONENT_POST_UNPACK_ACTION_1 += ( $(RM) -r $(COMPONENT_SRC)/$(MPFR_NAME) && $(CP) -rpP $(COMPONENT_SRC_1) $(COMPONENT_SRC)/$(MPFR_NAME) )
@@ -68,7 +68,7 @@ $(error Empty MPC archive hash)
 endif
 COMPONENT_SRC_2= $(MPC_NAME)-$(MPC_VERSION)
 COMPONENT_ARCHIVE_2= $(COMPONENT_SRC_2).tar.gz
-COMPONENT_ARCHIVE_URL_2=  http://www.multiprecision.org/mpc/download/$(COMPONENT_ARCHIVE_2)
+COMPONENT_ARCHIVE_URL_2=  https://ftp.gnu.org/gnu/mpc/$(COMPONENT_ARCHIVE_2)
 COMPONENT_ARCHIVE_HASH_2= $(MPC_ARCHIVE_HASH)
 CLEAN_PATHS += $(COMPONENT_SRC_2)
 COMPONENT_POST_UNPACK_ACTION_2 += ( $(RM) -r $(COMPONENT_SRC)/$(MPC_NAME) && $(CP) -rpP $(COMPONENT_SRC_2) $(COMPONENT_SRC)/$(MPC_NAME) )
@@ -82,7 +82,7 @@ $(error Empty GMP archive hash)
 endif
 COMPONENT_SRC_3= $(GMP_NAME)-$(GMP_VERSION)
 COMPONENT_ARCHIVE_3= $(COMPONENT_SRC_3).tar.bz2
-COMPONENT_ARCHIVE_URL_3=  http://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE_3)
+COMPONENT_ARCHIVE_URL_3=  https://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE_3)
 COMPONENT_ARCHIVE_HASH_3= $(GMP_ARCHIVE_HASH)
 CLEAN_PATHS += $(COMPONENT_SRC_3)
 COMPONENT_POST_UNPACK_ACTION_3 += ( $(RM) -r $(COMPONENT_SRC)/$(GMP_NAME) && $(CP) -rpP $(COMPONENT_SRC_3) $(COMPONENT_SRC)/$(GMP_NAME) )
@@ -101,6 +101,8 @@ FCFLAGS= -O2
 COMMON_ENV=  LD_OPTIONS="-zignore -zcombreloc -i"
 COMMON_ENV+= LD_FOR_TARGET=/usr/bin/ld
 COMMON_ENV+= LD_FOR_HOST=/usr/bin/ld
+COMMON_ENV+= STRIP="/usr/bin/strip -x"
+COMMON_ENV+= STRIP_FOR_TARGET="/usr/bin/strip -x"
 COMMON_ENV+= LD=/usr/bin/ld
 
 CONFIGURE_ENV+= $(COMMON_ENV)
@@ -125,6 +127,14 @@ CONFIGURE_OPTIONS+= --without-gnu-ld
 CONFIGURE_OPTIONS+= --with-ld=/usr/bin/ld
 CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_TRIPLET)/bin
 
+# If the compiler used to build matches the compiler being built, there is no
+# need for a 3 stage build.
+ifneq ($(shell $(CC) --version | grep $(COMPONENT_VERSION)),)
+CONFIGURE_OPTIONS +=    --disable-bootstrap
+else
+COMPONENT_BUILD_TARGETS=bootstrap
+endif
+
 # On SPARC systems, use Sun Assembler
 CONFIGURE_OPTIONS.sparc+= --without-gnu-as --with-as=/usr/bin/as
 CONFIGURE_OPTIONS.i386+= --with-gnu-as --with-as=/usr/bin/gas
@@ -132,6 +142,9 @@ CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(MACH))
 
 # Set path to library install prefix
 CONFIGURE_OPTIONS+= LDFLAGS="-R$(CONFIGURE_PREFIX)/lib"
+
+# Strip the resulting binaries
+COMPONENT_INSTALL_TARGETS = install-strip
 
 COMPONENT_POST_INSTALL_ACTION = \
   $(RM) -r $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include-fixed
@@ -150,6 +163,7 @@ unexport SHELLOPTS
 # With the soft stacksize limit set to 16384 we get reasonably good
 # test results.
 #
+ifeq   ($(strip $(MACH)),i386)
 COMPONENT_PRE_TEST_ACTION += \
 	(cd $(COMPONENT_TEST_DIR) ; \
 	 ulimit -Ss 16385 ; \
@@ -161,6 +175,19 @@ COMPONENT_PRE_TEST_ACTION += \
 	        gsed -e '/Summary ===$/,$p' -e  'd' $f >> $f.2; \
 	        mv $f.2 $f; done; \
 	 $(GMAKE) mail-report.log)
+else
+COMPONENT_PRE_TEST_ACTION += \
+	(cd $(COMPONENT_TEST_DIR) ; \
+	 ulimit -Ss 16385 ; \
+	 $(ENV) $(COMPONENT_PRE_TEST_ENV) \
+	        $(GMAKE) -k -i $(JOBS:%=-j%) check check-target RUNTESTFLAGS="--target_board=unix/-m64" ; \
+	 $(FIND) . -name  '*.sum' | while read f; do \
+	        gsed -e '1,/^Running target unix/p' -e  'd' $f > $f.2; \
+	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | sort -k 2 >> $f.2; \
+	        gsed -e '/Summary ===$/,$p' -e  'd' $f >> $f.2; \
+	        mv $f.2 $f; done; \
+	 $(GMAKE) mail-report.log)
+endif
 
 COMPONENT_TEST_CMD = $(CAT)
 COMPONENT_TEST_TARGETS = mail-report.log

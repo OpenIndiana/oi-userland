@@ -1,0 +1,13 @@
+diff --git a/toolkit/xre/nsNativeAppSupportUnix.cpp b/toolkit/xre/nsNativeAppSupportUnix.cpp
+index 380fbc4..6bbce50 100644
+--- a/toolkit/xre/nsNativeAppSupportUnix.cpp
++++ b/toolkit/xre/nsNativeAppSupportUnix.cpp
+@@ -205,7 +205,7 @@ static void ice_connection_watch(IceConn connection, IcePointer client_data,
+ 
+     *watch_data = GUINT_TO_POINTER(watch_id);
+   } else {
+-    watch_id = GPOINTER_TO_UINT(*watch_data);
++    watch_id = (uint64_t)(*watch_data);
+     g_source_remove(watch_id);
+   }
+ }

@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2018 <contributor>
+# Copyright 2021 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -36,6 +36,7 @@ file path=usr/bin/sg_compare_and_write
 file path=usr/bin/sg_decode_sense
 file path=usr/bin/sg_format
 file path=usr/bin/sg_get_config
+file path=usr/bin/sg_get_elem_status
 file path=usr/bin/sg_get_lba_status
 file path=usr/bin/sg_ident
 file path=usr/bin/sg_inq
@@ -54,6 +55,7 @@ file path=usr/bin/sg_read_long
 file path=usr/bin/sg_readcap
 file path=usr/bin/sg_reassign
 file path=usr/bin/sg_referrals
+file path=usr/bin/sg_rep_pip
 file path=usr/bin/sg_rep_zones
 file path=usr/bin/sg_requests
 file path=usr/bin/sg_reset_wp
@@ -95,9 +97,11 @@ file path=usr/include/scsi/sg_pr2serr.h
 file path=usr/include/scsi/sg_pt.h
 file path=usr/include/scsi/sg_pt_nvme.h
 file path=usr/include/scsi/sg_unaligned.h
-link path=usr/lib/$(MACH64)/libsgutils2.so target=libsgutils2.so.2.0.0
-link path=usr/lib/$(MACH64)/libsgutils2.so.2 target=libsgutils2.so.2.0.0
-file path=usr/lib/$(MACH64)/libsgutils2.so.2.0.0
+link path=usr/lib/$(MACH64)/libsgutils2-$(COMPONENT_VERSION).so.2 \
+    target=libsgutils2-$(COMPONENT_VERSION).so.2.0.0
+file path=usr/lib/$(MACH64)/libsgutils2-$(COMPONENT_VERSION).so.2.0.0
+link path=usr/lib/$(MACH64)/libsgutils2.so \
+    target=libsgutils2-$(COMPONENT_VERSION).so.2.0.0
 file path=usr/share/man/man8/scsi_mandat.8
 file path=usr/share/man/man8/scsi_readcap.8
 file path=usr/share/man/man8/scsi_ready.8
@@ -111,6 +115,7 @@ file path=usr/share/man/man8/sg_compare_and_write.8
 file path=usr/share/man/man8/sg_decode_sense.8
 file path=usr/share/man/man8/sg_format.8
 file path=usr/share/man/man8/sg_get_config.8
+file path=usr/share/man/man8/sg_get_elem_status.8
 file path=usr/share/man/man8/sg_get_lba_status.8
 file path=usr/share/man/man8/sg_ident.8
 file path=usr/share/man/man8/sg_inq.8
@@ -129,6 +134,7 @@ file path=usr/share/man/man8/sg_read_long.8
 file path=usr/share/man/man8/sg_readcap.8
 file path=usr/share/man/man8/sg_reassign.8
 file path=usr/share/man/man8/sg_referrals.8
+file path=usr/share/man/man8/sg_rep_pip.8
 file path=usr/share/man/man8/sg_rep_zones.8
 file path=usr/share/man/man8/sg_requests.8
 file path=usr/share/man/man8/sg_reset_wp.8

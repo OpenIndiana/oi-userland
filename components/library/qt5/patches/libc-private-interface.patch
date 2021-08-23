@@ -1,0 +1,11 @@
+--- qt-everywhere-src-5.12.9/qtbase/src/corelib/global/qrandom.cpp	Wed Jun  3 05:51:20 2020
++++ qt-everywhere-src-5.12.9/qtbase/src/corelib/global/qrandom.cpp	Thu Oct 15 19:13:06 2020
+@@ -277,7 +277,7 @@
+     if (quint32 v = seed.load())
+         *end++ = v; // 6
+ 
+-#if QT_CONFIG(getauxval)
++#if QT_CONFIG(getauxval) && !__sun
+     // works on Linux -- all modern libc have getauxval
+ #  ifdef AT_RANDOM
+     // ELF's auxv AT_RANDOM has 16 random bytes

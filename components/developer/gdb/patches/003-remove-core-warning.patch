@@ -1,0 +1,23 @@
+# The warning below appears multiple times for .reg2 when debugging a core
+# file on x86.  Can't set REGSET_VARIABLE_SIZE flag, so
+# just remove the warning.
+# Note: this patch may not be appropriate for upstream;
+# it may eventually be removed.
+
+--- gdb-8.0-orig/gdb/corelow.c	2017-06-04 08:54:54.000000000 -0700
++++ gdb-8.0/gdb/corelow.c	2017-08-18 10:37:36.834113960 -0700
+@@ -542,11 +542,14 @@ get_core_register_section (struct regcac
+       warning (_("Section `%s' in core file too small."), section_name);
+       return;
+     }
++#if !defined(__sun) && !defined(__SVR4)
++	/* skip this warning for Solaris */
+   if (size != min_size && !variable_size_section)
+     {
+       warning (_("Unexpected size of section `%s' in core file."),
+ 	       section_name);
+     }
++#endif
+ 
+   contents = (char *) alloca (size);
+   if (! bfd_get_section_contents (core_bfd, section, contents,

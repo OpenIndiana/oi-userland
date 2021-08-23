@@ -12,39 +12,39 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2020, 2021 Andreas Wacknitz
 #
 
+BUILD_BITS=				32_and_64
+BUILD_STYLE=			meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			pango
 COMPONENT_VERSION_MAJOR=	1
-COMPONENT_VERSION_MINOR=	42
-COMPONENT_VERSION_MICRO=	4
-COMPONENT_REVISION=		3
-COMPONENT_VERSION_DL=		$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
+COMPONENT_VERSION_MINOR=	48
+COMPONENT_VERSION_MICRO=	9
+COMPONENT_VERSION_DL=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
 COMPONENT_VERSION=		$(COMPONENT_VERSION_DL).$(COMPONENT_VERSION_MICRO)
 COMPONENT_SUMMARY=		GNOME core text and font handling libraries
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:1d2b74cd63e8bd41961f2f8d952355aa0f9be6002b52c8aa7699d9f5da597c9d
-COMPONENT_ARCHIVE_URL= \
-	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_DL)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=		http://www.pango.org/
+COMPONENT_ARCHIVE_HASH= sha256:a913657d3fe5aa04c03958a3b5d3fc859e891b75cd81b873a819330f6c0872aa
+COMPONENT_ARCHIVE_URL=	https://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_DL)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.pango.org/
 COMPONENT_FMRI=			library/desktop/pango
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPLv2
-COMPONENT_LICENSE_FILE=		COPYING
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-CONFIGURE_OPTIONS.32 = -sysconfdir=/etc
-CONFIGURE_OPTIONS.64 = -sysconfdir=/etc/$(MACH64)
-CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
+CONFIGURE_OPTIONS += -Denable_docs=true
+CONFIGURE_OPTIONS += -Dinstall-tests=true
+
+CONFIGURE_OPTIONS.32 += -Dgir=false
+CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -66,17 +66,31 @@ COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
 # For test suites to pass
 unexport SHELLOPTS
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
+# cp boundaries.utf8 to tests directory in the build area
+COMPONENT_PRE_TEST_ACTION += cp $(SOURCE_DIR)/tests/boundaries.utf8 \
+      $(BUILD_DIR_$(BITS))/tests/
+COMPONENT_TEST_TARGETS += ; cd tests; ./cxx-test; ./markup-parse; \
+        ./test-break; ./test-converage; ./test-font ; ./test-ot-tags; \
+        ./testboundaries; ./testcolor; ./testiter; ./testscript; \
+    ./test-ellipsize; ./test-harfbuzz; ./test-itemize; ./test-layout; \
+    ./test-pangocairo-threads; ./test-shape; ./testmisc; ./testattributes;
+COMPONENT_TEST_TRANSFORMS += '-e "s/      [0-9].[0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/      [0-9][0-9].[0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+    	'-e "/Failures/d" ' \
+        '-e "/OK/p" ' \
+        '-e "/Ok/p" ' \
+        '-e "/Fail/p" ' \
+        '-e "/Pass/p" ' \
+        '-e "/Skipped/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/fribidi
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/input-method/library/libthai
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2

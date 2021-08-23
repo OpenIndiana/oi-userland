@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020 <contributor name>
+# Copyright 2021 <contributor name>
 #
 
 BUILD_BITS=NO_ARCH

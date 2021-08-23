@@ -20,26 +20,24 @@
 #
 # Copyright (c) 2011, 2018, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gutenprint
-COMPONENT_VERSION=	5.2.14
-COMPONENT_REVISION=	1
+COMPONENT_MJR_VERSION=	5.3
+COMPONENT_MNR_VERSION=	4
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY=  Gutenprint - Drivers for Canon, Epson, Lexmark & PCL printers
-COMPONENT_PROJECT_URL=	http://www.gutenprint.org/software/gutenprint/
+COMPONENT_PROJECT_URL=	https://www.gutenprint.org/software/gutenprint/
 COMPONENT_FMRI=     print/filter/gutenprint
 COMPONENT_CLASSIFICATION=System/Printing
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:45bf0766f196a764c113bfad7ab1ea748f1d5ff9ebb0d3a2206705fe52e82389
-COMPONENT_ARCHIVE_URL= \
-  http://downloads.sourceforge.net/project/gimp-print/gutenprint-5.2/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:db44a701d2b8e6a8931c83cec06c91226be266d23e5c189d20a39dd175f2023b
+COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/gimp-print/gutenprint-$(COMPONENT_MJR_VERSION)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=  GPLv2, FDLv1.2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-escputil
@@ -61,16 +59,14 @@ COMPONENT_BUILD_TARGETS = all
 unexport SHELLOPTS
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-# the tests mostly pass, but it can't find several drivers for ppd files
-test:		$(TEST_32)
-
-# Sustaining dependencies
-REQUIRED_PACKAGES += runtime/perl-522
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/ TOTAL:/p" ' \
+        '-e "/PASS:/p" ' \
+        '-e "/ SKIP:/p" ' \
+        '-e "/ XFAIL:/p" ' \
+        '-e "/ FAIL:/p" ' \
+        '-e "/ ERROR:/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gtk2
@@ -79,6 +75,6 @@ REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

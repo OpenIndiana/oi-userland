@@ -29,15 +29,13 @@ BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
-COMPONENT_VERSION=	3.5.19
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5
+COMPONENT_VERSION=	3.6.16
+COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.6
 COMPONENT_SUMMARY=	GNU transport layer security library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:1936eb64f03aaefd6eb16cef0567457777618573826b94d03376bb6a4afadc44
-COMPONENT_ARCHIVE_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:1b79b381ac283d8b054368b335c408fedcb9b7144e0c07f531e3537d4328f3b3
+COMPONENT_ARCHIVE_URL=  https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI=		library/gnutls-3
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -52,9 +50,9 @@ MCS = mcs
 STRIP = strip
 
 CONFIGURE_OPTIONS += --disable-guile
-CONFIGURE_OPTIONS += --disable-ecdhe
 CONFIGURE_OPTIONS += --disable-openssl-compatibility
 CONFIGURE_OPTIONS += --disable-tests
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
@@ -64,6 +62,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL/p" ' \
 	'-e "/TOTAL/p" ' \
 	'-e "/ERROR/p" '
+
+# Parallel builds hang on some systems:
+COMPONENT_BUILD_ARGS= -j1
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -77,3 +78,4 @@ REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

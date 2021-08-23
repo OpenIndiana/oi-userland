@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXt
-COMPONENT_VERSION= 1.1.5
+COMPONENT_VERSION= 1.2.1
 COMPONENT_FMRI=    x11/library/toolkit/libxt
 COMPONENT_SUMMARY= libXt - X Toolkit library
 COMPONENT_ARCHIVE_HASH= \
-  sha256:46eeb6be780211fdd98c5109286618f6707712235fdd19df4ce1e6954f349f1a
+  sha256:679cc08f1646dbd27f5e48ffe8dd49406102937109130caab02ca32c083a3d60
 
 include $(WS_MAKE_RULES)/common.mk
 

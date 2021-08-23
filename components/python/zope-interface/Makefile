@@ -29,20 +29,19 @@ BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zope.interface
-COMPONENT_VERSION=	4.6.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	5.2.0
 COMPONENT_FMRI=         library/python/python-zope-interface
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_PROJECT_URL=	https://zope.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:1b653e63fc9d2fd61eec9ef3d486a415048e4e57e8efd68828aeb244d0948298
+  sha256:2abe865ee27fd1faadaf4a292d2cbd126cb7d3bc0d3ac275f4dff7bb9bf73539
 COMPONENT_ARCHIVE_URL= \
   https://github.com/zopefoundation/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=      ZPL
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	2.7 3.5 3.7 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -57,4 +56,6 @@ COMPONENT_SYSTEM_TEST_ARGS =
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library

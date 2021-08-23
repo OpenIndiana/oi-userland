@@ -1,0 +1,63 @@
+This patch comes from upstream: http://bugs.python.org/issue26228
+It has not yet been committed, but seems on track to be, and we need
+it to fix a bug.
+--- Python-3.9.0/Lib/pty.py
++++ Python-3.9.0/Lib/pty.py
+@@ -138,7 +138,7 @@ def _copy(master_fd, master_read=_read,
+         if master_fd in rfds:
+             data = master_read(master_fd)
+             if not data:  # Reached EOF.
+-                fds.remove(master_fd)
++                return
+             else:
+                 os.write(STDOUT_FILENO, data)
+         if STDIN_FILENO in rfds:
+@@ -155,7 +155,15 @@ def spawn(argv, master_read=_read, stdin
+     sys.audit('pty.spawn', argv)
+     pid, master_fd = fork()
+     if pid == CHILD:
+-        os.execlp(argv[0], *argv)
++        try:
++            os.execlp(argv[0], *argv)
++        except:
++            # If we wanted to be really clever, we would use
++            # the same method as subprocess() to pass the error
++            # back to the parent.  For now just dump stack trace.
++            traceback.print_exc()
++        finally:
++            os._exit(1)
+     try:
+         mode = tty.tcgetattr(STDIN_FILENO)
+         tty.setraw(STDIN_FILENO)
+@@ -165,6 +173,10 @@ def spawn(argv, master_read=_read, stdin
+     try:
+         _copy(master_fd, master_read, stdin_read)
+     except OSError:
++        # Some OSes never return an EOF on pty, just raise
++        # an error instead.
++        pass
++    finally:
+         if restore:
+             tty.tcsetattr(STDIN_FILENO, tty.TCSAFLUSH, mode)
+ 
+--- Python-3.9.0/Lib/test/test_pty.py
++++ Python-3.9.0/Lib/test/test_pty.py
+@@ -306,7 +306,7 @@ class SmallPtyTests(unittest.TestCase):
+         socketpair[1].close()
+         os.close(write_to_stdin_fd)
+ 
+-        # Expect two select calls, the last one will cause IndexError
++        # Expect two select calls, then a normal return on master EOF
+         pty.select = self._mock_select
+         self.select_rfds_lengths.append(2)
+         self.select_rfds_results.append([mock_stdin_fd, masters[0]])
+@@ -314,8 +314,7 @@ class SmallPtyTests(unittest.TestCase):
+         # both encountered an EOF before the second select call.
+         self.select_rfds_lengths.append(0)
+ 
+-        with self.assertRaises(IndexError):
+-            pty._copy(masters[0])
++        pty._copy(masters[0])
+ 
+ 
+ def tearDownModule():

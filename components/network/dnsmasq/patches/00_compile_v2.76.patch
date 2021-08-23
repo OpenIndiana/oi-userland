@@ -13,21 +13,20 @@ suitable for upstream.
 +#if defined(HAVE_LINUX_NETWORK) || defined(HAVE_BSD_NETWORK) || defined(HAVE_SOLARIS_NETWORK)
  void newaddress(time_t now);
  #endif
- 
---- dnsmasq-2.76/src/bpf.c.orig	2016-07-20 15:23:12.206647353 -0700
-+++ dnsmasq-2.76/src/bpf.c	2016-07-20 15:24:42.627316757 -0700
-@@ -30,8 +32,10 @@
+
+--- dnsmasq-2.82/src/bpf.c.orig	2020-07-19 22:54:44.000000000 +0000
++++ dnsmasq-2.82/src/bpf.c	2020-12-18 22:33:48.319966559 +0000
+@@ -31,7 +31,9 @@
+ #  include <net/if_var.h>
  #endif
  #include <netinet/in_var.h>
- #ifdef HAVE_IPV6
 +#ifndef HAVE_SOLARIS_NETWORK
- #  include <netinet6/in6_var.h>
- #endif
+ #include <netinet6/in6_var.h>
 +#endif
- 
+
  #ifndef SA_SIZE
  #define SA_SIZE(sa)                                             \
-
+ 
 --- dnsmasq-2.76/src/config.h.orig	2016-07-22 16:41:00.629870757 -0700
 +++ dnsmasq-2.76/src/config.h	2016-07-22 16:41:37.890924646 -0700
 @@ -293,7 +293,8 @@

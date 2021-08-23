@@ -21,21 +21,25 @@
 # Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2021, Nona Hansel
+# Copyright (c) 2021, Andreas Wacknitz
 #
 
 BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnupg
-COMPONENT_VERSION=	2.2.19
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnupg.org/
+COMPONENT_PROJECT_URL=	https://www.gnupg.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:242554c0e06f3a83c420b052f750b65ead711cc3fddddb5e7274fcdbb4e9dec0
+COMPONENT_ARCHIVE_HASH= sha256:c498db346a9b9a4b399e514c8f56dfc0a888ce8f327f10376ff984452cd154ec
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gnupg/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		crypto/gnupg
+COMPONENT_SUMMARY=	GNU Privacy Guard
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_DESCRIPTION=		A complete and free implementation of the OpenPGP Standard as defined by RFC4880
+COMPONENT_LICENSE=	GPLv3, GPLv2, LGPLv3, LGPLv2.1, Creative Commons 1.0, others
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -89,12 +93,20 @@ install:	$(INSTALL_64)
 	    $(MV) -f $$f.8 $$f.1m ; fi ; \
 	    done )
 
+COMPONENT_TEST_TRANSFORMS += \
+         '-n ' \
+         '-e "/^PASS:/p" ' \
+         '-e "/^FAIL:/p" ' \
+         '-e "/^SKIP:/p" ' \
+         '-e "/^\# /p" '
+
 # Missing dependencies for pinentry
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsecret
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/gnutls-3
@@ -107,6 +119,5 @@ REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/security/libksba
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += security/pinentry
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt

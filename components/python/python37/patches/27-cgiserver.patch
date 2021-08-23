@@ -1,0 +1,43 @@
+Fixes Python CGI being confused about binary files (bugs 31546357 & 31936635).
+
+Upstream issue:
+https://bugs.python.org/issue27777
+
+WIP patch taken from upstream is still buggy, so we use
+this in-house developed one.
+
+--- Python-3.7.10/Lib/cgi.py
++++ Python-3.7.10/Lib/cgi.py
+@@ -711,7 +711,10 @@ class FieldStorage:
+                 if not data:
+                     self.done = -1
+                     break
+-                self.file.write(data)
++                if self._binary_file:
++                    self.file.write(data)
++                else:
++                    self.file.write(data.decode())
+                 todo = todo - len(data)
+ 
+     def read_lines(self):
+--- Python-3.7.10/Lib/test/test_cgi.py
++++ Python-3.7.10/Lib/test/test_cgi.py
+@@ -396,6 +396,18 @@ Larry
+         self.assertEqual(fs.list[0].name, 'submit-name')
+         self.assertEqual(fs.list[0].value, 'Larry')
+ 
++    def test_content_length_no_content_disposition(self):
++        body = b'{"test":123}'
++        env = {
++            'CONTENT_LENGTH': len(body),
++            'REQUEST_METHOD': 'POST',
++            'CONTENT_TYPE': 'application/json',
++            'wsgi.input': BytesIO(body),
++        }
++
++        form = cgi.FieldStorage(fp=env['wsgi.input'], environ=env)
++        self.assertEqual(form.file.read(), body.decode(form.encoding))
++
+     def test_field_storage_multipart_no_content_length(self):
+         fp = BytesIO(b"""--MyBoundary
+ Content-Disposition: form-data; name="my-arg"; filename="foo"

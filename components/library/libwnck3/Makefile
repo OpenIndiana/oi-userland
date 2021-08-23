@@ -10,31 +10,31 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2021 Andreas Wacknitz
 #
 
+BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwnck3
-COMPONENT_VERSION=	3.18.0
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.gnome.org
+COMPONENT_MJR_VERSION=	3.32
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).0
+COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SUMMARY=	Window Navigator Construction Kit Library
 COMPONENT_SRC=		libwnck-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:4dabf8f28fd140cbe1f27c0c466c1a787cbfd03621e45bd24fed62fa568106ac
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/libwnck/3.18/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:9595835cf28d0fc6af5526a18f77f2fcf3ca8c09e36741bb33915b6e69b8e3ca
+COMPONENT_ARCHIVE_URL=	https://ftp.gnome.org/pub/GNOME/sources/libwnck/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2
-COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_FMRI=         library/desktop/libwnck3
 
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+PATH=$(PATH.gnu)
 
-PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
@@ -43,13 +43,6 @@ CONFIGURE_OPTIONS+=	--program-suffix=3
 # 
 COMPONENT_BUILD_ENV+=	CC="$(CC)"
 COMPONENT_BUILD_ENV+=	CFLAGS="$(CFLAGS)"
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk

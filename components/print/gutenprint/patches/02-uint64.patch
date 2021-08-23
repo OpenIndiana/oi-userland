@@ -1,0 +1,15 @@
+For Solaris data type uint64_t has to be defined.
+
+--- gutenprint-5.3.3/src/cups/backend_common.h	2019-06-07 05:22:01.000000000 -0700
++++ gutenprint-5.3.3-mod/src/cups/backend_common.h	2020-10-20 22:30:38.761276448 -0700
+@@ -42,6 +42,10 @@
+ #ifndef __BACKEND_COMMON_H
+ #define __BACKEND_COMMON_H
+ 
++#if defined (__SOLARIS__) || defined(__sun) 
++#define __uint64_t  uint64_t
++#endif 
++
+ #define STR_LEN_MAX 64
+ #define STATE( ... ) do { if (!quiet) fprintf(stderr, "STATE: " __VA_ARGS__ ); } while(0)
+ #define ATTR( ... ) do { if (!quiet) fprintf(stderr, "ATTR: " __VA_ARGS__ ); } while(0)
