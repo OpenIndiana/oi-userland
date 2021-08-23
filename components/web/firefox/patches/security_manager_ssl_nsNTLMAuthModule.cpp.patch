@@ -1,0 +1,13 @@
+diff --git a/security/manager/ssl/nsNTLMAuthModule.cpp b/security/manager/ssl/nsNTLMAuthModule.cpp
+index d574950..17d7050 100644
+--- a/security/manager/ssl/nsNTLMAuthModule.cpp
++++ b/security/manager/ssl/nsNTLMAuthModule.cpp
+@@ -591,6 +591,8 @@ static nsresult GenerateType3Msg(const nsString& domain,
+   uint8_t ntlmv2Resp[NTLMv2_RESP_LEN];
+   uint8_t ntlmHash[NTLM_HASH_LEN];
+   uint8_t ntlmv2_blob1[NTLMv2_BLOB1_LEN];
++
++  memset(ntlmv2Resp, 0, NTLMv2_RESP_LEN);
+   if (ntlmv2) {
+     // NTLMv2 mode, the default
+     nsString userUpper, domainUpper;

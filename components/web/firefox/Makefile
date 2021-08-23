@@ -25,14 +25,14 @@ include ../../../make-rules/shared-macros.mk
 ESR = esr
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	78.13.0
+COMPONENT_VERSION =	91.2.0
 COMPONENT_REVISION=     0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:19f9a9e2c2473cb37d57a49a1b2661a8236c4930df9b251d5e9ae274292b4f6c
+COMPONENT_ARCHIVE_HASH= sha256:3ef3cfd321d0c2c80ee1b41b8baf7a1ea4daf93c29e1377274933440ff5e42c3
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -59,10 +59,13 @@ CONFIGURE_DEFAULT_DIRS=no
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu):$(BUILD_DIR)/cargo/bin
+RUSTUP_HOME = $(BUILD_DIR)/.rust_up
+CARGO_HOME  = $(BUILD_DIR)/.cargo
+
+PATH = $(CARGO_HOME)/bin:$(PATH.gnu)
 
 MOZCONFIG = $(SOURCE_DIR)/mozconfig
-GNU_ARCH=		x86_64-sun-solaris
+GNU_ARCH= x86_64-unknown-illumos
 
 ifdef DEBUG
 # disable code optimization
@@ -86,6 +89,8 @@ COMPILER.clang= clang
 COMPILER = $(COMPILER.$(CC_TYPE))
 
 CXXFLAGS += -Wno-invalid-offsetof -fpermissive
+# xpcom uses DEF XP_SOLARIS
+CXXFLAGS += -DXP_SOLARIS
 # type problem compiling ffvpx with clang 
 CFLAGS += -D__int8_t_defined
 
@@ -136,17 +141,25 @@ LD_OPTIONS += -msave-args
 # because we touched old-configure.in and js/src/old-configure.in
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); \
-	autoreconf; \
-	touch configure; \
+	cp configure.in configure; \
 	cd js/src; \
-	autoreconf; \
-	touch configure; \
-	cargo install --root=$(BUILD_DIR)/cargo cbindgen \
+	cp configure.in configure; \
+	export RUSTUP_HOME=$(RUSTUP_HOME); \
+	export CARGO_HOME=$(CARGO_HOME); \
+	export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
+	curl https://sh.rustup.rs -sSf | bash -s -- -y; \
+	source $(CARGO_HOME)/env; \
+	rustup install 1.51.0; \
+	rustup default 1.51.0-x86_64-unknown-illumos; \
+	rustup show; \
+	cargo install --root=$(CARGO_HOME) cbindgen; \
 	);
 
 ENV +=	CFLAGS="$(CFLAGS)"
 ENV +=	CXXFLAGS="$(CXXFLAGS)"
 ENV += PKG_CONFIG=/usr/bin/amd64/pkg-config
+ENV += RUSTUP_HOME=$(RUSTUP_HOME)
+ENV += CARGO_HOME=$(CARGO_HOME)
 
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 
