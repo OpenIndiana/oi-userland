@@ -24,24 +24,25 @@ BUILD_BITS=32_and_64
 USE_COMMON_TEST_MASTER=yes
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_VERSION_SHORT = 1.1
-COMPONENT_NAME =	openssl-$(COMPONENT_VERSION_SHORT)
+COMPONENT_VERSION_SHORT= 1.1
+COMPONENT_NAME=	openssl-$(COMPONENT_VERSION_SHORT)
 
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
 # and IPS_COMPONENT_VERSION.
-COMPONENT_VERSION =	1.1.1k
+COMPONENT_VERSION=	1.1.1l
+HUMAN_VERSION=	$(COMPONENT_VERSION)
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.1.1.11
+IPS_COMPONENT_VERSION= 1.1.1.12
 COMPONENT_FMRI=		library/security/openssl-11
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SUMMARY=	OpenSSL - a Toolkit for Transport Layer (TLS v1+) protocols and general purpose cryptographic library
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
-COMPONENT_SRC =		openssl-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:892a0875b9872acd04a9fde79b1f943075d5ea162415de3047c327df33fbaee5
-COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =	OpenSSL, SSLeay
+COMPONENT_SRC=		openssl-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:0b7a3e5e59c34827fe0c3a74b7ec8baef302b98fa80088d7f9153aa16fa76bd1
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	OpenSSL, SSLeay
 
 # Clone the patch files to the patches-all dir.
 # COPY_COMMON_FILES is there so that the copy is called as soon as
