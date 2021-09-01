@@ -1,5 +1,5 @@
---- libfuse/mount_util.c.orig	2017-12-06 22:17:00.200753628 +0000
-+++ libfuse/mount_util.c	2017-12-06 22:16:13.152587853 +0000
+--- mount_util.c.ref	2010-06-15 16:46:54.000000000 +0200
++++ mount_util.c	2016-05-03 21:36:52.782854200 +0200
 @@ -58,6 +58,7 @@
          return -1;
      }
@@ -8,20 +8,18 @@
          char templ[] = "/tmp/fusermountXXXXXX";
          char *tmp;
  
-@@ -79,9 +80,9 @@
+@@ -79,8 +80,8 @@
              exit(1);
          }
          rmdir(tmp);
 -        execl("/bin/mount", "/bin/mount", "-i", "-f", "-t", type, "-o", opts,
 -              fsname, mnt, NULL);
--        fprintf(stderr, "%s: failed to execute /bin/mount: %s\n", progname,
-+        execle("/sbin/mount", "/sbin/mount", "-F", type, "-o", opts,
++        execle("/bin/mount", "/bin/mount", "-i", "-f", "-t", type, "-o", opts,
 +              fsname, mnt, NULL, &env);
-+        fprintf(stderr, "%s: failed to execute /sbin/mount: %s\n", progname,
+         fprintf(stderr, "%s: failed to execute /bin/mount: %s\n", progname,
                  strerror(errno));
          exit(1);
-     }
-@@ -112,10 +113,12 @@
+@@ -112,9 +113,16 @@
          return -1;
      }
      if (res == 0) {
@@ -30,10 +28,13 @@
          setuid(geteuid());
 -        execl("/bin/umount", "/bin/umount", "-i", mnt, lazy ? "-l" : NULL,
 -              NULL);
--        fprintf(stderr, "%s: failed to execute /bin/umount: %s\n", progname,
-+        execle("/sbin/umount", "/sbin/umount",  mnt,
++        if (lazy) {
++            execle("/bin/umount", "/bin/umount", "-i", mnt, "-l",
 +                   NULL, &env);
-+        fprintf(stderr, "%s: failed to execute /sbin/umount: %s\n", progname,
++        } else {
++            execle("/bin/umount", "/bin/umount", "-i", mnt,
++                   NULL, &env);
++        }
+         fprintf(stderr, "%s: failed to execute /bin/umount: %s\n", progname,
                  strerror(errno));
          exit(1);
-     }
