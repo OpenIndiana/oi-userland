@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		boost
 COMPONENT_VERSION=	1.76.0
 COMPONENT_SRC_VERSION=	1_76_0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		system/library/boost
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=	boost - free peer-reviewed portable C++ source libraries

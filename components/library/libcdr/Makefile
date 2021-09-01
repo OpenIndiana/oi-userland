@@ -25,7 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libcdr
 COMPONENT_VERSION=	0.1.6
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=     	library/c++/libcdr
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libcdr
@@ -48,13 +48,11 @@ CONFIGURE_OPTIONS+=	--disable-static
 REQUIRED_PACKAGES += developer/cppunit
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/imagemagick
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/librevenge
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/boost
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

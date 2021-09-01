@@ -32,7 +32,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		samba
 COMPONENT_FMRI =		service/network/samba
 COMPONENT_VERSION =		4.12.5
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		http://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
@@ -155,7 +155,7 @@ REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += library/perl-5/parse-yapp-524
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/gnutls-3
@@ -167,12 +167,9 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/gpgme
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/security/libgcrypt
 REQUIRED_PACKAGES += system/network/avahi

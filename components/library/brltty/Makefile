@@ -12,44 +12,45 @@
 #
 # Copyright 2017 Gary Mills
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2021 Andreas Wacknitz
 #
-BUILD_BITS=64
-
+BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= brltty
-COMPONENT_VERSION= 5.5
-COMPONENT_REVISION=	2
+COMPONENT_VERSION= 6.0
 COMPONENT_SUMMARY= Braille support
 COMPONENT_FMRI= library/accessibility/brltty
 COMPONENT_CLASSIFICATION= Applications/Universal Access
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:915d87d122f7795a201d217ba903cbdf1c83bb4962dd0c283e9525c9adc2996a
-COMPONENT_ARCHIVE_URL= \
-  http://www.mielke.cc/brltty/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.mielke.cc/brltty/
+COMPONENT_ARCHIVE_HASH= sha256:af4bcd1e030416c2b669cc6904f73c30e73bb4ed8f743c2ada9edc87964ab752
+COMPONENT_PROJECT_URL=	http://www.mielke.cc/brltty/
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE = GPLv2,LGPLv2.1
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        autoconf -f )
+PATH=	$(PATH.gnu)
 
 # Missing files on install without this
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D)) ;
+
+# Needed because we patch configure.ac
+COMPONENT_PRE_CONFIGURE_ACTION += (cd $(@D) ; ./autogen) ;
+
+CC +=		$(CC_BITS)
+CFLAGS +=	$(CC_PIC)
+CFLAGS +=	-I /usr/include/pcre -I /usr/include/liblouis
+CPPFLAGS +=	-D_SYS_UCONTEXT_H # Workaround Bug Id 15558893
 
 # Orca uses python 3.5, so we need to match
 PYTHON_VERSION = 3.5
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 PKG_MACROS += PYVER="$(PYTHON_VERSION)"
 
-CFLAGS +=	$(CC_PIC)
-
-CONFIGURE_OPTIONS.32 +=    --disable-python-bindings
-CONFIGURE_OPTIONS.64 +=    --enable-python-bindings
+CONFIGURE_OPTIONS +=    --enable-python-bindings
 CONFIGURE_OPTIONS +=    --disable-java-bindings
 CONFIGURE_OPTIONS +=    --disable-lisp-bindings
 CONFIGURE_OPTIONS +=    --disable-ocaml-bindings
@@ -60,21 +61,28 @@ CONFIGURE_OPTIONS +=    --disable-polkit # requires SO_PEERCRED support
 CONFIGURE_OPTIONS +=    --without-midi-package
 CONFIGURE_OPTIONS +=    --without-writable-directory
 CONFIGURE_OPTIONS +=    --with-gui-toolkit=Xaw
-CONFIGURE_OPTIONS +=    --localstatedir=/var
-CONFIGURE_OPTIONS +=    --sysconfdir=/etc
+CONFIGURE_OPTIONS +=    --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += CYTHON="$(CYTHON)"
 CONFIGURE_ENV += ac_cv_path_MSGFMT="/usr/gnu/bin/msgfmt"
 
+# Needed by call to setup.py for python module in build phase
+# (copied from make-rules/setup.py.mk)
 PYTHON_ENV +=   CC="$(CC)"
 PYTHON_ENV +=   CFLAGS="$(CFLAGS)"
-PYTHON_ENV +=   LDFLAGS="$(LDFLAGS)"
-PYTHON_ENV +=   LDSHARED="$(CC) -shared"
+PYTHON_ENV +=   LDFLAGS="$(LDFLAGS) -m64"
+PYTHON_ENV +=   LDSHARED="$(CC) -shared -m64"
 COMPONENT_BUILD_ENV += $(PYTHON_ENV)
 COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 COMPONENT_TEST_ENV += $(PYTHON_ENV)
+
+# brltty's Makefile doesn't let us pass --install-lib to setup.py so we
+# fake it with a symlink in the proto area
+COMPONENT_POST_INSTALL_ACTION += \
+    $(SYMLINK) site-packages $(PROTO_DIR)$(PYTHON_LIB)
 
 COMPONENT_INSTALL_ARGS += INSTALL_ROOT=$(PROTO_DIR)
 
@@ -83,11 +91,12 @@ REQUIRED_PACKAGES += system/header/header-ugen
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
+REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/icu
-REQUIRED_PACKAGES += library/python/cython-35
+REQUIRED_PACKAGES += library/liblouis
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += x11/library/libx11
