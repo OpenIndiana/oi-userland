@@ -11,61 +11,87 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2021 Andreas Wacknitz
 #
 
+BUILD_BITS=	64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= liblouis
-COMPONENT_VERSION= 2.1.1
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 3.13.0
 COMPONENT_SUMMARY= Support for contracted braille
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_NAME)_2_1_1
-COMPONENT_ARCHIVE= $(COMPONENT_NAME)_2_1_1.tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:1346de8a755781fb645c705b587f21f694cc7e8f9c4b7a01441d30c8e0be25a4
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/liblouis/liblouis/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:f9be5bd83f1de5d218f7dd2d7f0f9c4af08af3dc8f282a342f2c83cbb1799267
+COMPONENT_ARCHIVE_URL=	https://github.com/liblouis/liblouis/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = http://liblouis.org/
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/liblouis
 COMPONENT_LICENSE = LGPLv3,GPLv3
 COMPONENT_LICENSE_FILE = liblouis.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
+
+PYTHON_VERSION=	3.7
 
 COMPONENT_BUILD_ARGS =
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i ) 
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ( cp -a $(SOURCE_DIR)/* $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION += ( cp -a $(SOURCE_DIR)/* $(@D)) ;
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
+CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-ucs4
 
-CONFIGURE_ENV += PYTHON=$(PYTHON)
+# While the main library is built with configure, the python module is
+# built & installed with separate invocations of setup.py
+PYTHON_ENV +=   CC="$(CC)"
+PYTHON_ENV +=   CFLAGS="$(CFLAGS)"
+PYTHON_ENV +=   PYTHONPATH='$(@D)/python' 
 
-ENV = /usr/bin/env -i
+COMPONENT_POST_BUILD_ACTION += \
+    (cd $(@D)/python ; \
+        $(ENV) $(COMPONENT_BUILD_ENV) $(PYTHON_ENV) \
+        LD_LIBRARY_PATH_$(BITS)=$(@D)/liblouis/.libs/ \
+            $(PYTHON) ./setup.py build );
+COMPONENT_POST_INSTALL_ACTION += \
+    (cd $(@D)/python ; \
+        $(ENV) $(COMPONENT_INSTALL_ENV) $(PYTHON_ENV) \
+        LD_LIBRARY_PATH_$(BITS)=$(PROTO_DIR)$(USRLIB.$(BITS)) \
+            $(PYTHON) ./setup.py install --root $(PROTO_DIR) \
+        --install-lib $(PYTHON_LIB) );
 
-$(BUILD_DIR)/.built_python_modules:	$(INSTALL_32)
-	cd $(BUILD_DIR_32)/python && $(ENV) LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib:/usr/lib:/lib $(PYTHON) setup.py build
-	$(TOUCH) $@
+# Needed for "gmake test" to work successfully.
+unexport SHELLOPTS
 
-$(BUILD_DIR)/.installed_python_modules:	$(INSTALL_32) $(BUILD_DIR)/.built_python_modules
-	cd $(BUILD_DIR_32)/python && $(ENV) LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib:/usr/lib:/lib $(PYTHON) setup.py install --root $(PROTO_DIR) --install-lib /usr/lib/python$(PYTHON_VERSION)/vendor-packages
-	$(TOUCH) $@
+# Share 32- and 64-bit test results
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-build: $(BUILD_32_and_64)
+# Standard automake test framework results transform
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/TOTAL/p" ' \
+        '-e "/SKIP/p" ' \
+        '-e "/PASS/p" ' \
+        '-e "/FAIL/p" ' \
+        '-e "/ERROR/p" '
 
-install: $(INSTALL_32_and_64) $(BUILD_DIR)/.built_python_modules $(BUILD_DIR)/.installed_python_modules
+# additional transforms for brltty
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "/^==*$$/p" ' \
+        '-e "/expected/p" '
 
-test: $(TEST_32_and_64)
+# Manually added build dependencies
+REQUIRED_PACKAGES += runtime/python-37
 
-REQUIRED_PACKAGES += runtime/python-27
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/libyaml
+REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library
