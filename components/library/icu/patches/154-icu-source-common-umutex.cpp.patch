@@ -1,0 +1,110 @@
+Note that programs that link ICU library may crash
+because std::call_once cannot handle C++ exceptions.
+The reason is that GCC's implementation calls pthread_once
+that is not C++ exception aware at least in Solaris libc.
+
+To workaround this issue, a simple implementation based
+on C++11 atomic operations and variadic templates is provided.
+This way we avoid that C++ exception is thrown in libc library.
+
+Note that the implementation is far from optimal with respect
+to the performance, for example, the following could be improved:
+1) use a condition variable instead of yield if thread contention is high
+2) utilize C++11 memory model to reduce synchronization overhead
+
+However, the workaround is temporary as an untested patch is available on GCC's bugzilla:
+https://gcc.gnu.org/pipermail/gcc-patches/2020-November/557928.html
+
+The patch is not suitable for upstream.
+It only fixes the problem in ICU library.
+
+--- a/icu/source/common/umutex.cpp	2021-02-02 22:43:50.662337159 +0000
++++ b/icu/source/common/umutex.cpp	2021-02-02 22:43:41.120200571 +0000
+@@ -26,6 +26,7 @@
+ #include "uassert.h"
+ #include "ucln_cmn.h"
+ #include "cmemory.h"
++#include <thread>
+ 
+ U_NAMESPACE_BEGIN
+ 
+@@ -51,21 +52,54 @@ std::condition_variable *initCondition;
+ // Used when ICU implementation code passes nullptr for the mutex pointer.
+ UMutex globalMutex;
+ 
++#if defined(sun) || defined(__sun) || defined(__sun__)
++enum class CallOnceState : int {
++  INIT, RUNNING, FINISH
++};
++
++std::atomic<CallOnceState> initState;
++#else
+ std::once_flag initFlag;
+ std::once_flag *pInitFlag = &initFlag;
+-
++#endif
+ }  // Anonymous namespace
+ 
++#if defined(sun) || defined(__sun) || defined(__sun__)
++template <class Callable, class... Args>
++void solaris_call_once(std::atomic<CallOnceState>& state, Callable&& fce, Args&&... args) {
++  if (state != CallOnceState::FINISH)  {
++    do {
++      CallOnceState expected = CallOnceState::INIT, desired = CallOnceState::RUNNING;
++      if (state.compare_exchange_strong(expected, desired)) {
++        try {
++          fce(std::forward<Args>(args)...);
++          state = CallOnceState::FINISH;
++        } catch (...) {
++          state = CallOnceState::INIT;
++          throw;
++        }
++      } else {
++        std::this_thread::yield();
++      }
++    } while (state != CallOnceState::FINISH);
++  }
++}
++#endif
++
+ U_CDECL_BEGIN
+ static UBool U_CALLCONV umtx_cleanup() {
+     initMutex->~mutex();
+     initCondition->~condition_variable();
+     UMutex::cleanup();
+ 
++    #if defined(sun) || defined(__sun) || defined(__sun__)
++    initState = CallOnceState::INIT;
++    #else
+     // Reset the once_flag, by destructing it and creating a fresh one in its place.
+     // Do not use this trick anywhere else in ICU; use umtx_initOnce, not std::call_once().
+     pInitFlag->~once_flag();
+     pInitFlag = new(&initFlag) std::once_flag();
++    #endif
+     return true;
+ }
+ 
+@@ -80,7 +114,11 @@ U_CDECL_END
+ std::mutex *UMutex::getMutex() {
+     std::mutex *retPtr = fMutex.load(std::memory_order_acquire);
+     if (retPtr == nullptr) {
++        #if defined(sun) || defined(__sun) || defined(__sun__)
++        solaris_call_once(initState, umtx_init);
++        #else
+         std::call_once(*pInitFlag, umtx_init);
++        #endif
+         std::lock_guard<std::mutex> guard(*initMutex);
+         retPtr = fMutex.load(std::memory_order_acquire);
+         if (retPtr == nullptr) {
+@@ -143,7 +181,11 @@ umtx_unlock(UMutex* mutex)
+ //
+ U_COMMON_API UBool U_EXPORT2
+ umtx_initImplPreInit(UInitOnce &uio) {
++    #if defined(sun) || defined(__sun) || defined(__sun__)
++    solaris_call_once(initState, umtx_init);
++    #else
+     std::call_once(*pInitFlag, umtx_init);
++    #endif
+     std::unique_lock<std::mutex> lock(*initMutex);
+     if (umtx_loadAcquire(uio.fState) == 0) {
+         umtx_storeRelease(uio.fState, 1);

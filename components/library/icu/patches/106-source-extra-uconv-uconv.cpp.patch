@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+Add NULL checks to getBuffer calls and catch a potential file leak
+http://bugs.icu-project.org/trac/ticket/12378
+diff --git a/icu/source/extra/uconv/uconv.cpp b/icu/source/extra/uconv/uconv.cpp
+index 3be4e8e..5223ce6 100644
+--- a/icu/source/extra/uconv/uconv.cpp
++++ b/icu/source/extra/uconv/uconv.cpp
+@@ -445,7 +445,10 @@ getChunkLimit(const UnicodeString &prev, const UnicodeString &s) {
+         }
+     }
+ 
+-    const UChar *u = s.getBuffer(), *limit = u + s.length();
++    const UChar *u = s.getBuffer();
++    if (u == NULL)
++	return -1;
++    const UChar *limit = u + s.length();
+     UChar c;
+ 
+     while (u < limit) {
+@@ -1348,6 +1351,7 @@ main(int argc, char **argv)
+ 
+     cf.setBufferSize(bufsz);
+ 
++    try {
+     if(remainArgv < remainArgvLimit) {
+         for (iter = remainArgv; iter != remainArgvLimit; iter++) {
+             if (!cf.convertFile(
+@@ -1367,6 +1371,11 @@ main(int argc, char **argv)
+             goto error_exit;
+         }
+     }
++    }
++    catch (int e)
++    {
++        goto error_exit;
++    }
+ 
+     goto normal_exit;
+ error_exit:

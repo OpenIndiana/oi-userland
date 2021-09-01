@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+getBuffer handling is tracked upstream as
+http://www.icu-project.org/trac/ticket/12378
+diff --git a/icu/source/common/caniter.cpp b/icu/source/common/caniter.cpp
+index b28acfc..759e032 100644
+--- a/icu/source/common/caniter.cpp
++++ b/icu/source/common/caniter.cpp
+@@ -518,6 +518,10 @@ Hashtable *CanonicalIterator::extract(Hashtable *fillinResult, UChar32 comp, con
+         return NULL;
+     }
+     const UChar *decomp=decompString.getBuffer();
++    if ( decomp == NULL ) {
++        status = U_MEMORY_ALLOCATION_ERROR;
++        return NULL;
++    }
+     int32_t decompLen=decompString.length();
+ 
+     // See if it matches the start of segment (at segmentPos)

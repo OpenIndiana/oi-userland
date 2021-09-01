@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+avoid buffer overrun in UConverter_fromUnicode_ISO_2022_CN_OFFSETS_LOGIC
+http://bugs.icu-project.org/trac/ticket/12389
+diff --git a/icu/source/common/ucnv2022.cpp b/icu/source/common/ucnv2022.cpp
+index 169ad4c..f02c832 100644
+--- a/icu/source/common/ucnv2022.cpp
++++ b/icu/source/common/ucnv2022.cpp
+@@ -3106,8 +3106,11 @@ getTrail:
+                                 }
+                             }
+                         } else {
++			    if (cs0>=UCNV_2022_MAX_CONVERTERS) {
++				*err =U_BUFFER_OVERFLOW_ERROR;
++				break;
++			    }
+                             /* GB2312_1 or ISO-IR-165 */
+-                            U_ASSERT(cs0<UCNV_2022_MAX_CONVERTERS);
+                             len2 = MBCS_FROM_UCHAR32_ISO2022(
+                                         converterData->myConverterArray[cs0],
+                                         sourceChar,
+@@ -3391,7 +3394,10 @@ getTrailByte:
+                                 tempBufLen = 3;
+ 
+                             }else{
+-                                U_ASSERT(tempState<UCNV_2022_MAX_CONVERTERS);
++				if (tempState>=UCNV_2022_MAX_CONVERTERS) {
++					*err =U_BUFFER_OVERFLOW_ERROR;
++					break;
++				}
+                                 cnv = myData->myConverterArray[tempState];
+                                 tempBuf[0] = (char) (mySourceChar);
+                                 tempBuf[1] = (char) trailByte;

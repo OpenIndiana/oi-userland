@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+Add NULL checks to getBuffer calls
+http://www.icu-project.org/trac/ticket/12378
+diff --git a/icu/source/common/unisetspan.cpp b/icu/source/common/unisetspan.cpp
+index 68e44d9..3c6bcaf 100644
+--- a/icu/source/common/unisetspan.cpp
++++ b/icu/source/common/unisetspan.cpp
+@@ -657,6 +657,8 @@ int32_t UnicodeSetStringSpan::span(const UChar *s, int32_t length, USetSpanCondi
+                 }
+                 const UnicodeString &string=*(const UnicodeString *)strings.elementAt(i);
+                 const UChar *s16=string.getBuffer();
++		if (s16 == NULL)
++		    continue;
+                 int32_t length16=string.length();
+ 
+                 // Try to match this string at pos-overlap..pos.
+@@ -1362,6 +1364,8 @@ int32_t UnicodeSetStringSpan::spanNot(const UChar *s, int32_t length) const {
+             }
+             const UnicodeString &string=*(const UnicodeString *)strings.elementAt(i);
+             const UChar *s16=string.getBuffer();
++	    if (s16 == NULL)
++		continue;
+             int32_t length16=string.length();
+             if(length16<=rest && matches16CPB(s, pos, length, s16, length16)) {
+                 return pos;  // There is a set element at pos.
+@@ -1405,6 +1409,8 @@ int32_t UnicodeSetStringSpan::spanNotBack(const UChar *s, int32_t length) const
+             }
+             const UnicodeString &string=*(const UnicodeString *)strings.elementAt(i);
+             const UChar *s16=string.getBuffer();
++	    if (s16 == NULL)
++		continue;
+             int32_t length16=string.length();
+             if(length16<=pos && matches16CPB(s, pos-length16, length, s16, length16)) {
+                 return pos;  // There is a set element at pos.

@@ -11,6 +11,7 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2021 Andreas Wacknitz
 #
 
 BUILD_BITS=64_and_32
@@ -18,49 +19,55 @@ PREFERRED_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= icu
-COMPONENT_VERSION= 66.1
-COMPONENT_UVERSION= 66_1
-COMPONENT_DVERSION= 66-1
+COMPONENT_VERSION= 68.2
+COMPONENT_UVERSION= 68_2
+COMPONENT_DVERSION= 68-2
 COMPONENT_SUMMARY= International Components for Unicode
 COMPONENT_SRC= $(COMPONENT_NAME)
 COMPONENT_ARCHIVE= icu4c-$(COMPONENT_UVERSION)-src.tgz
-COMPONENT_ARCHIVE_HASH= sha256:52a3f2209ab95559c1cf0a14f24338001f389615bf00e2585ef3dbc43ecf0a2e
-COMPONENT_PROJECT_URL = http://icu-project.org
+COMPONENT_ARCHIVE_HASH=	sha256:c79193dee3907a2199b8296a93b52c5cb74332c26f3d167269487680d479d625
+COMPONENT_PROJECT_URL = https://icu-project.org
 COMPONENT_ARCHIVE_URL = https://github.com/unicode-org/icu/releases/download/release-$(COMPONENT_DVERSION)/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-CONFIGURE_SCRIPT = $(SOURCE_DIR)/source/runConfigureICU
-CONFIGURE_OPTIONS = Solaris/GCC
-CONFIGURE_OPTIONS+= --with-data-packaging=library
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --enable-static
-CONFIGURE_OPTIONS+= --disable-samples
-CONFIGURE_OPTIONS+= --prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS+= --libdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+= --bindir=$(CONFIGURE_BINDIR.$(BITS))
+# set relocate_to option while unpacking the tar ball
+UNPACK_ARGS= -r $(COMPONENT_SRC)
 
-CONFIGURE_OPTIONS.32+= --disable-64bit-libs
+COMPONENT_BUILD_TARGETS = all
+
+CONFIGURE_SCRIPT = $(SOURCE_DIR)/icu/source/runConfigureICU
+
+CONFIGURE_OPTIONS = Solaris/GCC
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --with-data-packaging=library
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --enable-static
+CONFIGURE_OPTIONS += --disable-samples
+CONFIGURE_OPTIONS += --disable-renaming
+CONFIGURE_OPTIONS += --prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
+
+CFLAGS += -D__EXTENSIONS__ -DDECCHECK -D_XOPEN_SOURCE=600
+CXXFLAGS += -D__EXTENSIONS__ -DDECCHECK -D_XOPEN_SOURCE=600 -std=c++11
 
 COMPONENT_POST_CONFIGURE_ACTION = \
-(echo 'CPPFLAGS += -DICU_DATA_DIR=\"$(CONFIGURE_PREFIX)/share/icu/$(COMPONENT_VERSION)\"' >> $(@D)/icudefs.mk ) 
+	(echo 'CPPFLAGS += -DICU_DATA_DIR=\"$(CONFIGURE_PREFIX)/share/icu/$(COMPONENT_VERSION)\"' >> $(@D)/icudefs.mk ) 
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-COMPONENT_TEST_CMD+= -k
-
 COMPONENT_TEST_TRANSFORMS += \
-	" -e 's/([0-9m\.[:space:]]*s[[:space:]]*)//g' " \
-	" -e 's/()//g' " \
-	" -e 's/[[:space:]]*$$//g' " \
-	" -n -e '/{/p' -e '/}/p' " \
-	" -e '/OK/p' -e '/TEST/p' -e '/ISSUE/p' " \
-	" -e '/^\#/p' -e '/^ok:/p' -e '/^\/ts/p' "
+    '-n ' \
+    '-e "/^All tests OK:  testdata intltest iotest cintltst/p" ' \
+    '-e "/^PASS: config selfcheck OK/p" '
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+#REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

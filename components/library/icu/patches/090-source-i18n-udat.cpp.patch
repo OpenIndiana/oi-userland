@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+Prevent access to uninitialized memory in udat_getSymbols
+http://bugs.icu-project.org/trac/ticket/12375
+diff --git a/icu/source/i18n/udat.cpp b/icu/source/i18n/udat.cpp
+index ba44710..8f67eef 100644
+--- a/icu/source/i18n/udat.cpp
++++ b/icu/source/i18n/udat.cpp
+@@ -736,6 +736,10 @@ udat_getSymbols(const   UDateFormat     *fmt,
+         res = syms->getZodiacNames(count, DateFormatSymbols::FORMAT, DateFormatSymbols::NARROW);
+         break;
+ 
++    default:
++	*status = U_UNSUPPORTED_ERROR;
++	return 0;
++
+     }
+ 
+     if(index < count) {

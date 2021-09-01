@@ -1,32 +1,34 @@
 reported upstream as
 https://unicode-org.atlassian.net/projects/ICU/issues/ICU-20241
-diff --git icu/source/test/intltest/numbertest.h.orig icu/source/test/intltest/numbertest.h
---- icu/source/test/intltest/numbertest.h.orig
-+++ icu/source/test/intltest/numbertest.h
-@@ -83,7 +83,7 @@ class NumberFormatterApiTest : public In
+diff --git a/icu/source/test/intltest/numbertest.h b/icu/source/test/intltest/numbertest.h
+index 39c1a12..d19c1d1 100644
+--- a/icu/source/test/intltest/numbertest.h
++++ b/icu/source/test/intltest/numbertest.h
+@@ -102,7 +102,7 @@ class NumberFormatterApiTest : public IntlTestWithFieldPosition {
      CurrencyUnit GBP;
      CurrencyUnit CZK;
      CurrencyUnit CAD;
 -    CurrencyUnit ESP;
 +    CurrencyUnit __ESP;
      CurrencyUnit PTE;
- 
-     MeasureUnit METER;
-diff --git icu/source/test/intltest/numbertest_api.cpp.orig icu/source/test/intltest/numbertest_api.cpp
---- icu/source/test/intltest/numbertest_api.cpp.orig
-+++ icu/source/test/intltest/numbertest_api.cpp
-@@ -29,7 +29,7 @@ NumberFormatterApiTest::NumberFormatterA
+     CurrencyUnit RON;
+     CurrencyUnit TWD;
+diff --git a/icu/source/test/intltest/numbertest_api.cpp b/icu/source/test/intltest/numbertest_api.cpp
+index 4580564..ca1807c 100644
+--- a/icu/source/test/intltest/numbertest_api.cpp
++++ b/icu/source/test/intltest/numbertest_api.cpp
+@@ -35,7 +35,7 @@ NumberFormatterApiTest::NumberFormatterApiTest(UErrorCode& status)
            GBP(u"GBP", status),
            CZK(u"CZK", status),
            CAD(u"CAD", status),
 -          ESP(u"ESP", status),
 +          __ESP(u"ESP", status),
            PTE(u"PTE", status),
-           FRENCH_SYMBOLS(Locale::getFrench(), status),
-           SWISS_SYMBOLS(Locale("de-CH"), status),
-@@ -721,7 +721,7 @@ void NumberFormatterApiTest::unitCurrenc
-     assertFormatSingle(
+           RON(u"RON", status),
+           TWD(u"TWD", status),
+@@ -1658,7 +1658,7 @@ void NumberFormatterApiTest::unitCurrency() {
              u"Currency-dependent format (Test)",
+             u"currency/ESP unit-width-short",
              u"currency/ESP unit-width-short",
 -            NumberFormatter::with().unit(ESP).unitWidth(UNUM_UNIT_WIDTH_SHORT),
 +            NumberFormatter::with().unit(__ESP).unitWidth(UNUM_UNIT_WIDTH_SHORT),

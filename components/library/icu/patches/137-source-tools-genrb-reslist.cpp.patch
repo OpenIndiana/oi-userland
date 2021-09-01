@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+getBuffer handling is tracked upstream as
+http://www.icu-project.org/trac/ticket/12378
+diff --git a/icu/source/tools/genrb/reslist.cpp b/icu/source/tools/genrb/reslist.cpp
+index 4bc6adc..92b5394 100644
+--- a/icu/source/tools/genrb/reslist.cpp
++++ b/icu/source/tools/genrb/reslist.cpp
+@@ -1503,8 +1503,16 @@ compareStringSuffixes(const void * /*context*/, const void *l, const void *r) {
+     const StringResource *left = *((const StringResource **)l);
+     const StringResource *right = *((const StringResource **)r);
+     const UChar *lStart = left->getBuffer();
++    if ( lStart == NULL ) {
++        fprintf(stderr, "Could not allocate memory!!");
++        exit(U_MEMORY_ALLOCATION_ERROR);
++    }
+     const UChar *lLimit = lStart + left->length();
+     const UChar *rStart = right->getBuffer();
++    if ( rStart == NULL ) {
++        fprintf(stderr, "Could not allocate memory!!");
++        exit(U_MEMORY_ALLOCATION_ERROR);
++    }
+     const UChar *rLimit = rStart + right->length();
+     int32_t diff;
+     /* compare keys in reverse character order */
