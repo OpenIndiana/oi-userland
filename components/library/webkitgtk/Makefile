@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		webkitgtk
 COMPONENT_VERSION=	2.16.6
-COMPONENT_REVISION=	8
+COMPONENT_REVISION=	9
 COMPONENT_SUMMARY=	Web content engine library for GTK+
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -35,8 +35,10 @@ COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	BSD,LGPLv2,CCASA3.0
 COMPONENT_LICENSE_FILE=	webkitgtk.license
 
-TEST_TARGET=		$(NO_TESTS)
+# Build single threaded (parallel build fails on some systems):
+# COMPONENT_BUILD_ARGS=	-j1
 
+TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # build with the distribution preferred libjpeg implementation

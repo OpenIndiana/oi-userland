@@ -15,13 +15,13 @@
 # Copyright 2019 Tim Mooney
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tracker
 COMPONENT_VERSION= 1.8.3
-COMPONENT_REVISION= 6
+COMPONENT_REVISION= 7
 COMPONENT_SUMMARY= Desktop search tool
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -80,6 +80,8 @@ CONFIGURE_OPTIONS += --enable-libvorbis
 CONFIGURE_OPTIONS += --enable-libxml2
 CONFIGURE_OPTIONS += --enable-miner-apps
 CONFIGURE_OPTIONS += --enable-miner-fs
+CONFIGURE_OPTIONS += --disable-miner-firefox
+CONFIGURE_OPTIONS += --disable-miner-thunderbird
 CONFIGURE_OPTIONS += --enable-miner-user-guides
 CONFIGURE_OPTIONS += --enable-mp3
 CONFIGURE_OPTIONS += --disable-nautilus-extension
