@@ -32,6 +32,20 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# Newer setup tools creates entry point scripts which do:
+#        try:
+#            from importlib.metadata import distribution
+#        except ImportError:
+#            try:
+#                from importlib_metadata import distribution
+#            except ImportError:
+#                from pkg_resources import load_entry_point
+#
+# The IPS dependency resolver cannot process this and fails to find a
+# dependency for the 'metadata' requirement, which is only available from
+# python 3.8. Bypass this dependency.
+<transform file path=usr/demo/twisted-python$(PYVER)/ -> set pkg.depend.bypass-generate .*metadata.* >
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
