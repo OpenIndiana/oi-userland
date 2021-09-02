@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= brltty
 COMPONENT_VERSION= 6.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Braille support
 COMPONENT_FMRI= library/accessibility/brltty
 COMPONENT_CLASSIFICATION= Applications/Universal Access
