@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			borgbackup
 COMPONENT_VERSION=		1.1.17
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_PROJECT_URL=	https://borgbackup.readthedocs.org/en/stable/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz

@@ -34,6 +34,10 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 depend type=require \
 	fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
+# pkgdepend fails to detect this
+depend type=require \
+	fmri=library/python/packaging-$(PYV)
+
 file path=usr/bin/borg-$(PYVER)
 # Not mediated because we ship the default only
 link path=usr/bin/borg target=borg-$(PYVER)
