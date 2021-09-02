@@ -29,11 +29,11 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnupg
-COMPONENT_VERSION=	2.3.1
+COMPONENT_VERSION=	2.3.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:c498db346a9b9a4b399e514c8f56dfc0a888ce8f327f10376ff984452cd154ec
+COMPONENT_ARCHIVE_HASH= sha256:e1d953e0e296072fca284215103ef168885eaac596c4660c5039a36a83e3041b
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gnupg/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		crypto/gnupg
 COMPONENT_SUMMARY=	GNU Privacy Guard
@@ -106,7 +106,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsecret
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/gnutls-3
@@ -119,5 +118,6 @@ REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/security/libksba
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += security/pinentry
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt
