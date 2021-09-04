@@ -1,0 +1,21 @@
+We do not have a cython_test_exception_raiser python component, so we make it optional.
+
+This was submitted upstream, but ultimately rejected as they don't want
+to skip tests of core functionality:
+https://twistedmatrix.com/trac/ticket/10113
+https://github.com/twisted/twisted/pull/1537
+
+--- Twisted-21.2.0rc1/src/twisted/test/test_failure.py
++++ Twisted-21.2.0rc1/src/twisted/test/test_failure.py
+@@ -22,7 +22,10 @@ from twisted.python import failure
+ from twisted.trial.unittest import SynchronousTestCase
+ 
+ 
+-from cython_test_exception_raiser import raiser
++try:
++    from cython_test_exception_raiser import raiser
++except ImportError:
++    raiser = None
+ 
+ 
+ def getDivisionFailure(*args, **kwargs):
