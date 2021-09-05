@@ -28,9 +28,9 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		cog-spur
-COMPONENT_VERSION=	5.0.3041
-GIT_TAG=		sun-v5.0.35
-PLUGIN_REV=		5.0-202108201356-cog
+COMPONENT_VERSION=	5.0.3047
+GIT_TAG=		sun-v5.0.36
+PLUGIN_REV=		5.0-202108291418-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/cog-spur
@@ -44,7 +44,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:64b8774108ced76bf7099789974523a7e9961115167d070e0ad5430429b605b6
+COMPONENT_ARCHIVE_HASH=	sha256:d8995382549f30cb65e26f8773098fbcb4a4a51862c0f4b4d651d0116d17444c
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
@@ -81,8 +81,8 @@ CONFIGURE_OPTIONS +=	--without-npsqueak
 CONFIGURE_OPTIONS +=	--with-vmversion=5.0
 CONFIGURE_OPTIONS +=	--disable-dynamicopenssl
 CONFIGURE_OPTIONS +=	--without-libtls
-CONFIGURE_OPTIONS.64 +=	--with-src=spur64src
-CONFIGURE_OPTIONS.32 +=	--with-src=spursrc
+CONFIGURE_OPTIONS.32 +=	--with-src=src/spur32.cog
+CONFIGURE_OPTIONS.64 +=	--with-src=src/spur64.cog
 
 CONFIGURE_ENV    +=     CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV    +=     LIBS="$(LIBS)"
