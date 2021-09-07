@@ -65,8 +65,8 @@ class UserlandActionChecker(base.ActionChecker):
                         "amd64",
                         "sparcv9",
                         "64",
-                        "i86pc-solaris-64",     # perl path
-                        "sun4-solaris-64"       # perl path
+                        "i86pc-solaris-thread-multi-64",     # perl path
+                        "sun4-solaris-thread-multi-64"       # perl path
                 ]
                 self.runpath_re = [
                         re.compile('^/lib(/.*)?$'),
