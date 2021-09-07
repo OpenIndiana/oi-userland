@@ -23,20 +23,18 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
 #
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gzip
-COMPONENT_VERSION=	1.10
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gzip/
+COMPONENT_VERSION=	1.11
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gzip/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:8425ccac99872d544d4310305f915f5ea81e04d0f437ef1a230dc9d1c819d7c0
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:9b9a95d68fdcb936849a4d6fada8bf8686cddf58b9b26c9c4289ed0c92a77907
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # To get correct @bindir@ substitution in the various gz<whatever> scripts.
 CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
@@ -95,13 +93,8 @@ $(GZGREP_MAN_VARIANTS):
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_64)
-
 install:	$(INSTALL_64) $(GZGREP_MAN_VARIANTS)
 
-test:		$(TEST_64)
-
-REQUIRED_PACKAGES += SUNWcs
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
