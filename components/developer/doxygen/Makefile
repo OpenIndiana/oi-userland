@@ -19,32 +19,33 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2020, Andreas Wacknitz
+# Copyright (c) 2020, 2021, Andreas Wacknitz
 #
-PREFERRED_BITS=64
-
+BUILD_BITS= 64
+PREFERRED_BITS= 64
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			doxygen
-COMPONENT_VERSION=		1.9.1
+COMPONENT_VERSION=		1.9.2
+COMPONENT_VERSION_=		$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_FMRI=			developer/documentation-tool/doxygen		
 COMPONENT_SUMMARY=		Doxygen - Source Code Documentation Tool 
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_PROJECT_URL=	https://www.stack.nl/~dimitri/doxygen/index.html
-COMPONENT_SRC=			$(COMPONENT_NAME)-Release_1_9_1
+COMPONENT_FILE=			Release_$(COMPONENT_VERSION_)
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_FILE)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:96db0b69cd62be1a06b0efe16b6408310e5bd4cd5cb5495b77f29c84c7ccf7d7
-COMPONENT_ARCHIVE_URL=	https://github.com/doxygen/doxygen/archive/Release_1_9_1.tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:40f429241027ea60f978f730229d22e971786172fdb4dc74db6406e7f6c034b3
+COMPONENT_ARCHIVE_URL=	https://github.com/doxygen/doxygen/archive/$(COMPONENT_FILE).tar.gz
 COMPONENT_LICENSE=		GPLv2
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
-COMPONENT_ARCHIVE_HASH_1 =	sha256:4da9ad07435f9cb48eb50dcf8879177dd75e9cacac4a22104f69d2a0a2655d2d
+COMPONENT_ARCHIVE_HASH_1 =	sha256:d148f266ad1825fbeca069a049a4f49289121cf0c19054fe7f2e7456e9798ecd
 COMPONENT_ARCHIVE_URL_1 =	https://doxygen.nl/files/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -67,19 +68,17 @@ COMPONENT_TEST_MASTER = \
 # The additional doxygen specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-'-e "/^ok/d" ' \
+	'-e "/Passed/d" ' \
+	'-e "/Total/d" ' \
+	'-e "/Start/d" ' 
 
 # common targets
-build:		$(BUILD_64)
-
 install:	$(INSTALL_64)
 	$(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) 
 	[ -f $(PROTO_DIR)/doxygen_manual-$(IPS_COMPONENT_VERSION).pdf ] || \
 	  $(MV) doxygen_manual-$(IPS_COMPONENT_VERSION).pdf $(PROTO_DIR)
 	$(INSTALL) -d $(PROTOUSRSHAREMAN1DIR)
 	$(INSTALL) -vm644 $(SOURCE_DIR)/doc/*.1 $(PROTOUSRSHAREMAN1DIR)
-
-test:	$(TEST_64)
 
 # Build dependencies
 REQUIRED_PACKAGES+= developer/lexer/flex
