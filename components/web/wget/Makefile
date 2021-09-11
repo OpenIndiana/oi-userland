@@ -28,15 +28,13 @@ USE_OPENSSL11=yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wget
-COMPONENT_VERSION=      1.21.1
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      1.21.2
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/wget/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.lz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:db9bbe5347e6faa06fc78805eeb808b268979455ead9003a608569c9d4fc90ad
+	sha256:1727a330a86acacb3e57615ce268f5f29978bf7adec4abe6a30d370207bc91b3
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/wget
 
 include $(WS_MAKE_RULES)/common.mk
 
