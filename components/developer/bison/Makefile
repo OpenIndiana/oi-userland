@@ -29,12 +29,12 @@ BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bison
-COMPONENT_VERSION=	3.7.6
+COMPONENT_VERSION=	3.8.1
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/bison/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	bison - A YACC Replacement
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:67d68ce1e22192050525643fc0a7a22297576682bef6a5c51446903f5aeef3cf
+COMPONENT_ARCHIVE_HASH=	sha256:31fc602488aad6bdecf0ccc556e0fc72fc57cdc595cf92398f020e0cf4980f15
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_FMRI=		developer/parser/bison
@@ -63,7 +63,7 @@ CONFIGURE_OPTIONS +=	WARN_CXXFLAGS_TEST="$(CFLAGS)"
 
 CONFIGURE_ENV += 	M4="/usr/bin/gm4"
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+#COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # Strip compilation lines from test output
 # and strange backslash lines. and random output,
