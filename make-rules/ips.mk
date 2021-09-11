@@ -325,6 +325,12 @@ mkgeneric = \
 		"-> emit depend nodrop=true type=conditional" \
 		"predicate=$(1)-$(2) fmri=%<1>-$(2)@%<2>>" >> $@;
 
+mkgenericdep = \
+	( echo -n "<transform set name=pkg.fmri value=(?:pkg:/)?(.+)-\#\#\#@(.*)" \
+		"-> emit depend nodrop=true type=require-any " ;  \
+        for i in $(2); do echo -n "fmri=%<1>-$$i@%<2> " ; done ; \
+        echo ">" ) >> $@
+
 # Define and execute a macro that generates a rule to create a manifest for a
 # python module specific to a particular version of the python runtime.
 define python-manifest-rule
@@ -347,6 +353,7 @@ $(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_
 	$(RM) $@
 	$(foreach ver,$(shell echo $(PYTHON_VERSIONS) | tr -d .), \
 		$(call mkgeneric,runtime/python,$(ver)))
+	$(call mkgenericdep,runtime/python,$(shell echo $(PYTHON_VERSIONS) | tr -d .))
 
 # Build Python version-wrapping manifests from the generic version.
 $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
@@ -371,6 +378,7 @@ $(BUILD_DIR)/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PR
 	$(RM) $@
 	$(foreach ver,$(shell echo $(PERL_VERSIONS) | tr -d .), \
 		$(call mkgeneric,runtime/perl,$(ver)))
+	$(call mkgenericdep,runtime/perl,$(shell echo $(PERL_VERSIONS) | tr -d .))
 
 # Build Perl version-wrapping manifests from the generic version.
 $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(BUILD_DIR)/mkgeneric-perl
@@ -415,6 +423,7 @@ $(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PR
 	$(foreach ver,$(RUBY_VERSIONS),\
 	        $(call mkgeneric,runtime/ruby,$(shell echo $(ver) | \
 	            cut -d. -f1,2 | tr -d .)))
+	$(call mkgenericdep,runtime/ruby,$(shell echo $(RUBY_VERSIONS) | cut -d. -f1,2 | tr -d .))
 
 # Build Ruby version-wrapping manifests from the generic version.
 # Creates build/manifest-*-modulename.p5m file.
