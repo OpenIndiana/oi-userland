@@ -1,6 +1,8 @@
---- bison-3.7/Makefile.in.orig	2020-07-24 10:39:34.580098670 +0000
-+++ bison-3.7/Makefile.in	2020-07-24 10:43:04.145242328 +0000
-@@ -608,6 +608,12 @@
+Linking the liby library with appropriate flags
+
+--- bison-3.8/Makefile.in.orig	2021-09-07 19:37:19.000000000 +0000
++++ bison-3.8/Makefile.in	2021-09-11 18:59:38.527168553 +0000
+@@ -680,6 +680,12 @@
  @ENABLE_YACC_TRUE@am_lib_liby_a_OBJECTS = lib/main.$(OBJEXT) \
  @ENABLE_YACC_TRUE@	lib/yyerror.$(OBJEXT)
  lib_liby_a_OBJECTS = $(am_lib_liby_a_OBJECTS)
@@ -10,10 +12,10 @@
 +# being in our CFLAGS from shared-macros.mk
 +lib/yyerror.o lib/main.o: CFLAGS += $(CC_PIC)
 +
- am__objects_9 = examples/c++/calc++/calc__-driver.$(OBJEXT) \
+ am__objects_13 = examples/c++/calc++/calc__-driver.$(OBJEXT) \
  	examples/c++/calc++/calc__-scanner.$(OBJEXT) \
  	examples/c++/calc++/calc__-calc++.$(OBJEXT)
-@@ -3318,6 +3324,9 @@
+@@ -3688,6 +3694,9 @@
  @ENABLE_YACC_TRUE@lib_LIBRARIES = lib/liby.a
  @ENABLE_YACC_TRUE@EXTRA_LIBRARIES = lib/liby.a
  @ENABLE_YACC_TRUE@lib_liby_a_SOURCES = lib/main.c lib/yyerror.c
@@ -23,11 +25,11 @@
  # Prettify Automake-computed names of compiled objects.
  src_bison_SHORTNAME = bison
  src_bison_CPPFLAGS = $(AM_CPPFLAGS) -DINSTALLDIR=\"$(bindir)\"
-@@ -3486,6 +3495,10 @@
+@@ -3859,6 +3868,10 @@
  all: $(BUILT_SOURCES)
  	$(MAKE) $(AM_MAKEFLAGS) all-recursive
  
-+lib/liby.so.1:    $(lib_liby_a_OBJECTS) $(lib_liby_a_DEPENDENCIES)
++lib/liby.so.1:    $(lib_liby_a_OBJECTS) $(lib_liby_a_DEPENDENCIES)                                                                   
 +	-rm -f lib/liby.so.1
 +	$(CC) $(CFLAGS) -shared -Wl,-h -Wl,liby.so.1 -o lib/liby.so.1 $(lib_liby_a_OBJECTS) $(lib_liby_a_LIBADD)
 +
