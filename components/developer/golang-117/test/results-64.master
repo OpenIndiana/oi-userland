@@ -25,7 +25,10 @@ ok  	crypto/des
 ok  	crypto/dsa	
 ok  	crypto/ecdsa	
 ok  	crypto/ed25519	
+ok  	crypto/ed25519/internal/edwards25519	
+ok  	crypto/ed25519/internal/edwards25519/field	
 ok  	crypto/elliptic	
+ok  	crypto/elliptic/internal/fiat	
 ok  	crypto/hmac	
 ok  	crypto/internal/subtle	
 ok  	crypto/md5	
@@ -91,9 +94,11 @@ ok  	image/gif
 ok  	image/jpeg	
 ok  	image/png	
 ok  	index/suffixarray	
+ok  	internal/abi	
 ok  	internal/cpu	
 ok  	internal/execabs	
 ok  	internal/fmtsort	
+ok  	internal/itoa	
 ok  	internal/poll	
 ok  	internal/profile	
 ok  	internal/reflectlite	
@@ -126,6 +131,7 @@ ok  	net/http/httptest
 ok  	net/http/httptrace	
 ok  	net/http/httputil	
 ok  	net/http/internal	
+ok  	net/http/internal/ascii	
 ok  	net/http/pprof	
 ok  	net/internal/socktest	
 ok  	net/mail	
@@ -137,7 +143,7 @@ ok  	net/url
 --- FAIL: TestReadOnlyWriteFile ()
     read_test.go:87: Expected an error when writing to read-only file /tmp/TestReadOnlyWriteFile/blurp.txt
 --- FAIL: TestRemoveAllButReadOnlyAndPathError ()
-    removeall_test.go:352: RemoveAll succeeded unexpectedly
+    removeall_test.go:327: RemoveAll succeeded unexpectedly
 FAIL
 FAIL	os	
 ok  	os/exec	
@@ -150,13 +156,13 @@ ok  	reflect
 ok  	regexp	
 ok  	regexp/syntax	
 ok  	runtime	
+ok  	runtime/cgo	
 ok  	runtime/debug	
 ok  	runtime/internal/atomic	
 ok  	runtime/internal/math	
 ok  	runtime/internal/sys	
 ok  	runtime/metrics	
 ok  	runtime/pprof	
-ok  	runtime/race	
 ok  	runtime/trace	
 ok  	sort	
 ok  	strconv	
@@ -180,20 +186,37 @@ ok  	cmd/addr2line
 ok  	cmd/api	
 ok  	cmd/asm/internal/asm	
 ok  	cmd/asm/internal/lex	
-ok  	cmd/compile	
-ok  	cmd/compile/internal/gc	
+ok  	cmd/compile/internal/dwarfgen	
+ok  	cmd/compile/internal/importer	
+ok  	cmd/compile/internal/ir	
 ok  	cmd/compile/internal/logopt	
+ok  	cmd/compile/internal/noder	
 ok  	cmd/compile/internal/ssa	
+ok  	cmd/compile/internal/ssagen	
 ok  	cmd/compile/internal/syntax	
 ok  	cmd/compile/internal/test	
+ok  	cmd/compile/internal/typecheck	
 ok  	cmd/compile/internal/types	
+ok  	cmd/compile/internal/types2	
 ok  	cmd/cover	
 ok  	cmd/doc	
 ok  	cmd/fix	
 go test proxy running at GOPROXY=http://127.0.0.1:nnnnn/mod
 --- FAIL: TestScript ()
+    --- FAIL: TestScript/mod_cache_rw ()
+        script_test.go:252: 
+            # Regression test for golang.org/issue/31481. ()
+            # golang.org/issue/31481: an explicit flag should make directories in the module
+            # cache writable in order to work around the historical inability of 'rm -rf' to
+            # forcibly remove files in unwritable directories. ()
+            # After adding an extraneous file, 'go mod verify' should fail. ()
+            # However, files within those directories should still be read-only to avoid
+            # accidental mutations. ()
+            > [!root] ! cp $WORK/extraneous.txt $GOPATH/pkg/mod/rsc.io/quote@v1.5.2/go.mod
+            FAIL: testdata/script/mod_cache_rw.txt:16: unexpected command success
+            
     --- FAIL: TestScript/build_nocache ()
-        script_test.go:213: 
+        script_test.go:252: 
             # As of Go 1.12, the module cache is required.
             # If none of the variables we use to locate GOCACHE are set, the cache is off
             # and we cannot build. ()
@@ -209,18 +232,6 @@ go test proxy running at GOPROXY=http://127.0.0.1:nnnnn/mod
             > env GOCACHE=$WORK/unwritable/home
             > ! go build -o triv triv.go
             FAIL: testdata/script/build_nocache.txt:35: unexpected command success
-            
-    --- FAIL: TestScript/mod_cache_rw ()
-        script_test.go:213: 
-            # Regression test for golang.org/issue/31481. ()
-            # golang.org/issue/31481: an explicit flag should make directories in the module
-            # cache writable in order to work around the historical inability of 'rm -rf' to
-            # forcibly remove files in unwritable directories. ()
-            # After adding an extraneous file, 'go mod verify' should fail. ()
-            # However, files within those directories should still be read-only to avoid
-            # accidental mutations. ()
-            > [!root] ! cp $WORK/extraneous.txt $GOPATH/pkg/mod/rsc.io/quote@v1.5.2/go.mod
-            FAIL: testdata/script/mod_cache_rw.txt:16: unexpected command success
             
 FAIL
 FAIL	cmd/go	
@@ -240,7 +251,6 @@ ok  	cmd/go/internal/modfetch/zip_sum_test
 ok  	cmd/go/internal/modload	
 ok  	cmd/go/internal/mvs	
 ok  	cmd/go/internal/par	
-ok  	cmd/go/internal/renameio	
 ok  	cmd/go/internal/search	
 ok  	cmd/go/internal/str	
 ok  	cmd/go/internal/test	
@@ -272,6 +282,7 @@ ok  	cmd/link/internal/loader
 ok  	cmd/nm	
 ok  	cmd/objdump	
 ok  	cmd/pack	
+ok  	cmd/pprof	
 ok  	cmd/trace	
 ok  	cmd/vet	
 FAIL
