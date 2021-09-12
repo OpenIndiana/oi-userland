@@ -12,36 +12,26 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
-
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libdvbpsi
-COMPONENT_VERSION= 1.3.1
+COMPONENT_VERSION= 1.3.3
 COMPONENT_FMRI = library/video/libdvbpsi
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SUMMARY= A simple library designed for decoding and generation of MPEG TS and DVB PSI tables
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:d68367afd5ad8e6ebca813e7958a3ceb9743b421adb4265eceeb6a3511c84420
-COMPONENT_ARCHIVE_URL= \
-  http://download.videolan.org/pub/libdvbpsi/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.videolan.org/developers/libdvbpsi.html
+COMPONENT_ARCHIVE_HASH=	sha256:02b5998bcf289cdfbd8757bedd5987e681309b0a25b3ffe6cebae599f7a00112
+COMPONENT_ARCHIVE_URL=	https://download.videolan.org/pub/libdvbpsi/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.videolan.org/developers/libdvbpsi.html
 COMPONENT_LICENSE = LGPLv2.1
-COMPONENT_LICENSE_FILE = COPYING
 
+TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/encumbered.mk
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 LDFLAGS += -lsocket -lnsl
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
