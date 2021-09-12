@@ -20,22 +20,18 @@
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libdnet
-COMPONENT_VERSION=	1.12
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://code.google.com/p/libdnet/
+COMPONENT_VERSION=	1.14
+COMPONENT_PROJECT_URL=	https://code.google.com/p/libdnet/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:b6360659c93fa2e3cde9e0a1fc9c07bc4111f3448c5de856e095eb98315dd424
-COMPONENT_ARCHIVE_URL=\
-  https://github.com/dugsong/libdnet/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:592599c54a57102a177270f3a2caabda2c2ac7768b977d7458feba97da923dfe
+COMPONENT_ARCHIVE_URL=	https://github.com/dugsong/libdnet/archive/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Needed to generate libraries with a .so extension.
 COMPONENT_PREP_ACTION = \
@@ -56,17 +52,11 @@ CONFIGURE_OPTIONS += ac_cv_dnet_linux_pf_packet=no
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
 # Tests for libdnet are not enabled by default as they use the Check unit
 # testing framework which is currently not present on Solaris. See:
 # http://check.sourceforge.net/ for more details.
 # If you do have Check on your system, then uncomment the TEST_32 line.
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

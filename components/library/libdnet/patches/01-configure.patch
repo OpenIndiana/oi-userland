@@ -1,0 +1,56 @@
+Adjust the check for the check test framework to look for libcheck.so
+instead of libcheck.a.
+
+Allow building in zones with shared IP stack
+
+--- libdnet-libdnet-1.14/configure.orig	2021-09-12 14:42:45.488362814 +0000
++++ libdnet-libdnet-1.14/configure	2021-09-12 14:49:49.173387681 +0000
+@@ -19553,25 +19553,25 @@
+   *)
+      echo "$as_me:$LINENO: result: $withval" >&5
+ echo "${ECHO_T}$withval" >&6
+-     if test -f $withval/include/check.h -a -f $withval/lib/libcheck.a; then
++     if test -f $withval/include/check.h -a -f $withval/lib/libcheck.so; then
+         owd=`pwd`
+         if cd $withval; then withval=`pwd`; cd $owd; fi
+         CHECKINC="-I$withval/include"
+         CHECKLIB="-L$withval/lib -lcheck"
+-     elif test -f $withval/src/check.h -a -f $withval/src/libcheck.a; then
++     elif test -f $withval/src/check.h -a -f $withval/src/libcheck.so; then
+         owd=`pwd`
+         if cd $withval; then withval=`pwd`; cd $owd; fi
+         CHECKINC="-I$withval/src"
+         CHECKLIB="-L$withval/src -lcheck"
+      else
+-        { { echo "$as_me:$LINENO: error: check.h or libcheck.a not found in $withval" >&5
+-echo "$as_me: error: check.h or libcheck.a not found in $withval" >&2;}
++        { { echo "$as_me:$LINENO: error: check.h or libcheck.so not found in $withval" >&5
++echo "$as_me: error: check.h or libcheck.so not found in $withval" >&2;}
+    { (exit 1); exit 1; }; }
+      fi
+      ;;
+   esac
+ else
+-   if test -f ${prefix}/include/check.h -a -f ${prefix}/lib/libcheck.a; then
++   if test -f ${prefix}/include/check.h -a -f ${prefix}/lib/libcheck.so; then
+      CHECKINC="-I${prefix}/include"
+      CHECKLIB="-L${prefix}/lib -lcheck"
+      echo "$as_me:$LINENO: result: yes" >&5
+@@ -20246,7 +20246,7 @@
+ 
+ for ac_header in net/bpf.h net/if.h net/if_var.h \
+ 	    net/if_arp.h net/if_dl.h net/pfilt.h \
+-	    net/pfvar.h net/radix.h net/raw.h net/route.h netinet/in_var.h \
++	    net/pfvar.h net/radix.h net/raw.h netinet/in.h netinet/in_var.h \
+ 	    net/if_tun.h linux/if_tun.h netinet/ip_fw.h linux/ip_fw.h \
+ 	    linux/ip_fwchains.h linux/netfilter_ipv4/ipchains_core.h
+ do
+@@ -21601,7 +21601,7 @@
+     if test "${ac_cv_dnet_streams_mib2+set}" = set; then
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+-  if test -f /usr/include/inet/mib2.h -a -c /dev/ip ; then
++  if test -f /usr/include/inet/mib2.h ; then
+             ac_cv_dnet_streams_mib2=yes
+         else
+             ac_cv_dnet_streams_mib2=no
