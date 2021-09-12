@@ -13,40 +13,38 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libdca
-COMPONENT_VERSION= 0.0.5
+COMPONENT_VERSION= 0.0.7
 COMPONENT_FMRI = library/audio/libdca
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SUMMARY= A free library for decoding DTS Coherent Acoustics streams
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:dba022e022109a5bacbe122d50917769ff27b64a7bba104bd38ced8de8510642
-COMPONENT_ARCHIVE_URL= \
-  http://download.videolan.org/pub/videolan/libdca/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.videolan.org/developers/libdca.html
-COMPONENT_LICENSE = LGPLv2.1
+COMPONENT_ARCHIVE_HASH=	sha256:3a0b13815f582c661d2388ffcabc2f1ea82f471783c400f765f2ec6c81065f6a
+COMPONENT_ARCHIVE_URL=	https://download.videolan.org/pub/videolan/libdca/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.videolan.org/developers/libdca.html
+COMPONENT_LICENSE= LGPLv2.1
 COMPONENT_LICENSE_FILE = COPYING
 
+TEST_TARGET=	$(NO_TESTS)
 include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/common.mk
 
 CFLAGS += $($(COMPILER)_PIC)
+
+COMPONENT_PRE_CONFIGURE_ACTION = \
+    ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+COMPONENT_PREP_ACTION = \
+    (cd $(@D) ; autoreconf -fi)
 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
