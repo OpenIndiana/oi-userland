@@ -25,15 +25,15 @@ BUILD_BITS=				32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libogg
-COMPONENT_VERSION=      1.3.4
+COMPONENT_VERSION=      1.3.5
 COMPONENT_FMRI=         library/libogg
 COMPONENT_SUMMARY=      libogg - general-purpose compressed audio format
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=  https://xiph.org/ogg
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:fe5670640bd49e828d64d2879c31cb4dde9758681bb664f9bdbf159a01b0c76e
-COMPONENT_ARCHIVE_URL=	https://downloads.xiph.org/releases/ogg/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:0eb4b4b9420a0f51db142ba3f9c64b333f826532dc0f48c6410ae51f4799b664
+COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/ogg/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD
 
 include $(WS_MAKE_RULES)/common.mk
