@@ -19,21 +19,21 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2016, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2021, Andreas Wacknitz
 #
 BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libcdr
-COMPONENT_VERSION=	0.1.6
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	0.1.7
 COMPONENT_FMRI=     	library/c++/libcdr
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libcdr
 COMPONENT_SUMMARY=      libcdr - library for reading CorelDRAW documents
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:01cd00b04a030977e544433c2d127c997205332cd9b8e35ec0ee17110da7f861
-COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:5666249d613466b9aa1e987ea4109c04365866e9277d80f6cd9663e86b8ecdd4
+COMPONENT_ARCHIVE_URL=	https://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MPLv2
 
 # Fix threading detection issue introduced with boost 1.64
@@ -43,6 +43,19 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS= \
+	'-e "s/^\# //" ' \
+	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/PASS/p" '  \
+	'-e "/SKIP/p" '  \
+	'-e "/XFAIL/p" ' \
+	'-e "/FAIL/p" '  \
+	'-e "/XPASS/p" ' \
+	'-e "/ERROR/p" ' \
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/cppunit
