@@ -20,37 +20,27 @@
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libestr
-COMPONENT_VERSION=	0.1.10
+COMPONENT_VERSION=	0.1.11
 COMPONENT_FMRI=         library/libestr
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=      libestr - extended string handling library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://libestr.adiscon.com/
+COMPONENT_PROJECT_URL=	https://libestr.adiscon.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:bd655e126e750edd18544b88eb1568d200a424a0c23f665eb14bbece07ac703c
-COMPONENT_ARCHIVE_URL= \
-  $(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:46632b2785ff4a231dcf241eeb0dcb5fc0c7d4da8ee49cf5687722cdbe8b2024
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2.1
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Userland default includes -mt which links with libthread which we don't need.
-studio_MT =
+studio_MT=
 
 CONFIGURE_OPTIONS+= --disable-static
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
