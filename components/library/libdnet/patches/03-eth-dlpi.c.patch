@@ -1,0 +1,22 @@
+Fix Bug 23595729 dnet can't send out packet.
+
+--- libdnet-libdnet-1.14/src/eth-dlpi.c.orig	2020-07-17 18:56:28.000000000 +0000
++++ libdnet-libdnet-1.14/src/eth-dlpi.c	2021-09-12 15:18:14.525536772 +0000
+@@ -151,7 +151,7 @@
+ 	}
+ #else
+ 	e->fd = -1;
+-	snprintf(dev, sizeof(dev), "/dev/%s", device);
++	snprintf(dev, sizeof(dev), "/dev/net/%s", device);
+ 	if ((p = dev_find_ppa(dev)) == NULL) {
+ 		errno = EINVAL;
+ 		return (eth_close(e));
+@@ -160,7 +160,7 @@
+ 	*p = '\0';
+ 
+ 	if ((e->fd = open(dev, O_RDWR)) < 0) {
+-		snprintf(dev, sizeof(dev), "/dev/%s", device);
++		snprintf(dev, sizeof(dev), "/dev/net/%s", device);
+ 		if ((e->fd = open(dev, O_RDWR)) < 0)
+ 			return (eth_close(e));
+ 	}
