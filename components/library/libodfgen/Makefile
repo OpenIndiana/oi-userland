@@ -20,25 +20,23 @@
 #
 # Copyright (c) 2015-2017, Aurelien Larcher. All rights reserved.
 #
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libodfgen
-COMPONENT_VERSION=	0.1.7
+COMPONENT_VERSION=	0.1.8
 COMPONENT_FMRI=     	library/c++/libodfgen
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/p/libwpd/wiki/libodfgen/
 COMPONENT_SUMMARY=      libodfgen - ODF export library using librevenge
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:323e491f956c8ca2abb12c998e350670930a32317bf9662b0615dd4b3922b831
-COMPONENT_ARCHIVE_URL=	\
-  http://sourceforge.net/projects/libwpd/files/libodfgen/libodfgen-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:55200027fd46623b9bdddd38d275e7452d1b0ff8aeddcad6f9ae6dc25f610625
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libwpd/files/libodfgen/libodfgen-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Fix threading detection issue with boost 1.64
 CXXFLAGS+= -pthread
@@ -46,18 +44,13 @@ CXXFLAGS+= -pthread
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
 # Build dependencies
 REQUIRED_PACKAGES += system/library/boost
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/c++/librevenge
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/c++/librevenge
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
