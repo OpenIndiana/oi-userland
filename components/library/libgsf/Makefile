@@ -12,29 +12,25 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Jason Martin
+# Copyright 2021 Andreas Wacknitz
 #
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgsf
-COMPONENT_VERSION= 1.14.45
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.14.47
 COMPONENT_SUMMARY= GNOME Structured File Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:5cbc2c0f1dc44d202fa0c6e3a51e9f17b0c2deb8711ba650432bfde3180b69fa
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.14/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL= http://www.gnome.org
+COMPONENT_ARCHIVE_HASH= sha256:d188ebd3787b5375a8fd38ee6f761a2007de5e98fa0cf5623f271daa67ba774d
+COMPONENT_ARCHIVE_URL=	https://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.14/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_FMRI= library/desktop/libgsf
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE= LGPLv2
 COMPONENT_LICENSE_FILE = COPYING.LIB
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -50,32 +46,36 @@ COMPONENT_PREP_ACTION= ( cd $(@D)  && \
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --with-bz2
+CONFIGURE_OPTIONS += --with-pic
+CONFIGURE_OPTIONS += --with-zlib
+CONFIGURE_OPTIONS.32 += --disable-introspection
+CONFIGURE_OPTIONS.64 += --enable-introspection
 
 COMPONENT_TEST_ENV += CC=$(CC)
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_ARGS =   -k -i
 COMPONENT_TEST_TRANSFORMS += \
-    '-ne "/^\# TOTAL:/p" ' \
-    '-ne "/^\# PASS:/p" ' \
-    '-ne "/^\# SKIP:/p" ' \
-    '-ne "/^\# XFAIL:/p" ' \
-    '-ne "/^\# FAIL:/p" ' \
-    '-ne "/^\# XPASS:/p" ' \
-    '-ne "/^\# ERROR::/p" '
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
+        '-n ' \
+        '-e "/TOTAL:/p" ' \
+        '-e "/SKIP:/p" ' \
+        '-e "/PASS:/p" ' \
+        '-e "/FAIL:/p" ' \
+        '-e "/ERROR:/p" '
 
 # To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
 
-test: $(TEST_32_and_64)
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
