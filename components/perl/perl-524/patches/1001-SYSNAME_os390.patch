@@ -1,0 +1,25 @@
+This is to fix the following warning:
+
+Cwd.xs:19:0: warning: "SYSNAME" redefined
+ #define SYSNAME "$SYSNAME"
+ 
+In file included from ../../perl.h:770:0,
+                 from Cwd.xs:8:
+/usr/include/sys/param.h:184:0: note: this is the location of the previous definition
+ #define SYSNAME 9  /* # chars in system name */
+
+still needed in 5.34.0 - trying to upstream it.
+
+--- perl-5.24.3/dist/PathTools/Cwd.xs.orig	2017-06-30 23:03:22.000000000 +0000
++++ perl-5.24.3/dist/PathTools/Cwd.xs	2021-09-08 14:46:16.711667609 +0000
+@@ -16,7 +16,10 @@
+ #endif
+ 
+ /* For special handling of os390 sysplexed systems */
++#ifdef EBCDIC
+ #define SYSNAME "$SYSNAME"
++#endif
++
+ #define SYSNAME_LEN (sizeof(SYSNAME) - 1)
+ 
+ /* The realpath() implementation from OpenBSD 3.9 to 4.2 (realpath.c 1.13)

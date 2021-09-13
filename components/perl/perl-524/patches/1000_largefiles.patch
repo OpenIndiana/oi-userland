@@ -1,8 +1,12 @@
 In house patch to correctly identify large file support in a 64-bit
 compilation environment.
 A correction of this sort should be sent upstream.
---- perl-5.22.1/hints/solaris_2.sh-orig	2016-02-25 20:22:01.201322692 -0800
-+++ perl-5.22.1/hints/solaris_2.sh	2016-02-25 20:22:31.670265384 -0800
+
+Changed default CFLAGS for SPARC/GCC from -mcpu=v9 into -mcpu=ultrasparc
+and add VIS(1) UltraSparc1 option -mvis.
+
+--- perl-5.24.3/hints/solaris_2.sh.~1~	2017-06-30 23:01:01.000000000 +0000
++++ perl-5.24.3/hints/solaris_2.sh	2021-09-08 14:19:49.112064456 +0000
 @@ -494,9 +494,9 @@
  ''|$define|true|[yY]*)
  
@@ -16,3 +20,21 @@ A correction of this sort should be sent upstream.
  
      ccflags="$ccflags $ccflags_uselargefiles"
      ldflags="$ldflags $ldflags_uselargefiles"
+@@ -587,7 +587,7 @@
+ 	    case "${cc:-cc} -v 2>/dev/null" in
+ 	    *gcc*)
+ 		echo 'int main() { return 0; }' > try.c
+-		case "`${cc:-cc} $ccflags -mcpu=v9 -m64 -S try.c 2>&1 | grep 'm64 is not supported by this configuration'`" in
++		case "`${cc:-cc} $ccflags -m64 -mcpu=ultrasparc -S try.c 2>&1 | grep 'm64 is not supported by this configuration'`" in
+ 		*"m64 is not supported"*)
+ 		    cat >&4 <<EOM
+ 
+@@ -603,7 +603,7 @@
+ 		esac
+ 		if test "$processor" = sparc; then
+ 		    loclibpth="/usr/lib/sparcv9 $loclibpth"
+-		    ccflags="$ccflags -mcpu=v9"
++		    ccflags="$ccflags -mcpu=ultrasparc"
+ 		fi
+ 		ccflags="$ccflags -m64"
+ 
