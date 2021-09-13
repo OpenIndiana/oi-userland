@@ -11,19 +11,18 @@
 #
 # Copyright 2017 Alexander Pyhalov
 #
-BUILD_BITS=32_and_64
+BUILD_BITS=64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmtp
-COMPONENT_VERSION=	1.1.17
+COMPONENT_VERSION=	1.1.18
 COMPONENT_SUMMARY=	libmtp is an Initiator implementation of the Media Transfer Protocol
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=	http://libmtp.sourceforge.net/
+COMPONENT_PROJECT_URL=	https://libmtp.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f8a34cf52d9f9b9cb8c7f26b12da347d4af7eb904c13189602e4c6b62d1a79dc
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libmtp/files/libmtp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download/
+COMPONENT_ARCHIVE_HASH= sha256:7280fe50c044c818a06667f45eabca884deab3193caa8682e0b581e847a281f0
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libmtp/files/libmtp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download/
 COMPONENT_FMRI=		library/libmtp
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
@@ -47,6 +46,7 @@ CONFIGURE_OPTIONS  += --disable-static
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt
