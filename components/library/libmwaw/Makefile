@@ -24,14 +24,14 @@ BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmwaw
-COMPONENT_VERSION=	0.3.15
+COMPONENT_VERSION=	0.3.20
 COMPONENT_FMRI=     	library/c++/libmwaw
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libmwaw
 COMPONENT_SUMMARY=      libmwaw - library for reading various old mac text documents
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:0440bb09f05e3419423d8dfa36ee847056ebfd837f9cbc091fdb5b057daab0b1
+COMPONENT_ARCHIVE_HASH=	sha256:14c38b06214f277ccd1450e22e6e32648955018d7695896bc560165748c8cd21
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libmwaw/files/libmwaw/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=      LGPLv2, MPLv2
 
