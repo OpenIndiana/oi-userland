@@ -15,19 +15,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hunspell-fr
-COMPONENT_VERSION=	6.3
-COMPONENT_PROJECT_URL=	http://www.dicollecte.org/
+COMPONENT_VERSION=	7.0
+COMPONENT_PROJECT_URL=	https://www.dicollecte.org/
 COMPONENT_SUMMARY=	Myspell and Hunspell spell dictionary files for French
 COMPONENT_LICENSE=	MPLv2.0
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_FMRI=	library/myspell/dictionary/fr
 COMPONENT_CLASSIFICATION	= System/Localizations
 
-COMPONENT_SRC=            hunspell-french-dictionaries-v$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH=        \
-       sha256:cc6c2d15073659d221487b45245e9eee9a4ed66c30c6dcf784326bab063c5266
-COMPONENT_ARCHIVE_URL=   http://www.dicollecte.org/download/fr/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=			hunspell-french-dictionaries-v$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE_HASH=	sha256:eb7ac36dc14b9c3e3c0cabae0f90304a137da8e6ae607bcaf56d65720fbd097f
+COMPONENT_ARCHIVE_URL=	https://www.dicollecte.org/download/fr/$(COMPONENT_ARCHIVE)
 UNPACK_ARGS+=-r $(COMPONENT_SRC)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -45,8 +44,8 @@ $(SOURCE_DIR)/.installed:	$(SOURCE_DIR)/.prep
 	[ -d $(PROTO_DIR)$(LINKDIR) ] || mkdir -p $(PROTO_DIR)$(LINKDIR)
 	[ -d $(PROTO_DIR)$(FFDIR) ] || mkdir -p $(PROTO_DIR)$(FFDIR)
 	[ -d $(PROTO_DIR)$(TBDIR) ] || mkdir -p $(PROTO_DIR)$(TBDIR)
-	cp $(COMPONENT_SRC)/fr-moderne.aff $(PROTO_DIR)$(DESTDIR)/fr_FR.aff
-	cp $(COMPONENT_SRC)/fr-moderne.dic $(PROTO_DIR)$(DESTDIR)/fr_FR.dic
+	cp $(COMPONENT_SRC)/fr-classique.aff $(PROTO_DIR)$(DESTDIR)/fr_FR.aff
+	cp $(COMPONENT_SRC)/fr-classique.dic $(PROTO_DIR)$(DESTDIR)/fr_FR.dic
 	for alias in $(FRALIASES); do\
 		ln -fs fr_FR.aff $(PROTO_DIR)$(DESTDIR)/$$alias.aff; \
 		ln -fs fr_FR.dic $(PROTO_DIR)$(DESTDIR)/$$alias.dic; \
