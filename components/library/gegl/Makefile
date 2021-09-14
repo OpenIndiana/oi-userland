@@ -19,19 +19,21 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
-COMPONENT_VERSION= 0.4.30
+COMPONENT_VERSION= 0.4.32
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:c112782cf4096969e23217ccdfabe42284e35d5435ff0c43d40e4c70faeca8dd
-COMPONENT_ARCHIVE_URL= https://ftp.gimp.org/pub/gegl/0.4/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:668e3c6b9faf75fb00512701c36274ab6f22a8ba05ec62dbf187d34b8d298fa1
+COMPONENT_ARCHIVE_URL=	https://ftp.gimp.org/pub/gegl/0.4/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.gegl.org/
 COMPONENT_LICENSE= GPLv3, LGPLv3
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
+
+GCC_VERSION=	10
 
 CFLAGS += $(CFLAGS.$(BITS))
 
@@ -42,6 +44,7 @@ LDFLAGS           +=    $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS+= --infodir=$(USRSHAREDIR)/info
+CONFIGURE_OPTIONS+= -Dlua=disabled
 CONFIGURE_OPTIONS+= -Dworkshop=true
 
 # gobject-introspection requires this
@@ -65,17 +68,17 @@ REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/ilmbase
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/sdl2
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+# If ffmpeg is installed it will be detected by configure but we don't want to depend on a package from encumbered.
+# Therefore ffmpeg and its dependencies need to be uninstalled from the build machine when building gegl.
+#REQUIRED_PACKAGES += video/ffmpeg
