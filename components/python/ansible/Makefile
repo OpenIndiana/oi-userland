@@ -17,12 +17,12 @@ BUILD_BITS=	NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ansible
-COMPONENT_VERSION=	2.9.25
+COMPONENT_VERSION=	2.9.26
 COMPONENT_SUMMARY=	Ansible is a radically simple IT automation system
 COMPONENT_PROJECT_URL=	https://ansible.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:8bcf2c2f5c609e5b91114ca8b0e4226d603b87f2be71dcb338e8b7d3adbaa28f
+COMPONENT_ARCHIVE_HASH=	sha256:3ae02aad2bbedcfb419ce75ebd2a648e9deb73e9e2d8de86c82d6047b1bdeb63
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_FMRI=	system/management/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
