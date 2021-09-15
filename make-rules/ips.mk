@@ -252,7 +252,7 @@ NORUBY_MANIFESTS = $(filter-out %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
 RUBY_MANIFESTS = $(filter %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
 RUBYV_VALUES = $(RUBY_VERSIONS)
 RUBYV_FMRI_VERSION = RUBYV
-RUBYV_MANIFESTS = $(foreach v,$(RUBYV_VERSIONS),\
+RUBYV_MANIFESTS = $(foreach v,$(RUBY_VERSIONS),\
                       $(shell echo $(RUBY_MANIFESTS) |\
                       sed -e 's/-RUBYVER.p5m/-$(shell echo $(v) |\
                       cut -d. -f1,2 | tr -d .).p5m/g'))
