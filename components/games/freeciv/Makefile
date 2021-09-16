@@ -41,13 +41,13 @@ CONFIGURE_OPTIONS += --disable-dependency-tracking
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += image/imagemagick
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += system/library
