@@ -13,6 +13,7 @@
 #
 # Copyright 2016 Adam Stevko. All rights reserved.
 # Copyright 2017 Michal Nowak
+# Copyright 2021 David Stes
 #
 
 Vagrant.configure("2") do |config|
@@ -39,7 +40,10 @@ Vagrant.configure("2") do |config|
     host = RbConfig::CONFIG['host_os']
 
     # Get memory size and CPU cores amount
-    if host =~ /darwin/
+    if host =~ /solaris/
+	mem = `/usr/sbin/prtconf|grep Memory|cut -f3 -d' '`.to_i * 1024 * 1024
+	cpus = `/usr/sbin/psrinfo|wc -l`.to_i
+    elsif host =~ /darwin/
         # sysctl returns Bytes
         mem = `sysctl -n hw.memsize`.to_i
         cpus = `sysctl -n hw.ncpu`.to_i
@@ -51,6 +55,9 @@ Vagrant.configure("2") do |config|
         # Windows code via https://github.com/rdsubhas/vagrant-faster
         mem = `wmic computersystem Get TotalPhysicalMemory`.split[1].to_i
         cpus = `echo %NUMBER_OF_PROCESSORS%`.to_i
+    else
+	puts "Unsupported operating system"
+	exit
     end
 
     # Give VM 1/4 system memory as well as CPU core count
@@ -60,6 +67,7 @@ Vagrant.configure("2") do |config|
     config.vm.provider "virtualbox" do |v|
         v.customize ["modifyvm", :id, "--memory", mem]
         v.customize ["modifyvm", :id, "--cpus", cpus]
+
         v.customize ["storagectl", :id, "--name", "SATA Controller", "--hostiocache", "on"]
         # Enable following line, if oi-userland directory is on non-rotational
         # drive (e.g. SSD). (This could be automated, but with all those storage
