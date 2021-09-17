@@ -12,12 +12,11 @@
 # Copyright 2018 Harry Liebel <hliebel@gmail.com>
 #
 
-PREFERRED_BITS=64
-
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		timidity++
-COMPONENT_VERSION=	2.14.0
+COMPONENT_VERSION=	2.15.0
 COMPONENT_FMRI=		multimedia/timidity++
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/timidity
 COMPONENT_SUMMARY=	Software MIDI player
@@ -25,31 +24,25 @@ COMPONENT_DESCRIPTION=	A software synthesizer, without external instruments, tha
 COMPONENT_CLASSIFICATION= Applications/Sound and Video
 COMPONENT_SRC=		TiMidity++-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:f97fb643f049e9c2e5ef5b034ea9eeb582f0175dce37bc5df843cc85090f6476
+COMPONENT_ARCHIVE_HASH=	sha256:161fc0395af16b51f7117ad007c3e434c825a308fa29ad44b626ee8f9bb1c8f5
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/TiMidity++/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	timidity++.license
 COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --enable-audio=oss,ao,vorbis,flac
 CONFIGURE_OPTIONS += --enable-ncurses
 
-# common targets
-build:		$(BUILD_64)
+# Manually added build dependencies
+REQUIRED_PACKAGES += system/header/header-audio
 
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += library/audio/libao
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
