@@ -19,30 +19,37 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
+# Copyright 2021, Andreas Wacknitz
 #
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		teseq
-COMPONENT_VERSION=	1.1
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/teseq/
+COMPONENT_VERSION=	1.1.1
+COMPONENT_SUMMARY=	teseq - terminal control sequences analyzer
+COMPONENT_DESCRIPTION=	A tool for analyzing files that contain control characters and terminal control sequences
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/teseq/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:6efd3c3a1e14209226db3c6df35bb1cb92ae68d7bb529bcaa3e02fdd5424c00d
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/teseq/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:32fbd22bc1e16796a02a3915ac6c29015607a19b00a50de570c747860b009622
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/teseq/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_FMRI=	text/teseq
+COMPONENT_LICENSE=	GPLv3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS	+= -std=c99
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+COMPONENT_TEST_TRANSFORMS += \
+	'-ne "/^\# TOTAL:/ p" ' \
+	'-ne "/^\# PASS:/ p" ' \
+	'-ne "/^\# XPASS:/ p" ' \
+	'-ne "/^\# SKIP:/ p" ' \
+	'-ne "/^\# FAIL:/ p" ' \
+	'-ne "/^\# XFAIL:/ p" ' \
+	'-ne "/^\# ERROR:/ p" ' \
+	'-ne "/Result/ p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
