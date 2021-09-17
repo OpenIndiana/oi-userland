@@ -30,16 +30,65 @@ VENDOR_GEM_DIR=/usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VE
 # <component_name>.gemspec
 GEMSPEC=$(COMPONENT_NAME).gemspec
 
-
 # Some gems projects have to be built using rake
 # Allow GEM build/install commands to be overwritten
 # to account for possible differences
 GEM_BUILD_ACTION=(cd $(@D); $(GEM) build $(GEM_BUILD_ARGS) $(GEMSPEC))
 
+define ruby-rule
+$(BUILD_DIR)/%-$(1)/.built:             RUBY_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.built:             RUBY_LIB_VERSION=$(RUBY_LIB_VERSION.$(1))
+$(BUILD_DIR)/%-$(1)/.installed:         RUBY_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.installed:         RUBY_LIB_VERSION=$(RUBY_LIB_VERSION.$(1))
+$(BUILD_DIR)/%-$(1)/.tested:            RUBY_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.tested:            RUBY_LIB_VERSION=$(RUBY_LIB_VERSION.$(1))
+$(BUILD_DIR)/%-$(1)/.tested-and-compared:       RUBY_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.tested-and-compared:       RUBY_LIB_VERSION=$(RUBY_LIB_VERSION.$(1))
+endef
+
+$(foreach rbver, $(RUBY_VERSIONS), $(eval $(call ruby-rule,$(rbver))))
+
+$(BUILD_DIR)/$(MACH32)-%/.built:        BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.built:        BITS=64
+$(BUILD_DIR)/$(MACH32)-%/.installed:    BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.installed:    BITS=64
+$(BUILD_DIR)/$(MACH32)-%/.tested:       BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.tested:       BITS=64
+$(BUILD_DIR)/$(MACH32)-%/.tested-and-compared:  BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.tested-and-compared:  BITS=64
+
+BUILD_32 = $(RUBY_32_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
+BUILD_64 = $(RUBY_64_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
+BUILD_NO_ARCH = $(RUBY_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.built)
+
+ifeq ($(filter-out $(RUBY_64_ONLY_VERSIONS), $(RUBY_VERSION)),)
+BUILD_32_and_64 = $(BUILD_64)
+endif
+
+ifeq ($(filter-out $(RUBY_32_ONLY_VERSIONS), $(RUBY_VERSION)),)
+BUILD_32_and_64 = $(BUILD_32)
+endif
+
+INSTALL_32 = $(RUBY_32_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
+INSTALL_64 = $(RUBY_64_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
+INSTALL_NO_ARCH = $(RUBY_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.installed)
+
+# If we are building Ruby 2.6 support, build it and install it
+# before Ruby 2.3, so 2.3 is installed last and is the canonical version.
+# When we change the default, the new default should go last.
+ifneq ($(findstring 2.6,$(RUBY_VERSIONS)),)
+$(BUILD_DIR)/%-2.3/.built:     $(BUILD_DIR)/%-2.6/.built
+$(BUILD_DIR)/%-2.3/.installed: $(BUILD_DIR)/%-2.6/.installed
+endif
+
+ifeq ($(strip $(RUBY_BUILD_DOCS)),yes)
 # Build install args in a more readable fashion
 ifeq ($(firstword $(subst .,$(space),$(RUBY_VERSION))),2)
 # gem install 2.x does docs differently. Continue to generate both types
 GEM_INSTALL_ARGS += --document rdoc,ri
+endif
+else
+GEM_INSTALL_ARGS += --no-document
 endif
 
 GEM_INSTALL_ARGS += -V --local --force
@@ -71,6 +120,17 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 	$(TOUCH) $@
 
 COMPONENT_TEST_TARGETS =
+
+# determine the type of tests we want to run.
+ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
+TEST_32 = $(RUBY_32_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested)
+TEST_64 = $(RUBY_64_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested)
+TEST_NO_ARCH = $(RUBY_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested)
+else
+TEST_32 = $(RUBY_32_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested-and-compared)
+TEST_64 = $(RUBY_64_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested-and-compared)
+TEST_NO_ARCH = $(RUBY_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested-and-compared)
+endif
 
 # Test the built source.  If the output file shows up in the environment or
 # arguments, don't redirect stdout/stderr to it.
