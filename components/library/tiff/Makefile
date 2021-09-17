@@ -20,19 +20,17 @@ USE_DEFAULT_TEST_TRANSFORMS=yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tiff
-COMPONENT_VERSION= 4.2.0
+COMPONENT_VERSION= 4.3.0
 COMPONENT_SUMMARY= libtiff - library for reading and writing TIFF
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:eb0484e568ead8fa23b513e9b0041df7e327f4ee2d22db5a533929dfc19633cb
-COMPONENT_ARCHIVE_URL= \
-	https://download.osgeo.org/libtiff/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.simplesystems.org/libtiff/
-COMPONENT_LICENSE_FILE = COPYRIGHT
-COMPONENT_LICENSE = BSD-like
-COMPONENT_FMRI = image/library/libtiff
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
+COMPONENT_ARCHIVE_HASH= sha256:0e46e5acb087ce7d1ac53cf4f56a09b221537fc86dfc5daaad1c2e89e1b37ac8
+COMPONENT_ARCHIVE_URL=	https://download.osgeo.org/libtiff/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.simplesystems.org/libtiff/
+COMPONENT_LICENSE_FILE=	COPYRIGHT
+COMPONENT_LICENSE=	BSD-like
+COMPONENT_FMRI=	image/library/libtiff
+COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 
 include $(WS_MAKE_RULES)/common.mk
 
