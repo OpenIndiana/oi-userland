@@ -1,10 +1,11 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
@@ -14,12 +15,12 @@
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license docs/LICENSE.TXT license='GPLv3'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file files/awstats.1 path=usr/share/man/man1/awstats.1
 
@@ -30,14 +31,14 @@ file path=usr/lib/awstats/tools/awstats_buildstaticpages.pl mode=0555
 file path=usr/lib/awstats/tools/awstats_configure.pl mode=0555
 file path=usr/lib/awstats/tools/awstats_exportlib.pl mode=0555
 file path=usr/lib/awstats/tools/awstats_updateall.pl mode=0555
-file path=usr/lib/awstats/tools/geoip_generator.pl mode=0555
 file path=usr/lib/awstats/tools/dolibarr/README.md
-file path=usr/lib/awstats/tools/httpd_conf
+file path=usr/lib/awstats/tools/geoip_generator.pl mode=0555
+file path=usr/lib/awstats/tools/httpd_conf preserve=true mode=0644
 file path=usr/lib/awstats/tools/logresolvemerge.pl mode=0555
 file path=usr/lib/awstats/tools/maillogconvert.pl mode=0555
 file path=usr/lib/awstats/tools/nginx/README.txt
 file path=usr/lib/awstats/tools/nginx/awstats-fcgi.php
-file path=usr/lib/awstats/tools/nginx/awstats-nginx.conf
+file path=usr/lib/awstats/tools/nginx/awstats-nginx.conf preserve=true mode=0644
 file path=usr/lib/awstats/tools/urlaliasbuilder.pl mode=0555
 file path=usr/lib/awstats/tools/webmin/.gitignore
 file path=usr/lib/awstats/tools/webmin/README.md
@@ -49,7 +50,7 @@ file path=usr/lib/awstats/tools/xslt/awstats.datademo2.xml
 file path=usr/lib/awstats/tools/xslt/awstats.datademo2.xslt
 file path=usr/lib/awstats/tools/xslt/awstats.xsd
 file path=usr/share/awstats/cgi-bin/awdownloadcsv.pl mode=0555
-file path=usr/share/awstats/cgi-bin/awredir.pl mode=0555 
+file path=usr/share/awstats/cgi-bin/awredir.pl mode=0555
 file path=usr/share/awstats/cgi-bin/awstats.model.conf preserve=true mode=0644
 file path=usr/share/awstats/cgi-bin/awstats.pl mode=0555
 file path=usr/share/awstats/cgi-bin/lang/awstats-al.txt
@@ -165,6 +166,8 @@ file path=usr/share/awstats/cgi-bin/plugins/decodeutfkeys.pm
 file path=usr/share/awstats/cgi-bin/plugins/example/example.pm
 file path=usr/share/awstats/cgi-bin/plugins/export_to_csv.pm
 file path=usr/share/awstats/cgi-bin/plugins/geoip.pm
+file path=usr/share/awstats/cgi-bin/plugins/geoip2_city.pm
+file path=usr/share/awstats/cgi-bin/plugins/geoip2_country.pm
 file path=usr/share/awstats/cgi-bin/plugins/geoip6.pm
 file path=usr/share/awstats/cgi-bin/plugins/geoip_asn_maxmind.pm
 file path=usr/share/awstats/cgi-bin/plugins/geoip_city_maxmind.pm
@@ -475,6 +478,7 @@ file path=usr/share/awstats/icon/flags/ma.png
 file path=usr/share/awstats/icon/flags/mc.png
 file path=usr/share/awstats/icon/flags/md.png
 file path=usr/share/awstats/icon/flags/me.png
+file path=usr/share/awstats/icon/flags/mf.png
 file path=usr/share/awstats/icon/flags/mg.png
 file path=usr/share/awstats/icon/flags/mil.png
 file path=usr/share/awstats/icon/flags/mk.png
@@ -546,6 +550,7 @@ file path=usr/share/awstats/icon/flags/sr.png
 file path=usr/share/awstats/icon/flags/st.png
 file path=usr/share/awstats/icon/flags/su.png
 file path=usr/share/awstats/icon/flags/sv.png
+file path=usr/share/awstats/icon/flags/sx.png
 file path=usr/share/awstats/icon/flags/sy.png
 file path=usr/share/awstats/icon/flags/sz.png
 file path=usr/share/awstats/icon/flags/tc.png
@@ -636,6 +641,22 @@ file path=usr/share/awstats/icon/mime/xls.png
 file path=usr/share/awstats/icon/mime/xsl.png
 file path=usr/share/awstats/icon/os/aix.png
 file path=usr/share/awstats/icon/os/amigaos.png
+file path=usr/share/awstats/icon/os/android.png
+file path=usr/share/awstats/icon/os/android10.png
+file path=usr/share/awstats/icon/os/androidcupcake.png
+file path=usr/share/awstats/icon/os/androiddonut.png
+file path=usr/share/awstats/icon/os/androideclair.png
+file path=usr/share/awstats/icon/os/androidfroyo.png
+file path=usr/share/awstats/icon/os/androidgingerbread.png
+file path=usr/share/awstats/icon/os/androidhoneycomb.png
+file path=usr/share/awstats/icon/os/androidics.png
+file path=usr/share/awstats/icon/os/androidjellybean.png
+file path=usr/share/awstats/icon/os/androidkitkat.png
+file path=usr/share/awstats/icon/os/androidlollipop.png
+file path=usr/share/awstats/icon/os/androidmarshmallow.png
+file path=usr/share/awstats/icon/os/androidnougat.png
+file path=usr/share/awstats/icon/os/androidoreo.png
+file path=usr/share/awstats/icon/os/androidpie.png
 file path=usr/share/awstats/icon/os/apple.png
 file path=usr/share/awstats/icon/os/atari.png
 file path=usr/share/awstats/icon/os/beos.png
@@ -687,6 +708,9 @@ file path=usr/share/awstats/icon/os/macosx.png
 file path=usr/share/awstats/icon/os/macosx10.png
 file path=usr/share/awstats/icon/os/macosx11.png
 file path=usr/share/awstats/icon/os/macosx12.png
+file path=usr/share/awstats/icon/os/macosx13.png
+file path=usr/share/awstats/icon/os/macosx14.png
+file path=usr/share/awstats/icon/os/macosx15.png
 file path=usr/share/awstats/icon/os/macosx4.png
 file path=usr/share/awstats/icon/os/macosx5.png
 file path=usr/share/awstats/icon/os/macosx6.png
