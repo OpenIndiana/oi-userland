@@ -23,23 +23,20 @@ include ../../../make-rules/shared-macros.mk
 GCC_VERSION= 10
 
 COMPONENT_NAME=		mbuffer
-COMPONENT_VERSION=	20210328
+COMPONENT_VERSION=	20210829
 COMPONENT_FMRI=		shell/mbuffer
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SUMMARY=	mbuffer - tool for buffering data streams
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:51b5b8d8488991a55fe1dfce90130f9e47bc1ce286ba03b4f628c04b784fdc5d
-COMPONENT_ARCHIVE_URL=	http://www.maier-komor.de/software/mbuffer/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.maier-komor.de/mbuffer.html
+COMPONENT_ARCHIVE_HASH=	sha256:74e6f01c716147128d1c7ba0a8f01bf3df67415d67d90ac8c39892514cbc69ae
+COMPONENT_ARCHIVE_URL=	https://www.maier-komor.de/software/mbuffer/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.maier-komor.de/mbuffer.html
 COMPONENT_LICENSE=	GPLv3
-COMPONENT_LICENSE_FILE=	LICENSE
 
 COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-
-TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
