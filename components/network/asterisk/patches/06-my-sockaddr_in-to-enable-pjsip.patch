@@ -1,0 +1,78 @@
+--- include/asterisk/network.h.orig	Sun Sep 19 21:36:10 2021
++++ include/asterisk/network.h	Sun Sep 19 20:45:36 2021
+@@ -91,10 +91,52 @@
+ #endif
+ #define getprotobyname __getprotobyname_is_not_threadsafe__do_not_use__
+ 
++/* olbohlen, lets hack our own sockaddr_in replacement to avoid:
++ *
++ *@ /usr/gcc/7/bin/gcc -o chan_pjsip.o -c chan_pjsip.c -MD -MT chan_pjsip.o -MF .chan_pjsip.o.d -MP -D_POSIX_PTHREAD_SEMANTICS -pthread -I/export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/include -m32 -O3 -I/usr/include/jansson -I/usr/include/libxml2 -DBIND_8_COMPAT -pipe -Wall -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -g3 -Wcast-align -DSOLARIS -I../include/solaris-compat -I/opt/ssl/include -I/usr/local/ssl/include -D_XPG4_2 -D__EXTENSIONS__ -O3 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fPIC -DAST_MODULE="chan_pjsip" -DAST_MODULE_SELF_SYM=__internal_chan_pjsip_self -DPJ_AUTOCONF=1 -m32 -O3 -I/usr/include/jansson -DPJ_IS_BIG_ENDIAN=0 -DPJ_IS_LITTLE_ENDIAN=1 -I/export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/third-party/pjproject/source/pjlib/include -I/export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/third-party/pjproject/source/pjlib-util/include -I/export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/third-party/pjproject/source/pjnath/include -I/export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/third-party/pjproject/source/pjmedia/include -I/export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/third-party/pjproject/source/pjsip/include
++ * In file included from /export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/include/asterisk/utils.h:26:0,
++ *                  from /export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/include/asterisk/alertpipe.h:22,
++ *                  from /export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/include/asterisk/channel.h:126,
++ *                  from chan_pjsip.c:42:
++ * /export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/include/asterisk/network.h: In function 'inaddrcmp':
++ * /export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/include/asterisk/network.h:97:32: error: 'const struct in_addr' has no member named 's_addr'
++ *          return ((sin1->sin_addr.s_addr != sin2->sin_addr.s_addr)
++ *                                 ^
++ * /export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/include/asterisk/network.h:97:57: error: 'const struct in_addr' has no member named 's_addr'
++ *          return ((sin1->sin_addr.s_addr != sin2->sin_addr.s_addr)
++ *                                                          ^
++ * gmake[2]: *** [/export/home/olbohlen/git/oi-userland/components/network/asterisk/build/i86/Makefile.rules:151: chan_pjsip.o] Error 1
++ * 
++ */
++
++struct my_in_addr {
++        union {
++                struct { uint8_t s_b1, s_b2, s_b3, s_b4; } _S_un_b;
++                struct { uint16_t s_w1, s_w2; } _S_un_w;
++#if !defined(_XPG4_2) || defined(__EXTENSIONS__)
++                uint32_t _S_addr;
++#else
++                in_addr_t _S_addr;
++#endif /* !defined(_XPG4_2) || defined(__EXTENSIONS__) */
++        } _S_un;
++#define my_s_addr  _S_un._S_addr           /* should be used for all code */
++};
++
++struct my_sockaddr_in {
++        sa_family_t        sin_family;
++        in_port_t          sin_port;
++        struct  my_in_addr sin_addr;
++#if !defined(_XPG4_2) || defined(__EXTENSIONS__)
++        char            sin_zero[8];
++#else
++        unsigned char   sin_zero[8];
++#endif /* !defined(_XPG4_2) || defined(__EXTENSIONS__) */
++};
++
+ /*! \brief Compares the source address and port of two sockaddr_in */
+-static force_inline int inaddrcmp(const struct sockaddr_in *sin1, const struct sockaddr_in *sin2)
++static force_inline int inaddrcmp(const struct my_sockaddr_in *sin1, const struct my_sockaddr_in *sin2)
+ {
+-        return ((sin1->sin_addr.s_addr != sin2->sin_addr.s_addr)
++        return ((sin1->sin_addr.my_s_addr != sin2->sin_addr.my_s_addr)
+                 || (sin1->sin_port != sin2->sin_port));
+ }
+ 
+
+--- res/res_rtp_asterisk.c.orig	Sun Sep 19 21:36:14 2021
++++ res/res_rtp_asterisk.c	Sun Sep 19 20:54:12 2021
+@@ -152,7 +152,7 @@
+ static int learning_min_sequential = DEFAULT_LEARNING_MIN_SEQUENTIAL; /*!< Number of sequential RTP frames needed from a single source during learning mode to accept new source. */
+ #ifdef HAVE_PJPROJECT
+ static int icesupport = DEFAULT_ICESUPPORT;
+-static struct sockaddr_in stunaddr;
++static struct my_sockaddr_in stunaddr;
+ static pj_str_t turnaddr;
+ static int turnport = DEFAULT_TURN_PORT;
+ static pj_str_t turnusername;
+@@ -2979,7 +2979,7 @@
+ 	}
+ 
+ 	/* If configured to use a STUN server to get our external mapped address do so */
+-	if (stunaddr.sin_addr.s_addr && count && ast_sockaddr_is_ipv4(addr)
++	if (stunaddr.sin_addr.my_s_addr && count && ast_sockaddr_is_ipv4(addr)
+ 		&& !stun_address_is_blacklisted(addr)) {
+ 		struct sockaddr_in answer;
+ 		int rsp;

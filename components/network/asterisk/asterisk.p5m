@@ -11,6 +11,7 @@
 #
 # Copyright 2016 Andrey Sokolov. All rights reserved.
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2021 Olaf Bohlen
 #
 
 set name=pkg.fmri value=pkg:/network/asterisk@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -475,6 +476,7 @@ file path=usr/lib/asterisk/modules/cel_tds.so
 file path=usr/lib/asterisk/modules/chan_bridge_media.so
 file path=usr/lib/asterisk/modules/chan_iax2.so
 file path=usr/lib/asterisk/modules/chan_mgcp.so
+file path=usr/lib/asterisk/modules/chan_pjsip.so
 file path=usr/lib/asterisk/modules/chan_rtp.so
 file path=usr/lib/asterisk/modules/chan_sip.so
 file path=usr/lib/asterisk/modules/chan_skinny.so
@@ -540,6 +542,9 @@ file path=usr/lib/asterisk/modules/func_md5.so
 file path=usr/lib/asterisk/modules/func_module.so
 file path=usr/lib/asterisk/modules/func_periodic_hook.so
 file path=usr/lib/asterisk/modules/func_pitchshift.so
+file path=usr/lib/asterisk/modules/func_pjsip_aor.so
+file path=usr/lib/asterisk/modules/func_pjsip_contact.so
+file path=usr/lib/asterisk/modules/func_pjsip_endpoint.so
 file path=usr/lib/asterisk/modules/func_presencestate.so
 file path=usr/lib/asterisk/modules/func_rand.so
 file path=usr/lib/asterisk/modules/func_realtime.so
@@ -603,6 +608,7 @@ file path=usr/lib/asterisk/modules/res_format_attr_siren14.so
 file path=usr/lib/asterisk/modules/res_format_attr_siren7.so
 file path=usr/lib/asterisk/modules/res_format_attr_vp8.so
 file path=usr/lib/asterisk/modules/res_hep.so
+file path=usr/lib/asterisk/modules/res_hep_pjsip.so
 file path=usr/lib/asterisk/modules/res_hep_rtcp.so
 file path=usr/lib/asterisk/modules/res_http_media_cache.so
 file path=usr/lib/asterisk/modules/res_http_post.so
@@ -615,9 +621,56 @@ file path=usr/lib/asterisk/modules/res_musiconhold.so
 file path=usr/lib/asterisk/modules/res_mutestream.so
 file path=usr/lib/asterisk/modules/res_parking.so
 file path=usr/lib/asterisk/modules/res_phoneprov.so
+file path=usr/lib/asterisk/modules/res_pjproject.so
+file path=usr/lib/asterisk/modules/res_pjsip_acl.so
+file path=usr/lib/asterisk/modules/res_pjsip_authenticator_digest.so
+file path=usr/lib/asterisk/modules/res_pjsip_caller_id.so
+file path=usr/lib/asterisk/modules/res_pjsip_config_wizard.so
+file path=usr/lib/asterisk/modules/res_pjsip_dialog_info_body_generator.so
+file path=usr/lib/asterisk/modules/res_pjsip_diversion.so
+file path=usr/lib/asterisk/modules/res_pjsip_dlg_options.so
+file path=usr/lib/asterisk/modules/res_pjsip_dtmf_info.so
+file path=usr/lib/asterisk/modules/res_pjsip_empty_info.so
+file path=usr/lib/asterisk/modules/res_pjsip_endpoint_identifier_anonymous.so
+file path=usr/lib/asterisk/modules/res_pjsip_endpoint_identifier_ip.so
+file path=usr/lib/asterisk/modules/res_pjsip_endpoint_identifier_user.so
+file path=usr/lib/asterisk/modules/res_pjsip_exten_state.so
+file path=usr/lib/asterisk/modules/res_pjsip_header_funcs.so
+file path=usr/lib/asterisk/modules/res_pjsip_history.so
+file path=usr/lib/asterisk/modules/res_pjsip_logger.so
+file path=usr/lib/asterisk/modules/res_pjsip_messaging.so
+file path=usr/lib/asterisk/modules/res_pjsip_mwi_body_generator.so
+file path=usr/lib/asterisk/modules/res_pjsip_mwi.so
+file path=usr/lib/asterisk/modules/res_pjsip_nat.so
+file path=usr/lib/asterisk/modules/res_pjsip_notify.so
+file path=usr/lib/asterisk/modules/res_pjsip_one_touch_record_info.so
+file path=usr/lib/asterisk/modules/res_pjsip_outbound_authenticator_digest.so
+file path=usr/lib/asterisk/modules/res_pjsip_outbound_publish.so
+file path=usr/lib/asterisk/modules/res_pjsip_outbound_registration.so
+file path=usr/lib/asterisk/modules/res_pjsip_path.so
+file path=usr/lib/asterisk/modules/res_pjsip_phoneprov_provider.so
+file path=usr/lib/asterisk/modules/res_pjsip_pidf_body_generator.so
+file path=usr/lib/asterisk/modules/res_pjsip_pidf_digium_body_supplement.so
+file path=usr/lib/asterisk/modules/res_pjsip_pidf_eyebeam_body_supplement.so
+file path=usr/lib/asterisk/modules/res_pjsip_publish_asterisk.so
+file path=usr/lib/asterisk/modules/res_pjsip_pubsub.so
+file path=usr/lib/asterisk/modules/res_pjsip_refer.so
+file path=usr/lib/asterisk/modules/res_pjsip_registrar_expire.so
+file path=usr/lib/asterisk/modules/res_pjsip_registrar.so
+file path=usr/lib/asterisk/modules/res_pjsip_rfc3326.so
+file path=usr/lib/asterisk/modules/res_pjsip_sdp_rtp.so
+file path=usr/lib/asterisk/modules/res_pjsip_send_to_voicemail.so
+file path=usr/lib/asterisk/modules/res_pjsip_session.so
+file path=usr/lib/asterisk/modules/res_pjsip_sips_contact.so
+file path=usr/lib/asterisk/modules/res_pjsip_t38.so
+file path=usr/lib/asterisk/modules/res_pjsip_transport_management.so
+file path=usr/lib/asterisk/modules/res_pjsip_transport_websocket.so
+file path=usr/lib/asterisk/modules/res_pjsip_xpidf_body_generator.so
+file path=usr/lib/asterisk/modules/res_pjsip.so
 file path=usr/lib/asterisk/modules/res_realtime.so
 file path=usr/lib/asterisk/modules/res_rtp_asterisk.so
 file path=usr/lib/asterisk/modules/res_rtp_multicast.so
+file path=usr/lib/asterisk/modules/res_sdp_translator_pjmedia.so
 file path=usr/lib/asterisk/modules/res_security_log.so
 file path=usr/lib/asterisk/modules/res_smdi.so
 file path=usr/lib/asterisk/modules/res_snmp.so
@@ -637,6 +690,8 @@ file path=usr/lib/asterisk/modules/res_statsd.so
 file path=usr/lib/asterisk/modules/res_stun_monitor.so
 file path=usr/lib/asterisk/modules/res_timing_pthread.so
 file path=usr/lib/asterisk/modules/res_timing_timerfd.so
+link path=usr/lib/libasteriskpj.so target=libasteriskpj.so.2
+file path=usr/lib/libasteriskpj.so.2
 link path=usr/lib/libasteriskssl.so target=libasteriskssl.so.1
 file path=usr/lib/libasteriskssl.so.1
 file path=usr/sbin/astcanary
