@@ -23,6 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# We don't want 32-bit binaries:
+<transform file path=.*/bin/i86/.+ -> drop>
+
 file path=usr/bin/$(MACH32)/fribidi
 file path=usr/bin/fribidi
 file path=usr/include/fribidi/fribidi-arabic.h
