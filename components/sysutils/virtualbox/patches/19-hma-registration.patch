@@ -1,7 +1,7 @@
 diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/SUPDrv.cpp a/src/VBox/HostDrivers/Support/SUPDrv.cpp
 --- a~/src/VBox/HostDrivers/Support/SUPDrv.cpp	1970-01-01 00:00:00
 +++ a/src/VBox/HostDrivers/Support/SUPDrv.cpp	1970-01-01 00:00:00
-@@ -4049,7 +4049,7 @@ SUPR0DECL(RTCCUINTREG) SUPR0ChangeCR4(RT
+@@ -4160,7 +4160,7 @@ SUPR0DECL(RTCCUINTREG) SUPR0ChangeCR4(RT
   */
  SUPR0DECL(int) SUPR0EnableVTx(bool fEnable)
  {
@@ -10,7 +10,7 @@ diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/SUPDrv.cpp a/src/
      return supdrvOSEnableVTx(fEnable);
  #else
      RT_NOREF1(fEnable);
-@@ -4067,7 +4067,7 @@ SUPR0DECL(int) SUPR0EnableVTx(bool fEnab
+@@ -4178,7 +4178,7 @@ SUPR0DECL(int) SUPR0EnableVTx(bool fEnab
   */
  SUPR0DECL(bool) SUPR0SuspendVTxOnCpu(void)
  {
@@ -19,7 +19,7 @@ diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/SUPDrv.cpp a/src/
      return supdrvOSSuspendVTxOnCpu();
  #else
      return false;
-@@ -4084,7 +4084,7 @@ SUPR0DECL(bool) SUPR0SuspendVTxOnCpu(voi
+@@ -4195,7 +4195,7 @@ SUPR0DECL(bool) SUPR0SuspendVTxOnCpu(voi
   */
  SUPR0DECL(void) SUPR0ResumeVTxOnCpu(bool fSuspended)
  {
@@ -29,8 +29,8 @@ diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/SUPDrv.cpp a/src/
  #else
      RT_NOREF1(fSuspended);
 diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c a/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c
---- VirtualBox-6.1.6/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c.~1~	2020-04-09 20:41:57.000000000 +0000
-+++ VirtualBox-6.1.6/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c	2020-04-28 21:37:24.891100342 +0000
+--- a~/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c	1970-01-01 00:00:00
++++ a/src/VBox/HostDrivers/Support/solaris/SUPDrv-solaris.c	1970-01-01 00:00:00
 @@ -47,6 +47,7 @@
  #include <sys/priv_names.h>
  #include <vm/hat.h>
@@ -39,7 +39,7 @@ diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/solaris/SUPDrv-so
  
  #include "../SUPDrvInternal.h"
  #include <VBox/log.h>
-@@ -976,6 +977,49 @@
+@@ -976,6 +977,53 @@ bool VBOXCALL  supdrvOSAreTscDeltasInSyn
      return false;
  }
  
@@ -56,7 +56,11 @@ diff -wpruN '--exclude=*.orig' a~/src/VBox/HostDrivers/Support/solaris/SUPDrv-so
 +		if (vbox_hma_reg)
 +			return VINF_SUCCESS;
 +
++#if OOCEVER >= 151029
 +		if ((reg = hma_register_exclusive(vbox_hma_ident)) == NULL)
++#else
++		if ((reg = hma_register(vbox_hma_ident)) == NULL)
++#endif
 +			return VERR_NOT_SUPPORTED;
 +
 +		cmn_err(CE_NOTE, "!Successfully registered '%s'\n",
