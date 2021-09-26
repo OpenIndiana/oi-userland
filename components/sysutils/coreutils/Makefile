@@ -24,13 +24,13 @@
 # Copyright 2017 Gary Mills
 # Copyright 2017 Aurelien Larcher
 # Copyright 2019 Michal Nowak
-# Copyright 2020 Nona Hansel
+# Copyright 2020-2021 Nona Hansel
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         coreutils
-COMPONENT_VERSION=      8.32
+COMPONENT_VERSION=      9.0
 COMPONENT_FMRI=         file/gnu-coreutils	
 COMPONENT_SUMMARY=      GNU Core Utilities
 COMPONENT_DESCRIPTION= \
@@ -40,7 +40,7 @@ COMPONENT_PROJECT_URL=	https://www.gnu.org/software/coreutils/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:4458d8de7849df44ccab15e16b1548b285224dbba5f08fac070c1c0e0bcc4cfa
+	sha256:ce30acdf4a41bc5bb30dd955e9eaa75fa216b4e3deb08889ed32433c7b3b97ce
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv3, FDLv1.3
 
@@ -112,5 +112,6 @@ COMPONENT_TEST_TRANSFORMS += \
 
 test:		install $(TEST_64)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += system/library
