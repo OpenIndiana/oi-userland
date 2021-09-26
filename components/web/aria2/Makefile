@@ -23,22 +23,18 @@
 #
 
 BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           aria2
-COMPONENT_VERSION=        1.35.0
+COMPONENT_VERSION=        1.36.0
 COMPONENT_FMRI=           web/aria2
 COMPONENT_PROJECT_URL=    https://aria2.github.io/
 COMPONENT_CLASSIFICATION= Applications/Internet
-COMPONENT_SUMMARY= \
-	aria2 - lightweight multi-protocol and multi-source download utility
-COMPONENT_SRC=         $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=     $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:1e2b7fd08d6af228856e51c07173cfcf987528f1ac97e04c5af4a47642617dfd
-COMPONENT_ARCHIVE_URL= \
-	https://github.com/aria2/aria2/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SUMMARY=	aria2 - lightweight multi-protocol and multi-source download utility
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:58d1e7608c12404f0229a3d9a4953d0d00c18040504498b483305bcb3de907a5
+COMPONENT_ARCHIVE_URL=	https://github.com/aria2/aria2/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 
 include $(WS_MAKE_RULES)/common.mk
@@ -57,9 +53,29 @@ CONFIGURE_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
 COMPONENT_TEST_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
-REQUIRED_PACKAGES += database/sqlite-3
+# Tests may output some compilation lines, so just pull out the relevant test
+# output lines for the test results comparison.
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/TOTAL:/p" ' \
+	'-e "/PASS:/p" ' \
+	'-e "/SKIP:/p" ' \
+	'-e "/XFAIL:/p" ' \
+	'-e "/FAIL:/p" ' \
+	'-e "/XPASS:/p" ' \
+	'-e "/ERROR:/p" '
+
+# We have one failing test (from test-suite.log):
+# 09/26 19:19:47 [INFO] Processing metaurl group metaurl=README.torrent
+# 09/26 19:19:47 [ERROR] Unrecognized URI or unsupported protocol: README.torrent
+
 # cppunit is for tests
 REQUIRED_PACKAGES += developer/cppunit
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libssh2
@@ -67,6 +83,4 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
