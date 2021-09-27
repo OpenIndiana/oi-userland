@@ -1,0 +1,10 @@
+--- password-store-1.7.3/src/password-store.sh.orig	2018-08-03 05:32:48.000000000 +0000
++++ password-store-1.7.3/src/password-store.sh	2021-09-27 12:27:14.728445741 +0000
+@@ -6,6 +6,7 @@
+ umask "${PASSWORD_STORE_UMASK:-077}"
+ set -o pipefail
+ 
++PATH="/usr/gnu/bin:$PATH"
+ GPG_OPTS=( $PASSWORD_STORE_GPG_OPTS "--quiet" "--yes" "--compress-algo=none" "--no-encrypt-to" )
+ GPG="gpg"
+ export GPG_TTY="${GPG_TTY:-$(tty 2>/dev/null)}"
