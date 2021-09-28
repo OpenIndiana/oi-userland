@@ -1,48 +1,45 @@
---- subversion-1.9.7/Makefile.in.~1~	2015-12-10 07:00:15.000000000 +0000
-+++ subversion-1.9.7/Makefile.in	2017-08-11 10:11:57.379408261 +0000
-@@ -82,8 +82,8 @@
+--- subversion-1.14.1/Makefile.in.orig	   :: 
++++ subversion-1.14.1/Makefile.in	   :: 
+@@ -89,8 +89,8 @@
  swig_rb_libdir = @libdir@
  
  ### these possibly need further discussion
 -swig_pydir = @libdir@/svn-python/libsvn
 -swig_pydir_extra = @libdir@/svn-python/svn
-+swig_pydir = /usr/lib/python2.7/vendor-packages/libsvn
-+swig_pydir_extra = /usr/lib/python2.7/vendor-packages/svn
++swig_pydir = /usr/lib/python3.9/vendor-packages/libsvn
++swig_pydir_extra = /usr/lib/python3.9/vendor-packages/svn
  swig_pldir = @libdir@/svn-perl
  swig_rbdir = $(SWIG_RB_SITE_ARCH_DIR)/svn/ext
  toolsdir = @bindir@/svn-tools
-@@ -142,8 +142,8 @@
+@@ -150,8 +150,8 @@
  SWIG = @SWIG@
- SWIG_PY_INCLUDES = @SWIG_PY_INCLUDES@ -I$(SWIG_SRC_DIR)/python/libsvn_swig_py
+ SWIG_PY_INCLUDES = @SWIG_PY_INCLUDES@ @SVN_PY3C_INCLUDES@ -I$(SWIG_SRC_DIR)/python/libsvn_swig_py
  SWIG_PY_COMPILE = @SWIG_PY_COMPILE@
 -SWIG_PY_LINK = @SWIG_PY_LINK@
 -SWIG_PY_LIBS = @SWIG_PY_LIBS@
 +SWIG_PY_LINK = @SWIG_PY_LINK@ $(CFLAGS) $(EXTRA_CFLAGS)
 +SWIG_PY_LIBS = @SWIG_PY_LIBS@ $(SVN_APR_LIBS) $(SVN_APRUTIL_LIBS)
+ SWIG_PY_ERRMSG = @SWIG_PY_ERRMSG@
  SWIG_PL_INCLUDES = @SWIG_PL_INCLUDES@
- SWIG_RB_INCLUDES = @SWIG_RB_INCLUDES@ -I$(SWIG_SRC_DIR)/ruby/libsvn_swig_ruby
- SWIG_RB_COMPILE = @SWIG_RB_COMPILE@
-@@ -185,8 +185,9 @@
+ SWIG_PL_ERRMSG = @SWIG_PL_ERRMSG@
+@@ -198,6 +198,7 @@
  ### suppressed (but they may come from httpd or APR).
  CPPFLAGS = @CPPFLAGS@ $(EXTRA_CPPFLAGS)
  LDFLAGS = @LDFLAGS@ $(EXTRA_LDFLAGS)
 +EXTRA_SWIG_LDFLAGS = -R$(libdir)
  SWIG_LDFLAGS = @SWIG_LDFLAGS@ $(EXTRA_SWIG_LDFLAGS)
--SWIG_CPPFLAGS = @SWIG_CPPFLAGS@ $(EXTRA_CPPFLAGS)
-+SWIG_CPPFLAGS = @SWIG_CPPFLAGS@ $(EXTRA_CPPFLAGS) $(SWIG_PY_LIBS)
- 
- COMPILE = $(CC) $(CMODEFLAGS) $(CPPFLAGS) $(CMAINTAINERFLAGS) $(CFLAGS) $(INCLUDES)
- COMPILE_NOWARN = $(CC) $(CMODEFLAGS) $(CPPFLAGS) $(CNOWARNFLAGS) $(CFLAGS) $(INCLUDES)
-@@ -261,7 +262,7 @@
- LINK_CXX_LIB = $(LINK_CXX) $(LT_SO_VERSION)
+ SWIG_FEATURES = @SWIG_FEATURES@
+ SWIG_PY_FEATURES = @SWIG_PY_FEATURES@
+@@ -279,7 +280,7 @@
+ LINK_SVNXX_TEST = $(LINK_CXX) $(BOOST_TEST_LDFLAGS)
  
  # special link rule for mod_dav_svn
--LINK_APACHE_MOD = $(LIBTOOL) $(LTFLAGS) --mode=link $(CC) $(LT_LDFLAGS) $(CFLAGS) $(LDFLAGS) -rpath $(APACHE_LIBEXECDIR) -avoid-version -module $(APACHE_LDFLAGS)
-+LINK_APACHE_MOD = $(LIBTOOL) $(LTFLAGS) --mode=link $(CC) $(LT_LDFLAGS) $(CFLAGS) $(LDFLAGS) $(SVN_APR_LIBS) $(SVN_APRUTIL_LIBS) -rpath $(APACHE_LIBEXECDIR) -avoid-version -module $(APACHE_LDFLAGS)
+-LINK_APACHE_MOD = $(LIBTOOL) $(LTFLAGS) --mode=link $(CC) $(LT_LDFLAGS) $(CFLAGS) $(LDFLAGS) -rpath $(APACHE_LIBEXECDIR) -avoid-version -module $(APACHE_LDFLAGS) -shared
++LINK_APACHE_MOD = $(LIBTOOL) $(LTFLAGS) --mode=link $(CC) $(LT_LDFLAGS) $(CFLAGS) $(LDFLAGS) $(SVN_APR_LIBS) $(SVN_APRUTIL_LIBS) -rpath $(APACHE_LIBEXECDIR) -avoid-version -module $(APACHE_LDFLAGS) -shared
  
  # Special LDFLAGS for some libraries
- libsvn_auth_gnome_keyring_LDFLAGS = @libsvn_auth_gnome_keyring_LDFLAGS@
-@@ -286,7 +287,7 @@
+ libsvn_client_LDFLAGS = @libsvn_client_LDFLAGS@
+@@ -306,7 +307,7 @@
  COMPILE_RB_WRAPPER = $(LIBTOOL) $(LTFLAGS) --mode=compile $(SWIG_RB_COMPILE) $(LT_CFLAGS) $(CPPFLAGS) $(SWIG_RB_INCLUDES) -prefer-pic -c -o $@
  
  # these commands link the wrapper objects into an extension library/module
@@ -51,25 +48,25 @@
  LINK_RB_WRAPPER = $(LIBTOOL) $(LTFLAGS) --mode=link $(SWIG_RB_LINK) $(SWIG_LDFLAGS) -rpath $(swig_rbdir) -avoid-version -module
  
  LINK_JAVAHL_CXX = $(LIBTOOL) $(LTCXXFLAGS) --mode=link $(CXX) $(LT_LDFLAGS) $(CXXFLAGS) $(LDFLAGS) $(LT_CXX_LIBADD) -rpath $(libdir)
-@@ -836,7 +837,14 @@
+@@ -881,7 +882,14 @@
  	./config.status subversion/bindings/swig/perl/native/Makefile.PL
  
- $(SWIG_PL_DIR)/native/Makefile: $(SWIG_PL_DIR)/native/Makefile.PL
+ $(SWIG_PL_DIR)/native/Makefile: libsvn_swig_perl $(SWIG_PL_DIR)/native/Makefile.PL
 -	cd $(SWIG_PL_DIR)/native; $(PERL) Makefile.PL PREFIX=$(prefix)
 +	(cd $(SWIG_PL_DIR)/native; $(PERL) Makefile.PL)
 +	( cd $(SWIG_PL_DIR)/native; \
-+           for file in Makefile Makefile.client Makefile.delta \
-+           Makefile.fs Makefile.ra Makefile.repos Makefile.wc ; do \
-+           cp -f $$file $$file.orig ; \
-+           sed -e 's;^LD_RUN_PATH.*$$;LD_RUN_PATH=/usr/lib/svn;g' $$file.orig >$$file ; \
-+           rm -f $$file.orig ; \
-+        done )
++	    for file in Makefile Makefile.client Makefile.delta \
++	    Makefile.fs Makefile.ra Makefile.repos Makefile.wc ; do \
++	    cp -f $$file $$file.orig ; \
++	    sed -e 's;^LD_RUN_PATH.*$$;LD_RUN_PATH=/usr/lib/svn;g' $$file.orig >$$file ; \
++	    rm -f $$file.orig ; \
++	done )
  
  # There is a "readlink -f" command on some systems for the same purpose,
  # but it's not as portable (e.g. Mac OS X doesn't have it).  These should
-@@ -850,13 +858,13 @@
- 	if test "`$(READLINK_PL) $(SWIG_PL_DIR)`" != "`$(READLINK_PL) $(SWIG_PL_SRC_DIR)`"; then \
- 	  ln -sf $(SWIG_PL_SRC_DIR)/native/*.c $(SWIG_PL_DIR)/native; \
+@@ -897,13 +905,13 @@
+ 	    fi; \
+ 	  done; \
  	fi
 -	cd $(SWIG_PL_DIR)/native; $(MAKE) OPTIMIZE="" OTHERLDFLAGS="$(SWIG_LDFLAGS)"
 +	cd $(SWIG_PL_DIR)/native; $(MAKE) OPTIMIZE="" OTHERLDFLAGS="$(SWIG_LDFLAGS)" LD_RUN_PATH="/usr/lib/svn"
