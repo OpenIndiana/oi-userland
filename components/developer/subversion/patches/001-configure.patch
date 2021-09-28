@@ -1,6 +1,16 @@
---- a/configure.~1~	2017-08-05 19:22:48.000000000 +0000
-+++ b/configure	2017-08-11 10:06:36.599227732 +0000
-@@ -4896,14 +4896,14 @@
+The entry: GCC_VERSION=	10 in the Makefile fixes the following error:
+
+/bin/bash "/ws/oi-userland/components/developer/subversion/build/sparcv9/libtool" --tag=CC --silent --mode=compile gcc -fPIC  -DSOLARIS2=11 -D_POSIX_PTHREAD_SEMANTICS -D_REENTRANT  -I/usr/include/python3.9 -I./subversion/include -I./subversion -I./subversion/bindings/swig/proxy -I/usr/apr/include  -I/usr/apr-util/include -I/usr/include/openldap  -I/ws/oi-userland/components/developer/subversion/subversion-1.14.1/subversion/bindings/swig/python/libsvn_swig_py -prefer-pic -c -o subversion/bindings/swig/python/core.lo /ws/oi-userland/components/developer/subversion/subversion-1.14.1/subversion/bindings/swig/python/core.c
+In file included from /usr/include/python3.9/Python.h:63:0,
+                 from /ws/oi-userland/components/developer/subversion/subversion-1.14.1/subversion/bindings/swig/python/core.c:157:
+/usr/include/python3.9/pyport.h:736:2: error: #error "LONG_BIT definition appears wrong for platform (bad gcc/glibc config?)."
+ #error "LONG_BIT definition appears wrong for platform (bad gcc/glibc config?)."
+  ^~~~~
+make[1]: *** [/ws/oi-userland/components/developer/subversion/subversion-1.14.1/build-outputs.mk:2361: subversion/bindings/swig/python/core.lo] Error 1
+
+--- subversion-1.14.1/configure.~1~	2021-02-04 13:21:18.000000000 +0000
++++ subversion-1.14.1/configure	2021-08-25 08:52:55.992343810 +0000
+@@ -4974,14 +4974,14 @@
    fi
  
    if test "$enable_all_static" = "yes"; then
@@ -19,7 +29,7 @@
      fi
    fi
    SVN_APR_LIBS="`
-@@ -5140,14 +5140,14 @@
+@@ -5221,14 +5221,14 @@
    fi
  
    if test "$enable_all_static" = "yes"; then
@@ -38,3 +48,38 @@
      fi
    fi
    SVN_APRUTIL_LIBS="`
+@@ -27761,7 +27761,21 @@
+ fi
+ 
+ 
+-
++# I really don't know why I had to set all of them one more time.
++# this configure script is really wired...
++case $host in
++  *-*-solaris2*)
++    printf "Setting correct swig-flags for OpenIndiana..."
++    SWIG_PY_INCLUDES="`$PYTHON ${abs_srcdir}/build/get-py-info.py --includes`"
++    SWIG_PY_INCLUDES="$SWIG_PY_INCLUDES -I./subversion/include -I./subversion"
++    SWIG_PY_INCLUDES="$SWIG_PY_INCLUDES -I./subversion/bindings/swig/proxy"
++    SWIG_PY_INCLUDES="$SWIG_PY_INCLUDES \$(SVN_APR_INCLUDES) \$(SVN_APRUTIL_INCLUDES)"
++    SWIG_PY_LIBS="`$PYTHON ${abs_srcdir}/build/get-py-info.py --libs`"
++    SWIG_PY_COMPILE="`$PYTHON ${abs_srcdir}/build/get-py-info.py --compile`"
++    SWIG_PY_LINK="`$PYTHON ${abs_srcdir}/build/get-py-info.py --link`"
++    SWIG_PY_ERRMSG=""
++  echo " done."
++esac
+ 
+ 
+ # ==== Miscellaneous bits ====================================================
+@@ -29447,6 +29461,11 @@
+   s&@infodir@&$infodir&g
+   s&@localedir@&$localedir&g
+   s&@mandir@&$mandir&g
++  s&@SWIG_PY_COMPILE@&$SWIG_PY_COMPILE&g
++  s&@SWIG_PY_LINK@&$SWIG_PY_LINK&g
++  s&@SWIG_PY_LIBS@&$SWIG_PY_LIBS&g
++  s&@SWIG_PY_INCLUDES@&$SWIG_PY_INCLUDES&g
++  s&@SVN_PY3C_INCLUDES@&$SVN_PY3C_INCLUDES&g
+   s&\\\${datarootdir}&$datarootdir&g' ;;
+ esac
+ _ACEOF
