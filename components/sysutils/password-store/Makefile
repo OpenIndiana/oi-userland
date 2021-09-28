@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			password-store
 COMPONENT_VERSION=		1.7.3
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		A password manager
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_PROJECT_URL=	https://www.passwordstore.org/
@@ -41,7 +42,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_TARGETS = test
 
-# Manually added dependencies (according to documentation):
+# Manually added dependencies (according to documentation).
+# These are runtime dependencies but we keep them here, too:
 REQUIRED_PACKAGES += crypto/gnupg
 REQUIRED_PACKAGES += developer/versioning/git
 REQUIRED_PACKAGES += file/tree
