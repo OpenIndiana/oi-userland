@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			password-store
 COMPONENT_VERSION=		1.7.4
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		A password manager
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_PROJECT_URL=	https://www.passwordstore.org/
@@ -34,7 +35,7 @@ COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:cfa9faf659f2ed6b38e7a7c3fb43e177d00edbacc6265e6e32215ff40e3793c0
 COMPONENT_ARCHIVE_URL=	https://git.zx2c4.com/password-store/snapshot/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=			Utilities/password-store
+COMPONENT_FMRI=			utilities/password-store
 COMPONENT_LICENSE=		GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
