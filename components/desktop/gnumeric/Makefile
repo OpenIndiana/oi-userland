@@ -16,14 +16,13 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     gnumeric
-COMPONENT_VERSION=  1.12.48
-COMPONENT_PROJECT_URL=  http://www.gnome.org
+COMPONENT_VERSION=  1.12.50
+COMPONENT_PROJECT_URL=  https://www.gnome.org
 COMPONENT_SUMMARY=  GTK Spreadsheet Application
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:57cce33a41d34db81292e9eebae8b5046f30e5d919d848256fbb75bfc132a590
-COMPONENT_ARCHIVE_URL=  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.12/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:758819ba1bd6983829f9e7c6d71a7fa20cd75a3652a271e5bb003d5d8bcc14b8
+COMPONENT_ARCHIVE_URL=  https://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.12/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=   Applications/Office
 COMPONENT_LICENSE= GPLv2
@@ -44,6 +43,16 @@ CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+= --without-perl
 
 COMPONENT_TEST_ARGS += -k
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/TOTAL:/p" ' \
+	'-e "/SKIP:/p" ' \
+	'-e "/PASS:/p" ' \
+	'-e "/XPASS:/p" ' \
+	'-e "/FAIL:/p" ' \
+	'-e "/XFAIL:/p" ' \
+	'-e "/ERROR:/p" '
 
 # To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
