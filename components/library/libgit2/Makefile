@@ -16,21 +16,20 @@
 
 BUILD_BITS=			32_and_64
 BUILD_STYLE=		cmake
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgit2
-COMPONENT_VERSION=	0.28.5
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=		library/libgit2
-COMPONENT_CLASSIFICATION=Development/Source Code Management
+COMPONENT_VERSION=	1.3.0
+COMPONENT_SUMMARY=	Portable implementation of the Git core methods provided as a library
+COMPONENT_CLASSIFICATION=	Development/Source Code Management
 COMPONENT_PROJECT_URL=	https://libgit2.github.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2b7b68aee6f123bc84cc502a9c12738435b8054e7d628962e091cd2a25be4f42
+COMPONENT_ARCHIVE_HASH=	sha256:192eeff84596ff09efb6b01835a066f2df7cd7985e0991c79595688e6b36444e
 COMPONENT_ARCHIVE_URL=	https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=		library/libgit2
 COMPONENT_LICENSE=	GPLv2 with Linking Exception
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      Portable implementation of the Git core methods provided as a library
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -43,8 +42,7 @@ COMPONENT_TEST_ARGS =   -V
 COMPONENT_TEST_TARGETS = ""
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/http-parser
 REQUIRED_PACKAGES += library/libssh2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
