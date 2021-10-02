@@ -11,29 +11,33 @@
 #
 # Copyright (c) 2016 Aurelien Larcher
 # Copyright (c) 2018 Michal Nowak
+# Copyright (c) 2021 Andreas Wacknitz
 #
 
-X11_CATEGORY=LIB
-BUILD_STYLE=meson
+X11_CATEGORY= LIB
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libepoxy
-COMPONENT_VERSION= 1.5.5
+COMPONENT_VERSION= 1.5.9
 COMPONENT_FMRI=	   x11/library/libepoxy
 COMPONENT_SUMMARY= library for handling OpenGL function pointers
 COMPONENT_CLASSIFICATION=System/Hardware
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:261663db21bcc1cc232b07ea683252ee6992982276536924271535875f5b0556
-COMPONENT_ARCHIVE_URL=	\
-    https://github.com/anholt/libepoxy/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:d168a19a6edfdd9977fef1308ccf516079856a4275cf876de688fb7927e365e4
+COMPONENT_ARCHIVE_URL=	https://github.com/anholt/libepoxy/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/common.mk
 
 #CONFIGURE_OPTIONS += -Degl=no
+CONFIGURE_OPTIONS += -Dtests=true
 
-#CONFIGURE_ENV.32 += CPPFLAGS="$(CPP_LARGEFILES.32)"
+# Remove measured times (eg. 1.16s):
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
+
+# Explicitly enable tests:
+test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
