@@ -12,26 +12,25 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2020 Michal Nowak
+# Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=		32
-
+BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xterm
-COMPONENT_VERSION=	368
+COMPONENT_VERSION=	369
 COMPONENT_SUMMARY=	Xterm - terminal emulator for X 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:2ff5169930b6b49ef0bafb5e1331c94f1a98c310442bba7798add821c76ae712
-COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/xterm/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:71ed6a48d064893d2149741a002781a973496fd24d52dadd364f63439a764e26
+COMPONENT_ARCHIVE_URL=	http://invisible-mirror.net/archives/xterm/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://invisible-island.net/xterm/
 COMPONENT_FMRI=		terminal/xterm
 COMPONENT_LICENSE=	MIT
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 
 TEST_TARGET=		$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
@@ -51,7 +50,7 @@ CONFIGURE_OPTIONS += --enable-logging
 REQUIRED_PACKAGES += terminal/luit
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
