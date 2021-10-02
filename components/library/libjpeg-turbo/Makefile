@@ -16,15 +16,14 @@ BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libjpeg-turbo
-COMPONENT_VERSION= 2.0.6
+COMPONENT_VERSION= 2.1.1
 COMPONENT_FMRI= image/library/libjpeg-turbo
 COMPONENT_PROJECT_URL= https://www.libjpeg-turbo.org/
 COMPONENT_SUMMARY= libjpeg -JPEG Turbo libraries
 COMPONENT_SRC= libjpeg-turbo-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:d74b92ac33b0e3657123ddcf6728788c90dc84dcb6a52013d758af3c4af481bb
-COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/libjpeg-turbo/files/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz/download
+COMPONENT_ARCHIVE_HASH=	sha256:b76aaedefb71ba882cbad4e9275b30c2ae493e3195be0a099425b5c6b99bd510
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libjpeg-turbo/files/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz/download
 COMPONENT_LICENSE= IJG,BSD,zlib
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 
