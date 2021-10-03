@@ -19,61 +19,56 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2021 Andreas Wacknitz
 #
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsndfile
-COMPONENT_VERSION=	1.0.28
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.0.31
 COMPONENT_SUMMARY=	libsndfile - a library for reading/writing sound files
 COMPONENT_DESCRIPTION=	Libsndfile is a C library for reading and writing files\
  containing sampled sound (such as MS Windows WAV and the Apple/SGI AIFF\
  format) through one standard library interface.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.mega-nerd.com/libsndfile/
+COMPONENT_PROJECT_URL=	https://libsndfile.github.io/libsndfile/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:1ff33929f042fa333aed1e8923aa628c3ee9e1eb85512686c55092d1e5a9dfa9
-COMPONENT_ARCHIVE_URL=	http://www.mega-nerd.com/libsndfile/files/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:8cdee0acb06bb0a3c1a6ca524575643df8b1f3a55a0893b4dd9f829d08263785
+COMPONENT_ARCHIVE_URL=	https://github.com/libsndfile/libsndfile/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=	library/libsndfile
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE= LGPLv2.1
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && ./autogen.sh )
 
 # Need to use GNU sed otherwise we get a:
 # Error : sfversion <version> and PACKAGE_VERSION <version> don't match."
 # failure from the test_wrapper.sh script.
+#
+# Attention: If the user running the tests has increased privileges the permission tests may fail.
 COMPONENT_TEST_ENV +=   PATH="$(GNUBIN):$(PATH)"
 COMPONENT_SYSTEM_TEST_ENV +=   PATH="$(GNUBIN):$(PATH)"
-
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|libsndfile-1\.0\...|libsndfile-1\.0\.xx|g" ' \
 	'-e "/FILE_OFFSET_BITS/d"' \
 	'-n ' \
+	'-e "/Running/p" ' \
 	'-e "/-------/p" ' \
-	'-e "/=======/p" ' \
 	'-e "/ passed /p" ' \
 	'-e "/ failed /p" ' \
+	'-e "/^FAIL/p" ' \
 	'-e "/^Testing/p" ' \
 	'-e "/dev\/full/p" ' \
-	'-e "/^\./p" ' \
+	'-e "/aiff_ima/p" ' \
 	'-e "/ok$$/p" '
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:	$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += codec/flac
-REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libvorbis
+REQUIRED_PACKAGES += library/opus
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -1,6 +1,5 @@
-    binheader_writef_check                   :ok
 ok
-./test_main
+Running unit tests from src/ directory of source code tree.
     File offsets are 64 bit                  : ok
     Testing big endian conversions           : ok
     Testing little endian conversions        : ok
@@ -19,6 +18,7 @@ ok
     Testing file read                        : ok
     Testing file seek                        : ok
     Testing file offset                      : ok
+    Testing seek with offset                 : ok
     Testing file truncate                    : ok
     Testing audio detect                     : ok
     Testing ima/oki encoder                  : ok
@@ -29,13 +29,20 @@ ok
     Testing broadcast_var_set                : ok
     Testing broadcast_var_zero               : ok
     Testing cart_var_set                     : ok
-ok
+    Testing nms adpcm 32kbs encoder          : ok
+    Testing nms adpcm 32kbs decoder          : ok
+    Testing nms adpcm 24kbs encoder          : ok
+    Testing nms adpcm 24kbs decoder          : ok
+    Testing nms adpcm 16kbs encoder          : ok
+    Testing nms adpcm 16kbs decoder          : ok
+Running end-to-end tests from tests/ directory.
     error_number_test              : ......................... ok
     error_value_test               : error.aiff .............. ok
     error_close_test               : error_close.wav ......... ok
     no_file_test                   : no_file.wav ............. ok
     zero_length_test               : zero_length.wav ......... ok
     bad_wav_test                   : bad_wav.wav ............. ok
+    unrecognised_test              : unrecognised.bin ........ ok
     lrintf_test                    : ......................... ok
     pcm_test_bits_8                : pcm-s8.raw .............. ok
     pcm_test_bits_8                : pcm-u8.raw .............. ok
@@ -71,9 +78,24 @@ ok
     truncate_test                  : truncate.raw ............ ok
     truncate_test                  : truncate.au ............. ok
     instrument_test                : instrument.wav .......... ok
-    instrument_test                : instrument.aiff ......... ok
     cue_test                       : cue.wav ................. ok
     cue_test                       : cue.aiff ................ ok
+    cue_test_var 0                 : cue.wav ................. ok
+    cue_test_var 0                 : cue.aiff ................ ok
+    cue_test_var 1                 : cue.wav ................. ok
+    cue_test_var 1                 : cue.aiff ................ ok
+    cue_test_var 10                : cue.wav ................. ok
+    cue_test_var 10                : cue.aiff ................ ok
+    cue_test_var 100               : cue.wav ................. ok
+    cue_test_var 100               : cue.aiff ................ ok
+    cue_test_var 101               : cue.wav ................. ok
+    cue_test_var 101               : cue.aiff ................ ok
+    cue_test_var 1000              : cue.wav ................. ok
+    cue_test_var 1000              : cue.aiff ................ ok
+    cue_test_var 1001              : cue.wav ................. ok
+    cue_test_var 1001              : cue.aiff ................ ok
+    cue_test_var 2500              : cue.wav ................. ok
+    cue_test_var 2500              : cue.aiff ................ ok
     current_sf_info_test           : current.wav ............. ok
     broadcast_test                 : broadcast.wav ........... ok
     broadcast_rdwr_test            : broadcast.wav ........... ok
@@ -124,6 +146,7 @@ ok
     float_scaled_test              : flac_16.flac ............  -90.2dB SNR ... ok
     float_scaled_test              : flac_24.flac ............ -138.5dB SNR ... ok
     float_scaled_test              : vorbis.oga ..............  -41.3dB SNR ... ok
+    float_scaled_test              : opus.opus ...............  -32.3dB SNR ... ok
     float_scaled_test              : replace_float.raw ....... -500.0dB SNR ... ok
     double_scaled_test             : double.raw .............. -500.0dB SNR ... ok
     double_scaled_test             : pcm_s8.raw ..............  -42.1dB SNR ... ok
@@ -158,6 +181,7 @@ ok
     double_scaled_test             : flac_16.flac ............  -90.2dB SNR ... ok
     double_scaled_test             : flac_24.flac ............ -138.6dB SNR ... ok
     double_scaled_test             : vorbis.oga ..............  -41.3dB SNR ... ok
+    double_scaled_test             : opus.opus ...............  -32.3dB SNR ... ok
     double_scaled_test             : replace_double.raw ...... -500.0dB SNR ... ok
     float_short_little_test        : float_short_little.au ... ok
     float_short_big_test           : float_short_big.au ...... ok
@@ -209,9 +233,12 @@ ok
     rdwr_float_test                : rdwr_float.wav .......... ok
     rdwr_double_test               : rdwr_double.wav ......... ok
     rdwr_raw_test                  : rdwr_raw.wav ............ ok
+    locale_test           de_DE    : Füße.au                   ok
     locale_test           en_AU    : kangaroo.au               ok
     locale_test           POSIX    : posix.au                  ok
+    locale_test           pt_PT    : conceição.au              ok
     locale_test           ja_JP    : おはようございます.au     ok
+    locale_test           vi_VN    : quốc ngữ.au               ok
     major_format_test              : ......................... ok
     subtype_format_test            : ......................... ok
     simple_format_test             : ......................... ok
@@ -264,11 +291,11 @@ ok
     read_raw_test                  : alaw.aiff ............... ok
     sdlcomp_test_short             : gsm610.aiff ............. ok
     sdlcomp_test_int               : gsm610.aiff ............. ok
-    sdlcomp_test_float             : gsm610.aiff ............. ** fix this ** ok
+    sdlcomp_test_float             : gsm610.aiff ............. ok
     sdlcomp_test_double            : gsm610.aiff ............. ok
-==========================
-./lossy_comp_test aiff_ima
-==========================
+----------------------------------------------------------------------
+  lossy_comp_test aiff_ima
+----------------------------------------------------------------------
     test_float_peak                : peak_float.aiff ......... ok
     read_write_peak_test           : rw_peak.aiff ............ ok
     update_header_test             : header.aiff ............. ok
@@ -421,7 +448,7 @@ ok
     lcomp_test_double              : ima.rifx ................ ok
     sdlcomp_test_short             : ima.wav ................. ok
     sdlcomp_test_int               : ima.wav ................. ok
-    sdlcomp_test_float             : ima.wav ................. ** fix this ** ok
+    sdlcomp_test_float             : ima.wav ................. ok
     sdlcomp_test_double            : ima.wav ................. ok
     lcomp_test_short               : msadpcm.wav ............. ok
     lcomp_test_int                 : msadpcm.wav ............. ok
@@ -433,7 +460,7 @@ ok
     lcomp_test_double              : msadpcm.rifx ............ ok
     sdlcomp_test_short             : msadpcm.wav ............. ok
     sdlcomp_test_int               : msadpcm.wav ............. ok
-    sdlcomp_test_float             : msadpcm.wav ............. ** fix this ** ok
+    sdlcomp_test_float             : msadpcm.wav ............. ok
     sdlcomp_test_double            : msadpcm.wav ............. ok
     lcomp_test_short               : ulaw.wav ................ ok
     lcomp_test_int                 : ulaw.wav ................ ok
@@ -451,7 +478,7 @@ ok
     sdlcomp_test_int               : gsm610.wav .............. ok
     sdlcomp_test_short             : gsm610.rifx ............. ok
     sdlcomp_test_int               : gsm610.rifx ............. ok
-    sdlcomp_test_float             : gsm610.wav .............. ** fix this ** ok
+    sdlcomp_test_float             : gsm610.wav .............. ok
     sdlcomp_test_double            : gsm610.wav .............. ok
     lcomp_test_short               : g721.wav ................ ok
     lcomp_test_int                 : g721.wav ................ ok
@@ -522,7 +549,7 @@ ok
     lcomp_test_double              : ima.w64 ................. ok
     sdlcomp_test_short             : ima.w64 ................. ok
     sdlcomp_test_int               : ima.w64 ................. ok
-    sdlcomp_test_float             : ima.w64 ................. ** fix this ** ok
+    sdlcomp_test_float             : ima.w64 ................. ok
     sdlcomp_test_double            : ima.w64 ................. ok
     lcomp_test_short               : msadpcm.w64 ............. ok
     lcomp_test_int                 : msadpcm.w64 ............. ok
@@ -530,7 +557,7 @@ ok
     lcomp_test_double              : msadpcm.w64 ............. ok
     sdlcomp_test_short             : msadpcm.w64 ............. ok
     sdlcomp_test_int               : msadpcm.w64 ............. ok
-    sdlcomp_test_float             : msadpcm.w64 ............. ** fix this ** ok
+    sdlcomp_test_float             : msadpcm.w64 ............. ok
     sdlcomp_test_double            : msadpcm.w64 ............. ok
     lcomp_test_short               : ulaw.w64 ................ ok
     lcomp_test_int                 : ulaw.w64 ................ ok
@@ -544,7 +571,7 @@ ok
     read_raw_test                  : alaw.w64 ................ ok
     sdlcomp_test_short             : gsm610.w64 .............. ok
     sdlcomp_test_int               : gsm610.w64 .............. ok
-    sdlcomp_test_float             : gsm610.w64 .............. ** fix this ** ok
+    sdlcomp_test_float             : gsm610.w64 .............. ok
     sdlcomp_test_double            : gsm610.w64 .............. ok
     update_header_test             : header.w64 .............. ok
     update_seek_short_test         : header_short.w64 ........ ok
@@ -608,7 +635,7 @@ ok
     lcomp_test_double              : alaw.raw ................ ok
     sdlcomp_test_short             : raw.gsm ................. ok
     sdlcomp_test_int               : raw.gsm ................. ok
-    sdlcomp_test_float             : raw.gsm ................. ** fix this ** ok
+    sdlcomp_test_float             : raw.gsm ................. ok
     sdlcomp_test_double            : raw.gsm ................. ok
     lcomp_test_short               : adpcm.vox ............... ok
     lcomp_test_int                 : adpcm.vox ............... ok
@@ -616,7 +643,7 @@ ok
     lcomp_test_double              : adpcm.vox ............... ok
     sdlcomp_test_short             : adpcm.vox ............... ok
     sdlcomp_test_int               : adpcm.vox ............... ok
-    sdlcomp_test_float             : adpcm.vox ............... ** fix this ** ok
+    sdlcomp_test_float             : adpcm.vox ............... ok
     sdlcomp_test_double            : adpcm.vox ............... ok
     raw_offset_test                : offset.raw .............. ok
     bad_raw_test                   : bad.raw ................. ok
@@ -848,6 +875,7 @@ ok
     pcm_test_24bit                 : 24bit.flac .............. ok
     compression_size_test          : q[36]_pcm16.flac ........ ok
     string_start_test              : strings.flac ............ ok
+    update_header_before_write     : header.flac ............. ok
 ----------------------------------------------------------------------
   libsndfile-1.0.xx passed tests on FLAC files.
 ----------------------------------------------------------------------
@@ -864,11 +892,28 @@ ok
     compression_size_test          : q[36]_vorbis.oga ........ ok
     sdlcomp_test_short             : vorbis.oga .............. ok
     sdlcomp_test_int               : vorbis.oga .............. ok
+    sdlcomp_test_float             : vorbis.oga .............. ok
+    sdlcomp_test_double            : vorbis.oga .............. ok
     string_start_test              : vorbis.oga .............. ok
     zero_data_test                 : zerolen.oga ............. ok
     permission_test                : readonly.oga ............ ok
 ----------------------------------------------------------------------
   libsndfile-1.0.xx passed tests on OGG/VORBIS files.
+----------------------------------------------------------------------
+    ogg_opus_short_test            : ogg_opus_short.opus ..... ok
+    ogg_opus_seek_test             : ogg_opus_short.opus ..... ok
+    ogg_opus_int_test              : ogg_opus_int.opus ....... ok
+    ogg_opus_seek_test             : ogg_opus_int.opus ....... ok
+    ogg_opus_float_test            : ogg_opus_float.opus ..... ok
+    ogg_opus_seek_test             : ogg_opus_float.opus ..... ok
+    ogg_opus_double_test           : ogg_opus_double.opus .... ok
+    ogg_opus_seek_test             : ogg_opus_double.opus .... ok
+    ogg_opus_stereo_seek_test      : ogg_opus_seek.opus ...... ok
+    ogg_opus_original_samplerate_test : ogg_opus_original_samplerate.opus  ok
+    compression_size_test          : q[36]_opus.opus ......... ok
+    string_start_test              : opus.opus ............... ok
+----------------------------------------------------------------------
+  libsndfile-1.0.xx passed tests on OPUS files.
 ----------------------------------------------------------------------
     stdio_test                     : raw ..................... ok
     stdio_test                     : wav ..................... ok
@@ -912,6 +957,10 @@ ok
 ----------------------------------------------------------------------
   libsndfile-1.0.xx passed stdio/pipe/vio tests.
 ----------------------------------------------------------------------
+    binheader_writef_check                   : ok
+----------------------------------------------------------------------
+  libsndfile-1.0.xx passed binary header tests.
+----------------------------------------------------------------------
 Testing WAV metadata manipulation:
     Empty fail test                :ok
     Copy test                      :ok
@@ -920,3 +969,6 @@ Testing WAV metadata manipulation:
     Post mod test                  :ok
     Update test                    :ok
     Rewrite test                   :ok
+----------------------------------------------------------------------
+  libsndfile-1.0.xx passed sndfile metadata tests.
+----------------------------------------------------------------------
