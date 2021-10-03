@@ -20,30 +20,30 @@
 #
 # Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2021, Andreas Wacknitz
 #
 
-PREFERRED_BITS=64
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 
 COMPONENT_NAME=		pinentry
-COMPONENT_VERSION=	1.1.0
+COMPONENT_VERSION=	1.2.0
+COMPONENT_SUMMARY=	A small utility for entering passwords.
+COMPONENT_DESCRIPTION=	A small collection of dialog programs that allow GnuPG to read passphrases and PIN numbers in a secure manner.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/pinentry/
+COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/pinentry/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:68076686fa724a290ea49cdf0d1c0c1500907d1b759a3bcbfbec0293e8f56570
+COMPONENT_ARCHIVE_HASH=	sha256:10072045a3e043d0581f91cd5676fcac7ffee957a16636adedaa4f583a616470
 COMPONENT_ARCHIVE_URL=	https://www.gnupg.org/ftp/gcrypt/pinentry/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_FMRI=		security/pinentry
+COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
-
-PATCH_LEVEL = 0
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
@@ -60,15 +60,17 @@ CONFIGURE_ENV +=	LIBS="$(LIBS)"
 # Following line is required if FLTK pinentry is to be shipped
 # CONFIGURE_ENV +=	FLTK_CONFIG="$(USRBINDIR.$(BITS))/fltk-config"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		--enable-pinentry-curses
-CONFIGURE_OPTIONS  +=		--enable-pinentry-gtk2
-CONFIGURE_OPTIONS  +=		--disable-pinentry-qt
-CONFIGURE_OPTIONS  +=		--disable-ncurses
-CONFIGURE_OPTIONS  +=		--disable-pinentry-fltk
-
-build: $(BUILD_64)
+CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --enable-libsecret
+CONFIGURE_OPTIONS += --enable-pinentry-curses
+CONFIGURE_OPTIONS += --enable-ncurses
+CONFIGURE_OPTIONS += --enable-pinentry-gtk2
+CONFIGURE_OPTIONS += --disable-pinentry-efl
+CONFIGURE_OPTIONS += --disable-pinentry-emacs
+CONFIGURE_OPTIONS += --disable-pinentry-fltk
+CONFIGURE_OPTIONS += --disable-pinentry-gnome3
+CONFIGURE_OPTIONS += --disable-pinentry-qt
 
 install: $(INSTALL_64)
 	$(MKDIR) $(PROTOUSRLIBDIR)
@@ -76,14 +78,15 @@ install: $(INSTALL_64)
 	$(MV) $(PROTOUSRBINDIR)/pinentry-curses $(PROTOUSRLIBDIR)/ ; fi
 	if test -f $(PROTOUSRBINDIR)/pinentry-gtk-2 ; then \
 	$(MV) $(PROTOUSRBINDIR)/pinentry-gtk-2 $(PROTOUSRLIBDIR)/ ; fi
+	if test -f $(PROTOUSRBINDIR)/pinentry-emacs ; then \
+	$(MV) $(PROTOUSRBINDIR)/pinentry-emacs $(PROTOUSRLIBDIR)/ ; fi
 	cd $(PROTOUSRLIBDIR) && ln -sf pinentry-gtk-2 pinentry
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsecret
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/libassuan
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += system/library
