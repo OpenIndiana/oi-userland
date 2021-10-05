@@ -13,7 +13,8 @@
 # Copyright 2018 Alexnader Pyhalov
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,6 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# Drop Windows CMD files:
+<transform file path=usr/share/maven/bin/.+\.cmd$ -> drop>
+
 link path=usr/bin/mvn target=../share/maven/bin/mvn
 
 file path=usr/share/maven/LICENSE
@@ -29,17 +33,15 @@ file path=usr/share/maven/NOTICE
 file path=usr/share/maven/README.txt
 file path=usr/share/maven/bin/m2.conf mode=0444
 file path=usr/share/maven/bin/mvn mode=0555
-#file path=usr/share/maven/bin/mvn.cmd
+file path=usr/share/maven/bin/mvn.cmd
 file path=usr/share/maven/bin/mvnDebug mode=0555
-#file path=usr/share/maven/bin/mvnDebug.cmd
+file path=usr/share/maven/bin/mvnDebug.cmd
 file path=usr/share/maven/bin/mvnyjp mode=0555
 file path=usr/share/maven/boot/plexus-classworlds-2.6.0.jar
 file path=usr/share/maven/boot/plexus-classworlds.license
 file path=usr/share/maven/conf/logging/simplelogger.properties
 file path=usr/share/maven/conf/settings.xml
 file path=usr/share/maven/conf/toolchains.xml
-file path=usr/share/maven/lib/cdi-api-1.0.jar
-file path=usr/share/maven/lib/cdi-api.license
 file path=usr/share/maven/lib/commons-cli-1.4.jar
 file path=usr/share/maven/lib/commons-cli.license
 file path=usr/share/maven/lib/commons-io-2.6.jar
@@ -52,15 +54,17 @@ file path=usr/share/maven/lib/guava.license
 file path=usr/share/maven/lib/guice-4.2.2-no_aop.jar
 file path=usr/share/maven/lib/guice.license
 file path=usr/share/maven/lib/jansi-2.3.4.jar
+file path=usr/share/maven/lib/jansi-native/README.txt
+file path=usr/share/maven/lib/jansi-native/Windows/x86/jansi.dll
+file path=usr/share/maven/lib/jansi-native/Windows/x86_64/jansi.dll
 file path=usr/share/maven/lib/jansi.license
+file path=usr/share/maven/lib/javax.annotation-api-1.2.jar
+file path=usr/share/maven/lib/javax.annotation-api.license
 file path=usr/share/maven/lib/javax.inject-1.jar
 file path=usr/share/maven/lib/javax.inject.license
 file path=usr/share/maven/lib/jcl-over-slf4j-1.7.32.jar
 file path=usr/share/maven/lib/jcl-over-slf4j.license
-file path=usr/share/maven/lib/jsoup-1.12.1.jar
 file path=usr/share/maven/lib/jsoup.license
-file path=usr/share/maven/lib/jsr250-api-1.0.jar
-file path=usr/share/maven/lib/jsr250-api.license
 file path=usr/share/maven/lib/maven-artifact-$(COMPONENT_VERSION).jar
 file path=usr/share/maven/lib/maven-builder-support-$(COMPONENT_VERSION).jar
 file path=usr/share/maven/lib/maven-compat-$(COMPONENT_VERSION).jar
@@ -81,19 +85,19 @@ file path=usr/share/maven/lib/maven-settings-$(COMPONENT_VERSION).jar
 file path=usr/share/maven/lib/maven-settings-builder-$(COMPONENT_VERSION).jar
 file path=usr/share/maven/lib/maven-shared-utils-3.3.4.jar
 file path=usr/share/maven/lib/maven-slf4j-provider-$(COMPONENT_VERSION).jar
-file path=usr/share/maven/lib/org.eclipse.sisu.inject-0.3.4.jar
+file path=usr/share/maven/lib/org.eclipse.sisu.inject-0.3.5.jar
 file path=usr/share/maven/lib/org.eclipse.sisu.inject.license
-file path=usr/share/maven/lib/org.eclipse.sisu.plexus-0.3.4.jar
+file path=usr/share/maven/lib/org.eclipse.sisu.plexus-0.3.5.jar
 file path=usr/share/maven/lib/org.eclipse.sisu.plexus.license
-file path=usr/share/maven/lib/plexus-cipher-1.8.jar
+file path=usr/share/maven/lib/plexus-cipher-2.0.jar
 file path=usr/share/maven/lib/plexus-cipher.license
 file path=usr/share/maven/lib/plexus-component-annotations-2.1.0.jar
 file path=usr/share/maven/lib/plexus-component-annotations.license
-file path=usr/share/maven/lib/plexus-interpolation-1.25.jar
+file path=usr/share/maven/lib/plexus-interpolation-1.26.jar
 file path=usr/share/maven/lib/plexus-interpolation.license
-file path=usr/share/maven/lib/plexus-sec-dispatcher-1.4.jar
+file path=usr/share/maven/lib/plexus-sec-dispatcher-2.0.jar
 file path=usr/share/maven/lib/plexus-sec-dispatcher.license
-file path=usr/share/maven/lib/plexus-utils-3.2.1.jar
+file path=usr/share/maven/lib/plexus-utils-3.3.0.jar
 file path=usr/share/maven/lib/plexus-utils.license
 file path=usr/share/maven/lib/slf4j-api-1.7.32.jar
 file path=usr/share/maven/lib/slf4j-api.license
