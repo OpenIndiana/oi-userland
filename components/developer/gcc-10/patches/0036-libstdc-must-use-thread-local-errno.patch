@@ -1,0 +1,46 @@
+From 85e56ed630134eb0082e7f905d9c54fdb28865ec Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Tue, 31 Aug 2021 21:40:48 +0000
+Subject: [PATCH 36/36] libstdc++ must use thread-local errno
+
+---
+ libstdc++-v3/configure    | 6 ++++++
+ libstdc++-v3/configure.ac | 5 +++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
+index 1aa657d443f..81db3929c69 100755
+--- a/libstdc++-v3/configure
++++ b/libstdc++-v3/configure
+@@ -76833,6 +76833,12 @@ CPU_OPT_BITS_RANDOM=config/${cpu_opt_bits_random}
+ 
+ 
+ 
++case "${target}" in *-*-solaris2*)
++	EXTRA_CFLAGS="$EXTRA_CFLAGS -D_TS_ERRNO"
++	EXTRA_CXX_FLAGS="$EXTRA_CXX_FLAGS -D_TS_ERRNO"
++esac
++
++
+ # Add CET specific flags if Intel CET is enabled.
+  # Check whether --enable-cet was given.
+ if test "${enable_cet+set}" = set; then :
+diff --git a/libstdc++-v3/configure.ac b/libstdc++-v3/configure.ac
+index 07cf05b6856..7dbe0fc446c 100644
+--- a/libstdc++-v3/configure.ac
++++ b/libstdc++-v3/configure.ac
+@@ -528,6 +528,11 @@ AC_SUBST(CPU_OPT_EXT_RANDOM)
+ AC_SUBST(CPU_OPT_BITS_RANDOM)
+ 
+ 
++case "${target}" in *-*-solaris2*)
++	EXTRA_CFLAGS="$EXTRA_CFLAGS -D_TS_ERRNO"
++	EXTRA_CXX_FLAGS="$EXTRA_CXX_FLAGS -D_TS_ERRNO"
++esac
++
+ # Add CET specific flags if Intel CET is enabled.
+ GCC_CET_FLAGS(CET_FLAGS)
+ EXTRA_CXX_FLAGS="$EXTRA_CXX_FLAGS $CET_FLAGS"
+-- 
+2.33.0
+
