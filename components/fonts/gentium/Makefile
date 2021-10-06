@@ -27,16 +27,15 @@ BUILD_STYLE = archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=  	gentium
-COMPONENT_VERSION=      1.102
-COMPONENT_VERSION=      1
-COMPONENT_SUMMARY=      Gentium Basic extended Unicode fonts
-COMPONENT_SRC=  	GentiumBasic_1102
-COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).zip
-COMPONENT_PROJECT_URL=  https://software.sil.org/gentium/
-COMPONENT_DOWNLOAD_URL= https://software.sil.org/downloads/r/gentium/
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= \
-  sha256:2f1a2c5491d7305dffd3520c6375d2f3e14931ee35c6d8ae1e8f098bf1a7b3cc
+COMPONENT_VERSION=	6.0.0.1
+HUMAN_VERSION=		6.001
+COMPONENT_SUMMARY=	Gentium Plus extended Unicode fonts supporting Latin, Cyrillic and Greek
+COMPONENT_SRC=  	GentiumPlus-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(HUMAN_VERSION).zip
+COMPONENT_PROJECT_URL=	https://software.sil.org/gentium/
+COMPONENT_DOWNLOAD_URL=	https://software.sil.org/downloads/r/gentium
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE_HASH=	sha256:7589cb8fa9887c34070e14fc78108102657ffac7ed36e81bb2058bde2da9430c
 COMPONENT_LICENSE=      SIL OPEN FONT LICENSE Version 1.1
 
 FONT_TYPE = TTF
