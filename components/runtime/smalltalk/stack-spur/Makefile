@@ -34,9 +34,9 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		stack-spur
-COMPONENT_VERSION=	5.0.3072
-GIT_TAG=		sun-v5.0.38
-PLUGIN_REV=		5.0-202109241411
+COMPONENT_VERSION=	5.0.3080
+GIT_TAG=		sun-v5.0.39
+PLUGIN_REV=		5.0-202110081743
 COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/stack-spur
@@ -50,12 +50,17 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:acd6a22f124def92d5d8955dc9bc7f41ddf67f7ad678b83fead3c48ac0e2f6ef
+COMPONENT_ARCHIVE_HASH=	sha256:758f651b3ae8ca57a8c794972575af36f5aaf61b36c0746f0fe6adcc66813373
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
+
+# problem with OpenSmalltalk libtool and /bin/bash
+# since upgrade from libtool VERSION="2.4.6 Debian-2.4.6-2"
+# to VERSION="2.4.6 Debian-2.4.6-9"
+CONFIG_SHELL= /bin/sh
 
 PKG_OPTIONS += -D PLUGIN_REV="$(PLUGIN_REV)"
 PKG_OPTIONS += -DBRANCHID="$(BRANCHID)"
