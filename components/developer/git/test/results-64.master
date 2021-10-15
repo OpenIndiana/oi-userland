@@ -1024,8 +1024,17 @@ ok 29 - invalid file in delayed checkout
 ok 30 # skip delayed checkout with case-collision don't write to the wrong place (missing CASE_INSENSITIVE_FS of PERL,SYMLINKS,CASE_INSENSITIVE_FS)
 ok 31 - delayed checkout with utf-8-collision don't write to the wrong place
 ok 32 # skip delayed checkout with submodule collision don't write to the wrong place (missing CASE_INSENSITIVE_FS of PERL,SYMLINKS,CASE_INSENSITIVE_FS)
-# passed all 32 test(s)
-1..32
+ok 33 - setup for progress tests
+ok 34 # skip delayed checkout shows progress by default on tty (pathspec checkout) (missing TTY of PERL,TTY)
+ok 35 - delayed checkout ommits progress on non-tty (pathspec checkout)
+ok 36 # skip delayed checkout ommits progress with --quiet (pathspec checkout) (missing TTY of PERL,TTY)
+ok 37 # skip delayed checkout honors --[no]-progress (pathspec checkout) (missing TTY of PERL,TTY)
+ok 38 # skip delayed checkout shows progress by default on tty (branch checkout) (missing TTY of PERL,TTY)
+ok 39 - delayed checkout ommits progress on non-tty (branch checkout)
+ok 40 # skip delayed checkout ommits progress with --quiet (branch checkout) (missing TTY of PERL,TTY)
+ok 41 # skip delayed checkout honors --[no]-progress (branch checkout) (missing TTY of PERL,TTY)
+# passed all 41 test(s)
+1..41
 *** t0022-crlf-rename.sh ***
 ok 1 - setup
 ok 2 - diff -M
@@ -3105,8 +3114,8 @@ ok 2 - Git::I18N is located at $(@D)/t/../perl/build/lib/Git/I18N.pm
 ok 3 - sanity: Git::I18N has 3 export(s)
 ok 4 - sanity: Git::I18N exports everything by default
 ok 5 - sanity: __ has a $ prototype
-ok 6 - sanity: N__ has a $ prototype
-ok 7 - sanity: __n has a $$$ prototype
+ok 6 - sanity: __n has a $$$ prototype
+ok 7 - sanity: N__ has a $ prototype
 ok 8 - Passing a string through __() in the C locale works
 ok 9 - Get singular string through __n() in C locale
 ok 10 - Get plural string through __n() in C locale
@@ -4653,9 +4662,10 @@ ok 186 - transaction can commit multiple times
 ok 187 - transaction can create and delete
 ok 188 - transaction can commit after abort
 ok 189 - transaction cannot restart ongoing transaction
-ok 190 - directory not created deleting packed ref
-# passed all 190 test(s)
-1..190
+ok 190 - transaction flushes status updates
+ok 191 - directory not created deleting packed ref
+# passed all 191 test(s)
+1..191
 *** t1401-symbolic-ref.sh ***
 ok 1 - setup
 ok 2 - symbolic-ref read/write roundtrip
@@ -8960,18 +8970,19 @@ ok 131 - detect misconfigured autosetuprebase (no value)
 ok 132 - attempt to delete a branch without base and unmerged to HEAD
 ok 133 - attempt to delete a branch merged to its base
 ok 134 - attempt to delete a branch merged to its base
-ok 135 - use --edit-description
-ok 136 - detect typo in branch name when using --edit-description
-ok 137 - refuse --edit-description on unborn branch for now
-ok 138 - --merged catches invalid object names
-ok 139 - --list during rebase
-ok 140 - --list during rebase from detached HEAD
-ok 141 - tracking with unexpected .fetch refspec
-ok 142 - configured committerdate sort
-ok 143 - option override configured sort
-ok 144 - invalid sort parameter in configuration
-# passed all 144 test(s)
-1..144
+ok 135 - branch --delete --force removes dangling branch
+ok 136 - use --edit-description
+ok 137 - detect typo in branch name when using --edit-description
+ok 138 - refuse --edit-description on unborn branch for now
+ok 139 - --merged catches invalid object names
+ok 140 - --list during rebase
+ok 141 - --list during rebase from detached HEAD
+ok 142 - tracking with unexpected .fetch refspec
+ok 143 - configured committerdate sort
+ok 144 - option override configured sort
+ok 145 - invalid sort parameter in configuration
+# passed all 145 test(s)
+1..145
 *** t3201-branch-contains.sh ***
 ok 1 - setup
 ok 2 - branch --contains=main
@@ -9605,17 +9616,18 @@ ok 7 - rebase with --merge
 ok 8 - rebase --skip with --merge
 ok 9 - merge and reference trees equal
 ok 10 - moved back to branch correctly
-ok 11 - correct advice upon picking empty commit
-ok 12 - correct authorship when committing empty pick
-ok 13 - correct advice upon rewording empty commit
-ok 14 - correct advice upon editing empty commit
-ok 15 - correct advice upon cherry-picking an empty commit during a rebase
-ok 16 - correct advice upon multi cherry-pick picking an empty commit during a rebase
-ok 17 - fixup that empties commit fails
-ok 18 - squash that empties commit fails
-ok 19 - $EDITOR and friends are unchanged
-# passed all 19 test(s)
-1..19
+ok 11 - skipping final pick removes .git/MERGE_MSG
+ok 12 - correct advice upon picking empty commit
+ok 13 - correct authorship when committing empty pick
+ok 14 - correct advice upon rewording empty commit
+ok 15 - correct advice upon editing empty commit
+ok 16 - correct advice upon cherry-picking an empty commit during a rebase
+ok 17 - correct advice upon multi cherry-pick picking an empty commit during a rebase
+ok 18 - fixup that empties commit fails
+ok 19 - squash that empties commit fails
+ok 20 - $EDITOR and friends are unchanged
+# passed all 20 test(s)
+1..20
 *** t3404-rebase-interactive.sh ***
 ok 1 - setup
 ok 2 - rebase --keep-empty
@@ -9675,73 +9687,74 @@ ok 55 - rebase -i continue with only submodule staged
 ok 56 - rebase -i continue with unstaged submodule
 ok 57 - avoid unnecessary reset
 ok 58 - reword
-ok 59 - rebase -i can copy notes
-ok 60 - rebase -i can copy notes over a fixup
-ok 61 - rebase while detaching HEAD
-ok 62 - always cherry-pick with --no-ff
-ok 63 - set up commits with funny messages
-ok 64 - rebase-i history with funny messages
-ok 65 - prepare for rebase -i --exec
-ok 66 - running "git rebase -i --exec git show HEAD"
-ok 67 - running "git rebase --exec git show HEAD -i"
-ok 68 - running "git rebase -ix git show HEAD"
-ok 69 - rebase -ix with several <CMD>
-ok 70 - rebase -ix with several instances of --exec
-ok 71 - rebase -ix with --autosquash
-ok 72 - rebase --exec works without -i 
-ok 73 - rebase -i --exec without <CMD>
-ok 74 - rebase -i --root re-order and drop commits
-ok 75 - rebase -i --root retain root commit author and message
-ok 76 - rebase -i --root temporary sentinel commit
-ok 77 - rebase -i --root fixup root commit
-ok 78 - rebase -i --root reword original root commit
-ok 79 - rebase -i --root reword new root commit
-ok 80 - rebase -i --root when root has untracked file conflict
-ok 81 - rebase -i --root reword root when root has untracked file conflict
-ok 82 - rebase --edit-todo does not work on non-interactive rebase
-ok 83 - rebase --edit-todo can be used to modify todo
-ok 84 - rebase -i produces readable reflog
-ok 85 - rebase -i respects core.commentchar
-ok 86 - rebase -i respects core.commentchar=auto
-ok 87 - rebase -i, with <onto> and <upstream> specified as :/quuxery
-ok 88 - rebase -i with --strategy and -X
-ok 89 - interrupted rebase -i with --strategy and -X
-ok 90 - rebase -i error on commits with \ in message
-ok 91 - short commit ID setup
-ok 92 - short commit ID collide
-ok 93 - respect core.abbrev
-ok 94 - todo count
-ok 95 - rebase -i commits that overwrite untracked files (pick)
-ok 96 - rebase -i commits that overwrite untracked files (squash)
-ok 97 - rebase -i commits that overwrite untracked files (no ff)
-ok 98 - rebase --continue removes CHERRY_PICK_HEAD
-ok 99 - drop
-ok 100 - rebase -i respects rebase.missingCommitsCheck = ignore
-ok 101 - rebase -i respects rebase.missingCommitsCheck = warn
-ok 102 - rebase -i respects rebase.missingCommitsCheck = error
-ok 103 - rebase --edit-todo respects rebase.missingCommitsCheck = ignore
-ok 104 - rebase --edit-todo respects rebase.missingCommitsCheck = warn
-ok 105 - rebase --edit-todo respects rebase.missingCommitsCheck = error
-ok 106 - rebase.missingCommitsCheck = error after resolving conflicts
-ok 107 - rebase.missingCommitsCheck = error when editing for a second time
-ok 108 - respects rebase.abbreviateCommands with fixup, squash and exec
-ok 109 - static check of bad command
-ok 110 - tabs and spaces are accepted in the todolist
-ok 111 - static check of bad SHA-1
-ok 112 - editor saves as CR/LF
-ok 113 - rebase -i --gpg-sign=<key-id>
-ok 114 - rebase -i --gpg-sign=<key-id> overrides commit.gpgSign
-ok 115 - valid author header after --root swap
-ok 116 - valid author header when author contains single quote
-ok 117 - post-commit hook is called
-ok 118 - correct error message for partial commit after empty pick
-ok 119 - correct error message for commit --amend after empty pick
-ok 120 - todo has correct onto hash
-ok 121 - ORIG_HEAD is updated correctly
-ok 122 - $EDITOR and friends are unchanged
+ok 59 - no uncommited changes when rewording the todo list is reloaded
+ok 60 - rebase -i can copy notes
+ok 61 - rebase -i can copy notes over a fixup
+ok 62 - rebase while detaching HEAD
+ok 63 - always cherry-pick with --no-ff
+ok 64 - set up commits with funny messages
+ok 65 - rebase-i history with funny messages
+ok 66 - prepare for rebase -i --exec
+ok 67 - running "git rebase -i --exec git show HEAD"
+ok 68 - running "git rebase --exec git show HEAD -i"
+ok 69 - running "git rebase -ix git show HEAD"
+ok 70 - rebase -ix with several <CMD>
+ok 71 - rebase -ix with several instances of --exec
+ok 72 - rebase -ix with --autosquash
+ok 73 - rebase --exec works without -i 
+ok 74 - rebase -i --exec without <CMD>
+ok 75 - rebase -i --root re-order and drop commits
+ok 76 - rebase -i --root retain root commit author and message
+ok 77 - rebase -i --root temporary sentinel commit
+ok 78 - rebase -i --root fixup root commit
+ok 79 - rebase -i --root reword original root commit
+ok 80 - rebase -i --root reword new root commit
+ok 81 - rebase -i --root when root has untracked file conflict
+ok 82 - rebase -i --root reword root when root has untracked file conflict
+ok 83 - rebase --edit-todo does not work on non-interactive rebase
+ok 84 - rebase --edit-todo can be used to modify todo
+ok 85 - rebase -i produces readable reflog
+ok 86 - rebase -i respects core.commentchar
+ok 87 - rebase -i respects core.commentchar=auto
+ok 88 - rebase -i, with <onto> and <upstream> specified as :/quuxery
+ok 89 - rebase -i with --strategy and -X
+ok 90 - interrupted rebase -i with --strategy and -X
+ok 91 - rebase -i error on commits with \ in message
+ok 92 - short commit ID setup
+ok 93 - short commit ID collide
+ok 94 - respect core.abbrev
+ok 95 - todo count
+ok 96 - rebase -i commits that overwrite untracked files (pick)
+ok 97 - rebase -i commits that overwrite untracked files (squash)
+ok 98 - rebase -i commits that overwrite untracked files (no ff)
+ok 99 - rebase --continue removes CHERRY_PICK_HEAD
+ok 100 - drop
+ok 101 - rebase -i respects rebase.missingCommitsCheck = ignore
+ok 102 - rebase -i respects rebase.missingCommitsCheck = warn
+ok 103 - rebase -i respects rebase.missingCommitsCheck = error
+ok 104 - rebase --edit-todo respects rebase.missingCommitsCheck = ignore
+ok 105 - rebase --edit-todo respects rebase.missingCommitsCheck = warn
+ok 106 - rebase --edit-todo respects rebase.missingCommitsCheck = error
+ok 107 - rebase.missingCommitsCheck = error after resolving conflicts
+ok 108 - rebase.missingCommitsCheck = error when editing for a second time
+ok 109 - respects rebase.abbreviateCommands with fixup, squash and exec
+ok 110 - static check of bad command
+ok 111 - tabs and spaces are accepted in the todolist
+ok 112 - static check of bad SHA-1
+ok 113 - editor saves as CR/LF
+ok 114 - rebase -i --gpg-sign=<key-id>
+ok 115 - rebase -i --gpg-sign=<key-id> overrides commit.gpgSign
+ok 116 - valid author header after --root swap
+ok 117 - valid author header when author contains single quote
+ok 118 - post-commit hook is called
+ok 119 - correct error message for partial commit after empty pick
+ok 120 - correct error message for commit --amend after empty pick
+ok 121 - todo has correct onto hash
+ok 122 - ORIG_HEAD is updated correctly
+ok 123 - $EDITOR and friends are unchanged
 # still have 1 known breakage(s)
-# passed all remaining 121 test(s)
-1..122
+# passed all remaining 122 test(s)
+1..123
 *** t3405-rebase-malformed.sh ***
 ok 1 - setup
 ok 2 - rebase commit with multi-line subject
@@ -9918,35 +9931,36 @@ ok 4 - at beginning of file
 1..4
 *** t3418-rebase-continue.sh ***
 ok 1 - setup
-ok 2 - interactive rebase --continue works with touched file
-ok 3 - non-interactive rebase --continue works with touched file
-ok 4 - rebase --continue can not be used with other options
-ok 5 - rebase --continue remembers merge strategy and options
-ok 6 - rebase -i --continue handles merge strategy and options
-ok 7 - rebase passes merge strategy options correctly
-ok 8 - rebase -r passes merge strategy options correctly
-ok 9 - --skip after failed fixup cleans commit message
-ok 10 - setup rerere database
-ok 11 - rebase  --continue remembers --rerere-autoupdate
-ok 12 - rebase  --continue honors rerere.autoUpdate
-ok 13 - rebase  --continue remembers --no-rerere-autoupdate
-ok 14 - rebase -m --continue remembers --rerere-autoupdate
-ok 15 - rebase -m --continue honors rerere.autoUpdate
-ok 16 - rebase -m --continue remembers --no-rerere-autoupdate
-ok 17 - rebase -i --continue remembers --rerere-autoupdate
-ok 18 - rebase -i --continue honors rerere.autoUpdate
-ok 19 - rebase -i --continue remembers --no-rerere-autoupdate
-ok 20 - rebase --preserve-merges --continue remembers --rerere-autoupdate
-ok 21 - rebase --preserve-merges --continue honors rerere.autoUpdate
-ok 22 - rebase --preserve-merges --continue remembers --no-rerere-autoupdate
-ok 23 - the todo command "break" works
-ok 24 - --reschedule-failed-exec
-ok 25 - rebase.rescheduleFailedExec only affects `rebase -i`
-ok 26 - rebase.rescheduleFailedExec=true & --no-reschedule-failed-exec
-ok 27 - new rebase.rescheduleFailedExec=true setting in an ongoing rebase is ignored
-ok 28 - there is no --no-reschedule-failed-exec in an ongoing rebase
-# passed all 28 test(s)
-1..28
+ok 2 - merge based rebase --continue with works with touched file
+ok 3 - merge based rebase --continue removes .git/MERGE_MSG
+ok 4 - apply based rebase --continue works with touched file
+ok 5 - rebase --continue can not be used with other options
+ok 6 - rebase --continue remembers merge strategy and options
+ok 7 - rebase -i --continue handles merge strategy and options
+ok 8 - rebase passes merge strategy options correctly
+ok 9 - rebase -r passes merge strategy options correctly
+ok 10 - --skip after failed fixup cleans commit message
+ok 11 - setup rerere database
+ok 12 - rebase --apply --continue remembers --rerere-autoupdate
+ok 13 - rebase --apply --continue honors rerere.autoUpdate
+ok 14 - rebase --apply --continue remembers --no-rerere-autoupdate
+ok 15 - rebase -m --continue remembers --rerere-autoupdate
+ok 16 - rebase -m --continue honors rerere.autoUpdate
+ok 17 - rebase -m --continue remembers --no-rerere-autoupdate
+ok 18 - rebase -i --continue remembers --rerere-autoupdate
+ok 19 - rebase -i --continue honors rerere.autoUpdate
+ok 20 - rebase -i --continue remembers --no-rerere-autoupdate
+ok 21 - rebase --preserve-merges --continue remembers --rerere-autoupdate
+ok 22 - rebase --preserve-merges --continue honors rerere.autoUpdate
+ok 23 - rebase --preserve-merges --continue remembers --no-rerere-autoupdate
+ok 24 - the todo command "break" works
+ok 25 - --reschedule-failed-exec
+ok 26 - rebase.rescheduleFailedExec only affects `rebase -i`
+ok 27 - rebase.rescheduleFailedExec=true & --no-reschedule-failed-exec
+ok 28 - new rebase.rescheduleFailedExec=true setting in an ongoing rebase is ignored
+ok 29 - there is no --no-reschedule-failed-exec in an ongoing rebase
+# passed all 29 test(s)
+1..29
 *** t3419-rebase-patch-id.sh ***
 ok 1 - setup
 ok 2 - setup: 500 lines
@@ -10228,26 +10242,27 @@ ok 3 - generate correct todo list
 ok 4 - `reset` refuses to overwrite untracked files
 ok 5 - failed `merge -C` writes patch (may be rescheduled, too)
 ok 6 - failed `merge <branch>` does not crash
-ok 7 - fast-forward merge -c still rewords
-ok 8 - with a branch tip that was cherry-picked already
-ok 9 - do not rebase cousins unless asked for
-ok 10 - refs/rewritten/* is worktree-local
-ok 11 - --abort cleans up refs/rewritten
-ok 12 - --quit cleans up refs/rewritten
-ok 13 - post-rewrite hook and fixups work for merges
-ok 14 - refuse to merge ancestors of HEAD
-ok 15 - root commits
-ok 16 - a "merge" into a root commit is a fast-forward
-ok 17 - A root commit can be a cousin, treat it that way
-ok 18 - labels that are object IDs are rewritten
-ok 19 - octopus merges
-ok 20 - with --autosquash and --exec
-ok 21 - --continue after resolving conflicts after a merge
-ok 22 - --rebase-merges with strategies
-ok 23 - --rebase-merges with commit that can generate bad characters for filename
-ok 24 - --rebase-merges with message matched with onto label
-# passed all 24 test(s)
-1..24
+ok 7 - merge -c commits before rewording and reloads todo-list
+ok 8 - merge -c rewords when a strategy is given
+ok 9 - with a branch tip that was cherry-picked already
+ok 10 - do not rebase cousins unless asked for
+ok 11 - refs/rewritten/* is worktree-local
+ok 12 - --abort cleans up refs/rewritten
+ok 13 - --quit cleans up refs/rewritten
+ok 14 - post-rewrite hook and fixups work for merges
+ok 15 - refuse to merge ancestors of HEAD
+ok 16 - root commits
+ok 17 - a "merge" into a root commit is a fast-forward
+ok 18 - A root commit can be a cousin, treat it that way
+ok 19 - labels that are object IDs are rewritten
+ok 20 - octopus merges
+ok 21 - with --autosquash and --exec
+ok 22 - --continue after resolving conflicts after a merge
+ok 23 - --rebase-merges with strategies
+ok 24 - --rebase-merges with commit that can generate bad characters for filename
+ok 25 - --rebase-merges with message matched with onto label
+# passed all 25 test(s)
+1..25
 *** t3431-rebase-fork-point.sh ***
 ok 1 - setup
 ok 2 - git rebase 
@@ -11467,9 +11482,12 @@ ok 104 - stash --keep-index with file deleted in index does not resurrect it on 
 ok 105 - stash apply should succeed with unmodified file
 ok 106 - stash handles skip-worktree entries nicely
 ok 107 - stash -c stash.useBuiltin=false warning 
+ok 108 - git stash succeeds despite directory/file change
+ok 109 - git stash can pop file -> directory saved changes
+ok 110 - git stash can pop directory -> file saved changes
 # still have 2 known breakage(s)
-# passed all remaining 105 test(s)
-1..107
+# passed all remaining 108 test(s)
+1..110
 *** t3904-stash-patch.sh ***
 ok 1 - setup
 ok 2 - saying "n" does nothing
@@ -12998,8 +13016,13 @@ ok 31 - config diff.relative false -p --no-relative --relative
 ok 32 - config diff.relative true -p --no-relative --relative
 ok 33 - config diff.relative false -p --no-relative --relative=subdir
 ok 34 - config diff.relative true -p --no-relative --relative=subdir
-# passed all 34 test(s)
-1..34
+ok 35 - setup diff --relative unmerged
+ok 36 - diff --relative without change in subdir
+ok 37 - diff --relative --name-only with change in subdir
+not ok 38 - diff --relative with change in subdir # TODO known breakage
+# still have 1 known breakage(s)
+# passed all remaining 37 test(s)
+1..38
 *** t4046-diff-unmerged.sh ***
 ok 1 - setup
 ok 2 - diff-files -0
@@ -13579,8 +13602,9 @@ ok 19 - apply binary diff without replacement (copy).
 ok 20 - apply binary diff.
 ok 21 - apply binary diff (copy).
 ok 22 - apply binary -p0 diff
-# passed all 22 test(s)
-1..22
+ok 23 - reject truncated binary diff
+# passed all 23 test(s)
+1..23
 *** t4104-apply-boundary.sh ***
 ok 1 - setup
 ok 2 - apply add-a-patch with context
@@ -13652,8 +13676,11 @@ ok 8 - apply -3 with add/add conflict (dirty working tree)
 ok 9 - apply -3 with ambiguous repeating file
 ok 10 - apply with --3way --cached clean apply
 ok 11 - apply with --3way --cached and conflicts
-# passed all 11 test(s)
-1..11
+ok 12 - apply binary file patch
+ok 13 - apply binary file patch with 3way
+ok 14 - apply full-index patch with 3way
+# passed all 14 test(s)
+1..14
 *** t4109-apply-multifrag.sh ***
 ok 1 - git apply (1)
 ok 2 - git apply (2)
@@ -14147,8 +14174,10 @@ ok 15 - am -3 --abort on unborn branch removes applied commits
 ok 16 - am --abort on unborn branch will keep local commits intact
 ok 17 - am --skip leaves index stat info alone
 ok 18 - am --abort leaves index stat info alone
-# passed all 18 test(s)
-1..18
+ok 19 - git am --abort return failed exit status when it fails
+ok 20 - git am --abort cleans relevant files
+# passed all 20 test(s)
+1..20
 *** t4152-am-subjects.sh ***
 ok 1 - setup baseline commit
 ok 2 - create patches with short subject
@@ -14642,8 +14671,9 @@ ok 14 - config grep.patternType=perl
 ok 15 - log --grep does not find non-reencoded values (latin1 + locale)
 ok 16 - log --grep searches in log output encoding (latin1 + locale)
 ok 17 - log --grep does not die on invalid UTF-8 value (latin1 + locale + invalid needle)
-# passed all 17 test(s)
-1..17
+ok 18 - log shows warning when conversion fails
+# passed all 18 test(s)
+1..18
 *** t4211-line-log.sh ***
 ok 1 - setup (import history)
 ok 2 - basic command line parsing
@@ -15318,52 +15348,58 @@ ok 6 - info/refs updates when changes are made
 1..6
 *** t5300-pack-object.sh ***
 ok 1 - setup
-ok 2 - pack without delta
-ok 3 - pack-objects with bogus arguments
-ok 4 - unpack without delta
-ok 5 - pack with REF_DELTA
-ok 6 - unpack with REF_DELTA
-ok 7 - pack with OFS_DELTA
-ok 8 - unpack with OFS_DELTA
-ok 9 - compare delta flavors
-ok 10 - use packed objects
-ok 11 - use packed deltified (REF_DELTA) objects
-ok 12 - use packed deltified (OFS_DELTA) objects
-ok 13 - survive missing objects/pack directory
-ok 14 - verify pack
-ok 15 - verify pack -v
-ok 16 - verify-pack catches mismatched .idx and .pack files
-ok 17 - verify-pack catches a corrupted pack signature
-ok 18 - verify-pack catches a corrupted pack version
-ok 19 - verify-pack catches a corrupted type/size of the 1st packed object data
-ok 20 - verify-pack catches a corrupted sum of the index file itself
-ok 21 - build pack index for an existing pack
-ok 22 - unpacking with --strict
-ok 23 - index-pack with --strict
-ok 24 - honor pack.packSizeLimit
-ok 25 - verify resulting packs
-ok 26 - tolerate packsizelimit smaller than biggest object
-ok 27 - verify resulting packs
-ok 28 - set up pack for non-repo tests
-ok 29 - index-pack --stdin complains of non-repo
-ok 30 - index-pack <pack> works in non-repo
-ok 31 - index-pack --strict <pack> works in non-repo
-ok 32 # skip index-pack --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
-ok 33 # skip pack-objects --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
-ok 34 - pack-objects in too-many-packs mode
-ok 35 - setup: fake a SHA1 hash collision
-ok 36 - make sure index-pack detects the SHA1 collision
-ok 37 - make sure index-pack detects the SHA1 collision (large blobs)
-ok 38 - prefetch objects
-ok 39 - setup for --stdin-packs tests
-ok 40 - --stdin-packs with excluded packs
-ok 41 - --stdin-packs is incompatible with --filter
-ok 42 - --stdin-packs is incompatible with --revs
-ok 43 - --stdin-packs with loose objects
-ok 44 - --stdin-packs with broken links
-ok 45 - negative window clamps to 0
-# passed all 45 test(s)
-1..45
+ok 2 - setup pack-object <stdin
+ok 3 - pack-object <stdin parsing: basic [|--revs]
+ok 4 - pack-object <stdin parsing: [|--revs] bad line
+ok 5 - pack-object <stdin parsing: [|--revs] empty line
+ok 6 - pack-object <stdin parsing: [|--revs] with --stdin
+ok 7 - pack-object <stdin parsing: --stdin-packs handles garbage
+ok 8 - pack without delta
+ok 9 - pack-objects with bogus arguments
+ok 10 - unpack without delta
+ok 11 - pack with REF_DELTA
+ok 12 - unpack with REF_DELTA
+ok 13 - pack with OFS_DELTA
+ok 14 - unpack with OFS_DELTA
+ok 15 - compare delta flavors
+ok 16 - use packed objects
+ok 17 - use packed deltified (REF_DELTA) objects
+ok 18 - use packed deltified (OFS_DELTA) objects
+ok 19 - survive missing objects/pack directory
+ok 20 - verify pack
+ok 21 - verify pack -v
+ok 22 - verify-pack catches mismatched .idx and .pack files
+ok 23 - verify-pack catches a corrupted pack signature
+ok 24 - verify-pack catches a corrupted pack version
+ok 25 - verify-pack catches a corrupted type/size of the 1st packed object data
+ok 26 - verify-pack catches a corrupted sum of the index file itself
+ok 27 - build pack index for an existing pack
+ok 28 - unpacking with --strict
+ok 29 - index-pack with --strict
+ok 30 - honor pack.packSizeLimit
+ok 31 - verify resulting packs
+ok 32 - tolerate packsizelimit smaller than biggest object
+ok 33 - verify resulting packs
+ok 34 - set up pack for non-repo tests
+ok 35 - index-pack --stdin complains of non-repo
+ok 36 - index-pack <pack> works in non-repo
+ok 37 - index-pack --strict <pack> works in non-repo
+ok 38 # skip index-pack --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
+ok 39 # skip pack-objects --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
+ok 40 - pack-objects in too-many-packs mode
+ok 41 - setup: fake a SHA1 hash collision
+ok 42 - make sure index-pack detects the SHA1 collision
+ok 43 - make sure index-pack detects the SHA1 collision (large blobs)
+ok 44 - prefetch objects
+ok 45 - setup for --stdin-packs tests
+ok 46 - --stdin-packs with excluded packs
+ok 47 - --stdin-packs is incompatible with --filter
+ok 48 - --stdin-packs is incompatible with --revs
+ok 49 - --stdin-packs with loose objects
+ok 50 - --stdin-packs with broken links
+ok 51 - negative window clamps to 0
+# passed all 51 test(s)
+1..51
 *** t5301-sliding-window.sh ***
 ok 1 - setup
 ok 2 - verify-pack -v, defaults
@@ -15904,7 +15940,7 @@ ok 11 - pack.useSparse overridden
 1..11
 *** t5323-pack-redundant.sh ***
 ok 1 - setup main repo
-ok 2 - master: pack-redundant works with no packfile
+ok 2 - main: pack-redundant works with no packfile
 ok 3 - main: pack-redundant works with one packfile
 ok 4 - main: no redundant for pack 1, 2, 3
 ok 5 - main: one of pack-2/pack-3 is redundant
@@ -17039,9 +17075,10 @@ ok 177 - --no-show-forced-updates
 ok 178 - --negotiation-tip limits "have" lines sent
 ok 179 - --negotiation-tip understands globs
 ok 180 - --negotiation-tip understands abbreviated SHA-1
-# passed all 180 test(s)
+ok 181 - --negotiation-tip rejects missing OIDs
+# passed all 181 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
-1..180
+1..181
 *** t5511-refspec.sh ***
 ok 1 - push  (invalid)
 ok 2 - push :
@@ -17799,6 +17836,8 @@ ok 7 - non-fastforward push (builtin protocol)
 # passed all 7 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
 1..7
+*** t5549-fetch-push-http.sh ***
+1..0 # SKIP no web server found at '/usr/sbin/apache2'
 *** t5550-http-fetch-dumb.sh ***
 1..0 # SKIP no web server found at '/usr/sbin/apache2'
 *** t5551-http-fetch-smart.sh ***
@@ -18515,33 +18554,34 @@ ok 13 - warn if using server-option with ls-remote with legacy protocol
 ok 14 - clone with file:// using protocol v2
 ok 15 - clone of empty repo propagates name of default branch
 ok 16 - ...but not if explicitly forbidden by config
-ok 17 - fetch with file:// using protocol v2
-ok 18 - ref advertisement is filtered during fetch using protocol v2
-ok 19 - server-options are sent when fetching
-ok 20 - warn if using server-option with fetch with legacy protocol
-ok 21 - server-options are sent when cloning
-ok 22 - warn if using server-option with clone with legacy protocol
-ok 23 - upload-pack respects config using protocol v2
-ok 24 - setup filter tests
-ok 25 - partial clone
-ok 26 - dynamically fetch missing object
-ok 27 - when dynamically fetching missing object, do not list refs
-ok 28 - partial fetch
-ok 29 - do not advertise filter if not configured to do so
-ok 30 - partial clone warns if filter is not advertised
-ok 31 - even with handcrafted request, filter does not work if not advertised
-ok 32 - default refspec is used to filter ref when fetchcing
-ok 33 - fetch supports various ways of have lines
-ok 34 - fetch supports include-tag and tag following
-ok 35 - upload-pack respects client shallows
-ok 36 - ensure that multiple fetches in same process from a shallow repo works
-ok 37 - deepen-relative
-ok 38 - usage: --negotiate-only without --negotiation-tip
-ok 39 - file:// --negotiate-only
-ok 40 - file:// --negotiate-only with protocol v0
-# passed all 40 test(s)
+ok 17 - bare clone propagates empty default branch
+ok 18 - fetch with file:// using protocol v2
+ok 19 - ref advertisement is filtered during fetch using protocol v2
+ok 20 - server-options are sent when fetching
+ok 21 - warn if using server-option with fetch with legacy protocol
+ok 22 - server-options are sent when cloning
+ok 23 - warn if using server-option with clone with legacy protocol
+ok 24 - upload-pack respects config using protocol v2
+ok 25 - setup filter tests
+ok 26 - partial clone
+ok 27 - dynamically fetch missing object
+ok 28 - when dynamically fetching missing object, do not list refs
+ok 29 - partial fetch
+ok 30 - do not advertise filter if not configured to do so
+ok 31 - partial clone warns if filter is not advertised
+ok 32 - even with handcrafted request, filter does not work if not advertised
+ok 33 - default refspec is used to filter ref when fetchcing
+ok 34 - fetch supports various ways of have lines
+ok 35 - fetch supports include-tag and tag following
+ok 36 - upload-pack respects client shallows
+ok 37 - ensure that multiple fetches in same process from a shallow repo works
+ok 38 - deepen-relative
+ok 39 - usage: --negotiate-only without --negotiation-tip
+ok 40 - file:// --negotiate-only
+ok 41 - file:// --negotiate-only with protocol v0
+# passed all 41 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
-1..40
+1..41
 *** t5703-upload-pack-ref-in-want.sh ***
 ok 1 - setup repository
 ok 2 - config controls ref-in-want advertisement
@@ -18556,14 +18596,22 @@ ok 10 - fetching multiple refs
 ok 11 - fetching ref and exact OID
 ok 12 - fetching with wildcard that does not match any refs
 ok 13 - fetching with wildcard that matches multiple refs
-# passed all 13 test(s)
+ok 14 - setup namespaced repo
+ok 15 - with namespace: want-ref is considered relative to namespace
+ok 16 - with namespace: want-ref outside namespace is unknown
+ok 17 - without namespace: want-ref outside namespace succeeds
+ok 18 - with namespace: hideRefs is matched, relative to namespace
+ok 19 - with namespace: want-ref succeeds if hideRefs is removed
+ok 20 - without namespace: relative hideRefs does not match
+# passed all 20 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
-1..13
+1..20
 *** t5704-protocol-violations.sh ***
 ok 1 - extra delim packet in v2 ls-refs args
 ok 2 - extra delim packet in v2 fetch args
-# passed all 2 test(s)
-1..2
+ok 3 - bogus symref in v0 capabilities
+# passed all 3 test(s)
+1..3
 *** t5705-session-id-in-capabilities.sh ***
 ok 1 - setup repos for session ID capability tests
 ok 2 - session IDs not advertised by default (fetch v0)
@@ -18575,12 +18623,15 @@ ok 7 - session IDs not advertised by default (push v2)
 ok 8 - enable SID advertisement
 ok 9 - session IDs advertised (fetch v0)
 ok 10 - session IDs advertised (push v0)
-ok 11 - session IDs advertised (fetch v1)
-ok 12 - session IDs advertised (push v1)
-ok 13 - session IDs advertised (fetch v2)
-ok 14 - session IDs advertised (push v2)
-# passed all 14 test(s)
-1..14
+ok 11 - client & server log negotiated version (v0)
+ok 12 - session IDs advertised (fetch v1)
+ok 13 - session IDs advertised (push v1)
+ok 14 - client & server log negotiated version (v1)
+ok 15 - session IDs advertised (fetch v2)
+ok 16 - session IDs advertised (push v2)
+ok 17 - client & server log negotiated version (v2)
+# passed all 17 test(s)
+1..17
 *** t5801-remote-helpers.sh ***
 ok 1 - setup repository
 ok 2 - cloning from local repo
@@ -20203,7 +20254,6 @@ ok 230 # skip basic atom: refs/tags/signed-empty body (missing GPG)
 ok 231 # skip basic atom: refs/tags/signed-empty contents:body (missing GPG)
 ok 232 # skip basic atom: refs/tags/signed-empty contents:signature (missing GPG)
 ok 233 # skip basic atom: refs/tags/signed-empty contents (missing GPG)
-fatal: Not a valid object name refs/tags/signed-empty
 ok 234 # skip basic atom: refs/tags/signed-empty contents:size (missing GPG)
 ok 235 # skip basic atom: refs/tags/signed-short subject (missing GPG)
 ok 236 # skip basic atom: refs/tags/signed-short subject:sanitize (missing GPG)
@@ -20212,7 +20262,6 @@ ok 238 # skip basic atom: refs/tags/signed-short body (missing GPG)
 ok 239 # skip basic atom: refs/tags/signed-short contents:body (missing GPG)
 ok 240 # skip basic atom: refs/tags/signed-short contents:signature (missing GPG)
 ok 241 # skip basic atom: refs/tags/signed-short contents (missing GPG)
-fatal: Not a valid object name refs/tags/signed-short
 ok 242 # skip basic atom: refs/tags/signed-short contents:size (missing GPG)
 ok 243 # skip basic atom: refs/tags/signed-long subject (missing GPG)
 ok 244 # skip basic atom: refs/tags/signed-long subject:sanitize (missing GPG)
@@ -20221,7 +20270,6 @@ ok 246 # skip basic atom: refs/tags/signed-long body (missing GPG)
 ok 247 # skip basic atom: refs/tags/signed-long contents:body (missing GPG)
 ok 248 # skip basic atom: refs/tags/signed-long contents:signature (missing GPG)
 ok 249 # skip basic atom: refs/tags/signed-long contents (missing GPG)
-fatal: Not a valid object name refs/tags/signed-long
 ok 250 # skip basic atom: refs/tags/signed-long contents:size (missing GPG)
 ok 251 - set up refs pointing to tree and blob
 ok 252 # skip basic atom: refs/mytrees/first subject (missing GPG)
@@ -22677,35 +22725,36 @@ ok 23 - Commit a message with --allow-empty-message
 ok 24 - commit -C empty respects --allow-empty-message
 ok 25 - commit --fixup provides correct one-line commit message
 ok 26 - commit --fixup -m"something" -m"extra"
-ok 27 - commit --fixup=amend: creates amend! commit
-ok 28 - --fixup=amend: --only ignores staged changes
-ok 29 - --fixup=reword: ignores staged changes
-ok 30 - --fixup=reword: error out with -m option
-ok 31 - --fixup=amend: error out with -m option
-ok 32 - consecutive amend! commits remove amend! line from commit msg body
-ok 33 - deny to create amend! commit if its commit msg body is empty
-ok 34 - amend! commit allows empty commit msg body with --allow-empty-message
-ok 35 - --fixup=reword: incompatible with --all
-ok 36 - --fixup=reword: incompatible with --include
-ok 37 - --fixup=reword: incompatible with --only
-ok 38 - --fixup=reword: incompatible with --interactive
-ok 39 - --fixup=reword: incompatible with --patch
-ok 40 - --fixup=reword: give error with pathsec
-ok 41 - --fixup=reword: -F give error message
-ok 42 - commit --squash works with -F
-ok 43 - commit --squash works with -m
-ok 44 - commit --squash works with -C
-ok 45 - commit --squash works with -c
-ok 46 - commit --squash works with -C for same commit
-ok 47 - commit --squash works with -c for same commit
-ok 48 - commit --squash works with editor
-ok 49 - invalid message options when using --fixup
-ok 50 - new line found before status message in commit template
-ok 51 - setup empty commit with unstaged rename and copy
-ok 52 - check commit with unstaged rename and copy
-ok 53 - commit without staging files fails and displays hints
-# passed all 53 test(s)
-1..53
+ok 27 - commit --fixup --edit
+ok 28 - commit --fixup=amend: creates amend! commit
+ok 29 - --fixup=amend: --only ignores staged changes
+ok 30 - --fixup=reword: ignores staged changes
+ok 31 - --fixup=reword: error out with -m option
+ok 32 - --fixup=amend: error out with -m option
+ok 33 - consecutive amend! commits remove amend! line from commit msg body
+ok 34 - deny to create amend! commit if its commit msg body is empty
+ok 35 - amend! commit allows empty commit msg body with --allow-empty-message
+ok 36 - --fixup=reword: incompatible with --all
+ok 37 - --fixup=reword: incompatible with --include
+ok 38 - --fixup=reword: incompatible with --only
+ok 39 - --fixup=reword: incompatible with --interactive
+ok 40 - --fixup=reword: incompatible with --patch
+ok 41 - --fixup=reword: give error with pathsec
+ok 42 - --fixup=reword: -F give error message
+ok 43 - commit --squash works with -F
+ok 44 - commit --squash works with -m
+ok 45 - commit --squash works with -C
+ok 46 - commit --squash works with -c
+ok 47 - commit --squash works with -C for same commit
+ok 48 - commit --squash works with -c for same commit
+ok 49 - commit --squash works with editor
+ok 50 - invalid message options when using --fixup
+ok 51 - new line found before status message in commit template
+ok 52 - setup empty commit with unstaged rename and copy
+ok 53 - check commit with unstaged rename and copy
+ok 54 - commit without staging files fails and displays hints
+# passed all 54 test(s)
+1..54
 *** t7501-commit-basic-functionality.sh ***
 ok 1 - initial status
 ok 2 - fail initial amend
@@ -23566,7 +23615,7 @@ ok 77 - suggested names are not ambiguous
 1..77
 *** t7601-merge-pull-config.sh ***
 ok 1 - setup
-ok 2 - pull.rebase not set
+ok 2 - pull.rebase not set, ff possible
 ok 3 - pull.rebase not set and pull.ff=true
 ok 4 - pull.rebase not set and pull.ff=false
 ok 5 - pull.rebase not set and pull.ff=only
@@ -23584,21 +23633,51 @@ ok 16 - pull.rebase not set and --no-rebase given (not-fast-forward)
 ok 17 - pull.rebase not set and --ff given (not-fast-forward)
 ok 18 - pull.rebase not set and --no-ff given (not-fast-forward)
 ok 19 - pull.rebase not set and --ff-only given (not-fast-forward)
-ok 20 - merge c1 with c2
-ok 21 - fast-forward pull succeeds with "true" in pull.ff
-ok 22 - pull.ff=true overrides merge.ff=false
-ok 23 - fast-forward pull creates merge with "false" in pull.ff
-ok 24 - pull prevents non-fast-forward with "only" in pull.ff
-ok 25 - merge c1 with c2 (ours in pull.twohead)
-ok 26 - merge c1 with c2 and c3 (recursive in pull.octopus)
-ok 27 - merge c1 with c2 and c3 (recursive and octopus in pull.octopus)
-ok 28 - setup conflicted merge
-ok 29 - merge picks up the best result
-ok 30 - merge picks up the best result (from config)
-ok 31 - merge errors out on invalid strategy
-ok 32 - merge errors out on invalid strategy
-# passed all 32 test(s)
-1..32
+ok 20 - --ff-only overrides --rebase
+ok 21 - --ff-only overrides --rebase even if first
+ok 22 - --ff-only overrides --no-rebase
+ok 23 - pull.ff=only overrides pull.rebase=true
+ok 24 - pull.ff=only overrides pull.rebase=false
+ok 25 - --rebase overrides --no-ff
+ok 26 - --rebase overrides --ff
+ok 27 - --rebase fast-forwards when possible
+ok 28 - pull.rebase=true overrides pull.ff=false
+ok 29 - pull.rebase=true overrides pull.ff=true
+ok 30 - --ff-only takes precedence over pull.rebase=true
+ok 31 - --ff-only takes precedence over pull.rebase=false
+ok 32 - --no-rebase takes precedence over pull.ff=only
+ok 33 - --rebase takes precedence over pull.ff=only
+ok 34 - --rebase overrides pull.ff=true
+ok 35 - --rebase overrides pull.ff=false
+ok 36 - --rebase overrides pull.ff unset
+ok 37 - --no-rebase works with --no-ff
+ok 38 - --no-rebase works with --ff
+ok 39 - --no-rebase does ff if pull.ff unset
+ok 40 - --no-rebase heeds pull.ff=true
+ok 41 - --no-rebase heeds pull.ff=false
+ok 42 - pull.rebase=true and --no-ff
+ok 43 - pull.rebase=true and --ff
+ok 44 - pull.rebase=false and --no-ff
+ok 45 - pull.rebase=false and --ff, ff possible
+ok 46 - pull.rebase=false and --ff, ff not possible
+ok 47 - Multiple heads warns about inability to fast forward
+ok 48 - Multiple can never be fast forwarded
+ok 49 - Cannot rebase with multiple heads
+ok 50 - merge c1 with c2
+ok 51 - fast-forward pull succeeds with "true" in pull.ff
+ok 52 - pull.ff=true overrides merge.ff=false
+ok 53 - fast-forward pull creates merge with "false" in pull.ff
+ok 54 - pull prevents non-fast-forward with "only" in pull.ff
+ok 55 - merge c1 with c2 (ours in pull.twohead)
+ok 56 - merge c1 with c2 and c3 (recursive in pull.octopus)
+ok 57 - merge c1 with c2 and c3 (recursive and octopus in pull.octopus)
+ok 58 - setup conflicted merge
+ok 59 - merge picks up the best result
+ok 60 - merge picks up the best result (from config)
+ok 61 - merge errors out on invalid strategy
+ok 62 - merge errors out on invalid strategy
+# passed all 62 test(s)
+1..62
 *** t7602-merge-octopus-many.sh ***
 ok 1 - setup
 ok 2 - merge c1 with c2, c3, c4, ... c29
@@ -23852,15 +23931,16 @@ ok 68 - difftool --no-symlinks detects conflict
 ok 69 - difftool properly honors gitlink and core.worktree
 ok 70 - difftool --dir-diff symlinked directories
 ok 71 - difftool --dir-diff handles modified symlinks
-ok 72 - add -N and difftool -d
-ok 73 - difftool --cached with unmerged files
-ok 74 - outside worktree
-ok 75 - difftool --gui, --tool and --extcmd are mutually exclusive
-ok 76 - difftool --rotate-to
-ok 77 - difftool --skip-to
-ok 78 - difftool --rotate/skip-to error condition
-# passed all 78 test(s)
-1..78
+ok 72 - difftool --dir-diff writes symlinks as raw text
+ok 73 - add -N and difftool -d
+ok 74 - difftool --cached with unmerged files
+ok 75 - outside worktree
+ok 76 - difftool --gui, --tool and --extcmd are mutually exclusive
+ok 77 - difftool --rotate-to
+ok 78 - difftool --skip-to
+ok 79 - difftool --rotate/skip-to error condition
+# passed all 79 test(s)
+1..79
 *** t7810-grep.sh ***
 ok 1 - setup
 ok 2 - grep should not segfault with a bad input
@@ -24380,12 +24460,13 @@ ok 27 - start preserves existing schedule
 ok 28 - magic markers are correct
 ok 29 - stop preserves surrounding schedule
 ok 30 - start and stop macOS maintenance
-ok 31 - start and stop Windows maintenance
-ok 32 - register preserves existing strategy
-ok 33 - fails when running outside of a repository
-ok 34 - register and unregister bare repo
-# passed all 34 test(s)
-1..34
+ok 31 - use launchctl list to prevent extra work
+ok 32 - start and stop Windows maintenance
+ok 33 - register preserves existing strategy
+ok 34 - fails when running outside of a repository
+ok 35 - register and unregister bare repo
+# passed all 35 test(s)
+1..35
 *** t8001-annotate.sh ***
 ok 1 - setup A lines
 ok 2 - blame 1 author
@@ -25017,85 +25098,90 @@ ok 121 - ASCII subject is not RFC2047 quoted
 ok 122 - setup expect
 ok 123 - asks about and fixes 8bit encodings
 ok 124 - sendemail.8bitEncoding works
-ok 125 - --8bit-encoding overrides sendemail.8bitEncoding
-ok 126 - setup expect
+ok 125 - sendemail.8bitEncoding in .git/config overrides --global .gitconfig
+ok 126 - --8bit-encoding overrides sendemail.8bitEncoding
 ok 127 - setup expect
-ok 128 - --8bit-encoding also treats subject
-ok 129 - setup expect
-ok 130 - --transfer-encoding overrides sendemail.transferEncoding
-ok 131 - sendemail.transferEncoding via config
-ok 132 - sendemail.transferEncoding via cli
-ok 133 - setup expect
-ok 134 - 8-bit and sendemail.transferencoding=quoted-printable
-ok 135 - setup expect
-ok 136 - 8-bit and sendemail.transferencoding=base64
-ok 137 - setup expect
-ok 138 - convert from quoted-printable to base64
-ok 139 - setup expect
+ok 128 - setup expect
+ok 129 - --8bit-encoding also treats subject
+ok 130 - setup expect
+ok 131 - --transfer-encoding overrides sendemail.transferEncoding
+ok 132 - sendemail.transferEncoding via config
+ok 133 - sendemail.transferEncoding via cli
+ok 134 - setup expect
+ok 135 - 8-bit and sendemail.transferencoding=quoted-printable
+ok 136 - setup expect
+ok 137 - 8-bit and sendemail.transferencoding=base64
+ok 138 - setup expect
+ok 139 - convert from quoted-printable to base64
 ok 140 - setup expect
-ok 141 - CRLF and sendemail.transferencoding=quoted-printable
-ok 142 - setup expect
-ok 143 - CRLF and sendemail.transferencoding=base64
-ok 144 - refusing to send cover letter template
-ok 145 - --force sends cover letter template anyway
-ok 146 - to-cover adds To to all mail
-ok 147 - cc-cover adds Cc to all mail
-ok 148 - tocover adds To to all mail
-ok 149 - cccover adds Cc to all mail
-ok 150 - escaped quotes in sendemail.aliasfiletype=mutt
-ok 151 - sendemail.aliasfiletype=mailrc
-ok 152 - sendemail.aliasesfile=~/.mailrc
-ok 153 - --dump-aliases sendmail format
-ok 154 - --dump-aliases mutt format
-ok 155 - --dump-aliases mailrc format
-ok 156 - --dump-aliases pine format
-ok 157 - --dump-aliases gnus format
-ok 158 - --dump-aliases must be used alone
-ok 159 - aliases and sendemail.identity
-ok 160 - sendemail.aliasfiletype=sendmail
-ok 161 - sendmail aliases line folding
-ok 162 - sendmail aliases tolerate bogus line folding
-ok 163 - sendmail aliases empty
-ok 164 - alias support in To header
-ok 165 - alias support in Cc header
-ok 166 - tocmd works with aliases
-ok 167 - cccmd works with aliases
-ok 168 - --[no-]xmailer without any configuration
-ok 169 - --[no-]xmailer with sendemail.xmailer=true
-ok 170 - --[no-]xmailer with sendemail.xmailer
-ok 171 - --[no-]xmailer with sendemail.xmailer=false
-ok 172 - --[no-]xmailer with sendemail.xmailer=
-ok 173 - setup expected-list
-ok 174 - use email list in --cc --to and --bcc
-ok 175 - aliases work with email list
-ok 176 - leading and trailing whitespaces are removed
-ok 177 - test using command name with --sendmail-cmd
-ok 178 - test using arguments with --sendmail-cmd
-ok 179 - test shell expression with --sendmail-cmd
-ok 180 - invoke hook
-ok 181 - test that send-email works outside a repo
-ok 182 - test that sendmail config is rejected
-ok 183 - test that sendmail config rejection is specific
-ok 184 - test forbidSendmailVariables behavior override
-# passed all 184 test(s)
-1..184
+ok 141 - setup expect
+ok 142 - CRLF and sendemail.transferencoding=quoted-printable
+ok 143 - setup expect
+ok 144 - CRLF and sendemail.transferencoding=base64
+ok 145 - refusing to send cover letter template
+ok 146 - --force sends cover letter template anyway
+ok 147 - to-cover adds To to all mail
+ok 148 - cc-cover adds Cc to all mail
+ok 149 - tocover adds To to all mail
+ok 150 - cccover adds Cc to all mail
+ok 151 - escaped quotes in sendemail.aliasfiletype=mutt
+ok 152 - sendemail.aliasfiletype=mailrc
+ok 153 - sendemail.aliasesfile=~/.mailrc
+ok 154 - --dump-aliases sendmail format
+ok 155 - --dump-aliases mutt format
+ok 156 - --dump-aliases mailrc format
+ok 157 - --dump-aliases pine format
+ok 158 - --dump-aliases gnus format
+ok 159 - --dump-aliases must be used alone
+ok 160 - aliases and sendemail.identity
+ok 161 - sendemail.aliasfiletype=sendmail
+ok 162 - sendmail aliases line folding
+ok 163 - sendmail aliases tolerate bogus line folding
+ok 164 - sendmail aliases empty
+ok 165 - alias support in To header
+ok 166 - alias support in Cc header
+ok 167 - tocmd works with aliases
+ok 168 - cccmd works with aliases
+ok 169 - --[no-]xmailer without any configuration
+ok 170 - --[no-]xmailer with sendemail.xmailer=true
+ok 171 - --[no-]xmailer with sendemail.xmailer
+ok 172 - --[no-]xmailer with sendemail.xmailer=false
+ok 173 - --[no-]xmailer with sendemail.xmailer=
+ok 174 - setup expected-list
+ok 175 - use email list in --cc --to and --bcc
+ok 176 - aliases work with email list
+ok 177 - leading and trailing whitespaces are removed
+ok 178 - test using command name with --sendmail-cmd
+ok 179 - test using arguments with --sendmail-cmd
+ok 180 - test shell expression with --sendmail-cmd
+ok 181 - set up in-reply-to/references patches
+ok 182 - patch reply headers correct with --no-thread
+ok 183 - cmdline in-reply-to used with --no-thread
+ok 184 - invoke hook
+ok 185 - test that send-email works outside a repo
+ok 186 - test that sendmail config is rejected
+ok 187 - test that sendmail config rejection is specific
+ok 188 - test forbidSendmailVariables behavior override
+# passed all 188 test(s)
+1..188
 *** t9002-column.sh ***
 ok 1 - setup
 ok 2 - never
 ok 3 - always
-ok 4 - 80 columns
-ok 5 - COLUMNS = 1
-ok 6 - width = 1
-ok 7 - 20 columns
-ok 8 - 20 columns, nodense
-ok 9 - 20 columns, dense
-ok 10 - 20 columns, padding 2
-ok 11 - 20 columns, indented
-ok 12 - 20 columns, row first
-ok 13 - 20 columns, row first, nodense
-ok 14 - 20 columns, row first, dense
-# passed all 14 test(s)
-1..14
+ok 4 - --nl
+ok 5 - 80 columns
+ok 6 - COLUMNS = 1
+ok 7 - width = 1
+ok 8 - 20 columns
+ok 9 - 20 columns, nodense
+ok 10 - 20 columns, dense
+ok 11 - 20 columns, padding 2
+ok 12 - 20 columns, indented
+ok 13 - 20 columns, row first
+ok 14 - 20 columns, row first, nodense
+ok 15 - 20 columns, row first, dense
+# passed all 15 test(s)
+1..15
 *** t9003-help-autocorrect.sh ***
 ok 1 - setup
 ok 2 - autocorrect showing candidates
@@ -25109,657 +25195,143 @@ ok 1 - decorate
 # passed all 1 test(s)
 1..1
 *** t9100-git-svn-basic.sh ***
-ok 1 - git svn --version works anywhere
-ok 2 - git svn help works anywhere
-ok 3 - initialize git svn
-ok 4 - import an SVN revision into git
-ok 5 - checkout from svn
-ok 6 - try a deep --rmdir with a commit
-ok 7 - detect node change from file to directory #1
-ok 8 - detect node change from directory to file #1
-ok 9 - detect node change from file to directory #2
-ok 10 - detect node change from directory to file #2
-ok 11 - remove executable bit from a file
-ok 12 - add executable bit back file
-ok 13 - executable file becomes a symlink to file
-ok 14 - new symlink is added to a file that was also just made executable
-ok 15 - modify a symlink to become a file
-ok 16 - commit with UTF-8 message: locale: C.UTF-8
-ok 17 - test fetch functionality (svn => git) with alternate GIT_SVN_ID
-ok 18 - check imported tree checksums expected tree checksums
-ok 19 - exit if remote refs are ambigious
-ok 20 - exit if init-ing a would clobber a URL
-ok 21 - init allows us to connect to another directory in the same repo
-ok 22 - dcommit $rev does not clobber current branch
-ok 23 - able to dcommit to a subdirectory
-ok 24 - dcommit should not fail with a touched file
-ok 25 - rebase should not fail with a touched file
-ok 26 - able to set-tree to a subdirectory
-ok 27 - git-svn works in a bare repository
-ok 28 - git-svn works in a repository with a gitdir: link
-# passed all 28 test(s)
-1..28
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9101-git-svn-props.sh ***
-ok 1 - checkout working copy from svn
-ok 2 - setup some commits to svn
-ok 3 - initialize git svn
-ok 4 - fetch revisions from svn
-ok 5 - test svn:keywords ignoring
-ok 6 - raw $Id$ found in kw.c
-ok 7 - propset CR on crlf files
-ok 8 - fetch and pull latest from svn and checkout a new wc
-ok 9 - Comparing crlf
-ok 10 - Comparing ne_crlf
-ok 11 - Comparing lf
-ok 12 - Comparing ne_lf
-ok 13 - Comparing cr
-ok 14 - Comparing ne_cr
-ok 15 - Comparing empty_cr
-ok 16 - Comparing empty_lf
-ok 17 - Comparing empty
-ok 18 - Comparing empty_crlf
-ok 19 - Set CRLF on cr files
-ok 20 - fetch and pull latest from svn
-ok 21 - CRLF + $Id$
-ok 22 - CRLF + $Id$ (no newline)
-ok 23 - test show-ignore
-ok 24 - test create-ignore
-ok 25 - test propget
-ok 26 - test proplist
-# passed all 26 test(s)
-1..26
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9102-git-svn-deep-rmdir.sh ***
-ok 1 - initialize repo
-ok 2 - mirror via git svn
-ok 3 - Try a commit on rmdir
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9103-git-svn-tracked-directory-removed.sh ***
-ok 1 - make history for tracking
-ok 2 - clone repo with git
-ok 3 - make sure r2 still has old file
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9104-git-svn-follow-parent.sh ***
-ok 1 - initialize repo
-ok 2 - init and fetch a moved directory
-ok 3 - init and fetch from one svn-remote
-ok 4 - follow deleted parent
-ok 5 - follow larger parent
-ok 6 - follow higher-level parent
-ok 7 - follow deleted directory
-ok 8 - follow-parent avoids deleting relevant info
-ok 9 - track initial change if it was only made to parent
-ok 10 - follow-parent is atomic
-ok 11 - track multi-parent paths
-ok 12 - multi-fetch continues to work
-ok 13 - multi-fetch works off a 'clean' repository
-# passed all 13 test(s)
-1..13
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9105-git-svn-commit-diff.sh ***
-ok 1 - initialize repo
-ok 2 - test the commit-diff command
-ok 3 - commit-diff to a sub-directory (with git svn config)
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9106-git-svn-commit-diff-clobber.sh ***
-ok 1 - initialize repo
-ok 2 - commit change from svn side
-ok 3 - commit conflicting change from git
-ok 4 - commit complementing change from git
-ok 5 - dcommit fails to commit because of conflict
-ok 6 - dcommit does the svn equivalent of an index merge
-ok 7 - commit another change from svn side
-ok 8 - multiple dcommit from git svn will not clobber svn
-ok 9 - check that rebase really failed
-ok 10 - resolve, continue the rebase and dcommit
-# passed all 10 test(s)
-1..10
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9107-git-svn-migrate.sh ***
-ok 1 - setup old-looking metadata
-ok 2 - git-svn-HEAD is a real HEAD
-ok 3 - initialize old-style (v0) git svn layout
-ok 4 - initialize a multi-repository repo
-ok 5 - multi-fetch works on partial urls + paths
-ok 6 - migrate --minimize on old inited layout
-ok 7 - .rev_db auto-converted to .rev_map.UUID
-# passed all 7 test(s)
-1..7
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9108-git-svn-glob.sh ***
-ok 1 - test refspec globbing
-ok 2 - test left-hand-side only globbing
-ok 3 - prepare test disallow multi-globs
-ok 4 - test disallow multi-globs
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9109-git-svn-multi-glob.sh ***
-ok 1 - test refspec globbing
-ok 2 - test left-hand-side only globbing
-ok 3 - test another branch
-ok 4 - prepare test disallow multiple globs
-ok 5 - test disallow multiple globs
-# passed all 5 test(s)
-1..5
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9110-git-svn-use-svm-props.sh ***
-ok 1 - load svm repo
-ok 2 - verify metadata for /bar
-ok 3 - verify metadata for /dir/a/b/c/d/e
-ok 4 - verify metadata for /dir
-ok 5 - find commit based on SVN revision number
-ok 6 - empty rebase
-# passed all 6 test(s)
-1..6
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9111-git-svn-use-svnsync-props.sh ***
-ok 1 - load svnsync repo
-ok 2 - verify metadata for /bar
-ok 3 - verify metadata for /dir/a/b/c/d/e
-ok 4 - verify metadata for /dir
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9112-git-svn-md5less-file.sh ***
-ok 1 - load svn dumpfile
-ok 2 - initialize git svn
-ok 3 - fetch revisions from svn
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9113-git-svn-dcommit-new-file.sh ***
-1..0 # SKIP skipping svnserve test. (set $GIT_TEST_SVNSERVE to enable)
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9114-git-svn-dcommit-merge.sh ***
-ok 1 - setup svn repository
-ok 2 - setup git mirror and merge
-ok 3 - verify pre-merge ancestry
-ok 4 - git svn dcommit merges
-ok 5 - verify post-merge ancestry
-ok 6 - verify merge commit message
-# passed all 6 test(s)
-1..6
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9115-git-svn-dcommit-funky-renames.sh ***
-ok 1 - load repository with strange names
-ok 2 - init and fetch repository
-ok 3 - create file in existing ugly and empty dir
-ok 4 - rename ugly file
-ok 5 - rename pretty file
-ok 6 - rename pretty file into ugly one
-ok 7 - add a file with plus signs
-ok 8 - clone the repository to test rebase
-ok 9 - make a commit to test rebase
-ok 10 - git svn rebase works inside a fresh-cloned repository
-ok 11 # skip svn.pathnameencoding=cp932 new file on dcommit (missing !UTF8_NFD_TO_NFC of UTF8,!MINGW,!UTF8_NFD_TO_NFC)
-ok 12 # skip svn.pathnameencoding=cp932 rename on dcommit (missing !UTF8_NFD_TO_NFC of !MINGW,!UTF8_NFD_TO_NFC)
-# passed all 12 test(s)
-1..12
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9116-git-svn-log.sh ***
-ok 1 - setup repository and import
-ok 2 - run log
-ok 3 - run log against a from trunk
-ok 4 - test ascending revision range
-ok 5 - test ascending revision range with --show-commit
-ok 6 - test ascending revision range with --show-commit (sha1)
-ok 7 - test descending revision range
-ok 8 - test ascending revision range with unreachable revision
-ok 9 - test descending revision range with unreachable revision
-ok 10 - test ascending revision range with unreachable upper boundary revision and 1 commit
-ok 11 - test descending revision range with unreachable upper boundary revision and 1 commit
-ok 12 - test ascending revision range with unreachable lower boundary revision and 1 commit
-ok 13 - test descending revision range with unreachable lower boundary revision and 1 commit
-ok 14 - test ascending revision range with unreachable boundary revisions and no commits
-ok 15 - test descending revision range with unreachable boundary revisions and no commits
-ok 16 - test ascending revision range with unreachable boundary revisions and 1 commit
-ok 17 - test descending revision range with unreachable boundary revisions and 1 commit
-# passed all 17 test(s)
-1..17
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9117-git-svn-init-clone.sh ***
-ok 1 - setup svnrepo
-ok 2 - basic clone
-ok 3 - clone to target directory
-ok 4 - clone with --stdlayout
-ok 5 - clone to target directory with --stdlayout
-ok 6 - init without -s/-T/-b/-t does not warn
-ok 7 - clone without -s/-T/-b/-t does not warn
-ok 8 - init with -s/-T/-b/-t assumes --prefix=origin/
-ok 9 - clone with -s/-T/-b/-t assumes --prefix=origin/
-ok 10 - init with -s/-T/-b/-t and --prefix "" still works
-ok 11 - clone with -s/-T/-b/-t and --prefix "" still works
-ok 12 - init with -T as a full url works
-# passed all 12 test(s)
-1..12
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9118-git-svn-funky-branch-names.sh ***
-ok 1 - setup svnrepo
-ok 2 - test clone with funky branch names
-ok 3 - test dcommit to funky branch
-ok 4 - test dcommit to scary branch
-ok 5 - test dcommit to trailing_dotlock branch
-# passed all 5 test(s)
-1..5
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9119-git-svn-info.sh ***
-1..0 # SKIP skipping svn-info test (SVN version: 1.9.7 not supported)
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9120-git-svn-clone-with-percent-escapes.sh ***
-ok 1 - setup svnrepo
-ok 2 - test clone with percent escapes
-ok 3 - svn checkout with percent escapes
-ok 4 - svn checkout with space
-ok 5 - test clone trunk with percent escapes and minimize-url
-ok 6 - test clone trunk with percent escapes
-ok 7 - test clone --stdlayout with percent escapes
-ok 8 - test clone -s with unescaped space
-# passed all 8 test(s)
-1..8
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9121-git-svn-fetch-renamed-dir.sh ***
-ok 1 - load repository with renamed directory
-ok 2 - init and fetch repository
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9122-git-svn-author.sh ***
-ok 1 - setup svn repository
-ok 2 - interact with it via git svn
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9123-git-svn-rebuild-with-rewriteroot.sh ***
-ok 1 - init, fetch and checkout repository
-ok 2 - remove rev_map
-ok 3 - rebuild rev_map
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9124-git-svn-dcommit-auto-props.sh ***
-ok 1 - initialize git svn
-ok 2 - enable auto-props config
-ok 3 - add files matching auto-props
-ok 4 - disable auto-props config
-ok 5 - add files matching disabled auto-props
-ok 6 - check resulting svn repository
-ok 7 - check renamed file
-# passed all 7 test(s)
-1..7
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9125-git-svn-multi-glob-branch-names.sh ***
-ok 1 - setup svnrepo
-ok 2 - test clone with multi-glob in branch names
-ok 3 - test dcommit to multi-globbed branch
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9126-git-svn-follow-deleted-readded-directory.sh ***
-1..0 # SKIP skipping svnserve test. (set $GIT_TEST_SVNSERVE to enable)
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9127-git-svn-partial-rebuild.sh ***
-ok 1 - initialize svnrepo
-ok 2 - import an early SVN revision into git
-ok 3 - make full git mirror of SVN
-ok 4 - fetch from git mirror and partial-rebuild
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9128-git-svn-cmd-branch.sh ***
-ok 1 - initialize svnrepo
-ok 2 - import into git
-ok 3 - git svn branch tests
-ok 4 - branch uses correct svn-remote
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9129-git-svn-i18n-commitencoding.sh ***
-ok 1 - ISO8859-1 setup
-ok 2 - eucJP setup
-ok 3 - ISO-2022-JP setup
-ok 4 - ISO8859-1 commit on git side
-ok 5 - eucJP commit on git side
-ok 6 - ISO-2022-JP commit on git side
-ok 7 - ISO8859-1 dcommit to svn
-ok 8 - eucJP dcommit to svn
-ok 9 - ISO-2022-JP dcommit to svn
-ok 10 - ISO-8859-1 should match UTF-8 in svn
-ok 11 - eucJP should match UTF-8 in svn
-ok 12 - ISO-2022-JP should match UTF-8 in svn
-# passed all 12 test(s)
-1..12
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9130-git-svn-authors-file.sh ***
-ok 1 - setup svnrepo
-ok 2 - start import with incomplete authors file
-ok 3 - imported 2 revisions successfully
-ok 4 - continues to import once authors have been added
-ok 5 - authors-file against globs
-ok 6 - fetch fails on ee
-ok 7 - failure happened without negative side effects
-ok 8 - fetch continues after authors-file is fixed
-ok 9 - fresh clone with svn.authors-file in config
-ok 10 - authors-file imported user without email
-# passed all 10 test(s)
-1..10
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9131-git-svn-empty-symlink.sh ***
-ok 1 - load svn dumpfile
-ok 2 - clone using git svn
-ok 3 - enable broken symlink workaround
-ok 4 - "bar" is an empty file
-ok 5 - get "bar" => symlink fix from svn
-ok 6 - "bar" becomes a symlink
-ok 7 - clone using git svn
-ok 8 - disable broken symlink workaround
-ok 9 - "bar" is an empty file
-ok 10 - get "bar" => symlink fix from svn
-ok 11 - "bar" does not become a symlink
-ok 12 - clone using git svn
-ok 13 - "bar" is an empty file
-ok 14 - get "bar" => symlink fix from svn
-ok 15 - "bar" does not become a symlink
-# passed all 15 test(s)
-1..15
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9132-git-svn-broken-symlink.sh ***
-ok 1 - load svn dumpfile
-ok 2 - clone using git svn
-ok 3 - "bar" is a symlink that points to "asdf"
-ok 4 - get "bar" => symlink fix from svn
-ok 5 - "bar" remains a proper symlink
-# passed all 5 test(s)
-1..5
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9133-git-svn-nested-git-repo.sh ***
-ok 1 - setup repo with a git repo inside it
-ok 2 - clone an SVN repo containing a git repo
-ok 3 - SVN-side change outside of .git
-ok 4 - update git svn-cloned repo
-ok 5 - SVN-side change inside of .git
-ok 6 - update git svn-cloned repo
-ok 7 - SVN-side change in and out of .git
-ok 8 - update git svn-cloned repo again
-# passed all 8 test(s)
-1..8
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9134-git-svn-ignore-paths.sh ***
-ok 1 - setup test repository
-ok 2 - clone an SVN repository with ignored www directory
-ok 3 - init+fetch an SVN repository with ignored www directory
-ok 4 - verify ignore-paths config saved by clone
-ok 5 - SVN-side change outside of www
-ok 6 - update git svn-cloned repo (config ignore)
-ok 7 - update git svn-cloned repo (option ignore)
-ok 8 - SVN-side change inside of ignored www
-ok 9 - update git svn-cloned repo (config ignore)
-ok 10 - update git svn-cloned repo (option ignore)
-ok 11 - SVN-side change in and out of ignored www
-ok 12 - update git svn-cloned repo again (config ignore)
-ok 13 - update git svn-cloned repo again (option ignore)
-# passed all 13 test(s)
-1..13
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9135-git-svn-moved-branch-empty-file.sh ***
-ok 1 - load svn dumpfile
-ok 2 - clone using git svn
-ok 3 - test that b1 exists and is empty
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9136-git-svn-recreated-branch-empty-file.sh ***
-ok 1 - load svn dumpfile
-ok 2 - clone using git svn
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9137-git-svn-dcommit-clobber-series.sh ***
-ok 1 - initialize repo
-ok 2 - (supposedly) non-conflicting change from SVN
-ok 3 - some unrelated changes to git
-ok 4 - change file but in unrelated area
-ok 5 - attempt to dcommit with a dirty index
-# passed all 5 test(s)
-1..5
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9138-git-svn-authors-prog.sh ***
-ok 1 - svn-authors setup
-ok 2 - setup svnrepo
-ok 3 - import authors with prog and file
-ok 4 - imported 6 revisions successfully
-ok 5 - authors-prog ran correctly
-ok 6 - authors-file overrode authors-prog
-ok 7 - authors-prog imported user without email
-ok 8 - imported without authors-prog and authors-file
-ok 9 - authors-prog handled special characters in username
-# passed all 9 test(s)
-1..9
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9139-git-svn-non-utf8-commitencoding.sh ***
-ok 1 - ISO8859-1 setup
-ok 2 - eucJP setup
-ok 3 - ISO8859-1 commit on git side
-ok 4 - eucJP commit on git side
-ok 5 - ISO8859-1 dcommit to svn
-ok 6 - eucJP dcommit to svn
-# passed all 6 test(s)
-1..6
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9140-git-svn-reset.sh ***
-ok 1 - setup test repository
-ok 2 - clone SVN repository with hidden directory
-ok 3 - modify hidden file in SVN repo
-ok 4 - fetch fails on modified hidden file
-ok 5 - reset unwinds back to r1
-ok 6 - refetch succeeds not ignoring any files
-# passed all 6 test(s)
-1..6
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9141-git-svn-multiple-branches.sh ***
-ok 1 - setup svnrepo
-ok 2 - clone multiple branch and tag paths
-ok 3 - Multiple branch or tag paths require -d
-ok 4 - create new branches and tags
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9142-git-svn-shallow-clone.sh ***
-ok 1 - setup test repository
-ok 2 - clone trunk with "-r HEAD"
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9143-git-svn-gc.sh ***
-ok 1 - setup directories and test repo
-ok 2 - checkout working copy from svn
-ok 3 - set some properties to create an unhandled.log file
-ok 4 - Setup repo
-ok 5 - Fetch repo
-ok 6 - make backup copy of unhandled.log
-ok 7 - create leftover index
-ok 8 - git svn gc runs
-ok 9 - git svn index removed
-ok 10 - git svn gc produces a valid gzip file
-ok 11 - git svn gc does not change unhandled.log files
-# passed all 11 test(s)
-1..11
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9144-git-svn-old-rev_map.sh ***
-ok 1 - setup test repository with old layout
-ok 2 - old layout continues to work
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9145-git-svn-master-branch.sh ***
-ok 1 - setup test repository
-ok 2 - git svn clone --stdlayout sets up trunk as main
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9146-git-svn-empty-dirs.sh ***
-ok 1 - initialize repo
-ok 2 - clone
-ok 3 - empty directories exist
-ok 4 - option automkdirs set to false
-ok 5 - more emptiness
-ok 6 - git svn rebase creates empty directory
-ok 7 - git svn mkdirs recreates empty directories
-ok 8 - git svn mkdirs -r works
-ok 9 - initialize trunk
-ok 10 - clone trunk
-ok 11 - empty directories in trunk exist
-ok 12 - remove a top-level directory from svn
-ok 13 - removed top-level directory does not exist
-ok 14 - git svn gc-ed files work
-# passed all 14 test(s)
-1..14
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9147-git-svn-include-paths.sh ***
-ok 1 - setup test repository
-ok 2 - clone an SVN repository with filter to include qqq directory
-ok 3 - init+fetch an SVN repository with included qqq directory
-ok 4 - verify include-paths config saved by clone
-ok 5 - SVN-side change outside of www
-ok 6 - update git svn-cloned repo (config include)
-ok 7 - update git svn-cloned repo (option include)
-ok 8 - SVN-side change inside of ignored www
-ok 9 - update git svn-cloned repo (config include)
-ok 10 - update git svn-cloned repo (option include)
-ok 11 - SVN-side change in and out of included qqq
-ok 12 - update git svn-cloned repo again (config include)
-ok 13 - update git svn-cloned repo again (option include)
-# passed all 13 test(s)
-1..13
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9148-git-svn-propset.sh ***
-ok 1 - setup propset via import
-ok 2 - initialize git svn
-ok 3 - fetch revisions from svn
-ok 4 - add props top level
-ok 5 - add multiple props
-ok 6 - add props subdir
-ok 7 - add props relative
-# passed all 7 test(s)
-1..7
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9150-svk-mergetickets.sh ***
-ok 1 - load svk depot
-ok 2 - svk merges were represented coming in
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9151-svn-mergeinfo.sh ***
-ok 1 - load svn dump
-ok 2 - all svn merges became git merge commits
-ok 3 - cherry picks did not become git merge commits
-ok 4 - svn non-merge merge commits did not become git merge commits
-ok 5 - commit made to merged branch is reachable from the merge
-ok 6 - merging two branches in one commit is detected correctly
-not ok 7 - everything got merged in the end # TODO known breakage
-# still have 1 known breakage(s)
-# passed all remaining 6 test(s)
-1..7
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9152-svn-empty-dirs-after-gc.sh ***
-ok 1 - initialize repo
-ok 2 - clone
-ok 3 - git svn gc runs
-ok 4 - git svn mkdirs recreates empty directories after git svn gc
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9153-git-svn-rewrite-uuid.sh ***
-ok 1 - load svn repo
-ok 2 - verify uuid
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9154-git-svn-fancy-glob.sh ***
-ok 1 - load svn repo
-ok 2 - add red branch
-ok 3 - add gre branch
-ok 4 - add green branch
-ok 5 - add all branches
-# passed all 5 test(s)
-1..5
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9155-git-svn-fetch-deleted-tag.sh ***
-ok 1 - setup svn repo
-ok 2 - fetch deleted tags from same revision with checksum error
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9156-git-svn-fetch-deleted-tag-2.sh ***
-ok 1 - setup svn repo
-ok 2 - fetch deleted tags from same revision with no checksum error
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9157-git-svn-fetch-merge.sh ***
-ok 1 - initialize source svn repo
-ok 2 - clone svn repo
-ok 3 - verify merge commit
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9158-git-svn-mergeinfo.sh ***
-ok 1 - initialize source svn repo
-ok 2 - clone svn repo
-ok 3 - change svn:mergeinfo
-ok 4 - verify svn:mergeinfo
-ok 5 - change svn:mergeinfo multiline
-ok 6 - verify svn:mergeinfo multiline
-# passed all 6 test(s)
-1..6
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9159-git-svn-no-parent-mergeinfo.sh ***
-ok 1 - test handling of root commits in merge ranges
-# passed all 1 test(s)
-1..1
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9160-git-svn-preserve-empty-dirs.sh ***
-ok 1 - initialize source svn repo containing empty dirs
-ok 2 - clone svn repo with --preserve-empty-dirs
-ok 3 - directory empty from inception
-ok 4 - directory empty from subsequent svn commit
-ok 5 - add entry to previously empty directory
-ok 6 - remove non-last entry from directory
-ok 7 - clone svn repo with --placeholder-file specified
-ok 8 - placeholder namespace conflict with file
-ok 9 - placeholder namespace conflict with directory
-ok 10 - second set of svn commits and rebase
-ok 11 - flag persistence during subsqeuent rebase
-ok 12 - placeholder list persistence during subsqeuent rebase
-# passed all 12 test(s)
-1..12
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9161-git-svn-mergeinfo-push.sh ***
-ok 1 - load svn dump
-ok 2 - propagate merge information
-ok 3 - check svn:mergeinfo
-ok 4 - merge another branch
-ok 5 - check primary parent mergeinfo respected
-ok 6 - merge existing merge
-ok 7 - check both parents' mergeinfo respected
-ok 8 - make further commits to branch
-ok 9 - second forward merge
-ok 10 - check new mergeinfo added
-ok 11 - reintegration merge
-ok 12 - check reintegration mergeinfo
-ok 13 - dcommit a merge at the top of a stack
-# passed all 13 test(s)
-1..13
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9162-git-svn-dcommit-interactive.sh ***
-ok 1 - initialize repo
-ok 2 - answers: y [\n] yes
-ok 3 - answers: yes yes no
-ok 4 - answers: yes quit
-ok 5 - answers: all
-# passed all 5 test(s)
-1..5
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9163-git-svn-reset-clears-caches.sh ***
-ok 1 - initialize source svn repo
-ok 2 - fetch to merge-base (a)
-ok 3 - rebase looses SVN merge (m)
-ok 4 - reset and fetch gets the SVN merge (m) correctly
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9164-git-svn-dcommit-concurrent.sh ***
-ok 1 - setup svn repository
-ok 2 - check if post-commit hook creates a concurrent commit
-ok 3 - check if pre-commit hook fails
-ok 4 - dcommit error handling
-ok 5 - dcommit concurrent change in non-changed file
-ok 6 - dcommit concurrent non-conflicting change
-ok 7 - dcommit --no-rebase concurrent non-conflicting change
-ok 8 - dcommit fails on concurrent conflicting change
-# passed all 8 test(s)
-1..8
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9165-git-svn-fetch-merge-branch-of-branch.sh ***
-ok 1 - initialize source svn repo
-ok 2 - clone svn repo
-ok 3 - verify merge commit
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9166-git-svn-fetch-merge-branch-of-branch2.sh ***
-ok 1 - initialize source svn repo
-ok 2 - clone svn repo
-ok 3 - verify merge commit
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9167-git-svn-cmd-branch-subproject.sh ***
-ok 1 - initialize svnrepo
-ok 2 - import into git
-ok 3 - git svn branch tests
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9168-git-svn-partially-globbed-names.sh ***
-ok 1 - prepare test refspec prefixed globbing
-ok 2 - test refspec prefixed globbing
-ok 3 - prepare test left-hand-side only prefixed globbing
-ok 4 - test left-hand-side only prefixed globbing
-ok 5 - prepare test prefixed globs match just prefix
-ok 6 - test prefixed globs match just prefix
-ok 7 - prepare test disallow prefixed multi-globs
-ok 8 - test disallow prefixed multi-globs
-ok 9 - prepare test globbing in the middle of the word
-ok 10 - test globbing in the middle of the word
-ok 11 - prepare test disallow multiple asterisks in one word
-ok 12 - test disallow multiple asterisks in one word
-# passed all 12 test(s)
-1..12
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9169-git-svn-dcommit-crlf.sh ***
-ok 1 - setup commit repository
-# passed all 1 test(s)
-1..1
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9200-git-cvsexportcommit.sh ***
 ok 1 - New file
 ok 2 - Remove two files, add two and update two
@@ -26099,7 +25671,7 @@ ok 12 - repo has original shape and timestamps
 ok 13 - root tree has original shape
 ok 14 - paths in subdir ended up in one tree
 ok 15 - identical gitlinks got identical oid
-ok 16 - tag points to branch tip
+ok 16 - all tags point to branch tip
 ok 17 - idents are shared
 # passed all 17 test(s)
 1..17
@@ -26403,176 +25975,178 @@ ok 40 - __gitcomp - ignore/narrow optional negative options
 ok 41 - __gitcomp - ignore/narrow optional negative options
 ok 42 - __gitcomp - expand all negative options
 ok 43 - __gitcomp - expand/narrow all negative options
-ok 44 - __gitcomp - doesnt fail because of invalid variable name
-ok 45 - __gitcomp_nl - trailing space
-ok 46 - __gitcomp_nl - prefix
-ok 47 - __gitcomp_nl - suffix
-ok 48 - __gitcomp_nl - no suffix
-ok 49 - __gitcomp_nl - doesnt fail because of invalid variable name
-ok 50 - __git_remotes - list remotes from $GIT_DIR/remotes and from config file
-ok 51 - __git_is_configured_remote
-ok 52 - setup for ref completion
-ok 53 - __git_refs - simple
-ok 54 - __git_refs - full refs
-ok 55 - __git_refs - repo given on the command line
-ok 56 - __git_refs - remote on local file system
-ok 57 - __git_refs - remote on local file system - full refs
-ok 58 - __git_refs - configured remote
-ok 59 - __git_refs - configured remote - full refs
-ok 60 - __git_refs - configured remote - repo given on the command line
-ok 61 - __git_refs - configured remote - full refs - repo given on the command line
-ok 62 - __git_refs - configured remote - remote name matches a directory
-ok 63 - __git_refs - URL remote
-ok 64 - __git_refs - URL remote - full refs
-ok 65 - __git_refs - non-existing remote
-ok 66 - __git_refs - non-existing remote - full refs
-ok 67 - __git_refs - non-existing URL remote
-ok 68 - __git_refs - non-existing URL remote - full refs
-ok 69 - __git_refs - not in a git repository
-ok 70 - __git_refs - unique remote branches for git checkout DWIMery
-ok 71 - __git_refs - after --opt=
-ok 72 - __git_refs - after --opt= - full refs
-ok 73 - __git refs - excluding refs
-ok 74 - __git refs - excluding full refs
-ok 75 - setup for filtering matching refs
-ok 76 - __git_refs - do not filter refs unless told so
-ok 77 - __git_refs - only matching refs
-ok 78 - __git_refs - only matching refs - full refs
-ok 79 - __git_refs - only matching refs - remote on local file system
-ok 80 - __git_refs - only matching refs - configured remote
-ok 81 - __git_refs - only matching refs - remote - full refs
-ok 82 - __git_refs - only matching refs - checkout DWIMery
-ok 83 - teardown after filtering matching refs
-ok 84 - __git_refs - for-each-ref format specifiers in prefix
-ok 85 - __git_complete_refs - simple
-ok 86 - __git_complete_refs - matching
-ok 87 - __git_complete_refs - remote
-ok 88 - __git_complete_refs - track
-ok 89 - __git_complete_refs - current word
-ok 90 - __git_complete_refs - prefix
-ok 91 - __git_complete_refs - suffix
-ok 92 - __git_complete_fetch_refspecs - simple
-ok 93 - __git_complete_fetch_refspecs - matching
-ok 94 - __git_complete_fetch_refspecs - prefix
-ok 95 - __git_complete_fetch_refspecs - fully qualified
-ok 96 - __git_complete_fetch_refspecs - fully qualified & prefix
-ok 97 - git switch - with no options, complete local branches and unique remote branch names for DWIM logic
-ok 98 - git checkout - completes refs and unique remote branches for DWIM
-ok 99 - git switch - with --no-guess, complete only local branches
-ok 100 - git switch - with GIT_COMPLETION_CHECKOUT_NO_GUESS=1, complete only local branches
-ok 101 - git switch - --guess overrides GIT_COMPLETION_CHECKOUT_NO_GUESS=1, complete local branches and unique remote names for DWIM logic
-ok 102 - git switch - a later --guess overrides previous --no-guess, complete local and remote unique branches for DWIM
-ok 103 - git switch - a later --no-guess overrides previous --guess, complete only local branches
-ok 104 - git checkout - with GIT_COMPLETION_NO_GUESS=1 only completes refs
-ok 105 - git checkout - --guess overrides GIT_COMPLETION_NO_GUESS=1, complete refs and unique remote branches for DWIM
-ok 106 - git checkout - with --no-guess, only completes refs
-ok 107 - git checkout - a later --guess overrides previous --no-guess, complete refs and unique remote branches for DWIM
-ok 108 - git checkout - a later --no-guess overrides previous --guess, complete only refs
-ok 109 - git checkout - with checkout.guess = false, only completes refs
-ok 110 - git checkout - with checkout.guess = true, completes refs and unique remote branches for DWIM
-ok 111 - git checkout - a later --guess overrides previous checkout.guess = false, complete refs and unique remote branches for DWIM
-ok 112 - git checkout - a later --no-guess overrides previous checkout.guess = true, complete only refs
-ok 113 - git switch - with --detach, complete all references
-ok 114 - git checkout - with --detach, complete only references
-ok 115 - git switch - with -d, complete all references
-ok 116 - git checkout - with -d, complete only references
-ok 117 - git switch - with --track, complete only remote branches
-ok 118 - git checkout - with --track, complete only remote branches
-ok 119 - git switch - with --no-track, complete only local branch names
-ok 120 - git checkout - with --no-track, complete only local references
-ok 121 - git switch - with -c, complete all references
-ok 122 - git switch - with -C, complete all references
-ok 123 - git switch - with -c and --track, complete all references
-ok 124 - git switch - with -C and --track, complete all references
-ok 125 - git switch - with -c and --no-track, complete all references
-ok 126 - git switch - with -C and --no-track, complete all references
-ok 127 - git checkout - with -b, complete all references
-ok 128 - git checkout - with -B, complete all references
-ok 129 - git checkout - with -b and --track, complete all references
-ok 130 - git checkout - with -B and --track, complete all references
-ok 131 - git checkout - with -b and --no-track, complete all references
-ok 132 - git checkout - with -B and --no-track, complete all references
-ok 133 - git switch - for -c, complete local branches and unique remote branches
-ok 134 - git switch - for -C, complete local branches and unique remote branches
-ok 135 - git switch - for -c with --no-guess, complete local branches only
-ok 136 - git switch - for -C with --no-guess, complete local branches only
-ok 137 - git switch - for -c with --no-track, complete local branches only
-ok 138 - git switch - for -C with --no-track, complete local branches only
-ok 139 - git checkout - for -b, complete local branches and unique remote branches
-ok 140 - git checkout - for -B, complete local branches and unique remote branches
-ok 141 - git checkout - for -b with --no-guess, complete local branches only
-ok 142 - git checkout - for -B with --no-guess, complete local branches only
-ok 143 - git checkout - for -b with --no-track, complete local branches only
-ok 144 - git checkout - for -B with --no-track, complete local branches only
-ok 145 - git switch - with --orphan completes local branch names and unique remote branch names
-ok 146 - git switch - --orphan with branch already provided completes nothing else
-ok 147 - git checkout - with --orphan completes local branch names and unique remote branch names
-ok 148 - git checkout - --orphan with branch already provided completes local refs for a start-point
-ok 149 - teardown after ref completion
-ok 150 - setup for path completion tests
-ok 151 - __git_complete_index_file - simple
-ok 152 - __git_complete_index_file - escaped characters on cmdline
-ok 153 - __git_complete_index_file - quoted characters on cmdline
-ok 154 - __git_complete_index_file - UTF-8 in ls-files output
-ok 155 - __git_complete_index_file - C-style escapes in ls-files output
-ok 156 - __git_complete_index_file - \nnn-escaped characters in ls-files output
-ok 157 - __git_complete_index_file - removing repeated quoted path components
-ok 158 - teardown after path completion tests
-ok 159 - __git_find_on_cmdline - single match
-ok 160 - __git_find_on_cmdline - multiple matches
-ok 161 - __git_find_on_cmdline - no match
-ok 162 - __git_find_on_cmdline - single match with index
-ok 163 - __git_find_on_cmdline - multiple matches with index
-ok 164 - __git_find_on_cmdline - no match with index
-ok 165 - __git_find_on_cmdline - ignores matches before command with index
-ok 166 - __git_get_config_variables
-ok 167 - __git_pretty_aliases
-ok 168 - basic
-ok 169 - double dash "git" itself
-ok 170 - double dash "git checkout"
-ok 171 - general options
-ok 172 - general options plus command
-ok 173 - git --help completion
-ok 174 - completion.commands removes multiple commands
-ok 175 - setup for integration tests
-ok 176 - checkout completes ref names
-ok 177 - git -C <path> checkout uses the right repo
-ok 178 - show completes all refs
-ok 179 - <ref>: completes paths
-ok 180 - complete tree filename with spaces
-ok 181 - complete tree filename with metacharacters
-ok 182 - send-email
-ok 183 - complete files
-ok 184 - simple alias
-ok 185 - recursive alias
-ok 186 - completion uses <cmd> completion for alias: !sh -c 'git <cmd> ...'
-ok 187 - completion uses <cmd> completion for alias: !f () { VAR=val git <cmd> ... }
-ok 188 - completion used <cmd> completion for alias: !f() { : git <cmd> ; ... }
-ok 189 - completion without explicit _git_xxx function
-not ok 190 - complete with tilde expansion # TODO known breakage
-ok 191 - setup other remote for remote reference completion
-ok 192 - __git_complete_remote_or_refspec - push -d other
-not ok 193 - __git_complete_remote_or_refspec - push other -d # TODO known breakage
-ok 194 - __git_complete_remote_or_refspec - push --delete other
-not ok 195 - __git_complete_remote_or_refspec - push other --delete # TODO known breakage
-ok 196 - git config - section
-ok 197 - git config - variable name
-ok 198 - git config - value
-ok 199 - git -c - section
-ok 200 - git -c - variable name
-ok 201 - git -c - value
-ok 202 - git clone --config= - section
-ok 203 - git clone --config= - variable name
-ok 204 - git clone --config= - value
-ok 205 - sourcing the completion script clears cached commands
-ok 206 - sourcing the completion script clears cached merge strategies
-ok 207 - sourcing the completion script clears cached --options
-ok 208 - option aliases are not shown by default
-ok 209 - option aliases are shown with GIT_COMPLETION_SHOW_ALL
-ok 210 - __git_complete
+ok 44 - __gitcomp - equal skip
+ok 45 - __gitcomp - doesnt fail because of invalid variable name
+ok 46 - __gitcomp_nl - trailing space
+ok 47 - __gitcomp_nl - prefix
+ok 48 - __gitcomp_nl - suffix
+ok 49 - __gitcomp_nl - no suffix
+ok 50 - __gitcomp_nl - doesnt fail because of invalid variable name
+ok 51 - __git_remotes - list remotes from $GIT_DIR/remotes and from config file
+ok 52 - __git_is_configured_remote
+ok 53 - setup for ref completion
+ok 54 - __git_refs - simple
+ok 55 - __git_refs - full refs
+ok 56 - __git_refs - repo given on the command line
+ok 57 - __git_refs - remote on local file system
+ok 58 - __git_refs - remote on local file system - full refs
+ok 59 - __git_refs - configured remote
+ok 60 - __git_refs - configured remote - full refs
+ok 61 - __git_refs - configured remote - repo given on the command line
+ok 62 - __git_refs - configured remote - full refs - repo given on the command line
+ok 63 - __git_refs - configured remote - remote name matches a directory
+ok 64 - __git_refs - URL remote
+ok 65 - __git_refs - URL remote - full refs
+ok 66 - __git_refs - non-existing remote
+ok 67 - __git_refs - non-existing remote - full refs
+ok 68 - __git_refs - non-existing URL remote
+ok 69 - __git_refs - non-existing URL remote - full refs
+ok 70 - __git_refs - not in a git repository
+ok 71 - __git_refs - unique remote branches for git checkout DWIMery
+ok 72 - __git_refs - after --opt=
+ok 73 - __git_refs - after --opt= - full refs
+ok 74 - __git refs - excluding refs
+ok 75 - __git refs - excluding full refs
+ok 76 - setup for filtering matching refs
+ok 77 - __git_refs - do not filter refs unless told so
+ok 78 - __git_refs - only matching refs
+ok 79 - __git_refs - only matching refs - full refs
+ok 80 - __git_refs - only matching refs - remote on local file system
+ok 81 - __git_refs - only matching refs - configured remote
+ok 82 - __git_refs - only matching refs - remote - full refs
+ok 83 - __git_refs - only matching refs - checkout DWIMery
+ok 84 - teardown after filtering matching refs
+ok 85 - __git_refs - for-each-ref format specifiers in prefix
+ok 86 - __git_complete_refs - simple
+ok 87 - __git_complete_refs - matching
+ok 88 - __git_complete_refs - remote
+ok 89 - __git_complete_refs - track
+ok 90 - __git_complete_refs - current word
+ok 91 - __git_complete_refs - prefix
+ok 92 - __git_complete_refs - suffix
+ok 93 - __git_complete_fetch_refspecs - simple
+ok 94 - __git_complete_fetch_refspecs - matching
+ok 95 - __git_complete_fetch_refspecs - prefix
+ok 96 - __git_complete_fetch_refspecs - fully qualified
+ok 97 - __git_complete_fetch_refspecs - fully qualified & prefix
+ok 98 - git switch - with no options, complete local branches and unique remote branch names for DWIM logic
+ok 99 - git checkout - completes refs and unique remote branches for DWIM
+ok 100 - git switch - with --no-guess, complete only local branches
+ok 101 - git switch - with GIT_COMPLETION_CHECKOUT_NO_GUESS=1, complete only local branches
+ok 102 - git switch - --guess overrides GIT_COMPLETION_CHECKOUT_NO_GUESS=1, complete local branches and unique remote names for DWIM logic
+ok 103 - git switch - a later --guess overrides previous --no-guess, complete local and remote unique branches for DWIM
+ok 104 - git switch - a later --no-guess overrides previous --guess, complete only local branches
+ok 105 - git checkout - with GIT_COMPLETION_NO_GUESS=1 only completes refs
+ok 106 - git checkout - --guess overrides GIT_COMPLETION_NO_GUESS=1, complete refs and unique remote branches for DWIM
+ok 107 - git checkout - with --no-guess, only completes refs
+ok 108 - git checkout - a later --guess overrides previous --no-guess, complete refs and unique remote branches for DWIM
+ok 109 - git checkout - a later --no-guess overrides previous --guess, complete only refs
+ok 110 - git checkout - with checkout.guess = false, only completes refs
+ok 111 - git checkout - with checkout.guess = true, completes refs and unique remote branches for DWIM
+ok 112 - git checkout - a later --guess overrides previous checkout.guess = false, complete refs and unique remote branches for DWIM
+ok 113 - git checkout - a later --no-guess overrides previous checkout.guess = true, complete only refs
+ok 114 - git switch - with --detach, complete all references
+ok 115 - git checkout - with --detach, complete only references
+ok 116 - git switch - with -d, complete all references
+ok 117 - git checkout - with -d, complete only references
+ok 118 - git switch - with --track, complete only remote branches
+ok 119 - git checkout - with --track, complete only remote branches
+ok 120 - git switch - with --no-track, complete only local branch names
+ok 121 - git checkout - with --no-track, complete only local references
+ok 122 - git switch - with -c, complete all references
+ok 123 - git switch - with -C, complete all references
+ok 124 - git switch - with -c and --track, complete all references
+ok 125 - git switch - with -C and --track, complete all references
+ok 126 - git switch - with -c and --no-track, complete all references
+ok 127 - git switch - with -C and --no-track, complete all references
+ok 128 - git checkout - with -b, complete all references
+ok 129 - git checkout - with -B, complete all references
+ok 130 - git checkout - with -b and --track, complete all references
+ok 131 - git checkout - with -B and --track, complete all references
+ok 132 - git checkout - with -b and --no-track, complete all references
+ok 133 - git checkout - with -B and --no-track, complete all references
+ok 134 - git switch - for -c, complete local branches and unique remote branches
+ok 135 - git switch - for -C, complete local branches and unique remote branches
+ok 136 - git switch - for -c with --no-guess, complete local branches only
+ok 137 - git switch - for -C with --no-guess, complete local branches only
+ok 138 - git switch - for -c with --no-track, complete local branches only
+ok 139 - git switch - for -C with --no-track, complete local branches only
+ok 140 - git checkout - for -b, complete local branches and unique remote branches
+ok 141 - git checkout - for -B, complete local branches and unique remote branches
+ok 142 - git checkout - for -b with --no-guess, complete local branches only
+ok 143 - git checkout - for -B with --no-guess, complete local branches only
+ok 144 - git checkout - for -b with --no-track, complete local branches only
+ok 145 - git checkout - for -B with --no-track, complete local branches only
+ok 146 - git switch - with --orphan completes local branch names and unique remote branch names
+ok 147 - git switch - --orphan with branch already provided completes nothing else
+ok 148 - git checkout - with --orphan completes local branch names and unique remote branch names
+ok 149 - git checkout - --orphan with branch already provided completes local refs for a start-point
+ok 150 - teardown after ref completion
+ok 151 - setup for path completion tests
+ok 152 - __git_complete_index_file - simple
+ok 153 - __git_complete_index_file - escaped characters on cmdline
+ok 154 - __git_complete_index_file - quoted characters on cmdline
+ok 155 - __git_complete_index_file - UTF-8 in ls-files output
+ok 156 - __git_complete_index_file - C-style escapes in ls-files output
+ok 157 - __git_complete_index_file - \nnn-escaped characters in ls-files output
+ok 158 - __git_complete_index_file - removing repeated quoted path components
+ok 159 - teardown after path completion tests
+ok 160 - __git_find_on_cmdline - single match
+ok 161 - __git_find_on_cmdline - multiple matches
+ok 162 - __git_find_on_cmdline - no match
+ok 163 - __git_find_on_cmdline - single match with index
+ok 164 - __git_find_on_cmdline - multiple matches with index
+ok 165 - __git_find_on_cmdline - no match with index
+ok 166 - __git_find_on_cmdline - ignores matches before command with index
+ok 167 - __git_get_config_variables
+ok 168 - __git_pretty_aliases
+ok 169 - basic
+ok 170 - double dash "git" itself
+ok 171 - double dash "git checkout"
+ok 172 - general options
+ok 173 - general options plus command
+ok 174 - git --help completion
+ok 175 - completion.commands removes multiple commands
+ok 176 - setup for integration tests
+ok 177 - checkout completes ref names
+ok 178 - git -C <path> checkout uses the right repo
+ok 179 - show completes all refs
+ok 180 - <ref>: completes paths
+ok 181 - complete tree filename with spaces
+ok 182 - complete tree filename with metacharacters
+ok 183 - send-email
+ok 184 - complete files
+ok 185 - simple alias
+ok 186 - recursive alias
+ok 187 - completion uses <cmd> completion for alias: !sh -c 'git <cmd> ...'
+ok 188 - completion uses <cmd> completion for alias: !f () { VAR=val git <cmd> ... }
+ok 189 - completion used <cmd> completion for alias: !f() { : git <cmd> ; ... }
+ok 190 - completion without explicit _git_xxx function
+not ok 191 - complete with tilde expansion # TODO known breakage
+ok 192 - setup other remote for remote reference completion
+ok 193 - __git_complete_remote_or_refspec - push -d other
+not ok 194 - __git_complete_remote_or_refspec - push other -d # TODO known breakage
+ok 195 - __git_complete_remote_or_refspec - push --delete other
+not ok 196 - __git_complete_remote_or_refspec - push other --delete # TODO known breakage
+ok 197 - git config - section
+ok 198 - git config - variable name
+ok 199 - git config - value
+ok 200 - git -c - section
+ok 201 - git -c - variable name
+ok 202 - git -c - value
+ok 203 - git clone --config= - section
+ok 204 - git clone --config= - variable name
+ok 205 - git clone --config= - value
+ok 206 - options with value
+ok 207 - sourcing the completion script clears cached commands
+ok 208 - sourcing the completion script clears cached merge strategies
+ok 209 - sourcing the completion script clears cached --options
+ok 210 - option aliases are not shown by default
+ok 211 - option aliases are shown with GIT_COMPLETION_SHOW_ALL
+ok 212 - __git_complete
 # still have 3 known breakage(s)
-# passed all remaining 207 test(s)
-1..210
+# passed all remaining 209 test(s)
+1..212
 *** t9903-bash-prompt.sh ***
 ok 1 - setup for prompt tests
 ok 2 - prompt - branch name
@@ -26646,7 +26220,7 @@ ok 66 - prompt - hide if pwd ignored - inside gitdir
 failed test(s): t0204 t3910
 
 fixed   2
-success 22914
+success 22551
 failed  12
 broken  217
-total   23578
+total   23219
