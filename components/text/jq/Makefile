@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         jq
 COMPONENT_VERSION=      1.6
-COMPONENT_REVISION= 	1
+COMPONENT_REVISION= 	2
 COMPONENT_SUMMARY=      jq - lightweight and flexible command-line JSON processor
 COMPONENT_PROJECT_URL=	https://stedolan.github.io/jq/
 COMPONENT_FMRI=         text/jq
@@ -40,6 +40,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D); cd $(@D))
 #COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D); cd $(@D); autoreconf -fi)
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS) $(CPP_XPG6MODE)"
+COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS) $(CPP_XPG6MODE) -DNDEBUG=1"
 
 CONFIGURE_OPTIONS += --disable-valgrind
 CONFIGURE_OPTIONS += --with-oniguruma=/usr
