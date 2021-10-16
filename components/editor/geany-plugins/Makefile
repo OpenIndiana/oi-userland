@@ -17,15 +17,14 @@ BUILD_BITS=			32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		geany-plugins
-COMPONENT_VERSION=	1.37
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.38
 COMPONENT_CLASSIFICATION=	System/Text Tools
 COMPONENT_FMRI=	editor/geany/plugins
 COMPONENT_SUMMARY= 	Plugins for Geany editor
 COMPONENT_DESCRIPTION= Geany-Plugins is a collection of different plugins for Geany, a lightweight IDE.
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:51a76b098232146f47d94cd93a6bd2b5988a22f2a5b3dc0830c48e85af012a8a
+COMPONENT_ARCHIVE_HASH=	sha256:44dedf70605220d6e4094703a85c5f5a224c150cb1538b6b7f908b403b1bcc1b
 COMPONENT_ARCHIVE_URL=	https://plugins.geany.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://plugins.geany.org/
 COMPONENT_LICENSE= GPLv2
@@ -60,22 +59,19 @@ CONFIGURE_OPTIONS+= --disable-lipsum
 # Manually added build dependencies
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/desktop/gtkspell
 REQUIRED_PACKAGES += library/python/pygobject
-REQUIRED_PACKAGES += library/python/pygtk2 
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += editor/geany
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/gtkspell
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
-REQUIRED_PACKAGES += library/desktop/vte
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libgit2
 REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/spell-checking/enchant
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
