@@ -30,14 +30,13 @@ USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
-COMPONENT_VERSION=	6.4.19
+COMPONENT_VERSION=	6.4.22
 COMPONENT_DESCRIPTION=	Full-featured, robust, well-documented remote-mail retrieval and forwarding utility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:cd8d11a3d103e50caa2ec64bcda6307eb3d0783a4d4dfd88e668b81aaf9d6b5f
-COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/$(COMPONENT_NAME)/files/branch_6.4/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz/download 
-COMPONENT_PROJECT_URL=	http://www.fetchmail.info/
+COMPONENT_ARCHIVE_HASH=	sha256:cc6818bd59435602169fa292d6d163d56b21c7f53112829470a3aceabe612c84
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/branch_6.4/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz/download 
+COMPONENT_PROJECT_URL=	https://www.fetchmail.info/
 COMPONENT_FMRI=		mail/fetchmail
 
 TEST_TARGET=	$(TEST_64)
@@ -50,6 +49,17 @@ CONFIGURE_OPTIONS  +=		--enable-NTLM
 
 # Block the fetchmailconf build - this option is taken from configure.ac
 CONFIGURE_ENV += PYTHON=:
+
+COMPONENT_TEST_TRANSFORMS= \
+	'-e "s/^\# //" ' \
+	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/PASS/p" '  \
+	'-e "/SKIP/p" '  \
+	'-e "/XFAIL/p" ' \
+	'-e "/FAIL/p" '  \
+	'-e "/XPASS/p" ' \
+	'-e "/ERROR/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl-11
