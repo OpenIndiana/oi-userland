@@ -22,26 +22,28 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=32_and_64
-BUILD_STYLE=setup.py
+BUILD_BITS= 32_and_64
+BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyOpenSSL
-COMPONENT_VERSION=	16.2.0
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	19.0.0
+COMPONENT_SUMMARY=	Python interface to the OpenSSL library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:7779a3bbb74e79db234af6a08775568c6769b5821faecf6e2f4143edb227516e
+COMPONENT_ARCHIVE_HASH=	sha256:aeca66338f6de19d1aa46ed634c3b9ae519a64b458f8468aec688e7e3c20f200
 COMPONENT_ARCHIVE_URL=  $(call pypi_url)
 COMPONENT_PROJECT_URL=  https://pyopenssl.org/
-COMPONENT_BUGDB=	python-mod/pyopenssl
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_LICENSE=	Apache2
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
 
+# We miss the flaky and pretend packages that are required for the tests:
+TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_TEST_ACTION = $(CP) -r $(COMPONENT_SRC)/tests $(@D)
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_TRANSFORMS += \
         '-n ' \
@@ -50,24 +52,26 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/^s tests/p" ' \
         '-e "/^F tests/p" '
 
-# In tests/test_crypto.py::FunctionTests::test_dump_certificate, the serial number line
-# outputs the same hex as the key, so this is a false error.
-# In tests/test_ssl.py::ConnectionTests::test_set_seesion_wrong_method, This test doesn't
-# work for our version of OpenSSL, which is 1.0.2j; this test only supports OpenSSL 1.0.0
-COMPONENT_TEST_DIR = $(@D)
-COMPONENT_TEST_ENV += PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32):$(PYTHON_VENDOR_PACKAGES)
+# Testing directly inside the build directory prevents ELFCLASS errors (because
+# both 32bit and 64bit versions of Python 2.7 have their own directory and
+# cached versions of 32/64 bit precompiled .so files are thus not a problem.)
+COMPONENT_PRE_TEST_ACTION = $(CP) -r $(COMPONENT_SRC)/tests $(@D)
+COMPONENT_TEST_DIR =	$(@D)
+COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
+COMPONENT_TEST_ARGS =	--disable-warnings
+
 # Some tests require unicode characters, otherwise ~17 tests will fail
-COMPONENT_TEST_ENV += LC_ALL=en_US.UTF-8
-COMPONENT_TEST_CMD = $(PYTHON.$(PYTHON_VERSION).$(BITS)) /usr/bin/py.test-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS = --result-log=$(COMPONENT_TEST_OUTPUT)
+COMPONENT_TEST_ENV += TZ=UTC LC_ALL=en_US.UTF-8
 
-# The pep8 and pyflakes output lines sometimes come in a different order.
-COMPONENT_TEST_COMPARE_CMD = sort -o $(COMPONENT_TEST_SNAPSHOT) $(COMPONENT_TEST_SNAPSHOT); $(GDIFF) -uN
-
+# Manually added test dependencies
+#REQUIRED_PACKAGES += library/python/flaky
+REQUIRED_PACKAGES += library/python/nose
+#REQUIRED_PACKAGES += library/python/pretend
 
 # Manually added dependencies
 REQUIRED_PACKAGES += library/security/openssl
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
