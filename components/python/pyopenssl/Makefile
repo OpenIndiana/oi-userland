@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyOpenSSL
 COMPONENT_VERSION=	19.0.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Python interface to the OpenSSL library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -39,18 +40,17 @@ COMPONENT_LICENSE=	Apache2
 
 PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
 
-# We miss the flaky and pretend packages that are required for the tests:
-TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
         '-n ' \
-        '-e "/^\. lib/p" ' \
-        '-e "/^\. tests/p" ' \
-        '-e "/^s tests/p" ' \
-        '-e "/^F tests/p" '
+		'-e "s/ in [0-9]\.[0-9][0-9]s//"' \
+        '-e "/^\===/p" ' \
+        '-e "/^\test_/p" ' \
+        '-e "/^\FAILED/p" '
 
 # Testing directly inside the build directory prevents ELFCLASS errors (because
 # both 32bit and 64bit versions of Python 2.7 have their own directory and
@@ -64,9 +64,9 @@ COMPONENT_TEST_ARGS =	--disable-warnings
 COMPONENT_TEST_ENV += TZ=UTC LC_ALL=en_US.UTF-8
 
 # Manually added test dependencies
-#REQUIRED_PACKAGES += library/python/flaky
+REQUIRED_PACKAGES += library/python/flaky
 REQUIRED_PACKAGES += library/python/nose
-#REQUIRED_PACKAGES += library/python/pretend
+REQUIRED_PACKAGES += library/python/pretend
 
 # Manually added dependencies
 REQUIRED_PACKAGES += library/security/openssl
