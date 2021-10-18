@@ -13,6 +13,7 @@
 # Copyright 2016 Jim Klimov
 #
 
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	nut
@@ -32,15 +33,13 @@ COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_LICENSE=	GPLv2+
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CXXFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 CFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 
-CXXFLAGS+=$(CXXFLAGS.$(BITS))
-CFLAGS+=$(CFLAGS.$(BITS))
+CXXFLAGS += $(CXXFLAGS.$(BITS))
+CFLAGS   += $(CFLAGS.$(BITS))
 
 # Document generation can fail with -jN
 COMPONENT_BUILD_ARGS=
@@ -78,11 +77,14 @@ CONFIGURE_OPTIONS +=	--with-dev
 CONFIGURE_OPTIONS +=	--with-libltdl
 CONFIGURE_OPTIONS +=	--with-ssl
 CONFIGURE_OPTIONS +=	--with-openssl
+CONFIGURE_OPTIONS +=	--with-gd-includes=-I/usr/include/gd2
 
 CONFIGURE_OPTIONS.32 +=	--with-drvpath=/usr/lib/nut/bin/$(MACH32)
 CONFIGURE_OPTIONS.32 +=	--with-cgipath=/usr/lib/nut/cgi-bin/$(MACH32)
+CONFIGURE_OPTIONS.32 +=	--with-gd-libs=-L/usr/lib
 CONFIGURE_OPTIONS.64 +=	--with-drvpath=/usr/lib/nut/bin
 CONFIGURE_OPTIONS.64 +=	--with-cgipath=/usr/lib/nut/cgi-bin
+CONFIGURE_OPTIONS.64 +=	--with-gd-libs=-L/usr/lib/$(MACH64)
 
 # No separate toggle for this yet
 #CONFIGURE_OPTIONS +=	--with-nut-scanner=yes
@@ -106,9 +108,6 @@ CONFIGURE_OPTIONS +=	--with-macosx_ups=no
 CONFIGURE_OPTIONS +=	--with-snmp
 CONFIGURE_OPTIONS +=	--with-net-snmp-config=$(USRBINDIR)/net-snmp-config-$(BITS)
 
-CONFIGURE_OPTIONS.32 +=	--with-gdlib-config=$(USRBINDIR)/gdlib-config
-CONFIGURE_OPTIONS.64 +=	--with-gdlib-config=$(USRBINDIR64)/gdlib-config
-
 # Note: building the numerous documents of this projects is time-consuming
 # and we only need one copy. Also, we don't ship "dblatex" (needed here for
 # compiling PDFs) and probably don't require "html-chunked" chapters.
@@ -117,23 +116,22 @@ CONFIGURE_OPTIONS.64 +=        --with-doc="man=yes"
 
 CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 
-build: $(BUILD_32_and_64)
+# Manually added dependencies:
+REQUIRED_PACKAGES += text/asciidoc
 
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/usb/libusb
 REQUIRED_PACKAGES += system/management/freeipmi
+#REQUIRED_PACKAGES += system/management/nut/libs
 REQUIRED_PACKAGES += system/management/powerman
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
-REQUIRED_PACKAGES += text/asciidoc
