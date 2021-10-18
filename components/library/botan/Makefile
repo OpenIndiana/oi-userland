@@ -10,25 +10,24 @@
 
 #
 # Copyright 2015 Adam Stevko
+# Copyright 2021 Andreas Wacknitz
 #
 
+BUILD_BITS= 64_and_32
+#USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		botan
-COMPONENT_VERSION=      1.10.9
-COMPONENT_REVISION=     2
-COMPONENT_LICENSE=      BSD
-COMPONENT_PROJECT_URL=  http://botan.randombit.net/
+COMPONENT_VERSION=	1.10.17
+COMPONENT_LICENSE=	BSD
+COMPONENT_PROJECT_URL=	https://botan.randombit.net/
 COMPONENT_SUMMARY= 	Crypto and TLS for C++11
 COMPONENT_SRC=		Botan-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:487d27d3a081ae403cf87c0fc78c2a64183f001b48f9feb87e8de1e16fba8df2
-COMPONENT_ARCHIVE_URL= http://botan.randombit.net/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:6847ffb64b8d2f939dccfecc17bd2c80385d08f7621e2c56d3a335118e823613
+COMPONENT_ARCHIVE_URL=	https://botan.randombit.net/releases/old/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -60,16 +59,12 @@ COMPONENT_POST_INSTALL_ACTION= \
             (cd $(PROTOUSRDIR) ;  \
              $(MV)  include/botan-1.10/botan/build.h include/botan-1.10/botan/build-$(BITS).h )
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
