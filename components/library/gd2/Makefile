@@ -23,28 +23,27 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2016 Jim Klimov
 # Copyright 2017 Aurelien Larcher
+# Copyright 2021 Andreas Wacknitz
 #
 
+BUILD_BITS= 64_and_32
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gd2
-COMPONENT_VERSION=	2.2.4
-COMPONENT_REVISION=	6
+COMPONENT_VERSION=	2.3.3
 COMPONENT_FMRI=		library/gd
 COMPONENT_SUMMARY=	The Graphics Draw Library
 COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_PROJECT_URL=	http://libgd.github.io/
+COMPONENT_PROJECT_URL=	https://libgd.github.io/
 COMPONENT_SRC_NAME=	gd
 COMPONENT_SRC=		libgd-$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:afdd50db677648cb9335b2dda10dd3a6700d97feb21fe802e6ee0f7065acd8c4
+COMPONENT_ARCHIVE_HASH= sha256:24429f9d0dbe0f865aaa4b1a63558242396ba9134e6cfd32ca5e486a84483350
 COMPONENT_ARCHIVE_URL=	https://github.com/libgd/libgd/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GD2 License
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -58,8 +57,6 @@ LDFLAGS  += $(JPEG_LDFLAGS)
 
 # Pass iconv related macro not set with CMake
 CFLAGS   += -DHAVE_ICONV_T_DEF=1
-
-COMPONENT_PREP_ACTION = (cp files/unitialized_memory_read.gif $(COMPONENT_SRC)/tests/gif)
 
 # Needed for the test suite
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -98,30 +95,18 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/Passed/p"' \
 	'-e "/Failed/p"'
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-# Test failures:
-# 32  64  Test
-# X   X     6 - test_freetype_bug00132 (Failed): Different Freetype rendering
-# X        36 - test_gdimagecopyresampled_bug00201 (Failed): Visually similar
-# X        65 - test_gdimagegrayscale_basic (Failed): Visually similar
-# X        88 - test_gdimagerotate_bug00067 (Failed): Visually similar
-# X   X   101 - test_gdimagestringft_gdimagestringft_bbox (Failed): Different Freetype rendering
-test:		$(TEST_32_and_64)
+# Manually added dependencies
+REQUIRED_PACKAGES += library/zlib
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/libwebp
-REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libxpm
