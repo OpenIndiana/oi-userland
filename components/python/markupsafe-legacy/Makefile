@@ -13,36 +13,36 @@
 # Copyright 2015, PALO Richard.
 # Copyright 2017 Gary Mills
 # Copyright 2021 Nona Hansel
-# Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=		64
-BUILD_STYLE=	setup.py
+BUILD_BITS=		32_and_64
+BUILD_STYLE=		setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		MarkupSafe
-COMPONENT_VERSION=	2.0.1
+COMPONENT_VERSION=	1.1.1
 COMPONENT_SUMMARY=	A XML/HTML/XHTML Markup safe string for Python
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/MarkupSafe
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:594c67807fb16238b30c44bdf74f36c02cdf22d1c8cda91ef8a0ed8dabf5620a
+COMPONENT_ARCHIVE_HASH= sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_FMRI=		library/python/markupsafe
 COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_FMRI=		library/python/markupsafe
 COMPONENT_LICENSE=	BSD
 
-PYTHON_VERSIONS=	3.7 3.9
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+# Tests fail for python-2.7 because we don't have pytest for it.
 COMPONENT_TEST_DIR =    $(SOURCE_DIR)/tests
 COMPONENT_TEST_CMD =    $(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
