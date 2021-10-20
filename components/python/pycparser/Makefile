@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2021 Nona Hansel 
+# Copyright (c) 2021 Andreas Wacknitz
 #
 
 BUILD_BITS=			NO_ARCH
@@ -29,28 +30,31 @@ BUILD_STYLE=		setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycparser
-COMPONENT_VERSION=	2.14
-COMPONENT_REVISION=	5
+COMPONENT_VERSION=	2.20
+COMPONENT_SUMMARY=	Complete C99 parser in pure Python
+COMPONENT_DESCRIPTION=	pycparser is a parser for the C language, written in pure Python. \
+						It is a module designed to be easily integrated into applications that need to parse C source code.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:7959b4a74abdc27b312fed1c21e6caf9309ce0b29ea86b591fd2e99ecdf27f73
+COMPONENT_ARCHIVE_HASH= sha256:2d475327684562c3a96cc71adf7dc8c4f0565175cf86b6d7a404ff4c771f15f0
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/eliben/pycparser
-COMPONENT_BUGDB=	python-mod/pycparser
+COMPONENT_FMRI=		library/python/pycparser
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_LICENSE=	BSD
 
 PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+# Tests can only be run for python 3 versions as we don't have pytest for python-2.7:
+#PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
 
-TEST_TARGET=			$(NO_TESTS)
+#TEST_TARGET=			$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_DIR =	$(SOURCE_DIR)
-COMPONENT_TEST_CMD =	py.test-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS =	--resultlog $(@D)/testresults
-COMPONENT_TEST_ARGS +=	-p no:codechecker
-COMPONENT_TEST_ENV +=	PATH=$$PATH:$(BUILD_DIR)/bin
+COMPONENT_TEST_DIR=	$(SOURCE_DIR)/tests
+COMPONENT_TEST_CMD=	$(PYTHON) -m pytest
+COMPONENT_TEST_ARGS=
 
 $(SOURCE_DIR)/pycparser/ply/lex.py: $(SOURCE_DIR)/.prep
 
@@ -59,6 +63,20 @@ $(BUILD_DIR)/license.ply: $(SOURCE_DIR)/pycparser/ply/lex.py
 
 # common targets
 install:	$(INSTALL_NO_ARCH) $(BUILD_DIR)/license.ply
+
+# Due to a packaging oversight, pycparser modifies c_ast.py after
+# the compilation is done, resulting in a stale pyc file.
+COMPONENT_POST_INSTALL_ACTION += \
+	$(PYTHON) -m compileall $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES_BASE)/pycparser/c_ast.py
+
+# Manually added test dependencies (disabled as long as we provide python-2.7 version):
+#REQUIRED_PACKAGES += library/python/flaky
+#REQUIRED_PACKAGES += library/python/hypothesis
+#REQUIRED_PACKAGES += library/python/pluggy
+#REQUIRED_PACKAGES += library/python/py
+#REQUIRED_PACKAGES += library/python/pytest
+#REQUIRED_PACKAGES += library/python/pytest-benchmark
+#REQUIRED_PACKAGES += library/python/pytest-reporter
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
