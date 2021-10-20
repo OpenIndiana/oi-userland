@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnuplot
 COMPONENT_VERSION=	5.4.2
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	image/gnuplot
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SUMMARY=	gnuplot - plotting utility
@@ -46,10 +47,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
-#QT5_ROOT=/usr/lib/qt/5.12
-#QT5_LIBS=$(QT5_ROOT)/lib/$(MACH64)
+CPPFLAGS += -I/usr/include/gd2
 
-#PATH=$(USRBINDIR.64):$(PATH.gnu):$(QT5_ROOT)/bin/$(MACH64)
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+
 PATH=$(USRBINDIR.64):$(PATH.gnu)
 
 CONFIGURE_OPTIONS  += --libexecdir=$(CONFIGURE_LIBDIR.64)
@@ -62,13 +63,11 @@ CONFIGURE_OPTIONS  += --with-qt=no
 CONFIGURE_OPTIONS  += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  += CXXFLAGS="$(CXXFLAGS)"
 
-#CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64):$(QT5_LIBS)"
-#CONFIGURE_ENV.64 += PKG_CONFIG_PATH="$(QT5_LIBS)/pkgconfig:$(PKG_CONFIG_PATH.64)"
-
 # Build dependencies
 REQUIRED_PACKAGES += editor/gnu-emacs
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gtk2
