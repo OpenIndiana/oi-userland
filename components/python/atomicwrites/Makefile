@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2021, Andreas Wacknitz
 #
 
 BUILD_BITS=NO_ARCH
@@ -28,27 +29,32 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		atomicwrites
-COMPONENT_VERSION=	1.3.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.4.0
 COMPONENT_FMRI=		library/python/atomicwrites
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SUMMARY=	atomicwrites - Python Atomic File Writes
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:75a9445bac02d8d058d5e1fe689654ba5a6556a1dfd8ce6ec55a0ed79866cfa6
+COMPONENT_ARCHIVE_HASH= sha256:ae70396ad1a434f9c7046fd2dd196fc04b12f9e91ffb859164193be8b6168a7a
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/untitaker/python-atomicwrites
 COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=$(PYTHON2_VERSIONS) $(PYTHON3_VERSIONS)
-
+PYTHON_VERSIONS=$(PYTHON_ALL_VERSIONS)
+# Test can only be run for python3 versions:
+#PYTHON_VERSIONS=$(PYTHON3_VERSIONS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)/tests
 COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/in [0-9]*\.[0-9]*s //"' \
+	'-n' \
+	'-e "/===/p"' \
+	'-e "/collected/p"' \
+	'-e "/test_/p"'
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
