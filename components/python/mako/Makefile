@@ -21,6 +21,7 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2015, PALO Richard.
 # Copyright 2017 Gary Mills
+# Copyright 2021 Andreas Wacknitz
 #
 
 BUILD_BITS=NO_ARCH
@@ -28,18 +29,20 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Mako
-COMPONENT_VERSION=	1.0.4
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	http://www.makotemplates.org/
+COMPONENT_VERSION=	1.1.5
+COMPONENT_SUMMARY=	A template library written in Python
+COMPONENT_PROJECT_URL=	https://www.makotemplates.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:fed99dbe4d0ddb27a33ee4910d8708aca9ef1fe854e668387a9ab9a90cbf9059
-COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/M/Mako/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	python-mod/mako
+COMPONENT_ARCHIVE_HASH= sha256:169fa52af22a91900d852e937400e79f535496191c63712e3b9fda5a9bed6fc3
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_FMRI=		library/python/mako
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
 
+# We don't support tests because we don't have tox:
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
@@ -49,3 +52,5 @@ COMPONENT_TEST_ARGS=	./setup.py test
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
