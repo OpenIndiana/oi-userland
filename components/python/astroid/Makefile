@@ -21,23 +21,25 @@
 
 #
 # Copyright 2021 Gary Mills
+# Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_STYLE=	setup.py
-BUILD_BITS=	NO_ARCH
-
+BUILD_STYLE= setup.py
+BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		astroid
-COMPONENT_VERSION=	2.6.2
+COMPONENT_VERSION=	2.8.3
 # COMPONENT_REVISION=	0
+COMPONENT_SUMMARY=	A common base representation of python source code
 COMPONENT_PROJECT_URL=	https://github.com/PyCQA/astroid
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:0b146fca525affa936312de8e2e196e92562527f389fcd86f66bf1c8b5cd1a0e
-COMPONENT_ARCHIVE_URL=	https://github.com/PyCQA/$(COMPONENT_NAME)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_BUGDB=	python-mod/astroid
+COMPONENT_ARCHIVE_HASH= sha256:4cccf37b45f72a2107c2541829f36b00348679967868ba54a03a52a1bd4ae7ff
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_FMRI=		library/python/astroid
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_LICENSE=	LGPLv2.1, GPLv2
 
 # Set python version used by this product
 PYTHON_VERSION=		3.9
@@ -45,21 +47,31 @@ PYTHON_VERSIONS=	3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
-# The tests are run using python 3.9 only and require that the
-# python-39 package is installed (does not have to be the default python).
-# The pytest-39 package must also be installed
-
-# Use the python 3.9 libraries (via PYTHONPATH setting) for testing.
-test: PYTHON_VERSION=3.9
-
 COMPONENT_TEST_DIR = $(COMPONENT_SRC)/tests
 COMPONENT_TEST_CMD = $(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/in [0-9]*\.[0-9]*s //"' \
+	'-n' \
+	'-e "/===/p"' \
+	'-e "/collected/p"' \
+	'-e "/^FAILED/p"' \
+	'-e "/^E /p"' \
+	'-e "/^\.\.\./p"' \
+	'-e "/^unittest_/p"'
 
-# Typical failures for test target:
-#=========================== short test summary info ============================
-#FAILED unittest_modutils.py::ModPathFromFileTest::test_import_symlink_with_source_outside_of_path
-#============ 1 failed, 987 passed, 43 skipped, 10 xfailed in 17.15s ============
+# Manually added test dependencies:
+REQUIRED_PACKAGES += library/python/flaky
+REQUIRED_PACKAGES += library/python/hypothesis
+#REQUIRED_PACKAGES += library/python/lazy_object_proxy
+REQUIRED_PACKAGES += library/python/pluggy
+REQUIRED_PACKAGES += library/python/py
+REQUIRED_PACKAGES += library/python/pytest
+REQUIRED_PACKAGES += library/python/pytest-benchmark
+REQUIRED_PACKAGES += library/python/pytest-reporter
+REQUIRED_PACKAGES += library/python/typing_extensions
+#REQUIRED_PACKAGES += library/python/wrapt
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-39
