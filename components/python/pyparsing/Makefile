@@ -28,14 +28,13 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyparsing
-COMPONENT_VERSION=	2.4.0
+COMPONENT_VERSION=	2.4.7
 COMPONENT_FMRI=		library/python/pyparsing
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SUMMARY=	Python parsing module
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:06151405855b18034a8624fe6635c1f5d9822cede49196aa99a4d53910c4fede
+COMPONENT_ARCHIVE_HASH= sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/pyparsing/
 COMPONENT_LICENSE=	MIT
@@ -48,7 +47,14 @@ COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_CMD =	$(PYTHON) unitTests.py
 COMPONENT_TEST_ARGS =
 
-COMPONENT_TEST_TRANSFORMS += '-n -e "/\.\.\./p"'
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/[0-9]*\.[0-9]*s//"' \
+	'-re "s|(Ran [0-9]+ tests).*|\1|"' \
+	'-re "s|(\.+).*|\1|"' \
+	'-n' \
+	'-e "/\.\.\./p"' \
+	'-e "/Ran [0-9]+ tests/p"'
+
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
