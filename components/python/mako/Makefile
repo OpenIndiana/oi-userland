@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Mako
 COMPONENT_VERSION=	1.1.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A template library written in Python
 COMPONENT_PROJECT_URL=	https://www.makotemplates.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,6 +46,10 @@ PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
 # We don't support tests because we don't have tox:
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_POST_INSTALL_ACTION = \
+	(cd $(PROTO_DIR)/usr/bin ; \
+         $(MV) -f mako-render mako-render-$(PYTHON_VERSION))
 
 COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
 COMPONENT_TEST_ARGS=	./setup.py test
