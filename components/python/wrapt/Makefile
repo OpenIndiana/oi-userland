@@ -29,32 +29,42 @@ BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wrapt
-COMPONENT_VERSION=	1.12.1
-COMPONENT_FMRI=         library/python/wrapt
-COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_VERSION=	1.13.2
+COMPONENT_SUMMARY=	A transparent object proxy for Python
 COMPONENT_PROJECT_URL=	https://github.com/GrahamDumpleton/wrapt
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:19f2043e05b76ce9b68971b387bfd8eed50c2ee1c9c0bd230edc422fec753917
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/GrahamDumpleton/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_LICENSE=      BSD
+COMPONENT_ARCHIVE_HASH= sha256:dca56cc5963a5fd7c2aa8607017753f534ee514e09103a6c55d2db70b50e7447
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_FMRI=		library/python/wrapt
+COMPONENT_LICENSE=	BSD
 
 PYTHON_VERSIONS=	3.7 3.9
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =    $(SOURCE_DIR)/tests
 COMPONENT_TEST_CMD =    $(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/in [0-9]*\.[0-9]*s //"' \
+	'-n' \
+	'-e "/===/p"' \
+	'-e "/collected/p"' \
+	'-e "/^test_/p"'
 
-# Typical failures for test target:
-#=========================== short test summary info ============================
-#FAILED test_outer_classmethod.py::TestCallingOuterClassMethod::test_class_call_function
-#FAILED test_outer_classmethod.py::TestCallingOuterClassMethod::test_instance_call_function
-#FAILED test_synchronized_lock.py::TestSynchronized::test_synchronized_outer_classmethod
-#================== 3 failed, 371 passed, 55 warnings in 1.47s ==================
+# Manually added test dependencies:
+REQUIRED_PACKAGES += library/python/flaky
+REQUIRED_PACKAGES += library/python/hypothesis
+REQUIRED_PACKAGES += library/python/pluggy
+REQUIRED_PACKAGES += library/python/py
+REQUIRED_PACKAGES += library/python/pytest
+REQUIRED_PACKAGES += library/python/pytest-benchmark
+REQUIRED_PACKAGES += library/python/pytest-reporter
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-37
