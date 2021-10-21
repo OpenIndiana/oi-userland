@@ -29,22 +29,18 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Pygments
-COMPONENT_VERSION=	2.9.0
+COMPONENT_VERSION=	2.10.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a18f47b506a429f6f4b9df81bb02beab9ca21d0a5fee38ed15aef65f0545519f
+COMPONENT_ARCHIVE_HASH= sha256:f398865f7eb6874156579fdf36bc840a03cab64d1cde9e93d68f46a425ec52c6
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pygments.org/
 COMPONENT_SUMMARY=	A syntax highlighting package written in Python
 COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_FMRI=		library/python/pygments
 
 PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
 
-#
-# Some of the tests can fail if markupsafe isn't installed (the
-# dependency in indirect via mako which itself lacks a dependency on the
-# former.)
-#
 include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
@@ -56,6 +52,17 @@ COMPONENT_POST_INSTALL_ACTION = \
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)/tests
 COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
+COMPONENT_TEST_TRANSFORMS= \
+	'-e "s/[0-9]*\.[0-9]*s//"'
+
+# Manually added test dependencies
+REQUIRED_PACKAGES += library/python/flaky
+REQUIRED_PACKAGES += library/python/hypothesis
+REQUIRED_PACKAGES += library/python/pluggy
+REQUIRED_PACKAGES += library/python/py
+REQUIRED_PACKAGES += library/python/pytest
+REQUIRED_PACKAGES += library/python/pytest-benchmark
+REQUIRED_PACKAGES += library/python/pytest-reporter
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-35
