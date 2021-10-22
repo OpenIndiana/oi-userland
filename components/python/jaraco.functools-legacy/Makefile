@@ -9,26 +9,29 @@
 #
 
 #
+# Copyright 2016 Alexander Pyhalov
 # Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=	NO_ARCH
+BUILD_BITS= NO_ARCH
 BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jaraco.functools
-COMPONENT_VERSION=	3.3.0
+COMPONENT_VERSION=	1.20
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	'jaraco.functools - Additional functools'
 COMPONENT_PROJECT_URL=	https://pypi.org/project/jaraco.functools/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:bfcf7da71e2a0e980189b0744b59dba6c1dcf66dcd7a30f8a4413e478046b314
+COMPONENT_ARCHIVE_HASH= sha256:bad775f06e58bb8de5563bc2a8bf704168919e6779d6e849b1ca58b443e97f3b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_FMRI=	library/python/jaraco.functools
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	3.7 3.9
+PYTHON_VERSIONS=	2.7 3.5
 
 TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -36,10 +39,10 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_BUILD_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
 COMPONENT_INSTALL_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
 
-# Manually added dependencies
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += library/python/setuptools_scm-37
-REQUIRED_PACKAGES += library/python/setuptools_scm-39
+# Build dependencies
+REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += library/python/setuptools_scm-27
+REQUIRED_PACKAGES += library/python/setuptools-35
+REQUIRED_PACKAGES += library/python/setuptools_scm-35
 
 # Auto-generated dependencies
