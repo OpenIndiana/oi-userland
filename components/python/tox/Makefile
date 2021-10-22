@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tox
 COMPONENT_VERSION=	3.24.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Command line driven CI frontend and development task automation tool
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
