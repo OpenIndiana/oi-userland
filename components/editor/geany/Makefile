@@ -18,17 +18,16 @@ BUILD_BITS=			32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	geany
-COMPONENT_VERSION= 	1.37.1
+COMPONENT_VERSION= 	1.38
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=		editor/geany
 COMPONENT_SUMMARY= 	A fast and lightweight IDE
 COMPONENT_DESCRIPTION= Small and fast IDE, which has only a few dependencies from other package (independent on DE)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-	sha256:18c5756444c1d8bcd737c8ecfd4ef0b3607c924fc02560d4e8b78f6121531a18
-COMPONENT_ARCHIVE_URL= https://download.geany.org/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.geany.org
+COMPONENT_ARCHIVE_HASH=	sha256:abff176e4d48bea35ee53037c49c82f90b6d4c23e69aed6e4a5ca8ccd3aad546
+COMPONENT_ARCHIVE_URL=	https://download.geany.org/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.geany.org
 COMPONENT_LICENSE= GPLv2
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
@@ -39,8 +38,6 @@ PATH=$(PATH.gnu)
 
 CFLAGS +=				-D_FILE_OFFSET_BITS=64
 
-# If we are using gtk3 we will loose geanypy and multiterm plugins (and vte won't be used):
-CONFIGURE_OPTIONS    += --enable-gtk2
 CONFIGURE_OPTIONS    += --enable-vte
 CONFIGURE_OPTIONS    += --disable-html-docs
 CONFIGURE_OPTIONS    += --disable-pdf-docs
@@ -85,7 +82,7 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
