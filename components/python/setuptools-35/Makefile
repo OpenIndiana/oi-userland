@@ -20,7 +20,6 @@
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
-# Copyright (c) 2021, Andreas wacknitz
 #
 
 BUILD_BITS=NO_ARCH
@@ -28,18 +27,16 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		setuptools
-COMPONENT_VERSION=	58.3.0
-COMPONENT_SUMMARY=	Download, build, install, upgrade, and uninstall Python packages easily
+COMPONENT_VERSION=	50.3.2
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:b0c2461641b58fe30e11d4c3dfba316c513bdf9ec85f9fed0c871c678447205e
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE_HASH=	\
+  sha256:ed0519d27a243843b05d82a5e9d01b0b083d9934eaa3d02779a23da18077bd3c
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/pypa/setuptools
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_FMRI=		library/python/setuptools
-COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS=	3.7 3.9
+PYTHON_VERSIONS=	3.5
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -48,5 +45,4 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PREP_ACTION = (cd $(@D) ; $(PYTHON) bootstrap.py)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+REQUIRED_PACKAGES += runtime/python-35
