@@ -10,28 +10,26 @@
 
 #
 # Copyright (c) 2019 Tim Mooney
+# Copyright (c) 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_BITS= NO_ARCH
+BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		virtualenv
-COMPONENT_VERSION=	16.5.0
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	20.9.0
 COMPONENT_FMRI=		library/python/virtualenv
-COMPONENT_SUMMARY=	'A tool to create isolated Python environments'
+COMPONENT_SUMMARY=	A tool to create isolated Python environments
 COMPONENT_PROJECT_URL=	https://virtualenv.pypa.io/en/latest/
-COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:948df2d66849bdbf1207110b1bcc32f64e5e35257b76f8067392e3a2c08b3731
-COMPONENT_ARCHIVE_URL=	https://github.com/pypa/virtualenv/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:bb55ace18de14593947354e5e6cd1be75fb32c3329651da62e92bf5d0aab7213
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	virtualenv.license
 
-PYTHON_VERSIONS= 2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
 
 # this python module currently has no binary components, so all
 # targets are *_NO_ARCH
@@ -48,10 +46,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
         (cd $(PROTOUSRBINDIR); $(MV) virtualenv virtualenv-$(PYTHON_VERSION)) ;
 
-
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-35
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
+REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
