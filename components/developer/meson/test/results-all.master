@@ -1,5 +1,5 @@
 test_meson_exe_windows (__main__.CommandTests) ... skipped 'NOT IMPLEMENTED'
-test_meson_installed (__main__.CommandTests) ... warning: no files found matching '__main__.py'
+test_meson_installed (__main__.CommandTests) ... /usr/lib/python3.9/vendor-packages/setuptools/__init__.py:148: SetuptoolsDeprecationWarning: setup_requires is deprecated. Supply build dependencies using PEP 517 pyproject.toml build-requires.
 test_meson_uninstalled (__main__.CommandTests) ... ok
 test_meson_zipapp (__main__.CommandTests) ... ok
 test_compiler_args_class_clike (__main__.InternalTests) ... ok
@@ -180,6 +180,7 @@ test_introspect_projectinfo_subprojects (__main__.AllPlatformTests) ... ok
 test_introspect_projectinfo_without_configured_build (__main__.AllPlatformTests) ... ok
 test_introspect_targets_from_source (__main__.AllPlatformTests) ... ok
 test_introspection_target_subproject (__main__.AllPlatformTests) ... ok
+test_invalid_option_names (__main__.AllPlatformTests) ... ok
 test_junit_valid_exitcode (__main__.AllPlatformTests) ... ok
 test_junit_valid_gtest (__main__.AllPlatformTests) ... skipped 'Project requested skipping: $(SOURCE_DIR)/test cases/frameworks/2 gtest'
 test_junit_valid_tap (__main__.AllPlatformTests) ... ok
@@ -223,6 +224,7 @@ test_run_target_files_path (__main__.AllPlatformTests)
 Test that run_targets are run from the correct directory ... ok
 test_run_target_subdir (__main__.AllPlatformTests)
 Test that run_targets are run from the correct directory ... ok
+test_rust_rlib_linkage (__main__.AllPlatformTests) ... ok
 test_same_d_option_twice (__main__.AllPlatformTests) ... ok
 test_same_d_option_twice_configure (__main__.AllPlatformTests) ... ok
 test_same_dash_option_twice (__main__.AllPlatformTests) ... ok
@@ -404,6 +406,8 @@ Test that the soname is set correctly for shared libraries. This can't ... ok
 test_build_rpath (__main__.LinuxlikeTests) ... FAIL
 test_build_rpath_pkgconfig (__main__.LinuxlikeTests)
 Test that current build artefacts (libs) are found first on the rpath, ... FAIL
+test_cmake_multilib (__main__.LinuxlikeTests)
+Test that the cmake module handles multilib paths correctly. ... ok
 test_compiler_c_stds (__main__.LinuxlikeTests)
 Test that C stds specified for this compiler can all be used. Can't be ... ok
 test_compiler_check_flags_order (__main__.LinuxlikeTests)
@@ -421,8 +425,8 @@ test_deterministic_rpath_order (__main__.LinuxlikeTests)
 Test that the rpaths are always listed in a deterministic order. ... ok
 test_generate_gir_with_address_sanitizer (__main__.LinuxlikeTests) ... skipped 'Project requested skipping: $(SOURCE_DIR)/test cases/frameworks/7 gnome'
 test_global_rpath (__main__.LinuxlikeTests) ... FAIL
-test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/tmp3o_h7l4n/binary_wrapper0.py']> is not a valid python or it is missing distutils
-test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/tmp3o_h7l4n/binary_wrapper0.py']> is not a valid python or it is missing distutils
+test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/binary_wrapper.py']> is not a valid python or it is missing distutils
+test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/binary_wrapper.py']> is not a valid python or it is missing distutils
 test_identity_cross (__main__.LinuxlikeTests) ... ok
 test_identity_cross_env (__main__.LinuxlikeTests) ... ok
 test_install_subdir_symlinks (__main__.LinuxlikeTests) ... ok
@@ -548,8 +552,8 @@ ERROR: test_versions (__main__.PythonTests)
 1/1 extmod FAIL               exit status 1
 FAILED: meson-test 
 ERROR: test_python_module (__main__.NativeFileTests)
-test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/tmp3o_h7l4n/binary_wrapper0.py']> is not a valid python or it is missing distutils
-test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/tmp3o_h7l4n/binary_wrapper0.py']> is not a valid python or it is missing distutils
+test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/binary_wrapper.py']> is not a valid python or it is missing distutils
+test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/binary_wrapper.py']> is not a valid python or it is missing distutils
 ERROR: test_prelinking (__main__.LinuxlikeTests)
 ERROR: test_qtdependency_pkgconfig_detection (__main__.LinuxlikeTests)
 test cases/frameworks/4 qt/meson.build:48:4: ERROR: Assert failed: qtmodule.has_tools()
@@ -580,8 +584,10 @@ Total passed tests:  519
 Total failed tests:  12
 Total skipped tests: 115
 test cases/common/103 has header symbol/meson.build:16:2: ERROR: Assert failed: FILE structure is defined in stdio.h, not stdlib.h
-FAILED: libbob.so 
+FAILED: sub/libfoo.so 
 FAILED: libbob-conf.so 
+FAILED: libbob.so 
+FAILED: libbob-files.so 
 ERROR: Could not find a JDK platform include directory for your OS, please open an issue or provide a pull request.
 test cases/java/9 jdk/meson.build:15:0: ERROR: Dependency "jdk" not found, tried system
 FAILED: libdir/storer.cpython-o.p/meson-generated_libdir_storer.pyx.c.o 
