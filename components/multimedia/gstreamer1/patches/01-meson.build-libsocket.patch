@@ -1,0 +1,117 @@
+diff -ur gstreamer-1.18.5.orig/gst/meson.build gstreamer-1.18.5/gst/meson.build
+--- gstreamer-1.18.5.orig/gst/meson.build	2021-09-08 14:01:48.743989500 +0000
++++ gstreamer-1.18.5/gst/meson.build	2021-10-25 23:38:36.506424498 +0000
+@@ -246,8 +246,8 @@
+     # HACK, change include paths in .y and .l in final version.
+     include_directories('parse')],
+   install : true,
+-  dependencies : [gobject_dep, gmodule_dep, glib_dep, mathlib, dl_dep] + backtrace_deps
+-                   + platform_deps,
++  dependencies : [gobject_dep, gmodule_dep, glib_dep, mathlib, dl_dep]
++	+ network_deps + backtrace_deps + platform_deps,
+ )
+ 
+ if build_gir
+diff -ur gstreamer-1.18.5.orig/libs/gst/helpers/meson.build gstreamer-1.18.5/libs/gst/helpers/meson.build
+--- gstreamer-1.18.5.orig/libs/gst/helpers/meson.build	2021-09-08 14:01:48.755989600 +0000
++++ gstreamer-1.18.5/libs/gst/helpers/meson.build	2021-10-25 23:38:36.506659793 +0000
+@@ -112,7 +112,8 @@
+   executable('gst-ptp-helper', 'gst-ptp-helper.c',
+     c_args : gst_c_args,
+     include_directories : [configinc, libsinc],
+-    dependencies : [gio_dep, gobject_dep, glib_dep, mathlib, gst_dep, cap_dep],
++    dependencies : [gio_dep, gobject_dep, glib_dep, mathlib, gst_dep, cap_dep]
++	+ network_deps,
+     install_dir : helpers_install_dir,
+     install : true)
+ 
+diff -ur gstreamer-1.18.5.orig/libs/gst/net/meson.build gstreamer-1.18.5/libs/gst/net/meson.build
+--- gstreamer-1.18.5.orig/libs/gst/net/meson.build	2021-09-08 14:01:48.755989600 +0000
++++ gstreamer-1.18.5/libs/gst/net/meson.build	2021-10-25 23:38:36.506823841 +0000
+@@ -32,7 +32,7 @@
+   soversion : soversion,
+   darwin_versions : osxversion,
+   install : true,
+-  dependencies : [gio_dep, gst_base_dep],
++  dependencies : [gio_dep, gst_base_dep] + network_deps,
+ )
+ 
+ if build_gir
+diff -ur gstreamer-1.18.5.orig/meson.build gstreamer-1.18.5/meson.build
+--- gstreamer-1.18.5.orig/meson.build	2021-09-08 14:01:48.759989500 +0000
++++ gstreamer-1.18.5/meson.build	2021-10-25 23:45:39.509464275 +0000
+@@ -500,6 +500,21 @@
+ # Also provides clock_gettime in glibc < 2.17
+ rt_lib = cc.find_library('rt', required : false)
+ 
++#
++# Solaris and Illumos distros split a lot of networking-related code
++# into '-lsocket -lnsl'.  Anything that calls socketpair(), getifaddr(),
++# etc. probably needs to include network_deps
++#
++socket_lib = cc.find_library('socket', required: false)
++nsl_lib    = cc.find_library('nsl',    required: false)
++network_deps = []
++if socket_lib.found()
++  network_deps += socket_lib
++endif
++if nsl_lib.found()
++  network_deps += nsl_lib
++endif
++
+ gir = find_program('g-ir-scanner', required : get_option('introspection'))
+ gnome = import('gnome')
+ 
+diff -ur gstreamer-1.18.5.orig/pkgconfig/gstreamer-net-uninstalled.pc.in gstreamer-1.18.5/pkgconfig/gstreamer-net-uninstalled.pc.in
+--- gstreamer-1.18.5.orig/pkgconfig/gstreamer-net-uninstalled.pc.in	2021-09-08 14:01:48.759989500 +0000
++++ gstreamer-1.18.5/pkgconfig/gstreamer-net-uninstalled.pc.in	2021-10-25 23:47:52.900962013 +0000
+@@ -11,5 +11,5 @@
+ Requires: gstreamer-@GST_API_VERSION@ = @VERSION@ gio-2.0
+ Version: @VERSION@
+ 
+-Libs: -L${libdir} -lgstnet-@GST_API_VERSION@
++Libs: -L${libdir} -lgstnet-@GST_API_VERSION@ @LIBSOCKET@ @LIBNSL@
+ Cflags: -I@abs_top_srcdir@/libs -I@abs_top_builddir@/libs
+diff -ur gstreamer-1.18.5.orig/pkgconfig/gstreamer-net.pc.in gstreamer-1.18.5/pkgconfig/gstreamer-net.pc.in
+--- gstreamer-1.18.5.orig/pkgconfig/gstreamer-net.pc.in	2021-09-08 14:01:48.759989500 +0000
++++ gstreamer-1.18.5/pkgconfig/gstreamer-net.pc.in	2021-10-25 23:47:13.426442177 +0000
+@@ -11,5 +11,5 @@
+ Description: Network-enabled GStreamer plug-ins and clocking
+ Requires: gstreamer-@GST_API_VERSION@ gio-2.0
+ Version: @VERSION@
+-Libs: -L${libdir} -lgstnet-@GST_API_VERSION@
++Libs: -L${libdir} -lgstnet-@GST_API_VERSION@ @LIBSOCKET@ @LIBNSL@
+ Cflags: -I${includedir}
+diff -ur gstreamer-1.18.5.orig/pkgconfig/meson.build gstreamer-1.18.5/pkgconfig/meson.build
+--- gstreamer-1.18.5.orig/pkgconfig/meson.build	2021-09-08 14:01:48.759989500 +0000
++++ gstreamer-1.18.5/pkgconfig/meson.build	2021-10-25 23:49:50.822279295 +0000
+@@ -9,6 +9,8 @@
+ pkgconf.set('VERSION', gst_version)
+ pkgconf.set('LIBM', mathlib.found() ? '-lm' : '')
+ pkgconf.set('LIBRT', rt_lib.found() ? '-lrt' : '')
++pkgconf.set('LIBSOCKET', socket_lib.found() ? '-lsocket' : '')
++pkgconf.set('LIBNSL',    nsl_lib.found() ? '-lnsl' : '')
+ 
+ # Requires.private
+ pkgconf.set('UNWIND_REQUIRE', cdata.has('HAVE_UNWIND') ? 'libunwind' : '')
+diff -ur gstreamer-1.18.5.orig/tests/check/meson.build gstreamer-1.18.5/tests/check/meson.build
+--- gstreamer-1.18.5.orig/tests/check/meson.build	2021-09-08 14:01:48.787989100 +0000
++++ gstreamer-1.18.5/tests/check/meson.build	2021-10-25 23:38:36.507237568 +0000
+@@ -150,7 +150,7 @@
+         cpp_args : gst_c_args + test_defines,
+         include_directories : [configinc],
+         link_with : link_with_libs,
+-        dependencies : test_deps + glib_deps + gst_deps,
++        dependencies : test_deps + glib_deps + gst_deps + network_deps,
+     )
+ 
+     env = environment()
+diff -ur gstreamer-1.18.5.orig/tests/misc/meson.build gstreamer-1.18.5/tests/misc/meson.build
+--- gstreamer-1.18.5.orig/tests/misc/meson.build	2021-09-08 14:01:48.787989100 +0000
++++ gstreamer-1.18.5/tests/misc/meson.build	2021-10-25 23:38:36.507365598 +0000
+@@ -1,3 +1,4 @@
+ executable('netclock-replay', 'netclock-replay.c',
+     include_directories: libsinc,
+-    dependencies : [gio_dep, gst_dep])
++    dependencies : [gio_dep, gst_dep] + network_deps
++)
