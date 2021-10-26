@@ -14,13 +14,13 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS=	32_and_64
+BUILD_STYLE=	meson
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-base1
-COMPONENT_VERSION= 1.16.2
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.18.5
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/base
@@ -28,10 +28,10 @@ COMPONENT_SRC_NAME= gst-plugins-base
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b13e73e2fe74a4166552f9577c3dcb24bed077021b9c7fa600d910ec6987816a
+  sha256:960b7af4585700db0fdd5b843554e11e2564fed9e061f591fae88a7be6446fa3
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL= http://gstreamer.freedesktop.org/
+COMPONENT_PROJECT_URL= https://gstreamer.freedesktop.org/
 COMPONENT_LICENSE= GPLv2,LGPLv2
 
 include $(WS_MAKE_RULES)/common.mk
@@ -45,17 +45,23 @@ CFLAGS += -I/usr/X11/include
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-CONFIGURE_OPTIONS += --enable-orc
-CONFIGURE_OPTIONS += --enable-pango
-CONFIGURE_OPTIONS += --disable-gles2
-CONFIGURE_OPTIONS += --enable-external
-CONFIGURE_OPTIONS += --enable-experimental
-CONFIGURE_OPTIONS.32 += --disable-introspection
-CONFIGURE_OPTIONS.64 += --enable-introspection
-CONFIGURE_OPTIONS += --disable-alsa
-CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
-CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
-CONFIGURE_OPTIONS += --with-default-videosink=autovideosink
+CONFIGURE_OPTIONS += -Dalsa=disabled
+CONFIGURE_OPTIONS += -Dorc=enabled
+CONFIGURE_OPTIONS += -Dpango=enabled
+#CONFIGURE_OPTIONS += --disable-gles2
+#CONFIGURE_OPTIONS += -Dgl=disabled
+CONFIGURE_OPTIONS += -Dgl_api=opengl
+CONFIGURE_OPTIONS += -Dgl_platform=glx,egl
+CONFIGURE_OPTIONS += -Dgl_winsys=x11,egl
+CONFIGURE_OPTIONS += -Dgl-graphene=disabled
+#CONFIGURE_OPTIONS += --enable-external
+#CONFIGURE_OPTIONS += --enable-experimental
+CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
+CONFIGURE_OPTIONS.64 += -Dintrospection=enabled
+#CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
+#CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
+#CONFIGURE_OPTIONS += --with-default-videosink=autovideosink
+CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -64,24 +70,35 @@ COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ENV += CC="$(CC)"
 
 unexport SHELLOPTS
-
-COMPONENT_TEST_TRANSFORMS= \
-	'-n ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/PASS/p" '  \
-	'-e "/SKIP/p" '  \
-	'-e "/XFAIL/p" ' \
-	'-e "/FAIL/p" '  \
-	'-e "/XPASS/p" ' \
-	'-e "/ERROR/p" '
+# (first) delete the timing information from any line
+# delete the "exit status N", it can cause issues too
+# print lines that start with " N/NNN"
+# print everything between "^Ok:" and "^Timeout:"
+# delete the ninja log-related stuff at the end
+# elements_compositor and elements_libvisual can non-determinstically
+# fail, so leave them and the totals out
+# many of the GL tests require a DISPLAY, so filter out libs_gstgl*,
+# elements_gl*, and pipelines_gl*
+COMPONENT_TEST_TRANSFORMS += \
+    '-n ' \
+    '-e "/elements_compositor/d" ' \
+    '-e "/elements_libvisual/d" ' \
+    '-e "/libs_gstgl/d" ' \
+    '-e "/elements_gl/d" ' \
+    '-e "/pipelines_gl/d" ' \
+    '-e "s/[ 	]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
+    '-e "s/[ 	]*exit status [0-9][0-9]*//" ' \
+    '-e "/^[ 	]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
+    '-e "/^Summary of/p" ' \
+    '-e "/^Ok:/,/^Timeout:/d" ' \
+    '-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/library/mesa
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/libtheora
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/desktop/cairo
