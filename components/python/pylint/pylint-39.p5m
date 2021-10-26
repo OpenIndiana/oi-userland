@@ -1,31 +1,46 @@
 #
-# This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"), version 1.0.
-# You may only use this file in accordance with the terms of version
-# 1.0 of the CDDL.
+# CDDL HEADER START
 #
-# A full copy of the text of the CDDL should have accompanied this
-# source.  A copy of the CDDL is also available via the Internet at
-# http://www.illumos.org/license/CDDL.
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright 2021 Gary Mills
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-#
-# Copyright 2021 <contributor>
-#
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=pkg.fmri value=pkg:/developer/python/pylint-39@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="pylint - python code static checker"
+set name=pkg.description value="Pylint is a Python static code analysis tool which looks for programming errors, helps enforcing a coding standard, sniffs for code smells and offers simple refactoring suggestions."
+set name=com.oracle.info.description value="the pylint Python code static checker for Python 3.9"
+set name=com.oracle.info.tpno value=9026
+set name=info.classification value="org.opensolaris.category.2008:Development/Python"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=org.opensolaris.arc-caseid \
+    value=PSARC/2009/325
 
-license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+file path=usr/bin/epylint-3.9 pkg.depend.bypass-generate=.*
+file path=usr/bin/pylint-3.9 pkg.depend.bypass-generate=.*
+file path=usr/bin/pyreverse-3.9 pkg.depend.bypass-generate=.*
+file path=usr/bin/symilar-3.9 pkg.depend.bypass-generate=.*
 
-file path=usr/bin/epylint-3.9
-file path=usr/bin/pylint-3.9
-file path=usr/bin/pyreverse-3.9
-file path=usr/bin/symilar-3.9
 file path=usr/lib/python3.9/vendor-packages/pylint-$(COMPONENT_VERSION)-py3.9.egg-info/PKG-INFO
 file path=usr/lib/python3.9/vendor-packages/pylint-$(COMPONENT_VERSION)-py3.9.egg-info/SOURCES.txt
 file path=usr/lib/python3.9/vendor-packages/pylint-$(COMPONENT_VERSION)-py3.9.egg-info/dependency_links.txt
@@ -141,14 +156,30 @@ file path=usr/lib/python3.9/vendor-packages/pylint/utils/ast_walker.py
 file path=usr/lib/python3.9/vendor-packages/pylint/utils/file_state.py
 file path=usr/lib/python3.9/vendor-packages/pylint/utils/pragma_parser.py
 file path=usr/lib/python3.9/vendor-packages/pylint/utils/utils.py
-file path=usr/share/doc/pylint/README.rst
-file path=usr/share/doc/pylint/examples/custom.py
-file path=usr/share/doc/pylint/examples/custom_raw.py
-file path=usr/share/doc/pylint/examples/pylint.el
-file path=usr/share/doc/pylint/examples/pylintrc
-file path=usr/share/doc/pylint/examples/pylintrc_camelcase
-file path=usr/share/doc/pylint/faq.rst
-file path=usr/share/doc/pylint/index.rst
-file path=usr/share/doc/pylint/intro.rst
-file path=usr/share/doc/pylint/support.rst
-file path=usr/share/doc/pylint/tutorial.rst
+
+link path=usr/bin/epylint target=epylint-3.9 mediator=python3 mediator-version=3.9
+link path=usr/bin/pylint target=pylint-3.9 mediator=python3 mediator-version=3.9
+link path=usr/bin/pyreverse target=pyreverse-3.9 mediator=python3 mediator-version=3.9
+link path=usr/bin/symilar target=symilar-3.9 mediator=python3 mediator-version=3.9
+
+license pylint.license license="GPLv2"
+
+# force a dependency on astroid-39
+depend fmri=library/python/astroid-39 type=require
+
+# force a dependency on isort-39
+depend fmri=library/python/isort-39 type=require
+
+# force a dependency on mccabe-39
+depend fmri=library/python/mccabe-39 type=require
+
+# force a dependency on toml-39
+depend fmri=library/python/toml-39 type=require
+
+# force a dependency on the Python 3.9 runtime
+depend fmri=__TBD pkg.debug.depend.file=python3.9 \
+       pkg.debug.depend.path=usr/bin type=require
+
+# force a dependency on the pylint package
+depend fmri=developer/python/pylint@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    type=require

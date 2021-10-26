@@ -19,26 +19,30 @@
 # CDDL HEADER END
 
 #
+# Copyright 2021 Gary Mills
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+
+BUILD_STYLE=	setup.py
+BUILD_BITS=	NO_ARCH
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylint
-COMPONENT_VERSION=	0.25.2
+COMPONENT_VERSION=	2.9.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:757f2b97071a87fb7e4d017fc7c9eb74f26dcf412e683b614d3c5d54b217212d
+  sha256:9f0c8e6cd5c812fe4cc65b11dbce0573302171e385fcd9ebb48e0a5e99fd1dde
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/PyCQA/pylint/archive/$(COMPONENT_NAME)-version-$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL=  http://www.logilab.org/project/pylint/
+  https://github.com/PyCQA/$(COMPONENT_NAME)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_PROJECT_URL=  https://github.com/PyCQA/$(COMPONENT_NAME)
 
-PYTHON_VERSIONS=	2.7
+# Set python version used by this product
+PYTHON_VERSION=		3.9
+PYTHON_VERSIONS=	3.9
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # There are several pylint documentation files that setup.py isn't installing
 # but are present in the pylint package on other distributions. Copy them into
@@ -50,17 +54,17 @@ PDOC_PYLINT_EXAMPLES =	$(PDOC_PYLINT)/examples
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/doc/beginner_pylint_tutorial.txt $(PDOC_PYLINT) ;
+	$(CP) $(COMPONENT_SRC)/doc/tutorial.rst $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/doc/FAQ.txt $(PDOC_PYLINT) ;
+	$(CP) $(COMPONENT_SRC)/doc/faq.rst $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/doc/features.txt $(PDOC_PYLINT) ;
+	$(CP) $(COMPONENT_SRC)/doc/index.rst $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/doc/manual.txt $(PDOC_PYLINT) ;
+	$(CP) $(COMPONENT_SRC)/doc/intro.rst $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/doc/quickstart.txt $(PDOC_PYLINT) ;
+	$(CP) $(COMPONENT_SRC)/doc/support.rst $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/README $(PDOC_PYLINT) ;
+	$(CP) $(COMPONENT_SRC)/README.rst $(PDOC_PYLINT) ;
 
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PDOC_PYLINT_EXAMPLES) ;
@@ -79,46 +83,44 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTOUSRBINDIR); $(MV) pylint pylint-$(PYTHON_VERSION)) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTOUSRBINDIR); $(MV) pylint-gui pylint-gui-$(PYTHON_VERSION)) ;
-COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTOUSRBINDIR); $(MV) pyreverse pyreverse-$(PYTHON_VERSION)) ;
 COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTOUSRBINDIR); $(MV) symilar symilar-$(PYTHON_VERSION)) ;
 
+# The tests are run using python 3.9 only and require that
+# the python-39 package is installed (does not have to be the default python).
+# The astroid-39, isort-39, mccabe-39, and toml-39 packages must also
+# be installed
 
-# common targets
+# Use the python 3.9 libraries for testing.
+test: PYTHON_VERSION=3.9
 
-build:		$(BUILD_NO_ARCH)
+COMPONENT_TEST_ENV = PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 
-install:	$(INSTALL_NO_ARCH)
-
-# The tests are run using python 2.7 only and require that
-# the python-27 package is installed (does not have to be the default python).
-
-# Use the python 2.7 libraries for testing.
-test: PYTHON_VERSION=2.7
-
-# logilab-common and logilab-astng are runtime dependencies of pylint,
-# and we need to use their latest versions from this workspace.
-# We can't just add their install targets as dependencies here,
-# so just "gmake install" in the logilab-common and logilab-astng
-# component directories before running the pylint tests.
-COMPONENT_PRE_TEST_ACTION = ($(GMAKE) -C \
-	$(COMPONENT_DIR)/../logilab-common install; \
-	$(GMAKE) -C $(COMPONENT_DIR)/../logilab-astng install )
-
-COMPONENT_TEST_ENV = PYTHONPATH=$(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)$(PYTHON_VENDOR_PACKAGES):$(COMPONENT_DIR)/../logilab-astng/build/prototype/$(MACH)$(PYTHON_VENDOR_PACKAGES):$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
-
-# Run pytest-2.7 from logilab-common's proto area for now, until the
-# new version of logilab-common containing pytest is in CBE.
-# Then we can change it to /usr/bin/pytest-$(PYTHON_VERSION).
-COMPONENT_TEST_CMD = $(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)/usr/bin/pytest-$(PYTHON_VERSION)
+# Run pytest-3.9
+COMPONENT_TEST_DIR = $(COMPONENT_SRC)/tests
+COMPONENT_TEST_CMD = /usr/bin/pytest-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS =
 
-# Expected failures for test target:
-# 799 test cases, 2 errors, 3 skipped
-# 10 modules OK (1 failed)
+# Typical failures for test target:
+#=========================== short test summary info ============================
+#FAILED test_import_graph.py::test_dependencies_graph[tests/regrtest_data/foo.dot]
+#FAILED test_self.py::TestRunTC::test_pkginfo - AssertionError: expected outpu...
+#FAILED test_self.py::TestRunTC::test_enable_all_works - assert "*************...
+#...
+#FAILED checkers/unittest_typecheck.py::TestTypeChecker::test_nomember_on_c_extension_error_msg
+#FAILED checkers/unittest_typecheck.py::TestTypeChecker::test_nomember_on_c_extension_info_msg
+#=== 14 failed, 1375 passed, 59 skipped, 200 deselected in 263.14s (0:04:23) ====
 
-test:		$(TEST_NO_ARCH)
+# Manually added test dependencies
+REQUIRED_PACKAGES += library/python/flaky
+REQUIRED_PACKAGES += library/python/hypothesis
+REQUIRED_PACKAGES += library/python/isort
+REQUIRED_PACKAGES += library/python/mccabe
+REQUIRED_PACKAGES += library/python/pluggy
+REQUIRED_PACKAGES += library/python/py
+REQUIRED_PACKAGES += library/python/pytest
+REQUIRED_PACKAGES += library/python/pytest-benchmark
+REQUIRED_PACKAGES += library/python/pytest-reporter
 
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-39
