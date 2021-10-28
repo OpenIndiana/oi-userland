@@ -1,0 +1,34 @@
+Meson sets host_machine.cpu_family to x86_64 even for 32bit build 
+(intel). As a workaround to distinguish bitness of the system we can
+use CFLAGS for the test.
+
+Should be evaluated whether there is no other possibility (e.g. to
+provide 32bit gcc binary) and eventually send it to upstream.
+
+From 69f3a3221dd7dfd6f293269a304313b7f872f520 Mon Sep 17 00:00:00 2001
+From: Petr Sumbera <petr.sumbera@oracle.com>
+Date: Wed, 1 Apr 2020 07:41:57 -0700
+Subject: [PATCH] Meson should set correctly host_machine.cpu_family for 32bit
+ builds
+
+---
+--- meson-0.59.2/mesonbuild/compilers/detect.py
++++ meson-0.59.2/mesonbuild/compilers/detect.py
+@@ -1162,7 +1162,7 @@ Detect GNU compiler platform type (Apple
+     """
+     # Arguments to output compiler pre-processor defines to stdout
+     # gcc, g++, and gfortran all support these arguments
+-    args = compiler + ['-E', '-dM', '-']
++    args = compiler + os.environ.get('CFLAGS', '').split() + ['-E', '-dM', '-']
+     p, output, error = Popen_safe(args, write='', stdin=subprocess.PIPE)
+     if p.returncode != 0:
+         raise EnvironmentException('Unable to detect GNU compiler type:\n' + output + error)
+@@ -1186,7 +1186,7 @@ def _get_clang_compiler_defines(compiler
+     """
+     Get the list of Clang pre-processor defines
+     """
+-    args = compiler + ['-E', '-dM', '-']
++    args = compiler + os.environ.get('CFLAGS', '').split() + ['-E', '-dM', '-']
+     p, output, error = Popen_safe(args, write='', stdin=subprocess.PIPE)
+     if p.returncode != 0:
+         raise EnvironmentException('Unable to get clang pre-processor defines:\n' + output + error)
