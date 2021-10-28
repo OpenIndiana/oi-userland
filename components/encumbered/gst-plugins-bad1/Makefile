@@ -12,35 +12,33 @@
 #
 # Copyright 2016-2017 Aurelien Larcher.  All rights reserved.
 # Copyright 2019 Michal Nowak
+# Copyright 2021 Tim Mooney.  All rights reserved.
 #
 
 BUILD_BITS= 32_and_64
+BUILD_STYLE=	meson
+USE_OPENSSL11=	yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gst-plugins-bad1
-COMPONENT_VERSION= 1.16.2
-COMPONENT_REVISION= 2
-COMPONENT_SUMMARY= GNOME streaming media framework plugins
+COMPONENT_NAME=		gst-plugins-bad1
+COMPONENT_VERSION=	1.18.5
+COMPONENT_SUMMARY=	GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
-COMPONENT_FMRI= library/audio/gstreamer1/plugin/bad
-COMPONENT_SRC_NAME= gst-plugins-bad
-COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_FMRI=		library/audio/gstreamer1/plugin/bad
+COMPONENT_SRC_NAME=	gst-plugins-bad
+COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f1cb7aa2389569a5343661aae473f0a940a90b872001824bc47fa8072a041e74
+  sha256:a164923b94f0d08578a6fcaeaac6e0c05da788a46903a1086870e9ca45ad678e
 COMPONENT_ARCHIVE_URL= \
-  http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
-COMPONENT_LICENSE= LGPLv2
+  https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/
+COMPONENT_LICENSE=	LGPLv2
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && aclocal -I ./m4 -I./common/m4 &&\
-                          autoheader &&\
-                          automake -a -f -c --gnu &&\
-                          autoconf )
 gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
@@ -54,33 +52,45 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --disable-examples
-CONFIGURE_OPTIONS += --enable-external
-CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
-CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
-CONFIGURE_OPTIONS += --with-default-videosink=autovideosink
-CONFIGURE_OPTIONS += --enable-openexr
+CONFIGURE_OPTIONS += -Dexamples=disabled
+CONFIGURE_OPTIONS += -Dopenexr=enabled
+CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
+CONFIGURE_OPTIONS.64 += -Dintrospection=enabled
+# if someone can weigh in on the fdk-aac license, adding fdk-aac might be
+# be nice.
+# Openh264 has no licensing issues but needs some porting
+CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CXX="$(CXX)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CXXFLAGS="$(CXXFLAGS)"
+COMPONENT_INSTALL_ENV += CC="$(CC)"
+COMPONENT_INSTALL_ENV += CXX="$(CXX)"
 COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ENV += CXXFLAGS="$(CXXFLAGS)"
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 unexport SHELLOPTS
-COMPONENT_TEST_TRANSFORMS= \
+# (first) delete the timing information from any line
+# delete the "exit status N", it can cause issues too
+# print lines that start with " N/NNN"
+# print everything between "^Ok:" and "^Timeout:"
+# delete the ninja log-related stuff at the end
+COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/PASS/p" '  \
-	'-e "/SKIP/p" '  \
-	'-e "/XFAIL/p" ' \
-	'-e "/FAIL/p" '  \
-	'-e "/XPASS/p" ' \
-	'-e "/ERROR/p" '
+	'-e "s/[ 	]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
+	'-e "s/[ 	]*exit status [0-9][0-9]*//" ' \
+	'-e "/^[ 	]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
+	'-e "/^Summary of/p" ' \
+	'-e "/^Ok:/,/^Timeout:/p" ' \
+	'-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
+
 
 # Build dependencies
+# gstkcms now required libdrm >= 2.4.98, so not currently being built
 REQUIRED_PACKAGES += system/header/header-drm
 
 # Auto-generated dependencies
@@ -96,10 +106,10 @@ REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/audio/libdca
 REQUIRED_PACKAGES += library/audio/libgsm
 REQUIRED_PACKAGES += library/audio/openal
+REQUIRED_PACKAGES += library/audio/soundtouch
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/graphics/libvdpau
 REQUIRED_PACKAGES += library/ilmbase
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libofa
@@ -110,7 +120,7 @@ REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/opus
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libdvdnav
 REQUIRED_PACKAGES += library/video/libdvdread
@@ -121,5 +131,4 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += video/rtmpdump
 REQUIRED_PACKAGES += web/curl
-REQUIRED_PACKAGES += x11/library/libdrm
 REQUIRED_PACKAGES += x11/library/libx11
