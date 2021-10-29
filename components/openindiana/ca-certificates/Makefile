@@ -13,6 +13,7 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Till Wegmueller
+# Copyright 2021 David Stes
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -21,6 +22,7 @@ COMPONENT_NAME= ca-certificates
 COMPONENT_VERSION_MAJOR=3
 COMPONENT_VERSION_MINOR=71
 COMPONENT_VERSION=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Common CA certificates
 COMPONENT_SRC=		nss-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
