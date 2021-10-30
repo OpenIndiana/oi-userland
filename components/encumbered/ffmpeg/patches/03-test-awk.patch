@@ -1,17 +1,23 @@
---- ffmpeg-2.8.10/tests/fate/filter-video.mak.orig	2016-12-12 20:08:08.259752860 +0100
-+++ ffmpeg-2.8.10/tests/fate/filter-video.mak	2016-12-12 20:08:18.680896002 +0100
-@@ -482,7 +482,7 @@
+
+Updated version of Alexander Pyhalov's patch from earlier builds, switches
+all instances of 'awk' to 'gawk' in the FATE test suite.
+
+diff -ur ffmpeg-4.4.1.orig/tests/fate/filter-video.mak ffmpeg-4.4.1/tests/fate/filter-video.mak
+--- ffmpeg-4.4.1.orig/tests/fate/filter-video.mak	2021-10-24 15:47:07.000000000 +0000
++++ ffmpeg-4.4.1/tests/fate/filter-video.mak	2021-10-30 03:21:58.297307078 +0000
+@@ -677,7 +677,7 @@
  tests/pixfmts.mak: TAG = GEN
- tests/pixfmts.mak: ffmpeg$(EXESUF)
+ tests/pixfmts.mak: ffmpeg$(PROGSSUF)$(EXESUF) | tests
  	$(M)printf "PIXFMTS = " > $@
 -	$(Q)$(TARGET_EXEC) $(TARGET_PATH)/$< -pix_fmts list 2> /dev/null | awk 'NR > 8 && /^IO/ { printf $$2 " " }' >> $@
 +	$(Q)$(TARGET_EXEC) $(TARGET_PATH)/$< -pix_fmts list 2> /dev/null | gawk 'NR > 8 && /^IO/ { printf $$2 " " }' >> $@
  	$(Q)printf "\n" >> $@
  
  RUNNING_PIXFMTS_TESTS := $(filter check fate fate-list fate-filter fate-vfilter fate-filter-pixdesc%,$(MAKECMDGOALS))
---- ffmpeg-2.8.10/tests/fate-run.sh.orig	2016-12-12 20:20:57.968486091 +0100
-+++ ffmpeg-2.8.10/tests/fate-run.sh	2016-12-12 20:14:43.434323816 +0100
-@@ -39,7 +39,7 @@
+diff -ur ffmpeg-4.4.1.orig/tests/fate-run.sh ffmpeg-4.4.1/tests/fate-run.sh
+--- ffmpeg-4.4.1.orig/tests/fate-run.sh	2021-10-24 15:47:07.000000000 +0000
++++ ffmpeg-4.4.1/tests/fate-run.sh	2021-10-30 03:20:43.642561202 +0000
+@@ -41,7 +41,7 @@
  # $1=value1, $2=value2, $3=threshold
  # prints 0 if absolute difference between value1 and value2 is <= threshold
  compare(){
@@ -20,7 +26,25 @@
  }
  
  do_tiny_psnr(){
-@@ -204,11 +204,11 @@
+@@ -159,7 +159,7 @@
+     encfile="${outdir}/${test}.out"
+     cleanfiles="$cleanfiles $encfile"
+     ffmpeg -y "$@" $(target_path $encfile) || return
+-    do_md5sum $encfile | awk '{print $1}'
++    do_md5sum $encfile | gawk '{print $1}'
+ }
+ 
+ pcm(){
+@@ -368,7 +368,7 @@
+     fuzz=${3:-0.001}
+     ffmpeg $FLAGS $ENC_OPTS \
+         -lavfi "testsrc2=size=300x200:rate=1:duration=5,format=${pixfmt},split[ref][tmp];[tmp]avgblur=4[enc];[enc][ref]${refcmp},metadata=print:file=-" \
+-        -f null /dev/null | awk -v ref=${ref} -v fuzz=${fuzz} -f ${base}/refcmp-metadata.awk -
++        -f null /dev/null | gawk -v ref=${ref} -v fuzz=${fuzz} -f ${base}/refcmp-metadata.awk -
+ }
+ 
+ pixfmt_conversion(){
+@@ -406,11 +406,11 @@
      in_fmts=${outfile}_in_fmts
  
      # exclude pixel formats which are not supported as input
@@ -35,3 +59,12 @@
      pix_fmts=$(comm -12 $scale_exclude_fmts $in_fmts)
  
      outertest=$test
+@@ -481,7 +481,7 @@
+     packetfile="${outdir}/${test}.ffprobe"
+     cleanfiles="$concatfile $packetfile"
+ 
+-    awk "{gsub(/%SRCFILE%/, \"$sample\"); print}" $template > $concatfile
++    gawk "{gsub(/%SRCFILE%/, \"$sample\"); print}" $template > $concatfile
+ 
+     if [ "$mode" = "md5" ]; then
+         run ffprobe${PROGSUF}${EXECSUF} -bitexact -show_streams -show_packets -safe 0 $extra_args $(target_path $concatfile) | tr -d '\r' > $packetfile

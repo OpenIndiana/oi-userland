@@ -17,13 +17,12 @@ USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ffmpeg
-COMPONENT_VERSION= 3.2.14
-COMPONENT_REVISION= 4
+COMPONENT_VERSION= 4.4.1
 COMPONENT_SUMMARY= A very fast video and audio converter
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d918bf3cec12e865f03eaf01c9a4b4d49bbd311217cb56f02fa7de95730ee096
+  sha256:8fc9f20ac5ed95115a9e285647add0eedd5cc1a98a039ada14c132452f98ac42
 COMPONENT_ARCHIVE_URL= \
   https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.ffmpeg.org/
@@ -32,9 +31,7 @@ COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_FMRI = video/ffmpeg
 
 include $(WS_MAKE_RULES)/encumbered.mk
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS.32 += -fno-rename-registers
 CFLAGS.32 += -fomit-frame-pointer
@@ -54,6 +51,8 @@ CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --cc=$(CC)
 CONFIGURE_OPTIONS += --enable-runtime-cpudetect 
 CONFIGURE_OPTIONS += --enable-mmx --enable-sse --enable-ssse3
+# force additional new CPU instruction enablement
+CONFIGURE_OPTIONS += --enable-avx
 CONFIGURE_OPTIONS += --disable-debug
 CONFIGURE_OPTIONS += --enable-nonfree
 CONFIGURE_OPTIONS += --enable-gpl
@@ -64,6 +63,7 @@ CONFIGURE_OPTIONS += --enable-libgsm
 CONFIGURE_OPTIONS += --enable-libxvid
 CONFIGURE_OPTIONS += --enable-libx264
 CONFIGURE_OPTIONS += --enable-libx265
+CONFIGURE_OPTIONS += --enable-libdav1d
 # Don't enable it, resulting binary is not 
 # redistributable
 #CONFIGURE_OPTIONS += --enable-libfaac
@@ -71,7 +71,9 @@ CONFIGURE_OPTIONS += --enable-libtheora
 CONFIGURE_OPTIONS += --enable-libmp3lame
 CONFIGURE_OPTIONS += --enable-libvorbis
 CONFIGURE_OPTIONS += --enable-libvpx
-CONFIGURE_OPTIONS += --enable-x11grab
+# x11grab has been replaced by the x11xcb options
+#CONFIGURE_OPTIONS += --enable-x11grab
+CONFIGURE_OPTIONS += --enable-libxcb
 CONFIGURE_OPTIONS += --enable-libspeex
 CONFIGURE_OPTIONS += --enable-pthreads
 # Incompatible with GPLv2
@@ -79,37 +81,45 @@ CONFIGURE_OPTIONS += --enable-pthreads
 CONFIGURE_OPTIONS += --enable-libass
 CONFIGURE_OPTIONS += --enable-openssl
 CONFIGURE_OPTIONS += --enable-openal
-CONFIGURE_OPTIONS += --enable-avresample
+# don't enable avresample any more, it's long-deprecated.  Use swresample
+# instead
+#CONFIGURE_OPTIONS += --enable-avresample
+CONFIGURE_OPTIONS += --enable-swresample
 # Incompatible with GPLv2
 #CONFIGURE_OPTIONS += --enable-libopencore-amrwb
-CONFIGURE_OPTIONS += --enable-libschroedinger
+# libschroedinger support was removed in 3.4.x
+#CONFIGURE_OPTIONS += --enable-libschroedinger
 CONFIGURE_OPTIONS += --enable-libopenjpeg
 CONFIGURE_OPTIONS += --enable-librtmp
 CONFIGURE_OPTIONS += --enable-vdpau
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
+# these tests cause problems, skip them
+CONFIGURE_OPTIONS += --ignore-tests=source
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-
-# Use binaries and libraries from $(PROTO_DIR) for tests
-COMPONENT_TEST_ENV+= PATH=$(PROTO_DIR)/usr/bin:$(PATH)
-COMPONENT_TEST_ENV+= LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results.master
-
-COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" '
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test:	$(TEST_32_and_64)
+COMPONENT_TEST_ENV.32 += PATH=$(PROTO_DIR)/usr/bin/$(MACH$(BITS)):$(PATH)
+COMPONENT_TEST_ENV.32 += LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib
+COMPONENT_TEST_ENV.64 += PATH=$(PROTO_DIR)/usr/bin:$(PATH)
+COMPONENT_TEST_ENV.64 += LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH$(BITS))
+COMPONENT_TEST_ENV += $(COMPONENT_TEST_ENV.$(BITS))
 
-# Build dependencies
-REQUIRED_PACKAGES += image/library/openjpeg
+COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" -e "/^IGNORE/p" '
+
+# You must run the 'install' target before running the test
+# suite, as we use binaries and libraries from $(PROTO_DIR) for tests
+# to reduce issues with all the test binaries not being able to find
+# ffmpeg's libraries.
+test:	install $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += audio/lame
+REQUIRED_PACKAGES += codec/dav1d
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += compress/bzip2
@@ -122,7 +132,6 @@ REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/video/libass
-REQUIRED_PACKAGES += library/video/libschroedinger
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += library/video/x265
