@@ -1,0 +1,15 @@
+
+Illumos has dlsym(), let meson detect it.
+
+diff -ur dav1d-0.9.2.orig/meson.build dav1d-0.9.2/meson.build
+--- dav1d-0.9.2.orig/meson.build	2021-09-03 09:42:36.000000000 +0000
++++ dav1d-0.9.2/meson.build	2021-10-31 03:10:51.254571251 +0000
+@@ -161,7 +176,7 @@
+ endif
+ 
+ libdl_dependency = []
+-if host_machine.system() == 'linux'
++if host_machine.system() == 'linux' or host_machine.system() == 'sunos'
+     libdl_dependency = cc.find_library('dl', required : false)
+     if cc.has_function('dlsym', prefix : '#include <dlfcn.h>', args : test_args, dependencies : libdl_dependency)
+         cdata.set('HAVE_DLSYM', 1)
