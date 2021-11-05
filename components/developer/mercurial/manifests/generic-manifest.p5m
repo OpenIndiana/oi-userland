@@ -1,46 +1,20 @@
 #
-# CDDL HEADER START
-#
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 
-#
-# Copyright 2021 Gary Mills
-# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
-#
-
-set name=pkg.fmri \
-    value=pkg:/developer/versioning/mercurial-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="The Mercurial Source Control Management System"
-set name=pkg.description \
-    value="A fast, lightweight source control management system designed for efficient handling of very large distributed projects."
-set name=com.oracle.info.description \
-    value="the Mercurial source control management system"
-set name=info.classification \
-    value="org.opensolaris.category.2008:Development/Source Code Management"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+# Copyright 2021 <contributor>
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2006/417
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-#
-link path=usr/bin/hg target=hg-$(PYVER) mediator=python3 \
-    mediator-version=$(PYVER)
-
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 file path=usr/bin/hg-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/hgdemandimport/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgdemandimport/demandimportpy2.py
@@ -92,6 +66,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fetch.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fix.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/bser.cpython-37m.so
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/capabilities.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/encoding.py
@@ -209,6 +184,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/bundlecaches.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/bundlerepo.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cacheutil.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/base85.cpython-37m.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/bdiff.cpython-37m.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/mpatch.cpython-37m.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/osutil.cpython-37m.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/parsers.cpython-37m.so
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cffi/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cffi/bdiff.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cffi/bdiffbuild.py
@@ -615,10 +595,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/excep
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/filters.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/attr/validators.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/selectors2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/sha1dc.cpython-37m.so
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/_compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/_flatten.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/_zope_interface_coptimizations.cpython-37m.so
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/adapter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/advice.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/declarations.py
@@ -665,20 +647,13 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/wireprotov1server.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/wireprotov2peer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/wireprotov2server.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/worker.py
-file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/bser.so
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/base85.so
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/bdiff.so
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/mpatch.so
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/osutil.so
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/parsers.so
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/sha1dc.so
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/_zope_interface_coptimizations.so
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/zstd.so
-#
-license mercurial.copyright.zstd license="BSD 3-Clause (zstd)"
-license mercurial.copyright license=GPLv2+
-license mercurial.copyright.statprof license=LGPLv2.1
-
-# force a dependency on the mercurial package
-depend type=optional \
-    fmri=developer/versioning/mercurial@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/zstd.cpython-37m.so
+file path=usr/lib/python$(PYVER)/vendor-packages/hgext/fsmonitor/pywatchman/bser.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/base85.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/bdiff.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/mpatch.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/osutil.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/cext/parsers.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/sha1dc.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/thirdparty/zope/interface/_zope_interface_coptimizations.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/zstd.cpython-39.so
