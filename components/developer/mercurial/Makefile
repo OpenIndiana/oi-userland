@@ -20,25 +20,25 @@
 #
 
 #
-# Copyright 2017 Gary Mills
+# Copyright 2017, 2021 Gary Mills
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=32_and_64
+BUILD_BITS=64
 BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	5.3.2
+COMPONENT_VERSION=	5.9.3
 COMPONENT_PROJECT_URL=	http://mercurial-scm.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fed24cbc314d31b0780309ee324c38d45476f00f555969551badcc2a1d5f1329
+    sha256:3b43f68977ad0fa75aa7f1e5c8f0a83ba935621ab2396129abb498e56d1be08e
 COMPONENT_ARCHIVE_URL=	https://www.mercurial-scm.org/release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hg
 
-PYTHON_VERSIONS = 2.7 3.5
+PYTHON_VERSIONS = 3.7 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -58,8 +58,11 @@ TEST_BLACKLIST = \
 	test-check-config.t \
 	test-devel-warnings.t \
 	test-hghave.t \
-	test-module-imports.t \
-	test-run-tests.t
+	test-run-tests.t \
+	test-merge1.t \
+	test-removeemptydirs.t \
+	test-stdio.py \
+	test-update-names.t
 
 # https://www.mercurial-scm.org/pipermail/mercurial-devel/2017-March/093876.html
 TEST_BLACKLIST += \
@@ -83,36 +86,6 @@ COMPONENT_TEST_ARGS =	./run-tests.py \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# Assuming you have docutils installed, update the manpages patch for a new
-# mercurial version based on the patches applied to the source and to the
-# manpage generator.  This works either against source that's already been
-# patched with the older manpages.patch or against a fresh tarball.  Eventually
-# we'll have docutils in the CBE and we'll be able to regenerate the manpages
-# as part of the build, rather than patching them.
-#
-# Only build this target if it doesn't already exist, since this recipe is just
-# for the component maintainer's benefit.
-patches/manpages.patch: $(SOURCE_DIR)/.unpacked \
-    $(SOURCE_DIR)/.patched-rst.patch $(SOURCE_DIR)/.patched-hgmanpage.patch
-	if [[ -f $@ ]]; then exit 0; fi; \
-	if [[ -f $(COMPONENT_SRC)/doc/hg.1.~1~ ]]; then \
-		cd $(COMPONENT_SRC)/doc; gmake man || true; cd ../..; \
-		for f in hg.1 hgignore.5 hgrc.5; do \
-			diff -u $(COMPONENT_SRC)/doc/$$f.~1~ $(COMPONENT_SRC)/doc/$$f; \
-		done > $@; \
-	else \
-		for f in hg.1 hgignore.5 hgrc.5; do \
-			cp -p $(COMPONENT_SRC)/doc/$$f $(COMPONENT_SRC)/doc/$$f.orig; \
-		done; \
-		cd $(COMPONENT_SRC)/doc; gmake man || true; cd ../..; \
-		for f in hg.1 hgignore.5 hgrc.5; do \
-			diff -u $(COMPONENT_SRC)/doc/$$f.orig $(COMPONENT_SRC)/doc/$$f; \
-		done > $@; \
-	fi || true
-
-# Install 64-bit first, so that the 32-bit hg is what's installed.
-$(INSTALL_32): $(INSTALL_64)
-
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
