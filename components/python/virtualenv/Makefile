@@ -18,25 +18,24 @@ BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		virtualenv
-COMPONENT_VERSION=	20.9.0
+COMPONENT_VERSION=	20.10.0
 COMPONENT_FMRI=		library/python/virtualenv
 COMPONENT_SUMMARY=	A tool to create isolated Python environments
 COMPONENT_PROJECT_URL=	https://virtualenv.pypa.io/en/latest/
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:bb55ace18de14593947354e5e6cd1be75fb32c3329651da62e92bf5d0aab7213
+COMPONENT_ARCHIVE_HASH= sha256:576d05b46eace16a9c348085f7d0dc8ef28713a2cabaa1cf0aea41e8f12c9218
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_LICENSE=	MIT
 
 PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
 
-# this python module currently has no binary components, so all
-# targets are *_NO_ARCH
 include $(WS_MAKE_RULES)/common.mk
 
+# Tests don't work successfully yet.
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
-COMPONENT_TEST_ARGS =	setup.py test
+COMPONENT_TEST_CMD=		tox-3.9
 
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
 COMPONENT_POST_INSTALL_ACTION += \
