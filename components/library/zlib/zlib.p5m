@@ -22,18 +22,19 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+<transform file path=.*/lib/.+\.a$ -> drop>
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
 
 file libz.3.sunman path=usr/share/man/man3/libz.3
 
 file path=usr/include/zconf.h
 file path=usr/include/zlib.h
-#file path=usr/lib/$(MACH64)/libz.a
+file path=usr/lib/$(MACH64)/libz.a
 link path=usr/lib/$(MACH64)/libz.so target=libz.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/libz.so.$(COMPONENT_VERSION)
 link path=usr/lib/$(MACH64)/libz.so.1 target=libz.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/zlib.pc
-#file path=usr/lib/libz.a
+file path=usr/lib/libz.a
 link path=usr/lib/libz.so target=libz.so.$(COMPONENT_VERSION)
 file path=usr/lib/libz.so.$(COMPONENT_VERSION)
 link path=usr/lib/libz.so.1 target=libz.so.$(COMPONENT_VERSION)

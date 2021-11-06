@@ -24,25 +24,23 @@
 # Copyright (c) 2013  Erol Zavidic. All rights reserved.
 #
 
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zlib
 COMPONENT_VERSION=	1.2.11
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	The Zip compression library
-COMPONENT_PROJECT_URL=	http://www.zlib.net/
+COMPONENT_PROJECT_URL=	https://zlib.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/libpng/zlib/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1
+COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/libpng/zlib/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	library/zlib
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	zlib license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Zlib won't build without cloning. We need also to get rid of default
 # Makefile and get our own version of zconf.h to avoid interactions
@@ -51,9 +49,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	$(CLONEY) $(SOURCE_DIR) $(@D); \
 	$(RM) $(@D)/Makefile $(@D)/zconf.h; \
 	$(CP) $(SOURCE_DIR)/zconf.h $(@D) )
-
-#Fixes firefox crash with new zlib, don't remove until proper fix
-gcc_OPT="-O2"
 
 # Also, the x86 architecture does not require alignment for multi-byte
 # loads, so we can define UNALIGNED_OK for x86
@@ -79,10 +74,5 @@ CONFIGURE_ENV += LDSHARED="$(CC) $(CFLAGS) -G"
 # to allow Zlib detect capability of creating shared libraries.
 COMPONENT_BUILD_ARGS = LDSHARED="$(CC) $(CFLAGS) $(LDFLAGS) -shared -Wl,-z -Wl,text -Wl,-h -Wl,libz.so.1 $(LD_OPTIONS_SO) -Wl,-M -Wl,../../mapfile -L."
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
