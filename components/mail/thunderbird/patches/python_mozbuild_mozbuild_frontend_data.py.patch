@@ -1,14 +1,15 @@
+linker error: unknown ld option  --version-script
+
 diff --git a/python/mozbuild/mozbuild/frontend/data.py b/python/mozbuild/mozbuild/frontend/data.py
-index cfc204a..48674ac 100644
+index 7ba6c23..d8b478e 100644
 --- a/python/mozbuild/mozbuild/frontend/data.py
 +++ b/python/mozbuild/mozbuild/frontend/data.py
-@@ -842,6 +842,9 @@ class SharedLibrary(Library):
-                     self.symbols_link_arg = '-DEF:' + self.symbols_file
-             elif context.config.substs.get('GCC_USE_GNU_LD'):
-                 self.symbols_link_arg = '-Wl,--version-script,' + self.symbols_file
-+            else:
-+                self.symbols_link_arg = '-Wl,-M,' + self.symbols_file
-+
- 
- 
- class HostSharedLibrary(HostMixin, Library):
+@@ -913,7 +913,7 @@ class SharedLibrary(Library):
+                 )
+             elif os_target == "SunOS":
+                 self.symbols_link_arg = (
+-                    "-z gnu-version-script-compat -Wl,--version-script,"
++                    "-Wl,-M,"
+                     + self.symbols_file
+                 )
+             elif os_target == "WINNT":

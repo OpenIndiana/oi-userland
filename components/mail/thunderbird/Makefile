@@ -27,16 +27,19 @@
 #
 
 BUILD_BITS = 64
-COMPILER = gcc
+
 include ../../../make-rules/shared-macros.mk
 
+# unfortunatly I see -m32 in CFLAGS despite that BUILD_BITS = 64 is set
+BITS = 64
+
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	78.13.0
+COMPONENT_VERSION =	91.3.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b7e4076e5ce561b06ad9cd89005989ed71fd724ce83c4888cf569dc2930d90e9
+COMPONENT_ARCHIVE_HASH= sha256:d3abcf55637fb21bd9d68a19c01780edd82e6e72b5e850b31de186dddc2708ad
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -52,9 +55,9 @@ COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 
 LANG_LIST = af ar ast be bg br ca cak cs cy \
        da de dsb el en-CA en-GB en-US es-AR es-ES et \
-       eu fa fi fr fy-NL ga-IE gd gl he hr hsb hu \
-       hy-AM id is it ja ka kab kk ko lt ms \
-       nb-NO nl nn-NO pa-IN pl pt-BR pt-PT rm ro ru si sk sl \
+       eu fi fr fy-NL ga-IE gd gl he hr hsb hu \
+       hy-AM id is it ja ka kab kk ko lt lv ms \
+       nb-NO nl nn-NO pa-IN pl pt-BR pt-PT rm ro ru sk sl \
        sq sr sv-SE th tr uk uz vi zh-CN zh-TW
 
 LANG_FILES_LOCATION= \
@@ -66,10 +69,13 @@ CONFIGURE_DEFAULT_DIRS=no
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu):$(BUILD_DIR)/cargo/bin
+RUSTUP_HOME = $(BUILD_DIR)/.rust_up
+CARGO_HOME  = $(BUILD_DIR)/.cargo
+
+PATH = $(CARGO_HOME)/bin:$(PATH.gnu)
 
 MOZCONFIG = $(SOURCE_DIR)/mozconfig
-GNU_ARCH=               x86_64-sun-solaris
+GNU_ARCH=               x86_64-unknown-illumos
 
 ifdef DEBUG
 # disable code optimization
@@ -86,6 +92,7 @@ endif
 THUNDERBIRD_LIBDIR = /usr/lib/$(MACH64)
 
 COMPONENT_PRE_CONFIGURE_ACTION += \
+	rm -f  $(MOZCONFIG); \
 	echo "ac_add_options MOZILLA_OFFICIAL=1" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --prefix=/usr" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --libdir=$(THUNDERBIRD_LIBDIR)" >> $(MOZCONFIG) ; \
@@ -108,7 +115,8 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
         echo "ac_add_options --host=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
         echo "ac_add_options --target=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
 
-CXXFLAGS += -Wno-invalid-offsetof -fpermissive 
+# xpcom uses DEF XP_SOLARIS
+CXXFLAGS += -DXP_SOLARIS -Wno-invalid-offsetof -fpermissive 
 
 # 28395728
 LD_MAP_NOEXBSS.sparc=
@@ -132,16 +140,33 @@ $(LANG_FILES):
 download prep:: $(LANG_FILES)
 
 CONFIGURE_OPTIONS = CC=$(CC) CXX=$(CXX)
+
+ENV +=  CFLAGS="$(CFLAGS)"
+ENV +=  CXXFLAGS="$(CXXFLAGS)"
+ENV += PKG_CONFIG=/usr/bin/amd64/pkg-config
+ENV += RUSTUP_HOME=$(RUSTUP_HOME)
+ENV += CARGO_HOME=$(CARGO_HOME)
+
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
+
+CONFIGURE_ENV = $(ENV)
+COMPONENT_BUILD_ENV =   $(ENV)
 
 # because we touched old-configure.in and js/src/old-configure.in
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); \
-	autoreconf; \
-	touch configure; \
-	cd js/src; autoreconf; \
-	touch configure; \
-        cargo install --root=$(BUILD_DIR)/cargo cbindgen; \
+        cp configure.in configure; \
+        cd js/src; \
+        cp configure.in configure; \
+        export RUSTUP_HOME=$(RUSTUP_HOME); \
+        export CARGO_HOME=$(CARGO_HOME); \
+        export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
+        curl https://sh.rustup.rs -sSf | bash -s -- -y --no-modify-path; \
+        source $(CARGO_HOME)/env; \
+        rustup install 1.51.0; \
+        rustup default 1.51.0-x86_64-unknown-illumos; \
+        rustup show; \
+        cargo install --root=$(CARGO_HOME) cbindgen; \
 	);
 
 # COMPONENT_POST_BUILD_ACTION = \
