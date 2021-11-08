@@ -1,31 +1,38 @@
+add illumos target. we have also no RawWindowHandle::Xcb(handle)
+
+diff --git a/third_party/rust/gfx-backend-vulkan/src/lib.rs b/third_party/rust/gfx-backend-vulkan/src/lib.rs
+index 3c1a9be..e588cd7 100644
+--- a/third_party/rust/gfx-backend-vulkan/src/lib.rs
++++ b/third_party/rust/gfx-backend-vulkan/src/lib.rs
+@@ -610,6 +610,7 @@ impl hal::Instance<Backend> for Instance {
+                 unix,
+                 not(target_os = "android"),
+                 not(target_os = "macos"),
++                not(target_os = "illumos"),
+                 not(target_os = "solaris")
+             ))]
+             RawWindowHandle::Wayland(handle)
+@@ -621,6 +622,7 @@ impl hal::Instance<Backend> for Instance {
+                 unix,
+                 not(target_os = "android"),
+                 not(target_os = "macos"),
++                not(target_os = "illumos"),
+                 not(target_os = "solaris")
+             ))]
+             RawWindowHandle::Xlib(handle)
+@@ -632,6 +634,7 @@ impl hal::Instance<Backend> for Instance {
+                 unix,
+                 not(target_os = "android"),
+                 not(target_os = "macos"),
++                not(target_os = "illumos"),
+                 not(target_os = "ios")
+             ))]
+             RawWindowHandle::Xcb(handle) if self.extensions.contains(&khr::XcbSurface::name()) => {
 diff --git a/third_party/rust/gfx-backend-vulkan/.cargo-checksum.json b/third_party/rust/gfx-backend-vulkan/.cargo-checksum.json
-index 1b1cf47..cfe3763 100644
+index a5350d4..62a0a91 100644
 --- a/third_party/rust/gfx-backend-vulkan/.cargo-checksum.json
 +++ b/third_party/rust/gfx-backend-vulkan/.cargo-checksum.json
 @@ -1 +1 @@
--{"files":{"Cargo.toml":"40880324b21dbbbca40c1362e4b3ea445d7600f773b7146e8284c48a3c9352cf","README.md":"8cc42e022567870c58a53ff1cb6f94e961482e789fe5e22f9960408a43cf8405","src/command.rs":"b8af184eec394220b3e2365c9df7d134b848f44c97d01ff54c1e27ce499ce6fa","src/conv.rs":"e7117e38380c568faa843e4ede990580bf67e8d3c56ead7923b73336e107f862","src/device.rs":"e64c9cd4af13e974d77cdb9d646e6e9ab7d4ad8f60d79227af7610fc3552e047","src/info.rs":"4a21b54f85ff73c538ca2f57f4d371eb862b5a28f126cd0ecafd37fc6dfd1318","src/lib.rs":"26e21f46d470a64f9133b8bf8a2d265ecadc475d73ddba8b3218f90646654efd","src/native.rs":"097330f1866f9128abfc8efc001f4809fe499d854b0fb11b9ee7b1622151bb3f","src/pool.rs":"acf5785b9841655cbbed469899a80d87fa9ed4c1e5b6b3a3ee35b57d728e3da4","src/window.rs":"ff8c3a9921d4bb5a06361e2f113420c901efdd446ff897b49539e48804495b86"},"package":"45ff36feae801fa23d29acd74082603a0145a697a23595757dd4e78828ab33da"}
+-{"files":{"Cargo.toml":"a4dab5b9bb789af14347fb1ebb810b761d8d701f4c07aa020858990cded61af3","README.md":"18c8b36bca25cef6642315221fe0713e23054430377cd465fdb2c4fe7f332daf","src/command.rs":"5834a642982bccc7b524702beda8ecbd69b2831f7daa0516387e77fed21fc8a0","src/conv.rs":"04ce2a815fd65b53b52b3f54fa243f4b27a0e9b3ab8809d9b11615b190b198fc","src/device.rs":"19dee8dea68199fc45f43bfe7674dd766273a7ba7ff902a84583dab1cb973aae","src/info.rs":"4a21b54f85ff73c538ca2f57f4d371eb862b5a28f126cd0ecafd37fc6dfd1318","src/lib.rs":"47d651be740415ab3859bdae82d91a6d99fc962445f162b353c41045f372f0d5","src/native.rs":"72099d0499e72625496bea64d968f650a6d43fe24840ace9b0c419bd60e3a3c6","src/physical_device.rs":"5e62550be60474b44c6235f0b6304fb8fa4f9f36b59106291da35abc4821f622","src/pool.rs":"16d174bb274c2dd2f4b94379835269825695dca581436a57b8942b27811255fc","src/window.rs":"dca36024d0e6b7d352f1c6a0f4c1a490488ffc1838a73a6d54a27587ece1e61e"},"package":null}
 \ No newline at end of file
-+{"files":{"Cargo.toml":"40880324b21dbbbca40c1362e4b3ea445d7600f773b7146e8284c48a3c9352cf","README.md":"8cc42e022567870c58a53ff1cb6f94e961482e789fe5e22f9960408a43cf8405","src/command.rs":"b8af184eec394220b3e2365c9df7d134b848f44c97d01ff54c1e27ce499ce6fa","src/conv.rs":"e7117e38380c568faa843e4ede990580bf67e8d3c56ead7923b73336e107f862","src/device.rs":"e64c9cd4af13e974d77cdb9d646e6e9ab7d4ad8f60d79227af7610fc3552e047","src/info.rs":"4a21b54f85ff73c538ca2f57f4d371eb862b5a28f126cd0ecafd37fc6dfd1318","src/lib.rs":"9a7a50f47436999f56f893f50ce76ca07ee4561c43d5c72fe1e70076450ff443","src/native.rs":"097330f1866f9128abfc8efc001f4809fe499d854b0fb11b9ee7b1622151bb3f","src/pool.rs":"acf5785b9841655cbbed469899a80d87fa9ed4c1e5b6b3a3ee35b57d728e3da4","src/window.rs":"ff8c3a9921d4bb5a06361e2f113420c901efdd446ff897b49539e48804495b86"},"package":"45ff36feae801fa23d29acd74082603a0145a697a23595757dd4e78828ab33da"}
-diff --git a/third_party/rust/gfx-backend-vulkan/src/lib.rs b/third_party/rust/gfx-backend-vulkan/src/lib.rs
-index 0fe5733..9b2781b 100644
---- a/third_party/rust/gfx-backend-vulkan/src/lib.rs
-+++ b/third_party/rust/gfx-backend-vulkan/src/lib.rs
-@@ -541,7 +541,7 @@ impl hal::Instance<Backend> for Instance {
-         use raw_window_handle::RawWindowHandle;
- 
-         match has_handle.raw_window_handle() {
--            #[cfg(all(unix, not(target_os = "android"), not(target_os = "macos")))]
-+            #[cfg(all(unix, not(target_os = "android"), not(target_os = "macos"), not(target_os = "solaris")))]
-             RawWindowHandle::Wayland(handle)
-                 if self
-                     .extensions
-@@ -553,7 +553,8 @@ impl hal::Instance<Backend> for Instance {
-                 feature = "x11",
-                 unix,
-                 not(target_os = "android"),
--                not(target_os = "macos")
-+                not(target_os = "macos"),
-+                not(target_os = "solaris")
-             ))]
-             RawWindowHandle::Xlib(handle)
-                 if self
++{"files":{"Cargo.toml":"a4dab5b9bb789af14347fb1ebb810b761d8d701f4c07aa020858990cded61af3","README.md":"18c8b36bca25cef6642315221fe0713e23054430377cd465fdb2c4fe7f332daf","src/command.rs":"5834a642982bccc7b524702beda8ecbd69b2831f7daa0516387e77fed21fc8a0","src/conv.rs":"04ce2a815fd65b53b52b3f54fa243f4b27a0e9b3ab8809d9b11615b190b198fc","src/device.rs":"19dee8dea68199fc45f43bfe7674dd766273a7ba7ff902a84583dab1cb973aae","src/info.rs":"4a21b54f85ff73c538ca2f57f4d371eb862b5a28f126cd0ecafd37fc6dfd1318","src/lib.rs":"7891ab2a7ae36f3dc0f6cf0d5552b9517843320009b85870d06c609eb6870eed","src/native.rs":"72099d0499e72625496bea64d968f650a6d43fe24840ace9b0c419bd60e3a3c6","src/physical_device.rs":"5e62550be60474b44c6235f0b6304fb8fa4f9f36b59106291da35abc4821f622","src/pool.rs":"16d174bb274c2dd2f4b94379835269825695dca581436a57b8942b27811255fc","src/window.rs":"dca36024d0e6b7d352f1c6a0f4c1a490488ffc1838a73a6d54a27587ece1e61e"},"package":null}
