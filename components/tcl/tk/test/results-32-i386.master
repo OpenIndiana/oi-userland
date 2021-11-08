@@ -455,7 +455,7 @@ textDisp.test
     lappend res [.t count -ypixels 5.0 25.0]
 
 ---- Result was:
-300 75
+300 300
 ---- Result should have been (exact matching):
 75 75
 ==== textDisp-19.18 FAILED
@@ -539,6 +539,27 @@ textIndex.test
 textMark.test
 textTag.test
 textWind.test
+
+
+==== textWind-10.7 EmbWinLayoutProc procedure, error in creating window FAILED
+==== Contents of test case:
+
+    .t insert 1.0 "Some sample text"
+    .t window create 1.5 -create {
+        toplevel .t2 -width 100 -height 150
+        wm geom .t2 +0+0
+        concat .t2
+    }
+    set msg {}
+    update
+    lappend msg [.t bbox 1.5]
+
+---- Result was:
+{{can't embed .t2 relative to .t}} {40 12 0 0}
+---- Result should have been (exact matching):
+{{can't embed .t2 relative to .t}} {{window name "t2" already exists in parent}} {40 12 0 0}
+==== textWind-10.7 FAILED
+
 tk.test
 unixButton.test
 unixEmbed.test
@@ -769,7 +790,7 @@ courier
     set x
 
 ---- Result was:
-36
+32
 ---- Result should have been (exact matching):
 78
 ==== unixfont-8.4 FAILED
@@ -786,7 +807,7 @@ courier
     set x
 
 ---- Result was:
-30
+22
 ---- Result should have been (exact matching):
 60
 ==== unixfont-8.6 FAILED
@@ -1291,9 +1312,9 @@ iconic
 
 xmfbox.test
 
-all.tcl:	Total	9650	Passed	8645	Skipped	941	Failed	64
+all.tcl:	Total	9661	Passed	8656	Skipped	940	Failed	65
 Sourced 92 Test Files.
-Files with failing tests: canvText.test clrpick.test focus.test font.test pack.test place.test scrollbar.test textDisp.test unixEmbed.test unixFont.test unixWm.test winWm.test winfo.test wm.test
+Files with failing tests: canvText.test clrpick.test focus.test font.test pack.test place.test scrollbar.test textDisp.test textWind.test unixEmbed.test unixFont.test unixWm.test winWm.test winfo.test wm.test
 Number of tests skipped for each constraint:
 	1	
     !havePseudocolorVisual
@@ -1314,7 +1335,7 @@ Number of tests skipped for each constraint:
 	11	testmetrics
 	7	testwinevent
 	133	textfonts
-	2	userInteraction
+	1	userInteraction
 	340	win
 	51	winSend
 
