@@ -1,23 +1,14 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
+
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
 #
@@ -39,13 +30,14 @@ license license.terms license=BSD-like
 
 file files/libtcl.3 path=usr/share/man/man3/libtcl.3
 
-link path=usr/bin/$(MACH32)/tclsh target=tclsh$(COMPONENT_MINOR_VERSION)
 file path=usr/bin/$(MACH32)/tclsh$(COMPONENT_MINOR_VERSION)
-link path=usr/bin/$(MACH64)/tclsh target=tclsh$(COMPONENT_MINOR_VERSION)
 file path=usr/bin/$(MACH64)/tclsh$(COMPONENT_MINOR_VERSION)
+link path=usr/bin/$(MACH32)/tclsh target=tclsh$(COMPONENT_MINOR_VERSION)
+link path=usr/bin/$(MACH64)/tclsh target=tclsh$(COMPONENT_MINOR_VERSION)
 link path=usr/bin/tclsh target=tclsh$(COMPONENT_MINOR_VERSION)
 link path=usr/bin/tclsh$(COMPONENT_MINOR_VERSION) \
     target=$(MACH64)/tclsh$(COMPONENT_MINOR_VERSION)
+
 file path=usr/include/tcl.h
 file path=usr/include/tclDecls.h
 file path=usr/include/tclOO.h
@@ -54,20 +46,18 @@ file path=usr/include/tclPlatDecls.h
 file path=usr/include/tclTomMath.h
 file path=usr/include/tclTomMathDecls.h
 file path=usr/lib/$(MACH64)/libtcl$(COMPONENT_MINOR_VERSION).so
-link path=usr/lib/$(MACH64)/libtcl8.5.so \
-    target=libtcl$(COMPONENT_MINOR_VERSION).so
 file path=usr/lib/$(MACH64)/libtclstub$(COMPONENT_MINOR_VERSION).a
 file path=usr/lib/$(MACH64)/pkgconfig/tcl.pc
 file path=usr/lib/$(MACH64)/tclConfig.sh mode=0555
 file path=usr/lib/$(MACH64)/tclooConfig.sh mode=0555
 file path=usr/lib/libtcl$(COMPONENT_MINOR_VERSION).so
-link path=usr/lib/libtcl8.5.so target=libtcl$(COMPONENT_MINOR_VERSION).so
 file path=usr/lib/libtclstub$(COMPONENT_MINOR_VERSION).a
 file path=usr/lib/pkgconfig/tcl.pc
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/auto.tcl
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/clock.tcl
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/ascii.enc
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/big5.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cns11643.enc
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp1250.enc
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp1251.enc
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/cp1252.enc
@@ -111,6 +101,7 @@ file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso2022-kr.enc
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso2022.enc
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-1.enc
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-10.enc
+file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-11.enc
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-13.enc
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-14.enc
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/iso8859-15.enc
@@ -284,7 +275,7 @@ file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/tclAppInit.c
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/tclIndex
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/tm.tcl
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/word.tcl
-file path=usr/lib/tcl8/8.4/platform-1.0.15.tm
+file path=usr/lib/tcl8/8.4/platform-1.0.18.tm
 file path=usr/lib/tcl8/8.4/platform/shell-1.1.4.tm
 file path=usr/lib/tcl8/8.5/msgcat-1.6.1.tm
 file path=usr/lib/tcl8/8.5/tcltest-2.5.3.tm
@@ -911,6 +902,7 @@ link path=usr/share/man/man3tcl/Tcl_GetLongFromObj.3tcl \
 link path=usr/share/man/man3tcl/Tcl_GetMaster.3tcl target=Tcl_IsSafe.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetMathFuncInfo.3tcl \
     target=Tcl_CreateMathFunc.3tcl
+link path=usr/share/man/man3tcl/Tcl_GetMemoryInfo.3tcl target=Tcl_Alloc.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetModeFromStat.3tcl \
     target=Tcl_FSRegister.3tcl
 link path=usr/share/man/man3tcl/Tcl_GetModificationTimeFromStat.3tcl \
@@ -1058,6 +1050,8 @@ file path=usr/share/man/man3tcl/Tcl_LoadFile.3tcl
 link path=usr/share/man/man3tcl/Tcl_LogCommandInfo.3tcl \
     target=Tcl_GetReturnOptions.3tcl
 file path=usr/share/man/man3tcl/Tcl_Main.3tcl
+link path=usr/share/man/man3tcl/Tcl_MainEx.3tcl target=Tcl_Main.3tcl
+link path=usr/share/man/man3tcl/Tcl_MainExW.3tcl target=Tcl_Main.3tcl
 link path=usr/share/man/man3tcl/Tcl_MakeFileChannel.3tcl \
     target=Tcl_OpenFileChannel.3tcl
 link path=usr/share/man/man3tcl/Tcl_MakeSafe.3tcl target=Tcl_IsSafe.3tcl
