@@ -10,15 +10,15 @@
 #
 # Copyright 2017 Aurelien Larcher
 # Copyright 2020 Michal Nowak
+# Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_STYLE=setup.py
-BUILD_BITS=NO_ARCH
-
+BUILD_STYLE= setup.py
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meson
-COMPONENT_VERSION=	0.59.2
+COMPONENT_VERSION=	0.60.1
 COMPONENT_SUMMARY=	The Meson Build system
 COMPONENT_PROJECT_URL=	https://mesonbuild.com/
 COMPONENT_FMRI=		developer/build/meson
@@ -26,10 +26,8 @@ COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/mesonbuild/meson/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:13dee549a7ba758b7e33ce7719f28d1d337a98d10d378a4779ccc996f5a2fc49
+COMPONENT_ARCHIVE_HASH=	sha256:5add789c953d984b500858b2851ee3d7add0460cf1a6f852f0a721af17384e13
 COMPONENT_LICENSE=	APLv2
-
-TEST_TARGET= $(TEST_64)
 
 GCC_VERSION=		10
 PYTHON_VERSION=		3.9
@@ -48,18 +46,17 @@ PROTO_PY_MESONBUILD_DIR= $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-pac
 COMPONENT_POST_INSTALL_ACTION= \
 	( $(GSED) -i -e 's/env python3/python$(PYTHON_VERSION)/' $(PROTO_PY_MESONBUILD_DIR)/rewriter.py ; )
 
-
 COMPONENT_TEST_DIR=		$(COMPONENT_SRC)
 COMPONENT_TEST_CMD=		./run_tests.py
 COMPONENT_TEST_ARGS=
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
 # Test transforms retain only reproducible summaries of results output.
 # -E flag enables extended regular expressions, so that | can be used
 COMPONENT_TEST_TRANSFORMS += \
         '-n ' \
         '-e "/^Total .*time:/d" ' \
         '-e "s/[0-9][0-9\.]* *s//" ' \
+		'-e "s/tmp.*binary_wrapper0.py/binary_wrapper.py/" ' \
         '-e "/^Total/p" ' \
         '-E -e "/(^test| \.\.\. |PASS|FAIL|ERROR)/p" '
 

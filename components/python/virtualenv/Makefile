@@ -10,35 +10,32 @@
 
 #
 # Copyright (c) 2019 Tim Mooney
+# Copyright (c) 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_BITS= NO_ARCH
+BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		virtualenv
-COMPONENT_VERSION=	16.5.0
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	20.10.0
 COMPONENT_FMRI=		library/python/virtualenv
-COMPONENT_SUMMARY=	'A tool to create isolated Python environments'
+COMPONENT_SUMMARY=	A tool to create isolated Python environments
 COMPONENT_PROJECT_URL=	https://virtualenv.pypa.io/en/latest/
-COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:948df2d66849bdbf1207110b1bcc32f64e5e35257b76f8067392e3a2c08b3731
-COMPONENT_ARCHIVE_URL=	https://github.com/pypa/virtualenv/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:576d05b46eace16a9c348085f7d0dc8ef28713a2cabaa1cf0aea41e8f12c9218
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	virtualenv.license
 
-PYTHON_VERSIONS= 2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
 
-# this python module currently has no binary components, so all
-# targets are *_NO_ARCH
 include $(WS_MAKE_RULES)/common.mk
 
+# Tests don't work successfully yet.
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
-COMPONENT_TEST_ARGS =	setup.py test
+COMPONENT_TEST_CMD=		tox-3.9
 
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
 COMPONENT_POST_INSTALL_ACTION += \
@@ -48,10 +45,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
         (cd $(PROTOUSRBINDIR); $(MV) virtualenv virtualenv-$(PYTHON_VERSION)) ;
 
-
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-35
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
+REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39

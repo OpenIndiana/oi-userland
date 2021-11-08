@@ -1,5 +1,5 @@
 Rewrite some sections of the documentation to match what we deliver on
-Solaris, or remove sections that are of no relevance to Solaris.
+OI, or remove sections that are of no relevance to OI.
 
 --- mercurial-5.1.1/hgext/hgk.py
 +++ mercurial-5.1.1/hgext/hgk.py
@@ -22,8 +22,8 @@ Solaris, or remove sections that are of no relevance to Solaris.
  
    [hgk]
    path = /location/of/hgk
---- mercurial-5.3.2/mercurial/helptext/config.txt.~1~	2020-04-02 19:05:39.000000000 +0000
-+++ mercurial-5.3.2/mercurial/helptext/config.txt	2020-04-13 02:00:27.838425664 +0000
+--- mercurial-5.9.3/mercurial/helptext/config.txt-orig	Tue Oct 26 08:23:49 2021
++++ mercurial-5.9.3/mercurial/helptext/config.txt	Sat Oct 30 16:03:19 2021
 @@ -36,10 +36,6 @@
  
  Global configuration like the username setting is typically put into:
@@ -42,9 +42,9 @@ Solaris, or remove sections that are of no relevance to Solaris.
 -  On Unix, the following files are consulted:
 +  The following files are consulted:
  
+   - ``<repo>/.hg/hgrc-not-shared`` (per-repository)
    - ``<repo>/.hg/hgrc`` (per-repository)
-   - ``$HOME/.hgrc`` (per-user)
-@@ -63,40 +59,6 @@
+@@ -64,42 +60,6 @@
    - ``/etc/mercurial/hgrc.d/*.rc`` (per-system)
    - ``<internal>/*.rc`` (defaults)
  
@@ -52,6 +52,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
 -
 -  On Windows, the following files are consulted:
 -
+-  - ``<repo>/.hg/hgrc-not-shared`` (per-repository)
 -  - ``<repo>/.hg/hgrc`` (per-repository)
 -  - ``%USERPROFILE%\.hgrc`` (per-user)
 -  - ``%USERPROFILE%\Mercurial.ini`` (per-user)
@@ -74,6 +75,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
 -
 -  On Plan9, the following files are consulted:
 -
+-  - ``<repo>/.hg/hgrc-not-shared`` (per-repository)
 -  - ``<repo>/.hg/hgrc`` (per-repository)
 -  - ``$home/lib/hgrc`` (per-user)
 -  - ``<install-root>/lib/mercurial/hgrc`` (per-installation)
@@ -85,7 +87,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
  Per-repository configuration options only apply in a
  particular repository. This file is not version-controlled, and
  will not get transferred during a "clone" operation. Options in
-@@ -104,7 +66,7 @@
+@@ -107,7 +67,7 @@
  
  .. container:: unix.plan9
  
@@ -94,7 +96,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
    belong to a trusted user or to a trusted group. See
    :hg:`help config.trusted` for more details.
  
-@@ -126,10 +88,8 @@
+@@ -129,10 +89,8 @@
  
  Per-installation configuration files are for the system on
  which Mercurial is running. Options in these files apply to all
@@ -107,7 +109,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
  order until one or more configuration files are detected.
  
  Per-system configuration files are for the system on which Mercurial
-@@ -671,14 +631,6 @@
+@@ -699,14 +657,6 @@
  of an empty temporary file, where the filtered data must be written by
  the command.
  
@@ -122,7 +124,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
  This filter mechanism is used internally by the ``eol`` extension to
  translate line ending characters between Windows (CRLF) and Unix (LF)
  format. We suggest you use the ``eol`` extension for convenience.
-@@ -962,23 +914,6 @@
+@@ -1052,23 +1002,6 @@
  of the hook in the config, respectively. In the example above, this will
  be ``$HG_HOOKTYPE=incoming`` and ``$HG_HOOKNAME=incoming.email``.
  
@@ -146,7 +148,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
  ``changegroup``
    Run after a changegroup has been added via push, pull or unbundle.  The ID of
    the first new changeset is in ``$HG_NODE`` and last is in ``$HG_NODE_LAST``.
-@@ -1187,13 +1122,6 @@
+@@ -1278,13 +1211,6 @@
     Also, hooks like "commit" will be called in all contexts that
     generate a commit (e.g. tag) and not just the commit command.
  
@@ -160,7 +162,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
  The syntax for Python hooks is as follows::
  
    hookname = python:modulename.submodule.callable
-@@ -1452,7 +1380,6 @@
+@@ -1543,7 +1469,6 @@
  
    # Define new tool
    myHtmlTool.args = -m $local $other $base $output
@@ -168,7 +170,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
    myHtmlTool.priority = 1
  
  Supported arguments:
-@@ -1464,11 +1391,6 @@
+@@ -1555,11 +1480,6 @@
  ``executable``
    Either just the name of the executable or its pathname.
  
@@ -180,9 +182,9 @@ Solaris, or remove sections that are of no relevance to Solaris.
    (default: the tool name)
  
  ``args``
-@@ -1536,30 +1458,6 @@
-   ``keep-merge3``. See the corresponding variable in ``[ui]`` for more
-   information.
+@@ -1628,30 +1548,6 @@
+   if ``premerge`` is ``keep` or ``keep-merge3``. See the corresponding variable
+   in ``[ui]`` for more information.
  
 -.. container:: windows
 -
@@ -211,7 +213,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
  ``pager``
  ---------
  
-@@ -2421,10 +2319,6 @@
+@@ -2610,10 +2506,6 @@
      ``false``
        Alias for ``ignore``.
  
@@ -220,8 +222,8 @@ Solaris, or remove sections that are of no relevance to Solaris.
 -      On Windows, this configuration option is ignored and the command aborted.
 -
  ``pre-merge-tool-output-template``
-     A template that is printed before executing an external merge tool. This can
-     be used to print out additional context that might be useful to have during
+     (DEPRECATED) Use ``command-template.pre-merge-tool-output`` instead.
+ 
 --- mercurial-5.1.1/mercurial/helptext/hg.1.txt
 +++ mercurial-5.1.1/mercurial/helptext/hg.1.txt
 @@ -85,6 +85,11 @@ This file can be used to define local ta

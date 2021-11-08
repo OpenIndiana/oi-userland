@@ -3,12 +3,11 @@
 # Common Development and Distribution License ("CDDL"), version 1.0.
 # You may only use this file in accordance with the terms of version
 # 1.0 of the CDDL.
-#
 # A full copy of the text of the CDDL should have accompanied this
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
-#
 
+# Copyright 2021 <contributor>
 #
 # Copyright 2020 Alexander Pyhalov
 #
@@ -21,6 +20,10 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Force a dependency on the appropriate python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
 
 file path=usr/lib/python$(PYVER)/vendor-packages/redis-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/redis-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
