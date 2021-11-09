@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= minidlna
 COMPONENT_VERSION= 1.2.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=  MiniDLNA DLNA/UPnP-AV media server
 COMPONENT_PROJECT_URL= https://sourceforge.net/projects/minidlna/
 COMPONENT_FMRI= media/minidlna
@@ -54,6 +55,7 @@ REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/audio/libid3tag
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libvorbis
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += video/ffmpeg
