@@ -1,24 +1,26 @@
-#Chezmoi by default uses git to find the version it is built from. This does not work as we download a tarball copy from Github and build inside oi-userland, thus we remove the version embedding here
---- chezmoi-2.7.3/Makefile.orig	2021-10-22 15:34:17.000000000 +0000
-+++ chezmoi-2.7.3/Makefile	2021-10-29 09:59:04.758384704 +0000
-@@ -2,17 +2,15 @@
+--- chezmoi-2.7.5/Makefile.orig	2021-11-07 09:04:07.000000000 +0000
++++ chezmoi-2.7.5/Makefile	2021-11-09 05:58:33.783358142 +0000
+@@ -2,12 +2,11 @@
  GOLANGCI_LINT_VERSION=$(shell grep GOLANGCI_LINT_VERSION: .github/workflows/main.yml | awk '{ print $$2 }')
  
  .PHONY: default
--default: run build test lint format
-+default: build
+-default: run build-all test lint format
++default: build-all
  
  .PHONY: install
  install:
 -	go install -ldflags "-X main.version=$(shell git describe --abbrev=0 --tags) \
 -		-X main.commit=$(shell git rev-parse HEAD) \
--		-X main.date=$(shell date -u +%Y-%m-%dT%H:%M:%SZ) \
--		-X main.builtBy=source"
-+	go install
++	go install -ldflags "-X main.version=2.7.5\
+ 		-X main.date=$(shell date -u +%Y-%m-%dT%H:%M:%SZ) \
+ 		-X main.builtBy=source"
  
- .PHONY: build
--build: build-darwin build-freebsd build-linux build-windows
-+build:
+@@ -19,7 +18,8 @@
+ 		-X main.builtBy=source"
+ 
+ .PHONY: build-all
+-build-all: build-darwin build-freebsd build-linux build-windows
++build-all:
 +	GOARCH=amd64 ${GO} build -o /dev/null .
  
  .PHONY: build-darwin
