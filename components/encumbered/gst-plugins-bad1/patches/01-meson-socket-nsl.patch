@@ -1,0 +1,61 @@
+diff -ur gst-plugins-bad-1.18.5.orig/ext/curl/meson.build gst-plugins-bad-1.18.5/ext/curl/meson.build
+--- gst-plugins-bad-1.18.5.orig/ext/curl/meson.build	2021-09-08 14:03:40.823254800 +0000
++++ gst-plugins-bad-1.18.5/ext/curl/meson.build	2021-10-27 22:36:40.148443609 +0000
+@@ -22,7 +22,7 @@
+     curl_sources,
+     c_args : gst_plugins_bad_args,
+     include_directories : [configinc, libsinc],
+-    dependencies : [gstbase_dep, curl_dep] + winsock2,
++    dependencies : [gstbase_dep, curl_dep] + winsock2 + network_deps,
+     install : true,
+     install_dir : plugins_install_dir,
+   )
+diff -ur gst-plugins-bad-1.18.5.orig/gst/festival/meson.build gst-plugins-bad-1.18.5/gst/festival/meson.build
+--- gst-plugins-bad-1.18.5.orig/gst/festival/meson.build	2021-09-08 14:03:40.915254000 +0000
++++ gst-plugins-bad-1.18.5/gst/festival/meson.build	2021-10-27 22:36:13.119942319 +0000
+@@ -6,7 +6,7 @@
+   festival_sources,
+   c_args : gst_plugins_bad_args,
+   include_directories : [configinc],
+-  dependencies : [gstbase_dep, gstaudio_dep] + winsock2,
++  dependencies : [gstbase_dep, gstaudio_dep] + winsock2 + network_deps,
+   install : true,
+   install_dir : plugins_install_dir,
+ )
+diff -ur gst-plugins-bad-1.18.5.orig/meson.build gst-plugins-bad-1.18.5/meson.build
+--- gst-plugins-bad-1.18.5.orig/meson.build	2021-09-08 14:03:40.951254100 +0000
++++ gst-plugins-bad-1.18.5/meson.build	2021-10-27 22:36:13.120183642 +0000
+@@ -358,6 +358,21 @@
+ gio_dep = dependency('gio-2.0', fallback: ['glib', 'libgio_dep'])
+ # gio-unix-2.0 is used by sys/bluez
+ 
++#
++# Solaris and Illumos distros split a lot of networking-related code
++# into '-lsocket -lnsl'.  Anything that calls socketpair(), getifaddr(),
++# etc. probably needs to include network_deps
++#
++socket_lib = cc.find_library('socket', required: false)
++nsl_lib    = cc.find_library('nsl',    required: false)
++network_deps = []
++if socket_lib.found()
++  network_deps += socket_lib
++endif
++if nsl_lib.found()
++  network_deps += nsl_lib
++endif
++
+ # Optional dep of ext/gl and gst/librfb
+ x11_dep = dependency('x11', required : get_option('x11'))
+ if x11_dep.found()
+diff -ur gst-plugins-bad-1.18.5.orig/sys/shm/meson.build gst-plugins-bad-1.18.5/sys/shm/meson.build
+--- gst-plugins-bad-1.18.5.orig/sys/shm/meson.build	2021-09-08 14:03:40.991253900 +0000
++++ gst-plugins-bad-1.18.5/sys/shm/meson.build	2021-10-27 22:36:13.120371726 +0000
+@@ -34,7 +34,7 @@
+     shm_sources,
+     c_args : gst_plugins_bad_args + ['-DSHM_PIPE_USE_GLIB'],
+     include_directories : [configinc],
+-    dependencies : [gstbase_dep, rt_dep],
++    dependencies : [gstbase_dep, rt_dep] + network_deps,
+     install : true,
+     install_dir : plugins_install_dir,
+   )
