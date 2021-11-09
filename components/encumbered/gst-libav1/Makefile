@@ -13,31 +13,31 @@
 # Copyright 2016 Aurelien Larcher.  All rights reserved.
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2021 Tim Mooney.  All rights reserved.
 #
 
 BUILD_BITS= 32_and_64
+BUILD_STYLE=	meson
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gst-libav
-COMPONENT_VERSION= 1.16.2
-COMPONENT_SUMMARY= GNOME streaming media framework plugins
+COMPONENT_NAME=		gst-libav
+COMPONENT_VERSION=	1.18.5
+COMPONENT_SUMMARY=	GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
-COMPONENT_FMRI= library/audio/gstreamer1/plugin/libav
-COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_FMRI=		library/audio/gstreamer1/plugin/libav
+COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/
+COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c724f612700c15a933c7356fbeabb0bb9571fb5538f8b1b54d4d2d94188deef2
+  sha256:822e008a910e9dd13aedbdd8dc63fedef4040c0ee2e927bab3112e9de693a548
 COMPONENT_ARCHIVE_URL= \
-  http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
-COMPONENT_LICENSE= LGPLv2
-COMPONENT_LICENSE_FILE= COPYING.LIB
+  https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	LGPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
-
-COMPONENT_PREP_ACTION = (cd $(SOURCE_DIR) && autoreconf -f)
 
 PATH = $(PATH.gnu)
 
@@ -45,12 +45,13 @@ CFLAGS += -I/usr/X11/include/mesa
 CFLAGS += -I/usr/X11/include
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
-REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += compress/xz
+# gst-libav current does not have a test suite
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += video/ffmpeg
