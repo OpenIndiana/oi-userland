@@ -1,0 +1,22 @@
+
+Disable a bunch of the Qt5 stuff.  Previous versions (1.16.x, 0.10.x) didn't
+include any Qt5 stuff, and the current examples find qmake but build for
+the wrong ABI (64 bit when the rest is 32 bit), causing link steps to fail.
+
+If someone wants to add the .32 and .64 specific config to get qmake to
+build the right ABI, these could be re-enabled and included.
+
+diff -ur gst-plugins-base-1.18.5.orig/tests/examples/gl/meson.build gst-plugins-base-1.18.5/tests/examples/gl/meson.build
+--- gst-plugins-base-1.18.5.orig/tests/examples/gl/meson.build	2021-09-08 14:02:22.223757700 +0000
++++ gst-plugins-base-1.18.5/tests/examples/gl/meson.build	2021-10-26 02:57:17.335389518 +0000
+@@ -1,6 +1,8 @@
+ subdir('cocoa')
+ subdir('generic')
+ subdir('gtk', if_found : gtk_dep)
+-qt5core_dep = dependency('qt5', modules : ['Core'], required : false)
+-subdir('qt', if_found: qt5core_dep)
++# the Qt stuff currently isn't getting the 32 vs. 64 bit compilation
++# correct, so just disable it. 
++#qt5core_dep = dependency('qt5', modules : ['Core'], required : false)
++#subdir('qt', if_found: qt5core_dep)
+ subdir('sdl')

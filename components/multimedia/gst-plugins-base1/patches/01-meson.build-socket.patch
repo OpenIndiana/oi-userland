@@ -1,0 +1,37 @@
+diff -ur gst-plugins-base-1.18.5.orig/gst-libs/gst/rtsp/meson.build gst-plugins-base-1.18.5/gst-libs/gst/rtsp/meson.build
+--- gst-plugins-base-1.18.5.orig/gst-libs/gst/rtsp/meson.build	2021-09-08 14:02:22.163758000 +0000
++++ gst-plugins-base-1.18.5/gst-libs/gst/rtsp/meson.build	2021-10-26 00:31:25.944186016 +0000
+@@ -48,7 +48,7 @@
+   soversion : soversion,
+   darwin_versions : osxversion,
+   install : true,
+-  dependencies : gstrtsp_deps,
++  dependencies : gstrtsp_deps + network_deps,
+ )
+ 
+ rtsp_gen_sources = [gstrtsp_h]
+diff -ur gst-plugins-base-1.18.5.orig/meson.build gst-plugins-base-1.18.5/meson.build
+--- gst-plugins-base-1.18.5.orig/meson.build	2021-09-08 14:02:22.199757800 +0000
++++ gst-plugins-base-1.18.5/meson.build	2021-10-26 00:31:59.408719122 +0000
+@@ -278,6 +278,21 @@
+   gst_plugins_base_args += ['-DGST_STATIC_COMPILATION']
+ endif
+ 
++#
++# Solaris and Illumos distros split a lot of networking-related code
++# into '-lsocket -lnsl'.  Anything that calls socketpair(), getifaddr(),
++# etc. probably needs to include network_deps
++#
++socket_lib = cc.find_library('socket', required: false)
++nsl_lib    = cc.find_library('nsl',    required: false)
++network_deps = []
++if socket_lib.found()
++  network_deps += socket_lib
++endif
++if nsl_lib.found()
++  network_deps += nsl_lib
++endif
++
+ # X11 checks are for sys/ and tests/
+ x11_dep = dependency('x11', required : get_option('x11'))
+ # GLib checks are for the entire project
