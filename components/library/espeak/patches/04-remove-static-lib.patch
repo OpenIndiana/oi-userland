@@ -1,0 +1,37 @@
+--- espeak-1.48.04-source/src/Makefile.orig	2021-10-16 13:58:58.444739532 +0000
++++ espeak-1.48.04-source/src/Makefile	2021-10-16 13:59:24.571902838 +0000
+@@ -11,7 +11,6 @@
+ BIN_NAME = speak
+ BIN2_NAME = espeak
+ LIB_NAME = libespeak.so
+-STATIC_LIB_NAME = libespeak.a
+ LIB_VERSION = 1
+ LIBTAG = $(LIB_VERSION).$(RELEASE)
+ 
+@@ -96,7 +95,7 @@
+ #CXXFLAGS=-O2
+ 
+ 
+-all: $(BIN_NAME) $(LIB_NAME) $(STATIC_LIB_NAME) $(BIN2_NAME)
++all: $(BIN_NAME) $(LIB_NAME) $(BIN2_NAME)
+ 
+ .cpp.o:
+ 	$(CXX) $(CXXFLAGS) $(USE_AUDIO) -D PATH_ESPEAK_DATA=\"$(DATADIR)\" -Wall -pedantic -I. -c -fno-exceptions  $<
+@@ -120,9 +119,6 @@
+ 	$(LN_SF) $(LIB_NAME).$(LIBTAG) $(LIB_NAME).$(LIB_VERSION)
+ 	$(LN_SF) $(LIB_NAME).$(LIB_VERSION) $(LIB_NAME)
+ 
+-$(STATIC_LIB_NAME): $(OBJS2)
+-	$(AR) cqs $(STATIC_LIB_NAME) $(OBJS2)
+-
+ clean:
+ 	rm -f *.o *.a *~
+ 
+@@ -143,7 +139,6 @@
+ 	# Install shared library
+ 	$(INSTALL) -m 755 $(LIB_NAME).$(LIBTAG) $(DESTDIR)$(LIBDIR)
+ 	# Install static library
+-	$(INSTALL) -m 755 $(STATIC_LIB_NAME) $(DESTDIR)$(LIBDIR)
+ 	$(LN_SF) $(LIB_NAME).$(LIBTAG) $(DESTDIR)$(LIBDIR)/$(LIB_NAME).$(LIB_VERSION)
+ 	$(LN_SF) $(LIB_NAME).$(LIB_VERSION) $(DESTDIR)$(LIBDIR)/$(LIB_NAME)
+ 	# Install development headers

@@ -12,30 +12,28 @@
 #
 # Copyright 2017 Gary Mills
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2021 Andreas Wacknitz
 #
-
+BUILD_BITS= 32_and_64
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= espeak
 COMPONENT_VERSION= 1.48.04
 IPS_COMPONENT_VERSION= 1.48.4
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= eSpeak - compact open source software speech synthesizer
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)-source
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= \
-  sha256:bf9a17673adffcc28ff7ea18764f06136547e97bbd9edf2ec612f09b207f0659
-COMPONENT_ARCHIVE_URL= \
-  http://downloads.sourceforge.net/project/espeak/espeak/espeak-1.48/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://espeak.sourceforge.net/
+COMPONENT_ARCHIVE_HASH= sha256:bf9a17673adffcc28ff7ea18764f06136547e97bbd9edf2ec612f09b207f0659
+COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/espeak/espeak/espeak-1.48/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://espeak.sourceforge.net/
 COMPONENT_FMRI = library/speech/espeak
 COMPONENT_CLASSIFICATION = Applications/Universal Access
 COMPONENT_LICENSE = GPLv3
-COMPONENT_LICENSE_FILE = License.txt
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CXXFLAGS += -fpermissive
 
@@ -61,12 +59,6 @@ COMPONENT_BUILD_ARGS += $(COMPONENT_COMMON_ARGS)
 COMPONENT_BUILD_ENV += $(COMPONENT_COMMON_ENV)
 COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
 COMPONENT_INSTALL_ENV += $(COMPONENT_COMMON_ENV)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
