@@ -11,34 +11,27 @@
 
 #
 # Copyright 2016 Aurelien Larcher
+# Copyright 2021 Andreas Wacknitz
 #
 
+BUILD_BITS= 32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xorg-cf-files
-COMPONENT_VERSION=        1.0.6
+COMPONENT_VERSION=        1.0.7
 COMPONENT_FMRI=           developer/build/imake/xorg-cf-files
 COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SUMMARY=  X.Org platform configuration files for imake
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:4dcf5a9dbe3c6ecb9d2dd05e629b3d373eae9ba12d13942df87107fdc1b3934d
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/util/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
+COMPONENT_ARCHIVE_HASH= sha256:74a771d5bb2189020399998dfa2329c3e038aa2e14dd3d4056144ed9a5976308
+COMPONENT_ARCHIVE_URL=	https://www.x.org/releases/individual/util/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.x.org/
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xorg-cf-files.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
-
+# Auto-generated dependencies
