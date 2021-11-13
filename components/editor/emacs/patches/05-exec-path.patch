@@ -1,0 +1,16 @@
+Do not capture the build-time value of $PATH in the 'emacs' executable
+since this can noticeably increase the size of the closure of Emacs
+with things like GCC being referenced.
+
+--- emacs-27.2/lisp/loadup.el.orig	2021-01-28 18:52:38.000000000 +0000
++++ emacs-27.2/lisp/loadup.el	2021-11-13 09:13:51.395492934 +0000
+@@ -481,7 +481,8 @@
+                         ((equal dump-mode "dump") "emacs")
+                         ((equal dump-mode "bootstrap") "emacs")
+                         ((equal dump-mode "pbootstrap") "bootstrap-emacs.pdmp")
+-                        (t (error "unrecognized dump mode %s" dump-mode)))))
++                        (t (error "unrecognized dump mode %s" dump-mode))))
++                    (exec-path nil))
+       (message "Dumping under the name %s" output)
+       (condition-case ()
+           (delete-file output)
