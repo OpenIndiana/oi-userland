@@ -11,10 +11,10 @@
 #
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 # Copyright 2020 Michal Nowak
+# Copyright 2021 Andreas Wacknitz
 #
 
 BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 PATH= $(USRBINDIR64):$(PATH.gnu)
@@ -90,9 +90,12 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/XFAIL/p" '
 
 # added manually, not found as dependency
-REQUIRED_PACKAGES += text/asciidoc
 REQUIRED_PACKAGES += application/cluster/resource-agents
+REQUIRED_PACKAGES += library/libesmtp
 REQUIRED_PACKAGES += library/libstatgrab
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/management/snmp/net-snmp
+REQUIRED_PACKAGES += text/asciidoc
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
@@ -101,19 +104,17 @@ REQUIRED_PACKAGES += application/cluster/corosync
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls-3
-REQUIRED_PACKAGES += library/libesmtp
 REQUIRED_PACKAGES += library/libqb
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/management/snmp/net-snmp
 # Bogus dependency due to libssp
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
