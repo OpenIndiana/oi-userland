@@ -32,14 +32,14 @@ diff -Nura a/doc/crm_fencing.txt b/doc/crm_fencing.txt
  	fi
      else
  	echo "can't compare cibs from running and stopped systems"
---- pacemaker-Pacemaker-1.1.21/Makefile.common.~1~	2019-08-19 08:25:47.998859419 +0000
-+++ pacemaker-Pacemaker-1.1.21/Makefile.common	2019-08-19 08:26:20.901990399 +0000
-@@ -38,7 +38,7 @@
+--- pacemaker-Pacemaker-2.0.3/Makefile.common.~1~	2020-01-15 11:05:18.097760296 +0000
++++ pacemaker-Pacemaker-2.0.3/Makefile.common	2020-01-15 11:06:42.973133739 +0000
+@@ -58,7 +58,7 @@
+ if BUILD_HELP
+ man8_MANS		= $(sbin_PROGRAMS:%=%.8) $(sbin_SCRIPTS:%=%.8)
  
- %.8:	% $(MAN8DEPS)
- 	chmod a+x $(abs_builddir)/$<
--	$(AM_V_MAN)PATH=$(abs_builddir):$$PATH $(HELP2MAN) --output $@ --no-info --section 8 --name "Part of the Pacemaker cluster resource manager" $(abs_builddir)/$<
-+	$(AM_V_MAN)PATH=$(abs_builddir):$$PATH $(HELP2MAN) --output $@ --no-info --section 1m --name "Part of the Pacemaker cluster resource manager" $(abs_builddir)/$<
+-HELP2MAN_ARGS = -N --section 8 --name "Part of the Pacemaker cluster resource manager"
++HELP2MAN_ARGS = -N --section 1m --name "Part of the Pacemaker cluster resource manager"
  
- %.xml:  %
- 	$(AM_V_GEN)$(abs_builddir)/$< metadata > $@
+ # Some of our tools' help are just shell script invocations of another tool's
+ # help. Putting the real tool in MAN8DEPS helps detect when the wrapped help
