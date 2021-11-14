@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016 John Smith
+# Copyright 2021 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,27 +23,37 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# Drop static libraries
+<transform file path=.*/lib/.+\.a$ -> drop>
+# Drop dir files
+<transform file path=.+/share/info/dir -> drop>
+
 file path=usr/include/libconfig.h
 file path=usr/include/libconfig.h++
-file path=usr/lib/cmake/libconfig++/libconfig++Config.cmake
-file path=usr/lib/cmake/libconfig/libconfigConfig.cmake
-link path=usr/lib/libconfig++.so target=libconfig++.so.9.2.0
-link path=usr/lib/libconfig++.so.9 target=libconfig++.so.9.2.0
-file path=usr/lib/libconfig++.so.9.2.0
-link path=usr/lib/libconfig.so target=libconfig.so.9.2.0
-link path=usr/lib/libconfig.so.9 target=libconfig.so.9.2.0
-file path=usr/lib/libconfig.so.9.2.0
-file path=usr/lib/pkgconfig/libconfig++.pc
-file path=usr/lib/pkgconfig/libconfig.pc
 file path=usr/lib/$(MACH64)/cmake/libconfig++/libconfig++Config.cmake
 file path=usr/lib/$(MACH64)/cmake/libconfig/libconfigConfig.cmake
-link path=usr/lib/$(MACH64)/libconfig++.so target=libconfig++.so.9.2.0
-link path=usr/lib/$(MACH64)/libconfig++.so.9 target=libconfig++.so.9.2.0
-file path=usr/lib/$(MACH64)/libconfig++.so.9.2.0
-link path=usr/lib/$(MACH64)/libconfig.so target=libconfig.so.9.2.0
-link path=usr/lib/$(MACH64)/libconfig.so.9 target=libconfig.so.9.2.0
-file path=usr/lib/$(MACH64)/libconfig.so.9.2.0
+file path=usr/lib/$(MACH64)/libconfig++.a
+link path=usr/lib/$(MACH64)/libconfig++.so target=libconfig++.so.11.1.0
+link path=usr/lib/$(MACH64)/libconfig++.so.11 target=libconfig++.so.11.1.0
+file path=usr/lib/$(MACH64)/libconfig++.so.11.1.0
+file path=usr/lib/$(MACH64)/libconfig.a
+link path=usr/lib/$(MACH64)/libconfig.so target=libconfig.so.11.1.0
+link path=usr/lib/$(MACH64)/libconfig.so.11 target=libconfig.so.11.1.0
+file path=usr/lib/$(MACH64)/libconfig.so.11.1.0
 file path=usr/lib/$(MACH64)/pkgconfig/libconfig++.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libconfig.pc
+file path=usr/lib/cmake/libconfig++/libconfig++Config.cmake
+file path=usr/lib/cmake/libconfig/libconfigConfig.cmake
+file path=usr/lib/libconfig++.a
+link path=usr/lib/libconfig++.so target=libconfig++.so.11.1.0
+link path=usr/lib/libconfig++.so.11 target=libconfig++.so.11.1.0
+file path=usr/lib/libconfig++.so.11.1.0
+file path=usr/lib/libconfig.a
+link path=usr/lib/libconfig.so target=libconfig.so.11.1.0
+link path=usr/lib/libconfig.so.11 target=libconfig.so.11.1.0
+file path=usr/lib/libconfig.so.11.1.0
+file path=usr/lib/pkgconfig/libconfig++.pc
+file path=usr/lib/pkgconfig/libconfig.pc
+file path=usr/share/info/dir
 file path=usr/share/info/libconfig.info group=bin mode=0444 owner=root \
     restart_fmri=svc:/application/texinfo-update:default facet.doc.info=true 
