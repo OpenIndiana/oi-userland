@@ -10,31 +10,33 @@
 
 #
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
+# Copyright 2021 Andreas Wacknitz
 #
 
 BUILD_BITS= 64
 BUILD_STYLE= justmake
-
 include ../../../make-rules/shared-macros.mk
 
-GCC_VERSION= 10
-PATH= $(PATH.gnu)
-
-COMPONENT_NAME=           couchdb
-COMPONENT_VERSION=        3.1.1
-COMPONENT_VERSION_MAJOR=  3.1
-COMPONENT_FMRI=           database/$(COMPONENT_NAME)-31
-COMPONENT_CLASSIFICATION= System/Databases
-COMPONENT_PROJECT_URL=    http://couchdb.apache.org/
-COMPONENT_SRC=            apache-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE_HASH=   sha256:8ffe766bba2ba39a7b49689a0732afacf69caffdf8e2d95447e82fb173c78ca3
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=    http://apache.mirror.iphh.net/$(COMPONENT_NAME)/source/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_SUMMARY=        Apache CouchDB is a document-oriented database.
-COMPONENT_LICENSE=        Apache 2.0
-COMPONENT_LICENSE_FILE=   $(USRDIR)/couchdb/$(COMPONENT_VERSION_MAJOR)/LICENSE
+COMPONENT_NAME=				couchdb
+COMPONENT_VERSION_MAJOR=	3.1
+COMPONENT_VERSION_MAJOR_=	$(subst .,,$(COMPONENT_VERSION_MAJOR))
+COMPONENT_VERSION=			$(COMPONENT_VERSION_MAJOR).2
+COMPONENT_FMRI=				database/$(COMPONENT_NAME)-$(COMPONENT_VERSION_MAJOR_)
+COMPONENT_CLASSIFICATION=	System/Databases
+COMPONENT_PROJECT_URL=		https://couchdb.apache.org/
+COMPONENT_SRC=				apache-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE_HASH=		sha256:e799c489a9c8fa50c3c40b5267f526d80c93cb57fecafb77ee37f79606f4fb27
+COMPONENT_ARCHIVE=			$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=		https://archive.apache.org/dist/$(COMPONENT_NAME)/source/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SUMMARY=			Apache CouchDB is a document-oriented database.
+COMPONENT_LICENSE=			Apache 2.0
 
 include $(WS_MAKE_RULES)/common.mk
+
+GCC_VERSION= 10
+PYTHON_VERSION= 3.7
+
+PATH= $(PATH.gnu)
 
 PKG_MACROS += COMPONENT_VERSION_MAJOR=$(COMPONENT_VERSION_MAJOR)
 
@@ -88,8 +90,8 @@ REQUIRED_PACKAGES += developer/icu
 
 # only required for target test
 # this modules are in the repository
-REQUIRED_PACKAGES += library/python/nose-27
-REQUIRED_PACKAGES += library/python/requests-27
+REQUIRED_PACKAGES += library/python/nose-37
+REQUIRED_PACKAGES += library/python/requests-37
 # and install this via pip
 # pip install hypothesis
 
@@ -102,12 +104,12 @@ REQUIRED_PACKAGES += runtime/erlang
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/mozjs-60
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
