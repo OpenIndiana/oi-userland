@@ -9,14 +9,16 @@
 #
 
 #
+# Copyright 2021 Gary Mills
 # Copyright 2014 Alexander Pyhalov
 #
 
+BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libevent2
 COMPONENT_VERSION=	2.0.22
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://libevent.org/
 COMPONENT_SUMMARY=	An event notification library for event-driven network servers
 COMPONENT_FMRI=         library/libevent2
@@ -30,9 +32,13 @@ https://github.com/libevent/libevent/releases/download/release-$(COMPONENT_VERSI
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+PYTHON_VERSION=		3.9
+
+include $(WS_MAKE_RULES)/common.mk
+
+# Replace the python script with a python3 version
+COMPONENT_PREP_ACTION= \
+	( $(CP) $(COMPONENT_DIR)/files/event_rpcgen.py $(@D) )
 
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--includedir=/usr/include/libevent2
@@ -42,14 +48,29 @@ CONFIGURE_OPTIONS+=	--includedir=/usr/include/libevent2
 COMPONENT_POST_INSTALL_ACTION= \
             ($(MV) $(PROTO_DIR)/usr/include/libevent2/event2/event-config.h $(PROTO_DIR)/usr/include/libevent2/event2/event-config-$(BITS).h )
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
+# Typical results from the test target
+#EVPORT
+#...
+#EPOLL
+#...
+#EPOLL (changelist)
+#...
+#DEVPOLL
+#...
+#POLL
+#...
+#SELECT
+#...
+#  FAIL .../libevent-2.0.22-stable/test/regress_util.c:972: assert(a)
+#  [getaddrinfo FAILED]
+#1/180 TESTS FAILED. (0 skipped)
+#....
+#==================
+#1 of 1 test failed
+#==================
 
 # util/getaddrinfo fails (https://github.com/libevent/libevent/issues/134)
-test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
