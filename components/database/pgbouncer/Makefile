@@ -13,13 +13,12 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS=64
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgbouncer
 COMPONENT_VERSION= 	1.12.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY= 	pgBouncer connection pooler
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -45,7 +44,8 @@ CONFIGURE_ENV +=        "XMLTO=xmlto --skip-validation"
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
