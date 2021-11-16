@@ -3,43 +3,43 @@ ok 1 - verify that the running shell supports "local"
 ok 2 - .git/objects should be empty after git init in an empty repo
 ok 3 - .git/objects should have 3 subdirectories
 ok 4 - success is reported like this
-ok 5 - pretend we have a fully passing test suite
-ok 6 - pretend we have a partially passing test suite
-ok 7 - pretend we have a known breakage
-ok 8 - pretend we have fixed a known breakage
-ok 9 - pretend we have fixed one of two known breakages (run in sub test-lib)
-ok 10 - pretend we have a pass, fail, and known breakage
-ok 11 - pretend we have a mix of all possible results
-ok 12 - test --verbose
-ok 13 - test --verbose-only
-ok 14 - GIT_SKIP_TESTS
-ok 15 - GIT_SKIP_TESTS several tests
-ok 16 - GIT_SKIP_TESTS sh pattern
-ok 17 - GIT_SKIP_TESTS entire suite
-ok 18 - GIT_SKIP_TESTS does not skip unmatched suite
-ok 19 - --run basic
-ok 20 - --run with a range
-ok 21 - --run with two ranges
-ok 22 - --run with a left open range
-ok 23 - --run with a right open range
-ok 24 - --run with basic negation
-ok 25 - --run with two negations
-ok 26 - --run a range and negation
-ok 27 - --run range negation
-ok 28 - --run include, exclude and include
-ok 29 - --run include, exclude and include, comma separated
-ok 30 - --run exclude and include
-ok 31 - --run empty selectors
-ok 32 - --run substring selector
-ok 33 - --run keyword selection
-ok 34 - --run invalid range end
-ok 35 - tests respect prerequisites
-ok 36 - tests respect lazy prerequisites
-ok 37 - nested lazy prerequisites
-ok 38 - lazy prereqs do not turn off tracing
-ok 39 - tests clean up after themselves
-ok 40 - tests clean up even on failures
-ok 41 - test_atexit is run
+ok 5 - subtest: 3 passing tests
+ok 6 - subtest: 2/3 tests passing
+ok 7 - subtest: a failing TODO test
+ok 8 - subtest: a passing TODO test
+ok 9 - subtest: 2 TODO tests, one passin
+ok 10 - subtest: mixed results: pass, failure and a TODO test
+ok 11 - subtest: mixed results: a mixture of all possible results
+ok 12 - subtest: --verbose option
+ok 13 - subtest: --verbose-only option
+ok 14 - subtest: skip one with GIT_SKIP_TESTS
+ok 15 - subtest: skip several with GIT_SKIP_TESTS
+ok 16 - subtest: sh pattern skipping with GIT_SKIP_TESTS
+ok 17 - subtest: skip entire test suite with GIT_SKIP_TESTS
+ok 18 - subtest: GIT_SKIP_TESTS does not skip unmatched suite
+ok 19 - subtest: --run basic
+ok 20 - subtest: --run with a range
+ok 21 - subtest: --run with two ranges
+ok 22 - subtest: --run with a left open range
+ok 23 - subtest: --run with a right open range
+ok 24 - subtest: --run with basic negation
+ok 25 - subtest: --run with two negations
+ok 26 - subtest: --run a range and negation
+ok 27 - subtest: --run range negation
+ok 28 - subtest: --run include, exclude and include
+ok 29 - subtest: --run include, exclude and include, comma separated
+ok 30 - subtest: --run exclude and include
+ok 31 - subtest: --run empty selectors
+ok 32 - subtest: --run substring selector
+ok 33 - subtest: --run keyword selection
+ok 34 - subtest: --run invalid range end
+ok 35 - subtest: tests respect prerequisites
+ok 36 - subtest: tests respect lazy prerequisites
+ok 37 - subtest: nested lazy prerequisites
+ok 38 - subtest: lazy prereqs do not turn off tracing
+ok 39 - subtest: tests clean up after themselves
+ok 40 - subtest: tests clean up even on failures
+ok 41 - subtest: test_atexit is run
 ok 42 - test_oid provides sane info by default
 ok 43 - test_oid can look up data for SHA-1
 ok 44 - test_oid can look up data for SHA-256
@@ -203,11 +203,15 @@ ok 30 - symlinks not respected in-tree
 *** t0004-unwritable.sh ***
 ok 1 - setup
 ok 2 # skip write-tree should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 3 # skip commit should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 4 # skip update-index should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 5 # skip add should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-# passed all 5 test(s)
-1..5
+ok 3 # skip write-tree output on unwritable repository (missing WRITE_TREE_OUT)
+ok 4 # skip commit should notice unwritable repository (missing SANITY of POSIXPERM,SANITY,!SANITIZE_LEAK)
+ok 5 # skip commit output on unwritable repository (missing COMMIT_OUT)
+ok 6 # skip update-index should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 7 # skip update-index output on unwritable repository (missing UPDATE_INDEX_OUT)
+ok 8 # skip add should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 9 # skip add output on unwritable repository (missing ADD_OUT)
+# passed all 9 test(s)
+1..9
 *** t0005-signals.sh ***
 ok 1 - sigchain works
 ok 2 - signals are propagated using shell convention
@@ -697,16 +701,18 @@ ok 382 - -z --stdin from subdirectory with -v
 ok 383 - streaming support for --stdin
 ok 384 - existing file and directory
 ok 385 - existing directory and file
-ok 386 - trailing whitespace is ignored
-ok 387 - quoting allows trailing whitespace
-ok 388 - correct handling of backslashes
-ok 389 - info/exclude trumps core.excludesfile
-ok 390 - set up ignore file for symlink tests
-ok 391 - symlinks respected in core.excludesFile
-ok 392 - symlinks respected in info/exclude
-ok 393 - symlinks not respected in-tree
-# passed all 393 test(s)
-1..393
+ok 386 - exact prefix matching (with root)
+ok 387 - exact prefix matching (without root)
+ok 388 - trailing whitespace is ignored
+ok 389 - quoting allows trailing whitespace
+ok 390 - correct handling of backslashes
+ok 391 - info/exclude trumps core.excludesfile
+ok 392 - set up ignore file for symlink tests
+ok 393 - symlinks respected in core.excludesFile
+ok 394 - symlinks respected in info/exclude
+ok 395 - symlinks not respected in-tree
+# passed all 395 test(s)
+1..395
 *** t0009-prio-queue.sh ***
 ok 1 - basic ordering
 ok 2 - mixed put and get
@@ -747,153 +753,158 @@ ok 14 - string interning
 *** t0012-help.sh ***
 ok 1 - setup
 ok 2 - basic help commands
-ok 3 - works for commands and guides by default
-ok 4 - --exclude-guides does not work for guides
-ok 5 - --help does not work for guides
-ok 6 - git help
-ok 7 - git help -g
-ok 8 - generate builtin list
-ok 9 - add can handle -h
-ok 10 - am can handle -h
-ok 11 - annotate can handle -h
-ok 12 - apply can handle -h
-ok 13 - archive can handle -h
-ok 14 - bisect--helper can handle -h
-ok 15 - blame can handle -h
-ok 16 - branch can handle -h
-ok 17 - bugreport can handle -h
-ok 18 - bundle can handle -h
-ok 19 - cat-file can handle -h
-ok 20 - check-attr can handle -h
-ok 21 - check-ignore can handle -h
-ok 22 - check-mailmap can handle -h
-ok 23 - check-ref-format can handle -h
-ok 24 - checkout can handle -h
-ok 25 - checkout--worker can handle -h
-ok 26 - checkout-index can handle -h
-ok 27 - cherry can handle -h
-ok 28 - cherry-pick can handle -h
-ok 29 - clean can handle -h
-ok 30 - clone can handle -h
-ok 31 - column can handle -h
-ok 32 - commit can handle -h
-ok 33 - commit-graph can handle -h
-ok 34 - commit-tree can handle -h
-ok 35 - config can handle -h
-ok 36 - count-objects can handle -h
-ok 37 - credential can handle -h
-ok 38 - credential-cache can handle -h
-ok 39 - credential-cache--daemon can handle -h
-ok 40 - credential-store can handle -h
-ok 41 - describe can handle -h
-ok 42 - diff can handle -h
-ok 43 - diff-files can handle -h
-ok 44 - diff-index can handle -h
-ok 45 - diff-tree can handle -h
-ok 46 - difftool can handle -h
-ok 47 - env--helper can handle -h
-ok 48 - fast-export can handle -h
-ok 49 - fast-import can handle -h
-ok 50 - fetch can handle -h
-ok 51 - fetch-pack can handle -h
-ok 52 - fmt-merge-msg can handle -h
-ok 53 - for-each-ref can handle -h
-ok 54 - for-each-repo can handle -h
-ok 55 - format-patch can handle -h
-ok 56 - fsck can handle -h
-ok 57 - fsck-objects can handle -h
-ok 58 - gc can handle -h
-ok 59 - get-tar-commit-id can handle -h
-ok 60 - grep can handle -h
-ok 61 - hash-object can handle -h
-ok 62 - help can handle -h
-ok 63 - index-pack can handle -h
-ok 64 - init can handle -h
-ok 65 - init-db can handle -h
-ok 66 - interpret-trailers can handle -h
-ok 67 - log can handle -h
-ok 68 - ls-files can handle -h
-ok 69 - ls-remote can handle -h
-ok 70 - ls-tree can handle -h
-ok 71 - mailinfo can handle -h
-ok 72 - mailsplit can handle -h
-ok 73 - maintenance can handle -h
-ok 74 - merge can handle -h
-ok 75 - merge-base can handle -h
-ok 76 - merge-file can handle -h
-ok 77 - merge-index can handle -h
-ok 78 - merge-ours can handle -h
-ok 79 - merge-recursive can handle -h
-ok 80 - merge-recursive-ours can handle -h
-ok 81 - merge-recursive-theirs can handle -h
-ok 82 - merge-subtree can handle -h
-ok 83 - merge-tree can handle -h
-ok 84 - mktag can handle -h
-ok 85 - mktree can handle -h
-ok 86 - multi-pack-index can handle -h
-ok 87 - mv can handle -h
-ok 88 - name-rev can handle -h
-ok 89 - notes can handle -h
-ok 90 - pack-objects can handle -h
-ok 91 - pack-redundant can handle -h
-ok 92 - pack-refs can handle -h
-ok 93 - patch-id can handle -h
-ok 94 - pickaxe can handle -h
-ok 95 - prune can handle -h
-ok 96 - prune-packed can handle -h
-ok 97 - pull can handle -h
-ok 98 - push can handle -h
-ok 99 - range-diff can handle -h
-ok 100 - read-tree can handle -h
-ok 101 - rebase can handle -h
-ok 102 - rebase--interactive can handle -h
-ok 103 - receive-pack can handle -h
-ok 104 - reflog can handle -h
-ok 105 - remote can handle -h
-ok 106 - remote-ext can handle -h
-ok 107 - remote-fd can handle -h
-ok 108 - repack can handle -h
-ok 109 - replace can handle -h
-ok 110 - rerere can handle -h
-ok 111 - reset can handle -h
-ok 112 - restore can handle -h
-ok 113 - rev-list can handle -h
-ok 114 - rev-parse can handle -h
-ok 115 - revert can handle -h
-ok 116 - rm can handle -h
-ok 117 - send-pack can handle -h
-ok 118 - shortlog can handle -h
-ok 119 - show can handle -h
-ok 120 - show-branch can handle -h
-ok 121 - show-index can handle -h
-ok 122 - show-ref can handle -h
-ok 123 - sparse-checkout can handle -h
-ok 124 - stage can handle -h
-ok 125 - stash can handle -h
-ok 126 - status can handle -h
-ok 127 - stripspace can handle -h
-ok 128 - submodule--helper can handle -h
-ok 129 - switch can handle -h
-ok 130 - symbolic-ref can handle -h
-ok 131 - tag can handle -h
-ok 132 - unpack-file can handle -h
-ok 133 - unpack-objects can handle -h
-ok 134 - update-index can handle -h
-ok 135 - update-ref can handle -h
-ok 136 - update-server-info can handle -h
-ok 137 - upload-archive can handle -h
-ok 138 - upload-archive--writer can handle -h
-ok 139 - upload-pack can handle -h
-ok 140 - var can handle -h
-ok 141 - verify-commit can handle -h
-ok 142 - verify-pack can handle -h
-ok 143 - verify-tag can handle -h
-ok 144 - version can handle -h
-ok 145 - whatchanged can handle -h
-ok 146 - worktree can handle -h
-ok 147 - write-tree can handle -h
-# passed all 147 test(s)
-1..147
+ok 3 - invalid usage
+ok 4 - works for commands and guides by default
+ok 5 - --exclude-guides does not work for guides
+ok 6 - --help does not work for guides
+ok 7 - git help
+ok 8 - git help -g
+ok 9 - git help fails for non-existing html pages
+ok 10 - git help succeeds without git.html
+ok 11 - git help -c
+ok 12 - git help --config-for-completion
+ok 13 - git help --config-sections-for-completion
+ok 14 - generate builtin list
+ok 15 - add can handle -h
+ok 16 - am can handle -h
+ok 17 - annotate can handle -h
+ok 18 - apply can handle -h
+ok 19 - archive can handle -h
+ok 20 - bisect--helper can handle -h
+ok 21 - blame can handle -h
+ok 22 - branch can handle -h
+ok 23 - bugreport can handle -h
+ok 24 - bundle can handle -h
+ok 25 - cat-file can handle -h
+ok 26 - check-attr can handle -h
+ok 27 - check-ignore can handle -h
+ok 28 - check-mailmap can handle -h
+ok 29 - check-ref-format can handle -h
+ok 30 - checkout can handle -h
+ok 31 - checkout--worker can handle -h
+ok 32 - checkout-index can handle -h
+ok 33 - cherry can handle -h
+ok 34 - cherry-pick can handle -h
+ok 35 - clean can handle -h
+ok 36 - clone can handle -h
+ok 37 - column can handle -h
+ok 38 - commit can handle -h
+ok 39 - commit-graph can handle -h
+ok 40 - commit-tree can handle -h
+ok 41 - config can handle -h
+ok 42 - count-objects can handle -h
+ok 43 - credential can handle -h
+ok 44 - credential-cache can handle -h
+ok 45 - credential-cache--daemon can handle -h
+ok 46 - credential-store can handle -h
+ok 47 - describe can handle -h
+ok 48 - diff can handle -h
+ok 49 - diff-files can handle -h
+ok 50 - diff-index can handle -h
+ok 51 - diff-tree can handle -h
+ok 52 - difftool can handle -h
+ok 53 - env--helper can handle -h
+ok 54 - fast-export can handle -h
+ok 55 - fast-import can handle -h
+ok 56 - fetch can handle -h
+ok 57 - fetch-pack can handle -h
+ok 58 - fmt-merge-msg can handle -h
+ok 59 - for-each-ref can handle -h
+ok 60 - for-each-repo can handle -h
+ok 61 - format-patch can handle -h
+ok 62 - fsck can handle -h
+ok 63 - fsck-objects can handle -h
+ok 64 - gc can handle -h
+ok 65 - get-tar-commit-id can handle -h
+ok 66 - grep can handle -h
+ok 67 - hash-object can handle -h
+ok 68 - help can handle -h
+ok 69 - index-pack can handle -h
+ok 70 - init can handle -h
+ok 71 - init-db can handle -h
+ok 72 - interpret-trailers can handle -h
+ok 73 - log can handle -h
+ok 74 - ls-files can handle -h
+ok 75 - ls-remote can handle -h
+ok 76 - ls-tree can handle -h
+ok 77 - mailinfo can handle -h
+ok 78 - mailsplit can handle -h
+ok 79 - maintenance can handle -h
+ok 80 - merge can handle -h
+ok 81 - merge-base can handle -h
+ok 82 - merge-file can handle -h
+ok 83 - merge-index can handle -h
+ok 84 - merge-ours can handle -h
+ok 85 - merge-recursive can handle -h
+ok 86 - merge-recursive-ours can handle -h
+ok 87 - merge-recursive-theirs can handle -h
+ok 88 - merge-subtree can handle -h
+ok 89 - merge-tree can handle -h
+ok 90 - mktag can handle -h
+ok 91 - mktree can handle -h
+ok 92 - multi-pack-index can handle -h
+ok 93 - mv can handle -h
+ok 94 - name-rev can handle -h
+ok 95 - notes can handle -h
+ok 96 - pack-objects can handle -h
+ok 97 - pack-redundant can handle -h
+ok 98 - pack-refs can handle -h
+ok 99 - patch-id can handle -h
+ok 100 - pickaxe can handle -h
+ok 101 - prune can handle -h
+ok 102 - prune-packed can handle -h
+ok 103 - pull can handle -h
+ok 104 - push can handle -h
+ok 105 - range-diff can handle -h
+ok 106 - read-tree can handle -h
+ok 107 - rebase can handle -h
+ok 108 - receive-pack can handle -h
+ok 109 - reflog can handle -h
+ok 110 - remote can handle -h
+ok 111 - remote-ext can handle -h
+ok 112 - remote-fd can handle -h
+ok 113 - repack can handle -h
+ok 114 - replace can handle -h
+ok 115 - rerere can handle -h
+ok 116 - reset can handle -h
+ok 117 - restore can handle -h
+ok 118 - rev-list can handle -h
+ok 119 - rev-parse can handle -h
+ok 120 - revert can handle -h
+ok 121 - rm can handle -h
+ok 122 - send-pack can handle -h
+ok 123 - shortlog can handle -h
+ok 124 - show can handle -h
+ok 125 - show-branch can handle -h
+ok 126 - show-index can handle -h
+ok 127 - show-ref can handle -h
+ok 128 - sparse-checkout can handle -h
+ok 129 - stage can handle -h
+ok 130 - stash can handle -h
+ok 131 - status can handle -h
+ok 132 - stripspace can handle -h
+ok 133 - submodule--helper can handle -h
+ok 134 - switch can handle -h
+ok 135 - symbolic-ref can handle -h
+ok 136 - tag can handle -h
+ok 137 - unpack-file can handle -h
+ok 138 - unpack-objects can handle -h
+ok 139 - update-index can handle -h
+ok 140 - update-ref can handle -h
+ok 141 - update-server-info can handle -h
+ok 142 - upload-archive can handle -h
+ok 143 - upload-archive--writer can handle -h
+ok 144 - upload-pack can handle -h
+ok 145 - var can handle -h
+ok 146 - verify-commit can handle -h
+ok 147 - verify-pack can handle -h
+ok 148 - verify-tag can handle -h
+ok 149 - version can handle -h
+ok 150 - whatchanged can handle -h
+ok 151 - worktree can handle -h
+ok 152 - write-tree can handle -h
+# passed all 152 test(s)
+1..152
 *** t0013-sha1dc.sh ***
 ok 1 - test-sha1 detects shattered pdf
 # passed all 1 test(s)
@@ -1022,7 +1033,7 @@ ok 27 - delayed checkout in process filter
 ok 28 - missing file in delayed checkout
 ok 29 - invalid file in delayed checkout
 ok 30 # skip delayed checkout with case-collision don't write to the wrong place (missing CASE_INSENSITIVE_FS of PERL,SYMLINKS,CASE_INSENSITIVE_FS)
-ok 31 - delayed checkout with utf-8-collision don't write to the wrong place
+ok 31 # skip delayed checkout with utf-8-collision don't write to the wrong place (missing UTF8_NFD_TO_NFC of PERL,SYMLINKS,UTF8_NFD_TO_NFC)
 ok 32 # skip delayed checkout with submodule collision don't write to the wrong place (missing CASE_INSENSITIVE_FS of PERL,SYMLINKS,CASE_INSENSITIVE_FS)
 ok 33 - setup for progress tests
 ok 34 # skip delayed checkout shows progress by default on tty (pathspec checkout) (missing TTY of PERL,TTY)
@@ -2567,39 +2578,40 @@ ok 19 - OPT_MAGNITUDE() 3giga
 ok 20 - short options
 ok 21 - long options
 ok 22 - missing required value
-ok 23 - intermingled arguments
-ok 24 - unambiguously abbreviated option
-ok 25 - unambiguously abbreviated option with "="
-ok 26 - ambiguously abbreviated option
-ok 27 - non ambiguous option (after two options it abbreviates)
-ok 28 - Alias options do not contribute to abbreviation
-ok 29 - detect possible typos
-ok 30 - detect possible typos
-ok 31 - keep some options as arguments
-ok 32 - OPT_CALLBACK() and OPT_BIT() work
-ok 33 - OPT_CALLBACK() and callback errors work
-ok 34 - OPT_BIT() and OPT_SET_INT() work
-ok 35 - OPT_NEGBIT() and OPT_SET_INT() work
-ok 36 - OPT_BIT() works
-ok 37 - OPT_NEGBIT() works
-ok 38 - OPT_CMDMODE() works
-ok 39 - OPT_CMDMODE() detects incompatibility
-ok 40 - OPT_CMDMODE() detects incompatibility with something else
-ok 41 - OPT_COUNTUP() with PARSE_OPT_NODASH works
-ok 42 - OPT_NUMBER_CALLBACK() works
-ok 43 - negation of OPT_NONEG flags is not ambiguous
-ok 44 - --list keeps list of strings
-ok 45 - --no-list resets list
-ok 46 - multiple quiet levels
-ok 47 - multiple verbose levels
-ok 48 - --no-quiet sets --quiet to 0
-ok 49 - --no-quiet resets multiple -q to 0
-ok 50 - --no-verbose sets verbose to 0
-ok 51 - --no-verbose resets multiple verbose to 0
-ok 52 - GIT_TEST_DISALLOW_ABBREVIATED_OPTIONS works
-ok 53 - --end-of-options treats remainder as args
-# passed all 53 test(s)
-1..53
+ok 23 - superfluous value provided: boolean
+ok 24 - superfluous value provided: cmdmode
+ok 25 - intermingled arguments
+ok 26 - unambiguously abbreviated option
+ok 27 - unambiguously abbreviated option with "="
+ok 28 - ambiguously abbreviated option
+ok 29 - non ambiguous option (after two options it abbreviates)
+ok 30 - Alias options do not contribute to abbreviation
+ok 31 - detect possible typos
+ok 32 - detect possible typos
+ok 33 - OPT_CALLBACK() and OPT_BIT() work
+ok 34 - OPT_CALLBACK() and callback errors work
+ok 35 - OPT_BIT() and OPT_SET_INT() work
+ok 36 - OPT_NEGBIT() and OPT_SET_INT() work
+ok 37 - OPT_BIT() works
+ok 38 - OPT_NEGBIT() works
+ok 39 - OPT_CMDMODE() works
+ok 40 - OPT_CMDMODE() detects incompatibility
+ok 41 - OPT_CMDMODE() detects incompatibility with something else
+ok 42 - OPT_COUNTUP() with PARSE_OPT_NODASH works
+ok 43 - OPT_NUMBER_CALLBACK() works
+ok 44 - negation of OPT_NONEG flags is not ambiguous
+ok 45 - --list keeps list of strings
+ok 46 - --no-list resets list
+ok 47 - multiple quiet levels
+ok 48 - multiple verbose levels
+ok 49 - --no-quiet sets --quiet to 0
+ok 50 - --no-quiet resets multiple -q to 0
+ok 51 - --no-verbose sets verbose to 0
+ok 52 - --no-verbose resets multiple verbose to 0
+ok 53 - GIT_TEST_DISALLOW_ABBREVIATED_OPTIONS works
+ok 54 - --end-of-options treats remainder as args
+# passed all 54 test(s)
+1..54
 *** t0041-usage.sh ***
 ok 1 - setup 
 ok 2 - tag --contains <existent_tag>
@@ -2620,7 +2632,6 @@ ok 16 - for-each-ref usage error
 # passed all 16 test(s)
 1..16
 *** t0050-filesystem.sh ***
-will test on a unicode corrupting filesystem
 ok 1 - detection of case insensitive filesystem during repo init
 ok 2 - detection of filesystem w/o symlink support during repo init
 ok 3 - setup case tests
@@ -2629,11 +2640,10 @@ ok 5 - merge (case change)
 ok 6 # skip add directory (with different case) (missing CASE_INSENSITIVE_FS)
 ok 7 # skip add (with different case) (missing CASE_INSENSITIVE_FS)
 ok 8 - setup unicode normalization tests
-not ok 9 - rename (silent unicode normalization) # TODO known breakage
-not ok 10 - merge (silent unicode normalization) # TODO known breakage
+ok 9 - rename (silent unicode normalization)
+ok 10 - merge (silent unicode normalization)
 ok 11 # skip checkout with no pathspec and a case insensitive fs (missing CASE_INSENSITIVE_FS)
-# still have 2 known breakage(s)
-# passed all remaining 9 test(s)
+# passed all 11 test(s)
 1..11
 *** t0051-windows-named-pipe.sh ***
 ok 1 # skip o_append write to named pipe (missing MINGW)
@@ -2885,8 +2895,10 @@ ok 210 - match .gitattributes
 ok 211 - match .gitignore
 ok 212 - match .mailmap
 ok 213 # skip is_valid_path() on Windows (missing MINGW)
-# passed all 213 test(s)
-1..213
+ok 214 # skip RUNTIME_PREFIX works (missing RUNTIME_PREFIX of RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
+ok 215 # skip %(prefix)/ works (missing RUNTIME_PREFIX of RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
+# passed all 215 test(s)
+1..215
 *** t0061-run-command.sh ***
 ok 1 # skip subprocess inherits only std handles (missing MINGW)
 ok 2 - start_command reports ENOENT (slash)
@@ -2988,6 +3000,10 @@ ok 7 - eof on sideband message is reported
 ok 8 - missing sideband designator is reported
 # passed all 8 test(s)
 1..8
+*** t0071-sort.sh ***
+ok 1 - llist_mergesort()
+# passed all 1 test(s)
+1..1
 *** t0090-cache-tree.sh ***
 ok 1 - initial commit has cache-tree
 ok 2 - read-tree HEAD establishes cache-tree
@@ -3113,9 +3129,9 @@ ok 1 - Testing Git::I18N with NO Perl gettext library
 ok 2 - Git::I18N is located at $(@D)/t/../perl/build/lib/Git/I18N.pm
 ok 3 - sanity: Git::I18N has 3 export(s)
 ok 4 - sanity: Git::I18N exports everything by default
-ok 5 - sanity: __ has a $ prototype
-ok 6 - sanity: __n has a $$$ prototype
-ok 7 - sanity: N__ has a $ prototype
+ok 5 - sanity: __n has a $$$ prototype
+ok 6 - sanity: N__ has a $ prototype
+ok 7 - sanity: __ has a $ prototype
 ok 8 - Passing a string through __() in the C locale works
 ok 9 - Get singular string through __n() in C locale
 ok 10 - Get plural string through __n() in C locale
@@ -3634,36 +3650,72 @@ ok 84 - --batch-check with multiple sha1s gives correct format
 ok 85 - setup blobs which are likely to delta
 ok 86 - confirm that neither loose blob is a delta
 ok 87 - %(deltabase) reports packed delta bases
-ok 88 - Type of broken object is correct
-ok 89 - Size of broken object is correct
-ok 90 - Type of broken object is correct when type is large
-ok 91 - Size of large broken object is correct when type is large
-ok 92 - prep for symlink tests
-ok 93 - git cat-file --batch-check --follow-symlinks works for non-links
-ok 94 - git cat-file --batch-check --follow-symlinks works for in-repo, same-dir links
-ok 95 - git cat-file --batch-check --follow-symlinks works for in-repo, links to dirs
-ok 96 - git cat-file --batch-check --follow-symlinks works for broken in-repo, same-dir links
-ok 97 - git cat-file --batch-check --follow-symlinks works for same-dir links-to-links
-ok 98 - git cat-file --batch-check --follow-symlinks works for parent-dir links
-ok 99 - git cat-file --batch-check --follow-symlinks works for .. links
-ok 100 - git cat-file --batch-check --follow-symlinks works for ../.. links
-ok 101 - git cat-file --batch-check --follow-symlinks works for dir/ links
-ok 102 - git cat-file --batch-check --follow-symlinks works for dir/subdir links
-ok 103 - git cat-file --batch-check --follow-symlinks works for dir ->subdir links
-ok 104 - git cat-file --batch-check --follow-symlinks works for out-of-repo symlinks
-ok 105 - git cat-file --batch-check --follow-symlinks works for out-of-repo symlinks in dirs
-ok 106 - git cat-file --batch-check --follow-symlinks works for out-of-repo symlinks in subdirs
-ok 107 - git cat-file --batch-check --follow-symlinks works for symlinks with internal ..
-ok 108 - git cat-file --batch-check --follow-symlink breaks loops
-ok 109 - git cat-file --batch --follow-symlink returns correct sha and mode
-ok 110 - cat-file --batch-all-objects shows all objects
-ok 111 - cat-file --unordered works
-ok 112 - set up object list for --batch-all-objects tests
-ok 113 - cat-file --batch="%(objectname)" with --batch-all-objects will work
-ok 114 - cat-file --batch="%(rest)" with --batch-all-objects will work
-ok 115 - cat-file --batch="batman" with --batch-all-objects will work
-# passed all 115 test(s)
-1..115
+ok 88 - setup bogus data
+ok 89 - cat-file  -s error on bogus short OID
+ok 90 - cat-file  -s error on bogus full OID
+ok 91 - cat-file  -s error on missing short OID
+ok 92 - cat-file  -s error on missing full OID
+ok 93 - cat-file  -t error on bogus short OID
+ok 94 - cat-file  -t error on bogus full OID
+ok 95 - cat-file  -t error on missing short OID
+ok 96 - cat-file  -t error on missing full OID
+ok 97 - cat-file  -p error on bogus short OID
+ok 98 - cat-file  -p error on bogus full OID
+ok 99 - cat-file  -p error on missing short OID
+ok 100 - cat-file  -p error on missing full OID
+ok 101 - cat-file --allow-unknown-type -s error on bogus short OID
+ok 102 - cat-file --allow-unknown-type -s error on bogus full OID
+ok 103 - cat-file --allow-unknown-type -s error on missing short OID
+ok 104 - cat-file --allow-unknown-type -s error on missing full OID
+ok 105 - cat-file --allow-unknown-type -t error on bogus short OID
+ok 106 - cat-file --allow-unknown-type -t error on bogus full OID
+ok 107 - cat-file --allow-unknown-type -t error on missing short OID
+ok 108 - cat-file --allow-unknown-type -t error on missing full OID
+ok 109 - -e is OK with a broken object without --allow-unknown-type
+ok 110 - -e can not be combined with --allow-unknown-type
+ok 111 - -p cannot print a broken object even with --allow-unknown-type
+ok 112 - <type> <hash> does not work with objects of broken types
+ok 113 - broken types combined with --batch and --batch-check
+ok 114 - the --batch and --batch-check options do not combine with --allow-unknown-type
+ok 115 - the --allow-unknown-type option does not consider replacement refs
+ok 116 - Type of broken object is correct
+ok 117 - Size of broken object is correct
+ok 118 - clean up broken object
+ok 119 - Type of broken object is correct when type is large
+ok 120 - Size of large broken object is correct when type is large
+ok 121 - clean up broken object
+ok 122 - cat-file -t and -s on corrupt loose object
+ok 123 - prep for symlink tests
+ok 124 - git cat-file --batch-check --follow-symlinks works for non-links
+ok 125 - git cat-file --batch-check --follow-symlinks works for in-repo, same-dir links
+ok 126 - git cat-file --batch-check --follow-symlinks works for in-repo, links to dirs
+ok 127 - git cat-file --batch-check --follow-symlinks works for broken in-repo, same-dir links
+ok 128 - git cat-file --batch-check --follow-symlinks works for same-dir links-to-links
+ok 129 - git cat-file --batch-check --follow-symlinks works for parent-dir links
+ok 130 - git cat-file --batch-check --follow-symlinks works for .. links
+ok 131 - git cat-file --batch-check --follow-symlinks works for ../.. links
+ok 132 - git cat-file --batch-check --follow-symlinks works for dir/ links
+ok 133 - git cat-file --batch-check --follow-symlinks works for dir/subdir links
+ok 134 - git cat-file --batch-check --follow-symlinks works for dir ->subdir links
+ok 135 - git cat-file --batch-check --follow-symlinks works for out-of-repo symlinks
+ok 136 - git cat-file --batch-check --follow-symlinks works for out-of-repo symlinks in dirs
+ok 137 - git cat-file --batch-check --follow-symlinks works for out-of-repo symlinks in subdirs
+ok 138 - git cat-file --batch-check --follow-symlinks works for symlinks with internal ..
+ok 139 - git cat-file --batch-check --follow-symlink breaks loops
+ok 140 - git cat-file --batch --follow-symlink returns correct sha and mode
+ok 141 - cat-file --batch-all-objects shows all objects
+ok 142 - cat-file --unordered works
+ok 143 - set up object list for --batch-all-objects tests
+ok 144 - cat-file --batch="%(objectname)" with --batch-all-objects will work
+ok 145 - cat-file --batch="%(rest)" with --batch-all-objects will work
+ok 146 - cat-file --batch="batman" with --batch-all-objects will work
+ok 147 - set up replacement object
+ok 148 - cat-file --batch respects replace objects
+ok 149 - cat-file --batch-check respects replace objects
+ok 150 - cat-file --batch-all-objects --batch ignores replace
+ok 151 - cat-file --batch-all-objects --batch-check ignores replace
+# passed all 151 test(s)
+1..151
 *** t1007-hash-object.sh ***
 ok 1 - setup
 ok 2 - multiple '--stdin's are rejected
@@ -3780,7 +3832,7 @@ ok 11 - git read-tree -u -m --recurse-submodules: modified submodule updates sub
 ok 12 - git read-tree -u -m --recurse-submodules: updating to a missing submodule commit fails
 ok 13 - git read-tree -u -m --recurse-submodules: submodule branch is not changed, detach HEAD instead
 ok 14 - git read-tree -u -m --recurse-submodules: added submodule doesn't remove untracked file with same name
-not ok 15 - git read-tree -u -m --recurse-submodules: added submodule removes an untracked ignored file # TODO known breakage
+ok 15 - git read-tree -u -m --recurse-submodules: added submodule removes an untracked ignored file
 not ok 16 - git read-tree -u -m --recurse-submodules: replace submodule with a directory # TODO known breakage
 not ok 17 - git read-tree -u -m --recurse-submodules: replace submodule containing a .git directory with a directory must absorb the git dir # TODO known breakage
 ok 18 - git read-tree -u -m --recurse-submodules: replace submodule with a file works ignores ignored files in submodule
@@ -3834,8 +3886,8 @@ ok 65 - git_test_func: modified submodule does not update submodule work tree
 ok 66 - git_test_func: modified submodule does not update submodule work tree to invalid commit
 ok 67 - git_test_func: modified submodule does not update submodule work tree from invalid commit
 ok 68 - git_test_func: added submodule does remove untracked unignored file with same name when forced
-# still have 11 known breakage(s)
-# passed all remaining 57 test(s)
+# still have 10 known breakage(s)
+# passed all remaining 58 test(s)
 1..68
 *** t1014-read-tree-confusing.sh ***
 ok 1 - create base tree
@@ -3908,34 +3960,35 @@ ok 1 - read-tree in partial clone prefetches in one batch
 1..1
 *** t1050-large.sh ***
 ok 1 - setup
-ok 2 - add with -c core.compression=0
-ok 3 - add with -c core.compression=9
-ok 4 - add with -c core.compression=0 -c pack.compression=0
-ok 5 - add with -c core.compression=9 -c pack.compression=0
-ok 6 - add with -c core.compression=0 -c pack.compression=9
-ok 7 - add with -c core.compression=9 -c pack.compression=9
-ok 8 - add with -c pack.compression=0
-ok 9 - add with -c pack.compression=9
-ok 10 - add a large file or two
-ok 11 - checkout a large file
-ok 12 - packsize limit
-ok 13 - diff --raw
-ok 14 - diff --stat
-ok 15 - diff
-ok 16 - diff --cached
-ok 17 - hash-object
-ok 18 - cat-file a large file
-ok 19 - cat-file a large file from a tag
-ok 20 - git-show a large file
-ok 21 - index-pack
-ok 22 - repack
-ok 23 - pack-objects with large loose object
-ok 24 - tar archiving
-ok 25 - zip archiving, store only
-ok 26 - zip archiving, deflate
-ok 27 - fsck large blobs
-# passed all 27 test(s)
-1..27
+ok 2 - enter "large" codepath, with small core.bigFileThreshold
+ok 3 - add with -c core.compression=0
+ok 4 - add with -c core.compression=9
+ok 5 - add with -c core.compression=0 -c pack.compression=0
+ok 6 - add with -c core.compression=9 -c pack.compression=0
+ok 7 - add with -c core.compression=0 -c pack.compression=9
+ok 8 - add with -c core.compression=9 -c pack.compression=9
+ok 9 - add with -c pack.compression=0
+ok 10 - add with -c pack.compression=9
+ok 11 - add a large file or two
+ok 12 - checkout a large file
+ok 13 - packsize limit
+ok 14 - diff --raw
+ok 15 - diff --stat
+ok 16 - diff
+ok 17 - diff --cached
+ok 18 - hash-object
+ok 19 - cat-file a large file
+ok 20 - cat-file a large file from a tag
+ok 21 - git-show a large file
+ok 22 - index-pack
+ok 23 - repack
+ok 24 - pack-objects with large loose object
+ok 25 - tar archiving
+ok 26 - zip archiving, store only
+ok 27 - zip archiving, deflate
+ok 28 - fsck large blobs
+# passed all 28 test(s)
+1..28
 *** t1051-large-conversion.sh ***
 ok 1 - setup input tests
 ok 2 - autocrlf=true converts on input
@@ -4007,7 +4060,7 @@ ok 25 - fail when lock is taken
 ok 26 - .gitignore should not warn about cone mode
 ok 27 - sparse-checkout (init|set|disable) warns with dirty status
 ok 28 - sparse-checkout (init|set|disable) warns with unmerged status
-ok 29 - sparse-checkout reapply
+not ok 29 - sparse-checkout reapply # TODO known breakage
 ok 30 - cone mode: set with core.ignoreCase=true
 ok 31 - interaction with submodules
 ok 32 - different sparse-checkouts with worktrees
@@ -4021,8 +4074,10 @@ ok 39 - pattern-checks: starting "*"
 ok 40 - pattern-checks: contained glob characters
 ok 41 - pattern-checks: escaped characters
 ok 42 # skip cone mode replaces backslashes with slashes (missing MINGW)
-# passed all 42 test(s)
-1..42
+ok 43 - cone mode clears ignored subdirectories
+# still have 1 known breakage(s)
+# passed all remaining 42 test(s)
+1..43
 *** t1092-sparse-checkout-compatibility.sh ***
 ok 1 - setup
 ok 2 - sparse-index contents
@@ -4030,31 +4085,35 @@ ok 3 - expanded in-memory index matches full index
 ok 4 - status with options
 ok 5 - status reports sparse-checkout
 ok 6 - add, commit, checkout
-ok 7 - commit including unstaged changes
-ok 8 - status/add: outside sparse cone
-ok 9 - checkout and reset --hard
-ok 10 - diff --staged
-ok 11 - diff with renames and conflicts
-ok 12 - diff with directory/file conflicts
-ok 13 - log with pathspec outside sparse definition
-ok 14 - blame with pathspec inside sparse definition
-not ok 15 - blame with pathspec outside sparse definition # TODO known breakage
-not ok 16 - checkout and reset (mixed) # TODO known breakage
-ok 17 - checkout and reset (mixed) [sparse]
-ok 18 - merge
-ok 19 - merge with outside renames
-ok 20 - cherry-pick with conflicts
-ok 21 - clean
-ok 22 - submodule handling
-ok 23 - sparse-index is expanded and converted back
-ok 24 - sparse-index is not expanded
-ok 25 - reset mixed and checkout orphan
-ok 26 - add everything with deep new file
-ok 27 - checkout behaves oddly with df-conflict-1
-ok 28 - checkout behaves oddly with df-conflict-2
+ok 7 - add outside sparse cone
+ok 8 - commit including unstaged changes
+ok 9 - status/add: outside sparse cone
+ok 10 - checkout and reset --hard
+ok 11 - diff --staged
+ok 12 - diff with renames and conflicts
+ok 13 - diff with directory/file conflicts
+ok 14 - log with pathspec outside sparse definition
+ok 15 - blame with pathspec inside sparse definition
+not ok 16 - blame with pathspec outside sparse definition # TODO known breakage
+not ok 17 - checkout and reset (mixed) # TODO known breakage
+ok 18 - checkout and reset (mixed) [sparse]
+ok 19 - merge, cherry-pick, and rebase
+ok 20 - merge with conflict outside cone
+ok 21 - cherry-pick/rebase with conflict outside cone
+ok 22 - merge with outside renames
+ok 23 - cherry-pick with conflicts
+ok 24 - clean
+ok 25 - submodule handling
+ok 26 - sparse-index is expanded and converted back
+ok 27 - sparse-index is not expanded
+ok 28 - sparse-index is not expanded: merge conflict in cone
+ok 29 - reset mixed and checkout orphan
+ok 30 - add everything with deep new file
+ok 31 - checkout behaves oddly with df-conflict-1
+ok 32 - checkout behaves oddly with df-conflict-2
 # still have 2 known breakage(s)
-# passed all remaining 26 test(s)
-1..28
+# passed all remaining 30 test(s)
+1..32
 *** t1100-commit-tree-options.sh ***
 ok 1 - test preparation: write empty tree
 ok 2 - construct commit
@@ -4858,24 +4917,25 @@ ok 53 - delete fails cleanly if packed-refs.new write fails
 # passed all 53 test(s)
 1..53
 *** t1405-main-ref-store.sh ***
-ok 1 - pack_refs(PACK_REFS_ALL | PACK_REFS_PRUNE)
-ok 2 - create_symref(FOO, refs/heads/main)
-ok 3 - delete_refs(FOO, refs/tags/new-tag)
-ok 4 - rename_refs(main, new-main)
-ok 5 - for_each_ref(refs/heads/)
-ok 6 - for_each_ref() is sorted
-ok 7 - resolve_ref(new-main)
-ok 8 - verify_ref(new-main)
-ok 9 - for_each_reflog()
-ok 10 - for_each_reflog_ent()
-ok 11 - for_each_reflog_ent_reverse()
-ok 12 - reflog_exists(HEAD)
-ok 13 - delete_reflog(HEAD)
-ok 14 - create-reflog(HEAD)
-ok 15 - delete_ref(refs/heads/foo)
+ok 1 - setup
+ok 2 - pack_refs(PACK_REFS_ALL | PACK_REFS_PRUNE)
+ok 3 - create_symref(FOO, refs/heads/main)
+ok 4 - delete_refs(FOO, refs/tags/new-tag)
+ok 5 - rename_refs(main, new-main)
+ok 6 - for_each_ref(refs/heads/)
+ok 7 - for_each_ref() is sorted
+ok 8 - resolve_ref(new-main)
+ok 9 - verify_ref(new-main)
+ok 10 - for_each_reflog()
+ok 11 - for_each_reflog_ent()
+ok 12 - for_each_reflog_ent_reverse()
+ok 13 - reflog_exists(HEAD)
+ok 14 - delete_reflog(HEAD)
+ok 15 - create-reflog(HEAD)
 ok 16 - delete_ref(refs/heads/foo)
-# passed all 16 test(s)
-1..16
+ok 17 - delete_ref(refs/heads/foo)
+# passed all 17 test(s)
+1..17
 *** t1406-submodule-ref-store.sh ***
 ok 1 - setup
 ok 2 - pack_refs() not allowed
@@ -5079,86 +5139,89 @@ ok 42 - branch -m can rename refs/heads/-dash
 ok 1 - setup
 ok 2 - loose objects borrowed from alternate are not missing
 ok 3 - HEAD is part of refs, valid objects appear valid
-ok 4 - object with bad sha1
-ok 5 - branch pointing to non-commit
-ok 6 - HEAD link pointing at a funny object
-ok 7 - HEAD link pointing at a funny place
-ok 8 - HEAD link pointing at a funny object (from different wt)
-ok 9 - other worktree HEAD link pointing at a funny object
-ok 10 - other worktree HEAD link pointing at missing object
-ok 11 - other worktree HEAD link pointing at a funny place
-ok 12 - commit with multiple signatures is okay
-ok 13 - email without @ is okay
-ok 14 - email with embedded > is not okay
-ok 15 - missing < email delimiter is reported nicely
-ok 16 - missing email is reported nicely
-ok 17 - > in name is reported
-ok 18 - integer overflow in timestamps is reported
-ok 19 - commit with NUL in header
-ok 20 - tree object with duplicate entries
-ok 21 - tree object with duplicate names: x x.1 x/
-ok 22 - tree object with duplicate names: x x.1.2 x.1/ x/
-ok 23 - tree object with duplicate names: x x.1 x.1.2 x/
-ok 24 - unparseable tree object
-ok 25 - tree entry with type mismatch
-ok 26 - tag pointing to nonexistent
-ok 27 - tag pointing to something else than its type
-ok 28 - tag with incorrect tag name & missing tagger
-ok 29 - tag with bad tagger
-ok 30 - tag with NUL in header
-ok 31 - cleaned up
-ok 32 - rev-list --verify-objects
-ok 33 - rev-list --verify-objects with bad sha1
-ok 34 - force fsck to ignore double author
-ok 35 - fsck notices blob entry pointing to null sha1
-ok 36 - fsck notices submodule entry pointing to null sha1
-ok 37 - fsck notices . as blob
-ok 38 - fsck notices . as tree
-ok 39 - fsck notices .. as blob
-ok 40 - fsck notices .. as tree
-ok 41 - fsck notices .git as blob
-ok 42 - fsck notices .git as tree
-ok 43 - fsck notices .GIT as blob
-ok 44 - fsck notices .GIT as tree
-ok 45 - fsck notices .gI{u200c}T as blob
-ok 46 - fsck notices .gI{u200c}T as tree
-ok 47 - fsck notices .Git as blob
-ok 48 - fsck notices .Git as tree
-ok 49 - fsck notices git~1 as blob
-ok 50 - fsck notices git~1 as tree
-ok 51 - fsck notices .git. as blob
-ok 52 - fsck notices .git. as tree
-ok 53 - fsck notices .\.GIT\foobar as blob
-ok 54 - fsck notices .\.GIT\foobar as tree
-ok 55 - fsck notices .git\foobar as blob
-ok 56 - fsck notices .git\foobar as tree
-ok 57 - fsck allows .Ňit
-ok 58 - NUL in commit
-ok 59 - fsck notices missing blob
-ok 60 - fsck notices missing subtree
-ok 61 - fsck notices missing root tree
-ok 62 - fsck notices missing parent
-ok 63 - fsck notices missing tagged object
-ok 64 - fsck notices ref pointing to missing commit
-ok 65 - fsck notices ref pointing to missing tag
-ok 66 - fsck --connectivity-only
-ok 67 - fsck --connectivity-only with explicit head
-ok 68 - fsck --name-objects
-ok 69 - alternate objects are correctly blamed
-ok 70 - fsck errors in packed objects
-ok 71 - fsck fails on corrupt packfile
-ok 72 - fsck finds problems in duplicate loose objects
-ok 73 - fsck detects trailing loose garbage (commit)
-ok 74 - fsck detects trailing loose garbage (large blob)
-ok 75 - fsck detects truncated loose object
-ok 76 - create dangling-object repository
-ok 77 - fsck notices dangling objects
-ok 78 - fsck --connectivity-only notices dangling objects
-ok 79 - fsck $name notices bogus $name
-ok 80 - bogus head does not fallback to all heads
-ok 81 - detect corrupt index file in fsck
-# passed all 81 test(s)
-1..81
+ok 4 - object with hash mismatch
+ok 5 - object with hash and type mismatch
+ok 6 - zlib corrupt loose object output 
+ok 7 - branch pointing to non-commit
+ok 8 - HEAD link pointing at a funny object
+ok 9 - HEAD link pointing at a funny place
+ok 10 - HEAD link pointing at a funny object (from different wt)
+ok 11 - other worktree HEAD link pointing at a funny object
+ok 12 - other worktree HEAD link pointing at missing object
+ok 13 - other worktree HEAD link pointing at a funny place
+ok 14 - commit with multiple signatures is okay
+ok 15 - email without @ is okay
+ok 16 - email with embedded > is not okay
+ok 17 - missing < email delimiter is reported nicely
+ok 18 - missing email is reported nicely
+ok 19 - > in name is reported
+ok 20 - integer overflow in timestamps is reported
+ok 21 - commit with NUL in header
+ok 22 - tree object with duplicate entries
+ok 23 - tree object with duplicate names: x x.1 x/
+ok 24 - tree object with duplicate names: x x.1.2 x.1/ x/
+ok 25 - tree object with duplicate names: x x.1 x.1.2 x/
+ok 26 - unparseable tree object
+ok 27 - tree entry with type mismatch
+ok 28 - tag pointing to nonexistent
+ok 29 - tag pointing to something else than its type
+ok 30 - tag with incorrect tag name & missing tagger
+ok 31 - tag with bad tagger
+ok 32 - tag with NUL in header
+ok 33 - cleaned up
+ok 34 - rev-list --verify-objects
+ok 35 - rev-list --verify-objects with bad sha1
+ok 36 - force fsck to ignore double author
+ok 37 - fsck notices blob entry pointing to null sha1
+ok 38 - fsck notices submodule entry pointing to null sha1
+ok 39 - fsck notices . as blob
+ok 40 - fsck notices . as tree
+ok 41 - fsck notices .. as blob
+ok 42 - fsck notices .. as tree
+ok 43 - fsck notices .git as blob
+ok 44 - fsck notices .git as tree
+ok 45 - fsck notices .GIT as blob
+ok 46 - fsck notices .GIT as tree
+ok 47 - fsck notices .gI{u200c}T as blob
+ok 48 - fsck notices .gI{u200c}T as tree
+ok 49 - fsck notices .Git as blob
+ok 50 - fsck notices .Git as tree
+ok 51 - fsck notices git~1 as blob
+ok 52 - fsck notices git~1 as tree
+ok 53 - fsck notices .git. as blob
+ok 54 - fsck notices .git. as tree
+ok 55 - fsck notices .\.GIT\foobar as blob
+ok 56 - fsck notices .\.GIT\foobar as tree
+ok 57 - fsck notices .git\foobar as blob
+ok 58 - fsck notices .git\foobar as tree
+ok 59 - fsck allows .Ňit
+ok 60 - NUL in commit
+ok 61 - fsck notices missing blob
+ok 62 - fsck notices missing subtree
+ok 63 - fsck notices missing root tree
+ok 64 - fsck notices missing parent
+ok 65 - fsck notices missing tagged object
+ok 66 - fsck notices ref pointing to missing commit
+ok 67 - fsck notices ref pointing to missing tag
+ok 68 - fsck --connectivity-only
+ok 69 - fsck --connectivity-only with explicit head
+ok 70 - fsck --name-objects
+ok 71 - alternate objects are correctly blamed
+ok 72 - fsck errors in packed objects
+ok 73 - fsck fails on corrupt packfile
+ok 74 - fsck finds problems in duplicate loose objects
+ok 75 - fsck detects trailing loose garbage (commit)
+ok 76 - fsck detects trailing loose garbage (large blob)
+ok 77 - fsck detects truncated loose object
+ok 78 - create dangling-object repository
+ok 79 - fsck notices dangling objects
+ok 80 - fsck --connectivity-only notices dangling objects
+ok 81 - fsck $name notices bogus $name
+ok 82 - bogus head does not fallback to all heads
+ok 83 - detect corrupt index file in fsck
+ok 84 - fsck error and recovery on invalid object type
+# passed all 84 test(s)
+1..84
 *** t1500-rev-parse.sh ***
 ok 1 - setup
 ok 2 - toplevel: --is-bare-repository
@@ -5307,8 +5370,10 @@ ok 24 - test --parseopt --stuck-long and empty optional argument
 ok 25 - setup expect.8
 ok 26 - test --parseopt --stuck-long and long option with unset optional argument
 ok 27 - test --parseopt --stuck-long and short option with unset optional argument
-# passed all 27 test(s)
-1..27
+ok 28 - test --parseopt help output: "wrapped" options normal "or:" lines
+ok 29 - test --parseopt help output: multi-line blurb after empty line
+# passed all 29 test(s)
+1..29
 *** t1503-rev-parse-verify.sh ***
 ok 1 - set up basic repo with 1 file (hello) and 4 commits
 ok 2 - works with one good rev
@@ -5734,8 +5799,32 @@ ok 24 - split index respects core.sharedrepository 0642
 ok 25 # skip graceful handling when splitting index is not allowed (missing SANITY of POSIXPERM,SANITY)
 ok 26 - writing split index with null sha1 does not write cache tree
 ok 27 - do not refresh null base index
-# passed all 27 test(s)
-1..27
+not ok 28 - reading split index at alternate location
+#	
+#		git init reading-alternate-location &&
+#		(
+#			cd reading-alternate-location &&
+#			>file-in-alternate &&
+#			git update-index --split-index --add file-in-alternate
+#		) &&
+#		echo file-in-alternate >expect &&
+#	
+#		# Should be able to find the shared index both right next to
+#		# the specified split index file ...
+#		GIT_INDEX_FILE=./reading-alternate-location/.git/index \
+#		git ls-files --cached >actual &&
+#		test_cmp expect actual &&
+#	
+#		# ... and, for backwards compatibility, in the current GIT_DIR
+#		# as well.
+#		mv -v ./reading-alternate-location/.git/sharedindex.* .git &&
+#		GIT_INDEX_FILE=./reading-alternate-location/.git/index \
+#		git ls-files --cached >actual &&
+#		test_cmp expect actual
+#	
+ok 29 - GIT_TEST_SPLIT_INDEX works
+# failed 1 among 29 test(s)
+1..29
 *** t1701-racy-split-index.sh ***
 ok 1 - setup
 ok 2 - split the index while adding a racily clean file #0
@@ -5841,7 +5930,7 @@ ok 2 - checkout-index -h in broken repository
 ok 3 - checkout-index reports errors (cmdline)
 ok 4 - checkout-index reports errors (stdin)
 ok 5 # skip checkout-index with case-collision don't write to the wrong place (missing CASE_INSENSITIVE_FS of SYMLINKS,CASE_INSENSITIVE_FS)
-ok 6 - checkout-index with utf-8-collision don't write to the wrong place
+ok 6 # skip checkout-index with utf-8-collision don't write to the wrong place (missing UTF8_NFD_TO_NFC of SYMLINKS,UTF8_NFD_TO_NFC)
 ok 7 - checkout-index --temp correctly reports error on missing blobs
 ok 8 - checkout-index --temp correctly reports error for submodules
 # passed all 8 test(s)
@@ -6692,6 +6781,20 @@ ok 19 - repair multiple gitdir files
 ok 20 - repair moved main and linked worktrees
 # passed all 20 test(s)
 1..20
+*** t2500-untracked-overwriting.sh ***
+ok 1 - reset --hard will nuke untracked files/dirs
+ok 2 - reset --merge will preserve untracked files/dirs
+ok 3 - reset --keep will preserve untracked files/dirs
+ok 4 - checkout -m does not nuke untracked file
+ok 5 - git rebase --abort and untracked files
+ok 6 - git rebase fast forwarding and untracked files
+not ok 7 - git rebase --autostash and untracked files # TODO known breakage
+not ok 8 - git stash and untracked files # TODO known breakage
+ok 9 - git am --abort and untracked dir vs. unmerged file
+ok 10 - git am --skip and untracked dir vs deleted file
+# still have 2 known breakage(s)
+# passed all remaining 8 test(s)
+1..10
 *** t3000-ls-files-others.sh ***
 ok 1 - setup 
 ok 2 - setup: expected output
@@ -9054,14 +9157,15 @@ ok 26 - ambiguous branch/tag not marked
 ok 27 - local-branch symrefs shortened properly
 ok 28 - sort branches, ignore case
 ok 29 - git branch --format option
-ok 30 - worktree colors correct
-ok 31 - set up color tests
-ok 32 - %(color) omitted without tty
-ok 33 # skip %(color) present with tty (missing TTY)
-ok 34 - --color overrides auto-color
-ok 35 - verbose output lists worktree path
-# passed all 35 test(s)
-1..35
+ok 30 - git branch with --format=%(rest) must fail
+ok 31 - worktree colors correct
+ok 32 - set up color tests
+ok 33 - %(color) omitted without tty
+ok 34 # skip %(color) present with tty (missing TTY)
+ok 35 - --color overrides auto-color
+ok 36 - verbose output lists worktree path
+# passed all 36 test(s)
+1..36
 *** t3204-branch-name-interpretation.sh ***
 ok 1 - set up repo
 ok 2 - update branch via @{-1}
@@ -9656,105 +9760,100 @@ ok 24 - retain authorship
 ok 25 - retain authorship w/ conflicts
 ok 26 - squash
 ok 27 - retain authorship when squashing
-ok 28 - -p handles "no changes" gracefully
-not ok 29 - exchange two commits with -p # TODO known breakage
-ok 30 - preserve merges with -p
-ok 31 - edit ancestor with -p
-ok 32 - --continue tries to commit
-ok 33 - verbose flag is heeded, even after --continue
-ok 34 - multi-squash only fires up editor once
-ok 35 - multi-fixup does not fire up editor
-ok 36 - commit message used after conflict
-ok 37 - commit message retained after conflict
-ok 38 - squash and fixup generate correct log messages
-ok 39 - squash ignores comments
-ok 40 - squash ignores blank lines
-ok 41 - squash works as expected
-ok 42 - interrupted squash works as expected
-ok 43 - interrupted squash works as expected (case 2)
-ok 44 - --continue tries to commit, even for "edit"
-ok 45 - aborted --continue does not squash commits after "edit"
-ok 46 - auto-amend only edited commits after "edit"
-ok 47 - clean error after failed "exec"
-ok 48 - rebase a detached HEAD
-ok 49 - rebase a commit violating pre-commit
-ok 50 - rebase with a file named HEAD in worktree
-ok 51 - do "noop" when there is nothing to cherry-pick
-ok 52 - submodule rebase setup
-ok 53 - submodule rebase -i
-ok 54 - submodule conflict setup
-ok 55 - rebase -i continue with only submodule staged
-ok 56 - rebase -i continue with unstaged submodule
-ok 57 - avoid unnecessary reset
-ok 58 - reword
-ok 59 - no uncommited changes when rewording the todo list is reloaded
-ok 60 - rebase -i can copy notes
-ok 61 - rebase -i can copy notes over a fixup
-ok 62 - rebase while detaching HEAD
-ok 63 - always cherry-pick with --no-ff
-ok 64 - set up commits with funny messages
-ok 65 - rebase-i history with funny messages
-ok 66 - prepare for rebase -i --exec
-ok 67 - running "git rebase -i --exec git show HEAD"
-ok 68 - running "git rebase --exec git show HEAD -i"
-ok 69 - running "git rebase -ix git show HEAD"
-ok 70 - rebase -ix with several <CMD>
-ok 71 - rebase -ix with several instances of --exec
-ok 72 - rebase -ix with --autosquash
-ok 73 - rebase --exec works without -i 
-ok 74 - rebase -i --exec without <CMD>
-ok 75 - rebase -i --root re-order and drop commits
-ok 76 - rebase -i --root retain root commit author and message
-ok 77 - rebase -i --root temporary sentinel commit
-ok 78 - rebase -i --root fixup root commit
-ok 79 - rebase -i --root reword original root commit
-ok 80 - rebase -i --root reword new root commit
-ok 81 - rebase -i --root when root has untracked file conflict
-ok 82 - rebase -i --root reword root when root has untracked file conflict
-ok 83 - rebase --edit-todo does not work on non-interactive rebase
-ok 84 - rebase --edit-todo can be used to modify todo
-ok 85 - rebase -i produces readable reflog
-ok 86 - rebase -i respects core.commentchar
-ok 87 - rebase -i respects core.commentchar=auto
-ok 88 - rebase -i, with <onto> and <upstream> specified as :/quuxery
-ok 89 - rebase -i with --strategy and -X
-ok 90 - interrupted rebase -i with --strategy and -X
-ok 91 - rebase -i error on commits with \ in message
-ok 92 - short commit ID setup
-ok 93 - short commit ID collide
-ok 94 - respect core.abbrev
-ok 95 - todo count
-ok 96 - rebase -i commits that overwrite untracked files (pick)
-ok 97 - rebase -i commits that overwrite untracked files (squash)
-ok 98 - rebase -i commits that overwrite untracked files (no ff)
-ok 99 - rebase --continue removes CHERRY_PICK_HEAD
-ok 100 - drop
-ok 101 - rebase -i respects rebase.missingCommitsCheck = ignore
-ok 102 - rebase -i respects rebase.missingCommitsCheck = warn
-ok 103 - rebase -i respects rebase.missingCommitsCheck = error
-ok 104 - rebase --edit-todo respects rebase.missingCommitsCheck = ignore
-ok 105 - rebase --edit-todo respects rebase.missingCommitsCheck = warn
-ok 106 - rebase --edit-todo respects rebase.missingCommitsCheck = error
-ok 107 - rebase.missingCommitsCheck = error after resolving conflicts
-ok 108 - rebase.missingCommitsCheck = error when editing for a second time
-ok 109 - respects rebase.abbreviateCommands with fixup, squash and exec
-ok 110 - static check of bad command
-ok 111 - tabs and spaces are accepted in the todolist
-ok 112 - static check of bad SHA-1
-ok 113 - editor saves as CR/LF
-ok 114 - rebase -i --gpg-sign=<key-id>
-ok 115 - rebase -i --gpg-sign=<key-id> overrides commit.gpgSign
-ok 116 - valid author header after --root swap
-ok 117 - valid author header when author contains single quote
-ok 118 - post-commit hook is called
-ok 119 - correct error message for partial commit after empty pick
-ok 120 - correct error message for commit --amend after empty pick
-ok 121 - todo has correct onto hash
-ok 122 - ORIG_HEAD is updated correctly
-ok 123 - $EDITOR and friends are unchanged
-# still have 1 known breakage(s)
-# passed all remaining 122 test(s)
-1..123
+ok 28 - --continue tries to commit
+ok 29 - verbose flag is heeded, even after --continue
+ok 30 - multi-squash only fires up editor once
+ok 31 - multi-fixup does not fire up editor
+ok 32 - commit message used after conflict
+ok 33 - commit message retained after conflict
+ok 34 - squash and fixup generate correct log messages
+ok 35 - squash ignores comments
+ok 36 - squash ignores blank lines
+ok 37 - squash works as expected
+ok 38 - interrupted squash works as expected
+ok 39 - interrupted squash works as expected (case 2)
+ok 40 - --continue tries to commit, even for "edit"
+ok 41 - aborted --continue does not squash commits after "edit"
+ok 42 - auto-amend only edited commits after "edit"
+ok 43 - clean error after failed "exec"
+ok 44 - rebase a detached HEAD
+ok 45 - rebase a commit violating pre-commit
+ok 46 - rebase with a file named HEAD in worktree
+ok 47 - do "noop" when there is nothing to cherry-pick
+ok 48 - submodule rebase setup
+ok 49 - submodule rebase -i
+ok 50 - submodule conflict setup
+ok 51 - rebase -i continue with only submodule staged
+ok 52 - rebase -i continue with unstaged submodule
+ok 53 - avoid unnecessary reset
+ok 54 - reword
+ok 55 - no uncommited changes when rewording the todo list is reloaded
+ok 56 - rebase -i can copy notes
+ok 57 - rebase -i can copy notes over a fixup
+ok 58 - rebase while detaching HEAD
+ok 59 - always cherry-pick with --no-ff
+ok 60 - set up commits with funny messages
+ok 61 - rebase-i history with funny messages
+ok 62 - prepare for rebase -i --exec
+ok 63 - running "git rebase -i --exec git show HEAD"
+ok 64 - running "git rebase --exec git show HEAD -i"
+ok 65 - running "git rebase -ix git show HEAD"
+ok 66 - rebase -ix with several <CMD>
+ok 67 - rebase -ix with several instances of --exec
+ok 68 - rebase -ix with --autosquash
+ok 69 - rebase --exec works without -i 
+ok 70 - rebase -i --exec without <CMD>
+ok 71 - rebase -i --root re-order and drop commits
+ok 72 - rebase -i --root retain root commit author and message
+ok 73 - rebase -i --root temporary sentinel commit
+ok 74 - rebase -i --root fixup root commit
+ok 75 - rebase -i --root reword original root commit
+ok 76 - rebase -i --root reword new root commit
+ok 77 - rebase -i --root when root has untracked file conflict
+ok 78 - rebase -i --root reword root when root has untracked file conflict
+ok 79 - rebase --edit-todo does not work on non-interactive rebase
+ok 80 - rebase --edit-todo can be used to modify todo
+ok 81 - rebase -i produces readable reflog
+ok 82 - rebase -i respects core.commentchar
+ok 83 - rebase -i respects core.commentchar=auto
+ok 84 - rebase -i, with <onto> and <upstream> specified as :/quuxery
+ok 85 - rebase -i with --strategy and -X
+ok 86 - interrupted rebase -i with --strategy and -X
+ok 87 - rebase -i error on commits with \ in message
+ok 88 - short commit ID setup
+ok 89 - short commit ID collide
+ok 90 - respect core.abbrev
+ok 91 - todo count
+ok 92 - rebase -i commits that overwrite untracked files (pick)
+ok 93 - rebase -i commits that overwrite untracked files (squash)
+ok 94 - rebase -i commits that overwrite untracked files (no ff)
+ok 95 - rebase --continue removes CHERRY_PICK_HEAD
+ok 96 - drop
+ok 97 - rebase -i respects rebase.missingCommitsCheck = ignore
+ok 98 - rebase -i respects rebase.missingCommitsCheck = warn
+ok 99 - rebase -i respects rebase.missingCommitsCheck = error
+ok 100 - rebase --edit-todo respects rebase.missingCommitsCheck = ignore
+ok 101 - rebase --edit-todo respects rebase.missingCommitsCheck = warn
+ok 102 - rebase --edit-todo respects rebase.missingCommitsCheck = error
+ok 103 - rebase.missingCommitsCheck = error after resolving conflicts
+ok 104 - rebase.missingCommitsCheck = error when editing for a second time
+ok 105 - respects rebase.abbreviateCommands with fixup, squash and exec
+ok 106 - static check of bad command
+ok 107 - tabs and spaces are accepted in the todolist
+ok 108 - static check of bad SHA-1
+ok 109 - editor saves as CR/LF
+ok 110 - rebase -i --gpg-sign=<key-id>
+ok 111 - rebase -i --gpg-sign=<key-id> overrides commit.gpgSign
+ok 112 - valid author header after --root swap
+ok 113 - valid author header when author contains single quote
+ok 114 - post-commit hook is called
+ok 115 - correct error message for partial commit after empty pick
+ok 116 - correct error message for commit --amend after empty pick
+ok 117 - todo has correct onto hash
+ok 118 - ORIG_HEAD is updated correctly
+ok 119 - $EDITOR and friends are unchanged
+# passed all 119 test(s)
+1..119
 *** t3405-rebase-malformed.sh ***
 ok 1 - setup
 ok 2 - rebase commit with multi-line subject
@@ -9784,42 +9883,24 @@ ok 1 - setup
 ok 2 - rebase --apply --abort
 ok 3 - rebase --apply --abort after --skip
 ok 4 - rebase --apply --abort after --continue
-ok 5 - rebase --apply --abort does not update reflog
-ok 6 - rebase --abort can not be used with other options
-ok 7 - rebase --merge --abort
-ok 8 - rebase --merge --abort after --skip
-ok 9 - rebase --merge --abort after --continue
-ok 10 - rebase --merge --abort does not update reflog
-ok 11 - rebase --abort can not be used with other options
-ok 12 - rebase --apply --quit
-ok 13 - rebase --merge --quit
-# passed all 13 test(s)
-1..13
+ok 5 - rebase --apply --abort when checking out a tag
+ok 6 - rebase --apply --abort does not update reflog
+ok 7 - rebase --abort can not be used with other options
+ok 8 - rebase --apply --quit
+ok 9 - rebase --merge --abort
+ok 10 - rebase --merge --abort after --skip
+ok 11 - rebase --merge --abort after --continue
+ok 12 - rebase --merge --abort when checking out a tag
+ok 13 - rebase --merge --abort does not update reflog
+ok 14 - rebase --abort can not be used with other options
+ok 15 - rebase --merge --quit
+# passed all 15 test(s)
+1..15
 *** t3408-rebase-multi-line.sh ***
 ok 1 - setup
 ok 2 - rebase
-ok 3 - rebasep
-# passed all 3 test(s)
-1..3
-*** t3409-rebase-preserve-merges.sh ***
-ok 1 - setup for merge-preserving rebase
-ok 2 - --continue works after a conflict
-ok 3 - rebase -p preserves no-ff merges
-ok 4 - rebase -p ignores merge.log config
-# passed all 4 test(s)
-1..4
-*** t3410-rebase-preserve-dropped-merges.sh ***
-ok 1 - setup
-ok 2 - skip same-resolution merges with -p
-ok 3 - keep different-resolution merges with -p
-# passed all 3 test(s)
-1..3
-*** t3411-rebase-preserve-around-merges.sh ***
-ok 1 - setup
-ok 2 - squash F1 into D1
-ok 3 - rebase two levels of merge
-# passed all 3 test(s)
-1..3
+# passed all 2 test(s)
+1..2
 *** t3412-rebase-root.sh ***
 ok 1 - prepare repository
 ok 2 - rebase --root fails with too many args
@@ -9832,28 +9913,22 @@ ok 8 - rebase -i --root --onto <newbase>
 ok 9 - pre-rebase got correct input (3)
 ok 10 - rebase -i --root --onto <newbase> <branch>
 ok 11 - pre-rebase got correct input (4)
-ok 12 - rebase -i -p with linear history
-ok 13 - pre-rebase got correct input (5)
-ok 14 - set up merge history
-ok 15 - rebase -i -p with merge
-ok 16 - set up second root and merge
-ok 17 - rebase -i -p with two roots
-ok 18 - setup pre-rebase hook that fails
-ok 19 - pre-rebase hook stops rebase
-ok 20 - pre-rebase hook stops rebase -i
-ok 21 - remove pre-rebase hook
-ok 22 - set up a conflict
-ok 23 - rebase --root with conflict (first part)
-ok 24 - fix the conflict
-ok 25 - rebase --root with conflict (second part)
-ok 26 - rebase -i --root with conflict (first part)
-ok 27 - fix the conflict
-ok 28 - rebase -i --root with conflict (second part)
-ok 29 - rebase -i -p --root with conflict (first part)
-ok 30 - fix the conflict
-ok 31 - rebase -i -p --root with conflict (second part)
-# passed all 31 test(s)
-1..31
+ok 12 - set up merge history
+ok 13 - set up second root and merge
+ok 14 - setup pre-rebase hook that fails
+ok 15 - pre-rebase hook stops rebase
+ok 16 - pre-rebase hook stops rebase -i
+ok 17 - remove pre-rebase hook
+ok 18 - set up a conflict
+ok 19 - rebase --root with conflict (first part)
+ok 20 - fix the conflict
+ok 21 - rebase --root with conflict (second part)
+ok 22 - rebase -i --root with conflict (first part)
+ok 23 - fix the conflict
+ok 24 - rebase -i --root with conflict (second part)
+ok 25 - fix the conflict
+# passed all 25 test(s)
+1..25
 *** t3413-rebase-hook.sh ***
 ok 1 - setup
 ok 2 - rebase
@@ -9872,13 +9947,6 @@ ok 14 - rebase --no-verify overrides pre-rebase (1)
 ok 15 - rebase --no-verify overrides pre-rebase (2)
 # passed all 15 test(s)
 1..15
-*** t3414-rebase-preserve-onto.sh ***
-ok 1 - setup
-ok 2 - rebase from B1 onto H1
-ok 3 - rebase from E1 onto H1
-ok 4 - rebase from C1 onto H1
-# passed all 4 test(s)
-1..4
 *** t3415-rebase-autosquash.sh ***
 ok 1 - setup
 ok 2 - auto fixup (option)
@@ -9937,30 +10005,26 @@ ok 4 - apply based rebase --continue works with touched file
 ok 5 - rebase --continue can not be used with other options
 ok 6 - rebase --continue remembers merge strategy and options
 ok 7 - rebase -i --continue handles merge strategy and options
-ok 8 - rebase passes merge strategy options correctly
-ok 9 - rebase -r passes merge strategy options correctly
-ok 10 - --skip after failed fixup cleans commit message
-ok 11 - setup rerere database
-ok 12 - rebase --apply --continue remembers --rerere-autoupdate
-ok 13 - rebase --apply --continue honors rerere.autoUpdate
-ok 14 - rebase --apply --continue remembers --no-rerere-autoupdate
-ok 15 - rebase -m --continue remembers --rerere-autoupdate
-ok 16 - rebase -m --continue honors rerere.autoUpdate
-ok 17 - rebase -m --continue remembers --no-rerere-autoupdate
-ok 18 - rebase -i --continue remembers --rerere-autoupdate
-ok 19 - rebase -i --continue honors rerere.autoUpdate
-ok 20 - rebase -i --continue remembers --no-rerere-autoupdate
-ok 21 - rebase --preserve-merges --continue remembers --rerere-autoupdate
-ok 22 - rebase --preserve-merges --continue honors rerere.autoUpdate
-ok 23 - rebase --preserve-merges --continue remembers --no-rerere-autoupdate
-ok 24 - the todo command "break" works
-ok 25 - --reschedule-failed-exec
-ok 26 - rebase.rescheduleFailedExec only affects `rebase -i`
-ok 27 - rebase.rescheduleFailedExec=true & --no-reschedule-failed-exec
-ok 28 - new rebase.rescheduleFailedExec=true setting in an ongoing rebase is ignored
-ok 29 - there is no --no-reschedule-failed-exec in an ongoing rebase
-# passed all 29 test(s)
-1..29
+ok 8 - rebase -r passes merge strategy options correctly
+ok 9 - --skip after failed fixup cleans commit message
+ok 10 - setup rerere database
+ok 11 - rebase --apply --continue remembers --rerere-autoupdate
+ok 12 - rebase --apply --continue honors rerere.autoUpdate
+ok 13 - rebase --apply --continue remembers --no-rerere-autoupdate
+ok 14 - rebase -m --continue remembers --rerere-autoupdate
+ok 15 - rebase -m --continue honors rerere.autoUpdate
+ok 16 - rebase -m --continue remembers --no-rerere-autoupdate
+ok 17 - rebase -i --continue remembers --rerere-autoupdate
+ok 18 - rebase -i --continue honors rerere.autoUpdate
+ok 19 - rebase -i --continue remembers --no-rerere-autoupdate
+ok 20 - the todo command "break" works
+ok 21 - --reschedule-failed-exec
+ok 22 - rebase.rescheduleFailedExec only affects `rebase -i`
+ok 23 - rebase.rescheduleFailedExec=true & --no-reschedule-failed-exec
+ok 24 - new rebase.rescheduleFailedExec=true setting in an ongoing rebase is ignored
+ok 25 - there is no --no-reschedule-failed-exec in an ongoing rebase
+# passed all 25 test(s)
+1..25
 *** t3419-rebase-patch-id.sh ***
 ok 1 - setup
 ok 2 - setup: 500 lines
@@ -10019,88 +10083,69 @@ ok 1 - setup
 ok 2 - simple rebase --apply
 ok 3 - simple rebase -m
 ok 4 - simple rebase -i
-ok 5 - simple rebase -p
-ok 6 - setup branches and remote tracking
-ok 7 - rebase --apply is no-op if upstream is an ancestor
-ok 8 - rebase -m is no-op if upstream is an ancestor
-ok 9 - rebase -i is no-op if upstream is an ancestor
-ok 10 - rebase -p is no-op if upstream is an ancestor
-ok 11 - rebase --apply -f rewrites even if upstream is an ancestor
-ok 12 - rebase --fork-point -f rewrites even if upstream is an ancestor
-ok 13 - rebase -m -f rewrites even if upstream is an ancestor
-ok 14 - rebase -i -f rewrites even if upstream is an ancestor
-not ok 15 - rebase -p -f rewrites even if upstream is an ancestor # TODO known breakage
-ok 16 - rebase --apply -f rewrites even if remote upstream is an ancestor
-ok 17 - rebase --fork-point -f rewrites even if remote upstream is an ancestor
-ok 18 - rebase -m -f rewrites even if remote upstream is an ancestor
-ok 19 - rebase -i -f rewrites even if remote upstream is an ancestor
-ok 20 - rebase -p -f rewrites even if remote upstream is an ancestor
-ok 21 - rebase --apply fast-forwards from ancestor of upstream
-ok 22 - rebase --fork-point fast-forwards from ancestor of upstream
-ok 23 - rebase -m fast-forwards from ancestor of upstream
-ok 24 - rebase -i fast-forwards from ancestor of upstream
-ok 25 - rebase -p fast-forwards from ancestor of upstream
-ok 26 - setup of linear history for range selection tests
-ok 27 - rebase --apply drops patches in upstream
-ok 28 - rebase -m drops patches in upstream
-ok 29 - rebase -i drops patches in upstream
-ok 30 - rebase -p drops patches in upstream
-ok 31 - rebase --apply can drop last patch if in upstream
-ok 32 - rebase -m can drop last patch if in upstream
-ok 33 - rebase -i can drop last patch if in upstream
-ok 34 - rebase -p can drop last patch if in upstream
-ok 35 - rebase --apply --onto drops patches in upstream
-ok 36 - rebase -m --onto drops patches in upstream
-ok 37 - rebase -i --onto drops patches in upstream
-ok 38 - rebase -p --onto drops patches in upstream
-ok 39 - rebase --apply --onto does not drop patches in onto
-ok 40 - rebase -m --onto does not drop patches in onto
-ok 41 - rebase -i --onto does not drop patches in onto
-ok 42 - rebase -p --onto does not drop patches in onto
-ok 43 - setup of linear history for empty commit tests
-not ok 44 - rebase --apply keeps begin-empty commits # TODO known breakage
-ok 45 - rebase -m keeps begin-empty commits
-ok 46 - rebase -i keeps begin-empty commits
-not ok 47 - rebase -p keeps begin-empty commits # TODO known breakage
-ok 48 - rebase -m --no-keep-empty drops begin-empty commits
-ok 49 - rebase -i --no-keep-empty drops begin-empty commits
-ok 50 - rebase -p --no-keep-empty drops begin-empty commits
-ok 51 - rebase -m --keep-empty keeps empty even if already in upstream
-ok 52 - rebase -i --keep-empty keeps empty even if already in upstream
-ok 53 - rebase -p --keep-empty keeps empty even if already in upstream
-ok 54 - rebase --rebase-merges --keep-empty keeps empty even if already in upstream
-ok 55 - setup of linear history for test involving root
-ok 56 - rebase --apply --onto --root
-ok 57 - rebase -m --onto --root
-ok 58 - rebase -i --onto --root
-ok 59 - rebase -p --onto --root
-ok 60 - rebase --apply without --onto --root with disjoint history
-ok 61 - rebase -m without --onto --root with disjoint history
-ok 62 - rebase -i without --onto --root with disjoint history
-not ok 63 - rebase -p without --onto --root with disjoint history # TODO known breakage
-ok 64 - rebase --apply --onto --root drops patch in onto
-ok 65 - rebase -m --onto --root drops patch in onto
-ok 66 - rebase -i --onto --root drops patch in onto
-ok 67 - rebase -p --onto --root drops patch in onto
-ok 68 - rebase --apply --onto --root with merge-base does not go to root
-ok 69 - rebase -m --onto --root with merge-base does not go to root
-ok 70 - rebase -i --onto --root with merge-base does not go to root
-not ok 71 - rebase -p --onto --root with merge-base does not go to root # TODO known breakage
-ok 72 - rebase --apply without --onto --root with disjoint history drops patch in onto
-ok 73 - rebase -m without --onto --root with disjoint history drops patch in onto
-ok 74 - rebase -i without --onto --root with disjoint history drops patch in onto
-not ok 75 - rebase -p without --onto --root with disjoint history drops patch in onto # TODO known breakage
-ok 76 - rebase  --root on linear history is a no-op
-ok 77 - rebase -m --root on linear history is a no-op
-ok 78 - rebase -i --root on linear history is a no-op
-not ok 79 - rebase -p --root on linear history is a no-op # TODO known breakage
-ok 80 - rebase  -f --root on linear history causes re-write
-ok 81 - rebase -m -f --root on linear history causes re-write
-ok 82 - rebase -i -f --root on linear history causes re-write
-ok 83 - rebase -p -f --root on linear history causes re-write
-# still have 7 known breakage(s)
-# passed all remaining 76 test(s)
-1..83
+ok 5 - setup branches and remote tracking
+ok 6 - rebase --apply is no-op if upstream is an ancestor
+ok 7 - rebase -m is no-op if upstream is an ancestor
+ok 8 - rebase -i is no-op if upstream is an ancestor
+ok 9 - rebase --apply -f rewrites even if upstream is an ancestor
+ok 10 - rebase --fork-point -f rewrites even if upstream is an ancestor
+ok 11 - rebase -m -f rewrites even if upstream is an ancestor
+ok 12 - rebase -i -f rewrites even if upstream is an ancestor
+ok 13 - rebase --apply -f rewrites even if remote upstream is an ancestor
+ok 14 - rebase --fork-point -f rewrites even if remote upstream is an ancestor
+ok 15 - rebase -m -f rewrites even if remote upstream is an ancestor
+ok 16 - rebase -i -f rewrites even if remote upstream is an ancestor
+ok 17 - rebase --apply fast-forwards from ancestor of upstream
+ok 18 - rebase --fork-point fast-forwards from ancestor of upstream
+ok 19 - rebase -m fast-forwards from ancestor of upstream
+ok 20 - rebase -i fast-forwards from ancestor of upstream
+ok 21 - setup of linear history for range selection tests
+ok 22 - rebase --apply drops patches in upstream
+ok 23 - rebase -m drops patches in upstream
+ok 24 - rebase -i drops patches in upstream
+ok 25 - rebase --apply can drop last patch if in upstream
+ok 26 - rebase -m can drop last patch if in upstream
+ok 27 - rebase -i can drop last patch if in upstream
+ok 28 - rebase --apply --onto drops patches in upstream
+ok 29 - rebase -m --onto drops patches in upstream
+ok 30 - rebase -i --onto drops patches in upstream
+ok 31 - rebase --apply --onto does not drop patches in onto
+ok 32 - rebase -m --onto does not drop patches in onto
+ok 33 - rebase -i --onto does not drop patches in onto
+ok 34 - setup of linear history for empty commit tests
+not ok 35 - rebase --apply keeps begin-empty commits # TODO known breakage
+ok 36 - rebase -m keeps begin-empty commits
+ok 37 - rebase -i keeps begin-empty commits
+ok 38 - rebase -m --no-keep-empty drops begin-empty commits
+ok 39 - rebase -i --no-keep-empty drops begin-empty commits
+ok 40 - rebase -m --keep-empty keeps empty even if already in upstream
+ok 41 - rebase -i --keep-empty keeps empty even if already in upstream
+ok 42 - rebase --rebase-merges --keep-empty keeps empty even if already in upstream
+ok 43 - setup of linear history for test involving root
+ok 44 - rebase --apply --onto --root
+ok 45 - rebase -m --onto --root
+ok 46 - rebase -i --onto --root
+ok 47 - rebase --apply without --onto --root with disjoint history
+ok 48 - rebase -m without --onto --root with disjoint history
+ok 49 - rebase -i without --onto --root with disjoint history
+ok 50 - rebase --apply --onto --root drops patch in onto
+ok 51 - rebase -m --onto --root drops patch in onto
+ok 52 - rebase -i --onto --root drops patch in onto
+ok 53 - rebase --apply --onto --root with merge-base does not go to root
+ok 54 - rebase -m --onto --root with merge-base does not go to root
+ok 55 - rebase -i --onto --root with merge-base does not go to root
+ok 56 - rebase --apply without --onto --root with disjoint history drops patch in onto
+ok 57 - rebase -m without --onto --root with disjoint history drops patch in onto
+ok 58 - rebase -i without --onto --root with disjoint history drops patch in onto
+ok 59 - rebase  --root on linear history is a no-op
+ok 60 - rebase -m --root on linear history is a no-op
+ok 61 - rebase -i --root on linear history is a no-op
+ok 62 - rebase  -f --root on linear history causes re-write
+ok 63 - rebase -m -f --root on linear history causes re-write
+ok 64 - rebase -i -f --root on linear history causes re-write
+# still have 1 known breakage(s)
+# passed all remaining 63 test(s)
+1..64
 *** t3422-rebase-incompatible-options.sh ***
 ok 1 - setup
 ok 2 - --whitespace=fix incompatible with --merge
@@ -10113,10 +10158,8 @@ ok 8 - -C4 incompatible with --strategy=ours
 ok 9 - -C4 incompatible with --strategy-option=ours
 ok 10 - -C4 incompatible with --interactive
 ok 11 - -C4 incompatible with --exec
-ok 12 - --preserve-merges incompatible with --signoff
-ok 13 - --preserve-merges incompatible with --rebase-merges
-# passed all 13 test(s)
-1..13
+# passed all 11 test(s)
+1..11
 *** t3423-rebase-reword.sh ***
 ok 1 - setup
 ok 2 - reword without issues functions as intended
@@ -10156,25 +10199,8 @@ ok 10 - rebase -i of non-linear history is linearized upstream
 ok 11 - rebase --apply of non-linear history with merges after upstream merge is linearized
 ok 12 - rebase -m of non-linear history with merges after upstream merge is linearized
 ok 13 - rebase -i of non-linear history with merges after upstream merge is linearized
-ok 14 - rebase -p is no-op in non-linear history
-ok 15 - rebase -p is no-op when base inside second parent
-not ok 16 - rebase -p --root on non-linear history is a no-op # TODO known breakage
-ok 17 - rebase -p re-creates merge from side branch
-ok 18 - rebase -p re-creates internal merge
-ok 19 - rebase -p can re-create two branches on onto
-ok 20 - setup of non-linear-history for patch-equivalence tests
-ok 21 - rebase -p re-creates history around dropped commit matching upstream
-ok 22 - rebase -p --onto in merged history drops patches in upstream
-ok 23 - rebase -p --onto in merged history does not drop patches in onto
-ok 24 - setup of non-linear-history for dropping whole side
-not ok 25 - rebase -p drops merge commit when entire first-parent side is dropped # TODO known breakage
-ok 26 - rebase -p drops merge commit when entire second-parent side is dropped
-ok 27 - setup of non-linear-history for empty commits
-ok 28 - rebase -p re-creates empty internal merge commit
-ok 29 - rebase -p re-creates empty merge commit
-# still have 2 known breakage(s)
-# passed all remaining 27 test(s)
-1..29
+# passed all 13 test(s)
+1..13
 *** t3426-rebase-submodule.sh ***
 ok 1 - git_rebase: added submodule creates empty directory
 ok 2 - git_rebase: added submodule leaves existing empty directory alone
@@ -10210,13 +10236,10 @@ ok 29 - rebase interactive ignores modified submodules
 1..29
 *** t3427-rebase-subtree.sh ***
 ok 1 - setup
-not ok 2 - Rebase -Xsubtree --preserve-merges --onto commit # TODO known breakage
-not ok 3 - Rebase -Xsubtree --keep-empty --preserve-merges --onto commit # TODO known breakage
-ok 4 - Rebase -Xsubtree --empty=ask --onto commit
-ok 5 - Rebase -Xsubtree --empty=ask --rebase-merges --onto commit
-# still have 2 known breakage(s)
-# passed all remaining 3 test(s)
-1..5
+ok 2 - Rebase -Xsubtree --empty=ask --onto commit
+ok 3 - Rebase -Xsubtree --empty=ask --rebase-merges --onto commit
+# passed all 3 test(s)
+1..3
 *** t3428-rebase-signoff.sh ***
 ok 1 - rebase --signoff adds a sign-off line
 ok 2 - rebase --no-signoff does not add a sign-off line
@@ -10546,19 +10569,21 @@ ok 3 - --ignore-whitespace works with merge backend
 ok 4 - --ignore-whitespace is remembered when continuing
 ok 5 - --committer-date-is-author-date works with apply backend
 ok 6 - --committer-date-is-author-date works with merge backend
-ok 7 - --committer-date-is-author-date works with rebase -r
-ok 8 - --committer-date-is-author-date works when forking merge
-ok 9 - --committer-date-is-author-date works when committing conflict resolution
-ok 10 - --reset-author-date works with apply backend
-ok 11 - --reset-author-date works with merge backend
-ok 12 - --reset-author-date works after conflict resolution
-ok 13 - --reset-author-date works with rebase -r
-ok 14 - --reset-author-date with --committer-date-is-author-date works
-ok 15 - --reset-author-date --committer-date-is-author-date works when forking merge
-ok 16 - --ignore-date is an alias for --reset-author-date
-ok 17 - $EDITOR and friends are unchanged
-# passed all 17 test(s)
-1..17
+ok 7 - --committer-date-is-author-date works when rewording
+ok 8 - --committer-date-is-author-date works with rebase -r
+ok 9 - --committer-date-is-author-date works when forking merge
+ok 10 - --committer-date-is-author-date works when committing conflict resolution
+ok 11 - --reset-author-date works with apply backend
+ok 12 - --reset-author-date works with merge backend
+ok 13 - --reset-author-date works after conflict resolution
+ok 14 - --reset-author-date works with rebase -r
+ok 15 - --reset-author-date with --committer-date-is-author-date works
+ok 16 - reset-author-date with --committer-date-is-author-date works when rewording
+ok 17 - --reset-author-date --committer-date-is-author-date works when forking merge
+ok 18 - --ignore-date is an alias for --reset-author-date
+ok 19 - $EDITOR and friends are unchanged
+# passed all 19 test(s)
+1..19
 *** t3437-rebase-fixup-options.sh ***
 ok 1 - setup
 ok 2 - simple fixup -C works
@@ -10593,8 +10618,9 @@ ok 9 - cherry-pick "-" to pick from previous branch
 ok 10 - cherry-pick "-" is meaningless without checkout
 ok 11 - cherry-pick "-" works with arguments
 ok 12 - cherry-pick works with dirty renamed file
-# passed all 12 test(s)
-1..12
+ok 13 - advice from failed revert
+# passed all 13 test(s)
+1..13
 *** t3502-cherry-pick-merge.sh ***
 ok 1 - setup
 ok 2 - cherry-pick -m complains of bogus numbers
@@ -10956,12 +10982,16 @@ ok 2 - rm does not remove sparse entries
 ok 3 - rm -f does not remove sparse entries
 ok 4 - rm --dry-run does not remove sparse entries
 ok 5 - recursive rm does not remove sparse entries
-ok 6 - rm obeys advice.updateSparsePath
-ok 7 - do not advice about sparse entries when they do not match the pathspec
-ok 8 - do not warn about sparse entries when pathspec matches dense entries
-ok 9 - do not warn about sparse entries with --ignore-unmatch
-# passed all 9 test(s)
-1..9
+ok 6 - recursive rm --sparse removes sparse entries
+ok 7 - rm obeys advice.updateSparsePath
+ok 8 - do not advice about sparse entries when they do not match the pathspec
+ok 9 - do not warn about sparse entries when pathspec matches dense entries
+ok 10 - do not warn about sparse entries with --ignore-unmatch
+ok 11 - refuse to rm a non-skip-worktree path outside sparse cone
+ok 12 - can remove files from non-sparse dir
+ok 13 - refuse to remove non-skip-worktree file from sparse dir
+# passed all 13 test(s)
+1..13
 *** t3700-add.sh ***
 ok 1 - Test of git add
 ok 2 - Post-check that foo is in the index
@@ -11137,9 +11167,13 @@ ok 12 - git add --renormalize does not update sparse entries
 ok 13 - git add --dry-run --ignore-missing warn on sparse path
 ok 14 - do not advice about sparse entries when they do not match the pathspec
 ok 15 - do not warn when pathspec matches dense entries
-ok 16 - add obeys advice.updateSparsePath
-# passed all 16 test(s)
-1..16
+ok 16 - git add fails outside of sparse-checkout definition
+ok 17 - add obeys advice.updateSparsePath
+ok 18 - add allows sparse entries with --sparse
+ok 19 - can add files from non-sparse dir
+ok 20 - refuse to add non-skip-worktree file from sparse dir
+# passed all 20 test(s)
+1..20
 *** t3800-mktag.sh ***
 ok 1 - setup
 ok 2 - basic usage
@@ -11533,8 +11567,9 @@ ok 30 - stash show --only-untracked only shows untracked files
 ok 31 - stash show --no-include-untracked cancels --{include,only}-untracked
 ok 32 - stash show --include-untracked errors on duplicate files
 ok 33 - stash show --{include,only}-untracked on stashes without untracked entries
-# passed all 33 test(s)
-1..33
+ok 34 - stash -u ignores sub-repository
+# passed all 34 test(s)
+1..34
 *** t3906-stash-submodule.sh ***
 ok 1 - git_stash: added submodule creates empty directory
 not ok 2 - git_stash: added submodule leaves existing empty directory alone # TODO known breakage
@@ -11582,101 +11617,7 @@ ok 5 - error conditions
 # passed all 5 test(s)
 1..5
 *** t3910-mac-os-precompose.sh ***
-not ok 1 - detect if nfd needed
-#	
-#		precomposeunicode=$(git config core.precomposeunicode) &&
-#		test "$precomposeunicode" = true &&
-#		git config core.precomposeunicode true
-#	
-ok 2 - setup
-ok 3 - setup case mac
-not ok 4 - git diff f.Adiar
-#	
-#		touch f.$Adiarnfc &&
-#		git add f.$Adiarnfc &&
-#		echo f.Adiarnfc >f.$Adiarnfc &&
-#		git diff f.$Adiarnfd >expect &&
-#		git diff f.$Adiarnfc >actual &&
-#		test_cmp expect actual &&
-#		git reset HEAD f.Adiarnfc &&
-#		rm f.$Adiarnfc expect actual
-#	
-ok 5 - git diff-files f.Adiar
-not ok 6 - git diff-index f.Adiar
-#	
-#		touch f.$Adiarnfc &&
-#		git add f.$Adiarnfc &&
-#		echo f.Adiarnfc >f.$Adiarnfc &&
-#		git diff-index HEAD f.$Adiarnfd >expect &&
-#		git diff-index HEAD f.$Adiarnfc >actual &&
-#		test_cmp expect actual &&
-#		git reset HEAD f.Adiarnfc &&
-#		rm f.$Adiarnfc expect actual
-#	
-ok 7 - add file Adiarnfc
-not ok 8 - git diff-tree f.Adiar
-#	
-#		echo f.Adiarnfc >>f.$Adiarnfc &&
-#		git diff-tree HEAD f.$Adiarnfd >expect &&
-#		git diff-tree HEAD f.$Adiarnfc >actual &&
-#		test_cmp expect actual &&
-#		git checkout f.$Adiarnfc &&
-#		rm expect actual
-#	
-ok 9 - stage file d.Adiarnfd/f.Adiarnfd
-ok 10 - add link Adiarnfc
-not ok 11 - git log f.Adiar
-#	
-#		git log f.$Adiarnfc > f.Adiarnfc.log &&
-#		git log f.$Adiarnfd > f.Adiarnfd.log &&
-#		test -s f.Adiarnfc.log &&
-#		test -s f.Adiarnfd.log &&
-#		test_cmp f.Adiarnfc.log f.Adiarnfd.log &&
-#		rm f.Adiarnfc.log f.Adiarnfd.log
-#	
-not ok 12 - git lsfiles f.Adiar
-#	
-#		git ls-files f.$Adiarnfc > f.Adiarnfc.log &&
-#		git ls-files f.$Adiarnfd > f.Adiarnfd.log &&
-#		test -s f.Adiarnfc.log &&
-#		test -s f.Adiarnfd.log &&
-#		test_cmp f.Adiarnfc.log f.Adiarnfd.log &&
-#		rm f.Adiarnfc.log f.Adiarnfd.log
-#	
-not ok 13 - git mv
-#	
-#		git mv f.$Adiarnfd f.$Odiarnfc &&
-#		git mv d.$Adiarnfd d.$Odiarnfc &&
-#		git mv l.$Adiarnfd l.$Odiarnfc &&
-#		git commit -m "mv Adiarnfd Odiarnfc"
-#	
-not ok 14 - git checkout nfc
-#	
-#		rm f.$Odiarnfc &&
-#		git checkout f.$Odiarnfc
-#	
-not ok 15 - git checkout file nfd
-#	
-#		rm -f f.* &&
-#		git checkout f.$Odiarnfd
-#	
-not ok 16 - git checkout link nfd
-#	
-#		rm l.* &&
-#		git checkout l.$Odiarnfd
-#	
-ok 17 - setup case mac2
-ok 18 - commit file d2.Adiarnfd/f.Adiarnfd
-ok 19 - setup for long decomposed filename
-ok 20 - Add long decomposed filename
-ok 21 - setup for long precomposed filename
-ok 22 - Add long precomposed filename
-ok 23 - handle existing decomposed filenames # TODO known breakage vanished
-ok 24 - unicode decomposed: git restore -p . 
-ok 25 - respect git config --global core.precomposeunicode
-# 1 known breakage(s) vanished; please update test(s)
-# failed 10 among remaining 24 test(s)
-1..25
+1..0 # SKIP filesystem does not corrupt utf-8
 *** t3920-crlf-messages.sh ***
 ok 1 - Setup refs with commit and tag messages using CRLF
 ok 2 - branch: --verbose works with messages using CRLF
@@ -11836,7 +11777,6 @@ ok 7 - --shortstat output after binary chmod
 1..7
 *** t4007-rename-3.sh ***
 ok 1 - prepare reference tree
-warning: unable to access '$(@D)/.gitattributes': Number of symbolic links encountered during path name traversal exceeds MAXSYMLINKS
 ok 2 - prepare work tree
 ok 3 - copy detection
 ok 4 - copy detection, cached
@@ -13391,12 +13331,15 @@ ok 40 - path filter
 ok 41 - given commit
 ok 42 - setup .git file for sm2
 ok 43 - diff --submodule=diff with .git file
-ok 44 - setup nested submodule
-ok 45 - move nested submodule HEAD
-ok 46 - diff --submodule=diff with moved nested submodule HEAD
-ok 47 - diff --submodule=diff recurses into nested submodules
-# passed all 47 test(s)
-1..47
+ok 44 - deleted submodule with .git file
+ok 45 - typechanged(submodule->blob) submodule with .git file
+ok 46 - setup nested submodule
+ok 47 - move nested submodule HEAD
+ok 48 - diff --submodule=diff with moved nested submodule HEAD
+ok 49 - diff --submodule=diff recurses into nested submodules
+ok 50 - diff --submodule=diff recurses into deleted nested submodules
+# passed all 50 test(s)
+1..50
 *** t4061-diff-indent.sh ***
 ok 1 - prepare
 ok 2 - diff: ugly spaces
@@ -14303,74 +14246,82 @@ ok 32 - log -F -E --perl-regexp --grep=<pcre> uses PCRE
 ok 33 - log with grep.patternType configuration
 ok 34 - log with grep.patternType configuration and command line
 ok 35 - log with various grep.patternType configurations & command-lines
-ok 36 - simple log --graph
-ok 37 - simple log --graph --line-prefix="123 "
-ok 38 - set up merge history
-ok 39 - log --graph with merge
-ok 40 - log --graph --line-prefix="| | | " with merge
-ok 41 - log --graph with merge with log.graphColors
-ok 42 - log --raw --graph -m with merge
-ok 43 - diff-tree --graph
-ok 44 - log --graph with full output
-ok 45 - set up more tangled history
-ok 46 - log --graph with merge
-ok 47 - log.decorate configuration
-ok 48 - decorate-refs with glob
-ok 49 - decorate-refs without globs
-ok 50 - multiple decorate-refs
-ok 51 - decorate-refs-exclude with glob
-ok 52 - decorate-refs-exclude without globs
-ok 53 - multiple decorate-refs-exclude
-ok 54 - decorate-refs and decorate-refs-exclude
-ok 55 - deocrate-refs and log.excludeDecoration
-ok 56 - decorate-refs-exclude and simplify-by-decoration
-ok 57 - log.decorate config parsing
-ok 58 # skip log output on a TTY (missing TTY)
-ok 59 - reflog is expected format
-ok 60 - whatchanged is expected format
-ok 61 - log.abbrevCommit configuration
-ok 62 - show added path under "--follow -M"
-ok 63 - git log -c --follow
-ok 64 - log --graph with diff and stats
-ok 65 - log --line-prefix="*** " --graph with diff and stats
-ok 66 - log --graph with --name-status
-ok 67 - log --graph with --name-only
-ok 68 - dotdot is a parent directory
-ok 69 # skip setup signed branch (missing GPG)
-ok 70 # skip setup signed branch with subkey (missing GPG)
-ok 71 # skip setup signed branch x509 (missing GPGSM)
-ok 72 # skip log x509 fingerprint (missing GPGSM)
-ok 73 # skip log OpenPGP fingerprint (missing GPGSM)
-ok 74 # skip log --graph --show-signature (missing GPG)
-ok 75 # skip log --graph --show-signature x509 (missing GPGSM)
-ok 76 # skip log --graph --show-signature for merged tag (missing GPG)
-ok 77 # skip log --graph --show-signature for merged tag in shallow clone (missing GPG)
-ok 78 # skip log --graph --show-signature for merged tag with missing key (missing GPG)
-ok 79 # skip log --graph --show-signature for merged tag with bad signature (missing GPG)
-ok 80 # skip log --show-signature for merged tag with GPG failure (missing GPG)
-ok 81 # skip log --graph --show-signature for merged tag x509 (missing GPGSM)
-ok 82 # skip log --graph --show-signature for merged tag x509 missing key (missing GPGSM)
-ok 83 # skip log --graph --show-signature for merged tag x509 bad signature (missing GPGSM)
-ok 84 # skip --no-show-signature overrides --show-signature (missing GPG)
-ok 85 # skip log.showsignature=true behaves like --show-signature (missing GPG)
-ok 86 # skip --no-show-signature overrides log.showsignature=true (missing GPG)
-ok 87 # skip --show-signature overrides log.showsignature=false (missing GPG)
-ok 88 - log --graph --no-walk is forbidden
-ok 89 - log on empty repo fails
-ok 90 - log diagnoses bogus HEAD hash
-ok 91 - log diagnoses bogus HEAD symref
-ok 92 - log does not default to HEAD when rev input is given
-ok 93 - do not default to HEAD with ignored object on cmdline
-ok 94 - do not default to HEAD with ignored object on stdin
-ok 95 - set up --source tests
-ok 96 - log --source paints branch names
-ok 97 - log --source paints tag names
-ok 98 - log --source paints symmetric ranges
-ok 99 - --exclude-promisor-objects does not BUG-crash
-ok 100 - log --decorate includes all levels of tag annotated tags
-ok 101 - log --end-of-options
-# passed all 101 test(s)
-1..101
+ok 36 - log --author
+ok 37 - log --committer
+ok 38 - log -i --grep with color
+ok 39 - -c color.grep.selected log --grep
+ok 40 - -c color.grep.matchSelected log --grep
+ok 41 - simple log --graph
+ok 42 - simple log --graph --line-prefix="123 "
+ok 43 - set up merge history
+ok 44 - log --graph with merge
+ok 45 - log --graph --line-prefix="| | | " with merge
+ok 46 - log --graph with merge with log.graphColors
+ok 47 - log --raw --graph -m with merge
+ok 48 - diff-tree --graph
+ok 49 - log --graph with full output
+ok 50 - set up more tangled history
+ok 51 - log --graph with merge
+ok 52 - log.decorate configuration
+ok 53 - decorate-refs with glob
+ok 54 - decorate-refs without globs
+ok 55 - multiple decorate-refs
+ok 56 - decorate-refs-exclude with glob
+ok 57 - decorate-refs-exclude without globs
+ok 58 - multiple decorate-refs-exclude
+ok 59 - decorate-refs and decorate-refs-exclude
+ok 60 - deocrate-refs and log.excludeDecoration
+ok 61 - decorate-refs-exclude and simplify-by-decoration
+ok 62 - log.decorate config parsing
+ok 63 # skip log output on a TTY (missing TTY)
+ok 64 - reflog is expected format
+ok 65 - whatchanged is expected format
+ok 66 - log.abbrevCommit configuration
+ok 67 - show added path under "--follow -M"
+ok 68 - git log -c --follow
+ok 69 - log --graph with diff and stats
+ok 70 - log --line-prefix="*** " --graph with diff and stats
+ok 71 - log --graph with --name-status
+ok 72 - log --graph with --name-only
+ok 73 - dotdot is a parent directory
+ok 74 # skip setup signed branch (missing GPG)
+ok 75 # skip setup signed branch with subkey (missing GPG)
+ok 76 # skip setup signed branch x509 (missing GPGSM)
+ok 77 # skip setup sshkey signed branch (missing GPGSSH)
+ok 78 # skip log x509 fingerprint (missing GPGSM)
+ok 79 # skip log OpenPGP fingerprint (missing GPGSM)
+ok 80 # skip log ssh key fingerprint (missing GPGSSH)
+ok 81 # skip log --graph --show-signature (missing GPG)
+ok 82 # skip log --graph --show-signature x509 (missing GPGSM)
+ok 83 # skip log --graph --show-signature ssh (missing GPGSSH)
+ok 84 # skip log --graph --show-signature for merged tag (missing GPG)
+ok 85 # skip log --graph --show-signature for merged tag in shallow clone (missing GPG)
+ok 86 # skip log --graph --show-signature for merged tag with missing key (missing GPG)
+ok 87 # skip log --graph --show-signature for merged tag with bad signature (missing GPG)
+ok 88 # skip log --show-signature for merged tag with GPG failure (missing GPG)
+ok 89 # skip log --graph --show-signature for merged tag x509 (missing GPGSM)
+ok 90 # skip log --graph --show-signature for merged tag x509 missing key (missing GPGSM)
+ok 91 # skip log --graph --show-signature for merged tag x509 bad signature (missing GPGSM)
+ok 92 # skip --no-show-signature overrides --show-signature (missing GPG)
+ok 93 # skip log.showsignature=true behaves like --show-signature (missing GPG)
+ok 94 # skip --no-show-signature overrides log.showsignature=true (missing GPG)
+ok 95 # skip --show-signature overrides log.showsignature=false (missing GPG)
+ok 96 - log --graph --no-walk is forbidden
+ok 97 - log on empty repo fails
+ok 98 - log diagnoses bogus HEAD hash
+ok 99 - log diagnoses bogus HEAD symref
+ok 100 - log does not default to HEAD when rev input is given
+ok 101 - do not default to HEAD with ignored object on cmdline
+ok 102 - do not default to HEAD with ignored object on stdin
+ok 103 - set up --source tests
+ok 104 - log --source paints branch names
+ok 105 - log --source paints tag names
+ok 106 - log --source paints symmetric ranges
+ok 107 - --exclude-promisor-objects does not BUG-crash
+ok 108 - log --decorate includes all levels of tag annotated tags
+ok 109 - log --end-of-options
+# passed all 109 test(s)
+1..109
 *** t4203-mailmap.sh ***
 ok 1 - setup commits and contacts file
 ok 2 - check-mailmap no arguments
@@ -14671,9 +14622,8 @@ ok 14 - config grep.patternType=perl
 ok 15 - log --grep does not find non-reencoded values (latin1 + locale)
 ok 16 - log --grep searches in log output encoding (latin1 + locale)
 ok 17 - log --grep does not die on invalid UTF-8 value (latin1 + locale + invalid needle)
-ok 18 - log shows warning when conversion fails
-# passed all 18 test(s)
-1..18
+# passed all 17 test(s)
+1..17
 *** t4211-line-log.sh ***
 ok 1 - setup (import history)
 ok 2 - basic command line parsing
@@ -15570,79 +15520,80 @@ ok 6 - failover to a duplicate object in the same pack
 1..6
 *** t5310-pack-bitmaps.sh ***
 ok 1 - setup repo with moderate-sized history
-ok 2 - full repack creates bitmaps
-ok 3 - rev-list --test-bitmap verifies bitmaps
-ok 4 - counting commits via bitmap (full bitmap, second)
-ok 5 - counting partial commits via bitmap (full bitmap, second)
-ok 6 - counting commits with limit (full bitmap, second)
-ok 7 - counting non-linear history (full bitmap, second)
-ok 8 - counting commits with limiting (full bitmap, second)
-ok 9 - counting objects via bitmap (full bitmap, second)
-ok 10 - enumerate commits (full bitmap, second)
-ok 11 - enumerate --objects (full bitmap, second)
-ok 12 - bitmap --objects handles non-commit objects (full bitmap, second)
-ok 13 - counting commits via bitmap (full bitmap, other)
-ok 14 - counting partial commits via bitmap (full bitmap, other)
-ok 15 - counting commits with limit (full bitmap, other)
-ok 16 - counting non-linear history (full bitmap, other)
-ok 17 - counting commits with limiting (full bitmap, other)
-ok 18 - counting objects via bitmap (full bitmap, other)
-ok 19 - enumerate commits (full bitmap, other)
-ok 20 - enumerate --objects (full bitmap, other)
-ok 21 - bitmap --objects handles non-commit objects (full bitmap, other)
-ok 22 - clone from bitmapped repository
-ok 23 - partial clone from bitmapped repository
-ok 24 - setup further non-bitmapped commits
-ok 25 - counting commits via bitmap (partial bitmap, second)
-ok 26 - counting partial commits via bitmap (partial bitmap, second)
-ok 27 - counting commits with limit (partial bitmap, second)
-ok 28 - counting non-linear history (partial bitmap, second)
-ok 29 - counting commits with limiting (partial bitmap, second)
-ok 30 - counting objects via bitmap (partial bitmap, second)
-ok 31 - enumerate commits (partial bitmap, second)
-ok 32 - enumerate --objects (partial bitmap, second)
-ok 33 - bitmap --objects handles non-commit objects (partial bitmap, second)
-ok 34 - counting commits via bitmap (partial bitmap, other)
-ok 35 - counting partial commits via bitmap (partial bitmap, other)
-ok 36 - counting commits with limit (partial bitmap, other)
-ok 37 - counting non-linear history (partial bitmap, other)
-ok 38 - counting commits with limiting (partial bitmap, other)
-ok 39 - counting objects via bitmap (partial bitmap, other)
-ok 40 - enumerate commits (partial bitmap, other)
-ok 41 - enumerate --objects (partial bitmap, other)
-ok 42 - bitmap --objects handles non-commit objects (partial bitmap, other)
-ok 43 - fetch (partial bitmap)
-ok 44 - incremental repack fails when bitmaps are requested
-ok 45 - incremental repack can disable bitmaps
-ok 46 - pack-objects respects --local (non-local loose)
-ok 47 - pack-objects respects --honor-pack-keep (local non-bitmapped pack)
-ok 48 - pack-objects respects --local (non-local pack)
-ok 49 - pack-objects respects --honor-pack-keep (local bitmapped pack)
-ok 50 - pack-objects respects --local (non-local bitmapped pack)
-ok 51 - pack-objects to file can use bitmap
-ok 52 - full repack, reusing previous bitmaps
-ok 53 - fetch (full bitmap)
-ok 54 - create objects for missing-HAVE tests
-ok 55 - pack-objects respects --incremental
-ok 56 - pack with missing blob
-ok 57 - pack with missing tree
-ok 58 - pack with missing parent
-ok 59 # skip we can read jgit bitmaps (missing JGIT of JGIT,SHA1)
-ok 60 # skip jgit can read our bitmaps (missing JGIT of JGIT,SHA1)
-ok 61 - splitting packs does not generate bogus bitmaps
-ok 62 - set up reusable pack
-ok 63 - pack reuse respects --honor-pack-keep
-ok 64 - pack reuse respects --local
-ok 65 - pack reuse respects --incremental
-ok 66 - truncated bitmap fails gracefully (ewah)
-ok 67 - truncated bitmap fails gracefully (cache)
-ok 68 - enumerating progress counts pack-reused objects
-ok 69 - set up thin delta-reuse parent
-ok 70 - fetch without bitmaps ignores delta against old base
-ok 71 - fetch with bitmaps can reuse old base
-ok 72 - pack.preferBitmapTips
-# passed all 72 test(s)
-1..72
+ok 2 - setup writing bitmaps during repack
+ok 3 - full repack creates bitmaps
+ok 4 - rev-list --test-bitmap verifies bitmaps
+ok 5 - counting commits via bitmap (full bitmap, second)
+ok 6 - counting partial commits via bitmap (full bitmap, second)
+ok 7 - counting commits with limit (full bitmap, second)
+ok 8 - counting non-linear history (full bitmap, second)
+ok 9 - counting commits with limiting (full bitmap, second)
+ok 10 - counting objects via bitmap (full bitmap, second)
+ok 11 - enumerate commits (full bitmap, second)
+ok 12 - enumerate --objects (full bitmap, second)
+ok 13 - bitmap --objects handles non-commit objects (full bitmap, second)
+ok 14 - counting commits via bitmap (full bitmap, other)
+ok 15 - counting partial commits via bitmap (full bitmap, other)
+ok 16 - counting commits with limit (full bitmap, other)
+ok 17 - counting non-linear history (full bitmap, other)
+ok 18 - counting commits with limiting (full bitmap, other)
+ok 19 - counting objects via bitmap (full bitmap, other)
+ok 20 - enumerate commits (full bitmap, other)
+ok 21 - enumerate --objects (full bitmap, other)
+ok 22 - bitmap --objects handles non-commit objects (full bitmap, other)
+ok 23 - clone from bitmapped repository
+ok 24 - partial clone from bitmapped repository
+ok 25 - setup further non-bitmapped commits
+ok 26 - counting commits via bitmap (partial bitmap, second)
+ok 27 - counting partial commits via bitmap (partial bitmap, second)
+ok 28 - counting commits with limit (partial bitmap, second)
+ok 29 - counting non-linear history (partial bitmap, second)
+ok 30 - counting commits with limiting (partial bitmap, second)
+ok 31 - counting objects via bitmap (partial bitmap, second)
+ok 32 - enumerate commits (partial bitmap, second)
+ok 33 - enumerate --objects (partial bitmap, second)
+ok 34 - bitmap --objects handles non-commit objects (partial bitmap, second)
+ok 35 - counting commits via bitmap (partial bitmap, other)
+ok 36 - counting partial commits via bitmap (partial bitmap, other)
+ok 37 - counting commits with limit (partial bitmap, other)
+ok 38 - counting non-linear history (partial bitmap, other)
+ok 39 - counting commits with limiting (partial bitmap, other)
+ok 40 - counting objects via bitmap (partial bitmap, other)
+ok 41 - enumerate commits (partial bitmap, other)
+ok 42 - enumerate --objects (partial bitmap, other)
+ok 43 - bitmap --objects handles non-commit objects (partial bitmap, other)
+ok 44 - fetch (partial bitmap)
+ok 45 - enumerating progress counts pack-reused objects
+ok 46 - incremental repack fails when bitmaps are requested
+ok 47 - incremental repack can disable bitmaps
+ok 48 - pack-objects respects --local (non-local loose)
+ok 49 - pack-objects respects --honor-pack-keep (local non-bitmapped pack)
+ok 50 - pack-objects respects --local (non-local pack)
+ok 51 - pack-objects respects --honor-pack-keep (local bitmapped pack)
+ok 52 - pack-objects respects --local (non-local bitmapped pack)
+ok 53 - pack-objects to file can use bitmap
+ok 54 - full repack, reusing previous bitmaps
+ok 55 - fetch (full bitmap)
+ok 56 - create objects for missing-HAVE tests
+ok 57 - pack-objects respects --incremental
+ok 58 - pack with missing blob
+ok 59 - pack with missing tree
+ok 60 - pack with missing parent
+ok 61 # skip we can read jgit bitmaps (missing JGIT of JGIT,SHA1)
+ok 62 # skip jgit can read our bitmaps (missing JGIT of JGIT,SHA1)
+ok 63 - splitting packs does not generate bogus bitmaps
+ok 64 - set up reusable pack
+ok 65 - pack reuse respects --honor-pack-keep
+ok 66 - pack reuse respects --local
+ok 67 - pack reuse respects --incremental
+ok 68 - truncated bitmap fails gracefully (ewah)
+ok 69 - truncated bitmap fails gracefully (cache)
+ok 70 - set up thin delta-reuse parent
+ok 71 - fetch without bitmaps ignores delta against old base
+ok 72 - fetch with bitmaps can reuse old base
+ok 73 - pack.preferBitmapTips
+# passed all 73 test(s)
+1..73
 *** t5311-pack-bitmaps-shallow.sh ***
 ok 1 - setup shallow repo
 ok 2 - turn on bitmaps in the parent
@@ -15654,16 +15605,18 @@ ok 1 - disable reflogs
 ok 2 - create history reachable only from a bogus-named ref
 ok 3 - pruning does not drop bogus object
 ok 4 - put bogus object into pack
-ok 5 - destructive repack keeps packed object
-ok 6 - clean up bogus ref
-ok 7 - create history with missing tip commit
-ok 8 - pruning with a corrupted tip does not drop history
-ok 9 - pack-refs does not silently delete broken loose ref
-ok 10 - create packed-refs file with broken ref
-ok 11 - pack-refs does not silently delete broken packed ref
-ok 12 - pack-refs does not drop broken refs during deletion
-# passed all 12 test(s)
-1..12
+ok 5 - non-destructive repack bails on bogus ref
+ok 6 - GIT_REF_PARANOIA=0 overrides safety
+ok 7 - destructive repack keeps packed object
+ok 8 - destructive repack not confused by dangling symref
+ok 9 - create history with missing tip commit
+ok 10 - pruning with a corrupted tip does not drop history
+ok 11 - pack-refs does not silently delete broken loose ref
+ok 12 - create packed-refs file with broken ref
+ok 13 - pack-refs does not silently delete broken packed ref
+ok 14 - pack-refs does not drop broken refs during deletion
+# passed all 14 test(s)
+1..14
 *** t5313-pack-bounds-checks.sh ***
 ok 1 - setup
 ok 2 - set up base packfile and variables
@@ -15735,99 +15688,104 @@ ok 30 - verify pack-objects w/ --missing=allow-any
 # passed all 30 test(s)
 1..30
 *** t5318-commit-graph.sh ***
-ok 1 - setup full repo
-ok 2 - tweak umask for modebit tests
-ok 3 - verify graph with no graph file
-ok 4 - write graph with no packs
-ok 5 - exit with correct error on bad input to --stdin-packs
-ok 6 - create commits and repack
-ok 7 - check normal git operations: no graph
-ok 8 - exit with correct error on bad input to --stdin-commits
-ok 9 - write graph
-ok 10 - write graph has correct permissions
-ok 11 - check normal git operations: graph exists
-ok 12 - Add more commits
-ok 13 - commit-graph write progress off for redirected stderr
-ok 14 - commit-graph write force progress on for stderr
-ok 15 - commit-graph write with the --no-progress option
-ok 16 - commit-graph write --stdin-commits progress off for redirected stderr
-ok 17 - commit-graph write --stdin-commits force progress on for stderr
-ok 18 - commit-graph write --stdin-commits with the --no-progress option
-ok 19 - commit-graph verify progress off for redirected stderr
-ok 20 - commit-graph verify force progress on for stderr
-ok 21 - commit-graph verify with the --no-progress option
-ok 22 - write graph with merges
-ok 23 - check normal git operations: merge 1 vs 2
-ok 24 - check normal git operations: merge 1 vs 3
-ok 25 - check normal git operations: merge 2 vs 3
-ok 26 - Add one more commit
-ok 27 - check normal git operations: mixed mode, commit 8 vs merge 1
-ok 28 - check normal git operations: mixed mode, commit 8 vs merge 2
-ok 29 - write graph with new commit
-ok 30 - check normal git operations: full graph, commit 8 vs merge 1
-ok 31 - check normal git operations: full graph, commit 8 vs merge 2
-ok 32 - write graph with nothing new
-ok 33 - check normal git operations: cleared graph, commit 8 vs merge 1
-ok 34 - check normal git operations: cleared graph, commit 8 vs merge 2
-ok 35 - build graph from latest pack with closure
-ok 36 - check normal git operations: graph from pack, commit 8 vs merge 1
-ok 37 - check normal git operations: graph from pack, commit 8 vs merge 2
-ok 38 - build graph from commits with closure
-ok 39 - check normal git operations: graph from commits, commit 8 vs merge 1
-ok 40 - check normal git operations: graph from commits, commit 8 vs merge 2
-ok 41 - build graph from commits with append
-ok 42 - check normal git operations: append graph, commit 8 vs merge 1
-ok 43 - check normal git operations: append graph, commit 8 vs merge 2
-ok 44 - build graph using --reachable
+ok 1 - usage
+ok 2 - usage shown without sub-command
+ok 3 - usage shown with an error on unknown sub-command
+ok 4 - setup full repo
+ok 5 - tweak umask for modebit tests
+ok 6 - verify graph with no graph file
+ok 7 - write graph with no packs
+ok 8 - exit with correct error on bad input to --stdin-packs
+ok 9 - create commits and repack
+ok 10 - check normal git operations: no graph
+ok 11 - exit with correct error on bad input to --stdin-commits
+ok 12 - write graph
+ok 13 - write graph has correct permissions
+ok 14 - check normal git operations: graph exists
+ok 15 - Add more commits
+ok 16 - commit-graph write progress off for redirected stderr
+ok 17 - commit-graph write force progress on for stderr
+ok 18 - commit-graph write with the --no-progress option
+ok 19 - commit-graph write --stdin-commits progress off for redirected stderr
+ok 20 - commit-graph write --stdin-commits force progress on for stderr
+ok 21 - commit-graph write --stdin-commits with the --no-progress option
+ok 22 - commit-graph verify progress off for redirected stderr
+ok 23 - commit-graph verify force progress on for stderr
+ok 24 - commit-graph verify with the --no-progress option
+ok 25 - write graph with merges
+ok 26 - check normal git operations: merge 1 vs 2
+ok 27 - check normal git operations: merge 1 vs 3
+ok 28 - check normal git operations: merge 2 vs 3
+ok 29 - Add one more commit
+ok 30 - check normal git operations: mixed mode, commit 8 vs merge 1
+ok 31 - check normal git operations: mixed mode, commit 8 vs merge 2
+ok 32 - write graph with new commit
+ok 33 - check normal git operations: full graph, commit 8 vs merge 1
+ok 34 - check normal git operations: full graph, commit 8 vs merge 2
+ok 35 - write graph with nothing new
+ok 36 - check normal git operations: cleared graph, commit 8 vs merge 1
+ok 37 - check normal git operations: cleared graph, commit 8 vs merge 2
+ok 38 - build graph from latest pack with closure
+ok 39 - check normal git operations: graph from pack, commit 8 vs merge 1
+ok 40 - check normal git operations: graph from pack, commit 8 vs merge 2
+ok 41 - build graph from commits with closure
+ok 42 - check normal git operations: graph from commits, commit 8 vs merge 1
+ok 43 - check normal git operations: graph from commits, commit 8 vs merge 2
+ok 44 - build graph from commits with append
 ok 45 - check normal git operations: append graph, commit 8 vs merge 1
 ok 46 - check normal git operations: append graph, commit 8 vs merge 2
-ok 47 - setup bare repo
-ok 48 - check normal git operations: bare repo, commit 8 vs merge 1
-ok 49 - check normal git operations: bare repo, commit 8 vs merge 2
-ok 50 - write graph in bare repo
-ok 51 - check normal git operations: bare repo with graph, commit 8 vs merge 1
-ok 52 - check normal git operations: bare repo with graph, commit 8 vs merge 2
-ok 53 - perform fast-forward merge in full repo
-ok 54 - check that gc computes commit-graph
-ok 55 - replace-objects invalidates commit-graph
-ok 56 - commit grafts invalidate commit-graph
-ok 57 - replace-objects invalidates commit-graph
-ok 58 - warn on improper hash version
-ok 59 - lower layers have overflow chunk
-ok 60 - git commit-graph verify
-ok 61 # skip detect permission problem (missing SANITY of POSIXPERM,SANITY)
-ok 62 - detect too small
-ok 63 - detect bad signature
-ok 64 - detect bad version
-ok 65 - detect bad hash version
-ok 66 - detect low chunk count
-ok 67 - detect missing OID fanout chunk
-ok 68 - detect missing OID lookup chunk
-ok 69 - detect missing commit data chunk
-ok 70 - detect incorrect fanout
-ok 71 - detect incorrect fanout final value
-ok 72 - detect incorrect OID order
-ok 73 - detect OID not in object database
-ok 74 - detect incorrect tree OID
-ok 75 - detect incorrect parent int-id
-ok 76 - detect extra parent int-id
-ok 77 - detect wrong parent
-ok 78 - detect incorrect generation number
-ok 79 - detect incorrect generation number
-ok 80 - detect incorrect commit date
-ok 81 - detect incorrect parent for octopus merge
-ok 82 - detect invalid checksum hash
-ok 83 - detect incorrect chunk count
-ok 84 - git fsck (checks commit-graph)
-ok 85 - setup non-the_repository tests
-ok 86 - parse_commit_in_graph works for non-the_repository
-ok 87 - get_commit_tree_in_graph works for non-the_repository
-ok 88 - corrupt commit-graph write (broken parent)
-ok 89 - corrupt commit-graph write (missing tree)
-ok 90 - set up and verify repo with generation data overflow chunk
-ok 91 - check normal git operations: generation data overflow chunk repo
-# passed all 91 test(s)
-1..91
+ok 47 - build graph using --reachable
+ok 48 - check normal git operations: append graph, commit 8 vs merge 1
+ok 49 - check normal git operations: append graph, commit 8 vs merge 2
+ok 50 - setup bare repo
+ok 51 - check normal git operations: bare repo, commit 8 vs merge 1
+ok 52 - check normal git operations: bare repo, commit 8 vs merge 2
+ok 53 - write graph in bare repo
+ok 54 - check normal git operations: bare repo with graph, commit 8 vs merge 1
+ok 55 - check normal git operations: bare repo with graph, commit 8 vs merge 2
+ok 56 - perform fast-forward merge in full repo
+ok 57 - check that gc computes commit-graph
+ok 58 - replace-objects invalidates commit-graph
+ok 59 - commit grafts invalidate commit-graph
+ok 60 - replace-objects invalidates commit-graph
+ok 61 - warn on improper hash version
+ok 62 - lower layers have overflow chunk
+ok 63 - git commit-graph verify
+ok 64 # skip detect permission problem (missing SANITY of POSIXPERM,SANITY)
+ok 65 - detect too small
+ok 66 - detect bad signature
+ok 67 - detect bad version
+ok 68 - detect bad hash version
+ok 69 - detect low chunk count
+ok 70 - detect missing OID fanout chunk
+ok 71 - detect missing OID lookup chunk
+ok 72 - detect missing commit data chunk
+ok 73 - detect incorrect fanout
+ok 74 - detect incorrect fanout final value
+ok 75 - detect incorrect OID order
+ok 76 - detect OID not in object database
+ok 77 - detect incorrect tree OID
+ok 78 - detect incorrect parent int-id
+ok 79 - detect extra parent int-id
+ok 80 - detect wrong parent
+ok 81 - detect incorrect generation number
+ok 82 - detect incorrect generation number
+ok 83 - detect incorrect commit date
+ok 84 - detect incorrect parent for octopus merge
+ok 85 - detect invalid checksum hash
+ok 86 - detect incorrect chunk count
+ok 87 - git fsck (checks commit-graph when config set to true)
+ok 88 - git fsck (ignores commit-graph when config set to false)
+ok 89 - git fsck (checks commit-graph when config unset)
+ok 90 - setup non-the_repository tests
+ok 91 - parse_commit_in_graph works for non-the_repository
+ok 92 - get_commit_tree_in_graph works for non-the_repository
+ok 93 - corrupt commit-graph write (broken parent)
+ok 94 - corrupt commit-graph write (missing tree)
+ok 95 - set up and verify repo with generation data overflow chunk
+ok 96 - check normal git operations: generation data overflow chunk repo
+# passed all 96 test(s)
+1..96
 *** t5319-multi-pack-index.sh ***
 ok 1 - setup
 ok 2 - don't write midx with no packs
@@ -15840,67 +15798,72 @@ ok 8 - corrupt idx reports errors
 ok 9 - add more objects
 ok 10 - write midx with two packs
 ok 11 - check normal git operations: two packs
-ok 12 - write progress off for redirected stderr
-ok 13 - write force progress on for stderr
-ok 14 - write with the --no-progress option
-ok 15 - add more packs
-ok 16 - check normal git operations: mixed mode (two packs + extra)
-ok 17 - write midx with twelve packs
-ok 18 - check normal git operations: twelve packs
-ok 19 - warn on improper hash version
-ok 20 - midx picks objects from preferred pack
-ok 21 - verify multi-pack-index success
-ok 22 - verify progress off for redirected stderr
-ok 23 - verify force progress on for stderr
-ok 24 - verify with the --no-progress option
-ok 25 - verify bad signature
-ok 26 - verify bad version
-ok 27 - verify bad OID version
-ok 28 - verify truncated chunk count
-ok 29 - verify extended chunk count
-ok 30 - verify missing required chunk
-ok 31 - verify invalid chunk offset
-ok 32 - verify packnames out of order
-ok 33 - verify packnames out of order
-ok 34 - verify oid fanout out of order
-ok 35 - verify oid lookup out of order
-ok 36 - verify incorrect pack-int-id
-ok 37 - verify incorrect offset
-ok 38 - git-fsck incorrect offset
-ok 39 - corrupt MIDX is not reused
-ok 40 - verify incorrect checksum
-ok 41 - repack progress off for redirected stderr
-ok 42 - repack force progress on for stderr
-ok 43 - repack with the --no-progress option
-ok 44 - repack removes multi-pack-index when deleting packs
-ok 45 - repack preserves multi-pack-index when creating packs
-ok 46 - check normal git operations: after repack
-ok 47 - multi-pack-index and pack-bitmap
-ok 48 - multi-pack-index and alternates
-ok 49 - check normal git operations: with alternate (local midx)
-ok 50 - multi-pack-index in an alternate
-ok 51 - check normal git operations: with alternate (remote midx)
-ok 52 - force some 64-bit offsets with pack-objects
-ok 53 - verify multi-pack-index with 64-bit offsets
-ok 54 - verify incorrect 64-bit offset
-ok 55 - setup expire tests
-ok 56 - expire does not remove any packs
-ok 57 - expire progress off for redirected stderr
-ok 58 - expire force progress on for stderr
-ok 59 - expire with the --no-progress option
-ok 60 - expire removes unreferenced packs
-ok 61 - repack with minimum size does not alter existing packs
-ok 62 - repack respects repack.packKeptObjects=false
-ok 63 - repack creates a new pack
-ok 64 - expire removes repacked packs
-ok 65 - expire works when adding new packs
-ok 66 - expire respects .keep files
-ok 67 - repack --batch-size=0 repacks everything
-ok 68 - repack --batch-size=<large> repacks everything
-ok 69 - load reverse index when missing .idx, .pack
-ok 70 - usage shown without sub-command
-# passed all 70 test(s)
-1..70
+ok 12 - write midx with --stdin-packs
+ok 13 - check normal git operations: mixed mode (one pack + extra)
+ok 14 - write progress off for redirected stderr
+ok 15 - write force progress on for stderr
+ok 16 - write with the --no-progress option
+ok 17 - add more packs
+ok 18 - check normal git operations: mixed mode (two packs + extra)
+ok 19 - write midx with twelve packs
+ok 20 - check normal git operations: twelve packs
+ok 21 - multi-pack-index *.rev cleanup with --object-dir
+ok 22 - warn on improper hash version
+ok 23 - midx picks objects from preferred pack
+ok 24 - preferred packs must be non-empty
+ok 25 - verify multi-pack-index success
+ok 26 - verify progress off for redirected stderr
+ok 27 - verify force progress on for stderr
+ok 28 - verify with the --no-progress option
+ok 29 - verify bad signature
+ok 30 - verify bad version
+ok 31 - verify bad OID version
+ok 32 - verify truncated chunk count
+ok 33 - verify extended chunk count
+ok 34 - verify missing required chunk
+ok 35 - verify invalid chunk offset
+ok 36 - verify packnames out of order
+ok 37 - verify packnames out of order
+ok 38 - verify oid fanout out of order
+ok 39 - verify oid lookup out of order
+ok 40 - verify incorrect pack-int-id
+ok 41 - verify incorrect offset
+ok 42 - git-fsck incorrect offset
+ok 43 - corrupt MIDX is not reused
+ok 44 - verify incorrect checksum
+ok 45 - repack progress off for redirected stderr
+ok 46 - repack force progress on for stderr
+ok 47 - repack with the --no-progress option
+ok 48 - repack removes multi-pack-index when deleting packs
+ok 49 - repack preserves multi-pack-index when creating packs
+ok 50 - check normal git operations: after repack
+ok 51 - multi-pack-index and pack-bitmap
+ok 52 - multi-pack-index and alternates
+ok 53 - check normal git operations: with alternate (local midx)
+ok 54 - multi-pack-index in an alternate
+ok 55 - check normal git operations: with alternate (remote midx)
+ok 56 - force some 64-bit offsets with pack-objects
+ok 57 - verify multi-pack-index with 64-bit offsets
+ok 58 - verify incorrect 64-bit offset
+ok 59 - setup expire tests
+ok 60 - expire does not remove any packs
+ok 61 - expire progress off for redirected stderr
+ok 62 - expire force progress on for stderr
+ok 63 - expire with the --no-progress option
+ok 64 - expire removes unreferenced packs
+ok 65 - repack with minimum size does not alter existing packs
+ok 66 - repack respects repack.packKeptObjects=false
+ok 67 - repack creates a new pack
+ok 68 - expire removes repacked packs
+ok 69 - expire works when adding new packs
+ok 70 - expire respects .keep files
+ok 71 - repack --batch-size=0 repacks everything
+ok 72 - repack --batch-size=<large> repacks everything
+ok 73 - load reverse index when missing .idx, .pack
+ok 74 - usage shown without sub-command
+ok 75 - complains when run outside of a repository
+# passed all 75 test(s)
+1..75
 *** t5320-delta-islands.sh ***
 ok 1 - setup commits
 ok 2 - vanilla repack deltas one against two
@@ -16008,6 +15971,177 @@ ok 7 - reverse index is not generated when available on disk
 ok 8 - revindex in-memory vs on-disk
 # passed all 8 test(s)
 1..8
+*** t5326-multi-pack-bitmaps.sh ***
+ok 1 - setup repo with moderate-sized history
+ok 2 - enable core.multiPackIndex
+ok 3 - create single-pack midx with bitmaps
+ok 4 - rev-list --test-bitmap verifies bitmaps
+ok 5 - counting commits via bitmap (full bitmap, second)
+ok 6 - counting partial commits via bitmap (full bitmap, second)
+ok 7 - counting commits with limit (full bitmap, second)
+ok 8 - counting non-linear history (full bitmap, second)
+ok 9 - counting commits with limiting (full bitmap, second)
+ok 10 - counting objects via bitmap (full bitmap, second)
+ok 11 - enumerate commits (full bitmap, second)
+ok 12 - enumerate --objects (full bitmap, second)
+ok 13 - bitmap --objects handles non-commit objects (full bitmap, second)
+ok 14 - counting commits via bitmap (full bitmap, other)
+ok 15 - counting partial commits via bitmap (full bitmap, other)
+ok 16 - counting commits with limit (full bitmap, other)
+ok 17 - counting non-linear history (full bitmap, other)
+ok 18 - counting commits with limiting (full bitmap, other)
+ok 19 - counting objects via bitmap (full bitmap, other)
+ok 20 - enumerate commits (full bitmap, other)
+ok 21 - enumerate --objects (full bitmap, other)
+ok 22 - bitmap --objects handles non-commit objects (full bitmap, other)
+ok 23 - clone from bitmapped repository
+ok 24 - partial clone from bitmapped repository
+ok 25 - setup further non-bitmapped commits
+ok 26 - counting commits via bitmap (partial bitmap, second)
+ok 27 - counting partial commits via bitmap (partial bitmap, second)
+ok 28 - counting commits with limit (partial bitmap, second)
+ok 29 - counting non-linear history (partial bitmap, second)
+ok 30 - counting commits with limiting (partial bitmap, second)
+ok 31 - counting objects via bitmap (partial bitmap, second)
+ok 32 - enumerate commits (partial bitmap, second)
+ok 33 - enumerate --objects (partial bitmap, second)
+ok 34 - bitmap --objects handles non-commit objects (partial bitmap, second)
+ok 35 - counting commits via bitmap (partial bitmap, other)
+ok 36 - counting partial commits via bitmap (partial bitmap, other)
+ok 37 - counting commits with limit (partial bitmap, other)
+ok 38 - counting non-linear history (partial bitmap, other)
+ok 39 - counting commits with limiting (partial bitmap, other)
+ok 40 - counting objects via bitmap (partial bitmap, other)
+ok 41 - enumerate commits (partial bitmap, other)
+ok 42 - enumerate --objects (partial bitmap, other)
+ok 43 - bitmap --objects handles non-commit objects (partial bitmap, other)
+ok 44 - fetch (partial bitmap)
+ok 45 - enumerating progress counts pack-reused objects
+ok 46 - create new additional packs
+ok 47 - create multi-pack midx with bitmaps
+ok 48 - rev-list --test-bitmap verifies bitmaps
+ok 49 - counting commits via bitmap (full bitmap, second)
+ok 50 - counting partial commits via bitmap (full bitmap, second)
+ok 51 - counting commits with limit (full bitmap, second)
+ok 52 - counting non-linear history (full bitmap, second)
+ok 53 - counting commits with limiting (full bitmap, second)
+ok 54 - counting objects via bitmap (full bitmap, second)
+ok 55 - enumerate commits (full bitmap, second)
+ok 56 - enumerate --objects (full bitmap, second)
+ok 57 - bitmap --objects handles non-commit objects (full bitmap, second)
+ok 58 - counting commits via bitmap (full bitmap, other)
+ok 59 - counting partial commits via bitmap (full bitmap, other)
+ok 60 - counting commits with limit (full bitmap, other)
+ok 61 - counting non-linear history (full bitmap, other)
+ok 62 - counting commits with limiting (full bitmap, other)
+ok 63 - counting objects via bitmap (full bitmap, other)
+ok 64 - enumerate commits (full bitmap, other)
+ok 65 - enumerate --objects (full bitmap, other)
+ok 66 - bitmap --objects handles non-commit objects (full bitmap, other)
+ok 67 - clone from bitmapped repository
+ok 68 - partial clone from bitmapped repository
+ok 69 - setup further non-bitmapped commits
+ok 70 - counting commits via bitmap (partial bitmap, second)
+ok 71 - counting partial commits via bitmap (partial bitmap, second)
+ok 72 - counting commits with limit (partial bitmap, second)
+ok 73 - counting non-linear history (partial bitmap, second)
+ok 74 - counting commits with limiting (partial bitmap, second)
+ok 75 - counting objects via bitmap (partial bitmap, second)
+ok 76 - enumerate commits (partial bitmap, second)
+ok 77 - enumerate --objects (partial bitmap, second)
+ok 78 - bitmap --objects handles non-commit objects (partial bitmap, second)
+ok 79 - counting commits via bitmap (partial bitmap, other)
+ok 80 - counting partial commits via bitmap (partial bitmap, other)
+ok 81 - counting commits with limit (partial bitmap, other)
+ok 82 - counting non-linear history (partial bitmap, other)
+ok 83 - counting commits with limiting (partial bitmap, other)
+ok 84 - counting objects via bitmap (partial bitmap, other)
+ok 85 - enumerate commits (partial bitmap, other)
+ok 86 - enumerate --objects (partial bitmap, other)
+ok 87 - bitmap --objects handles non-commit objects (partial bitmap, other)
+ok 88 - fetch (partial bitmap)
+ok 89 - enumerating progress counts pack-reused objects
+ok 90 - --no-bitmap is respected when bitmaps exist
+ok 91 - setup midx with base from later pack
+ok 92 - counting commits via bitmap (full bitmap with backwards delta, second)
+ok 93 - counting partial commits via bitmap (full bitmap with backwards delta, second)
+ok 94 - counting commits with limit (full bitmap with backwards delta, second)
+ok 95 - counting non-linear history (full bitmap with backwards delta, second)
+ok 96 - counting commits with limiting (full bitmap with backwards delta, second)
+ok 97 - counting objects via bitmap (full bitmap with backwards delta, second)
+ok 98 - enumerate commits (full bitmap with backwards delta, second)
+ok 99 - enumerate --objects (full bitmap with backwards delta, second)
+ok 100 - bitmap --objects handles non-commit objects (full bitmap with backwards delta, second)
+ok 101 - counting commits via bitmap (full bitmap with backwards delta, other)
+ok 102 - counting partial commits via bitmap (full bitmap with backwards delta, other)
+ok 103 - counting commits with limit (full bitmap with backwards delta, other)
+ok 104 - counting non-linear history (full bitmap with backwards delta, other)
+ok 105 - counting commits with limiting (full bitmap with backwards delta, other)
+ok 106 - counting objects via bitmap (full bitmap with backwards delta, other)
+ok 107 - enumerate commits (full bitmap with backwards delta, other)
+ok 108 - enumerate --objects (full bitmap with backwards delta, other)
+ok 109 - bitmap --objects handles non-commit objects (full bitmap with backwards delta, other)
+ok 110 - clone with bitmaps enabled
+ok 111 - setup pack reuse tests (pack -> MIDX)
+ok 112 - build bitmap from existing (pack -> MIDX)
+ok 113 - verify resulting bitmaps (pack -> MIDX)
+ok 114 - setup pack reuse tests (MIDX -> pack)
+ok 115 - build bitmap from existing (MIDX -> pack)
+ok 116 - verify resulting bitmaps (MIDX -> pack)
+ok 117 - setup pack reuse tests (MIDX -> MIDX)
+ok 118 - build bitmap from existing (MIDX -> MIDX)
+ok 119 - verify resulting bitmaps (MIDX -> MIDX)
+ok 120 - missing object closure fails gracefully
+ok 121 - setup partial bitmaps
+ok 122 - rev-list --test-bitmap verifies bitmaps
+ok 123 - counting commits via bitmap (full bitmap, second)
+ok 124 - counting partial commits via bitmap (full bitmap, second)
+ok 125 - counting commits with limit (full bitmap, second)
+ok 126 - counting non-linear history (full bitmap, second)
+ok 127 - counting commits with limiting (full bitmap, second)
+ok 128 - counting objects via bitmap (full bitmap, second)
+ok 129 - enumerate commits (full bitmap, second)
+ok 130 - enumerate --objects (full bitmap, second)
+ok 131 - bitmap --objects handles non-commit objects (full bitmap, second)
+ok 132 - counting commits via bitmap (full bitmap, other)
+ok 133 - counting partial commits via bitmap (full bitmap, other)
+ok 134 - counting commits with limit (full bitmap, other)
+ok 135 - counting non-linear history (full bitmap, other)
+ok 136 - counting commits with limiting (full bitmap, other)
+ok 137 - counting objects via bitmap (full bitmap, other)
+ok 138 - enumerate commits (full bitmap, other)
+ok 139 - enumerate --objects (full bitmap, other)
+ok 140 - bitmap --objects handles non-commit objects (full bitmap, other)
+ok 141 - clone from bitmapped repository
+ok 142 - partial clone from bitmapped repository
+ok 143 - setup further non-bitmapped commits
+ok 144 - counting commits via bitmap (partial bitmap, second)
+ok 145 - counting partial commits via bitmap (partial bitmap, second)
+ok 146 - counting commits with limit (partial bitmap, second)
+ok 147 - counting non-linear history (partial bitmap, second)
+ok 148 - counting commits with limiting (partial bitmap, second)
+ok 149 - counting objects via bitmap (partial bitmap, second)
+ok 150 - enumerate commits (partial bitmap, second)
+ok 151 - enumerate --objects (partial bitmap, second)
+ok 152 - bitmap --objects handles non-commit objects (partial bitmap, second)
+ok 153 - counting commits via bitmap (partial bitmap, other)
+ok 154 - counting partial commits via bitmap (partial bitmap, other)
+ok 155 - counting commits with limit (partial bitmap, other)
+ok 156 - counting non-linear history (partial bitmap, other)
+ok 157 - counting commits with limiting (partial bitmap, other)
+ok 158 - counting objects via bitmap (partial bitmap, other)
+ok 159 - enumerate commits (partial bitmap, other)
+ok 160 - enumerate --objects (partial bitmap, other)
+ok 161 - bitmap --objects handles non-commit objects (partial bitmap, other)
+ok 162 - fetch (partial bitmap)
+ok 163 - enumerating progress counts pack-reused objects
+ok 164 - removing a MIDX clears stale bitmaps
+ok 165 - pack.preferBitmapTips
+ok 166 - writing a bitmap with --refs-snapshot
+ok 167 - write a bitmap with --refs-snapshot (preferred tips)
+ok 168 - hash-cache values are propagated from pack bitmaps
+# passed all 168 test(s)
+1..168
 *** t5400-send-pack.sh ***
 ok 1 - setup
 ok 2 - pack the source repository
@@ -17444,30 +17578,28 @@ ok 47 - preserve merge setup
 ok 48 - pull.rebase=false create a new merge commit
 ok 49 - pull.rebase=true flattens keep-merge
 ok 50 - pull.rebase=1 is treated as true and flattens keep-merge
-ok 51 - pull.rebase=preserve rebases and merges keep-merge
-ok 52 - pull.rebase=interactive
-ok 53 - pull --rebase=i
-ok 54 - pull.rebase=invalid fails
-ok 55 - --rebase=false create a new merge commit
-ok 56 - --rebase=true rebases and flattens keep-merge
-ok 57 - --rebase=preserve rebases and merges keep-merge
-ok 58 - --rebase=invalid fails
-ok 59 - --rebase overrides pull.rebase=preserve and flattens keep-merge
-ok 60 - --rebase with rebased upstream
-ok 61 - --rebase -f with rebased upstream
-ok 62 - --rebase with rebased default upstream
-ok 63 - rebased upstream + fetch + pull --rebase
-ok 64 - pull --rebase dies early with dirty working directory
-ok 65 - pull --rebase works on branch yet to be born
-ok 66 - pull --rebase fails on unborn branch with staged changes
-ok 67 - pull --rebase fails on corrupt HEAD
-ok 68 - setup for detecting upstreamed changes
-ok 69 - git pull --rebase detects upstreamed changes
-ok 70 - setup for avoiding reapplying old patches
-ok 71 - git pull --rebase does not reapply old patches
-ok 72 - git pull --rebase against local branch
-# passed all 72 test(s)
-1..72
+ok 51 - pull.rebase=interactive
+ok 52 - pull --rebase=i
+ok 53 - pull.rebase=invalid fails
+ok 54 - --rebase=false create a new merge commit
+ok 55 - --rebase=true rebases and flattens keep-merge
+ok 56 - --rebase=invalid fails
+ok 57 - --rebase overrides pull.rebase=merges and flattens keep-merge
+ok 58 - --rebase with rebased upstream
+ok 59 - --rebase -f with rebased upstream
+ok 60 - --rebase with rebased default upstream
+ok 61 - rebased upstream + fetch + pull --rebase
+ok 62 - pull --rebase dies early with dirty working directory
+ok 63 - pull --rebase works on branch yet to be born
+ok 64 - pull --rebase fails on unborn branch with staged changes
+ok 65 - pull --rebase fails on corrupt HEAD
+ok 66 - setup for detecting upstreamed changes
+ok 67 - git pull --rebase detects upstreamed changes
+ok 68 - setup for avoiding reapplying old patches
+ok 69 - git pull --rebase does not reapply old patches
+ok 70 - git pull --rebase against local branch
+# passed all 70 test(s)
+1..70
 *** t5521-pull-options.sh ***
 ok 1 - setup
 ok 2 - git pull -q --no-rebase
@@ -17489,8 +17621,10 @@ ok 17 - git pull does not add a sign-off line
 ok 18 - git pull --no-signoff does not add sign-off line
 ok 19 - git pull --signoff add a sign-off line
 ok 20 - git pull --no-signoff flag cancels --signoff flag
-# passed all 20 test(s)
-1..20
+ok 21 - git pull --no-verify flag passed to merge
+ok 22 - git pull --no-verify --verify passed to merge
+# passed all 22 test(s)
+1..22
 *** t5522-pull-symlink.sh ***
 ok 1 - setup
 ok 2 - pulling from real subdir
@@ -17706,12 +17840,14 @@ ok 4 - push --signed fails with a receiver without push certificate support
 ok 5 - push --signed=1 is accepted
 ok 6 # skip no certificate for a signed push with no update (missing GPG)
 ok 7 # skip signed push sends push certificate (missing GPG)
-ok 8 # skip inconsistent push options in signed push not allowed (missing GPG)
-ok 9 # skip fail without key and heed user.signingkey (missing GPG)
-ok 10 # skip fail without key and heed user.signingkey x509 (missing GPGSM)
-ok 11 # skip failed atomic push does not execute GPG (missing GPG)
-# passed all 11 test(s)
-1..11
+ok 8 # skip ssh signed push sends push certificate (missing GPGSSH)
+ok 9 # skip inconsistent push options in signed push not allowed (missing GPG)
+ok 10 # skip fail without key and heed user.signingkey (missing GPG)
+ok 11 # skip fail without key and heed user.signingkey x509 (missing GPGSM)
+ok 12 # skip fail without key and heed user.signingkey ssh (missing GPGSSH)
+ok 13 # skip failed atomic push does not execute GPG (missing GPG)
+# passed all 13 test(s)
+1..13
 *** t5535-fetch-push-symref.sh ***
 ok 1 - setup
 ok 2 - push
@@ -17876,6 +18012,19 @@ ok 19 - pull --set-upstream with valid URL and branch sets branch
 ok 1 - noop negotiator does not emit any "have"
 # passed all 1 test(s)
 1..1
+*** t5555-http-smart-common.sh ***
+ok 1 - setup
+ok 2 - git upload-pack --http-backend-info-refs and --advertise-refs are aliased
+ok 3 - git receive-pack --http-backend-info-refs and --advertise-refs are aliased
+ok 4 - git upload-pack --advertise-refs
+ok 5 - git upload-pack --advertise-refs: v0
+ok 6 - git receive-pack --advertise-refs: v0
+ok 7 - git upload-pack --advertise-refs: v1
+ok 8 - git receive-pack --advertise-refs: v1
+ok 9 - git upload-pack --advertise-refs: v2
+ok 10 - git receive-pack --advertise-refs: v2
+# passed all 10 test(s)
+1..10
 *** t5560-http-backend-noserver.sh ***
 ok 1 - setup repository
 ok 2 - direct refs/heads/main not found
@@ -18305,25 +18454,26 @@ ok 20 - cloning locally respects "-u" for fetching refs
 1..20
 *** t5606-clone-options.sh ***
 ok 1 - setup
-ok 2 - clone -o
-ok 3 - rejects invalid -o/--origin
-ok 4 - disallows --bare with --origin
-ok 5 - disallows --bare with --separate-git-dir
-ok 6 - reject cloning shallow repository
-ok 7 - reject cloning non-local shallow repository
-ok 8 - succeed cloning normal repository
-ok 9 - uses "origin" for default remote name
-ok 10 - prefers --template config over normal config
-ok 11 - prefers -c config over --template config
-ok 12 - prefers config "clone.defaultRemoteName" over default
-ok 13 - prefers --origin over -c config
-ok 14 - redirected clone does not show progress
-ok 15 - redirected clone -v does show progress
-ok 16 - clone does not segfault with --bare and core.bare=false
-ok 17 - chooses correct default initial branch name
-ok 18 - guesses initial branch name correctly
-# passed all 18 test(s)
-1..18
+ok 2 - submodule.stickyRecursiveClone flag manipulates submodule.recurse value
+ok 3 - clone -o
+ok 4 - rejects invalid -o/--origin
+ok 5 - disallows --bare with --origin
+ok 6 - disallows --bare with --separate-git-dir
+ok 7 - reject cloning shallow repository
+ok 8 - reject cloning non-local shallow repository
+ok 9 - succeed cloning normal repository
+ok 10 - uses "origin" for default remote name
+ok 11 - prefers --template config over normal config
+ok 12 - prefers -c config over --template config
+ok 13 - prefers config "clone.defaultRemoteName" over default
+ok 14 - prefers --origin over -c config
+ok 15 - redirected clone does not show progress
+ok 16 - redirected clone -v does show progress
+ok 17 - clone does not segfault with --bare and core.bare=false
+ok 18 - chooses correct default initial branch name
+ok 19 - guesses initial branch name correctly
+# passed all 19 test(s)
+1..19
 *** t5607-clone-bundle.sh ***
 ok 1 - setup
 ok 2 - "verify" needs a worktree
@@ -18525,18 +18675,23 @@ ok 2 - stateless-rpc flag does not list capabilities
 ok 3 - request invalid capability
 ok 4 - request with no command
 ok 5 - request invalid command
-ok 6 - wrong object-format
-ok 7 - setup some refs and tags
-ok 8 - basics of ls-refs
-ok 9 - basic ref-prefixes
-ok 10 - refs/heads prefix
-ok 11 - peel parameter
-ok 12 - symrefs parameter
-ok 13 - sending server-options
-ok 14 - unexpected lines are not allowed in fetch request
-ok 15 - basics of object-info
-# passed all 15 test(s)
-1..15
+ok 6 - request capability as command
+ok 7 - request command as capability
+ok 8 - requested command is command=value
+ok 9 - wrong object-format
+ok 10 - setup some refs and tags
+ok 11 - basics of ls-refs
+ok 12 - ls-refs complains about unknown options
+ok 13 - basic ref-prefixes
+ok 14 - refs/heads prefix
+ok 15 - ignore very large set of prefixes
+ok 16 - peel parameter
+ok 17 - symrefs parameter
+ok 18 - sending server-options
+ok 19 - unexpected lines are not allowed in fetch request
+ok 20 - basics of object-info
+# passed all 20 test(s)
+1..20
 *** t5702-protocol-v2.sh ***
 ok 1 - create repo to be served by git-daemon
 ok 2 - list refs with git:// using protocol v2
@@ -19466,8 +19621,10 @@ ok 73 - bisect start takes options and revs in any order
 ok 74 - bisect skip works with --term*
 ok 75 - git bisect reset cleans bisection state properly
 ok 76 - bisect handles annotated tags
-# passed all 76 test(s)
-1..76
+ok 77 - bisect run fails with exit code equals or greater than 128
+ok 78 - bisect visualize with a filename with dash and space
+# passed all 78 test(s)
+1..78
 *** t6040-tracking-info.sh ***
 ok 1 - setup
 ok 2 - branch -v
@@ -19992,34 +20149,37 @@ ok 3 - log and ls-files in .git directory
 *** t6200-fmt-merge-msg.sh ***
 ok 1 - setup
 ok 2 # skip set up a signed tag (missing GPG)
-ok 3 - message for merging local branch
-ok 4 # skip message for merging local tag signed by good key (missing GPG)
-ok 5 # skip message for merging local tag signed by unknown key (missing GPG)
-ok 6 - message for merging external branch
-ok 7 - [merge] summary/log configuration
-ok 8 - setup FETCH_HEAD
-ok 9 - merge.log=3 limits shortlog length
-ok 10 - merge.log=5 shows all 5 commits
-ok 11 - --log=5 with custom comment character
-ok 12 - merge.log=0 disables shortlog
-ok 13 - --log=3 limits shortlog length
-ok 14 - --log=5 shows all 5 commits
-ok 15 - --no-log disables shortlog
-ok 16 - --log=0 disables shortlog
-ok 17 - fmt-merge-msg -m
-ok 18 - setup: expected shortlog for two branches
-ok 19 - shortlog for two branches
-ok 20 - merge-msg -F
-ok 21 - merge-msg -F in subdirectory
-ok 22 - merge-msg with nothing to merge
-ok 23 - merge-msg tag
-ok 24 - merge-msg two tags
-ok 25 - merge-msg tag and branch
-ok 26 - merge-msg lots of commits
-ok 27 - merge-msg with "merging" an annotated tag
-ok 28 - merge.suppressDest configuration
-# passed all 28 test(s)
-1..28
+ok 3 # skip created ssh signed commit and tag (missing GPGSSH)
+ok 4 - message for merging local branch
+ok 5 # skip message for merging local tag signed by good key (missing GPG)
+ok 6 # skip message for merging local tag signed by unknown key (missing GPG)
+ok 7 # skip message for merging local tag signed by good ssh key (missing GPGSSH)
+ok 8 # skip message for merging local tag signed by unknown ssh key (missing GPGSSH)
+ok 9 - message for merging external branch
+ok 10 - [merge] summary/log configuration
+ok 11 - setup FETCH_HEAD
+ok 12 - merge.log=3 limits shortlog length
+ok 13 - merge.log=5 shows all 5 commits
+ok 14 - --log=5 with custom comment character
+ok 15 - merge.log=0 disables shortlog
+ok 16 - --log=3 limits shortlog length
+ok 17 - --log=5 shows all 5 commits
+ok 18 - --no-log disables shortlog
+ok 19 - --log=0 disables shortlog
+ok 20 - fmt-merge-msg -m
+ok 21 - setup: expected shortlog for two branches
+ok 22 - shortlog for two branches
+ok 23 - merge-msg -F
+ok 24 - merge-msg -F in subdirectory
+ok 25 - merge-msg with nothing to merge
+ok 26 - merge-msg tag
+ok 27 - merge-msg two tags
+ok 28 - merge-msg tag and branch
+ok 29 - merge-msg lots of commits
+ok 30 - merge-msg with "merging" an annotated tag
+ok 31 - merge.suppressDest configuration
+# passed all 31 test(s)
+1..31
 *** t6300-for-each-ref.sh ***
 ok 1 - setup
 ok 2 - basic atom: head refname
@@ -20072,260 +20232,281 @@ ok 48 - basic atom: head parent:short=10
 ok 49 - basic atom: head numparent
 ok 50 - basic atom: head object
 ok 51 - basic atom: head type
-ok 52 - basic atom: head *objectname
-ok 53 - basic atom: head *objecttype
-ok 54 - basic atom: head author
-ok 55 - basic atom: head authorname
-ok 56 - basic atom: head authoremail
-ok 57 - basic atom: head authoremail:trim
-ok 58 - basic atom: head authoremail:localpart
-ok 59 - basic atom: head authordate
-ok 60 - basic atom: head committer
-ok 61 - basic atom: head committername
-ok 62 - basic atom: head committeremail
-ok 63 - basic atom: head committeremail:trim
-ok 64 - basic atom: head committeremail:localpart
-ok 65 - basic atom: head committerdate
-ok 66 - basic atom: head tag
-ok 67 - basic atom: head tagger
-ok 68 - basic atom: head taggername
-ok 69 - basic atom: head taggeremail
-ok 70 - basic atom: head taggeremail:trim
-ok 71 - basic atom: head taggeremail:localpart
-ok 72 - basic atom: head taggerdate
-ok 73 - basic atom: head creator
-ok 74 - basic atom: head creatordate
-ok 75 - basic atom: head subject
-ok 76 - basic atom: head subject:sanitize
-ok 77 - basic atom: head contents:subject
-ok 78 - basic atom: head body
-ok 79 - basic atom: head contents:body
-ok 80 - basic atom: head contents:signature
-ok 81 - basic atom: head contents
-ok 82 - basic atom: head contents:size
-ok 83 - basic atom: head HEAD
-ok 84 - basic atom: tag refname
-ok 85 - basic atom: tag refname:short
-ok 86 - basic atom: tag upstream
-ok 87 - basic atom: tag push
-ok 88 - basic atom: tag objecttype
-ok 89 - basic atom: tag objectsize
-ok 90 - basic atom: tag objectsize:disk
-ok 91 - basic atom: tag *objectsize:disk
-ok 92 - basic atom: tag deltabase
-ok 93 - basic atom: tag *deltabase
-ok 94 - basic atom: tag objectname
-ok 95 - basic atom: tag objectname:short
-ok 96 - basic atom: head objectname:short=1
-ok 97 - basic atom: head objectname:short=10
-ok 98 - basic atom: tag tree
-ok 99 - basic atom: tag tree:short
-ok 100 - basic atom: tag tree:short=1
-ok 101 - basic atom: tag tree:short=10
-ok 102 - basic atom: tag parent
-ok 103 - basic atom: tag parent:short
-ok 104 - basic atom: tag parent:short=1
-ok 105 - basic atom: tag parent:short=10
-ok 106 - basic atom: tag numparent
-ok 107 - basic atom: tag object
-ok 108 - basic atom: tag type
-ok 109 - basic atom: tag *objectname
-ok 110 - basic atom: tag *objecttype
-ok 111 - basic atom: tag author
-ok 112 - basic atom: tag authorname
-ok 113 - basic atom: tag authoremail
-ok 114 - basic atom: tag authoremail:trim
-ok 115 - basic atom: tag authoremail:localpart
-ok 116 - basic atom: tag authordate
-ok 117 - basic atom: tag committer
-ok 118 - basic atom: tag committername
-ok 119 - basic atom: tag committeremail
-ok 120 - basic atom: tag committeremail:trim
-ok 121 - basic atom: tag committeremail:localpart
-ok 122 - basic atom: tag committerdate
-ok 123 - basic atom: tag tag
-ok 124 - basic atom: tag tagger
-ok 125 - basic atom: tag taggername
-ok 126 - basic atom: tag taggeremail
-ok 127 - basic atom: tag taggeremail:trim
-ok 128 - basic atom: tag taggeremail:localpart
-ok 129 - basic atom: tag taggerdate
-ok 130 - basic atom: tag creator
-ok 131 - basic atom: tag creatordate
-ok 132 - basic atom: tag subject
-ok 133 - basic atom: tag subject:sanitize
-ok 134 - basic atom: tag contents:subject
-ok 135 - basic atom: tag body
-ok 136 - basic atom: tag contents:body
-ok 137 - basic atom: tag contents:signature
-ok 138 - basic atom: tag contents
-ok 139 - basic atom: tag contents:size
-ok 140 - basic atom: tag HEAD
-ok 141 - Check invalid atoms names are errors
-ok 142 - Check format specifiers are ignored in naming date atoms
-ok 143 - Check valid format specifiers for date fields
-ok 144 - Check invalid format specifiers are errors
-ok 145 - arguments to %(objectname:short=) must be positive integers
-ok 146 - Check unformatted date fields output
-ok 147 - Check format "default" formatted date fields output
-ok 148 - Check format "default-local" date fields output
-ok 149 - Check format "relative" date fields output
-ok 150 - Check format "relative-local" date fields output
-ok 151 - Check format "short" date fields output
-ok 152 - Check format "short-local" date fields output
-ok 153 - Check format "local" date fields output
-ok 154 - Check format "iso8601" date fields output
-ok 155 - Check format "iso8601-local" date fields output
-ok 156 - Check format "rfc2822" date fields output
-ok 157 - Check format "rfc2822-local" date fields output
-ok 158 - Check format "raw" date fields output
-ok 159 - Check format "raw-local" date fields output
-ok 160 - Check format of strftime date fields
-ok 161 - Check format of strftime-local date fields
-ok 162 - exercise strftime with odd fields
-ok 163 - Verify ascending sort
-ok 164 - Verify descending sort
-ok 165 - exercise patterns with prefixes
-ok 166 - exercise glob patterns with prefixes
-ok 167 - Quoting style: shell
-ok 168 - Quoting style: perl
-ok 169 - Quoting style: python
-ok 170 - Quoting style: tcl
-ok 171 - more than one quoting style: --perl --shell
-ok 172 - more than one quoting style: -s --python
-ok 173 - more than one quoting style: --python --tcl
-ok 174 - more than one quoting style: --tcl --perl
-ok 175 - setup for upstream:track[short]
-ok 176 - basic atom: head upstream:track
-ok 177 - basic atom: head upstream:trackshort
-ok 178 - basic atom: head upstream:track,nobracket
-ok 179 - basic atom: head upstream:nobracket,track
-ok 180 - setup for push:track[short]
-ok 181 - basic atom: head push:track
-ok 182 - basic atom: head push:trackshort
-ok 183 - Check that :track[short] cannot be used with other atoms
-ok 184 - Check that :track[short] works when upstream is invalid
-ok 185 - Check for invalid refname format
-ok 186 - set up color tests
-ok 187 # skip %(color) shows color with a tty (missing TTY)
-ok 188 - %(color) does not show color without tty
-ok 189 - --color can override tty check
-ok 190 - color.ui=always does not override tty check
-ok 191 - Check ambiguous head and tag refs (strict)
-ok 192 - Check ambiguous head and tag refs (loose)
-ok 193 - Check ambiguous head and tag refs II (loose)
-ok 194 - create tag without tagger
-ok 195 - basic atom: refs/tags/taggerless type
-ok 196 - basic atom: refs/tags/taggerless tag
-ok 197 - basic atom: refs/tags/taggerless tagger
-ok 198 - basic atom: refs/tags/taggerless taggername
-ok 199 - basic atom: refs/tags/taggerless taggeremail
-ok 200 - basic atom: refs/tags/taggerless taggeremail:trim
-ok 201 - basic atom: refs/tags/taggerless taggeremail:localpart
-ok 202 - basic atom: refs/tags/taggerless taggerdate
-ok 203 - basic atom: refs/tags/taggerless committer
-ok 204 - basic atom: refs/tags/taggerless committername
-ok 205 - basic atom: refs/tags/taggerless committeremail
-ok 206 - basic atom: refs/tags/taggerless committeremail:trim
-ok 207 - basic atom: refs/tags/taggerless committeremail:localpart
-ok 208 - basic atom: refs/tags/taggerless committerdate
-ok 209 - basic atom: refs/tags/taggerless subject
-ok 210 - an unusual tag with an incomplete line
-ok 211 - create tag with subject and body content
-ok 212 - basic atom: refs/tags/subject-body subject
-ok 213 - basic atom: refs/tags/subject-body subject:sanitize
-ok 214 - basic atom: refs/tags/subject-body body
-ok 215 - basic atom: refs/tags/subject-body contents
-ok 216 - basic atom: refs/tags/subject-body contents:size
-ok 217 - create tag with multiline subject
-ok 218 - basic atom: refs/tags/multiline subject
-ok 219 - basic atom: refs/tags/multiline subject:sanitize
-ok 220 - basic atom: refs/tags/multiline contents:subject
-ok 221 - basic atom: refs/tags/multiline body
-ok 222 - basic atom: refs/tags/multiline contents:body
-ok 223 - basic atom: refs/tags/multiline contents:signature
-ok 224 - basic atom: refs/tags/multiline contents
-ok 225 - basic atom: refs/tags/multiline contents:size
-ok 226 # skip create signed tags (missing GPG)
-ok 227 # skip basic atom: refs/tags/signed-empty subject (missing GPG)
-ok 228 # skip basic atom: refs/tags/signed-empty subject:sanitize (missing GPG)
-ok 229 # skip basic atom: refs/tags/signed-empty contents:subject (missing GPG)
-ok 230 # skip basic atom: refs/tags/signed-empty body (missing GPG)
-ok 231 # skip basic atom: refs/tags/signed-empty contents:body (missing GPG)
-ok 232 # skip basic atom: refs/tags/signed-empty contents:signature (missing GPG)
-ok 233 # skip basic atom: refs/tags/signed-empty contents (missing GPG)
-ok 234 # skip basic atom: refs/tags/signed-empty contents:size (missing GPG)
-ok 235 # skip basic atom: refs/tags/signed-short subject (missing GPG)
-ok 236 # skip basic atom: refs/tags/signed-short subject:sanitize (missing GPG)
-ok 237 # skip basic atom: refs/tags/signed-short contents:subject (missing GPG)
-ok 238 # skip basic atom: refs/tags/signed-short body (missing GPG)
-ok 239 # skip basic atom: refs/tags/signed-short contents:body (missing GPG)
-ok 240 # skip basic atom: refs/tags/signed-short contents:signature (missing GPG)
-ok 241 # skip basic atom: refs/tags/signed-short contents (missing GPG)
-ok 242 # skip basic atom: refs/tags/signed-short contents:size (missing GPG)
-ok 243 # skip basic atom: refs/tags/signed-long subject (missing GPG)
-ok 244 # skip basic atom: refs/tags/signed-long subject:sanitize (missing GPG)
-ok 245 # skip basic atom: refs/tags/signed-long contents:subject (missing GPG)
-ok 246 # skip basic atom: refs/tags/signed-long body (missing GPG)
-ok 247 # skip basic atom: refs/tags/signed-long contents:body (missing GPG)
-ok 248 # skip basic atom: refs/tags/signed-long contents:signature (missing GPG)
-ok 249 # skip basic atom: refs/tags/signed-long contents (missing GPG)
-ok 250 # skip basic atom: refs/tags/signed-long contents:size (missing GPG)
-ok 251 - set up refs pointing to tree and blob
-ok 252 # skip basic atom: refs/mytrees/first subject (missing GPG)
-ok 253 # skip basic atom: refs/mytrees/first contents:subject (missing GPG)
-ok 254 # skip basic atom: refs/mytrees/first body (missing GPG)
-ok 255 # skip basic atom: refs/mytrees/first contents:body (missing GPG)
-ok 256 # skip basic atom: refs/mytrees/first contents:signature (missing GPG)
-ok 257 # skip basic atom: refs/mytrees/first contents (missing GPG)
-ok 258 # skip basic atom: refs/mytrees/first contents:size (missing GPG)
-ok 259 # skip basic atom: refs/myblobs/first subject (missing GPG)
-ok 260 # skip basic atom: refs/myblobs/first contents:subject (missing GPG)
-ok 261 # skip basic atom: refs/myblobs/first body (missing GPG)
-ok 262 # skip basic atom: refs/myblobs/first contents:body (missing GPG)
-ok 263 # skip basic atom: refs/myblobs/first contents:signature (missing GPG)
-ok 264 # skip basic atom: refs/myblobs/first contents (missing GPG)
-ok 265 # skip basic atom: refs/myblobs/first contents:size (missing GPG)
-ok 266 - set up multiple-sort tags
-ok 267 - Verify sort with multiple keys
-ok 268 - equivalent sorts fall back on refname
-ok 269 - do not dereference NULL upon %(HEAD) on unborn branch
-ok 270 - set up trailers for next test
-ok 271 - %(trailers:unfold) unfolds trailers
-ok 272 - %(trailers:only) shows only "key: value" trailers
-ok 273 - %(trailers:only=no,only=true) shows only "key: value" trailers
-ok 274 - %(trailers:only=yes) shows only "key: value" trailers
-ok 275 - %(trailers:only=no) shows all trailers
-ok 276 - %(trailers:only) and %(trailers:unfold) work together
-ok 277 - %(trailers:unfold) and %(trailers:only) work together
-ok 278 - %(trailers:key=foo) shows that trailer
-ok 279 - %(trailers:key=foo) is case insensitive
-ok 280 - %(trailers:key=foo:) trailing colon also works
-ok 281 - %(trailers:key=foo) multiple keys
-ok 282 - %(trailers:key=nonexistent) becomes empty
-ok 283 - %(trailers:key=foo) handles multiple lines even if folded
-ok 284 - %(trailers:key=foo,unfold) properly unfolds
-ok 285 - %(trailers:key=foo,only=no) also includes nontrailer lines
-ok 286 - %(trailers:key=foo,valueonly) shows only value
-ok 287 - %(trailers:separator) changes separator
-ok 288 - %(trailers:key_value_separator) changes key-value separator
-ok 289 - %(trailers:separator,key_value_separator) changes both separators
-ok 290 - %(trailers) rejects unknown trailers arguments
-ok 291 - %(trailers:key) without value is error
-ok 292 - if arguments, %(contents:trailers) shows error if colon is missing
-ok 293 - basic atom: head contents:trailers
-ok 294 - trailer parsing not fooled by --- line
-ok 295 - Add symbolic ref for the following tests
-ok 296 - Verify usage of %(symref) atom
-ok 297 - Verify usage of %(symref:short) atom
-ok 298 - Verify usage of %(symref:lstrip) atom
-ok 299 - Verify usage of %(symref:rstrip) atom
-ok 300 - :remotename and :remoteref
-ok 301 - for-each-ref --ignore-case ignores case
-ok 302 - for-each-ref --ignore-case works on multiple sort keys
-ok 303 - for-each-ref reports broken tags
-# passed all 303 test(s)
-1..303
+ok 52 - basic atom: head raw
+ok 53 - basic atom: head *objectname
+ok 54 - basic atom: head *objecttype
+ok 55 - basic atom: head author
+ok 56 - basic atom: head authorname
+ok 57 - basic atom: head authoremail
+ok 58 - basic atom: head authoremail:trim
+ok 59 - basic atom: head authoremail:localpart
+ok 60 - basic atom: head authordate
+ok 61 - basic atom: head committer
+ok 62 - basic atom: head committername
+ok 63 - basic atom: head committeremail
+ok 64 - basic atom: head committeremail:trim
+ok 65 - basic atom: head committeremail:localpart
+ok 66 - basic atom: head committerdate
+ok 67 - basic atom: head tag
+ok 68 - basic atom: head tagger
+ok 69 - basic atom: head taggername
+ok 70 - basic atom: head taggeremail
+ok 71 - basic atom: head taggeremail:trim
+ok 72 - basic atom: head taggeremail:localpart
+ok 73 - basic atom: head taggerdate
+ok 74 - basic atom: head creator
+ok 75 - basic atom: head creatordate
+ok 76 - basic atom: head subject
+ok 77 - basic atom: head subject:sanitize
+ok 78 - basic atom: head contents:subject
+ok 79 - basic atom: head body
+ok 80 - basic atom: head contents:body
+ok 81 - basic atom: head contents:signature
+ok 82 - basic atom: head contents
+ok 83 - basic atom: head contents:size
+ok 84 - basic atom: head HEAD
+ok 85 - basic atom: tag refname
+ok 86 - basic atom: tag refname:short
+ok 87 - basic atom: tag upstream
+ok 88 - basic atom: tag push
+ok 89 - basic atom: tag objecttype
+ok 90 - basic atom: tag objectsize
+ok 91 - basic atom: tag objectsize:disk
+ok 92 - basic atom: tag *objectsize:disk
+ok 93 - basic atom: tag deltabase
+ok 94 - basic atom: tag *deltabase
+ok 95 - basic atom: tag objectname
+ok 96 - basic atom: tag objectname:short
+ok 97 - basic atom: head objectname:short=1
+ok 98 - basic atom: head objectname:short=10
+ok 99 - basic atom: tag tree
+ok 100 - basic atom: tag tree:short
+ok 101 - basic atom: tag tree:short=1
+ok 102 - basic atom: tag tree:short=10
+ok 103 - basic atom: tag parent
+ok 104 - basic atom: tag parent:short
+ok 105 - basic atom: tag parent:short=1
+ok 106 - basic atom: tag parent:short=10
+ok 107 - basic atom: tag numparent
+ok 108 - basic atom: tag object
+ok 109 - basic atom: tag type
+ok 110 - basic atom: tag *objectname
+ok 111 - basic atom: tag *objecttype
+ok 112 - basic atom: tag author
+ok 113 - basic atom: tag authorname
+ok 114 - basic atom: tag authoremail
+ok 115 - basic atom: tag authoremail:trim
+ok 116 - basic atom: tag authoremail:localpart
+ok 117 - basic atom: tag authordate
+ok 118 - basic atom: tag committer
+ok 119 - basic atom: tag committername
+ok 120 - basic atom: tag committeremail
+ok 121 - basic atom: tag committeremail:trim
+ok 122 - basic atom: tag committeremail:localpart
+ok 123 - basic atom: tag committerdate
+ok 124 - basic atom: tag tag
+ok 125 - basic atom: tag tagger
+ok 126 - basic atom: tag taggername
+ok 127 - basic atom: tag taggeremail
+ok 128 - basic atom: tag taggeremail:trim
+ok 129 - basic atom: tag taggeremail:localpart
+ok 130 - basic atom: tag taggerdate
+ok 131 - basic atom: tag creator
+ok 132 - basic atom: tag creatordate
+ok 133 - basic atom: tag subject
+ok 134 - basic atom: tag subject:sanitize
+ok 135 - basic atom: tag contents:subject
+ok 136 - basic atom: tag body
+ok 137 - basic atom: tag contents:body
+ok 138 - basic atom: tag contents:signature
+ok 139 - basic atom: tag contents
+ok 140 - basic atom: tag contents:size
+ok 141 - basic atom: tag HEAD
+ok 142 - basic atom: refs/tags/testtag *raw
+ok 143 - Check invalid atoms names are errors
+ok 144 - Check format specifiers are ignored in naming date atoms
+ok 145 - Check valid format specifiers for date fields
+ok 146 - Check invalid format specifiers are errors
+ok 147 - arguments to %(objectname:short=) must be positive integers
+ok 148 - Check unformatted date fields output
+ok 149 - Check format "default" formatted date fields output
+ok 150 - Check format "default-local" date fields output
+ok 151 - Check format "relative" date fields output
+ok 152 - Check format "relative-local" date fields output
+ok 153 - Check format "short" date fields output
+ok 154 - Check format "short-local" date fields output
+ok 155 - Check format "local" date fields output
+ok 156 - Check format "iso8601" date fields output
+ok 157 - Check format "iso8601-local" date fields output
+ok 158 - Check format "rfc2822" date fields output
+ok 159 - Check format "rfc2822-local" date fields output
+ok 160 - Check format "raw" date fields output
+ok 161 - Check format "raw-local" date fields output
+ok 162 - Check format of strftime date fields
+ok 163 - Check format of strftime-local date fields
+ok 164 - exercise strftime with odd fields
+ok 165 - Verify ascending sort
+ok 166 - Verify descending sort
+ok 167 - exercise patterns with prefixes
+ok 168 - exercise glob patterns with prefixes
+ok 169 - Quoting style: shell
+ok 170 - Quoting style: perl
+ok 171 - Quoting style: python
+ok 172 - Quoting style: tcl
+ok 173 - more than one quoting style: --perl --shell
+ok 174 - more than one quoting style: -s --python
+ok 175 - more than one quoting style: --python --tcl
+ok 176 - more than one quoting style: --tcl --perl
+ok 177 - setup for upstream:track[short]
+ok 178 - basic atom: head upstream:track
+ok 179 - basic atom: head upstream:trackshort
+ok 180 - basic atom: head upstream:track,nobracket
+ok 181 - basic atom: head upstream:nobracket,track
+ok 182 - setup for push:track[short]
+ok 183 - basic atom: head push:track
+ok 184 - basic atom: head push:trackshort
+ok 185 - Check that :track[short] cannot be used with other atoms
+ok 186 - Check that :track[short] works when upstream is invalid
+ok 187 - Check for invalid refname format
+ok 188 - set up color tests
+ok 189 # skip %(color) shows color with a tty (missing TTY)
+ok 190 - %(color) does not show color without tty
+ok 191 - --color can override tty check
+ok 192 - color.ui=always does not override tty check
+ok 193 - Check ambiguous head and tag refs (strict)
+ok 194 - Check ambiguous head and tag refs (loose)
+ok 195 - Check ambiguous head and tag refs II (loose)
+ok 196 - create tag without tagger
+ok 197 - basic atom: refs/tags/taggerless type
+ok 198 - basic atom: refs/tags/taggerless tag
+ok 199 - basic atom: refs/tags/taggerless tagger
+ok 200 - basic atom: refs/tags/taggerless taggername
+ok 201 - basic atom: refs/tags/taggerless taggeremail
+ok 202 - basic atom: refs/tags/taggerless taggeremail:trim
+ok 203 - basic atom: refs/tags/taggerless taggeremail:localpart
+ok 204 - basic atom: refs/tags/taggerless taggerdate
+ok 205 - basic atom: refs/tags/taggerless committer
+ok 206 - basic atom: refs/tags/taggerless committername
+ok 207 - basic atom: refs/tags/taggerless committeremail
+ok 208 - basic atom: refs/tags/taggerless committeremail:trim
+ok 209 - basic atom: refs/tags/taggerless committeremail:localpart
+ok 210 - basic atom: refs/tags/taggerless committerdate
+ok 211 - basic atom: refs/tags/taggerless subject
+ok 212 - an unusual tag with an incomplete line
+ok 213 - create tag with subject and body content
+ok 214 - basic atom: refs/tags/subject-body subject
+ok 215 - basic atom: refs/tags/subject-body subject:sanitize
+ok 216 - basic atom: refs/tags/subject-body body
+ok 217 - basic atom: refs/tags/subject-body contents
+ok 218 - basic atom: refs/tags/subject-body contents:size
+ok 219 - create tag with multiline subject
+ok 220 - basic atom: refs/tags/multiline subject
+ok 221 - basic atom: refs/tags/multiline subject:sanitize
+ok 222 - basic atom: refs/tags/multiline contents:subject
+ok 223 - basic atom: refs/tags/multiline body
+ok 224 - basic atom: refs/tags/multiline contents:body
+ok 225 - basic atom: refs/tags/multiline contents:signature
+ok 226 - basic atom: refs/tags/multiline contents
+ok 227 - basic atom: refs/tags/multiline contents:size
+ok 228 # skip create signed tags (missing GPG)
+ok 229 # skip basic atom: refs/tags/signed-empty subject (missing GPG)
+ok 230 # skip basic atom: refs/tags/signed-empty subject:sanitize (missing GPG)
+ok 231 # skip basic atom: refs/tags/signed-empty contents:subject (missing GPG)
+ok 232 # skip basic atom: refs/tags/signed-empty body (missing GPG)
+ok 233 # skip basic atom: refs/tags/signed-empty contents:body (missing GPG)
+ok 234 # skip basic atom: refs/tags/signed-empty contents:signature (missing GPG)
+ok 235 # skip basic atom: refs/tags/signed-empty contents (missing GPG)
+ok 236 # skip basic atom: refs/tags/signed-empty contents:size (missing GPG)
+ok 237 # skip basic atom: refs/tags/signed-empty raw (missing GPG)
+ok 238 # skip basic atom: refs/tags/signed-short subject (missing GPG)
+ok 239 # skip basic atom: refs/tags/signed-short subject:sanitize (missing GPG)
+ok 240 # skip basic atom: refs/tags/signed-short contents:subject (missing GPG)
+ok 241 # skip basic atom: refs/tags/signed-short body (missing GPG)
+ok 242 # skip basic atom: refs/tags/signed-short contents:body (missing GPG)
+ok 243 # skip basic atom: refs/tags/signed-short contents:signature (missing GPG)
+ok 244 # skip basic atom: refs/tags/signed-short contents (missing GPG)
+ok 245 # skip basic atom: refs/tags/signed-short contents:size (missing GPG)
+ok 246 # skip basic atom: refs/tags/signed-short raw (missing GPG)
+ok 247 # skip basic atom: refs/tags/signed-long subject (missing GPG)
+ok 248 # skip basic atom: refs/tags/signed-long subject:sanitize (missing GPG)
+ok 249 # skip basic atom: refs/tags/signed-long contents:subject (missing GPG)
+ok 250 # skip basic atom: refs/tags/signed-long body (missing GPG)
+ok 251 # skip basic atom: refs/tags/signed-long contents:body (missing GPG)
+ok 252 # skip basic atom: refs/tags/signed-long contents:signature (missing GPG)
+ok 253 # skip basic atom: refs/tags/signed-long contents (missing GPG)
+ok 254 # skip basic atom: refs/tags/signed-long contents:size (missing GPG)
+ok 255 # skip basic atom: refs/tags/signed-long raw (missing GPG)
+ok 256 - set up refs pointing to tree and blob
+ok 257 # skip basic atom: refs/mytrees/first subject (missing GPG)
+ok 258 # skip basic atom: refs/mytrees/first contents:subject (missing GPG)
+ok 259 # skip basic atom: refs/mytrees/first body (missing GPG)
+ok 260 # skip basic atom: refs/mytrees/first contents:body (missing GPG)
+ok 261 # skip basic atom: refs/mytrees/first contents:signature (missing GPG)
+ok 262 # skip basic atom: refs/mytrees/first contents (missing GPG)
+ok 263 # skip basic atom: refs/mytrees/first contents:size (missing GPG)
+ok 264 - basic atom: refs/mytrees/first raw
+ok 265 # skip basic atom: refs/myblobs/first subject (missing GPG)
+ok 266 # skip basic atom: refs/myblobs/first contents:subject (missing GPG)
+ok 267 # skip basic atom: refs/myblobs/first body (missing GPG)
+ok 268 # skip basic atom: refs/myblobs/first contents:body (missing GPG)
+ok 269 # skip basic atom: refs/myblobs/first contents:signature (missing GPG)
+ok 270 # skip basic atom: refs/myblobs/first contents (missing GPG)
+ok 271 # skip basic atom: refs/myblobs/first contents:size (missing GPG)
+ok 272 - basic atom: refs/myblobs/first raw
+ok 273 - set up refs pointing to binary blob
+ok 274 - Verify sorts with raw
+ok 275 - Verify sorts with raw:size
+ok 276 - validate raw atom with %(if:equals)
+ok 277 - validate raw atom with %(if:notequals)
+ok 278 - empty raw refs with %(if)
+ok 279 - %(raw) with --python must fail
+ok 280 - %(raw) with --tcl must fail
+ok 281 - %(raw) with --perl
+ok 282 - %(raw) with --shell must fail
+ok 283 - %(raw) with --shell and --sort=raw must fail
+ok 284 - %(raw:size) with --shell
+ok 285 - for-each-ref --format compare with cat-file --batch
+ok 286 - set up multiple-sort tags
+ok 287 - Verify sort with multiple keys
+ok 288 - equivalent sorts fall back on refname
+ok 289 - do not dereference NULL upon %(HEAD) on unborn branch
+ok 290 - set up trailers for next test
+ok 291 - %(trailers:unfold) unfolds trailers
+ok 292 - %(trailers:only) shows only "key: value" trailers
+ok 293 - %(trailers:only=no,only=true) shows only "key: value" trailers
+ok 294 - %(trailers:only=yes) shows only "key: value" trailers
+ok 295 - %(trailers:only=no) shows all trailers
+ok 296 - %(trailers:only) and %(trailers:unfold) work together
+ok 297 - %(trailers:unfold) and %(trailers:only) work together
+ok 298 - %(trailers:key=foo) shows that trailer
+ok 299 - %(trailers:key=foo) is case insensitive
+ok 300 - %(trailers:key=foo:) trailing colon also works
+ok 301 - %(trailers:key=foo) multiple keys
+ok 302 - %(trailers:key=nonexistent) becomes empty
+ok 303 - %(trailers:key=foo) handles multiple lines even if folded
+ok 304 - %(trailers:key=foo,unfold) properly unfolds
+ok 305 - %(trailers:key=foo,only=no) also includes nontrailer lines
+ok 306 - %(trailers:key=foo,valueonly) shows only value
+ok 307 - %(trailers:separator) changes separator
+ok 308 - %(trailers:key_value_separator) changes key-value separator
+ok 309 - %(trailers:separator,key_value_separator) changes both separators
+ok 310 - %(trailers) rejects unknown trailers arguments
+ok 311 - %(trailers:key) without value is error
+ok 312 - if arguments, %(contents:trailers) shows error if colon is missing
+ok 313 - basic atom: head contents:trailers
+ok 314 - basic atom: rest must fail
+ok 315 - trailer parsing not fooled by --- line
+ok 316 - Add symbolic ref for the following tests
+ok 317 - Verify usage of %(symref) atom
+ok 318 - Verify usage of %(symref:short) atom
+ok 319 - Verify usage of %(symref:lstrip) atom
+ok 320 - Verify usage of %(symref:rstrip) atom
+ok 321 - :remotename and :remoteref
+ok 322 - for-each-ref --ignore-case ignores case
+ok 323 - for-each-ref --ignore-case works on multiple sort keys
+ok 324 - for-each-ref reports broken tags
+# passed all 324 test(s)
+1..324
 *** t6301-for-each-ref-errors.sh ***
 ok 1 - setup
 ok 2 - Broken refs are reported correctly
@@ -21237,6 +21418,18 @@ ok 49 - moving a submodule in nested directories
 ok 50 - moving nested submodules
 # passed all 50 test(s)
 1..50
+*** t7002-mv-sparse-checkout.sh ***
+ok 1 - setup
+ok 2 - mv refuses to move sparse-to-sparse
+ok 3 - mv refuses to move sparse-to-sparse, ignores failure
+ok 4 - mv refuses to move non-sparse-to-sparse
+ok 5 - mv refuses to move sparse-to-non-sparse
+ok 6 - recursive mv refuses to move (possible) sparse
+ok 7 - recursive mv refuses to move sparse
+ok 8 - can move files to non-sparse dir
+ok 9 - refuse to move file to non-skip-worktree sparse path
+# passed all 9 test(s)
+1..9
 *** t7003-filter-branch.sh ***
 ok 1 - setup
 ok 2 - rewrite identically
@@ -21487,22 +21680,23 @@ ok 195 - versionsort.suffix overrides versionsort.prereleaseSuffix
 ok 196 - version sort with very long prerelease suffix
 ok 197 - --contains and --no-contains work in a deep repo
 ok 198 - --format should list tags as per format given
-ok 199 - set up color tests
-ok 200 - %(color) omitted without tty
-ok 201 # skip %(color) present with tty (missing TTY)
-ok 202 - --color overrides auto-color
-ok 203 - color.ui=always overrides auto-color
-ok 204 - setup --merged test tags
-ok 205 - --merged can be used in non-list mode
-ok 206 - --merged is compatible with --no-merged
-ok 207 - --merged shows merged tags
-ok 208 - --no-merged show unmerged tags
-ok 209 - --no-merged can be used in non-list mode
-ok 210 - ambiguous branch/tags not marked
-ok 211 - --contains combined with --no-contains
-ok 212 - Does --[no-]contains stop at commits? Yes!
-# passed all 212 test(s)
-1..212
+ok 199 - git tag -l with --format="%(rest)" must fail
+ok 200 - set up color tests
+ok 201 - %(color) omitted without tty
+ok 202 # skip %(color) present with tty (missing TTY)
+ok 203 - --color overrides auto-color
+ok 204 - color.ui=always overrides auto-color
+ok 205 - setup --merged test tags
+ok 206 - --merged can be used in non-list mode
+ok 207 - --merged is compatible with --no-merged
+ok 208 - --merged shows merged tags
+ok 209 - --no-merged show unmerged tags
+ok 210 - --no-merged can be used in non-list mode
+ok 211 - ambiguous branch/tags not marked
+ok 212 - --contains combined with --no-contains
+ok 213 - Does --[no-]contains stop at commits? Yes!
+# passed all 213 test(s)
+1..213
 *** t7005-editor.sh ***
 ok 1 - determine default editor
 ok 2 - setup
@@ -21727,9 +21921,21 @@ ok 10 # skip verify signatures with --raw x509 (missing GPGSM)
 ok 11 # skip verify multiple tags (missing GPG)
 ok 12 # skip verify multiple tags x509 (missing GPGSM)
 ok 13 # skip verifying tag with --format (missing GPG)
-ok 14 # skip verifying a forged tag with --format should fail silently (missing GPG)
-# passed all 14 test(s)
-1..14
+ok 14 # skip verifying tag with --format="%(rest)" must fail (missing GPG)
+ok 15 # skip verifying a forged tag with --format should fail silently (missing GPG)
+# passed all 15 test(s)
+1..15
+*** t7031-verify-tag-signed-ssh.sh ***
+ok 1 # skip create signed tags ssh (missing GPGSSH)
+ok 2 # skip verify and show ssh signatures (missing GPGSSH)
+ok 3 # skip detect fudged ssh signature (missing GPGSSH)
+ok 4 # skip verify ssh signatures with --raw (missing GPGSSH)
+ok 5 # skip verify signatures with --raw ssh (missing GPGSSH)
+ok 6 # skip verify multiple tags ssh (missing GPGSSH)
+ok 7 # skip verifying tag with --format - ssh (missing GPGSSH)
+ok 8 # skip verifying a forged tag with --format should fail silently - ssh (missing GPGSSH)
+# passed all 8 test(s)
+1..8
 *** t7060-wtstatus.sh ***
 ok 1 - setup
 ok 2 - A/A conflict
@@ -22055,7 +22261,7 @@ ok 11 - git reset --keep --recurse-submodules: modified submodule updates submod
 ok 12 - git reset --keep --recurse-submodules: updating to a missing submodule commit fails
 ok 13 - git reset --keep --recurse-submodules: submodule branch is not changed, detach HEAD instead
 ok 14 - git reset --keep --recurse-submodules: added submodule doesn't remove untracked file with same name
-not ok 15 - git reset --keep --recurse-submodules: added submodule removes an untracked ignored file # TODO known breakage
+ok 15 - git reset --keep --recurse-submodules: added submodule removes an untracked ignored file
 not ok 16 - git reset --keep --recurse-submodules: replace submodule with a directory # TODO known breakage
 not ok 17 - git reset --keep --recurse-submodules: replace submodule containing a .git directory with a directory must absorb the git dir # TODO known breakage
 ok 18 - git reset --keep --recurse-submodules: replace submodule with a file works ignores ignored files in submodule
@@ -22123,8 +22329,8 @@ ok 79 - git_test_func: modified submodule does not update submodule work tree
 ok 80 - git_test_func: modified submodule does not update submodule work tree to invalid commit
 ok 81 - git_test_func: modified submodule does not update submodule work tree from invalid commit
 ok 82 - git_test_func: added submodule does remove untracked unignored file with same name when forced
-# still have 13 known breakage(s)
-# passed all remaining 69 test(s)
+# still have 12 known breakage(s)
+# passed all remaining 70 test(s)
 1..82
 *** t7113-post-index-change-hook.sh ***
 ok 1 - setup
@@ -22946,23 +23152,24 @@ ok 8 - --no-verify with succeeding hook (editor)
 ok 9 - with failing hook
 ok 10 - with failing hook (editor)
 ok 11 - --no-verify with failing hook
-ok 12 - --no-verify with failing hook (editor)
-ok 13 - merge fails with failing hook
-ok 14 - merge bypasses failing hook with --no-verify
-ok 15 - with non-executable hook
-ok 16 - with non-executable hook (editor)
-ok 17 - --no-verify with non-executable hook
-ok 18 - --no-verify with non-executable hook (editor)
-ok 19 - hook edits commit message
-ok 20 - hook edits commit message (editor)
-ok 21 - hook doesn't edit commit message
-ok 22 - hook doesn't edit commit message (editor)
-ok 23 - hook called in git-merge picks up commit message
-not ok 24 - merge --continue remembers --no-verify # TODO known breakage
-ok 25 - hook is called for reword during `rebase -i`
+ok 12 - -n followed by --verify with failing hook
+ok 13 - --no-verify with failing hook (editor)
+ok 14 - merge fails with failing hook
+ok 15 - merge bypasses failing hook with --no-verify
+ok 16 - with non-executable hook
+ok 17 - with non-executable hook (editor)
+ok 18 - --no-verify with non-executable hook
+ok 19 - --no-verify with non-executable hook (editor)
+ok 20 - hook edits commit message
+ok 21 - hook edits commit message (editor)
+ok 22 - hook doesn't edit commit message
+ok 23 - hook doesn't edit commit message (editor)
+ok 24 - hook called in git-merge picks up commit message
+not ok 25 - merge --continue remembers --no-verify # TODO known breakage
+ok 26 - hook is called for reword during `rebase -i`
 # still have 1 known breakage(s)
-# passed all remaining 24 test(s)
-1..25
+# passed all remaining 25 test(s)
+1..26
 *** t7505-prepare-commit-msg-hook.sh ***
 ok 1 - set up commits for rebasing
 ok 2 - with no hook
@@ -22978,15 +23185,14 @@ ok 11 - with hook (-c)
 ok 12 - with hook (merge)
 ok 13 - with hook and editor (merge)
 ok 14 - with hook (rebase -i)
-ok 15 - with hook (rebase -p)
-ok 16 - with hook (cherry-pick)
-ok 17 - with hook and editor (cherry-pick)
-ok 18 - with failing hook
-ok 19 - with failing hook (--no-verify)
-ok 20 - with failing hook (merge)
-ok 21 - with failing hook (cherry-pick)
-# passed all 21 test(s)
-1..21
+ok 15 - with hook (cherry-pick)
+ok 16 - with hook and editor (cherry-pick)
+ok 17 - with failing hook
+ok 18 - with failing hook (--no-verify)
+ok 19 - with failing hook (merge)
+ok 20 - with failing hook (cherry-pick)
+# passed all 20 test(s)
+1..20
 *** t7506-status-submodule.sh ***
 ok 1 - setup
 ok 2 - status clean
@@ -23212,30 +23418,31 @@ ok 12 - --reset-author with CHERRY_PICK_HEAD
 *** t7510-signed-commit.sh ***
 ok 1 # skip create signed commits (missing GPG)
 ok 2 # skip verify and show signatures (missing GPG)
-ok 3 # skip verify-commit exits success on untrusted signature (missing GPG)
-ok 4 # skip verify-commit exits success with matching minTrustLevel (missing GPG)
-ok 5 # skip verify-commit exits success with low minTrustLevel (missing GPG)
-ok 6 # skip verify-commit exits failure with high minTrustLevel (missing GPG)
-ok 7 # skip verify signatures with --raw (missing GPG)
-ok 8 # skip proper header is used for hash algorithm (missing GPG)
-ok 9 # skip show signed commit with signature (missing GPG)
-ok 10 # skip detect fudged signature (missing GPG)
-ok 11 # skip detect fudged signature with NUL (missing GPG)
-ok 12 # skip amending already signed commit (missing GPG)
-ok 13 # skip show good signature with custom format (missing GPG)
-ok 14 # skip show bad signature with custom format (missing GPG)
-ok 15 # skip show untrusted signature with custom format (missing GPG)
-ok 16 # skip show untrusted signature with undefined trust level (missing GPG)
-ok 17 # skip show untrusted signature with ultimate trust level (missing GPG)
-ok 18 # skip show unknown signature with custom format (missing GPG)
-ok 19 # skip show lack of signature with custom format (missing GPG)
-ok 20 # skip log.showsignature behaves like --show-signature (missing GPG)
-ok 21 # skip check config gpg.format values (missing GPG)
-ok 22 # skip detect fudged commit with double signature (missing GPG)
-ok 23 # skip show double signature with custom format (missing GPG)
-ok 24 # skip verify-commit verifies multiply signed commits (missing GPG)
-# passed all 24 test(s)
-1..24
+ok 3 # skip verify-commit exits failure on unknown signature (missing GPG)
+ok 4 # skip verify-commit exits success on untrusted signature (missing GPG)
+ok 5 # skip verify-commit exits success with matching minTrustLevel (missing GPG)
+ok 6 # skip verify-commit exits success with low minTrustLevel (missing GPG)
+ok 7 # skip verify-commit exits failure with high minTrustLevel (missing GPG)
+ok 8 # skip verify signatures with --raw (missing GPG)
+ok 9 # skip proper header is used for hash algorithm (missing GPG)
+ok 10 # skip show signed commit with signature (missing GPG)
+ok 11 # skip detect fudged signature (missing GPG)
+ok 12 # skip detect fudged signature with NUL (missing GPG)
+ok 13 # skip amending already signed commit (missing GPG)
+ok 14 # skip show good signature with custom format (missing GPG)
+ok 15 # skip show bad signature with custom format (missing GPG)
+ok 16 # skip show untrusted signature with custom format (missing GPG)
+ok 17 # skip show untrusted signature with undefined trust level (missing GPG)
+ok 18 # skip show untrusted signature with ultimate trust level (missing GPG)
+ok 19 # skip show unknown signature with custom format (missing GPG)
+ok 20 # skip show lack of signature with custom format (missing GPG)
+ok 21 # skip log.showsignature behaves like --show-signature (missing GPG)
+ok 22 # skip check config gpg.format values (missing GPG)
+ok 23 # skip detect fudged commit with double signature (missing GPG)
+ok 24 # skip show double signature with custom format (missing GPG)
+ok 25 # skip verify-commit verifies multiply signed commits (missing GPG)
+# passed all 25 test(s)
+1..25
 *** t7511-status-index.sh ***
 ok 1 - status, filename length 1
 ok 2 - status, filename length 2
@@ -23429,15 +23636,13 @@ ok 8 - non-fast-forward rebase refuses to write commits
 ok 9 - fast-forward rebase does not care about ident (interactive)
 ok 10 - non-fast-forward rebase refuses to write commits (interactive)
 ok 11 - noop interactive rebase does not care about ident
-ok 12 - fast-forward rebase does not care about ident (preserve)
-ok 13 - non-fast-forward rebase refuses to write commits (preserve)
-ok 14 - author.name overrides user.name
-ok 15 - author.email overrides user.email
-ok 16 - committer.name overrides user.name
-ok 17 - committer.email overrides user.email
-ok 18 - author and committer environment variables override config settings
-# passed all 18 test(s)
-1..18
+ok 12 - author.name overrides user.name
+ok 13 - author.email overrides user.email
+ok 14 - committer.name overrides user.name
+ok 15 - committer.email overrides user.email
+ok 16 - author and committer environment variables override config settings
+# passed all 16 test(s)
+1..16
 *** t7518-ident-corner-cases.sh ***
 ok 1 - empty name and missing email
 ok 2 - commit rejects all-crud name
@@ -23533,6 +23738,32 @@ ok 10 - only touches what was listed
 ok 11 - error conditions
 # passed all 11 test(s)
 1..11
+*** t7528-signed-commit-ssh.sh ***
+ok 1 # skip create signed commits (missing GPGSSH)
+ok 2 # skip verify and show signatures (missing GPGSSH)
+ok 3 # skip verify-commit exits failure on untrusted signature (missing GPGSSH)
+ok 4 # skip verify-commit exits success with matching minTrustLevel (missing GPGSSH)
+ok 5 # skip verify-commit exits success with low minTrustLevel (missing GPGSSH)
+ok 6 # skip verify-commit exits failure with high minTrustLevel (missing GPGSSH)
+ok 7 # skip verify signatures with --raw (missing GPGSSH)
+ok 8 # skip proper header is used for hash algorithm (missing GPGSSH)
+ok 9 # skip show signed commit with signature (missing GPGSSH)
+ok 10 # skip detect fudged signature (missing GPGSSH)
+ok 11 # skip detect fudged signature with NUL (missing GPGSSH)
+ok 12 # skip amending already signed commit (missing GPGSSH)
+ok 13 # skip show good signature with custom format (missing GPGSSH)
+ok 14 # skip show bad signature with custom format (missing GPGSSH)
+ok 15 # skip show untrusted signature with custom format (missing GPGSSH)
+ok 16 # skip show untrusted signature with undefined trust level (missing GPGSSH)
+ok 17 # skip show untrusted signature with ultimate trust level (missing GPGSSH)
+ok 18 # skip show lack of signature with custom format (missing GPGSSH)
+ok 19 # skip log.showsignature behaves like --show-signature (missing GPGSSH)
+ok 20 # skip check config gpg.format values (missing GPGSSH)
+ok 21 # skip detect fudged commit with double signature (TODO) (missing GPGSSH)
+ok 22 # skip show double signature with custom format (TODO) (missing GPGSSH)
+ok 23 # skip verify-commit verifies multiply signed commits (TODO) (missing GPGSSH)
+# passed all 23 test(s)
+1..23
 *** t7600-merge.sh ***
 ok 1 - setup
 ok 2 - test option parsing
@@ -23668,16 +23899,18 @@ ok 51 - fast-forward pull succeeds with "true" in pull.ff
 ok 52 - pull.ff=true overrides merge.ff=false
 ok 53 - fast-forward pull creates merge with "false" in pull.ff
 ok 54 - pull prevents non-fast-forward with "only" in pull.ff
-ok 55 - merge c1 with c2 (ours in pull.twohead)
-ok 56 - merge c1 with c2 and c3 (recursive in pull.octopus)
-ok 57 - merge c1 with c2 and c3 (recursive and octopus in pull.octopus)
-ok 58 - setup conflicted merge
-ok 59 - merge picks up the best result
-ok 60 - merge picks up the best result (from config)
-ok 61 - merge errors out on invalid strategy
-ok 62 - merge errors out on invalid strategy
-# passed all 62 test(s)
-1..62
+ok 55 - already-up-to-date pull succeeds with "only" in pull.ff
+ok 56 - already-up-to-date pull/rebase succeeds with "only" in pull.ff
+ok 57 - merge c1 with c2 (ours in pull.twohead)
+ok 58 - merge c1 with c2 and c3 (recursive in pull.octopus)
+ok 59 - merge c1 with c2 and c3 (recursive and octopus in pull.octopus)
+ok 60 - setup conflicted merge
+ok 61 - merge picks up the best result
+ok 62 - merge picks up the best result (from config)
+ok 63 - merge errors out on invalid strategy
+ok 64 - merge errors out on invalid strategy
+# passed all 64 test(s)
+1..64
 *** t7602-merge-octopus-many.sh ***
 ok 1 - setup
 ok 2 - merge c1 with c2, c3, c4, ... c29
@@ -23832,8 +24065,15 @@ ok 13 - incremental repack does not complain
 ok 14 - bitmaps can be disabled on bare repos
 ok 15 - no bitmaps created if .keep files present
 ok 16 - auto-bitmaps do not complain if unavailable
-# passed all 16 test(s)
-1..16
+ok 17 - setup for --write-midx tests
+ok 18 - --write-midx unchanged
+ok 19 - --write-midx with a new pack
+ok 20 - --write-midx with -b
+ok 21 - --write-midx with -d
+ok 22 - cleans up MIDX when appropriate
+ok 23 - --write-midx with preferred bitmap tips
+# passed all 23 test(s)
+1..23
 *** t7701-repack-unpack-unreachable.sh ***
 ok 1 - -A with -d option leaves unreachable objects unpacked
 ok 2 - -A without -d option leaves unreachable objects packed
@@ -23857,8 +24097,9 @@ ok 4 - --geometric with loose objects
 ok 5 - --geometric with small-pack rollup
 ok 6 - --geometric with small- and large-pack rollup
 ok 7 - --geometric ignores kept packs
-# passed all 7 test(s)
-1..7
+ok 8 - --geometric chooses largest MIDX preferred pack
+# passed all 8 test(s)
+1..8
 *** t7800-difftool.sh ***
 ok 1 - basic usage requires no repo
 ok 2 - setup
@@ -23905,42 +24146,44 @@ ok 42 - difftool -d --no-symlinks
 ok 43 - difftool -d --symlinks
 ok 44 - difftool --dir-diff --no-symlinks
 ok 45 - difftool --dir-diff --symlinks
-ok 46 - difftool --dir-diff ignores --prompt --no-symlinks
-ok 47 - difftool --dir-diff ignores --prompt --symlinks
-ok 48 - difftool --dir-diff branch from subdirectory --no-symlinks
-ok 49 - difftool --dir-diff branch from subdirectory --symlinks
-ok 50 - difftool --dir-diff v1 from subdirectory --no-symlinks
-ok 51 - difftool --dir-diff v1 from subdirectory --symlinks
-ok 52 - difftool --dir-diff branch from subdirectory w/ pathspec --no-symlinks
-ok 53 - difftool --dir-diff branch from subdirectory w/ pathspec --symlinks
-ok 54 - difftool --dir-diff v1 from subdirectory w/ pathspec --no-symlinks
-ok 55 - difftool --dir-diff v1 from subdirectory w/ pathspec --symlinks
-ok 56 - difftool --dir-diff from subdirectory with GIT_DIR set --no-symlinks
-ok 57 - difftool --dir-diff from subdirectory with GIT_DIR set --symlinks
-ok 58 - difftool --dir-diff when worktree file is missing --no-symlinks
-ok 59 - difftool --dir-diff when worktree file is missing --symlinks
-ok 60 - difftool --dir-diff with unmerged files --no-symlinks
-ok 61 - difftool --dir-diff with unmerged files --symlinks
-ok 62 - difftool --dir-diff --symlinks without unstaged changes
-ok 63 - difftool --dir-diff syncs worktree with unstaged change --no-symlinks
-ok 64 - difftool --dir-diff syncs worktree with unstaged change --symlinks
-ok 65 - difftool --dir-diff syncs worktree without unstaged change --no-symlinks
-ok 66 - difftool --dir-diff syncs worktree without unstaged change --symlinks
-ok 67 - difftool --no-symlinks does not overwrite working tree file 
-ok 68 - difftool --no-symlinks detects conflict 
-ok 69 - difftool properly honors gitlink and core.worktree
-ok 70 - difftool --dir-diff symlinked directories
-ok 71 - difftool --dir-diff handles modified symlinks
-ok 72 - difftool --dir-diff writes symlinks as raw text
-ok 73 - add -N and difftool -d
-ok 74 - difftool --cached with unmerged files
-ok 75 - outside worktree
-ok 76 - difftool --gui, --tool and --extcmd are mutually exclusive
-ok 77 - difftool --rotate-to
-ok 78 - difftool --skip-to
-ok 79 - difftool --rotate/skip-to error condition
-# passed all 79 test(s)
-1..79
+ok 46 - difftool --dir-diff avoids repeated slashes in TMPDIR --no-symlinks
+ok 47 - difftool --dir-diff avoids repeated slashes in TMPDIR --symlinks
+ok 48 - difftool --dir-diff ignores --prompt --no-symlinks
+ok 49 - difftool --dir-diff ignores --prompt --symlinks
+ok 50 - difftool --dir-diff branch from subdirectory --no-symlinks
+ok 51 - difftool --dir-diff branch from subdirectory --symlinks
+ok 52 - difftool --dir-diff v1 from subdirectory --no-symlinks
+ok 53 - difftool --dir-diff v1 from subdirectory --symlinks
+ok 54 - difftool --dir-diff branch from subdirectory w/ pathspec --no-symlinks
+ok 55 - difftool --dir-diff branch from subdirectory w/ pathspec --symlinks
+ok 56 - difftool --dir-diff v1 from subdirectory w/ pathspec --no-symlinks
+ok 57 - difftool --dir-diff v1 from subdirectory w/ pathspec --symlinks
+ok 58 - difftool --dir-diff from subdirectory with GIT_DIR set --no-symlinks
+ok 59 - difftool --dir-diff from subdirectory with GIT_DIR set --symlinks
+ok 60 - difftool --dir-diff when worktree file is missing --no-symlinks
+ok 61 - difftool --dir-diff when worktree file is missing --symlinks
+ok 62 - difftool --dir-diff with unmerged files --no-symlinks
+ok 63 - difftool --dir-diff with unmerged files --symlinks
+ok 64 - difftool --dir-diff --symlinks without unstaged changes
+ok 65 - difftool --dir-diff syncs worktree with unstaged change --no-symlinks
+ok 66 - difftool --dir-diff syncs worktree with unstaged change --symlinks
+ok 67 - difftool --dir-diff syncs worktree without unstaged change --no-symlinks
+ok 68 - difftool --dir-diff syncs worktree without unstaged change --symlinks
+ok 69 - difftool --no-symlinks does not overwrite working tree file 
+ok 70 - difftool --no-symlinks detects conflict 
+ok 71 - difftool properly honors gitlink and core.worktree
+ok 72 - difftool --dir-diff symlinked directories
+ok 73 - difftool --dir-diff handles modified symlinks
+ok 74 - difftool --dir-diff writes symlinks as raw text
+ok 75 - add -N and difftool -d
+ok 76 - difftool --cached with unmerged files
+ok 77 - outside worktree
+ok 78 - difftool --gui, --tool and --extcmd are mutually exclusive
+ok 79 - difftool --rotate-to
+ok 80 - difftool --skip-to
+ok 81 - difftool --rotate/skip-to error condition
+# passed all 81 test(s)
+1..81
 *** t7810-grep.sh ***
 ok 1 - setup
 ok 2 - grep should not segfault with a bad input
@@ -24197,16 +24440,52 @@ ok 4 - grep pcre utf-8 string with "+"
 ok 5 - grep literal string, with -F
 ok 6 - grep string with regex, with -F
 ok 7 - pickaxe -i on non-ascii
-ok 8 - PCRE v2: setup invalid UTF-8 data
-ok 9 - PCRE v2: grep ASCII from invalid UTF-8 data
-ok 10 - PCRE v2: grep ASCII from invalid UTF-8 data (PCRE2 bug #2642)
-ok 11 - PCRE v2: grep non-ASCII from invalid UTF-8 data
-ok 12 - PCRE v2: grep non-ASCII from invalid UTF-8 data (PCRE2 bug #2642)
-ok 13 - PCRE v2: grep non-ASCII from invalid UTF-8 data with -i
-ok 14 # skip PCRE v2: grep non-ASCII from invalid UTF-8 data with -i (missing PCRE2_MATCH_INVALID_UTF of GETTEXT_LOCALE,LIBPCRE2,PCRE2_MATCH_INVALID_UTF)
-ok 15 # skip PCRE v2: grep non-ASCII from invalid UTF-8 data with -i (PCRE2 bug #2642) (missing PCRE2_MATCH_INVALID_UTF of GETTEXT_LOCALE,LIBPCRE2,PCRE2_MATCH_INVALID_UTF)
-# passed all 15 test(s)
-1..15
+not ok 8 - log --author with an ascii pattern on UTF-8 data
+#	
+#		cat >expected <<-\EOF &&
+#		Author: <BOLD;RED>À Ú Thor<RESET> <author@example.com>
+#		EOF
+#		test_write_lines "forth" >file4 &&
+#		git add file4 &&
+#		git commit --author="À Ú Thor <author@example.com>" -m sécond &&
+#		git log -1 --color=always --perl-regexp --author=".*Thor" >log &&
+#		grep Author log >actual.raw &&
+#		test_decode_color <actual.raw >actual &&
+#		test_cmp expected actual
+#	
+not ok 9 - log --committer with an ascii pattern on ISO-8859-1 data
+#	
+#		cat >expected <<-\EOF &&
+#		Commit:     Ç<BOLD;RED> O Mîtter <committer@example.com><RESET>
+#		EOF
+#		test_write_lines "fifth" >file5 &&
+#		git add file5 &&
+#		GIT_COMMITTER_NAME="Ç O Mîtter" &&
+#		GIT_COMMITTER_EMAIL="committer@example.com" &&
+#		git -c i18n.commitEncoding=latin1 commit -m thïrd &&
+#		git -c i18n.logOutputEncoding=latin1 log -1 --pretty=fuller --color=always --perl-regexp --committer=" O.*" >log &&
+#		grep Commit: log >actual.raw &&
+#		test_decode_color <actual.raw >actual &&
+#		test_cmp expected actual
+#	
+ok 10 - log --grep with an ascii pattern on UTF-8 data
+ok 11 - log --grep with an ascii pattern on ISO-8859-1 data
+ok 12 - PCRE v2: setup invalid UTF-8 data
+not ok 13 - PCRE v2: grep ASCII from invalid UTF-8 data
+#	
+#		git grep -h "var" invalid-0x80 >actual &&
+#		test_cmp expected actual &&
+#		git grep -h "(*NO_JIT)var" invalid-0x80 >actual &&
+#		test_cmp expected actual
+#	
+ok 14 - PCRE v2: grep ASCII from invalid UTF-8 data (PCRE2 bug #2642)
+ok 15 - PCRE v2: grep non-ASCII from invalid UTF-8 data
+ok 16 - PCRE v2: grep non-ASCII from invalid UTF-8 data (PCRE2 bug #2642)
+ok 17 - PCRE v2: grep non-ASCII from invalid UTF-8 data with -i
+ok 18 # skip PCRE v2: grep non-ASCII from invalid UTF-8 data with -i (missing PCRE2_MATCH_INVALID_UTF of GETTEXT_LOCALE,LIBPCRE2,PCRE2_MATCH_INVALID_UTF)
+ok 19 # skip PCRE v2: grep non-ASCII from invalid UTF-8 data with -i (PCRE2 bug #2642) (missing PCRE2_MATCH_INVALID_UTF of GETTEXT_LOCALE,LIBPCRE2,PCRE2_MATCH_INVALID_UTF)
+# failed 3 among 19 test(s)
+1..19
 *** t7813-grep-icase-iso.sh ***
 # lib-gettext: Found 'is_IS.UTF-8' as an is_IS UTF-8 locale
 # lib-gettext: Found 'is_IS.ISO8859-1' as an is_IS ISO-8859-1 locale
@@ -24240,8 +24519,16 @@ ok 22 - grep --recurse-submodules should pass the pattern type along
 ok 23 - grep --recurse-submodules with submodules without .gitmodules in the working tree
 ok 24 - grep --recurse-submodules without --cached considers worktree modifications
 ok 25 - grep --recurse-submodules with --cached ignores worktree modifications
-# passed all 25 test(s)
-1..25
+not ok 26 - grep --textconv: superproject .gitattributes does not affect submodules # TODO known breakage
+not ok 27 - grep --textconv: superproject .gitattributes (from index) does not affect submodules # TODO known breakage
+not ok 28 - grep --textconv: superproject .git/info/attributes does not affect submodules # TODO known breakage
+not ok 29 - grep --textconv correctly reads submodule .gitattributes # TODO known breakage
+not ok 30 - grep --textconv correctly reads submodule .gitattributes (from index) # TODO known breakage
+not ok 31 - grep --textconv correctly reads submodule .git/info/attributes # TODO known breakage
+not ok 32 - grep saves textconv cache in the appropriate repository # TODO known breakage
+# still have 7 known breakage(s)
+# passed all remaining 25 test(s)
+1..32
 *** t7815-grep-binary.sh ***
 ok 1 - setup
 ok 2 - git grep ina a
@@ -24447,26 +24734,30 @@ ok 14 - maintenance.loose-objects.auto
 ok 15 - incremental-repack task
 ok 16 # skip incremental-repack 2g limit (missing EXPENSIVE)
 ok 17 - maintenance.incremental-repack.auto
-ok 18 - pack-refs task
-ok 19 - --auto and --schedule incompatible
-ok 20 - invalid --schedule value
-ok 21 - --schedule inheritance weekly -> daily -> hourly
-ok 22 - maintenance.strategy inheritance
-ok 23 - register and unregister
-ok 24 - register and unregister with regex metacharacters
-ok 25 - start from empty cron table
-ok 26 - stop from existing schedule
-ok 27 - start preserves existing schedule
-ok 28 - magic markers are correct
-ok 29 - stop preserves surrounding schedule
-ok 30 - start and stop macOS maintenance
-ok 31 - use launchctl list to prevent extra work
-ok 32 - start and stop Windows maintenance
-ok 33 - register preserves existing strategy
-ok 34 - fails when running outside of a repository
-ok 35 - register and unregister bare repo
-# passed all 35 test(s)
-1..35
+ok 18 - maintenance.incremental-repack.auto (when config is unset)
+ok 19 - pack-refs task
+ok 20 - --auto and --schedule incompatible
+ok 21 - invalid --schedule value
+ok 22 - --schedule inheritance weekly -> daily -> hourly
+ok 23 - maintenance.strategy inheritance
+ok 24 - register and unregister
+ok 25 - register and unregister with regex metacharacters
+ok 26 - start --scheduler=<scheduler>
+ok 27 - start from empty cron table
+ok 28 - stop from existing schedule
+ok 29 - start preserves existing schedule
+ok 30 - magic markers are correct
+ok 31 - stop preserves surrounding schedule
+ok 32 - start and stop macOS maintenance
+ok 33 - use launchctl list to prevent extra work
+ok 34 - start and stop Windows maintenance
+ok 35 - start and stop Linux/systemd maintenance
+ok 36 - start and stop when several schedulers are available
+ok 37 - register preserves existing strategy
+ok 38 - fails when running outside of a repository
+ok 39 - register and unregister bare repo
+# passed all 39 test(s)
+1..39
 *** t8001-annotate.sh ***
 ok 1 - setup A lines
 ok 2 - blame 1 author
@@ -26217,10 +26508,10 @@ ok 66 - prompt - hide if pwd ignored - inside gitdir
 # passed all 66 test(s)
 1..66
 
-failed test(s): t0204 t3910
+failed test(s): t0204 t1700 t7812
 
-fixed   2
-success 22551
-failed  12
-broken  217
-total   23219
+fixed   1
+success 22811
+failed  6
+broken  212
+total   23519
