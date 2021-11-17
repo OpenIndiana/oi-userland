@@ -12,6 +12,8 @@
 # Copyright 2013 Adam Stevko. All rights reserved.
 #
 
+# Republish triggered on 2021-11-17 by Till Wegmueller
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkg
