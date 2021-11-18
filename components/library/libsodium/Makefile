@@ -11,29 +11,28 @@
 
 #
 # Copyright 2018 Alexander Pyhalov
+# Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
+BUILD_BITS=64_and_32
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsodium
-COMPONENT_VERSION= 1.0.16
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.0.18
 COMPONENT_SUMMARY= Sodium crypto library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:eeadc7e1e1bcef09680fb4837d448fbdf57224978f865ac1c16745868fbd0533
+  sha256:6f504490b342a4f8a4c4a02fc9b866cbef8622d5df4e5452b46be121e46636c1
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/jedisct1/libsodium/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+  https://download.libsodium.org/$(COMPONENT_NAME)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://download.libsodium.org/doc/
 COMPONENT_FMRI= library/security/libsodium
 COMPONENT_CLASSIFICATION= System/Security
 COMPONENT_LICENSE = ISC
 COMPONENT_LICENSE_FILE = LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # pynacl tests dump core with -O3
 gcc_OPT = -O2
@@ -52,14 +51,5 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/Leaving directory/d"' \
 	'-e "/Entering directory/d"'
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
