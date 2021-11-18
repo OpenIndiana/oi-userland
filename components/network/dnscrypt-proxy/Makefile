@@ -13,12 +13,12 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2017 Andreas Wacknitz
 #
-
+BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= dnscrypt-proxy
 COMPONENT_VERSION= 1.9.5
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= DNSCrypt client
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -32,9 +32,7 @@ COMPONENT_LICENSE= ISC
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION= System/Services
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/common.mk
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
