@@ -1,0 +1,19 @@
+--- squeak-3811/platforms/unix/plugins/CameraPlugin/sqCamera-linux.c	Fri Oct  5 02:00:00 2018
++++ p0/squeak-3811/platforms/unix/plugins/CameraPlugin/sqCamera-linux.c	Fri Nov 19 18:41:14 2021
+@@ -49,11 +49,12 @@
+ #include <sys/ioctl.h>
+ #include <dlfcn.h>
+ 
+-#include <asm/types.h>	  /* for videodev2.h */
++#include <sys/videodev2.h>
++#ifndef V4L2_PIX_FMT_RGB444
++/* illumos sys/videodev2.h currently does not define RGB444 */
++#define V4L2_PIX_FMT_RGB444 v4l2_fourcc('R','4','4','4')
++#endif
+ 
+-#include <linux/videodev2.h>
+-
+-
+ #define true 1
+ #define false 0
+ 
