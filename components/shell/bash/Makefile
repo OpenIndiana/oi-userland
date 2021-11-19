@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2021, Andreas Wacknitz
 #
 
 BUILD_BITS=		64
@@ -45,7 +46,8 @@ BASH_PATCHLEVEL=$(shell grep -h "define PATCHLEVEL" $(COMPONENT_DIR)/patches/bas
 ifeq ($(BASH_PATCHLEVEL),)
 BASH_PATCHLEVEL=0
 endif
-IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).$(BASH_PATCHLEVEL)
+IPS_COMPONENT_VERSION= $(COMPONENT_VERSION).$(BASH_PATCHLEVEL)
+HUMAN_VERSION= $(COMPONENT_VERSION).p$(BASH_PATCHLEVEL)
 PATCH_LEVEL = 0
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
