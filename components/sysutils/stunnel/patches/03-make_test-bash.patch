@@ -1,0 +1,45 @@
+This patch will eventually not be needed, as upstream is redoing their
+test suite in python.  Until then, allow OpenIndiana to use /bin/bash
+for the tests.
+
+diff -ur stunnel-5.60.orig/tests/make_test stunnel-5.60/tests/make_test
+--- stunnel-5.60.orig/tests/make_test	2021-03-10 12:39:09.000000000 +0000
++++ stunnel-5.60/tests/make_test	2021-11-19 02:57:58.512432065 +0000
+@@ -78,11 +78,20 @@
+       fi
+     printf "\n%s\n" "Testing..." >> "results.log"
+     head -n5 "results.log"
+-    if ! grep -q "solaris" "results.log"
++    TEST_SHELL=/bin/sh
++    if grep -q "solaris" "results.log" 
++      then
++        if test -x /bin/bash
++          then
++            TEST_SHELL=/bin/bash
++        fi
++    fi
++    if ! grep -q "solaris" "results.log" || \
++         grep -q "solaris" "results.log" && test $TEST_SHELL = /bin/bash
+       then
+         for plik in ${script_path}/recipes/*
+           do
+-            /bin/sh $plik "$mynetcat" "$mynetstat" "$mybuffer" "$mypython"
++            $TEST_SHELL $plik "$mynetcat" "$mynetstat" "$mybuffer" "$mypython"
+             state=$?
+             if [ "$state" -eq 0 ]
+               then # $state=0
+@@ -104,12 +113,12 @@
+         printf "%s\n" "./make_test finished"
+         cd ..
+       else # skip make test for solaris
+-        printf "%s\n" "./make_test skipped"
++        printf "%s\n" "./make_test skipped (no compatible shell)"
+         printf "%s\n" "./make_test skipped" >> "results.log"
+         #result=125
+       fi
+   else # netcat not found
+-    printf "%s\n" "./make_test skipped"
++    printf "%s\n" "./make_test skipped (missing ncat/nc)"
+     #result=125
+   fi
+ exit $result

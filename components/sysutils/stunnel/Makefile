@@ -21,31 +21,31 @@
 
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# copyright (c) 2021, Tim Mooney.  All rights reserved.
 #
 
+BUILD_BITS=             64
+USE_OPENSSL11=          yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		stunnel
-COMPONENT_VERSION=	4.56
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	http://www.stunnel.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:9cae2cfbe26d87443398ce50d7d5db54e5ea363889d5d2ec8d2778a01c871293
+COMPONENT_NAME=         stunnel
+COMPONENT_VERSION=      5.60
+COMPONENT_SUMMARY=	A TLS-encrypting socket wrapper
+COMPONENT_PROJECT_URL=  https://www.stunnel.org/
+COMPONENT_FMRI=		service/security/stunnel
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:c45d765b1521861fea9b03b425b9dd7d48b3055128c0aec673bba5ef9b8f787d
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPLv2
 
-COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)/ac4c4a30bd7a55b6687cbd62d864054c/$(COMPONENT_ARCHIVE)
-
-COMPONENT_BUGDB=	utility/stunnel
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # need /usr/perl5/bin on path to access pod2man perl script, used by 
 # the build to create docs. 
 # Perl 5.10 pod2man does not recognize "-u" argument.
-COMPONENT_BUILD_ENV +=  PATH=/usr/perl5/5.16/bin:$(PATH)
+COMPONENT_BUILD_ENV +=  PATH=$(PERL5BINDIR):$(PATH)
 
 CPPFLAGS +=	"-DPIDFILE='\"/var/run/stunnel.pid\"'"
 
@@ -54,33 +54,37 @@ CPPFLAGS += -DMACH64='\"$(MACH64)\"'
 
 CONFIGURE_OPTIONS +=	--disable-fips
 CONFIGURE_OPTIONS +=	--enable-ipv6
+CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS +=	--with-ssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
+# work around Linux-specific LDFLAGS
+CONFIGURE_OPTIONS +=	LDFLAGS="-L$(OPENSSL_PREFIX)/lib/$(MACH64) $(LDFLAGS)"
 
 # used to generate LD_PRELOAD_* interposer pathnames
 COMPONENT_BUILD_ARGS += pkglibdir=/usr/lib/stunnel
 
 COMPONENT_PRE_INSTALL_ACTION = \
 	$(MKDIR) $(PROTOETCDIR)/stunnel ; \
+	$(MKDIR) $(PROTOETCDIR)/stunnel/conf.d ; \
 	$(TOUCH) $(PROTOETCDIR)/stunnel/stunnel.pem
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-build:          $(BUILD_32_and_64)
+unexport SHELLOPTS
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/^test /p" ' \
+	'-e "/^summary: /p" '
 
-install:        $(INSTALL_32_and_64)
-
-test:           $(NO_TESTS)
+# ncat needed for test suite
+REQUIRED_PACKAGES += diagnostic/nmap-cli
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

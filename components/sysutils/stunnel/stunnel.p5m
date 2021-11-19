@@ -11,44 +11,48 @@
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2013, Adam Stevko. All rights reserved.
+# Copyright (c) 2021, Tim Mooney. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
-set name=pkg.fmri value=pkg:/service/security/stunnel@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="An SSL-encrypting socket wrapper"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=pkg.description value="Stunnel is a socket wrapper which can provide SSL (Secure Sockets Layer) support to ordinary applications. For example, it can be used in conjunction with imapd to create an SSL secure IMAP server."
 set name=info.classification value="org.opensolaris.category.2008:System/Security"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license stunnel.license license=GPLv2
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file files/auth_stunnel path=etc/security/auth_attr.d/stunnel
 file files/prof_stunnel path=etc/security/prof_attr.d/stunnel
 file files/stunnel.xml path=lib/svc/manifest/network/ssl/stunnel.xml
 
-file tools/stunnel.conf path=etc/stunnel/stunnel.conf mode=0644 preserve=true
+# use the updated sample conf as our new default stunnel.conf
+file etc/stunnel/stunnel.conf-sample path=etc/stunnel/stunnel.conf mode=0644 preserve=true
 
-dir  path=etc
 dir  path=etc/stunnel
+dir  path=etc/stunnel/conf.d
 file etc/stunnel/stunnel.conf-sample path=usr/share/doc/stunnel/stunnel.conf-sample
-dir  path=usr
-dir  path=usr/bin
-dir  path=usr/bin/$(MACH64)
-file path=usr/bin/$(MACH64)/stunnel
 file path=usr/bin/stunnel
-dir  path=usr/lib
-dir  path=usr/lib/$(MACH64)
+file path=usr/bin/stunnel3
 dir  path=usr/lib/$(MACH64)/stunnel
 file path=usr/lib/$(MACH64)/stunnel/libstunnel.so
-dir  path=usr/lib/stunnel
-file path=usr/lib/stunnel/libstunnel.so
-dir  path=usr/share
-dir  path=usr/share/doc
 dir  path=usr/share/doc/stunnel
-file path=usr/share/doc/stunnel/PORTS
+file path=usr/share/doc/stunnel/AUTHORS.md
+file path=usr/share/doc/stunnel/BUGS.md
+file path=usr/share/doc/stunnel/COPYING.md
+file path=usr/share/doc/stunnel/COPYRIGHT.md
+file path=usr/share/doc/stunnel/CREDITS.md
+file path=usr/share/doc/stunnel/INSTALL.FIPS.md
+file path=usr/share/doc/stunnel/INSTALL.W32.md
+file path=usr/share/doc/stunnel/INSTALL.WCE.md
+file path=usr/share/doc/stunnel/NEWS.md
+file path=usr/share/doc/stunnel/PORTS.md
+file path=usr/share/doc/stunnel/README.md
+file path=usr/share/doc/stunnel/TODO.md
 dir  path=usr/share/doc/stunnel/examples
 file path=usr/share/doc/stunnel/examples/ca.html
 file path=usr/share/doc/stunnel/examples/ca.pl
@@ -56,9 +60,11 @@ file path=usr/share/doc/stunnel/examples/importCA.html
 file path=usr/share/doc/stunnel/examples/importCA.sh
 file path=usr/share/doc/stunnel/examples/script.sh
 file path=usr/share/doc/stunnel/examples/stunnel.init
+file path=usr/share/doc/stunnel/examples/stunnel.logrotate
+file path=usr/share/doc/stunnel/examples/stunnel.rh.init
 file path=usr/share/doc/stunnel/examples/stunnel.service
 file path=usr/share/doc/stunnel/examples/stunnel.spec
 file path=usr/share/doc/stunnel/stunnel.html
-dir  path=usr/share/man
-dir  path=usr/share/man/man8
+file path=usr/share/doc/stunnel/stunnel.pl.html
 file path=usr/share/man/man8/stunnel.8
+file path=usr/share/man/man8/stunnel.pl.8
