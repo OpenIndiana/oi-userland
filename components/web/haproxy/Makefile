@@ -15,7 +15,7 @@
 
 BUILD_BITS=			64
 BUILD_STYLE=		justmake
-USE_OPENSSL11=		yes
+#USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		haproxy
@@ -74,3 +74,4 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
