@@ -1,0 +1,21 @@
+
+Without this patch, python detects and uses epoll which only exists in
+OmniOS for lx zones and Linux compatibility. It is not quite the same as
+the Linux implementation and can cause socket related failures in python.
+
+There is no nice way to tell configure that we don't have it
+(pkgsrc get around this by installing a broken epoll.h into the build
+ chroot area).
+
+diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
+--- a~/configure.ac	1970-01-01 00:00:00
++++ a/configure.ac	1970-01-01 00:00:00
+@@ -3779,7 +3779,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#in
+   [AC_MSG_RESULT(no)
+ ])
+ AC_MSG_CHECKING(for epoll)
+-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/epoll.h>]], [[void *x=epoll_create]])],
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/epoll.h>]], [[void *x=NOepoll_create]])],
+   [AC_DEFINE(HAVE_EPOLL, 1, Define if you have the 'epoll' functions.)
+    AC_MSG_RESULT(yes)],
+   [AC_MSG_RESULT(no)
