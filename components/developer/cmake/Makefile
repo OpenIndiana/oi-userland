@@ -32,8 +32,8 @@ PARFAIT_BUILD=			no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
-COMPONENT_MAJOR_VERSION=3.21
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).4
+COMPONENT_MAJOR_VERSION=3.22
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).0
 COMPONENT_PROJECT_URL=  https://www.cmake.org/
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
@@ -46,7 +46,7 @@ CMake generates native makefiles and workspaces that can be used in the \
 workspaces that can be used in the compiler environment of your choice.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d9570a95c215f4c9886dd0f0564ca4ef8d18c30750f157238ea12669c2985978
+COMPONENT_ARCHIVE_HASH=	sha256:998c7ba34778d2dfdb3df8a695469e24b11e2bfa21fbe41b361a3f45e1c9345e
 COMPONENT_ARCHIVE_URL=	https://www.cmake.org/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD, MIT, GPLv2, Curl, PD
 
@@ -126,8 +126,8 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 COMPONENT_TEST_TARGETS =	test
 
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/\s\s*[0-9][0-9]*\.[0-9][0-9]* sec/ SEC sec/"' \
-	'-e "s/\][0-9][0-9]*\.[0-9][0-9]* sec/\]SEC sec/"' \
+	'-e "s/\s\s*[0-9][0-9]*\.[0-9][0-9]* sec//"' \
+	'-e "s/\][0-9][0-9]*\.[0-9][0-9]* sec/\]/"' \
 	'-e "/bin/ctest/d"' \
 	'-e "/Test project/d"' \
 	'-e "/^[mM]ake/d"' \
