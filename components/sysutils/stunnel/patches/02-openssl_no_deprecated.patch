@@ -1,0 +1,20 @@
+
+The logic in this test is wrong; CRYPTO_set_id_callback is only available
+if both of those conditions are true.
+
+This has been reported to upstream and the patch below is their preferred
+method to fix it.  We should not need our local patch starting with 5.61
+
+
+diff -ur stunnel-5.60.orig/src/sthreads.c stunnel-5.60/src/sthreads.c
+--- stunnel-5.60.orig/src/sthreads.c	2021-02-10 05:39:36.000000000 +0000
++++ stunnel-5.60/src/sthreads.c	2021-11-19 01:54:06.307846225 +0000
+@@ -112,7 +112,7 @@
+ #if OPENSSL_VERSION_NUMBER>=0x10000000L && OPENSSL_VERSION_NUMBER<0x10100000L
+     CRYPTO_THREADID_set_callback(threadid_func);
+ #endif
+-#if OPENSSL_VERSION_NUMBER<0x10000000L || !defined(OPENSSL_NO_DEPRECATED)
++#if OPENSSL_VERSION_NUMBER<0x10000000L
+     CRYPTO_set_id_callback(stunnel_thread_id);
+ #endif
+ }
