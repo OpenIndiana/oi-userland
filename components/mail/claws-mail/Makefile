@@ -11,6 +11,7 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 # Copyright (c) 2020 Michal Nowak
+# Copyright 2021 Gary Mills
 #
 
 BUILD_BITS=		64
@@ -18,21 +19,26 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
-COMPONENT_VERSION=	3.18.0
+COMPONENT_VERSION=	4.0.0
 COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:cb5819e66b4bb3bbd44eb79c58f516a932389367a7900554321c24b509ece6bb
-COMPONENT_ARCHIVE_URL=	https://www.claws-mail.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+    sha256:6f04364715f97acd8c26c7edd61a57598d926f57e796c03bb9d9080cfa3dc894
+COMPONENT_ARCHIVE_URL=	https://www.claws-mail.org/download.php?file=releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPL-3
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION= Applications/Internet
 
+TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fi )
+
+# Specify the python version used by this build
+PYTHON_VERSION=		3.9
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -43,19 +49,20 @@ CONFIGURE_OPTIONS += --disable-ldap
 CONFIGURE_OPTIONS += --disable-perl-plugin
 CONFIGURE_OPTIONS += --disable-rssyl-plugin
 CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --disable-jpilot
+CONFIGURE_OPTIONS += --disable-valgrind
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_ENV += PATH=/usr/bin/$(MACH64):/usr/bin
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-REQUIRED_PACKAGES += library/python/pygobject
-REQUIRED_PACKAGES += library/python/pygtk2
-REQUIRED_PACKAGES += library/libsoup
-REQUIRED_PACKAGES += runtime/python-27
+# Manual-derived dependencies
+REQUIRED_PACKAGES += runtime/python-39
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libgdata
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/startup-notification
@@ -77,4 +84,3 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
-REQUIRED_PACKAGES += x11/library/libx11
