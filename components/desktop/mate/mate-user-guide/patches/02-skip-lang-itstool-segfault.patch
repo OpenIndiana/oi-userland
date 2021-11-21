@@ -1,0 +1,18 @@
+
+itstool has several problems with memory management with libxml2.  I'm
+only skipping these languages because their XML causes our itstool to
+crash.  Once that issue is fixed, this patch should be dropped and these
+languages should be shipped again.
+
+diff -ur mate-user-guide-1.26.0.orig/mate-user-guide/Makefile.am mate-user-guide-1.26.0/mate-user-guide/Makefile.am
+--- mate-user-guide-1.26.0.orig/mate-user-guide/Makefile.am	2021-08-05 14:05:42.000000000 +0000
++++ mate-user-guide-1.26.0/mate-user-guide/Makefile.am	2021-11-27 23:57:00.019861763 +0000
+@@ -75,7 +75,7 @@
+ 
+ if USE_NLS
+ # Add linguas to be ignored, e.g. IGNORE_HELP_LINGUAS = ca de es fr
+-IGNORE_HELP_LINGUAS =
++IGNORE_HELP_LINGUAS = ja sr
+ HELP_LINGUAS = $(if $(IGNORE_HELP_LINGUAS), \
+ 	$(filter-out $(IGNORE_HELP_LINGUAS),$(subst /,,$(dir $(wildcard */*.po)))), \
+ 	$(subst /,,$(dir $(wildcard */*.po))) )
