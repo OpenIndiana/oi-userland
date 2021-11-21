@@ -1,0 +1,243 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2019, Michal Nowak
+# copyright 2021, Andreas Wacknitz
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/gm4 type=require
+
+# Drop all info files as we provide them in a separate package:
+<transform file path=.+/info/.+ -> drop>
+
+# Drop bison runtime files as we provide them in a separate package:
+<transform file path=.+/gnu/lib/.+ -> drop>
+<transform file path=.+/locale/.+ -> drop>
+
+link path=usr/sfw/bin/bison target=../../bin/bison mediator=bison mediator-version=$(COMPONENT_MAJOR_VERSION)
+link path=usr/sfw/bin/$(MACH64)/bison target=../../../bin/$(MACH64)/bison mediator=bison mediator-version=$(COMPONENT_MAJOR_VERSION)
+
+link path=usr/bin/$(MACH64)/bison target=bison-$(COMPONENT_MAJOR_VERSION) mediator=bison mediator-version=$(COMPONENT_MAJOR_VERSION)
+link path=usr/bin/bison target=bison-$(COMPONENT_MAJOR_VERSION) mediator=bison mediator-version=$(COMPONENT_MAJOR_VERSION)
+
+link path=usr/share/man/man1/bison.1 target=bison-$(COMPONENT_MAJOR_VERSION).1 mediator=bison mediator-version=$(COMPONENT_MAJOR_VERSION)
+
+#link path=usr/gnu/lib/$(MACH64)/liby.so.1 target=bison-$(COMPONENT_MAJOR_VERSION)/liby.so.1 mediator=bison mediator-version=$(COMPONENT_MAJOR_VERSION)
+#link path=usr/gnu/lib/liby.so.1 target=bison-$(COMPONENT_MAJOR_VERSION)/liby.so.1 mediator=bison mediator-version=$(COMPONENT_MAJOR_VERSION)
+
+file path=usr/bin/$(MACH64)/bison-$(COMPONENT_MAJOR_VERSION)
+file path=usr/bin/bison-$(COMPONENT_MAJOR_VERSION)
+file path=usr/gnu/lib/$(MACH64)/bison-$(COMPONENT_MAJOR_VERSION)/liby.so.1
+file path=usr/gnu/lib/bison-$(COMPONENT_MAJOR_VERSION)/liby.so.1
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/aclocal/bison-i18n.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/README.md
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/bison-default.css
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/m4sugar/foreach.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/m4sugar/m4sugar.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/README-D.txt
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/bison.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/c++-skel.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/c++.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/c-like.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/c-skel.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/c.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/d-skel.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/d.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/glr.c
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/glr.cc
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/java-skel.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/java.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/lalr1.cc
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/lalr1.d
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/lalr1.java
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/location.cc
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/stack.hh
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/traceon.m4
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/variant.hh
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/skeletons/yacc.c
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/xslt/bison.xsl
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/xslt/xml2dot.xsl
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/xslt/xml2text.xsl
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/bison/xslt/xml2xhtml.xsl
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/info/bison.info
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/info/dir
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/af/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ast/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/be/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/bg/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/bg/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/bg/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ca/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ca/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ca/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/cs/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/da/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/da/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/da/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/de/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/de/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/de/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/el/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/el/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/el/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/eo/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/eo/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/eo/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/es/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/es/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/es/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/et/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/et/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/et/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/eu/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/fi/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/fi/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/fi/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/fr/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/fr/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/fr/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ga/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ga/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ga/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/gl/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/gl/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/hr/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/hr/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/hu/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/hu/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ia/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/id/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/id/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/it/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/it/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/it/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ja/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ja/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ja/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ko/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ky/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/lt/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/lv/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ms/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ms/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ms/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/nb/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/nb/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/nb/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/nl/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/nl/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/nl/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/pl/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/pl/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/pl/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/pt/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/pt/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/pt/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/pt_BR/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/pt_BR/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/pt_BR/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ro/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ro/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ro/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ru/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ru/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ru/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/rw/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/sk/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/sl/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/sl/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/sq/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/sr/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/sr/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/sr/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/sv/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/sv/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/sv/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/ta/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/th/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/tr/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/tr/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/tr/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/uk/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/uk/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/uk/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/vi/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/vi/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/vi/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/zh_CN/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/zh_CN/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/zh_CN/LC_MESSAGES/bison.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/zh_TW/LC_MESSAGES/bison-gnulib.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/zh_TW/LC_MESSAGES/bison-runtime.mo
+file path=usr/share/bison-$(COMPONENT_MAJOR_VERSION)/locale/zh_TW/LC_MESSAGES/bison.mo
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/AUTHORS
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/COPYING
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/NEWS
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/README
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/THANKS
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/TODO
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/README.md
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c++/Makefile
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c++/README.md
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c++/calc++/Makefile
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c++/calc++/README.md
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c++/calc++/calc++.cc
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c++/calc++/driver.cc
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c++/calc++/driver.hh
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c++/calc++/parser.yy
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c++/calc++/scanner.ll
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c++/simple.yy
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c++/variant-11.yy
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c++/variant.yy
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/README.md
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/bistromathic/Makefile
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/bistromathic/README.md
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/bistromathic/parse.y
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/calc/Makefile
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/calc/README.md
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/calc/calc.y
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/lexcalc/Makefile
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/lexcalc/README.md
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/lexcalc/parse.y
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/lexcalc/scan.l
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/mfcalc/Makefile
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/mfcalc/calc.h
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/mfcalc/mfcalc.y
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/pushcalc/Makefile
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/pushcalc/README.md
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/pushcalc/calc.y
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/reccalc/Makefile
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/reccalc/README.md
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/reccalc/parse.y
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/reccalc/scan.l
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/rpcalc/Makefile
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/c/rpcalc/rpcalc.y
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/d/Makefile
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/d/README.md
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/d/calc.y
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/java/README.md
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/java/calc/Calc.y
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/java/calc/Makefile
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/java/simple/Calc.y
+file path=usr/share/doc/bison-$(COMPONENT_MAJOR_VERSION)/examples/java/simple/Makefile
+file path=usr/share/man/man1/bison-$(COMPONENT_MAJOR_VERSION).1
