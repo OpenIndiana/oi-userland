@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pari
 COMPONENT_VERSION=	2.13.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The PARI Computer Algebra System
 COMPONENT_PROJECT_URL=	https://pari.math.u-bordeaux.fr
 COMPONENT_FMRI=		library/math/pari
@@ -44,6 +45,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH=$(PATH.gnu)
 
 # Configure complains when built outside of source tree
+# The PARI script config/genfunclist uses find -type f and fails on symlinks
 COMPONENT_PRE_CONFIGURE_ACTION= ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # PARI/gp Configure is not autoconf 
@@ -55,13 +57,15 @@ CONFIGURE_OPTIONS=     --prefix=$(CONFIGURE_PREFIX)
 # PARI/gp installs its 64bit library in /usr/lib
 CONFIGURE_OPTIONS+=	--libdir=$(USRLIBDIR64)
 
-# PARI/gp says GMP on OpenIndiana is too old
+# PARI/gp can be compiled with GMP but does not find gmp.h in /usr/include/gmp
+# CONFIGURE_OPTIONS=	--with-gmp-include=/usr/include/gmp
+# our choice is to use the native kernel i.e., compile without GMP 
 CONFIGURE_OPTIONS+=	--without-gmp
 
 CONFIGURE_ENV+= 	CFLAGS="$(CFLAGS)"
 
 # all does not work because documentation requires Tex typesetting
-COMPONENT_BUILD_TARGET = gp
+COMPONENT_BUILD_TARGETS = gp
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/readline
