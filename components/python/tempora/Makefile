@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tempora
 COMPONENT_VERSION=	1.13
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	'Objects and routines pertaining to date and time'
 COMPONENT_PROJECT_URL=	https://pypi.org/project/tempora/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -31,9 +31,8 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
-TEST_TARGET:        $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
@@ -43,13 +42,20 @@ COMPONENT_POST_INSTALL_ACTION += \
         (cd $(PROTO_DIR)/usr/bin && \
           $(MV) -f calc-prorate calc-prorate-$(PYTHON_VERSION))
 
+TEST_TARGET=$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/python/setuptools_scm-27
 REQUIRED_PACKAGES += library/python/setuptools_scm-35
+REQUIRED_PACKAGES += library/python/setuptools_scm-37
+REQUIRED_PACKAGES += library/python/setuptools_scm-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-35
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
