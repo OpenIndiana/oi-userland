@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		CherryPy
 # This is the last version with Python 2.7 support
 COMPONENT_VERSION=	17.3.0
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_SUMMARY=	'Pythonic, object-oriented HTTP framework'
 COMPONENT_PROJECT_URL=	https://cherrypy.github.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,7 +41,7 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE.md
 
-PYTHON_VERSIONS=	3.5
+PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -55,9 +55,19 @@ COMPONENT_TEST_ARGS =	-v
 
 # Test requirements
 REQUIRED_PACKAGES += library/python/nose-35
+REQUIRED_PACKAGES += library/python/nose-37
+REQUIRED_PACKAGES += library/python/nose-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-35
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
 REQUIRED_PACKAGES += library/python/setuptools_scm-35
+REQUIRED_PACKAGES += library/python/setuptools_scm-37
+REQUIRED_PACKAGES += library/python/setuptools_scm-39
 REQUIRED_PACKAGES += library/python/six-35
+REQUIRED_PACKAGES += library/python/six-37
+REQUIRED_PACKAGES += library/python/six-39
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
