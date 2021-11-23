@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pari
 COMPONENT_VERSION=	2.13.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The PARI Computer Algebra System
 COMPONENT_PROJECT_URL=	https://pari.math.u-bordeaux.fr
 COMPONENT_FMRI=		library/math/pari
@@ -38,7 +38,7 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/pub/pari/unix/$(COMPONENT_ARCHIV
 COMPONENT_LICENSE=     	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET= $(NO_TESTS)
+TEST_TARGET= $(TEST_64)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -62,10 +62,14 @@ CONFIGURE_OPTIONS+=	--libdir=$(USRLIBDIR64)
 # our choice is to use the native kernel i.e., compile without GMP 
 CONFIGURE_OPTIONS+=	--without-gmp
 
+CONFIGURE_OPTIONS+=	--with-readline
+
 CONFIGURE_ENV+= 	CFLAGS="$(CFLAGS)"
 
 # all does not work because documentation requires Tex typesetting
 COMPONENT_BUILD_TARGETS = gp
+
+COMPONENT_TEST_TARGETS = test-all
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/readline
