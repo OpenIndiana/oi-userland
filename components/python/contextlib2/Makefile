@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		contextlib2
 COMPONENT_VERSION=	0.5.5
-COMPONEENT_REVISION=	1
+COMPONEENT_REVISION=	2
 COMPONENT_SUMMARY=	'A backport of the standard library contextlib module to earlier Python versions'
 COMPONENT_PROJECT_URL=	https://github.com/cherrypy/contextlib2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,7 +29,9 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	PSFv2
 COMPONENT_LICENSE_FILE=	LICENSE.txt
 
-PYTHON_VERSIONS=	2.7 3.5
+# contextlib2 isn't necessary on newer versions of python 3, but some things
+# in their current versions use it rather than the builtin 'contextlib' anyway
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
