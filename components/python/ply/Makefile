@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ply
 COMPONENT_VERSION=	3.8
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -39,7 +39,7 @@ COMPONENT_ARCHIVE_URL=	http://www.dabeaz.com/ply/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.dabeaz.com/ply/
 COMPONENT_BUGDB=	python-mod/ply
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -59,3 +59,5 @@ COMPONENT_TEST_TRANSFORMS += \
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
