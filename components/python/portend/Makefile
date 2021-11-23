@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		portend
 COMPONENT_VERSION=	2.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	'TCP port monitoring utilities'
 COMPONENT_PROJECT_URL=	https://pypi.org/project/portend/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,7 +29,7 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -48,3 +48,5 @@ test:           $(NO_TESTS)
 # Build dependencies
 REQUIRED_PACKAGES += library/python/setuptools_scm-27
 REQUIRED_PACKAGES += library/python/setuptools_scm-35
+REQUIRED_PACKAGES += library/python/setuptools_scm-37
+REQUIRED_PACKAGES += library/python/setuptools_scm-39
