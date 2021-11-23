@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycurl
 COMPONENT_VERSION=	7.43.0.2
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://pycurl.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -37,7 +37,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/pycurl
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -45,6 +45,10 @@ include $(WS_MAKE_RULES)/ips.mk
 
 # to make sure that the docs get installed in the right place.
 PYTHON_DATA = /usr
+
+# pycurl can't auto-detect the backend in use
+COMPONENT_BUILD_ENV += PYCURL_SSL_LIBRARY=openssl
+COMPONENT_INSTALL_ENV += PYCURL_SSL_LIBRARY=openssl
 
 ASLR_MODE=	$(ASLR_NOT_APPLICABLE)
 
@@ -63,10 +67,14 @@ test:		$(TEST_32_and_64)
 REQUIRED_PACKAGES += library/python/nose
 REQUIRED_PACKAGES += library/python/nose-27
 REQUIRED_PACKAGES += library/python/nose-35
+REQUIRED_PACKAGES += library/python/nose-37
+REQUIRED_PACKAGES += library/python/nose-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
