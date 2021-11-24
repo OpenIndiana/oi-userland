@@ -12,6 +12,7 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
+# Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
 
 BUILD_BITS=		64
@@ -19,14 +20,14 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mozo
-COMPONENT_MJR_VERSION=	1.24
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MJR_VERSION=	1.26
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	Simple menu editor for MATE
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:608d42bbd607b84fe123f934118b6880e581fb4385429f08de4e07d8de20fa92
+COMPONENT_ARCHIVE_HASH= sha256:4642cbf985fa0d72e205ad7f6abfb7d008e3117e2c5e331340f2bc6466c3ddc2
 COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/xdg/menu-editor/mozo
 COMPONENT_CLASSIFICATION=	Applications/Configuration and Preferences
@@ -47,5 +48,6 @@ CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON.3.5.VENDOR_PACKAGES.64)"
 # Build requirements
 REQUIRED_PACKAGES += library/python/pygobject-3
 REQUIRED_PACKAGES += library/python/pygobject-3-35
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-35
