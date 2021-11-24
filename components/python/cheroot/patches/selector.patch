@@ -1,0 +1,16 @@
+
+When using selectors.DefaultSelector() [ which is the DevPollSelector ]
+cheroot can miss socket wakeups.
+
+diff -wpruN '--exclude=*.orig' a~/cheroot/connections.py a/cheroot/connections.py
+--- a~/cheroot/connections.py	1970-01-01 00:00:00
++++ a/cheroot/connections.py	1970-01-01 00:00:00
+@@ -70,7 +70,7 @@ class _ThreadsafeSelector:
+     """
+ 
+     def __init__(self):
+-        self._selector = selectors.DefaultSelector()
++        self._selector = selectors.PollSelector()
+         self._lock = threading.Lock()
+ 
+     def __len__(self):
