@@ -703,16 +703,17 @@ ok 384 - existing file and directory
 ok 385 - existing directory and file
 ok 386 - exact prefix matching (with root)
 ok 387 - exact prefix matching (without root)
-ok 388 - trailing whitespace is ignored
-ok 389 - quoting allows trailing whitespace
-ok 390 - correct handling of backslashes
-ok 391 - info/exclude trumps core.excludesfile
-ok 392 - set up ignore file for symlink tests
-ok 393 - symlinks respected in core.excludesFile
-ok 394 - symlinks respected in info/exclude
-ok 395 - symlinks not respected in-tree
-# passed all 395 test(s)
-1..395
+ok 388 - directories and ** matches
+ok 389 - trailing whitespace is ignored
+ok 390 - quoting allows trailing whitespace
+ok 391 - correct handling of backslashes
+ok 392 - info/exclude trumps core.excludesfile
+ok 393 - set up ignore file for symlink tests
+ok 394 - symlinks respected in core.excludesFile
+ok 395 - symlinks respected in info/exclude
+ok 396 - symlinks not respected in-tree
+# passed all 396 test(s)
+1..396
 *** t0009-prio-queue.sh ***
 ok 1 - basic ordering
 ok 2 - mixed put and get
@@ -23899,18 +23900,19 @@ ok 51 - fast-forward pull succeeds with "true" in pull.ff
 ok 52 - pull.ff=true overrides merge.ff=false
 ok 53 - fast-forward pull creates merge with "false" in pull.ff
 ok 54 - pull prevents non-fast-forward with "only" in pull.ff
-ok 55 - already-up-to-date pull succeeds with "only" in pull.ff
-ok 56 - already-up-to-date pull/rebase succeeds with "only" in pull.ff
-ok 57 - merge c1 with c2 (ours in pull.twohead)
-ok 58 - merge c1 with c2 and c3 (recursive in pull.octopus)
-ok 59 - merge c1 with c2 and c3 (recursive and octopus in pull.octopus)
-ok 60 - setup conflicted merge
-ok 61 - merge picks up the best result
-ok 62 - merge picks up the best result (from config)
-ok 63 - merge errors out on invalid strategy
+ok 55 - already-up-to-date pull succeeds with unspecified pull.ff
+ok 56 - already-up-to-date pull succeeds with "only" in pull.ff
+ok 57 - already-up-to-date pull/rebase succeeds with "only" in pull.ff
+ok 58 - merge c1 with c2 (ours in pull.twohead)
+ok 59 - merge c1 with c2 and c3 (recursive in pull.octopus)
+ok 60 - merge c1 with c2 and c3 (recursive and octopus in pull.octopus)
+ok 61 - setup conflicted merge
+ok 62 - merge picks up the best result
+ok 63 - merge picks up the best result (from config)
 ok 64 - merge errors out on invalid strategy
-# passed all 64 test(s)
-1..64
+ok 65 - merge errors out on invalid strategy
+# passed all 65 test(s)
+1..65
 *** t7602-merge-octopus-many.sh ***
 ok 1 - setup
 ok 2 - merge c1 with c2, c3, c4, ... c29
@@ -24440,52 +24442,16 @@ ok 4 - grep pcre utf-8 string with "+"
 ok 5 - grep literal string, with -F
 ok 6 - grep string with regex, with -F
 ok 7 - pickaxe -i on non-ascii
-not ok 8 - log --author with an ascii pattern on UTF-8 data
-#	
-#		cat >expected <<-\EOF &&
-#		Author: <BOLD;RED>À Ú Thor<RESET> <author@example.com>
-#		EOF
-#		test_write_lines "forth" >file4 &&
-#		git add file4 &&
-#		git commit --author="À Ú Thor <author@example.com>" -m sécond &&
-#		git log -1 --color=always --perl-regexp --author=".*Thor" >log &&
-#		grep Author log >actual.raw &&
-#		test_decode_color <actual.raw >actual &&
-#		test_cmp expected actual
-#	
-not ok 9 - log --committer with an ascii pattern on ISO-8859-1 data
-#	
-#		cat >expected <<-\EOF &&
-#		Commit:     Ç<BOLD;RED> O Mîtter <committer@example.com><RESET>
-#		EOF
-#		test_write_lines "fifth" >file5 &&
-#		git add file5 &&
-#		GIT_COMMITTER_NAME="Ç O Mîtter" &&
-#		GIT_COMMITTER_EMAIL="committer@example.com" &&
-#		git -c i18n.commitEncoding=latin1 commit -m thïrd &&
-#		git -c i18n.logOutputEncoding=latin1 log -1 --pretty=fuller --color=always --perl-regexp --committer=" O.*" >log &&
-#		grep Commit: log >actual.raw &&
-#		test_decode_color <actual.raw >actual &&
-#		test_cmp expected actual
-#	
-ok 10 - log --grep with an ascii pattern on UTF-8 data
-ok 11 - log --grep with an ascii pattern on ISO-8859-1 data
-ok 12 - PCRE v2: setup invalid UTF-8 data
-not ok 13 - PCRE v2: grep ASCII from invalid UTF-8 data
-#	
-#		git grep -h "var" invalid-0x80 >actual &&
-#		test_cmp expected actual &&
-#		git grep -h "(*NO_JIT)var" invalid-0x80 >actual &&
-#		test_cmp expected actual
-#	
-ok 14 - PCRE v2: grep ASCII from invalid UTF-8 data (PCRE2 bug #2642)
-ok 15 - PCRE v2: grep non-ASCII from invalid UTF-8 data
-ok 16 - PCRE v2: grep non-ASCII from invalid UTF-8 data (PCRE2 bug #2642)
-ok 17 - PCRE v2: grep non-ASCII from invalid UTF-8 data with -i
-ok 18 # skip PCRE v2: grep non-ASCII from invalid UTF-8 data with -i (missing PCRE2_MATCH_INVALID_UTF of GETTEXT_LOCALE,LIBPCRE2,PCRE2_MATCH_INVALID_UTF)
-ok 19 # skip PCRE v2: grep non-ASCII from invalid UTF-8 data with -i (PCRE2 bug #2642) (missing PCRE2_MATCH_INVALID_UTF of GETTEXT_LOCALE,LIBPCRE2,PCRE2_MATCH_INVALID_UTF)
-# failed 3 among 19 test(s)
-1..19
+ok 8 - PCRE v2: setup invalid UTF-8 data
+ok 9 - PCRE v2: grep ASCII from invalid UTF-8 data
+ok 10 - PCRE v2: grep ASCII from invalid UTF-8 data (PCRE2 bug #2642)
+ok 11 - PCRE v2: grep non-ASCII from invalid UTF-8 data
+ok 12 - PCRE v2: grep non-ASCII from invalid UTF-8 data (PCRE2 bug #2642)
+ok 13 - PCRE v2: grep non-ASCII from invalid UTF-8 data with -i
+ok 14 - PCRE v2: grep non-ASCII from invalid UTF-8 data with -i
+ok 15 - PCRE v2: grep non-ASCII from invalid UTF-8 data with -i (PCRE2 bug #2642)
+# passed all 15 test(s)
+1..15
 *** t7813-grep-icase-iso.sh ***
 # lib-gettext: Found 'is_IS.UTF-8' as an is_IS UTF-8 locale
 # lib-gettext: Found 'is_IS.ISO8859-1' as an is_IS ISO-8859-1 locale
@@ -26508,10 +26474,10 @@ ok 66 - prompt - hide if pwd ignored - inside gitdir
 # passed all 66 test(s)
 1..66
 
-failed test(s): t0204 t1700 t7812
+failed test(s): t0204 t1700
 
 fixed   1
-success 22811
-failed  6
+success 22814
+failed  3
 broken  212
-total   23519
+total   23517
