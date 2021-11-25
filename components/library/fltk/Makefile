@@ -16,7 +16,7 @@ BUILD_BITS=				32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=        fltk
-COMPONENT_VERSION=     1.3.7
+COMPONENT_VERSION=     1.3.8
 COMPONENT_SUMMARY=     fltk - Fast Light Toolkit
 COMPONENT_PROJECT_URL= https://www.fltk.org
 COMPONENT_FMRI=        library/fltk
@@ -24,7 +24,7 @@ COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
 COMPONENT_ARCHIVE_URL=	https://fltk.org/pub/fltk/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:5d2ccb7ad94e595d3d97509c7a931554e059dd970b7b29e6fd84cb70fd5491c6
+COMPONENT_ARCHIVE_HASH=	sha256:f3c1102b07eb0e7a50538f9fc9037c18387165bc70d4b626e94ab725b9d4d1bf
 COMPONENT_LICENSE= GPLv2
 
 CONFIGURE_FIX_LIBTOOL_RPATH= no
@@ -44,11 +44,12 @@ CONFIGURE_OPTIONS+= --enable-shared
 CONFIGURE_OPTIONS+= --disable-static
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcursor
