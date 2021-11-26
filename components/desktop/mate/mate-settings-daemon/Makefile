@@ -12,6 +12,7 @@
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
 # Copyright 2020 Michal Nowak
+# Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
 
 BUILD_BITS=		64
@@ -19,17 +20,16 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-settings-daemon
-COMPONENT_MJR_VERSION=	1.24
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.26
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	Fork of gnome-settings-deamon
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:8c25b4f8aba69b9a0597e8759f9ef23f12ac0d3153f3f5b5a6d4afd0733f3914
+COMPONENT_ARCHIVE_HASH= sha256:b77aa017ff811a6fcae40bd45f18d8606eec87be21e3e6fa6d35c0fe14e66d41
 COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
@@ -46,6 +46,7 @@ CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/$(COMPONENT_NAME)
 CONFIGURE_OPTIONS+= --disable-rfkill
+CONFIGURE_OPTIONS+= --enable-pulse
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
@@ -57,7 +58,9 @@ REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += system/library/mozilla-nss
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += gnome/config/dconf
+REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
