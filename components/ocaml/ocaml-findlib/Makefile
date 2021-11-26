@@ -16,16 +16,15 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ocaml-findlib
-COMPONENT_VERSION= 1.8.1
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.9.1
 COMPONENT_SUMMARY= ocaml-find - OCaml library manager
 COMPONENT_PROJECT_URL= http://projects.camlcity.org/projects/findlib.html
 COMPONENT_FMRI= library/ocaml/ocaml-findlib
 COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_SRC=		ocamlfind-findlib-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_URL= https://github.com/ocaml/ocamlfind/archive/findlib-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:90e2d16e0e479ea61b7889c41f008530ffa7b6e48f0f52d5d22e006233f35cd2
+COMPONENT_ARCHIVE_URL=	https://github.com/ocaml/ocamlfind/archive/findlib-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:4cf6f1ac15564d5e4e4d9c2066f894c4bba2f9cb20ccedc9959089c5545dab9d
 COMPONENT_LICENSE= MIT
 
 TEST_TARGET=$(NO_TESTS)
