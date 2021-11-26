@@ -68,7 +68,7 @@ test_typed_pos_args_varargs_invalid_mulitple_types (unittests.internaltests.Inte
 test_typed_pos_args_varargs_not_given (unittests.internaltests.InternalTests) ... ok
 test_typed_pos_args_variadic_and_optional (unittests.internaltests.InternalTests) ... ok
 test_validate_json (unittests.internaltests.InternalTests)
-Validate the json schema for the test cases. ... ok
+Validate the json schema for the test cases. ... skipped 'Python jsonschema module not found.'
 test_version_compare (unittests.internaltests.InternalTests) ... ok
 test_version_number (unittests.internaltests.InternalTests) ... ok
 test_all_functions_defined_in_ast_interpreter (unittests.datatests.DataTests)
@@ -136,7 +136,7 @@ test_default_options_prefix (unittests.allplatformstests.AllPlatformTests)
 Tests that setting a prefix in default_options in project() works. ... ok
 test_default_options_prefix_dependent_defaults (unittests.allplatformstests.AllPlatformTests)
 Tests that setting a prefix in default_options in project() sets prefix ... ok
-test_devenv (unittests.allplatformstests.AllPlatformTests) ... ok
+test_devenv (unittests.allplatformstests.AllPlatformTests) ... ERROR
 test_dirs (unittests.allplatformstests.AllPlatformTests) ... ok
 test_dist_git (unittests.allplatformstests.AllPlatformTests) ... ok
 test_dist_git_script (unittests.allplatformstests.AllPlatformTests) ... ok
@@ -146,6 +146,7 @@ test_do_conf_file_preserve_newlines (unittests.allplatformstests.AllPlatformTest
 test_env_flags_to_linker (unittests.allplatformstests.AllPlatformTests) ... ok
 test_error_location_path (unittests.allplatformstests.AllPlatformTests)
 Test locations in meson errors contain correct paths ... ok
+test_extract_objects_custom_target_no_warning (unittests.allplatformstests.AllPlatformTests) ... ok
 test_feature_check_usage_subprojects (unittests.allplatformstests.AllPlatformTests) ... ok
 test_flock (unittests.allplatformstests.AllPlatformTests) ... ok
 test_force_fallback_for (unittests.allplatformstests.AllPlatformTests) ... ok
@@ -218,6 +219,7 @@ test_pkgconfig_static (unittests.allplatformstests.AllPlatformTests)
 Test that the we prefer static libraries when `static: true` is ... ok
 test_prebuilt_object (unittests.allplatformstests.AllPlatformTests) ... ok
 test_prebuilt_shared_lib (unittests.allplatformstests.AllPlatformTests) ... ok
+test_prebuilt_shared_lib_rpath (unittests.allplatformstests.AllPlatformTests) ... ok
 test_prebuilt_static_lib (unittests.allplatformstests.AllPlatformTests) ... ok
 test_prefix_dependent_defaults (unittests.allplatformstests.AllPlatformTests)
 Tests that configured directory paths are set to prefix dependent ... ok
@@ -404,7 +406,7 @@ test_too_many_plans (unittests.taptests.TAPParserTests) ... ok
 test_unexpected (unittests.taptests.TAPParserTests) ... ok
 test_version (unittests.taptests.TAPParserTests) ... ok
 test_yaml (unittests.taptests.TAPParserTests) ... ok
-test_foreach (unittests.subprojectscommandtests.SubprojectsCommandTests) ... ok
+test_foreach (unittests.subprojectscommandtests.SubprojectsCommandTests) ... ERROR
 test_git_update (unittests.subprojectscommandtests.SubprojectsCommandTests) ... ok
 test_purge (unittests.subprojectscommandtests.SubprojectsCommandTests) ... ok
 test_invalid_option_names (unittests.platformagnostictests.PlatformAgnosticTests) ... ok
@@ -415,10 +417,10 @@ test_as_link_whole (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_basic_soname (unittests.linuxliketests.LinuxlikeTests)
 Test that the soname is set correctly for shared libraries. This can't ... ok
 test_build_rpath (unittests.linuxliketests.LinuxlikeTests) ... FAIL
+test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/binary_wrapper.py']> is not a valid python or it is missing distutils
+test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/binary_wrapper.py']> is not a valid python or it is missing distutils
 test_build_rpath_pkgconfig (unittests.linuxliketests.LinuxlikeTests)
 Test that current build artefacts (libs) are found first on the rpath, ... FAIL
-test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/binary_wrapper.py']> is not a valid python or it is missing distutils
-test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/binary_wrapper.py']> is not a valid python or it is missing distutils
 test_cmake_multilib (unittests.linuxliketests.LinuxlikeTests)
 Test that the cmake module handles multilib paths correctly. ... ok
 test_compiler_c_stds (unittests.linuxliketests.LinuxlikeTests)
@@ -467,7 +469,6 @@ test_link_arg_fullname (unittests.linuxliketests.LinuxlikeTests)
 Test for  support of -l:libfullname.a ... ok
 test_lookup_system_after_broken_fallback (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_no_rpath_for_static (unittests.linuxliketests.LinuxlikeTests) ... FAIL
-test cases/common/190 install_mode/meson.build:27: WARNING: The variable(s) 'empty' in the input file 'config.h.in' are not present in the given configuration data.
 test_noncross_options (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_old_gnome_module_codepaths (unittests.linuxliketests.LinuxlikeTests)
 A lot of code in the GNOME module is conditional on the version of the ... skipped 'Project requested skipping.'
@@ -493,11 +494,12 @@ test_pkgconfig_uninstalled (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_pkgconfig_usage (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_prelinking (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_qt5dependency_qmake_detection (unittests.linuxliketests.LinuxlikeTests)
-Test that qt5 detection with qmake works. This can't be an ordinary ... skipped 'QMake not found'
+Test that qt5 detection with qmake works. This can't be an ordinary ... ok
 test_qt6dependency_qmake_detection (unittests.linuxliketests.LinuxlikeTests)
-Test that qt6 detection with qmake works. This can't be an ordinary ... skipped 'QMake not found'
+Test that qt6 detection with qmake works. This can't be an ordinary ... skipped 'Qmake found, but it is not for Qt 6.'
 test_qtdependency_pkgconfig_detection (unittests.linuxliketests.LinuxlikeTests)
 Test that qt4 and qt5 detection with pkgconfig works. ... ERROR
+test cases/common/190 install_mode/meson.build:27: WARNING: The variable(s) 'empty' in the input file 'config.h.in' are not present in the given configuration data.
 test cases/frameworks/4 qt/meson.build:48:4: ERROR: Assert failed: qtmodule.has_tools()
 test cases/frameworks/4 qt/meson.build:48:4: ERROR: Assert failed: qtmodule.has_tools()
 test_reconfigure (unittests.linuxliketests.LinuxlikeTests) ... ok
@@ -559,6 +561,7 @@ test_library_versioning (unittests.darwintests.DarwinTests)
 Ensure that compatibility_version and current_version are set correctly ... skipped 'requires Darwin'
 test_objc_versions (unittests.darwintests.DarwinTests) ... skipped 'requires Darwin'
 test_removing_unused_linker_args (unittests.darwintests.DarwinTests) ... skipped 'requires Darwin'
+ERROR: test_devenv (unittests.allplatformstests.AllPlatformTests)
 ERROR: test_versions (unittests.pythontests.PythonTests)
 1/1 extmod FAIL               exit status 1
 1/1 extmod FAIL               exit status 1
@@ -566,6 +569,7 @@ FAILED: meson-test
 ERROR: test_python_module (unittests.machinefiletests.NativeFileTests)
 test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/binary_wrapper.py']> is not a valid python or it is missing distutils
 test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/binary_wrapper.py']> is not a valid python or it is missing distutils
+ERROR: test_foreach (unittests.subprojectscommandtests.SubprojectsCommandTests)
 ERROR: test_qtdependency_pkgconfig_detection (unittests.linuxliketests.LinuxlikeTests)
 test cases/frameworks/4 qt/meson.build:48:4: ERROR: Assert failed: qtmodule.has_tools()
 test cases/frameworks/4 qt/meson.build:48:4: ERROR: Assert failed: qtmodule.has_tools()
@@ -578,22 +582,22 @@ FAIL: test_installed_modes_extended (unittests.linuxliketests.LinuxlikeTests)
 test cases/common/190 install_mode/meson.build:27: WARNING: The variable(s) 'empty' in the input file 'config.h.in' are not present in the given configuration data.
 FAIL: test_no_rpath_for_static (unittests.linuxliketests.LinuxlikeTests)
 FAIL: test_pkgconfig_gen (unittests.linuxliketests.LinuxlikeTests)
-FAILED (failures=8, errors=3, skipped=76)
+FAILED (failures=8, errors=5, skipped=76)
   [ERROR]    common: 103 has header symbol
   [ERROR]    linuxlike: 3 linker script
-  [ERROR]    cython: 1 basic    (cython_language=c)
-  [ERROR]    cython: 1 basic    (cython_language=cpp)
   [ERROR]    rust: 5 polyglot static
-  [ERROR]    python: 3 cython
+  [ERROR]    rust: 13 external c dependencies    (static=True method=system)
   [ERROR]    frameworks: 1 boost    (static=false)
+  [ERROR]    frameworks: 4 qt    (method=config-tool)
   [ERROR]    frameworks: 4 qt    (method=pkg-config)
+  [ERROR]    frameworks: 4 qt    (method=qmake)
   [ERROR]    frameworks: 25 hdf5    (method=config-tool)
   [ERROR]    frameworks: 28 gir link order 2
   [ERROR]    frameworks: 31 curses    (method=config-tool)
   [ERROR]    frameworks: 31 curses    (method=system)
-Total passed tests:  529
+Total passed tests:  531
 Total failed tests:  12
-Total skipped tests: 118
+Total skipped tests: 119
 test cases/common/103 has header symbol/meson.build:16:2: ERROR: Assert failed: FILE structure is defined in stdio.h, not stdlib.h
 FAILED: libbob.so 
 FAILED: libbob-conf.so 
@@ -601,12 +605,16 @@ FAILED: libbob-files.so
 FAILED: sub/libfoo.so 
 FAILED: libbar.so 
 FAILED: libbob-ct.so 
-FAILED: libdir/storer.cpython-o.p/meson-generated_libdir_storer.pyx.c.o 
-FAILED: libdir/storer.cpython-o.p/meson-generated_libdir_storer.pyx.cpp.o 
 FAILED: prog 
-FAILED: libdir/storer.cpython-o.p/meson-generated_.._storer_pyx.c.o 
+FAILED: prog 
 FAILED: extralibexe 
+53/3 qt5test      FAIL               killed by signal 9 SIGKILL
+54/3 qt5maninclude FAIL               killed by signal 9 SIGKILL
+55/3 qtubfolder FAIL            0.03s   killed by signal 9 SIGKILL
 test cases/frameworks/4 qt/meson.build:48:4: ERROR: Assert failed: qtmodule.has_tools()
+47/3 qt5test      FAIL               killed by signal 9 SIGKILL
+48/3 qt5maninclude FAIL               killed by signal 9 SIGKILL
+49/3 qtubfolder FAIL            0.02s   killed by signal 9 SIGKILL
 FAILED: exef.p/main.f90.o 
 FAILED: libsample.so 
 FAILED: basic 
