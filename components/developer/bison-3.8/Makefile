@@ -22,32 +22,46 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2020, Michal Nowak
+# Copyright 2021, Andreas Wacknitz
 #
 
 BUILD_BITS=		32_and_64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bison
-COMPONENT_VERSION=	3.8.2
+COMPONENT_MAJOR_VERSION=	3.8
+COMPONENT_MAJOR_VERSION_=   $(subst .,,$(COMPONENT_MAJOR_VERSION))
+COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/bison/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	bison - A YACC Replacement
+COMPONENT_DESCRIPTION=  A general-purpose parser generator that converts an annotated context-free grammar into an LALR(1) or GLR parser for that grammar
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:9bba0214ccf7f1079c5d59210045227bcf619519840ebfa80cd3849cff5a5bf2
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Development/Other Languages
-COMPONENT_FMRI=		developer/parser/bison
+COMPONENT_FMRI=		developer/parser/bison-$(COMPONENT_MAJOR_VERSION_)
+COMPONENT_LICENSE=  GPLv2, FDLv1.2
 
 include $(WS_MAKE_RULES)/common.mk
+
+PKG_MACROS+= COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
 
 # Tests need this
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_LIBDIR.32 =   $(GNULIB)
-CONFIGURE_LIBDIR.64 =   $(GNULIB)/$(MACH64)
+CONFIGURE_LIBDIR.32 =   $(GNULIB)/$(COMPONENT_NAME)-$(COMPONENT_MAJOR_VERSION)/
+CONFIGURE_LIBDIR.64 =   $(GNULIB)/$(MACH64)/$(COMPONENT_NAME)-$(COMPONENT_MAJOR_VERSION)/
 
+CONFIGURE_OPTIONS +=    --program-transform-name=s/$$/-$(COMPONENT_MAJOR_VERSION)/
+CONFIGURE_OPTIONS +=    --datarootdir=$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)-$(COMPONENT_MAJOR_VERSION)/
+CONFIGURE_OPTIONS +=    --docdir=$(CONFIGURE_PREFIX)/share/doc/$(COMPONENT_NAME)-$(COMPONENT_MAJOR_VERSION)/
+# We set the localedir here because this is the latest version and thus it will be used in the bison-runtime package.
+# Info and locale files will be filtered out from the bison-$(COMPONENT_MAJOR_VERSION) manifests.
+CONFIGURE_OPTIONS +=	--localedir=$(CONFIGURE_PREFIX)/share/locale/
+# We set the infodir here because this is the latest version
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--disable-silent-rules
 CONFIGURE_OPTIONS += 	--disable-dependency-tracking
