@@ -17,18 +17,16 @@ BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pyml
-COMPONENT_VERSION= 20200518
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 20211015
 COMPONENT_SUMMARY= pyml - OCaml bindings for Python
 COMPONENT_PROJECT_URL= https://github.com/thierry-martinez/pyml/
 COMPONENT_FMRI= library/ocaml/pyml
 COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/thierry-martinez/pyml/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a49a46fe08ee48423a3994b8f8ed8ad116ad97ab61f9cfebc10ec6dd02b2598a
-COMPONENT_LICENSE= BSD 3-Clause
+COMPONENT_ARCHIVE_URL=	https://github.com/thierry-martinez/pyml/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:4ef930b3ff8c7c4115b87eabd194795fa1da3aedbebbdcddf82af84eadbb94ab
+COMPONENT_LICENSE= BSD 2-Clause
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -36,7 +34,7 @@ include $(WS_MAKE_RULES)/ocaml.mk
 
 PATH=$(PATH.gnu)
 
-PYTHON_VERSION= 3.5
+PYTHON_VERSION= 3.9
 
 COMPONENT_BUILD_ARGS=-j1
 
