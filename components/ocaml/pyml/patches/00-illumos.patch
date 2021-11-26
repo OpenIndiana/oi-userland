@@ -12,15 +12,6 @@ diff -ruN pyml-20200518/Makefile pyml-20200518.new/Makefile
  
  HAVE_OCAMLFIND := $(shell \
  	if $(OCAMLFIND) query -help >/dev/null 2>&1; then \
-@@ -129,6 +133,8 @@
- 	PYML_ARCH := pyml_arch_cygwin.ml
- else ifeq ($(UNAME_ARCH),FreeBSD)
- 	PYML_ARCH := pyml_arch_freebsd.ml
-+else ifeq ($(UNAME_ARCH),SunOS)
-+	PYML_ARCH := pyml_arch_sunos.ml
- else
- 	$(error Unsupported OS $(UNAME_ARCH))
- endif
 @@ -208,15 +214,15 @@
  ifeq ($(HAVE_OCAMLFIND),no)
  	$(error ocamlfind is needed for 'make install')
@@ -43,19 +34,49 @@ diff -ruN pyml-20200518/Makefile pyml-20200518.new/Makefile
  
  .PHONY : clean
  clean :
-diff -ruN pyml-20200518/pyml_arch_sunos.ml pyml-20200518.new/pyml_arch_sunos.ml
---- pyml-20200518/pyml_arch_sunos.ml	1970-01-01 01:00:00.000000000 +0000
-+++ pyml-20200518.new/pyml_arch_sunos.ml	2020-05-29 17:47:32.470025383 +0000
-@@ -0,0 +1,12 @@
-+let library_patterns: (int -> int -> string, unit, string) format list =
-+  ["libpython%d.%dm.so"; "libpython%d.%d.so"]
-+
-+let library_suffix = ".so"
-+
-+let ensure_executable_suffix executable = executable
-+
-+let which = "which"
-+
-+external fd_of_int: int -> Unix.file_descr = "%identity"
-+
-+let path_separator = ":"
+--- pyml-20211015/pyml_arch_generate.c.orig	2021-10-15 15:09:19.000000000 +0000
++++ pyml-20211015/pyml_arch_generate.c	2021-11-26 23:06:42.112334092 +0000
+@@ -6,6 +6,8 @@
+   #define PLATFORM_NAME "Linux"
+ #elif defined(WIN32) || defined(_WIN32)
+   #define PLATFORM_NAME "Windows"
++#elif defined __sun__
++  #define PLATFORM_NAME "SunOS"
+ #else
+   #error "Unknown platform"
+ #endif
+@@ -15,7 +17,7 @@
+ {
+   FILE *f = fopen("pyml_arch.ml", "w");
+   fprintf(f, "\
+-type t = Linux | Windows | Mac\n\n\
++type t = Linux | Windows | Mac | SunOS\n\n\
+ let os = %s\n\n\
+ ", PLATFORM_NAME);
+   #if WIN32
+--- pyml-20211015/py.ml.orig	2021-10-15 15:09:19.000000000 +0000
++++ pyml-20211015/py.ml	2021-11-26 23:17:48.606150366 +0000
+@@ -408,6 +408,7 @@
+   | Pyml_arch.Windows -> ["python%d%dm.dll"; "python%d%d.dll"]
+   | Pyml_arch.Mac -> ["libpython%d.%dm.dylib"; "libpython%d.%d.dylib"]
+   | Pyml_arch.Linux -> ["libpython%d.%dm.so"; "libpython%d.%d.so"]
++  | Pyml_arch.SunOS -> ["libpython%d.%dm.so"; "libpython%d.%d.so"]
+ 
+ let libpython_from_python_config version_major version_minor =
+   let command =
+@@ -573,6 +574,7 @@
+ let which_command =
+   match Pyml_arch.os with
+   | Pyml_arch.Windows -> "where"
++  | Pyml_arch.SunOS -> "which"
+   | _ -> "command -v"
+ 
+ let which program =
+--- pyml-20211015/pyml_arch.mli.orig	2021-10-15 15:09:19.000000000 +0000
++++ pyml-20211015/pyml_arch.mli	2021-11-26 23:21:20.375348874 +0000
+@@ -1,4 +1,4 @@
+-type t = Linux | Windows | Mac
++type t = Linux | Windows | Mac | SunOS
+ 
+ val os : t
+ 
