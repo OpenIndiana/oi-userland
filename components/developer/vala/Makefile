@@ -21,21 +21,22 @@
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
 # Copyright (c) 2017, 2020 Andreas Wacknitz
 # Copyright (c) 2019 Jason Martin
+# Copyright (c) 2021 Tim Mooney.  All rights reserved
 
-BUILD_BITS=			32_and_64
+BUILD_BITS=64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     vala
-COMPONENT_VERSION=  0.40.25
-COMPONENT_LICENSE=  LGPL2.1
+COMPONENT_VERSION=  0.54.3
 COMPONENT_FMRI=     developer/vala
 COMPONENT_SUMMARY=  Vala programming language
 COMPONENT_CLASSIFICATION=   Development/Other Languages
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Vala
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:870fc7af58bbcfc82de6d11a96308a7bec6c180484ec431ce5bee68c2653b7df
-COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/vala/0.40/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:ed1d5fe4cbc0cd2845d0de4f1ffefb15afb06892d230c7cca695781672e8fb60
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/vala/0.54/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=  LGPL2.1
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -49,7 +50,7 @@ CONFIGURE_OPTIONS  +=  --disable-static
 CONFIGURE_OPTIONS  +=  --enable-shared
 
 COMPONENT_TEST_ENV += LANG=C
-COMPONENT_TEST_ENV += CC=$(CC)
+COMPONENT_TEST_ENV += CC="$(CC)"
 COMPONENT_TEST_ENV += CXX="$(CXX)"
 COMPONENT_TEST_ENV += FC="$(FC)"
 COMPONENT_TEST_ENV += CFLAGS="$(CFLAGS)"
@@ -57,15 +58,16 @@ COMPONENT_TEST_ENV += CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_TEST_ENV += FCFLAGS="$(FCFLAGS)"
 COMPONENT_TEST_ENV += LDFLAGS="$(LDFLAGS)"
 
+unexport SHELLOPTS
 COMPONENT_TEST_ARGS += -k -i
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
-    '-ne "/ tests passed/p" ' \
-    '-ne "/ tests failed/p" '
+	'-n ' \
+	'-e "/^PASS: /p" ' \
+	'-e "/^FAIL: /p" ' \
+	'-e "/^SKIP: /p" '
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
