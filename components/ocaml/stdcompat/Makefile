@@ -16,17 +16,15 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= stdcompat
-COMPONENT_VERSION= 14
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 17
 COMPONENT_SUMMARY= stdcompat - Compatibility module for OCaml standard library 
 COMPONENT_PROJECT_URL= https://github.com/thierry-martinez/stdcompat/
 COMPONENT_FMRI= library/ocaml/stdcompat
 COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/thierry-martinez/stdcompat/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:bfa6d16b451c55216a9f79ca4735a1ada61a6734a822d1faf5a6c77365485c3c
+COMPONENT_ARCHIVE_URL=	https://github.com/thierry-martinez/stdcompat/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:1b31e119b61b35543a8473ef96c17d0609ac2613966b860680c94ed2ab13037c
 COMPONENT_LICENSE= BSD 2-Clause
 
 TEST_TARGET=$(NO_TESTS)
