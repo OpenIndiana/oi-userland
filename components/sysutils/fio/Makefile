@@ -9,43 +9,47 @@
 #
 
 #
+# Copyright 2021 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fio
-COMPONENT_VERSION=	2.15
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.28
+# COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=	Flexible I/O tester
 COMPONENT_FMRI=		system/test/fio
 COMPONENT_CLASSIFICATION=	Development/System
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:bcc4407d3f8d0b02964a738b11719e6daa45461fd830ac6d0a7909ea25da4156
+	sha256:859dca5241e5494d86c4aa1531a984cc556789c78e56b30d6070acfbdd193a8c
 COMPONENT_PROJECT_URL=	http://freecode.com/projects/fio
 COMPONENT_ARCHIVE_URL=	\
-	https://github.com/axboe/fio/archive/$(COMPONENT_ARCHIVE)
+	https://brick.kernel.dk/snaps/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
+
+# Specify the python version used by this build
+PYTHON_VERSION=		3.9
 
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --cc="$(CC)"
 CONFIGURE_OPTIONS += --extra-cflags="$(CFLAGS)"
 
-build:		$(BUILD_32)
+TEST_TARGET:		$(NO_TESTS)
 
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/six-39
+REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/python-39
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += web/curl
