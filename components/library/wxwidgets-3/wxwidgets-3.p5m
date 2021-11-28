@@ -23,15 +23,16 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Common issue. Ignore dependency on libGL.so.1 and depend on service/opengl/ogl-select.
+# Common issue. Ignore dependency on libGL.so.1, libEGL.so.1 and depend on service/opengl/ogl-select.
 <transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
+<transform file -> add pkg.depend.bypass-generate libEGL\.so\.1>
 
-link path=usr/bin/$(MACH64)/wx-config-3 \
+link path=usr/bin/$(MACH64)/wx-config \
     target=../../lib/$(MACH64)/wx/config/gtk3-unicode-3.1
-link path=usr/bin/$(MACH64)/wxrc-3 target=wxrc-3.1
+link path=usr/bin/$(MACH64)/wxrc target=wxrc-3.1
 file path=usr/bin/$(MACH64)/wxrc-3.1
-link path=usr/bin/wx-config-3 target=../lib/wx/config/gtk3-unicode-3.1
-link path=usr/bin/wxrc-3 target=wxrc-3.1
+link path=usr/bin/wx-config target=../lib/wx/config/gtk3-unicode-3.1
+link path=usr/bin/wxrc target=wxrc-3.1
 file path=usr/bin/wxrc-3.1
 file path=usr/include/wx-3.1/wx/aboutdlg.h
 file path=usr/include/wx-3.1/wx/accel.h
@@ -108,6 +109,7 @@ file path=usr/include/wx-3.1/wx/containr.h
 file path=usr/include/wx-3.1/wx/control.h
 file path=usr/include/wx-3.1/wx/convauto.h
 file path=usr/include/wx-3.1/wx/cpp.h
+file path=usr/include/wx-3.1/wx/creddlg.h
 file path=usr/include/wx-3.1/wx/crt.h
 file path=usr/include/wx-3.1/wx/cshelp.h
 file path=usr/include/wx-3.1/wx/ctrlsub.h
@@ -204,6 +206,7 @@ file path=usr/include/wx-3.1/wx/generic/caret.h
 file path=usr/include/wx-3.1/wx/generic/choicdgg.h
 file path=usr/include/wx-3.1/wx/generic/collheaderctrl.h
 file path=usr/include/wx-3.1/wx/generic/combo.h
+file path=usr/include/wx-3.1/wx/generic/creddlgg.h
 file path=usr/include/wx-3.1/wx/generic/custombgwin.h
 file path=usr/include/wx-3.1/wx/generic/dataview.h
 file path=usr/include/wx-3.1/wx/generic/datectrl.h
@@ -621,6 +624,7 @@ file path=usr/include/wx-3.1/wx/unix/evtloopsrc.h
 file path=usr/include/wx-3.1/wx/unix/fontutil.h
 file path=usr/include/wx-3.1/wx/unix/fswatcher_inotify.h
 file path=usr/include/wx-3.1/wx/unix/fswatcher_kqueue.h
+file path=usr/include/wx-3.1/wx/unix/glegl.h
 file path=usr/include/wx-3.1/wx/unix/glx11.h
 file path=usr/include/wx-3.1/wx/unix/joystick.h
 file path=usr/include/wx-3.1/wx/unix/mimetype.h
@@ -649,6 +653,7 @@ file path=usr/include/wx-3.1/wx/vms_x_fix.h
 file path=usr/include/wx-3.1/wx/volume.h
 file path=usr/include/wx-3.1/wx/vscroll.h
 file path=usr/include/wx-3.1/wx/weakref.h
+file path=usr/include/wx-3.1/wx/webrequest.h
 file path=usr/include/wx-3.1/wx/webview.h
 file path=usr/include/wx-3.1/wx/webviewarchivehandler.h
 file path=usr/include/wx-3.1/wx/webviewfshandler.h
@@ -754,116 +759,115 @@ file path=usr/include/wx-3.1/wx/xtitypes.h
 file path=usr/include/wx-3.1/wx/xtixml.h
 file path=usr/include/wx-3.1/wx/zipstrm.h
 file path=usr/include/wx-3.1/wx/zstream.h
-link path=usr/lib/$(MACH64)/libwx_baseu-3.1.so target=libwx_baseu-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_baseu-3.1.so.4
+link path=usr/lib/$(MACH64)/libwx_baseu-3.1.so target=libwx_baseu-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_baseu-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_baseu_net-3.1.so \
-    target=libwx_baseu_net-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_baseu_net-3.1.so.4
+    target=libwx_baseu_net-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_baseu_net-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_baseu_xml-3.1.so \
-    target=libwx_baseu_xml-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_baseu_xml-3.1.so.4
+    target=libwx_baseu_xml-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_baseu_xml-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_gtk3u_adv-3.1.so \
-    target=libwx_gtk3u_adv-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_adv-3.1.so.4
+    target=libwx_gtk3u_adv-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_adv-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_gtk3u_aui-3.1.so \
-    target=libwx_gtk3u_aui-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_aui-3.1.so.4
+    target=libwx_gtk3u_aui-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_aui-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_gtk3u_core-3.1.so \
-    target=libwx_gtk3u_core-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_core-3.1.so.4
-link path=usr/lib/$(MACH64)/libwx_gtk3u_gl-3.1.so target=libwx_gtk3u_gl-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_gl-3.1.so.4
+    target=libwx_gtk3u_core-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_core-3.1.so.5
+link path=usr/lib/$(MACH64)/libwx_gtk3u_gl-3.1.so target=libwx_gtk3u_gl-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_gl-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_gtk3u_html-3.1.so \
-    target=libwx_gtk3u_html-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_html-3.1.so.4
+    target=libwx_gtk3u_html-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_html-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_gtk3u_media-3.1.so \
-    target=libwx_gtk3u_media-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_media-3.1.so.4
+    target=libwx_gtk3u_media-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_media-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_gtk3u_propgrid-3.1.so \
-    target=libwx_gtk3u_propgrid-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_propgrid-3.1.so.4
-link path=usr/lib/$(MACH64)/libwx_gtk3u_qa-3.1.so target=libwx_gtk3u_qa-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_qa-3.1.so.4
+    target=libwx_gtk3u_propgrid-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_propgrid-3.1.so.5
+link path=usr/lib/$(MACH64)/libwx_gtk3u_qa-3.1.so target=libwx_gtk3u_qa-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_qa-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_gtk3u_ribbon-3.1.so \
-    target=libwx_gtk3u_ribbon-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_ribbon-3.1.so.4
+    target=libwx_gtk3u_ribbon-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_ribbon-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_gtk3u_richtext-3.1.so \
-    target=libwx_gtk3u_richtext-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_richtext-3.1.so.4
+    target=libwx_gtk3u_richtext-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_richtext-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_gtk3u_stc-3.1.so \
-    target=libwx_gtk3u_stc-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_stc-3.1.so.4
+    target=libwx_gtk3u_stc-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_stc-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_gtk3u_webview-3.1.so \
-    target=libwx_gtk3u_webview-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_webview-3.1.so.4
+    target=libwx_gtk3u_webview-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_webview-3.1.so.5
 link path=usr/lib/$(MACH64)/libwx_gtk3u_xrc-3.1.so \
-    target=libwx_gtk3u_xrc-3.1.so.4
-file path=usr/lib/$(MACH64)/libwx_gtk3u_xrc-3.1.so.4
+    target=libwx_gtk3u_xrc-3.1.so.5
+file path=usr/lib/$(MACH64)/libwx_gtk3u_xrc-3.1.so.5
 file path=usr/lib/$(MACH64)/wx/$(COMPONENT_VERSION)/web-extensions/webkit2_extu-$(COMPONENT_VERSION).so
 file path=usr/lib/$(MACH64)/wx/config/gtk3-unicode-3.1 mode=0555
 file path=usr/lib/$(MACH64)/wx/include/gtk3-unicode-3.1/wx/setup.h
-link path=usr/lib/libwx_baseu-3.1.so target=libwx_baseu-3.1.so.4
-file path=usr/lib/libwx_baseu-3.1.so.4
-link path=usr/lib/libwx_baseu_net-3.1.so target=libwx_baseu_net-3.1.so.4
-file path=usr/lib/libwx_baseu_net-3.1.so.4
-link path=usr/lib/libwx_baseu_xml-3.1.so target=libwx_baseu_xml-3.1.so.4
-file path=usr/lib/libwx_baseu_xml-3.1.so.4
-link path=usr/lib/libwx_gtk3u_adv-3.1.so target=libwx_gtk3u_adv-3.1.so.4
-file path=usr/lib/libwx_gtk3u_adv-3.1.so.4
-link path=usr/lib/libwx_gtk3u_aui-3.1.so target=libwx_gtk3u_aui-3.1.so.4
-file path=usr/lib/libwx_gtk3u_aui-3.1.so.4
-link path=usr/lib/libwx_gtk3u_core-3.1.so target=libwx_gtk3u_core-3.1.so.4
-file path=usr/lib/libwx_gtk3u_core-3.1.so.4
-link path=usr/lib/libwx_gtk3u_gl-3.1.so target=libwx_gtk3u_gl-3.1.so.4
-file path=usr/lib/libwx_gtk3u_gl-3.1.so.4
-link path=usr/lib/libwx_gtk3u_html-3.1.so target=libwx_gtk3u_html-3.1.so.4
-file path=usr/lib/libwx_gtk3u_html-3.1.so.4
-link path=usr/lib/libwx_gtk3u_media-3.1.so target=libwx_gtk3u_media-3.1.so.4
-file path=usr/lib/libwx_gtk3u_media-3.1.so.4
+link path=usr/lib/libwx_baseu-3.1.so target=libwx_baseu-3.1.so.5
+file path=usr/lib/libwx_baseu-3.1.so.5
+link path=usr/lib/libwx_baseu_net-3.1.so target=libwx_baseu_net-3.1.so.5
+file path=usr/lib/libwx_baseu_net-3.1.so.5
+link path=usr/lib/libwx_baseu_xml-3.1.so target=libwx_baseu_xml-3.1.so.5
+file path=usr/lib/libwx_baseu_xml-3.1.so.5
+link path=usr/lib/libwx_gtk3u_adv-3.1.so target=libwx_gtk3u_adv-3.1.so.5
+file path=usr/lib/libwx_gtk3u_adv-3.1.so.5
+link path=usr/lib/libwx_gtk3u_aui-3.1.so target=libwx_gtk3u_aui-3.1.so.5
+file path=usr/lib/libwx_gtk3u_aui-3.1.so.5
+link path=usr/lib/libwx_gtk3u_core-3.1.so target=libwx_gtk3u_core-3.1.so.5
+file path=usr/lib/libwx_gtk3u_core-3.1.so.5
+link path=usr/lib/libwx_gtk3u_gl-3.1.so target=libwx_gtk3u_gl-3.1.so.5
+file path=usr/lib/libwx_gtk3u_gl-3.1.so.5
+link path=usr/lib/libwx_gtk3u_html-3.1.so target=libwx_gtk3u_html-3.1.so.5
+file path=usr/lib/libwx_gtk3u_html-3.1.so.5
+link path=usr/lib/libwx_gtk3u_media-3.1.so target=libwx_gtk3u_media-3.1.so.5
+file path=usr/lib/libwx_gtk3u_media-3.1.so.5
 link path=usr/lib/libwx_gtk3u_propgrid-3.1.so \
-    target=libwx_gtk3u_propgrid-3.1.so.4
-file path=usr/lib/libwx_gtk3u_propgrid-3.1.so.4
-link path=usr/lib/libwx_gtk3u_qa-3.1.so target=libwx_gtk3u_qa-3.1.so.4
-file path=usr/lib/libwx_gtk3u_qa-3.1.so.4
-link path=usr/lib/libwx_gtk3u_ribbon-3.1.so target=libwx_gtk3u_ribbon-3.1.so.4
-file path=usr/lib/libwx_gtk3u_ribbon-3.1.so.4
+    target=libwx_gtk3u_propgrid-3.1.so.5
+file path=usr/lib/libwx_gtk3u_propgrid-3.1.so.5
+link path=usr/lib/libwx_gtk3u_qa-3.1.so target=libwx_gtk3u_qa-3.1.so.5
+file path=usr/lib/libwx_gtk3u_qa-3.1.so.5
+link path=usr/lib/libwx_gtk3u_ribbon-3.1.so target=libwx_gtk3u_ribbon-3.1.so.5
+file path=usr/lib/libwx_gtk3u_ribbon-3.1.so.5
 link path=usr/lib/libwx_gtk3u_richtext-3.1.so \
-    target=libwx_gtk3u_richtext-3.1.so.4
-file path=usr/lib/libwx_gtk3u_richtext-3.1.so.4
-link path=usr/lib/libwx_gtk3u_stc-3.1.so target=libwx_gtk3u_stc-3.1.so.4
-file path=usr/lib/libwx_gtk3u_stc-3.1.so.4
-link path=usr/lib/libwx_gtk3u_webview-3.1.so target=libwx_gtk3u_webview-3.1.so.4
-file path=usr/lib/libwx_gtk3u_webview-3.1.so.4
-link path=usr/lib/libwx_gtk3u_xrc-3.1.so target=libwx_gtk3u_xrc-3.1.so.4
-file path=usr/lib/libwx_gtk3u_xrc-3.1.so.4
+    target=libwx_gtk3u_richtext-3.1.so.5
+file path=usr/lib/libwx_gtk3u_richtext-3.1.so.5
+link path=usr/lib/libwx_gtk3u_stc-3.1.so target=libwx_gtk3u_stc-3.1.so.5
+file path=usr/lib/libwx_gtk3u_stc-3.1.so.5
+link path=usr/lib/libwx_gtk3u_webview-3.1.so target=libwx_gtk3u_webview-3.1.so.5
+file path=usr/lib/libwx_gtk3u_webview-3.1.so.5
+link path=usr/lib/libwx_gtk3u_xrc-3.1.so target=libwx_gtk3u_xrc-3.1.so.5
+file path=usr/lib/libwx_gtk3u_xrc-3.1.so.5
 file path=usr/lib/wx/$(COMPONENT_VERSION)/web-extensions/webkit2_extu-$(COMPONENT_VERSION).so
 file path=usr/lib/wx/config/gtk3-unicode-3.1 mode=0555
 file path=usr/lib/wx/include/gtk3-unicode-3.1/wx/setup.h
-#file path=usr/share/aclocal/wxwin.m4
-#file path=usr/share/bakefile/presets/wx.bkl
-#file path=usr/share/bakefile/presets/wx_presets.py
-#file path=usr/share/bakefile/presets/wx_unix.bkl
-#file path=usr/share/bakefile/presets/wx_win32.bkl
-#file path=usr/share/bakefile/presets/wx_xrc.bkl
-file path=usr/share/locale/ca/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/cs/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/da/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/de/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/el/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/es/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/fi/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/fr/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/hu/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/id/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/it/LC_MESSAGES/wxmsw.mo
-file path=usr/share/locale/it/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/ja/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/nl/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/pl/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/ru/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/sl/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/sv/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/tr/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/uk/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/zh_CN/LC_MESSAGES/wxstd.mo
-file path=usr/share/locale/zh_TW/LC_MESSAGES/wxstd.mo
+file path=usr/share/aclocal/wxwin.m4
+file path=usr/share/bakefile/presets/wx.bkl
+file path=usr/share/bakefile/presets/wx_presets.py
+file path=usr/share/bakefile/presets/wx_unix.bkl
+file path=usr/share/bakefile/presets/wx_win32.bkl
+file path=usr/share/bakefile/presets/wx_xrc.bkl
+file path=usr/share/locale/ca/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/cs/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/da/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/de/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/el/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/es/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/fi/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/fr/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/hu/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/id/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/it/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/ja/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/nl/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/pl/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/ru/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/sl/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/sv/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/tr/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/uk/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/wxstd-3.1.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/wxstd-3.1.mo
