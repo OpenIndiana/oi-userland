@@ -73,7 +73,7 @@ stage_prepare_pkgdepotd() {
 	platform=$(uname -p)
 
 	# check if we already have this branch set up as a pkg.depotd:
-	if ! "svcs pkg/server:${BRANCH_NAME}" >/dev/null 2>&1; then
+	if ! svcs "pkg/server:${BRANCH_NAME}"; then
 
 		# get highest port from ${HTTPCONF} to figure out the next free one
 		nextport=$(($(nawk -F '[/:]' '{ print $7 }' <"${HTTPCONF}" | sort -n | tail -1) + 1))
