@@ -1,6 +1,6 @@
 #!/bin/ksh
 # 2021-04-07 Olaf Bohlen <olbohlen@eenfach.de>
-# 2021-11-29 Till Wegmueller <toasterson@gmail.com>
+# 2021-11-30 Till Wegmueller <toasterson@gmail.com>
 # instead of putting all this into the Jenkinsfile I decided to put the actual code in this script
 
 set -x
@@ -73,7 +73,7 @@ stage_prepare_pkgdepotd() {
 	platform=$(uname -p)
 
 	# check if we already have this branch set up as a pkg.depotd:
-	if ! svcs "pkg/server:${BRANCH_NAME}"; then
+	if ! svcs "pkg/server:${BRANCH_NAME}" >/dev/null 2>&1; then
 
 		# get highest port from ${HTTPCONF} to figure out the next free one
 		nextport=$(($(nawk -F '[/:]' '{ print $7 }' <"${HTTPCONF}" | sort -n | tail -1) + 1))
