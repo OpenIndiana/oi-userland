@@ -3,7 +3,7 @@
 # 2021-11-30 Till Wegmueller <toasterson@gmail.com>
 # instead of putting all this into the Jenkinsfile I decided to put the actual code in this script
 
-set -x
+set -ex
 
 # global config
 HTTPCONF="/etc/apache2/2.4/conf.d/pkgdepotd.conf"
