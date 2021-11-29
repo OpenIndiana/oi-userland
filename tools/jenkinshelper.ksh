@@ -1,6 +1,9 @@
 #!/bin/ksh
 # 2021-04-07 Olaf Bohlen <olbohlen@eenfach.de>
+# 2021-11-29 Till Wegmueller <toasterson@gmail.com>
 # instead of putting all this into the Jenkinsfile I decided to put the actual code in this script
+
+set -x
 
 # global config
 HTTPCONF="/etc/apache2/2.4/conf.d/pkgdepotd.conf"
