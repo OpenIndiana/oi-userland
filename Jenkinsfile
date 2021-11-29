@@ -43,9 +43,7 @@ pipeline {
 
         stage('cleanup') {
             when {
-                 not {
-                     environment name: 'CHANGE_ID', value: 'null'
-                 }
+                changeRequest()
             }
             steps {
                 script {
