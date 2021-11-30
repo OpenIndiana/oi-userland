@@ -16,21 +16,20 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= coccinelle
-COMPONENT_VERSION= 1.0.8
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.1.1
 COMPONENT_SUMMARY= coccinelle - program matching and transformation engine which provides the language SmPL
-COMPONENT_PROJECT_URL= http://coccinelle.lip6.fr/
+COMPONENT_PROJECT_URL=	https://coccinelle.gitlabpages.inria.fr/website/
 COMPONENT_FMRI= developer/coccinelle
 COMPONENT_CLASSIFICATION= Development/C 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL= https://github.com/coccinelle/coccinelle/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9f994bf98bc88c333ac7a54a03d4fa1826122eec7016a1f22c6b2ef2a6a4347f
+COMPONENT_ARCHIVE_URL=	https://github.com/coccinelle/coccinelle/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:095919e129ac563586d880ebbc5aac829fec224177090aebe34dc34ed5f142bf
 COMPONENT_LICENSE= GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION=3.5
+PYTHON_VERSION=3.9
 
 PATH=$(PATH.gnu)
 
