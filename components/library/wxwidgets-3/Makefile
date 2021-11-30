@@ -14,11 +14,10 @@
 #
 
 BUILD_BITS=		32_and_64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wxwidgets-3
-COMPONENT_VERSION=      3.1.4
+COMPONENT_VERSION=      3.1.5
 COMPONENT_SUMMARY=      wxWidgets - Cross-Platform GUI Library
 COMPONENT_PROJECT_URL=  https://www.wxwidgets.org/
 COMPONENT_FMRI=         library/graphics/wxwidgets-3
@@ -26,18 +25,12 @@ COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_SRC_NAME=     wxWidgets
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_URL= \
-	https://github.com/wxWidgets/wxWidgets/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-	sha256:3ca3a19a14b407d0cdda507a7930c2e84ae1c8e74f946e0144d2fa7d881f1a94
+COMPONENT_ARCHIVE_URL=	https://github.com/wxWidgets/wxWidgets/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:d7b3666de33aa5c10ea41bb9405c40326e1aeb74ee725bb88f90f1d50270a224
 COMPONENT_LICENSE=      wxWindows Library license
 
 TEST_TARGET=		$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
-
-# Compilation failure due to char * conversion
-CXXFLAGS += -fpermissive
 
 CONFIGURE_OPTIONS += --with-gtk=3
 CONFIGURE_OPTIONS += --enable-gui
@@ -62,6 +55,9 @@ CONFIGURE_OPTIONS += --without-libmspack
 CONFIGURE_OPTIONS += --with-opengl
 CONFIGURE_OPTIONS += --with-sdl
 
+# Manually added dependencies
+REQUIRED_PACKAGES += service/opengl/ogl-select
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
@@ -71,6 +67,8 @@ REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/audio/gstreamer1
+# We don't want to depend on packages from encumbered. Thus, make sure gstreamer1/plugin/bad is not installed.
+#REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/bad
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -83,10 +81,10 @@ REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += service/opengl/ogl-select
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxtst
