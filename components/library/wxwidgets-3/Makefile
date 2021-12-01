@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wxwidgets-3
 COMPONENT_VERSION=      3.1.5
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      wxWidgets - Cross-Platform GUI Library
 COMPONENT_PROJECT_URL=  https://www.wxwidgets.org/
 COMPONENT_FMRI=         library/graphics/wxwidgets-3
@@ -55,9 +55,6 @@ CONFIGURE_OPTIONS += --with-libtiff=sys
 CONFIGURE_OPTIONS += --without-libmspack
 CONFIGURE_OPTIONS += --with-opengl
 CONFIGURE_OPTIONS += --with-sdl
-
-# Manually added dependencies
-REQUIRED_PACKAGES += service/opengl/ogl-select
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
