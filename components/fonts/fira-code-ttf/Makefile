@@ -10,29 +10,27 @@
 #
 
 #
-# Copyright 2018 Andreas Wacknitz
+# Copyright 2018,2021 Andreas Wacknitz
 #
 
+BUILD_STYLE=				justmake
 include ../../../make-rules/shared-macros.mk
 
 BUILD_BITS=					32
 COMPONENT_NAME=				fira-code-ttf
 COMPONENT_SUMMARY=			Monospaced font with programming ligatures
-COMPONENT_VERSION= 			5.2
+COMPONENT_VERSION= 			6
 COMPONENT_PROJECT_URL= 		https://github.com/tonsky/FiraCode
 COMPONENT_FMRI=				system/font/truetype/fira-code
 COMPONENT_CLASSIFICATION=	System/Fonts
 COMPONENT_SRC_NAME=			Fira_Code
 COMPONENT_SRC=				$(COMPONENT_SRC_NAME)_v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      	$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_URL=	\
-	https://github.com/tonsky/FiraCode/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-	sha256:521a72be00dd22678d248e63f817c0c79c1b6f23a4fbd377eba73d30cdca5efd
+COMPONENT_ARCHIVE_URL=		https://github.com/tonsky/FiraCode/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=		sha256:a4997c2f905fb20a6d814baf7b9bab7df7de574a8e87d6af509685a43291caf1
 COMPONENT_LICENSE=			FiraCode License
 COMPONENT_LICENSE_FILE=		fira-code.license
 
-BUILD_STYLE=				justmake
 TEST_TARGET=				$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
