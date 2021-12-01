@@ -23,16 +23,21 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+depend fmri=service/opengl/ogl-select type=require
+
 # Common issue. Ignore dependency on libGL.so.1, libEGL.so.1 and depend on service/opengl/ogl-select.
 <transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
 <transform file -> add pkg.depend.bypass-generate libEGL\.so\.1>
 
+file usr/share/aclocal/wxwin.m4 path=usr/share/aclocal/wxwin3.m4
+link path=usr/share/aclocal/wxwin.m4 target=usr/share/aclocal/wxwin3.m4 mediator=wxwidgets mediator-version=3
+
 link path=usr/bin/$(MACH64)/wx-config \
     target=../../lib/$(MACH64)/wx/config/gtk3-unicode-3.1 mediator=wxwidgets mediator-version=3
 link path=usr/bin/$(MACH64)/wxrc target=wxrc-3.1 mediator=wxwidgets mediator-version=3
-file path=usr/bin/$(MACH64)/wxrc-3.1
+file path=usr/bin/$(MACH64)/wxrc-3.1 mediator=wxwidgets mediator-version=3
 link path=usr/bin/wx-config target=../lib/wx/config/gtk3-unicode-3.1
-link path=usr/bin/wxrc target=wxrc-3.1
+link path=usr/bin/wxrc target=wxrc-3.1 mediator=wxwidgets mediator-version=3
 file path=usr/bin/wxrc-3.1
 file path=usr/include/wx-3.1/wx/aboutdlg.h
 file path=usr/include/wx-3.1/wx/accel.h
@@ -844,7 +849,7 @@ file path=usr/lib/libwx_gtk3u_xrc-3.1.so.5
 file path=usr/lib/wx/$(COMPONENT_VERSION)/web-extensions/webkit2_extu-$(COMPONENT_VERSION).so
 file path=usr/lib/wx/config/gtk3-unicode-3.1 mode=0555
 file path=usr/lib/wx/include/gtk3-unicode-3.1/wx/setup.h
-file path=usr/share/aclocal/wxwin.m4
+#file path=usr/share/aclocal/wxwin3.m4
 file path=usr/share/bakefile/presets/wx.bkl
 file path=usr/share/bakefile/presets/wx_presets.py
 file path=usr/share/bakefile/presets/wx_unix.bkl

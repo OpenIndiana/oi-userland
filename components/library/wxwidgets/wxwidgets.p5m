@@ -34,10 +34,15 @@ set name=org.opensolaris.arc-caseid value=LSARC/2008/476
 
 license wxwidgets.license license='wxWindows Library license'
 
+depend fmri=service/opengl/ogl-select type=require
+
+file usr/share/aclocal/wxwin.m4 path=usr/share/aclocal/wxwin2.m4 
+link path=usr/share/aclocal/wxwin.m4 target=usr/share/aclocal/wxwin2.m4 mediator=wxwidgets mediator-version=2
+
 link path=usr/bin/$(MACH64)/wx-config target=../../lib/$(MACH64)/wx/config/gtk2-unicode-release-2.8 mediator=wxwidgets mediator-version=2
 link path=usr/bin/wx-config target=../lib/wx/config/gtk2-unicode-release-2.8 mediator=wxwidgets mediator-version=2
-file path=usr/bin/$(MACH64)/wxrc
-file path=usr/bin/wxrc
+file path=usr/bin/$(MACH64)/wxrc mediator=wxwidgets mediator-version=2
+file path=usr/bin/wxrc mediator=wxwidgets mediator-version=2
 file path=usr/include/wx-2.8/wx/aboutdlg.h
 file path=usr/include/wx-2.8/wx/accel.h
 file path=usr/include/wx-2.8/wx/access.h
@@ -669,7 +674,7 @@ file path=usr/lib/libwx_gtk2u_svg-2.8.so.0
 file path=usr/lib/libwx_gtk2u_xrc-2.8.so.0
 file mode=0555 path=usr/lib/wx/config/gtk2-unicode-release-2.8
 file path=usr/lib/wx/include/gtk2-unicode-release-2.8/wx/setup.h
-file path=usr/share/aclocal/wxwin.m4
+#file path=usr/share/aclocal/wxwin.m4
 file wx-config.1 path=usr/share/man/man1/wx-config.1
 file wxrc.1 path=usr/share/man/man1/wxrc.1
 link path=usr/lib/$(MACH64)/libwx_baseu_net-2.8.so target=libwx_baseu_net-2.8.so.0
@@ -708,5 +713,3 @@ link path=usr/lib/libwx_gtk2u_richtext-2.8.so target=libwx_gtk2u_richtext-2.8.so
 link path=usr/lib/libwx_gtk2u_stc-2.8.so target=libwx_gtk2u_stc-2.8.so.0
 link path=usr/lib/libwx_gtk2u_svg-2.8.so target=libwx_gtk2u_svg-2.8.so.0
 link path=usr/lib/libwx_gtk2u_xrc-2.8.so target=libwx_gtk2u_xrc-2.8.so.0
-
-depend fmri=service/opengl/ogl-select type=require
