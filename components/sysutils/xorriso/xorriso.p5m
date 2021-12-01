@@ -20,15 +20,19 @@ set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Drop info dir files
+<transform file path=.+/share/info/dir -> drop>
 
 link path=usr/bin/osirrox target=xorriso
 link path=usr/bin/xorrecord target=xorriso
 file path=usr/bin/xorriso
 file path=usr/bin/xorriso-tcltk
 link path=usr/bin/xorrisofs target=xorriso
-#file path=usr/share/info/dir
+file path=usr/share/info/dir
 file path=usr/share/info/xorrecord.info
 file path=usr/share/info/xorriso-dd-target.info
 file path=usr/share/info/xorriso-tcltk.info
