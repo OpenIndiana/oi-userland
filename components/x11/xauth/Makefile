@@ -18,11 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    xauth
-COMPONENT_VERSION= 1.1
+COMPONENT_VERSION= 1.1.1
 COMPONENT_FMRI=    x11/session/xauth
 COMPONENT_SUMMARY= xauth - X authority file utility
-COMPONENT_ARCHIVE_HASH= \
-  sha256:6d1dd1b79dd185107c5b0fdd22d1d791ad749ad6e288d0cdf80964c4ffa7530c
+COMPONENT_ARCHIVE_HASH= sha256:164ea0a29137b284a47b886ef2affcb0a74733bf3aad04f9b106b1a6c82ebd92
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
