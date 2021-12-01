@@ -58,7 +58,7 @@ stage_build_changed() {
 	for f in $(git diff --name-only HEAD..origin/oi/hipster | grep Makefile); do
 		echo "jenkinshelper: building for ${f%/*}..."
 		curpwd=$(pwd)
-		cd "${f%/*}" && gmake publish
+		cd "${f%/*}" && COMPONENT_BUILD_ARGS=-j$(psrinfo -t -c) gmake publish
 		rc=$?
 		cd "${curpwd}"
 		echo "jenkinshelper: done with ${f%/*} return code ${rc}"
