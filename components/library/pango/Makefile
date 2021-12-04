@@ -21,14 +21,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			pango
 COMPONENT_VERSION_MAJOR=	1
-COMPONENT_VERSION_MINOR=	48
-COMPONENT_VERSION_MICRO=	10
+COMPONENT_VERSION_MINOR=	50
+COMPONENT_VERSION_MICRO=	0
 COMPONENT_VERSION_DL=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
 COMPONENT_VERSION=		$(COMPONENT_VERSION_DL).$(COMPONENT_VERSION_MICRO)
 COMPONENT_SUMMARY=		GNOME core text and font handling libraries
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:21e1f5798bcdfda75eabc4280514b0896ab56f656d4e7e66030b9a2535ecdc98
+COMPONENT_ARCHIVE_HASH= sha256:dba8b62ddf86e10f73f93c3d2256b73238b2bcaf87037ca229b40bdc040eb3f3
 COMPONENT_ARCHIVE_URL=	https://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_DL)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.pango.org/
 COMPONENT_FMRI=			library/desktop/pango
@@ -40,10 +40,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-CONFIGURE_OPTIONS += -Denable_docs=true
 CONFIGURE_OPTIONS += -Dinstall-tests=true
 
-CONFIGURE_OPTIONS.32 += -Dgir=false
 CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
@@ -77,6 +75,8 @@ COMPONENT_TEST_TARGETS += ; cd tests; ./cxx-test; ./markup-parse; \
 COMPONENT_TEST_TRANSFORMS += '-e "s/      [0-9].[0-9][0-9]s//" '
 COMPONENT_TEST_TRANSFORMS += '-e "s/      [0-9][0-9].[0-9][0-9]s//" '
 COMPONENT_TEST_TRANSFORMS += \
+		'-e "s/[0-2][0-3]\:[0-9]*\:[0-9]*\.[0-9]*//" ' \
+		'-e "s/test-layout\:[0-9]*/test-layout/" ' \
         '-n ' \
     	'-e "/Failures/d" ' \
         '-e "/OK/p" ' \
