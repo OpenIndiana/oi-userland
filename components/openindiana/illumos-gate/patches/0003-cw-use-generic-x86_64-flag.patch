@@ -1,0 +1,35 @@
+From d7082f6a79868c9140d1c3cb6cbf5f8d41848a55 Mon Sep 17 00:00:00 2001
+From: Aurelien Larcher <aurelien.larcher@gmail.com>
+Date: Thu, 19 Aug 2021 22:49:29 +0200
+Subject: [PATCH] cw: use generic x86_64 flag
+
+---
+ usr/src/tools/cw/cw.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/usr/src/tools/cw/cw.c b/usr/src/tools/cw/cw.c
+index 594da6fc70..08294482fb 100644
+--- a/usr/src/tools/cw/cw.c
++++ b/usr/src/tools/cw/cw.c
+@@ -339,7 +339,7 @@ typedef struct xarch_table {
+ static const xarch_table_t xtbl[] = {
+ #if defined(__x86)
+ 	{ "generic",	SS11, {NULL} },
+-	{ "generic64",	(SS11|M64), { "-m64", "-mtune=opteron" } },
++	{ "generic64",	(SS11|M64), { "-m64", "-march=x86-64 -mtune=generic" } },
+ 	{ "amd64",	(SS11|M64), { "-m64", "-mtune=opteron" } },
+ 	{ "386",	SS11,	{ "-march=i386" } },
+ 	{ "pentium_pro", SS11,	{ "-march=pentiumpro" } },
+@@ -864,7 +864,8 @@ do_gcc(cw_ictx_t *ctx)
+ 			if (strcmp(arg, "-m64") == 0) {
+ 				newae(ctx->i_ae, "-m64");
+ #if defined(__x86)
+-				newae(ctx->i_ae, "-mtune=opteron");
++				newae(ctx->i_ae, "-march=x86-64");
++				newae(ctx->i_ae, "-mtune=generic");
+ #endif
+ 				mflag |= M64;
+ 				break;
+-- 
+2.33.0
+
