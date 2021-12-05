@@ -1,0 +1,1917 @@
+make[1]: Entering directory '$(@D)'
+Making check in config
+make[2]: Entering directory '$(@D)/config'
+make[2]: Nothing to be done for 'check'.
+make[2]: Leaving directory '$(@D)/config'
+Making check in m4
+make[2]: Entering directory '$(@D)/m4'
+make[2]: Nothing to be done for 'check'.
+make[2]: Leaving directory '$(@D)/m4'
+Making check in term
+make[2]: Entering directory '$(@D)/term'
+make[2]: Nothing to be done for 'check'.
+make[2]: Leaving directory '$(@D)/term'
+Making check in src
+make[2]: Entering directory '$(@D)/src'
+/usr/gnu/bin/make  check-recursive
+make[3]: Entering directory '$(@D)/src'
+Making check in wxterminal
+make[4]: Entering directory '$(@D)/src/wxterminal'
+make[4]: Nothing to be done for 'check'.
+make[4]: Leaving directory '$(@D)/src/wxterminal'
+Making check in qtterminal
+make[4]: Entering directory '$(@D)/src/qtterminal'
+make[4]: Nothing to be done for 'check'.
+make[4]: Leaving directory '$(@D)/src/qtterminal'
+make[4]: Entering directory '$(@D)/src'
+make[4]: Nothing to be done for 'check-am'.
+make[4]: Leaving directory '$(@D)/src'
+make[3]: Leaving directory '$(@D)/src'
+make[2]: Leaving directory '$(@D)/src'
+Making check in docs
+make[2]: Entering directory '$(@D)/docs'
+/usr/gnu/bin/make  check-am
+make[3]: Entering directory '$(@D)/docs'
+/usr/gnu/bin/make  check-local
+make[4]: Entering directory '$(@D)/docs'
+./checkdoc < $(SOURCE_DIR)/docs/gnuplot.doc; \
+if test $? -eq 0; then \
+  echo "PASS: gnuplot.doc"; \
+else \
+  :; \
+fi
+spaces-only line :4849
+spaces-only line :4883
+spaces-only line :7273
+PASS: gnuplot.doc
+make[4]: Leaving directory '$(@D)/docs'
+make[3]: Leaving directory '$(@D)/docs'
+make[2]: Leaving directory '$(@D)/docs'
+Making check in man
+make[2]: Entering directory '$(@D)/man'
+make[2]: Nothing to be done for 'check'.
+make[2]: Leaving directory '$(@D)/man'
+Making check in demo
+make[2]: Entering directory '$(@D)/demo'
+Making check in plugin
+make[3]: Entering directory '$(@D)/demo/plugin'
+make[3]: Nothing to be done for 'check'.
+make[3]: Leaving directory '$(@D)/demo/plugin'
+make[3]: Entering directory '$(@D)/demo'
+/usr/gnu/bin/make  check-local
+make[4]: Entering directory '$(@D)/demo'
+******************** file simple.dem ********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue******************** file controls.dem ********************
+Hit return to continue******************** file electron.dem ********************
+Hit return to continueHit return to continueHit return to continue******************** file using.dem ********************
+Hit return to continueHit return to continue******************** file fillstyle.dem ********************
+Now draw the boxes with solid fillNow draw the boxes with a black borderNow make the boxes a little less wideAnd now let's try a different fill densityNow draw the boxes with no borderOr maybe a pattern fill, instead?Finished this demo******************** file fillcvrs.dem ********************
+Press Return to continuePress Return to continuePress Return to continuePress Return to continuePress Return to continuePress Return to continuePress Return to continueHit return to continueHit return to continueHit return to continue******************** file candlesticks.dem ********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue******************** file autoscale.dem ********************
+Hit return to continueHit return to continueHit return to continue******************** file bins.dem *************************
+Hit return to continue******************** file smooth_splines.dem ********************
+various splines for smoothing
+Now apply a smoothing spline, weighted by 1/rel error (-> return)Make it smoother by changing the smoothing weights (-> return)Accentuate the relative changes with a log-scale (-> return)Now approximate the data with a bezier curve between the endpoints (-> return)You would rather use log-scales ? (-> return)Hit return to continueHit <cr> to continueHit <cr> to continue******************** file errorbars.dem ********************
+various styles of errorbar
+Would you like boxes? (-> return)Only X-Bars? (-> return)Only Y-Bars? (-> return)Logscaled? (-> return)X as well? (-> return)If you like bars without tics (-> return)X-Bars only (-> return)Y-Bars only (-> return)filledcurve shaded error regionHit return to continue******************** file zerror.dem ********************
+Hit return to continueHit return to continue******************** file fit.dem ********************
+Some examples how data fitting using nonlinear least squares fit can be done.
+
+We fit a straight line to the data -- only as a demo without physical meaning.
+  fit function:l(x) = y0 + m*x
+  initial parameters: y0 = 1.1, m = -0.1
+  fit command: fit l(x) 'lcdemo.dat' via y0, m
+
+Now start fitting...  (-> return)Press enter to proceed with the next example.
+Now use the real single-measurement weights from column 5.  (Look at the file
+lcdemo.dat and compare the columns to see the difference.)
+Since these are weights we rescale the resulting parameter errors.
+  fit settings: set fit errorscaling
+  fit command : fit l(x) 'lcdemo.dat' using 1:2:5 yerr via y0, m
+
+Press enter to start the fit.Press enter to proceed with the next example.
+It's time now to try a more realistic model function:
+
+  density(x) = x < Tc ? curve(x)+lowlin(x) : high(x)
+  curve(x) = b*tanh(g*(Tc-x))
+  lowlin(x)  = ml*(x-Tc) + dens_Tc
+  high(x) = mh*(x-Tc) + dens_Tc
+
+density(x) is a function which shall fit the whole temperature range using
+a ?: expression. It contains 6 model parameters which will all be varied. Now
+take the start parameters out of the file 'start.par' and plot the function.
+  fit command: fit density(x) 'lcdemo.dat' using 1:2:5 yerror via 'start.par'
+
+Press enter to start the fit.Press enter to proceed with the next example.
+
+Now a brief demonstration of 3d fitting.
+hemisphr.dat contains random points on a hemisphere of radius 1, but we let
+fit figure this out for us.  It takes many iterations, so we limit them to 50.
+We also do not want intermediate results here.
+  fit settings: set fit results maxiter 50
+  fit function: h(x,y) = sqrt(r*r - (abs(x-x0))**2.2 - (abs(y-y0))**1.8) + z0
+  fit command : fit h(x,y) 'hemisphr.dat' using 1:2:3 via r, x0, y0, z0
+Press enter to start the fit.
+After 50 iterations the fit converged.
+final sum of squares of residuals : 0.080165
+rel. change during last iteration : 0
+
+degrees of freedom    (FIT_NDF)                        : 245
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0180888
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000327204
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+r               = 1.00225          +/- 0.0003641    (0.03632%)
+x0              = -0.000450691     +/- 0.0003929    (87.17%)
+y0              = 0.000201292      +/- 0.0004735    (235.3%)
+z0              = -0.00104521      +/- 0.001526     (146%)
+
+correlation matrix of the fit parameters:
+                r      x0     y0     z0     
+r               1.000 
+x0              0.140  1.000 
+y0              0.085 -0.424  1.000 
+z0             -0.658 -0.045 -0.049  1.000 
+
+Notice, however, that this would converge much faster when fitted in a more
+appropriate co-ordinate system:
+  fit r 'hemisphr.dat' using 0:($1*$1+$2*$2+$3*$3) via r
+where we are fitting f(x)=r to the radii calculated as the data is read from
+the file.  No x value is required in this case.
+(This is left as an exercise for the user).
+
+Another possibility is to prescale the variables (set fit prescale),
+which may improve convergence.
+  fit settings: set fit maxiter 50 prescale
+  fit command : fit h(x,y) 'hemisphr.dat' using 1:2:3 via r, x0,y0,z0
+Press enter to proceed with the next example.
+
+Now an example on how to fit multi-branch functions.
+The model consists of two branches, the first describing longitudinal sound
+velocity as function of propagation direction (upper data, from dataset 1),
+the second describing transverse sound velocity (lower data, from dataset 0).
+
+The model uses these data in order to fit elastic stiffnesses which occur
+differently in both branches.
+  fit function: f(x,y)	=  y==1  ?  vlong(x)  :  vtrans(x)
+                vlong(x)    = sqrt(1.0/2.0/rho*1e9*(main(x) + mixed(x)))
+                vtrans(x)   = sqrt(1.0/2.0/rho*1e9*(main(x) - mixed(x)))
+y will be the index of the dataset.
+  fit command: fit f(x,y) 'soundvel.dat' using 1:-2:2 via 'sound.par'
+
+Press enter to start the fit.iter      chisq       delta/lim  lambda   c33           c11           c44           c13           phi0         
+   0 1.6651778833e+07   0.00e+00  1.06e+02    9.000000e+00   6.000000e+00   1.000000e+00   4.000000e+00   2.000000e+01
+   1 3.7115794520e+06  -3.49e+05  1.06e+01    1.107842e+01   5.715164e+00   1.112984e+00   5.269471e+00   5.489671e+00
+   2 3.0952217805e+05  -1.10e+06  1.06e+00    1.250349e+01   5.473118e+00   6.767568e-01   4.359096e+00  -2.308544e+00
+   3 7.9135498639e+04  -2.91e+05  1.06e-01    1.257557e+01   5.490760e+00   7.047546e-01   4.019414e+00  -3.385802e-01
+   4 7.8701397376e+04  -5.52e+02  1.06e-02    1.258878e+01   5.490036e+00   7.019290e-01   3.998785e+00  -3.997977e-01
+   5 7.8701391418e+04  -7.57e-03  1.06e-03    1.258874e+01   5.490047e+00   7.019482e-01   3.998746e+00  -3.995830e-01
+iter      chisq       delta/lim  lambda   c33           c11           c44           c13           phi0         
+
+After 5 iterations the fit converged.
+final sum of squares of residuals : 78701.4
+rel. change during last iteration : -7.57102e-08
+
+degrees of freedom    (FIT_NDF)                        : 144
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 23.3781
+variance of residuals (reduced chisquare) = WSSR/ndf   : 546.537
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+c33             = 12.5887          +/- 0.02898      (0.2302%)
+c11             = 5.49005          +/- 0.01846      (0.3363%)
+c44             = 0.701948         +/- 0.009755     (1.39%)
+c13             = 3.99875          +/- 0.03177      (0.7946%)
+phi0            = -0.399583        +/- 0.13         (32.54%)
+
+correlation matrix of the fit parameters:
+                c33    c11    c44    c13    phi0   
+c33             1.000 
+c11            -0.066  1.000 
+c44            -0.198 -0.278  1.000 
+c13            -0.141  0.028 -0.086  1.000 
+phi0            0.114 -0.022  0.034  0.181  1.000 
+
+Look at the file 'hexa.fnc' to see how the branches are realized using the
+data index as input for a pseudo-3d fit.
+
+Press enter to proceed with the next example.Next we only use every fifth data point for fitting by using the 'every'
+keyword. Note the faster fit and its result.
+  fit command: fit f(x,y) 'soundvel.dat' every 5 using 1:-2:2 via 'sound.par'
+
+Press enter to start the fit.iter      chisq       delta/lim  lambda   c33           c11           c44           c13           phi0         
+   0 3.4156363488e+06   0.00e+00  1.06e+02    9.000000e+00   6.000000e+00   1.000000e+00   4.000000e+00   2.000000e+01
+   1 1.7633147044e+06  -9.37e+04  1.06e+01    1.068004e+01   5.714969e+00   1.220411e+00   5.416989e+00   1.563561e+01
+   2 3.6812403684e+05  -3.79e+05  1.06e+00    1.154575e+01   5.621298e+00   9.265286e-01   5.024562e+00  -3.686271e+00
+   3 2.6359224461e+04  -1.30e+06  1.06e-01    1.253003e+01   5.480326e+00   6.995740e-01   4.092691e+00  -5.722734e-02
+   4 1.9074727803e+04  -3.82e+04  1.06e-02    1.254656e+01   5.491040e+00   7.055514e-01   3.941309e+00  -9.110937e-01
+   5 1.9071441847e+04  -1.72e+01  1.06e-03    1.254887e+01   5.490704e+00   7.054929e-01   3.937661e+00  -8.989885e-01
+   6 1.9071441717e+04  -6.83e-04  1.06e-04    1.254886e+01   5.490728e+00   7.054880e-01   3.937655e+00  -8.989317e-01
+iter      chisq       delta/lim  lambda   c33           c11           c44           c13           phi0         
+
+After 6 iterations the fit converged.
+final sum of squares of residuals : 19071.4
+rel. change during last iteration : -6.82518e-09
+
+degrees of freedom    (FIT_NDF)                        : 26
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 27.0835
+variance of residuals (reduced chisquare) = WSSR/ndf   : 733.517
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+c33             = 12.5489          +/- 0.07395      (0.5893%)
+c11             = 5.49073          +/- 0.04794      (0.8732%)
+c44             = 0.705488         +/- 0.02385      (3.381%)
+c13             = 3.93766          +/- 0.08229      (2.09%)
+phi0            = -0.898932        +/- 0.3067       (34.11%)
+
+correlation matrix of the fit parameters:
+                c33    c11    c44    c13    phi0   
+c33             1.000 
+c11            -0.067  1.000 
+c44            -0.227 -0.251  1.000 
+c13            -0.196  0.051 -0.066  1.000 
+phi0            0.086  0.006 -0.005  0.147  1.000 
+
+When you compare the results (see 'fit.log') you will note that the error of
+the fitted parameters have become larger, and the quality of the plot is only
+slightly affected.
+Press enter to proceed with the next example.
+By marking some parameters as '# FIXED' in the parameter file, you fit only
+the others (c44 and c13 are fixed here).
+Press enter to start the fit.iter      chisq       delta/lim  lambda   c33           c11           phi0         
+   0 9.7945909430e+06   0.00e+00  7.60e+01    9.000000e+00   6.000000e+00   1.000000e-04
+   1 5.6703596465e+05  -1.63e+06  7.60e+00    1.220149e+01   5.310817e+00  -7.224014e-01
+   2 5.3024065948e+05  -6.94e+03  7.60e-01    1.240113e+01   5.340579e+00  -1.080402e-01
+   3 5.3014685038e+05  -1.77e+01  7.60e-02    1.240095e+01   5.340080e+00  -1.667665e-01
+   4 5.3014624975e+05  -1.13e-01  7.60e-03    1.240106e+01   5.340147e+00  -1.620752e-01
+iter      chisq       delta/lim  lambda   c33           c11           phi0         
+
+After 4 iterations the fit converged.
+final sum of squares of residuals : 530146
+rel. change during last iteration : -1.13295e-06
+
+degrees of freedom    (FIT_NDF)                        : 146
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 60.2589
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3631.14
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+c33             = 12.4011          +/- 0.07251      (0.5847%)
+c11             = 5.34015          +/- 0.0462       (0.8651%)
+phi0            = -0.162075        +/- 0.3543       (218.6%)
+
+correlation matrix of the fit parameters:
+                c33    c11    phi0   
+c33             1.000 
+c11            -0.135  1.000 
+phi0            0.153  0.001  1.000 
+
+This has the same effect as specifying only the real free parameters by
+the 'via' syntax:
+  fit f(x) 'soundvel.dat' via c33, c11, phi0
+
+Press enter to proceed with the next example.
+
+Here comes an example of a rather complex function.
+
+First a plot with all parameters set to initial values.
+Now fit the model function to the data.
+  fit settings: set fit limit 1e-10
+  fit function: R(x) = sinh(A*a(x)) * exp(-1.*A*(1.+a(x)))
+                a(x) = W(x) * Q(tc) / mu
+                W(x) = 1./(sqrt(2.*pi)*eta) * exp( -1. * x**2 / (2.*eta**2) )
+  initial parameters:
+                eta = 0.00012
+                tc  = 0.0018
+  fit command : fit R(x) 'moli3.dat' u 1:2:3 zerror via eta, tc
+
+now start fitting...  (-> return)iter      chisq       delta/lim  lambda   eta           tc           
+   0 1.1441984213e+04   0.00e+00  2.76e+05    1.200000e-04   1.800000e-03
+   1 5.3171854336e+03  -1.15e+10  2.76e+04    1.043852e-04   1.837367e-03
+   2 4.6879093617e+03  -1.34e+09  2.76e+03    1.018093e-04   2.009651e-03
+   3 4.6734120845e+03  -3.10e+07  2.76e+02    1.010031e-04   2.024420e-03
+   4 4.6729937953e+03  -8.95e+05  2.76e+01    1.008229e-04   2.021774e-03
+   5 4.6729736309e+03  -4.32e+04  2.76e+00    1.007894e-04   2.021375e-03
+   6 4.6729718879e+03  -3.73e+03  2.76e-01    1.007831e-04   2.021299e-03
+   7 4.6729716327e+03  -5.46e+02  2.76e-02    1.007819e-04   2.021285e-03
+   8 4.6729715874e+03  -9.70e+01  2.76e-03    1.007817e-04   2.021282e-03
+   9 4.6729715790e+03  -1.80e+01  2.76e-04    1.007817e-04   2.021282e-03
+  10 4.6729715774e+03  -3.37e+00  2.76e-05    1.007817e-04   2.021282e-03
+  11 4.6729715771e+03  -6.32e-01  2.76e-06    1.007817e-04   2.021282e-03
+iter      chisq       delta/lim  lambda   eta           tc           
+
+After 11 iterations the fit converged.
+final sum of squares of residuals : 4672.97
+rel. change during last iteration : -6.32403e-11
+
+degrees of freedom    (FIT_NDF)                        : 123
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 6.16374
+variance of residuals (reduced chisquare) = WSSR/ndf   : 37.9916
+p-value of the Chisq distribution (FIT_P)              : 0
+
+Final set of parameters            Standard Deviation
+=======================            ==========================
+eta             = 0.000100782      +/- 3.184e-07    (0.3159%)
+tc              = 0.00202128       +/- 1.282e-05    (0.6342%)
+
+correlation matrix of the fit parameters:
+                eta    tc     
+eta             1.000 
+tc              0.426  1.000 
+
+Looking at the plot of the resulting fit curve, you can see that this function
+doesn't really fit this set of data points.  This would normally be a reason to
+to check for measurement problems not yet accounted for, and maybe even re-think
+the theoretic prediction in use.
+
+Press enter to proceed with the next example.
+Next we show a fit with three independent variables.
+The file fit3.dat has four columns, with values of the three independent
+variables x, y and t, and the'resulting value z.  The data lines are in four
+sections, with t being constant within each section.  The sections are separated
+by two blank lines, so we can select sections with "index" modifiers.  Here are
+the data in the first section, where t = -3.
+
+We will fit the function a0/(1 + a1*x**2 + a2*y**2) to these data.  Since at
+this point we have two independent variables, our "using" spec has four entries,
+representing x:y:z:s (where s is the estimated error in the z value).
+  fit function: f1(x,y)=a0/(1+a1*x**2+a2*y**2)
+  fit command : fit f1(x,y) 'fit3.dat' index 0 using 1:2:4 via a0,a1,a2
+
+Press enter to start the fit.iter      chisq       delta/lim  lambda   a0            a1            a2           
+   0 1.9200759829e+02   0.00e+00  1.08e+00    1.000000e+00   1.000000e-01   1.000000e-01
+   * 2.1341288746e+05   9.99e+09  1.08e+01   -1.996446e+00  -9.317214e-02  -6.894074e-02
+   1 1.2155812773e+02  -5.80e+09  1.08e+00    6.747760e-01   3.330668e-01   3.459786e-01
+   2 6.4591509465e+00  -1.78e+11  1.08e-01   -2.166519e+00   4.014935e-01   5.408270e-01
+   3 1.0813895568e+00  -4.97e+10  1.08e-02   -3.016252e+00   5.534097e-01   4.635940e-01
+   4 1.0604896443e+00  -1.97e+08  1.08e-03   -3.021526e+00   5.281087e-01   4.842650e-01
+   5 1.0604647203e+00  -2.35e+05  1.08e-04   -3.022777e+00   5.291208e-01   4.850168e-01
+   6 1.0604647180e+00  -2.20e+01  1.08e-05   -3.022759e+00   5.291036e-01   4.850186e-01
+   7 1.0604647180e+00  -2.62e-01  1.08e-06   -3.022760e+00   5.291039e-01   4.850187e-01
+iter      chisq       delta/lim  lambda   a0            a1            a2           
+
+After 7 iterations the fit converged.
+final sum of squares of residuals : 1.06046
+rel. change during last iteration : -2.61567e-11
+
+degrees of freedom    (FIT_NDF)                        : 118
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0947997
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.00898699
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+a0              = -3.02276         +/- 0.05612      (1.857%)
+a1              = 0.529104         +/- 0.02538      (4.798%)
+a2              = 0.485019         +/- 0.02338      (4.821%)
+
+correlation matrix of the fit parameters:
+                a0     a1     a2     
+a0              1.000 
+a1             -0.636  1.000 
+a2             -0.638  0.235  1.000 
+Press enter to proceed with the next example.
+Here is the last set of data where t = 3.
+We fit the same function to this set.
+  fit function: f1(x,y)=a0/(1+a1*x**2+a2*y**2)
+  fit command : fit f1(x,y) 'fit3.dat' index 3 using 1:2:4 via a0,a1,a2
+
+Press enter to start the fit.iter      chisq       delta/lim  lambda   a0            a1            a2           
+   0 2.7120346202e+02   0.00e+00  4.18e-01   -3.022760e+00   5.291039e-01   4.850187e-01
+   1 5.0488012023e+00  -5.27e+11  4.18e-02    2.596854e+00   6.962571e-01   5.636897e-01
+   2 1.4652164280e+00  -2.45e+10  4.18e-03    3.093112e+00   4.150048e-01   5.365566e-01
+   3 1.1757252546e+00  -2.46e+09  4.18e-04    3.115259e+00   4.994275e-01   5.471436e-01
+   4 1.1726111180e+00  -2.66e+07  4.18e-05    3.120030e+00   5.112617e-01   5.467837e-01
+   5 1.1726107387e+00  -3.23e+03  4.18e-06    3.119771e+00   5.112950e-01   5.466635e-01
+   6 1.1726107381e+00  -5.57e+00  4.18e-07    3.119777e+00   5.112965e-01   5.466665e-01
+   * 1.1726107381e+00   1.67e-01  4.18e-06    3.119777e+00   5.112964e-01   5.466664e-01
+   * 1.1726107381e+00   1.67e-01  4.18e-05    3.119777e+00   5.112964e-01   5.466664e-01
+   * 1.1726107381e+00   1.67e-01  4.18e-04    3.119777e+00   5.112964e-01   5.466664e-01
+   * 1.1726107381e+00   1.67e-01  4.18e-03    3.119777e+00   5.112964e-01   5.466664e-01
+   * 1.1726107381e+00   1.67e-01  4.18e-02    3.119777e+00   5.112964e-01   5.466664e-01
+   * 1.1726107381e+00   1.67e-01  4.18e-01    3.119777e+00   5.112964e-01   5.466664e-01
+   * 1.1726107381e+00   1.54e-01  4.18e+00    3.119777e+00   5.112964e-01   5.466664e-01
+   * 1.1726107381e+00   3.65e-02  4.18e+01    3.119777e+00   5.112964e-01   5.466665e-01
+   * 1.1726107381e+00   8.58e-04  4.18e+02    3.119777e+00   5.112965e-01   5.466665e-01
+   * 1.1726107381e+00   7.57e-06  4.18e+03    3.119777e+00   5.112965e-01   5.466665e-01
+   7 1.1726107381e+00  -1.89e-06  4.18e+02    3.119777e+00   5.112965e-01   5.466665e-01
+iter      chisq       delta/lim  lambda   a0            a1            a2           
+
+After 7 iterations the fit converged.
+final sum of squares of residuals : 1.17261
+rel. change during last iteration : -1.89359e-16
+
+degrees of freedom    (FIT_NDF)                        : 117
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.100112
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.0100223
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+a0              = 3.11978          +/- 0.0752       (2.41%)
+a1              = 0.511296         +/- 0.02835      (5.544%)
+a2              = 0.546667         +/- 0.03019      (5.522%)
+
+correlation matrix of the fit parameters:
+                a0     a1     a2     
+a0              1.000 
+a1              0.718  1.000 
+a2              0.716  0.376  1.000 
+Press enter to proceed with the next example.
+We also have data for several intermediate values of t.  We will fit the
+function f(x,y,t)=a0*t/(1+a1*x**2+a2*y**2) to all the data.
+  fit function: f(x,y,t)=a0*t/(1+a1*x**2+a2*y**2)
+  fit command : fit f(x,y,t) 'fit3.dat' u 1:2:3:4 via a0,a1,a2
+
+Press enter to start the fit.iter      chisq       delta/lim  lambda   a0            a1            a2           
+   0 6.6327563650e+02   0.00e+00  9.11e-01    3.119777e+00   5.112965e-01   5.466665e-01
+   1 4.6639172676e+00  -1.41e+12  9.11e-02    1.058306e+00   5.232988e-01   5.443153e-01
+   2 4.5674642800e+00  -2.11e+08  9.11e-03    1.021357e+00   5.174850e-01   5.083111e-01
+   3 4.5674523432e+00  -2.61e+04  9.11e-04    1.021796e+00   5.177911e-01   5.088947e-01
+   4 4.5674523419e+00  -2.84e+00  9.11e-05    1.021790e+00   5.177820e-01   5.088906e-01
+   5 4.5674523419e+00  -4.67e-02  9.11e-06    1.021790e+00   5.177821e-01   5.088907e-01
+iter      chisq       delta/lim  lambda   a0            a1            a2           
+
+After 5 iterations the fit converged.
+final sum of squares of residuals : 4.56745
+rel. change during last iteration : -4.67264e-12
+
+degrees of freedom    (FIT_NDF)                        : 480
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0975476
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.00951553
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+a0              = 1.02179          +/- 0.01414      (1.384%)
+a1              = 0.517782         +/- 0.01766      (3.41%)
+a2              = 0.508891         +/- 0.01737      (3.414%)
+
+correlation matrix of the fit parameters:
+                a0     a1     a2     
+a0              1.000 
+a1              0.669  1.000 
+a2              0.669  0.289  1.000 
+
+Here are all the data together.
+
+You can use ranges to rename variables and/or limit the data included in the
+fit.  The first range corresponds to the first "using" entry, etc. For example,
+we could have gotten the same fit like this:
+   fit [lon=*:*][lat=*:*][time=*:*]        \
+     a0*time/(1 + a1*lon**2 + a2*lat**2)   \
+     "fit3.dat" u 1:2:3:4 via a0,a1,a2
+Press enter to proceed with the next example.
+
+The fit command can handle errors in the independent variable, too.
+The problem shown here is Pearson's data with York's weights.
+
+First draw the data with uncertainties and the initial function.
+
+Press enter to fit the data using no error values
+
+Press enter to fit the data using no error valueslambda start value set: 1
+iter      chisq       delta/lim  lambda   a1            a2           
+   0 4.6100000000e+00   0.00e+00  1.00e+00    5.000000e+00  -5.000000e-01
+   1 8.0189138044e-01  -4.75e+08  1.00e-01    5.741046e+00  -5.350813e-01
+   2 8.0066352303e-01  -1.53e+05  1.00e-02    5.761170e+00  -5.395735e-01
+   3 8.0066352224e-01  -9.89e-02  1.00e-03    5.761185e+00  -5.395773e-01
+iter      chisq       delta/lim  lambda   a1            a2           
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 0.800664
+rel. change during last iteration : -9.88845e-10
+
+degrees of freedom    (FIT_NDF)                        : 8
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.316359
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.100083
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+a1              = 5.76119          +/- 0.1895       (3.289%)
+a2              = -0.539577        +/- 0.04213      (7.807%)
+
+correlation matrix of the fit parameters:
+                a1     a2     
+a1              1.000 
+a2             -0.849  1.000 
+
+Press enter to fit the data using only the uncertainties of the y-values.
+
+Press enter to fit the data using only the uncertainties of the y-values.lambda start value set: 1
+iter      chisq       delta/lim  lambda   a1y           a2y          
+   0 1.4962550000e+02   0.00e+00  1.00e+00    5.000000e+00  -5.000000e-01
+   1 3.4345697872e+01  -3.36e+08  1.00e-01    6.095602e+00  -6.101483e-01
+   2 3.4345207498e+01  -1.43e+03  1.00e-02    6.100109e+00  -6.108129e-01
+   3 3.4345207498e+01  -4.10e-06  1.00e-03    6.100109e+00  -6.108130e-01
+iter      chisq       delta/lim  lambda   a1y           a2y          
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 34.3452
+rel. change during last iteration : -4.09628e-14
+
+degrees of freedom    (FIT_NDF)                        : 8
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.07199
+variance of residuals (reduced chisquare) = WSSR/ndf   : 4.29315
+p-value of the Chisq distribution (FIT_P)              : 3.51726e-05
+
+Final set of parameters            Standard Deviation
+=======================            ==========================
+a1y             = 6.10011          +/- 0.2047       (3.355%)
+a2y             = -0.610813        +/- 0.03009      (4.926%)
+
+correlation matrix of the fit parameters:
+                a1y    a2y    
+a1y             1.000 
+a2y            -0.985  1.000 
+
+Press enter to fit the data using the uncertainties of the x and y values.
+
+Press enter to fit the data using the uncertainties of the x and y values.lambda start value set: 1
+iter      chisq       delta/lim  lambda   a1xy          a2xy         
+   0 6.3259837889e+01   0.00e+00  1.00e+00    5.000000e+00  -5.000000e-01
+   1 1.1957122097e+01  -4.29e+08  1.00e-01    5.395533e+00  -4.633919e-01
+   2 1.1956475893e+01  -5.40e+03  1.00e-02    5.396066e+00  -4.634515e-01
+   * 1.1956484542e+01   7.23e+01  1.00e-01    5.396062e+00  -4.634507e-01
+   * 1.1956484540e+01   7.23e+01  1.00e+00    5.396062e+00  -4.634507e-01
+   * 1.1956484400e+01   7.12e+01  1.00e+01    5.396062e+00  -4.634507e-01
+   * 1.1956479134e+01   2.71e+01  1.00e+02    5.396064e+00  -4.634512e-01
+   * 1.1956475943e+01   4.19e-01  1.00e+03    5.396066e+00  -4.634515e-01
+   * 1.1956475893e+01   4.16e-03  1.00e+04    5.396066e+00  -4.634515e-01
+   * 1.1956475893e+01   4.03e-05  1.00e+05    5.396066e+00  -4.634515e-01
+   3 1.1956475893e+01  -1.63e-07  1.00e+04    5.396066e+00  -4.634515e-01
+iter      chisq       delta/lim  lambda   a1xy          a2xy         
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 11.9565
+rel. change during last iteration : -1.63425e-15
+
+degrees of freedom    (FIT_NDF)                        : 8
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.22252
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.49456
+p-value of the Chisq distribution (FIT_P)              : 0.153156
+
+Final set of parameters            Standard Deviation
+=======================            ==========================
+a1xy            = 5.39607          +/- 0.2957       (5.479%)
+a2xy            = -0.463451        +/- 0.0578       (12.47%)
+
+correlation matrix of the fit parameters:
+                a1xy   a2xy   
+a1xy            1.000 
+a2xy           -0.964  1.000 
+
+
+Summary of the fit results:
+                        a1           a2           a1_err       a2_err
+------------------------------------------------------------------------
+initial values          5.000e+00  -5.00e-01
+our result              5.396e+00  -4.63e-01   2.957e-01  5.78e-02
+ROOT Minuit             5.480e+00  -4.81e-01   2.926e-01  5.76e-02
+------------------------------------------------------------------------
+
+You can have a look at all previous fit results by looking into the file
+'fit.log' (or whatever you defined the environment variable 'FIT_LOG' to).
+Remember that this file will always be appended to, so remove it from time
+to time.
+
+Done with fitting demo  (-> return)"fitmulti.dem" line 83: warning: 
+	> Implied independent variable y not found in fit function.
+	> Assuming version 4 syntax with zerror in column 3 but no zerror keyword.
+
+iter      chisq       delta/lim  lambda   c1           
+   0 2.1892940362e+01   0.00e+00  6.81e-01    1.000000e+00
+   1 4.5233347856e-02  -4.83e+07  6.81e-02    2.431818e+00
+   2 1.0247233379e-08  -4.41e+11  6.81e-03    2.499968e+00
+   3 2.3236116830e-19  -4.41e+15  6.81e-04    2.500000e+00
+   4 1.9793013150e-28  -1.17e+14  6.81e-05    2.500000e+00
+   5 1.9793013150e-28   0.00e+00  6.81e-06    2.500000e+00
+iter      chisq       delta/lim  lambda   c1           
+
+After 5 iterations the fit converged.
+final sum of squares of residuals : 1.9793e-28
+rel. change during last iteration : 0
+
+degrees of freedom    (FIT_NDF)                        : 20
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 3.14587e-15
+variance of residuals (reduced chisquare) = WSSR/ndf   : 9.89651e-30
+p-value of the Chisq distribution (FIT_P)              : 1
+
+Final set of parameters            Standard Deviation
+=======================            ==========================
+c1              = 2.5              +/- 0.3206       (12.82%)
+---------------------------------------------------------
+1D fit: expected 2.5 c1 = 2.5
+---------------------------------------------------------
+Hit return to try for a 2D fit"fitmulti.dem" line 99: warning: 
+	> Implied independent variable t not found in fit function.
+	> Assuming version 4 syntax with zerror in column 4 but no zerror keyword.
+
+iter      chisq       delta/lim  lambda   c1            c2           
+   0 1.8402267568e+01   0.00e+00  5.08e-01    1.000000e+00   1.000000e+00
+   1 5.1495377021e-01  -3.47e+06  5.08e-02    2.363854e+00  -7.849976e-01
+   2 1.4278686826e-05  -3.61e+09  5.08e-03    2.499431e+00  -1.794590e+00
+   3 4.0743857030e-14  -3.50e+13  5.08e-04    2.500000e+00  -1.800000e+00
+   4 1.1747755312e-26  -3.47e+17  5.08e-05    2.500000e+00  -1.800000e+00
+   5 1.3330381888e-28  -8.71e+06  5.08e-06    2.500000e+00  -1.800000e+00
+   6 1.2866926106e-28  -3.60e+03  5.08e-07    2.500000e+00  -1.800000e+00
+   7 1.2866926106e-28   0.00e+00  5.08e-08    2.500000e+00  -1.800000e+00
+iter      chisq       delta/lim  lambda   c1            c2           
+
+After 7 iterations the fit converged.
+final sum of squares of residuals : 1.28669e-28
+rel. change during last iteration : 0
+
+degrees of freedom    (FIT_NDF)                        : 18
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.67363e-15
+variance of residuals (reduced chisquare) = WSSR/ndf   : 7.14829e-30
+p-value of the Chisq distribution (FIT_P)              : 1
+
+Final set of parameters            Standard Deviation
+=======================            ==========================
+c1              = 2.5              +/- 0.3503       (14.01%)
+c2              = -1.8             +/- 1.432        (79.57%)
+
+correlation matrix of the fit parameters:
+                c1     c2     
+c1              1.000 
+c2             -0.403  1.000 
+---------------------------------------------------------
+2D fit: expected 2.5 c1 = 2.5
+2D fit: expected -1.8 c2 = -1.80000000000001
+---------------------------------------------------------
+Hit return to try for a 3D fit"fitmulti.dem" line 115: warning: 
+	> Implied independent variable x3 not found in fit function.
+	> Assuming version 4 syntax with zerror in column 5 but no zerror keyword.
+
+iter      chisq       delta/lim  lambda   c1            c2            c3           
+   0 5.0042107018e+05   0.00e+00  1.36e+00    1.000000e+00   1.000000e+00   1.000000e+00
+   1 1.5648231886e+02  -3.20e+08  1.36e-01    2.667794e+00   2.485896e-01   6.876787e+01
+   2 9.5026215217e-04  -1.65e+10  1.36e-02    2.498116e+00  -1.774715e+00   6.999949e+01
+   3 1.4986897994e-11  -6.34e+12  1.36e-03    2.500000e+00  -1.799997e+00   7.000000e+01
+   4 2.5594986155e-23  -5.86e+16  1.36e-04    2.500000e+00  -1.800000e+00   7.000000e+01
+   5 1.5865767741e-24  -1.51e+06  1.36e-05    2.500000e+00  -1.800000e+00   7.000000e+01
+   6 1.5657265887e-24  -1.33e+03  1.36e-06    2.500000e+00  -1.800000e+00   7.000000e+01
+   * 1.5852570098e-24   1.23e+03  1.36e-05    2.500000e+00  -1.800000e+00   7.000000e+01
+   * 1.5852570098e-24   1.23e+03  1.36e-04    2.500000e+00  -1.800000e+00   7.000000e+01
+   * 1.5852570098e-24   1.23e+03  1.36e-03    2.500000e+00  -1.800000e+00   7.000000e+01
+   * 1.5852570098e-24   1.23e+03  1.36e-02    2.500000e+00  -1.800000e+00   7.000000e+01
+   * 1.5852570098e-24   1.23e+03  1.36e-01    2.500000e+00  -1.800000e+00   7.000000e+01
+   * 1.5852570098e-24   1.23e+03  1.36e+00    2.500000e+00  -1.800000e+00   7.000000e+01
+   * 1.5854870121e-24   1.25e+03  1.36e+01    2.500000e+00  -1.800000e+00   7.000000e+01
+   7 1.5657265887e-24   0.00e+00  1.36e+00    2.500000e+00  -1.800000e+00   7.000000e+01
+iter      chisq       delta/lim  lambda   c1            c2            c3           
+
+After 7 iterations the fit converged.
+final sum of squares of residuals : 1.56573e-24
+rel. change during last iteration : 0
+
+degrees of freedom    (FIT_NDF)                        : 18
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.94932e-13
+variance of residuals (reduced chisquare) = WSSR/ndf   : 8.69848e-26
+p-value of the Chisq distribution (FIT_P)              : 1
+
+Final set of parameters            Standard Deviation
+=======================            ==========================
+c1              = 2.5              +/- 0.3341       (13.36%)
+c2              = -1.8             +/- 0.8232       (45.73%)
+c3              = 70               +/- 0.09942      (0.142%)
+
+correlation matrix of the fit parameters:
+                c1     c2     c3     
+c1              1.000 
+c2             -0.228  1.000 
+c3             -0.144 -0.089  1.000 
+---------------------------------------------------------
+3D fit: expected 2.5 c1 = 2.50000000000001
+3D fit: expected -1.8 c2 = -1.80000000000011
+3D fit: expected 70.0 c3 = 70.0
+---------------------------------------------------------
+Hit return to try for a 4D fit"fitmulti.dem" line 131: warning: 
+	> Implied independent variable x4 not found in fit function.
+	> Assuming version 4 syntax with zerror in column 6 but no zerror keyword.
+
+iter      chisq       delta/lim  lambda   c1            c2            c3            c4           
+   0 5.0434414591e+05   0.00e+00  1.23e+00    1.000000e+00   1.000000e+00   1.000000e+00   1.000000e+00
+   1 1.0737393796e+02  -4.70e+08  1.23e-01    2.637883e+00   2.081428e-01   6.896240e+01  -3.465848e+00
+   2 7.6766393648e-04  -1.40e+10  1.23e-02    2.498380e+00  -1.775303e+00   6.999930e+01  -3.204055e+00
+   3 1.1976288234e-11  -6.41e+12  1.23e-03    2.500000e+00  -1.799997e+00   7.000000e+01  -3.200001e+00
+   4 1.9635651177e-23  -6.10e+16  1.23e-04    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   5 6.5436327632e-25  -2.90e+06  1.23e-05    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   6 6.5213001110e-25  -3.42e+02  1.23e-06    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   7 6.5184207687e-25  -4.42e+01  1.23e-07    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   8 6.4608339226e-25  -8.91e+02  1.23e-08    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   * 6.5173794723e-25   8.68e+02  1.23e-07    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   * 6.5173794723e-25   8.68e+02  1.23e-06    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   * 6.5173794723e-25   8.68e+02  1.23e-05    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   * 6.5173794723e-25   8.68e+02  1.23e-04    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   * 6.5173794723e-25   8.68e+02  1.23e-03    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   * 6.5173794723e-25   8.68e+02  1.23e-02    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   * 6.5173794723e-25   8.68e+02  1.23e-01    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   * 6.5173794723e-25   8.68e+02  1.23e+00    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   * 6.5178922319e-25   8.75e+02  1.23e+01    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+   9 6.4608339226e-25   0.00e+00  1.23e+00    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00
+iter      chisq       delta/lim  lambda   c1            c2            c3            c4           
+
+After 9 iterations the fit converged.
+final sum of squares of residuals : 6.46083e-25
+rel. change during last iteration : 0
+
+degrees of freedom    (FIT_NDF)                        : 17
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.94948e-13
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.80049e-26
+p-value of the Chisq distribution (FIT_P)              : 1
+
+Final set of parameters            Standard Deviation
+=======================            ==========================
+c1              = 2.5              +/- 0.3341       (13.36%)
+c2              = -1.8             +/- 0.8947       (49.71%)
+c3              = 70               +/- 0.1026       (0.1466%)
+c4              = -3.2             +/- 0.3306       (10.33%)
+
+correlation matrix of the fit parameters:
+                c1     c2     c3     c4     
+c1              1.000 
+c2             -0.214  1.000 
+c3             -0.137 -0.176  1.000 
+c4              0.010 -0.392  0.247  1.000 
+---------------------------------------------------------
+4D fit: expected 2.5 c1 = 2.4999999999999
+4D fit: expected -1.8 c2 = -1.80000000000033
+4D fit: expected 70.0 c3 = 70.0
+4D fit: expected -3.2 c4 = -3.1999999999997
+---------------------------------------------------------
+Hit return to try for a 5D fit"fitmulti.dem" line 149: warning: 
+	> Implied independent variable x5 not found in fit function.
+	> Assuming version 4 syntax with zerror in column 7 but no zerror keyword.
+
+iter      chisq       delta/lim  lambda   c1            c2            c3            c4            c5           
+   0 3.5652827793e+05   0.00e+00  2.08e+01    1.000000e+00   1.000000e+00   1.000000e+00   1.000000e+00   1.000000e+00
+   1 8.2628175865e+04  -3.31e+05  2.08e+00    1.131551e+00   1.200143e+00   4.015282e+00   1.106540e+00   3.274197e+00
+   2 2.8797393982e+03  -2.77e+06  2.08e-01    2.268438e+00   3.004089e+00   5.746308e+01  -1.174504e+00   9.548228e-01
+   3 5.7761101766e-02  -4.99e+09  2.08e-02    2.484844e+00  -1.615778e+00   6.995937e+01  -3.211773e+00   4.017438e-01
+   4 5.5575896136e-09  -1.04e+12  2.08e-03    2.499994e+00  -1.799932e+00   6.999999e+01  -3.200009e+00   4.000002e-01
+   5 7.5296124774e-20  -7.38e+15  2.08e-04    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   6 6.8714202466e-25  -1.10e+10  2.08e-05    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   7 6.6497897753e-25  -3.33e+03  2.08e-06    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   * 6.6506654109e-25   1.32e+01  2.08e-05    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   * 6.6506654109e-25   1.32e+01  2.08e-04    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   * 6.6506654109e-25   1.32e+01  2.08e-03    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   * 6.6506654109e-25   1.32e+01  2.08e-02    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   * 6.6506654109e-25   1.32e+01  2.08e-01    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   * 6.6500422107e-25   3.80e+00  2.08e+00    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   8 6.4747494290e-25  -2.70e+03  2.08e-01    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   * 6.9279657963e-25   6.54e+03  2.08e+00    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   * 6.6666004012e-25   2.88e+03  2.08e+01    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   * 6.6524640137e-25   2.67e+03  2.08e+02    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   * 6.5555287857e-25   1.23e+03  2.08e+03    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+   9 6.4747494290e-25   0.00e+00  2.08e+02    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01
+iter      chisq       delta/lim  lambda   c1            c2            c3            c4            c5           
+
+After 9 iterations the fit converged.
+final sum of squares of residuals : 6.47475e-25
+rel. change during last iteration : 0
+
+degrees of freedom    (FIT_NDF)                        : 16
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.01165e-13
+variance of residuals (reduced chisquare) = WSSR/ndf   : 4.04672e-26
+p-value of the Chisq distribution (FIT_P)              : 1
+
+Final set of parameters            Standard Deviation
+=======================            ==========================
+c1              = 2.5              +/- 0.3351       (13.41%)
+c2              = -1.8             +/- 0.9103       (50.57%)
+c3              = 70               +/- 0.2366       (0.338%)
+c4              = -3.2             +/- 0.3331       (10.41%)
+c5              = 0.4              +/- 0.01144      (2.86%)
+
+correlation matrix of the fit parameters:
+                c1     c2     c3     c4     c5     
+c1              1.000 
+c2             -0.224  1.000 
+c3              0.011 -0.241  1.000 
+c4              0.001 -0.360 -0.004  1.000 
+c5             -0.078  0.184 -0.901  0.123  1.000 
+---------------------------------------------------------
+5D fit: expected 2.5 c1 = 2.4999999999999
+5D fit: expected -1.8 c2 = -1.80000000000034
+5D fit: expected 70.0 c3 = 70.0
+5D fit: expected -3.2 c4 = -3.1999999999997
+5D fit: expected 0.4 c5 = 0.4
+---------------------------------------------------------
+Hit return to try for a 6D fitThis 6D fit will fail in version 4 but version 5 can handle more parameters
+"fitmulti.dem" line 171: warning: 
+	> Implied independent variable  not found in fit function.
+	> Assuming version 4 syntax with zerror in column 8 but no zerror keyword.
+
+iter      chisq       delta/lim  lambda   c1            c2            c3            c4            c5            c6           
+   0 3.4961271093e+05   0.00e+00  1.94e+01    1.000000e+00   1.000000e+00   1.000000e+00   1.000000e+00   1.000000e+00   1.000000e+00
+   1 7.6637354181e+04  -3.56e+05  1.94e+00    9.608331e-01   1.184762e+00   4.200546e+00   1.106839e+00   3.265869e+00   9.641673e-01
+   2 2.4111848689e+03  -3.08e+06  1.94e-01    1.293024e+00   2.647546e+00   5.815961e+01  -1.307965e+00   9.256806e-01   1.373154e-01
+   3 4.0425600039e-02  -5.96e+09  1.94e-02    2.493419e+00  -1.646308e+00   6.996638e+01  -3.211246e+00   4.014427e-01  -1.585899e-01
+   4 7.1103832630e-08  -5.69e+10  1.94e-03    2.500262e+00  -1.799903e+00   7.000002e+01  -3.200052e+00   3.999987e-01  -2.480390e-01
+   5 3.2145956903e-15  -2.21e+12  1.94e-04    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.499996e-01
+   6 1.2915932826e-24  -2.49e+14  1.94e-05    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2994882026e-24   6.08e+02  1.94e-04    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2994882026e-24   6.08e+02  1.94e-03    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2994882026e-24   6.08e+02  1.94e-02    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   7 1.2628874232e-24  -2.27e+03  1.94e-03    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   8 1.1896282775e-24  -6.16e+03  1.94e-04    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2110348070e-24   1.77e+03  1.94e-03    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2110348070e-24   1.77e+03  1.94e-02    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2110348070e-24   1.77e+03  1.94e-01    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2219968181e-24   2.65e+03  1.94e+00    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2252721686e-24   2.91e+03  1.94e+01    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   9 1.1888204839e-24  -6.79e+01  1.94e+00    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2998029581e-24   8.54e+03  1.94e+01    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+  10 1.1888204839e-24   0.00e+00  1.94e+00    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+iter      chisq       delta/lim  lambda   c1            c2            c3            c4            c5            c6           
+
+After 10 iterations the fit converged.
+final sum of squares of residuals : 1.18882e-24
+rel. change during last iteration : 0
+
+degrees of freedom    (FIT_NDF)                        : 14
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.91403e-13
+variance of residuals (reduced chisquare) = WSSR/ndf   : 8.49157e-26
+p-value of the Chisq distribution (FIT_P)              : 1
+
+Final set of parameters            Standard Deviation
+=======================            ==========================
+c1              = 2.5              +/- 1.079        (43.17%)
+c2              = -1.8             +/- 0.9301       (51.67%)
+c3              = 70               +/- 0.2616       (0.3737%)
+c4              = -3.2             +/- 0.3759       (11.75%)
+c5              = 0.4              +/- 0.01302      (3.256%)
+c6              = -0.25            +/- 7.512        (3005%)
+
+correlation matrix of the fit parameters:
+                c1     c2     c3     c4     c5     c6     
+c1              1.000 
+c2              0.124  1.000 
+c3              0.370 -0.129  1.000 
+c4             -0.440 -0.405 -0.182  1.000 
+c5             -0.447  0.062 -0.919  0.303  1.000 
+c6              0.945  0.197  0.366 -0.461 -0.428  1.000 
+---------------------------------------------------------
+6D fit: expected 2.5 c1 = 2.49999999999976
+6D fit: expected -1.8 c2 = -1.80000000000026
+6D fit: expected 70.0 c3 = 70.0
+6D fit: expected -3.2 c4 = -3.19999999999975
+6D fit: expected 0.4 c5 = 0.4
+6D fit: expected -0.25 c6 = -0.250000000000491
+FIT_NDF = 14 after range filters (expected 14)
+---------------------------------------------------------
+Hit return to try fit with array variables"fitmulti.dem" line 183: warning: 
+	> Implied independent variable  not found in fit function.
+	> Assuming version 4 syntax with zerror in column 8 but no zerror keyword.
+
+iter      chisq       delta/lim  lambda   A[1]          A[2]          A[3]          A[4]          A[5]          A[6]         
+   0 3.4961271093e+05   0.00e+00  1.94e+01    1.000000e+00   1.000000e+00   1.000000e+00   1.000000e+00   1.000000e+00   1.000000e+00
+   1 7.6637354181e+04  -3.56e+05  1.94e+00    9.608331e-01   1.184762e+00   4.200546e+00   1.106839e+00   3.265869e+00   9.641673e-01
+   2 2.4111848689e+03  -3.08e+06  1.94e-01    1.293024e+00   2.647546e+00   5.815961e+01  -1.307965e+00   9.256806e-01   1.373154e-01
+   3 4.0425600039e-02  -5.96e+09  1.94e-02    2.493419e+00  -1.646308e+00   6.996638e+01  -3.211246e+00   4.014427e-01  -1.585899e-01
+   4 7.1103832630e-08  -5.69e+10  1.94e-03    2.500262e+00  -1.799903e+00   7.000002e+01  -3.200052e+00   3.999987e-01  -2.480390e-01
+   5 3.2145956903e-15  -2.21e+12  1.94e-04    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.499996e-01
+   6 1.2915932826e-24  -2.49e+14  1.94e-05    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2994882026e-24   6.08e+02  1.94e-04    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2994882026e-24   6.08e+02  1.94e-03    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2994882026e-24   6.08e+02  1.94e-02    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   7 1.2628874232e-24  -2.27e+03  1.94e-03    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   8 1.1896282775e-24  -6.16e+03  1.94e-04    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2110348070e-24   1.77e+03  1.94e-03    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2110348070e-24   1.77e+03  1.94e-02    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2110348070e-24   1.77e+03  1.94e-01    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2219968181e-24   2.65e+03  1.94e+00    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2252721686e-24   2.91e+03  1.94e+01    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   9 1.1888204839e-24  -6.79e+01  1.94e+00    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+   * 1.2998029581e-24   8.54e+03  1.94e+01    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+  10 1.1888204839e-24   0.00e+00  1.94e+00    2.500000e+00  -1.800000e+00   7.000000e+01  -3.200000e+00   4.000000e-01  -2.500000e-01
+iter      chisq       delta/lim  lambda   A[1]          A[2]          A[3]          A[4]          A[5]          A[6]         
+
+After 10 iterations the fit converged.
+final sum of squares of residuals : 1.18882e-24
+rel. change during last iteration : 0
+
+degrees of freedom    (FIT_NDF)                        : 14
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.91403e-13
+variance of residuals (reduced chisquare) = WSSR/ndf   : 8.49157e-26
+p-value of the Chisq distribution (FIT_P)              : 1
+
+Final set of parameters            Standard Deviation
+=======================            ==========================
+A[1]            = 2.5              +/- 1.079        (43.17%)
+A[2]            = -1.8             +/- 0.9301       (51.67%)
+A[3]            = 70               +/- 0.2616       (0.3737%)
+A[4]            = -3.2             +/- 0.3759       (11.75%)
+A[5]            = 0.4              +/- 0.01302      (3.256%)
+A[6]            = -0.25            +/- 7.512        (3005%)
+
+correlation matrix of the fit parameters:
+                A[1]   A[2]   A[3]   A[4]   A[5]   A[6]   
+A[1]            1.000 
+A[2]            0.124  1.000 
+A[3]            0.370 -0.129  1.000 
+A[4]           -0.440 -0.405 -0.182  1.000 
+A[5]           -0.447  0.062 -0.919  0.303  1.000 
+A[6]            0.945  0.197  0.366 -0.461 -0.428  1.000 
+---------------------------------------------------------
+
+	Variables beginning with A_:
+	A_1__err = 1.07920943632493
+	A_2__err = 0.930099132065864
+	A_3__err = 0.261566870454281
+	A_4__err = 0.375869300020404
+	A_5__err = 0.0130221281721936
+	A_6__err = 7.51152824151569
+
+Array A after 6D fit: [2.49999999999976,-1.80000000000026,70.0,-3.19999999999975,0.4,-0.250000000000491]
+
+Hit return to end multidimension fit demo******************** file named_var.dem ********************
+Hit return to continue******************** file param.dem ********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue******************** file piecewise.dem ********************
+Hit <cr> to continueHit <cr> to continueHit <cr> to continue******************** file polar.dem ********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue******************** file poldat.dem ********************
+Hit return to continueHit return to continueHit return to continueHit return to continue******************** file polar_quadrants.dem ********************
+<cr> to continue******************** file orbits.dem ********************
+******************** file solar_path.dem ****************
+21-12-2016    sunrise 8:04   sunset 16:37    sunlight 8 h 32 m
+22-06-2017    sunrise 4:37   sunset 20:04    sunlight 15 h 27 m
+05-12-2021    sunrise 7:59   sunset 16:42    sunlight 8 h 42 m
+<cr> to continue******************** file ttics.dem ********************
+<cr> to continue<cr> to continue<cr> to continue******************** file boxplot.dem ********************
+*** Boxplot demo ***
+Hit <cr> to continue: Compare sub-datasetsHit <cr> to continue: Assign selected colors to each factorHit <cr> to continue: Sort factors alphabeticallyHit <cr> to continue: The same, with iteration and manual filteringHit <cr> to continue: boxplot demo finished******************** file jitter.dem ********************
+Hit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continue******************** file violinplot.dem ********************
+Hit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continue******************** file spiderplot.dem ********************
+<cr> to continue<cr> to continue<cr> to continue<cr> to continue<cr> to continue<cr> to continue<cr> to continue******************** file sampling.dem ********************
+test 1: explicit trange distinct from xrange
+Hit <cr> to continuetest 2: range set by 'sample' keyword, linear x axis
+Hit <cr> to continuetest 3: range set by 'sample' keyword, logscale x axis
+Hit <cr> to continuetest 4: splot '++' with autoscaled y (linear xy)
+Hit <cr> to continuetest 5: splot '++' with autoscaled y (logscale xy)
+Hit <cr> to continuetest 6: plot '++' with image (linear xy)
+Hit <cr> to continuetest 7: plot '++' with image (logscale xy)
+Hit <cr> to continuetest 8: multiple sampling ranges in one 2D plot command
+Hit <cr> to continuetest 9: 3D sampling range distinct from plot x/y range
+Hit <cr> to continuetest 10: splot '++' with explicit sampling intervals
+Hit <cr> to continuetest 10: plot '++' with explicit sampling intervals
+Hit <cr> to continueHit return to continueHit return to continue******************** file multiplt.dem ********************
+Hit return to continue<cr> to continue<cr> to continue<cr> to continue<cr> to continue<cr> to continue<cr> to continue******************** file surface1.dem ********************
+Hit return to continueHit return to continue (1)Hit return to continue (2)Hit return to continue (3)Hit return to continue (4)Hit return to continue (5)Hit return to continue (6)Hit return to continue (7)Hit return to continue (8)Hit return to continue (9)Hit return to continue (10)Hit return to continue (11)Hit return to continue (12)Hit return to continue (13)Hit return to continue (14)Hit return to continue (15)Hit return to continue (16)Hit return to continue (17)Hit return to continue (18)Hit return to continue (19)Hit return to continue (20)Hit return to continue (21)Hit return to continue (22)Hit return to continue (23)Hit return to continue (24)Hit return to continue (25)******************** file discrete.dem ********************
+Hit return to continueHit return to continueHit return to continue******************** file hidden.dem ********************
+Hit return to continue (1)Hit return to continue (2)Hit return to continue (3)Hit return to continue (4)Hit return to continue (5)Hit return to continue (6)Hit return to continue (7)******************** file hidden_compare.dem ********************
+<return> to continue******************** file dgrid3d.dem ********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue******************** file world.dem ********************
+Hit return to continueHit return to continueHit return to continueHit return to continueSame plot with hidden line removalHit return to continue******************** file prob.dem ********************
+                   Statistical Library Demo, version 2.3
+
+          Copyright (c) 1991, 1992, Jos van de Woude, jvdwoude@hut.nl
+
+
+                      Press Ctrl-C to exit right now
+                      Press Return to start demo ...Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue******************** file prob2.dem ********************
+
+
+
+
+
+
+                        Statistical Approximations, version 1.1
+
+        Copyright (c) 1991, 1992, Jos van de Woude, jvdwoude@hut.nl
+
+
+
+
+
+
+
+
+
+
+
+     NOTE: contains 10 plots and consequently takes some time to run
+                      Press Ctrl-C to exit right now
+
+                      Press Return to start demo ...Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue******************** file random.dem ********************
+Hit return to continue3D plot ahead, one moment please ...
+Hit return to continue
+Multivariate normal distribution
+
+The surface plot shows a two variable multivariate probability
+density function.  On the x-y plane are some samples of the random
+vector and a contour plot illustrating the correlation, which in
+this case is zero, i.e. a circle.  (Easier to view in map mode.)
+
+"random.dem" line 73: warning: Cannot contour non grid data. Please use "set dgrid3d".
+Hit return to continue
+Simple Monte Carlo simulation
+
+The first curve is a histogram where the binned frequency of occurrence
+of a pseudo random variable distributed according to the normal
+(Gaussian) law is scaled such that the histogram converges to the
+normal probability density function with increasing number of samples
+used in the Monte Carlo simulation.  The second curve is the normal
+probability density function with unit variance and zero mean.
+
+Hit return to continue
+Another Monte Carlo simulation
+
+This is similar to the previous simulation but uses multivariate
+zero mean, unit variance normal data by computing the distance 
+each point is from the origin.  That distribution is known to fit
+the Maxwell probability law, as shown.
+
+Hit return to continue******************** file rugplot.dem ********************
+Hit <cr> to continue******************** file smooth.dem ********************
+Hit enter to continueHit enter to continueHit enter to continueHit enter to continue******************** file spline.dem ********************
+Press return to continuePress return to continuePress return to continuePress return to continuePress return to continuePress return to continue******************** file binary.dem ********************
+Hit return to continue (1)Hit return to continue (2)Hit return to continue (3)******************** file steps.dem ********************
+Hit return for demonstration of automatic histogram creationHit return to see the same plot with fillstepsHit return for normal distribution function.Hit return for inverse error function.Hit return for inverse normal distribution function.Press return to continue******************** file scatter.dem ********************
+Hit return to continue (1)Hit return to continue (2)Hit return to continue (3)Hit return to continue (4)Hit return to continue (5)"scatter.dem" line 43: warning: Cannot contour non grid data. Please use "set dgrid3d".
+Hit return to continue (6)Hit return to continue (7)Hit return to continue (8)******************** file singulr.dem ********************
+Hit return to continue (1)Hit return to continue (2)Hit return to continue (3)Hit return to continue (4)Hit return to continue (5)Hit return to continue (6)Hit return to continue (7)Hit return to continue (8)Hit return to continue (9)Hit return to continue (10)Hit return to continue (11)Hit return to continue (12)Hit return to continue (13)Hit return to continue (14)Hit return to continue (15)Hit return to continue (16)Hit return to continue (17)Hit return to continue (18)Hit return to continue (19)Hit return to continue (20)******************** file airfoil.dem ********************
+NACA four series airfoils by bezier splines
+Will add pressure distribution later with Overplotting
+Press ReturnPress ReturnJoukowski Airfoil using Complex Variables
+Press ReturnPress Return******************** file surface2.dem ********************
+Hit return to continue (1)Hit return to continue (2)Hit return to continue (3)Hit return to continue (4)Hit return to continue (5)Hit return to continue (6)Hit return to continue (7)Hit return to continue (8)Hit return to continue (9)******************** file azimuth.dem ********************
+Hit return to continue******************** file projection.dem ******************
+Hit return to continue******************** file contours.dem ********************
+Hit return to continue (1)Hit return to continue (2)Hit return to continue (3)Hit return to continue (4)Hit return to continue (5)Hit return to continue (6)Hit return to continue (7)Hit return to continue (8)Hit return to continue (9)Hit return to continue (10)Hit return to continue (11)Hit return to continue (12)Hit return to continue (13)Hit return to continue (14)Hit return to continue (15)Hit return to continue (16)Hit return to continue (17)Hit return to continue (18)Hit return to continue (19)Hit Return to Continue (20)Hit Return to Continue (21)Hit Return to Continue (22)Hit Return to Continue (23)<cr> to continue******************** file pixmap.dem ********************
+Hit <cr> to continue******************** file bivariat.dem ********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue******************** Time/Date data ********************
+Hit return to continueHit return to continueHit return to continue
+Relative time output (strftime(), axis labels)
+t = -3672.5
+print strftime("%.2tM == %.2tS", t)	-61.21 min == -3672.50 sec
+print strftime("%tM:%.2tS", t)  	-61:12.50
+print strftime("%tH:%tM:%.2tS", t)	-1:01:12.50
+t = 3672.5
+print strftime("%.2tM == %.2tS", t)	61.21 min == 3672.50 sec
+print strftime("%tM:%.2tS", t)  	61:12.50
+print strftime("%tH:%tM:%.2tS", t)	1:01:12.50
+
+Relative time input (strptime(), data files)
+print strptime("%tH:%tM:%tS", "-1:01:12.50")	-3672.5
+print strptime("    %tM:%tS", "-61:12.50")	-3672.5
+print strptime("        %tS", "-3672.50")	-3672.5
+
+Timezones time output (strftime(), axis labels)
+t = 1550496278
+print strftime("%d/%m/%y\t%H:%M", t)	18/02/19	13:24
+print strftime("%d/%m/%y\t%H:%M%z", t)	18/02/19	13:24
+print strftime("%d/%m/%y\t%H:%M%Z", t)	18/02/19	13:24
+
+Timezones time input (strptime(), data files)
+print strptime("%d/%m/%y\t%H:%M", "18/02/19\t13:24")	1550496240.0
+print strptime("%d/%m/%y\t%H:%M%z", "18/02/19\t12:24+00:00")	"timedat.dem" line 87: warning: Bad time format in string
+1550492640.0
+print strptime("%d/%m/%y\t%H:%M%z", "18/02/19\t13:24+01:00")	"timedat.dem" line 88: warning: Bad time format in string
+1550496240.0
+print strptime("%d/%m/%y\t%H:%M %Z", "18/02/19\t13:24 CET")	"timedat.dem" line 89: warning: Bad time format in string
+1550496240.0
+print strptime("%d/%m/%y\t%H:%M %Z", "18/02/19\t14:24 CEST")	"timedat.dem" line 90: warning: Bad time format in string
+1550499840.0
+Hit return to check backwards compatibility with v4 syntaxHit return to continue********************** file rainbow.dem *********************
+
+# These are the input commands
+
+	set style line 1 lt rgb "red" lw 3
+	set style line 2 lt rgb "orange" lw 2
+	set style line 3 lt rgb "yellow" lw 3
+	set style line 4 lt rgb "green" lw 2
+	set style line 5 lt rgb "cyan" lw 3
+	set style line 6 lt rgb "blue" lw 2
+	set style line 7 lt rgb "violet" lw 3
+
+# And this is the result
+	linestyle 1,  linecolor rgb "red"  linewidth 3.000 dashtype solid pointtype 1 pointsize default
+	linestyle 2,  linecolor rgb "orange"  linewidth 2.000 dashtype solid pointtype 2 pointsize default
+	linestyle 3,  linecolor rgb "yellow"  linewidth 3.000 dashtype solid pointtype 3 pointsize default
+	linestyle 4,  linecolor rgb "green"  linewidth 2.000 dashtype solid pointtype 4 pointsize default
+	linestyle 5,  linecolor rgb "cyan"  linewidth 3.000 dashtype solid pointtype 5 pointsize default
+	linestyle 6,  linecolor rgb "blue"  linewidth 2.000 dashtype solid pointtype 6 pointsize default
+	linestyle 7,  linecolor rgb "violet"  linewidth 3.000 dashtype solid pointtype 7 pointsize default
+
+Hit return to continueHit return to continue********************** file rgb_variable.dem *********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue********************** file rgba_lines.dem *********************
+Hit return to continue********************** file varcolor.dem *********************
+Hit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continue********************** file pm3d.dem *********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continuePress Enter; I will continue by 'set autoscale cb' and much more...Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continuePlot by pm3d algorithm draws quadrangles filled with color calculated from
+the z- or color-value of the surrounding 4 corners. The following demo shows
+different color spots for a plot with very small number of quadrangles (here
+rectangular pixels). Note that the default option is 'mean'.
+Hit return to continueEnd of pm3d demo.
+********************** file pm3d_clip.dem *********************
+<return> to continue********************** file pm3dcolors.dem *********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue********************** file complex_trig.dem *********************
+********************** file heatmaps.dem *********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue********************** file matrix_index.dem *********************
+Hit return to continue********************** file matrix_every.dem *********************
+<cr> to continue********************** file pm3dgamma.dem *********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue********************** file hidden2.dem ***********************
+Hit return to continueHit return to continueHit return to continue********************** file textcolor.dem *********************
+Hit return to continueHit return to continue********************** file textrotate.dem *********************
+Hit return to continue********************** enhanced text *********************
+Hit return to continueHit return to continue********************** unicode text *********************
+<cr> to continue********************** file dashtypes.dem *********************
+Hit return to continueHit return to continue********************** file arrowstyle.dem *********************
+ We have defined the following arrowstyles:
+	arrowstyle 1, 	 head back linecolor rgb "dark-violet"  linewidth 2.000 dashtype solid
+	  arrow heads: filled,  length (screen units) 0.025, angle 30 deg, backangle 45 deg
+	arrowstyle 2, 	 head back linecolor rgb "#56b4e9"  linewidth 2.000 dashtype solid
+	  arrow heads: nofilled,  length (screen units) 0.03, angle 15 deg
+	arrowstyle 3, 	 head back linecolor rgb "dark-violet"  linewidth 2.000 dashtype solid
+	  arrow heads: filled,  length (screen units) 0.03, angle 15 deg, backangle 45 deg
+	arrowstyle 4, 	 head back linecolor rgb "#56b4e9"  linewidth 2.000 dashtype solid
+	  arrow heads: filled,  length (screen units) 0.03, angle 15 deg, backangle 90 deg
+	arrowstyle 5, 	 heads back linecolor rgb "dark-violet"  linewidth 2.000 dashtype solid
+	  arrow heads: noborder,  length (screen units) 0.03, angle 15 deg, backangle 135 deg
+	arrowstyle 6, 	 head back linecolor rgb "#56b4e9"  linewidth 2.000 dashtype solid
+	  arrow heads: empty,  length (screen units) 0.03, angle 15 deg, backangle 135 deg
+	arrowstyle 7, 	 nohead back linecolor rgb "dark-violet"  linewidth 2.000 dashtype solid
+	arrowstyle 8, 	 heads back linecolor rgb "#56b4e9"  linewidth 2.000 dashtype solid
+	  arrow heads: nofilled,  length (screen units) 0.008, angle 90 deg
+
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHi return to continue********************** file vector.dem *********************
+
+ This file demonstrates
+ -1- saving contour lines as a gnuplottable datablock
+ -2- plotting a vector field on the same graph
+ -3- manipulating columns using the '$1,$2' syntax.
+ the example is taken here from Physics is the display of equipotential
+ lines and electrostatic field for a dipole (+q,-q)
+Now create a in-memory datablock with equipotential lines
+Hit return to continueNow create a x/y datablock for plotting with vectors 
+and display vectors parallel to the electrostatic field
+Hit return to continueHit return to continue********************** file short_vector.dem *********************
+<cr> to continue********************** file tics.dem *********************
+Hit return to continueHit return to continueHit return to continueHit return to continueEnd of tics demo.
+********************** file break_continue.dem *********************
+start 1
+   continue if i == 3, break if i > 4
+      still in load file
+end 1
+start 2
+   continue if i == 3, break if i > 4
+      still in load file
+end 2
+start 3
+   continue if i == 3, break if i > 4
+start 4
+   continue if i == 3, break if i > 4
+      still in load file
+end 4
+start 5
+   continue if i == 3, break if i > 4
+done with for loop
+********************** file callargs.dem *********************
+
+Entering callargs.dem with 0 parameters
+Now exercise the call mechanism at line 47
+
+# Curve 0 of 1, 2 points
+# Curve title: "Does $1 clobber using spec?"
+# x y type
+ 1  2  i
+ 3  4  i
+
+
+Entering callargs.dem with 8 parameters
+
+	Test whether this copy of gnuplot also supports deprecated
+	call parameter syntax $0 $1 $2 etc: 
+		no
+
+	Variables beginning with ARG:
+	ARGC = 8
+	ARG0 = "callargs.dem"
+	ARGV = <8 element array>
+	ARG1 = "1.23e4"
+	ARG2 = "string constant"
+	ARG3 = "FOO"
+	ARG4 = "5.67"
+	ARG5 = "3 + log(BAZ)"
+	ARG6 = "a string"
+	ARG7 = "8"
+	ARG8 = "3.14159"
+	ARG9 = ""
+
+ARG1 (numerical constant) came through as 1.23e4
+     @ARG1 = 12300.0
+     (ARG1 == @ARG1) is TRUE
+ARG2 (string constant) came through as string constant
+     words(ARG2) = 2
+ARG3 (undefined variable FOO) came through as FOO
+ARG4 (numerical variable BAZ=5.67) came through as 5.67
+     @ARG4 = 5.67
+ARG5 (quoted expression) came through as 3 + log(BAZ)
+     @ARG5 = 4.73518911773966
+ARG6 (string variable) came through as a string
+     words(ARG6) = 2
+ARG7 (expression) came through as 8
+ARG8 (pi) came through as 3.14159
+ARGV = [12300.0,"string constant","FOO",5.67,"3 + log(BAZ)","a string",8,3.14159265358979]
+
+
+# Curve 0 of 1, 2 points
+# Curve title: "Does $1 clobber using spec?"
+# x y type
+ 1  2  i
+ 3  4  i
+
+********************** file volatile.dem *********************
+********************** file datastrings.dem *********************
+<cr> to plot again using x2ticlabels<cr> to plot again using x2ticlabels<cr> to plot same data from table format<cr> to show double use of y values<cr> to show use of boxed labels<cr> to end demo********************** file textbox.dem *********************
+<cr> to continue********************** file hypertext.dem *********************
+hit return to continue********************** file rotate_labels.dem *****************
+<cr> to continue********************** file stats.dem *********************
+
+* FILE: 
+  Records:           20
+  Out of range:       0
+  Invalid:            0
+  Header records:     0
+  Blank:              1
+  Data Blocks:        1
+
+* COLUMN: 
+  Mean:               2.5408
+  Std Dev:            0.2227
+  Sample StdDev:      0.2285
+  Skewness:           0.9783
+  Kurtosis:           3.6056
+  Avg Dev:            0.1785
+  Sum:               50.8156
+  Sum Sq.:          130.1035
+
+  Mean Err.:          0.0498
+  Std Dev Err.:       0.0352
+  Skewness Err.:      0.5477
+  Kurtosis Err.:      1.0954
+
+  Minimum:            2.2009 [ 7]
+  Maximum:            3.1397 [ 9]
+  Quartile:           2.3866 
+  Median:             2.4610 
+  Quartile:           2.6562 
+
+Hit return to continue
+* FILE: 
+  Records:           20
+  Out of range:       0
+  Invalid:            0
+  Header records:     0
+  Blank:              1
+  Data Blocks:        1
+
+* COLUMNS:
+  Mean:               2.1168             2.5408
+  Std Dev:            0.7921             0.2227
+  Sample StdDev:      0.8127             0.2285
+  Skewness:          -1.1174             0.9783
+  Kurtosis:           3.5250             3.6056
+  Avg Dev:            0.6330             0.1785
+  Sum:               42.3356            50.8156
+  Sum Sq.:          102.1648           130.1035
+
+  Mean Err.:          0.1771             0.0498
+  Std Dev Err.:       0.1252             0.0352
+  Skewness Err.:      0.5477             0.5477
+  Kurtosis Err.:      1.0954             1.0954
+
+  Minimum:            0.0000 [ 0]        2.2009 [ 7]
+  Maximum:            2.9957 [19]        3.1397 [ 9]
+  Quartile:           1.7006             2.3866
+  Median:             2.3502             2.4610
+  Quartile:           2.7403             2.6562
+
+  Linear Model:       y = -0.06694 x + 2.682
+  Slope:              -0.06694 +- 0.06437
+  Intercept:          2.682 +- 0.1455
+  Correlation:        r = -0.2381
+  Sum xy:             106.7
+
+Hit return to continue********************** file iterate.dem *********************
+Hit return to continueHit return to continueHit return to continue
+dynamic reevaluation of numeric iteration limits
+
+J =[1,4,3]
+
+do for [i=1:3] for [j=J[i]:3] { save(i,j) }
+1-1 1-2 1-3 3-3 
+
+J =[4,1,3]
+
+do for [i=1:3] for [j=J[i]:3] { save(i,j) }
+2-1 2-2 2-3 3-3 
+
+do for [i=1:4] for [k=i:i] for [j=1:k] { save(i,j) }
+1-1 2-1 2-2 3-1 3-2 3-3 4-1 4-2 4-3 4-4 
+
+dynamic reevaluation of iteration string
+A = ["a b","","d"]
+
+do for [ i = 1:|A| ] { do for [ j in A[i]] { print "".i.": ".j }}
+  1: a  1: b  3: d
+do for [ i = 1:|A| ] for [ j in A[i]] { print "".i.": ".j }
+  1: a  1: b  3: d
+********************** file histograms.dem *********************
+<cr> to plot the same data as a histogram<cr> to change the gap between clusters<cr> to plot the same dataset as stacked histogram<cr> to rescale each stack to % of totalNow try histograms stacked by columnsNext we do several sets of parallel histogramsSame plot using rowstacked histogram<cr> to finish histogram demoSame plot using explicit histogram start colorsSame plot using explicit histogram start patternSame plot with both explicit color and patternHit return to continue<cr> to continue********************** file boxclusters.dem *********************
+<cr> to continue********************** file array.dem *********************
+Sum[ 5] = 132551
+Sum[ 6] = 218066
+Sum[ 7] = 363446
+Sum[ 8] = 2441994
+Sum[ 9] = 570452
+Sum[10] = 1191986
+Sum[11] = 4787900
+Sum[12] = 250579
+Sum[13] = 473705
+<cr> to continue<cr> to fit function to array valuesiter      chisq       delta/lim  lambda   a             b             c            
+   0 9.9999204485e+01   0.00e+00  2.34e-01    1.000000e-02   1.000000e-02   1.000000e-02
+   1 1.6039554052e+01  -5.23e+05  2.34e-02    1.611270e-02   3.078639e-02  -1.276761e-02
+   2 1.4435046211e+01  -1.11e+04  2.34e-03   -8.775024e-02   3.489031e-02   1.116027e-01
+   3 7.6186322301e+00  -8.95e+04  2.34e-04   -6.958570e-01   4.780008e-02   1.056042e-01
+   4 1.2568552328e+00  -5.06e+05  2.34e-05   -1.798334e+00   6.691177e-02  -6.157194e-03
+   5 9.1892934655e-02  -1.27e+06  2.34e-06   -1.576523e+00   6.305461e-02   4.984622e-02
+   6 9.1071729992e-02  -9.02e+02  2.34e-07   -1.570092e+00   6.294290e-02   5.131791e-02
+   * 9.1071736683e-02   7.35e-03  2.34e-06   -1.570082e+00   6.294271e-02   5.131400e-02
+   * 9.1071736683e-02   7.35e-03  2.34e-05   -1.570082e+00   6.294271e-02   5.131400e-02
+   * 9.1071736683e-02   7.35e-03  2.34e-04   -1.570082e+00   6.294271e-02   5.131400e-02
+   * 9.1071736683e-02   7.35e-03  2.34e-03   -1.570082e+00   6.294271e-02   5.131400e-02
+   * 9.1071736651e-02   7.31e-03  2.34e-02   -1.570082e+00   6.294272e-02   5.131400e-02
+   * 9.1071734471e-02   4.92e-03  2.34e-01   -1.570085e+00   6.294276e-02   5.131418e-02
+   * 9.1071731220e-02   1.35e-03  2.34e+00   -1.570092e+00   6.294285e-02   5.131729e-02
+   * 9.1071731111e-02   1.23e-03  2.34e+01   -1.570092e+00   6.294287e-02   5.131790e-02
+   * 9.1071730029e-02   4.02e-05  2.34e+02   -1.570092e+00   6.294290e-02   5.131791e-02
+   * 9.1071729993e-02   4.10e-07  2.34e+03   -1.570092e+00   6.294290e-02   5.131791e-02
+   * 9.1071729992e-02   4.04e-09  2.34e+04   -1.570092e+00   6.294290e-02   5.131791e-02
+   7 9.1071729992e-02  -1.07e-10  2.34e+03   -1.570092e+00   6.294290e-02   5.131791e-02
+iter      chisq       delta/lim  lambda   a             b             c            
+
+After 7 iterations the fit converged.
+final sum of squares of residuals : 0.0910717
+rel. change during last iteration : -1.06668e-15
+
+degrees of freedom    (FIT_NDF)                        : 97
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.0306412
+variance of residuals (reduced chisquare) = WSSR/ndf   : 0.000938884
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+a               = -1.57009         +/- 0.008342     (0.5313%)
+b               = 0.0629429        +/- 0.0001395    (0.2216%)
+c               = 0.0513179        +/- 0.003065     (5.973%)
+
+correlation matrix of the fit parameters:
+                a      b      c      
+a               1.000 
+b              -0.855  1.000 
+c               0.024 -0.029  1.000 
+<cr> to continue
+* FILE: 
+  Records:           20
+  Out of range:       0
+  Invalid:            0
+  Header records:     0
+  Blank:              1
+  Data Blocks:        1
+
+* COLUMN: 
+  Mean:               5.9866
+  Std Dev:            5.5330
+  Sample StdDev:      5.6768
+  Skewness:           1.4119
+  Kurtosis:           3.1850
+  Avg Dev:            4.3558
+  Sum:              119.7324
+  Sum Sq.:         1329.0836
+
+  Mean Err.:          1.2372
+  Std Dev Err.:       0.8749
+  Skewness Err.:      0.5477
+  Kurtosis Err.:      1.0954
+
+  Minimum:            1.0000 [ 8]
+  Maximum:           17.8341 [ 0]
+  Quartile:           3.2693 
+  Median:             3.5672 
+  Quartile:           4.8706 
+
+
+* FILE: 
+  Records:           20
+  Out of range:       0
+  Invalid:            0
+  Header records:     0
+  Blank:              1
+  Data Blocks:        1
+
+* COLUMN: 
+  Mean:               5.9866
+  Std Dev:            5.5330
+  Sample StdDev:      5.6768
+  Skewness:           1.4119
+  Kurtosis:           3.1850
+  Avg Dev:            4.3558
+  Sum:              119.7324
+  Sum Sq.:         1329.0836
+
+  Mean Err.:          1.2372
+  Std Dev Err.:       0.8749
+  Skewness Err.:      0.5477
+  Kurtosis Err.:      1.0954
+
+  Minimum:            1.0000 [ 8]
+  Maximum:           17.8341 [ 0]
+  Quartile:           3.2693 
+  Median:             3.5672 
+  Quartile:           4.8706 
+
+<cr> to continue**********************    Image formats    *********************
+
+The plotting styles `image` and `rgbimage` are intended for plotting
+images described in a data file either in the conventional ASCII format or
+in a binary format described by the qualifiers `binary` and `using`.
+All pixels have an (x,y) or (x,y,z) coordinate.  These values can be
+included in the data file or implicitly determined with the sampling
+'array' key word and sampling periods 'dx' and 'dy'.  The key words
+'rotate' and, for 3d plots, 'perpendicular' control orientation.
+
+The data for this image was stored as RGB triples, one byte per channel,
+without (x,y) coordinate information.  This yields a most compact file.
+The plotting command is displayed on the graph.
+
+Hit return to continue
+Images are typically stored in a file with the first datum being the
+top, left pixel.  Without the ability to translate coordinates, the
+the result would be an upside down image.
+
+The key word 'array' means an implied sample array is applied
+to generate the locations of file data using the sampling periods
+dx, dy and dz.  The x-dimension is always the contiguous points in
+a binary file.  The y-dimension is the line number which is incremented
+upon the x-dimension reaching the line length.  The z-dimension is
+the plane number which is incremented upon the y-dimension reaching
+the number of lines per plane.
+
+To alter the location of the binary data when displayed via the 'plot'
+command, use the key word 'rotate' along with changing the sign of dx, dy
+and dz.
+
+Hit return to continue
+There is the ability to plot both color images and palette based
+images.  This is controlled by the styles `image`, which derives
+color information from the current palette, and `rgbimage`,
+which requires three components representing the red, blue and
+green primary color scheme.
+
+By the way, if you have a mouse active, click the right button
+inside the image to isolate a portion of the image and see what
+happens.
+
+Hit return to continue
+Naturally, as with 3d color surfaces, the palette may be changed.
+This is an example of gray scale.
+
+Also, notice in the plot command the key word 'flipy'.  This
+means to change the direction of the sample along the y dimension
+and is useful for the situation where images or other data are
+stored in some direction other than that of the Cartesion system.
+Alone, 'flipD' means do flipping in the D (x y or z) direction
+for all records.  Individual records can be controlled using the
+syntax 'flipD=#,...,#', where # is '0' or '1'.
+
+Hit return to continue
+Also, similar to 3d color surface plots, a color box showing the
+palette mapping scheme can be added to the plot.  The default
+location is the right edge of the plot.  The location can be set
+manually using `set colorbox` and `set margin`.
+
+As a prelude to the next graph, resize the plot window to judge
+the refresh speed of the image drawing routine.  Notice that when
+the window is smaller, the image refresh is faster.  There is more
+decimation in the data of the original image and less data to plot.
+Furthermore, the window continues to refresh at a reasonable rate
+even when the input image size becomes large (e.g., 1024 x 1024)
+because the number of pixels on the screen remains about the same
+while much of the hi resolution data is decimated.
+
+Hit return to continue
+The 'rotation' key word works not only with angles of integer
+multiples of 90 degrees but also arbitrary rotations.  When
+constructing an image, Gnuplot verifies that pixel locations
+form a valid grid.  Pixel widths are based upon the grid
+spacing.  If the image orientation is aligned with the view
+axes, Gnuplot uses an efficient image driver routine.  Otherwise,
+individual pixels are drawn using polygon shapes.
+
+Resize this window and compare the plot's refresh rate to that of
+the previous and next plot.  Notice how in this example if the
+window is small the image refresh does not speed up.  Unlike the
+image routine where image data is decimated, all color rectangles
+must be redrawn no matter the size of the output image.
+
+Also notice how the center of the image matches the tuple specified
+with the key word 'center' in the plot command.  Before doing the
+rotation, the image's natural center is subtracted, and after doing
+the rotation, the specified center is added.
+
+Hit return to continue
+The image of this plot is rotated 90 degrees and can utilize the
+efficient image functions of terminal drivers.  The plot refresh
+is faster than the previous plot.
+
+Furthermore, the image location in this case is specified via the
+'origin' key word.  As such, the rotation is done about the origin
+as opposed to the center of the image.  Notice the difference in
+axis ranges.
+
+Hit return to continue
+Algebraic manipulation of the input variables can select various
+components of the image.  Here are three examples where two
+channels--or analogous to the ASCII file, data "columns"--are ignored
+This is done by using `*` in the format to indicate that a variable
+of a certain size should be discarded.  For example, to select the
+green channel, `%*uchar%uchar%*uchar` is one alternative.
+
+Hit return to continue
+The range of valid RGB color component values is [0:255]
+This is a CHANGE in gnuplot version 5.2.
+To adjust the color balance you can filter the individual values
+through a scaling function.  Here we multiply by a constant c,
+ c > 1 to brighten, c < 1 to dim.
+
+Hit return to continue
+Not only can the 2d binary data mode be used for image data.
+Here is an example that repeats the `using.dem` demo with the
+same data, but stored in binary format of differing sizes.  It
+uses different format specifiers within the 'format' string.
+There are machine dependent and machine independent specifiers,
+display by the command 'show datafile binary datasizes':
+
+
+	The following binary data sizes are machine dependent:
+
+	  name (size in bytes)
+
+	  "char" "schar" "c" (1)
+	  "uchar" (1)
+	  "short" (2)
+	  "ushort" (2)
+	  "int" "sint" "i" "d" (4)
+	  "uint" "u" (4)
+	  "long" "ld" (8)
+	  "ulong" "lu" (8)
+	  "float" "f" (4)
+	  "double" "lf" (8)
+	  (8)
+	  (8)
+
+	The following binary data sizes attempt to be machine independent:
+
+	  name (size in bytes)
+
+	  "int8" "byte" (1)
+	  "uint8" "ubyte" (1)
+	  "int16" "word" (2)
+	  "uint16" "uword" (2)
+	  "int32" (4)
+	  "uint32" (4)
+	  "int64" (8)
+	  "uint64" (8)
+	  "float32" (4)
+	  "float64" (8)
+
+
+Hit return to continue
+Again, a different format specification for `using` can be
+used to select different "columns" within the file.
+
+Hit return to continue
+Here is another example, one repeating the `scatter.dem`
+demo.  With binary data we cannot have blank lines to
+indicate a break in data, as is done with ASCII files.
+Instead, we can specify the record lengths in the command.
+In this case, the data file contains the (x,y,z) coordinate
+information, hence implicit derivation of that information
+is not desired.  Instead, the record lengths can be specified
+using the keyword 'record', which behaves the same as
+'array' but does not generate coordinates.  The command is
+displayed on the graph.
+
+Hit return to continue
+For binary data, the byte endian format of the file and of the
+compiler often require attention.  Therefore, the key word
+'endian' is provided for setting or interchanging byte
+order.  The allowable types are 'little', 'big', and
+depending upon how your version of Gnuplot was compiled,
+'middle' (or 'pdp') for those still living in the medieval
+age of computers.  These types refer to the file's endian.
+Gnuplot arranges bytes according to this endian and what it
+determines to be the compiler's endian.
+
+There are also the special types 'default' and 'swap' (or
+'swab') for those who don't know the file type but realize
+their data looks incorrect and want to change the byte read
+order.
+
+Here is an example showing the `scatter.dem` data plotted
+with correct and incorrect byte order.  The file is known
+to be little endian, so the upper left plot is correct
+appearance and the upper right plot is incorrect appearance.
+The lower two plots are default and swapped bytes.  If the
+plots within the columns match, your compiler uses little
+endian.  If diagonal plots match then your compiler uses
+big endian.  If neither of the bottom plots matches the
+upper plots, Tux says you're living in the past.
+
+Hit return to continue
+This close up of a 2x2 image illustrates how pixels surround the
+sampling grid points.  This behavior is slightly different than
+that for pm3d where the four grid points would be used to create
+a single polygon element using an average, or similar mathematical
+combination, of the four values at those points.
+
+Hit return to continue
+Lower dimensional data may be extended to higher dimensional plots
+via a number of simple, logical rules.  The first step Gnuplot does
+is sets the components for higher than the natural dimension of the
+input data to zero.  For example, a two dimensional image can be
+displayed in the three dimensional plot as shown.  Without
+translation, the image lies in the x/y-plane.
+
+Warning: empty z range [0:0], adjusting to [-1:1]
+Hit return to continue
+The key words 'rotate' and 'center' still apply in 'splot' with
+rules similar to their use in 'plot'.  However, the center must be
+specified as a three element tuple.
+
+Warning: empty z range [50:50], adjusting to [49.5:50.5]
+Hit return to continue
+To have full degrees of freedom in orienting the image, an additional
+key word, 'perpendicular', can translate the x/y-plane of the 2d
+data so that it lies orthogonal to a vector given as a three element
+tuple.  The default vector is, of course, (0,0,1).  The vector need
+not be of unit length, as this example illustrates.  Viewing this
+plot with the mouse active can help visualize the image's orientation
+by panning the axes.
+
+Hit return to continue
+These concepts of extending lower dimensional data also apply
+to temporal-like signals.  For example, a uniformly sampled
+sinusoid, sin(1.75*pi*x), in a binary file having no data for
+the independent variable can be displayed along any direction
+for both 'plot'...
+
+Hit return to continue
+...and 'splot'.  Here is the 'scatter.dem' example again,
+but this simulates the case of the redundant x coordinates not
+being in the binary file.  The first "column" of the binary
+file is ignored and reconstructed by orienting the various
+data records.
+
+Hit return to continue
+Some binary data files have headers, which may be skipped via
+the 'skip' key word.  Here is the 'scatter.dem' example
+again, but this time the first and third traces are skipped.
+The first trace is 30 samples of three floats so takes up 360
+bytes of space.  Similarly, the third trace takes up 348 bytes.
+
+Hit return to continue
+Generating uniformly spaced coordinates is valid for polar
+plots as well.  This is useful for data acquired by machines
+sampling in a circular fashion.  Here the sinusoidal data
+of the previous 2D plot put on a polar plot.  Note the
+pseudonyms 'dt' meaning sample period along the angular,
+or theta, direction.  In Gnuplot, cylindrical coordinate
+notation is (t,r,z).  [Different from common math convention
+(r,t,z).]
+
+Hit return to continue
+Binary data stored in matrix format (i.e., gnuplot binary)
+may also be translated with similar syntax.  However, the
+binary keywords `format`, `array` and `record` do not apply
+because gnuplot binary has the requirements of float data
+and grid information as part of the file.  Here is an
+example of a single matrix binary file input four times,
+each translated to a different location with different
+orientation.
+
+Hit return to continue
+As with ASCII data, decimation in various directions can
+be achieved via the `every` keyword.  (Note that no down-
+sampling filter is applied such that you risk aliasing data
+with the `every` keyword.
+
+Here is a series of plots with increasing decimation.
+
+Hit return to continueHit return to continueHit return to continueHit return to continue
+Decimation works on general binary data files as well.  Here is the
+image file with increasing decimation.
+
+Hit return to continueHit return to continue
+Gnuplot understands a few common binary formats.  Internally
+a function is linked with various extensions.  When the
+extension is specified at the command line or recognized via
+a special file type called 'auto', Gnuplot will call the
+function that sets up the necessary binary information.  The
+known extensions are displayed using the 'show filetype'
+command.  E.g.,
+
+
+	This version of gnuplot understands the following binary file types:
+	  avs	  bin	  edf	  ehf	  gif	  gpbin	  jpeg	  jpg	  png	  raw	  rgb	  auto
+
+Here's an example where an EDF file is recognized when Gnuplot
+is in 'auto' mode.  Details are pulled from the header of
+file itself and not specified at the command line.  The command
+line can still be used to over-ride in-file attributes.
+
+Hit return to continue
+The 'flip', 'rotate' and 'perpendicular' qualifiers
+should provide adequate freedom to orient data as desired.
+However, there is an additional key words 'scan' which may
+offer a more direct and intuitive manner of orienting data
+depending upon the user's application and perspective.
+
+'scan' is a 2 or 3 letter string representing how Gnuplot
+should derive (x,y), (x,y,z), (t,r) or (t,r,z) from the
+the datafile's scan order.  The first letter pertains to the
+fastest rate or point-by-point increment.  The second letter
+pertains to the medium rate or line-by-line increment.  If
+there is a third letter, it pertains to the slowest rate or
+plane-by-plane increment.  The default or inherent scan order
+is 'scan=xyz'.
+
+The pseudonym 'transpose' is equivalent to 'scan=yx' when
+generating 2D coordinates and 'scan=yxz' when generating
+3D coordinates.
+
+There is a subtle difference between the behavior of 'scan'
+when dimension info is taken from the file itself as opposed
+to entered at the command line.  When information is gathered
+from the file, internal scanning is unaltered so that issuing
+the 'scan' command may cause the number of samples along
+the various dimensions to change.  However, when the qualifier
+'array' is entered at the command line, the array dimensions
+adjust so that 'array=XxYxZ' is always the number of samples
+along the Cartesian x, y and z directions, respectively.
+
+Hit return to continue
+It is possible to enter binary data at the command line.  Of
+course, the limitation to this approach is that keyboards will
+allow entering only a limited subset of the possible character
+values necessary to represent general binary data.  For this
+reason, the primary application for binary data at the command
+line is using Gnuplot through a pipe.  For example, if a pipe
+is established with a C program, the function 'fputs()' can
+send ASCII strings containing the Gnuplot commands while the
+function 'fwrite()' can send binary data.
+
+Furthermore, there can be no special ending character such as
+in the case of ASCII data entry where 'e' represents the end
+of data for the special file '-'.  It is important to note
+that when 'binary' is specified, Gnuplot will continue
+reading until reaching the number of elements specified via
+the 'array' or 'record' command.
+
+Here is an example of binary data in the range [0:1] inserted
+into the command stream by copying 48 bytes from a pre-existing
+binary file into this demo file.
+
+Hit return to continue
+ASCII data files have a matrix variant.  Unlike matrix binary,
+ASCII binary may have multiple matrices per file, separated
+by a blank line.  The keyword `index` can select the desired
+matrix to plot.
+
+Hit return to continue
+Images maintain orientation with respect to axis direction.
+All plots show the same exact plot, but with various states
+of reversed axes.  The upper left plot has reversed x axis,
+the upper right plot has conventional axes, the lower left
+plot has both reversed x and y axes, and the lower right
+plot has reversed y axis.
+
+Hit return to continue
+Tux says "bye-bye".
+
+Hit return to continue
+End of image demo...
+Hit return to continueHit return to continue"imageNaN.dem" line 38: warning: matrix contains missing or undefined values
+Hit return to continue"imageNaN.dem" line 45: warning: matrix contains missing or undefined values
+Hit return to continue"imageNaN.dem" line 51: warning: matrix contains missing or undefined values
+Hit return to continue"imageNaN.dem" line 57: warning: matrix contains missing or undefined values
+Hit return to continue"imageNaN.dem" line 63: warning: matrix contains missing or undefined values
+Hit return to continue"imageNaN.dem" line 69: warning: matrix contains missing or undefined values
+Hit return to continueHit return to continueHit return to continueHit return to continue********************** file stringvar.dem *********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue
+time_str          = "2005-05-09 19:44:12"
+-> seconds        = 1115667852.0
+   seconds + 10.  = 1115667862.0
+-> time_str2      = "2005-05-09 19:44:22"
+
+read_time(fmt, c) = strptime(fmt, stringcolumn(c).' '.stringcolumn(c+1))
+
+Hit return to continue********************** file running_avg.dem *********************
+Hit return to continue********************** file pointsize.dem *********************
+Hit return to continueHit return to continueHit return to continueHit return to continue********************** file circles.dem *********************
+Hit return to continueHit return to continueHit return to continueHit return to continue********************** file armillary.dem *********************
+Hit <cr> to continue********************** file ellipses_style.dem *********************
+Hit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continueHit <cr> to continue********************** file key.dem *********************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue********************** file custom_key.dem *********************
+Hit return to continueHit return to continueHit return to continue<cr> to continue<cr> to continue********************** file walls.dem *********************
+<cr> to continue********************** file boxes3d.dem *********************
+hit return to continuehit return to continuehit return to continuehit return to continuehit return to continuehit return to continue********************** file borders.dem *********************
+Hit return to continue********************** file columnhead.dem *********************
+********************** file margins.dem *********************
+Hit return to continue********************** file rectangle.dem *********************
+Hit return to continueHit return to continue********************** clipping *********************
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Hit return to continueHit return to continueHit return to continue<cr> to continue********************** file approximate.dem *********************
+Hit return to continue********************** file parallel.dem *********************
+Hit return to continueHit return to continueHit return to continue********************** nonlinear axis demos *********************
+<cr> to continue<cr> to continue<cr> to continue<cr> to continue<cr> to continue<cr> to continue<cr> to continue<return> to continue********************** linked axes **************************
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continue********************** file map_projection.dem *********************
+<cr> to continue<cr> to continue"map_projection.dem" line 101: warning: mouseformat function did not return a string
+<cr> to continue********************** file transparent.dem *********************
+Hit return to continueHit return to continueHit return to continueHit return to continue********************** file transparent_solids.dem *********************
+Hit return to continueHit return to continue********************** file pm3d_lighting.dem *********************
+Warning: empty cb range [1.12023e+07:1.12023e+07], adjusting to [1.10903e+07:1.13143e+07]
+Hit <return> to continueHit return to continue********************** file polygons.dem *********************
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Polygon is not closed - adding extra vertex
+Hit return to continueHit return to continueHit return to continueHit return to continueHit return to continueHit return to continue********************** file vplot.dem *********************
+vfill from - :
+	radius 1 gives a brick of 25 voxels on x, 25 voxels on y, 25 voxels on z
+	number of points input:           1
+	number of voxels modified:     7901
+vfill from - :
+	radius 1 gives a brick of 25 voxels on x, 25 voxels on y, 25 voxels on z
+	number of points input:           1
+	number of voxels modified:     7930
+vfill from - :
+	radius 2 gives a brick of 19 voxels on x, 19 voxels on y, 19 voxels on z
+	number of points input:           1
+	number of voxels modified:     3690
+	$v122:
+		size 100 X 100 X 100
+		vxrange [-4:4]  vyrange[-4:4]  vzrange[-4:4]
+		non-zero voxel values:  min 1.1e-14 max 97  mean 25 stddev 19
+		number of zero voxels:  992104   (99.21%)
+	$v032:
+		size 100 X 100 X 100
+		vxrange [-4:4]  vyrange[-4:4]  vzrange[-4:4]
+		non-zero voxel values:  min 0.061 max 95  mean 25 stddev 19
+		number of zero voxels:  992070   (99.21%)
+	$v201:	(active)
+		size 25 X 25 X 25
+		vxrange [0:5]  vyrange[-2.5:2.5]  vzrange[-1:4]
+		non-zero voxel values:  min 15 max 97  mean 26 stddev 12
+		number of zero voxels:  11935   (76.38%)
+
+<cr> to continue<cr> to continue********************** file isosurface.dem *********************
+<cr> to continuevfill from + :
+	radius 0.9 gives a brick of 15 voxels on x, 15 voxels on y, 5 voxels on z
+	number of points input:          55
+	number of voxels modified:    29540
+<cr> to continue<cr> to continue<cr> to continue********************** file voxel.dem *********************
+vfill from $random :
+	radius 0.33 gives a brick of 9 voxels on x, 9 voxels on y, 9 voxels on z
+	number of points input:        2998
+	number of voxels modified:   854156
+<cr> to continue<cr> to continuemake[4]: Leaving directory '$(@D)/demo'
+make[3]: Leaving directory '$(@D)/demo'
+make[2]: Leaving directory '$(@D)/demo'
+Making check in share
+make[2]: Entering directory '$(@D)/share'
+make[3]: Entering directory '$(@D)/share'
+make[3]: Nothing to be done for 'check-am'.
+make[3]: Leaving directory '$(@D)/share'
+make[2]: Leaving directory '$(@D)/share'
+make[2]: Entering directory '$(@D)'
+make[2]: Leaving directory '$(@D)'
+make[1]: Leaving directory '$(@D)'
