@@ -16,7 +16,7 @@ BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=chezmoi
-COMPONENT_VERSION=2.8.0
+COMPONENT_VERSION=2.9.2
 COMPONENT_SUMMARY=Manage your dotfiles across multiple diverse machines, securely.
 COMPONENT_PROJECT_URL=https://github.com/twpayne/chezmoi
 COMPONENT_FMRI=application/chezmoi
@@ -24,24 +24,26 @@ COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=https://github.com/twpayne/chezmoi/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=sha256:3c7408625639c215926e1401b9acc037a0c2216984a7d063cf647d9ec0798937
+COMPONENT_ARCHIVE_HASH=sha256:8d193ad8b6cf509ee596ac8f96ace7b719f71926368b4befe6c6eabb820a022e
 COMPONENT_LICENSE=MIT
 COMPONENT_LICENSE_FILE=chezmoi.license
 TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
 include $(WS_MAKE_RULES)/common.mk
 
+DATE=$(shell date -u)
+
 COMPONENT_BUILD_ENV += GOOS="illumos"
 COMPONENT_BUILD_ENV += GOPATH="$(SOURCE_DIR)/gopath"
 COMPONENT_BUILD_ENV += PREFIX=/usr
 COMPONENT_BUILD_ENV += VERSION="v$(COMPONENT_VERSION)"
-# COMPONENT_BUILD_ENV += DATE=$(shell date -u)
+#COMPONENT_BUILD_ENV += DATE="$(DATE)"
 COMPONENT_BUILD_ENV += BUILT_BY="source"
 
 COMPONENT_INSTALL_ENV += GOOS="illumos"
 COMPONENT_INSTALL_ENV += GOPATH="$(SOURCE_DIR)/gopath"
 COMPONENT_INSTALL_ENV += PREFIX=/usr
 COMPONENT_INSTALL_ENV += VERSION="v$(COMPONENT_VERSION)"
-# COMPONENT_INSTALL_ENV += DATE=$(shell date -u)
+#COMPONENT_INSTALL_ENV += DATE="$(DATE)"
 COMPONENT_INSTALL_ENV += BUILT_BY="source"
 
 # Go doesn't like symbolic links, so copy the source directory
