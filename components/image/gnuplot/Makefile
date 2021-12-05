@@ -30,7 +30,6 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnuplot
 COMPONENT_VERSION=	5.4.2
-COMPONENT_REVISION=	1
 COMPONENT_FMRI=	image/gnuplot
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SUMMARY=	gnuplot - plotting utility
@@ -70,11 +69,11 @@ REQUIRED_PACKAGES += editor/gnu-emacs
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/desktop/cairo
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/graphics/wxwidgets
+REQUIRED_PACKAGES += library/graphics/wxwidgets-3
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += shell/ksh93
