@@ -26,25 +26,28 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
-COMPONENT_VERSION=	2.3.3.2
-HUMAN_VERSION=		2.3.3op2
-COMPONENT_REVISION=	1
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_VERSION=	2.4.1
+#COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://openprinting.github.io/cups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5d7dc1f05cde3d5c31d3a2b3b54d519ca74e42c1b25df1add9a1802cd13c65ad
-COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:df195c931349949293c832e1337527e7831e1225f567b60caf5d9c206c2bffdc
+COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+#COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 
 include $(WS_MAKE_RULES)/common.mk
 
 # don't use LD_Z_IGNORE: causes linker problems
 LD_Z_IGNORE=
 
+CFLAGS += -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 LDFLAGS += -lsocket
 
 CONFIGURE_ENV += DSOFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
+CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 CONFIGURE_OPTIONS +=	--prefix=/usr
 CONFIGURE_OPTIONS +=	--mandir=/usr/share/man
