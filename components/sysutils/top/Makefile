@@ -28,7 +28,6 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		top
 COMPONENT_VERSION=	3.8beta1
-COMPONENT_REVISION=	6
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/unixtop/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -45,10 +44,7 @@ include $(WS_MAKE_RULES)/common.mk
 # viewpathing support in the build is broken in the 'install' target
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# top build process is producing both 32-bit and 64-bit in one Makefile target.
-# It will receive LDFLAGS and cause 64-bit object files linked with 32-bit argument.
-# Till top fixes that mess, unseting LDFLAGS is the hacky workaround.
-LDFLAGS=
+CONFIGURE_OPTIONS += --disable-dualarch
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
