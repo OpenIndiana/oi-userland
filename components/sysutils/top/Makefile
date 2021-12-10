@@ -28,17 +28,19 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		top
 COMPONENT_VERSION=	3.8beta1
+IPS_COMPONENT_VERSION =	3.8
+HUMAN_VERSION=		$(COMPONENT_VERSION)
+COMPONENT_SUMMARY=	provides a rolling display of top cpu using processes
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/unixtop/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:6c683e9cb092078cbc1b2233b15fa8bd3d35a00874e6ba27cf54370d1d64fa4d
+COMPONENT_ARCHIVE_HASH=	sha256:6c683e9cb092078cbc1b2233b15fa8bd3d35a00874e6ba27cf54370d1d64fa4d
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/unixtop/files/unixtop/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_FMRI=		diagnostic/top
-IPS_COMPONENT_VERSION =	3.8
+COMPONENT_LICENSE=	BSD, Apache v2.0
 
 TEST_TARGET=		$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 # viewpathing support in the build is broken in the 'install' target
