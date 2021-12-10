@@ -21,15 +21,15 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2020, Andreas Wacknitz
+# Copyright (c) 2021, Klaus Ziegler
 #
 
-BUILD_BITS=			32
+BUILD_BITS=			64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
 COMPONENT_VERSION=	27.2
-COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -43,10 +43,15 @@ include $(WS_MAKE_RULES)/common.mk
 # we build three different variants of emacs for our users. As Solaris
 # always has a 64-bit kernel, and 64-bit emacs can handle larger files,
 # we only build and deliver 64-bit binaries.
-VARIANTS =	nox x gtk
+X_VARIANT =	$(BUILD_DIR)/$(MACH64)-x
+NOX_VARIANT =	$(BUILD_DIR)/$(MACH64)-nox
+GTK_VARIANT =	$(BUILD_DIR)/$(MACH64)-gtk
+VARIANTS =	$(NOX_VARIANT) $(X_VARIANT) $(GTK_VARIANT)
 
-BUILD_32 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
-INSTALL_32 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
+$(VARIANTS:%=%/.configured):	BITS=64
+
+BUILD_64 = $(VARIANTS:%=%/.built)
+INSTALL_64 = $(VARIANTS:%=%/.installed)
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
@@ -61,7 +66,7 @@ LD_MAP_NOEXSTK.sparc=
 LD_MAP_NOEXDATA.sparc=
 
 # LDFLAGS is defined for emacs to detect ncurses
-LDFLAGS += -L/usr/gnu/lib -R/usr/gnu/lib
+LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 
 # This code is built with gcc. The primary reason for this is that the
 # configure script has problems using a non-GNU cpp. I am not aware of
@@ -75,13 +80,17 @@ COMPILER =	gcc
 
 # The configure script runs the pkg-config command. Since we're building
 # 64-bit executables, we need pkg-config to use the 64-bit metadata files
-# CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
+CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
+
+# to find gmp.h
+CONFIGURE_ENV += CPPFLAGS="-I/usr/include/gmp"
 
 # configure options common to all variants of emacs that we want to build.
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--with-gif=no
+CONFIGURE_OPTIONS +=	--with-mailutils
 # Disable imagemagick (fixes https://www.illumos.org/issues/10354)
 CONFIGURE_OPTIONS +=	--without-imagemagick
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
@@ -119,35 +128,35 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) $(PBIN)/emacs $(PBIN)/emacs-* ;
 
 # GTK binaries
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH32)-gtk/src/emacs-$(COMPONENT_VERSION).1 \
+	$(CP) $(BUILD_DIR)/$(MACH64)-gtk/src/emacs-$(COMPONENT_VERSION).1 \
 		$(PBIN)/emacs-gtk ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(LN) $(PBIN)/emacs-gtk $(PBIN)/emacs-gtk-$(COMPONENT_VERSION) ;
 # Each emacs variant needs its own dump file:
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH32)-gtk/src/emacs.pdmp \
+	$(CP) $(BUILD_DIR)/$(MACH64)-gtk/src/emacs.pdmp \
 		$(PPDMP)/emacs-gtk.pdmp ;
 
 # Non-X11 binaries
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH32)-nox/src/emacs-$(COMPONENT_VERSION).1 \
+	$(CP) $(BUILD_DIR)/$(MACH64)-nox/src/emacs-$(COMPONENT_VERSION).1 \
 		$(PBIN)/emacs-nox ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(LN) $(PBIN)/emacs-nox $(PBIN)/emacs-nox-$(COMPONENT_VERSION) ;
 # Each emacs variant needs its own dump file:
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH32)-nox/src/emacs.pdmp \
+	$(CP) $(BUILD_DIR)/$(MACH64)-nox/src/emacs.pdmp \
 		$(PPDMP)/emacs-nox.pdmp ;
 
 # X11 (Athena) binaries
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH32)-x/src/emacs-$(COMPONENT_VERSION).1 \
+	$(CP) $(BUILD_DIR)/$(MACH64)-x/src/emacs-$(COMPONENT_VERSION).1 \
 		$(PBIN)/emacs-x ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(LN) $(PBIN)/emacs-x $(PBIN)/emacs-x-$(COMPONENT_VERSION) ;
 # Each emacs variant needs its own dump file:
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH32)-x/src/emacs.pdmp \
+	$(CP) $(BUILD_DIR)/$(MACH64)-x/src/emacs.pdmp \
 		$(PPDMP)/emacs-x.pdmp ;
 
 # Emacs shell script that picks the right variant at runtime
@@ -168,7 +177,7 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PVAR) ;
 # DOC-23.1.1. Remove and replace.
 COMPONENT_POST_INSTALL_ACTION += $(RM) $(PETC)/DOC-$(COMPONENT_VERSION).2 ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH32)-x/etc/DOC-$(COMPONENT_VERSION).1 \
+	$(CP) $(BUILD_DIR)/$(MACH64)-x/etc/DOC-$(COMPONENT_VERSION).1 \
 		$(PETC)/DOC-$(COMPONENT_VERSION).1 ;
 
 COMPONENT_POST_INSTALL_ACTION += \
@@ -198,10 +207,13 @@ COMPONENT_POST_INSTALL_ACTION += $(GUNZIP) \
 # Solaris, it is delivered by system/prerequisite/gnu.
 COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
 
-install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed
+install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed
+
+# build dependencies.
+REQUIRED_PACKAGES += mail/mailutils
 
 # Auto-generated dependencies
-#REQUIRED_PACKAGES += editor/gnu-emacs
+REQUIRED_PACKAGES += editor/gnu-emacs
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
@@ -213,13 +225,13 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
-#REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
@@ -239,3 +251,4 @@ REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
+REQUIRED_PACKAGES += x11/library/toolkit/libxaw3d
