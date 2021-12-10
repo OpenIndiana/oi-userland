@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2020 <contributor>
+# Copyright 2021 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -24,10 +24,10 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/ebrowse
 file path=usr/bin/emacs
-hardlink path=usr/bin/emacs-gtk target=emacs-gtk-$(COMPONENT_VERSION)
-file path=usr/bin/emacs-gtk-$(COMPONENT_VERSION)
-file path=usr/bin/emacs-nox
-hardlink path=usr/bin/emacs-nox-$(COMPONENT_VERSION) target=emacs-nox
+file path=usr/bin/emacs-gtk
+hardlink path=usr/bin/emacs-gtk-$(COMPONENT_VERSION) target=emacs-gtk
+hardlink path=usr/bin/emacs-nox target=emacs-nox-$(COMPONENT_VERSION)
+file path=usr/bin/emacs-nox-$(COMPONENT_VERSION)
 file path=usr/bin/emacs-x
 hardlink path=usr/bin/emacs-x-$(COMPONENT_VERSION) target=emacs-x
 file path=usr/bin/emacsclient
@@ -36,14 +36,13 @@ file path=usr/gnu/bin/etags
 file path=usr/gnu/share/man/man1/ctags.1
 file path=usr/gnu/share/man/man1/etags.1
 file path=usr/include/emacs-module.h
+file path=usr/lib/$(MACH64)/systemd/user/emacs.service
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/emacs-gtk.pdmp
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/emacs-nox.pdmp
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/emacs-x.pdmp
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/emacs.pdmp
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/hexl
-file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/movemail
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/rcs2log
-file path=usr/lib/systemd/user/emacs.service
 file path=usr/share/applications/emacs.desktop
 file path=usr/share/emacs/$(COMPONENT_VERSION)/etc/AUTHORS
 file path=usr/share/emacs/$(COMPONENT_VERSION)/etc/CALC-NEWS
