@@ -1,0 +1,15 @@
+--- mailutils-3.13/configure.orig	2021-08-05 12:46:25.000000000 +0000
++++ mailutils-3.13/configure	2021-12-07 10:05:05.372344233 +0000
+@@ -30874,10 +30874,10 @@
+ else
+   mu_cv_lib_mysqlclient=no
+  mu_check_lib_save_LIBS=$LIBS
+- for path in "" /usr/local/lib/mysql /usr/lib/mysql
++ for path in "" /usr/local/lib/mysql /usr/lib/mysql $MYSQL_LIB
+  do
+    if test -n "$path"; then
+-     mu_ldflags="-L$path -lmysqlclient -lm"
++     mu_ldflags="-L$path -R$path -lmysqlclient -L$PG_LIB -R$PG_LIB -lm"
+    else
+      mu_ldflags="-lmysqlclient -lm"
+    fi
