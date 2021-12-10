@@ -1,0 +1,18 @@
+
+This fixes the following error:
+
+mh_init.c:1142:17: error: 'TIOCGWINSZ' undeclared (first use in this function); did you mean 'LIOCGETS'?
+
+--- mailutils-3.13/mh/mh_init.c.orig	2021-07-16 19:50:58.000000000 +0000
++++ mailutils-3.13/mh/mh_init.c	2021-12-05 16:03:58.165128225 +0000
+@@ -30,6 +30,10 @@
+ #include <fnmatch.h>
+ #include <sys/ioctl.h>
+ 
++#ifdef	__sun
++#include <sys/termios.h>
++#endif
++
+ void
+ mh_init (void)
+ {

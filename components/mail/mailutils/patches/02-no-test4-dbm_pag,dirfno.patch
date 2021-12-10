@@ -1,0 +1,23 @@
+
+for both variables there isn't any checking in configure:
+
+HAVE_DBM_PAGFNO
+HAVE_DBM_DIRFNO
+
+WITH_NDBM is detected correctly on OI so therefor define
+HAVE_DBM_PAGFNO to 1 to pass by this error:
+
+libmu_dbm/ndbm.c:63:4: error: #error "neither dbm_pagfno nor dbm_dirfno available"
+
+--- mailutils-3.13/libmu_dbm/ndbm.c.orig	2021-07-16 19:51:00.000000000 +0000
++++ mailutils-3.13/libmu_dbm/ndbm.c	2021-12-05 15:20:19.891165055 +0000
+@@ -32,6 +32,9 @@
+ 
+ #if defined(WITH_NDBM)
+ #include <ndbm.h>
++#ifdef	__sun
++#define	HAVE_DBM_PAGFNO	1
++#endif
+ 
+ static int
+ _ndbm_file_safety (mu_dbm_file_t db, int mode, uid_t owner)
