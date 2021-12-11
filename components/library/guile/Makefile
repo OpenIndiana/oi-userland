@@ -50,13 +50,22 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV+= CPP="$(GCC_ROOT)/bin/gcc -E"
 
-CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/gmp -D__USE_LEGACY_PROTOTYPES__"
+CONFIGURE_OPTIONS +=	CPPFLAGS="-D__USE_LEGACY_PROTOTYPES__"
 CONFIGURE_OPTIONS +=	LIBS="-lsocket -lnsl"
 CONFIGURE_OPTIONS +=	--disable-static 
 CONFIGURE_OPTIONS +=	--disable-error-on-warning
+ifeq ($(strip $(MACH)),i386)
 CONFIGURE_OPTIONS +=	ac_cv_type_complex_double=no
+endif
 
 CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
+
+# bug at: https://bugs.gentoo.org/676468
+ifeq ($(strip $(MACH)),sparc)
+COMPONENT_POST_UNPACK_ACTION= \
+	( cd $(COMPONENT_SRC)/prebuilt/32-bit-big-endian ; \
+		find . -name \*.go -exec rm {} \; )
+endif
 
 # It is imperative the timestamps of .scm and .go files be preserved, and .go
 # file be newer than its source, or nothing works

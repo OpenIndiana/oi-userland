@@ -43,7 +43,6 @@ COMPONENT_LICENSE=	GPLv3, LGPLv2.1, FDLv1.3
 
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS += -I$(USRINCDIR)/gmp
 CFLAGS += -I$(USRINCDIR)/idn2
 
 MCS = mcs

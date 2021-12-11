@@ -59,7 +59,7 @@ LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)
 MPN32_i386 = x86/pentium x86 generic
 MPN64_i386 = x86_64/pentium4 x86_64 generic
 MPN32_sparc = sparc32/v9 sparc32 generic
-MPN64_sparc = sparc64 generic
+MPN64_sparc = sparc64/ultrasparc34 sparc64/ultrasparc1234 sparc64 generic
 MPN_32 = $(MPN32_$(MACH))
 MPN_64 = $(MPN64_$(MACH))
 GM4 = /usr/bin/gm4
@@ -85,7 +85,6 @@ CONFIGURE_ENV += SED="$(GSED)"
 CONFIGURE_ENV += ABI="$(BITS)"
 CONFIGURE_ENV += "MPN_PATH=$(MPN_$(BITS))"
 
-CONFIGURE_OPTIONS += --includedir=/usr/include/gmp
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
@@ -126,8 +125,6 @@ COMPONENT_POST_INSTALL_ACTION = \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
 					$(COMPONENT_DIR)/Solaris/libgmpxx-64.pc > \
 							$(COMPONENT_DIR)/libgmpxx.pc ; \
-      $(MV) $(PROTOUSRINCLUDEDIR)/gmp.h $(PROTOUSRINCLUDEDIR)/gmp/ ; \
-      $(MV) $(PROTOUSRINCLUDEDIR)/mp.h $(PROTOUSRINCLUDEDIR)/gmp/ ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libgmp.pc \
 					$(PROTOPKGCONFIGDIR) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libgmpxx.pc \

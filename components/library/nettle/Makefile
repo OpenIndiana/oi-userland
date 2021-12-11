@@ -38,8 +38,6 @@ PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
-CPPFLAGS += -I/usr/include/gmp
-
 CONFIGURE_OPTIONS += --disable-assembler
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"

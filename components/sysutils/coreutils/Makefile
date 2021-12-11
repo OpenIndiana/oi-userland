@@ -59,7 +59,6 @@ COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
 
 CONFIGURE_PREFIX	 =	$(GNUDIR)
 CONFIGURE_BINDIR.64	 =	$(GNUBIN)
-CONFIGURE_OPTIONS	+=	CPPFLAGS=" -I$(USRINCDIR)/gmp"
 CONFIGURE_OPTIONS	+=	--libdir=$(USRLIBDIR.$(BITS))
 # Put libstdbuf in the library directory
 CONFIGURE_OPTIONS	+=	--libexecdir=$(USRLIBDIR.$(BITS))
