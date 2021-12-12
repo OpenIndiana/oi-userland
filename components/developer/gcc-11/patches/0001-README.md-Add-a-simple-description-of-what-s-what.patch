@@ -1,0 +1,58 @@
+From 22ad7e29aa64410a5af391b202714ae238f68915 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Sat, 16 Apr 2011 23:25:51 -0400
+Subject: [PATCH 01/34] README.md: Add a simple description of what's what
+
+---
+ README.md | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+ create mode 100644 README.md
+
+diff --git a/README.md b/README.md
+new file mode 100644
+index 00000000000..fcb3d7f9570
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,39 @@
++This is the GCC used for compiling illumos.
++
++The `il-*` branches contain the the patches used for building illumos, which
++are rebased versions of those used for Solaris/OpenSolaris, and then
++additional changes.  The versions actually in use are tagged with
++`il-VERSION-ilN` where _N_ version the illumos changes over the GCC version in
++question.
++
++The `wip/*` branches are works in progress and _should never be used_
++
++The `codesourcery/*` and `sun/*` branches contain the original GCCs as patched by
++CodeSourcery and Sun Microsystems for use compiling Solaris and OpenSolaris as
++was, and the GCCFSS patches of Sun's
++
++When building the compilers for illumos use the flags generally used are:
++
++i386
++~~~sh
++../../configure --prefix=/opt/gcc/$VER --with-as=/usr/bin/gas --with-gnu-as \
++   --with-ld=/usr/bin/ld --without-gnu-ld --enable-languages="c,c++,objc" \
++   --enable-shared  --with-mpfr-include=/usr/include/mpfr \
++   --with-gmp-include=/usr/include/gmp \
++   --with-pkgversion="Illumos $(git describe --all)" \
++   --with-bugurl="http://github.com/richlowe/gcc/issues"
++~~~
++
++sparc
++~~~sh
++../../configure --prefix=/opt/gcc/$VER --without-gnu-as --with-as=/usr/ccs/bin/as" \
++   --with-ld=/usr/bin/ld --without-gnu-ld --enable-languages="c,c++,objc" \
++   --enable-shared  --with-mpfr-include=/usr/include/mpfr \
++   --with-gmp-include=/usr/include/gmp \
++   --with-pkgversion="Illumos $(git describe --all)" \
++   --with-bugurl="http://github.com/richlowe/gcc/issues"
++~~~
++
++Please use the correct `--with-bugurl` and `--with-pkgversion` flags as
++appropriate for any modifications you make, but please also be sure that they
++accurately describe what is in use (ie, are not left at the defaults) either.
+-- 
+2.31.1
+
