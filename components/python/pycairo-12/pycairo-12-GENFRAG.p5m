@@ -20,13 +20,17 @@
 #
 
 #
+# Copyright 2021 Gary Mills
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-file path=usr/include/pycairo/py3cairo.h
-file path=usr/lib/$(MACH64)/pkgconfig/py3cairo.pc
-license COPYING license=GPLv3
-license COPYING.LESSER license=LGPLv3
+license COPYING-MPL-1.1 license="MPL v1.1"
+license COPYING-LGPL-2.1 license="LGPL v2.1"
+
 # Manually added since python2 version is built separately in ../py2cairo
-depend type=conditional fmri=library/python/pycairo-27 \
+depend type=conditional fmri=$(COMPONENT_FMRI)-27 \
     predicate=runtime/python-27
+
+# Manually added since python3 version is built separately in ../pycairo
+depend type=conditional fmri=$(COMPONENT_FMRI)-35 \
+    predicate=runtime/python-35
