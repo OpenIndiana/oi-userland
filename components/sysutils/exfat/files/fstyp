@@ -1,0 +1,15 @@
+#!/bin/sh
+while [ -n "$1" ];  do
+        case "$1" in
+        -*)
+                shift
+                ;;
+        *)
+		if dd if=$1 bs=1 skip=3 count=8 2> /dev/null | grep -q "EXFAT   "
+		then echo "exfat" && exit 0
+		fi
+                exit 1
+                ;;
+        esac
+done
+exit 1
