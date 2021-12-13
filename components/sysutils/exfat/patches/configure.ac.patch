@@ -1,0 +1,26 @@
+
+Define the compiler and tools to be used for compiling and generating
+shared objects
+
+--- tries/configure.ac.orig	2018-09-15 07:03:24.000000000 +0000
++++ tries/configure.ac	2021-12-14 10:02:55.084828345 +0000
+@@ -26,11 +26,17 @@
+ 	[exfat],
+ 	[https://github.com/relan/exfat])
+ AM_INIT_AUTOMAKE([1.11.2 -Wall -Werror foreign subdir-objects])
+-AC_PROG_CC
+-AC_PROG_CC_C99
++AC_PROG_CC(gcc cc)
+ AC_PROG_RANLIB
+ AM_PROG_AR
+ AC_SYS_LARGEFILE
++
++ifdef(
++        [LT_INIT],
++        [LT_INIT],
++        [AC_PROG_LIBTOOL]
++)
++
+ PKG_CHECK_MODULES([UBLIO], [libublio], [
+   CFLAGS="$CFLAGS $UBLIO_CFLAGS"
+   LIBS="$LIBS $UBLIO_LIBS"

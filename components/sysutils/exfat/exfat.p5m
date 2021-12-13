@@ -1,0 +1,44 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2021 Jean-Pierre André. All rights reserved.
+#
+
+<transform file path=usr/lib/fs/exfat/(.*) -> default mode 0555>
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file files/fstyp path=usr/lib/fs/exfat/fstyp
+link path=usr/lib/fs/exfat/mount target=../../../sbin/mount.exfat-fuse
+link path=usr/bin/exfat target=../sbin/mount.exfat-fuse
+link path=usr/lib/fs/exfat/mkfs  target=../../../sbin/mkexfatfs
+
+link path=usr/lib/amd64/libexfat.so target=libexfat.so.0.0.0
+link path=usr/lib/amd64/libexfat.so.0 target=libexfat.so.0.0.0
+file path=usr/lib/amd64/libexfat.so.0.0.0
+
+file path=usr/sbin/mount.exfat-fuse
+file path=usr/sbin/mkexfatfs
+file path=usr/sbin/exfatlabel
+file path=usr/sbin/exfatfsck
+file path=usr/sbin/dumpexfat
+file path=usr/share/man/man8/dumpexfat.8
+file path=usr/share/man/man8/exfatfsck.8
+file path=usr/share/man/man8/mount.exfat-fuse.8
+file path=usr/share/man/man8/exfatlabel.8
+file path=usr/share/man/man8/mkexfatfs.8
