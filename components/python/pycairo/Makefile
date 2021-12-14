@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2021 Gary Mills
 # Copyright 2017 Alexander Pyhalov
 #
 BUILD_BITS=64
@@ -17,8 +18,9 @@ BUILD_STYLE=waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycairo
+# This version supports only python 3.5
 COMPONENT_VERSION=	1.10.0
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	http://www.cairographics.org
 COMPONENT_SUMMARY=	Python bindings for Cairo
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -66,6 +68,11 @@ COMPONENT_POST_INSTALL_ACTION += \
             $(PYTHON) -m compileall $(PROTO_DIR)/usr/lib/python3.5/vendor-packages/cairo ; \
 	fi ;
 
+# Rename some files to make way for symlinks
+COMPONENT_POST_INSTALL_ACTION += \
+	(cd $(PROTOUSRINCDIR)/pycairo; $(MV) py3cairo.h py3cairo.h-3.5) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	(cd $(PROTOUSRLIBDIR.64)/pkgconfig; $(MV) py3cairo.pc py3cairo.pc-3.5) ;
 
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += runtime/python-35
