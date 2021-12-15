@@ -85,7 +85,6 @@ CONFIGURE_ENV += SED="$(GSED)"
 CONFIGURE_ENV += ABI="$(BITS)"
 CONFIGURE_ENV += "MPN_PATH=$(MPN_$(BITS))"
 
-CONFIGURE_OPTIONS += --includedir=/usr/include/gmp
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
@@ -126,8 +125,6 @@ COMPONENT_POST_INSTALL_ACTION = \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
 					$(COMPONENT_DIR)/Solaris/libgmpxx-64.pc > \
 							$(COMPONENT_DIR)/libgmpxx.pc ; \
-      $(MV) $(PROTOUSRINCLUDEDIR)/gmp.h $(PROTOUSRINCLUDEDIR)/gmp/ ; \
-      $(MV) $(PROTOUSRINCLUDEDIR)/mp.h $(PROTOUSRINCLUDEDIR)/gmp/ ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libgmp.pc \
 					$(PROTOPKGCONFIGDIR) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libgmpxx.pc \
