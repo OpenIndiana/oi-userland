@@ -51,11 +51,10 @@ LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)
 MPN32_i386 = x86/pentium x86 generic
 MPN64_i386 = x86_64/pentium4 x86_64 generic
 MPN32_sparc = sparc32/v9 sparc32 generic
-MPN64_sparc = sparc64 generic
+MPN64_sparc = sparc64/ultrasparc34 sparc64/ultrasparc1234 sparc64 generic
 MPN32 = $(MPN32_$(MACH))
 MPN64 = $(MPN64_$(MACH))
 
-GMPINCDIR = /usr/include/gmp
 GMPLIBDIR_32 = /usr/lib
 GMPLIBDIR_64 = /usr/lib/$(MACH64)
 MPFRMULHIGH = 2048
@@ -68,20 +67,24 @@ CONFIGURE_ENV += SED="$(GSED)"
 CONFIGURE_ENV += ABI="$(BITS)"
 CONFIGURE_ENV += "MPN_PATH=$(MPN_$(BITS))"
 
-CONFIGURE_OPTIONS += --includedir=/usr/include/mpfr
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock
 CONFIGURE_OPTIONS += --enable-thread-safe
 CONFIGURE_OPTIONS += --enable-tests-timeout=0
-CONFIGURE_OPTIONS += --with-gmp-include=$(GMPINCDIR)
 CONFIGURE_OPTIONS += --with-gmp-lib=$(GMPLIBDIR_$(BITS))
 CONFIGURE_OPTIONS += --with-mulhigh-size=$(MPFRMULHIGH)
 CONFIGURE_OPTIONS += --with-pic
 
-COMPONENT_POST_INSTALL_ACTION = \
-      ( $(GSED) -i -e "s^\#include <gmp.h>^\#include <gmp/gmp.h>^g" $(PROTOUSRDIR)/include/mpfr/mpfr.h ; )
+COMPONENT_TEST_TRANSFORMS= \
+	'-e "/^make/d" ' \
+	'-e "/^Making/d" ' \
+	'-e "/^\//d" ' \
+	'-e "/^mv/d" ' \
+	'-e "/^libtool/d" ' \
+	'-e "/^depbase/d" ' \
+	'-e "/^\[/d" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
