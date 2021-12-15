@@ -55,7 +55,6 @@ MPN64_sparc = sparc64 generic
 MPN32 = $(MPN32_$(MACH))
 MPN64 = $(MPN64_$(MACH))
 
-GMPINCDIR = /usr/include/gmp
 GMPLIBDIR_32 = /usr/lib
 GMPLIBDIR_64 = /usr/lib/$(MACH64)
 MPFRMULHIGH = 2048
@@ -75,13 +74,9 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock
 CONFIGURE_OPTIONS += --enable-thread-safe
 CONFIGURE_OPTIONS += --enable-tests-timeout=0
-CONFIGURE_OPTIONS += --with-gmp-include=$(GMPINCDIR)
 CONFIGURE_OPTIONS += --with-gmp-lib=$(GMPLIBDIR_$(BITS))
 CONFIGURE_OPTIONS += --with-mulhigh-size=$(MPFRMULHIGH)
 CONFIGURE_OPTIONS += --with-pic
-
-COMPONENT_POST_INSTALL_ACTION = \
-      ( $(GSED) -i -e "s^\#include <gmp.h>^\#include <gmp/gmp.h>^g" $(PROTOUSRDIR)/include/mpfr/mpfr.h ; )
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
