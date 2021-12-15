@@ -50,7 +50,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV+= CPP="$(GCC_ROOT)/bin/gcc -E"
 
-CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/gmp -D__USE_LEGACY_PROTOTYPES__"
+CONFIGURE_OPTIONS +=	CPPFLAGS="-D__USE_LEGACY_PROTOTYPES__"
 CONFIGURE_OPTIONS +=	LIBS="-lsocket -lnsl"
 CONFIGURE_OPTIONS +=	--disable-static 
 CONFIGURE_OPTIONS +=	--disable-error-on-warning

@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
 COMPONENT_VERSION=	27.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -81,9 +82,6 @@ COMPILER =	gcc
 # The configure script runs the pkg-config command. Since we're building
 # 64-bit executables, we need pkg-config to use the 64-bit metadata files
 CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
-
-# to find gmp.h
-CONFIGURE_ENV += CPPFLAGS="-I/usr/include/gmp"
 
 # configure options common to all variants of emacs that we want to build.
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)

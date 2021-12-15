@@ -24,7 +24,6 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnu-cobol
 COMPONENT_VERSION=	1.1
-COMPONENT_REVISION=	2
 COMPONENT_FMRI=	developer/gnu-cobol
 COMPONENT_SUMMARY=	COBOL to C compiler
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -42,8 +41,6 @@ CONFIGURE_FIX_LIBTOOL_RPATH = no
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-CFLAGS += -I/usr/include/gmp
 
 COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
 
