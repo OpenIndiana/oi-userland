@@ -1,0 +1,20 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type='manifest' name='export'>
+	<service name='network/nzbget' type='service' version='0'>
+		<create_default_instance enabled='false'/>
+		<dependency name='network' grouping='require_all' restart_on='error' type='service'>
+			<service_fmri value='svc:/milestone/network:default'/>
+		</dependency>
+		<dependency name='filesystem-local' grouping='require_all' restart_on='none' type='service'>
+			<service_fmri value='svc:/system/filesystem/local:default'/>
+		</dependency>
+		<exec_method name='start' type='method' exec='/usr/bin/nzbget --daemon  --configfile /etc/nzbget.conf' timeout_seconds='60'/>
+		<exec_method name='stop' type='method' exec='/usr/bin/nzbget --quit' timeout_seconds='60'/>
+		<exec_method name='refresh' type='method' exec='/usr/bin/nzbget --reload' timeout_seconds='60'/>
+		<property_group name='application' type='application'>
+			<propval name='config_file' type='astring' value='/etc/nzbget.conf'/>
+		</property_group>
+	</service>
+</service_bundle>
+
