@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         jsonschema
 COMPONENT_VERSION=      3.2.0
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=  https://pypi.python.org/pypi/jsonschema
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz

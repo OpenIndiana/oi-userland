@@ -24,6 +24,10 @@ license COPYING license='MIT'
 
 <transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
 
+# force a dependency on the pyrsistent package                                                                                               
+depend type=require \                                                                                                                
+    fmri=library/python/pyrsistent-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
 link path=usr/bin/jsonschema target=jsonschema-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file path=usr/bin/jsonschema-$(PYVER)
@@ -49,3 +53,4 @@ file path=usr/lib/python$(PYVER)/vendor-packages/jsonschema/schemas/draft4.json
 file path=usr/lib/python$(PYVER)/vendor-packages/jsonschema/schemas/draft6.json
 file path=usr/lib/python$(PYVER)/vendor-packages/jsonschema/schemas/draft7.json
 file path=usr/lib/python$(PYVER)/vendor-packages/jsonschema/validators.py
+
