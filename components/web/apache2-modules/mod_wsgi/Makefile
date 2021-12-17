@@ -26,12 +26,11 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_wsgi
-COMPONENT_VERSION=	4.5.22
-COMPONENT_REVISION=	5
+COMPONENT_VERSION=	4.9.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d8205b1ebe6042e21a7a59fbfe10c4c5a12753bac531879758bdf2fa8e2bf301
-COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/aa/a5/909ecab8a101afb57de4815250d6fa23fcc1b94d095f6d56a9c15d7425fa/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:1f1a22511e7700c7d4d26b14768937c919ae5f53e80f5352226a218d866156ec
+COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/m/mod_wsgi/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://pypi.python.org/pypi/mod_wsgi/
 COMPONENT_BUGDB=	utility/apache
 
@@ -39,7 +38,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PYTHON_VERSIONS = 2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
 APACHE_USR_PREFIX=/usr/apache2/2.4
 
@@ -57,10 +56,14 @@ CFLAGS+= -std=c99 $(CPP_XPG6MODE)
 # setup.py.mk
 $(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/%-3.5/.built:		PYTHON_VERSION=3.5
+$(BUILD_DIR)/%-3.7/.built:		PYTHON_VERSION=3.7
+$(BUILD_DIR)/%-3.9/.built:		PYTHON_VERSION=3.9
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
 $(BUILD_DIR)/%-2.7/.installed:  PYTHON_VERSION=2.7
 $(BUILD_DIR)/%-3.5/.installed:  PYTHON_VERSION=3.5
+$(BUILD_DIR)/%-3.7/.installed:  PYTHON_VERSION=3.7
+$(BUILD_DIR)/%-3.9/.installed:  PYTHON_VERSION=3.9
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
 BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
@@ -78,5 +81,7 @@ install:	$(INSTALL_64)
 
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/server/apache-24

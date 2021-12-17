@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pybonjour
 COMPONENT_VERSION=	1.1.1
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	http://code.google.com/p/pybonjour/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -35,7 +35,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:006175b0fa6ef555fe8970132db81332827662a680d5f64dcb005bfcc80299ad
 COMPONENT_ARCHIVE_URL=	https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/pybonjour/$(COMPONENT_ARCHIVE)
 
-PYTHON_VERSIONS=	2.7 3.5
+PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -50,3 +50,5 @@ COMPONENT_TEST_TRANSFORMS = "'/^Ran .+ / { sub(\" tests in .+s\", \" tests in\")
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
