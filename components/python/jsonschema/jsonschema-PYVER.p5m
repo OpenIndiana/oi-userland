@@ -24,9 +24,16 @@ license COPYING license='MIT'
 
 <transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
 
-# force a dependency on the pyrsistent package                                                                                               
-depend type=require \                                                                                                                
-    fmri=library/python/pyrsistent-$(PYV)
+# We force a runtime dependency on setuptools-$(PYV) which is already a build dependendy:
+set pkg.linted.pkglint.manifest005.2=true
+
+# force dependencies on needed packages according to setup.cfg:
+depend type=require fmri=library/python/attrs-$(PYV)
+# importlib-metadata is needed for python < 3.8:
+$(PYTHON_3.9_EXCL)depend type=require fmri=library/python/importlib-metadata-$(PYV)
+depend type=require fmri=library/python/pyrsistent-$(PYV)
+depend type=require fmri=library/python/setuptools-$(PYV)
+depend type=require fmri=library/python/six-$(PYV)
 
 link path=usr/bin/jsonschema target=jsonschema-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
