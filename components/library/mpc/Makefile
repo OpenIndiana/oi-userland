@@ -23,12 +23,14 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2016, Aurelien Larcher. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2021, Andreas Wacknitz
 #
 
+BUILD_BITS=	64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mpc
-COMPONENT_VERSION=	1.1.0
+COMPONENT_VERSION=	1.2.1
 COMPONENT_SUMMARY=	Multiprecision complex data type evaluation library
 COMPONENT_PROJECT_URL=	http://www.multiprecision.org/
 COMPONENT_FMRI=		library/mpc
@@ -36,16 +38,11 @@ COMPONENT_CLASSIFICATION=	Development/High Performance Computing
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/mpc/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:6985c538143c1208dcb1ac42cedad6ff52e267b47e5f970183a3e75125b43c2e
+COMPONENT_ARCHIVE_HASH=	sha256:17503d2c395dfcf106b622dc142683c1199431d095367c6aacba6eec30340459
+COMPONENT_SIG_URL=  $(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_LICENSE=	LGPLv2.1
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-export SHELL
-SHELL=/bin/sh
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS +=		`pkg-config --cflags mpfr`
 
@@ -53,13 +50,19 @@ CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--disable-static
 
 COMPONENT_TEST_DIR =	$(BUILD_DIR)/$(MACH$(BITS))/tests
+COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+    '-n ' \
+	'-e "/====/p" ' \
+	'-e "/^Testsuite/p" ' \
+    '-e "/TOTAL:/p" ' \
+    '-e "/PASS:/p" ' \
+    '-e "/SKIP:/p" ' \
+    '-e "/XFAIL:/p" ' \
+    '-e "/FAIL:/p" ' \
+    '-e "/XPASS:/p" ' \
+    '-e "/ERROR:/p" '
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)	
-
-test:		$(TEST_32_and_64)
- 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/mpfr
