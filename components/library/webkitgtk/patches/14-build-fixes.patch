@@ -1,0 +1,51 @@
+Patch added to fix the following error:
+from webkitgtk-2.24.2
+
+webkitgtk-2.26.3/Source/ThirdParty/ANGLE/src/common/third_party/smhasher/src/PMurHash.cpp:95:51: error: operator '&&' has no right operand
+         defined(_LITTLE_ENDIAN) && _LITTLE_ENDIAN == 1
+                                                   ^~
+diff --git a/Source/ThirdParty/ANGLE/src/common/third_party/smhasher/src/PMurHash.cpp b/Source/ThirdParty/ANGLE/src/common/third_party/smhasher/src/PMurHash.cpp
+index 379e5ce..6288eea 100644
+--- a/Source/ThirdParty/ANGLE/src/common/third_party/smhasher/src/PMurHash.cpp
++++ b/Source/ThirdParty/ANGLE/src/common/third_party/smhasher/src/PMurHash.cpp
+@@ -74,6 +74,12 @@ on big endian machines, or a byte-by-byte read if the endianess is unknown.
+  * ROTL32(x,r)      Rotate x left by r bits
+  */
+ 
++#if !defined(__BYTE_ORDER) && defined(__GNUC__)
++  #define __BIG_ENDIAN __ORDER_BIG_ENDIAN__
++  #define __LITTLE_ENDIAN __ORDER_LITTLE_ENDIAN__
++  #define __BYTE_ORDER __BYTE_ORDER__
++#endif
++
+ /* Convention is to define __BYTE_ORDER == to one of these values */
+ #if !defined(__BIG_ENDIAN)
+ #    define __BIG_ENDIAN 4321
+diff --git a/Source/WTF/wtf/Assertions.h b/Source/WTF/wtf/Assertions.h
+index 315f3e6..31b36db 100644
+--- a/Source/WTF/wtf/Assertions.h
++++ b/Source/WTF/wtf/Assertions.h
+@@ -452,7 +452,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
+ 
+ /* COMPILE_ASSERT */
+ #ifndef COMPILE_ASSERT
+-#if COMPILER_SUPPORTS(C_STATIC_ASSERT)
++#if COMPILER_SUPPORTS(C_STATIC_ASSERT) && !defined(__cplusplus)
+ /* Unlike static_assert below, this also works in plain C code. */
+ #define COMPILE_ASSERT(exp, name) _Static_assert((exp), #name)
+ #else
+diff --git a/Source/WebCore/platform/network/DNS.h b/Source/WebCore/platform/network/DNS.h
+index e63a7b0..9880c7d 100644
+--- a/Source/WebCore/platform/network/DNS.h
++++ b/Source/WebCore/platform/network/DNS.h
+@@ -32,6 +32,10 @@
+ #include <netinet/in.h>
+ #endif
+ 
++#ifdef __sun__
++#include <sys/socket.h>
++#endif
++
+ #include <wtf/Forward.h>
+ #include <wtf/Optional.h>
+ #include <wtf/Variant.h>
