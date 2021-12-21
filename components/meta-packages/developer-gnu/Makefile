@@ -10,13 +10,16 @@
 
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
+# Copyright 2021 Andreas Wacknitz. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		developer-gnu
-COMPONENT_VERSION=	0.5.11
+COMPONENT_VERSION=	1.0
 COMPONENT_SUMMARY=	GNU Tools Development cluster
+COMPONENT_CLASSIFICATION=	Meta Packages/Group Packages
+COMPONENT_FMRI=		developer/gnu
 
 include ../../../make-rules/ips.mk
 
