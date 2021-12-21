@@ -22,6 +22,11 @@ differences. We can safely comment it out. [Not for upstream]
 
 test_tcl should be investigated more [Should be reported upstream]
 
+test_float is another locale related issue. [Should be reported upstream]
+https://github.com/python/cpython/commit/aa967ec4d4c2fc844f8f16b339140b050ae4d5e2
+
+test_pkgutil doesn't expect that pkg module exists. [Not for upstream]
+
 --- Python-3.9.2/Lib/test/test_gdb.py
 +++ Python-3.9.2/Lib/test/test_gdb.py
 @@ -52,6 +52,9 @@ if gdb_major_version < 7:
@@ -157,3 +162,29 @@ test_tcl should be investigated more [Should be reported upstream]
      def test_evalfile_null_in_result(self):
          tcl = self.interp
          filename = support.TESTFN_ASCII
+--- Python-3.9.4/Lib/test/test_float.py
++++ Python-3.9.4/Lib/test/test_float.py
+@@ -144,7 +144,7 @@ class GeneralFloatCases(unittest.TestCas
+         # non-UTF-8 byte string
+         check(b'123\xa0')
+ 
+-    @support.run_with_locale('LC_NUMERIC', 'fr_FR', 'de_DE')
++    @support.run_with_locale('LC_NUMERIC', 'fr_FR.UTF-8', 'de_DE.UTF-8')
+     def test_float_with_comma(self):
+         # set locale to something that doesn't use '.' for the decimal point
+         # float must not accept the locale specific decimal point but
+--- Python-3.9.4/Lib/test/test_pkgutil.py
++++ Python-3.9.4/Lib/test/test_pkgutil.py
+@@ -479,7 +479,11 @@ class NestedNamespacePackageTest(unittes
+         sys.path.insert(0, os.path.join(self.basedir, 'b'))
+         import pkg
+         self.addCleanup(unload, 'pkg')
+-        self.assertEqual(len(pkg.__path__), 2)
++        # Solaris has its own pkg package that breaks this test
++        if os.path.exists("/usr/lib/python3.9/vendor-packages/pkg/"):
++            self.assertEqual(len(pkg.__path__), 3)
++        else:
++            self.assertEqual(len(pkg.__path__), 2)
+         import pkg.subpkg
+         self.addCleanup(unload, 'pkg.subpkg')
+         self.assertEqual(len(pkg.subpkg.__path__), 2)
