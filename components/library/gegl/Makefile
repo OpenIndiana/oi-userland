@@ -19,12 +19,12 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
-COMPONENT_VERSION= 0.4.30
+COMPONENT_VERSION= 0.4.34
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:c112782cf4096969e23217ccdfabe42284e35d5435ff0c43d40e4c70faeca8dd
+COMPONENT_ARCHIVE_HASH= sha256:ef63f0bca5b431c6119addd834ca7fbb507c900c4861c57b3667b6f4ccfcaaaa
 COMPONENT_ARCHIVE_URL= https://ftp.gimp.org/pub/gegl/0.4/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.gegl.org/
 COMPONENT_LICENSE= GPLv3, LGPLv3
@@ -43,6 +43,8 @@ LDFLAGS           +=    $(JPEG_LDFLAGS)
 CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS+= --infodir=$(USRSHAREDIR)/info
 CONFIGURE_OPTIONS+= -Dworkshop=true
+# libav is from encumbered
+CONFIGURE_OPTIONS+= -Dlibav=disabled
 
 # gobject-introspection requires this
 COMPONENT_BUILD_ENV += CC="$(CC)"
@@ -53,6 +55,7 @@ LD_B_DIRECT=
 LD_Z_IGNORE=
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(BUILD_DIR_64)/gegl
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
