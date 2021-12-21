@@ -10,14 +10,16 @@
 
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
+# Copyright 2021 Andreas Wacknitz. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		developer-opensolaris-X
-COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION=	4
-COMPONENT_SUMMARY=	Dependencies required to build the X Consolidation.
+COMPONENT_VERSION=	1.0
+COMPONENT_SUMMARY=	Dependencies required to build the X Consolidation
+COMPONENT_CLASSIFICATION=	Meta Packages/Group Packages
+COMPONENT_FMRI=	developer/opensolaris/X
 
 include ../../../make-rules/ips.mk
 
