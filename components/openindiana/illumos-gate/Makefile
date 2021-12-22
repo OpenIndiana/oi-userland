@@ -66,7 +66,7 @@ download:: $(SOURCE_DIR)/.downloaded
 PATCH_DIR ?=    patches
 PATCH_PATTERN ?=        *.patch
 PATCHES =       $(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
-                                2>/dev/null | sort) $(EXTRA_PATCHES)
+                                2>/dev/null | sort)
 
 $(SOURCE_DIR)/.patched:	$(SOURCE_DIR)/.downloaded $(PATCHES)
 	$(MKDIR) $(@D)
