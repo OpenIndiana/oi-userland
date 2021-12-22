@@ -18,15 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2016 Jim Klimov
+# Copyright 2021 Nona Hansel
+# Copyright (c) 2011, 2021, Oracle and/or its affiliates.
 #
+
+BUILD_BITS=	64
+BUILD_STYLE= meson 
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meld
-COMPONENT_VERSION=	1.8.6
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	3.21.0
 COMPONENT_FMRI=		developer/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	meld - graphical diff and merge tool
 COMPONENT_DESCRIPTION=\
@@ -35,42 +38,49 @@ and edit them in place (diffs update dynamically). You can compare two or \
 three folders and launch file comparisons. You can browse and view a working \
 copy from popular version control systems such such as Git, CVS, Subversion, \
 Bazaar-ng and Mercurial.
-COMPONENT_PROJECT_URL=	http://meld.sourceforge.net/
+COMPONENT_PROJECT_URL=	https://meld.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:af96682b8f4bf3ad4221c853b1516218d62a17ff43c38f4a83e7e8ac6736e8a5
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/gnome/sources/meld/1.8/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/meld
+    sha256:b680114d5ab793324549fd58f4eb202d8e280c0633a0b765ede6dfb34160a81b
+COMPONENT_ARCHIVE_URL=	https://ftp.gnome.org/pub/gnome/sources/meld/3.21/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	meld.license
 COMPONENT_CLASSIFICATION=	Development/Editors
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PYTHON_VERSIONS =	 3.9
 
-PKG_OPTIONS +=		-D COMPONENT_DESCRIPTION="$(COMPONENT_DESCRIPTION)"
-PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
+PATH=$(PATH.gnu)
 
-COMPONENT_BUILD_ENV += PYTHON=$(PYTHON)
+# Don't build and package these, they need to be generated on install to
+# reflect all the other packages installed on the machine too, not just meld
+COMPONENT_SETUP_ARGS += --no-compile-schemas
+COMPONENT_SETUP_ARGS += --no-update-icon-cache
 
-# Meld has no configure however it honors DESTDIR which is necessary so
-# we don't try to install into roots /usr but rather our proto areas usr
-COMPONENT_INSTALL_ARGS +=	DESTDIR=$(PROTO_DIR)
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTOUSRLIBDIR)/python3.9/vendor-packages; \
+        $(MV) $(PROTOUSRLIBDIR)/python3.9/site-packages/* $(PROTOUSRLIBDIR)/python3.9/vendor-packages/; \
+	python3.9 -m compileall $(PROTOUSRLIBDIR)/python3.9/vendor-packages;
 
-# common targets
-build:		$(BUILD_32)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9]*[0-9].[0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/OK      [0-9]//" '
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/OK/p" ' \
+        '-e "/Ok/p" ' \
+        '-e "/Pass/p" ' \
+        '-e "/Fail/p" '
 
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += text/rarian
+# Runtime dependencies
+REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/desktop/gtksourceview4
+REQUIRED_PACKAGES += library/python/pycairo-39
+REQUIRED_PACKAGES += text/itstool
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/pygtk2-27
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/pygobject-3-39
+REQUIRED_PACKAGES += runtime/python-39

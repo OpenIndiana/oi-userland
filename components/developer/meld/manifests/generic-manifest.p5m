@@ -1,120 +1,87 @@
 #
-# CDDL HEADER START
-#
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright 2016 Jim Klimov
-# Copyright 2021 Nona Hansel
-# Copyright (c) 2011, 2021, Oracle and/or its affiliates.
-#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 
-#
+# Copyright 2022 <contributor>
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
-set name=com.oracle.info.description value="the meld graphical diff and merge tool"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2008/189
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-#
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-depend type=require fmri=library/desktop/gtk3
-depend type=require fmri=library/glib2
-depend type=require fmri=library/desktop/gtksourceview4
-depend type=require fmri=library/python/pycairo-39
-depend type=require fmri=text/itstool
-
-#
-# Bypass Tk dependencies, since they're only used to display an error dialog
-# if GTK is not found
-file path=usr/bin/meld pkg.depend.bypass-generate=.*/Tkinter.* \
-    pkg.depend.bypass-generate=.*/messagebox.* \
-    pkg.depend.bypass-generate=.*/tkMessageBox.* \
-    pkg.depend.bypass-generate=.*/tkinter.*
-file path=usr/lib/python3.9/vendor-packages/meld/__init__.py
-file path=usr/lib/python3.9/vendor-packages/meld/accelerators.py
-file path=usr/lib/python3.9/vendor-packages/meld/actiongutter.py
-file path=usr/lib/python3.9/vendor-packages/meld/build_helpers.py
-file path=usr/lib/python3.9/vendor-packages/meld/chunkmap.py
-file path=usr/lib/python3.9/vendor-packages/meld/conf.py
-file path=usr/lib/python3.9/vendor-packages/meld/const.py
-file path=usr/lib/python3.9/vendor-packages/meld/diffgrid.py
-file path=usr/lib/python3.9/vendor-packages/meld/dirdiff.py
-file path=usr/lib/python3.9/vendor-packages/meld/filediff.py
-file path=usr/lib/python3.9/vendor-packages/meld/filters.py
-file path=usr/lib/python3.9/vendor-packages/meld/gutterrendererchunk.py
-file path=usr/lib/python3.9/vendor-packages/meld/iohelpers.py
-file path=usr/lib/python3.9/vendor-packages/meld/linkmap.py
-file path=usr/lib/python3.9/vendor-packages/meld/matchers/__init__.py
-file path=usr/lib/python3.9/vendor-packages/meld/matchers/diffutil.py
-file path=usr/lib/python3.9/vendor-packages/meld/matchers/helpers.py
-file path=usr/lib/python3.9/vendor-packages/meld/matchers/merge.py
-file path=usr/lib/python3.9/vendor-packages/meld/matchers/myers.py
-file path=usr/lib/python3.9/vendor-packages/meld/meldapp.py
-file path=usr/lib/python3.9/vendor-packages/meld/meldbuffer.py
-file path=usr/lib/python3.9/vendor-packages/meld/melddoc.py
-file path=usr/lib/python3.9/vendor-packages/meld/meldwindow.py
-file path=usr/lib/python3.9/vendor-packages/meld/menuhelpers.py
-file path=usr/lib/python3.9/vendor-packages/meld/misc.py
-file path=usr/lib/python3.9/vendor-packages/meld/newdifftab.py
-file path=usr/lib/python3.9/vendor-packages/meld/patchdialog.py
-file path=usr/lib/python3.9/vendor-packages/meld/preferences.py
-file path=usr/lib/python3.9/vendor-packages/meld/recent.py
-file path=usr/lib/python3.9/vendor-packages/meld/settings.py
-file path=usr/lib/python3.9/vendor-packages/meld/sourceview.py
-file path=usr/lib/python3.9/vendor-packages/meld/style.py
-file path=usr/lib/python3.9/vendor-packages/meld/task.py
-file path=usr/lib/python3.9/vendor-packages/meld/tree.py
-file path=usr/lib/python3.9/vendor-packages/meld/treehelpers.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/__init__.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/bufferselectors.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/cellrenderers.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/emblemcellrenderer.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/filechooser.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/findbar.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/gladesupport.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/gtkcompat.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/historyentry.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/listwidget.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/msgarea.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/notebook.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/notebooklabel.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/recentselector.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/statusbar.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/util.py
-file path=usr/lib/python3.9/vendor-packages/meld/ui/vcdialogs.py
-file path=usr/lib/python3.9/vendor-packages/meld/undo.py
-file path=usr/lib/python3.9/vendor-packages/meld/vc/COPYING
-file path=usr/lib/python3.9/vendor-packages/meld/vc/README
-file path=usr/lib/python3.9/vendor-packages/meld/vc/__init__.py
-file path=usr/lib/python3.9/vendor-packages/meld/vc/_null.py
-file path=usr/lib/python3.9/vendor-packages/meld/vc/_vc.py
-file path=usr/lib/python3.9/vendor-packages/meld/vc/bzr.py
-file path=usr/lib/python3.9/vendor-packages/meld/vc/cvs.py
-file path=usr/lib/python3.9/vendor-packages/meld/vc/darcs.py
-file path=usr/lib/python3.9/vendor-packages/meld/vc/git.py
-file path=usr/lib/python3.9/vendor-packages/meld/vc/mercurial.py
-file path=usr/lib/python3.9/vendor-packages/meld/vc/svn.py
-file path=usr/lib/python3.9/vendor-packages/meld/vcview.py
-file path=usr/lib/python3.9/vendor-packages/meld/windowstate.py
+file path=usr/bin/meld
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/accelerators.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/actiongutter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/build_helpers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/chunkmap.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/conf.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/const.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/diffgrid.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/dirdiff.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/filediff.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/filters.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/gutterrendererchunk.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/iohelpers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/linkmap.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/matchers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/matchers/diffutil.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/matchers/helpers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/matchers/merge.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/matchers/myers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/meldapp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/meldbuffer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/melddoc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/meldwindow.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/menuhelpers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/misc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/newdifftab.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/patchdialog.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/preferences.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/recent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/settings.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/sourceview.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/style.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/task.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/tree.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/treehelpers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/bufferselectors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/cellrenderers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/emblemcellrenderer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/filechooser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/findbar.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/gladesupport.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/gtkcompat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/historyentry.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/listwidget.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/msgarea.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/notebook.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/notebooklabel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/recentselector.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/statusbar.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/ui/vcdialogs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/undo.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/vc/COPYING
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/vc/README
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/vc/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/vc/_null.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/vc/_vc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/vc/bzr.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/vc/cvs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/vc/darcs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/vc/git.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/vc/mercurial.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/vc/svn.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/vcview.py
+file path=usr/lib/python$(PYVER)/vendor-packages/meld/windowstate.py
 file path=usr/share/applications/org.gnome.Meld.desktop
 file path=usr/share/glib-2.0/schemas/org.gnome.meld.gschema.xml
 file path=usr/share/help/C/meld/command-line.page
@@ -277,7 +244,7 @@ file path=usr/share/locale/uk/LC_MESSAGES/meld.mo
 file path=usr/share/locale/vi/LC_MESSAGES/meld.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/meld.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/meld.mo
-file meld.1 path=usr/share/man/man1/meld.1
+file path=usr/share/man/man1/meld.1
 file path=usr/share/meld/org.gnome.Meld.gresource
 file path=usr/share/meld/styles/meld-base.style-scheme.xml
 file path=usr/share/meld/styles/meld-dark.style-scheme.xml
