@@ -43,7 +43,7 @@ COMPONENT_ARCHIVE_URL ?= \
 
 PATCH_EACH_ARCHIVE=1
 PATCHDIR_PATCHES = $(shell find $(PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
-                                2>/dev/null | sort) $(EXTRA_PATCHES)
+                                2>/dev/null | sort)
 
 MPFR_NAME= mpfr
 ifeq ($(strip $(MPFR_VERSION)),)
