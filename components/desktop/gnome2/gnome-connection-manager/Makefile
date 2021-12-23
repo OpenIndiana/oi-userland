@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright (c) 2015-2020 Jim Klimov
+# Copyright (c) 2015-2021 Jim Klimov
 #
 
 include ../../../../make-rules/shared-macros.mk
@@ -20,18 +20,33 @@ COMPONENT_NAME_SHORT=	gcm
 # The value below should match the .p5m and .license filenames, in particular:
 COMPONENT_NAME=  		$(COMPONENT_NAME_LONG)
 COMPONENT_VERSION=	1.2.1
+# Currently the latest release is a bit behind the Git HEAD on features
+# Comment away when switching to future "vanilla" release
+COMPONENT_GIT_ORG=	kuthulux
+COMPONENT_GIT_REV=	d2f66e3
+COMPONENT_GIT_DATE=	20210420
 COMPONENT_PROJECT_URL=	http://kuthulu.com/gcm
 
+ifeq (,$(COMPONENT_GIT_REV))
+### How the source dir is named in the archive:
 COMPONENT_SRC=		$(COMPONENT_NAME_LONG)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:a78f90fc1b5ea5c3c0f068d51c5db75cfe5b77eff1bed0f910ac9d484b29f3a3
-
 ### How the original sites name the archive:
 COMPONENT_ARCHIVE_ORIG=	v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_URL=	https://github.com/kuthulux/$(COMPONENT_NAME_LONG)/archive/$(COMPONENT_ARCHIVE_ORIG)
-
+COMPONENT_ARCHIVE_URL=	https://github.com/$(COMPONENT_GIT_ORG)/$(COMPONENT_NAME_LONG)/archive/$(COMPONENT_ARCHIVE_ORIG)
 ### How we name the archive to store on build hosts:
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+else
+### How the source dir is named in the archive:
+COMPONENT_SRC=		$(COMPONENT_GIT_ORG)-$(COMPONENT_NAME_LONG)-$(COMPONENT_GIT_REV)
+### How the original sites name the archive:
+#COMPONENT_ARCHIVE_ORIG=	v$(COMPONENT_VERSION)-$(COMPONENT_GIT_REV).tar.gz
+COMPONENT_ARCHIVE_URL=	https://codeload.github.com/$(COMPONENT_GIT_ORG)/$(COMPONENT_NAME_LONG)/legacy.tar.gz/$(COMPONENT_GIT_REV)
+### How we name the archive to store on build hosts:
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_GIT_REV).tar.gz
+endif
+
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:9ab00a8ea22a32e77ad6f225b6da65652c60e097dd125a5e27a07cb5c3dcb659
 
 COMPONENT_SUMMARY=	GCM - an Advanced SSH connections manager for X/Windows
 COMPONENT_FMRI=		terminal/$(COMPONENT_NAME)
