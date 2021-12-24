@@ -1,0 +1,27 @@
+Temporary solution for https://github.com/kuthulux/gnome-connection-manager/issues/64
+proposed in PR https://github.com/kuthulux/gnome-connection-manager/pull/72 against
+GCM release 1.2.1 (plus HEAD commits up to 2021-04-20), to process double-clicks
+in Midnight Commander running in GCM terminals better (not perfectly though).
+
+This may get merged or solved differently in future iterations of GCM upstream,
+then this patch file can be removed.
+
+--- gcm-1.2.1-d2f66e3-orig/gnome_connection_manager.py	2021-04-20 16:18:58.000000000 +0200
++++ gcm-1.2.1-current/gnome_connection_manager.py	2021-12-23 18:08:19.018024484 +0000
+@@ -2033,10 +1968,14 @@
+     def on_double_click(self, widget, event, *args):
+         if event.type in [Gdk.EventType._2BUTTON_PRESS, Gdk.EventType._3BUTTON_PRESS] and event.button == 1:
+             if isinstance(widget, Gtk.Notebook):
+-                pos = event.x + widget.get_allocation().x
++                posX = event.x + widget.get_allocation().x
++                posY = event.y + widget.get_allocation().y
+                 size = widget.get_tab_label(widget.get_nth_page(widget.get_n_pages()-1)).get_allocation()
+-                if pos <= size.x + size.width + 8 or event.x >= widget.get_allocation().width - widget.style_get_property("scroll-arrow-hlength"):
++
++                # HACK with (posY > size.height) below as a way to detect we click the label area and not the terminal pane with MC running, see https://github.com/kuthulux/gnome-connection-manager/issues/64 :
++                if posX <= size.x + size.width + 8 or event.x >= widget.get_allocation().width - widget.style_get_property("scroll-arrow-hlength") or posY > size.height:
+                     return True
++                # else fall through to addTab()
+             if isinstance(widget, Gtk.Toolbar) and widget.get_drop_index(event.x,event.y) < widget.get_n_items():
+                 return True
+             self.addTab(widget if isinstance(widget, Gtk.Notebook) else self.nbConsole, 'local')
