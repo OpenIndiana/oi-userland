@@ -1,48 +1,48 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright (c) 2020, Oracle and/or its affiliates.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+#
+# Copyright (c) 2020, Oracle and/or its affiliates.
+# Copyright (c) 2021, Andreas Wacknitz.
+#
+
 set name=pkg.fmri \
-    value=pkg:/library/libcares@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="c-ares - C library for asynchronous DNS requests"
-set name=pkg.description \
-    value="c-ares is a C library for asynchronous DNS requests including name resolves"
-set name=info.classification \
-    value=org.opensolaris.category.2008:System/Libraries
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+
+license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)
+
+<transform file path=.+/lib/.+\.a$ -> drop>
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+
 file path=usr/include/ares.h
 file path=usr/include/ares_build.h
 file path=usr/include/ares_dns.h
+file path=usr/include/ares_nameser.h
 file path=usr/include/ares_rules.h
 file path=usr/include/ares_version.h
-link path=usr/lib/$(MACH64)/libcares.so target=libcares.so.2.4.3
-link path=usr/lib/$(MACH64)/libcares.so.2 target=libcares.so.2.4.3
-file path=usr/lib/$(MACH64)/libcares.so.2.4.3
+file path=usr/lib/$(MACH64)/libcares.a
+link path=usr/lib/$(MACH64)/libcares.so target=libcares.so.2.5.1
+link path=usr/lib/$(MACH64)/libcares.so.2 target=libcares.so.2.5.1
+file path=usr/lib/$(MACH64)/libcares.so.2.5.1
 file path=usr/lib/$(MACH64)/pkgconfig/libcares.pc
-link path=usr/lib/libcares.so target=libcares.so.2.4.3
-link path=usr/lib/libcares.so.2 target=libcares.so.2.4.3
-file path=usr/lib/libcares.so.2.4.3
+file path=usr/lib/libcares.a
+link path=usr/lib/libcares.so target=libcares.so.2.5.1
+link path=usr/lib/libcares.so.2 target=libcares.so.2.5.1
+file path=usr/lib/libcares.so.2.5.1
 file path=usr/lib/pkgconfig/libcares.pc
 file path=usr/share/man/man3/ares_cancel.3
 file path=usr/share/man/man3/ares_create_query.3
@@ -75,6 +75,7 @@ file path=usr/share/man/man3/ares_library_initialized.3
 file path=usr/share/man/man3/ares_mkquery.3
 file path=usr/share/man/man3/ares_parse_a_reply.3
 file path=usr/share/man/man3/ares_parse_aaaa_reply.3
+file path=usr/share/man/man3/ares_parse_caa_reply.3
 file path=usr/share/man/man3/ares_parse_mx_reply.3
 file path=usr/share/man/man3/ares_parse_naptr_reply.3
 file path=usr/share/man/man3/ares_parse_ns_reply.3
@@ -82,6 +83,7 @@ file path=usr/share/man/man3/ares_parse_ptr_reply.3
 file path=usr/share/man/man3/ares_parse_soa_reply.3
 file path=usr/share/man/man3/ares_parse_srv_reply.3
 file path=usr/share/man/man3/ares_parse_txt_reply.3
+file path=usr/share/man/man3/ares_parse_uri_reply.3
 file path=usr/share/man/man3/ares_process.3
 file path=usr/share/man/man3/ares_query.3
 file path=usr/share/man/man3/ares_save_options.3
@@ -101,4 +103,3 @@ file path=usr/share/man/man3/ares_set_sortlist.3
 file path=usr/share/man/man3/ares_strerror.3
 file path=usr/share/man/man3/ares_timeout.3
 file path=usr/share/man/man3/ares_version.3
-license c-ares.license license=MIT
