@@ -18,7 +18,7 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meson
-COMPONENT_VERSION=	0.60.2
+COMPONENT_VERSION=	0.60.3
 COMPONENT_SUMMARY=	The Meson Build system
 COMPONENT_PROJECT_URL=	https://mesonbuild.com/
 COMPONENT_FMRI=		developer/build/meson
@@ -26,7 +26,7 @@ COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/mesonbuild/meson/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:64e6968565bf1b8152f4f9d6ca8154efb9e14caa9aabf7b22e71e6c5d053e921
+COMPONENT_ARCHIVE_HASH=	sha256:87ca5fa9358a01864529392bd64e027158eb94afca7c7766b1866ef27eccb98e
 COMPONENT_LICENSE=	APLv2
 
 GCC_VERSION=		10
@@ -55,7 +55,7 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
         '-n ' \
         '-e "/^Total .*time:/d" ' \
-        '-e "s/[0-9][0-9\.]* *s//" ' \
+		'-e "s/[0-9]\.[0-9]* *s//" ' \
 		'-e "s/tmp.*binary_wrapper0.py/binary_wrapper.py/" ' \
         '-e "/^Total/p" ' \
         '-E -e "/(^test| \.\.\. |PASS|FAIL|ERROR)/p" '
