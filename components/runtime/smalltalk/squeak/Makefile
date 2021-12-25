@@ -42,6 +42,12 @@
 
 BUILD_BITS=32_and_64
 
+# the goal is to use libjpeg8-turbo but that links, but does not display
+# working jpeg images; needs to be fixed upstream by the Squeak team
+# currently use libjpeg6-ijg which is better than using the copy of
+# those libjpeg files in the squeak source tree
+JPEG_IMPLEM=libjpeg6-ijg
+
 include ../../../../make-rules/shared-macros.mk
 
 # the version is the same as the VMMaker Smalltalk sources
@@ -49,7 +55,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.19.9
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -86,16 +92,32 @@ PATH=$(PATH.gnu)
 # lfcompile - large file compilation environment for 32-bit applications
 
 gcc_OPT=	-O
-gcc_OPT+=	-D_LARGEFILE_SOURCE
-gcc_OPT+=	-D_FILE_OFFSET_BITS=64
+
+CPPFLAGS +=     $(CPP_LARGEFILES)
+
+# build against libjpeg6 (see Illumos feature request #7391 for libjpeg8-turbo)
+# use --link-shared-lib to avoid the Squeak copy of libjpeg
+CPPFLAGS +=	$(JPEG_CPPFLAGS)
+LDFLAGS  +=     $(JPEG_LDFLAGS)
+
+SOURCE_JPEG = $(SOURCE_DIR)/platforms/Cross/plugins/JPEGReadWriter2Plugin
 
 # squeak configure looks for .svn or svnversion file, but
 # prep-svn.mk did a svn export and created an unversioned copy of the sources
 COMPONENT_PRE_CONFIGURE_ACTION = \
-( echo $(SVN_REV) > $(SOURCE_DIR)/platforms/unix/svnversion )
+( echo $(SVN_REV) > $(SOURCE_DIR)/platforms/unix/svnversion; \
+  find $(SOURCE_JPEG) \
+     \! -name JPEGReadWriter2Plugin.h \
+     \! -name sqJPEGReadWriter2Plugin.c \
+     \! -name Error.c \
+     \! -name jinclude.h \
+     \! -name jmemdatasrc.c \
+     \! -name jmemdatadst.c \
+  -exec rm {} \;)
 
 CONFIGURE_SCRIPT= $(SOURCE_DIR)/platforms/unix/cmake/configure
 CONFIGURE_OPTIONS +=	--src=$(SOURCE_DIR)/src
+CONFIGURE_OPTIONS +=    --link-shared-lib
 
 # in the 64bit case the vm is called squeakvm64 (not squeakvm)
 # the plugin directory under usr/lib/squeak has a _64bit suffix
@@ -130,6 +152,8 @@ REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -145,3 +169,4 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxrender
+
