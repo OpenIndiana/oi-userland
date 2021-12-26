@@ -12,37 +12,28 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xdg-utils
-COMPONENT_VERSION=	1.0.2
-COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/xdg-utils/
+COMPONENT_VERSION=	1.1.3
+COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/xdg-utils/
 COMPONENT_SUMMARY=	The Portland Project's desktop integration tools
 COMPONENT_FMRI=		desktop/xdg/xdg-utils
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:21aeb7d16b2529b8d3975118f59eec09953e09f9a68d718159e98c90474b01ac
-COMPONENT_ARCHIVE_URL=	http://portland.freedesktop.org/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:d798b08af8a8e2063ddde6c9fa3398ca81484f27dec642c5627ffcaa0d4051d9
+COMPONENT_ARCHIVE_URL=	https://portland.freedesktop.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_LICENSE=	MIT
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PRE_CONFIGURE_ACTION = (cp -rp $(SOURCE_DIR)/* $(@D))
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/bash
