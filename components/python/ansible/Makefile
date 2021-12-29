@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ansible
 COMPONENT_VERSION=	2.9.27
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Ansible is a radically simple IT automation system
 COMPONENT_PROJECT_URL=	https://ansible.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
