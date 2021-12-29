@@ -12,22 +12,23 @@
 # Copyright 2016 Till Wegmueller
 # Copyright 2016 Ken Mays
 # Copyright 2020 Michal Nowak
+# Copyright (c) 2021 Tim Mooney. All rights reserved
 #
 
-BUILD_BITS=		32_and_64
+BUILD_BITS=		64_and_32
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmatemixer
-COMPONENT_MJR_VERSION=  1.24
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MJR_VERSION=  1.26
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	Mixer library for MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:1d2f2f0c3b6b31f96b689e28a73d4c3c080061ec22c1b3b4696e7f63e6c1d9d8
+	sha256:9a9bcc605b27e9c5c91a28eb7cb79831e6d6fbf6339f5e5c18d524f3ee259ff1
 COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
@@ -55,6 +56,10 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # Build requirements
 REQUIRED_PACKAGES += system/header/header-audio
+# if we stop rebuilding configure these two build dependencies can
+# be dropped
+REQUIRED_PACKAGES += developer/build/autoconf-archive
+REQUIRED_PACKAGES += library/desktop/mate/mate-common
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/pulseaudio
