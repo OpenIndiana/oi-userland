@@ -11,6 +11,7 @@
 #
 # Copyright 2016 Till Wegmueller
 # Copyright 2020 Michal Nowak
+# Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
 
 BUILD_BITS=		64
@@ -18,14 +19,14 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-calc
-COMPONENT_MJR_VERSION=	1.24
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.26
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE Calculator App
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:d4a4c8ff51c4611b32a129b7cad33c3bb8a1ec6b9d5f209aa4ee0c8f1b90e8f9
+COMPONENT_ARCHIVE_HASH= sha256:7eb826801dda5d7b070e41d9e831df2ad24459be6c96fe9c0506c21e1374ad55
 COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Accessories
@@ -46,11 +47,13 @@ CONFIGURE_OPTIONS+=	--disable-static
 
 # Build dependencies
 REQUIRED_PACKAGES += library/desktop/mate/mate-common
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/mpc
+REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
