@@ -1,3 +1,7 @@
+Note: tiny modification (in place) at 1.26.0 to get the 
+      gpm_manager_correct_policy(manager, &policy);
+      to apply after minor nearby changes.
+
 We want to have 'hibernate/sleep' policy by default, when it's supported, but if suspend/hibernate is
 not supported, we avoid doing anything excepting critical actions.
 So we correct policy: set it to "Do nothing" when shutdown/hibernate/sleep is not supported and 
@@ -40,7 +44,7 @@ diff -ur mate-power-manager-1.18.1-1/src/gpm-manager.c mate-power-manager-1.18.1
 +
 +		old_policy = *policy;
 +		*policy = GPM_ACTION_POLICY_NOTHING;
-+		egg_debug ("corrected policy: set policy to %i (as %i is not supported or allowed)", *policy, old_policy);
++		g_debug ("corrected policy: set policy to %i (as %i is not supported or allowed)", *policy, old_policy);
 +        }
 +}
 +
@@ -50,12 +54,12 @@ diff -ur mate-power-manager-1.18.1-1/src/gpm-manager.c mate-power-manager-1.18.1
 @@ -680,6 +703,8 @@
  
  	policy = g_settings_get_enum (manager->priv->settings, policy_key);
- 	egg_debug ("action: %s set to %i (%s)", policy_key, policy, reason);
+ 	g_debug ("action: %s set to %i (%s)", policy_key, policy, reason);
 +      
 +        gpm_manager_correct_policy(manager, &policy);
  
  	if (policy == GPM_ACTION_POLICY_NOTHING) {
- 		egg_debug ("doing nothing, reason: %s", reason);
+ 		g_debug ("doing nothing, reason: %s", reason);
 @@ -728,6 +753,8 @@
  	else
  		policy = g_settings_get_enum (manager->priv->settings, GPM_SETTINGS_ACTION_SLEEP_TYPE_BATT);
