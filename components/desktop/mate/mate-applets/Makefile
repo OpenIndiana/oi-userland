@@ -13,6 +13,7 @@
 # Copyright 2016 Ken Mays
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
+# Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
 
 BUILD_BITS=		64
@@ -20,19 +21,17 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-applets
-COMPONENT_MJR_VERSION=	1.24
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MJR_VERSION=	1.26
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Applets components for the MATE Desktop Environment
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:d76f6be9aa19451b52b4f354d9f846a572810c40c27eb2df3d01cc353a89e040
+	sha256:b7e0439b4e0c754233c2988644faa3f6ab6270970061b7a0c635d68d236fc977
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
@@ -49,15 +48,18 @@ CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --enable-stickynotes 
+CONFIGURE_OPTIONS+= --disable-polkit
+CONFIGURE_OPTIONS+= --without-nl
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON.3.5.64)"
 CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON.3.5.VENDOR_PACKAGES.64)"
 CONFIGURE_ENV+= am_cv_python_pyexecdir="$(PYTHON.3.5.VENDOR_PACKAGES.64)"
 CONFIGURE_ENV+= LIBS="-lnsl -lsocket"
 
-REQUIRED_PACKAGES += desktop/character-map/gucharmap
-REQUIRED_PACKAGES += library/python/pygobject-3-27
+REQUIRED_PACKAGES += library/python/pygobject-3-35
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += desktop/character-map/gucharmap
 REQUIRED_PACKAGES += desktop/mate/mate-panel
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
