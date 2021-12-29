@@ -1,0 +1,15 @@
+--- webkitgtk-2.32.3/Source/WTF/wtf/FastMalloc.cpp.orig	2021-03-25 16:14:06.000000000 +0000
++++ webkitgtk-2.32.3/Source/WTF/wtf/FastMalloc.cpp	2021-09-20 22:02:37.098644485 +0000
+@@ -170,7 +170,11 @@
+ {
+     ASSERT_IS_WITHIN_LIMIT(size);
+     void* p = nullptr;
+-    posix_memalign(&p, alignment, size);
++#ifdef __sun__
++        memalign(alignment, size);
++#else
++        posix_memalign(&p, alignment, size);
++#endif
+     if (UNLIKELY(!p))
+         CRASH();
+     return p;

@@ -1,0 +1,18 @@
+--- webkitgtk-2.32.3/Source/WebKit/PlatformGTK.cmake.~1~	2021-05-05 07:46:35.000000000 +0000
++++ webkitgtk-2.32.3/Source/WebKit/PlatformGTK.cmake	2021-10-06 16:56:29.415600826 +0000
+@@ -18,13 +18,13 @@
+ add_definitions(-DWEBKIT2_COMPILATION)
+ add_definitions(-DWEBKIT_DOM_USE_UNSTABLE_API)
+ 
+-add_definitions(-DPKGLIBEXECDIR="${LIBEXEC_INSTALL_DIR}")
++add_definitions(-DPKGLIBEXECDIR="${LIBEXEC_INSTALL_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}")
+ add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
+ add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}")
+ add_definitions(-DLIBDIR="${LIB_INSTALL_DIR}")
+ 
+ if (NOT DEVELOPER_MODE AND NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-    WEBKIT_ADD_TARGET_PROPERTIES(WebKit LINK_FLAGS "-Wl,--version-script,${CMAKE_CURRENT_SOURCE_DIR}/webkitglib-symbols.map")
++    WEBKIT_ADD_TARGET_PROPERTIES(WebKit LINK_FLAGS "-Wl,-M,${CMAKE_CURRENT_SOURCE_DIR}/webkitglib-symbols.map")
+ endif ()
+ 
+ set(WebKit_USE_PREFIX_HEADER ON)

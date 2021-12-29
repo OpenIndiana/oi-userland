@@ -16,7 +16,7 @@ BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		weechat
-COMPONENT_VERSION=	3.3
+COMPONENT_VERSION=	3.4
 COMPONENT_PROJECT_URL=	https://weechat.org/
 COMPONENT_SUMMARY=	WeeChat - portable, fast, light and extensible IRC client
 COMPONENT_DESCRIPTION=	WeeChat (Wee Enhanced Environment for Chat) is a portable, fast, light and \
@@ -24,13 +24,12 @@ extensible chat client. Everything can be done with a keyboard. \
 It is customizable and extensible with scripts.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:cafeab8af8be4582ccfd3e74fd40e5086a1efa158231f2c26b8b05c3950fcbdf
+COMPONENT_ARCHIVE_HASH=	sha256:7cd3dcc7029e888de49e13ebbcc3749586ff59c9d97f89f5eeb611067c7bb94c
 COMPONENT_ARCHIVE_URL=	https://weechat.org/files/src/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=		network/chat/weechat
-COMPONENT_LICENSE=	GPLv3
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION=	Applications/Internet
+COMPONENT_LICENSE=	GPLv3
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -38,6 +37,9 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_VERSION = 5.24
 
 PATH= $(PATH.gnu)
+
+# We have strange crashes, so -O2 is a try to prevent from them:
+gcc_OPT = -O2
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && ./autogen.sh )
 

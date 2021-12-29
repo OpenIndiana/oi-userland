@@ -12,6 +12,7 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
+# Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
 
 BUILD_BITS=		64
@@ -19,7 +20,7 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-user-guide
-COMPONENT_MJR_VERSION=	1.24
+COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://mate-desktop.org
@@ -27,8 +28,8 @@ COMPONENT_SUMMARY=	MATE documentation
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:ee344d5e8170cd4c366c3a8f98f941f066f12b079ae2d50af2bbf94890f2bd35
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+	sha256:0581d45053e9a1c16925c3154341b5b21140905a22b1bd3caa84619f9f05c2c0
+COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	FDLv1.1
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Documentation
@@ -48,8 +49,11 @@ CONFIGURE_SCRIPT = $(@D)/configure
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
+# build dependencies
 REQUIRED_PACKAGES += library/perl-5/xml-parser-522
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += text/gnu-gettext
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/intltool
+
+# Auto-generated dependencies

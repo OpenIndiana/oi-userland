@@ -12,6 +12,7 @@
 #
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2021 Klaus Ziegler
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -30,8 +31,10 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 link path=usr/bin/jsc target=../lib/webkit2gtk-4.0/jsc mediator=webkitgtk mediator-version=4.0
 link path=usr/bin/jsc-4 target=../lib/webkit2gtk-4.0/jsc
+file path=usr/bin/WebKitWebDriver
 link path=usr/$(MACH64)/bin/jsc target=../../lib/$(MACH64)/webkit2gtk-4.0/jsc mediator=webkitgtk mediator-version=4.0
 link path=usr/$(MACH64)/bin/jsc-4 target=../../lib/$(MACH64)/webkit2gtk-4.0/jsc
+file path=usr/bin/$(MACH64)/WebKitWebDriver
 
 file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSBase.h
 file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSContextRef.h
@@ -41,8 +44,21 @@ file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSTypedArray.h
 file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSValueRef.h
 file path=usr/include/webkitgtk-4.0/JavaScriptCore/JavaScript.h
 file path=usr/include/webkitgtk-4.0/JavaScriptCore/WebKitAvailability.h
+file path=usr/include/webkitgtk-4.0/jsc/JSCAutocleanups.h
+file path=usr/include/webkitgtk-4.0/jsc/JSCClass.h
+file path=usr/include/webkitgtk-4.0/jsc/JSCContext.h
+file path=usr/include/webkitgtk-4.0/jsc/JSCDefines.h
+file path=usr/include/webkitgtk-4.0/jsc/JSCException.h
+file path=usr/include/webkitgtk-4.0/jsc/JSCOptions.h
+file path=usr/include/webkitgtk-4.0/jsc/JSCValue.h
+file path=usr/include/webkitgtk-4.0/jsc/JSCVersion.h
+file path=usr/include/webkitgtk-4.0/jsc/JSCVirtualMachine.h
+file path=usr/include/webkitgtk-4.0/jsc/JSCWeakValue.h
+file path=usr/include/webkitgtk-4.0/jsc/jsc.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitApplicationInfo.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitAuthenticationRequest.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitAutocleanups.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitAutomationSession.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitBackForwardList.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitBackForwardListItem.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitColorChooserRequest.h
@@ -53,6 +69,7 @@ file path=usr/include/webkitgtk-4.0/webkit2/WebKitContextMenuItem.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitCookieManager.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitCredential.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitDefines.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitDeviceInfoPermissionRequest.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitDownload.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitEditingCommands.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitEditorState.h
@@ -64,18 +81,24 @@ file path=usr/include/webkitgtk-4.0/webkit2/WebKitFindController.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitFormSubmissionRequest.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitForwardDeclarations.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitFrame.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitGeolocationManager.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitGeolocationPermissionRequest.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitHitTestResult.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitInputMethodContext.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitInstallMissingMediaPluginsPermissionRequest.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitJavascriptResult.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitMediaKeySystemPermissionRequest.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitMimeInfo.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitNavigationAction.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitNavigationPolicyDecision.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitNetworkProxySettings.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitNotification.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitNotificationPermissionRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitOptionMenu.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitOptionMenuItem.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitPermissionRequest.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitPlugin.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitPointerLockPermissionRequest.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitPolicyDecision.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitPrintCustomWidget.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitPrintOperation.h
@@ -88,9 +111,12 @@ file path=usr/include/webkitgtk-4.0/webkit2/WebKitSettings.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitURIRequest.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitURIResponse.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitURISchemeRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitURIUtilities.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitUserContent.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitUserContentFilterStore.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitUserContentManager.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitUserMediaPermissionRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitUserMessage.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitVersion.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebContext.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebEditor.h
@@ -99,12 +125,15 @@ file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebExtensionAutocleanups.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebHitTestResult.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebInspector.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebPage.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebProcessEnumTypes.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebResource.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebView.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebViewBase.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebViewSessionState.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebsiteData.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebsiteDataAccessPermissionRequest.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebsiteDataManager.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebsitePolicies.h
 file path=usr/include/webkitgtk-4.0/webkit2/WebKitWindowProperties.h
 file path=usr/include/webkitgtk-4.0/webkit2/webkit-web-extension.h
 file path=usr/include/webkitgtk-4.0/webkit2/webkit2.h
@@ -117,6 +146,8 @@ file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCSSStyleDeclaration.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCSSStyleSheet.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCSSValue.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCharacterData.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMClientRect.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMClientRectList.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMComment.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCustom.h
 file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCustomUnstable.h
@@ -222,37 +253,31 @@ file path=usr/include/webkitgtk-4.0/webkitdom/webkitdomdefines.h
 link path=usr/lib/$(MACH64)/libjavascriptcoregtk-4.0.so \
     target=libjavascriptcoregtk-4.0.so.18
 link path=usr/lib/$(MACH64)/libjavascriptcoregtk-4.0.so.18 \
-    target=libjavascriptcoregtk-4.0.so.18.5.13
-file path=usr/lib/$(MACH64)/libjavascriptcoregtk-4.0.so.18.5.13
+    target=libjavascriptcoregtk-4.0.so.18.18.7
+file path=usr/lib/$(MACH64)/libjavascriptcoregtk-4.0.so.18.18.7
 link path=usr/lib/$(MACH64)/libwebkit2gtk-4.0.so target=libwebkit2gtk-4.0.so.37
 link path=usr/lib/$(MACH64)/libwebkit2gtk-4.0.so.37 \
-    target=libwebkit2gtk-4.0.so.37.19.9
-file path=usr/lib/$(MACH64)/libwebkit2gtk-4.0.so.37.19.9
+    target=libwebkit2gtk-4.0.so.37.53.4
+file path=usr/lib/$(MACH64)/libwebkit2gtk-4.0.so.37.53.4
 file path=usr/lib/$(MACH64)/pkgconfig/javascriptcoregtk-4.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/webkit2gtk-4.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/webkit2gtk-web-extension-4.0.pc
-file path=usr/lib/$(MACH64)/webkit2gtk-4.0/WebKitDatabaseProcess
 file path=usr/lib/$(MACH64)/webkit2gtk-4.0/WebKitNetworkProcess
-file path=usr/lib/$(MACH64)/webkit2gtk-4.0/WebKitPluginProcess
-file path=usr/lib/$(MACH64)/webkit2gtk-4.0/WebKitPluginProcess2
 file path=usr/lib/$(MACH64)/webkit2gtk-4.0/WebKitWebProcess
 file path=usr/lib/$(MACH64)/webkit2gtk-4.0/injected-bundle/libwebkit2gtkinjectedbundle.so
 file path=usr/lib/$(MACH64)/webkit2gtk-4.0/jsc
 link path=usr/lib/libjavascriptcoregtk-4.0.so \
     target=libjavascriptcoregtk-4.0.so.18
 link path=usr/lib/libjavascriptcoregtk-4.0.so.18 \
-    target=libjavascriptcoregtk-4.0.so.18.5.13
-file path=usr/lib/libjavascriptcoregtk-4.0.so.18.5.13
+    target=libjavascriptcoregtk-4.0.so.18.18.7
+file path=usr/lib/libjavascriptcoregtk-4.0.so.18.18.7
 link path=usr/lib/libwebkit2gtk-4.0.so target=libwebkit2gtk-4.0.so.37
-link path=usr/lib/libwebkit2gtk-4.0.so.37 target=libwebkit2gtk-4.0.so.37.19.9
-file path=usr/lib/libwebkit2gtk-4.0.so.37.19.9
+link path=usr/lib/libwebkit2gtk-4.0.so.37 target=libwebkit2gtk-4.0.so.37.53.4
+file path=usr/lib/libwebkit2gtk-4.0.so.37.53.4
 file path=usr/lib/pkgconfig/javascriptcoregtk-4.0.pc
 file path=usr/lib/pkgconfig/webkit2gtk-4.0.pc
 file path=usr/lib/pkgconfig/webkit2gtk-web-extension-4.0.pc
-file path=usr/lib/webkit2gtk-4.0/WebKitDatabaseProcess
 file path=usr/lib/webkit2gtk-4.0/WebKitNetworkProcess
-file path=usr/lib/webkit2gtk-4.0/WebKitPluginProcess
-file path=usr/lib/webkit2gtk-4.0/WebKitPluginProcess2
 file path=usr/lib/webkit2gtk-4.0/WebKitWebProcess
 file path=usr/lib/webkit2gtk-4.0/injected-bundle/libwebkit2gtkinjectedbundle.so
 file path=usr/lib/webkit2gtk-4.0/jsc

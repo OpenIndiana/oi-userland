@@ -1,0 +1,22 @@
+Audacity tries to interact with Gnome via libgnomeui.
+If it dlopens library, we get GTK2 and GTK3 symbols in one application.
+Luckily, GTK3 detects this early and crashes.
+
+--- audacity-Audacity-2.3.2/src/AudacityApp.cpp.1	2019-08-10 20:50:21.064091116 +0000
++++ audacity-Audacity-2.3.2/src/AudacityApp.cpp	2019-08-10 20:57:41.366368746 +0000
+@@ -538,6 +538,7 @@
+  public:
+    GnomeShutdown()
+    {
++#if 0
+       mArgv[0].reset(strdup("Audacity"));
+ 
+       mGnomeui = dlopen("libgnomeui-2.so.0", RTLD_NOW);
+@@ -580,6 +581,7 @@
+       }
+ 
+       g_signal_connect(mClient, "save-yourself", G_CALLBACK(save_yourself_cb), NULL);
++#endif
+    }
+ 
+    virtual ~GnomeShutdown()

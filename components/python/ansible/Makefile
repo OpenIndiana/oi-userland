@@ -10,6 +10,7 @@
 
 #
 # Copyright 2018 Alexander Pyhalov
+# Copyright 2021 Andreas Wacknitz
 #
 
 BUILD_STYLE=	setup.py
@@ -18,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ansible
 COMPONENT_VERSION=	2.9.27
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Ansible is a radically simple IT automation system
 COMPONENT_PROJECT_URL=	https://ansible.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,13 +40,17 @@ COMPONENT_TEST_DIR =    $(COMPONENT_SRC)/test
 COMPONENT_TEST_CMD =    $(PYTHON) /usr/bin/py.test-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS =
 
+# Some tests still fail because of missing modules like validate_modules:
 # Required for tests
+REQUIRED_PACKAGES += library/python/flaky-37
 REQUIRED_PACKAGES += library/python/hypothesis-37
 REQUIRED_PACKAGES += library/python/mock-37
 REQUIRED_PACKAGES += library/python/pluggy-37
 REQUIRED_PACKAGES += library/python/py-37
 REQUIRED_PACKAGES += library/python/pyparsing-37
 REQUIRED_PACKAGES += library/python/pytest-37
+REQUIRED_PACKAGES += library/python/pytest-benchmark-37
+REQUIRED_PACKAGES += library/python/pytest-reporter-37
 REQUIRED_PACKAGES += library/python/sortedcontainers-37
 
 # Auto-generated dependencies

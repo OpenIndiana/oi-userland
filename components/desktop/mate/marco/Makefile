@@ -12,24 +12,24 @@
 # Copyright 2016 Ken Mays
 # Copyright 2016 Till Wegmueller
 # Copyright 2020 Michal Nowak
+# Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
-
 BUILD_BITS=		64
+BUILD_STYLE=		meson
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		marco
-COMPONENT_MJR_VERSION=	1.24
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.26
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE Window Manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:498350cb12fc4d9c7c4a0355102c17b50043fbab258d11ad41b7d698b4f042a7
+COMPONENT_ARCHIVE_HASH= sha256:f63c08cd8b07450ab3e33a04605c4f9e69522358884273b3cbcf30275eee5b05
 COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
@@ -39,20 +39,11 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION = cd $(@D)  && NOCONFIGURE=1 ./autogen.sh;\
-	$(GSED) -i '/_XOPEN_SOURCE/d' $(@D)/src/tools/marco-mag.c; \
-	$(GSED) -i '/_POSIX_C_SOURCE/d' $(@D)/src/core/util.c; \
-	$(GSED) -i '/_XOPEN_SOURCE/d' $(@D)/src/ui/preview-widget.c
-
 CFLAGS+=-D__EXTENSIONS__
 CFLAGS+=-std=gnu99
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_OPTIONS+= --enable-maintainer-mode
-CONFIGURE_OPTIONS+= --enable-compositor
-CONFIGURE_OPTIONS+= --enable-xinerama
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"

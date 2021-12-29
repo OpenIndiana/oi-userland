@@ -19,13 +19,21 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+<<<<<<< HEAD
 #
+=======
+# Copyright (c) 2021, Tim Mooney.  All rights reserved.
+#
+BUILD_STYLE=configure
+BUILD_BITS=64
+>>>>>>> f89ef0ae5e4548f66058d8c53a3e84faad59168f
 include ../../../make-rules/shared-macros.mk
 
 #
 # Note this perl is 64-bit only.
 #
 
+<<<<<<< HEAD
 # I want to override PERL_VERSION and PERL_ARCH because when building
 # a new version of perl it probably isn't installed so shared-macros.mk
 # can't call it.
@@ -49,6 +57,29 @@ COMPONENT_LICENSE_FILE=	Artistic
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+=======
+# Override PERL_VERSION because when building a new version
+# of perl it probably isn't installed so shared-macros.mk
+# can't call it.
+
+COMPONENT_NAME=         perl
+COMPONENT_VERSION=      5.34.0
+COMPONENT_SUMMARY=      Perl 5.34.0
+# PERL_VERSION should be M.NN, it should not include the micro version
+PERL_VERSION=		5.34
+COMPONENT_PROJECT_URL=  https://www.perl.org/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:82c2e5e5c71b0e10487a80d79140469ab1f8056349ca8545140a224dbbed7ded
+COMPONENT_ARCHIVE_URL=  https://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         runtime/perl-534
+COMPONENT_CLASSIFICATION=Development/Perl
+COMPONENT_LICENSE=      Artistic
+COMPONENT_LICENSE_FILE= Artistic
+
+include $(WS_MAKE_RULES)/common.mk
+>>>>>>> f89ef0ae5e4548f66058d8c53a3e84faad59168f
 
 LD_B_DIRECT=		""
 
@@ -62,14 +93,22 @@ CONFIGURE_OPTIONS = \
 			-Dmksymlinks \
 			-Ulocincpth= \
 			-Uloclibpth= \
+<<<<<<< HEAD
                         -Dbin=/usr/perl5/$(PERL_VERSION)/bin \
+=======
+			-Dbin=/usr/perl5/$(PERL_VERSION)/bin \
+>>>>>>> f89ef0ae5e4548f66058d8c53a3e84faad59168f
 			-Dcc="$(CC) $(CC_BITS)" \
 			-Dcf_email="oi-dev@openindiana.org" \
 			-Dcf_by="perl-bugs" \
 			-Dlibperl=libperl.so \
 			-Dmyhostname="localhost" \
 			-Dprefix=/usr/perl5/$(PERL_VERSION) \
+<<<<<<< HEAD
                         -Dprivlib=/usr/perl5/$(PERL_VERSION)/lib \
+=======
+			-Dprivlib=/usr/perl5/$(PERL_VERSION)/lib \
+>>>>>>> f89ef0ae5e4548f66058d8c53a3e84faad59168f
 			-Dsitelib=/usr/perl5/site_perl/$(PERL_VERSION) \
 			-Dsiteprefix=/usr/perl5/$(PERL_VERSION) \
 			-Dvendorlib=/usr/perl5/vendor_perl/$(PERL_VERSION) \
@@ -102,6 +141,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^u=/d" ' \
 	'-e "/^Elapsed/d"'
 
+<<<<<<< HEAD
 
 build:		$(BUILD_64)
 
@@ -116,6 +156,8 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 # Bogus dependency due to libssp
 #REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+=======
+>>>>>>> f89ef0ae5e4548f66058d8c53a3e84faad59168f
 # Auto-generated dependencies
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/database/gdbm

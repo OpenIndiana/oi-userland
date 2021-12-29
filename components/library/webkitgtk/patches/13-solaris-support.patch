@@ -1,0 +1,175 @@
+Changes for the build to work on Solaris
+
+Potentially suitable to send upstream
+
+diff --git a/Source/WTF/wtf/CurrentTime.cpp b/Source/WTF/wtf/CurrentTime.cpp
+index d7fb93f..aa9c14d 100644
+--- a/Source/WTF/wtf/CurrentTime.cpp
++++ b/Source/WTF/wtf/CurrentTime.cpp
+@@ -273,7 +273,7 @@ MonotonicTime MonotonicTime::now()
+     return fromMachAbsoluteTime(mach_absolute_time());
+ #elif OS(FUCHSIA)
+     return fromRawSeconds(zx_clock_get_monotonic() / static_cast<double>(ZX_SEC(1)));
+-#elif OS(LINUX) || OS(FREEBSD) || OS(OPENBSD) || OS(NETBSD)
++#elif OS(LINUX) || OS(FREEBSD) || OS(OPENBSD) || OS(SOLARIS) || OS(NETBSD)
+     struct timespec ts { };
+     clock_gettime(CLOCK_MONOTONIC, &ts);
+     return fromRawSeconds(static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1.0e9);
+diff --git a/Source/WTF/wtf/NumberOfCores.cpp b/Source/WTF/wtf/NumberOfCores.cpp
+index 7636865..59fd2f7 100644
+--- a/Source/WTF/wtf/NumberOfCores.cpp
++++ b/Source/WTF/wtf/NumberOfCores.cpp
+@@ -30,7 +30,7 @@
+ 
+ #if OS(DARWIN)
+ #include <sys/sysctl.h>
+-#elif OS(LINUX) || OS(AIX) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
++#elif OS(LINUX) || OS(AIX) || OS(SOLARIS) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
+ #include <unistd.h>
+ #elif OS(WINDOWS)
+ #include <windows.h>
+@@ -65,7 +65,7 @@ int numberOfProcessorCores()
+     int sysctlResult = sysctl(name, sizeof(name) / sizeof(int), &result, &length, 0, 0);
+ 
+     s_numberOfCores = sysctlResult < 0 ? defaultIfUnavailable : result;
+-#elif OS(LINUX) || OS(AIX) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
++#elif OS(LINUX) || OS(AIX) || OS(SOLARIS) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
+     long sysconfResult = sysconf(_SC_NPROCESSORS_ONLN);
+ 
+     s_numberOfCores = sysconfResult < 0 ? defaultIfUnavailable : static_cast<int>(sysconfResult);
+diff --git a/Source/WTF/wtf/PageBlock.h b/Source/WTF/wtf/PageBlock.h
+index c655a50..be6f1a4 100644
+--- a/Source/WTF/wtf/PageBlock.h
++++ b/Source/WTF/wtf/PageBlock.h
+@@ -49,7 +49,7 @@ namespace WTF {
+ // Use 64 KiB for any unknown CPUs to be conservative.
+ #if OS(DARWIN) || PLATFORM(PLAYSTATION)
+ constexpr size_t CeilingOnPageSize = 16 * KB;
+-#elif USE(64KB_PAGE_BLOCK) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(UNKNOWN)
++#elif USE(64KB_PAGE_BLOCK) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(SPARC) || CPU(UNKNOWN)
+ constexpr size_t CeilingOnPageSize = 64 * KB;
+ #elif OS(WINDOWS) || CPU(MIPS) || CPU(MIPS64) || CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64)
+ constexpr size_t CeilingOnPageSize = 4 * KB;
+diff --git a/Source/WTF/wtf/PlatformCPU.h b/Source/WTF/wtf/PlatformCPU.h
+index 0e711de..62864ea 100644
+--- a/Source/WTF/wtf/PlatformCPU.h
++++ b/Source/WTF/wtf/PlatformCPU.h
+@@ -89,6 +89,26 @@
+ #define WTF_CPU_KNOWN 1
+ #endif
+ 
++/* CPU(SPARC32) - SPARC 32-bit */
++#if defined(__sparc) && !defined(__arch64__) || defined(__sparcv8)
++#define WTF_CPU_SPARC32 1
++#define WTF_CPU_BIG_ENDIAN 1
++#define WTF_CPU_KNOWN 1
++#endif
++
++/* CPU(SPARC64) - SPARC 64-bit */
++#if defined(__sparc__) && defined(__arch64__) || defined (__sparcv9)
++#define WTF_CPU_SPARC64 1
++#define WTF_CPU_BIG_ENDIAN 1
++#define WTF_CPU_KNOWN 1
++#endif
++
++/* CPU(SPARC) - any SPARC, true for CPU(SPARC32) and CPU(SPARC64) */
++#if CPU(SPARC32) || CPU(SPARC64)
++#define WTF_CPU_SPARC 1
++#define WTF_CPU_KNOWN 1
++#endif
++
+ /* CPU(X86) - i386 / x86 32-bit */
+ #if   defined(__i386__) \
+     || defined(i386)     \
+@@ -281,7 +301,7 @@
+ #define WTF_CPU_UNKNOWN 1
+ #endif
+ 
+-#if CPU(ARM) || CPU(MIPS) || CPU(UNKNOWN)
++#if CPU(ARM) || CPU(MIPS) || CPU(UNKNOWN) || CPU(SPARC)
+ #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
+ #endif
+ 
+diff --git a/Source/WTF/wtf/PlatformHave.h b/Source/WTF/wtf/PlatformHave.h
+index 41afbb4..9e5d453 100644
+--- a/Source/WTF/wtf/PlatformHave.h
++++ b/Source/WTF/wtf/PlatformHave.h
+@@ -328,7 +328,7 @@
+ #define HAVE_URL_FORMATTING 1
+ #endif
+ 
+-#if !OS(WINDOWS)
++#if !OS(WINDOWS) && !OS(SOLARIS)
+ #define HAVE_STACK_BOUNDS_FOR_NEW_THREAD 1
+ #endif
+ 
+diff --git a/Source/WTF/wtf/PlatformOS.h b/Source/WTF/wtf/PlatformOS.h
+index be27911..a5216ba 100644
+--- a/Source/WTF/wtf/PlatformOS.h
++++ b/Source/WTF/wtf/PlatformOS.h
+@@ -114,6 +114,11 @@
+ #define WTF_OS_OPENBSD 1
+ #endif
+ 
++/* OS(SOLARIS) - Solaris */
++#if defined(sun) || defined(__sun)
++#define WTF_OS_SOLARIS 1
++#endif
++
+ /* OS(WINDOWS) - Any version of Windows */
+ #if defined(WIN32) || defined(_WIN32)
+ #define WTF_OS_WINDOWS 1
+@@ -129,6 +134,7 @@
+     || OS(LINUX)            \
+     || OS(NETBSD)           \
+     || OS(OPENBSD)          \
++    || OS(SOLARIS)          \
+     || defined(unix)        \
+     || defined(__unix)      \
+     || defined(__unix__)
+diff --git a/Source/WTF/wtf/StackBounds.cpp b/Source/WTF/wtf/StackBounds.cpp
+index e6f7095..8fb3955 100644
+--- a/Source/WTF/wtf/StackBounds.cpp
++++ b/Source/WTF/wtf/StackBounds.cpp
+@@ -29,6 +29,10 @@
+ 
+ #include <windows.h>
+ 
++#elif OS(SOLARIS)
++
++#include <thread.h>
++
+ #elif OS(UNIX)
+ 
+ #include <pthread.h>
+@@ -65,6 +69,17 @@ StackBounds StackBounds::currentThreadStackBoundsInternal()
+     return newThreadStackBounds(pthread_self());
+ }
+ 
++#elif OS(SOLARIS)
++
++StackBounds StackBounds::currentThreadStackBoundsInternal()
++{
++    stack_t s;
++    thr_stksegment(&s);
++    void* origin = s.ss_sp;
++    void* bound = static_cast<char*>(origin) - s.ss_size;
++    return StackBounds { origin, bound };
++}
++
+ #elif OS(UNIX)
+ 
+ #if OS(OPENBSD)
+diff --git a/Source/WebCore/inspector/InspectorFrontendHost.cpp b/Source/WebCore/inspector/InspectorFrontendHost.cpp
+index 6577423..b882b9e 100644
+--- a/Source/WebCore/inspector/InspectorFrontendHost.cpp
++++ b/Source/WebCore/inspector/InspectorFrontendHost.cpp
+@@ -386,6 +386,8 @@ String InspectorFrontendHost::platform() const
+     return "freebsd"_s;
+ #elif OS(OPENBSD)
+     return "openbsd"_s;
++#elif OS(SOLARIS)
++    return "solaris"_s;
+ #else
+     return "unknown"_s;
+ #endif

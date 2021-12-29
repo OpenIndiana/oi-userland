@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
 COMPONENT_VERSION= 4.9.4
-COMPONENT_REVISION= 7
+COMPONENT_REVISION= 8
 MPFR_NAME= mpfr
 MPFR_VERSION=3.1.3
 MPC_NAME=mpc
@@ -36,7 +36,7 @@ COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_PROJECT_URL = http://gcc.gnu.org/
 PATCH_EACH_ARCHIVE=1
 PATCHDIR_PATCHES = $(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
-                                2>/dev/null | sort) $(EXTRA_PATCHES)
+                                2>/dev/null | sort)
 
 COMPONENT_SRC_1=    $(MPFR_NAME)-$(MPFR_VERSION)
 COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).tar.bz2

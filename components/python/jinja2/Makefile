@@ -21,14 +21,14 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Jinja2
-COMPONENT_VERSION=	3.0.2
+COMPONENT_VERSION=	3.0.3
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_FMRI=		library/python/jinja2
 COMPONENT_SUMMARY=	Fast and easy to use stand-alone template engine
 COMPONENT_PROJECT_URL=	https://jinja.pocoo.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:827a0e32839ab1600d4eb1c4c33ec5a8edfbc5cb42dafa13b81f182f97784b45
+COMPONENT_ARCHIVE_HASH=	sha256:611bb273cd68f3b993fabdc4064fc858c5b47a973cb5aa7999ec1ba405c87cd7
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_LICENSE=	BSD
 
@@ -43,13 +43,22 @@ COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
 
 # Manually added test dependencies
-REQUIRED_PACKAGES += library/python/flaky
-REQUIRED_PACKAGES += library/python/hypothesis
-REQUIRED_PACKAGES += library/python/pluggy
-REQUIRED_PACKAGES += library/python/py 
-REQUIRED_PACKAGES += library/python/pytest
-REQUIRED_PACKAGES += library/python/pytest-benchmark
-REQUIRED_PACKAGES += library/python/pytest-reporter
+REQUIRED_PACKAGES += library/python/flaky-37
+REQUIRED_PACKAGES += library/python/flaky-39
+REQUIRED_PACKAGES += library/python/hypothesis-37
+REQUIRED_PACKAGES += library/python/hypothesis-39
+REQUIRED_PACKAGES += library/python/pluggy-37
+REQUIRED_PACKAGES += library/python/pluggy-39
+REQUIRED_PACKAGES += library/python/py-37
+REQUIRED_PACKAGES += library/python/py-39
+REQUIRED_PACKAGES += library/python/pytest-37
+REQUIRED_PACKAGES += library/python/pytest-39
+REQUIRED_PACKAGES += library/python/pytest-benchmark-37
+REQUIRED_PACKAGES += library/python/pytest-benchmark-39
+REQUIRED_PACKAGES += library/python/pytest-reporter-37
+REQUIRED_PACKAGES += library/python/pytest-reporter-39
+REQUIRED_PACKAGES += library/python/sortedcontainers-37
+REQUIRED_PACKAGES += library/python/sortedcontainers-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-37

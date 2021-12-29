@@ -11,12 +11,12 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2021 Andreas Wacknitz.  All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/developer/opensolaris/X@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=description value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Meta Packages/Group Packages"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 depend fmri=pkg:/compress/bzip2 type=require
@@ -24,7 +24,7 @@ depend fmri=pkg:/compress/gzip type=require
 depend fmri=pkg:/data/docbook type=require
 depend fmri=pkg:/developer/build/autoconf type=require
 depend fmri=pkg:/developer/build/autogen type=require
-depend fmri=pkg:/developer/build/automake-110 type=require
+depend fmri=pkg:/developer/build/automake type=require
 depend fmri=pkg:/developer/build/gnu-make type=require
 depend fmri=pkg:/developer/build/libtool type=require
 depend fmri=pkg:/developer/build/make type=require
@@ -34,15 +34,16 @@ depend fmri=pkg:/developer/debug/mdb type=require
 depend fmri=pkg:/developer/documentation-tool/openjade type=require
 depend fmri=pkg:/developer/documentation-tool/opensp type=require
 depend fmri=pkg:/developer/dtrace type=require
-depend fmri=pkg:/developer/gcc-49 type=require
-depend fmri=pkg:/gnome/gnome-common type=require
+depend fmri=pkg:/developer/gcc-7 type=require
 depend fmri=pkg:/developer/java/openjdk8 type=require
 depend fmri=pkg:/developer/lexer/flex type=require
 depend fmri=pkg:/developer/linker type=require
 depend fmri=pkg:/developer/object-file type=require
-depend fmri=pkg:/developer/parser/bison type=require
+depend fmri=pkg:/developer/parser/bison-37 type=require
 depend fmri=pkg:/developer/versioning/cvs type=require
+depend fmri=pkg:/developer/versioning/git type=require
 depend fmri=pkg:/developer/versioning/mercurial type=require
+depend fmri=pkg:/gnome/gnome-common type=require
 depend fmri=pkg:/image/library/libjpeg type=require
 depend fmri=pkg:/image/library/libpng type=require
 depend fmri=pkg:/library/expat type=require
@@ -58,7 +59,6 @@ depend fmri=pkg:/system/header/header-audio type=require
 depend fmri=pkg:/system/header/header-usb type=require
 depend fmri=pkg:/system/library type=require
 depend fmri=pkg:/system/library/flex-runtime type=require
-depend fmri=pkg:/system/library/gcc-4-runtime type=require
 depend fmri=pkg:/system/library/libdbus type=require
 depend fmri=pkg:/system/library/math type=require
 depend fmri=pkg:/text/doctools type=require
