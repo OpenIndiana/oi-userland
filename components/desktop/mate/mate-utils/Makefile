@@ -12,6 +12,7 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
+# Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
 
 BUILD_BITS=		64
@@ -19,7 +20,7 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-utils
-COMPONENT_MJR_VERSION=	1.24
+COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
@@ -27,7 +28,7 @@ COMPONENT_SUMMARY=	Basic MATE utils
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:219673047fe2a14eb9c8bc23a5fb7c99d45e7acad4c05b4bf59a3d244cb026ac
+	sha256:7ca56ab242e8efaa64f93ffb84f6e4bf8d4d0df01e20b3b6ef8956ce3192782e
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE= GPLv3
