@@ -13,6 +13,7 @@
 # Copyright 2016 Ken Mays
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
+# Copyright (c) 2021 Tim Mooney.  All rights reserved 
 #
 
 BUILD_BITS=		64
@@ -20,15 +21,14 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-notification-daemon
-COMPONENT_MJR_VERSION=	1.24
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.26
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	Notification Daemon for Mate
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:58a4193ef8b36024ec0035c3e48e2a08d87c569260317ffef6f12f665048ae0a
+COMPONENT_ARCHIVE_HASH= sha256:b23c6581f8f5916d6a16584edd91c2e4b6d0db7dd8e1eec5dd360acf2834b9ba
 COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
@@ -46,21 +46,24 @@ COMPONENT_PREP_ACTION=	cd $(@D) && NOCONFIGURE=1 ./autogen.sh
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/$(COMPONENT_NAME)
 CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --disable-scrollkeeper
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_OPTIONS+= --with-gnome-distributor="The OpenIndiana Project"
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
+# build dependencies, if configure is regenerated
+REQUIRED_PACKAGES += developer/build/autoconf-archive
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += desktop/mate/mate-panel
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libwnck3
+REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libnotify
