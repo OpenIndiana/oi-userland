@@ -29,7 +29,7 @@ BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libexpat
-COMPONENT_VERSION=	2.4.1
+COMPONENT_VERSION=	2.4.2
 COMPONENT_VERSION_U=	$(shell echo $(COMPONENT_VERSION) | tr . _)
 COMPONENT_FMRI=		library/expat
 COMPONENT_SUMMARY=	libexpat - XML parser library
@@ -39,8 +39,8 @@ COMPONENT_PROJECT_URL=	https://libexpat.github.io
 COMPONENT_SRC_NAME=	expat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.lz
-COMPONENT_ARCHIVE_HASH= sha256:8541697089dec1e28a2ec834adc135d18f47e1db8c829af469eb46bbab87cefc
-COMPONENT_ARCHIVE_URL= https://github.com/libexpat/libexpat/releases/download/R_$(COMPONENT_VERSION_U)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:e114edc885cae53d9e534d18122c47001e093544f11cdaa68f25fa209a13acdf
+COMPONENT_ARCHIVE_URL=	https://github.com/libexpat/libexpat/releases/download/R_$(COMPONENT_VERSION_U)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	expat license
 
 include $(WS_MAKE_RULES)/common.mk
