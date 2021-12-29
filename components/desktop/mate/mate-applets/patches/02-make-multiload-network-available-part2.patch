@@ -1,0 +1,16 @@
+
+Inherited from the older single-part patch, this part moved to its own
+patch at 1.26.0 since it needed src changes.
+
+diff -ur mate-applets-1.26.0.orig/multiload/src/linux-proc.c mate-applets-1.26.0/multiload/src/linux-proc.c
+--- mate-applets-1.26.0.orig/multiload/src/linux-proc.c	2021-08-07 06:25:18.000000000 +0000
++++ mate-applets-1.26.0/multiload/src/linux-proc.c	2021-12-26 19:47:29.270727117 +0000
+@@ -373,6 +373,8 @@
+     MultiloadApplet *multiload;
+ 
+     multiload = g->multiload;
++
++    netlist.flags = 1;
+     devices = glibtop_get_netlist(&netlist);
+ 
+     for(i = 0; i < netlist.number; ++i)
