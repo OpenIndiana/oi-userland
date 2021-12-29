@@ -1,5 +1,13 @@
---- mate-applets-1.22.2/multiload/linux-proc.c	2019-09-19 14:17:35.000000000 +0000
-+++ mate-applets-1.22.2/multiload/linux-proc.c	2019-09-19 21:04:08.314342879 +0000
+
+Modified this patch to
+- add the /src/ directory into the path, for the source reorganization
+  at 1.25.x
+- move the netlist.flags = 1; chunk to
+  02-make-multiload-network-available-part2.patch because of changes to
+  that section of the file.
+
+--- mate-applets-1.22.2/multiload/src/linux-proc.c	2019-09-19 14:17:35.000000000 +0000
++++ mate-applets-1.22.2/multiload/src/linux-proc.c	2019-09-19 21:04:08.314342879 +0000
 @@ -151,6 +151,13 @@ GetDiskLoad (int Maximum, int data [3],
      }
      else
@@ -25,14 +33,6 @@
      }
  
      readdiff  = read - lastread;
-@@ -376,6 +387,7 @@ GetNet (int Maximum, int data [4], LoadG
-         autoscaler_init(&scaler, 60, 501);
-     }
- 
-+    netlist.flags = 1;
-     devices = glibtop_get_netlist(&netlist);
- 
-     for(i = 0; i < netlist.number; ++i)
 @@ -385,7 +397,12 @@ GetNet (int Maximum, int data [4], LoadG
  
          glibtop_get_netload(&netload, devices[i]);
