@@ -11,34 +11,43 @@
 #
 # Copyright (c) 2017 Dariusz Sendkowski
 #
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libxdg-basedir
-COMPONENT_VERSION=      1.2.0
+COMPONENT_VERSION=      1.2.3
 COMPONENT_PROJECT_URL=  https://github.com/devnev/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=      An implementation of the XDG Base Directory specifications.
 COMPONENT_FMRI=         library/xdg/libxdg-basedir 
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:1c2b0032a539033313b5be2e48ddd0ae94c84faf21d93956d53562eef4614868
+COMPONENT_ARCHIVE_HASH= sha256:ff30c60161f7043df4dcc6e7cdea8e064e382aa06c73dcc3d1885c7d2c77451d
 COMPONENT_ARCHIVE_URL=  https://github.com/devnev/$(COMPONENT_NAME)/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-
+#TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f -i)
 
+# Tests will fail without unexport SHELLOPTS
+unexport SHELLOPTS
 
-build:		$(BUILD_32_and_64)
+COMPONENT_TEST_TRANSFORMS += \
+    '-n ' \
+	'-e "/PASS:/p" ' \
+	'-e "/FAIL:/p" ' \
+	'-e "/SKIP:/p" ' \
+	'-e "/ERROR:/p" ' \
+	'-e "/TOTAL:/p" ' \
+	'-e "/====/p" ' \
+	'-e "/^Testsuite/p" ' \
+	'-e "/^See /p" ' \
+	'-e "/^Please /p" '
 
-install:	$(INSTALL_32_and_64)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-test:		$(NO_TEST)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
