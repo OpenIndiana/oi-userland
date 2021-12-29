@@ -1,3 +1,6 @@
+Note: minor modification to this patch in-place at 1.26.0, changing
+instances of egg_debug to g_debug.
+
 Run screensaver on suspend/hibernate
 
 diff -ur mate-power-manager-1.18.1/data/org.mate.power-manager.gschema.xml.in mate-power-manager-new/data/org.mate.power-manager.gschema.xml.in
@@ -85,7 +88,7 @@ diff -ur mate-power-manager-1.18.1/src/gpm-screensaver.c mate-power-manager-new/
 +      command = g_strdup ("/usr/bin/xdg-screensaver lock");   
 +      screen = gdk_screen_get_default ();
 +
-+      egg_debug ("Doing xdg-screensaver lock");
++      g_debug ("Doing xdg-screensaver lock");
 +      if (!gpm_screensaver_gdk_spawn_command_line_on_screen (screen, command, &error)) {
 +              g_warning ("Cannot lock screen: %s", error->message);
 +              g_error_free (error);
@@ -95,7 +98,7 @@ diff -ur mate-power-manager-1.18.1/src/gpm-screensaver.c mate-power-manager-new/
 +      /* TODO: Make sure screen locking takes effect until both point 
 +       * and keyboard are grabbed successfully.
 +       */
-+      egg_debug ("Screen locking is sucessful!, sleepcount = %d", sleepcount);
++      g_debug ("Screen locking is sucessful!, sleepcount = %d", sleepcount);
 +#else
  
  	g_return_val_if_fail (GPM_IS_SCREENSAVER (screensaver), FALSE);
