@@ -12,6 +12,7 @@
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
+# Copyright (c) 2021 Tim Mooney.  All rights reserved 
 #
 
 BUILD_BITS=		64
@@ -19,14 +20,14 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-control-center
-COMPONENT_MJR_VERSION=	1.24
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	1.26
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE desktop wide preference configuration tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:69d8c633a73a4f503501a6bd03f81f230c26835110bb02942a735842d9c47aa3
+COMPONENT_ARCHIVE_HASH= sha256:286714ea778f6540fe74ef00aaf504c47141518d26ab224994f4a1af36b0134a
 COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/mate/control-center
 COMPONENT_CLASSIFICATION=	Applications/Configuration and Preferences
@@ -50,6 +51,9 @@ REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 REQUIRED_PACKAGES += library/desktop/mate/mate-common
 REQUIRED_PACKAGES += desktop/mate/mate-settings-daemon
 
+# no longer auto-detected
+REQUIRED_PACKAGES += system/library/libdbus-glib
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/marco
 REQUIRED_PACKAGES += gnome/config/dconf
@@ -68,7 +72,6 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcursor
