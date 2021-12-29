@@ -20,25 +20,25 @@
 #
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=32_and_64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmwaw
-COMPONENT_VERSION=	0.3.20
-COMPONENT_FMRI=     	library/c++/libmwaw
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_VERSION=	0.3.21
+COMPONENT_FMRI=     library/c++/libmwaw
+COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libmwaw
-COMPONENT_SUMMARY=      libmwaw - library for reading various old mac text documents
+COMPONENT_SUMMARY=      A library for reading various old mac text documents
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:14c38b06214f277ccd1450e22e6e32648955018d7695896bc560165748c8cd21
+COMPONENT_ARCHIVE_HASH=	sha256:e8750123a78d61b943cef78b7736c8a7f20bb0a649aa112402124fba794fc21c
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libmwaw/files/libmwaw/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=      LGPLv2, MPLv2
 
 # Fix threading detection issue introduced with boost 1.64
 CXXFLAGS+= -std=c++11 -pthread
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+=	--enable-shared
