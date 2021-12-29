@@ -13,6 +13,7 @@
 # Copyright 2016 Ken Mays
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
+# Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
 
 BUILD_BITS=		64
@@ -20,15 +21,14 @@ BUILD_BITS=		64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-themes
-COMPONENT_VERSION=	3.22.22
+COMPONENT_VERSION=	3.22.23
 COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE Themes
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:bd00affe5aec217656c0af21496a4c66fd5f6f3e9e93b42fc96b54771d6f99a1
+COMPONENT_ARCHIVE_HASH= sha256:61e5ad626c9841f5763c908f1769139b2a812687b98f6b330afee4da18fb6fab
 COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/themes/3.22/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
@@ -47,8 +47,11 @@ CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
+# build dependencies
 REQUIRED_PACKAGES += library/desktop/xdg/icon-naming-utils
 REQUIRED_PACKAGES += text/intltool
 REQUIRED_PACKAGES += text/gnu-gettext
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += library/perl-5/xml-parser
+
+# Auto-generated dependencies
