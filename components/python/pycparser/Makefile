@@ -30,24 +30,23 @@ BUILD_STYLE=		setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycparser
-COMPONENT_VERSION=	2.20
+COMPONENT_VERSION=	2.21
 COMPONENT_SUMMARY=	Complete C99 parser in pure Python
 COMPONENT_DESCRIPTION=	pycparser is a parser for the C language, written in pure Python. \
 						It is a module designed to be easily integrated into applications that need to parse C source code.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:2d475327684562c3a96cc71adf7dc8c4f0565175cf86b6d7a404ff4c771f15f0
+COMPONENT_ARCHIVE_HASH= sha256:e644fdec12f7872f86c58ff790da456218b10f863970249516d60a5eaca77206
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/eliben/pycparser
 COMPONENT_FMRI=		library/python/pycparser
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	BSD
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
-# Tests can only be run for python 3 versions as we don't have pytest for python-2.7:
+PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
+# Tests can only be run for python 3 versions as we miss some necessary packages for python-2.7.
 #PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
 
-#TEST_TARGET=			$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
@@ -69,14 +68,31 @@ install:	$(INSTALL_NO_ARCH) $(BUILD_DIR)/license.ply
 COMPONENT_POST_INSTALL_ACTION += \
 	$(PYTHON) -m compileall $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES_BASE)/pycparser/c_ast.py
 
-# Manually added test dependencies (disabled as long as we provide python-2.7 version):
-#REQUIRED_PACKAGES += library/python/flaky
-#REQUIRED_PACKAGES += library/python/hypothesis
-#REQUIRED_PACKAGES += library/python/pluggy
-#REQUIRED_PACKAGES += library/python/py
-#REQUIRED_PACKAGES += library/python/pytest
-#REQUIRED_PACKAGES += library/python/pytest-benchmark
-#REQUIRED_PACKAGES += library/python/pytest-reporter
+# Manually added test dependencies
+REQUIRED_PACKAGES += library/python/flaky-35
+REQUIRED_PACKAGES += library/python/flaky-37
+REQUIRED_PACKAGES += library/python/flaky-39
+REQUIRED_PACKAGES += library/python/hypothesis-35
+REQUIRED_PACKAGES += library/python/hypothesis-37
+REQUIRED_PACKAGES += library/python/hypothesis-39
+REQUIRED_PACKAGES += library/python/pluggy-35
+REQUIRED_PACKAGES += library/python/pluggy-37
+REQUIRED_PACKAGES += library/python/pluggy-39
+REQUIRED_PACKAGES += library/python/py-35
+REQUIRED_PACKAGES += library/python/py-37
+REQUIRED_PACKAGES += library/python/py-39
+REQUIRED_PACKAGES += library/python/pytest-35
+REQUIRED_PACKAGES += library/python/pytest-37
+REQUIRED_PACKAGES += library/python/pytest-39
+REQUIRED_PACKAGES += library/python/pytest-benchmark-35
+REQUIRED_PACKAGES += library/python/pytest-benchmark-37
+REQUIRED_PACKAGES += library/python/pytest-benchmark-39
+REQUIRED_PACKAGES += library/python/pytest-reporter-35
+REQUIRED_PACKAGES += library/python/pytest-reporter-37
+REQUIRED_PACKAGES += library/python/pytest-reporter-39
+REQUIRED_PACKAGES += library/python/sortedcontainers-35
+REQUIRED_PACKAGES += library/python/sortedcontainers-37
+REQUIRED_PACKAGES += library/python/sortedcontainers-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
