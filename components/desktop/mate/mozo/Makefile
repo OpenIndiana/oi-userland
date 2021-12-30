@@ -13,34 +13,23 @@
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
+# Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=		64
-
+MATE_CATEGORY=	APP
 include ../../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mozo
 COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	0
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
+COMPONENT_MNR_VERSION=	1
 COMPONENT_SUMMARY=	Simple menu editor for MATE
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:4642cbf985fa0d72e205ad7f6abfb7d008e3117e2c5e331340f2bc6466c3ddc2
-COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:0f24429a3b037bd0688ec4c391d9d8781e42b23ef345f5e50af1e72c5ef2fa39
 COMPONENT_FMRI=		desktop/xdg/menu-editor/mozo
 COMPONENT_CLASSIFICATION=	Applications/Configuration and Preferences
 COMPONENT_LICENSE= LGPLv2
-COMPONENT_LICENSE_FILE= COPYING
-
-TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
-
-PATH=$(PATH.gnu)
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 CONFIGURE_ENV+= PYTHON=$(PYTHON.3.5.64)
 CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON.3.5.VENDOR_PACKAGES.64)"
