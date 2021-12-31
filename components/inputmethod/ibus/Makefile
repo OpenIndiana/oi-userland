@@ -18,16 +18,13 @@ BUILD_BITS=64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ibus
-COMPONENT_VERSION= 1.5.22
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.5.25
 COMPONENT_SUMMARY= iBus - Intelligent Input Bus
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:8170eba58c28aa4818970751ebdeada728ebb63d535967a5c5f5c21b0017be4a
-COMPONENT_PROJECT_URL = https://github.com/ibus/ibus
-COMPONENT_ARCHIVE_URL= \
-  $(COMPONENT_PROJECT_URL)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:dea4f663c485267cc3313e40a0bc89b977c397e19644f8ab41df0e6eaec34330
+COMPONENT_PROJECT_URL=	https://github.com/ibus/ibus
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -64,18 +61,36 @@ CONFIGURE_ENV += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+unexport SHELLOPTS
+
+COMPONENT_TEST_TRANSFORMS += \
+         '-n ' \
+         '-e "/^PASS:/p" ' \
+         '-e "/^XPASS:/p" ' \
+         '-e "/^ERROR:/p" ' \
+         '-e "/^FAIL:/p" ' \
+         '-e "/^XFAIL:/p" ' \
+         '-e "/^SKIP:/p" ' \
+         '-e "/^TOTAL:/p" ' \
+         '-e "/^See/p" ' \
+         '-e "/^Please/p" ' \
+         '-e "/^Testsuite/p" ' \
+         '-e "/====/p" '
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libnotify
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxi
