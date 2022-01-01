@@ -31,14 +31,14 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	8.2.1897
+COMPONENT_VERSION=	8.2.3951
 # Remove leading zeros in the patch-level part of $COMPONENT_VERSION (IPS does not like them)
 IPS_COMPONENT_VERSION=  $(shell echo $(COMPONENT_VERSION) | sed -e 's/\.00*\([1-9]\)/.\1/')
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:cb406f503e82d4b83aea07fc25c9754128c005a0439ef2af96686b9ed9288690
+COMPONENT_ARCHIVE_HASH=	sha256:adddc84d81dc79cfddc08e8933d536a0445f546fac99fd3251be7fde742acd2a
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -60,6 +60,7 @@ TEST_64 = 	$(NOX_VARIANT)/.tested
 # vim uses self-defined INFINITY/NAN, which don't work well on illumos
 CFLAGS += -std=c99 -D_XOPEN_SOURCE=600
 
+CONFIGURE_ENV +=	PATH=$(PATH.gnu)
 # Make sure we use a 64-bit, multithreaded perl
 CONFIGURE_ENV +=	vi_cv_path_perl=/usr/perl5/5.24/bin/perl
 # Vim's configure script looks for a "python3" executable, per PEP 394
@@ -113,6 +114,7 @@ test:		$(TEST_64)
 
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += runtime/perl-524
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -121,7 +123,8 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/security/libsodium
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
