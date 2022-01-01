@@ -1,0 +1,29 @@
+--- squeak-3814/platforms/Cross/plugins/JPEGReadWriter2Plugin/sqJPEGReadWriter2Plugin.c	Fri Oct  5 02:00:00 2018
++++ p0/squeak-3814/platforms/Cross/plugins/JPEGReadWriter2Plugin/sqJPEGReadWriter2Plugin.c	Fri Dec 31 07:58:18 2021
+@@ -63,7 +63,7 @@
+ 
+ 	if (*destinationSizePtr) {
+ 		jpeg_create_compress(pcinfo);
+-		jpeg_mem_dest(pcinfo, destination, destinationSizePtr);
++		sqJpeg_mem_dest(pcinfo, destination, destinationSizePtr);
+ 
+ 		pcinfo->image_width = width;
+ 		pcinfo->image_height = height;
+@@ -159,7 +159,7 @@
+ 	}
+ 
+ 	if (ok)
+-		ok = jpeg_mem_src_newLocationOfData(pcinfo, source, sourceSize);
++		ok = sqJpeg_mem_src_newLocationOfData(pcinfo, source, sourceSize);
+ 
+ 	if (ok) {
+ 		jpeg_start_decompress(pcinfo);
+@@ -301,7 +301,7 @@
+ 
+ 	if (sourceSize) {
+ 		jpeg_create_decompress(pcinfo);
+-		jpeg_mem_src(pcinfo, source, sourceSize);
++		sqJpeg_mem_src(pcinfo, source, sourceSize);
+ 		jpeg_read_header(pcinfo, TRUE);
+ 	}
+ }
