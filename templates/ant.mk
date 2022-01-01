@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2021 <contributor name>
+# Copyright 2022 <contributor name>
 #
 
 BUILD_BITS=32
