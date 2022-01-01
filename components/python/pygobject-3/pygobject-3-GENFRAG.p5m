@@ -10,13 +10,16 @@
 #
 
 #
+# Copyright 2021 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
 license COPYING license="LGPL v2.1"
 
-file path=usr/include/pygobject-3.0/pygobject.h
-file path=usr/lib/$(MACH64)/pkgconfig/pygobject-3.0.pc
+# Manually added since python2 version is built in ../pygobject-3
+depend type=conditional fmri=$(COMPONENT_FMRI)-27 \
+    predicate=runtime/python-27
 
-depend type=require \
-    fmri=library/python/pycairo@1.10.0
+# Manually added since python3 version is also built in ../pygobject-3
+depend type=conditional fmri=$(COMPONENT_FMRI)-35 \
+    predicate=runtime/python-35
