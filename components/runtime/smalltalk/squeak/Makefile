@@ -46,7 +46,7 @@ BUILD_BITS=32_and_64
 # working jpeg images; needs to be fixed upstream by the Squeak team
 # currently use libjpeg6-ijg which is better than using the copy of
 # those libjpeg files in the squeak source tree
-JPEG_IMPLEM=libjpeg6-ijg
+JPEG_IMPLEM=libjpeg8-turbo
 
 include ../../../../make-rules/shared-macros.mk
 
@@ -55,7 +55,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.19.9
-COMPONENT_REVISION=	6
+COMPONENT_REVISION=	7
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -93,13 +93,21 @@ PATH=$(PATH.gnu)
 
 gcc_OPT=	-O
 
+# add -D_FILE_OFFSET_BITS=64 to CPPFLAGS but unlike OpenSmalltalk,
+# must also add this to CFLAGS because Squeak configure is not using CPPFLAGS
+# (see CFLAGS += CPPFLAGS below)
 CPPFLAGS +=     $(CPP_LARGEFILES)
 
-# build against libjpeg6 (see Illumos feature request #7391 for libjpeg8-turbo)
+# build against libjpeg (see Illumos feature request #7391 for libjpeg8-turbo)
 # use --link-shared-lib to avoid the Squeak copy of libjpeg
-CPPFLAGS +=	$(JPEG_CPPFLAGS)
+CPPFLAGS +=     $(JPEG_CPPFLAGS)
 LDFLAGS  +=     $(JPEG_LDFLAGS)
 
+# include "jpeglib.h" uses incorrect /usr/include/jpeglib.h unless CFLAGS set
+# CPPFLAGS seems not respected by Squeak configure while CFLAGS is
+CFLAGS   +=     $(CPPFLAGS)
+
+# cleanup the plugin directory
 SOURCE_JPEG = $(SOURCE_DIR)/platforms/Cross/plugins/JPEGReadWriter2Plugin
 
 # squeak configure looks for .svn or svnversion file, but
@@ -152,8 +160,7 @@ REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
