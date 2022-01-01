@@ -11,6 +11,7 @@
 
 #
 # Copyright 2019 Rouven Weiler
+# Copyright 2022 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,22 +23,25 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/wavpack
-file path=usr/bin/$(MACH64)/wvgain
-file path=usr/bin/$(MACH64)/wvtag
-file path=usr/bin/$(MACH64)/wvunpack
+# Drop 32-bit binaries
+<transform path=usr/bin/$(MACH32) -> drop>
+
+file path=usr/bin/$(MACH32)/wavpack
+file path=usr/bin/$(MACH32)/wvgain
+file path=usr/bin/$(MACH32)/wvtag
+file path=usr/bin/$(MACH32)/wvunpack
 file path=usr/bin/wavpack
 file path=usr/bin/wvgain
 file path=usr/bin/wvtag
 file path=usr/bin/wvunpack
 file path=usr/include/wavpack/wavpack.h
-link path=usr/lib/$(MACH64)/libwavpack.so target=libwavpack.so.1.2.0
-link path=usr/lib/$(MACH64)/libwavpack.so.1 target=libwavpack.so.1.2.0
-file path=usr/lib/$(MACH64)/libwavpack.so.1.2.0
+link path=usr/lib/$(MACH64)/libwavpack.so target=libwavpack.so.1.2.3
+link path=usr/lib/$(MACH64)/libwavpack.so.1 target=libwavpack.so.1.2.3
+file path=usr/lib/$(MACH64)/libwavpack.so.1.2.3
 file path=usr/lib/$(MACH64)/pkgconfig/wavpack.pc
-link path=usr/lib/libwavpack.so target=libwavpack.so.1.2.0
-link path=usr/lib/libwavpack.so.1 target=libwavpack.so.1.2.0
-file path=usr/lib/libwavpack.so.1.2.0
+link path=usr/lib/libwavpack.so target=libwavpack.so.1.2.3
+link path=usr/lib/libwavpack.so.1 target=libwavpack.so.1.2.3
+file path=usr/lib/libwavpack.so.1.2.3
 file path=usr/lib/pkgconfig/wavpack.pc
 file path=usr/share/man/man1/wavpack.1
 file path=usr/share/man/man1/wvgain.1
