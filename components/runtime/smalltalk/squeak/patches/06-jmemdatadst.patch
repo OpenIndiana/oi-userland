@@ -1,6 +1,6 @@
 --- squeak-3814/platforms/Cross/plugins/JPEGReadWriter2Plugin/jmemdatadst.c	Fri Oct  5 02:00:00 2018
-+++ p0/squeak-3814/platforms/Cross/plugins/JPEGReadWriter2Plugin/jmemdatadst.c	Sat Dec 25 17:40:27 2021
-@@ -115,7 +115,6 @@
++++ p0/squeak-3814/platforms/Cross/plugins/JPEGReadWriter2Plugin/jmemdatadst.c	Fri Dec 31 08:00:49 2021
+@@ -115,13 +115,12 @@
    }
  }
  
@@ -8,6 +8,13 @@
  /*
   * Prepare for output to a stdio stream.
   * The caller must have already opened the stream, and is responsible
+  * for closing it after finishing compression.
+  */
+-GLOBAL(void) jpeg_mem_dest (j_compress_ptr cinfo, char * pDestination, unsigned *pDestinationSize) {
++GLOBAL(void) sqJpeg_mem_dest (j_compress_ptr cinfo, char * pDestination, unsigned *pDestinationSize) {
+   my_dest_ptr dest;
+ 
+   /* The destination object is made permanent so that multiple JPEG images
 @@ -145,5 +144,4 @@
    dest->pSpaceUsed = pDestinationSize;
    *(dest->pSpaceUsed) = 0;
