@@ -10,6 +10,7 @@ PASS: basic-types/boolean.vala
 PASS: basic-types/custom-types.vala
 PASS: basic-types/default-gtype.vala
 PASS: basic-types/strings.vala
+PASS: basic-types/string-concat-null.test
 PASS: basic-types/arrays.vala
 PASS: basic-types/arrays-generics.vala
 PASS: basic-types/arrays-fixed-assignment.vala
@@ -61,6 +62,7 @@ PASS: basic-types/bug787152.vala
 PASS: basic-types/bug788775.vala
 PASS: constants/array-type-invalid.test
 PASS: constants/glog.vala
+PASS: constants/member-access.vala
 PASS: constants/strings.vala
 PASS: namespace/unique.vala
 PASS: arrays/cast-silent-invalid.test
@@ -103,9 +105,11 @@ PASS: arrays/slice-fixed-length.vala
 PASS: arrays/slice-invalid-start.test
 PASS: arrays/slice-invalid-stop.test
 PASS: arrays/slice-no-array.test
+PASS: chainup/base-arguments.test
 PASS: chainup/base-class-invalid.test
 PASS: chainup/base-enum-invalid.test
 PASS: chainup/base-invalid.test
+PASS: chainup/base-private.test
 PASS: chainup/base-struct-invalid.test
 PASS: chainup/class-base.vala
 PASS: chainup/class-base-foo.vala
@@ -155,7 +159,8 @@ PASS: methods/bug598738.vala
 PASS: methods/bug599892.vala
 PASS: methods/bug613483.vala
 PASS: methods/bug615450.test
-PASS: methods/bug620673.test
+PASS: methods/bug620673.vala
+PASS: methods/bug620673-2.test
 PASS: methods/bug622570.vala
 PASS: methods/bug626783.vala
 PASS: methods/bug634753.vala
@@ -193,6 +198,7 @@ PASS: methods/delegate-target.vala
 PASS: methods/generics.vala
 PASS: methods/nowrapper-interface.vala
 PASS: methods/nowrapper-no-vfunc.test
+PASS: methods/parameter-ccode-type.vala
 PASS: methods/params-array.vala
 PASS: methods/params-array-abstract.test
 PASS: methods/params-array-multi-dimensional.test
@@ -203,6 +209,7 @@ PASS: methods/print-attribute-invalid.test
 PASS: methods/printf-invalid.test
 PASS: methods/printf-constructor.vala
 PASS: methods/printf-constructor-invalid.test
+PASS: methods/profile.vala
 PASS: methods/varargs-delegate.vala
 PASS: methods/varargs-delegate-without-target.vala
 PASS: methods/varargs-gvalue.vala
@@ -287,6 +294,7 @@ PASS: control-semantic/variadic-argument-invalid.test
 PASS: enums/default-gtype.vala
 PASS: enums/enum_only.vala
 PASS: enums/enum-no-gtype.vala
+PASS: enums/enum-gtype-too-short.test
 PASS: enums/enums.vala
 PASS: enums/flags.vala
 PASS: enums/from-0-literal.vala
@@ -306,11 +314,13 @@ PASS: structs/struct_only.vala
 PASS: structs/struct-base-types.vala
 PASS: structs/struct-boxed-cast.vala
 PASS: structs/struct-empty-still.test
+PASS: structs/struct-gtype-too-short.test
 PASS: structs/struct-initializer-list-in-array.vala
 PASS: structs/struct-initializer-list-nested.vala
 PASS: structs/struct-no-gtype.vala
 PASS: structs/struct-no-gtype-inherit.vala
-PASS: structs/struct-static-field-initializer.test
+PASS: structs/struct-static-field-initializer.vala
+PASS: structs/struct-static-field-initializer-2.test
 PASS: structs/struct-static-property-initializer.test
 PASS: structs/structs.vala
 PASS: structs/constructor-params-array.vala
@@ -353,7 +363,6 @@ PASS: structs/bug688732.vala
 PASS: structs/bug690380.vala
 PASS: structs/bug694140.vala
 PASS: structs/bug749952.vala
-PASS: structs/bug764041.test
 PASS: structs/bug775761.vala
 PASS: structs/bug777194.vala
 PASS: structs/bug777194-2.vala
@@ -406,6 +415,7 @@ PASS: objects/chainup.vala
 PASS: objects/class-ccode-cprefix.vala
 PASS: objects/class_only.vala
 PASS: objects/class-destroysinstance.vala
+PASS: objects/class-gtype-too-short.test
 PASS: objects/class-inner-types.vala
 PASS: objects/class-new-no-override.vala
 PASS: objects/class-vfunc-base-access.vala
@@ -437,6 +447,7 @@ PASS: objects/instance-comparison.vala
 PASS: objects/interface_only.vala
 PASS: objects/interface-async-base-access.vala
 PASS: objects/interface-base-access.vala
+PASS: objects/interface-gtype-too-short.test
 PASS: objects/interface-inner-types.vala
 PASS: objects/interfaces.vala
 PASS: objects/interface-abstract-async-override.vala
@@ -490,9 +501,12 @@ PASS: objects/signals-default-class-handler.vala
 PASS: objects/signals-enum-marshal.vala
 PASS: objects/signals-delegate.vala
 PASS: objects/signals-delegate-parameter.vala
+PASS: objects/signals-dynamic-invalid-disconnect.test
 PASS: objects/signals-dymanic-invalid-handler.test
+PASS: objects/signals-dynamic-lambda-handler.test
 PASS: objects/signals-error-marshal.vala
 PASS: objects/signals-fundamental-return.vala
+PASS: objects/signals-generic-return.vala
 PASS: objects/signals-gobject-return.vala
 PASS: objects/signals-lambda-delegate.vala
 PASS: objects/signals-prototype-access.vala
@@ -686,8 +700,10 @@ PASS: generics/property-int-cast.vala
 PASS: generics/reference-transfer.vala
 PASS: generics/string-literal-comparison.vala
 PASS: generics/type-parameter-properties.vala
+PASS: generics/type-parameter-property-clash.vala
 PASS: generics/value-pointer-type-access.vala
-PASS: generics/bug640330.test
+PASS: generics/bug640330.vala
+PASS: generics/bug640330-2.test
 PASS: generics/bug694765-1.vala
 PASS: generics/bug694765-2.vala
 PASS: generics/bug694765-3.vala
@@ -877,6 +893,7 @@ PASS: parser/signal-no-static.test
 PASS: parser/statement-keyword-as-identifier.vala
 PASS: parser/statement-outside-root.test
 PASS: parser/switch-statement.vala
+PASS: parser/switch-section-outside-switch.test
 PASS: parser/template.vala
 PASS: parser/tuple.vala
 PASS: parser/unsupported-property-async.test
@@ -902,6 +919,11 @@ PASS: resolver/interface-prerequisite-cycle.test
 PASS: resolver/peek-inner-types-ambiguous.test
 PASS: resolver/peek-inner-types.vala
 PASS: resolver/struct-base-cycle.test
+PASS: ordering/constant-class.vala
+PASS: ordering/constant-constant.vala
+PASS: ordering/constant-enum.vala
+PASS: ordering/constant-field.vala
+PASS: ordering/constant-struct.vala
 PASS: ordering/delegate-class.vala
 PASS: ordering/delegate-enum.vala
 PASS: ordering/delegate-interface.vala
@@ -920,6 +942,7 @@ PASS: semantic/assignment-fixed-array-length.test
 PASS: semantic/assignment-same-variable.vala
 PASS: semantic/assignment-signal-incompatible-method.test
 PASS: semantic/assignment-signal-incompatible-type.test
+PASS: semantic/assignment-invalid-type.test
 PASS: semantic/cast-gvalue-unsupported.test
 PASS: semantic/cast-gvariant-unsupported.test
 PASS: semantic/cast-void-not-allowed.vala
@@ -981,6 +1004,7 @@ PASS: semantic/enum-empty.test
 PASS: semantic/errordomain-empty.test
 PASS: semantic/field-accessibility.test
 PASS: semantic/field-compact-static.test
+PASS: semantic/field-constant.vala
 PASS: semantic/field-external.test
 PASS: semantic/field-incompatible.test
 PASS: semantic/field-interface.test
@@ -1010,6 +1034,7 @@ PASS: semantic/foreach-next-value-args.test
 PASS: semantic/foreach-next-value-void.test
 PASS: semantic/foreach-next-void.test
 PASS: semantic/foreach-wrong-types.test
+PASS: semantic/initializer-invalid-type.test
 PASS: semantic/initializer-unknown-type.test
 PASS: semantic/interface-prerequisite-invalid.test
 PASS: semantic/interface-prerequisite-less-accessible.test
@@ -1180,7 +1205,14 @@ PASS: version/since-field.test
 PASS: version/since-local-variable.test
 PASS: version/since-method.test
 PASS: version/since-parameter.test
+PASS: genie/case.gs
 PASS: genie/class.gs
+PASS: genie/class-abstract.gs
+PASS: genie/class-field.gs
+PASS: genie/class-init.gs
+PASS: genie/class-property.gs
+PASS: genie/class-signal.gs
+PASS: genie/constant.gs
 PASS: genie/control-flow-if-do.gs
 PASS: genie/control-flow-if-else.gs
 PASS: genie/control-flow-if-else-if.gs
@@ -1188,8 +1220,13 @@ PASS: genie/control-flow-if-greater-than.gs
 PASS: genie/control-flow-if.gs
 PASS: genie/control-flow-if-identity.gs
 PASS: genie/control-flow-if-less-than.gs
+PASS: genie/do-while.gs
 PASS: genie/enum.gs
 PASS: genie/enum-with-keyword-values.gs
+PASS: genie/exception.gs
+PASS: genie/for-downto.gs
+PASS: genie/for-in.gs
+PASS: genie/for-to.gs
 PASS: genie/function.gs
 PASS: genie/function-returns-closure.gs
 PASS: genie/function-with-argument.gs
@@ -1197,6 +1234,8 @@ PASS: genie/function-with-return-value.gs
 PASS: genie/indentation-with-spaces.gs
 PASS: genie/init.gs
 PASS: genie/init-int.gs
+PASS: genie/initializer-list.gs
+PASS: genie/interface.gs
 PASS: genie/literal-boolean-assignment.gs
 PASS: genie/literal-boolean.gs
 PASS: genie/literal-character.gs
@@ -1242,8 +1281,13 @@ PASS: genie/preparser-equality-expression.gs
 PASS: genie/preparser.gs
 PASS: genie/preparser-not.gs
 PASS: genie/preparser-or-expression.gs
+PASS: genie/print.gs
+PASS: genie/sizeof.gs
 PASS: genie/struct.gs
 PASS: genie/struct-after-class.gs
+PASS: genie/try-except-finally.gs
+PASS: genie/typeof.gs
+PASS: genie/while.gs
 PASS: glib/conditional-glib-api.vala
 PASS: libvaladoc/errorreporter.vala
 PASS: libvaladoc/markupreader.vala
