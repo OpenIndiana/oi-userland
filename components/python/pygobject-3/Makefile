@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		pygobject
 # This version only supports python 3.7 - 3.9 inclusive
 COMPONENT_VERSION=	3.42.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Python bindings for GObject
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -54,7 +55,7 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTOUSRINCDIR)/pygobject-3.0; $(MV) pygobject.h pygobject.h-$(PYTHON_VERSION)) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTOUSRLIBDIR)/pkgconfig; $(MV) pygobject-3.0.pc pygobject-3.0.pc-$(PYTHON_VERSION)) ;
+	(cd $(PROTOUSRLIBDIR)/pkgconfig; $(MKDIR) ../$(MACH64)/pkgconfig; $(MV) pygobject-3.0.pc ../$(MACH64)/pkgconfig/pygobject-3.0.pc-$(PYTHON_VERSION)) ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
