@@ -27,7 +27,7 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			doxygen
-COMPONENT_VERSION=		1.9.2
+COMPONENT_VERSION=		1.9.3
 COMPONENT_VERSION_=		$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_FMRI=			developer/documentation-tool/doxygen		
 COMPONENT_SUMMARY=		Doxygen - Source Code Documentation Tool 
@@ -36,13 +36,13 @@ COMPONENT_PROJECT_URL=	https://www.stack.nl/~dimitri/doxygen/index.html
 COMPONENT_FILE=			Release_$(COMPONENT_VERSION_)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_FILE)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:40f429241027ea60f978f730229d22e971786172fdb4dc74db6406e7f6c034b3
+COMPONENT_ARCHIVE_HASH=	sha256:c29426222c9361dc33b762cf1c6447c78cfb0b9c213e5dcdbe31a10540c918c5
 COMPONENT_ARCHIVE_URL=	https://github.com/doxygen/doxygen/archive/$(COMPONENT_FILE).tar.gz
 COMPONENT_LICENSE=		GPLv2
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
-COMPONENT_ARCHIVE_HASH_1 =	sha256:d148f266ad1825fbeca069a049a4f49289121cf0c19054fe7f2e7456e9798ecd
+COMPONENT_ARCHIVE_HASH_1 =	sha256:9435f7a028946b76951e5e39c1da52162944e0756caef34b2f6c2d16593423fa
 COMPONENT_ARCHIVE_URL_1 =	https://doxygen.nl/files/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/common.mk
