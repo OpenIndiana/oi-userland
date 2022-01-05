@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2017 Gary Mills
+# Copyright 2017,2022 Gary Mills
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -973,7 +973,8 @@ OPENSSL_PKG_CONFIG_PATH= $(OPENSSL_PREFIX)/lib/$(BITS)/pkgconfig
 # Pkg-config paths
 PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
-PKG_CONFIG_PATH = $(OPENSSL_PKG_CONFIG_PATH):$(PKG_CONFIG_PATH.$(BITS))
+PKG_CONFIG_PATH = \
+    $(OPENSSL_PKG_CONFIG_PATH):$(PKG_CONFIG_PATH.$(BITS)):$(PKG_CONFIG_PATH.32)
 
 # Set default path for environment modules
 MODULE_VERSION =	3.2.10
