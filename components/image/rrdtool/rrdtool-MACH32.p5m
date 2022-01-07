@@ -1,0 +1,44 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Friedrich Kink
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(MACH32)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=pkg:/image/rrdtool-common type=require
+depend fmri=pkg:/tcl/tcllib type=require
+#depend fmri=pkg:/runtime/lua type=require
+
+file path=usr/bin/rrdcached
+file path=usr/bin/rrdcgi
+link path=usr/bin/rrdcreate target=rrdupdate
+link path=usr/bin/rrdinfo target=rrdupdate
+file path=usr/bin/rrdtool
+file path=usr/bin/rrdupdate
+link path=usr/lib/librrd.so target=librrd.so.8.2.1
+link path=usr/lib/librrd.so.8 target=librrd.so.8.2.1
+file path=usr/lib/librrd.so.8.2.1
+link path=usr/lib/lua/5.2/rrd.so target=rrd.so.0.0.0
+link path=usr/lib/lua/5.2/rrd.so.0 target=rrd.so.0.0.0
+file path=usr/lib/lua/5.2/rrd.so.0.0.0
+file path=usr/lib/pkgconfig/librrd.pc
+file path=usr/lib/rrdtool/ifOctets.tcl
+file path=usr/lib/rrdtool/pkgIndex.tcl
+file path=usr/lib/tclrrd$(COMPONENT_VERSION).so
