@@ -21,25 +21,35 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2022 Tim Mooney.  All rights reserved.
 #
 
+BUILD_STYLE=makemaker
+BUILD_BITS=32_and_64
+# not yet, but soon:
+#USE_OPENSSL11=yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Net-SSLeay
 COMPONENT_VERSION=	1.80
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
+COMPONENT_FMRI=		library/perl-5/net-ssleay
+COMPONENT_SUMMARY=	Net::SSLeay - Perl extension for using OpenSSL
+COMPONENT_CLASSIFICATION=Development/Perl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	http://search.cpan.org/dist/Net-SSLeay/
+COMPONENT_PROJECT_URL=	https://metacpan.org/pod/Net::SSLeay
 COMPONENT_ARCHIVE_HASH=	\
     sha256:a541a66d59fc5f9bb7af09d3a0b68305e4c43ba9488b12915728fd282ea01b93
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/M/MI/MIKEM/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	perl-mod/net-ssleay
+COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/C/CH/CHRISN/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	Artistic
 
+# until all perl modules have been rebuilt with 5.34, each module sets
+# this manually, before including common.mk
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/makemaker.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -47,16 +57,23 @@ ASLR_MODE = $(ASLR_ENABLE)
 # The component Makefile.PL file will ask some questions on whether we want
 # to run external tests, to which we want to answer with "n".
 COMPONENT_CONFIGURE_ENV += ; echo "n" |
-COMPONENT_TEST_TARGETS = test
 
-build:		$(BUILD_32_and_64)
+#
+# need different master test results per version
+#
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION).master
 
-install:	$(INSTALL_32_and_64)
+#
+# delete any lines up through test_harness
+# delete timings
+#
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/test_harness/d"' \
+	'-e "s/,  *[0-9]* wallclock.*//"'
 
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
