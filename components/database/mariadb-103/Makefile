@@ -12,6 +12,7 @@
 # Copyright 2011-2013, EveryCity Ltd. All rights reserved.
 # Copyright 2016-2017, Wiselabs Software Ltda - http://www.wiselabs.com.br . All rights reserved.
 # Copyright 2019, Michal Nowak
+# Copyright 2022, erwinlem
 #
 
 BUILD_BITS= 32_and_64
@@ -47,7 +48,7 @@ CMAKE_PLUGINDIR.32 =	lib/$(MACH32)/plugin
 
 CMAKE_OPTIONS+= -DCMAKE_C_COMPILER=$(CC)
 CMAKE_OPTIONS+= -DCMAKE_CXX_COMPILER=$(CXX)
-CMAKE_OPTIONS+= -DCMAKE_C_FLAGS=$(CFLAGS)
+CMAKE_OPTIONS+= -DCMAKE_C_FLAGS="$(CFLAGS)"
 
 CMAKE_OPTIONS+= -DINSTALL_LAYOUT=SVR4
 CMAKE_OPTIONS+= -DCMAKE_INSTALL_PREFIX=$(CONFIGURE_PREFIX)
