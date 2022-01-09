@@ -1,0 +1,17 @@
+tm.gmtoff is a BSD extension we don't have.
+
+--- pgpool-II-4.3.0/src/main/pgpool_logger.c.orig	2021-12-07 03:47:33.000000000 +0000
++++ pgpool-II-4.3.0/src/main/pgpool_logger.c	2022-01-09 12:11:45.759995653 +0000
+@@ -1116,10 +1116,10 @@
+ 	rotinterval = pool_config->log_rotation_age * SECS_PER_MINUTE;	/* convert to seconds */
+ 	now = (pg_time_t) time(NULL);
+ 	tm = localtime(&now);
+-	now += tm->tm_gmtoff;
++//	now += tm->tm_gmtoff;
+ 	now -= now % rotinterval;
+ 	now += rotinterval;
+-	now -= tm->tm_gmtoff;
++//	now -= tm->tm_gmtoff;
+ 	next_rotation_time = now;
+ }
+ 
