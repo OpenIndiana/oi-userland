@@ -14,19 +14,17 @@
 #
 
 BUILD_BITS= 64
+#USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgbouncer
-COMPONENT_VERSION= 	1.12.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION= 	1.16.1
 COMPONENT_SUMMARY= 	pgBouncer connection pooler
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:1b3c6564376cafa0da98df3520f0e932bb2aebaf9a95ca5b9fa461e9eb7b273e
-COMPONENT_ARCHIVE_URL= \
-  https://pgbouncer.github.io/downloads/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.pgbouncer.org/
+COMPONENT_ARCHIVE_HASH=	sha256:087477e9e4766d032b04b7b006c0c8d64160a54141a7bfc2c6e5ae7ae11bf7fc
+COMPONENT_ARCHIVE_URL=	https://pgbouncer.github.io/downloads/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.pgbouncer.org/
 COMPONENT_FMRI=	database/postgres/pgbouncer
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_LICENSE=	BSD
