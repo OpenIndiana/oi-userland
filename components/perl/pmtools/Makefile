@@ -21,32 +21,49 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2022 Tim Mooney.  All rights reserved.
 #
 
+BUILD_STYLE=makemaker
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pmtools
 COMPONENT_VERSION=	2.0.0
-COMPONENT_PROJECT_URL=	http://search.cpan.org/dist/pmtools/
+COMPONENT_REVISION=	1
+COMPONENT_FMRI=		library/perl-5/pmtools
+COMPONENT_SUMMARY=	Perl module tools.
+COMPONENT_CLASSIFICATION=Development/Perl
+COMPONENT_PROJECT_URL=	https://metacpan.org/pod/pmtools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:5863fc9434d6a8d7311fd612cf243c29c3573aaba9caa7a8fb54154089d8baf3
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/M/ML/MLFISHER/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/perl-pmtools
+COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/M/ML/MLFISHER/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPLv1+, Artistic
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/makemaker.mk
-include $(WS_TOP)/make-rules/ips.mk
+# until all perl modules have been rebuilt with 5.34, each module sets
+# this manually, before including common.mk
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
+include $(WS_MAKE_RULES)/common.mk
 
-build:		$(BUILD_32_and_64)
+#
+# use the same results for comparison for all builds
+#
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
+#
+# filter out all output up to and including the test_harness line
+# filter out timing information and anything else that varies between builds
+#
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/test_harness/d"' \
+	'-e "s/,  *[0-9]* wallclock.*//"'
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += SUNWcs
