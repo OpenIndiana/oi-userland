@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2013, Alexander Pyhalov. All rights reserved.
+# Copyright (c) 2022 Tim Mooney.  All rights reserved.
 #
 
 BUILD_STYLE=makemaker
@@ -30,30 +31,44 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	DBI-PostgreSQL
 COMPONENT_VERSION=	3.10.0
-COMPONENT_REVISION=	3
-COMPONENT_SUMMARY= 	The DBI PostgreSQL Interface for Perl
+COMPONENT_REVISION=	4
+COMPONENT_SUMMARY= 	PostgreSQL database driver for the DBI module
+COMPONENT_FMRI=		library/perl-5/postgres-dbi
+COMPONENT_CLASSIFICATION=Development/Perl
+COMPONENT_PROJECT_URL=	https://metacpan.org/pod/DBD::Pg
 COMPONENT_SRC=		DBD-Pg-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:e103268a63e2828e3d43659bdba5f743446cbbe047a766f843112eedae105f80
 COMPONENT_ARCHIVE_URL= \
-  http://search.cpan.org/CPAN/authors/id/T/TU/TURNSTEP/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://search.cpan.org/dist/DBD-Pg/Pg.pm
+  https://cpan.metacpan.org/authors/id/T/TU/TURNSTEP/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE_FILE=	dbi-postgresql.license
+COMPONENT_LICENSE=	Artistic
 
 # Don't depend on host default pg_config
 PATH=$(PG_BINDIR):/usr/sbin:/usr/bin:/usr/perl5/bin
 
 TEST_TARGET=$(NO_TESTS)
+
+# until all perl modules have been rebuilt with 5.34, each module sets
+# this manually, before including common.mk
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
+
 include $(WS_MAKE_RULES)/common.mk
+
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
 
 LD_OPTIONS += -L$(PG_LIBDIR) -R$(PG_LIBDIR)
 
 # Build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += library/perl-5/database
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += system/library
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
