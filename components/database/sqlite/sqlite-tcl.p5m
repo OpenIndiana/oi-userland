@@ -18,26 +18,37 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Louis M. Picciano. All rights reserved.
-# Copyright (c) 2019, Michal Nowak
+
+#
+# Copyright (c) 2015, 2021, Oracle and/or its affiliates.
 # Copyright (c) 2022, Andreas Wacknitz
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.fmri \
+    value=pkg:/runtime/tcl-8/tcl-sqlite-3@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="SQL database engine library - tcl files"
+set name=pkg.description \
+    value="tcl files for SQLite which is a self-contained, serverless, zero-configuration, transactional SQL database engine"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+license $(COMPONENT_LICENSE_FILE) license="$(COMPONENT_LICENSE)"
 
-legacy arch=i386 category=GNOME2,application,JDSoi desc="SQL database engine library - development files" hotline="Please contact your local service provider" name="SQL database engine library - development files" pkg=SUNWsqlite3-devel
+# We force a runtime dependency on $(COMPONENT_FMRI) which is already a build dependendy:                                            
+set pkg.linted.pkglint.manifest005.2=true
 
-# Drop 32-bit binaries
-<transform path=usr/bin/$(MACH32) -> drop>
-# Drop TCL related files
-<transform path=usr/lib/tcl8 -> drop>
+# Depend on the main package
+depend type=require fmri=$(COMPONENT_FMRI)
+
+# Drop everything not TCL related
+<transform path=usr/bin/ -> drop>
+<transform path=usr/include/ -> drop>
+<transform path=usr/lib/$(MACH64) -> drop>
+<transform path=usr/lib/libsqlite -> drop>
+<transform path=usr/lib/pkgconfig -> drop>
+<transform path=usr/share/man -> drop>
 
 file path=usr/bin/$(MACH32)/sqlite3
 file path=usr/bin/sqlite3
