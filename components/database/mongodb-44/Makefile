@@ -12,6 +12,7 @@
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2021 erwinlem
 #
 
 # if gcc11 is available use openssl 1.1 and remove OPENSSL* from BUILD_ARGS
@@ -19,6 +20,7 @@
 BUILD_BITS= 64
 BUILD_STYLE= justmake
 USE_OPENSSL10= yes
+CCACHE_DISABLE= true
 
 include ../../../make-rules/shared-macros.mk
 
@@ -58,13 +60,13 @@ COMPONENT_BUILD_ARGS +=	CPPPATH="$(OPENSSL_PREFIX)/include"
 COMPONENT_BUILD_ARGS += DESTDIR=$(PROTO_DIR)
 COMPONENT_BUILD_ARGS += PREFIX=$(MONGO_PREFIX)
 COMPONENT_BUILD_ARGS += TARGET_ARCH=x86_64
-COMPONENT_BUILD_ARGS += CC="$(CC) -DSOLARIS"
-COMPONENT_BUILD_ARGS += CXX="$(CXX) -DSOLARIS"
+COMPONENT_BUILD_ARGS += CC="$(CC)"
+COMPONENT_BUILD_ARGS += CXX="$(CXX)"
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ARGS += CXXFLAGS="$(CXXFLAGS) -fpermissive"
 COMPONENT_BUILD_ARGS += LINKFLAGS="$(LDFLAGS) -lkstat"
 COMPONENT_BUILD_ARGS += AR=/usr/bin/gar
-COMPONENT_BUILD_ARGS += CCFLAGS=-I$(USRINCDIR)/pcre 
+COMPONENT_BUILD_ARGS += CCFLAGS="-I$(USRINCDIR)/pcre -DSOLARIS"
 COMPONENT_BUILD_ARGS += --js-engine=mozjs
 COMPONENT_BUILD_ARGS += --use-system-pcre
 COMPONENT_BUILD_ARGS += --use-system-zlib
