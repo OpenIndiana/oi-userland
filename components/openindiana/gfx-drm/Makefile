@@ -20,7 +20,7 @@ COMPONENT_NAME=		gfx-drm
 COMPONENT_SRC=		$(COMPONENT_NAME)
 
 GIT=git
-GIT_REPO=git://github.com/illumos/gfx-drm.git
+GIT_REPO=https://github.com/illumos/gfx-drm.git
 GIT_BRANCH=master
 GIT_CHANGESET=HEAD
 

@@ -19,7 +19,7 @@ COMPONENT_NAME=		illumos-gate
 COMPONENT_SRC=		$(COMPONENT_NAME)
 
 GIT=git
-GIT_REPO=git://github.com/illumos/illumos-gate.git
+GIT_REPO=https://github.com/illumos/illumos-gate.git
 GIT_BRANCH=master
 GIT_CHANGESET=HEAD
 
