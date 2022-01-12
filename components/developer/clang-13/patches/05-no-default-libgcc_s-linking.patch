@@ -1,0 +1,21 @@
+diff -wpruN '--exclude=*.orig' a~/lib/Driver/ToolChains/Solaris.cpp a/lib/Driver/ToolChains/Solaris.cpp
+--- a~/tools/clang/lib/Driver/ToolChains/Solaris.cpp	1970-01-01 00:00:00
++++ a/tools/clang/lib/Driver/ToolChains/Solaris.cpp	1970-01-01 00:00:00
+@@ -51,6 +51,7 @@
+                                    const ArgList &Args,
+                                    const char *LinkingOutput) const {
+   ArgStringList CmdArgs;
++  const Driver &D = getToolChain().getDriver();
+ 
+   // Demangle C++ names in errors
+   CmdArgs.push_back("-C");
+@@ -125,7 +126,8 @@
+   if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs)) {
+     if (getToolChain().ShouldLinkCXXStdlib(Args))
+       getToolChain().AddCXXStdlibLibArgs(Args, CmdArgs);
+-    CmdArgs.push_back("-lgcc_s");
++    if (D.CCCIsCXX())
++      CmdArgs.push_back("-lgcc_s");
+     CmdArgs.push_back("-lc");
+     if (!Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-lgcc");

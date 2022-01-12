@@ -1,0 +1,12 @@
+diff -wpruN '--exclude=*.orig' a~/tools/clang-shlib/CMakeLists.txt a/tools/clang-shlib/CMakeLists.txt
+--- a~/tools/clang/tools/clang-shlib/CMakeLists.txt	1970-01-01 00:00:00
++++ a/tools/clang/tools/clang-shlib/CMakeLists.txt	1970-01-01 00:00:00
+@@ -48,8 +48,3 @@ add_clang_library(clang-cpp
+                   ${_OBJECTS}
+                   LINK_LIBS
+                   ${_DEPS})
+-# Optimize function calls for default visibility definitions to avoid PLT and
+-# reduce dynamic relocations.
+-if (NOT APPLE AND NOT MINGW)
+-  target_link_options(clang-cpp PRIVATE LINKER:-Bsymbolic-functions)
+-endif()
