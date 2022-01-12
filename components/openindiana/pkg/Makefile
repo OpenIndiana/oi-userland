@@ -12,10 +12,6 @@
 # Copyright 2013 Adam Stevko. All rights reserved.
 #
 
-# Republish triggered on 2021-11-17 by Till Wegmueller
-# Republish triggered on 2021-11-17 by Till Wegmueller
-# Republish triggered on 2021-11-17 by Till Wegmueller
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkg
@@ -38,8 +34,6 @@ CLEAN_PATHS += $(BUILD_DIR)
 
 COMPONENT_PREP_GIT=no
 include $(WS_TOP)/make-rules/prep.mk
-
-#export CC 
 
 COMPONENT_ENV = CC=$(CC)
 COMPONENT_BUILD_ENV = $(COMPONENT_ENV)
