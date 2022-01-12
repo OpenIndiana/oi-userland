@@ -22,30 +22,48 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2014, Alexander Pyhalov. All rights reserved.
+# Copyright (c) 2022 Tim Mooney.  All rights reserved.
 #
-
+BUILD_STYLE=makemaker
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		HTTP-Date
 COMPONENT_VERSION=	6.02
 IPS_COMPONENT_VERSION=	6.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
+COMPONENT_FMRI=		library/perl-5/http-date
+COMPONENT_SUMMARY=	HTTP::Date - date conversion routines
+COMPONENT_CLASSIFICATION=Development/Perl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	http://search.cpan.org/~gaas/HTTP-Date/
+COMPONENT_PROJECT_URL=	https://metacpan.org/pod/HTTP::Date
 COMPONENT_ARCHIVE_HASH=	\
     sha256:e8b9941da0f9f0c9c01068401a5e81341f0e3707d1c754f8e11f42a7e629e333
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/G/GA/GAAS/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/O/OA/OALDERS/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	Artistic
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/makemaker.mk
-include $(WS_MAKE_RULES)/ips.mk
+# until all perl modules have been rebuilt with 5.34, each module sets
+# this manually, before including common.mk
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
 
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_TARGETS = test
+#
+# use the same results for comparison for all builds
+#
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-build:		$(BUILD_32_and_64)
+#
+# delete any lines up through test_harness
+# delete timings
+#
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/test_harness/d"' \
+	'-e "s/,  *[0-9]* wallclock.*//"'
 
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
