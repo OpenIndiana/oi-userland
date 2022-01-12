@@ -1,0 +1,42 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Klaus Ziegler
+#
+
+set name=pkg.fmri value=pkg:/runtime/clang-11@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/clang/11.0/lib/.*.so.* -> \
+	default pkg.linted.userland.action001.2 true >
+
+# runtime link, needed for new mesa library.
+link path=usr/lib/$(MACH64)/libLLVM-11.so target=../../clang/11.0/lib/libLLVM-11.so
+
+link path=usr/clang/11.0/lib/libLLVM-$(COMPONENT_VERSION).so \
+    target=libLLVM-11.so
+file path=usr/clang/11.0/lib/libLLVM-11.so
+link path=usr/clang/11.0/lib/libLLVM.so target=libLLVM-11.so
+link path=usr/clang/11.0/lib/libLTO.so target=libLTO.so.11
+file path=usr/clang/11.0/lib/libLTO.so.11
+link path=usr/clang/11.0/lib/libRemarks.so target=libRemarks.so.11
+file path=usr/clang/11.0/lib/libRemarks.so.11
+link path=usr/clang/11.0/lib/libclang-cpp.so target=libclang-cpp.so.11
+file path=usr/clang/11.0/lib/libclang-cpp.so.11
+link path=usr/clang/11.0/lib/libclang.so target=libclang.so.11
+file path=usr/clang/11.0/lib/libclang.so.11
