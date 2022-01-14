@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tox
 COMPONENT_VERSION=	3.24.4
-COMPONENT_REVISION=	1
+REQUIRED_PACKAGES += library/python/pytest-reporter
 COMPONENT_SUMMARY=	Command line driven CI frontend and development task automation tool
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -65,15 +65,24 @@ COMPONENT_TEST_TRANSFORMS += \
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Manually added test dependencies
-REQUIRED_PACKAGES += library/python/filelock
-REQUIRED_PACKAGES += library/python/flaky
-REQUIRED_PACKAGES += library/python/freezegun
-REQUIRED_PACKAGES += library/python/hypothesis
-REQUIRED_PACKAGES += library/python/pluggy
-REQUIRED_PACKAGES += library/python/py
-REQUIRED_PACKAGES += library/python/pytest
-REQUIRED_PACKAGES += library/python/pytest-benchmark
-REQUIRED_PACKAGES += library/python/pytest-reporter
+REQUIRED_PACKAGES += library/python/filelock-37
+REQUIRED_PACKAGES += library/python/filelock-39
+REQUIRED_PACKAGES += library/python/flaky-37
+REQUIRED_PACKAGES += library/python/flaky-39
+REQUIRED_PACKAGES += library/python/freezegun-37
+REQUIRED_PACKAGES += library/python/freezegun-39
+REQUIRED_PACKAGES += library/python/hypothesis-37
+REQUIRED_PACKAGES += library/python/hypothesis-39
+REQUIRED_PACKAGES += library/python/pluggy-37
+REQUIRED_PACKAGES += library/python/pluggy-39
+REQUIRED_PACKAGES += library/python/py-37
+REQUIRED_PACKAGES += library/python/py-39
+REQUIRED_PACKAGES += library/python/pytest-37
+REQUIRED_PACKAGES += library/python/pytest-39
+REQUIRED_PACKAGES += library/python/pytest-benchmark-37
+REQUIRED_PACKAGES += library/python/pytest-benchmark-39
+REQUIRED_PACKAGES += library/python/pytest-reporter-37
+REQUIRED_PACKAGES += library/python/pytest-reporter-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-37
