@@ -22,28 +22,52 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2014, Alexander Pyhalov. All rights reserved.
+# Copyright (c) 2022 Tim Mooney.  All rights reserved.
 #
 
+BUILD_STYLE=makemaker
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Net-HTTP
 COMPONENT_VERSION=	6.12
+COMPONENT_REVISION=	1
+COMPONENT_FMRI=		library/perl-5/net-http
+COMPONENT_SUMMARY=	Net::HTTP - Low-level HTTP connection (client)
+COMPONENT_CLASSIFICATION=Development/Perl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	http://search.cpan.org/~gaas/Net-HTTP/
+COMPONENT_PROJECT_URL=	https://metacpan.org/pod/Net::HTTP
 COMPONENT_ARCHIVE_HASH=	\
     sha256:8565aff76b3d09084642f3a83c654fb4ced8220e8e19d35c78b661519b4c1be6
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/O/OA/OALDERS/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/O/OA/OALDERS/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	Artistic
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/makemaker.mk
-include $(WS_MAKE_RULES)/ips.mk
+# until all perl modules have been rebuilt with 5.34, each module sets
+# this manually, before including common.mk
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
 
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_TARGETS = test
+#
+# use the same results for comparison for all builds
+#
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-build:		$(BUILD_32_and_64)
+#
+# filter out all output up to and including the test_harness line
+# filter out timing information and anything else that varies between builds
+#
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/test_harness/d"' \
+	'-e "s/,  *[0-9]* wallclock.*//"'
 
-install:	$(INSTALL_32_and_64)
+# Net::HTTP requires URI at runtime, so make certain it's installed
+# at build time for the test suite
+REQUIRED_PACKAGES += library/perl-5/uri
 
-test:		$(TEST_32_and_64)
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
