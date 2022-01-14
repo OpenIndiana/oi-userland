@@ -1,0 +1,20 @@
+
+perl 5.26 dropped '.' from the module search path (@INC), so to allow
+5.34 to find build-time code in ., add '.' to the end of the path
+in INC.
+
+diff -ur Authen-PAM-0.16.orig/Makefile.PL Authen-PAM-0.16/Makefile.PL
+--- Authen-PAM-0.16.orig/Makefile.PL	2005-06-06 08:29:12.000000000 +0000
++++ Authen-PAM-0.16/Makefile.PL	2022-01-13 23:45:25.221646510 +0000
+@@ -1,6 +1,11 @@
+ use ExtUtils::MakeMaker;
+ use Config;
+ 
++# allow perl 5.26 and later to find code relative to .
++BEGIN {
++	push @INC, '.';
++}
++
+ sub configure {
+     $ENV{'CC'} # If a compiler is not specified on the command line then
+       or $ENV{'CC'} = $Config{'cc'}; # use the one with which perl was built

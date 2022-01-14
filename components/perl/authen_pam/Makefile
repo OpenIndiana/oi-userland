@@ -19,24 +19,38 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2022 Tim Mooney.  All rights reserved.
 #
 
+BUILD_STYLE=makemaker
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Authen-PAM
 COMPONENT_VERSION=	16
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
+COMPONENT_FMRI=		library/perl-5/authen-pam
+COMPONENT_SUMMARY=	Authen::PAM - Perl interface to PAM library
+COMPONENT_CLASSIFICATION=Development/Perl
+COMPONENT_PROJECT_URL=	https://metacpan.org/pod/Authen::PAM
 COMPONENT_SRC=		$(COMPONENT_NAME)-0.16
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:0e949bd9a2a9df0f829971030fe9169cbaf6cec78b92faf22f547ff6c6155c9b
 COMPONENT_ARCHIVE_URL=	\
-    http://search.cpan.org/CPAN/authors/id/N/NI/NIKIP/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://search.cpan.org/~nikip/Authen-PAM-0.16/
+    https://cpan.metacpan.org/authors/id/N/NI/NIKIP/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	Artistic
+COMPONENT_LICENSE_FILE=	authen-pam.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/makemaker.mk
+# until all perl modules have been rebuilt with 5.34, each module sets
+# this manually, before including common.mk
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
+
+# the tests all pass, but can't all be run non-interactively
+TEST_TARGET=$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -44,19 +58,10 @@ ASLR_MODE = $(ASLR_ENABLE)
 # man pages go in the common area
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        autoconf )
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoconf )
 
-
-COMPONENT_TEST_TARGETS = test
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
