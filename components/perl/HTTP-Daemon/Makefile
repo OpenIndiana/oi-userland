@@ -22,29 +22,61 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2014, Alexander Pyhalov. All rights reserved.
+# Copyright (c) 2022 Tim Mooney.  All rights reserved.
 #
 
+BUILD_STYLE=makemaker
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		HTTP-Daemon
 COMPONENT_VERSION=	6.01
 IPS_COMPONENT_VERSION=	6.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
+COMPONENT_FMRI=		library/perl-5/http-daemon
+COMPONENT_SUMMARY=	HTTP::Daemon - a simple http server class
+COMPONENT_CLASSIFICATION=Development/Perl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	http://search.cpan.org/~gaas/HTTP-Daemon/
+COMPONENT_PROJECT_URL=	https://metacpan.org/pod/HTTP::Daemon
 COMPONENT_ARCHIVE_HASH=	\
     sha256:43fd867742701a3f9fcc7bd59838ab72c6490c0ebaf66901068ec6997514adc2
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/G/GA/GAAS/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/G/GA/GAAS/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	Artistic
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/makemaker.mk
-include $(WS_TOP)/make-rules/ips.mk
+# until all perl modules have been rebuilt with 5.34, each module sets
+# this manually, before including common.mk
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
 
-COMPONENT_TEST_TARGETS = test
+include $(WS_MAKE_RULES)/common.mk
 
-build:		$(BUILD_32_and_64)
+#
+# use the same results for comparison for all builds
+#
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-install:	$(INSTALL_32_and_64)
+#
+# filter out all output up to and including the test_harness line
+# filter out timing information and anything else that varies between builds
+#
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/test_harness/d"' \
+	'-e "s/,  *[0-9]* wallclock.*//"'
 
-test:		$(TEST_32_and_64)
+# runtime dependencies HTTP::Date, HTTP::{Request,Response,Status} (all
+# from HTTP::Message) and LWP::MediaTypes needed to run the tests
+REQUIRED_PACKAGES += library/perl-5/http-date-522
+REQUIRED_PACKAGES += library/perl-5/http-date-524
+REQUIRED_PACKAGES += library/perl-5/http-date-534
+REQUIRED_PACKAGES += library/perl-5/http-message-522
+REQUIRED_PACKAGES += library/perl-5/http-message-524
+REQUIRED_PACKAGES += library/perl-5/http-message-534
+REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes-522
+REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes-524
+REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes-534
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
