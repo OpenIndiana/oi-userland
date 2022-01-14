@@ -119,5 +119,6 @@ PACKAGE_NAMES += system/zones/brand/ipkg
 PACKAGE_NAMES += system/zones/brand/kvm
 PACKAGE_NAMES += system/zones/brand/nlipkg
 
+# Manually added dependencies
 REQUIRED_PACKAGES += developer/opensolaris/pkg5
 REQUIRED_PACKAGES += system/zones/internal
