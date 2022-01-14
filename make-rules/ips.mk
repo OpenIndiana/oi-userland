@@ -302,7 +302,7 @@ $(GENERATED).p5m:	install
 	[ ! -d $(SAMPLE_MANIFEST_DIR) ] && $(MKDIR) $(SAMPLE_MANIFEST_DIR) || true
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' -e '/^dir .*$$/d' \
+		sed -e '/^$$/d' -e '/^#.*$$/d' \
 		-e '/\.la$$/d' -e '/\.pyo$$/d' -e '/usr\/lib\/python[23]\..*\.pyc$$/d' \
 		-e '/usr\/lib\/python3\..*\/__pycache__\/.*/d'  | \
 		$(PKGFMT) | \

@@ -36,7 +36,9 @@
 <transform dir file link hardlink license -> delete pkg.size .*>
 <transform dir file link hardlink license -> delete owner .*>
 <transform dir file link hardlink license -> delete group .*>
-<transform dir file link hardlink license -> delete mode .*>
+<transform dir link hardlink license -> delete mode .*>
+# preserve mode for illumos-closed files
+<transform file path=(?!opt/onbld/closed/root_i386) -> delete mode .*>
 
 #<transform set name=pkg.fmri -> edit value "@[^ \t\n\r\f\v]*" "@$!(IPS_COMPONENT_VERSION),$!(BUILD_VERSION)">
 
@@ -109,5 +111,6 @@
 <transform dir file link hardlink -> \
 	edit target "\$!\((.*)\)" "$(\1)">
 
-<transform dir path=mangled -> drop>
-<transform dir file link hardlink path=mangled/(.*) -> drop>
+<transform file link hardlink path=mangled/(.*) -> drop>
+# drop all dirs except for illumos-closed
+<transform dir path=(?!(opt/onbld/closed/root_i386(-nd)?/)) -> drop>

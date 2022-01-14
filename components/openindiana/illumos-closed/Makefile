@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-closed
 COMPONENT_VERSION=	5.11
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	illumos-closed - illumos closed binaries
 COMPONENT_PROJECT_URL=	https://www.openindiana.org/
 COMPONENT_FMRI=		developer/illumos-closed
@@ -45,6 +45,19 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CLEAN_PATHS += $(BUILD_DIR)
+
+PKG_HARDLINKS +=	opt/onbld/closed/root_i386/etc/init.d/llc2
+PKG_HARDLINKS +=	opt/onbld/closed/root_i386/kernel/strmod/$(MACH64)/sdpib
+PKG_HARDLINKS +=	opt/onbld/closed/root_i386/kernel/strmod/sdpib
+PKG_HARDLINKS +=	opt/onbld/closed/root_i386/platform/i86pc/kernel/cpu/cpu_ms.GenuineIntel.6.46
+PKG_HARDLINKS +=	opt/onbld/closed/root_i386/platform/i86pc/kernel/cpu/$(MACH64)/cpu_ms.GenuineIntel.6.46
+PKG_HARDLINKS +=	opt/onbld/closed/root_i386/usr/xpg4/bin/alias
+PKG_HARDLINKS +=	opt/onbld/closed/root_i386-nd/etc/init.d/llc2
+PKG_HARDLINKS +=	opt/onbld/closed/root_i386-nd/kernel/drv/$(MACH64)/sdpib
+PKG_HARDLINKS +=	opt/onbld/closed/root_i386-nd/kernel/drv/sdpib
+PKG_HARDLINKS +=	opt/onbld/closed/root_i386-nd/platform/i86pc/kernel/cpu/cpu_ms.GenuineIntel.6.46
+PKG_HARDLINKS +=	opt/onbld/closed/root_i386-nd/platform/i86pc/kernel/cpu/$(MACH64)/cpu_ms.GenuineIntel.6.46
+PKG_HARDLINKS +=	opt/onbld/closed/root_i386-nd/usr/xpg4/bin/alias
 
 $(BUILD_32):
 	$(MKDIR) $(BUILD_DIR_32)
