@@ -11,31 +11,37 @@
 
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright (c) 2022 Tim Mooney.  All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 
-set name=pkg.fmri value=pkg:/runtime/perl-516/module/sun-solaris@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/runtime/perl-534/module/sun-solaris@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
     value="Perl $(PERL_VERSION) Sun::Solaris Modules"
 set name=pkg.description value="Perl Sun::Solaris Modules"
-set name=info.classification \
-    value="org.opensolaris.category.2008:Development/Perl"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_UPSTREAM_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license sun-solaris.license license='Artistic'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# force a dependency on the Perl runtime
+depend fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERL_VERSION)/bin type=require
+
+# this FMRI does not exist:
 depend fmri=library/perl/module/sun-solaris type=optional
 
-dir  path=usr/perl5
-dir  path=usr/perl5/$(PERL_VERSION)
-dir  path=usr/perl5/$(PERL_VERSION)/bin
-file mode=0555 path=usr/perl5/$(PERL_VERSION)/bin/perlgcc
-dir  path=usr/perl5/$(PERL_VERSION)/man
-dir  path=usr/perl5/$(PERL_VERSION)/man/man1
-file path=usr/perl5/$(PERL_VERSION)/man/man1/perlgcc.1
-dir  path=usr/perl5/$(PERL_VERSION)/man/man3
+#dir  path=usr/perl5
+#dir  path=usr/perl5/$(PERL_VERSION)
+#dir  path=usr/perl5/$(PERL_VERSION)/bin
+# no longer packaged since perl is built with gcc on OI
+#file mode=0555 path=usr/perl5/$(PERL_VERSION)/bin/perlgcc
+#dir  path=usr/perl5/$(PERL_VERSION)/man
+#dir  path=usr/perl5/$(PERL_VERSION)/man/man1
+#file path=usr/perl5/$(PERL_VERSION)/man/man1/perlgcc.1
+#dir  path=usr/perl5/$(PERL_VERSION)/man/man3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/Sun::Solaris::Exacct.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/Sun::Solaris::Exacct::Catalog.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/Sun::Solaris::Exacct::File.3
@@ -48,9 +54,9 @@ file path=usr/perl5/$(PERL_VERSION)/man/man3/Sun::Solaris::Privilege.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/Sun::Solaris::Project.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/Sun::Solaris::Task.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/Sun::Solaris::Ucred.3
-dir  path=usr/perl5/vendor_perl
-dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)
-dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)
+#dir  path=usr/perl5/vendor_perl
+#dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)
+#dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Sun
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Sun/Solaris
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Sun/Solaris/Exacct
@@ -66,7 +72,7 @@ file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Sun/Solaris/Project
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Sun/Solaris/Task.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Sun/Solaris/Ucred.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Sun/Solaris/Utils.pm
-dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto
+#dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/BSM
@@ -76,58 +82,61 @@ dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Ex
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/.packlist
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Catalog
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Catalog/.packlist
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Catalog/Catalog.bs
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Catalog/Catalog.so
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Exacct.bs
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Exacct.so
+# the '.bs' files are no longer installed
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Catalog/Catalog.bs
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Catalog/Catalog.so mode=0555
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Exacct.bs
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Exacct.so mode=0555
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/File
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/File/.packlist
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/File/File.bs
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/File/File.so
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/File/File.bs
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/File/File.so mode=0555
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Object
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Object/.packlist
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Object/Object.bs
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Object/Object.so
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Object/Object.bs
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Exacct/Object/Object.so mode=0555
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Intrs
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Intrs/.packlist
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Intrs/Intrs.bs
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Intrs/Intrs.so
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Intrs/Intrs.bs
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Intrs/Intrs.so mode=0555
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Kstat
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Kstat/.packlist
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Kstat/Kstat.bs
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Kstat/Kstat.so
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Kstat/Kstat.bs
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Kstat/Kstat.so mode=0555
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Lgrp
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Lgrp/.packlist
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Lgrp/Lgrp.bs
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Lgrp/Lgrp.so
-dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/PerlGcc
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/PerlGcc/.packlist
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Lgrp/Lgrp.bs
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Lgrp/Lgrp.so mode=0555
+# no longer included since we now use gcc for building perl
+#dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/PerlGcc
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/PerlGcc/.packlist
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Pg
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Pg/.packlist
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Privilege
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Privilege/.packlist
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Privilege/Privilege.bs
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Privilege/Privilege.so
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Privilege/Privilege.bs
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Privilege/Privilege.so mode=0555
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Project
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Project/.packlist
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Project/Project.bs
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Project/Project.so
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Project/Project.bs
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Project/Project.so mode=0555
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Task
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Task/.packlist
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Task/Task.bs
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Task/Task.so
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Task/Task.bs
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Task/Task.so mode=0555
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Ucred
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Ucred/.packlist
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Ucred/Ucred.bs
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Ucred/Ucred.so
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Ucred/Ucred.bs
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Ucred/Ucred.so mode=0555
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Utils
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Utils/.packlist
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Utils/Utils.bs
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Utils/Utils.so
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Utils/Utils.bs
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Sun/Solaris/Utils/Utils.so mode=0555
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/Sun
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/Sun/Solaris
 dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/Sun/Solaris/BSM
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/Sun/Solaris/BSM/_BSMparse.pm
-dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/Sun/Solaris/PerlGcc
-file path=usr/perl5/vendor_perl/$(PERL_VERSION)/Sun/Solaris/PerlGcc/Config.pm
+# no longer included since we now use gcc for building perl
+#dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/Sun/Solaris/PerlGcc
+#file path=usr/perl5/vendor_perl/$(PERL_VERSION)/Sun/Solaris/PerlGcc/Config.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/Sun/Solaris/Pg.pm
