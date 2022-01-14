@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016-2017 Predrag Zečević.  All rights reserved.
+# Copyright 2022 Nona Hansel
 #
 
 BUILD_BITS=			32
@@ -18,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		geany-plugins
 COMPONENT_VERSION=	1.38
+COMPONENT_REVISION=	1
 COMPONENT_CLASSIFICATION=	System/Text Tools
 COMPONENT_FMRI=	editor/geany/plugins
 COMPONENT_SUMMARY= 	Plugins for Geany editor
@@ -28,6 +30,8 @@ COMPONENT_ARCHIVE_HASH=	sha256:44dedf70605220d6e4094703a85c5f5a224c150cb1538b6b7
 COMPONENT_ARCHIVE_URL=	https://plugins.geany.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://plugins.geany.org/
 COMPONENT_LICENSE= GPLv2
+
+PYTHON_VERSION= 3.9
 
 COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -f)
 
@@ -40,6 +44,7 @@ CFLAGS+= $(XPG6MODE)
 CFLAGS+= -D_FILE_OFFSET_BITS=64
 
 CONFIGURE_ENV+= CHECK_CFLAGS="-I/usr/include/check"
+CONFIGURE_ENV+= PYTHON=$(PYTHON.3.9.64)
 
 # cppcheck is not packaged
 CONFIGURE_OPTIONS+= --disable-cppcheck
@@ -56,11 +61,14 @@ CONFIGURE_OPTIONS+= --disable-webhelper
 # no lipsum (www.lipsum.com) in OI yet
 CONFIGURE_OPTIONS+= --disable-lipsum
 
+# requires Python2.7, https://plugins.geany.org/geanypy.html
+CONFIGURE_OPTIONS+= --disable-geanypy
+
 # Manually added build dependencies
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/desktop/gtkspell
-REQUIRED_PACKAGES += library/python/pygobject
+REQUIRED_PACKAGES += library/python/pygobject-3-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += editor/geany
