@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest-randomly
 COMPONENT_VERSION=	3.11.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Pytest plugin to randomly order tests and control random.seed 
 COMPONENT_PROJECT_URL=	https://github.com/pytest-dev/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
