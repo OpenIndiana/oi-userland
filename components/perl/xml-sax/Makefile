@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2013, 2018, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Aurelien Larcher
+# Copyright (c) 2022 Tim Mooney.  All rights reserved.
 #
 BUILD_BITS=32_and_64
 BUILD_STYLE=makemaker
@@ -30,23 +31,29 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		XML-SAX
 COMPONENT_VERSION=	1.2
 HUMAN_VERSION=		1.02
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/perl-5/xml-sax
+COMPONENT_SUMMARY=	XML::SAX - Simple API for XML
 COMPONENT_CLASSIFICATION=Development/Perl
+COMPONENT_PROJECT_URL=	https://metacpan.org/pod/XML::SAX
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:4506c387043aa6a77b455f00f57409f3720aa7e553495ab2535263b4ed1ea12a
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/G/GR/GRANTM/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://search.cpan.org/~grantm/
+COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/G/GR/GRANTM/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	Artistic
 COMPONENT_LICENSE_FILE=	xml-sax.license
+
+# until all perl modules have been rebuilt with 5.34, each module sets
+# this manually, before including common.mk
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
 
 include $(WS_MAKE_RULES)/common.mk
 
 # man pages go in the common area
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 
-COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^PERL_DL_NONLAZY/d" ' \
@@ -55,9 +62,14 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(^Files=\).*|\1|" '
 
 # Build dependencies
-REQUIRED_PACKAGES += library/perl-5/xml-sax-base
-REQUIRED_PACKAGES += library/perl-5/xml-namespacesupport
+REQUIRED_PACKAGES += library/perl-5/xml-sax-base-522
+REQUIRED_PACKAGES += library/perl-5/xml-sax-base-524
+REQUIRED_PACKAGES += library/perl-5/xml-sax-base-534
+REQUIRED_PACKAGES += library/perl-5/xml-namespacesupport-522
+REQUIRED_PACKAGES += library/perl-5/xml-namespacesupport-524
+REQUIRED_PACKAGES += library/perl-5/xml-namespacesupport-534
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
