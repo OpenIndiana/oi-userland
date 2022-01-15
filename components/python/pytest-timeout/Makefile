@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest-timeout
 COMPONENT_VERSION=	2.0.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	This plugin will time each test and terminate it when it takes too long
 COMPONENT_PROJECT_URL=	https://github.com/pytest-dev/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

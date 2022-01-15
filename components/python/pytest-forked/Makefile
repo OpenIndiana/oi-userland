@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest-forked
 COMPONENT_VERSION=	1.4.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	run each test in a forked subprocess to survive SEGFAULTS or otherwise dying processes
 COMPONENT_PROJECT_URL=	https://github.com/pytest-dev/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
