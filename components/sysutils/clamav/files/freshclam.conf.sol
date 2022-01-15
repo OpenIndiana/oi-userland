@@ -22,7 +22,8 @@ UpdateLogFile /var/clamav/log/freshclam.log
 # Value of 0 disables the limit.
 # You may use 'M' or 'm' for megabytes (1M = 1m = 1048576 bytes)
 # and 'K' or 'k' for kilobytes (1K = 1k = 1024 bytes).
-# in bytes just don't use modifiers.
+# in bytes just don't use modifiers. If LogFileMaxSize is enabled,
+# log rotation (the LogRotate option) will always be enabled.
 # Default: 1M
 #LogFileMaxSize 2M
 LogFileMaxSize 0
@@ -44,7 +45,14 @@ LogFileMaxSize 0
 # Default: LOG_LOCAL6
 #LogFacility LOG_MAIL
 
+# Enable log rotation. Always enabled when LogFileMaxSize is enabled.
+# Default: no
+#LogRotate yes
+
 # This option allows you to save the process identifier of the daemon
+# This file will be owned by root, as long as freshclam was started by root.
+# It is recommended that the directory where this file is stored is
+# also owned by root to keep other users from tampering with it.
 # Default: disabled
 #PidFile /var/run/freshclam.pid
 PidFile /var/clamav/run/freshclam.pid
@@ -52,32 +60,22 @@ PidFile /var/clamav/run/freshclam.pid
 # By default when started freshclam drops privileges and switches to the
 # "clamav" user. This directive allows you to change the database owner.
 # Default: clamav (may depend on installation options)
-DatabaseOwner clamav
-#DatabaseOwner root
+#DatabaseOwner clamav
 
-# Initialize supplementary group access (freshclam must be started by root).
-# Default: no
-#AllowSupplementaryGroups yes
-
-# Use DNS to verify virus database version. Freshclam uses DNS TXT records
+# Use DNS to verify virus database version. FreshClam uses DNS TXT records
 # to verify database and software versions. With this directive you can change
 # the database verification domain.
 # WARNING: Do not touch it unless you're configuring freshclam to use your
 # own database verification domain.
 # Default: current.cvd.clamav.net
 #DNSDatabaseInfo current.cvd.clamav.net
-DNSDatabaseInfo current.cvd.clamav.net
 
-# Uncomment the following line and replace XY with your country
-# code. See http://www.iana.org/cctld/cctld-whois.htm for the full list.
-# You can use db.XY.ipv6.clamav.net for IPv6 connections.
-#DatabaseMirror db.XY.clamav.net
-DatabaseMirror db.uk.clamav.net
-
-# database.clamav.net is a round-robin record which points to our most 
-# reliable mirrors. It's used as a fall back in case db.XY.clamav.net is 
-# not working. DO NOT TOUCH the following line unless you know what you
-# are doing.
+# database.clamav.net is now the primary domain name to be used world-wide.
+# Now that CloudFlare is being used as our Content Delivery Network (CDN),
+# this one domain name works world-wide to direct freshclam to the closest
+# geographic endpoint.
+# If the old db.XY.clamav.net domains are set, freshclam will automatically
+# use database.clamav.net instead.
 DatabaseMirror database.clamav.net
 
 # How many attempts to make before giving up.
@@ -95,20 +93,45 @@ DatabaseMirror database.clamav.net
 # Default: no
 #CompressLocalDatabase no
 
-# With this option you can provide custom sources (http:// or file://) for
-# database files. This option can be used multiple times.
+# With this option you can provide custom sources for database files.
+# This option can be used multiple times. Support for:
+#   http(s)://, ftp(s)://, or file://
 # Default: no custom URLs
-#DatabaseCustomURL http://myserver.com/mysigs.ndb
+#DatabaseCustomURL http://myserver.example.com/mysigs.ndb
+#DatabaseCustomURL https://myserver.example.com/mysigs.ndb
+#DatabaseCustomURL https://myserver.example.com:4567/allow_list.wdb
+#DatabaseCustomURL ftp://myserver.example.com/example.ldb
+#DatabaseCustomURL ftps://myserver.example.com:4567/example.ndb
 #DatabaseCustomURL file:///mnt/nfs/local.hdb
+
+# This option allows you to easily point freshclam to private mirrors.
+# If PrivateMirror is set, freshclam does not attempt to use DNS
+# to determine whether its databases are out-of-date, instead it will
+# use the If-Modified-Since request or directly check the headers of the
+# remote database files. For each database, freshclam first attempts
+# to download the CLD file. If that fails, it tries to download the
+# CVD file. This option overrides DatabaseMirror, DNSDatabaseInfo
+# and ScriptedUpdates. It can be used multiple times to provide
+# fall-back mirrors.
+# Default: disabled
+#PrivateMirror mirror1.example.com
+#PrivateMirror mirror2.example.com
 
 # Number of database checks per day.
 # Default: 12 (every two hours)
-#Checks 24
-Checks 240
+Checks 24
 
 # Proxy settings
+# The HTTPProxyServer may be prefixed with [scheme]:// to specify which kind
+# of proxy is used.
+#   http://     HTTP Proxy. Default when no scheme or proxy type is specified.
+#   https://    HTTPS Proxy. (Added in 7.52.0 for OpenSSL, GnuTLS and NSS)
+#   socks4://   SOCKS4 Proxy.
+#   socks4a://  SOCKS4a Proxy. Proxy resolves URL hostname.
+#   socks5://   SOCKS5 Proxy.
+#   socks5h://  SOCKS5 Proxy. Proxy resolves URL hostname.
 # Default: disabled
-#HTTPProxyServer myproxy.com
+#HTTPProxyServer https://proxy.example.com
 #HTTPProxyPort 1234
 #HTTPProxyUsername myusername
 #HTTPProxyPassword mypass
@@ -116,7 +139,9 @@ Checks 240
 # If your servers are behind a firewall/proxy which applies User-Agent
 # filtering you can use this option to force the use of a different
 # User-Agent header.
-# Default: clamav/version_number
+# As of ClamAV 0.103.3, this setting may not be used when updating from the
+# clamav.net CDN and can only be used when updating from a private mirror.
+# Default: clamav/version_number (OS: ..., ARCH: ..., CPU: ..., UUID: ...)
 #HTTPUserAgent SomeUserAgentIdString
 
 # Use aaa.bbb.ccc.ddd as client address for downloading databases. Useful for
@@ -130,6 +155,7 @@ Checks 240
 NotifyClamd /etc/clamav/clamd.conf
 
 # Run command after successful database update.
+# Use EXIT_1 to return 1 after successful database update.
 # Default: disabled
 #OnUpdateExecute command
 
@@ -154,73 +180,30 @@ NotifyClamd /etc/clamav/clamd.conf
 # Default: 30
 #ConnectTimeout 60
 
-# Timeout in seconds when reading from database server.
-# Default: 30
-#ReceiveTimeout 60
+# Maximum time in seconds for each download operation. 0 means no timeout.
+# Default: 0
+#ReceiveTimeout 1800
 
-# With this option enabled, freshclam will attempt to load new
-# databases into memory to make sure they are properly handled
-# by libclamav before replacing the old ones.
+# With this option enabled, freshclam will attempt to load new databases into
+# memory to make sure they are properly handled by libclamav before replacing
+# the old ones.
+# Tip: This feature uses a lot of RAM. If your system has limited RAM and you
+# are actively running ClamD or ClamScan during the update, then you may need
+# to set `TestDatabases no`.
 # Default: yes
-#TestDatabases yes
-
-# When enabled freshclam will submit statistics to the ClamAV Project about
-# the latest virus detections in your environment. The ClamAV maintainers
-# will then use this data to determine what types of malware are the most
-# detected in the field and in what geographic area they are.
-# Freshclam will connect to clamd in order to get recent statistics.
-# Default: no
-#SubmitDetectionStats /path/to/clamd.conf
-#SubmitDetectionStats /etc/clamav/clamd.conf
-
-# Country of origin of malware/detection statistics (for statistical
-# purposes only). The statistics collector at ClamAV.net will look up
-# your IP address to determine the geographical origin of the malware
-# reported by your installation. If this installation is mainly used to
-# scan data which comes from a different location, please enable this
-# option and enter a two-letter code (see http://www.iana.org/domains/root/db/)
-# of the country of origin.
-# Default: disabled
-#DetectionStatsCountry country-code
-
-# This option enables support for our "Personal Statistics" service. 
-# When this option is enabled, the information on malware detected by
-# your clamd installation is made available to you through our website.
-# To get your HostID, log on http://www.stats.clamav.net and add a new
-# host to your host list. Once you have the HostID, uncomment this option
-# and paste the HostID here. As soon as your freshclam starts submitting
-# information to our stats collecting service, you will be able to view
-# the statistics of this clamd installation by logging into
-# http://www.stats.clamav.net with the same credentials you used to
-# generate the HostID. For more information refer to:
-# http://www.clamav.net/support/faq/faq-cctts/
-# This feature requires SubmitDetectionStats to be enabled.
-# Default: disabled
-#DetectionStatsHostID unique-id
-
-# This option enables support for Google Safe Browsing. When activated for
-# the first time, freshclam will download a new database file (safebrowsing.cvd)
-# which will be automatically loaded by clamd and clamscan during the next
-# reload, provided that the heuristic phishing detection is turned on. This
-# database includes information about websites that may be phishing sites or
-# possible sources of malware. When using this option, it's mandatory to run
-# freshclam at least every 30 minutes.
-# Freshclam uses the ClamAV's mirror infrastructure to distribute the
-# database and its updates but all the contents are provided under Google's
-# terms of use. See http://code.google.com/support/bin/answer.py?answer=70015
-# and http://safebrowsing.clamav.net for more information.
-# Default: disabled
-#SafeBrowsing yes
-SafeBrowsing Yes
+#TestDatabases no
 
 # This option enables downloading of bytecode.cvd, which includes additional
 # detection mechanisms and improvements to the ClamAV engine.
-# Default: enabled
-#Bytecode yes
+# Default: yes
+#Bytecode no
 
-# Download an additional 3rd party signature database distributed through
-# the ClamAV mirrors. Here you can find a list of available databases:
-# http://www.clamav.net/download/cvd/3rdparty
+# Include an optional signature databases (opt-in).
 # This option can be used multiple times.
 #ExtraDatabase dbname1
 #ExtraDatabase dbname2
+
+# Exclude a standard signature database (opt-out).
+# This option can be used multiple times.
+#ExcludeDatabase dbname1
+#ExcludeDatabase dbname2
