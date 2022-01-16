@@ -35,17 +35,17 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:177f9dd59861d871e27a484c3332f35a6e3f5d14626f2bf91be37891f18927f3
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/spulec/freezegun
-COMPONENT_FMRI=		library/python/freezegun
+COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	Apache 2.0
 
 PYTHON_VERSIONS=	3.7 3.9
+
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)/tests
 COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
-#COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/in [0-9]*\.[0-9]*s //"' \
 	'-n' \
@@ -56,13 +56,18 @@ COMPONENT_TEST_TRANSFORMS += \
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Manually added test dependencies
-REQUIRED_PACKAGES += library/python/flaky
-REQUIRED_PACKAGES += library/python/hypothesis
-REQUIRED_PACKAGES += library/python/pluggy
-REQUIRED_PACKAGES += library/python/py
-REQUIRED_PACKAGES += library/python/pytest
-REQUIRED_PACKAGES += library/python/pytest-benchmark
-REQUIRED_PACKAGES += library/python/pytest-reporter
+REQUIRED_PACKAGES += library/python/python-dateutil-37
+REQUIRED_PACKAGES += library/python/python-dateutil-39
+REQUIRED_PACKAGES += library/python/flaky-37
+REQUIRED_PACKAGES += library/python/flaky-39
+REQUIRED_PACKAGES += library/python/hypothesis-37
+REQUIRED_PACKAGES += library/python/hypothesis-39
+REQUIRED_PACKAGES += library/python/pytest-37
+REQUIRED_PACKAGES += library/python/pytest-39
+REQUIRED_PACKAGES += library/python/pytest-benchmark-37
+REQUIRED_PACKAGES += library/python/pytest-benchmark-39
+REQUIRED_PACKAGES += library/python/pytest-reporter-37
+REQUIRED_PACKAGES += library/python/pytest-reporter-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-37
