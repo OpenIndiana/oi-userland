@@ -1,22 +1,61 @@
 #
-# This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"), version 1.0.
-# You may only use this file in accordance with the terms of version
-# 1.0 of the CDDL.
-# A full copy of the text of the CDDL should have accompanied this
-# source.  A copy of the CDDL is also available via the Internet at
-# http://www.illumos.org/license/CDDL.
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
 
-# Copyright 2022 <contributor>
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+#
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2021 Aurelien Larcher
+# Copyright 2021 Nona Hansel
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force dependencies 
+depend type=require fmri=library/python/attrs-$(PYV)
+depend type=require fmri=library/python/iniconfig-$(PYV)
+depend type=require fmri=library/python/importlib-metadata-$(PYV)
+depend type=require fmri=library/python/packaging-$(PYV)
+depend type=require fmri=library/python/pathlib2-$(PYV)
+depend type=require fmri=library/python/pluggy-$(PYV)
+depend type=require fmri=library/python/py-$(PYV)
+depend type=require fmri=library/python/toml-$(PYV)
+
 file path=usr/bin/py.test-$(PYVER)
 file path=usr/bin/pytest-$(PYVER)
+link path=usr/bin/py.test target=py.test-$(PYVER) mediator=python3 \
+    mediator-version=$(PYVER)
+link path=usr/bin/pytest target=pytest-$(PYVER) mediator=python3 \
+    mediator-version=$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/_argcomplete.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/_code/__init__.py
@@ -60,7 +99,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/pastebin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/pathlib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/py.typed
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/pytester.py
-file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/pytester_assertions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/python.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/python_api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/recwarn.py
@@ -72,11 +110,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/skipping.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/stepwise.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/store.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/terminal.py
-file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/threadexception.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/timing.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/tmpdir.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/unittest.py
-file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/unraisableexception.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/warning_types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/warnings.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
@@ -90,3 +126,4 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pytest/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest/__main__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest/collect.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest/py.typed
+
