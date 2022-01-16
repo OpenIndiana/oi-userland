@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freezegun
 COMPONENT_VERSION=	1.1.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A library that allows your Python tests to travel through time by mocking the datetime module
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
