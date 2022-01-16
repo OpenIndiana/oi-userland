@@ -1,0 +1,47 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Friedrich Kink. All right reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=etc/clamav_mod.conf preserve=true
+file path=etc/clamav_mod.conf.default
+file path=etc/clamd_mod.conf preserve=true
+file path=etc/clamd_mod.conf.default
+file path=etc/srv_content_filtering.conf.default
+file path=etc/srv_url_check.conf
+file path=etc/srv_url_check.conf.default
+file path=etc/virus_scan.conf
+file path=etc/virus_scan.conf.default
+file path=usr/bin/c-icap-mods-sguardDB
+file path=usr/lib/$(MACH64)/c_icap/clamav_mod.so
+file path=usr/lib/$(MACH64)/c_icap/clamd_mod.so
+file path=usr/lib/$(MACH64)/c_icap/srv_content_filtering.so
+file path=usr/lib/$(MACH64)/c_icap/srv_url_check.so
+file path=usr/lib/$(MACH64)/c_icap/virus_scan.so
+file path=usr/share/c_icap/templates/srv_content_filtering/en/BLOCK
+file path=usr/share/c_icap/templates/srv_url_check/en/DENY
+file path=usr/share/c_icap/templates/virus_scan/en/VIRUS_FOUND
+file path=usr/share/c_icap/templates/virus_scan/en/VIR_MODE_HEAD
+file path=usr/share/c_icap/templates/virus_scan/en/VIR_MODE_PROGRESS
+file path=usr/share/c_icap/templates/virus_scan/en/VIR_MODE_TAIL
+file path=usr/share/c_icap/templates/virus_scan/en/VIR_MODE_VIRUS_FOUND
+file path=usr/share/man/man8/c-icap-mods-sguardDB.8
