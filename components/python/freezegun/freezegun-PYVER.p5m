@@ -7,7 +7,7 @@
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 
-# Copyright 2021 Andreas Wacknitz
+# Copyright 2021, 2022 Andreas Wacknitz
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
@@ -19,8 +19,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # Force a dependency on the filelock package:
-depend fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    type=require
+depend type=require fmri=library/python/filelock-$(PYV)
+depend type=require fmri=library/python/date-util-$(PYV)
 
 # Force a dependency on the appropriate python runtime:
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
