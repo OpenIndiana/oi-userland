@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xmlschema
 COMPONENT_VERSION=      1.9.2
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		The xmlschema library is an implementation of XML Schema for Python
 COMPONENT_PROJECT_URL=  https://pypi.org/project/xmlschema/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
