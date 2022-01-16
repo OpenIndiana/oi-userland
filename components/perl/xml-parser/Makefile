@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2022 TIm Mooney.  All rights reserved.
 #
 
 #
@@ -27,22 +28,31 @@
 # with an incorrect version number.
 #
 
+BUILD_STYLE=makemaker
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		XML-Parser
 COMPONENT_VERSION=	2.44
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
+COMPONENT_FMRI=		library/perl-5/xml-parser
+COMPONENT_SUMMARY=	XML::Parser - A perl module for parsing XML documents
+COMPONENT_CLASSIFICATION=Development/Perl
+COMPONENT_PROJECT_URL=	https://metacpan.org/pod/XML::Parser
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1ae9d07ee9c35326b3d9aad56eae71a6730a73a116b9fe9e8a4758b7cc033216
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/T/TO/TODDR/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://search.cpan.org/~toddr/
-COMPONENT_BUGDB=	perl-mod/xml-parser
+COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/T/TO/TODDR/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	Artistic
+COMPONENT_LICENSE_FILE=	xml-parser.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/makemaker.mk
+# until all perl modules have been rebuilt with 5.34, each module sets
+# this manually, before including common.mk
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
+
+include $(WS_MAKE_RULES)/common.mk
 
 # Enable ASLR for this component
 #ASLR_MODE = $(ASLR_ENABLE)
@@ -50,16 +60,28 @@ include $(WS_TOP)/make-rules/makemaker.mk
 # man pages go in the common area
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 
-COMPONENT_TEST_TARGETS = test
+#
+# use the same results for comparison for all builds
+#
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-build:		$(BUILD_32_and_64)
+#
+# filter out all output up to and including the test_harness line
+# filter out timing information and anything else that varies between builds
+#
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/test_harness/d"' \
+	'-e "s/,  *[0-9]* wallclock.*//"'
 
-install:	$(INSTALL_32_and_64)
+# runtime dependency on LWP::UserAgent (from libwww-perl) needed for the
+# test suite
+REQUIRED_PACKAGES += library/perl-5/libwww-perl-522
+REQUIRED_PACKAGES += library/perl-5/libwww-perl-524
+REQUIRED_PACKAGES += library/perl-5/libwww-perl-534
 
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
