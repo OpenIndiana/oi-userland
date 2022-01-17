@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		build-essential
 COMPONENT_VERSION=	1.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A meta-package that installs common development tools such as gcc
 COMPONENT_CLASSIFICATION=	Meta Packages/Group Packages
 COMPONENT_FMRI=	metapackages/build-essential
