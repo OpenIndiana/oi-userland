@@ -25,13 +25,13 @@ include ../../../make-rules/shared-macros.mk
 ESR = esr
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	91.4.1
+COMPONENT_VERSION =	91.5.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:75e98daf53c5aea19d711a625d5d5e6dfdc8335965d3a19567c62f9d2961fc75
+COMPONENT_ARCHIVE_HASH= sha256:f45cd9c96227e3e6eabe37962ce924b7a7ca86b6c191326c1bab18e082b4c813
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -40,6 +40,8 @@ endif
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
+
+RUST_VERSION = 1.51.0
 
 LANG_LIST= ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA en-GB \
  en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb \
@@ -148,8 +150,8 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
 	curl https://sh.rustup.rs -sSf | bash -s -- -y --no-modify-path; \
 	source $(CARGO_HOME)/env; \
-	rustup install 1.51.0; \
-	rustup default 1.51.0-x86_64-unknown-illumos; \
+	rustup install $(RUST_VERSION); \
+	rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
 	rustup show; \
 	cargo install --root=$(CARGO_HOME) cbindgen; \
 	);
