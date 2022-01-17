@@ -17,6 +17,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Add runtime dependencies
+$(PYTHON_2.7_EXCL)depend type=require fmri=library/python/pyparsing-$(PYV)
+
 file path=usr/lib/python$(PYVER)/vendor-packages/packaging-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/packaging-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/packaging-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
@@ -34,7 +41,3 @@ file path=usr/lib/python$(PYVER)/vendor-packages/packaging/specifiers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/packaging/tags.py
 file path=usr/lib/python$(PYVER)/vendor-packages/packaging/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/packaging/version.py
-
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
