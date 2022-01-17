@@ -15,17 +15,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flexi-streams
-COMPONENT_VERSION=	1.0.15
-COMPONENT_PROJECT_URL=	http://weitz.de/flexi-streams/
-COMPONENT_FMRI=		library/common-lisp/flexi-streams
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:f70c76e1724978100e26d9e0e0a0844939cde084b0d7f5623f1adbc8cb187d7e
-COMPONENT_ARCHIVE_URL=	http://weitz.de/files/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	BSD-style
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+COMPONENT_VERSION=	1.0.19
 COMPONENT_SUMMARY=	FLEXI-STREAMS implements "virtual" bivalent streams
+COMPONENT_PROJECT_URL=	http://weitz.de/flexi-streams/
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:5e0d4cfa66496ec0ddd501de1d4c19c1d99232ee601d82dce9ef4585f2b47b29
+COMPONENT_ARCHIVE_URL=	https://github.com/edicl/flexi-streams/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=
+COMPONENT_CLASSIFICATION=	Development/Other Languages
+COMPONENT_FMRI=		library/common-lisp/flexi-streams
+COMPONENT_LICENSE=	BSD-style
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/common-lisp.mk
