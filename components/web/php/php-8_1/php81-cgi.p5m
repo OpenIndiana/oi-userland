@@ -1,0 +1,31 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 EveryCity Ltd. All rights reserved.
+# Copyright 2022 Friedrich Kink. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)/php-cgi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="PHP Server 8.1 (cgi/fastcgi)"
+set name=info.classification value=org.opensolaris.category.2008:Development/PHP
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+link path=usr/bin/php-cgi target=../php/8.1/bin/php-cgi mediator=php \
+    mediator-version=8.1
+file path=usr/php/8.1/bin/php-cgi
+file path=usr/php/8.1/share/man/man1/php-cgi.1
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend type=require fmri=pkg:/$(COMPONENT_FMRI)/php-common
