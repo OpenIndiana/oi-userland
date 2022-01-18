@@ -1,0 +1,12 @@
+# see https://bugs.php.net/bug.php?id=81658
+--- php-8.1.1/ext/mysqli/mysqli_nonapi.c	2021-12-15 03:00:45.000000000 +0000
++++ php-8.1.1/ext/mysqli/mysqli_nonapi.c.new	2022-01-18 14:02:57.200093299 +0000
+@@ -333,7 +333,7 @@
+ 	unsigned int allow_local_infile = MyG(allow_local_infile);
+ 	mysql_options(mysql->mysql, MYSQL_OPT_LOCAL_INFILE, (char *)&allow_local_infile);
+ 
+-#if MYSQL_VERSION_ID >= 80021 || defined(MYSQLI_USE_MYSQLND)
++#if (MYSQL_VERSION_ID >= 80021 && !defined(MARIADB_BASE_VERSION)) || defined(MYSQLI_USE_MYSQLND)
+ 	if (MyG(local_infile_directory) && !php_check_open_basedir(MyG(local_infile_directory))) {
+ 		mysql_options(mysql->mysql, MYSQL_OPT_LOAD_DATA_LOCAL_DIR, MyG(local_infile_directory));
+ 	}
