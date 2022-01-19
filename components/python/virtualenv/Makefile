@@ -18,14 +18,14 @@ BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		virtualenv
-COMPONENT_VERSION=	20.10.0
+COMPONENT_VERSION=	20.13.0
 COMPONENT_FMRI=		library/python/virtualenv
 COMPONENT_SUMMARY=	A tool to create isolated Python environments
 COMPONENT_PROJECT_URL=	https://virtualenv.pypa.io/en/latest/
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:576d05b46eace16a9c348085f7d0dc8ef28713a2cabaa1cf0aea41e8f12c9218
+COMPONENT_ARCHIVE_HASH= sha256:d8458cf8d59d0ea495ad9b34c2599487f8a7772d796f9910858376d1600dd2dd
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_LICENSE=	MIT
 
@@ -44,6 +44,43 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 COMPONENT_POST_INSTALL_ACTION += \
         (cd $(PROTOUSRBINDIR); $(MV) virtualenv virtualenv-$(PYTHON_VERSION)) ;
+
+# Manually added test dependencies
+# Note that we still missing some test dependencies and have many failing tests.
+REQUIRED_PACKAGES += library/python/coverage-35
+REQUIRED_PACKAGES += library/python/coverage-37
+REQUIRED_PACKAGES += library/python/coverage-39
+#REQUIRED_PACKAGES += library/python/coverage-enable-subprocess-35
+#REQUIRED_PACKAGES += library/python/coverage-enable-subprocess-37
+#REQUIRED_PACKAGES += library/python/coverage-enable-subprocess-39
+REQUIRED_PACKAGES += library/python/flaky-35
+REQUIRED_PACKAGES += library/python/flaky-37
+REQUIRED_PACKAGES += library/python/flaky-39
+#REQUIRED_PACKAGES += library/python/freezegun-35
+REQUIRED_PACKAGES += library/python/freezegun-37
+REQUIRED_PACKAGES += library/python/freezegun-39
+REQUIRED_PACKAGES += library/python/packaging-35
+REQUIRED_PACKAGES += library/python/packaging-37
+REQUIRED_PACKAGES += library/python/packaging-39
+REQUIRED_PACKAGES += library/python/pytest-35
+REQUIRED_PACKAGES += library/python/pytest-37
+REQUIRED_PACKAGES += library/python/pytest-39
+#REQUIRED_PACKAGES += library/python/pytest-env-35
+#REQUIRED_PACKAGES += library/python/pytest-env-37
+#REQUIRED_PACKAGES += library/python/pytest-env-39
+#REQUIRED_PACKAGES += library/python/pytest-mock-35
+REQUIRED_PACKAGES += library/python/pytest-mock-37
+REQUIRED_PACKAGES += library/python/pytest-mock-39
+#REQUIRED_PACKAGES += library/python/pytest-randomly-35
+REQUIRED_PACKAGES += library/python/pytest-randomly-37
+REQUIRED_PACKAGES += library/python/pytest-randomly-39
+#REQUIRED_PACKAGES += library/python/pytest-timeout-35
+REQUIRED_PACKAGES += library/python/pytest-timeout-37
+REQUIRED_PACKAGES += library/python/pytest-timeout-39
+REQUIRED_PACKAGES += library/python/tox-39
+#REQUIRED_PACKAGES += library/python/wheel-35
+REQUIRED_PACKAGES += library/python/wheel-37
+REQUIRED_PACKAGES += library/python/wheel-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-35

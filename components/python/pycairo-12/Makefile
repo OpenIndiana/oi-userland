@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		pycairo
 # This version supports python 3.6+
 COMPONENT_VERSION=	1.20.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Python bindings for Cairo
 COMPONENT_PROJECT_URL=	http://www.cairographics.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -50,7 +51,7 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTOUSRINCDIR)/pycairo; $(MV) py3cairo.h py3cairo.h-$(PYTHON_VERSION)) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTOUSRLIBDIR)/pkgconfig; $(MV) py3cairo.pc py3cairo.pc-$(PYTHON_VERSION)) ;
+	(cd $(PROTOUSRLIBDIR)/pkgconfig; $(MKDIR) ../$(MACH64)/pkgconfig; $(MV) py3cairo.pc ../$(MACH64)/pkgconfig/py3cairo.pc-$(PYTHON_VERSION)) ;
 
 # Tests require packages: pytest py pluggy benchmark
 COMPONENT_TEST_DIR=	$(COMPONENT_SRC)

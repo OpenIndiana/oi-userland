@@ -12,19 +12,19 @@
 # Copyright 2014 Ken Mays. All rights reserved.
 # Copyright 2016 Adam Stevko. All rights reserved.
 # Copyright 2019 Michal Nowak
-# Copyright 2020, 2021 Andreas Wacknitz
+# Copyright 2020, 2022 Andreas Wacknitz
 #
 
 BUILD_BITS=			32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iso-codes
-COMPONENT_VERSION=	4.8.0
+COMPONENT_VERSION=	4.9.0
 COMPONENT_FMRI=		data/iso-codes
 COMPONENT_SUMMARY=	ISO code lists and translations
 COMPONENT_SRC=		$(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:8d33be26726d78a39e0b808f03c07079ddbaedfe2502fee275c3aa86b6ad0832
+COMPONENT_ARCHIVE_HASH= sha256:d60541cf1b3acceeef625a4d05f673aff5f22fbe28186e61911357b245c66411
 COMPONENT_PROJECT_URL=	https://salsa.debian.org/iso-codes-team/iso-codes
 COMPONENT_ARCHIVE_URL=	https://salsa.debian.org/iso-codes-team/$(COMPONENT_NAME)/-/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1

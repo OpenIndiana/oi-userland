@@ -31,18 +31,13 @@ MilterSocket inet:7357
 # Remove stale socket after unclean shutdown.
 #
 # Default: yes
-FixStaleSocket yes
+#FixStaleSocket yes
 
-# Run as another user (clamav-milter must be started by root for this option to work)
+# Run as another user (clamav-milter must be started by root for this option
+# to work)
 #
 # Default: unset (don't drop privileges)
 User clamav
-# User root
-
-# Initialize supplementary group access (clamav-milter must be started by root).
-#
-# Default: no
-#AllowSupplementaryGroups no
 
 # Waiting for data from clamd will timeout after this time (seconds).
 # Value of 0 disables the timeout.
@@ -56,15 +51,20 @@ User clamav
 #Foreground yes
 
 # Chroot to the specified directory.
-# Chrooting is performed just after reading the config file and before dropping privileges.
+# Chrooting is performed just after reading the config file and before
+# dropping privileges.
 #
 # Default: unset (don't chroot)
 #Chroot /newroot
 
 # This option allows you to save a process identifier of the listening
 # daemon (main thread).
+# This file will be owned by root, as long as clamav-milter was started by
+# root.  It is recommended that the directory where this file is stored is
+# also owned by root to keep other users from tampering with it.
 #
 # Default: disabled
+#PidFile /var/run/clamav-milter.pid
 PidFile /var/clamav/run/clamav-milter.pid
 
 # Optional path to the global temporary directory.
@@ -89,11 +89,13 @@ TemporaryDirectory /tmp
 #     ClamdSocket tcp:192.168.0.1
 #
 # This option can be repeated several times with different sockets or even
-# with the same socket: clamd servers will be selected in a round-robin fashion.
+# with the same socket: clamd servers will be selected in a round-robin
+# fashion.
 #
 # Default: no default
 #ClamdSocket tcp:scanner.mydomain:7357
 ClamdSocket unix:/var/clamav/run/clamd.sock
+
 
 ##
 ## Exclusions
@@ -102,7 +104,7 @@ ClamdSocket unix:/var/clamav/run/clamd.sock
 # Messages originating from these hosts/networks will not be scanned
 # This option takes a host(name)/mask pair in CIRD notation and can be
 # repeated several times. If "/mask" is omitted, a host is assumed.
-# To specify a locally orignated, non-smtp, email use the keyword "local"
+# To specify a locally originated, non-smtp, email use the keyword "local"
 #
 # Default: unset (scan everything regardless of the origin)
 #LocalNet local
@@ -112,23 +114,23 @@ ClamdSocket unix:/var/clamav/run/clamd.sock
 # This option specifies a file which contains a list of basic POSIX regular
 # expressions. Addresses (sent to or from - see below) matching these regexes
 # will not be scanned.  Optionally each line can start with the string "From:"
-# or "To:" (note: no whitespace after the colon) indicating if it is, 
-# respectively, the sender or recipient that is to be whitelisted.
+# or "To:" (note: no whitespace after the colon) indicating if it is,
+# respectively, the sender or recipient that is to be allowed.
 # If the field is missing, "To:" is assumed.
 # Lines starting with #, : or ! are ignored.
 #
 # Default unset (no exclusion applied)
-#Whitelist /etc/clamav/whitelisted_addresses
+#AllowList /etc/allowed_addresses
 
 # Messages from authenticated SMTP users matching this extended POSIX
 # regular expression (egrep-like) will not be scanned.
 # As an alternative, a file containing a plain (not regex) list of names (one
 # per line) can be specified using the prefix "file:".
-# e.g. SkipAuthenticated file:/etc/clamav/good_guys
+# e.g. SkipAuthenticated file:/etc/good_guys
 #
 # Note: this is the AUTH login name!
 #
-# Default: unset (no whitelisting based on SMTP auth)
+# Default: unset (no allowing based on SMTP auth)
 #SkipAuthenticated ^(tom|dick|henry)$
 
 # Messages larger than this value won't be scanned.
@@ -136,20 +138,19 @@ ClamdSocket unix:/var/clamav/run/clamd.sock
 #
 # Default: 25M
 #MaxFileSize 10M
-MaxFileSize 25M
 
 
 ##
 ## Actions
 ##
 
-# The following group of options controls the delievery process under
+# The following group of options controls the delivery process under
 # different circumstances.
 # The following actions are available:
 # - Accept
-#   The message is accepted for delievery
+#   The message is accepted for delivery
 # - Reject
-#   Immediately refuse delievery (a 5xx error is returned to the peer)
+#   Immediately refuse delivery (a 5xx error is returned to the peer)
 # - Defer
 #   Return a temporary failure message (4xx) to the peer
 # - Blackhole (not available for OnFail)
@@ -159,7 +160,7 @@ MaxFileSize 25M
 #
 # NOTE: In Sendmail the quarantine queue can be examined via mailq -qQ
 # For Postfix this causes the message to be placed on hold
-# 
+#
 # Action to be performed on clean messages (mostly useful for testing)
 # Default: Accept
 #OnClean Accept
@@ -178,7 +179,7 @@ MaxFileSize 25M
 # and it's therefore only useful together with "OnInfected Reject"
 # The string "%v", if present, will be replaced with the virus name.
 # Default: MTA specific
-#RejectMsg 
+#RejectMsg
 
 # If this option is set to "Replace" (or "Yes"), an "X-Virus-Scanned" and an
 # "X-Virus-Status" headers will be attached to each processed message, possibly
@@ -197,15 +198,16 @@ AddHeader Add
 # Default: disabled
 #ReportHostname my.mail.server.name
 
-# Execute a command (possibly searching PATH) when an infected message is found.
+# Execute a command (possibly searching PATH) when an infected message is
+# found.
 # The following parameters are passed to the invoked program in this order:
 # virus name, queue id, sender, destination, subject, message id, message date.
 # Note #1: this requires MTA macroes to be available (see LogInfected below)
 # Note #2: the process is invoked in the context of clamav-milter
 # Note #3: clamav-milter will wait for the process to exit. Be quick or fork to
-# avoid unnecessary delays in email delievery
+# avoid unnecessary delays in email delivery
 # Default: disabled
-#VirusAction /usr/bin/my_infected_message_handler
+#VirusAction /usr/local/bin/my_infected_message_handler
 
 ##
 ## Logging options
@@ -230,10 +232,11 @@ LogFile /var/clamav/log/clamav-milter.log
 # Value of 0 disables the limit.
 # You may use 'M' or 'm' for megabytes (1M = 1m = 1048576 bytes)
 # and 'K' or 'k' for kilobytes (1K = 1k = 1024 bytes). To specify the size
-# in bytes just don't use modifiers.
+# in bytes just don't use modifiers. If LogFileMaxSize is enabled, log
+# rotation (the LogRotate option) will always be enabled.
 #
 # Default: 1M
-LogFileMaxSize 0
+LogFileMaxSize 2M
 
 # Log time with each message.
 #
@@ -256,6 +259,10 @@ LogSyslog yes
 # Default: no
 LogVerbose yes
 
+# Enable log rotation. Always enabled when LogFileMaxSize is enabled.
+# Default: no
+#LogRotate yes
+
 # This option allows to tune what is logged when a message is infected.
 # Possible values are Off (the default - nothing is logged),
 # Basic (minimal info logged), Full (verbose info logged)
@@ -270,9 +277,25 @@ LogVerbose yes
 # Default: disabled
 LogInfected Basic
 
-# This option allows to tune what is logged when no threat is found in a scanned message.
+# This option allows to tune what is logged when no threat is found in
+# a scanned message.
 # See LogInfected for possible values and caveats.
 # Useful in debugging but drastically increases the log size.
 # Default: disabled
 #LogClean Basic
 
+# This option affects the behaviour of LogInfected, LogClean and VirusAction
+# when a message with multiple recipients is scanned:
+# If SupportMultipleRecipients is off (the default)
+# then one single log entry is generated for the message and, in case the
+# message is determined to be malicious, the command indicated by VirusAction
+# is executed just once. In both cases only the last recipient is reported.
+# If SupportMultipleRecipients is on:
+# then one line is logged for each recipient and the command indicated
+# by VirusAction is also executed once for each recipient.
+#
+# Note: although it's probably a good idea to enable this option, the default
+# value
+# is currently set to off for legacy reasons.
+# Default: no
+#SupportMultipleRecipients yes

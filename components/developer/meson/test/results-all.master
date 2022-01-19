@@ -24,6 +24,7 @@ test_mode_symbolic_to_bits (unittests.internaltests.InternalTests) ... ok
 test_msvc_toolset_version (unittests.internaltests.InternalTests)
 Ensure that the toolset version returns the correct value for this MSVC ... skipped 'Test only applies to MSVC-like compilers'
 test_needs_exe_wrapper_override (unittests.internaltests.InternalTests) ... ok
+test_option_key_from_string (unittests.internaltests.InternalTests) ... ok
 test_pkgconfig_parse_libs (unittests.internaltests.InternalTests)
 Unit test for parsing of pkg-config output to search for libraries ... ok
 test_quote_arg (unittests.internaltests.InternalTests) ... ok
@@ -129,7 +130,7 @@ test_cross_file_constants (unittests.allplatformstests.AllPlatformTests) ... ok
 test_custom_target_changes_cause_rebuild (unittests.allplatformstests.AllPlatformTests)
 Test that in a custom target, changes to the input files, the ... ok
 test_custom_target_exe_data_deterministic (unittests.allplatformstests.AllPlatformTests) ... ok
-test_custom_target_implicit_include (unittests.allplatformstests.AllPlatformTests) ... ok
+test_custom_target_implicit_include (unittests.allplatformstests.AllPlatformTests) ... ERROR
 test_custom_target_name (unittests.allplatformstests.AllPlatformTests) ... ok
 test_dash_d_dedup (unittests.allplatformstests.AllPlatformTests) ... ok
 test_default_options_prefix (unittests.allplatformstests.AllPlatformTests)
@@ -156,9 +157,9 @@ test_free_stringarray_setting (unittests.allplatformstests.AllPlatformTests) ...
 test_guessed_linker_dependencies (unittests.allplatformstests.AllPlatformTests)
 Test that meson adds dependencies for libraries based on the final ... ok
 test_identical_target_name_in_subdir_flat_layout (unittests.allplatformstests.AllPlatformTests)
-Test that identical targets in different subdirs do not collide ... ok
+Test that identical targets in different subdirs do not collide ... ERROR
 test_identical_target_name_in_subproject_flat_layout (unittests.allplatformstests.AllPlatformTests)
-Test that identical targets in different subprojects do not collide ... ok
+Test that identical targets in different subprojects do not collide ... ERROR
 test_identity_cross (unittests.allplatformstests.AllPlatformTests) ... ok
 test_implicit_forcefallback (unittests.allplatformstests.AllPlatformTests) ... ok
 test_install_introspection (unittests.allplatformstests.AllPlatformTests)
@@ -218,8 +219,12 @@ test_pkgconfig_gen_escaping (unittests.allplatformstests.AllPlatformTests) ... o
 test_pkgconfig_static (unittests.allplatformstests.AllPlatformTests)
 Test that the we prefer static libraries when `static: true` is ... ok
 test_prebuilt_object (unittests.allplatformstests.AllPlatformTests) ... ok
-test_prebuilt_shared_lib (unittests.allplatformstests.AllPlatformTests) ... ok
-test_prebuilt_shared_lib_rpath (unittests.allplatformstests.AllPlatformTests) ... ok
+test_prebuilt_shared_lib (unittests.allplatformstests.AllPlatformTests) ... ERROR
+FAILED: prog 
+FAILED: prog2 
+FAILED: meson-out/prog 
+FAILED: meson-out/prog 
+test_prebuilt_shared_lib_rpath (unittests.allplatformstests.AllPlatformTests) ... ERROR
 test_prebuilt_static_lib (unittests.allplatformstests.AllPlatformTests) ... ok
 test_prefix_dependent_defaults (unittests.allplatformstests.AllPlatformTests)
 Tests that configured directory paths are set to prefix dependent ... ok
@@ -228,6 +233,10 @@ Test that preprocessor compiler checks read CPPFLAGS and also CFLAGS but ... ok
 test_reconfigure (unittests.allplatformstests.AllPlatformTests) ... ok
 test_rpath_uses_ORIGIN (unittests.allplatformstests.AllPlatformTests)
 Test that built targets use $ORIGIN in rpath, which ensures that they ... FAIL
+FAILED: rejected 
+FAILED: rejected_whole 
+FAILED: rejected 
+FAILED: rejected_whole 
 test_run_target_files_path (unittests.allplatformstests.AllPlatformTests)
 Test that run_targets are run from the correct directory ... ok
 test_run_target_subdir (unittests.allplatformstests.AllPlatformTests)
@@ -248,10 +257,11 @@ test_spurious_reconfigure_built_dep_file (unittests.allplatformstests.AllPlatfor
 test_static_compile_order (unittests.allplatformstests.AllPlatformTests)
 Test that the order of files in a compiler command-line while compiling ... ok
 test_static_library_lto (unittests.allplatformstests.AllPlatformTests)
-Test that static libraries can be built with LTO and linked to ... ok
+Test that static libraries can be built with LTO and linked to ... ERROR
 test_static_library_overwrite (unittests.allplatformstests.AllPlatformTests)
 Tests that static libraries are never appended to, always overwritten. ... ok
-test_subproject_promotion (unittests.allplatformstests.AllPlatformTests) ... ok
+test_subproject_promotion (unittests.allplatformstests.AllPlatformTests) ... ERROR
+FAILED: prog 
 test_subproject_promotion_wrap (unittests.allplatformstests.AllPlatformTests) ... ok
 test_suite_selection (unittests.allplatformstests.AllPlatformTests) ... ok
 test_summary (unittests.allplatformstests.AllPlatformTests) ... ok
@@ -306,6 +316,8 @@ test_wrap_nofallback (unittests.failuretests.FailureTests) ... ok
 test_wx_dependency (unittests.failuretests.FailureTests) ... ok
 test_wx_notfound_dependency (unittests.failuretests.FailureTests) ... skipped 'wx-config, wx-config-3.0 or wx-config-gtk3 found'
 test_versions (unittests.pythontests.PythonTests) ... ERROR
+FAILED: subprojects/s2/s2 
+FAILED: subprojects/s1/s1 
 test_builtin_options (unittests.machinefiletests.NativeFileTests) ... ok
 test_builtin_options_compiler_properties (unittests.machinefiletests.NativeFileTests) ... ok
 test_builtin_options_compiler_properties_legacy (unittests.machinefiletests.NativeFileTests) ... ok
@@ -353,10 +365,12 @@ test_kwargs_info (unittests.rewritetests.RewriterTests) ... ok
 test_kwargs_remove (unittests.rewritetests.RewriterTests) ... ok
 test_kwargs_remove_regex (unittests.rewritetests.RewriterTests) ... ok
 test_kwargs_set (unittests.rewritetests.RewriterTests) ... ok
+test_target_add_extra_files (unittests.rewritetests.RewriterTests) ... ok
 test_target_add_sources (unittests.rewritetests.RewriterTests) ... ok
 test_target_add_sources_abs (unittests.rewritetests.RewriterTests) ... ok
 test_target_add_subdir (unittests.rewritetests.RewriterTests) ... ok
 test_target_remove (unittests.rewritetests.RewriterTests) ... ok
+test_target_remove_extra_files (unittests.rewritetests.RewriterTests) ... ok
 test_target_remove_sources (unittests.rewritetests.RewriterTests) ... ok
 test_target_remove_subdir (unittests.rewritetests.RewriterTests) ... ok
 test_target_same_name_skip (unittests.rewritetests.RewriterTests) ... ok
@@ -438,7 +452,9 @@ test_deterministic_dep_order (unittests.linuxliketests.LinuxlikeTests)
 Test that the dependencies are always listed in a deterministic order. ... ok
 test_deterministic_rpath_order (unittests.linuxliketests.LinuxlikeTests)
 Test that the rpaths are always listed in a deterministic order. ... ok
-test_generate_gir_with_address_sanitizer (unittests.linuxliketests.LinuxlikeTests) ... skipped 'Project requested skipping: $(SOURCE_DIR)/test cases/frameworks/7 gnome'
+test_generate_gir_with_address_sanitizer (unittests.linuxliketests.LinuxlikeTests) ... ERROR
+FAILED: gir/dep1/dep3/MesonDep3-1.0.gir 
+FAILED: gir/dep1/dep2/MesonDep2-1.0.gir 
 test_global_rpath (unittests.linuxliketests.LinuxlikeTests) ... FAIL
 test_identity_cross (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_identity_cross_env (unittests.linuxliketests.LinuxlikeTests) ... ok
@@ -453,7 +469,7 @@ test_installed_modes_extended (unittests.linuxliketests.LinuxlikeTests)
 Test that files are installed with correct permissions using install_mode. ... FAIL
 test_installed_soname (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_introspect_dependencies (unittests.linuxliketests.LinuxlikeTests)
-Tests that mesonintrospect --dependencies returns expected output. ... skipped 'Project requested skipping: $(SOURCE_DIR)/test cases/frameworks/7 gnome'
+Tests that mesonintrospect --dependencies returns expected output. ... ok
 test_introspect_installed (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_ld_environment_variable_bfd (unittests.linuxliketests.LinuxlikeTests) ... skipped 'Solaris currently cannot override the linker.'
 test_ld_environment_variable_cpp (unittests.linuxliketests.LinuxlikeTests) ... skipped 'Solaris currently cannot override the linker.'
@@ -468,10 +484,10 @@ test_ldflag_dedup (unittests.linuxliketests.LinuxlikeTests) ... skipped 'Not app
 test_link_arg_fullname (unittests.linuxliketests.LinuxlikeTests)
 Test for  support of -l:libfullname.a ... ok
 test_lookup_system_after_broken_fallback (unittests.linuxliketests.LinuxlikeTests) ... ok
-test_no_rpath_for_static (unittests.linuxliketests.LinuxlikeTests) ... FAIL
+test_no_rpath_for_static (unittests.linuxliketests.LinuxlikeTests) ... ERROR
 test_noncross_options (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_old_gnome_module_codepaths (unittests.linuxliketests.LinuxlikeTests)
-A lot of code in the GNOME module is conditional on the version of the ... skipped 'Project requested skipping.'
+A lot of code in the GNOME module is conditional on the version of the ... ok
 test_order_of_l_arguments (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_override_with_exe_dep (unittests.linuxliketests.LinuxlikeTests)
 Test that we produce the correct dependencies when a program is overridden with an executable. ... ok
@@ -491,15 +507,18 @@ test_pkgconfig_link_order (unittests.linuxliketests.LinuxlikeTests)
 Test that libraries are listed before their dependencies. ... ok
 test_pkgconfig_relative_paths (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_pkgconfig_uninstalled (unittests.linuxliketests.LinuxlikeTests) ... ok
-test_pkgconfig_usage (unittests.linuxliketests.LinuxlikeTests) ... ok
-test_prelinking (unittests.linuxliketests.LinuxlikeTests) ... ok
+test_pkgconfig_usage (unittests.linuxliketests.LinuxlikeTests) ... ERROR
+test cases/common/190 install_mode/meson.build:27: WARNING: The variable(s) 'empty' in the input file 'config.h.in' are not present in the given configuration data.
+FAILED: prog 
+test_prelinking (unittests.linuxliketests.LinuxlikeTests) ... ERROR
 test_qt5dependency_qmake_detection (unittests.linuxliketests.LinuxlikeTests)
 Test that qt5 detection with qmake works. This can't be an ordinary ... ok
 test_qt6dependency_qmake_detection (unittests.linuxliketests.LinuxlikeTests)
 Test that qt6 detection with qmake works. This can't be an ordinary ... skipped 'Qmake found, but it is not for Qt 6.'
 test_qtdependency_pkgconfig_detection (unittests.linuxliketests.LinuxlikeTests)
 Test that qt4 and qt5 detection with pkgconfig works. ... ERROR
-test cases/common/190 install_mode/meson.build:27: WARNING: The variable(s) 'empty' in the input file 'config.h.in' are not present in the given configuration data.
+FAILED: libpkgdep.so 
+FAILED: testprog 
 test cases/frameworks/4 qt/meson.build:48:4: ERROR: Assert failed: qtmodule.has_tools()
 test cases/frameworks/4 qt/meson.build:48:4: ERROR: Assert failed: qtmodule.has_tools()
 test_reconfigure (unittests.linuxliketests.LinuxlikeTests) ... ok
@@ -507,7 +526,7 @@ test_run_installed (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_soname (unittests.linuxliketests.LinuxlikeTests) ... ok
 test_static_archive_stripping (unittests.linuxliketests.LinuxlikeTests)
 Check that Meson produces valid static archives with --strip enabled ... ok
-test_static_link (unittests.linuxliketests.LinuxlikeTests) ... ok
+test_static_link (unittests.linuxliketests.LinuxlikeTests) ... ERROR
 test_symlink_builddir (unittests.linuxliketests.LinuxlikeTests)
 Test using a symlink as either the builddir for "setup" or ... ok
 test_unity_subproj (unittests.linuxliketests.LinuxlikeTests) ... ok
@@ -552,6 +571,7 @@ test_pefile_checksum (unittests.windowstests.WindowsTests) ... skipped 'requires
 test_qt5dependency_vscrt (unittests.windowstests.WindowsTests)
 Test that qt5 dependencies use the debug module suffix when b_vscrt is ... skipped 'requires Windows (or Windows via Cygwin)'
 test_rc_depends_files (unittests.windowstests.WindowsTests) ... skipped 'requires Windows (or Windows via Cygwin)'
+test_vsenv_option (unittests.windowstests.WindowsTests) ... skipped 'requires Windows (or Windows via Cygwin)'
 test_apple_bitcode (unittests.darwintests.DarwinTests)
 Test that -fembed-bitcode is correctly added while compiling and ... skipped 'requires Darwin'
 test_apple_bitcode_modules (unittests.darwintests.DarwinTests)
@@ -561,6 +581,24 @@ test_library_versioning (unittests.darwintests.DarwinTests)
 Ensure that compatibility_version and current_version are set correctly ... skipped 'requires Darwin'
 test_objc_versions (unittests.darwintests.DarwinTests) ... skipped 'requires Darwin'
 test_removing_unused_linker_args (unittests.darwintests.DarwinTests) ... skipped 'requires Darwin'
+ERROR: test_custom_target_implicit_include (unittests.allplatformstests.AllPlatformTests)
+FAILED: prog 
+FAILED: prog2 
+ERROR: test_identical_target_name_in_subdir_flat_layout (unittests.allplatformstests.AllPlatformTests)
+FAILED: meson-out/prog 
+ERROR: test_identical_target_name_in_subproject_flat_layout (unittests.allplatformstests.AllPlatformTests)
+FAILED: meson-out/prog 
+ERROR: test_prebuilt_shared_lib (unittests.allplatformstests.AllPlatformTests)
+FAILED: rejected 
+FAILED: rejected_whole 
+ERROR: test_prebuilt_shared_lib_rpath (unittests.allplatformstests.AllPlatformTests)
+FAILED: rejected 
+FAILED: rejected_whole 
+ERROR: test_static_library_lto (unittests.allplatformstests.AllPlatformTests)
+FAILED: prog 
+ERROR: test_subproject_promotion (unittests.allplatformstests.AllPlatformTests)
+FAILED: subprojects/s2/s2 
+FAILED: subprojects/s1/s1 
 ERROR: test_versions (unittests.pythontests.PythonTests)
 1/1 extmod FAIL               exit status 1
 1/1 extmod FAIL               exit status 1
@@ -568,9 +606,21 @@ FAILED: meson-test
 ERROR: test_python_module (unittests.machinefiletests.NativeFileTests)
 test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/binary_wrapper.py']> is not a valid python or it is missing distutils
 test cases/unit/47 native file binary/meson.build:18:2: ERROR: <PythonExternalProgram 'python' -> ['$(SOURCE_DIR)/binary_wrapper.py']> is not a valid python or it is missing distutils
+ERROR: test_generate_gir_with_address_sanitizer (unittests.linuxliketests.LinuxlikeTests)
+FAILED: gir/dep1/dep3/MesonDep3-1.0.gir 
+FAILED: gir/dep1/dep2/MesonDep2-1.0.gir 
+ERROR: test_no_rpath_for_static (unittests.linuxliketests.LinuxlikeTests)
+FAILED: prog 
+ERROR: test_pkgconfig_usage (unittests.linuxliketests.LinuxlikeTests)
+FAILED: libpkgdep.so 
+ERROR: test_prelinking (unittests.linuxliketests.LinuxlikeTests)
+FAILED: testprog 
 ERROR: test_qtdependency_pkgconfig_detection (unittests.linuxliketests.LinuxlikeTests)
 test cases/frameworks/4 qt/meson.build:48:4: ERROR: Assert failed: qtmodule.has_tools()
 test cases/frameworks/4 qt/meson.build:48:4: ERROR: Assert failed: qtmodule.has_tools()
+ERROR: test_static_link (unittests.linuxliketests.LinuxlikeTests)
+test static link libs undefined
+FAILED: libfunco 
 FAIL: test_rpath_uses_ORIGIN (unittests.allplatformstests.AllPlatformTests)
 FAIL: test_build_rpath (unittests.linuxliketests.LinuxlikeTests)
 FAIL: test_build_rpath_pkgconfig (unittests.linuxliketests.LinuxlikeTests)
@@ -578,17 +628,64 @@ FAIL: test_global_rpath (unittests.linuxliketests.LinuxlikeTests)
 FAIL: test_installed_modes (unittests.linuxliketests.LinuxlikeTests)
 FAIL: test_installed_modes_extended (unittests.linuxliketests.LinuxlikeTests)
 test cases/common/190 install_mode/meson.build:27: WARNING: The variable(s) 'empty' in the input file 'config.h.in' are not present in the given configuration data.
-FAIL: test_no_rpath_for_static (unittests.linuxliketests.LinuxlikeTests)
 FAIL: test_pkgconfig_gen (unittests.linuxliketests.LinuxlikeTests)
-FAILED (failures=8, errors=3, skipped=76)
+FAILED (failures=7, errors=15, skipped=74)
+test static link libs undefined
+FAILED: libfunco 
+  [ERROR]    cmake: 2 advanced
+  [ERROR]    cmake: 3 advanced no dep
+  [ERROR]    cmake: 5 object library
+  [ERROR]    cmake: 6 object library no dep
+  [ERROR]    cmake: 15 object library advanced
+  [ERROR]    cmake: 16 threads    (use_pthread=NOT_SET)
+  [ERROR]    cmake: 16 threads    (use_pthread=OFF)
+  [ERROR]    cmake: 16 threads    (use_pthread=ON)
+  [ERROR]    cmake: 19 advanced options
+  [ERROR]    cmake: 24 mixing languages
+  [ERROR]    common: 5 linkstatic
+  [ERROR]    common: 55 exe static shared
+  [ERROR]    common: 78 internal dependency
+  [ERROR]    common: 79 same basename
+  [ERROR]    common: 80 declare dep
+  [ERROR]    common: 81 extract all
+  [ERROR]    common: 86 private include
+  [ERROR]    common: 98 subproject subdir
   [ERROR]    common: 103 has header symbol
+  [ERROR]    common: 112 subdir subproject
+  [ERROR]    common: 121 object only target
+  [ERROR]    common: 137 whole archive
+  [ERROR]    common: 138 C and CPP link
+  [ERROR]    common: 145 recursive linking
+  [ERROR]    common: 147 simd
+  [ERROR]    common: 153 wrap file should not failed
+  [ERROR]    common: 170 generator link whole
+  [ERROR]    common: 172 identical target name in subproject flat layout
+  [ERROR]    common: 178 bothlibraries
+  [ERROR]    common: 181 same target name flat layout
+  [ERROR]    common: 194 static threads
+  [ERROR]    common: 208 link custom
+  [ERROR]    common: 212 source set configuration_data
+  [ERROR]    common: 213 source set dictionary
   [ERROR]    linuxlike: 3 linker script
-  [ERROR]    cython: 1 basic    (cython_language=c)
-  [ERROR]    cython: 1 basic    (cython_language=cpp)
+  [ERROR]    linuxlike: 4 extdep static lib
+  [ERROR]    vala: 6 static library
+  [ERROR]    vala: 16 mixed dependence
+  [ERROR]    vala: 17 plain consumer
   [ERROR]    rust: 5 polyglot static
+  [ERROR]    rust: 13 external c dependencies    (static=False method=cmake)
+  [ERROR]    rust: 13 external c dependencies    (static=False method=pkg-config)
+  [ERROR]    rust: 13 external c dependencies    (static=False method=system)
+  [ERROR]    rust: 13 external c dependencies    (static=True method=cmake)
   [ERROR]    rust: 13 external c dependencies    (static=True method=system)
-  [ERROR]    python: 3 cython
+  [ERROR]    rust: 16 internal c dependencies
+  [ERROR]    objc: 4 c++ project objc subproject
+  [ERROR]    fortran: 2 modules
+  [ERROR]    fortran: 5 static
+  [ERROR]    fortran: 7 generated
+  [ERROR]    fortran: 14 fortran links c
+  [ERROR]    fortran: 21 install static    (default_library=static)
   [ERROR]    frameworks: 1 boost    (static=false)
+  [ERROR]    frameworks: 1 boost    (static=true)
   [ERROR]    frameworks: 4 qt    (method=config-tool)
   [ERROR]    frameworks: 4 qt    (method=pkg-config)
   [ERROR]    frameworks: 4 qt    (method=qmake)
@@ -596,26 +693,82 @@ FAILED (failures=8, errors=3, skipped=76)
   [ERROR]    frameworks: 28 gir link order 2
   [ERROR]    frameworks: 31 curses    (method=config-tool)
   [ERROR]    frameworks: 31 curses    (method=system)
-Total passed tests:  532
-Total failed tests:  15
-Total skipped tests: 115
+  [ERROR]    frameworks: 34 gir static lib
+Total passed tests:  486
+Total failed tests:  62
+Total skipped tests: 117
+FAILED: main2 
+FAILED: main2 
+FAILED: static 
+FAILED: static 
+FAILED: static 
+FAILED: exe1 
+FAILED: exe1 
+FAILED: exe1 
+FAILED: subprojects/cmOpts/testEXE 
+FAILED: exe1 
+FAILED: prog 
+FAILED: libshro 
+FAILED: src/projtest 
+FAILED: name 
+FAILED: dummy 
+FAILED: dep_user 
+FAILED: proggie 
+FAILED: proggie_recursive 
+FAILED: user/libuser 
+FAILED: prog 
 test cases/common/103 has header symbol/meson.build:16:2: ERROR: Assert failed: FILE structure is defined in stdio.h, not stdlib.h
+FAILED: prog/prog 
+FAILED: prog 
+FAILED: sh_func2_linked_func1/libsh_func2_linked_funco 
+FAILED: sh_func2_dep_func1/libsh_func2_dep_funco 
+FAILED: sh_func2_transdep_func1/libsh_func2_transdep_funco 
+FAILED: libfooext.so 
+FAILED: shstdep/libshstdep.so 
+test cases/common/147 simd/meson.build:3: WARNING: Module unstable-simd has no backwards or forwards compatibility and might not exist in future releases.
+FAILED: simdtest 
+FAILED: src/testexe 
+FAILED: exe3 
+FAILED: libshlibo 
+FAILED: prog 
+FAILED: prog-static 
+FAILED: prog-static2 
+FAILED: prog 
+FAILED: prog 
+FAILED: exe1 
+FAILED: exe1_2 
+FAILED: second 
+FAILED: second_via_lib 
+FAILED: second 
+FAILED: second_via_lib 
 FAILED: libbob.so 
 FAILED: libbob-conf.so 
-FAILED: libdir/storer.cpython-o.p/meson-generated_libdir_storer.pyx.c.o 
-FAILED: libdir/storer.cpython-o.p/meson-generated_libdir_storer.pyx.cpp.o 
+FAILED: libbob-files.so 
+FAILED: sub/libfoo.so 
+FAILED: prog 
+FAILED: valaprog 
+FAILED: app 
+FAILED: app 
 FAILED: prog 
 FAILED: prog 
-FAILED: libdir/storer.cpython-o.p/meson-generated_.._storer_pyx.c.o 
-FAILED: extralibexe 
-80/3 qt5test      FAIL               killed by signal 9 SIGKILL
-81/3 qt5maninclude FAIL               killed by signal 9 SIGKILL
-82/3 qtubfolder FAIL            0.02s   killed by signal 9 SIGKILL
+FAILED: prog 
+FAILED: prog 
+FAILED: prog 
+FAILED: prog 
+FAILED: static 
+FAILED: master 
+FAILED: modprog 
+FAILED: test_exe 
+FAILED: generated 
+FAILED: f_call_c 
+FAILED: main_exe 
+FAILED: partial_dep/external_dep 
+FAILED: partial_dep/external_dep 
+FAILED: qt5app 
 test cases/frameworks/4 qt/meson.build:48:4: ERROR: Assert failed: qtmodule.has_tools()
-63/3 qt5test      FAIL               killed by signal 9 SIGKILL
-64/3 qt5maninclude FAIL               killed by signal 9 SIGKILL
-65/3 qtubfolder FAIL            0.02s   killed by signal 9 SIGKILL
+FAILED: qt5app 
 FAILED: exef.p/main.f90.o 
 FAILED: libsample.so 
 FAILED: basic 
 FAILED: basic 
+FAILED: subdir/gir/libgirlib.so 

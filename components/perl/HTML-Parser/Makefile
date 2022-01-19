@@ -22,35 +22,59 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2014, Alexander Pyhalov. All rights reserved.
+# Copyright (c) 2022 Tim Mooney.  All rights reserved.
 #
 
-
+BUILD_STYLE=makemaker
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		HTML-Parser
 COMPONENT_VERSION=	3.72
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
+COMPONENT_FMRI=		library/perl-5/html-parser
+COMPONENT_SUMMARY=	HTML::Parser - HTML parser class
+COMPONENT_CLASSIFICATION=Development/Perl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	http://search.cpan.org/~gaas/HTML-Parser/
+COMPONENT_PROJECT_URL=	https://metacpan.org/pod/HTML::Parser
 COMPONENT_ARCHIVE_HASH=	\
     sha256:ec28c7e1d9e67c45eca197077f7cdc41ead1bb4c538c7f02a3296a4bb92f608b
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/G/GA/GAAS/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/G/GA/GAAS/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	Artistic
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/makemaker.mk
-include $(WS_TOP)/make-rules/ips.mk
+# until all perl modules have been rebuilt with 5.34, each module sets
+# this manually, before including common.mk
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
 
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_TARGETS = test
+#
+# need different results per version because 5.24+ has threading while
+# 5.22 does not.
+#
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION).master
 
-build:		$(BUILD_32_and_64)
+#
+# filter out all output up to and including the test_harness line
+# filter out timing information and anything else that varies between builds
+#
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/test_harness/d"' \
+	'-e "s/,  *[0-9]* wallclock.*//"'
 
-install:	$(INSTALL_32_and_64)
+# runtime requirements HTML::Tagset needed to run the test suite
+# HTTP::Headers (from HTTP::Message) is recommended, so include it too
+REQUIRED_PACKAGES += library/perl-5/html-tagset-522
+REQUIRED_PACKAGES += library/perl-5/html-tagset-524
+REQUIRED_PACKAGES += library/perl-5/html-tagset-534
+REQUIRED_PACKAGES += library/perl-5/http-message-522
+REQUIRED_PACKAGES += library/perl-5/http-message-524
+REQUIRED_PACKAGES += library/perl-5/http-message-534
 
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

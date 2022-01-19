@@ -22,20 +22,22 @@
 # Copyright (c) 2020 Michal Nowak
 #
 
-BUILD_BITS=			32_and_64
+BUILD_BITS=			64_and_32
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
-COMPONENT_VERSION=      3.37.1
-TARBALL_VERSION=		3370100
+COMPONENT_VERSION=      3.37.2
+TARBALL_VERSION=		3370200
+COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:7168153862562d7ac619a286368bd61a04ef3e5736307eac63cadbb85ec8bb12
+COMPONENT_ARCHIVE_HASH= sha256:486770b4d5f88b5bb0dba540dd6ee1763067d7539dfee18a7c66fe9bb03d16d9
 COMPONENT_PROJECT_URL=  https://www.sqlite.org
-COMPONENT_ARCHIVE_URL=  https://www.sqlite.org/2021/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  https://www.sqlite.org/2022/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION=	Development/Databases
 COMPONENT_FMRI=         database/sqlite-3
-COMPONENT_LICENSE=      PublicDomain
+COMPONENT_LICENSE=      Public Domain
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -65,7 +67,7 @@ CFLAGS			+= -DSQLITE_ENABLE_STMT_SCANSTATUS
 CFLAGS			+= -DSQLITE_ENABLE_COLUMN_METADATA
 
 # Fixes firefox crash with new sqlite, don't remove until proper fix
-gcc_OPT                 =  -O2
+#gcc_OPT                 =  -O2
 
 CONFIGURE_OPTIONS.32	+= --with-tcl="$(USRLIBDIR)"
 CONFIGURE_OPTIONS.64	+= --with-tcl="$(USRLIBDIR64)"
@@ -86,8 +88,19 @@ CONFIGURE_OPTIONS	+= --enable-shared
 COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP) $(SOURCE_DIR)/sqlite3.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/
 
 COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+# remove clutter and timings from test results:
+COMPONENT_TEST_TRANSFORMS += \
+	' -n ' \
+	' -e "s/[0-9]* ms//" ' \
+	' -e "s/ in [0-9]*\.[0-9]* seconds//" ' \
+	' -e "s/[0-9]* microseconds per iteration//" ' \
+	' -e "/^Time/p" ' \
+	' -e "/^Query/p" ' \
+	' -e "/No /p" ' 
 
 # Auto-generated dependencies
+#REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

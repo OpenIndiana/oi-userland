@@ -29,13 +29,13 @@ BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		platformdirs
-COMPONENT_VERSION=	2.4.0
+COMPONENT_VERSION=	2.4.1
 COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_SUMMARY=	platformdirs will help you choose appropriate user dirs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:367a5e80b3d04d2428ffa76d33f124cf11e8fff2acdaa9b43d545f5c7d661ef2
+COMPONENT_ARCHIVE_HASH= sha256:440633ddfebcc36264232365d7840a970e75e1018d15b4327d11f91909045fda
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/platformdirs/platformdirs
 COMPONENT_LICENSE=	MIT
@@ -43,8 +43,7 @@ COMPONENT_LICENSE=	MIT
 # platformdir needs python-3.6+
 PYTHON_VERSIONS=	3.7 3.9
 
-# We miss some test dependencies:
-TEST_TARGET=	$(NO_TESTS)
+# Note that we miss some test dependencies.
 include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
@@ -59,6 +58,24 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/===/p"' \
 	'-e "/collected/p"' \
 	'-e "/test_/p"'
+
+# Manually added test dependencies
+REQUIRED_PACKAGES += library/python/appdirs-37
+REQUIRED_PACKAGES += library/python/appdirs-39
+REQUIRED_PACKAGES += library/python/flaky-37
+REQUIRED_PACKAGES += library/python/flaky-39
+REQUIRED_PACKAGES += library/python/hypothesis-37
+REQUIRED_PACKAGES += library/python/hypothesis-39
+REQUIRED_PACKAGES += library/python/pytest-37
+REQUIRED_PACKAGES += library/python/pytest-39
+REQUIRED_PACKAGES += library/python/pytest-benchmark-37
+REQUIRED_PACKAGES += library/python/pytest-benchmark-39
+REQUIRED_PACKAGES += library/python/pytest-cov-37
+REQUIRED_PACKAGES += library/python/pytest-cov-39
+REQUIRED_PACKAGES += library/python/pytest-mock-37
+REQUIRED_PACKAGES += library/python/pytest-mock-39
+REQUIRED_PACKAGES += library/python/pytest-reporter-37
+REQUIRED_PACKAGES += library/python/pytest-reporter-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-37

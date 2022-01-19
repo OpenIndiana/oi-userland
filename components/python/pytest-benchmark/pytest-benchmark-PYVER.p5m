@@ -19,6 +19,14 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
 
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force runtime dependencies on other packages
+depend type=require fmri=library/python/pytest-$(PYV)
+depend type=require fmri=library/python/py-cpuinfo-$(PYV)
+
 file path=usr/bin/py.test-benchmark-$(PYVER)
 file path=usr/bin/pytest-benchmark-$(PYVER)
 link path=usr/bin/py.test-benchmark target=py.test-benchmark-$(PYVER) mediator=python \
@@ -51,11 +59,4 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pytest_benchmark/storage/file.p
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest_benchmark/table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest_benchmark/timers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest_benchmark/utils.py
-
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
-
-# force a dependency on the pytest package
-depend type=require fmri=library/python/pytest-$(PYV)
 

@@ -10,23 +10,23 @@
 
 #
 # Copyright 2021 Aurelien Larcher
+# Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_BITS= NO_ARCH
+BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest-benchmark
-COMPONENT_VERSION=	3.2.3
-COMPONENT_FMRI=		library/python/pytest-benchmark
-COMPONENT_CLASSIFICATION=Development/Python
+COMPONENT_VERSION=	3.4.1
 COMPONENT_SUMMARY=	A pytest fixture for benchmarking code.
 COMPONENT_PROJECT_URL=	https://github.com/ionelmc/pytest-benchmark
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:ad4314d093a3089701b24c80a05121994c7765ce373478c8f4ba8d23c9ba9528
+COMPONENT_ARCHIVE_HASH= sha256:40e263f912de5a81d891619032983557d62a3d85843f9a9f30b98baea0cd7b47
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 

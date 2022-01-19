@@ -20,19 +20,26 @@
 #
 # Copyright (c) 2013, Louis M. Picciano. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2022, Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="in-process SQL database engine library"
-set name=info.classification value="org.opensolaris.category.2008:Development/Databases"
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license sqlite.license license="Public Domain"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
 legacy arch=i386 category=GNOME2,application,JDSoi desc="SQL database engine library - development files" hotline="Please contact your local service provider" name="SQL database engine library - development files" pkg=SUNWsqlite3-devel
 
-file path=usr/bin/$(MACH64)/sqlite3
+# Drop 32-bit binaries
+<transform path=usr/bin/$(MACH32) -> drop>
+# Drop TCL related files
+<transform path=usr/lib/tcl8 -> drop>
+
+file path=usr/bin/$(MACH32)/sqlite3
 file path=usr/bin/sqlite3
 file path=usr/include/sqlite3.h
 file path=usr/include/sqlite3ext.h
@@ -44,6 +51,6 @@ link path=usr/lib/libsqlite3.so target=libsqlite3.so.0.8.6
 link path=usr/lib/libsqlite3.so.0 target=libsqlite3.so.0.8.6
 file path=usr/lib/libsqlite3.so.0.8.6
 file path=usr/lib/pkgconfig/sqlite3.pc
-#file path=usr/lib/tcl8.6/sqlite3/libtclsqlite3.so
-#file path=usr/lib/tcl8.6/sqlite3/pkgIndex.tcl
+file path=usr/lib/tcl8.6/sqlite3/libtclsqlite3.so
+file path=usr/lib/tcl8.6/sqlite3/pkgIndex.tcl
 file path=usr/share/man/man1/sqlite3.1

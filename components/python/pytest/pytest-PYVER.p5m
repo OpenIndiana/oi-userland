@@ -35,7 +35,22 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
-#
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force dependencies 
+depend type=require fmri=library/python/attrs-$(PYV)
+depend type=require fmri=library/python/iniconfig-$(PYV)
+depend type=require fmri=library/python/packaging-$(PYV)
+depend type=require fmri=library/python/pluggy-$(PYV)
+depend type=require fmri=library/python/py-$(PYV)
+depend type=require fmri=library/python/toml-$(PYV)
+
+# importlib-metadata is only needed for python < 3.8 according to setup.cfg:
+$(PYTHON_3.9_EXCL)depend type=require fmri=library/python/importlib-metadata-$(PYV)
+
 file path=usr/bin/py.test-$(PYVER)
 file path=usr/bin/pytest-$(PYVER)
 link path=usr/bin/py.test target=py.test-$(PYVER) mediator=python3 \
@@ -85,6 +100,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/pastebin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/pathlib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/py.typed
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/pytester.py
+file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/pytester_assertions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/python.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/python_api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/recwarn.py
@@ -96,9 +112,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/skipping.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/stepwise.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/store.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/terminal.py
+file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/threadexception.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/timing.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/tmpdir.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/unittest.py
+file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/unraisableexception.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/warning_types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/warnings.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
@@ -112,22 +130,3 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pytest/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest/__main__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest/collect.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest/py.typed
-
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
-
-# force dependencies 
-depend type=require fmri=library/python/attrs-$(PYV)
-depend type=require fmri=library/python/iniconfig-$(PYV)
-depend type=require fmri=library/python/packaging-$(PYV)
-depend type=require fmri=library/python/pluggy-$(PYV)
-depend type=require fmri=library/python/py-$(PYV)
-depend type=require fmri=library/python/toml-$(PYV)
-
-$(PYTHON_3.5_ONLY)depend type=require fmri=library/python/pathlib2-$(PYV)
-$(PYTHON_3.9_EXCL)depend type=require fmri=library/python/importlib-metadata-$(PYV)
-
-# force a dependency on the pytest package
-depend type=require \
-    fmri=library/python/pytest@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

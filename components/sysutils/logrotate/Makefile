@@ -11,7 +11,7 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
-# Copyright 2020 Nona Hansel
+# Copyright 2020, 2022 Nona Hansel
 #
 
 BUILD_BITS=		64
@@ -19,7 +19,7 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		logrotate
-COMPONENT_VERSION=	3.17.0
+COMPONENT_VERSION=	3.19.0
 COMPONENT_PROJECT_URL=	https://github.com/logrotate/logrotate
 COMPONENT_SUMMARY=	Logrotate - Rotates and compresses log files
 COMPONENT_FMRI=		system/file/logrotate
@@ -27,7 +27,7 @@ COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:5db8cf4786e0abeeec64f852d605ef702bfcf18f4d7938dce7d7a00ad4de787c
+	sha256:ecaac5c5e9c19fbc497d258da271ed6f3f2eb5f9e2e809053592cae4ffd4af91
 COMPONENT_ARCHIVE_URL=	https://github.com/logrotate/logrotate/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
@@ -40,6 +40,14 @@ PATH=$(PATH.gnu)
 
 # Tests otherwise fail
 unexport SHELLOPTS
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/TOTAL:/p" ' \
+	'-e "/SKIP:/p" ' \
+	'-e "/PASS:/p" ' \
+	'-e "/FAIL:/p" ' \
+	'-e "/ERROR:/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/popt

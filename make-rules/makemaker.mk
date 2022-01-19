@@ -21,7 +21,7 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-# All Perl versions are 32-bit only.
+# perl-5.22 is 32 bit (only), perl-5.24 and later are 64 bit (only)
 
 COMMON_PERL_ENV +=	MAKE=$(GMAKE)
 COMMON_PERL_ENV +=	PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:$(PATH)
@@ -33,34 +33,54 @@ COMMON_PERL_ENV +=	CFLAGS="$(CC_BITS) $(PERL_OPTIMIZE)"
 # directories so that it populates all architecture prototype
 # directories.
 
-$(BUILD_DIR)/$(MACH32)-5.22/.configured:	PERL_VERSION=5.22
-$(BUILD_DIR)/$(MACH32)-5.22/.configured:	BITS=32
-$(BUILD_DIR)/$(MACH64)-5.24/.configured:	PERL_VERSION=5.24
-$(BUILD_DIR)/$(MACH64)-5.24/.configured:	BITS=64
+$(BUILD_DIR)/%-5.22/.configured:	PERL_VERSION=5.22
+$(BUILD_DIR)/%-5.24/.configured:	PERL_VERSION=5.24
+$(BUILD_DIR)/%-5.34/.configured:	PERL_VERSION=5.34
+$(BUILD_DIR)/$(MACH32)-%/.configured:	BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.configured:	BITS=64
 
-$(BUILD_DIR)/$(MACH32)-5.22/.built:	PERL_VERSION=5.22
-$(BUILD_DIR)/$(MACH32)-5.22/.built:	BITS=32
-$(BUILD_DIR)/$(MACH64)-5.24/.built:	PERL_VERSION=5.24
-$(BUILD_DIR)/$(MACH64)-5.24/.built:	BITS=64
+$(BUILD_DIR)/%-5.22/.built:	PERL_VERSION=5.22
+$(BUILD_DIR)/%-5.24/.built:	PERL_VERSION=5.24
+$(BUILD_DIR)/%-5.34/.built:	PERL_VERSION=5.34
+$(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
-$(BUILD_DIR)/$(MACH32)-5.22/.tested:	PERL_VERSION=5.22
-$(BUILD_DIR)/$(MACH32)-5.22/.tested:	BITS=32
-$(BUILD_DIR)/$(MACH64)-5.24/.tested:	PERL_VERSION=5.24
-$(BUILD_DIR)/$(MACH64)-5.24/.tested:	BITS=64
+$(BUILD_DIR)/%-5.22/.installed:	PERL_VERSION=5.22
+$(BUILD_DIR)/%-5.24/.installed:	PERL_VERSION=5.24
+$(BUILD_DIR)/%-5.34/.installed:	PERL_VERSION=5.34
+$(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
-$(BUILD_DIR)/$(MACH32)-5.22/.tested-and-compared:	BITS=32
-$(BUILD_DIR)/$(MACH32)-5.22/.tested-and-compared:	PERL_VERSION=5.22
-$(BUILD_DIR)/$(MACH64)-5.24/.tested-and-compared:	PERL_VERSION=5.24
-$(BUILD_DIR)/$(MACH64)-5.24/.tested-and-compared:	BITS=64
+$(BUILD_DIR)/%-5.22/.tested:	PERL_VERSION=5.22
+$(BUILD_DIR)/%-5.24/.tested:	PERL_VERSION=5.24
+$(BUILD_DIR)/%-5.34/.tested:	PERL_VERSION=5.34
+$(BUILD_DIR)/$(MACH32)-%/.tested:	BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.tested:	BITS=64
 
-PERL_32_TEST_FILES:=$(foreach ver, $(PERL_VERSIONS), $(BUILD_DIR)/$(MACH32)-$(ver)/.tested )
-PERL_32_TEST_AND_COMPARE_FILES:=$(foreach ver, $(PERL_VERSIONS), $(BUILD_DIR)/$(MACH32)-$(ver)/.tested-and-compared )
+$(BUILD_DIR)/%-5.22/.tested-and-compared:	PERL_VERSION=5.22
+$(BUILD_DIR)/%-5.24/.tested-and-compared:	PERL_VERSION=5.24
+$(BUILD_DIR)/%-5.34/.tested-and-compared:	PERL_VERSION=5.34
+$(BUILD_DIR)/$(MACH32)-%/.tested-and-compared:	BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.tested-and-compared:	BITS=64
 
-BUILD_32 =	$(BUILD_DIR)/$(MACH32)-5.22/.built
-BUILD_64 =	$(BUILD_DIR)/$(MACH64)-5.24/.built
+PERL_32_ONLY_VERSIONS = $(filter-out $(PERL_64_ONLY_VERSIONS), $(PERL_VERSIONS))
 
-INSTALL_32 =	$(BUILD_DIR)/$(MACH32)-5.22/.installed
-INSTALL_64 =	$(BUILD_DIR)/$(MACH64)-5.24/.installed
+BUILD_32 =	$(PERL_32_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
+BUILD_64 =	$(PERL_64_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
+BUILD_NO_ARCH =	$(PERL_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.built)
+
+ifeq ($(PERL_VERSION),5.24)
+BUILD_32_and_64 = $(BUILD_64)
+BUILD_64_and_32 = $(BUILD_64)
+endif
+ifeq ($(PERL_VERSION),5.34)
+BUILD_32_and_64 = $(BUILD_64)
+BUILD_64_and_32 = $(BUILD_64)
+endif
+
+INSTALL_32 = $(PERL_32_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
+INSTALL_64 = $(PERL_64_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
+INSTALL_NO_ARCH = $(PERL_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.installed)
 
 COMPONENT_CONFIGURE_ENV +=	$(COMMON_PERL_ENV)
 COMPONENT_CONFIGURE_ENV +=	PERL="$(PERL)"
@@ -106,11 +126,13 @@ COMPONENT_TEST_ENV +=	$(COMMON_PERL_ENV)
 
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
-TEST_32 =	$(BUILD_DIR)/$(MACH32)-5.22/.tested
-TEST_64 =	$(BUILD_DIR)/$(MACH64)-5.24/.tested
+TEST_32 =	$(PERL_32_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested)
+TEST_64 =	$(PERL_64_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested)
+TEST_NO_ARCH =	$(PERL_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested)
 else
-TEST_32 =       $(BUILD_DIR)/$(MACH32)-5.22/.tested-and-compared
-TEST_64 =       $(BUILD_DIR)/$(MACH32)-5.24/.tested-and-compared
+TEST_32 =	$(PERL_32_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested-and-compared)
+TEST_64 =	$(PERL_64_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested-and-compared)
+TEST_NO_ARCH = $(PERL_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested-and-compared)
 endif
 
 # test the built source

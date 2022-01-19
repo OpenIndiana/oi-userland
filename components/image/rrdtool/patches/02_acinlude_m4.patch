@@ -1,0 +1,255 @@
+
+# Fix AM_CHECK_PYTHON_HEADERS macro for Python3
+#
+# This detects Python3 include paths like /usr/include/python3.7m.
+# Taken from pygobject/rrdtool project.
+# https://github.com/oetiker/rrdtool-1.x/blob/master/m4/acinclude.m4
+--- rrdtool-1.7.2/m4/acinclude.m4	2019-05-27 18:23:00.000000000 +0000
++++ rrdtool-1.7.2/m4/acinclude.m4.new	2022-01-13 20:12:13.373744815 +0000
+@@ -61,7 +61,6 @@
+            fi
+      fi
+   fi  
+-
+   if test ${EX_CHECK_STATE} = NO; then
+      AC_MSG_WARN([
+ ----------------------------------------------------------------------------
+@@ -69,19 +68,13 @@
+   this is the case. Maybe you need to set LDFLAGS and CPPFLAGS appropriately
+   so that compiler and the linker can find lib$1 and its header files. If
+   you have not installed $4, you can get it either from its original home on
+-
+      $6
+-
+   You can find also find an archive copy on
+-
+      https://oss.oetiker.ch/rrdtool/pub/libs
+-
+   The last tested version of $4 is $5.
+-
+        LIBS=$LIBS
+    LDFLAGS=$LDFLAGS
+   CPPFLAGS=$CPPFLAGS
+-
+ ----------------------------------------------------------------------------
+                 ])
+        EX_CHECK_ALL_ERR=YES
+@@ -146,11 +139,9 @@
+ AC_REQUIRE([AC_CANONICAL_HOST])
+ AC_LANG_PUSH(C)
+ acx_pthread_ok=no
+-
+ # We used to check for pthread.h first, but this fails if pthread.h
+ # requires special compiler flags (e.g. on True64 or Sequent).
+ # It gets checked for in the link test anyway.
+-
+ # First of all, check if the user has set any of the PTHREAD_LIBS,
+ # etcetera environment variables, and if threads linking works using
+ # them:
+@@ -169,22 +160,17 @@
+         LIBS="$save_LIBS"
+         CFLAGS="$save_CFLAGS"
+ fi
+-
+ # We must check for the threads library under a number of different
+ # names; the ordering is very important because some systems
+ # (e.g. DEC) have both -lpthread and -lpthreads, where one of the
+ # libraries is broken (non-POSIX).
+-
+ # Create a list of thread flags to try.  Items starting with a "-" are
+ # C compiler flags, and other items are library names, except for "none"
+ # which indicates that we try without any flags at all, and "pthread-config"
+ # which is a program returning the flags for the Pth emulation library.
+-
+ acx_pthread_flags="pthreads none -Kthread -kthread lthread -pthread -pthreads -mthreads pthread --thread-safe -mt pthread-config"
+-
+ # The ordering *is* (sometimes) important.  Some notes on the
+ # individual items follow:
+-
+ # pthreads: AIX (must check this before -lpthread)
+ # none: in case threads are in libc; should be tried before -Kthread and
+ #       other compiler flags to prevent continual compiler warnings
+@@ -200,10 +186,8 @@
+ # pthread: Linux, etcetera
+ # --thread-safe: KAI C++
+ # pthread-config: use pthread-config program (for GNU Pth library)
+-
+ case "${host_cpu}-${host_os}" in
+         *solaris*)
+-
+         # On Solaris (at least, for some versions), libc contains stubbed
+         # (non-functional) versions of the pthreads routines, so link-based
+         # tests will erroneously succeed.  (We need to link with -pthread or
+@@ -211,42 +195,34 @@
+         # a function called by this macro, so we could check for that, but
+         # who knows whether they'll stub that too in a future libc.)  So,
+         # we'll just look for -pthreads and -lpthread first:
+-
+         acx_pthread_flags="-pthread -pthreads pthread -mt $acx_pthread_flags"
+         ;;
+ esac
+-
+ if test x"$acx_pthread_ok" = xno; then
+ for flag in $acx_pthread_flags; do
+-
+         case $flag in
+                 none)
+                 AC_MSG_CHECKING([whether pthreads work without any flags])
+                 ;;
+-
+                 -*)
+                 AC_MSG_CHECKING([whether pthreads work with $flag])
+                 PTHREAD_CFLAGS="$flag"
+                 ;;
+-
+ 		pthread-config)
+ 		AC_CHECK_PROG(acx_pthread_config, pthread-config, yes, no)
+ 		if test x"$acx_pthread_config" = xno; then continue; fi
+ 		PTHREAD_CFLAGS="`pthread-config --cflags`"
+ 		PTHREAD_LIBS="`pthread-config --ldflags` `pthread-config --libs`"
+ 		;;
+-
+                 *)
+                 AC_MSG_CHECKING([for the pthreads library -l$flag])
+                 PTHREAD_LIBS="-l$flag"
+                 ;;
+         esac
+-
+         save_LIBS="$LIBS"
+         save_CFLAGS="$CFLAGS"
+         LIBS="$PTHREAD_LIBS $LIBS"
+         CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+-
+         # Check for various functions.  We must include pthread.h,
+         # since some functions may be macros.  (On the Sequent, we
+         # need a special flag -Kthread to make this header compile.)
+@@ -259,27 +235,22 @@
+         AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <pthread.h>]], [[pthread_t th; pthread_join(th, 0);
+                      pthread_attr_init(0); pthread_cleanup_push(0, 0);
+                      pthread_create(0,0,0,0); pthread_cleanup_pop(0); ]])],[acx_pthread_ok=yes],[])
+-
+         LIBS="$save_LIBS"
+         CFLAGS="$save_CFLAGS"
+-
+         AC_MSG_RESULT($acx_pthread_ok)
+         if test "x$acx_pthread_ok" = xyes; then
+                 break;
+         fi
+-
+         PTHREAD_LIBS=""
+         PTHREAD_CFLAGS=""
+ done
+ fi
+-
+ # Various other checks:
+ if test "x$acx_pthread_ok" = xyes; then
+         save_LIBS="$LIBS"
+         LIBS="$PTHREAD_LIBS $LIBS"
+         save_CFLAGS="$CFLAGS"
+         CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+-
+         # Detect AIX lossage: JOINABLE attribute is called UNDETACHED.
+ 	AC_MSG_CHECKING([for joinable pthread attribute])
+ 	attr_name=unknown
+@@ -292,7 +263,6 @@
+                                [Define to necessary symbol if this constant
+                                 uses a non-standard name on your system.])
+         fi
+-
+         AC_MSG_CHECKING([if more special flags are required for pthreads])
+         x_rflag=no
+         case "${host_cpu}-${host_os}" in
+@@ -309,20 +279,16 @@
+         if test "x$x_rflag" != xno; then
+             PTHREAD_CFLAGS="$x_rflag $PTHREAD_CFLAGS"
+         fi
+-
+         LIBS="$save_LIBS"
+         CFLAGS="$save_CFLAGS"
+-
+         # More AIX lossage: must compile with cc_r
+         AC_CHECK_PROG(PTHREAD_CC, cc_r, cc_r, ${CC})
+ else
+         PTHREAD_CC="$CC"
+ fi
+-
+ AC_SUBST(PTHREAD_LIBS)
+ AC_SUBST(PTHREAD_CFLAGS)
+ AC_SUBST(PTHREAD_CC)
+-
+ # Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
+ if test x"$acx_pthread_ok" = xyes; then
+         ifelse([$1],,AC_DEFINE(HAVE_PTHREAD,1,[Define if you have POSIX threads libraries and header files.]),[$1])
+@@ -378,7 +344,6 @@
+  AC_MSG_RESULT(no)
+  $6
+ fi
+-
+ ])
+ 
+ AC_DEFUN([AC_FULL_IEEE],[
+@@ -413,9 +378,7 @@
+ make IEEE math work with your compiler and let me know (tobi@oetiker.ch).
+ Check config.log to see what went wrong ...
+ ]))])])])])])])])])])
+-
+ AC_LANG_POP(C)
+-
+ ])
+ 
+ 
+@@ -426,11 +389,16 @@
+ [AC_REQUIRE([AM_PATH_PYTHON])
+ AC_MSG_CHECKING(for headers required to compile python extensions)
+ dnl deduce PYTHON_INCLUDES
+-py_prefix=`$PYTHON -c "import sys; print(sys.prefix)"`
+-py_exec_prefix=`$PYTHON -c "import sys; print(sys.exec_prefix)"`
+-PYTHON_INCLUDES="-I${py_prefix}/include/python${PYTHON_VERSION}"
+-if test "$py_prefix" != "$py_exec_prefix"; then
+-  PYTHON_INCLUDES="$PYTHON_INCLUDES -I${py_exec_prefix}/include/python${PYTHON_VERSION}"
++py_prefix=`$PYTHON -c "import sys; sys.stdout.write(sys.prefix)"`
++py_exec_prefix=`$PYTHON -c "import sys; sys.stdout.write(sys.exec_prefix)"`
++PYTHON_CONFIG=`which $PYTHON`-config
++if test -x "$PYTHON_CONFIG"; then
++  PYTHON_INCLUDES=`$PYTHON_CONFIG --includes 2>/dev/null`
++else
++  PYTHON_INCLUDES="-I${py_prefix}/include/python${PYTHON_VERSION}"
++  if test "$py_prefix" != "$py_exec_prefix"; then
++    PYTHON_INCLUDES="$PYTHON_INCLUDES -I${py_exec_prefix}/include/python${PYTHON_VERSION}"
++  fi
+ fi
+ AC_SUBST(PYTHON_INCLUDES)
+ dnl check if the headers exist:
+@@ -541,8 +509,6 @@
+         return 1;
+ }
+ ]])],[rd_cv_ms_async=ok],[rd_cv_ms_async=broken],[:])])
+-
+-
+ if test "${rd_cv_ms_async}" = "ok"; then
+  AC_MSG_RESULT(yes)
+ else
+@@ -553,7 +519,6 @@
+  AC_MSG_WARN([file it opens for rw access.])
+  sleep 2
+ fi
+-
+ ])
+ 
+ dnl idea taken from the autoconf mailing list, posted by
+@@ -587,7 +552,6 @@
+                                gq_cv_have_tm_gmtoff=yes
+                         )
+         )
+-
+         AC_CACHE_CHECK([__tm_gmtoff in struct tm], gq_cv_have___tm_gmtoff,
+                 gq_cv_have___tm_gmtoff=no
+                 AC_TRY_COMPILE([#include <time.h>
+@@ -600,7 +564,6 @@
+                                gq_cv_have___tm_gmtoff=yes
+                         )
+         )
+-
+         if test "$gq_cv_have_tm_gmtoff" = yes ; then
+                 AC_DEFINE(HAVE_TM_GMTOFF,1,[does tm have a tm_gmtoff member])
+                 AC_DEFINE(TM_GMTOFF, tm_gmtoff,[the real name of tm_gmtoff])

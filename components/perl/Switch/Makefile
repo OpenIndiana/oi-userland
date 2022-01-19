@@ -11,28 +11,48 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright (c) 2022 Tim Mooney.  All rights reserved.
 #
 
+BUILD_STYLE=makemaker
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Switch
 COMPONENT_VERSION=	2.17
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
+COMPONENT_FMRI=		library/perl-5/switch
+COMPONENT_SUMMARY=	A switch statement for perl
+COMPONENT_CLASSIFICATION=Development/Perl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	http://search.cpan.org/dist/Switch/
+COMPONENT_PROJECT_URL=	https://metacpan.org/pod/Switch
 COMPONENT_ARCHIVE_HASH=	\
     sha256:31354975140fe6235ac130a109496491ad33dd42f9c62189e23f49f75f936d75
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/C/CH/CHORNY/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/C/CH/CHORNY/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	Artistic
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/makemaker.mk
-include $(WS_TOP)/make-rules/ips.mk
+# until all perl modules have been rebuilt with 5.34, each module sets
+# this manually, before including common.mk
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
 
-COMPONENT_TEST_TARGETS = test
+include $(WS_MAKE_RULES)/common.mk
 
-build:		$(BUILD_32_and_64)
+#
+# use the same results for comparison for all builds
+#
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-install:	$(INSTALL_32_and_64)
+#
+# delete any lines up through test_harness
+# delete timings
+#
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/test_harness/d"' \
+	'-e "s/,  *[0-9]* wallclock.*//"'
 
-test:		$(TEST_32_and_64)
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534

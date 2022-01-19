@@ -22,29 +22,54 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2014, Alexander Pyhalov. All rights reserved.
+# Copyright (c) 2022 Tim Mooney.  All rights reserved.
 #
 
+BUILD_STYLE=makemaker
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		WWW-RobotRules
 COMPONENT_VERSION=	6.02
 IPS_COMPONENT_VERSION=	6.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
+COMPONENT_FMRI=		library/perl-5/www-robotrules
+COMPONENT_SUMMARY=	WWW::RobotRules - database of robots.txt-derived permissions
+COMPONENT_CLASSIFICATION=Development/Perl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	http://search.cpan.org/~gaas/WWW-RobotRules/
+COMPONENT_PROJECT_URL=	https://metacpan.org/pod/WWW::RobotRules
 COMPONENT_ARCHIVE_HASH=	\
     sha256:46b502e7a288d559429891eeb5d979461dd3ecc6a5c491ead85d165b6e03a51e
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/G/GA/GAAS/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/G/GA/GAAS/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	Artistic
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/makemaker.mk
-include $(WS_MAKE_RULES)/ips.mk
+# until all perl modules have been rebuilt with 5.34, each module sets
+# this manually, before including common.mk
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
 
-COMPONENT_TEST_TARGETS = test
+include $(WS_MAKE_RULES)/common.mk
 
-build:		$(BUILD_32_and_64)
+#
+# use the same results for comparison for all builds
+#
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-install:	$(INSTALL_32_and_64)
+#
+# filter out all output up to and including the test_harness line
+# filter out timing information and anything else that varies between builds
+#
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/test_harness/d"' \
+	'-e "s/,  *[0-9]* wallclock.*//"'
 
-test:		$(TEST_32_and_64)
+# to run the test suite, we need the runtime dependency module URI
+REQUIRED_PACKAGES += library/perl-5/uri-522
+REQUIRED_PACKAGES += library/perl-5/uri-524
+REQUIRED_PACKAGES += library/perl-5/uri-534
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534

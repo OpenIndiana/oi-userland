@@ -12,10 +12,6 @@
 # Copyright 2013 Adam Stevko. All rights reserved.
 #
 
-# Republish triggered on 2021-11-17 by Till Wegmueller
-# Republish triggered on 2021-11-17 by Till Wegmueller
-# Republish triggered on 2021-11-17 by Till Wegmueller
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkg
@@ -24,7 +20,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 
 GIT=git
-GIT_REPO=git://github.com/OpenIndiana/pkg5.git
+GIT_REPO=https://github.com/OpenIndiana/pkg5.git
 GIT_BRANCH=oi
 GIT_CHANGESET=HEAD
 
@@ -38,8 +34,6 @@ CLEAN_PATHS += $(BUILD_DIR)
 
 COMPONENT_PREP_GIT=no
 include $(WS_TOP)/make-rules/prep.mk
-
-#export CC 
 
 COMPONENT_ENV = CC=$(CC)
 COMPONENT_BUILD_ENV = $(COMPONENT_ENV)
@@ -125,5 +119,6 @@ PACKAGE_NAMES += system/zones/brand/ipkg
 PACKAGE_NAMES += system/zones/brand/kvm
 PACKAGE_NAMES += system/zones/brand/nlipkg
 
+# Manually added dependencies
 REQUIRED_PACKAGES += developer/opensolaris/pkg5
 REQUIRED_PACKAGES += system/zones/internal
