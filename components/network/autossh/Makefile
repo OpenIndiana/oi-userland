@@ -20,6 +20,7 @@ COMPONENT_FMRI=		network/autossh
 COMPONENT_CLASSIFICATION=	System/Security
 COMPONENT_VERSION=	1.4g
 IPS_COMPONENT_VERSION=	1.4.7
+COMPONENT_REVISION=	1
 COMPONENT_LICENSE=	BSD-like
 COMPONENT_PROJECT_URL=	http://www.harding.motd.ca/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	autossh tunnel maintainer
@@ -35,7 +36,7 @@ COMPONENT_PREP_ACTION = \
 		(cd $(@D) &&\
 		aclocal -I . &&\
 		autoheader &&\
-		autoconf &&\
+		autoreconf --force --install &&\
 		$(RM) config.h )
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
