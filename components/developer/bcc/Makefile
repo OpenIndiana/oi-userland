@@ -23,25 +23,29 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_STYLE=justmake
+BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		bcc
-COMPONENT_VERSION=	0.16.19
-COMPONENT_PROJECT_URL=	http://v3.sk/~lkundrak/dev86/
-COMPONENT_SRC=		dev86-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	Dev86src-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:33398b87ca85e2b69e4062cf59f2f7354af46da5edcba036c6f97bae17b8d00e
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)archive/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=         bcc
+COMPONENT_VERSION=      0.16.19
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  http://v3.sk/~lkundrak/dev86/
+COMPONENT_SRC=          dev86-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      Dev86src-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:33398b87ca85e2b69e4062cf59f2f7354af46da5edcba036c6f97bae17b8d00e
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)archive/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+COMMON_TARGETS=no
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # Create the Makefile before we build
-COMPONENT_PRE_BUILD_ACTION = (cd $(@D) ; CC="$(CC)" $(GMAKE) make.fil)
+COMPONENT_PRE_BUILD_ACTION = \
+  (cd $(@D) ; CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" $(GMAKE) make.fil)
 # build with the created Makefile (make.fil)
 COMPONENT_BUILD_ARGS = -f make.fil
 COMPONENT_BUILD_ARGS += PATH="$(@D)/bin:$(PATH)"
@@ -49,13 +53,14 @@ COMPONENT_BUILD_ARGS += MAKE="$(GMAKE)"
 COMPONENT_BUILD_ARGS += VERSION="$(COMPONENT_VERSION)"
 COMPONENT_BUILD_ARGS += TOPDIR="$(@D)"
 COMPONENT_BUILD_ARGS += CC="$(CC)"
+COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_TARGETS = bcc86 as86 ld86 ar86
 
 
 # common targets
 install build:		$(BUILD_32)
 
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
