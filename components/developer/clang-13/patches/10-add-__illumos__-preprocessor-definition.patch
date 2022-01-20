@@ -1,0 +1,11 @@
+diff -wpruN '--exclude=*.orig' a~/lib/Basic/Targets/OSTargets.h a/lib/Basic/Targets/OSTargets.h
+--- a~/tools/clang/lib/Basic/Targets/OSTargets.h	1970-01-01 00:00:00
++++ a/tools/clang/lib/Basic/Targets/OSTargets.h	1970-01-01 00:00:00
+@@ -624,6 +624,7 @@ protected:
+   void getOSDefines(const LangOptions &Opts, const llvm::Triple &Triple,
+                     MacroBuilder &Builder) const override {
+     DefineStd(Builder, "sun", Opts);
++    Builder.defineMacro("__illumos__");
+     DefineStd(Builder, "unix", Opts);
+     Builder.defineMacro("__ELF__");
+     Builder.defineMacro("__svr4__");

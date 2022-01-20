@@ -1,0 +1,24 @@
+diff -wpruN '--exclude=*.orig' a~/lib/Driver/ToolChains/Solaris.cpp a/lib/Driver/ToolChains/Solaris.cpp
+--- a~/tools/clang/lib/Driver/ToolChains/Solaris.cpp	1970-01-01 00:00:00
++++ a/tools/clang/lib/Driver/ToolChains/Solaris.cpp	1970-01-01 00:00:00
+@@ -220,9 +220,6 @@ void Solaris::AddClangSystemIncludeArgs(
+   if (DriverArgs.hasArg(clang::driver::options::OPT_nostdinc))
+     return;
+ 
+-  if (!DriverArgs.hasArg(options::OPT_nostdlibinc))
+-    addSystemInclude(DriverArgs, CC1Args, D.SysRoot + "/usr/local/include");
+-
+   if (!DriverArgs.hasArg(options::OPT_nobuiltininc)) {
+     SmallString<128> P(D.ResourceDir);
+     llvm::sys::path::append(P, "include");
+diff -wpruN '--exclude=*.orig' a~/lib/Frontend/InitHeaderSearch.cpp a/lib/Frontend/InitHeaderSearch.cpp
+--- a~/tools/clang/lib/Frontend/InitHeaderSearch.cpp	1970-01-01 00:00:00
++++ a/tools/clang/lib/Frontend/InitHeaderSearch.cpp	1970-01-01 00:00:00
+@@ -233,6 +233,7 @@ void InitHeaderSearch::AddDefaultCInclud
+     case llvm::Triple::PS4:
+     case llvm::Triple::ELFIAMCU:
+     case llvm::Triple::Fuchsia:
++    case llvm::Triple::Solaris:
+       break;
+     case llvm::Triple::Win32:
+       if (triple.getEnvironment() != llvm::Triple::Cygnus)
