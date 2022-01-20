@@ -11,30 +11,26 @@
 #
 # Copyright (c) 2016, 2017, Wiselabs Software Ltda. All rights reserved.
 #
+BUILD_STYLE=justmake
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		aget
-COMPONENT_VERSION=	0.4.1
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.enderunix.org/aget
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:d17393c7f44aab38028ae71f14b572ba1839b6e085fb2092b6ebe68bc931df4d
-COMPONENT_ARCHIVE_URL=	http://www.enderunix.org/aget/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=         aget
+COMPONENT_VERSION=      0.4.1
+COMPONENT_REVISION=     2
+COMPONENT_PROJECT_URL=  http://www.enderunix.org/aget
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:d17393c7f44aab38028ae71f14b572ba1839b6e085fb2092b6ebe68bc931df4d
+COMPONENT_ARCHIVE_URL=  http://www.enderunix.org/aget/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS+= -std=c89
 
 COMPONENT_PREP_ACTION = ( $(CP) $(SOURCE_DIR)/Makefile.Solaris $(SOURCE_DIR)/Makefile )
 COMPONENT_INSTALL_ARGS += PREFIX=$(PROTOUSRDIR)
 COMPONENT_BUILD_ENV += BITS=$(BITS) CC=$(CC) CFLAGS="$(CFLAGS)"
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
 
 REQUIRED_PACKAGES += system/library
