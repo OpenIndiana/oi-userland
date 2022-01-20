@@ -22,6 +22,7 @@ COMPONENT_NAME= icu
 COMPONENT_VERSION= 68.2
 COMPONENT_UVERSION= 68_2
 COMPONENT_DVERSION= 68-2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= International Components for Unicode
 COMPONENT_SRC= $(COMPONENT_NAME)
 COMPONENT_ARCHIVE= icu4c-$(COMPONENT_UVERSION)-src.tgz
@@ -31,7 +32,8 @@ COMPONENT_ARCHIVE_URL = https://github.com/unicode-org/icu/releases/download/rel
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+# The build system does not honor the environment variables
+PATH=$(GCC_BINDIR):$(PATH.gnu)
 
 # set relocate_to option while unpacking the tar ball
 UNPACK_ARGS= -r $(COMPONENT_SRC)
