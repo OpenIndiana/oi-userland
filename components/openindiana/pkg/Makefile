@@ -39,7 +39,7 @@ COMPONENT_ENV = CC=$(CC)
 COMPONENT_BUILD_ENV = $(COMPONENT_ENV)
 COMPONENT_INSTALL_ENV = $(COMPONENT_ENV)
 
-$(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
+$(SOURCE_DIR)/.downloaded: component-environment-prep $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
 	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
 	@cd $(SOURCE_DIR); $(GIT) checkout $(GIT_BRANCH); $(GIT) pull \
