@@ -12,35 +12,31 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tango-icon-theme
 COMPONENT_VERSION=      0.8.90
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=     2
 COMPONENT_PROJECT_URL=  http://tango.freedesktop.org/
 COMPONENT_SUMMARY=      Tango icon theme
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:e94004fa9aa6a7250ac4db6180e96f9c147db617c0d8e7fc8c9e2c42924e990c
+	sha256:e94004fa9aa6a7250ac4db6180e96f9c147db617c0d8e7fc8c9e2c42924e990c
 COMPONENT_ARCHIVE_URL=  http://tango.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Theming
-COMPONENT_FMRI=	gnome/theme/tango-icon-theme
-COMPONENT_LICENSE=	PublicDomain
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_CLASSIFICATION=Desktop (GNOME)/Theming
+COMPONENT_FMRI=         gnome/theme/tango-icon-theme
+COMPONENT_LICENSE=      PublicDomain
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
+# Manually added dependency
+REQUIRED_PACKAGES+= image/imagemagick
