@@ -24,6 +24,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libusb-ugen
 COMPONENT_VERSION=	0.1.8
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	0.5.11
 COMPONENT_PROJECT_URL=	http://libusb.sf.net/
 COMPONENT_SRC=		src
@@ -48,7 +49,7 @@ clobber:	clean
 	$(RM) $(SOURCE_DIR)/.prep
 
 # common targets
-$(SOURCE_DIR)/.prep:
+$(SOURCE_DIR)/.prep: component-environment-prep
 	$(TOUCH) $@
 
 prep:	$(SOURCE_DIR)/.prep
@@ -62,3 +63,4 @@ test:		$(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES+= system/header/header-ugen
+REQUIRED_PACKAGES+= system/library/usb/libusb
