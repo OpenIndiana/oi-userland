@@ -50,8 +50,13 @@ component-environment-check::
 component-environment-prep::
 	@/usr/bin/pkg list -vH $(USERLAND_REQUIRED_PACKAGES:%=/%) $(REQUIRED_PACKAGES:%=/%) >/dev/null || \
 		{ echo "Adding required packages to build environment..."; \
-		  $(PFEXEC) /usr/bin/pkg install --accept -v $(REQUIRED_PACKAGES:%=/%) || [ $$? -eq 4 ] ; }
-
+		RETVAL=7 ; \
+		while [ $$RETVAL -eq 7 ] ; do \
+		  $(PFEXEC) /usr/bin/pkg install --accept -v $(REQUIRED_PACKAGES:%=/%) ; \
+		  RETVAL=$$? ; \
+		  if [ $$RETVAL -eq 4 ] || [ -z $$RETVAL ]; then break; fi; \
+		  sleep 10; \
+		done; }
 ZONENAME_PREFIX = bz
 ZONENAME_ID = $(shell echo "$(WS_TOP)" | sha1sum | cut -c0-7)-$(COMPONENT_NAME)
 ZONENAME = $(ZONENAME_PREFIX)-$(ZONENAME_ID)
