@@ -17,9 +17,8 @@ BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	libreoffice
-COMPONENT_VERSION= 6.4.3
+COMPONENT_VERSION= 6.4.7
 COMPONENT_RC_VERSION= 2
-COMPONENT_REVISION= 4
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION)
 COMPONENT_SUMMARY= LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL= https://www.libreoffice.org/
@@ -29,7 +28,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL= https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
-COMPONENT_ARCHIVE_HASH= sha256:bc14547c188efa15f4cb36cfb3da7cacb3037a7448d1bba8a58ed6a320ccabb2
+COMPONENT_ARCHIVE_HASH= sha256:034dd79a60cfff60c7d353130fe2cc8e6a1aabeab50d89e4570ae95f33296644
 COMPONENT_LICENSE= MPL2.0
 COMPONENT_LICENSE_FILE= COPYING.MPL
 
@@ -57,9 +56,9 @@ COMPONENT_ARCHIVE_6 = 884ed41809687c3e168fc7c19b16585149ff058eca79acbf3ee784f663
 COMPONENT_ARCHIVE_HASH_6 = sha256:884ed41809687c3e168fc7c19b16585149ff058eca79acbf3ee784f6630704cc
 COMPONENT_ARCHIVE_URL_6 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_6)
 
-COMPONENT_ARCHIVE_7 = a233181e03d3c307668b4c722d881661-mariadb_client-2.0.0-src.tar.gz
-COMPONENT_ARCHIVE_HASH_7 = sha256:fd2f751dea049c1907735eb236aeace1d811d6a8218118b00bbaa9b84dc5cd60
-COMPONENT_ARCHIVE_URL_7 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_7)
+#COMPONENT_ARCHIVE_7 = a233181e03d3c307668b4c722d881661-mariadb_client-2.0.0-src.tar.gz
+#COMPONENT_ARCHIVE_HASH_7 = sha256:fd2f751dea049c1907735eb236aeace1d811d6a8218118b00bbaa9b84dc5cd60
+#COMPONENT_ARCHIVE_URL_7 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_7)
 
 COMPONENT_ARCHIVE_8 = raptor2-2.0.15-patched.tar.bz2
 COMPONENT_ARCHIVE_HASH_8 = sha256:e0a4bbe6421c115fba4684f6fa009541ed041f64fca609569967805831b0a9db
@@ -106,18 +105,19 @@ COMPONENT_ARCHIVE_HASH_18 = sha256:13eec4811ea30e3f0e16a734d1dbf7f9d246a71d540b4
 COMPONENT_ARCHIVE_URL_18 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_18)
 
 COMPONENT_ARCHIVE_19 = libreoffice-translations-$(COMPONENT_FULL_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_19 = sha256:03260badad37d1d96c9bcac79ee48ab2ab00000aba78c3a4a4accd51c987e91b
+COMPONENT_ARCHIVE_HASH_19 = sha256:b13088a98be1f6e7e177331db3d723419bfeb11ae16516334f0fbb853ae40ab1
 COMPONENT_ARCHIVE_URL_19 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_19)
 
 COMPONENT_ARCHIVE_20 = libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_20 = sha256:75deaae62faaa9c06afe04b5e1293e65c5e6ed5d91895a1432a817478ab35941
+COMPONENT_ARCHIVE_HASH_20 = sha256:3718c44d5ec5fc1d011ddf5b9bbbef384f1bdc695338e8459d6e403da2539bb7
 COMPONENT_ARCHIVE_URL_20 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_20)
 
 COMPONENT_ARCHIVE_21 = boost_1_69_0.tar.bz2
 COMPONENT_ARCHIVE_HASH_21 = sha256:8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406
 COMPONENT_ARCHIVE_URL_21 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_21)
 
-NUM_EXTRA_ARCHIVES = $(shell seq 1 21)
+# ignore archive 7 (mariadb client)
+NUM_EXTRA_ARCHIVES = $(shell seq 1 6) $(shell 8 21)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -192,6 +192,8 @@ CONFIGURE_OPTIONS += --with-system-libwpd
 CONFIGURE_OPTIONS += --with-system-libwpg
 CONFIGURE_OPTIONS += --with-system-libwps
 CONFIGURE_OPTIONS += --with-system-libzmf
+# Use packaged mariadb client with solaris patches
+CONFIGURE_OPTIONS += --with-system-mariadb
 CONFIGURE_OPTIONS += --enable-gio
 CONFIGURE_OPTIONS += --with-lang=ALL
 CONFIGURE_OPTIONS += --disable-firebird-sdbc
@@ -215,12 +217,13 @@ COMPONENT_INSTALL_TARGETS = distro-pack-install
 LIBREOFFICE_PROGRAM_DIR = /usr/lib/libreoffice/program
 
 NSS_LIB_DIR=/usr/lib/mps
+MARIADB_LIBDIR=/usr/mariadb/10.1/lib
 
 COMPONENT_POST_INSTALL_ACTION  = \
     for file in $(PROTO_DIR)$(LIBREOFFICE_PROGRAM_DIR)/*.so*; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR)"' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR)"' $$file ; \
-    done ;
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR):$(MARIADB_LIBDIR)"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR):$(MARIADB_LIBDIR)"' $$file ; \
+    done ; 
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/assembler/nasm
@@ -233,6 +236,7 @@ REQUIRED_PACKAGES += library/c++/mdds
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo

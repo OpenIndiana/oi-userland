@@ -1,0 +1,11 @@
+--- libreoffice-6.4.7.2/sysui/CustomTarget_solaris.mk.1	Fri Feb  4 08:22:11 2022
++++ libreoffice-6.4.7.2/sysui/CustomTarget_solaris.mk	Fri Feb  4 08:25:00 2022
+@@ -46,7 +46,7 @@
+ 	cat $< | tr -d "\015" > $@
+ 
+ $(solaris_WORKDIR)/%/prototype: $(solaris_SRCDIR)/prototype
+-	cat $< | tr -d "\015" | sed -e "s/%PREFIX/$(UNIXFILENAME.$*)/g" -e "s_%SOURCE_$(call gb_CustomTarget_get_workdir,sysui/share)/$*_g" -e "s/%ICONPREFIX/$(UNIXFILENAME.$*)/g" > $@
++	cat $< | tr -d "\015" | sed -e "s/%PREFIX/$(UNIXFILENAME.$*)/g" -e "s%\%SOURCE%$(call gb_CustomTarget_get_workdir,sysui/share)/$*%g" -e "s/%ICONPREFIX/$(UNIXFILENAME.$*)/g" > $@
+ 
+ $(solaris_WORKDIR)/%-desktop-integration.tar.gz: $(solaris_WORKDIR)/%/copyright $(solaris_WORKDIR)/%/pkginfo $(solaris_WORKDIR)/%/depend $(solaris_WORKDIR)/%/mailcap $(solaris_WORKDIR)/%/postinstall $(solaris_WORKDIR)/%/postremove $(solaris_WORKDIR)/%/prototype $(call gb_CustomTarget_get_workdir,sysui/share)/%/openoffice.org.xml
+ #	pkgmk -l 1073741824 -r $(solaris_WORKDIR) -f $(solaris_WORKDIR)/$*/prototype -o -d $(solaris_WORKDIR) ARCH=all VERSION=$(PKGVERSION.$*)
