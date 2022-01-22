@@ -159,8 +159,8 @@ else
 MK_BITS=$(strip $(BUILD_BITS))
 endif
 
-PYTHON_VERSION =	2.7
-PYTHON_VERSIONS =	2.7
+PYTHON_VERSION?=	2.7
+PYTHON_VERSIONS?=	2.7
 
 PYTHON2_VERSIONS = 2.7
 PYTHON2_VERSION = 2.7
@@ -625,8 +625,8 @@ export CCACHE := $(shell \
         fi; \
     fi)
 
-GCC_VERSION =	7
-GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
+GCC_VERSION?=	7
+GCC_ROOT?=	/usr/gcc/$(GCC_VERSION)
 
 GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
 GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
@@ -731,7 +731,7 @@ CXX =		$(CXX.$(COMPILER).$(BITS))
 F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
-RUBY_VERSION =  2.3
+RUBY_VERSION?=  2.3
 RUBY_LIB_VERSION.2.2 = 2.2.0
 RUBY_LIB_VERSION.2.3 = 2.3.0
 RUBY.2.2 =	/usr/ruby/2.2/bin/ruby
@@ -784,7 +784,7 @@ JAVA_HOME = $(JAVA8_HOME)
 
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
-PERL_VERSION =  5.22
+PERL_VERSION?=  5.22
 
 # Do *not* add 5.34 to PERL_VERSIONS/PERL_64_ONLY_VERSIONS yet.  We'll
 # enable it system-wide once all existing perl modules have been rebuilt
