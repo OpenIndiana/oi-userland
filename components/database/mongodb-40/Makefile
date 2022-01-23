@@ -40,11 +40,13 @@ INSTALL_TOOLS= $(BUILD_DIR)/tools/.installed
 
 MONGO_PREFIX=usr/mongodb/$(COMPONENT_MAJOR_VERSION)
 
-GMAKE=scons
+# Use supplied scons version for compatibility
+GMAKE=$(SOURCE_DIR)/src/third_party/scons-2.5.0/scons.py
 CORES=$(shell psrinfo -v|grep '^Status of'|tail -1|awk '{print $$5}')
 GOROOT=$(shell go env | grep GOROOT | awk -F= '{ print $$2 }' | tr -d '"')
 
 ENV = /usr/bin/env -i
+COMPONENT_BUILD_ENV += GO111MODULE=auto
 
 COMPONENT_BUILD_ARGS += TARGET_ARCH=x86_64
 COMPONENT_BUILD_ARGS += CXXFLAGS="$(CXXFLAGS)"
@@ -120,7 +122,6 @@ REQUIRED_PACKAGES += library/python/pyyaml
 REQUIRED_PACKAGES += library/python/urllib3-27
 
 # Build dependencies
-REQUIRED_PACKAGES += developer/build/scons
 REQUIRED_PACKAGES += developer/gcc-6
 REQUIRED_PACKAGES += developer/golang
 REQUIRED_PACKAGES += library/python/typing
