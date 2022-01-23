@@ -13,32 +13,32 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS=32_and_64
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gst-ffmpeg
-COMPONENT_VERSION= 0.10.13
-COMPONENT_REVISION= 1
-COMPONENT_SUMMARY= GNOME streaming media framework plugins
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=         gst-ffmpeg
+COMPONENT_VERSION=      0.10.13
+COMPONENT_REVISION=     2
+COMPONENT_SUMMARY=      GNOME streaming media framework plugins
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ed9cc4375100c80ce56540ac1c30b8712a94d0cb97ba33dd52dd6203cd554729
-COMPONENT_ARCHIVE_URL= \
-  http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_FMRI = library/audio/gstreamer/plugin/ffmpeg
-COMPONENT_LICENSE = GPLv2
-COMPONENT_LICENSE_FILE = COPYING
+	sha256:ed9cc4375100c80ce56540ac1c30b8712a94d0cb97ba33dd52dd6203cd554729
+COMPONENT_ARCHIVE_URL=  \
+	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://gstreamer.freedesktop.org/
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_FMRI=         library/audio/gstreamer/plugin/ffmpeg
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
 gcc_OPT = -O2
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cd $(SOURCE_DIR) && aclocal -I ./m4 -I./common/m4 &&\
 					autoheader &&\
