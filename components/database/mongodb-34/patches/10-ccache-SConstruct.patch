@@ -1,0 +1,14 @@
+--- SConstruct.orig	Thu Sep  9 23:53:33 2021
++++ mongodb-src-r3.4.19/SConstruct	Thu Sep  9 23:54:45 2021
+@@ -907,6 +907,11 @@
+                )
+ 
+ env = Environment(variables=env_vars, **envDict)
++for ccache_env in ('CC_gcc_32','CC_gcc_64','CXX_gcc_32','CXX_gcc_64'):
++	try:
++		env['ENV'][ccache_env]=os.environ[ccache_env]
++	except KeyError:
++		pass
+ del envDict
+ 
+ env.AddMethod(env_os_is_wrapper, 'TargetOSIs')
