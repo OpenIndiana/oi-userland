@@ -1,0 +1,20 @@
+--- ./SConstruct	Wed Sep  8 19:36:28 2021
++++ mongodb-src-r4.0.11/SConstruct	Wed Sep  8 19:47:36 2021
+@@ -986,6 +986,12 @@
+ 
+ env = Environment(variables=env_vars, **envDict)
+ del envDict
++# For ccache to work properly 
++for ccache_env in ('CC_gcc_32','CC_gcc_64','CXX_gcc_32','CXX_gcc_64'):
++	try:
++		env['ENV'][ccache_env]=os.environ[ccache_env]
++	except KeyError:
++		pass
+ 
+ env.AddMethod(mongo_platform.env_os_is_wrapper, 'TargetOSIs')
+ env.AddMethod(mongo_platform.env_get_os_name_wrapper, 'GetTargetOSName')
+@@ -3773,3 +3779,4 @@
+ # because SCons wants it to be a particular object.
+ for i, s in enumerate(BUILD_TARGETS):
+     BUILD_TARGETS[i] = env.subst(s)
++
