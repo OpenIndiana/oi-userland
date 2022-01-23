@@ -46,7 +46,6 @@ CORES=$(shell psrinfo -v|grep '^Status of'|tail -1|awk '{print $$5}')
 GOROOT=$(shell go env | grep GOROOT | awk -F= '{ print $$2 }' | tr -d '"')
 
 ENV = /usr/bin/env -i
-COMPONENT_BUILD_ENV += GO111MODULE=auto
 
 COMPONENT_BUILD_ARGS += TARGET_ARCH=x86_64
 COMPONENT_BUILD_ARGS += CXXFLAGS="$(CXXFLAGS)"
@@ -73,7 +72,7 @@ COMPONENT_INSTALL_ARGS = $(COMPONENT_BUILD_ARGS)
 $(BUILD_TOOLS):	$(BUILD_64)
 	$(MKDIR) $(@D)/bin
 	$(CP) -a $(SOURCE_DIR)/src/mongo/gotools/* $(@D) 
-	cd $(@D)/src/github.com/mongodb/mongo-tools && GOROOT=$(GOROOT) /usr/bin/bash build.sh ssl
+	cd $(@D)/src/github.com/mongodb/mongo-tools && GOROOT=$(GOROOT) GO111MODULE=auto /usr/bin/bash build.sh ssl
 	$(TOUCH) $(@)
 
 $(INSTALL_TOOLS): $(BUILD_TOOLS) $(INSTALL_64)
