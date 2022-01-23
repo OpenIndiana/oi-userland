@@ -68,7 +68,7 @@ GOROOT=$(shell go env | grep GOROOT | awk -F= '{ print $$2 }' | tr -d '"')
 $(BUILD_TOOLS):	$(BUILD_64)
 	$(MKDIR) $(@D)/bin
 	$(CP) -a $(SOURCE_DIR)/src/mongo/gotools/* $(@D) 
-	cd $(@D)/src/github.com/mongodb/mongo-tools && GOROOT=$(GOROOT) /usr/bin/bash build.sh ssl
+	cd $(@D)/src/github.com/mongodb/mongo-tools && GOROOT=$(GOROOT) GO111MODULE=auto /usr/bin/bash build.sh ssl
 	$(TOUCH) $(@)
 
 $(INSTALL_TOOLS): $(BUILD_TOOLS) $(INSTALL_64)
