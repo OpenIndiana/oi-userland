@@ -1,0 +1,14 @@
+diff --git a/common/gst-glib-gen.mak b/common/gst-glib-gen.mak
+index 76b2233bb22c9c6a437c72f23744794d39ca94d3..bcb424034f3657c22cf021c8a099d9e9c198729b 100644
+--- a/common/gst-glib-gen.mak
++++ b/common/gst-glib-gen.mak
+@@ -8,7 +8,8 @@
+ #glib_gen_decl_banner=GST_EXPORT
+ #glib_gen_decl_include=\#include <gst/foo/foo-prelude.h>
+ 
+-enum_headers=$(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++hash:=\#
++enum_headers=$(foreach h,$(glib_enum_headers),\n$(hash)include \"$(h)\")
+ 
+ # these are all the rules generating the relevant files
+ $(glib_gen_basename)-marshal.h: $(glib_gen_basename)-marshal.list

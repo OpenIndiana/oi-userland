@@ -13,38 +13,42 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gst-plugins-bad
-COMPONENT_VERSION= 0.10.23
-COMPONENT_REVISION= 5
-COMPONENT_SUMMARY= GNOME streaming media framework plugins
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=         gst-plugins-bad
+COMPONENT_VERSION=      0.10.23
+COMPONENT_REVISION=     6
+COMPONENT_SUMMARY=      GNOME streaming media framework plugins
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:03cf0786391c64625569072e904082a08861f05a63d64b2f8e8dad3f26d81bf9
-COMPONENT_ARCHIVE_URL= \
-  http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_FMRI = library/audio/gstreamer/plugin/bad
-COMPONENT_LICENSE = GPLv2
-COMPONENT_LICENSE_FILE = COPYING
+	sha256:03cf0786391c64625569072e904082a08861f05a63d64b2f8e8dad3f26d81bf9
+COMPONENT_ARCHIVE_URL=  \
+	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://gstreamer.freedesktop.org/
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_FMRI=         library/audio/gstreamer/plugin/bad
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
 
-CFLAGS += -I/usr/sfw/include -I/usr/X11/include
+CFLAGS += -I/usr/X11/include
+
+COMPONENT_PREP_ACTION=(cd $(@D) && aclocal -I ./m4 -I./common/m4 &&\
+                                   autoheader &&\
+                                   automake -a -f -c --gnu &&\
+                                   autoconf )
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR64)
 CONFIGURE_OPTIONS += --enable-external
 CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
 CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
@@ -55,15 +59,8 @@ CONFIGURE_ENV += HAVE_CXX=yes
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-$(INSTALL_32):	$(INSTALL_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += audio/faac
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += codec/jasper
@@ -83,6 +80,7 @@ REQUIRED_PACKAGES += library/graphics/libvdpau
 REQUIRED_PACKAGES += library/libofa
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/neon
+REQUIRED_PACKAGES += library/opus
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libdvdnav
@@ -92,8 +90,6 @@ REQUIRED_PACKAGES += library/video/libschroedinger
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/xvid
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += video/rtmpdump
