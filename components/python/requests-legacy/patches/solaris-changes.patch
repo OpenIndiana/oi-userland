@@ -1,0 +1,18 @@
+This patch file adjusts the where() routine in certs.py to return the
+location of the standard certs bundle on Solaris.
+
+This change is only suitable for Solaris, and will not be sent upstream.
+
+--- requests-2.21.0/requests/certs.py
++++ requests-2.21.0/requests/certs.py
+@@ -12,7 +12,9 @@ If you are packaging Requests, e.g., for
+ environment, you can change the definition of where() to return a separately
+ packaged CA bundle.
+ """
+-from certifi import where
++def where():
++    """Return the preferred certificate bundle."""
++    return "/etc/certs/ca-certificates.crt"
+ 
+ if __name__ == '__main__':
+     print(where())
