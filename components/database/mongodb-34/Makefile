@@ -40,7 +40,7 @@ INSTALL_TOOLS=	$(BUILD_DIR)/tools/.installed
 
 MONGO_PREFIX=	usr/mongodb/$(COMPONENT_MAJOR_VERSION)
 
-GMAKE=scons
+GMAKE=/usr/bin/python $(SOURCE_DIR)/src/third_party/scons-2.5.0/scons.py
 
 COMPONENT_BUILD_ARGS += TARGET_ARCH=x86_64
 COMPONENT_BUILD_ARGS += CXXFLAGS="$(CXXFLAGS)"
@@ -68,7 +68,7 @@ GOROOT=$(shell go env | grep GOROOT | awk -F= '{ print $$2 }' | tr -d '"')
 $(BUILD_TOOLS):	$(BUILD_64)
 	$(MKDIR) $(@D)/bin
 	$(CP) -a $(SOURCE_DIR)/src/mongo/gotools/* $(@D) 
-	cd $(@D)/src/github.com/mongodb/mongo-tools && GOROOT=$(GOROOT) /usr/bin/bash build.sh ssl
+	cd $(@D)/src/github.com/mongodb/mongo-tools && GOROOT=$(GOROOT) GO111MODULE=auto /usr/bin/bash build.sh ssl
 	$(TOUCH) $(@)
 
 $(INSTALL_TOOLS): $(BUILD_TOOLS) $(INSTALL_64)
@@ -115,7 +115,6 @@ REQUIRED_PACKAGES += library/python/pymongo-27
 REQUIRED_PACKAGES += library/python/pyyaml
 
 # Build dependencies
-REQUIRED_PACKAGES += developer/build/scons
 REQUIRED_PACKAGES += developer/gcc-6
 REQUIRED_PACKAGES += developer/golang
 
