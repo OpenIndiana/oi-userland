@@ -16,7 +16,7 @@
 # Copyright 2021 Tim Mooney.  All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 BUILD_STYLE=	meson
 
 include ../../../make-rules/shared-macros.mk
