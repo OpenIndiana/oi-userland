@@ -41,7 +41,7 @@ INSTALL_TOOLS= $(BUILD_DIR)/tools/.installed
 MONGO_PREFIX=usr/mongodb/$(COMPONENT_MAJOR_VERSION)
 
 # Use supplied scons version for compatibility
-GMAKE=$(SOURCE_DIR)/src/third_party/scons-2.5.0/scons.py
+GMAKE=/usr/bin/python $(SOURCE_DIR)/src/third_party/scons-2.5.0/scons.py
 CORES=$(shell psrinfo -v|grep '^Status of'|tail -1|awk '{print $$5}')
 GOROOT=$(shell go env | grep GOROOT | awk -F= '{ print $$2 }' | tr -d '"')
 
