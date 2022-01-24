@@ -26,33 +26,33 @@
 # or inseparable run-time dependencies:
 USE_ENCUMBERED?=yes
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		SDL2_mixer
-COMPONENT_VERSION=	2.0.1
-COMPONENT_PROJECT_URL=	http://www.libsdl.org/projects/SDL_mixer/
-COMPONENT_SUMMARY=	SDL_mixer is a sample multi-channel audio mixer library
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:5a24f62a610249d744cbd8d28ee399d8905db7222bf3bdbc8a8b4a76e597695f
-COMPONENT_ARCHIVE_URL=	http://www.libsdl.org/projects/SDL_mixer/release/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	library/audio/sdl2-mixer
-COMPONENT_LICENSE =	ZLIB
-COMPONENT_LICENSE_FILE =	COPYING.txt
-COMPONENT_CLASSIFICATION =	System/Multimedia Libraries
+COMPONENT_NAME=         SDL2_mixer
+COMPONENT_VERSION=      2.0.1
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  http://www.libsdl.org/projects/SDL_mixer/
+COMPONENT_SUMMARY=      SDL_mixer is a sample multi-channel audio mixer library
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:5a24f62a610249d744cbd8d28ee399d8905db7222bf3bdbc8a8b4a76e597695f
+COMPONENT_ARCHIVE_URL=  http://www.libsdl.org/projects/SDL_mixer/release/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/audio/sdl2-mixer
+COMPONENT_LICENSE=      ZLIB
+COMPONENT_LICENSE_FILE= COPYING.txt
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 
 ifeq ($(strip $(USE_ENCUMBERED)),yes)
 COMPONENT_SUMMARY:=$(COMPONENT_SUMMARY) (encumbered version)
 include $(WS_MAKE_RULES)/encumbered.mk
 endif
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH.32=/usr/gnu/bin:/usr/bin
-PATH.64=/usr/gnu/bin:/usr/gnu/bin/$(MACH64):/usr/bin/$(MACH64):/usr/bin
-PATH=$(PATH.$(BITS))
+PATH=/usr/gnu/bin:/usr/gnu/bin/$(MACH64):/usr/bin/$(MACH64):/usr/bin
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && ./autogen.sh )
 
@@ -74,13 +74,6 @@ REQUIRED_PACKAGES += library/audio/libmad
 else
 CONFIGURE_OPTIONS +=	--disable-music-mp3
 endif
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += system/library
