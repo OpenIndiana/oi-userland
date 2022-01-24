@@ -13,27 +13,29 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= audacity
-COMPONENT_VERSION= 2.3.2
-COMPONENT_SUMMARY= Cross-platform audio software for recording and editing
-COMPONENT_SRC= audacity-Audacity-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= Audacity-$(COMPONENT_VERSION).zip
+COMPONENT_NAME=         audacity
+COMPONENT_VERSION=      2.3.2
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      Cross-platform audio software for recording and editing
+COMPONENT_SRC=          audacity-Audacity-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      Audacity-$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_HASH= \
-  sha256:675fb1a7a4270800324cd5add5b9f23dae32c9f4df5b3dbe5124dac6c4de0988
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/audacity/audacity/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.audacityteam.org/
-COMPONENT_FMRI= audio/audacity
-COMPONENT_CLASSIFICATION= Applications/Sound and Video
-COMPONENT_LICENSE= GPLv2
+	sha256:675fb1a7a4270800324cd5add5b9f23dae32c9f4df5b3dbe5124dac6c4de0988
+COMPONENT_ARCHIVE_URL=  \
+	https://github.com/audacity/audacity/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://www.audacityteam.org/
+COMPONENT_FMRI=         audio/audacity
+COMPONENT_CLASSIFICATION=Applications/Sound and Video
+COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= LICENSE.txt
 
 include $(WS_MAKE_RULES)/encumbered.mk
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -45,7 +47,7 @@ CFLAGS += -std=c99 $(CPP_XPG6MODE)
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CP) -rpP $(SOURCE_DIR)/* $(@D))
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_ENV += WX_CONFIG=/usr/bin/wx-config-3
+CONFIGURE_ENV += WX_CONFIG=/usr/bin/$(MACH64)/wx-config-3
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
@@ -67,13 +69,6 @@ CONFIGURE_OPTIONS+= --with-libtwolame=system
 CONFIGURE_OPTIONS+= --with-libvorbis=system
 CONFIGURE_OPTIONS+= --with-portmixer=yes
 CONFIGURE_OPTIONS+= --with-portmidi=local
-
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += shell/which
 REQUIRED_PACKAGES += video/ffmpeg
