@@ -12,25 +12,26 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_STYLE=cmake
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		x265
-COMPONENT_VERSION=	3.5
-COMPONENT_SUMMARY=	High Efficiency Video Coding (HEVC)
-COMPONENT_PROJECT_URL=	https://x265.org/
-COMPONENT_FMRI=		library/video/x265
-COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_NAME=         x265
+COMPONENT_VERSION=      3.5
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      High Efficiency Video Coding (HEVC)
+COMPONENT_PROJECT_URL=  https://x265.org/
+COMPONENT_FMRI=         library/video/x265
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	https://bitbucket.org/multicoreware/$(COMPONENT_NAME)_git/downloads/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:e70a3335cacacbba0b3a20ec6fecd6783932288ebc8163ad74bcc9606477cae8
-COMPONENT_LICENSE=	GPLv2.0
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_ARCHIVE_URL=  https://bitbucket.org/multicoreware/$(COMPONENT_NAME)_git/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:e70a3335cacacbba0b3a20ec6fecd6783932288ebc8163ad74bcc9606477cae8
+COMPONENT_LICENSE=      GPLv2.0
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 SOURCE_DIR =    $(COMPONENT_DIR)/$(COMPONENT_SRC)/source/
 
@@ -38,12 +39,6 @@ CMAKE_OPTIONS += -DENABLE_PIC=ON
 CMAKE_OPTIONS += -DENABLE_TESTS=ON
 
 COMPONENT_TEST_CMD = test/TestBench
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += developer/assembler/nasm
 
