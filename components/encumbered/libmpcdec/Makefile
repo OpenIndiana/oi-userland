@@ -13,31 +13,30 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libmpcdec
-COMPONENT_VERSION= 1.2.6
-COMPONENT_FMRI = library/audio/libmpcdec
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_SUMMARY= Portable Musepack decoder library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=         libmpcdec
+COMPONENT_VERSION=      1.2.6
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/audio/libmpcdec
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_SUMMARY=      Portable Musepack decoder library
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4bd54929a80850754f27b568d7891e1e3e1b8d2f208d371f27d1fda09e6f12a8
-COMPONENT_ARCHIVE_URL= \
-   http://pkgs.fedoraproject.org/repo/pkgs/libmpcdec/$(COMPONENT_ARCHIVE)/7f7a060e83b4278acf4b77d7a7b9d2c0/$(COMPONENT_ARCHIVE)
+	sha256:4bd54929a80850754f27b568d7891e1e3e1b8d2f208d371f27d1fda09e6f12a8
+COMPONENT_ARCHIVE_URL=  \
+	http://pkgs.fedoraproject.org/repo/pkgs/libmpcdec/$(COMPONENT_ARCHIVE)/7f7a060e83b4278acf4b77d7a7b9d2c0/$(COMPONENT_ARCHIVE)
 #  http://files.musepack.net/source/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.musepack.net/
-COMPONENT_LICENSE = BSD
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_PROJECT_URL=  https://www.musepack.net/
+COMPONENT_LICENSE=      BSD
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
