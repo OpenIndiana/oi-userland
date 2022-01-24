@@ -13,25 +13,26 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libdca
-COMPONENT_VERSION= 0.0.7
-COMPONENT_FMRI = library/audio/libdca
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_SUMMARY= A free library for decoding DTS Coherent Acoustics streams
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:3a0b13815f582c661d2388ffcabc2f1ea82f471783c400f765f2ec6c81065f6a
-COMPONENT_ARCHIVE_URL=	https://download.videolan.org/pub/videolan/libdca/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://www.videolan.org/developers/libdca.html
-COMPONENT_LICENSE= LGPLv2.1
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_NAME=         libdca
+COMPONENT_VERSION=      0.0.7
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/audio/libdca
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_SUMMARY=      A free library for decoding DTS Coherent Acoustics streams
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:3a0b13815f582c661d2388ffcabc2f1ea82f471783c400f765f2ec6c81065f6a
+COMPONENT_ARCHIVE_URL=  https://download.videolan.org/pub/videolan/libdca/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://www.videolan.org/developers/libdca.html
+COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 TEST_TARGET=	$(NO_TESTS)
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/common.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $($(COMPILER)_PIC)
 
