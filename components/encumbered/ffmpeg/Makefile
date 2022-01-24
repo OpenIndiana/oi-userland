@@ -12,31 +12,33 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
-PREFERRED_BITS= 64
+BUILD_BITS= 64
 USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= ffmpeg
-COMPONENT_VERSION= 4.4.1
-COMPONENT_SUMMARY= A very fast video and audio converter
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=         ffmpeg
+COMPONENT_VERSION=      4.4.1
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      A very fast video and audio converter
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8fc9f20ac5ed95115a9e285647add0eedd5cc1a98a039ada14c132452f98ac42
-COMPONENT_ARCHIVE_URL= \
-  https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.ffmpeg.org/
-COMPONENT_LICENSE = GPLv2
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_FMRI = video/ffmpeg
+	sha256:8fc9f20ac5ed95115a9e285647add0eedd5cc1a98a039ada14c132452f98ac42
+COMPONENT_ARCHIVE_URL=  \
+	https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://www.ffmpeg.org/
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_FMRI=         video/ffmpeg
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS.32 += -fno-rename-registers
-CFLAGS.32 += -fomit-frame-pointer
-CFLAGS.32 += -fno-PIC -UPIC 
-CFLAGS.32 += -mpreferred-stack-boundary=4
+#Dropped 32-bit build
+#CFLAGS.32 += -fno-rename-registers
+#CFLAGS.32 += -fomit-frame-pointer
+#CFLAGS.32 += -fno-PIC -UPIC 
+#CFLAGS.32 += -mpreferred-stack-boundary=4
 
 CFLAGS += $(CFLAGS.$(BITS))
 CFLAGS += -I/usr/X11/include
@@ -99,15 +101,8 @@ CONFIGURE_OPTIONS += --ignore-tests=source
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-COMPONENT_TEST_ENV.32 += PATH=$(PROTO_DIR)/usr/bin/$(MACH$(BITS)):$(PATH)
-COMPONENT_TEST_ENV.32 += LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib
-COMPONENT_TEST_ENV.64 += PATH=$(PROTO_DIR)/usr/bin:$(PATH)
-COMPONENT_TEST_ENV.64 += LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH$(BITS))
-COMPONENT_TEST_ENV += $(COMPONENT_TEST_ENV.$(BITS))
+COMPONENT_TEST_ENV += PATH=$(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS)):$(PATH)
+COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
 
 COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" -e "/^IGNORE/p" '
 
