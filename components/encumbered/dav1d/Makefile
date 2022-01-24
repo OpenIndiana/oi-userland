@@ -11,23 +11,24 @@
 #
 # Copyright 2021 (c) Tim Mooney. All rights reserved.
 #
-BUILD_BITS=		64_and_32
+BUILD_BITS=		64
 BUILD_STYLE=		meson
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		dav1d
-COMPONENT_VERSION=	0.9.2
-COMPONENT_FMRI=		codec/dav1d
-COMPONENT_SUMMARY=	A fast, cross-platform AV1 decoder
+COMPONENT_NAME=         dav1d
+COMPONENT_VERSION=      0.9.2
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         codec/dav1d
+COMPONENT_SUMMARY=      A fast, cross-platform AV1 decoder
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_PROJECT_URL=	https://code.videolan.org/videolan/dav1d
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL= \
+COMPONENT_PROJECT_URL=  https://code.videolan.org/videolan/dav1d
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=  \
 	$(COMPONENT_PROJECT_URL)/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_ARCHIVE_HASH= \
 	sha256:59a5fc9cc5d8ea780ad71ede6d589ed33fb5179d87780dcf80a00ee854952935
-COMPONENT_LICENSE=	BSD 2-Clause Simplified License
+COMPONENT_LICENSE=      BSD 2-Clause Simplified License
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
