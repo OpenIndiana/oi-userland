@@ -13,32 +13,31 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libmms
-COMPONENT_VERSION= 0.6.4
-COMPONENT_SUMMARY= mms stream protocol library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=         libmms
+COMPONENT_VERSION=      0.6.4
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      mms stream protocol library
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3c05e05aebcbfcc044d9e8c2d4646cd8359be39a3f0ba8ce4e72a9094bee704f
-COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/libmms/files/libmms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE) 
-COMPONENT_PROJECT_URL = http://libmms.sourceforge.net/
-COMPONENT_LICENSE = LGPLv2
-COMPONENT_LICENSE_FILE = COPYING.LIB
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_FMRI = library/video/libmms
+	sha256:3c05e05aebcbfcc044d9e8c2d4646cd8359be39a3f0ba8ce4e72a9094bee704f
+COMPONENT_ARCHIVE_URL=  \
+	http://sourceforge.net/projects/libmms/files/libmms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://libmms.sourceforge.net/
+COMPONENT_LICENSE=      LGPLv2
+COMPONENT_LICENSE_FILE= COPYING.LIB
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_FMRI=         library/video/libmms
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 
-build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32_and_64)
