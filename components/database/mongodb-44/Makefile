@@ -20,7 +20,6 @@
 BUILD_BITS= 64
 BUILD_STYLE= justmake
 USE_OPENSSL10= yes
-CCACHE_DISABLE= true
 
 include ../../../make-rules/shared-macros.mk
 
