@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2021 <contributor>
+# Copyright 2022 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,10 +22,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/dcadec
-file path=usr/bin/$(MACH64)/dtsdec
-file path=usr/bin/$(MACH64)/extract_dca
-file path=usr/bin/$(MACH64)/extract_dts
 file path=usr/bin/dcadec
 file path=usr/bin/dtsdec
 file path=usr/bin/extract_dca
@@ -36,16 +32,9 @@ link path=usr/lib/$(MACH64)/libdca.so target=libdca.so.0.0.0
 link path=usr/lib/$(MACH64)/libdca.so.0 target=libdca.so.0.0.0
 file path=usr/lib/$(MACH64)/libdca.so.0.0.0
 link path=usr/lib/$(MACH64)/libdts.a \
-    target=/oibuild/oi-userland/components/encumbered/libdca/build/prototype/$(MACH)/usr/lib/$(MACH64)/libdca.a
+    target=/tank/local/alarcher/oi-userland/components/encumbered/libdca/build/prototype/$(MACH)/usr/lib/$(MACH64)/libdca.a
 file path=usr/lib/$(MACH64)/pkgconfig/libdca.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libdts.pc
-link path=usr/lib/libdca.so target=libdca.so.0.0.0
-link path=usr/lib/libdca.so.0 target=libdca.so.0.0.0
-file path=usr/lib/libdca.so.0.0.0
-link path=usr/lib/libdts.a \
-    target=/oibuild/oi-userland/components/encumbered/libdca/build/prototype/$(MACH)/usr/lib/libdca.a
-file path=usr/lib/pkgconfig/libdca.pc
-file path=usr/lib/pkgconfig/libdts.pc
 file path=usr/share/man/man1/dcadec.1
 link path=usr/share/man/man1/dtsdec.1 target=/usr/share/man/man1/dcadec.1
 file path=usr/share/man/man1/extract_dca.1
