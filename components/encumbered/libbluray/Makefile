@@ -14,26 +14,27 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libbluray
-COMPONENT_VERSION=	1.1.2
-COMPONENT_FMRI=		library/video/libbluray
-COMPONENT_CLASSIFICATION= System/Multimedia Libraries
-COMPONENT_SUMMARY=	An open-source library designed for Blu-Ray Discs playback for media players.
-COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=         libbluray
+COMPONENT_VERSION=      1.1.2
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/video/libbluray
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_SUMMARY=      An open-source library designed for Blu-Ray Discs playback for media players.
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
 	sha256:a3dd452239b100dc9da0d01b30e1692693e2a332a7d29917bf84bb10ea7c0b42
-COMPONENT_ARCHIVE_URL= \
+COMPONENT_ARCHIVE_URL=  \
 	ftp://ftp.videolan.org/pub/videolan/libbluray/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.videolan.org/developers/libbluray.html
-COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_PROJECT_URL=  http://www.videolan.org/developers/libbluray.html
+COMPONENT_LICENSE=      LGPLv2.1
 
 include $(WS_MAKE_RULES)/encumbered.mk
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMMON_BUILD_ENV += JDK_HOME="$(JAVA_HOME)" 
 
@@ -43,12 +44,6 @@ CONFIGURE_OPTIONS += --datadir=$(USRSHARELIBDIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-libxml2
 CONFIGURE_OPTIONS += --with-freetype
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libxml2
