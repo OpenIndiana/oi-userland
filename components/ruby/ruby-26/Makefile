@@ -132,8 +132,13 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/Finished tests in Xs, X tests\/s, X assertions/p"' \
     '-e "/.* tests, X assertions, .* failures, .* errors, X skips/p"'
 
+# Bogus dependency due to libssp
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libyaml
 REQUIRED_PACKAGES += library/ncurses
@@ -141,9 +146,5 @@ REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
