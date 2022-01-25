@@ -13,25 +13,25 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS=		32
+BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gthumb
+COMPONENT_NAME=         gthumb
 # Later versions use symbolic icons
-COMPONENT_VERSION=	3.6.2
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/gthumb
-COMPONENT_SUMMARY=	GNOME image organizer (gthumb)
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_VERSION=      3.6.2
+COMPONENT_REVISION=     3
+COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/gthumb
+COMPONENT_SUMMARY=      GNOME image organizer (gthumb)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
 	sha256:c9bf6bb7502659f5e990069527584bb96193f7f5f9492f0bf5f65828f5024b66
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.6/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	image/viewer/gthumb
-COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_ARCHIVE_URL=  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.6/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         image/viewer/gthumb
+COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 TEST_TARGET=		$(NO_TESTS)
 
@@ -41,6 +41,9 @@ PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
 
+# For ansidecl.h
+CPPFLAGS += -I/usr/gnu/include
+# For LCMS2 detection
 CPPFLAGS += -I/usr/include/lcms2
 
 # Use default libjpeg
@@ -58,6 +61,10 @@ CONFIGURE_OPTIONS+=	--enable-libwebp
 CONFIGURE_OPTIONS+=	--enable-librsvg
 
 CONFIGURE_ENV+= CPPFLAGS="$(CPPFLAGS)"
+
+# Build dependencies
+REQUIRED_PACKAGES += library/gnome/yelp-tools
+REQUIRED_PACKAGES += text/itstool
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
