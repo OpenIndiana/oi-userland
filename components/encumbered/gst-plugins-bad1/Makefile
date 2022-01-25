@@ -15,7 +15,7 @@
 # Copyright 2021 Tim Mooney.  All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 BUILD_STYLE=	meson
 USE_OPENSSL11=	yes
 
@@ -23,6 +23,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-bad1
 COMPONENT_VERSION=	1.18.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI=		library/audio/gstreamer1/plugin/bad
@@ -54,8 +55,7 @@ LDFLAGS  += $(JPEG_LDFLAGS)
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += -Dexamples=disabled
 CONFIGURE_OPTIONS += -Dopenexr=enabled
-CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
-CONFIGURE_OPTIONS.64 += -Dintrospection=enabled
+CONFIGURE_OPTIONS += -Dintrospection=enabled
 # if someone can weigh in on the fdk-aac license, adding fdk-aac might be
 # be nice.
 # Openh264 has no licensing issues but needs some porting
@@ -92,6 +92,8 @@ COMPONENT_TEST_TRANSFORMS += \
 # Build dependencies
 # gstkcms now required libdrm >= 2.4.98, so not currently being built
 REQUIRED_PACKAGES += system/header/header-drm
+# Introspection
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
