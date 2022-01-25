@@ -15,25 +15,26 @@
 # Copyright 2021 Tim Mooney.  All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 BUILD_STYLE=	meson
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gst-plugins-ugly1
-COMPONENT_VERSION=	1.18.5
-COMPONENT_SUMMARY=	GNOME streaming media framework plugins
-COMPONENT_CLASSIFICATION= System/Multimedia Libraries
-COMPONENT_FMRI=		library/audio/gstreamer1/plugin/ugly
+COMPONENT_NAME=         gst-plugins-ugly1
+COMPONENT_VERSION=      1.18.5
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      GNOME streaming media framework plugins
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_FMRI=         library/audio/gstreamer1/plugin/ugly
 COMPONENT_SRC_NAME=	gst-plugins-ugly
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:df32803e98f8a9979373fa2ca7e05e62f977b1097576d3a80619d9f5c69f66d9
-COMPONENT_ARCHIVE_URL= \
-  https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/
-COMPONENT_LICENSE=	LGPLv2
+	sha256:df32803e98f8a9979373fa2ca7e05e62f977b1097576d3a80619d9f5c69f66d9
+COMPONENT_ARCHIVE_URL=  \
+	https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
+COMPONENT_LICENSE=      LGPLv2
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
