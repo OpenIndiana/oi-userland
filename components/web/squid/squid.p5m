@@ -1,24 +1,16 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
+
 #
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2022 Friedrich Kink. All rights reserved.
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -54,9 +46,8 @@ dir path=var/squid/cache group=webservd owner=webservd mode=0755
 dir path=var/squid/logs group=webservd owner=webservd mode=0755
 dir path=var/squid/run group=webservd owner=webservd mode=0755
 
-# from here on files have no modified attributes
 file path=etc/squid/cachemgr.conf.default
-file path=etc/squid/errorpage.css
+file path=etc/squid/errorpage.css preserve=true
 file path=etc/squid/errorpage.css.default
 file path=etc/squid/mime.conf.default
 file path=etc/squid/squid.conf.default
@@ -67,7 +58,6 @@ file path=usr/squid/libexec/basic_db_auth
 file path=usr/squid/libexec/basic_fake_auth
 file path=usr/squid/libexec/basic_getpwnam_auth
 file path=usr/squid/libexec/basic_ldap_auth
-file path=usr/squid/libexec/basic_msnt_multi_domain_auth
 file path=usr/squid/libexec/basic_ncsa_auth
 file path=usr/squid/libexec/basic_nis_auth
 file path=usr/squid/libexec/basic_pam_auth
@@ -76,7 +66,6 @@ file path=usr/squid/libexec/basic_radius_auth
 file path=usr/squid/libexec/basic_sasl_auth
 file path=usr/squid/libexec/basic_smb_auth
 file path=usr/squid/libexec/basic_smb_auth.sh
-file path=usr/squid/libexec/basic_smb_lm_auth
 file path=usr/squid/libexec/cachemgr.cgi
 file path=usr/squid/libexec/digest_edirectory_auth
 file path=usr/squid/libexec/digest_file_auth
@@ -88,23 +77,25 @@ file path=usr/squid/libexec/ext_ldap_group_acl
 file path=usr/squid/libexec/ext_session_acl
 file path=usr/squid/libexec/ext_unix_group_acl
 file path=usr/squid/libexec/ext_wbinfo_group_acl
-file path=usr/squid/libexec/helper-mux.pl
+file path=usr/squid/libexec/helper-mux
 file path=usr/squid/libexec/log_db_daemon
 file path=usr/squid/libexec/log_file_daemon
 file path=usr/squid/libexec/negotiate_kerberos_auth
 file path=usr/squid/libexec/negotiate_kerberos_auth_test
 file path=usr/squid/libexec/negotiate_wrapper_auth
 file path=usr/squid/libexec/ntlm_fake_auth
-file path=usr/squid/libexec/ntlm_smb_lm_auth
+file path=usr/squid/libexec/security_fake_certverify
+file path=usr/squid/libexec/security_file_certgen
 file path=usr/squid/libexec/storeid_file_rewrite
 file path=usr/squid/libexec/unlinkd
 file path=usr/squid/libexec/url_fake_rewrite
 file path=usr/squid/libexec/url_fake_rewrite.sh
+file path=usr/squid/libexec/url_lfs_rewrite
+file path=usr/squid/man/man1/purge.1
 file path=usr/squid/man/man1/squidclient.1
 file path=usr/squid/man/man8/basic_db_auth.8
 file path=usr/squid/man/man8/basic_getpwnam_auth.8
 file path=usr/squid/man/man8/basic_ldap_auth.8
-file path=usr/squid/man/man8/basic_msnt_multi_domain_auth.8
 file path=usr/squid/man/man8/basic_ncsa_auth.8
 file path=usr/squid/man/man8/basic_pam_auth.8
 file path=usr/squid/man/man8/basic_pop3_auth.8
@@ -118,10 +109,14 @@ file path=usr/squid/man/man8/ext_ldap_group_acl.8
 file path=usr/squid/man/man8/ext_session_acl.8
 file path=usr/squid/man/man8/ext_unix_group_acl.8
 file path=usr/squid/man/man8/ext_wbinfo_group_acl.8
+file path=usr/squid/man/man8/helper-mux.8
 file path=usr/squid/man/man8/log_db_daemon.8
 file path=usr/squid/man/man8/negotiate_kerberos_auth.8
+file path=usr/squid/man/man8/security_fake_certverify.8
+file path=usr/squid/man/man8/security_file_certgen.8
 file path=usr/squid/man/man8/squid.8
 file path=usr/squid/man/man8/storeid_file_rewrite.8
+file path=usr/squid/man/man8/url_lfs_rewrite.8
 file path=usr/squid/sbin/squid
 file path=usr/squid/share/errors/COPYRIGHT
 file path=usr/squid/share/errors/TRANSLATORS
@@ -155,6 +150,7 @@ file path=usr/squid/share/errors/af/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/af/ERR_NO_RELAY
 file path=usr/squid/share/errors/af/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/af/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/af/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/af/ERR_READ_ERROR
 file path=usr/squid/share/errors/af/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/af/ERR_SECURE_CONNECT_FAIL
@@ -213,6 +209,7 @@ file path=usr/squid/share/errors/ar/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/ar/ERR_NO_RELAY
 file path=usr/squid/share/errors/ar/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/ar/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/ar/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/ar/ERR_READ_ERROR
 file path=usr/squid/share/errors/ar/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/ar/ERR_SECURE_CONNECT_FAIL
@@ -256,6 +253,7 @@ file path=usr/squid/share/errors/az/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/az/ERR_NO_RELAY
 file path=usr/squid/share/errors/az/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/az/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/az/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/az/ERR_READ_ERROR
 file path=usr/squid/share/errors/az/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/az/ERR_SECURE_CONNECT_FAIL
@@ -299,6 +297,7 @@ file path=usr/squid/share/errors/bg/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/bg/ERR_NO_RELAY
 file path=usr/squid/share/errors/bg/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/bg/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/bg/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/bg/ERR_READ_ERROR
 file path=usr/squid/share/errors/bg/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/bg/ERR_SECURE_CONNECT_FAIL
@@ -311,6 +310,7 @@ file path=usr/squid/share/errors/bg/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/bg/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/bg/ERR_ZERO_SIZE_OBJECT
 file path=usr/squid/share/errors/bg/error-details.txt
+link path=usr/squid/share/errors/ca-es target=ca
 file path=usr/squid/share/errors/ca/ERR_ACCESS_DENIED
 file path=usr/squid/share/errors/ca/ERR_ACL_TIME_QUOTA_EXCEEDED
 file path=usr/squid/share/errors/ca/ERR_AGENT_CONFIGURE
@@ -341,6 +341,7 @@ file path=usr/squid/share/errors/ca/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/ca/ERR_NO_RELAY
 file path=usr/squid/share/errors/ca/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/ca/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/ca/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/ca/ERR_READ_ERROR
 file path=usr/squid/share/errors/ca/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/ca/ERR_SECURE_CONNECT_FAIL
@@ -384,6 +385,7 @@ file path=usr/squid/share/errors/cs/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/cs/ERR_NO_RELAY
 file path=usr/squid/share/errors/cs/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/cs/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/cs/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/cs/ERR_READ_ERROR
 file path=usr/squid/share/errors/cs/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/cs/ERR_SECURE_CONNECT_FAIL
@@ -427,6 +429,7 @@ file path=usr/squid/share/errors/da/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/da/ERR_NO_RELAY
 file path=usr/squid/share/errors/da/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/da/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/da/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/da/ERR_READ_ERROR
 file path=usr/squid/share/errors/da/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/da/ERR_SECURE_CONNECT_FAIL
@@ -474,6 +477,7 @@ file path=usr/squid/share/errors/de/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/de/ERR_NO_RELAY
 file path=usr/squid/share/errors/de/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/de/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/de/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/de/ERR_READ_ERROR
 file path=usr/squid/share/errors/de/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/de/ERR_SECURE_CONNECT_FAIL
@@ -517,6 +521,7 @@ file path=usr/squid/share/errors/el/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/el/ERR_NO_RELAY
 file path=usr/squid/share/errors/el/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/el/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/el/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/el/ERR_READ_ERROR
 file path=usr/squid/share/errors/el/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/el/ERR_SECURE_CONNECT_FAIL
@@ -532,6 +537,7 @@ file path=usr/squid/share/errors/el/error-details.txt
 link path=usr/squid/share/errors/en-au target=en
 link path=usr/squid/share/errors/en-bz target=en
 link path=usr/squid/share/errors/en-ca target=en
+link path=usr/squid/share/errors/en-cn target=en
 link path=usr/squid/share/errors/en-gb target=en
 link path=usr/squid/share/errors/en-ie target=en
 link path=usr/squid/share/errors/en-in target=en
@@ -574,6 +580,7 @@ file path=usr/squid/share/errors/en/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/en/ERR_NO_RELAY
 file path=usr/squid/share/errors/en/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/en/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/en/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/en/ERR_READ_ERROR
 file path=usr/squid/share/errors/en/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/en/ERR_SECURE_CONNECT_FAIL
@@ -588,24 +595,69 @@ file path=usr/squid/share/errors/en/ERR_ZERO_SIZE_OBJECT
 file path=usr/squid/share/errors/en/error-details.txt
 link path=usr/squid/share/errors/es-ar target=es
 link path=usr/squid/share/errors/es-bo target=es
+link path=usr/squid/share/errors/es-bz target=es-mx
 link path=usr/squid/share/errors/es-cl target=es
 link path=usr/squid/share/errors/es-co target=es
-link path=usr/squid/share/errors/es-cr target=es
+link path=usr/squid/share/errors/es-cr target=es-mx
+link path=usr/squid/share/errors/es-cu target=es
 link path=usr/squid/share/errors/es-do target=es
 link path=usr/squid/share/errors/es-ec target=es
 link path=usr/squid/share/errors/es-es target=es
-link path=usr/squid/share/errors/es-gt target=es
-link path=usr/squid/share/errors/es-hn target=es
-link path=usr/squid/share/errors/es-mx target=es
-link path=usr/squid/share/errors/es-ni target=es
-link path=usr/squid/share/errors/es-pa target=es
+link path=usr/squid/share/errors/es-gt target=es-mx
+link path=usr/squid/share/errors/es-hn target=es-mx
+file path=usr/squid/share/errors/es-mx/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/es-mx/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/es-mx/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/es-mx/ERR_AGENT_WPAD
+file path=usr/squid/share/errors/es-mx/ERR_CACHE_ACCESS_DENIED
+file path=usr/squid/share/errors/es-mx/ERR_CACHE_MGR_ACCESS_DENIED
+file path=usr/squid/share/errors/es-mx/ERR_CANNOT_FORWARD
+file path=usr/squid/share/errors/es-mx/ERR_CONFLICT_HOST
+file path=usr/squid/share/errors/es-mx/ERR_CONNECT_FAIL
+file path=usr/squid/share/errors/es-mx/ERR_DIR_LISTING
+file path=usr/squid/share/errors/es-mx/ERR_DNS_FAIL
+file path=usr/squid/share/errors/es-mx/ERR_ESI
+file path=usr/squid/share/errors/es-mx/ERR_FORWARDING_DENIED
+file path=usr/squid/share/errors/es-mx/ERR_FTP_DISABLED
+file path=usr/squid/share/errors/es-mx/ERR_FTP_FAILURE
+file path=usr/squid/share/errors/es-mx/ERR_FTP_FORBIDDEN
+file path=usr/squid/share/errors/es-mx/ERR_FTP_NOT_FOUND
+file path=usr/squid/share/errors/es-mx/ERR_FTP_PUT_CREATED
+file path=usr/squid/share/errors/es-mx/ERR_FTP_PUT_ERROR
+file path=usr/squid/share/errors/es-mx/ERR_FTP_PUT_MODIFIED
+file path=usr/squid/share/errors/es-mx/ERR_FTP_UNAVAILABLE
+file path=usr/squid/share/errors/es-mx/ERR_GATEWAY_FAILURE
+file path=usr/squid/share/errors/es-mx/ERR_ICAP_FAILURE
+file path=usr/squid/share/errors/es-mx/ERR_INVALID_REQ
+file path=usr/squid/share/errors/es-mx/ERR_INVALID_RESP
+file path=usr/squid/share/errors/es-mx/ERR_INVALID_URL
+file path=usr/squid/share/errors/es-mx/ERR_LIFETIME_EXP
+file path=usr/squid/share/errors/es-mx/ERR_NO_RELAY
+file path=usr/squid/share/errors/es-mx/ERR_ONLY_IF_CACHED_MISS
+file path=usr/squid/share/errors/es-mx/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/es-mx/ERR_PROTOCOL_UNKNOWN
+file path=usr/squid/share/errors/es-mx/ERR_READ_ERROR
+file path=usr/squid/share/errors/es-mx/ERR_READ_TIMEOUT
+file path=usr/squid/share/errors/es-mx/ERR_SECURE_CONNECT_FAIL
+file path=usr/squid/share/errors/es-mx/ERR_SHUTTING_DOWN
+file path=usr/squid/share/errors/es-mx/ERR_SOCKET_FAILURE
+file path=usr/squid/share/errors/es-mx/ERR_TOO_BIG
+file path=usr/squid/share/errors/es-mx/ERR_UNSUP_HTTPVERSION
+file path=usr/squid/share/errors/es-mx/ERR_UNSUP_REQ
+file path=usr/squid/share/errors/es-mx/ERR_URN_RESOLVE
+file path=usr/squid/share/errors/es-mx/ERR_WRITE_ERROR
+file path=usr/squid/share/errors/es-mx/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/es-mx/error-details.txt
+link path=usr/squid/share/errors/es-ni target=es-mx
+link path=usr/squid/share/errors/es-pa target=es-mx
 link path=usr/squid/share/errors/es-pe target=es
 link path=usr/squid/share/errors/es-pr target=es
 link path=usr/squid/share/errors/es-py target=es
-link path=usr/squid/share/errors/es-sv target=es
+link path=usr/squid/share/errors/es-sv target=es-mx
 link path=usr/squid/share/errors/es-us target=es
 link path=usr/squid/share/errors/es-uy target=es
 link path=usr/squid/share/errors/es-ve target=es
+link path=usr/squid/share/errors/es-xl target=es
 file path=usr/squid/share/errors/es/ERR_ACCESS_DENIED
 file path=usr/squid/share/errors/es/ERR_ACL_TIME_QUOTA_EXCEEDED
 file path=usr/squid/share/errors/es/ERR_AGENT_CONFIGURE
@@ -636,6 +688,7 @@ file path=usr/squid/share/errors/es/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/es/ERR_NO_RELAY
 file path=usr/squid/share/errors/es/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/es/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/es/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/es/ERR_READ_ERROR
 file path=usr/squid/share/errors/es/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/es/ERR_SECURE_CONNECT_FAIL
@@ -679,6 +732,7 @@ file path=usr/squid/share/errors/et/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/et/ERR_NO_RELAY
 file path=usr/squid/share/errors/et/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/et/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/et/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/et/ERR_READ_ERROR
 file path=usr/squid/share/errors/et/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/et/ERR_SECURE_CONNECT_FAIL
@@ -723,6 +777,7 @@ file path=usr/squid/share/errors/fa/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/fa/ERR_NO_RELAY
 file path=usr/squid/share/errors/fa/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/fa/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/fa/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/fa/ERR_READ_ERROR
 file path=usr/squid/share/errors/fa/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/fa/ERR_SECURE_CONNECT_FAIL
@@ -766,6 +821,7 @@ file path=usr/squid/share/errors/fi/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/fi/ERR_NO_RELAY
 file path=usr/squid/share/errors/fi/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/fi/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/fi/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/fi/ERR_READ_ERROR
 file path=usr/squid/share/errors/fi/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/fi/ERR_SECURE_CONNECT_FAIL
@@ -814,6 +870,7 @@ file path=usr/squid/share/errors/fr/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/fr/ERR_NO_RELAY
 file path=usr/squid/share/errors/fr/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/fr/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/fr/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/fr/ERR_READ_ERROR
 file path=usr/squid/share/errors/fr/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/fr/ERR_SECURE_CONNECT_FAIL
@@ -857,6 +914,7 @@ file path=usr/squid/share/errors/he/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/he/ERR_NO_RELAY
 file path=usr/squid/share/errors/he/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/he/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/he/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/he/ERR_READ_ERROR
 file path=usr/squid/share/errors/he/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/he/ERR_SECURE_CONNECT_FAIL
@@ -900,6 +958,7 @@ file path=usr/squid/share/errors/hu/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/hu/ERR_NO_RELAY
 file path=usr/squid/share/errors/hu/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/hu/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/hu/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/hu/ERR_READ_ERROR
 file path=usr/squid/share/errors/hu/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/hu/ERR_SECURE_CONNECT_FAIL
@@ -944,6 +1003,7 @@ file path=usr/squid/share/errors/hy/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/hy/ERR_NO_RELAY
 file path=usr/squid/share/errors/hy/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/hy/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/hy/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/hy/ERR_READ_ERROR
 file path=usr/squid/share/errors/hy/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/hy/ERR_SECURE_CONNECT_FAIL
@@ -987,6 +1047,7 @@ file path=usr/squid/share/errors/id/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/id/ERR_NO_RELAY
 file path=usr/squid/share/errors/id/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/id/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/id/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/id/ERR_READ_ERROR
 file path=usr/squid/share/errors/id/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/id/ERR_SECURE_CONNECT_FAIL
@@ -1031,6 +1092,7 @@ file path=usr/squid/share/errors/it/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/it/ERR_NO_RELAY
 file path=usr/squid/share/errors/it/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/it/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/it/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/it/ERR_READ_ERROR
 file path=usr/squid/share/errors/it/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/it/ERR_SECURE_CONNECT_FAIL
@@ -1074,6 +1136,7 @@ file path=usr/squid/share/errors/ja/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/ja/ERR_NO_RELAY
 file path=usr/squid/share/errors/ja/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/ja/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/ja/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/ja/ERR_READ_ERROR
 file path=usr/squid/share/errors/ja/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/ja/ERR_SECURE_CONNECT_FAIL
@@ -1117,6 +1180,7 @@ file path=usr/squid/share/errors/ka/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/ka/ERR_NO_RELAY
 file path=usr/squid/share/errors/ka/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/ka/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/ka/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/ka/ERR_READ_ERROR
 file path=usr/squid/share/errors/ka/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/ka/ERR_SECURE_CONNECT_FAIL
@@ -1161,6 +1225,7 @@ file path=usr/squid/share/errors/ko/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/ko/ERR_NO_RELAY
 file path=usr/squid/share/errors/ko/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/ko/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/ko/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/ko/ERR_READ_ERROR
 file path=usr/squid/share/errors/ko/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/ko/ERR_SECURE_CONNECT_FAIL
@@ -1204,6 +1269,7 @@ file path=usr/squid/share/errors/lt/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/lt/ERR_NO_RELAY
 file path=usr/squid/share/errors/lt/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/lt/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/lt/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/lt/ERR_READ_ERROR
 file path=usr/squid/share/errors/lt/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/lt/ERR_SECURE_CONNECT_FAIL
@@ -1247,6 +1313,7 @@ file path=usr/squid/share/errors/lv/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/lv/ERR_NO_RELAY
 file path=usr/squid/share/errors/lv/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/lv/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/lv/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/lv/ERR_READ_ERROR
 file path=usr/squid/share/errors/lv/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/lv/ERR_SECURE_CONNECT_FAIL
@@ -1290,6 +1357,7 @@ file path=usr/squid/share/errors/ms/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/ms/ERR_NO_RELAY
 file path=usr/squid/share/errors/ms/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/ms/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/ms/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/ms/ERR_READ_ERROR
 file path=usr/squid/share/errors/ms/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/ms/ERR_SECURE_CONNECT_FAIL
@@ -1333,6 +1401,7 @@ file path=usr/squid/share/errors/nl/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/nl/ERR_NO_RELAY
 file path=usr/squid/share/errors/nl/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/nl/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/nl/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/nl/ERR_READ_ERROR
 file path=usr/squid/share/errors/nl/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/nl/ERR_SECURE_CONNECT_FAIL
@@ -1375,6 +1444,7 @@ file path=usr/squid/share/errors/oc/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/oc/ERR_NO_RELAY
 file path=usr/squid/share/errors/oc/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/oc/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/oc/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/oc/ERR_READ_ERROR
 file path=usr/squid/share/errors/oc/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/oc/ERR_SECURE_CONNECT_FAIL
@@ -1418,6 +1488,7 @@ file path=usr/squid/share/errors/pl/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/pl/ERR_NO_RELAY
 file path=usr/squid/share/errors/pl/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/pl/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/pl/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/pl/ERR_READ_ERROR
 file path=usr/squid/share/errors/pl/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/pl/ERR_SECURE_CONNECT_FAIL
@@ -1460,6 +1531,7 @@ file path=usr/squid/share/errors/pt-br/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/pt-br/ERR_NO_RELAY
 file path=usr/squid/share/errors/pt-br/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/pt-br/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/pt-br/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/pt-br/ERR_READ_ERROR
 file path=usr/squid/share/errors/pt-br/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/pt-br/ERR_SECURE_CONNECT_FAIL
@@ -1474,6 +1546,7 @@ file path=usr/squid/share/errors/pt-br/ERR_ZERO_SIZE_OBJECT
 file path=usr/squid/share/errors/pt-br/error-details.txt
 link path=usr/squid/share/errors/pt-bz target=pt-br
 link path=usr/squid/share/errors/pt-pt target=pt
+link path=usr/squid/share/errors/pt-xl target=pt-br
 file path=usr/squid/share/errors/pt/ERR_ACCESS_DENIED
 file path=usr/squid/share/errors/pt/ERR_ACL_TIME_QUOTA_EXCEEDED
 file path=usr/squid/share/errors/pt/ERR_AGENT_CONFIGURE
@@ -1504,6 +1577,7 @@ file path=usr/squid/share/errors/pt/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/pt/ERR_NO_RELAY
 file path=usr/squid/share/errors/pt/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/pt/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/pt/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/pt/ERR_READ_ERROR
 file path=usr/squid/share/errors/pt/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/pt/ERR_SECURE_CONNECT_FAIL
@@ -1548,6 +1622,7 @@ file path=usr/squid/share/errors/ro/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/ro/ERR_NO_RELAY
 file path=usr/squid/share/errors/ro/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/ro/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/ro/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/ro/ERR_READ_ERROR
 file path=usr/squid/share/errors/ro/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/ro/ERR_SECURE_CONNECT_FAIL
@@ -1591,6 +1666,7 @@ file path=usr/squid/share/errors/ru/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/ru/ERR_NO_RELAY
 file path=usr/squid/share/errors/ru/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/ru/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/ru/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/ru/ERR_READ_ERROR
 file path=usr/squid/share/errors/ru/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/ru/ERR_SECURE_CONNECT_FAIL
@@ -1634,6 +1710,7 @@ file path=usr/squid/share/errors/sk/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/sk/ERR_NO_RELAY
 file path=usr/squid/share/errors/sk/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/sk/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/sk/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/sk/ERR_READ_ERROR
 file path=usr/squid/share/errors/sk/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/sk/ERR_SECURE_CONNECT_FAIL
@@ -1677,6 +1754,7 @@ file path=usr/squid/share/errors/sl/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/sl/ERR_NO_RELAY
 file path=usr/squid/share/errors/sl/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/sl/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/sl/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/sl/ERR_READ_ERROR
 file path=usr/squid/share/errors/sl/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/sl/ERR_SECURE_CONNECT_FAIL
@@ -1689,6 +1767,7 @@ file path=usr/squid/share/errors/sl/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/sl/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/sl/ERR_ZERO_SIZE_OBJECT
 file path=usr/squid/share/errors/sl/error-details.txt
+link path=usr/squid/share/errors/spq target=es
 link path=usr/squid/share/errors/sr target=sr-latn
 link path=usr/squid/share/errors/sr-cyrl-cs target=sr-cyrl
 link path=usr/squid/share/errors/sr-cyrl-me target=sr-cyrl
@@ -1723,6 +1802,7 @@ file path=usr/squid/share/errors/sr-cyrl/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/sr-cyrl/ERR_NO_RELAY
 file path=usr/squid/share/errors/sr-cyrl/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/sr-cyrl/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/sr-cyrl/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/sr-cyrl/ERR_READ_ERROR
 file path=usr/squid/share/errors/sr-cyrl/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/sr-cyrl/ERR_SECURE_CONNECT_FAIL
@@ -1768,6 +1848,7 @@ file path=usr/squid/share/errors/sr-latn/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/sr-latn/ERR_NO_RELAY
 file path=usr/squid/share/errors/sr-latn/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/sr-latn/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/sr-latn/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/sr-latn/ERR_READ_ERROR
 file path=usr/squid/share/errors/sr-latn/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/sr-latn/ERR_SECURE_CONNECT_FAIL
@@ -1814,6 +1895,7 @@ file path=usr/squid/share/errors/sv/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/sv/ERR_NO_RELAY
 file path=usr/squid/share/errors/sv/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/sv/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/sv/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/sv/ERR_READ_ERROR
 file path=usr/squid/share/errors/sv/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/sv/ERR_SECURE_CONNECT_FAIL
@@ -1856,6 +1938,7 @@ file path=usr/squid/share/errors/templates/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/templates/ERR_NO_RELAY
 file path=usr/squid/share/errors/templates/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/templates/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/templates/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/templates/ERR_READ_ERROR
 file path=usr/squid/share/errors/templates/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/templates/ERR_SECURE_CONNECT_FAIL
@@ -1899,6 +1982,7 @@ file path=usr/squid/share/errors/th/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/th/ERR_NO_RELAY
 file path=usr/squid/share/errors/th/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/th/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/th/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/th/ERR_READ_ERROR
 file path=usr/squid/share/errors/th/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/th/ERR_SECURE_CONNECT_FAIL
@@ -1942,6 +2026,7 @@ file path=usr/squid/share/errors/tr/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/tr/ERR_NO_RELAY
 file path=usr/squid/share/errors/tr/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/tr/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/tr/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/tr/ERR_READ_ERROR
 file path=usr/squid/share/errors/tr/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/tr/ERR_SECURE_CONNECT_FAIL
@@ -1985,6 +2070,7 @@ file path=usr/squid/share/errors/uk/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/uk/ERR_NO_RELAY
 file path=usr/squid/share/errors/uk/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/uk/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/uk/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/uk/ERR_READ_ERROR
 file path=usr/squid/share/errors/uk/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/uk/ERR_SECURE_CONNECT_FAIL
@@ -2027,6 +2113,7 @@ file path=usr/squid/share/errors/uz/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/uz/ERR_NO_RELAY
 file path=usr/squid/share/errors/uz/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/uz/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/uz/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/uz/ERR_READ_ERROR
 file path=usr/squid/share/errors/uz/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/uz/ERR_SECURE_CONNECT_FAIL
@@ -2070,6 +2157,7 @@ file path=usr/squid/share/errors/vi/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/vi/ERR_NO_RELAY
 file path=usr/squid/share/errors/vi/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/vi/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/vi/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/vi/ERR_READ_ERROR
 file path=usr/squid/share/errors/vi/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/vi/ERR_SECURE_CONNECT_FAIL
@@ -2115,6 +2203,7 @@ file path=usr/squid/share/errors/zh-hans/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/zh-hans/ERR_NO_RELAY
 file path=usr/squid/share/errors/zh-hans/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/zh-hans/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/zh-hans/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/zh-hans/ERR_READ_ERROR
 file path=usr/squid/share/errors/zh-hans/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/zh-hans/ERR_SECURE_CONNECT_FAIL
@@ -2160,6 +2249,7 @@ file path=usr/squid/share/errors/zh-hant/ERR_LIFETIME_EXP
 file path=usr/squid/share/errors/zh-hant/ERR_NO_RELAY
 file path=usr/squid/share/errors/zh-hant/ERR_ONLY_IF_CACHED_MISS
 file path=usr/squid/share/errors/zh-hant/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/zh-hant/ERR_PROTOCOL_UNKNOWN
 file path=usr/squid/share/errors/zh-hant/ERR_READ_ERROR
 file path=usr/squid/share/errors/zh-hant/ERR_READ_TIMEOUT
 file path=usr/squid/share/errors/zh-hant/ERR_SECURE_CONNECT_FAIL
