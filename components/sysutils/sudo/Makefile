@@ -21,7 +21,7 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
-# Copyright (c) 2020-2021 Nona Hansel
+# Copyright (c) 2020-2022 Nona Hansel
 #
 
 BUILD_BITS=		64
@@ -29,8 +29,8 @@ USE_OPENSSL11=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sudo
-SRC_VERSION=		1.9.8
-SRC_PATCH_VERSION=	2
+SRC_VERSION=		1.9.9
+SRC_PATCH_VERSION=	0
 SRC_DOT_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo .$(SRC_PATCH_VERSION))
 SRC_P_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo p$(SRC_PATCH_VERSION))
 HUMAN_VERSION=		$(SRC_VERSION)$(SRC_P_PATCH_VERSION)
@@ -39,7 +39,7 @@ COMPONENT_VERSION=	$(SRC_VERSION)$(SRC_DOT_PATCH_VERSION)
 COMPONENT_SUMMARY=	sudo - tool to allow certain tasks to be run as root by ordinary users
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)$(SRC_P_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9e3b8b8da7def43b6e60c257abe80467205670fd0f7c081de1423c414b680f2d
+COMPONENT_ARCHIVE_HASH= sha256:6d6ee863a3bc26c87661093a74ec63e10fd031ceba714642d21636dfe25e3e00
 COMPONENT_ARCHIVE_URL=	https://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig	
 COMPONENT_PROJECT_URL=  https://www.sudo.ws/
