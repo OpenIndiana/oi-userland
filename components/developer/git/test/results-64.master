@@ -9789,8 +9789,9 @@ ok 32 - switch to branch checked out here
 ok 33 - switch to branch not checked out
 ok 34 - refuse to switch to branch checked out elsewhere
 ok 35 # skip rebase when .git/logs is a symlink (missing SYMLINKS_WINDOWS,MINGW of MINGW,SYMLINKS_WINDOWS)
-# passed all 35 test(s)
-1..35
+ok 36 - rebase when inside worktree subdirectory
+# passed all 36 test(s)
+1..36
 *** t3401-rebase-and-am-rename.sh ***
 ok 1 - setup testcase where directory rename should be detected
 ok 2 - rebase --interactive: directory rename detected
@@ -15993,7 +15994,14 @@ ok 14 - write progress off for redirected stderr
 ok 15 - write force progress on for stderr
 ok 16 - write with the --no-progress option
 ok 17 - add more packs
-ok 18 - check normal git operations: mixed mode (two packs + extra)
+not ok 18 - check normal git operations: mixed mode (two packs + extra)
+#	
+#			midx_git_two_modes "rev-list --objects --all" &&
+#			midx_git_two_modes "log --raw" &&
+#			midx_git_two_modes "count-objects --verbose" &&
+#			midx_git_two_modes "cat-file --batch-all-objects --batch-check" &&
+#			midx_git_two_modes "cat-file --batch-all-objects --batch-check --unordered" sorted
+#		
 ok 19 - write midx with twelve packs
 ok 20 - check normal git operations: twelve packs
 ok 21 - multi-pack-index *.rev cleanup with --object-dir
@@ -16051,7 +16059,7 @@ ok 72 - repack --batch-size=<large> repacks everything
 ok 73 - load reverse index when missing .idx, .pack
 ok 74 - usage shown without sub-command
 ok 75 - complains when run outside of a repository
-# passed all 75 test(s)
+# failed 1 among 75 test(s)
 1..75
 *** t5320-delta-islands.sh ***
 ok 1 - setup commits
@@ -26700,10 +26708,10 @@ ok 66 - prompt - hide if pwd ignored - inside gitdir
 missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !RUNS_COMMANDS_FROM_PWD ADD_OUT AUTOIDENT CASE_INSENSITIVE_FS COMMIT_OUT EXPENSIVE GPG GPGSM GPGSSH GPGSSH_VERIFYTIME JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SANITY SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK TTY UPDATE_INDEX_OUT UTF8_NFD_TO_NFC WINDOWS WRITE_TREE_OUT
 
 
-failed test(s): t0204 t1700 t2501 t3200 t4150
+failed test(s): t0204 t1700 t2501 t3200 t4150 t5319
 
 fixed   1
 success 22938
-failed  8
+failed  9
 broken  211
-total   23669
+total   23670
