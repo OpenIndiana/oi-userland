@@ -179,8 +179,9 @@ CONFIGURE_OPTIONS+=	--with-unixODBC
 CONFIGURE_OPTIONS+=	--with-openssl-dir=$(OPENSSL_PREFIX)
 
 # remove EXTRA_FLAGS to get the right ssl and crypto libs
+# now with fix to cover all EXTRA_LDFLAGS conditions
 COMPONENT_POST_CONFIGURE_ACTION= \
-	(cd $(@D) ; $(GSED) -i -e 's:EXTRA_LDFLAGS = -avoid-version -module -L/usr/lib/amd64:EXTRA_LDFLAGS = -avoid-version -module:' Makefile )
+	(cd $(@D) ; $(GSED) -i -e 's:^EXTRA_LDFLAGS = .*:EXTRA_LDFLAGS = -avoid-version -module:' Makefile )
 
 # Installation Arguments
 COMPONENT_INSTALL_ARGS+=INSTALL_ROOT=$(PROTO_DIR)
