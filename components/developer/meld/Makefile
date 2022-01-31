@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meld
 COMPONENT_VERSION=	3.21.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		developer/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	meld - graphical diff and merge tool
 COMPONENT_DESCRIPTION=\
