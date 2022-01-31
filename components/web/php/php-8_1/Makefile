@@ -19,7 +19,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.1
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MNR_VERSION=	2
 COMPONENT_SUMMARY=      PHP 8.1
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_CLASSIFICATION=Meta Packages/Group Packages
@@ -28,7 +28,7 @@ COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:4e4cf3f843a5111f6c55cd21de8f26834ea3cd4a5be77c88357cbcec4a2d671d
+COMPONENT_ARCHIVE_HASH= sha256:9992409c0543e0c8e89914f7307e1485a08c057091146e4731565b59065f8bde
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_LICENSE=      PHP License
@@ -51,7 +51,9 @@ PHP_PREFIX=		/usr/php/$(COMPONENT_MJR_VERSION)
 PHP_SYSCONFDIR=		/etc/php/$(COMPONENT_MJR_VERSION)
 PHP_DATADIR=		/var/php/$(COMPONENT_MJR_VERSION)
 
-CFLAGS+=                $(CC_BITS) -D_XPG4_2 -D__EXTENSIONS__
+# -D__solaris__ is very important to trigger patched file TSRM.h
+# otherwise mod_php81.so is crashing
+CFLAGS+=                $(CC_BITS) -D_XPG4_2 -D__EXTENSIONS__ -D__solaris__
 CFLAGS+=		-I/usr/include/openldap
 CPPFLAGS+=              $(CPP_XPG6MODE)
 LDFLAGS+=               -lldap_r
