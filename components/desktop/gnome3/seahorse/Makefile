@@ -20,7 +20,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		seahorse
 COMPONENT_MJR_VERSION=	3.20
 COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/action/show/Apps/Seahorse
 COMPONENT_SUMMARY=	Seahorse is a GNOME application for managing encryption keys
