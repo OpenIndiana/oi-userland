@@ -4,9 +4,9 @@ $(@D)/libsm
 Configuration: pfx=, os=SunOS, rel=$(OS_VERSION), rbase=5, rroot=$(OS_VERSION), arch=$(ARCH), sfx=, variant=optimized
 Making in $(@D)/$(SM_BUILD_SUB_DIR)/libsm
 make[2]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/libsm'
-make t-event  t-exc  t-rpool  t-string  t-smstdio  t-fget  t-match  t-strio  t-heap  t-fopen  t-strl  t-strrevcmp  t-types  t-path  t-float  t-scanf  t-shm  t-sem  t-inet6_ntop  t-qic 
+make t-event  t-exc  t-rpool  t-string  t-smstdio  t-fget  t-match  t-strio  t-heap  t-fopen  t-strl  t-strrevcmp  t-types  t-path  t-float  t-scanf  t-shm  t-sem  t-inet6_ntop  t-qic  t-str2prt  t-ixlen  t-streq 
 make[3]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/libsm'
-t-types.c: In function ‘main’:
+t-types.c: In function 'main':
 t-types.c:64:17: warning: integer overflow in expression [-Woverflow]
   lt = LLONG_MIN - 1;
                  ^
@@ -66,10 +66,14 @@ and compile again without semaphore support, i.e.,-DSM_CONF_SEM=0
 PASS: t-sem
 39 of 39 tests completed successfully
 PASS: t-inet6_ntop
-114 of 114 tests completed successfully
+130 of 130 tests completed successfully
 PASS: t-qic
+6 of 6 tests completed successfully
+PASS: t-str2prt
+PASS: t-ixlen.sh
+PASS: t-streq.sh
 ===================
-All 20 tests passed
+All 23 tests passed
 ===================
 make[3]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/libsm'
 make[2]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/libsm'
@@ -111,90 +115,10 @@ if [ -r /usr/include/sysexits.h ]; \
 then \
 	ln -s /usr/include/sysexits.h; \
 fi
-makedepend -- -I. -I../../include -I/usr/include/openldap -I/usr/include/sasl -DSOLARIS=21100 -DNETINET6  -erroff=E_STATEMENT_NOT_REACHED -m$(BITS) -- t_dropgid.c   t_dropgid.c t_exclopen.c t_pathconf.c t_seteuid.c t_setgid.c t_setreuid.c t_setuid.c 
+makedepend -- -I. -I../../include -I/usr/openssl/1.1/include -I/usr/include/openldap -I/usr/include/sasl -DSOLARIS=21100 -DNETINET6  -erroff=E_STATEMENT_NOT_REACHED -m$(BITS) -D_FILE_OFFSET_BITS=64 -- t_dropgid.c   t_dropgid.c t_exclopen.c t_pathconf.c t_seteuid.c t_setgid.c t_setreuid.c t_setuid.c 
 make[2]: Leaving directory '$(@D)/$(SM_BUILD_SUB_DIR)/test'
 Making in $(@D)/$(SM_BUILD_SUB_DIR)/test
 make[2]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/test'
-t_dropgid.c: In function ‘main’:
-t_dropgid.c:73:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_dropgid.c:149:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_dropgid.c:153:2: warning: incompatible implicit declaration of built-in function ‘exit’
-  exit(0);
-  ^
-t_exclopen.c: In function ‘bail’:
-t_exclopen.c:61:2: warning: incompatible implicit declaration of built-in function ‘exit’
-  exit(status);
-  ^
-t_exclopen.c: In function ‘main’:
-t_exclopen.c:112:2: warning: incompatible implicit declaration of built-in function ‘exit’
-  exit(0);
-  ^
-t_pathconf.c: In function ‘main’:
-t_pathconf.c:45:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(EX_USAGE);
-   ^
-t_pathconf.c:48:2: warning: incompatible implicit declaration of built-in function ‘strcpy’
-  strcpy(tbuf, "TXXXXXX");
-  ^
-t_pathconf.c:53:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(EX_CANTCREAT);
-   ^
-t_pathconf.c:83:2: warning: incompatible implicit declaration of built-in function ‘exit’
-  exit(EX_OK);
-  ^
-t_seteuid.c: In function ‘main’:
-t_seteuid.c:58:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_seteuid.c:64:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_seteuid.c:134:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_seteuid.c:138:2: warning: incompatible implicit declaration of built-in function ‘exit’
-  exit(0);
-  ^
-t_setgid.c: In function ‘main’:
-t_setgid.c:52:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_setgid.c:114:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_setgid.c:118:2: warning: incompatible implicit declaration of built-in function ‘exit’
-  exit(0);
-  ^
-t_setreuid.c: In function ‘main’:
-t_setreuid.c:55:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_setreuid.c:61:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_setreuid.c:158:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_setreuid.c:162:2: warning: incompatible implicit declaration of built-in function ‘exit’
-  exit(0);
-  ^
-t_setuid.c: In function ‘main’:
-t_setuid.c:53:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_setuid.c:59:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_setuid.c:106:3: warning: incompatible implicit declaration of built-in function ‘exit’
-   exit(1);
-   ^
-t_setuid.c:110:2: warning: incompatible implicit declaration of built-in function ‘exit’
-  exit(0);
-  ^
 make 
 make[3]: Entering directory '$(@D)/$(SM_BUILD_SUB_DIR)/test'
 make[3]: Nothing to be done for 'all'.
