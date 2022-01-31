@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:3064e84967b4b4216f5c7e065cfec8c52019438a590e9ed81366af2770660944
 COMPONENT_ARCHIVE_URL= \
-	http://ftp.gnome.org/pub/gnome/sources/$(COMPONENT_NAME)/3.0/$(COMPONENT_ARCHIVE)
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/3.0/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_FMRI=		gnome/config/gconf/gconf-editor
 COMPONENT_CLASSIFICATION=	Applications/Configuration and Preferences

@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:cd1cdbacca25c8d1debf847455155ee798c3e67a20903df8b228d4ece5505e82
 COMPONENT_ARCHIVE_URL= \
-  http://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org/projects/vinagre
 COMPONENT_FMRI= desktop/remote-desktop/vinagre
 COMPONENT_CLASSIFICATION= Applications/Internet

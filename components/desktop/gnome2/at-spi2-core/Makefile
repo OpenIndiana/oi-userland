@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:1e90d064b937aacfe79a96232ac7e63d28d716e85bd9ff4333f865305a959b5b
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI= gnome/accessibility/at-spi2-core
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries

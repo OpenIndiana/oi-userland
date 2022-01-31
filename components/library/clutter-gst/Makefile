@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:abc879cdd562f1640a825131405f4327a427bfe65b805ebc25d0c78909c8c622
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/mirror/gnome.org/sources/$(COMPONENT_NAME)/1.6/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/1.6/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.clutter-project.org/
 
 include $(WS_MAKE_RULES)/prep.mk

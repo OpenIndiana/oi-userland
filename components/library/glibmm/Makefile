@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:d34189237b99e88228e6f557f7d6e62f767fe356f395a244f5ad0e486254b645
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/glibmm/2.58/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/glibmm/2.58/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.gtkmm.org/
 COMPONENT_FMRI=		library/c++/glibmm
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries

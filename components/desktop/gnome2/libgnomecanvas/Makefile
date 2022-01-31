@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:859b78e08489fce4d5c15c676fec1cd79782f115f516e8ad8bed6abcb8dedd40
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI= library/desktop/libgnomecanvas
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries

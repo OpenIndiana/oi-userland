@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:ab80d6b9f5b3443e2c455a14ab93a5ece44edbc9b7226e5a6060a49b443e78b2
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.5/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.gnome.org
 
 include $(WS_MAKE_RULES)/prep.mk

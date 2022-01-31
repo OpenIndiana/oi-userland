@@ -27,7 +27,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:2494af16fedc311d7bb50bc47c32a69035f7b95fd7995d9db4fe497926087fb5
 COMPONENT_ARCHIVE_URL= \
-  http://download.gnome.org/sources/devhelp/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/devhelp/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Apps/Devhelp
 COMPONENT_FMRI= developer/gnome/devhelp
 COMPONENT_CLASSIFICATION= Development/GNOME and GTK+

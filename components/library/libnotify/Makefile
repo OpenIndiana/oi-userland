@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:9cb4ce315b2655860c524d46b56010874214ec27e854086c1a1d0260137efc04
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/gnome/sources/$(COMPONENT_NAME)/0.7/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/0.7/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.galago-project.org/news/index.php
 COMPONENT_FMRI=	library/libnotify
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
