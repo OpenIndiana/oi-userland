@@ -1,0 +1,10 @@
+--- php-8.1.2/ext/mysqli/mysqli.c	2022-01-30 17:33:12.644053038 +0000
++++ php-8.1.2/ext/mysqli/mysqli.c.new	2022-01-30 17:32:58.157704436 +0000
+@@ -886,6 +886,7 @@
+ 	snprintf(buf, sizeof(buf), ZEND_LONG_FMT, MyG(num_links));
+ 	php_info_print_table_row(2, "Active Links", buf);
+ #ifndef MYSQLI_USE_MYSQLND
++#include <server/mysql_version.h>
+ 	php_info_print_table_row(2, "Client API header version", MYSQL_SERVER_VERSION);
+ 	php_info_print_table_row(2, "MYSQLI_SOCKET", MYSQL_UNIX_ADDR);
+ #endif
