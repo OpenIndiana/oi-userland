@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:552092b3b6c23f47f4beee05495d0f9a153781f62a1c4b7ec53857a37dfce046
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.0/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/0.0/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= http://www.gnome.org
 COMPONENT_FMRI=		library/desktop/pangox-compat
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries

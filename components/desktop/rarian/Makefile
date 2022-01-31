@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:aafe886d46e467eb3414e91fa9e42955bd4b618c3e19c42c773026b205a84577
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.8/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/0.8/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org
 
 include $(WS_MAKE_RULES)/prep.mk

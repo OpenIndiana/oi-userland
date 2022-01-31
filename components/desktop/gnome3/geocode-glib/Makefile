@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:19c1fef4fd89eb4bfe6decca45ac45a2eca9bb7933be560ce6c172194840c35e
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.gnome.org
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 COMPONENT_FMRI= library/desktop/geocode-glib

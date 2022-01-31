@@ -25,7 +25,7 @@ COMPONENT_SRC_NAME=     ttf-bitstream-vera
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/ttf-bitstream-vera/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/ttf-bitstream-vera/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
   sha256:db5b27df7bbb318036ebdb75acd3e98f1bd6eb6608fb70a67d478cd243d178dc
 COMPONENT_LICENSE=      Bitstream Vera Fonts License

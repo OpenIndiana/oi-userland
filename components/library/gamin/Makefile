@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:28085f0ae8be10eab582ff186af4fb0be92cc6c62b5cc19cd09b295c7c2899a1
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.1/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/0.1/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI= library/file-monitor/gamin

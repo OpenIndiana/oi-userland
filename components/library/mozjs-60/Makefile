@@ -36,7 +36,7 @@ COMPONENT_SRC=          mozjs-60.8.0
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
 	sha256:697331336c3d65b80ded9ca87b4a8ceb804e5342b476eaa133ac638102a9dc5d
-COMPONENT_ARCHIVE_URL=  http://ftp.gnome.org/pub/gnome/teams/releng/tarballs-needing-help/mozjs/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/teams/releng/tarballs-needing-help/mozjs/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= library/mozjs-60
 COMPONENT_SUMMARY= Javascript engine
 COMPONENT_CLASSIFICATION= Development/Other Languages

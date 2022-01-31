@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:cf5fc92805e581c8303e08d54519457ba07f15b766e9b1edde4862993ac1aa43
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/gtkmm/3.24/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/gtkmm/3.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.gtkmm.org/
 COMPONENT_FMRI=		library/desktop/c++/gtkmm3
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries

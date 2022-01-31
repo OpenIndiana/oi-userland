@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:9c8285bc3131faa309d5cba5a919d5166abc2b8cc5a0c850fe861be8b14e089c
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.10/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/3.10/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI = library/media-player/totem-pl-parser
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries

@@ -23,7 +23,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:fdc11e74c10fc9ffe4188537e2b370c0abacca7d89021d4d303afdf7fd7476fa
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.3/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.3/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI = image/library/libart
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries

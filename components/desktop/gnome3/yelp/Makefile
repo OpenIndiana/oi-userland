@@ -23,7 +23,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:dda0b051ad32908cb9d894d1db3ffdac69b21849b8a6a9a74d9669b017f608c2
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/yelp/3.20/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/yelp/3.20/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI = gnome/help-viewer/yelp
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Documentation

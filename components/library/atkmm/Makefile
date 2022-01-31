@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:4c4cfc917fd42d3879ce997b463428d6982affa0fb660cafcc0bc2d9afcedd3a
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/atkmm/2.28/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/atkmm/2.28/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.gtkmm.org/
 COMPONENT_FMRI=		library/desktop/c++/atkmm
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries

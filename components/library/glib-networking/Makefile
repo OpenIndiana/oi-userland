@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:304dd9e4c0ced69094300e0b9e66cd2eaae7161b9fc3186536d11458677d820d
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.42/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.42/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI = library/glib-networking
 COMPONENT_CLASSIFICATION = System/Libraries

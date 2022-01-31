@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:0513aad38e5d3cedd4ae3c551634e3be1b9baaa79775e53b2dba9456f15b01c9
 COMPONENT_ARCHIVE_URL= \
-	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.8/$(COMPONENT_ARCHIVE)
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.8/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://wiki.gnome.org/Projects/Librest
 COMPONENT_FMRI = library/desktop/librest
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries

@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:46030c09422603dbb72f13b5dd592dcc01fbc13562b9e94dafb2b58982bc6b3a
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://projects.gnome.org/gconf/
 
 TEST_TARGET= $(NO_TESTS)

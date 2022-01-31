@@ -27,7 +27,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:ee0eb0d7d7bdf696ac9471b19ff3bea3240d63b6cb8a134bf632054af8665d90
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.4/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/3.4/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI= gnome/media/rhythmbox
 COMPONENT_CLASSIFICATION= Applications/Sound and Video

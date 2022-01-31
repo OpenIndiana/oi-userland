@@ -25,7 +25,7 @@ COMPONENT_FMRI=		library/desktop/c++/pangomm
 COMPONENT_ARCHIVE_HASH= \
   sha256:ca6da067ff93a6445780c0b4b226eb84f484ab104b8391fb744a45cbc7edbf56
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/pangomm/2.42/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/pangomm/2.42/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.gtkmm.org/
 
 include $(WS_MAKE_RULES)/prep.mk

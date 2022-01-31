@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:fff85cf48223ab60e3c3c8318e2087131b590fd6f1737e42cb3759a3b427a334
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.36/$(COMPONENT_ARCHIVE)
+  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.36/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://gitlab.gnome.org/GNOME/gdk-pixbuf
 COMPONENT_FMRI=	library/desktop/gdk-pixbuf
 
