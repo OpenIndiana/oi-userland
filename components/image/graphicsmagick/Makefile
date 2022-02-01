@@ -16,17 +16,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		GraphicsMagick
 COMPONENT_MAJOR_VERSION=1.3
-COMPONENT_MINOR_VERSION=26
+COMPONENT_MINOR_VERSION=37
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.graphicsmagick.org/	
 COMPONENT_SUMMARY=	A collection of utilities to support file format conversion,image processing, and 2D vector rendering.
 COMPONENT_FMRI=		image/graphicsmagick
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:fba015f3d5e5d5f17e57db663f1aa9d338e7b62f1d415b85d13ee366927e5f88
-COMPONENT_ARCHIVE_URL=	ftp://ftp.graphicsmagick.org/pub/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:90dc22f1a7bd240e4c9065a940962bf13da43c99bcc36cb111cc3c1a0d7477d4
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	Copyright.txt
 
@@ -46,8 +45,12 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TEST)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
@@ -55,11 +58,9 @@ REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
