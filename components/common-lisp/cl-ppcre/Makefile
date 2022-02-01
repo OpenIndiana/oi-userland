@@ -15,17 +15,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cl-ppcre
-COMPONENT_VERSION=	2.0.11
-COMPONENT_PROJECT_URL=	http://weitz.de/cl-ppcre/
+COMPONENT_VERSION=	2.1.1
+COMPONENT_PROJECT_URL=	https://edicl.github.io/cl-ppcre/
 COMPONENT_FMRI=		library/common-lisp/cl-ppcre
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:626d4e1f78659d0b6e4d675c94e39afb1f602427724c961b1e4f029b348f4cb6
-COMPONENT_ARCHIVE_URL=	http://weitz.de/files/$(COMPONENT_ARCHIVE)
+	sha256:89631179b71648d9e6c565a928f6896a9d5742aa2083b9c1b705fe0b45d85def
+COMPONENT_ARCHIVE_URL=	https://github.com/edicl/cl-ppcre/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=	BSD-style
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	CL-PPCRE is a portable regular expression library for Common Lisp
+COMPONENT_CLASSIFICATION=Development/Other Languages
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/common-lisp.mk
