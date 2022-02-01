@@ -24,12 +24,11 @@
 # Copyright 2017, Aurelien Larcher.
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		m4
 COMPONENT_VERSION=	1.4.19
-COMPONENT_REVISION=	1
 COMPONENT_FMRI=	developer/macro/gnu-m4
 COMPONENT_SUMMARY=	GNU m4
 COMPONENT_CLASSIFICATION=	Development/GNU
