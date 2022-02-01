@@ -15,17 +15,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		drakma
-COMPONENT_VERSION=	2.0.2
-COMPONENT_PROJECT_URL=	http://weitz.de/drakma/
+COMPONENT_VERSION=	2.0.8
+COMPONENT_PROJECT_URL=	https://edicl.github.io/drakma/
 COMPONENT_FMRI=		library/common-lisp/drakma
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:5f40ae3c8c8cabb834234a17c8f89dd8cc35cc104b89a8f86636b4ee5280fcae
-COMPONENT_ARCHIVE_URL=	http://weitz.de/files/drakma.tar.gz
+	sha256:5c0c1c4a0614deaa395968660636edbd9168064d0e6be66d6f93e594e78d0770
+COMPONENT_ARCHIVE_URL=	https://github.com/edicl/drakma/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=	BSD-style
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	Drakma is a full-featured HTTP client implemented in Common Lisp.
+COMPONENT_CLASSIFICATION=Development/Other Languages
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/common-lisp.mk
