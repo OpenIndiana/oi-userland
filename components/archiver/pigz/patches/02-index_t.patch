@@ -1,0 +1,29 @@
+--- pigz-2.7/pigz.c	2022-01-15 20:18:20.000000000 +0000
++++ pigz-2.7/pigz.c	2022-02-01 13:30:11.000232060 +0000
+@@ -374,7 +374,7 @@
+ #  include <inttypes.h> // intmax_t, uintmax_t
+    typedef uintmax_t length_t;
+    typedef uint32_t crc_t;
+-   typedef uint_least16_t index_t;
++   typedef uint_least16_t pigz_index_t;
+ #else
+    typedef unsigned long length_t;
+    typedef unsigned long crc_t;
+@@ -3663,7 +3663,7 @@
+     // memory for unlzw() -- the first 256 entries of prefix[] and suffix[] are
+     // never used, so could have offset the index but it's faster to waste a
+     // little memory
+-    index_t prefix[65536];              // index to LZW prefix string
++    pigz_index_t prefix[65536];              // index to LZW prefix string
+     unsigned char suffix[65536];        // one-character LZW suffix
+     unsigned char match[65280 + 2];     // buffer for reversed match
+ 
+@@ -3809,7 +3809,7 @@
+             // link new table entry
+             if (end < mask) {
+                 end++;
+-                prefix[end] = (index_t)prev;
++                prefix[end] = (pigz_index_t)prev;
+                 suffix[end] = (unsigned char)final;
+             }
+ 
