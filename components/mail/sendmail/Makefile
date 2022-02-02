@@ -23,16 +23,18 @@
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=     64
+USE_OPENSSL11=	yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sendmail
-COMPONENT_VERSION=	8.16.1
+COMPONENT_VERSION=	8.17.1
 COMPONENT_REVISION=	0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	ftp://ftp.sendmail.org/pub/sendmail/
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME).$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:7886d5dc4b436b86175f32b5b9c7305c80787749847e2909bf99123ecc4e64ba
+COMPONENT_ARCHIVE_HASH=	sha256:04bc76b6c886e6d111be7fd8daa32b8ce00128a288b6b52e067bc29f3854a6e6
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 
 TPNO=			23958
@@ -106,18 +108,18 @@ APPENDDEF(`conf_sendmail_ENVDEF', `-DSUN_SIMPLIFIED_LDAP')
 APPENDDEF(`conf_sendmail_ENVDEF', `-DTCPWRAPPERS')
 APPENDDEF(`conf_sendmail_ENVDEF', `-DSASL')
 APPENDDEF(`conf_sendmail_ENVDEF', `-DSTARTTLS')
+APPENDDEF(`conf_sendmail_ENVDEF', `-DHASFLOCK')
 APPENDDEF(`conf_sendmail_ENVDEF', `-D_FFR_LOCAL_DAEMON')
 APPENDDEF(`conf_sendmail_ENVDEF', `-D_FFR_MAIL_MACRO')
-APPENDDEF(`conf_sendmail_ENVDEF', `-DIPV6_FULL=0')
+APPENDDEF(`conf_sendmail_ENVDEF', `-DIPV6_FULL=1')
+APPENDDEF(`conf_sendmail_LIBS', `-L$(OPENSSL_PREFIX)/lib/amd64 -lssl -lcrypto')
 APPENDDEF(`conf_sendmail_LIBS', `-lsldap')
 APPENDDEF(`conf_sendmail_LIBS', `-lwrap')
 APPENDDEF(`conf_sendmail_LIBS', `-lumem')
-APPENDDEF(`conf_sendmail_LIBS', `-lssl')
-APPENDDEF(`conf_sendmail_LIBS', `-lcrypto')
 APPENDDEF(`confMAPDEF', `-DLDAPMAP')
-APPENDDEF(`confLIBS', `-lldap_r-2.4 -llber-2.4 -lsasl -lc')
+APPENDDEF(`confLIBS', `-L$(OPENSSL_PREFIX)/lib -lldap_r -llber -lsasl -lc')
 define(`confDEPEND_TYPE', `Solaris')
-define(`confINCDIRS', `-I/usr/include/openldap -I/usr/include/sasl')
+define(`confINCDIRS', `-I$(OPENSSL_PREFIX)/include -I/usr/include/openldap -I/usr/include/sasl')
 define(`confMKDIR', `/usr/bin/mkdir')
 define(`confMTCFLAGS', `$(CC_PIC)')
 define(`sendmailTARGET_LINKS', `')
@@ -188,12 +190,14 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-REQUIRED_PACKAGES += database/berkeleydb-5
-REQUIRED_PACKAGES += developer/build/makedepend
-REQUIRED_PACKAGES += library/libmilter
-REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-522
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += database/berkeleydb-5
+#chicken egg problem
+#REQUIRED_PACKAGES += library/libmilter
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += runtime/perl-534
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl
