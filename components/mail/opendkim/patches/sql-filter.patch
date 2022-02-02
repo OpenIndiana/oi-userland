@@ -1,0 +1,16 @@
+--- opendkim-2.11.0~alpha.orig/opendkim/opendkim-db.c	2015-10-20 02:21:23.000000000 +0000
++++ ./opendkim-2.11.0~alpha/opendkim/opendkim-db.c	2017-09-20 17:41:51.410641883 +0000
+@@ -5994,9 +5994,11 @@
+ 		{
+ 			char query[BUFRSZ];
+ 
+-			snprintf(query, sizeof query, "SELECT %s,%s FROM %s",
++			snprintf(query, sizeof query, "SELECT %s,%s FROM %s%s%s",
+ 			         dsn->dsn_keycol, dsn->dsn_datacol,
+-			         dsn->dsn_table);
++			         dsn->dsn_table,
++	                         dsn->dsn_filter == NULL ? "" : " WHERE ",
++        	                 dsn->dsn_filter == NULL ? "" : dsn->dsn_filter);
+ 
+ 			err = odbx_query((odbx_t *) db->db_handle, query, 0);
+ 			if (err < 0)

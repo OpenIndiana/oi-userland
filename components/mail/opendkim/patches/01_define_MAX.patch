@@ -1,0 +1,15 @@
+# there is no MAX function defined and there is no C function, too
+--- opendkim-2.10.3/stats/opendkim-importstats.c	2022-02-05 19:01:48.369660562 +0000
++++ opendkim-2.10.3/stats/opendkim-importstats.c.new	2022-02-05 19:33:02.755143771 +0000
+@@ -41,6 +41,11 @@
+ #endif /* USE_ODBX */
+ 
+ /* macros, definitions */
++#define MAX(a,b) \
++   ({ __typeof__ (a) _a = (a); \
++       __typeof__ (b) _b = (b); \
++     _a > _b ? _a : _b; })
++
+ #define	CMDLINEOPTS	"d:EFh:mP:p:rSs:u:vx"
+ 
+ #define	DEFDBHOST	"localhost"
