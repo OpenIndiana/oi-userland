@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2022 Andreas Wacknitz
 #
 
 BUILD_BITS=NO_ARCH
@@ -19,25 +20,22 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	barman
-COMPONENT_VERSION= 	2.17
+COMPONENT_VERSION= 	2.18
 COMPONENT_SUMMARY= 	An administration tool for disaster recovery of PostgreSQL servers 
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c0224641407d1cc55b3f4ada414ecd53bdeec093c0c49180ea28a0b8812839d0
+COMPONENT_ARCHIVE_HASH=	sha256:1955a570922bce2cb8fc1a346e0b3e7bee1c366ca16a2e92b1811240d89de29f
 COMPONENT_ARCHIVE_URL=	https://github.com/EnterpriseDB/barman/releases/download/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://pgbarman.org/
+COMPONENT_CLASSIFICATION=	System/Databases
+COMPONENT_FMRI=		database/postgres/barman
+COMPONENT_LICENSE=	GPLv3
 
-PYTHON_VERSIONS=	3.7
+PYTHON_VERSIONS=	3.9
+PYTHON_VERSION=		3.9
 
 TEST_TARGET=$(NO_TESTS)
-
 include $(WS_TOP)/make-rules/common.mk
-
-COMPONENT_POST_INSTALL_ACTION += \
-	cd $(PROTO_DIR)/usr/bin ; \
-	for file in barman barman-wal-archive barman-wal-restore; do \
-		mv $$file $$file-$(PYTHON_VERSION) ; \
-	done ;
 
 # Install example configuration files
 DOC_DIR=$(PROTO_DIR)/usr/share/barman
@@ -50,5 +48,5 @@ COMPONENT_POST_INSTALL_ACTION += \
 	done
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += library/python/setuptools-39
+REQUIRED_PACKAGES += runtime/python-39
