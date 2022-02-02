@@ -30,17 +30,15 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         findutils
-COMPONENT_VERSION=      4.8.0
+COMPONENT_VERSION=      4.9.0
 COMPONENT_SUMMARY=      GNU findutils
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/findutils/
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/findutils/
 COMPONENT_FMRI=         file/gnu-findutils
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:57127b7e97d91282c6ace556378d5455a9509898297e46e10443016ea1387164
-COMPONENT_ARCHIVE_URL= \
-	http://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:a2bfb8c09d436770edc59f50fa483e785b161a3b7b9d547573cb08065fd462fe
+COMPONENT_ARCHIVE_URL= 	https://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
