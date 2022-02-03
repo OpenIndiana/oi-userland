@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2016 Jim Klimov
+# Copyright 2022 Nona Hansel
 #
 
 BUILD_BITS=64
@@ -29,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 		nmap
 COMPONENT_VERSION=		7.80
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=	http://nmap.org/
 COMPONENT_FMRI=			diagnostic/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
@@ -37,11 +39,9 @@ COMPONENT_DESCRIPTION=	Nmap is useful for inventorying the network, managing \
 service upgrade schedules, and monitoring host or service uptime
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:fcfa5a0e42099e12e4bf7a68ebe6fde05553383a682e816a7ec9256ab4773faa
+COMPONENT_ARCHIVE_HASH=	sha256:fcfa5a0e42099e12e4bf7a68ebe6fde05553383a682e816a7ec9256ab4773faa
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_PROJECT_URL)dist/sigs/$(COMPONENT_ARCHIVE).asc	
-COMPONENT_BUGDB=		utility/nmap
 COMPONENT_LICENSE=		GPLv2,OpenSSL,SSLeay
 # Note: This license file incorporates nmap COPYING and OpenSSL license text
 COMPONENT_LICENSE_FILE=	nmap.license
@@ -49,7 +49,6 @@ COMPONENT_LICENSE_FILE=	nmap.license
 include $(WS_MAKE_RULES)/common.mk
 
 PKG_OPTIONS +=	-D COMPONENT_DESCRIPTION="$(COMPONENT_DESCRIPTION)"
-PKG_OPTIONS +=	-D PYTHON_VERSION="$(PYTHON_VERSION)"
 
 COMPONENT_PREP_ACTION = (cd $(@D)/libdnet-stripped && autoconf)
 
@@ -57,28 +56,16 @@ COMPONENT_PRE_CONFIGURE_ACTION = $(CP) -rp $(SOURCE_DIR)/. $(@D)
 
 CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS  +=   LIBS="-lsocket -lnsl"
-CONFIGURE_OPTIONS  +=   PYTHON="$(PYTHON)"
 CONFIGURE_OPTIONS  +=   --srcdir=$(BUILD_DIR_$(BITS))
 CONFIGURE_OPTIONS  +=   --localstatedir=/var
 CONFIGURE_OPTIONS  +=   --without-localdirs
-CONFIGURE_OPTIONS  +=   --with-zenmap
+CONFIGURE_OPTIONS  +=   --without-ndiff
+CONFIGURE_OPTIONS  +=   --without-zenmap
 CONFIGURE_OPTIONS  +=   --with-openssl
 CONFIGURE_OPTIONS  +=   --with-libpcap
 CONFIGURE_OPTIONS  +=   --with-libpcre
 CONFIGURE_OPTIONS  +=   --with-liblua
 CONFIGURE_OPTIONS  +=   --with-ncat
-CONFIGURE_OPTIONS  +=   --with-ndiff
-
-# Python packages are delivered to vendor-packages instead of site-packages.
-CONFIGURE_OPTIONS  +=   am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES.32)
-
-# pkgdepend doesn't like the first line of a Python script to be:
-# '#!/usr/bin/env python' so turn it into '#!/usr/bin/python2.7'
-COMPONENT_POST_INSTALL_ACTION += \
-        $(GSED) -e 's?env python?python$(PYTHON_VERSION)?' \
-                -i $(PROTOUSRBINDIR)/uninstall_zenmap && \
-        $(GSED) -e 's?env python?python$(PYTHON_VERSION)?' \
-                -i $(PROTOUSRBINDIR)/uninstall_ndiff
 
 TEST_TARGET= $(NO_TESTS)
 
@@ -87,13 +74,9 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/python/pygobject-27
-REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
