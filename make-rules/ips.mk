@@ -147,6 +147,12 @@ $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-generate-macros,$(ver))))
 
 PKG_MACROS +=           PYTHON_32_ONLY=
 
+define ruby-generate-macros
+PKG_MACROS +=           RUBY_$(1)_ONLY=\#
+PKG_MACROS +=           RUBY_$(1)_EXCL=
+endef
+$(foreach ver,$(RUBY_VERSIONS),$(eval $(call ruby-generate-macros,$(ver))))
+
 MANGLED_DIR =	$(PROTO_DIR)/mangled
 
 PKG_PROTO_DIRS += $(MANGLED_DIR) $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT_SRC)
@@ -400,19 +406,19 @@ $(foreach mfst,$(HISTORICAL_MANIFESTS),$(eval $(call history-manifest-rule,$(mfs
 # the version number.
 define ruby-manifest-rule
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: \
-        PKG_MACROS += RUBY_VERSION=$(1) RUBY_LIB_VERSION=$(2) \
-            RUBYV=$(subst .,,$(1))
+        PKG_MACROS += RUBY_VERSION=$(1) RUBY_LIB_VERSION=$(2) RUBY_$(1)_ONLY= RUBY_$(1)_EXCL=\# \
+            RUBYV=$(subst .,,$(1) RUBY_ARCH=$(3))
 
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-RUBYVER.p5m
-	if [ -f $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m ]; then \
-	        cat $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m >> $$@; \
+	if [ -f $$*-$(shell echo $(1) | tr -d .)-GENFRAG.p5m ]; then \
+	        cat $$*-$(shell echo $(1) | tr -d .)-GENFRAG.p5m >> $$@; \
 	fi
 	$(PKGMOGRIFY) -D RUBY_VERSION=$(1) -D RUBY_LIB_VERSION=$(2) \
-	    -D RUBYV=$(shell echo $(1) | tr -d .) $$< > $$@
+	    -D RUBYV=$(shell echo $(1) | tr -d .) -D RUBY_ARCH=$(3) $$< > $$@
 endef
 $(foreach ver,$(RUBY_VERSIONS),\
         $(eval $(call ruby-manifest-rule,$(shell echo $(ver) | \
-            cut -d. -f1,2),$(ver))))
+            cut -d. -f1,2),$(RUBY_LIB_VERSION.$(ver)),$(RUBY_ARCH.$(ver)))))
 
 # A rule to create a helper transform package for ruby, that will insert the
 # appropriate conditional dependencies into a ruby library's

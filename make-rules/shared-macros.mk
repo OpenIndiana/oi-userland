@@ -732,10 +732,13 @@ F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
 RUBY_VERSION =  2.3
-RUBY_LIB_VERSION.2.2 = 2.2.0
+RUBY_ARCH.2.3 = $(MACH)-solaris$(SOLARIS_VERSION)
+RUBY_ARCH.2.6 = $(MACH64)-solaris$(SOLARIS_VERSION)
+RUBY_ARCH = $(RUBY_ARCH.$(RUBY_VERSION))
 RUBY_LIB_VERSION.2.3 = 2.3.0
-RUBY.2.2 =	/usr/ruby/2.2/bin/ruby
+RUBY_LIB_VERSION.2.6 = 2.6.0
 RUBY.2.3 =	/usr/ruby/2.3/bin/ruby
+RUBY.2.6 =	/usr/ruby/2.6/bin/ruby
 RUBY =          $(RUBY.$(RUBY_VERSION))
 RUBY_LIB_VERSION = $(RUBY_LIB_VERSION.$(RUBY_VERSION))
 
@@ -750,7 +753,13 @@ RUBY_SCRIPT_FIX_FUNC = \
 # Use the ruby lib versions to represent the RUBY_VERSIONS that
 # need to get built.  This is done because during package transformations
 # both the ruby version and the ruby library version are needed.
-RUBY_VERSIONS = $(RUBY_LIB_VERSION)
+RUBY_VERSIONS = 2.3
+RUBY_32_VERSIONS = 2.3
+RUBY_64_VERSIONS = 2.6
+
+RUBY_BUILD_DOCS = yes
+
+PKG_MACROS +=   RUBY_ARCH=$(RUBY_ARCH)
 
 PYTHON_VENDOR_PACKAGES.32 = $(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)
 PYTHON_VENDOR_PACKAGES.64 = $(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.64)
