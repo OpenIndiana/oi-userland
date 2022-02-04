@@ -21,21 +21,23 @@
 #
 
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2020, Oracle and/or its affiliates.
 #
 
 # Some userland consolidation specific lint checks
 
 import pkg.lint.base as base
 from pkg.lint.engine import lint_fmri_successor
-import pkg.fmri
 import pkg.elf as elf
+import pkg.fmri
+import platform
 import re
 import os.path
 import subprocess
 import pkg.client.api
 import pkg.client.api_errors
 import pkg.client.progress
+import sys
 
 class UserlandActionChecker(base.ActionChecker):
         """An opensolaris.org-specific class to check actions."""
@@ -50,6 +52,7 @@ class UserlandActionChecker(base.ActionChecker):
                         self.proto_path = path.split()
                 else:
                         self.proto_path = None
+                solaris_ver = os.getenv('SOLARIS_VERSION', '2.11')
                 #
                 # These lists are used to check if a 32/64-bit binary
                 # is in a proper 32/64-bit directory.
@@ -59,14 +62,25 @@ class UserlandActionChecker(base.ActionChecker):
                         "sparcv7",
                         "32",
                         "i86pc-solaris-64int",  # perl path
-                        "sun4-solaris-64int"    # perl path
+                        "sun4-solaris-64int",   # perl path
+                        "i386-solaris" + solaris_ver,        # ruby path
+                        "sparc-solaris"        + solaris_ver        # ruby path
                 ]
                 self.pathlist64 = [
                         "amd64",
                         "sparcv9",
                         "64",
-                        "i86pc-solaris-thread-multi-64",     # perl path
-                        "sun4-solaris-thread-multi-64"       # perl path
+                        "fbconfig",        # x11/app/gfx-utils path
+                        "i86pc-solaris-64",     # perl path
+                        "sun4-solaris-64",      # perl path
+                        "i86pc-solaris-thread-multi-64", # perl path
+                        "sun4-solaris-thread-multi-64", # perl path
+                        "amd64-solaris" + solaris_ver,        # ruby path
+                        "sparcv9-solaris" + solaris_ver,# ruby path
+                        "sparcv9-sun-solaris" + solaris_ver,# ruby path
+                        "amd64-solaris-" + solaris_ver,  # ruby path
+                        "sparcv9-solaris-" + solaris_ver,# ruby path
+                        "x86_64-pc-solaris" + solaris_ver  # GCC path
                 ]
                 self.runpath_re = [
                         re.compile('^/lib(/.*)?$'),
@@ -78,7 +92,25 @@ class UserlandActionChecker(base.ActionChecker):
                         re.compile('^.*/amd64(/.*)?$'),
                         re.compile('^.*/sparcv9(/.*)?$'),
                         re.compile('^.*/i86pc-solaris-64(/.*)?$'), # perl path
-                        re.compile('^.*/sun4-solaris-64(/.*)?$')   # perl path
+                        re.compile('^.*/sun4-solaris-64(/.*)?$'),  # perl path
+                        re.compile('^.*/i86pc-solaris-thread-multi-64(/.*)?$'),
+                                # perl path
+                        re.compile('^.*/sun4-solaris-thread-multi-64(/.*)?$'),
+                                # perl path
+                        re.compile('^.*/amd64-solaris2\.[0-9]+(/.*)?$'),
+                                # ruby path
+                        re.compile('^.*/sparcv9-solaris2\.[0-9]+(/.*)?$'),
+                                # ruby path
+                        re.compile('^.*/sparcv9-sun-solaris2\.[0-9]+(/.*)?$'),
+                                # GCC path
+                        re.compile('^.*/x86_64-sun-solaris2\.[0-9]+(/.*)?$'),
+                                # GCC path
+                        re.compile('^/usr/lib/fbconfig(/)?$'),
+                                # x11/app/gfx-utils path
+                        re.compile('^/usr/lib/xorg/modules(/)?$'),
+                                # Xorg path
+                        re.compile('^/usr/lib/xorg/modules/(drivers|extensions|input)$')
+                                # Xorg path
                 ]
                 self.initscript_re = re.compile("^etc/(rc.|init)\.d")
 
@@ -116,7 +148,12 @@ class UserlandActionChecker(base.ActionChecker):
 
                                 variants = action.get_variant_template()
                                 variants.merge_unknown(pkg_vars)
-                                action.attrs.update(variants)
+                                # Action attributes must be lists or strings.
+                                for k, v in variants.items():
+                                        if isinstance(v, set):
+                                                action.attrs[k] = list(v)
+                                        else:
+                                                action.attrs[k] = v
 
                                 p = action.attrs[attr]
                                 dic.setdefault(p, []).append((mf.fmri, action))
@@ -242,7 +279,7 @@ class UserlandActionChecker(base.ActionChecker):
                 # aslr_tag_string will get stdout; err will get stderr
                 aslr_tag_string, err = aslr_tag_process.communicate()
 
-                # No ASLR tag was found; everthing must be tagged
+                # No ASLR tag was found; everything must be tagged
                 if aslr_tag_process.returncode != 0:
                         engine.error(
                                 _("'%s' is not tagged for aslr") % (path),
@@ -251,7 +288,7 @@ class UserlandActionChecker(base.ActionChecker):
 
                 # look for "ENABLE" anywhere in the string;
                 # warn about binaries which are not ASLR enabled
-                if re.search("ENABLE", aslr_tag_string) is not None:
+                if re.search(b"ENABLE", aslr_tag_string) is not None:
                         return result
                 engine.warning(
                         _("'%s' does not have aslr enabled") % (path),
@@ -275,16 +312,47 @@ class UserlandActionChecker(base.ActionChecker):
                                         match = True
                                         break
 
-                        # The RUNPATH shouldn't contain any runtime linker
-                        # default paths (or the /64 equivalent link)
-                        if dir in ['/lib', '/lib/64',
-                                   '/lib/amd64', '/lib/sparcv9',
-                                   '/usr/lib', '/usr/lib/64',
-                                   '/usr/lib/amd64', '/usr/lib/sparcv9' ]:
-                                list.append(dir)
-
                         if match == False:
                                 list.append(dir)
+                        # Make sure RUNPATH matches against a packaged path.
+                        # Don't check runpaths starting with $ORIGIN, which
+                        # is specially handled by the linker.
+
+                        elif not dir.startswith('$ORIGIN/'):
+
+                        # Strip out leading and trailing '/' in the 
+                        # runpath, since the reference paths don't start 
+                        # with '/' and trailing '/' could cause mismatches.
+                        # Check first if there is an exact match, then check
+                        # if any reference path starts with this runpath
+                        # plus a trailing slash, since it may still be a link
+                        # to a directory that has no action because it uses
+                        # the default attributes.
+
+                                relative_dir = dir.strip('/')
+                                if not relative_dir in self.ref_paths and \
+                                    not any(key.startswith(relative_dir + '/')
+                                        for key in self.ref_paths):
+
+                        # If still no match, if the runpath contains
+                        # an embedded symlink, emit a warning; it may or may
+                        # not resolve to a legitimate path.
+                        # E.g., for usr/openwin/lib, usr/openwin->X11 and
+                        # usr/X11/lib are packaged, but usr/openwin/lib is not.
+                        # Otherwise, runpath is bad; add it to list.
+                                        embedded_link = False
+                                        pdir = os.path.dirname(relative_dir)
+                                        while pdir != '':
+                                                if (pdir in self.ref_paths and 
+                                                    self.ref_paths[pdir][0][1].name == "link"):
+                                                        embedded_link = True
+                                                        engine.warning(
+                                                                _("runpath '%s' in '%s' not found in reference paths but contains symlink at '%s'") % (dir, path, pdir),
+                                                                msgid="%s%s.3" % (self.name, "001"))
+                                                        break
+                                                pdir = os.path.dirname(pdir)
+                                        if not embedded_link:
+                                                list.append(dir)
 
                         if bits == 32:
                                 for expr in self.runpath_64_re:
@@ -308,23 +376,33 @@ class UserlandActionChecker(base.ActionChecker):
 
                 return result
 
-        def __elf_wrong_location_check(self, path):
+        def __elf_wrong_location_check(self, path, inspath):
                 result = None
 
                 ei = elf.get_info(path)
                 bits = ei.get("bits")
                 type = ei.get("type");
-                elems = os.path.dirname(path).split("/")
-
-                path64 = False
-                for p in self.pathlist64:
-                    if (p in elems):
-                            path64 = True
+                elems = os.path.dirname(inspath).split("/")
 
                 path32 = False
-                for p in self.pathlist32:
-                    if (p in elems):
+                path64 = False
+
+                # Walk through the path elements backward and at the first
+                # 32/64 bit specific element, flag it and break.
+                for p in elems[::-1]:
+                    if (p in self.pathlist32):
                             path32 = True
+                            break
+                    if (p in self.pathlist64):
+                            path64 = True
+                            break
+
+                # The Xorg module directory is a hybrid case - everything
+                # but the dri subdirectory is 64-bit
+                if (os.path.dirname(inspath).startswith("usr/lib/xorg/modules")
+                    and not
+                    os.path.dirname(inspath) == "usr/lib/xorg/modules/dri"):
+                        path64 = True
 
                 # ignore 64-bit executables in normal (non-32-bit-specific)
                 # locations, that's ok now.
@@ -332,7 +410,7 @@ class UserlandActionChecker(base.ActionChecker):
                         return result
 
                 if bits == 32 and path64:
-                        result = _("32-bit object '%s' in 64-bit path")
+                        result = _("32-bit object '%%s' in 64-bit path(%s)" % elems)
                 elif bits == 64 and not path64:
                         result = _("64-bit object '%s' in 32-bit path")
                 return result
@@ -343,9 +421,11 @@ class UserlandActionChecker(base.ActionChecker):
                 if action.name not in ["file"]:
                         return
 
+                inspath=action.attrs["path"]
+
                 path = action.hash
                 if path == None or path == 'NOHASH':
-                        path = action.attrs["path"]
+                        path = inspath
 
                 # check for writable files without a preserve attribute
                 if "mode" in action.attrs:
@@ -383,18 +463,28 @@ class UserlandActionChecker(base.ActionChecker):
                                         msgid="%s%s.1" % (self.name, pkglint_id))
                         elif elf.is_elf_object(fullpath):
                                 # 32/64 bit in wrong place
-                                result = self.__elf_wrong_location_check(fullpath)
+                                result = self.__elf_wrong_location_check(fullpath, inspath)
                                 if result != None:
-                                        engine.error(result % path, 
+                                        engine.error(result % inspath, 
                                                 msgid="%s%s.2" % (self.name, pkglint_id))
                                 result = self.__elf_runpath_check(fullpath, engine)
                                 if result != None:
                                         engine.error(result % path, 
                                                 msgid="%s%s.3" % (self.name, pkglint_id))
-                                # illumos does not support ASLR
-                                #result = self.__elf_aslr_check(fullpath, engine)
+                                result = self.__elf_aslr_check(fullpath, engine)
 
         file_action.pkglint_desc = _("Paths should exist in the proto area.")
+
+        def legacy_action(self, action, manifest, engine, pkglint_id="005"):
+                """Checks for deprecated legacy actions."""
+
+                if action.name not in ["legacy"]:
+                        return
+
+                engine.error(_("legacy actions are deprecated"),
+                        msgid="%s%s.0" % (self.name, pkglint_id))
+
+        legacy_action.pkglint_desc = _("legacy actions are deprecated.")
 
         def link_resolves(self, action, manifest, engine, pkglint_id="002"):
                 """Checks for link resolution."""
@@ -455,27 +545,6 @@ class UserlandManifestChecker(base.ManifestChecker):
         def __init__(self, config):
                 super(UserlandManifestChecker, self).__init__(config)
 
-        def forbidden_publisher(self, manifest, engine, pkglint_id="1001"):
-                if not os.environ.get("ENCUMBERED"):
-                        for action in manifest.gen_actions_by_type("depend"):
-                                for f in action.attrlist("fmri"):
-                                        pkg_name=pkg.fmri.PkgFmri(f).pkg_name
-                                        info_needed = pkg.client.api.PackageInfo.ALL_OPTIONS - \
-                                            (pkg.client.api.PackageInfo.ACTION_OPTIONS |
-                                             frozenset([pkg.client.api.PackageInfo.LICENSES]))
-                                        progtracker = pkg.client.progress.NullProgressTracker()
-                                        interface=pkg.client.api.ImageInterface("/", pkg.client.api.CURRENT_API_VERSION, progtracker, lambda x: False, None,None)
-                                        ret = interface.info([pkg_name],True,info_needed)
-                                        if ret[pkg.client.api.ImageInterface.INFO_FOUND]:
-                                                allowed_pubs = engine.get_param("%s.allowed_pubs" % self.name).split(" ") + ["openindiana.org","on-nightly"]
-                                                for i in ret[pkg.client.api.ImageInterface.INFO_FOUND]:
-                                                        if i.publisher not in allowed_pubs:
-                                                                engine.error(_("package %(pkg)s depends on %(name)s, which comes from forbidden publisher %(publisher)s") %
-                                                                        {"pkg":manifest.fmri,"name":pkg_name,"publisher":i.publisher}, msgid="%s%s.1" % (self.name, pkglint_id))
-
-        forbidden_publisher.pkglint_desc = _(
-                "Dependencies should come from standard publishers" )
-
         def component_check(self, manifest, engine, pkglint_id="001"):
                 manifest_paths = []
                 files = False
@@ -489,27 +558,20 @@ class UserlandManifestChecker(base.ManifestChecker):
                         return
 
                 for action in manifest.gen_actions_by_type("license"):
-                        if not action.attrs['license']:
-                                engine.error( _("missing vaue for action license attribute 'license' like 'CDDL','MIT','GPL'..."),
-                                    msgid="%s%s.0" % (self.name, pkglint_id))
-                        else:
-                                license = True
-                                break
+                        license = True
+                        break
 
                 if license == False:
                         engine.error( _("missing license action"),
                                 msgid="%s%s.0" % (self.name, pkglint_id))
 
-#                if 'org.opensolaris.arc-caseid' not in manifest:
-#                        engine.error( _("missing ARC data (org.opensolaris.arc-caseid)"),
-#                                msgid="%s%s.0" % (self.name, pkglint_id))
-
         component_check.pkglint_desc = _(
-                "license actions and ARC information are required if you deliver files.")
+                "license actions are required if you deliver files.")
 
         def publisher_in_fmri(self, manifest, engine, pkglint_id="002"):
+                lint_id = "%s%s" % (self.name, pkglint_id)
                 allowed_pubs = engine.get_param(
-                    "%s.allowed_pubs" % self.name).split(" ")
+                    "%s.allowed_pubs" % lint_id).split(" ") 
 
                 fmri = manifest.fmri
                 if fmri.publisher and fmri.publisher not in allowed_pubs:
@@ -518,4 +580,117 @@ class UserlandManifestChecker(base.ManifestChecker):
                             msgid="%s%s.2" % (self.name, pkglint_id))
 
         publisher_in_fmri.pkglint_desc = _(
-                "extra publisher set" )
+            "Publishers mentioned in package FMRIs must be in fixed set.")
+
+        # CFFI names the modules it creates with a hash that includes the
+        # version of CFFI (since the schema may change from one version to
+        # another).  This means that if a package depends on CFFI, then it must
+        # also incorporate the version it builds with, which should be the
+        # version in the gate.
+        def uses_cffi(self, manifest, engine, pkglint_id="003"):
+                cffi_match = {"fmri": "*/cffi*"}
+                cffi_require = None
+                cffi_incorp = None
+                for action in manifest.gen_actions_by_type("depend"):
+                        if not any(
+                            f
+                            for f in action.attrlist("fmri")
+                            if "/cffi-" in pkg.fmri.PkgFmri(f, "5.11").pkg_name):
+                                continue
+                        if action.attrs["type"] in ("require", "require-any"):
+                                cffi_require = action
+                        elif action.attrs["type"] == "incorporate":
+                                cffi_incorp = action
+
+                try:
+                        sys.path[0:0] = [os.path.join(os.getenv("WS_TOP", ""),
+                            "components/python/cffi/build/prototype/"
+                            "%s/usr/lib/python%d.%d/vendor-packages" %
+                            ((platform.processor(),) + sys.version_info[:2]))]
+                        import cffi
+                        cffi_version = cffi.__version__
+                        del sys.path[0]
+                except ImportError:
+                        cffi_version = None
+
+                if not cffi_require:
+                        return
+
+                if not cffi_version:
+                        engine.warning(_("package %s depends on CFFI, but we "
+                            "cannot determine the version of CFFI needed") %
+                            manifest.fmri,
+                            msgid="%s%s.1" % (self.name, pkglint_id))
+
+                if not cffi_incorp:
+                        engine.error(_("package %(pkg)s depends on CFFI, but "
+                            "does not incorporate it (should be at %(should)s)")
+                            % {"pkg": manifest.fmri, "should": cffi_version},
+                            msgid="%s%s.2" % (self.name, pkglint_id))
+
+                # The final check can only be done if neither of the previous
+                # checks have fired.
+                if not cffi_version or not cffi_incorp:
+                    return
+
+                cffi_incorp_ver = str(pkg.fmri.PkgFmri(
+                    cffi_incorp.attrs["fmri"], "5.11").version.release)
+                if cffi_incorp_ver != cffi_version:
+                        engine.error(_("package %(pkg)s depends on CFFI, but "
+                            "incorporates it at the wrong version (%(actual)s "
+                            "instead of %(should)s)") % {"pkg": manifest.fmri,
+                            "actual": cffi_incorp_ver, "should": cffi_version},
+                            msgid="%s%s.3" % (self.name, pkglint_id))
+
+        uses_cffi.pkglint_desc = _(
+            "Packages using CFFI incorporate CFFI at the correct version.")
+
+
+        def makefile_var_check(self, manifest, engine, pkglint_id="004"):
+                for m in manifest.as_lines():
+                        if m.find("$(") != -1:
+                                engine.error( _("Unexpanded make variable in %s:\n%s" % (manifest.fmri, m)),
+                                        msgid="%s%s.0" % (self.name, pkglint_id))
+
+        makefile_var_check.pkglint_desc = _("Unexpanded makefile variable.")
+
+
+        # Make sure that the manifests deliver only variant.arch equal to
+        # architecture on current machine. Otherwise we may have problems later
+        # when merging i386 and sparc repos together.
+        def check_package_arch(self, manifest, engine, pkglint_id="005"):
+                arch = platform.uname()[5] # i386 or sparc
+
+                # First make sure that whole manifest does not have
+                # wrong variant.arch set
+                for v in manifest.gen_variants():
+                        if v[0] != "variant.arch":
+                                continue
+
+                        if v[1] == set([arch]):
+                                continue
+
+                        engine.error(
+                                _( "Package %s is being published for wrong "
+                                "architecture %s instead of %s:\n%s\n") %
+                                (manifest.fmri, v[1], arch, v),
+                                msgid="%s%s.1" % (self.name, pkglint_id))
+
+                # Then go through all actions in the manifest
+                for m in manifest.gen_actions():
+                        # scan all variants
+                        for v in m.get_variant_template():
+                                if v != "variant.arch":
+                                        continue
+
+                                if m.attrs[v] == [arch]:
+                                        continue
+
+                                engine.error(
+                                        _("The manifest %s contains action with "
+                                        "wrong architecture '%s' (instead of '%s'):"
+                                        "\n%s\n") %
+                                        (manifest.fmri, m.attrs[v], arch, m),
+                                        msgid="%s%s.2" % (self.name, pkglint_id))
+
+        check_package_arch.desc = _("Wrong architecture package.")
