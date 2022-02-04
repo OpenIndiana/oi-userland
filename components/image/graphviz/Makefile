@@ -23,92 +23,109 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+# build 64-bit only
+BUILD_BITS =	64
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		graphviz
-COMPONENT_VERSION=	2.40.1
-COMPONENT_REVISION=	6
-COMPONENT_PROJECT_URL=	http://www.graphviz.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:ca5218fade0204d59947126c38439f432853543b0818d9d728c589dfe7f3a421
-COMPONENT_ARCHIVE_URL= http://204.178.9.49/pub/graphviz/stable/SOURCES/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME =		graphviz
+COMPONENT_VERSION =		2.50.0
+COMPONENT_PROJECT_URL =		https://www.graphviz.org/
+COMPONENT_CLASSIFICATION =	Applications/System Utilities
+COMPONENT_LICENSE_FILE =	COPYING
+COMPONENT_LICENSE =		EPL1.0
+COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH = \
+    sha256:6b16bf990df114195be669773a1dae975dbbffada45e1de2849ddeb5851bb9a8
+COMPONENT_ARCHIVE_URL = \
+    https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-CPPFLAGS += -I/usr/lib/$(MACH64)/ocaml
-# GMP header files for the guile extension (no --with- flag)
-# The guile build is broken with studio (7073649), so we disable this for now.
-# CPPFLAGS +=	-I/usr/include/gmp
-# Java header files (--with-javaincludedir allows for only one directory)
-CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
+# explicit versions
+PERL_VERSION =		5.34
+PYTHON_VERSION =	3.9
+RUBY_VERSION =		2.6
 
+# preparation
 COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -cf && \
 				aclocal && \
 				autoconf -f -I m4 && \
 				autoheader && \
 				automake --add-missing)
 
-# Can't find headers without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
+# configure
+CONFIGURE_ENV +=	LIBPOSTFIX="/$(MACH64)"
+# --with-javaincludedir allows for only one directory and we need two
+CONFIGURE_ENV +=	JAVA_INCLUDES="-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris"
 CONFIGURE_ENV +=	PERL=$(PERL)
-# Explicitly use Ruby 1.9.  Allows switching Ruby default without
-# affecting graphviz build.
+CONFIGURE_ENV +=	PYTHON=$(PYTHON)
 CONFIGURE_ENV +=	RUBY=$(RUBY)
+CONFIGURE_ENV +=	RUBY_VER=$(RUBY_VERSION)
+CONFIGURE_OPTIONS +=	--disable-man-pdfs
+CONFIGURE_OPTIONS +=	--disable-sharp
+CONFIGURE_OPTIONS +=	--disable-go
+CONFIGURE_OPTIONS +=	--disable-guile
+CONFIGURE_OPTIONS +=	--disable-php
+CONFIGURE_OPTIONS +=	--disable-python
+CONFIGURE_OPTIONS +=	--enable-python3
+CONFIGURE_OPTIONS +=	--disable-r
+CONFIGURE_OPTIONS +=	--enable-lefty
 CONFIGURE_OPTIONS +=	--without-included-ltdl
-CONFIGURE_OPTIONS +=	--enable-python=no
-CONFIGURE_OPTIONS +=	--enable-python26=no
-CONFIGURE_OPTIONS +=	--enable-python27=yes
-CONFIGURE_OPTIONS +=	--enable-php=no
-CONFIGURE_ENV +=	PYTHON27=$(PYTHON.2.7.$(BITS))
-# We build only 64-bit java library,
-# but avoid building other 64-bit bindings for now
-CONFIGURE_OPTIONS.32 +=	--enable-java=no
-CONFIGURE_OPTIONS.64 +=	--enable-java=yes
-CONFIGURE_OPTIONS.64 +=	--enable-perl=no
-CONFIGURE_OPTIONS.64 +=	--enable-ruby=no
-CONFIGURE_OPTIONS.64 +=	--enable-tcl=no
-CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS +=	--with-qt=no
-CONFIGURE_OPTIONS += --with-gdincludedir=$(CONFIGURE_INCLUDEDIR)/gd2
+CONFIGURE_OPTIONS +=	--without-devil
+CONFIGURE_OPTIONS +=	--without-visio
+CONFIGURE_OPTIONS +=	--without-lasi
+CONFIGURE_OPTIONS +=	--without-gtkgl
+CONFIGURE_OPTIONS +=	--without-gtkglext
+CONFIGURE_OPTIONS +=	--without-ann
+CONFIGURE_OPTIONS +=	--without-qt
+CONFIGURE_OPTIONS +=	--without-smyrna
 
-CONFIGURE_ENV.32 += ac_cv_path_GDLIB_CONFIG=/usr/bin/gdlib-config
-CONFIGURE_ENV.64 += ac_cv_path_GDLIB_CONFIG=/usr/bin/$(MACH64)/gdlib-config
-
-COMPONENT_BUILD_ARGS += 	GREP=/usr/bin/ggrep
-
+# graphviz.7 -> graphviz.5
 COMPONENT_POST_INSTALL_ACTION += \
-    ( cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
-        $(RM) -r vendor-packages-$(BITS) ; \
-        $(MV) site-packages vendor-packages-$(BITS) )
+	$(RM) -r $(PROTOUSRSHAREMAN5DIR) ; \
+	$(MV) $(PROTOUSRSHAREMANDIR)/man7 $(PROTOUSRSHAREMAN5DIR) ; \
+	$(MV) $(PROTOUSRSHAREMAN5DIR)/graphviz.7 \
+	    $(PROTOUSRSHAREMAN5DIR)/graphviz.5 ;
 
-# common targets
+# fix java, lua, ocaml, python, ruby man pages
+COMPONENT_POST_INSTALL_ACTION += \
+	cd $(PROTOUSRSHAREMAN3DIR) ; \
+	for e in java lua ocaml python ruby ; do \
+		for f in *.3$$e ; do \
+			$(MV) $$f $${f%.3$$e}-$$e.3 ; \
+		done ; \
+	done ;
 
-# We don't want to overwrite 32-bit bits
-$(INSTALL_32):	$(INSTALL_64)
+# fix tcl man pages
+COMPONENT_POST_INSTALL_ACTION += \
+	cd $(PROTOUSRSHAREMAN3DIR) ; \
+	$(RM) -r ../man3tcl ; \
+	$(MKDIR) ../man3tcl ; \
+	for f in *.3tcl ; do \
+		$(MV) $$f ../man3tcl ; \
+		$(SYMLINK) ../man3tcl/$$f $${f%.3tcl}-tcl.3 ; \
+	done ;
 
-build:		$(BUILD_32_and_64)
+# python vendor-packages
+COMPONENT_POST_INSTALL_ACTION += \
+	cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
+	$(RM) -r vendor-packages ; \
+	$(MV) site-packages vendor-packages ;
 
-install:	$(INSTALL_32_and_64)
-	env LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib GVBINDIR=$(PROTO_DIR)/usr/lib/graphviz $(PROTO_DIR)/usr/bin/dot -c
-	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/graphviz/python27
+# no usable tests available
+TEST_TARGET = $(NO_TESTS)
 
-# The test infrastructure doesn't run in a VPATHed environment.
-COMPONENT_PRE_TEST_ACTION = \
-	(cd $(@D)/rtest; ln -s $(SOURCE_DIR)/rtest/* .)
-
-# There are tests, but they fail consistently because the test samples are out
-# of date and not generated with a known configuration.  See
-# http://graphviz.org/bugs/b2063.html
-test:		$(NO_TESTS)
+# various build dependencies not detected automatically
+REQUIRED_PACKAGES += developer/java/openjdk8
+REQUIRED_PACKAGES += runtime/ocaml
+REQUIRED_PACKAGES += runtime/tcl-8
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += image/graphviz
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+#REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -120,25 +137,17 @@ REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/math/gts
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/ruby-23
-REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += runtime/perl-534
+REQUIRED_PACKAGES += runtime/ruby-26
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
-REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/ruby-23
-REQUIRED_PACKAGES += runtime/tk-8
-REQUIRED_PACKAGES += runtime/java/openjdk8
-REQUIRED_PACKAGES += runtime/ocaml

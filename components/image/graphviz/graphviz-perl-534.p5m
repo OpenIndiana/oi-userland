@@ -24,26 +24,20 @@
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 
 set name=pkg.fmri \
-    value=pkg:/image/graphviz/graphviz-perl-522@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Perl 5.22 bindings for Graphviz"
-set name=com.oracle.info.description value="Perl 5.22 bindings for Graphviz"
-set name=info.classification \
-    value="org.opensolaris.category.2008:Applications/System Utilities"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+    value=pkg:/image/graphviz/graphviz-perl-534@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Perl 5.34 bindings for Graphviz"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2011/269
 
-
-file path=usr/lib/graphviz/perl/gv.pm
-link path=usr/lib/graphviz/perl/gv.so target=libgv_perl.so
-file path=usr/lib/graphviz/perl/libgv_perl.so
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/gv.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/gv.so
-file path=usr/share/graphviz/demo/modgraph.pl
-file path=usr/share/graphviz/doc/pdf/gv.3perl.pdf
-file path=usr/share/man/man3/gv.3perl
-
-license COPYING license=EPL1.0
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 license graphviz.license.extra license="Other Notices"
+
+file path=usr/lib/$(MACH64)/graphviz/perl/gv.pm
+link path=usr/lib/$(MACH64)/graphviz/perl/gv.so target=libgv_perl.so
+file path=usr/lib/$(MACH64)/graphviz/perl/libgv_perl.so
+file path=usr/perl5/vendor_perl/5.34/i86pc-solaris-thread-multi-64/gv.pm
+file path=usr/perl5/vendor_perl/5.34/i86pc-solaris-thread-multi-64/gv.so
+file path=usr/share/graphviz/demo/modgraph.pl
+file path=usr/share/man/man3/gv.3perl
