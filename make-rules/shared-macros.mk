@@ -732,10 +732,10 @@ F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
 RUBY_VERSION =  2.3
-RUBY_LIB_VERSION.2.2 = 2.2.0
 RUBY_LIB_VERSION.2.3 = 2.3.0
-RUBY.2.2 =	/usr/ruby/2.2/bin/ruby
+RUBY_LIB_VERSION.2.6 = 2.6.0
 RUBY.2.3 =	/usr/ruby/2.3/bin/ruby
+RUBY.2.6 =	/usr/ruby/2.6/bin/ruby
 RUBY =          $(RUBY.$(RUBY_VERSION))
 RUBY_LIB_VERSION = $(RUBY_LIB_VERSION.$(RUBY_VERSION))
 
