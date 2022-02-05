@@ -1,0 +1,14 @@
+--- libreoffice-6.4.7.2/bridges/Library_cpp_uno.mk.orig	Wed Oct  7 09:23:42 2020
++++ libreoffice-6.4.7.2/bridges/Library_cpp_uno.mk	Tue Feb  1 22:56:38 2022
+@@ -172,6 +172,11 @@
+ bridges_SELECTED_BRIDGE := gcc3_macosx_x86-64
+ bridge_exception_objects := abi call cpp2uno except uno2cpp
+ bridge_noncallexception_noopt_objects := callvirtualmethod
++else ifeq ($(OS),SOLARIS)
++bridges_SELECTED_BRIDGE := gcc3_solaris_x86-64
++bridge_exception_objects := cpp2uno except uno2cpp
++bridge_asm_objects := call
++bridge_noncallexception_objects := callvirtualmethod
+ else ifeq ($(COM),MSC)
+ bridges_SELECTED_BRIDGE := msvc_win32_x86-64
+ bridge_exception_objects := cpp2uno dllinit uno2cpp

@@ -10,14 +10,15 @@
 
 #
 # Copyright 2020 Alexander Pyhalov
+# Copyright 2022 Daniel Bell
 #
 
-BUILD_BITS=32
 
 include ../../../make-rules/shared-macros.mk
+BITS=64
 
 COMPONENT_NAME=	libreoffice
-COMPONENT_VERSION= 6.4.7
+COMPONENT_VERSION= 7.2.5
 COMPONENT_RC_VERSION= 2
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION)
 COMPONENT_SUMMARY= LibreOffice is a powerful office suite
@@ -28,7 +29,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL= https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
-COMPONENT_ARCHIVE_HASH= sha256:034dd79a60cfff60c7d353130fe2cc8e6a1aabeab50d89e4570ae95f33296644
+COMPONENT_ARCHIVE_HASH= sha256:67c1bfb059d433286b0252a915627b33af63bb5f4b6ec9509d13b9dd475512a7
 COMPONENT_LICENSE= MPL2.0
 COMPONENT_LICENSE_FILE= COPYING.MPL
 
@@ -52,9 +53,9 @@ COMPONENT_ARCHIVE_5 = 5ade6ae2a99bc1e9e57031ca88d36dad-hyphen-2.8.8.tar.gz
 COMPONENT_ARCHIVE_HASH_5 = sha256:304636d4eccd81a14b6914d07b84c79ebb815288c76fe027b9ebff6ff24d5705
 COMPONENT_ARCHIVE_URL_5 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_5)
 
-COMPONENT_ARCHIVE_6 = 884ed41809687c3e168fc7c19b16585149ff058eca79acbf3ee784f6630704cc-opens___.ttf
-COMPONENT_ARCHIVE_HASH_6 = sha256:884ed41809687c3e168fc7c19b16585149ff058eca79acbf3ee784f6630704cc
-COMPONENT_ARCHIVE_URL_6 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_6)
+COMPONENT_ARCHIVE_6 = f543e6e2d7275557a839a164941c0a86e5f2c3f2a0042bfc434c88c6dde9e140-opens___.ttf
+COMPONENT_ARCHIVE_HASH_6 = sha256:f543e6e2d7275557a839a164941c0a86e5f2c3f2a0042bfc434c88c6dde9e140
+COMPONENT_ARCHIVE_URL_6 = https://dev-www.libreoffice.org/extern/$(COMPONENT_ARCHIVE_6)
 
 #COMPONENT_ARCHIVE_7 = a233181e03d3c307668b4c722d881661-mariadb_client-2.0.0-src.tar.gz
 #COMPONENT_ARCHIVE_HASH_7 = sha256:fd2f751dea049c1907735eb236aeace1d811d6a8218118b00bbaa9b84dc5cd60
@@ -88,48 +89,89 @@ COMPONENT_ARCHIVE_14 = libexttextcat-3.4.5.tar.xz
 COMPONENT_ARCHIVE_HASH_14 = sha256:13fdbc9d4c489a4d0519e51933a1aa21fe3fb9eb7da191b87f7a63e82797dac8
 COMPONENT_ARCHIVE_URL_14 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_14)
 
-COMPONENT_ARCHIVE_15 = libnumbertext-1.0.5.tar.xz
-COMPONENT_ARCHIVE_HASH_15 = sha256:e1c9086b4cecb6b25f180316f30740dfabe6a4dbaf70dddc34276fc839e4f4f7
+COMPONENT_ARCHIVE_15 = libnumbertext-1.0.7.tar.xz
+COMPONENT_ARCHIVE_HASH_15 = sha256:17b8249cb89ae11ae15a85612d2665626c0e0e3e56b35654363ba6566d8b61fc
 COMPONENT_ARCHIVE_URL_15 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_15)
 
-COMPONENT_ARCHIVE_16 = liborcus-0.15.3.tar.gz
-COMPONENT_ARCHIVE_HASH_16 = sha256:0dd26f3f2e611c51df9ee02d6dbf08887989eaa417b73f6877cd0d94df795fc2
+COMPONENT_ARCHIVE_16 = liborcus-0.16.1.tar.bz2
+COMPONENT_ARCHIVE_HASH_16 = sha256:c700d1325f744104d9fca0d5a019434901e9d51a16eedfb05792f90a298587a4
 COMPONENT_ARCHIVE_URL_16 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_16)
 
 COMPONENT_ARCHIVE_17 = QR-Code-generator-1.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH_17 = sha256:fcdf9fd69fde07ae4dca2351d84271a9de8093002f733b77c70f52f1630f6e4a
 COMPONENT_ARCHIVE_URL_17 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_17)
 
-COMPONENT_ARCHIVE_18 = xmlsec1-1.2.28.tar.gz
-COMPONENT_ARCHIVE_HASH_18 = sha256:13eec4811ea30e3f0e16a734d1dbf7f9d246a71d540b48d143a07b489f6222d4
+COMPONENT_ARCHIVE_18 = xmlsec1-1.2.32.tar.gz
+COMPONENT_ARCHIVE_HASH_18 = sha256:e383702853236004e5b08e424b8afe9b53fe9f31aaa7a5382f39d9533eb7c043
 COMPONENT_ARCHIVE_URL_18 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_18)
 
 COMPONENT_ARCHIVE_19 = libreoffice-translations-$(COMPONENT_FULL_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_19 = sha256:b13088a98be1f6e7e177331db3d723419bfeb11ae16516334f0fbb853ae40ab1
+COMPONENT_ARCHIVE_HASH_19 = sha256:f6b9ee4627ec117ed101476c5fa555c3fc504ba759792dd16ca9e80b7f6e31df
 COMPONENT_ARCHIVE_URL_19 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_19)
 
 COMPONENT_ARCHIVE_20 = libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_20 = sha256:3718c44d5ec5fc1d011ddf5b9bbbef384f1bdc695338e8459d6e403da2539bb7
+COMPONENT_ARCHIVE_HASH_20 = sha256:5915694f8a844afe96d46d306dafdd30f548bffd96ae8cfbc0a35189d7988f66
 COMPONENT_ARCHIVE_URL_20 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_20)
 
-COMPONENT_ARCHIVE_21 = boost_1_69_0.tar.bz2
-COMPONENT_ARCHIVE_HASH_21 = sha256:8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406
-COMPONENT_ARCHIVE_URL_21 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_21)
+#COMPONENT_ARCHIVE_21 = boost_1_69_0.tar.bz2
+#COMPONENT_ARCHIVE_HASH_21 = sha256:8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406
+#COMPONENT_ARCHIVE_URL_21 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_21)
+
+COMPONENT_ARCHIVE_22 = neon-0.31.2.tar.gz
+COMPONENT_ARCHIVE_HASH_22 = sha256:cf1ee3ac27a215814a9c80803fcee4f0ede8466ebead40267a9bd115e16a8678
+COMPONENT_ARCHIVE_URL_22 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_22)
+
+COMPONENT_ARCHIVE_23 = zxing-cpp-1.1.1.tar.gz
+COMPONENT_ARCHIVE_HASH_23 = sha256:e595b3fa2ec320beb0b28f6af56b1141853257c2611686685639cebb3b248c86
+COMPONENT_ARCHIVE_URL_23 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_23)
+
+COMPONENT_ARCHIVE_24 = box2d-2.3.1.tar.gz
+COMPONENT_ARCHIVE_HASH_24 = sha256:58ffc8475a8650aadc351345aef696937747b40501ab78d72c197c5ff5b3035c
+COMPONENT_ARCHIVE_URL_24 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_24)
+
+
+COMPONENT_ARCHIVE_25 = dtoa-20180411.tgz
+COMPONENT_ARCHIVE_HASH_25 = sha256:0082d0684f7db6f62361b76c4b7faba19e0c7ce5cb8e36c4b65fea8281e711b4
+COMPONENT_ARCHIVE_URL_25 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_25)
+
+COMPONENT_ARCHIVE_26 = glm-0.9.9.7.zip
+COMPONENT_ARCHIVE_HASH_26 = sha256:c5e167c042afd2d7ad642ace6b643863baeb33880781983563e1ab68a30d3e95
+COMPONENT_ARCHIVE_URL_26 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_26)
+
+
+COMPONENT_ARCHIVE_27 = skia-m90-45c57e116ee0ce214bdf78405a4762722e4507d9.tar.xz
+COMPONENT_ARCHIVE_HASH_27 = sha256:abe0b94d54edb717c58d74263f4ed3d27824d2ce9e9f2ce85a21ab38d993f94d
+COMPONENT_ARCHIVE_URL_27 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_27)
+
+COMPONENT_ARCHIVE_28 = libcmis-0.5.2.tar.xz
+COMPONENT_ARCHIVE_HASH_28 = sha256:d7b18d9602190e10d437f8a964a32e983afd57e2db316a07d87477a79f5000a2
+COMPONENT_ARCHIVE_URL_28 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_28)
 
 # ignore archive 7 (mariadb client)
-NUM_EXTRA_ARCHIVES = $(shell seq 1 6) $(shell 8 21)
+# ignore archive 21 (boost)
+NUM_EXTRA_ARCHIVES = $(shell seq 1 6) $(shell 8 20) $(shell 22 28)
 
 include $(WS_MAKE_RULES)/common.mk
 
+GCC_VERSION=7
 PATH=$(GCC_ROOT)/bin:$(PATH.gnu)
+
+#Ensure asm is built in 64-bit.
+AFLAGS= -m64
+
+#CFLAGS / CXXFLAGS not passed to all external libraries! Add -m64 to ensure 64-bit is built.
+CC+= -m64
+CXX+= -m64
 
 COMPONENT_BUILD_ENV=   CONFIG_SHELL="$(CONFIG_SHELL)"
 COMPONENT_BUILD_ENV+=  SHELL="$(CONFIG_SHELL)"
-COMPONENT_BUILD_ENV+=  CC="$(CC)"
-COMPONENT_BUILD_ENV+=  CXX="$(CXX)"
+COMPONENT_BUILD_ENV+=  AFLAGS="$(AFLAGS)"
+
 
 CONFIGURE_ENV = $(COMPONENT_BUILD_ENV)
 CONFIGURE_ENV += PYTHON=/usr/bin/python3.5
+
+CONFIGURE_LIBDIR= $(CONFIGURE_LIBDIR.64)
 
 COMPONENT_PREP_ACTION= ( mkdir -p $(@D)/external/tarballs && \
 	for i in $(ARCHIVES) ; do \
@@ -138,12 +180,15 @@ COMPONENT_PREP_ACTION= ( mkdir -p $(@D)/external/tarballs && \
 	done && \
 	cd $(@D) && autoconf )
 
+COMPONENT_PRE_BUILD_ACTION= ( rm -rf $(SOURCE_DIR)/bridges/source/cpp_uno/gcc3_solaris_x86-64; cp -R $(COMPONENT_DIR)/files/gcc3_solaris_x86-64 $(SOURCE_DIR)/bridges/source/cpp_uno/ )
 
-# LDFLAGS seem to be not always passed to lower levels
-CFLAGS += $(JPEG_CPPFLAGS) $(JPEG_LDFLAGS)
-CFLAGS += -fstack-protector -lssp_nonshared
+LDFLAGS += $(JPEG_LDFLAGS) -lX11-xcb -lX11 
 
+CFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS) -fstack-protector -lssp_nonshared
 CXXFLAGS = $(CFLAGS)
+
+# 64-bit
+CONFIGURE_OPTIONS += --build=amd64-pc-solaris2.11
 
 CONFIGURE_OPTIONS += --with-myspell-dicts
 CONFIGURE_OPTIONS += --with-help=common
@@ -156,17 +201,21 @@ CONFIGURE_OPTIONS += --with-system-libxml
 CONFIGURE_OPTIONS += --with-system-icu
 CONFIGURE_OPTIONS += --with-system-poppler
 CONFIGURE_OPTIONS += --with-system-curl
-# Our boost is too old
-#CONFIGURE_OPTIONS += --with-system-boost
+CONFIGURE_OPTIONS += --with-system-boost
 CONFIGURE_OPTIONS += --with-system-nss
 CONFIGURE_OPTIONS += --with-system-apr
-CONFIGURE_OPTIONS += --with-system-neon
+# library/libneon < 0.31.2
+# CONFIGURE_OPTIONS += --with-system-neon
 CONFIGURE_OPTIONS += --with-system-openssl
 CONFIGURE_OPTIONS += --with-system-libpng
 CONFIGURE_OPTIONS += --with-system-jpeg
 CONFIGURE_OPTIONS += --with-system-harfbuzz
+
 CONFIGURE_OPTIONS += --with-system-graphite
 CONFIGURE_OPTIONS += --with-system-cppunit
+
+#CONFIGURE_OPTIONS += --enable-debug
+
 CONFIGURE_OPTIONS += --with-system-lcms2
 CONFIGURE_OPTIONS += --with-system-dicts
 CONFIGURE_OPTIONS += --with-system-epoxy
@@ -174,7 +223,8 @@ CONFIGURE_OPTIONS += --with-system-hunspell
 CONFIGURE_OPTIONS += --with-system-mdds
 CONFIGURE_OPTIONS += --with-system-libabw
 CONFIGURE_OPTIONS += --with-system-libcdr
-CONFIGURE_OPTIONS += --with-system-libcmis
+# libreoffice uses functionality not packaged in latest libcmis (0.5.2)
+#CONFIGURE_OPTIONS += --with-system-libcmis
 CONFIGURE_OPTIONS += --with-system-libetonyek
 CONFIGURE_OPTIONS += --with-system-libebook
 CONFIGURE_OPTIONS += --with-system-libepubgen
@@ -192,6 +242,7 @@ CONFIGURE_OPTIONS += --with-system-libwpd
 CONFIGURE_OPTIONS += --with-system-libwpg
 CONFIGURE_OPTIONS += --with-system-libwps
 CONFIGURE_OPTIONS += --with-system-libzmf
+
 # Use packaged mariadb client with solaris patches
 CONFIGURE_OPTIONS += --with-system-mariadb
 CONFIGURE_OPTIONS += --enable-gio
@@ -214,10 +265,10 @@ COMPONENT_BUILD_ENV += GMAKE_OPTIONS='VERBOSE=1 gb_SUPPRESS_TESTS=x'
 
 COMPONENT_INSTALL_TARGETS = distro-pack-install
 
-LIBREOFFICE_PROGRAM_DIR = /usr/lib/libreoffice/program
+LIBREOFFICE_PROGRAM_DIR = /usr/lib/amd64/libreoffice/program
 
-NSS_LIB_DIR=/usr/lib/mps
-MARIADB_LIBDIR=/usr/mariadb/10.1/lib
+NSS_LIB_DIR=/usr/lib/mps/amd64
+MARIADB_LIBDIR=/usr/mariadb/10.1/lib/amd64
 
 COMPONENT_POST_INSTALL_ACTION  = \
     for file in $(PROTO_DIR)$(LIBREOFFICE_PROGRAM_DIR)/*.so*; do \
@@ -232,6 +283,7 @@ REQUIRED_PACKAGES += developer/gperf
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/c++/mdds
+REQUIRED_PACKAGES += database/mariadb-101/client
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -290,6 +342,7 @@ REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/mozilla-nss
+REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += text/hunspell
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libepoxy

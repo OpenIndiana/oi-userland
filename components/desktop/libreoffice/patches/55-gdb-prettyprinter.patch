@@ -1,0 +1,15 @@
+--- libreoffice-7.2.5.2/solenv/gdb/libreoffice/util/compatibility.py.orig	Thu Feb 10 18:27:00 2022
++++ libreoffice-7.2.5.2/solenv/gdb/libreoffice/util/compatibility.py	Thu Feb 10 18:28:39 2022
+@@ -15,6 +15,11 @@
+ except ImportError:
+     use_gdb_printing = False
+ 
+-use_lazy_string = hasattr(gdb.Value, 'lazy_string')
++# gdb choking on display of utf-16 lazy strings with
++# "Resource temporarily unavailable." or "Error 0" messages.
+ 
++# use_lazy_string = hasattr(gdb.Value, 'lazy_string')
++
++use_lazy_string = False
++
+ # vim:set shiftwidth=4 softtabstop=4 expandtab:

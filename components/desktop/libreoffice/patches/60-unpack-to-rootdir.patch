@@ -1,0 +1,27 @@
+--- libreoffice-7.2.5.2/bin/unpack-sources.~1~	Tue Feb  8 14:46:06 2022
++++ libreoffice-7.2.5.2/bin/unpack-sources	Tue Feb  8 14:55:18 2022
+@@ -63,8 +63,7 @@
+     exit 0;
+ fi
+ 
+-lo_src_dir="$start_dir/src"
+-mkdir -p "$lo_src_dir"
++lo_src_dir="$start_dir"
+ 
+ for tarball in $tarballs ; do
+     tarname=`basename $tarball | sed -e "s/\.tar\..*//"`
+@@ -74,12 +73,8 @@
+     fi
+ 
+     echo "Unpacking $tarname..."
+-    echo mkdir -p "$lo_src_dir/$tarname"
+-    if ! mkdir -p "$lo_src_dir/$tarname" ; then
+-        echo "Error: could not create directory $lo_src_dir/$tarname"
+-    fi
+-    echo tar -xf "$tarball" -C "$lo_src_dir/$tarname" --strip-components=1
+-    if ! tar -xf "$tarball" -C "$lo_src_dir/$tarname" --strip-components=1; then
++    echo tar -xf "$tarball" -C "$lo_src_dir" --strip-components=1
++    if ! tar -xf "$tarball" -C "$lo_src_dir" --strip-components=1; then
+         echo "Error: could not unpack $tarname"
+         exit 1
+     fi
