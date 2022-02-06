@@ -12,6 +12,7 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
+# Copyright 2022 Niklas Poslovski
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,17 +24,14 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
-<transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
-
 file path=etc/gconf/schemas/purple.schemas
 file path=usr/bin/finch
 file path=usr/bin/pidgin
 file path=usr/bin/purple-client-example
-file path=usr/bin/purple-remote pkg.depend.bypass-generate=.*urllib.*
+file path=usr/bin/purple-remote
 file path=usr/bin/purple-send
 file path=usr/bin/purple-send-async
-file path=usr/bin/purple-url-handler pkg.depend.bypass-generate=.*urllib.*
+file path=usr/bin/purple-url-handler
 file path=usr/include/finch/finch.h
 file path=usr/include/finch/gntaccount.h
 file path=usr/include/finch/gntblist.h
@@ -54,33 +52,6 @@ file path=usr/include/finch/gntroomlist.h
 file path=usr/include/finch/gntsound.h
 file path=usr/include/finch/gntstatus.h
 file path=usr/include/finch/gntui.h
-file path=usr/include/gnt/gnt.h
-file path=usr/include/gnt/gntbindable.h
-file path=usr/include/gnt/gntbox.h
-file path=usr/include/gnt/gntbutton.h
-file path=usr/include/gnt/gntcheckbox.h
-file path=usr/include/gnt/gntclipboard.h
-file path=usr/include/gnt/gntcolors.h
-file path=usr/include/gnt/gntcombobox.h
-file path=usr/include/gnt/gntentry.h
-file path=usr/include/gnt/gntfilesel.h
-file path=usr/include/gnt/gntkeys.h
-file path=usr/include/gnt/gntlabel.h
-file path=usr/include/gnt/gntline.h
-file path=usr/include/gnt/gntmarshal.h
-file path=usr/include/gnt/gntmenu.h
-file path=usr/include/gnt/gntmenuitem.h
-file path=usr/include/gnt/gntmenuitemcheck.h
-file path=usr/include/gnt/gntprogressbar.h
-file path=usr/include/gnt/gntslider.h
-file path=usr/include/gnt/gntstyle.h
-file path=usr/include/gnt/gnttextview.h
-file path=usr/include/gnt/gnttree.h
-file path=usr/include/gnt/gntutils.h
-file path=usr/include/gnt/gntwidget.h
-file path=usr/include/gnt/gntwindow.h
-file path=usr/include/gnt/gntwm.h
-file path=usr/include/gnt/gntws.h
 file path=usr/include/libpurple/account.h
 file path=usr/include/libpurple/accountopt.h
 file path=usr/include/libpurple/blist.h
@@ -106,6 +77,7 @@ file path=usr/include/libpurple/dnssrv.h
 file path=usr/include/libpurple/eventloop.h
 file path=usr/include/libpurple/ft.h
 file path=usr/include/libpurple/gaim-compat.h
+file path=usr/include/libpurple/glibcompat.h
 file path=usr/include/libpurple/idle.h
 file path=usr/include/libpurple/imgstore.h
 file path=usr/include/libpurple/log.h
@@ -209,17 +181,14 @@ file path=usr/lib/$(MACH64)/finch/gnthistory.so
 file path=usr/lib/$(MACH64)/finch/gntlastlog.so
 file path=usr/lib/$(MACH64)/finch/gnttinyurl.so
 file path=usr/lib/$(MACH64)/finch/grouping.so
-file path=usr/lib/$(MACH64)/gnt/irssi.so
-file path=usr/lib/$(MACH64)/gnt/s.so
-link path=usr/lib/$(MACH64)/libgnt.so target=libgnt.so.0.8.10
-link path=usr/lib/$(MACH64)/libgnt.so.0 target=libgnt.so.0.8.10
-file path=usr/lib/$(MACH64)/libgnt.so.0.8.10
-link path=usr/lib/$(MACH64)/libpurple-client.so target=libpurple-client.so.0.13.0
-link path=usr/lib/$(MACH64)/libpurple-client.so.0 target=libpurple-client.so.0.13.0
-file path=usr/lib/$(MACH64)/libpurple-client.so.0.13.0
-link path=usr/lib/$(MACH64)/libpurple.so target=libpurple.so.0.13.0
-link path=usr/lib/$(MACH64)/libpurple.so.0 target=libpurple.so.0.13.0
-file path=usr/lib/$(MACH64)/libpurple.so.0.13.0
+link path=usr/lib/$(MACH64)/libpurple-client.so \
+    target=libpurple-client.so.0.14.8
+link path=usr/lib/$(MACH64)/libpurple-client.so.0 \
+    target=libpurple-client.so.0.14.8
+file path=usr/lib/$(MACH64)/libpurple-client.so.0.14.8
+link path=usr/lib/$(MACH64)/libpurple.so target=libpurple.so.0.14.8
+link path=usr/lib/$(MACH64)/libpurple.so.0 target=libpurple.so.0.14.8
+file path=usr/lib/$(MACH64)/libpurple.so.0.14.8
 file path=usr/lib/$(MACH64)/pidgin/cap.so
 file path=usr/lib/$(MACH64)/pidgin/convcolors.so
 file path=usr/lib/$(MACH64)/pidgin/extplacement.so
@@ -245,7 +214,6 @@ file path=usr/lib/$(MACH64)/pidgin/transparency.so
 file path=usr/lib/$(MACH64)/pidgin/xmppconsole.so
 file path=usr/lib/$(MACH64)/pidgin/xmppdisco.so
 file path=usr/lib/$(MACH64)/pkgconfig/finch.pc
-file path=usr/lib/$(MACH64)/pkgconfig/gnt.pc
 file path=usr/lib/$(MACH64)/pkgconfig/pidgin.pc
 file path=usr/lib/$(MACH64)/pkgconfig/purple.pc
 file path=usr/lib/$(MACH64)/purple-2/autoaccept.so
@@ -253,18 +221,13 @@ file path=usr/lib/$(MACH64)/purple-2/buddynote.so
 file path=usr/lib/$(MACH64)/purple-2/dbus-example.so
 file path=usr/lib/$(MACH64)/purple-2/idle.so
 file path=usr/lib/$(MACH64)/purple-2/joinpart.so
-file path=usr/lib/$(MACH64)/purple-2/libaim.so
 file path=usr/lib/$(MACH64)/purple-2/libbonjour.so
 file path=usr/lib/$(MACH64)/purple-2/libgg.so
-file path=usr/lib/$(MACH64)/purple-2/libicq.so
 file path=usr/lib/$(MACH64)/purple-2/libirc.so
 link path=usr/lib/$(MACH64)/purple-2/libjabber.so target=libjabber.so.0.0.0
 link path=usr/lib/$(MACH64)/purple-2/libjabber.so.0 target=libjabber.so.0.0.0
 file path=usr/lib/$(MACH64)/purple-2/libjabber.so.0.0.0
 file path=usr/lib/$(MACH64)/purple-2/libnovell.so
-link path=usr/lib/$(MACH64)/purple-2/liboscar.so target=liboscar.so.0.0.0
-link path=usr/lib/$(MACH64)/purple-2/liboscar.so.0 target=liboscar.so.0.0.0
-file path=usr/lib/$(MACH64)/purple-2/liboscar.so.0.0.0
 file path=usr/lib/$(MACH64)/purple-2/libsimple.so
 file path=usr/lib/$(MACH64)/purple-2/libxmpp.so
 file path=usr/lib/$(MACH64)/purple-2/libzephyr.so
@@ -284,7 +247,6 @@ file path=usr/lib/$(MACH64)/purple-2/statenotify.so
 file path=usr/lib/$(MACH64)/purple-2/tcl.so
 file path=usr/lib/perl5/i86pc-solaris-thread-multi-64/perllocal.pod
 file path=usr/share/aclocal/purple.m4
-file path=usr/share/appdata/pidgin.appdata.xml
 file path=usr/share/applications/pidgin.desktop
 file path=usr/share/icons/hicolor/16x16/apps/pidgin.png
 file path=usr/share/icons/hicolor/22x22/apps/pidgin.png
@@ -295,6 +257,7 @@ file path=usr/share/icons/hicolor/scalable/apps/pidgin.svg
 file path=usr/share/locale/af/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/am/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ar/LC_MESSAGES/pidgin.mo
+file path=usr/share/locale/ar_SA/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/as/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ast/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/az/LC_MESSAGES/pidgin.mo
@@ -390,6 +353,7 @@ file path=usr/share/man/man1/finch.1
 file path=usr/share/man/man1/pidgin.1
 file path=usr/share/man/man3/Pidgin.3
 file path=usr/share/man/man3/Purple.3
+file path=usr/share/metainfo/pidgin.appdata.xml
 file path=usr/share/pixmaps/pidgin/animations/16/connect0.png
 file path=usr/share/pixmaps/pidgin/animations/16/connect1.png
 file path=usr/share/pixmaps/pidgin/animations/16/connect2.png
@@ -769,12 +733,10 @@ file path=usr/share/pixmaps/pidgin/emotes/small/wink.png
 file path=usr/share/pixmaps/pidgin/emotes/small/working.png
 file path=usr/share/pixmaps/pidgin/emotes/small/writing.png
 file path=usr/share/pixmaps/pidgin/logo.png
-file path=usr/share/pixmaps/pidgin/protocols/16/aim.png
 file path=usr/share/pixmaps/pidgin/protocols/16/bonjour.png
 file path=usr/share/pixmaps/pidgin/protocols/16/facebook.png
 file path=usr/share/pixmaps/pidgin/protocols/16/gadu-gadu.png
 file path=usr/share/pixmaps/pidgin/protocols/16/google-talk.png
-file path=usr/share/pixmaps/pidgin/protocols/16/icq.png
 file path=usr/share/pixmaps/pidgin/protocols/16/irc.png
 file path=usr/share/pixmaps/pidgin/protocols/16/jabber.png
 file path=usr/share/pixmaps/pidgin/protocols/16/meanwhile.png
@@ -782,12 +744,10 @@ file path=usr/share/pixmaps/pidgin/protocols/16/novell.png
 file path=usr/share/pixmaps/pidgin/protocols/16/silc.png
 file path=usr/share/pixmaps/pidgin/protocols/16/simple.png
 file path=usr/share/pixmaps/pidgin/protocols/16/zephyr.png
-file path=usr/share/pixmaps/pidgin/protocols/22/aim.png
 file path=usr/share/pixmaps/pidgin/protocols/22/bonjour.png
 file path=usr/share/pixmaps/pidgin/protocols/22/facebook.png
 file path=usr/share/pixmaps/pidgin/protocols/22/gadu-gadu.png
 file path=usr/share/pixmaps/pidgin/protocols/22/google-talk.png
-file path=usr/share/pixmaps/pidgin/protocols/22/icq.png
 file path=usr/share/pixmaps/pidgin/protocols/22/irc.png
 file path=usr/share/pixmaps/pidgin/protocols/22/jabber.png
 file path=usr/share/pixmaps/pidgin/protocols/22/meanwhile.png
@@ -795,11 +755,9 @@ file path=usr/share/pixmaps/pidgin/protocols/22/novell.png
 file path=usr/share/pixmaps/pidgin/protocols/22/silc.png
 file path=usr/share/pixmaps/pidgin/protocols/22/simple.png
 file path=usr/share/pixmaps/pidgin/protocols/22/zephyr.png
-file path=usr/share/pixmaps/pidgin/protocols/48/aim.png
 file path=usr/share/pixmaps/pidgin/protocols/48/bonjour.png
 file path=usr/share/pixmaps/pidgin/protocols/48/facebook.png
 file path=usr/share/pixmaps/pidgin/protocols/48/gadu-gadu.png
-file path=usr/share/pixmaps/pidgin/protocols/48/icq.png
 file path=usr/share/pixmaps/pidgin/protocols/48/irc.png
 file path=usr/share/pixmaps/pidgin/protocols/48/jabber.png
 file path=usr/share/pixmaps/pidgin/protocols/48/meanwhile.png
@@ -807,11 +765,9 @@ file path=usr/share/pixmaps/pidgin/protocols/48/novell.png
 file path=usr/share/pixmaps/pidgin/protocols/48/silc.png
 file path=usr/share/pixmaps/pidgin/protocols/48/simple.png
 file path=usr/share/pixmaps/pidgin/protocols/48/zephyr.png
-file path=usr/share/pixmaps/pidgin/protocols/scalable/aim.svg
 file path=usr/share/pixmaps/pidgin/protocols/scalable/bonjour.svg
 file path=usr/share/pixmaps/pidgin/protocols/scalable/gadu-gadu.svg
 file path=usr/share/pixmaps/pidgin/protocols/scalable/google-talk.svg
-file path=usr/share/pixmaps/pidgin/protocols/scalable/icq.svg
 file path=usr/share/pixmaps/pidgin/protocols/scalable/irc.svg
 file path=usr/share/pixmaps/pidgin/protocols/scalable/jabber.svg
 file path=usr/share/pixmaps/pidgin/protocols/scalable/meanwhile.svg
