@@ -1,0 +1,763 @@
+##
+## opendkim.conf -- configuration file for OpenDKIM filter
+##
+## Copyright (c) 2010-2015, The Trusted Domain Project.  All rights reserved.
+##
+
+##
+## For settings that refer to a "dataset", see the opendkim(8) man page.
+##
+
+## DEPRECATED CONFIGURATION OPTIONS
+## 
+## The following configuration options are no longer valid.  They should be
+## removed from your existing configuration file to prevent potential issues.
+## Failure to do so may result in opendkim being unable to start.
+## 
+## Removed in 2.10.0:
+##   AddAllSignatureResults
+##   ADSPAction
+##   ADSPNoSuchDomain
+##   BogusPolicy
+##   DisableADSP
+##   LDAPSoftStart
+##   LocalADSP
+##   NoDiscardableMailTo
+##   On-PolicyError
+##   SendADSPReports
+##   UnprotectedPolicy
+
+## CONFIGURATION OPTIONS
+
+##  AllowSHA1Only { yes | no }
+##  	default "no"
+##
+##  By default, the filter will refuse to start if support for SHA256 is
+##  not available since this violates the strong recommendations of
+##  RFC6376 Section 3.3, which says:
+##
+##  "Verifiers MUST implement both rsa-sha1 and rsa-sha256.  Signers MUST
+##   implement and SHOULD sign using rsa-sha256."
+##
+##  This forces that violation to be explicitly selected by the administrator.
+
+# AllowSHA1Only		no
+
+##  AlwaysAddARHeader { yes | no }
+##  	default "no"
+##
+##  Add an "Authentication-Results:" header even to unsigned messages
+##  from domains with no "signs all" policy.  The reported DKIM result
+##  will be "none" in such cases.  Normally unsigned mail from non-strict
+##  domains does not cause the results header to be added.
+
+# AlwaysAddARHeader	no
+
+##  AuthservID string
+##  	default (local host name)
+##
+##  Defines the "authserv-id" token to be used when generating 
+##  Authentication-Results headers after message verification.
+
+# AuthservID		example.com
+
+##  AuthservIDWithJobID
+##  	default "no"
+##
+##  Appends a "/" followed by the MTA's job ID to the "authserv-id" token
+##  when generating Authentication-Results headers after message verification.
+
+# AuthservIDWithJobId	no
+
+##  AutoRestart { yes | no }
+##  	default "no"
+##
+##  Indicate whether or not the filter should arrange to restart automatically
+##  if it crashes.
+
+# AutoRestart		No
+
+##  AutoRestartCount n
+##  	default 0
+##
+##  Sets the maximum automatic restart count.  After this number of
+##  automatic restarts, the filter will give up and terminate.  A value of 0
+##  implies no limit.
+
+# AutoRestartCount	0
+
+##  AutoRestartRate n/t[u]
+##  	default (none)
+## 
+##  Sets the maximum automatic restart rate.  See the opendkim.conf(5)
+##  man page for the format of this parameter.
+
+# AutoRestartRate	n/tu
+
+##  Background { yes | no }
+##  	default "yes"
+##
+##  Indicate whether or not the filter should run in the background.
+
+# Background		Yes
+
+##  BaseDirectory path
+##  	default (none)
+##
+##  Causes the filter to change to the named directory before beginning
+##  operation.  Thus, cores will be dumped here and configuration files
+##  are read relative to this location.
+
+# BaseDirectory		/var/run/opendkim
+
+##  BodyLengthDB dataset
+##  	default (none)
+##
+##  A data set that is checked against envelope recipients to see if a
+##  body length tag should be included in the generated signature.
+##  This has security implications; see opendkim.conf(5) for details.
+
+# BodyLengthDB		dataset
+
+##  Canonicalization hdrcanon[/bodycanon]
+##  	default "simple/simple"
+##
+##  Select canonicalizations to use when signing.  If the "bodycanon" is
+##  omitted, "simple" is used.  Valid values for each are "simple" and
+##  "relaxed".
+
+# Canonicalization	simple/simple
+
+##  ClockDrift n
+##  	default 300
+##
+##  Specify the tolerance range for expired signatures or signatures
+##  which appear to have timestamps in the future, allowing for clock
+##  drift.
+
+# ClockDrift		300 
+
+##  Diagnostics { yes | no }
+##  	default "no"
+##
+##  Specifies whether or not signatures with header diagnostic tags should
+##  be generated.
+
+# Diagnostics		No
+
+##  DNSTimeout n
+##  	default 10
+##
+##  Specify the time in seconds to wait for replies from the nameserver when
+##  requesting keys or signing policies.
+
+# DNSTimeout		10
+
+##  Domain dataset
+##  	default (none)
+##
+##  Specify for which domain(s) signing should be done.  No default; must
+##  be specified for signing.
+
+Domain			example.com
+
+##  DomainKeysCompat { yes | no }
+##  	default "no"
+##
+##  When enabled, backward compatibility with DomainKeys (RFC4870) key
+##  records is enabled.  Otherwise, such key records are considered to be
+##  syntactically invalid.
+
+# DomainKeysCompat	no
+
+##  DontSignMailTo	dataset
+##  	default (none)
+##
+##  Gives a list of recipient addresses or address patterns whose mail should
+##  not be signed.
+
+# DontSignMailTo	addr1,addr2,...
+
+##  EnableCoredumps { yes | no }
+##  	default "no"
+##
+##  On systems which have support for such, requests that the kernel dump
+##  core even though the process may change user ID during its execution.
+
+# EnableCoredumps	no
+
+##  ExemptDomains dataset
+##  	default (none)
+##
+##  A data set of domain names that are checked against the message sender's
+##  domain.  If a match is found, the message is ignored by the filter.
+
+# ExemptDomains		domain1,domain2,...
+
+##  ExternalIgnoreList filename
+##
+##  Names a file from which a list of externally-trusted hosts is read.
+##  These are hosts which are allowed to send mail through you for signing.
+##  Automatically contains 127.0.0.1.  See man page for file format.
+
+# ExternalIgnoreList	filename
+
+##  FixCRLF { yes | no }
+##
+##  Requests that the library convert "naked" CR and LF characters to
+##  CRLFs during canonicalization.  The default is "no".
+
+# FixCRLF 		no
+
+##  IgnoreMalformedMail { yes | no }
+##  	default "no"
+##
+##  Silently passes malformed messages without alteration.  This includes 
+##  messages that fail the RequiredHeaders check, if enabled.  The default is
+##  to pass those messages but add an Authentication-Results field indicating
+##  that they were malformed.
+
+# IgnoreMalformedMail	no
+
+##  InternalHosts dataset
+##  	default "127.0.0.1"
+##
+##  Names a file from which a list of internal hosts is read.  These are
+##  hosts from which mail should be signed rather than verified.
+##  Automatically contains 127.0.0.1.
+
+# InternalHosts		dataset
+
+##  KeepTemporaryFiles { yes | no }
+##  	default "no"
+##
+##  If set, causes temporary files generated during message signing or
+##  verifying to be left behind for debugging use.  Not for normal operation;
+##  can fill your disks quite fast on busy systems.
+
+# KeepTemporaryFiles	no
+
+##  KeyFile filename
+##  	default (none)
+##
+##  Specifies the path to the private key to use when signing.  Ignored if
+##  SigningTable and KeyTable are used.  No default; must be specified for 
+##  signing if SigningTable/KeyTable are not in use.
+
+KeyFile			/var/db/dkim/example.private
+
+##  KeyTable dataset
+##  	default (none)
+##
+##  Defines a table that will be queried to convert key names to
+##  sets of data of the form (signing domain, signing selector, private key).
+##  The private key can either contain a PEM-formatted private key,
+##  a base64-encoded DER format private key, or a path to a file containing
+##  one of those.
+
+# KeyTable		dataset
+
+##  LogWhy { yes | no }
+##  	default "no"
+##
+##  If logging is enabled (see Syslog below), issues very detailed logging
+##  about the logic behind the filter's decision to either sign a message
+##  or verify it.  The logic behind the decision is non-trivial and can be
+##  confusing to administrators not familiar with its operation.  A
+##  description of how the decision is made can be found in the OPERATIONS
+##  section of the opendkim(8) man page.  This causes a large increase
+##  in the amount of log data generated for each message, so it should be
+##  limited to debugging use and not enabled for general operation.
+
+# LogWhy		no
+
+##  MacroList macro[=value][,...]
+##
+##  Gives a set of MTA-provided macros which should be checked to see
+##  if the sender has been determined to be a local user and therefore
+##  whether or not signing should be done.  See opendkim.conf(5) for
+##  more information.
+
+# MacroList		foo=bar,baz=blivit
+
+##  MaximumHeaders n
+##
+##  Disallow messages whose header blocks are bigger than "n" bytes.
+##  Intended to detect and block a denial-of-service attack.  The default
+##  is 65536.  A value of 0 disables this test.
+
+# MaximumHeaders	n
+
+##  MaximumSignaturesToVerify n
+##  	(default 3)
+##
+##  Verify no more than "n" signatures on an arriving message.
+##  A value of 0 means "no limit".
+
+# MaximumSignaturesToVerify	n
+
+##  MaximumSignedBytes n
+##
+##  Don't sign more than "n" bytes of the message.  The default is to 
+##  sign the entire message.  Setting this implies "BodyLengths".
+
+# MaximumSignedBytes	n
+
+##  MilterDebug n
+##
+##  Request a debug level of "n" from the milter library.  The default is 0.
+
+# MilterDebug		0
+
+##  Minimum n[% | +]
+##  	default 0
+##
+##  Sets a minimum signing volume; one of the following formats:
+##	n	at least n bytes (or the whole message, whichever is less)
+##		must be signed
+##  	n%	at least n% of the message must be signed
+##	n+	if a length limit was presented in the signature, no more than
+##  		n bytes may have been added
+
+# Minimum		n
+
+##  MinimumKeyBits n
+##  	default 1024
+##
+##  Causes the library not to accept signatures matching keys made of fewer
+##  than the specified number of bits, even if they would otherwise pass
+##  DKIM signing.
+
+# MinimumKeyBits	1024
+
+##  Mode [sv]
+##  	default sv
+##
+##  Indicates which mode(s) of operation should be provided.  "s" means
+##  "sign", "v" means "verify".
+
+# Mode			sv
+
+##  MTA dataset
+##  	default (none)
+##  
+##  Specifies a list of MTAs whos mail should always be signed rather than
+##  verified.  The "mtaname" is extracted from the DaemonPortOptions line
+##  in effect.
+
+# MTA			name
+
+##  MultipleSignatures { yes | no }
+##  	default no
+##
+##  Allows multiple signatures to be added.  If set to "true" and a SigningTable
+##  is in use, all SigningTable entries that match the candidate message will
+##  cause a signature to be added.  Otherwise, only the first matching
+##  SigningTable entry will be added, or only the key defined by Domain,
+##  Selector and KeyFile will be added.
+
+# MultipleSignatures	no
+
+##  MustBeSigned dataset
+##  	default (none)
+##
+##  Defines a list of headers which, if present on a message, must be
+##  signed for the signature to be considered acceptable.
+
+# MustBeSigned		header1,header2,...
+
+##  Nameservers addr1[,addr2[,...]]
+##  	default (none)
+##
+##  Provides a comma-separated list of IP addresses that are to be used when
+##  doing DNS queries to retrieve DKIM keys, VBR records, etc.
+##  These override any local defaults built in to the resolver in use, which
+##  may be defined in /etc/resolv.conf or hard-coded into the software.
+
+# Nameservers addr1,addr2,...
+
+##  NoHeaderB { yes | no }
+##  	default "no"
+##
+##  Suppresses addition of "header.b" tags on Authentication-Results
+##  header fields.
+
+# NoHeaderB		no
+
+##  OmitHeaders dataset
+##  	default (none)
+##
+##  Specifies a list of headers that should always be omitted when signing.
+##  Header names should be separated by commas.
+
+# OmitHeaders		header1,header2,...
+
+##  On-...
+##
+##  Specifies what to do when certain error conditions are encountered.
+##
+##  See opendkim.conf(5) for more information.
+
+# On-Default
+# On-BadSignature
+# On-DNSError
+# On-InternalError
+# On-NoSignature
+# On-Security
+# On-SignatureError
+
+##  OversignHeaders dataset
+##  	default (none)
+##
+##  Specifies a set of header fields that should be included in all signature
+##  header lists (the "h=" tag) once more than the number of times they were
+##  actually present in the signed message.  See opendkim.conf(5) for more
+##  information.
+
+# OverSignHeaders	header1,header2,...
+
+##  PeerList dataset
+##  	default (none)
+##
+##  Contains a list of IP addresses, CIDR blocks, hostnames or domain names
+##  whose mail should be neither signed nor verified by this filter.  See man
+##  page for file format.
+
+# PeerList		filename
+
+##  PidFile filename
+##  	default (none)
+## 
+##  Name of the file where the filter should write its pid before beginning
+##  normal operations.
+
+# PidFile		filename
+
+##  POPDBFile dataset
+##  	default (none)
+##
+##  Names a database which should be checked for "POP before SMTP" records
+##  as a form of authentication of users who may be sending mail through
+##  the MTA for signing.  Requires special compilation of the filter.
+##  See opendkim.conf(5) for more information.
+
+# POPDBFile		filename
+
+##  Quarantine { yes | no }
+##  	default "no"
+##
+##  Indicates whether or not the filter should arrange to quarantine mail
+##  which fails verification.  Intended for diagnostic use only.
+
+# Quarantine		No
+
+##  QueryCache { yes | no }
+##  	default "no"
+##
+##  Instructs the DKIM library to maintain its own local cache of keys and
+##  policies retrieved from DNS, rather than relying on the nameserver for
+##  caching service.  Useful if the nameserver being used by the filter is
+##  not local.  The filter must be compiled with the QUERY_CACHE flag to enable
+##  this feature, since it adds a library dependency.
+
+# QueryCache		No
+
+##  RedirectFailuresTo address
+##  	default (none)
+##
+##  Redirects signed messages to the specified address if none of the
+##  signatures present failed to verify.
+
+# RedirectFailuresTo	postmaster@example.com
+
+##  RemoveARAll { yes | no }
+##  	default "no"
+##
+##  Remove all Authentication-Results: headers on all arriving mail.
+
+# RemoveARAll		No
+
+##  RemoveARFrom dataset
+##  	default (none)
+##
+##  Remove all Authentication-Results: headers on all arriving mail that
+##  claim to have been added by hosts listed in this parameter.  The list
+##  should be comma-separated.  Entire domains may be specified by preceding
+##  the dopmain name by a single dot (".") character.
+
+# RemoveARFrom		host1,host2,.domain1,.domain2,...
+
+##  RemoveOldSignatures { yes | no }
+##  	default "no"
+##
+##  Remove old signatures on messages, if any, when generating a signature.
+
+# RemoveOldSignatures	No
+
+##  ReportAddress addr
+##  	default (executing user)@(hostname)
+##
+##  Specifies the sending address to be used on From: headers of outgoing
+##  failure reports.  By default, the e-mail address of the user executing
+##  the filter is used.
+
+# ReportAddress		"DKIM Error Postmaster" <postmaster@example.com>
+
+##  ReportBccAddress addr
+##  	default (none)
+##
+##  Specifies additional recipient address(es) to receive outgoing failure
+##  reports.
+
+# ReportBccAddress	postmaster@example.com, john@example.com
+
+##  RequiredHeaders { yes | no }
+##  	default no
+##
+##  Rejects messages which don't conform to RFC5322 header count requirements.
+
+# RequiredHeaders	No
+
+##  RequireSafeKeys { yes | no }
+##  	default yes
+##
+##  Refuses to use key files that appear to have unsafe permissions.
+
+# RequireSafeKeys	Yes
+
+##  ResignAll { yes | no }
+##  	default no
+##
+##  Where ResignMailTo triggers a re-signing action, this flag indicates
+##  whether or not all mail should be signed (if set) versus only verified
+##  mail being signed (if not set).
+
+# ResignAll		No
+
+##  ResignMailTo dataset
+##  	default (none)
+##
+##  Checks each message recipient against the specified dataset for a
+##  matching record.  The full address is checked in each case, then the
+##  hostname, then each domain preceded by ".".  If there is a match, the
+##  value returned is presumed to be the name of a key in the KeyTable
+##  (if defined) to be used to re-sign the message in addition to
+##  verifying it.  If there is a match without a KeyTable, the default key
+##  is applied.
+
+# ResignMailTo		dataset
+
+##  ResolverConfiguration string
+##
+##  Passes arbitrary configuration data to the resolver.  For the stock UNIX
+##  resolver, this is ignored; for Unbound, it names a resolv.conf(5)-style
+##  file that should be read for configuration information.
+
+# ResolverConfiguration	string
+
+##  ResolverTracing { yes | no }
+##
+##  Requests enabling of resolver trace features, if available.  The effect
+##  of setting this flag depends on how trace features, if any, are implemented
+##  in the resolver in use.  Currently only effective when used with the
+##  OpenDKIM asynchronous resolver.
+
+# ResolverTracing	no
+
+##  Selector name
+##
+##  The name of the selector to use when signing.  No default; must be
+##  specified for signing.
+
+Selector		my-selector-name
+
+##  SenderHeaders 	dataset
+##  	default (none)
+##
+##  Overrides the default list of headers that will be used to determine
+##  the sending domain when deciding whether to sign the message and with
+##  with which key(s).  See opendkim.conf(5) for details.
+
+# SenderHeaders		From
+
+##  SendReports { yes | no }
+##  	default "no"
+##
+##  Specifies whether or not the filter should generate report mail back
+##  to senders when verification fails and an address for such a purpose
+##  is provided.  See opendkim.conf(5) for details.
+
+# SendReports		No
+
+##  SignatureAlgorithm signalg
+##  	default "rsa-sha256"
+##
+##  Signature algorithm to use when generating signatures.  Must be either
+##  "rsa-sha1" or "rsa-sha256".
+
+# SignatureAlgorithm	rsa-sha256
+
+##  SignatureTTL seconds
+##  	default "0"
+##
+##  Specifies the lifetime in seconds of signatures generated by the
+##  filter.  A value of 0 means no expiration time is included in the
+##  signature.
+
+# SignatureTTL		0
+
+##  SignHeaders dataset
+##  	default (none)
+##
+##  Specifies the list of headers which should be included when generating
+##  signatures.  The string should be a comma-separated list of header names.
+##  See the opendkim.conf(5) man page for more information.
+
+# SignHeaders		header1,header2,...
+
+##  SigningTable dataset
+##  	default (none)
+##
+##  Defines a dataset that will be queried for the message sender's address
+##  to determine which private key(s) (if any) should be used to sign the
+##  message.  The sender is determined from the value of the sender
+##  header fields as described with SenderHeaders above.  The key for this
+##  lookup should be an address or address pattern that matches senders;
+##  see the opendkim.conf(5) man page for more information.  The value
+##  of the lookup should return the name of a key found in the KeyTable
+##  that should be used to sign the message.  If MultipleSignatures
+##  is set, all possible lookup keys will be attempted which may result
+##  in multiple signatures being applied.
+
+# SigningTable		filename
+
+##  SingleAuthResult { yes | no}
+##  	default "no"
+##
+##  When DomainKeys verification is enabled, multiple Authentication-Results
+##  will be added, one for DK and one for DKIM.  With this enabled, only
+##  a DKIM result will be reported unless DKIM failed but DK passed, in which
+##  case only a DK result will be reported.
+
+# SingleAuthResult	no
+
+##  SMTPURI uri
+##
+##  Specifies a URI (e.g., "smtp://localhost") to which mail should be sent
+##  via SMTP when notifications are generated.
+
+# Socket smtp://localhost
+
+##  Socket socketspec
+##
+##  Names the socket where this filter should listen for milter connections
+##  from the MTA.  Required.  Should be in one of these forms:
+##
+##  inet:port@address		to listen on a specific interface
+##  inet:port			to listen on all interfaces
+##  local:/path/to/socket	to listen on a UNIX domain socket
+
+Socket			inet:port@localhost
+
+##  SoftwareHeader { yes | no }
+##  	default "no"
+##
+##  Add a DKIM-Filter header field to messages passing through this filter
+##  to identify messages it has processed.
+
+# SoftwareHeader	no
+
+##  StrictHeaders { yes | no }
+##  	default "no"
+##
+##  Requests that the DKIM library refuse to process a message whose
+##  header fields do not conform to the standards, in particular Section 3.6
+##  of RFC5322.
+
+# StrictHeaders		no
+
+##  StrictTestMode { yes | no }
+##  	default "no"
+##
+##  Selects strict CRLF mode during testing (see the "-t" command line
+##  flag in the opendkim(8) man page).  Messages for which all header
+##  fields and body lines are not CRLF-terminated are considered malformed
+##  and will produce an error.
+
+# StrictTestMode	no
+
+##  SubDomains { yes | no }
+##  	default "no"
+##
+##  Sign for subdomains as well?
+
+# SubDomains		No
+
+##  Syslog { yes | no }
+##  	default "yes"
+##
+##  Log informational and error activity to syslog?
+
+Syslog			Yes
+
+##  SyslogFacility      facility
+##  	default "mail"
+##
+##  Valid values are :
+##      auth cron daemon kern lpr mail news security syslog user uucp 
+##      local0 local1 local2 local3 local4 local5 local6 local7
+##
+##  syslog facility to be used
+
+# SyslogFacility	mail
+
+##  SyslogSuccess { yes | no }
+##  	default "no"
+##
+##  Log success activity to syslog?
+
+# SyslogSuccess		No
+
+##  TemporaryDirectory path
+##  	default /tmp
+##
+##  Specifies which directory will be used for creating temporary files
+##  during message processing.
+
+# TemporaryDirectory	/tmp
+
+##  TestPublicKeys filename
+##  	default (none)
+##
+##  Names a file from which public keys should be read.  Intended for use
+##  only during automated testing.
+
+# TestPublicKeys	/tmp/testkeys
+
+##  TrustAnchorFile filename
+##  	default (none)
+##
+## Specifies a file from which trust anchor data should be read when doing
+## DNS queries and applying the DNSSEC protocol.  See the Unbound documentation
+## at http://unbound.net for the expected format of this file.
+
+# TrustAnchorFile	/var/named/trustanchor
+
+##  UMask mask
+##  	default (none)
+##
+##  Change the process umask for file creation to the specified value.
+##  The system has its own default which will be used (usually 022).
+##  See the umask(2) man page for more information.
+
+# UMask			022
+
+# UnboundConfigFile	/var/named/unbound.conf
+
+##  Userid userid
+##  	default (none)
+##
+##  Change to user "userid" before starting normal operation?  May include
+##  a group ID as well, separated from the userid by a colon.
+
+# UserID		userid

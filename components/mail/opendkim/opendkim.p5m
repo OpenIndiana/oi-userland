@@ -1,0 +1,241 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Friedrich Kink. All right reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+group groupname=opendkim gid=30
+user username=opendkim gcos-field="opendkim - used for unprivileged processes" group=opendkim home-dir=/var/empty login-shell=/bin/false uid=30
+
+file files/opendkim.xml path=lib/svc/manifest/network/opendkim.xml restart_fmri=svc:/system/manifest-import:default
+
+file files/opendkim.conf.sample path=etc/mail/opendkim.conf.sample
+
+file files/prof_attr path=etc/security/prof_attr.d/opendkim group=sys
+
+file path=usr/bin/autobuild
+file path=usr/bin/miltertest
+file path=usr/bin/opendkim-reprrdimport
+file path=usr/bin/opendkim-spam
+file path=usr/include/opendkim/dkim.h
+file path=usr/include/rbl/rbl.h
+file path=usr/include/reprrd/reprrd.h
+file path=usr/include/vbr/vbr.h
+file path=usr/lib/$(MACH64)/libopendkim.a
+link path=usr/lib/$(MACH64)/libopendkim.so target=libopendkim.so.10.0.3
+link path=usr/lib/$(MACH64)/libopendkim.so.10 target=libopendkim.so.10.0.3
+file path=usr/lib/$(MACH64)/libopendkim.so.10.0.3
+file path=usr/lib/$(MACH64)/librbl.a
+link path=usr/lib/$(MACH64)/librbl.so target=librbl.so.1.0.0
+link path=usr/lib/$(MACH64)/librbl.so.1 target=librbl.so.1.0.0
+file path=usr/lib/$(MACH64)/librbl.so.1.0.0
+file path=usr/lib/$(MACH64)/libreprrd.a
+link path=usr/lib/$(MACH64)/libreprrd.so target=libreprrd.so.1.0.0
+link path=usr/lib/$(MACH64)/libreprrd.so.1 target=libreprrd.so.1.0.0
+file path=usr/lib/$(MACH64)/libreprrd.so.1.0.0
+file path=usr/lib/$(MACH64)/libvbr.a
+link path=usr/lib/$(MACH64)/libvbr.so target=libvbr.so.2.0.0
+link path=usr/lib/$(MACH64)/libvbr.so.2 target=libvbr.so.2.0.0
+file path=usr/lib/$(MACH64)/libvbr.so.2.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/opendkim.pc
+file path=usr/lib/$(MACH64)/pkgconfig/rbl.pc
+file path=usr/lib/$(MACH64)/pkgconfig/vbr.pc
+file path=usr/sbin/opendkim
+file path=usr/sbin/opendkim-atpszone
+file path=usr/sbin/opendkim-expire
+file path=usr/sbin/opendkim-gengraphs
+file path=usr/sbin/opendkim-genkey
+file path=usr/sbin/opendkim-genstats
+file path=usr/sbin/opendkim-genzone
+file path=usr/sbin/opendkim-importstats
+file path=usr/sbin/opendkim-reportstats
+file path=usr/sbin/opendkim-stats
+file path=usr/sbin/opendkim-testkey
+file path=usr/sbin/opendkim-testmsg
+file path=usr/share/doc/opendkim/FEATURES
+file path=usr/share/doc/opendkim/KNOWNBUGS
+file path=usr/share/doc/opendkim/LICENSE
+file path=usr/share/doc/opendkim/LICENSE.Sendmail
+file path=usr/share/doc/opendkim/README
+file path=usr/share/doc/opendkim/README.LDAP
+file path=usr/share/doc/opendkim/README.SQL
+file path=usr/share/doc/opendkim/README.opendkim-reportstats
+file path=usr/share/doc/opendkim/README.specs.html
+file path=usr/share/doc/opendkim/RELEASE_NOTES.Sendmail
+file path=usr/share/doc/opendkim/authheaders-check-setup-hook.lua
+file path=usr/share/doc/opendkim/autobuild.conf.sample
+file path=usr/share/doc/opendkim/chroot
+file path=usr/share/doc/opendkim/convert_keylist.sh
+file path=usr/share/doc/opendkim/dkim.html
+file path=usr/share/doc/opendkim/dkim_add_querymethod.html
+file path=usr/share/doc/opendkim/dkim_add_xtag.html
+file path=usr/share/doc/opendkim/dkim_alg_t.html
+file path=usr/share/doc/opendkim/dkim_atps_check.html
+file path=usr/share/doc/opendkim/dkim_atps_t.html
+file path=usr/share/doc/opendkim/dkim_body.html
+file path=usr/share/doc/opendkim/dkim_canon_t.html
+file path=usr/share/doc/opendkim/dkim_cbstat.html
+file path=usr/share/doc/opendkim/dkim_chunk.html
+file path=usr/share/doc/opendkim/dkim_close.html
+file path=usr/share/doc/opendkim/dkim_diffheaders.html
+file path=usr/share/doc/opendkim/dkim_dns_close.html
+file path=usr/share/doc/opendkim/dkim_dns_config.html
+file path=usr/share/doc/opendkim/dkim_dns_init.html
+file path=usr/share/doc/opendkim/dkim_dns_nslist.html
+file path=usr/share/doc/opendkim/dkim_dns_set_close.html
+file path=usr/share/doc/opendkim/dkim_dns_set_config.html
+file path=usr/share/doc/opendkim/dkim_dns_set_init.html
+file path=usr/share/doc/opendkim/dkim_dns_set_nslist.html
+file path=usr/share/doc/opendkim/dkim_dns_set_query_cancel.html
+file path=usr/share/doc/opendkim/dkim_dns_set_query_service.html
+file path=usr/share/doc/opendkim/dkim_dns_set_query_start.html
+file path=usr/share/doc/opendkim/dkim_dns_set_query_waitreply.html
+file path=usr/share/doc/opendkim/dkim_dns_set_trustanchor.html
+file path=usr/share/doc/opendkim/dkim_dns_trustanchor.html
+file path=usr/share/doc/opendkim/dkim_dnssec.html
+file path=usr/share/doc/opendkim/dkim_eoh.html
+file path=usr/share/doc/opendkim/dkim_eom.html
+file path=usr/share/doc/opendkim/dkim_flush_cache.html
+file path=usr/share/doc/opendkim/dkim_free.html
+file path=usr/share/doc/opendkim/dkim_get_msgdate.html
+file path=usr/share/doc/opendkim/dkim_get_reputation.html
+file path=usr/share/doc/opendkim/dkim_get_signer.html
+file path=usr/share/doc/opendkim/dkim_get_sigsubstring.html
+file path=usr/share/doc/opendkim/dkim_get_user_context.html
+file path=usr/share/doc/opendkim/dkim_getcachestats.html
+file path=usr/share/doc/opendkim/dkim_getdomain.html
+file path=usr/share/doc/opendkim/dkim_geterror.html
+file path=usr/share/doc/opendkim/dkim_getid.html
+file path=usr/share/doc/opendkim/dkim_getmode.html
+file path=usr/share/doc/opendkim/dkim_getpartial.html
+file path=usr/share/doc/opendkim/dkim_getresultstr.html
+file path=usr/share/doc/opendkim/dkim_getsighdr.html
+file path=usr/share/doc/opendkim/dkim_getsighdr_d.html
+file path=usr/share/doc/opendkim/dkim_getsiglist.html
+file path=usr/share/doc/opendkim/dkim_getsignature.html
+file path=usr/share/doc/opendkim/dkim_getsslbuf.html
+file path=usr/share/doc/opendkim/dkim_getuser.html
+file path=usr/share/doc/opendkim/dkim_header.html
+file path=usr/share/doc/opendkim/dkim_init.html
+file path=usr/share/doc/opendkim/dkim_key_syntax.html
+file path=usr/share/doc/opendkim/dkim_lib.html
+file path=usr/share/doc/opendkim/dkim_libfeature.html
+file path=usr/share/doc/opendkim/dkim_libversion.html
+file path=usr/share/doc/opendkim/dkim_mail_parse.html
+file path=usr/share/doc/opendkim/dkim_minbody.html
+file path=usr/share/doc/opendkim/dkim_ohdrs.html
+file path=usr/share/doc/opendkim/dkim_options.html
+file path=usr/share/doc/opendkim/dkim_param_t.html
+file path=usr/share/doc/opendkim/dkim_privkey_load.html
+file path=usr/share/doc/opendkim/dkim_qi_getname.html
+file path=usr/share/doc/opendkim/dkim_qi_gettype.html
+file path=usr/share/doc/opendkim/dkim_query_t.html
+file path=usr/share/doc/opendkim/dkim_queryinfo.html
+file path=usr/share/doc/opendkim/dkim_resign.html
+file path=usr/share/doc/opendkim/dkim_set_dns_callback.html
+file path=usr/share/doc/opendkim/dkim_set_final.html
+file path=usr/share/doc/opendkim/dkim_set_key_lookup.html
+file path=usr/share/doc/opendkim/dkim_set_margin.html
+file path=usr/share/doc/opendkim/dkim_set_prescreen.html
+file path=usr/share/doc/opendkim/dkim_set_signature_handle.html
+file path=usr/share/doc/opendkim/dkim_set_signature_handle_free.html
+file path=usr/share/doc/opendkim/dkim_set_signature_tagvalues.html
+file path=usr/share/doc/opendkim/dkim_set_signer.html
+file path=usr/share/doc/opendkim/dkim_set_trust_anchor.html
+file path=usr/share/doc/opendkim/dkim_set_user_context.html
+file path=usr/share/doc/opendkim/dkim_setpartial.html
+file path=usr/share/doc/opendkim/dkim_sig_getbh.html
+file path=usr/share/doc/opendkim/dkim_sig_getcanonlen.html
+file path=usr/share/doc/opendkim/dkim_sig_getcanons.html
+file path=usr/share/doc/opendkim/dkim_sig_getcontext.html
+file path=usr/share/doc/opendkim/dkim_sig_getdnssec.html
+file path=usr/share/doc/opendkim/dkim_sig_getdomain.html
+file path=usr/share/doc/opendkim/dkim_sig_geterror.html
+file path=usr/share/doc/opendkim/dkim_sig_geterrorstr.html
+file path=usr/share/doc/opendkim/dkim_sig_getflags.html
+file path=usr/share/doc/opendkim/dkim_sig_gethashes.html
+file path=usr/share/doc/opendkim/dkim_sig_getidentity.html
+file path=usr/share/doc/opendkim/dkim_sig_getkeysize.html
+file path=usr/share/doc/opendkim/dkim_sig_getqueries.html
+file path=usr/share/doc/opendkim/dkim_sig_getreportinfo.html
+file path=usr/share/doc/opendkim/dkim_sig_getselector.html
+file path=usr/share/doc/opendkim/dkim_sig_getsignalg.html
+file path=usr/share/doc/opendkim/dkim_sig_getsignedhdrs.html
+file path=usr/share/doc/opendkim/dkim_sig_getsigntime.html
+file path=usr/share/doc/opendkim/dkim_sig_getsslbuf.html
+file path=usr/share/doc/opendkim/dkim_sig_gettagvalue.html
+file path=usr/share/doc/opendkim/dkim_sig_hdrsigned.html
+file path=usr/share/doc/opendkim/dkim_sig_ignore.html
+file path=usr/share/doc/opendkim/dkim_sig_process.html
+file path=usr/share/doc/opendkim/dkim_sig_seterror.html
+file path=usr/share/doc/opendkim/dkim_sig_syntax.html
+file path=usr/share/doc/opendkim/dkim_sigerror.html
+file path=usr/share/doc/opendkim/dkim_siginfo.html
+file path=usr/share/doc/opendkim/dkim_sigkey_t.html
+file path=usr/share/doc/opendkim/dkim_sign.html
+file path=usr/share/doc/opendkim/dkim_signhdrs.html
+file path=usr/share/doc/opendkim/dkim_ssl_version.html
+file path=usr/share/doc/opendkim/dkim_stat.html
+file path=usr/share/doc/opendkim/dkim_verify.html
+file path=usr/share/doc/opendkim/dns.html
+file path=usr/share/doc/opendkim/example.com.ldif
+file path=usr/share/doc/opendkim/final.lua.sample
+file path=usr/share/doc/opendkim/index.html
+file path=usr/share/doc/opendkim/mkdb.mysql
+file path=usr/share/doc/opendkim/opendkim
+file path=usr/share/doc/opendkim/opendkim-default-keygen
+file path=usr/share/doc/opendkim/opendkim-fixipaddrs.pl
+file path=usr/share/doc/opendkim/opendkim-spam-ignore-cmdswitch.patch
+file path=usr/share/doc/opendkim/opendkim.conf.sample
+file path=usr/share/doc/opendkim/opendkim.conf.simple
+file path=usr/share/doc/opendkim/opendkim.conf.simple-verify
+file path=usr/share/doc/opendkim/opendkim.ldif
+file path=usr/share/doc/opendkim/opendkim.schema
+file path=usr/share/doc/opendkim/opendkim.service
+file path=usr/share/doc/opendkim/opendkim.spec.in
+file path=usr/share/doc/opendkim/opendkim.xml
+file path=usr/share/doc/opendkim/overview.html
+file path=usr/share/doc/opendkim/reprrd-config.php
+file path=usr/share/doc/opendkim/reprrd.php
+file path=usr/share/doc/opendkim/repute.py
+file path=usr/share/doc/opendkim/screen.lua.sample
+file path=usr/share/doc/opendkim/setup.lua.sample
+file path=usr/share/doc/opendkim/stats.lua
+file path=usr/share/man/man1/opendkim-spam.1
+file path=usr/share/man/man3/opendkim-lua.3
+file path=usr/share/man/man3/rbl.3
+file path=usr/share/man/man3/vbr.3
+file path=usr/share/man/man5/opendkim.conf.5
+file path=usr/share/man/man8/autobuild.8
+file path=usr/share/man/man8/miltertest.8
+file path=usr/share/man/man8/opendkim-atpszone.8
+file path=usr/share/man/man8/opendkim-expire.8
+file path=usr/share/man/man8/opendkim-gengraphs.8
+file path=usr/share/man/man8/opendkim-genkey.8
+file path=usr/share/man/man8/opendkim-genstats.8
+file path=usr/share/man/man8/opendkim-genzone.8
+file path=usr/share/man/man8/opendkim-importstats.8
+file path=usr/share/man/man8/opendkim-reprrdimport.8
+file path=usr/share/man/man8/opendkim-stats.8
+file path=usr/share/man/man8/opendkim-testkey.8
+file path=usr/share/man/man8/opendkim-testmsg.8
+file path=usr/share/man/man8/opendkim.8

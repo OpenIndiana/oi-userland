@@ -1,0 +1,15 @@
+# according to https://github.com/openssl/openssl/issues/1260 those functions aren't needed for openssl > 1.0
+# and test results are still exactly the same
+--- opendkim-2.10.3/opendkim/opendkim-crypto.c	2022-02-06 14:42:23.022149911 +0000
++++ opendkim-2.10.3/opendkim/opendkim-crypto.c.new	2022-02-06 14:57:05.159603533 +0000
+@@ -365,8 +365,10 @@
+ 	SSL_library_init();
+ 	ERR_load_crypto_strings();
+ 
++#if OPENSSL_VERSION_NUMBER < OPENSSL_VERSION_1_1_0
+ 	CRYPTO_set_id_callback(&dkimf_crypto_get_id);
+ 	CRYPTO_set_locking_callback(&dkimf_crypto_lock_callback);
++#endif
+ 	CRYPTO_set_dynlock_create_callback(&dkimf_crypto_dyn_create);
+ 	CRYPTO_set_dynlock_lock_callback(&dkimf_crypto_dyn_lock);
+ 	CRYPTO_set_dynlock_destroy_callback(&dkimf_crypto_dyn_destroy);

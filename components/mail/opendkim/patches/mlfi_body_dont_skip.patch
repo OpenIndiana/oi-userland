@@ -1,0 +1,36 @@
+commit 90a4ea2af4669eeaef945b13319f7a9c03855aac
+Author: Dilian Wesselinov Palauzov  <git-dpa@aegee.org>
+Date:   Wed May 16 11:16:08 2018 +0000
+
+    opendkim/opendkim.c:mlfi_body: don't SMFIS_SKIP a big message, that doesn't need verification, but need signing
+    
+    sendmail sends bodies to libmilter in chunks of 64k.
+    
+    When opendkim is supposed simulateneously to verify the signature
+    of an email and to sign it, the body is >64k, the email has no signature yet,
+    that can be verified, opendkim shall not send SMFIS_SKIP, hence ingoring the
+    remaining chunks of the message, as opendkim needs the remaining chunks for
+    correct signing of the message.
+
+diff --git a/opendkim/opendkim.c b/opendkim/opendkim.c
+index eaf8c9e6..3c16da07 100644
+--- a/opendkim/opendkim.c
++++ b/opendkim/opendkim.c
+@@ -13138,13 +13138,10 @@ mlfi_body(SMFICTX *ctx, u_char *bodyp, size_t bodylen)
+ 		return dkimf_libstatus(ctx, last, "dkim_body()", status);
+ 
+ #ifdef SMFIS_SKIP
+-	if (dfc->mctx_srhead != NULL && cc->cctx_milterv2 &&
+-	    dkimf_msr_minbody(dfc->mctx_srhead) == 0)
+-			return SMFIS_SKIP;
+-
+-	if (dfc->mctx_dkimv != NULL && cc->cctx_milterv2 &&
+-	    dkim_minbody(dfc->mctx_dkimv) == 0)
+-			return SMFIS_SKIP;
++	if (cc->cctx_milterv2 &&
++	    (dfc->mctx_srhead == NULL || dkimf_msr_minbody(dfc->mctx_srhead) == 0) &&
++	    (dfc->mctx_dkimv == NULL || dkim_minbody(dfc->mctx_dkimv) == 0))
++		return SMFIS_SKIP;
+ #endif /* SMFIS_SKIP */
+ 
+ 	return SMFIS_CONTINUE;
