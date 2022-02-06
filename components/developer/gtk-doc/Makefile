@@ -56,3 +56,4 @@ REQUIRED_PACKAGES += text/itstool
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += library/python/pygments-37
