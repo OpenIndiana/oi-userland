@@ -25,6 +25,7 @@ UID   | User name
 22    | sshd
 25    | smmsp
 27    | postfix
+32    | spfmilter
 37    | listen
 40    | puppet
 50    | gdm
@@ -94,6 +95,7 @@ GID   | Group name
 25    | smmsp
 27    | postfix
 28    | postdrop
+32    | spfmilter
 40    | puppet
 50    | gdm
 52    | upnp
