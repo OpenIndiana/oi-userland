@@ -12,22 +12,23 @@
 # Copyright (c) 2014 Alexander Pyhalov
 # Copyright 2017 Gary Mills
 # Copyright 2019 Michal Nowak
+# Copyright 2022 Niklas Poslovski
 #
 
 BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
-COMPONENT_VERSION=	2.13.0
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	2.14.8
+#COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
 COMPONENT_FMRI=		communication/im/pidgin
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2747150c6f711146bddd333c496870bfd55058bab22ffb7e4eb784018ec46d8f
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/Pidgin/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+    sha256:3f8085c0211c4ca1ba9f8a03889b3d60738432c1673b57b0086070ef6e094cca
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/Pidgin/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	pidgin.license
@@ -72,6 +73,7 @@ CONFIGURE_OPTIONS+=	--enable-consoleui
 CONFIGURE_OPTIONS+=	--with-ncurses-headers=/usr/include/ncurses
 CONFIGURE_OPTIONS+=	--disable-vv
 CONFIGURE_OPTIONS+=	--enable-perl=yes
+CONFIGURE_OPTIONS+=	--enable-cyrus-sasl=no
 
 CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
 CONFIGURE_ENV+=	PERL=$(PERL)
@@ -95,6 +97,7 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/python/python-dbus-35
+REQUIRED_PACKAGES += library/libgnt
 REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += runtime/tcl-8
