@@ -1,0 +1,107 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Friedrich Kink
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value="$(COMPONENT_PROJECT_URL)"
+set name=info.source-url value="$(COMPONENT_ARCHIVE_URL)"
+set name=org.opensolaris.consolidation value="$(CONSOLIDATION)"
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+group groupname=opendmarc gid=31
+user username=opendmarc gcos-field="opendmarc - used for unprivileged processes" group=opendmarc home-dir=/var/empty login-shell=/bin/false uid=31
+
+file files/opendmarc.xml path=lib/svc/manifest/network/opendmarc.xml restart_fmri=svc:/system/manifest-import:default
+
+file files/opendmarc.conf.sample path=etc/mail/opendmarc.conf.sample
+
+file files/prof_attr path=etc/security/prof_attr.d/opendmarc group=sys
+
+dir path=var/opendmarc owner=opendmarc group=opendmarc mode=0750
+
+file path=usr/include/opendmarc/dmarc.h
+link path=usr/lib/$(MACH64)/libopendmarc.so target=libopendmarc.so.2.0.3
+link path=usr/lib/$(MACH64)/libopendmarc.so.2 target=libopendmarc.so.2.0.3
+file path=usr/lib/$(MACH64)/libopendmarc.so.2.0.3
+file path=usr/sbin/opendmarc
+file path=usr/sbin/opendmarc-check
+file path=usr/sbin/opendmarc-expire
+file path=usr/sbin/opendmarc-import
+file path=usr/sbin/opendmarc-importstats
+file path=usr/sbin/opendmarc-params
+file path=usr/sbin/opendmarc-reports
+file path=usr/share/doc/opendmarc/LICENSE
+file path=usr/share/doc/opendmarc/LICENSE.Sendmail
+file path=usr/share/doc/opendmarc/README
+file path=usr/share/doc/opendmarc/README.rddmarc
+file path=usr/share/doc/opendmarc/README.schema
+file path=usr/share/doc/opendmarc/dmarc_policy_t.html
+file path=usr/share/doc/opendmarc/dmarcfail.py
+file path=usr/share/doc/opendmarc/index.html
+file path=usr/share/doc/opendmarc/mkdmarc
+file path=usr/share/doc/opendmarc/mysql_ip6.c
+file path=usr/share/doc/opendmarc/opendmarc
+file path=usr/share/doc/opendmarc/opendmarc.conf.sample
+file path=usr/share/doc/opendmarc/opendmarc.service.in
+file path=usr/share/doc/opendmarc/opendmarc.spec.in
+file path=usr/share/doc/opendmarc/opendmarc_dns_fake_record.html
+file path=usr/share/doc/opendmarc/opendmarc_get_policy_to_enforce.html
+file path=usr/share/doc/opendmarc/opendmarc_lib_t.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_connect_clear.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_connect_init.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_connect_rset.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_connect_shutdown.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_fetch_adkim.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_fetch_alignment.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_fetch_aspf.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_fetch_fo.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_fetch_p.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_fetch_pct.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_fetch_rf.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_fetch_rua.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_fetch_ruf.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_fetch_sp.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_fetch_utilized_domain.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_library_init.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_library_shutdown.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_parse_dmarc.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_query_dmarc.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_status_to_str.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_store_dkim.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_store_dmarc.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_store_from_domain.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_store_spf.html
+file path=usr/share/doc/opendmarc/opendmarc_policy_to_buf.html
+file path=usr/share/doc/opendmarc/opendmarc_spf_test.html
+file path=usr/share/doc/opendmarc/opendmarc_status_t.html
+file path=usr/share/doc/opendmarc/opendmarc_tld_read_file.html
+file path=usr/share/doc/opendmarc/opendmarc_tld_shutdown.html
+file path=usr/share/doc/opendmarc/opendmarc_util_clearargv.html
+file path=usr/share/doc/opendmarc/opendmarc_xml.html
+file path=usr/share/doc/opendmarc/opendmarc_xml_parse.html
+file path=usr/share/doc/opendmarc/overview.html
+file path=usr/share/doc/opendmarc/rddmarc
+file path=usr/share/doc/opendmarc/schema.mysql
+file path=usr/share/man/man5/opendmarc.conf.5
+file path=usr/share/man/man8/opendmarc-check.8
+file path=usr/share/man/man8/opendmarc-expire.8
+file path=usr/share/man/man8/opendmarc-import.8
+file path=usr/share/man/man8/opendmarc-importstats.8
+file path=usr/share/man/man8/opendmarc-params.8
+file path=usr/share/man/man8/opendmarc-reports.8
+file path=usr/share/man/man8/opendmarc.8
