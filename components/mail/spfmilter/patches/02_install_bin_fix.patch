@@ -1,0 +1,18 @@
+# this package does not understand DESTDIR concept
+--- spfmilter-2.001/Makefile.in	2015-02-10 17:30:41.000000000 +0000
++++ spfmilter-2.001/Makefile.in.new	2022-02-06 21:07:40.556704940 +0000
+@@ -38,10 +38,10 @@
+ 
+ 
+ install:
+-	-mkdir -p $(BINDIR)
+-	$(INSTALL) -m 555 -o bin -g bin spfmilter $(BINDIR)
+-	-mkdir -p $(MANDIR)/man8
+-	$(INSTALL) -m 444 -o bin -g bin spfmilter.8 $(MANDIR)/man8
++	-mkdir -p PROTO_DIR$(BINDIR)
++	$(INSTALL) -m 555 spfmilter PROTO_DIR$(BINDIR)
++	-mkdir -p PROTO_DIR$(MANDIR)/man8
++	$(INSTALL) -m 444 spfmilter.8 PROTO_DIR$(MANDIR)/man8
+ 
+ 
+ clean:
