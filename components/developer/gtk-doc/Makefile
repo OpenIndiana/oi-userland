@@ -21,7 +21,7 @@ COMPONENT_NAME=		gtk-doc
 COMPONENT_MAJOR_VERSION=        1.33
 COMPONENT_MINOR_VERSION=        2
 COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-# COMPONENT_REVISION=	0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gtk.org/gtk-doc/
 COMPONENT_SUMMARY=	GTK+ DocBook Documentation Generator
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,17 +43,25 @@ PATH=$(PATH.gnu)
 # Build configure script
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv)
 
+# pkgdepend doesn't like the first line of a Python script to be:
+# '#!/usr/bin/env python3' so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
+#
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i -e 's?env python3?python$(PYTHON_VERSION)?' \
+		$(PROTOUSRSHAREDIR)/gtk-doc/python/gtkdoc/highlight.py;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i -e 's?env python3?python$(PYTHON_VERSION)?' \
+		$(PROTOUSRSHAREDIR)/gtk-doc/python/gtkdoc/mkhtml2.py;
+
 CONFIGURE_OPTIONS+=	--bindir=$(USRBINDIR)
 CONFIGURE_OPTIONS+=	--sbindir=$(USRSBINDIR)
 CONFIGURE_OPTIONS+=	--sysconfdir=$(ETCDIR)
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 CONFIGURE_ENV+=		PERL=$(PERL)
 
-# Auto-generated dependencies
-REQUIRED_PACKAGES += text/itstool
-
-# Auto-generated dependencies
+# Manually added dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += text/itstool
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += library/python/pygments-37
