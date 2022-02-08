@@ -1,0 +1,493 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Carsten Grzemba
+#
+<transform file path=opt/SUNWsamfs/([s]?bin|lib)/.* -> default pkg.linted.userland.action001.3 true>
+<transform file path=usr/lib/fs/samfs/.* -> default pkg.linted.userland.action001.3 true>
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=etc/fs/samfs/mount mode=0555
+file path=etc/fs/samfs/umount mode=0555
+file path=etc/sysevent/config/SUNW,SUNWsamfs,sysevent.conf
+file path=kernel/drv/$(MACH64)/samaio mode=0555
+file path=kernel/drv/$(MACH64)/samioc mode=0555
+file path=kernel/drv/samaio.conf
+file path=kernel/drv/samioc.conf
+file path=kernel/fs/$(MACH64)/samfs mode=0555
+file path=lib/svc/method/svc-qfs-shared-mount
+file path=lib/svc/method/svc-sam-fsd
+file path=opt/SUNWsamfs/bin/archive
+file path=opt/SUNWsamfs/bin/notify
+link path=opt/SUNWsamfs/bin/release target=archive
+file path=opt/SUNWsamfs/bin/request
+file path=opt/SUNWsamfs/bin/schproj
+file path=opt/SUNWsamfs/bin/sdu
+link path=opt/SUNWsamfs/bin/segment target=archive
+link path=opt/SUNWsamfs/bin/setfa target=archive
+file path=opt/SUNWsamfs/bin/sfind
+file path=opt/SUNWsamfs/bin/sls
+link path=opt/SUNWsamfs/bin/squota target=../sbin/samquota
+link path=opt/SUNWsamfs/bin/ssum target=archive
+link path=opt/SUNWsamfs/bin/stage target=archive
+file path=opt/SUNWsamfs/bin/tapealert_log
+file path=opt/SUNWsamfs/bin/tapealert_trap
+file path=opt/SUNWsamfs/client/examples/Makefile
+file path=opt/SUNWsamfs/client/examples/archive.c
+file path=opt/SUNWsamfs/client/examples/samstat.c
+link path=opt/SUNWsamfs/client/include/samrpc.h \
+    target=/opt/SUNWsamfs/include/samrpc.h pkg.linted.userland.action002.0=true
+file path=opt/SUNWsamfs/client/lib/libsamrpc.so
+file path=opt/SUNWsamfs/client/src/client/Makefile
+file path=opt/SUNWsamfs/client/src/client/sam_attrtoa.c
+file path=opt/SUNWsamfs/client/src/client/samfs_clnt.c
+file path=opt/SUNWsamfs/client/src/client/samrpc.c
+file path=opt/SUNWsamfs/client/src/xdr/Makefile
+file path=opt/SUNWsamfs/client/src/xdr/sam_xdr.c
+file path=opt/SUNWsamfs/doc/OPENSOLARIS.LICENSE
+file path=opt/SUNWsamfs/doc/tapealert.text
+file path=opt/SUNWsamfs/etc/samdb.schema
+file path=opt/SUNWsamfs/etc/samdb_sql.cat
+file path=opt/SUNWsamfs/etc/startup/samsyschk mode=0555
+file path=opt/SUNWsamfs/examples/archiver.sh
+file path=opt/SUNWsamfs/examples/defaults.conf
+file path=opt/SUNWsamfs/examples/inquiry.conf
+file path=opt/SUNWsamfs/examples/log_rotate.sh
+file path=opt/SUNWsamfs/examples/recover.sh
+file path=opt/SUNWsamfs/examples/recycler.sh
+file path=opt/SUNWsamfs/examples/save_core.sh
+file path=opt/SUNWsamfs/examples/ssi.sh
+file path=opt/SUNWsamfs/examples/tarback.sh
+file path=opt/SUNWsamfs/include/catalog.h
+file path=opt/SUNWsamfs/include/devstat.h
+file path=opt/SUNWsamfs/include/lib.h
+file path=opt/SUNWsamfs/include/listio.h
+file path=opt/SUNWsamfs/include/mig.h
+file path=opt/SUNWsamfs/include/rminfo.h
+file path=opt/SUNWsamfs/include/samrpc.h
+file path=opt/SUNWsamfs/include/sefstructs.h
+file path=opt/SUNWsamfs/include/sefvals.h
+file path=opt/SUNWsamfs/include/stat.h
+file path=opt/SUNWsamfs/include/version.h
+file path=opt/SUNWsamfs/lib/$(MACH64)/libsam.so
+link path=opt/SUNWsamfs/lib/$(MACH64)/libsamconf.so \
+    target=/usr/lib/fs/samfs/$(MACH64)/libsamconf.so pkg.linted.userland.action002.0=true
+file path=opt/SUNWsamfs/lib/libarch.so
+file path=opt/SUNWsamfs/lib/libfsmdb.so
+file path=opt/SUNWsamfs/lib/libfsmgmt.so
+file path=opt/SUNWsamfs/lib/libpax_hdr.so
+file path=opt/SUNWsamfs/lib/librecycler.so
+file path=opt/SUNWsamfs/lib/libsam.so
+file path=opt/SUNWsamfs/lib/libsamapi.so
+file path=opt/SUNWsamfs/lib/libsamcat.so
+link path=opt/SUNWsamfs/lib/libsamconf.so target=/usr/lib/fs/samfs/libsamconf.so pkg.linted.userland.action002.0=true
+file path=opt/SUNWsamfs/lib/libsamdb.so
+file path=opt/SUNWsamfs/lib/libsamfs.so
+file path=opt/SUNWsamfs/lib/libsammig.so
+file path=opt/SUNWsamfs/lib/libsamrft.so
+link path=opt/SUNWsamfs/lib/libsamrpc.so \
+    target=/opt/SUNWsamfs/client/lib/libsamrpc.so pkg.linted.userland.action002.0=true
+file path=opt/SUNWsamfs/lib/libsamut.so
+file path=opt/SUNWsamfs/lib/libstager.so
+hardlink path=opt/SUNWsamfs/man/man1/archive.1 \
+    target=../../zone/man/man1/archive.1
+hardlink path=opt/SUNWsamfs/man/man1/release.1 \
+    target=../../zone/man/man1/release.1
+hardlink path=opt/SUNWsamfs/man/man1/request.1 \
+    target=../../zone/man/man1/request.1
+file path=opt/SUNWsamfs/man/man1/schproj.1
+hardlink path=opt/SUNWsamfs/man/man1/sdu.1 target=../../zone/man/man1/sdu.1
+hardlink path=opt/SUNWsamfs/man/man1/segment.1 \
+    target=../../zone/man/man1/segment.1
+hardlink path=opt/SUNWsamfs/man/man1/setfa.1 target=../../zone/man/man1/setfa.1
+hardlink path=opt/SUNWsamfs/man/man1/sfind.1 target=../../zone/man/man1/sfind.1
+hardlink path=opt/SUNWsamfs/man/man1/sls.1 target=../../zone/man/man1/sls.1
+hardlink path=opt/SUNWsamfs/man/man1/squota.1 \
+    target=../../zone/man/man1/squota.1
+hardlink path=opt/SUNWsamfs/man/man1/ssum.1 target=../../zone/man/man1/ssum.1
+hardlink path=opt/SUNWsamfs/man/man1/stage.1 target=../../zone/man/man1/stage.1
+file path=opt/SUNWsamfs/man/man1m/HAStoragePlus_samfs.1m
+file path=opt/SUNWsamfs/man/man1m/archive_audit.1m
+file path=opt/SUNWsamfs/man/man1m/archiver.1m
+file path=opt/SUNWsamfs/man/man1m/archiver.sh.1m
+file path=opt/SUNWsamfs/man/man1m/auditslot.1m
+file path=opt/SUNWsamfs/man/man1m/backto.1m
+file path=opt/SUNWsamfs/man/man1m/build_cat.1m
+file path=opt/SUNWsamfs/man/man1m/chmed.1m
+file path=opt/SUNWsamfs/man/man1m/cleandrive.1m
+file path=opt/SUNWsamfs/man/man1m/dev_down.sh.1m
+file path=opt/SUNWsamfs/man/man1m/dmpshm.1m
+file path=opt/SUNWsamfs/man/man1m/dump_cat.1m
+file path=opt/SUNWsamfs/man/man1m/dump_log.1m
+file path=opt/SUNWsamfs/man/man1m/exarchive.1m
+file path=opt/SUNWsamfs/man/man1m/export.1m
+file path=opt/SUNWsamfs/man/man1m/fsmadm.1m
+file path=opt/SUNWsamfs/man/man1m/fsmdb.1m
+file path=opt/SUNWsamfs/man/man1m/fsmgmtd.1m
+file path=opt/SUNWsamfs/man/man1m/generic.1m
+file path=opt/SUNWsamfs/man/man1m/import.1m
+file path=opt/SUNWsamfs/man/man1m/itemize.1m
+file path=opt/SUNWsamfs/man/man1m/load.1m
+file path=opt/SUNWsamfs/man/man1m/load_notify.sh.1m
+file path=opt/SUNWsamfs/man/man1m/log_rotate.sh.1m
+file path=opt/SUNWsamfs/man/man1m/mount_samfs.1m
+file path=opt/SUNWsamfs/man/man1m/move.1m
+file path=opt/SUNWsamfs/man/man1m/nrecycler.sh.1m
+file path=opt/SUNWsamfs/man/man1m/odlabel.1m
+file path=opt/SUNWsamfs/man/man1m/rearch.1m
+file path=opt/SUNWsamfs/man/man1m/recover.sh.1m
+file path=opt/SUNWsamfs/man/man1m/recycler.1m
+file path=opt/SUNWsamfs/man/man1m/recycler.sh.1m
+file path=opt/SUNWsamfs/man/man1m/releaser.1m
+file path=opt/SUNWsamfs/man/man1m/reserve.1m
+file path=opt/SUNWsamfs/man/man1m/restore.sh.1m
+file path=opt/SUNWsamfs/man/man1m/robots.1m
+file path=opt/SUNWsamfs/man/man1m/rpc.sam.1m
+file path=opt/SUNWsamfs/man/man1m/sam-amld.1m
+file path=opt/SUNWsamfs/man/man1m/sam-archiverd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-arcopy.1m
+file path=opt/SUNWsamfs/man/man1m/sam-arfind.1m
+file path=opt/SUNWsamfs/man/man1m/sam-catserverd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-clientd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-dbupd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-fsalogd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-fsd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-ftpd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-genericd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-nrecycler.1m
+file path=opt/SUNWsamfs/man/man1m/sam-recycler.1m
+file path=opt/SUNWsamfs/man/man1m/sam-releaser.1m
+file path=opt/SUNWsamfs/man/man1m/sam-rftd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-robotsd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-rpcd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-scannerd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-serverd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-sharefsd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-shrink.1m
+file path=opt/SUNWsamfs/man/man1m/sam-stagealld.1m
+file path=opt/SUNWsamfs/man/man1m/sam-stagerd.1m
+file path=opt/SUNWsamfs/man/man1m/sam-stagerd_copy.1m
+file path=opt/SUNWsamfs/man/man1m/sam-stk_helper.1m
+file path=opt/SUNWsamfs/man/man1m/sam-stkd.1m
+file path=opt/SUNWsamfs/man/man1m/samadm.1m
+file path=opt/SUNWsamfs/man/man1m/sambcheck.1m
+file path=opt/SUNWsamfs/man/man1m/samchaid.1m
+file path=opt/SUNWsamfs/man/man1m/samcmd.1m
+file path=opt/SUNWsamfs/man/man1m/samcrondump.1m
+file path=opt/SUNWsamfs/man/man1m/samcronfix.1m
+file path=opt/SUNWsamfs/man/man1m/samd.1m
+file path=opt/SUNWsamfs/man/man1m/samdb.1m
+file path=opt/SUNWsamfs/man/man1m/samexplorer.1m
+file path=opt/SUNWsamfs/man/man1m/samexport.1m
+file path=opt/SUNWsamfs/man/man1m/samfsck.1m
+file path=opt/SUNWsamfs/man/man1m/samfsconfig.1m
+file path=opt/SUNWsamfs/man/man1m/samfsdump.1m
+file path=opt/SUNWsamfs/man/man1m/samfsinfo.1m
+file path=opt/SUNWsamfs/man/man1m/samfsrestore.1m
+file path=opt/SUNWsamfs/man/man1m/samfstyp.1m
+file path=opt/SUNWsamfs/man/man1m/samgrowfs.1m
+file path=opt/SUNWsamfs/man/man1m/samimport.1m
+file path=opt/SUNWsamfs/man/man1m/samload.1m
+file path=opt/SUNWsamfs/man/man1m/sammkfs.1m
+file path=opt/SUNWsamfs/man/man1m/samncheck.1m
+file path=opt/SUNWsamfs/man/man1m/samquota.1m
+file path=opt/SUNWsamfs/man/man1m/samquotastat.1m
+file path=opt/SUNWsamfs/man/man1m/samset.1m
+file path=opt/SUNWsamfs/man/man1m/samsharefs.1m
+file path=opt/SUNWsamfs/man/man1m/samsnoop.1m
+file path=opt/SUNWsamfs/man/man1m/samstorade.1m
+file path=opt/SUNWsamfs/man/man1m/samtrace.1m
+file path=opt/SUNWsamfs/man/man1m/samu.1m
+file path=opt/SUNWsamfs/man/man1m/samunhold.1m
+file path=opt/SUNWsamfs/man/man1m/save_core.sh.1m
+file path=opt/SUNWsamfs/man/man1m/scanner.1m
+file path=opt/SUNWsamfs/man/man1m/sefreport.1m
+file path=opt/SUNWsamfs/man/man1m/sendtrap.1m
+file path=opt/SUNWsamfs/man/man1m/set_admin.1m
+file path=opt/SUNWsamfs/man/man1m/set_state.1m
+file path=opt/SUNWsamfs/man/man1m/showqueue.1m
+file path=opt/SUNWsamfs/man/man1m/stageall.1m
+file path=opt/SUNWsamfs/man/man1m/stageback.sh.1m
+file path=opt/SUNWsamfs/man/man1m/star.1m
+file path=opt/SUNWsamfs/man/man1m/tapealert.1m
+file path=opt/SUNWsamfs/man/man1m/tarback.sh.1m
+file path=opt/SUNWsamfs/man/man1m/tplabel.1m
+file path=opt/SUNWsamfs/man/man1m/trace_rotate.1m
+file path=opt/SUNWsamfs/man/man1m/umount_samfs.1m
+file path=opt/SUNWsamfs/man/man1m/unarchive.1m
+file path=opt/SUNWsamfs/man/man1m/undamage.1m
+file path=opt/SUNWsamfs/man/man1m/unload.1m
+file path=opt/SUNWsamfs/man/man1m/unrearch.1m
+file path=opt/SUNWsamfs/man/man1m/unreserve.1m
+file path=opt/SUNWsamfs/man/man3/intro_libsam.3
+file path=opt/SUNWsamfs/man/man3/intro_libsamrpc.3
+file path=opt/SUNWsamfs/man/man3/qfs_listio.3
+file path=opt/SUNWsamfs/man/man3/sam_advise.3
+file path=opt/SUNWsamfs/man/man3/sam_archive.3
+file path=opt/SUNWsamfs/man/man3/sam_cancelstage.3
+file path=opt/SUNWsamfs/man/man3/sam_closecat.3
+file path=opt/SUNWsamfs/man/man3/sam_damage.3
+file path=opt/SUNWsamfs/man/man3/sam_devstat.3
+file path=opt/SUNWsamfs/man/man3/sam_devstr.3
+file path=opt/SUNWsamfs/man/man3/sam_exarchive.3
+file path=opt/SUNWsamfs/man/man3/sam_getcatalog.3
+file path=opt/SUNWsamfs/man/man3/sam_lstat.3
+file path=opt/SUNWsamfs/man/man3/sam_mig_create_file.3
+file path=opt/SUNWsamfs/man/man3/sam_mig_mount_media.3
+file path=opt/SUNWsamfs/man/man3/sam_mig_rearchive.3
+file path=opt/SUNWsamfs/man/man3/sam_mig_release_device.3
+file path=opt/SUNWsamfs/man/man3/sam_mig_stage_end.3
+file path=opt/SUNWsamfs/man/man3/sam_mig_stage_error.3
+file path=opt/SUNWsamfs/man/man3/sam_mig_stage_file.3
+file path=opt/SUNWsamfs/man/man3/sam_mig_stage_write.3
+file path=opt/SUNWsamfs/man/man3/sam_opencat.3
+file path=opt/SUNWsamfs/man/man3/sam_readrminfo.3
+file path=opt/SUNWsamfs/man/man3/sam_rearch.3
+file path=opt/SUNWsamfs/man/man3/sam_release.3
+file path=opt/SUNWsamfs/man/man3/sam_request.3
+file path=opt/SUNWsamfs/man/man3/sam_restore_copy.3
+file path=opt/SUNWsamfs/man/man3/sam_restore_file.3
+file path=opt/SUNWsamfs/man/man3/sam_segment.3
+file path=opt/SUNWsamfs/man/man3/sam_segment_stat.3
+file path=opt/SUNWsamfs/man/man3/sam_segment_vsn_stat.3
+file path=opt/SUNWsamfs/man/man3/sam_setfa.3
+file path=opt/SUNWsamfs/man/man3/sam_ssum.3
+file path=opt/SUNWsamfs/man/man3/sam_stage.3
+file path=opt/SUNWsamfs/man/man3/sam_stat.3
+file path=opt/SUNWsamfs/man/man3/sam_unarchive.3
+file path=opt/SUNWsamfs/man/man3/sam_undamage.3
+file path=opt/SUNWsamfs/man/man3/sam_unrearch.3
+file path=opt/SUNWsamfs/man/man3/sam_vsn_stat.3
+file path=opt/SUNWsamfs/man/man3/usam_mig_cancel_stage_req.3
+file path=opt/SUNWsamfs/man/man3/usam_mig_initialize.3
+file path=opt/SUNWsamfs/man/man3/usam_mig_stage_file_req.3
+file path=opt/SUNWsamfs/man/man3x/intro_libsam.3x
+file path=opt/SUNWsamfs/man/man3x/intro_libsamrpc.3x
+file path=opt/SUNWsamfs/man/man3x/sam_archive.3x
+file path=opt/SUNWsamfs/man/man3x/sam_closerpc.3x
+file path=opt/SUNWsamfs/man/man3x/sam_initrpc.3x
+file path=opt/SUNWsamfs/man/man3x/sam_lstat.3x
+file path=opt/SUNWsamfs/man/man3x/sam_release.3x
+file path=opt/SUNWsamfs/man/man3x/sam_segment.3x
+file path=opt/SUNWsamfs/man/man3x/sam_setfa.3x
+file path=opt/SUNWsamfs/man/man3x/sam_stage.3x
+file path=opt/SUNWsamfs/man/man3x/sam_stat.3x
+file path=opt/SUNWsamfs/man/man4/archiver.cmd.4
+file path=opt/SUNWsamfs/man/man4/defaults.conf.4
+file path=opt/SUNWsamfs/man/man4/devlog.4
+file path=opt/SUNWsamfs/man/man4/diskvols.conf.4
+file path=opt/SUNWsamfs/man/man4/fsalogd.cmd.4
+file path=opt/SUNWsamfs/man/man4/ftp.cmd.4
+file path=opt/SUNWsamfs/man/man4/hosts.fs.4
+file path=opt/SUNWsamfs/man/man4/hosts.fs.local.4
+file path=opt/SUNWsamfs/man/man4/inquiry.conf.4
+file path=opt/SUNWsamfs/man/man4/mcf.4
+file path=opt/SUNWsamfs/man/man4/notify.cmd.4
+file path=opt/SUNWsamfs/man/man4/nrecycler.cmd.4
+file path=opt/SUNWsamfs/man/man4/preview.cmd.4
+file path=opt/SUNWsamfs/man/man4/recycler.cmd.4
+file path=opt/SUNWsamfs/man/man4/releaser.cmd.4
+file path=opt/SUNWsamfs/man/man4/rft.cmd.4
+file path=opt/SUNWsamfs/man/man4/samdb.conf.4
+file path=opt/SUNWsamfs/man/man4/samfs.cmd.4
+file path=opt/SUNWsamfs/man/man4/sefdata.4
+file path=opt/SUNWsamfs/man/man4/sefsysevent.4
+file path=opt/SUNWsamfs/man/man4/shrink.cmd.4
+file path=opt/SUNWsamfs/man/man4/stager.cmd.4
+file path=opt/SUNWsamfs/man/man5/media.5
+file path=opt/SUNWsamfs/man/man5/sam_worm.5
+file path=opt/SUNWsamfs/man/man7/acl2amd640.7
+file path=opt/SUNWsamfs/man/man7/acl452.7
+file path=opt/SUNWsamfs/man/man7/historian.7
+file path=opt/SUNWsamfs/man/man7/sam-remote.7
+file path=opt/SUNWsamfs/man/man7/samaio.7
+file path=opt/SUNWsamfs/man/man7/ssi.sh.7
+file path=opt/SUNWsamfs/man/man7/ssi_so.7
+file path=opt/SUNWsamfs/man/man7/stk.7
+file path=opt/SUNWsamfs/sbin/$(MACH)/samtrace
+file path=opt/SUNWsamfs/sbin/$(MACH64)/samtrace
+file path=opt/SUNWsamfs/sbin/archive_audit
+file path=opt/SUNWsamfs/sbin/archiver
+file path=opt/SUNWsamfs/sbin/auditslot
+file path=opt/SUNWsamfs/sbin/build_cat
+file path=opt/SUNWsamfs/sbin/chmed
+file path=opt/SUNWsamfs/sbin/cleandrive
+file path=opt/SUNWsamfs/sbin/clientmgmt
+file path=opt/SUNWsamfs/sbin/dmpshm
+file path=opt/SUNWsamfs/sbin/dump_cat
+file path=opt/SUNWsamfs/sbin/dump_log
+link path=opt/SUNWsamfs/sbin/exarchive target=unarchive
+link path=opt/SUNWsamfs/sbin/export target=samexport
+file path=opt/SUNWsamfs/sbin/fsmadm
+file path=opt/SUNWsamfs/sbin/fsmdb
+file path=opt/SUNWsamfs/sbin/fsmgmtd
+file path=opt/SUNWsamfs/sbin/fsmupd
+file path=opt/SUNWsamfs/sbin/itemize
+link path=opt/SUNWsamfs/sbin/load target=samload
+file path=opt/SUNWsamfs/sbin/move
+file path=opt/SUNWsamfs/sbin/odlabel
+link path=opt/SUNWsamfs/sbin/rearch target=unarchive
+file path=opt/SUNWsamfs/sbin/reserve
+file path=opt/SUNWsamfs/sbin/sam-amld
+file path=opt/SUNWsamfs/sbin/sam-archiverd
+file path=opt/SUNWsamfs/sbin/sam-arcopy
+file path=opt/SUNWsamfs/sbin/sam-arfind
+file path=opt/SUNWsamfs/sbin/sam-catserverd
+file path=opt/SUNWsamfs/sbin/sam-clientd
+file path=opt/SUNWsamfs/sbin/sam-dbupd
+file path=opt/SUNWsamfs/sbin/sam-fsalogd
+link path=opt/SUNWsamfs/sbin/sam-fsd target=/usr/lib/fs/samfs/sam-fsd pkg.linted.userland.action002.0=true
+file path=opt/SUNWsamfs/sbin/sam-genericd
+file path=opt/SUNWsamfs/sbin/sam-nrecycler
+file path=opt/SUNWsamfs/sbin/sam-recycler
+file path=opt/SUNWsamfs/sbin/sam-releaser
+file path=opt/SUNWsamfs/sbin/sam-rftd
+file path=opt/SUNWsamfs/sbin/sam-robotsd
+file path=opt/SUNWsamfs/sbin/sam-rpcd
+file path=opt/SUNWsamfs/sbin/sam-scannerd
+file path=opt/SUNWsamfs/sbin/sam-serverd
+file path=opt/SUNWsamfs/sbin/sam-stagealld
+file path=opt/SUNWsamfs/sbin/sam-stagerd
+file path=opt/SUNWsamfs/sbin/sam-stagerd_copy
+file path=opt/SUNWsamfs/sbin/samadm
+link path=opt/SUNWsamfs/sbin/sambcheck target=/usr/lib/fs/samfs/bcheck pkg.linted.userland.action002.0=true
+file path=opt/SUNWsamfs/sbin/samchaid
+file path=opt/SUNWsamfs/sbin/samcmd
+file path=opt/SUNWsamfs/sbin/samcrondump
+file path=opt/SUNWsamfs/sbin/samd
+file path=opt/SUNWsamfs/sbin/samdb
+file path=opt/SUNWsamfs/sbin/samexplorer
+file path=opt/SUNWsamfs/sbin/samexport
+link path=opt/SUNWsamfs/sbin/samfsck target=/usr/lib/fs/samfs/fsck pkg.linted.userland.action002.0=true
+file path=opt/SUNWsamfs/sbin/samfsconfig
+link path=opt/SUNWsamfs/sbin/samfsdump target=/usr/lib/fs/samfs/samfsrestore pkg.linted.userland.action002.0=true
+link path=opt/SUNWsamfs/sbin/samfsinfo target=/usr/lib/fs/samfs/mkfs pkg.linted.userland.action002.0=true
+link path=opt/SUNWsamfs/sbin/samfsrestore target=/usr/lib/fs/samfs/samfsrestore pkg.linted.userland.action002.0=true
+link path=opt/SUNWsamfs/sbin/samfstyp target=/usr/lib/fs/samfs/fstyp pkg.linted.userland.action002.0=true
+link path=opt/SUNWsamfs/sbin/samgrowfs target=/usr/lib/fs/samfs/mkfs pkg.linted.userland.action002.0=true
+file path=opt/SUNWsamfs/sbin/samimport pkg.linted.userland.action001.3=true
+file path=opt/SUNWsamfs/sbin/samload
+link path=opt/SUNWsamfs/sbin/sammkfs target=/usr/lib/fs/samfs/mkfs pkg.linted.userland.action002.0=true
+link path=opt/SUNWsamfs/sbin/samncheck target=/usr/lib/fs/samfs/ncheck pkg.linted.userland.action002.0=true
+file path=opt/SUNWsamfs/sbin/samquota
+file path=opt/SUNWsamfs/sbin/samquotastat
+file path=opt/SUNWsamfs/sbin/samset
+file path=opt/SUNWsamfs/sbin/samsharefs
+file path=opt/SUNWsamfs/sbin/samstorade
+file path=opt/SUNWsamfs/sbin/samtrace
+hardlink path=opt/SUNWsamfs/sbin/samu target=samcmd
+file path=opt/SUNWsamfs/sbin/sefreport
+file path=opt/SUNWsamfs/sbin/set_admin
+file path=opt/SUNWsamfs/sbin/set_state
+file path=opt/SUNWsamfs/sbin/showqueue
+file path=opt/SUNWsamfs/sbin/star
+file path=opt/SUNWsamfs/sbin/tapealert
+file path=opt/SUNWsamfs/sbin/tplabel
+file path=opt/SUNWsamfs/sbin/trace_rotate
+file path=opt/SUNWsamfs/sbin/unarchive
+link path=opt/SUNWsamfs/sbin/undamage target=unarchive
+file path=opt/SUNWsamfs/sbin/unload
+link path=opt/SUNWsamfs/sbin/unrearch target=unarchive
+file path=opt/SUNWsamfs/sbin/unreserve
+file path=opt/SUNWsamfs/util/check_mcf.pl mode=0550
+file path=opt/SUNWsamfs/util/samqfs-postinstall mode=0550
+hardlink path=opt/SUNWsamfs/zone/bin/archive target=../../bin/archive
+link path=opt/SUNWsamfs/zone/bin/release target=archive
+hardlink path=opt/SUNWsamfs/zone/bin/request target=../../bin/request
+hardlink path=opt/SUNWsamfs/zone/bin/sdu target=../../bin/sdu
+link path=opt/SUNWsamfs/zone/bin/segment target=archive
+link path=opt/SUNWsamfs/zone/bin/setfa target=archive
+hardlink path=opt/SUNWsamfs/zone/bin/sfind target=../../bin/sfind
+hardlink path=opt/SUNWsamfs/zone/bin/sls target=../../bin/sls
+link path=opt/SUNWsamfs/zone/bin/squota target=../sbin/samquota
+link path=opt/SUNWsamfs/zone/bin/ssum target=archive
+link path=opt/SUNWsamfs/zone/bin/stage target=archive
+hardlink path=opt/SUNWsamfs/zone/lib/libsam.so target=../../lib/libsam.so
+hardlink path=opt/SUNWsamfs/zone/lib/libsamcat.so target=../../lib/libsamcat.so
+link path=opt/SUNWsamfs/zone/lib/libsamconf.so \
+    target=/usr/lib/fs/samfs/libsamconf.so pkg.linted.userland.action002.0=true
+hardlink path=opt/SUNWsamfs/zone/lib/libsamrft.so target=../../lib/libsamrft.so
+hardlink path=opt/SUNWsamfs/zone/lib/libsamut.so target=../../lib/libsamut.so
+file path=opt/SUNWsamfs/zone/man/man1/archive.1
+file path=opt/SUNWsamfs/zone/man/man1/release.1
+file path=opt/SUNWsamfs/zone/man/man1/request.1
+file path=opt/SUNWsamfs/zone/man/man1/sdu.1
+file path=opt/SUNWsamfs/zone/man/man1/segment.1
+file path=opt/SUNWsamfs/zone/man/man1/setfa.1
+file path=opt/SUNWsamfs/zone/man/man1/sfind.1
+file path=opt/SUNWsamfs/zone/man/man1/sls.1
+file path=opt/SUNWsamfs/zone/man/man1/squota.1
+file path=opt/SUNWsamfs/zone/man/man1/ssum.1
+file path=opt/SUNWsamfs/zone/man/man1/stage.1
+hardlink path=opt/SUNWsamfs/zone/sbin/samquota target=../../sbin/samquota
+file path=usr/lib/devfsadm/linkmod/SUNW_samaio_link.so
+file path=usr/lib/fs/samfs/$(MACH)/fsck mode=0555
+file path=usr/lib/fs/samfs/$(MACH)/mkfs mode=0555
+file path=usr/lib/fs/samfs/$(MACH64)/fsck mode=0555
+file path=usr/lib/fs/samfs/$(MACH64)/libsamconf.so
+file path=usr/lib/fs/samfs/$(MACH64)/mkfs mode=0555
+file path=usr/lib/fs/samfs/bcheck mode=0550
+file path=usr/lib/fs/samfs/fsck mode=0550
+file path=usr/lib/fs/samfs/fstyp mode=0555
+file path=usr/lib/fs/samfs/libsamconf.so
+file path=usr/lib/fs/samfs/mkfs mode=0555
+link path=usr/lib/fs/samfs/mount target=/etc/fs/samfs/mount pkg.linted.userland.action002.0=true
+file path=usr/lib/fs/samfs/ncheck mode=0550
+file path=usr/lib/fs/samfs/sam-fsd mode=0500
+link path=usr/lib/fs/samfs/samfsdump target=samfsrestore
+file path=usr/lib/fs/samfs/samfsrestore mode=0550
+link path=usr/lib/fs/samfs/umount target=/etc/fs/samfs/umount pkg.linted.userland.action002.0=true
+file path=usr/lib/locale/C/LC_MESSAGES/SUNWsamfs
+file path=var/opt/SUNWsamfs/errcodes/acl2amd640
+file path=var/opt/SUNWsamfs/errcodes/acl452
+file path=var/opt/SUNWsamfs/errcodes/adic100
+file path=var/opt/SUNWsamfs/errcodes/adic1000
+file path=var/opt/SUNWsamfs/errcodes/adic448
+file path=var/opt/SUNWsamfs/errcodes/atl1500
+file path=var/opt/SUNWsamfs/errcodes/atlp3000
+file path=var/opt/SUNWsamfs/errcodes/cyg1803
+file path=var/opt/SUNWsamfs/errcodes/dlt2700
+file path=var/opt/SUNWsamfs/errcodes/docstor
+file path=var/opt/SUNWsamfs/errcodes/exb210
+file path=var/opt/SUNWsamfs/errcodes/exbx80
+file path=var/opt/SUNWsamfs/errcodes/fujitsu_nm
+file path=var/opt/SUNWsamfs/errcodes/hpc7200
+file path=var/opt/SUNWsamfs/errcodes/hpoplib
+file path=var/opt/SUNWsamfs/errcodes/hpslxx
+file path=var/opt/SUNWsamfs/errcodes/ibm3570c
+file path=var/opt/SUNWsamfs/errcodes/ibm3584
+file path=var/opt/SUNWsamfs/errcodes/metd28
+file path=var/opt/SUNWsamfs/errcodes/metd360
+file path=var/opt/SUNWsamfs/errcodes/odi_neo
+file path=var/opt/SUNWsamfs/errcodes/plasmond
+file path=var/opt/SUNWsamfs/errcodes/plasmong
+file path=var/opt/SUNWsamfs/errcodes/qual82xx
+file path=var/opt/SUNWsamfs/errcodes/quantumc4
+file path=var/opt/SUNWsamfs/errcodes/sonycsm
+file path=var/opt/SUNWsamfs/errcodes/sonydms
+file path=var/opt/SUNWsamfs/errcodes/spcpyth
+file path=var/opt/SUNWsamfs/errcodes/speclog
+file path=var/opt/SUNWsamfs/errcodes/stk97xx
+file path=var/opt/SUNWsamfs/errcodes/stklxx
+file path=var/opt/SUNWsamfs/errcodes/stksl3000
+file path=var/svc/manifest/system/sam-fsd.xml
+file path=var/svc/manifest/system/samqfs-postinstall.xml
+driver name=samioc perms="* 0666 root sys"
+driver name=samaio perms="* 0666 root sys"
