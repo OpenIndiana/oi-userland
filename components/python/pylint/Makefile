@@ -19,30 +19,37 @@
 # CDDL HEADER END
 
 #
-# Copyright 2021 Gary Mills
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2021 Gary Mills
+# Copyright 2022 Andreas Wacknitz
 #
 
 BUILD_STYLE=	setup.py
 BUILD_BITS=	NO_ARCH
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylint
-COMPONENT_VERSION=	2.9.3
+COMPONENT_VERSION=	2.12.2
+COMPONENT_SUMMARY=	Pylint is a Python static code analysis tool
+COMPONENT_DESCRIPTION=	Pylint is a Python static code analysis tool which looks for programming errors, helps enforcing a coding standard, sniffs for code smells and offers simple refactoring suggestions.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:9f0c8e6cd5c812fe4cc65b11dbce0573302171e385fcd9ebb48e0a5e99fd1dde
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/PyCQA/$(COMPONENT_NAME)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL=  https://github.com/PyCQA/$(COMPONENT_NAME)
+COMPONENT_ARCHIVE_HASH= sha256:411308682f3d4578bb769e7fa549c8f34edf1033871d2e8cd5c3ce16a5741c59
+# The sources provided by pypi are missing tests and doc files, thus we are using the sources provided by Github:
+#COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_ARCHIVE_URL=	https://github.com/PyCQA/pylint/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_PROJECT_URL=	https://www.pylint.org/
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_FMRI=			developer/python/$(COMPONENT_NAME)
+COMPONENT_LICENSE=	GPLv2
 
 # Set python version used by this product
 PYTHON_VERSION=		3.9
 PYTHON_VERSIONS=	3.9
 
 include $(WS_MAKE_RULES)/common.mk
+
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 # There are several pylint documentation files that setup.py isn't installing
 # but are present in the pylint package on other distributions. Copy them into
@@ -78,49 +85,33 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) $(COMPONENT_SRC)/examples/pylintrc_camelcase $(PDOC_PYLINT_EXAMPLES) ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) $(COMPONENT_SRC)/examples/pylintrc $(PDOC_PYLINT_EXAMPLES) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTOUSRBINDIR); $(MV) epylint epylint-$(PYTHON_VERSION)) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTOUSRBINDIR); $(MV) pylint pylint-$(PYTHON_VERSION)) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTOUSRBINDIR); $(MV) pyreverse pyreverse-$(PYTHON_VERSION)) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTOUSRBINDIR); $(MV) symilar symilar-$(PYTHON_VERSION)) ;
 
-# The tests are run using python 3.9 only and require that
-# the python-39 package is installed (does not have to be the default python).
-# The astroid-39, isort-39, mccabe-39, and toml-39 packages must also
-# be installed
-
-# Use the python 3.9 libraries for testing.
-test: PYTHON_VERSION=3.9
-
-COMPONENT_TEST_ENV = PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
-
-# Run pytest-3.9
-COMPONENT_TEST_DIR = $(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD = /usr/bin/pytest-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS =
-
-# Typical failures for test target:
-#=========================== short test summary info ============================
-#FAILED test_import_graph.py::test_dependencies_graph[tests/regrtest_data/foo.dot]
-#FAILED test_self.py::TestRunTC::test_pkginfo - AssertionError: expected outpu...
-#FAILED test_self.py::TestRunTC::test_enable_all_works - assert "*************...
-#...
-#FAILED checkers/unittest_typecheck.py::TestTypeChecker::test_nomember_on_c_extension_error_msg
-#FAILED checkers/unittest_typecheck.py::TestTypeChecker::test_nomember_on_c_extension_info_msg
-#=== 14 failed, 1375 passed, 59 skipped, 200 deselected in 263.14s (0:04:23) ====
+COMPONENT_TEST_DIR= $(COMPONENT_SRC)/tests
+COMPONENT_TEST_CMD= tox -e py39
+COMPONENT_TEST_ARGS=
+COMPONENT_TEST_MASTER= $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+# remove times and timings:
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/in [0-9]*\.[0-9]*s //"' \
+	'-e "s/[0-9]*:[0-9]*:[0-9]*//"'
 
 # Manually added test dependencies
-REQUIRED_PACKAGES += library/python/flaky
-REQUIRED_PACKAGES += library/python/hypothesis
-REQUIRED_PACKAGES += library/python/isort
-REQUIRED_PACKAGES += library/python/mccabe
-REQUIRED_PACKAGES += library/python/pluggy
-REQUIRED_PACKAGES += library/python/py
-REQUIRED_PACKAGES += library/python/pytest
-REQUIRED_PACKAGES += library/python/pytest-benchmark
-REQUIRED_PACKAGES += library/python/pytest-reporter
+REQUIRED_PACKAGES += library/python/flaky-39
+REQUIRED_PACKAGES += library/python/hypothesis-39
+REQUIRED_PACKAGES += library/python/pluggy-39
+REQUIRED_PACKAGES += library/python/py-39
+REQUIRED_PACKAGES += library/python/pytest-39
+REQUIRED_PACKAGES += library/python/pytest-benchmark-39
+REQUIRED_PACKAGES += library/python/pytest-reporter-39
 
+# Manually added build dependencies (according to setup.cfg):
+REQUIRED_PACKAGES += library/python/astroid-39
+REQUIRED_PACKAGES += library/python/isort-39
+REQUIRED_PACKAGES += library/python/mccabe-39
+REQUIRED_PACKAGES += library/python/toml-39
+REQUIRED_PACKAGES += library/python/typing_extensions-39
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/python/importlib-metadata-39
+REQUIRED_PACKAGES += library/python/setuptools-39
 REQUIRED_PACKAGES += runtime/python-39
