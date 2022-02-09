@@ -1,0 +1,39 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/include/olm/error.h
+file path=usr/include/olm/inbound_group_session.h
+file path=usr/include/olm/olm.h
+file path=usr/include/olm/olm_export.h
+file path=usr/include/olm/outbound_group_session.h
+file path=usr/include/olm/pk.h
+file path=usr/include/olm/sas.h
+file path=usr/lib/$(MACH64)/cmake/Olm/OlmConfig.cmake
+file path=usr/lib/$(MACH64)/cmake/Olm/OlmConfigVersion.cmake
+file path=usr/lib/$(MACH64)/cmake/Olm/OlmTargets-release.cmake
+file path=usr/lib/$(MACH64)/cmake/Olm/OlmTargets.cmake
+link path=usr/lib/$(MACH64)/libolm.so target=libolm.so.3
+file path=usr/lib/$(MACH64)/libolm.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libolm.so.3 target=libolm.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/pkgconfig/olm.pc
