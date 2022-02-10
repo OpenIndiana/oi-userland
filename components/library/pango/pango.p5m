@@ -9,6 +9,7 @@
 # http://www.illumos.org/license/CDDL.
 #
 
+
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
@@ -25,7 +26,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # We don't want 32-bit binaries:                                                                                                                                                                   
-<transform file path=.*/bin/i86/.+ -> drop>                                                                                          
+<transform file path=.*/bin/$(MACH32)/.+ -> drop>                                                                                          
 
 depend fmri=library/desktop/pangox-compat@0.0.2,5.11-2015.0.0.0 type=require
 
@@ -49,6 +50,7 @@ file path=usr/include/pango-1.0/pango/pango-enum-types.h
 file path=usr/include/pango-1.0/pango/pango-features.h
 file path=usr/include/pango-1.0/pango/pango-font.h
 file path=usr/include/pango-1.0/pango/pango-fontmap.h
+file path=usr/include/pango-1.0/pango/pango-fontset-simple.h
 file path=usr/include/pango-1.0/pango/pango-fontset.h
 file path=usr/include/pango-1.0/pango/pango-glyph-item.h
 file path=usr/include/pango-1.0/pango/pango-glyph.h
@@ -81,20 +83,20 @@ file path=usr/lib/$(MACH64)/girepository-1.0/PangoFc-1.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/PangoOT-1.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/PangoXft-1.0.typelib
 link path=usr/lib/$(MACH64)/libpango-1.0.so target=libpango-1.0.so.0
-link path=usr/lib/$(MACH64)/libpango-1.0.so.0 target=libpango-1.0.so.0.5000.3
-file path=usr/lib/$(MACH64)/libpango-1.0.so.0.5000.3
+link path=usr/lib/$(MACH64)/libpango-1.0.so.0 target=libpango-1.0.so.0.5000.4
+file path=usr/lib/$(MACH64)/libpango-1.0.so.0.5000.4
 link path=usr/lib/$(MACH64)/libpangocairo-1.0.so target=libpangocairo-1.0.so.0
 link path=usr/lib/$(MACH64)/libpangocairo-1.0.so.0 \
-    target=libpangocairo-1.0.so.0.5000.3
-file path=usr/lib/$(MACH64)/libpangocairo-1.0.so.0.5000.3
+    target=libpangocairo-1.0.so.0.5000.4
+file path=usr/lib/$(MACH64)/libpangocairo-1.0.so.0.5000.4
 link path=usr/lib/$(MACH64)/libpangoft2-1.0.so target=libpangoft2-1.0.so.0
 link path=usr/lib/$(MACH64)/libpangoft2-1.0.so.0 \
-    target=libpangoft2-1.0.so.0.5000.3
-file path=usr/lib/$(MACH64)/libpangoft2-1.0.so.0.5000.3
+    target=libpangoft2-1.0.so.0.5000.4
+file path=usr/lib/$(MACH64)/libpangoft2-1.0.so.0.5000.4
 link path=usr/lib/$(MACH64)/libpangoxft-1.0.so target=libpangoxft-1.0.so.0
 link path=usr/lib/$(MACH64)/libpangoxft-1.0.so.0 \
-    target=libpangoxft-1.0.so.0.5000.3
-file path=usr/lib/$(MACH64)/libpangoxft-1.0.so.0.5000.3
+    target=libpangoxft-1.0.so.0.5000.4
+file path=usr/lib/$(MACH64)/libpangoxft-1.0.so.0.5000.4
 file path=usr/lib/$(MACH64)/pkgconfig/pango.pc
 file path=usr/lib/$(MACH64)/pkgconfig/pangocairo.pc
 file path=usr/lib/$(MACH64)/pkgconfig/pangofc.pc
@@ -123,6 +125,16 @@ file path=usr/lib/installed-tests/pango/breaks/three.expected
 file path=usr/lib/installed-tests/pango/breaks/two.break
 file path=usr/lib/installed-tests/pango/breaks/two.expected
 file path=usr/lib/installed-tests/pango/cxx-test
+file path=usr/lib/installed-tests/pango/fonts/Cantarell-VF.otf
+file path=usr/lib/installed-tests/pango/fonts/DejaVuSans.ttf
+file path=usr/lib/installed-tests/pango/fonts/DejaVuSansMono.ttf
+file path=usr/lib/installed-tests/pango/fonts/amiri-06dd.ttf
+file path=usr/lib/installed-tests/pango/fonts/droid-sans-subset.ttf
+file path=usr/lib/installed-tests/pango/fonts/emoji-subset.ttf
+file path=usr/lib/installed-tests/pango/fonts/fa-regular-f2db.ttf
+file path=usr/lib/installed-tests/pango/fonts/fa-solid-f2db.ttf
+file path=usr/lib/installed-tests/pango/fonts/fonts.conf
+file path=usr/lib/installed-tests/pango/fonts/noto-sans-cjk.ttf
 file path=usr/lib/installed-tests/pango/itemize/one.expected
 file path=usr/lib/installed-tests/pango/itemize/one.items
 file path=usr/lib/installed-tests/pango/itemize/two.expected
@@ -135,6 +147,7 @@ file path=usr/lib/installed-tests/pango/layouts/bratwurst3.layout
 file path=usr/lib/installed-tests/pango/layouts/bratwurst4.layout
 file path=usr/lib/installed-tests/pango/layouts/effigy.layout
 file path=usr/lib/installed-tests/pango/layouts/kebab.layout
+file path=usr/lib/installed-tests/pango/layouts/letterspacing.layout
 file path=usr/lib/installed-tests/pango/layouts/no-space.layout
 file path=usr/lib/installed-tests/pango/layouts/tab-assert.layout
 file path=usr/lib/installed-tests/pango/layouts/tab-crash.layout
@@ -310,17 +323,17 @@ file path=usr/lib/installed-tests/pango/testscript
 file path=usr/lib/installed-tests/pango/testserialize
 file path=usr/lib/installed-tests/pango/testtabs
 link path=usr/lib/libpango-1.0.so target=libpango-1.0.so.0
-link path=usr/lib/libpango-1.0.so.0 target=libpango-1.0.so.0.5000.3
-file path=usr/lib/libpango-1.0.so.0.5000.3
+link path=usr/lib/libpango-1.0.so.0 target=libpango-1.0.so.0.5000.4
+file path=usr/lib/libpango-1.0.so.0.5000.4
 link path=usr/lib/libpangocairo-1.0.so target=libpangocairo-1.0.so.0
-link path=usr/lib/libpangocairo-1.0.so.0 target=libpangocairo-1.0.so.0.5000.3
-file path=usr/lib/libpangocairo-1.0.so.0.5000.3
+link path=usr/lib/libpangocairo-1.0.so.0 target=libpangocairo-1.0.so.0.5000.4
+file path=usr/lib/libpangocairo-1.0.so.0.5000.4
 link path=usr/lib/libpangoft2-1.0.so target=libpangoft2-1.0.so.0
-link path=usr/lib/libpangoft2-1.0.so.0 target=libpangoft2-1.0.so.0.5000.3
-file path=usr/lib/libpangoft2-1.0.so.0.5000.3
+link path=usr/lib/libpangoft2-1.0.so.0 target=libpangoft2-1.0.so.0.5000.4
+file path=usr/lib/libpangoft2-1.0.so.0.5000.4
 link path=usr/lib/libpangoxft-1.0.so target=libpangoxft-1.0.so.0
-link path=usr/lib/libpangoxft-1.0.so.0 target=libpangoxft-1.0.so.0.5000.3
-file path=usr/lib/libpangoxft-1.0.so.0.5000.3
+link path=usr/lib/libpangoxft-1.0.so.0 target=libpangoxft-1.0.so.0.5000.4
+file path=usr/lib/libpangoxft-1.0.so.0.5000.4
 file path=usr/lib/pkgconfig/pango.pc
 file path=usr/lib/pkgconfig/pangocairo.pc
 file path=usr/lib/pkgconfig/pangofc.pc
