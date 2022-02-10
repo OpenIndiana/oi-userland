@@ -11,20 +11,21 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2022 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= enchant
-COMPONENT_VERSION= 1.6.1
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.3.2
+#COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME spell checker component
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:bef0d9c0fef2e4e8746956b68e4d6c6641f6b85bd2908d91731efb68eba9e3f5
+  sha256:ce9ba47fd4d34031bd69445598a698a6611602b2b0e91d705e91a6f5099ead6e
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/AbiWord/enchant/releases/download/enchant-1-6-1/$(COMPONENT_ARCHIVE)
+  https://github.com/AbiWord/enchant/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://abiword.github.io/enchant/
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_FMRI = library/spell-checking/enchant
@@ -52,9 +53,9 @@ install: $(INSTALL_32_and_64)
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += text/aspell
 REQUIRED_PACKAGES += text/hunspell
