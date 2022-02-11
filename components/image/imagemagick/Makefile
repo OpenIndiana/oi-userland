@@ -26,20 +26,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
-COMPONENT_VERSION=		6.9.9
-COMPONENT_REVISION=		3
-COMPONENT_MAJOR_VERSIOR=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+\.[0-9]\+/\1/')
-COMPONENT_SUBVERSION=		21
+COMPONENT_VERSION=		6.9.12
+COMPONENT_SUBVERSION=		38
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_FMRI=			image/imagemagick
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_SUMMARY=		ImageMagick - Image Manipulation Utilities and Libraries
-COMPONENT_PROJECT_URL=		http://www.imagemagick.org/
-COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.gz
+COMPONENT_PROJECT_URL=		https://legacy.imagemagick.org
+COMPONENT_SRC=			$(COMPONENT_NAME)6-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:e8fdd8329c103b1f16654738ba517d46866b6c54ead43e001c04e83531faaab7						
-COMPONENT_ARCHIVE_URL=		https://github.com/ImageMagick/ImageMagick/archive/$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION).tar.gz
+	sha256:209d2c60e19372da6da308004826f8e5004489bc281b6d9410c108655915634c
+COMPONENT_ARCHIVE_URL=		https://github.com/ImageMagick/ImageMagick6/archive/$(HUMAN_VERSION).tar.gz
 COMPONENT_LICENSE = Apache 2.0 license
 COMPONENT_LICENSE_FILE = LICENSE
 
@@ -56,9 +54,6 @@ COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
 #
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
 
-COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_SRC)-$(COMPONENT_SUBVERSION) \
-    $(COMPONENT_SRC))
-
 # To get the Perl modules built it is necessary to copy the PerlMagick directory
 # to the build directory
 #
@@ -71,6 +66,11 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	-e 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' \
 	-e 's|need_relink=yes|need_relink=not_on_solaris|' \
 	libtool)
+
+# remove various perl temporary files
+COMPONENT_POST_INSTALL_ACTION += \
+	$(FIND) $(PROTO_DIR) -name ".packlist" -exec $(RM) {} \; ; \
+	$(FIND) $(PROTO_DIR) -name "perllocal.pod" -exec $(RM) {} \; ;
 
 LIBS += -lsocket -lnsl
 CONFIGURE_ENV += LIBS="$(LIBS)"
@@ -112,11 +112,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
-PKG_MACROS += COMPONENT_SUBVERSION=$(COMPONENT_SUBVERSION)
-PKG_MACROS += PERL_PKG=$(PERL_PKG)
-
-
 # Needed for "gmake test" to work successfully.  If SHELLOPTS is exported (as
 # it is by the Userland Makefiles), then all shell options get exported to
 # child invocations of bash, which results in test failures due to nounset and
@@ -142,7 +137,8 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 REQUIRED_PACKAGES += print/filter/ghostscript/fonts/gnu-gs-fonts-std
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += image/djvulibre
@@ -153,7 +149,6 @@ REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += image/library/openjpeg
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
-REQUIRED_PACKAGES += library/fftw-3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libtool/libltdl
@@ -161,10 +156,9 @@ REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
