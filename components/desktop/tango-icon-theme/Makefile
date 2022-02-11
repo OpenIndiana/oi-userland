@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tango-icon-theme
 COMPONENT_VERSION=      0.8.90
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_PROJECT_URL=  http://tango.freedesktop.org/
 COMPONENT_SUMMARY=      Tango icon theme
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,3 +40,4 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 # Manually added dependency
 REQUIRED_PACKAGES+= image/imagemagick
+REQUIRED_PACKAGES += library/desktop/xdg/icon-naming-utils
