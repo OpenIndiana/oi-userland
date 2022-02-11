@@ -28,9 +28,9 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		cog-spur
-COMPONENT_VERSION=	5.0.3141
-GIT_TAG=		sun-v5.0.44
-PLUGIN_REV=		5.0-202201211453-cog
+COMPONENT_VERSION=	5.0.3142
+GIT_TAG=		sun-v5.0.45
+PLUGIN_REV=		5.0-202202061652-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/cog-spur
@@ -44,7 +44,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:db10b0e7eede42573878a34c48685a417ace1ba92b87604dce40d2eb5705ff26
+COMPONENT_ARCHIVE_HASH=	sha256:5b5762cf26347ca18192764f9dea443a3359afb5e0ff565f90dc8d90c1af2f0f
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 TEST_TARGET= $(NO_TESTS)
@@ -89,6 +89,9 @@ CONFIGURE_OPTIONS +=	--without-libtls
 CONFIGURE_OPTIONS.32 +=	--with-src=src/spur32.cog
 CONFIGURE_OPTIONS.64 +=	--with-src=src/spur64.cog
 
+# epoll(5) seems to work, so use epoll instead of select(3c)
+CONFIGURE_ENV    +=     ax_cv_have_epoll=yes
+CONFIGURE_ENV    +=     ax_cv_have_epoll_pwait=yes
 CONFIGURE_ENV    +=     CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV    +=     LIBS="$(LIBS)"
 CONFIGURE_ENV.32 +=	TARGET_ARCH="-m32"
