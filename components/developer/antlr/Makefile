@@ -20,38 +20,38 @@
 #
 
 #
+# Copyright 2022 Gary Mills
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=		32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		antlr
+# This is an ancient version, but a dependency of the ant package
 COMPONENT_VERSION=	2.7.7
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.antlr.org/
+COMPONENT_REVISION=	2
+COMPONENT_PROJECT_URL=	https://www.antlr.org/
+COMPONENT_FMRI=		developer/parser/antlr
+COMPONENT_CLASSIFICATION=	Development/Other Languages
+COMPONENT_SUMMARY=	ANother Tool for Language Recognition
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:853aeb021aef7586bda29e74a6b03006bcb565a755c86b66032d8ec31b67dbb9
-COMPONENT_ARCHIVE_URL=	http://www.antlr2.org/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://www.antlr2.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	java-class/antlr
 
 # Use version of Java defined in ../../make-rules/shared-macros.mk
-PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
+PATH=$(JAVA_HOME)/bin:/usr/bin
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL =		0
 
 CONFIGURE_OPTIONS +=	--without-examples
-
-# pkgdepend doesn't like the first line of a Python script to be:
-# '#!/usr/bin/env python' so turn it into '#!/usr/bin/python2.6'
-COMPONENT_POST_CONFIGURE_ACTION = \
-	$(GSED) -i -e 's/env python/python2.7/' \
-		$(BUILD_DIR_32)/scripts/pyantlr.sh
+# Omit python 2.7 from this build
+CONFIGURE_OPTIONS +=	--disable-python
 
 COMPONENT_INSTALL_ARGS += prefix=$(PROTOUSRDIR)
 COMPONENT_INSTALL_ARGS += libdir=$(PROTOUSRLIBDIR)
@@ -65,15 +65,15 @@ COMPONENT_TEST_TARGETS = test
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-CONFIGURE_ENV += PYTHON=$(PYTHON)
+# Rename some files to accomodate newer versions of antlr
+COMPONENT_POST_INSTALL_ACTION += \
+	(cd $(PROTOUSRBINDIR); $(MV) antlr antlr-$(COMPONENT_VERSION); \
+	$(MV) antlr-config antlr-config-$(COMPONENT_VERSION)) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	(cd $(PROTOUSRLIBDIR); $(MV) antlr.jar antlr-$(COMPONENT_VERSION).jar) ;
 
-# common targets
-build:          $(BUILD_32)
-
-install:        $(INSTALL_32)
-
-test:           $(TEST_32)
-
-REQUIRED_PACKAGES += SUNWcs
+# Added build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
-REQUIRED_PACKAGES += runtime/python-27
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93
