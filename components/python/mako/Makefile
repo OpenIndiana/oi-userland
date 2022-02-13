@@ -21,7 +21,7 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2015, PALO Richard.
 # Copyright 2017 Gary Mills
-# Copyright 2021 Andreas Wacknitz
+# Copyright 2021, 2022 Andreas Wacknitz
 #
 
 BUILD_BITS=NO_ARCH
@@ -29,13 +29,12 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Mako
-COMPONENT_VERSION=	1.1.5
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.1.6
 COMPONENT_SUMMARY=	A template library written in Python
 COMPONENT_PROJECT_URL=	https://www.makotemplates.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:169fa52af22a91900d852e937400e79f535496191c63712e3b9fda5a9bed6fc3
+COMPONENT_ARCHIVE_HASH= sha256:4e9e345a41924a954251b95b4b28e14a301145b544901332e658907a7464b6b2
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_FMRI=		library/python/mako
 COMPONENT_CLASSIFICATION=	Development/Python
@@ -43,16 +42,16 @@ COMPONENT_LICENSE=	MIT
 
 PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
 
-# We don't support tests because we don't have tox:
-TEST_TARGET=		$(NO_TESTS)
+# Tests don't work yet as we are missing many dependencies:
+TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTO_DIR)/usr/bin ; \
          $(MV) -f mako-render mako-render-$(PYTHON_VERSION))
 
-COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
-COMPONENT_TEST_ARGS=	./setup.py test
+COMPONENT_TEST_DIR=		$(COMPONENT_SRC_DIR)
+COMPONENT_TEST_CMD=		tox -e py$(PYV)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
