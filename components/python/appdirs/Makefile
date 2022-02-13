@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		appdirs
 COMPONENT_VERSION=	1.4.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	appdirs will help you choose an appropriate	directory for data
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -46,7 +47,10 @@ include $(WS_MAKE_RULES)/common.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)/test
-COMPONENT_TEST_CMD =	tox-3.9
+COMPONENT_TEST_CMD =	tox -e py$(PYV)
+
+# Manually added test dependencies
+REQUIRED_PACKAGES += library/python/tox
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-37
