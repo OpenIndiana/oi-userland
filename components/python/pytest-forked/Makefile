@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest-forked
 COMPONENT_VERSION=	1.4.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	run each test in a forked subprocess to survive SEGFAULTS or otherwise dying processes
 COMPONENT_PROJECT_URL=	https://github.com/pytest-dev/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,20 +33,22 @@ PYTHON_VERSIONS= 3.7 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Tests don't work yet as we miss many dependent packages.
+# Tests don't work yet. 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
-COMPONENT_TEST_CMD=		tox-3.9 -e py$(PYV)
+COMPONENT_TEST_CMD=		tox -e py$(PYV)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Manually added test dependencies
-REQUIRED_PACKAGES += library/python/pluggy-37
-REQUIRED_PACKAGES += library/python/pluggy-39
 REQUIRED_PACKAGES += library/python/py-37
 REQUIRED_PACKAGES += library/python/py-39
 REQUIRED_PACKAGES += library/python/pytest-37
 REQUIRED_PACKAGES += library/python/pytest-39
-REQUIRED_PACKAGES += library/python/tox-39
+REQUIRED_PACKAGES += library/python/tox
+
+# Manually added dependencies (according to setup.py)
+REQUIRED_PACKAGES += library/python/setuptools_scm-37
+REQUIRED_PACKAGES += library/python/setuptools_scm-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-37
