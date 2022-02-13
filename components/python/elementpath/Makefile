@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         elementpath
 COMPONENT_VERSION=      2.4.0
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=		XPath 1.0/2.0 parsers and selectors for ElementTree and lxml
 COMPONENT_PROJECT_URL=  https://pypi.org/project/elementpath/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,11 +35,15 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Note: Tests don't properly work yet.
 COMPONENT_TEST_DIR=    $(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD=    tox-3.9
+COMPONENT_TEST_CMD=    tox -e py$(PYV)
 COMPONENT_TEST_ARGS=
 
 # Manually added test dependencies
-REQUIRED_PACKAGES += library/python/tox-39
+REQUIRED_PACKAGES += library/python/tox
+
+# Manually added dependencies
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-37

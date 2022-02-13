@@ -17,12 +17,12 @@ BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest-asyncio
-COMPONENT_VERSION=	0.17.0
+COMPONENT_VERSION=	0.18.1
 COMPONENT_SUMMARY=	Pytest support for asyncio
 COMPONENT_PROJECT_URL=	https://github.com/pytest-dev/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:c98e0e04ae5910bbcc219f52bdf871bd1d392f624ef77c49c236613c0b6d8ee1
+COMPONENT_ARCHIVE_HASH= sha256:c43fcdfea2335dd82ffe0f2774e40285ddfea78a8e81e56118d47b6a90fbb09e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Development/Python
@@ -34,7 +34,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Tests don't work yet as we miss many dependent packages.
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
-COMPONENT_TEST_CMD=		tox-3.9
+COMPONENT_TEST_CMD=		tox -e py$(PYV)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -43,18 +43,16 @@ REQUIRED_PACKAGES += library/python/setuptools_scm-37
 REQUIRED_PACKAGES += library/python/setuptools_scm-39
 
 # Manually added test dependencies
-# We are still missing a lot dependencies
+# We are still missing mypy
+REQUIRED_PACKAGES += library/python/coverage-37
+REQUIRED_PACKAGES += library/python/coverage-39
 REQUIRED_PACKAGES += library/python/flaky-37
 REQUIRED_PACKAGES += library/python/flaky-39
 REQUIRED_PACKAGES += library/python/hypothesis-37
 REQUIRED_PACKAGES += library/python/hypothesis-39
-REQUIRED_PACKAGES += library/python/pluggy-37
-REQUIRED_PACKAGES += library/python/pluggy-39
-REQUIRED_PACKAGES += library/python/py-37
-REQUIRED_PACKAGES += library/python/py-39
 REQUIRED_PACKAGES += library/python/pytest-37
 REQUIRED_PACKAGES += library/python/pytest-39
-REQUIRED_PACKAGES += library/python/tox-39
+REQUIRED_PACKAGES += library/python/tox
 REQUIRED_PACKAGES += library/python/zipp-37
 REQUIRED_PACKAGES += library/python/zipp-39
 

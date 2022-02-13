@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2021, Andreas Wacknitz
+# Copyright (c) 2021, 2022 Andreas Wacknitz
 #
 
 BUILD_BITS=NO_ARCH
@@ -28,11 +28,11 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		filelock
-COMPONENT_VERSION=	3.3.1
+COMPONENT_VERSION=	3.4.2
 COMPONENT_SUMMARY=	A platform independent file lock that supports the with-statement
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:34a9f35f95c441e7b38209775d6e0337f9a3759f3565f6c5798f19618527c76f
+COMPONENT_ARCHIVE_HASH= sha256:38b4f4c989f9d06d44524df1b24bd19e167d851f19b50bf3e3559952dddc5b80
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/tox-dev/py-filelock
 COMPONENT_FMRI=		library/python/filelock
@@ -42,6 +42,7 @@ COMPONENT_LICENSE=	Unlicense
 PYTHON_VERSIONS=	3.7 3.9
 include $(WS_MAKE_RULES)/common.mk
 
+# Tests fail because we are missing depencencies (pytest-timeout, covdefaults) 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)/tests
 COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
@@ -56,13 +57,22 @@ COMPONENT_TEST_TRANSFORMS += \
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Manually added test dependencies
-REQUIRED_PACKAGES += library/python/flaky
-REQUIRED_PACKAGES += library/python/hypothesis
-REQUIRED_PACKAGES += library/python/pluggy
-REQUIRED_PACKAGES += library/python/py
-REQUIRED_PACKAGES += library/python/pytest
-REQUIRED_PACKAGES += library/python/pytest-benchmark
-REQUIRED_PACKAGES += library/python/pytest-reporter
+REQUIRED_PACKAGES += library/python/coverage-37
+REQUIRED_PACKAGES += library/python/coverage-39
+REQUIRED_PACKAGES += library/python/flaky-37
+REQUIRED_PACKAGES += library/python/flaky-39
+REQUIRED_PACKAGES += library/python/hypothesis-37
+REQUIRED_PACKAGES += library/python/hypothesis-37
+REQUIRED_PACKAGES += library/python/pluggy-37
+REQUIRED_PACKAGES += library/python/pluggy-39
+REQUIRED_PACKAGES += library/python/py-37
+REQUIRED_PACKAGES += library/python/py-39
+REQUIRED_PACKAGES += library/python/pytest-37
+REQUIRED_PACKAGES += library/python/pytest-39
+REQUIRED_PACKAGES += library/python/pytest-benchmark-37
+REQUIRED_PACKAGES += library/python/pytest-benchmark-39
+REQUIRED_PACKAGES += library/python/pytest-reporter-37
+REQUIRED_PACKAGES += library/python/pytest-reporter-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-37
