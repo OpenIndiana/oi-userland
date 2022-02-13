@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest-cov
 COMPONENT_VERSION=	3.0.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A pytest plugin that produces coverage reports
 COMPONENT_PROJECT_URL=	https://github.com/pytest-dev/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,11 +35,13 @@ include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# Tests don't work yet as we miss many dependent packages.
+# Tests don't work yet as we miss some dependent packages.
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
-COMPONENT_TEST_CMD=		tox-3.9
+COMPONENT_TEST_CMD=		tox -e py$(PYV)
 
 # Manually added test dependencies
+REQUIRED_PACKAGES += library/python/coverage-37
+REQUIRED_PACKAGES += library/python/coverage-39
 REQUIRED_PACKAGES += library/python/pluggy-37
 REQUIRED_PACKAGES += library/python/pluggy-39
 REQUIRED_PACKAGES += library/python/py-37
@@ -47,7 +50,9 @@ REQUIRED_PACKAGES += library/python/pytest-37
 REQUIRED_PACKAGES += library/python/pytest-39
 REQUIRED_PACKAGES += library/python/pytest-asyncio-37
 REQUIRED_PACKAGES += library/python/pytest-asyncio-39
-REQUIRED_PACKAGES += library/python/tox-39
+REQUIRED_PACKAGES += library/python/toml-37
+REQUIRED_PACKAGES += library/python/toml-39
+REQUIRED_PACKAGES += library/python/tox
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-37
