@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2021, Andreas Wacknitz
+# Copyright (c) 2021, 2022 Andreas Wacknitz
 #
 
 BUILD_BITS=NO_ARCH
@@ -28,32 +28,31 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tox
-COMPONENT_VERSION=	3.24.4
+COMPONENT_VERSION=	3.24.5
 REQUIRED_PACKAGES += library/python/pytest-reporter
 COMPONENT_SUMMARY=	Command line driven CI frontend and development task automation tool
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:c30b57fa2477f1fb7c36aa1d83292d5c2336cd0018119e1b1c17340e2c2708ca
+COMPONENT_ARCHIVE_HASH= sha256:67e0e32c90e278251fea45b696d0fef3879089ccbe979b0c556d35d5a70e2993
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://tox.wiki/
 COMPONENT_FMRI=		library/python/tox
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS=	3.7 3.9
-include $(WS_MAKE_RULES)/common.mk
+# tox is a tool so we provide only a single package
+PYTHON_VERSIONS=	3.9
+PYTHON_VERSION=		3.9
 
-COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; \
-         $(MV) -f tox tox-$(PYTHON_VERSION) ; \
-         $(MV) -f tox-quickstart tox-quickstart-$(PYTHON_VERSION))
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)/tests
 COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
-#COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/in [0-9]*\.[0-9]*s //"' \
+	'-e "s/[0-9]*:[0-9]*:[0-9]*//"' \
 	'-n' \
 	'-e "/===/p"' \
 	'-e "/collected/p"' \
@@ -64,28 +63,23 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# Manually added test dependencies
-REQUIRED_PACKAGES += library/python/filelock-37
+# Manually added test dependencies according to setup.cfg
 REQUIRED_PACKAGES += library/python/filelock-39
-REQUIRED_PACKAGES += library/python/flaky-37
 REQUIRED_PACKAGES += library/python/flaky-39
-REQUIRED_PACKAGES += library/python/freezegun-37
 REQUIRED_PACKAGES += library/python/freezegun-39
-REQUIRED_PACKAGES += library/python/hypothesis-37
 REQUIRED_PACKAGES += library/python/hypothesis-39
-REQUIRED_PACKAGES += library/python/pluggy-37
 REQUIRED_PACKAGES += library/python/pluggy-39
-REQUIRED_PACKAGES += library/python/py-37
+REQUIRED_PACKAGES += library/python/psutil-39
 REQUIRED_PACKAGES += library/python/py-39
-REQUIRED_PACKAGES += library/python/pytest-37
 REQUIRED_PACKAGES += library/python/pytest-39
-REQUIRED_PACKAGES += library/python/pytest-benchmark-37
 REQUIRED_PACKAGES += library/python/pytest-benchmark-39
-REQUIRED_PACKAGES += library/python/pytest-reporter-37
+REQUIRED_PACKAGES += library/python/pytest-cov-39
+REQUIRED_PACKAGES += library/python/pytest-mock-39
+# Our pytest-randomly doesn't seem to work
+#REQUIRED_PACKAGES += library/python/pytest-randomly-39
 REQUIRED_PACKAGES += library/python/pytest-reporter-39
+REQUIRED_PACKAGES += library/python/virtualenv-39
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-37
 REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/python-39
