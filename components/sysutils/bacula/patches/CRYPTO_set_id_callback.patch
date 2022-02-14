@@ -1,0 +1,23 @@
+--- bacula-11.0.5/src/lib/openssl.c	2021-06-03 09:31:55.000000000 +0000
++++ bacula-11.0.5/src/lib/openssl.c.new	2022-02-14 12:57:10.572321146 +0000
+@@ -173,7 +173,10 @@
+    int stat;
+ 
+    /* Set thread ID callback */
++
++#if OPENSSL_VERSION_NUMBER < OPENSSL_VERSION_1_1_0
+    CRYPTO_set_id_callback(get_openssl_thread_id);
++#endif
+ 
+    /* Initialize static locking */
+    numlocks = CRYPTO_num_locks();
+@@ -206,7 +209,9 @@
+    int stat;
+ 
+    /* Unset thread ID callback */
++#if OPENSSL_VERSION_NUMBER < OPENSSL_VERSION_1_1_0
+    CRYPTO_set_id_callback(NULL);
++#endif
+ 
+    /* Deallocate static lock mutexes */
+    numlocks = CRYPTO_num_locks();
