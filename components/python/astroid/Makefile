@@ -21,7 +21,7 @@
 
 #
 # Copyright 2021 Gary Mills
-# Copyright 2021 Andreas Wacknitz
+# Copyright 2021, 2022 Andreas Wacknitz
 #
 
 BUILD_STYLE= setup.py
@@ -29,14 +29,14 @@ BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		astroid
-COMPONENT_VERSION=	2.8.3
-# COMPONENT_REVISION=	0
+COMPONENT_VERSION=	2.9.3
 COMPONENT_SUMMARY=	A common base representation of python source code
 COMPONENT_PROJECT_URL=	https://github.com/PyCQA/astroid
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0e361da0744d5011d4f5d57e64473ba9b7ab4da1e2d45d6631ebd67dd28c3cce
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_ARCHIVE_HASH= sha256:07234423c3722df6aa067c15f5fa60adf4f1d6ae659d2ab147acb40a8a1904f7
+# Downloading the package source from pypi misses the tests, thus we a download from Github:
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		library/python/astroid
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	LGPLv2.1, GPLv2
@@ -47,8 +47,9 @@ PYTHON_VERSIONS=	3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Tests fail because numpy cannot be compiled.
 COMPONENT_TEST_DIR = $(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD = $(PYTHON) -m pytest
+COMPONENT_TEST_CMD = tox -e py39
 COMPONENT_TEST_ARGS =
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
@@ -62,16 +63,18 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^unittest_/p"'
 
 # Manually added test dependencies:
-REQUIRED_PACKAGES += library/python/flaky
-REQUIRED_PACKAGES += library/python/hypothesis
-#REQUIRED_PACKAGES += library/python/lazy_object_proxy
-REQUIRED_PACKAGES += library/python/pluggy
-REQUIRED_PACKAGES += library/python/py
-REQUIRED_PACKAGES += library/python/pytest
-REQUIRED_PACKAGES += library/python/pytest-benchmark
-REQUIRED_PACKAGES += library/python/pytest-reporter
-REQUIRED_PACKAGES += library/python/typing_extensions
-#REQUIRED_PACKAGES += library/python/wrapt
+REQUIRED_PACKAGES += library/python/flaky-39
+REQUIRED_PACKAGES += library/python/hypothesis-39
+REQUIRED_PACKAGES += library/python/lazy_object_proxy-39
+REQUIRED_PACKAGES += library/python/pluggy-39
+REQUIRED_PACKAGES += library/python/py-39
+REQUIRED_PACKAGES += library/python/pytest-39
+REQUIRED_PACKAGES += library/python/pytest-benchmark-39
+REQUIRED_PACKAGES += library/python/pytest-reporter-39
+REQUIRED_PACKAGES += library/python/setuptools-39
+REQUIRED_PACKAGES += library/python/typing_extensions-39
+REQUIRED_PACKAGES += library/python/wrapt-39
+REQUIRED_PACKAGES += library/python/tox
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-39
