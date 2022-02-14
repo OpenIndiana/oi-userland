@@ -45,6 +45,7 @@ PATH=$(PATH.gnu):/usr/mariadb/10.3/bin
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc \
 		    --localstatedir=/var \
+		    --libexecdir=/usr/lib \
                     --with-gssapi=plugin \
                     --with-ldap=plugin \
                     --with-sql=plugin \
