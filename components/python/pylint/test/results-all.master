@@ -1,0 +1,115 @@
+.tox create: $(SOURCE_DIR)/.tox/.tox
+.tox installdeps: pip >=21.3.1, tox >= 2.4
+WARNING: Discarding $PYTHONPATH from environment, to override specify PYTHONPATH in 'passenv' in your configuration.
+GLOB sdist-make: $(SOURCE_DIR)/setup.py
+py39 create: $(SOURCE_DIR)/.tox/py39
+py39 installdeps: -r$(SOURCE_DIR)/requirements_test.txt
+WARNING: Discarding $PYTHONPATH from environment, to override specify PYTHONPATH in 'passenv' in your configuration.
+py39 inst: $(SOURCE_DIR)/.tox/.tmp/package/1/pylint-2.12.2.zip
+WARNING: Discarding $PYTHONPATH from environment, to override specify PYTHONPATH in 'passenv' in your configuration.
+py39 installed: astroid==2.9.0,attrs==21.4.0,black==21.11b1,certifi==2021.10.8,cfgv==3.3.1,charset-normalizer==2.0.12,cli-ui==0.16.0,click==8.0.3,colorama==0.4.4,contextlib2==21.6.0,coverage==6.3.1,coveralls==3.3.1,distlib==0.3.4,docopt==0.6.2,execnet==1.9.0,filelock==3.4.2,flake8==4.0.1,flake8-typing-imports==1.11.0,gitdb==4.0.9,GitPython==3.1.26,gprof2dot==2021.2.21,identify==2.4.10,idna==3.3,iniconfig==1.1.1,isort==5.10.1,lazy-object-proxy==1.7.1,mccabe==0.6.1,mypy==0.910,mypy-extensions==0.4.3,nodeenv==1.6.0,packaging==21.3,pathspec==0.9.0,platformdirs==2.5.0,pluggy==1.0.0,pre-commit==2.17.0,py==1.11.0,py-cpuinfo==8.0.0,pycodestyle==2.8.0,pyenchant==3.2.2,pyflakes==2.4.0,pylint==2.12.2,pyparsing==3.0.7,pytest==6.2.5,pytest-benchmark==3.4.1,pytest-cov==3.0.0,pytest-forked==1.4.0,pytest-profiling==1.7.0,pytest-xdist==2.5.0,PyYAML==6.0,regex==2022.1.18,requests==2.27.1,schema==0.7.5,six==1.16.0,smmap==5.0.0,tabulate==0.8.9,tbump==6.6.1,toml==0.10.2,tomli==1.2.3,tomlkit==0.9.2,types-pkg-resources==0.1.3,types-toml==0.10.1,typing_extensions==4.1.1,Unidecode==1.3.2,urllib3==1.26.8,virtualenv==20.13.1,wrapt==1.13.3
+py39 run-test-pre: PYTHONHASHSEED='1792645291'
+py39 run-test: commands[0] | pytest --benchmark-disable $(SOURCE_DIR)/tests/
+============================= test session starts ==============================
+platform sunos5 -- Python 3.9.10, pytest-6.2.5, py-1.11.0, pluggy-1.0.0
+cachedir: .tox/py39/.pytest_cache
+benchmark: 3.4.1 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: $(SOURCE_DIR), configfile: setup.cfg, testpaths: tests
+plugins: benchmark-3.4.1, xdist-2.5.0, forked-1.4.0, profiling-1.7.0, cov-3.0.0
+collected 1574 items
+
+tests/test_check_parallel.py ........................................... [  2%]
+..                                                                       [  2%]
+tests/test_epylint.py ..                                                 [  2%]
+tests/test_func.py ............                                          [  3%]
+tests/test_functional.py ..........................................s.... [  6%]
+...................s.................................s.................. [ 11%]
+..................................................s............s........ [ 15%]
+.......s................................................................ [ 20%]
+............................................s.s....s.................... [ 25%]
+...........sss..s....................................................... [ 29%]
+..s..................................................................... [ 34%]
+........................................................................ [ 38%]
+...........s..s.s..s....s.....................s...............s......... [ 43%]
+......................                                                   [ 44%]
+tests/test_import_graph.py ...ss.                                        [ 45%]
+tests/test_numversion.py ...........                                     [ 45%]
+tests/test_pragma_parser.py ............                                 [ 46%]
+tests/test_pylint_runners.py ....                                        [ 46%]
+tests/test_regr.py ...................                                   [ 48%]
+tests/test_self.py ..................................................... [ 51%]
+...................................................                      [ 54%]
+tests/unittest_reporters_json.py ..                                      [ 54%]
+tests/unittest_reporting.py .........                                    [ 55%]
+tests/benchmark/test_baseline_benchmarks.py ...........                  [ 56%]
+tests/checkers/unittest_base.py .........s                               [ 56%]
+tests/checkers/unittest_base_checker.py .                                [ 56%]
+tests/checkers/unittest_deprecated.py ........................           [ 58%]
+tests/checkers/unittest_design.py ...                                    [ 58%]
+tests/checkers/unittest_format.py .........                              [ 59%]
+tests/checkers/unittest_imports.py ......                                [ 59%]
+tests/checkers/unittest_misc.py ..........                               [ 60%]
+tests/checkers/unittest_refactoring.py .                                 [ 60%]
+tests/checkers/unittest_similar.py ..................                    [ 61%]
+tests/checkers/unittest_spelling.py ssssssssssssssssssssssssssssssssss   [ 63%]
+tests/checkers/unittest_stdlib.py .                                      [ 63%]
+tests/checkers/unittest_strings.py .                                     [ 63%]
+tests/checkers/unittest_typecheck.py ss.                                 [ 63%]
+tests/checkers/unittest_utils.py ......................................  [ 66%]
+tests/checkers/unittest_variables.py ..........                          [ 66%]
+tests/config/test_config.py .                                            [ 66%]
+tests/config/test_functional_config_loading.py ...............           [ 67%]
+tests/config/unittest_config.py ........                                 [ 68%]
+tests/extensions/test_check_docs.py .................................... [ 70%]
+......................................................                   [ 74%]
+tests/extensions/test_check_docs_utils.py ..............                 [ 74%]
+tests/extensions/test_confusing_elif.py ........                         [ 75%]
+tests/extensions/test_while_used.py .                                    [ 75%]
+tests/functional/r/redundant_unittest_assert.py ss                       [ 75%]
+tests/lint/test_pylinter.py ..                                           [ 75%]
+tests/lint/test_utils.py ..                                              [ 75%]
+tests/lint/unittest_expand_modules.py .....                              [ 76%]
+tests/lint/unittest_lint.py ............................................ [ 78%]
+......                                                                   [ 79%]
+tests/message/unittest_message.py .                                      [ 79%]
+tests/message/unittest_message_definition.py ......                      [ 79%]
+tests/message/unittest_message_definition_store.py .................     [ 80%]
+tests/message/unittest_message_id_store.py .......                       [ 81%]
+tests/primer/test_primer_external.py sssssssssss                         [ 82%]
+tests/primer/test_primer_stdlib.py sssssssssssssssssssssssssssssssssssss [ 84%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 88%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 93%]
+sssssssssssssssssss                                                      [ 94%]
+tests/profile/test_profile_against_externals.py s                        [ 94%]
+tests/pyreverse/test_diadefs.py .........                                [ 95%]
+tests/pyreverse/test_diagrams.py .                                       [ 95%]
+tests/pyreverse/test_inspector.py ........                               [ 95%]
+tests/pyreverse/test_main.py ..                                          [ 96%]
+tests/pyreverse/test_printer.py .............                            [ 96%]
+tests/pyreverse/test_printer_factory.py .....                            [ 97%]
+tests/pyreverse/test_utils.py ..................                         [ 98%]
+tests/pyreverse/test_writer.py ...........                               [ 99%]
+tests/testutils/test_configuration_test.py .                             [ 99%]
+tests/testutils/test_output_line.py ........                             [ 99%]
+tests/testutils/test_package_to_lint.py ..                               [ 99%]
+tests/utils/unittest_ast_walker.py ..                                    [ 99%]
+tests/utils/unittest_utils.py ..                                         [100%]
+
+=============================== warnings summary ===============================
+tests/test_import_graph.py: 26 warnings
+tests/test_pylint_runners.py: 2 warnings
+tests/test_regr.py: 22 warnings
+tests/unittest_reporting.py: 1 warning
+tests/checkers/unittest_format.py: 1 warning
+tests/checkers/unittest_variables.py: 2 warnings
+tests/lint/test_pylinter.py: 2 warnings
+tests/lint/unittest_lint.py: 1 warning
+tests/pyreverse/test_diadefs.py: 4 warnings
+  $(SOURCE_DIR)/.tox/py39/lib/python3.9/site-packages/astroid/nodes/scoped_nodes.py DeprecationWarning: In astroid 3.0.0 NodeNG.statement() will return either a nodes.Statement or raise a StatementMissing exception. nodes.Module will no longer be considered a statement. This behaviour can already be triggered by passing 'future=True' to a statement() call.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/warnings.html
+========== 1300 passed, 274 skipped, 61 warnings () ==========
+___________________________________ summary ____________________________________
+  py39: commands succeeded
+  congratulations :)
