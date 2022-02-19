@@ -10,6 +10,7 @@
 
 #
 # Copyright 2019-2020 Nona Hansel
+# Copyright 2022 Andreas Wacknitz
 #
 
 BUILD_BITS=	NO_ARCH
@@ -18,24 +19,39 @@ BUILD_STYLE=	setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tqdm
-COMPONENT_VERSION=	4.53.0
-COMPONENT_SUMMARY=	'Fast, extensible progress bar for Python and CLI'
+COMPONENT_VERSION=	4.62.3
+COMPONENT_SUMMARY=	Fast, extensible progress bar for Python and CLI
 COMPONENT_PROJECT_URL=	https://github.com/tqdm/tqdm
 COMPONENT_FMRI=		library/python/tqdm		
 COMPONENT_CLASSIFICATION= Development/Python 
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_ARCHIVE_HASH= \
-	sha256:3d3f1470d26642e88bd3f73353cb6ff4c51ef7d5d7efef763238f4bc1f7e4e81
+COMPONENT_ARCHIVE_HASH= sha256:d359de7217506c9851b7869f3708d8ee53ed70a1b8edbba4dbcb47442592920d
 COMPONENT_LICENSE=	MPLv2.0,MIT
 COMPONENT_LICENSE_FILE=	LICENCE
 
-PYTHON_VERSIONS=	3.5
+PYTHON_VERSIONS=	3.7 3.9
 
-TEST_TARGET:	$(NO_TESTS)
+# Tests are failing because numpy package cannot be build.
+TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_POST_INSTALL_ACTION += \
+        (cd $(PROTOUSRBINDIR); $(MV) tqdm tqdm-$(PYTHON_VERSION)) ;
+
+#COMPONENT_TEST_DIR= $(SOURCE_DIR)
+#COMPONENT_TEST_CMD= tox -e py$(PYV)
+
+# Manually added test dependencies
+REQUIRED_PACKAGES += library/python/tox
+
+# Manually added dependencies
+REQUIRED_PACKAGES += library/python/importlib-metadata-37
+REQUIRED_PACKAGES += library/python/importlib-metadata-39
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
+REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
