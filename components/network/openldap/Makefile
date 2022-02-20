@@ -25,22 +25,23 @@
 # Copyright (c) 2022, Friedrich Kink
 #
 
-BUILD_BITS=             64
+BUILD_BITS=             64_and_32
 USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		openldap
-COMPONENT_VERSION=	2.6.1
-COMPONENT_SUMMARY=	OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_PROJECT_URL=	https://www.openldap.org/
-COMPONENT_ARCHIVE_HASH=	sha256:9d576ea6962d7db8a2e2808574e8c257c15aef55f403a1fb5a0faf35de70e6f3
-COMPONENT_ARCHIVE_URL=	https://openldap.org/software/download/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=			library/openldap
-COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_LICENSE=		The OpenLDAP Public License
-COMPONENT_LICENSE_FILE=		LICENSE
+COMPONENT_NAME=         openldap
+COMPONENT_VERSION=      2.6.1
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
+COMPONENT_PROJECT_URL=  https://www.openldap.org/
+COMPONENT_ARCHIVE_HASH= sha256:9d576ea6962d7db8a2e2808574e8c257c15aef55f403a1fb5a0faf35de70e6f3
+COMPONENT_ARCHIVE_URL=  https://openldap.org/software/download/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/openldap
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_LICENSE=      The OpenLDAP Public License
+COMPONENT_LICENSE_FILE= LICENSE
 
 SDFVER=			sdf-2.001
 SDFBLIB=		$(BUILD_DIR)/${SDFVER}/blib
@@ -53,9 +54,12 @@ COMPONENT_ARCHIVE_URL_1= ftp://ftp.eenet.ee/pub/cpan/authors/id/I/IA/IANC/$(COMP
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
-COMPONENT_POST_CONFIGURE_ACTION = ( $(GSED) -i -e 's:perl5/5.22/lib/i86pc-solaris-64int:perl5/5.34/lib/i86pc-solaris-thread-multi-64:g' $(@D)/servers/slapd/back-perl/Makefile )
+COMPONENT_POST_CONFIGURE_ACTION.64 = ( $(GSED) -i -e 's:perl5/5.22/lib/i86pc-solaris-64int:perl5/5.34/lib/i86pc-solaris-thread-multi-64:g' $(@D)/servers/slapd/back-perl/Makefile )
+COMPONENT_POST_CONFIGURE_ACTION.32 = 
 
-PERL=		/usr/perl5/5.34/bin/perl
+PERL.64=		/usr/perl5/5.34/bin/perl
+PERL.32=		/usr/perl5/5.22/bin/perl
+PERL=			$(PERL.$(BITS))
 COMPONENT_PRE_BUILD_ACTION = \
 	 ( $(CP) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) $(BUILD_DIR); \
 	 cd $(BUILD_DIR); \
@@ -95,14 +99,15 @@ CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-tls=openssl
 CONFIGURE_OPTIONS += --with-mp=gmp
 CONFIGURE_OPTIONS += --with-odbc=unixodbc
-CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/amd64
+CONFIGURE_OPTIONS.64 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/amd64
+CONFIGURE_OPTIONS.32 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib
 CONFIGURE_OPTIONS += CPPFLAGS="-I$(OPENSSL_PREFIX)/include -I/usr/include/odbc"
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
 COMPONENT_TEST_ENV += PATH="$(PROTOUSRSBINDIR):$(PROTOUSRBINDIR):/usr/bin"
 
 # common targets
-BUILD_TARGET:	$(BUILD_64)
+BUILD_TARGET:	$(BUILD_64_and_32)
 	(cd $(BUILD_DIR)/doc/guide/admin; \
 	$(PERL) -I$(SDFBLIB)/lib $(SDFBLIB)/script/sdf -2html guide.sdf; \
 	$(PERL) -I$(SDFBLIB)/lib $(SDFBLIB)/script/sdf -2html index.sdf)

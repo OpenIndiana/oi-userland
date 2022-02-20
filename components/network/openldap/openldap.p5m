@@ -59,6 +59,20 @@ file files/ldap-olslapd path=lib/svc/method/ldap-olslapd
 
 link path=usr/bin/openldapadd target=openldapmodify
 
+link path=usr/lib/$(MACH64)/liblber-2.4.so target=liblber-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/liblber-2.6.so target=liblber-2.6.so.2.0.200
+# for backward compatibility
+link path=usr/lib/liblber-2.4.so target=liblber-2.6.so.2.0.200
+link path=usr/lib/liblber-2.6.so target=liblber-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/libldap-2.4.so target=libldap-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/libldap-2.6.so target=libldap-2.6.so.2.0.200
+# for backward compatibility
+link path=usr/lib/libldap-2.4.so target=libldap-2.6.so.2.0.200
+link path=usr/lib/libldap-2.6.so target=libldap-2.6.so.2.0.200
+# next two lines for backward compatibility (new version threadsafe no extra library needed)
+link path=usr/lib/libldap_r-2.4.so target=libldap-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/libldap_r-2.4.so target=libldap-2.6.so.2.0.200
+
 file path=etc/openldap/ldap.conf mode=0644 owner=root group=openldap preserve=true
 file path=etc/openldap/ldap.conf.default
 file path=etc/openldap/schema/README
@@ -114,131 +128,139 @@ file path=usr/include/openldap/ldap_utf8.h
 file path=usr/include/openldap/ldif.h
 file path=usr/include/openldap/openldap.h
 file path=usr/include/openldap/slapi-plugin.h
-link path=usr/lib/$(MACH64)/liblber.so target=liblber.so.2.0.200
-link path=usr/lib/$(MACH64)/liblber.so.2 target=liblber.so.2.0.200
-file path=usr/lib/$(MACH64)/liblber.so.2.0.200
-link path=usr/lib/$(MACH64)/libldap.so target=libldap.so.2.0.200
-link path=usr/lib/$(MACH64)/libldap.so.2 target=libldap.so.2.0.200
-file path=usr/lib/$(MACH64)/libldap.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/accesslog.so target=accesslog.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/accesslog.so.2 target=accesslog.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/accesslog.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/argon2.so target=argon2.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/argon2.so.2 target=argon2.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/argon2.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/auditlog.so target=auditlog.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/auditlog.so.2 target=auditlog.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/auditlog.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/autoca.so target=autoca.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/autoca.so.2 target=autoca.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/autoca.so.2.0.200
+#link path=usr/lib/liblber.so target=liblber-2.6.so.2.0.200
+link path=usr/lib/liblber-2.6.so.2 target=liblber-2.6.so.2.0.200
+file path=usr/lib/liblber-2.6.so.2.0.200
+#link path=usr/lib/libldap.so target=libldap-2.6.so.2.0.200
+link path=usr/lib/libldap-2.6.so.2 target=libldap-2.6.so.2.0.200
+file path=usr/lib/libldap-2.6.so.2.0.200
+file path=usr/lib/pkgconfig/lber.pc
+file path=usr/lib/pkgconfig/ldap.pc
+link path=usr/lib/$(MACH64)/liblber-2.6.so.2 target=liblber-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/liblber-2.6.so.2.0.200
+#link path=usr/lib/$(MACH64)/liblber.so target=liblber-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/libldap-2.6.so.2 target=libldap-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/libldap-2.6.so.2.0.200
+#link path=usr/lib/$(MACH64)/libldap.so target=libldap-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/accesslog.so target=accesslog-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/accesslog-2.6.so.2 target=accesslog-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/accesslog-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/argon2.so target=argon2-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/argon2-2.6.so.2 target=argon2-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/argon2-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/auditlog.so target=auditlog-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/auditlog-2.6.so.2 target=auditlog-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/auditlog-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/autoca.so target=autoca-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/autoca-2.6.so.2 target=autoca-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/autoca-2.6.so.2.0.200
 link path=usr/lib/$(MACH64)/openldap/back_asyncmeta.so \
-    target=back_asyncmeta.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_asyncmeta.so.2 \
-    target=back_asyncmeta.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/back_asyncmeta.so.2.0.200
+    target=back_asyncmeta-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_asyncmeta-2.6.so.2 \
+    target=back_asyncmeta-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/back_asyncmeta-2.6.so.2.0.200
 link path=usr/lib/$(MACH64)/openldap/back_dnssrv.so \
-    target=back_dnssrv.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_dnssrv.so.2 \
-    target=back_dnssrv.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/back_dnssrv.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_ldap.so target=back_ldap.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_ldap.so.2 target=back_ldap.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/back_ldap.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_mdb.so target=back_mdb.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_mdb.so.2 target=back_mdb.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/back_mdb.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_meta.so target=back_meta.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_meta.so.2 target=back_meta.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/back_meta.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_null.so target=back_null.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_null.so.2 target=back_null.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/back_null.so.2.0.200
+    target=back_dnssrv-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_dnssrv-2.6.so.2 \
+    target=back_dnssrv-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/back_dnssrv-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_ldap.so target=back_ldap-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_ldap-2.6.so.2 target=back_ldap-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/back_ldap-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_mdb.so target=back_mdb-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_mdb-2.6.so.2 target=back_mdb-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/back_mdb-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_meta.so target=back_meta-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_meta-2.6.so.2 target=back_meta-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/back_meta-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_null.so target=back_null-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_null-2.6.so.2 target=back_null-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/back_null-2.6.so.2.0.200
 link path=usr/lib/$(MACH64)/openldap/back_passwd.so \
-    target=back_passwd.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_passwd.so.2 \
-    target=back_passwd.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/back_passwd.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_perl.so target=back_perl.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_perl.so.2 target=back_perl.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/back_perl.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_relay.so target=back_relay.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_relay.so.2 \
-    target=back_relay.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/back_relay.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_sock.so target=back_sock.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_sock.so.2 target=back_sock.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/back_sock.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_sql.so target=back_sql.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/back_sql.so.2 target=back_sql.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/back_sql.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/collect.so target=collect.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/collect.so.2 target=collect.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/collect.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/constraint.so target=constraint.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/constraint.so.2 \
-    target=constraint.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/constraint.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/dds.so target=dds.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/dds.so.2 target=dds.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/dds.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/deref.so target=deref.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/deref.so.2 target=deref.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/deref.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/dyngroup.so target=dyngroup.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/dyngroup.so.2 target=dyngroup.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/dyngroup.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/dynlist.so target=dynlist.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/dynlist.so.2 target=dynlist.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/dynlist.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/homedir.so target=homedir.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/homedir.so.2 target=homedir.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/homedir.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/memberof.so target=memberof.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/memberof.so.2 target=memberof.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/memberof.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/otp.so target=otp.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/otp.so.2 target=otp.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/otp.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/pcache.so target=pcache.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/pcache.so.2 target=pcache.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/pcache.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/ppolicy.so target=ppolicy.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/ppolicy.so.2 target=ppolicy.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/ppolicy.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/refint.so target=refint.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/refint.so.2 target=refint.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/refint.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/remoteauth.so target=remoteauth.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/remoteauth.so.2 \
-    target=remoteauth.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/remoteauth.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/retcode.so target=retcode.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/retcode.so.2 target=retcode.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/retcode.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/rwm.so target=rwm.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/rwm.so.2 target=rwm.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/rwm.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/seqmod.so target=seqmod.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/seqmod.so.2 target=seqmod.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/seqmod.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/sssvlv.so target=sssvlv.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/sssvlv.so.2 target=sssvlv.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/sssvlv.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/syncprov.so target=syncprov.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/syncprov.so.2 target=syncprov.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/syncprov.so.2.0.200
+    target=back_passwd-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_passwd-2.6.so.2 \
+    target=back_passwd-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/back_passwd-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_perl.so target=back_perl-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_perl-2.6.so.2 target=back_perl-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/back_perl-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_relay.so target=back_relay-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_relay-2.6.so.2 \
+    target=back_relay-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/back_relay-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_sock.so target=back_sock-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_sock-2.6.so.2 target=back_sock-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/back_sock-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_sql.so target=back_sql-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/back_sql-2.6.so.2 target=back_sql-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/back_sql-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/collect.so target=collect-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/collect-2.6.so.2 target=collect-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/collect-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/constraint.so target=constraint-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/constraint-2.6.so.2 \
+    target=constraint-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/constraint-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/dds.so target=dds-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/dds-2.6.so.2 target=dds-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/dds-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/deref.so target=deref-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/deref-2.6.so.2 target=deref-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/deref-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/dyngroup.so target=dyngroup-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/dyngroup-2.6.so.2 target=dyngroup-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/dyngroup-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/dynlist.so target=dynlist-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/dynlist-2.6.so.2 target=dynlist-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/dynlist-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/homedir.so target=homedir-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/homedir-2.6.so.2 target=homedir-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/homedir-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/memberof.so target=memberof-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/memberof-2.6.so.2 target=memberof-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/memberof-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/otp.so target=otp-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/otp-2.6.so.2 target=otp-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/otp-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/pcache.so target=pcache-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/pcache-2.6.so.2 target=pcache-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/pcache-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/ppolicy.so target=ppolicy-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/ppolicy-2.6.so.2 target=ppolicy-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/ppolicy-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/refint.so target=refint-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/refint-2.6.so.2 target=refint-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/refint-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/remoteauth.so target=remoteauth-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/remoteauth-2.6.so.2 \
+    target=remoteauth-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/remoteauth-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/retcode.so target=retcode-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/retcode-2.6.so.2 target=retcode-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/retcode-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/rwm.so target=rwm-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/rwm-2.6.so.2 target=rwm-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/rwm-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/seqmod.so target=seqmod-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/seqmod-2.6.so.2 target=seqmod-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/seqmod-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/sssvlv.so target=sssvlv-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/sssvlv-2.6.so.2 target=sssvlv-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/sssvlv-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/syncprov.so target=syncprov-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/syncprov-2.6.so.2 target=syncprov-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/syncprov-2.6.so.2.0.200
 link path=usr/lib/$(MACH64)/openldap/translucent.so \
-    target=translucent.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/translucent.so.2 \
-    target=translucent.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/translucent.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/unique.so target=unique.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/unique.so.2 target=unique.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/unique.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/valsort.so target=valsort.so.2.0.200
-link path=usr/lib/$(MACH64)/openldap/valsort.so.2 target=valsort.so.2.0.200
-file path=usr/lib/$(MACH64)/openldap/valsort.so.2.0.200
+    target=translucent-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/translucent-2.6.so.2 \
+    target=translucent-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/translucent-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/unique.so target=unique-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/unique-2.6.so.2 target=unique-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/unique-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/valsort.so target=valsort-2.6.so.2.0.200
+link path=usr/lib/$(MACH64)/openldap/valsort-2.6.so.2 target=valsort-2.6.so.2.0.200
+file path=usr/lib/$(MACH64)/openldap/valsort-2.6.so.2.0.200
 file path=usr/lib/$(MACH64)/pkgconfig/lber.pc
 file path=usr/lib/$(MACH64)/pkgconfig/ldap.pc
 file path=usr/lib/$(MACH64)/slapd mode=555
