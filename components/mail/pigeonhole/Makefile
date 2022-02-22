@@ -16,9 +16,10 @@ BUILD_BITS=		64
 USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pigeonhole
-COMPONENT_VERSION=	0.5.18
-COMPONENT_SUMMARY=	Sieve Support for Dovecot
+COMPONENT_NAME=         pigeonhole
+COMPONENT_VERSION=      0.5.18
+COMPONENT_REVISION=     2
+COMPONENT_SUMMARY=      Sieve Support for Dovecot
 COMPONENT_DESCRIPTION=	The Pigeonhole project provides Sieve support as a plugin for \
 			Dovecot's Local Delivery Agent (LDA) and also for its LMTP \
 			service. The plugin implements a Sieve interpreter, which filters \
@@ -27,16 +28,16 @@ COMPONENT_DESCRIPTION=	The Pigeonhole project provides Sieve support as a plugin
 			that Sieve script, the user can customize how incoming messages \
 			are handled. Messages can be delivered to specific folders, \
 			forwarded, rejected, discarded, etc.
-COMPONENT_PROJECT_URL=	https://dovecot.org/
-COMPONENT_FMRI=		mail/dovecot/pigeonhole
+COMPONENT_PROJECT_URL=  https://dovecot.org/
+COMPONENT_FMRI=         mail/dovecot/pigeonhole
 COMPONENT_CLASSIFICATION=Applications/Internet
-COMPONENT_SRC=		dovecot-2.3-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_SRC=          dovecot-2.3-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_SIG_URL=	https://pigeonhole.dovecot.org/releases/2.3/$(COMPONENT_ARCHIVE).sig
-COMPONENT_ARCHIVE_URL=	https://pigeonhole.dovecot.org/releases/2.3/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:a6d828f8d6f2decba5105343ece5c7a65245bd94e46a8ae4432a6d97543108a5
-COMPONENT_LICENSE=	MIT,LGPLv2.1
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_ARCHIVE_URL=  https://pigeonhole.dovecot.org/releases/2.3/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:a6d828f8d6f2decba5105343ece5c7a65245bd94e46a8ae4432a6d97543108a5
+COMPONENT_LICENSE=      MIT,LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -46,6 +47,7 @@ CONFIGURE_ENV+=		CPPFLAGS=-I/usr/include/openldap
 PATH=$(PATH.gnu):/usr/mariadb/10.3/bin
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc \
+		    --libexecdir=/usr/lib \
                     --with-ldap=plugin \
 		    --enable-static=no \
 		    --with-dovecot=/usr/lib/amd64/dovecot \

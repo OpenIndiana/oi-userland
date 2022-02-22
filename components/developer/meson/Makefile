@@ -18,8 +18,7 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         meson
-COMPONENT_VERSION=      0.61.1
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      0.61.2
 COMPONENT_SUMMARY=      The Meson Build system
 COMPONENT_PROJECT_URL=  https://mesonbuild.com/
 COMPONENT_FMRI=         developer/build/meson
@@ -27,7 +26,7 @@ COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mesonbuild/meson/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:feb2cefb325b437dbf36146df7c6b87688ddff0b0205caa31dc64055c6da410c
+COMPONENT_ARCHIVE_HASH= sha256:0233a7f8d959079318f6052b0939c27f68a5de86ba601f25c9ee6869fb5f5889
 COMPONENT_LICENSE=      APLv2
 
 GCC_VERSION=		10

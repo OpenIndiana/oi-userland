@@ -22,55 +22,56 @@
 #
 # Copyright (c) 2011, 2018, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2022, Friedrich Kink
 #
 
+BUILD_BITS=             64_and_32
+USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		openldap
-COMPONENT_VERSION=	2.4.58
-COMPONENT_SUMMARY=	OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_PROJECT_URL=	https://www.openldap.org/
-COMPONENT_ARCHIVE_HASH=	sha256:57b59254be15d0bf6a9ab3d514c1c05777b02123291533134a87c94468f8f47b
-COMPONENT_ARCHIVE_URL=	ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=			library/openldap
-COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_LICENSE=		openldap license
+COMPONENT_NAME=         openldap
+COMPONENT_VERSION=      2.6.1
+COMPONENT_REVISION=     3
+COMPONENT_SUMMARY=      OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
+COMPONENT_PROJECT_URL=  https://www.openldap.org/
+COMPONENT_ARCHIVE_HASH= sha256:9d576ea6962d7db8a2e2808574e8c257c15aef55f403a1fb5a0faf35de70e6f3
+COMPONENT_ARCHIVE_URL=  https://openldap.org/software/download/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/openldap
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_LICENSE=      The OpenLDAP Public License
+COMPONENT_LICENSE_FILE= LICENSE
 
 SDFVER=			sdf-2.001
-SDFBLIB=		$(BUILD_DIR_32)/${SDFVER}/blib
+SDFBLIB=		$(BUILD_DIR)/${SDFVER}/blib
 
 COMPONENT_ARCHIVE_1= $(SDFVER).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
 	sha256:6f9bcdc884a9f450208c740e45effdfeb7e65c689f57b05d3c15208193a8a6ea
 COMPONENT_ARCHIVE_URL_1= ftp://ftp.eenet.ee/pub/cpan/authors/id/I/IA/IANC/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_POST_CONFIGURE_ACTION.64 = ( $(GSED) -i -e 's:perl5/5.22/lib/i86pc-solaris-64int:perl5/5.34/lib/i86pc-solaris-thread-multi-64:g' $(@D)/servers/slapd/back-perl/Makefile )
+COMPONENT_POST_CONFIGURE_ACTION.32 = 
 
+PERL.64=		/usr/perl5/5.34/bin/perl
+PERL.32=		/usr/perl5/5.22/bin/perl
+PERL=			$(PERL.$(BITS))
 COMPONENT_PRE_BUILD_ACTION = \
-	 ( $(CP) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) $(BUILD_DIR_32); \
-	 cd $(BUILD_DIR_32); \
+	 ( $(CP) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) $(BUILD_DIR); \
+	 cd $(BUILD_DIR); \
 	 gzip -dc $(COMPONENT_ARCHIVE_1) | tar xopf -; \
 	 rm $(COMPONENT_ARCHIVE_1); \
-	  cd $(SDFVER); $(PERL) Makefile.PL; \
-		$(GMAKE))
+	 cd $(SDFVER); $(PERL) Makefile.PL; $(GMAKE))
 
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
 
-CONFIGURE_ENV += "ac_cv_lib_net_main=no"
-CONFIGURE_ENV += "ac_cv_lib_net_socket=no"
-CONFIGURE_ENV += "ac_cv_lib_inet_socket=no"
-
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
+CONFIGURE_OPTIONS += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)/openldap
 CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/openldap
 CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)
@@ -78,55 +79,47 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-overlays
 CONFIGURE_OPTIONS += --enable-dynamic
 CONFIGURE_OPTIONS += --enable-modules
-CONFIGURE_OPTIONS += --enable-crypt
+CONFIGURE_OPTIONS += --enable-syslog
+CONFIGURE_OPTIONS += --enable-ipv6
+CONFIGURE_OPTIONS += --enable-rlookups
+CONFIGURE_OPTIONS += --enable-dynacl
+CONFIGURE_OPTIONS += --enable-aci
+CONFIGURE_OPTIONS += --enable-wrappers
 CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS += --enable-bdb
-CONFIGURE_OPTIONS += --enable-hdb=mod
-CONFIGURE_OPTIONS += --enable-mdb
-CONFIGURE_OPTIONS += --enable-null
-CONFIGURE_OPTIONS += --enable-passwd
-CONFIGURE_OPTIONS += --enable-shell
-CONFIGURE_OPTIONS += --enable-ldap
-CONFIGURE_OPTIONS += --enable-meta
+#enable all backends but wt
+CONFIGURE_OPTIONS += --enable-backends=mod
+CONFIGURE_OPTIONS += --enable-wt=no
+#enable all overlays
+CONFIGURE_OPTIONS += --enable-overlays=mod
+CONFIGURE_OPTIONS += --enable-argon2
+#CONFIGURE_OPTIONS += --enable-balancer
+CONFIGURE_OPTIONS += --without-systemd
 CONFIGURE_OPTIONS += --with-cyrus-sasl
 CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-tls=openssl
+CONFIGURE_OPTIONS += --with-mp=gmp
+CONFIGURE_OPTIONS += --with-odbc=unixodbc
+CONFIGURE_OPTIONS.64 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/amd64
+CONFIGURE_OPTIONS.32 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib
+CONFIGURE_OPTIONS += CPPFLAGS="-I$(OPENSSL_PREFIX)/include -I/usr/include/odbc"
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
-COMPONENT_TEST_ARGS += -e
-
-# Otherwise --enable-modules fails
-COMPONENT_BUILD_ENV += LTCFLAGS="-m$(BITS)"
-
-$(INSTALL_32): COMPONENT_POST_INSTALL_ACTION += \
-	for f in $(PROTOUSRBINDIR)/ldap* $(PROTOUSRLIBDIR)/slapd ; do \
-		/usr/bin/elfedit -e "dyn:runpath ''" $$f; \
-	done ;
-
-$(INSTALL_64): COMPONENT_POST_INSTALL_ACTION += \
-	for f in $(PROTOUSRBINDIR64)/ldap* $(PROTOUSRLIBDIR64)/slapd ; do \
-		/usr/bin/elfedit -e "dyn:runpath ''" $$f; \
-	done ;
+COMPONENT_TEST_ENV += PATH="$(PROTOUSRSBINDIR):$(PROTOUSRBINDIR):/usr/bin"
 
 # common targets
-build:	$(BUILD_32_and_64)
-	(cd $(BUILD_DIR_32)/doc/guide/admin; \
+BUILD_TARGET:	$(BUILD_64_and_32)
+	(cd $(BUILD_DIR)/doc/guide/admin; \
 	$(PERL) -I$(SDFBLIB)/lib $(SDFBLIB)/script/sdf -2html guide.sdf; \
 	$(PERL) -I$(SDFBLIB)/lib $(SDFBLIB)/script/sdf -2html index.sdf)
 
-install:	$(INSTALL_32_and_64)
-
-# build does this always
-test:	$(TEST_32_and_64)
-
-# Build dependencies
-REQUIRED_PACKAGES += developer/icu
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += database/berkeleydb-5
+REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libtool/libltdl
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/libsodium
+REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/unixodbc
+REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl

@@ -16,24 +16,25 @@ BUILD_BITS=		64
 USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		dovecot
-COMPONENT_VERSION=	2.3.18
-COMPONENT_SUMMARY=	DOVECOT - The Secure IMAP server
+COMPONENT_NAME=         dovecot
+COMPONENT_VERSION=      2.3.18
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      DOVECOT - The Secure IMAP server
 COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for \
 		Linux/UNIX-like systems, written with security primarily in mind. \
 		Dovecot is an excellent choice for both small and large installations. \
 		It's fast, simple to set up, requires no special administration \
 		and it uses very little memory.
-COMPONENT_PROJECT_URL=	https://dovecot.org/
-COMPONENT_FMRI=		mail/dovecot
+COMPONENT_PROJECT_URL=  https://dovecot.org/
+COMPONENT_FMRI=         mail/dovecot
 COMPONENT_CLASSIFICATION=Applications/Internet
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_SIG_URL=	https://dovecot.org/releases/2.3/$(COMPONENT_ARCHIVE).sig
-COMPONENT_ARCHIVE_URL=	https://dovecot.org/releases/2.3/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:06e73f668c6c093c45bdeeeb7c20398ab8dc49317234f4b5781ac5e2cc5d6c33
-COMPONENT_LICENSE=	MIT,LGPLv2.1
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_SIG_URL=	$(COMPONENT_PROJECT_URL)/releases/2.3/$(COMPONENT_ARCHIVE).sig
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/2.3/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:06e73f668c6c093c45bdeeeb7c20398ab8dc49317234f4b5781ac5e2cc5d6c33
+COMPONENT_LICENSE=      MIT,LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -43,11 +44,15 @@ CONFIGURE_ENV+=		CPPFLAGS=-I/usr/include/openldap
 PATH=$(PATH.gnu):/usr/mariadb/10.3/bin
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc \
+		    --localstatedir=/var \
+		    --libexecdir=/usr/lib \
                     --with-gssapi=plugin \
                     --with-ldap=plugin \
                     --with-sql=plugin \
                     --with-lua=plugin \
                     --with-ssl=openssl \
+		    --with-ioloop=poll \
+		    --with-notify=none \
                     --with-sodium \
                     --with-mysql \
                     --with-pgsql \
@@ -87,6 +92,7 @@ REQUIRED_PACKAGES += library/security/libsodium
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss

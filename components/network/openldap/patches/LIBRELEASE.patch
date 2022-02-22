@@ -1,0 +1,20 @@
+# between versions 2.4.x and 2.6.x build mechanism changed and libraries
+# libldap|lber are built now as libldap|lber.so.xxx which is different to
+# style libldap-2.4|lber-2.4
+# This brings two problems 
+# a) it clashes with the system ldap implementation (name libldap.so, too and
+# b) breaks backwards compatibility
+# this small patch brings back old naming convention
+--- openldap-2.6.1/build/top.mk	2022-01-19 19:32:34.000000000 +0000
++++ openldap-2.6.1/build/top.mk.new	2022-02-20 14:00:35.649028520 +0000
+@@ -73,8 +73,9 @@
+ MKVERSION = $(top_srcdir)/build/mkversion -v "$(VERSION)"
+ 
+ LIBTOOL = @LIBTOOL@
++LIBRELEASE = 2.6
+ LIBVERSION = @OPENLDAP_LIBVERSION@
+-LTVERSION = -version-info $(LIBVERSION)
++LTVERSION = -release $(LIBRELEASE) -version-info $(LIBVERSION)
+ 
+ # libtool --only flag for libraries: platform specific
+ NT_LTONLY_LIB = # --only-$(BUILD_LIBS_DYNAMIC)
