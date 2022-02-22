@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bacula
 COMPONENT_VERSION=      11.0.5
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      Bacula (network backup solution)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -36,7 +36,9 @@ TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION =  ($(CLONEY) $(SOURCE_DIR) $(@D))
+# To build 64-bit mysql support 
+COMPONENT_POST_CONFIGURE_ACTION = ($(GSED) -i -e 's:-R /usr/mariadb/10.3/lib -L/usr/mariadb/10.3/lib:-m64 -R /usr/mariadb/10.3/lib/amd64 -L/usr/mariadb/10.3/lib/amd64:' $(@D)/src/cats/Makefile)
 
 PATH=/usr/mariadb/10.3/bin:/usr/postgres/12/bin:/usr/lib/qt/5.12/bin:/usr/bin:/usr/sbin
 
@@ -59,7 +61,7 @@ CONFIGURE_OPTIONS+= --with-readline=/usr/include/readline
 CONFIGURE_OPTIONS+= --disable-conio
 CONFIGURE_OPTIONS+= --disable-afs
 CONFIGURE_OPTIONS+= --disable-rpath
-CONFIGURE_OPTIONS+= LDFLAGS="-m64 -L$(OPENSSL_PREFIX)/lib/$(MACH64) -lssl -lcrypto -L/usr/mariadb/10.3/lib/$(MACH64) -L/lib/$(MACH64) -L/usr/lib/$(MACH64)"
+CONFIGURE_OPTIONS+= LDFLAGS="-m64 -L$(OPENSSL_PREFIX)/lib/$(MACH64) -lssl -lcrypto -L/lib/$(MACH64) -L/usr/lib/$(MACH64)"
 CONFIGURE_OPTIONS+= CPPFLAGS="-I$(OPENSSL_PREFIX)/include"
 
 # manually added dependencies
@@ -77,6 +79,6 @@ REQUIRED_PACKAGES += library/lzo
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
