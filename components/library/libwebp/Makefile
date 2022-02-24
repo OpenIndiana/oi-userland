@@ -18,13 +18,13 @@ BUILD_BITS=64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libwebp
-COMPONENT_VERSION= 1.2.1
+COMPONENT_VERSION= 1.2.2
 COMPONENT_FMRI= library/libwebp
 COMPONENT_SUMMARY= WebP image format library
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:808b98d2f5b84e9b27fdef6c5372dac769c3bda4502febbfa5031bd3c4d7d018
+COMPONENT_ARCHIVE_HASH= sha256:7656532f837af5f4cec3ff6bafe552c044dc39bf453587bd5b77450802f4aee6
 COMPONENT_ARCHIVE_URL=	https://storage.googleapis.com/downloads.webmproject.org/releases/webp/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://developers.google.com/speed/webp/
 COMPONENT_LICENSE= BSD
