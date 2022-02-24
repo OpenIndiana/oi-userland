@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openldap
 COMPONENT_VERSION=      2.6.1
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_SUMMARY=      OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
@@ -105,6 +105,9 @@ CONFIGURE_OPTIONS += CPPFLAGS="-I$(OPENSSL_PREFIX)/include -I/usr/include/odbc"
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
 COMPONENT_TEST_ENV += PATH="$(PROTOUSRSBINDIR):$(PROTOUSRBINDIR):/usr/bin"
+
+# to remove plugin.la dependency
+COMPONENT_POST_INSTALL_ACTION= $(GSED) -i -e 's:.la$$:.so:' $(PROTOETCDIR)/$(COMPONENT_NAME)/slapd.*
 
 # common targets
 BUILD_TARGET:	$(BUILD_64_and_32)
