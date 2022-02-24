@@ -1,0 +1,79 @@
+--- wxWidgets-3.1.5/include/wx/string.h.orig	2022-02-24 20:36:30.420389723 +0000
++++ wxWidgets-3.1.5/include/wx/string.h	2022-02-24 20:36:37.956572846 +0000
+@@ -32,6 +32,7 @@
+ #include <stdarg.h>
+ #include <limits.h>
+ #include <stdlib.h>
++#include <type_traits>
+ 
+ #include "wx/wxcrtbase.h"   // for wxChar, wxStrlen() etc.
+ #include "wx/strvararg.h"
+@@ -207,12 +208,14 @@
+     const wxStringCharType *AsInternal() const;
+ 
+     // allow expressions like "c_str()[0]":
+-    inline wxUniChar operator[](size_t n) const;
+-    wxUniChar operator[](int n) const { return operator[](size_t(n)); }
+-    wxUniChar operator[](long n) const { return operator[](size_t(n)); }
+-#ifndef wxSIZE_T_IS_UINT
+-    wxUniChar operator[](unsigned int n) const { return operator[](size_t(n)); }
+-#endif // size_t != unsigned int
++    template<typename T, typename = std::enable_if<std::is_integral<T>::value>>
++    inline wxUniChar operator[](T n) const
++    {
++      // NB: we intentionally use operator[] and not at() here because the former
++      //     works for the terminating NUL while the latter does not
++      return (*m_str)[m_offset + n];
++    }
++
+ 
+     // These operators are needed to emulate the pointer semantics of c_str():
+     // expressions like "wxChar *p = str.c_str() + 1;" should continue to work
+@@ -1510,29 +1513,13 @@
+        Note that we we must define all of the overloads below to avoid
+        ambiguity when using str[0].
+      */
+-    wxUniChar operator[](int n) const
+-      { return at(n); }
+-    wxUniChar operator[](long n) const
++    template<typename T, typename = std::enable_if<std::is_integral<T>::value>>
++    inline wxUniChar operator[](T n) const
+       { return at(n); }
+-    wxUniChar operator[](size_t n) const
+-      { return at(n); }
+-#ifndef wxSIZE_T_IS_UINT
+-    wxUniChar operator[](unsigned int n) const
+-      { return at(n); }
+-#endif // size_t != unsigned int
+ 
+-    // operator versions of GetWriteableChar()
+-    wxUniCharRef operator[](int n)
+-      { return at(n); }
+-    wxUniCharRef operator[](long n)
++    template<typename T, typename = std::enable_if<std::is_integral<T>::value>>
++    inline wxUniCharRef operator[](T n)
+       { return at(n); }
+-    wxUniCharRef operator[](size_t n)
+-      { return at(n); }
+-#ifndef wxSIZE_T_IS_UINT
+-    wxUniCharRef operator[](unsigned int n)
+-      { return at(n); }
+-#endif // size_t != unsigned int
+-
+ 
+     /*
+         Overview of wxString conversions, implicit and explicit:
+@@ -4366,13 +4353,6 @@
+         return (*m_str)[m_offset];
+ }
+ 
+-inline wxUniChar wxCStrData::operator[](size_t n) const
+-{
+-    // NB: we intentionally use operator[] and not at() here because the former
+-    //     works for the terminating NUL while the latter does not
+-    return (*m_str)[m_offset + n];
+-}
+-
+ // ----------------------------------------------------------------------------
+ // more wxCStrData operators
+ // ----------------------------------------------------------------------------
