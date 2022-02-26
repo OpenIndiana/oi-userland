@@ -20,6 +20,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.1
 COMPONENT_MNR_VERSION=	3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      PHP 8.1
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_CLASSIFICATION=Meta Packages/Group Packages
