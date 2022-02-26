@@ -40,11 +40,9 @@ TEST_TARGET=$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_BUILD_ENV	+=	USE_PGXS=0
-
 # Manually added build dependencies
 REQUIRED_PACKAGES += database/postgres-12/developer
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += database/postgres-12/library
 REQUIRED_PACKAGES += system/library

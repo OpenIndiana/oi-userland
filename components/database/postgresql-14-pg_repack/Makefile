@@ -45,5 +45,4 @@ REQUIRED_PACKAGES += database/postgres-14/developer
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += database/postgres-14/library
-REQUIRED_PACKAGES += database/postgres-14
 REQUIRED_PACKAGES += system/library

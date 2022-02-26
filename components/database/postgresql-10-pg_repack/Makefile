@@ -37,11 +37,9 @@ PATH=		$(PG_HOME)/bin:/usr/sbin:/usr/bin
 TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_BUILD_ENV	+=	USE_PGXS=0
-
 # Manually added build dependencies
 REQUIRED_PACKAGES += database/postgres-10/developer
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += database/postgres-10/library
 REQUIRED_PACKAGES += system/library
