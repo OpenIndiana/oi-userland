@@ -1,0 +1,24 @@
+diff -ruN gtkspell-2.0.16.orig/configure.ac gtkspell-2.0.16/configure.ac
+--- gtkspell-2.0.16.orig/configure.ac	2022-02-26 12:25:34.656153930 +0000
++++ gtkspell-2.0.16/configure.ac	2022-02-26 12:26:23.869247467 +0000
+@@ -12,7 +12,7 @@
+ AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
+ AC_CONFIG_HEADERS([config.h])
+ 
+-SPELLER_LIB=-lenchant
++#SPELLER_LIB=-lenchant
+       
+ AC_SUBST(SPELLER_LIB)
+ GTKSPELL_PACKAGES=gtk+-2.0
+diff -ruN gtkspell-2.0.16.orig/gtkspell/gtkspell.c gtkspell-2.0.16/gtkspell/gtkspell.c
+--- gtkspell-2.0.16.orig/gtkspell/gtkspell.c	2009-10-09 21:01:47.000000000 +0000
++++ gtkspell-2.0.16/gtkspell/gtkspell.c	2022-02-26 12:26:10.060536084 +0000
+@@ -277,7 +277,7 @@
+ 	get_word_extents_from_mark(spell->buffer, &start, &end, spell->mark_click);
+ 	word = gtk_text_buffer_get_text(spell->buffer, &start, &end, FALSE);
+ 	
+-	enchant_dict_add_to_pwl( spell->speller, word, strlen(word));
++	enchant_dict_add( spell->speller, word, strlen(word));
+ 
+ 	gtkspell_recheck_all(spell);
+ 

@@ -37,6 +37,7 @@ PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION =	( cd $(@D)  && \
 	libtoolize --copy --force &&\
+	sed -i 's/enchant >=/enchant-2 >=/' configure.ac &&\
 	aclocal -I . &&\
 	automake -c -f -a &&\
 	autoconf )
@@ -45,6 +46,7 @@ COMPONENT_PREP_ACTION =	( cd $(@D)  && \
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS+=	--disable-gtk-doc
 
 # common targets
 build:		$(BUILD_32_and_64)
