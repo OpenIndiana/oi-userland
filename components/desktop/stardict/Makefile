@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stardict
 COMPONENT_VERSION=	3.0.6
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.stardict.org/
 COMPONENT_SUMMARY=	A powerful dictionary platform written in GTK+2
 COMPONENT_FMRI=		system/desktop/stardict
@@ -31,7 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(MYSQL_BINDIR):$(PATH.gnu)
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
+COMPONENT_PREP_ACTION = ( cd $(@D) && sed -i 's/enchant >=/enchant-2 >=/' dict/configure.ac && autoreconf -f -i )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-deprecations
