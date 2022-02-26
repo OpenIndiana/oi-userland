@@ -1,0 +1,16 @@
+Since version 14.1 it seems ExecGetJunkAttribute is defined in the server/executor/executor.h
+header file as inline function and the symbol is no longer exported from the postgres binary.
+So to be able to load mysql_fdw.so we need to include that include file when compiling.
+diff -wpruN '--exclude=*.orig' a~/mysql_fdw.c a/mysql_fdw.c
+--- a~/mysql_fdw.c	1970-01-01 00:00:00
++++ a/mysql_fdw.c	1970-01-01 00:00:00
+@@ -35,6 +35,9 @@
+ #include "commands/defrem.h"
+ #include "commands/explain.h"
+ #include "catalog/heap.h"
++#if PG_VERSION_NUM >= 140000
++#include "executor/executor.h"
++#endif
+ #include "foreign/fdwapi.h"
+ #include "miscadmin.h"
+ #include "mysql_query.h"
