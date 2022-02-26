@@ -33,7 +33,7 @@ COMPONENT_CLASSIFICATION =	System/Databases
 COMPONENT_LICENSE =	MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-PG_VERSION=	12
+PG_VERSION=	14
 # Don't depend on host default pg_config
 # Note, for PostgreSQL >= 9.6 $(PG_HOME)/bin contains 64-bit files
 PATH=		$(PG_HOME)/bin:$(MYSQL_BINDIR.$(BITS)):/usr/sbin:/usr/bin
@@ -46,5 +46,5 @@ COMPONENT_BUILD_ENV	+=	USE_PGXS=1
 COMPONENT_BUILD_ARGS	+=	MYSQL_LIBNAME=$(MYSQL_LIBDIR)/libmysqlclient.so
 COMPONENT_INSTALL_ENV	+=	USE_PGXS=1
 
-REQUIRED_PACKAGES += database/postgres-12/developer
+REQUIRED_PACKAGES += database/postgres-14/developer
 REQUIRED_PACKAGES += database/mariadb-101/library
