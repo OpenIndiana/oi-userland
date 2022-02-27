@@ -20,6 +20,7 @@
 #
 
 #
+# Copyright 2022 Gary Mills
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -33,7 +34,7 @@ COMPONENT_SUMMARY=	A gobject-based plugins engine for GNOME
 COMPONENT_DESCRIPTION=	libpeas is a gobject-based plugins engine, and is targeted\
  at giving every application the chance to assume its own extensibility.
 COMPONENT_VERSION=	1.20.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Libpeas
 COMPONENT_MAJOR_MINOR=        $(basename $(COMPONENT_VERSION))
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -48,19 +49,16 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_ENV.32 += PYTHON2=$(PYTHON.2.7.32)
-CONFIGURE_ENV.64 += PYTHON2=$(PYTHON.2.7.64)
 # Note, there's no 32-bit Python 3.5
-CONFIGURE_ENV.64 += PYTHON=$(PYTHON.3.5.64)
-CONFIGURE_ENV.64 += PYTHON3_CONFIG=/usr/bin/python3.5-config
+CONFIGURE_ENV += PYTHON=$(PYTHON.3.5.64)
+CONFIGURE_ENV += PYTHON3_CONFIG=/usr/bin/python3.5-config
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-gtk
 CONFIGURE_OPTIONS += --enable-lua5.2
 CONFIGURE_OPTIONS += --disable-luajit
-CONFIGURE_OPTIONS += --enable-python2
-CONFIGURE_OPTIONS.32 += --disable-python3
-CONFIGURE_OPTIONS.64 += --enable-python3
+CONFIGURE_OPTIONS += --disable-python2
+CONFIGURE_OPTIONS += --enable-python3
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
 
@@ -88,16 +86,16 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/ui-designer/glade
-
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/lua/lgi-52
+REQUIRED_PACKAGES += library/python/pygobject-3
+REQUIRED_PACKAGES += text/xmlto
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/lua/lgi-52
-REQUIRED_PACKAGES += library/python/pygobject-3
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += text/xmlto
