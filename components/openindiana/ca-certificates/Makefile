@@ -13,20 +13,20 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Till Wegmueller
-# Copyright 2021 David Stes
+# Copyright 2022 David Stes
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ca-certificates
 COMPONENT_VERSION_MAJOR=3
-COMPONENT_VERSION_MINOR=74
+COMPONENT_VERSION_MINOR=75
 COMPONENT_VERSION=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
 COMPONENT_SUMMARY=	Common CA certificates
 COMPONENT_SRC=		nss-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-		       sha256:88928811f9f40f87d42e2eaccdf6e454562e51486067f2ddbe90aa47ea6cd056
+		       sha256:fd571507827284644f4dd522a032acda2286835f6683ed22a1c2d3878cc58582
 COMPONENT_ARCHIVE_URL= \
 	https://ftp.mozilla.org/pub/security/nss/releases/NSS_$(COMPONENT_VERSION_MAJOR)_$(COMPONENT_VERSION_MINOR)_RTM/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
@@ -43,12 +43,19 @@ CLEAN_PATHS += $(BUILD_DIR) $(PROTO_DIR)
 
 $(BUILD_32): $(BUILD_DIR_32)/.certs_renamed
 
+# some filenames are UTF-8 not 7bit ASCII because 
+# certdata.txt has CKA_LABEL UTF8 entries that are not 7bit ASCII
+# for example NetLock_Arany_(Class_Gold)_Ftanstvny.pem has a small letter o
+# which uses the Hungarian small latin o with double acute (U + 0151)
+# to avoid packaging UTF-8 non-ASCII paths in /etc, process by iconv
+# see Illumos bug #14510 and bug #11625
+
 $(BUILD_DIR_32)/.certs_renamed: $(BUILD_DIR_32)/.certs_extracted
 	for i in $(BUILD_DIR_32)/xx*; do \
 		FILE_LEN=$$(wc -l  "$$i" |awk ' { print $$1; }' ); \
 		BEGIN=$$(grep -n "BEGIN CERT" "$$i" |cut -d : -f 1); \
 		TAIL=$$(($$FILE_LEN-$$BEGIN+1)); \
-		NAME=$$(head -1 "$$i" | tr ' ' '_'); \
+		NAME=$$(head -1 "$$i" | tr ' ' '_' | iconv -c -f UTF-8 -t ASCII | tr -d '?'); \
 		tail -n $$TAIL  "$$i" > $(BUILD_DIR_32)/$${NAME}.pem ;\
 	done
 	$(TOUCH) $@
@@ -94,4 +101,5 @@ REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += library/perl-5/libwww-perl-522  
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-grep
+REQUIRED_PACKAGES += system/library/iconv/utf-8
 # Auto-generated dependencies
