@@ -28,31 +28,37 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		py
-COMPONENT_VERSION=	1.8.2
+COMPONENT_VERSION=	1.11.0
 COMPONENT_FMRI=		library/python/py
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SUMMARY=	py - library with cross-python path, ini-parsing, io, code, log facilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f3b3a4c36512a4c4f024041ab51866f11761cc169670204b235f6b20523d4e6b
+COMPONENT_ARCHIVE_HASH= sha256:51c75c4126074b472f746a24399ad32f6053d1b34b68d2fa41e558e6f4a98719
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://bitbucket.org/hpk42/py
+COMPONENT_PROJECT_URL=	https://py.readthedocs.io/en/latest/
 COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS=	2.7 3.5 3.7 3.9
+PYTHON_VERSIONS= $(PYTHON_ALL_VERSIONS)
 
-
-# Tests require the pytest package to be installed: circular dependency.
-TEST_TARGET=  $(NO_TESTS)
+# Tests are failing
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_ENV += LC_ALL=en_US.UTF-8
-COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/testing
-COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
-COMPONENT_TEST_ARGS =
+COMPONENT_TEST_DIR= $(SOURCE_DIR)
+PYV= $(subst .,,$(PYTHON_VERSION))
+COMPONENT_TEST_CMD= tox -e py$(PYV)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += library/python/setuptools-35
+REQUIRED_PACKAGES += library/python/setuptools-37
+REQUIRED_PACKAGES += library/python/setuptools-39
+REQUIRED_PACKAGES += library/python/setuptools_scm-27
+REQUIRED_PACKAGES += library/python/setuptools_scm-35
+REQUIRED_PACKAGES += library/python/setuptools_scm-37
+REQUIRED_PACKAGES += library/python/setuptools_scm-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-27
