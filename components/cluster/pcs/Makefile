@@ -10,14 +10,14 @@
 
 #
 # Copyright 2021 Gary Mills
-# Copyright 2019 Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
+# Copyright 2022 Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pcs
 COMPONENT_VERSION= 0.10.1
-# COMPONENT_REVISION= 0
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_PROJECT_URL= https://github.com/ClusterLabs/pcs
