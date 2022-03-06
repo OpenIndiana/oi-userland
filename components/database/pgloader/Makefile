@@ -16,17 +16,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgloader
-# Later versions can't load data from SQLite
-# https://github.com/dimitri/pgloader/issues/843
-COMPONENT_VERSION= 	3.5.1
+COMPONENT_VERSION= 	3.6.3
 COMPONENT_SUMMARY= 	Data loading tool for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= \
-  sha256:0cd8ccd9356b02ea6ec44e85a1a047ac7166e0a7d3520d2ca1a9923908bcaef3
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/dimitri/pgloader/archive/v$(COMPONENT_VERSION).zip
-COMPONENT_PROJECT_URL = http://pgloader.io/
+COMPONENT_ARCHIVE_HASH= sha256:15d3654b5d631f42e58c47489ac7be54848cb12fbaffe9ced67b60b362b59544
+COMPONENT_ARCHIVE_URL=	https://github.com/dimitri/pgloader/archive/v$(COMPONENT_VERSION).zip
+COMPONENT_PROJECT_URL=	https://pgloader.io/
 
 # Don't depend on host default pg_config
 PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
@@ -65,6 +61,5 @@ REQUIRED_PACKAGES += library/freetds
 REQUIRED_PACKAGES += runtime/ccl
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
