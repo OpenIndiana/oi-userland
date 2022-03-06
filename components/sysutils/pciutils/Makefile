@@ -15,13 +15,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pciutils
-COMPONENT_VERSION=	3.4.0
+COMPONENT_VERSION=	3.7.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ba6244652723e137001e69d6081497d462cbff6ba0acec38cc81c20ea1ac0d7e
-COMPONENT_ARCHIVE_URL=	ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://mj.ucw.cz/sw/pciutils/
+COMPONENT_ARCHIVE_HASH =	sha256:08c27e01030d1fcc700d02bc2ea66c638f58a3d150e45e58852aa82ad4160d84
+COMPONENT_ARCHIVE_URL =		https://mj.ucw.cz/download/linux/pci/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL =		https://mj.ucw.cz/sw/pciutils/
 COMPONENT_FMRI=		system/pciutils
+COMPONENT_CLASSIFICATION =	System/Hardware
 COMPONENT_SUMMARY=	The PCI Utilities are a collection of programs for inspecting and manipulating configuration of PCI devices
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
