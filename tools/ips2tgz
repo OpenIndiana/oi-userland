@@ -80,21 +80,21 @@ file() {
 
     if [ -z $variant ]; then
         [ -f $PREFIX/i386/$path ] && rm -f $PREFIX/i386/$path
-        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        mkdir -p `dirname $PREFIX/i386/$path`
         cp `ls $PREFIX.pkgrecv/*/*/$hash|head -1` $PREFIX/i386/$path
         chmod $mode $PREFIX/i386/$path
         [ -f $PREFIX/sparc/$path ] && rm -f $PREFIX/sparc/$path
-        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        mkdir -p `dirname $PREFIX/sparc/$path`
         cp `ls $PREFIX.pkgrecv/*/*/$hash|head -1` $PREFIX/sparc/$path
         chmod $mode $PREFIX/sparc/$path
     elif [ $variant = i386 ]; then
         [ -f $PREFIX/i386/$path ] && rm -f $PREFIX/i386/$path
-        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        mkdir -p `dirname $PREFIX/i386/$path`
         cp `ls $PREFIX.pkgrecv/*/*/$hash|head -1` $PREFIX/i386/$path
         chmod $mode $PREFIX/i386/$path
     elif [ $variant = sparc ]; then
         [ -f $PREFIX/sparc/$path ] && rm -f $PREFIX/sparc/$path
-        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        mkdir -p `dirname $PREFIX/sparc/$path`
         cp `ls $PREFIX.pkgrecv/*/*/$hash|head -1` $PREFIX/sparc/$path
         chmod $mode $PREFIX/sparc/$path
     fi
@@ -122,18 +122,18 @@ hardlink() {
 
     if [ -z $variant ]; then
         [ -f $PREFIX/i386/$path ] && rm -f $PREFIX/i386/$path
-        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        mkdir -p `dirname $PREFIX/i386/$path`
         ln `dirname $PREFIX/i386/$path`/$target $PREFIX/i386/$path
         [ -f $PREFIX/sparc/$path ] && rm -f $PREFIX/sparc/$path
-        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        mkdir -p `dirname $PREFIX/sparc/$path`
         ln `dirname $PREFIX/sparc/$path`/$target $PREFIX/sparc/$path
     elif [ $variant = i386 ]; then
         [ -f $PREFIX/i386/$path ] && rm -f $PREFIX/i386/$path
-        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        mkdir -p `dirname $PREFIX/i386/$path`
         ln `dirname $PREFIX/i386/$path`/$target $PREFIX/i386/$path
     elif [ $variant = sparc ]; then
         [ -f $PREFIX/sparc/$path ] && rm -f $PREFIX/sparc/$path
-        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        mkdir -p `dirname $PREFIX/sparc/$path`
         ln `dirname $PREFIX/sparc/$path`/$target $PREFIX/sparc/$path
     fi
 
@@ -160,18 +160,18 @@ link() {
 
     if [ -z $variant ]; then
         [ -h $PREFIX/i386/$path ] && rm -f $PREFIX/i386/$path
-        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        mkdir -p `dirname $PREFIX/i386/$path`
         ln -s $target $PREFIX/i386/$path
         [ -h $PREFIX/sparc/$path ] && rm -f $PREFIX/sparc/$path
-        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        mkdir -p `dirname $PREFIX/sparc/$path`
         ln -s $target $PREFIX/sparc/$path
     elif [ $variant = i386 ]; then
         [ -h $PREFIX/i386/$path ] && rm -f $PREFIX/i386/$path
-        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        mkdir -p `dirname $PREFIX/i386/$path`
         ln -s $target $PREFIX/i386/$path
     elif [ $variant = sparc ]; then
         [ -h $PREFIX/sparc/$path ] && rm -f $PREFIX/sparc/$path
-        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        mkdir -p `dirname $PREFIX/sparc/$path`
         ln -s $target $PREFIX/sparc/$path
     fi
 
@@ -196,23 +196,23 @@ license() {
 
 
 for i in $PREFIX.pkgrecv/*/*/manifest.dir; do
-    [ -f $i ] && . $i
+    [ -f $i ] && sed -e 's/\([^ ]*\)/"\1"/g' < $i > $i-edited && . $i-edited
 done
 
 for i in $PREFIX.pkgrecv/*/*/manifest.file; do
-    [ -f $i ] && . $i
+    [ -f $i ] && sed -e 's/\([^ ]*\)/"\1"/g' < $i > $i-edited && . $i-edited
 done
 
 for i in $PREFIX.pkgrecv/*/*/manifest.hardlink; do
-    [ -f $i ] && . $i
+    [ -f $i ] && sed -e 's/\([^ ]*\)/"\1"/g' < $i > $i-edited && . $i-edited
 done
 
 for i in $PREFIX.pkgrecv/*/*/manifest.link; do
-    [ -f $i ] && . $i
+    [ -f $i ] && sed -e 's/\([^ ]*\)/"\1"/g' < $i > $i-edited && . $i-edited
 done
 
 for i in $PREFIX.pkgrecv/*/*/manifest.license; do
-    [ -f $i ] && . $i
+    [ -f $i ] && sed -e 's/\([^ ]*\)/"\1"/g' < $i > $i-edited && . $i-edited
 done
 
 tar cf - $PREFIX | gzip -9 >$ARCHIVE
