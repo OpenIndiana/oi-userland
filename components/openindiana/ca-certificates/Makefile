@@ -20,13 +20,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ca-certificates
 COMPONENT_VERSION_MAJOR=3
-COMPONENT_VERSION_MINOR=75
+COMPONENT_VERSION_MINOR=76
 COMPONENT_VERSION=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
 COMPONENT_SUMMARY=	Common CA certificates
 COMPONENT_SRC=		nss-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-		       sha256:fd571507827284644f4dd522a032acda2286835f6683ed22a1c2d3878cc58582
+		       sha256:1b8e0310add364d2ade40620cde0f1c37f4f00a6999b2d3e7ea8dacda4aa1630
 COMPONENT_ARCHIVE_URL= \
 	https://ftp.mozilla.org/pub/security/nss/releases/NSS_$(COMPONENT_VERSION_MAJOR)_$(COMPONENT_VERSION_MINOR)_RTM/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
@@ -55,7 +55,10 @@ $(BUILD_DIR_32)/.certs_renamed: $(BUILD_DIR_32)/.certs_extracted
 		FILE_LEN=$$(wc -l  "$$i" |awk ' { print $$1; }' ); \
 		BEGIN=$$(grep -n "BEGIN CERT" "$$i" |cut -d : -f 1); \
 		TAIL=$$(($$FILE_LEN-$$BEGIN+1)); \
-		NAME=$$(head -1 "$$i" | tr ' ' '_' | iconv -c -f UTF-8 -t ASCII | tr -d '?'); \
+		NAME=$$(head -1 "$$i" | tr ' ' '_' | \
+			iconv -c -f UTF-8 -t ASCII | \
+			tr -d '?' | tr -d '(' | tr -d ')' \
+		); \
 		tail -n $$TAIL  "$$i" > $(BUILD_DIR_32)/$${NAME}.pem ;\
 	done
 	$(TOUCH) $@
