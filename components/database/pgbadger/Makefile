@@ -12,36 +12,32 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
+# Copyright 2022 Andreas Wacknitz
 #
-
+BUILD_BITS= 64
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgbadger
-COMPONENT_VERSION= 	9.2
+COMPONENT_VERSION= 	11.6
 COMPONENT_SUMMARY= 	A fast PostgreSQL log analyzer
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:2107466309a409fb9e40f11bb77cac1f9ba7910d5328e7b2e08eb7a1c6d760ec
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/dalibo/pgbadger/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL=	http://dalibo.github.io/pgbadger/
-COMPONENT_FMRI=	database/postgres/pgbadger
+COMPONENT_ARCHIVE_HASH= sha256:9c8744f76123021c2d15da8521d77b3f529e50702fb3518c4d0e0311e457a3ec
+COMPONENT_ARCHIVE_URL=	https://github.com/darold/pgbadger/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_PROJECT_URL=	https://dalibo.github.io/pgbadger/
+COMPONENT_FMRI=	database/postgres/$(COMPONENT_NAME)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
+PERL_VERSION = 5.24
 
 # Using makemaker.mk here is an overkill,
 # because we don't need versioned pgbadger
-COMPONENT_PRE_BUILD_ACTION = ( cd $(BUILD_DIR_32) && $(PERL) Makefile.PL )
+COMPONENT_PRE_BUILD_ACTION = ( cd $(BUILD_DIR_64) && $(PERL) Makefile.PL )
 
-PKG_PROTO_DIRS += $(BUILD_DIR_32)
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
+PKG_PROTO_DIRS += $(BUILD_DIR_64)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/perl-524
