@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bluefish
 COMPONENT_VERSION=	2.2.12
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://bluefish.openoffice.nl/index.html
 COMPONENT_SUMMARY=	Bluefish, a powerful editor for experienced web designers
 COMPONENT_FMRI=		web/editor/bluefish
