@@ -62,38 +62,6 @@ diff -ur gstreamer-1.18.5.orig/meson.build gstreamer-1.18.5/meson.build
  gir = find_program('g-ir-scanner', required : get_option('introspection'))
  gnome = import('gnome')
  
-diff -ur gstreamer-1.18.5.orig/pkgconfig/gstreamer-net-uninstalled.pc.in gstreamer-1.18.5/pkgconfig/gstreamer-net-uninstalled.pc.in
---- gstreamer-1.18.5.orig/pkgconfig/gstreamer-net-uninstalled.pc.in	2021-09-08 14:01:48.759989500 +0000
-+++ gstreamer-1.18.5/pkgconfig/gstreamer-net-uninstalled.pc.in	2021-10-25 23:47:52.900962013 +0000
-@@ -11,5 +11,5 @@
- Requires: gstreamer-@GST_API_VERSION@ = @VERSION@ gio-2.0
- Version: @VERSION@
- 
--Libs: -L${libdir} -lgstnet-@GST_API_VERSION@
-+Libs: -L${libdir} -lgstnet-@GST_API_VERSION@ @LIBSOCKET@ @LIBNSL@
- Cflags: -I@abs_top_srcdir@/libs -I@abs_top_builddir@/libs
-diff -ur gstreamer-1.18.5.orig/pkgconfig/gstreamer-net.pc.in gstreamer-1.18.5/pkgconfig/gstreamer-net.pc.in
---- gstreamer-1.18.5.orig/pkgconfig/gstreamer-net.pc.in	2021-09-08 14:01:48.759989500 +0000
-+++ gstreamer-1.18.5/pkgconfig/gstreamer-net.pc.in	2021-10-25 23:47:13.426442177 +0000
-@@ -11,5 +11,5 @@
- Description: Network-enabled GStreamer plug-ins and clocking
- Requires: gstreamer-@GST_API_VERSION@ gio-2.0
- Version: @VERSION@
--Libs: -L${libdir} -lgstnet-@GST_API_VERSION@
-+Libs: -L${libdir} -lgstnet-@GST_API_VERSION@ @LIBSOCKET@ @LIBNSL@
- Cflags: -I${includedir}
-diff -ur gstreamer-1.18.5.orig/pkgconfig/meson.build gstreamer-1.18.5/pkgconfig/meson.build
---- gstreamer-1.18.5.orig/pkgconfig/meson.build	2021-09-08 14:01:48.759989500 +0000
-+++ gstreamer-1.18.5/pkgconfig/meson.build	2021-10-25 23:49:50.822279295 +0000
-@@ -9,6 +9,8 @@
- pkgconf.set('VERSION', gst_version)
- pkgconf.set('LIBM', mathlib.found() ? '-lm' : '')
- pkgconf.set('LIBRT', rt_lib.found() ? '-lrt' : '')
-+pkgconf.set('LIBSOCKET', socket_lib.found() ? '-lsocket' : '')
-+pkgconf.set('LIBNSL',    nsl_lib.found() ? '-lnsl' : '')
- 
- # Requires.private
- pkgconf.set('UNWIND_REQUIRE', cdata.has('HAVE_UNWIND') ? 'libunwind' : '')
 diff -ur gstreamer-1.18.5.orig/tests/check/meson.build gstreamer-1.18.5/tests/check/meson.build
 --- gstreamer-1.18.5.orig/tests/check/meson.build	2021-09-08 14:01:48.787989100 +0000
 +++ gstreamer-1.18.5/tests/check/meson.build	2021-10-25 23:38:36.507237568 +0000
