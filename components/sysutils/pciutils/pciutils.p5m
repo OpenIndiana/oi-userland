@@ -4,7 +4,7 @@
 # only use this file in accordance with the terms of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
@@ -14,6 +14,7 @@
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
@@ -23,9 +24,10 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 file path=usr/sbin/lspci
 file path=usr/sbin/setpci
 file path=usr/sbin/update-pciids
+file path=usr/share/man/man5/pci.ids.5
 file path=usr/share/man/man7/pcilib.7
 file path=usr/share/man/man8/lspci.8
 file path=usr/share/man/man8/setpci.8
 file path=usr/share/man/man8/update-pciids.8
 
-depend fmri=system/pciutils/pci.ids@2.2 type=require
+depend fmri=system/data/hardware-registry type=require
