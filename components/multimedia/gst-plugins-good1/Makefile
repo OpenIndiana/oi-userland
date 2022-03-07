@@ -21,7 +21,7 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-good1
-COMPONENT_VERSION=	1.18.5
+COMPONENT_VERSION=	1.20.0
 COMPONENT_SUMMARY=	GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI=		library/audio/gstreamer1/plugin/good
@@ -29,7 +29,7 @@ COMPONENT_SRC_NAME=	gst-plugins-good
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3aaeeea7765fbf8801acce4a503a9b05f73f04e8a35352e9d00232cfd555796b
+  sha256:2d119c15ab8c9e79f8cd3c6bf582ff7a050b28ccae52ab4865e1a1464991659c
 COMPONENT_ARCHIVE_URL= \
   https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/
@@ -109,7 +109,6 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
