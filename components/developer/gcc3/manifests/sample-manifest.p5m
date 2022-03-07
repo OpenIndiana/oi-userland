@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2022 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,39 +23,35 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=.sedded
-hardlink path=usr/gcc/3.4/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-c++ \
-    target=i386-pc-solaris2.11-g++
-file path=usr/gcc/3.4/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-g++
-file path=usr/gcc/3.4/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc
-hardlink \
-    path=usr/gcc/3.4/bin/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)-gcc-$(COMPONENT_VERSION) \
+hardlink path=usr/gcc/3.4/bin/$(GNU_TRIPLET)-c++ target=g++
+hardlink path=usr/gcc/3.4/bin/$(GNU_TRIPLET)-g++ target=g++
+file path=usr/gcc/3.4/bin/$(GNU_TRIPLET)-gcc
+hardlink path=usr/gcc/3.4/bin/$(GNU_TRIPLET)-gcc-$(COMPONENT_VERSION) \
     target=i386-pc-solaris2.11-gcc
-hardlink path=usr/gcc/3.4/bin/c++ target=i386-pc-solaris2.11-g++
+hardlink path=usr/gcc/3.4/bin/c++ target=g++
 file path=usr/gcc/3.4/bin/cpp
-hardlink path=usr/gcc/3.4/bin/g++ target=i386-pc-solaris2.11-g++
+file path=usr/gcc/3.4/bin/g++
 file path=usr/gcc/3.4/bin/g77
-hardlink path=usr/gcc/3.4/bin/gcc target=i386-pc-solaris2.11-gcc
+file path=usr/gcc/3.4/bin/gcc
 file path=usr/gcc/3.4/bin/gccbug
 file path=usr/gcc/3.4/bin/gcov
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/atomic_word.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/basic_file.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/c++allocator.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/c++config.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/c++io.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/c++locale.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/codecvt_specializations.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/ctype_base.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/ctype_inline.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/ctype_noninline.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/gthr-default.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/gthr-posix.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/gthr-single.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/gthr.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/messages_members.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/os_defines.h
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/stdc++.h.gch/O0g
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/stdc++.h.gch/O2g
-file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bits/time_members.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/atomic_word.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/basic_file.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/c++allocator.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/c++config.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/c++io.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/c++locale.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/codecvt_specializations.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/ctype_base.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/ctype_inline.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/ctype_noninline.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/gthr-default.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/gthr-posix.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/gthr-single.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/gthr.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/messages_members.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/os_defines.h
+file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/$(GNU_TRIPLET)/bits/time_members.h
 file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/algorithm
 file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/backward/algo.h
 file path=usr/gcc/3.4/include/c++/$(COMPONENT_VERSION)/backward/algobase.h
@@ -270,80 +266,71 @@ link path=usr/gcc/3.4/lib/$(MACH64)/libobjc.so target=libobjc.so.1.0.0
 link path=usr/gcc/3.4/lib/$(MACH64)/libobjc.so.1 target=libobjc.so.1.0.0
 file path=usr/gcc/3.4/lib/$(MACH64)/libobjc.so.1.0.0
 file path=usr/gcc/3.4/lib/$(MACH64)/libstdc++.a
-file path=usr/gcc/3.4/lib/$(MACH64)/libstdc++.la.orig
 link path=usr/gcc/3.4/lib/$(MACH64)/libstdc++.so target=libstdc++.so.6.0.3
 link path=usr/gcc/3.4/lib/$(MACH64)/libstdc++.so.6 target=libstdc++.so.6.0.3
 file path=usr/gcc/3.4/lib/$(MACH64)/libstdc++.so.6.0.3
 file path=usr/gcc/3.4/lib/$(MACH64)/libsupc++.a
-file path=usr/gcc/3.4/lib/$(MACH64)/libsupc++.la.orig
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/$(MACH64)/crtbegin.o
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/$(MACH64)/crtend.o
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/$(MACH64)/gmon.o
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/$(MACH64)/libgcc.a
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/$(MACH64)/libgcc_eh.a
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/$(MACH64)/libgcov.a
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/crtbegin.o
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/crtend.o
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/gmon.o
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/README
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/emmintrin.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/firefox/dbm/ncompat.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/float.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/g2c.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/iso646.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/limits.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/math.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/mmintrin.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/mps/ncompat.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/netinet/ip_fil.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/netinet/ip_lookup.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/netinet/ip_nat.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/netinet/ip_proxy.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/netinet/ip_state.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/objc/NXConstStr.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/objc/Object.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/objc/Protocol.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/objc/encoding.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/objc/hash.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/objc/objc-api.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/objc/objc-list.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/objc/objc.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/objc/sarray.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/objc/thr.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/objc/typedstream.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/pmmintrin.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/rpc/auth.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/rpc/clnt.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/rpc/svc.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/rpc/xdr.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/stdarg.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/stdbool.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/stddef.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/sys/varargs.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/syslimits.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/unwind.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/varargs.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/xmmintrin.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/include/xorg/edid.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/gsyslimits.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/README
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/emmintrin.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/float.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/iso646.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/limits.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/mmintrin.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/pmmintrin.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/stdarg.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/stdbool.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/stddef.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/unwind.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/varargs.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/include/xmmintrin.h
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/mkheaders.conf
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/libgcc.a
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/libgcc_eh.a
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/libgcov.a
-file path=usr/gcc/3.4/lib/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/specs
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/$(MACH64)/crtbegin.o
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/$(MACH64)/crtend.o
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/$(MACH64)/gmon.o
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/$(MACH64)/libgcc.a
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/$(MACH64)/libgcc_eh.a
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/$(MACH64)/libgcov.a
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/crtbegin.o
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/crtend.o
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/gmon.o
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/README
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/emmintrin.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/float.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/g2c.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/iso646.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/limits.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/math.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/mmintrin.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/mps/ncompat.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/objc/NXConstStr.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/objc/Object.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/objc/Protocol.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/objc/encoding.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/objc/hash.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/objc/objc-api.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/objc/objc-list.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/objc/objc.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/objc/sarray.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/objc/thr.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/objc/typedstream.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/pmmintrin.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/rpc/auth.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/rpc/clnt.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/rpc/svc.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/rpc/xdr.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/stdarg.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/stdbool.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/stddef.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/sys/varargs.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/syslimits.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/unwind.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/varargs.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/include/xmmintrin.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/gsyslimits.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/README
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/emmintrin.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/float.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/iso646.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/limits.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/mmintrin.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/pmmintrin.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/stdarg.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/stdbool.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/stddef.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/unwind.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/varargs.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/include/xmmintrin.h
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/mkheaders.conf
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/libgcc.a
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/libgcc_eh.a
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/libgcov.a
+file path=usr/gcc/3.4/lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/specs
 file path=usr/gcc/3.4/lib/libfrtbegin.a
 file path=usr/gcc/3.4/lib/libg2c.a
 link path=usr/gcc/3.4/lib/libg2c.so target=libg2c.so.0.0.0
@@ -357,20 +344,18 @@ link path=usr/gcc/3.4/lib/libobjc.so target=libobjc.so.1.0.0
 link path=usr/gcc/3.4/lib/libobjc.so.1 target=libobjc.so.1.0.0
 file path=usr/gcc/3.4/lib/libobjc.so.1.0.0
 file path=usr/gcc/3.4/lib/libstdc++.a
-file path=usr/gcc/3.4/lib/libstdc++.la.orig
 link path=usr/gcc/3.4/lib/libstdc++.so target=libstdc++.so.6.0.3
 link path=usr/gcc/3.4/lib/libstdc++.so.6 target=libstdc++.so.6.0.3
 file path=usr/gcc/3.4/lib/libstdc++.so.6.0.3
 file path=usr/gcc/3.4/lib/libsupc++.a
-file path=usr/gcc/3.4/lib/libsupc++.la.orig
-file path=usr/gcc/3.4/libexec/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/cc1
-file path=usr/gcc/3.4/libexec/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/cc1obj
-file path=usr/gcc/3.4/libexec/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/cc1plus
-file path=usr/gcc/3.4/libexec/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/collect2
-file path=usr/gcc/3.4/libexec/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/f771
-file path=usr/gcc/3.4/libexec/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/fixinc.sh
-file path=usr/gcc/3.4/libexec/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/fixincl
-file path=usr/gcc/3.4/libexec/gcc/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/$(COMPONENT_VERSION)/install-tools/mkheaders
+file path=usr/gcc/3.4/libexec/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/cc1
+file path=usr/gcc/3.4/libexec/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/cc1obj
+file path=usr/gcc/3.4/libexec/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/cc1plus
+file path=usr/gcc/3.4/libexec/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/collect2
+file path=usr/gcc/3.4/libexec/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/f771
+file path=usr/gcc/3.4/libexec/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/fixinc.sh
+file path=usr/gcc/3.4/libexec/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/fixincl
+file path=usr/gcc/3.4/libexec/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION)/install-tools/mkheaders
 file path=usr/gcc/3.4/share/info/cpp.info
 file path=usr/gcc/3.4/share/info/cppinternals.info
 file path=usr/gcc/3.4/share/info/dir
