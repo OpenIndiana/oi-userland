@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gcc
 COMPONENT_VERSION=	3.4.3
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://gcc.gnu.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -33,10 +33,13 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:3ab488fe2df01bf54a57acd70e745266e19232edacf77512f77655296748e7a0
 COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-compiler
+COMPONENT_FMRI =		developer/gcc-3
+COMPONENT_SUMMARY =		gcc - The GNU C compiler
+COMPONENT_CLASSIFICATION =	Development/C
+COMPONENT_LICENSE_FILE =	gcc.license
+COMPONENT_LICENSE =		GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # we build gcc with gcc
 COMPILER =	gcc
@@ -76,15 +79,17 @@ COMPONENT_BUILD_ENV += CFLAGS_FOR_TARGET="$(CFLAGS)"
 COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
 COMPONENT_BUILD_TARGETS = bootstrap
 
+PKG_HARDLINKS +=	usr/gcc/3.4/bin/gcc
+PKG_HARDLINKS +=	usr/gcc/3.4/bin/g++
+PKG_HARDLINKS +=	usr/gcc/3.4/bin/$(GNU_TRIPLET)-gcc
+
 # common targets
 build:		$(BUILD_32)
 
 $(PROTO_DIR)/.sedded:	$(INSTALL_32)
 	(cd $(@D) ; for file in libstdc++.la libsupc++.la ; do \
-		$(MV) usr/gcc/3.4/lib/$$file usr/gcc/3.4/lib/$$file.orig ; \
-		sed -e "s;\\(dependency_libs=\\).*;\\1' -L/usr/gcc/3.4/lib -lgcc_s -lm';" usr/gcc/3.4/lib/$$file.orig >usr/gcc/3.4/lib/$$file ; \
-		$(MV) usr/gcc/3.4/lib/$(MACH64)/$$file usr/gcc/3.4/lib/$(MACH64)/$$file.orig ; \
-		sed -e "s;\\(dependency_libs=\\).*;\\1' -L/usr/gcc/3.4/lib/$(MACH64) -lgcc_s -lm';" usr/gcc/3.4/lib/$(MACH64)/$$file.orig >usr/gcc/3.4/lib/$(MACH64)/$$file ; \
+		sed -i -e "s;\\(dependency_libs=\\).*;\\1' -L/usr/gcc/3.4/lib -lgcc_s -lm';" usr/gcc/3.4/lib/$$file ; \
+		sed -i -e "s;\\(dependency_libs=\\).*;\\1' -L/usr/gcc/3.4/lib/$(MACH64) -lgcc_s -lm';" usr/gcc/3.4/lib/$(MACH64)/$$file ; \
 	 done)
 	$(TOUCH) $@
 
@@ -95,9 +100,9 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 test: $(TEST_32)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += developer/gnu-binutils
 REQUIRED_PACKAGES += developer/linker
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c-runtime
 REQUIRED_PACKAGES += system/library/gcc-3-runtime
