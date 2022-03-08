@@ -1,0 +1,36 @@
+--- libreoffice-7.2.5.2/external/coinmp/ExternalProject_coinmp.mk.~1~	Wed Dec 29 08:49:22 2021
++++ libreoffice-7.2.5.2/external/coinmp/ExternalProject_coinmp.mk	Wed Feb 23 09:20:27 2022
+@@ -12,7 +12,6 @@
+ $(eval $(call gb_ExternalProject_register_targets,coinmp,\
+ 	build \
+ ))
+-
+ ifeq ($(COM),MSC)
+ $(call gb_ExternalProject_get_state_target,coinmp,build) :
+ 	$(call gb_Trace_StartRange,coinmp,EXTERNAL)
+@@ -27,11 +26,14 @@
+ 
+ else
+ $(call gb_ExternalProject_get_state_target,coinmp,build) :
++	$(info COINMP_CFLAGS = $(COINMP_CFLAGS))
++	$(info COINMP_CXXFLAGS = $(COINMP_CXXFLAGS))
+ 	$(call gb_Trace_StartRange,coinmp,EXTERNAL)
+ 	+$(call gb_ExternalProject_run,build,\
+-		$(gb_RUN_CONFIGURE) ./configure COIN_SKIP_PROJECTS="Data/Sample" \
++		$(gb_RUN_CONFIGURE) CFLAGS="$(COINMP_CFLAGS)" CXXFLAGS="$(COINMP_CXXFLAGS)"  ./configure COIN_SKIP_PROJECTS="Data/Sample" \
+ 			$(if $(verbose),--disable-silent-rules,--enable-silent-rules) \
+-			$(if $(CROSS_COMPILING),--build=$(BUILD_PLATFORM) --host=$(HOST_PLATFORM)) \
++			--build=$(BUILD_PLATFORM) \
++			$(if $(CROSS_COMPILING), --host=$(HOST_PLATFORM)) \
+ 			$(if $(DISABLE_DYNLOADING),--disable-shared) \
+ 			--disable-bzlib \
+ 			$(if $(filter MACOSX,$(OS)),--prefix=/@.__________________________________________________OOO) \
+@@ -40,7 +42,7 @@
+ 			$(if $(filter LINUX,$(OS)), \
+ 				'LDFLAGS=-Wl$(COMMA)-z$(COMMA)origin \
+ 					-Wl$(COMMA)-rpath$(COMMA)\$$$$ORIGIN') \
+-		&& $(MAKE) \
++		&& $(MAKE) -j1 \
+ 		$(if $(filter MACOSX,$(OS)),&& $(PERL) \
+ 			$(SRCDIR)/solenv/bin/macosx-change-install-names.pl shl OOO \
+ 			$(EXTERNAL_WORKDIR)/Cbc/src/.libs/libCbc.3.8.8.dylib \

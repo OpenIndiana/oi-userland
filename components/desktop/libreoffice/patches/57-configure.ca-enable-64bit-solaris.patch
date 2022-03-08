@@ -1,0 +1,27 @@
+--- libreoffice-6.4.7.2/configure.ac	Tue Feb  1 18:17:23 2022
++++ libreoffice-6.4.7.2/configure.ac.new	Tue Feb  1 19:32:02 2022
+@@ -605,10 +605,10 @@
+ 
+     dnl Check whether we're using a SPARC or i386 processor
+     AC_MSG_CHECKING([the processor type])
+-    if test "$host_cpu" = "sparc" -o "$host_cpu" = "i386"; then
++    if test "$host_cpu" = "sparc" -o "$host_cpu" = "i386" -o "$host_cpu" = "x86_64"; then
+         AC_MSG_RESULT([ok ($host_cpu)])
+     else
+-        AC_MSG_ERROR([only SPARC and i386 processors are supported])
++        AC_MSG_ERROR([only SPARC and i386 processors are supported, not $host_cpu])
+     fi
+     ;;
+ 
+@@ -4592,6 +4592,11 @@
+         RTL_ARCH=x86
+         PLATFORMID=solaris_x86
+         ;;
++    x86_64)
++        CPUNAME=X86_64
++        RTL_ARCH=X86_64
++        PLATFORMID=solaris_x86_64
++        ;;
+     sparc)
+         CPUNAME=SPARC
+         RTL_ARCH=SPARC

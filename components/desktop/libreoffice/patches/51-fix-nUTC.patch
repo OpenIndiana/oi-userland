@@ -1,0 +1,11 @@
+--- libreoffice-7.2.5.2/tools/source/datetime/ttime.cxx.orig	Wed Feb  9 08:46:29 2022
++++ libreoffice-7.2.5.2/tools/source/datetime/ttime.cxx	Wed Feb  9 08:47:17 2022
+@@ -415,7 +415,7 @@
+ #if defined(__sun)
+         // Solaris gmtime_r() seems not to handle daylight saving time
+         // flags correctly
+-        nUTC = nLocalTime + ( aTM.tm_isdst == 0 ? timezone : altzone );
++        sal_Int32 nUTC = nLocalTime + ( aTM.tm_isdst == 0 ? timezone : altzone );
+ #elif defined( LINUX )
+         // Linux mktime() seems not to handle tm_isdst correctly
+         sal_Int32 nUTC = nLocalTime - aTM.tm_gmtoff;
