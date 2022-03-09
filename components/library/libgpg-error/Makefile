@@ -26,14 +26,14 @@ BUILD_BITS = 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgpg-error
-COMPONENT_VERSION=	1.43
+COMPONENT_VERSION=	1.44
 COMPONENT_SUMMARY=	GnuPG Error Library
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/libgpg-error/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:a9ab83ca7acc442a5bd846a75b920285ff79bdb4e3d34aa382be88ed2c3aebaf
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		library/security/libgpg-error
+COMPONENT_ARCHIVE_HASH=	sha256:8e3d2da7a8b9a104dd8e9212ebe8e0daf86aa838cc1314ba6bc4de8f2d8a1ff9
+COMPONENT_ARCHIVE_URL=	https://gnupg.org/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		library/security/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Security
 COMPONENT_LICENSE=	LGPLv2.1
 
@@ -41,9 +41,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
-CONFIGURE_OPTIONS  +=           --disable-static
-CONFIGURE_OPTIONS  +=           --enable-shared
-CONFIGURE_OPTIONS  +=           --enable-threads=posix
+CONFIGURE_OPTIONS  +=	--disable-static
+CONFIGURE_OPTIONS  +=	--enable-shared
+CONFIGURE_OPTIONS  +=	--enable-threads=posix
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
