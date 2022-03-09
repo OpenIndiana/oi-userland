@@ -19,14 +19,15 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
-COMPONENT_VERSION= 0.4.34
+COMPONENT_VERSION= 0.4.36
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
-COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ef63f0bca5b431c6119addd834ca7fbb507c900c4861c57b3667b6f4ccfcaaaa
-COMPONENT_ARCHIVE_URL= https://ftp.gimp.org/pub/gegl/0.4/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.gegl.org/
+COMPONENT_ARCHIVE_HASH= sha256:6fd58a0cdcc7702258adaeffb573a389228ae8f0eff47578efda2309b61b2ca6
+COMPONENT_ARCHIVE_URL=	https://ftp.gimp.org/pub/gegl/0.4/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.gegl.org/
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_FMRI=	image/library/$(COMPONENT_NAME)
 COMPONENT_LICENSE= GPLv3, LGPLv3
 
 include $(WS_MAKE_RULES)/common.mk
@@ -68,17 +69,14 @@ REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/ilmbase
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/sdl2
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
