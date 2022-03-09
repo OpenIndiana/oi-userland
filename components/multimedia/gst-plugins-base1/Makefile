@@ -12,6 +12,7 @@
 #
 # Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
 # Copyright 2019 Michal Nowak
+# Copyright 2022 Niklas Poslovski
 #
 
 BUILD_BITS=	32_and_64
@@ -20,7 +21,7 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-base1
-COMPONENT_VERSION= 1.18.5
+COMPONENT_VERSION= 1.20.0
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI= library/audio/gstreamer1/plugin/base
@@ -28,7 +29,7 @@ COMPONENT_SRC_NAME= gst-plugins-base
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:960b7af4585700db0fdd5b843554e11e2564fed9e061f591fae88a7be6446fa3
+  sha256:4cb66fccf730b1037e6533862c2128990912a6db4e5bbd14e0ef914450eb4c7c
 COMPONENT_ARCHIVE_URL= \
   http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://gstreamer.freedesktop.org/
@@ -40,7 +41,11 @@ gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
 
-CFLAGS += -I/usr/X11/include
+CFLAGS += -I/usr/X11/include -lsocket
+# build with the distribution preferred libjpeg implementation
+CFLAGS             +=           $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS           +=           $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS            +=           $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
