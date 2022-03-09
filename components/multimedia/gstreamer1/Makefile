@@ -13,6 +13,7 @@
 # Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Tim Mooney.  All rights reserved.
+# Copyright 2022 Niklas Poslovski
 #
 
 BUILD_BITS=	32_and_64
@@ -21,7 +22,7 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gstreamer1
-COMPONENT_VERSION=	1.18.5
+COMPONENT_VERSION=	1.20.0
 COMPONENT_SUMMARY=	GNOME streaming media framework
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/
 COMPONENT_FMRI=		library/audio/gstreamer1
@@ -30,7 +31,7 @@ COMPONENT_SRC_NAME=	gstreamer
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:55862232a63459bbf56abebde3085ca9aec211b478e891dacea4d6df8cafe80a
+  sha256:edf4bffff85591d4fff7b21bb9ed7f0feabc123ac4a4eff29e73cbce454f9db7
 COMPONENT_ARCHIVE_URL= \
   $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2
@@ -42,8 +43,6 @@ gcc_OPT = -O2
 PATH = $(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include
-# until meson.build searches for gmp's CFLAGS, needed for gst_utils test
-CFLAGS += -I/usr/include/gmp
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR.$(BITS))
