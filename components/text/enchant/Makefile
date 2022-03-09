@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= enchant
 COMPONENT_VERSION= 2.3.2
-#COMPONENT_REVISION= 1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME spell checker component
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -40,7 +40,7 @@ COMPONENT_PREP_ACTION = ( cd $(@D)  && autoreconf -vif )
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --with-myspell-dir=/usr/share/spell/myspell
+CONFIGURE_OPTIONS += --with-hunspell-dir=/usr/share/spell/hunspell
 CONFIGURE_OPTIONS += --disable-aspell
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += OBJC=$(CC)
