@@ -1,0 +1,145 @@
+# Newer Vala compilers seem to dislike variables starting with an underscore, prepending an x fixes that.
+diff -Nru Venom-0.5.5.orig/src/tox/Conference.vala Venom-0.5.5/src/tox/Conference.vala
+--- Venom-0.5.5.orig/src/tox/Conference.vala	2020-04-23 08:31:21.000000000 +0000
++++ Venom-0.5.5/src/tox/Conference.vala	2022-03-08 13:05:56.500536445 +0000
+@@ -26,7 +26,7 @@
+     public string title             { get; set; }
+     public string status_message    { get; set; default = ""; }
+     public int    unread_messages   { get; set; default = 0; }
+-    public bool   _show_notifications { get; set; default = true; }
++    public bool   x_show_notifications { get; set; default = true; }
+     private Gee.Map<uint32, ConferencePeer> peers;
+     private static Gdk.Pixbuf default_image;
+ 
+@@ -123,7 +123,7 @@
+     }
+ 
+     public bool show_notifications() {
+-      return _show_notifications;
++      return x_show_notifications;
+     }
+ 
+     public bool get_requires_attention() { return unread_messages > 0; }
+diff -Nru Venom-0.5.5.orig/src/tox/SqliteContactRepository.vala Venom-0.5.5/src/tox/SqliteContactRepository.vala
+--- Venom-0.5.5.orig/src/tox/SqliteContactRepository.vala	2020-04-23 08:31:21.000000000 +0000
++++ Venom-0.5.5/src/tox/SqliteContactRepository.vala	2022-03-08 13:06:09.127473116 +0000
+@@ -91,7 +91,7 @@
+         c.auto_conference = stmt.column_bool(PeerSettingsColumn.AUTO_ACCEPT_CI);
+         c.auto_filetransfer = stmt.column_bool(PeerSettingsColumn.AUTO_ACCEPT_FT);
+         c.auto_location = stmt.column_text(PeerSettingsColumn.FT_DIRECTORY);
+-        c._show_notifications = stmt.column_bool(PeerSettingsColumn.NOTIFICATIONS);
++        c.x_show_notifications = stmt.column_bool(PeerSettingsColumn.NOTIFICATIONS);
+       } else {
+         logger.e("Could not read contact");
+       }
+@@ -110,7 +110,7 @@
+         .bind_bool("$AUTO_CI", c.auto_conference)
+         .bind_bool("$AUTO_FT", c.auto_filetransfer)
+         .bind_text("$FT_DIR", c.auto_location)
+-        .bind_bool("$NOTIFICATIONS", c._show_notifications)
++        .bind_bool("$NOTIFICATIONS", c.x_show_notifications)
+         .step();
+     }
+     public void delete(IContact contact) {
+diff -Nru Venom-0.5.5.orig/src/tox/ToxAdapterFriendListener.vala Venom-0.5.5/src/tox/ToxAdapterFriendListener.vala
+--- Venom-0.5.5.orig/src/tox/ToxAdapterFriendListener.vala	2020-04-23 08:31:21.000000000 +0000
++++ Venom-0.5.5/src/tox/ToxAdapterFriendListener.vala	2022-03-08 13:07:51.832254436 +0000
+@@ -308,7 +308,7 @@
+     public void on_friend_typing_status_changed(uint32 friend_number, bool is_typing) {
+       logger.d("on_friend_typing_status_changed");
+       var contact = friends.@get(friend_number) as Contact;
+-      contact._is_typing = is_typing;
++      contact.x_is_typing = is_typing;
+       contact.changed();
+     }
+ 
+diff -Nru Venom-0.5.5.orig/src/tox/ToxContact.vala Venom-0.5.5/src/tox/ToxContact.vala
+--- Venom-0.5.5.orig/src/tox/ToxContact.vala	2020-04-23 08:31:21.000000000 +0000
++++ Venom-0.5.5/src/tox/ToxContact.vala	2022-03-08 13:06:33.806663352 +0000
+@@ -40,8 +40,8 @@
+     public bool        connected       { get; set; default = false; }
+     public Gdk.Pixbuf ? tox_image      { get; set; default = null; }
+     public int         unread_messages { get; set; default = 0; }
+-    public bool        _is_typing      { get; set; default = false; }
+-    public bool        _show_notifications { get; set; default = true; }
++    public bool        x_is_typing      { get; set; default = false; }
++    public bool        x_show_notifications { get; set; default = true; }
+ 
+     public Contact(uint32 friend_number, string id) {
+       tox_friend_number = friend_number;
+@@ -69,7 +69,7 @@
+     }
+ 
+     public bool is_typing() {
+-      return _is_typing;
++      return x_is_typing;
+     }
+ 
+     public bool is_conference() {
+@@ -89,7 +89,7 @@
+     }
+ 
+     public bool show_notifications() {
+-      return _show_notifications;
++      return x_show_notifications;
+     }
+   }
+ }
+diff -Nru Venom-0.5.5.orig/src/view/ApplicationWindow.vala Venom-0.5.5/src/view/ApplicationWindow.vala
+--- Venom-0.5.5.orig/src/view/ApplicationWindow.vala	2020-04-23 08:31:21.000000000 +0000
++++ Venom-0.5.5/src/view/ApplicationWindow.vala	2022-03-08 13:07:02.133409801 +0000
+@@ -382,10 +382,10 @@
+       logger.d(@"on_mute_contact($contact_id)");
+       var c = find_contact(contact_id);
+       if (c != null && c is Contact) {
+-        ((Contact)c)._show_notifications = false;
++        ((Contact)c).x_show_notifications = false;
+         friend_listener.on_apply_friend_settings(c);
+       } else if (c != null && c is Conference) {
+-        ((Conference)c)._show_notifications = false;
++        ((Conference)c).x_show_notifications = false;
+       } else {
+         logger.e(@"Friend with id $contact_id not found.");
+       }
+diff -Nru Venom-0.5.5.orig/src/viewmodel/ConferenceInfoViewModel.vala Venom-0.5.5/src/viewmodel/ConferenceInfoViewModel.vala
+--- Venom-0.5.5.orig/src/viewmodel/ConferenceInfoViewModel.vala	2020-04-23 08:31:21.000000000 +0000
++++ Venom-0.5.5/src/viewmodel/ConferenceInfoViewModel.vala	2022-03-08 13:05:09.391270385 +0000
+@@ -50,7 +50,7 @@
+ 
+     private void set_info() {
+       title = contact.title;
+-      show_notifications = contact._show_notifications;
++      show_notifications = contact.x_show_notifications;
+     }
+ 
+     public ListModel get_list_model() {
+@@ -64,7 +64,7 @@
+ 
+     public void on_apply_clicked() {
+       logger.d("on_apply_clicked");
+-      contact._show_notifications = show_notifications;
++      contact.x_show_notifications = show_notifications;
+       if (title != contact.title) {
+         try {
+           listener.on_change_conference_title(contact, title);
+diff -Nru Venom-0.5.5.orig/src/viewmodel/FriendInfoViewModel.vala Venom-0.5.5/src/viewmodel/FriendInfoViewModel.vala
+--- Venom-0.5.5.orig/src/viewmodel/FriendInfoViewModel.vala	2020-04-23 08:31:21.000000000 +0000
++++ Venom-0.5.5/src/viewmodel/FriendInfoViewModel.vala	2022-03-08 13:05:23.103335508 +0000
+@@ -71,7 +71,7 @@
+         last_seen_tooltip = contact.last_seen.format("%c");
+       }
+ 
+-      show_notifications = contact._show_notifications;
++      show_notifications = contact.x_show_notifications;
+       tox_id = contact.get_id();
+       tox_identicon = Identicon.generate_pixbuf(Tools.hexstring_to_bin(tox_id), 40);
+       var pixbuf = contact.get_image();
+@@ -94,7 +94,7 @@
+       } else {
+         contact.auto_location = "";
+       }
+-      contact._show_notifications = show_notifications;
++      contact.x_show_notifications = show_notifications;
+       listener.on_apply_friend_settings(contact);
+       contact.changed();
+     }
