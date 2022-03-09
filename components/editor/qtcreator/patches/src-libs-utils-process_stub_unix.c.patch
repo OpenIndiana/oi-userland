@@ -1,0 +1,21 @@
+--- qt-creator-opensource-src-4.11.2/src/libs/utils/process_stub_unix.c.orig	Thu Mar  3 19:47:29 2022
++++ qt-creator-opensource-src-4.11.2/src/libs/utils/process_stub_unix.c	Tue Mar  1 11:42:29 2022
+@@ -133,7 +133,8 @@
+ #ifdef __linux__
+             ptrace(PTRACE_DETACH, chldPid, 0, 0);
+ #else
+-            ptrace(PT_DETACH, chldPid, 0, 0);
++                kill(chldPid, SIGSTOP);
++//            ptrace(PT_DETACH, chldPid, 0, 0);
+ #endif
+             sendMsg("pid %d\n", chldPid);
+             if (isDetached == 2 && isDebug) {
+@@ -304,7 +305,7 @@
+             prctl(PR_SET_PTRACER, atoi(argv[ArgPid]));
+             ptrace(PTRACE_TRACEME);
+ #else
+-            ptrace(PT_TRACE_ME, 0, 0, 0);
++//            ptrace(PT_TRACE_ME, 0, 0, 0);
+ #endif
+ 
+             if (env)

@@ -1,0 +1,14 @@
+--- qt-creator-opensource-src-4.11.2/src/tools/clangrefactoringbackend/source/clangquery.cpp.orig	Thu Mar  3 19:48:05 2022
++++ qt-creator-opensource-src-4.11.2/src/tools/clangrefactoringbackend/source/clangquery.cpp	Tue Mar  1 15:17:37 2022
+@@ -78,8 +78,9 @@
+                    std::make_move_iterator(asts.end()),
+                    [&] (std::unique_ptr<clang::ASTUnit> &&ast) {
+         Diagnostics diagnostics;
+-        auto optionalMatcher = Parser::parseMatcherExpression({m_query.data(), m_query.size()},
+-                                                              nullptr,
++        llvm::StringRef sr = llvm::StringRef(m_query.data());
++        auto optionalMatcher = Parser::parseMatcherExpression( sr, //{m_query.data(), m_query.size()},
++                                                              //nullptr,
+                                                               &diagnostics);
+         parseDiagnostics(diagnostics);
+         matchLocation(optionalMatcher, std::move(ast));

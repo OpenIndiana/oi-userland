@@ -1,0 +1,35 @@
+--- qt-creator-opensource-src-4.11.2/CMakeLists.txt.orig	Thu Mar  3 19:48:21 2022
++++ qt-creator-opensource-src-4.11.2/CMakeLists.txt	Thu Mar  3 08:09:15 2022
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.9)
++cmake_minimum_required(VERSION 3.9.1)
+ 
+ ## Add paths to check for cmake modules:
+ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+@@ -76,7 +76,7 @@
+ 
+ qt5_query_qmake()
+ 
+-find_package(Qt5 COMPONENTS Designer Help Script SerialPort Svg QUIET)
++find_package(Qt5 COMPONENTS Designer Help Script SerialPort Svg )
+ function (set_if_target var target)
+    if (TARGET "${target}")
+      set(_result ON)
+@@ -97,7 +97,7 @@
+ endif()
+ install(TARGETS OptionalSvg EXPORT QtCreator)
+ 
+-find_package(Clang COMPONENTS libclang QUIET)
++find_package(Clang COMPONENTS libclang )
+ # silence a lot of warnings from building against llvm
+ # this would better fit inside a central libclang detection/include cmake file, but since we do not
+ # have one put it temporary here
+@@ -104,7 +104,7 @@
+ if(MSVC AND TARGET libclang)
+     target_compile_options(libclang INTERFACE /wd4100 /wd4141 /wd4146 /wd4244 /wd4267 /wd4291)
+ endif()
+-find_package(LLVM QUIET)
++find_package(LLVM )
+ 
+ if (APPLE)
+   find_library(FWCoreFoundation CoreFoundation)
