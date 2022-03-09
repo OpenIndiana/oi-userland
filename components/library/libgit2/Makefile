@@ -20,14 +20,14 @@ USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgit2
-COMPONENT_VERSION=	1.3.0
+COMPONENT_VERSION=	1.4.2
 COMPONENT_SUMMARY=	Portable implementation of the Git core methods provided as a library
-COMPONENT_CLASSIFICATION=	Development/Source Code Management
 COMPONENT_PROJECT_URL=	https://libgit2.github.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:192eeff84596ff09efb6b01835a066f2df7cd7985e0991c79595688e6b36444e
+COMPONENT_ARCHIVE_HASH=	sha256:901c2b4492976b86477569502a41c31b274b69adc177149c02099ea88404ef19
 COMPONENT_ARCHIVE_URL=	https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_CLASSIFICATION=	Development/Source Code Management
 COMPONENT_FMRI=		library/libgit2
 COMPONENT_LICENSE=	GPLv2 with Linking Exception
 
@@ -42,7 +42,6 @@ COMPONENT_TEST_ARGS =   -V
 COMPONENT_TEST_TARGETS = ""
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
