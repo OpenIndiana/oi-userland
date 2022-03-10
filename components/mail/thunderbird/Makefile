@@ -34,12 +34,12 @@ include ../../../make-rules/shared-macros.mk
 BITS = 64
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	91.6.2
+COMPONENT_VERSION =	91.7.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:79040aa634e30a4e861409725b6acd97e5d43152645fe952e60b1313060c3df6
+COMPONENT_ARCHIVE_HASH= sha256:624a51870bd2e0d9b259082e836df84981f01b0b397d13d93d7f1b9ccef24e05
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -223,6 +223,10 @@ REQUIRED_PACKAGES += library/python/psutil
 REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += web/browser/lynx
+
+# Rustup needs gcc-49 libraries (otherwise build fails):
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
