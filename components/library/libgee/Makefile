@@ -22,27 +22,35 @@
 # Copyright (c) 2018 Jason Martin
 # Copyright (c) 2021 Andreas Wacknitz
 #
-BUILD_BITS=			32_and_64
+BUILD_BITS=	64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     libgee
-COMPONENT_VERSION=  0.20.4
+COMPONENT_VERSION=  0.20.5
 COMPONENT_SUMMARY=  GObject based collection and utility library
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Libgee
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:524c1bf390f9cdda4fbd9a47b269980dc64ab5280f0801b53bc69d782c72de0e
+COMPONENT_ARCHIVE_HASH=	sha256:31863a8957d5a727f9067495cabf0a0889fa5d3d44626e54094331188d5c1518
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libgee/0.20/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/desktop/libgee
 COMPONENT_CLASSIFICATION=	Development/GNOME and GTK+
 
-# Since GLib 2.62, gtester and gtester-report are deprecated. Thus, disable tests until ported:
-TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  +=       --disable-static
-CONFIGURE_OPTIONS  +=       --enable-shared
+CONFIGURE_OPTIONS	+=	--disable-static
+CONFIGURE_OPTIONS	+=	--enable-shared
+CONFIGURE_OPTIONS	+=	--disable-dependency-tracking
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/[0-9]*\:[0-9]*\:[0-9]*\.[0-9]*//" ' \
+	'-e "s/gtester:[0-9]*/gtester/" ' \
+    '-n ' \
+	'-e "/WARNING/p" ' \
+	'-e "/PASS:/p" ' \
+    '-e "/OK/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
