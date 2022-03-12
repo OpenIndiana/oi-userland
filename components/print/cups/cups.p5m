@@ -20,10 +20,23 @@
 # comments by using of the automate reformating tools.
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2021, Andreas Wacknitz
+# Copyright 2021, 2022, Andreas Wacknitz
+
+# Note: illumos-gate delivers some colliding printing related commands and man pages.
+#´      Thus, we move the colliding commands to the cups library folder and prepend the man page file names with "cups".
+# Resolving file conflicts with illumos lp
+# As with the commands in /usr/bin cups commands are designed to replace lp
+# But as lp is still delivered by illumos-gate we need to rename all the commands
+# and their man pages and prefix them with cups so that both softwares can be installed simultaneously
+# There is two ways where we can go from here.
+# 1. Remove lp if it is not needed anymore and properly suceeded by cups
+# 2. Modify manifest in illumos-gate to provide mediators so users can properly choose 
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 <transform file path=usr/lib/cups/.+ ->default mode 0555>
+# Drop 32-bit binaries:
+<transform path=usr/bin/$(MACH32) -> drop>
+<transform path=usr/sbin/$(MACH32) -> drop>
 
 set name=pkg.fmri value=pkg:/print/cups@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Common Unix Print System (CUPS)"
@@ -78,19 +91,6 @@ file Solaris/svc-cupsd path=lib/svc/method/svc-cupsd
 file Solaris/ManageCUPS.html mode=0444 \
      path=usr/lib/help/auths/locale/C/ManageCUPS.html
 
-file usr/bin/cancel path=usr/lib/cups/bin/cancel mode=0555
-file usr/bin/lp path=usr/lib/cups/bin/lp mode=0555
-file usr/bin/lpoptions path=usr/lib/cups/bin/lpoptions mode=0555
-file usr/bin/lpr path=usr/lib/cups/bin/lpr mode=0555
-file usr/bin/lpstat path=usr/lib/cups/bin/lpstat mode=0555
-file usr/bin/lpq path=usr/lib/cups/bin/lpq mode=0555
-file usr/bin/lprm path=usr/lib/cups/bin/lprm mode=0555
-file usr/sbin/cupsaccept path=usr/lib/cups/bin/cupsaccept mode=0555
-file usr/sbin/lpc path=usr/lib/cups/bin/lpc mode=0555
-file usr/sbin/lpmove path=usr/lib/cups/bin/lpmove mode=0555
-file usr/sbin/lpadmin path=usr/lib/cups/bin/lpadmin mode=0555
-file usr/sbin/lpinfo path=usr/sbin/lpinfo
-
 link path=usr/lib/cups/bin/accept target=cupsaccept
 link path=usr/lib/cups/bin/cupsdisable target=cupsaccept
 link path=usr/lib/cups/bin/disable target=cupsaccept
@@ -114,21 +114,6 @@ file Solaris/tsol_banner.ps path=usr/lib/cups/filter/tsol_banner.ps
 file Solaris/tsol_separator.ps path=usr/lib/cups/filter/tsol_separator.ps
 file Solaris/tsol_trailer.ps path=usr/lib/cups/filter/tsol_trailer.ps
 
-# Resolving file conflicts with illumos lp
-# As witht the commands in /usr/bin cups commands are designed to replace lp
-# But as lp is still delivered by illumos-gate we need to rename all the commands
-# and their man pages and prefix them with cups so that both softwares can be installed simultaneously
-# There is two ways where we can go from here.
-# 1. Remove lp if it is not needed anymore and properly suceeded by cups
-# 2. Modify manifest in illumos-gate to provide mediators so users can properly choose 
-file usr/share/man/man1/lp.1 path=usr/share/man/man1/cupslp.1
-file usr/share/man/man1/lpoptions.1 path=usr/share/man/man1/cupslpoptions.1
-file usr/share/man/man1/lpq.1 path=usr/share/man/man1/cupslpq.1
-file usr/share/man/man1/lpr.1 path=usr/share/man/man1/cupslpr.1
-file usr/share/man/man1/lprm.1 path=usr/share/man/man1/cupslprm.1
-file usr/share/man/man1/lpstat.1 path=usr/share/man/man1/cupslpstat.1
-file usr/share/man/man1/cancel.1 path=usr/share/man/man1/cupscancel.1
-
 # file-objects from sample-manifest
 #file path=etc/cups/cups-files.conf
 #file path=etc/cups/cups-files.conf.N
@@ -143,36 +128,38 @@ file path=etc/dbus-1/system.d/cups.conf
 file path=etc/pam.d/cups
 #file path=etc/pam.d/cups.N
 #file path=lib/svc/manifest/application/cups.xml
-# We don't provide 32-bit apps but just libraries:
-#file path=usr/bin/$(MACH32)/cancel
-#file path=usr/bin/$(MACH32)/cups-config
-#file path=usr/bin/$(MACH32)/cupstestppd
-#file path=usr/bin/$(MACH32)/ippeveprinter
-#file path=usr/bin/$(MACH32)/ippfind
-#file path=usr/bin/$(MACH32)/ipptool
-#file path=usr/bin/$(MACH32)/lp
-#file path=usr/bin/$(MACH32)/lpoptions
-#file path=usr/bin/$(MACH32)/lpq
-#file path=usr/bin/$(MACH32)/lpr
-#file path=usr/bin/$(MACH32)/lprm
-#file path=usr/bin/$(MACH32)/lpstat
-#file path=usr/bin/$(MACH32)/ppdc
-#file path=usr/bin/$(MACH32)/ppdhtml
-#file path=usr/bin/$(MACH32)/ppdi
-#file path=usr/bin/$(MACH32)/ppdmerge
-#file path=usr/bin/$(MACH32)/ppdpo
-#file path=usr/bin/cancel
+
+# usr/bin/$(MACH32) is being filtered out by a transform rule:
+file path=usr/bin/$(MACH32)/cancel
+file path=usr/bin/$(MACH32)/cups-config
+file path=usr/bin/$(MACH32)/cupstestppd
+file path=usr/bin/$(MACH32)/ippeveprinter
+file path=usr/bin/$(MACH32)/ippfind
+file path=usr/bin/$(MACH32)/ipptool
+file path=usr/bin/$(MACH32)/lp
+file path=usr/bin/$(MACH32)/lpoptions
+file path=usr/bin/$(MACH32)/lpq
+file path=usr/bin/$(MACH32)/lpr
+file path=usr/bin/$(MACH32)/lprm
+file path=usr/bin/$(MACH32)/lpstat
+file path=usr/bin/$(MACH32)/ppdc
+file path=usr/bin/$(MACH32)/ppdhtml
+file path=usr/bin/$(MACH32)/ppdi
+file path=usr/bin/$(MACH32)/ppdmerge
+file path=usr/bin/$(MACH32)/ppdpo
+
+file usr/bin/cancel path=usr/lib/cups/bin/cancel mode=0555
 file path=usr/bin/cups-config
 file path=usr/bin/cupstestppd
 file path=usr/bin/ippeveprinter
 file path=usr/bin/ippfind
 file path=usr/bin/ipptool
-#file path=usr/bin/lp
-#file path=usr/bin/lpoptions
-#file path=usr/bin/lpq
-#file path=usr/bin/lpr
-#file path=usr/bin/lprm
-#file path=usr/bin/lpstat
+file usr/bin/lp path=usr/lib/cups/bin/lp mode=0555
+file usr/bin/lpoptions path=usr/lib/cups/bin/lpoptions mode=0555
+file usr/bin/lpq path=usr/lib/cups/bin/lpq mode=0555
+file usr/bin/lpr path=usr/lib/cups/bin/lpr mode=0555
+file usr/bin/lprm path=usr/lib/cups/bin/lprm mode=0555
+file usr/bin/lpstat path=usr/lib/cups/bin/lpstat mode=0555
 file path=usr/bin/ppdc
 file path=usr/bin/ppdhtml
 file path=usr/bin/ppdi
@@ -237,28 +224,29 @@ file path=usr/lib/cups/notifier/rss
 #file path=usr/lib/libcupsimage.so.2
 
 # We don't provide 32-bit binaries but only libraries:
-#file path=usr/sbin/$(MACH32)/cupsaccept
-#file path=usr/sbin/$(MACH32)/cupsctl
-#file path=usr/sbin/$(MACH32)/cupsd
-#link path=usr/sbin/$(MACH32)/cupsdisable target=cupsaccept
-#link path=usr/sbin/$(MACH32)/cupsenable target=cupsaccept
-#file path=usr/sbin/$(MACH32)/cupsfilter
-#link path=usr/sbin/$(MACH32)/cupsreject target=cupsaccept
-#file path=usr/sbin/$(MACH32)/lpadmin
-#file path=usr/sbin/$(MACH32)/lpc
-#file path=usr/sbin/$(MACH32)/lpinfo
-#file path=usr/sbin/$(MACH32)/lpmove
+file path=usr/sbin/$(MACH32)/cupsaccept
+file path=usr/sbin/$(MACH32)/cupsctl
+file path=usr/sbin/$(MACH32)/cupsd
+link path=usr/sbin/$(MACH32)/cupsdisable target=cupsaccept
+link path=usr/sbin/$(MACH32)/cupsenable target=cupsaccept
+file path=usr/sbin/$(MACH32)/cupsfilter
+link path=usr/sbin/$(MACH32)/cupsreject target=cupsaccept
+file path=usr/sbin/$(MACH32)/lpadmin
+file path=usr/sbin/$(MACH32)/lpc
+file path=usr/sbin/$(MACH32)/lpinfo
+file path=usr/sbin/$(MACH32)/lpmove
 file path=usr/sbin/cupsaccept
+file usr/sbin/cupsaccept path=usr/lib/cups/bin/cupsaccept mode=0555
 file path=usr/sbin/cupsctl
 file path=usr/sbin/cupsd
 link path=usr/sbin/cupsdisable target=cupsaccept
 link path=usr/sbin/cupsenable target=cupsaccept
 file path=usr/sbin/cupsfilter
 link path=usr/sbin/cupsreject target=cupsaccept
-#file path=usr/sbin/lpadmin
-file path=usr/sbin/lpc
-#file path=usr/sbin/lpinfo
-#file path=usr/sbin/lpmove
+file usr/sbin/lpadmin path=usr/lib/cups/bin/lpadmin mode=0555
+file usr/sbin/lpc path=usr/lib/cups/bin/lpc mode=0555
+file usr/sbin/lpinfo path=usr/lib/cups/bin/lpinfo mode=0555
+file usr/sbin/lpmove path=usr/lib/cups/bin/lpmove mode=0555
 file path=usr/share/applications/cups.desktop
 file path=usr/share/cups/drv/sample.drv
 file path=usr/share/cups/examples/color.drv
@@ -919,19 +907,19 @@ file path=usr/share/locale/ja/cups_ja.po
 file path=usr/share/locale/pt_BR/cups_pt_BR.po
 file path=usr/share/locale/ru/cups_ru.po
 file path=usr/share/locale/zh_CN/cups_zh_CN.po
-#file path=usr/share/man/man1/cancel.1
+file usr/share/man/man1/cancel.1 path=usr/share/man/man1/cupscancel.1
 file path=usr/share/man/man1/cups-config.1
 file path=usr/share/man/man1/cups.1
 file path=usr/share/man/man1/cupstestppd.1
 file path=usr/share/man/man1/ippeveprinter.1
 file path=usr/share/man/man1/ippfind.1
 file path=usr/share/man/man1/ipptool.1
-#file path=usr/share/man/man1/lp.1
-#file path=usr/share/man/man1/lpoptions.1
-#file path=usr/share/man/man1/lpq.1
-#file path=usr/share/man/man1/lpr.1
-#file path=usr/share/man/man1/lprm.1
-#file path=usr/share/man/man1/lpstat.1
+file usr/share/man/man1/lp.1 path=usr/share/man/man1/cupslp.1
+file usr/share/man/man1/lpoptions.1 path=usr/share/man/man1/cupslpoptions.1
+file usr/share/man/man1/lpq.1 path=usr/share/man/man1/cupslpq.1
+file usr/share/man/man1/lpr.1 path=usr/share/man/man1/cupslpr.1
+file usr/share/man/man1/lprm.1 path=usr/share/man/man1/cupslprm.1
+file usr/share/man/man1/lpstat.1 path=usr/share/man/man1/cupslpstat.1
 file path=usr/share/man/man1/ppdc.1
 file path=usr/share/man/man1/ppdhtml.1
 file path=usr/share/man/man1/ppdi.1
@@ -948,7 +936,7 @@ file path=usr/share/man/man5/mailto.conf.5
 file path=usr/share/man/man5/mime.convs.5
 file path=usr/share/man/man5/mime.types.5
 file path=usr/share/man/man5/ppdcfile.5
-file path=usr/share/man/man5/printers.conf.5
+file usr/share/man/man5/printers.conf.5 path=usr/share/man/man5/cupsprinters.conf.5
 file path=usr/share/man/man5/subscriptions.conf.5
 file path=usr/share/man/man7/backend.7
 file path=usr/share/man/man7/filter.7
@@ -968,7 +956,7 @@ link path=usr/share/man/man8/cupsdisable.8 target=cupsenable.8
 file path=usr/share/man/man8/cupsenable.8
 file path=usr/share/man/man8/cupsfilter.8
 link path=usr/share/man/man8/cupsreject.8 target=cupsaccept.8
-file path=usr/share/man/man8/lpadmin.8
-file path=usr/share/man/man8/lpc.8
-file path=usr/share/man/man8/lpinfo.8
-file path=usr/share/man/man8/lpmove.8
+file usr/share/man/man8/lpadmin.8 path=usr/share/man/man8/cupslpadmin.8
+file usr/share/man/man8/lpc.8 path=usr/share/man/man8/cupslpc.8
+file usr/share/man/man8/lpinfo.8 path=usr/share/man/man8/cupslpinfo.8
+file usr/share/man/man8/lpmove.8 path=usr/share/man/man8/cupslpmove.8
