@@ -27,13 +27,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
 COMPONENT_VERSION=	2.4.1
-#COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+HUMAN_VERSION=		2.4.1
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://openprinting.github.io/cups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:df195c931349949293c832e1337527e7831e1225f567b60caf5d9c206c2bffdc
-COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-#COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 
 include $(WS_MAKE_RULES)/common.mk
 
