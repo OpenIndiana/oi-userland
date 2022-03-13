@@ -22,8 +22,8 @@ USE_OPENSSL11=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-bad1
-COMPONENT_VERSION=	1.18.5
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.20.0
+#COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI=		library/audio/gstreamer1/plugin/bad
@@ -31,7 +31,7 @@ COMPONENT_SRC_NAME=	gst-plugins-bad
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:a164923b94f0d08578a6fcaeaac6e0c05da788a46903a1086870e9ca45ad678e
+  sha256:015b8d4d9a395ebf444d40876867a2034dd3304b3ad48bc3a0dd0c1ee71dc11d
 COMPONENT_ARCHIVE_URL= \
   https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/
@@ -56,6 +56,7 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += -Dexamples=disabled
 CONFIGURE_OPTIONS += -Dopenexr=enabled
 CONFIGURE_OPTIONS += -Dintrospection=enabled
+CONFIGURE_OPTIONS += -Dgpl=enabled
 # if someone can weigh in on the fdk-aac license, adding fdk-aac might be
 # be nice.
 # Openh264 has no licensing issues but needs some porting
@@ -110,11 +111,12 @@ REQUIRED_PACKAGES += library/audio/libgsm
 REQUIRED_PACKAGES += library/audio/openal
 REQUIRED_PACKAGES += library/audio/soundtouch
 REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/ilmbase
 REQUIRED_PACKAGES += library/lcms2
-REQUIRED_PACKAGES += library/libofa
+REQUIRED_PACKAGES += library/libqrencode
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
@@ -126,7 +128,6 @@ REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libdvdnav
 REQUIRED_PACKAGES += library/video/libdvdread
-REQUIRED_PACKAGES += library/video/libmms
 REQUIRED_PACKAGES += library/video/x265
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
