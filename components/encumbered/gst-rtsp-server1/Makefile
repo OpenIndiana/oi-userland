@@ -34,6 +34,7 @@ COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/
 COMPONENT_LICENSE=	LGPLv2
 COMPONENT_LICENSE_FILE=	gst-rtsp-server1.license
 
+include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
 #gcc_OPT = -O2
@@ -48,6 +49,9 @@ test: $(NO_TESTS)
 
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
+
+# Manually added dependencies
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/bad
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/gstreamer1
