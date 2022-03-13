@@ -21,7 +21,7 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-ugly1
-COMPONENT_VERSION=      1.18.5
+COMPONENT_VERSION=      1.20.0
 COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -30,7 +30,7 @@ COMPONENT_SRC_NAME=	gst-plugins-ugly
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:df32803e98f8a9979373fa2ca7e05e62f977b1097576d3a80619d9f5c69f66d9
+	sha256:4e8dcb5d26552f0a4937f6bc6279bd9070f55ca6ae0eaa32d72d264c44001c2e
 COMPONENT_ARCHIVE_URL=  \
 	https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
@@ -50,6 +50,7 @@ CFLAGS += -I/usr/X11/include
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += -Dorc=enabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
+CONFIGURE_OPTIONS += -Dgpl=enabled
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CC="$(CC)"
