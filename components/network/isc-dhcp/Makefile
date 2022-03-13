@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2011, 2019, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2022, Nona Hansel
 #
 
 BUILD_BITS=		64
@@ -27,9 +28,7 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
-COMPONENT_VERSION=	4.4.2
-COMPONENT_REVISION=	2
-IPS_COMPONENT_VERSION=	4.4.2.0.0
+COMPONENT_VERSION=	4.4.3
 COMPONENT_FMRI=		service/network/dhcp/isc-dhcp
 COMPONENT_SUMMARY=	ISC DHCP Server and Relay Agent
 COMPONENT_CLASSIFICATION=	System/Services
@@ -38,9 +37,8 @@ COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://www.isc.org/software/dhcp/
 COMPONENT_ARCHIVE_URL=  \
-	http://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-	sha256:1a7ccd64a16e5e68f7b5e0f527fd07240a2892ea53fe245620f4f5f607004521
+	https://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:0e3ec6b4c2a05ec0148874bcd999a66d05518378d77421f607fb0bc9d0135818
 COMPONENT_LICENSE=	MPL v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
 
@@ -73,5 +71,6 @@ $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_64)
 	$(TOUCH) $@
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
