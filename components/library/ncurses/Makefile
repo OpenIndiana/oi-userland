@@ -32,6 +32,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		ncurses
 COMPONENT_VERSION=	6.3
 COMPONENT_REV=		20211021
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_REV)
 COMPONENT_SUMMARY=	A CRT screen handling and optimization package.
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/ncurses/
