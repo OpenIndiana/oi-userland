@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2013-2017, Aurelien Larcher. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright 2022 Gary Mills
 #
 
 BUILD_BITS=		64
@@ -30,7 +31,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		efl
 COMPONENT_VERSION=	1.18.5
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	Enlightenment Foundation Libraries
 COMPONENT_FMRI=		library/e/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -42,6 +43,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
 	http://download.enlightenment.org/rel/libs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD 2-clause, GPLv2, LGPLv2.1, Small
+
+PYTHON_VERSION=		3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -99,7 +102,7 @@ REQUIRED_PACKAGES += library/libspectre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2

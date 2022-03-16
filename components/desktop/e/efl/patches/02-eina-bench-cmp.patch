@@ -1,0 +1,162 @@
+This patch, produced by /usr/bin/2to3-3.9, converts the script
+from python-2 to python-3 .
+
+--- efl-1.18.5/src/scripts/eina/eina-bench-cmp-orig	Thu May  4 04:34:26 2017
++++ efl-1.18.5/src/scripts/eina/eina-bench-cmp	Mon Mar 14 17:07:47 2022
+@@ -70,12 +70,12 @@
+     fmtsize = len(options.format % {"value": 12345.67, "percentual": 1234.56})
+     hdrfmt = "%%%d.%ds" % (fmtsize, fmtsize)
+ 
+-    print test_name_fmt % "\\",
+-    print "%7.7s" % (files[0][-7:],),
++    print(test_name_fmt % "\\", end=' ')
++    print("%7.7s" % (files[0][-7:],), end=' ')
+     for f in files[1:]:
+         n, e = os.path.splitext(f)
+-        print hdrfmt % n[-fmtsize:],
+-    print
++        print(hdrfmt % n[-fmtsize:], end=' ')
++    print()
+ 
+     if options.color and os.environ.get("TERM", "") in (
+         "xterm", "xterm-color", "rxvt", "rxvt-unicode", "screen",
+@@ -92,14 +92,14 @@
+ 
+ 
+     def print_row(test):
+-        print test_name_fmt % test,
++        print(test_name_fmt % test, end=' ')
+         ref_val = data[ref_f][test]
+-        print "%7.2f" % ref_val,
++        print("%7.2f" % ref_val, end=' ')
+         for f in others_f:
+             try:
+                 val = data[f][test]
+             except KeyError:
+-                print "-?????-",
++                print("-?????-", end=' ')
+                 continue
+ 
+             percent = (val - ref_val) / ref_val
+@@ -113,9 +113,9 @@
+             fmt = options.format % {"value": val, "percentual": percent * 100}
+             if len(fmt) < fmtsize:
+                 fmt = hdrfmt % fmt
+-            print "%s%s%s" % (c, fmt, color_reset),
++            print("%s%s%s" % (c, fmt, color_reset), end=' ')
+ 
+-        print
++        print()
+ 
+     for t in tests:
+         print_row(t)
+@@ -125,7 +125,7 @@
+     import time
+ 
+     fnames = [os.path.basename(f) for f in files]
+-    print """\
++    print("""\
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ 
+@@ -158,9 +158,9 @@
+        border-bottom: 1px dashed #ccc;
+     }
+     td.test-name, thead tr td { text-align: right; }\
+-"""
++""")
+     if options.color:
+-        print """\
++        print("""\
+     td.value-good { background-color: #aaffaa; }
+     td.value-bad { background-color: #ffaaaa; }
+     td.value-missing { background-color: #ffffaa; }
+@@ -170,9 +170,9 @@
+        background-color: #d9d9d9;
+        border-bottom: 1px dashed #ccc;
+     }
+-"""
++""")
+ 
+-    print """
++    print("""
+   </style>
+   <body>
+      <p>Comparison sheet for %(files)s, created at %(date)s.</p>
+@@ -182,17 +182,17 @@
+            <td>\\</td>\
+ """ % {"files": ", ".join(fnames),
+        "date": time.asctime(),
+-       }
++       })
+ 
+     for f in fnames:
+-        print """\
++        print("""\
+            <td>%s</td>\
+-""" % f
+-    print """\
++""" % f)
++    print("""\
+          </tr>
+        </thead>
+        <tbody>\
+-"""
++""")
+ 
+     def print_row(test):
+         ref_val = data[ref_f][test]
+@@ -201,19 +201,19 @@
+         else:
+             extra_cls = ""
+ 
+-        print """\
++        print("""\
+          <tr%s>
+            <td class="test-name">%s</td>
+            <td class="value-reference">%7.2f</td>\
+-""" % (extra_cls, test, ref_val)
++""" % (extra_cls, test, ref_val))
+ 
+         for f in others_f:
+             try:
+                 val = data[f][test]
+             except KeyError:
+-                print """\
++                print("""\
+            <td class="value-missing">-?????-</td>\
+-"""
++""")
+                 continue
+ 
+             percent = (val - ref_val) / ref_val
+@@ -226,23 +226,23 @@
+ 
+             v = options.format % {"value": val, "percentual": percent * 100}
+ 
+-            print """\
++            print("""\
+            <td class="value-%s">%s</td>\
+-""" % (c, v)
++""" % (c, v))
+ 
+-        print """\
++        print("""\
+          </tr>\
+-"""
++""")
+ 
+     for t in tests:
+         print_row(t)
+ 
+-    print """\
++    print("""\
+        </tbody>
+      </table>
+   </body>
+ </html>
+-"""
++""")
+ 
+ if options.report == "text":
+     report_text()
