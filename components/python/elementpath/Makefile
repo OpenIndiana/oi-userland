@@ -17,13 +17,12 @@ BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         elementpath
-COMPONENT_VERSION=      2.4.0
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      2.5.0
 COMPONENT_SUMMARY=		XPath 1.0/2.0 parsers and selectors for ElementTree and lxml
 COMPONENT_PROJECT_URL=  https://pypi.org/project/elementpath/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:5b6801b3be94d48d213beb7b8ebad96addb35c95fc6a9c062c80e033b4a32fe8
+COMPONENT_ARCHIVE_HASH= sha256:3a27aaf3399929fccda013899cb76d3ff111734abf4281e5f9d3721ba0b9ffa3
 COMPONENT_ARCHIVE_URL=  $(call pypi_url)
 COMPONENT_FMRI=			library/python/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Python
@@ -34,8 +33,9 @@ PYTHON_VERSIONS=	3.7 3.9
 include $(WS_MAKE_RULES)/common.mk
 
 # Note: Tests don't properly work yet.
+TEST_VERSION=	$(subst .,,$(PYTHON_VERSION))
 COMPONENT_TEST_DIR=    $(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD=    tox -e py$(PYV)
+COMPONENT_TEST_CMD=    tox -e py$(TEST_VERSION)
 COMPONENT_TEST_ARGS=
 
 # Manually added test dependencies
