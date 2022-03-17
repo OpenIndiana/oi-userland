@@ -1,0 +1,56 @@
+--- jxrlib/Makefile	Mon May 11 17:07:07 2020
++++ jxrlib/Makefile_patch	Sat Feb 26 10:10:14 2022
+@@ -60,7 +60,7 @@
+ endif
+ 
+ ifndef JAVA_HOME
+-JAVA_HOME:=$(shell jrunscript -e 'java.lang.System.out.println(new java.io.File(java.lang.System.getProperty("java.home")).getParent());')
++JAVA_HOME=/usr/jdk/instances/openjdk1.8.0
+ endif
+ 
+ ifndef JAVA_INCLUDE
+@@ -81,8 +81,8 @@
+ 
+ CD=cd
+ MK_DIR=mkdir -p
+-CFLAGS=-I. -Icommon/include -I$(DIR_SYS) $(ENDIANFLAG) -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -w -Os -fPIC
+-CXXFLAGS=-I. -Icommon/include -I$(DIR_SYS) -I$(DIR_GLUE) -I$(DIR_TEST) -Wno-self-assign-field -Wno-unsequenced -Os -fPIC
++CFLAGS=-I. -I$(JAVA_INCLUDE)/solaris -Icommon/include -I$(DIR_SYS) $(ENDIANFLAG) -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -w -Os -fPIC
++CXXFLAGS=-I. -I$(JAVA_INCLUDE)/solaris -Icommon/include -I$(DIR_SYS) -I$(DIR_GLUE) -I$(DIR_TEST) -Wno-self-assign-field -Wno-unsequenced -Os -fPIC
+ 
+ ifdef DEBUG
+ CFLAGS:=$(CFLAGS) -g -O0 -DDEBUG
+@@ -305,20 +305,20 @@
+ 	rm -rf $(DIR_BUILD)/*App $(DIR_BUILD)/**/*.o $(DIR_BUILD)/**/*.class $(DIR_BUILD)/libj*.a $(DIR_BUILD)/libj*.$(LIBSUFFIX) $(DIR_BUILD)/libjxr.pc $(DIR_BUILD)/$(CXXDECAPP) $(DIR_BUILD)/$(JAR)
+ 
+ $(DIR_BUILD)/libjxr.pc: $(DIR_SRC)/libjxr.pc.in
+-	@python -c 'import os; d = { "DIR_INSTALL": "$(DIR_INSTALL)", "JXR_VERSION": "$(JXR_VERSION)", "JXR_ENDIAN": "$(ENDIANFLAG)" }; fin = open("$<", "r"); fout = open("$@", "w+"); fout.writelines( [ l % d for l in fin.readlines()])'
++	@python -c 'import os; d = { "PREFIX": "$(PREFIX)", "JXR_VERSION": "$(JXR_VERSION)", "JXR_ENDIAN": "$(ENDIANFLAG)" }; fin = open("$<", "r"); fout = open("$@", "w+"); fout.writelines( [ l % d for l in fin.readlines()])'
+ 
+ install: all $(DIR_BUILD)/libjxr.pc
+-	install -d $(DIR_INSTALL)/lib/pkgconfig $(DIR_INSTALL)/bin $(DIR_INSTALL)/include/libjxr/common  $(DIR_INSTALL)/include/libjxr/image/x86 $(DIR_INSTALL)/include/libjxr/glue $(DIR_INSTALL)/include/libjxr/test $(DIR_INSTALL)/share/doc/jxr-$(JXR_VERSION)
+-	install $(LIBRARIES) $(DIR_INSTALL)/lib
+-	install -m 644 $(DIR_BUILD)/libjxr.pc $(DIR_INSTALL)/lib/pkgconfig
+-	install $(DIR_BUILD)/$(ENCAPP) $(DIR_BUILD)/$(DECAPP) $(DIR_INSTALL)/bin
+-	install -m 644 $(DIR_SRC)/common/include/*.h $(DIR_INSTALL)/include/libjxr/common
+-	install -m 644 $(DIR_SRC)/image/x86/*.h $(DIR_INSTALL)/include/libjxr/image/x86
+-	install -m 644 $(DIR_SRC)/$(DIR_SYS)/*.h $(DIR_INSTALL)/include/libjxr/image
+-	install -m 644 $(DIR_SRC)/$(DIR_ENC)/*.h $(DIR_INSTALL)/include/libjxr/image
+-	install -m 644 $(DIR_SRC)/$(DIR_DEC)/*.h $(DIR_INSTALL)/include/libjxr/image
+-	install -m 644 $(DIR_SRC)/$(DIR_GLUE)/*.h $(DIR_INSTALL)/include/libjxr/glue
+-	install -m 644 $(DIR_SRC)/$(DIR_TEST)/*.h $(DIR_INSTALL)/include/libjxr/test
+-	install -m 644 doc/* $(DIR_INSTALL)/share/doc/jxr-$(JXR_VERSION)
++	install -d $(DIR_INSTALL)/usr/lib/amd64/pkgconfig $(DIR_INSTALL)/usr/bin $(DIR_INSTALL)/usr/include/libjxr/common  $(DIR_INSTALL)/usr/include/libjxr/image/x86 $(DIR_INSTALL)/usr/include/libjxr/glue $(DIR_INSTALL)/usr/include/libjxr/test $(DIR_INSTALL)/usr/share/doc/jxr-$(JXR_VERSION)
++	install $(LIBRARIES) $(DIR_INSTALL)/usr/lib/amd64/
++	install -m 644 $(DIR_BUILD)/libjxr.pc $(DIR_INSTALL)/usr/lib/amd64/pkgconfig
++	install $(DIR_BUILD)/$(ENCAPP) $(DIR_BUILD)/$(DECAPP) $(DIR_INSTALL)/usr/bin
++	install -m 644 $(DIR_SRC)/common/include/*.h $(DIR_INSTALL)/usr/include/libjxr/common
++	install -m 644 $(DIR_SRC)/image/x86/*.h $(DIR_INSTALL)/usr/include/libjxr/image/x86
++	install -m 644 $(DIR_SRC)/$(DIR_SYS)/*.h $(DIR_INSTALL)/usr/include/libjxr/image
++	install -m 644 $(DIR_SRC)/$(DIR_ENC)/*.h $(DIR_INSTALL)/usr/include/libjxr/image
++	install -m 644 $(DIR_SRC)/$(DIR_DEC)/*.h $(DIR_INSTALL)/usr/include/libjxr/image
++	install -m 644 $(DIR_SRC)/$(DIR_GLUE)/*.h $(DIR_INSTALL)/usr/include/libjxr/glue
++	install -m 644 $(DIR_SRC)/$(DIR_TEST)/*.h $(DIR_INSTALL)/usr/include/libjxr/test
++	install -m 644 doc/* $(DIR_INSTALL)/usr/share/doc/jxr-$(JXR_VERSION)
+ 
+ ##
