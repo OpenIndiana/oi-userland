@@ -1,0 +1,11 @@
+--- ZenLib-0.4.39/Source/ZenLib/Thread.cpp	週日 2月 20 22:16:54 2022
++++ ZenLib-0.4.39_patch/Source/ZenLib/Thread.cpp	週日 2月 20 21:17:57 2022
+@@ -519,7 +519,7 @@
+ {
+     //Terminating (not clean)
+     #if !defined(__ANDROID_API__)
+-    pthread_cancel((pthread_t)ThreadPointer);
++    pthread_cancel(*(pthread_t*)&ThreadPointer);
+     #endif
+ 
+     //Configuring
