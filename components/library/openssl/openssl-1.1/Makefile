@@ -29,18 +29,15 @@ COMPONENT_NAME=	openssl-$(COMPONENT_VERSION_SHORT)
 
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
 # and IPS_COMPONENT_VERSION.
-COMPONENT_VERSION=	1.1.1m
-HUMAN_VERSION=	$(COMPONENT_VERSION)
-# Version for IPS. It is easier to do it manually than convert the letter to a
-# number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION= 1.1.1.13
+COMPONENT_VERSION=	1.1.1.14
+HUMAN_VERSION=		1.1.1n
 COMPONENT_FMRI=		library/security/openssl-11
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SUMMARY=	OpenSSL - a Toolkit for Transport Layer (TLS v1+) protocols and general purpose cryptographic library
 COMPONENT_PROJECT_URL=	https://www.openssl.org/
-COMPONENT_SRC=		openssl-$(COMPONENT_VERSION)
+COMPONENT_SRC=		openssl-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f89199be8b23ca45fc7cb9f1d8d3ee67312318286ad030f5316aca6462db6c96
+COMPONENT_ARCHIVE_HASH=	sha256:40dceb51a4f6a5275bde0e6bf20ef4b91bfc32ed57c0552e2e8e15463372b17a
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	OpenSSL, SSLeay
 
