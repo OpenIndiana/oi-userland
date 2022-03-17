@@ -1,0 +1,106 @@
+--- MEGAsync_ori/src/MEGASync/mega/src/posix/fs.cpp	Thu Mar 10 00:45:05 2022
++++ MEGAsync_patched/src/MEGASync/mega/src/posix/fs.cpp	Sat Mar  5 15:48:56 2022
+@@ -39,6 +39,10 @@
+ #include <uuid/uuid.h>
+ #endif
+ 
++#ifdef __solaris__
++#include <sys/statvfs.h>
++#endif
++
+ #ifdef __linux__
+ 
+ #ifndef __ANDROID__
+@@ -1276,6 +1280,7 @@
+     dirent* d;
+     int removed;
+     struct stat statbuf;
++	struct stat s;
+     PosixFileSystemAccess pfsa;
+ #ifdef USE_IOS
+     const string namestr = adjustBasePath(name);
+@@ -1303,7 +1308,8 @@
+ 
+             while ((d = readdir(dp)))
+             {
+-                if (d->d_type != DT_DIR
++				stat(d->d_name, &s);
++                if ((s.st_mode & S_IFMT) != S_IFDIR
+                  || *d->d_name != '.'
+                  || (d->d_name[1] && (d->d_name[1] != '.' || d->d_name[2])))
+                 {
+@@ -1633,7 +1639,7 @@
+     }
+ #endif
+ 
+-    utsname uts;
++    struct utsname uts;
+ 
+     if (!uname(&uts))
+     {
+@@ -1862,10 +1868,10 @@
+ 
+ fsfp_t PosixDirNotify::fsfingerprint() const
+ {
+-    struct statfs statfsbuf;
++    struct statvfs statfsbuf;
+ 
+     // FIXME: statfs() does not really do what we want.
+-    if (statfs(localbasepath.localpath.c_str(), &statfsbuf))
++    if (statvfs(localbasepath.localpath.c_str(), &statfsbuf))
+     {
+         return 0;
+     }
+@@ -1875,22 +1881,23 @@
+ 
+ bool PosixDirNotify::fsstableids() const
+ {
+-    struct statfs statfsbuf;
++    struct statvfs statfsbuf;
+ 
+-    if (statfs(localbasepath.localpath.c_str(), &statfsbuf))
++    if (statvfs(localbasepath.localpath.c_str(), &statfsbuf))
+     {
+         LOG_err << "Failed to get filesystem type. Error code: " << errno;
+         return true;
+     }
+ 
+-    LOG_info << "Filesystem type: " << statfsbuf.f_type;
++    LOG_info << "Filesystem type: " << statfsbuf.f_basetype;
+ 
+ #ifdef __APPLE__
+     return statfsbuf.f_type != 0x1c // FAT32
+         && statfsbuf.f_type != 0x1d; // exFAT
+ #else
+-    return statfsbuf.f_type != 0x4d44 // FAT
+-        && statfsbuf.f_type != 0x65735546; // FUSE
++//    return statfsbuf.f_basetype != 0x4d44 // FAT
++//        && statfsbuf.f_basetype != 0x65735546; // FUSE
++	  return true;
+ #endif
+ }
+ #endif // ENABLE_SYNC
+@@ -1927,9 +1934,9 @@
+ bool PosixFileSystemAccess::getlocalfstype(const LocalPath& path, FileSystemType& type) const
+ {
+ #if defined(__linux__) || defined(__ANDROID__)
+-    struct statfs statbuf;
++    struct statvfs statbuf;
+ 
+-    if (!statfs(path.localpath.c_str(), &statbuf))
++    if (!statvfs(path.localpath.c_str(), &statbuf))
+     {
+         switch (statbuf.f_type)
+         {
+@@ -1978,9 +1985,9 @@
+         {"ntfs",  FS_NTFS}
+     }; /* filesystemTypes */
+ 
+-    struct statfs statbuf;
++    struct statvfs statbuf;
+ 
+-    if (!statfs(path.localpath.c_str(), &statbuf))
++    if (!statvfs(path.localpath.c_str(), &statbuf))
+     {
+         auto it = filesystemTypes.find(statbuf.f_fstypename);
+ 

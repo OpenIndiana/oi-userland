@@ -1,0 +1,38 @@
+--- MEGAsync_ori/src/MEGASync/gui/ProxySettings.cpp	Wed Jan 26 20:25:17 2022
++++ MEGAsync_patched/src/MEGASync/gui/ProxySettings.cpp	Sat Mar  5 15:36:25 2022
+@@ -33,7 +33,7 @@
+     connect(mUi->rProxyManual, &QRadioButton::clicked, this, [this]{setManualMode(true);});
+     connect(mUi->cProxyRequiresPassword, &QCheckBox::toggled, this, [this]{setManualMode(true);});
+     connect(mUi->rNoProxy, &QRadioButton::clicked, this, [this]{setManualMode(false);});
+-#ifndef Q_OS_LINUX
++#if !defined(Q_OS_LINUX) && !defined(Q_OS_SOLARIS)
+     connect(mUi->rProxyAuto, &QRadioButton::clicked, this, [this]{setManualMode(false);});
+ #endif
+ }
+@@ -48,7 +48,7 @@
+ void ProxySettings::initialize()
+ {
+     mUi->rNoProxy->setChecked(mPreferences->proxyType() == Preferences::PROXY_TYPE_NONE);
+-#ifndef Q_OS_LINUX
++#if !defined(Q_OS_LINUX) && !defined(Q_OS_SOLARIS)
+     mUi->rProxyAuto->setChecked(mPreferences->proxyType() == Preferences::PROXY_TYPE_AUTO);
+ #endif
+     mUi->rProxyManual->setChecked(mPreferences->proxyType() == Preferences::PROXY_TYPE_CUSTOM);
+@@ -99,7 +99,7 @@
+     {
+         mPreferences->setProxyType(Preferences::PROXY_TYPE_NONE);
+     }
+-#ifndef Q_OS_LINUX
++#if !defined(Q_OS_LINUX) && !defined(Q_OS_SOLARIS)
+     else if (mUi->rProxyAuto->isChecked())
+     {
+         mPreferences->setProxyType(Preferences::PROXY_TYPE_AUTO);
+@@ -147,7 +147,7 @@
+             proxy.setPassword(mUi->eProxyPassword->text());
+         }
+     }
+-#ifndef Q_OS_LINUX
++#if !defined(Q_OS_LINUX) && !defined(Q_OS_SOLARIS)
+     else if (mUi->rProxyAuto->isChecked())
+     {
+         MegaProxy *proxySettings = mApp->getMegaApi()->getAutoProxySettings();

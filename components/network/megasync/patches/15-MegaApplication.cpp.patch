@@ -1,0 +1,74 @@
+--- MEGAsync_ori/src/MEGASync/MegaApplication.cpp	Wed Jan 26 20:25:17 2022
++++ MEGAsync_patched/src/MEGASync/MegaApplication.cpp	Sun Mar  6 01:01:28 2022
+@@ -22,7 +22,7 @@
+ 
+ #include <assert.h>
+ 
+-#ifdef Q_OS_LINUX
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+     #include <signal.h>
+     #include <condition_variable>
+     #include <QSvgRenderer>
+@@ -54,7 +54,7 @@
+ 
+ void MegaApplication::loadDataPath()
+ {
+-#ifdef Q_OS_LINUX
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+     dataPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+                + QString::fromUtf8("/data/Mega Limited/MEGAsync");
+ #else
+@@ -89,7 +89,7 @@
+     logToStdout = true;
+ #endif
+ 
+-#ifdef Q_OS_LINUX
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+     if (argc == 2)
+     {
+          if (!strcmp("--debug", argv[1]))
+@@ -418,7 +418,7 @@
+     indexing = false;
+     setQuitOnLastWindowClosed(false);
+ 
+-#ifdef Q_OS_LINUX
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+     isLinux = true;
+ #else
+     isLinux = false;
+@@ -737,7 +737,7 @@
+     createTrayIcon();
+ }
+ 
+-#ifdef Q_OS_LINUX
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+ void MegaApplication::setTrayIconFromTheme(QString icon)
+ {
+     QString name = QString(icon).replace(QString::fromUtf8("://images/"), QString::fromUtf8("mega")).replace(QString::fromUtf8(".svg"),QString::fromUtf8(""));
+@@ -965,7 +965,7 @@
+ 
+ void MegaApplication::start()
+ {
+-#ifdef Q_OS_LINUX
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+     QSvgRenderer qsr; //to have svg library linked
+ #endif
+ 
+@@ -2250,7 +2250,7 @@
+ 
+     if (trayIcon)
+     {
+-#ifdef Q_OS_LINUX
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+         if (counter==4 && getenv("XDG_CURRENT_DESKTOP") && !strcmp(getenv("XDG_CURRENT_DESKTOP"),"XFCE"))
+         {
+             trayIcon->hide();
+@@ -5793,7 +5793,7 @@
+         whyAmIBlocked();
+     }
+ 
+-#ifdef Q_OS_LINUX
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+     if (getenv("XDG_CURRENT_DESKTOP") && (
+                 !strcmp(getenv("XDG_CURRENT_DESKTOP"),"ubuntu:GNOME")
+                 || !strcmp(getenv("XDG_CURRENT_DESKTOP"),"LXDE")

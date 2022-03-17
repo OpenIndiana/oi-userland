@@ -1,0 +1,101 @@
+--- MEGAsync_ori/src/MEGASync/main.cpp	Wed Jan 26 20:25:17 2022
++++ MEGAsync_patched/src/MEGASync/main.cpp	Sun Mar  6 00:21:32 2022
+@@ -9,7 +9,7 @@
+ #include <QFontDatabase>
+ #include <assert.h>
+ 
+-#ifdef Q_OS_LINUX
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+     #include <signal.h>
+     #include <condition_variable>
+ #endif
+@@ -24,7 +24,7 @@
+ #include <Shellapi.h>
+ #endif
+ 
+-#if defined(WIN32) || defined(Q_OS_LINUX)
++#if defined(WIN32) || defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+ #include <QScreen>
+ #endif
+ 
+@@ -59,7 +59,7 @@
+ }
+ 
+ 
+-#ifdef Q_OS_LINUX
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+ MegaApplication *theapp = NULL;
+ bool waitForRestartSignal = false;
+ std::mutex mtxcondvar;
+@@ -229,7 +229,7 @@
+         return 0;
+     }
+ 
+-#ifdef Q_OS_LINUX
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+ 
+     // Ensure interesting signals are unblocked.
+     sigset_t signalstounblock;
+@@ -315,7 +315,7 @@
+ 
+ #endif
+ 
+-#if defined(Q_OS_LINUX)
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+     if (!(getenv("DO_NOT_SET_QT_PLUGIN_PATH")))
+     {
+         if (QDir(QString::fromUtf8("/opt/mega/plugins")).exists())
+@@ -333,7 +333,7 @@
+     }
+ #endif
+ 
+-#if defined(Q_OS_LINUX) && QT_VERSION >= 0x050C00
++#if (defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)) && QT_VERSION >= 0x050C00
+     // Linux && Qt >= 5.12.0
+     if (!(getenv("DO_NOT_UNSET_XDG_SESSION_TYPE")))
+     {
+@@ -350,7 +350,7 @@
+     ScaleFactorManager scaleFactorManager(OsType::WIN);
+ #endif
+ 
+-#if defined(Q_OS_LINUX)
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+     ScaleFactorManager scaleFactorManager(OsType::LINUX);
+ #endif
+ 
+@@ -364,7 +364,7 @@
+     }
+ #endif
+ 
+-#if defined(Q_OS_LINUX)
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+ #if QT_VERSION >= 0x050000
+     if (!(getenv("DO_NOT_UNSET_QT_QPA_PLATFORMTHEME")) && getenv("QT_QPA_PLATFORMTHEME"))
+     {
+@@ -389,7 +389,7 @@
+ 
+ 
+     MegaApplication app(argc, argv);
+-#if defined(Q_OS_LINUX)
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+     theapp = &app;
+     appToWaitForSignal = QString::fromUtf8("\"%1\"").arg(MegaApplication::applicationFilePath());
+     for (int i = 1; i < argc; i++)
+@@ -413,7 +413,7 @@
+     }
+ #endif
+ 
+-#if defined(Q_OS_LINUX) && QT_VERSION >= 0x050600
++#if (defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)) && QT_VERSION >= 0x050600
+     for (const auto& screen : app.screens())
+     {
+         MegaApi::log(MegaApi::LOG_LEVEL_INFO, ("Device pixel ratio on '" +
+@@ -560,7 +560,7 @@
+     int toret = app.exec();
+ 
+ 
+-#ifdef Q_OS_LINUX
++#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+     theapp = nullptr;
+ #endif
+     return toret;

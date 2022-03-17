@@ -1,0 +1,51 @@
+--- MEGAsync_ori/src/MEGASync/control/CrashHandler.cpp	Wed Jan 26 20:25:17 2022
++++ MEGAsync_patched/src/MEGASync/control/CrashHandler.cpp	Fri Feb 18 16:33:47 2022
+@@ -12,12 +12,17 @@
+ 
+ #if defined(Q_OS_MAC)
+ #include "client/mac/handler/exception_handler.h"
+-#elif defined(Q_OS_LINUX)
+-#include "client/linux/handler/exception_handler.h"
++#elif defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
++#include "client/solaris/handler/exception_handler.h"
+ #elif defined(Q_OS_WIN32)
+ #include "client/windows/handler/exception_handler.h"
+ #endif
+ 
++#ifdef __illumos__
++#include<fcntl.h>
++#include<unistd.h>
++#endif
++
+ #ifndef WIN32
+     #ifndef CREATE_COMPATIBLE_MINIDUMPS
+ 
+@@ -26,7 +31,9 @@
+     #include <sys/utsname.h>
+ 
+ 
+-#ifdef __linux__
++
++
++#if defined(__linux__) || defined(__freebsd__) || defined(__illumos__)
+     #include <fstream>
+ 
+ string &ltrimEtcProperty(string &s, const char &c)
+@@ -310,7 +317,7 @@
+ bool DumpCallback(const wchar_t* _dump_dir,const wchar_t* _minidump_id,void* context,EXCEPTION_POINTERS* exinfo,MDRawAssertionInfo* assertion,bool success)
+ #elif defined(Q_OS_LINUX)
+ bool DumpCallback(const google_breakpad::MinidumpDescriptor &,void *context, bool success)
+-#elif defined(Q_OS_MAC)
++#elif defined(Q_OS_MAC) || defined(Q_OS_SOLARIS)
+ bool DumpCallback(const char* _dump_dir,const char* _minidump_id,void *context, bool success)
+ #endif
+ {
+@@ -347,7 +354,7 @@
+         );
+ #else
+     #ifdef CREATE_COMPATIBLE_MINIDUMPS
+-        #if defined(Q_OS_LINUX)
++        #if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
+             std::string pathAsStr = dumpPath.toUtf8().constData();
+             google_breakpad::MinidumpDescriptor md(pathAsStr);
+             pHandler = new google_breakpad::ExceptionHandler(
