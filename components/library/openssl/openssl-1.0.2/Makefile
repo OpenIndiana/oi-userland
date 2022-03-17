@@ -32,19 +32,16 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME =	openssl
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
 # and IPS_COMPONENT_VERSION.
-COMPONENT_VERSION =	1.0.2u
-# Version for IPS. It is easier to do it manually than convert the letter to a
-# number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.2.21
-COMPONENT_REVISION=	6
+COMPONENT_VERSION =	1.0.2.21
+HUMAN_VERSION = 1.0.2u
+COMPONENT_REVISION=	7
 COMPONENT_FMRI =	library/security/openssl
 COMPONENT_SUMMARY =	OpenSSL - a Toolkit for Secure Sockets Layer (SSL v2/v3) and Transport Layer (TLS v1) protocols and general purpose cryptographic library
 COMPONENT_CLASSIFICATION = System/Security
 COMPONENT_PROJECT_URL=	https://www.openssl.org
-COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC =		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:ecd0c6ffb493dd06707d38b14bb4d8c2288bb7033735606569d8f90f89669d16
+COMPONENT_ARCHIVE_HASH= sha256:ecd0c6ffb493dd06707d38b14bb4d8c2288bb7033735606569d8f90f89669d16
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =	OpenSSL, SSLeay
 COMPONENT_LICENSE_FILE = openssl-1.0.2.license
