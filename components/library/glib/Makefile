@@ -20,14 +20,20 @@ BUILD_STYLE = meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
-COMPONENT_MJR_VERSION=	2.66
-COMPONENT_MNR_VERSION=	8
+COMPONENT_MJR_VERSION=	2.62
+COMPONENT_MNR_VERSION=	6
+COMPONENT_REVISION=		1
+# Note: When updating this component make sure that it still works with our HAL.
+# Version 2.66.x is known for its problems eg. when plugging/unplugging USB devices under X11.
+# 2.62.6 is the last known working version (2.63.x, 2.64.x untested).
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+# We need to have a fake version because we had delivered non-working versions before:
+IPS_COMPONENT_VERSION=	2.66.8
 COMPONENT_SUMMARY=	GNOME core libraries
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:97bc87dd91365589af5cbbfea2574833aea7a1b71840fd365ecd2852c76b9c8b
+COMPONENT_ARCHIVE_HASH=	sha256:104fa26fbefae8024ff898330c671ec23ad075c1c0bce45c325c6d5657d58b9c
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gtk.org/
 COMPONENT_FMRI=		library/glib2
@@ -57,6 +63,9 @@ CONFIGURE_ENV    += CPPFLAGS="$(CPPFLAGS)"
 # Dtrace flags
 DFLAGS.64 = -64
 COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
+
+COMPONENT_POST_CONFIGURE_ACTION= \
+  ( cd $(@D); $(GSED) -i "s/_FILE_OFFSET_BITS=64/_FILE_OFFSET_BITS=$(BITS)/g" ./build.ninja )
 
 # Otherwise tests fail
 #ENV = /usr/bin/env -i
