@@ -23,8 +23,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# We don't deliver 32-bit apps anymore:
+<transform path=usr/bin/$(MACH32) -> drop>
+
 file etc/bash_completion.d/dbus-bash-completion.sh path=usr/share/bash-completion/completions/dbus-bash-completion.sh
-file path=usr/bin/$(MACH64)/dbus-binding-tool
+file path=usr/bin/$(MACH32)/dbus-binding-tool
 file path=usr/bin/dbus-binding-tool
 file path=usr/include/dbus-1.0/dbus/dbus-glib-bindings.h
 file path=usr/include/dbus-1.0/dbus/dbus-glib-lowlevel.h
@@ -32,13 +35,13 @@ file path=usr/include/dbus-1.0/dbus/dbus-glib.h
 file path=usr/include/dbus-1.0/dbus/dbus-gtype-specialized.h
 file path=usr/include/dbus-1.0/dbus/dbus-gvalue-parse-variant.h
 file path=usr/lib/$(MACH64)/dbus-bash-completion-helper mode=0555
-link path=usr/lib/$(MACH64)/libdbus-glib-1.so target=libdbus-glib-1.so.2.3.4
-link path=usr/lib/$(MACH64)/libdbus-glib-1.so.2 target=libdbus-glib-1.so.2.3.4
-file path=usr/lib/$(MACH64)/libdbus-glib-1.so.2.3.4
+link path=usr/lib/$(MACH64)/libdbus-glib-1.so target=libdbus-glib-1.so.2.3.5
+link path=usr/lib/$(MACH64)/libdbus-glib-1.so.2 target=libdbus-glib-1.so.2.3.5
+file path=usr/lib/$(MACH64)/libdbus-glib-1.so.2.3.5
 file path=usr/lib/$(MACH64)/pkgconfig/dbus-glib-1.pc
 file path=usr/lib/dbus-bash-completion-helper mode=0555
-link path=usr/lib/libdbus-glib-1.so target=libdbus-glib-1.so.2.3.4
-link path=usr/lib/libdbus-glib-1.so.2 target=libdbus-glib-1.so.2.3.4
-file path=usr/lib/libdbus-glib-1.so.2.3.4
+link path=usr/lib/libdbus-glib-1.so target=libdbus-glib-1.so.2.3.5
+link path=usr/lib/libdbus-glib-1.so.2 target=libdbus-glib-1.so.2.3.5
+file path=usr/lib/libdbus-glib-1.so.2.3.5
 file path=usr/lib/pkgconfig/dbus-glib-1.pc
 file path=usr/share/man/man1/dbus-binding-tool.1
