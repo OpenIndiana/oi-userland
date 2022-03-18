@@ -1,0 +1,184 @@
+See https://github.com/libuv/libuv/pull/3542
+
+On illumos and Solaris, fs events are implemented with
+PORT_SOURCE_FILE type event ports. These are one-shot so
+need re-arming each time they fire. Once they are armed
+and an event occurs, the kernel removes them from the current
+cache list and puts them on an event queue to be read by
+the application.
+
+There's a window in closing one of these ports when it could
+have triggered and be pending delivery. In that case, the
+attempt to disarm (dissociate) the event will fail with ENOENT
+but libuv still goes ahead and closes down the handle. In
+particular, the close callback (uv_close() argument) will be
+called but then the event will subsequently be delivered if
+the loop is still active; this should not happen.
+
+diff -wpruN '--exclude=*.orig' a~/src/unix/core.c a/src/unix/core.c
+--- a~/src/unix/core.c	1970-01-01 00:00:00
++++ a/src/unix/core.c	1970-01-01 00:00:00
+@@ -159,6 +159,15 @@ void uv_close(uv_handle_t* handle, uv_cl
+ 
+   case UV_FS_EVENT:
+     uv__fs_event_close((uv_fs_event_t*)handle);
++#if defined(__sun)
++    /*
++     * On Solaris and illumos, we will not be able to dissociate the watcher
++     * for an event which is pending delivery, so we cannot always call
++     * uv__make_close_pending() straight away. The backend will call the
++     * function once the event has cleared.
++     */
++    return;
++#endif
+     break;
+ 
+   case UV_POLL:
+diff -wpruN '--exclude=*.orig' a~/src/unix/sunos.c a/src/unix/sunos.c
+--- a~/src/unix/sunos.c	1970-01-01 00:00:00
++++ a/src/unix/sunos.c	1970-01-01 00:00:00
+@@ -154,7 +154,6 @@ void uv__io_poll(uv_loop_t* loop, int ti
+   sigset_t set;
+   uint64_t base;
+   uint64_t diff;
+-  uint64_t idle_poll;
+   unsigned int nfds;
+   unsigned int i;
+   int saved_errno;
+@@ -424,7 +423,7 @@ void uv_loadavg(double avg[3]) {
+ #if defined(PORT_SOURCE_FILE)
+ 
+ static int uv__fs_event_rearm(uv_fs_event_t *handle) {
+-  if (handle->fd == -1)
++  if (handle->fd == PORT_DELETED)
+     return UV_EBADF;
+ 
+   if (port_associate(handle->loop->fs_fd,
+@@ -475,6 +474,12 @@ static void uv__fs_event_read(uv_loop_t*
+     handle = (uv_fs_event_t*) pe.portev_user;
+     assert((r == 0) && "unexpected port_get() error");
+ 
++    if (uv__is_closing(handle)) {
++      uv__handle_stop(handle);
++      uv__make_close_pending((uv_handle_t*) handle);
++      break;
++    }
++
+     events = 0;
+     if (pe.portev_events & (FILE_ATTRIB | FILE_MODIFIED))
+       events |= UV_CHANGE;
+@@ -542,12 +547,14 @@ int uv_fs_event_start(uv_fs_event_t* han
+ }
+ 
+ 
+-int uv_fs_event_stop(uv_fs_event_t* handle) {
++static int i_uv_fs_event_stop(uv_fs_event_t* handle) {
++  int ret = 0;
++
+   if (!uv__is_active(handle))
+     return 0;
+ 
+-  if (handle->fd == PORT_FIRED || handle->fd == PORT_LOADED) {
+-    port_dissociate(handle->loop->fs_fd,
++  if (handle->fd == PORT_LOADED) {
++    ret = port_dissociate(handle->loop->fs_fd,
+                     PORT_SOURCE_FILE,
+                     (uintptr_t) &handle->fo);
+   }
+@@ -556,13 +563,28 @@ int uv_fs_event_stop(uv_fs_event_t* hand
+   uv__free(handle->path);
+   handle->path = NULL;
+   handle->fo.fo_name = NULL;
++  if (ret == 0)
+   uv__handle_stop(handle);
+ 
++  return ret;
++}
++
++int uv_fs_event_stop(uv_fs_event_t* handle) {
++  (void) i_uv_fs_event_stop(handle);
+   return 0;
+ }
+ 
+ void uv__fs_event_close(uv_fs_event_t* handle) {
+-  uv_fs_event_stop(handle);
++  /*
++   * If we were unable to dissociate the port here, then it is most likely
++   * that there is a pending queued event. When this happens, we don't want
++   * to complete the close as it will free the underlying memory for the
++   * handle, causing a use-after-free problem when the event is processed.
++   * We defer the final cleanup until after the event is consumed in
++   * uv__fs_event_read().
++   */
++  if (i_uv_fs_event_stop(handle) == 0)
++    uv__make_close_pending((uv_handle_t*) handle);
+ }
+ 
+ #else /* !defined(PORT_SOURCE_FILE) */
+diff -wpruN '--exclude=*.orig' a~/test/test-fs-event.c a/test/test-fs-event.c
+--- a~/test/test-fs-event.c	1970-01-01 00:00:00
++++ a/test/test-fs-event.c	1970-01-01 00:00:00
+@@ -923,6 +923,44 @@ TEST_IMPL(fs_event_close_with_pending_ev
+   return 0;
+ }
+ 
++TEST_IMPL(fs_event_close_with_pending_delete_event) {
++#if defined(NO_FS_EVENTS)
++  RETURN_SKIP(NO_FS_EVENTS);
++#endif
++  uv_loop_t* loop;
++  int r;
++
++  loop = uv_default_loop();
++
++  create_dir("watch_dir");
++  create_file("watch_dir/file");
++
++  r = uv_fs_event_init(loop, &fs_event);
++  ASSERT(r == 0);
++  r = uv_fs_event_start(&fs_event, fs_event_fail, "watch_dir/file", 0);
++  ASSERT(r == 0);
++
++  /* Generate an fs event. */
++  remove("watch_dir/file");
++
++  /* Allow time for the remove event to propagate to the pending list. */
++  /* XXX - perhaps just for __sun? */
++  uv_sleep(1100);
++  uv_update_time(loop);
++
++  uv_close((uv_handle_t*)&fs_event, close_cb);
++
++  uv_run(loop, UV_RUN_DEFAULT);
++
++  ASSERT(close_cb_called == 1);
++
++  /* Clean up */
++  remove("watch_dir/");
++
++  MAKE_VALGRIND_HAPPY();
++  return 0;
++}
++
+ TEST_IMPL(fs_event_close_in_callback) {
+ #if defined(NO_FS_EVENTS)
+   RETURN_SKIP(NO_FS_EVENTS);
+diff -wpruN '--exclude=*.orig' a~/test/test-list.h a/test/test-list.h
+--- a~/test/test-list.h	1970-01-01 00:00:00
++++ a/test/test-list.h	1970-01-01 00:00:00
+@@ -386,6 +386,7 @@ TEST_DECLARE   (fs_event_no_callback_aft
+ TEST_DECLARE   (fs_event_no_callback_on_close)
+ TEST_DECLARE   (fs_event_immediate_close)
+ TEST_DECLARE   (fs_event_close_with_pending_event)
++TEST_DECLARE   (fs_event_close_with_pending_delete_event)
+ TEST_DECLARE   (fs_event_close_in_callback)
+ TEST_DECLARE   (fs_event_start_and_close)
+ TEST_DECLARE   (fs_event_error_reporting)
+@@ -1048,6 +1049,7 @@ TASK_LIST_START
+   TEST_ENTRY  (fs_event_no_callback_on_close)
+   TEST_ENTRY  (fs_event_immediate_close)
+   TEST_ENTRY  (fs_event_close_with_pending_event)
++  TEST_ENTRY  (fs_event_close_with_pending_delete_event)
+   TEST_ENTRY  (fs_event_close_in_callback)
+   TEST_ENTRY  (fs_event_start_and_close)
+   TEST_ENTRY_CUSTOM (fs_event_error_reporting, 0, 0, 60000)
