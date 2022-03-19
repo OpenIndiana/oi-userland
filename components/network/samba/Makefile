@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2019 Rouven Weiler
+# Copyright 2012 Friedrich Kink
 #
 
 BUILD_BITS =			64_and_32
@@ -31,24 +32,24 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
 COMPONENT_FMRI =		service/network/samba
-COMPONENT_VERSION =		4.12.5
-COMPONENT_REVISION =	3
+COMPONENT_VERSION =		4.15.6
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:54b41cc6378acae20dd155ba55d78ff171875c2eaa3f05f87b485d3d6891b815
-COMPONENT_ARCHIVE_URL =		https://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH = 	sha256:0575b999a9048445820428dc540ba8a9527ce596fa66af02ea2ba1ea9578bcb4
+COMPONENT_ARCHIVE_URL =		https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL = 		https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_LICENSE =		GPLv3
-COMPONENT_LICENSE_FILE = 	$(COMPONENT_NAME).license
+COMPONENT_LICENSE_FILE = 	COPYING
 COMPONENT_CLASSIFICATION =	System/File System
 
 TEST_TARGET =		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PERL_VERSION = 5.24
-PYTHON_VERSION = 3.5
+PERL_VERSION = 5.34
+PYTHON_VERSION = 3.9
 PY3_CPYTHON_NAMING =\#
 
 # set WAF and adapt PATH for building
@@ -71,7 +72,7 @@ LDFLAGS +=	-R/usr/lib/samba/private$(MACHLIBDIR)
 LDFLAGS +=	-L$(GNULIB.$(BITS)) -R$(GNULIB.$(BITS))
 
 LDFLAGS +=      -lrt -lsec -lcrypt -lmd5 -lsocket -lnsl -lsendfile
-LDFLAGS +=      -lldap_r -lsendfile -lavahi-common -lavahi-core 
+LDFLAGS +=      -lldap-2.6 -lsendfile -lavahi-common -lavahi-core 
 
 # Flag is not picked up for lib/replace
 LDFLAGS +=	$(LD_SSP)
@@ -115,7 +116,6 @@ CONFIGURE_OPTIONS.64 +=	--with-shared-modules=vfs_worm,vfs_zfsacl,vfs_prealloc,v
 CONFIGURE_OPTIONS +=	--with-ads
 CONFIGURE_OPTIONS +=	--with-winbind
 CONFIGURE_OPTIONS +=	--with-ldap
-CONFIGURE_OPTIONS +=	--with-libldap=ldap_r
 CONFIGURE_OPTIONS +=	--without-systemd
 
 CONFIGURE_OPTIONS.64 += --python=$(PYTHON)
@@ -151,8 +151,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 		> $(PROTO_DIR)$(ETCDIR)/samba/smb.conf.default $(BUILD_DIR_64)/examples/smb.conf.default) 
 
 # Build dependencies
-REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += library/perl-5/parse-yapp-524
+REQUIRED_PACKAGES += runtime/perl-534
+REQUIRED_PACKAGES += library/perl-5/parse-yapp-534
+REQUIRED_PACKAGES += library/python/dnspython-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
@@ -168,8 +169,7 @@ REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/network/avahi
