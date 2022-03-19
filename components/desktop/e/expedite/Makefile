@@ -18,12 +18,17 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2012 Gary Mills
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
+
+BUILD_BITS=		64
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         expedite
 COMPONENT_VERSION=      1.7.10
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=         library/e/expedite
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=      Enlightenment - Performance and correctness test suite for Evas
@@ -36,9 +41,11 @@ COMPONENT_ARCHIVE_URL= \
     http://download.enlightenment.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+PYTHON_VERSION=		3.9
+
+TEST_TARGET=		$(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_BINDIR.64=$(USRBINDIR)
 
@@ -49,15 +56,9 @@ CONFIGURE_OPTIONS+=	--with-x
 # pkgdepend fails to resolve the python version if env is used
 COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!$(PYTHON)|' $(PROTO_DIR)/usr/bin/expedite-cmp;
 
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
-
 REQUIRED_PACKAGES += library/e/efl
 REQUIRED_PACKAGES += library/sdl
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
