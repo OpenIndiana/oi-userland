@@ -22,7 +22,7 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-libav
-COMPONENT_VERSION=	1.20.0
+COMPONENT_VERSION=	1.20.1
 COMPONENT_SUMMARY=	GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI=		library/audio/gstreamer1/plugin/libav
@@ -30,7 +30,7 @@ COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5eee5ed8d5082a31b500448e41535c722ee30cd5f8224f32982bbaba2eedef17
+  sha256:91a71fb633b75e1bd52e22a457845cb0ba563a2972ba5954ec88448f443a9fc7
 COMPONENT_ARCHIVE_URL= \
   https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2

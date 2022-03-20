@@ -10,20 +10,21 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2022 Niklas Poslovski
 #
 
-BUILD_STYLE= configure
+BUILD_STYLE= meson
 BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-python
-COMPONENT_VERSION=	1.16.2
+COMPONENT_VERSION=	1.20.1
 COMPONENT_SUMMARY=	Python bindings for the GStreamer streaming media framework
 COMPONENT_PROJECT_URL=	http://freedesktop.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:208df3148d73d9f416d016564737585d8ea763d91201732d44b5fe688c6288a8
+    sha256:ba6cd59faa3db3981d8c6982351c239d823c0b8e80b1acf58d2997b050289422
 COMPONENT_ARCHIVE_URL=	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_CLASSIFICATION= Development/Python
@@ -31,8 +32,8 @@ COMPONENT_FMRI=	library/python/python-gst
 COMPONENT_LICENSE=	LGPL v2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-PYTHON_VERSION=		3.5
-PYTHON_VERSIONS=	3.5
+PYTHON_VERSION=		3.9
+PYTHON_VERSIONS=	3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -55,5 +56,5 @@ REQUIRED_PACKAGES += library/python/pygobject-3
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
