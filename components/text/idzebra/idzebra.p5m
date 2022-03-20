@@ -24,29 +24,21 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=usr/share/idzebra-2.0/examples/(.+)$ -> set action.hash usr/share/idzebra-2.0-examples/%<\1> >
 
-file usr/bin/$(MACH64)/idzebra-config-2.0 path=usr/bin/$(MACH64)/idzebra-config mode=0555
-file usr/bin/$(MACH64)/zebraidx-2.0 path=usr/bin/$(MACH64)/zebraidx mode=0555
-file usr/bin/$(MACH64)/zebrasrv-2.0 path=usr/bin/$(MACH64)/zebrasrv mode=0555
-file usr/bin/idzebra-config-2.0 path=usr/bin/idzebra-config mode=0555
-file usr/bin/zebraidx-2.0 path=usr/bin/zebraidx mode=0555
-file usr/bin/zebrasrv-2.0 path=usr/bin/zebrasrv mode=0555
+# Drop 32-bit binaries
+<transform file path=.*/bin/$(MACH32)/.+ -> drop>
 
 file usr/share/man/man1/idzebra-config-2.0.1 path=usr/share/man/man1/idzebra-config.1
 file usr/share/man/man1/zebraidx-2.0.1 path=usr/share/man/man1/zebraidx.1
 file usr/share/man/man8/zebrasrv-2.0.8 path=usr/share/man/man8/zebrasrv.8
 
-file path=usr/bin/$(MACH64)/idzebra-abs2dom
-#file path=usr/bin/$(MACH64)/idzebra-config-2.0
-#link path=usr/bin/$(MACH64)/zebraidx target=zebraidx-2.0
-#file path=usr/bin/$(MACH64)/zebraidx-2.0
-#link path=usr/bin/$(MACH64)/zebrasrv target=zebrasrv-2.0
-#file path=usr/bin/$(MACH64)/zebrasrv-2.0
+file path=usr/bin/$(MACH32)/idzebra-abs2dom
+file path=usr/bin/$(MACH32)/idzebra-config
+file path=usr/bin/$(MACH32)/zebraidx
+file path=usr/bin/$(MACH32)/zebrasrv
 file path=usr/bin/idzebra-abs2dom
-#file path=usr/bin/idzebra-config-2.0
-#link path=usr/bin/zebraidx target=zebraidx-2.0
-#file path=usr/bin/zebraidx-2.0
-#link path=usr/bin/zebrasrv target=zebrasrv-2.0
-#file path=usr/bin/zebrasrv-2.0
+file path=usr/bin/idzebra-config
+file path=usr/bin/zebraidx
+file path=usr/bin/zebrasrv
 file path=usr/include/idzebra-2.0/idzebra/api.h
 file path=usr/include/idzebra-2.0/idzebra/bfile.h
 file path=usr/include/idzebra-2.0/idzebra/data1.h
@@ -69,9 +61,10 @@ file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-grs-regx.so
 file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-grs-xml.so
 file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-safari.so
 file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-text.so
-link path=usr/lib/$(MACH64)/libidzebra-2.0.so target=libidzebra-2.0.so.0.0.1
-link path=usr/lib/$(MACH64)/libidzebra-2.0.so.0 target=libidzebra-2.0.so.0.0.1
-file path=usr/lib/$(MACH64)/libidzebra-2.0.so.0.0.1
+link path=usr/lib/$(MACH64)/libidzebra-2.0.so target=libidzebra-2.0.so.0.0.2
+link path=usr/lib/$(MACH64)/libidzebra-2.0.so.0 target=libidzebra-2.0.so.0.0.2
+file path=usr/lib/$(MACH64)/libidzebra-2.0.so.0.0.2
+file path=usr/lib/$(MACH64)/pkgconfig/zebra.pc
 file path=usr/lib/idzebra-2.0/modules/mod-alvis.so
 file path=usr/lib/idzebra-2.0/modules/mod-dom.so
 file path=usr/lib/idzebra-2.0/modules/mod-grs-marc.so
@@ -79,9 +72,10 @@ file path=usr/lib/idzebra-2.0/modules/mod-grs-regx.so
 file path=usr/lib/idzebra-2.0/modules/mod-grs-xml.so
 file path=usr/lib/idzebra-2.0/modules/mod-safari.so
 file path=usr/lib/idzebra-2.0/modules/mod-text.so
-link path=usr/lib/libidzebra-2.0.so target=libidzebra-2.0.so.0.0.1
-link path=usr/lib/libidzebra-2.0.so.0 target=libidzebra-2.0.so.0.0.1
-file path=usr/lib/libidzebra-2.0.so.0.0.1
+link path=usr/lib/libidzebra-2.0.so target=libidzebra-2.0.so.0.0.2
+link path=usr/lib/libidzebra-2.0.so.0 target=libidzebra-2.0.so.0.0.2
+file path=usr/lib/libidzebra-2.0.so.0.0.2
+file path=usr/lib/pkgconfig/zebra.pc
 file path=usr/share/aclocal/idzebra-2.0.m4
 file path=usr/share/doc/idzebra-2.0/administration-extended-services.html
 file path=usr/share/doc/idzebra-2.0/administration-ranking.html
@@ -197,7 +191,7 @@ file path=usr/share/idzebra-2.0/examples/marc21/sample-marc
 file path=usr/share/idzebra-2.0/examples/marc21/zebra.cfg
 file path=usr/share/idzebra-2.0/examples/marcxml/MARC21slim2INDEX.xsl
 file path=usr/share/idzebra-2.0/examples/marcxml/MARC21slim2MADS.xsl
-file path=usr/share/idzebra-2.0/examples/marcxml/MARC21slim2MODS3-1.xsl
+file path=usr/share/idzebra-2.0/examples/marcxml/MARC21slim2MODS3-7.xsl
 file path=usr/share/idzebra-2.0/examples/marcxml/MARC21slim2SRWDC.xsl
 file path=usr/share/idzebra-2.0/examples/marcxml/MARC21slimUtils.xsl
 file path=usr/share/idzebra-2.0/examples/marcxml/README
