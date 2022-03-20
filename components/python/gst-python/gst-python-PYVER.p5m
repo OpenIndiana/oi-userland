@@ -11,6 +11,7 @@
 
 #
 # Copyright 2020 Alexander Pyhalov
+# Copyright 2022 Niklas Poslovski
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,7 +23,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstpython.cpython-$(PYV)m.so
-file path=usr/lib/python$(PYVER)/vendor-packages/gi/overrides/Gst.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gi/overrides/GstPbutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gi/overrides/_gi_gst.so
+<transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
+
+file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstpython.so
+file path=usr/lib/python$(PYVER)/site-packages/gi/overrides/Gst.py
+file path=usr/lib/python$(PYVER)/site-packages/gi/overrides/GstAudio.py
+file path=usr/lib/python$(PYVER)/site-packages/gi/overrides/GstPbutils.py
+file path=usr/lib/python$(PYVER)/site-packages/gi/overrides/GstVideo.py
