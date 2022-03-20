@@ -20,19 +20,20 @@
 #
 # Copyright (c) 2015-2017, Aurelien Larcher 
 #
-BUILD_BITS=				32_and_64
+BUILD_BITS=				64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms2
-COMPONENT_VERSION=      2.12
+COMPONENT_MJR_VERSION=	2.13
+COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).1
 COMPONENT_FMRI=         library/lcms2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=      The Little Color Management System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://www.littlecms.com/
+COMPONENT_PROJECT_URL=  https://www.littlecms.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:18663985e864100455ac3e507625c438c3710354d85e5cbb7cd4043e11fe10f5
-COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:d473e796e7b27c5af01bd6d1552d42b45b43457e7182ce9903f38bb748203b88
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 
 include $(WS_MAKE_RULES)/common.mk
@@ -60,9 +61,8 @@ CONFIGURE_OPTIONS  +=           --with-pic
 
 COMPONENT_PRE_TEST_ACTION = ( cd $(@D); $(MAKE) -C testbed clean )
 
-# One test fails in 32-bit
 COMPONENT_TEST_ARGS = -k -i
-
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*test bed.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^.*MPixel.*$$|XXX_REMOVE_XXX|g" ' \
