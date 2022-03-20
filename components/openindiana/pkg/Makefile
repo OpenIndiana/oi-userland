@@ -35,10 +35,6 @@ CLEAN_PATHS += $(BUILD_DIR)
 COMPONENT_PREP_GIT=no
 include $(WS_TOP)/make-rules/prep.mk
 
-COMPONENT_ENV = CC=$(CC)
-COMPONENT_BUILD_ENV = $(COMPONENT_ENV)
-COMPONENT_INSTALL_ENV = $(COMPONENT_ENV)
-
 $(SOURCE_DIR)/.downloaded: component-environment-prep $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
 	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
@@ -57,7 +53,7 @@ download:: $(SOURCE_DIR)/.downloaded
 $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded 
 	$(MKDIR) $(@D) && \
 	cd $(SOURCE_DIR)/src && \
-	$(ENV) $(COMPONENT_BUILD_ENV) $(MAKE) && $(ENV) $(COMPONENT_INSTALL_ENV) $(MAKE) install && \
+	$(MAKE) && $(MAKE) install && \
 	cd pkg && \
 	$(MAKE) BUILD_VERSION=$(BUILD_VERSION) && \
 	$(MAKE) publish-pkgs BUILD_VERSION=$(BUILD_VERSION) && \
@@ -69,7 +65,7 @@ devbook: $(DEVBOOK)
 
 $(DEVBOOK): $(SOURCE_DIR)/.downloaded
 	cd $(SOURCE_DIR)/doc/dev-guide && \
-	$(ENV) $(COMPONENT_BUILD_ENV) $(MAKE)
+	$(MAKE)
 
 build install: $(BUILD_DIR)/$(MACH)/.built
 
