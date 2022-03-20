@@ -22,7 +22,7 @@ USE_OPENSSL11=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-bad1
-COMPONENT_VERSION=	1.20.0
+COMPONENT_VERSION=	1.20.1
 #COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -31,7 +31,7 @@ COMPONENT_SRC_NAME=	gst-plugins-bad
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:015b8d4d9a395ebf444d40876867a2034dd3304b3ad48bc3a0dd0c1ee71dc11d
+  sha256:09d3c2cf5911f0bc7da6bf557a55251779243d3de216b6a26cc90c445b423848
 COMPONENT_ARCHIVE_URL= \
   https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/
@@ -135,3 +135,4 @@ REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += video/rtmpdump
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libx11
+# Auto-generated dependencies
