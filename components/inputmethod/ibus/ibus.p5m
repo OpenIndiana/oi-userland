@@ -26,15 +26,21 @@ license COPYING license='LGPLv2.1'
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 <transform file path=usr/lib/ibus/.* -> default mode 0555>
 
+# Drop 32-bit binaries
+<transform file path=.*/bin/$(MACH32)/.+ -> drop>
+
+<transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
+
 depend fmri=system/input-method/imf-startup type=require
 
 file files/ibus-xinput path=etc/X11/xinit/imf.d/0010.ibus mode=0555
 
 file path=etc/dconf/db/ibus.d/00-upstream-settings
 file path=etc/dconf/profile/ibus
-#file path=usr/bin/$(MACH32)/ibus
-#file path=usr/bin/$(MACH32)/ibus-daemon
-#file path=usr/bin/$(MACH32)/ibus-setup
+file path=etc/xdg/Xwayland-session.d/10-ibus-x11
+file path=usr/bin/$(MACH32)/ibus
+file path=usr/bin/$(MACH32)/ibus-daemon
+file path=usr/bin/$(MACH32)/ibus-setup
 file path=usr/bin/ibus
 file path=usr/bin/ibus-daemon
 file path=usr/bin/ibus-setup
@@ -81,9 +87,9 @@ file path=usr/include/ibus-1.0/ibusxml.h
 file path=usr/lib/$(MACH64)/girepository-1.0/IBus-1.0.typelib
 file path=usr/lib/$(MACH64)/gtk-2.0/2.10.0/immodules/im-ibus.so
 file path=usr/lib/$(MACH64)/gtk-3.0/3.0.0/immodules/im-ibus.so
-link path=usr/lib/$(MACH64)/libibus-1.0.so target=libibus-1.0.so.5.0.525
-link path=usr/lib/$(MACH64)/libibus-1.0.so.5 target=libibus-1.0.so.5.0.525
-file path=usr/lib/$(MACH64)/libibus-1.0.so.5.0.525
+link path=usr/lib/$(MACH64)/libibus-1.0.so target=libibus-1.0.so.5.0.526
+link path=usr/lib/$(MACH64)/libibus-1.0.so.5 target=libibus-1.0.so.5.0.526
+file path=usr/lib/$(MACH64)/libibus-1.0.so.5.0.526
 file path=usr/lib/$(MACH64)/pkgconfig/ibus-1.0.pc
 file path=usr/lib/gtk-2.0/2.10.0/immodules/im-ibus.so
 file path=usr/lib/gtk-3.0/3.0.0/immodules/im-ibus.so
@@ -97,11 +103,11 @@ file path=usr/lib/ibus/ibus-engine-simple
 file path=usr/lib/ibus/ibus-portal
 file path=usr/lib/ibus/ibus-ui-gtk3
 file path=usr/lib/ibus/ibus-x11
-link path=usr/lib/libibus-1.0.so target=libibus-1.0.so.5.0.525
-link path=usr/lib/libibus-1.0.so.5 target=libibus-1.0.so.5.0.525
-file path=usr/lib/libibus-1.0.so.5.0.525
+link path=usr/lib/libibus-1.0.so target=libibus-1.0.so.5.0.526
+link path=usr/lib/libibus-1.0.so.5 target=libibus-1.0.so.5.0.526
+file path=usr/lib/libibus-1.0.so.5.0.526
 file path=usr/lib/pkgconfig/ibus-1.0.pc
-file path=usr/lib/python3.5/vendor-packages/gi/overrides/IBus.py
+file path=usr/lib/python3.9/vendor-packages/gi/overrides/IBus.py
 file path=usr/share/GConf/gsettings/ibus.convert
 file path=usr/share/applications/org.freedesktop.IBus.Setup.desktop
 file path=usr/share/bash-completion/completions/ibus.bash
@@ -172,24 +178,24 @@ file path=usr/share/ibus/keymaps/jp
 file path=usr/share/ibus/keymaps/kr
 file path=usr/share/ibus/keymaps/modifiers
 file path=usr/share/ibus/keymaps/us
-file path=usr/share/ibus/setup/__pycache__/emojilang.cpython-35.opt-1.pyc
-file path=usr/share/ibus/setup/__pycache__/emojilang.cpython-35.pyc
-file path=usr/share/ibus/setup/__pycache__/engineabout.cpython-35.opt-1.pyc
-file path=usr/share/ibus/setup/__pycache__/engineabout.cpython-35.pyc
-file path=usr/share/ibus/setup/__pycache__/enginecombobox.cpython-35.opt-1.pyc
-file path=usr/share/ibus/setup/__pycache__/enginecombobox.cpython-35.pyc
-file path=usr/share/ibus/setup/__pycache__/enginedialog.cpython-35.opt-1.pyc
-file path=usr/share/ibus/setup/__pycache__/enginedialog.cpython-35.pyc
-file path=usr/share/ibus/setup/__pycache__/enginetreeview.cpython-35.opt-1.pyc
-file path=usr/share/ibus/setup/__pycache__/enginetreeview.cpython-35.pyc
-file path=usr/share/ibus/setup/__pycache__/i18n.cpython-35.opt-1.pyc
-file path=usr/share/ibus/setup/__pycache__/i18n.cpython-35.pyc
-file path=usr/share/ibus/setup/__pycache__/icon.cpython-35.opt-1.pyc
-file path=usr/share/ibus/setup/__pycache__/icon.cpython-35.pyc
-file path=usr/share/ibus/setup/__pycache__/keyboardshortcut.cpython-35.opt-1.pyc
-file path=usr/share/ibus/setup/__pycache__/keyboardshortcut.cpython-35.pyc
-file path=usr/share/ibus/setup/__pycache__/main.cpython-35.opt-1.pyc
-file path=usr/share/ibus/setup/__pycache__/main.cpython-35.pyc
+file path=usr/share/ibus/setup/__pycache__/emojilang.cpython-39.opt-1.pyc
+file path=usr/share/ibus/setup/__pycache__/emojilang.cpython-39.pyc
+file path=usr/share/ibus/setup/__pycache__/engineabout.cpython-39.opt-1.pyc
+file path=usr/share/ibus/setup/__pycache__/engineabout.cpython-39.pyc
+file path=usr/share/ibus/setup/__pycache__/enginecombobox.cpython-39.opt-1.pyc
+file path=usr/share/ibus/setup/__pycache__/enginecombobox.cpython-39.pyc
+file path=usr/share/ibus/setup/__pycache__/enginedialog.cpython-39.opt-1.pyc
+file path=usr/share/ibus/setup/__pycache__/enginedialog.cpython-39.pyc
+file path=usr/share/ibus/setup/__pycache__/enginetreeview.cpython-39.opt-1.pyc
+file path=usr/share/ibus/setup/__pycache__/enginetreeview.cpython-39.pyc
+file path=usr/share/ibus/setup/__pycache__/i18n.cpython-39.opt-1.pyc
+file path=usr/share/ibus/setup/__pycache__/i18n.cpython-39.pyc
+file path=usr/share/ibus/setup/__pycache__/icon.cpython-39.opt-1.pyc
+file path=usr/share/ibus/setup/__pycache__/icon.cpython-39.pyc
+file path=usr/share/ibus/setup/__pycache__/keyboardshortcut.cpython-39.opt-1.pyc
+file path=usr/share/ibus/setup/__pycache__/keyboardshortcut.cpython-39.pyc
+file path=usr/share/ibus/setup/__pycache__/main.cpython-39.opt-1.pyc
+file path=usr/share/ibus/setup/__pycache__/main.cpython-39.pyc
 file path=usr/share/ibus/setup/emojilang.py
 file path=usr/share/ibus/setup/engineabout.py
 file path=usr/share/ibus/setup/enginecombobox.py
