@@ -100,6 +100,9 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	  echo export BUILDPERL64=\"#\"; \
 	  echo export BUILDPY2=\"#\"; \
 	  echo export BUILDPY2TOOLS=\"#\"; \
+	  echo export PYTHON3b_VERSION="3.9"; \
+	  echo export PYTHON3b_SUFFIX=""; \
+	  echo export BUILDPY3b=""; \
 	  echo export BLD_JAVA_8=; \
 	  echo export CW_NO_SHADOW=1; \
 	  echo export __GNUC=\"\"; \
@@ -642,7 +645,8 @@ print-package-names:
 	fi
 	grep -v -x -F -f packages.ignore.in pkg5.complete.fmris > pkg5.fmris
 	cat pkg5.fmris
- 
+
 REQUIRED_PACKAGES += developer/gcc-7
 REQUIRED_PACKAGES += developer/illumos-closed
 REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-39
