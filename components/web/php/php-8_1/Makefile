@@ -19,8 +19,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.1
-COMPONENT_MNR_VERSION=	3
-COMPONENT_REVISION=	1
+COMPONENT_MNR_VERSION=	4
 COMPONENT_SUMMARY=      PHP 8.1
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_CLASSIFICATION=Meta Packages/Group Packages
@@ -29,7 +28,7 @@ COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:92d74f5a4af7de90cef6cda65bd0c341dc9a1027b32f70e7b8861f6f68a38bb2
+COMPONENT_ARCHIVE_HASH= sha256:a9951c1c8fd5d2eefde28de0f646c344eb61d751319d220713a6da26f986abde
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_LICENSE=      PHP License

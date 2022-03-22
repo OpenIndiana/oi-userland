@@ -1,13 +1,11 @@
-# -D__solaris__ is very important 
-# otherwise mod_php81.so is crashing
---- php-8.1.2/TSRM/TSRM.h	2022-01-31 14:37:28.923622243 +0000
-+++ php-8.1.2/TSRM/TSRM.h.new	2022-01-31 14:35:45.389879307 +0000
+--- php-8.1.4/TSRM/TSRM.h.orig	2022-03-15 21:18:41.000000000 +0000
++++ php-8.1.4/TSRM/TSRM.h	2022-03-22 20:07:56.044769647 +0000
 @@ -147,7 +147,7 @@
  # define __has_attribute(x) 0
  #endif
  
--#if !__has_attribute(tls_model) || defined(__FreeBSD__) || defined(__MUSL__)
-+#if !__has_attribute(tls_model) || defined(__FreeBSD__) || defined(__MUSL__) || defined(__solaris__)
+-#if !__has_attribute(tls_model) || defined(__FreeBSD__) || defined(__MUSL__) || defined(__HAIKU__)
++#if !__has_attribute(tls_model) || defined(__FreeBSD__) || defined(__MUSL__) || defined(__HAIKU__) || defined(__solaris__)
  # define TSRM_TLS_MODEL_ATTR
  #elif __PIC__
  # define TSRM_TLS_MODEL_ATTR __attribute__((tls_model("initial-exec")))
