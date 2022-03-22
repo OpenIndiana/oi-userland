@@ -48,15 +48,15 @@ else
 MULTI_PROTO=no
 endif
 
-$(SOURCE_DIR)/.downloaded: 
-	@[ -d $(SOURCE_DIR) ] || \
-	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
+$(SOURCE_DIR):
+	$(GIT) -c fetch.fsckobjects=false \
+	    clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
+
+$(SOURCE_DIR)/.downloaded:  $(SOURCE_DIR)
 	@cd $(SOURCE_DIR); $(GIT) checkout $(GIT_BRANCH); $(GIT) pull \
 	  $(GIT_REPO); $(GIT) log -1 --format=%H > .downloaded
 
-update:
-	@[ -d $(SOURCE_DIR) ] || \
-	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
+update: $(SOURCE_DIR)
 	cd $(SOURCE_DIR); $(GIT) pull $(GIT_REPO); \
 	  [ "$$($(GIT) log -1 --format=%H)" == "$$(cat .downloaded)" ] || \
 	  $(GIT) log -1 --format=%H > .downloaded
