@@ -12,18 +12,18 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2020 Michal Nowak
-# Copyright 2021 Andreas Wacknitz
+# Copyright 2022 Andreas Wacknitz
 #
 
 BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xterm
-COMPONENT_VERSION=	371
+COMPONENT_VERSION=	372
 COMPONENT_SUMMARY=	Xterm - terminal emulator for X 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:32f888277b19e28ebc0a3112bff000607c07bed0679caa0beebb36f9cad484f5
+COMPONENT_ARCHIVE_HASH=	sha256:c6d08127cb2409c3a04bcae559b7025196ed770bb7bf26630abcb45d95f60ab1
 COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/xterm/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://invisible-island.net/xterm/
 COMPONENT_FMRI=		terminal/xterm
