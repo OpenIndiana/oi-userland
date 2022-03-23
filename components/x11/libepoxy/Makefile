@@ -11,7 +11,7 @@
 #
 # Copyright (c) 2016 Aurelien Larcher
 # Copyright (c) 2018 Michal Nowak
-# Copyright (c) 2021 Andreas Wacknitz
+# Copyright (c) 2022 Andreas Wacknitz
 #
 
 X11_CATEGORY= LIB
@@ -20,13 +20,13 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libepoxy
-COMPONENT_VERSION= 1.5.9
+COMPONENT_VERSION= 1.5.10
 COMPONENT_FMRI=	   x11/library/libepoxy
 COMPONENT_SUMMARY= library for handling OpenGL function pointers
 COMPONENT_CLASSIFICATION=System/Hardware
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:d168a19a6edfdd9977fef1308ccf516079856a4275cf876de688fb7927e365e4
-COMPONENT_ARCHIVE_URL=	https://github.com/anholt/libepoxy/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:a7ced37f4102b745ac86d6a70a9da399cc139ff168ba6b8002b4d8d43c900c15
+COMPONENT_ARCHIVE_URL=	https://github.com/anholt/libepoxy/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 
 include $(WS_MAKE_RULES)/common.mk
 
