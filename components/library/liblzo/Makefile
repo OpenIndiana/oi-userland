@@ -15,37 +15,30 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS=	64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lzo
-COMPONENT_VERSION=	2.10
-IPS_COMPONENT_VERSION=	2.0.10
+COMPONENT_VERSION=	2.0.10
+HUMAN_VERSION=		2.10
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	LZO is a portable lossless data compression library written in ANSI C
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:c0f892943208266f9b6543b3ae308fab6284c5c90e627931446fb49b4221a072
+COMPONENT_PROJECT_URL=	https://www.oberhumer.com/opensource/$(COMPONENT_NAME)/
+COMPONENT_ARCHIVE_URL=	https://www.oberhumer.com/opensource/$(COMPONENT_NAME)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION =	System/Libraries
-COMPONENT_SUMMARY=	LZO is a portable lossless data compression library written in ANSI C
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:c0f892943208266f9b6543b3ae308fab6284c5c90e627931446fb49b4221a072
-COMPONENT_PROJECT_URL=	http://www.oberhumer.com/opensource/$(COMPONENT_NAME)/
-COMPONENT_ARCHIVE_URL=	http://www.oberhumer.com/opensource/$(COMPONENT_NAME)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+=	--enable-static=no
 CONFIGURE_OPTIONS+=	--enable-shared
 
 COMPONENT_TEST_TARGETS =	check test
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
