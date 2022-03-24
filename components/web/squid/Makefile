@@ -30,7 +30,7 @@ USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      5.3
+COMPONENT_VERSION=      5.4.1
 COMPONENT_SUMMARY=      Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
 #No https connection available at all
@@ -38,7 +38,7 @@ COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v5/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:45178588df1311ded41ebadd632840c4d93a8d7f5f60e38e74acf2f1ae2f1715
+COMPONENT_ARCHIVE_HASH= sha256:df4d310a91663ae59c29b0f8183f22623c5e6f731869af793805987ab94ca41c
 #COMPONENT_ARCHIVE_URL.2=  $(COMPONENT_PROJECT_URL)Versions/langpack/squid-langpack-20211208.tar.gz
 #COMPONENT_ARCHIVE_HASH.2= sha256:847bd84f62f5af5b413e9dc61a526245fefebb5c66cb4df4cd798f58346abb03
 COMPONENT_FMRI=         web/proxy/squid
@@ -153,7 +153,7 @@ REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/tdb
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
