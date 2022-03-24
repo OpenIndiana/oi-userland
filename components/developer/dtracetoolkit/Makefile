@@ -17,14 +17,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		DTraceToolkit
 COMPONENT_VERSION=	0.99
-COMPONENT_REVISION=	5	
-COMPONENT_PROJECT_URL=	http://www.brendangregg.com/dtracetoolkit.html
+COMPONENT_REVISION=	6
+COMPONENT_PROJECT_URL=	https://www.brendangregg.com/dtracetoolkit.html
 COMPONENT_SUMMARY=	A collection of opensource dtrace scripts
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f4f5df564b79103088731813cbc5c1bab0cb4dec98d2700b8583af190c695266
-COMPONENT_ARCHIVE_URL=	http://www.brendangregg.com/DTraceToolkit/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://www.brendangregg.com/DTraceToolkit/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
