@@ -27,12 +27,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		snort
 COMPONENT_VERSION=	2.9.9.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	snort - Network Intrusion and Protection Detector
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:71b147125e96390a12f3d55796ed5073df77206bd3563d84d3e5a1f19e7d7a56
-COMPONENT_PROJECT_URL=	http://www.snort.org/
+COMPONENT_PROJECT_URL=	https://www.snort.org/
 COMPONENT_ARCHIVE_URL=	https://snort.org/downloads/archive/snort/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	diagnostic/snort
 COMPONENT_CLASSIFICATION=	Applications/Internet
