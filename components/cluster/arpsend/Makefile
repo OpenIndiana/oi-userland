@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=   arpsend
 COMPONENT_VERSION=  1.2.3
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_FMRI= utility/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL=  https://www.net.princeton.edu/software/$(COMPONENT_NAME)/
