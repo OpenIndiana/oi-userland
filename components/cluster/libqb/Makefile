@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=   libqb
 COMPONENT_VERSION=  1.0.5
+COMPONENT_REVISION=	1
 COMPONENT_FMRI= library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL=  https://github.com/ClusterLabs/libqb
