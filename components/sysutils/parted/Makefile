@@ -19,9 +19,10 @@ COMPONENT_NAME= parted
 # It's illumos-gate version based on parted 1.8.8
 # For IPS to perfer it we bumped COMPONENT_VERSION
 COMPONENT_VERSION= 1.8.8.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNU Parted - Partition Editor
 COMPONENT_SRC = src
-COMPONENT_PROJECT_URL = http://www.gnu.org/software/parted/
+COMPONENT_PROJECT_URL = https://www.gnu.org/software/parted/
 
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
