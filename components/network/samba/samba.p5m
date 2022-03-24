@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2020 Rouven Weiler
+# Copyright 2022 Friedrich Kink
 #
 
 #
@@ -44,20 +45,23 @@ dir  path=var/spool/samba mode=1777
 #
 # smbprofiles
 file usr/share/man/man1/profiles.1 path=usr/share/man/man1/smbprofiles.1
+file usr/share/man/man8/smbd.8 path=usr/share/man/man8/samba_smbd.8
 
 <include samba.proto-objects>
 
 #  man
 <transform file path=usr/share/man/man1/profiles.1 -> drop >
+<transform file path=usr/share/man/man8/smbd.8 -> drop >
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile >
 
 # now handle pyc 
 <transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
-<transform file path=usr/(.*) -> default pkg.depend.runpath "$PKGDEPEND_RUNPATH:/usr/lib/python3.5/vendor-packages/samba:/usr/lib/python3.5/vendor-packages/samba/samba:/usr/lib/python3.5/vendor-packages/samba/samba/external:/usr/lib/python3.5/vendor-packages/samba/samba/subunit:/usr/lib/python3.5/vendor-packages/samba/samba/third_party" >
+<transform file path=usr/(.*) -> default pkg.depend.runpath "$PKGDEPEND_RUNPATH:/usr/lib/python3.9/vendor-packages/samba:/usr/lib/python3.9/vendor-packages/samba/samba:/usr/lib/python3.9/vendor-packages/samba/samba/external:/usr/lib/python3.9/vendor-packages/samba/samba/subunit:/usr/lib/python3.9/vendor-packages/samba/samba/third_party" >
 <transform file path=.*/dns_hub.py -> default pkg.depend.bypass-generate .* >
 <transform file path=.*/run.py -> default pkg.depend.bypass-generate .* >
 <transform file path=.*/samba_upgradedns -> default pkg.depend.bypass-generate .* >
 <transform file path=.*/samba_dnsupdate -> default pkg.depend.bypass-generate .* >
+<transform file path=.*/tests -> default pkg.depend.bypass-generate .* >
 
 # service manifests to install
 file Solaris/samba.xml path=lib/svc/manifest/network/samba.xml
@@ -73,7 +77,6 @@ link path=usr/bin/dbwrap_tool target=../lib/samba/bin/$(MACH64)/dbwrap_tool
 # Maybe one day we can set target and source to sbin.
 # left the following for compatibility purposes
 link path=usr/bin/eventlogadm target=../lib/samba/sbin/$(MACH64)/eventlogadm
-link path=usr/bin/findsmb target=../lib/samba/bin/$(MACH64)/findsmb
 link path=usr/bin/gentest target=../lib/samba/bin/$(MACH64)/gentest
 link path=usr/bin/ldbadd target=../lib/samba/bin/$(MACH64)/ldbadd
 link path=usr/bin/ldbdel target=../lib/samba/bin/$(MACH64)/ldbdel
