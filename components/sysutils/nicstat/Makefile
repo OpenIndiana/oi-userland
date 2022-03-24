@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nicstat
 COMPONENT_VERSION=	1.95
+COMPONENT_REVISION=	1
 COMPONENT_GIT_REV=	1fbe281
 COMPONENT_LICENSE=	The Artistic License 2.0
 COMPONENT_SRC=		scotte-nicstat-$(COMPONENT_GIT_REV)
