@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cpp
 COMPONENT_VERSION=	0.5.11
+COMPONENT_REVISION =	1
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 # below is required for userland-fetch to bahave
