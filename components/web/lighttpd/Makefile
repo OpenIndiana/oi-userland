@@ -28,7 +28,8 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
 COMPONENT_VERSION=	1.4.55
-COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
+COMPONENT_REVISION=	1
+COMPONENT_PROJECT_URL=	https://www.lighttpd.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
