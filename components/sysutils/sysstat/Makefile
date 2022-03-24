@@ -18,15 +18,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sysstat
 COMPONENT_VERSION=	20151012
-COMPONENT_REVISION=     1
+COMPONENT_REVISION= 2
 COMPONENT_FMRI=		diagnostic/sysstat
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SUMMARY=	sysstat - tool for quick overview of various Solaris stats
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	sha256:4ec664956b557f7c3a01eb644f731314f976e6ff6b83afe55c2d6e8f73ae0736
-COMPONENT_ARCHIVE_URL=	http://www.maier-komor.de/sysstat/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.maier-komor.de/sysstat.html
+COMPONENT_ARCHIVE_URL=	https://www.maier-komor.de/sysstat/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.maier-komor.de/sysstat.html
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	LICENSE
 # Note: the website says the project is under GPLv2, but sources provide a
