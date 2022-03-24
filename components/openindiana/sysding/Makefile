@@ -18,9 +18,10 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		sysding
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_VERSION=	0.5.11
+COMPONENT_REVISION=	1
 COMPONENT_LICENSE=	CDDL
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-COMPONENT_PROJECT_URL=	http://openindiana.org
+COMPONENT_PROJECT_URL=	https://openindiana.org
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_FMRI=	service/management/sysding
 
