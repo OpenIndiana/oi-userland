@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mdata-client
 COMPONENT_VERSION=	20190228
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Cross-platform metadata client tools for use in Joyent Triton guests (both Zones and KVM)
 COMPONENT_PROJECT_URL=	https://github.com/joyent/mdata-client
 COMPONENT_FMRI=		system/virtualization/mdata-client
