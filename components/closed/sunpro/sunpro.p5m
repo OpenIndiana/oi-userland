@@ -1,0 +1,34 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Marcel Telka
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/include/demangle.h
+file path=usr/lib/$(MACH64)/libCrun.so.1
+file path=usr/lib/$(MACH64)/libCstd.so.1 pkg.linted=true
+link path=usr/lib/$(MACH64)/libdemangle.so target=./libdemangle.so.1
+file path=usr/lib/$(MACH64)/libdemangle.so.1
+file path=usr/lib/$(MACH64)/libiostream.so.1
+file path=usr/lib/libC.so.5
+file path=usr/lib/libCrun.so.1
+file path=usr/lib/libCstd.so.1 pkg.linted=true
+link path=usr/lib/libdemangle.so target=./libdemangle.so.1
+file path=usr/lib/libdemangle.so.1
+file path=usr/lib/libiostream.so.1
