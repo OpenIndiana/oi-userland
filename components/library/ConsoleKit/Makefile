@@ -16,14 +16,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ConsoleKit
 COMPONENT_VERSION=	0.4.1
-COMPONENT_REVISION=	3
-COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/ConsoleKit
+COMPONENT_REVISION=	4
+COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/ConsoleKit
 COMPONENT_SUMMARY=	Framework for tracking users, login sessions, and seats
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f032adc6146d745034315054c5822a7a09f30e20a40d6e802221fa977354403e
-COMPONENT_ARCHIVE_URL=	http://www.freedesktop.org/software/ConsoleKit/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://www.freedesktop.org/software/ConsoleKit/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Sessions
