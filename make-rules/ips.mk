@@ -506,18 +506,19 @@ $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS)
 REQUIRED_PACKAGES_TRANSFORM=$(foreach p,$(REQUIRED_PACKAGES_SUBST), -e 's|$($(p))|$$($(p))|')
 
 #
-# Generate a set of REQUIRED_PACKAGES based on what is needed to for pkgdepend
-# to resolve properly.  Automatically append this to your Makefile for the truly
-# lazy among us.  This is only a piece of the REQUIRED_PACKAGES puzzle.
+# Generate a set of REQUIRED_PACKAGES based on what is needed for pkgdepend to
+# resolve properly.  Automatically update the list in your Makefile for the
+# truly lazy among us.  This is only a piece of the REQUIRED_PACKAGES puzzle.
 # You must still include packages for tools you build and test with.
 #
 REQUIRED_PACKAGES::     $(RESOLVED)
 	$(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
+	@$(GSED) -i -e '/^# Auto-generated dependencies$$/,$$d' Makefile
 	@echo "# Auto-generated dependencies" >>Makefile
 	@$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) | \
 		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' $(REQUIRED_PACKAGES_TRANSFORM) \
 			| sort -u >>Makefile
-	@echo "*** Please edit your Makefile and verify the new content at the end ***"
+	@echo "*** Please edit your Makefile and verify the new or updated content at the end ***"
 
 
 # lint the manifests all at once
