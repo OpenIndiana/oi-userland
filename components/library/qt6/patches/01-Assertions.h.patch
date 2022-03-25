@@ -1,0 +1,16 @@
+--- qt-everywhere-src-6.2.4/qtdeclarative/src/3rdparty/masm/wtf/Assertions.h	Fri Mar  4 12:35:36 2022
++++ qt-everywhere-src-6.2.4_patched/qtdeclarative/src/3rdparty/masm/wtf/Assertions.h	Sat Mar 26 16:46:10 2022
+@@ -344,10 +344,10 @@
+ 
+ /* COMPILE_ASSERT */
+ #ifndef COMPILE_ASSERT
+-#if COMPILER_SUPPORTS(C_STATIC_ASSERT)
++//#if COMPILER_SUPPORTS(C_STATIC_ASSERT)
+ /* Unlike static_assert below, this also works in plain C code. */
+-#define COMPILE_ASSERT(exp, name) _Static_assert((exp), #name)
+-#elif COMPILER_SUPPORTS(CXX_STATIC_ASSERT)
++//#define COMPILE_ASSERT(exp, name) _Static_assert((exp), #name)
++#if COMPILER_SUPPORTS(CXX_STATIC_ASSERT)
+ #define COMPILE_ASSERT(exp, name) static_assert((exp), #name)
+ #else
+ #define COMPILE_ASSERT(exp, name) typedef int dummy##name [(exp) ? 1 : -1]
