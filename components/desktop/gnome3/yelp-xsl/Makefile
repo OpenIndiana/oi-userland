@@ -13,10 +13,13 @@
 # Copyright 2016 Till Wegmueller
 #
 
+BUILD_BITS =    NO_ARCH
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yelp-xsl
 COMPONENT_VERSION=	3.20.1
+COMPONENT_REVISION =	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Yelp Tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,30 +32,17 @@ COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/gnome/$(COMPONENT_NAME)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET =   $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/$(COMPONENT_NAME)
-CONFIGURE_OPTIONS+=     --with-gtk=2.0
 
-CONFIGURE_ENV+= PYTHON="$(PYTHON)"
-
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-REQUIRED_PACKAGES += gnome/help-viewer/yelp
+# Build dependencies
 REQUIRED_PACKAGES += text/itstool
+
+# Auto-generated dependencies
