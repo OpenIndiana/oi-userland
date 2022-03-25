@@ -61,7 +61,7 @@ USERLAND_REQUIRED_PACKAGES += compress/lzip
 USERLAND_REQUIRED_PACKAGES += compress/xz
 USERLAND_REQUIRED_PACKAGES += compress/zip
 USERLAND_REQUIRED_PACKAGES += compress/zstd
-USERLAND_REQUIRED_PACKAGES += developer/java/jdk
+USERLAND_REQUIRED_PACKAGES += developer/java/openjdk8
 USERLAND_REQUIRED_PACKAGES += runtime/ruby
 
 endif
