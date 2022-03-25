@@ -140,3 +140,4 @@ PACKAGE_NAMES += system/library/install
 REQUIRED_PACKAGES += system/install/text-install
 REQUIRED_PACKAGES += system/library/install/libinstzones
 REQUIRED_PACKAGES += system/library/storage/ima/header-ima
+REQUIRED_PACKAGES += system/zones/internal
