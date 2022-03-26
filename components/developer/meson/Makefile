@@ -10,7 +10,7 @@
 #
 # Copyright 2017 Aurelien Larcher
 # Copyright 2020 Michal Nowak
-# Copyright 2021 Andreas Wacknitz
+# Copyright 2022 Andreas Wacknitz
 #
 
 BUILD_STYLE= setup.py
@@ -18,7 +18,7 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         meson
-COMPONENT_VERSION=      0.61.3
+COMPONENT_VERSION=      0.62.0
 COMPONENT_SUMMARY=      The Meson Build system
 COMPONENT_PROJECT_URL=  https://mesonbuild.com/
 COMPONENT_FMRI=         developer/build/meson
@@ -26,7 +26,7 @@ COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mesonbuild/meson/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:9c884434469471f3fe0cbbceb9b9ea0c8047f19e792940e1df6595741aae251b
+COMPONENT_ARCHIVE_HASH= sha256:06f8c1cfa51bfdb533c82623ffa524cacdbea02ace6d709145e33aabdad6adcb
 COMPONENT_LICENSE=      APLv2
 
 GCC_VERSION=		10
