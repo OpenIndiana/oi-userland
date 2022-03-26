@@ -1,0 +1,11 @@
+--- MEGAsync_ori/src/MEGASync/mega/src/utils.cpp	Wed Mar  9 22:04:59 2022
++++ MEGASync_patched/mega/src/utils.cpp	Sat Mar  5 15:44:11 2022
+@@ -1916,7 +1916,7 @@
+ #error "localtime is not thread safe in this compiler; please use a later one"
+ #else //POSIX
+     t = mktime(&dst);
+-    t += dst.tm_gmtoff - dst.tm_isdst * 3600;
++    t += dst.tm_isdst * 3600;
+ #endif
+     return t;
+ }

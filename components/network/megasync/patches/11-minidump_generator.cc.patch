@@ -1,0 +1,95 @@
+--- MEGAsync_ori/src/MEGASync/google_breakpad/client/solaris/handler/minidump_generator.cc	Wed Jan 26 20:25:17 2022
++++ MEGAsync_patched/src/MEGASync/google_breakpad/client/solaris/handler/minidump_generator.cc	Sat Mar  5 20:28:34 2022
+@@ -38,9 +38,11 @@
+ #include <unistd.h>
+ 
+ #include <cstdlib>
++#include <cstring>
+ #include <ctime>
+ 
+ #include "client/solaris/handler/minidump_generator.h"
++#include "client/solaris/handler/solaris_lwp.h"
+ #include "client/minidump_file_writer-inl.h"
+ #include "common/solaris/file_id.h"
+ 
+@@ -105,6 +107,8 @@
+   uintptr_t last_ebp = (*gregs)[R_FP];
+ #elif TARGET_CPU_X86
+   uintptr_t last_ebp = (*gregs)[EBP];
++#elif TARGET_CPU_X86_64
++  uintptr_t last_ebp = (*gregs)[EBP];
+ #endif
+   uintptr_t stack_bottom = lwp_lister->GetLwpStackBottom(last_ebp);
+   if (stack_bottom > last_ebp &&
+@@ -194,7 +198,7 @@
+ 
+   return true;
+ }
+-#elif TARGET_CPU_X86
++#elif TARGET_CPU_X86 || TARGET_CPU_X86_64
+ bool WriteContext(MDRawContextX86 *context, prgregset_t regs,
+                   prfpregset_t *fp_regs) {
+   if (!context || !regs)
+@@ -250,7 +254,7 @@
+   lwp->thread_context = context.location();
+   memset(context.get(), 0, sizeof(MDRawContextSPARC));
+   return WriteContext(context.get(), writer_args->sig_ctx);
+-#elif TARGET_CPU_X86
++#elif TARGET_CPU_X86 || TARGET_CPU_X86_64
+   UntypedMDRVA memory(minidump_writer);
+   if (!WriteLwpStack(writer_args->lwp_lister,
+                      writer_args->sig_ctx->uc_mcontext.gregs[UESP],
+@@ -264,7 +268,7 @@
+   lwp->thread_context = context.location();
+   memset(context.get(), 0, sizeof(MDRawContextX86));
+   return WriteContext(context.get(),
+-                      (int *)&writer_args->sig_ctx->uc_mcontext.gregs,
++                      writer_args->sig_ctx->uc_mcontext.gregs,
+                       &writer_args->sig_ctx->uc_mcontext.fpregs);
+ #endif
+ }
+@@ -290,7 +294,7 @@
+   lwp->thread_id = lsp->pr_lwpid;
+   lwp->thread_context = context.location();
+   memset(context.get(), 0, sizeof(MDRawContextSPARC));
+-#elif TARGET_CPU_X86
++#elif TARGET_CPU_X86 || TARGET_CPU_X86_64
+   if (!WriteLwpStack(lwp_lister,
+                      (*gregs)[UESP],
+                      &memory,
+@@ -306,7 +310,7 @@
+   lwp->thread_context = context.location();
+   memset(context.get(), 0, sizeof(MDRawContextX86));
+ #endif /* TARGET_CPU_XXX */
+-  return WriteContext(context.get(), (int *)gregs, &fp_regs);
++  return WriteContext(context.get(), (greg_t*)&gregs, &fp_regs);
+ }
+ 
+ bool WriteCPUInformation(MDRawSystemInfo *sys_info) {
+@@ -605,7 +609,7 @@
+   exception.get()->thread_context = context.location();
+   memset(context.get(), 0, sizeof(MDRawContextSPARC));
+   return WriteContext(context.get(), writer_args->sig_ctx);
+-#elif TARGET_CPU_X86
++#elif TARGET_CPU_X86 || TARGET_CPU_X86_64
+   if (writer_args->sig_ctx != NULL) {
+     exception.get()->exception_record.exception_address =
+       writer_args->sig_ctx->uc_mcontext.gregs[EIP];
+@@ -620,7 +624,7 @@
+   exception.get()->thread_context = context.location();
+   memset(context.get(), 0, sizeof(MDRawContextX86));
+   return WriteContext(context.get(),
+-                      (int *)&writer_args->sig_ctx->uc_mcontext.gregs,
++                      writer_args->sig_ctx->uc_mcontext.gregs,
+                       NULL);
+ #endif
+ }
+@@ -702,6 +706,8 @@
+           writer_args->sig_ctx->uc_mcontext.gregs[REG_O6]
+ #elif TARGET_CPU_X86
+           writer_args->sig_ctx->uc_mcontext.gregs[UESP]
++#elif TARGET_CPU_X86_64
++		  writer_args->sig_ctx->uc_mcontext.gregs[UESP]
+ #endif
+       );
+ 
