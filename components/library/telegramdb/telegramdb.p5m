@@ -1,0 +1,45 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 David Stes
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/include/td/telegram/Client.h
+file path=usr/include/td/telegram/Log.h
+file path=usr/include/td/telegram/td_api.h
+file path=usr/include/td/telegram/td_api.hpp
+file path=usr/include/td/telegram/td_json_client.h
+file path=usr/include/td/telegram/td_log.h
+file path=usr/include/td/telegram/tdjson_export.h
+file path=usr/include/td/tl/TlObject.h
+file path=usr/lib/$(MACH64)/cmake/Td/TdConfig.cmake
+file path=usr/lib/$(MACH64)/cmake/Td/TdConfigVersion.cmake
+file path=usr/lib/$(MACH64)/cmake/Td/TdTargets-release.cmake
+file path=usr/lib/$(MACH64)/cmake/Td/TdTargets.cmake
+link path=usr/lib/$(MACH64)/libtdjson.so \
+    target=libtdjson.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libtdjson.so.$(COMPONENT_VERSION)
+file path=usr/lib/cmake/Td/TdConfig.cmake
+file path=usr/lib/cmake/Td/TdConfigVersion.cmake
+file path=usr/lib/cmake/Td/TdTargets-release.cmake
+file path=usr/lib/cmake/Td/TdTargets.cmake
+link path=usr/lib/libtdjson.so target=libtdjson.so.$(COMPONENT_VERSION)
+file path=usr/lib/libtdjson.so.$(COMPONENT_VERSION)
