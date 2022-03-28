@@ -1,0 +1,18 @@
+libelf large file support only exists in 64-bit on Solaris.
+
+--- a/gio/meson.build	2019-12-08 01:16:38.553436116 -0800
++++ b/gio/meson.build	2019-12-08 01:16:30.455379986 -0800
+@@ -896,6 +896,13 @@
+   have_libelf = have_libelf and cc.has_header('libelf.h')
+ endif
+ 
++# Large file support only on 64-bit
++if '-m32' in get_option('c_args')
++  have_libelf = false
++else
++  have_libelf = true
++endif
++
+ if have_libelf
+   glib_conf.set('HAVE_LIBELF', 1)
+ else
