@@ -1,0 +1,24 @@
+This fix has been added to Solaris 11 according to https://gitlab.freedesktop.org/alanc/hal/-/commit/a3e3d718f64be8f9477019d48267001c7b91a4cd
+We also have trouble with glib versions > 2.62.6.
+--- illumos-gate/usr/src/cmd/hal/hald/device.c.orig	2022-03-24 07:32:18.574658291 +0000
++++ illumos-gate/usr/src/cmd/hal/hald/device.c	2022-03-24 10:28:49.215689899 +0000
+@@ -47,7 +47,7 @@
+ 	LAST_SIGNAL
+ };
+ 
+-static guint signals[LAST_SIGNAL] = { 0 };
++static guint signals[LAST_SIGNAL];
+ 
+ #ifdef HALD_MEMLEAK_DBG
+ int dbg_hal_device_object_delta = 0;
+--- illumos-gate/usr/src/cmd/hal/hald/device_store.c.orig	2022-03-24 07:32:18.575095653 +0000
++++ illumos-gate/usr/src/cmd/hal/hald/device_store.c	2022-03-24 10:29:32.841920979 +0000
+@@ -44,7 +44,7 @@
+ 	LAST_SIGNAL
+ };
+ 
+-static guint signals[LAST_SIGNAL] = { 0 };
++static guint signals[LAST_SIGNAL];
+ 
+ static void
+ hal_device_store_finalize (GObject *obj)
