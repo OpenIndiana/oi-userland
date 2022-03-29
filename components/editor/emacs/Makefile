@@ -211,7 +211,7 @@ install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed
 REQUIRED_PACKAGES += mail/mailutils
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += editor/gnu-emacs
+#REQUIRED_PACKAGES += editor/gnu-emacs
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
@@ -249,4 +249,3 @@ REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
-REQUIRED_PACKAGES += x11/library/toolkit/libxaw3d
