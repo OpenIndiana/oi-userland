@@ -21,21 +21,22 @@ USE_OPENSSL11=	yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gst-plugins-bad1
-COMPONENT_VERSION=	1.20.1
+COMPONENT_NAME=         gst-plugins-bad1
+COMPONENT_VERSION=      1.20.1
+COMPONENT_REVISION=     1
 #COMPONENT_REVISION=	1
-COMPONENT_SUMMARY=	GNOME streaming media framework plugins
-COMPONENT_CLASSIFICATION= System/Multimedia Libraries
-COMPONENT_FMRI=		library/audio/gstreamer1/plugin/bad
+COMPONENT_SUMMARY=      GNOME streaming media framework plugins
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_FMRI=         library/audio/gstreamer1/plugin/bad
 COMPONENT_SRC_NAME=	gst-plugins-bad
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:09d3c2cf5911f0bc7da6bf557a55251779243d3de216b6a26cc90c445b423848
-COMPONENT_ARCHIVE_URL= \
-  https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/
-COMPONENT_LICENSE=	LGPLv2
+	sha256:09d3c2cf5911f0bc7da6bf557a55251779243d3de216b6a26cc90c445b423848
+COMPONENT_ARCHIVE_URL=  \
+	https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
+COMPONENT_LICENSE=      LGPLv2
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
