@@ -1,0 +1,24 @@
+For components getting compiled with Studio, we get this error:
+
+"/usr/include/glib-2.0/glib/gmacros.h", line 243: unexpected "("
+
+--- a/glib/gmacros.h	2021-09-24 16:57:18.225175209 -0700
++++ b/glib/gmacros.h	2021-09-24 16:58:48.163283926 -0700
+@@ -118,6 +118,7 @@
+  * https://gcc.gnu.org/onlinedocs/cpp/_005f_005fhas_005fattribute.html
+  */
+ 
++#ifndef __SUNPRO_C
+ #ifdef __has_attribute
+ #define g_macro__has_attribute __has_attribute
+ #else
+@@ -144,6 +145,9 @@
+ #define g_macro__has_attribute_warn_unused_result G_GNUC_CHECK_VERSION (3, 4)
+ 
+ #endif
++#else
++#define g_macro__has_attribute(x) 0
++#endif
+ 
+ /* Provide macros to feature the GCC function attribute.
+  */

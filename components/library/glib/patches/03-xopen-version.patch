@@ -1,0 +1,16 @@
+Remove Unix standard settings for Solaris 11.4, so we don't exclude all
+features added between XPG2 & XPG7, now that these are exposed by default.
+
+To send upstream, need to adjust to right version for each OS level
+
+--- a/meson.build	2019-09-25 15:21:05.190853342 -0700
++++ b/meson.build	2019-09-25 15:21:13.619238512 -0700
+@@ -1905,8 +1905,6 @@
+ 
+ # FIXME: How to detect Solaris? https://github.com/mesonbuild/meson/issues/1578
+ if host_system == 'sunos'
+-  glib_conf.set('_XOPEN_SOURCE_EXTENDED', 1)
+-  glib_conf.set('_XOPEN_SOURCE', 2)
+   glib_conf.set('__EXTENSIONS__',1)
+ endif
+ 
