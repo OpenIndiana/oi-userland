@@ -25,21 +25,22 @@ BUILD_BITS= 64_and_32
 #USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =        curl
+COMPONENT_NAME=         curl
 COMPONENT_VERSION=      7.82.0
-COMPONENT_SUMMARY=		The CURL Network Utility and Library
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:0aaa12d7bd04b0966254f2703ce80dd5c38dbbd76af0297d3d690cdce58a583c
+COMPONENT_ARCHIVE_HASH= sha256:0aaa12d7bd04b0966254f2703ce80dd5c38dbbd76af0297d3d690cdce58a583c
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=  	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE).asc
-COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_FMRI=			web/$(COMPONENT_NAME)
-COMPONENT_LICENSE=		CURL
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_FMRI=         web/$(COMPONENT_NAME)
+COMPONENT_LICENSE=      CURL
 
-include $(WS_TOP)/make-rules/common.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Community code uses different defs
 $(BUILD_DIR_32)/.configured:   CPPFLAGS += -D__ILP32=32
