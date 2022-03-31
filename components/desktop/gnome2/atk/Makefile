@@ -18,27 +18,27 @@ BUILD_BITS= 32_and_64
 BUILD_STYLE= meson
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= atk
+COMPONENT_NAME=         atk
 COMPONENT_MJR_VERSION=2.36
 COMPONENT_MNR_VERSION=0
-COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_SUMMARY= GNOME accesibility toolkit libraries
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      GNOME accesibility toolkit libraries
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:fb76247e369402be23f1f5c65d38a9639c1164d934e40f6a9cf3c9e96b652788
-COMPONENT_ARCHIVE_URL= \
+COMPONENT_ARCHIVE_URL=  \
 	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.gnome.org
-COMPONENT_FMRI= library/desktop/atk
-COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_LICENSE = LGPLv2
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_PROJECT_URL=  https://www.gnome.org
+COMPONENT_FMRI=         library/desktop/atk
+COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=      LGPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# gcc-7 fails to build atk:
-GCC_VERSION=	10
+PATH= $(PATH.gnu)
 
 # gobject-introspection is 64-Bit-only
 CONFIGURE_OPTIONS.32 += -Dintrospection=false
@@ -63,7 +63,6 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # Manually added build dependencies
 REQUIRED_PACKAGES+= library/desktop/gobject/gobject-introspection
-REQUIRED_PACKAGES+= developer/gcc-10
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
