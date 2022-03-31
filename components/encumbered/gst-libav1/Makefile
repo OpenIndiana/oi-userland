@@ -23,7 +23,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-libav
 COMPONENT_VERSION=      1.20.1
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/libav
