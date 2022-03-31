@@ -1,0 +1,14 @@
+We use gcc which doesn't support -flags. So remove it.
+
+--- zlib-1.2.12/configure.orig	2022-03-28 01:39:42.000000000 +0000
++++ zlib-1.2.12/configure	2022-03-31 14:25:13.873964238 +0000
+@@ -307,8 +307,7 @@
+          if test $build64 -eq 1; then
+              # old versions of SunPRO/Workshop/Studio don't support -m64,
+              # but newer ones do.  Check for it.
+-             flag64=`$CC -flags | egrep -- '^-m64'`
+-             if test x"$flag64" != x"" ; then
++             if true ; then
+                  CFLAGS="${CFLAGS} -m64"
+                  SFLAGS="${SFLAGS} -m64"
+              else
