@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXpm
 COMPONENT_VERSION= 3.5.13
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=    x11/library/libxpm
 COMPONENT_SUMMARY= libXpm - X Pixmap library 
 COMPONENT_ARCHIVE_HASH= \
@@ -36,8 +37,6 @@ CONFIGURE_OPTIONS+= --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+= --sbindir=$(USRSBINDIR$(BITS))
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
-
-LD_OPTIONS_SO += -M$(COMPONENT_DIR)/mapfile-vers
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
