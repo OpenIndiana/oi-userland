@@ -1,0 +1,40 @@
+Patch migrated from Desktop, where it was listed as:
+#owner:yippi date:2005-08-14 type:feature
+
+Patch default-path to not include "." because on Solaris we want to avoid
+setting PATH to include the current working directory.  This was an
+ARC requirement.  The GNOME community already decided to not change
+this behavior (bugzilla bug 317945), but this change is safe.  This
+code only gets executed when the user's PATH is unset, which should
+be never.  Safer to avoid adding "." to PATH.
+
+--- glib-2.55.2/glib/gspawn.c.~1~	2018-01-09 00:34:19.000000000 +0000
++++ glib-2.55.2/glib/gspawn.c	2018-02-16 11:31:49.253694209 +0000
+@@ -1761,7 +1761,12 @@
+            * what to search if PATH is unset. POSIX may, dunno.
+            */
+           
++#ifdef __sun
++          /* bin is a symlink to usr/bin on Solaris */
++          path = "/usr/bin";
++#else
+           path = "/bin:/usr/bin:.";
++#endif
+ 	}
+ 
+       len = strlen (file) + 1;
+--- glib-2.44.0/glib/gutils.c	Sat Feb 28 17:50:08 2015
++++ glib-2.44.0/glib/gutils.c	Sun Apr 19 12:26:11 2015
+@@ -379,7 +379,12 @@
+        * what to search if PATH is unset. POSIX may, dunno.
+        */
+       
++#ifdef __sun
++      /* bin is a symlink to usr/bin on Solaris */
++      path = "/usr/bin";
++#else
+       path = "/bin:/usr/bin:.";
++#endif
+     }
+ #else
+   n = GetModuleFileNameW (NULL, wfilename, MAXPATHLEN);

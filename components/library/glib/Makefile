@@ -20,19 +20,23 @@ BUILD_STYLE = meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
-COMPONENT_MJR_VERSION=	2.70
-COMPONENT_MNR_VERSION=	0
+COMPONENT_MJR_VERSION=	2.62
+COMPONENT_MNR_VERSION=	6
+COMPONENT_REVISION=		1
+# Note: When updating this component make sure that it still works with our HAL.
+# Version 2.66.x is known for its problems eg. when plugging/unplugging USB devices under X11.
+# 2.62.6 is the last known working version (2.63.x, 2.64.x untested).
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+# We need to have a fake version because we had delivered non-working versions before:
+IPS_COMPONENT_VERSION=	2.70.0
 COMPONENT_SUMMARY=	GNOME core libraries
+COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742
+COMPONENT_ARCHIVE_HASH=	sha256:104fa26fbefae8024ff898330c671ec23ad075c1c0bce45c325c6d5657d58b9c
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GLib/
+COMPONENT_PROJECT_URL=	https://www.gtk.org/
 COMPONENT_FMRI=		library/glib2
-COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	COPYING
 
 PATH=$(PATH.gnu)
 
@@ -42,21 +46,10 @@ PYTHON_VERSION = 3.5
 
 LDFLAGS += -lsocket -lsecdb -lnsl
 
-#CFLAGS += -Wno-error=format-nonliteral
+# GCC 6
+CFLAGS += -Wno-error=format-nonliteral
 CPPFLAGS += $(CPP_XPG6MODE)
-CFLAGS += $(CPP_XPG6MODE)
-CFLAGS += -std=gnu11
 
-# Assumes GNU msgfmt in PATH.
-CONFIGURE_ENV += PATH="$(PATH)"
-COMPONENT_BUILD_ENV += PATH="$(PATH)"
-COMPONENT_INSTALL_ENV += PATH="$(PATH)"
-
-CONFIGURE_OPTIONS += -Druntime_libdir=$(USRLIBDIR)
-CONFIGURE_OPTIONS += -Dcharsetalias_dir=$(USRLIBDIR)
-CONFIGURE_OPTIONS += -Dselinux=disabled
-CONFIGURE_OPTIONS += -Dlibmount=disabled
-CONFIGURE_OPTIONS += -Dbsymbolic_functions=false
 CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
 CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
 CONFIGURE_OPTIONS += -Dxattr=false
@@ -66,7 +59,6 @@ CONFIGURE_OPTIONS += -Dman=true
 CONFIGURE_ENV    += PERL=$(PERL)
 CONFIGURE_ENV    += PYTHON=$(PYTHON)
 CONFIGURE_ENV    += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV    += CFLAGS="$(CFLAGS)"
 
 # Dtrace flags
 DFLAGS.64 = -64
@@ -76,7 +68,7 @@ COMPONENT_POST_CONFIGURE_ACTION= \
   ( cd $(@D); $(GSED) -i "s/_FILE_OFFSET_BITS=64/_FILE_OFFSET_BITS=$(BITS)/g" ./build.ninja )
 
 # Otherwise tests fail
-unexport SHELLOPTS
+#ENV = /usr/bin/env -i
 
 # We need to install libraries and set correct LD_LIBRARY_PATH before test
 $(TEST_TARGET): $(INSTALL_TARGET)
@@ -90,10 +82,6 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/^(Fail|Ok|Expected Fail|Unexpected Pass|Skipped|Timeout)/'"
 
-# Manually added runtime dependencies
-REQUIRED_PACKAGES += runtime/python-35
-
-# Manually add build dependencies
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library/dbus
 
@@ -102,5 +90,6 @@ REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
