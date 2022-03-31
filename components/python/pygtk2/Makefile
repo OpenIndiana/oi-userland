@@ -11,19 +11,20 @@
 #
 # Copyright (c) 2013 Alexander Pyhalov
 #
-
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pygtk2
-COMPONENT_VERSION=	2.17.0
-COMPONENT_REVISION=	7
-COMPONENT_PROJECT_URL=	http://www.gnome.org
+COMPONENT_VERSION=	2.24.0
+COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SUMMARY=	Python bindings for GTK+
 COMPONENT_SRC=		pygtk-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:6a61817a2e765c6209c72ecdf44389ec134c1ebed1d842408bf001c9321f1400
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/pygtk/2.17/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:cd1c1ea265bd63ff669e92a2d3c2a88eb26bcd9e5363e0f82c896e649f206912
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/pygtk/2.24/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_LICENSE=	LGP v2.1
 
 PYTHON_VERSIONS=	2.7
 
@@ -46,11 +47,10 @@ $(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CFLAGS.$(BITS)+=	-I$(PYTHON_VENDOR_PACKAGES.$(BITS))/numpy/core/include
 CFLAGS+=	$(CFLAGS.$(BITS))
@@ -59,13 +59,6 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 CONFIGURE_ENV+=		am_cv_python_pythondir="$(am_cv_python_pythondir)"
 CONFIGURE_ENV+=		am_cv_python_pyexecdir="$(am_cv_python_pyexecdir)"
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/python/pygobject-27
