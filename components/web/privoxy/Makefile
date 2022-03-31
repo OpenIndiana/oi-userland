@@ -23,11 +23,11 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS= 32
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		privoxy
-COMPONENT_VERSION=	3.0.32
+COMPONENT_VERSION=	3.0.33
 COMPONENT_SUMMARY=	Privacy-enhancing, ad-removing web proxy
 COMPONENT_DESCRIPTION=	Privoxy is a non-caching web proxy with advanced\
  filtering capabilities for enhancing privacy, modifying web page data\
@@ -36,7 +36,7 @@ COMPONENT_DESCRIPTION=	Privoxy is a non-caching web proxy with advanced\
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-stable
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_PROJECT_URL=	https://www.privoxy.org/
-COMPONENT_ARCHIVE_HASH= sha256:c61de4008c62445ec18f1f270407cbf2372eaba93beaccdc9e3238bb2defeed7
+COMPONENT_ARCHIVE_HASH= sha256:04b104e70dac61561b9dd110684b250fafc8c13dbe437a60fae18ddd9a881fae
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/ijbswa/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	web/proxy/privoxy
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
@@ -59,8 +59,8 @@ CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 
 # common targets
-install:	$(INSTALL_32)
-	$(CP) $(BUILD_DIR_32)/templates/* $(PROTOETCDIR)/templates
+install:	$(INSTALL_64)
+	$(CP) $(BUILD_DIR_64)/templates/* $(PROTOETCDIR)/templates
 
 # Regression tests exist for privoxy in tools/privoxy-regression-test.pl,
 # however these are not applicable to us since they violate the company policy
@@ -79,4 +79,5 @@ install:	$(INSTALL_32)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
