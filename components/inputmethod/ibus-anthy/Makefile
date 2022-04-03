@@ -13,24 +13,24 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS=64
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= ibus-anthy
-COMPONENT_VERSION= 1.5.11
-COMPONENT_CLASSIFICATION= System/Internationalization
-COMPONENT_SUMMARY= iBus Japanese IME - anthy
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=         ibus-anthy
+COMPONENT_VERSION=      1.5.11
+COMPONENT_REVISION=     1
+COMPONENT_CLASSIFICATION=System/Internationalization
+COMPONENT_SUMMARY=      iBus Japanese IME - anthy
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:809596b0d4630c5861a96fc28800ebaa1ab007787b22f5d7d3c7c0152fd78fff
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/ibus/ibus-anthy/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://github.com/fujiwarat/ibus-anthy/wiki
-COMPONENT_FMRI = system/input-method/ibus/anthy
-COMPONENT_LICENSE = GPLv2
-COMPONENT_LICENSE_FILE = COPYING
+	sha256:809596b0d4630c5861a96fc28800ebaa1ab007787b22f5d7d3c7c0152fd78fff
+COMPONENT_ARCHIVE_URL=  \
+	https://github.com/ibus/ibus-anthy/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://github.com/fujiwarat/ibus-anthy/wiki
+COMPONENT_FMRI=         system/input-method/ibus/anthy
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -50,8 +50,11 @@ CONFIGURE_ENV += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-REQUIRED_PACKAGES += SUNWcs
+# Manually added build dependencies
+REQUIRED_PACKAGES += runtime/python-35
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/input-method/library/libanthy
 REQUIRED_PACKAGES += system/library
