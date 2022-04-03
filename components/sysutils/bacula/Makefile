@@ -66,9 +66,9 @@ CONFIGURE_OPTIONS+= CPPFLAGS="-I$(OPENSSL_PREFIX)/include"
 # manually added dependencies
 REQUIRED_PACKAGES += database/mariadb-103
 REQUIRED_PACKAGES += database/mariadb-103/client
+REQUIRED_PACKAGES += database/postgres-12/developer
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/mariadb-103/library
@@ -78,6 +78,5 @@ REQUIRED_PACKAGES += library/lzo
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
