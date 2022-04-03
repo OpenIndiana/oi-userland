@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany
 COMPONENT_VERSION=      1.38
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=         editor/geany
 COMPONENT_SUMMARY=      A fast and lightweight IDE
