@@ -29,16 +29,17 @@ BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
-COMPONENT_VERSION=      27.2
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      28.1
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b4a7cc4e78e63f378624e0919215b910af5bb2a0afc819fad298272e9f40c1b9
-COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:28b1b3d099037a088f0a4ca251d7e7262eab5ea1677aabffa6c4426961ad75e1
+COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			editor/gnu-emacs
+COMPONENT_CLASSIFICATION=	Development/Editors
+COMPONENT_LICENSE=		GPLv3
 
 TEST_TARGET=		$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 # we build three different variants of emacs for our users. As Solaris
@@ -87,7 +88,8 @@ CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
-CONFIGURE_OPTIONS +=	--with-gif=no
+CONFIGURE_OPTIONS +=	--with-gif=yes
+CONFIGURE_OPTIONS +=	--with-xaw3d=no
 CONFIGURE_OPTIONS +=	--with-mailutils
 # Disable imagemagick (fixes https://www.illumos.org/issues/10354)
 CONFIGURE_OPTIONS +=	--without-imagemagick
@@ -222,6 +224,7 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/gnutls-3
@@ -230,6 +233,7 @@ REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
@@ -241,11 +245,11 @@ REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
-REQUIRED_PACKAGES += x11/library/libxft
 REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/libxpm
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
+#REQUIRED_PACKAGES += x11/library/toolkit/libxaw3d
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
