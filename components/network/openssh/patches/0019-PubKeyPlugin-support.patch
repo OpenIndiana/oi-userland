@@ -33,10 +33,10 @@ diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
  #include "ssh2.h"
  #include "packet.h"
 +#include "digest.h"
+ #include "kex.h"
  #include "sshbuf.h"
  #include "log.h"
- #include "misc.h"
-@@ -85,6 +92,15 @@ format_key(const struct sshkey *key)
+@@ -86,6 +93,15 @@ format_key(const struct sshkey *key)
  	return ret;
  }
  
@@ -50,9 +50,9 @@ diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
 +    const u_char *, size_t);
 +
  static int
- userauth_pubkey(struct ssh *ssh)
+ userauth_pubkey(struct ssh *ssh, const char *method)
  {
-@@ -976,6 +992,124 @@ user_key_command_allowed2(struct ssh *ss
+@@ -1032,6 +1048,124 @@ user_key_command_allowed2(struct ssh *ss
  	return found_key;
  }
  
@@ -177,7 +177,7 @@ diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -1016,6 +1150,10 @@ user_key_allowed(struct ssh *ssh, struct
+@@ -1072,6 +1206,10 @@ user_key_allowed(struct ssh *ssh, struct
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -191,7 +191,7 @@ diff -wpruN '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
 diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -192,6 +192,7 @@ initialize_server_options(ServerOptions
+@@ -207,6 +207,7 @@ initialize_server_options(ServerOptions
  	 */
  	options->pam_service_per_authmethod = 1;
  #endif
@@ -199,23 +199,23 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -536,6 +537,7 @@ typedef enum {
+@@ -543,6 +544,7 @@ typedef enum {
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
- 	sExposeAuthInfo, sRDomain,
+ 	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
 +	sPubKeyPlugin,
  	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -692,6 +694,7 @@ static struct {
+@@ -709,6 +711,7 @@ static struct {
  	{ "exposeauthinfo", sExposeAuthInfo, SSHCFG_ALL },
  	{ "rdomain", sRDomain, SSHCFG_ALL },
  	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
 +	{ "pubkeyplugin", sPubKeyPlugin, SSHCFG_ALL },
+ 	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
  	{ NULL, sBadOption, 0 }
  };
- 
-@@ -2247,6 +2250,18 @@ process_server_config_line(ServerOptions
+@@ -2506,6 +2509,18 @@ process_server_config_line_depth(ServerO
  		}
  		break;
  
@@ -224,7 +224,7 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
 +		 * Can't use parse_filename, as we need to support plain
 +		 * names which dlopen will find on our lib path.
 +		 */
-+		arg = strdelim(&cp);
++		arg = strdelim(&str);
 +		if (!arg || *arg == '\0')
 +			fatal("%s line %d: missing file name.",
 +			    filename, linenum);
@@ -237,11 +237,11 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
 diff -wpruN '--exclude=*.orig' a~/servconf.h a/servconf.h
 --- a~/servconf.h	1970-01-01 00:00:00
 +++ a/servconf.h	1970-01-01 00:00:00
-@@ -220,6 +220,7 @@ typedef struct {
+@@ -237,6 +237,7 @@ typedef struct {
  
  	int	fingerprint_hash;
  	int	expose_userauth_info;
 +	char	*pubkey_plugin;
  	u_int64_t timing_secret;
+ 	char   *sk_provider;
  }       ServerOptions;
- 

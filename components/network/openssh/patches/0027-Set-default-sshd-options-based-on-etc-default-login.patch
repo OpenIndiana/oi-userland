@@ -17,7 +17,7 @@ diff -wpruN '--exclude=*.orig' a~/pathnames.h a/pathnames.h
 diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -36,6 +36,7 @@
+@@ -37,6 +37,7 @@
  #include <unistd.h>
  #include <limits.h>
  #include <stdarg.h>
@@ -25,7 +25,7 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  #include <errno.h>
  #ifdef HAVE_UTIL_H
  #include <util.h>
-@@ -202,6 +203,64 @@ option_clear_or_none(const char *o)
+@@ -217,6 +218,64 @@ option_clear_or_none(const char *o)
  	return o == NULL || strcasecmp(o, "none") == 0;
  }
  
@@ -90,7 +90,7 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  static void
  assemble_algorithms(ServerOptions *o)
  {
-@@ -296,6 +355,8 @@ fill_default_server_options(ServerOption
+@@ -297,6 +356,8 @@ fill_default_server_options(ServerOption
  		options->use_pam = 0;
  #endif
  
@@ -99,10 +99,10 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  	/* Standard Options */
  	if (options->num_host_key_files == 0) {
  		/* fill default hostkeys for protocols */
-diff -wpruN '--exclude=*.orig' a~/sshd_config.4 a/sshd_config.4
---- a~/sshd_config.4	1970-01-01 00:00:00
-+++ a/sshd_config.4	1970-01-01 00:00:00
-@@ -1177,7 +1177,13 @@ Specifies the maximum number of authenti
+diff -wpruN '--exclude=*.orig' a~/sshd_config.5 a/sshd_config.5
+--- a~/sshd_config.5	1970-01-01 00:00:00
++++ a/sshd_config.5	1970-01-01 00:00:00
+@@ -1238,7 +1238,14 @@ Specifies the maximum number of authenti
  connection.
  Once the number of failures reaches half this value,
  additional failures are logged.
@@ -110,14 +110,15 @@ diff -wpruN '--exclude=*.orig' a~/sshd_config.4 a/sshd_config.4
 +The default is 6, or the value given by
 +.Dq RETRIES=
 +in the file
-+.Dq /etc/default/login ,
-+if available (see
++.Pa /etc/default/login ,
++if available
++.Po see
 +.Xr login 1
-+).
++.Pc .
  .It Cm MaxSessions
  Specifies the maximum number of open shell, login or subsystem (e.g. sftp)
  sessions permitted per network connection.
-@@ -1228,7 +1234,14 @@ The default is
+@@ -1313,7 +1320,14 @@ The default is
  When password authentication is allowed, it specifies whether the
  server allows login to accounts with empty password strings.
  The default is
@@ -126,10 +127,10 @@ diff -wpruN '--exclude=*.orig' a~/sshd_config.4 a/sshd_config.4
 +unless
 +.Dq PASSREQ=YES
 +is present in
-+.Dq /etc/default/login
-+(see
++.Pa /etc/default/login
++.Po see
 +.Xr login 1
-+).
++.Pc .
  .It Cm PermitListen
  Specifies the addresses/ports on which a remote TCP port forwarding may listen.
  The listen specification must be one of the following forms:

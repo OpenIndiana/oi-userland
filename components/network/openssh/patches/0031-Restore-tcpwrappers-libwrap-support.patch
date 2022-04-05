@@ -1,20 +1,7 @@
-From accb8ef16ca7b9273135ffb4cdc040383f87bfb9 Mon Sep 17 00:00:00 2001
-From: Alex Wilson <alex.wilson@joyent.com>
-Date: Wed, 16 Sep 2015 10:54:13 -0700
-Subject: [PATCH 31/34] Restore tcpwrappers/libwrap support
-
-This reverts commit f9696566fb41320820f3b257ab564fa321bb3751
-and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
----
- configure.ac | 57 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- sshd.1m      |  7 +++++++
- sshd.c       | 29 +++++++++++++++++++++++++++++
- 3 files changed, 93 insertions(+)
-
 diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
 --- a~/configure.ac	1970-01-01 00:00:00
 +++ a/configure.ac	1970-01-01 00:00:00
-@@ -1500,6 +1500,62 @@ else
+@@ -1602,6 +1602,62 @@ else
  	AC_MSG_RESULT([no])
  fi
  
@@ -77,18 +64,18 @@ diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5233,6 +5289,7 @@ echo "                       PAM support
+@@ -5608,6 +5664,7 @@ echo "                       PAM support
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
 +echo "              TCP Wrappers support: $TCPW_MSG"
- echo "              MD5 password support: $MD5_MSG"
  echo "                   libedit support: $LIBEDIT_MSG"
  echo "                   libldns support: $LDNS_MSG"
-diff -wpruN '--exclude=*.orig' a~/sshd.1m a/sshd.1m
---- a~/sshd.1m	1970-01-01 00:00:00
-+++ a/sshd.1m	1970-01-01 00:00:00
-@@ -873,6 +873,12 @@ the user's home directory becomes access
+ echo "  Solaris process contract support: $SPC_MSG"
+diff -wpruN '--exclude=*.orig' a~/sshd.8 a/sshd.8
+--- a~/sshd.8	1970-01-01 00:00:00
++++ a/sshd.8	1970-01-01 00:00:00
+@@ -908,6 +908,12 @@ the user's home directory becomes access
  This file should be writable only by the user, and need not be
  readable by anyone else.
  .Pp
@@ -101,7 +88,7 @@ diff -wpruN '--exclude=*.orig' a~/sshd.1m a/sshd.1m
  .It Pa /etc/hosts.equiv
  This file is for host-based authentication (see
  .Xr ssh 1 ) .
-@@ -1002,6 +1008,7 @@ Each SSHv2 userauth type has its own PAM
+@@ -1037,6 +1043,7 @@ Each SSHv2 userauth type has its own PAM
  .Xr ssh-keygen 1 ,
  .Xr ssh-keyscan 1 ,
  .Xr chroot 2 ,
@@ -112,9 +99,9 @@ diff -wpruN '--exclude=*.orig' a~/sshd.1m a/sshd.1m
 diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
 --- a~/sshd.c	1970-01-01 00:00:00
 +++ a/sshd.c	1970-01-01 00:00:00
-@@ -123,6 +123,17 @@
- #include "version.h"
- #include "ssherr.h"
+@@ -129,6 +129,17 @@
+ #include "srclimit.h"
+ #include "dh.h"
  
 +#ifdef LIBWRAP
 +#include <tcpd.h>
@@ -130,7 +117,7 @@ diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
  /* Re-exec fds */
  #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
  #define REEXEC_STARTUP_PIPE_FD		(STDERR_FILENO + 2)
-@@ -2076,6 +2087,24 @@ main(int ac, char **av)
+@@ -2187,6 +2198,24 @@ main(int ac, char **av)
  #ifdef SSH_AUDIT_EVENTS
  	audit_connection_from(ssh, remote_ip, remote_port);
  #endif

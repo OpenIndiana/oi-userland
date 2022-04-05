@@ -25,58 +25,41 @@
 #
 
 BUILD_BITS=		64
-
+USE_OPENSSL11=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
-COMPONENT_VERSION=	8.1p1
-COMPONENT_REVISION=	2
-HUMAN_VERSION=		$(COMPONENT_VERSION)
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-
-# Version for IPS.  The encoding rules are:
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-IPS_COMPONENT_VERSION=	8.1.0.1
-
+COMPONENT_VERSION=	8.9.0.1
+HUMAN_VERSION=		8.9p1
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openssh.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:02f5dbef3835d0753556f973cd57b4c19b6b1f6cd24c03445e23ac77ca1b93ff
-COMPONENT_ARCHIVE_URL=	https://cloudflare.cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:fd497654b7ab1686dac672fb83dfb4ba4096e8b5ffcdaccd262380ae58bec5e7
+COMPONENT_ARCHIVE_URL=	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	network/ssh
 COMPONENT_LICENSE=	BSD, BSD-like
 COMPONENT_LICENSE_FILE=	LICENCE
 
 include $(WS_MAKE_RULES)/common.mk
 
-GENERATED_MAN_4_PAGES = moduli ssh_config sshd_config 
-GENERATED_MAN_1m_PAGES = sftp-server ssh-keysign ssh-pkcs11-helper sshd
-
-# Move man pages to correct section and fix header
-define process-man-rule
-uc=$(shell echo $(3)| tr '[:lower:]' '[:upper:]')
-$(PATCH_STAMPS):	$(SOURCE_DIR)/$(1).$(3)
-
-$(SOURCE_DIR)/$(1).$(3):	$(SOURCE_DIR)/.unpacked
-	cat $(SOURCE_DIR)/$(1).$(2) | $(GSED) -E "s/^(\.Dt +[^ ]+).*$//\1 $$(uc)/"  > $$@
-endef
-
-$(foreach man,$(GENERATED_MAN_4_PAGES),$(eval $(call process-man-rule,$(man),5,4)))
-$(foreach man,$(GENERATED_MAN_1m_PAGES),$(eval $(call process-man-rule,$(man),8,1m)))
-
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
 
 CFLAGS += -DSET_USE_PAM
-CFLAGS += -DNO_UID_RESTORATION_TEST
-CFLAGS += -DDEPRECATE_SUNSSH_OPT
-CFLAGS += -DKRB5_BUILD_FIX
-CFLAGS += -DDTRACE_SFTP
-CFLAGS += -DDISABLE_BANNER
 CFLAGS += -DPAM_ENHANCEMENT
 CFLAGS += -DPAM_BUGFIX
-CFLAGS += -DOPTION_DEFAULT_VALUE
-CFLAGS += -DHAVE_EVP_SHA256
-CFLAGS += -DPER_SESSION_XAUTHFILE
+CFLAGS += -DDTRACE_SFTP
 CFLAGS += -I/usr/include/kerberosv5/
+CFLAGS += -DKRB5_BUILD_FIX
+CFLAGS += -DDISABLE_BANNER
+CFLAGS += -DDEPRECATE_SUNSSH_OPT
+CFLAGS += -DOPTION_DEFAULT_VALUE
+CFLAGS += -DSANDBOX_SOLARIS
+#CFLAGS += -DNO_UID_RESTORATION_TEST
+#CFLAGS += -DHAVE_EVP_SHA256
+CFLAGS += -DPER_SESSION_XAUTHFILE
+CFLAGS += -I$(OPENSSL_INCDIR)
 
 # We need to disable lazyloading of dynamic dependent libraries. During the
 # pre-authentication phase, sshd will chroot to /var/empty which doesn't
@@ -84,6 +67,8 @@ CFLAGS += -I/usr/include/kerberosv5/
 # libraries that it needs.
 LDFLAGS += -B direct -z nolazyload
 
+CONFIGURE_OPTIONS += --with-ssl-dir=$(OPENSSL_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --with-ssl-engine
 CONFIGURE_OPTIONS += --with-audit=solaris
 CONFIGURE_OPTIONS += --with-libedit
 CONFIGURE_OPTIONS += --with-kerberos5
@@ -91,31 +76,36 @@ CONFIGURE_OPTIONS += --with-pam
 CONFIGURE_OPTIONS += --with-sandbox=solaris
 CONFIGURE_OPTIONS += --with-solaris-contracts
 CONFIGURE_OPTIONS += --with-solaris-privs
+CONFIGURE_OPTIONS += --with-privsep-user=daemon
+CONFIGURE_OPTIONS += --with-solaris-projects
 CONFIGURE_OPTIONS += --with-tcp-wrappers
 CONFIGURE_OPTIONS += --with-4in6
 CONFIGURE_OPTIONS += --with-xauth=/usr/bin/xauth
 CONFIGURE_OPTIONS += --enable-strip=no
 CONFIGURE_OPTIONS += --without-rpath
+CONFIGURE_OPTIONS += --disable-lastlog
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib/ssh
 CONFIGURE_OPTIONS += --sbindir=/usr/lib/ssh
 CONFIGURE_OPTIONS += --sysconfdir=/etc/ssh
 CONFIGURE_OPTIONS += --bindir=/usr/bin
-CONFIGURE_OPTIONS += --disable-lastlog
 
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm755 $(SOURCE_DIR)/contrib/ssh-copy-id $(PROTOUSRBINDIR)/ssh-copy-id;
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm644 $(SOURCE_DIR)/contrib/ssh-copy-id.1 $(PROTOUSRSHAREMAN1DIR)/ssh-copy-id.1;
 
 COMPONENT_TEST_TARGETS	= tests
 
+# Manually added dependencies
+# Bogus dependency due to libssp
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

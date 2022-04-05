@@ -1,12 +1,7 @@
-From dad178a7fb894660036982a75b4e1c30e71cbd33 Mon Sep 17 00:00:00 2001
-From: oracle <solaris@oracle.com>
-Date: Mon, 3 Aug 2015 14:37:01 -0700
-Subject: [PATCH 13/34] Solaris Auditing support
-
 diff -wpruN '--exclude=*.orig' a~/INSTALL a/INSTALL
 --- a~/INSTALL	1970-01-01 00:00:00
 +++ a/INSTALL	1970-01-01 00:00:00
-@@ -98,9 +98,13 @@ http://www.gnu.org/software/autoconf/
+@@ -106,9 +106,13 @@ http://www.gnu.org/software/automake/
  
  Basic Security Module (BSM):
  
@@ -23,7 +18,7 @@ diff -wpruN '--exclude=*.orig' a~/INSTALL a/INSTALL
  
  makedepend:
  
-@@ -156,8 +160,9 @@ name).
+@@ -174,8 +178,9 @@ name).
  There are a few other options to the configure script:
  
  --with-audit=[module] enable additional auditing via the specified module.
@@ -38,8 +33,8 @@ diff -wpruN '--exclude=*.orig' a~/INSTALL a/INSTALL
 diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
 --- a~/Makefile.in	1970-01-01 00:00:00
 +++ a/Makefile.in	1970-01-01 00:00:00
-@@ -109,7 +109,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o s
- 	sshconnect.o sshconnect2.o mux.o
+@@ -120,7 +120,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o s
+ 	sshconnect.o sshconnect2.o mux.o $(SKOBJS)
  
  SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
 -	audit.o audit-bsm.o audit-linux.o platform.o \
@@ -50,17 +45,21 @@ diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
 diff -wpruN '--exclude=*.orig' a~/README.platform a/README.platform
 --- a~/README.platform	1970-01-01 00:00:00
 +++ a/README.platform	1970-01-01 00:00:00
-@@ -71,8 +71,8 @@ zlib-devel and pam-devel, on Debian base
+@@ -71,10 +71,10 @@ zlib-devel and pam-devel, on Debian base
  libssl-dev, libz-dev and libpam-dev.
  
  
 -Solaris
 --------
+-If you enable BSM auditing on Solaris, you need to update audit_event(4)
+-for praudit(1m) to give sensible output.  The following line needs to be
 +Prior to Solaris 11
 +-------------------
- If you enable BSM auditing on Solaris, you need to update audit_event(4)
- for praudit(1m) to give sensible output.  The following line needs to be
++If you enable BSM auditing on Solaris, you need to update audit_event(5)
++for praudit(8) to give sensible output.  The following line needs to be
  added to /etc/security/audit_event:
+ 
+ 	32800:AUE_openssh:OpenSSH login:lo
 @@ -85,6 +85,9 @@ There is no official registry of 3rd par
  number is already in use on your system, you may change it at build time
  by configure'ing --with-cflags=-DAUE_openssh=32801 then rebuilding.
@@ -74,7 +73,7 @@ diff -wpruN '--exclude=*.orig' a~/README.platform a/README.platform
 diff -wpruN '--exclude=*.orig' a~/audit-bsm.c a/audit-bsm.c
 --- a~/audit-bsm.c	1970-01-01 00:00:00
 +++ a/audit-bsm.c	1970-01-01 00:00:00
-@@ -347,7 +347,7 @@ bsm_audit_bad_login(const char *what)
+@@ -348,7 +348,7 @@ bsm_audit_bad_login(const char *what)
  /* Below is the sshd audit API code */
  
  void
@@ -700,7 +699,7 @@ diff -wpruN '--exclude=*.orig' a~/audit.h a/audit.h
 diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
 --- a~/configure.ac	1970-01-01 00:00:00
 +++ a/configure.ac	1970-01-01 00:00:00
-@@ -1603,7 +1603,7 @@ AC_ARG_WITH([libedit],
+@@ -1708,7 +1708,7 @@ AC_ARG_WITH([libedit],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -709,7 +708,7 @@ diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -1640,6 +1640,13 @@ AC_ARG_WITH([audit],
+@@ -1745,6 +1745,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -726,7 +725,7 @@ diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
 diff -wpruN '--exclude=*.orig' a~/defines.h a/defines.h
 --- a~/defines.h	1970-01-01 00:00:00
 +++ a/defines.h	1970-01-01 00:00:00
-@@ -655,6 +655,11 @@ struct winsize {
+@@ -715,6 +715,11 @@ struct winsize {
  # define CUSTOM_SSH_AUDIT_EVENTS
  #endif
  
@@ -741,7 +740,7 @@ diff -wpruN '--exclude=*.orig' a~/defines.h a/defines.h
 diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
 --- a~/sshd.c	1970-01-01 00:00:00
 +++ a/sshd.c	1970-01-01 00:00:00
-@@ -2055,7 +2055,7 @@ main(int ac, char **av)
+@@ -2166,7 +2166,7 @@ main(int ac, char **av)
  	remote_ip = ssh_remote_ipaddr(ssh);
  
  #ifdef SSH_AUDIT_EVENTS
@@ -750,7 +749,7 @@ diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
  #endif
  
  	rdomain = ssh_packet_rdomain_in(ssh);
-@@ -2143,8 +2143,10 @@ main(int ac, char **av)
+@@ -2255,8 +2255,10 @@ main(int ac, char **av)
  	}
  
  #ifdef SSH_AUDIT_EVENTS
@@ -761,7 +760,7 @@ diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
  
  #ifdef GSSAPI
  	if (options.gss_authentication) {
-@@ -2173,6 +2175,10 @@ main(int ac, char **av)
+@@ -2285,6 +2287,10 @@ main(int ac, char **av)
  		do_pam_session(ssh);
  	}
  #endif
