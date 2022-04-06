@@ -31,14 +31,12 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	8.2.4600
-# Remove leading zeros in the patch-level part of $COMPONENT_VERSION (IPS does not like them)
-IPS_COMPONENT_VERSION=  $(shell echo $(COMPONENT_VERSION) | sed -e 's/\.00*\([1-9]\)/.\1/')
+COMPONENT_VERSION=	8.2.4700
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:3a49148998c19946bb4dd78ee764b763647c83203f0b9692a76e13acd1f68288
+COMPONENT_ARCHIVE_HASH=	sha256:ccf96833675361f30064c6ac8a9637cec6362d6eb7df78fcf789e70bca042c6d
 
 include $(WS_MAKE_RULES)/common.mk
 
