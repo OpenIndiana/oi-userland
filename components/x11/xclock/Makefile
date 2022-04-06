@@ -17,12 +17,12 @@ X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=    xclock
-COMPONENT_VERSION= 1.0.9
-COMPONENT_FMRI=    x11/xclock
-COMPONENT_SUMMARY= xclock - analog / digital clock for X
-COMPONENT_ARCHIVE_HASH= \
-  sha256:cf461fb2c6f2ac42c54d8429ee2010fdb9a1442a370adfbfe8a7bfaf33c123bb
+COMPONENT_NAME=		xclock
+COMPONENT_VERSION=	1.1.0
+COMPONENT_FMRI=		x11/xclock
+COMPONENT_SUMMARY=	xclock - analog / digital clock for X
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:00d1be08b3471a16b1239acad11e26b80545c49c34d9d20deab0ce14515e098f
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
