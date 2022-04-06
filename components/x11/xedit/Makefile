@@ -17,14 +17,13 @@ X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xedit
-COMPONENT_VERSION=        1.2.2
-COMPONENT_REVISION=       2
-COMPONENT_FMRI=           editor/xedit
-COMPONENT_CLASSIFICATION= Development/Editors
-COMPONENT_SUMMARY=        xedit - simple Xaw toolkit text editor for X
-COMPONENT_ARCHIVE_HASH= \
-  sha256:69aa42885dfc06332ca22eb01cc7187e49206e6d65b74113a8ee4cc345fc2927
+COMPONENT_NAME=				xedit
+COMPONENT_VERSION=			1.2.3
+COMPONENT_FMRI=				editor/xedit
+COMPONENT_CLASSIFICATION=	Development/Editors
+COMPONENT_SUMMARY=			xedit - simple Xaw toolkit text editor for X
+COMPONENT_ARCHIVE=			$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=		sha256:bdd33afeeca881622e55d2cf28f07b4a98f083d0a2573c0b9048f25bdd62db2f
 
 include $(WS_MAKE_RULES)/common.mk
 
