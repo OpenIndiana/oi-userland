@@ -17,13 +17,13 @@ X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xload
-COMPONENT_VERSION=        1.1.3
-COMPONENT_SUMMARY=        xload - system load average display for X
-COMPONENT_FMRI=           diagnostic/xload
-COMPONENT_ARCHIVE_HASH= \
-  sha256:f34e4803871d771325cfe52bebd98cc5b6040d3f065184ec73de436f9a375907
-COMPONENT_LICENSE_FILE=   COPYING
+COMPONENT_NAME=		xload
+COMPONENT_VERSION=	1.1.4
+COMPONENT_SUMMARY=	xload - system load average display for X
+COMPONENT_FMRI=		diagnostic/xload
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:8346b99120db24e0f42920f7f12e23e9b1b407d3a66ce419990387b608373031
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
