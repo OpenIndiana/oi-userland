@@ -34,12 +34,12 @@ include ../../../make-rules/shared-macros.mk
 BITS = 64
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	91.7.0
+COMPONENT_VERSION =	91.8.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:624a51870bd2e0d9b259082e836df84981f01b0b397d13d93d7f1b9ccef24e05
+COMPONENT_ARCHIVE_HASH= sha256:4a93d1773e17aa110341428165581f0176c347d55dd7f6cbed789ca8369da6fa
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -163,8 +163,8 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
         export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
         curl https://sh.rustup.rs -sSf | bash -s -- -y --no-modify-path; \
         source $(CARGO_HOME)/env; \
-        rustup install 1.51.0; \
-        rustup default 1.51.0-x86_64-unknown-illumos; \
+        rustup install 1.59.0; \
+        rustup default 1.59.0-x86_64-unknown-illumos; \
         rustup show; \
         cargo install --root=$(CARGO_HOME) cbindgen; \
 	);
