@@ -18,12 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xcalc
-COMPONENT_VERSION=  1.1.0
+COMPONENT_VERSION=  1.1.1
 COMPONENT_FMRI=     x11/xcalc
 COMPONENT_SUMMARY=  xcalc - scientific calculator for X
 COMPONENT_CLASSIFICATION= Applications/Accessories
-COMPONENT_ARCHIVE_HASH= \
-  sha256:d5d746954465afc3da1f355d721882806568fb04b4d059c027702c0d16a3b5eb
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:8cb08212c5322e8043f39b28699e13a43f000976c90b3c7fadd4fae2766326b4
 
 include $(WS_MAKE_RULES)/common.mk
 
