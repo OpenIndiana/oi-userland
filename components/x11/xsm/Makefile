@@ -17,12 +17,12 @@ X11_CATEGORY=APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xsm
-COMPONENT_VERSION=        1.0.4
-COMPONENT_SUMMARY=        xsm - X Session manager
-COMPONENT_FMRI=           x11/xsm
-COMPONENT_ARCHIVE_HASH= \
-  sha256:9934b6893a4e52cf7435368fc8d425c371b5e32d96e420ead30166eb82d64425
+COMPONENT_NAME=		xsm
+COMPONENT_VERSION=	1.0.5
+COMPONENT_SUMMARY=	xsm - X Session manager
+COMPONENT_FMRI=		x11/xsm
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:9c30fdaa3fc132e4ff201cfc478669056e6e15502e77df88df11fb94e4e6fb2d
 
 include $(WS_MAKE_RULES)/common.mk
 
