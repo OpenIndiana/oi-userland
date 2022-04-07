@@ -20,27 +20,23 @@
 #
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS=	32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		uhttpmock
-COMPONENT_VERSION=	0.5.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.5.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	A library for mocking web service APIs which use HTTP or HTTPS
 COMPONENT_PROJECT_URL=	https://gitlab.com/uhttpmock/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:26da182a2db2579c5ba4dad9096d52099e0766228c295cfbaed6de4046f7d16e
+COMPONENT_ARCHIVE_HASH=	sha256:90843223c3a30bdb7f1eb3442373a03fee425af85a9df289cd687698ccff112f
 COMPONENT_ARCHIVE_URL=	https://tecnocode.co.uk/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=	library/uhttpmock
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_LICENSE= LGPLv2.1
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
@@ -69,13 +65,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL:/p" ' \
 	'-e "/ERROR:/p" ' \
 	'-e "/  \//p" ' \
-
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
