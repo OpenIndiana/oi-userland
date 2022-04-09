@@ -12,11 +12,12 @@
 # Copyright (c) 2017 Dariusz Sendkowski
 #
 
+BUILD_BITS=	32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		GraphicsMagick
 COMPONENT_MAJOR_VERSION=1.3
-COMPONENT_MINOR_VERSION=37
+COMPONENT_MINOR_VERSION=38
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_PROJECT_URL=	http://www.graphicsmagick.org/	
 COMPONENT_SUMMARY=	A collection of utilities to support file format conversion,image processing, and 2D vector rendering.
@@ -24,14 +25,12 @@ COMPONENT_FMRI=		image/graphicsmagick
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:90dc22f1a7bd240e4c9065a940962bf13da43c99bcc36cb111cc3c1a0d7477d4
+COMPONENT_ARCHIVE_HASH=	sha256:d60cd9db59351d2b9cb19beb443170acaa28f073d13d258f67b3627635e32675
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	Copyright.txt
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
@@ -39,11 +38,19 @@ LDFLAGS  += $(JPEG_LDFLAGS)
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 
-build:		$(BUILD_32_and_64)
+unexport SHELLOPTS
 
-install:	$(INSTALL_32_and_64)
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/=========/p" ' \
+	'-e "/Testsuite summary for/p" ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" '
 
-test:		$(NO_TEST)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
