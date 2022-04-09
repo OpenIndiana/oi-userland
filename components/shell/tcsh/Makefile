@@ -24,21 +24,21 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS=64
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcsh
-COMPONENT_VERSION=	6.22.04
-IPS_COMPONENT_VERSION=	6.22.4
+COMPONENT_VERSION=	6.24.0
+HUMAN_VERSION=		6.24.00
+COMPONENT_SUMMARY=	Tenex C-shell (tcsh)
+COMPONENT_DESCRIPTION=	C shell with file name completion and command line editing
+COMPONENT_PROJECT_URL=	https://github.com/tcsh-org/tcsh
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:60be2c504bd8f1fa6e424b1956495d7e7ced52a2ac94db5fd27f4b6bfc8f74f0
+COMPONENT_ARCHIVE_URL=	https://astron.com/pub/tcsh/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/tcsh
 COMPONENT_CLASSIFICATION= System/Shells
-COMPONENT_PROJECT_URL=	https://github.com/tcsh-org/tcsh
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:eb16356243218c32f39e07258d72bf8b21e62ce94bb0e8a95e318b151397e231
-COMPONENT_ARCHIVE_URL=	https://astron.com/pub/tcsh/old/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	Copyright
 
@@ -56,5 +56,6 @@ COMPONENT_TEST_TRANSFORMS = \
 
 # configure needs gencat
 REQUIRED_PACKAGES += text/locale
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
