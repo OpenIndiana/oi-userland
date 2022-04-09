@@ -20,11 +20,11 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	babl
-COMPONENT_VERSION=	0.1.90
+COMPONENT_VERSION=	0.1.92
 COMPONENT_SUMMARY=	Babl is a dynamic, any to any, pixel format conversion library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:6e2ebb636f37581588e3d02499b3d2f69f9ac73e34a262f42911d7f5906a9243
+COMPONENT_ARCHIVE_HASH= 
 COMPONENT_ARCHIVE_URL=	https://ftp.gimp.org/pub/babl/0.1/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://gegl.org/babl/
 COMPONENT_FMRI=	image/library/babl
@@ -34,8 +34,7 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Need GNU version of awk
-export AWK=gawk
+PATH=$(PATH.gnu)
 
 CPPFLAGS += -I/usr/include/lcms2
 
