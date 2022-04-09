@@ -1,15 +1,17 @@
---- opensmalltalk-vm-sun-v5.0.26/platforms/unix/config/Makefile.in	Thu Feb 11 17:20:06 2021
-+++ p0/opensmalltalk-vm-sun-v5.0.26/platforms/unix/config/Makefile.in	Mon Mar 29 16:48:16 2021
-@@ -49,7 +49,7 @@
+--- opensmalltalk-vm-sun-v5.0.49/platforms/unix/config/Makefile.in	Fri Apr  8 20:59:36 2022
++++ p0/opensmalltalk-vm-sun-v5.0.49/platforms/unix/config/Makefile.in	Sat Apr  9 16:14:28 2022
+@@ -44,8 +44,8 @@
  
  # VM
  
 -$(squeak) : config.sh $(SQLIBS) version.o
+-	$(LINK) $(squeak) $(SQLIBS) version.o $(LIBS) [plibs] -Wl,-whole-archive,vm/vm.a,-no-whole-archive
 +$(squeak) : $(SQLIBS) version.o
- 	$(LINK) $(squeak) $(SQLIBS) version.o $(LIBS) [plibs] vm/vm.a
++	$(LINK) $(squeak) $(SQLIBS) version.o $(LIBS) [plibs] -Wl,--whole-archive,vm/vm.a,--no-whole-archive
  	@echo
  	@size $(squeak)
-@@ -67,8 +67,11 @@
+ 	@echo
+@@ -62,8 +62,11 @@
  getversion : ${cfgdir}/getversion.c ${topdir}/platforms/Cross/vm/sqSCCSVersion.h
  	$(LINK) getversion $(INCLUDES) ${cfgdir}/getversion.c
  
@@ -22,7 +24,7 @@
  # nuke everything but the mvm script; plugins.ext and plugins.int are assumed
  # to be copied from the parent or grandparent directory
  
-@@ -77,10 +80,10 @@
+@@ -72,10 +75,10 @@
  
  # unix launch scripts
  squeak.sh: ${cfgdir}/squeak.sh.in getversion
@@ -35,7 +37,7 @@
  
  # npsqueak
  
-@@ -135,7 +138,7 @@
+@@ -130,7 +133,7 @@
  NPOBJS		= vm-display-Quartz/sqUnixSafari.o vm-sound-MacOSX/sqUnixSoundMacOSX.o vm-display-Quartz/sqUnixQuartz.o
  NPLIBS		= $(NPOBJS) -framework CoreAudio -framework AudioToolbox
  
@@ -44,7 +46,7 @@
  	gcc -bundle -flat_namespace -undefined suppress -o NPSqueak \
  	  $(NPLIBS) $(SQLIBS) version.o $(LIBS)  vm/vm.a
  
-@@ -153,15 +156,6 @@
+@@ -148,15 +151,6 @@
  @Makefile_rpm@
  @Makefile_deb@
  
