@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2013  Erol Zavidic. All rights reserved.
+# Copyright (c) 2022  Tim Mooney.  All rights reserved.
 #
 
 BUILD_BITS= 32_and_64
@@ -29,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zlib
 COMPONENT_VERSION=	1.2.12
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The Zip compression library
 COMPONENT_PROJECT_URL=	https://zlib.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
