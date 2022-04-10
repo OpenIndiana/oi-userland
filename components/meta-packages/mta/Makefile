@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		mta
 COMPONENT_FMRI=		system/mta
 COMPONENT_VERSION=	1.0.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	System MTA daemon
 
 include $(WS_MAKE_RULES)/ips.mk
