@@ -1,12 +1,7 @@
-From 09ad0aa54f500a5e3aef488bb4755bd480c4b8fa Mon Sep 17 00:00:00 2001
-From: oracle <solaris@oracle.com>
-Date: Mon, 3 Aug 2015 14:36:00 -0700
-Subject: [PATCH 08/34] Add DisableBanner option
-
 diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
 --- a~/readconf.c	1970-01-01 00:00:00
 +++ a/readconf.c	1970-01-01 00:00:00
-@@ -165,6 +165,9 @@ typedef enum {
+@@ -164,6 +164,9 @@ typedef enum {
  	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
  	oSendEnv, oSetEnv, oControlPath, oControlMaster, oControlPersist,
  	oHashKnownHosts,
@@ -16,7 +11,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	oTunnel, oTunnelDevice,
  	oLocalCommand, oPermitLocalCommand, oRemoteCommand,
  	oVisualHostKey,
-@@ -286,6 +289,9 @@ static struct {
+@@ -289,6 +292,9 @@ static struct {
  	{ "controlpersist", oControlPersist },
  	{ "hashknownhosts", oHashKnownHosts },
  	{ "include", oInclude },
@@ -26,9 +21,9 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -828,6 +834,17 @@ static const struct multistate multistat
- 	{ NULL, -1 }
- };
+@@ -924,6 +930,17 @@ parse_multistate_value(const char *arg,
+ 	return -1;
+ }
  
 +#ifdef DISABLE_BANNER
 +static const struct multistate multistate_disablebanner[] = {
@@ -44,7 +39,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -1741,6 +1758,13 @@ parse_keytypes:
+@@ -2191,6 +2208,13 @@ parse_pubkey_algos:
  			*charptr = xstrdup(arg);
  		break;
  
@@ -58,9 +53,9 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	case oDeprecated:
  		debug("%s line %d: Deprecated option \"%s\"",
  		    filename, linenum, keyword);
-@@ -1936,6 +1960,9 @@ initialize_options(Options * options)
- 	options->ip_qos_bulk = -1;
- 	options->request_tty = -1;
+@@ -2426,6 +2450,9 @@ initialize_options(Options * options)
+ 	options->stdin_null = -1;
+ 	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
 +#ifdef DISABLE_BANNER
 +	options->disable_banner = -1;
@@ -68,7 +63,7 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -2114,6 +2141,10 @@ fill_default_options(Options * options)
+@@ -2625,6 +2652,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -78,12 +73,12 @@ diff -wpruN '--exclude=*.orig' a~/readconf.c a/readconf.c
 +#endif
  	if (options->fingerprint_hash == -1)
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
- 	if (options->update_hostkeys == -1)
+ #ifdef ENABLE_SK_INTERNAL
 diff -wpruN '--exclude=*.orig' a~/readconf.h a/readconf.h
 --- a~/readconf.h	1970-01-01 00:00:00
 +++ a/readconf.h	1970-01-01 00:00:00
-@@ -166,6 +166,9 @@ typedef struct {
- 	char   *jump_extra;
+@@ -177,6 +177,9 @@ typedef struct {
+ 	char   *known_hosts_command;
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
 +#ifdef DISABLE_BANNER
@@ -91,8 +86,8 @@ diff -wpruN '--exclude=*.orig' a~/readconf.h a/readconf.h
 +#endif
  }       Options;
  
- #define SSH_CANONICALISE_NO	0
-@@ -197,6 +200,12 @@ typedef struct {
+ #define SSH_PUBKEY_AUTH_NO	0x00
+@@ -217,6 +220,12 @@ typedef struct {
  #define SSH_STRICT_HOSTKEY_YES	2
  #define SSH_STRICT_HOSTKEY_ASK	3
  
@@ -102,13 +97,13 @@ diff -wpruN '--exclude=*.orig' a~/readconf.h a/readconf.h
 +#define SSH_DISABLEBANNER_INEXECMODE	2
 +#endif
 +
- void     initialize_options(Options *);
- void     fill_default_options(Options *);
- void	 fill_default_options_for_canonicalization(Options *);
-diff -wpruN '--exclude=*.orig' a~/ssh_config.4 a/ssh_config.4
---- a~/ssh_config.4	1970-01-01 00:00:00
-+++ a/ssh_config.4	1970-01-01 00:00:00
-@@ -578,6 +578,14 @@ If set to a time in seconds, or a time i
+ const char *kex_default_pk_alg(void);
+ char	*ssh_connection_hash(const char *thishost, const char *host,
+     const char *portstr, const char *user);
+diff -wpruN '--exclude=*.orig' a~/ssh_config.5 a/ssh_config.5
+--- a~/ssh_config.5	1970-01-01 00:00:00
++++ a/ssh_config.5	1970-01-01 00:00:00
+@@ -611,6 +611,14 @@ If set to a time in seconds, or a time i
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -126,7 +121,7 @@ diff -wpruN '--exclude=*.orig' a~/ssh_config.4 a/ssh_config.4
 diff -wpruN '--exclude=*.orig' a~/sshconnect2.c a/sshconnect2.c
 --- a~/sshconnect2.c	1970-01-01 00:00:00
 +++ a/sshconnect2.c	1970-01-01 00:00:00
-@@ -82,6 +82,10 @@ extern char *client_version_string;
+@@ -85,6 +85,10 @@ extern char *client_version_string;
  extern char *server_version_string;
  extern Options options;
  
@@ -137,7 +132,7 @@ diff -wpruN '--exclude=*.orig' a~/sshconnect2.c a/sshconnect2.c
  /*
   * SSH2 key exchange
   */
-@@ -522,8 +526,28 @@ input_userauth_banner(int type, u_int32_
+@@ -594,8 +598,28 @@ input_userauth_banner(int type, u_int32_
  	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
  	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
  		goto out;

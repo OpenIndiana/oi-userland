@@ -10,7 +10,7 @@ behaviour (at least the parts that are most commonly used).
 diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -161,7 +161,7 @@ initialize_server_options(ServerOptions
+@@ -175,7 +175,7 @@ initialize_server_options(ServerOptions
  	options->client_alive_interval = -1;
  	options->client_alive_count_max = -1;
  	options->num_authkeys_files = 0;
@@ -19,42 +19,42 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  	options->num_setenv = 0;
  	options->permit_tun = -1;
  	options->permitted_opens = NULL;
-@@ -472,6 +472,33 @@ fill_default_server_options(ServerOption
+@@ -486,6 +486,33 @@ fill_default_server_options(ServerOption
  		options->max_sessions = DEFAULT_SESSIONS_MAX;
  	if (options->use_dns == -1)
  		options->use_dns = 0;
 +	if (options->num_accept_env == -1) {
 +		options->num_accept_env = 0;
-+		array_append("[default]", 0, "AcceptEnv",
++		opt_array_append("[default]", 0, "AcceptEnv",
 +		    &options->accept_env, &options->num_accept_env,
 +		    "LANG");
-+		array_append("[default]", 0, "AcceptEnv",
++		opt_array_append("[default]", 0, "AcceptEnv",
 +		    &options->accept_env, &options->num_accept_env,
 +		    "LC_ALL");
-+		array_append("[default]", 0, "AcceptEnv",
++		opt_array_append("[default]", 0, "AcceptEnv",
 +		    &options->accept_env, &options->num_accept_env,
 +		    "LC_CTYPE");
-+		array_append("[default]", 0, "AcceptEnv",
++		opt_array_append("[default]", 0, "AcceptEnv",
 +		    &options->accept_env, &options->num_accept_env,
 +		    "LC_COLLATE");
-+		array_append("[default]", 0, "AcceptEnv",
++		opt_array_append("[default]", 0, "AcceptEnv",
 +		    &options->accept_env, &options->num_accept_env,
 +		    "LC_TIME");
-+		array_append("[default]", 0, "AcceptEnv",
++		opt_array_append("[default]", 0, "AcceptEnv",
 +		    &options->accept_env, &options->num_accept_env,
 +		    "LC_NUMERIC");
-+		array_append("[default]", 0, "AcceptEnv",
++		opt_array_append("[default]", 0, "AcceptEnv",
 +		    &options->accept_env, &options->num_accept_env,
 +		    "LC_MONETARY");
-+		array_append("[default]", 0, "AcceptEnv",
++		opt_array_append("[default]", 0, "AcceptEnv",
 +		    &options->accept_env, &options->num_accept_env,
 +		    "LC_MESSAGES");
 +	}
  	if (options->client_alive_interval == -1)
  		options->client_alive_interval = 0;
  	if (options->client_alive_count_max == -1)
-@@ -1974,8 +2001,12 @@ process_server_config_line(ServerOptions
- 			if (strchr(arg, '=') != NULL)
+@@ -2124,8 +2151,12 @@ process_server_config_line_depth(ServerO
+ 			if (*arg == '\0' || strchr(arg, '=') != NULL)
  				fatal("%s line %d: Invalid environment name.",
  				    filename, linenum);
 +			if (options->num_accept_env == -1)
@@ -63,10 +63,10 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
  				continue;
 +			if (strcmp(arg, "none") == 0)
 +				continue;
- 			array_append(filename, linenum, "AcceptEnv",
+ 			opt_array_append(filename, linenum, keyword,
  			    &options->accept_env, &options->num_accept_env,
  			    arg);
-@@ -2489,7 +2520,7 @@ copy_set_server_options(ServerOptions *d
+@@ -2774,7 +2805,7 @@ copy_set_server_options(ServerOptions *d
  } while(0)
  #define M_CP_STRARRAYOPT(s, num_s) do {\
  	u_int i; \
@@ -78,7 +78,7 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
 diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
 --- a~/session.c	1970-01-01 00:00:00
 +++ a/session.c	1970-01-01 00:00:00
-@@ -848,6 +848,18 @@ check_quietlogin(Session *s, const char
+@@ -843,6 +843,18 @@ check_quietlogin(Session *s, const char
  }
  
  /*
@@ -97,7 +97,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
   * Reads environment variables from the given file and adds/overrides them
   * into the environment.  If the file does not exist, this does nothing.
   * Otherwise, it must consist of empty lines, comments (line starts with '#')
-@@ -1027,6 +1039,16 @@ do_setup_env(struct ssh *ssh, Session *s
+@@ -1026,6 +1038,16 @@ do_setup_env(struct ssh *ssh, Session *s
  	ssh_gssapi_do_child(&env, &envsize);
  #endif
  
@@ -114,7 +114,7 @@ diff -wpruN '--exclude=*.orig' a~/session.c a/session.c
  	/* Set basic environment. */
  	for (i = 0; i < s->num_env; i++)
  		child_set_env(&env, &envsize, s->env[i].name, s->env[i].val);
-@@ -1070,8 +1092,7 @@ do_setup_env(struct ssh *ssh, Session *s
+@@ -1069,8 +1091,7 @@ do_setup_env(struct ssh *ssh, Session *s
  	/* Normal systems set SHELL by default. */
  	child_set_env(&env, &envsize, "SHELL", shell);
  
@@ -138,10 +138,10 @@ diff -wpruN '--exclude=*.orig' a~/sshd_config a/sshd_config
  # Authentication:
  
  #LoginGraceTime 2m
-diff -wpruN '--exclude=*.orig' a~/sshd_config.4 a/sshd_config.4
---- a~/sshd_config.4	1970-01-01 00:00:00
-+++ a/sshd_config.4	1970-01-01 00:00:00
-@@ -86,7 +86,18 @@ directives.
+diff -wpruN '--exclude=*.orig' a~/sshd_config.5 a/sshd_config.5
+--- a~/sshd_config.5	1970-01-01 00:00:00
++++ a/sshd_config.5	1970-01-01 00:00:00
+@@ -86,7 +86,20 @@ directives.
  Be warned that some environment variables could be used to bypass restricted
  user environments.
  For this reason, care should be taken in the use of this directive.
@@ -153,9 +153,11 @@ diff -wpruN '--exclude=*.orig' a~/sshd_config.4 a/sshd_config.4
 +family of environment variables. If any
 +.Cm AcceptEnv
 +directives are present in your config file, they will replace this default
-+(ie, only the variables you list will be passed into the session's
++.Po
++ie, only the variables you list will be passed into the session's
 +.Xr environ 7
-+). You can also use an argument of
++.Pc .
++You can also use an argument of
 +.Dq none
 +to specify that no environment variables should be passed.
  .It Cm AddressFamily
