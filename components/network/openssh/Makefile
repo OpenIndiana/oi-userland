@@ -32,6 +32,7 @@ COMPONENT_NAME=		openssh
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
 COMPONENT_VERSION=	8.9.0.1
+COMPONENT_REVISION =	1
 HUMAN_VERSION=		8.9p1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openssh.org
