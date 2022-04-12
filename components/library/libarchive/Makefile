@@ -27,7 +27,7 @@ BUILD_BITS=		64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
-COMPONENT_VERSION=	3.6.0
+COMPONENT_VERSION=	3.6.1
 COMPONENT_SUMMARY=	multi-format archive and compression library
 COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
  interface for reading and writing archives in various formats such as\
@@ -36,14 +36,14 @@ COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
  and bzip2(1). The library is inherently stream-oriented;\
  readers serially iterate through the archive, writers serially\
  add things to the archive.
-COMPONENT_SRC=		libarchive-$(COMPONENT_VERSION)
+COMPONENT_SRC=			libarchive-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.libarchive.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:a36613695ffa2905fdedc997b6df04a3006ccfd71d747a339b78aa8412c3d852
-COMPONENT_ARCHIVE_URL= https://www.libarchive.org/downloads/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=        library/libarchive
-COMPONENT_CLASSIFICATION=       System/Libraries
-COMPONENT_LICENSE=      BSD-like
+COMPONENT_ARCHIVE_HASH=	sha256:c676146577d989189940f1959d9e3980d28513d74eedfbc6b7f15ea45fe54ee2
+COMPONENT_ARCHIVE_URL=	https://www.libarchive.org/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			library/libarchive
+COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_LICENSE=		BSD-like
 
 include $(WS_MAKE_RULES)/common.mk
 
