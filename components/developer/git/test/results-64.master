@@ -117,7 +117,7 @@ ok 27 - init creates a new deep directory
 ok 28 - init creates a new deep directory (umask vs. shared)
 ok 29 - init notices EEXIST (1)
 ok 30 - init notices EEXIST (2)
-ok 31 # skip init notices EPERM (missing SANITY of POSIXPERM,SANITY)
+ok 31 - init notices EPERM
 ok 32 - init creates a new bare directory with global --bare
 ok 33 - init prefers command line to GIT_DIR
 ok 34 - init with separate gitdir
@@ -125,7 +125,7 @@ ok 35 - explicit bare & --separate-git-dir incompatible
 ok 36 - implicit bare & --separate-git-dir incompatible
 ok 37 - bare & --separate-git-dir incompatible within worktree
 ok 38 - init in long base path
-ok 39 - init in long restricted base path
+ok 39 # skip init in long restricted base path (missing GETCWD_IGNORES_PERMS)
 ok 40 - re-init on .git file
 ok 41 - re-init to update git link
 ok 42 - re-init to move gitdir
@@ -202,14 +202,14 @@ ok 30 - symlinks not respected in-tree
 1..30
 *** t0004-unwritable.sh ***
 ok 1 - setup
-ok 2 # skip write-tree should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 3 # skip write-tree output on unwritable repository (missing WRITE_TREE_OUT)
-ok 4 # skip commit should notice unwritable repository (missing SANITY of POSIXPERM,SANITY,!SANITIZE_LEAK)
-ok 5 # skip commit output on unwritable repository (missing COMMIT_OUT)
-ok 6 # skip update-index should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 7 # skip update-index output on unwritable repository (missing UPDATE_INDEX_OUT)
-ok 8 # skip add should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 9 # skip add output on unwritable repository (missing ADD_OUT)
+ok 2 - write-tree should notice unwritable repository
+ok 3 - write-tree output on unwritable repository
+ok 4 - commit should notice unwritable repository
+ok 5 - commit output on unwritable repository
+ok 6 - update-index should notice unwritable repository
+ok 7 - update-index output on unwritable repository
+ok 8 - add should notice unwritable repository
+ok 9 - add output on unwritable repository
 # passed all 9 test(s)
 1..9
 *** t0005-signals.sh ***
@@ -2767,148 +2767,151 @@ ok 72 - longest ancestor: /foo/bar /:/bar => 0
 ok 73 - longest ancestor: /foo/bar /foo => 4
 ok 74 - longest ancestor: /foo/bar /foo:/bar => 4
 ok 75 - longest ancestor: /foo/bar /bar => -1
-ok 76 - strip_path_suffix
-ok 77 - absolute path rejects the empty string
-ok 78 # skip <drive-letter>:\\abc is an absolute path (missing MINGW)
-ok 79 - real path rejects the empty string
-ok 80 - real path works on absolute paths 1
-ok 81 - real path works on absolute paths 2
-ok 82 - real path removes extra leading slashes
-ok 83 - real path removes other extra slashes
-ok 84 - real path works on symlinks
-ok 85 - prefix_path works with absolute paths to work tree symlinks
-ok 86 - prefix_path works with only absolute path to work tree
-ok 87 - prefix_path rejects absolute path to dir with same beginning as work tree
-ok 88 - prefix_path works with absolute path to a symlink to work tree having  same beginning as work tree
-ok 89 - relative path: /foo/a/b/c/ /foo/a/b/ => c/
-ok 90 - relative path: /foo/a/b/c/ /foo/a/b => c/
-ok 91 - relative path: /foo/a//b//c/ ///foo/a/b// => c/
-ok 92 - relative path: /foo/a/b /foo/a/b => ./
-ok 93 - relative path: /foo/a/b/ /foo/a/b => ./
-ok 94 - relative path: /foo/a /foo/a/b => ../
-ok 95 - relative path: / /foo/a/b/ => ../../../
-ok 96 - relative path: /foo/a/c /foo/a/b/ => ../c
-ok 97 - relative path: /foo/a/c /foo/a/b => ../c
-ok 98 - relative path: /foo/x/y /foo/a/b/ => ../../x/y
-ok 99 - relative path: /foo/a/b <empty> => /foo/a/b
-ok 100 - relative path: /foo/a/b <null> => /foo/a/b
-ok 101 - relative path: foo/a/b/c/ foo/a/b/ => c/
-ok 102 - relative path: foo/a/b/c/ foo/a/b => c/
-ok 103 - relative path: foo/a/b//c foo/a//b => c
-ok 104 - relative path: foo/a/b/ foo/a/b/ => ./
-ok 105 - relative path: foo/a/b/ foo/a/b => ./
-ok 106 - relative path: foo/a foo/a/b => ../
-ok 107 - relative path: foo/x/y foo/a/b => ../../x/y
-ok 108 - relative path: foo/a/c foo/a/b => ../c
-ok 109 - relative path: foo/a/b /foo/x/y => foo/a/b
-ok 110 - relative path: /foo/a/b foo/x/y => /foo/a/b
-ok 111 # skip relative path: d:/a/b D:/a/c => ../b (missing MINGW)
-ok 112 # skip relative path: C:/a/b D:/a/c => C:/a/b (missing MINGW)
-ok 113 - relative path: foo/a/b <empty> => foo/a/b
-ok 114 - relative path: foo/a/b <null> => foo/a/b
-ok 115 - relative path: <empty> /foo/a/b => ./
-ok 116 - relative path: <empty> <empty> => ./
-ok 117 - relative path: <empty> <null> => ./
-ok 118 - relative path: <null> <empty> => ./
-ok 119 - relative path: <null> <null> => ./
-ok 120 - relative path: <null> /foo/a/b => ./
-ok 121 - git-path A=B info/grafts => .git/info/grafts
-ok 122 - git-path GIT_GRAFT_FILE=foo info/grafts => foo
-ok 123 - git-path GIT_GRAFT_FILE=foo info/////grafts => foo
-ok 124 - git-path GIT_INDEX_FILE=foo index => foo
-ok 125 - git-path GIT_INDEX_FILE=foo index/foo => .git/index/foo
-ok 126 - git-path GIT_INDEX_FILE=foo index2 => .git/index2
-ok 127 - setup fake objects directory foo
-ok 128 - git-path GIT_OBJECT_DIRECTORY=foo objects => foo
-ok 129 - git-path GIT_OBJECT_DIRECTORY=foo objects/foo => foo/foo
-ok 130 - git-path GIT_OBJECT_DIRECTORY=foo objects2 => .git/objects2
-ok 131 - setup common repository
-ok 132 - git-path GIT_COMMON_DIR=bar index => .git/index
-ok 133 - git-path GIT_COMMON_DIR=bar index.lock => .git/index.lock
-ok 134 - git-path GIT_COMMON_DIR=bar HEAD => .git/HEAD
-ok 135 - git-path GIT_COMMON_DIR=bar logs/HEAD => .git/logs/HEAD
-ok 136 - git-path GIT_COMMON_DIR=bar logs/HEAD.lock => .git/logs/HEAD.lock
-ok 137 - git-path GIT_COMMON_DIR=bar logs/refs/bisect/foo => .git/logs/refs/bisect/foo
-ok 138 - git-path GIT_COMMON_DIR=bar logs/refs => bar/logs/refs
-ok 139 - git-path GIT_COMMON_DIR=bar logs/refs/ => bar/logs/refs/
-ok 140 - git-path GIT_COMMON_DIR=bar logs/refs/bisec/foo => bar/logs/refs/bisec/foo
-ok 141 - git-path GIT_COMMON_DIR=bar logs/refs/bisec => bar/logs/refs/bisec
-ok 142 - git-path GIT_COMMON_DIR=bar logs/refs/bisectfoo => bar/logs/refs/bisectfoo
-ok 143 - git-path GIT_COMMON_DIR=bar objects => bar/objects
-ok 144 - git-path GIT_COMMON_DIR=bar objects/bar => bar/objects/bar
-ok 145 - git-path GIT_COMMON_DIR=bar info/exclude => bar/info/exclude
-ok 146 - git-path GIT_COMMON_DIR=bar info/grafts => bar/info/grafts
-ok 147 - git-path GIT_COMMON_DIR=bar info/sparse-checkout => .git/info/sparse-checkout
-ok 148 - git-path GIT_COMMON_DIR=bar info//sparse-checkout => .git/info//sparse-checkout
-ok 149 - git-path GIT_COMMON_DIR=bar remotes/bar => bar/remotes/bar
-ok 150 - git-path GIT_COMMON_DIR=bar branches/bar => bar/branches/bar
-ok 151 - git-path GIT_COMMON_DIR=bar logs/refs/heads/main => bar/logs/refs/heads/main
-ok 152 - git-path GIT_COMMON_DIR=bar refs/heads/main => bar/refs/heads/main
-ok 153 - git-path GIT_COMMON_DIR=bar refs/bisect/foo => .git/refs/bisect/foo
-ok 154 - git-path GIT_COMMON_DIR=bar hooks/me => bar/hooks/me
-ok 155 - git-path GIT_COMMON_DIR=bar config => bar/config
-ok 156 - git-path GIT_COMMON_DIR=bar packed-refs => bar/packed-refs
-ok 157 - git-path GIT_COMMON_DIR=bar shallow => bar/shallow
-ok 158 - git-path GIT_COMMON_DIR=bar common => bar/common
-ok 159 - git-path GIT_COMMON_DIR=bar common/file => bar/common/file
-ok 160 - test_submodule_relative_url: ../ ../foo ../submodule => ../../submodule
-ok 161 - test_submodule_relative_url: ../ ../foo/bar ../submodule => ../../foo/submodule
-ok 162 - test_submodule_relative_url: ../ ../foo/submodule ../submodule => ../../foo/submodule
-ok 163 - test_submodule_relative_url: ../ ./foo ../submodule => ../submodule
-ok 164 - test_submodule_relative_url: ../ ./foo/bar ../submodule => ../foo/submodule
-ok 165 - test_submodule_relative_url: ../../../ ../foo/bar ../sub/a/b/c => ../../../../foo/sub/a/b/c
-ok 166 - test_submodule_relative_url: ../ $(@D)/t/trash directory.t0060-path-utils/addtest ../repo => $(@D)/t/trash directory.t0060-path-utils/repo
-ok 167 - test_submodule_relative_url: ../ foo/bar ../submodule => ../foo/submodule
-ok 168 - test_submodule_relative_url: ../ foo ../submodule => ../submodule
-ok 169 - test_submodule_relative_url: (null) ../foo/bar ../sub/a/b/c => ../foo/sub/a/b/c
-ok 170 - test_submodule_relative_url: (null) ../foo/bar ../sub/a/b/c/ => ../foo/sub/a/b/c
-ok 171 - test_submodule_relative_url: (null) ../foo/bar/ ../sub/a/b/c => ../foo/sub/a/b/c
-ok 172 - test_submodule_relative_url: (null) ../foo/bar ../submodule => ../foo/submodule
-ok 173 - test_submodule_relative_url: (null) ../foo/submodule ../submodule => ../foo/submodule
-ok 174 - test_submodule_relative_url: (null) ../foo ../submodule => ../submodule
-ok 175 - test_submodule_relative_url: (null) ./foo/bar ../submodule => foo/submodule
-ok 176 - test_submodule_relative_url: (null) ./foo ../submodule => submodule
-ok 177 - test_submodule_relative_url: (null) //somewhere else/repo ../subrepo => //somewhere else/subrepo
-ok 178 - test_submodule_relative_url: (null) //somewhere else/repo ../../subrepo => //subrepo
-ok 179 - test_submodule_relative_url: (null) //somewhere else/repo ../../../subrepo => /subrepo
-ok 180 - test_submodule_relative_url: (null) //somewhere else/repo ../../../../subrepo => subrepo
-ok 181 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/subsuper_update_r ../subsubsuper_update_r => $(@D)/t/trash directory.t0060-path-utils/subsubsuper_update_r
-ok 182 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/super_update_r2 ../subsuper_update_r => $(@D)/t/trash directory.t0060-path-utils/subsuper_update_r
-ok 183 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/. ../. => $(@D)/t/trash directory.t0060-path-utils/.
-ok 184 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils ./. => $(@D)/t/trash directory.t0060-path-utils/.
-ok 185 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/addtest ../repo => $(@D)/t/trash directory.t0060-path-utils/repo
-ok 186 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils ./å äö => $(@D)/t/trash directory.t0060-path-utils/å äö
-ok 187 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/. ../submodule => $(@D)/t/trash directory.t0060-path-utils/submodule
-ok 188 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/submodule ../submodule => $(@D)/t/trash directory.t0060-path-utils/submodule
-ok 189 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/home2/../remote ../bundle1 => $(@D)/t/trash directory.t0060-path-utils/home2/../bundle1
-ok 190 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/submodule_update_repo ./. => $(@D)/t/trash directory.t0060-path-utils/submodule_update_repo/.
-ok 191 - test_submodule_relative_url: (null) file:///tmp/repo ../subrepo => file:///tmp/subrepo
-ok 192 - test_submodule_relative_url: (null) foo/bar ../submodule => foo/submodule
-ok 193 - test_submodule_relative_url: (null) foo ../submodule => submodule
-ok 194 - test_submodule_relative_url: (null) helper:://hostname/repo ../subrepo => helper:://hostname/subrepo
-ok 195 - test_submodule_relative_url: (null) helper:://hostname/repo ../../subrepo => helper:://subrepo
-ok 196 - test_submodule_relative_url: (null) helper:://hostname/repo ../../../subrepo => helper::/subrepo
-ok 197 - test_submodule_relative_url: (null) helper:://hostname/repo ../../../../subrepo => helper::subrepo
-ok 198 - test_submodule_relative_url: (null) helper:://hostname/repo ../../../../../subrepo => helper:subrepo
-ok 199 - test_submodule_relative_url: (null) helper:://hostname/repo ../../../../../../subrepo => .:subrepo
-ok 200 - test_submodule_relative_url: (null) ssh://hostname/repo ../subrepo => ssh://hostname/subrepo
-ok 201 - test_submodule_relative_url: (null) ssh://hostname/repo ../../subrepo => ssh://subrepo
-ok 202 - test_submodule_relative_url: (null) ssh://hostname/repo ../../../subrepo => ssh:/subrepo
-ok 203 - test_submodule_relative_url: (null) ssh://hostname/repo ../../../../subrepo => ssh:subrepo
-ok 204 - test_submodule_relative_url: (null) ssh://hostname/repo ../../../../../subrepo => .:subrepo
-ok 205 - test_submodule_relative_url: (null) ssh://hostname:22/repo ../subrepo => ssh://hostname:22/subrepo
-ok 206 - test_submodule_relative_url: (null) user@host:path/to/repo ../subrepo => user@host:path/to/subrepo
-ok 207 - test_submodule_relative_url: (null) user@host:repo ../subrepo => user@host:subrepo
-ok 208 - test_submodule_relative_url: (null) user@host:repo ../../subrepo => .:subrepo
-ok 209 - match .gitmodules
-ok 210 - match .gitattributes
-ok 211 - match .gitignore
-ok 212 - match .mailmap
-ok 213 # skip is_valid_path() on Windows (missing MINGW)
-ok 214 # skip RUNTIME_PREFIX works (missing RUNTIME_PREFIX of RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
-ok 215 # skip %(prefix)/ works (missing RUNTIME_PREFIX of RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
-# passed all 215 test(s)
-1..215
+ok 76 # skip longest ancestor: C:/Users/me C:/ => 2 (missing MINGW)
+ok 77 # skip longest ancestor: D:/Users/me C:/ => -1 (missing MINGW)
+ok 78 # skip longest ancestor: //server/share/my-directory //server/share/ => 14 (missing MINGW)
+ok 79 - strip_path_suffix
+ok 80 - absolute path rejects the empty string
+ok 81 # skip <drive-letter>:\\abc is an absolute path (missing MINGW)
+ok 82 - real path rejects the empty string
+ok 83 - real path works on absolute paths 1
+ok 84 - real path works on absolute paths 2
+ok 85 - real path removes extra leading slashes
+ok 86 - real path removes other extra slashes
+ok 87 - real path works on symlinks
+ok 88 - prefix_path works with absolute paths to work tree symlinks
+ok 89 - prefix_path works with only absolute path to work tree
+ok 90 - prefix_path rejects absolute path to dir with same beginning as work tree
+ok 91 - prefix_path works with absolute path to a symlink to work tree having  same beginning as work tree
+ok 92 - relative path: /foo/a/b/c/ /foo/a/b/ => c/
+ok 93 - relative path: /foo/a/b/c/ /foo/a/b => c/
+ok 94 - relative path: /foo/a//b//c/ ///foo/a/b// => c/
+ok 95 - relative path: /foo/a/b /foo/a/b => ./
+ok 96 - relative path: /foo/a/b/ /foo/a/b => ./
+ok 97 - relative path: /foo/a /foo/a/b => ../
+ok 98 - relative path: / /foo/a/b/ => ../../../
+ok 99 - relative path: /foo/a/c /foo/a/b/ => ../c
+ok 100 - relative path: /foo/a/c /foo/a/b => ../c
+ok 101 - relative path: /foo/x/y /foo/a/b/ => ../../x/y
+ok 102 - relative path: /foo/a/b <empty> => /foo/a/b
+ok 103 - relative path: /foo/a/b <null> => /foo/a/b
+ok 104 - relative path: foo/a/b/c/ foo/a/b/ => c/
+ok 105 - relative path: foo/a/b/c/ foo/a/b => c/
+ok 106 - relative path: foo/a/b//c foo/a//b => c
+ok 107 - relative path: foo/a/b/ foo/a/b/ => ./
+ok 108 - relative path: foo/a/b/ foo/a/b => ./
+ok 109 - relative path: foo/a foo/a/b => ../
+ok 110 - relative path: foo/x/y foo/a/b => ../../x/y
+ok 111 - relative path: foo/a/c foo/a/b => ../c
+ok 112 - relative path: foo/a/b /foo/x/y => foo/a/b
+ok 113 - relative path: /foo/a/b foo/x/y => /foo/a/b
+ok 114 # skip relative path: d:/a/b D:/a/c => ../b (missing MINGW)
+ok 115 # skip relative path: C:/a/b D:/a/c => C:/a/b (missing MINGW)
+ok 116 - relative path: foo/a/b <empty> => foo/a/b
+ok 117 - relative path: foo/a/b <null> => foo/a/b
+ok 118 - relative path: <empty> /foo/a/b => ./
+ok 119 - relative path: <empty> <empty> => ./
+ok 120 - relative path: <empty> <null> => ./
+ok 121 - relative path: <null> <empty> => ./
+ok 122 - relative path: <null> <null> => ./
+ok 123 - relative path: <null> /foo/a/b => ./
+ok 124 - git-path A=B info/grafts => .git/info/grafts
+ok 125 - git-path GIT_GRAFT_FILE=foo info/grafts => foo
+ok 126 - git-path GIT_GRAFT_FILE=foo info/////grafts => foo
+ok 127 - git-path GIT_INDEX_FILE=foo index => foo
+ok 128 - git-path GIT_INDEX_FILE=foo index/foo => .git/index/foo
+ok 129 - git-path GIT_INDEX_FILE=foo index2 => .git/index2
+ok 130 - setup fake objects directory foo
+ok 131 - git-path GIT_OBJECT_DIRECTORY=foo objects => foo
+ok 132 - git-path GIT_OBJECT_DIRECTORY=foo objects/foo => foo/foo
+ok 133 - git-path GIT_OBJECT_DIRECTORY=foo objects2 => .git/objects2
+ok 134 - setup common repository
+ok 135 - git-path GIT_COMMON_DIR=bar index => .git/index
+ok 136 - git-path GIT_COMMON_DIR=bar index.lock => .git/index.lock
+ok 137 - git-path GIT_COMMON_DIR=bar HEAD => .git/HEAD
+ok 138 - git-path GIT_COMMON_DIR=bar logs/HEAD => .git/logs/HEAD
+ok 139 - git-path GIT_COMMON_DIR=bar logs/HEAD.lock => .git/logs/HEAD.lock
+ok 140 - git-path GIT_COMMON_DIR=bar logs/refs/bisect/foo => .git/logs/refs/bisect/foo
+ok 141 - git-path GIT_COMMON_DIR=bar logs/refs => bar/logs/refs
+ok 142 - git-path GIT_COMMON_DIR=bar logs/refs/ => bar/logs/refs/
+ok 143 - git-path GIT_COMMON_DIR=bar logs/refs/bisec/foo => bar/logs/refs/bisec/foo
+ok 144 - git-path GIT_COMMON_DIR=bar logs/refs/bisec => bar/logs/refs/bisec
+ok 145 - git-path GIT_COMMON_DIR=bar logs/refs/bisectfoo => bar/logs/refs/bisectfoo
+ok 146 - git-path GIT_COMMON_DIR=bar objects => bar/objects
+ok 147 - git-path GIT_COMMON_DIR=bar objects/bar => bar/objects/bar
+ok 148 - git-path GIT_COMMON_DIR=bar info/exclude => bar/info/exclude
+ok 149 - git-path GIT_COMMON_DIR=bar info/grafts => bar/info/grafts
+ok 150 - git-path GIT_COMMON_DIR=bar info/sparse-checkout => .git/info/sparse-checkout
+ok 151 - git-path GIT_COMMON_DIR=bar info//sparse-checkout => .git/info//sparse-checkout
+ok 152 - git-path GIT_COMMON_DIR=bar remotes/bar => bar/remotes/bar
+ok 153 - git-path GIT_COMMON_DIR=bar branches/bar => bar/branches/bar
+ok 154 - git-path GIT_COMMON_DIR=bar logs/refs/heads/main => bar/logs/refs/heads/main
+ok 155 - git-path GIT_COMMON_DIR=bar refs/heads/main => bar/refs/heads/main
+ok 156 - git-path GIT_COMMON_DIR=bar refs/bisect/foo => .git/refs/bisect/foo
+ok 157 - git-path GIT_COMMON_DIR=bar hooks/me => bar/hooks/me
+ok 158 - git-path GIT_COMMON_DIR=bar config => bar/config
+ok 159 - git-path GIT_COMMON_DIR=bar packed-refs => bar/packed-refs
+ok 160 - git-path GIT_COMMON_DIR=bar shallow => bar/shallow
+ok 161 - git-path GIT_COMMON_DIR=bar common => bar/common
+ok 162 - git-path GIT_COMMON_DIR=bar common/file => bar/common/file
+ok 163 - test_submodule_relative_url: ../ ../foo ../submodule => ../../submodule
+ok 164 - test_submodule_relative_url: ../ ../foo/bar ../submodule => ../../foo/submodule
+ok 165 - test_submodule_relative_url: ../ ../foo/submodule ../submodule => ../../foo/submodule
+ok 166 - test_submodule_relative_url: ../ ./foo ../submodule => ../submodule
+ok 167 - test_submodule_relative_url: ../ ./foo/bar ../submodule => ../foo/submodule
+ok 168 - test_submodule_relative_url: ../../../ ../foo/bar ../sub/a/b/c => ../../../../foo/sub/a/b/c
+ok 169 - test_submodule_relative_url: ../ $(@D)/t/trash directory.t0060-path-utils/addtest ../repo => $(@D)/t/trash directory.t0060-path-utils/repo
+ok 170 - test_submodule_relative_url: ../ foo/bar ../submodule => ../foo/submodule
+ok 171 - test_submodule_relative_url: ../ foo ../submodule => ../submodule
+ok 172 - test_submodule_relative_url: (null) ../foo/bar ../sub/a/b/c => ../foo/sub/a/b/c
+ok 173 - test_submodule_relative_url: (null) ../foo/bar ../sub/a/b/c/ => ../foo/sub/a/b/c
+ok 174 - test_submodule_relative_url: (null) ../foo/bar/ ../sub/a/b/c => ../foo/sub/a/b/c
+ok 175 - test_submodule_relative_url: (null) ../foo/bar ../submodule => ../foo/submodule
+ok 176 - test_submodule_relative_url: (null) ../foo/submodule ../submodule => ../foo/submodule
+ok 177 - test_submodule_relative_url: (null) ../foo ../submodule => ../submodule
+ok 178 - test_submodule_relative_url: (null) ./foo/bar ../submodule => foo/submodule
+ok 179 - test_submodule_relative_url: (null) ./foo ../submodule => submodule
+ok 180 - test_submodule_relative_url: (null) //somewhere else/repo ../subrepo => //somewhere else/subrepo
+ok 181 - test_submodule_relative_url: (null) //somewhere else/repo ../../subrepo => //subrepo
+ok 182 - test_submodule_relative_url: (null) //somewhere else/repo ../../../subrepo => /subrepo
+ok 183 - test_submodule_relative_url: (null) //somewhere else/repo ../../../../subrepo => subrepo
+ok 184 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/subsuper_update_r ../subsubsuper_update_r => $(@D)/t/trash directory.t0060-path-utils/subsubsuper_update_r
+ok 185 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/super_update_r2 ../subsuper_update_r => $(@D)/t/trash directory.t0060-path-utils/subsuper_update_r
+ok 186 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/. ../. => $(@D)/t/trash directory.t0060-path-utils/.
+ok 187 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils ./. => $(@D)/t/trash directory.t0060-path-utils/.
+ok 188 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/addtest ../repo => $(@D)/t/trash directory.t0060-path-utils/repo
+ok 189 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils ./å äö => $(@D)/t/trash directory.t0060-path-utils/å äö
+ok 190 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/. ../submodule => $(@D)/t/trash directory.t0060-path-utils/submodule
+ok 191 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/submodule ../submodule => $(@D)/t/trash directory.t0060-path-utils/submodule
+ok 192 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/home2/../remote ../bundle1 => $(@D)/t/trash directory.t0060-path-utils/home2/../bundle1
+ok 193 - test_submodule_relative_url: (null) $(@D)/t/trash directory.t0060-path-utils/submodule_update_repo ./. => $(@D)/t/trash directory.t0060-path-utils/submodule_update_repo/.
+ok 194 - test_submodule_relative_url: (null) file:///tmp/repo ../subrepo => file:///tmp/subrepo
+ok 195 - test_submodule_relative_url: (null) foo/bar ../submodule => foo/submodule
+ok 196 - test_submodule_relative_url: (null) foo ../submodule => submodule
+ok 197 - test_submodule_relative_url: (null) helper:://hostname/repo ../subrepo => helper:://hostname/subrepo
+ok 198 - test_submodule_relative_url: (null) helper:://hostname/repo ../../subrepo => helper:://subrepo
+ok 199 - test_submodule_relative_url: (null) helper:://hostname/repo ../../../subrepo => helper::/subrepo
+ok 200 - test_submodule_relative_url: (null) helper:://hostname/repo ../../../../subrepo => helper::subrepo
+ok 201 - test_submodule_relative_url: (null) helper:://hostname/repo ../../../../../subrepo => helper:subrepo
+ok 202 - test_submodule_relative_url: (null) helper:://hostname/repo ../../../../../../subrepo => .:subrepo
+ok 203 - test_submodule_relative_url: (null) ssh://hostname/repo ../subrepo => ssh://hostname/subrepo
+ok 204 - test_submodule_relative_url: (null) ssh://hostname/repo ../../subrepo => ssh://subrepo
+ok 205 - test_submodule_relative_url: (null) ssh://hostname/repo ../../../subrepo => ssh:/subrepo
+ok 206 - test_submodule_relative_url: (null) ssh://hostname/repo ../../../../subrepo => ssh:subrepo
+ok 207 - test_submodule_relative_url: (null) ssh://hostname/repo ../../../../../subrepo => .:subrepo
+ok 208 - test_submodule_relative_url: (null) ssh://hostname:22/repo ../subrepo => ssh://hostname:22/subrepo
+ok 209 - test_submodule_relative_url: (null) user@host:path/to/repo ../subrepo => user@host:path/to/subrepo
+ok 210 - test_submodule_relative_url: (null) user@host:repo ../subrepo => user@host:subrepo
+ok 211 - test_submodule_relative_url: (null) user@host:repo ../../subrepo => .:subrepo
+ok 212 - match .gitmodules
+ok 213 - match .gitattributes
+ok 214 - match .gitignore
+ok 215 - match .mailmap
+ok 216 # skip is_valid_path() on Windows (missing MINGW)
+ok 217 # skip RUNTIME_PREFIX works (missing RUNTIME_PREFIX of RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
+ok 218 # skip %(prefix)/ works (missing RUNTIME_PREFIX of RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
+# passed all 218 test(s)
+1..218
 *** t0061-run-command.sh ***
 ok 1 # skip subprocess inherits only std handles (missing MINGW)
 ok 2 - start_command reports ENOENT (slash)
@@ -2919,7 +2922,7 @@ ok 6 - run_command can run a script without a #! line
 ok 7 - run_command does not try to execute a directory
 ok 8 - run_command passes over non-executable file
 ok 9 - run_command reports EACCES
-ok 10 # skip unreadable directory in PATH (missing SANITY of POSIXPERM,SANITY)
+ok 10 - unreadable directory in PATH
 ok 11 - run_command runs in parallel with more jobs available than tasks
 ok 12 - run_command runs in parallel with as many jobs as tasks
 ok 13 - run_command runs in parallel with more tasks than jobs available
@@ -2971,8 +2974,8 @@ ok 2 - dir-iterator should iterate through all files
 ok 3 - dir-iterator should list files in the correct order
 ok 4 - begin should fail upon inexistent paths
 ok 5 - begin should fail upon non directory paths
-ok 6 # skip advance should not fail on errors by default (missing SANITY of POSIXPERM,SANITY)
-ok 7 # skip advance should fail on errors, w/ pedantic flag (missing SANITY of POSIXPERM,SANITY)
+ok 6 - advance should not fail on errors by default
+ok 7 - advance should fail on errors, w/ pedantic flag
 ok 8 - setup dirs with symlinks
 ok 9 - dir-iterator should not follow symlinks by default
 ok 10 - dir-iterator should follow symlinks w/ follow flag
@@ -3002,7 +3005,7 @@ ok 2 - oidtree each
 *** t0070-fundamental.sh ***
 ok 1 - character classes (isspace, isalpha etc.)
 ok 2 - mktemp to nonexistent directory prints filename
-ok 3 # skip mktemp to unwritable directory prints filename (missing SANITY of POSIXPERM,SANITY)
+ok 3 - mktemp to unwritable directory prints filename
 ok 4 - git_mkstemps_mode does not fail if fd 0 is not open
 ok 5 - check for a bug in the regex routines
 ok 6 - incomplete sideband messages are reassembled
@@ -3139,9 +3142,9 @@ ok 1 - Testing Git::I18N with NO Perl gettext library
 ok 2 - Git::I18N is located at $(@D)/t/../perl/build/lib/Git/I18N.pm
 ok 3 - sanity: Git::I18N has 3 export(s)
 ok 4 - sanity: Git::I18N exports everything by default
-ok 5 - sanity: __n has a $$$ prototype
+ok 5 - sanity: N__ has a $ prototype
 ok 6 - sanity: __ has a $ prototype
-ok 7 - sanity: N__ has a $ prototype
+ok 7 - sanity: __n has a $$$ prototype
 ok 8 - Passing a string through __() in the C locale works
 ok 9 - Get singular string through __n() in C locale
 ok 10 - Get plural string through __n() in C locale
@@ -3331,7 +3334,7 @@ ok 40 - helper (store) can store empty username
 ok 41 - if custom xdg file exists, home and xdg files not created
 ok 42 - get: use home file if both home and xdg files have matches
 ok 43 - get: use xdg file if home file has no matches
-ok 44 # skip get: use xdg file if home file is unreadable (missing SANITY of POSIXPERM,SANITY)
+ok 44 - get: use xdg file if home file is unreadable
 ok 45 - store: if both xdg and home files exist, only store in home file
 ok 46 - erase: erase matching credentials from both xdg and home files
 ok 47 - get: ignore credentials without scheme as invalid
@@ -3555,7 +3558,7 @@ ok 9 - 3-way not overwriting local changes (setup)
 ok 10 - 3-way not overwriting local changes (our side)
 ok 11 - 3-way not overwriting local changes (their side)
 ok 12 - funny symlink in work tree
-ok 13 # skip funny symlink in work tree, un-unlink-able (missing SANITY)
+ok 13 - funny symlink in work tree, un-unlink-able
 ok 14 - D/F setup
 ok 15 - D/F
 ok 16 - D/F resolve
@@ -4519,7 +4522,7 @@ ok 20 - find value with highest priority from a configset
 ok 21 - find value_list for a key from a configset
 ok 22 - proper error on non-existent files
 ok 23 - proper error on directory "files"
-ok 24 # skip proper error on non-accessible files (missing SANITY of POSIXPERM,SANITY)
+ok 24 - proper error on non-accessible files
 ok 25 - proper error on error in default config files
 ok 26 - proper error on error in custom config files
 ok 27 - check line errors for malformed values
@@ -5844,7 +5847,7 @@ ok 21 - check splitIndex.sharedIndexExpire set to "never" and "now"
 ok 22 - same mode for index & split index
 ok 23 - split index respects core.sharedrepository 0666
 ok 24 - split index respects core.sharedrepository 0642
-ok 25 # skip graceful handling when splitting index is not allowed (missing SANITY of POSIXPERM,SANITY)
+ok 25 - graceful handling when splitting index is not allowed
 ok 26 - writing split index with null sha1 does not write cache tree
 ok 27 - do not refresh null base index
 not ok 28 - reading split index at alternate location
@@ -6709,7 +6712,7 @@ ok 1 - initialize
 ok 2 - worktree prune on normal repo
 ok 3 - prune files inside $GIT_DIR/worktrees
 ok 4 - prune directories without gitdir
-ok 5 # skip prune directories with unreadable gitdir (missing SANITY)
+ok 5 - prune directories with unreadable gitdir
 ok 6 - prune directories with invalid gitdir
 ok 7 - prune directories with gitdir pointing to nowhere
 ok 8 - not prune locked checkout
@@ -11018,7 +11021,7 @@ ok 11 - Test that "git rm bar" succeeds
 ok 12 - Post-check that bar does not exist and is not in index after "git rm -f bar"
 ok 13 - Test that "git rm -- -q" succeeds (remove a file that looks like an option)
 ok 14 - Test that "git rm -f" succeeds with embedded space, tab, or newline characters.
-ok 15 # skip Test that "git rm -f" fails if its rm fails (missing SANITY)
+ok 15 - Test that "git rm -f" fails if its rm fails
 ok 16 - When the rm in "git rm -f" fails, it should not remove the file from the index
 ok 17 - Remove nonexistent file with --ignore-unmatch
 ok 18 - "rm" command printed
@@ -11137,11 +11140,11 @@ ok 20 - git add with filemode=0, symlinks=0 prefers stage 2 over stage 1
 ok 21 - git add --refresh
 ok 22 - git add --refresh with pathspec
 ok 23 - git add --refresh correctly reports no match error
-ok 24 # skip git add should fail atomically upon an unreadable file (missing SANITY of POSIXPERM,SANITY)
-ok 25 # skip git add --ignore-errors (missing SANITY of POSIXPERM,SANITY)
-ok 26 # skip git add (add.ignore-errors) (missing SANITY of POSIXPERM,SANITY)
-ok 27 # skip git add (add.ignore-errors = false) (missing SANITY of POSIXPERM,SANITY)
-ok 28 # skip --no-ignore-errors overrides config (missing SANITY of POSIXPERM,SANITY)
+ok 24 - git add should fail atomically upon an unreadable file
+ok 25 - git add --ignore-errors
+ok 26 - git add (add.ignore-errors)
+ok 27 - git add (add.ignore-errors = false)
+ok 28 - --no-ignore-errors overrides config
 ok 29 - git add 'fo\[ou\]bar' ignores foobar
 ok 30 - git add to resolve conflicts on otherwise ignored path
 ok 31 - "add non-existent" should fail
@@ -13359,7 +13362,7 @@ ok 9 - -U0 is valid, so is diff.context=0
 ok 1 - setup
 ok 2 - no order (=tree object order)
 ok 3 - missing orderfile
-ok 4 # skip unreadable orderfile (missing SANITY of POSIXPERM,SANITY)
+ok 4 - unreadable orderfile
 ok 5 - orderfile using option from subdir with --output
 ok 6 - orderfile using option (1)
 ok 7 - orderfile is fifo (1)
@@ -14468,18 +14471,23 @@ ok 76 - dotdot is a parent directory
 ok 77 # skip setup signed branch (missing GPG)
 ok 78 # skip setup signed branch with subkey (missing GPG)
 ok 79 # skip setup signed branch x509 (missing GPGSM)
-ok 80 # skip setup sshkey signed branch (missing GPGSSH)
-ok 81 # skip create signed commits with keys having defined lifetimes (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
+ok 80 - setup sshkey signed branch
+ok 81 - create signed commits with keys having defined lifetimes
 ok 82 # skip log x509 fingerprint (missing GPGSM)
 ok 83 # skip log OpenPGP fingerprint (missing GPGSM)
-ok 84 # skip log ssh key fingerprint (missing GPGSSH)
+ok 84 - log ssh key fingerprint
 ok 85 # skip log --graph --show-signature (missing GPG)
 ok 86 # skip log --graph --show-signature x509 (missing GPGSM)
-ok 87 # skip log --graph --show-signature ssh (missing GPGSSH)
-ok 88 # skip log shows failure on expired signature key (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 89 # skip log shows failure on not yet valid signature key (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 90 # skip log show success with commit date and key validity matching (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 91 # skip log shows failure with commit date outside of key validity (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
+not ok 87 - log --graph --show-signature ssh
+#	
+#		test_config gpg.ssh.allowedSignersFile "${GPGSSH_ALLOWED_SIGNERS}" &&
+#		git log --graph --show-signature -n1 signed-ssh >actual &&
+#		grep "${GOOD_SIGNATURE_TRUSTED}" actual
+#	
+ok 88 - log shows failure on expired signature key
+ok 89 - log shows failure on not yet valid signature key
+ok 90 - log show success with commit date and key validity matching
+ok 91 - log shows failure with commit date outside of key validity
 ok 92 # skip log --graph --show-signature for merged tag (missing GPG)
 ok 93 # skip log --graph --show-signature for merged tag in shallow clone (missing GPG)
 ok 94 # skip log --graph --show-signature for merged tag with missing key (missing GPG)
@@ -14508,7 +14516,7 @@ ok 116 - log --decorate includes all levels of tag annotated tags
 ok 117 - log --end-of-options
 ok 118 - set up commits with different authors
 ok 119 - log --invert-grep --grep --author
-# passed all 119 test(s)
+# failed 1 among 119 test(s)
 1..119
 *** t4203-mailmap.sh ***
 ok 1 - setup commits and contacts file
@@ -15941,7 +15949,7 @@ ok 60 - replace-objects invalidates commit-graph
 ok 61 - warn on improper hash version
 ok 62 - lower layers have overflow chunk
 ok 63 - git commit-graph verify
-ok 64 # skip detect permission problem (missing SANITY of POSIXPERM,SANITY)
+ok 64 - detect permission problem
 ok 65 - detect too small
 ok 66 - detect bad signature
 ok 67 - detect bad version
@@ -15994,14 +16002,7 @@ ok 14 - write progress off for redirected stderr
 ok 15 - write force progress on for stderr
 ok 16 - write with the --no-progress option
 ok 17 - add more packs
-not ok 18 - check normal git operations: mixed mode (two packs + extra)
-#	
-#			midx_git_two_modes "rev-list --objects --all" &&
-#			midx_git_two_modes "log --raw" &&
-#			midx_git_two_modes "count-objects --verbose" &&
-#			midx_git_two_modes "cat-file --batch-all-objects --batch-check" &&
-#			midx_git_two_modes "cat-file --batch-all-objects --batch-check --unordered" sorted
-#		
+ok 18 - check normal git operations: mixed mode (two packs + extra)
 ok 19 - write midx with twelve packs
 ok 20 - check normal git operations: twelve packs
 ok 21 - multi-pack-index *.rev cleanup with --object-dir
@@ -16059,7 +16060,7 @@ ok 72 - repack --batch-size=<large> repacks everything
 ok 73 - load reverse index when missing .idx, .pack
 ok 74 - usage shown without sub-command
 ok 75 - complains when run outside of a repository
-# failed 1 among 75 test(s)
+# passed all 75 test(s)
 1..75
 *** t5320-delta-islands.sh ***
 ok 1 - setup commits
@@ -18041,11 +18042,11 @@ ok 4 - push --signed fails with a receiver without push certificate support
 ok 5 - push --signed=1 is accepted
 ok 6 # skip no certificate for a signed push with no update (missing GPG)
 ok 7 # skip signed push sends push certificate (missing GPG)
-ok 8 # skip ssh signed push sends push certificate (missing GPGSSH)
+ok 8 - ssh signed push sends push certificate
 ok 9 # skip inconsistent push options in signed push not allowed (missing GPG)
 ok 10 # skip fail without key and heed user.signingkey (missing GPG)
 ok 11 # skip fail without key and heed user.signingkey x509 (missing GPGSM)
-ok 12 # skip fail without key and heed user.signingkey ssh (missing GPGSSH)
+ok 12 - fail without key and heed user.signingkey ssh
 ok 13 # skip failed atomic push does not execute GPG (missing GPG)
 # passed all 13 test(s)
 1..13
@@ -18077,7 +18078,7 @@ ok 8 - fetch something upstream has but hidden by clients shallow boundaries
 ok 9 - fetch that requires changes in .git/shallow is filtered
 ok 10 - fetch --update-shallow
 ok 11 - fetch --update-shallow (with fetch.writeCommitGraph)
-ok 12 # skip shallow fetch from a read-only repo (missing SANITY of POSIXPERM,SANITY)
+ok 12 - shallow fetch from a read-only repo
 ok 13 - .git/shallow is edited by repack
 # passed all 13 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
@@ -20352,17 +20353,17 @@ ok 3 - log and ls-files in .git directory
 *** t6200-fmt-merge-msg.sh ***
 ok 1 - setup
 ok 2 # skip set up a signed tag (missing GPG)
-ok 3 # skip created ssh signed commit and tag (missing GPGSSH)
-ok 4 # skip create signed tags with keys having defined lifetimes (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
+ok 3 - created ssh signed commit and tag
+ok 4 - create signed tags with keys having defined lifetimes
 ok 5 - message for merging local branch
 ok 6 # skip message for merging local tag signed by good key (missing GPG)
 ok 7 # skip message for merging local tag signed by unknown key (missing GPG)
-ok 8 # skip message for merging local tag signed by good ssh key (missing GPGSSH)
-ok 9 # skip message for merging local tag signed by unknown ssh key (missing GPGSSH)
-ok 10 # skip message for merging local tag signed by expired ssh key (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 11 # skip message for merging local tag signed by not yet valid ssh key (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 12 # skip message for merging local tag signed by valid timeboxed ssh key (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 13 # skip message for merging local tag signed by invalid timeboxed ssh key (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
+ok 8 - message for merging local tag signed by good ssh key
+ok 9 - message for merging local tag signed by unknown ssh key
+ok 10 - message for merging local tag signed by expired ssh key
+ok 11 - message for merging local tag signed by not yet valid ssh key
+ok 12 - message for merging local tag signed by valid timeboxed ssh key
+ok 13 - message for merging local tag signed by invalid timeboxed ssh key
 ok 14 - message for merging external branch
 ok 15 - [merge] summary/log configuration
 ok 16 - setup FETCH_HEAD
@@ -22140,19 +22141,19 @@ ok 15 # skip verifying a forged tag with --format should fail silently (missing 
 # passed all 15 test(s)
 1..15
 *** t7031-verify-tag-signed-ssh.sh ***
-ok 1 # skip create signed tags ssh (missing GPGSSH)
-ok 2 # skip create signed tags with keys having defined lifetimes (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 3 # skip verify and show ssh signatures (missing GPGSSH)
-ok 4 # skip verify-tag exits failure on expired signature key (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 5 # skip verify-tag exits failure on not yet valid signature key (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 6 # skip verify-tag succeeds with tag date and key validity matching (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 7 # skip verify-tag failes with tag date outside of key validity (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 8 # skip detect fudged ssh signature (missing GPGSSH)
-ok 9 # skip verify ssh signatures with --raw (missing GPGSSH)
-ok 10 # skip verify signatures with --raw ssh (missing GPGSSH)
-ok 11 # skip verify multiple tags ssh (missing GPGSSH)
-ok 12 # skip verifying tag with --format - ssh (missing GPGSSH)
-ok 13 # skip verifying a forged tag with --format should fail silently - ssh (missing GPGSSH)
+ok 1 - create signed tags ssh
+ok 2 - create signed tags with keys having defined lifetimes
+ok 3 - verify and show ssh signatures
+ok 4 - verify-tag exits failure on expired signature key
+ok 5 - verify-tag exits failure on not yet valid signature key
+ok 6 - verify-tag succeeds with tag date and key validity matching
+ok 7 - verify-tag failes with tag date outside of key validity
+ok 8 - detect fudged ssh signature
+ok 9 - verify ssh signatures with --raw
+ok 10 - verify signatures with --raw ssh
+ok 11 - verify multiple tags ssh
+ok 12 - verifying tag with --format - ssh
+ok 13 - verifying a forged tag with --format should fail silently - ssh
 # passed all 13 test(s)
 1..13
 *** t7060-wtstatus.sh ***
@@ -22628,11 +22629,11 @@ ok 24 - clean.requireForce
 ok 25 - clean.requireForce and -n
 ok 26 - clean.requireForce and -f
 ok 27 - core.excludesfile
-ok 28 # skip removal failure (missing SANITY)
+ok 28 - removal failure
 ok 29 - nested git work tree
 ok 30 - should clean things that almost look like git but are not
 ok 31 - should not clean submodules
-ok 32 # skip should avoid cleaning possible submodules (missing SANITY of POSIXPERM,SANITY)
+ok 32 - should avoid cleaning possible submodules
 ok 33 - nested (empty) git should be kept
 ok 34 - nested bare repositories should be cleaned
 not ok 35 - nested (empty) bare repositories should be cleaned even when in .git # TODO known breakage
@@ -22642,7 +22643,7 @@ ok 38 - giving path to nested .git will not remove it
 ok 39 - giving path to nested .git/ will NOT remove contents
 ok 40 - force removal of nested git work tree
 ok 41 - git clean -e
-ok 42 # skip git clean -d with an unreadable empty directory (missing SANITY)
+ok 42 - git clean -d with an unreadable empty directory
 ok 43 - git clean -d respects pathspecs (dir is prefix of pathspec)
 ok 44 - git clean -d respects pathspecs (pathspec is prefix of dir)
 ok 45 - git clean -d skips untracked dirs containing ignored files
@@ -23571,7 +23572,7 @@ ok 62 - status submodule summary (clean submodule): commit
 ok 63 - status -s submodule summary (clean submodule)
 ok 64 - status -z implies porcelain
 ok 65 - commit --dry-run submodule summary (--amend)
-ok 66 # skip status succeeds in a read-only repository (missing SANITY of POSIXPERM,SANITY)
+ok 66 - status succeeds in a read-only repository
 ok 67 - --ignore-submodules=untracked suppresses submodules with untracked content
 ok 68 - .gitmodules ignore=untracked suppresses submodules with untracked content
 ok 69 - .git/config ignore=untracked suppresses submodules with untracked content
@@ -23781,7 +23782,7 @@ ok 38 - in-place editing with basic patch
 ok 39 - in-place editing with additional trailer
 ok 40 - in-place editing on stdin disallowed
 ok 41 - in-place editing on non-existing file
-ok 42 # skip in-place editing doesn't clobber original file on error (missing SANITY of POSIXPERM,SANITY)
+ok 42 - in-place editing doesn't clobber original file on error
 ok 43 - using "where = before"
 ok 44 - overriding configuration with "--where after"
 ok 45 - using "where = before" with "--no-where"
@@ -23961,36 +23962,37 @@ ok 11 - error conditions
 # passed all 11 test(s)
 1..11
 *** t7528-signed-commit-ssh.sh ***
-ok 1 # skip create signed commits (missing GPGSSH)
-ok 2 # skip sign commits using literal public keys with ssh-agent (missing GPGSSH)
-ok 3 # skip create signed commits with keys having defined lifetimes (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 4 # skip verify and show signatures (missing GPGSSH)
-ok 5 # skip verify-commit exits failure on untrusted signature (missing GPGSSH)
-ok 6 # skip verify-commit exits failure on expired signature key (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 7 # skip verify-commit exits failure on not yet valid signature key (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 8 # skip verify-commit succeeds with commit date and key validity matching (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 9 # skip verify-commit exits failure with commit date outside of key validity (missing GPGSSH_VERIFYTIME,GPGSSH of GPGSSH,GPGSSH_VERIFYTIME)
-ok 10 # skip verify-commit exits success with matching minTrustLevel (missing GPGSSH)
-ok 11 # skip verify-commit exits success with low minTrustLevel (missing GPGSSH)
-ok 12 # skip verify-commit exits failure with high minTrustLevel (missing GPGSSH)
-ok 13 # skip verify signatures with --raw (missing GPGSSH)
-ok 14 # skip proper header is used for hash algorithm (missing GPGSSH)
-ok 15 # skip show signed commit with signature (missing GPGSSH)
-ok 16 # skip detect fudged signature (missing GPGSSH)
-ok 17 # skip detect fudged signature with NUL (missing GPGSSH)
-ok 18 # skip amending already signed commit (missing GPGSSH)
-ok 19 # skip show good signature with custom format (missing GPGSSH)
-ok 20 # skip show bad signature with custom format (missing GPGSSH)
-ok 21 # skip show untrusted signature with custom format (missing GPGSSH)
-ok 22 # skip show untrusted signature with undefined trust level (missing GPGSSH)
-ok 23 # skip show untrusted signature with ultimate trust level (missing GPGSSH)
-ok 24 # skip show lack of signature with custom format (missing GPGSSH)
-ok 25 # skip log.showsignature behaves like --show-signature (missing GPGSSH)
-ok 26 # skip check config gpg.format values (missing GPGSSH)
-ok 27 # skip detect fudged commit with double signature (TODO) (missing GPGSSH)
-ok 28 # skip show double signature with custom format (TODO) (missing GPGSSH)
-ok 29 # skip verify-commit verifies multiply signed commits (TODO) (missing GPGSSH)
-# passed all 29 test(s)
+ok 1 - create signed commits
+ok 2 - sign commits using literal public keys with ssh-agent
+ok 3 - create signed commits with keys having defined lifetimes
+ok 4 - verify and show signatures
+ok 5 - verify-commit exits failure on untrusted signature
+ok 6 - verify-commit exits failure on expired signature key
+ok 7 - verify-commit exits failure on not yet valid signature key
+ok 8 - verify-commit succeeds with commit date and key validity matching
+ok 9 - verify-commit exits failure with commit date outside of key validity
+ok 10 - verify-commit exits success with matching minTrustLevel
+ok 11 - verify-commit exits success with low minTrustLevel
+ok 12 - verify-commit exits failure with high minTrustLevel
+ok 13 - verify signatures with --raw
+ok 14 - proper header is used for hash algorithm
+ok 15 - show signed commit with signature
+ok 16 - detect fudged signature
+ok 17 - detect fudged signature with NUL
+ok 18 - amending already signed commit
+ok 19 - show good signature with custom format
+ok 20 - show bad signature with custom format
+ok 21 - show untrusted signature with custom format
+ok 22 - show untrusted signature with undefined trust level
+ok 23 - show untrusted signature with ultimate trust level
+ok 24 - show lack of signature with custom format
+ok 25 - log.showsignature behaves like --show-signature
+ok 26 - check config gpg.format values
+not ok 27 - detect fudged commit with double signature (TODO) # TODO known breakage
+not ok 28 - show double signature with custom format (TODO) # TODO known breakage
+not ok 29 - verify-commit verifies multiply signed commits (TODO) # TODO known breakage
+# still have 3 known breakage(s)
+# passed all remaining 26 test(s)
 1..29
 *** t7600-merge.sh ***
 ok 1 - setup
@@ -26705,13 +26707,13 @@ ok 66 - prompt - hide if pwd ignored - inside gitdir
 # passed all 66 test(s)
 1..66
 
-missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !RUNS_COMMANDS_FROM_PWD ADD_OUT AUTOIDENT CASE_INSENSITIVE_FS COMMIT_OUT EXPENSIVE GPG GPGSM GPGSSH GPGSSH_VERIFYTIME JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SANITY SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK TTY UPDATE_INDEX_OUT UTF8_NFD_TO_NFC WINDOWS WRITE_TREE_OUT
+missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !RUNS_COMMANDS_FROM_PWD AUTOIDENT CASE_INSENSITIVE_FS EXPENSIVE GETCWD_IGNORES_PERMS GPG GPGSM JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK TTY UTF8_NFD_TO_NFC WINDOWS
 
 
-failed test(s): t0204 t1700 t2501 t3200 t4150 t5319
+failed test(s): t0204 t1700 t2501 t3200 t4150 t4202
 
 fixed   1
-success 22938
+success 23026
 failed  9
-broken  211
-total   23670
+broken  214
+total   23673
