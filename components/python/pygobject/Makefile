@@ -11,19 +11,21 @@
 #
 # Copyright 2013-2016 Alexander Pyhalov
 #
-
+BUILD_BITS=	32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pygobject
 COMPONENT_VERSION=	2.28.6
-COMPONENT_REVISION=	6
-COMPONENT_PROJECT_URL=	http://www.gnome.org
+COMPONENT_REVISION=	7
+COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SUMMARY=	Python bindings for GObject
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:d464699db159f72e41a8d629ab44b7fef6cf8d746e51f576b6fbc4ce317239d3
+COMPONENT_ARCHIVE_HASH= sha256:d464699db159f72e41a8d629ab44b7fef6cf8d746e51f576b6fbc4ce317239d3
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.28/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_LICENSE=	LGPL v2.1
 
 PYTHON_VERSIONS= 2.7
 
@@ -46,15 +48,14 @@ $(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -f -i)
 
-CFLAGS += $(gcc_C99_ENABLE)
+#CFLAGS += $(gcc_C99_ENABLE)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--without-ffi
@@ -68,13 +69,6 @@ CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 CONFIGURE_ENV+=         PYTHON=$(PYTHON)
 CONFIGURE_ENV+=         am_cv_python_pythondir="$(am_cv_python_pythondir)"
 CONFIGURE_ENV+=         am_cv_python_pyexecdir="$(am_cv_python_pyexecdir)"
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/cairo
