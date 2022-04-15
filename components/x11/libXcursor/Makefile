@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXcursor
-COMPONENT_VERSION= 1.2.0
+COMPONENT_VERSION= 1.2.1
 COMPONENT_FMRI=    x11/library/libxcursor
 COMPONENT_SUMMARY= libXcursor - Client-side cursor loading library
-COMPONENT_ARCHIVE_HASH= \
-  sha256:3ad3e9f8251094af6fe8cb4afcf63e28df504d46bfa5a5529db74a505d628782
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:46c143731610bafd2070159a844571b287ac26192537d047a39df06155492104
 
 include $(WS_MAKE_RULES)/common.mk
 
