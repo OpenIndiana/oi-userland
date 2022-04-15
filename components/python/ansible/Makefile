@@ -10,7 +10,7 @@
 
 #
 # Copyright 2018 Alexander Pyhalov
-# Copyright 2021 Andreas Wacknitz
+# Copyright 2021, 2022 Andreas Wacknitz
 #
 
 BUILD_STYLE=	setup.py
@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ansible
 COMPONENT_VERSION=	2.9.27
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Ansible is a radically simple IT automation system
 COMPONENT_PROJECT_URL=	https://ansible.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -31,27 +31,35 @@ COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
-PYTHON_VERSION=		3.7
-PYTHON_VERSIONS=	3.7
+PYTHON_VERSION=		3.9
+PYTHON_VERSIONS=	3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =    $(COMPONENT_SRC)/test
 COMPONENT_TEST_CMD =    $(PYTHON) /usr/bin/py.test-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS =
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/in [0-9]*\.[0-9]*s //"' \
+	'-n' \
+	'-e "/=========/p"' \
+	'-e "/---------/p"' \
+	'-e "/collected/p"' \
+	'-e "/ERROR /p"' \
+	'-e "/HINT/p"'
 
 # Some tests still fail because of missing modules like validate_modules:
 # Required for tests
-REQUIRED_PACKAGES += library/python/flaky-37
-REQUIRED_PACKAGES += library/python/hypothesis-37
-REQUIRED_PACKAGES += library/python/mock-37
-REQUIRED_PACKAGES += library/python/pluggy-37
-REQUIRED_PACKAGES += library/python/py-37
-REQUIRED_PACKAGES += library/python/pyparsing-37
-REQUIRED_PACKAGES += library/python/pytest-37
-REQUIRED_PACKAGES += library/python/pytest-benchmark-37
-REQUIRED_PACKAGES += library/python/pytest-reporter-37
-REQUIRED_PACKAGES += library/python/sortedcontainers-37
+REQUIRED_PACKAGES += library/python/flaky-39
+REQUIRED_PACKAGES += library/python/hypothesis-39
+REQUIRED_PACKAGES += library/python/mock-39
+REQUIRED_PACKAGES += library/python/pluggy-39
+REQUIRED_PACKAGES += library/python/py-39
+REQUIRED_PACKAGES += library/python/pyparsing-39
+REQUIRED_PACKAGES += library/python/pytest-39
+REQUIRED_PACKAGES += library/python/pytest-benchmark-39
+REQUIRED_PACKAGES += library/python/pytest-reporter-39
+REQUIRED_PACKAGES += library/python/sortedcontainers-39
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
