@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           listres
-COMPONENT_VERSION=        1.0.4
-COMPONENT_REVISION=       1
+COMPONENT_VERSION=        1.0.5
 COMPONENT_FMRI=           x11/listres
 COMPONENT_SUMMARY=  listres - Xt widget resource list utility
-COMPONENT_ARCHIVE_HASH= \
-  sha256:6a1229f478796e141d6658762f432ebbe1f6083b27550847d52239b3f7ec2b10
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:ce2a00bbe7d2eb8d75177006f343c80443a22d52570c48a43c6fe70ea074dc9d
 
 include $(WS_MAKE_RULES)/common.mk
 
