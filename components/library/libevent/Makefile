@@ -22,49 +22,36 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libevent
-COMPONENT_VERSION=	1.4.14b
-COMPONENT_REVISION=	2
-IPS_COMPONENT_VERSION=	1.4.14.2
-COMPONENT_PROJECT_URL=	http://monkey.org/~provos/libevent/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-stable
+COMPONENT_VERSION=	1.4.15
+HUMAN_VERSION=		1.4.15
+COMPONENT_SUMMARY=	libevent - an event notification library
+COMPONENT_PROJECT_URL=	https://libevent.org/
+COMPONENT_SRC=		$(COMPONENT_NAME)-release-$(HUMAN_VERSION)-stable
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:afa61b476a222ba43fc7cca2d24849ab0bbd940124400cb699915d3c60e46301
-COMPONENT_ARCHIVE_URL=	http://cloud.github.com/downloads/libevent/libevent/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libevent
+COMPONENT_ARCHIVE_HASH= sha256:e9a32238a98954081d7ed9918d8f799eb4c743fd570749c0721585140dd5de21
+COMPONENT_ARCHIVE_URL=	https://github.com/libevent/libevent/archive/refs/tags/release-$(HUMAN_VERSION)-stable.tar.gz
+COMPONENT_FMRI=		library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_LICENSE=	BSD
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION =  \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( \
+	$(CLONEY) $(SOURCE_DIR) $(@D) && \
+	cd $(SOURCE_DIR) && NOCONFIGURE=1 ./autogen.sh )
 
-#The original manpage is in a format that the Solaris man command does
-#not understand. Hence it has been manually converted.
+# The original manpage is in a format that the Solaris man command does
+# not understand. Hence it has been manually converted.
 #
-#List of files from the original package that are not being delivered
-#
-#/usr/bin/event_rpcgen.py
+# List of files from the original package that are not being delivered
+# /usr/bin/event_rpcgen.py
 
 CONFIGURE_OPTIONS	+= --disable-static
-
-# Setup event-config.h file to support 32 & 64 bit.
-#
-COMPONENT_POST_INSTALL_ACTION= \
-            ($(MV) $(PROTO_DIR)/usr/include/event-config.h $(PROTO_DIR)/usr/include/event-config-$(BITS).h )
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-# this isn't really true - there _are_ tests, but we can't run
-# them because we delete things that the tests want (see above).
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
