@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	DBI-PostgreSQL
 COMPONENT_VERSION=	3.10.0
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY= 	PostgreSQL database driver for the DBI module
 COMPONENT_FMRI=		library/perl-5/postgres-dbi
 COMPONENT_CLASSIFICATION=Development/Perl
