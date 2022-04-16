@@ -20,19 +20,18 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
 COMPONENT_VERSION=	15.1.4
-COMPONENT_REVISION=	8
+COMPONENT_REVISION=	9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:8ce3ffbff473410ae0ed0472adea22b01a20f9ec784ebfec51393282028acc16
-COMPONENT_PROJECT_URL=	http://www.asterisk.org
-COMPONENT_ARCHIVE_URL=	http://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.asterisk.org
+COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
 TEST_TARGET=$(NO_TESTS) 
 
 include $(WS_MAKE_RULES)/common.mk
-
 
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 
