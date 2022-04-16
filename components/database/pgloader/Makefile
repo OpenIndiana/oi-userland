@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgloader
 COMPONENT_VERSION= 	3.6.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	Data loading tool for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).zip
