@@ -11,12 +11,13 @@
 #
 # Copyright 2016 Alexander Pyhalov
 #
-
+BUILD_BITS= 32
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gammu
 COMPONENT_VERSION=	1.37.4
-COMPONENT_REVISION=	7
+COMPONENT_REVISION=	8
 COMPONENT_PROJECT_URL=	https://wammu.eu/gammu/
 COMPONENT_SUMMARY=	Command line utility to control your phone
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,9 +30,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_FMRI=		utility/gammu
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(MYSQL_HOME)/bin:$(PG_HOME)/bin:/usr/gnu/bin:/usr/bin
 
@@ -51,15 +51,9 @@ CMAKE_OPTIONS +=	-DWITH_BACKUP=OFF
 CMAKE_OPTIONS +=	-DBUILD_SHARED_LIBS=ON
 CMAKE_OPTIONS +=	-DINSTALL_GNAPPLET=OFF
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
 # Build dependencies
 REQUIRED_PACKAGES += utility/bash-completion
-REQUIRED_PACKAGES += database/postgres-94/developer
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
