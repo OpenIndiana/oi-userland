@@ -40,10 +40,10 @@ file files/FontStates.html path=usr/lib/help/auths/locale/C/FontStates.html
 
 file files/libfontconfig.3lib path=usr/share/man/man3lib/libfontconfig.3lib
 
-file usr/share/man/man5/fonts-conf.5 path=usr/share/man/man4/fonts.conf.4
-
 dir group=bin mode=0755 owner=root path=var/cache/fontconfig
 
+file path=etc/fonts/conf.avail/05-reset-dirs-sample.conf
+file path=etc/fonts/conf.avail/09-autohint-if-no-hinting.conf
 file path=etc/fonts/conf.avail/10-autohint.conf
 file path=etc/fonts/conf.avail/10-hinting-full.conf
 file path=etc/fonts/conf.avail/10-hinting-medium.conf
@@ -62,9 +62,11 @@ file path=etc/fonts/conf.avail/11-lcdfilter-light.conf
 file path=etc/fonts/conf.avail/20-unhint-small-vera.conf
 file path=etc/fonts/conf.avail/25-unhint-nonlatin.conf
 file path=etc/fonts/conf.avail/30-metric-aliases.conf
+file path=etc/fonts/conf.avail/35-lang-normalize.conf
 file path=etc/fonts/conf.avail/40-nonlatin.conf
 file path=etc/fonts/conf.avail/45-generic.conf
 file path=etc/fonts/conf.avail/45-latin.conf
+file path=etc/fonts/conf.avail/48-spacing.conf
 file path=etc/fonts/conf.avail/49-sansserif.conf
 file path=etc/fonts/conf.avail/50-user.conf
 file path=etc/fonts/conf.avail/51-local.conf
@@ -78,6 +80,10 @@ file path=etc/fonts/conf.avail/70-no-bitmaps.conf
 file path=etc/fonts/conf.avail/70-yes-bitmaps.conf
 file path=etc/fonts/conf.avail/80-delicious.conf
 file path=etc/fonts/conf.avail/90-synthetic.conf
+link path=etc/fonts/conf.d/05-reset-dirs-sample.conf \
+    target=../conf.avail/05-reset-dirs-sample.conf
+link path=etc/fonts/conf.d/09-autohint-if-no-hinting.conf \
+    target=../conf.avail/09-autohint-if-no-hinting.conf
 link path=etc/fonts/conf.d/10-autohint.conf \
     target=../conf.avail/10-autohint.conf
 link path=etc/fonts/conf.d/10-hinting-full.conf \
@@ -114,10 +120,13 @@ link path=etc/fonts/conf.d/25-unhint-nonlatin.conf \
     target=../conf.avail/25-unhint-nonlatin.conf
 link path=etc/fonts/conf.d/30-metric-aliases.conf \
     target=../conf.avail/30-metric-aliases.conf
+link path=etc/fonts/conf.d/35-lang-normalize.conf \
+    target=../conf.avail/35-lang-normalize.conf
 link path=etc/fonts/conf.d/40-nonlatin.conf \
     target=../conf.avail/40-nonlatin.conf
 link path=etc/fonts/conf.d/45-generic.conf target=../conf.avail/45-generic.conf
 link path=etc/fonts/conf.d/45-latin.conf target=../conf.avail/45-latin.conf
+link path=etc/fonts/conf.d/48-spacing.conf target=../conf.avail/48-spacing.conf
 link path=etc/fonts/conf.d/49-sansserif.conf \
     target=../conf.avail/49-sansserif.conf
 link path=etc/fonts/conf.d/50-user.conf target=../conf.avail/50-user.conf
@@ -132,9 +141,8 @@ link path=etc/fonts/conf.d/65-nonlatin.conf \
 link path=etc/fonts/conf.d/69-unifont.conf target=../conf.avail/69-unifont.conf
 link path=etc/fonts/conf.d/70-no-bitmaps.conf \
     target=../conf.avail/70-no-bitmaps.conf
-# Disable bitmaps by default
-#link path=etc/fonts/conf.d/70-yes-bitmaps.conf \
-#    target=../conf.avail/70-yes-bitmaps.conf
+link path=etc/fonts/conf.d/70-yes-bitmaps.conf \
+    target=../conf.avail/70-yes-bitmaps.conf
 link path=etc/fonts/conf.d/80-delicious.conf \
     target=../conf.avail/80-delicious.conf
 link path=etc/fonts/conf.d/90-synthetic.conf \
@@ -226,6 +234,7 @@ file path=usr/share/doc/fontconfig/fontconfig-devel/fcconfiggetcachedirs.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcconfiggetconfigdirs.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcconfiggetconfigfiles.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcconfiggetcurrent.html
+file path=usr/share/doc/fontconfig/fontconfig-devel/fcconfiggetfilename.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcconfiggetfontdirs.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcconfiggetfonts.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcconfiggetrescaninterval.html
@@ -353,6 +362,7 @@ file path=usr/share/doc/fontconfig/fontconfig-devel/fcrangecreateinteger.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcrangedestroy.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcrangegetdouble.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcstrbasename.html
+file path=usr/share/doc/fontconfig/fontconfig-devel/fcstrbuildfilename.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcstrcmp.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcstrcmpignorecase.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcstrcopy.html
@@ -463,6 +473,7 @@ file path=usr/share/man/man3/FcConfigGetCacheDirs.3
 file path=usr/share/man/man3/FcConfigGetConfigDirs.3
 file path=usr/share/man/man3/FcConfigGetConfigFiles.3
 file path=usr/share/man/man3/FcConfigGetCurrent.3
+file path=usr/share/man/man3/FcConfigGetFilename.3
 file path=usr/share/man/man3/FcConfigGetFontDirs.3
 file path=usr/share/man/man3/FcConfigGetFonts.3
 file path=usr/share/man/man3/FcConfigGetRescanInterval.3
@@ -590,6 +601,7 @@ file path=usr/share/man/man3/FcRangeCreateInteger.3
 file path=usr/share/man/man3/FcRangeDestroy.3
 file path=usr/share/man/man3/FcRangeGetDouble.3
 file path=usr/share/man/man3/FcStrBasename.3
+file path=usr/share/man/man3/FcStrBuildFilename.3
 file path=usr/share/man/man3/FcStrCmp.3
 file path=usr/share/man/man3/FcStrCmpIgnoreCase.3
 file path=usr/share/man/man3/FcStrCopy.3
