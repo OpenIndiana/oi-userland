@@ -20,8 +20,7 @@
 #
 # Copyright (c) 2015-2017 Aurelien Larcher. All rights reserved.
 #
-#BUILD_BITS= 32_and_64
-BUILD_BITS= 64
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsamplerate
