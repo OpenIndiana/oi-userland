@@ -1,0 +1,412 @@
+make[1]: Entering directory '$(@D)'
+Making check in M4
+make[2]: Entering directory '$(@D)/M4'
+make[2]: Nothing to be done for 'check'.
+make[2]: Leaving directory '$(@D)/M4'
+Making check in src
+make[2]: Entering directory '$(@D)/src'
+make[2]: Leaving directory '$(@D)/src'
+Making check in doc
+make[2]: Entering directory '$(@D)/doc'
+make[2]: Nothing to be done for 'check'.
+make[2]: Leaving directory '$(@D)/doc'
+Making check in examples
+make[2]: Entering directory '$(@D)/examples'
+make[2]: Nothing to be done for 'check'.
+make[2]: Leaving directory '$(@D)/examples'
+Making check in tests
+make[2]: Entering directory '$(@D)/tests'
+date
+Sun Apr 17 14:14:51 CEST 2022
+uname -a
+SunOS skoll 5.11 illumos-fb29dee06f i86pc i386 i86pc
+./misc_test
+
+    version : libsamplerate-0.1.9 (c) 2002-2008 Erik de Castro Lopo
+
+    name_test :
+	Name 0 : Best Sinc Interpolator
+	Desc 0 : Band limited sinc interpolation, best quality, 144dB SNR, 96% BW.
+	Name 1 : Medium Sinc Interpolator
+	Desc 1 : Band limited sinc interpolation, medium quality, 121dB SNR, 90% BW.
+	Name 2 : Fastest Sinc Interpolator
+	Desc 2 : Band limited sinc interpolation, fastest, 97dB SNR, 80% BW.
+	Name 3 : ZOH Interpolator
+	Desc 3 : Zero order hold interpolator, very fast, poor quality.
+	Name 4 : Linear Interpolator
+	Desc 4 : Linear interpolator, very fast, poor quality.
+
+    error_test :
+	0  : No error.
+	1  : Malloc failed.
+	2  : SRC_STATE pointer is NULL.
+	3  : SRC_DATA pointer is NULL.
+	4  : SRC_DATA->data_out or SRC_DATA->data_in is NULL.
+	5  : Internal error. No private data.
+	6  : SRC ratio outside [1/256, 256] range.
+	7  : Internal error. No process pointer.
+	8  : Internal error. SHIFT_BITS too large.
+	9  : Internal error. Filter length too large.
+	10 : Bad converter number.
+	11 : Channel count must be >= 1.
+	12 : Internal error. Bad buffer length. Please report this.
+	13 : Internal error. Input data / internal buffer size difference. Please report this.
+	14 : Internal error. Private pointer is NULL. Please report this.
+	15 : src_process() called without reset after end_of_input.
+	16 : Input and output data arrays overlap.
+	17 : Supplied callback function pointer is NULL.
+	18 : Calling mode differs from initialisation mode (ie process v callback).
+	19 : Callback function pointer is NULL in src_callback_read ().
+	20 : This converter only allows constant conversion ratios.
+	21 : Internal error : Bad length in prepare_data ().
+	22 : Error : Someone is trampling on my internal state.
+	23 : Placeholder. No error defined for this error number.
+
+    src_ratio_test (SRC ratio must be in range [1/256, 256]):
+	 SRC ratio (  0.00390) : fail ................... ok
+	 SRC ratio (  0.00391) : pass ................... ok
+	 SRC ratio (  1.00000) : pass ................... ok
+	 SRC ratio (256.00000) : pass ................... ok
+	 SRC ratio (256.10000) : fail ................... ok
+	 SRC ratio ( -1.00000) : fail ................... ok
+
+    zero_input_test (ZOH Interpolator          ) ........ ok
+    zero_input_test (Linear Interpolator       ) ........ ok
+    zero_input_test (Fastest Sinc Interpolator ) ........ ok
+
+./termination_test
+
+    Zero Order Hold interpolator:
+	init_term_test   (SRC ratio =  0.9999) .......... ok
+	init_term_test   (SRC ratio =  1.0001) .......... ok
+	init_term_test   (SRC ratio =  0.7890) .......... ok
+	init_term_test   (SRC ratio =  1.2000) .......... ok
+	init_term_test   (SRC ratio =  0.3333) .......... ok
+	init_term_test   (SRC ratio =  3.1000) .......... ok
+	init_term_test   (SRC ratio =  0.1250) .......... ok
+	init_term_test   (SRC ratio =  8.0000) .......... ok
+	init_term_test   (SRC ratio =  0.0999) .......... ok
+	init_term_test   (SRC ratio =  9.9900) .......... ok
+	init_term_test   (SRC ratio =  0.1000) .......... ok
+	init_term_test   (SRC ratio = 10.0000) .......... ok
+
+	stream_test      (SRC ratio =  0.9999) .......... ok
+	stream_test      (SRC ratio =  1.0001) .......... ok
+	stream_test      (SRC ratio =  0.7890) .......... ok
+	stream_test      (SRC ratio =  1.2000) .......... ok
+	stream_test      (SRC ratio =  0.3333) .......... ok
+	stream_test      (SRC ratio =  3.1000) .......... ok
+	stream_test      (SRC ratio =  0.1250) .......... ok
+	stream_test      (SRC ratio =  8.0000) .......... ok
+	stream_test      (SRC ratio =  0.0999) .......... ok
+	stream_test      (SRC ratio =  9.9900) .......... ok
+	stream_test      (SRC ratio =  0.1000) .......... ok
+	stream_test      (SRC ratio = 10.0000) .......... ok
+
+    Linear interpolator:
+	init_term_test   (SRC ratio =  0.9999) .......... ok
+	init_term_test   (SRC ratio =  1.0001) .......... ok
+	init_term_test   (SRC ratio =  0.7890) .......... ok
+	init_term_test   (SRC ratio =  1.2000) .......... ok
+	init_term_test   (SRC ratio =  0.3333) .......... ok
+	init_term_test   (SRC ratio =  3.1000) .......... ok
+	init_term_test   (SRC ratio =  0.1250) .......... ok
+	init_term_test   (SRC ratio =  8.0000) .......... ok
+	init_term_test   (SRC ratio =  0.0999) .......... ok
+	init_term_test   (SRC ratio =  9.9900) .......... ok
+	init_term_test   (SRC ratio =  0.1000) .......... ok
+	init_term_test   (SRC ratio = 10.0000) .......... ok
+
+	stream_test      (SRC ratio =  0.9999) .......... ok
+	stream_test      (SRC ratio =  1.0001) .......... ok
+	stream_test      (SRC ratio =  0.7890) .......... ok
+	stream_test      (SRC ratio =  1.2000) .......... ok
+	stream_test      (SRC ratio =  0.3333) .......... ok
+	stream_test      (SRC ratio =  3.1000) .......... ok
+	stream_test      (SRC ratio =  0.1250) .......... ok
+	stream_test      (SRC ratio =  8.0000) .......... ok
+	stream_test      (SRC ratio =  0.0999) .......... ok
+	stream_test      (SRC ratio =  9.9900) .......... ok
+	stream_test      (SRC ratio =  0.1000) .......... ok
+	stream_test      (SRC ratio = 10.0000) .......... ok
+
+    Sinc interpolator:
+	init_term_test   (SRC ratio =  0.9999) .......... ok
+	init_term_test   (SRC ratio =  1.0001) .......... ok
+	init_term_test   (SRC ratio =  0.7890) .......... ok
+	init_term_test   (SRC ratio =  1.2000) .......... ok
+	init_term_test   (SRC ratio =  0.3333) .......... ok
+	init_term_test   (SRC ratio =  3.1000) .......... ok
+	init_term_test   (SRC ratio =  0.1250) .......... ok
+	init_term_test   (SRC ratio =  8.0000) .......... ok
+	init_term_test   (SRC ratio =  0.0999) .......... ok
+	init_term_test   (SRC ratio =  9.9900) .......... ok
+	init_term_test   (SRC ratio =  0.1000) .......... ok
+	init_term_test   (SRC ratio = 10.0000) .......... ok
+
+	stream_test      (SRC ratio =  0.9999) .......... ok
+	stream_test      (SRC ratio =  1.0001) .......... ok
+	stream_test      (SRC ratio =  0.7890) .......... ok
+	stream_test      (SRC ratio =  1.2000) .......... ok
+	stream_test      (SRC ratio =  0.3333) .......... ok
+	stream_test      (SRC ratio =  3.1000) .......... ok
+	stream_test      (SRC ratio =  0.1250) .......... ok
+	stream_test      (SRC ratio =  8.0000) .......... ok
+	stream_test      (SRC ratio =  0.0999) .......... ok
+	stream_test      (SRC ratio =  9.9900) .......... ok
+	stream_test      (SRC ratio =  0.1000) .......... ok
+	stream_test      (SRC ratio = 10.0000) .......... ok
+
+./callback_hang_test
+
+	callback_hang_test  (ZOH Interpolator            ) ....... ok
+	callback_hang_test  (Linear Interpolator         ) ....... ok
+	callback_hang_test  (Fastest Sinc Interpolator   ) ....... ok
+
+./downsample_test
+
+        downsample_test     (ZOH Interpolator            ) ....... ok
+        downsample_test     (Linear Interpolator         ) ....... ok
+        downsample_test     (Fastest Sinc Interpolator   ) ....... ok
+        downsample_test     (Medium Sinc Interpolator    ) ....... ok
+        downsample_test     (Best Sinc Interpolator      ) ....... ok
+
+./simple_test
+
+    Zero Order Hold interpolator :
+	simple_test      (SRC ratio = 1.0001) ........... ok
+	simple_test      (SRC ratio = 0.0990) ........... ok
+	simple_test      (SRC ratio = 0.1000) ........... ok
+	simple_test      (SRC ratio = 0.3333) ........... ok
+	simple_test      (SRC ratio = 0.7890) ........... ok
+	simple_test      (SRC ratio = 1.9000) ........... ok
+	simple_test      (SRC ratio = 3.1000) ........... ok
+	simple_test      (SRC ratio = 9.9000) ........... ok
+    Linear interpolator :
+	simple_test      (SRC ratio = 1.0001) ........... ok
+	simple_test      (SRC ratio = 0.0990) ........... ok
+	simple_test      (SRC ratio = 0.1000) ........... ok
+	simple_test      (SRC ratio = 0.3333) ........... ok
+	simple_test      (SRC ratio = 0.7890) ........... ok
+	simple_test      (SRC ratio = 1.9000) ........... ok
+	simple_test      (SRC ratio = 3.1000) ........... ok
+	simple_test      (SRC ratio = 9.9000) ........... ok
+    Sinc interpolator :
+	simple_test      (SRC ratio = 1.0001) ........... ok
+	simple_test      (SRC ratio = 0.0990) ........... ok
+	simple_test      (SRC ratio = 0.1000) ........... ok
+	simple_test      (SRC ratio = 0.3333) ........... ok
+	simple_test      (SRC ratio = 0.7890) ........... ok
+	simple_test      (SRC ratio = 1.9000) ........... ok
+	simple_test      (SRC ratio = 3.1000) ........... ok
+	simple_test      (SRC ratio = 9.9000) ........... ok
+
+./callback_test
+
+    Zero Order Hold interpolator :
+	callback_test    (SRC ratio = 1.0000) ........... ok
+	callback_test    (SRC ratio = 0.0990) ........... ok
+	callback_test    (SRC ratio = 0.1000) ........... ok
+	callback_test    (SRC ratio = 0.3333) ........... ok
+	callback_test    (SRC ratio = 0.7890) ........... ok
+	callback_test    (SRC ratio = 1.0001) ........... ok
+	callback_test    (SRC ratio = 1.9000) ........... ok
+	callback_test    (SRC ratio = 3.1000) ........... ok
+	callback_test    (SRC ratio = 9.9000) ........... ok
+    Linear interpolator :
+	callback_test    (SRC ratio = 1.0000) ........... ok
+	callback_test    (SRC ratio = 0.0990) ........... ok
+	callback_test    (SRC ratio = 0.1000) ........... ok
+	callback_test    (SRC ratio = 0.3333) ........... ok
+	callback_test    (SRC ratio = 0.7890) ........... ok
+	callback_test    (SRC ratio = 1.0001) ........... ok
+	callback_test    (SRC ratio = 1.9000) ........... ok
+	callback_test    (SRC ratio = 3.1000) ........... ok
+	callback_test    (SRC ratio = 9.9000) ........... ok
+    Sinc interpolator :
+	callback_test    (SRC ratio = 1.0000) ........... ok
+	callback_test    (SRC ratio = 0.0990) ........... ok
+	callback_test    (SRC ratio = 0.1000) ........... ok
+	callback_test    (SRC ratio = 0.3333) ........... ok
+	callback_test    (SRC ratio = 0.7890) ........... ok
+	callback_test    (SRC ratio = 1.0001) ........... ok
+	callback_test    (SRC ratio = 1.9000) ........... ok
+	callback_test    (SRC ratio = 3.1000) ........... ok
+	callback_test    (SRC ratio = 9.9000) ........... ok
+
+    End of stream test :
+	ZOH Interpolator                      ........... ok
+	Linear Interpolator                   ........... ok
+	Fastest Sinc Interpolator             ........... ok
+
+./reset_test
+
+	process_reset_test  (ZOH Interpolator            ) ....... ok
+	process_reset_test  (Linear Interpolator         ) ....... ok
+	process_reset_test  (Fastest Sinc Interpolator   ) ....... ok
+	callback_reset_test (ZOH Interpolator            ) ....... ok
+	callback_reset_test (Linear Interpolator         ) ....... ok
+	callback_reset_test (Fastest Sinc Interpolator   ) ....... ok
+
+./multi_channel_test
+
+    Zero Order Hold interpolator :
+	simple_test            ( 1 channel ) ............ ok
+	process_test           ( 1 channel ) ............ ok
+	callback_test          ( 1 channel ) ............ ok
+	simple_test            ( 2 channels) ............ ok
+	process_test           ( 2 channels) ............ ok
+	callback_test          ( 2 channels) ............ ok
+	simple_test            ( 3 channels) ............ ok
+	process_test           ( 3 channels) ............ ok
+	callback_test          ( 3 channels) ............ ok
+
+    Linear interpolator :
+	simple_test            ( 1 channel ) ............ ok
+	process_test           ( 1 channel ) ............ ok
+	callback_test          ( 1 channel ) ............ ok
+	simple_test            ( 2 channels) ............ ok
+	process_test           ( 2 channels) ............ ok
+	callback_test          ( 2 channels) ............ ok
+	simple_test            ( 3 channels) ............ ok
+	process_test           ( 3 channels) ............ ok
+	callback_test          ( 3 channels) ............ ok
+
+    Sinc interpolator :
+	simple_test            ( 1 channel ) ............ ok
+	process_test           ( 1 channel ) ............ ok
+	callback_test          ( 1 channel ) ............ ok
+	simple_test            ( 2 channels) ............ ok
+	process_test           ( 2 channels) ............ ok
+	callback_test          ( 2 channels) ............ ok
+	simple_test            ( 3 channels) ............ ok
+	process_test           ( 3 channels) ............ ok
+	callback_test          ( 3 channels) ............ ok
+	simple_test            ( 4 channels) ............ ok
+	process_test           ( 4 channels) ............ ok
+	callback_test          ( 4 channels) ............ ok
+	simple_test            ( 5 channels) ............ ok
+	process_test           ( 5 channels) ............ ok
+	callback_test          ( 5 channels) ............ ok
+	simple_test            ( 6 channels) ............ ok
+	process_test           ( 6 channels) ............ ok
+	callback_test          ( 6 channels) ............ ok
+	simple_test            ( 7 channels) ............ ok
+	process_test           ( 7 channels) ............ ok
+	callback_test          ( 7 channels) ............ ok
+	simple_test            ( 8 channels) ............ ok
+	process_test           ( 8 channels) ............ ok
+	callback_test          ( 8 channels) ............ ok
+	simple_test            ( 9 channels) ............ ok
+	process_test           ( 9 channels) ............ ok
+	callback_test          ( 9 channels) ............ ok
+	simple_test            (10 channels) ............ ok
+	process_test           (10 channels) ............ ok
+	callback_test          (10 channels) ............ ok
+
+./varispeed_test
+
+    Zero Order Hold interpolator    : ok
+    Linear interpolator             : ok
+    Sinc interpolator               : ok
+
+./float_short_test
+
+	float_to_short_test ............................. ok
+	short_to_float_test ............................. ok
+	float_to_int_test ............................... ok
+	int_to_float_test ............................... ok
+
+./snr_bw_test
+
+    Converter 3 : ZOH Interpolator
+    Zero order hold interpolator, very fast, poor quality.
+	Signal-to-Noise Ratio Test 0 : Pass
+	Signal-to-Noise Ratio Test 1 : Pass
+	Signal-to-Noise Ratio Test 2 : Pass
+	Signal-to-Noise Ratio Test 3 : Pass
+	Signal-to-Noise Ratio Test 4 : Pass
+	Signal-to-Noise Ratio Test 5 : Pass
+	Signal-to-Noise Ratio Test 6 : Pass
+	Signal-to-Noise Ratio Test 7 : Pass
+    Worst case Signal-to-Noise Ratio : 10.55 dB.
+    Bandwith test not performed on this converter.
+
+    Converter 4 : Linear Interpolator
+    Linear interpolator, very fast, poor quality.
+	Signal-to-Noise Ratio Test 0 : Pass
+	Signal-to-Noise Ratio Test 1 : Pass
+	Signal-to-Noise Ratio Test 2 : Pass
+	Signal-to-Noise Ratio Test 3 : Pass
+	Signal-to-Noise Ratio Test 4 : Pass
+	Signal-to-Noise Ratio Test 5 : Pass
+	Signal-to-Noise Ratio Test 6 : Pass
+	Signal-to-Noise Ratio Test 7 : Pass
+    Worst case Signal-to-Noise Ratio : 15.80 dB.
+    Bandwith test not performed on this converter.
+
+    Converter 2 : Fastest Sinc Interpolator
+    Band limited sinc interpolation, fastest, 97dB SNR, 80% BW.
+	Signal-to-Noise Ratio Test 0 : Pass
+	Signal-to-Noise Ratio Test 1 : Pass
+	Signal-to-Noise Ratio Test 2 : Pass
+	Signal-to-Noise Ratio Test 3 : Pass
+	Signal-to-Noise Ratio Test 4 : Pass
+	Signal-to-Noise Ratio Test 5 : Pass
+	Signal-to-Noise Ratio Test 6 : Pass
+	Signal-to-Noise Ratio Test 7 : Pass
+	Signal-to-Noise Ratio Test 8 : Pass
+    Worst case Signal-to-Noise Ratio : 101.71 dB.
+    Measured -3dB rolloff point      : 80.23 %.
+
+    Converter 1 : Medium Sinc Interpolator
+    Band limited sinc interpolation, medium quality, 121dB SNR, 90% BW.
+	Signal-to-Noise Ratio Test 0 : Pass
+	Signal-to-Noise Ratio Test 1 : Pass
+	Signal-to-Noise Ratio Test 2 : Pass
+	Signal-to-Noise Ratio Test 3 : Pass
+	Signal-to-Noise Ratio Test 4 : Pass
+	Signal-to-Noise Ratio Test 5 : Pass
+	Signal-to-Noise Ratio Test 6 : Pass
+	Signal-to-Noise Ratio Test 7 : Pass
+	Signal-to-Noise Ratio Test 8 : Pass
+    Worst case Signal-to-Noise Ratio : 121.18 dB.
+    Measured -3dB rolloff point      : 90.55 %.
+
+    Converter 0 : Best Sinc Interpolator
+    Band limited sinc interpolation, best quality, 144dB SNR, 96% BW.
+	Signal-to-Noise Ratio Test 0 : Pass
+	Signal-to-Noise Ratio Test 1 : Pass
+	Signal-to-Noise Ratio Test 2 : Pass
+	Signal-to-Noise Ratio Test 3 : Pass
+	Signal-to-Noise Ratio Test 4 : Pass
+	Signal-to-Noise Ratio Test 5 : Pass
+	Signal-to-Noise Ratio Test 6 : Pass
+	Signal-to-Noise Ratio Test 7 : Pass
+	Signal-to-Noise Ratio Test 8 : Pass
+    Worst case Signal-to-Noise Ratio : 144.07 dB.
+    Measured -3dB rolloff point      : 96.08 %.
+
+./throughput_test
+
+    CPU name : Unknown
+
+    Converter                        Duration        Throughput
+    -----------------------------------------------------------
+    ZOH Interpolator                   3.00            56554605
+    Linear Interpolator                3.00            43946064
+    Fastest Sinc Interpolator          3.00            10204385
+    Medium Sinc Interpolator           3.01             5523538
+    Best Sinc Interpolator             3.02             1548346
+
+            Duration is in seconds.
+            Throughput is in samples/sec (more is better).
+
+-----------------------------------------------------------------
+  libsamplerate-0.1.9 passed all tests.
+-----------------------------------------------------------------
+make[2]: Leaving directory '$(@D)/tests'
+make[2]: Entering directory '$(@D)'
+make[2]: Nothing to be done for 'check-am'.
+make[2]: Leaving directory '$(@D)'
+make[1]: Leaving directory '$(@D)'
