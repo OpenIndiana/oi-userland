@@ -31,12 +31,12 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	8.2.4700
+COMPONENT_VERSION=	8.2.4750
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ccf96833675361f30064c6ac8a9637cec6362d6eb7df78fcf789e70bca042c6d
+COMPONENT_ARCHIVE_HASH=	sha256:cb8d5037f29bf87e085d66d9ed069c8f64560f86df0b583415e0ec3839de02b6
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -58,11 +58,13 @@ TEST_64 = 	$(NOX_VARIANT)/.tested
 # vim uses self-defined INFINITY/NAN, which don't work well on illumos
 CFLAGS += -std=c99 -D_XOPEN_SOURCE=600
 
+PYTHON_VERSION=	3.9
+
 CONFIGURE_ENV +=	PATH=$(PATH.gnu)
 # Make sure we use a 64-bit, multithreaded perl
 CONFIGURE_ENV +=	vi_cv_path_perl=/usr/perl5/5.24/bin/perl
 # Vim's configure script looks for a "python3" executable, per PEP 394
-CONFIGURE_ENV +=	vi_cv_path_python3=/usr/bin/python3.5
+CONFIGURE_ENV +=	vi_cv_path_python3=/usr/bin/python$(PYTHON_VERSION)
 # zh_CN.cp936.po has invalid characters which GNU msgfmt seems to be able to ignore.
 CONFIGURE_ENV +=	MSGFMT=gmsgfmt
 
@@ -103,19 +105,21 @@ $(SOURCE_DIR)/runtime/doc/uganda.txt: prep
 $(BUILD_DIR)/license: $(SOURCE_DIR)/runtime/doc/uganda.txt
 	nawk '/begin of license/ {p=1; getline; next} /end of license/ {p=0} p == 1 {print}' $< > $@
 
-build:		$(BUILD_64)
-
 install:	$(INSTALL_64) $(BUILD_DIR)/license
 
 #  A lot of tests fail with 'Cannot create directory'
-test:		$(TEST_64)
 
+# Manually added build dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+# Bogus dependency due to libssp
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/python-39
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
@@ -129,5 +133,3 @@ REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
