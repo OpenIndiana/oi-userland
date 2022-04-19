@@ -1,0 +1,108 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Niklas Poslovski
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
+
+depend fmri=library/perl-5/test-exception-$(PLV) type=require
+depend fmri=library/perl-5/test-fatal-$(PLV) type=require
+depend fmri=library/perl-5/module-build-$(PLV) type=require
+depend fmri=library/perl-5/module-build-xsutil-$(PLV) type=require
+depend fmri=library/perl-5/test-requires-$(PLV) type=require
+depend fmri=library/perl-5/test-leaktrace-$(PLV) type=require
+depend fmri=library/perl-5/test-output-$(PLV) type=require
+depend fmri=library/perl-5/test-deep-$(PLV) type=require
+depend fmri=library/perl-5/io-string-$(PLV) type=require
+depend fmri=library/perl-5/path-class-$(PLV) type=require
+
+# force a dependency on the Perl runtime
+depend fmri=__TBD pkg.debug.depend.file=perl \
+        pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin type=require
+
+# Until there is consensus on whether we should have this package require
+# the non-PLV version of this  module, don't enable this.
+# depend type=require \
+#       fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Exporter.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::Attribute.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::Class.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::Method.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::Method::Accessor.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::Method::Constructor.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::Method::Delegation.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::Method::Destructor.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::Module.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::Role.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::Role::Application.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::Role::Composite.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::Role::Method.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Meta::TypeConstraint.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Object.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::PurePerl.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Role.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Spec.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Tiny.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::TypeRegistry.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Util.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Util::MetaRole.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::Util::TypeConstraints.3
+file path=usr/perl5/$(PERLVER)/man/man3/Mouse::XS.3
+file path=usr/perl5/$(PERLVER)/man/man3/Squirrel.3
+file path=usr/perl5/$(PERLVER)/man/man3/Squirrel::Role.3
+file path=usr/perl5/$(PERLVER)/man/man3/Test::Mouse.3
+file path=usr/perl5/$(PERLVER)/man/man3/ouse.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Exporter.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/Attribute.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/Class.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/Method.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/Method/Accessor.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/Method/Constructor.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/Method/Delegation.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/Method/Destructor.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/Module.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/Role.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/Role/Application.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/Role/Composite.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/Role/Method.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Meta/TypeConstraint.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Object.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/PurePerl.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Role.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Spec.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Tiny.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Tiny.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/TypeRegistry.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Util.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Util/MetaRole.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/Util/TypeConstraints.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Mouse/XS.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Squirrel.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Squirrel/Role.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Test/Mouse.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Mouse/.packlist
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Mouse/Mouse.bs
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Mouse/Mouse.so
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/ouse.pm
