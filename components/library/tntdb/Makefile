@@ -12,12 +12,12 @@
 #
 # Copyright 2016 Jim Klimov
 #
-
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	tntdb
 COMPONENT_VERSION=	1.3
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	C++ library to access SQL databases, easy and robust
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -31,9 +31,7 @@ COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS +=	$(CPP_LARGEFILES)
 CXXFLAGS +=	$(CPP_LARGEFILES)
@@ -61,16 +59,11 @@ CONFIGURE_OPTIONS += --with-postgresql=yes
 CONFIGURE_OPTIONS += --with-replicate=yes
 CONFIGURE_OPTIONS += --with-oracle=no
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
 # We need mysql_config delivered by (mariadb-101|mysql|percona)/client :
 REQUIRED_PACKAGES += $(MYSQL_BASEPKG)/client
 # We need pg_config :
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

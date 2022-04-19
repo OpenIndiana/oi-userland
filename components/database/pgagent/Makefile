@@ -15,20 +15,16 @@
 
 BUILD_BITS = 64
 BUILD_STYLE = cmake
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgAgent
-COMPONENT_VERSION= 	3.4.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION= 	4.0.0
 COMPONENT_SUMMARY= 	pgAgent job scheduler for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-Source
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:0da0ac8f453cf34ab6f708eee036bed0fd0e5fa311de283b92d2ff06600bbb3d
-COMPONENT_ARCHIVE_URL= \
-  https://ftp.postgresql.org/pub/pgadmin/pgagent/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.pgadmin.org/
+COMPONENT_ARCHIVE_HASH= sha256:57bd047401629533ac6c5238bc94026f0ea0bf9f1f33a2bccc754b27132ea7e8
+COMPONENT_ARCHIVE_URL=	https://ftp.postgresql.org/pub/pgadmin/pgagent/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.pgadmin.org/
 COMPONENT_FMRI=	database/postgres/pgagent
 COMPONENT_CLASSIFICATION=	System/Databases
 COMPONENT_LICENSE=	MIT
@@ -50,18 +46,22 @@ $(BUILD_DIR)/%/.configured:     $(SOURCE_DIR)/.prep
 	$(COMPONENT_POST_CMAKE_ACTION)
 	$(TOUCH) $@
 
+CXXFLAGS += -pthreads
+
 CMAKE_OPTIONS = -D STATIC_BUILD=NO
 # Don't depend on host default pg_config
 CMAKE_OPTIONS += -D CMAKE_PROGRAM_PATH=$(PATH)
 CMAKE_OPTIONS += -D CMAKE_BUILD_WITH_INSTALL_RPATH="TRUE"
 CMAKE_OPTIONS += -D CMAKE_INSTALL_RPATH_USE_LINK_PATH="TRUE"
-
 CMAKE_OPTIONS += -D CMAKE_INSTALL_PREFIX=/usr
+
+# How can I tell cmake to use /usr/lib/amd64/cmake instead of /usr/lib/cmake?
+CMAKE_OPTIONS += -D CMAKE_PREFIX_PATH="/usr/lib/$(MACH64)/cmake"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += library/graphics/wxwidgets
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/boost

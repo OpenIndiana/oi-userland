@@ -25,19 +25,21 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 file files/pgagent.1 path=usr/share/man/man1/pgagent.1
 file files/pgagent.xml path=lib/svc/manifest/application/database/pgagent.xml restart_fmri=svc:/system/manifest-import:default
 
-# We need postgres user
-depend type=require fmri=database/postgres-common@8.4.18
+# We need the user postgres
+depend type=require fmri=database/postgres-common
 
-# There is a conflict with earlier pgadmin package
+# There is a conflict with an earlier pgadmin package
 depend type=optional fmri=database/postgres/pgadmin@1.18.1
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
 
 dir path=var/postgres/pgagent owner=postgres group=postgres
-file path=usr/bin/pgagent
+
+file usr/LICENSE path=usr/share/doc/pgagent/LICENSE
 file usr/README path=usr/share/doc/pgagent/README
-file usr/share/pgagent.sql path=usr/share/pgagent/pgagent.sql
-file usr/share/pgagent_upgrade.sql path=usr/share/pgagent/pgagent_upgrade.sql
-file path=usr/postgres/$(PG_VERSION)/share/extension/pgagent--3.4.sql
-file path=usr/postgres/$(PG_VERSION)/share/extension/pgagent--unpackaged--3.4.sql
+file path=usr/bin/pgagent
+file path=usr/postgres/$(PG_VERSION)/share/extension/pgagent--3.4--4.0.sql
+file path=usr/postgres/$(PG_VERSION)/share/extension/pgagent--4.0.sql
+file path=usr/postgres/$(PG_VERSION)/share/extension/pgagent--unpackaged--4.0.sql
 file path=usr/postgres/$(PG_VERSION)/share/extension/pgagent.control
+file usr/share/pgagent.sql path=usr/share/pgagent/pgagent.sql

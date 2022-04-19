@@ -12,20 +12,21 @@
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
-
+BUILD_BITS= 32
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgadmin3
 COMPONENT_VERSION= 	1.22.2
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY= 	pgAdminIII administration and development GUI for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:9b68b0e3d3f0a261344fb8196825967d1e7acaca1d8cc82c42e12368ca5844ac
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.postgresql.org/pub/pgadmin/pgadmin3/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.pgadmin.org
+  https://ftp.postgresql.org/pub/pgadmin/pgadmin3/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.pgadmin.org
 
 # Don't depend on host default pg_config
 PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
@@ -35,17 +36,11 @@ LDFLAGS+=   -lsocket -lnsl
 
 CONFIGURE_OPTIONS += --with-pgsql=$(PG_HOME)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION= (cp -a $(SOURCE_DIR)/* $(@D))
 
 COMPONENT_BUILD_ENV+= LDFLAGS="$(LDFLAGS)"
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
