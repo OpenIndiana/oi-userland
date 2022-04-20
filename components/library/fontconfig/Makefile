@@ -13,27 +13,23 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fontconfig
-COMPONENT_VERSION=	2.13.1
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	2.14.0
 COMPONENT_SUMMARY=	Fontconfig - Font configuration and customization library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-	sha256:f655dd2a986d7aa97e052261b36aa67b0a64989496361eca8d604e6414006741
-COMPONENT_ARCHIVE_URL= \
-	http://www.freedesktop.org/software/fontconfig/release/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/fontconfig/
-COMPONENT_FMRI=		system/library/fontconfig
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:dcbeb84c9c74bbfdb133d535fe1c7bedc9f2221a8daf3914b984c44c520e9bac
+COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/fontconfig/
+COMPONENT_ARCHIVE_URL= 	https://www.freedesktop.org/software/fontconfig/release/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		system/library/$(COMPONENT_NAME)
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION= System/Libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -64,14 +60,14 @@ $(BUILD_DIR)/.fonts_installed: $(INSTALL_32_and_64)
 	done
 	$(TOUCH) $@
 
-build:		$(BUILD_32_and_64)
-
 install:	$(INSTALL_32_and_64) $(BUILD_DIR)/.fonts_installed
 
-test:		$(TEST_32_and_64)
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/gperf
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += developer/gperf
