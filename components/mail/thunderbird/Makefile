@@ -34,12 +34,12 @@ include ../../../make-rules/shared-macros.mk
 BITS = 64
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	91.8.0
+COMPONENT_VERSION =	91.8.1
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:4a93d1773e17aa110341428165581f0176c347d55dd7f6cbed789ca8369da6fa
+COMPONENT_ARCHIVE_HASH= sha256:82737d29b89f39620fbdfc47e84d053edad903c72057526ff2a8215fd73e283d
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -193,7 +193,7 @@ license: install
 	unzip -c $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/$(COMPONENT_NAME)/omni.ja chrome/messenger/content/messenger/license.html \
 	    | lynx  -stdin --dump -nolist > $(COMPONENT_NAME).license
 
-SIGNED_LIST.i386 = libsoftokn3.so libnssdbm3.so libfreebl3.so
+SIGNED_LIST.amd64 = libsoftokn3.so libnssdbm3.so libfreebl3.so
 SIGNED_LIST.sparc = libsoftokn3.so libnssdbm3.so libfreebl_64fpu_3.so libfreebl_64int_3.so
 SIGNED_LIST = $(SIGNED_LIST.$(MACH))
 
