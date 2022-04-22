@@ -19,7 +19,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.1
-COMPONENT_MNR_VERSION=	4
+COMPONENT_MNR_VERSION=	5
 COMPONENT_SUMMARY=      PHP 8.1
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_CLASSIFICATION=Meta Packages/Group Packages
@@ -28,7 +28,7 @@ COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a9951c1c8fd5d2eefde28de0f646c344eb61d751319d220713a6da26f986abde
+COMPONENT_ARCHIVE_HASH= sha256:44d637627746082395d5d3d3d6ae7d71e780b82a8d55a0228887158c4316bf11
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_LICENSE=      PHP License
@@ -224,10 +224,10 @@ REQUIRED_PACKAGES += database/mariadb-103/client
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/mariadb-103/library
-REQUIRED_PACKAGES += database/postgres-12/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/gmp
