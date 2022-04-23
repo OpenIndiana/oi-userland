@@ -24,26 +24,22 @@
 # Copyright 2019, Michal Nowak
 #
 
-PREFERRED_BITS=		64
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		conflict
-COMPONENT_VERSION=	20190106
-IPS_COMPONENT_VERSION=	0.2019.1.6
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_VERSION=	2021.1.8
+HUMAN_VERSION=		20210108
+COMPONENT_SUMMARY=	conflict displays conflicting filenames in your execution path
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_PROJECT_URL=	http://invisible-island.net/conflict/conflict.html
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:a3f314feb5a976b11e1d3a993eb992910784f3cdb0cab9763de2d8393abac64a
-COMPONENT_ARCHIVE_URL= \
-	http://invisible-mirror.net/archives/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/conflict
+COMPONENT_PROJECT_URL=	https://invisible-island.net/conflict/conflict.html
+COMPONENT_ARCHIVE_HASH=	sha256:90e878233d022c4e7507cf9e7424c3131c016b00f00f6661dae7ee1a29239a56
+COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/conflict
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Required to configure correctly.
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -69,13 +65,6 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "s|^\*\*            \$$(@D)/.*$$|XXX_CC_XXX|g" ' \
         '-e "s|^\*\*            /usr/bin/.*$$|XXX_CC_XXX|g" ' \
         '-e "/^XXX_CC_XXX$$/d" '
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
