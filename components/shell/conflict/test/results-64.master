@@ -2,23 +2,18 @@
 **	Set PATH = .:$(@D):/bin
 **	This produces no conflict (unless /bin contains conflict!):
 Current working directory is "$(@D)"
--> .
---> /bin
-*+: conflict
 **
 **	Set PATH = .:$(@D):/bin
 **	This shows conflict between different filetypes
 Current working directory is "$(@D)"
 :----> .
-:----:----> /bin
-:co.-:--.-: conflict (.c,.o,)
+:co.-: conflict (.c,.o,)
 **
 **	Set PATH = .:$(@D):/bin
 **	This repeats the last test, with pathnames-only
 ./conflict.c
 ./conflict.o
 ./conflict
-/bin/conflict
 **
 **	Add a dummy executable in the current directory
 **		/tmp/conflict.xxxxxx
@@ -32,5 +27,4 @@ Current working directory is "$(@D)"
 Current working directory is "/tmp/conflict.xxxxxx"
 :---> .
 :---:---> $(@D)
-:---:---:---> /bin
-:.--:.--:.--: conflict ()
+:.--:.--: conflict ()
