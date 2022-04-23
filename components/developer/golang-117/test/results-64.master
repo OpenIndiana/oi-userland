@@ -108,10 +108,7 @@ ok  	internal/unsafeheader
 ok  	internal/xcoff	
 ok  	io	
 ok  	io/fs	
---- FAIL: TestReadOnlyWriteFile ()
-    ioutil_test.go:90: Expected an error when writing to read-only file /tmp/TestReadOnlyWriteFile/blurp.txt
-FAIL
-FAIL	io/ioutil	
+ok  	io/ioutil	
 ok  	log	
 ok  	log/syslog	
 ok  	math	
@@ -140,12 +137,7 @@ ok  	net/rpc/jsonrpc
 ok  	net/smtp	
 ok  	net/textproto	
 ok  	net/url	
---- FAIL: TestReadOnlyWriteFile ()
-    read_test.go:87: Expected an error when writing to read-only file /tmp/TestReadOnlyWriteFile/blurp.txt
---- FAIL: TestRemoveAllButReadOnlyAndPathError ()
-    removeall_test.go:327: RemoveAll succeeded unexpectedly
-FAIL
-FAIL	os	
+ok  	os	
 ok  	os/exec	
 ok  	os/signal	
 ok  	os/user	
@@ -201,40 +193,7 @@ ok  	cmd/compile/internal/types2
 ok  	cmd/cover	
 ok  	cmd/doc	
 ok  	cmd/fix	
-go test proxy running at GOPROXY=http://127.0.0.1:nnnnn/mod
---- FAIL: TestScript ()
-    --- FAIL: TestScript/build_nocache ()
-        script_test.go:253: 
-            # As of Go 1.12, the module cache is required.
-            # If none of the variables we use to locate GOCACHE are set, the cache is off
-            # and we cannot build. ()
-            # If GOCACHE is set but is not an absolute path, and we cannot build. ()
-            # An explicit GOCACHE=off also disables builds. ()
-            # If GOCACHE is set to an unwritable directory, we should diagnose it as such. ()
-            > [windows] stop # Does not support unwritable directories.
-            > [root] skip # Can write to unwritable directories.
-            > mkdir $WORK/unwritable/home
-            > chmod 0555 $WORK/unwritable/home
-            > [!plan9] env HOME=$WORK/unwritable/home
-            > [plan9] env home=$WORK/unwritable/home
-            > env GOCACHE=$WORK/unwritable/home
-            > ! go build -o triv triv.go
-            FAIL: testdata/script/build_nocache.txt:35: unexpected command success
-            
-    --- FAIL: TestScript/mod_cache_rw ()
-        script_test.go:253: 
-            # Regression test for golang.org/issue/31481. ()
-            # golang.org/issue/31481: an explicit flag should make directories in the module
-            # cache writable in order to work around the historical inability of 'rm -rf' to
-            # forcibly remove files in unwritable directories. ()
-            # After adding an extraneous file, 'go mod verify' should fail. ()
-            # However, files within those directories should still be read-only to avoid
-            # accidental mutations. ()
-            > [!root] ! cp $WORK/extraneous.txt $GOPATH/pkg/mod/rsc.io/quote@v1.5.2/go.mod
-            FAIL: testdata/script/mod_cache_rw.txt:16: unexpected command success
-            
-FAIL
-FAIL	cmd/go	
+ok  	cmd/go	
 ok  	cmd/go/internal/auth	
 ok  	cmd/go/internal/cache	
 ok  	cmd/go/internal/fsys	
