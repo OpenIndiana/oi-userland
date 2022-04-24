@@ -11,46 +11,55 @@
 #
 # Copyright 2016 Adam Stevko
 #
-
+BUILD_BITS= 32_and_64
+# Softhsm needs some RSA and DSA functions that are not available in openssl-1.1:
+#USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	 	softhsm
-COMPONENT_VERSION=     	2.1.0
-COMPONENT_REVISION=     1
-COMPONENT_LICENSE=      BSD
+COMPONENT_VERSION=     	2.6.1
 COMPONENT_PROJECT_URL=  https://www.opendnssec.org/softhsm/
 COMPONENT_SUMMARY= 	SoftHSM is an implementation of a cryptographic store accessible through a PKCS11 interface.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:0399b06f196fbfaebe73b4aeff2e2d65d0dc1901161513d0d6a94f031dcd827e
-COMPONENT_ARCHIVE_URL= https://dist.opendnssec.org/source/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:61249473054bcd1811519ef9a989a880a7bdcc36d317c9c25457fc614df475f2
+COMPONENT_ARCHIVE_URL=	https://dist.opendnssec.org/source/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		security/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	System/Security
+COMPONENT_LICENSE=      BSD
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
+# This lets the 32-bit binaries being replaced with its 64-bit counterparts:
 CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
 CONFIGURE_OPTIONS+= --enable-shared
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --localstatedir=/var
-CONFIGURE_OPTIONS+= --disable-ecc
-CONFIGURE_OPTIONS+= --with-crypto-backend=botan
-CONFIGURE_OPTIONS+= --with-botan=/usr
+CONFIGURE_OPTIONS+= --with-crypto-backend=openssl
+#CONFIGURE_OPTIONS+= --with-openssl=/usr/openssl/1.1
 CONFIGURE_OPTIONS+= --with-migrate
 CONFIGURE_OPTIONS+= --with-sqlite3=/usr
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/=========/p" ' \
+        '-e "/Testsuite summary for/p" ' \
+        '-e "/TOTAL/p" ' \
+        '-e "/PASS/p" ' \
+        '-e "/SKIP/p" ' \
+        '-e "/XFAIL/p" ' \
+        '-e "/FAIL/p" ' \
+        '-e "/XPASS/p" ' \
+        '-e "/ERROR/p" '
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += library/security/botan
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += system/library
