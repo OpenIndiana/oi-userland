@@ -17,16 +17,14 @@ BUILD_STYLE=		justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ts
-COMPONENT_VERSION=	1.0.1
+COMPONENT_VERSION=	1.0.2
 COMPONENT_SUMMARY=	task spooler - a Unix batch system
 COMPONENT_PROJECT_URL= https://vicerveza.homeunix.net/~viric/soft/ts/
 COMPONENT_FMRI=		utility/ts
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:f41ef307b0b9c7424398813b9c6e39d37a970831071e301842ba4b1145d56278
-COMPONENT_ARCHIVE_URL= \
-	https://vicerveza.homeunix.net/~viric/soft/ts/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:f73452aed80e2f9a7764883e9353aa7f40e65d3c199ad1f3be60fd58b58eafec
+COMPONENT_ARCHIVE_URL=	https://vicerveza.homeunix.net/~viric/soft/ts/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2+
 
 include $(WS_MAKE_RULES)/common.mk
