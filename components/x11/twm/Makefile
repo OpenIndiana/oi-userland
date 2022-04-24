@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    twm
-COMPONENT_VERSION= 1.0.11
+COMPONENT_VERSION= 1.0.12
 COMPONENT_SUMMARY= twm - Tab Window Manager for the X Window System
 COMPONENT_FMRI=    desktop/window-manager/twm
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:f4e8a842dec410e79741f25ed4dfac09df080835d0bba2e3983b5914569b68c7
+COMPONENT_ARCHIVE_HASH= sha256:aaf201d4de04c1bb11eed93de4bee0147217b7bdf61b7b761a56b2fdc276afe4
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
