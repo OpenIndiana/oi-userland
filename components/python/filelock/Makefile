@@ -28,14 +28,14 @@ BUILD_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		filelock
-COMPONENT_VERSION=	3.4.2
+COMPONENT_VERSION=	3.6.0
 COMPONENT_SUMMARY=	A platform independent file lock that supports the with-statement
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:38b4f4c989f9d06d44524df1b24bd19e167d851f19b50bf3e3559952dddc5b80
+COMPONENT_ARCHIVE_HASH= sha256:9cd540a9352e432c7246a48fe4e8712b10acb1df2ad1f30e8c070b82ae1fed85
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/tox-dev/py-filelock
-COMPONENT_FMRI=		library/python/filelock
+COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	Unlicense
 
