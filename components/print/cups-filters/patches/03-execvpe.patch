@@ -1,0 +1,42 @@
+As of today illumos doesn't have execvpe() and we need to emulate the calls.
+
+--- cups-filters-1.28.12/filter/gstoraster.c.orig	2022-02-17 19:38:25.000000000 +0000
++++ cups-filters-1.28.12/filter/gstoraster.c	2022-03-13 13:26:30.080994088 +0000
+@@ -393,6 +393,7 @@
+   int pid;
+   int status = 65536;
+   int wstatus;
++  extern char **environ;
+ 
+   /* Put Ghostscript command line argument into an array for the "exec()"
+      call */
+@@ -462,7 +463,8 @@
+     }
+ 
+     /* Execute Ghostscript command line ... */
+-    execvpe(filename, gsargv, envp);
++    environ = envp;
++    execvp(filename, gsargv);
+     fprintf(stderr, "ERROR: Unable to launch Ghostscript: %s: %s\n", filename, strerror(errno));
+     goto out;
+   }
+--- cups-filters-1.28.12/filter/mupdftoraster.c.orig	2022-02-17 19:38:25.000000000 +0000
++++ cups-filters-1.28.12/filter/mupdftoraster.c	2022-03-13 13:49:30.425995849 +0000
+@@ -176,6 +176,7 @@
+   int pid;
+   int status = 65536;
+   int wstatus;
++  extern char **environ;
+ 
+   /* Put mutool command line argument into an array for the "exec()"
+      call */
+@@ -203,7 +204,8 @@
+ 
+   if ((pid = fork()) == 0) {
+     /* Execute mutool command line ... */
+-    execvpe(filename, mutoolargv, envp);
++    environ = envp;
++    execvp(filename, mutoolargv);
+     perror(filename);
+     goto out;
+   }
