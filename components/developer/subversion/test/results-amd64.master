@@ -25,7 +25,7 @@
 [025/122] fs-x-pack-testsuccess
 [026/122] hashdump-testsuccess
 [027/122] io-testsuccess
-[028/122] locks-testFAILURE
+[028/122] locks-testsuccess
 [029/122] mergeinfo-testsuccess
 [030/122] mtcc-testsuccess
 [031/122] op-depth-testsuccess
@@ -114,12 +114,12 @@
 [114/122] svnsync_authz_testspysuccess
 [115/122] svnsync_testspysuccess
 [116/122] svnversion_testspysuccess
-[117/122] switch_testspyFAILURE
+[117/122] switch_testspysuccess
 [118/122] trans_testspysuccess
 [119/122] tree_conflict_testspysuccess
 [120/122] update_testspysuccess
 [121/122] upgrade_testspysuccess
-[122/122] wc_testspyFAILURE
+[122/122] wc_testspysuccess
 SKIP:  cache-test 2: basic memcache svn_cache test
 SKIP:  cache-test 3: memcache svn_cache with very long keys
 SKIP:  crypto-test 1: basic password encryption/decryption test
@@ -173,6 +173,7 @@ SKIP:  authz_testspy 31: remove a subdir with authz file
 SKIP:  authz_testspy 32: access rights for user in inverted group
 SKIP:  authz_testspy 33: group definition ignores empty member
 SKIP:  authz_testspy 34: empty group is ignored
+SKIP:  authz_testspy 35: log doesn't leak inaccessible copyfrom paths
 SKIP:  basic_testspy 52: verify that neon/serf are compiled if tested
 SKIP:  basic_testspy 66: test store-plaintext-passwords = no
 SKIP:  checkout_testspy 14: checkout from the root of a Windows drive
@@ -193,6 +194,8 @@ SKIP:  mod_authz_svn_testspy 6: test authenticated only access with lcuser
 SKIP:  mod_authz_svn_testspy 7: test authenticated only access via groups
 SKIP:  mod_authz_svn_testspy 8: test satisfy all require any config
 SKIP:  mod_authz_svn_testspy 9: test satisfy all require all config
+SKIP:  mod_authz_svn_testspy 10: repos-relative access file
+SKIP:  mod_authz_svn_testspy 11: repos-relative access file with bad repository URL
 SKIP:  mod_dav_svn_testspy 1: verify 'Cache-Control' headers on responses
 SKIP:  mod_dav_svn_testspy 2: verify simple PROPFIND responses
 SKIP:  mod_dav_svn_testspy 3: verify multi-prop PROPFIND response
@@ -378,7 +381,6 @@ XFAIL: wc_testspy 3: file status with not-parent symlink
 XFAIL: wc_testspy 4: add file through unversioned symlink
 XFAIL: wc_testspy 5: add file through versioned symlink
 XFAIL: wc_testspy 6: add file with not-parent symlink
-FAIL:  locks-test 14: lock/unlock when 'write-lock' couldn't be obtained
 FAIL:  commit_testspy 7: commit wc_dir -- (anchor=wc_dir, tgt={})
 FAIL:  commit_testspy 9: replace two nested dirs, verify empty contents
 FAIL:  diff_testspy 27: scheduled deleted
@@ -387,12 +389,10 @@ FAIL:  merge_testspy 2: merge and add new files/dirs with history
 FAIL:  merge_testspy 15: merge should skip over unversioned obstructions
 FAIL:  merge_testspy 16: merge into missing must not break working copy
 FAIL:  merge_testspy 134: merged directory properties are added
-FAIL:  switch_testspy 15: refresh the WC file system read-only attribute
-FAIL:  wc_testspy 7: inaccessible svn/wcdb
 Summary of test results:
-  2510 tests PASSED
-  161 tests SKIPPED
+  2514 tests PASSED
+  164 tests SKIPPED
   80 tests XFAILED (17 WORK-IN-PROGRESS)
-  11 tests FAILED
+  8 tests FAILED
 SUMMARY: Some tests failed
 
