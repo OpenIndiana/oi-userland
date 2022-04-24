@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2022 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,7 +23,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=etc/cups/cups-browsed.conf
-file path=etc/fonts/conf.d/99pdftoopvp.conf
 file path=etc/init.d/cups-browsed
 link path=etc/rc0.d/K00cups-browsed target=../init.d/cups-browsed
 link path=etc/rc2.d/K00cups-browsed target=../init.d/cups-browsed
@@ -32,26 +31,43 @@ link path=etc/rc3.d/K00cups-browsed target=../init.d/cups-browsed
 link path=etc/rc3.d/S99cups-browsed target=../init.d/cups-browsed
 link path=etc/rc5.d/K00cups-browsed target=../init.d/cups-browsed
 link path=etc/rc5.d/S99cups-browsed target=../init.d/cups-browsed
-link path=usr/bin/foomatic-rip target=/usr/lib/cups/filter/foomatic-rip
-file path=usr/bin/ttfread
+link path=usr/bin/foomatic-rip target=../lib/cups/filter/foomatic-rip
 file path=usr/include/cupsfilters/colord.h
 file path=usr/include/cupsfilters/colormanager.h
 file path=usr/include/cupsfilters/driver.h
 file path=usr/include/cupsfilters/image.h
+file path=usr/include/cupsfilters/ipp.h
+file path=usr/include/cupsfilters/pdftoippprinter.h
+file path=usr/include/cupsfilters/ppdgenerator.h
 file path=usr/include/cupsfilters/raster.h
 file path=usr/include/fontembed/bitset.h
 file path=usr/include/fontembed/embed.h
 file path=usr/include/fontembed/fontfile.h
 file path=usr/include/fontembed/iofn.h
 file path=usr/include/fontembed/sfnt.h
+link path=usr/lib/cups/$(MACH64)/libcupsfilters.so \
+    target=libcupsfilters.so.1.0.0
+link path=usr/lib/cups/$(MACH64)/libcupsfilters.so.1 \
+    target=libcupsfilters.so.1.0.0
+file path=usr/lib/cups/$(MACH64)/libcupsfilters.so.1.0.0
+link path=usr/lib/cups/$(MACH64)/libfontembed.so target=libfontembed.so.1.0.0
+link path=usr/lib/cups/$(MACH64)/libfontembed.so.1 target=libfontembed.so.1.0.0
+file path=usr/lib/cups/$(MACH64)/libfontembed.so.1.0.0
+file path=usr/lib/cups/$(MACH64)/pkgconfig/libcupsfilters.pc
+file path=usr/lib/cups/$(MACH64)/pkgconfig/libfontembed.pc
 file path=usr/lib/cups/backend/beh
+file path=usr/lib/cups/backend/cups-brf
 file path=usr/lib/cups/backend/implicitclass
 file path=usr/lib/cups/backend/parallel
 file path=usr/lib/cups/backend/serial
 file path=usr/lib/cups/filter/bannertopdf
 file path=usr/lib/cups/filter/brftoembosser
+file path=usr/lib/cups/filter/brftopagedbrf
+link path=usr/lib/cups/filter/cgmtopdf target=vectortopdf
+link path=usr/lib/cups/filter/cmxtopdf target=vectortopdf
 file path=usr/lib/cups/filter/commandtoescpx
 file path=usr/lib/cups/filter/commandtopclx
+link path=usr/lib/cups/filter/emftopdf target=vectortopdf
 file path=usr/lib/cups/filter/foomatic-rip
 file path=usr/lib/cups/filter/gstopdf
 file path=usr/lib/cups/filter/gstopxl
@@ -63,16 +79,16 @@ file path=usr/lib/cups/filter/imagetoraster
 link path=usr/lib/cups/filter/imagetoubrl target=imagetobrf
 file path=usr/lib/cups/filter/imageubrltoindexv3
 file path=usr/lib/cups/filter/imageubrltoindexv4
-file path=usr/lib/cups/filter/mupdftoraster
-file path=usr/lib/cups/filter/pdftoijs
-file path=usr/lib/cups/filter/pdftoopvp
+file path=usr/lib/cups/filter/musicxmltobrf
 file path=usr/lib/cups/filter/pdftopdf
 file path=usr/lib/cups/filter/pdftops
 file path=usr/lib/cups/filter/pdftoraster
 file path=usr/lib/cups/filter/rastertoescpx
+file path=usr/lib/cups/filter/rastertopclm
 file path=usr/lib/cups/filter/rastertopclx
 file path=usr/lib/cups/filter/rastertopdf
 file path=usr/lib/cups/filter/rastertops
+link path=usr/lib/cups/filter/svgtopdf target=vectortopdf
 file path=usr/lib/cups/filter/sys5ippprinter
 file path=usr/lib/cups/filter/textbrftoindexv3
 link path=usr/lib/cups/filter/textbrftoindexv4 target=textbrftoindexv3
@@ -80,17 +96,11 @@ file path=usr/lib/cups/filter/texttobrf
 file path=usr/lib/cups/filter/texttopdf
 file path=usr/lib/cups/filter/texttops
 file path=usr/lib/cups/filter/texttotext
-file path=usr/lib/cups/filter/urftopdf
-file path=usr/lib/libcupsfilters.a
-link path=usr/lib/libcupsfilters.so target=libcupsfilters.so.1.0.0
-link path=usr/lib/libcupsfilters.so.1 target=libcupsfilters.so.1.0.0
-file path=usr/lib/libcupsfilters.so.1.0.0
-file path=usr/lib/libfontembed.a
-link path=usr/lib/libfontembed.so target=libfontembed.so.1.0.0
-link path=usr/lib/libfontembed.so.1 target=libfontembed.so.1.0.0
-file path=usr/lib/libfontembed.so.1.0.0
-file path=usr/lib/pkgconfig/libcupsfilters.pc
-file path=usr/lib/pkgconfig/libfontembed.pc
+file path=usr/lib/cups/filter/vectortobrf
+file path=usr/lib/cups/filter/vectortopdf
+link path=usr/lib/cups/filter/vectortoubrl target=vectortobrf
+link path=usr/lib/cups/filter/wmftopdf target=vectortopdf
+link path=usr/lib/cups/filter/xfigtopdf target=vectortopdf
 file path=usr/sbin/cups-browsed
 file path=usr/share/cups/banners/classified
 file path=usr/share/cups/banners/confidential
@@ -121,12 +131,12 @@ file path=usr/share/cups/data/topsecret.pdf
 file path=usr/share/cups/data/unclassified.pdf
 file path=usr/share/cups/drv/cupsfilters.drv
 file path=usr/share/cups/drv/generic-brf.drv
+file path=usr/share/cups/drv/generic-ubrl.drv
 file path=usr/share/cups/drv/indexv3.drv
 file path=usr/share/cups/drv/indexv4.drv
 file path=usr/share/cups/mime/braille.convs
 file path=usr/share/cups/mime/braille.types
 file path=usr/share/cups/mime/cupsfilters-ghostscript.convs
-file path=usr/share/cups/mime/cupsfilters-mupdf.convs
 file path=usr/share/cups/mime/cupsfilters-poppler.convs
 file path=usr/share/cups/mime/cupsfilters.convs
 file path=usr/share/cups/mime/cupsfilters.types
@@ -142,6 +152,7 @@ file path=usr/share/cups/ppdc/liblouis3.defs
 file path=usr/share/cups/ppdc/liblouis4.defs
 file path=usr/share/cups/ppdc/media-braille.defs
 file path=usr/share/cups/ppdc/pcl.h
+file path=usr/share/doc/cups-filters/ABOUT-NLS
 file path=usr/share/doc/cups-filters/AUTHORS
 file path=usr/share/doc/cups-filters/COPYING
 file path=usr/share/doc/cups-filters/INSTALL
@@ -153,7 +164,6 @@ file path=usr/share/man/man8/cups-browsed.8
 file path=usr/share/ppd/cupsfilters/Fuji_Xerox-DocuPrint_CM305_df-PDF.ppd
 file path=usr/share/ppd/cupsfilters/Generic-PDF_Printer-PDF.ppd
 file path=usr/share/ppd/cupsfilters/HP-Color_LaserJet_CM3530_MFP-PDF.ppd
-file path=usr/share/ppd/cupsfilters/HP-PhotoSmart_Pro_B8300-hpijs-pdftoijs.ppd
 file path=usr/share/ppd/cupsfilters/Ricoh-PDF_Printer-PDF.ppd
 file path=usr/share/ppd/cupsfilters/pxlcolor.ppd
 file path=usr/share/ppd/cupsfilters/pxlmono.ppd
