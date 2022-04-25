@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-closed
 COMPONENT_VERSION=	5.11
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	illumos-closed - illumos closed binaries
 COMPONENT_PROJECT_URL=	https://www.openindiana.org/
 COMPONENT_FMRI=		developer/illumos-closed
@@ -59,7 +59,7 @@ PKG_HARDLINKS +=	opt/onbld/closed/root_i386-nd/platform/i86pc/kernel/cpu/cpu_ms.
 PKG_HARDLINKS +=	opt/onbld/closed/root_i386-nd/platform/i86pc/kernel/cpu/$(MACH64)/cpu_ms.GenuineIntel.6.46
 PKG_HARDLINKS +=	opt/onbld/closed/root_i386-nd/usr/xpg4/bin/alias
 
-$(BUILD_32):
+$(BUILD_32): download
 	$(MKDIR) $(BUILD_DIR_32)
 	$(TOUCH) $@
 
