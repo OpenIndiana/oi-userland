@@ -13,12 +13,12 @@
 # Copyright 2016 Jim Klimov
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	nut
 COMPONENT_VERSION=	2.7.4
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	Network UPS Tools (NUT)
 COMPONENT_DESCRIPTION=	Network UPS Tools (NUT) is a versatile power-device monitoring toolkit to facilitate safe shutdowns
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -27,16 +27,13 @@ COMPONENT_ARCHIVE_HASH=	\
   sha256:d580915fdf7090655c1c7c98eb116b61952553f06f0039b1f93c9f5a13e2d36b
 COMPONENT_ARCHIVE_URL=	\
   https://github.com/networkupstools/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL=	http://networkupstools.org
+COMPONENT_PROJECT_URL=	https://networkupstools.org
 COMPONENT_FMRI=	system/management/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_LICENSE=	GPLv2+
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
-
-CXXFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
-CFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 
 CXXFLAGS += $(CXXFLAGS.$(BITS))
 CFLAGS   += $(CFLAGS.$(BITS))
@@ -49,16 +46,12 @@ COMPONENT_PREP_ACTION =	( cd $(SOURCE_DIR) && ./autogen.sh )
 COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # We deliver only 64-bit binaries
-CONFIGURE_BINDIR.32 = $(USRBINDIR32)
-CONFIGURE_SBINDIR.32 = $(USRSBINDIR32)
 CONFIGURE_BINDIR.64 = $(USRBINDIR)
 CONFIGURE_SBINDIR.64 = $(USRSBINDIR)
 
-CONFIGURE_ENV.32+=	LDFLAGS="$(LDFLAGS.32)"
-CONFIGURE_ENV.64+=	LDFLAGS="$(LDFLAGS.64)"
+CONFIGURE_ENV     +=	LDFLAGS="$(LDFLAGS.64)"
 
-CONFIGURE_OPTIONS.32+=	LDFLAGS="$(LDFLAGS.32)"
-CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
+CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS.64)"
 
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
@@ -79,12 +72,9 @@ CONFIGURE_OPTIONS +=	--with-ssl
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-gd-includes=-I/usr/include/gd2
 
-CONFIGURE_OPTIONS.32 +=	--with-drvpath=/usr/lib/nut/bin/$(MACH32)
-CONFIGURE_OPTIONS.32 +=	--with-cgipath=/usr/lib/nut/cgi-bin/$(MACH32)
-CONFIGURE_OPTIONS.32 +=	--with-gd-libs=-L/usr/lib
-CONFIGURE_OPTIONS.64 +=	--with-drvpath=/usr/lib/nut/bin
-CONFIGURE_OPTIONS.64 +=	--with-cgipath=/usr/lib/nut/cgi-bin
-CONFIGURE_OPTIONS.64 +=	--with-gd-libs=-L/usr/lib/$(MACH64)
+CONFIGURE_OPTIONS +=	--with-drvpath=/usr/lib/nut/bin
+CONFIGURE_OPTIONS +=	--with-cgipath=/usr/lib/nut/cgi-bin
+CONFIGURE_OPTIONS +=	--with-gd-libs=-L/usr/lib/$(MACH64)
 
 # No separate toggle for this yet
 #CONFIGURE_OPTIONS +=	--with-nut-scanner=yes
@@ -111,23 +101,23 @@ CONFIGURE_OPTIONS +=	--with-net-snmp-config=$(USRBINDIR)/net-snmp-config-$(BITS)
 # Note: building the numerous documents of this projects is time-consuming
 # and we only need one copy. Also, we don't ship "dblatex" (needed here for
 # compiling PDFs) and probably don't require "html-chunked" chapters.
-CONFIGURE_OPTIONS.32 +=        --with-doc="no"
-CONFIGURE_OPTIONS.64 +=        --with-doc="man=yes"
+CONFIGURE_OPTIONS +=        --with-doc="man=yes"
 
 CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 
 # Manually added dependencies:
 REQUIRED_PACKAGES += text/asciidoc
+REQUIRED_PACKAGES += library/augeas-tools
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/usb/libusb
