@@ -18,15 +18,14 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libdvdnav
-COMPONENT_VERSION=      5.0.3
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      6.0.1
 COMPONENT_FMRI=         library/video/libdvdnav
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_SUMMARY=      DVD navigation library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-	sha256:5097023e3d2b36944c763f1df707ee06b19dc639b2b68fb30113a5f2cbf60b6d
+	sha256:e566a396f1950017088bfd760395b0565db44234195ada5413366c9d23926733
 COMPONENT_ARCHIVE_URL=  \
 	http://download.videolan.org/pub/videolan/libdvdnav/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://dvdnav.mplayerhq.hu
