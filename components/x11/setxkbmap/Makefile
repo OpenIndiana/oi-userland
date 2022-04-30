@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     setxkbmap
-COMPONENT_VERSION=  1.3.2
+COMPONENT_VERSION=  1.3.3
 COMPONENT_FMRI=     x11/keyboard/setxkbmap
 COMPONENT_SUMMARY=  the setxkbmap keyboard configuration utility
-COMPONENT_ARCHIVE_HASH= \
-  sha256:8ff27486442725e50b02d7049152f51d125ecad71b7ce503cfa09d5d8ceeb9f5
+COMPONENT_ARCHIVE=  $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:b560c678da6930a0da267304fa3a41cc5df39a96a5e23d06f14984c87b6f587b
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -30,3 +30,4 @@ include $(WS_MAKE_RULES)/common.mk
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxkbfile
+REQUIRED_PACKAGES += x11/library/libxrandr
