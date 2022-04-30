@@ -23,19 +23,22 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=32_and_64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sox
 COMPONENT_VERSION=	14.4.1
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	http://sox.sourceforge.net/
+COMPONENT_REVISION=	3
+COMPONENT_SUMMARY=	Sound eXchange, the Swiss Army knife of audio manipulation
+COMPONENT_DESCRIPTION=	SoX is a cross-platform command line utility that can convert various formats of computer audio files into other formats.
+COMPONENT_PROJECT_URL=	https://sox.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:9a8c2c6fe51e608da346a157e111508a957af9e3ecf3de26781d36e9a67fa89b
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/sox
+COMPONENT_ARCHIVE_HASH=	sha256:9a8c2c6fe51e608da346a157e111508a957af9e3ecf3de26781d36e9a67fa89b
+COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPLv2, LGPLv2.1
+COMPONENT_FMRI=		audio/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Applications/Sound and Video
 
 include $(WS_MAKE_RULES)/common.mk
 
