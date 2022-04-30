@@ -17,12 +17,12 @@ BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL2
-COMPONENT_VERSION=	2.0.20
+COMPONENT_VERSION=	2.0.22
 COMPONENT_PROJECT_URL=	https://www.libsdl.org/
 COMPONENT_SUMMARY=	libsdl2 - Simple DirectMedia Layer 2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c56aba1d7b5b0e7e999e4a7698c70b63a3394ff9704b5f6e1c57e0c16f04dd06
+COMPONENT_ARCHIVE_HASH=	sha256:fe7cbf3127882e3fc7259a75a0cb585620272c51745d3852ab9dd87960697f2e
 COMPONENT_ARCHIVE_URL=	https://www.libsdl.org/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =	library/sdl2
 # Note: license change from LGPL was significant in 2.x vs 1.x series, and now
