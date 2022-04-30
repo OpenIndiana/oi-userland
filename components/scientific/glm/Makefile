@@ -18,20 +18,24 @@ BUILD_STYLE=cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= glm
-COMPONENT_VERSION= 0.9.9.7
+COMPONENT_VERSION= 0.9.9.8
 COMPONENT_FMRI= library/math/glm
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SUMMARY= glm - OpenGL Mathematics, A C++ mathematics library for graphics programming
 COMPONENT_PROJECT_URL= https://glm.g-truc.net
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:2ec9e33a80b548892af64fbd84a947f93f0e725423b1b7bec600f808057a8239
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/g-truc/glm/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:7d508ab72cb5d43227a3711420f06ff99b0a0cb63ee2f93631b162bfe1fe9592
+COMPONENT_ARCHIVE_URL= https://github.com/g-truc/glm/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= MIT
 
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/[0-9]*\.[0-9]* sec/ SEC seconds/"' \
+	'-n ' \
+	'-e "/Passed/p"' \
+	'-e "/tests passed/,\\$$p"'
+
 # Auto-generated dependencies
-# None
