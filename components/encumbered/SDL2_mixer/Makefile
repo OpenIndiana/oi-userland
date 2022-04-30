@@ -31,19 +31,17 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         SDL2_mixer
-COMPONENT_VERSION=      2.0.1
-COMPONENT_REVISION=     1
-COMPONENT_PROJECT_URL=  http://www.libsdl.org/projects/SDL_mixer/
+COMPONENT_VERSION=      2.0.4
+COMPONENT_PROJECT_URL=  https://www.libsdl.org/projects/SDL_mixer/
 COMPONENT_SUMMARY=      SDL_mixer is a sample multi-channel audio mixer library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:5a24f62a610249d744cbd8d28ee399d8905db7222bf3bdbc8a8b4a76e597695f
-COMPONENT_ARCHIVE_URL=  http://www.libsdl.org/projects/SDL_mixer/release/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:b4cf5a382c061cd75081cf246c2aa2f9df8db04bdda8dcdc6b6cca55bede2419
+COMPONENT_ARCHIVE_URL=  https://www.libsdl.org/projects/SDL_mixer/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/sdl2-mixer
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=      ZLIB
 COMPONENT_LICENSE_FILE= COPYING.txt
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 
 ifeq ($(strip $(USE_ENCUMBERED)),yes)
 COMPONENT_SUMMARY:=$(COMPONENT_SUMMARY) (encumbered version)
@@ -66,10 +64,8 @@ CONFIGURE_OPTIONS +=	--enable-music-ogg-shared
 CONFIGURE_OPTIONS +=	--enable-music-flac-shared
 
 ifeq ($(strip $(USE_ENCUMBERED)),yes)
-### Note: currently we do not serve libmad in the fully open components,
-### it and MPEG support is reserved for encumbered components
-#CONFIGURE_OPTIONS +=	--enable-music-mp3-smpeg --enable-music-mp3-smpeg-shared
-CONFIGURE_OPTIONS +=	--enable-music-mp3-mad-gpl
+CONFIGURE_OPTIONS += --enable-music-mp3-mad-gpl
+
 REQUIRED_PACKAGES += library/audio/libmad
 else
 CONFIGURE_OPTIONS +=	--disable-music-mp3
