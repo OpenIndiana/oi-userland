@@ -24,14 +24,14 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mdds
-COMPONENT_VERSION=	1.6.0
+COMPONENT_VERSION=	1.7.0
 COMPONENT_FMRI=     	library/c++/mdds
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://gitlab.com/mdds/mdds
 COMPONENT_SUMMARY=      mdds - A collection of multi-dimensional data structures and indexing algorithms
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:77d5f9e758c8dd3b980b6c34aeb4a64297a5d0b49d394a7d48b02238a01003e0
+COMPONENT_ARCHIVE_HASH=	sha256:5e2ae7a7a4e8e8fa1e7f1aa640731198be3b124445a3d8ac5d19da6993063371
 COMPONENT_ARCHIVE_URL=	https://gitlab.com/mdds/mdds/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 
