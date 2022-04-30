@@ -15,18 +15,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		trivial-gray-streams
-COMPONENT_VERSION=	0.20140912
-COMPONENT_GITREV=	0483ade330508b4b2edeabdb47d16ec9437ee1cb
-COMPONENT_PROJECT_URL=	http://common-lisp.net/project/trivial-gray-streams/
+COMPONENT_VERSION=	20210117
+COMPONENT_GITREV=	2b3823edbc78a450db4891fd2b566ca0316a7876
+COMPONENT_SUMMARY=	an extremely thin compatibility layer for gray streams
+COMPONENT_PROJECT_URL=	https://common-lisp.net/project/trivial-gray-streams/
 COMPONENT_FMRI=		library/common-lisp/trivial-gray-streams
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_GITREV)
-COMPONENT_ARCHIVE=	$(COMPONENT_GITREV).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:2c7990f1919203fb7285239908241ea3673a117ab248d10f6fee4c5380e89ed0
-COMPONENT_ARCHIVE_URL=	https://github.com/trivial-gray-streams/trivial-gray-streams/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_DL_ARCHIVE=	$(COMPONENT_GITREV).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:db356ca34420f4ce34ce786b74e747dd7ac3be9b555ed34eeda3df6183066079
+COMPONENT_ARCHIVE_URL=	https://github.com/trivial-gray-streams/trivial-gray-streams/archive/$(COMPONENT_DL_ARCHIVE)
 COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-COMPONENT_SUMMARY=	an extremely thin compatibility layer for gray streams
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/common-lisp.mk
