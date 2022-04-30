@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     mkfontscale
-COMPONENT_VERSION=  1.2.1
-COMPONENT_REVISION= 1
+COMPONENT_VERSION=  1.2.2
 COMPONENT_FMRI=     x11/mkfontscale
 COMPONENT_SUMMARY=  mkfontscale legacy X11 scalable font metadata creation tool
-COMPONENT_ARCHIVE_HASH= \
-  sha256:ca0495eb974a179dd742bfa6199d561bda1c8da4a0c5a667f21fd82aaab6bac7
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:8ae3fb5b1fe7436e1f565060acaa3e2918fe745b0e4979b5593968914fe2d5c4
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
