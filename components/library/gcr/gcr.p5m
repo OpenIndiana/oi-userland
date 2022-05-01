@@ -12,6 +12,7 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
+# Copyright 2022 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,7 +24,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/gcr-viewer
+# Drop 32-bit binaries:
+<transform file path=.*/bin/$(MACH32)/.+ -> drop>
+
+file path=usr/bin/$(MACH32)/gcr-viewer
 file path=usr/bin/gcr-viewer
 file path=usr/include/gck-1/gck/gck-deprecated.h
 file path=usr/include/gck-1/gck/gck-enum-types.h
@@ -175,6 +179,7 @@ file path=usr/share/locale/bn_IN/LC_MESSAGES/gcr.mo
 file path=usr/share/locale/bs/LC_MESSAGES/gcr.mo
 file path=usr/share/locale/ca/LC_MESSAGES/gcr.mo
 file path=usr/share/locale/ca@valencia/LC_MESSAGES/gcr.mo
+file path=usr/share/locale/ckb/LC_MESSAGES/gcr.mo
 file path=usr/share/locale/cs/LC_MESSAGES/gcr.mo
 file path=usr/share/locale/cy/LC_MESSAGES/gcr.mo
 file path=usr/share/locale/da/LC_MESSAGES/gcr.mo

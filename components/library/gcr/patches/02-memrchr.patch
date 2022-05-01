@@ -1,27 +1,6 @@
 memrchr compatibility stub taken from sudo.
 21158555 - solaris should provide memrchr for bsd / linux compatibility 
 
---- gcr-3.16.0/configure.ac	2015-05-12 07:27:59.000000000 -0700
-+++ gcr-3.16.0/configure.ac	2015-05-27 16:50:16.536249851 -0700
-@@ -144,6 +144,7 @@
- #
- 
- AC_CHECK_FUNCS(timegm, AC_DEFINE(HAVE_TIMEGM,1,[Have timegm]))
-+AC_CHECK_FUNCS(memrchr, AC_DEFINE(HAVE_MEMRCHR,1,[Have memrchr]))
- AC_CHECK_FUNCS(mlock)
- 
- # --------------------------------------------------------------------
---- gcr-3.16.0/egg/egg-armor.c	2015-04-06 11:28:46.000000000 -0700
-+++ gcr-3.16.0/egg/egg-armor.c	2015-05-27 16:59:15.748737526 -0700
-@@ -31,7 +31,7 @@
- #include <glib.h>
- 
- #include <ctype.h>
--#include <string.h>
-+#include "egg-memrchr.h"
- 
- /*
-  * Armor looks like:
 --- gcr-3.16.0/egg/egg-memrchr.c	1969-12-31 16:00:00.000000000 -0800
 +++ gcr-3.16.0/egg/egg-memrchr.c	2015-05-27 16:56:33.358969153 -0700
 @@ -0,0 +1,42 @@
@@ -100,13 +79,33 @@ memrchr compatibility stub taken from sudo.
 +#endif
 +
 +#endif /* EGG_MEMRCHR_H_ */
---- gcr-3.16.0/egg/Makefile.am	2015-04-06 11:28:46.000000000 -0700
-+++ gcr-3.16.0/egg/Makefile.am	2015-05-27 16:58:43.053533180 -0700
+--- a/configure.ac	2019-11-16 00:57:30.063291815 -0800
++++ b/configure.ac	2019-11-16 00:57:48.045441901 -0800
+@@ -147,6 +147,7 @@
+ #
+ 
+ AC_CHECK_FUNCS(timegm, AC_DEFINE(HAVE_TIMEGM,1,[Have timegm]))
++AC_CHECK_FUNCS(memrchr, AC_DEFINE(HAVE_MEMRCHR,1,[Have memrchr]))
+ AC_CHECK_FUNCS(mlock)
+ 
+ # --------------------------------------------------------------------
+--- a/egg/egg-armor.c	2019-11-16 00:58:37.233863072 -0800
++++ b/egg/egg-armor.c	2019-11-16 00:59:10.845047518 -0800
+@@ -32,6 +32,7 @@
+ 
+ #include <ctype.h>
+ #include <string.h>
++#include "egg-memrchr.h"
+ 
+ /*
+  * Armor looks like:
+--- a/egg/Makefile.am	2019-11-16 00:59:48.489742020 -0800
++++ b/egg/Makefile.am	2019-11-16 01:00:08.295772019 -0800
 @@ -27,6 +27,7 @@
  	egg/egg-hex.c egg/egg-hex.h \
  	egg/egg-hkdf.c egg/egg-hkdf.h \
  	egg/egg-libgcrypt.c egg/egg-libgcrypt.h \
-+	egg/egg-memrchr.c egg/egg-memrchr.h \
++        egg/egg-memrchr.c egg/egg-memrchr.h \
  	egg/egg-oid.c egg/egg-oid.h \
  	egg/egg-padding.c egg/egg-padding.h \
  	egg/egg-openssl.c egg/egg-openssl.h \
