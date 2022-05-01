@@ -18,12 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    bitmap
-COMPONENT_VERSION= 1.0.9
+COMPONENT_VERSION= 1.1.0
 COMPONENT_SUMMARY= bitmap - bitmap, bmtoa, and atobm utilities
 COMPONENT_FMRI=    image/editor/bitmap
 COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
-COMPONENT_ARCHIVE_HASH= \
-  sha256:e0f3afad5272d796f54c33fa1b5bd1fb3f62843a54b28c87196d06a35123e5f5
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:8e86879c2feeece3f10e189330479cf51da0dd268355d1e3ee8a8497ab833690
 
 include $(WS_MAKE_RULES)/common.mk
 
