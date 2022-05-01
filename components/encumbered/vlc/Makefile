@@ -11,6 +11,7 @@
 
 #
 # Copyright 2015 Aurelien Larcher
+# Copyright 2022 David Stes
 #
 
 BUILD_BITS=64
@@ -18,14 +19,13 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
-COMPONENT_VERSION= 3.0.16
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 3.0.17.4
 COMPONENT_FMRI = media/vlc
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:ffae35fc64f625c175571d2346bc5f6207be99762517f15423e74f18399410f6
+COMPONENT_ARCHIVE_HASH=	sha256:8c5a62d88a4fb45c1b095cf10befef217dfa87aedcec5184b9e7d590b6dd4133
 COMPONENT_ARCHIVE_URL=	https://download.videolan.org/pub/videolan/vlc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.videolan.org/vlc
 COMPONENT_LICENSE = GPLv2.0,LGPLv2.1
@@ -107,6 +107,7 @@ CONFIGURE_OPTIONS += --enable-mad
 CONFIGURE_OPTIONS += --disable-merge-ffmpeg
 CONFIGURE_OPTIONS += --disable-gst-decode
 CONFIGURE_OPTIONS += --enable-avcodec
+CONFIGURE_OPTIONS += --disable-dav1d
 CONFIGURE_OPTIONS += --disable-libva
 CONFIGURE_OPTIONS += --disable-dxva2
 CONFIGURE_OPTIONS += --enable-avformat
@@ -201,7 +202,7 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += audio/mpg123
 REQUIRED_PACKAGES += audio/twolame
-REQUIRED_PACKAGES += codec/dav1d
+# REQUIRED_PACKAGES += codec/dav1d
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/speex
