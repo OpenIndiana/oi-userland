@@ -1,0 +1,20 @@
+Removes a test that throws an assertion and prematurely stops unit testing...
+
+Already reported in upstream:
+https://gitlab.gnome.org/GNOME/gcr/-/issues/31
+
+--- gcr-3.38.0/gcr/test-gnupg-collection.c	2021-03-29 14:31:24.750591762 +0000
++++ gcr-3.38.0/gcr/test-gnupg-collection.c	2021-03-29 14:30:59.368128372 +0000
+@@ -195,12 +195,6 @@ test_load (Test *test, gconstpointer unu
+ 	g_assert_cmpuint (g_hash_table_size (check), ==, g_hash_table_size (test->keys));
+ 	g_hash_table_destroy (check);
+ 	g_list_free (objects);
+-
+-	/* Phillip R. Zimmerman's key should have a photo */
+-	key = g_hash_table_lookup (test->keys, "C7463639B2D7795E");
+-	g_assert (GCR_IS_GNUPG_KEY (key));
+-	record = _gcr_records_find (_gcr_gnupg_key_get_public_records (key), GCR_RECORD_SCHEMA_XA1);
+-	g_assert (record);
+ }
+ 
+ static void

@@ -22,43 +22,40 @@
 #
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2022, Andreas Wacknitz
 #
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gcr
-COMPONENT_VERSION=	3.28.1
-COMPONENT_REVISION=	1
+COMPONENT_NAME=			gcr
+COMPONENT_MJR_VERSION=	3.38
+COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).1
 COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/gcr/
 COMPONENT_SUMMARY=	A GNOME library for displaying certificates and crypto UI
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:95204aa2111c301778ebfbe60975ce3ed698c958430ffcc2a785ac5e593d168b
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/3.28/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:17fcaf9c4a93a65fb1c72b82643bb102c13344084687d5886ea66313868d9ec9
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/GNOME/gcr
-COMPONENT_FMRI=		library/gnome/gcr
+COMPONENT_FMRI=			library/gnome/gcr
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --libexecdir="$(USRLIBDIR.$(BITS))"
 CONFIGURE_OPTIONS += --localstatedir="$(VARDIR)"
 CONFIGURE_OPTIONS += --sysconfdir="$(ETCDIR)"
 
 # Assumes GNU xgettext in PATH.
-CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)
+CONFIGURE_ENV += PATH=$(PATH.gnu)
 
 # Requires a reconf due to patch to autoconf and automake-related files.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 
 # Not available on Solaris.
-CONFIGURE_OPTIONS += --disable-valgrind
+#CONFIGURE_OPTIONS += --disable-valgrind
 # Required for other components.
 CONFIGURE_OPTIONS.64 += --enable-introspection
 # Required for other components.
@@ -83,14 +80,6 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
-$(INSTALL_32):	$(INSTALL_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 # Build dependencies
 REQUIRED_PACKAGES += crypto/gnupg
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
@@ -98,6 +87,7 @@ REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/security/libgpg-error
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
