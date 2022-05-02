@@ -23,6 +23,7 @@
 # Copyright (c) 2015-2017 Aurelien Larcher. All rights reserved.
 # Copyright (c) 2019 Michal Nowak
 # Copyright (c) 2021 David Stes
+# Copyright (c) 2022 Friedrich Kink
 #
 
 BUILD_BITS= 64
@@ -30,17 +31,17 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		valgrind
-COMPONENT_VERSION=	3.18.1
+COMPONENT_VERSION=	3.19.0
 COMPONENT_FMRI=		developer/debug/valgrind
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:00859aa13a772eddf7822225f4b46ee0d39afbe071d32778da4d99984081f7f5
-COMPONENT_ARCHIVE_URL=	ftp://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL =	http://valgrind.org
+COMPONENT_ARCHIVE_HASH=	sha256:dd5e34486f1a483ff7be7300cc16b4d6b24690987877c3278d797534d6738f02
+COMPONENT_ARCHIVE_URL=	https://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL =	https://valgrind.org
 COMPONENT_SUMMARY=	Valgrind: instrumentation framework and tools to detect memory and threading problems
 COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -84,5 +85,5 @@ COMPONENT_TEST_TRANSFORMS += '-n -e "/^== /p"'
 
 # Build dependencies
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += system/library
