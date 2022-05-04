@@ -1,0 +1,11 @@
+--- qt-everywhere-src-5.15.3/qtbase/src/corelib/io/qstandardpaths_unix.cpp	Thu Mar 18 23:29:29 2021
++++ qt-everywhere-src-5.15.3_patched/qtbase/src/corelib/io/qstandardpaths_unix.cpp	Tue Mar 22 08:38:50 2022
+@@ -115,7 +115,7 @@
+         perms |= S_IWOTH;
+     if (permissions & QFile::ExeOther)
+         perms |= S_IXOTH;
+-    return '0' + QByteArray::number(perms, 8);
++    return '0' + QByteArray::number((uint)perms, 8);
+ }
+ 
+ static bool checkXdgRuntimeDir(const QString &xdgRuntimeDir)
