@@ -1,0 +1,25 @@
+--- qtcreator-tags-v7.0.1/src/plugins/clangformat/CMakeLists.txt	Mon Apr 25 18:54:04 2022
++++ qtcreator-tags-v7.0.1_P/src/plugins/clangformat/CMakeLists.txt	Mon May  2 00:56:30 2022
+@@ -20,11 +20,6 @@
+ endif()
+ 
+ extend_qtc_plugin(ClangFormat
+-  CONDITION UNIX AND NOT APPLE
+-  PROPERTIES LINK_FLAGS "-Wl,--exclude-libs,ALL"
+-)
+-
+-extend_qtc_plugin(ClangFormat
+   CONDITION WITH_TESTS
+   SOURCES
+     tests/clangformat-test.cpp
+--- qtcreator-tags-v7.0.1/src/plugins/clangformat/clangformat.qbs		Mon May  2 00:57:21 2022
++++ qtcreator-tags-v7.0.1_P/src/plugins/clangformat/clangformat_.qbs	Mon May  2 00:57:28 2022
+@@ -22,8 +22,6 @@
+     cpp.cxxFlags: base.concat(libclang.llvmToolingCxxFlags)
+     cpp.linkerFlags: {
+         var flags = base;
+-        if (qbs.targetOS.contains("unix") && !qbs.targetOS.contains("macos"))
+-            flags.push("--exclude-libs", "ALL");
+         return flags;
+     }
+     cpp.includePaths: base.concat(libclang.llvmIncludeDir)
