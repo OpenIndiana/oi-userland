@@ -1,0 +1,11 @@
+--- php-7.3.21/ext/intl/locale/locale_methods.c	Tue Aug  4 16:06:22 2020
++++ php-7.3.21_patched/ext/intl/locale/locale_methods.c	Sat Apr  9 06:55:08 2022
+@@ -1326,7 +1326,7 @@
+ 		if( token && (token==cur_lang_tag) ){
+ 			/* check if the char. after match is SEPARATOR */
+ 			chrcheck = token + (strlen(cur_loc_range));
+-			if( isIDSeparator(*chrcheck) || isEndOfTag(*chrcheck) ){
++			if( isIDSeparator(*chrcheck) || isKeywordSeparator(*chrcheck) || isEndOfTag(*chrcheck) ){
+ 				efree( cur_lang_tag );
+ 				efree( cur_loc_range );
+ 				if( can_lang_tag){

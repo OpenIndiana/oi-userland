@@ -58,6 +58,10 @@ LDFLAGS		+=	$(JPEG_LDFLAGS)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && autoconf )
 
+COMPONENT_PRE_CONFIGURE_ACTION += \
+	cp $(SOURCE_DIR)/../patches/dateformat_get_set_calendar_variant6.phpt $(SOURCE_DIR)/ext/intl/tests/; \
+	cp $(SOURCE_DIR)/../patches/locale_filter_matches4.phpt $(SOURCE_DIR)/ext/intl/tests/
+
 # Configure Options
 CONFIGURE_OPTIONS  =	--prefix=$(PHP_PREFIX)
 CONFIGURE_OPTIONS  +=	--bindir=$(PHP_PREFIX)/bin

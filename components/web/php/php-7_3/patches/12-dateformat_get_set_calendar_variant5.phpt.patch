@@ -1,0 +1,14 @@
+--- php-7.3.21/ext/intl/tests/dateformat_get_set_calendar_variant5.phpt	Tue Aug  4 16:06:22 2020
++++ php-7.3.21_patched/ext/intl/tests/dateformat_get_set_calendar_variant5.phpt	Sat Apr  9 07:04:23 2022
+@@ -1,9 +1,9 @@
+ --TEST--
+-IntlDateFormatter: setCalendar()/getCalendar()/getCalendarObject()
++IntlDateFormatter: setCalendar()/getCalendar()/getCalendarObject() for ICU >= 58.1 and < 70.1
+ --SKIPIF--
+ <?php
+ if (!extension_loaded('intl')) die('skip intl extension not enabled'); ?>
+-<?php if (version_compare(INTL_ICU_VERSION, '58.1') < 0) die('skip for ICU >= 58.1'); ?>
++<?php if (version_compare(INTL_ICU_VERSION, '58.1') < 0 || version_compare(INTL_ICU_VERSION, '70.1') >= 0) die('skip for ICU >= 58.1 and < 70.1'); ?>
+ --FILE--
+ <?php
+ ini_set("intl.error_level", E_WARNING);
