@@ -3,42 +3,18 @@
 # Common Development and Distribution License ("CDDL"), version 1.0.
 # You may only use this file in accordance with the terms of version
 # 1.0 of the CDDL.
-#
 # A full copy of the text of the CDDL should have accompanied this
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
-#
 
-#
-# Copyright 2022 Gary Mills
-# Copyright 2015 Alexander Pyhalov
-#
-
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+# Copyright 2022 <contributor>
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-# These modules are optional
-<transform file path=(.*)\.py -> default pkg.depend.bypass-generate .*(pygments|sphinx|recommonmark).*>
-
-link path=usr/bin/rst2html.py target=rst2html.py-$(PYVER) mediator=python3 mediator-version=$(PYVER)
-link path=usr/bin/rst2html4.py target=rst2html4.py-$(PYVER) mediator=python3 mediator-version=$(PYVER)
-link path=usr/bin/rst2html5.py target=rst2html5.py-$(PYVER) mediator=python3 mediator-version=$(PYVER)
-link path=usr/bin/rst2latex.py target=rst2latex.py-$(PYVER) mediator=python3 mediator-version=$(PYVER)
-link path=usr/bin/rst2man.py target=rst2man.py-$(PYVER) mediator=python3 mediator-version=$(PYVER)
-link path=usr/bin/rst2odt_prepstyles.py target=rst2odt_prepstyles.py-$(PYVER) mediator=python3 mediator-version=$(PYVER)
-link path=usr/bin/rst2odt.py target=rst2odt.py-$(PYVER) mediator=python3 mediator-version=$(PYVER)
-link path=usr/bin/rst2pseudoxml.py target=rst2pseudoxml.py-$(PYVER) mediator=python3 mediator-version=$(PYVER)
-link path=usr/bin/rst2s5.py target=rst2s5.py-$(PYVER) mediator=python3 mediator-version=$(PYVER)
-link path=usr/bin/rst2xetex.py target=rst2xetex.py-$(PYVER) mediator=python3 mediator-version=$(PYVER)
-link path=usr/bin/rst2xml.py target=rst2xml.py-$(PYVER) mediator=python3 mediator-version=$(PYVER)
-link path=usr/bin/rstpep2html.py target=rstpep2html.py-$(PYVER) mediator=python3 mediator-version=$(PYVER)
-
 file path=usr/bin/rst2html.py-$(PYVER)
 file path=usr/bin/rst2html4.py-$(PYVER)
 file path=usr/bin/rst2html5.py-$(PYVER)
@@ -51,7 +27,6 @@ file path=usr/bin/rst2s5.py-$(PYVER)
 file path=usr/bin/rst2xetex.py-$(PYVER)
 file path=usr/bin/rst2xml.py-$(PYVER)
 file path=usr/bin/rstpep2html.py-$(PYVER)
-
 file path=usr/lib/python$(PYVER)/vendor-packages/docutils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/docutils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.html
 file path=usr/lib/python$(PYVER)/vendor-packages/docutils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
@@ -59,7 +34,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/docutils-$(COMPONENT_VERSION)-p
 file path=usr/lib/python$(PYVER)/vendor-packages/docutils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/docutils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.html
 file path=usr/lib/python$(PYVER)/vendor-packages/docutils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
-
 file path=usr/lib/python$(PYVER)/vendor-packages/docutils/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/docutils/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/docutils/examples.py
