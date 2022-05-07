@@ -12,13 +12,17 @@
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2019 Michal Nowak
+# Copyright 2022 Daniel Chan
 #
+
+BUILD_BITS=			32
+BUILD_STYLE= justmake
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fbreader
 COMPONENT_VERSION=	0.99.4
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	Powerful e-book reader
 COMPONENT_PROJECT_URL=	http://www.fbreader.org/
 COMPONENT_FMRI=	desktop/fbreader
@@ -31,11 +35,9 @@ COMPONENT_ARCHIVE_URL= \
 	http://www.fbreader.org/files/desktop/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-QT5_ROOT=/usr/lib/qt/5.12
+QT5_ROOT=/usr/lib/qt/5.15
 PATH=$(GCC_ROOT)/bin:$(PATH.gnu):$(QT5_ROOT)/bin
 
 ENV += TARGET_ARCH=desktop
@@ -44,17 +46,13 @@ ENV += TARGET_STATUS=release
 ENV += CFLAGS="$(CFLAGS)"
 ENV += LDFLAGS="$(LDFLAGS)"
 ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH.$(BITS)):$(QT5_ROOT)/lib/pkgconfig"
+ENV += QT_NO_OPENSSL=1
 ENV += ZLSHARED=no
 
 COMPONENT_POST_INSTALL_ACTION = \
 	/usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(GCC_ROOT)/lib:$(QT5_ROOT)/lib"' $(PROTO_DIR)/usr/bin/FBReader; \
 	/usr/bin/elfedit -e 'dyn:value -s RPATH   "$(GCC_ROOT)/lib:$(QT5_ROOT)/lib"' $(PROTO_DIR)/usr/bin/FBReader;
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += web/curl
 
