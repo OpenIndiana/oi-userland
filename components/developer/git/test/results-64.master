@@ -3218,9 +3218,9 @@ ok 1 - Testing Git::I18N with NO Perl gettext library
 ok 2 - Git::I18N is located at $(@D)/perl/build/lib/Git/I18N.pm
 ok 3 - sanity: Git::I18N has 3 export(s)
 ok 4 - sanity: Git::I18N exports everything by default
-ok 5 - sanity: __ has a $ prototype
-ok 6 - sanity: __n has a $$$ prototype
-ok 7 - sanity: N__ has a $ prototype
+ok 5 - sanity: N__ has a $ prototype
+ok 6 - sanity: __ has a $ prototype
+ok 7 - sanity: __n has a $$$ prototype
 ok 8 - Passing a string through __() in the C locale works
 ok 9 - Get singular string through __n() in C locale
 ok 10 - Get plural string through __n() in C locale
@@ -12516,12 +12516,14 @@ ok 201 - diff --cached on unborn branch
 ok 202 - diff --cached -- file on unborn branch
 ok 203 - diff --line-prefix with spaces
 ok 204 - diff-tree --stdin with log formatting
-ok 205 - diff -I<regex>: setup
-ok 206 - diff -I<regex>
-ok 207 - diff -I<regex> --stat
-ok 208 - diff -I<regex>: detect malformed regex
-# passed all 208 test(s)
-1..208
+ok 205 - diff-tree --stdin with pathspec
+ok 206 - show A B ... -- <pathspec>
+ok 207 - diff -I<regex>: setup
+ok 208 - diff -I<regex>
+ok 209 - diff -I<regex> --stat
+ok 210 - diff -I<regex>: detect malformed regex
+# passed all 210 test(s)
+1..210
 *** t4014-format-patch.sh ***
 ok 1 - setup
 ok 2 - format-patch --ignore-if-in-upstream
@@ -23486,29 +23488,31 @@ ok 35 - submodule init picks up update=none
 ok 36 - submodule update - update=none in .git/config
 ok 37 - submodule update - update=none in .git/config but --checkout given
 ok 38 - submodule update --init skips submodule with update=none
-ok 39 - submodule update continues after checkout error
-ok 40 - submodule update continues after recursive checkout error
-ok 41 - submodule update exit immediately in case of merge conflict
-ok 42 - submodule update exit immediately after recursive rebase error
-ok 43 - add different submodules to the same path
-ok 44 - submodule add places git-dir in superprojects git-dir
-ok 45 - submodule update places git-dir in superprojects git-dir
-ok 46 - submodule add places git-dir in superprojects git-dir recursive
-ok 47 - submodule update places git-dir in superprojects git-dir recursive
-ok 48 - submodule add properly re-creates deeper level submodules
-ok 49 - submodule update properly revives a moved submodule
-ok 50 - submodule update can handle symbolic links in pwd
-ok 51 - submodule update clone shallow submodule
-ok 52 - submodule update clone shallow submodule outside of depth
-ok 53 - submodule update --recursive drops module name before recursing
-ok 54 - submodule update can be run in parallel
-ok 55 - git clone passes the parallel jobs config on to submodules
-ok 56 - submodule update --quiet passes quietness to merge/rebase
-ok 57 - submodule update --quiet passes quietness to fetch with a shallow clone
-ok 58 - submodule update --filter requires --init
-ok 59 - submodule update --filter sets partial clone settings
-# passed all 59 test(s)
-1..59
+ok 39 - submodule update with pathspec warns against uninitialized ones
+ok 40 - submodule update without pathspec updates only initialized ones
+ok 41 - submodule update continues after checkout error
+ok 42 - submodule update continues after recursive checkout error
+ok 43 - submodule update exit immediately in case of merge conflict
+ok 44 - submodule update exit immediately after recursive rebase error
+ok 45 - add different submodules to the same path
+ok 46 - submodule add places git-dir in superprojects git-dir
+ok 47 - submodule update places git-dir in superprojects git-dir
+ok 48 - submodule add places git-dir in superprojects git-dir recursive
+ok 49 - submodule update places git-dir in superprojects git-dir recursive
+ok 50 - submodule add properly re-creates deeper level submodules
+ok 51 - submodule update properly revives a moved submodule
+ok 52 - submodule update can handle symbolic links in pwd
+ok 53 - submodule update clone shallow submodule
+ok 54 - submodule update clone shallow submodule outside of depth
+ok 55 - submodule update --recursive drops module name before recursing
+ok 56 - submodule update can be run in parallel
+ok 57 - git clone passes the parallel jobs config on to submodules
+ok 58 - submodule update --quiet passes quietness to merge/rebase
+ok 59 - submodule update --quiet passes quietness to fetch with a shallow clone
+ok 60 - submodule update --filter requires --init
+ok 61 - submodule update --filter sets partial clone settings
+# passed all 61 test(s)
+1..61
 *** t7407-submodule-foreach.sh ***
 ok 1 - setup a submodule tree
 ok 2 - test basic "submodule foreach" usage
@@ -26754,29 +26758,30 @@ ok 27 - rewriting tag of filtered out object
 ok 28 - rewrite tag predating pathspecs to nothing
 not ok 29 - no exact-ref revisions included # TODO known breakage
 ok 30 - path limiting with import-marks does not lose unmodified files
-ok 31 - avoid corrupt stream with non-existent mark
-ok 32 - full-tree re-shows unmodified files
-ok 33 - set-up a few more tags for tag export tests
-ok 34 - tree_tag
-ok 35 - tree_tag-obj
-ok 36 - tag-obj_tag
-ok 37 - tag-obj_tag-obj
-ok 38 - handling tags of blobs
-ok 39 - handling nested tags
-ok 40 - directory becomes symlink
-ok 41 - fast-export quotes pathnames
-ok 42 - test bidirectionality
-ok 43 - avoid uninteresting refs
-ok 44 - refs are updated even if no commits need to be exported
-ok 45 - use refspec
-ok 46 - delete ref because entire history excluded
-ok 47 - delete refspec
-ok 48 - when using -C, do not declare copy when source of copy is also modified
-ok 49 - merge commit gets exported with --import-marks
-ok 50 - fast-export --first-parent outputs all revisions output by revision walk
+ok 31 - path limiting works
+ok 32 - avoid corrupt stream with non-existent mark
+ok 33 - full-tree re-shows unmodified files
+ok 34 - set-up a few more tags for tag export tests
+ok 35 - tree_tag
+ok 36 - tree_tag-obj
+ok 37 - tag-obj_tag
+ok 38 - tag-obj_tag-obj
+ok 39 - handling tags of blobs
+ok 40 - handling nested tags
+ok 41 - directory becomes symlink
+ok 42 - fast-export quotes pathnames
+ok 43 - test bidirectionality
+ok 44 - avoid uninteresting refs
+ok 45 - refs are updated even if no commits need to be exported
+ok 46 - use refspec
+ok 47 - delete ref because entire history excluded
+ok 48 - delete refspec
+ok 49 - when using -C, do not declare copy when source of copy is also modified
+ok 50 - merge commit gets exported with --import-marks
+ok 51 - fast-export --first-parent outputs all revisions output by revision walk
 # still have 1 known breakage(s)
-# passed all remaining 49 test(s)
-1..50
+# passed all remaining 50 test(s)
+1..51
 *** t9351-fast-export-anonymize.sh ***
 ok 1 - setup simple repo
 ok 2 - export anonymized stream
@@ -27374,7 +27379,7 @@ missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !REFFILES !RUNS_COMMANDS_FROM_PWD
 failed test(s): t0204 t1700 t2501 t3200 t4150 t4202 t9902
 
 fixed   1
-success 23640
+success 23645
 failed  10
 broken  212
-total   24286
+total   24291
