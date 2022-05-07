@@ -33,6 +33,7 @@ MICRO_VERSION=10
 
 COMPONENT_NAME=		wireshark
 COMPONENT_VERSION=	$(MAJOR_VERSION).$(MICRO_VERSION)
+COMPONENT_REVISION =     1
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -46,7 +47,7 @@ TEST_TARGET:		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Set path to Qt5 libs
-QT5_LIBDIR = /usr/lib/qt/5.12/lib/amd64
+QT5_LIBDIR = /usr/lib/qt/5.15/lib/amd64
 
 # Set path to Qt5 cmake modules.
 CMAKE_OPTIONS += -DCMAKE_PREFIX_PATH=$(QT5_LIBDIR)/cmake
