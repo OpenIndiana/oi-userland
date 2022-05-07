@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		MEGAsync
 COMPONENT_VERSION=	4.6.3
+COMPONENT_REVISION= 1
 _REL=Linux
 COMPONENT_PREP_GIT=yes
 GIT_TAG=v$(COMPONENT_VERSION).0_$(_REL)
@@ -45,6 +46,8 @@ COMPONENT_LICENSE=	custom:MEGA LIMITED CODE REVIEW LICENCE
 COMPONENT_LICENSE_FILE=	LICENCE.md
 
 include $(WS_MAKE_RULES)/common.mk
+QT5_ROOT=/usr/lib/qt/5.15
+PATH=$(QT5_ROOT)/bin/amd64:$(GNUBIN):$(USRBINDIR$(BITS)):$(USRBINDIR):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(PERL5BINDIR)
 COMPONENT_POST_UNPACK_ACTION= \
 	git clone $(SDK_REPO) $(SOURCE_DIR)/src/MEGASync/mega; \
 	cd $(SOURCE_DIR)/src/MEGASync/mega && git checkout $(SDK_COMMIT_ID)
@@ -54,9 +57,9 @@ COMPONENT_PRE_CONFIGURE_ACTION= \
 	(mv $(SOURCE_DIR)/* $(@D)); \
 	cd $(@D)/src/MEGASync/mega && ./autogen.sh
 COMPONENT_PRE_BUILD_ACTION= \
-	cd $(@D)/src && qmake "CONFIG += FULLREQUIREMENTS" "QMAKE_LFLAGS += -Wl,-z,nodefs -Wl,-z,ignore -Wl,-z,redlocsym -fPIC" "QMAKE_CC = $(CC)" "QMAKE_CXX = $(CXX)" MEGA.pro  && lrelease MEGASync/MEGASync.pro
+	cd $(@D)/src && qmake "CONFIG += FULLREQUIREMENTS" "QMAKE_LFLAGS += -Wl,-z,nodefs -Wl,-z,ignore -Wl,-z,redlocsym -fPIC" "QMAKE_CC = $(CC)" "QMAKE_CXX = $(CXX)" MEGA.pro && lrelease MEGASync/MEGASync.pro
 COMPONENT_POST_BUILD_ACTION= \
-	mv $(BUILD_DIR)/amd64/LICENCE.md $(SOURCE_DIR)/../LICENCE.md
+	mv $(BUILD_DIR)/amd64/LICENCE.md $(SOURCE_DIR)/LICENCE.md
 COMPONENT_INSTALL_ARGS += INSTALL_ROOT=$(PROTO_DIR)
 COMPONENT_POST_INSTALL_ACTION = \
 	cd $(@D)/src/ && mkdir -p $(PROTO_DIR)/usr/bin/ && ginstall -Dm 755 MEGASync/megasync $(PROTO_DIR)/usr/bin/
