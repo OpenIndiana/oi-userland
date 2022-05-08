@@ -782,6 +782,26 @@ JAVA7_HOME =	/usr/jdk/instances/openjdk1.7.0
 JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
 JAVA_HOME = $(JAVA8_HOME)
 
+# QT macros
+# We deliver version 5 in 32- and 64-bit variants.
+QT5_VERSION = 5.15
+QT5_BASEDIR = $(USRLIBDIR)/qt/$(QT5_VERSION)
+QT5_BINDIR.32 = $(QT5_BASEDIR)/bin
+QT5_LIBDIR.32 = $(QT5_BASEDIR)/lib
+QT5_BINDIR.64 = $(QT5_BASEDIR)/bin/$(MACH64)
+QT5_LIBDIR.64 = $(QT5_BASEDIR)/lib/$(MACH64)
+QT5_BINDIR = $(QT5_BINDIR.$(BITS))
+QT5_LIBDIR = $(QT5_LIBDIR.$(BITS))
+QT5_INCDIR = $(QT5_BASEDIR)/include
+QT5_PKG_CONFIG_PATH = $(QT5_LIBDIR)/pkgconfig
+
+# We deliver version 6 only in a 64-bit variant.
+QT6_VERSION = 6.2
+QT6_BASEDIR = $(USRLIBDIR)/qt/$(QT6_VERSION)
+QT6_BINDIR = $(QT6_BASEDIR)/bin/$(MACH64)
+QT6_LIBDIR = $(QT6_BASEDIR)/lib/$(MACH64)
+QT6_PKG_CONFIG_PATH = $(QT6_LIBDIR)/pkgconfig
+
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
 PERL_VERSION =  5.22
