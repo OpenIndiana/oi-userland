@@ -27,7 +27,7 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			doxygen
-COMPONENT_VERSION=		1.9.3
+COMPONENT_VERSION=		1.9.4
 COMPONENT_VERSION_=		$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_FMRI=			developer/documentation-tool/doxygen		
 COMPONENT_SUMMARY=		Doxygen - Source Code Documentation Tool 
@@ -36,14 +36,14 @@ COMPONENT_PROJECT_URL=	https://www.stack.nl/~dimitri/doxygen/index.html
 COMPONENT_FILE=			Release_$(COMPONENT_VERSION_)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_FILE)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c29426222c9361dc33b762cf1c6447c78cfb0b9c213e5dcdbe31a10540c918c5
+COMPONENT_ARCHIVE_HASH=	sha256:1b083d15b29817463129ae1ae73b930d883030eeec090ea7a99b3a04fdb51c76
 COMPONENT_ARCHIVE_URL=	https://github.com/doxygen/doxygen/archive/$(COMPONENT_FILE).tar.gz
 COMPONENT_LICENSE=		GPLv2
 
 # Download the manual so that we don't have to keep updating it in the gate.
-COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
-COMPONENT_ARCHIVE_HASH_1 =	sha256:9435f7a028946b76951e5e39c1da52162944e0756caef34b2f6c2d16593423fa
-COMPONENT_ARCHIVE_URL_1 =	https://doxygen.nl/files/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_1=	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
+COMPONENT_ARCHIVE_HASH_1=	sha256:04463487284c85b145f494c923248bef232652cf32818ad912b520fccc0e6684
+COMPONENT_ARCHIVE_URL_1=	https://doxygen.nl/files/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -68,6 +68,7 @@ COMPONENT_TEST_MASTER = \
 # The additional doxygen specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/[0-9. ]*sec//g"' \
 	'-e "/Passed/d" ' \
 	'-e "/Total/d" ' \
 	'-e "/Start/d" ' 
