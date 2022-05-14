@@ -1,0 +1,11 @@
+--- qt-everywhere-src-6.2.4/qtquick3d/src/runtimerender/graphobjects/qssgrenderparticles.cpp	Tue Mar  8 03:52:29 2022
++++ qt-everywhere-src-6.2.4_patched/qtquick3d/src/runtimerender/graphobjects/qssgrenderparticles.cpp	Sun Mar 27 00:56:06 2022
+@@ -54,7 +54,7 @@
+     }
+     int vec4PerParticle = ceilDivide(particleSize, 16);
+     int vec4s = particleCount * vec4PerParticle;
+-    int width = divisibleBy(sqrt(vec4s), vec4PerParticle);
++    int width = divisibleBy((int)sqrt((double)vec4s), vec4PerParticle);
+     int height = ceilDivide(vec4s, width);
+     m_particlesPerSlice = width / vec4PerParticle;
+     m_particleCount = particleCount;
