@@ -24,46 +24,41 @@
 # Copyright (c) 2019 Nona Hansel
 #
 
+BUILD_BITS= 64
+#USE_OPENSSL11= yes		slrn doesn't seem to be compatible with openssl-1.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		slrn
-COMPONENT_VERSION=	1.0.1
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	http://slrn.sourceforge.net/
+COMPONENT_VERSION=	1.0.3
+HUMAN_VERSION=		1.0.3a
+COMPONENT_SUMMARY=	slrn is an text-based news client
+COMPONENT_PROJECT_URL=	https://slrn.info
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:06b4a060939ec3077e5a060c7a2556747c96061a24eec2c09e1feacd5dbeaae6
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/slrn/files/slrn/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:3ba8a4d549201640f2b82d53fb1bec1250f908052a7983f0061c983c634c2dac
+COMPONENT_ARCHIVE_URL=	https://jedsoft.org/releases/slrn/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		network/nntp/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Applications/Internet
+COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
+
 CONFIGURE_SCRIPT = $(@D)/configure
 
 # slrn configure test for 'mkdir -p' functionality doesn't like Solaris
 # implementation (GNU mkdir will understand --version option).
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--with-server-file=/etc/nntpserver
 CONFIGURE_OPTIONS +=	--with-slrnpull=/var/spool/slrnpull
 CONFIGURE_OPTIONS +=	--enable-spool
-CONFIGURE_OPTIONS +=	--with-ssl
-
-# Needed to successfully link the 64-bit programs.
-CC +=			$(CC_BITS)
+CONFIGURE_OPTIONS +=	--with-ssl=$(OPENSSL_PREFIX)
 
 ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl
