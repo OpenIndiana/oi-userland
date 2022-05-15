@@ -23,40 +23,38 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		slang
-COMPONENT_VERSION=	2.3.1
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.3.2
+COMPONENT_SUMMARY=	S-Lang is a multi-platform programmer's library designed to allow a developer to create robust multi-platform software
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:a810d5da7b0c0c8c335393c6b4f12884be6fa7696d9ca9521ef21316a4e00f9d
-COMPONENT_ARCHIVE_URL=	http://www.jedsoft.org/releases/slang/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.jedsoft.org/slang/
-COMPONENT_BUGDB=	utility/slang
+COMPONENT_ARCHIVE_HASH= sha256:fc9e3b0fc4f67c3c1f6d43c90c16a5c42d117b8e28457c5b46831b8b5d3ae31a
+COMPONENT_ARCHIVE_URL=	https://www.jedsoft.org/releases/slang/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.jedsoft.org/slang/
+COMPONENT_FMRI=			library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Development/Other Languages
+COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D)/autoconf && autoconf -f -o ../configure )
-
-CFLAGS += -std=gnu89
 
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS  +=		--sysconfdir=$(ETCDIR)/slsh
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/slsh
 
 COMPONENT_BUILD_ARGS=
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/Running /p" ' \
+	'-e "/Testing /p" ' \
+	'-e "/^Ok/p" ' \
+	'-e "/All /p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
@@ -65,3 +63,4 @@ REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += text/oniguruma
