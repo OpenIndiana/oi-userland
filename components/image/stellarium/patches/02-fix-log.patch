@@ -1,0 +1,29 @@
+--- stellarium-0.22.0/src/gui/AstroCalcDialog.cpp.orig	2022-03-20 15:34:54.000000000 +0000
++++ stellarium-0.22.0/src/gui/AstroCalcDialog.cpp	2022-05-15 10:16:40.885936779 +0000
+@@ -1696,18 +1696,18 @@
+ 
+ 	// The QLogValueAxis has a stupid limit for the low end. Again, circumvent it with a CategoryAxis.
+ 	QCategoryAxis *radialAxis = new QCategoryAxis();
+-	radialAxis->append("0.5", log(.5));  // a few stop marks for AU values
+-	radialAxis->append("1", log(1));
+-	radialAxis->append("2", log(2));
+-	radialAxis->append("5", log(5));
+-	radialAxis->append("10", log(10));
+-	radialAxis->append("20", log(20));
+-	radialAxis->append("30", log(30));
++	radialAxis->append("0.5", log((double).5));  // a few stop marks for AU values
++	radialAxis->append("1", log((double)1));
++	radialAxis->append("2", log((double)2));
++	radialAxis->append("5", log((double)5));
++	radialAxis->append("10", log((double)10));
++	radialAxis->append("20", log((double)20));
++	radialAxis->append("30", log((double)30));
+ 	radialAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
+ 	radialAxis->setLabelsColor(labelColor);
+ 	radialAxis->setGridLineColor(axisColor);
+ 	radialAxis->setLineVisible(false);
+-	radialAxis->setRange(-1.5, log(32));
++	radialAxis->setRange(-1.5, log((double)32));
+ 	chart->addAxis(radialAxis, QPolarChart::PolarOrientationRadial);
+ 
+ 	seriesPlanets->attachAxis(angularAxis);
