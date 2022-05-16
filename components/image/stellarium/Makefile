@@ -18,7 +18,7 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stellarium
-COMPONENT_VERSION=	0.22.0
+COMPONENT_VERSION=	0.22.1
 COMPONENT_SUMMARY=	Planetarium with realistic 3D sky just like seeing with naked eye, binoculars or telescope.
 COMPONENT_PROJECT_URL=	https://stellarium.org
 COMPONENT_FMRI=		image/stellarium
@@ -26,7 +26,7 @@ COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SRC_NAME=	stellarium
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:0b4dc23cf9054b5e76cd9bc5ad68e172eb221999e90af37e93667d04fe78c885
+COMPONENT_ARCHIVE_HASH=	sha256:61a595ecc345dcc7517359573d0dc772e67ecaf6d52fefab142a77c92cf3fa24
 COMPONENT_ARCHIVE_URL=  https://github.com/Stellarium/stellarium/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz
 COMPONENT_LICENSE=	GPLv2.0
 COMPONENT_LICENSE_FILE=	COPYING
