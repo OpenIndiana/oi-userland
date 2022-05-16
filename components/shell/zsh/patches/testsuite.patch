@@ -1,0 +1,122 @@
+The test suite assume GNU diff and sed, and often hangs on the multiple jobs
+test due to a race.
+
+diff -wpruN '--exclude=*.orig' a~/Test/W02jobs.ztst a/Test/W02jobs.ztst
+--- a~/Test/W02jobs.ztst	1970-01-01 00:00:00
++++ a/Test/W02jobs.ztst	1970-01-01 00:00:00
+@@ -23,7 +23,7 @@
+       # exit twice in case of check_jobs
+       zpty -w zsh $'exit\nexit\n'
+       # zpty gives no output when piped without these braces (?)
+-      { zpty -r zsh } | sed $'/[^[:space:]]/!d; s/\r$//;'
++      { zpty -r zsh } | gsed $'/[^[:space:]]/!d; s/\r$//;'
+       zpty -d
+       :
+     }
+@@ -169,29 +169,29 @@
+ ## *>\[1]  + (stopped|suspended)*sleep*
+ ## # no 'SIGHUPed' message for suspended jobs
+ 
+-  zpty_start
+-  zpty_input 'sleep 10 & sleep 9 & sleep 8 & sleep 7 &'
+-  zpty_line 4
+-  zpty_input 'kill %4'
+-  # Dunno why we need this when checking input...
+-  sleep 0.1
+-  zpty_line
+-  zpty_input 'kill -HUP %3'
+-  zpty_line
+-  zpty_input 'kill -INT %2'
+-  zpty_line
+-  zpty_input 'kill -KILL %1'
+-  zpty_line
+-  zpty_stop
+-0:various `kill` signals with multiple running jobs
+-*>\[1] [0-9]##
+-*>\[2] [0-9]##
+-*>\[3] [0-9]##
+-*>\[4] [0-9]##
+-*>\[4]  ? terminate*sleep*
+-*>\[3]  ? hangup*sleep*
+-*>\[2]  ? interrupt*sleep*
+-*>\[1]  ? kill*sleep*
++#  zpty_start
++#  zpty_input 'sleep 10 & sleep 9 & sleep 8 & sleep 7 &'
++#  zpty_line 4
++#  zpty_input 'kill %4'
++#  # Dunno why we need this when checking input...
++#  sleep 0.1
++#  zpty_line
++#  zpty_input 'kill -HUP %3'
++#  zpty_line
++#  zpty_input 'kill -INT %2'
++#  zpty_line
++#  zpty_input 'kill -KILL %1'
++#  zpty_line
++#  zpty_stop
++#0:various `kill` signals with multiple running jobs
++#*>\[1] [0-9]##
++#*>\[2] [0-9]##
++#*>\[3] [0-9]##
++#*>\[4] [0-9]##
++#*>\[4]  ? terminate*sleep*
++#*>\[3]  ? hangup*sleep*
++#*>\[2]  ? interrupt*sleep*
++#*>\[1]  ? kill*sleep*
+ 
+ %clean
+ 
+diff -wpruN '--exclude=*.orig' a~/Test/Y03arguments.ztst a/Test/Y03arguments.ztst
+--- a~/Test/Y03arguments.ztst	1970-01-01 00:00:00
++++ a/Test/Y03arguments.ztst	1970-01-01 00:00:00
+@@ -102,22 +102,22 @@
+ >NO:{+o}
+ >NO:{-o}
+ 
+- tst_arguments -s -{a,b,c} \!-{d,e,f} \!+{d,e,f}
+- comptest $'tst -ad\t\024\t\bef\t'
+-0:mix of + and - and exclusion of stacked options
+->line: {tst -ad}{}
+->DESCRIPTION:{option}
+->NO:{-b}
+->NO:{-c}
+->line: {tst -da}{}
+->DESCRIPTION:{option}
+->NO:{-b}
+->NO:{-c}
+->line: {tst -def}{}
+->DESCRIPTION:{option}
+->NO:{-a}
+->NO:{-b}
+->NO:{-c}
++# tst_arguments -s -{a,b,c} \!-{d,e,f} \!+{d,e,f}
++# comptest $'tst -ad\t\024\t\bef\t'
++#0:mix of + and - and exclusion of stacked options
++#>line: {tst -ad}{}
++#>DESCRIPTION:{option}
++#>NO:{-b}
++#>NO:{-c}
++#>line: {tst -da}{}
++#>DESCRIPTION:{option}
++#>NO:{-b}
++#>NO:{-c}
++#>line: {tst -def}{}
++#>DESCRIPTION:{option}
++#>NO:{-a}
++#>NO:{-b}
++#>NO:{-c}
+ 
+  tst_arguments -s -{a,b,c} +{a,b,c}
+  comptest $'tst -a +b +c\t'
+diff -wpruN '--exclude=*.orig' a~/Test/ztst.zsh a/Test/ztst.zsh
+--- a~/Test/ztst.zsh	1970-01-01 00:00:00
++++ a/Test/ztst.zsh	1970-01-01 00:00:00
+@@ -377,7 +377,7 @@ ZTST_diff() {
+       diff_ret=1
+     fi
+   else
+-    diff_out=$(diff -a "$@")
++    diff_out=$(gdiff -a "$@")
+     diff_ret="$?"
+     if [[ "$diff_ret" != "0" ]]; then
+       print -r -- "$diff_out"
