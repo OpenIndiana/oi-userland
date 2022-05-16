@@ -17,29 +17,23 @@
 #
 
 BUILD_BITS=		32_and_64
-
 include ../../../make-rules/shared-macros.mk
 
-COMPILER=gcc
-COMPONENT_NAME=		qt
-COMPONENT_VERSION=	5.15.3
+COMPONENT_NAME=			qt
 COMPONENT_VERSION_MJR=	5.15
-#COMPONENT_REVISION=     4
-COMPONENT_FMRI=		library/qt5
+COMPONENT_VERSION=		$(COMPONENT_VERSION_MJR).4
 COMPONENT_PROJECT_URL=	https://www.qt.io/
-COMPONENT_SUMMARY=	Qt cross-platform application and UI framework
+COMPONENT_SUMMARY=		Qt cross-platform application and UI framework
+COMPONENT_SRC=			$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-everywhere-opensource-src-$(COMPONENT_VERSION).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:615ff68d7af8eef3167de1fd15eac1b150e1fd69d1e2f4239e54447e7797253b
+COMPONENT_ARCHIVE_URL=	https://download.qt.io/official_releases/qt/$(COMPONENT_VERSION_MJR)/$(COMPONENT_VERSION)/single/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			library/qt5
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-everywhere-opensource-src-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:b7412734698a87f4a0ae20751bab32b1b07fdc351476ad8e35328dbe10efdedb
-COMPONENT_ARCHIVE_URL=\
-	https://download.qt.io/official_releases/qt/$(COMPONENT_VERSION_MJR)/$(COMPONENT_VERSION)/single/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	QT5
+COMPONENT_LICENSE=		QT5
 COMPONENT_LICENSE_FILE=	qt5.license
 
 TEST_TARGET=		$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PG_BINDIR.$(BITS)):$(MYSQL_BINDIR.$(BITS)):$(GCC_ROOT)/bin:$(PATH.gnu)
@@ -119,14 +113,13 @@ REQUIRED_PACKAGES += x11/library/libpthread-stubs
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += developer/clang-90
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/audio/openal
@@ -145,7 +138,7 @@ REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/clang-13
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
