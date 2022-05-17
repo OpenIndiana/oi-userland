@@ -1,0 +1,24 @@
+--- qbittorrent-4.4.2/src/base/utils/fs.cpp	Sat Mar 19 08:46:25 2022
++++ qbittorrent-4.4.2_patched/src/base/utils/fs.cp	Sun Apr  3 09:23:34 2022
+@@ -352,8 +352,8 @@
+         file += '/';
+     file += '.';
+ 
+-    struct statfs buf {};
+-    if (statfs(file.toLocal8Bit().constData(), &buf) != 0)
++    struct statvfs buf {};
++    if (statvfs(file.toLocal8Bit().constData(), &buf) != 0)
+         return false;
+ 
+ #if defined(Q_OS_OPENBSD)
+@@ -360,6 +360,10 @@
+     return ((strncmp(buf.f_fstypename, "cifs", sizeof(buf.f_fstypename)) == 0)
+         || (strncmp(buf.f_fstypename, "nfs", sizeof(buf.f_fstypename)) == 0)
+         || (strncmp(buf.f_fstypename, "smbfs", sizeof(buf.f_fstypename)) == 0));
++#elif defined(Q_OS_SOLARIS)
++    return ((strncmp(buf.f_basetype, "cifs", sizeof(buf.f_basetype)) == 0)
++        || (strncmp(buf.f_basetype, "nfs", sizeof(buf.f_basetype)) == 0)
++        || (strncmp(buf.f_basetype, "smbfs", sizeof(buf.f_basetype)) == 0));
+ #else
+     // Magic number reference:
+     // https://github.com/coreutils/coreutils/blob/master/src/stat.c
