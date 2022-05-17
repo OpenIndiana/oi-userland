@@ -17,21 +17,20 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPILER=gcc
-COMPONENT_NAME=		qt
-COMPONENT_VERSION=	6.2.4
-COMPONENT_VERSION_MJR=	6.2
-COMPONENT_FMRI=		library/qt6
-COMPONENT_PROJECT_URL=	https://www.qt.io/
-COMPONENT_SUMMARY=	Qt cross-platform application and UI framework
-COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:cfe41905b6bde3712c65b102ea3d46fc80a44c9d1487669f14e4a6ee82ebb8fd
-COMPONENT_ARCHIVE_URL=\
-	https://download.qt.io/official_releases/qt/$(COMPONENT_VERSION_MJR)/$(COMPONENT_VERSION)/single/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	LGPLv3
-COMPONENT_LICENSE_FILE=	LICENSE.LGPLv3
+COMPONENT_NAME=				qt
+COMPONENT_VERSION_MJR=		$(QT6_VERSION)
+COMPONENT_VERSION=			$(COMPONENT_VERSION_MJR).4
+COMPONENT_REVISION=     	1
+COMPONENT_FMRI=				library/qt6
+COMPONENT_PROJECT_URL=		https://www.qt.io/
+COMPONENT_SUMMARY=			Qt cross-platform application and UI framework
+COMPONENT_CLASSIFICATION= 	Desktop (GNOME)/Libraries
+COMPONENT_SRC=				$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=			$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=		sha256:cfe41905b6bde3712c65b102ea3d46fc80a44c9d1487669f14e4a6ee82ebb8fd
+COMPONENT_ARCHIVE_URL=		https://download.qt.io/official_releases/qt/$(COMPONENT_VERSION_MJR)/$(COMPONENT_VERSION)/single/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=			FDLv1.3, GPLv2, GPLv3, LGPLv2.1, LGPLv3
+COMPONENT_LICENSE_FILE=		qt6.license
 
 TEST_TARGET=		$(NO_TESTS)
 
@@ -54,7 +53,7 @@ GCC_VERSION 	= 10
 MYSQL_VERSION	= 10.3
 PG_VERSION		= 14
 OPENSSL_VERSION	= 1.1
-Clang_VERSION	= 9.0
+Clang_VERSION	= 13.0
 
 
 LDFLAGS += -Wl,-rpath,$(QT_PREFIX)/lib/$(QT_ARCHSUBDIR.$(BITS)):/usr/clang/$(Clang_VERSION)/lib:$(MYSQL_LIBDIR):$(PG_LIBDIR)
@@ -127,7 +126,6 @@ REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += database/mariadb-103/library
 REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += developer/clang-90
 REQUIRED_PACKAGES += image/library/libjpeg6
 REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += image/library/libpng16
@@ -141,10 +139,12 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/libmng
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libwebp
+REQUIRED_PACKAGES += library/md4c
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/clang-13
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
