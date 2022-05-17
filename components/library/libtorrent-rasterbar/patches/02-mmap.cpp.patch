@@ -1,0 +1,11 @@
+--- libtorrent-rasterbar-v2.0.5/src/mmap.cpp	Sun Dec  5 06:09:00 2021
++++ libtorrent-rasterbar-v2.0.5_patched/src/mmap.cpp Fri Thu  1 01:38:25 2022
+@@ -602,7 +602,7 @@
+ #endif
+ 		;
+ 		if (advise != 0)
+-			madvise(m_mapping, static_cast<std::size_t>(m_size), advise);
++			posix_madvise(m_mapping, static_cast<std::size_t>(m_size), advise);
+ 	}
+ #endif
+ }
