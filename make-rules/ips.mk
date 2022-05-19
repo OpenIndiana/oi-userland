@@ -306,6 +306,7 @@ $(GENERATED).p5m:	install
 		-e '/\.la$$/d' -e '/\.pyo$$/d' -e '/usr\/lib\/python[23]\..*\.pyc$$/d' \
 		-e '/usr\/lib\/python3\..*\/__pycache__\/.*/d'  | \
 		$(PKGFMT) | \
+		uniq | \
 		cat $(METADATA_TEMPLATE) - | \
 		$(TEE) $@ $(SAMPLE_MANIFEST_FILE) >/dev/null
 	if [ "$(GENERATE_GENERIC_TRANSFORMS)X" != "X" ]; \
