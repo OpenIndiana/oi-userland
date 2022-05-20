@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Net-DNS
 COMPONENT_VERSION =		1.15
+COMPONENT_REVISION =		1
 COMPONENT_FMRI =		library/perl-5/net-dns
 COMPONENT_SUMMARY =		Net::DNS - Perl Interface to the Domain Name System
 COMPONENT_CLASSIFICATION =	Development/Perl
