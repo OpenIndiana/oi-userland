@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Time-Duration
 COMPONENT_VERSION =		1.21
+COMPONENT_REVISION =		1
 COMPONENT_FMRI =		library/perl-5/time-duration
 COMPONENT_SUMMARY =		Time::Duration - rounded or exact English expression of durations
 COMPONENT_CLASSIFICATION =	Development/Perl
