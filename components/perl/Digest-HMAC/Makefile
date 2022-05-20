@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		Digest-HMAC
 HUMAN_VERSION =			1.04
 COMPONENT_VERSION =		1.4
+COMPONENT_REVISION =		1
 COMPONENT_FMRI =		library/perl-5/digest-hmac
 COMPONENT_SUMMARY =		Digest::HMAC - Keyed-Hashing for Message Authentication
 COMPONENT_CLASSIFICATION =	Development/Perl
