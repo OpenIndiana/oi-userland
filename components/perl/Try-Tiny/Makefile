@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Try-Tiny
 COMPONENT_VERSION =		0.31
+COMPONENT_REVISION =		1
 COMPONENT_FMRI =		library/perl-5/try-tiny
 COMPONENT_SUMMARY =		Try::Tiny - Minimal try/catch with proper preservation of $$@
 COMPONENT_CLASSIFICATION =	Development/Perl
