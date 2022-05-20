@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		IO-Socket-SSL
 HUMAN_VERSION =			2.074
 COMPONENT_VERSION =		2.74
+COMPONENT_REVISION =		1
 COMPONENT_FMRI =		library/perl-5/io-socket-ssl
 COMPONENT_SUMMARY =		IO::Socket::SSL - SSL sockets with IO::Socket interface
 COMPONENT_CLASSIFICATION =	Development/Perl
@@ -40,15 +41,12 @@ PERL_64_ONLY_VERSIONS = 5.24 5.34
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
 # The component Makefile.PL file will ask some questions on whether we want
 # to run external tests, to which we want to answer with "n".
 COMPONENT_CONFIGURE_ENV += ; echo "n" |
 
 #
-# use the same results for comparison for all builds
+# need different master test results per version
 #
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION).master
 
