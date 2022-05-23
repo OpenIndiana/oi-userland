@@ -50,11 +50,11 @@ component-environment-check::
 component-environment-prep::
 	@/usr/bin/pkg list -vH $(USERLAND_REQUIRED_PACKAGES:%=/%) $(REQUIRED_PACKAGES:%=/%) >/dev/null || \
 		{ echo "Adding required packages to build environment..."; \
-		RETVAL=7 ; \
-		while [ $$RETVAL -eq 7 ] ; do \
+		while true ; do \
 		  $(PFEXEC) /usr/bin/pkg install --accept -v $(REQUIRED_PACKAGES:%=/%) ; \
 		  RETVAL=$$? ; \
-		  if [ $$RETVAL -eq 4 ] || [ -z $$RETVAL ]; then break; fi; \
+		  [ $$RETVAL -eq 4 ] && break; \
+		  [ $$RETVAL -ne 7 ] && exit 1; \
 		  sleep 10; \
 		done; }
 ZONENAME_PREFIX = bz
