@@ -806,12 +806,8 @@ QT6_PKG_CONFIG_PATH = $(QT6_LIBDIR)/pkgconfig
 # Not necessarily the system's default version, i.e. /usr/bin/perl
 PERL_VERSION =  5.22
 
-# Do *not* add 5.34 to PERL_VERSIONS/PERL_64_ONLY_VERSIONS yet.  We'll
-# enable it system-wide once all existing perl modules have been rebuilt
-# with support for all three current perl versions.
-PERL_VERSIONS = 5.22 5.24
-
-PERL_64_ONLY_VERSIONS = 5.24
+PERL_VERSIONS = 5.22 5.24 5.34
+PERL_64_ONLY_VERSIONS = 5.24 5.34
 
 PERL.5.22 =	/usr/perl5/5.22/bin/perl
 PERL.5.24 =	/usr/perl5/5.24/bin/perl
