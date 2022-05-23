@@ -488,47 +488,39 @@ COMPONENT_TEST_TRANSFORMS = \
 # set the default commands used to generate the file containing the set
 # of transforms to be applied to the test results to try to normalize them.
 COMPONENT_TEST_CREATE_TRANSFORMS = \
-	if [ -e $(COMPONENT_TEST_MASTER) ]; \
-	then \
-		print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
-        	print '$(COMPONENT_TEST_TRANSFORMER) ' \
-			$(COMPONENT_TEST_TRANSFORMS) \
-                	' \\' >> $(COMPONENT_TEST_TRANSFORM_CMD); \
-        	print '$(COMPONENT_TEST_OUTPUT) \\' \
-                	>> $(COMPONENT_TEST_TRANSFORM_CMD); \
-        	print '> $(COMPONENT_TEST_SNAPSHOT)' \
-                	>> $(COMPONENT_TEST_TRANSFORM_CMD); \
-	fi
+	print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
+	print '$(COMPONENT_TEST_TRANSFORMER) ' \
+		$(COMPONENT_TEST_TRANSFORMS) \
+		' \\' >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+	print '$(COMPONENT_TEST_OUTPUT) \\' \
+		>> $(COMPONENT_TEST_TRANSFORM_CMD); \
+	print '> $(COMPONENT_TEST_SNAPSHOT)' \
+		>> $(COMPONENT_TEST_TRANSFORM_CMD); \
 
 # set the default command for performing any test result munging
 COMPONENT_TEST_TRANSFORM_CMD =	$(COMPONENT_TEST_BUILD_DIR)/transform-$(BITS)-results
 
 # set the default operation to run to perform test result normalization
 COMPONENT_TEST_PERFORM_TRANSFORM = \
-	if [ -e $(COMPONENT_TEST_MASTER) ]; \
-	then \
-		$(SHELL) $(COMPONENT_TEST_TRANSFORM_CMD); \
-	fi
+	$(SHELL) $(COMPONENT_TEST_TRANSFORM_CMD); \
 
 # set the default command used to compare the master results with the snapshot
 COMPONENT_TEST_COMPARE_CMD =	$(GDIFF) -uN
 
 # set the default way that master and snapshot test results are compared
 COMPONENT_TEST_COMPARE = \
-	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	[ -e $(COMPONENT_TEST_MASTER) ] || exit 1; \
+	$(COMPONENT_TEST_COMPARE_CMD) \
+		$(COMPONENT_TEST_MASTER) $(COMPONENT_TEST_SNAPSHOT) \
+		> $(COMPONENT_TEST_DIFFS); \
+	print "Test results in $(COMPONENT_TEST_OUTPUT)"; \
+	if [ -s $(COMPONENT_TEST_DIFFS) ]; \
 	then \
-		$(COMPONENT_TEST_COMPARE_CMD) \
-			$(COMPONENT_TEST_MASTER) $(COMPONENT_TEST_SNAPSHOT) \
-			> $(COMPONENT_TEST_DIFFS); \
-		print "Test results in $(COMPONENT_TEST_OUTPUT)"; \
-		if [ -s $(COMPONENT_TEST_DIFFS) ]; \
-		then \
-			print "Differences found."; \
-			$(CAT) $(COMPONENT_TEST_DIFFS); \
-			exit 2; \
-		else \
-			print "No differences found."; \
-		fi \
+		print "Differences found."; \
+		$(CAT) $(COMPONENT_TEST_DIFFS); \
+		exit 2; \
+	else \
+		print "No differences found."; \
 	fi
 
 # set the default env command to use for test of the component
