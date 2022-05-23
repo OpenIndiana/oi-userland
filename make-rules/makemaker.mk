@@ -122,6 +122,13 @@ COMPONENT_TEST_OUTPUT = $(COMPONENT_TEST_BUILD_DIR)/test-$(PERL_VERSION)-$(BITS)
 COMPONENT_TEST_DIFFS =  $(COMPONENT_TEST_BUILD_DIR)/test-$(PERL_VERSION)-$(BITS)-diffs
 COMPONENT_TEST_SNAPSHOT = $(COMPONENT_TEST_BUILD_DIR)/results-$(PERL_VERSION)-$(BITS).snapshot
 COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PERL_VERSION)-$(BITS)-results
+#
+# delete any lines up through test_harness
+# delete timings
+#
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/test_harness/d"' \
+	'-e "s/,  *[0-9]* wallclock.*//"'
 
 COMPONENT_TEST_TARGETS =	test
 COMPONENT_TEST_ENV +=	$(COMMON_PERL_ENV)
