@@ -18,7 +18,7 @@ diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
 index cdd5633cb57..abe66923749 100644
 --- a/gcc/config/i386/i386.c
 +++ b/gcc/config/i386/i386.c
-@@ -6961,21 +6961,21 @@ static void
+@@ -6972,21 +6972,21 @@
  ix86_emit_save_regs (void)
  {
    unsigned int regno;
@@ -43,7 +43,7 @@ index cdd5633cb57..abe66923749 100644
  	pro_epilogue_adjust_stack (stack_pointer_rtx, stack_pointer_rtx,
  				   GEN_INT (-UNITS_PER_WORD), -1, false);
      }
-@@ -7066,22 +7066,21 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
+@@ -7077,22 +7077,21 @@
  /* Emit code to save registers using MOV insns.
     First register is stored at CFA - CFA_OFFSET.  */
  static void
@@ -70,7 +70,7 @@ index cdd5633cb57..abe66923749 100644
  	{
  	  regno = x86_64_int_parameter_registers[i];
  	  ix86_emit_save_reg_using_mov(word_mode, regno, cfa_offset);
-@@ -7089,7 +7088,7 @@ ix86_emit_save_regs_using_mov (const struct ix86_frame *frame)
+@@ -7100,7 +7099,7 @@
  	}
      }
  
@@ -79,7 +79,7 @@ index cdd5633cb57..abe66923749 100644
  
    for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
      if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true, true))
-@@ -8475,7 +8474,7 @@ ix86_expand_prologue (void)
+@@ -8487,7 +8486,7 @@
  	       && (! TARGET_STACK_PROBE
  		   || frame.stack_pointer_offset < CHECK_STACK_LIMIT))
  	{
@@ -88,7 +88,7 @@ index cdd5633cb57..abe66923749 100644
  	  cfun->machine->red_zone_used = true;
  	  int_registers_saved = true;
  	}
-@@ -8772,7 +8771,7 @@ ix86_expand_prologue (void)
+@@ -8784,7 +8783,7 @@
      }
  
    if (!int_registers_saved)
@@ -97,7 +97,7 @@ index cdd5633cb57..abe66923749 100644
    if (!sse_registers_saved)
      ix86_emit_save_sse_regs_using_mov (frame.sse_reg_save_offset);
    else if (save_stub_call_needed)
-@@ -9429,33 +9428,30 @@ ix86_expand_epilogue (int style)
+@@ -9441,33 +9440,30 @@
        ix86_emit_restore_regs_using_pop ();
      }
  
