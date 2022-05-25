@@ -18,12 +18,11 @@
 BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_VERSION= 11.2.0
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 11.3.0
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:5efe343a97e95fe9031aa23e103755ec3bc56855c865c4b6ffcbad6c25675514
+COMPONENT_ARCHIVE_HASH=	sha256:5b117751dd46ebfe9774da9efc977c094f1e0a7061c887d5f8b3fe00725186d2
 
 MPFR_VERSION=4.1.0
 MPFR_ARCHIVE_HASH=	sha256:feced2d430dd5a97805fa289fed3fc8ff2b094c02d05287fd6133e7f1f0ec926
@@ -47,7 +46,7 @@ PARCH = $(MACH:i386=x86_64-pc)
 else
 PARCH = $(MACH:i386=i386-pc)
 endif
-GNU_TRIPLET = $(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
+GNU_TRIPLET = $(PARCH:sparc=sparcv9-sun)-solaris$(SOLARIS_VERSION)
 PKG_MACROS += GNU_TRIPLET="$(GNU_TRIPLET)"
 
 CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
@@ -56,16 +55,23 @@ CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS+= --with-diagnostics-urls=auto-if-env
 CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-objc-gc
-CONFIGURE_OPTIONS.i386+= --enable-initfini-array
+CONFIGURE_OPTIONS.sparc+= --with-mulhigh-size=2048
+CONFIGURE_OPTIONS.sparc+= --with-cpu=ultrasparc3
+CONFIGURE_OPTIONS.sparc+= --enable-float128
+CONFIGURE_OPTIONS.sparc+= --enable-link-mutex
+CONFIGURE_OPTIONS+= --enable-initfini-array
 CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
 CONFIGURE_OPTIONS+= --disable-libitm
 CONFIGURE_OPTIONS+= enable_frame_pointer=yes
+
+# Master test results are different between amd64 and SPARCV9.
+COMPONENT_TEST_MASTER = \
+	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH64).master
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/gc
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-#REQUIRED_PACKAGES += system/library/g++-11-runtime
-#REQUIRED_PACKAGES += system/library/gcc-11-runtime
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/c-runtime
