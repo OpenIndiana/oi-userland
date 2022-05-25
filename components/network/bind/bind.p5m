@@ -26,13 +26,12 @@
 	set action.hash doc/arm/%<\1> >
 
 set name=pkg.fmri \
-    value=pkg:/service/network/dns/bind@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/service/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(COMPONENT_VERSION)
 set name=pkg.description \
     value="BIND is open source software that implements the Domain Name System (DNS) protocols for the Internet.  This package contains the DNS server 'named' and tools used to setup and validate configuration."
 set name=pkg.summary \
     value="BIND DNS name server and configuration tools."
-set name=com.oracle.info.description value="the BIND DNS name server and configuration tools"
 set name=info.classification \
     value="org.opensolaris.category.2008:System/Services"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -42,7 +41,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # This package name has known conflicts with other packages in the WOS
-set pkg.linted.pkglint.manifest004=true
+#set pkg.linted.pkglint.manifest004=true
 
 
 # Solaris additions
@@ -55,6 +54,8 @@ file path=usr/lib/dns/$(MACH64)/named/filter-aaaa.so
 
 # Tools
 file path=usr/bin/named-rrchecker
+file path=usr/sbin/ddns-confgen
+link path=usr/sbin/tsig-keygen target=ddns-confgen
 file path=usr/sbin/dnssec-cds
 file path=usr/sbin/dnssec-checkds
 file path=usr/sbin/dnssec-coverage
@@ -75,24 +76,27 @@ file path=usr/sbin/named-nzd2nzf
 link path=usr/sbin/named-rrchecker target=../bin/named-rrchecker
 
 # Man
-file usr/share/man/man5/named.conf.5 path=usr/share/man/man4/named.conf.4
-file usr/share/man/man8/dnssec-cds.8 path=usr/share/man/man1m/dnssec-cds.1m
-file usr/share/man/man8/dnssec-checkds.8 path=usr/share/man/man1m/dnssec-checkds.1m
-file usr/share/man/man8/dnssec-coverage.8 path=usr/share/man/man1m/dnssec-coverage.1m
-file usr/share/man/man8/dnssec-dsfromkey.8 path=usr/share/man/man1m/dnssec-dsfromkey.1m
-file usr/share/man/man8/dnssec-importkey.8 path=usr/share/man/man1m/dnssec-importkey.1m
-file usr/share/man/man8/dnssec-keyfromlabel.8 path=usr/share/man/man1m/dnssec-keyfromlabel.1m
-file usr/share/man/man8/dnssec-keygen.8 path=usr/share/man/man1m/dnssec-keygen.1m
-file usr/share/man/man8/dnssec-revoke.8 path=usr/share/man/man1m/dnssec-revoke.1m
-file usr/share/man/man8/dnssec-settime.8 path=usr/share/man/man1m/dnssec-settime.1m
-file usr/share/man/man8/dnssec-signzone.8 path=usr/share/man/man1m/dnssec-signzone.1m
-file usr/share/man/man8/dnssec-verify.8 path=usr/share/man/man1m/dnssec-verify.1m
-file usr/share/man/man8/filter-aaaa.8 path=usr/share/man/man1m/filter-aaa.1m
-file usr/share/man/man8/named-checkconf.8 path=usr/share/man/man1m/named-checkconf.1m
-file usr/share/man/man8/named-checkzone.8 path=usr/share/man/man1m/named-checkzone.1m
-file usr/share/man/man8/named-journalprint.8 path=usr/share/man/man1m/named-journalprint.1m
-file usr/share/man/man1/named-rrchecker.1 path=usr/share/man/man1m/named-rrchecker.1m
-file usr/share/man/man8/named.8 path=usr/share/man/man1m/named.1m
+file path=usr/share/man/man1/named-rrchecker.1
+file path=usr/share/man/man5/named.conf.5
+file path=usr/share/man/man8/ddns-confgen.8
+file path=usr/share/man/man8/dnssec-cds.8
+file path=usr/share/man/man8/dnssec-checkds.8
+file path=usr/share/man/man8/dnssec-coverage.8
+file path=usr/share/man/man8/dnssec-dsfromkey.8
+file path=usr/share/man/man8/dnssec-importkey.8
+file path=usr/share/man/man8/dnssec-keyfromlabel.8
+file path=usr/share/man/man8/dnssec-keygen.8
+file path=usr/share/man/man8/dnssec-revoke.8
+file path=usr/share/man/man8/dnssec-settime.8
+file path=usr/share/man/man8/dnssec-signzone.8
+file path=usr/share/man/man8/dnssec-verify.8
+file path=usr/share/man/man8/filter-aaaa.8
+file path=usr/share/man/man8/named-checkconf.8
+file path=usr/share/man/man8/named-checkzone.8
+file path=usr/share/man/man8/named-compilezone.8
+file path=usr/share/man/man8/named-journalprint.8
+file path=usr/share/man/man8/named.8
+file path=usr/share/man/man8/tsig-keygen.8
 
 group groupname=named gid=53
 user username=named ftpuser=false gcos-field="BIND Reserved UID" group=named \
