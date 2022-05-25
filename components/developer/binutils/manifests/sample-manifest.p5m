@@ -14,6 +14,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -24,8 +25,8 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/gnu/$(GNU_TRIPLET)/bin/ar
 file path=usr/gnu/$(GNU_TRIPLET)/bin/as
-file path=usr/gnu/$(GNU_TRIPLET)/bin/ld
-hardlink path=usr/gnu/$(GNU_TRIPLET)/bin/ld.bfd target=ld
+hardlink path=usr/gnu/$(GNU_TRIPLET)/bin/ld target=ld.bfd
+file path=usr/gnu/$(GNU_TRIPLET)/bin/ld.bfd
 file path=usr/gnu/$(GNU_TRIPLET)/bin/nm
 file path=usr/gnu/$(GNU_TRIPLET)/bin/objcopy
 file path=usr/gnu/$(GNU_TRIPLET)/bin/objdump
@@ -202,30 +203,14 @@ file path=usr/gnu/$(GNU_TRIPLET)/lib/ldscripts/elf_x86_64_sol2.xswe
 file path=usr/gnu/$(GNU_TRIPLET)/lib/ldscripts/elf_x86_64_sol2.xu
 file path=usr/gnu/$(GNU_TRIPLET)/lib/ldscripts/elf_x86_64_sol2.xw
 file path=usr/gnu/$(GNU_TRIPLET)/lib/ldscripts/elf_x86_64_sol2.xwe
-file path=usr/gnu/bin/$(MACH64)/addr2line
-file path=usr/gnu/bin/$(MACH64)/ar
-file path=usr/gnu/bin/$(MACH64)/as
-file path=usr/gnu/bin/$(MACH64)/c++filt
-file path=usr/gnu/bin/$(MACH64)/elfedit
-file path=usr/gnu/bin/$(MACH64)/gprof
-file path=usr/gnu/bin/$(MACH64)/ld
-hardlink path=usr/gnu/bin/$(MACH64)/ld.bfd target=ld
-file path=usr/gnu/bin/$(MACH64)/nm
-file path=usr/gnu/bin/$(MACH64)/objcopy
-file path=usr/gnu/bin/$(MACH64)/objdump
-file path=usr/gnu/bin/$(MACH64)/ranlib
-file path=usr/gnu/bin/$(MACH64)/readelf
-file path=usr/gnu/bin/$(MACH64)/size
-file path=usr/gnu/bin/$(MACH64)/strings
-file path=usr/gnu/bin/$(MACH64)/strip
 file path=usr/gnu/bin/addr2line
 hardlink path=usr/gnu/bin/ar target=../$(GNU_TRIPLET)//bin/ar
 hardlink path=usr/gnu/bin/as target=../$(GNU_TRIPLET)//bin/as
 file path=usr/gnu/bin/c++filt
 file path=usr/gnu/bin/elfedit
 file path=usr/gnu/bin/gprof
-hardlink path=usr/gnu/bin/ld target=../$(GNU_TRIPLET)//bin/ld
-hardlink path=usr/gnu/bin/ld.bfd target=../$(GNU_TRIPLET)//bin/ld
+hardlink path=usr/gnu/bin/ld target=../$(GNU_TRIPLET)//bin/ld.bfd
+hardlink path=usr/gnu/bin/ld.bfd target=../$(GNU_TRIPLET)//bin/ld.bfd
 hardlink path=usr/gnu/bin/nm target=../$(GNU_TRIPLET)//bin/nm
 hardlink path=usr/gnu/bin/objcopy target=../$(GNU_TRIPLET)//bin/objcopy
 hardlink path=usr/gnu/bin/objdump target=../$(GNU_TRIPLET)//bin/objdump
@@ -248,11 +233,6 @@ file path=usr/gnu/lib/$(MACH64)/libbfd.a
 file path=usr/gnu/lib/$(MACH64)/libctf-nobfd.a
 file path=usr/gnu/lib/$(MACH64)/libctf.a
 file path=usr/gnu/lib/$(MACH64)/libopcodes.a
-file path=usr/gnu/lib/bfd-plugins/libdep.so
-file path=usr/gnu/lib/libbfd.a
-file path=usr/gnu/lib/libctf-nobfd.a
-file path=usr/gnu/lib/libctf.a
-file path=usr/gnu/lib/libopcodes.a
 file path=usr/gnu/share/locale/bg/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/bg/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/bg/LC_MESSAGES/ld.mo
@@ -383,6 +363,7 @@ file path=usr/gnu/share/man/man1/windres.1
 file path=usr/share/info/as.info
 file path=usr/share/info/bfd.info
 file path=usr/share/info/binutils.info
+file path=usr/share/info/ctf-spec.info
 file path=usr/share/info/dir
 file path=usr/share/info/gprof.info
 file path=usr/share/info/ld.info
