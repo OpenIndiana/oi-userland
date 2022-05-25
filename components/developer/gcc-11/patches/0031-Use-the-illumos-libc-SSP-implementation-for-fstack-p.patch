@@ -39,7 +39,7 @@ diff --git a/gcc/configure b/gcc/configure
 index e3ba8874ef3..2e3daa1dbaa 100755
 --- a/gcc/configure
 +++ b/gcc/configure
-@@ -30790,7 +30790,7 @@ fi
+@@ -31369,7 +31369,7 @@
  	 # realistically usable GNU/Hurd configurations.
  	 # All supported versions of musl provide it as well
  	 gcc_cv_libc_provides_ssp=yes;;
@@ -52,7 +52,7 @@ diff --git a/gcc/configure.ac b/gcc/configure.ac
 index 39fee787a01..bf9f5645fc9 100644
 --- a/gcc/configure.ac
 +++ b/gcc/configure.ac
-@@ -6658,7 +6658,7 @@ AC_CACHE_CHECK(__stack_chk_fail in target C library,
+@@ -6893,7 +6893,7 @@
  	 # realistically usable GNU/Hurd configurations.
  	 # All supported versions of musl provide it as well
  	 gcc_cv_libc_provides_ssp=yes;;
@@ -61,3 +61,26 @@ index 39fee787a01..bf9f5645fc9 100644
  	 AC_CHECK_FUNC(__stack_chk_fail,[gcc_cv_libc_provides_ssp=yes],
             [echo "no __stack_chk_fail on this target"])
          ;;
+--- a/gcc/config/sparc/sol2.h.orig	2022-04-21 10:59:17.000000000 +0000
++++ b/gcc/config/sparc/sol2.h	2022-05-19 12:51:49.767643135 +0000
+@@ -456,3 +456,20 @@
+ 
+ #undef SPARC_LOW_FE_EXCEPT_VALUES
+ #define SPARC_LOW_FE_EXCEPT_VALUES 1
++
++/*
++ * As of 5788, the illumos libc includes support for the stack protector
++ * __stack_chk_fail() function and for the __stack_chk_guard variable.
++ * That means that, for most cases, no extra objects need to be linked in
++ * when compiling with one of the -fstack-protector options.
++ * However, for 32-bit PIC/PIE objects, the gcc stack protector emits a
++ * function call to __stack_chk_fail_local(); this symbol is provided in
++ * illumos via the libssp_ns.a object. The spec below includes this in the
++ * link when appropriate.
++ */
++#if defined(TARGET_LIBC_PROVIDES_SSP)
++#define LINK_SSP_SPEC "%{fstack-protector|fstack-protector-all|" \
++			"fstack-protector-strong|fstack-protector-explicit:" \
++			DEF_ARCH32_SPEC("-lssp_ns") \
++			"}"
++#endif
