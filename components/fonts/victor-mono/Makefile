@@ -18,14 +18,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=				victor-mono
 COMPONENT_SUMMARY=			Victor Mono is an open-source monospaced font with optional semi-connected cursive italics and programming symbol ligatures.
-COMPONENT_VERSION= 			1.52
+# We already had 1.52 and cannot go back. Thus, we are using HUMAN_VERSION for the "real" version number
+COMPONENT_VERSION= 			1.53
+HUMAN_VERSION=				1.5.3
 COMPONENT_PROJECT_URL= 		https://rubjo.github.io/victor-mono/
 COMPONENT_SRC_NAME=			VictorMonoAll
 COMPONENT_SRC=				$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_URL=		https://rubjo.github.io/victor-mono/$(COMPONENT_SRC_NAME).zip
-#COMPONENT_ARCHIVE_URL=		https://github.com/rubjo/victor-mono/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= 	sha256:090cbcf1d95f147da981173f30d481386ae065480dfe150d8a0a287fb0bcc256
+COMPONENT_ARCHIVE_HASH= 	sha256:839aa255ca6554430b6be353338431485e9c1452545c278161cc108a7ee7b1ab
 COMPONENT_LICENSE=			SIL Open Font License, Version 1.1
 COMPONENT_LICENSE_FILE=		LICENSE.txt
 
