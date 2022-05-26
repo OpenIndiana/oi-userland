@@ -19,8 +19,8 @@ include ../../../make-rules/shared-macros.mk
 # Due to this, initial version for helper packages starts from that.
 
 COMPONENT_NAME=		jenkins
-COMPONENT_VERSION=	2.65
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	2.66
+COMPONENT_REVISION=     1	
 COMPONENT_FMRI=		developer/jenkins
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_PROJECT_URL=	http://jenkins-ci.org/
@@ -48,5 +48,5 @@ install:
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/java/openjdk11
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/java/openjdk8
