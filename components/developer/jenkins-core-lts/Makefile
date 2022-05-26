@@ -41,8 +41,7 @@ COMPONENT_FMRI=				developer/jenkins-core-$(JENKINS_RELEASE)
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_SRC=				$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://jenkins.io/changelog/
-COMPONENT_ARCHIVE_URL=\
-	http://mirrors.jenkins-ci.org/war-stable/$(COMPONENT_VERSION)/jenkins.war
+COMPONENT_ARCHIVE_URL=		https://get.jenkins.io/war-stable/$(COMPONENT_VERSION)/jenkins.war
 COMPONENT_LICENSE=			MIT
 COMPONENT_LICENSE_FILE= 	jenkins.license
 COMPONENT_SUMMARY=			Jenkins is a Java-based CI automation server
