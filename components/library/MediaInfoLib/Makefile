@@ -20,6 +20,7 @@ COMPONENT_NAME=		MediaInfoLib
 COMPONENT_VERSION=	21.09
 IPS_COMPONENT_VERSION=	21.9
 HUMAN_VERSION= $(COMPONENT_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	MediaInfo(Lib) is a convenient unified display of the most relevant technical and tag data for video and audio files.
 COMPONENT_PROJECT_URL=	https://github.com/MediaArea/MediaInfoLib
 COMPONENT_FMRI=		library/libmediainfo
@@ -38,10 +39,18 @@ CONFIGURE_SCRIPT =	$(SOURCE_DIR)/Project/GNU/Library/configure
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS+=	--with-libcurl
+CONFIGURE_OPTIONS+=	--with-libmms
+CONFIGURE_OPTIONS+=	--with-graphviz
 CONFIGURE_OPTIONS+= "builddir=$(SOURCE_DIR)/../build/amd64"
 CONFIGURE_ENV += CPPFLAGS="$(CXXFLAGS) -DUNICODE -I/usr/include -DMEDIAINFO_GRAPHVIZ_NO -DMEDIAINFO_LIBCURL_NO -DMEDIAINFO_LIBMMS_NO -I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -I$(SOURCE_DIR)/Source/ThirdParty/tinyxml2 -I$(SOURCE_DIR)/Source/ThirdParty/base64 -DUNICODE -fPIC -O2"
 CFLAGS+=-I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -fPIC -O2
-CXXFLAGS+=-DUNICODE -DSIZE_T_IS_LONG -DMEDIAINFO_GRAPHVIZ_NO -DMEDIAINFO_LIBCURL_NO -DMEDIAINFO_LIBMMS_NO -I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -I$(SOURCE_DIR)/Source/ThirdParty/tinyxml2 -I$(SOURCE_DIR)/Source/ThirdParty/base64 -DUNICODE -fPIC -O2
+CXXFLAGS+=-DUNICODE -DSIZE_T_IS_LONG  -I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -I$(SOURCE_DIR)/Source/ThirdParty/tinyxml2 -I$(SOURCE_DIR)/Source/ThirdParty/base64 -DUNICODE -fPIC -O2
+
+# Manually added dependencies
+REQUIRED_PACKAGES += image/graphviz
+REQUIRED_PACKAGES += library/video/libmms
+REQUIRED_PACKAGES += web/curl
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
