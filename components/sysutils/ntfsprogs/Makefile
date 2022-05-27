@@ -13,20 +13,19 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2016 Adam Stevko.  All rights reserved.
 # Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
-# Copyright 2021 Jean-Pierre André. All rights reserved.
+# Copyright 2021-2022 Jean-Pierre André. All rights reserved.
 #
 
 BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ntfs-3g_ntfsprogs
-IPS_COMPONENT_VERSION= 2021.8.22
-COMPONENT_VERSION= $(IPS_COMPONENT_VERSION)
+COMPONENT_VERSION= 2022.5.17
 COMPONENT_SUMMARY= ntfsprogs - Utilities that provide access to NTFS
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= sha256:55b883aa05d94b2ec746ef3966cb41e66bed6db99f22ddd41d1b8b94bb202efb
-COMPONENT_ARCHIVE_URL= https://tuxera.com/opensource/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC= ntfs-3g-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:49680b2dd38c472368425923b0178195e24705fc355c78764632e5835000db49
+COMPONENT_ARCHIVE_URL= https://github.com/tuxera/ntfs-3g/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = https://github.com/tuxera/ntfs-3g/
 COMPONENT_FMRI= system/file-system/ntfsprogs
 COMPONENT_CLASSIFICATION= System/Administration and Configuration
@@ -40,6 +39,8 @@ PATH=$(PATH.gnu)
 
 CFLAGS += -D__LITTLE_ENDIAN=1234
 CFLAGS += -D__BYTE_ORDER=1234
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
 CONFIGURE_OPTIONS += --exec-prefix=/usr
 CONFIGURE_OPTIONS += --enable-xattr-mappings
