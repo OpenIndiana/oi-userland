@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rrdtool
 
-COMPONENT_VERSION=	1.7.2
+COMPONENT_VERSION=	1.8.0
 COMPONENT_FMRI=		image/rrdtool
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SUMMARY=	Data analysis tool generating graphical representations
@@ -30,9 +30,9 @@ COMPONENT_DESCRIPTION=	RRDtool is the OpenSource industry standard, high perform
 			applications.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a199faeb7eff7cafc46fac253e682d833d08932f3db93a550a4a5af180ca58db
-COMPONENT_ARCHIVE_URL=	http://oss.oetiker.ch/rrdtool/pub/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://oss.oetiker.ch/rrdtool/
+COMPONENT_ARCHIVE_HASH= sha256:bd37614137d7a8dc523359648eb2a81631a34fd91a82ed5581916a52c08433f4
+COMPONENT_ARCHIVE_URL=	https://github.com/oetiker/rrdtool-1.x/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://github.com/oetiker/rrdtool-1.x
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	LICENSE
 
