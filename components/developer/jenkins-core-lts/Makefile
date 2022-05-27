@@ -29,6 +29,7 @@ JENKINS_RELEASE=			lts
 COMPONENT_MAJOR_VERSION=	2
 COMPONENT_MINOR_VERSION=	332
 COMPONENT_PATCH_VERSION=	3
+COMPONENT_REVISION=		1
 COMPONENT_ARCHIVE_HASH=		sha256:d193f179aadf3a7ceb61adebc3ab51218ac4a7852b88932ff33b44fd7be6010f
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
@@ -86,4 +87,4 @@ install: $(INSTALL_32)
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/java/openjdk8
+REQUIRED_PACKAGES += runtime/java/openjdk11
