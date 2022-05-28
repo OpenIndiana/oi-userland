@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		MEGAsync
 COMPONENT_VERSION=	4.6.6
-#COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 _REL=Linux
 GIT_TAG=v$(COMPONENT_VERSION).0_$(_REL)
 COMPONENT_SUMMARY=	Easy automated syncing between your computers and your MEGA cloud drive
@@ -50,18 +50,27 @@ COMPONENT_ARCHIVE_1=      $(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_URL_1=  $(COMPONENT_GIT_URL)/sdk/archive/$(GIT_BRANCH_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= sha256:850973860197be5328324970572844fbd833439e65f14e23b78fd15a1c8a6fad
 
+include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
-QT5_ROOT=/usr/lib/qt/5.15
+
 PATH=$(QT5_BINDIR):$(GNUBIN):$(USRBINDIR$(BITS)):$(USRBINDIR):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(PERL5BINDIR)
 COMPONENT_POST_UNPACK_ACTION_1= \
 	mv $(COMPONENT_SRC_1)/* $(SOURCE_DIR)/src/MEGASync/mega
 CONFIGURE_OPTIONS += with_pcre=/usr
+CONFIGURE_OPTIONS += with_libmediainfo=/usr
+CONFIGURE_OPTIONS += with_freeimage=yes
+CONFIGURE_OPTIONS += --disable-silent-rules
+CONFIGURE_OPTIONS += --disable-curl-checks
+CONFIGURE_OPTIONS += --disable-megaapi
+CONFIGURE_OPTIONS += --disable-posix-threads
+CONFIGURE_OPTIONS += --disable-examples
+CONFIGURE_OPTIONS += --prefix="$(@D)/MEGAsync/src/MEGASync/mega/bindings/qt/3rdparty"
 CONFIGURE_SCRIPT = configure
 COMPONENT_PRE_CONFIGURE_ACTION= \
 	(mv $(SOURCE_DIR)/* $(@D)); \
 	cd $(@D)/src/MEGASync/mega && ./autogen.sh
 COMPONENT_PRE_BUILD_ACTION= \
-	cd $(@D)/src && qmake "CONFIG += FULLREQUIREMENTS" "QMAKE_LFLAGS += -Wl,-z,nodefs -Wl,-z,ignore -Wl,-z,redlocsym -fPIC" "QMAKE_CC = $(CC)" "QMAKE_CXX = $(CXX)" MEGA.pro && lrelease MEGASync/MEGASync.pro
+	cd $(@D)/src && qmake "CONFIG += FULLREQUIREMENTS" "QMAKE_LFLAGS += -lelf -ljpegxr -lsocket -Wl,-z,ignore -Wl,-z,redlocsym -fPIC" "QMAKE_CC = $(CC)" "QMAKE_CXX = $(CXX)" MEGA.pro && lrelease MEGASync/MEGASync.pro
 COMPONENT_POST_BUILD_ACTION= \
 	mv $(BUILD_DIR)/amd64/LICENCE.md $(SOURCE_DIR)/LICENCE.md
 COMPONENT_INSTALL_ARGS += INSTALL_ROOT=$(PROTO_DIR)
@@ -98,6 +107,7 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += library/cryptopp
 REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/libfreeimage
@@ -110,5 +120,6 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += video/ffmpeg
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libxcb
