@@ -22,6 +22,7 @@ COMPONENT_VERSION_MAJOR=3
 COMPONENT_VERSION_MINOR=18
 COMPONENT_VERSION_PATCH=0
 COMPONENT_VERSION=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR).$(COMPONENT_VERSION_PATCH)
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A library project for developers to support popular graphics image formats
 COMPONENT_PROJECT_URL=	https://freeimage.sourceforge.io
 COMPONENT_FMRI=		library/libfreeimage
@@ -35,17 +36,45 @@ COMPONENT_LICENSE_FILE=	license-gplv3.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_UNPACK_ACTION=cp $(SOURCE_DIR)/../libfreeimage.pc $(SOURCE_DIR)/
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
+
+LDFLAGS += -L/usr/lib/amd64 -ljpegxr
+COMPONENT_POST_UNPACK_ACTION= \
+	cp $(SOURCE_DIR)/../libfreeimage.pc $(SOURCE_DIR)/ ;\
+	dos2unix $(SOURCE_DIR)/FreeImage.2013.vcxproj $(SOURCE_DIR)/FreeImage.2013.vcxproj_bak ;\
+	iconv -f 8859-15 -t UTF-8 $(SOURCE_DIR)/FreeImage.2013.vcxproj_bak > $(SOURCE_DIR)/FreeImage.2013.vcxproj ;\
+	echo "\n" >> $(SOURCE_DIR)/FreeImage.2013.vcxproj
+	
+COMPONENT_COPY_ACTION = cp $(SOURCE_DIR)/Source/LibJPEG/transupp.h $(SOURCE_DIR)/Dist/ && rm -r $(SOURCE_DIR)/Source/Lib* $(SOURCE_DIR)/Source/ZLib $(SOURCE_DIR)/Source/OpenEXR &&  cp -r $(SOURCE_DIR)/* $(@D)
+COMPONENT_PRE_BUILD_ACTION = \
+	echo -n "SRC" test ;\
+	chmod +x $(@D)/gensrclist.sh;\
+	chmod +x $(@D)/genfipsrclist.sh;\
+	cd $(@D) && ./gensrclist.sh ;\
+	cd $(@D) && ./genfipsrclist.sh
 COMPONENT_BUILD_GMAKE_ARGS="file=Makefile.gnu"
-CFLAGS+=-fPIC
-CFLAGS+=-fexceptions
-CFLAGS+=-fvisibility=hidden
-CXXFLAGS+=-fPIC 
-CXXFLAGS+=-fexceptions
-CXXFLAGS+=-fvisibility=hidden 
+
+FIFLAGS=-fPIC
+FIFLAGS+=-fexceptions
+FIFLAGS+=-fvisibility=default
+CFLAGS+= $(FIFLAGS)
+CXXFLAGS+=$(FIFLAGS)
 CXXFLAGS+=-Wno-ctor-dtor-privacy
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/libraw
+REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += image/library/openjpeg
+REQUIRED_PACKAGES += library/ilmbase
+REQUIRED_PACKAGES += library/jxrlib
+REQUIRED_PACKAGES += library/libwebp
+REQUIRED_PACKAGES += library/openexr
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

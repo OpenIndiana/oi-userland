@@ -1,0 +1,25 @@
+--- FreeImage/Source/FreeImage/PluginJPEG.cpp	Sat Jul 28 19:22:24 2018
++++ FreeImage/Source/FreeImage/PluginJPEG_.cpp	Tue May 24 01:12:54 2022
+@@ -35,9 +35,9 @@
+ #undef FAR
+ #include <setjmp.h>
+ 
+-#include "../LibJPEG/jinclude.h"
+-#include "../LibJPEG/jpeglib.h"
+-#include "../LibJPEG/jerror.h"
++#include "stdio.h"
++#include "jpeglib.h"
++#include "jerror.h"
+ }
+ 
+ #include "FreeImage.h"
+@@ -502,7 +502,7 @@
+   NOTE: if the file contains invalid ICC APP2 markers, we just silently
+   return FALSE.  You might want to issue an error message instead.
+ */
+-static BOOL 
++BOOL 
+ jpeg_read_icc_profile(j_decompress_ptr cinfo, JOCTET **icc_data_ptr, unsigned *icc_data_len) {
+        jpeg_saved_marker_ptr marker;
+        int num_markers = 0;
+

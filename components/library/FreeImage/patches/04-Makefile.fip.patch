@@ -1,0 +1,42 @@
+--- FreeImage/Makefile.fip	Tue Mar 10 09:03:56 2015
++++ FreeImage/Makefile_.fip	Tue May 24 00:33:23 2022
+@@ -17,20 +17,22 @@
+ MODULES := $(MODULES:.cpp=.o)
+ CFLAGS ?= -O3 -fPIC -fexceptions -fvisibility=hidden
+ # OpenJPEG
+-CFLAGS += -DOPJ_STATIC
++override CFLAGS += -DOPJ_STATIC
+ # LibRaw
+-CFLAGS += -DNO_LCMS
++override CFLAGS += -DNO_LCMS
+ # LibJXR
+-CFLAGS += -DDISABLE_PERF_MEASUREMENT -D__ANSI__
+-CFLAGS += $(INCLUDE)
++override CFLAGS += -DDISABLE_PERF_MEASUREMENT -D__ANSI__
++override CFLAGS += $(INCLUDE)
+ CXXFLAGS ?= -O3 -fPIC -fexceptions -fvisibility=hidden -Wno-ctor-dtor-privacy
+ # LibJXR
+-CXXFLAGS += -D__ANSI__
+-CXXFLAGS += $(INCLUDE)
++override CXXFLAGS += -D__ANSI__
++override CXXFLAGS += $(INCLUDE)
++LDFLAGS ?=
++override LDFLAGS += -LDist -lfreeimage-$(VER_MAJOR).$(VER_MINOR)
+ 
+ ifeq ($(shell sh -c 'uname -m 2>/dev/null || echo not'),x86_64)
+-	CFLAGS += -fPIC
+-	CXXFLAGS += -fPIC
++	override CFLAGS += -fPIC
++	override CXXFLAGS += -fPIC
+ endif
+ 
+ TARGET  = freeimageplus
+@@ -68,7 +70,7 @@
+ 	$(AR) r $@ $(MODULES)
+ 
+ $(SHAREDLIB): $(MODULES)
+-	$(CC) -s -shared -Wl,-soname,$(VERLIBNAME) $(LDFLAGS) -o $@ $(MODULES) $(LIBRARIES)
++	$(CC) -shared -Wl,-soname,$(VERLIBNAME) -o $@ $(MODULES) $(LIBRARIES) $(LDFLAGS)
+ 
+ install:
+ 	install -d $(INCDIR) $(INSTALLDIR)
