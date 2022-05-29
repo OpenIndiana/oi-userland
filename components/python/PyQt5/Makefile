@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		PyQt5
 COMPONENT_VERSION=	5.15.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Python bindings for the Qt cross platform application toolkit
 COMPONENT_PROJECT_URL=	https://pypi.org/project/PyQt5/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,8 +44,9 @@ COMPONENT_LICENSE_FILE= LICENSE
 PYTHON_VERSION=	3.9
 PYTHON_VERSIONS=	3.9
 
-
+TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
 PATH=$(QT5_BINDIR):$(PATH.gnu)
 COMPONENT_INSTALL_ENV += INSTALL_ROOT=$(PROTO_DIR)
 SIP_OPTIONS += --confirm-license
@@ -86,7 +88,7 @@ COMPONENT_INSTALL_ACTION = \
 	cp $(@D)/pyuic/uic/widget-plugins/__pycache__/* $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/site-packages/PyQt5/uic/widget-plugins/__pycache__/
 
 
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += library/python/pyqtbuilder
 REQUIRED_PACKAGES += library/python/sip
 
