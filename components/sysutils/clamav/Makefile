@@ -23,7 +23,7 @@ COMPONENT_NAME=		clamav
 ### But our IPS version should better have same number of components.
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
-COMPONENT_VERSION=	0.104.2
+COMPONENT_VERSION=	0.105.0
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -40,7 +40,7 @@ COMPONENT_DESCRIPTION=	ClamAV is an open source (GPLv2) anti-virus toolkit, desi
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:3e45e46d9aaeb3a6956ed30376237ab7c4cd9573bc0f5d6fc15c588d30978d9d
+COMPONENT_ARCHIVE_HASH=	sha256:270203a54c458049db54fcd93683ff5b2db19151f363c48e82cecefdde2b35d4
 COMPONENT_PROJECT_URL=	http://www.clamav.net/
 COMPONENT_ARCHIVE_URL=	http://www.clamav.net/downloads/production/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
@@ -51,6 +51,32 @@ COMPONENT_LICENSE=	GPLv2,LGPL,Apache
 COMPONENT_FETCH_USER_AGENT=	fetch
 
 include $(WS_MAKE_RULES)/common.mk
+
+# clamav now additionally also depends on rust :-(
+RUST_VERSION=		1.61.0
+RUSTUP_HOME=		$(BUILD_DIR)/.rust_up
+CARGO_HOME=		$(BUILD_DIR)/.cargo
+
+PATH=			$(CARGO_HOME)/bin:$(PATH.gnu)
+
+COMPONENT_PRE_CMAKE_ACTION += ( \
+        cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); \
+        export RUSTUP_HOME=$(RUSTUP_HOME); \
+        export CARGO_HOME=$(CARGO_HOME); \
+        export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
+        curl https://sh.rustup.rs -sSf | bash -s -- -y --no-modify-path; \
+        source $(CARGO_HOME)/env; \
+        rustup install $(RUST_VERSION); \
+        rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
+        rustup show; \
+        cargo install --root=$(CARGO_HOME) cbindgen; \
+        );
+
+ENV+=			RUSTUP_HOME=$(RUSTUP_HOME)
+ENV+=			CARGO_HOME=$(CARGO_HOME)
+
+CONFIGURE_ENV=		$(ENV)
+COMPONENT_BUILD_ENV=	$(ENV)
 
 # Note: This is done just in case, because according to
 # https://github.com/vrtadmin/clamav-devel/issues/45 currently
@@ -68,8 +94,9 @@ COMPONENT_PREP_ACTION= (cd $(@D) && for f in COPYING/*; do cat $$f >> COPYING.$(
 CMAKE_ENV+=		LDFLAGS="-lsocket -lnsl"
 
 CMAKE_OPTIONS+=		-DPCRE2_INCLUDE_DIR=/usr/include/pcre
+# clang still does not work
 CMAKE_OPTIONS+=		-DBYTECODE_RUNTIME=interpreter
-#CMAKE_OPTIONS+=		-DLLVM_ROOT_DIR=/usr/clang/9.0
+#CMAKE_OPTIONS+=		-DLLVM_ROOT_DIR=/usr/clang/13.0
 CMAKE_OPTIONS+=		-DAPP_CONFIG_DIRECTORY=/etc/clamav
 CMAKE_OPTIONS+=		-DCMAKE_SKIP_RPATH=ON
 CMAKE_OPTIONS+=		-DENABLE_UNRAR=ON
@@ -84,15 +111,14 @@ COMPONENT_TEST_TRANSFORMS += \
         '-n ' \
         '-e "/passed/p" '
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TESTS_64)
-
 # Needed for cmake tests
 REQUIRED_PACKAGES += system/library/iconv/unicode
 REQUIRED_PACKAGES += developer/check
+
+# Rustup needs gcc-49 libraries (otherwise build fails):
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
