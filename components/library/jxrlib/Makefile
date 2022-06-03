@@ -21,7 +21,7 @@ COMPONENT_NAME=		jxrlib
 COMPONENT_VERSION=	0.2.4
 COMPONENT_SUMMARY=	Decode and encode JPEG-XR data from Java
 COMPONENT_PROJECT_URL=	https://github.com/glencoesoftware/jxrlib
-COMPONENT_FMRI=		library/jxlib
+COMPONENT_FMRI=		library/jxrlib
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
@@ -33,18 +33,25 @@ COMPONENT_LICENSE_FILE=	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
-COMPONENT_POST_UNPACK_ACTION=mkdir -p garbagecollector; \
-							 echo \<settings\>\<localRepository\>$(SOURCE_DIR)\/..\/garbagecollector\/Repository\<\/localRepository\>\<\/settings\> > "$(SOURCE_DIR)/../garbagecollector/settings.xml"; \
-							 sed 's|DIR_INSTALL|PREFIX|g' -i $(SOURCE_DIR)/libjxr.pc.in; \
+COMPONENT_PRE_BUILD_ACTION += cd $(@D)/java && mkdir -p target/swig/ome/jxrlib;
+COMPONENT_PRE_BUILD_ACTION += cd $(@D)/java && swig -java -c++ -package ome.jxrlib -outdir target/swig/ome/jxrlib -o target/swig/JXR_wrap.cxx JXR.i;
+COMPONENT_PRE_BUILD_ACTION += mkdir -p $(@D)/garbagecollector; \
+							 echo \<settings\>\<localRepository\>$(@D)\/garbagecollector\/Repository\<\/localRepository\>\<\/settings\> > "$(@D)/garbagecollector/settings.xml"; \
 							 sed 's|"DIR_INSTALL": "$(DIR_INSTALL)"|"PREFIX": "$(PREFIX)"|g' -i $(SOURCE_DIR)/Makefile
 COMPONENT_BUILD_GMAKE_ARGS+=SHARED=1
 COMPONENT_BUILD_GMAKE_ARGS+=PREFIX=/usr
 COMPONENT_BUILD_GMAKE_ARGS+=swig all
 COMPONENT_BUILD_GMAKE_ARGS+=CC="$(CC) $(CFLAGS)"
 COMPONENT_BUILD_GMAKE_ARGS+=CXX="$(CXX) $(CXXFLAGS)"
-COMPONENT_PRE_INSTALL_ACTION=LD_LIBRARY_PATH="$(SOURCE_DIR)/../build/amd64/build" mvn -s "$(SOURCE_DIR)/../garbagecollector/settings.xml" -f $(SOURCE_DIR)/../build/amd64/java package
+COMPONENT_PRE_INSTALL_ACTION=LD_LIBRARY_PATH="$(@D)/build" mvn -s "$(@D)/garbagecollector/settings.xml" -f $(@D)/java package
 COMPONENT_INSTALL_ARGS+=SHARED=1
-COMPONENT_INSTALL_ARGS+=DIR_INSTALL=$(SOURCE_DIR)/../build/prototype/i386/
+COMPONENT_INSTALL_ARGS+=PREFIX=/usr
+COMPONENT_INSTALL_ARGS+=DIR_INSTALL=$(PROTO_DIR)/
+COMPONENT_POST_INSTALL_ACTION += cd $(@D)/java/target && ginstall -Dm 644 $(COMPONENT_SRC).jar $(PROTO_DIR)/usr/share/java/$(COMPONENT_SRC).jar
+
+# Build dependencies
+REQUIRED_PACKAGES += developer/build/maven
+REQUIRED_PACKAGES += runtime/java/openjdk8
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

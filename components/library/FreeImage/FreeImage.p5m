@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2022, Daniel Chan
+# Copyright 2022 Daniel Chan
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,7 +23,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/include/FreeImage.h
-file path=usr/lib/$(MACH64)/libfreeimage-3.18.0.so
+file path=usr/lib/$(MACH64)/libfreeimage-$(COMPONENT_VERSION).so
 link path=usr/lib/$(MACH64)/libfreeimage.so target=libfreeimage.so.3
-link path=usr/lib/$(MACH64)/libfreeimage.so.3 target=libfreeimage-3.18.0.so
+link path=usr/lib/$(MACH64)/libfreeimage.so.3 \
+    target=libfreeimage-$(COMPONENT_VERSION).so
 file path=usr/lib/$(MACH64)/pkgconfig/libfreeimage.pc

@@ -19,7 +19,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.1
-COMPONENT_MNR_VERSION=	5
+COMPONENT_MNR_VERSION=	6
 COMPONENT_SUMMARY=      PHP 8.1
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_CLASSIFICATION=Meta Packages/Group Packages
@@ -28,7 +28,7 @@ COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:44d637627746082395d5d3d3d6ae7d71e780b82a8d55a0228887158c4316bf11
+COMPONENT_ARCHIVE_HASH= sha256:e847745fd66fc8c57fac993a609fefcded93fddccd225f0620a26bb5ae5753c3
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_LICENSE=      PHP License
@@ -253,5 +253,3 @@ REQUIRED_PACKAGES += text/aspell
 REQUIRED_PACKAGES += text/oniguruma
 REQUIRED_PACKAGES += text/tidy
 REQUIRED_PACKAGES += web/curl
-# chicken egg problem - does not make sense
-#REQUIRED_PACKAGES += web/php-81/php-cli

@@ -1,0 +1,58 @@
+--- FreeImage/Makefile.gnu	Tue Mar 10 09:04:00 2015
++++ FreeImage/Makefile_.gnu	Tue May 24 02:22:10 2022
+@@ -6,7 +6,8 @@
+ # General configuration variables:
+ DESTDIR ?= /
+ INCDIR ?= $(DESTDIR)/usr/include
+-INSTALLDIR ?= $(DESTDIR)/usr/lib
++INSTALLDIR ?= $(DESTDIR)/usr/lib/amd64
++PKGCFGDIR ?= $(DESTDIR)/usr/lib/amd64/pkgconfig
+ 
+ # Converts cr/lf to just lf
+ DOS2UNIX = dos2unix
+@@ -16,21 +17,13 @@
+ MODULES = $(SRCS:.c=.o)
+ MODULES := $(MODULES:.cpp=.o)
+ CFLAGS ?= -O3 -fPIC -fexceptions -fvisibility=hidden
+-# OpenJPEG
+-CFLAGS += -DOPJ_STATIC
+-# LibRaw
+-CFLAGS += -DNO_LCMS
+-# LibJXR
+-CFLAGS += -DDISABLE_PERF_MEASUREMENT -D__ANSI__
+-CFLAGS += $(INCLUDE)
+-CXXFLAGS ?= -O3 -fPIC -fexceptions -fvisibility=hidden -Wno-ctor-dtor-privacy
+-# LibJXR
+-CXXFLAGS += -D__ANSI__
+-CXXFLAGS += $(INCLUDE)
++override CFLAGS += $(INCLUDE) -D__ANSI__ -I/usr/include/jxrlib $(shell pkg-config --cflags OpenEXR libopenjp2 libjpeg libjxr libraw libpng libtiff-4 libwebp libwebpmux zlib)
++override CXXFLAGS += $(INCLUDE) -D__ANSI__ -I/usr/include/jxrlib $(shell pkg-config --cflags OpenEXR libopenjp2 libjpeg libjxr libraw libpng libtiff-4 libwebp libwebpmux zlib)
++override LDFLAGS += $(shell pkg-config --libs OpenEXR libopenjp2 libjpeg libjxr libraw libpng libtiff-4 libwebp libwebpmux zlib)
+ 
+ ifeq ($(shell sh -c 'uname -m 2>/dev/null || echo not'),x86_64)
+-	CFLAGS += -fPIC
+-	CXXFLAGS += -fPIC
++	override CFLAGS += -fPIC
++	override CXXFLAGS += -fPIC
+ endif
+ 
+ TARGET  = freeimage
+@@ -67,13 +60,13 @@
+ 	$(AR) r $@ $(MODULES)
+ 
+ $(SHAREDLIB): $(MODULES)
+-	$(CC) -s -shared -Wl,-soname,$(VERLIBNAME) $(LDFLAGS) -o $@ $(MODULES) $(LIBRARIES)
++	$(CC) -shared -Wl,-soname,$(VERLIBNAME) -o $@ $(MODULES) $(LIBRARIES) $(LDFLAGS)
+ 
+ install:
+-	install -d $(INCDIR) $(INSTALLDIR)
+-	install -m 644 -o root -g root $(HEADER) $(INCDIR)
+-	install -m 644 -o root -g root $(STATICLIB) $(INSTALLDIR)
+-	install -m 755 -o root -g root $(SHAREDLIB) $(INSTALLDIR)
++	ginstall -c -d $(INCDIR) $(PKGCFGDIR)
++	ginstall -c -m 644 $(HEADER) $(INCDIR)
++	ginstall -c -m 755 $(SHAREDLIB) $(INSTALLDIR)
++	ginstall -c -m 644 libfreeimage.pc $(PKGCFGDIR)
+ 	ln -sf $(SHAREDLIB) $(INSTALLDIR)/$(VERLIBNAME)
+ 	ln -sf $(VERLIBNAME) $(INSTALLDIR)/$(LIBNAME)	
+ #	ldconfig

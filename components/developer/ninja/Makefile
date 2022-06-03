@@ -17,19 +17,16 @@ BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ninja
-COMPONENT_VERSION=      1.10.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      1.11.0
 COMPONENT_SUMMARY=      Ninja - a small build system with a focus on speed
 COMPONENT_PROJECT_URL=  https://ninja-build.org/
+COMPONENT_SRC=    		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=  	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=	https://github.com/ninja-build/ninja/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:3c6ba2e66400fe3f1ae83deb4b235faf3137ec20bd5b08c29bfc368db143e4c6
 COMPONENT_FMRI=         developer/build/ninja
-COMPONENT_CLASSIFICATION=Development/Distribution Tools
-COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL= \
-	https://github.com/ninja-build/ninja/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:ce35865411f0490368a8fc383f29071de6690cbadc27704734978221f25e2bed
-COMPONENT_LICENSE=      Apache License version 2.0
+COMPONENT_CLASSIFICATION=	Development/Distribution Tools
+COMPONENT_LICENSE=      Apache 2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -62,8 +59,7 @@ COMPONENT_PRE_TEST_ACTION = \
     ./ninja all;
 
 COMPONENT_TEST_CMD = cd $(BUILD_DIR_64); ./ninja_test
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS+= '-n -e "/^\[[0-9]*\/341\]/p"'
+COMPONENT_TEST_TRANSFORMS+= '-n -e "/^\[[0-9]*\/384\]/p"'
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/lexer/re2c
