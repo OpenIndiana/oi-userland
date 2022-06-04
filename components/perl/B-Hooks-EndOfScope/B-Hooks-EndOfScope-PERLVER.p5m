@@ -1,0 +1,51 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Niklas Poslovski
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
+
+depend fmri=library/perl-5/module-implementation-$(PLV) type=require
+depend fmri=library/perl-5/module-runtime-$(PLV) type=require
+depend fmri=library/perl-5/sub-exporter-$(PLV) type=require
+depend fmri=library/perl-5/sub-exporter-progressive-$(PLV) type=require
+depend fmri=library/perl-5/try-tiny-$(PLV) type=require
+depend fmri=library/perl-5/variable-magic-$(PLV) type=require
+
+# force a dependency on the Perl runtime
+depend fmri=__TBD pkg.debug.depend.file=perl \
+        pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin type=require
+
+# Until there is consensus on whether we should have this package require
+# the non-PLV version of this  module, don't enable this.
+# depend type=require \
+#       fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+file path=usr/perl5/$(PERLVER)/man/man3/B::Hooks::EndOfScope.3
+file path=usr/perl5/$(PERLVER)/man/man3/B::Hooks::EndOfScope::PP.3
+file path=usr/perl5/$(PERLVER)/man/man3/B::Hooks::EndOfScope::XS.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/B/Hooks/EndOfScope.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/B/Hooks/EndOfScope/PP.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/B/Hooks/EndOfScope/PP/FieldHash.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/B/Hooks/EndOfScope/PP/HintHash.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/B/Hooks/EndOfScope/XS.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/B/Hooks/EndOfScope/.packlist
