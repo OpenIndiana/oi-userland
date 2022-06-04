@@ -14,6 +14,7 @@
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Tim Mooney.  All rights reserved.
+# Copyright 2022 Niklas Poslovski
 #
 
 BUILD_BITS= 64
@@ -22,8 +23,8 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-libav
-COMPONENT_VERSION=      1.20.1
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      1.20.2
+#COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/libav
@@ -31,7 +32,7 @@ COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:91a71fb633b75e1bd52e22a457845cb0ba563a2972ba5954ec88448f443a9fc7
+	sha256:b5c531dd8413bf771c79dab66b8e389f20b3991f745115133f0fa0b8e32809f9
 COMPONENT_ARCHIVE_URL=  \
 	https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2
