@@ -20,18 +20,15 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tmux
-COMPONENT_VERSION=	3.2a
-# Version for IPS. It is easier to do it manually than convert the letter to a
-# number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION=	3.2.1
+COMPONENT_VERSION=	3.3
 HUMAN_VERSION=	$(COMPONENT_VERSION)
 COMPONENT_FMRI=		terminal/tmux
 COMPONENT_PROJECT_URL=	https://$(COMPONENT_NAME).github.io
 COMPONENT_SUMMARY=	tmux terminal multiplexer
 COMPONENT_CLASSIFICATION= Applications/System Utilities
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:551553a4f82beaa8dadc9256800bcc284d7c000081e47aa6ecbb6ff36eacd05f
+COMPONENT_ARCHIVE_HASH= sha256:b2382ac391f6a1c5b93293016cdc9488337d9a04b9d611ae05eac164740351dc
 COMPONENT_ARCHIVE_URL=	https://github.com/tmux/tmux/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	BSD
