@@ -19,7 +19,7 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-editing-services1
-COMPONENT_VERSION=	1.20.1
+COMPONENT_VERSION=	1.20.2
 COMPONENT_SUMMARY=	Multimedia graph framework - editing services
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI=		library/audio/gstreamer1/editing-services
@@ -27,7 +27,7 @@ COMPONENT_SRC_NAME=	gst-editing-services
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:6ace1b21b58e0110b7dadd469f79b77e2f47d6207604231492531ae9fd4148df
+  sha256:2ddef442cf8313e78477510a4461c8522f180afef26d035a38fea3f5006d012f
 COMPONENT_ARCHIVE_URL= \
   https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/

@@ -13,6 +13,7 @@
 # Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Tim Mooney.  All rights reserved.
+# Copyright 2022 Niklas Poslovski
 #
 
 BUILD_BITS= 64
@@ -21,8 +22,7 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-ugly1
-COMPONENT_VERSION=      1.20.1
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      1.20.2
 #COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -31,7 +31,7 @@ COMPONENT_SRC_NAME=	gst-plugins-ugly
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:42035145e29983308d2828207bb4ef933ed0407bb587fb3a569738c6a57fdb19
+	sha256:b43fb4df94459afbf67ec22003ca58ffadcd19e763f276dca25b64c848adb7bf
 COMPONENT_ARCHIVE_URL=  \
 	https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/

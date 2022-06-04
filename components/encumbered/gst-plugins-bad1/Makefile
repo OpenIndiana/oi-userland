@@ -13,6 +13,7 @@
 # Copyright 2016-2017 Aurelien Larcher.  All rights reserved.
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Tim Mooney.  All rights reserved.
+# Copyright 2022 Niklas Poslovski
 #
 
 BUILD_BITS= 64
@@ -22,8 +23,7 @@ USE_OPENSSL11=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-bad1
-COMPONENT_VERSION=      1.20.1
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      1.20.2
 #COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -32,7 +32,7 @@ COMPONENT_SRC_NAME=	gst-plugins-bad
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:09d3c2cf5911f0bc7da6bf557a55251779243d3de216b6a26cc90c445b423848
+	sha256:4adc4c05f41051f8136b80cda99b0d049a34e777832f9fea7c5a70347658745b
 COMPONENT_ARCHIVE_URL=  \
 	https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/

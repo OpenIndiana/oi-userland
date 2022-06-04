@@ -21,8 +21,8 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-base1
-COMPONENT_VERSION=      1.20.1
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      1.20.2
+#COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/base
@@ -30,7 +30,7 @@ COMPONENT_SRC_NAME= gst-plugins-base
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:96d8a6413ba9394fbec1217aeef63741a729d476a505a797c1d5337d8fa7c204
+	sha256:ab0656f2ad4d38292a803e0cb4ca090943a9b43c8063f650b4d3e3606c317f17
 COMPONENT_ARCHIVE_URL=  \
 	http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
