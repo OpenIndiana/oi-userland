@@ -19,8 +19,8 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-devtools1
-COMPONENT_VERSION=      1.20.1
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      1.20.2
+#COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Multimedia graph framework - devtools
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_FMRI=         library/audio/gstreamer1/devtools
@@ -28,7 +28,7 @@ COMPONENT_SRC_NAME=	gst-devtools
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:81f1c7ef105b8bdb63412638952f6320723b3161c96a80f113b020e2de554b2b
+	sha256:b28dba953a92532208b30467ff91076295e266f65364b1b3482b4c4372d44b2a
 COMPONENT_ARCHIVE_URL=  \
 	https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
