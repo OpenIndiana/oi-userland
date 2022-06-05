@@ -12,10 +12,13 @@
 #
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2022 Andreas Wacknitz
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -23,15 +26,21 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/certtool
-file path=usr/bin/$(MACH64)/gnutls-cli
-file path=usr/bin/$(MACH64)/gnutls-cli-debug
-file path=usr/bin/$(MACH64)/gnutls-serv
-file path=usr/bin/$(MACH64)/ocsptool
-file path=usr/bin/$(MACH64)/p11tool
-file path=usr/bin/$(MACH64)/psktool
-file path=usr/bin/$(MACH64)/srptool
-file path=usr/bin/$(MACH64)/tpmtool
+
+# Drop 32-bit apps:
+<transform file path=.*/bin/$(MACH32)/.+ -> drop>
+# Drop dir files:
+<transform file path=.+/info/dir -> drop>
+
+file path=usr/bin/$(MACH32)/certtool
+file path=usr/bin/$(MACH32)/gnutls-cli
+file path=usr/bin/$(MACH32)/gnutls-cli-debug
+file path=usr/bin/$(MACH32)/gnutls-serv
+file path=usr/bin/$(MACH32)/ocsptool
+file path=usr/bin/$(MACH32)/p11tool
+file path=usr/bin/$(MACH32)/psktool
+file path=usr/bin/$(MACH32)/srptool
+file path=usr/bin/$(MACH32)/tpmtool
 file path=usr/bin/certtool
 file path=usr/bin/gnutls-cli
 file path=usr/bin/gnutls-cli-debug
@@ -82,7 +91,7 @@ file path=usr/share/doc/gnutls/gnutls-logo.png
 file path=usr/share/doc/gnutls/gnutls-modauth.png
 file path=usr/share/doc/gnutls/gnutls-x509.png
 file path=usr/share/doc/gnutls/pkcs11-vision.png
-#file path=usr/share/info/dir
+file path=usr/share/info/dir
 file path=usr/share/info/gnutls-client-server-use-case.png
 file path=usr/share/info/gnutls-guile.info
 file path=usr/share/info/gnutls-handshake-sequence.png
