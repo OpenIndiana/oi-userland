@@ -1,0 +1,17 @@
+diff -Nru nim-1.6.6.orig/lib/posix/termios.nim nim-1.6.6/lib/posix/termios.nim
+--- nim-1.6.6.orig/lib/posix/termios.nim	2022-05-05 02:55:22.000000000 +0000
++++ nim-1.6.6/lib/posix/termios.nim	2022-06-03 20:29:02.275215845 +0000
+@@ -237,8 +237,11 @@
+     header: "<termios.h>".}
+ # Get process group ID for session leader for controlling terminal FD.
+ 
+-# Window size ioctl.  Should work on on any Unix that xterm has been ported to.
+-var TIOCGWINSZ*{.importc, header: "<sys/ioctl.h>".}: culong
++# Window size ioctl.  Solaris based systems have an uncommen place for this.
++when defined(solaris) or defined(sunos):
++  var TIOCGWINSZ*{.importc, header: "<sys/termios.h>".}: culong
++else:
++  var TIOCGWINSZ*{.importc, header: "<sys/ioctl.h>".}: culong
+ 
+ when defined(nimHasStyleChecks):
+   {.push styleChecks: off.}
