@@ -53,6 +53,7 @@ component-environment-prep::
 		while true ; do \
 		  $(PFEXEC) /usr/bin/pkg install --accept -v $(REQUIRED_PACKAGES:%=/%) ; \
 		  RETVAL=$$? ; \
+		  [ $$RETVAL -eq 0 ] && break; \
 		  [ $$RETVAL -eq 4 ] && break; \
 		  [ $$RETVAL -ne 7 ] && echo "pkg install returned $$RETVAL" && exit 1; \
 		  sleep 10; \
