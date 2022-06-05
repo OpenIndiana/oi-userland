@@ -54,7 +54,7 @@ component-environment-prep::
 		  $(PFEXEC) /usr/bin/pkg install --accept -v $(REQUIRED_PACKAGES:%=/%) ; \
 		  RETVAL=$$? ; \
 		  [ $$RETVAL -eq 4 ] && break; \
-		  [ $$RETVAL -ne 7 ] && exit 1; \
+		  [ $$RETVAL -ne 7 ] && echo "pkg install returned $$RETVAL" && exit 1; \
 		  sleep 10; \
 		done; }
 ZONENAME_PREFIX = bz
