@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           aria2
 COMPONENT_VERSION=        1.36.0
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           web/aria2
 COMPONENT_PROJECT_URL=    https://aria2.github.io/
 COMPONENT_CLASSIFICATION= Applications/Internet
