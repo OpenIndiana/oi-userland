@@ -21,18 +21,19 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2022 Niklas Poslovski
 #
 
 BUILD_BITS = 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
-COMPONENT_VERSION=	1.4.55
+COMPONENT_VERSION=	1.4.64
 COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:065259fb618774df516add13df22a52cac76a8f59e4561f143fe3ec810f4a03a
+    sha256:71e46403fb28371a06b23ef1cceffd75285140c6f62a879c777ee5af0d248801
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lighttpd
 
@@ -68,12 +69,12 @@ CONFIGURE_OPTIONS +=	--with-ldap
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += compress/bzip2
+# Auto-generated dependencies
 REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/fastcgi/spawn-fcgi
