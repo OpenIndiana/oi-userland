@@ -32,9 +32,13 @@ srcdir=$1
 destdir=$2
 
 PATH=/usr/bin
+if [ "X$CLONEY_MODE" = "X" ];then
+	CLONEY_MODE="symlink"
+fi
 
-echo symlink cloning $srcdir to $destdir
+echo $CLONEY_MODE cloning $srcdir to $destdir
 
+if [ "$CLONEY_MODE" = "symlink" ]; then
 cd ${srcdir}
 gfind . -type d | \
     grep -v '^.$' | \
@@ -52,5 +56,31 @@ gfind . -type f -o -type l | \
     while read i;
 do
 	rm -f "${destdir}/$i"
-	ln "${srcdir}/$i" "${destdir}/$i"
+	ln -s "${srcdir}/$i" "${destdir}/$i"
 done
+elif [ "$CLONEY_MODE" = "hardlink" ]; then
+cd ${srcdir}
+gfind . -type d | \
+    grep -v '^.$' | \
+    gsed -e 's,^\./,,' | \
+    while read i;
+do
+        mkdir -p "${destdir}/$i"
+done
+
+# Copy files and symlinks, making sure we ignore the gnu-patch backup
+# files, too.
+gfind . -type f -o -type l | \
+    egrep -v '~[0-9]+~' | \
+    gsed -e 's,^\./,,' | \
+    while read i;
+do
+        rm -f "${destdir}/$i"
+        ln "${srcdir}/$i" "${destdir}/$i"
+done
+elif [ "$CLONEY_MODE" = "copy" ]; then
+	cp -r ${srcdir}/* ${destdir}/
+else
+	echo "CLONEY_MODE=$CLONEY_MODE not supported"
+	exit 1
+fi
