@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rdesktop
 COMPONENT_VERSION=	1.9.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.rdesktop.org/
 COMPONENT_SUMMARY=	RDP, Microsoft Terminal Services client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
