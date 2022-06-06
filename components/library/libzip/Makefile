@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libzip
 COMPONENT_VERSION=	1.8.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A C library for reading, creating, and modifying zip archives
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
