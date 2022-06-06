@@ -1,0 +1,12 @@
+diff -Nru nim-1.6.6.orig/lib/posix/posix_other.nim nim-1.6.6/lib/posix/posix_other.nim
+--- nim-1.6.6.orig/lib/posix/posix_other.nim	2022-05-05 02:55:22.000000000 +0000
++++ nim-1.6.6/lib/posix/posix_other.nim	2022-06-05 11:22:52.727133291 +0000
+@@ -641,7 +641,7 @@
+   else:
+     const SO_REUSEPORT* = cint(15)
+ else:
+-  var SO_REUSEPORT* {.importc, header: "<sys/socket.h>".}: cint
++  var SO_REUSEPORT* {.importc: "SO_REUSEADDR", header: "<sys/socket.h>".}: cint
+ 
+ when defined(linux) or defined(bsd):
+   var SOCK_CLOEXEC* {.importc, header: "<sys/socket.h>".}: cint

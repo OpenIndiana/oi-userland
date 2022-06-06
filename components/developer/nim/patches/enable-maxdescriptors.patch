@@ -1,0 +1,34 @@
+diff -Nru nim-1.6.6.orig/lib/pure/asyncdispatch.nim nim-1.6.6/lib/pure/asyncdispatch.nim
+--- nim-1.6.6.orig/lib/pure/asyncdispatch.nim	2022-06-03 20:44:50.454919211 +0000
++++ nim-1.6.6/lib/pure/asyncdispatch.nim	2022-06-03 20:48:30.015708825 +0000
+@@ -1974,11 +1974,11 @@
+   import posix
+ 
+ when defined(linux) or defined(windows) or defined(macosx) or defined(bsd) or
+-       defined(zephyr) or defined(freertos):
++       defined(solaris) or defined(zephyr) or defined(freertos):
+   proc maxDescriptors*(): int {.raises: OSError.} =
+     ## Returns the maximum number of active file descriptors for the current
+     ## process. This involves a system call. For now `maxDescriptors` is
+-    ## supported on the following OSes: Windows, Linux, OSX, BSD.
++    ## supported on the following OSes: Windows, Linux, OSX, BSD, Solaris.
+     when defined(windows):
+       result = 16_700_000
+     elif defined(zephyr) or defined(freertos):
+diff -Nru nim-1.6.6.orig/lib/pure/selectors.nim nim-1.6.6/lib/pure/selectors.nim
+--- nim-1.6.6.orig/lib/pure/selectors.nim	2022-06-03 20:44:50.455725114 +0000
++++ nim-1.6.6/lib/pure/selectors.nim	2022-06-03 20:49:08.217352415 +0000
+@@ -324,11 +324,11 @@
+     doAssert(timeout >= -1, "Cannot select with a negative value, got: " & $timeout)
+ 
+   when defined(linux) or defined(windows) or defined(macosx) or defined(bsd) or
+-       defined(zephyr) or defined(freertos):
++       defined(solaris) or defined(zephyr) or defined(freertos):
+     template maxDescriptors*(): int =
+       ## Returns the maximum number of active file descriptors for the current
+       ## process. This involves a system call. For now `maxDescriptors` is
+-      ## supported on the following OSes: Windows, Linux, OSX, BSD.
++      ## supported on the following OSes: Windows, Linux, OSX, BSD, Solaris.
+       when defined(windows):
+         16_700_000
+       elif defined(zephyr) or defined(freertos):
