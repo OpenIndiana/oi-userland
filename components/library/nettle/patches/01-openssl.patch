@@ -1,0 +1,16 @@
+Use EVP_MD_CTX_create() to support openssl 1.0.
+The function was renamed to EVP_MD_CTX_new() in openssl 1.1.
+
+Not suitable for upstream.
+
+--- nettle-3.7.2/examples/nettle-openssl.c	2021-03-24 08:38:34.388843695 +0000
++++ nettle-3.7.2/examples/nettle-openssl.c	2021-03-24 08:37:37.592232522 +0000
+@@ -379,7 +379,7 @@ static void								\
+ openssl_##name##_init(void *p)						\
+ {									\
+   struct openssl_hash_ctx *ctx = p;					\
+-  if ((ctx->evp = EVP_MD_CTX_new()) == NULL)			\
++  if ((ctx->evp = EVP_MD_CTX_create()) == NULL)			\
+     return;								\
+ 									\
+   EVP_DigestInit(ctx->evp, EVP_##name());				\
