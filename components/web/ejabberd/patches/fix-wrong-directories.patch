@@ -1,0 +1,41 @@
+diff -Nru ejabberd-22.05.orig/Makefile.in ejabberd-22.05/Makefile.in
+--- ejabberd-22.05.orig/Makefile.in	2022-05-06 15:12:22.000000000 +0000
++++ ejabberd-22.05/Makefile.in	2022-06-06 20:37:04.805045744 +0000
+@@ -10,7 +10,8 @@
+ DESTDIR =
+ 
+ # /etc/ejabberd/
+-ETCDIR = $(DESTDIR)@sysconfdir@/ejabberd
++ETCDIRRAW = @sysconfdir@/ejabberd
++ETCDIR = $(DESTDIR)$(ETCDIRRAW)
+ 
+ # /bin/
+ BINDIR = $(DESTDIR)@bindir@
+@@ -66,10 +67,12 @@
+ LUADIR = $(PRIVDIR)/lua
+ 
+ # /var/lib/ejabberd/
+-SPOOLDIR = $(DESTDIR)@localstatedir@/lib/ejabberd
++SPOOLDIRRAW = @localstatedir@/lib/ejabberd
++SPOOLDIR = $(DESTDIR)$(SPOOLDIRRAW)
+ 
+ # /var/log/ejabberd/
+-LOGDIR = $(DESTDIR)@localstatedir@/log/ejabberd
++LOGDIRRAW = @localstatedir@/log/ejabberd
++LOGDIR = $(DESTDIR)$(LOGDIRRAW)
+ 
+ INSTALLUSER=@INSTALLUSER@
+ # if no user was enabled, don't set privileges or ownership
+@@ -299,9 +302,9 @@
+ 
+ ejabberdctl.example: vars.config
+ 	$(SED)  -e "s*{{installuser}}*@INSTALLUSER@*g" \
+-		-e "s*{{config_dir}}*${ETCDIR}*g" \
+-		-e "s*{{logs_dir}}*${LOGDIR}*g" \
+-		-e "s*{{spool_dir}}*${SPOOLDIR}*g" \
++		-e "s*{{config_dir}}*${ETCDIRRAW}*g" \
++		-e "s*{{logs_dir}}*${LOGDIRRAW}*g" \
++		-e "s*{{spool_dir}}*${SPOOLDIRRAW}*g" \
+ 		-e "s*{{bindir}}*@bindir@*g" \
+ 		-e "s*{{libdir}}*@libdir@*g" \
+ 		-e "s*{{erl}}*@ERL@*g" \

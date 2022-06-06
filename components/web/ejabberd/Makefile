@@ -21,7 +21,8 @@
 
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
+# Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2022 Niklas Poslovski
 #
 
 BUILD_BITS= 64
@@ -30,14 +31,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ejabberd
 COMPONENT_FMRI= web/server/$(COMPONENT_NAME)
-COMPONENT_VERSION= 21.04
-IPS_COMPONENT_VERSION= 21.0.4
+COMPONENT_VERSION= 22.0.5
+HUMAN_VERSION= 22.05
 COMPONENT_PROJECT_URL=	http://www.ejabberd.im/
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC= $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:2a5d22cd594ea2bd31adebcbcef9d9bdf46109803874fb336f8afba76fc08d8d
-COMPONENT_ARCHIVE_URL= https://www.process-one.net/downloads/ejabberd/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_URL= https://github.com/processone/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:b8e93b51ae3cb650a2870fae1b6705404bb155289e97be7e9a54961a9effb959
+COMPONENT_ARCHIVE_URL= https://www.process-one.net/downloads/ejabberd/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL= https://github.com/processone/$(COMPONENT_NAME)/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_BUGDB= service/ejabberd
 COMPONENT_SUMMARY= ejabberd - Jabber/XMPP instant messaging server
 COMPONENT_DESCRIPTION= the ejabberd Jabber/XMPP instant messaging server
@@ -64,7 +65,7 @@ COMPONENT_PRE_CONFIGURE_ACTION+= \
 COMPONENT_PRE_BUILD_ACTION+= \
   $(CLONEY) $(SOURCE_DIR) $(@D)
 
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--with-erlang=$(USRBINDIR)
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 CONFIGURE_OPTIONS +=	--enable-odbc
@@ -84,6 +85,9 @@ COMPONENT_BUILD_TARGETS = all
 
 COMPONENT_TEST_ARGS = "CT_BACKENDS=mnesia"
 COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TRANSFORMS= \
+    '-n ' \
+    '-e "/TEST COMPLETE/p"'
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/sqlite-3
