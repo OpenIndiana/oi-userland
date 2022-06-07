@@ -10,6 +10,7 @@
 
 #
 # Copyright 2018 Harry Liebel
+# Copyright 2022 Jim Klimov
 #
 
 BUILD_BITS=64
@@ -18,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		x11vnc
 COMPONENT_VERSION=	0.9.16
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://libvnc.github.io
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz

@@ -11,6 +11,7 @@
 
 #
 # Copyright 2018 Harry Liebel
+# Copyright 2022 Jim Klimov
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -25,3 +26,13 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 file path=usr/bin/x11vnc
 file path=usr/share/applications/x11vnc.desktop
 file path=usr/share/man/man1/x11vnc.1
+
+file \
+    files/svc-x11vnc \
+    path=lib/svc/method/svc-x11vnc \
+    mode=0555
+file \
+    files/x11vnc.xml \
+    path=lib/svc/manifest/application/x11/x11vnc.xml \
+    pkg.depend.bypass-generate=.* \
+    restart_fmri=svc:/system/manifest-import:default

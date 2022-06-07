@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ CDDL HEADER START
+
+ The contents of this file are subject to the terms of the
+ Common Development and Distribution License (the "License").
+ You may not use this file except in compliance with the License.
+
+ You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+ or http://www.opensolaris.org/os/licensing.
+ See the License for the specific language governing permissions
+ and limitations under the License.
+
+ When distributing Covered Code, include this CDDL HEADER in each
+ file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+ If applicable, add the following below this CDDL HEADER, with the
+ fields enclosed by brackets "[]" replaced with your own identifying
+ information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+
+	NOTE:  This service manifest is not editable; its contents will
+	be overwritten by package or patch operations, including
+	operating system upgrade.  Make customizations in a different
+	file.
+
+	Service manifest for the x11vnc server to provide remote access
+	to persistent GUI sessions, such as a system DISPLAY=:0 with its
+	currently rendered lightdm login or interactive user session.
+-->
+<!--
+	Copyright 2022 Jim Klimov
+-->
+<service_bundle type='manifest' name='x11vnc'>
+
+	<service name='application/x11/x11vnc' type='service' version='1'>
+
+		<dependency
+			name='filesystem'
+			grouping='require_all'
+			restart_on='none'
+			type='service'>
+				<service_fmri value='svc:/system/filesystem/local'/>
+		</dependency>
+
+		<dependency name='multi-user'
+			grouping='require_all'
+			restart_on='error'
+			type='service'>
+				<service_fmri value='svc:/milestone/multi-user:default'/>
+		</dependency>
+
+		<dependency
+			name='sysconfig'
+			grouping='require_all'
+			restart_on='none'
+			type='service'>
+				<service_fmri value='svc:/milestone/sysconfig'/>
+		</dependency>
+
+		<dependency
+			name='lightdm'
+			grouping='optional_all'
+			restart_on='refresh'
+			type='service'>
+				<service_fmri value='svc:/application/graphical-login/lightdm:default'/>
+		</dependency>
+
+		<dependency
+			name='utmpx'
+			grouping='require_all'
+			restart_on='none'
+			type='service'>
+				<service_fmri value='svc:/system/utmp'/>
+		</dependency>
+
+		<dependency
+			name='x11-init'
+			grouping='require_all'
+			restart_on='none'
+			type='service'>
+				<service_fmri value='svc:/application/x11/x11-init'/>
+		</dependency>
+
+		<exec_method type='method' name='start'
+			exec='/lib/svc/method/svc-x11vnc start' timeout_seconds='60'>
+		</exec_method>
+
+		<exec_method type='method' name='stop'
+			exec=':kill' timeout_seconds='60'>
+		</exec_method>
+
+		<exec_method type='method' name='refresh'
+			exec=':kill' timeout_seconds='60'>
+		</exec_method>
+
+		<!-- Authorization -->
+		<property_group name='general' type='framework'>
+			<!-- to start stop x11vnc, same as for lightdm: -->
+			<propval name='action_authorization' type='astring'
+					value='solaris.smf.manage.dt.login' />
+		</property_group>
+
+		<property_group name='startd' type='framework'>
+			<!-- Track the started process until it exits -->
+			<propval name='duration' type='astring'
+				value='child' />
+			<!-- Keep restarting as long as it is enabled -->
+			<propval name='ignore_error' type='astring'
+				value='core,signal' />
+		</property_group>
+
+		<!-- Properties below may be defined at service or instance
+		     level; note that not-empty strings and positive numbers
+		     at the particular instance's level would have complete
+		     precedence over service-level "general defaults":
+		  -->
+		<property_group name='x11vnc' type='application'>
+			<propval name='PERMISSION_MODEL' type='astring' value='lightdm' />
+			<propval name='ARGS' type='astring' value='' />
+			<propval name='BASE_PORT' type='integer' value='-1' />
+		</property_group>
+
+		<!-- Service instance name conveys the display number
+		     (and per SMF syntax, may not be just a number):
+		  -->
+		<instance name='display-0' enabled='false' >
+
+			<!-- these are passed to x11vnc in the method script -->
+			<property_group name='x11vnc' type='application'>
+				<propval name='PERMISSION_MODEL' type='astring' value='lightdm' />
+				<!-- The daemon suggests a lot of custom configuration
+				     for security, protocol aspects, etc. in the log
+				     (consider listening on localhost and SSH tunnels,
+				     and enabling software compositing in MATE if
+				     window-dragging lags awfully, especially in VMs).
+				     Note that if an X11 session gets logged in and
+				     later disconnected, and that user account has a
+				     ~/.vnc/passwd file, that one would be honored by
+				     the method script when reconnecting the VNC again.
+				  -->
+				<propval name='ARGS' type='astring' value='' />
+				<!-- Normally values below are defaulted by the method
+				     script or guessed from SMF instance name; however
+				     in some setups it can make sense to override them:
+				  -->
+				<propval name='DISPLAY_NUMBER' type='integer' value='-1' />
+				<propval name='BASE_PORT' type='integer' value='-1' />
+				<propval name='PORT' type='integer' value='-1' />
+			</property_group>
+
+		</instance>
+
+		<template>
+			<common_name>
+				<loctext xml:lang='C'>
+					X11VNC Remote desktop service
+				</loctext>
+			</common_name>
+			<description>
+				<loctext xml:lang='C'>
+					X11VNC Remote desktop service
+				</loctext>
+			</description>
+			<documentation>
+				<manpage title='x11vnc' section='1'
+					manpath='/usr/share/man'/>
+			</documentation>
+		</template>
+	</service>
+
+</service_bundle>
