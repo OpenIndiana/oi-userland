@@ -12,6 +12,7 @@
 # Copyright 2017, Longrin Wischnewski.
 # Copyright 2019, Michal Nowak
 # Copyright 2021, Nona Hansel
+# Copyright 2022 Niklas Poslovski
 #
 
 BUILD_BITS=			64
@@ -19,11 +20,11 @@ BUILD_STYLE=		cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fish
-COMPONENT_VERSION=	3.3.1
+COMPONENT_VERSION=	3.4.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://fishshell.com
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b5b4ee1a5269762cbbe993a4bd6507e675e4100ce9bbe84214a5eeb2b19fae89
+COMPONENT_ARCHIVE_HASH= sha256:b6f23b3843b04db6b0a90fea1f6f0d0e40cc027b4a732098200863f2864a94ea
 COMPONENT_ARCHIVE_URL= https://github.com/fish-shell/fish-shell/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_SUMMARY=	Fish is a smart and user-friendly command line shell
@@ -38,8 +39,7 @@ CMAKE_OPTIONS += -DCMAKE_INSTALL_SYSCONFDIR="/etc"
 CMAKE_OPTIONS += -DPCRE2_INCLUDE_DIR=/usr/include/pcre
 
 COMPONENT_TEST_CMD = gmake
-
-COMPONENT_TEST_TARGETS = test_fishscript test_interactive
+COMPONENT_TEST_TARGETS = test
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += library/pcre2

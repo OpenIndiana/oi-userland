@@ -1,0 +1,12 @@
+diff -Nru fish-3.4.1.orig/src/screen.cpp fish-3.4.1/src/screen.cpp
+--- fish-3.4.1.orig/src/screen.cpp	2022-03-25 17:22:53.000000000 +0000
++++ fish-3.4.1/src/screen.cpp	2022-06-06 23:55:58.744332321 +0000
+@@ -234,7 +234,7 @@
+         if (!p) continue;
+ 
+         for (int k = 0; k < max_colors; k++) {
+-            size_t esc_seq_len = try_sequence(tparm(const_cast<char *>(p), k), code);
++            size_t esc_seq_len = try_sequence(fish_tparm(const_cast<char *>(p), k), code);
+             if (esc_seq_len) {
+                 *resulting_length = esc_seq_len;
+                 return true;
