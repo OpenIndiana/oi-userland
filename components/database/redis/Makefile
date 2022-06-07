@@ -11,6 +11,7 @@
 #
 # Copyright 2020 Alexander Pyhalov
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2022 Niklas Poslovski
 #
 
 BUILD_BITS=64
@@ -18,7 +19,7 @@ BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= redis
-COMPONENT_VERSION= 6.2.6
+COMPONENT_VERSION= 6.2.7
 COMPONENT_SUMMARY= Redis in-memory data structure store
 COMPONENT_PROJECT_URL= https://redis.io/
 COMPONENT_FMRI= database/redis
@@ -26,7 +27,7 @@ COMPONENT_CLASSIFICATION= System/Databases
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  https://download.redis.io/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:5b2b8b7a50111ef395bf1c1d5be11e6e167ac018125055daa8b5c2317ae131ab
+COMPONENT_ARCHIVE_HASH= sha256:b7a79cc3b46d3c6eb52fa37dde34a4a60824079ebdfb3abfbbfa035947c55319
 COMPONENT_LICENSE= BSD
 COMPONENT_LICENSE_FILE= COPYING
 
