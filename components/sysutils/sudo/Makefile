@@ -29,8 +29,8 @@ USE_OPENSSL11=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sudo
-SRC_VERSION=		1.9.10
-SRC_PATCH_VERSION=	0
+SRC_VERSION=		1.9.11
+SRC_PATCH_VERSION=	1
 SRC_DOT_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo .$(SRC_PATCH_VERSION))
 SRC_P_PATCH_VERSION=	$(shell [ $(SRC_PATCH_VERSION) -gt 0 ] && echo p$(SRC_PATCH_VERSION))
 HUMAN_VERSION=		$(SRC_VERSION)$(SRC_P_PATCH_VERSION)
@@ -39,7 +39,7 @@ COMPONENT_VERSION=	$(SRC_VERSION)$(SRC_DOT_PATCH_VERSION)
 COMPONENT_SUMMARY=	sudo - tool to allow certain tasks to be run as root by ordinary users
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)$(SRC_P_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:44a1461098e7c7b8e6ac597499c24fb2e43748c0c139a8b4944e57d1349a64f4
+COMPONENT_ARCHIVE_HASH= sha256:eb8b6c1a69a9adf4b82030b66d99d79214d7cba5031a0be43103a6176b16254b
 COMPONENT_ARCHIVE_URL=	https://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig	
 COMPONENT_PROJECT_URL=  https://www.sudo.ws/
@@ -51,7 +51,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
-CONFIGURE_OPTIONS +=	--disable-hardening
+COMPONENT_PREP_ACTION = ( cd $(@D)  && autoreconf -vif )
+
+#CONFIGURE_OPTIONS +=	--disable-hardening
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-project
 CONFIGURE_OPTIONS +=	--with-rundir=/var/run/sudo
@@ -64,7 +66,7 @@ CONFIGURE_OPTIONS +=	--without-lecture
 CONFIGURE_OPTIONS +=	--with-ignore-dot
 CONFIGURE_OPTIONS +=	--with-bsm-audit
 CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR64)
-CONFIGURE_OPTIONS +=	"sudo_cv_var_nroff_opt_Tascii=no"
+#CONFIGURE_OPTIONS +=	"sudo_cv_var_nroff_opt_Tascii=no"
 
 COMPONENT_BUILD_ENV +=	CC="$(CC)"
 COMPONENT_BUILD_ENV +=	CXX="$(CXX)"
