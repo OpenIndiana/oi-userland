@@ -25,12 +25,13 @@
 
 BUILD_STYLE=makemaker
 BUILD_BITS=32_and_64
+USE_COMMON_TEST_MASTER = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Moo
-COMPONENT_VERSION=	2.0.0.5004
+COMPONENT_VERSION =	2.5.4
 HUMAN_VERSION=		2.005004
-#COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/perl-5/moo
 COMPONENT_SUMMARY=	Moo - Minimalist Object Orientation (with Moose compatibility)
 COMPONENT_CLASSIFICATION=Development/Perl
@@ -42,25 +43,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/H/HA/HAARG/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv1, Artistic
 
-# until all perl modules have been rebuilt with 5.34, each module sets
-# this manually, before including common.mk
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
-
 include $(WS_MAKE_RULES)/common.mk
-
-#
-# use the same results for comparison for all builds
-#
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-#
-# filter out all output up to and including the test_harness line
-# filter out timing information and anything else that varies between builds
-#
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "1,/test_harness/d"' \
-	'-e "s/,  *[0-9]* wallclock.*//"'
 
 # Manually added dependencies
 REQUIRED_PACKAGES += library/perl-5/class-method-modifiers-522
