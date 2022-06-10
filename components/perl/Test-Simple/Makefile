@@ -21,8 +21,9 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		Test-Simple
 HUMAN_VERSION =			1.302190
 COMPONENT_VERSION =		1.302.190
+COMPONENT_REVISION =		1
 COMPONENT_FMRI =		library/perl-5/test-simple
-COMPONENT_SUMMARY =		Test-Simple - Basic utilities for writing tests.
+COMPONENT_SUMMARY =		Test2 - Framework for writing test tools that all work together.
 COMPONENT_CLASSIFICATION =	Development/Perl
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
@@ -31,6 +32,13 @@ COMPONENT_ARCHIVE_HASH =	\
 	sha256:fbb15226f1c605c4466a8c6ba02030083d54333d34fa76c02549cae7014c3a0e
 COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/E/EX/EXODIST/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		Artistic
+
+# We need Test2 part of this package only.  Perl distribution already bundles
+# Test-Simple, but its version in 5.22 and 5.24 is so old that it does not
+# contain Test2.  Perl 5.34 already bundles pretty recent Test-Simple so we do
+# not need this package for 5.34 at all.
+PERL_VERSIONS = 5.22 5.24
+PERL_64_ONLY_VERSIONS = 5.24
 
 include $(WS_MAKE_RULES)/common.mk
 
