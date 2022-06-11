@@ -29,6 +29,10 @@ COMMON_PERL_ENV +=	LANG=""
 COMMON_PERL_ENV +=	CC="$(CC)"
 COMMON_PERL_ENV +=	CFLAGS="$(CC_BITS) $(PERL_OPTIMIZE)"
 
+# Generate requirements on all built perl version variants for given packages
+REQUIRED_PACKAGES += $(PERL_REQUIRED_PACKAGES)
+REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(PERL_REQUIRED_PACKAGES:%=%-$(shell echo $(ver) | tr -d .)))
+
 # Yes.  Perl is just scripts, for now, but we need architecture
 # directories so that it populates all architecture prototype
 # directories.
