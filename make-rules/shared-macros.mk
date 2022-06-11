@@ -505,7 +505,7 @@ COMPONENT_TEST_PERFORM_TRANSFORM = \
 	$(SHELL) $(COMPONENT_TEST_TRANSFORM_CMD); \
 
 # set the default command used to compare the master results with the snapshot
-COMPONENT_TEST_COMPARE_CMD =	$(GDIFF) -uN
+COMPONENT_TEST_COMPARE_CMD =	$(GDIFF) -uNb
 
 # set the default way that master and snapshot test results are compared
 COMPONENT_TEST_COMPARE = \
