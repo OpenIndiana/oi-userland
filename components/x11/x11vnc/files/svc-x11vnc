@@ -1,0 +1,140 @@
+#!/bin/sh
+
+#
+# Method script to start x11vnc daemon connected to an X11 display
+# and represents the system desktop session (or another display)
+# for persistent remote access. Starts as root and changes to the
+# currently appropriate account, selected as implemented below.
+#
+# The X11VNC program must run as the same account which runs the
+# X11 server at the moment, to use the same magic cookies etc.,
+# e.g. "lightdm" when waiting for login and as the "real user" if
+# reconnecting after someone has logged in there. A VNC client
+# disconnection as well as a session logout stops the daemon (and
+# SMF then restarts it, connecting to the existing X11 session).
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+# Copyright 2022 Jim Klimov
+
+. /lib/svc/share/smf_include.sh
+
+SMF_FMRI_BASENAME="`echo "${SMF_FMRI}" | sed 's,:[^:]*$,,'`"
+SMF_FMRI_INSTANCE="`echo "${SMF_FMRI}" | sed 's,^.*:\([^:]*\)$,\1,'`"
+
+getpropInst() {
+    OUT="`svcprop -p "$1" "$2" 2>/dev/null`" || return
+    if [ x"${OUT}" = x'""' ]; then OUT=""; fi
+    echo "$OUT"
+}
+
+getprop() {
+    getpropInst "$1" "$SMF_FMRI" \
+    || getpropInst "$1" "$SMF_FMRI_BASENAME"
+}
+
+getpropNumPositive() {
+    NUM="`getpropInst "$1" "$SMF_FMRI"`" \
+    && [ -n "${NUM}" ] && [ "${NUM}" -gt 0 ] \
+    && { echo "$NUM" ; return 0; }
+
+    NUM="`getpropInst "$1" "$SMF_FMRI_BASENAME"`" \
+    && [ -n "${NUM}" ] && [ "${NUM}" -gt 0 ] \
+    && { echo "$NUM" ; return 0; }
+
+    return 1
+}
+
+getpropStringNotEmpty() {
+    STR="`getpropInst "$1" "$SMF_FMRI"`" \
+    && [ -n "${STR}" ] \
+    && { echo "$STR" ; return 0; }
+
+    STR="`getpropInst "$1" "$SMF_FMRI_BASENAME"`" \
+    && [ -n "${STR}" ] \
+    && { echo "$STR" ; return 0; }
+
+    return 1
+}
+
+# Currently we support one way of determining the needed account,
+# but just in case anticipate extensibility:
+PERMISSION_MODEL="`getpropStringNotEmpty x11vnc/PERMISSION_MODEL`" \
+&& [ -n "${PERMISSION_MODEL}" ] \
+|| PERMISSION_MODEL="lightdm"
+
+# Default a display number from settings or SMF instance name:
+DISPLAY_NUMBER="`getpropInst x11vnc/DISPLAY_NUMBER $SMF_FMRI`" \
+&& [ -n "${DISPLAY_NUMBER}" ] && [ "${DISPLAY_NUMBER}" -gt 0 ] \
+|| { DISPLAY_NUMBER="`echo "${SMF_FMRI_INSTANCE}" | sed 's,^display-\([0-9]*\)$,\1,'`" \
+     && [ -n "${DISPLAY_NUMBER}" ] && [ "${DISPLAY_NUMBER}" -gt 0 ] \
+     || DISPLAY_NUMBER="0"
+   }
+
+# Note: while port 5900 is standard for VNC on DISPLAY=":0" it may
+# conflict with other enabled VNC server implementations (including
+# an inetd-style listener) so we let it be configured:
+BASE_PORT="`getpropNumPositive x11vnc/BASE_PORT`" \
+|| BASE_PORT="5900"
+
+PORT="`getpropInst x11vnc/PORT $SMF_FMRI`" \
+&& [ -n "${PORT}" ] && [ "${PORT}" -gt 0 ] \
+|| PORT="`expr $BASE_PORT + $DISPLAY_NUMBER`"
+
+ARGS="`getpropStringNotEmpty x11vnc/ARGS`" \
+|| ARGS=""
+
+getUser() {
+    # Echo back the user name to run as:
+    case "${PERMISSION_MODEL}" in
+        lightdm)
+            if [ -s "/var/run/lightdm/root/:${DISPLAY_NUMBER}" ]; then
+                ls -la "/var/run/lightdm/root/:${DISPLAY_NUMBER}" \
+                | awk '{print $3}' \
+                && return 0
+            fi
+            echo "Could not determine current lightdm/X11 user account for DISPLAY=:${DISPLAY_NUMBER}" >&2
+            ;;
+        *)  echo "Unsupported x11vnc/PERMISSION_MODEL: ${PERMISSION_MODEL}" >&2
+            # TODO: Hardcode? Define in SMF? Look for running Xorg processes?
+            # echo "root"
+            ;;
+    esac
+    return 1
+}
+
+X11USER="`getUser`" || X11USER=""
+if [ -n "${X11USER}" ] ; then
+    X11USER_HOME="`getent passwd "${X11USER}" | awk -F: '{print \$6}'`"
+else
+    X11USER_HOME="`getent passwd \"\`id -u\`\" | awk -F: '{print \$6}'`"
+fi
+
+case "$1" in
+    start)
+        # Password file may be created by `vncpasswd` executed by the user,
+        # or by the server binary like this:
+        #   x11vnc -storepasswd yourVNCpasswordHERE ~/.vnc/passwd
+        case "${ARGS}" in
+            *rfbauth*|*storepasswd*) ;;
+            *)  if [ -s "${X11USER_HOME}/.vnc/passwd" ] ; then
+                    ARGS="$ARGS -rfbauth '${X11USER_HOME}/.vnc/passwd'"
+                fi
+                ;;
+        esac
+
+        # set -x
+        if [ -n "${X11USER}" ] ; then
+            exec su - "${X11USER}" -c "/usr/bin/x11vnc -display ':${DISPLAY_NUMBER}' -rfbport '${PORT}' $ARGS"
+        else
+            exec /usr/bin/x11vnc -display ":${DISPLAY_NUMBER}" -rfbport "${PORT}" $ARGS
+        fi
+        ;;
+esac
