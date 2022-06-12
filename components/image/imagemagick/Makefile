@@ -22,37 +22,31 @@
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
 COMPONENT_VERSION=		6.9.12
 COMPONENT_SUBVERSION=		38
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
+IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
+COMPONENT_REVISION=		1
 COMPONENT_FMRI=			image/imagemagick
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_SUMMARY=		ImageMagick - Image Manipulation Utilities and Libraries
-COMPONENT_PROJECT_URL=		https://legacy.imagemagick.org
+COMPONENT_PROJECT_URL=	https://legacy.imagemagick.org
 COMPONENT_SRC=			$(COMPONENT_NAME)6-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:209d2c60e19372da6da308004826f8e5004489bc281b6d9410c108655915634c
-COMPONENT_ARCHIVE_URL=		https://github.com/ImageMagick/ImageMagick6/archive/$(HUMAN_VERSION).tar.gz
-COMPONENT_LICENSE = Apache 2.0 license
-COMPONENT_LICENSE_FILE = LICENSE
+COMPONENT_ARCHIVE_HASH=	sha256:209d2c60e19372da6da308004826f8e5004489bc281b6d9410c108655915634c
+COMPONENT_ARCHIVE_URL=	https://github.com/ImageMagick/ImageMagick6/archive/$(HUMAN_VERSION).tar.gz
+COMPONENT_LICENSE= Apache 2.0 license
+COMPONENT_LICENSE_FILE= LICENSE
 
-CONFIGURE_FIX_LIBTOOL_RPATH=no
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+CONFIGURE_FIX_LIBTOOL_RPATH= no
+PERL_VERSION= 5.22
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
-
-# IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but in
-# this case we need to replace the '-' by '.'.
-#
-IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
 
 # To get the Perl modules built it is necessary to copy the PerlMagick directory
 # to the build directory
@@ -104,13 +98,9 @@ CONFIGURE_OPTIONS+= --sysconfdir=/etc
 
 # common targets
 #
-build:		$(BUILD_32_and_64)
-
 # Doing it twice because /usr/lib is deep...
 # Remove build machine runpath from libMagick++-6.Q16.so.1.0.0
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+#install:	$(INSTALL_32_and_64)
 
 # Needed for "gmake test" to work successfully.  If SHELLOPTS is exported (as
 # it is by the Userland Makefiles), then all shell options get exported to

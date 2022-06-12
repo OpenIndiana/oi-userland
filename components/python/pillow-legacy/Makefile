@@ -10,34 +10,37 @@
 
 #
 # Copyright 2020 Alexander Pyhalov
-# Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_STYLE= setup.py
-BUILD_BITS= 32_and_64
+BUILD_STYLE=setup.py
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Pillow
-COMPONENT_VERSION=	9.1.1
+# Pillow 7 dropped Python 2.7 support
+COMPONENT_VERSION=	6.2.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://pypi.org/project/Pillow/
 COMPONENT_SUMMARY=	Python image processing library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:7502539939b53d7565f3d11d87c78e7ec900d3c72945d4ee0e2f250d598309a0
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:db9ff0c251ed066d367f53b64827cc9e18ccea001b986d08c265e53625dab950
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_FMRI=		library/python/pillow
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	PIL software license
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	3.7 3.9
+# 3.4 is not supported
+PYTHON_VERSIONS=	2.7 3.5
 
 include $(WS_MAKE_RULES)/common.mk
 
 # build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
+CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS           +=    $(JPEG_LDFLAGS)
 
 COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_ARGS= ./selftest.py
@@ -58,8 +61,7 @@ REQUIRED_PACKAGES += image/library/openjpeg
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += x11/library/libxcb
