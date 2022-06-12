@@ -7,23 +7,15 @@
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 
-# Copyright 2022 Andreas Wacknitz
-#
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+# Copyright 2022 <contributor>
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
-
-license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/BdfFontFile.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/BlpImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/BmpImagePlugin.py
@@ -113,9 +105,16 @@ file path=usr/lib/python$(PYVER)/vendor-packages/PIL/XpmImagePlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/__main__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_binary.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imaging.cpython-37m.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingcms.cpython-37m.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingft.cpython-37m.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingmath.cpython-37m.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingmorph.cpython-37m.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingtk.cpython-37m.so
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_tkinter_finder.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_util.py
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_webp.cpython-37m.so
 file path=usr/lib/python$(PYVER)/vendor-packages/PIL/features.py
 file path=usr/lib/python$(PYVER)/vendor-packages/Pillow-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/Pillow-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
@@ -123,10 +122,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/Pillow-$(COMPONENT_VERSION)-py$
 file path=usr/lib/python$(PYVER)/vendor-packages/Pillow-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/Pillow-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/Pillow-$(COMPONENT_VERSION)-py$(PYVER).egg-info/zip-safe
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imaging.so
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingcms.so
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingft.so
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingmath.so
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingmorph.so
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingtk.so
-file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_webp.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imaging.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingcms.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingft.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingmath.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingmorph.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_imagingtk.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/PIL/_webp.cpython-39.so
