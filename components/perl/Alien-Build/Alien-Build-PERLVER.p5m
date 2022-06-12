@@ -1,0 +1,205 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Marcel Telka
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=library/perl-5/capture-tiny-$(PLV)@0.17 type=require
+depend fmri=library/perl-5/ffi-checklib-$(PLV)@0.11 type=require
+depend fmri=library/perl-5/file-which-$(PLV)@1.10 type=require
+depend fmri=library/perl-5/file-chdir-$(PLV) type=require
+depend fmri=library/perl-5/path-tiny-$(PLV)@0.77 type=require
+depend fmri=runtime/perl-$(PLV) type=require
+
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Base.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Base::Authoring.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Base::FAQ.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Base::PkgConfig.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Base::Wrapper.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::CommandSequence.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Interpolate.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Interpolate::Default.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Log.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Log::Abbreviate.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Log::Default.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::MM.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Manual::Alien.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Manual::AlienAuthor.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Manual::AlienUser.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Manual::Contributing.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Manual::FAQ.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Manual::PluginAuthor.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Build.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Build::Autoconf.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Build::CMake.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Build::Copy.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Build::MSYS.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Build::Make.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Build::SearchDep.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Core.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Core::CleanInstall.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Core::Download.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Core::FFI.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Core::Gather.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Core::Legacy.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Core::Override.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Core::Setup.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Core::Tail.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Decode.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Decode::DirListing.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Decode::DirListingFtpcopy.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Decode::HTML.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Decode::Mojo.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Download.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Download::Negotiate.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Extract.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Extract::ArchiveTar.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Extract::ArchiveZip.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Extract::CommandLine.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Extract::Directory.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Extract::Negotiate.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Fetch.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Fetch::CurlCommand.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Fetch::HTTPTiny.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Fetch::LWP.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Fetch::Local.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Fetch::LocalDir.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Fetch::NetFTP.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Fetch::Wget.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Gather::IsolateDynamic.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::PkgConfig::CommandLine.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::PkgConfig::LibPkgConf.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::PkgConfig::MakeStatic.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::PkgConfig::Negotiate.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::PkgConfig::PP.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Prefer.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Prefer::BadVersion.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Prefer::GoodVersion.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Prefer::SortVersions.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Probe.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Probe::CBuilder.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Probe::CommandLine.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Probe::Vcpkg.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Plugin::Test::Mock.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Temp.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Util.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::Version::Basic.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Build::rc.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Role.3
+file path=usr/perl5/$(PERLVER)/man/man3/Alien::Util.3
+file path=usr/perl5/$(PERLVER)/man/man3/Test::Alien.3
+file path=usr/perl5/$(PERLVER)/man/man3/Test::Alien::Build.3
+file path=usr/perl5/$(PERLVER)/man/man3/Test::Alien::CanCompile.3
+file path=usr/perl5/$(PERLVER)/man/man3/Test::Alien::CanPlatypus.3
+file path=usr/perl5/$(PERLVER)/man/man3/Test::Alien::Diag.3
+file path=usr/perl5/$(PERLVER)/man/man3/Test::Alien::Run.3
+file path=usr/perl5/$(PERLVER)/man/man3/Test::Alien::Synthetic.3
+file path=usr/perl5/$(PERLVER)/man/man3/alienfile.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Alien/Build/.packlist
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Base.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Base/Authoring.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Base/FAQ.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Base/PkgConfig.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Base/Wrapper.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/CommandSequence.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Interpolate.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Interpolate/Default.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Log.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Log/Abbreviate.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Log/Default.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/MM.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Manual/Alien.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Manual/AlienAuthor.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Manual/AlienUser.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Manual/Contributing.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Manual/FAQ.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Manual/PluginAuthor.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Build.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Build/Autoconf.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Build/CMake.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Build/Copy.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Build/MSYS.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Build/Make.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Build/SearchDep.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Core.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Core/CleanInstall.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Core/Download.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Core/FFI.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Core/Gather.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Core/Legacy.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Core/Override.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Core/Setup.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Core/Tail.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Decode.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Decode/DirListing.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Decode/DirListingFtpcopy.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Decode/HTML.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Decode/Mojo.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Download.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Download/Negotiate.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Extract.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Extract/ArchiveTar.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Extract/ArchiveZip.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Extract/CommandLine.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Extract/Directory.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Extract/Negotiate.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Fetch.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Fetch/CurlCommand.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Fetch/HTTPTiny.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Fetch/LWP.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Fetch/Local.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Fetch/LocalDir.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Fetch/NetFTP.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Fetch/Wget.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Gather/IsolateDynamic.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/PkgConfig/CommandLine.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/PkgConfig/LibPkgConf.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/PkgConfig/MakeStatic.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/PkgConfig/Negotiate.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/PkgConfig/PP.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Prefer.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Prefer/BadVersion.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Prefer/GoodVersion.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Prefer/SortVersions.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Probe.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Probe/CBuilder.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Probe/CommandLine.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Probe/Vcpkg.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Plugin/Test/Mock.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Temp.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Util.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/Version/Basic.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Build/rc.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Role.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Alien/Util.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Test/Alien.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Test/Alien/Build.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Test/Alien/CanCompile.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Test/Alien/CanPlatypus.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Test/Alien/Diag.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Test/Alien/Run.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Test/Alien/Synthetic.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/alienfile.pm
