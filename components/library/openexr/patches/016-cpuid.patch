@@ -1,59 +1,57 @@
---- IlmImf/ImfSystemSpecific.cpp.orig   2014-08-10 04:23:57.000000000 +0000
-+++ IlmImf/ImfSystemSpecific.cpp
-@@ -40,21 +40,19 @@ OPENEXR_IMF_INTERNAL_NAMESPACE_SOURCE_EN
-
+--- openexr-3.1.5/src/lib/OpenEXR/ImfSystemSpecific.cpp	Thu Apr  7 08:52:25 2022
++++ openexr-3.1.5/src/lib/OpenEXR/ImfSystemSpecific_.cpp	Sat Jun  4 09:51:06 2022
+@@ -13,21 +13,17 @@
+ 
  namespace {
- #if defined(IMF_HAVE_SSE2) &&  defined(__GNUC__)
+ #if defined(IMF_HAVE_SSE2) &&  defined(__GNUC__) && !defined(__e2k__)
 -
 +#include <cpuid.h>
      // Helper functions for gcc + SSE enabled
 -    void cpuid(int n, int &eax, int &ebx, int &ecx, int &edx)
-+    void cpuid(unsigned int n, unsigned int &eax, unsigned int &ebx,
-+                   unsigned int &ecx, unsigned int &edx)
++    void cpuid(unsigned int n, unsigned int &eax, unsigned int &ebx, unsigned int &ecx, unsigned int &edx)
      {
 -        __asm__ __volatile__ (
 -            "cpuid"
--            : /* Output  */ "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx) 
+-            : /* Output  */ "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx)
 -            : /* Input   */ "a"(n)
 -            : /* Clobber */);
-+       __get_cpuid(n, &eax, &ebx, &ecx, &edx);
++        __get_cpuid(n, &eax, &ebx, &ecx, &edx);
      }
-
- #else // IMF_HAVE_SSE2 && __GNUC__
-
+ 
+ #else // IMF_HAVE_SSE2 && __GNUC__ && !__e2k__
+ 
      // Helper functions for generic compiler - all disabled
 -    void cpuid(int n, int &eax, int &ebx, int &ecx, int &edx)
-+    void cpuid(unsigned int n, unsigned int &eax, unsigned int &ebx,
-+                   unsigned int &ecx, unsigned int &edx)
++    void cpuid(unsigned int n, unsigned int &eax, unsigned int &ebx, unsigned int &ecx, unsigned int &edx)
      {
          eax = ebx = ecx = edx = 0;
      }
-@@ -64,7 +62,7 @@ namespace {
-
- #ifdef OPENEXR_IMF_HAVE_GCC_INLINE_ASM_AVX
-
+@@ -37,7 +33,7 @@
+ 
+ #ifdef IMF_HAVE_GCC_INLINEASM_X86
+ 
 -    void xgetbv(int n, int &eax, int &edx)
 +    void xgetbv(unsigned int n, unsigned int &eax, unsigned int &edx)
      {
          __asm__ __volatile__ (
              "xgetbv"
-@@ -75,7 +73,7 @@ namespace {
-
- #else //  OPENEXR_IMF_HAVE_GCC_INLINE_ASM_AVX
-
+@@ -48,7 +44,7 @@
+ 
+ #else //  IMF_HAVE_GCC_INLINEASM_X86
+ 
 -    void xgetbv(int n, int &eax, int &edx)
 +    void xgetbv(unsigned int n, unsigned int &eax, unsigned int &edx)
      {
          eax = edx = 0;
      }
-@@ -94,8 +92,8 @@ CpuId::CpuId():
-     f16c(false)
- {
+@@ -91,8 +87,8 @@
+ #   endif
+ #else // x86/x86_64
      bool osxsave = false;
 -    int  max     = 0;
 -    int  eax, ebx, ecx, edx;
 +    unsigned int  max     = 0;
 +    unsigned int  eax, ebx, ecx, edx;
-
+ 
      cpuid(0, max, ebx, ecx, edx);
      if (max > 0)
