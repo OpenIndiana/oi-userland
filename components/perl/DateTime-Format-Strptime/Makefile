@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DateTime-Format-Strptime
 COMPONENT_VERSION =		1.70
-COMPONENT_FMRI =		library/perl-5/DateTime-Format-Strptime
+COMPONENT_FMRI =		library/perl-5/datetime-format-strptime
 COMPONENT_SUMMARY =		DateTime::Format::Strptime - Parse and format strp and strf time patterns
 COMPONENT_CLASSIFICATION =	Development/Perl
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
