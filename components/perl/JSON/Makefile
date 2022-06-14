@@ -23,45 +23,28 @@
 # Copyright (c) 2022 Friedrich Kink.  All rights reserved.
 #
 
-BUILD_STYLE=makemaker
-BUILD_BITS=32_and_64
+BUILD_STYLE = makemaker
+BUILD_BITS = 32_and_64
+USE_COMMON_TEST_MASTER = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		JSON
-COMPONENT_VERSION=	4.05
-HUMAN_VERSION=          $(COMPONENT_VERSION)
-IPS_COMPONENT_VERSION=  4.0.5
-COMPONENT_FMRI=		library/perl-5/JSON
-COMPONENT_SUMMARY=	JSON - JSON (JavaScript Object Notation) encoder/decoder
-COMPONENT_CLASSIFICATION=Development/Perl
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	https://metacpan.org/pod/JSON
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:53839373210bebea0b24fe459d0a8232446b62015c8dc42dc36051da67336bf0
-COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/I/IS/ISHIGAKI/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	Artistic
-
-# until all perl modules have been rebuilt with 5.34, each module sets
-# this manually, before including common.mk
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
+COMPONENT_NAME =		JSON
+HUMAN_VERSION =			4.06
+COMPONENT_VERSION =		4.6
+COMPONENT_FMRI =		library/perl-5/json
+COMPONENT_SUMMARY =		JSON - JSON (JavaScript Object Notation) encoder/decoder
+COMPONENT_CLASSIFICATION =	Development/Perl
+COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
+COMPONENT_PROJECT_URL=		https://metacpan.org/pod/JSON
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:1137e98a42208d802f3ad94a10855606c0455ddad167ba018557d751f6f7672e
+COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/I/IS/ISHIGAKI/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE =		Artistic
 
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# use the same results for comparison for all builds
-#
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-#
-# filter out all output up to and including the test_harness line
-# filter out timing information and anything else that varies between builds
-#
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "1,/test_harness/d"' \
-	'-e "s/,  *[0-9]* wallclock.*$$//"' \
-	'-e "/Leaving directory/d"' \
-	'-e "/Entering directory/d"'
+PERL_REQUIRED_PACKAGES += library/perl-5/test-pod
 
 # Auto-generated dependencies
