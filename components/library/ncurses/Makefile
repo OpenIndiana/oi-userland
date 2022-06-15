@@ -32,14 +32,15 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		ncurses
 COMPONENT_VERSION=	6.3
 COMPONENT_REV=		20211021
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
+# With the next version we should remove the COMPONENT_REV part as doesn't seem to be used by other distributions:
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_REV)
 COMPONENT_SUMMARY=	A CRT screen handling and optimization package.
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/ncurses/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_REV)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:56c2c86006661c509e2dded98d9f37ac7caf90edf6fe65b3b5eeb2580da46c98
-COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/$(COMPONENT_NAME)/current/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/ncurses/
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:97fc51ac2b085d4cde31ef4d2c3122c21abc217e9090a43a30fc5ec21684e059
+COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		library/ncurses
 COMPONENT_LICENSE=	MIT
