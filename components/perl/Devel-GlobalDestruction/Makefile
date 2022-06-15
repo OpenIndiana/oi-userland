@@ -29,9 +29,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Devel-GlobalDestruction
 COMPONENT_VERSION=	0.14
-#COMPONENT_REVISION=	1
+COMPONENT_REVISION =	1
 COMPONENT_FMRI=		library/perl-5/devel-globaldestruction
-COMPONENT_SUMMARY=	Devel::GlobalDestruction - Provides function returning the equivalent of ${^GLOBAL_PHASE} eq 'DESTRUCT' for older perls.
+COMPONENT_SUMMARY =	Devel::GlobalDestruction - Provides function returning the equivalent of \$${^GLOBAL_PHASE} eq 'DESTRUCT' for older perls.
 COMPONENT_CLASSIFICATION=Development/Perl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -41,33 +41,10 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/H/HA/HAARG/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	Artistic
 
-# until all perl modules have been rebuilt with 5.34, each module sets
-# this manually, before including common.mk
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
-
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# use the results for each perl version
-#
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION).master
-
-#
-# filter out all output up to and including the test_harness line
-# filter out timing information and anything else that varies between builds
-#
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "1,/test_harness/d"' \
-	'-e "s/,  *[0-9]* wallclock.*//"'
-
 # Manually added dependencies
-REQUIRED_PACKAGES += library/perl-5/sub-exporter-522
-REQUIRED_PACKAGES += library/perl-5/sub-exporter-524
-REQUIRED_PACKAGES += library/perl-5/sub-exporter-534
-REQUIRED_PACKAGES += library/perl-5/sub-exporter-progressive-522
-REQUIRED_PACKAGES += library/perl-5/sub-exporter-progressive-524
-REQUIRED_PACKAGES += library/perl-5/sub-exporter-progressive-534
+PERL_REQUIRED_PACKAGES += library/perl-5/sub-exporter-progressive
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/perl-522
