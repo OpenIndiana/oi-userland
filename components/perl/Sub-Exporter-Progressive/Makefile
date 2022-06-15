@@ -25,12 +25,13 @@
 
 BUILD_STYLE=makemaker
 BUILD_BITS=32_and_64
+USE_COMMON_TEST_MASTER = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Sub-Exporter-Progressive
-COMPONENT_VERSION=	0.0.0.1013
+COMPONENT_VERSION =	0.1.13
 HUMAN_VERSION=		0.001013
-#COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/perl-5/sub-exporter-progressive
 COMPONENT_SUMMARY=	Sub::Exporter::Progressive - Only use Sub::Exporter if you need it
 COMPONENT_CLASSIFICATION=Development/Perl
@@ -42,25 +43,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/F/FR/FREW/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv1, Artistic
 
-# until all perl modules have been rebuilt with 5.34, each module sets
-# this manually, before including common.mk
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
-
 include $(WS_MAKE_RULES)/common.mk
-
-#
-# use the same results for comparison for all builds
-#
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-#
-# filter out all output up to and including the test_harness line
-# filter out timing information and anything else that varies between builds
-#
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "1,/test_harness/d"' \
-	'-e "s/,  *[0-9]* wallclock.*//"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/perl-522
