@@ -17,7 +17,8 @@ BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	 	softhsm
-COMPONENT_VERSION=     	2.6.1
+COMPONENT_VERSION=  2.6.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=  https://www.opendnssec.org/softhsm/
 COMPONENT_SUMMARY= 	SoftHSM is an implementation of a cryptographic store accessible through a PKCS11 interface.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
