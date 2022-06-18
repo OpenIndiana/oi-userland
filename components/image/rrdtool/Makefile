@@ -14,13 +14,12 @@
 # Copyright 2022 Friedrich Kink.  All rights reserved.
 #
 
-BUILD_STYLE=configure
 BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rrdtool
 
-COMPONENT_VERSION=	1.7.2
+COMPONENT_VERSION=	1.8.0
 COMPONENT_FMRI=		image/rrdtool
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SUMMARY=	Data analysis tool generating graphical representations
@@ -28,17 +27,17 @@ COMPONENT_DESCRIPTION=	RRDtool is the OpenSource industry standard, high perform
 			logging and graphing system for time series data. RRDtool can be \
 			easily integrated in shell scripts, perl, python, ruby, lua or tcl \
 			applications.
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a199faeb7eff7cafc46fac253e682d833d08932f3db93a550a4a5af180ca58db
-COMPONENT_ARCHIVE_URL=	http://oss.oetiker.ch/rrdtool/pub/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://oss.oetiker.ch/rrdtool/
+COMPONENT_SRC=		$(COMPONENT_NAME)-1.x-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:88a59a645161d0cfd1af898459fc033af975816278cf132cc66bf0dd8d0559cc
+COMPONENT_ARCHIVE_URL=	https://github.com/oetiker/$(COMPONENT_NAME)-1.x/archive/refs/tags/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://oss.oetiker.ch/rrdtool/
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	LICENSE
 
 PERL_VERSION=		5.34
 
-PYTHON_VERSION=		3.7
+PYTHON_VERSION=		3.9
 
 RUBY_VER=		2.6
 
@@ -73,9 +72,6 @@ CONFIGURE_OPTIONS+=	--without-systemdsystemunitdir
 # Needed for "gmake test" to work successfully.
 unexport SHELLOPTS
 
-#according to rrdtool github inside rpn2 does not work, therefor this explicit test enumeration
-COMPONENT_TEST_TARGETS = check TESTS="modify1 modify2 modify3 modify4 modify5 tune1 tune2 graph1 rrdcreate dump-restore create-with-source-1 create-with-source-2 create-with-source-3 create-with-source-4 create-with-source-and-mapping-1 create-from-template-1 dcounter1 vformatter1 list1 rpn1 pdp-calc1 xport1 tune1 tune2"
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-64.master
 COMPONENT_TEST_TRANSFORMS += \
         '-n ' \
         '-e "/^TOTAL/p" ' \
@@ -86,12 +82,8 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/^FAIL/p" ' \
         '-e "/^ERROR/p" '
 
-build: $(BUILD_64)
-
 #RRDs.so is installed with perm 555 which breaks RUNPATH stripping
 install: $(INSTALL_64) ; $(shell /bin/chmod -R u+w $(@D) )
-
-test: 	$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libpng16
@@ -100,6 +92,5 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
