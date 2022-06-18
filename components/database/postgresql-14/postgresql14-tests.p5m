@@ -12,16 +12,18 @@
 #
 # Copyright 2019 Alexander Pyhalov
 # Copyright 2022 Marco van Wieringen
+# Copyright 2022 Andreas Wacknitz
 #
 
-set name=pkg.fmri value=pkg:/database/postgres-14/tests@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="PostgreSQL functional regression tests"
-set name=info.classification value=org.opensolaris.category.2008:Development/Databases
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/tests@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="PostgreSQL 14 functional regression tests"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license COPYRIGHT license="PostgreSQL"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file files/pg_regress.sh path=usr/postgres/14/lib/regress/pg_regress.sh mode=0555
 
