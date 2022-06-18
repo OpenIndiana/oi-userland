@@ -14,19 +14,16 @@
 #
 
 set name=pkg.fmri \
-    value=pkg:/runtime/tcl-8@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Tcl - portable scripting environment"
-set name=pkg.description \
-    value="Tcl is a dynamic programming language used in web and desktop applications, networking, administration, testing and many more applications"
-set name=com.oracle.info.description value="the Tcl programming language"
-set name=info.classification \
-    value="org.opensolaris.category.2008:Development/Other Languages"
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2007/317 value=PSARC/2017/157
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license license.terms license=BSD-like
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file files/libtcl.3 path=usr/share/man/man3/libtcl.3
 
