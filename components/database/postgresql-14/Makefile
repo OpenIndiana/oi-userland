@@ -14,31 +14,36 @@
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Gary Mills
 # Copyright 2022 Marco van Wieringen
+# Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=32_and_64
-
+BUILD_BITS= 32_and_64
+# Alas the settings resulting from the following are completely ignored:
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	14
-COMPONENT_MNR_VERSION=	3
+COMPONENT_MNR_VERSION=	4
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:279057368bf59a919c05ada8f95c5e04abb43e74b9a2a69c3d46a20e07a9af38
+COMPONENT_ARCHIVE_HASH=	sha256:c23b6237c5231c791511bdc79098617d6852e9e3bdf360efd8b5d15a1a3d8f6a
 COMPONENT_ARCHIVE_URL=	https://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.postgresql.org
-
-TEST_TARGET=$(TEST_64)
+COMPONENT_FMRI=			database/postgres-$(COMPONENT_MJR_VERSION)
+COMPONENT_CLASSIFICATION=	System/Databases
+COMPONENT_LICENSE=		Postgresql
+COMPONENT_LICENSE_FILE=	COPYRIGHT
 
 # Set python version used by this product
 PYTHON_VERSION=3.7
 
+TEST_TARGET=$(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION=	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT=       $(@D)/configure
 
@@ -113,11 +118,14 @@ COMPONENT_TEST_TRANSFORMS= \
 	'-e "/FAIL/p"' \
 	'-e "/failed/p"'
 
+# Manually added dependencies
+REQUIRED_PACKAGES += library/libxslt
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+#REQUIRED_PACKAGES += database/postgres-14/library
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
