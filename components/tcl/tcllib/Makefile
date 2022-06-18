@@ -17,14 +17,14 @@ BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcllib
-COMPONENT_VERSION=	1.20
+COMPONENT_VERSION=	1.21
 COMPONENT_PROJECT_URL=	https://core.tcl.tk/tcllib/doc/trunk/embedded/index.html
 COMPONENT_SUMMARY=	The standard Tcl library
 COMPONENT_FMRI=		tcl/tcllib
 COMPONENT_CLASSIFICATION=       Development/Other Languages
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:199e8ec7ee26220e8463bc84dd55c44965fc8ef4d4ac6e4684b2b1c03b1bd5b9
+COMPONENT_ARCHIVE_HASH= sha256:10c7749e30fdd6092251930e8a1aa289b193a3b7f1abf17fee1d4fa89814762f
 COMPONENT_ARCHIVE_URL=	https://core.tcl.tk/tcllib/uv/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	TCL
 COMPONENT_LICENSE_FILE=	license.terms
@@ -52,3 +52,4 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += shell/ksh93
