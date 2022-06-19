@@ -17,15 +17,14 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
-COMPONENT_VERSION=	2.10.30
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.10.32
 COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
 COMPONENT_FMRI=		image/editor/gimp
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:88815daa76ed7d4277eeb353358bafa116cd2fcd2c861d95b95135c1d52b67dc
+COMPONENT_ARCHIVE_HASH= sha256:3f15c70554af5dcc1b46e6dc68f3d8f0a6cc9fe56b6d78ac08c0fd859ab89a25
 COMPONENT_ARCHIVE_URL=	https://download.gimp.org/pub/gimp/v2.10/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
@@ -74,8 +73,10 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 # Tests need this
 unexport SHELLOPTS
+# Tests need a display and some fail.
 
 # Build dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/mypaint-brushes
 REQUIRED_PACKAGES += library/python/pygobject
 REQUIRED_PACKAGES += library/python/pygtk2
