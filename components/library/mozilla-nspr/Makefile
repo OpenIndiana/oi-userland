@@ -12,18 +12,22 @@
 # Copyright 2011, Andrzej Szeszo
 # Copyright 2013, Jon Tibble
 # Copyright 2019, Michal Nowak
+# Copyright 2022, Andreas Wacknitz
 #
 
-BUILD_BITS=			32_and_64
+BUILD_BITS=			64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         nspr
-COMPONENT_VERSION=      4.33
+COMPONENT_VERSION=      4.34
 COMPONENT_PROJECT_URL=  https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:b23ee315be0e50c2fb1aa374d17f2d2d9146a835b1a79c1918ea15d075a693d7
+COMPONENT_ARCHIVE_HASH= sha256:beef011cd15d8f40794984d17014366513cec5719bf1a78f5e8a3e3a1cebf99c
 COMPONENT_ARCHIVE_URL=  https://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Development/System
+COMPONENT_LICENSE=		MPL 2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -47,7 +51,7 @@ CONFIGURE_OPTIONS +=	--includedir=/usr/include/mps
 CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
 CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64_and_32)
 	for i in $(PROTO_DIR)/usr/lib/mps/*.so; do \
 		/usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib/mps"' $$i ;\
 		/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "/usr/lib/mps"' $$i ;\
@@ -64,10 +68,14 @@ install:	$(INSTALL_32_and_64)
 	$(TOUCH) $(BUILD_DIR_32)/.installed $(BUILD_DIR_64)/.installed
 
 # Test suite is just this script
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_CMD=	perl nspr/pr/tests/runtests.pl
 COMPONENT_TEST_ENV_CMD=
 COMPONENT_TEST_ARGS=
 COMPONENT_TEST_TARGETS=
+COMPONENT_TEST_TRANSFORMS += \
+    '-n ' \
+    '-e "/Passed/p" ' \
 
 # Build dependencies
 REQUIRED_PACKAGES += text/xmlto
