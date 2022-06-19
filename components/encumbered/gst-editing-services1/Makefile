@@ -19,18 +19,16 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-editing-services1
-COMPONENT_VERSION=	1.20.2
+COMPONENT_VERSION=	1.20.3
 COMPONENT_SUMMARY=	Multimedia graph framework - editing services
-COMPONENT_CLASSIFICATION= System/Multimedia Libraries
-COMPONENT_FMRI=		library/audio/gstreamer1/editing-services
 COMPONENT_SRC_NAME=	gst-editing-services
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:2ddef442cf8313e78477510a4461c8522f180afef26d035a38fea3f5006d012f
-COMPONENT_ARCHIVE_URL= \
-  https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:5fd896de69fbe24421eb6b0ff8d2f8b4c3cba3f3025ceacd302172f39a8abaa2
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_FMRI=		library/audio/gstreamer1/editing-services
 COMPONENT_LICENSE=	LGPLv2
 COMPONENT_LICENSE_FILE=	gst-editing-services1.license
 
@@ -40,15 +38,25 @@ PYTHON_VERSION=		3.9
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-#gcc_OPT = -O2
-
 PATH = $(PATH.gnu)
 
 # gobject-introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-test: $(NO_TESTS)
+# Some tests are failing because we miss some packages
+unexport SHELLOPTS
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/[0-9]*\.[0-9]*s//" ' \
+    '-n ' \
+    '-e "/Summary/p" ' \
+    '-e "/TIMEOUT/p" ' \
+    '-e "/Ok/p" ' \
+    '-e "/Fail/p" ' \
+    '-e "/Pass/p" ' \
+    '-e "/Skipped/p" ' \
+    '-e "/Timeout/p" '
 
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
