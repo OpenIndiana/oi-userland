@@ -23,18 +23,15 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-libav
-COMPONENT_VERSION=      1.20.2
-#COMPONENT_REVISION=     1
+COMPONENT_VERSION=      1.20.3
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_FMRI=         library/audio/gstreamer1/plugin/libav
-COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:b5c531dd8413bf771c79dab66b8e389f20b3991f745115133f0fa0b8e32809f9
-COMPONENT_ARCHIVE_URL=  \
-	https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:3fedd10560fcdfaa1b6462cbf79a38c4e7b57d7f390359393fc0cef6dbf27dfe
+COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/audio/gstreamer1/plugin/libav
+COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
@@ -49,7 +46,7 @@ CFLAGS += -I/usr/X11/include
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
-# gst-libav current does not have a test suite
+# Most tests currently fail because of loader errors.
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/gstreamer1
