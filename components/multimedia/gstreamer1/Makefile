@@ -16,30 +16,28 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=	32_and_64
+BUILD_BITS=		32_and_64
 BUILD_STYLE=	meson
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gstreamer1
-COMPONENT_VERSION=      1.20.2
-#COMPONENT_REVISION=     1
+COMPONENT_VERSION=      1.20.3
 COMPONENT_SUMMARY=      GNOME streaming media framework
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
-COMPONENT_FMRI=         library/audio/gstreamer1
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_SRC_NAME=	gstreamer
+COMPONENT_SRC_NAME=		gstreamer
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:df24e8792691a02dfe003b3833a51f1dbc6c3331ae625d143b17da939ceb5e0a
-COMPONENT_ARCHIVE_URL=  \
-	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:607daf64bbbd5fb18af9d17e21c0d22c4d702fffe83b23cb22d1b1af2ca23a2a
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/audio/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-gcc_OPT = -O2
+# Optimisation has been lowered in past for an unknown reason. Nowadays it doesn't seem to make any difference in the test results:
+#gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
 
@@ -74,8 +72,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Ok:/,/^Timeout:/p" ' \
 	'-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
 
-test: $(TEST_32_and_64)
-
 # not picked up by REQUIRED_PACKAGES but probably still needed
 # for the 64 bit build to do introspection
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
@@ -86,6 +82,5 @@ REQUIRED_PACKAGES += developer/gsl
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
