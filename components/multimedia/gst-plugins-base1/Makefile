@@ -15,30 +15,27 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=	32_and_64
+BUILD_BITS=		32_and_64
 BUILD_STYLE=	meson
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-base1
-COMPONENT_VERSION=      1.20.2
-#COMPONENT_REVISION=     1
+COMPONENT_VERSION=      1.20.3
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_FMRI=         library/audio/gstreamer1/plugin/base
-COMPONENT_SRC_NAME= gst-plugins-base
+COMPONENT_SRC_NAME= 	gst-plugins-base
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:ab0656f2ad4d38292a803e0cb4ca090943a9b43c8063f650b4d3e3606c317f17
-COMPONENT_ARCHIVE_URL=  \
-	http://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:7e30b3dd81a70380ff7554f998471d6996ff76bbe6fc5447096f851e24473c9f
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_FMRI=         library/audio/gstreamer1/plugin/base
 COMPONENT_LICENSE=      GPLv2,LGPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-gcc_OPT = -O2
+# Optimisation has been reduced for unknown reasons in the past. Nowadays it doesn't seem to make a difference in the test results:
+#gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
 
