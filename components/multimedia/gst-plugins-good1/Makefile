@@ -21,24 +21,22 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-good1
-COMPONENT_VERSION=      1.20.2
-#COMPONENT_REVISION=     1
+COMPONENT_VERSION=      1.20.3
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_FMRI=         library/audio/gstreamer1/plugin/good
-COMPONENT_SRC_NAME=	gst-plugins-good
+COMPONENT_SRC_NAME=		gst-plugins-good
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:83589007bf002b8f9ef627718f308c16d83351905f0db8e85c3060f304143aae
-COMPONENT_ARCHIVE_URL=  \
-	https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:f8f3c206bf5cdabc00953920b47b3575af0ef15e9f871c0b6966f6d0aa5868b7
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/audio/gstreamer1/plugin/good
+COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-gcc_OPT = -O2
+# Optimisation has been reduced in the past for unknown reasons. Nowadays it doesn't seem to make any difference in the test results;
+#gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
 

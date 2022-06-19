@@ -22,25 +22,23 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-ugly1
-COMPONENT_VERSION=      1.20.2
-#COMPONENT_REVISION=     1
+COMPONENT_VERSION=      1.20.3
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/ugly
 COMPONENT_SRC_NAME=	gst-plugins-ugly
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:b43fb4df94459afbf67ec22003ca58ffadcd19e763f276dca25b64c848adb7bf
-COMPONENT_ARCHIVE_URL=  \
-	https://gstreamer.freedesktop.org/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:8caa20789a09c304b49cf563d33cca9421b1875b84fcc187e4a385fa01d6aefd
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
+COMPONENT_ARCHIVE_URL= 	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-gcc_OPT = -O2
+# In the past the optimisation level has been reduced for unknown reasons. Nowadays the test results don't differ anymore:
+#gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
 
