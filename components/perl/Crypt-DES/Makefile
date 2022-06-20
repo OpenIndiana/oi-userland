@@ -25,12 +25,13 @@
 
 BUILD_STYLE=makemaker
 BUILD_BITS=32_and_64
+USE_COMMON_TEST_MASTER = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Crypt-DES
-COMPONENT_VERSION=	2.0.7
+COMPONENT_VERSION =	2.7
 HUMAN_VERSION=		2.07
-#COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/perl-5/crypt-des
 COMPONENT_SUMMARY=	Crypt::DES - Perl DES encryption module
 COMPONENT_CLASSIFICATION=Development/Perl
@@ -42,29 +43,22 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/D/DP/DPARIS/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	Custom
 
-# until all perl modules have been rebuilt with 5.34, each module sets
-# this manually, before including common.mk
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
-
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# use the same results for comparison for all builds
-#
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+# filter out timing information
+COMPONENT_TEST_TRANSFORMS += '-e "s/ *[0-9]* wallclock.*//"'
+# filter out lines that could vary between runs
+COMPONENT_TEST_TRANSFORMS += '-e "1,/^PERL_DL_NONLAZY/d"'
 
-#
-# filter out all output up to and including the test_harness line
-# filter out timing information and anything else that varies between builds
-#
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/,  *[0-9]* wallclock.*//"'
+# Test results for this component omits the expected 'test_harness' pattern so add it
+COMPONENT_POST_TEST_ACTION += \
+	$(MV) $(COMPONENT_TEST_OUTPUT) $(COMPONENT_TEST_OUTPUT)-orig ; \
+	echo "\ntest_harness" > $(COMPONENT_TEST_OUTPUT) ; \
+	$(CAT) $(COMPONENT_TEST_OUTPUT)-orig >> $(COMPONENT_TEST_OUTPUT) ; \
+	$(RM) $(COMPONENT_TEST_OUTPUT)-orig ;
 
 # Manually added dependencies
-REQUIRED_PACKAGES += library/perl-5/crypt-cbc-522
-REQUIRED_PACKAGES += library/perl-5/crypt-cbc-524
-REQUIRED_PACKAGES += library/perl-5/crypt-cbc-534
+PERL_REQUIRED_PACKAGES += library/perl-5/crypt-cbc
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/perl-522
