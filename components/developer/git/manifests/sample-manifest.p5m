@@ -14,6 +14,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -185,6 +186,7 @@ hardlink path=usr/lib/git-core/git-status target=git-upload-pack
 hardlink path=usr/lib/git-core/git-stripspace target=git-upload-pack
 file path=usr/lib/git-core/git-submodule
 hardlink path=usr/lib/git-core/git-submodule--helper target=git-upload-pack
+file path=usr/lib/git-core/git-subtree
 file path=usr/lib/git-core/git-svn
 hardlink path=usr/lib/git-core/git-switch target=git-upload-pack
 hardlink path=usr/lib/git-core/git-symbolic-ref target=git-upload-pack
@@ -227,27 +229,28 @@ file path=usr/lib/git-core/mergetools/tortoisemerge
 file path=usr/lib/git-core/mergetools/vimdiff
 file path=usr/lib/git-core/mergetools/winmerge
 file path=usr/lib/git-core/mergetools/xxdiff
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/FromCPAN/Error.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/FromCPAN/Mail/Address.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/I18N.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/IndexInfo.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/LoadCPAN.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/LoadCPAN/Error.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/LoadCPAN/Mail/Address.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/Packet.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/SVN.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/SVN/Editor.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/SVN/Fetcher.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/SVN/GlobSpec.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/SVN/Log.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/SVN/Memoize/YAML.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/SVN/Migration.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/SVN/Prompt.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/SVN/Ra.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Git/SVN/Utils.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/FromCPAN/Error.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/FromCPAN/Mail/Address.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/I18N.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/IndexInfo.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/LoadCPAN.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/LoadCPAN/Error.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/LoadCPAN/Mail/Address.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/Packet.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/SVN.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/SVN/Editor.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/SVN/Fetcher.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/SVN/GlobSpec.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/SVN/Log.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/SVN/Memoize/YAML.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/SVN/Migration.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/SVN/Prompt.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/SVN/Ra.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Git/SVN/Utils.pm
 file path=usr/share/bash-completion/completions/git
 link path=usr/share/bash-completion/completions/gitk target=git
+file path=usr/share/doc/git/git-subtree.html
 file path=usr/share/git-core/templates/description
 file path=usr/share/git-core/templates/hooks/applypatch-msg.sample
 file path=usr/share/git-core/templates/hooks/commit-msg.sample
@@ -494,6 +497,7 @@ file path=usr/share/man/man1/git-stash.1
 file path=usr/share/man/man1/git-status.1
 file path=usr/share/man/man1/git-stripspace.1
 file path=usr/share/man/man1/git-submodule.1
+file path=usr/share/man/man1/git-subtree.1
 file path=usr/share/man/man1/git-svn.1
 file path=usr/share/man/man1/git-switch.1
 file path=usr/share/man/man1/git-symbolic-ref.1
