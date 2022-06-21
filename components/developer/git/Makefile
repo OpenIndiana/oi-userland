@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
 COMPONENT_VERSION=	2.36.1
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_FMRI=		developer/versioning/git
@@ -69,17 +70,13 @@ COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1
 COMPONENT_BUILD_ENV+=	V=1
 COMPONENT_INSTALL_ENV+=	NO_PERL_MAKEMAKER=1
 
-#
-# perl's install path for sparc is based off the value of the
-# "arch" command.  So we must package that way also.
-#
-PKG_MACROS +=		P_ARCH=$(shell arch)
+PKG_MACROS +=		PERLVER=$(PERL_VERSION)
 
 # This runs configure but configure doesn't generate a Makefile.
 # Instead a Makefile comes with git.
 # Anyways viewpathing doesn't work.
 # Therefore we need cloney to copy a set of files to build.
-# Overwrite symliked tests, because they relying on test assets being regular files.
+# Overwrite symlinked tests, because they are relying on test assets being regular files.
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	(chmod u+x $(COMPONENT_SRC)/t/*.sh  && $(CLONEY) $(SOURCE_DIR) $(@D) && \
 	$(RM) -r $(@D)/t && $(CP) -rp $(COMPONENT_SRC)/t $(@D))
@@ -144,12 +141,19 @@ $(BUILD_DIR)/.manpages:
 	done
 	$(TOUCH) $@
 
-$(BUILD_DIR_64)/.contrib:
+$(BUILD_DIR_64)/.contrib: $(BUILD_DIR_64)/.contrib-subtree
 	$(MKDIR) $(PROTOUSRSHAREDIR)/bash-completion/completions
 	$(GMAKE) -C $(BUILD_DIR_64)/contrib/diff-highlight
 	$(CP) -RLp $(BUILD_DIR_64)/contrib/diff-highlight/diff-highlight $(PROTOUSRBINDIR)/diff-highlight
 	$(CP) -RLp $(BUILD_DIR_64)/contrib/completion/git-completion.bash $(PROTOUSRSHAREDIR)/bash-completion/completions/git
 	(cd $(PROTOUSRSHAREDIR)/bash-completion/completions; $(LN) -sf git gitk)
+	$(TOUCH) $@
+
+# Install steps taken from contrib/subtree/INSTALL
+$(BUILD_DIR_64)/.contrib-subtree:
+	$(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR)
+	$(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install
+	$(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install-doc
 	$(TOUCH) $@
 
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
@@ -167,6 +171,10 @@ REQUIRED_PACKAGES += library/perl-5/sqlite-dbi
 REQUIRED_PACKAGES += library/perl-5/subversion
 REQUIRED_PACKAGES += locale/is
 REQUIRED_PACKAGES += locale/is-extra
+
+# Needed to generate git-subtree documentation
+REQUIRED_PACKAGES += text/asciidoc
+REQUIRED_PACKAGES += text/xmlto
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/expat
