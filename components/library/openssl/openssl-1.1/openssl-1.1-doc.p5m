@@ -10,21 +10,22 @@
 #
 
 #
-# Copyright 2020 <contributor>
+# Copyright 2022 Andreas Wacknitz
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability "pass-through uncommitted">
-<transform link mediator=openssl -> default mediator-implementation default@1.1>
-
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/documentation@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)/documentation@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)  (Documentation)"
 set name=pkg.human-version value=$(HUMAN_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY) (Documentation)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability "pass-through uncommitted">
+<transform link mediator=openssl -> default mediator-implementation default@1.1>
 
 # Manual pages.
 file path=usr/openssl/1.1/share/doc/openssl/html/man1/CA.pl.html
@@ -970,7 +971,7 @@ link path=usr/openssl/1.1/share/doc/openssl/html/man3/BN_RECP_CTX_new.html \
     target=BN_mod_mul_reciprocal.html
 link path=usr/openssl/1.1/share/doc/openssl/html/man3/BN_RECP_CTX_set.html \
     target=BN_mod_mul_reciprocal.html
-link path=usr/openssl/1.1/share/doc/openssl/html/man3/BN_abs_is_word.html \                                                                                                                        
+link path=usr/openssl/1.1/share/doc/openssl/html/man3/BN_abs_is_word.html \
     target=BN_cmp.html
 file path=usr/openssl/1.1/share/doc/openssl/html/man3/BN_add.html
 file path=usr/openssl/1.1/share/doc/openssl/html/man3/BN_add_word.html
@@ -1100,6 +1101,8 @@ link path=usr/openssl/1.1/share/doc/openssl/html/man3/BN_mod_mul.html \
 file path=usr/openssl/1.1/share/doc/openssl/html/man3/BN_mod_mul_montgomery.html
 file path=usr/openssl/1.1/share/doc/openssl/html/man3/BN_mod_mul_reciprocal.html
 link path=usr/openssl/1.1/share/doc/openssl/html/man3/BN_mod_sqr.html \
+    target=BN_add.html
+link path=usr/openssl/1.1/share/doc/openssl/html/man3/BN_mod_sqrt.html \
     target=BN_add.html
 link path=usr/openssl/1.1/share/doc/openssl/html/man3/BN_mod_sub.html \
     target=BN_add.html
@@ -5637,12 +5640,18 @@ link \
     path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_CTX_get0_CA_list.html \
     target=SSL_CTX_set0_CA_list.html
 link \
+    path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_CTX_get0_chain_cert_store.html \
+    target=SSL_CTX_set1_verify_cert_store.html
+link \
     path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_CTX_get0_chain_certs.html \
     target=SSL_CTX_add1_chain_cert.html
 file path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_CTX_get0_param.html
 link \
     path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_CTX_get0_security_ex_data.html \
     target=SSL_CTX_set_security_level.html
+link \
+    path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_CTX_get0_verify_cert_store.html \
+    target=SSL_CTX_set1_verify_cert_store.html
 link \
     path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_CTX_get_cert_store.html \
     target=SSL_CTX_set_cert_store.html
@@ -6219,6 +6228,9 @@ link \
     path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_get0_alpn_selected.html \
     target=SSL_CTX_set_alpn_select_cb.html
 link \
+    path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_get0_chain_cert_store.html \
+    target=SSL_CTX_set1_verify_cert_store.html
+link \
     path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_get0_chain_certs.html \
     target=SSL_CTX_add1_chain_cert.html
 link \
@@ -6245,6 +6257,9 @@ link path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_get0_session.html \
 link \
     path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_get0_verified_chain.html \
     target=SSL_get_peer_cert_chain.html
+link \
+    path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_get0_verify_cert_store.html \
+    target=SSL_CTX_set1_verify_cert_store.html
 link path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_get1_curves.html \
     target=SSL_CTX_set1_curves.html
 link path=usr/openssl/1.1/share/doc/openssl/html/man3/SSL_get1_groups.html \
@@ -7616,6 +7631,9 @@ link \
     target=X509_STORE_set_verify_cb_func.html
 file path=usr/openssl/1.1/share/doc/openssl/html/man3/X509_STORE_CTX_new.html
 link \
+    path=usr/openssl/1.1/share/doc/openssl/html/man3/X509_STORE_CTX_purpose_inherit.html \
+    target=X509_STORE_CTX_new.html
+link \
     path=usr/openssl/1.1/share/doc/openssl/html/man3/X509_STORE_CTX_set0_crls.html \
     target=X509_STORE_CTX_new.html
 link \
@@ -7648,6 +7666,12 @@ link \
 link \
     path=usr/openssl/1.1/share/doc/openssl/html/man3/X509_STORE_CTX_set_ex_data.html \
     target=BIO_get_ex_new_index.html
+link \
+    path=usr/openssl/1.1/share/doc/openssl/html/man3/X509_STORE_CTX_set_purpose.html \
+    target=X509_STORE_CTX_new.html
+link \
+    path=usr/openssl/1.1/share/doc/openssl/html/man3/X509_STORE_CTX_set_trust.html \
+    target=X509_STORE_CTX_new.html
 link \
     path=usr/openssl/1.1/share/doc/openssl/html/man3/X509_STORE_CTX_set_verify.html \
     target=X509_STORE_CTX_new.html
@@ -8455,6 +8479,10 @@ link path=usr/openssl/1.1/share/doc/openssl/html/man3/d2i_X509_SIG.html \
     target=d2i_X509.html
 link path=usr/openssl/1.1/share/doc/openssl/html/man3/d2i_X509_VAL.html \
     target=d2i_X509.html
+link path=usr/openssl/1.1/share/doc/openssl/html/man3/d2i_X509_bio.html \
+    target=d2i_X509.html
+link path=usr/openssl/1.1/share/doc/openssl/html/man3/d2i_X509_fp.html \
+    target=d2i_X509.html
 link \
     path=usr/openssl/1.1/share/doc/openssl/html/man3/i2d_ACCESS_DESCRIPTION.html \
     target=d2i_X509.html
@@ -8886,6 +8914,10 @@ link path=usr/openssl/1.1/share/doc/openssl/html/man3/i2d_X509_REVOKED.html \
 link path=usr/openssl/1.1/share/doc/openssl/html/man3/i2d_X509_SIG.html \
     target=d2i_X509.html
 link path=usr/openssl/1.1/share/doc/openssl/html/man3/i2d_X509_VAL.html \
+    target=d2i_X509.html
+link path=usr/openssl/1.1/share/doc/openssl/html/man3/i2d_X509_bio.html \
+    target=d2i_X509.html
+link path=usr/openssl/1.1/share/doc/openssl/html/man3/i2d_X509_fp.html \
     target=d2i_X509.html
 link path=usr/openssl/1.1/share/doc/openssl/html/man3/i2d_re_X509_CRL_tbs.html \
     target=i2d_re_X509_tbs.html
@@ -9898,7 +9930,7 @@ link path=usr/openssl/1.1/share/man/man3openssl/BN_RECP_CTX_new.3openssl \
     target=BN_mod_mul_reciprocal.3openssl
 link path=usr/openssl/1.1/share/man/man3openssl/BN_RECP_CTX_set.3openssl \
     target=BN_mod_mul_reciprocal.3openssl
-link path=usr/openssl/1.1/share/man/man3openssl/BN_abs_is_word.3openssl \                                                                                                                          
+link path=usr/openssl/1.1/share/man/man3openssl/BN_abs_is_word.3openssl \
     target=BN_cmp.3openssl
 file path=usr/openssl/1.1/share/man/man3openssl/BN_add.3openssl
 file path=usr/openssl/1.1/share/man/man3openssl/BN_add_word.3openssl
@@ -10026,6 +10058,8 @@ link path=usr/openssl/1.1/share/man/man3openssl/BN_mod_mul.3openssl \
 file path=usr/openssl/1.1/share/man/man3openssl/BN_mod_mul_montgomery.3openssl
 file path=usr/openssl/1.1/share/man/man3openssl/BN_mod_mul_reciprocal.3openssl
 link path=usr/openssl/1.1/share/man/man3openssl/BN_mod_sqr.3openssl \
+    target=BN_add.3openssl
+link path=usr/openssl/1.1/share/man/man3openssl/BN_mod_sqrt.3openssl \
     target=BN_add.3openssl
 link path=usr/openssl/1.1/share/man/man3openssl/BN_mod_sub.3openssl \
     target=BN_add.3openssl
@@ -14346,12 +14380,18 @@ link \
 link path=usr/openssl/1.1/share/man/man3openssl/SSL_CTX_get0_CA_list.3openssl \
     target=SSL_CTX_set0_CA_list.3openssl
 link \
+    path=usr/openssl/1.1/share/man/man3openssl/SSL_CTX_get0_chain_cert_store.3openssl \
+    target=SSL_CTX_set1_verify_cert_store.3openssl
+link \
     path=usr/openssl/1.1/share/man/man3openssl/SSL_CTX_get0_chain_certs.3openssl \
     target=SSL_CTX_add1_chain_cert.3openssl
 file path=usr/openssl/1.1/share/man/man3openssl/SSL_CTX_get0_param.3openssl
 link \
     path=usr/openssl/1.1/share/man/man3openssl/SSL_CTX_get0_security_ex_data.3openssl \
     target=SSL_CTX_set_security_level.3openssl
+link \
+    path=usr/openssl/1.1/share/man/man3openssl/SSL_CTX_get0_verify_cert_store.3openssl \
+    target=SSL_CTX_set1_verify_cert_store.3openssl
 link \
     path=usr/openssl/1.1/share/man/man3openssl/SSL_CTX_get_cert_store.3openssl \
     target=SSL_CTX_set_cert_store.3openssl
@@ -14916,6 +14956,9 @@ link path=usr/openssl/1.1/share/man/man3openssl/SSL_get0_CA_list.3openssl \
 link \
     path=usr/openssl/1.1/share/man/man3openssl/SSL_get0_alpn_selected.3openssl \
     target=SSL_CTX_set_alpn_select_cb.3openssl
+link \
+    path=usr/openssl/1.1/share/man/man3openssl/SSL_get0_chain_cert_store.3openssl \
+    target=SSL_CTX_set1_verify_cert_store.3openssl
 link path=usr/openssl/1.1/share/man/man3openssl/SSL_get0_chain_certs.3openssl \
     target=SSL_CTX_add1_chain_cert.3openssl
 link \
@@ -14941,6 +14984,9 @@ link path=usr/openssl/1.1/share/man/man3openssl/SSL_get0_session.3openssl \
 link \
     path=usr/openssl/1.1/share/man/man3openssl/SSL_get0_verified_chain.3openssl \
     target=SSL_get_peer_cert_chain.3openssl
+link \
+    path=usr/openssl/1.1/share/man/man3openssl/SSL_get0_verify_cert_store.3openssl \
+    target=SSL_CTX_set1_verify_cert_store.3openssl
 link path=usr/openssl/1.1/share/man/man3openssl/SSL_get1_curves.3openssl \
     target=SSL_CTX_set1_curves.3openssl
 link path=usr/openssl/1.1/share/man/man3openssl/SSL_get1_groups.3openssl \
@@ -16234,6 +16280,9 @@ link \
     target=X509_STORE_set_verify_cb_func.3openssl
 file path=usr/openssl/1.1/share/man/man3openssl/X509_STORE_CTX_new.3openssl
 link \
+    path=usr/openssl/1.1/share/man/man3openssl/X509_STORE_CTX_purpose_inherit.3openssl \
+    target=X509_STORE_CTX_new.3openssl
+link \
     path=usr/openssl/1.1/share/man/man3openssl/X509_STORE_CTX_set0_crls.3openssl \
     target=X509_STORE_CTX_new.3openssl
 link \
@@ -16266,6 +16315,12 @@ link \
 link \
     path=usr/openssl/1.1/share/man/man3openssl/X509_STORE_CTX_set_ex_data.3openssl \
     target=BIO_get_ex_new_index.3openssl
+link \
+    path=usr/openssl/1.1/share/man/man3openssl/X509_STORE_CTX_set_purpose.3openssl \
+    target=X509_STORE_CTX_new.3openssl
+link \
+    path=usr/openssl/1.1/share/man/man3openssl/X509_STORE_CTX_set_trust.3openssl \
+    target=X509_STORE_CTX_new.3openssl
 link \
     path=usr/openssl/1.1/share/man/man3openssl/X509_STORE_CTX_set_verify.3openssl \
     target=X509_STORE_CTX_new.3openssl
@@ -17034,6 +17089,10 @@ link path=usr/openssl/1.1/share/man/man3openssl/d2i_X509_SIG.3openssl \
     target=d2i_X509.3openssl
 link path=usr/openssl/1.1/share/man/man3openssl/d2i_X509_VAL.3openssl \
     target=d2i_X509.3openssl
+link path=usr/openssl/1.1/share/man/man3openssl/d2i_X509_bio.3openssl \
+    target=d2i_X509.3openssl
+link path=usr/openssl/1.1/share/man/man3openssl/d2i_X509_fp.3openssl \
+    target=d2i_X509.3openssl
 link \
     path=usr/openssl/1.1/share/man/man3openssl/i2d_ACCESS_DESCRIPTION.3openssl \
     target=d2i_X509.3openssl
@@ -17446,6 +17505,10 @@ link path=usr/openssl/1.1/share/man/man3openssl/i2d_X509_SIG.3openssl \
     target=d2i_X509.3openssl
 link path=usr/openssl/1.1/share/man/man3openssl/i2d_X509_VAL.3openssl \
     target=d2i_X509.3openssl
+link path=usr/openssl/1.1/share/man/man3openssl/i2d_X509_bio.3openssl \
+    target=d2i_X509.3openssl
+link path=usr/openssl/1.1/share/man/man3openssl/i2d_X509_fp.3openssl \
+    target=d2i_X509.3openssl
 link path=usr/openssl/1.1/share/man/man3openssl/i2d_re_X509_CRL_tbs.3openssl \
     target=i2d_re_X509_tbs.3openssl
 link path=usr/openssl/1.1/share/man/man3openssl/i2d_re_X509_REQ_tbs.3openssl \
@@ -17545,12 +17608,6 @@ file path=usr/openssl/1.1/share/man/man7openssl/crypto.7openssl
 file path=usr/openssl/1.1/share/man/man7openssl/ct.7openssl
 file path=usr/openssl/1.1/share/man/man7openssl/des_modes.7openssl
 file path=usr/openssl/1.1/share/man/man7openssl/evp.7openssl
-
-# Do not deliver
-# openssl.7 is pre-Solarified, so bypass the mangler.
-#file files/openssl.7 \
-#    path=usr/openssl/1.1/share/man/man7openssl/openssl.7openssl \
-#    mangler.bypass=true
 file path=usr/openssl/1.1/share/man/man7openssl/ossl_store-file.7openssl
 file path=usr/openssl/1.1/share/man/man7openssl/ossl_store.7openssl
 file path=usr/openssl/1.1/share/man/man7openssl/passphrase-encoding.7openssl
