@@ -73,26 +73,6 @@ index de2642f..93ac752 100644
      MOZ_FIX_LINK_PATHS="-L${DIST}/bin"
      ;;
  
-<<<<<<< HEAD
-=======
-diff --git a/build/cargo-linker b/build/cargo-linker
-index 394dabc..3830e26 100755
---- a/build/cargo-linker
-+++ b/build/cargo-linker
-@@ -1,4 +1,4 @@
--#!/bin/sh
-+#!/usr/bin/bash
- 
- # If you want to use a custom linker with Cargo, Cargo requires that you
- # specify it in Cargo.toml or via the matching environment variable.
-@@ -19,4 +19,5 @@
- #
- # $@ is doubly quoted for the eval. See bug 1418598.
- 
--eval ${MOZ_CARGO_WRAP_LD} ${MOZ_CARGO_WRAP_LDFLAGS} '"$@"'
-+eval /usr/gcc/7/bin/gcc -std=gnu99 -m64 -lpthread -Wl,-z,text -fstack-protector-strong $@
-+# eval ${MOZ_CARGO_WRAP_LD} ${MOZ_CARGO_WRAP_LDFLAGS} '"$@"'
-diff --git a/js/src/old-configure.in b/js/src/old-configure.in
 index 77652f6..67235f3 100644
 --- a/js/src/old-configure.in
 +++ b/js/src/old-configure.in
@@ -105,4 +85,3 @@ index 77652f6..67235f3 100644
      MOZ_FIX_LINK_PATHS="-L${DIST}/bin"
      ;;
  
->>>>>>> 960f0c516 (firefox: update 91esr patches)
