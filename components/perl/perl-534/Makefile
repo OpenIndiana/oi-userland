@@ -29,20 +29,15 @@ include ../../../make-rules/shared-macros.mk
 # Note this perl is 64-bit only.
 #
 
-# Override PERL_VERSION because when building a new version
-# of perl it probably isn't installed so shared-macros.mk
-# can't call it.
-
 COMPONENT_NAME=         perl
-COMPONENT_VERSION=      5.34.0
-COMPONENT_SUMMARY=      Perl 5.34.0
-# PERL_VERSION should be M.NN, it should not include the micro version
-PERL_VERSION=		5.34
+COMPONENT_VERSION_MAJOR =	5.34
+COMPONENT_VERSION =		$(COMPONENT_VERSION_MAJOR).1
+COMPONENT_SUMMARY =		Perl $(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.perl.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:82c2e5e5c71b0e10487a80d79140469ab1f8056349ca8545140a224dbbed7ded
+	sha256:6d52cf833ff1af27bb5e986870a2c30cec73c044b41e3458cd991f94374039f7
 COMPONENT_ARCHIVE_URL=  https://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         runtime/perl-534
 COMPONENT_CLASSIFICATION=Development/Perl
@@ -51,7 +46,8 @@ COMPONENT_LICENSE_FILE= Artistic
 
 include $(WS_MAKE_RULES)/common.mk
 
-LD_B_DIRECT=		""
+# PERL_VERSION should be M.NN, it should not include the micro version
+PERL_VERSION = $(COMPONENT_VERSION_MAJOR)
 
 COMPONENT_BUILD_ARGS =
 
@@ -84,12 +80,6 @@ CONFIGURE_OPTIONS = \
 COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
 
 #
-# perl's install path for sparc is based off the value of the
-# "arch" command.  So we must package that way also.
-#
-PKG_MACROS		+=	P_ARCH=$(shell arch)
-
-#
 # Getting 1 different result between sparc and x86.
 #
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
@@ -102,6 +92,20 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "1,/runtests choose/d"' \
 	'-e "/^u=/d" ' \
 	'-e "/^Elapsed/d"'
+
+#
+# Proper PERL_ARCH and PERLVER are needed for manifest processing.
+#
+PERL_ARCH = $(call PERL_ARCH_FUNC,$(PROTO_DIR)/usr/perl5/$(PERL_VERSION)/bin/perl)
+PKG_MACROS += PERLVER=$(PERL_VERSION)
+
+#
+# All hardlink targets should be listed here so generated sample manifest does
+# not change with every run.
+#
+PKG_HARDLINKS += usr/perl5/$(PERL_VERSION)/bin/perl
+PKG_HARDLINKS += usr/perl5/$(PERL_VERSION)/bin/perlbug
+PKG_HARDLINKS += usr/perl5/$(PERL_VERSION)/man/man1/perlbug.1
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += database/berkeleydb-5
