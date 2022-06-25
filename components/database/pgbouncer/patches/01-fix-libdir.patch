@@ -1,0 +1,13 @@
+pgbouncer's configure doesn't care about 32- and 64-bit support. We need to add the correct path component to our 64-bit libs.
+
+--- pgbouncer-1.17.0/configure.orig	2022-03-23 11:01:59.000000000 +0000
++++ pgbouncer-1.17.0/configure	2022-06-25 13:28:51.462248946 +0000
+@@ -7885,7 +7885,7 @@
+     else
+       tls_support=libssl
+       TLS_CPPFLAGS="-I$withval/include"
+-      TLS_LDFLAGS="-L$withval/lib"
++      TLS_LDFLAGS="-L$withval/lib/64"
+       TLS_LIBS="-lssl -lcrypto"
+     fi
+ 

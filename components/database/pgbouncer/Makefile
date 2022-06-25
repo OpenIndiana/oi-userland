@@ -14,19 +14,18 @@
 #
 
 BUILD_BITS= 64
-#USE_OPENSSL11= yes
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgbouncer
-COMPONENT_VERSION= 	1.16.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION= 	1.17.0
 COMPONENT_SUMMARY= 	pgBouncer connection pooler
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:087477e9e4766d032b04b7b006c0c8d64160a54141a7bfc2c6e5ae7ae11bf7fc
+COMPONENT_ARCHIVE_HASH=	sha256:657309b7bc5c7a85cbf70a9a441b535f7824123081eabb7ba86d00349a256e23
 COMPONENT_ARCHIVE_URL=	https://pgbouncer.github.io/downloads/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.pgbouncer.org/
-COMPONENT_FMRI=	database/postgres/pgbouncer
+COMPONENT_FMRI=	database/postgres/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_LICENSE=	BSD
 
@@ -36,8 +35,10 @@ PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
-CONFIGURE_ENV +=        "XMLTO=xmlto --skip-validation"
+CLONEY_ARGS= CLONEY_MODE="hardlink"
+
+CONFIGURE_OPTIONS += --with-openssl=$(OPENSSL_PREFIX)
+CONFIGURE_ENV +=	"XMLTO=xmlto --skip-validation"
 
 # Build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
@@ -46,5 +47,5 @@ REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
