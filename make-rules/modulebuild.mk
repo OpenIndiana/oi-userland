@@ -28,7 +28,7 @@ include $(WS_MAKE_RULES)/makemaker.mk
 COMPONENT_CONFIGURE_ARGS =	--installdirs=vendor
 $(BUILD_DIR)/%/.configured:	 $(SOURCE_DIR)/.prep
 	($(RM) -r $(@D) ; $(MKDIR) $(@D))
-	$(CLONEY) $(SOURCE_DIR) $(@D)
+	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_CONFIGURE_ACTION)
 	(cd $(@D) ; $(COMPONENT_CONFIGURE_ENV) $(PERL) $(PERL_FLAGS) \
 								Build.PL $(COMPONENT_CONFIGURE_ARGS) $(PERL_STUDIO_OVERWRITE) $(CONFIGURE_OPTIONS))
