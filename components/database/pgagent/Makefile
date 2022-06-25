@@ -18,24 +18,25 @@ BUILD_STYLE = cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgAgent
-COMPONENT_VERSION= 	4.0.0
+COMPONENT_VERSION= 	4.2.1
 COMPONENT_SUMMARY= 	pgAgent job scheduler for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-Source
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:57bd047401629533ac6c5238bc94026f0ea0bf9f1f33a2bccc754b27132ea7e8
+COMPONENT_ARCHIVE_HASH=	sha256:caa8fa0587433839d733d0ad1d45f5cd6e2e47c9cd9ce5ab62ab2d0e6b317fb8
 COMPONENT_ARCHIVE_URL=	https://ftp.postgresql.org/pub/pgadmin/pgagent/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.pgadmin.org/
+COMPONENT_PROJECT_URL=	https://www.pgadmin.org/
 COMPONENT_FMRI=	database/postgres/pgagent
 COMPONENT_CLASSIFICATION=	System/Databases
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
 # Don't depend on host default pg_config
-PATH=		$(PG_BINDIR.$(BITS)):/usr/bin/$(MACH64):/usr/bin
+PATH=	$(PG_BINDIR.$(BITS)):/usr/bin/$(MACH64):/usr/bin
 
+TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CMAKE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
+COMPONENT_PRE_CMAKE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D))
 
 # Workaround for cmake to look for files in build directory
 $(BUILD_DIR)/%/.configured:     $(SOURCE_DIR)/.prep
@@ -57,6 +58,9 @@ CMAKE_OPTIONS += -D CMAKE_INSTALL_PREFIX=/usr
 
 # How can I tell cmake to use /usr/lib/amd64/cmake instead of /usr/lib/cmake?
 CMAKE_OPTIONS += -D CMAKE_PREFIX_PATH="/usr/lib/$(MACH64)/cmake"
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
