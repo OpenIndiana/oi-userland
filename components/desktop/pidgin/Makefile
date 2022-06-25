@@ -19,13 +19,13 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
-COMPONENT_VERSION=	2.14.9
+COMPONENT_VERSION=	2.14.10
 COMPONENT_PROJECT_URL=	https://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
 COMPONENT_FMRI=		communication/im/pidgin
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:1872d1629a26e9b775d9ec0bdd3d3fd348f721376f320b29bcd5ff3f0443222b
+COMPONENT_ARCHIVE_HASH=	sha256:454b1b928bc6bcbb183353af30fbfde5595f2245a3423a1a46e6c97a2df22810
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/Pidgin/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
@@ -35,26 +35,25 @@ TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Use 64-bit perl
-PERL_VERSION = 5.24
-PYTHON_VERSION = 3.5
+PERL_VERSION = 5.34
 
 PATH = $(PATH.gnu)
 
 # We use libncurses and libpanel from /usr/gnu/lib/$(MACH64)
 LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-			                libtoolize --force && \
-					intltoolize --force --copy --automake && \
-					aclocal -I. && \
-					automake -a -f -c &&\
-					autoconf )
+COMPONENT_PREP_ACTION = ( cd $(@D) && \
+	libtoolize --force && \
+	intltoolize --force --copy --automake && \
+	aclocal -I. && \
+	automake -a -f -c && \
+	autoconf )
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( cp -rp $(SOURCE_DIR)/* $(@D) && \
                                         cp -rp $(COMPONENT_DIR)/files/po-sun $(@D) && \
                                         cd $(@D)/po-sun && $(MAKE))
 
-CONFIGURE_SCRIPT=       $(@D)/configure
+CONFIGURE_SCRIPT=	$(@D)/configure
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-gnutls=no
@@ -90,17 +89,17 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtkspell
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libgnt
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/python/python-dbus-35
-REQUIRED_PACKAGES += library/libgnt
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
