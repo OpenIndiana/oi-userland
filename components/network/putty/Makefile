@@ -12,19 +12,20 @@
 # Copyright 2017 Till Wegmueller
 #
 
-BUILD_BITS=				64
+BUILD_BITS= 64
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			putty
-COMPONENT_VERSION=		0.76
+COMPONENT_VERSION=		0.77
 COMPONENT_SUMMARY=		A terminal integrated SSH/Telnet client commandline tools
 COMPONENT_PROJECT_URL=	https://www.chiark.greenend.org.uk/~sgtatham/putty/
-COMPONENT_FMRI=			network/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:547cd97a8daa87ef71037fab0773bceb54a8abccb2f825a49ef8eba5e045713f
+COMPONENT_ARCHIVE_HASH=	sha256:419a76f45238fd45f2c76b42438993056e74fa78374f136052aaa843085beae5
+COMPONENT_FMRI=			network/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_LICENSE=		MIT
 COMPONENT_LICENSE_FILE=	LICENCE
 
@@ -32,9 +33,12 @@ include $(WS_MAKE_RULES)/common.mk
 
 LDFLAGS += -lnsl -lsocket
 
-CONFIGURE_OPTIONS+=--without-gssapi 
-CONFIGURE_OPTIONS+=--without-gtk
-
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
