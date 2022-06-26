@@ -22,6 +22,17 @@
 #
 # Copyright (c) 2012, 2020, Oracle and/or its affiliates. All rights reserved.
 #
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
 # Dependency resolution works only if the version is already installed in the build zone
 <transform file path=.+\.py$ -> \
     default pkg.depend.bypass-generate .* >
@@ -38,17 +49,9 @@
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=.*/(idle_)?tests?/.* -> default facet.optional.test true>
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-#
 link path=usr/bin/2to3 target=2to3-3.9 mediator=python mediator-version=3.9
 file path=usr/bin/2to3-3.9
+
 #link path=usr/bin/idle target=idle3.9 mediator=python mediator-version=3.9
 #link path=usr/bin/idle3 target=idle3.9 mediator=python mediator-version=3.9
 #file path=usr/bin/idle3.9
@@ -63,7 +66,7 @@ link path=usr/bin/python3-config target=python3.9-config mediator=python \
     mediator-version=3.9
 file path=usr/bin/python3.9
 file path=usr/bin/python3.9-config
-#
+
 file path=usr/include/python3.9/Python-ast.h
 file path=usr/include/python3.9/Python.h
 file path=usr/include/python3.9/abstract.h
@@ -223,6 +226,7 @@ file path=usr/include/python3.9/weakrefobject.h
 link path=usr/lib/$(MACH64)/libpython3.9.so target=libpython3.9.so.1.0
 file path=usr/lib/$(MACH64)/libpython3.9.so.1.0
 file path=usr/lib/$(MACH64)/libpython3.9_db.so.1.0
+
 # Mediate libpython3 stable ABI
 file usr/lib/$(MACH64)/libpython3.so path=usr/lib/$(MACH64)/libpython39.so
 link path=usr/lib/$(MACH64)/libpython3.so target=libpython39.so mediator=python mediator-version=3.9
@@ -2148,8 +2152,8 @@ file path=usr/lib/python3.9/test/test_threadsignals.py
 file path=usr/lib/python3.9/test/test_time.py
 file path=usr/lib/python3.9/test/test_timeit.py
 file path=usr/lib/python3.9/test/test_timeout.py
-file path=usr/lib/python3.9/test/test_tix.py
-file path=usr/lib/python3.9/test/test_tk.py
+#file path=usr/lib/python3.9/test/test_tix.py
+#file path=usr/lib/python3.9/test/test_tk.py
 file path=usr/lib/python3.9/test/test_tokenize.py
 file path=usr/lib/python3.9/test/test_tools/__init__.py
 file path=usr/lib/python3.9/test/test_tools/__main__.py
@@ -2489,5 +2493,5 @@ file path=usr/lib/python3.9/zoneinfo/_common.py
 file path=usr/lib/python3.9/zoneinfo/_tzpath.py
 file path=usr/lib/python3.9/zoneinfo/_zoneinfo.py
 file path=usr/share/man/man1/python3.9.1
-link path=usr/share/man/man1/python3.1 target=python3.9.1 mediator=python \
+link path=usr/share/man/man1/python3.1 target=python3.9.1 mediator=python3 \
     mediator-version=3.9
