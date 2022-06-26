@@ -20,14 +20,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	docutils
 COMPONENT_VERSION= 	0.18.1
-# COMPONENT_REVISION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:679987caf361a7539d76e584cbeddc311e3aee937877c87346f31debc63e9d06
-COMPONENT_ARCHIVE_URL= \
-  https://pypi.python.org/packages/source/d/docutils/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/docutils
+COMPONENT_ARCHIVE_HASH=	sha256:679987caf361a7539d76e584cbeddc311e3aee937877c87346f31debc63e9d06
+COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/d/docutils/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/docutils
 COMPONENT_FMRI=		library/python/docutils
 COMPONENT_SUMMARY=	Docutils is a modular system for processing documentation into useful formats, such as HTML, XML, and LaTeX
 COMPONENT_CLASSIFICATION= org.opensolaris.category.2008:Development/Python
