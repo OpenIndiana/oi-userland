@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         pygobject
 # This version supports python 2.7 and 3.5
 COMPONENT_VERSION=      3.18.2
-COMPONENT_REVISION=     7
+COMPONENT_REVISION=     8
 COMPONENT_PROJECT_URL=  http://www.gnome.org
 COMPONENT_SUMMARY=      Python bindings for GObject
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -90,11 +90,12 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTOUSRLIBDIR.64)/pkgconfig; $(MV) pygobject-3.0.pc pygobject-3.0.pc-$(PYTHON_VERSION)) ;
 
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += system/library
