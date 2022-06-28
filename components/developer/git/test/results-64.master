@@ -118,7 +118,7 @@ ok 27 - init creates a new deep directory
 ok 28 - init creates a new deep directory (umask vs. shared)
 ok 29 - init notices EEXIST (1)
 ok 30 - init notices EEXIST (2)
-ok 31 - init notices EPERM
+ok 31 # skip init notices EPERM (missing SANITY of POSIXPERM,SANITY)
 ok 32 - init creates a new bare directory with global --bare
 ok 33 - init prefers command line to GIT_DIR
 ok 34 - init with separate gitdir
@@ -126,7 +126,7 @@ ok 35 - explicit bare & --separate-git-dir incompatible
 ok 36 - implicit bare & --separate-git-dir incompatible
 ok 37 - bare & --separate-git-dir incompatible within worktree
 ok 38 - init in long base path
-ok 39 # skip init in long restricted base path (missing GETCWD_IGNORES_PERMS)
+ok 39 - init in long restricted base path
 ok 40 - re-init on .git file
 ok 41 - re-init to update git link
 ok 42 - re-init to move gitdir
@@ -203,14 +203,14 @@ ok 30 - symlinks not respected in-tree
 1..30
 *** t0004-unwritable.sh ***
 ok 1 - setup
-ok 2 - write-tree should notice unwritable repository
-ok 3 - write-tree output on unwritable repository
-ok 4 - commit should notice unwritable repository
-ok 5 - commit output on unwritable repository
-ok 6 - update-index should notice unwritable repository
-ok 7 - update-index output on unwritable repository
-ok 8 - add should notice unwritable repository
-ok 9 - add output on unwritable repository
+ok 2 # skip write-tree should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 3 # skip write-tree output on unwritable repository (missing WRITE_TREE_OUT)
+ok 4 # skip commit should notice unwritable repository (missing SANITY of POSIXPERM,SANITY,!SANITIZE_LEAK)
+ok 5 # skip commit output on unwritable repository (missing COMMIT_OUT)
+ok 6 # skip update-index should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 7 # skip update-index output on unwritable repository (missing UPDATE_INDEX_OUT)
+ok 8 # skip add should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
+ok 9 # skip add output on unwritable repository (missing ADD_OUT)
 # passed all 9 test(s)
 1..9
 *** t0005-signals.sh ***
@@ -2635,14 +2635,20 @@ ok 1 - unittests
 1..1
 *** t0033-safe-directory.sh ***
 ok 1 - safe.directory is not set
-ok 2 - safe.directory does not match
-ok 3 - path exist as different key
-ok 4 - safe.directory matches
-ok 5 - safe.directory matches, but is reset
-ok 6 - safe.directory=*
-ok 7 - safe.directory=*, but is reset
-# passed all 7 test(s)
-1..7
+ok 2 - ignoring safe.directory on the command line
+ok 3 - ignoring safe.directory in the environment
+ok 4 - ignoring safe.directory in GIT_CONFIG_PARAMETERS
+ok 5 - ignoring safe.directory in repo config
+ok 6 - safe.directory does not match
+ok 7 - path exist as different key
+ok 8 - safe.directory matches
+ok 9 - safe.directory matches, but is reset
+ok 10 - safe.directory=*
+ok 11 - safe.directory=*, but is reset
+# passed all 11 test(s)
+1..11
+*** t0034-root-safe-directory.sh ***
+1..0 # SKIP You must set env var GIT_TEST_ALLOW_SUDO=YES in order to run this test
 *** t0040-parse-options.sh ***
 ok 1 - test help
 ok 2 - OPT_BOOL() #1
@@ -2984,8 +2990,8 @@ ok 213 - match .gitattributes
 ok 214 - match .gitignore
 ok 215 - match .mailmap
 ok 216 # skip is_valid_path() on Windows (missing MINGW)
-ok 217 # skip RUNTIME_PREFIX works (missing RUNTIME_PREFIX of RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
-ok 218 # skip %(prefix)/ works (missing RUNTIME_PREFIX of RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
+ok 217 # skip RUNTIME_PREFIX works (missing RUNTIME_PREFIX of !VALGRIND,RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
+ok 218 # skip %(prefix)/ works (missing RUNTIME_PREFIX of !VALGRIND,RUNTIME_PREFIX,CAN_EXEC_IN_PWD)
 # passed all 218 test(s)
 1..218
 *** t0061-run-command.sh ***
@@ -2998,17 +3004,22 @@ ok 6 - run_command can run a script without a #! line
 ok 7 - run_command does not try to execute a directory
 ok 8 - run_command passes over non-executable file
 ok 9 - run_command reports EACCES
-ok 10 - unreadable directory in PATH
+ok 10 # skip unreadable directory in PATH (missing SANITY of POSIXPERM,SANITY)
 ok 11 - run_command runs in parallel with more jobs available than tasks
-ok 12 - run_command runs in parallel with as many jobs as tasks
-ok 13 - run_command runs in parallel with more tasks than jobs available
-ok 14 - run_command is asked to abort gracefully
-ok 15 - run_command outputs 
-ok 16 - GIT_TRACE with environment variables
-ok 17 # skip verify curlies are quoted properly (missing MINGW)
-ok 18 # skip can spawn .bat with argv[0] containing spaces (missing MINGW)
-# passed all 18 test(s)
-1..18
+ok 12 - run_command runs ungrouped in parallel with more jobs available than tasks
+ok 13 - run_command runs in parallel with as many jobs as tasks
+ok 14 - run_command runs ungrouped in parallel with as many jobs as tasks
+ok 15 - run_command runs in parallel with more tasks than jobs available
+ok 16 - run_command runs ungrouped in parallel with more tasks than jobs available
+ok 17 - run_command is asked to abort gracefully
+ok 18 - run_command is asked to abort gracefully (ungroup)
+ok 19 - run_command outputs 
+ok 20 - run_command outputs (ungroup) 
+ok 21 - GIT_TRACE with environment variables
+ok 22 # skip verify curlies are quoted properly (missing MINGW)
+ok 23 # skip can spawn .bat with argv[0] containing spaces (missing MINGW)
+# passed all 23 test(s)
+1..23
 *** t0062-revision-walking.sh ***
 ok 1 - setup
 ok 2 - revision walking can be done twice
@@ -3050,8 +3061,8 @@ ok 2 - dir-iterator should iterate through all files
 ok 3 - dir-iterator should list files in the correct order
 ok 4 - begin should fail upon inexistent paths
 ok 5 - begin should fail upon non directory paths
-ok 6 - advance should not fail on errors by default
-ok 7 - advance should fail on errors, w/ pedantic flag
+ok 6 # skip advance should not fail on errors by default (missing SANITY of POSIXPERM,SANITY)
+ok 7 # skip advance should fail on errors, w/ pedantic flag (missing SANITY of POSIXPERM,SANITY)
 ok 8 - setup dirs with symlinks
 ok 9 - dir-iterator should not follow symlinks by default
 ok 10 - dir-iterator should follow symlinks w/ follow flag
@@ -3081,7 +3092,7 @@ ok 2 - oidtree each
 *** t0070-fundamental.sh ***
 ok 1 - character classes (isspace, isalpha etc.)
 ok 2 - mktemp to nonexistent directory prints filename
-ok 3 - mktemp to unwritable directory prints filename
+ok 3 # skip mktemp to unwritable directory prints filename (missing SANITY of POSIXPERM,SANITY)
 ok 4 - git_mkstemps_mode does not fail if fd 0 is not open
 ok 5 - check for a bug in the regex routines
 ok 6 - incomplete sideband messages are reassembled
@@ -3218,9 +3229,9 @@ ok 1 - Testing Git::I18N with NO Perl gettext library
 ok 2 - Git::I18N is located at $(@D)/perl/build/lib/Git/I18N.pm
 ok 3 - sanity: Git::I18N has 3 export(s)
 ok 4 - sanity: Git::I18N exports everything by default
-ok 5 - sanity: N__ has a $ prototype
-ok 6 - sanity: __ has a $ prototype
-ok 7 - sanity: __n has a $$$ prototype
+ok 5 - sanity: __ has a $ prototype
+ok 6 - sanity: __n has a $$$ prototype
+ok 7 - sanity: N__ has a $ prototype
 ok 8 - Passing a string through __() in the C locale works
 ok 9 - Get singular string through __n() in C locale
 ok 10 - Get plural string through __n() in C locale
@@ -3267,10 +3278,13 @@ ok 4 - normal stream, exit code 0
 ok 5 - normal stream, exit code 1
 ok 6 - normal stream, error event
 ok 7 - BUG messages are written to trace2
-ok 8 - using global config, normal stream, return code 0
-ok 9 - using global config with include
-# passed all 9 test(s)
-1..9
+ok 8 - bug messages with BUG_if_bug() are written to trace2
+ok 9 - bug messages without explicit BUG_if_bug() are written to trace2
+ok 10 - bug messages followed by BUG() are written to trace2
+ok 11 - using global config, normal stream, return code 0
+ok 12 - using global config with include
+# passed all 12 test(s)
+1..12
 *** t0211-trace2-perf.sh ***
 ok 1 - perf stream, return code 0
 ok 2 - perf stream, return code 1
@@ -3410,7 +3424,7 @@ ok 40 - helper (store) can store empty username
 ok 41 - if custom xdg file exists, home and xdg files not created
 ok 42 - get: use home file if both home and xdg files have matches
 ok 43 - get: use xdg file if home file has no matches
-ok 44 - get: use xdg file if home file is unreadable
+ok 44 # skip get: use xdg file if home file is unreadable (missing SANITY of POSIXPERM,SANITY)
 ok 45 - store: if both xdg and home files exist, only store in home file
 ok 46 - erase: erase matching credentials from both xdg and home files
 ok 47 - get: ignore credentials without scheme as invalid
@@ -3640,7 +3654,7 @@ ok 9 - 3-way not overwriting local changes (setup)
 ok 10 - 3-way not overwriting local changes (our side)
 ok 11 - 3-way not overwriting local changes (their side)
 ok 12 - funny symlink in work tree
-ok 13 - funny symlink in work tree, un-unlink-able
+ok 13 # skip funny symlink in work tree, un-unlink-able (missing SANITY)
 ok 14 - D/F setup
 ok 15 - D/F
 ok 16 - D/F resolve
@@ -4323,28 +4337,34 @@ ok 39 - merge with conflict outside cone
 ok 40 - cherry-pick/rebase with conflict outside cone
 ok 41 - merge with outside renames
 ok 42 - cherry-pick with conflicts
-ok 43 - checkout-index inside sparse definition
-ok 44 - checkout-index outside sparse definition
-ok 45 - checkout-index with folders
-ok 46 - checkout-index --all
-ok 47 - clean
-ok 48 - submodule handling
-ok 49 - sparse-index is expanded and converted back
-ok 50 - index.sparse disabled inline uses full index
-ok 51 - sparse-index is not expanded
-ok 52 - sparse-index is not expanded: merge conflict in cone
-ok 53 - sparse index is not expanded: diff
-ok 54 - sparse index is not expanded: update-index
-ok 55 - sparse index is not expanded: blame
-ok 56 - sparse index is not expanded: fetch/pull
-ok 57 - sparse index is not expanded: read-tree
-ok 58 - ls-files
-ok 59 - reset mixed and checkout orphan
-ok 60 - add everything with deep new file
-ok 61 - checkout behaves oddly with df-conflict-1
-ok 62 - checkout behaves oddly with df-conflict-2
-# passed all 62 test(s)
-1..62
+ok 43 - stash
+ok 44 - checkout-index inside sparse definition
+ok 45 - checkout-index outside sparse definition
+ok 46 - checkout-index with folders
+ok 47 - checkout-index --all
+ok 48 - clean
+ok 49 - show (cached blobs/trees)
+ok 50 - rev-parse (cached blobs/trees)
+ok 51 - submodule handling
+ok 52 - sparse-index is expanded and converted back
+ok 53 - index.sparse disabled inline uses full index
+ok 54 - sparse-index is not expanded
+ok 55 - sparse-index is not expanded: merge conflict in cone
+ok 56 - sparse-index is not expanded: stash
+ok 57 - sparse index is not expanded: diff
+ok 58 - sparse index is not expanded: show and rev-parse
+ok 59 - sparse index is not expanded: update-index
+ok 60 - sparse index is not expanded: blame
+ok 61 - sparse index is not expanded: fetch/pull
+ok 62 - sparse index is not expanded: read-tree
+ok 63 - ls-files
+ok 64 - sparse index is not expanded: sparse-checkout
+ok 65 - reset mixed and checkout orphan
+ok 66 - add everything with deep new file
+ok 67 - checkout behaves oddly with df-conflict-1
+ok 68 - checkout behaves oddly with df-conflict-2
+# passed all 68 test(s)
+1..68
 *** t1100-commit-tree-options.sh ***
 ok 1 - test preparation: write empty tree
 ok 2 - construct commit
@@ -4730,7 +4750,7 @@ ok 20 - find value with highest priority from a configset
 ok 21 - find value_list for a key from a configset
 ok 22 - proper error on non-existent files
 ok 23 - proper error on directory "files"
-ok 24 - proper error on non-accessible files
+ok 24 # skip proper error on non-accessible files (missing SANITY of POSIXPERM,SANITY)
 ok 25 - proper error on error in default config files
 ok 26 - proper error on error in custom config files
 ok 27 - check line errors for malformed values
@@ -6071,7 +6091,7 @@ ok 21 - check splitIndex.sharedIndexExpire set to "never" and "now"
 ok 22 - same mode for index & split index
 ok 23 - split index respects core.sharedrepository 0666
 ok 24 - split index respects core.sharedrepository 0642
-ok 25 - graceful handling when splitting index is not allowed
+ok 25 # skip graceful handling when splitting index is not allowed (missing SANITY of POSIXPERM,SANITY)
 ok 26 - writing split index with null sha1 does not write cache tree
 ok 27 - do not refresh null base index
 not ok 28 - reading split index at alternate location
@@ -6148,8 +6168,10 @@ ok 10 - git hook run arg u ments without -- is not allowed
 ok 11 - git hook run -- pass arguments
 ok 12 - git hook run -- out-of-repo runs excluded
 ok 13 - git -c core.hooksPath=<PATH> hook run
-# passed all 13 test(s)
-1..13
+ok 14 # skip git hook run: stdout and stderr are connected to a TTY (missing TTY)
+ok 15 # skip git commit: stdout and stderr are connected to a TTY (missing TTY)
+# passed all 15 test(s)
+1..15
 *** t2000-conflict-when-checking-files-out.sh ***
 ok 1 - git update-index --add various paths.
 ok 2 - git checkout-index without -f should fail on conflicting work tree.
@@ -6964,7 +6986,7 @@ ok 1 - initialize
 ok 2 - worktree prune on normal repo
 ok 3 - prune files inside $GIT_DIR/worktrees
 ok 4 - prune directories without gitdir
-ok 5 - prune directories with unreadable gitdir
+ok 5 # skip prune directories with unreadable gitdir (missing SANITY)
 ok 6 - prune directories with invalid gitdir
 ok 7 - prune directories with gitdir pointing to nowhere
 ok 8 - not prune locked checkout
@@ -9312,6 +9334,69 @@ ok 17 - ls-tree '--format=<%(objectmode) %(objecttype) %(objectname)%x09%(path)>
 ok 18 - ls-tree '--format=<%(objectmode) %(objecttype) %(objectname)%x09%(path)>' on optimized v.s. non-optimized path
 # passed all 18 test(s)
 1..18
+*** t3105-ls-tree-output.sh ***
+ok 1 - ls-tree --format usage
+ok 2 - setup
+ok 3 - setup: HEAD_* variables
+ok 4 - 'ls-tree ' output
+ok 5 - 'ls-tree ' output (via subdir)
+ok 6 - 'ls-tree  -t' output
+ok 7 - 'ls-tree  -t' output (via subdir)
+ok 8 - 'ls-tree  -d' output
+ok 9 - 'ls-tree  -d' output (via subdir)
+ok 10 - 'ls-tree  -r' output
+ok 11 - 'ls-tree  -r' output (via subdir)
+ok 12 - 'ls-tree --long' output
+ok 13 - 'ls-tree --long' output (via subdir)
+ok 14 - 'ls-tree --long -t' output
+ok 15 - 'ls-tree --long -t' output (via subdir)
+ok 16 - 'ls-tree --long -d' output
+ok 17 - 'ls-tree --long -d' output (via subdir)
+ok 18 - 'ls-tree --long -r' output
+ok 19 - 'ls-tree --long -r' output (via subdir)
+ok 20 - 'ls-tree --name-only' output
+ok 21 - 'ls-tree --name-only' output (via subdir)
+ok 22 - 'ls-tree --name-only -t' output
+ok 23 - 'ls-tree --name-only -t' output (via subdir)
+ok 24 - 'ls-tree --name-only -d' output
+ok 25 - 'ls-tree --name-only -d' output (via subdir)
+ok 26 - 'ls-tree --name-only -r' output
+ok 27 - 'ls-tree --name-only -r' output (via subdir)
+ok 28 - 'ls-tree --object-only' output
+ok 29 - 'ls-tree --object-only' output (via subdir)
+ok 30 - 'ls-tree --object-only -t' output
+ok 31 - 'ls-tree --object-only -t' output (via subdir)
+ok 32 - 'ls-tree --object-only -d' output
+ok 33 - 'ls-tree --object-only -d' output (via subdir)
+ok 34 - 'ls-tree --object-only -r' output
+ok 35 - 'ls-tree --object-only -r' output (via subdir)
+ok 36 - setup: HEAD_short_* variables
+ok 37 - 'ls-tree --object-only --abbrev' output
+ok 38 - 'ls-tree --object-only --abbrev' output (via subdir)
+ok 39 - 'ls-tree --object-only --abbrev -t' output
+ok 40 - 'ls-tree --object-only --abbrev -t' output (via subdir)
+ok 41 - 'ls-tree --object-only --abbrev -d' output
+ok 42 - 'ls-tree --object-only --abbrev -d' output (via subdir)
+ok 43 - 'ls-tree --object-only --abbrev -r' output
+ok 44 - 'ls-tree --object-only --abbrev -r' output (via subdir)
+ok 45 - 'ls-tree --full-name' output
+ok 46 - 'ls-tree --full-name' output (via subdir)
+ok 47 - 'ls-tree --full-name -d' output
+ok 48 - 'ls-tree --full-name -d' output (via subdir)
+ok 49 - 'ls-tree --full-name -r' output
+ok 50 - 'ls-tree --full-name -r' output (via subdir)
+ok 51 - 'ls-tree --full-name -t' output
+ok 52 - 'ls-tree --full-name -t' output (via subdir)
+ok 53 - 'ls-tree --full-tree' output
+ok 54 - 'ls-tree --full-tree' output (via subdir, fails)
+ok 55 - 'ls-tree --full-tree -t' output
+ok 56 - 'ls-tree --full-tree -t' output (via subdir, fails)
+ok 57 - 'ls-tree --full-tree -d' output
+ok 58 - 'ls-tree --full-tree -d' output (via subdir, fails)
+ok 59 - 'ls-tree --full-tree -r' output
+ok 60 - 'ls-tree --full-tree -r' output (via subdir, fails)
+# passed all 60 test(s)
+1..60
 *** t3200-branch.sh ***
 ok 1 - prepare a trivial repository
 ok 2 - git branch --help should not have created a bogus branch
@@ -9426,69 +9511,72 @@ ok 89 - test --track without .fetch entries
 ok 90 - branch from non-branch HEAD w/autosetupmerge=always
 ok 91 - branch from non-branch HEAD w/--track causes failure
 ok 92 - branch from tag w/--track causes failure
-ok 93 - --set-upstream-to fails on multiple branches
-ok 94 - --set-upstream-to fails on detached HEAD
-ok 95 - --set-upstream-to fails on a missing dst branch
-ok 96 - --set-upstream-to fails on a missing src branch
-ok 97 - --set-upstream-to fails on a non-ref
-ok 98 - --set-upstream-to fails on locked config
-ok 99 - use --set-upstream-to modify HEAD
-ok 100 - use --set-upstream-to modify a particular branch
-ok 101 - --unset-upstream should fail if given a non-existent branch
-ok 102 - --unset-upstream should fail if config is locked
-ok 103 - test --unset-upstream on HEAD
-ok 104 - --unset-upstream should fail on multiple branches
-ok 105 - --unset-upstream should fail on detached HEAD
-ok 106 - test --unset-upstream on a particular branch
-ok 107 - disabled option --set-upstream fails
-ok 108 - --set-upstream-to notices an error to set branch as own upstream
-ok 109 - git checkout -b g/h/i -l should create a branch and a log
-ok 110 - checkout -b makes reflog by default
-ok 111 - checkout -b does not make reflog when core.logAllRefUpdates = false
-ok 112 - checkout -b with -l makes reflog when core.logAllRefUpdates = false
-ok 113 - avoid ambiguous track and advise
-ok 114 - autosetuprebase local on a tracked local branch
-ok 115 - autosetuprebase always on a tracked local branch
-ok 116 - autosetuprebase remote on a tracked local branch
-ok 117 - autosetuprebase never on a tracked local branch
-ok 118 - autosetuprebase local on a tracked remote branch
-ok 119 - autosetuprebase never on a tracked remote branch
-ok 120 - autosetuprebase remote on a tracked remote branch
-ok 121 - autosetuprebase always on a tracked remote branch
-ok 122 - autosetuprebase unconfigured on a tracked remote branch
-ok 123 - autosetuprebase unconfigured on a tracked local branch
-ok 124 - autosetuprebase unconfigured on untracked local branch
-ok 125 - autosetuprebase unconfigured on untracked remote branch
-ok 126 - autosetuprebase never on an untracked local branch
-ok 127 - autosetuprebase local on an untracked local branch
-ok 128 - autosetuprebase remote on an untracked local branch
-ok 129 - autosetuprebase always on an untracked local branch
-ok 130 - autosetuprebase never on an untracked remote branch
-ok 131 - autosetuprebase local on an untracked remote branch
-ok 132 - autosetuprebase remote on an untracked remote branch
-ok 133 - autosetuprebase always on an untracked remote branch
-ok 134 - autosetuprebase always on detached HEAD
-ok 135 - detect misconfigured autosetuprebase (bad value)
-ok 136 - detect misconfigured autosetuprebase (no value)
-ok 137 - attempt to delete a branch without base and unmerged to HEAD
-ok 138 - attempt to delete a branch merged to its base
-ok 139 - attempt to delete a branch merged to its base
-ok 140 - branch --delete --force removes dangling branch
-ok 141 - use --edit-description
-ok 142 - detect typo in branch name when using --edit-description
-ok 143 - refuse --edit-description on unborn branch for now
-ok 144 - --merged catches invalid object names
-ok 145 - --list during rebase
-ok 146 - --list during rebase from detached HEAD
-ok 147 - tracking with unexpected .fetch refspec
-ok 148 - configured committerdate sort
-ok 149 - option override configured sort
-ok 150 - invalid sort parameter in configuration
-ok 151 - tracking info copied with --track=inherit
-ok 152 - tracking info copied with autoSetupMerge=inherit
-ok 153 - --track overrides branch.autoSetupMerge
-# failed 1 among 153 test(s)
-1..153
+ok 93 - simple tracking works when remote branch name matches
+ok 94 - simple tracking skips when remote branch name does not match
+ok 95 - simple tracking skips when remote ref is not a branch
+ok 96 - --set-upstream-to fails on multiple branches
+ok 97 - --set-upstream-to fails on detached HEAD
+ok 98 - --set-upstream-to fails on a missing dst branch
+ok 99 - --set-upstream-to fails on a missing src branch
+ok 100 - --set-upstream-to fails on a non-ref
+ok 101 - --set-upstream-to fails on locked config
+ok 102 - use --set-upstream-to modify HEAD
+ok 103 - use --set-upstream-to modify a particular branch
+ok 104 - --unset-upstream should fail if given a non-existent branch
+ok 105 - --unset-upstream should fail if config is locked
+ok 106 - test --unset-upstream on HEAD
+ok 107 - --unset-upstream should fail on multiple branches
+ok 108 - --unset-upstream should fail on detached HEAD
+ok 109 - test --unset-upstream on a particular branch
+ok 110 - disabled option --set-upstream fails
+ok 111 - --set-upstream-to notices an error to set branch as own upstream
+ok 112 - git checkout -b g/h/i -l should create a branch and a log
+ok 113 - checkout -b makes reflog by default
+ok 114 - checkout -b does not make reflog when core.logAllRefUpdates = false
+ok 115 - checkout -b with -l makes reflog when core.logAllRefUpdates = false
+ok 116 - avoid ambiguous track and advise
+ok 117 - autosetuprebase local on a tracked local branch
+ok 118 - autosetuprebase always on a tracked local branch
+ok 119 - autosetuprebase remote on a tracked local branch
+ok 120 - autosetuprebase never on a tracked local branch
+ok 121 - autosetuprebase local on a tracked remote branch
+ok 122 - autosetuprebase never on a tracked remote branch
+ok 123 - autosetuprebase remote on a tracked remote branch
+ok 124 - autosetuprebase always on a tracked remote branch
+ok 125 - autosetuprebase unconfigured on a tracked remote branch
+ok 126 - autosetuprebase unconfigured on a tracked local branch
+ok 127 - autosetuprebase unconfigured on untracked local branch
+ok 128 - autosetuprebase unconfigured on untracked remote branch
+ok 129 - autosetuprebase never on an untracked local branch
+ok 130 - autosetuprebase local on an untracked local branch
+ok 131 - autosetuprebase remote on an untracked local branch
+ok 132 - autosetuprebase always on an untracked local branch
+ok 133 - autosetuprebase never on an untracked remote branch
+ok 134 - autosetuprebase local on an untracked remote branch
+ok 135 - autosetuprebase remote on an untracked remote branch
+ok 136 - autosetuprebase always on an untracked remote branch
+ok 137 - autosetuprebase always on detached HEAD
+ok 138 - detect misconfigured autosetuprebase (bad value)
+ok 139 - detect misconfigured autosetuprebase (no value)
+ok 140 - attempt to delete a branch without base and unmerged to HEAD
+ok 141 - attempt to delete a branch merged to its base
+ok 142 - attempt to delete a branch merged to its base
+ok 143 - branch --delete --force removes dangling branch
+ok 144 - use --edit-description
+ok 145 - detect typo in branch name when using --edit-description
+ok 146 - refuse --edit-description on unborn branch for now
+ok 147 - --merged catches invalid object names
+ok 148 - --list during rebase
+ok 149 - --list during rebase from detached HEAD
+ok 150 - tracking with unexpected .fetch refspec
+ok 151 - configured committerdate sort
+ok 152 - option override configured sort
+ok 153 - invalid sort parameter in configuration
+ok 154 - tracking info copied with --track=inherit
+ok 155 - tracking info copied with autoSetupMerge=inherit
+ok 156 - --track overrides branch.autoSetupMerge
+# failed 1 among 156 test(s)
+1..156
 *** t3201-branch-contains.sh ***
 ok 1 - setup
 ok 2 - branch --contains=main
@@ -9529,8 +9617,12 @@ ok 9 - show branch --merge-base with one argument
 ok 10 - show branch --merge-base with two arguments
 ok 11 - show branch --merge-base with N arguments
 ok 12 - show branch --reflog=2
-# passed all 12 test(s)
-1..12
+ok 13 - show-branch --all --reflog (should fail)
+ok 14 - show-branch --merge-base --reflog (should fail)
+ok 15 - show-branch --list --merge-base (should fail)
+ok 16 - show-branch --reflog --current (should fail)
+# passed all 16 test(s)
+1..16
 *** t3203-branch-output.sh ***
 ok 1 - make commits
 ok 2 - make branches
@@ -9633,8 +9725,9 @@ ok 36 - format-patch --range-diff with --notes
 ok 37 - format-patch --range-diff with format.notes config
 ok 38 - format-patch --range-diff with multiple notes
 ok 39 - --left-only/--right-only
-# passed all 39 test(s)
-1..39
+ok 40 - submodule changes are shown irrespective of diff.submodule
+# passed all 40 test(s)
+1..40
 *** t3207-branch-submodule.sh ***
 ok 1 - setup superproject and submodule
 ok 2 - --recurse-submodules should create branches
@@ -10421,11 +10514,13 @@ ok 7 - rebase -i --onto main...side
 ok 8 - rebase --keep-base --onto incompatible
 ok 9 - rebase --keep-base --root incompatible
 ok 10 - rebase --keep-base main from topic
-ok 11 - rebase --keep-base main from side
-ok 12 - rebase -i --keep-base main from topic
-ok 13 - rebase -i --keep-base main from side
-# passed all 13 test(s)
-1..13
+ok 11 - rebase --keep-base main topic from main
+ok 12 - rebase --keep-base main from side
+ok 13 - rebase -i --keep-base main from topic
+ok 14 - rebase -i --keep-base main topic from main
+ok 15 - rebase -i --keep-base main from side
+# passed all 15 test(s)
+1..15
 *** t3417-rebase-whitespace-fix.sh ***
 ok 1 - blank line at end of file; extend at end of file
 ok 2 - two blanks line at end of file; extend at end of file
@@ -11060,8 +11155,12 @@ ok 10 - cherry-pick "-" is meaningless without checkout
 ok 11 - cherry-pick "-" works with arguments
 ok 12 - cherry-pick works with dirty renamed file
 ok 13 - advice from failed revert
-# passed all 13 test(s)
-1..13
+ok 14 - identification of reverted commit (default)
+ok 15 - identification of reverted commit (--reference)
+ok 16 - identification of reverted commit (revert.reference)
+ok 17 - cherry-pick is unaware of --reference (for now)
+# passed all 17 test(s)
+1..17
 *** t3502-cherry-pick-merge.sh ***
 ok 1 - setup
 ok 2 - cherry-pick -m complains of bogus numbers
@@ -11338,7 +11437,7 @@ ok 11 - Test that "git rm bar" succeeds
 ok 12 - Post-check that bar does not exist and is not in index after "git rm -f bar"
 ok 13 - Test that "git rm -- -q" succeeds (remove a file that looks like an option)
 ok 14 - Test that "git rm -f" succeeds with embedded space, tab, or newline characters.
-ok 15 - Test that "git rm -f" fails if its rm fails
+ok 15 # skip Test that "git rm -f" fails if its rm fails (missing SANITY)
 ok 16 - When the rm in "git rm -f" fails, it should not remove the file from the index
 ok 17 - Remove nonexistent file with --ignore-unmatch
 ok 18 - "rm" command printed
@@ -11437,58 +11536,60 @@ ok 13 - refuse to remove non-skip-worktree file from sparse dir
 ok 1 - Test of git add
 ok 2 - Post-check that foo is in the index
 ok 3 - Test that "git add -- -q" works
-ok 4 - git add: Test that executable bit is not used if core.filemode=0
-ok 5 - git add: filemode=0 should not get confused by symlink
-ok 6 - git update-index --add: Test that executable bit is not used...
+ok 4 - git add: core.fsyncmethod=batch
+ok 5 - git update-index: core.fsyncmethod=batch
+ok 6 - git add: Test that executable bit is not used if core.filemode=0
 ok 7 - git add: filemode=0 should not get confused by symlink
 ok 8 - git update-index --add: Test that executable bit is not used...
-ok 9 - .gitignore test setup
-ok 10 - .gitignore is honored
-ok 11 - error out when attempting to add ignored ones without -f
-ok 12 - error out when attempting to add ignored ones without -f
-ok 13 - error out when attempting to add ignored ones but add others
-ok 14 - add ignored ones with -f
-ok 15 - add ignored ones with -f
+ok 9 - git add: filemode=0 should not get confused by symlink
+ok 10 - git update-index --add: Test that executable bit is not used...
+ok 11 - .gitignore test setup
+ok 12 - .gitignore is honored
+ok 13 - error out when attempting to add ignored ones without -f
+ok 14 - error out when attempting to add ignored ones without -f
+ok 15 - error out when attempting to add ignored ones but add others
 ok 16 - add ignored ones with -f
-ok 17 - .gitignore with subdirectory
-ok 18 - check correct prefix detection
-ok 19 - git add with filemode=0, symlinks=0, and unmerged entries
-ok 20 - git add with filemode=0, symlinks=0 prefers stage 2 over stage 1
-ok 21 - git add --refresh
-ok 22 - git add --refresh with pathspec
-ok 23 - git add --refresh correctly reports no match error
-ok 24 - git add should fail atomically upon an unreadable file
-ok 25 - git add --ignore-errors
-ok 26 - git add (add.ignore-errors)
-ok 27 - git add (add.ignore-errors = false)
-ok 28 - --no-ignore-errors overrides config
-ok 29 - git add 'fo\[ou\]bar' ignores foobar
-ok 30 - git add to resolve conflicts on otherwise ignored path
-ok 31 - "add non-existent" should fail
-ok 32 - git add -A on empty repo does not error out
-ok 33 - "git add ." in empty repo
-ok 34 - error on a repository with no commits
-ok 35 - git add --dry-run of existing changed file
-ok 36 - git add --dry-run of non-existing file
-ok 37 - git add --dry-run of an existing file output
-ok 38 - git add --dry-run --ignore-missing of non-existing file
-ok 39 - git add --dry-run --ignore-missing of non-existing file output
-ok 40 - git add --dry-run --interactive should fail
-ok 41 - git add empty string should fail
-ok 42 - git add --chmod=[+-]x stages correctly
-ok 43 - git add --chmod=+x with symlinks
-ok 44 - git add --chmod=[+-]x changes index with already added file
-ok 45 - git add --chmod=[+-]x does not change the working tree
-ok 46 - git add --chmod fails with non regular files (but updates the other paths)
-ok 47 - git add --chmod honors --dry-run
-ok 48 - git add --chmod --dry-run reports error for non regular files
-ok 49 - git add --chmod --dry-run reports error for unmatched pathspec
-ok 50 - no file status change if no pathspec is given
-ok 51 - no file status change if no pathspec is given in subdir
-ok 52 - all statuses changed in folder if . is given
-ok 53 # skip path is case-insensitive (missing CASE_INSENSITIVE_FS)
-# passed all 53 test(s)
-1..53
+ok 17 - add ignored ones with -f
+ok 18 - add ignored ones with -f
+ok 19 - .gitignore with subdirectory
+ok 20 - check correct prefix detection
+ok 21 - git add with filemode=0, symlinks=0, and unmerged entries
+ok 22 - git add with filemode=0, symlinks=0 prefers stage 2 over stage 1
+ok 23 - git add --refresh
+ok 24 - git add --refresh with pathspec
+ok 25 - git add --refresh correctly reports no match error
+ok 26 # skip git add should fail atomically upon an unreadable file (missing SANITY of POSIXPERM,SANITY)
+ok 27 # skip git add --ignore-errors (missing SANITY of POSIXPERM,SANITY)
+ok 28 # skip git add (add.ignore-errors) (missing SANITY of POSIXPERM,SANITY)
+ok 29 # skip git add (add.ignore-errors = false) (missing SANITY of POSIXPERM,SANITY)
+ok 30 # skip --no-ignore-errors overrides config (missing SANITY of POSIXPERM,SANITY)
+ok 31 - git add 'fo\[ou\]bar' ignores foobar
+ok 32 - git add to resolve conflicts on otherwise ignored path
+ok 33 - "add non-existent" should fail
+ok 34 - git add -A on empty repo does not error out
+ok 35 - "git add ." in empty repo
+ok 36 - error on a repository with no commits
+ok 37 - git add --dry-run of existing changed file
+ok 38 - git add --dry-run of non-existing file
+ok 39 - git add --dry-run of an existing file output
+ok 40 - git add --dry-run --ignore-missing of non-existing file
+ok 41 - git add --dry-run --ignore-missing of non-existing file output
+ok 42 - git add --dry-run --interactive should fail
+ok 43 - git add empty string should fail
+ok 44 - git add --chmod=[+-]x stages correctly
+ok 45 - git add --chmod=+x with symlinks
+ok 46 - git add --chmod=[+-]x changes index with already added file
+ok 47 - git add --chmod=[+-]x does not change the working tree
+ok 48 - git add --chmod fails with non regular files (but updates the other paths)
+ok 49 - git add --chmod honors --dry-run
+ok 50 - git add --chmod --dry-run reports error for non regular files
+ok 51 - git add --chmod --dry-run reports error for unmatched pathspec
+ok 52 - no file status change if no pathspec is given
+ok 53 - no file status change if no pathspec is given in subdir
+ok 54 - all statuses changed in folder if . is given
+ok 55 # skip path is case-insensitive (missing CASE_INSENSITIVE_FS)
+# passed all 55 test(s)
+1..55
 *** t3701-add-interactive.sh ***
 ok 1 - setup (initial)
 ok 2 - status works (initial)
@@ -11534,35 +11635,35 @@ ok 41 - split hunk setup
 ok 42 - goto hunk
 ok 43 - navigate to hunk via regex
 ok 44 - split hunk "add -p (edit)"
-not ok 45 - split hunk "add -p (no, yes, edit)" # TODO known breakage
-ok 46 - split hunk with incomplete line at end
-not ok 47 - edit, adding lines to the first hunk # TODO known breakage
-ok 48 - patch mode ignores unmerged entries
-ok 49 - index is refreshed after applying patch
-ok 50 - diffs can be colorized
-ok 51 - colors can be overridden
-ok 52 - colorized diffs respect diff.wsErrorHighlight
-ok 53 - diffFilter filters diff
-ok 54 - detect bogus diffFilter output
-ok 55 - diff.algorithm is passed to `git diff-files`
-ok 56 - patch-mode via -i prompts for files
-ok 57 - add -p handles globs
-ok 58 - add -p handles relative paths
-ok 59 - add -p does not expand argument lists
-ok 60 - hunk-editing handles custom comment char
-ok 61 - add -p works even with color.ui=always
-ok 62 - setup different kinds of dirty submodules
-ok 63 - status ignores dirty submodules (except HEAD)
-ok 64 - set up pathological context
-ok 65 - add -p works with pathological context lines
-ok 66 - add -p patch editing works with pathological context lines
-ok 67 - checkout -p works with pathological context lines
-ok 68 - add -N followed by add -p patch editing
-ok 69 - checkout -p patch editing of added file
-ok 70 - show help from add--helper
-# still have 2 known breakage(s)
-# passed all remaining 68 test(s)
-1..70
+ok 45 - setup ADD_I_USE_BUILTIN check
+ok 46 - split hunk "add -p (no, yes, edit)"
+ok 47 - split hunk with incomplete line at end
+ok 48 - edit, adding lines to the first hunk
+ok 49 - patch mode ignores unmerged entries
+ok 50 - index is refreshed after applying patch
+ok 51 - diffs can be colorized
+ok 52 - colors can be overridden
+ok 53 - colorized diffs respect diff.wsErrorHighlight
+ok 54 - diffFilter filters diff
+ok 55 - detect bogus diffFilter output
+ok 56 - diff.algorithm is passed to `git diff-files`
+ok 57 - patch-mode via -i prompts for files
+ok 58 - add -p handles globs
+ok 59 - add -p handles relative paths
+ok 60 - add -p does not expand argument lists
+ok 61 - hunk-editing handles custom comment char
+ok 62 - add -p works even with color.ui=always
+ok 63 - setup different kinds of dirty submodules
+ok 64 - status ignores dirty submodules (except HEAD)
+ok 65 - set up pathological context
+ok 66 - add -p works with pathological context lines
+ok 67 - add -p patch editing works with pathological context lines
+ok 68 - checkout -p works with pathological context lines
+ok 69 - add -N followed by add -p patch editing
+ok 70 - checkout -p patch editing of added file
+ok 71 - show help from add--helper
+# passed all 71 test(s)
+1..71
 *** t3702-add-edit.sh ***
 ok 1 - setup
 ok 2 - add -e
@@ -11966,13 +12067,14 @@ ok 113 - stash works when user.name and user.email are not set
 ok 114 - stash --keep-index with file deleted in index does not resurrect it on disk
 ok 115 - stash apply should succeed with unmodified file
 ok 116 - stash handles skip-worktree entries nicely
-ok 117 - git stash succeeds despite directory/file change
-ok 118 - git stash can pop file -> directory saved changes
-ok 119 - git stash can pop directory -> file saved changes
-ok 120 - restore untracked files even when we hit conflicts
+ok 117 - stash with core.fsyncmethod=batch
+ok 118 - git stash succeeds despite directory/file change
+ok 119 - git stash can pop file -> directory saved changes
+ok 120 - git stash can pop directory -> file saved changes
+ok 121 - restore untracked files even when we hit conflicts
 # still have 3 known breakage(s)
-# passed all remaining 117 test(s)
-1..120
+# passed all remaining 118 test(s)
+1..121
 *** t3904-stash-patch.sh ***
 ok 1 - setup
 ok 2 - saying "n" does nothing
@@ -13690,7 +13792,7 @@ ok 9 - -U0 is valid, so is diff.context=0
 ok 1 - setup
 ok 2 - no order (=tree object order)
 ok 3 - missing orderfile
-ok 4 - unreadable orderfile
+ok 4 # skip unreadable orderfile (missing SANITY of POSIXPERM,SANITY)
 ok 5 - orderfile using option from subdir with --output
 ok 6 - orderfile using option (1)
 ok 7 - orderfile is fifo (1)
@@ -14830,7 +14932,7 @@ ok 94 # skip setup signed branch (missing GPG)
 ok 95 # skip setup signed branch with subkey (missing GPG)
 ok 96 # skip setup signed branch x509 (missing GPGSM)
 ok 97 - setup sshkey signed branch
-ok 98 - create signed commits with keys having defined lifetimes
+ok 98 # skip create signed commits with keys having defined lifetimes (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
 ok 99 # skip log x509 fingerprint (missing GPGSM)
 ok 100 # skip log OpenPGP fingerprint (missing GPGSM)
 ok 101 - log ssh key fingerprint
@@ -14842,10 +14944,10 @@ not ok 104 - log --graph --show-signature ssh
 #		git log --graph --show-signature -n1 signed-ssh >actual &&
 #		grep "${GOOD_SIGNATURE_TRUSTED}" actual
 #	
-ok 105 - log shows failure on expired signature key
-ok 106 - log shows failure on not yet valid signature key
-ok 107 - log show success with commit date and key validity matching
-ok 108 - log shows failure with commit date outside of key validity
+ok 105 # skip log shows failure on expired signature key (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
+ok 106 # skip log shows failure on not yet valid signature key (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
+ok 107 # skip log show success with commit date and key validity matching (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
+ok 108 # skip log shows failure with commit date outside of key validity (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
 ok 109 # skip log --graph --show-signature for merged tag (missing GPG)
 ok 110 # skip log --graph --show-signature for merged tag in shallow clone (missing GPG)
 ok 111 # skip log --graph --show-signature for merged tag with missing key (missing GPG)
@@ -15431,6 +15533,12 @@ ok 139 - --max-new-filters overrides configuration
 ok 140 - Bloom generation backfills empty commits
 # passed all 140 test(s)
 1..140
+*** t4217-log-limit.sh ***
+ok 1 - setup test
+ok 2 - git log --since-as-filter=...
+ok 3 - git log --children --since-as-filter=...
+# passed all 3 test(s)
+1..3
 *** t4252-am-options.sh ***
 ok 1 - setup
 ok 2 - interrupted am --whitespace=fix
@@ -15746,20 +15854,21 @@ ok 61 -  validate that diff files are converted
 ok 62 -  validate that -diff files are unchanged
 ok 63 -  validate that custom diff is unchanged 
 ok 64 -  validate extra file untracked
-ok 65 - git archive --format=zip --add-file twice
-ok 66 -  extract ZIP archive
-ok 67 -  validate filenames
-ok 68 -  validate file contents
-ok 69 -  extract ZIP archive with EOL conversion
-ok 70 -  validate that text files are converted
-ok 71 -  validate that binary files are unchanged
-ok 72 -  validate that diff files are converted
-ok 73 -  validate that -diff files are unchanged
-ok 74 -  validate that custom diff is unchanged 
-ok 75 -  validate extra file one/untracked
-ok 76 -  validate extra file two/untracked
-# passed all 76 test(s)
-1..76
+ok 65 - git archive --format=zip --add-virtual-file
+ok 66 - git archive --format=zip --add-file twice
+ok 67 -  extract ZIP archive
+ok 68 -  validate filenames
+ok 69 -  validate file contents
+ok 70 -  extract ZIP archive with EOL conversion
+ok 71 -  validate that text files are converted
+ok 72 -  validate that binary files are unchanged
+ok 73 -  validate that diff files are converted
+ok 74 -  validate that -diff files are unchanged
+ok 75 -  validate that custom diff is unchanged 
+ok 76 -  validate extra file one/untracked
+ok 77 -  validate extra file two/untracked
+# passed all 77 test(s)
+1..77
 *** t5004-archive-corner-cases.sh ***
 ok 1 - create commit with empty tree and fake empty tar
 ok 2 - tar archive of commit with empty tree
@@ -15864,49 +15973,52 @@ ok 7 - pack-object <stdin parsing: --stdin-packs handles garbage
 ok 8 - pack without delta
 ok 9 - pack-objects with bogus arguments
 ok 10 - unpack without delta
-ok 11 - pack with REF_DELTA
-ok 12 - unpack with REF_DELTA
-ok 13 - pack with OFS_DELTA
-ok 14 - unpack with OFS_DELTA
-ok 15 - compare delta flavors
-ok 16 - use packed objects
-ok 17 - use packed deltified (REF_DELTA) objects
-ok 18 - use packed deltified (OFS_DELTA) objects
-ok 19 - survive missing objects/pack directory
-ok 20 - verify pack
-ok 21 - verify pack -v
-ok 22 - verify-pack catches mismatched .idx and .pack files
-ok 23 - verify-pack catches a corrupted pack signature
-ok 24 - verify-pack catches a corrupted pack version
-ok 25 - verify-pack catches a corrupted type/size of the 1st packed object data
-ok 26 - verify-pack catches a corrupted sum of the index file itself
-ok 27 - build pack index for an existing pack
-ok 28 - unpacking with --strict
-ok 29 - index-pack with --strict
-ok 30 - honor pack.packSizeLimit
-ok 31 - verify resulting packs
-ok 32 - tolerate packsizelimit smaller than biggest object
-ok 33 - verify resulting packs
-ok 34 - set up pack for non-repo tests
-ok 35 - index-pack --stdin complains of non-repo
-ok 36 - index-pack <pack> works in non-repo
-ok 37 - index-pack --strict <pack> works in non-repo
-ok 38 # skip index-pack --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
-ok 39 # skip pack-objects --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
-ok 40 - pack-objects in too-many-packs mode
-ok 41 - setup: fake a SHA1 hash collision
-ok 42 - make sure index-pack detects the SHA1 collision
-ok 43 - make sure index-pack detects the SHA1 collision (large blobs)
-ok 44 - prefetch objects
-ok 45 - setup for --stdin-packs tests
-ok 46 - --stdin-packs with excluded packs
-ok 47 - --stdin-packs is incompatible with --filter
-ok 48 - --stdin-packs is incompatible with --revs
-ok 49 - --stdin-packs with loose objects
-ok 50 - --stdin-packs with broken links
-ok 51 - negative window clamps to 0
-# passed all 51 test(s)
-1..51
+ok 11 - unpack without delta (core.fsyncmethod=batch)
+ok 12 - pack with REF_DELTA
+ok 13 - unpack with REF_DELTA
+ok 14 - unpack with REF_DELTA (core.fsyncmethod=batch)
+ok 15 - pack with OFS_DELTA
+ok 16 - unpack with OFS_DELTA
+ok 17 - unpack with OFS_DELTA (core.fsyncmethod=batch)
+ok 18 - compare delta flavors
+ok 19 - use packed objects
+ok 20 - use packed deltified (REF_DELTA) objects
+ok 21 - use packed deltified (OFS_DELTA) objects
+ok 22 - survive missing objects/pack directory
+ok 23 - verify pack
+ok 24 - verify pack -v
+ok 25 - verify-pack catches mismatched .idx and .pack files
+ok 26 - verify-pack catches a corrupted pack signature
+ok 27 - verify-pack catches a corrupted pack version
+ok 28 - verify-pack catches a corrupted type/size of the 1st packed object data
+ok 29 - verify-pack catches a corrupted sum of the index file itself
+ok 30 - build pack index for an existing pack
+ok 31 - unpacking with --strict
+ok 32 - index-pack with --strict
+ok 33 - honor pack.packSizeLimit
+ok 34 - verify resulting packs
+ok 35 - tolerate packsizelimit smaller than biggest object
+ok 36 - verify resulting packs
+ok 37 - set up pack for non-repo tests
+ok 38 - index-pack --stdin complains of non-repo
+ok 39 - index-pack <pack> works in non-repo
+ok 40 - index-pack --strict <pack> works in non-repo
+ok 41 # skip index-pack --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
+ok 42 # skip pack-objects --threads=N or pack.threads=N warns when no pthreads (missing !PTHREADS of !PTHREADS,!FAIL_PREREQS)
+ok 43 - pack-objects in too-many-packs mode
+ok 44 - setup: fake a SHA1 hash collision
+ok 45 - make sure index-pack detects the SHA1 collision
+ok 46 - make sure index-pack detects the SHA1 collision (large blobs)
+ok 47 - prefetch objects
+ok 48 - setup for --stdin-packs tests
+ok 49 - --stdin-packs with excluded packs
+ok 50 - --stdin-packs is incompatible with --filter
+ok 51 - --stdin-packs is incompatible with --revs
+ok 52 - --stdin-packs with loose objects
+ok 53 - --stdin-packs with broken links
+ok 54 - negative window clamps to 0
+# passed all 54 test(s)
+1..54
 *** t5301-sliding-window.sh ***
 ok 1 - setup
 ok 2 - verify-pack -v, defaults
@@ -16310,7 +16422,7 @@ ok 60 - replace-objects invalidates commit-graph
 ok 61 - warn on improper hash version
 ok 62 - lower layers have overflow chunk
 ok 63 - git commit-graph verify
-ok 64 - detect permission problem
+ok 64 # skip detect permission problem (missing SANITY of POSIXPERM,SANITY)
 ok 65 - detect too small
 ok 66 - detect bad signature
 ok 67 - detect bad version
@@ -16872,6 +16984,39 @@ ok 3 - set up and verify repo with generation data overflow chunk
 ok 4 - check normal git operations: overflow 2
 # passed all 4 test(s)
 1..4
+*** t5329-pack-objects-cruft.sh ***
+ok 1 - unreachable loose objects are packed (expire never)
+ok 2 - unreachable packed objects are packed (expire never)
+ok 3 - unreachable cruft objects are repacked (expire never)
+ok 4 - multiple cruft packs (expire never)
+ok 5 - cruft packs tolerate missing trees (expire never)
+ok 6 - cruft packs tolerate missing blobs (expire never)
+ok 7 - unreachable loose objects are packed (expire 2.weeks.ago)
+ok 8 - unreachable packed objects are packed (expire 2.weeks.ago)
+ok 9 - unreachable cruft objects are repacked (expire 2.weeks.ago)
+ok 10 - multiple cruft packs (expire 2.weeks.ago)
+ok 11 - cruft packs tolerate missing trees (expire 2.weeks.ago)
+ok 12 - cruft packs tolerate missing blobs (expire 2.weeks.ago)
+ok 13 - cruft tags rescue tagged objects
+ok 14 - cruft commits rescue parents, trees
+ok 15 - cruft trees rescue sub-trees, blobs
+ok 16 - expired objects are pruned
+ok 17 - repack --cruft generates a cruft pack
+ok 18 - loose objects mtimes upsert others
+ok 19 - expiring cruft objects with git gc
+ok 20 - cruft packs are not included in geometric repack
+ok 21 - repack --geometric collects once-cruft objects
+ok 22 - cruft repack with no reachable objects
+ok 23 - cruft repack ignores --max-pack-size
+ok 24 - cruft repack ignores pack.packSizeLimit
+ok 25 - cruft repack respects repack.cruftWindow
+ok 26 - cruft repack respects --window by default
+ok 27 - cruft repack respects --quiet
+ok 28 - cruft --local drops unreachable objects
+ok 29 - MIDX bitmaps tolerate reachable cruft objects
+ok 30 - cruft objects are freshend via loose
+# passed all 30 test(s)
+1..30
 *** t5400-send-pack.sh ***
 ok 1 - setup
 ok 2 - pack the source repository
@@ -17632,105 +17777,109 @@ ok 1 - setup
 ok 2 - add remote whose URL agrees with url.<...>.insteadOf
 ok 3 - remote information for the origin
 ok 4 - add another remote
-ok 5 - check remote-tracking
-ok 6 - remote forces tracking branches
-ok 7 - remove remote
-ok 8 - remove remote
-ok 9 - remove remote protects local branches
-ok 10 - remove errors out early when deleting non-existent branch
-ok 11 - remove remote with a branch without configured merge
-ok 12 - rename errors out early when deleting non-existent branch
-ok 13 - rename errors out early when new name is invalid
-ok 14 - add existing foreign_vcs remote
-ok 15 - add existing foreign_vcs remote
-ok 16 - add invalid foreign_vcs remote
-ok 17 - show
-ok 18 - show -n
-ok 19 - prune
-ok 20 - set-head --delete
-ok 21 - set-head --auto
-ok 22 - set-head --auto has no problem w/multiple HEADs
-ok 23 - set-head explicit
-ok 24 - prune --dry-run
-ok 25 - add --mirror && prune
-ok 26 - add --mirror=fetch
-ok 27 - fetch mirrors act as mirrors during fetch
-ok 28 - fetch mirrors can prune
-ok 29 - fetch mirrors do not act as mirrors during push
-ok 30 - add fetch mirror with specific branches
-ok 31 - fetch mirror respects specific branches
-ok 32 - add --mirror=push
-ok 33 - push mirrors act as mirrors during push
-ok 34 - push mirrors do not act as mirrors during fetch
-ok 35 - push mirrors do not allow you to specify refs
-ok 36 - add alt && prune
-ok 37 - add with reachable tags (default)
-ok 38 - add --tags
-ok 39 - add --no-tags
-ok 40 - reject --no-no-tags
-ok 41 - update
-ok 42 - update with arguments
-ok 43 - update --prune
-ok 44 - update default
-ok 45 - update default (overridden, with funny whitespace)
-ok 46 - update (with remotes.default defined)
-ok 47 - "remote show" does not show symbolic refs
-ok 48 - reject adding remote with an invalid name
-ok 49 - rename a remote
-ok 50 - rename a remote renames repo remote.pushDefault
-ok 51 - rename a remote renames repo remote.pushDefault but ignores global
-ok 52 - rename a remote renames repo remote.pushDefault but keeps global
-ok 53 - rename does not update a non-default fetch refspec
-ok 54 - rename a remote with name part of fetch spec
-ok 55 - rename a remote with name prefix of other remote
-ok 56 - rename succeeds with existing remote.<target>.prune
-ok 57 - remove a remote
-ok 58 - remove a remote removes repo remote.pushDefault
-ok 59 - remove a remote removes repo remote.pushDefault but ignores global
-ok 60 - remove a remote removes repo remote.pushDefault but keeps global
-ok 61 - migrate a remote from named file in $GIT_DIR/remotes
-ok 62 - migrate a remote from named file in $GIT_DIR/branches
-ok 63 - migrate a remote from named file in $GIT_DIR/branches (2)
-ok 64 - remote prune to cause a dangling symref
-ok 65 - show empty remote
-ok 66 - remote set-branches requires a remote
-ok 67 - remote set-branches
-ok 68 - remote set-branches with --mirror
-ok 69 - new remote
-ok 70 - get-url on new remote
-ok 71 - remote set-url with locked config
-ok 72 - remote set-url bar
-ok 73 - remote set-url baz bar
-ok 74 - remote set-url zot bar
-ok 75 - remote set-url --push zot baz
-ok 76 - remote set-url --push zot
-ok 77 - get-url with different urls
-ok 78 - remote set-url --push qux zot
-ok 79 - remote set-url --push foo qu+x
-ok 80 - remote set-url --push --add aaa
-ok 81 - get-url on multi push remote
-ok 82 - remote set-url --push bar aaa
-ok 83 - remote set-url --push --delete bar
-ok 84 - remote set-url --push --delete foo
-ok 85 - remote set-url --add bbb
-ok 86 - get-url on multi fetch remote
-ok 87 - remote set-url --delete .*
-ok 88 - remote set-url --delete bbb
-ok 89 - remote set-url --delete baz
-ok 90 - remote set-url --add ccc
-ok 91 - remote set-url --delete baz
-ok 92 - extra args: setup
-ok 93 - extra args: add nick url
-ok 94 - extra args: rename origin newname
-ok 95 - extra args: remove origin
-ok 96 - extra args: set-head origin main
-ok 97 - extra args: get-url origin newurl
-ok 98 - extra args: set-url origin newurl oldurl
-ok 99 - add remote matching the "insteadOf" URL
-ok 100 - unqualified <dst> refspec DWIM and advice
-ok 101 - refs/remotes/* <src> refspec and unqualified <dst> DWIM and advice
-# passed all 101 test(s)
-1..101
+ok 5 - setup bare clone for server
+ok 6 - filters for promisor remotes are listed by git remote -v
+ok 7 - filters should not be listed for non promisor remotes (remote -v)
+ok 8 - filters are listed by git remote -v only
+ok 9 - check remote-tracking
+ok 10 - remote forces tracking branches
+ok 11 - remove remote
+ok 12 - remove remote
+ok 13 - remove remote protects local branches
+ok 14 - remove errors out early when deleting non-existent branch
+ok 15 - remove remote with a branch without configured merge
+ok 16 - rename errors out early when deleting non-existent branch
+ok 17 - rename errors out early when new name is invalid
+ok 18 - add existing foreign_vcs remote
+ok 19 - add existing foreign_vcs remote
+ok 20 - add invalid foreign_vcs remote
+ok 21 - show
+ok 22 - show -n
+ok 23 - prune
+ok 24 - set-head --delete
+ok 25 - set-head --auto
+ok 26 - set-head --auto has no problem w/multiple HEADs
+ok 27 - set-head explicit
+ok 28 - prune --dry-run
+ok 29 - add --mirror && prune
+ok 30 - add --mirror=fetch
+ok 31 - fetch mirrors act as mirrors during fetch
+ok 32 - fetch mirrors can prune
+ok 33 - fetch mirrors do not act as mirrors during push
+ok 34 - add fetch mirror with specific branches
+ok 35 - fetch mirror respects specific branches
+ok 36 - add --mirror=push
+ok 37 - push mirrors act as mirrors during push
+ok 38 - push mirrors do not act as mirrors during fetch
+ok 39 - push mirrors do not allow you to specify refs
+ok 40 - add alt && prune
+ok 41 - add with reachable tags (default)
+ok 42 - add --tags
+ok 43 - add --no-tags
+ok 44 - reject --no-no-tags
+ok 45 - update
+ok 46 - update with arguments
+ok 47 - update --prune
+ok 48 - update default
+ok 49 - update default (overridden, with funny whitespace)
+ok 50 - update (with remotes.default defined)
+ok 51 - "remote show" does not show symbolic refs
+ok 52 - reject adding remote with an invalid name
+ok 53 - rename a remote
+ok 54 - rename a remote renames repo remote.pushDefault
+ok 55 - rename a remote renames repo remote.pushDefault but ignores global
+ok 56 - rename a remote renames repo remote.pushDefault but keeps global
+ok 57 - rename does not update a non-default fetch refspec
+ok 58 - rename a remote with name part of fetch spec
+ok 59 - rename a remote with name prefix of other remote
+ok 60 - rename succeeds with existing remote.<target>.prune
+ok 61 - remove a remote
+ok 62 - remove a remote removes repo remote.pushDefault
+ok 63 - remove a remote removes repo remote.pushDefault but ignores global
+ok 64 - remove a remote removes repo remote.pushDefault but keeps global
+ok 65 - migrate a remote from named file in $GIT_DIR/remotes
+ok 66 - migrate a remote from named file in $GIT_DIR/branches
+ok 67 - migrate a remote from named file in $GIT_DIR/branches (2)
+ok 68 - remote prune to cause a dangling symref
+ok 69 - show empty remote
+ok 70 - remote set-branches requires a remote
+ok 71 - remote set-branches
+ok 72 - remote set-branches with --mirror
+ok 73 - new remote
+ok 74 - get-url on new remote
+ok 75 - remote set-url with locked config
+ok 76 - remote set-url bar
+ok 77 - remote set-url baz bar
+ok 78 - remote set-url zot bar
+ok 79 - remote set-url --push zot baz
+ok 80 - remote set-url --push zot
+ok 81 - get-url with different urls
+ok 82 - remote set-url --push qux zot
+ok 83 - remote set-url --push foo qu+x
+ok 84 - remote set-url --push --add aaa
+ok 85 - get-url on multi push remote
+ok 86 - remote set-url --push bar aaa
+ok 87 - remote set-url --push --delete bar
+ok 88 - remote set-url --push --delete foo
+ok 89 - remote set-url --add bbb
+ok 90 - get-url on multi fetch remote
+ok 91 - remote set-url --delete .*
+ok 92 - remote set-url --delete bbb
+ok 93 - remote set-url --delete baz
+ok 94 - remote set-url --add ccc
+ok 95 - remote set-url --delete baz
+ok 96 - extra args: setup
+ok 97 - extra args: add nick url
+ok 98 - extra args: rename origin newname
+ok 99 - extra args: remove origin
+ok 100 - extra args: set-head origin main
+ok 101 - extra args: get-url origin newurl
+ok 102 - extra args: set-url origin newurl oldurl
+ok 103 - add remote matching the "insteadOf" URL
+ok 104 - unqualified <dst> refspec DWIM and advice
+ok 105 - refs/remotes/* <src> refspec and unqualified <dst> DWIM and advice
+# passed all 105 test(s)
+1..105
 *** t5506-remote-groups.sh ***
 ok 1 - setup
 ok 2 - no group updates all
@@ -18004,42 +18153,44 @@ ok 47 - fetch refs/heads/	tab (invalid)
 # passed all 47 test(s)
 1..47
 *** t5512-ls-remote.sh ***
-ok 1 - setup
-ok 2 - ls-remote --tags .git
-ok 3 - ls-remote .git
-ok 4 - ls-remote --tags self
-ok 5 - ls-remote self
-ok 6 - ls-remote --sort="version:refname" --tags self
-ok 7 - ls-remote --sort="-version:refname" --tags self
-ok 8 - ls-remote --sort="-refname" --tags self
-ok 9 - dies when no remote specified and no default remotes found
-ok 10 - use "origin" when no remote specified
-ok 11 - suppress "From <url>" with -q
-ok 12 - use branch.<name>.remote if possible
-ok 13 - confuses pattern as remote when no remote specified
-ok 14 - die with non-2 for wrong repository even with --exit-code
-ok 15 - Report success even when nothing matches
-ok 16 - Report no-match with --exit-code
-ok 17 - Report match with --exit-code
-ok 18 - set up some extra tags for ref hiding
-ok 19 - Hide some refs with transfer.hiderefs
-ok 20 - Override hiding of transfer.hiderefs
-ok 21 - Hide some refs with uploadpack.hiderefs
-ok 22 - Override hiding of uploadpack.hiderefs
-ok 23 - overrides work between mixed transfer/upload-pack hideRefs
-ok 24 - protocol v2 supports hiderefs
-ok 25 - ls-remote --symref
-ok 26 - ls-remote with filtered symref (refname)
-not ok 27 - ls-remote with filtered symref (--heads) # TODO known breakage
-ok 28 - ls-remote --symref omits filtered-out matches
-ok 29 # skip indicate no refs in standards-compliant empty remote (missing JGIT of PIPE,JGIT,GIT_DAEMON)
-ok 30 - ls-remote works outside repository
-ok 31 - ls-remote --sort fails gracefully outside repository
-ok 32 - ls-remote patterns work with all protocol versions
-ok 33 - ls-remote prefixes work with all protocol versions
+ok 1 - dies when no remote found
+ok 2 - setup
+ok 3 - ls-remote --tags .git
+ok 4 - ls-remote .git
+ok 5 - ls-remote --tags self
+ok 6 - ls-remote self
+ok 7 - ls-remote --sort="version:refname" --tags self
+ok 8 - ls-remote --sort="-version:refname" --tags self
+ok 9 - ls-remote --sort="-refname" --tags self
+ok 10 - dies when no remote specified, multiple remotes found, and no default specified
+ok 11 - succeeds when no remote specified but only one found
+ok 12 - use "origin" when no remote specified and multiple found
+ok 13 - suppress "From <url>" with -q
+ok 14 - use branch.<name>.remote if possible
+ok 15 - confuses pattern as remote when no remote specified
+ok 16 - die with non-2 for wrong repository even with --exit-code
+ok 17 - Report success even when nothing matches
+ok 18 - Report no-match with --exit-code
+ok 19 - Report match with --exit-code
+ok 20 - set up some extra tags for ref hiding
+ok 21 - Hide some refs with transfer.hiderefs
+ok 22 - Override hiding of transfer.hiderefs
+ok 23 - Hide some refs with uploadpack.hiderefs
+ok 24 - Override hiding of uploadpack.hiderefs
+ok 25 - overrides work between mixed transfer/upload-pack hideRefs
+ok 26 - protocol v2 supports hiderefs
+ok 27 - ls-remote --symref
+ok 28 - ls-remote with filtered symref (refname)
+not ok 29 - ls-remote with filtered symref (--heads) # TODO known breakage
+ok 30 - ls-remote --symref omits filtered-out matches
+ok 31 # skip indicate no refs in standards-compliant empty remote (missing JGIT of PIPE,JGIT,GIT_DAEMON)
+ok 32 - ls-remote works outside repository
+ok 33 - ls-remote --sort fails gracefully outside repository
+ok 34 - ls-remote patterns work with all protocol versions
+ok 35 - ls-remote prefixes work with all protocol versions
 # still have 1 known breakage(s)
-# passed all remaining 32 test(s)
-1..33
+# passed all remaining 34 test(s)
+1..35
 *** t5513-fetch-track.sh ***
 ok 1 - setup
 ok 2 - fetch
@@ -18177,70 +18328,74 @@ ok 45 - push with remote.pushdefault
 ok 46 - push with config remote.*.pushurl
 ok 47 - push with config branch.*.pushremote
 ok 48 - branch.*.pushremote config order is irrelevant
-ok 49 - push with dry-run
-ok 50 - push updates local refs
-ok 51 - push updates up-to-date local refs
-ok 52 - push preserves up-to-date packed refs
-ok 53 - push does not update local refs on failure
-ok 54 - allow deleting an invalid remote ref
-ok 55 - pushing valid refs triggers post-receive and post-update hooks
-ok 56 - deleting dangling ref triggers hooks with correct args
-ok 57 - deletion of a non-existent ref is not fed to post-receive and post-update hooks
-ok 58 - deletion of a non-existent ref alone does trigger post-receive and post-update hooks
-ok 59 - mixed ref updates, deletes, invalid deletes trigger hooks with correct input
-ok 60 - allow deleting a ref using --delete
-ok 61 - allow deleting a tag using --delete
-ok 62 - push --delete without args aborts
-ok 63 - push --delete refuses src:dest refspecs
-ok 64 - push --delete refuses empty string
-ok 65 - warn on push to HEAD of non-bare repository
-ok 66 - deny push to HEAD of non-bare repository
-ok 67 - allow push to HEAD of bare repository (bare)
-ok 68 - allow push to HEAD of non-bare repository (config)
-ok 69 - fetch with branches
-ok 70 - fetch with branches containing #
-ok 71 - push with branches
-ok 72 - push with branches containing #
-ok 73 - push into aliased refs (consistent)
-ok 74 - push into aliased refs (inconsistent)
-ok 75 - force pushing required to update lightweight tag
-ok 76 - force pushing required to update annotated tag
-ok 77 - fetch will not clobber an existing lightweight tag without --force
-ok 78 - fetch will not clobber an existing annotated tag without --force
-ok 79 - push --porcelain
-ok 80 - push --porcelain bad url
-ok 81 - push --porcelain rejected
-ok 82 - push --porcelain --dry-run rejected
-ok 83 - push --prune
-ok 84 - push --prune refspec
-ok 85 - push to update a ref hidden by transfer.hiderefs
-ok 86 - push to update a ref hidden by receive.hiderefs
-ok 87 - fetch exact SHA1
-ok 88 - fetch exact SHA1 in protocol v2
-ok 89 - shallow fetch reachable SHA1 (but not a ref), allowtipsha1inwant=true
-ok 90 - deny fetch unreachable SHA1, allowtipsha1inwant=true
-ok 91 - shallow fetch reachable SHA1 (but not a ref), allowtipsha1inwant=false
-ok 92 - deny fetch unreachable SHA1, allowtipsha1inwant=false
-ok 93 - fetch follows tags by default
-ok 94 - peeled advertisements are not considered ref tips
-ok 95 - pushing a specific ref applies remote.$name.push as refmap
-ok 96 - with no remote.$name.push, it is not used as refmap
-ok 97 - with no remote.$name.push, upstream mapping is used
-ok 98 - push does not follow tags by default
-ok 99 - push --follow-tags only pushes relevant tags
-ok 100 - push --no-thin must produce non-thin pack
-ok 101 - pushing a tag pushes the tagged object
-ok 102 - push into bare respects core.logallrefupdates
-ok 103 - fetch into bare respects core.logallrefupdates
-ok 104 - receive.denyCurrentBranch = updateInstead
-ok 105 - updateInstead with push-to-checkout hook
-ok 106 - denyCurrentBranch and worktrees
-ok 107 - denyCurrentBranch and bare repository worktrees
-ok 108 - refuse fetch to current branch of worktree
-ok 109 - refuse fetch to current branch of bare repository worktree
-ok 110 - refuse to push a hidden ref, and make sure do not pollute the repository
-# passed all 110 test(s)
-1..110
+ok 49 - push rejects empty branch name entries
+ok 50 - push ignores "branch." config without subsection
+ok 51 - push with dry-run
+ok 52 - push updates local refs
+ok 53 - push updates up-to-date local refs
+ok 54 - push preserves up-to-date packed refs
+ok 55 - push does not update local refs on failure
+ok 56 - allow deleting an invalid remote ref
+ok 57 - pushing valid refs triggers post-receive and post-update hooks
+ok 58 - deleting dangling ref triggers hooks with correct args
+ok 59 - deletion of a non-existent ref is not fed to post-receive and post-update hooks
+ok 60 - deletion of a non-existent ref alone does trigger post-receive and post-update hooks
+ok 61 - mixed ref updates, deletes, invalid deletes trigger hooks with correct input
+ok 62 - allow deleting a ref using --delete
+ok 63 - allow deleting a tag using --delete
+ok 64 - push --delete without args aborts
+ok 65 - push --delete refuses src:dest refspecs
+ok 66 - push --delete refuses empty string
+ok 67 - warn on push to HEAD of non-bare repository
+ok 68 - deny push to HEAD of non-bare repository
+ok 69 - allow push to HEAD of bare repository (bare)
+ok 70 - allow push to HEAD of non-bare repository (config)
+ok 71 - fetch with branches
+ok 72 - fetch with branches containing #
+ok 73 - push with branches
+ok 74 - push with branches containing #
+ok 75 - push into aliased refs (consistent)
+ok 76 - push into aliased refs (inconsistent)
+ok 77 - force pushing required to update lightweight tag
+ok 78 - force pushing required to update annotated tag
+ok 79 - fetch will not clobber an existing lightweight tag without --force
+ok 80 - fetch will not clobber an existing annotated tag without --force
+ok 81 - push --porcelain
+ok 82 - push --porcelain bad url
+ok 83 - push --porcelain rejected
+ok 84 - push --porcelain --dry-run rejected
+ok 85 - push --prune
+ok 86 - push --prune refspec
+ok 87 - push to update a ref hidden by transfer.hiderefs
+ok 88 - push to update a ref hidden by receive.hiderefs
+ok 89 - fetch exact SHA1
+ok 90 - fetch exact SHA1 in protocol v2
+ok 91 - shallow fetch reachable SHA1 (but not a ref), allowtipsha1inwant=true
+ok 92 - deny fetch unreachable SHA1, allowtipsha1inwant=true
+ok 93 - shallow fetch reachable SHA1 (but not a ref), allowtipsha1inwant=false
+ok 94 - deny fetch unreachable SHA1, allowtipsha1inwant=false
+ok 95 - fetch follows tags by default
+ok 96 - peeled advertisements are not considered ref tips
+ok 97 - pushing a specific ref applies remote.$name.push as refmap
+ok 98 - with no remote.$name.push, it is not used as refmap
+ok 99 - with no remote.$name.push, upstream mapping is used
+ok 100 - push does not follow tags by default
+ok 101 - push --follow-tags only pushes relevant tags
+ok 102 - push --no-thin must produce non-thin pack
+ok 103 - pushing a tag pushes the tagged object
+ok 104 - push into bare respects core.logallrefupdates
+ok 105 - fetch into bare respects core.logallrefupdates
+ok 106 - receive.denyCurrentBranch = updateInstead
+ok 107 - updateInstead with push-to-checkout hook
+ok 108 - denyCurrentBranch and worktrees
+ok 109 - denyCurrentBranch and bare repository worktrees
+ok 110 - refuse fetch to current branch of worktree
+ok 111 - refuse fetch to current branch of bare repository worktree
+ok 112 - refuse to push a hidden ref, and make sure do not pollute the repository
+ok 113 - fetch warns or fails when using username:password
+ok 114 - push warns or fails when using username:password
+# passed all 114 test(s)
+1..114
 *** t5517-push-mirror.sh ***
 ok 1 - push mirror creates new branches
 ok 2 - push mirror updates existing branches
@@ -18465,8 +18620,10 @@ ok 47 - recursive fetch after deinit a submodule
 ok 48 - setup repo with upstreams that share a submodule name
 ok 49 - fetch --recurse-submodules updates name-conflicted, populated submodule
 ok 50 - fetch --recurse-submodules updates name-conflicted, unpopulated submodule
-# passed all 50 test(s)
-1..50
+ok 51 - fetch --all with --recurse-submodules
+ok 52 - fetch --all with --recurse-submodules with multiple
+# passed all 52 test(s)
+1..52
 *** t5527-fetch-odd-refs.sh ***
 ok 1 - setup repo with odd suffix ref
 ok 2 - suffix ref is ignored during fetch
@@ -18481,26 +18638,36 @@ ok 2 - "upstream" pushes to configured upstream
 ok 3 - "upstream" does not push on unconfigured remote
 ok 4 - "upstream" does not push on unconfigured branch
 ok 5 - "upstream" does not push when remotes do not match
-ok 6 - push from/to new branch with upstream, matching and simple
-ok 7 - "matching" fails if none match
-ok 8 - push ambiguously named branch with upstream, matching and simple
-ok 9 - push from/to new branch with current creates remote branch
-ok 10 - push to existing branch, with no upstream configured
-ok 11 - push to existing branch, upstream configured with same name
-ok 12 - push to existing branch, upstream configured with different name
-ok 13 - push.default = current success in central workflows
-ok 14 - push.default = upstream success in central workflows
-ok 15 - push.default = simple failure in central workflows
-ok 16 - push.default = matching success in central workflows
-ok 17 - push.default = current success in triangular workflows
-ok 18 - push.default = upstream failure in triangular workflows
-ok 19 - push.default = simple success in triangular workflows
-ok 20 - push.default = matching success in triangular workflows
-ok 21 - default behavior allows "simple" push
-ok 22 - default behavior rejects non-simple push
-ok 23 - default triangular behavior acts like "current"
-# passed all 23 test(s)
-1..23
+ok 6 - "current" does not push when multiple remotes and none origin
+ok 7 - "current" pushes when remote explicitly specified
+ok 8 - "current" pushes to origin when no remote specified among multiple
+ok 9 - "current" pushes to single remote even when not specified
+ok 10 - push from/to new branch with non-defaulted remote fails with upstream, matching, current and simple 
+ok 11 - push from/to new branch fails with upstream and simple 
+not ok 12 - push from/to new branch fails with matching  # TODO known breakage
+ok 13 - push from/to branch with tracking fails with nothing 
+ok 14 - push from/to new branch succeeds with upstream if push.autoSetupRemote
+ok 15 - push from/to new branch succeeds with simple if push.autoSetupRemote
+ok 16 - "matching" fails if none match
+ok 17 - push ambiguously named branch with upstream, matching and simple
+ok 18 - push from/to new branch with current creates remote branch
+ok 19 - push to existing branch, with no upstream configured
+ok 20 - push to existing branch, upstream configured with same name
+ok 21 - push to existing branch, upstream configured with different name
+ok 22 - push.default = current success in central workflows
+ok 23 - push.default = upstream success in central workflows
+ok 24 - push.default = simple failure in central workflows
+ok 25 - push.default = matching success in central workflows
+ok 26 - push.default = current success in triangular workflows
+ok 27 - push.default = upstream failure in triangular workflows
+ok 28 - push.default = simple success in triangular workflows
+ok 29 - push.default = matching success in triangular workflows
+ok 30 - default behavior allows "simple" push
+ok 31 - default behavior rejects non-simple push
+ok 32 - default triangular behavior acts like "current"
+# still have 1 known breakage(s)
+# passed all remaining 31 test(s)
+1..32
 *** t5529-push-errors.sh ***
 ok 1 - setup commits
 ok 2 - setup remote
@@ -18633,12 +18800,13 @@ ok 8 - fetch something upstream has but hidden by clients shallow boundaries
 ok 9 - fetch that requires changes in .git/shallow is filtered
 ok 10 - fetch --update-shallow
 ok 11 - fetch --update-shallow into a repo with submodules
-ok 12 - fetch --update-shallow (with fetch.writeCommitGraph)
-ok 13 - shallow fetch from a read-only repo
-ok 14 - .git/shallow is edited by repack
-# passed all 14 test(s)
+ok 12 - fetch --update-shallow a commit that is also a shallow point into a repo with submodules
+ok 13 - fetch --update-shallow (with fetch.writeCommitGraph)
+ok 14 # skip shallow fetch from a read-only repo (missing SANITY of POSIXPERM,SANITY)
+ok 15 - .git/shallow is edited by repack
+# passed all 15 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
-1..14
+1..15
 *** t5538-push-shallow.sh ***
 ok 1 - setup
 ok 2 - push from shallow clone
@@ -18923,13 +19091,15 @@ ok 57 - pull --recurse-submodule setup
 ok 58 - recursive pull updates working tree
 ok 59 - submodule.recurse option triggers recursive pull
 ok 60 -  --[no-]recurse-submodule and submodule.recurse
-ok 61 - pull --rebase --recurse-submodules (remote superproject submodule changes, local submodule changes)
-ok 62 - pull --rebase --recurse-submodules fails if both sides record submodule changes
-ok 63 - pull --rebase --recurse-submodules (no submodule changes, no fork-point)
-ok 64 - branch has no merge base with remote-tracking counterpart
+ok 61 - fetch.recurseSubmodules option triggers recursive fetch (but not recursive update)
+ok 62 - fetch.recurseSubmodules takes precedence over submodule.recurse
+ok 63 - pull --rebase --recurse-submodules (remote superproject submodule changes, local submodule changes)
+ok 64 - pull --rebase --recurse-submodules fails if both sides record submodule changes
+ok 65 - pull --rebase --recurse-submodules (no submodule changes, no fork-point)
+ok 66 - branch has no merge base with remote-tracking counterpart
 # still have 8 known breakage(s)
-# passed all remaining 56 test(s)
-1..64
+# passed all remaining 58 test(s)
+1..66
 *** t5573-pull-verify-signatures.sh ***
 ok 1 # skip create repositories with signed commits (missing GPG)
 ok 2 # skip pull unsigned commit with --verify-signatures (missing GPG)
@@ -18996,107 +19166,109 @@ ok 4 - output from clone
 ok 5 - clone does not keep pack
 ok 6 - clone checks out files
 ok 7 - clone respects GIT_WORK_TREE
-ok 8 - clone from hooks
-ok 9 - clone creates intermediate directories
-ok 10 - clone creates intermediate directories for bare repo
-ok 11 - clone --mirror
-ok 12 - clone --mirror with detached HEAD
-ok 13 - clone --bare with detached HEAD
-ok 14 - clone --bare names the local repository <name>.git
-ok 15 - clone --mirror does not repeat tags
-ok 16 - clone to destination with trailing /
-ok 17 - clone to destination with extra trailing /
-ok 18 - clone to an existing empty directory
-ok 19 - clone to an existing non-empty directory
-ok 20 - clone to an existing path
-ok 21 - clone a void
-ok 22 - clone respects global branch.autosetuprebase
-ok 23 - respect url-encoding of file://
-ok 24 - do not query-string-decode + in URLs
-ok 25 - do not respect url-encoding of non-url path
-ok 26 - clone separate gitdir
-ok 27 - clone separate gitdir: output
-ok 28 - clone from .git file
-ok 29 - fetch from .git gitfile
-ok 30 - fetch from gitfile parent
-ok 31 - clone separate gitdir where target already exists
-ok 32 - clone --reference from original
-ok 33 - clone with more than one --reference
-ok 34 - clone from original with relative alternate
-ok 35 - clone checking out a tag
-ok 36 - set up ssh wrapper
-ok 37 - clone myhost:src uses ssh
-ok 38 - clone local path foo:bar
-ok 39 - bracketed hostnames are still ssh
-ok 40 - OpenSSH variant passes -4
-ok 41 - variant can be overridden
-ok 42 - variant=auto picks based on basename
-ok 43 - simple does not support -4/-6
-ok 44 - simple does not support port
-ok 45 - uplink is treated as simple
-ok 46 - OpenSSH-like uplink is treated as ssh
-ok 47 - plink is treated specially (as putty)
-ok 48 - plink.exe is treated specially (as putty)
-ok 49 - tortoiseplink is like putty, with extra arguments
-ok 50 - double quoted plink.exe in GIT_SSH_COMMAND
-ok 51 - single quoted plink.exe in GIT_SSH_COMMAND
-ok 52 - GIT_SSH_VARIANT overrides plink detection
-ok 53 - ssh.variant overrides plink detection
-ok 54 - GIT_SSH_VARIANT overrides plink detection to plink
-ok 55 - GIT_SSH_VARIANT overrides plink to tortoiseplink
-ok 56 - clean failure on broken quoting
-ok 57 - clone c:temp is ssl
-ok 58 # skip clone c:temp is dos drive (missing MINGW)
-ok 59 - clone host:rep
-ok 60 - clone host:rep/home/project
-ok 61 - clone host:123
-ok 62 - clone [::1]:rep
-ok 63 - clone [::1]:rep/home/project
-ok 64 - clone [::1]:123
-ok 65 - clone host:/~repo
-ok 66 - clone [::1]:/~repo
-ok 67 - clone foo/bar:baz is not ssh
-ok 68 - clone [foo]bar/baz:qux is not ssh
-ok 69 - clone [foo/bar]:baz is not ssh
-ok 70 - clone ssh://host.xz/home/user/repo
-ok 71 - clone ssh://host.xz/~repo
-ok 72 - clone ssh://host.xz:/home/user/repo
-ok 73 - clone ssh://host.xz:/~repo
-ok 74 - clone ssh://host.xz:22/home/user/repo
-ok 75 - clone ssh://host.xz:22/~repo
-ok 76 - clone ssh://::1/home/user/repo
-ok 77 - clone ssh://[::1]/home/user/repo
-ok 78 - clone ssh://[::1]:/home/user/repo
-ok 79 - clone ssh://user@::1/home/user/repo
-ok 80 - clone ssh://user@[::1]/home/user/repo
-ok 81 - clone ssh://user@[::1]:/home/user/repo
-ok 82 - clone ssh://[user@::1]/home/user/repo
-ok 83 - clone ssh://[user@::1]:/home/user/repo
-ok 84 - clone ssh://::1/~repo
-ok 85 - clone ssh://[::1]/~repo
-ok 86 - clone ssh://user@::1/~repo
-ok 87 - clone ssh://user@[::1]/~repo
-ok 88 - clone ssh://[user@::1]/~repo
-ok 89 - clone ssh://[::1]:22/home/user/repo
-ok 90 - clone ssh://user@[::1]:22/home/user/repo
-ok 91 - clone ssh://[user@::1]:22/home/user/repo
-ok 92 - clone ssh://[::1]:22/~repo
-ok 93 - clone ssh://user@[::1]:22/~repo
-ok 94 - clone ssh://[user@::1]:22/~repo
-ok 95 - clone from a repository with two identical branches
-ok 96 - shallow clone locally
-ok 97 - GIT_TRACE_PACKFILE produces a usable pack
-ok 98 - clone on case-insensitive fs
-ok 99 # skip colliding file detection (missing CASE_INSENSITIVE_FS)
-ok 100 - clone with GIT_DEFAULT_HASH
-ok 101 - partial clone
-ok 102 - partial clone with -o
-ok 103 - partial clone: warn if server does not support object filtering
-ok 104 - batch missing blob request during checkout
-ok 105 - batch missing blob request does not inadvertently try to fetch gitlinks
-# passed all 105 test(s)
+ok 8 - clone warns or fails when using username:password
+ok 9 - clone does not detect username:password when it is https://username@domain:port/
+ok 10 - clone from hooks
+ok 11 - clone creates intermediate directories
+ok 12 - clone creates intermediate directories for bare repo
+ok 13 - clone --mirror
+ok 14 - clone --mirror with detached HEAD
+ok 15 - clone --bare with detached HEAD
+ok 16 - clone --bare names the local repository <name>.git
+ok 17 - clone --mirror does not repeat tags
+ok 18 - clone to destination with trailing /
+ok 19 - clone to destination with extra trailing /
+ok 20 - clone to an existing empty directory
+ok 21 - clone to an existing non-empty directory
+ok 22 - clone to an existing path
+ok 23 - clone a void
+ok 24 - clone respects global branch.autosetuprebase
+ok 25 - respect url-encoding of file://
+ok 26 - do not query-string-decode + in URLs
+ok 27 - do not respect url-encoding of non-url path
+ok 28 - clone separate gitdir
+ok 29 - clone separate gitdir: output
+ok 30 - clone from .git file
+ok 31 - fetch from .git gitfile
+ok 32 - fetch from gitfile parent
+ok 33 - clone separate gitdir where target already exists
+ok 34 - clone --reference from original
+ok 35 - clone with more than one --reference
+ok 36 - clone from original with relative alternate
+ok 37 - clone checking out a tag
+ok 38 - set up ssh wrapper
+ok 39 - clone myhost:src uses ssh
+ok 40 - clone local path foo:bar
+ok 41 - bracketed hostnames are still ssh
+ok 42 - OpenSSH variant passes -4
+ok 43 - variant can be overridden
+ok 44 - variant=auto picks based on basename
+ok 45 - simple does not support -4/-6
+ok 46 - simple does not support port
+ok 47 - uplink is treated as simple
+ok 48 - OpenSSH-like uplink is treated as ssh
+ok 49 - plink is treated specially (as putty)
+ok 50 - plink.exe is treated specially (as putty)
+ok 51 - tortoiseplink is like putty, with extra arguments
+ok 52 - double quoted plink.exe in GIT_SSH_COMMAND
+ok 53 - single quoted plink.exe in GIT_SSH_COMMAND
+ok 54 - GIT_SSH_VARIANT overrides plink detection
+ok 55 - ssh.variant overrides plink detection
+ok 56 - GIT_SSH_VARIANT overrides plink detection to plink
+ok 57 - GIT_SSH_VARIANT overrides plink to tortoiseplink
+ok 58 - clean failure on broken quoting
+ok 59 - clone c:temp is ssl
+ok 60 # skip clone c:temp is dos drive (missing MINGW)
+ok 61 - clone host:rep
+ok 62 - clone host:rep/home/project
+ok 63 - clone host:123
+ok 64 - clone [::1]:rep
+ok 65 - clone [::1]:rep/home/project
+ok 66 - clone [::1]:123
+ok 67 - clone host:/~repo
+ok 68 - clone [::1]:/~repo
+ok 69 - clone foo/bar:baz is not ssh
+ok 70 - clone [foo]bar/baz:qux is not ssh
+ok 71 - clone [foo/bar]:baz is not ssh
+ok 72 - clone ssh://host.xz/home/user/repo
+ok 73 - clone ssh://host.xz/~repo
+ok 74 - clone ssh://host.xz:/home/user/repo
+ok 75 - clone ssh://host.xz:/~repo
+ok 76 - clone ssh://host.xz:22/home/user/repo
+ok 77 - clone ssh://host.xz:22/~repo
+ok 78 - clone ssh://::1/home/user/repo
+ok 79 - clone ssh://[::1]/home/user/repo
+ok 80 - clone ssh://[::1]:/home/user/repo
+ok 81 - clone ssh://user@::1/home/user/repo
+ok 82 - clone ssh://user@[::1]/home/user/repo
+ok 83 - clone ssh://user@[::1]:/home/user/repo
+ok 84 - clone ssh://[user@::1]/home/user/repo
+ok 85 - clone ssh://[user@::1]:/home/user/repo
+ok 86 - clone ssh://::1/~repo
+ok 87 - clone ssh://[::1]/~repo
+ok 88 - clone ssh://user@::1/~repo
+ok 89 - clone ssh://user@[::1]/~repo
+ok 90 - clone ssh://[user@::1]/~repo
+ok 91 - clone ssh://[::1]:22/home/user/repo
+ok 92 - clone ssh://user@[::1]:22/home/user/repo
+ok 93 - clone ssh://[user@::1]:22/home/user/repo
+ok 94 - clone ssh://[::1]:22/~repo
+ok 95 - clone ssh://user@[::1]:22/~repo
+ok 96 - clone ssh://[user@::1]:22/~repo
+ok 97 - clone from a repository with two identical branches
+ok 98 - shallow clone locally
+ok 99 - GIT_TRACE_PACKFILE produces a usable pack
+ok 100 - clone on case-insensitive fs
+ok 101 # skip colliding file detection (missing CASE_INSENSITIVE_FS)
+ok 102 - clone with GIT_DEFAULT_HASH
+ok 103 - partial clone
+ok 104 - partial clone with -o
+ok 105 - partial clone: warn if server does not support object filtering
+ok 106 - batch missing blob request during checkout
+ok 107 - batch missing blob request does not inadvertently try to fetch gitlinks
+# passed all 107 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
-1..105
+1..107
 *** t5602-clone-remote-exec.sh ***
 ok 1 - setup
 ok 2 - clone calls git upload-pack unqualified with no -u option
@@ -19210,8 +19382,9 @@ ok 17 - cloning non-git directory fails
 ok 18 - cloning file:// does not hardlink
 ok 19 - cloning a local path with --no-local does not hardlink
 ok 20 - cloning locally respects "-u" for fetching refs
-# passed all 20 test(s)
-1..20
+ok 21 - local clone from repo with corrupt refs fails gracefully
+# passed all 21 test(s)
+1..21
 *** t5606-clone-options.sh ***
 ok 1 - setup
 ok 2 - submodule.stickyRecursiveClone flag manipulates submodule.recurse value
@@ -20409,8 +20582,10 @@ ok 79 - git bisect reset cleans bisection state properly
 ok 80 - bisect handles annotated tags
 ok 81 - bisect run fails with exit code equals or greater than 128
 ok 82 - bisect visualize with a filename with dash and space
-# passed all 82 test(s)
-1..82
+ok 83 - bisect state output with multiple good commits
+ok 84 - bisect state output with bad commit
+# passed all 84 test(s)
+1..84
 *** t6040-tracking-info.sh ***
 ok 1 - setup
 ok 2 - branch -v
@@ -20889,8 +21064,18 @@ ok 18 - t_e_i() exclude case #8
 ok 19 - grep --untracked PATTERN
 ok 20 - grep --untracked PATTERN :(exclude)DIR
 ok 21 - grep --untracked PATTERN :(exclude)*FILE
-# passed all 21 test(s)
-1..21
+ok 22 - archive with all negative
+ok 23 - add with all negative
+ok 24 - add -p with all negative
+ok 25 - clean with all negative
+ok 26 - commit with all negative
+ok 27 - reset with all negative
+ok 28 - grep with all negative
+ok 29 - ls-files with all negative
+ok 30 - rm with all negative
+ok 31 - stash with all negative
+# passed all 31 test(s)
+1..31
 *** t6133-pathspec-rev-dwim.sh ***
 ok 1 - setup
 ok 2 - non-rev wildcard dwims to pathspec
@@ -20942,16 +21127,16 @@ ok 3 - log and ls-files in .git directory
 ok 1 - setup
 ok 2 # skip set up a signed tag (missing GPG)
 ok 3 - created ssh signed commit and tag
-ok 4 - create signed tags with keys having defined lifetimes
+ok 4 # skip create signed tags with keys having defined lifetimes (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
 ok 5 - message for merging local branch
 ok 6 # skip message for merging local tag signed by good key (missing GPG)
 ok 7 # skip message for merging local tag signed by unknown key (missing GPG)
 ok 8 - message for merging local tag signed by good ssh key
 ok 9 - message for merging local tag signed by unknown ssh key
-ok 10 - message for merging local tag signed by expired ssh key
-ok 11 - message for merging local tag signed by not yet valid ssh key
-ok 12 - message for merging local tag signed by valid timeboxed ssh key
-ok 13 - message for merging local tag signed by invalid timeboxed ssh key
+ok 10 # skip message for merging local tag signed by expired ssh key (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
+ok 11 # skip message for merging local tag signed by not yet valid ssh key (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
+ok 12 # skip message for merging local tag signed by valid timeboxed ssh key (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
+ok 13 # skip message for merging local tag signed by invalid timeboxed ssh key (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
 ok 14 - message for merging external branch
 ok 15 - [merge] summary/log configuration
 ok 16 - setup FETCH_HEAD
@@ -22732,12 +22917,12 @@ ok 15 # skip verifying a forged tag with --format should fail silently (missing 
 1..15
 *** t7031-verify-tag-signed-ssh.sh ***
 ok 1 - create signed tags ssh
-ok 2 - create signed tags with keys having defined lifetimes
+ok 2 # skip create signed tags with keys having defined lifetimes (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
 ok 3 - verify and show ssh signatures
-ok 4 - verify-tag exits failure on expired signature key
-ok 5 - verify-tag exits failure on not yet valid signature key
-ok 6 - verify-tag succeeds with tag date and key validity matching
-ok 7 - verify-tag failes with tag date outside of key validity
+ok 4 # skip verify-tag exits failure on expired signature key (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
+ok 5 # skip verify-tag exits failure on not yet valid signature key (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
+ok 6 # skip verify-tag succeeds with tag date and key validity matching (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
+ok 7 # skip verify-tag failes with tag date outside of key validity (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
 ok 8 - detect fudged ssh signature
 ok 9 - verify ssh signatures with --raw
 ok 10 - verify signatures with --raw ssh
@@ -22806,51 +22991,58 @@ ok 4 - status first time (empty cache)
 ok 5 - untracked cache after first status
 ok 6 - status second time (fully populated cache)
 ok 7 - untracked cache after second status
-ok 8 - modify in root directory, one dir invalidation
-ok 9 - verify untracked cache dump
-ok 10 - new .gitignore invalidates recursively
-ok 11 - verify untracked cache dump
-ok 12 - new info/exclude invalidates everything
-ok 13 - verify untracked cache dump
-ok 14 - move two from tracked to untracked
-ok 15 - status after the move
+ok 8 - untracked cache is bypassed with -uall
+ok 9 - untracked cache remains after bypass
+ok 10 - if -uall is configured, untracked cache gets populated by default
+ok 11 - if -uall was configured, untracked cache is populated
+ok 12 - if -uall is configured, untracked cache is used by default
+ok 13 - if -uall is configured, untracked cache is bypassed with -unormal
+ok 14 - repopulate untracked cache for -unormal
+ok 15 - modify in root directory, one dir invalidation
 ok 16 - verify untracked cache dump
-ok 17 - move two from untracked to tracked
-ok 18 - status after the move
-ok 19 - verify untracked cache dump
-ok 20 - set up for sparse checkout testing
-ok 21 - status after commit
-ok 22 - untracked cache correct after commit
-ok 23 - set up sparse checkout
-ok 24 - create/modify files, some of which are gitignored
-ok 25 - test sparse status with untracked cache
-ok 26 - untracked cache correct after status
-ok 27 - test sparse status again with untracked cache
-ok 28 - set up for test of subdir and sparse checkouts
-ok 29 - test sparse status with untracked cache and subdir
-ok 30 - verify untracked cache dump (sparse/subdirs)
-ok 31 - test sparse status again with untracked cache and subdir
-ok 32 - move entry in subdir from untracked to cached
-ok 33 - move entry in subdir from cached to untracked
-ok 34 - --no-untracked-cache removes the cache
-ok 35 - git status does not change anything
-ok 36 - setting core.untrackedCache to true and using git status creates the cache
-ok 37 - using --no-untracked-cache does not fail when core.untrackedCache is true
-ok 38 - setting core.untrackedCache to false and using git status removes the cache
-ok 39 - using --untracked-cache does not fail when core.untrackedCache is false
-ok 40 - setting core.untrackedCache to keep
-ok 41 - test ident field is working
-ok 42 - untracked cache survives a checkout
-ok 43 - untracked cache survives a commit
-ok 44 - teardown worktree
-ok 45 - setup worktree for symlink test
-ok 46 - "status" after symlink replacement should be clean with UC=true
-ok 47 - "status" after symlink replacement should be clean with UC=false
-ok 48 - setup worktree for non-symlink test
-ok 49 - "status" after file replacement should be clean with UC=true
-ok 50 - "status" after file replacement should be clean with UC=false
-# passed all 50 test(s)
-1..50
+ok 17 - new .gitignore invalidates recursively
+ok 18 - verify untracked cache dump
+ok 19 - new info/exclude invalidates everything
+ok 20 - verify untracked cache dump
+ok 21 - move two from tracked to untracked
+ok 22 - status after the move
+ok 23 - verify untracked cache dump
+ok 24 - move two from untracked to tracked
+ok 25 - status after the move
+ok 26 - verify untracked cache dump
+ok 27 - set up for sparse checkout testing
+ok 28 - status after commit
+ok 29 - untracked cache correct after commit
+ok 30 - set up sparse checkout
+ok 31 - create/modify files, some of which are gitignored
+ok 32 - test sparse status with untracked cache
+ok 33 - untracked cache correct after status
+ok 34 - test sparse status again with untracked cache
+ok 35 - set up for test of subdir and sparse checkouts
+ok 36 - test sparse status with untracked cache and subdir
+ok 37 - verify untracked cache dump (sparse/subdirs)
+ok 38 - test sparse status again with untracked cache and subdir
+ok 39 - move entry in subdir from untracked to cached
+ok 40 - move entry in subdir from cached to untracked
+ok 41 - --no-untracked-cache removes the cache
+ok 42 - git status does not change anything
+ok 43 - setting core.untrackedCache to true and using git status creates the cache
+ok 44 - using --no-untracked-cache does not fail when core.untrackedCache is true
+ok 45 - setting core.untrackedCache to false and using git status removes the cache
+ok 46 - using --untracked-cache does not fail when core.untrackedCache is false
+ok 47 - setting core.untrackedCache to keep
+ok 48 - test ident field is working
+ok 49 - untracked cache survives a checkout
+ok 50 - untracked cache survives a commit
+ok 51 - teardown worktree
+ok 52 - setup worktree for symlink test
+ok 53 - "status" after symlink replacement should be clean with UC=true
+ok 54 - "status" after symlink replacement should be clean with UC=false
+ok 55 - setup worktree for non-symlink test
+ok 56 - "status" after file replacement should be clean with UC=true
+ok 57 - "status" after file replacement should be clean with UC=false
+# passed all 57 test(s)
+1..57
 *** t7064-wtstatus-pv2.sh ***
 ok 1 - setup
 ok 2 - before initial commit, nothing added, only untracked
@@ -23220,11 +23412,11 @@ ok 24 - clean.requireForce
 ok 25 - clean.requireForce and -n
 ok 26 - clean.requireForce and -f
 ok 27 - core.excludesfile
-ok 28 - removal failure
+ok 28 # skip removal failure (missing SANITY)
 ok 29 - nested git work tree
 ok 30 - should clean things that almost look like git but are not
 ok 31 - should not clean submodules
-ok 32 - should avoid cleaning possible submodules
+ok 32 # skip should avoid cleaning possible submodules (missing SANITY of POSIXPERM,SANITY)
 ok 33 - nested (empty) git should be kept
 ok 34 - nested bare repositories should be cleaned
 not ok 35 - nested (empty) bare repositories should be cleaned even when in .git # TODO known breakage
@@ -23234,7 +23426,7 @@ ok 38 - giving path to nested .git will not remove it
 ok 39 - giving path to nested .git/ will NOT remove contents
 ok 40 - force removal of nested git work tree
 ok 41 - git clean -e
-ok 42 - git clean -d with an unreadable empty directory
+ok 42 # skip git clean -d with an unreadable empty directory (missing SANITY)
 ok 43 - git clean -d respects pathspecs (dir is prefix of pathspec)
 ok 44 - git clean -d respects pathspecs (pathspec is prefix of dir)
 ok 45 - git clean -d skips untracked dirs containing ignored files
@@ -24173,7 +24365,7 @@ ok 62 - status submodule summary (clean submodule): commit
 ok 63 - status -s submodule summary (clean submodule)
 ok 64 - status -z implies porcelain
 ok 65 - commit --dry-run submodule summary (--amend)
-ok 66 - status succeeds in a read-only repository
+ok 66 # skip status succeeds in a read-only repository (missing SANITY of POSIXPERM,SANITY)
 ok 67 - --ignore-submodules=untracked suppresses submodules with untracked content
 ok 68 - .gitmodules ignore=untracked suppresses submodules with untracked content
 ok 69 - .git/config ignore=untracked suppresses submodules with untracked content
@@ -24385,7 +24577,7 @@ ok 38 - in-place editing with basic patch
 ok 39 - in-place editing with additional trailer
 ok 40 - in-place editing on stdin disallowed
 ok 41 - in-place editing on non-existing file
-ok 42 - in-place editing doesn't clobber original file on error
+ok 42 # skip in-place editing doesn't clobber original file on error (missing SANITY of POSIXPERM,SANITY)
 ok 43 - using "where = before"
 ok 44 - overriding configuration with "--where after"
 ok 45 - using "where = before" with "--no-where"
@@ -24477,38 +24669,41 @@ ok 4 - empty configured name does not auto-detect for committer
 # passed all 4 test(s)
 1..4
 *** t7519-status-fsmonitor.sh ***
-ok 1 - setup
-ok 2 - fsmonitor extension is off by default
-ok 3 - update-index --fsmonitor" adds the fsmonitor extension
-ok 4 - update-index --no-fsmonitor" removes the fsmonitor extension
-ok 5 - update-index --fsmonitor-valid" sets the fsmonitor valid bit
-ok 6 - update-index --no-fsmonitor-valid" clears the fsmonitor valid bit
-ok 7 - all files returned by integration script get flagged as invalid
-ok 8 - newly added files are marked valid
-ok 9 - all unmodified files get marked valid
-ok 10 - *only* files returned by the integration script get flagged as invalid
-ok 11 - refresh_index() invalidates fsmonitor cache
-ok 12 - setup preloadIndex to false
-ok 13 - setup untracked cache to false
-ok 14 - compare status with and without fsmonitor
-ok 15 - status doesn't detect unreported modifications
-ok 16 - setup untracked cache to true
+ok 1 - incompatible bare repo
+ok 2 # skip run fsmonitor-daemon in bare repo (missing FSMONITOR_DAEMON)
+ok 3 # skip run fsmonitor-daemon in virtual repo (missing FSMONITOR_DAEMON,MINGW of MINGW,FSMONITOR_DAEMON)
+ok 4 - setup
+ok 5 - fsmonitor extension is off by default
+ok 6 - update-index --fsmonitor" adds the fsmonitor extension
+ok 7 - update-index --no-fsmonitor" removes the fsmonitor extension
+ok 8 - update-index --fsmonitor-valid" sets the fsmonitor valid bit
+ok 9 - update-index --no-fsmonitor-valid" clears the fsmonitor valid bit
+ok 10 - all files returned by integration script get flagged as invalid
+ok 11 - newly added files are marked valid
+ok 12 - all unmodified files get marked valid
+ok 13 - *only* files returned by the integration script get flagged as invalid
+ok 14 - refresh_index() invalidates fsmonitor cache
+ok 15 - setup preloadIndex to false
+ok 16 - setup untracked cache to false
 ok 17 - compare status with and without fsmonitor
 ok 18 - status doesn't detect unreported modifications
-ok 19 - setup preloadIndex to true
-ok 20 - setup untracked cache to false
-ok 21 - compare status with and without fsmonitor
-ok 22 - status doesn't detect unreported modifications
-ok 23 - setup untracked cache to true
+ok 19 - setup untracked cache to true
+ok 20 - compare status with and without fsmonitor
+ok 21 - status doesn't detect unreported modifications
+ok 22 - setup preloadIndex to true
+ok 23 - setup untracked cache to false
 ok 24 - compare status with and without fsmonitor
 ok 25 - status doesn't detect unreported modifications
-ok 26 - splitting the index results in the same state
-ok 27 - ignore .git changes when invalidating UNTR
-ok 28 - discard_index() also discards fsmonitor info
-ok 29 - status succeeds after staging/unstaging
-ok 30 - status succeeds with sparse index
-# passed all 30 test(s)
-1..30
+ok 26 - setup untracked cache to true
+ok 27 - compare status with and without fsmonitor
+ok 28 - status doesn't detect unreported modifications
+ok 29 - splitting the index results in the same state
+ok 30 - ignore .git changes when invalidating UNTR
+ok 31 - discard_index() also discards fsmonitor info
+ok 32 - status succeeds after staging/unstaging
+ok 33 - status succeeds with sparse index
+# passed all 33 test(s)
+1..33
 *** t7520-ignored-hook-warning.sh ***
 ok 1 - setup
 ok 2 - no warning if hook is not ignored
@@ -24532,6 +24727,11 @@ ok 11 - Verify behavior of status with --ignored=traditional and --untracked-fil
 ok 12 - Verify behavior of status with --ignored=traditional and --untracked-files=normal
 # passed all 12 test(s)
 1..12
+*** t7524-commit-summary.sh ***
+ok 1 - setup
+ok 2 - commit summary ignores rewrites
+# passed all 2 test(s)
+1..2
 *** t7525-status-rename.sh ***
 ok 1 - setup
 ok 2 - status no-options
@@ -24569,13 +24769,13 @@ ok 11 - error conditions
 *** t7528-signed-commit-ssh.sh ***
 ok 1 - create signed commits
 ok 2 - sign commits using literal public keys with ssh-agent
-ok 3 - create signed commits with keys having defined lifetimes
+ok 3 # skip create signed commits with keys having defined lifetimes (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
 ok 4 - verify and show signatures
 ok 5 - verify-commit exits failure on untrusted signature
-ok 6 - verify-commit exits failure on expired signature key
-ok 7 - verify-commit exits failure on not yet valid signature key
-ok 8 - verify-commit succeeds with commit date and key validity matching
-ok 9 - verify-commit exits failure with commit date outside of key validity
+ok 6 # skip verify-commit exits failure on expired signature key (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
+ok 7 # skip verify-commit exits failure on not yet valid signature key (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
+ok 8 # skip verify-commit succeeds with commit date and key validity matching (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
+ok 9 # skip verify-commit exits failure with commit date outside of key validity (missing GPGSSH_VERIFYTIME of GPGSSH,GPGSSH_VERIFYTIME)
 ok 10 - verify-commit exits success with matching minTrustLevel
 ok 11 - verify-commit exits success with low minTrustLevel
 ok 12 - verify-commit exits failure with high minTrustLevel
@@ -24804,6 +25004,14 @@ ok 4 - ambiguous tag
 ok 5 - remote-tracking branch
 # passed all 5 test(s)
 1..5
+*** t7609-mergetool--lib.sh ***
+not ok 1 - mergetool --tool=vimdiff creates the expected layout
+#	
+#		. $GIT_BUILD_DIR/mergetools/vimdiff &&
+#		run_unit_tests
+#	
+# failed 1 among 1 test(s)
+1..1
 *** t7610-mergetool.sh ***
 ok 1 - setup
 ok 2 - custom mergetool
@@ -24941,9 +25149,11 @@ ok 4 - --geometric with loose objects
 ok 5 - --geometric with small-pack rollup
 ok 6 - --geometric with small- and large-pack rollup
 ok 7 - --geometric ignores kept packs
-ok 8 - --geometric chooses largest MIDX preferred pack
-# passed all 8 test(s)
-1..8
+ok 8 - --geometric ignores --keep-pack packs
+ok 9 - --geometric chooses largest MIDX preferred pack
+ok 10 - --geometric with pack.packSizeLimit
+# passed all 10 test(s)
+1..10
 *** t7800-difftool.sh ***
 ok 1 - basic usage requires no repo
 ok 2 - setup
@@ -25312,8 +25522,9 @@ ok 14 - PCRE v2: grep non-ASCII from invalid UTF-8 data with -i
 ok 15 - PCRE v2: grep non-ASCII from invalid UTF-8 data with -i
 ok 16 - PCRE v2: grep non-ASCII from invalid UTF-8 data with -i (PCRE2 bug #2642)
 ok 17 - PCRE v2: grep non-literal ASCII from UTF-8
-# passed all 17 test(s)
-1..17
+ok 18 - PCRE v2: grep avoid endless loop bug
+# passed all 18 test(s)
+1..18
 *** t7813-grep-icase-iso.sh ***
 # lib-gettext: Found 'is_IS.UTF-8' as an is_IS UTF-8 locale
 # lib-gettext: Found 'is_IS.ISO8859-1' as an is_IS ISO-8859-1 locale
@@ -25696,9 +25907,12 @@ ok 105 - blame -L X,Y (non-numeric Y)
 ok 106 - blame -L X,+N (non-numeric N)
 ok 107 - blame -L X,-N (non-numeric N)
 ok 108 - blame -L ,^/RE/
-ok 109 - annotate old revision
-# passed all 109 test(s)
-1..109
+ok 109 - blame progress on a full file
+ok 110 - blame progress on a single range
+ok 111 - blame progress on multiple ranges
+ok 112 - annotate old revision
+# passed all 112 test(s)
+1..112
 *** t8002-blame.sh ***
 ok 1 - setup A lines
 ok 2 - blame 1 author
@@ -25808,23 +26022,26 @@ ok 105 - blame -L X,Y (non-numeric Y)
 ok 106 - blame -L X,+N (non-numeric N)
 ok 107 - blame -L X,-N (non-numeric N)
 ok 108 - blame -L ,^/RE/
-ok 109 - setup
-ok 110 - blame untracked file in empty repo
-ok 111 - blame --show-email
-ok 112 - setup showEmail tests
-ok 113 - blame with no options and no config
-ok 114 - blame with showemail options
-ok 115 - blame with showEmail config false
-ok 116 - blame with showEmail config true
-ok 117 - set up abbrev tests
-ok 118 - blame --abbrev=<n> works
-ok 119 - blame -l aligns regular and boundary commits
-ok 120 - blame --abbrev with full length behaves like -l
-ok 121 - --no-abbrev works like --abbrev with full length
-ok 122 - --exclude-promisor-objects does not BUG-crash
-ok 123 - blame with uncommitted edits in partial clone does not crash
-# passed all 123 test(s)
-1..123
+ok 109 - blame progress on a full file
+ok 110 - blame progress on a single range
+ok 111 - blame progress on multiple ranges
+ok 112 - setup
+ok 113 - blame untracked file in empty repo
+ok 114 - blame --show-email
+ok 115 - setup showEmail tests
+ok 116 - blame with no options and no config
+ok 117 - blame with showemail options
+ok 118 - blame with showEmail config false
+ok 119 - blame with showEmail config true
+ok 120 - set up abbrev tests
+ok 121 - blame --abbrev=<n> works
+ok 122 - blame -l aligns regular and boundary commits
+ok 123 - blame --abbrev with full length behaves like -l
+ok 124 - --no-abbrev works like --abbrev with full length
+ok 125 - --exclude-promisor-objects does not BUG-crash
+ok 126 - blame with uncommitted edits in partial clone does not crash
+# passed all 126 test(s)
+1..126
 *** t8003-blame-corner-cases.sh ***
 ok 1 - setup
 ok 2 - straight copy without -C
@@ -26056,11 +26273,14 @@ ok 105 - blame -L X,Y (non-numeric Y)
 ok 106 - blame -L X,+N (non-numeric N)
 ok 107 - blame -L X,-N (non-numeric N)
 ok 108 - blame -L ,^/RE/
-ok 109 - colored blame colors contiguous lines
-ok 110 - color by age consistently colors old code
-ok 111 - blame color by age: new code is different
-# passed all 111 test(s)
-1..111
+ok 109 - blame progress on a full file
+ok 110 - blame progress on a single range
+ok 111 - blame progress on multiple ranges
+ok 112 - colored blame colors contiguous lines
+ok 113 - color by age consistently colors old code
+ok 114 - blame color by age: new code is different
+# passed all 114 test(s)
+1..114
 *** t8013-blame-ignore-revs.sh ***
 ok 1 - setup
 ok 2 - validate --ignore-rev
@@ -27050,6 +27270,10 @@ ok 47 - unquote escape sequences
 1..0 # SKIP skipping git p4 tests; no p4 or p4d
 *** t9834-git-p4-file-dir-bug.sh ***
 1..0 # SKIP skipping git p4 tests; no p4 or p4d
+*** t9835-git-p4-metadata-encoding-python2.sh ***
+1..0 # SKIP skipping git p4 tests; no p4 or p4d
+*** t9836-git-p4-metadata-encoding-python3.sh ***
+1..0 # SKIP skipping git p4 tests; no p4 or p4d
 *** t9901-git-web--browse.sh ***
 ok 1 - URL with an ampersand in it
 ok 2 - URL with a semi-colon in it
@@ -27373,13 +27597,13 @@ ok 66 - prompt - hide if pwd ignored - inside gitdir
 # passed all 66 test(s)
 1..66
 
-missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !REFFILES !RUNS_COMMANDS_FROM_PWD AUTOIDENT CASE_INSENSITIVE_FS EXPENSIVE GETCWD_IGNORES_PERMS GPG GPGSM JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK TTY UTF8_NFD_TO_NFC WINDOWS
+missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !REFFILES !RUNS_COMMANDS_FROM_PWD ADD_OUT AUTOIDENT CASE_INSENSITIVE_FS COMMIT_OUT EXPENSIVE FSMONITOR_DAEMON GPG GPGSM GPGSSH_VERIFYTIME JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SANITY SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK TTY UPDATE_INDEX_OUT UTF8_NFD_TO_NFC WINDOWS WRITE_TREE_OUT
 
 
-failed test(s): t0204 t1700 t2501 t3200 t4150 t4202 t9902
+failed test(s): t0204 t1700 t2501 t3200 t4150 t4202 t7609 t9902
 
 fixed   1
-success 23645
-failed  10
-broken  212
-total   24291
+success 23789
+failed  11
+broken  211
+total   24490
