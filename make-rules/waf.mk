@@ -105,7 +105,7 @@ $(foreach pyver, $(PYTHON_VERSIONS), \
 
 $(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
-	$(CLONEY) $(SOURCE_DIR) $(@D)
+	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_CONFIGURE_ACTION)
 	(cd $(@D) ; $(ENV) $(CONFIGURE_ENV) \
 		$(WAF) $(COMPONENT_CONFIGURE_TARGETS) $(CONFIGURE_OPTIONS))
@@ -210,7 +210,7 @@ $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 $(BUILD_DIR)/%/.system-tested-and-compared:    $(SOURCE_DIR)/.prep
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(CLONEY) $(SOURCE_DIR) $(@D)
+	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_SYSTEM_TEST_ACTION)
 	-(cd $(COMPONENT_SYSTEM_TEST_DIR) ; \
 		$(COMPONENT_SYSTEM_TEST_ENV_CMD) $(COMPONENT_SYSTEM_TEST_ENV) \
@@ -225,7 +225,7 @@ $(BUILD_DIR)/%/.system-tested-and-compared:    $(SOURCE_DIR)/.prep
 	$(TOUCH) $@
 
 $(BUILD_DIR)/%/.system-tested:    $(SOURCE_DIR)/.prep
-	$(CLONEY) $(SOURCE_DIR) $(@D)
+	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_SYSTEM_TEST_ACTION)
 	(cd $(COMPONENT_SYSTEM_TEST_DIR) ; \
 		$(COMPONENT_SYSTEM_TEST_ENV_CMD) $(COMPONENT_SYSTEM_TEST_ENV) \
