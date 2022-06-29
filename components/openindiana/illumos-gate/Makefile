@@ -95,9 +95,10 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	    -e 's|^export MULTI_PROTO=.*|export MULTI_PROTO=\"$(MULTI_PROTO)\"|' \
 	    -e 's|^export SHADOW_CCS=.*||' \
 	    -e 's|^export SHADOW_CCCS=.*||' ; \
-	  echo export PERL_VERSION=\"5.22\"; \
-	  echo export PERL_PKGVERS=\"-522\"; \
-	  echo export BUILDPERL64=\"#\"; \
+	  echo export PERL_VERSION=\"5.34\"; \
+	  echo export PERL_VARIANT=\"-thread-multi\" ; \
+	  echo export PERL_PKGVERS=\"-534\"; \
+	  echo export BUILDPERL32=\"#\"; \
 	  echo export BUILDPY2=\"#\"; \
 	  echo export BUILDPY2TOOLS=\"#\"; \
 	  echo export PYTHON3b_VERSION="3.9"; \
