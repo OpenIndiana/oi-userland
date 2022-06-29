@@ -27,7 +27,7 @@ COMPONENT_BUILD_ENV += JAVA_HOME="$(JAVA_HOME)"
 # build the configured source
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
-	$(CLONEY) $(SOURCE_DIR) $(@D)
+	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
 	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
 		$(ANT) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))

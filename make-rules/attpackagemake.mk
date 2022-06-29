@@ -67,7 +67,7 @@ COMPONENT_TEST_ARGS = HOSTTYPE="$(HOSTTYPE$(BITS))"
 # build the configured source
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
-	$(CLONEY) $(SOURCE_DIR) $(@D)
+	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
 	cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) \
    		bin/package make $(COMPONENT_BUILD_TARGETS) $(COMPONENT_BUILD_ARGS)
