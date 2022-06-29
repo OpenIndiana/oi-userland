@@ -37,33 +37,27 @@ REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(PERL_REQUIRED_PACKAGES:%=%
 # directories so that it populates all architecture prototype
 # directories.
 
-$(BUILD_DIR)/%-5.22/.configured:	PERL_VERSION=5.22
-$(BUILD_DIR)/%-5.24/.configured:	PERL_VERSION=5.24
-$(BUILD_DIR)/%-5.34/.configured:	PERL_VERSION=5.34
+define perl-version-rule
+$(BUILD_DIR)/%-$(1)/.configured:		PERL_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.built:			PERL_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.installed:			PERL_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.tested:			PERL_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.tested-and-compared:	PERL_VERSION=$(1)
+endef
+$(foreach perlver,$(PERL_VERSIONS),$(eval $(call perl-version-rule,$(perlver))))
+
 $(BUILD_DIR)/$(MACH32)-%/.configured:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.configured:	BITS=64
 
-$(BUILD_DIR)/%-5.22/.built:	PERL_VERSION=5.22
-$(BUILD_DIR)/%-5.24/.built:	PERL_VERSION=5.24
-$(BUILD_DIR)/%-5.34/.built:	PERL_VERSION=5.34
 $(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
-$(BUILD_DIR)/%-5.22/.installed:	PERL_VERSION=5.22
-$(BUILD_DIR)/%-5.24/.installed:	PERL_VERSION=5.24
-$(BUILD_DIR)/%-5.34/.installed:	PERL_VERSION=5.34
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
-$(BUILD_DIR)/%-5.22/.tested:	PERL_VERSION=5.22
-$(BUILD_DIR)/%-5.24/.tested:	PERL_VERSION=5.24
-$(BUILD_DIR)/%-5.34/.tested:	PERL_VERSION=5.34
 $(BUILD_DIR)/$(MACH32)-%/.tested:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.tested:	BITS=64
 
-$(BUILD_DIR)/%-5.22/.tested-and-compared:	PERL_VERSION=5.22
-$(BUILD_DIR)/%-5.24/.tested-and-compared:	PERL_VERSION=5.24
-$(BUILD_DIR)/%-5.34/.tested-and-compared:	PERL_VERSION=5.34
 $(BUILD_DIR)/$(MACH32)-%/.tested-and-compared:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.tested-and-compared:	BITS=64
 
@@ -72,15 +66,6 @@ PERL_32_ONLY_VERSIONS = $(filter-out $(PERL_64_ONLY_VERSIONS), $(PERL_VERSIONS))
 BUILD_32 =	$(PERL_32_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
 BUILD_64 =	$(PERL_64_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
 BUILD_NO_ARCH =	$(PERL_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.built)
-
-ifeq ($(PERL_VERSION),5.24)
-BUILD_32_and_64 = $(BUILD_64)
-BUILD_64_and_32 = $(BUILD_64)
-endif
-ifeq ($(PERL_VERSION),5.34)
-BUILD_32_and_64 = $(BUILD_64)
-BUILD_64_and_32 = $(BUILD_64)
-endif
 
 INSTALL_32 = $(PERL_32_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
 INSTALL_64 = $(PERL_64_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
