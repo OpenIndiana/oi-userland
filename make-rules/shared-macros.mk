@@ -802,18 +802,12 @@ PERL_VERSION =  5.34
 PERL_VERSIONS = 5.22 5.24 5.34
 PERL_64_ONLY_VERSIONS = 5.24 5.34
 
-PERL.5.22 =	/usr/perl5/5.22/bin/perl
-PERL.5.24 =	/usr/perl5/5.24/bin/perl
-PERL.5.34 =	/usr/perl5/5.34/bin/perl
-
-POD2MAN.5.22 =	/usr/perl5/5.22/bin/pod2man
-POD2MAN.5.24 =	/usr/perl5/5.24/bin/pod2man
-POD2MAN.5.34 =	/usr/perl5/5.34/bin/pod2man
-
-# Location of pod2man, etc
-PERL5BINDIR.5.22 =	/usr/perl5/5.22/bin
-PERL5BINDIR.5.24 =	/usr/perl5/5.24/bin
-PERL5BINDIR.5.34 =	/usr/perl5/5.34/bin
+define perl-path-rule
+PERL.$(1) =		/usr/perl5/$(1)/bin/perl
+POD2MAN.$(1) =		/usr/perl5/$(1)/bin/pod2man
+PERL5BINDIR.$(1) =	/usr/perl5/$(1)/bin
+endef
+$(foreach perlver,$(PERL_VERSIONS),$(eval $(call perl-path-rule,$(perlver))))
 
 PERL5BINDIR = 	$(PERL5BINDIR.$(PERL_VERSION))
 PERL =		$(PERL.$(PERL_VERSION))
