@@ -124,19 +124,15 @@ include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
 COMPILER =		gcc
 LINKER =		gcc
-BITS =			32
 
-# The values of BITS changes during the build process for components that
-# are built 32-bit and 64-bit.  This macro makes it possible to determine
-# which components are only built 64-bit and allow other make-rules files
-# to adjust accordingly.  Possible values are: '32', '64', '32_and_64',
-# '64_and_32', and 'NO_ARCH' (the orderings specify build preference).
-BUILD_BITS ?=$(BITS)
-ifeq ($(strip $(BUILD_BITS)),64)
-BITS ?=			64
-else
-BITS ?=			32
-endif
+# The value of BITS is set automatically during the build process to either 32
+# or 64 as needed.
+
+# This macro makes it possible to determine which components are only built
+# 64-bit (default) and allow other make-rules files to adjust accordingly.
+# Possible values are: '32', '64', '32_and_64', '64_and_32', and 'NO_ARCH' (the
+# orderings specify build preference).
+BUILD_BITS ?= 64
 
 # Based on BUILD_BITS, determine which binaries are preferred for a build.
 # This macro is for the convenience of other make-rules files and should not be
