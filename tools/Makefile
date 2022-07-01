@@ -54,6 +54,7 @@ pkglint:
 	@chmod +x pkglint
 
 
+time-$(MACH32).o:			BITS=32
 time-$(MACH64).o:			BITS=64
 time-$(MACH32).o time-$(MACH64).o:	CFLAGS += $(CC_PIC)
 
