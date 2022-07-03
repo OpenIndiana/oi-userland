@@ -1,0 +1,16 @@
+--- mosquitto-2.0.14/src/CMakeLists.txt.bak	Tue Jun 14 04:02:07 2022
++++ mosquitto-2.0.14/src/CMakeLists.txt	Tue Jun 14 04:02:26 2022
+@@ -210,13 +210,5 @@
+ 	set_target_properties(mosquitto PROPERTIES ENABLE_EXPORTS 1)
+ endif (WIN32)
+ 
+-if (UNIX)
+-	if (APPLE)
+-		set_target_properties(mosquitto PROPERTIES LINK_FLAGS "-Wl,-exported_symbols_list -Wl,${mosquitto_SOURCE_DIR}/src/linker-macosx.syms")
+-	else (APPLE)
+-		set_target_properties(mosquitto PROPERTIES LINK_FLAGS "-Wl,-dynamic-list=${mosquitto_SOURCE_DIR}/src/linker.syms")
+-	endif (APPLE)
+-endif (UNIX)
+-
+ install(TARGETS mosquitto RUNTIME DESTINATION "${CMAKE_INSTALL_SBINDIR}")
+ install(FILES ../include/mosquitto_broker.h ../include/mosquitto_plugin.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")

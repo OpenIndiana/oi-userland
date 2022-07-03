@@ -1,0 +1,60 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/bin/mosquitto_passwd
+file path=usr/bin/mosquitto_pub
+file path=usr/bin/mosquitto_rr
+file path=usr/bin/mosquitto_sub
+file path=usr/etc/mosquitto/aclfile.example
+file path=usr/etc/mosquitto/mosquitto.conf
+file path=usr/etc/mosquitto/pskfile.example
+file path=usr/etc/mosquitto/pwfile.example
+file path=usr/include/mosquitto.h
+file path=usr/include/mosquitto_broker.h
+file path=usr/include/mosquitto_plugin.h
+file path=usr/include/mosquittopp.h
+file path=usr/include/mqtt_protocol.h
+link path=usr/lib/$(MACH64)/libmosquitto.so target=libmosquitto.so.1
+file path=usr/lib/$(MACH64)/libmosquitto.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libmosquitto.so.1 \
+    target=libmosquitto.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libmosquittopp.so target=libmosquittopp.so.1
+file path=usr/lib/$(MACH64)/libmosquittopp.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libmosquittopp.so.1 \
+    target=libmosquittopp.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/pkgconfig/libmosquitto.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libmosquittopp.pc
+file path=usr/sbin/mosquitto
+file path=usr/share/man/man1/mosquitto_ctrl.1
+file path=usr/share/man/man1/mosquitto_ctrl_dynsec.1
+file path=usr/share/man/man1/mosquitto_passwd.1
+file path=usr/share/man/man1/mosquitto_pub.1
+file path=usr/share/man/man1/mosquitto_rr.1
+file path=usr/share/man/man1/mosquitto_sub.1
+file path=usr/share/man/man3/libmosquitto.3
+file path=usr/share/man/man5/mosquitto.conf.5
+file path=usr/share/man/man7/mosquitto-tls.7
+file path=usr/share/man/man7/mqtt.7
+file path=usr/share/man/man8/mosquitto.8
