@@ -22,13 +22,13 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         pango
 COMPONENT_VERSION_MAJOR=	1
 COMPONENT_VERSION_MINOR=	50
-COMPONENT_VERSION_MICRO=	7
+COMPONENT_VERSION_MICRO=	8
 COMPONENT_VERSION_DL=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
 COMPONENT_VERSION=      $(COMPONENT_VERSION_DL).$(COMPONENT_VERSION_MICRO)
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:0477f369a3d4c695df7299a6989dc004756a7f4de27eecac405c6790b7e3ad33
+COMPONENT_ARCHIVE_HASH= sha256:cf626f59dd146c023174c4034920e9667f1d25ac2c1569516d63136c311255fa
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_DL)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.pango.org/
 COMPONENT_FMRI=         library/desktop/pango
@@ -79,7 +79,6 @@ COMPONENT_TEST_TRANSFORMS += \
 		'-e "s/test-layout\:[0-9]*/test-layout/" ' \
         '-n ' \
     	'-e "/Failures/d" ' \
-        '-e "/OK/p" ' \
         '-e "/Ok/p" ' \
         '-e "/Fail/p" ' \
         '-e "/Pass/p" ' \
