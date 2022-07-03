@@ -28,8 +28,6 @@
 # userland components.
 #
 
-include $(WS_MAKE_RULES)/prep.mk
-
 # Override this to limit builds and publication to a single architecture.
 BUILD_ARCH ?= $(MACH)
 ifneq ($(strip $(BUILD_ARCH)),$(MACH))
@@ -53,6 +51,8 @@ ifneq ($(strip $(BUILD_STYLE)),pkg)
 include $(WS_MAKE_RULES)/$(strip $(BUILD_STYLE)).mk
 endif
 endif
+
+include $(WS_MAKE_RULES)/prep.mk
 
 ifeq ($(strip $(BUILD_STYLE)),configure)
 # Assume these items should always be set in the configure environment.  strip
