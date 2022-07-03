@@ -21,8 +21,23 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-# perl-5.22 is 32 bit (only), perl-5.24 and later are 64 bit (only)
+# Component defaults
+COMPONENT_CLASSIFICATION ?=	Development/Perl
+COMPONENT_SRC ?=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE ?=		$(COMPONENT_SRC).tar.gz
+COMPONENT_FMRI ?=		library/perl-5/$(shell echo $(COMPONENT_NAME) | tr [A-Z] [a-z])
+ifneq ($(strip $(COMPONENT_PERL_MODULE)),)
+COMPONENT_NAME ?=		$(subst ::,-,$(COMPONENT_PERL_MODULE))
+COMPONENT_PROJECT_URL ?=	https://metacpan.org/pod/$(COMPONENT_PERL_MODULE)
+endif
+ifneq ($(strip $(COMPONENT_CPAN_AUTHOR)),)
+COMPONENT_CPAN_AUTHOR1 =	$(shell echo $(COMPONENT_CPAN_AUTHOR) | cut -c 1)
+COMPONENT_CPAN_AUTHOR2 =	$(shell echo $(COMPONENT_CPAN_AUTHOR) | cut -c 1-2)
+COMPONENT_CPAN_AUTHOR_URL =	$(COMPONENT_CPAN_AUTHOR1)/$(COMPONENT_CPAN_AUTHOR2)/$(COMPONENT_CPAN_AUTHOR)
+COMPONENT_ARCHIVE_URL ?=	https://cpan.metacpan.org/authors/id/$(COMPONENT_CPAN_AUTHOR_URL)/$(COMPONENT_ARCHIVE)
+endif
 
+# Common perl environment
 COMMON_PERL_ENV +=	MAKE=$(GMAKE)
 COMMON_PERL_ENV +=	PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:$(PATH)
 COMMON_PERL_ENV +=	LANG=""
