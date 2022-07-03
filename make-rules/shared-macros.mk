@@ -745,21 +745,25 @@ PYTHON_VENDOR_PACKAGES.32 = $(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)
 PYTHON_VENDOR_PACKAGES.64 = $(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.64)
 PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 
+# python2 was built for both 32- and 64-bits.
+# python3 is built for 64-bits only.
+
+PYTHON.2.7 =	/usr/bin/python2.7
 PYTHON.2.7.32 =	/usr/bin/python2.7
 PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
 
-PYTHON.3.5.32 =	/usr/bin/python3.5
-PYTHON.3.5.64 =	/usr/bin/python3.5
+PYTHON.3.5 =	/usr/bin/python3.5
+PYTHON.3.5.64 =	$(PYTHON.3.5)
 
-PYTHON.3.7.32 =	/usr/bin/python3.7
-PYTHON.3.7.64 =	/usr/bin/python3.7
+PYTHON.3.7 =	/usr/bin/python3.7
+PYTHON.3.7.64 =	$(PYTHON.3.7)
 
-PYTHON.3.9.32 =	/usr/bin/python3.9
-PYTHON.3.9.64 =	/usr/bin/python3.9
+PYTHON.3.9 =	/usr/bin/python3.9
+PYTHON.3.9.64 =	$(PYTHON.3.9)
 
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
-PYTHON =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
+PYTHON =	$(PYTHON.$(PYTHON_VERSION))
 
 # The default is site-packages, but that directory belongs to the end-user.
 # Modules which are shipped by the OS but not with the core Python distribution
