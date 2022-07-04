@@ -15,14 +15,15 @@
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
 
-BUILD_BITS=		64
-
+BUILD_BITS= 64
+USE_COMMON_TEST_MASTER= no
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		caja
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
 COMPONENT_SUMMARY=	File manager for the MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -64,6 +65,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Build dependencies
 REQUIRED_PACKAGES += library/desktop/mate/mate-common
+REQUIRED_PACKAGES += developer/build/autoconf-archive
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 
 # Auto-generated dependencies
