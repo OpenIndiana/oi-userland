@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-bad1
 COMPONENT_VERSION=      1.20.3
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=	gst-plugins-bad
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -113,7 +114,7 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/ilmbase
+REQUIRED_PACKAGES += library/imath
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libqrencode
 REQUIRED_PACKAGES += library/libsndfile
@@ -134,4 +135,3 @@ REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += video/rtmpdump
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libx11
-# Auto-generated dependencies
