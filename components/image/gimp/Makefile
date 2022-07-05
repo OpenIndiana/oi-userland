@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
 COMPONENT_VERSION=	2.10.32
+COMPONENT_REVISION= 1
 COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
 COMPONENT_FMRI=		image/editor/gimp
@@ -103,7 +104,6 @@ REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/libmng
-REQUIRED_PACKAGES += library/ilmbase
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libmypaint
 REQUIRED_PACKAGES += library/libpoppler
