@@ -238,6 +238,8 @@ PERLV_VALUES = $(shell echo $(PERL_VERSIONS) | tr -d .)
 PERLV_FMRI_VERSION = PLV
 PERLV_MANIFESTS = $(foreach v,$(PERLV_VALUES),$(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER.p5m/-$(v).p5m/g'))
 PERLNV_MANIFESTS = $(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER//')
+# Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES where appropriate
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PERLV_VALUES) $$(PLV), -e 's/^\(.*\)-$(v)$$/PERL_\1/g')
 else
 NOPERL_MANIFESTS = $(NOPY_MANIFESTS)
 endif
@@ -298,6 +300,10 @@ publish:		pre-publish update-metadata $(PUBLISH_STAMP)
 
 sample-manifest:	$(GENERATED).p5m
 
+# By default GENERATE_EXTRA_CMD is a no-op.
+# Since it is used in pipeline it needs to copy input to output.
+GENERATE_EXTRA_CMD ?= $(CAT)
+
 $(GENERATED).p5m:	install
 	[ ! -d $(SAMPLE_MANIFEST_DIR) ] && $(MKDIR) $(SAMPLE_MANIFEST_DIR) || true
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
@@ -308,6 +314,7 @@ $(GENERATED).p5m:	install
 		$(PKGFMT) | \
 		uniq | \
 		cat $(METADATA_TEMPLATE) - | \
+		$(GENERATE_EXTRA_CMD) | \
 		$(TEE) $@ $(SAMPLE_MANIFEST_FILE) >/dev/null
 	if [ "$(GENERATE_GENERIC_TRANSFORMS)X" != "X" ]; \
 	then sed $(GENERATE_GENERIC_TRANSFORMS) $(SAMPLE_MANIFEST_FILE) \
@@ -504,7 +511,7 @@ $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS)
 	$(TOUCH) $@
 
 # Set REQUIRED_PACKAGES macro substitution rules
-REQUIRED_PACKAGES_TRANSFORM=$(foreach p,$(REQUIRED_PACKAGES_SUBST), -e 's|$($(p))|$$($(p))|')
+REQUIRED_PACKAGES_TRANSFORM += $(foreach p,$(REQUIRED_PACKAGES_SUBST), -e 's|$($(p))|$$($(p))|')
 
 #
 # Generate a set of REQUIRED_PACKAGES based on what is needed for pkgdepend to
@@ -512,11 +519,11 @@ REQUIRED_PACKAGES_TRANSFORM=$(foreach p,$(REQUIRED_PACKAGES_SUBST), -e 's|$($(p)
 # truly lazy among us.  This is only a piece of the REQUIRED_PACKAGES puzzle.
 # You must still include packages for tools you build and test with.
 #
-REQUIRED_PACKAGES::     $(RESOLVED)
+REQUIRED_PACKAGES::     $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED)
 	$(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
 	@$(GSED) -i -e '/^# Auto-generated dependencies$$/,$$d' Makefile
 	@echo "# Auto-generated dependencies" >>Makefile
-	@$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) | \
+	@$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) | \
 		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' $(REQUIRED_PACKAGES_TRANSFORM) \
 			| sort -u >>Makefile
 	@echo "*** Please edit your Makefile and verify the new or updated content at the end ***"
