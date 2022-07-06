@@ -182,12 +182,14 @@ $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 # We need to add -$(PLV) to package fmri and generate runtime dependencies based on META.json
 GENERATE_EXTRA_CMD ?= \
 	$(GSED) -e 's/^\(set name=pkg.fmri [^@]*\)\(.*\)$$/\1-$$(PLV)\2/' | \
-	$(CAT) - <([ -f $(SOURCE_DIR)/META.json ] && $(WS_TOOLS)/perl-meta-deps $(BUILD_DIR) runtime $(PERL_VERSION) < $(SOURCE_DIR)/META.json)
+	$(CAT) - <([ -f $(SOURCE_DIR)/META.json ] && $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) runtime $(PERL_VERSION) < $(SOURCE_DIR)/META.json)
 
 # Support for adding dependencies from META.json to REQUIRED_PACKAGES
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
 $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
-	[ -f $(SOURCE_DIR)/META.json ] && $(WS_TOOLS)/perl-meta-deps $(BUILD_DIR) $(PERL_VERSION) < $(SOURCE_DIR)/META.json > $@
+	[ -f $(SOURCE_DIR)/META.json ] && $(CAT) $(SOURCE_DIR)/META.json \
+		| $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) $(PERL_VERSION) \
+		| $(GSED) -e 's/@[^ ]*//g' -e 's/\(fmri=[^ ]*\)/\1@0/g' > $@
 	$(TOUCH) $@
 
 # perl-meta-deps requires jq
