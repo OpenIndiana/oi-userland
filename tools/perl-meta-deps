@@ -18,13 +18,16 @@
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1"
-	printf "Usage: perl-meta-deps BUILD_DIR [runtime] PERL_VERSION\n" >&2
+	printf "Usage: perl-meta-deps WS_MACH BUILD_DIR [runtime] PERL_VERSION\n" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
 
 
 (($# == 0)) && usage
+
+WS_MACH="$1"
+[[ -d "$WS_MACH" ]] && shift || usage "WS_MACH does not exist"
 
 BUILD_DIR="$1"
 [[ -d "$BUILD_DIR" ]] && shift || usage "BUILD_DIR does not exist"
@@ -44,6 +47,11 @@ PERL_ARCH=$($PERL -e 'use Config; print $Config{archname}')
 PERL_VERSION_CONVERT="$(dirname $0)/perl-version-convert"
 [[ ! -x "$PERL_VERSION_CONVERT" ]] && printf "ERROR: perl-version-convert not found" && exit 1
 
+CACHEDIR="$WS_MACH/perl-meta-deps-cache"
+mkdir -p "$CACHEDIR"
+# Remove old entries from the cache
+find "$CACHEDIR" -type f -mtime +7 -exec rm -f {} \;
+
 
 printf "\n# Automatically generated dependencies based on distribution metadata\n"
 
@@ -52,33 +60,39 @@ printf "\n# Automatically generated dependencies based on distribution metadata\
 	VER=$("$PERL_VERSION_CONVERT" "$PREREQ" "$VERSION")
 	[[ "$VER" != "0" ]] && VER="@$VER" || VER=
 
-	MANIFEST="$BUILD_DIR/META-${PREREQ//::/-}"
+	# Resolve the dependency if not in cache already
+	if [[ ! -s "$CACHEDIR/$PREREQ" ]] ; then
+		MANIFEST="$BUILD_DIR/META-${PREREQ//::/-}"
 
-	# Prepare manifest
-	if [[ "$PREREQ" == "perl" ]] ; then
-		# "perl" is special case
-		cat <<#EOF > "$MANIFEST"
-			depend fmri=__TBD type=require pkg.debug.depend.file=$PREREQ \\
-				pkg.debug.depend.path=usr/perl5/$PERLVER/bin
-		EOF
-	else
-		cat <<#EOF > "$MANIFEST"
-			depend fmri=__TBD type=require pkg.debug.depend.file=${PREREQ//:://}.pm \\
-				pkg.debug.depend.path=usr/perl5/$PERLVER/lib \\
-				pkg.debug.depend.path=usr/perl5/$PERLVER/lib/$PERL_ARCH \\
-				pkg.debug.depend.path=usr/perl5/vendor_perl/$PERLVER \\
-				pkg.debug.depend.path=usr/perl5/vendor_perl/$PERLVER/$PERL_ARCH
-		EOF
+		# Prepare manifest
+		if [[ "$PREREQ" == "perl" ]] ; then
+			# "perl" is special case
+			cat <<#EOF > "$MANIFEST"
+				depend fmri=__TBD type=require pkg.debug.depend.file=$PREREQ \\
+					pkg.debug.depend.path=usr/perl5/$PERLVER/bin
+			EOF
+		else
+			cat <<#EOF > "$MANIFEST"
+				depend fmri=__TBD type=require pkg.debug.depend.file=${PREREQ//:://}.pm \\
+					pkg.debug.depend.path=usr/perl5/$PERLVER/lib \\
+					pkg.debug.depend.path=usr/perl5/$PERLVER/lib/$PERL_ARCH \\
+					pkg.debug.depend.path=usr/perl5/vendor_perl/$PERLVER \\
+					pkg.debug.depend.path=usr/perl5/vendor_perl/$PERLVER/$PERL_ARCH
+			EOF
+		fi
+
+		# Resolve dependency
+		if /usr/bin/pkgdepend resolve "$MANIFEST" ; then
+			# Remove version number and cache the result
+			cat "$MANIFEST.res" | sed -e 's/@[^ ]*//g' -e 's/-'$PLV'/-$(PLV)/g' > "$CACHEDIR/$PREREQ"
+		else
+			printf "ERROR: Prerequisite %s not found\n" "$PREREQ" >&2
+			cat "$MANIFEST"
+		fi
 	fi
 
-	# Resolve dependency
-	if /usr/bin/pkgdepend resolve "$MANIFEST" ; then
-		# Modify version number to pkg(5) compatible form
-		cat "$MANIFEST.res" | sed -e 's/@[^ ]*//g' -e 's/-'$PLV'/-$(PLV)/g' -e 's/\(fmri=[^ ]*\)/\1'$VER'/g'
-	else
-		printf "ERROR: Prerequisite %s not found\n" "$PREREQ" >&2
-		cat "$MANIFEST"
-	fi
+	# Use cached result (if any) and add required version number
+	[[ -f "$CACHEDIR/$PREREQ" ]] && cat "$CACHEDIR/$PREREQ" | sed  -e 's/\(fmri=[^ ]*\)/\1'$VER'/g'
 done | /usr/bin/pkgfmt -u | uniq | (
 	PREV_LINE_H=
 	PREV_FMRI=
@@ -98,6 +112,10 @@ done | /usr/bin/pkgfmt -u | uniq | (
 		[[ "$FMRI" == "$VER" ]] && VER=
 		[[ -n "$VER" ]] && VER="@$VER"
 		FMRI="fmri=$FMRI"
+
+		# There is no connection between module version and
+		# runtime/perl version for modules bundled with runtime/perl
+		[[ "$FMRI" == 'fmri=pkg:/runtime/perl-$(PLV)' ]] && VER=
 
 		if [[ "$PREV_LINE_H" != "$LINE_H" || "$PREV_FMRI" != "$FMRI" || "$PREV_LINE_T" != "$LINE_T" ]] ; then
 			[[ -n "$PREV_LINE_H$PREV_FMRI$PREV_VER$PREV_LINE_T" ]] && printf "%s%s%s%s\n" "$PREV_LINE_H" "$PREV_FMRI" "$PREV_VER" "$PREV_LINE_T"
