@@ -67,7 +67,7 @@ COMPONENT_INSTALL_ENV += GOPATH="$(SOURCE_DIR)/gopath"
 
 BUILD_BITS= 64
 BUILD_STYLE= justmake
-CLONEY_ARGS= CLONEY_MODE="hardlink"
+CLONEY_ARGS= CLONEY_MODE="copy"
 
 include $(WS_MAKE_RULES)/common.mk
 
