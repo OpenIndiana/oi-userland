@@ -1,0 +1,129 @@
+#! /usr/bin/ksh
+#
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Marcel Telka
+#
+
+function usage
+{
+	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1"
+	printf "Usage: perl-meta-deps BUILD_DIR [runtime] PERL_VERSION\n" >&2
+	[[ -n "$1" ]] && exit 1
+	exit 0
+}
+
+
+(($# == 0)) && usage
+
+BUILD_DIR="$1"
+[[ -d "$BUILD_DIR" ]] && shift || usage "BUILD_DIR does not exist"
+
+PHASES=".configure,.build,.test,.runtime"
+[[ "$1" == "runtime" ]] && PHASES=".runtime" && shift
+
+(($# == 0)) && usage "PERL_VERSION missing"
+PERLVER=$1 && shift
+PLV=${PERLVER//.}
+PERL=/usr/perl5/$PERLVER/bin/perl
+[[ -x "$PERL" ]] || usage "perl $PERLVER not found"
+PERL_ARCH=$($PERL -e 'use Config; print $Config{archname}')
+
+(($# != 0)) && usage "Too much arguments"
+
+PERL_VERSION_CONVERT="$(dirname $0)/perl-version-convert"
+[[ ! -x "$PERL_VERSION_CONVERT" ]] && printf "ERROR: perl-version-convert not found" && exit 1
+
+
+printf "\n# Automatically generated dependencies based on distribution metadata\n"
+
+/usr/bin/jq -r '.prereqs|'"$PHASES"'|.requires|to_entries?|.[]|.key+" "+.value' | while read PREREQ VERSION ; do
+	# Convert perl version number to pkg(5) compatible form
+	VER=$("$PERL_VERSION_CONVERT" "$PREREQ" "$VERSION")
+	[[ "$VER" != "0" ]] && VER="@$VER" || VER=
+
+	MANIFEST="$BUILD_DIR/META-${PREREQ//::/-}"
+
+	# Prepare manifest
+	if [[ "$PREREQ" == "perl" ]] ; then
+		# "perl" is special case
+		cat <<#EOF > "$MANIFEST"
+			depend fmri=__TBD type=require pkg.debug.depend.file=$PREREQ \\
+				pkg.debug.depend.path=usr/perl5/$PERLVER/bin
+		EOF
+	else
+		cat <<#EOF > "$MANIFEST"
+			depend fmri=__TBD type=require pkg.debug.depend.file=${PREREQ//:://}.pm \\
+				pkg.debug.depend.path=usr/perl5/$PERLVER/lib \\
+				pkg.debug.depend.path=usr/perl5/$PERLVER/lib/$PERL_ARCH \\
+				pkg.debug.depend.path=usr/perl5/vendor_perl/$PERLVER \\
+				pkg.debug.depend.path=usr/perl5/vendor_perl/$PERLVER/$PERL_ARCH
+		EOF
+	fi
+
+	# Resolve dependency
+	if /usr/bin/pkgdepend resolve "$MANIFEST" ; then
+		# Modify version number to pkg(5) compatible form
+		cat "$MANIFEST.res" | sed -e 's/@[^ ]*//g' -e 's/-'$PLV'/-$(PLV)/g' -e 's/\(fmri=[^ ]*\)/\1'$VER'/g'
+	else
+		printf "ERROR: Prerequisite %s not found\n" "$PREREQ" >&2
+		cat "$MANIFEST"
+	fi
+done | /usr/bin/pkgfmt -u | uniq | (
+	PREV_LINE_H=
+	PREV_FMRI=
+	PREV_VER=
+	PREV_LINE_T=
+	while read LINE ; do
+		# Copy verbatim lines without "fmri="
+		[[ "${LINE//*fmri=*/FMRI}" != "FMRI" ]] && printf "%s\n" "$LINE" && continue
+
+		LINE_H=${LINE%%fmri=*}
+		LINE_T=${LINE#*fmri=}
+		FMRI=${LINE_T%% *}
+		LINE_T=${LINE_T#* }
+		[[ "$FMRI" == "$LINE_T" ]] && LINE_T=
+		VER=${FMRI##*@}
+		FMRI=${FMRI%%@*}
+		[[ "$FMRI" == "$VER" ]] && VER=
+		[[ -n "$VER" ]] && VER="@$VER"
+		FMRI="fmri=$FMRI"
+
+		if [[ "$PREV_LINE_H" != "$LINE_H" || "$PREV_FMRI" != "$FMRI" || "$PREV_LINE_T" != "$LINE_T" ]] ; then
+			[[ -n "$PREV_LINE_H$PREV_FMRI$PREV_VER$PREV_LINE_T" ]] && printf "%s%s%s%s\n" "$PREV_LINE_H" "$PREV_FMRI" "$PREV_VER" "$PREV_LINE_T"
+			PREV_LINE_H="$LINE_H"
+			PREV_FMRI="$FMRI"
+			PREV_VER="$VER"
+			PREV_LINE_T="$LINE_T"
+			continue
+		fi
+
+		# Select higher version
+		VER1=${PREV_VER#@}
+		VER2=${VER#@}
+		while true ; do
+			[[ -z "$VER1" ]] && PREV_VER="$VER" && break
+			[[ -z "$VER2" ]] && break
+
+			V1=${VER1%%.*} ; [[ "$V1" == "$VER1" ]] && VER1="$VER1."
+			V2=${VER2%%.*} ; [[ "$V2" == "$VER2" ]] && VER2="$VER2."
+
+			((V1 < V2)) && PREV_VER="$VER" && break
+			((V1 > V2)) && break
+
+			VER1=${VER1#*.}
+			VER2=${VER2#*.}
+		done
+	done
+	[[ -n "$PREV_LINE_H$PREV_FMRI$PREV_VER$PREV_LINE_T" ]] && printf "%s%s%s%s\n" "$PREV_LINE_H" "$PREV_FMRI" "$PREV_VER" "$PREV_LINE_T"
+)| /usr/bin/pkgfmt
