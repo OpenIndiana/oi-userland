@@ -30,20 +30,19 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
 COMPONENT_VERSION=	3.5.10
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.python.org
 COMPONENT_SUMMARY=	The Python interpreter, libraries and utilities
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:0f0fa8685c1dc1f1dacb0b4e7779796b90aef99dc1fa4967a71b9da7b57d4a28
+COMPONENT_ARCHIVE_HASH= sha256:0f0fa8685c1dc1f1dacb0b4e7779796b90aef99dc1fa4967a71b9da7b57d4a28
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	PSFv2
 
 CONFIGURE_FIX_LIBTOOL_RPATH = no
 
 TEST_TARGET=		$(TEST_64)
-
 include $(WS_MAKE_RULES)/common.mk
 
 # Need to preserve timestamp for Grammar files.  If the pickle files are older,
