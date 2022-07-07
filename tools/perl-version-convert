@@ -27,7 +27,7 @@ function usage
 
 (($# == 0)) && usage
 (($# == 1)) && usage "Missing VERSION to convert"
-(($# > 2)) && usage "Too much arguments"
+(($# > 2)) && usage "Too many arguments"
 
 MODULE="$1"
 VERSION="$2"
@@ -55,18 +55,22 @@ function convert_version
 	#
 	# Notes:
 	#
+	# (*) The version format for Authen-PAM is 0.XX, but it was integrated
+	# as XX, so we need to follow that.
+	#
 	# (*) The actual version format for Crypt-PBKDF2 is 0.YYDDDR (YY -
 	# year, DDD - day in year, R - release in the day) so it had to be
 	# converted to 0.YY.DDD.R to be more accurate, but it was already
 	# integrated as 0.YYDDDR, so we need to follow it for now, because
 	# 0.YY.DDD.R would be considered older than 0.YYDDDR.  Possible
 	# conversion of 0.YYDDDR to YY.DDD.R would cause problem in a case the
-	# Crypt::PBKDF2 bump their major version.
+	# Crypt-PBKDF2 bump their major version.
 	#
 	# (*) Module-Build uses apparently version format 0.XXYY so it had to
 	# be converted to 0.XX.YY, but it was already integrated as 0.XXYY, so
 	# we need to follow it for now.
 	#
+	[[ "$MODULE" == "Authen-PAM" && "${VERSION:0:2}" == "0." ]] && ((${#VERSION} == 4)) && VERSION=$((1${VERSION:2:2} - 100))
 	[[ "$MODULE" == "Crypt-PBKDF2" && "${VERSION:0:2}" == "0." ]] && ((${#VERSION} == 8)) && VER[1]=$((1${VERSION:2:6} - 1000000)) && VERSION=${VERSION:0:1}
 	[[ "$MODULE" == "Email-Sender" && "${VERSION:0:2}" == "1." ]] && ((${#VERSION} == 8)) && VER[1]=${VERSION:2:1} && VER[2]=$((1${VERSION:3:5} - 100000)) && VERSION=${VERSION:0:1}
 	[[ "$MODULE" == "Email-Sender" && "${VERSION:0:2}" != "0." && "${VERSION:3:2}" == "00" ]] && ((${#VERSION} == 5)) && VER[1]=${VERSION:2:1} && VERSION=${VERSION:0:1}
