@@ -188,7 +188,7 @@ REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
 $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 	[ -f $(SOURCE_DIR)/META.json ] && $(CAT) $(SOURCE_DIR)/META.json \
 		| $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) $(PERL_VERSION) \
-		| $(GSED) -e 's/@[^ ]*//g' -e 's/\(fmri=[^ ]*\)/\1@0/g' > $@
+		| $(GSED) -e 's/@[^ ]*//g' -e 's/\(fmri=[^ ]*\)/\1@0/g' > $@ || true
 	$(TOUCH) $@
 
 # perl-meta-deps requires jq
