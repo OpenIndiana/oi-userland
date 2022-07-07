@@ -37,6 +37,13 @@ COMPONENT_CPAN_AUTHOR2 =	$(shell echo $(COMPONENT_CPAN_AUTHOR) | cut -c 1-2)
 COMPONENT_CPAN_AUTHOR_URL =	$(COMPONENT_CPAN_AUTHOR1)/$(COMPONENT_CPAN_AUTHOR2)/$(COMPONENT_CPAN_AUTHOR)
 COMPONENT_ARCHIVE_URL ?=	https://cpan.metacpan.org/authors/id/$(COMPONENT_CPAN_AUTHOR_URL)/$(COMPONENT_ARCHIVE)
 endif
+# Enable ASLR by default.  Component could disable ASLR by setting
+# COMPONENT_ASLR to 'no'.
+ifeq ($(strip $(COMPONENT_ASLR)),no)
+ASLR_MODE = $(ASLR_DISABLE)
+else
+ASLR_MODE = $(ASLR_ENABLE)
+endif
 
 # Common perl environment
 COMMON_PERL_ENV +=	MAKE=$(GMAKE)
