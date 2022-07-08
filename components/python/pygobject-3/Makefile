@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         pygobject
 # This version only supports python 3.7 - 3.9 inclusive
 COMPONENT_VERSION=      3.42.0
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_SUMMARY=      Python bindings for GObject
 COMPONENT_PROJECT_URL=  http://www.gnome.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)

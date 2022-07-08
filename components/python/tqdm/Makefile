@@ -13,13 +13,13 @@
 # Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=	NO_ARCH
-BUILD_STYLE=	setup.py
-
+BUILD_BITS= NO_ARCH
+BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tqdm
 COMPONENT_VERSION=	4.64.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Fast, extensible progress bar for Python and CLI
 COMPONENT_PROJECT_URL=	https://github.com/tqdm/tqdm
 COMPONENT_FMRI=		library/python/tqdm		

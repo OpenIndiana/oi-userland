@@ -22,7 +22,8 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 32_and_64
+BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		coverage
@@ -34,24 +35,16 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:38f16b1317b8dd82df67ed5daa5f5e7c959e46579840d77a67a4ceb9cef0a50b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 
-PYTHON_VERSIONS=	2.7 3.5 3.7 3.9
+PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+# test requires PyContracts and gevent which haven't been integrated yet.
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
-build:		$(BUILD_32_and_64)
-
 COMPONENT_POST_INSTALL_ACTION =	\
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f coverage coverage$(PYTHON_VERSION))
-
-install:	$(INSTALL_32_and_64)
-
-# test requires PyContracts and gevent which haven't been integrated yet.
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27

@@ -31,13 +31,12 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		pycairo
 # This version supports python 3.6+
 COMPONENT_VERSION=	1.20.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Python bindings for Cairo
 COMPONENT_PROJECT_URL=	http://www.cairographics.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:34f0a86ee5d98f3fca1f09dd3960d43ea9937b2df44f5270d2eb94f529677150
+COMPONENT_ARCHIVE_HASH= sha256:34f0a86ee5d98f3fca1f09dd3960d43ea9937b2df44f5270d2eb94f529677150
 COMPONENT_ARCHIVE_URL=	https://github.com/pygobject/$(COMPONENT_NAME)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=			library/python/pycairo
 COMPONENT_CLASSIFICATION=	Development/Python

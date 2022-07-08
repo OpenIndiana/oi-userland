@@ -19,13 +19,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pip
 COMPONENT_VERSION= 	20.3.3
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/python/pip
 COMPONENT_SUMMARY=	A tool for installing and managing Python packages
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:016f8d509871b72fb05da911db513c11059d8a99f4591dda3050a3cf83a29a79
+COMPONENT_ARCHIVE_HASH= sha256:016f8d509871b72fb05da911db513c11059d8a99f4591dda3050a3cf83a29a79
 COMPONENT_ARCHIVE_URL=	https://github.com/pypa/pip/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	https://github.com/pypa/pip
 
@@ -33,7 +33,6 @@ PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_TOP)/make-rules/common.mk
-
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/python/setuptools-27

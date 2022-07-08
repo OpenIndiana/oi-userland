@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		py-cpuinfo
 COMPONENT_VERSION=	7.0.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		library/python/py-cpuinfo
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_SUMMARY=	Get CPU info with pure Python

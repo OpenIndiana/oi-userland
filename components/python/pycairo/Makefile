@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		pycairo
 # This version supports only python 3.5
 COMPONENT_VERSION=	1.10.0
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_PROJECT_URL=	http://www.cairographics.org
 COMPONENT_SUMMARY=	Python bindings for Cairo
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

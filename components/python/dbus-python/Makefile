@@ -14,20 +14,19 @@
 # Copyright 2022 Gary Mills
 #
 
-BUILD_BITS=		64
-BUILD_STYLE=		setup.py
+BUILD_BITS= 64
+BUILD_STYLE= setup.py
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dbus-python
 COMPONENT_VERSION=      1.2.18
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/DBusBindings/
 COMPONENT_SUMMARY=      Python bindings for D-Bus
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:92bdd1e68b45596c833307a5ff4b217ee6929a1502f5341bae28fd120acf7260
+COMPONENT_ARCHIVE_HASH= sha256:92bdd1e68b45596c833307a5ff4b217ee6929a1502f5341bae28fd120acf7260
 COMPONENT_ARCHIVE_URL=  https://dbus.freedesktop.org/releases/dbus-python/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/python/python-dbus
 COMPONENT_CLASSIFICATTION= Development/Python
