@@ -110,7 +110,7 @@ COMPONENT_INSTALL_ARGS +=	--force
 $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built $(BUILD_DIR)/config-%/$(CFG)
 	$(COMPONENT_PRE_INSTALL_ACTION)
 	(cd $(SOURCE_DIR) ; $(ENV) HOME=$(BUILD_DIR)/config-$* $(COMPONENT_INSTALL_ENV) \
-		$(PYTHON.$(BITS)) ./setup.py install $(COMPONENT_INSTALL_ARGS))
+		$(PYTHON) ./setup.py install $(COMPONENT_INSTALL_ARGS))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
