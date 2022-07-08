@@ -25,26 +25,23 @@
 set name=pkg.fmri \
     value=pkg:/backup/rdiff-backup-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Local/remote mirror and incremental backup utility"
-set name=com.oracle.info.summary value="Python bindings for rdiff-backup"
-set name=com.oracle.info.tpno value=9055
 set name=info.classification \
     value="org.opensolaris.category.2008:Applications/System Utilities"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2008/272
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-link path=usr/bin/rdiff-backup target=rdiff-backup-$(PYVER) mediator=python3 \
+link path=usr/bin/rdiff-backup target=rdiff-backup-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file build/$(MACH64)-$(PYVER)/scripts-$(PYVER)/rdiff-backup \
     path=usr/bin/rdiff-backup-$(PYVER) pkg.depend.bypass-generate=.*msvcrt.*
 link path=usr/bin/rdiff-backup-statistics \
-    target=rdiff-backup-statistics-$(PYVER) mediator=python3 \
+    target=rdiff-backup-statistics-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file build/$(MACH64)-$(PYVER)/scripts-$(PYVER)/rdiff-backup-statistics \
     path=usr/bin/rdiff-backup-statistics-$(PYVER)
 link path=usr/bin/rdiff-backup-delete \
-    target=rdiff-backup-delete-$(PYVER) mediator=python3 \
+    target=rdiff-backup-delete-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file build/$(MACH64)-$(PYVER)/scripts-$(PYVER)/rdiff-backup-delete \
     path=usr/bin/rdiff-backup-delete-$(PYVER)

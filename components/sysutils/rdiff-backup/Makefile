@@ -22,12 +22,14 @@
 # Copyright 2021 Gary Mills
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64
+BUILD_STYLE= setup.py
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rdiff-backup
 COMPONENT_VERSION=	2.0.5
-# COMPONENT_REVISION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -38,6 +40,9 @@ COMPONENT_BUGDB=	utility/rdiff-backup
 
 # This version of rdiff-backup supports python versions: 3.5 3.6 3.7 3.8
 PYTHON_VERSIONS=	3.7
+
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Copy static files to destination directories
 COMPONENT_POST_INSTALL_ACTION = ( \
@@ -60,18 +65,7 @@ do \
 done \
 )
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-
-# common targets
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/librsync
 REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += system/library

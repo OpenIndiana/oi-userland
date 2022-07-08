@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		charset-normalizer
 COMPONENT_VERSION=	2.0.10
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The Real First Universal Charset Detector
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
