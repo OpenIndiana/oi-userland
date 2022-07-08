@@ -138,10 +138,14 @@ COMPONENT_TEST_SNAPSHOT = $(COMPONENT_TEST_BUILD_DIR)/results-$(PERL_VERSION)-$(
 COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PERL_VERSION)-$(BITS)-results
 
 # Normalize perl test results.
-COMPONENT_TEST_TRANSFORMS += '-e "1,/test_harness/d"'		# delete any lines up through test_harness
+COMPONENT_TEST_TRANSFORMS += '-e "0,/test_harness/d"'		# delete any lines up through test_harness
 COMPONENT_TEST_TRANSFORMS += '-e "s/,  *[0-9]* wallclock.*//"'	# delete timings
 COMPONENT_TEST_TRANSFORMS += '-e "/^\#/d"'			# delete comments
 COMPONENT_TEST_TRANSFORMS += '-e "/^make\[/d"'			# delete make logs
+
+# Add the expected 'test_harness' line if it is missing in the test results.
+COMPONENT_POST_TEST_ACTION += $(GNU_GREP) -q test_harness $(COMPONENT_TEST_OUTPUT) \
+	|| $(GSED) -i -e '1i\test_harness' $(COMPONENT_TEST_OUTPUT) ;
 
 COMPONENT_TEST_TARGETS =	test
 COMPONENT_TEST_ENV +=	$(COMMON_PERL_ENV)
