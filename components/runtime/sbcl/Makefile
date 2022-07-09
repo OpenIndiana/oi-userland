@@ -13,17 +13,17 @@
 # Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=			32
+BUILD_BITS=			64
 BUILD_STYLE=		justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
-COMPONENT_VERSION=	2.2.5
+COMPONENT_VERSION=	2.2.6
 COMPONENT_PROJECT_URL=	https://sbcl.sourceforge.io/
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:8584b541370fd6ad6e58d3f97982077dfcab240f30d4e9b18f15da91c2f13ed1
+COMPONENT_ARCHIVE_HASH=	sha256:3e23048c8fa826fb913220beb2ac3697dbc5c0cdf2e89fed8db39ed1712304a0
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/sbcl/sbcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-PublicDomain
 COMPONENT_SUMMARY=	sbcl - Steel Bank Common Lisp
@@ -36,7 +36,7 @@ COMPONENT_ENV  =	PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/gnu/bin
 COMPONENT_ENV +=	GNUMAKE=$(GMAKE)
 COMPONENT_ENV +=	CC="$(CC)"
 COMPONENT_BUILD_ARGS  =	--prefix=/usr
-COMPONENT_BUILD_ARGS +=	--arch=x86
+COMPONENT_BUILD_ARGS +=	--arch=x86-64
 # This is currently --with-sb-thread --with-sb-core-compression
 # --with-sb-xref-internals and :sb-after-xc-core as a build feature.
 COMPONENT_BUILD_ARGS +=	--fancy
@@ -59,6 +59,6 @@ clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
