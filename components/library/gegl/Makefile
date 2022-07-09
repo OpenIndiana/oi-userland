@@ -20,11 +20,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
 COMPONENT_VERSION= 0.4.36
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:6fd58a0cdcc7702258adaeffb573a389228ae8f0eff47578efda2309b61b2ca6
-COMPONENT_ARCHIVE_URL=	https://ftp.gimp.org/pub/gegl/0.4/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://ftp.gimp.org/pub/gegl/0.4/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gegl.org/
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI=	image/library/$(COMPONENT_NAME)
