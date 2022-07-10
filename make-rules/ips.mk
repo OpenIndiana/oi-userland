@@ -224,7 +224,7 @@ PYV_FMRI_VERSION = PYV
 PYV_MANIFESTS = $(foreach v,$(PYV_VALUES),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
 PYNV_MANIFESTS = $(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER//')
 MKGENERIC_SCRIPTS += $(BUILD_DIR)/mkgeneric-python
-GENERATE_GENERIC_TRANSFORMS+=$(PYTHON_VERSIONS:%=-e 's/%/\$$\(PYVER\)/g')
+GENERATE_GENERIC_TRANSFORMS+=$(foreach v,$(PYTHON_VERSIONS), -e 's/$(subst .,\.,$(v))/\$$\(PYVER\)/g')
 else
 NOPY_MANIFESTS = $(UNVERSIONED_MANIFESTS)
 endif
