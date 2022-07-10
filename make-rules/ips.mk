@@ -238,11 +238,19 @@ PERLV_VALUES = $(shell echo $(PERL_VERSIONS) | tr -d .)
 PERLV_FMRI_VERSION = PLV
 PERLV_MANIFESTS = $(foreach v,$(PERLV_VALUES),$(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER.p5m/-$(v).p5m/g'))
 PERLNV_MANIFESTS = $(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER//')
-# Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES where appropriate
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PERLV_VALUES) $$(PLV), -e 's/^\(.*\)-$(v)$$/PERL_\1/g')
 else
 NOPERL_MANIFESTS = $(NOPY_MANIFESTS)
 endif
+
+# PERL_PLV_VALUES contains list of all possible PLV values we could encounter:
+# - for all currently supported perl versions (from PERL_VERSIONS)
+# - for all perl versions we are currently obsoleting (from PERL_VERSIONS_OBSOLETING)
+# - the $(PLV) string itself
+PERL_PLV_VALUES = $(shell echo $(PERL_VERSIONS) $(PERL_VERSIONS_OBSOLETING) | tr -d .) $$(PLV)
+# Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES for runtime/perl
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PERL_PLV_VALUES), -e 's|^\(.*runtime/perl\)-$(v)$$|PERL_\1|g')
+# Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES for library/perl-5/*
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PERL_PLV_VALUES), -e 's|^\(.*library/perl-5/.*\)-$(v)$$|PERL_\1|g')
 
 # Look for manifests which need to be duplicated for each version of ruby.
 # NOPERL_MANIFESTS represents the manifests that are not Python or

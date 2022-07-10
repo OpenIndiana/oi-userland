@@ -802,6 +802,16 @@ PERL_VERSION =  5.34
 PERL_VERSIONS = 5.22 5.24 5.34
 PERL_64_ONLY_VERSIONS = 5.24 5.34
 
+# List of perl versions we are currently obsoleting.  We no longer build any
+# packages for these perl versions, but there still might be hanging some not
+# obsoleted yet versioned packages built for PERL_VERSIONS_OBSOLETING perl
+# versions.  Or there is just the versioned runtime/perl package still
+# available.
+#
+# This list should be usually empty.  Intersection of PERL_VERSIONS_OBSOLETING
+# and PERL_VERSIONS lists MUST be always empty.
+PERL_VERSIONS_OBSOLETING =
+
 define perl-path-rule
 PERL.$(1) =		/usr/perl5/$(1)/bin/perl
 POD2MAN.$(1) =		/usr/perl5/$(1)/bin/pod2man
@@ -1432,6 +1442,9 @@ REQUIRED_PACKAGES_SUBST+= GCC_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GXX_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GFORTRAN_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GOBJC_RUNTIME_PKG
+
+# Generate requirements on all built perl version variants for given packages
+REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(PERL_REQUIRED_PACKAGES:%=%-$(shell echo $(ver) | tr -d .)))
 
 include $(WS_MAKE_RULES)/environment.mk
 include $(WS_MAKE_RULES)/depend.mk
