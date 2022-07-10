@@ -30,7 +30,7 @@ COMPONENT_VERSION=		6.9.12
 COMPONENT_SUBVERSION=		38
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_FMRI=			image/imagemagick
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_SUMMARY=		ImageMagick - Image Manipulation Utilities and Libraries
@@ -43,7 +43,11 @@ COMPONENT_LICENSE= Apache 2.0 license
 COMPONENT_LICENSE_FILE= LICENSE
 
 CONFIGURE_FIX_LIBTOOL_RPATH= no
-PERL_VERSION= 5.22
+
+PERL.64=                /usr/perl5/5.34/bin/perl
+PERL.32=                /usr/perl5/5.22/bin/perl
+PERL=                   $(PERL.$(BITS))
+
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
@@ -91,9 +95,8 @@ CONFIGURE_OPTIONS+= --with-fontconfig=no
 # not have ghostscript fonts installed.
 CONFIGURE_OPTIONS+= --with-gs-font-dir="/usr/share/ghostscript/fonts"
 CONFIGURE_OPTIONS+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS)) 
-CONFIGURE_OPTIONS.32+= --with-perl=$(PERL)
-CONFIGURE_OPTIONS.32+= --with-perl-options="INSTALLDIRS=vendor"
-CONFIGURE_OPTIONS.64+= --without-perl
+CONFIGURE_OPTIONS+= --with-perl=$(PERL)
+CONFIGURE_OPTIONS+= --with-perl-options="INSTALLDIRS=vendor"
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 
 # common targets
