@@ -799,8 +799,10 @@ QT6_PKG_CONFIG_PATH = $(QT6_LIBDIR)/pkgconfig
 # Not necessarily the system's default version, i.e. /usr/bin/perl
 PERL_VERSION =  5.34
 
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
+PERL_VERSIONS = 5.34 5.36
+# Perl up to 5.22 was built 32-bit only.  Starting with 5.24 the perl package
+# is built 64-bit only.  So now all PERL_VERSIONS are 64-bit only.
+PERL_64_ONLY_VERSIONS = $(PERL_VERSIONS)
 
 # List of perl versions we are currently obsoleting.  We no longer build any
 # packages for these perl versions, but there still might be hanging some not
@@ -810,7 +812,7 @@ PERL_64_ONLY_VERSIONS = 5.24 5.34
 #
 # This list should be usually empty.  Intersection of PERL_VERSIONS_OBSOLETING
 # and PERL_VERSIONS lists MUST be always empty.
-PERL_VERSIONS_OBSOLETING =
+PERL_VERSIONS_OBSOLETING = 5.22 5.24
 
 define perl-path-rule
 PERL.$(1) =		/usr/perl5/$(1)/bin/perl
