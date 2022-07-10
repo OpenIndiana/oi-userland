@@ -523,9 +523,11 @@ REQUIRED_PACKAGES::     $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED)
 	$(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
 	@$(GSED) -i -e '/^# Auto-generated dependencies$$/,$$d' Makefile
 	@echo "# Auto-generated dependencies" >>Makefile
-	@$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) | \
-		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' $(REQUIRED_PACKAGES_TRANSFORM) \
-			| sort -u >>Makefile
+	$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) \
+		| $(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' \
+		| tr '|' '\n' \
+		| $(GSED) -e 's,pkg:/,,g' -e 's/@.*$$//g' $(REQUIRED_PACKAGES_TRANSFORM) \
+		| sort -u >>Makefile
 	@echo "*** Please edit your Makefile and verify the new or updated content at the end ***"
 
 
