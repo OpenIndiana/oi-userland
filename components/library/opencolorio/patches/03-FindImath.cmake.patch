@@ -1,0 +1,21 @@
+--- OpenColorIO-tags-v2.1.1/share/cmake/modules/FindImath.cmake	週五 12月 17 03:19:03 2021
++++ OpenColorIO-tags-v2.1.1/share/cmake/modules/FindImath_.cmake	週五 4月 22 09:05:25 2022
+@@ -150,7 +150,8 @@
+     if(BUILD_TYPE_DEBUG)
+         set(_Imath_LIB_SUFFIX "_d")
+     endif()
+-
++       set(CMAKE_INSTALL_LIBDIR "lib/amd64")
++       set(Imath_CXX_FLAGS "-m64 -fPIC")
+     set(Imath_LIBRARY
+         "${_EXT_DIST_ROOT}/${CMAKE_INSTALL_LIBDIR}/${CMAKE_STATIC_LIBRARY_PREFIX}Imath-${_Imath_LIB_VER}${_Imath_LIB_SUFFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+ 
+@@ -172,6 +173,7 @@
+             -DCMAKE_INSTALL_MESSAGE=${CMAKE_INSTALL_MESSAGE}
+             -DCMAKE_INSTALL_PREFIX=${_EXT_DIST_ROOT}
+             -DCMAKE_OBJECT_PATH_MAX=${CMAKE_OBJECT_PATH_MAX}
++            -DCMAKE_INSTALL_LIBDIR=lib/amd64
+             -DBUILD_SHARED_LIBS=OFF
+             -DBUILD_TESTING=OFF
+             -DPYTHON=OFF
+

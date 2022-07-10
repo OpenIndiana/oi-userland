@@ -1,0 +1,25 @@
+--- OpenColorIO-tags-v2.1.1/src/utils/NumberUtils.h			Fri Dec 17 03:19:03 2021
++++ OpenColorIO-tags-v2.1.1_patched/src/utils/NumberUtils.h	Thu Apr 21 07:14:15 2022
+@@ -15,6 +15,21 @@
+ #include <system_error>
+ #include <type_traits>
+ 
++inline double strtod_l(const char *__nptr, char **__endptr,
++    locale_t __loc) {
++  return strtod(__nptr, __endptr);
++}
++
++inline float strtof_l(const char *__nptr, char **__endptr,
++    locale_t __loc) {
++  return strtof(__nptr, __endptr);
++}
++
++inline long strtol_l(const char *__nptr, char **__endptr,
++    int __base, locale_t __loc) {
++  return strtol(__nptr, __endptr, __base);
++}
++
+ namespace OCIO_NAMESPACE
+ {
+ namespace NumberUtils
+

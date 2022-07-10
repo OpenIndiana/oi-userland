@@ -1,0 +1,21 @@
+--- OpenColorIO-tags-v2.1.1/share/cmake/modules/Findpybind11.cmake	週五 12月 17 03:19:03 2021
++++ OpenColorIO-tags-v2.1.1/share/cmake/modules/Findpybind11_.cmake	週六 4月 23 08:39:06 2022
+@@ -145,7 +145,8 @@
+     set(pybind11_FOUND TRUE)
+     set(pybind11_VERSION ${pybind11_FIND_VERSION})
+     set(pybind11_INCLUDE_DIR "${_EXT_DIST_ROOT}/${CMAKE_INSTALL_INCLUDEDIR}")
+-
++	set(CMAKE_INSTALL_LIBDIR "lib/amd64")
++   set(pybind11_CXX_FLAGS "-m64 -fPIC")
+     if(_pybind11_TARGET_CREATE)
+         # Hack to let imported target be built from ExternalProject_Add
+         file(MAKE_DIRECTORY ${pybind11_INCLUDE_DIR})
+@@ -165,6 +165,8 @@
+             -DCMAKE_INSTALL_MESSAGE=${CMAKE_INSTALL_MESSAGE}
+             -DCMAKE_INSTALL_PREFIX=${_EXT_DIST_ROOT}
+             -DCMAKE_OBJECT_PATH_MAX=${CMAKE_OBJECT_PATH_MAX}
++            -DCMAKE_INSTALL_LIBDIR=lib/amd64
++            -DCMAKE_CXX_FLAGS=${pybind11_CXX_FLAGS}
+             -DPYBIND11_INSTALL=ON
+             -DPYBIND11_TEST=OFF
+         )
