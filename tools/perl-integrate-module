@@ -1,0 +1,406 @@
+#! /usr/bin/ksh
+#
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Marcel Telka
+#
+
+
+METACPANAPI=https://fastapi.metacpan.org/v1
+CURL="/usr/bin/curl -s"
+
+
+function usage
+{
+	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1"
+	printf "Usage: perl-integrate-module [-l VERSION] [-o OBSOLETE].. MODULE\n" >&2
+	[[ -n "$1" ]] && exit 1
+	exit 0
+}
+
+
+VERSION=
+OBSOLETE=
+while getopts ":hl:o:" OPT ; do
+	case "$OPT" in
+	"?"|"h")	usage ;;
+	"l")		VERSION="$OPTARG" ;;
+	"o")		OBSOLETE="$OBSOLETE $OPTARG" ;;
+	esac
+done
+shift $((OPTIND - 1))
+
+(($# == 0)) && usage
+(($# > 1)) && usage "Too many arguments"
+
+MODULE="$1"
+
+
+WS_TOP=$(git rev-parse --show-toplevel 2>/dev/null)
+[[ -z "$WS_TOP" ]] && usage "The script must be run in git repo"
+
+DIR="$WS_TOP/components/perl"
+[[ -d "$DIR" ]] || usage "Directory $DIR not found"
+
+
+# Get data from metacpan
+METACPAN_MODULE=$($CURL "$METACPANAPI/module/$MODULE")
+if (($? != 0)) || [[ -z "$METACPAN_MODULE" ]] ; then
+	printf "FATAL: Failed to get data from metacpan\n" >&2
+	exit 1
+fi
+
+# Detect distribution for module
+DISTRIBUTION=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.distribution')
+if (($? != 0)) || [[ -z "$DISTRIBUTION" || "$DISTRIBUTION" == "null" ]] ; then
+	printf "FATAL: Failed to get distribution for module %s from metacpan\n" "$MODULE" >&2
+	exit 1
+fi
+if [[ "$DISTRIBUTION" != "${MODULE//::/-}" ]] then
+	printf "WARNING: Module %s does not match distribution %s\n" "$MODULE" "$DISTRIBUTION"
+	printf "WARNING: Continue with module %s instead of %s\n" "${DISTRIBUTION//-/::}" "$MODULE"
+	MODULE="${DISTRIBUTION//-/::}"
+fi
+
+# Find the latest version if not provided by user
+if [[ -z "$VERSION" ]] ; then
+	VERSION=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.version')
+	if (($? != 0)) || [[ -z "$VERSION" || "$VERSION" == "null" ]] ; then
+		printf "FATAL: Failed to get version for module %s from metacpan\n" "$MODULE" >&2
+		exit 1
+	fi
+fi
+
+# Get module author
+AUTHOR=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.author')
+if (($? != 0)) || [[ -z "$AUTHOR" || "$AUTHOR" == "null" ]] ; then
+	printf "FATAL: Failed to get author for module %s from metacpan\n" "$MODULE" >&2
+	exit 1
+fi
+
+
+# Prepare the directory
+DIR="$DIR/$DISTRIBUTION"
+mkdir -p "$DIR"
+cd "$DIR"
+git restore --staged . > /dev/null 2>&1
+git checkout . > /dev/null 2>&1
+
+# Is this new module, or just a reboot?
+NEW=1
+REBUILD=0
+PREV_VER=
+PREV_REV=0
+if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
+	NEW=0
+	REBUILD=1
+	PREV_VER=$(gmake print-value-COMPONENT_VERSION)
+	PREV_REV=$(gmake print-value-COMPONENT_REVISION)
+	gmake clobber > /dev/null 2>&1
+fi
+
+# Remove everything from git (except history)
+rm -f history
+find . -type f | while read f ; do rm -f "$f" ; git rm "$f" > /dev/null 2>&1 ; done
+git checkout history > /dev/null 2>&1
+
+
+# Makefile template
+cat $WS_TOP/transforms/copyright-template | sed -e '/^$/,$d' > Makefile
+cat <<EOF >> Makefile
+
+#
+# This file was automatically generated using the following command:
+#   \$WS_TOOLS/perl-integrate-module $MODULE
+#
+
+BUILD_STYLE = makemaker
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_PERL_MODULE =		$MODULE
+HUMAN_VERSION =			$VERSION
+COMPONENT_REVISION =		$((PREV_REV + 1))
+COMPONENT_SUMMARY =		$MODULE - TODO
+COMPONENT_CPAN_AUTHOR =		$AUTHOR
+COMPONENT_ARCHIVE_HASH =	\\
+	sha256:TODO
+COMPONENT_LICENSE =		license:TODO
+COMPONENT_LICENSE_FILE =	licfile:TODO
+
+include \$(WS_MAKE_RULES)/common.mk
+
+EOF
+
+# Remove COMPONENT_REVISION if not needed
+COMPONENT_VERSION=$(gmake print-value-COMPONENT_VERSION)
+[[ "$PREV_VER" != "$COMPONENT_VERSION" ]] && REBUILD=0 && sed -i -e '/^COMPONENT_REVISION/d' Makefile
+
+# Calculate sham256 sum for source package
+gmake fetch > /dev/null 2>&1
+USERLAND_ARCHIVES=$(gmake print-value-USERLAND_ARCHIVES)
+COMPONENT_ARCHIVE=$(gmake print-value-COMPONENT_ARCHIVE)
+SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES/$COMPONENT_ARCHIVE")
+sed -i -e 's/sha256:TODO/sha256:'"$SHA256"'/g' Makefile
+
+# Unpack sources
+gmake prep > /dev/null 2>&1
+SOURCE_DIR=$DISTRIBUTION-$VERSION
+
+# Switch to modulebuild if needed
+[[ ! -f "$SOURCE_DIR/Makefile.PL" && -f "$SOURCE_DIR/Build.PL" ]] && sed -i -e 's/makemaker/modulebuild/g' Makefile
+
+# Get abstrast.  Either from metacpan, or directly from sources.
+ABSTRACT=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.abstract')
+if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
+	printf "WARNING: Failed to get abstract for module %s from metacpan\n" "$MODULE" >&2
+	ABSTRACT="TODO"
+fi
+if [[ "$ABSTRACT" == "TODO" ]] ; then
+	if [[ ! -f "$SOURCE_DIR/META.json" ]] ; then
+		printf "WARNING: META.json missing\n" >&2
+	else
+		ABSTRACT=$(cat "$SOURCE_DIR/META.json" | /usr/bin/jq -r '.abstract')
+		if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
+			printf "WARNING: Failed to get abstract from META.json\n" >&2
+			ABSTRACT="TODO"
+		fi
+	fi
+fi
+# Abstract needs to be sanitized
+ABSTRACT="${ABSTRACT//\`/\\\\\`}"
+ABSTRACT="${ABSTRACT//\"/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"}"
+ABSTRACT="${ABSTRACT//\//\/}"
+ABSTRACT="${ABSTRACT//\$/\\\\\$\$}"
+sed -i -e 's/\(COMPONENT_SUMMARY.*\)TODO$/\1'"$ABSTRACT"'/g' Makefile
+
+
+# Try to detect license type(s)
+function detect_license
+{
+	typeset -n L="$1"
+	typeset F="$2"
+	typeset D
+
+	if grep -q -- "The Apache License, Version 2.0, January 2004" "$F" ; then
+		D="Apache-2.0"
+		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
+	fi
+
+	if grep -q -- "^--- The Artistic License 1.0 ---" "$F" \
+	    || grep -q -- "--- The \"Artistic License\" ---" "$F" ; then
+		D="Artistic-1.0-TODO"
+		grep -q "7. C subroutines" "$F" && grep -q "10. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0-Perl"
+		grep -q "7. C or perl subroutines" "$F" && grep -q "10. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0-cl8"
+		grep -q "7. C or perl subroutines" "$F" && grep -q "9. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0"
+		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
+	fi
+
+	if grep -q -- "Artistic License 2.0" "$F" ; then
+		D="Artistic-2.0"
+		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
+	fi
+
+	if grep -q -- "^--- The GNU General Public License, Version 1, February 1989 ---" "$F" ; then
+		D="GPL-1.0-only-TODO"
+		grep -A 2 "GNU General Public License as published by the" "$F" | grep -q "or (at your option) any" && D="GPL-1.0-or-later"
+		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
+	fi
+
+	if grep -q -- "The MIT License" "$F" ; then
+		D="MIT-TODO"
+		grep -q "The above copyright notice and this permission notice" "$F" && D="MIT"
+		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
+	fi
+}
+
+LICENSE=
+LICFILE=
+for f in LICENSE LICENCE COPYING ; do
+	[[ -f "$SOURCE_DIR/$f" ]] || continue
+	LICFILE="$SOURCE_DIR/$f"
+
+	detect_license LICENSE "$LICFILE"
+
+	if [[ -n "$LICENSE" ]] ; then
+		sed -i -e 's|licfile:TODO|'"$f"'|g' Makefile
+		break
+	fi
+
+	printf "WARNING: Failed to detect license type in %s file\n" "$f" >&2
+done
+if [[ -z "$LICFILE" ]] ; then
+	printf "WARNING: No license file found\n" >&2
+fi
+
+if [[ -z "$LICENSE" ]] ; then
+	# Since the distibution does not provide own license file (or we failed
+	# to find it) we will use default Perl license with added Copyright
+	# notice from this distribution
+
+	sed -i -e '/^COMPONENT_LICENSE_FILE/d' Makefile
+
+	# Try to find Copyright notice
+	COPYRIGHT=
+	for f in README README.md ; do
+		f="$SOURCE_DIR/$f"
+		[[ -f "$f" ]] || continue
+
+		COPYRIGHT=$(sed -e '1,/^# LICENSE/d' -e '/^#/,$d' -e '/./,$!d' "$f" 2>/dev/null)
+		[[ -n "$COPYRIGHT" ]] && break
+		COPYRIGHT=$(sed -e '1,/^# COPYRIGHT/d' -e '/^#/,$d' -e '/./,$!d' "$f" 2>/dev/null)
+		[[ -n "$COPYRIGHT" ]] && break
+		COPYRIGHT=$(sed -e '1,/LICENSE/d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
+		[[ -n "$COPYRIGHT" ]] && break
+		COPYRIGHT=$(sed -e '1,/COPYRIGHT/d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
+		[[ -n "$COPYRIGHT" ]] && break
+	done
+	if [[ -z "$COPYRIGHT" ]] ; then
+		printf "WARNING: No copyright notice found at standard locations\n" >&2
+		for f in $(find "$SOURCE_DIR" -type f -name "*.pm" | LC_ALL=C sort | while read f ; do egrep -q "^=head1 (LICENSE|COPYRIGHT)" "$f" && echo "$f" ; done) ; do
+			COPYRIGHT=$(sed -e '1,/^=head1 LICENSE/d' -e '/^=/,$d' "$f" 2>/dev/null)
+			if [[ -n "$COPYRIGHT" ]] ; then
+				printf "WARNING: Using copyright notice from %s\n" "$f"
+				break
+			fi
+			COPYRIGHT=$(sed -e '1,/^=head1 COPYRIGHT/d' -e '/^=/,$d' "$f" 2>/dev/null)
+			if [[ -n "$COPYRIGHT" ]] ; then
+				printf "WARNING: Using copyright notice from %s\n" "$f"
+				break
+			fi
+		done
+	fi
+	if [[ -z "$COPYRIGHT" ]] ; then
+		printf "WARNING: No copyright notice found\n" >&2
+		> "$DISTRIBUTION.license"
+	else
+		(printf "%s\n\n" "$COPYRIGHT"
+		i=75 ; while ((i)) ; do printf "=" ; i=$((i-1)) ; done
+		printf "\n\n") > "$DISTRIBUTION.license"
+	fi
+
+	# Confirm the package is distributed under the same terms as Perl itself
+	D=1
+	((D)) && (printf "%s\n" "$COPYRIGHT" | grep -q -i "under the same terms as Perl itself") && D=0
+	((D)) && grep -q "license *=> *'http://dev.perl.org/licenses/'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
+	((D)) && grep -q "LICENSE *=> *'perl'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
+
+	((D)) && printf "ERROR: Heuristics failed to detect license type, using default Perl license\n" >&2
+
+	# Make a copy of license so we can use it during publish
+	cat "$WS_TOP/tools/perl-license" | grep -v "^#" >> "$DISTRIBUTION.license"
+	git add "$DISTRIBUTION.license"
+
+	detect_license LICENSE "$WS_TOP/tools/perl-license"
+fi
+
+# Store the detected license into the Makefile
+sed -i -e 's/license:TODO/'"$LICENSE"'/g' Makefile
+
+
+# Create manifests
+if ! gmake sample-manifest > /dev/null 2>&1 ; then
+	printf "WARNING: 'gmake sample-manifest' failed!\n" >&2
+else
+	cat manifests/sample-manifest.p5m \
+		| sed -e 's/^#.*Copyright.*<contributor>.*$/# This file was automatically generated using perl-integrate-module/g' \
+		> "$DISTRIBUTION-PERLVER.p5m"
+	git add manifests/sample-manifest.p5m "$DISTRIBUTION-PERLVER.p5m"
+fi
+
+
+# Generate REQUIRED_PACKAGES
+gmake REQUIRED_PACKAGES > /dev/null 2>&1 || printf "WARNING: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
+git add Makefile
+
+
+# Make sure the build environment is setup properly and we do have all
+# requirements installed.  Otherwise we cannot continue.
+! gmake env-check > /dev/null 2>&1 && printf "FATAL: 'gmake env-check' failed!\n" >&2 && exit 1
+
+
+# Run tests and create results-all.master file
+mkdir -p test
+touch test/results-all.master
+gmake test > /dev/null 2>&1
+find build/test -type f -name "*.snapshot" -exec cp {} test/results-all.master \;
+gmake test > /dev/null 2>&1 || printf "WARNING: 'gmake test' failed!\n" >&2
+git add test/results-all.master
+
+
+# Publish packages and create pkg5 file
+gmake publish > /dev/null 2>&1 || printf "WARNING: 'gmake publish' failed!\n" >&2
+git add pkg5
+
+
+# Handle history
+COMPONENT_FMRI=$(gmake print-value-COMPONENT_FMRI)
+PERL_VERSIONS_OBSOLETING=$(gmake print-value-PERL_VERSIONS_OBSOLETING)
+OV=
+for o in $(echo $OBSOLETE $PERL_VERSIONS_OBSOLETING | LC_ALL=C sort -u) ; do
+	PLV=${o//.}
+	FMRI=$(pkg list -avH "$COMPONENT_FMRI-$PLV" 2>/dev/null | egrep -v '(o|r)$' | sed -e 's|^.*\('"$COMPONENT_FMRI"'\)|\1|g' -e 's/:[^:]*$//g' -e 's/\(-[^-]*\)$/,5.11\1/g')
+	[[ -n "$FMRI" ]] || continue
+	FMRI_H=${FMRI%.*}
+	FMRI_T=${FMRI##*.}
+	if [[ "$FMRI_H" == "$FMRI" ]] ; then
+		printf "ERROR: Wrong fmri format: %s\n" "$FMRI"
+		continue
+	fi
+	FMRI_T=$((FMRI_T + 1))
+	printf "%s.%s\n" "$FMRI_H" "$FMRI_T" >> history
+
+	[[ -n "$OV" ]] && OV="$OV and "
+	OV="$OV$o"
+done
+if [[ -f history ]] ; then
+	LC_ALL=C sort -u history > history.new
+	mv history.new history
+	git add history
+fi
+
+
+# Construct the commit message
+MSG=
+if ((NEW)) ; then
+	MSG="Add $MODULE perl module"
+else
+	((REBUILD)) || MSG="update to $VERSION"
+
+	NV=
+	PERL_VERSIONS=$(gmake print-value-PERL_VERSIONS)
+	for v in $PERL_VERSIONS ; do
+		PLV=${v//.}
+		pkg list -avH "$COMPONENT_FMRI-$PLV" 2>/dev/null | egrep -q -v '(o|r)$' && continue
+		[[ -n "$NV" ]] && NV="$NV and "
+		NV="$NV$v"
+	done
+
+	REBUILDMSG=
+	[[ -n "$NV" ]] && REBUILDMSG="rebuild for perl $NV"
+	if [[ -n "$OV" ]] ; then
+		[[ -n "$REBUILDMSG" ]] && REBUILDMSG="$REBUILDMSG and" || REBUILDMSG="rebuild"
+		REBUILDMSG="$REBUILDMSG to obsolete packages for perl $OV"
+	fi
+
+	if [[ -n "$REBUILDMSG" ]] ; then
+		[[ -n "$MSG" ]] && MSG="$MSG; "
+		MSG="$MSG$REBUILDMSG"
+	fi
+	[[ -z "$MSG" ]] && MSG="rebuild"
+
+	MSG="perl/$DISTRIBUTION: $MSG"
+fi
+
+# Commit the results
+git commit -m "$MSG" > /dev/null 2>&1 || printf "WARNING: 'git commit' failed!\n" >&2
