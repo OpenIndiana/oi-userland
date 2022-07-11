@@ -28,10 +28,13 @@
 
 BUILD_BITS= 64_and_32
 BUILD_STYLE= cmake
+USE_COMMON_TEST_MASTER = no
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gd2
 COMPONENT_VERSION=	2.3.3
+COMPONENT_REVISION =	1
 COMPONENT_FMRI=		library/gd
 COMPONENT_SUMMARY=	The Graphics Draw Library
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -99,12 +102,12 @@ COMPONENT_TEST_TRANSFORMS = \
 REQUIRED_PACKAGES += library/zlib
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/libwebp
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
