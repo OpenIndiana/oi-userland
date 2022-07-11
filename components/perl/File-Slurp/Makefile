@@ -10,27 +10,24 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module File::Slurp
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		File-Slurp
-COMPONENT_VERSION =		9999.32
-COMPONENT_FMRI =		library/perl-5/file-slurp
+COMPONENT_PERL_MODULE =		File::Slurp
+HUMAN_VERSION =			9999.32
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		File::Slurp - Simple and Efficient Reading/Writing/Modifying of Complete Files
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/File::Slurp
+COMPONENT_CPAN_AUTHOR =		CAPOEIRAB
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4c3c21992a9d42be3a79dd74a3c83d27d38057269d65509a2f555ea0fb2bc5b0
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/C/CA/CAPOEIRAB/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
