@@ -10,32 +10,25 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Digest::SHA1
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Digest-SHA1
-COMPONENT_VERSION =		2.13
-COMPONENT_FMRI =		library/perl-5/digest-sha1
+COMPONENT_PERL_MODULE =		Digest::SHA1
+HUMAN_VERSION =			2.13
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Digest::SHA1 - Perl interface to the SHA-1 algorithm
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Digest::SHA1
+COMPONENT_CPAN_AUTHOR =		GAAS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:68c1dac2187421f0eb7abf71452a06f190181b8fc4b28ededf5b90296fb943cc
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/G/GA/GAAS/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
