@@ -62,7 +62,8 @@ printf "\n# Automatically generated dependencies based on distribution metadata\
 
 	# Resolve the dependency if not in cache already
 	if [[ ! -s "$CACHEDIR/$PREREQ" ]] ; then
-		MANIFEST="$BUILD_DIR/META-$PREREQ"
+		# We must replace '::' by '-' otherwise 'pkgdepend resolve' fails
+		MANIFEST="$BUILD_DIR/META-${PREREQ//::/-}"
 
 		# Prepare manifest
 		if [[ "$PREREQ" == "perl" ]] ; then
