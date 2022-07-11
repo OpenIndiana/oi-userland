@@ -194,8 +194,10 @@ GENERATE_EXTRA_CMD ?= \
 # Support for adding dependencies from META.json to REQUIRED_PACKAGES
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
 $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
-	[ -f $(SOURCE_DIR)/META.json ] && $(CAT) $(SOURCE_DIR)/META.json \
-		| $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) $(PERL_VERSION) || true
+	if [ -f $(SOURCE_DIR)/META.json ] ; then \
+		$(MKDIR) $(BUILD_DIR) ; \
+		$(CAT) $(SOURCE_DIR)/META.json | $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) $(PERL_VERSION) > $@ ; \
+	fi
 	$(TOUCH) $@
 
 # perl-meta-deps requires jq
