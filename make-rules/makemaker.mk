@@ -189,7 +189,15 @@ $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 # We need to add -$(PLV) to package fmri and generate runtime dependencies based on META.json
 GENERATE_EXTRA_CMD ?= \
 	$(GSED) -e 's/^\(set name=pkg.fmri [^@]*\)\(.*\)$$/\1-$$(PLV)\2/' | \
-	$(CAT) - <([ -f $(SOURCE_DIR)/META.json ] && $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) runtime $(PERL_VERSION) < $(SOURCE_DIR)/META.json)
+	$(CAT) - <( \
+		echo "" ; \
+		echo "\# perl modules are unusable without perl runtime binary" ; \
+		echo "depend type=require fmri=__TBD pkg.debug.depend.file=perl \\" ; \
+		echo "    pkg.debug.depend.path=usr/perl5/\$$(PERLVER)/bin" ; \
+		[ -f $(SOURCE_DIR)/META.json ] && $(CAT) $(SOURCE_DIR)/META.json \
+			| $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) runtime $(PERL_VERSION) \
+			| $(GSED) -e 's|^\(depend.*pkg:/runtime/perl-\$$(PLV).*\)$$|\#\1|g' \
+	)
 
 # Support for adding dependencies from META.json to REQUIRED_PACKAGES
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
