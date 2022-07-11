@@ -122,7 +122,7 @@ define COMPONENT_INSTALL_ACTION=
 	(rm -r $(COMPONENT_TARGET_DIR)/pkg/obj); \
 	($(MKDIR) -p $(MEDIATEDUSRSHAREMAN1DIR)); \
 	/usr/gnu/bin/find $(COMPONENT_TARGET_DIR)/src -type f \
-       	| egrep -v '\.go|\.s|\.bash|\.txt|\.c|\.tmpl|\.h|\.pl|\.md|\.S|\.py|\.dist|\.rc|\.bat|README|Makefile|\.awk|\.rules|\.mod|\.json|LICENSE|PATENTS'\
+       	| egrep -v '\.go|\.s|\.bash|\.txt|\.c|\.tmpl|\.h|\.pl|\.md|\.S|\.py|\.dist|\.rc|\.bat|README|Makefile|\.awk|\.rules|\.mod|\.json|LICENSE|PATENTS|\.bin'\
 	| xargs rm;
 endef
 
