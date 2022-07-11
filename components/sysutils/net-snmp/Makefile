@@ -29,15 +29,11 @@ DOXYGEN= /usr/bin/doxygen
 
 include ../../../make-rules/shared-macros.mk
 
-PERL_VERSION=5.24
-PERL=$(PERL.$(PERL_VERSION))
-PERL_ARCH=$(shell $(PERL) -e 'use Config; print $$Config{archname}')
-
 PATH=$(VPATH):$(PATH.gnu)
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.8
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_FMRI= system/management/snmp/net-snmp
 COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -48,15 +44,12 @@ COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/net-snmp/files/net-snmp/
 COMPONENT_CLASSIFICATION= System/Enterprise Management
 COMPONENT_SUMMARY= Net-SNMP Agent files and libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += "-DFALSE_SHARING_ALIGN=64"
 
 CONFIGURE_ENV +=	PYTHONPROG=$(PYTHON.$(BITS))
-CONFIGURE_ENV.32   += PERL=$(PERL.5.22)
-CONFIGURE_ENV.64   += PERL=$(PERL.5.24)
+CONFIGURE_ENV.64 +=	PERL=$(PERL)
 
 CONFIGURE_OPTIONS  +=	--with-default-snmp-version=3
 CONFIGURE_OPTIONS  +=	--with-sys-contact="root@localhost"
@@ -88,7 +81,7 @@ CONFIGURE_OPTIONS  +=	--with-python-modules="$(PYTHON_ARGS)"
 PERL_ARGS =			DESTDIR=$(PROTO_DIR) INSTALLDIRS=vendor
 CONFIGURE_OPTIONS.32  +=	--disable-embedded-perl
 CONFIGURE_OPTIONS.32  +=	--without-perl-modules
-CONFIGURE_OPTIONS.64  +=	PERLPROG="$(PERL.5.24)"
+CONFIGURE_OPTIONS.64  +=	PERLPROG="$(PERL)"
 CONFIGURE_OPTIONS.64  +=  --disable-embedded-perl
 CONFIGURE_OPTIONS.64  +=  --with-perl-modules="$(PERL_ARGS)"
 
@@ -148,25 +141,22 @@ $(BUILD_DIR_32)/.docs:
 	$(TOUCH) $@
 
 # common targets
-build:  $(BUILD_32) $(BUILD_64) $(BUILD_DIR_32)/.docs
-
-install:  build $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
+build:  $(BUILD_DIR_32)/.docs
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+# Bogus dependency due to libssp
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Without the picl headers, the build fails on a missing SPARC-specific file.
+REQUIRED_PACKAGES += system/header/header-picl
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += service/picl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-# Without the picl headers, the build fails on a missing SPARC-specific file.
-REQUIRED_PACKAGES += system/header/header-picl
