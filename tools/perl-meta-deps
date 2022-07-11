@@ -42,7 +42,7 @@ PERL=/usr/perl5/$PERLVER/bin/perl
 [[ -x "$PERL" ]] || usage "perl $PERLVER not found"
 PERL_ARCH=$($PERL -e 'use Config; print $Config{archname}')
 
-(($# != 0)) && usage "Too much arguments"
+(($# != 0)) && usage "Too many arguments"
 
 PERL_VERSION_CONVERT="$(dirname $0)/perl-version-convert"
 [[ ! -x "$PERL_VERSION_CONVERT" ]] && printf "ERROR: perl-version-convert not found" && exit 1
@@ -62,7 +62,7 @@ printf "\n# Automatically generated dependencies based on distribution metadata\
 
 	# Resolve the dependency if not in cache already
 	if [[ ! -s "$CACHEDIR/$PREREQ" ]] ; then
-		MANIFEST="$BUILD_DIR/META-${PREREQ//::/-}"
+		MANIFEST="$BUILD_DIR/META-$PREREQ"
 
 		# Prepare manifest
 		if [[ "$PREREQ" == "perl" ]] ; then
