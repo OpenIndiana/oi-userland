@@ -24,14 +24,13 @@
 # Copyright (c) 2021 Klaus Ziegler
 #
 
-BUILD_BITS=	64
-
 include ../../../make-rules/shared-macros.mk
 
 PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		subversion
 COMPONENT_VERSION=	1.14.2
+COMPONENT_REVISION =	1
 COMPONENT_PROJECT_URL=	https://subversion.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -69,14 +68,7 @@ COMPONENT_INSTALL_TARGETS = install install-lib \
 
 COMPONENT_BUILD_TARGETS = $(COMPONENT_BUILD_TARGETS.$(BITS))
 
-PERL_VERSION=5.24
 PYTHON_VERSION=3.9
-PERL = /usr/perl5/5.24/bin/perl
-ifeq	($(strip $(MACH)),i386)
-PERL_ARCH = i86pc-solaris-thread-multi-64
-else
-PERL_ARCH = sun4-solaris-thread-multi-64
-endif
 
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += PYMODS="$(PYMODS)"
@@ -161,15 +153,19 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH64).master
 
+# PKGVERS is needed for manifest processing
+PKG_MACROS += PERLVER=$(PERL_VERSION)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/py3c
 REQUIRED_PACKAGES += runtime/python-39
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/versioning/subversion
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/apr-util
 REQUIRED_PACKAGES += library/expat
@@ -177,6 +173,5 @@ REQUIRED_PACKAGES += library/libserf
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/magic
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
