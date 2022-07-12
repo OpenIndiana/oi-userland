@@ -1,5 +1,5 @@
---- xpr-1.0.5/xpr.c.orig	2018-05-08 16:36:23.067816056 +0000
-+++ xpr-1.0.5/xpr.c	2018-05-08 16:45:10.666447370 +0000
+--- xpr-1.1.0/xpr.c	2022-07-11 00:57:30.000000000 +0000
++++ xpr-1.1.0.patched/xpr.c	2022-07-12 14:42:36.990257063 +0000
 @@ -69,6 +69,29 @@
   * to devices recognized.  Also added -density, -cutoff, and -noposition
   * command line options.
@@ -30,7 +30,7 @@
   */
  
  #ifdef HAVE_CONFIG_H
-@@ -116,6 +139,9 @@
+@@ -115,6 +138,9 @@
  #define W_PAGE 2550
  #define H_PAGE 3225
  
@@ -40,7 +40,7 @@
  #ifdef NOINLINE
  #define min(x,y) (((x)<(y))?(x):(y))
  #endif /* NOINLINE */
-@@ -158,6 +184,50 @@
+@@ -155,6 +181,50 @@
  static GrayRec gray3x3 = {sizeof(grayscale3x3)/sizeof(long), 3, 3, grayscale3x3};
  static GrayRec gray4x4 = {sizeof(grayscale4x4)/sizeof(long), 4, 4, grayscale4x4};
  
@@ -91,7 +91,7 @@
  /* mapping tables to map a byte in to the hex representation of its
   * bit-reversal
   */
-@@ -195,7 +265,9 @@
+@@ -192,7 +262,9 @@
    int *density,
    unsigned int *cutoff,
    float *gamma,
@@ -102,7 +102,7 @@
  static
  void setup_layout(
    enum device device,
-@@ -207,7 +279,9 @@
+@@ -204,7 +276,9 @@
    char *header,
    char *trailer,
    int *scale,
@@ -113,18 +113,7 @@
  static
  char *convert_data(
      XWDFileHeader *win,
-@@ -241,7 +315,9 @@
-   int *top_margin,
-   int flags,
-   const char *header,
--  const char *trailer);
-+  const char *trailer,
-+  int paper_width,
-+  int paper_length);
- static void ln03_finish(void);
- static void la100_setup(int iw, int ih, int scale);
- static void la100_finish(void);
-@@ -259,7 +335,9 @@
+@@ -227,7 +301,9 @@
    int flags,
    const char *header,
    const char *trailer,
@@ -133,9 +122,9 @@
 +  int paper_width,
 +  int paper_length);
  static void ps_finish(void);
- static
- void ln03_output_sixels(
-@@ -324,6 +402,10 @@
+ static void ps_output_bits(
+   int iw,
+@@ -273,6 +349,10 @@
      enum orientation orientation;
      enum device device;
      XColor *colors = (XColor *)NULL;
@@ -146,7 +135,7 @@
  
      if (!(progname = argv[0]))
        progname = "xpr";
-@@ -332,7 +414,14 @@
+@@ -281,7 +361,14 @@
  #endif
      parse_args (argc, argv, &scale, &width, &height, &left, &top, &device,
  		&flags, &split, &header, &trailer, &plane, &gray,
@@ -162,7 +151,7 @@
  
      if (device == PP) {
  	x2pmp(stdin, stdout, scale,
-@@ -418,7 +507,8 @@
+@@ -370,13 +457,14 @@
  
      /* calculate orientation and scale */
      setup_layout(device, (int) win.pixmap_width, (int) win.pixmap_height,
@@ -170,36 +159,25 @@
 +		 flags, width, height, header, trailer, &scale, &orientation,
 +		 w_max, h_max);
  
-     if (device == PS) {
- 	iw = win.pixmap_width;
-@@ -440,7 +530,7 @@
-     if (device == LN03) {
- /*	ln03_grind_fonts(sixmap, iw, ih, scale, &pixmap); */
- 	ln03_setup(iw, ih, orientation, scale, left, top,
--		   &left_margin, &top_margin, flags, header, trailer);
-+		   &left_margin, &top_margin, flags, header, trailer, paper_width, paper_length);
- 	ln03_output_sixels(sixmap, iw, ih, (flags & F_NOSIXOPT), split,
- 			   scale, top_margin, left_margin);
- 	ln03_finish();
-@@ -450,7 +540,7 @@
- 	la100_finish();
-     } else if (device == PS) {
- 	ps_setup(iw, ih, orientation, scale, left, top,
--		   flags, header, trailer, w_name);
-+		   flags, header, trailer, w_name, paper_width, paper_length);
- 	ps_output_bits(iw, ih, flags, orientation, &win, data);
- 	ps_finish();
-     } else {
-@@ -508,6 +598,8 @@
+     iw = win.pixmap_width;
+     ih = win.pixmap_height;
+ 
+     ps_setup(iw, ih, orientation, scale, left, top,
+-             flags, header, trailer, w_name);
++             flags, header, trailer, w_name, paper_width, paper_length);
+     ps_output_bits(iw, ih, flags, orientation, &win, data);
+     ps_finish();
+ 
+@@ -428,6 +516,8 @@
+ 	    "    -landscape  -portrait\n"
  	    "    -left <inches>  -top <inches>\n"
  	    "    -noposition\n"
- 	    "    -nosixopt\n"
-+        "    -papertype {letter | legal | A0-A10 | B0-B10 | C0-C10}\n"
-+        "    -pheight <inches>[in | cm | mm] -pwidth <inches>[in | cm | mm]\n"
++	    "    -papertype {letter | legal | A0-A10 | B0-B10 | C0-C10}\n"
++	    "    -pheight <inches>[in | cm | mm] -pwidth <inches>[in | cm | mm]\n"
  	    "    -plane <n>\n"
  	    "    -psfig\n"
  	    "    -render <type>\n"
-@@ -540,7 +632,9 @@
+@@ -460,7 +550,9 @@
    int *density,
    unsigned int *cutoff,
    float *gamma,
@@ -210,7 +188,7 @@
  {
      register char *output_filename;
      register int f;
-@@ -656,12 +750,49 @@
+@@ -568,12 +660,49 @@
  	    output_filename = *argv;
  	} else if (!strcmp(*argv, "-portrait")) {
  	    *flags |= F_PORTRAIT;
@@ -260,7 +238,7 @@
  	} else if (!strcmp(*argv, "-rv")) {
  	    *flags |= F_INVERT;
  	} else if (!strcmp(*argv, "-render")) {
-@@ -748,7 +879,9 @@
+@@ -660,7 +789,9 @@
    char *header,
    char *trailer,
    int *scale,
@@ -271,7 +249,7 @@
  {
      register int w_scale;
      register int h_scale;
-@@ -764,22 +897,22 @@
+@@ -676,22 +807,22 @@
  	if ((win_width < win_height || (flags & F_PORTRAIT)) &&
  	    !(flags & F_LANDSCAPE)) {
  	    *orientation = PORTRAIT;
@@ -292,25 +270,14 @@
  	    h_scale = h_max / win_height;
  	    *scale = min(w_scale, h_scale);
  	}
-     } else {			/* device == LA100 */
+     } else {
  	*orientation = PORTRAIT;
 -	*scale = W_MAX / win_width;
 +	*scale = wmax / win_width;
      }
      if (*scale == 0) *scale = 1;
      if (*scale > 6) *scale = 6;
-@@ -1086,7 +1219,9 @@
-   int *top_margin,
-   int flags,
-   const char *header,
--  const char *trailer)
-+  const char *trailer,
-+  int paper_width,
-+  int paper_length)
- {
-     register int i;
-     register int lm, tm, xm;
-@@ -1368,7 +1503,9 @@
+@@ -1072,7 +1203,9 @@
    int flags,
    const char *header,
    const char *trailer,
