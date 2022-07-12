@@ -13,34 +13,19 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY=DOC
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xorg-sgml-doctools
-COMPONENT_VERSION=        1.11
-COMPONENT_FMRI=           x11/documentation/xorg-sgml-doctools
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  Stylesheets and other data files used to generate X.Org documentation
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=         xorg-sgml-doctools
+COMPONENT_VERSION=      1.12
+COMPONENT_FMRI=         x11/documentation/xorg-sgml-doctools
+COMPONENT_SUMMARY=      Stylesheets and other data files used to generate X.Org documentation
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e71ce1df82dcc51eb14be6f42171dcc6bdd11ef46c0c605d6da8af12bd73b74c
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/doc/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xorg-sgml-doctools.license
+  sha256:65a9fdddedc17bd5e9c0b00d904960f03f047c3a62de5458989d493c29fec806
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_INSTALL_ARGS += pkgconfigdir=$(PKG_CONFIG_PATH.32)
 
-COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
-
+# Auto-generated dependencies
