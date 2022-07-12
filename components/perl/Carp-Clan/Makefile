@@ -10,38 +10,25 @@
 #
 
 #
-# Copyright 2022 Friedrich Kink
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Carp::Clan
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=			Carp-Clan
-COMPONENT_VERSION=		6.8
-COMPONENT_HUMAN=		6.08
-COMPONENT_FMRI=			library/perl-5/carp-clan
-COMPONENT_SUMMARY=		Carp::Clan - Report errors from perspective of caller of a clan of modules
-COMPONENT_CLASSIFICATION=	Development/Perl
-COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_HUMAN)
-COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=		https://metacpan.org/pod/Carp::Clan
-COMPONENT_ARCHIVE_HASH=		sha256:c75f92e34422cc5a65ab05d155842b701452434e9aefb649d6e2289c47ef6708
-COMPONENT_ARCHIVE_URL=		https://cpan.metacpan.org/authors/id/E/ET/ETHER/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=		Artistic
-COMPONENT_LICENSE_FILE=		LICENSE
+COMPONENT_PERL_MODULE =		Carp::Clan
+HUMAN_VERSION =			6.08
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Carp::Clan - Report errors from perspective of caller of a \\\\\\\"clan\\\\\\\" of modules
+COMPONENT_CPAN_AUTHOR =		ETHER
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:c75f92e34422cc5a65ab05d155842b701452434e9aefb649d6e2289c47ef6708
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_TRANSFORMS += \
-        '-e "s/,  *[0-9]* wallclock.*//"' \
-        '-e "/^\#/d"' \
-        '-e "/^PERL/d"' \
-        '-e "/^make/d"'
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/perl-534
+PERL_REQUIRED_PACKAGES += runtime/perl
