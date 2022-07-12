@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xscope
-COMPONENT_VERSION=      1.4.2
+COMPONENT_VERSION=      1.4.3
 COMPONENT_FMRI=         x11/diagnostic/xscope
 COMPONENT_SUMMARY=      xscope - X Window Protocol Viewer
-COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:507c107ce6969430b9d57441283a4278aecab656bf9d343a7a1ab56ec5ac4764
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= \
+  sha256:50604759481ac9f747d75b3fd1ad1bab846656d5aa2b3cee5d0e4cb814273985
 
 include $(WS_MAKE_RULES)/common.mk
 

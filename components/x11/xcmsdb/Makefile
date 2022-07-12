@@ -18,12 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xcmsdb
-COMPONENT_VERSION=  1.0.5
-COMPONENT_REVISION= 1
+COMPONENT_VERSION=  1.0.6
 COMPONENT_FMRI=     x11/xcmsdb
 COMPONENT_SUMMARY=  the xcmsdb Device Color Characterization utility
+COMPONENT_ARCHIVE_EXTENSION= .tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e5585361bb8b6a05bb814a8d0e444ee93e0f00180881d3070aff4571e97f67c6
+  sha256:640b42c746eb34bdd71ca2850f2bc9fb0ade194c9f152a8d002425a0684df077
 
 include $(WS_MAKE_RULES)/common.mk
 
