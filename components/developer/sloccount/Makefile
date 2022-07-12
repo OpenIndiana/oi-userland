@@ -13,11 +13,15 @@
 # Copyright 2019 Nona Hansel
 #
 
+BUILD_STYLE = justmake
+# To run tests we need real files, not symlinks
+CLONEY_ARGS = CLONEY_MODE="hardlink"
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sloccount
 COMPONENT_VERSION=	2.26
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.dwheeler.com/sloccount/
 COMPONENT_FMRI=		text/sloccount
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,23 +34,17 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	SLOCCount a set of tools for counting physical Source Lines of Code (SLOC)
 COMPONENT_CLASSIFICATION=System/Text Tools
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV += CC=$(CC)
 
 COMPONENT_INSTALL_ENV += INSTALL=$(INSTALL)
 COMPONENT_INSTALL_ENV += PREFIX=$(PROTO_DIR)/usr
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
+COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TRANSFORMS += '-e "/^make\[/d"'			# delete make logs
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
+PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
