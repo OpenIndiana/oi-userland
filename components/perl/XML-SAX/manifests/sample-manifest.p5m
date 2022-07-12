@@ -10,11 +10,11 @@
 #
 
 #
-# Copyright 2020 Aurelien Larcher
-# Copyright (c) 2022 Tim Mooney.  All rights reserved.
+# Copyright 2022 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -23,24 +23,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# force a dependency on the Perl runtime
-depend fmri=__TBD pkg.debug.depend.file=perl \
-        pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin type=require
-
-# force a dependency on the non-versioned package
-depend fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-        type=require
-
-# force dependencies on xml-namespacesupport and xml-sax-base
-depend fmri=library/perl-5/xml-namespacesupport-$(PLV) type=require
-depend fmri=library/perl-5/xml-sax-base-$(PLV) type=require
-
 file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX.3
 file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::DocumentLocator.3
 file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::Intro.3
 file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::ParserFactory.3
 file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::PurePerl.3
 file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::PurePerl::Reader.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/XML/SAX/.packlist
 file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/DocumentLocator.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/Intro.pod
@@ -61,4 +50,12 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/Reader/URI.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/Reader/UnicodeExt.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/UnicodeExt.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/XMLDecl.pm
-file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/XML/SAX/.packlist
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/xml-namespacesupport-$(PLV)@0.3
+depend type=require fmri=pkg:/library/perl-5/xml-sax-base-$(PLV)@1.5
+#depend type=require fmri=pkg:/runtime/perl-$(PLV)
