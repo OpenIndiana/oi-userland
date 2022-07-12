@@ -10,28 +10,25 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Devel::StackTrace
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Devel-StackTrace
+COMPONENT_PERL_MODULE =		Devel::StackTrace
 HUMAN_VERSION =			2.04
-COMPONENT_VERSION =		2.4
-COMPONENT_FMRI =		library/perl-5/devel-stacktrace
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Devel::StackTrace - An object representing a stack trace
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Devel::StackTrace
+COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:cd3c03ed547d3d42c61fa5814c98296139392e7971c092e09a431f2c9f5d6855
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
