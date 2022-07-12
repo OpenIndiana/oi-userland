@@ -12,13 +12,12 @@
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
-BUILD_BITS= 64
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	xmltoman
 COMPONENT_VERSION= 	0.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY= 	simple XML to man converter
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -33,4 +32,4 @@ COMPONENT_BUILD_ARGS += PREFIX=/usr
 COMPONENT_INSTALL_ARGS += PREFIX=/usr
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
+PERL_REQUIRED_PACKAGES += runtime/perl
