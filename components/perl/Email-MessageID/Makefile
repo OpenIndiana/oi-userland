@@ -10,27 +10,25 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Email::MessageID
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Email-MessageID
-COMPONENT_VERSION =		1.406
-COMPONENT_FMRI =		library/perl-5/email-messageid
+COMPONENT_PERL_MODULE =		Email::MessageID
+HUMAN_VERSION =			1.406
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::MessageID - Generate world unique message-ids.
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Email::MessageID
+COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:ec425ddbf395e0e1ac7c6f95b4933c55c57ac9f1e7514003c7c904ec6cd342b8
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/R/RJ/RJBS/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
