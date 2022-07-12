@@ -30,7 +30,7 @@ COMPONENT_VERSION=		6.9.12
 COMPONENT_SUBVERSION=		38
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_FMRI=			image/imagemagick
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_SUMMARY=		ImageMagick - Image Manipulation Utilities and Libraries
@@ -43,7 +43,6 @@ COMPONENT_LICENSE= Apache 2.0 license
 COMPONENT_LICENSE_FILE= LICENSE
 
 CONFIGURE_FIX_LIBTOOL_RPATH= no
-PERL_VERSION= 5.22
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
@@ -60,11 +59,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	-e 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' \
 	-e 's|need_relink=yes|need_relink=not_on_solaris|' \
 	libtool)
-
-# remove various perl temporary files
-COMPONENT_POST_INSTALL_ACTION += \
-	$(FIND) $(PROTO_DIR) -name ".packlist" -exec $(RM) {} \; ; \
-	$(FIND) $(PROTO_DIR) -name "perllocal.pod" -exec $(RM) {} \; ;
 
 LIBS += -lsocket -lnsl
 CONFIGURE_ENV += LIBS="$(LIBS)"
@@ -91,9 +85,9 @@ CONFIGURE_OPTIONS+= --with-fontconfig=no
 # not have ghostscript fonts installed.
 CONFIGURE_OPTIONS+= --with-gs-font-dir="/usr/share/ghostscript/fonts"
 CONFIGURE_OPTIONS+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS)) 
-CONFIGURE_OPTIONS.32+= --with-perl=$(PERL)
-CONFIGURE_OPTIONS.32+= --with-perl-options="INSTALLDIRS=vendor"
-CONFIGURE_OPTIONS.64+= --without-perl
+CONFIGURE_OPTIONS.32 += --without-perl
+CONFIGURE_OPTIONS.64 += --with-perl=$(PERL)
+CONFIGURE_OPTIONS.64 += --with-perl-options="INSTALLDIRS=vendor"
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 
 # common targets
@@ -122,6 +116,9 @@ COMPONENT_TEST_TRANSFORMS += \
        '-e "/ERROR/p" ' 
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# PKGVERS is needed for manifest processing
+PKG_MACROS += PERLVER=$(PERL_VERSION)
 
 # Build dependencies
 REQUIRED_PACKAGES += print/filter/ghostscript/fonts/gnu-gs-fonts-std
