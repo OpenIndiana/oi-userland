@@ -25,18 +25,19 @@
 # Copyright (c) 2021, Andreas Wacknitz
 #
 
-BUILD_BITS=		64
+BUILD_BITS= 64
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnupg
-COMPONENT_VERSION=	2.3.6
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	https://www.gnupg.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:21f7fe2fc5c2f214184ab050977ec7a8e304e58bfae2ab098fec69f8fabda9c1
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gnupg/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		crypto/gnupg
+COMPONENT_VERSION=	2.3.7
 COMPONENT_SUMMARY=	GNU Privacy Guard
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=	https://gnupg.org/
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:ee163a5fb9ec99ffc1b18e65faef8d086800c5713d15a672ab57d3799da83669
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		crypto/gnupg
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_DESCRIPTION=		A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_LICENSE=	GPLv3, GPLv2, LGPLv3, LGPLv2.1, Creative Commons 1.0, others
@@ -84,14 +85,6 @@ MAN8LIST = addgnupghome applygnupgdefaults
 install:	$(INSTALL_64)
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
 	    $(CP) -R 'en@boldquot' en )
-	( cd $(PROTOUSRSHAREMANDIR) ; \
-	    if test -d man8 ; then \
-	    $(MV) -f man8 man1m ; fi )
-	( cd $(PROTOUSRSHAREMANDIR)/man1m ; \
-	    list1='$(MAN8LIST)' ; for f in $$list1; do \
-	    if test -f $$f.8 ; then \
-	    $(MV) -f $$f.8 $$f.1m ; fi ; \
-	    done )
 
 COMPONENT_TEST_TRANSFORMS += \
          '-n ' \
