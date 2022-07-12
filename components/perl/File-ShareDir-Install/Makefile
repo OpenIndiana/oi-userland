@@ -10,27 +10,24 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module File::ShareDir::Install
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		File-ShareDir-Install
-COMPONENT_VERSION =		0.13
-COMPONENT_FMRI =		library/perl-5/file-sharedir-install
+COMPONENT_PERL_MODULE =		File::ShareDir::Install
+HUMAN_VERSION =			0.14
 COMPONENT_SUMMARY =		File::ShareDir::Install - Install shared files
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/File::ShareDir::Install
+COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:45befdf0d95cbefe7c25a1daf293d85f780d6d2576146546e6828aad26e580f9
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/E/ET/ETHER/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+	sha256:8f9533b198f2d4a9a5288cbc7d224f7679ad05a7a8573745599789428bc5aea0
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
