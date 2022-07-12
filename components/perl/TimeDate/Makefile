@@ -10,28 +10,26 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module TimeDate
+# and then slightly manually modified.
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		TimeDate
-COMPONENT_VERSION =		2.33
-COMPONENT_FMRI =		library/perl-5/timedate
+COMPONENT_PERL_MODULE =		TimeDate
+HUMAN_VERSION =			2.33
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		TimeDate - Parse date strings into time values
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL =		https://metacpan.org/dist/TimeDate
+COMPONENT_CPAN_AUTHOR =		ATOOMIC
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:c0b69c4b039de6f501b0d9f13ec58c86b040c1f7e9b27ef249651c143d605eb2
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/A/AT/ATOOMIC/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
