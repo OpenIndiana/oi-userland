@@ -1,9 +1,7 @@
-diff --git a/xfontsel.c b/xfontsel.c
-index 9ab33d1..861a6ce 100644
---- a/xfontsel.c
-+++ b/xfontsel.c
-@@ -52,6 +52,9 @@ Modified: Mark Leisher <mleisher@crl.nmsu.edu> to deal with UCS sample text.
- #include <X11/Xfuncs.h>
+--- a/xfontsel.c	2022-07-12 14:08:44.281585500 +0000
++++ b/xfontsel.c	2022-07-12 14:08:51.804374434 +0000
+@@ -53,6 +53,9 @@
+ #include <X11/Xlib.h>
  #include "ULabel.h"
  
 +#include <libintl.h>
@@ -12,7 +10,7 @@ index 9ab33d1..861a6ce 100644
  #define MIN_APP_DEFAULTS_VERSION 1
  #define FIELD_COUNT 14
  #define DELIM '-'
-@@ -151,6 +154,7 @@ static XrmOptionDescRec options[] = {
+@@ -154,6 +157,7 @@
  static void Syntax(const char *call)
  {
      fprintf (stderr, "usage:  %s [-options ...] -fn font\n\n%s\n", call,
@@ -20,16 +18,16 @@ index 9ab33d1..861a6ce 100644
  	"where options include:\n"
  	"    -display dpy           X server to contact\n"
  	"    -geometry geom         size and location of window\n"
-@@ -159,7 +163,7 @@ static void Syntax(const char *call)
- 	"    -sample string         sample text to use for 1-byte fonts\n"
+@@ -163,7 +167,7 @@
  	"    -sample16 string       sample text to use for 2-byte fonts\n"
  	"    -sampleUCS string      sample text to use for ISO10646 fonts\n"
--	"    -scaled                use scaled instances of fonts\n");
-+	"    -scaled                use scaled instances of fonts\n"));
+ 	"    -scaled                use scaled instances of fonts\n"
+-	"plus any standard toolkit options\n");
++	"plus any standard toolkit options\n"));
      exit (1);
  }
  
-@@ -252,10 +256,28 @@ main(int argc, char **argv)
+@@ -258,10 +262,28 @@
  {
      Widget topLevel, pane;
  
@@ -58,7 +56,7 @@ index 9ab33d1..861a6ce 100644
  
      if (argc != 1) Syntax(argv[0]);
  
-@@ -266,12 +288,15 @@ main(int argc, char **argv)
+@@ -272,12 +294,15 @@
      XtGetApplicationResources( topLevel, (XtPointer)&AppRes,
  			       resources, XtNumber(resources), NZ );
      if (AppRes.app_defaults_version < MIN_APP_DEFAULTS_VERSION) {
@@ -78,8 +76,8 @@ index 9ab33d1..861a6ce 100644
 +	XrmPutLineResource( &rdb, full_message);
      }
  
-     ScheduleWork(GetFontNames, (XtPointer)XtDisplay(topLevel), 0);
-@@ -507,7 +532,7 @@ void GetFontNames(XtPointer closure)
+     ScheduleWork(GetFontNames, (XtPointer)topLevel, 0);
+@@ -519,7 +544,7 @@
  	    }
  	    else
  		XtAppWarning( appCtx,
@@ -88,7 +86,7 @@ index 9ab33d1..861a6ce 100644
  	}
  	else {
  	    SetNoFonts();
-@@ -1005,11 +1030,11 @@ static void SetCurrentFontCount(void)
+@@ -1056,11 +1081,11 @@
      char label[80];
      Arg args[1];
      if (matchingFontCount == 1)
@@ -103,7 +101,7 @@ index 9ab33d1..861a6ce 100644
      XtSetArg( args[0], XtNlabel, label );
      XtSetValues( countLabel, args, ONE );
  }
-@@ -1020,9 +1045,9 @@ static void SetParsingFontCount(int count)
+@@ -1071,9 +1096,9 @@
      char label[80];
      Arg args[1];
      if (count == 1)
@@ -115,7 +113,7 @@ index 9ab33d1..861a6ce 100644
      XtSetArg( args[0], XtNlabel, label );
      XtSetValues( countLabel, args, ONE );
      FlushXqueue(XtDisplay(countLabel));
-@@ -1228,9 +1253,9 @@ void SelectField(Widget w, XtPointer closure, XtPointer callData)
+@@ -1279,9 +1304,9 @@
      int field = (long)closure;
      FieldValue *values = fieldValues[field]->value;
      int count = fieldValues[field]->count;
