@@ -13,28 +13,18 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY= DOC
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=           xorg-docs
-COMPONENT_VERSION=        1.7.1
-COMPONENT_FMRI=           x11/documentation/xorg-docs
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  X.Org documentation for the X Window System
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=         xorg-docs
+COMPONENT_VERSION=      1.7.2
+COMPONENT_FMRI=         x11/documentation/xorg-docs
+COMPONENT_SUMMARY=      X.Org documentation for the X Window System
 COMPONENT_ARCHIVE_HASH= \
-  sha256:24b8677c3462c10465cf50d40576d76682acd5835526093a575865b2aa242c4b
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/doc/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xorg-docs.license
+	sha256:2391b8af472626c12d3c3814b5e7a0ea43c3a96eda94255b7ed8bdff0fbf08e3
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/common.mk
 
 X11_DOC_DIR=$(USRSHAREDOCDIR)/X11
 X11_SGML_DIR=$(USRSHAREDIR)/sgml
@@ -45,21 +35,19 @@ COMPONENT_PREP_ACTION= \
 
 CONFIGURE_OPTIONS+= --docdir='$(X11_DOC_DIR)' \
 	XORG_SGML_PATH=$(PROTODIR)$(X11_SGML_DIR)
+CONFIGURE_OPTIONS+= --with-xmlto
+CONFIGURE_OPTIONS+= --without-xsltproc
 
-$(BUILD_DIR)/.postprocess:	$(INSTALL_32)
-	$(MKDIR) $(PROTO_DIR)$(X11_DOC_DIR)
-	(cd $(COMPONENT_DIR)/src && tar -cf - .) | \
-		(cd $(PROTO_DIR)$(X11_DOC_DIR) && tar -xf - )
-	mv -f $(PROTO_DIR)$(USRSHAREMAN5DIR)/Consortium.5 \
-		$(PROTO_DIR)$(USRSHAREMAN5DIR)/XConsortium.5
-	mv -f $(PROTO_DIR)$(USRSHAREMAN5DIR)/Standards.5 \
-		$(PROTO_DIR)$(USRSHAREMAN5DIR)/XStandards.5
-	$(TOUCH) $@
+COMPONENT_POST_INSTALL_ACTION= \
+	( $(MKDIR) $(PROTO_DIR)$(X11_DOC_DIR); \
+	    (cd $(COMPONENT_DIR)/src && tar -cf - .) | \
+	      (cd $(PROTO_DIR)$(X11_DOC_DIR) && tar -xf - ); \
+	    $(MV) $(PROTO_DIR)$(USRSHAREMAN7DIR)/Consortium.7 \
+		$(PROTO_DIR)$(USRSHAREMAN7DIR)/XConsortium.7; \
+	    $(MV) $(PROTO_DIR)$(USRSHAREMAN7DIR)/Standards.7 \
+		$(PROTO_DIR)$(USRSHAREMAN7DIR)/XStandards.7 )
 
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32) $(BUILD_DIR)/.postprocess
-
-test: $(NO_TESTS)
-
+# Build dependencies
+REQUIRED_PACKAGES+=text/xmlto
+# Auto-generated dependencies
+# None as it seems...
