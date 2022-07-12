@@ -226,6 +226,7 @@ function detect_license
 
 LICENSE=
 LICFILE=
+COPYRIGHT=
 for f in LICENSE LICENCE COPYING ; do
 	[[ -f "$SOURCE_DIR/$f" ]] || continue
 	LICFILE="$SOURCE_DIR/$f"
@@ -238,6 +239,10 @@ for f in LICENSE LICENCE COPYING ; do
 	fi
 
 	printf "WARNING: Failed to detect license type in %s file\n" "$f" >&2
+
+	# Since the license file does not contain any known license we will use
+	# its content as Copyright notice only
+	COPYRIGHT=$(<"$LICFILE")
 done
 if [[ -z "$LICFILE" ]] ; then
 	printf "WARNING: No license file found\n" >&2
@@ -250,9 +255,8 @@ if [[ -z "$LICENSE" ]] ; then
 
 	sed -i -e '/^COMPONENT_LICENSE_FILE/d' Makefile
 
-	# Try to find Copyright notice
-	COPYRIGHT=
-	for f in README README.md ; do
+	# Try to find Copyright notice if we do not have one yet
+	[[ -z "$COPYRIGHT" ]] && for f in README README.md ; do
 		f="$SOURCE_DIR/$f"
 		[[ -f "$f" ]] || continue
 
