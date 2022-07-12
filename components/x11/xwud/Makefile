@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xwud
-COMPONENT_VERSION=        1.0.5
+COMPONENT_VERSION=        1.0.6
 COMPONENT_SUMMARY=        xwud - viewer application for xwd images
 COMPONENT_FMRI=           x11/xwud
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:99997051f8a892313f22edf41dab45864e86e7062ee9012d5dbb6a40fc6b10a9
+  sha256:64048cd15eba3cd9a3d2e3280650391259ebf6b529f2101d1a20f441038c1afe
 
 include $(WS_MAKE_RULES)/common.mk
 
