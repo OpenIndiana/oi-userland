@@ -10,28 +10,25 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Test::RequiresInternet
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Test-RequiresInternet
+COMPONENT_PERL_MODULE =		Test::RequiresInternet
 HUMAN_VERSION =			0.05
-COMPONENT_VERSION =		0.5
-COMPONENT_FMRI =		library/perl-5/test-requiresinternet
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::RequiresInternet - Easily test network connectivity
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Test::RequiresInternet
+COMPONENT_CPAN_AUTHOR =		MALLEN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:bba7b32a1cc0d58ce2ec20b200a7347c69631641e8cae8ff4567ad24ef1e833e
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/M/MA/MALLEN/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
