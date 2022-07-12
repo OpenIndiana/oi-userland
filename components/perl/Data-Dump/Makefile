@@ -10,28 +10,24 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Data::Dump
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Data-Dump
-COMPONENT_VERSION =		1.25
-COMPONENT_FMRI =		library/perl-5/data-dump
+COMPONENT_PERL_MODULE =		Data::Dump
+HUMAN_VERSION =			1.25
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Data::Dump - Pretty printing of data structures
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Data::Dump
+COMPONENT_CPAN_AUTHOR =		GARU
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:a4aa6e0ddbf39d5ad49bddfe0f89d9da864e3bc00f627125d1bc580472f53fbd
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/G/GA/GARU/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
