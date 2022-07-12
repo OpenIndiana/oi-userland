@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    xfs
-COMPONENT_VERSION= 1.2.0
+COMPONENT_VERSION= 1.2.1
 COMPONENT_SUMMARY= xfs - X Font Server
 COMPONENT_FMRI=    x11/xfs
+COMPONENT_ARCHIVE_EXTENSION= .tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:db2212115783498f8eeaaee1349461d6c4e9d2005e142bacd3a984fe57269860
+  sha256:76df0106dbf845cb44534eb89f1ed7e9fb4d466125200baeb4719eb2586ded29
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
@@ -42,6 +43,7 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 REQUIRED_PACKAGES += x11/library/xtrans
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxfont2
