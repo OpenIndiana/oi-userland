@@ -294,6 +294,7 @@ if [[ -z "$LICENSE" ]] ; then
 	((D)) && (printf "%s\n" "$COPYRIGHT" | grep -q -i "under the same terms as Perl itself") && D=0
 	((D)) && grep -q "license *=> *'http://dev.perl.org/licenses/'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
 	((D)) && grep -q "LICENSE *=> *'perl'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
+	((D)) && [[ "$(jq -r '.license[]' < "$SOURCE_DIR/META.json" 2>/dev/null)" == "perl_5" ]] && D=0
 
 	((D)) && printf "ERROR: Heuristics failed to detect license type, using default Perl license\n" >&2
 
