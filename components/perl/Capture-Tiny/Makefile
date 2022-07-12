@@ -10,27 +10,25 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Capture::Tiny
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Capture-Tiny
-COMPONENT_VERSION =		0.48
-COMPONENT_FMRI =		library/perl-5/capture-tiny
+COMPONENT_PERL_MODULE =		Capture::Tiny
+HUMAN_VERSION =			0.48
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Capture::Tiny - Capture STDOUT and STDERR from Perl, XS or external programs
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Capture::Tiny
+COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:6c23113e87bad393308c90a207013e505f659274736638d8c79bac9c67cc3e19
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/D/DA/DAGOLDEN/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Apache v2.0
+COMPONENT_LICENSE =		Apache-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
