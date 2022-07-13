@@ -10,28 +10,24 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module IPC::Run3
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		IPC-Run3
+COMPONENT_PERL_MODULE =		IPC::Run3
 HUMAN_VERSION =			0.048
-COMPONENT_VERSION =		0.48
-COMPONENT_FMRI =		library/perl-5/ipc-run3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		IPC::Run3 - run a subprocess with input/ouput redirection
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/IPC::Run3
+COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:3d81c3cc1b5cff69cca9361e2c6e38df0352251ae7b41e2ff3febc850e463565
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/R/RJ/RJBS/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		BSD-2-Clause OR GPL-2.0 OR GPL-3.0 OR Artistic-1.0 OR Artistic-2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
