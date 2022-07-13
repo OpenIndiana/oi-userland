@@ -10,32 +10,26 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Sub::Info
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Sub-Info
+COMPONENT_PERL_MODULE =		Sub::Info
 HUMAN_VERSION =			0.002
-COMPONENT_VERSION =		0.2
-COMPONENT_FMRI =		library/perl-5/sub-info
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Sub::Info - Tool for inspecting subroutines.
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Sub::Info
+COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:ea3056d696bdeff21a99d340d5570887d39a8cc47bff23adfc82df6758cdd0ea
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/E/EX/EXODIST/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/importer
-REQUIRED_PACKAGES += library/perl-5/test-simple
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/importer
+PERL_REQUIRED_PACKAGES += runtime/perl
