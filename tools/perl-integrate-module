@@ -150,10 +150,6 @@ cat perl-integrate-module.conf | sed -e '0,/^%include-3%/d' -e '/^%/,$d' | gsed 
 printf "\n"
 ) > Makefile
 
-# perl-integrate-module.conf is no longer needed
-rm -f perl-integrate-module.conf
-git checkout perl-integrate-module.conf > /dev/null 2>&1
-
 # Remove COMPONENT_REVISION if not needed
 COMPONENT_VERSION=$(gmake print-value-COMPONENT_VERSION)
 [[ "$PREV_VER" != "$COMPONENT_VERSION" ]] && REBUILD=0 && sed -i -e '/^COMPONENT_REVISION/d' Makefile
@@ -209,8 +205,7 @@ function detect_license
 		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
 	fi
 
-	if grep -q -- "^--- The Artistic License 1.0 ---" "$F" \
-	    || grep -q -- "--- The \"Artistic License\" ---" "$F" ; then
+	if grep -q "The Artistic License 1.0" "$F" || grep -q "The \"Artistic License\"" "$F" ; then
 		D="Artistic-1.0-TODO"
 		grep -q "7. C subroutines" "$F" && grep -q "10. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0-Perl"
 		grep -q "7. C or perl subroutines" "$F" && grep -q "10. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0-cl8"
@@ -223,7 +218,7 @@ function detect_license
 		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
 	fi
 
-	if grep -q -- "^--- The GNU General Public License, Version 1, February 1989 ---" "$F" ; then
+	if grep -A 1 "GNU GENERAL PUBLIC LICENSE" "$F" | grep -q "Version 1, February 1989" ; then
 		D="GPL-1.0-only-TODO"
 		grep -A 2 "GNU General Public License as published by the" "$F" | grep -q "or (at your option) any" && D="GPL-1.0-or-later"
 		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
@@ -305,24 +300,44 @@ if [[ -z "$LICENSE" ]] ; then
 		printf "\n\n") > "$DISTRIBUTION.license"
 	fi
 
-	# Confirm the package is distributed under the same terms as Perl itself
-	D=1
-	((D)) && (printf "%s\n" "$COPYRIGHT" | grep -q -i "under the same terms as Perl itself") && D=0
-	((D)) && grep -q "license *=> *'http://dev.perl.org/licenses/'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
-	((D)) && grep -q "LICENSE *=> *'perl'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
-	((D)) && [[ "$(jq -r '.license[]' < "$SOURCE_DIR/META.json" 2>/dev/null)" == "perl_5" ]] && D=0
+	USE_DEFAULT_PERL_LICENSE=1
 
-	((D)) && printf "ERROR: Heuristics failed to detect license type, using default Perl license\n" >&2
+	# Execute hook-no-license snippet
+	sed -e '0,/^%hook-no-license%/d' -e '/^%/,$d' < perl-integrate-module.conf > perl-integrate-module.snippet
+	. ./perl-integrate-module.snippet
+	rm -f perl-integrate-module.snippet
 
-	# Make a copy of license so we can use it during publish
-	cat "$WS_TOP/tools/perl-license" | grep -v "^#" >> "$DISTRIBUTION.license"
+
+	if ((USE_DEFAULT_PERL_LICENSE)) ; then
+		# Confirm the package is distributed under the same terms as Perl itself
+		D=1
+		((D)) && (printf "%s\n" "$COPYRIGHT" | grep -q -i "under the same terms as Perl itself") && D=0
+		((D)) && grep -q "license *=> *'http://dev.perl.org/licenses/'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
+		((D)) && grep -q "LICENSE *=> *'perl'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
+		((D)) && [[ -f "$SOURCE_DIR/META.json" && "$(jq -r '.license[]' < "$SOURCE_DIR/META.json" 2>/dev/null)" == "perl_5" ]] && D=0
+
+		((D)) && printf "ERROR: Heuristics failed to detect license type, using default Perl license\n" >&2
+
+		# Make a copy of license so we can use it during publish
+		cat "$WS_TOP/tools/perl-license" | grep -v "^#" >> "$DISTRIBUTION.license"
+	fi
 	git add "$DISTRIBUTION.license"
 
-	detect_license LICENSE "$WS_TOP/tools/perl-license"
+	detect_license LICENSE "$DISTRIBUTION.license"
+	[[ -z "$LICENSE" ]] && LICENSE="TODO"
 fi
 
 # Store the detected license into the Makefile
 sed -i -e 's/license:TODO/'"$LICENSE"'/g' Makefile
+
+
+# Check for Makefile completeness
+grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\n"
+
+
+# perl-integrate-module.conf is no longer needed
+rm -f perl-integrate-module.conf
+git checkout perl-integrate-module.conf > /dev/null 2>&1
 
 
 # Create manifests
