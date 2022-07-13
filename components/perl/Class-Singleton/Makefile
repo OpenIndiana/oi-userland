@@ -10,28 +10,24 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Class::Singleton
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Class-Singleton
-COMPONENT_VERSION =		1.6
-COMPONENT_FMRI =		library/perl-5/class-singleton
-COMPONENT_SUMMARY =		Class::Singleton - Implementation of a "Singleton" class
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Class::Singleton
+COMPONENT_PERL_MODULE =		Class::Singleton
+HUMAN_VERSION =			1.6
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Class::Singleton - Implementation of a \\\\\\\"Singleton\\\\\\\" class
+COMPONENT_CPAN_AUTHOR =		SHAY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:27ba13f0d9512929166bbd8c9ef95d90d630fc80f0c9a1b7458891055e9282a4
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/S/SH/SHAY/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
