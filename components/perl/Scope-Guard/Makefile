@@ -10,28 +10,24 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Scope::Guard
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Scope-Guard
-COMPONENT_VERSION =		0.21
-COMPONENT_FMRI =		library/perl-5/scope-guard
+COMPONENT_PERL_MODULE =		Scope::Guard
+HUMAN_VERSION =			0.21
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Scope::Guard - lexically-scoped resource management
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Scope::Guard
+COMPONENT_CPAN_AUTHOR =		CHOCOLATE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:8c9b1bea5c56448e2c3fadc65d05be9e4690a3823a80f39d2f10fdd8f777d278
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/C/CH/CHOCOLATE/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
