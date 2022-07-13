@@ -17,12 +17,13 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=		  xmessage
-COMPONENT_VERSION=	  1.0.5
+COMPONENT_VERSION=	  1.0.6
 COMPONENT_SUMMARY=	  xmessage - display a message or query in a window
 COMPONENT_FMRI=		  x11/xmessage
 COMPONENT_CLASSIFICATION= Applications/Accessories
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:373dfb81e7a6f06d3d22485a12fcde6e255d58c6dee1bbaeb00c7d0caa9b2029
+  sha256:d2eac545f137156b960877e052fcc8e29795ed735c02f7690fd7b439e6846a12
 
 include $(WS_MAKE_RULES)/common.mk
 

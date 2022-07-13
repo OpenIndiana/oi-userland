@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xrefresh
-COMPONENT_VERSION=        1.0.6
+COMPONENT_VERSION=        1.0.7
 COMPONENT_SUMMARY=        xrefresh - X screen update utility
 COMPONENT_FMRI=           x11/xrefresh
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:287dfb9bb7e8d780d07e672e3252150850869cb550958ed5f8401f0835cd6353
+  sha256:a9f1d635f2f42283d0174e94d09ab69190c227faa5ab542bfe15ed9607771b1e
 
 include $(WS_MAKE_RULES)/common.mk
 
