@@ -10,50 +10,24 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
-# Copyright (c) 2022 Tim Mooney.  All rights reserved
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module IO::HTML
 #
 
-BUILD_STYLE=makemaker
-BUILD_BITS=32_and_64
+BUILD_STYLE = makemaker
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		IO-HTML
-COMPONENT_VERSION=	1.001
-IPS_COMPONENT_VERSION=	1.1
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=		library/perl-5/io-html
-COMPONENT_SUMMARY=	IO::HTML - Open an HTML file with automatic charset detection
-COMPONENT_CLASSIFICATION=Development/Perl
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	https://metacpan.org/pod/IO::HTML
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:ea78d2d743794adc028bc9589538eb867174b4e165d7d8b5f63486e6b828e7e0
-COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/C/CJ/CJM/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	Artistic
-
-# until all perl modules have been rebuilt with 5.34, each module sets
-# this manually, before including common.mk
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
+COMPONENT_PERL_MODULE =		IO::HTML
+HUMAN_VERSION =			1.004
+COMPONENT_SUMMARY =		IO::HTML - Open an HTML file with automatic charset detection
+COMPONENT_CPAN_AUTHOR =		CJM
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:c87b2df59463bbf2c39596773dfb5c03bde0f7e1051af339f963f58c1cbd8bf5
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# use the same results for comparison for all builds
-#
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-#
-# delete any lines up through test_harness
-# delete timings
-#
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "1,/test_harness/d"' \
-	'-e "s/,  *[0-9]* wallclock.*//"'
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/perl-534
+PERL_REQUIRED_PACKAGES += runtime/perl
