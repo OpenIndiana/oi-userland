@@ -10,29 +10,26 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Email::MIME::Encodings
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Email-MIME-Encodings
-COMPONENT_VERSION =		1.315
-COMPONENT_FMRI =		library/perl-5/email-mime-encodings
+COMPONENT_PERL_MODULE =		Email::MIME::Encodings
+HUMAN_VERSION =			1.315
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::MIME::Encodings - A unified interface to MIME encoding and decoding
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Email::MIME::Encodings
+COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4c71045507b31ec853dd60152b40e33ba3741779c0f49bb143b50cf8d243ab5c
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/R/RJ/RJBS/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/capture-tiny
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/capture-tiny
+PERL_REQUIRED_PACKAGES += runtime/perl
