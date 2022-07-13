@@ -10,28 +10,24 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module File::chdir
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		File-chdir
+COMPONENT_PERL_MODULE =		File::chdir
 HUMAN_VERSION =			0.1011
-COMPONENT_VERSION =		0.10.11
-COMPONENT_FMRI =		library/perl-5/file-chdir
 COMPONENT_SUMMARY =		File::chdir - a more sensible way to change directories
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/File::chdir
+COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:31ebf912df48d5d681def74b9880d78b1f3aca4351a0ed1fe3570b8e03af6c79
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/D/DA/DAGOLDEN/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
