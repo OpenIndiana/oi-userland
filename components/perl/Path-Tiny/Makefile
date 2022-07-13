@@ -1,67 +1,34 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2022 Niklas Poslovski
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Path::Tiny
 #
 
-BUILD_STYLE=makemaker
-BUILD_BITS=32_and_64
+BUILD_STYLE = makemaker
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		Path-Tiny
-COMPONENT_VERSION=	0.122
-#COMPONENT_REVISION=	1
-COMPONENT_FMRI=		library/perl-5/path-tiny
-COMPONENT_SUMMARY=	Path::Tiny - File path utility
-COMPONENT_CLASSIFICATION=Development/Perl
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	https://metacpan.org/pod/Path::Tiny
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:4bc6f76d0548ccd8b38cb66291a885bf0de453d0167562c7b82e8861afdcfb7c
-COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/D/DA/DAGOLDEN/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	Apache
-
-# until all perl modules have been rebuilt with 5.34, each module sets
-# this manually, before including common.mk
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
+COMPONENT_PERL_MODULE =		Path::Tiny
+HUMAN_VERSION =			0.122
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Path::Tiny - File path utility
+COMPONENT_CPAN_AUTHOR =		DAGOLDEN
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:4bc6f76d0548ccd8b38cb66291a885bf0de453d0167562c7b82e8861afdcfb7c
+COMPONENT_LICENSE =		Apache-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# use the results for each perl version
-#
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION).master
-
-#
-# filter out all output up to and including the test_harness line
-# filter out timing information and anything else that varies between builds
-#
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "1,/test_harness/d"' \
-	'-e "s/,  *[0-9]* wallclock.*//"'
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/perl-534
+PERL_REQUIRED_PACKAGES += runtime/perl
