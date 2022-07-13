@@ -10,28 +10,25 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Sub::Uplevel
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Sub-Uplevel
+COMPONENT_PERL_MODULE =		Sub::Uplevel
 HUMAN_VERSION =			0.2800
-COMPONENT_VERSION =		0.28.0
-COMPONENT_FMRI =		library/perl-5/sub-uplevel
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Sub::Uplevel - apparently run a function in a higher stack frame
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Sub::Uplevel
+COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b4f3f63b80f680a421332d8851ddbe5a8e72fcaa74d5d1d98f3c8cc4a3ece293
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/D/DA/DAGOLDEN/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
