@@ -166,7 +166,7 @@ SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES/$COMPONENT_ARCHIVE")
 sed -i -e 's/sha256:TODO/sha256:'"$SHA256"'/g' Makefile
 
 # Unpack sources
-gmake prep > /dev/null 2>&1
+! gmake prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
 SOURCE_DIR=$DISTRIBUTION-$VERSION
 
 # Switch to modulebuild if needed
