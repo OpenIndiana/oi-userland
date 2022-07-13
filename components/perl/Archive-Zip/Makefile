@@ -10,50 +10,23 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
-# Copyright (c) 2021 Tim Mooney.  All rights reserved.
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Archive::Zip
 #
 
-BUILD_STYLE=makemaker
-BUILD_BITS=32_and_64
+BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         Archive-Zip
-COMPONENT_VERSION=      1.37
-COMPONENT_REVISION=     2
-COMPONENT_FMRI=         library/perl-5/archive-zip
-COMPONENT_SUMMARY=	Provide an interface to ZIP archive files
-COMPONENT_CLASSIFICATION=Development/Perl
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=  https://metacpan.org/pod/Archive::Zip
-COMPONENT_ARCHIVE_HASH= \
-	sha256:ba789436dc82db02a7f3d2e9d120d0221edc83d8c7ec72519648ae64bbc4ce05
-COMPONENT_ARCHIVE_URL=  https://cpan.metacpan.org/authors/id/P/PH/PHRED/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	Artistic
-
-# until all perl modules have been rebuilt with 5.34, each module sets
-# this manually, before including common.mk
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
+COMPONENT_PERL_MODULE =		Archive::Zip
+HUMAN_VERSION =			1.46
+COMPONENT_SUMMARY =		Archive::Zip - Provide an interface to ZIP archive files.
+COMPONENT_CPAN_AUTHOR =		PHRED
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:6630ebeba753a7025126028eb290040ce44d86e8ced77017e31b75863348e524
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# use the same results for comparison for all builds
-#
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-#
-# delete any lines up through test_harness
-# delete timings
-#
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "1,/test_harness/d"' \
-	'-e "s/,  *[0-9]* wallclock.*//"'
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/perl-534
+PERL_REQUIRED_PACKAGES += runtime/perl
