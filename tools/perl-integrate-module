@@ -343,7 +343,7 @@ git checkout perl-integrate-module.conf > /dev/null 2>&1
 
 # Create manifests
 if ! gmake sample-manifest > /dev/null 2>&1 ; then
-	printf "WARNING: 'gmake sample-manifest' failed!\n" >&2
+	printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
 else
 	cat manifests/sample-manifest.p5m \
 		| sed -e 's/^#.*Copyright.*<contributor>.*$/# This file was automatically generated using perl-integrate-module/g' \
@@ -353,7 +353,7 @@ fi
 
 
 # Generate REQUIRED_PACKAGES
-gmake REQUIRED_PACKAGES > /dev/null 2>&1 || printf "WARNING: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
+gmake REQUIRED_PACKAGES > /dev/null 2>&1 || printf "ERROR: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
 git add Makefile
 
 
@@ -367,12 +367,12 @@ mkdir -p test
 touch test/results-all.master
 gmake test > /dev/null 2>&1
 find build/test -type f -name "*.snapshot" -exec cp {} test/results-all.master \;
-gmake test > /dev/null 2>&1 || printf "WARNING: 'gmake test' failed!\n" >&2
+gmake test > /dev/null 2>&1 || printf "ERROR: 'gmake test' failed!\n" >&2
 git add test/results-all.master
 
 
 # Publish packages and create pkg5 file
-gmake publish > /dev/null 2>&1 || printf "WARNING: 'gmake publish' failed!\n" >&2
+gmake publish > /dev/null 2>&1 || printf "ERROR: 'gmake publish' failed!\n" >&2
 git add pkg5
 
 
@@ -387,7 +387,7 @@ for o in $(echo $OBSOLETE $PERL_VERSIONS_OBSOLETING | LC_ALL=C sort -u) ; do
 	FMRI_H=${FMRI%.*}
 	FMRI_T=${FMRI##*.}
 	if [[ "$FMRI_H" == "$FMRI" ]] ; then
-		printf "ERROR: Wrong fmri format: %s\n" "$FMRI"
+		printf "WARNING: Wrong fmri format: %s\n" "$FMRI"
 		continue
 	fi
 	FMRI_T=$((FMRI_T + 1))
@@ -436,4 +436,4 @@ else
 fi
 
 # Commit the results
-git commit -m "$MSG" > /dev/null 2>&1 || printf "WARNING: 'git commit' failed!\n" >&2
+git commit -m "$MSG" > /dev/null 2>&1 || printf "ERROR: 'git commit' failed!\n" >&2
