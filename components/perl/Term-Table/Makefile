@@ -10,32 +10,26 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Term::Table
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Term-Table
+COMPONENT_PERL_MODULE =		Term::Table
 HUMAN_VERSION =			0.016
-COMPONENT_VERSION =		0.16
-COMPONENT_FMRI =		library/perl-5/term-table
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Term::Table - Format a header and rows into a table
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Term::Table
+COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:8fb4fbb8e96a2d6c514949eb8cfd7e66319bcb1cbf7cea0ab19af887a72d97bf
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/E/EX/EXODIST/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/importer
-REQUIRED_PACKAGES += library/perl-5/test-simple
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/importer
+PERL_REQUIRED_PACKAGES += runtime/perl
