@@ -10,29 +10,26 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Email::Simple
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Email-Simple
-COMPONENT_VERSION =		2.216
-COMPONENT_FMRI =		library/perl-5/email-simple
+COMPONENT_PERL_MODULE =		Email::Simple
+HUMAN_VERSION =			2.216
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::Simple - simple parsing of RFC2822 message format and headers
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Email::Simple
+COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d85f63cd1088d11311103676a8cf498fff564a201b538de52cd753b5e5ca8bd4
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/R/RJ/RJBS/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/email-date-format
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/email-date-format
+PERL_REQUIRED_PACKAGES += runtime/perl
