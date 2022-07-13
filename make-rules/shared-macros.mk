@@ -615,7 +615,7 @@ export CCACHE := $(shell \
         fi; \
     fi)
 
-GCC_VERSION =	7
+GCC_VERSION =	10
 GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
 
 GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
