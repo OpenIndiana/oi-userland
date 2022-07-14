@@ -12,11 +12,12 @@
 # Copyright 2011, Andrzej Szeszo
 #
 
-BUILD_BITS=	32
+BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rxvt-unicode
 COMPONENT_VERSION=	9.26
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		terminal/urxvt
 COMPONENT_SUMMARY=	rxvt-unicode is a fork of the well known terminal emulator rxvt
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -45,11 +46,11 @@ CONFIGURE_OPTIONS += --enable-smart-resize
 CONFIGURE_OPTIONS += --enable-everything
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
