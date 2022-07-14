@@ -279,8 +279,13 @@ if [[ -z "$LICENSE" ]] ; then
 	done
 	if [[ -z "$COPYRIGHT" ]] ; then
 		printf "WARNING: No copyright notice found at standard locations\n" >&2
-		for f in $(find "$SOURCE_DIR" -type f -name "*.pm" | LC_ALL=C sort | while read f ; do egrep -q "^=head1 (LICENSE|COPYRIGHT)" "$f" && echo "$f" ; done) ; do
+		for f in $(find "$SOURCE_DIR" -type f -name "*.pm" | LC_ALL=C sort | while read f ; do egrep -q "^=head1 (LICENSE|LICENCE|COPYRIGHT)" "$f" && echo "$f" ; done) ; do
 			COPYRIGHT=$(sed -e '1,/^=head1 LICENSE/d' -e '/^=/,$d' "$f" 2>/dev/null)
+			if [[ -n "$COPYRIGHT" ]] ; then
+				printf "WARNING: Using copyright notice from %s\n" "$f"
+				break
+			fi
+			COPYRIGHT=$(sed -e '1,/^=head1 LICENCE/d' -e '/^=/,$d' "$f" 2>/dev/null)
 			if [[ -n "$COPYRIGHT" ]] ; then
 				printf "WARNING: Using copyright notice from %s\n" "$f"
 				break
