@@ -137,7 +137,7 @@ cat <<EOF
 
 BUILD_STYLE = makemaker
 EOF
-sed -e '0,/^%include-1%/d' -e '/^%/,$d' < perl-integrate-module.conf
+gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < perl-integrate-module.conf
 cat <<EOF
 
 include ../../../make-rules/shared-macros.mk
@@ -152,9 +152,9 @@ COMPONENT_ARCHIVE_HASH =	\\
 COMPONENT_LICENSE =		license:TODO
 COMPONENT_LICENSE_FILE =	licfile:TODO
 EOF
-cat perl-integrate-module.conf | sed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
+cat perl-integrate-module.conf | gsed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\ninclude \$(WS_MAKE_RULES)/common.mk\n"
-cat perl-integrate-module.conf | sed -e '0,/^%include-3%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
+cat perl-integrate-module.conf | gsed -e '0,/^%include-3%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\n"
 ) > Makefile
 
@@ -316,7 +316,7 @@ if [[ -z "$LICENSE" ]] ; then
 	USE_DEFAULT_PERL_LICENSE=1
 
 	# Execute hook-no-license snippet
-	sed -e '0,/^%hook-no-license%/d' -e '/^%/,$d' < perl-integrate-module.conf > perl-integrate-module.snippet
+	gsed -e '0,/^%hook-no-license%/d' -e '/^%/,$d' < perl-integrate-module.conf > perl-integrate-module.snippet
 	. ./perl-integrate-module.snippet
 	rm -f perl-integrate-module.snippet
 
@@ -348,11 +348,6 @@ sed -i -e 's/license:TODO/'"$LICENSE"'/g' Makefile
 grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\n"
 
 
-# perl-integrate-module.conf is no longer needed
-rm -f perl-integrate-module.conf
-git checkout perl-integrate-module.conf > /dev/null 2>&1
-
-
 # Create manifests
 if ! gmake sample-manifest > /dev/null 2>&1 ; then
 	printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
@@ -360,8 +355,19 @@ else
 	cat manifests/sample-manifest.p5m \
 		| sed -e 's/^#.*Copyright.*<contributor>.*$/# This file was automatically generated using perl-integrate-module/g' \
 		> "$DISTRIBUTION-PERLVER.p5m"
+
+	# Execute hook-manifest snippet
+	gsed -e '0,/^%hook-manifest%/d' -e '/^%/,$d' < perl-integrate-module.conf > perl-integrate-module.snippet
+	. ./perl-integrate-module.snippet
+	rm -f perl-integrate-module.snippet
+
 	git add manifests/sample-manifest.p5m "$DISTRIBUTION-PERLVER.p5m"
 fi
+
+
+# perl-integrate-module.conf is no longer needed
+rm -f perl-integrate-module.conf
+git checkout perl-integrate-module.conf > /dev/null 2>&1
 
 
 # Generate REQUIRED_PACKAGES
