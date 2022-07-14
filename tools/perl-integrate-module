@@ -275,13 +275,15 @@ if [[ -z "$LICENSE" ]] ; then
 		f="$SOURCE_DIR/$f"
 		[[ -f "$f" ]] || continue
 
-		COPYRIGHT=$(sed -e '1,/^# LICENSE/d' -e '/^#/,$d' -e '/./,$!d' "$f" 2>/dev/null)
+		COPYRIGHT=$(gsed -e '0,/^# LICENSE/d' -e '/^#/,$d' -e '/./,$!d' "$f" 2>/dev/null)
 		[[ -n "$COPYRIGHT" ]] && break
-		COPYRIGHT=$(sed -e '1,/^# COPYRIGHT/d' -e '/^#/,$d' -e '/./,$!d' "$f" 2>/dev/null)
+		COPYRIGHT=$(gsed -e '0,/^# COPYRIGHT/d' -e '/^#/,$d' -e '/./,$!d' "$f" 2>/dev/null)
 		[[ -n "$COPYRIGHT" ]] && break
-		COPYRIGHT=$(sed -e '1,/LICENSE/d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
+		COPYRIGHT=$(gsed -e '0,/LICENSE/d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
 		[[ -n "$COPYRIGHT" ]] && break
-		COPYRIGHT=$(sed -e '1,/COPYRIGHT/d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
+		COPYRIGHT=$(gsed -e '0,/COPYING/d' -e '/^BUGS/,$d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
+		[[ -n "$COPYRIGHT" ]] && break
+		COPYRIGHT=$(gsed -e '0,/COPYRIGHT/d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
 		[[ -n "$COPYRIGHT" ]] && break
 	done
 	if [[ -z "$COPYRIGHT" ]] ; then
