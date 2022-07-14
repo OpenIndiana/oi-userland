@@ -23,7 +23,7 @@ CURL="/usr/bin/curl -s"
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1"
-	printf "Usage: perl-integrate-module [-l VERSION] [-o OBSOLETE].. MODULE\n" >&2
+	printf "Usage: perl-integrate-module [-l VERSION] [-o OBSOLETE].. [-u] MODULE\n" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
@@ -31,11 +31,13 @@ function usage
 
 VERSION=
 OBSOLETE=
-while getopts ":hl:o:" OPT ; do
+UPGRADE_ONLY=0
+while getopts ":hl:o:u" OPT ; do
 	case "$OPT" in
 	"?"|"h")	usage ;;
 	"l")		VERSION="$OPTARG" ;;
 	"o")		OBSOLETE="$OBSOLETE $OPTARG" ;;
+	"u")		UPGRADE_ONLY=1 ;;
 	esac
 done
 shift $((OPTIND - 1))
@@ -106,6 +108,11 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 	REBUILD=1
 	PREV_VER=$(gmake print-value-COMPONENT_VERSION 2>/dev/null)
 	PREV_REV=$(gmake print-value-COMPONENT_REVISION 2>/dev/null)
+
+	# If we were asked to do version upgrade, but we do not have new
+	# version, then we are done.
+	((UPGRADE_ONLY)) && [[ "$PREV_VER" == "$VERSION" ]] && exit 0
+
 	gmake clobber > /dev/null 2>&1
 fi
 
@@ -372,8 +379,11 @@ git add test/results-all.master
 
 
 # Publish packages and create pkg5 file
-gmake publish > /dev/null 2>&1 || printf "ERROR: 'gmake publish' failed!\n" >&2
-git add pkg5
+if ! gmake publish > /dev/null 2>&1 ; then
+	printf "ERROR: 'gmake publish' failed!\n" >&2
+else
+	git add pkg5
+fi
 
 
 # Handle history
