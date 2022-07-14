@@ -10,29 +10,25 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
-# Copyright (c) 2022 Tim Mooney.  All rights reserved
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Try::Tiny
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Try-Tiny
-COMPONENT_VERSION =		0.31
-COMPONENT_REVISION =		2
-COMPONENT_FMRI =		library/perl-5/try-tiny
+COMPONENT_PERL_MODULE =		Try::Tiny
+HUMAN_VERSION =			0.31
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Try::Tiny - Minimal try/catch with proper preservation of \$$@
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Try::Tiny
+COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:3300d31d8a4075b26d8f46ce864a1d913e0e8467ceeba6655d5d2b2e206c11be
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/E/ET/ETHER/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENCE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
