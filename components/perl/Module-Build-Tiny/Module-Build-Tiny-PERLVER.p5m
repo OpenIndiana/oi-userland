@@ -10,34 +10,29 @@
 #
 
 #
-# Copyright 2022 Niklas Poslovski
+# This file was automatically generated using perl-integrate-module
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set name=pkg.human-version value=$(HUMAN_VERSION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
-
-depend fmri=library/perl-5/extutils-config-$(PLV) type=require
-depend fmri=library/perl-5/extutils-helpers-$(PLV) type=require
-depend fmri=library/perl-5/extutils-installpaths-$(PLV) type=require
-
-# force a dependency on the Perl runtime
-depend fmri=__TBD pkg.debug.depend.file=perl \
-        pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin type=require
-
-# Until there is consensus on whether we should have this package require
-# the non-PLV version of this  module, don't enable this.
-# depend type=require \
-#       fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
 file path=usr/perl5/$(PERLVER)/man/man3/Module::Build::Tiny.3
-file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Build/Tiny.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Module/Build/Tiny/.packlist
+file path=usr/perl5/vendor_perl/$(PERLVER)/Module/Build/Tiny.pm
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/extutils-config-$(PLV)@0.3
+depend type=require fmri=pkg:/library/perl-5/extutils-helpers-$(PLV)@0.20
+depend type=require fmri=pkg:/library/perl-5/extutils-installpaths-$(PLV)@0.2
+#depend type=require fmri=pkg:/runtime/perl-$(PLV)
