@@ -10,89 +10,89 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
-# Copyright (c) 2021 Tim Mooney.  All rights reserved.
+# This file was automatically generated using perl-integrate-module
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# make this module depend upon the perl version it was built for.
-depend fmri=runtime/perl-$(PLV) type=require
-
-# force a dependency on the non-PLV version of this module
-depend type=require \
-    fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-
-file path=usr/perl5/$(PERLVER)/man/man3/URI.3 mode=0444
-file path=usr/perl5/$(PERLVER)/man/man3/URI::Escape.3 mode=0444
-file path=usr/perl5/$(PERLVER)/man/man3/URI::Heuristic.3 mode=0444
-file path=usr/perl5/$(PERLVER)/man/man3/URI::QueryParam.3 mode=0444
-file path=usr/perl5/$(PERLVER)/man/man3/URI::Split.3 mode=0444
-file path=usr/perl5/$(PERLVER)/man/man3/URI::URL.3 mode=0444
-file path=usr/perl5/$(PERLVER)/man/man3/URI::WithBase.3 mode=0444
-file path=usr/perl5/$(PERLVER)/man/man3/URI::_punycode.3 mode=0444
-file path=usr/perl5/$(PERLVER)/man/man3/URI::data.3 mode=0444
-file path=usr/perl5/$(PERLVER)/man/man3/URI::file.3 mode=0444
-file path=usr/perl5/$(PERLVER)/man/man3/URI::ldap.3 mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/Escape.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/Heuristic.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/IRI.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/QueryParam.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/Split.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/URL.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/WithBase.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_foreign.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_generic.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_idna.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_ldap.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_login.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_punycode.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_query.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_segment.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_server.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_userpass.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/data.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/Base.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/FAT.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/Mac.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/OS2.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/QNX.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/Unix.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/Win32.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/ftp.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/gopher.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/http.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/https.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/ldap.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/ldapi.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/ldaps.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/mailto.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/mms.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/news.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/nntp.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/pop.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/rlogin.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/rsync.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/rtsp.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/rtspu.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/sftp.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/sip.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/sips.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/snews.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/ssh.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/telnet.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/tn3270.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/urn.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/urn/isbn.pm mode=0444
-file path=usr/perl5/vendor_perl/$(PERLVER)/URI/urn/oid.pm mode=0444
+file path=usr/perl5/$(PERLVER)/man/man3/URI.3
+file path=usr/perl5/$(PERLVER)/man/man3/URI::Escape.3
+file path=usr/perl5/$(PERLVER)/man/man3/URI::Heuristic.3
+file path=usr/perl5/$(PERLVER)/man/man3/URI::QueryParam.3
+file path=usr/perl5/$(PERLVER)/man/man3/URI::Split.3
+file path=usr/perl5/$(PERLVER)/man/man3/URI::URL.3
+file path=usr/perl5/$(PERLVER)/man/man3/URI::WithBase.3
+file path=usr/perl5/$(PERLVER)/man/man3/URI::_punycode.3
+file path=usr/perl5/$(PERLVER)/man/man3/URI::data.3
+file path=usr/perl5/$(PERLVER)/man/man3/URI::file.3
+file path=usr/perl5/$(PERLVER)/man/man3/URI::ldap.3
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/URI/.packlist
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/Escape.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/Heuristic.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/IRI.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/QueryParam.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/Split.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/URL.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/WithBase.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_foreign.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_generic.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_idna.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_ldap.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_login.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_punycode.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_query.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_segment.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_server.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/_userpass.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/data.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/Base.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/FAT.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/Mac.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/OS2.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/QNX.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/Unix.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/file/Win32.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/ftp.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/gopher.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/http.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/https.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/ldap.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/ldapi.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/ldaps.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/mailto.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/mms.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/news.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/nntp.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/nntps.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/pop.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/rlogin.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/rsync.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/rtsp.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/rtspu.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/sftp.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/sip.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/sips.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/snews.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/ssh.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/telnet.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/tn3270.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/urn.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/urn/isbn.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/URI/urn/oid.pm
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+#depend type=require fmri=pkg:/runtime/perl-$(PLV)

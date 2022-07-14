@@ -1,72 +1,34 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2016 Alexander Pyhalov
-# Copyright (c) 2021 Tim Mooney.  All rights reserved.
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module URI
 #
 
-BUILD_STYLE=makemaker
-BUILD_BITS=32_and_64
+BUILD_STYLE = makemaker
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		URI
-COMPONENT_VERSION=	1.71
-COMPONENT_REVISION=	2
-COMPONENT_FMRI=		library/perl-5/uri
-COMPONENT_SUMMARY=	URI manipulation utilities
-COMPONENT_CLASSIFICATION=Development/Perl
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	https://metacpan.org/pod/URI
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:9c8eca0d7f39e74bbc14706293e653b699238eeb1a7690cc9c136fb8c2644115
-COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/O/OA/OALDERS/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	Artistic
-
-# until all perl modules have been rebuilt with 5.34, each module sets
-# this manually, before including common.mk
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
+COMPONENT_PERL_MODULE =		URI
+HUMAN_VERSION =			5.12
+COMPONENT_SUMMARY =		URI - Uniform Resource Identifiers (absolute and relative)
+COMPONENT_CPAN_AUTHOR =		OALDERS
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:66abe0eaddd76b74801ecd28ec1411605887550fc0a45ef6aa744fdad768d9b3
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# use the same results for comparison for all builds
-#
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-#
-# delete any lines up through test_harness
-# delete timings
-#
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "1,/test_harness/d"' \
-	'-e "s/,  *[0-9]* wallclock.*//"'
-
-
-# not autodetected, but required to build
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/perl-534
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/test-needs
+PERL_REQUIRED_PACKAGES += runtime/perl
