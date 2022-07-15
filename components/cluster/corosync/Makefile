@@ -13,26 +13,26 @@
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_NAME= corosync
-COMPONENT_VERSION= 2.4.5
-COMPONENT_REVISION= 1
-COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION= System/Services
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_NAME=         corosync
+COMPONENT_VERSION=      2.4.5
+COMPONENT_REVISION=     2
+COMPONENT_FMRI=         application/cluster/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/Services
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:1637b9fcc90ecb719f0c24bdb5bf98bbe7b7f8dbaf19fbe1e5ca5640512565e1
-COMPONENT_PROJECT_URL= https://github.com/corosync/corosync
-COMPONENT_ARCHIVE_URL= https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_LICENSE= BSD
-COMPONENT_SUMMARY= The Corosync cluster engine.
+COMPONENT_PROJECT_URL=  https://github.com/corosync/corosync
+COMPONENT_ARCHIVE_URL=  https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_LICENSE=      BSD
+COMPONENT_SUMMARY=      The Corosync cluster engine.
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION=(cd $(SOURCE_DIR); $(CONFIG_SHELL) autogen.sh )
 
@@ -40,7 +40,7 @@ COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT= $(@D)/configure
 
-SNMPCONFIG= /usr/bin/amd64/net-snmp-config
+SNMPCONFIG= /usr/bin/net-snmp-config-64
 CFLAGS += -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS
 LDFLAGS += -R/usr/lib/mps/$(MACH64)
 
@@ -71,20 +71,12 @@ COMPONENT_POST_INSTALL_ACTION=( \
 # if compilation fails make output verbose
 #COMPONENT_BUILD_GMAKE_ARGS= V=1
 
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
-CONFIGURE_SBINDIR.64= $(CONFIGURE_SBINDIR.32)
-
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(TESTS_64)
-
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libqb
 REQUIRED_PACKAGES += library/libstatgrab
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/mozilla-nss
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
