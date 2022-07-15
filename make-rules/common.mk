@@ -28,6 +28,19 @@
 # userland components.
 #
 
+#
+# COMMON_INCLUDED is transitional macro to help building legacy components that
+# DO NOT include common.mk.  Such components do not set BUILD_BITS but they
+# silently expects that 32-bit build is preferred (similarly as if BUILD_BITS
+# is set to 32 or 32_and_64).  Since this is not the case by default we
+# introduced COMMON_INCLUDED to detect such components and set BUILD_BITS to 32
+# for them.  The other part of this transitional solution is in prep.mk.
+#
+# Once all components are converted to include common.mk this macro could be
+# safely removed.
+#
+COMMON_INCLUDED = yes
+
 # Override this to limit builds and publication to a single architecture.
 BUILD_ARCH ?= $(MACH)
 ifneq ($(strip $(BUILD_ARCH)),$(MACH))

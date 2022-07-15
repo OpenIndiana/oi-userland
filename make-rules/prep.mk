@@ -23,6 +23,21 @@
 # Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+#
+# We set PREFERRED_BITS to 32 here for legacy components that DO NOT include
+# common.mk.  Such components do not set BUILD_BITS in their Makefile but they
+# silently expects that 32-bit build is preferred (similarly as if BUILD_BITS
+# is set to 32 or 32_and_64).  Since this is not the case by default we need to
+# enforce preference of 32-bit build for them.  COMMON_INCLUDED is set in
+# common.mk.
+#
+# Once all components are converted to include common.mk this conditional
+# setting could be safely removed.
+#
+ifneq ($(strip $(COMMON_INCLUDED)),yes)
+PREFERRED_BITS = 32
+endif
+
 include $(WS_MAKE_RULES)/prep-download.mk
 
 include $(WS_MAKE_RULES)/prep-hg.mk
