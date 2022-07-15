@@ -10,30 +10,26 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Test::Fatal
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Test-Fatal
+COMPONENT_PERL_MODULE =		Test::Fatal
 HUMAN_VERSION =			0.016
-COMPONENT_VERSION =		0.16
-COMPONENT_FMRI =		library/perl-5/test-fatal
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Fatal - incredibly simple helpers for testing code with exceptions
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Test::Fatal
+COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:7283d430f2ba2030b8cd979ae3039d3f1b2ec3dde1a11ca6ae09f992a66f788f
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/R/RJ/RJBS/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/try-tiny
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
+PERL_REQUIRED_PACKAGES += runtime/perl
