@@ -25,7 +25,7 @@
 
 MARCH=$(ARCH)
 LDFLAGS_sparcv9=-m64 -I$(ROOT)$(CFGPREFIX)/include -I.
-LDFLAGS_32=-I$(ROOT)$(CFGPREFIX)/include -I.
+LDFLAGS_32=-m32 -I$(ROOT)$(CFGPREFIX)/include -I.
 LDFLAGS_amd64=-m64 -I$(ROOT)$(CFGPREFIX)/include -I.
 LDFLAGS=$(LDFLAGS_$(MARCH))
 
