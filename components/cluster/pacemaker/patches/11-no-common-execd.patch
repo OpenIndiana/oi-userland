@@ -1,0 +1,62 @@
+From 898d369f3bc770c0db2ad3973c204e6d11ec0e0f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20Pokorn=C3=BD?= <jpokorny@redhat.com>
+Date: Tue, 21 Jan 2020 18:24:44 +0100
+Subject: [PATCH] Build: get ready for implicit -fno-common with upcoming GCC
+ 10
+
+Currently, -fno-common yields (and only yields, slightly restructured):
+
+> /usr/bin/ld:
+>   pacemaker_execd-execd_commands.o:
+>     pcmk/daemons/execd/pacemaker-execd.h:23:
+>       multiple definition of `rsc_list';
+>   + pacemaker_execd-pacemaker-execd.o:
+>     pcmk/daemons/execd/pacemaker-execd.h:23:
+>       first defined here
+>
+>   pacemaker_execd-execd_alerts.o:
+>     pcmk/daemons/execd/pacemaker-execd.h:23:
+>       multiple definition of `rsc_list';
+>   + pacemaker_execd-pacemaker-execd.o:
+>     pcmk/daemons/execd/pacemaker-execd.h:23:
+>       first defined here
+>
+> collect2: error: ld returned 1 exit status
+
+The problem is that a global (with external linkage) variable without
+explicit "extern" stands for "tentative definition" (as opposed to mere
+reference to existing object with external linkage otherwise),
+and these won't get automagically merged in -fno-common case (which
+is going to be a default in upcoming GCC 10).
+
+Solution is to explicitly add "extern" storage-class specifiers
+at what's indeed meant as non-tentative reference in the header
+files that are going to be included from various translation
+units that will end up in the same link.
+
+No more attempts at finding these was performed, just the only instance
+that got hit in practice (see above) receives this treatment, since
+manual work simply doesn't scale.  Either a static analysis can be
+employed to mark other potential show-stoppers, or we'll just deal
+with the issues on case-by-case basis (with the gargantuan assistence
+of CI systems).
+
+References:
+https://gcc.gnu.org/gcc-10/porting_to.html#common
+---
+ daemons/execd/pacemaker-execd.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/daemons/execd/pacemaker-execd.h b/daemons/execd/pacemaker-execd.h
+index 4a52d91834..dab3ccdbee 100644
+--- a/daemons/execd/pacemaker-execd.h
++++ b/daemons/execd/pacemaker-execd.h
+@@ -20,7 +20,7 @@
+ #    include <gnutls/gnutls.h>
+ #  endif
+ 
+-GHashTable *rsc_list;
++extern GHashTable *rsc_list;
+ 
+ typedef struct lrmd_rsc_s {
+     char *rsc_id;
