@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		aspell
 COMPONENT_VERSION=	0.60.8
+COMPONENT_REVISION =	1
 COMPONENT_FMRI=		text/aspell
 COMPONENT_SUMMARY=	GNU Aspell spell checking library
 COMPONENT_CLASSIFICATION=System/Text Tools
@@ -57,10 +58,9 @@ CONFIGURE_OPTIONS.32+=	LDFLAGS="$(LDFLAGS.32)"
 CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += system/library
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
