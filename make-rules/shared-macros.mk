@@ -776,6 +776,7 @@ PYTHON_DATA= $(PYTHON_LIB)
 
 JAVA7_HOME =	/usr/jdk/instances/openjdk1.7.0
 JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
+JAVA11_HOME =	/usr/jdk/instances/openjdk11.0.10
 JAVA_HOME = $(JAVA8_HOME)
 
 # QT macros
