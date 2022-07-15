@@ -13,29 +13,32 @@
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni) 
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=   libqb
-COMPONENT_VERSION=  1.0.5
-COMPONENT_FMRI= library/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_NAME=         libqb
+COMPONENT_VERSION=      1.0.5
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_PROJECT_URL=  https://github.com/ClusterLabs/libqb
-COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.gz
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:89fe0c743e5be15f2fa25849f107df41cb144928259752d5c797c13644eba6b1
 COMPONENT_ARCHIVE_URL=  \
-  https://github.com/ClusterLabs/libqb/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_LICENSE= LGPLv2
-COMPONENT_SUMMARY= libqb is a library providing high performance logging, tracing, ipc, and poll.
+	https://github.com/ClusterLabs/libqb/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_LICENSE=      LGPLv2
+COMPONENT_SUMMARY=      libqb is a library providing high performance logging, tracing, ipc, and poll.
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 unexport SHELLOPTS
 
-CFLAGS += -DNAME_MAX=255 -DHOST_NAME_MAX=255 -I/usr/include  -I/usr/include/heartbeat \
-				 	-lsocket -lnsl -ldladm -lssp_nonshared -lssp -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS
+CFLAGS += -DNAME_MAX=255 -DHOST_NAME_MAX=255 \
+	-I/usr/include  -I/usr/include/heartbeat \
+	-lsocket -lnsl -ldladm -lssp_nonshared -lssp \
+	-D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS
 
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --localstatedir=/var
@@ -56,11 +59,7 @@ COMPONENT_TEST_TARGETS = check
 #    /var/run/hacluster must exist and must be writable for the build user
 #
 
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(TEST_32_and_64)
-
-REQUIRED_PACKAGES += system/library
+# Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
