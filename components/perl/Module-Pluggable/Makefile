@@ -10,28 +10,24 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Module::Pluggable
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Module-Pluggable
-COMPONENT_VERSION =		5.2
-COMPONENT_FMRI =		library/perl-5/module-pluggable
+COMPONENT_PERL_MODULE =		Module::Pluggable
+HUMAN_VERSION =			5.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Module::Pluggable - automatically give your module the ability to have plugins
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Module::Pluggable
+COMPONENT_CPAN_AUTHOR =		SIMONW
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b3f2ad45e4fd10b3fb90d912d78d8b795ab295480db56dc64e86b9fa75c5a6df
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/S/SI/SIMONW/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
