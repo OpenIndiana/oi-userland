@@ -10,29 +10,26 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module CPAN::Meta::Check
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		CPAN-Meta-Check
+COMPONENT_PERL_MODULE =		CPAN::Meta::Check
 HUMAN_VERSION =			0.014
-COMPONENT_VERSION =		0.14
-COMPONENT_FMRI =		library/perl-5/cpan-meta-check
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		CPAN::Meta::Check - Verify requirements in a CPAN::Meta object
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/CPAN::Meta::Check
+COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:28a0572bfc1c0678d9ce7da48cf521097ada230f96eb3d063fcbae1cfe6a351f
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/L/LE/LEONT/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/test-deep
+PERL_REQUIRED_PACKAGES += runtime/perl
