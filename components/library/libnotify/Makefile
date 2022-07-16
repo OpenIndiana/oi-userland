@@ -14,33 +14,32 @@
 # Copyright 2016 Till Wegmueller
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libnotify
-COMPONENT_VERSION= 0.7.7
-COMPONENT_REVISION= 2
-COMPONENT_SUMMARY= Library for desktop notifications
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=         libnotify
+COMPONENT_VERSION=      0.7.7
+COMPONENT_REVISION=     3
+COMPONENT_SUMMARY=      Library for desktop notifications
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9cb4ce315b2655860c524d46b56010874214ec27e854086c1a1d0260137efc04
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/0.7/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.galago-project.org/news/index.php
-COMPONENT_FMRI=	library/libnotify
-COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_LICENSE = LGPLv2.1
-COMPONENT_LICENSE_FILE = COPYING
+	sha256:9cb4ce315b2655860c524d46b56010874214ec27e854086c1a1d0260137efc04
+COMPONENT_ARCHIVE_URL=  \
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.7/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://www.galago-project.org/news/index.php
+COMPONENT_FMRI=         library/libnotify
+COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT=       $(@D)/configure
 
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -49,15 +48,7 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 CONFIGURE_OPTIONS += --disable-static
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
