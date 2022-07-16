@@ -34,18 +34,21 @@ include ../../../make-rules/shared-macros.mk
 BITS = 64
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	91.10.0
+COMPONENT_VERSION =	102.0.2
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:a0dbf9a8083a4dff8a0506b5f4c6910f681476e2c5fce081beda4493168e66f9
+COMPONENT_ARCHIVE_HASH= \
+	sha256:21ae5c664bba6084f2c0d7a5573cae4bd9ec900e05a31a6e088cd28fe9ba337c
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)
 endif
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
+
+RUST_VERSION = 1.61.0
 
 # There are a set of .xpi files (as given in the LANG_LIST definition
 # below) that we need. We could download and unpack them individually, but
@@ -114,6 +117,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
         echo "ac_add_options --host=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
         echo "ac_add_options --target=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
+        echo "ac_add_options --without-wasm-sandboxed-libraries" >> $(MOZCONFIG) ; \
 
 # xpcom uses DEF XP_SOLARIS
 CXXFLAGS += -DXP_SOLARIS -Wno-invalid-offsetof -fpermissive 
@@ -163,10 +167,10 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
         export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
         curl https://sh.rustup.rs -sSf | bash -s -- -y --no-modify-path; \
         source $(CARGO_HOME)/env; \
-        rustup install 1.59.0; \
-        rustup default 1.59.0-x86_64-unknown-illumos; \
+        rustup install $(RUST_VERSION); \
+        rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
         rustup show; \
-        cargo install --root=$(CARGO_HOME) cbindgen; \
+        cargo install --root=$(CARGO_HOME) --vers 0.24.2 cbindgen; \
 	);
 
 # COMPONENT_POST_BUILD_ACTION = \
@@ -215,14 +219,12 @@ COMPONENT_TEST_TRANSFORMS = \
 # Build dependencies
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += developer/lang/rustc
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/http-parser
 REQUIRED_PACKAGES += library/python/psutil
-REQUIRED_PACKAGES += runtime/python-37
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/header/header-audio
-REQUIRED_PACKAGES += web/browser/lynx
 
 # Rustup needs gcc-49 libraries (otherwise build fails):
 REQUIRED_PACKAGES += system/library/g++-4-runtime
@@ -253,3 +255,4 @@ REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
+REQUIRED_PACKAGES += x11/library/libxrandr
