@@ -23,18 +23,19 @@
 BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libepubgen
-COMPONENT_VERSION=	0.1.1
-COMPONENT_FMRI=     	library/c++/libepubgen
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libepubgen/
+COMPONENT_NAME=         libepubgen
+COMPONENT_VERSION=      0.1.1
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/c++/libepubgen
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/libepubgen/
 COMPONENT_SUMMARY=      libepubgen - EPUB generator for librevenge
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:03e084b994cbeffc8c3dd13303b2cb805f44d8f2c3b79f7690d7e3fc7f6215ad
-COMPONENT_ARCHIVE_URL=	\
-  http://sourceforge.net/projects/libepubgen/files/libepubgen-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:03e084b994cbeffc8c3dd13303b2cb805f44d8f2c3b79f7690d7e3fc7f6215ad
+COMPONENT_ARCHIVE_URL=  \
+	http://sourceforge.net/projects/libepubgen/files/libepubgen-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MPLv2
 
 include $(WS_MAKE_RULES)/common.mk
