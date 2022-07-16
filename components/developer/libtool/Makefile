@@ -25,21 +25,23 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libtool
-COMPONENT_VERSION=	2.4.6
-COMPONENT_REVISION=	3
-COMPONENT_FMRI=	developer/build/libtool
-COMPONENT_SUMMARY=	GNU libtool
-COMPONENT_CLASSIFICATION=	Development/GNU
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libtool/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:e3bd4d5d3d025a36c21dd6af7ea818a2afcd4dfc1ea5a17b39d7854bcd0c06e3
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv2, FDLv1.3
+COMPONENT_NAME=         libtool
+COMPONENT_VERSION=      2.4.6
+COMPONENT_REVISION=     4
+COMPONENT_FMRI=         developer/build/libtool
+COMPONENT_SUMMARY=      GNU libtool
+COMPONENT_CLASSIFICATION=Development/GNU
+COMPONENT_PROJECT_URL=  http://www.gnu.org/software/libtool/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:e3bd4d5d3d025a36c21dd6af7ea818a2afcd4dfc1ea5a17b39d7854bcd0c06e3
+COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv2, FDLv1.3
 
 # For now, we want to continue to provide the libltdl.so's (and their
 # links) from libtool 1.5.22.
@@ -52,9 +54,7 @@ COMPONENT_ARCHIVE_HASH_1 = \
 COMPONENT_ARCHIVE_URL_1 = http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE_1)
 SOURCE_DIR_1 =		$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -116,13 +116,6 @@ $(SOURCE_DIR_1)/.prep:        $(SOURCE_DIR_1)/.unpacked
 prep::	$(SOURCE_DIR_1)/.prep
 
 CLEAN_PATHS += $(SOURCE_DIR_1)
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/linker

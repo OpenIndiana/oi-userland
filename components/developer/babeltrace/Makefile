@@ -11,10 +11,13 @@
 #
 # Copyright (c) 2017 Dariusz Sendkowski
 #
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         babeltrace
 COMPONENT_VERSION=      1.5.2
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  http://www.efficios.com/babeltrace	
 COMPONENT_SUMMARY=      Provides CTF trace read and write libraries, as well as a trace converter.
 COMPONENT_FMRI=         developer/babeltrace
@@ -26,20 +29,12 @@ COMPONENT_ARCHIVE_URL=  http://www.efficios.com/files/$(COMPONENT_NAME)/$(COMPON
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-static
 
-
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TEST)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/popt
 REQUIRED_PACKAGES += system/library
