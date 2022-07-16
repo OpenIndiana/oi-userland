@@ -10,32 +10,28 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Email::Abstract
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Email-Abstract
+COMPONENT_PERL_MODULE =		Email::Abstract
 HUMAN_VERSION =			3.009
-COMPONENT_VERSION =		3.9
-COMPONENT_FMRI =		library/perl-5/email-abstract
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::Abstract - unified interface to mail representations
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Email::Abstract
+COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:040b7292e22e54815e9e6dfcdbfac9d874741930a20744ff5b369147dde201fc
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/R/RJ/RJBS/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/email-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/module-pluggable
 PERL_REQUIRED_PACKAGES += library/perl-5/mro-compat
-
-# Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
