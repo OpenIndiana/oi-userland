@@ -20,25 +20,27 @@
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		daq
-COMPONENT_VERSION=	2.0.6
-COMPONENT_PROJECT_URL=	http://www.snort.org/
-COMPONENT_SUMMARY=	Snort data acquisition library for packet I/O
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:d41da5f7793e66044e6927dd868c0525e7ee4ec1a3515bf74ef9a30cd9273af0
-COMPONENT_ARCHIVE_URL=	https://snort.org/downloads/snort/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=         daq
+COMPONENT_VERSION=      2.0.6
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  http://www.snort.org/
+COMPONENT_SUMMARY=      Snort data acquisition library for packet I/O
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:d41da5f7793e66044e6927dd868c0525e7ee4ec1a3515bf74ef9a30cd9273af0
+COMPONENT_ARCHIVE_URL=  https://snort.org/downloads/snort/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/daq
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_FMRI=		system/library/libdaq
-COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_FMRI=         system/library/libdaq
+COMPONENT_CLASSIFICATION=System/Libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # error: tokdefs.h: No such file or directory
 COMPONENT_BUILD_ARGS=
@@ -47,13 +49,7 @@ CONFIGURE_OPTIONS +=    --enable-static=no
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
