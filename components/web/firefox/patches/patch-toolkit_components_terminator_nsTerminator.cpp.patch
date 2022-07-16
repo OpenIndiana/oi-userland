@@ -2,9 +2,9 @@ $NetBSD: patch-toolkit_components_terminator_nsTerminator.cpp,v 1.3 2019/03/19 1
 
 * Fix segfault on exit under NetBSD
 
---- a/toolkit/components/terminator/nsTerminator.cpp.orig	2019-03-07 16:53:45.000000000 +0000
-+++ b/toolkit/components/terminator/nsTerminator.cpp
-@@ -36,7 +36,7 @@
+--- firefox-102.0/toolkit/components/terminator/nsTerminator.cpp.~2~	2022-05-31 17:22:51.266704060 +0000
++++ firefox-102.0/toolkit/components/terminator/nsTerminator.cpp	2022-05-31 17:32:46.773492649 +0000
+@@ -34,7 +34,7 @@
  #if defined(XP_WIN)
  #  include <windows.h>
  #else
@@ -12,12 +12,12 @@ $NetBSD: patch-toolkit_components_terminator_nsTerminator.cpp,v 1.3 2019/03/19 1
 +#  include <time.h>
  #endif
  
- #include "mozilla/ArrayUtils.h"
-@@ -170,7 +170,10 @@ void RunWatchdog(void* arg) {
+ #include "mozilla/AppShutdown.h"
+@@ -184,7 +184,10 @@
  #if defined(XP_WIN)
-     Sleep(1000 /* ms */);
+     Sleep(HEARTBEAT_INTERVAL_MS /* ms */);
  #else
--    usleep(1000000 /* usec */);
+-    usleep(HEARTBEAT_INTERVAL_MS * 1000 /* usec */);
 +    struct timespec tickd;
 +    tickd.tv_sec = 1;
 +    tickd.tv_nsec = 0;

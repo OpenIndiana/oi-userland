@@ -1,0 +1,31 @@
+--- firefox-100.0/browser/components/extensions/jar.mn.old	2022-04-19 11:38:17.491657339 +0000
++++ firefox-100.0/browser/components/extensions/jar.mn	2022-04-19 11:39:21.613168136 +0000
+@@ -7,6 +7,9 @@
+ #ifdef XP_LINUX
+     content/browser/extension-linux-panel.css
+ #endif
++#ifdef XP_UNIX
++    content/browser/extension-linux-panel.css
++#endif
+ #ifdef XP_MACOSX
+     content/browser/extension-mac.css
+     content/browser/extension-mac-panel.css
+--- firefox-100.0/browser/components/extensions/ExtensionPopups.jsm.old	2022-04-20 13:37:56.213961520 +0000
++++ firefox-100.0/browser/components/extensions/ExtensionPopups.jsm	2022-04-20 13:56:15.985674321 +0000
+@@ -65,12 +65,16 @@
+ XPCOMUtils.defineLazyGetter(this, "standaloneStylesheets", () => {
+   let stylesheets = [];
+ 
++/* Solaris and Illumos are "other" platform */
++
+   if (AppConstants.platform === "macosx") {
+     stylesheets.push("chrome://browser/content/extension-mac-panel.css");
+   } else if (AppConstants.platform === "win") {
+     stylesheets.push("chrome://browser/content/extension-win-panel.css");
+   } else if (AppConstants.platform === "linux") {
+     stylesheets.push("chrome://browser/content/extension-linux-panel.css");
++  } else if (AppConstants.platform === "other") {
++    stylesheets.push("chrome://browser/content/extension-linux-panel.css");
+   }
+   return stylesheets;
+ });

@@ -1,0 +1,18 @@
+https://bugzilla.mozilla.org/show_bug.cgi?id=1695863
+
+Should be investigated why this happens on Solaris only.
+It's needed also for Thunderbird.
+can fixed/workaround akso with toolkit.asyncshutdown.crash_timeout = 6000000
+
+diff -r 665062221958 -r fc7b0156fd43 toolkit/components/terminator/nsTerminator.cpp
+--- a/toolkit/components/terminator/nsTerminator.cpp
++++ b/toolkit/components/terminator/nsTerminator.cpp
+@@ -66,7 +66,7 @@
+ // forcefully.
+ #define ADDITIONAL_WAIT_BEFORE_CRASH_MS 3000
+ 
+-#define HEARTBEAT_INTERVAL_MS 100
++#define HEARTBEAT_INTERVAL_MS 1000
+ 
+ namespace mozilla {
+ 

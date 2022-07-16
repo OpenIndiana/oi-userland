@@ -1,0 +1,31 @@
+Solaris x86_64 allocates some user space memory in the canonical
+'higher half' of the address space.  Consequently, on Solaris x86_64,
+a pointer may reference either the lower half or higher half.
+
+As the MemoryTracker persists only the low order 56 bits, we must
+reconstitute the high order bits in this case, as they may well not
+be zero.
+
+We can recover the bits easily, though, as the x86_64 specification
+requires the most significant 16 bits of any virtual address, bits 48
+through 63, be copies of bit 47, in a manner akin to sign extension.
+
+Suitable for upstream, though not a likely candidate, as Solaris seems
+to be the only operating system that allocates user space memory in
+the higher half.
+
+
+--- a/js/src/gc/Scheduling.cpp	2021-08-16 19:14:35.000000000 +0000
++++ b/js/src/gc/Scheduling.cpp	2021-09-06 17:12:00.451552042 +0000
+@@ -809,7 +809,11 @@
+ 
+ template <typename Ptr>
+ inline Ptr* MemoryTracker::Key<Ptr>::ptr() const {
++#  ifdef __x86_64__
++  return reinterpret_cast<Ptr*>((static_cast<intptr_t>(ptr_) << 16) >> 16);
++#  else
+   return reinterpret_cast<Ptr*>(ptr_);
++#  endif
+ }
+ template <typename Ptr>
+ inline MemoryUse MemoryTracker::Key<Ptr>::use() const {

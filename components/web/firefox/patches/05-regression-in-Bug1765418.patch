@@ -1,0 +1,38 @@
+Looks like a regression from Bug 1765418.
+Spits out this text when firefox is built with ac_add_options --disable-updater:
+Missing chrome or resource URL: resource://gre/modules/UpdateListener.jsm
+Missing chrome or resource URL: resource://gre/modules/UpdateListener.sys.mjs
+
+--- firefox-102.0/browser/components/BrowserGlue.jsm.~1~	2022-06-05 17:18:38.000000000 +0000
++++ firefox-102.0/browser/components/BrowserGlue.jsm	2022-06-08 16:01:47.198640850 +0000
+@@ -1993,7 +1993,6 @@
+       () => Normandy.uninit(),
+       () => RFPHelper.uninit(),
+       () => ASRouterNewTabHook.destroy(),
+-      () => UpdateListener.reset(),
+     ];
+ 
+     for (let task of tasks) {
+@@ -2758,12 +2757,6 @@
+         },
+       },
+ 
+-      {
+-        task: () => {
+-          UpdateListener.maybeShowUnsupportedNotification();
+-        },
+-      },
+-
+       {
+         task: () => {
+           // Use idleDispatch a second time to run this after the per-window
+--- firefox-102.0/toolkit/mozapps/update/tests/browser/browser_doorhanger_bc_check_unsupported.js.old	2022-06-07 13:36:31.223282622 +0000
++++ firefox-102.0/toolkit/mozapps/update/tests/browser/browser_doorhanger_bc_check_unsupported.js	2022-06-07 13:40:25.608287290 +0000
+@@ -50,7 +50,6 @@
+         !PanelUI.menuButton.hasAttribute("badge-status"),
+         "The window does not have a badge."
+       );
+-      UpdateListener.maybeShowUnsupportedNotification();
+       is(
+         PanelUI.notificationPanel.state,
+         "closed",
