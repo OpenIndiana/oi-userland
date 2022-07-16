@@ -23,16 +23,17 @@
 BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libabw
-COMPONENT_VERSION=	0.1.3
-COMPONENT_FMRI=     	library/c++/libabw
+COMPONENT_NAME=         libabw
+COMPONENT_VERSION=      0.1.3
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/c++/libabw
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libabw
+COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libabw
 COMPONENT_SUMMARY=      libabw - library for reading AbiWord documents
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:e763a9dc21c3d2667402d66e202e3f8ef4db51b34b79ef41f56cacb86dcd6eed
-COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:e763a9dc21c3d2667402d66e202e3f8ef4db51b34b79ef41f56cacb86dcd6eed
+COMPONENT_ARCHIVE_URL=  http://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MPLv2
 
 # Fix threading detection issue introduced with boost 1.64
