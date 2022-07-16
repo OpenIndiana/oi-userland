@@ -13,23 +13,24 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= clutter-gst
-COMPONENT_VERSION= 1.6.0
-COMPONENT_REVISION= 2
-COMPONENT_SUMMARY= gstreamer integration library for clutter
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=         clutter-gst
+COMPONENT_VERSION=      1.6.0
+COMPONENT_REVISION=     3
+COMPONENT_SUMMARY=      gstreamer integration library for clutter
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:abc879cdd562f1640a825131405f4327a427bfe65b805ebc25d0c78909c8c622
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/1.6/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.clutter-project.org/
+	sha256:abc879cdd562f1640a825131405f4327a427bfe65b805ebc25d0c78909c8c622
+COMPONENT_ARCHIVE_URL=  \
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.6/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://www.clutter-project.org/
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -46,11 +47,8 @@ CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+# Build dependencies
+REQUIRED_PACKAGES += library/desktop/json-glib
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/gstreamer
