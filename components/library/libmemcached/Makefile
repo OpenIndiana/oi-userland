@@ -23,22 +23,22 @@
 # Copyright (c) 2013  Erol Zavidic. All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libmemcached
-COMPONENT_VERSION=	1.0.17
-COMPONENT_REVISION=     1
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:7bb27b2589400f918df1cf5002cb01ef7ccac6e23f818604e2386de62c80bba5
+COMPONENT_NAME=         libmemcached
+COMPONENT_VERSION=      1.0.17
+COMPONENT_REVISION=     2
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:7bb27b2589400f918df1cf5002cb01ef7ccac6e23f818604e2386de62c80bba5
 COMPONENT_ARCHIVE_URL=  https://launchpad.net/libmemcached/1.0/1.0.17/+download/${COMPONENT_ARCHIVE}
 COMPONENT_PROJECT_URL=  http://libmemcached.org/libMemcached.html
 COMPONENT_BUGDB=	database/memcached
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS  += -std=c99 $(CPP_XPG6MODE)
 CXXFLAGS+= -std=c++98 $(CPP_XPG6MODE)
@@ -83,17 +83,10 @@ COMPONENT_INSTALL_ENV +=	DESTDIR=$(PROTO_DIR)
 
 COMPONENT_TEST_TARGETS =	test
 
-# common targets
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
 # Some tests fail because memcached is not running.
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
