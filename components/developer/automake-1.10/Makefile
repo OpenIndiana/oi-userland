@@ -23,31 +23,25 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		automake
-COMPONENT_VERSION=	1.10
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/automake/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:d92c77acdc3b132ff6b2de06a1321654a556defa21b7dd3e8d4829434ed64e8e
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=         automake
+COMPONENT_VERSION=      1.10
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  http://www.gnu.org/software/automake/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:d92c77acdc3b132ff6b2de06a1321654a556defa21b7dd3e8d4829434ed64e8e
+COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += SUNWcs
+PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/ksh93

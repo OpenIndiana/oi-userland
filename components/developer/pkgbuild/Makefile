@@ -14,34 +14,28 @@
 #
 # Note: Depends on xz for build
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pkgbuild
-COMPONENT_VERSION=	1.3.105
-COMPONENT_REVISION=	3
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:ed32d913af249d4221c2b94450eb4e996747024260c210620e94ac8130bc0fd6
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=         pkgbuild
+COMPONENT_VERSION=      1.3.105
+COMPONENT_REVISION=     4
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:ed32d913af249d4221c2b94450eb4e996747024260c210620e94ac8130bc0fd6
+COMPONENT_ARCHIVE_URL=  http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION += \
     (cd $(@D); aclocal-1.10 -I m4; automake-1.10 --add-missing; autoconf)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Build Dependencies
 REQUIRED_PACKAGES += developer/build/automake-110
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library

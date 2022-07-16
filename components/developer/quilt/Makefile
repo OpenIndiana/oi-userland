@@ -28,20 +28,20 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 
-COMPONENT_NAME=		quilt
-COMPONENT_VERSION=	0.65
-COMPONENT_REVISION=	1
-COMPONENT_FMRI= developer/quilt
-COMPONENT_SUMMARY=  Quilt - tool to manage series of patches
-COMPONENT_CLASSIFICATION= Development/Source Code Management
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://savannah.nongnu.org/projects/quilt/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:f6cbc788e5cbbb381a3c6eab5b9efce67c776a8662a7795c7432fd27aa096819
-COMPONENT_ARCHIVE_URL= \
-  http://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv2 
+COMPONENT_NAME=         quilt
+COMPONENT_VERSION=      0.65
+COMPONENT_REVISION=     2
+COMPONENT_FMRI=         developer/quilt
+COMPONENT_SUMMARY=      Quilt - tool to manage series of patches
+COMPONENT_CLASSIFICATION=Development/Source Code Management
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=  http://savannah.nongnu.org/projects/quilt/
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:f6cbc788e5cbbb381a3c6eab5b9efce67c776a8662a7795c7432fd27aa096819
+COMPONENT_ARCHIVE_URL=  \
+	http://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv2 
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -91,16 +91,19 @@ REQUIRED_PACKAGES += text/diffstat
 REQUIRED_PACKAGES += text/text-utilities
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += archiver/gnu-tar
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += file/gnu-findutils
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += service/network/smtp/postfix
+REQUIRED_PACKAGES += service/network/smtp/sendmail
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/gnu-getopt
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/network/mailwrapper
+REQUIRED_PACKAGES += text/diffstat
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-diffutils
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/gnu-patch
 REQUIRED_PACKAGES += text/gnu-sed
+REQUIRED_PACKAGES += text/text-utilities

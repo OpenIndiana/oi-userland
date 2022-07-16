@@ -22,25 +22,30 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS=		32_and_64
-
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		autogen
-COMPONENT_VERSION=	5.18.16
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autogen/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_NAME=         autogen
+COMPONENT_VERSION=      5.18.16
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         developer/build/autogen
+COMPONENT_SUMMARY=      GNU autogen utility
+COMPONENT_CLASSIFICATION=Development/Other Languages
+COMPONENT_PROJECT_URL=  http://www.gnu.org/software/autogen/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
 	sha256:e23c5bbd0ac83079ae2ef6eb3fd1948fecce718ac853025607a3ab0395538406
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autogen/rel$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/autogen/rel$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=GPLv3, FDLv1.2
 
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -I config -fi)
 
 # build target is incorrect without this 
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # built in SFW with gcc and builds cleanly now only with gcc
 COMPILER = gcc
@@ -68,15 +73,9 @@ COMPONENT_POST_UNPACK_ACTION = \
 		$(SOURCE_DIR)/build-aux/run-ag.sh \
 		$(SOURCE_DIR)/config/mk-shdefs.in ;
 
-CONFIGURE_ENV.64 += PATH=/usr/bin/$(MACH64):/usr/bin
-
-AUTOGEN_PATH.32 = $(PATH.illumos)
-AUTOGEN_PATH.64 = /usr/bin/$(MACH64):$(PATH.illumos)
-PERL.32 = $(PERL.5.22)
-PERL.64 = $(PERL.5.24)
-COMPONENT_BUILD_ENV += PATH=$(AUTOGEN_PATH.$(BITS)) PERL=$(PERL.$(BITS))
-COMPONENT_INSTALL_ENV += PATH=$(AUTOGEN_PATH.$(BITS)) PERL=$(PERL.$(BITS))
-COMPONENT_TEST_ENV += PATH=$(AUTOGEN_PATH.$(BITS)) PERL=$(PERL.$(BITS))
+COMPONENT_BUILD_ENV += PERL=$(PERL)
+COMPONENT_INSTALL_ENV += PERL=$(PERL)
+COMPONENT_TEST_ENV += PERL=$(PERL)
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \

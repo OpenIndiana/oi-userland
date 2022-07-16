@@ -24,27 +24,27 @@
 # Copyright (c) 2017, Aurelien Larcher
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pkg-config
-COMPONENT_VERSION=	0.29.2
-COMPONENT_REVISION=	2
-COMPONENT_FMRI=	developer/build/pkg-config
-COMPONENT_SUMMARY=	A tool to query library build-time information
-COMPONENT_CLASSIFICATION=	Development/System
-COMPONENT_PROJECT_URL= \
-  https://www.freedesktop.org/wiki/Software/pkg-config
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=         pkg-config
+COMPONENT_VERSION=      0.29.2
+COMPONENT_REVISION=     3
+COMPONENT_FMRI=         developer/build/pkg-config
+COMPONENT_SUMMARY=      A tool to query library build-time information
+COMPONENT_CLASSIFICATION=Development/System
+COMPONENT_PROJECT_URL=  \
+	https://www.freedesktop.org/wiki/Software/pkg-config
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591
-COMPONENT_ARCHIVE_URL= \
-  https://pkgconfig.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv2
+	sha256:6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591
+COMPONENT_ARCHIVE_URL=  \
+	https://pkgconfig.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -59,13 +59,6 @@ COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Making/d" ' \
 	'-e "/^make/d" '
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/gnome/gettext

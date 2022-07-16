@@ -20,37 +20,37 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		swig
-COMPONENT_VERSION=	3.0.12
-COMPONENT_REVISION=     1
-COMPONENT_SUMMARY=	Simplified Wrapper and Interface Generator
-COMPONENT_PROJECT_URL=	http://www.swig.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_NAME=         swig
+COMPONENT_VERSION=      3.0.12
+COMPONENT_REVISION=     2
+COMPONENT_SUMMARY=      Simplified Wrapper and Interface Generator
+COMPONENT_PROJECT_URL=  http://www.swig.org/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
 	sha256:7cf9f447ae7ed1c51722efc45e7f14418d15d7a1e143ac9f09a668999f4fc94d
-COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/swig/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		developer/swig
-COMPONENT_CLASSIFICATION=	Development/Other Languages
-COMPONENT_LICENSE=	GPLv3
+COMPONENT_ARCHIVE_URL=  http://prdownloads.sourceforge.net/swig/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         developer/swig
+COMPONENT_CLASSIFICATION=Development/Other Languages
+COMPONENT_LICENSE=      GPLv3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
+
+PYTHON_VERSION=3.9
 
 PATH=$(JAVA_HOME)/bin:/usr/bin
 
 # This is needed because the community provided 'check' target is not viewpath aware
 COMPONENT_PRE_CONFIGURE_ACTION =      ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-PHP.32=/usr/php/bin/php
-PHP.64=/usr/php/bin/$(MACH64)/php
-PHP=$(PHP.$(BITS))
+PHP=/usr/bin/php
 
-CONFIGURE_ENV += JAVA_HOME="$(JAVA_HOME)"
-CONFIGURE_OPTIONS +=	--with-javaincl="$(JAVA_HOME)/include"
+CONFIGURE_ENV += JAVA_HOME="$(JAVA11_HOME)"
+CONFIGURE_OPTIONS +=	--with-javaincl="$(JAVA11_HOME)/include"
 CONFIGURE_OPTIONS +=	--with-python="$(PYTHON)"
 CONFIGURE_OPTIONS +=	--with-perl="$(PERL)"
 CONFIGURE_OPTIONS +=	--with-php="$(PHP)"
@@ -79,23 +79,17 @@ COMPONENT_TEST_TARGETS = \
         partialcheck-python-test-suite \
         partialcheck-ruby-test-suite
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-REQUIRED_PACKAGES += developer/java/openjdk7
+# Build dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += runtime/java/openjdk11
 REQUIRED_PACKAGES += developer/parser/bison
-REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/ocaml
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += runtime/ruby-23
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += web/php-73
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
