@@ -17,18 +17,18 @@
 BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= brltty
-COMPONENT_VERSION= 6.0
-COMPONENT_REVISION= 3
-COMPONENT_SUMMARY= Braille support
-COMPONENT_FMRI= library/accessibility/brltty
-COMPONENT_CLASSIFICATION= Applications/Universal Access
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=         brltty
+COMPONENT_VERSION=      6.0
+COMPONENT_REVISION=     5
+COMPONENT_SUMMARY=      Braille support
+COMPONENT_FMRI=         library/accessibility/brltty
+COMPONENT_CLASSIFICATION=Applications/Universal Access
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:af4bcd1e030416c2b669cc6904f73c30e73bb4ed8f743c2ada9edc87964ab752
-COMPONENT_PROJECT_URL=	http://www.mielke.cc/brltty/
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE = GPLv2,LGPLv2.1
+COMPONENT_PROJECT_URL=  http://www.mielke.cc/brltty/
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv2,LGPLv2.1
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -46,12 +46,12 @@ CFLAGS +=	$(CC_PIC)
 CFLAGS +=	-I /usr/include/pcre -I /usr/include/liblouis
 CPPFLAGS +=	-D_SYS_UCONTEXT_H # Workaround Bug Id 15558893
 
-# Orca uses python 3.5, so we need to match
-PYTHON_VERSION = 3.5
+# Disable python bindings for now.
+PYTHON_VERSION = 3.9
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 PKG_MACROS += PYVER="$(PYTHON_VERSION)"
 
-CONFIGURE_OPTIONS +=    --enable-python-bindings
+CONFIGURE_OPTIONS +=    --disable-python-bindings
 CONFIGURE_OPTIONS +=    --disable-java-bindings
 CONFIGURE_OPTIONS +=    --disable-lisp-bindings
 CONFIGURE_OPTIONS +=    --disable-ocaml-bindings
@@ -82,8 +82,10 @@ COMPONENT_TEST_ENV += $(PYTHON_ENV)
 
 # brltty's Makefile doesn't let us pass --install-lib to setup.py so we
 # fake it with a symlink in the proto area
-COMPONENT_POST_INSTALL_ACTION += \
-    $(SYMLINK) site-packages $(PROTO_DIR)$(PYTHON_LIB)
+#COMPONENT_POST_INSTALL_ACTION += \
+#    $(MKDIR) $(PROTO_DIR)$(PYTHON_DIR) && \
+#    $(RM) $(PROTO_DIR)$(PYTHON_LIB) && \
+#    $(SYMLINK) site-packages $(PROTO_DIR)$(PYTHON_LIB)
 
 COMPONENT_INSTALL_ARGS += INSTALL_ROOT=$(PROTO_DIR)
 
