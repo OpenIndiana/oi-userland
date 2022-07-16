@@ -312,7 +312,7 @@ sample-manifest:	$(GENERATED).p5m
 # Since it is used in pipeline it needs to copy input to output.
 GENERATE_EXTRA_CMD ?= $(CAT)
 
-$(GENERATED).p5m:	install
+$(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 	[ ! -d $(SAMPLE_MANIFEST_DIR) ] && $(MKDIR) $(SAMPLE_MANIFEST_DIR) || true
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \

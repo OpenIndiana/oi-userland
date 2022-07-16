@@ -187,6 +187,7 @@ $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 
 
 # We need to add -$(PLV) to package fmri and generate runtime dependencies based on META.json
+GENERATE_EXTRA_DEPS += $(BUILD_DIR)/META.json
 GENERATE_EXTRA_CMD ?= \
 	$(GSED) -e 's/^\(set name=pkg.fmri [^@]*\)\(.*\)$$/\1-$$(PLV)\2/' | \
 	$(CAT) - <( \
@@ -194,22 +195,30 @@ GENERATE_EXTRA_CMD ?= \
 		echo "\# perl modules are unusable without perl runtime binary" ; \
 		echo "depend type=require fmri=__TBD pkg.debug.depend.file=perl \\" ; \
 		echo "    pkg.debug.depend.path=usr/perl5/\$$(PERLVER)/bin" ; \
-		[ -f $(SOURCE_DIR)/META.json ] && $(CAT) $(SOURCE_DIR)/META.json \
+		$(CAT) $(BUILD_DIR)/META.json \
 			| $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) runtime $(PERL_VERSION) \
 			| $(GSED) -e 's|^\(depend.*pkg:/runtime/perl-\$$(PLV).*\)$$|\#\1|g' \
 	)
 
 # Support for adding dependencies from META.json to REQUIRED_PACKAGES
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
-$(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
+$(BUILD_DIR)/META.depend.res: $(BUILD_DIR)/META.json
+	$(CAT) $(BUILD_DIR)/META.json | $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) $(PERL_VERSION) > $@
+
+$(BUILD_DIR)/META.json: $(SOURCE_DIR)/.prep
+	$(MKDIR) $(BUILD_DIR)
 	if [ -f $(SOURCE_DIR)/META.json ] ; then \
-		$(MKDIR) $(BUILD_DIR) ; \
-		$(CAT) $(SOURCE_DIR)/META.json | $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) $(PERL_VERSION) > $@ ; \
-	fi
-	$(TOUCH) $@
+		$(CAT) $(SOURCE_DIR)/META.json ; \
+	elif [ -f $(SOURCE_DIR)/META.yml ] ; then \
+		$(CAT) $(SOURCE_DIR)/META.yml \
+			| python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
+			| jq '{prereqs:{configure:{requires:.configure_requires},build:{requires:.build_requires},runtime:{requires}}}' ; \
+	fi > $@
 
 # perl-meta-deps requires jq
 USERLAND_REQUIRED_PACKAGES += text/jq
+# pyyaml is needed to convert META.yml to META.json
+USERLAND_REQUIRED_PACKAGES += library/python/pyyaml
 
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
