@@ -23,26 +23,27 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		aalib
-COMPONENT_VERSION=	1.4.0
+COMPONENT_NAME=         aalib
+COMPONENT_VERSION=      1.4.0
 HUMAN_VERSION=		1.4rc5
 IPS_COMPONENT_VERSION =	1.4.5
-COMPONENT_REVISION=	2
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://aa-project.sourceforge.net/aalib/
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:fbddda9230cf6ee2a4f5706b4b11e2190ae45f5eda1f0409dc4f99b35e0a70ee
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/aa-project/$(COMPONENT_ARCHIVE)
+COMPONENT_REVISION=     3
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=  http://aa-project.sourceforge.net/aalib/
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:fbddda9230cf6ee2a4f5706b4b11e2190ae45f5eda1f0409dc4f99b35e0a70ee
+COMPONENT_ARCHIVE_URL=  http://downloads.sourceforge.net/aa-project/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/aalib
 
 CONFIGURE_FIX_LIBTOOL_RPATH = no
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
 
@@ -63,17 +64,12 @@ CONFIGURE_OPTIONS	+= $(CONFIGURE_OPTIONS.$(BITS))
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
 # actually there is a test we put in the demos,
 # but it's 32-bit only and not a target
-test:		$(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/slang
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
