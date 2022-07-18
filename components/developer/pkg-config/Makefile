@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pkg-config
 COMPONENT_VERSION=      0.29.2
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_FMRI=         developer/build/pkg-config
 COMPONENT_SUMMARY=      A tool to query library build-time information
 COMPONENT_CLASSIFICATION=Development/System
