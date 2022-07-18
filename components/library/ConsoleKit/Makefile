@@ -12,26 +12,27 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		ConsoleKit
-COMPONENT_VERSION=	0.4.1
-COMPONENT_REVISION=	3
-COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/ConsoleKit
-COMPONENT_SUMMARY=	Framework for tracking users, login sessions, and seats
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f032adc6146d745034315054c5822a7a09f30e20a40d6e802221fa977354403e
-COMPONENT_ARCHIVE_URL=	http://www.freedesktop.org/software/ConsoleKit/dist/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_CLASSIFICATION= Desktop (GNOME)/Sessions
-COMPONENT_FMRI=		library/xdg/consolekit
+COMPONENT_NAME=         ConsoleKit
+COMPONENT_VERSION=      0.4.1
+COMPONENT_REVISION=     4
+COMPONENT_PROJECT_URL=  http://www.freedesktop.org/wiki/Software/ConsoleKit
+COMPONENT_SUMMARY=      Framework for tracking users, login sessions, and seats
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= \
+	sha256:f032adc6146d745034315054c5822a7a09f30e20a40d6e802221fa977354403e
+COMPONENT_ARCHIVE_URL=  http://www.freedesktop.org/software/ConsoleKit/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_CLASSIFICATION=Desktop (GNOME)/Sessions
+COMPONENT_FMRI=         library/xdg/consolekit
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -53,13 +54,6 @@ CONFIGURE_OPTIONS+=	--with-pam-module-dir=/usr/lib/security
 CONFIGURE_OPTIONS+=	--with-pam-module-dir=/usr/lib/security
 CONFIGURE_OPTIONS+=	--enable-rbac-shutdown=solaris.system.shutdown
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
 # Build dependencies
 REQUIRED_PACKAGES+= x11/header/x11-protocols
 REQUIRED_PACKAGES+= x11/library/libpthread-stubs
@@ -68,6 +62,7 @@ REQUIRED_PACKAGES+= x11/library/libpthread-stubs
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/dbus
 REQUIRED_PACKAGES += system/library/libdbus

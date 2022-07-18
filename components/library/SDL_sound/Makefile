@@ -12,25 +12,27 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		SDL_sound
-COMPONENT_VERSION=	1.0.3
-COMPONENT_PROJECT_URL=	http://icculus.org/SDL_sound/
-COMPONENT_SUMMARY=	Sound decoding library for SDL
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:3999fd0bbb485289a52be14b2f68b571cb84e380cc43387eadf778f64c79e6df
-COMPONENT_ARCHIVE_URL=	http://icculus.org/SDL_sound/downloads/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	library/audio/sdl-sound
-COMPONENT_LICENSE =	LGPLv2
-COMPONENT_LICENSE_FILE =	COPYING
-COMPONENT_CLASSIFICATION =	System/Multimedia Libraries
+COMPONENT_NAME=         SDL_sound
+COMPONENT_VERSION=      1.0.3
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  http://icculus.org/SDL_sound/
+COMPONENT_SUMMARY=      Sound decoding library for SDL
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:3999fd0bbb485289a52be14b2f68b571cb84e380cc43387eadf778f64c79e6df
+COMPONENT_ARCHIVE_URL=  http://icculus.org/SDL_sound/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/audio/sdl-sound
+COMPONENT_LICENSE=      LGPLv2
+COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -43,14 +45,6 @@ CONFIGURE_OPTIONS +=	--disable-mpglib
 CONFIGURE_OPTIONS +=	--disable-mikmod
 CONFIGURE_OPTIONS +=	--disable-modplug
 CONFIGURE_OPTIONS +=	--disable-physfs
-
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/flac
