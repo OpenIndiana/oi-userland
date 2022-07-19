@@ -13,38 +13,34 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libart_lgpl
-COMPONENT_VERSION= 2.3.21
-COMPONENT_SUMMARY= GNOME library for high-performace 2D graphics
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=         libart_lgpl
+COMPONENT_VERSION=      2.3.21
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      GNOME library for high-performace 2D graphics
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:fdc11e74c10fc9ffe4188537e2b370c0abacca7d89021d4d303afdf7fd7476fa
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.3/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
-COMPONENT_FMRI = image/library/libart
-COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
-COMPONENT_LICENSE = LGLPv2
-COMPONENT_LICENSE_FILE = COPYING
+	sha256:fdc11e74c10fc9ffe4188537e2b370c0abacca7d89021d4d303afdf7fd7476fa
+COMPONENT_ARCHIVE_URL=  \
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.3/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://www.gnome.org
+COMPONENT_FMRI=         image/library/libart
+COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=      LGLPv2
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 gcc_OPT = -O2
 
 PATH=$(PATH.gnu)
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
