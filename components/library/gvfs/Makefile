@@ -13,27 +13,27 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gvfs
-COMPONENT_VERSION= 1.26.0
-COMPONENT_REVISION= 4
-COMPONENT_SUMMARY= GNOME virtual file system framework
-COMPONENT_FMRI= library/gnome/gvfs
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=         gvfs
+COMPONENT_VERSION=      1.26.0
+COMPONENT_REVISION=     5
+COMPONENT_SUMMARY=      GNOME virtual file system framework
+COMPONENT_FMRI=         library/gnome/gvfs
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:6d43e8b33a5c1588525875f9d3979b515f648da1d567d0ce3d337a18f5ff8c32
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/1.26/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
-COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
-COMPONENT_LICENSE = LGPLv2
-COMPONENT_LICENSE_FILE = COPYING
+	sha256:6d43e8b33a5c1588525875f9d3979b515f648da1d567d0ce3d337a18f5ff8c32
+COMPONENT_ARCHIVE_URL=  \
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.26/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://www.gnome.org
+COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=      LGPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH = /usr/gnu/bin:/usr/bin
 
@@ -71,13 +71,10 @@ CONFIGURE_ENV+= PERL=$(PERL)
 
 $(INSTALL_32):	$(INSTALL_64)
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
+# Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+# Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/gnome-mount
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/gcr
@@ -87,7 +84,7 @@ REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/samba/libsmbclient
 REQUIRED_PACKAGES += service/hal
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/security/libgcrypt

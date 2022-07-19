@@ -12,24 +12,25 @@
 # Copyright (c) 2013-2016 Louis M. Picciano. All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           gsl
-COMPONENT_VERSION=        2.4
-COMPONENT_SUMMARY=        GSL - GNU Scientific Library
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:4d46d07b946e7b31c19bbf33dda6204d7bedc2f5462a1bae1d4013426cd1ce9b
-COMPONENT_ARCHIVE_URL=    ftp://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=           developer/gsl
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_LICENSE=        GPL v3
-COMPONENT_LICENSE_FILE=   COPYING
-COMPONENT_PROJECT_URL=    http://www.gnu.org/software/gsl/
+COMPONENT_NAME=         gsl
+COMPONENT_VERSION=      2.4
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      GSL - GNU Scientific Library
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:4d46d07b946e7b31c19bbf33dda6204d7bedc2f5462a1bae1d4013426cd1ce9b
+COMPONENT_ARCHIVE_URL=  ftp://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         developer/gsl
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_LICENSE=      GPL v3
+COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_PROJECT_URL=  http://www.gnu.org/software/gsl/
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 
@@ -37,13 +38,7 @@ CONFIGURE_OPTIONS 	+=--disable-static
 
 unexport SHELLOPTS
 
-	
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -24,23 +24,24 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		npth
-COMPONENT_VERSION=	1.6
-COMPONENT_FMRI=		library/npth
-COMPONENT_SUMMARY=	The New GNU Portable Threads Library
-COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/npth/
+COMPONENT_NAME=         npth
+COMPONENT_VERSION=      1.6
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/npth
+COMPONENT_SUMMARY=      The New GNU Portable Threads Library
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=  http://www.gnupg.org/related_software/npth/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_ARCHIVE_HASH= \
 	sha256:1393abd9adcf0762d34798dc34fdcf4d0d22a8410721e76f1e3afcd1daa4e2d1
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/npth/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  ftp://ftp.gnupg.org/gcrypt/npth/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Enable C99 mode + -Xc for its additional warnings.
 CFLAGS += -std=gnu99
@@ -66,12 +67,6 @@ CONFIGURE_ENV += INSTALL="$(INSTALL)"
 COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += '-e "s|\(^Pth:\).*|\1|" '
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
