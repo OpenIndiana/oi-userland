@@ -13,37 +13,32 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= liblogging
-COMPONENT_VERSION= 1.0.6
-COMPONENT_SUMMARY= An easy to use logging library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=         liblogging
+COMPONENT_VERSION=      1.0.6
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      An easy to use logging library
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:338c6174e5c8652eaa34f956be3451f7491a4416ab489aef63151f802b00bf93
-COMPONENT_ARCHIVE_URL= \
-  http://download.rsyslog.com/liblogging/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.liblogging.org/
-COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_LICENSE = BSD
-COMPONENT_FMRI = library/liblogging
-COMPONENT_CLASSIFICATION = System/Libraries
+	sha256:338c6174e5c8652eaa34f956be3451f7491a4416ab489aef63151f802b00bf93
+COMPONENT_ARCHIVE_URL=  \
+	http://download.rsyslog.com/liblogging/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://www.liblogging.org/
+COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_LICENSE=      BSD
+COMPONENT_FMRI=         library/liblogging
+COMPONENT_CLASSIFICATION=System/Libraries
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-journal=no
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
 
 # Build dependencies
 REQUIRED_PACKAGES += library/python/docutils

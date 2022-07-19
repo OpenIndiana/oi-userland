@@ -21,24 +21,25 @@
 # Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libksba
-COMPONENT_VERSION=	1.3.5
-COMPONENT_FMRI= library/security/libksba
-COMPONENT_SUMMARY=  GnuPG X.509 certificate library
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/libksba/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:41444fd7a6ff73a79ad9728f985e71c9ba8cd3e5e53358e70d5f066d35c1a340
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libksba/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv3 
+COMPONENT_NAME=         libksba
+COMPONENT_VERSION=      1.3.5
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/security/libksba
+COMPONENT_SUMMARY=      GnuPG X.509 certificate library
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=  http://www.gnupg.org/related_software/libksba/
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= \
+	sha256:41444fd7a6ff73a79ad9728f985e71c9ba8cd3e5e53358e70d5f066d35c1a340
+COMPONENT_ARCHIVE_URL=  ftp://ftp.gnupg.org/gcrypt/libksba/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv3 
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
@@ -55,12 +56,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/Leaving directory/d"' \
 	'-e "/Entering directory/d"'
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/libgpg-error
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
