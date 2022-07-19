@@ -23,17 +23,17 @@
 BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libpagemaker
-COMPONENT_VERSION=	0.0.4
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=     	library/c++/libpagemaker
+COMPONENT_NAME=         libpagemaker
+COMPONENT_VERSION=      0.0.4
+COMPONENT_REVISION=     2
+COMPONENT_FMRI=         library/c++/libpagemaker
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libpagemaker
+COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libpagemaker
 COMPONENT_SUMMARY=      libpagemaker - library for reading Aldus/Adobe PageMaker documents
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:66adacd705a7d19895e08eac46d1e851332adf2e736c566bef1164e7a442519d
-COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:66adacd705a7d19895e08eac46d1e851332adf2e736c566bef1164e7a442519d
+COMPONENT_ARCHIVE_URL=  http://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MPLv2
 
 # Fix threading detection issue introduced with boost 1.64

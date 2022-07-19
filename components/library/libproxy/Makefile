@@ -13,24 +13,26 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libproxy
+COMPONENT_NAME=         libproxy
 
-COMPONENT_VERSION= 0.3.1
-COMPONENT_REVISION= 2
-COMPONENT_SUMMARY= Libproxy is a library that provides automatic proxy configuration management
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_VERSION=      0.3.1
+COMPONENT_REVISION=     3
+COMPONENT_SUMMARY=      Libproxy is a library that provides automatic proxy configuration management
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:dbb2dd519d58c0a41c5c59204863c327dfa61f3ac564fc448ab2703a35610a2e
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/libproxy/libproxy/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://github.com/libproxy/libproxy
+	sha256:dbb2dd519d58c0a41c5c59204863c327dfa61f3ac564fc448ab2703a35610a2e
+COMPONENT_ARCHIVE_URL=  \
+	https://github.com/libproxy/libproxy/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://github.com/libproxy/libproxy
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
+
+PYTHON_VERSION=3.9
 
 COMPONENT_PREP_ACTION= ( cd $(@D) && \
                 libtoolize --force &&\
@@ -63,15 +65,12 @@ CONFIGURE_ENV    += PYTHON="$(PYTHON)"
 CONFIGURE_ENV    += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV    += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 
-
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
+# Build dependencies
+REQUIRED_PACKAGES += runtime/python-39
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libproxy
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxmu

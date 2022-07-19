@@ -20,17 +20,19 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		librsync
-COMPONENT_VERSION=	0.9.7
-COMPONENT_REVISION=	1
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://librsync.sourceforge.net/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:6633e4605662763a03bb6388529cbdfd3b11a9ec55b8845351c1bd9a92bc41d6
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/librsync/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_NAME=         librsync
+COMPONENT_VERSION=      0.9.7
+COMPONENT_REVISION=     2
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=  http://librsync.sourceforge.net/
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:6633e4605662763a03bb6388529cbdfd3b11a9ec55b8845351c1bd9a92bc41d6
+COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/$(COMPONENT_NAME)/files/librsync/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 
 # librsync documentation as originally found at:
 # http://librsync.sourcefrog.net/doc/librsync.html
@@ -47,9 +49,7 @@ CLEAN_PATHS += $(COMPONENT_NAME_1)
 
 CONFIGURE_FIX_LIBTOOL_RPATH = no
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
 
@@ -65,14 +65,10 @@ PROTOUSRSHAREDOCDIR = $(PROTOUSRSHAREDIR)/doc/librsync-0.9.7
 
 PATCH_LEVEL = 1
 
-build: $(BUILD_32_and_64)
-
 install: $(INSTALL_32_and_64)
 	$(MKDIR) -p $(PROTOUSRSHAREDOCDIR) ; \
 	$(CP) librsync-docs/librsync.pdf $(PROTOUSRSHAREDOCDIR) ; \
 	$(CP) -r librsync-docs/html $(PROTOUSRSHAREDOCDIR)
-
-test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/popt

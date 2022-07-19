@@ -21,26 +21,27 @@
 # Copyright (c) 2015, Apostolos Syropoulos. All rights reserved.
 # Copyright (c) 2015-207, Aurelien Larcher. All rights reserved.
 #
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		librevenge
-COMPONENT_VERSION=	0.0.4
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=     	library/c++/librevenge
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_PROJECT_URL=	https://sourceforge.net/p/libwpd/wiki/librevenge/
+COMPONENT_NAME=         librevenge
+COMPONENT_VERSION=      0.0.4
+COMPONENT_REVISION=     2
+COMPONENT_FMRI=         library/c++/librevenge
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_PROJECT_URL=  https://sourceforge.net/p/libwpd/wiki/librevenge/
 COMPONENT_SUMMARY=      librevenge - base library for writing document import filters
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:933f0729f04267cc354b9a02bc3e9afefa5512a3bdd0b45f159ee14a3e3347b2
-COMPONENT_ARCHIVE_URL=	\
-  http://sourceforge.net/projects/libwpd/files/librevenge/librevenge-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:933f0729f04267cc354b9a02bc3e9afefa5512a3bdd0b45f159ee14a3e3347b2
+COMPONENT_ARCHIVE_URL=  \
+	http://sourceforge.net/projects/libwpd/files/librevenge/librevenge-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Fix threading detection issue introduced with boost 1.64
 CXXFLAGS+= -pthread
@@ -48,12 +49,6 @@ CXXFLAGS+= -pthread
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--disable-werror
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += system/library/boost

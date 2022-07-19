@@ -12,25 +12,26 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libpng
-COMPONENT_VERSION=	1.0.69
-COMPONENT_PROJECT_URL=	http://www.libpng.org/
-COMPONENT_SUMMARY=	Portable Network Graphics library version $(COMPONENT_VERSION)
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:775798fd8e82c8dfe2b3e7d7bff3fd53d4ee875be65246f98bbb56fa4c1ed842
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libpng/files/libpng10/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_LICENSE=	libpng
-COMPONENT_LICENSE_FILE=	LICENSE
-COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
-COMPONENT_FMRI= 	image/library/libpng10
+COMPONENT_NAME=         libpng
+COMPONENT_VERSION=      1.0.69
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  http://www.libpng.org/
+COMPONENT_SUMMARY=      Portable Network Graphics library version $(COMPONENT_VERSION)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:775798fd8e82c8dfe2b3e7d7bff3fd53d4ee875be65246f98bbb56fa4c1ed842
+COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/libpng/files/libpng10/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_LICENSE=      libpng
+COMPONENT_LICENSE_FILE= LICENSE
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_FMRI=         image/library/libpng10
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -49,14 +50,8 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
