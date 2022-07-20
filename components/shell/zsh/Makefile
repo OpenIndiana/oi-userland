@@ -24,28 +24,28 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/shared-targets.mk
 
-COMPONENT_NAME=		zsh
-COMPONENT_VERSION=	5.8.1
-COMPONENT_PROJECT_URL=	https://www.zsh.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=         zsh
+COMPONENT_VERSION=      5.8.1
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  https://www.zsh.org/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:b6973520bace600b4779200269b1e5d79e5f505ac4952058c11ad5bbf0dd9919
-COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  https://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
-COMPONENT_FMRI=		shell/zsh
+COMPONENT_FMRI=         shell/zsh
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Force help files regeneration
 COMPONENT_POST_UNPACK_ACTION = ($(RM) $(SOURCE_DIR)/Doc/help.txt)
 
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
-CONFIGURE_LIBDIR.64= $(CONFIGURE_LIBDIR.32)
+CONFIGURE_LIBDIR.64= $(USRLIBDIR)
 
 CONFIGURE_OPTIONS += -n
 CONFIGURE_OPTIONS += --enable-cppflags="$(CPP_LARGEFILES)"
@@ -97,7 +97,6 @@ build:		$(BUILD_64) $(COMPOVERRIDES:%=$(COMPONENT_SRC)/%)
 install:	build $(INSTALL_64) $(PROTOETCDIR)/zprofile $(PROTOETCDIR)/zshrc license
 
 # build does this always
-test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses

@@ -61,19 +61,10 @@ $(SOURCE_DIR)/Test/B10getopts.ztst: all tests successful.
 $(SOURCE_DIR)/Test/C01arith.ztst: starting.
 $(SOURCE_DIR)/Test/C01arith.ztst: all tests successful.
 $(SOURCE_DIR)/Test/C02cond.ztst: starting.
-Test $(SOURCE_DIR)/Test/C02cond.ztst failed: bad status 1, expected 0 from:
-  if (( EUID == 0 )); then
-    print -u$ZTST_fd 'Warning: Not testing [[ ! -r file ]] (root reads anything)'
-    [[ -r zerolength && -r unmodish ]]
-  elif [[ $OSTYPE = cygwin ]]; then
-    print -u$ZTST_fd 'Warning: Not testing [[ ! -r file ]]
-   (all files created by user may be readable)'
-   [[ -r zerolength ]]
-  else
-    [[ -r zerolength && ! -r unmodish ]]
-  fi
-Was testing: -r cond
-$(SOURCE_DIR)/Test/C02cond.ztst: test failed.
+Warning: Not testing [[ -b blockdevice ]] (no devices found)
+Warning: Not testing [[ -f blockdevice ]] (no devices found)
+This test takes up to 60 seconds...
+$(SOURCE_DIR)/Test/C02cond.ztst: all tests successful.
 $(SOURCE_DIR)/Test/C03traps.ztst: starting.
 This test takes at least three seconds...
 This test, too, takes at least three seconds...
@@ -145,8 +136,6 @@ $(SOURCE_DIR)/Test/X02zlevi.ztst: starting.
 This test may hang the shell when it fails...
 $(SOURCE_DIR)/Test/X02zlevi.ztst: all tests successful.
 $(SOURCE_DIR)/Test/X03zlebindkey.ztst: starting.
-Test case skipped: multibyte not available for bindkey test
-Test case skipped: multibyte not available for bindkey test
 $(SOURCE_DIR)/Test/X03zlebindkey.ztst: all tests successful.
 $(SOURCE_DIR)/Test/X04zlehighlight.ztst: starting.
 $(SOURCE_DIR)/Test/X04zlehighlight.ztst: all tests successful.
@@ -157,9 +146,7 @@ $(SOURCE_DIR)/Test/Y02compmatch.ztst: all tests successful.
 $(SOURCE_DIR)/Test/Y03arguments.ztst: starting.
 $(SOURCE_DIR)/Test/Y03arguments.ztst: all tests successful.
 **************************************
-51 successful test scripts, 1 failure, 2 skipped
+52 successful test scripts, 0 failures, 2 skipped
 **************************************
-make[2]: *** [Makefile:190: check] Error 1
 make[2]: Leaving directory '$(@D)/Test'
-make[1]: *** [Makefile:263: check] Error 2
 make[1]: Leaving directory '$(@D)'
