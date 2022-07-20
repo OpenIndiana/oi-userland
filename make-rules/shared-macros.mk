@@ -775,9 +775,9 @@ PYTHON_DIR= /usr/lib/python$(PYTHON_VERSION)
 PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_DATA= $(PYTHON_LIB)
 
-JAVA7_HOME =	/usr/jdk/instances/openjdk1.7.0
 JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
 JAVA11_HOME =	/usr/jdk/instances/openjdk11.0.10
+JAVA18_HOME =	/usr/jdk/instances/openjdk18.0.1
 JAVA_HOME = $(JAVA8_HOME)
 
 # QT macros
