@@ -17,18 +17,19 @@ BUILD_BITS= 32_and_64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	libsigc++
+COMPONENT_NAME=         libsigc++
 COMPONEN_MAJOR_VERSION=	3.0
-COMPONENT_VERSION= $(COMPONEN_MAJOR_VERSION).6
-COMPONENT_FMRI= library/c++/sigcpp3
-COMPONENT_SUMMARY= Libsigc++ - a library that implements a typesafe callback system for standard C++
-COMPONENT_CLASSIFICATION=	Development/C++ 
-COMPONENT_PROJECT_URL = https://libsigc.sourceforge.net
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_VERSION=      $(COMPONEN_MAJOR_VERSION).6
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/c++/sigcpp3
+COMPONENT_SUMMARY=      Libsigc++ - a library that implements a typesafe callback system for standard C++
+COMPONENT_CLASSIFICATION=Development/C++ 
+COMPONENT_PROJECT_URL=  https://libsigc.sourceforge.net
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:b70edcf4611651c54a426e109b17196e1fa17da090592a5000e2d134c03ac5ce
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libsigc++/$(COMPONEN_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= LGPLv3 
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/libsigc++/$(COMPONEN_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      LGPLv3 
 
 include $(WS_MAKE_RULES)/common.mk
 

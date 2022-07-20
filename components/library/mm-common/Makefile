@@ -14,37 +14,33 @@
 # Copyright 2018 Michal Nowak
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		mm-common
-COMPONENT_VERSION=	0.9.12
-COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
-COMPONENT_FMRI=		library/desktop/c++/mm-common
-COMPONENT_SUMMARY=	GNOME C++ bindings effort http://www.gtkmm.org support tools
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=         mm-common
+COMPONENT_VERSION=      0.9.12
+COMPONENT_REVISION=     1
+COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
+COMPONENT_FMRI=         library/desktop/c++/mm-common
+COMPONENT_SUMMARY=      GNOME C++ bindings effort http://www.gtkmm.org support tools
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ceffdcce1e5b52742884c233ec604bf6fded12eea9da077ce7a62c02c87e7c0b
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/0.9/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
-COMPONENT_LICENSE= GPLv2
+	sha256:ceffdcce1e5b52742884c233ec604bf6fded12eea9da077ce7a62c02c87e7c0b
+COMPONENT_ARCHIVE_URL=  \
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.9/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://www.gnome.org
+COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
 
 # Configure checks
 REQUIRED_PACKAGES += text/gawk
@@ -52,5 +48,5 @@ REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += web/wget
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += text/gnu-sed

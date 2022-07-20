@@ -23,18 +23,19 @@
 BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libwpd
-COMPONENT_VERSION=	0.10.3
-COMPONENT_FMRI=     	library/c++/libwpd
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwpd
+COMPONENT_NAME=         libwpd
+COMPONENT_VERSION=      0.10.3
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/c++/libwpd
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/libwpd
 COMPONENT_SUMMARY=      libwpd - library for reading Corel WordPerfect(tm) documents 
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:2465b0b662fdc5d4e3bebcdc9a79027713fb629ca2bff04a3c9251fdec42dd09
-COMPONENT_ARCHIVE_URL=	\
-  http://sourceforge.net/projects/libwpd/files/libwpd/libwpd-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:2465b0b662fdc5d4e3bebcdc9a79027713fb629ca2bff04a3c9251fdec42dd09
+COMPONENT_ARCHIVE_URL=  \
+	http://sourceforge.net/projects/libwpd/files/libwpd/libwpd-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 
 TEST_TARGET=$(NO_TESTS)
