@@ -13,24 +13,25 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		xmlrpc-c
-COMPONENT_VERSION=	1.39.12
-COMPONENT_FMRI=		library/xmlrpc-c
+COMPONENT_NAME=         xmlrpc-c
+COMPONENT_VERSION=      1.39.12
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/xmlrpc-c
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=	http://xmlrpc-c.sourceforge.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:d830f3264a832dfe09f629cc64036acfd08121692526d0fabe090f7ff881ce08
-COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/xmlrpc-c/files/Xmlrpc-c%20Super%20Stable/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	BSD-like
-COMPONENT_LICENSE_FILE=	doc/COPYING
+COMPONENT_PROJECT_URL=  http://xmlrpc-c.sourceforge.net/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
+COMPONENT_ARCHIVE_HASH= sha256:d830f3264a832dfe09f629cc64036acfd08121692526d0fabe090f7ff881ce08
+COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/xmlrpc-c/files/Xmlrpc-c%20Super%20Stable/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      BSD-like
+COMPONENT_LICENSE_FILE= doc/COPYING
 COMPONENT_SUMMARY=      XMLRPC C/C++ Library
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Parallel build can fail
 COMPONENT_BUILD_ARGS=
@@ -61,14 +62,9 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/failed/p" ' \
         '-e "/tests/p" '
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
