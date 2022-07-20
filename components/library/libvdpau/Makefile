@@ -15,17 +15,18 @@ BUILD_BITS=32_and_64
 BUILD_STYLE=meson
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libvdpau
-COMPONENT_VERSION=	1.5
-COMPONENT_SUMMARY=	VDPAU libaries and headers
-COMPONENT_PROJECT_URL=	https://freedesktop.org/wiki/Software/VDPAU/
-COMPONENT_FMRI=		library/graphics/libvdpau
+COMPONENT_NAME=         libvdpau
+COMPONENT_VERSION=      1.5
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      VDPAU libaries and headers
+COMPONENT_PROJECT_URL=  https://freedesktop.org/wiki/Software/VDPAU/
+COMPONENT_FMRI=         library/graphics/libvdpau
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:a5d50a42b8c288febc07151ab643ac8de06a18446965c7241f89b4e810821913
-COMPONENT_ARCHIVE_URL=	https://gitlab.freedesktop.org/vdpau/libvdpau/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	MIT
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:a5d50a42b8c288febc07151ab643ac8de06a18446965c7241f89b4e810821913
+COMPONENT_ARCHIVE_URL=  https://gitlab.freedesktop.org/vdpau/libvdpau/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      MIT
 
 include $(WS_MAKE_RULES)/common.mk
 
