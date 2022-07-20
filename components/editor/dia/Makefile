@@ -12,27 +12,28 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           dia
-COMPONENT_VERSION=        0.97.3
-COMPONENT_REVISION=       4
+COMPONENT_NAME=         dia
+COMPONENT_VERSION=      0.97.3
+COMPONENT_REVISION=     5
 COMPONENT_COMMIT=         b86085dfe2b048a2d37d587adf8ceba6fb8bc43c
-COMPONENT_PROJECT_URL=    https://wiki.gnome.org/Apps/Dia
-COMPONENT_SUMMARY=        Dia Diagram Editor
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_COMMIT)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH=        \
-    sha256:447b6979829aa5f4989b8ac5c0685b25f8b8ec740e87853af113891b6e9c2738
-COMPONENT_ARCHIVE_URL=        https://github.com/GNOME/$(COMPONENT_NAME)/archive/$(COMPONENT_COMMIT).zip
-COMPONENT_FMRI=	editor/diagram/dia
-COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
-COMPONENT_LICENSE = 	GPLv2
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/Dia
+COMPONENT_SUMMARY=      Dia Diagram Editor
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_COMMIT)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE_HASH= \
+	sha256:447b6979829aa5f4989b8ac5c0685b25f8b8ec740e87853af113891b6e9c2738
+COMPONENT_ARCHIVE_URL=  https://github.com/GNOME/$(COMPONENT_NAME)/archive/$(COMPONENT_COMMIT).zip
+COMPONENT_FMRI=         editor/diagram/dia
+COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -50,13 +51,9 @@ CONFIGURE_OPTIONS +=        --with-cairo
 CONFIGURE_OPTIONS +=        --disable-static
 CONFIGURE_OPTIONS +=        --enable-db2html
 
-# common targets
-build:		        $(BUILD_32)
-
-install:     		$(INSTALL_32)
-
-test:			$(NO_TESTS)
-
+# Build dependencies
+REQUIRED_PACKAGES += text/intltool
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libart
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -70,4 +67,3 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += text/intltool
