@@ -14,12 +14,12 @@
 # Copyright 2022 Nona Hansel
 #
 
-BUILD_BITS=			32
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany-plugins
 COMPONENT_VERSION=      1.38
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=         editor/geany/plugins
 COMPONENT_SUMMARY=      Plugins for Geany editor
@@ -64,6 +64,9 @@ CONFIGURE_OPTIONS+= --disable-lipsum
 # requires Python2.7, https://plugins.geany.org/geanypy.html
 CONFIGURE_OPTIONS+= --disable-geanypy
 
+# Enable to avoid relying on the environment
+CONFIGURE_OPTIONS+= --enable-gtkspell
+
 # Manually added build dependencies
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += gnome/config/gconf
@@ -75,6 +78,7 @@ REQUIRED_PACKAGES += editor/geany
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/gtkspell3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libgit2
