@@ -14,12 +14,12 @@
 # Copyright 2020 Andreas Wacknitz
 #
 
-BUILD_BITS=			32
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany
 COMPONENT_VERSION=      1.38
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=         editor/geany
 COMPONENT_SUMMARY=      A fast and lightweight IDE
@@ -30,14 +30,13 @@ COMPONENT_ARCHIVE_HASH= sha256:abff176e4d48bea35ee53037c49c82f90b6d4c23e69aed6e4
 COMPONENT_ARCHIVE_URL=  https://download.geany.org/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.geany.org
 COMPONENT_LICENSE=      GPLv2
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-CFLAGS +=				-D_FILE_OFFSET_BITS=64
+CFLAGS += -D_FILE_OFFSET_BITS=64
 
 CONFIGURE_OPTIONS    += --enable-vte
 CONFIGURE_OPTIONS    += --disable-html-docs
@@ -45,7 +44,6 @@ CONFIGURE_OPTIONS    += --disable-pdf-docs
 CONFIGURE_OPTIONS    += --enable-api-docs
 CONFIGURE_OPTIONS    += --enable-gtkdoc-header
 CONFIGURE_OPTIONS    += --enable-the-force
-
 
 # Manually added build dependencies:
 REQUIRED_PACKAGES += compress/bzip2
