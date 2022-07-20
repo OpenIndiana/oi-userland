@@ -13,23 +13,24 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= clutter-gtk
-COMPONENT_VERSION= 0.10.8
-COMPONENT_REVISION= 2
-COMPONENT_SUMMARY= GTK+ integration library for clutter
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=         clutter-gtk
+COMPONENT_VERSION=      0.10.8
+COMPONENT_REVISION=     3
+COMPONENT_SUMMARY=      GTK+ integration library for clutter
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:7867f951568871d9f68cbe8a3644fd53d2138f725b7ba61ffc0053eb64e80814
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/0.10/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.clutter-project.org/
+	sha256:7867f951568871d9f68cbe8a3644fd53d2138f725b7ba61ffc0053eb64e80814
+COMPONENT_ARCHIVE_URL=  \
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.10/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://www.clutter-project.org/
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH = /usr/gnu/bin:/usr/bin
 
@@ -50,12 +51,6 @@ CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 # Tell g-ir-scanner about compiler
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection

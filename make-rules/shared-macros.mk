@@ -771,6 +771,7 @@ PYTHON =	$(PYTHON.$(PYTHON_VERSION))
 # The default is site-packages, but that directory belongs to the end-user.
 # Modules which are shipped by the OS but not with the core Python distribution
 # belong in vendor-packages.
+PYTHON_DIR= /usr/lib/python$(PYTHON_VERSION)
 PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_DATA= $(PYTHON_LIB)
 

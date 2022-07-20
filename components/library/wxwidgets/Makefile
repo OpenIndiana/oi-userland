@@ -21,21 +21,23 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		wxwidgets
-COMPONENT_VERSION=	2.8.12
+COMPONENT_NAME=         wxwidgets
+COMPONENT_VERSION=      2.8.12
+COMPONENT_REVISION=     1
 COMPONENT_SRC_NAME=	wxGTK
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:13cf89f2c29bcb90bb56a31ac1af10f23003d3d43c3e4b24991518f5dc4e5abe
-COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/wxwindows/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:13cf89f2c29bcb90bb56a31ac1af10f23003d3d43c3e4b24991518f5dc4e5abe
+COMPONENT_ARCHIVE_URL=  http://prdownloads.sourceforge.net/wxwindows/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.wxwidgets.org/
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/man
 
@@ -69,7 +71,6 @@ $(BUILD_DIR_32)/contrib/.configured \
 $(BUILD_DIR_64)/contrib/.configured:
 	$(TOUCH) $@
 
-# common targets
 build:		$(BUILD_32_and_64) \
 		$(BUILD_DIR_32)/contrib/.built \
 		$(BUILD_DIR_64)/contrib/.built
@@ -77,8 +78,6 @@ build:		$(BUILD_32_and_64) \
 install:	$(INSTALL_32_and_64) \
 		$(BUILD_DIR_32)/contrib/.installed \
 		$(BUILD_DIR_64)/contrib/.installed
-
-test: 		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libjpeg6

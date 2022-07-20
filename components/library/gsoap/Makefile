@@ -12,29 +12,31 @@
 # Copyright 2019 Michal Nowak
 #
 
-PREFERRED_BITS=		64
-
+BUILD_STYLE=configure
+BUILD_BITS=64
+USE_OPENSSL11=no
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gsoap
-COMPONENT_VERSION=	2.8.83
-COMPONENT_SUMMARY=	Toolkit for SOAP/REST-based C/C++ server and client web service applications
-COMPONENT_PROJECT_URL=	https://www.genivia.com/products.html
-COMPONENT_FMRI=		library/gsoap
-COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-2.8
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)_$(COMPONENT_VERSION).zip
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/gsoap2/gsoap-2.8/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:879ab40d40e379add9d3526c0592f891eaea16f7487be160157dbc40216e1633
-COMPONENT_LICENSE=	GPLv2+ with exceptions
-COMPONENT_LICENSE_FILE=	gsoap.license
+COMPONENT_NAME=         gsoap
+COMPONENT_VERSION=      2.8.83
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      Toolkit for SOAP/REST-based C/C++ server and client web service applications
+COMPONENT_PROJECT_URL=  https://www.genivia.com/products.html
+COMPONENT_FMRI=         library/gsoap
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_SRC=          $(COMPONENT_NAME)-2.8
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)_$(COMPONENT_VERSION).zip
+COMPONENT_ARCHIVE_URL=  http://downloads.sourceforge.net/project/gsoap2/gsoap-2.8/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:879ab40d40e379add9d3526c0592f891eaea16f7487be160157dbc40216e1633
+COMPONENT_LICENSE=      GPLv2+ with exceptions
+COMPONENT_LICENSE_FILE= gsoap.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Some samples need extra libraries, which are not autodetected
 LDFLAGS += -lsocket -lxnet -lnsl
+# Incite to use the provided openssl
+LDFLAGS += -L$(OPENSSL_LIBDIR.$(BITS)) -R$(OPENSSL_LIBDIR.$(BITS))
 
 # gsoap zip file contain a lot of enexpected files (binaries, non-GPL-licensed
 # files, etc), files we don't want, don't need, or perhaps can't even ship.
@@ -69,22 +71,17 @@ CONFIGURE_SCRIPT = $(@D)/configure
 CONFIGURE_OPTIONS +=	--enable-ipv6
 # Build and runs tests
 CONFIGURE_OPTIONS +=	--enable-samples
+CONFIGURE_OPTIONS +=	LT_SYS_LIBRARY_PATH="$(OPENSSL_LIBDIR.$(BITS))"
 
 # Parallel build fails. We either disable it, or build soapcpp2_yacc.c first.
 # We opt for the former.
 COMPONENT_BUILD_ARGS=
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
 # dos2unix
 REQUIRED_PACKAGES += system/extended-system-utilities
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
