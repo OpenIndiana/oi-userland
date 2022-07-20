@@ -21,22 +21,22 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2020, Andreas Wacknitz
 #
-BUILD_BITS=					32_and_64
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=				apr
-COMPONENT_VERSION=			1.7.0
-COMPONENT_REVISION=			1
-COMPONENT_PROJECT_URL=		https://apr.apache.org/
-COMPONENT_FMRI=				library/apr
-COMPONENT_SUMMARY=			Apache Portable Runtime (APR) Shared Libraries
-COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
-COMPONENT_SRC= 				$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=			$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_NAME=         apr
+COMPONENT_VERSION=      1.7.0
+COMPONENT_REVISION=     3
+COMPONENT_PROJECT_URL=  https://apr.apache.org/
+COMPONENT_FMRI=         library/apr
+COMPONENT_SUMMARY=      Apache Portable Runtime (APR) Shared Libraries
+COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
 	sha256:48e9dbf45ae3fdc7b491259ffb6ccf7d63049ffacbc1c0977cced095e4c2d5a2
-COMPONENT_ARCHIVE_URL=		https://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=			Apache v2.0
+COMPONENT_ARCHIVE_URL=  https://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      Apache v2.0
 
 CONFIGURE_DEFAULT_DIRS=no
 
@@ -89,6 +89,6 @@ $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION += \
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

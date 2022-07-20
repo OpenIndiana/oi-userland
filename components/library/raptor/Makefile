@@ -14,23 +14,23 @@
 # Copyright 2019 Nona Hansel
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		raptor
-COMPONENT_VERSION=	1.4.21
-COMPONENT_REVISION=	2
-COMPONENT_SUMMARY=	RDF Parser Library - RDF parser utility
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=         raptor
+COMPONENT_VERSION=      1.4.21
+COMPONENT_REVISION=     3
+COMPONENT_SUMMARY=      RDF Parser Library - RDF parser utility
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:db3172d6f3c432623ed87d7d609161973d2f7098e3d2233d0702fbcc22cfd8ca
-COMPONENT_ARCHIVE_URL= \
-  http://download.librdf.org/source/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://librdf.org/
+	sha256:db3172d6f3c432623ed87d7d609161973d2f7098e3d2233d0702fbcc22cfd8ca
+COMPONENT_ARCHIVE_URL=  \
+	http://download.librdf.org/source/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://librdf.org/
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Failed tests without this
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -42,17 +42,10 @@ CONFIGURE_OPTIONS += --enable-static=no
 CFLAGS.32 += -D_FILE_OFFSET_BITS=64
 CFLAGS += $(CFLAGS.$(BITS))
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

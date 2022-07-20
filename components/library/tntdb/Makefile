@@ -12,24 +12,24 @@
 #
 # Copyright 2016 Jim Klimov
 #
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=	tntdb
-COMPONENT_VERSION=	1.3
-COMPONENT_REVISION=	5
-COMPONENT_SUMMARY=	C++ library to access SQL databases, easy and robust
-COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=         tntdb
+COMPONENT_VERSION=      1.3
+COMPONENT_REVISION=     5
+COMPONENT_SUMMARY=      C++ library to access SQL databases, easy and robust
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:093ab2694bc66bc05ae0a5c8a505d75ae84d4c35c2ddc0ff0283c5b9574b474b
-COMPONENT_ARCHIVE_URL= \
-  http://www.tntnet.org/download/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.tntnet.org/tntdb.html
-COMPONENT_FMRI=	library/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_LICENSE=	LGPLv2.1
-COMPONENT_LICENSE_FILE=	COPYING
+	sha256:093ab2694bc66bc05ae0a5c8a505d75ae84d4c35c2ddc0ff0283c5b9574b474b
+COMPONENT_ARCHIVE_URL=  \
+	http://www.tntnet.org/download/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://www.tntnet.org/tntdb.html
+COMPONENT_FMRI=         library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -39,9 +39,7 @@ CPPFLAGS +=	$(CPP_LARGEFILES)
 
 # We use a fixed default mysql and postgres implementation+version as defined
 # in `make-rules/*.mk` files included above
-PATH.64=$(USRBINDIR.64):$(USRBINDIR.32):$(GNUBIN.64):$(GNUBIN.32)
-PATH.32=$(USRBINDIR.32):$(GNUBIN.32)
-PATH=$(MYSQL_BINDIR.$(BITS)):$(PG_BINDIR.$(BITS)):$(PATH.$(BITS))
+PATH=$(MYSQL_BINDIR.64):$(PG_BINDIR.64):$(PATH.gnu)
 
 COMPONENT_COMMON_ENV += PATH="$(PATH)"
 COMPONENT_COMMON_ENV += CC="$(CC)"
@@ -65,11 +63,12 @@ REQUIRED_PACKAGES += $(MYSQL_BASEPKG)/client
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += database/mariadb-101/library
+REQUIRED_PACKAGES += database/postgres-14/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/cxxtools
+REQUIRED_PACKAGES += library/tntdb/common
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

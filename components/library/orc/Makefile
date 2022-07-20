@@ -11,27 +11,28 @@
 #
 # Copyright 2012 EveryCity Ltd. All rights reserved.
 #
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           orc
-COMPONENT_VERSION=        0.4.26
+COMPONENT_NAME=         orc
+COMPONENT_VERSION=      0.4.26
+COMPONENT_REVISION=     1
 IPS_COMPONENT_VERSION=    0.5.11
 HUMAN_VERSION=            $(COMPONENT_VERSION)
-COMPONENT_FMRI=           system/library/orc
-COMPONENT_PROJECT_URL=    http://code.entropywave.com/projects/orc/
-COMPONENT_SUMMARY=        The Oil Runtime Compiler for SIMD array operations
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:7d52fa80ef84988359c3434e1eea302d077a08987abdde6905678ebcad4fa649
-COMPONENT_ARCHIVE_URL= \
-  http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        BSD
+COMPONENT_FMRI=         system/library/orc
+COMPONENT_PROJECT_URL=  http://code.entropywave.com/projects/orc/
+COMPONENT_SUMMARY=      The Oil Runtime Compiler for SIMD array operations
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:7d52fa80ef84988359c3434e1eea302d077a08987abdde6905678ebcad4fa649
+COMPONENT_ARCHIVE_URL=  \
+	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      BSD
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Heals libgstvideoscale core dump
 gcc_OPT = -O2
@@ -42,11 +43,6 @@ CONFIGURE_OPTIONS  +=	--disable-static
 
 ENV = /usr/bin/env -i
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

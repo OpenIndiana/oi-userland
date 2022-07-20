@@ -13,28 +13,28 @@
 # Copyright 2016 Jim Klimov
 #
 
+BUILD_STYLE=cmake
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=	physfs
-COMPONENT_VERSION=	2.0.3
-COMPONENT_REVISION=	2
-COMPONENT_FMRI=	library/$(COMPONENT_NAME)
-COMPONENT_SUMMARY=	PhysicsFS is a library to provide abstract access to various archives and limit write-access scope
-COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:ca862097c0fb451f2cacd286194d071289342c107b6fe69079c079883ff66b69
-COMPONENT_ARCHIVE_URL=	\
-  http://icculus.org/physfs/downloads/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://icculus.org/physfs/
-COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_NAME=         physfs
+COMPONENT_VERSION=      2.0.3
+COMPONENT_REVISION=     3
+COMPONENT_FMRI=         library/$(COMPONENT_NAME)
+COMPONENT_SUMMARY=      PhysicsFS is a library to provide abstract access to various archives and limit write-access scope
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= \
+	sha256:ca862097c0fb451f2cacd286194d071289342c107b6fe69079c079883ff66b69
+COMPONENT_ARCHIVE_URL=  \
+	http://icculus.org/physfs/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://icculus.org/physfs/
+COMPONENT_CLASSIFICATION=System/Libraries
 # LGPL is pulled by 7z/lzma support, otherwise PhysicsFS is zlib-licensed
-COMPONENT_LICENSE=	ZLIB,LGPL
-COMPONENT_LICENSE_FILE=	LICENSE.txt
+COMPONENT_LICENSE=      ZLIB,LGPL
+COMPONENT_LICENSE_FILE= LICENSE.txt
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CXXFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 CFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
@@ -62,12 +62,6 @@ CMAKE_OPTIONS+=	-D PHYSFS_HAVE_CDROM_SUPPORT=ON
 # We want proper threading, but no particular preference for test programs
 # or choice of zlib, readline, etc. (see end of CMakeLists.txt in source)
 CMAKE_OPTIONS+=	-D PHYSFS_HAVE_THREAD_SUPPORT=ON
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/readline
