@@ -16,6 +16,7 @@
 
 X11_CATEGORY= LIB
 BUILD_STYLE= meson
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
@@ -35,9 +36,6 @@ CONFIGURE_OPTIONS += -Dtests=true
 
 # Remove measured times (eg. 1.16s):
 COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
-
-# Explicitly enable tests:
-test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
