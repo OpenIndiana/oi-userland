@@ -1,0 +1,24 @@
+--- domoticz-2022.1/hardware/1Wire/1WireByOWFS.cpp.bak	Tue Jun 14 13:18:03 2022
++++ domoticz-2022.1/hardware/1Wire/1WireByOWFS.cpp	Tue Jun 14 13:21:58 2022
+@@ -378,7 +378,9 @@
+ bool C1WireByOWFS::IsValidDir(const struct dirent*const de)
+ {
+     // Check dirent type
+-    if (de->d_type!=DT_DIR)
++    struct stat s;
++    stat(de->d_name, &s);
++    if (!(s.st_mode & S_IFDIR))
+         return false;
+ 
+     // Filter system dirs "." and ".."
+@@ -444,7 +446,9 @@
+ 		while ((de = readdir(d)))
+ 		{
+ 			name = de->d_name;
+-			if (de->d_type == DT_DIR)
++                        struct stat s;
++                        stat(de->d_name, &s);
++                        if (s.st_mode & S_IFDIR)
+ 			{
+ 				if ( ((family == Environmental_Monitors) && (name.compare(0, 3, "EDS") == 0))
+ 				  || ((family == smart_battery_monitor) && (name.compare(0, 7, "B1-R1-A") == 0)) ) {

@@ -1,0 +1,11 @@
+--- domoticz-2022.1/main/SQLHelper.cpp.bak	Fri Jun 17 04:38:46 2022
++++ domoticz-2022.1/main/SQLHelper.cpp	Fri Jun 17 04:38:58 2022
+@@ -602,7 +602,7 @@
+ 	, m_Status(SQLITE_OK)
+ {
+ 	const char *pTail;
+-	int iRetVal = sqlite3_prepare_v3(m_DBase, pSQL.c_str(), pSQL.length(), 0, &m_Statement, &pTail);
++	int iRetVal = sqlite3_prepare_v2(m_DBase, pSQL.c_str(), pSQL.length(), &m_Statement, &pTail);
+ 	if (iRetVal != SQLITE_OK)
+ 	{
+ 		m_Status = iRetVal;

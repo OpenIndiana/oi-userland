@@ -1,0 +1,11 @@
+--- domoticz-2022.1/hardware/TE923Tool.cpp.bak	Tue Jun 14 15:31:25 2022
++++ domoticz-2022.1/hardware/TE923Tool.cpp	Tue Jun 14 15:32:59 2022
+@@ -73,7 +73,7 @@
+ 		_log.Log(LOG_ERROR, "TE923: Error while opening USB port and getting a device handler." );
+ 		return false;
+ 	}
+-#ifndef __NetBSD__
++#if (!defined(__NetBSD__) && !defined(__sun))
+ 	char driver_name[30];
+ 	ret = usb_get_driver_np(m_device_handle, 0, driver_name, 30);
+ 	if ( ret == 0 ) {

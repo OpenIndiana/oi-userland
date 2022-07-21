@@ -1,0 +1,21 @@
+--- domoticz-2022.1/main/Helper.cpp.bak	Thu Jun 16 05:26:57 2022
++++ domoticz-2022.1/main/Helper.cpp	Thu Jun 16 05:27:58 2022
+@@ -7,7 +7,7 @@
+ #include <dirent.h>
+ #include <unistd.h>
+ #endif
+-#if !defined(WIN32)
++#if !defined(WIN32) && !defined(__sun)
+ #include <sys/ptrace.h>
+ #endif
+ #include <sys/types.h>
+@@ -345,7 +345,8 @@
+ 			}
+ 		}
+ 	}
+-
++#elif defined(__sun)
++       // TODO: figure out how to use serial ports
+ #else
+ 	//scan /dev for /dev/ttyUSB* or /dev/ttyS* or /dev/tty.usbserial* or /dev/ttyAMA* or /dev/ttySAC* or /dev/ttymxc*
+ 	//also scan /dev/serial/by-id/* on Linux

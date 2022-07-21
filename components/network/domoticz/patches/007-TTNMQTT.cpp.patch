@@ -1,0 +1,20 @@
+--- domoticz-2022.1/hardware/TTNMQTT.cpp.bak	Wed Jun 15 09:10:42 2022
++++ domoticz-2022.1/hardware/TTNMQTT.cpp	Wed Jun 15 09:17:48 2022
+@@ -841,7 +841,7 @@
+ 							{
+ 								if(!bGwGeo && bPrevGwGeo)
+ 								{
+-									if (floor((lrssi/10)) > floor((gwrssi/10)))
++									if (floor(static_cast<double>(lrssi/10)) > floor(static_cast<double>(gwrssi/10)))
+ 									{
+ 										bBetter = true;
+ 									}
+@@ -871,7 +871,7 @@
+ 							{
+ 								// The previous found closest GW has Geo info and this one doesn't
+ 								// If the signals are very simular, we prefer the one with Geo
+-								if (floor((lrssi/10)) > floor((gwrssi/10)))
++								if (floor(static_cast<double>(lrssi/10)) > floor(static_cast<double>(gwrssi/10)))
+ 								{
+ 									bBetter = true;
+ 								}
