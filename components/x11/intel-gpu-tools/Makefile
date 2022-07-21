@@ -13,26 +13,28 @@
 # Copyright 2016 Aurelien Larcher
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           intel-gpu-tools
-COMPONENT_VERSION=        1.3
-COMPONENT_FMRI=           x11/diagnostics/intel-gpu-tools
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  Intel Graphics driver debug tools
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=         intel-gpu-tools
+COMPONENT_VERSION=      1.3
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         x11/diagnostics/intel-gpu-tools
+COMPONENT_CLASSIFICATION=System/X11
+COMPONENT_SUMMARY=      Intel Graphics driver debug tools
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:51d22fdb3d415a1b3b7d0a172c1bb24dec6f16116e80a9ce49873f44527f20a0
-COMPONENT_ARCHIVE_URL= \
-  https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.x.org/
+	sha256:51d22fdb3d415a1b3b7d0a172c1bb24dec6f16116e80a9ce49873f44527f20a0
+COMPONENT_ARCHIVE_URL=  \
+	https://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -43,12 +45,6 @@ CONFIGURATION_ENV+= PYTHON="$(PYTHON.3.4.$(BITS))"
 
 CONFIGURE_OPTIONS+= --disable-nouveau
 CONFIGURE_OPTIONS.32+= --disable-largefile
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-drm
