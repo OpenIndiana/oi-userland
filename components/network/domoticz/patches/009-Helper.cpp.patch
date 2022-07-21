@@ -1,0 +1,30 @@
+--- domoticz-2022.1/main/Helper.cpp.bak	Thu Jun 16 05:44:12 2022
++++ domoticz-2022.1/main/Helper.cpp	Thu Jun 16 05:51:11 2022
+@@ -1057,9 +1057,11 @@
+ 
+ bool dirent_is_directory(const std::string &dir, struct dirent *ent)
+ {
+-	if (ent->d_type == DT_DIR)
++	struct stat s;
++	stat(ent->d_name, &s);
++	if (s.st_mode & S_IFDIR)
+ 		return true;
+-#ifndef WIN32
++#if !defined(WIN32) && !defined(__sun)
+ 	if (ent->d_type == DT_LNK)
+ 		return true;
+ 	if (ent->d_type == DT_UNKNOWN) {
+@@ -1074,9 +1076,11 @@
+ 
+ bool dirent_is_file(const std::string &dir, struct dirent *ent)
+ {
+-	if (ent->d_type == DT_REG)
++	struct stat s;
++	stat(ent->d_name, &s);
++	if (s.st_mode & S_IFREG)
+ 		return true;
+-#ifndef WIN32
++#if !defined(WIN32) && !defined(__sun)
+ 	if (ent->d_type == DT_UNKNOWN) {
+ 		std::string fname = dir + "/" + ent->d_name;
+ 		struct stat st;

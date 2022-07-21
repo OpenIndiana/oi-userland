@@ -1,0 +1,11 @@
+--- domoticz-2022.1/hardware/VolcraftCO20.cpp.bak	Wed Jun 15 09:19:34 2022
++++ domoticz-2022.1/hardware/VolcraftCO20.cpp	Wed Jun 15 09:20:22 2022
+@@ -98,7 +98,7 @@
+ 		goto out;
+ 	}
+ 
+-#ifndef __NetBSD__
++#if !defined(__NetBSD__) && !defined(__sun)
+ 	/* Ensure that the device isn't claimed.  */
+ 	ret = usb_get_driver_np(devh, 0 /*intrf*/, driver_name, sizeof(driver_name));
+ 	if (!ret)

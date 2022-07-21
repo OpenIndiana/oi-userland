@@ -1,0 +1,30 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type='manifest' name='clamav'>
+  <service name='network/domoticz' type='service' version='0'>
+    <single_instance/>
+    <dependency name='fs' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+    <dependency name='network' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/milestone/multi-user-server'/>
+    </dependency>
+    <instance name='default' enabled='false'>
+      <exec_method type='method'
+                   name='start'
+	      exec='/usr/domoticz/domoticz -daemon -dbase /var/domoticz/domoticz.db -noupdates'
+                   timeout_seconds='240'>
+      </exec_method>
+      <exec_method type='method'
+                   name='stop'
+                   exec=':kill'
+                   timeout_seconds='60'>
+      </exec_method>
+      <template>
+        <common_name>
+          <loctext xml:lang='C'>Domoticz - A Home Automation System that lets you monitor and configure various devices</loctext>
+        </common_name>
+      </template>
+    </instance>
+  </service>
+</service_bundle>
