@@ -13,27 +13,28 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gnome-mount
-COMPONENT_VERSION= 0.8
-COMPONENT_REVISION= 2
-COMPONENT_SUMMARY= Programs for mounting, unmounting and ejecting storage devices
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=         gnome-mount
+COMPONENT_VERSION=      0.8
+COMPONENT_REVISION=     3
+COMPONENT_SUMMARY=      Programs for mounting, unmounting and ejecting storage devices
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:44ca6b78b49a4181435e489c7b7d416c8f26442dcecdc01ec4b981274ed957e2
-COMPONENT_ARCHIVE_URL= \
-  http://hal.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL= http://hal.freedesktop.org/
-COMPONENT_FMRI= gnome/gnome-mount
-COMPONENT_CLASSIFICATION = Applications/System Utilities
-COMPONENT_LICENSE = GPLv2
-COMPONENT_LICENSE_FILE = COPYING
+	sha256:44ca6b78b49a4181435e489c7b7d416c8f26442dcecdc01ec4b981274ed957e2
+COMPONENT_ARCHIVE_URL=  \
+	http://hal.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://hal.freedesktop.org/
+COMPONENT_FMRI=         gnome/gnome-mount
+COMPONENT_CLASSIFICATION=Applications/System Utilities
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -43,12 +44,7 @@ CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --disable-nautilus-extension
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
