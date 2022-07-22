@@ -13,24 +13,24 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64_and_32
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libgnome
+COMPONENT_NAME=         libgnome
 
-COMPONENT_VERSION= 2.32.1
-COMPONENT_REVISION= 2
-COMPONENT_SUMMARY= GNOME Base Library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_VERSION=      2.32.1
+COMPONENT_REVISION=     3
+COMPONENT_SUMMARY=      GNOME Base Library
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b2c63916866485793b87398266dd7778548c1734923c272a94d84ee011b6f7a4
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
+	sha256:b2c63916866485793b87398266dd7778548c1734923c272a94d84ee011b6f7a4
+COMPONENT_ARCHIVE_URL=  \
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://www.gnome.org
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 				libtoolize --copy --force &&\
@@ -45,12 +45,6 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-esd
 
 COMPONENT_INSTALL_ENV+=  GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/config/gconf
