@@ -17,23 +17,25 @@ PREFERRED_BITS=64
 BUILD_BITS= 32_and_64
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= GConf
-COMPONENT_VERSION= 2.32.4
-COMPONENT_REVISION= 8
-COMPONENT_SUMMARY= GNOME Configuration Framework
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=         GConf
+COMPONENT_VERSION=      2.32.4
+COMPONENT_REVISION=     9
+COMPONENT_SUMMARY=      GNOME Configuration Framework
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:46030c09422603dbb72f13b5dd592dcc01fbc13562b9e94dafb2b58982bc6b3a
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://projects.gnome.org/gconf/
+	sha256:46030c09422603dbb72f13b5dd592dcc01fbc13562b9e94dafb2b58982bc6b3a
+COMPONENT_ARCHIVE_URL=  \
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://projects.gnome.org/gconf/
 
 TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
+
+PYTHON_VERSION=3.9
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf --install --force)
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -46,12 +48,14 @@ CONFIGURE_LIBEXECDIR.64  = $(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBEXECDIR.$(BITS))
 CONFIGURE_OPTIONS += --enable-defaults-service=no
+CONFIGURE_OPTIONS.32 += --enable-introspection=no
 
 CONFIGURE_ENV+= INTLTOOL_PERL=$(PERL)
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += PYTHON="$(PYTHON)"
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
@@ -62,8 +66,8 @@ REQUIRED_PACKAGES += text/intltool
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/orbit2
-REQUIRED_PACKAGES += library/python/lxml-35
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += library/python/lxml-39
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
