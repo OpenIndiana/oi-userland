@@ -13,41 +13,36 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+# The bitness should be changed in illumos-gate
+BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		ospm
-COMPONENT_VERSION=	1.4.11
-COMPONENT_REVISION=	3
-COMPONENT_SUMMARY=	Print Monitor
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:bad98c2e925d40d62cbcd64755f006ccbd8c1ea00fadae6520d9adb43da93699
-COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi/jds/downloads/sources/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		print/lp/print-manager
-COMPONENT_CLASSIFICATION=	System/Printing
-COMPONENT_LICENSE =	GPLv2
-COMPONENT_LICENSE_FILE =	COPYING
+COMPONENT_NAME=         ospm
+COMPONENT_VERSION=      1.4.11
+COMPONENT_REVISION=     4
+COMPONENT_SUMMARY=      Print Monitor
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= \
+	sha256:bad98c2e925d40d62cbcd64755f006ccbd8c1ea00fadae6520d9adb43da93699
+COMPONENT_ARCHIVE_URL=  http://dlc.openindiana.org/oi/jds/downloads/sources/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         print/lp/print-manager
+COMPONENT_CLASSIFICATION=System/Printing
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_OPTIONS+=	--sysconfdir=$(ETCDIR)
 
 CONFIGURE_ENV+=	PERL=$(PERL)
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
