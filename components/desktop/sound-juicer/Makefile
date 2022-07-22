@@ -12,28 +12,29 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		sound-juicer
-COMPONENT_VERSION=	2.32.0
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	https://wiki.gnome.org/SoundJuicer
-COMPONENT_SUMMARY=	CD ripping tool
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f6040e19e50094daff9699dea3e9884ce3226a61f28acbe9ad3a0458975a305a
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
-COMPONENT_CLASSIFICATION= Applications/Sound and Video
-COMPONENT_FMRI= desktop/cd-ripping/sound-juicer
+COMPONENT_NAME=         sound-juicer
+COMPONENT_VERSION=      2.32.0
+COMPONENT_REVISION=     3
+COMPONENT_PROJECT_URL=  https://wiki.gnome.org/SoundJuicer
+COMPONENT_SUMMARY=      CD ripping tool
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= \
+	sha256:f6040e19e50094daff9699dea3e9884ce3226a61f28acbe9ad3a0458975a305a
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
+COMPONENT_CLASSIFICATION=Applications/Sound and Video
+COMPONENT_FMRI=         desktop/cd-ripping/sound-juicer
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
 					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
@@ -55,13 +56,7 @@ CONFIGURE_OPTIONS+=	--with-gtk=3.0
 
 COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/cd-burning/brasero
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/audio/gstreamer
@@ -74,5 +69,4 @@ REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/musicbrainz/libmusicbrainz-3
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus-glib
