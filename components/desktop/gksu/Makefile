@@ -12,24 +12,29 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gksu
-COMPONENT_VERSION=	2.0.2
-COMPONENT_REVISION=	5
-COMPONENT_PROJECT_URL=	http://www.nongnu.org/gksu/
-COMPONENT_SUMMARY=	Graphical frontend to su
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:a1de3dca039d88c195fcdc9516379439a1d699750417f1e655aa2101a955ee5a
-COMPONENT_ARCHIVE_URL=	http://people.debian.org/~kov/gksu/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=         gksu
+COMPONENT_VERSION=      2.0.2
+COMPONENT_REVISION=     6
+COMPONENT_FMRI=         desktop/gksu
+COMPONENT_CLASSIFICATION=Applications/System Utilities
+COMPONENT_PROJECT_URL=  http://www.nongnu.org/gksu/
+COMPONENT_SUMMARY=      Graphical frontend to su
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:a1de3dca039d88c195fcdc9516379439a1d699750417f1e655aa2101a955ee5a
+COMPONENT_ARCHIVE_URL=  http://people.debian.org/~kov/gksu/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_LICENSE=      GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					$(TOUCH) NEWS  README&&\
@@ -43,25 +48,18 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(
                                         cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
                                         cd $(@D)/po-sun && $(MAKE) all )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
+CONFIGURE_ENV+=	LT_SYS_LIBRARY_PATH=$(USRLIBDIR.$(BITS))
+CONFIGURE_OPTIONS+=	--sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS+=	--libexecdir=$(USRLIBDIR.$(BITS))
 CONFIGURE_OPTIONS+=	--disable-nautilus-extension
 
 # -O2 is hardcoded
 gcc_OPT=
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
 # Build dependencies
 REQUIRED_PACKAGES += library/gnome/gnome-keyring
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/libgksu
