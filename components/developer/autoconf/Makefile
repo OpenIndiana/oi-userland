@@ -23,20 +23,21 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=			32
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		autoconf
-COMPONENT_VERSION=	2.71
-COMPONENT_FMRI=		developer/build/autoconf
-COMPONENT_SUMMARY=	GNU autoconf utility
-COMPONENT_CLASSIFICATION= Development/GNU
-COMPONENT_PROJECT_URL=	https://www.gnu.org/software/autoconf/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:431075ad0bf529ef13cb41e9042c542381103e80015686222b8a9d4abef42a1c
-COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/autoconf/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv2, GPLv3, autoconf exception
+COMPONENT_NAME=         autoconf
+COMPONENT_VERSION=      2.71
+COMPONENT_REVISION=     2
+COMPONENT_FMRI=         developer/build/autoconf
+COMPONENT_SUMMARY=      GNU autoconf utility
+COMPONENT_CLASSIFICATION=Development/GNU
+COMPONENT_PROJECT_URL=  https://www.gnu.org/software/autoconf/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:431075ad0bf529ef13cb41e9042c542381103e80015686222b8a9d4abef42a1c
+COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/autoconf/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv2, GPLv3, autoconf exception
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -47,6 +48,6 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += developer/macro/gnu-m4
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += shell/ksh93
