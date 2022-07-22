@@ -18,24 +18,27 @@
 BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pidgin
-COMPONENT_VERSION=	2.14.10
-COMPONENT_PROJECT_URL=	https://www.pidgin.im
-COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
-COMPONENT_FMRI=		communication/im/pidgin
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:454b1b928bc6bcbb183353af30fbfde5595f2245a3423a1a46e6c97a2df22810
-COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/Pidgin/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_CLASSIFICATION=	Applications/Internet
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	pidgin.license
+COMPONENT_NAME=         pidgin
+COMPONENT_VERSION=      2.14.10
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  https://www.pidgin.im
+COMPONENT_SUMMARY=      Multiprotocol Instant Messaging Client
+COMPONENT_FMRI=         communication/im/pidgin
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:454b1b928bc6bcbb183353af30fbfde5595f2245a3423a1a46e6c97a2df22810
+COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/$(COMPONENT_NAME)/files/Pidgin/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_CLASSIFICATION=Applications/Internet
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= pidgin.license
 
 TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Use 64-bit perl
 PERL_VERSION = 5.34
+
+PYTHON_VERSION = 3.9
 
 PATH = $(PATH.gnu)
 
@@ -80,6 +83,7 @@ CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 CONFIGURE_ENV+=	CPPFLAGS="$(CPPFLAGS)"
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/desktop/atk
@@ -95,7 +99,6 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/python/python-dbus-35
-REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
