@@ -13,23 +13,23 @@
 # Copyright (c) 2020 Marco van Wieringen
 #
 
-BUILD_BITS= 32
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libgksu
-COMPONENT_VERSION=	2.0.12
-COMPONENT_REVISION=	5
-COMPONENT_FMRI=		library/desktop/libgksu
+COMPONENT_NAME=         libgksu
+COMPONENT_VERSION=      2.0.12
+COMPONENT_REVISION=     6
+COMPONENT_FMRI=         library/desktop/libgksu
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=	http://www.nongnu.org/gksu/
-COMPONENT_SUMMARY=	Simple API for embedded_su, pfexec and sudo (optional)
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:22f9cfc3627dcb6774b9aff66c6ea6554f3b34b82bbfa2467b821e67874c3faf
-COMPONENT_ARCHIVE_URL=	http://people.debian.org/~kov/gksu/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	LGPLv2
+COMPONENT_PROJECT_URL=  http://www.nongnu.org/gksu/
+COMPONENT_SUMMARY=      Simple API for embedded_su, pfexec and sudo (optional)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:22f9cfc3627dcb6774b9aff66c6ea6554f3b34b82bbfa2467b821e67874c3faf
+COMPONENT_ARCHIVE_URL=  http://people.debian.org/~kov/gksu/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      LGPLv2
 
 TEST_TARGET= $(NO_TESTS)
 
@@ -46,12 +46,9 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					intltoolize --force  --copy )
 
 CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--disable-scrollkeeper
-
-# Build dependencies
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+CONFIGURE_OPTIONS+=	--sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS+=	--libexecdir=$(USRLIBDIR)
+CONFIGURE_OPTIONS+=     --disable-gtk-doc	
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/config/gconf
