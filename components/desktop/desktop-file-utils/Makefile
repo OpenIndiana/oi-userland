@@ -18,24 +18,27 @@ BUILD_BITS=			64
 BUILD_STYLE=		meson
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		desktop-file-utils
-COMPONENT_VERSION=	0.26
-COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/desktop-file-utils/
-COMPONENT_SUMMARY=	A few command line utilities for working with desktop entries
-COMPONENT_FMRI=		library/desktop/desktop-file-utils
-COMPONENT_CLASSIFICATION= Desktop (GNOME)/Scripts
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_NAME=         desktop-file-utils
+COMPONENT_VERSION=      0.26
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/desktop-file-utils/
+COMPONENT_SUMMARY=      A few command line utilities for working with desktop entries
+COMPONENT_FMRI=         library/desktop/desktop-file-utils
+COMPONENT_CLASSIFICATION=Desktop (GNOME)/Scripts
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
 	sha256:b26dbde79ea72c8c84fb7f9d870ffd857381d049a86d25e0038c4cef4c747309
-COMPONENT_ARCHIVE_URL=	https://www.freedesktop.org/software/desktop-file-utils/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  https://www.freedesktop.org/software/desktop-file-utils/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE=      GPLv2
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
+
+COMPONENT_PRE_INSTALL_ACTION= ($(RM) $(PROTOUSRBINDIR)/desktop-file-edit)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
