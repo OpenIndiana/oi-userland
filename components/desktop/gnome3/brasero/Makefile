@@ -13,30 +13,29 @@
 # Copyright 2019, Michal Nowak
 #
 
-BUILD_BITS=		64_and_32
+BUILD_BITS=64
 
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		brasero
-COMPONENT_VERSION=	3.12.3
-COMPONENT_PROJECT_URL=	https://projects.gnome.org/brasero/
-COMPONENT_SUMMARY=	Gnome CD/DVD burner
-COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_NAME=         brasero
+COMPONENT_VERSION=      3.12.3
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  https://projects.gnome.org/brasero/
+COMPONENT_SUMMARY=      Gnome CD/DVD burner
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:87749eae33a141207d1b00be233b6d8045982ed3249ed4b98dae1f3a975fea15
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/3.12/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		desktop/cd-burning/brasero
-COMPONENT_CLASSIFICATION=	Applications/Internet
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/3.12/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         desktop/cd-burning/brasero
+COMPONENT_CLASSIFICATION=Applications/Internet
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
-
-CFLAGS.32 += -D_FILE_OFFSET_BITS=64
 
 # Regenerate yelp rules
 COMPONENT_PREP_ACTION = ( cd $(@D) ; autoreconf -vif ) 
@@ -79,4 +78,3 @@ REQUIRED_PACKAGES += library/media-player/totem-pl-parser
 REQUIRED_PACKAGES += media/cdrtools
 REQUIRED_PACKAGES += media/dvd+rw-tools
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
