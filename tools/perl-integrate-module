@@ -176,7 +176,7 @@ SOURCE_DIR=$DISTRIBUTION-$VERSION
 # Switch to modulebuild if needed
 [[ ! -f "$SOURCE_DIR/Makefile.PL" && -f "$SOURCE_DIR/Build.PL" ]] && sed -i -e 's/makemaker/modulebuild/g' Makefile
 
-# Get abstrast.  Either from metacpan, or directly from sources.
+# Get abstract.  Either from metacpan, or directly from sources.
 ABSTRACT=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.abstract')
 if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
 	printf "WARNING: Failed to get abstract for module %s from metacpan\n" "$MODULE" >&2
@@ -189,6 +189,17 @@ if [[ "$ABSTRACT" == "TODO" ]] ; then
 		ABSTRACT=$(cat "$SOURCE_DIR/META.json" | /usr/bin/jq -r '.abstract')
 		if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
 			printf "WARNING: Failed to get abstract from META.json\n" >&2
+			ABSTRACT="TODO"
+		fi
+	fi
+fi
+if [[ "$ABSTRACT" == "TODO" ]] ; then
+	if [[ ! -f "$SOURCE_DIR/META.yml" ]] ; then
+		printf "WARNING: META.yml missing\n" >&2
+	else
+		ABSTRACT=$(cat "$SOURCE_DIR/META.yml" | python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | /usr/bin/jq -r '.abstract')
+		if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
+			printf "WARNING: Failed to get abstract from META.yml\n" >&2
 			ABSTRACT="TODO"
 		fi
 	fi
@@ -329,7 +340,10 @@ if [[ -z "$LICENSE" ]] ; then
 		((D)) && (printf "%s\n" "$COPYRIGHT" | grep -q -i "under the same terms as Perl itself") && D=0
 		((D)) && grep -q "license *=> *'http://dev.perl.org/licenses/'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
 		((D)) && grep -q "LICENSE *=> *'perl'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
-		((D)) && [[ -f "$SOURCE_DIR/META.json" && "$(jq -r '.license[]' < "$SOURCE_DIR/META.json" 2>/dev/null)" == "perl_5" ]] && D=0
+		((D)) && [[ -f "$SOURCE_DIR/META.json" && "$(/usr/bin/jq -r '.license[]' < "$SOURCE_DIR/META.json" 2>/dev/null)" == "perl_5" ]] && D=0
+		((D)) && [[ -f "$SOURCE_DIR/META.yml" && "$(cat "$SOURCE_DIR/META.yml" \
+			| python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
+			| /usr/bin/jq -r '.license[]' 2>/dev/null)" == "perl_5" ]] && D=0
 
 		((D)) && printf "ERROR: Heuristics failed to detect license type, using default Perl license\n" >&2
 
