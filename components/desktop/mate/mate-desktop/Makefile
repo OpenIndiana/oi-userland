@@ -14,49 +14,26 @@
 # Copyright 2016 Ken Mays
 # Copyright 2020 Michal Nowak
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
+# Copyright 2022 Andreas Wacknitz
 #
 
-PREFERRED_BITS=		64
-BUILD_BITS=		32_and_64
-
+MATE_CATEGORY= LIB
 include ../../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-desktop
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=	Additional UI API for MATE Desktop
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:5f7c6b9b88886cb3393b3ffd57f9e9ec29f03a3c23ce8d4b45292de0aa4652a3
-COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_FMRI=		library/desktop/mate/$(COMPONENT_NAME)
-
-TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
-
-COMPONENT_PREP_ACTION = cd $(@D) && NOCONFIGURE=1 ./autogen.sh
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-
-CONFIGURE_ENV+= PYTHON="$(PYTHON)"
-
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
 # Build dependencies
 REQUIRED_PACKAGES += data/iso-codes
-REQUIRED_PACKAGES += library/desktop/mate/mate-common
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/config/dconf

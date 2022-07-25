@@ -14,37 +14,25 @@
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
+# Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=		64
-
+MATE_CATEGORY= APP
+BUILD_STYLE= configure
 include ../../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-applets
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	1
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=	Applets components for the MATE Desktop Environment
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:3ab8f61db376dc333ce4c18722c63a07fab3e8e1272b7e0e097ad4597b17c2c2
-COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
-TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
-
-COMPONENT_PREP_ACTION=	cd $(@D) && NOCONFIGURE=1 ./autogen.sh
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --enable-stickynotes 
 CONFIGURE_OPTIONS+= --disable-polkit
 CONFIGURE_OPTIONS+= --without-nl

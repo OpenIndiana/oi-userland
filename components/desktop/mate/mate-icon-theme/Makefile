@@ -13,51 +13,31 @@
 # Copyright 2016 Ken Mays
 # Copyright 2019 Michal Nowak
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
+# Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=		64
-
+MATE_CATEGORY= APP
+BUILD_STYLE= configure
 include ../../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-icon-theme
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=	Collection of icons for the MATE desktop
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:41f50436d57f425e54fd9557541be77fb291e03aacd55f7991c042e84a290a5a
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
-
-TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
-
-PATH=$(PATH.gnu)
-
-COMPONENT_PREP_ACTION= cd $(@D) && NOCONFIGURE=1 ./autogen.sh
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/mate
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-
-CONFIGURE_ENV+= PYTHON="$(PYTHON)"
-
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # build requirements
 REQUIRED_PACKAGES += library/desktop/xdg/icon-naming-utils
 REQUIRED_PACKAGES += text/intltool
 REQUIRED_PACKAGES += text/gnu-gettext
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += library/perl-5/xml-parser
 
 # Auto-generated dependencies
