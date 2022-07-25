@@ -13,45 +13,35 @@
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
+# Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=		64
-
+MATE_CATEGORY= APP
+BUILD_STYLE= configure
 include ../../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-user-guide
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	https://mate-desktop.org
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=	MATE documentation
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:0581d45053e9a1c16925c3154341b5b21140905a22b1bd3caa84619f9f05c2c0
 COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	FDLv1.1
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Documentation
-COMPONENT_FMRI=		desktop/mate/mate-user-guide
-
-TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
-
-PATH=$(PATH.gnu)
-
-COMPONENT_PREP_ACTION = cd $(@D) && autoreconf -f -i
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 # build dependencies
-REQUIRED_PACKAGES += library/perl-5/xml-parser-522
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += library/perl-5/xml-parser-534
+REQUIRED_PACKAGES += runtime/perl-534
 REQUIRED_PACKAGES += text/gnu-gettext
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/intltool

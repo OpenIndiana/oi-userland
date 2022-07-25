@@ -13,42 +13,28 @@
 # Copyright (c) 2019 Michal Nowak
 # Copyright (c) 2020 Marco van Wieringen
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
+# Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=		64
-
+MATE_CATEGORY= APP
+BUILD_STYLE= configure
 include ../../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-power-manager
 COMPONENT_MJR_VERSION=  1.26
 COMPONENT_MNR_VERSION=  0
-COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=  https://www.mate-desktop.org
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      MATE Power Manager utilities for desktop users
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:26b603ccf077366414a41e91ca6aa4c4c227a8e9fb6925a8ec5ca147c4e67b79
-COMPONENT_ARCHIVE_URL=  https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		desktop/mate/mate-power-manager
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET=		$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
-
-COMPONENT_PREP_ACTION =        ( cd $(@D) && autoreconf -fi )
-
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/mate
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 # Needs library/gnome/gnome-keyring >= 3.0.0
 #CONFIGURE_OPTIONS+=	--without-keyring
-
-CONFIGURE_ENV+= PYTHON="$(PYTHON)"
-CONFIGURE_ENV+= PERL="$(PERL)"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel

@@ -12,20 +12,19 @@
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
+# Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=		64
-
+MATE_CATEGORY= APP
+BUILD_STYLE= configure
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		eom
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=  https://www.mate-desktop.org
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      MATE image viewer
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:27f169aa396ddbc75740bf802bef1c0251771ca0747b5a727ff985c03dc067db
 COMPONENT_ARCHIVE_URL=  https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
@@ -33,13 +32,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
 COMPONENT_FMRI=		image/viewer/eom
 
-TEST_TARGET=		$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
-
-PATH=$(PATH.gnu)
-
-COMPONENT_PREP_ACTION=  cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 
 # build with the system default libjpeg
 CFLAGS		+=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
@@ -49,14 +42,7 @@ LDFLAGS		+=    $(JPEG_LDFLAGS)
 
 CFLAGS += -std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-
 CONFIGURE_ENV+=	CPPFLAGS="$(CPPFLAGS)"
-
-# CFLAGS are not passed to compiler when g-ir-scanner is used
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ENV += CC="$(CC)"
 
 COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
