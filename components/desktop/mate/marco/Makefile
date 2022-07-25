@@ -13,47 +13,34 @@
 # Copyright 2016 Till Wegmueller
 # Copyright 2020 Michal Nowak
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
+# Copyright 2022 Andreas Wacknitz
 #
-BUILD_BITS=		64
-BUILD_STYLE=		meson
 
+MATE_CATEGORY= LIB
+BUILD_STYLE= meson
 include ../../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		marco
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=	MATE Window Manager
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:f63c08cd8b07450ab3e33a04605c4f9e69522358884273b3cbcf30275eee5b05
-COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
-COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
-TEST_TARGET=		$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
-
-PATH=$(PATH.gnu)
 
 CFLAGS+=-D__EXTENSIONS__
 CFLAGS+=-std=gnu99
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 # Build dependencies
 REQUIRED_PACKAGES += gnome/zenity
 REQUIRED_PACKAGES += text/itstool
 # Needed for autogen.sh
-REQUIRED_PACKAGES += library/desktop/mate/mate-common
 REQUIRED_PACKAGES += library/gnome/yelp-tools
 
 # Auto-generated dependencies
