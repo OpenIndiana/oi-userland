@@ -14,18 +14,19 @@
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
 #
-MATE_CATEGORY=  APP
+MATE_CATEGORY= APP
+BUILD_STYLE= configure
 include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=         mate-panel
 COMPONENT_MJR_VERSION=  1.26
 COMPONENT_MNR_VERSION=  2
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      The Panel of Mate
 COMPONENT_ARCHIVE_HASH= sha256:aec4f98c89c59e76cc0656ed0482f1d82912f4decc660f21c8d004e493e05410
-COMPONENT_CLASSIFICATION = System/Libraries
+COMPONENT_CLASSIFICATION= System/Libraries
 
-TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Build requires
