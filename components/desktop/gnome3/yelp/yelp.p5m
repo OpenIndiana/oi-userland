@@ -16,6 +16,7 @@
 <transform dir path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -51,12 +52,14 @@ file path=usr/include/libyelp/yelp-types.h
 file path=usr/include/libyelp/yelp-uri-builder.h
 file path=usr/include/libyelp/yelp-uri.h
 file path=usr/include/libyelp/yelp-view.h
-link path=usr/lib/libyelp.so target=libyelp.so.0.0.0
-link path=usr/lib/libyelp.so.0 target=libyelp.so.0.0.0
-file path=usr/lib/libyelp.so.0.0.0
+file path=usr/lib/$(MACH64)/libyelp.a
+link path=usr/lib/$(MACH64)/libyelp.so target=libyelp.so.0.0.0
+link path=usr/lib/$(MACH64)/libyelp.so.0 target=libyelp.so.0.0.0
+file path=usr/lib/$(MACH64)/libyelp.so.0.0.0
+file path=usr/lib/$(MACH64)/yelp/web-extensions/libyelpwebextension.a
+file path=usr/lib/$(MACH64)/yelp/web-extensions/libyelpwebextension.so
 file path=usr/lib/yelp-groff mode=0555
 file path=usr/lib/yelp-manpath mode=0555
-file path=usr/lib/yelp/web-extensions/libyelpwebextension.so
 file path=usr/share/applications/yelp.desktop
 file path=usr/share/glib-2.0/schemas/org.gnome.yelp.gschema.xml
 file path=usr/share/locale/af/LC_MESSAGES/yelp.mo
