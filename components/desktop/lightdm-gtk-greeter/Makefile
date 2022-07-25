@@ -14,12 +14,13 @@
 # Copyright 2020 Michal Nowak
 #
 
-BUILD_BITS=		64
+BUILD_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lightdm-gtk-greeter
 COMPONENT_VERSION=	2.0.7
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	LightDM GTK+ Greeter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -48,8 +49,8 @@ include $(WS_MAKE_RULES)/common.mk
 EXO_CSOURCE_CFLAGS += -DHAVE_LOCALE_H -DHAVE_LIBINTL_H -DHAVE_STDLIB_H -DHAVE_LOCALE_H -DGETTEXT_PACKAGE=\"exo-csource\"
 EXO_CSOURCE_CFLAGS += -DPACKAGE_LOCALE_DIR=\"/usr/share/locale/\" -DPACKAGE_VERSION=\"0.10.7\"
 EXO_CSOURCE_CFLAGS += -D PACKAGE_TARNAME=\"unspecified\"  -DPACKAGE_BUGREPORT=\"no\"
-EXO_CSOURCE_CFLAGS += $(shell pkg-config --cflags glib-2.0)
-EXO_CSOURCE_LDFLAGS += $(shell pkg-config --libs glib-2.0)
+EXO_CSOURCE_CFLAGS += $(CC_BITS) $(shell pkg-config --cflags glib-2.0)
+EXO_CSOURCE_LDFLAGS += $(CC_BITS) $(shell pkg-config --libs glib-2.0)
 
 PATH=$(PATH.gnu):$(BUILD_DIR)/exo-csource
 
