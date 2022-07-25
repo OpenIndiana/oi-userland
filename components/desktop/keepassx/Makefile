@@ -13,13 +13,13 @@
 # Copyright 2019 Andreas Wacknitz <a.wacknitz@gmx.de>
 #
 
-BUILD_BITS=			64
-BUILD_STYLE=		cmake
+BUILD_BITS=64
+BUILD_STYLE=cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		keepassx
 COMPONENT_VERSION=	2.0.3
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://www.keepassx.org/
 COMPONENT_FMRI=		desktop/keepassx
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,8 +35,10 @@ COMPONENT_CLASSIFICATION=Applications/System Utilities
 TESTS=				$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+CMAKE_OPTIONS += -DQT_QMAKE_EXECUTABLE=/usr/lib/qt/4.8/bin/amd64/qmake
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/qt4
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
@@ -44,5 +46,3 @@ REQUIRED_PACKAGES += system/library/security/libgcrypt
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxtst
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
