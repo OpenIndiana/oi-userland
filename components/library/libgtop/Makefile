@@ -14,12 +14,12 @@
 # Copyright 2020 Marco van Wieringen
 #
 
-BUILD_BITS= 32_and_64
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgtop
 COMPONENT_VERSION= 2.40.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Library to get system specific data
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -27,7 +27,7 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:78f3274c0c79c434c03655c1b35edf7b95ec0421430897fb1345a98a265ed2d4
 COMPONENT_ARCHIVE_URL= \
   https://download.gnome.org/sources/$(COMPONENT_NAME)/2.40/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
+COMPONENT_PROJECT_URL = https://www.gnome.org
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/libgtop
 COMPONENT_LICENSE = GPLv2
@@ -52,6 +52,7 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/automake-111
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxau
