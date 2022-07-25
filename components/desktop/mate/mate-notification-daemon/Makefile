@@ -14,44 +14,24 @@
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
 # Copyright (c) 2021 Tim Mooney.  All rights reserved 
+# Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=		64
-
+MATE_CATEGORY= APP
+BUILD_STYLE= configure
 include ../../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-notification-daemon
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=	Notification Daemon for Mate
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:b23c6581f8f5916d6a16584edd91c2e4b6d0db7dd8e1eec5dd360acf2834b9ba
-COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
 include $(WS_MAKE_RULES)/common.mk
-
-TEST_TARGET=		$(NO_TESTS)
-
-PATH=$(PATH.gnu)
-
-COMPONENT_PREP_ACTION=	cd $(@D) && NOCONFIGURE=1 ./autogen.sh
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/$(COMPONENT_NAME)
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-
-CONFIGURE_ENV+= PYTHON="$(PYTHON)"
-
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # build dependencies, if configure is regenerated
 REQUIRED_PACKAGES += developer/build/autoconf-archive
