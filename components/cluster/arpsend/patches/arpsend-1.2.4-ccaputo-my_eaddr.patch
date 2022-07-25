@@ -1,0 +1,11 @@
+--- a/src/arpsend.c.original      2021-04-02 18:21:52.000000000 +0000
++++ b/src/arpsend.c       2021-04-11 16:38:39.006459963 +0000
+@@ -214,7 +214,7 @@
+ 
+ 			/* we were able to determine my_eaddr and my_eaddr for this interface */
+ 	
+-                       if ((sender_protocol_address.s_addr == my_ipaddr.s_addr) && bcmp(&sender_hardware_address, my_eaddr, sizeof(my_eaddr))) {
++                       if ((sender_protocol_address.s_addr == my_ipaddr.s_addr) && bcmp(&sender_hardware_address, my_eaddr, sizeof(*my_eaddr))) {
+ 				if (danger_found) /* this is not our first warning */
+ 					fprintf(stdout, "\n");
+ 				fprintf(stdout, "*** Warning: sender_protocol_address '%s' is my IP address, but\nsender_hardware_address '%s' ",
