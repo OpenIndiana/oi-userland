@@ -23,28 +23,29 @@
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gucharmap
+COMPONENT_NAME=         gucharmap
 COMPONENT_MAJOR_MINOR=  3.18
-COMPONENT_VERSION=	$(COMPONENT_MAJOR_MINOR).2
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY=	Unicode character map for the GNOME project
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_MINOR).2
+COMPONENT_REVISION=     2
+COMPONENT_SUMMARY=      Unicode character map for the GNOME project
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_MINOR)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  \
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_MINOR)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
 	sha256:80141d3e892c3c4812c1a8fad8f89978559ef19e933843267e6e9a5524c09ec9
-COMPONENT_FMRI = desktop/character-map/gucharmap
-COMPONENT_CLASSIFICATION = Desktop (GNOME)/Documentation
-COMPONENT_LICENSE = GPLv2
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_FMRI=         desktop/character-map/gucharmap
+COMPONENT_CLASSIFICATION=Desktop (GNOME)/Documentation
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 #COMPONENT_PREP_ACTION=  cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 
@@ -76,12 +77,6 @@ CONFIGURE_OPTIONS.64 += --enable-introspection
 CONFIGURE_OPTIONS += --enable-shared
 # Required for other components.
 CONFIGURE_OPTIONS += --with-gtk=3.0
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test:           $(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/c++/harfbuzz
