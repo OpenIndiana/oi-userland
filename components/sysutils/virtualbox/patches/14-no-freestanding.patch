@@ -2,10 +2,10 @@ Use illumos headers as GCC headers fail to behave correctly in 32-bit environmen
 
 --- VirtualBox-6.1.14/Config.kmk.orig	2020-09-04 09:28:09.000000000 +0000
 +++ VirtualBox-6.1.14/Config.kmk	2020-09-06 08:38:21.628275907 +0000
-@@ -4478,7 +4478,7 @@
- 	$(VBOX_GCC_Wno-variadic-macros) $(VBOX_GCC_R0_OPT) $(VBOX_GCC_R0_FP) -fno-strict-aliasing -fno-exceptions \
- 	$(VBOX_GCC_fno-stack-protector) -fno-common $(VBOX_GCC_fvisibility-inlines-hidden) $(VBOX_GCC_fvisibility-hidden) \
- 	-fno-rtti $(VBOX_GCC_IPRT_FMT_CHECK)
+@@ -4599,7 +4599,7 @@
+  if $(VBOX_GCC_VERSION_CC) >= 40500 # 4.1.2 complains, 4.5.2 is okay, didn't check which version inbetween made it okay with g++.
+ TEMPLATE_VBoxR0_CXXFLAGS           += -ffreestanding
+  endif
 -TEMPLATE_VBoxR0_CFLAGS.amd64        = -m64 -mno-red-zone -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -fasynchronous-unwind-tables -ffreestanding
 +TEMPLATE_VBoxR0_CFLAGS.amd64        = -m64 -mno-red-zone -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -fasynchronous-unwind-tables
  TEMPLATE_VBoxR0_CXXFLAGS.amd64      = -m64 -mno-red-zone -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -fasynchronous-unwind-tables
