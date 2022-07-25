@@ -15,38 +15,40 @@
 # Copyright 2018-2019 Michal Nowak
 #
 
-PREFERRED_BITS=		64
-
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		xscreensaver
-COMPONENT_VERSION=	5.44
-COMPONENT_PROJECT_URL=	https://www.jwz.org/xscreensaver/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_NAME=         xscreensaver
+COMPONENT_VERSION=      5.44
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  https://www.jwz.org/xscreensaver/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
 	sha256:73d8089cfc7d7363b5dac99b5b01dffb3429d0a855e6af16ce9a4b7777017b95
-COMPONENT_ARCHIVE_URL=	https://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		desktop/xscreensaver
+COMPONENT_ARCHIVE_URL=  https://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         desktop/xscreensaver
 
 PATCH_LEVEL=		0
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_POST_UNPACK_ACTION=	( cp $(COMPONENT_DIR)/files/*.p5i.in $(SOURCE_DIR)/driver && \
 					chmod a+x  $(SOURCE_DIR)/install-sh && \
 					mkdir -p $(SOURCE_DIR)/mesa/GL && \
 					ln -s /usr/include/mesa/*.h $(SOURCE_DIR)/mesa/GL )
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -if )
+# po/Makefile.in.in is modified by hand and broken by autoreconf
+COMPONENT_PREP_ACTION = ( $(CP) $(@D)/po/Makefile.in.in $(@D)/po/Makefile.in.in.jwz ; \
+			  cd $(@D) && autoreconf -if ; \
+                          $(CP) $(@D)/po/Makefile.in.in.jwz $(@D)/po/Makefile.in.in )
 
 PATH=$(PATH.gnu)
 
 COMPONENT_PRE_CONFIGURE_ACTION += chmod -R u+r $(SOURCE_DIR)/ && \
 					cp -rpP $(SOURCE_DIR)/* $(@D)
-
 
 CONFIGURE_SCRIPT=	$(@D)/configure
 
@@ -81,18 +83,17 @@ CONFIGURE_OPTIONS+=	--with-jpeg
 CONFIGURE_OPTIONS+=	--with-png
 CONFIGURE_OPTIONS+=	--with-gl
 
-COMPONENT_INSTALL_ENV += MAKEFLAGS=-e install_prefix=$(PROTO_DIR)
+COMPONENT_BUILD_TARGETS=all
 
 ../rss-glx/build/i86/.built:
-	(cd ../rss-glx ; $(GMAKE) build)
+	(cd ../rss-glx && $(GMAKE) build)
+	 
+COMPONENT_INSTALL_ENV += MAKEFLAGS=-e install_prefix=$(PROTO_DIR)
+	 
+install: $(INSTALL_64) ../rss-glx/build/i86/.built
+	$(PERL) ../rss-glx/build/$(MACH64)/utils/rss-glx_install.pl $(PROTO_DIR)/usr/share/X11/app-defaults/XScreenSaver
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64) ../rss-glx/build/i86/.built
-	perl ../rss-glx/build/i86/utils/rss-glx_install.pl $(PROTO_DIR)/usr/share/X11/app-defaults/XScreenSaver
-test:		$(NO_TESTS)
-
+# Build dependencies
 REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/harfbuzz
@@ -100,6 +101,7 @@ REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += x11/library/mesa
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -107,7 +109,6 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/glu
