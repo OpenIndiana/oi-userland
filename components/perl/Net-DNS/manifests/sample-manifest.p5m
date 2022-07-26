@@ -13,7 +13,8 @@
 # Copyright 2022 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -36,6 +37,7 @@ file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::A.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::AAAA.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::AFSDB.3
+file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::AMTRELAY.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::APL.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::CAA.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::CDNSKEY.3
@@ -44,7 +46,6 @@ file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::CERT.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::CNAME.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::CSYNC.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::DHCID.3
-file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::DLV.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::DNAME.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::DNSKEY.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::DS.3
@@ -53,6 +54,7 @@ file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::EUI64.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::GPOS.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::HINFO.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::HIP.3
+file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::HTTPS.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::IPSECKEY.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::ISDN.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::KEY.3
@@ -86,12 +88,14 @@ file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::SOA.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::SPF.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::SRV.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::SSHFP.3
+file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::SVCB.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::TKEY.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::TLSA.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::TSIG.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::TXT.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::URI.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::X25.3
+file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::RR::ZONEMD.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::Resolver.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::Resolver::Base.3
 file path=usr/perl5/$(PERLVER)/man/man3/Net::DNS::Resolver::MSWin32.3
@@ -119,6 +123,7 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/A.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/AAAA.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/AFSDB.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/AMTRELAY.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/APL.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/CAA.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/CDNSKEY.pm
@@ -127,7 +132,6 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/CERT.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/CNAME.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/CSYNC.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/DHCID.pm
-file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/DLV.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/DNAME.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/DNSKEY.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/DS.pm
@@ -136,6 +140,7 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/EUI64.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/GPOS.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/HINFO.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/HIP.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/HTTPS.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/IPSECKEY.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/ISDN.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/KEY.pm
@@ -169,12 +174,14 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/SOA.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/SPF.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/SRV.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/SSHFP.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/SVCB.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/TKEY.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/TLSA.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/TSIG.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/TXT.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/URI.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/X25.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/RR/ZONEMD.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/Resolver.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/Resolver/Base.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/Resolver/MSWin32.pm
@@ -187,3 +194,11 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/Resolver/os390.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/Text.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/Update.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Net/DNS/ZoneFile.pm
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/digest-hmac-$(PLV)@1.3
+#depend type=require fmri=pkg:/runtime/perl-$(PLV)
