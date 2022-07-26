@@ -1,25 +1,7 @@
 t/00-install.t ............. ok
-# 
-# These tests were run using:
-# 	Net::DNS                   1.15
-# 	Data::Dumper               2.179
-# 	Digest::HMAC               1.04
-# 	Digest::MD5                2.58
-# 	Digest::SHA                6.02
-# 	Encode                     3.08
-# 	File::Spec                 3.80
-# 	IO::File                   1.46
-# 	IO::Select                 1.46
-# 	IO::Socket                 1.46
-# 	IO::Socket::INET           1.46
-# 	IO::Socket::IP             0.41
-# 	MIME::Base64               3.16
-# 	PerlIO                     1.11
-# 	Scalar::Util               1.55
-# 	Socket                     2.031
-# 	Time::Local                1.30
 t/00-load.t ................ ok
-t/00-pod.t ................. skipped: Test::Pod 1.45 required for testing POD
+t/00-pod.t ................. ok
+t/01-resolver-config.t ..... ok
 t/01-resolver-env.t ........ ok
 t/01-resolver-file.t ....... ok
 t/01-resolver-flags.t ...... ok
@@ -27,10 +9,11 @@ t/01-resolver-opt.t ........ ok
 t/01-resolver.t ............ ok
 t/02-domain.t .............. ok
 t/02-domainname.t .......... ok
-t/02-IDN.t ................. skipped: No LibIDN or LibIDN2 installed
+t/02-IDN.t ................. skipped: Net::LibIDN2 not installed
 t/02-mailbox.t ............. ok
 t/02-text.t ................ ok
 t/03-header.t .............. ok
+t/03-parameters.t .......... ok
 t/03-question.t ............ ok
 t/03-rr.t .................. ok
 t/04-packet-truncate.t ..... ok
@@ -38,6 +21,7 @@ t/04-packet.t .............. ok
 t/05-A.t ................... ok
 t/05-AAAA.t ................ ok
 t/05-AFSDB.t ............... ok
+t/05-AMTRELAY.t ............ ok
 t/05-APL.t ................. ok
 t/05-CAA.t ................. ok
 t/05-CDNSKEY.t ............. ok
@@ -46,7 +30,6 @@ t/05-CERT.t ................ ok
 t/05-CNAME.t ............... ok
 t/05-CSYNC.t ............... ok
 t/05-DHCID.t ............... ok
-t/05-DLV.t ................. ok
 t/05-DNAME.t ............... ok
 t/05-DNSKEY.t .............. ok
 t/05-DS.t .................. ok
@@ -54,6 +37,7 @@ t/05-EUI48.t ............... ok
 t/05-EUI64.t ............... ok
 t/05-HINFO.t ............... ok
 t/05-HIP.t ................. ok
+t/05-HTTPS.t ............... ok
 t/05-IPSECKEY.t ............ ok
 t/05-ISDN.t ................ ok
 t/05-KEY.t ................. ok
@@ -84,12 +68,14 @@ t/05-SOA.t ................. ok
 t/05-SPF.t ................. ok
 t/05-SRV.t ................. ok
 t/05-SSHFP.t ............... ok
+t/05-SVCB.t ................ ok
 t/05-TKEY.t ................ ok
 t/05-TLSA.t ................ ok
 t/05-TSIG.t ................ ok
 t/05-TXT.t ................. ok
 t/05-URI.t ................. ok
 t/05-X25.t ................. ok
+t/05-ZONEMD.t .............. ok
 t/06-packet-unique-push.t .. ok
 t/06-update.t .............. ok
 t/07-rrsort.t .............. ok
@@ -97,26 +83,25 @@ t/07-zonefile.t ............ ok
 t/08-IPv4.t ................ ok
 t/08-IPv6.t ................ skipped: Unable to reach global root nameservers
 t/08-recurse.t ............. ok
-t/21-TSIG-create.t ......... ok
-t/22-TSIG-verify.t ......... ok
-t/31-NSEC-typelist.t ....... ok
+t/21-NSEC-typelist.t ....... ok
+t/22-NSEC-match.t .......... ok
+t/23-NSEC-covered.t ........ ok
+t/24-NSEC-encloser.t ....... ok
+t/31-NSEC3-base32.t ........ ok
 t/32-NSEC3-typelist.t ...... ok
 t/33-NSEC3-hash.t .......... ok
 t/34-NSEC3-flags.t ......... ok
-t/35-NSEC3-match.t ......... ok
 t/36-NSEC3-covered.t ....... ok
-t/37-NSEC3-base32.t ........ ok
+t/37-NSEC3-encloser.t ...... ok
 t/41-DNSKEY-keytag.t ....... ok
 t/42-DNSKEY-flags.t ........ ok
 t/43-DNSKEY-keylength.t .... ok
 t/51-DS-SHA1.t ............. ok
 t/52-DS-SHA256.t ........... ok
 t/54-DS-SHA384.t ........... ok
-t/61-SIG0-RSAMD5.t ......... skipped: Net::DNS::SEC not installed
-t/65-RRSIG-RSASHA1.t ....... skipped: Net::DNS::SEC not installed
-# Cleaning
+t/71-TSIG-create.t ......... ok
+t/72-TSIG-verify.t ......... ok
 t/99-cleanup.t ............. ok
 All tests successful.
-Files=98, Tests=3101
+Files=104, Tests=3340
 Result: PASS
-make[1]: Leaving directory '$(@D)'
