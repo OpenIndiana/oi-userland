@@ -17,14 +17,14 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         arpsend
-COMPONENT_VERSION=      1.2.3
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      1.2.4
+COMPONENT_REVISION=     0
 COMPONENT_FMRI=         utility/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_PROJECT_URL=  https://www.net.princeton.edu/software/$(COMPONENT_NAME)/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:5f7664bfe556225a94c3d6736eec21d88fd6a81af3b7fed0403de49488406757
+COMPONENT_ARCHIVE_HASH= sha256:d96c1a54f8ee21457ac0f4098d110c96d3dff7b9f5e13e84a36fdb6632014aab
 COMPONENT_ARCHIVE_URL=  https://www.net.princeton.edu/software/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE) 
 COMPONENT_LICENSE=      LGPLv2
 COMPONENT_SUMMARY=      arpsend sends an Ethernet frame containing an IP ARP request or reply packet containing fields you specify.
@@ -32,6 +32,7 @@ COMPONENT_SUMMARY=      arpsend sends an Ethernet frame containing an IP ARP req
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --with-libnet=$(USRDIR)
+GPATCH_FLAGS += -l
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D)) 
 
