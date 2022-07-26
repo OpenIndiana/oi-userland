@@ -10,49 +10,24 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
-# Copyright (c) 2022 Tim Mooney.  All rights reserved
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Net::DNS
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Net-DNS
-COMPONENT_VERSION =		1.15
-COMPONENT_REVISION =		1
-COMPONENT_FMRI =		library/perl-5/net-dns
+COMPONENT_PERL_MODULE =		Net::DNS
+HUMAN_VERSION =			1.34
 COMPONENT_SUMMARY =		Net::DNS - Perl Interface to the Domain Name System
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Net::DNS
+COMPONENT_CPAN_AUTHOR =		NLNETLABS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1ad46ba6438b846a94b4f50d53ecfda55f504a17e11b94effb087ff9329e61d0
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/N/NL/NLNETLABS/$(COMPONENT_ARCHIVE)
+	sha256:de756e3fb6addbd32beafc869c4dd1c6a0b3783c5ef56dbefc6809443a4b1d15
 COMPONENT_LICENSE =		MIT
-
-# until all perl modules have been rebuilt with 5.34, each module sets
-# this manually, before including common.mk
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
 
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# need different master test results per version
-#
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION).master
-
-#
-# delete any lines up through test_harness
-# delete timings
-#
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "1,/test_harness/d"' \
-	'-e "s/,  *[0-9]* wallclock.*//"'
-
-REQUIRED_PACKAGES += library/perl-5/digest-hmac
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-hmac
+PERL_REQUIRED_PACKAGES += runtime/perl
