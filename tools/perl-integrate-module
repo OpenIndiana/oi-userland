@@ -219,31 +219,46 @@ function detect_license
 	typeset F="$2"
 	typeset D
 
-	if grep -q -- "The Apache License, Version 2.0, January 2004" "$F" ; then
+	if grep -A 1 "Apache License" "$F" | grep -q "Version 2\.0, January 2004" ; then
 		D="Apache-2.0"
 		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
 	fi
 
-	if grep -q "The Artistic License 1.0" "$F" || grep -q "The \"Artistic License\"" "$F" ; then
+	if grep "Artistic License" "$F" | grep -q -v "2" ; then
 		D="Artistic-1.0-TODO"
-		grep -q "7. C subroutines" "$F" && grep -q "10. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0-Perl"
-		grep -q "7. C or perl subroutines" "$F" && grep -q "10. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0-cl8"
-		grep -q "7. C or perl subroutines" "$F" && grep -q "9. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0"
+		grep -q "7\. C subroutines" "$F" && grep -q "10\. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0-Perl"
+		grep -q "7\. C or perl subroutines" "$F" && grep -q "10\. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0-cl8"
+		grep -q "7\. C or perl subroutines" "$F" && grep -q "9\. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0"
 		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
 	fi
 
-	if grep -q -- "Artistic License 2.0" "$F" ; then
+	if grep -q "Artistic License.* 2\.0" "$F" || grep -q "ARTISTIC LICENSE v2" "$F" ; then
 		D="Artistic-2.0"
 		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
 	fi
 
 	if grep -A 1 "GNU GENERAL PUBLIC LICENSE" "$F" | grep -q "Version 1, February 1989" ; then
-		D="GPL-1.0-only-TODO"
+		D="GPL-1.0-only"
 		grep -A 2 "GNU General Public License as published by the" "$F" | grep -q "or (at your option) any" && D="GPL-1.0-or-later"
 		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
 	fi
 
-	if grep -q -- "The MIT License" "$F" ; then
+	if grep -i -A 1 "GENERAL PUBLIC LICENSE" "$F" | grep -q "Version 2, June 1991" ; then
+		D="GPL-2.0-only"
+		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
+	fi
+
+	if grep -A 1 "GNU LIBRARY GENERAL PUBLIC LICENSE" "$F" | grep -q "Version 2, June 1991" ; then
+		D="LGPL-2.0-only"
+		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
+	fi
+
+	if grep -A 1 "GNU Lesser General Public License" "$F" | grep -q "Version 2\.1, February 1999" ; then
+		D="LGPL-2.1-only"
+		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
+	fi
+
+	if grep -q "The MIT License" "$F" ; then
 		D="MIT-TODO"
 		grep -q "The above copyright notice and this permission notice" "$F" && D="MIT"
 		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
@@ -253,7 +268,7 @@ function detect_license
 LICENSE=
 LICFILE=
 COPYRIGHT=
-for f in LICENSE LICENCE COPYING ; do
+for f in LICENSE LICENCE COPYING COPYRIGHT ; do
 	[[ -f "$SOURCE_DIR/$f" ]] || continue
 	LICFILE="$SOURCE_DIR/$f"
 
@@ -294,7 +309,7 @@ if [[ -z "$LICENSE" ]] ; then
 		[[ -n "$COPYRIGHT" ]] && break
 		COPYRIGHT=$(gsed -e '0,/COPYING/d' -e '/^BUGS/,$d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
 		[[ -n "$COPYRIGHT" ]] && break
-		COPYRIGHT=$(gsed -e '0,/COPYRIGHT/d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
+		COPYRIGHT=$(gsed -e '0,/COPYRIGHT/d' -e '/^AUTHOR/,$d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
 		[[ -n "$COPYRIGHT" ]] && break
 	done
 	if [[ -z "$COPYRIGHT" ]] ; then
@@ -338,7 +353,7 @@ if [[ -z "$LICENSE" ]] ; then
 		# Confirm the package is distributed under the same terms as Perl itself
 		D=1
 		((D)) && (printf "%s\n" "$COPYRIGHT" | grep -q -i "under the same terms as Perl itself") && D=0
-		((D)) && grep -q "license *=> *'http://dev.perl.org/licenses/'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
+		((D)) && grep -q "license *=> *'http://dev\.perl\.org/licenses/'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
 		((D)) && grep -q "LICENSE *=> *'perl'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
 		((D)) && [[ -f "$SOURCE_DIR/META.json" && "$(/usr/bin/jq -r '.license[]' < "$SOURCE_DIR/META.json" 2>/dev/null)" == "perl_5" ]] && D=0
 		((D)) && [[ -f "$SOURCE_DIR/META.yml" && "$(cat "$SOURCE_DIR/META.yml" \
@@ -352,7 +367,7 @@ if [[ -z "$LICENSE" ]] ; then
 	fi
 	git add "$DISTRIBUTION.license"
 
-	detect_license LICENSE "$DISTRIBUTION.license"
+	[[ -z "$LICENSE" ]] && detect_license LICENSE "$DISTRIBUTION.license"
 	[[ -z "$LICENSE" ]] && LICENSE="TODO"
 fi
 
