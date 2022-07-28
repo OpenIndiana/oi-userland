@@ -10,30 +10,26 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Text::Diff
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Text-Diff
-COMPONENT_VERSION =		1.45
-COMPONENT_FMRI =		library/perl-5/text-diff
+COMPONENT_PERL_MODULE =		Text::Diff
+HUMAN_VERSION =			1.45
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Text::Diff - Perform diffs on files and record sets
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Text::Diff
+COMPONENT_CPAN_AUTHOR =		NEILB
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:e8baa07b1b3f53e00af3636898bbf73aec9a0ff38f94536ede1dbe96ef086f04
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/N/NE/NEILB/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/algorithm-diff
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/algorithm-diff
+PERL_REQUIRED_PACKAGES += runtime/perl
