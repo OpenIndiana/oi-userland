@@ -10,31 +10,25 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Types::Serialiser
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Types-Serialiser
+COMPONENT_PERL_MODULE =		Types::Serialiser
 HUMAN_VERSION =			1.01
-COMPONENT_VERSION =		1.1
-COMPONENT_FMRI =		library/perl-5/types-serialiser
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Types::Serialiser - simple data types for common serialisation formats
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Types::Serialiser
+COMPONENT_CPAN_AUTHOR =		MLEHMANN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:f8c7173b0914d0e3d957282077b366f0c8c70256715eaef3298ff32b92388a80
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/M/ML/MLEHMANN/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-PERL_REQUIRED_PACKAGES += library/perl-5/common-sense
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/common-sense
+PERL_REQUIRED_PACKAGES += runtime/perl
