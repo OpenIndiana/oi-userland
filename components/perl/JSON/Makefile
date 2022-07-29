@@ -1,50 +1,32 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2022 Friedrich Kink.  All rights reserved.
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module JSON
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		JSON
-HUMAN_VERSION =			4.06
-COMPONENT_VERSION =		4.6
-COMPONENT_FMRI =		library/perl-5/json
+COMPONENT_PERL_MODULE =		JSON
+HUMAN_VERSION =			4.07
 COMPONENT_SUMMARY =		JSON - JSON (JavaScript Object Notation) encoder/decoder
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=		https://metacpan.org/pod/JSON
+COMPONENT_CPAN_AUTHOR =		ISHIGAKI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1137e98a42208d802f3ad94a10855606c0455ddad167ba018557d751f6f7672e
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/I/IS/ISHIGAKI/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+	sha256:4f78b929798992e06106cf2bbc20de2375f7b60c60b3aa3ace02aae1e38513bb
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-PERL_REQUIRED_PACKAGES += library/perl-5/test-pod
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
