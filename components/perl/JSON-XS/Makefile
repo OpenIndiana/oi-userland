@@ -10,43 +10,31 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module JSON::XS
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		JSON-XS
+COMPONENT_PERL_MODULE =		JSON::XS
 HUMAN_VERSION =			4.03
-COMPONENT_VERSION =		4.3
-COMPONENT_FMRI =		library/perl-5/json-xs
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		JSON::XS - JSON serialising/deserialising, done correctly and fast
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/JSON::XS
+COMPONENT_CPAN_AUTHOR =		MLEHMANN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:515536f45f2fa1a7e88c8824533758d0121d267ab9cb453a1b5887c8a56b9068
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/M/ML/MLEHMANN/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Disable Canary::Stability prompt
 COMPONENT_CONFIGURE_ENV += PERL_CANARY_STABILITY_NOPROMPT=1
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
+# Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/canary-stability
 PERL_REQUIRED_PACKAGES += library/perl-5/common-sense
 PERL_REQUIRED_PACKAGES += library/perl-5/types-serialiser
-
-# Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/perl-534
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
