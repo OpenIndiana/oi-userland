@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=			gcr
 COMPONENT_MJR_VERSION=	3.38
 COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).1
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/gcr/
 COMPONENT_SUMMARY=	A GNOME library for displaying certificates and crypto UI
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -37,7 +38,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:17fcaf9c4a93a65fb1c72b82643bb102c13344084687d5886ea66313868d9ec9
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/GNOME/gcr
-COMPONENT_FMRI=			library/gnome/gcr
+COMPONENT_FMRI=			library/gnome/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
@@ -54,8 +55,8 @@ CONFIGURE_ENV += PATH=$(PATH.gnu)
 # Requires a reconf due to patch to autoconf and automake-related files.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 
-# Not available on Solaris.
-#CONFIGURE_OPTIONS += --disable-valgrind
+# We don't have introspection for 32-bit.
+CONFIGURE_OPTIONS.32 += --enable-introspection=no
 # Required for other components.
 CONFIGURE_OPTIONS.64 += --enable-introspection
 # Required for other components.
