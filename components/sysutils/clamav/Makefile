@@ -23,7 +23,7 @@ COMPONENT_NAME=		clamav
 ### But our IPS version should better have same number of components.
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
-COMPONENT_VERSION=	0.105.0
+COMPONENT_VERSION=	0.105.1
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -40,7 +40,7 @@ COMPONENT_DESCRIPTION=	ClamAV is an open source (GPLv2) anti-virus toolkit, desi
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:270203a54c458049db54fcd93683ff5b2db19151f363c48e82cecefdde2b35d4
+COMPONENT_ARCHIVE_HASH=	sha256:d2bc16374db889a6e5a6ac40f8c6e700254a039acaa536885a09eeea4b8529f6
 COMPONENT_PROJECT_URL=	http://www.clamav.net/
 COMPONENT_ARCHIVE_URL=	http://www.clamav.net/downloads/production/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
@@ -107,6 +107,7 @@ CMAKE_OPTIONS+=		-DENABLE_SYSTEMD=OFF
 # Additionly included CLang LLVM was removed, so only available
 # bytecode support is interpreter.
 
+USE_COMMON_TEST_MASTER=	no
 COMPONENT_TEST_TRANSFORMS += \
         '-n ' \
         '-e "/passed/p" '
