@@ -26,7 +26,7 @@ COMPONENT_VERSION ?=		$(shell $(WS_TOOLS)/perl-version-convert $(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION ?=	Development/Perl
 COMPONENT_SRC ?=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE ?=		$(COMPONENT_SRC).tar.gz
-COMPONENT_FMRI ?=		library/perl-5/$(shell echo $(COMPONENT_NAME) | tr [A-Z] [a-z])
+COMPONENT_FMRI ?=		library/perl-5/$(shell echo $(COMPONENT_NAME) | tr [A-Z]_ [a-z]-)
 ifneq ($(strip $(COMPONENT_PERL_MODULE)),)
 COMPONENT_NAME ?=		$(subst ::,-,$(COMPONENT_PERL_MODULE))
 COMPONENT_PROJECT_URL ?=	https://metacpan.org/pod/$(COMPONENT_PERL_MODULE)
