@@ -10,32 +10,26 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module CryptX
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		CryptX
+COMPONENT_PERL_MODULE =		CryptX
 HUMAN_VERSION =			0.076
-COMPONENT_VERSION =		0.76
-COMPONENT_FMRI =		library/perl-5/cryptx
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		CryptX - Cryptographic toolkit
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/CryptX
+COMPONENT_CPAN_AUTHOR =		MIK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:bb84ac012438c7cecdb51a5a6fffb4f1fee3b0eae0022e96cebc2e167522621c
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/M/MI/MIK/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
