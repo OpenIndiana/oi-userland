@@ -310,11 +310,13 @@ if [[ -z "$LICENSE" ]] ; then
 		[[ -n "$COPYRIGHT" ]] && break
 		COPYRIGHT=$(gsed -e '0,/^# COPYRIGHT/d' -e '/^#/,$d' -e '/./,$!d' "$f" 2>/dev/null)
 		[[ -n "$COPYRIGHT" ]] && break
-		COPYRIGHT=$(gsed -e '0,/LICENSE/d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
+		COPYRIGHT=$(gsed -e '0,/LICENSE/d' -e '/^REPOSITORY/,$d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
 		[[ -n "$COPYRIGHT" ]] && break
 		COPYRIGHT=$(gsed -e '0,/COPYING/d' -e '/^BUGS/,$d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
 		[[ -n "$COPYRIGHT" ]] && break
 		COPYRIGHT=$(gsed -e '0,/COPYRIGHT/d' -e '/^AUTHOR/,$d' -e '/^SEE/,$d' -e '/./,$!d' "$f" 2>/dev/null)
+		[[ -n "$COPYRIGHT" ]] && break
+		COPYRIGHT=$(gsed -e '0,/^## Copyright/d' -e '/./,$!d' "$f" 2>/dev/null)
 		[[ -n "$COPYRIGHT" ]] && break
 	done
 	if [[ -z "$COPYRIGHT" ]] ; then
@@ -341,7 +343,7 @@ if [[ -z "$LICENSE" ]] ; then
 		printf "WARNING: No copyright notice found\n" >&2
 		> "$DISTRIBUTION.license"
 	else
-		(printf "%s\n\n" "$COPYRIGHT"
+		(printf "%s\n\n" "$COPYRIGHT" | dos2unix -ascii
 		i=75 ; while ((i)) ; do printf "=" ; i=$((i-1)) ; done
 		printf "\n\n") > "$DISTRIBUTION.license"
 	fi
