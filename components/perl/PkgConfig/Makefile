@@ -10,38 +10,28 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module PkgConfig
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		PkgConfig
+COMPONENT_PERL_MODULE =		PkgConfig
 HUMAN_VERSION =			0.25026
-COMPONENT_VERSION =		0.25
-COMPONENT_FMRI =		library/perl-5/pkgconfig
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PkgConfig - Pure-Perl Core-Only replacement for pkg-config
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/PkgConfig
+COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4dba5ed3c2d6a681b95c5ebf14b6a6995ce6991ae4719bad7f1aaf38e987c2a0
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Test results for this component omits the expected 'test_harness' pattern so add it
-COMPONENT_POST_TEST_ACTION += \
-	$(MV) $(COMPONENT_TEST_OUTPUT) $(COMPONENT_TEST_OUTPUT)-orig ; \
-	echo "\ntest_harness" > $(COMPONENT_TEST_OUTPUT) ; \
-	$(CAT) $(COMPONENT_TEST_OUTPUT)-orig >> $(COMPONENT_TEST_OUTPUT) ; \
-	$(RM) $(COMPONENT_TEST_OUTPUT)-orig ;
+# remove line with perl version
+COMPONENT_TEST_TRANSFORMS += '-e "/^Testing PkgConfig .*, Perl .*/d"'
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/perl-534
+PERL_REQUIRED_PACKAGES += runtime/perl
