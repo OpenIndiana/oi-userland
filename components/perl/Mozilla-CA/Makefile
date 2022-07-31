@@ -10,29 +10,24 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Mozilla::CA
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Mozilla-CA
+COMPONENT_PERL_MODULE =		Mozilla::CA
 HUMAN_VERSION =			20211001
-COMPONENT_VERSION =		2021.10.1
-COMPONENT_FMRI =		library/perl-5/mozilla-ca
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mozilla::CA - Mozilla's CA cert bundle in PEM format
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Mozilla::CA
+COMPONENT_CPAN_AUTHOR =		ABH
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:122c8900000a9d388aa8e44f911cab6c118fe8497417917a84a8ec183971b449
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/A/AB/ABH/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		MPL v2.0
+COMPONENT_LICENSE =		MPL-2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
