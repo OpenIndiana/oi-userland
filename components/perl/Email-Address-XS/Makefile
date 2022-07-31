@@ -10,33 +10,25 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Email::Address::XS
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Email-Address-XS
+COMPONENT_PERL_MODULE =		Email::Address::XS
 HUMAN_VERSION =			1.04
-COMPONENT_VERSION =		1.4
-COMPONENT_FMRI =		library/perl-5/email-address-xs
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::Address::XS - Parse and format RFC 5322 email addresses and groups
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Email::Address::XS
+COMPONENT_CPAN_AUTHOR =		PALI
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:995f6d04a7b487dd5e1b55e3b52cad84c87750937c96feb6e24e8f1f10cd593e
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/P/PA/PALI/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
