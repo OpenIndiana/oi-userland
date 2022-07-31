@@ -10,32 +10,27 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module List::MoreUtils::XS
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		List-MoreUtils-XS
-COMPONENT_VERSION =		0.430
-COMPONENT_FMRI =		library/perl-5/list-moreutils-xs
+COMPONENT_PERL_MODULE =		List::MoreUtils::XS
+HUMAN_VERSION =			0.430
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		List::MoreUtils::XS - Provide compiled List::MoreUtils functions
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/List::MoreUtils::XS
+COMPONENT_CPAN_AUTHOR =		REHSACK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:e8ce46d57c179eecd8758293e9400ff300aaf20fefe0a9d15b9fe2302b9cb242
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/R/RE/REHSACK/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Apache v2.0
+COMPONENT_LICENSE =		Apache-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
