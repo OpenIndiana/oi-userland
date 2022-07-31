@@ -10,30 +10,26 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Test::Differences
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Test-Differences
-COMPONENT_VERSION =		0.69
-COMPONENT_FMRI =		library/perl-5/test-differences
+COMPONENT_PERL_MODULE =		Test::Differences
+HUMAN_VERSION =			0.69
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Differences - Test strings and data structures and show differences if not ok
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Test::Differences
+COMPONENT_CPAN_AUTHOR =		DCANTRELL
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:18f644fdd4a1fef93ef3f7f67df8e95b593d811899f34bcbbaba4d717222f58f
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/D/DC/DCANTRELL/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/capture-tiny
-REQUIRED_PACKAGES += library/perl-5/text-diff
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/capture-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/text-diff
+PERL_REQUIRED_PACKAGES += runtime/perl
