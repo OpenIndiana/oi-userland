@@ -10,11 +10,11 @@
 #
 
 #
-# Copyright 2020 Rouven Weiler
-# Copyright (c) 2022 Tim Mooney.  All rights reserved
+# This file was automatically generated using perl-integrate-module
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -26,18 +26,10 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 link path=usr/bin/yapp target=../perl5/$(PERLVER)/bin/yapp \
     mediator=perl mediator-version=$(PERLVER)
 
-# force a dependency on the Perl runtime
-depend fmri=__TBD pkg.debug.depend.file=perl \
-	pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin type=require
-
-# force a dependency on the non-PLV version of this module
-depend type=require \
-	fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-
 file path=usr/perl5/$(PERLVER)/bin/yapp
 file path=usr/perl5/$(PERLVER)/man/man1/yapp.1
 file path=usr/perl5/$(PERLVER)/man/man3/Parse::Yapp.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Parse/Yapp/.packlist
 file path=usr/perl5/vendor_perl/$(PERLVER)/Parse/Yapp.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Parse/Yapp/Driver.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Parse/Yapp/Grammar.pm
@@ -45,4 +37,9 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/Parse/Yapp/Lalr.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Parse/Yapp/Options.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Parse/Yapp/Output.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Parse/Yapp/Parse.pm
-file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Parse/Yapp/.packlist
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
