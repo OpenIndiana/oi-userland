@@ -178,7 +178,7 @@ sed -i -e 's/sha256:TODO/sha256:'"$SHA256"'/g' Makefile
 
 # Unpack sources
 ! gmake prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
-SOURCE_DIR=$DISTRIBUTION-$VERSION
+SOURCE_DIR=$(gmake print-value-SOURCE_DIR)
 
 # Switch to modulebuild if needed
 [[ ! -f "$SOURCE_DIR/Makefile.PL" && -f "$SOURCE_DIR/Build.PL" ]] && sed -i -e 's/makemaker/modulebuild/g' Makefile
