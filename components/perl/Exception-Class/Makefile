@@ -10,30 +10,27 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Exception::Class
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Exception-Class
-COMPONENT_VERSION =		1.45
-COMPONENT_FMRI =		library/perl-5/exception-class
+COMPONENT_PERL_MODULE =		Exception::Class
+HUMAN_VERSION =			1.45
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Exception::Class - A module that allows you to declare real exception classes in Perl
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Exception::Class
+COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:5482a77ef027ca1f9f39e1f48c558356e954936fc8fbbdee6c811c512701b249
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/class-data-inheritable
-REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/class-data-inheritable
+PERL_REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
+PERL_REQUIRED_PACKAGES += runtime/perl
