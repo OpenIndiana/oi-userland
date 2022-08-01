@@ -10,28 +10,25 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Exporter::Tiny
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Exporter-Tiny
+COMPONENT_PERL_MODULE =		Exporter::Tiny
 HUMAN_VERSION =			1.002002
-COMPONENT_VERSION =		1.2.2
-COMPONENT_FMRI =		library/perl-5/exporter-tiny
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Exporter::Tiny - an exporter with the features of Sub::Exporter but only core dependencies
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Exporter::Tiny
+COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:00f0b95716b18157132c6c118ded8ba31392563d19e490433e9a65382e707101
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/T/TO/TOBYINK/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
