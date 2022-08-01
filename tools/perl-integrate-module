@@ -99,10 +99,11 @@ cd "$DIR"
 git restore --staged . > /dev/null 2>&1
 git checkout . > /dev/null 2>&1
 
-# Is this new module, or just a reboot?
+# Is this new module, or just a rebuild?
 NEW=1
 REBUILD=0
 PREV_VER=
+PREV_HVER=
 PREV_REV=0
 if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 	NEW=0
@@ -112,7 +113,8 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 
 	# If we were asked to do version upgrade, but we do not have new
 	# version, then we are done.
-	((UPGRADE_ONLY)) && [[ "$PREV_VER" == "$VERSION" ]] && exit 0
+	PREV_HVER=$(gmake print-value-HUMAN_VERSION 2>/dev/null)
+	((UPGRADE_ONLY)) && [[ "$PREV_HVER" == "$VERSION" ]] && exit 0
 
 	gmake clobber > /dev/null 2>&1
 fi
@@ -490,7 +492,9 @@ MSG=
 if ((NEW)) ; then
 	MSG="Add $MODULE perl module"
 else
-	((REBUILD)) || MSG="update to $VERSION"
+	if ((REBUILD == 0)) ; then
+		[[ "$PREV_HVER" != "$VERSION" ]] && MSG="update to $VERSION" || MSG="change version format"
+	fi
 
 	NV=
 	for v in $PERL_VERSIONS ; do
