@@ -1,0 +1,37 @@
+--- a/driver/Makefile.in.~6~	2017-10-06 09:21:27.619470801 +0000
++++ b/driver/Makefile.in	2017-10-06 09:22:34.765399528 +0000
+@@ -103,8 +103,8 @@
+ GTK_LOCK_SRCS	= lock-Gtk.c atoms.c remote.c
+ GTK_LOCK_OBJS	= lock-Gtk.o atoms.o remote.o
+ 
+-PWENT_SRCS	= passwd-pwent.c
+-PWENT_OBJS	= passwd-pwent.o
++PWENT_SRCS	= # passwd-pwent.c - Not used in Solaris builds
++PWENT_OBJS	= # passwd-pwent.o - Not used in Solaris builds
+ 
+ KERBEROS_SRCS	= passwd-kerberos.c
+ KERBEROS_OBJS	= passwd-kerberos.o
+--- a/driver/auth.h
++++ b/driver/auth.h
+@@ -75,9 +75,11 @@ extern void pam_try_unlock (saver_info *si, Bool verbose_p,
+ extern Bool ext_passwd_valid_p (void *closure, const char *plaintext);
+ #endif
+ 
++#ifndef __sun /* Only use PAM on Solaris, not direct getpwent */
+ extern Bool pwent_lock_init (void);
+ extern Bool pwent_priv_init (void);
+ extern Bool pwent_passwd_valid_p (void *closure, const char *plaintext);
++#endif
+ 
+ /* GUI conversation function to pass to xscreensaver_auth. */
+ extern Bool xscreensaver_auth_conv (void *closure,
+--- a/driver/passwd.c
++++ b/driver/passwd.c
+@@ -105,8 +107,10 @@ struct auth_methods methods[] = {
+ # ifdef PASSWD_HELPER_PROGRAM
+   { "EXT",   0, ext_priv_init, ext_passwd_valid_p, 0, },
+ # endif
++# ifndef __sun /* Only use PAM on Solaris, not direct getpwent */
+   { "pwnam", pwent_lock_init, pwent_priv_init, pwent_passwd_valid_p, 0, }
++# endif
+ };

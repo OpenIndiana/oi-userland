@@ -21,8 +21,8 @@ Upstream status unknown.
 
 diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
 index 3e1ff8a..0a0ccf8 100644
---- driver/XScreenSaver.ad.in
-+++ driver/XScreenSaver.ad.in
+--- a/driver/XScreenSaver.ad.in
++++ b/driver/XScreenSaver.ad.in
 @@ -33,6 +33,7 @@
  *cycle:			0:10:00
  *lockTimeout:		0:00:00
@@ -33,8 +33,8 @@ index 3e1ff8a..0a0ccf8 100644
  *dpmsStandby:		0:10:00
 diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
 index f6f9c19..e78c3ed 100644
---- driver/demo-Gtk.c
-+++ driver/demo-Gtk.c
+--- a/driver/demo-Gtk.c
++++ b/driver/demo-Gtk.c
 @@ -1576,6 +1576,8 @@ flush_dialog_changes_and_save (state *s)
  
    MINUTES  (&p2->timeout,         "timeout_spinbutton");
@@ -82,44 +82,10 @@ index f6f9c19..e78c3ed 100644
      SENSITIZE ("lock_button",     can_lock_p);
      SENSITIZE ("lock_spinbutton", can_lock_p && p->lock_p);
      SENSITIZE ("lock_mlabel",     can_lock_p && p->lock_p);
-@@ -3089,6 +3101,7 @@ fix_text_entry_sizes (state *s)
- # if 0   /* appears no longer necessary with Gtk 1.2.10 */
-   const char * const spinbuttons[] = {
-     "timeout_spinbutton", "cycle_spinbutton", "lock_spinbutton",
-+    "pwd_spinbutton", /* bugid 5077981 */
-     "dpms_standby_spinbutton", "dpms_suspend_spinbutton",
-     "dpms_off_spinbutton",
-     "-fade_spinbutton" };
-diff --git a/driver/lock.c b/driver/lock.c
-index a4114e2..abf86c0 100644
---- driver/lock.c
-+++ driver/lock.c
-@@ -1651,6 +1651,10 @@ update_passwd_window (saver_info *si, const char *printed_passwd, float ratio)
-       event.xclient.data.l[1] = 0;
-       event.xclient.data.l[2] = 0;
- 
-+      /* CR 5077981: option to disable unlock timer */
-+      if (! si->prefs.unlock_timeout_p)
-+        event.xclient.data.l[1] = 1;
-+
-       if (!safe_XSendEvent (si->dpy, si->passwd_dialog, False, 0L, &event))
-         fprintf (stderr, "%s: error sending ratio to lock dialog\n", blurb ());
-     }
-@@ -2358,6 +2362,10 @@ passwd_animate_timer (XtPointer closure, XtIntervalId *id)
- 
-   if (!pw) return;
- 
-+  /* CR 5077981: option to disable unlock timer */
-+  if (! si->prefs.unlock_timeout_p)
-+    return;
-+
- #ifdef HAVE_XSCREENSAVER_LOCK
-   /* We want to make sure dialog is up before we update countdown timer */
-   if (!si->passwd_dialog)
 diff --git a/driver/prefs.c b/driver/prefs.c
 index 55bac7b..52538a8 100644
---- driver/prefs.c
-+++ driver/prefs.c
+--- a/driver/prefsw.c
++++ b/driver/prefsw.c
 @@ -252,6 +252,7 @@ static const char * const prefs[] = {
    "lockVTs",			/* not saved */
    "lockTimeout",
@@ -144,13 +110,13 @@ index 55bac7b..52538a8 100644
    p->passwd_timeout  = 1000 * get_seconds_resource (dpy, "passwdTimeout", "Time");
 +  /* bugid 5077981 */
 +  p->unlock_timeout_p = get_boolean_resource (dpy, "passwdTimeoutEnabled", "Boolean");
-   p->pointer_timeout = 1000 * get_seconds_resource (dpy, "pointerPollTime", "Time");
    p->pointer_hysteresis = get_integer_resource (dpy, "pointerHysteresis","Integer");
-   p->notice_events_timeout = 1000*get_seconds_resource(dpy,
+ 
+   p->dpms_enabled_p  = get_boolean_resource (dpy, "dpmsEnabled", "Boolean");
 diff --git a/driver/types.h b/driver/types.h
 index c77ee3f..b428f73 100644
---- driver/types.h
-+++ driver/types.h
+--- a/driver/types.h
++++ b/driver/types.h
 @@ -97,6 +97,8 @@ struct saver_preferences {
    Bool xsync_p;			/* whether XSynchronize has been called */
  
@@ -162,8 +128,8 @@ index c77ee3f..b428f73 100644
    Bool unfade_p;		/* whether to fade from black, if possible */
 diff --git a/driver/xscreensaver-demo.ui.in b/driver/xscreensaver-demo.ui.in
 index c04a331..2281859 100644
---- driver/xscreensaver-demo.ui.in
-+++ driver/xscreensaver-demo.ui.in
+--- a/driver/xscreensaver.ui
++++ b/driver/xscreensaver.ui
 @@ -57,6 +57,14 @@
      <property name="page_size">0</property>
      <property name="value">0</property>
@@ -298,3 +264,39 @@ index c04a331..2281859 100644
 -- 
 2.7.4
 
+--- b/driver/dialog.c	Mon Feb 21 20:04:57 2022
++++ a/driver/dialog.c	Tue Aug  9 02:06:25 2022
+@@ -190,6 +190,7 @@
+ 
+   double start_time, end_time;
+   int passwd_timeout;
++  Bool unlock_timeout_p;
+ 
+   Bool show_stars_p; /* "I regret that I have but one asterisk for my country."
+                         -- Nathan Hale, 1776. */
+@@ -1032,6 +1033,7 @@
+   ws->date_format = get_str (ws, "dateFormat", "DateFormat"); 
+   ws->show_stars_p =
+     get_boolean_resource (ws->dpy, "passwd.asterisks", "Passwd.Boolean");
++  ws->unlock_timeout_p = get_boolean_resource(ws->dpy, "passwdTimeoutEnabled", "Boolean");
+ 
+   ws->passwd_timeout = get_seconds_resource (ws->dpy, "passwdTimeout", "Time");
+   if (ws->passwd_timeout <= 5) ws->passwd_timeout = 5;
+@@ -1644,7 +1646,7 @@
+                          (ws->button_font->ascent * 2));
+ 
+   /* The thermometer */
+-  if (ws->thermo_width)
++  if (ws->thermo_width && ws->unlock_timeout_p)
+     {
+       if (ws->auth_state != AUTH_NOTIFY)
+         {
+@@ -2249,7 +2251,7 @@
+   window_state *ws = (window_state *) closure;
+   int timeout = 1000/30;  /* FPS */
+   double now = double_time();
+-  if (now >= ws->end_time)
++  if (now >= ws->end_time && ws->unlock_timeout_p)
+     ws->auth_state = AUTH_TIME;
+   if (ws->timer) XtRemoveTimeOut (ws->timer);
+   ws->timer = XtAppAddTimeOut (ws->app, timeout, thermo_timer, (XtPointer) ws);
