@@ -10,47 +10,25 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
-# Copyright (c) 2022 Tim Mooney.  All rights reserved
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Module::Runtime
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Module-Runtime
+COMPONENT_PERL_MODULE =		Module::Runtime
 HUMAN_VERSION =			0.016
-COMPONENT_VERSION =		0.16
-COMPONENT_FMRI =		library/perl-5/module-runtime
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Module::Runtime - runtime module handling
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Module::Runtime
+COMPONENT_CPAN_AUTHOR =		ZEFRAM
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:68302ec646833547d410be28e09676db75006f4aa58a11f3bdb44ffe99f0f024
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/Z/ZE/ZEFRAM/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
-
-# until all perl modules have been rebuilt with 5.34, each module sets
-# this manually, before including common.mk
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# use the same results for comparison for all builds
-#
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-#
-# delete any lines up through test_harness
-# delete timings
-#
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "1,/test_harness/d"' \
-	'-e "s/,  *[0-9]* wallclock.*//"'
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/module-build
+PERL_REQUIRED_PACKAGES += runtime/perl
