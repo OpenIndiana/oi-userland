@@ -10,31 +10,27 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Test::Memory::Cycle
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Test-Memory-Cycle
+COMPONENT_PERL_MODULE =		Test::Memory::Cycle
 HUMAN_VERSION =			1.06
-COMPONENT_VERSION =		1.6
-COMPONENT_FMRI =		library/perl-5/test-memory-cycle
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Memory::Cycle - Check for memory leaks and circular memory references
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Test::Memory::Cycle
+COMPONENT_CPAN_AUTHOR =		PETDANCE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:9d53ddfdc964cd8454cb0da4c695b6a3ae47b45839291c34cb9d8d1cfaab3202
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/P/PE/PETDANCE/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/devel-cycle
-REQUIRED_PACKAGES += library/perl-5/padwalker
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/devel-cycle
+PERL_REQUIRED_PACKAGES += library/perl-5/padwalker
+PERL_REQUIRED_PACKAGES += runtime/perl
