@@ -10,28 +10,24 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module MIME::Types
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		MIME-Types
-COMPONENT_VERSION =		2.22
-COMPONENT_FMRI =		library/perl-5/mime-types
+COMPONENT_PERL_MODULE =		MIME::Types
+HUMAN_VERSION =			2.22
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		MIME::Types - Definition of MIME types
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/MIME::Types
+COMPONENT_CPAN_AUTHOR =		MARKOV
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:c2545eb30b094e942860ff8444f0f6cb54641caa8f7d386aaa2d925da4b02400
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/M/MA/MARKOV/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
