@@ -1,67 +1,33 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2022 Niklas Poslovski
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Date::Manip
 #
 
-BUILD_STYLE=makemaker
-BUILD_BITS=32_and_64
+BUILD_STYLE = makemaker
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		Date-Manip
-COMPONENT_VERSION=	6.86
-#COMPONENT_REVISION=	1
-COMPONENT_FMRI=		library/perl-5/date-manip
-COMPONENT_SUMMARY=	Date::Manip - Date manipulation routines
-COMPONENT_CLASSIFICATION=Development/Perl
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	https://metacpan.org/pod/Date::Manip
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:b5203782d03c79aa5822cf33d1828aaa3b4db93a275d4a428c89f56f4713361f
-COMPONENT_ARCHIVE_URL=	https://cpan.metacpan.org/authors/id/S/SB/SBECK/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	Artistic
-
-# until all perl modules have been rebuilt with 5.34, each module sets
-# this manually, before including common.mk
-PERL_VERSIONS = 5.22 5.24 5.34
-PERL_64_ONLY_VERSIONS = 5.24 5.34
+COMPONENT_PERL_MODULE =		Date::Manip
+HUMAN_VERSION =			6.88
+COMPONENT_SUMMARY =		Date::Manip - Date manipulation routines
+COMPONENT_CPAN_AUTHOR =		SBECK
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:a1251c039883ad6016b663e4edc9b173f78a6b7dca061b4f391e9dd30389a8c6
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# use the same results for comparison for all builds
-#
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-#
-# filter out all output up to and including the test_harness line
-# filter out timing information and anything else that varies between builds
-#
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "1,/test_harness/d"' \
-	'-e "s/,  *[0-9]* wallclock.*//"'
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
-REQUIRED_PACKAGES += runtime/perl-534
+PERL_REQUIRED_PACKAGES += library/perl-5/test-inter
+PERL_REQUIRED_PACKAGES += runtime/perl
