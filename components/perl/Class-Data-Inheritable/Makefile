@@ -10,29 +10,24 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Class::Data::Inheritable
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Class-Data-Inheritable
+COMPONENT_PERL_MODULE =		Class::Data::Inheritable
 HUMAN_VERSION =			0.09
-COMPONENT_VERSION =		0.9
-COMPONENT_FMRI =		library/perl-5/class-data-inheritable
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Class::Data::Inheritable - Inheritable, overridable class data
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Class::Data::Inheritable
+COMPONENT_CPAN_AUTHOR =		RSHERER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:44088d6e90712e187b8a5b050ca5b1c70efe2baa32ae123e9bd8f59f29f06e4d
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/R/RS/RSHERER/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
