@@ -10,30 +10,25 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module MailTools
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		MailTools
-COMPONENT_VERSION =		2.21
-COMPONENT_FMRI =		library/perl-5/mailtools
-COMPONENT_SUMMARY =		MailTools - bundle of ancient email modules
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/MailTools
+COMPONENT_PERL_MODULE =		MailTools
+HUMAN_VERSION =			2.21
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		MailTools - Various ancient e-mail related modules
+COMPONENT_CPAN_AUTHOR =		MARKOV
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4ad9bd6826b6f03a2727332466b1b7d29890c8d99a32b4b3b0a8d926ee1a44cb
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/M/MA/MARKOV/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-PERL_REQUIRED_PACKAGES += library/perl-5/timedate
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/timedate
+PERL_REQUIRED_PACKAGES += runtime/perl
