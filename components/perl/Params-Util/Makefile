@@ -10,33 +10,25 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Params::Util
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Params-Util
-HUMAN_VERSION =			1.07
-COMPONENT_VERSION =		1.7
-COMPONENT_FMRI =		library/perl-5/params-util
+COMPONENT_PERL_MODULE =		Params::Util
+HUMAN_VERSION =			1.102
 COMPONENT_SUMMARY =		Params::Util - Simple, compact and correct param-checking functions
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Params::Util
+COMPONENT_CPAN_AUTHOR =		REHSACK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:30f1ec3f2cf9ff66ae96f973333f23c5f558915bb6266881eac7423f52d7c76c
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/A/AD/ADAMK/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+	sha256:499bb1b482db24fda277a51525596ad092c2bd51dd508fa8fec2e9f849097402
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/test-leaktrace
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
