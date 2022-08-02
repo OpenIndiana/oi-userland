@@ -10,28 +10,25 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Email::MIME::ContentType
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Email-MIME-ContentType
-HUMAN_VERSION =			1.018
-COMPONENT_VERSION =		1.18
-COMPONENT_FMRI =		library/perl-5/email-mime-contenttype
-COMPONENT_SUMMARY =		Email::MIME::ContentType - Parse a MIME Content-Type Header
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Email::MIME::ContentType
+COMPONENT_PERL_MODULE =		Email::MIME::ContentType
+HUMAN_VERSION =			1.026
+COMPONENT_SUMMARY =		Email::MIME::ContentType - Parse and build a MIME Content-Type or Content-Disposition Header
+COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7508cd1227b8f150a403ca49658cb4a0892836dd8f01ff95f049957b2abf10f9
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/R/RJ/RJBS/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+	sha256:74491930b7a93b8e7fda812bf669eee66ec8b9519958e5b01dcf8ccf92a9507d
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/text-unidecode
+PERL_REQUIRED_PACKAGES += runtime/perl
