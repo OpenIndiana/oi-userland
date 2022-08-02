@@ -1,50 +1,27 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+#
+# Copyright 2022 <contributor>
+#
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=pkg.description value="This module provides ways to parse XML documents. It is built on top of XML::Parser::Expat."
-set name=com.oracle.info.description value="the XML::Parser Perl module"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-# requires LWP::UserAgent from libwww-perl
-depend type=require fmri=library/perl-5/libwww-perl-$(PLV)
-
-# force a dependency on the Perl runtime
-depend fmri=__TBD pkg.debug.depend.file=perl \
-	pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin type=require
-
-# Until there is consensus on whether having this package require
-# the non-PLV version of this  module, don\t enable this.
-# depend type=require \
-#	fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
 file path=usr/perl5/$(PERLVER)/man/man3/XML::Parser.3
 file path=usr/perl5/$(PERLVER)/man/man3/XML::Parser::Expat.3
@@ -59,6 +36,7 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/Parser/Encodings/REA
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/Parser/Encodings/big5.enc
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/Parser/Encodings/euc-kr.enc
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/Parser/Encodings/ibm866.enc
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/Parser/Encodings/iso-8859-15.enc
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/Parser/Encodings/iso-8859-2.enc
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/Parser/Encodings/iso-8859-3.enc
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/Parser/Encodings/iso-8859-4.enc
@@ -86,3 +64,11 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/Parser/Style/Subs.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/Parser/Style/Tree.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/XML/Parser/.packlist
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/XML/Parser/Expat/Expat.so
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/libwww-perl-$(PLV)
+#depend type=require fmri=pkg:/runtime/perl-$(PLV)
