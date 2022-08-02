@@ -10,33 +10,28 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Test::Most
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Test-Most
-COMPONENT_VERSION =		0.34
-COMPONENT_FMRI =		library/perl-5/test-most
+COMPONENT_PERL_MODULE =		Test::Most
+HUMAN_VERSION =			0.37
 COMPONENT_SUMMARY =		Test::Most - Most commonly needed test functions and features.
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Test::Most
+COMPONENT_CPAN_AUTHOR =		OVID
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c2820c8de65f5fa59f218ac2be9be98b22cc1bb1a1f371e04375aa3b6054e244
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/O/OV/OVID/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+	sha256:533370141eb9f18cf4ac380f6ded2ab57802a6e184008a80fd2304bfcc474fc7
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/exception-class
-REQUIRED_PACKAGES += library/perl-5/test-deep
-REQUIRED_PACKAGES += library/perl-5/test-differences
-REQUIRED_PACKAGES += library/perl-5/test-exception
-REQUIRED_PACKAGES += library/perl-5/test-warn
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/exception-class
+PERL_REQUIRED_PACKAGES += library/perl-5/test-deep
+PERL_REQUIRED_PACKAGES += library/perl-5/test-differences
+PERL_REQUIRED_PACKAGES += library/perl-5/test-exception
+PERL_REQUIRED_PACKAGES += library/perl-5/test-warn
+PERL_REQUIRED_PACKAGES += runtime/perl
