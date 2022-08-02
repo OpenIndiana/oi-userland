@@ -10,29 +10,26 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Email::MIME
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Email-MIME
-COMPONENT_VERSION =		1.945
-COMPONENT_FMRI =		library/perl-5/email-mime
+COMPONENT_PERL_MODULE =		Email::MIME
+HUMAN_VERSION =			1.952
 COMPONENT_SUMMARY =		Email::MIME - easy MIME message handling
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Email::MIME
+COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:64401b9b2cb5e1f769158ba6223ad3d4e5c5c17573d79e1c9410aaa907fc05ff
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/R/RJ/RJBS/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+	sha256:6a960bb83515db780281017db6e0458be0981d1e2e66e8688f82489b1dcbd28a
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/email-address-xs
 PERL_REQUIRED_PACKAGES += library/perl-5/email-messageid
 PERL_REQUIRED_PACKAGES += library/perl-5/email-mime-contenttype
@@ -40,5 +37,4 @@ PERL_REQUIRED_PACKAGES += library/perl-5/email-mime-encodings
 PERL_REQUIRED_PACKAGES += library/perl-5/email-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/mime-types
 PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
-
-# Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
