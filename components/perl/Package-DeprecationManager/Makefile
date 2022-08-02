@@ -10,34 +10,31 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Package::DeprecationManager
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Package-DeprecationManager
-COMPONENT_VERSION =		0.17
-COMPONENT_FMRI =		library/perl-5/package-deprecationmanager
+COMPONENT_PERL_MODULE =		Package::DeprecationManager
+HUMAN_VERSION =			0.17
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Package::DeprecationManager - Manage deprecation warnings for your distribution
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Package::DeprecationManager
+COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:1d743ada482b5c9871d894966e87d4c20edc96931bb949fb2638b000ddd6684b
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/package-stash
 PERL_REQUIRED_PACKAGES += library/perl-5/params-util
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-install
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-name
 PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
 PERL_REQUIRED_PACKAGES += library/perl-5/test-warnings
-
-# Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
