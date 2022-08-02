@@ -10,33 +10,29 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Throwable
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Throwable
+COMPONENT_PERL_MODULE =		Throwable
 HUMAN_VERSION =			1.000
-COMPONENT_VERSION =		1
-COMPONENT_FMRI =		library/perl-5/throwable
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Throwable - a role for classes that can be thrown
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Throwable
+COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:023aac67baad5b7bcdc08dc858ea5e6a8ddb0e291d15dd6d24818cdd702d318f
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/R/RJ/RJBS/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
-REQUIRED_PACKAGES += library/perl-5/module-runtime
-REQUIRED_PACKAGES += library/perl-5/moo
-REQUIRED_PACKAGES += library/perl-5/sub-quote
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
+PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
+PERL_REQUIRED_PACKAGES += library/perl-5/moo
+PERL_REQUIRED_PACKAGES += library/perl-5/sub-quote
+PERL_REQUIRED_PACKAGES += runtime/perl
