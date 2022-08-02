@@ -10,11 +10,11 @@
 #
 
 #
-# Copyright 2015 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
-# Copyright 2022 (c) Tim Mooney.  All rights reserved
+# Copyright 2022 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,18 +22,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-# force a dependency on the Perl runtime
-depend fmri=__TBD pkg.debug.depend.file=perl \
-	pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin type=require
-
-# Until there is consensus on whether having this package require
-# the non-PLV version of this  module, don\t enable this.
-# depend type=require \
-#	fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# DBD::SQLite needs DBI for the same version of perl
-depend fmri=library/perl-5/database-$(PLV) type=require
 
 file path=usr/perl5/$(PERLVER)/man/man3/DBD::SQLite.3
 file path=usr/perl5/$(PERLVER)/man/man3/DBD::SQLite::Constants.3
@@ -46,8 +34,20 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/Constants.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/Cookbook.pod
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/Fulltext_search.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/GetInfo.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/VirtualTable.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/VirtualTable/FileContent.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/VirtualTable/PerlData.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/DBD/SQLite/.packlist
 file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/DBD/SQLite/SQLite.so
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/share/dist/DBD-SQLite/sqlite3.c
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/share/dist/DBD-SQLite/sqlite3.h
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/share/dist/DBD-SQLite/sqlite3ext.h
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/dbi-$(PLV)@1.57
+#depend type=require fmri=pkg:/runtime/perl-$(PLV)
