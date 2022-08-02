@@ -1,17 +1,4 @@
-# $DBI::VERSION=removed for test uniformity
-# Compile Options:
-#   ENABLE_COLUMN_METADATA
-#   ENABLE_FTS3
-#   ENABLE_FTS3_PARENTHESIS
-#   ENABLE_FTS4
-#   ENABLE_FTS5
-#   ENABLE_JSON1
-#   ENABLE_RTREE
-#   ENABLE_STAT4
-#   SYSTEM_MALLOC
-#   THREADSAFE=0
 t/01_compile.t ........................................ ok
-# sqlite_version=removed for test uniformity
 t/02_logon.t .......................................... ok
 t/03_create_table.t ................................... ok
 t/04_insert.t ......................................... ok
@@ -21,6 +8,7 @@ t/07_error.t .......................................... ok
 t/08_busy.t ........................................... ok
 t/09_create_function.t ................................ ok
 t/10_create_aggregate.t ............................... ok
+t/11_get_info.t ....................................... ok
 t/12_unicode.t ........................................ ok
 t/13_create_collation.t ............................... ok
 t/14_progress_handler.t ............................... ok
@@ -51,7 +39,7 @@ t/39_foreign_keys.t ................................... ok
 t/40_multiple_statements.t ............................ ok
 t/41_placeholders.t ................................... ok
 t/42_primary_key_info.t ............................... ok
-t/43_fts3.t ........................................... skipped: FTS3 tokenizer is disabled for this DBD::SQLite
+t/43_fts3.t ........................................... ok
 t/44_rtree.t .......................................... ok
 t/45_savepoints.t ..................................... ok
 t/46_mod_perl.t ....................................... skipped: requires APR::Table
@@ -70,23 +58,16 @@ t/58_see_if_its_a_number_and_explicit_binding.t ....... ok
 t/59_extended_result_codes.t .......................... skipped: this test is for Win32 only
 t/60_readonly.t ....................................... ok
 t/61_strlike.t ........................................ ok
-Wide character (U+30C6) in pattern match (m//) at $(@D)/blib/lib/DBD/SQLite.pm line 187.
-Wide character (U+30B9) in pattern match (m//) at $(@D)/blib/lib/DBD/SQLite.pm line 187.
-Wide character (U+30C8) in pattern match (m//) at $(@D)/blib/lib/DBD/SQLite.pm line 187.
-Wide character (U+30C6) in pattern match (m//) at $(@D)/blib/lib/DBD/SQLite.pm line 187.
-Wide character (U+30F3) in pattern match (m//) at $(@D)/blib/lib/DBD/SQLite.pm line 187.
-Wide character (U+30C8) in pattern match (m//) at $(@D)/blib/lib/DBD/SQLite.pm line 187.
-Wide character (U+30C6) in pattern match (m//) at $(@D)/blib/lib/DBD/SQLite.pm line 187.
-Wide character (U+30B9) in pattern match (m//) at $(@D)/blib/lib/DBD/SQLite.pm line 187.
-Wide character (U+30C8) in pattern match (m//) at $(@D)/blib/lib/DBD/SQLite.pm line 187.
-Wide character (U+30C6) in pattern match (m//) at $(@D)/blib/lib/DBD/SQLite.pm line 187.
-Wide character (U+30F3) in pattern match (m//) at $(@D)/blib/lib/DBD/SQLite.pm line 187.
-Wide character (U+30C8) in pattern match (m//) at $(@D)/blib/lib/DBD/SQLite.pm line 187.
 t/62_regexp_multibyte_char_class.t .................... ok
+t/63_param_values.t ................................... ok
+t/64_limit.t .......................................... ok
+t/65_db_config.t ...................................... ok
+t/66_get_autocommit.t ................................. ok
 t/cookbook_variance.t ................................. ok
 t/rt_106151_outermost_savepoint.t ..................... ok
 t/rt_106950_extra_warnings_with_savepoints.t .......... ok
 t/rt_115465_column_info_with_spaces.t ................. ok
+t/rt_124227_index_regression.t ........................ ok
 t/rt_15186_prepcached.t ............................... ok
 t/rt_21406_auto_finish.t .............................. ok
 t/rt_25371_asymmetric_unicode.t ....................... ok
@@ -127,8 +108,9 @@ t/virtual_table/10_filecontent.t ...................... ok
 t/virtual_table/11_filecontent_fulltext.t ............. ok
 t/virtual_table/20_perldata.t ......................... ok
 t/virtual_table/21_perldata_charinfo.t ................ ok
+t/virtual_table/rt_124941.t ........................... ok
 t/virtual_table/rt_99748.t ............................ ok
+t/virtual_table/unknown_op.t .......................... ok
 All tests successful.
-Files=105, Tests=3548
+Files=113, Tests=3850
 Result: PASS
-make[1]: Leaving directory '$(@D)'
