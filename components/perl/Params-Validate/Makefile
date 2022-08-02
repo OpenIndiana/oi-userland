@@ -10,43 +10,30 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Params::Validate
 #
 
 BUILD_STYLE = modulebuild
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Params-Validate
-COMPONENT_VERSION =		1.30
-COMPONENT_FMRI =		library/perl-5/params-validate
+COMPONENT_PERL_MODULE =		Params::Validate
+HUMAN_VERSION =			1.30
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Params::Validate - Validate method/function parameters
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Params::Validate
+COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:9a3a35583d3125d07e8c802c1f92f5be7d526e76dd496e944da270b1e273d812
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-# Test results for this component omits the expected 'test_harness' pattern so add it
-COMPONENT_POST_TEST_ACTION += \
-	$(MV) $(COMPONENT_TEST_OUTPUT) $(COMPONENT_TEST_OUTPUT)-orig ; \
-	echo "\ntest_harness" > $(COMPONENT_TEST_OUTPUT) ; \
-	$(CAT) $(COMPONENT_TEST_OUTPUT)-orig >> $(COMPONENT_TEST_OUTPUT) ; \
-	$(RM) $(COMPONENT_TEST_OUTPUT)-orig ;
-
+# Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
 PERL_REQUIRED_PACKAGES += library/perl-5/module-implementation
 PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
 PERL_REQUIRED_PACKAGES += library/perl-5/test-requires
-
-# Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
