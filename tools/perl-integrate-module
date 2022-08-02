@@ -69,9 +69,15 @@ if (($? != 0)) || [[ -z "$DISTRIBUTION" || "$DISTRIBUTION" == "null" ]] ; then
 	exit 1
 fi
 if [[ "$DISTRIBUTION" != "${MODULE//::/-}" ]] then
-	printf "WARNING: Module %s does not match distribution %s\n" "$MODULE" "$DISTRIBUTION"
-	printf "WARNING: Continue with module %s instead of %s\n" "${DISTRIBUTION//-/::}" "$MODULE"
-	MODULE="${DISTRIBUTION//-/::}"
+	NEW_MODULE="${DISTRIBUTION//-/::}"
+	NEW_METACPAN_MODULE=$($CURL "$METACPANAPI/module/$NEW_MODULE")
+	NEW_DISTRIBUTION=$(printf "%s" "$NEW_METACPAN_MODULE" | /usr/bin/jq -r '.distribution')
+	if [[ "$NEW_DISTRIBUTION" == "$DISTRIBUTION" ]] ; then
+		printf "WARNING: Module %s does not match distribution %s\n" "$MODULE" "$DISTRIBUTION"
+		printf "WARNING: Continue with module %s instead of %s\n" "$NEW_MODULE" "$MODULE"
+		MODULE="$NEW_MODULE"
+		METACPAN_MODULE="$NEW_METACPAN_MODULE"
+	fi
 fi
 
 # Find the latest version if not provided by user
@@ -152,6 +158,9 @@ cat <<EOF
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		$MODULE
+EOF
+[[ "$DISTRIBUTION" != "${MODULE//::/-}" ]] && printf "COMPONENT_PERL_DISTRIBUTION =\t%s\n" "$DISTRIBUTION"
+cat <<EOF
 HUMAN_VERSION =			$VERSION
 COMPONENT_REVISION =		$((PREV_REV + 1))
 COMPONENT_SUMMARY =		$MODULE - TODO
