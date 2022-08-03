@@ -13,7 +13,8 @@
 # Copyright 2022 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,42 +23,25 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/perl5/5.22/man/man3/FCGI::Client.3
-file path=usr/perl5/5.22/man/man3/FCGI::Client::Connection.3
-file path=usr/perl5/5.22/man/man3/FCGI::Client::Constant.3
-file path=usr/perl5/5.22/man/man3/FCGI::Client::Record.3
-file path=usr/perl5/5.22/man/man3/FCGI::Client::RecordFactory.3
-file path=usr/perl5/5.22/man/man3/FCGI::Client::RecordHeader.3
-file path=usr/perl5/5.24/man/man3/FCGI::Client.3
-file path=usr/perl5/5.24/man/man3/FCGI::Client::Connection.3
-file path=usr/perl5/5.24/man/man3/FCGI::Client::Constant.3
-file path=usr/perl5/5.24/man/man3/FCGI::Client::Record.3
-file path=usr/perl5/5.24/man/man3/FCGI::Client::RecordFactory.3
-file path=usr/perl5/5.24/man/man3/FCGI::Client::RecordHeader.3
-file path=usr/perl5/5.34/man/man3/FCGI::Client.3
-file path=usr/perl5/5.34/man/man3/FCGI::Client::Connection.3
-file path=usr/perl5/5.34/man/man3/FCGI::Client::Constant.3
-file path=usr/perl5/5.34/man/man3/FCGI::Client::Record.3
-file path=usr/perl5/5.34/man/man3/FCGI::Client::RecordFactory.3
-file path=usr/perl5/5.34/man/man3/FCGI::Client::RecordHeader.3
-file path=usr/perl5/vendor_perl/5.22/FCGI/Client.pm
-file path=usr/perl5/vendor_perl/5.22/FCGI/Client/Connection.pm
-file path=usr/perl5/vendor_perl/5.22/FCGI/Client/Constant.pm
-file path=usr/perl5/vendor_perl/5.22/FCGI/Client/Record.pm
-file path=usr/perl5/vendor_perl/5.22/FCGI/Client/RecordFactory.pm
-file path=usr/perl5/vendor_perl/5.22/FCGI/Client/RecordHeader.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/auto/FCGI/Client/.packlist
-file path=usr/perl5/vendor_perl/5.24/FCGI/Client.pm
-file path=usr/perl5/vendor_perl/5.24/FCGI/Client/Connection.pm
-file path=usr/perl5/vendor_perl/5.24/FCGI/Client/Constant.pm
-file path=usr/perl5/vendor_perl/5.24/FCGI/Client/Record.pm
-file path=usr/perl5/vendor_perl/5.24/FCGI/Client/RecordFactory.pm
-file path=usr/perl5/vendor_perl/5.24/FCGI/Client/RecordHeader.pm
-file path=usr/perl5/vendor_perl/5.24/i86pc-solaris-thread-multi-64/auto/FCGI/Client/.packlist
-file path=usr/perl5/vendor_perl/5.34/FCGI/Client.pm
-file path=usr/perl5/vendor_perl/5.34/FCGI/Client/Connection.pm
-file path=usr/perl5/vendor_perl/5.34/FCGI/Client/Constant.pm
-file path=usr/perl5/vendor_perl/5.34/FCGI/Client/Record.pm
-file path=usr/perl5/vendor_perl/5.34/FCGI/Client/RecordFactory.pm
-file path=usr/perl5/vendor_perl/5.34/FCGI/Client/RecordHeader.pm
-file path=usr/perl5/vendor_perl/5.34/i86pc-solaris-thread-multi-64/auto/FCGI/Client/.packlist
+file path=usr/perl5/$(PERLVER)/man/man3/FCGI::Client.3
+file path=usr/perl5/$(PERLVER)/man/man3/FCGI::Client::Connection.3
+file path=usr/perl5/$(PERLVER)/man/man3/FCGI::Client::Constant.3
+file path=usr/perl5/$(PERLVER)/man/man3/FCGI::Client::Record.3
+file path=usr/perl5/$(PERLVER)/man/man3/FCGI::Client::RecordFactory.3
+file path=usr/perl5/$(PERLVER)/man/man3/FCGI::Client::RecordHeader.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/FCGI/Client/.packlist
+file path=usr/perl5/vendor_perl/$(PERLVER)/FCGI/Client.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/FCGI/Client/Connection.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/FCGI/Client/Constant.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/FCGI/Client/Record.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/FCGI/Client/RecordFactory.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/FCGI/Client/RecordHeader.pm
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/moo-$(PLV)@2
+depend type=require fmri=pkg:/library/perl-5/type-tiny-$(PLV)
+#depend type=require fmri=pkg:/runtime/perl-$(PLV)
