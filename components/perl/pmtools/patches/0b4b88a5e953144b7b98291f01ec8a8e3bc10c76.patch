@@ -1,0 +1,21 @@
+From 0b4b88a5e953144b7b98291f01ec8a8e3bc10c76 Mon Sep 17 00:00:00 2001
+From: Florian Helmberger <fh@25th-floor.com>
+Date: Wed, 27 Jun 2018 11:25:09 +0200
+Subject: [PATCH] Fix for issue #124784, formatting of perlfunc POD changed.
+
+---
+ t/pfcat.t | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/t/pfcat.t b/t/pfcat.t
+index 9112eda..37dd3ee 100644
+--- a/t/pfcat.t
++++ b/t/pfcat.t
+@@ -15,5 +15,5 @@ eval {
+     $output = `bin/pfcat seek 2>&1`;
+ };
+ 
+-is($?,        0,                                                     "pfcat runs");
+-like($output, qr/There is no .*systell.* function.\s+Use .*sysseek/, "catted module function");
++is($?,        0,                                                       "pfcat runs");
++like($output, qr/There is no .*systell.* function.\s+Use\s+.*sysseek/, "catted module function");
