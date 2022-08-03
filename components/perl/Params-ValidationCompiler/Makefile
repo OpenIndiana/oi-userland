@@ -10,40 +10,31 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Params::ValidationCompiler
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Params-ValidationCompiler
-COMPONENT_VERSION =		0.30
-COMPONENT_FMRI =		library/perl-5/params-validationcompiler
+COMPONENT_PERL_MODULE =		Params::ValidationCompiler
+HUMAN_VERSION =			0.30
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Params::ValidationCompiler - Build an optimized subroutine parameter validator once, use it forever
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Params::ValidationCompiler
+COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:dc5bee23383be42765073db284bed9fbd819d4705ad649c20b644452090d16cb
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
-
-# This package requires test2-plugin-nowarnings and test2-suite which are not available for perl 5.22 and 5.24
-# Remove this once both perl 5.22 and 5.24 are obsoleted
-PERL_VERSIONS = 5.34
-PERL_64_ONLY_VERSIONS = 5.34
+COMPONENT_LICENSE =		Artistic-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/eval-closure
 PERL_REQUIRED_PACKAGES += library/perl-5/exception-class
 PERL_REQUIRED_PACKAGES += library/perl-5/specio
 PERL_REQUIRED_PACKAGES += library/perl-5/test-without-module
 PERL_REQUIRED_PACKAGES += library/perl-5/test2-plugin-nowarnings
 PERL_REQUIRED_PACKAGES += library/perl-5/test2-suite
-
-# Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
