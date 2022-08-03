@@ -10,35 +10,29 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module FFI::CheckLib
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
+# With default "symlink" cloney mode tests fails
+# see https://github.com/PerlFFI/FFI-CheckLib/issues/43
+CLONEY_ARGS = CLONEY_MODE="hardlink"
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		FFI-CheckLib
-COMPONENT_VERSION =		0.28
-COMPONENT_FMRI =		library/perl-5/ffi-checklib
+COMPONENT_PERL_MODULE =		FFI::CheckLib
+HUMAN_VERSION =			0.28
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		FFI::CheckLib - Check that a library is available for FFI
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/FFI::CheckLib
+COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:cf377ce735b332c41f600ca6c5e87af30db6c3787f9b67d50a245d1ebe6fc350
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
-
-# This package requires test2-suite which is not available for perl 5.22 and 5.24
-# Remove this once both perl 5.22 and 5.24 are obsoleted
-PERL_VERSIONS = 5.34
-PERL_64_ONLY_VERSIONS = 5.34
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-PERL_REQUIRED_PACKAGES += library/perl-5/test2-suite
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/test2-suite
+PERL_REQUIRED_PACKAGES += runtime/perl
