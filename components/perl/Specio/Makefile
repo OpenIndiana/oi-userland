@@ -10,38 +10,33 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Specio
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Specio
-COMPONENT_VERSION =		0.47
-COMPONENT_FMRI =		library/perl-5/specio
+COMPONENT_PERL_MODULE =		Specio
+HUMAN_VERSION =			0.48
 COMPONENT_SUMMARY =		Specio - Type constraints and coercions for Perl
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Specio::Library::Builtins
+COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f41307f14444f8777e572f27eeb6a964084399e7e382c47c577827ad8a286a1c
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+	sha256:0c85793580f1274ef08173079131d101f77b22accea7afa8255202f0811682b2
+COMPONENT_LICENSE =		Artistic-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
-REQUIRED_PACKAGES += library/perl-5/eval-closure
-REQUIRED_PACKAGES += library/perl-5/module-runtime
-REQUIRED_PACKAGES += library/perl-5/mro-compat
-REQUIRED_PACKAGES += library/perl-5/role-tiny
-REQUIRED_PACKAGES += library/perl-5/sub-quote
-REQUIRED_PACKAGES += library/perl-5/test-fatal
-REQUIRED_PACKAGES += library/perl-5/test-needs
-REQUIRED_PACKAGES += library/perl-5/try-tiny
-REQUIRED_PACKAGES += library/perl-5/xstring
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
+PERL_REQUIRED_PACKAGES += library/perl-5/eval-closure
+PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
+PERL_REQUIRED_PACKAGES += library/perl-5/mro-compat
+PERL_REQUIRED_PACKAGES += library/perl-5/role-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/sub-quote
+PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
+PERL_REQUIRED_PACKAGES += library/perl-5/test-needs
+PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
+PERL_REQUIRED_PACKAGES += runtime/perl
