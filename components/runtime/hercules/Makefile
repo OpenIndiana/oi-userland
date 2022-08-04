@@ -14,11 +14,13 @@
 # Copyright 2019 Nona Hansel
 #
 
+BUILD_BITS = 32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hercules
 COMPONENT_VERSION=	3.13
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://hercules-390.eu
 COMPONENT_FMRI=		emulator/hercules
 COMPONENT_SRC=		hercules-$(COMPONENT_VERSION)
@@ -31,22 +33,13 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	The Hercules S/370, ESA/390, and z/Architecture Emulator
 COMPONENT_CLASSIFICATION=org.opensolaris.category.2008:System/Virtualization
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-ipv6
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
