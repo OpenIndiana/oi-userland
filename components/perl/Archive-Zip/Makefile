@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Archive::Zip
-HUMAN_VERSION =			1.46
+HUMAN_VERSION =			1.68
 COMPONENT_SUMMARY =		Archive::Zip - Provide an interface to ZIP archive files.
 COMPONENT_CPAN_AUTHOR =		PHRED
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6630ebeba753a7025126028eb290040ce44d86e8ced77017e31b75863348e524
+	sha256:984e185d785baf6129c6e75f8eb44411745ac00bf6122fb1c8e822a3861ec650
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
