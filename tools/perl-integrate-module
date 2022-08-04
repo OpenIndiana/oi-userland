@@ -186,6 +186,7 @@ USERLAND_ARCHIVES=$(gmake print-value-USERLAND_ARCHIVES)
 COMPONENT_ARCHIVE=$(gmake print-value-COMPONENT_ARCHIVE)
 SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES/$COMPONENT_ARCHIVE")
 sed -i -e 's/sha256:TODO/sha256:'"$SHA256"'/g' Makefile
+git add Makefile
 
 # Unpack sources
 ! gmake prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
