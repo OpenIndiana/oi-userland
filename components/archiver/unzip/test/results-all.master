@@ -1,0 +1,38 @@
+make[1]: Entering directory '$(@D)'
+#####  This is a Unix-specific target.  (Just so you know.)
+#####     Make sure unzip, funzip and unzipsfx are compiled and
+#####     in this directory.
+#####  testing extraction
+Archive:  testmake.zip
+  inflating: testmake.zipinfo        
+#####  testing zipinfo (unzip -Z)
+1,4c1,3
+< Archive:  testmake.zip
+< Zip file size: 527 bytes, number of entries: 2
+< -rw-a--     2.3 ntf      126 tx defX 98-Nov-19 22:46 notes
+< -rw-a--     2.3 ntf      236 tx defX 98-Nov-19 22:46 testmake.zipinfo
+---
+> Archive:  testmake.zip   527 bytes   2 files
+> -rw-a--     2.3 ntf      126 tx defX 19-Nov-98 22:46 notes
+> -rw-a--     2.3 ntf      236 tx defX 19-Nov-98 22:46 testmake.zipinfo
+#####  WARNING:  zipinfo output doesn't match stored version
+#####     (If the only difference is the file times, compare your
+#####      timezone with the Central European timezone, which is one
+#####      hour east of Greenwich but effectively 2 hours east
+#####      during summer Daylight Savings Time.  The upper two
+#####      lines should correspond to your local time when the
+#####      files were created, on 19 November 1998 at 10:46pm CET.
+#####      If the times are consistent, please ignore this warning.)
+#####  testing unzip -d exdir option
+Archive:  testmake.zip
+  inflating: testun/notes            
+This file is part of testmake.zip for UnZip 5.4 and
+later.  It has DOS/OS2/NT style CR-LF line-endings.
+It's pretty short.
+#####  testing unzip -o and funzip (ignore funzip warning)
+funzip warning: zipfile has more than one entry--rest ignored
+#####  testing unzipsfx (self-extractor)
+UnZipSFX 6.00 of 20 April 2009, by Info-ZIP (http://www.info-zip.org).
+  inflating: notes                   
+#####  testing complete.
+make[1]: Leaving directory '$(@D)'
