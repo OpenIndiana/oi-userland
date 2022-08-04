@@ -10,37 +10,30 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module XML::LibXML
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		XML-LibXML
-HUMAN_VERSION =			2.0134
-COMPONENT_VERSION =		2.1.34
-COMPONENT_FMRI =		library/perl-5/xml-libxml
-COMPONENT_SUMMARY =		XML::LibXML - Perl Binding for libxml2
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/XML::LibXML
+COMPONENT_PERL_MODULE =		XML::LibXML
+HUMAN_VERSION =			2.0207
+COMPONENT_SUMMARY =		XML::LibXML - Interface to Gnome libxml2 xml parsing and DOM library
+COMPONENT_CPAN_AUTHOR =		SHLOMIF
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f0bca4d0c2da35d879fee4cd13f352014186cedab27ab5e191f39b5d7d4f46cf
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+	sha256:903436c9859875bef5593243aae85ced329ad0fb4b57bbf45975e32547c50c15
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
+# Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/alien-build
+PERL_REQUIRED_PACKAGES += library/perl-5/alien-libxml2
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-namespacesupport
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-sax
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-sax-base
-
-# Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
