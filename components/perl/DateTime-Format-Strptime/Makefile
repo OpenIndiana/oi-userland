@@ -10,36 +10,32 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module DateTime::Format::Strptime
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		DateTime-Format-Strptime
-COMPONENT_VERSION =		1.70
-COMPONENT_FMRI =		library/perl-5/datetime-format-strptime
+COMPONENT_PERL_MODULE =		DateTime::Format::Strptime
+HUMAN_VERSION =			1.79
 COMPONENT_SUMMARY =		DateTime::Format::Strptime - Parse and format strp and strf time patterns
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/DateTime::Format::Strptime
+COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ceead46b714c6baea3250b987078771f1ffbe217b501d6fc91ff3c5f2afbbc67
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+	sha256:701e46802c86ed4d88695c1a6dacbbe90b3390beeb794f387e7c792300037579
+COMPONENT_LICENSE =		Artistic-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/datetime
 PERL_REQUIRED_PACKAGES += library/perl-5/datetime-locale
 PERL_REQUIRED_PACKAGES += library/perl-5/datetime-timezone
-PERL_REQUIRED_PACKAGES += library/perl-5/package-deprecationmanager
-PERL_REQUIRED_PACKAGES += library/perl-5/params-validate
+PERL_REQUIRED_PACKAGES += library/perl-5/params-validationcompiler
+PERL_REQUIRED_PACKAGES += library/perl-5/specio
 PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
 PERL_REQUIRED_PACKAGES += library/perl-5/test-warnings
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
-
-# Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
