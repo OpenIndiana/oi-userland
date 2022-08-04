@@ -13,11 +13,13 @@
 # Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
 #
 
+BUILD_BITS = 64_and_32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= cluster-glue
 COMPONENT_VERSION= 1.0.12
-COMPONENT_REVISION= 6
+COMPONENT_REVISION= 7
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_COMMIT= bdd95fd0f89f31b19fa46ffa0ea3f5022ebcd858
@@ -29,16 +31,11 @@ COMPONENT_ARCHIVE_URL=  https://github.com/ClusterLabs/cluster-glue/archive/$(CO
 COMPONENT_LICENSE= GPLv2, LGPLv2
 COMPONENT_SUMMARY= Cluster Glue is a set of libraries, tools and utilities suitable for the Heartbeat/Pacemaker cluster stack.
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL= 1
 
 CFLAGS += -lssp -lssp_nonshared
-
-CONFIGURE_BINDIR.64= $(CONFIGURE_PREFIX)/bin
-CONFIGURE_SBINDIR.64= $(CONFIGURE_PREFIX)/sbin
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/lib
@@ -62,29 +59,22 @@ COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 COMPONENT_POST_INSTALL_ACTION+= cd $(PROTO_DIR) &&  \
 	$(MV) usr/include/heartbeat/glue_config.h usr/include/heartbeat/glue_config-$(BITS).h
 
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(TEST_32_and_64)
-
 # Build dependencies
 REQUIRED_PACKAGES += text/asciidoc
+REQUIRED_PACKAGES += system/library/libnet
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += web/curl
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
