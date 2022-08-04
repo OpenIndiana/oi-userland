@@ -10,40 +10,36 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module DateTime
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		DateTime
-COMPONENT_VERSION =		1.32
-COMPONENT_FMRI =		library/perl-5/datetime
+COMPONENT_PERL_MODULE =		DateTime
+HUMAN_VERSION =			1.58
 COMPONENT_SUMMARY =		DateTime - A date and time object for Perl
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/DateTime
+COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9c7ace3201156a491b42de2d89e9fbb311d3be1ea940e7b348b7379ca6a56db8
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+	sha256:00ee2a99d1cf1ae022eaf06b2cde600313d92a069e7ef9258a455a932a5fd90b
+COMPONENT_LICENSE =		Artistic-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
+# Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/cpan-meta-check
 PERL_REQUIRED_PACKAGES += library/perl-5/datetime-locale
 PERL_REQUIRED_PACKAGES += library/perl-5/datetime-timezone
 PERL_REQUIRED_PACKAGES += library/perl-5/dist-checkconflicts
-PERL_REQUIRED_PACKAGES += library/perl-5/params-validate
+PERL_REQUIRED_PACKAGES += library/perl-5/namespace-autoclean
+PERL_REQUIRED_PACKAGES += library/perl-5/params-validationcompiler
+PERL_REQUIRED_PACKAGES += library/perl-5/specio
 PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
 PERL_REQUIRED_PACKAGES += library/perl-5/test-warnings
+PERL_REQUIRED_PACKAGES += library/perl-5/test-without-module
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
-
-# Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
