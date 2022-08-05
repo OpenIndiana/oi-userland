@@ -24,12 +24,12 @@
 # copyright (c) 2021, Tim Mooney.  All rights reserved.
 #
 
-BUILD_BITS=             64
 USE_OPENSSL11=          yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         stunnel
 COMPONENT_VERSION=      5.60
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY=	A TLS-encrypting socket wrapper
 COMPONENT_PROJECT_URL=  https://www.stunnel.org/
 COMPONENT_FMRI=		service/security/stunnel
@@ -44,7 +44,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # need /usr/perl5/bin on path to access pod2man perl script, used by 
 # the build to create docs. 
-# Perl 5.10 pod2man does not recognize "-u" argument.
 COMPONENT_BUILD_ENV +=  PATH=$(PERL5BINDIR):$(PATH)
 
 CPPFLAGS +=	"-DPIDFILE='\"/var/run/stunnel.pid\"'"
@@ -81,10 +80,10 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^summary: /p" '
 
 # ncat needed for test suite
-REQUIRED_PACKAGES += diagnostic/nmap-cli
+REQUIRED_PACKAGES += diagnostic/nmap
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl-11
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
