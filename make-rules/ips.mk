@@ -514,9 +514,12 @@ $(RESOLVE_DEPS):	Makefile $(BUILD_DIR) $(DEPENDED)
 	$(PKGMOGRIFY) $(WS_TRANSFORMS)/PRINT_COMPONENT_FMRIS $(DEPENDED) | \
 		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' ;) | sort -u >$@
 
+$(BUILD_DIR)/runtime-perl.p5m: $(WS_TOOLS)/runtime-perl.p5m
+	$(CP) $< $@
+
 # resolve the dependencies all at once
-$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS)
-	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED)
+$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(BUILD_DIR)/runtime-perl.p5m
+	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED) $(BUILD_DIR)/runtime-perl.p5m
 	$(TOUCH) $@
 
 # Set REQUIRED_PACKAGES macro substitution rules
