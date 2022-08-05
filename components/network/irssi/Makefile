@@ -15,12 +15,12 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS=			64
 USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		irssi
 COMPONENT_VERSION=	1.2.3
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY=	irssi - a terminal based IRC client
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_FMRI=		network/chat/irssi
@@ -31,9 +31,9 @@ COMPONENT_ARCHIVE_URL= https://github.com/irssi/irssi/releases/download/$(COMPON
 COMPONENT_PROJECT_URL=	https://irssi.org/
 COMPONENT_LICENSE=	GPLv2+
 
-include $(WS_MAKE_RULES)/common.mk
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
-PERL_VERSION=			5.24
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS +=	--with-perl=yes
 CONFIGURE_OPTIONS +=	--with-socks
@@ -50,12 +50,15 @@ COMPONENT_PRE_CONFIGURE_ACTION += $(CLONEY) $(SOURCE_DIR) $(@D)
 COMPONENT_POST_INSTALL_ACTION += ( for x in perllocal.pod .packlist '*.la' ; do find $(PROTO_DIR) -name $$x -exec rm -f {} \; ; done);
 COMPONENT_POST_INSTALL_ACTION += ( for x in COPYING AUTHORS ChangeLog ; do cp $(SOURCE_DIR)/$$x $(PROTOUSRSHAREDOCDIR)/irssi/$$x ; done );
 
+# PKGVERS is needed for manifest processing
+PKG_MACROS += PERLVER=$(PERL_VERSION)
+
 # Bogus dependency due to libssp
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/openssl-11
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library
