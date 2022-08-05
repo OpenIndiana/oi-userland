@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= patchutils
 COMPONENT_VERSION= 0.3.4
+COMPONENT_REVISION =	1
 COMPONENT_FMRI= text/patchutils
 COMPONENT_SUMMARY= patchutils - Tools for manipulating patch files
 COMPONENT_PROJECT_URL= http://cyberelk.net/tim/software/patchutils/
@@ -30,11 +31,9 @@ COMPONENT_ARCHIVE_URL= \
   http://cyberelk.net/tim/data/patchutils/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS +=	--with-patch=gpatch
 CONFIGURE_OPTIONS +=	--with-diff=gdiff
@@ -48,22 +47,8 @@ COMPONENT_TEST_ENV += PATH=$(PROTOUSRBINDIR):$(PATH)
 
 unexport SHELLOPTS
 
-COMPONENT_TEST_TRANSFORMS += \
- 	'-n ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/SKIP/p" ' \
-	'-e "/PASS/p" ' \
-	'-e "/FAIL/p" ' \
-	'-e "/ERROR/p" '
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(TEST_64)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
