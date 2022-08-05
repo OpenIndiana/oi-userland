@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		developer-opensolaris-X
-COMPONENT_VERSION=	1.0
+COMPONENT_VERSION=	2
 COMPONENT_SUMMARY=	Dependencies required to build the X Consolidation
 COMPONENT_CLASSIFICATION=	Meta Packages/Group Packages
 COMPONENT_FMRI=	developer/opensolaris/X
