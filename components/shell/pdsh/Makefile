@@ -14,12 +14,11 @@
 # Copyright 2020 Michal Nowak
 #
 
-BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdsh
 COMPONENT_VERSION=	2.34
+COMPONENT_REVISION =	1
 COMPONENT_FMRI=		shell/pdsh
 COMPONENT_SUMMARY=	Parallel distributed shell
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -31,6 +30,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/chaos/pdsh/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
+
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -45,17 +46,10 @@ CONFIGURE_OPTIONS += --with-rsh
 CONFIGURE_OPTIONS += --with-readline
 CONFIGURE_OPTIONS += --with-dshgroups
 
-COMPONENT_TEST_TRANSFORMS= \
-	'-n' \
-	'-e "/PASS/p"' \
-	'-e "/XPASS/p"' \
-	'-e "/FAIL/p"' \
-	'-e "/XFAIL/p"' \
-	'-e "/ERROR/p"' \
-	'-e "/SKIP/p"'
+COMPONENT_TEST_TRANSFORMS += '-e "/XFAIL:/p"'
+COMPONENT_TEST_TRANSFORMS += '-e "/XPASS:/p"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
