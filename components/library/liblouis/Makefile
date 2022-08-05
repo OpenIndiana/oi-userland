@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= liblouis
 COMPONENT_VERSION= 3.13.0
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY= Support for contracted braille
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -29,6 +30,8 @@ COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/liblouis
 COMPONENT_LICENSE = LGPLv3,GPLv3
 COMPONENT_LICENSE_FILE = liblouis.license
+
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -70,18 +73,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 # Needed for "gmake test" to work successfully.
 unexport SHELLOPTS
 
-# Share 32- and 64-bit test results
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-# Standard automake test framework results transform
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/TOTAL/p" ' \
-        '-e "/SKIP/p" ' \
-        '-e "/PASS/p" ' \
-        '-e "/FAIL/p" ' \
-        '-e "/ERROR/p" '
-
 # additional transforms for brltty
 COMPONENT_TEST_TRANSFORMS += \
         '-e "/^==*$$/p" ' \
@@ -91,7 +82,7 @@ COMPONENT_TEST_TRANSFORMS += \
 REQUIRED_PACKAGES += runtime/python-37
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libyaml
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
