@@ -24,17 +24,20 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
+BUILD_STYLE = justmake
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		convmv
-COMPONENT_VERSION=	2.05
-IPS_COMPONENT_VERSION=	2.5
+HUMAN_VERSION =		2.05
+COMPONENT_VERSION =	2.5
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY=	Filename Encoding Conversion Tool
 COMPONENT_DESCRIPTION=	Convmv helps convert a single filename,\
  a directory tree and the contained files or a whole filesystem\
  into a different encoding.
 COMPONENT_PROJECT_URL=	http://www.j3e.de/linux/convmv/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:53b6ac8ae4f9beaee5bc5628f6a5382bfd14f42a5bed3d881b829d7b52d81ca6
@@ -44,20 +47,14 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	GPL2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
-COMPONENT_TEST_TARGETS= test 
+COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TRANSFORMS += '-e "/^make\[/d"'			# delete make logs
+COMPONENT_TEST_TRANSFORMS += '-e "/^unimplemented function:/d"'	# delete lines changing with every run
+COMPONENT_TEST_TRANSFORMS += '-e "s/ in [0-9]* seconds//g"'	# delete timing info
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
-
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl
