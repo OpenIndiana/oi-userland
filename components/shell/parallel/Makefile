@@ -25,17 +25,16 @@
 # Copyright 2020, Nona Hansel
 #
 
-BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		parallel
-COMPONENT_VERSION=	20201122
+HUMAN_VERSION =		20201122
 # A leading "0." is included to make it easier to upgrade the package, should
 # the maintainers decide to go to a more standard version numbering system.
-IPS_COMPONENT_VERSION=  0.2020.11.22
+COMPONENT_VERSION =	0.2020.11.22
+COMPONENT_REVISION =	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/parallel/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:4da0bf42c466493b44dcbd8750e7bf99c31da4c701e8be272276c16ec4caff30
@@ -54,6 +53,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_BUILD_ENV +=    PATH="$(PATH):/usr/perl5/bin"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/which
 REQUIRED_PACKAGES += SUNWcs
