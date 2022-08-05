@@ -25,11 +25,11 @@
 # Copyright (c) 2021, Andreas Wacknitz
 #
 
-BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
 COMPONENT_VERSION=	4.2.8p15
+COMPONENT_REVISION =	1
 IPS_COMPONENT_VERSION=	$(subst p,.,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
@@ -46,7 +46,6 @@ PATCH_LEVEL = 0
 
 ASLR_MODE= $(ASLR_ENABLE)
 
-TEST_TARGET= build $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ARGS=
@@ -55,8 +54,8 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf --force --install )
 
 CFLAGS += -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
-CONFIGURE_BINDIR.64 = $(USRSBINDIR)
-CONFIGURE_SBINDIR.64 = $(USRSBINDIR)
+CONFIGURE_BINDIR = $(USRSBINDIR)
+CONFIGURE_SBINDIR = $(USRSBINDIR)
 
 CONFIGURE_OPTIONS +=	--with-binsubdir=sbin
 CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR)/inet
@@ -132,11 +131,12 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 	fi
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/network/dns/mdns
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
