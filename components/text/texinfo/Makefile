@@ -25,12 +25,11 @@
 # Copyright (c) 2021, Nona Hansel
 #
 
-BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		texinfo
 COMPONENT_VERSION=	6.8
+COMPONENT_REVISION =	1
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/texinfo/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -66,10 +65,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*: .*is up to date.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
-REQUIRED_PACKAGES += runtime/perl-522
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
