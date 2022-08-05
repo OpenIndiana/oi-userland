@@ -18,12 +18,11 @@
 # See  https://pari.math.u-bordeaux.fr
 #
 
-BUILD_BITS=64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pari
 COMPONENT_VERSION=	2.13.4
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY=	The PARI Computer Algebra System
 COMPONENT_PROJECT_URL=	https://pari.math.u-bordeaux.fr
 COMPONENT_FMRI=		library/math/pari
@@ -36,8 +35,6 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/pub/pari/unix/$(COMPONENT_ARCHIV
 
 COMPONENT_LICENSE=     	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
-
-TEST_TARGET= $(TEST_64)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -72,7 +69,7 @@ COMPONENT_TEST_TARGETS = test-all
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
