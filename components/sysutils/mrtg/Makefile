@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mrtg
 COMPONENT_VERSION= 2.17.8
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY= mrtg - The Multi Router Traffic Grapher
 COMPONENT_FMRI= diagnostic/mrtg
 COMPONENT_CLASSIFICATION= Applications/Internet
@@ -41,6 +42,6 @@ REQUIRED_PACKAGES += image/rrdtool
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gd
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
