@@ -13,7 +13,6 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
 
 include ../../../make-rules/shared-macros.mk
@@ -21,7 +20,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         tigervnc
 COMPONENT_VERSION=      1.8.0
-COMPONENT_REVISION=     6
+COMPONENT_REVISION=     7
 COMPONENT_SUMMARY=      TigerVNC X11/VNC server
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -211,7 +210,7 @@ REQUIRED_PACKAGES += library/fltk
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
