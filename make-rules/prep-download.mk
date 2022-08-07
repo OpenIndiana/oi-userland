@@ -46,6 +46,7 @@ FETCH_KEEP ?=
 
 # Template for download rules.
 define download-rules
+ifdef COMPONENT_ARCHIVE$(1)
 ifdef COMPONENT_ARCHIVE_URL$(1)
 
 ARCHIVES += $$(COMPONENT_ARCHIVE$(1))
@@ -56,9 +57,6 @@ fetch::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 
 download::	$$(USERLAND_ARCHIVES)
 download::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
-
-$$(USERLAND_ARCHIVES):
-	$$(MKDIR) $$(USERLAND_ARCHIVES)
 
 $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 	$$(FETCH) $$(FETCH_KEEP) --file $$@ \
@@ -71,7 +69,11 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 USERLAND_REQUIRED_PACKAGES += runtime/python-27
 
 endif
+endif
 endef
+
+$(USERLAND_ARCHIVES):
+	$(MKDIR) $(USERLAND_ARCHIVES)
 
 #
 # Define the rules required to download any source archives and augment any
