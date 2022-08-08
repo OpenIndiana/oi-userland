@@ -12,6 +12,8 @@
 # Copyright (c) 2014 Alexander Pyhalov. All rights reserved
 #
 
+BUILD_BITS = 32_and_64
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssl
@@ -26,9 +28,9 @@ COMPONENT_ARCHIVE_HASH=	\
     
 COMPONENT_ARCHIVE_URL=	https://www.openssl.org/source/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET = $(NO_TESTS)
+
+include $(WS_TOP)/make-rules/common.mk
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
 
@@ -83,12 +85,6 @@ COMPONENT_PRE_BUILD_ACTION = \
       $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]	$(@D)/crypto/engine; \
       $(LN) -fs $(COMPONENT_DIR)/engines/devcrypto/*.[ch]	$(@D)/engines; )
 
+COMPONENT_BUILD_ENV += PERL5LIB=.
 COMPONENT_BUILD_ARGS=
 COMPONENT_BUILD_TARGETS= depend all
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
