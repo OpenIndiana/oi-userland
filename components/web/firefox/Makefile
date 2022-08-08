@@ -19,13 +19,12 @@
 #
 
 BUILD_BITS = 64
-
 include ../../../make-rules/shared-macros.mk
 
 ESR = esr
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	102.0.1
+COMPONENT_VERSION =	102.1.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,7 +35,7 @@ else
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 COMPONENT_ARCHIVE_HASH= \
-	sha256:98cdfeaeb2c567dbe88300bdf4febc41b3a400f446a4bd5be99a1fd09ec5cb1a
+	sha256:637b6e727d1b815bbc6eb39aeb04c6e144056eeb3c628b298cb16deb3b579460
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
