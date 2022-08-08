@@ -22,24 +22,21 @@
 # Copyright 2019, Michal Nowak
 #
 
-<transform file path=etc/mutt/Muttrc$ -> default mode 0644>
-<transform file path=etc/mutt/Muttrc$ -> default preserve renamenew>
-<transform file path=etc/mutt/mime.types$ -> default mode 0644>
-<transform file path=etc/mutt/mime.types$ -> default preserve renamenew>
-
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
-set name=pkg.summary value="The Mutt E-Mail Client"
-set name=pkg.description \
-    value="Mutt is a small but very powerful text-based mail client for Unix operating systems."
-set name=com.oracle.info.description value="the Mutt email client"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Applications/Internet
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=etc/mutt/Muttrc$ -> default mode 0644>
+<transform file path=etc/mutt/Muttrc$ -> default preserve renamenew>
+<transform file path=etc/mutt/mime.types$ -> default mode 0644>
+<transform file path=etc/mutt/mime.types$ -> default preserve renamenew>
 
 file path=etc/mutt/Muttrc
 file path=etc/mutt/Muttrc.dist
