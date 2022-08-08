@@ -4,6 +4,7 @@ archive.archive_gis pass
 archive.archive_no_symlink pass
 archive.archive_plugin pass
 archive.discover_5438 pass
+archive.mysqlhotcopy_archive pass
 archive.partition_archive pass
 archive.repair pass
 binlog_encryption.binlog_mysqlbinlog-cp932 pass
@@ -27,13 +28,20 @@ binlog.binlog_format_switch_in_tmp_table 'mix' pass
 binlog.binlog_grant 'mix' pass
 binlog.binlog_implicit_commit 'innodb,mix' pass
 binlog.binlog_innodb 'innodb,mix' pass
+binlog.binlog_invalid_read_in_rotate 'disable_checksum,innodb,mix' pass
+binlog.binlog_invalid_read_in_rotate 'enable_checksum,innodb,mix' pass
 binlog.binlog_max_binlog_stmt_cache_size 'mix' pass
 binlog.binlog_mixed_cache_stat 'innodb,mix' pass
 binlog.binlog_mixed_load_data 'mix' pass
 binlog.binlog_mysqlbinlog-cp932 'mix' pass
 binlog.binlog_mysqlbinlog2 'mix' pass
 binlog.binlog_old_versions 'mix' pass
+binlog.binlog_parallel_replication_ddl 'mix' pass
+binlog.binlog_parallel_replication_marks_stm_mix 'innodb,mix' pass
 binlog.binlog_server_id 'mix' pass
+binlog.binlog_show_binlog_event_random_pos 'disable_checksum,innodb,mix' pass
+binlog.binlog_show_binlog_event_random_pos 'enable_checksum,innodb,mix' pass
+binlog.binlog_spurious_ddl_errors 'innodb,mix' pass
 binlog.binlog_sql_mode 'mix' pass
 binlog.binlog_start_comment 'mix' pass
 binlog.binlog_stm_binlog 'innodb,mix' pass
@@ -43,14 +51,19 @@ binlog.binlog_stm_drop_tbl 'mix' pass
 binlog.binlog_stm_drop_tmp_tbl 'innodb,mix' pass
 binlog.binlog_stm_insert_select 'mix' pass
 binlog.binlog_tmp_table 'mix' pass
+binlog.binlog_truncate_innodb 'innodb,mix' pass
 binlog.binlog_truncate_myisam 'mix' pass
 binlog.binlog_variables_log_bin 'mix' pass
 binlog.binlog_variables_log_bin_index 'mix' pass
 binlog.binlog_variables_relay_log 'mix' pass
 binlog.binlog_variables_relay_log_index 'mix' pass
+binlog.binlog_xa_handling 'innodb,mix' pass
 binlog.flashback 'innodb,mix' pass
+binlog.innodb_autoinc_lock_mode_binlog 'innodb,mix' pass
 binlog.read_only 'mix' pass
 binlog.temptable_uservar_disconnect-7938 'mix' pass
+compat/maxdb.type_timestamp pass
+compat/oracle.binlog_ptr_mysqlbinlog 'innodb' pass
 compat/oracle.column_compression 'innodb' pass
 compat/oracle.empty_string_literal pass
 compat/oracle.events pass
@@ -70,6 +83,7 @@ compat/oracle.information_schema_parameters pass
 compat/oracle.keywords pass
 compat/oracle.misc pass
 compat/oracle.mysqldump_restore pass
+compat/oracle.parser pass
 compat/oracle.ps pass
 compat/oracle.rpl_sp_package 'mix' pass
 compat/oracle.rpl_sp_package_variables 'mix' pass
@@ -99,6 +113,7 @@ compat/oracle.trigger pass
 compat/oracle.truncate pass
 compat/oracle.type_blob pass
 compat/oracle.type_clob pass
+compat/oracle.type_date pass
 compat/oracle.type_number pass
 compat/oracle.type_raw pass
 compat/oracle.type_varchar pass
@@ -109,6 +124,8 @@ compat/oracle.versioning pass
 compat/oracle.win pass
 connect.alter_xml2 pass
 connect.bin pass
+connect.bson pass
+connect.bson_udf pass
 connect.csv pass
 connect.datest pass
 connect.dbf pass
@@ -118,6 +135,7 @@ connect.fix pass
 connect.fmt pass
 connect.general pass
 connect.grant pass
+connect.grant2 pass
 connect.grant3 pass
 connect.index pass
 connect.infoschema2-9739 pass
@@ -125,6 +143,7 @@ connect.ini pass
 connect.ini_grant pass
 connect.json_udf pass
 connect.json_udf_bin pass
+connect.misc pass
 connect.mrr pass
 connect.mul pass
 connect.mul_new pass
@@ -137,6 +156,7 @@ connect.mysql_new pass
 connect.null pass
 connect.occur pass
 connect.odbc pass
+connect.rest pass
 connect.tbl pass
 connect.temporary pass
 connect.unsigned pass
@@ -154,12 +174,16 @@ connect.xml2_zip pass
 csv.csv pass
 csv.csv_alter_table pass
 csv.csv_not_null pass
+csv.read_only pass
 encryption.aria_tiny 'cbc' pass
 encryption.aria_tiny 'ctr' pass
 encryption.compressed_import_tablespace 'innodb' pass
 encryption.corrupted_during_recovery 'cbc,innodb' pass
 encryption.corrupted_during_recovery 'ctr,innodb' pass
 encryption.encryption_force 'innodb' pass
+encryption.encryption_key_corruption 'crc32,innodb' pass
+encryption.encryption_key_corruption 'innodb,innodb' pass
+encryption.encryption_key_corruption 'innodb,none' pass
 encryption.file_creation 'innodb' pass
 encryption.filekeys_emptyfile 'innodb' pass
 encryption.filekeys_encfile 'innodb' pass
@@ -171,6 +195,11 @@ encryption.filekeys_nofile 'innodb' pass
 encryption.filekeys_syntax 'innodb' pass
 encryption.filekeys_tooshort 'innodb' pass
 encryption.filekeys_unencfile 'innodb' pass
+encryption.innodb_encryption_is 'cbc,innodb' pass
+encryption.innodb_encryption_is 'ctr,innodb' pass
+encryption.innodb_import 'encryption,innodb' pass
+encryption.innodb_import 'innodb,page_compressed_encryption' pass
+encryption.innodb_import 'innodb,page_compressed' pass
 encryption.innodb_page_encryption_key_change 'cbc,innodb' pass
 encryption.innodb_page_encryption_key_change 'ctr,innodb' pass
 encryption.innodb-bad-key-change 'cbc,innodb' pass
@@ -196,11 +225,15 @@ encryption.innodb-key-rotation-disable 'cbc,innodb' pass
 encryption.innodb-key-rotation-disable 'ctr,innodb' pass
 encryption.innodb-page_encryption_compression 'cbc,innodb' pass
 encryption.innodb-page_encryption_compression 'ctr,innodb' pass
+encryption.innodb-redo-badkey 'cbc,innodb' pass
+encryption.innodb-redo-badkey 'ctr,innodb' pass
 encryption.innodb-redo-nokeys 'cbc,innodb' pass
 encryption.innodb-redo-nokeys 'ctr,innodb' pass
 encryption.innodb-scrub-log 'innodb' pass
 encryption.second_plugin-12863 'cbc,innodb' pass
 encryption.second_plugin-12863 'ctr,innodb' pass
+encryption.tempfiles_encrypted 'cbc,innodb' pass
+encryption.tempfiles_encrypted 'ctr,innodb' pass
 federated.assisted_discovery 'X' pass
 federated.error_on_close-8313 'old' pass
 federated.error_on_close-8313 'X' pass
@@ -216,6 +249,11 @@ federated.federated_bug_32426 'old' pass
 federated.federated_bug_32426 'X' pass
 federated.federated_maybe_16324629 'old' pass
 federated.federated_maybe_16324629 'X' pass
+federated.federatedx_versioning 'X,heap,innodb' pass
+federated.federatedx_versioning 'X,innodb,myisam' pass
+federated.federatedx_versioning 'X,innodb,timestamp' pass
+federated.federatedx_versioning 'X,innodb,traditional' pass
+federated.federatedx_versioning 'X,innodb,trx_id' pass
 federated.net_thd_crash-12725 'old' pass
 federated.net_thd_crash-12725 'X' pass
 federated.net_thd_crash-12951 'innodb,old' pass
@@ -329,6 +367,7 @@ gcol.gcol_blackhole pass
 gcol.gcol_blocked_sql_funcs_innodb 'innodb' pass
 gcol.gcol_blocked_sql_funcs_myisam pass
 gcol.gcol_bug20746926 pass
+gcol.gcol_bugfixes 'innodb' pass
 gcol.gcol_column_def_options_innodb 'innodb' pass
 gcol.gcol_column_def_options_myisam pass
 gcol.gcol_handler_innodb 'innodb' pass
@@ -389,21 +428,26 @@ innodb_fts.fulltext_multi 'innodb' pass
 innodb_fts.fulltext_order_by 'innodb' pass
 innodb_fts.fulltext_update 'innodb' pass
 innodb_fts.fulltext_var 'innodb' pass
-innodb_fts.fulltext2 'innodb' pass
 innodb_fts.fulltext3 'innodb' pass
 innodb_fts.innodb_ft_aux_table 'innodb' pass
 innodb_fts.innodb_fts_large_records 'innodb' pass
+innodb_fts.innodb_fts_misc 'innodb' pass
 innodb_fts.innodb_fts_misc_1 'innodb' pass
 innodb_fts.innodb_fts_multiple_index 'innodb' pass
 innodb_fts.innodb_fts_proximity 'innodb' pass
 innodb_fts.innodb_fts_transaction 'innodb' pass
+innodb_fts.innodb-fts-ddl 'innodb' pass
 innodb_fts.innodb-fts-fic 'innodb' pass
 innodb_fts.innodb-fts-stopword 'innodb' pass
+innodb_fts.stopword 'innodb' pass
 innodb_gis.0 'innodb' pass
 innodb_gis.1 'innodb' pass
+innodb_gis.bug16236208 'innodb' pass
 innodb_gis.bug17057168 'innodb' pass
 innodb_gis.create_spatial_index 'innodb' pass
+innodb_gis.geometry 'innodb' pass
 innodb_gis.gis 'innodb' pass
+innodb_gis.gis_split_inf 'innodb' pass
 innodb_gis.innodb_gis_rtree '16k,compact,innodb' pass
 innodb_gis.innodb_gis_rtree '16k,dynamic,innodb' pass
 innodb_gis.innodb_gis_rtree '16k,innodb,redundant' pass
@@ -425,13 +469,12 @@ innodb_gis.repeatable_spatial 'innodb' pass
 innodb_gis.rt_precise 'innodb' pass
 innodb_gis.rtree 'innodb' pass
 innodb_gis.rtree_add_index 'innodb' pass
+innodb_gis.rtree_multi_pk 'innodb' pass
 innodb_gis.rtree_search 'innodb' pass
+innodb_gis.rtree_temporary 'innodb' pass
 innodb_zip.bug36169 '16k,innodb' pass
 innodb_zip.bug36169 '4k,innodb' pass
 innodb_zip.bug36169 '8k,innodb' pass
-innodb_zip.bug36172 '16k,innodb' pass
-innodb_zip.bug36172 '4k,innodb' pass
-innodb_zip.bug36172 '8k,innodb' pass
 innodb_zip.bug52745 '16k,innodb' pass
 innodb_zip.bug52745 '4k,innodb' pass
 innodb_zip.bug52745 '8k,innodb' pass
@@ -458,12 +501,25 @@ innodb_zip.prefix_index_liftedlimit 'innodb' pass
 innodb_zip.restart '16k,innodb' pass
 innodb_zip.restart '4k,innodb' pass
 innodb_zip.restart '8k,innodb' pass
+innodb_zip.wl5522_zip '16k,innodb' pass
+innodb_zip.wl5522_zip '4k,innodb' pass
+innodb_zip.wl5522_zip '8k,innodb' pass
 innodb_zip.wl6344_compress_level '16k,innodb' pass
 innodb_zip.wl6344_compress_level '4k,innodb' pass
 innodb_zip.wl6344_compress_level '8k,innodb' pass
 innodb.add_constraint 'innodb' pass
+innodb.alter_algorithm 'COPY,innodb' pass
+innodb.alter_algorithm 'INPLACE,innodb' pass
+innodb.alter_algorithm 'INSTANT,innodb' pass
+innodb.alter_algorithm 'NOCOPY,innodb' pass
+innodb.alter_algorithm2 'innodb' pass
 innodb.alter_key_block_size-11757 'innodb' pass
 innodb.alter_kill 'innodb' pass
+innodb.alter_missing_tablespace '16k,innodb' pass
+innodb.alter_missing_tablespace '32k,innodb' pass
+innodb.alter_missing_tablespace '4k,innodb' pass
+innodb.alter_missing_tablespace '64k,innodb' pass
+innodb.alter_missing_tablespace '8k,innodb' pass
 innodb.alter_not_null 'COPY,NON-STRICT,innodb' pass
 innodb.alter_not_null 'COPY,STRICT,innodb' pass
 innodb.alter_not_null 'INPLACE,NON-STRICT,innodb' pass
@@ -473,20 +529,27 @@ innodb.alter_partitioned_xa 'innodb' pass
 innodb.alter_rename_existing 'innodb' pass
 innodb.alter_table 'innodb' pass
 innodb.alter_varchar_change 'innodb' pass
+innodb.analyze_table 'innodb' pass
 innodb.autoinc_persist 'innodb' pass
+innodb.blob_cmp_empty 'compact,innodb' pass
+innodb.blob_cmp_empty 'dynamic,innodb' pass
+innodb.blob_cmp_empty 'innodb,redundant' pass
 innodb.blob_unique2pk 'innodb' pass
 innodb.check_ibd_filesize '16k,innodb' pass
 innodb.check_ibd_filesize '32k,innodb' pass
 innodb.check_ibd_filesize '4k,innodb' pass
 innodb.check_ibd_filesize '64k,innodb' pass
 innodb.check_ibd_filesize '8k,innodb' pass
+innodb.corrupted_during_recovery 'innodb' pass
 innodb.count_distinct 'innodb' pass
 innodb.create_isl_with_direct 'innodb' pass
 innodb.create_select 'innodb' pass
 innodb.create-index 'innodb' pass
 innodb.data_types 'innodb' pass
 innodb.deadlock_detect 'innodb' pass
-innodb.default_row_format_alter 'innodb' pass
+innodb.default_row_format_alter 'compact,innodb' pass
+innodb.default_row_format_alter 'dynamic,innodb' pass
+innodb.default_row_format_alter 'innodb,redundant' pass
 innodb.default_row_format_compatibility 'innodb' pass
 innodb.default_row_format_create 'compact,innodb' pass
 innodb.default_row_format_create 'dynamic,innodb' pass
@@ -499,7 +562,10 @@ innodb.dml_purge '64k,innodb' pass
 innodb.dml_purge '8k,innodb' pass
 innodb.dropdb 'innodb' pass
 innodb.file_format_defaults 'innodb' pass
+innodb.foreign_key 'innodb' pass
 innodb.help_url 'innodb' pass
+innodb.implicit_gap_lock_convertion 'innodb' pass
+innodb.import_corrupted 'innodb' pass
 innodb.index_merge_threshold 'innodb' pass
 innodb.index_tree_operation 'innodb' pass
 innodb.information_schema_grants 'innodb' pass
@@ -507,9 +573,11 @@ innodb.innodb 'innodb' pass
 innodb.innodb_28867993 'innodb' pass
 innodb.innodb_autoinc_lock_mode_zero 'innodb' pass
 innodb.innodb_blob_truncate 'innodb' pass
+innodb.innodb_buffer_pool_load_now 'innodb' pass
 innodb.innodb_bug12661768 'innodb' pass
 innodb.innodb_bug12902967 'innodb' pass
 innodb.innodb_bug13510739 'innodb' pass
+innodb.innodb_bug14147491 'innodb' pass
 innodb.innodb_bug21704 'innodb' pass
 innodb.innodb_bug30919 'innodb' pass
 innodb.innodb_bug34300 'innodb' pass
@@ -551,7 +619,6 @@ innodb.innodb_bug59307 'innodb' pass
 innodb.innodb_bug59410 'innodb' pass
 innodb.innodb_bug59641 'innodb' pass
 innodb.innodb_bug59733 'innodb' pass
-innodb.innodb_bug60049 'innodb' pass
 innodb.innodb_bug60229 'innodb' pass
 innodb.innodb_bug68148 'innodb' pass
 innodb.innodb_bug84958 'innodb' pass
@@ -561,7 +628,9 @@ innodb.innodb_bulk_create_index_small '8k,innodb' pass
 innodb.innodb_ctype_big5 'innodb' pass
 innodb.innodb_ctype_latin1 'innodb' pass
 innodb.innodb_ctype_ldml 'innodb' pass
+innodb.innodb_ctype_tis620 'innodb' pass
 innodb.innodb_ctype_utf8 'innodb' pass
+innodb.innodb_defrag_stats 'innodb' pass
 innodb.innodb_defragment_small 'innodb' pass
 innodb.innodb_force_pk 'innodb' pass
 innodb.innodb_force_recovery 'innodb' pass
@@ -584,18 +653,21 @@ innodb.innodb_stats_fetch_corrupted 'innodb' pass
 innodb.innodb_stats_fetch_nonexistent 'innodb' pass
 innodb.innodb_stats_rename_table 'innodb' pass
 innodb.innodb_stats_rename_table_if_exists 'innodb' pass
+innodb.innodb_sys_var_valgrind 'innodb' pass
 innodb.innodb_timeout_rollback 'innodb' pass
 innodb.innodb_trx_weight 'innodb' pass
 innodb.innodb-16k 'innodb' pass
 innodb.innodb-32k 'innodb' pass
 innodb.innodb-64k 'innodb' pass
 innodb.innodb-agregate 'innodb' pass
+innodb.innodb-alter 'innodb' pass
 innodb.innodb-alter-autoinc 'innodb' pass
 innodb.innodb-alter-nullable '16k,innodb' pass
 innodb.innodb-alter-nullable '32k,innodb' pass
 innodb.innodb-alter-nullable '4k,innodb' pass
 innodb.innodb-alter-nullable '64k,innodb' pass
 innodb.innodb-alter-nullable '8k,innodb' pass
+innodb.innodb-alter-timestamp 'innodb' pass
 innodb.innodb-analyze 'innodb' pass
 innodb.innodb-autoinc 'innodb' pass
 innodb.innodb-autoinc-18274 'innodb' pass
@@ -603,6 +675,7 @@ innodb.innodb-autoinc-44030 'innodb' pass
 innodb.innodb-autoinc-56228 'innodb' pass
 innodb.innodb-autoinc-61209 'innodb' pass
 innodb.innodb-autoinc-optimize 'innodb' pass
+innodb.innodb-autoinc-part 'innodb' pass
 innodb.innodb-bug-14068765 'innodb' pass
 innodb.innodb-bug-14084530 'innodb' pass
 innodb.innodb-consistent 'innodb' pass
@@ -640,10 +713,17 @@ innodb.innodb-virtual-columns 'innodb' pass
 innodb.innodb-virtual-columns2 'innodb' pass
 innodb.innodb-wl5980-alter 'innodb' pass
 innodb.innodb-xa 'innodb' pass
+innodb.instant_alter '16k,innodb' pass
+innodb.instant_alter '32k,innodb' pass
+innodb.instant_alter '4k,innodb' pass
+innodb.instant_alter '64k,innodb' pass
+innodb.instant_alter '8k,innodb' pass
+innodb.instant_alter_bugs 'innodb' pass
 innodb.instant_alter_import 'innodb' pass
 innodb.instant_alter_rollback 'compact,innodb' pass
 innodb.instant_alter_rollback 'dynamic,innodb' pass
 innodb.instant_alter_rollback 'innodb,redundant' pass
+innodb.lock_delete_updated 'innodb' pass
 innodb.log_file 'innodb' pass
 innodb.max_record_size '16k,compact,innodb' pass
 innodb.max_record_size '16k,dynamic,innodb' pass
@@ -663,6 +743,10 @@ innodb.max_record_size '8k,innodb,redundant' pass
 innodb.mdev-117 'innodb' pass
 innodb.missing_tablespaces 'innodb' pass
 innodb.multi_repair-7404 'innodb' pass
+innodb.mvcc 'innodb' pass
+innodb.mvcc_secondary '16k,innodb' pass
+innodb.mvcc_secondary '4k,innodb' pass
+innodb.mvcc_secondary '8k,innodb' pass
 innodb.page_id_innochecksum 'innodb' pass
 innodb.purge 'innodb' pass
 innodb.readahead 'innodb' pass
@@ -673,14 +757,16 @@ innodb.restart '4k,innodb' pass
 innodb.restart '64k,innodb' pass
 innodb.restart '8k,innodb' pass
 innodb.row_lock 'innodb' pass
-innodb.row_size_error_log_warnings_3 'innodb' pass
+innodb.row_size_error_log_warnings_3 '16k,innodb' pass
+innodb.row_size_error_log_warnings_3 '4k,innodb' pass
+innodb.row_size_error_log_warnings_3 '8k,innodb' pass
+innodb.skip_symbolic_links 'innodb' pass
 innodb.stat_tables 'innodb' pass
 innodb.stored_fk 'innodb' pass
 innodb.strict_mode 'innodb' pass
 innodb.system_tables 'innodb' pass
 innodb.table_index_statistics 'innodb' pass
 innodb.temp_table 'innodb' pass
-innodb.temp_table_savepoint 'innodb' pass
 innodb.temporary_table_optimization 'innodb' pass
 innodb.tmpdir 'innodb' pass
 innodb.trigger 'innodb' pass
@@ -702,6 +788,7 @@ main.alter_table_errors 'innodb' pass
 main.alter_table_mdev539_maria pass
 main.alter_table_mdev539_myisam pass
 main.alter_table_online 'innodb' pass
+main.alter_user pass
 main.analyze pass
 main.analyze_format_json pass
 main.analyze_stmt pass
@@ -712,7 +799,6 @@ main.ansi pass
 main.assign_key_cache pass
 main.auth_rpl 'mix' pass
 main.auto_increment pass
-main.auto_increment_ranges_innodb 'innodb' pass
 main.auto_increment_ranges_myisam pass
 main.bad_frm_crash_5029 pass
 main.bench_count_distinct pass
@@ -723,6 +809,7 @@ main.blackhole pass
 main.blackhole_plugin pass
 main.bool pass
 main.bootstrap pass
+main.bootstrap_innodb 'innodb' pass
 main.bug12427262 pass
 main.bug13633383 pass
 main.bug39022 'innodb' pass
@@ -740,12 +827,14 @@ main.check_constraint pass
 main.check_constraint_innodb 'innodb' pass
 main.check_constraint_show pass
 main.client_xml pass
+main.column_compression 'innodb' pass
 main.column_compression_parts pass
 main.column_compression_rpl 'innodb,mix' pass
 main.column_compression_utf16 pass
 main.comment_column pass
 main.comment_column2 pass
 main.comment_index pass
+main.comment_table pass
 main.comments pass
 main.commit 'innodb' pass
 main.commit_1innodb 'innodb' pass
@@ -758,9 +847,10 @@ main.consistent_snapshot 'innodb' pass
 main.constraints pass
 main.contributors pass
 main.count_distinct pass
-main.create pass
+main.count_distinct2 pass
 main.create_drop_binlog pass
 main.create_drop_db pass
+main.create_drop_function pass
 main.create_drop_index pass
 main.create_drop_procedure pass
 main.create_drop_role pass
@@ -773,7 +863,7 @@ main.create_not_windows pass
 main.create_or_replace 'innodb' pass
 main.create_or_replace_permission pass
 main.create_replace_tmp pass
-main.create_select_tmp 'innodb' pass
+main.create_select 'innodb' pass
 main.create_user pass
 main.create_w_max_indexes_64 pass
 main.create-uca pass
@@ -781,10 +871,12 @@ main.cte_grant pass
 main.cte_recursive_not_embedded pass
 main.ctype_ascii pass
 main.ctype_big5 pass
+main.ctype_binary pass
 main.ctype_collate pass
 main.ctype_cp1250_ch pass
 main.ctype_cp1251 pass
 main.ctype_cp850 pass
+main.ctype_cp866 pass
 main.ctype_cp932 pass
 main.ctype_cp932_binlog_stm pass
 main.ctype_create pass
@@ -819,36 +911,46 @@ main.ctype_ucs2_uca pass
 main.ctype_ujis pass
 main.ctype_ujis_ucs2 pass
 main.ctype_utf16_def pass
+main.ctype_utf16_uca pass
+main.ctype_utf32 pass
+main.ctype_utf32_def pass
+main.ctype_utf32_innodb 'innodb' pass
 main.ctype_utf32_uca pass
+main.ctype_utf8 'innodb' pass
 main.ctype_utf8_def_upgrade pass
 main.ctype_utf8_uca pass
 main.ctype_utf8mb4_uca pass
+main.ctype_utf8mb4_unicode_ci_def pass
+main.custom_aggregate_functions pass
 main.custom_aggregates_i_s pass
 main.date_formats pass
 main.datetime_456 pass
 main.ddl_i18n_koi8r fail
 main.ddl_i18n_utf8 fail
 main.deadlock_innodb 'innodb' pass
-main.default pass
+main.default 'innodb' pass
+main.default_innodb 'innodb' pass
 main.default_session pass
 main.default_storage_engine pass
+main.delayed_blob pass
 main.delete pass
 main.delete_returning pass
 main.delete_returning_grant pass
 main.delimiter_command_case_sensitivity pass
 main.deprecated_features pass
 main.derived pass
+main.derived_opt pass
 main.derived_split_innodb 'innodb' pass
 main.derived_view pass
 main.drop pass
 main.drop-no_root pass
 main.empty_server_name-8224 pass
-main.empty_string_literal pass
 main.empty_table pass
 main.empty_user_table pass
 main.endspace 'innodb' pass
 main.enforce_storage_engine pass
 main.enforce_storage_engine_opt pass
+main.errors pass
 main.events_1 pass
 main.events_grant pass
 main.events_logs_tests pass
@@ -859,6 +961,7 @@ main.events_trans_notembedded 'innodb' pass
 main.except pass
 main.execution_constants pass
 main.explain pass
+main.explain_innodb 'innodb' pass
 main.explain_json pass
 main.explain_json_format_partitions pass
 main.explain_json_innodb 'innodb' pass
@@ -879,6 +982,7 @@ main.flush-innodb-notembedded 'innodb' pass
 main.flush2 pass
 main.foreign_key 'innodb' pass
 main.frm_bad_row_type-7333 pass
+main.fulltext pass
 main.fulltext_cache pass
 main.fulltext_charsets pass
 main.fulltext_derived_4257 pass
@@ -909,7 +1013,7 @@ main.func_if pass
 main.func_in pass
 main.func_int pass
 main.func_isnull pass
-main.func_like pass
+main.func_json pass
 main.func_misc pass
 main.func_op pass
 main.func_regexp pass
@@ -929,10 +1033,11 @@ main.function_defaults_innodb 'innodb' pass
 main.gcc296 pass
 main.get_diagnostics pass
 main.gis-alter_table_online 'innodb' pass
-main.gis-json pass
 main.gis-loaddata pass
 main.gis-precise pass
 main.gis-rt-precise pass
+main.gis-rtree pass
+main.grant pass
 main.grant_4332 pass
 main.grant_cache_no_prot pass
 main.grant_explain_non_select pass
@@ -941,6 +1046,7 @@ main.grant_not_windows pass
 main.grant2 pass
 main.grant3 pass
 main.grant4 pass
+main.grant5 pass
 main.greedy_optimizer pass
 main.group_by_innodb 'innodb' pass
 main.group_by_null pass
@@ -955,8 +1061,10 @@ main.implicit_char_to_num_conversion pass
 main.implicit_commit 'innodb' pass
 main.in_datetime_241 pass
 main.index_intersect pass
+main.index_merge_myisam pass
 main.information_schema_all_engines 'innodb' pass
 main.information_schema_chmod pass
+main.information_schema_columns pass
 main.information_schema_db pass
 main.information_schema_inno 'innodb' pass
 main.information_schema_parameters pass
@@ -964,6 +1072,7 @@ main.information_schema_part pass
 main.information_schema_prepare pass
 main.information_schema_routines pass
 main.information_schema_stats pass
+main.information_schema_tables pass
 main.information_schema2 pass
 main.init_connect pass
 main.init_connection_query_cache pass
@@ -971,10 +1080,14 @@ main.init_file pass
 main.init_file_longline_3816 pass
 main.init_file_set_password-7656 pass
 main.innodb_bug878769 'innodb' pass
-main.innodb_ext_key 'innodb' pass
+main.innodb_ext_key 'covering,innodb,off' pass
+main.innodb_ext_key 'covering,innodb,on' pass
+main.innodb_ext_key 'innodb,off,unoptimized' pass
+main.innodb_ext_key 'innodb,on,unoptimized' pass
 main.innodb_group 'innodb' pass
 main.innodb_icp 'innodb' pass
 main.innodb_ignore_builtin pass
+main.innodb_mysql_lock 'innodb' pass
 main.innodb_mysql_lock2 'innodb' pass
 main.innodb_utf8 'innodb' pass
 main.insert pass
@@ -990,12 +1103,15 @@ main.invisible_field_grant_system pass
 main.ipv4_and_ipv6 pass
 main.ipv4_as_ipv6 pass
 main.ipv6 pass
+main.join pass
 main.join_crash pass
 main.join_nested pass
 main.join_nested_jcl6 pass
 main.join_optimizer pass
+main.join_outer pass
 main.join_outer_innodb 'innodb' pass
 main.join_outer_jcl6 pass
+main.key pass
 main.key_cache pass
 main.key_diff pass
 main.key_primary pass
@@ -1007,16 +1123,19 @@ main.limit pass
 main.limit_rows_examined pass
 main.loaddata_autocom_innodb 'innodb' pass
 main.loadxml pass
+main.lock pass
+main.lock_kill 'innodb' pass
 main.lock_multi pass
 main.lock_multi_bug38499 pass
 main.lock_multi_bug38691 pass
-main.lock_tables_lost_commit 'innodb' pass
 main.locked_temporary-5955 'innodb' pass
 main.log_errchk pass
 main.log_state pass
 main.log_state_bug33693 pass
+main.log_tables pass
 main.log_tables_upgrade 'innodb' pass
 main.long_tmpdir pass
+main.lowercase_fs_off pass
 main.lowercase_mixed_tmpdir pass
 main.lowercase_table pass
 main.lowercase_table_grant pass
@@ -1026,7 +1145,9 @@ main.lowercase_utf8 pass
 main.lowercase_view pass
 main.mdev_14586 pass
 main.mdev_19276 pass
+main.mdev-21101 pass
 main.mdev13607 'innodb' pass
+main.mdev19198 pass
 main.mdev316 pass
 main.mdl 'innodb' pass
 main.merge_innodb 'innodb' pass
@@ -1037,11 +1158,11 @@ main.mix2_myisam_ucs2 pass
 main.mrr_derived_crash_4610 'innodb' pass
 main.mrr_icp_extra pass
 main.multi_statement pass
+main.multi_update pass
 main.multi_update_big pass
 main.multi_update_binlog pass
 main.multi_update_innodb 'innodb' pass
 main.multi_update_tiny_hash pass
-main.myisam pass
 main.myisam_enable_keys-10506 pass
 main.myisam_explain_non_select_all pass
 main.myisam_icp pass
@@ -1054,6 +1175,7 @@ main.myisam-system pass
 main.myisampack pass
 main.mysql pass
 main.mysql_binary_mode pass
+main.mysql_binary_zero_insert pass
 main.mysql_comments pass
 main.mysql_cp932 pass
 main.mysql_not_windows pass
@@ -1070,6 +1192,7 @@ main.mysqladmin pass
 main.mysqlbinlog_raw_mode pass
 main.mysqlcheck 'innodb' pass
 main.mysqld_help_crash-9183 pass
+main.mysqld--defaults-file pass
 main.mysqld--help 'unix' pass
 main.mysqldump_restore pass
 main.mysqldump-compat pass
@@ -1078,10 +1201,13 @@ main.mysqldump-max 'innodb' pass
 main.mysqldump-nl pass
 main.mysqldump-no-binlog pass
 main.mysqldump-utf8mb4 pass
+main.mysqlhotcopy_myisam pass
 main.mysqlshow pass
 main.mysqltest_256 pass
 main.mysqltest_cont_on_error pass
+main.mysqltest_tracking_info pass
 main.negation_elimination pass
+main.nested_profiling pass
 main.no_binlog pass
 main.no_password_column-mdev-11170 pass
 main.non_blocking_api pass
@@ -1103,8 +1229,9 @@ main.overflow pass
 main.packet pass
 main.parser_bug21114_innodb 'innodb' pass
 main.parser_not_embedded pass
-main.parser_precedence pass
 main.parser_stack pass
+main.partition pass
+main.partition_alter 'innodb' pass
 main.partition_binlog pass
 main.partition_blackhole pass
 main.partition_bug18198 pass
@@ -1121,6 +1248,7 @@ main.partition_disabled pass
 main.partition_error pass
 main.partition_example pass
 main.partition_exchange 'innodb' pass
+main.partition_explicit_prune 'innodb' pass
 main.partition_grant pass
 main.partition_hash pass
 main.partition_key_cache pass
@@ -1128,17 +1256,24 @@ main.partition_list pass
 main.partition_mgm pass
 main.partition_mgm_err pass
 main.partition_mgm_err2 pass
+main.partition_mrr_aria pass
+main.partition_mrr_innodb 'innodb' pass
+main.partition_mrr_myisam pass
 main.partition_myisam pass
 main.partition_not_blackhole pass
 main.partition_not_windows pass
+main.partition_open_files_limit pass
 main.partition_order pass
 main.partition_pruning pass
+main.partition_range pass
 main.partition_rename_longfilename pass
+main.partition_sp pass
 main.partition_symlink pass
 main.partition_truncate pass
 main.partition_ucs2 pass
 main.partition_utf8 pass
 main.perror pass
+main.plugin pass
 main.plugin_auth 'innodb' pass
 main.plugin_auth_qa pass
 main.plugin_auth_qa_1 pass
@@ -1151,6 +1286,7 @@ main.plugin_loaderr pass
 main.plugin_maturity pass
 main.plugin_not_embedded pass
 main.plugin_vars pass
+main.precedence_bugs pass
 main.preload pass
 main.prepare pass
 main.profiling pass
@@ -1165,7 +1301,6 @@ main.ps_5merge pass
 main.ps_change_master pass
 main.ps_ddl pass
 main.ps_ddl1 pass
-main.ps_error pass
 main.ps_grant pass
 main.ps_innodb 'innodb' pass
 main.ps_max_subselect-5113 pass
@@ -1184,6 +1319,7 @@ main.read_only_innodb 'innodb' pass
 main.rename pass
 main.renamedb pass
 main.reopen_temp_table 'innodb' pass
+main.repair pass
 main.repair_symlink-5543 pass
 main.replace pass
 main.reset_connection pass
@@ -1193,11 +1329,13 @@ main.row pass
 main.row-checksum 'innodb' pass
 main.row-checksum-old 'innodb' pass
 main.rowid_order_innodb 'innodb' pass
+main.rpl_mysql_upgrade_slave_repo_check 'innodb,mix' pass
 main.rpl_mysqldump_slave 'mix' pass
 main.schema pass
 main.second_frac-9175 pass
 main.select_found pass
 main.select_safe pass
+main.selectivity pass
 main.selectivity_no_engine pass
 main.servers pass
 main.set_password pass
@@ -1220,7 +1358,6 @@ main.signal_sqlmode pass
 main.simultaneous_assignment 'innodb' pass
 main.single_delete_update pass
 main.single_delete_update_innodb 'innodb' pass
-main.skip_grants pass
 main.skip_log_bin pass
 main.skip_name_resolve pass
 main.sp_gis pass
@@ -1231,25 +1368,29 @@ main.sp_trans_log 'innodb' pass
 main.sp-anchor-row-type-cursor pass
 main.sp-anchor-row-type-table pass
 main.sp-anchor-type pass
+main.sp-big pass
 main.sp-bugs pass
 main.sp-bugs2 pass
 main.sp-condition-handler pass
 main.sp-cursor pass
 main.sp-destruct pass
 main.sp-dynamic pass
+main.sp-error pass
 main.sp-expr pass
 main.sp-fib pass
 main.sp-for-loop pass
 main.sp-group 'innodb' pass
+main.sp-i_s_columns pass
 main.sp-innodb 'innodb' pass
 main.sp-lock pass
 main.sp-no-code pass
+main.sp-no-valgrind pass
 main.sp-prelocking pass
 main.sp-row pass
 main.sp-security-anchor-type pass
 main.sp-threads pass
-main.sp-ucs2 pass
 main.sp-vars pass
+main.sp2 pass
 main.sql_mode pass
 main.sql_safe_updates pass
 main.ssl_7937 'nossl' pass
@@ -1267,8 +1408,9 @@ main.ssl_system_ca 'good' pass
 main.ssl_timeout-9836 pass
 main.ssl_verify_ip pass
 main.stack-crash pass
-main.stat_tables pass
 main.stat_tables_disabled 'innodb' pass
+main.stat_tables_innodb 'innodb' pass
+main.stat_tables_partition pass
 main.statement-expr pass
 main.statistics 'innodb' pass
 main.statistics_close pass
@@ -1281,6 +1423,7 @@ main.strict_autoinc_1myisam pass
 main.strict_autoinc_2innodb 'innodb' pass
 main.strict_autoinc_3heap pass
 main.subselect_cache pass
+main.subselect_exists2in pass
 main.subselect_exists2in_costmat pass
 main.subselect_extra pass
 main.subselect_extra_no_semijoin pass
@@ -1323,6 +1466,7 @@ main.table_keyinfo-6838 pass
 main.table_options pass
 main.table_options-5867 pass
 main.tablelock pass
+main.temp_table 'innodb' pass
 main.temp_table_frm pass
 main.temporal_literal pass
 main.temporal_scale_4283 pass
@@ -1332,6 +1476,7 @@ main.timezone_grant pass
 main.timezone2 pass
 main.timezone4 pass
 main.tmp_table_count-7586 pass
+main.tmp_table_error 'innodb' pass
 main.trans_read_only pass
 main.transaction_timeout 'innodb' pass
 main.trigger pass
@@ -1343,10 +1488,13 @@ main.trigger-compat pass
 main.trigger-trans 'innodb' pass
 main.truncate pass
 main.truncate_badse pass
+main.truncate_notembedded pass
 main.truncate-stale-6500 'innodb' pass
 main.type_binary pass
 main.type_bit pass
 main.type_bit_innodb 'innodb' pass
+main.type_date pass
+main.type_datetime pass
 main.type_decimal pass
 main.type_enum pass
 main.type_int pass
@@ -1357,23 +1505,24 @@ main.type_num_innodb 'innodb' pass
 main.type_ranges pass
 main.type_set pass
 main.type_temporal_mysql56 pass
+main.type_time pass
 main.type_time_6065 pass
 main.type_time_hires 'innodb' pass
 main.type_timestamp pass
 main.type_timestamp_hires 'innodb' pass
 main.type_uint pass
 main.type_varchar pass
-main.type_year pass
+main.udf pass
 main.udf_notembedded pass
 main.udf_query_cache pass
 main.udf_skip_grants pass
+main.union_innodb 'innodb' pass
 main.unsafe_binlog_innodb 'innodb' pass
 main.update 'innodb' pass
 main.update_ignore_216 pass
 main.update_innodb 'innodb' pass
 main.update_use_source 'innodb' pass
 main.upgrade pass
-main.user_limits pass
 main.user_var pass
 main.user_var-binlog pass
 main.userstat-badlogin-4824 pass
@@ -1381,11 +1530,11 @@ main.varbinary pass
 main.variables pass
 main.variables_community pass
 main.variables-notembedded pass
-main.view pass
 main.view_alias pass
 main.view_grant pass
 main.warnings pass
 main.warnings_engine_disabled pass
+main.win pass
 main.win_as_arg_to_aggregate_func pass
 main.win_avg pass
 main.win_big pass
@@ -1399,6 +1548,7 @@ main.win_insert_select pass
 main.win_lead_lag pass
 main.win_min_max pass
 main.win_nth_value pass
+main.win_ntile pass
 main.win_orderby pass
 main.win_percent_cume pass
 main.win_percentile pass
@@ -1414,6 +1564,7 @@ maria.concurrent pass
 maria.create pass
 maria.distinct pass
 maria.dynamic pass
+maria.encrypt-no-key pass
 maria.encrypt-wrong-key pass
 maria.fulltext2 pass
 maria.group_commit pass
@@ -1448,7 +1599,7 @@ maria.temporary pass
 maria.truncate pass
 mariabackup.apply-log-only-incr 'innodb' pass
 mariabackup.backup_grants pass
-mariabackup.backup_ssl pass
+mariabackup.backup_lock_wait_timeout 'innodb' pass
 mariabackup.binlog 'innodb' pass
 mariabackup.encrypted_page_compressed pass
 mariabackup.encrypted_page_corruption '16k,innodb' pass
@@ -1458,14 +1609,18 @@ mariabackup.encrypted_page_corruption '64k,innodb' pass
 mariabackup.encrypted_page_corruption '8k,innodb' pass
 mariabackup.extra_lsndir pass
 mariabackup.extra_lsndir_stream pass
+mariabackup.innodb_force_recovery 'innodb' pass
 mariabackup.innodb_log_optimize_ddl 'innodb' pass
+mariabackup.innodb_xa_rollback 'innodb' pass
 mariabackup.mdev-18438 pass
 mariabackup.missing_ibd 'innodb' pass
 mariabackup.page_compression_level pass
 mariabackup.partial pass
 mariabackup.partition_datadir pass
 mariabackup.partition_partial pass
+mariabackup.rpl_slave_info 'mix' pass
 mariabackup.skip_innodb pass
+mariabackup.slave_info_norpl pass
 mariabackup.small_ibd '16k,innodb' pass
 mariabackup.small_ibd '32k,innodb' pass
 mariabackup.small_ibd '4k,innodb' pass
@@ -1486,6 +1641,8 @@ metadata_lock_info.user_lock pass
 multi_source.gtid_slave_pos 'innodb' pass
 multi_source.multi_parallel 'innodb' pass
 multi_source.relaylog_events pass
+multi_source.reset_slave pass
+multi_source.simple pass
 multi_source.skip_counter pass
 multi_source.syntax 'mix' pass
 optimizer_unfixed_bugs.bug41996-extra1 pass
@@ -1502,6 +1659,7 @@ parts.alter_data_directory_innodb 'innodb' pass
 parts.cache pass
 parts.fulltext pass
 parts.insert_ignore-5421 pass
+parts.longname 'innodb' pass
 parts.optimizer pass
 parts.part_blocked_sql_func_innodb 'innodb' pass
 parts.part_blocked_sql_func_myisam pass
@@ -1517,7 +1675,11 @@ parts.partition_alter2_1_myisam pass
 parts.partition_alter2_2_myisam pass
 parts.partition_alter3_innodb 'innodb' pass
 parts.partition_alter3_myisam pass
+parts.partition_auto_increment_blackhole pass
+parts.partition_auto_increment_innodb 'innodb' pass
 parts.partition_auto_increment_max pass
+parts.partition_auto_increment_memory pass
+parts.partition_auto_increment_myisam pass
 parts.partition_basic_myisam pass
 parts.partition_basic_symlink_innodb 'innodb' pass
 parts.partition_basic_symlink_myisam pass
@@ -1865,6 +2027,7 @@ roles.create_and_drop_role_invalid_user_table pass
 roles.current_role_view-12666 pass
 roles.default_create_user_not_role pass
 roles.definer pass
+roles.drop_current_role pass
 roles.drop_current_user-5176 pass
 roles.drop_routines pass
 roles.flush_roles-12366 pass
@@ -1890,6 +2053,7 @@ roles.rpl_grant_revoke_current_role-8638 'mix' pass
 roles.set_and_drop pass
 roles.set_default_role_clear pass
 roles.set_default_role_for pass
+roles.set_default_role_invalid pass
 roles.set_default_role_new_connection pass
 roles.set_default_role_ps-6960 pass
 roles.set_role-13655 pass
@@ -1910,6 +2074,7 @@ rpl.failed_create_view-6409 'mix' pass
 rpl.ignore_table_autoinc-9737 'mix' pass
 rpl.kill_hard-6290 'mix' pass
 rpl.mdev_17588 'innodb,mix' pass
+rpl.mdev_24667 'mix' pass
 rpl.rename 'mix' pass
 rpl.replace 'mix' pass
 rpl.rpl_000010 'mix' pass
@@ -1925,6 +2090,7 @@ rpl.rpl_auto_increment_11932 'mix' pass
 rpl.rpl_auto_increment_bug33029 'mix' pass
 rpl.rpl_autogen_query_multi_byte_char 'mix' pass
 rpl.rpl_binlog_compress 'mix' pass
+rpl.rpl_binlog_dump_slave_gtid_state_info 'innodb,mix' pass
 rpl.rpl_binlog_dup_entry 'mix' pass
 rpl.rpl_binlog_grant 'innodb,mix' pass
 rpl.rpl_bit 'mix' pass
@@ -1975,6 +2141,7 @@ rpl.rpl_foreign_key_innodb 'innodb,mix' pass
 rpl.rpl_free_items 'mix' pass
 rpl.rpl_function_defaults 'mix' pass
 rpl.rpl_grant 'mix' pass
+rpl.rpl_gtid_delete_domain 'mix' pass
 rpl.rpl_gtid_excess_initial_delay 'mix' pass
 rpl.rpl_gtid_master_promote 'innodb,mix' pass
 rpl.rpl_gtid_mdev4473 'innodb,mix' pass
@@ -1996,6 +2163,7 @@ rpl.rpl_ignore_table_update 'mix' pass
 rpl.rpl_init_slave 'mix' pass
 rpl.rpl_innodb_mixed_ddl 'innodb,mix' pass
 rpl.rpl_innodb_mixed_dml 'innodb,mix' pass
+rpl.rpl_iodku 'innodb,mix' pass
 rpl.rpl_ip_mix pass
 rpl.rpl_ip_mix2 pass
 rpl.rpl_ipv6 pass
@@ -2011,6 +2179,7 @@ rpl.rpl_locale 'mix' pass
 rpl.rpl_log_pos 'mix' pass
 rpl.rpl_manual_change_index_file 'mix' pass
 rpl.rpl_many_optimize 'mix' pass
+rpl.rpl_mark_optimize_tbl_ddl 'innodb,mix' pass
 rpl.rpl_master_pos_wait 'mix' pass
 rpl.rpl_mdev10863 'innodb,mix' pass
 rpl.rpl_mdev6386 'innodb,mix' pass
@@ -2051,10 +2220,10 @@ rpl.rpl_replicate_ignore_db 'mix' pass
 rpl.rpl_report 'mix' pass
 rpl.rpl_report_port 'mix' pass
 rpl.rpl_reset_slave_fail 'mix' pass
-rpl.rpl_rewrt_db 'mix' pass
 rpl.rpl_rotate_logs pass
 rpl.rpl_row_unsafe_funcs 'mix' pass
 rpl.rpl_savepoint 'innodb,mix' pass
+rpl.rpl_semi_sync 'innodb,mix' pass
 rpl.rpl_semi_sync_event 'innodb,mix' pass
 rpl.rpl_semi_sync_gtid_reconnect 'mix' pass
 rpl.rpl_semi_sync_wait_no_slave 'mix' pass
@@ -2067,14 +2236,16 @@ rpl.rpl_set_null_innodb 'innodb,mix' pass
 rpl.rpl_set_null_myisam 'mix' pass
 rpl.rpl_set_statement_default_master 'mix' pass
 rpl.rpl_skip_error 'innodb,mix' pass
+rpl.rpl_slave_grp_exec 'innodb,mix' pass
 rpl.rpl_slave_invalid_external_user 'mix' pass
 rpl.rpl_slave_load_in 'innodb,mix' pass
-rpl.rpl_slave_load_tmpdir_not_exist 'mix' pass
+rpl.rpl_slave_shutdown_mdev20821 'innodb,mix' pass
 rpl.rpl_slave_skip 'innodb,mix' pass
 rpl.rpl_slave_status 'mix' pass
 rpl.rpl_sp 'mix' pass
 rpl.rpl_sp_variables 'mix' pass
 rpl.rpl_sp004 'mix' pass
+rpl.rpl_spec_variables 'innodb,mix' pass
 rpl.rpl_special_charset 'mix' pass
 rpl.rpl_sporadic_master 'mix' pass
 rpl.rpl_ssl 'mix' pass
@@ -2087,6 +2258,7 @@ rpl.rpl_stm_lcase_tblnames 'innodb,mix' pass
 rpl.rpl_stm_maria 'mix' pass
 rpl.rpl_stm_max_relay_size 'mix' pass
 rpl.rpl_stm_mix_show_relaylog_events 'mix' pass
+rpl.rpl_stm_multi_query 'mix' pass
 rpl.rpl_stm_no_op 'mix' pass
 rpl.rpl_stm_reset_slave 'mix' pass
 rpl.rpl_stm_until 'mix' pass
@@ -2104,6 +2276,7 @@ rpl.rpl_temporal_format_mysql56_to_mariadb53 'mix' pass
 rpl.rpl_temporal_format_mysql56_to_mysql56 'mix' pass
 rpl.rpl_temporal_mysql56 'mix' pass
 rpl.rpl_temporal_mysql56_to_mariadb 'mix' pass
+rpl.rpl_temporal_mysql56_to_mariadb53 'mix' pass
 rpl.rpl_temporary 'mix' pass
 rpl.rpl_timezone 'mix' pass
 rpl.rpl_trunc_temp 'mix' pass
@@ -2117,12 +2290,15 @@ rpl.rpl_variables_stm 'mix' pass
 rpl.rpl_view 'mix' pass
 rpl.rpl_view_multi 'mix' pass
 rpl.semisync_future-7591 'mix' pass
+rpl.show_status_stop_slave_race-7126 'mix' pass
 sequence.group_by pass
 sql_discovery.simple pass
+sql_sequence.alter 'innodb' pass
 sql_sequence.alter_notembedded 'innodb' pass
 sql_sequence.aria pass
 sql_sequence.auto_increment pass
 sql_sequence.binlog pass
+sql_sequence.create 'innodb' pass
 sql_sequence.default pass
 sql_sequence.grant pass
 sql_sequence.lock 'innodb' pass
@@ -2131,6 +2307,7 @@ sql_sequence.next 'innodb' pass
 sql_sequence.other 'innodb' pass
 sql_sequence.partition pass
 sql_sequence.read_only 'innodb' pass
+sql_sequence.rebuild 'innodb' pass
 sql_sequence.rename pass
 sql_sequence.replication_mixed 'innodb,mix' pass
 sql_sequence.setval 'innodb' pass
@@ -2140,6 +2317,8 @@ stress.ddl_archive pass
 stress.ddl_csv pass
 stress.ddl_memory pass
 stress.ddl_myisam pass
+stress.misc pass
+sys_vars.alter_algorithm_basic pass
 sys_vars.aria_block_size_basic pass
 sys_vars.aria_checkpoint_interval_basic pass
 sys_vars.aria_checkpoint_log_activity_basic pass
@@ -2334,7 +2513,6 @@ sys_vars.innodb_defragment_frequency_basic 'innodb' pass
 sys_vars.innodb_defragment_n_pages_basic 'innodb' pass
 sys_vars.innodb_defragment_stats_accuracy_basic 'innodb' pass
 sys_vars.innodb_disable_sort_file_cache_basic 'innodb' pass
-sys_vars.innodb_disallow_writes_basic 'innodb' pass
 sys_vars.innodb_doublewrite_basic 'innodb' pass
 sys_vars.innodb_encrypt_log_basic 'innodb' pass
 sys_vars.innodb_encrypt_tables_basic 'innodb' pass
@@ -2371,6 +2549,7 @@ sys_vars.innodb_ft_total_cache_size_basic 'innodb' pass
 sys_vars.innodb_ft_user_stopword_table_basic 'innodb' pass
 sys_vars.innodb_idle_flush_pct_basic 'innodb' pass
 sys_vars.innodb_immediate_scrub_data_uncompressed_basic 'innodb' pass
+sys_vars.innodb_instant_alter_column_allowed_basic 'innodb' pass
 sys_vars.innodb_io_capacity_basic 'innodb' pass
 sys_vars.innodb_io_capacity_max_basic 'innodb' pass
 sys_vars.innodb_lock_wait_timeout_basic 'innodb' pass
@@ -2559,6 +2738,7 @@ sys_vars.open_files_limit_basic pass
 sys_vars.optimizer_prune_level_basic pass
 sys_vars.optimizer_search_depth_basic pass
 sys_vars.optimizer_selectivity_sampling_limit_basic pass
+sys_vars.optimizer_switch_basic pass
 sys_vars.optimizer_use_condition_selectivity_basic pass
 sys_vars.oqgraph_allow_create_integer_latch_basic pass
 sys_vars.performance_schema_basic pass
@@ -2644,6 +2824,7 @@ sys_vars.report_password_basic pass
 sys_vars.report_port_basic pass
 sys_vars.report_user_basic pass
 sys_vars.rowid_merge_buff_size_basic pass
+sys_vars.rpl_init_slave_func 'mix' pass
 sys_vars.rpl_max_binlog_size_func pass
 sys_vars.rpl_semi_sync_master_enabled_basic pass
 sys_vars.rpl_semi_sync_master_timeout_basic pass
@@ -2657,6 +2838,7 @@ sys_vars.secure_auth_func pass
 sys_vars.secure_file_priv pass
 sys_vars.secure_file_priv2 pass
 sys_vars.server_id_basic pass
+sys_vars.session_track_system_variables_basic pass
 sys_vars.show_vs_valstr pass
 sys_vars.skip_external_locking_basic pass
 sys_vars.skip_name_resolve_basic pass
@@ -2796,17 +2978,13 @@ sys_vars.wsrep_mysql_replication_bundle_basic pass
 sys_vars.wsrep_node_address_basic pass
 sys_vars.wsrep_node_incoming_address_basic pass
 sys_vars.wsrep_node_name_basic pass
-sys_vars.wsrep_notify_cmd_basic pass
 sys_vars.wsrep_on_basic pass
 sys_vars.wsrep_osu_method_basic pass
-sys_vars.wsrep_provider_basic pass
-sys_vars.wsrep_provider_options_basic pass
 sys_vars.wsrep_recover_basic pass
 sys_vars.wsrep_replicate_myisam_basic pass
 sys_vars.wsrep_restart_slave_basic pass
 sys_vars.wsrep_retry_autocommit_basic pass
 sys_vars.wsrep_slave_fk_checks_basic pass
-sys_vars.wsrep_slave_threads_basic pass
 sys_vars.wsrep_slave_uk_checks_basic pass
 sys_vars.wsrep_sst_auth_basic pass
 sys_vars.wsrep_sst_donor_basic pass
@@ -2820,7 +2998,7 @@ unit.base64 pass
 unit.bitmap pass
 unit.byte_order pass
 unit.conc_async pass
-unit.conc_charset fail
+unit.conc_charset pass
 unit.conc_conc336 pass
 unit.conc_connection pass
 unit.conc_cursor pass
@@ -2838,6 +3016,7 @@ unit.dbug pass
 unit.dynstring pass
 unit.ed25519 pass
 unit.explain_filename pass
+unit.innodb_fts pass
 unit.json_lib pass
 unit.lf pass
 unit.ma_control_file pass
@@ -2871,7 +3050,7 @@ unit.my_malloc pass
 unit.my_rdtsc pass
 unit.my_vsnprintf pass
 unit.no_plan pass
-unit.pfs pass
+unit.pfs fail
 unit.pfs_account-oom pass
 unit.pfs_host-oom pass
 unit.pfs_instr pass
@@ -2885,6 +3064,7 @@ unit.queues pass
 unit.simple pass
 unit.skip pass
 unit.skip_all pass
+unit.stacktrace pass
 unit.strings pass
 unit.test-connect pass
 unit.todo pass
@@ -2917,6 +3097,7 @@ vcol.vcol_handler_myisam pass
 vcol.vcol_ins_upd_innodb 'innodb' pass
 vcol.vcol_ins_upd_myisam pass
 vcol.vcol_keys_aria pass
+vcol.vcol_keys_myisam pass
 vcol.vcol_memory pass
 vcol.vcol_merge pass
 vcol.vcol_non_stored_columns_innodb 'innodb' pass
@@ -2934,17 +3115,84 @@ vcol.vcol_trigger_sp_myisam pass
 vcol.vcol_view_innodb 'innodb' pass
 vcol.vcol_view_myisam pass
 vcol.wrong_arena pass
+versioning.alter 'innodb' pass
+versioning.autoinc 'heap,innodb' pass
+versioning.autoinc 'innodb,myisam' pass
+versioning.autoinc 'innodb,timestamp' pass
+versioning.autoinc 'innodb,traditional' pass
+versioning.autoinc 'innodb,trx_id' pass
+versioning.commit_id 'innodb' pass
+versioning.create 'heap,innodb' pass
+versioning.create 'innodb,myisam' pass
+versioning.create 'innodb,timestamp' pass
+versioning.create 'innodb,traditional' pass
+versioning.create 'innodb,trx_id' pass
 versioning.cte 'innodb' pass
+versioning.delete 'heap,innodb' pass
+versioning.delete 'innodb,myisam' pass
+versioning.delete 'innodb,timestamp' pass
+versioning.delete 'innodb,traditional' pass
+versioning.delete 'innodb,trx_id' pass
+versioning.delete_history 'heap,innodb' pass
+versioning.delete_history 'innodb,myisam' pass
+versioning.delete_history 'innodb,timestamp' pass
+versioning.delete_history 'innodb,traditional' pass
+versioning.delete_history 'innodb,trx_id' pass
 versioning.derived pass
+versioning.foreign 'innodb,pk,timestamp' pass
+versioning.foreign 'innodb,pk,trx_id' pass
+versioning.foreign 'innodb,sec,timestamp' pass
+versioning.foreign 'innodb,sec,trx_id' pass
+versioning.foreign 'innodb,timestamp,unique' pass
+versioning.foreign 'innodb,trx_id,unique' pass
+versioning.insert 'heap,innodb' pass
+versioning.insert 'innodb,myisam' pass
+versioning.insert 'innodb,timestamp' pass
+versioning.insert 'innodb,traditional' pass
+versioning.insert 'innodb,trx_id' pass
 versioning.insert2 'innodb' pass
 versioning.load_data pass
+versioning.not_embedded 'innodb' pass
+versioning.online 'innodb,release,timestamp' pass
+versioning.online 'innodb,release,trx_id' pass
 versioning.optimized pass
+versioning.partition 'heap,innodb' pass
+versioning.partition 'innodb,myisam' pass
+versioning.partition 'innodb,timestamp' pass
+versioning.partition 'innodb,traditional' pass
+versioning.partition 'innodb,trx_id' pass
+versioning.partition_rotation pass
+versioning.replace 'heap,innodb,pk' pass
+versioning.replace 'heap,innodb,unique' pass
+versioning.replace 'innodb,myisam,pk' pass
+versioning.replace 'innodb,myisam,unique' pass
+versioning.replace 'innodb,pk,timestamp' pass
+versioning.replace 'innodb,pk,traditional' pass
+versioning.replace 'innodb,pk,trx_id' pass
+versioning.replace 'innodb,timestamp,unique' pass
+versioning.replace 'innodb,traditional,unique' pass
+versioning.replace 'innodb,trx_id,unique' pass
 versioning.rpl 'heap,innodb,mix' pass
 versioning.rpl 'innodb,mix,myisam' pass
 versioning.rpl 'innodb,mix,timestamp' pass
 versioning.rpl 'innodb,mix,traditional' pass
 versioning.rpl 'innodb,mix,trx_id' pass
 versioning.rpl_mix 'mix' pass
+versioning.select 'heap,innodb' pass
+versioning.select 'innodb,myisam' pass
+versioning.select 'innodb,timestamp' pass
+versioning.select 'innodb,traditional' pass
+versioning.select 'innodb,trx_id' pass
+versioning.select2 'heap,innodb' pass
+versioning.select2 'innodb,myisam' pass
+versioning.select2 'innodb,timestamp' pass
+versioning.select2 'innodb,traditional' pass
+versioning.select2 'innodb,trx_id' pass
 versioning.simple 'innodb' pass
-versioning.truncate_privilege 'innodb' pass
+versioning.sysvars pass
 versioning.trx_id 'innodb' pass
+versioning.view 'heap,innodb' pass
+versioning.view 'innodb,myisam' pass
+versioning.view 'innodb,timestamp' pass
+versioning.view 'innodb,traditional' pass
+versioning.view 'innodb,trx_id' pass
