@@ -31,10 +31,10 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	openssl
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
-# and IPS_COMPONENT_VERSION.
+# and HUMAN_VERSION.
 COMPONENT_VERSION =	1.0.2.21
 HUMAN_VERSION = 1.0.2u
-COMPONENT_REVISION=	8
+COMPONENT_REVISION=	9
 COMPONENT_FMRI =	library/security/openssl
 COMPONENT_SUMMARY =	OpenSSL - a Toolkit for Secure Sockets Layer (SSL v2/v3) and Transport Layer (TLS v1) protocols and general purpose cryptographic library
 COMPONENT_CLASSIFICATION = System/Security
@@ -197,5 +197,5 @@ test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += developer/build/makedepend
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
