@@ -21,28 +21,27 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019 Nona Hansel
 #
+
+BUILD_STYLE = justmake
+
 include ../../../make-rules/shared-macros.mk
-include ../../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 COMPONENT_NAME=		psutils
-COMPONENT_VERSION=	p17
-COMPONENT_REVISION=	2
+HUMAN_VERSION =		p17
+# At the homepage it is stated that development version is pre-2.0
+COMPONENT_VERSION =	1.17
+COMPONENT_REVISION =	3
 COMPONENT_PROJECT_URL=	http://knackered.knackered.org/angus/psutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3853eb79584ba8fbe27a815425b65a9f7f15b258e0d43a05a856bdb75d588ae4
 COMPONENT_ARCHIVE_URL= ftp://ftp.knackered.org/pub/psutils/$(COMPONENT_ARCHIVE)
 
+TEST_TARGET = $(NO_TESTS)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-# Can't use 'p17' since that is not accepted by pkg. And homepage
-# http://knackered.knackered.org/angus/psutils/ states that development version
-# is pre-2.0
-IPS_COMPONENT_VERSION=1.17
+include $(WS_MAKE_RULES)/common.mk
 
 # to stay compatible with nevada settings, letter is default paper size
 CFLAGS += -DPAPER=\\\"letter\\\" -DUNIX
@@ -51,7 +50,7 @@ COMPONENT_BUILD_ENV += CC=$(CC)
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CCFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV += INCLUDEDIR=$(PROTO_DIR)/usr/share/psutils
-COMPONENT_BUILD_ENV += PERL=$(PERL)
+COMPONENT_BUILD_ENV += PERL=/usr/bin/perl
 
 # slightly hacky, since COMPONENT_BUILD_TARGETS are just arguments passed to
 # make
@@ -68,16 +67,9 @@ COMPONENT_INSTALL_ENV += INSTALLMAN="$(INSTALL) -m 0444"
 # make
 COMPONENT_INSTALL_ARGS = -e -f Makefile.unix
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-$(INSTALL_32):	$(PROTOUSRSHAREMAN1DIR) $(PROTOUSRBIN)
-
-test:		$(NO_TESTS)
+$(INSTALL_$(MK_BITS)):	$(PROTOUSRSHAREMAN1DIR) $(PROTOUSRBINDIR)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
