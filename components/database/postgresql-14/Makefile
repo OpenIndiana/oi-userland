@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	14
 COMPONENT_MNR_VERSION=	4
+COMPONENT_REVISION =	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -90,8 +91,7 @@ CONFIGURE_OPTIONS.64 += --libdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/lib/$(MA
 CONFIGURE_OPTIONS+=$(CONFIGURE_OPTIONS.$(BITS))
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
-CONFIGURE_ENV.32 += PERL=$(PERL)
-CONFIGURE_ENV.64 += PERL=$(PERL.5.24)
+CONFIGURE_ENV += PERL=$(PERL)
 
 COMPONENT_BUILD_ENV += MAKELEVEL=0
 COMPONENT_BUILD_ENV += PATH=$(PATH)
@@ -118,21 +118,19 @@ COMPONENT_TEST_TRANSFORMS= \
 	'-e "/FAIL/p"' \
 	'-e "/failed/p"'
 
-# Manually added dependencies
-REQUIRED_PACKAGES += library/libxslt
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
-#REQUIRED_PACKAGES += database/postgres-14/library
+PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += database/postgres-common
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
