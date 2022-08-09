@@ -18,9 +18,10 @@ BUILD_STYLE=		cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.7.33-36
-IPS_COMPONENT_VERSION=	5.7.33.36
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+HUMAN_VERSION =		5.7.33-36
+COMPONENT_VERSION =	5.7.33.36
+COMPONENT_REVISION =	1
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://www.percona.com/
 COMPONENT_ARCHIVE_HASH=	sha256:964e32f4a1e235421e26be81d2d24f9e659d8ef3cbd9ae6c3e85fe545bedfd5b
@@ -72,19 +73,17 @@ COMPONENT_POST_CMAKE_ACTION.64= find $(@D) -type f -name link.txt \
     -exec perl -pi -e 's/gcc\ \ -fPIC/\/gcc\ -m64\ -fPIC/' {} \;
 COMPONENT_POST_CMAKE_ACTION=$(COMPONENT_POST_CMAKE_ACTION.$(BITS))
 
-REQUIRED_PACKAGES += runtime/perl-522
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += SUNWcs
 #REQUIRED_PACKAGES += database/percona-server-57/client
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libsasl
