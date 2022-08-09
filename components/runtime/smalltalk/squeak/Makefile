@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020, 2021 David Stes
+# Copyright 2020, 2021, 2022 David Stes
 #
 
 
@@ -54,16 +54,15 @@ include ../../../../make-rules/shared-macros.mk
 # it cannot be changed here randomly, it must match the VMMaker version
 
 COMPONENT_NAME=		squeak
-COMPONENT_VERSION=	4.19.9
-COMPONENT_REVISION=	8
+COMPONENT_VERSION=	4.19.15
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/smalltalk/squeak
 COMPONENT_CLASSIFICATION=	Development/Smalltalk
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=                3816
-SVN_HASH=  sha256:837f183984a02e7ffb30f881680bb070ae93b3e78c2a074e1349d0f39c342b91
+SVN_REV=                3818
+SVN_HASH=  sha256:80e439c82e14b84dcb64d933f34bf2bbda6bb292c085ba34dfd4364175835bd8
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -176,4 +175,3 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxrender
-
