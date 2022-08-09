@@ -28,13 +28,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		a2ps
 COMPONENT_VERSION=	4.14
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/a2ps/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f3ae8d3d4564a41b6e2a21f237d2f2b104f48108591e8b83497500182a3ab3a4
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/a2ps/$(COMPONENT_ARCHIVE)
+
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -51,6 +53,8 @@ CONFIGURE_OPTIONS  +=		--with-medium=letter
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; ln -s $(SOURCE_DIR)/auxdir/mkinstalldirs)
 COMPONENT_POST_CONFIGURE_ACTION = \
+	(cd $(@D)/contrib ; \
+	 ln -s $(SOURCE_DIR)/contrib/shell.m4) ; \
 	(cd $(@D)/doc ; \
 	 ln -s $(SOURCE_DIR)/doc/make-authors.pl ; \
 	 ln -s $(SOURCE_DIR)/doc/translators.txt) ; \
@@ -66,8 +70,8 @@ ASLR_MODE = $(ASLR_ENABLE)
 REQUIRED_PACKAGES += developer/gperf 
 REQUIRED_PACKAGES += editor/gnu-emacs
 
-# Auto-generated
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
