@@ -12,11 +12,14 @@
 # Copyright 2017 Adam Stevko
 #
 
+BUILD_STYLE = archive
+BUILD_BITS = NO_ARCH
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkgtree
 COMPONENT_VERSION=	1.1
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	https://github.com/msmark/pkgtree
 COMPONENT_FMRI=		developer/pkgtree
 COMPONENT_CLASSIFICATION= System/Packaging
@@ -24,19 +27,22 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/msmark/pkgtree/archive/v1.1.tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:910e5dfc2e504ae48e2e125797cf6621b3b372a58e06f2fe8bb42657a0f8a238
-COMPONENT_LICENSE=	Apache 2.0 license
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+COMPONENT_LICENSE=	Apache-2.0
+COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_TARGET = $(BUILD_$(MK_BITS))
+INSTALL_TARGET = $(INSTALL_$(MK_BITS))
+TEST_TARGET = $(TEST_$(MK_BITS))
+
+include $(WS_MAKE_RULES)/common.mk
 
 CLEAN_PATHS += $(BUILD_DIR)
 
-$(BUILD_32):    $(SOURCE_DIR)/.prep
+$(BUILD_$(MK_BITS)): $(SOURCE_DIR)/.prep
 	$(MKDIR) $(@D)
 	$(TOUCH) $@
 
-$(INSTALL_32): $(BUILD_32)
+$(INSTALL_$(MK_BITS)): $(BUILD_$(MK_BITS))
 	$(MKDIR) $(PROTO_DIR) \
 		$(PROTOUSRBINDIR) \
 		$(PROTOUSRSHAREMAN1DIR)
@@ -46,11 +52,10 @@ $(INSTALL_32): $(BUILD_32)
 	$(foreach ver, $(PERL_VERSIONS), $(CP) -a $(SOURCE_DIR)/lib/perl5/* $(PROTO_DIR)/usr/perl5/vendor_perl/$(ver) ; )
 	$(TOUCH) $@
 
-build:		$(BUILD_32)
+$(TEST_$(MK_BITS)): $(INSTALL_$(MK_BITS))
+	$(SOURCE_DIR)/test.sh
+	$(TOUCH) $@
 
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
+# Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += runtime/perl
