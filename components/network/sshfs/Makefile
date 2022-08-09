@@ -12,33 +12,30 @@
 # Copyright 2016 - 2017 Adam Stevko. All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		sshfs
-COMPONENT_VERSION=	2.9
-COMPONENT_FMRI=		network/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION =	System/Libraries
-COMPONENT_SUMMARY=	A network filesystem client to connect to SSH servers
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_NAME=         sshfs
+COMPONENT_VERSION=      2.9
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         network/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_SUMMARY=      A network filesystem client to connect to SSH servers
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
 	sha256:46d1e1287ce97255fcb50010355184d8c5585329f73ab1e755217419a8e6e5de
-COMPONENT_PROJECT_URL=	https://github.com/libfuse/sshfs
-COMPONENT_ARCHIVE_URL=	https://github.com/libfuse/sshfs/releases/download/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://github.com/libfuse/sshfs
+COMPONENT_ARCHIVE_URL=  https://github.com/libfuse/sshfs/releases/download/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	https://github.com/libfuse/sshfs/releases/download/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE).asc
-COMPONENT_LICENSE =	GPLv2
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		  $(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libfuse
 REQUIRED_PACKAGES += system/library
