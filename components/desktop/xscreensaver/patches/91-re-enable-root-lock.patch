@@ -1,0 +1,27 @@
+--- a/driver/xscreensaver.c	Mon Aug  8 21:29:38 2022
++++ b/driver/xscreensaver.c	Mon Aug  8 22:36:39 2022
+@@ -1416,8 +1416,11 @@
+   if (!why)
+     {
+       uid_t u = getuid();
+-      if (u == 0 || u == (uid_t) -1 || u == (uid_t) -2)
+-        why = "cannot lock when running as root";
++      if (u == 0 || u == (uid_t) -1 || u == (uid_t) -2) {
++        fprintf(stderr, "%s: Logging in as root is a completely unnecessary security risk.\n",blurb());
++        fprintf(stderr, "%s: xscreensaver's locking functionality is normally disabled when the \n",blurb());
++        fprintf(stderr, "%s: daemon is run as root. Please log in as a normal user.\n",blurb());
++      }
+     }
+ 
+   if (!why && getenv ("RUNNING_UNDER_GDM"))
+@@ -1470,8 +1473,9 @@
+       else
+         {
+           locking_disabled_p = True;
+-          if (lock_p || verbose_p)
++          if (lock_p || verbose_p) {
+             fprintf (stderr, "%s: locking disabled: %s\n", blurb(), why);
++          }
+         }
+     }
+ }
