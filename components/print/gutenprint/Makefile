@@ -20,12 +20,13 @@
 #
 # Copyright (c) 2011, 2018, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS=			64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gutenprint
 COMPONENT_MJR_VERSION=	5.3
 COMPONENT_MNR_VERSION=	4
+COMPONENT_REVISION =	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY=  Gutenprint - Drivers for Canon, Epson, Lexmark & PCL printers
 COMPONENT_PROJECT_URL=	https://www.gutenprint.org/software/gutenprint/
@@ -36,6 +37,8 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:db44a701d2b8e6a8931c83cec06c91226be266d23e5c189d20a39dd175f2023b
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/gimp-print/gutenprint-$(COMPONENT_MJR_VERSION)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=  GPLv2, FDLv1.2
+
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -58,15 +61,7 @@ COMPONENT_BUILD_TARGETS = all
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/ TOTAL:/p" ' \
-        '-e "/PASS:/p" ' \
-        '-e "/ SKIP:/p" ' \
-        '-e "/ XFAIL:/p" ' \
-        '-e "/ FAIL:/p" ' \
-        '-e "/ ERROR:/p" '
+COMPONENT_TEST_TRANSFORMS += '-e "/ XFAIL:/p"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gtk2
@@ -74,7 +69,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
