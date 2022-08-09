@@ -522,6 +522,14 @@ $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(BUILD_DIR)/runtime
 	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED) $(BUILD_DIR)/runtime-perl.p5m
 	$(TOUCH) $@
 
+# generate list of sed rules to filter out component's own packages from
+# REQUIRED_PACKAGES list
+$(BUILD_DIR)/filter-own-pkgs: $(DEPENDED)
+	$(PKGMOGRIFY) $(WS_TRANSFORMS)/PRINT_COMPONENT_FMRIS $(DEPENDED) \
+		| $(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' -e 's/^\///g' -e 's/\//\\\//g' \
+		| sort -u \
+		| $(GSED) -e 's/^\(.*\)$$/\/^REQUIRED_PACKAGES += \1$$\/d/g' >$@
+
 # Set REQUIRED_PACKAGES macro substitution rules
 REQUIRED_PACKAGES_TRANSFORM += $(foreach p,$(REQUIRED_PACKAGES_SUBST), -e 's|$($(p))|$$($(p))|')
 
@@ -531,14 +539,16 @@ REQUIRED_PACKAGES_TRANSFORM += $(foreach p,$(REQUIRED_PACKAGES_SUBST), -e 's|$($
 # truly lazy among us.  This is only a piece of the REQUIRED_PACKAGES puzzle.
 # You must still include packages for tools you build and test with.
 #
-REQUIRED_PACKAGES::     $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED)
+REQUIRED_PACKAGES::     $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) $(BUILD_DIR)/filter-own-pkgs
 	$(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
 	@$(GSED) -i -e '/^# Auto-generated dependencies$$/,$$d' Makefile
 	@echo "# Auto-generated dependencies" >>Makefile
 	$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) \
 		| $(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' \
 		| tr '|' '\n' \
-		| $(GSED) -e 's,pkg:/,,g' -e 's/@.*$$//g' $(REQUIRED_PACKAGES_TRANSFORM) \
+		| $(GSED) -e 's,pkg:/,,g' -e 's/@.*$$//g' \
+			-f $(BUILD_DIR)/filter-own-pkgs \
+			$(REQUIRED_PACKAGES_TRANSFORM) \
 		| sort -u >>Makefile
 	@echo "*** Please edit your Makefile and verify the new or updated content at the end ***"
 
