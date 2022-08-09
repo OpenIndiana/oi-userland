@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		foomatic-db-engine
 COMPONENT_VERSION=	3.0-20080903
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -33,9 +33,9 @@ COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COM
 COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
 COMPONENT_BUGDB=	utility/foomatic
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+TEST_TARGET = $(NO_TESTS)
+
+include ../../../make-rules/common.mk
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 CONFIGURE_OPTIONS +=	PERL=$(PERL)
@@ -48,10 +48,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D) ;
 # setup perl build
 COMPONENT_PRE_CONFIGURE_ACTION += cd $(@D)/lib ; $(PERL) Makefile.PL
 
-# install perl modules
-COMPONENT_PRE_INSTALL_ACTION = \
- ( cd $(@D)/lib ; $(GMAKE) install_vendor DESTDIR=$(PROTO_DIR) )
-
 # the perl .packlist contains the path to the file as built rather than
 # as installed. Fix to be installed path, ie remove PROTO_DIR.
 VENDORARCH= $(shell $(PERL) -e 'use Config; print $$Config{vendorarch}')
@@ -61,17 +57,11 @@ COMPONENT_POST_INSTALL_ACTION = \
      >> $(PROTO_DIR)/$(PACKLIST).fixed ; \
  $(MV) $(PROTO_DIR)/$(PACKLIST).fixed $(PROTO_DIR)/$(PACKLIST)
 
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
+# PKGVERS is needed for manifest processing
+PKG_MACROS += PERLVER=$(PERL_VERSION)
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
