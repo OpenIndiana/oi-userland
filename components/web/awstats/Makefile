@@ -13,10 +13,14 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_STYLE = archive
+BUILD_BITS = NO_ARCH
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= awstats
 COMPONENT_VERSION= 7.8
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY= AWStats - Log File Analyzer for Advanced Statistics
 COMPONENT_FMRI= web/analytics/awstats
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -27,29 +31,27 @@ COMPONENT_PROJECT_URL=	https://awstats.sourceforge.net/
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_LICENSE=		GPLv3
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_TARGET = $(BUILD_$(MK_BITS))
+INSTALL_TARGET = $(INSTALL_$(MK_BITS))
 
-CLEAN_PATHS += $(BUILD_DIR) $(PROTO_DIR)
+include $(WS_MAKE_RULES)/common.mk
 
-$(BUILD_32): $(SOURCE_DIR)/.prep
-	$(MKDIR) $(BUILD_DIR_32)
-	cp -a $(SOURCE_DIR)/* $(BUILD_DIR_32)
-	$(TOUCH) $(@)
+CLEAN_PATHS += $(BUILD_DIR)
 
-$(INSTALL_32):  $(BUILD_32)
+$(BUILD_$(MK_BITS)): $(SOURCE_DIR)/.prep
+	$(RM) -r $(@D) ; $(MKDIR) $(@D)
+	$(CLONEY) $(SOURCE_DIR) $(@D)
+	$(TOUCH) $@
+
+$(INSTALL_$(MK_BITS)):  $(BUILD_$(MK_BITS))
 	$(RM) -r $(PROTO_DIR)
 	$(MKDIR) $(PROTO_DIR)/usr/lib/awstats
-	mv $(BUILD_DIR_32)/README.md $(BUILD_DIR_32)/tools $(PROTO_DIR)/usr/lib/awstats
+	$(CP) -r $(@D)/README.md $(@D)/tools $(PROTO_DIR)/usr/lib/awstats
 	$(MKDIR) $(PROTO_DIR)/usr/share/doc/awstats
-	mv $(BUILD_DIR_32)/docs $(PROTO_DIR)/usr/share/doc/awstats 
+	$(CP) -r $(@D)/docs $(PROTO_DIR)/usr/share/doc/awstats
 	$(MKDIR) $(PROTO_DIR)/usr/share/awstats
-	mv $(BUILD_DIR_32)/wwwroot/* $(PROTO_DIR)/usr/share/awstats
-	$(TOUCH) $(@)
+	$(CP) -r $(@D)/wwwroot/* $(PROTO_DIR)/usr/share/awstats
+	$(TOUCH) $@
 
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-REQUIRED_PACKAGES += runtime/perl-522
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl
