@@ -16,6 +16,7 @@
 <transform file path=usr/lib/fs/samfs/.* -> default pkg.linted.userland.action001.3 true>
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -106,23 +107,18 @@ link path=opt/SUNWsamfs/lib/libsamrpc.so \
     target=/opt/SUNWsamfs/client/lib/libsamrpc.so pkg.linted.userland.action002.0=true
 file path=opt/SUNWsamfs/lib/libsamut.so
 file path=opt/SUNWsamfs/lib/libstager.so
-hardlink path=opt/SUNWsamfs/man/man1/archive.1 \
-    target=../../zone/man/man1/archive.1
-hardlink path=opt/SUNWsamfs/man/man1/release.1 \
-    target=../../zone/man/man1/release.1
-hardlink path=opt/SUNWsamfs/man/man1/request.1 \
-    target=../../zone/man/man1/request.1
+file path=opt/SUNWsamfs/man/man1/archive.1
+file path=opt/SUNWsamfs/man/man1/release.1
+file path=opt/SUNWsamfs/man/man1/request.1
 file path=opt/SUNWsamfs/man/man1/schproj.1
-hardlink path=opt/SUNWsamfs/man/man1/sdu.1 target=../../zone/man/man1/sdu.1
-hardlink path=opt/SUNWsamfs/man/man1/segment.1 \
-    target=../../zone/man/man1/segment.1
-hardlink path=opt/SUNWsamfs/man/man1/setfa.1 target=../../zone/man/man1/setfa.1
-hardlink path=opt/SUNWsamfs/man/man1/sfind.1 target=../../zone/man/man1/sfind.1
-hardlink path=opt/SUNWsamfs/man/man1/sls.1 target=../../zone/man/man1/sls.1
-hardlink path=opt/SUNWsamfs/man/man1/squota.1 \
-    target=../../zone/man/man1/squota.1
-hardlink path=opt/SUNWsamfs/man/man1/ssum.1 target=../../zone/man/man1/ssum.1
-hardlink path=opt/SUNWsamfs/man/man1/stage.1 target=../../zone/man/man1/stage.1
+file path=opt/SUNWsamfs/man/man1/sdu.1
+file path=opt/SUNWsamfs/man/man1/segment.1
+file path=opt/SUNWsamfs/man/man1/setfa.1
+file path=opt/SUNWsamfs/man/man1/sfind.1
+file path=opt/SUNWsamfs/man/man1/sls.1
+file path=opt/SUNWsamfs/man/man1/squota.1
+file path=opt/SUNWsamfs/man/man1/ssum.1
+file path=opt/SUNWsamfs/man/man1/stage.1
 file path=opt/SUNWsamfs/man/man1m/HAStoragePlus_samfs.1m
 file path=opt/SUNWsamfs/man/man1m/archive_audit.1m
 file path=opt/SUNWsamfs/man/man1m/archiver.1m
@@ -339,6 +335,7 @@ file path=opt/SUNWsamfs/sbin/fsmadm
 file path=opt/SUNWsamfs/sbin/fsmdb
 file path=opt/SUNWsamfs/sbin/fsmgmtd
 file path=opt/SUNWsamfs/sbin/fsmupd
+link path=opt/SUNWsamfs/sbin/import target=samimport
 file path=opt/SUNWsamfs/sbin/itemize
 link path=opt/SUNWsamfs/sbin/load target=samload
 file path=opt/SUNWsamfs/sbin/move
@@ -369,7 +366,7 @@ file path=opt/SUNWsamfs/sbin/sam-stagerd_copy
 file path=opt/SUNWsamfs/sbin/samadm
 link path=opt/SUNWsamfs/sbin/sambcheck target=/usr/lib/fs/samfs/bcheck pkg.linted.userland.action002.0=true
 file path=opt/SUNWsamfs/sbin/samchaid
-file path=opt/SUNWsamfs/sbin/samcmd
+hardlink path=opt/SUNWsamfs/sbin/samcmd target=samu
 file path=opt/SUNWsamfs/sbin/samcrondump
 file path=opt/SUNWsamfs/sbin/samd
 file path=opt/SUNWsamfs/sbin/samdb
@@ -392,7 +389,7 @@ file path=opt/SUNWsamfs/sbin/samset
 file path=opt/SUNWsamfs/sbin/samsharefs
 file path=opt/SUNWsamfs/sbin/samstorade
 file path=opt/SUNWsamfs/sbin/samtrace
-hardlink path=opt/SUNWsamfs/sbin/samu target=samcmd
+file path=opt/SUNWsamfs/sbin/samu
 file path=opt/SUNWsamfs/sbin/sefreport
 file path=opt/SUNWsamfs/sbin/set_admin
 file path=opt/SUNWsamfs/sbin/set_state
@@ -425,17 +422,25 @@ link path=opt/SUNWsamfs/zone/lib/libsamconf.so \
     target=/usr/lib/fs/samfs/libsamconf.so pkg.linted.userland.action002.0=true
 hardlink path=opt/SUNWsamfs/zone/lib/libsamrft.so target=../../lib/libsamrft.so
 hardlink path=opt/SUNWsamfs/zone/lib/libsamut.so target=../../lib/libsamut.so
-file path=opt/SUNWsamfs/zone/man/man1/archive.1
-file path=opt/SUNWsamfs/zone/man/man1/release.1
-file path=opt/SUNWsamfs/zone/man/man1/request.1
-file path=opt/SUNWsamfs/zone/man/man1/sdu.1
-file path=opt/SUNWsamfs/zone/man/man1/segment.1
-file path=opt/SUNWsamfs/zone/man/man1/setfa.1
-file path=opt/SUNWsamfs/zone/man/man1/sfind.1
-file path=opt/SUNWsamfs/zone/man/man1/sls.1
-file path=opt/SUNWsamfs/zone/man/man1/squota.1
-file path=opt/SUNWsamfs/zone/man/man1/ssum.1
-file path=opt/SUNWsamfs/zone/man/man1/stage.1
+hardlink path=opt/SUNWsamfs/zone/man/man1/archive.1 \
+    target=../../../man/man1/archive.1
+hardlink path=opt/SUNWsamfs/zone/man/man1/release.1 \
+    target=../../../man/man1/release.1
+hardlink path=opt/SUNWsamfs/zone/man/man1/request.1 \
+    target=../../../man/man1/request.1
+hardlink path=opt/SUNWsamfs/zone/man/man1/sdu.1 target=../../../man/man1/sdu.1
+hardlink path=opt/SUNWsamfs/zone/man/man1/segment.1 \
+    target=../../../man/man1/segment.1
+hardlink path=opt/SUNWsamfs/zone/man/man1/setfa.1 \
+    target=../../../man/man1/setfa.1
+hardlink path=opt/SUNWsamfs/zone/man/man1/sfind.1 \
+    target=../../../man/man1/sfind.1
+hardlink path=opt/SUNWsamfs/zone/man/man1/sls.1 target=../../../man/man1/sls.1
+hardlink path=opt/SUNWsamfs/zone/man/man1/squota.1 \
+    target=../../../man/man1/squota.1
+hardlink path=opt/SUNWsamfs/zone/man/man1/ssum.1 target=../../../man/man1/ssum.1
+hardlink path=opt/SUNWsamfs/zone/man/man1/stage.1 \
+    target=../../../man/man1/stage.1
 hardlink path=opt/SUNWsamfs/zone/sbin/samquota target=../../sbin/samquota
 file path=usr/lib/devfsadm/linkmod/SUNW_samaio_link.so
 file path=usr/lib/fs/samfs/$(MACH)/fsck mode=0555
