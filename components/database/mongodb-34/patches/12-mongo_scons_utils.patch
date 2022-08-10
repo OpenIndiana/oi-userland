@@ -1,0 +1,13 @@
+--- mongodb-src-r3.4.19/site_scons/mongo_scons_utils.py.orig	2022-08-09 03:57:03.992802227 +0000
++++ mongodb-src-r3.4.19/site_scons/mongo_scons_utils.py	2022-08-09 03:57:34.693966981 +0000
+@@ -17,8 +17,8 @@
+     # the variant name
+     hasher = hashlib.md5()
+     for option in variant_options:
+-        hasher.update(option)
+-        hasher.update(str(env.GetOption(option)))
++        hasher.update(option.encode('utf-8'))
++        hasher.update(str(env.GetOption(option)).encode('utf-8'))
+     variant_dir = hasher.hexdigest()[0:8]
+ 
+     # If our option hash yields a well known hash, replace it with its name.

@@ -1,0 +1,911 @@
+diff --git a/SConstruct b/SConstruct
+index 13149ab..5b1d56a 100644
+--- a/SConstruct
++++ b/SConstruct
+@@ -30,7 +30,7 @@ EnsureSConsVersion( 2, 3, 0 )
+ def print_build_failures():
+     from SCons.Script import GetBuildFailures
+     for bf in GetBuildFailures():
+-        print "%s failed: %s" % (bf.node, bf.errstr)
++        print("%s failed: %s" % (bf.node, bf.errstr))
+ atexit.register(print_build_failures)
+ 
+ def versiontuple(v):
+@@ -426,7 +426,7 @@ win_version_min_choices = {
+ }
+ 
+ add_option('win-version-min',
+-    choices=win_version_min_choices.keys(),
++    choices=list(win_version_min_choices.keys()),
+     default=None,
+     help='minimum Windows version to support',
+     type='choice',
+@@ -511,7 +511,7 @@ try:
+         version_data = json.load(version_fp)
+ 
+     if 'version' not in version_data:
+-        print "version.json does not contain a version string"
++        print("version.json does not contain a version string")
+         Exit(1)
+     if 'githash' not in version_data:
+         version_data['githash'] = utils.getGitVersion()
+@@ -519,7 +519,7 @@ try:
+ except IOError as e:
+     # If the file error wasn't because the file is missing, error out
+     if e.errno != errno.ENOENT:
+-        print "Error opening version.json: {0}".format(e.strerror)
++        print("Error opening version.json: {0}".format(e.strerror))
+         Exit(1)
+ 
+     version_data = {
+@@ -528,14 +528,14 @@ except IOError as e:
+     }
+ 
+ except ValueError as e:
+-    print "Error decoding version.json: {0}".format(e)
++    print("Error decoding version.json: {0}".format(e))
+     Exit(1)
+ 
+ # Setup the command-line variables
+ def variable_shlex_converter(val):
+     # If the argument is something other than a string, propogate
+     # it literally.
+-    if not isinstance(val, basestring):
++    if not isinstance(val, str):
+         return val
+     parse_mode = get_option('variable-parse-mode')
+     if parse_mode == 'auto':
+@@ -598,7 +598,7 @@ def variable_distsrc_converter(val):
+ 
+ variables_files = variable_shlex_converter(get_option('variables-files'))
+ for file in variables_files:
+-    print "Using variable customization file %s" % file
++    print("Using variable customization file %s" % file)
+ 
+ env_vars = Variables(
+     files=variables_files,
+@@ -827,7 +827,7 @@ SConsignFile(str(sconsDataDir.File('sconsign')))
+ def printLocalInfo():
+     import sys, SCons
+     print( "scons version: " + SCons.__version__ )
+-    print( "python version: " + " ".join( [ `i` for i in sys.version_info ] ) )
++    print( "python version: " + " ".join( [ repr(i) for i in sys.version_info ] ) )
+ 
+ printLocalInfo()
+ 
+@@ -879,7 +879,7 @@ envDict = dict(BUILD_ROOT=buildDir,
+                MODULE_BANNERS=[],
+                ARCHIVE_ADDITION_DIR_MAP={},
+                ARCHIVE_ADDITIONS=[],
+-               PYTHON=utils.find_python(),
++               PYTHON="/usr/bin/python2.7",
+                SERVER_ARCHIVE='${SERVER_DIST_BASENAME}${DIST_ARCHIVE_SUFFIX}',
+                UNITTEST_ALIAS='unittests',
+                # TODO: Move unittests.txt to $BUILD_DIR, but that requires
+@@ -901,12 +901,12 @@ env.AddMethod(env_os_is_wrapper, 'TargetOSIs')
+ env.AddMethod(env_get_os_name_wrapper, 'GetTargetOSName')
+ 
+ def fatal_error(env, msg, *args):
+-    print msg.format(*args)
++    print(msg.format(*args))
+     Exit(1)
+ 
+ def conf_error(env, msg, *args):
+-    print msg.format(*args)
+-    print "See {0} for details".format(env['CONFIGURELOG'].abspath)
++    print(msg.format(*args))
++    print("See {0} for details".format(env['CONFIGURELOG']))
+ 
+     Exit(1)
+ 
+@@ -926,12 +926,12 @@ else:
+ env.AddMethod(lambda env: env['VERBOSE'], 'Verbose')
+ 
+ if has_option('variables-help'):
+-    print env_vars.GenerateHelpText(env)
++    print(env_vars.GenerateHelpText(env))
+     Exit(0)
+ 
+ unknown_vars = env_vars.UnknownVariables()
+ if unknown_vars:
+-    env.FatalError("Unknown variables specified: {0}", ", ".join(unknown_vars.keys()))
++    env.FatalError("Unknown variables specified: {0}", ", ".join(list(unknown_vars.keys())))
+ 
+ def set_config_header_define(env, varname, varval = 1):
+     env['CONFIG_HEADER_DEFINES'][varname] = varval
+@@ -1016,7 +1016,7 @@ def CheckForProcessor(context, which_arch):
+         context.Result(ret)
+         return ret;
+ 
+-    for k in processor_macros.keys():
++    for k in list(processor_macros.keys()):
+         ret = run_compile_check(k)
+         if ret:
+             context.Result('Detected a %s processor' % k)
+@@ -1124,7 +1124,7 @@ else:
+     env['TARGET_ARCH'] = detected_processor
+ 
+ if env['TARGET_OS'] not in os_macros:
+-    print "No special config for [{0}] which probably means it won't work".format(env['TARGET_OS'])
++    print("No special config for [{0}] which probably means it won't work".format(env['TARGET_OS']))
+ elif not detectConf.CheckForOS(env['TARGET_OS']):
+     env.ConfError("TARGET_OS ({0}) is not supported by compiler", env['TARGET_OS'])
+ 
+@@ -1813,7 +1813,7 @@ def doConfigure(myenv):
+             # form -Wno-xxx (but not -Wno-error=xxx), we also add -Wxxx to the flags. GCC does
+             # warn on unknown -Wxxx style flags, so this lets us probe for availablity of
+             # -Wno-xxx.
+-            for kw in test_mutation.keys():
++            for kw in list(test_mutation.keys()):
+                 test_flags = test_mutation[kw]
+                 for test_flag in test_flags:
+                     if test_flag.startswith("-Wno-") and not test_flag.startswith("-Wno-error="):
+@@ -1827,7 +1827,7 @@ def doConfigure(myenv):
+         # to make them real errors.
+         cloned.Append(CCFLAGS=['-Werror'])
+         conf = Configure(cloned, help=False, custom_tests = {
+-                'CheckFlag' : lambda(ctx) : CheckFlagTest(ctx, tool, extension, flag)
++                'CheckFlag' : lambda ctx : CheckFlagTest(ctx, tool, extension, flag)
+         })
+         available = conf.CheckFlag()
+         conf.Finish()
+@@ -2324,7 +2324,7 @@ def doConfigure(myenv):
+             "undefined" : myenv.File("#etc/ubsan.blacklist"),
+         }
+ 
+-        blackfiles = set([v for (k, v) in blackfiles_map.iteritems() if k in sanitizer_list])
++        blackfiles = set([v for (k, v) in list(blackfiles_map.items()) if k in sanitizer_list])
+         blacklist_options=["-fsanitize-blacklist=%s" % blackfile for blackfile in blackfiles]
+ 
+         for blacklist_option in blacklist_options:
+diff --git a/buildscripts/errorcodes.py b/buildscripts/errorcodes.py
+index 471cb7f..346e46f 100755
+--- a/buildscripts/errorcodes.py
++++ b/buildscripts/errorcodes.py
+@@ -10,9 +10,10 @@ import bisect
+ import os
+ import re
+ import sys
+-import utils
++from . import utils
+ from collections import defaultdict, namedtuple
+ from optparse import OptionParser
++from functools import reduce
+ 
+ ASSERT_NAMES = [ "uassert" , "massert", "fassert", "fassertFailed" ]
+ MINIMUM_CODE = 10000
+@@ -154,14 +155,14 @@ def readErrorCodes():
+ 
+     parseSourceFiles( checkDups )
+ 
+-    if seen.has_key("0"):
++    if "0" in seen:
+         code = "0"
+         bad = seen[code]
+         errors.append( bad )
+         print( "ZERO_CODE:" )
+         print( "  %s:%d:%s" % (bad.sourceFile, bad.lineNum, bad.lines) )
+ 
+-    for code, locations in dups.items():
++    for code, locations in list(dups.items()):
+         print( "DUPLICATE IDS: %s" % code )
+         for loc in locations:
+             print( "  %s:%d:%s" % (loc.sourceFile, loc.lineNum, loc.lines) )
+@@ -181,22 +182,22 @@ def replaceBadCodes( errors, nextCode ):
+     skip_errors = [e for e in errors if int(e.code) != 0]
+ 
+     for loc in skip_errors:
+-        print "SKIPPING NONZERO code=%s: %s:%s" % (loc.code, loc.sourceFile, loc.lineNum)
++        print("SKIPPING NONZERO code=%s: %s:%s" % (loc.code, loc.sourceFile, loc.lineNum))
+ 
+     for assertLoc in zero_errors:
+         (sourceFile, lineNum, lines, code) = assertLoc
+-        print "UPDATING_FILE: %s:%s" % (sourceFile, lineNum)
++        print("UPDATING_FILE: %s:%s" % (sourceFile, lineNum))
+ 
+         ln = lineNum - 1
+ 
+         with open(sourceFile, 'r+') as f:
+             fileLines = f.readlines()
+             line = fileLines[ln]
+-            print "LINE_%d_BEFORE:%s" % (lineNum, line.rstrip())
++            print("LINE_%d_BEFORE:%s" % (lineNum, line.rstrip()))
+             line = re.sub(r'(\( *)(\d+)',
+                           r'\g<1>' + str(nextCode),
+                           line)
+-            print "LINE_%d_AFTER :%s" % (lineNum, line.rstrip())
++            print("LINE_%d_AFTER :%s" % (lineNum, line.rstrip()))
+             fileLines[ln] = line
+             f.seek(0)
+             f.writelines(fileLines)
+@@ -255,7 +256,7 @@ def main():
+     elif options.replace:
+         replaceBadCodes(errors, next)
+     else:
+-        print ERROR_HELP
++        print(ERROR_HELP)
+         sys.exit(1)
+ 
+ 
+diff --git a/buildscripts/moduleconfig.py b/buildscripts/moduleconfig.py
+index 7f98667..cfd14ce 100644
+--- a/buildscripts/moduleconfig.py
++++ b/buildscripts/moduleconfig.py
+@@ -53,11 +53,11 @@ def discover_modules(module_root, allowed_modules):
+         module = None
+ 
+         if allowed_modules is not None and name not in allowed_modules:
+-            print "skipping module: %s" % name
++            print("skipping module: %s" % name)
+             continue
+ 
+         if os.path.isfile(build_py):
+-            print "adding module: %s" % name
++            print("adding module: %s" % name)
+             fp = open(build_py, "r")
+             try:
+                 module = imp.load_module("module_" + name, fp, build_py,
+@@ -91,11 +91,11 @@ def discover_module_directories(module_root, allowed_modules):
+         build_py = os.path.join(root, 'build.py')
+ 
+         if allowed_modules is not None and name not in allowed_modules:
+-            print "skipping module: %s" % name
++            print("skipping module: %s" % name)
+             continue
+ 
+         if os.path.isfile(build_py):
+-            print "adding module: %s" % name
++            print("adding module: %s" % name)
+             found_modules.append(name)
+ 
+     return found_modules
+@@ -108,7 +108,7 @@ def configure_modules(modules, conf):
+     """
+     for module in modules:
+         name = module.name
+-        print "configuring module: %s" % name
++        print("configuring module: %s" % name)
+ 
+         root = os.path.dirname(module.__file__)
+         module.configure(conf, conf.env)
+diff --git a/buildscripts/utils.py b/buildscripts/utils.py
+index 63a4ba6..07f8dd2 100644
+--- a/buildscripts/utils.py
++++ b/buildscripts/utils.py
+@@ -111,7 +111,7 @@ def getprocesslist():
+     raw = ""
+     try:
+         raw = execsys( "/bin/ps axww" )[0]
+-    except Exception,e:
++    except Exception as e:
+         print( "can't get processlist: " + str( e ) )
+ 
+     r = re.compile( "[\r\n]+" )
+@@ -134,7 +134,7 @@ def choosePathExist( choices , default=None):
+     return default
+ 
+ def filterExists(paths):
+-    return filter(os.path.exists, paths)
++    return list(filter(os.path.exists, paths))
+ 
+ def ensureDir( name ):
+     d = os.path.dirname( name )
+@@ -165,7 +165,7 @@ def didMongodStart( port=27017 , timeout=20 ):
+         try:
+             checkMongoPort( port )
+             return True
+-        except Exception,e:
++        except Exception as e:
+             print( e )
+             timeout = timeout - 1
+     return False
+@@ -240,7 +240,7 @@ def run_smoke_command(*args):
+ # at the position they occurred
+ def replace_with_repr(unicode_error):
+     offender = unicode_error.object[unicode_error.start:unicode_error.end]
+-    return (unicode(repr(offender).strip("'").strip('"')), unicode_error.end)
++    return (str(repr(offender).strip("'").strip('"')), unicode_error.end)
+ 
+ codecs.register_error('repr', replace_with_repr)
+ 
+diff --git a/site_scons/libdeps.py b/site_scons/libdeps.py
+index 78d3948..02cfbfb 100644
+--- a/site_scons/libdeps.py
++++ b/site_scons/libdeps.py
+@@ -68,7 +68,7 @@ def sorted_by_str(iterable):
+     across invocations of SCons.  Since dependency order changes force rebuilds,
+     we use this sort to create stable dependency orders.
+     """
+-    return sorted(iterable, cmp=lambda lhs, rhs: cmp(str(lhs), str(rhs)))
++    return sorted(iterable, key=lambda x: str(x))
+ 
+ class DependencyCycleError(SCons.Errors.UserError):
+     """Exception representing a cycle discovered in library dependencies."""
+@@ -109,7 +109,7 @@ def __compute_libdeps(node):
+                 deps.add(child)
+                 deps.update(__get_libdeps(child))
+ 
+-        except DependencyCycleError, e:
++        except DependencyCycleError as e:
+             if len(e.cycle_nodes) == 1 or e.cycle_nodes[0] != e.cycle_nodes[-1]:
+                 e.cycle_nodes.insert(0, node)
+             raise
+@@ -129,7 +129,7 @@ def __get_syslibdeps(node):
+         for lib in __get_libdeps(node):
+             for syslib in node.get_env().Flatten(lib.get_env().get(syslibdeps_env_var, [])):
+                 if syslib:
+-                    if type(syslib) in (str, unicode) and syslib.startswith(missing_syslibdep):
++                    if type(syslib) in (str, str) and syslib.startswith(missing_syslibdep):
+                         print("Target '%s' depends on the availability of a "
+                               "system provided library for '%s', "
+                               "but no suitable library was found during configuration." %
+@@ -192,7 +192,7 @@ def get_syslibdeps(source, target, env, for_signature):
+         # they're believed to represent library short names, that should be prefixed with -l
+         # or the compiler-specific equivalent.  I.e., 'm' becomes '-lm', but 'File("m.a") is passed
+         # through whole cloth.
+-        if type(d) in (str, unicode):
++        if type(d) in (str, str):
+             result.append('%s%s%s' % (lib_link_prefix, d, lib_link_suffix))
+         else:
+             result.append(d)
+diff --git a/site_scons/mongo_scons_utils.py b/site_scons/mongo_scons_utils.py
+index 69b81f7..8b1a7a4 100644
+--- a/site_scons/mongo_scons_utils.py
++++ b/site_scons/mongo_scons_utils.py
+@@ -1,4 +1,4 @@
+-import md5
++import hashlib
+ import subprocess
+ import SCons.Action
+ 
+@@ -15,7 +15,7 @@ def default_variant_dir_generator(target, source, env, for_signature):
+ 
+     # Hash the named options and their values, and take the first 8 characters of the hash as
+     # the variant name
+-    hasher = md5.md5()
++    hasher = hashlib.md5()
+     for option in variant_options:
+         hasher.update(option)
+         hasher.update(str(env.GetOption(option)))
+diff --git a/site_scons/site_tools/abilink.py b/site_scons/site_tools/abilink.py
+index f0c38d3..44d305b 100644
+--- a/site_scons/site_tools/abilink.py
++++ b/site_scons/site_tools/abilink.py
+@@ -44,13 +44,13 @@ def generate(env):
+                 # could avoid the shell out (and probably be faster, as we
+                 # could get exactly the information we want).
+                 contents = subprocess.check_output([env.subst('$ABIDW'), fname])
+-            except subprocess.CalledProcessError, e:
++            except subprocess.CalledProcessError as e:
+                 # ABIDW sometimes fails. In that case, log an error
+                 # and fall back to the normal contents
+-                print "WARNING: ABIDW failed for target %s, please file a bug report" % fname
++                print("WARNING: ABIDW failed for target %s, please file a bug report" % fname)
+                 try:
+                     contents = open(fname, "rb").read()
+-                except EnvironmentError, e:
++                except EnvironmentError as e:
+                     if not e.filename:
+                         e.filename = fname
+                     raise
+diff --git a/site_scons/site_tools/dagger/__init__.py b/site_scons/site_tools/dagger/__init__.py
+index f05228c..f10b402 100644
+--- a/site_scons/site_tools/dagger/__init__.py
++++ b/site_scons/site_tools/dagger/__init__.py
+@@ -5,7 +5,7 @@ import logging
+ 
+ import SCons
+ 
+-import dagger
++from . import dagger
+ 
+ def generate(env, **kwargs):
+     """The entry point for our tool. However, the builder for
+diff --git a/site_scons/site_tools/dagger/dagger.py b/site_scons/site_tools/dagger/dagger.py
+index 1eeefe1..03e7603 100644
+--- a/site_scons/site_tools/dagger/dagger.py
++++ b/site_scons/site_tools/dagger/dagger.py
+@@ -40,8 +40,8 @@ import sys
+ 
+ import SCons
+ 
+-import graph
+-import graph_consts
++from . import graph
++from . import graph_consts
+ 
+ 
+ LIB_DB = [] # Stores every SCons library nodes
+@@ -269,7 +269,7 @@ def write_obj_db(target, source, env):
+     for obj in OBJ_DB:
+         __generate_file_rels(obj, g)
+ 
+-    for exe in EXE_DB.keys():
++    for exe in list(EXE_DB.keys()):
+         __generate_exe_rels(exe, g)
+ 
+     # target is given as a list of target SCons nodes - this builder is only responsible for
+diff --git a/site_scons/site_tools/dagger/graph.py b/site_scons/site_tools/dagger/graph.py
+index 5ebe6f4..79378f2 100644
+--- a/site_scons/site_tools/dagger/graph.py
++++ b/site_scons/site_tools/dagger/graph.py
+@@ -4,10 +4,10 @@ import abc
+ import json
+ import copy
+ 
+-import graph_consts
++from . import graph_consts
+ 
+ if sys.version_info >= (3, 0):
+-    basestring = str
++    str = str
+ 
+ class Graph(object):
+     """Graph class for storing the build dependency graph. The graph stores the
+@@ -20,7 +20,7 @@ class Graph(object):
+         """
+         A graph can be initialized with a .json file, graph object, or with no args
+         """
+-        if isinstance(input, basestring):
++        if isinstance(input, str):
+             if input.endswith('.json'):
+                 with open(input, 'r') as f:
+                     data = json.load(f, encoding="ascii")
+@@ -141,7 +141,7 @@ class Graph(object):
+             node_dict["id"] = id
+             node_dict["node"] = {}
+ 
+-            for property, value in vars(node).iteritems():
++            for property, value in list(vars(node).items()):
+                 if isinstance(value, set):
+                     node_dict["node"][property] = list(value)
+                 else:
+@@ -151,7 +151,7 @@ class Graph(object):
+ 
+         for edge_type in graph_consts.RELATIONSHIP_TYPES:
+             edges_dict = self._edges[edge_type]
+-            for node in edges_dict.keys():
++            for node in list(edges_dict.keys()):
+                 to_nodes = list(self._edges[edge_type][node])
+                 to_nodes_dicts = [{"index": node_index[to_node], "id": to_node}
+                                   for to_node in to_nodes]
+@@ -166,14 +166,13 @@ class Graph(object):
+ 
+     def __str__(self):
+         return ("<Number of Nodes : {0}, Number of Edges : {1}, "
+-                "Hash: {2}>").format(len(self._nodes.keys()),
+-                sum(len(x) for x in self._edges.values()), hash(self))
++                "Hash: {2}>").format(len(list(self._nodes.keys())),
++                sum(len(x) for x in list(self._edges.values())), hash(self))
+ 
+ 
+-class NodeInterface(object):
++class NodeInterface(object, metaclass=abc.ABCMeta):
+     """Abstract base class for all Node Objects - All nodes must have an id and name
+     """
+-    __metaclass__ = abc.ABCMeta
+ 
+     @abc.abstractproperty
+     def id(self):
+@@ -190,7 +189,7 @@ class NodeLib(NodeInterface):
+     def __init__(self, id, name, input=None):
+         if isinstance(input, dict):
+             should_fail = False
+-            for k, v in input.iteritems():
++            for k, v in list(input.items()):
+                 try:
+                     if isinstance(v, list):
+                         setattr(self, k, set(v))
+@@ -310,7 +309,7 @@ class NodeSymbol(NodeInterface):
+         if isinstance(input, dict):
+             should_fail = False
+ 
+-            for k, v in input.iteritems():
++            for k, v in list(input.items()):
+                 try:
+                     if isinstance(v, list):
+                         setattr(self, k, set(v))
+@@ -435,7 +434,7 @@ class NodeFile(NodeInterface):
+     def __init__(self, id, name, input=None):
+         if isinstance(input, dict):
+             should_fail = False
+-            for k, v in input.iteritems():
++            for k, v in list(input.items()):
+                 try:
+                     if isinstance(v, list):
+                         setattr(self, k, set(v))
+@@ -551,7 +550,7 @@ class NodeExe(NodeInterface):
+     def __init__(self, id, name, input=None):
+         if isinstance(input, dict):
+             should_fail = False
+-            for k, v in input.iteritems():
++            for k, v in list(input.items()):
+                 try:
+                     if isinstance(v, list):
+                         setattr(self, k, set(v))
+diff --git a/site_scons/site_tools/dagger/graph_consts.py b/site_scons/site_tools/dagger/graph_consts.py
+index 81fe86d..a922a4f 100644
+--- a/site_scons/site_tools/dagger/graph_consts.py
++++ b/site_scons/site_tools/dagger/graph_consts.py
+@@ -17,8 +17,8 @@ NODE_SYM = 2
+ NODE_FILE = 3
+ NODE_EXE = 4
+ 
+-RELATIONSHIP_TYPES = range(1, 9)
+-NODE_TYPES = range(1, 5)
++RELATIONSHIP_TYPES = list(range(1, 9))
++NODE_TYPES = list(range(1, 5))
+ 
+ 
+ """Error/query codes"""
+diff --git a/site_scons/site_tools/dagger/graph_test.py b/site_scons/site_tools/dagger/graph_test.py
+index bc84f58..d91318a 100644
+--- a/site_scons/site_tools/dagger/graph_test.py
++++ b/site_scons/site_tools/dagger/graph_test.py
+@@ -5,8 +5,8 @@ from JSON
+ 
+ import json
+ import unittest
+-import graph
+-import graph_consts
++from . import graph
++from . import graph_consts
+ 
+ 
+ def generate_graph():
+@@ -122,15 +122,15 @@ class TestGraphMethods(unittest.TestCase, CustomAssertions):
+         node = graph.NodeLib("test_node", "test_node")
+         self.g._nodes = {"test_node": node}
+ 
+-        self.assertEquals(self.g.get_node("test_node"), node)
++        self.assertEqual(self.g.get_node("test_node"), node)
+ 
+-        self.assertEquals(self.g.get_node("missing_node"), None)
++        self.assertEqual(self.g.get_node("missing_node"), None)
+ 
+     def test_add_node(self):
+         node = graph.NodeLib("test_node", "test_node")
+         self.g.add_node(node)
+ 
+-        self.assertEquals(self.g.get_node("test_node"), node)
++        self.assertEqual(self.g.get_node("test_node"), node)
+ 
+         self.assertRaises(ValueError, self.g.add_node, node)
+ 
+@@ -153,16 +153,16 @@ class TestGraphMethods(unittest.TestCase, CustomAssertions):
+         self.g.add_edge(graph_consts.LIB_FIL, self.from_node_lib.id,
+                         self.to_node_file.id)
+ 
+-        self.assertEquals(self.g.edges[graph_consts.LIB_LIB][
++        self.assertEqual(self.g.edges[graph_consts.LIB_LIB][
+             self.from_node_lib.id], set([self.to_node_lib.id]))
+ 
+-        self.assertEquals(self.g.edges[graph_consts.LIB_SYM][
++        self.assertEqual(self.g.edges[graph_consts.LIB_SYM][
+             self.from_node_lib.id], set([self.to_node_sym.id]))
+ 
+-        self.assertEquals(self.g.edges[graph_consts.LIB_FIL][
++        self.assertEqual(self.g.edges[graph_consts.LIB_FIL][
+             self.from_node_lib.id], set([self.to_node_file.id]))
+ 
+-        self.assertEquals(self.to_node_lib.dependent_libs,
++        self.assertEqual(self.to_node_lib.dependent_libs,
+                           set([self.from_node_lib.id]))
+ 
+     def test_add_edge_files(self):
+@@ -173,14 +173,14 @@ class TestGraphMethods(unittest.TestCase, CustomAssertions):
+         self.g.add_edge(graph_consts.FIL_LIB, self.from_node_file.id,
+                         self.to_node_lib.id)
+ 
+-        self.assertEquals(self.g.edges[graph_consts.FIL_FIL][
++        self.assertEqual(self.g.edges[graph_consts.FIL_FIL][
+             self.from_node_file.id], set([self.to_node_file.id]))
+-        self.assertEquals(self.g.edges[graph_consts.FIL_SYM][
++        self.assertEqual(self.g.edges[graph_consts.FIL_SYM][
+             self.from_node_file.id], set([self.to_node_sym.id]))
+-        self.assertEquals(self.g.edges[graph_consts.FIL_LIB][
++        self.assertEqual(self.g.edges[graph_consts.FIL_LIB][
+             self.from_node_file.id], set([self.to_node_lib.id]))
+ 
+-        self.assertEquals(self.to_node_file.dependent_files,
++        self.assertEqual(self.to_node_file.dependent_files,
+                           set([self.from_node_file.id]))
+ 
+     def test_export_to_json(self):
+@@ -188,7 +188,7 @@ class TestGraphMethods(unittest.TestCase, CustomAssertions):
+         generated_graph.export_to_json("export_test.json")
+         generated = open("export_test.json", "r")
+         correct = open("test_graph.json", "r")
+-        self.assertEquals(json.load(generated), json.load(correct))
++        self.assertEqual(json.load(generated), json.load(correct))
+         generated.close()
+         correct.close()
+ 
+@@ -196,7 +196,7 @@ class TestGraphMethods(unittest.TestCase, CustomAssertions):
+         graph_fromJSON = graph.Graph("test_graph.json")
+         correct_graph = generate_graph()
+ 
+-        for id in graph_fromJSON.nodes.keys():
++        for id in list(graph_fromJSON.nodes.keys()):
+             # for some reason, neither
+             # assertTrue(graph_fromJSON.get_node(id) == correct_graph.get_node(str(id)))
+             # nor assertEquals() seem to call the correct eq method here, hence
+@@ -205,7 +205,7 @@ class TestGraphMethods(unittest.TestCase, CustomAssertions):
+             self.assertNodeEquals(
+                 graph_fromJSON.get_node(id), correct_graph.get_node(id))
+ 
+-        self.assertEquals(graph_fromJSON.edges, correct_graph.edges)
++        self.assertEqual(graph_fromJSON.edges, correct_graph.edges)
+ 
+ 
+ if __name__ == '__main__':
+diff --git a/site_scons/site_tools/distsrc.py b/site_scons/site_tools/distsrc.py
+index 861f5d9..2a32ce8 100644
+--- a/site_scons/site_tools/distsrc.py
++++ b/site_scons/site_tools/distsrc.py
+@@ -20,7 +20,7 @@ import shutil
+ import tarfile
+ import time
+ import zipfile
+-import StringIO
++import io
+ 
+ from distutils.spawn import find_executable
+ 
+@@ -28,7 +28,7 @@ __distsrc_callbacks = []
+ 
+ class DistSrcFile:
+     def __init__(self, **kwargs):
+-        [ setattr(self, key, val) for (key, val) in kwargs.items() ]
++        [ setattr(self, key, val) for (key, val) in list(kwargs.items()) ]
+ 
+     def __str__(self):
+         return self.name
+@@ -82,7 +82,7 @@ class DistSrcTarArchive(DistSrcArchive):
+ 
+     def append_file_contents(self, filename, file_contents,
+             mtime=time.time(),
+-            mode=0644,
++            mode=0o644,
+             uname="root",
+             gname="root"):
+         file_metadata = tarfile.TarInfo(name=filename)
+@@ -91,7 +91,7 @@ class DistSrcTarArchive(DistSrcArchive):
+         file_metadata.uname = uname
+         file_metadata.gname = gname
+         file_metadata.size = len(file_contents)
+-        file_buf = StringIO.StringIO(file_contents)
++        file_buf = io.StringIO(file_contents)
+         if self.archive_mode == 'r':
+             self.archive_file.close()
+             self.archive_file = tarfile.open(
+@@ -119,7 +119,7 @@ class DistSrcZipArchive(DistSrcArchive):
+             name=key,
+             size=item_data.file_size,
+             mtime=time.mktime(fixed_time),
+-            mode=0775 if is_dir else 0664,
++            mode=0o775 if is_dir else 0o664,
+             type=tarfile.DIRTYPE if is_dir else tarfile.REGTYPE,
+             uid=0,
+             gid=0,
+@@ -129,7 +129,7 @@ class DistSrcZipArchive(DistSrcArchive):
+ 
+     def append_file_contents(self, filename, file_contents,
+             mtime=time.time(),
+-            mode=0644,
++            mode=0o644,
+             uname="root",
+             gname="root"):
+         self.archive_file.writestr(filename, file_contents)
+@@ -139,7 +139,7 @@ class DistSrcZipArchive(DistSrcArchive):
+ 
+ def build_error_action(msg):
+     def error_stub(target=None, source=None, env=None):
+-        print msg
++        print(msg)
+         env.Exit(1)
+     return [ error_stub ]
+ 
+@@ -162,7 +162,7 @@ def distsrc_action_generator(source, target, env, for_signature):
+ 
+     target_ext = str(target[0])[-3:]
+     if not target_ext in [ 'zip', 'tar' ]:
+-        print "Invalid file format for distsrc. Must be tar or zip file"
++        print("Invalid file format for distsrc. Must be tar or zip file")
+         env.Exit(1)
+ 
+     git_cmd = "\"%s\" archive --format %s --output %s --prefix ${MONGO_DIST_SRC_PREFIX} HEAD" % (
+diff --git a/site_scons/site_tools/jstoh.py b/site_scons/site_tools/jstoh.py
+index 62424a6..41dc857 100644
+--- a/site_scons/site_tools/jstoh.py
++++ b/site_scons/site_tools/jstoh.py
+@@ -39,17 +39,17 @@ def jsToHeader(target, source):
+ 
+     text = '\n'.join(h)
+ 
+-    print "writing: %s" % outFile
++    print("writing: %s" % outFile)
+     with open(outFile, 'wb') as out:
+         try:
+-            out.write(text)
++            out.write(text.encode("utf-8"))
+         finally:
+             out.close()
+ 
+ 
+ if __name__ == "__main__":
+     if len(sys.argv) < 3:
+-        print "Must specify [target] [source] "
++        print("Must specify [target] [source] ")
+         sys.exit(1)
+ 
+     jsToHeader(sys.argv[1], sys.argv[2:])
+diff --git a/site_scons/site_tools/mongo_integrationtest.py b/site_scons/site_tools/mongo_integrationtest.py
+index 43543b9..3803802 100644
+--- a/site_scons/site_tools/mongo_integrationtest.py
++++ b/site_scons/site_tools/mongo_integrationtest.py
+@@ -9,12 +9,12 @@ def register_integration_test(env, test):
+     env['INTEGRATION_TEST_LIST_ENV']._IntegrationTestList('$INTEGRATION_TEST_LIST', installed_test)
+ 
+ def integration_test_list_builder_action(env, target, source):
+-    print "Generating " + str(target[0])
++    print("Generating " + str(target[0]))
+     ofile = open(str(target[0]), 'wb')
+     try:
+         for s in source:
+-            print '\t' + str(s)
+-            ofile.write('%s\n' % s)
++            print('\t' + str(s))
++            ofile.write(('%s\n' % s).encode("utf-8"))
+     finally:
+         ofile.close()
+ 
+diff --git a/site_scons/site_tools/mongo_unittest.py b/site_scons/site_tools/mongo_unittest.py
+index 9eb0874..9de854a 100644
+--- a/site_scons/site_tools/mongo_unittest.py
++++ b/site_scons/site_tools/mongo_unittest.py
+@@ -9,12 +9,12 @@ def register_unit_test(env, test):
+     env.Alias('$UNITTEST_ALIAS', test)
+ 
+ def unit_test_list_builder_action(env, target, source):
+-    print "Generating " + str(target[0])
++    print("Generating " + str(target[0]))
+     ofile = open(str(target[0]), 'wb')
+     try:
+         for s in source:
+-            print '\t' + str(s)
+-            ofile.write('%s\n' % s)
++            print('\t' + str(s))
++            ofile.write(('%s\n' % s).encode("utf-8"))
+     finally:
+         ofile.close()
+ 
+diff --git a/site_scons/site_tools/split_dwarf.py b/site_scons/site_tools/split_dwarf.py
+index 95130c9..62c1629 100644
+--- a/site_scons/site_tools/split_dwarf.py
++++ b/site_scons/site_tools/split_dwarf.py
+@@ -52,7 +52,7 @@ def generate(env):
+ 
+     for object_builder in SCons.Tool.createObjBuilders(env):
+         emitterdict = object_builder.builder.emitter
+-        for suffix in emitterdict.iterkeys():
++        for suffix in list(emitterdict.keys()):
+             if not suffix in suffixes:
+                 continue
+             base = emitterdict[suffix]
+diff --git a/site_scons/site_tools/thin_archive.py b/site_scons/site_tools/thin_archive.py
+index 05ff702..5afcf23 100644
+--- a/site_scons/site_tools/thin_archive.py
++++ b/site_scons/site_tools/thin_archive.py
+@@ -41,7 +41,7 @@ def exists(env):
+     for line in pipe.stdout:
+         if isgnu:
+             continue  # consume all data
+-        isgnu = re.search(r'^GNU ar', line)
++        isgnu = re.search(b'^GNU ar', line)
+ 
+     return bool(isgnu)
+ 
+diff --git a/src/mongo/SConscript b/src/mongo/SConscript
+index 2cfb206..f196f5f 100644
+--- a/src/mongo/SConscript
++++ b/src/mongo/SConscript
+@@ -157,7 +157,7 @@ js_engine_ver = get_option("js-engine") if get_option("server-js") == "on" else
+ 
+ # On windows, we need to escape the backslashes in the command-line
+ # so that windows paths look okay.
+-cmd_line = " ".join(sys.argv).encode('string-escape')
++cmd_line = " ".join(sys.argv).encode('unicode_escape')
+ if env.TargetOSIs('windows'):
+     cmd_line = cmd_line.replace('\\', r'\\')
+ 
+@@ -519,7 +519,7 @@ env.Append(MODULE_BANNERS = [distsrc.File('README'),
+                              distsrc.File('MPL-2')])
+ 
+ # If no module has introduced a file named LICENSE.txt, then inject the AGPL.
+-if sum(itertools.imap(lambda x: x.name == "LICENSE.txt", env['MODULE_BANNERS'])) == 0:
++if sum([x.name == "LICENSE.txt" for x in env['MODULE_BANNERS']]) == 0:
+     env.Append(MODULE_BANNERS = [distsrc.File('GNU-AGPL-3.0')])
+ 
+ # All module banners get staged to the top level of the tarfile, so we
+@@ -538,7 +538,7 @@ module_banner_transforms = ["--transform %s=$SERVER_DIST_BASENAME" % d for d in
+ # Allow modules to map original file name directories to subdirectories 
+ # within the archive (e.g. { "src/mongo/db/modules/enterprise/docs": "snmp"})
+ archive_addition_transforms = []
+-for full_dir, archive_dir in env["ARCHIVE_ADDITION_DIR_MAP"].items():
++for full_dir, archive_dir in list(env["ARCHIVE_ADDITION_DIR_MAP"].items()):
+   archive_addition_transforms.append("--transform \"%s=$SERVER_DIST_BASENAME/%s\"" %
+                                      (full_dir, archive_dir))
+ 
+diff --git a/src/mongo/installer/msi/SConscript b/src/mongo/installer/msi/SConscript
+index 4d006b2..359dd8e 100644
+--- a/src/mongo/installer/msi/SConscript
++++ b/src/mongo/installer/msi/SConscript
+@@ -69,8 +69,8 @@ else:
+       upgrade_code = '9295A251-1B1F-45FB-96FF-35B57E490613'
+ 
+ if 'msi' in BUILD_TARGETS and msi_edition == 'SSL' and msi_flavor != '2008R2Plus':
+-  print "Building the MongoDB SSL MSI is only supported on Windows 2008 R2+ or Windows 7+ platforms."
+-  print "You must add --win-version-min=ws08r2 to your scons flags"
++  print("Building the MongoDB SSL MSI is only supported on Windows 2008 R2+ or Windows 7+ platforms.")
++  print("You must add --win-version-min=ws08r2 to your scons flags")
+   exit(1)
+ 
+ if msi_platform == 'x64':
+diff --git a/src/third_party/wiredtiger/SConscript b/src/third_party/wiredtiger/SConscript
+index 5d36706..0853c65 100644
+--- a/src/third_party/wiredtiger/SConscript
++++ b/src/third_party/wiredtiger/SConscript
+@@ -93,7 +93,7 @@ if (VERSION_MAJOR == None or
+     VERSION_MINOR == None or
+     VERSION_PATCH == None or
+     VERSION_STRING == None):
+-    print "Failed to find version variables in " + version_file
++    print("Failed to find version variables in " + version_file)
+     Exit(1)
+ 
+ wiredtiger_includes = """
+--- mongodb-src-r3.4.19/SConstruct.orig	2022-07-26 09:28:50.164881824 +0000
++++ mongodb-src-r3.4.19/SConstruct	2022-07-26 09:29:27.473786537 +0000
+@@ -908,10 +908,10 @@
+ 
+ env = Environment(variables=env_vars, **envDict)
+ for ccache_env in ('CC_gcc_32','CC_gcc_64','CXX_gcc_32','CXX_gcc_64'):
+-	try:
+-		env['ENV'][ccache_env]=os.environ[ccache_env]
+-	except KeyError:
+-		pass
++    try:
++        env['ENV'][ccache_env]=os.environ[ccache_env]
++    except KeyError:
++        pass
+ del envDict
+ 
+ env.AddMethod(env_os_is_wrapper, 'TargetOSIs')
+@@ -2969,7 +2969,7 @@
+ 
+                         size_t initialZeros = (mask == 0 ? size : __builtin_ctzll(mask));
+                         if (initialZeros != offset) {{
+-			    return 1;
++                           return 1;
+                         }}
+ 
+                         if (offset < size) {{
+@@ -2977,7 +2977,7 @@
+                         }}
+                     }}
+ 
+-		    return 0;
++                   return 0;
+                 }}
+             """.format(index)
+ 
+@@ -2990,7 +2990,7 @@
+ 
+         outputIndex = next((idx for idx in [0,1] if conf.CheckAltivecVbpermqOutput(idx)), None)
+         if outputIndex is not None:
+-	    conf.env.SetConfigHeaderDefine("MONGO_CONFIG_ALTIVEC_VEC_VBPERMQ_OUTPUT_INDEX", outputIndex)
++           conf.env.SetConfigHeaderDefine("MONGO_CONFIG_ALTIVEC_VEC_VBPERMQ_OUTPUT_INDEX", outputIndex)
+         else:
+             myenv.ConfError("Running on ppc64le, but can't find a correct vec_vbpermq output index.  Compiler or platform not supported")
+ 
