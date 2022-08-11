@@ -20,7 +20,7 @@ include $(WS_MAKE_RULES)/mpi-macros.mk
 COMPONENT_NAME =            openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR =     4.0
 COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).1
-COMPONENT_REVISION =        3
+COMPONENT_REVISION =        4
 COMPONENT_FMRI =            library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION =  Development/High Performance Computing
 COMPONENT_PROJECT_URL =     http://www.open-mpi.org
@@ -36,9 +36,9 @@ COMPONENT_SUMMARY =         OpenMPI - High Performance Message Passing Library
 COMPONENT_LICENSE_FILE =    $(COMPONENT_SRC_NAME).license
 COMPONENT_LICENSE      =    BSD 2-Clause
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk  
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -67,8 +67,6 @@ CONFIGURE_OPTIONS+= --with-wrapper-libs="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBD
 CONFIGURE_OPTIONS+= --without-slurm
 CONFIGURE_OPTIONS+= ompi_cv_fortran_ignore_tkr_data=0
 
-build:		$(BUILD_64)
-
 $(BUILD_DIR)/modulefile.%:		files/modulefile
 	/bin/sed -e "s#%%BITS%%#$*#g" \
 	-e "s#%%COMPONENT_FMRI%%#$(COMPONENT_FMRI)#g" \
@@ -83,9 +81,6 @@ install:	$(INSTALL_64) $(BUILD_DIR)/modulefile.64
 	$(MKDIR) $(PROTO_MODULE_PATH)/64
 	$(CP) $(BUILD_DIR)/modulefile.64 $(PROTO_MODULE_PATH)/64/$(COMPONENT_VERSION)
 
-test:	$(TEST_64)
-
-
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-picl
 REQUIRED_PACKAGES += diagnostic/cpu-counters
@@ -95,8 +90,8 @@ REQUIRED_PACKAGES += service/picl
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += developer/hwloc
-REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += package/environment-modules
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
