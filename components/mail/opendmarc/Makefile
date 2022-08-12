@@ -12,12 +12,11 @@
 # Copyright 2022 Friedrich Kink
 #
 
-BUILD_BITS=		64 # for binaries or 32_and_64 for libraries
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         opendmarc
 COMPONENT_VERSION=      1.4.2
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY=      OpenDMARC is a free open source software implementation of the DMARC specification.
 COMPONENT_DESCRIPTION=	The OpenDMARC project is a community effort to develop and maintain \
 			an open source package for providing DMARC report generation and policy \
@@ -41,6 +40,8 @@ COMPONENT_ARCHIVE_HASH= sha256:18d4bf8ead4e78038065a66ecfeee57fbbae1af8dc79e3b5a
 COMPONENT_LICENSE=      Copyright (c) 2009, 2010, 2012, 2013, The Trusted Domain Project.
 COMPONENT_LICENSE_FILE= LICENSE
 
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=			$(PATH.gnu)
@@ -56,22 +57,15 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc/mail \
 
 unexport SHELLOPTS
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-64.master
-
-COMPONENT_TEST_TRANSFORMS += " -n " \
-	"-e '/TOTAL: /p' " \
-	"-e '/PASS: /p' " \
-	"-e '/SKIP: /p' " \
-	"-e '/XFAIL: /p' " \
-	"-e '/FAIL: /p' " \
-	"-e '/XPASS: /p' " \
-	"-e '/ERROR: /p' " \
-	"-e '/^=======/p' "
+COMPONENT_TEST_TRANSFORMS += "-e '/XFAIL: /p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/XPASS: /p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/^=======/p'"
 
 # manually added
 REQUIRED_PACKAGES += library/libspf2
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libmilter
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
