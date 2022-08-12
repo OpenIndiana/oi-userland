@@ -14,11 +14,13 @@
 # Copyright 2018 Michal Nowak
 #
 
+BUILD_BITS = 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glibmm
 COMPONENT_VERSION=	2.58.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	glibmm - C++ Wrapper for the Glib2 Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -32,9 +34,9 @@ COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
+include $(WS_MAKE_RULES)/common.mk
 
 CXXFLAGS += -std=c++11
 
@@ -44,12 +46,6 @@ PATH=$(PATH.gnu)
 
 # for tests to pass
 ENV=/usr/bin/env -i
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Build dependency
 REQUIRED_PACKAGES += library/desktop/c++/mm-common
@@ -62,5 +58,5 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
