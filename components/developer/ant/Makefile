@@ -24,11 +24,13 @@
 # Copyright 2017, Wiselabs Software Ltda - http://www.wiselabs.com.br. All rights reserved.
 #
 
+BUILD_STYLE = justmake
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ant
 COMPONENT_VERSION=	1.9.9
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Apache Ant is a Java-based build tool
 COMPONENT_PROJECT_URL=	http://ant.apache.org/
 COMPONENT_SRC_NAME=	apache-ant
@@ -42,11 +44,11 @@ COMPONENT_FMRI=		developer/build/ant
 COMPONENT_CLASSIFICATION=	Development/Distribution Tools
 COMPONENT_LICENSE=	Apache v2.0
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/common.mk
 
-GMAKE=./build.sh
+$(BUILD_$(MK_BITS)):	GMAKE=./build.sh
+$(INSTALL_$(MK_BITS)):	GMAKE=./build.sh
+$(TEST_$(MK_BITS)):	GMAKE=./build.sh
 
 ANT_ENV+=JAVA_HOME=$(JAVA_HOME)
 
@@ -75,12 +77,6 @@ COMPONENT_INSTALL_ENV +=	$(ANT_ENV)
 COMPONENT_TEST_TARGETS =	test
 COMPONENT_TEST_ENV +=		$(ANT_ENV)
 
-build:	$(BUILD_32)
-
-install: $(INSTALL_32)
-
-test:  $(TEST_32)
-
 # Build dependencies
 REQUIRED_PACKAGES += developer/java/openjdk8
 REQUIRED_PACKAGES += developer/parser/antlr-2
@@ -88,6 +84,5 @@ REQUIRED_PACKAGES += runtime/java/openjdk8
 REQUIRED_PACKAGES += library/java/commons-bsf
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/ksh93
