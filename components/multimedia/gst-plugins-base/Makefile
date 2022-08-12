@@ -13,11 +13,14 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
+BUILD_BITS = 32_and_64
+USE_COMMON_TEST_MASTER = no
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-base
 COMPONENT_VERSION= 0.10.36
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -31,9 +34,9 @@ COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_LICENSE_FILE = gstreamer-plugin-base.license
 COMPONENT_LICENSE = GPLv2, LGPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
+include $(WS_MAKE_RULES)/common.mk
 
 gcc_OPT = -O2
 
@@ -44,6 +47,7 @@ CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS += --enable-external
 CONFIGURE_OPTIONS += --enable-experimental
+CONFIGURE_OPTIONS.32 += --enable-introspection=no
 CONFIGURE_OPTIONS += --disable-alsa
 CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
 CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
@@ -54,12 +58,6 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ENV += CC="$(CC)"
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
@@ -76,7 +74,7 @@ REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/orc
