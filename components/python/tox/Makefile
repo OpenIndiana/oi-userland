@@ -23,17 +23,15 @@
 # Copyright (c) 2021, 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE= setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tox
-COMPONENT_VERSION=	3.24.5
-REQUIRED_PACKAGES += library/python/pytest-reporter
+COMPONENT_VERSION=	3.25.1
 COMPONENT_SUMMARY=	Command line driven CI frontend and development task automation tool
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:67e0e32c90e278251fea45b696d0fef3879089ccbe979b0c556d35d5a70e2993
+COMPONENT_ARCHIVE_HASH= sha256:c138327815f53bc6da4fe56baec5f25f00622ae69ef3fe4e1e385720e22486f9
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://tox.wiki/
 COMPONENT_FMRI=		library/python/tox
@@ -62,6 +60,8 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^test_/p"'
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+# Test note: library/python/pytest-randomly-39 let the tests fail because of internal errors.
 
 # Manually added test dependencies according to setup.cfg
 REQUIRED_PACKAGES += library/python/filelock-39
