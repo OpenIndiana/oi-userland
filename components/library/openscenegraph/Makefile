@@ -11,7 +11,6 @@
 #
 # Copyright (c) 2022 Jake Goerzen
 
-PREFERRED_BITS=	64
 BUILD_STYLE=	cmake
 
 include ../../../make-rules/shared-macros.mk
