@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DBD::Pg
-HUMAN_VERSION =			3.15.1
+HUMAN_VERSION =			3.16.0
 COMPONENT_SUMMARY =		DBD::Pg - PostgreSQL database driver for the DBI module
 COMPONENT_CPAN_AUTHOR =		TURNSTEP
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:13c7543b545c9a5253c86550ccd9204d06fe5f34a7dc51769d3dd665563fc17e
+	sha256:2c31163d8bdaaf8beaef9c97b8f260432d67a534bc7b69e7265c21cb841432b8
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-2.0-only
 
 # Don't depend on host default pg_config
