@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Address::XS
-HUMAN_VERSION =			1.04
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.05
 COMPONENT_SUMMARY =		Email::Address::XS - Parse and format RFC 5322 email addresses and groups
 COMPONENT_CPAN_AUTHOR =		PALI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:995f6d04a7b487dd5e1b55e3b52cad84c87750937c96feb6e24e8f1f10cd593e
+	sha256:1510b7f10d67201037cd50d22c9d6b26eeca55ededa4cdb46bbca27e59a4ea16
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
