@@ -1,0 +1,29 @@
+diff -Nru OpenSearch-2.1.0.orig/distribution/src/config/jvm.options OpenSearch-2.1.0/distribution/src/config/jvm.options
+--- OpenSearch-2.1.0.orig/distribution/src/config/jvm.options	2022-06-30 21:56:06.000000000 +0000
++++ OpenSearch-2.1.0/distribution/src/config/jvm.options	2022-07-16 19:41:10.611036887 +0000
+@@ -74,7 +74,7 @@
+ 8:-XX:GCLogFileSize=64m
+ 
+ # JDK 9+ GC logging
+-9-:-Xlog:gc*,gc+age=trace,safepoint:file=${loggc}:utctime,pid,tags:filecount=32,filesize=64m
++9-:-Xlog:gc*,gc+age=trace,safepoint:file=/var/log/opensearch/gc.log:utctime,pid,tags:filecount=32,filesize=64m
+ 
+ # Explicitly allow security manager (https://bugs.openjdk.java.net/browse/JDK-8270380)
+ 18-:-Djava.security.manager=allow
+diff -Nru OpenSearch-2.1.0.orig/distribution/src/config/opensearch.yml OpenSearch-2.1.0/distribution/src/config/opensearch.yml
+--- OpenSearch-2.1.0.orig/distribution/src/config/opensearch.yml	2022-06-30 21:56:06.000000000 +0000
++++ OpenSearch-2.1.0/distribution/src/config/opensearch.yml	2022-07-16 15:23:07.784948571 +0000
+@@ -30,11 +30,11 @@
+ #
+ # Path to directory where to store the data (separate multiple locations by comma):
+ #
+-${path.data}
++path.data: /var/db/opensearch
+ #
+ # Path to log files:
+ #
+-${path.logs}
++path.logs: /var/log/opensearch
+ #
+ # ----------------------------------- Memory -----------------------------------
+ #
