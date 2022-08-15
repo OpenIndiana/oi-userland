@@ -20,16 +20,15 @@
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS=			32_and_64
+BUILD_BITS=			64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xz
-COMPONENT_VERSION=	5.2.5
+COMPONENT_VERSION=	5.2.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://tukaani.org/xz/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:f6f4910fd033078738bd82bfba4f49219d03b17eb0794eb91efbae419f4aba10
+COMPONENT_ARCHIVE_HASH= sha256:a2105abee17bcd2ebd15ced31b4f5eda6e17efd6b10f921a01cda4a44c91b3a0
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		compress/xz
 COMPONENT_SUMMARY=	'XZ Utils - loss-less file compression application and library.'
@@ -39,15 +38,12 @@ COMPONENT_CLASSIFICATION= Applications/System Utilities
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=            --disable-rpath
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --disable-rpath
 
-CONFIGURE_ENV.64 +=             LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
+CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
-COMPONENT_TEST_DIR =            $(@D)/tests
-
-# Master test results are the same for 32-bit and 64-bit, so override
-# here, rather than create multiple identical master files.
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_DIR = $(@D)/tests
 
 # The additional xz specific set of transforms to be applied to the
 # test results to try to normalize them.
@@ -61,5 +57,6 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/xopen/xcu4
