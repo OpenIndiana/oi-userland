@@ -1,0 +1,11 @@
+--- a/src/hotspot/os/posix/os_posix.cpp	Fri Oct 16 12:10:19 2020
++++ b/src/hotspot/os/posix/os_posix.cpp	Fri Oct 16 12:11:19 2020
+@@ -1099,7 +1099,7 @@
+                       "enabled executable stack (see man page execstack(8))");
+ 
+   } else {
+-#if !defined(AIX) && !defined(__APPLE__)
++#if !defined(AIX) && !defined(__APPLE__) && !defined(SOLARIS)
+     // bsd and aix don't have this
+ 
+     // Accessing stack address below sp may cause SEGV if current

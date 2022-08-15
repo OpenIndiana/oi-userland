@@ -1,0 +1,15 @@
+$NetBSD$
+
+Fix build on SunOS in C99 mode.
+
+--- a/src/java.desktop/share/native/libsplashscreen/libpng/pngpriv.h.orig	2019-01-08 12:44:59.000000000 +0000
++++ b/src/java.desktop/share/native/libsplashscreen/libpng/pngpriv.h
+@@ -63,7 +63,7 @@
+  * Windows/Visual Studio) there is no effect; the OS specific tests below are
+  * still required (as of 2011-05-02.)
+  */
+-#ifndef _POSIX_SOURCE
++#if (!defined(__sun) || (__STDC_VERSION__-0 < 199901L)) && !defined(_POSIX_SOURCE)
+ # define _POSIX_SOURCE 1 /* Just the POSIX 1003.1 and C89 APIs */
+ #endif
+ 

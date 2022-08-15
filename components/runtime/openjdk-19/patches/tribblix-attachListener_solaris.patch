@@ -1,0 +1,11 @@
+--- a/src/hotspot/os/solaris/attachListener_solaris.cpp~	Tue Nov 26 00:55:54 2019
++++ b/src/hotspot/os/solaris/attachListener_solaris.cpp	Wed Apr  8 20:07:56 2020
+@@ -427,7 +427,7 @@
+     if (::rename(initial_path, door_path) == -1) {
+         ::close(dd);
+         ::fdetach(initial_path);
+-        log_debug(attach)("unable to create door - rename %s to %s failed (%d)", errno);
++        log_debug(attach)("unable to create door - rename %s to %s failed (%d)", initial_path, door_path, errno);
+         dd = -1;
+     }
+   }

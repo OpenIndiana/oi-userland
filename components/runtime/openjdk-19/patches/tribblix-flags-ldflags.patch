@@ -1,0 +1,19 @@
+--- a/make/autoconf/flags-ldflags.m4~	Mon Apr 13 13:55:05 2020
++++ b/make/autoconf/flags-ldflags.m4	Mon Apr 13 14:10:29 2020
+@@ -58,9 +58,13 @@
+   # Setup basic LDFLAGS
+   if test "x$TOOLCHAIN_TYPE" = xgcc; then
+     # Add -z,defs, to forbid undefined symbols in object files.
+-    # add -z,relro (mark relocations read only) for all libs
+-    # add -z,now ("full relro" - more of the Global Offset Table GOT is marked read only)
+-    BASIC_LDFLAGS="-Wl,-z,defs -Wl,-z,relro -Wl,-z,now"
++    if test "x$OPENJDK_TARGET_OS" = xsolaris; then
++      BASIC_LDFLAGS="$BASIC_LDFLAGS -Wl,-z,defs"
++    else
++      # add relro (mark relocations read only) for all libs
++      # add -z,now ("full relro" - more of the Global Offset Table GOT is marked read only)
++      BASIC_LDFLAGS="-Wl,-z,defs -Wl,-z,relro -Wl,-z,now"
++    fi
+     # Linux : remove unused code+data in link step
+     if test "x$ENABLE_LINKTIME_GC" = xtrue; then
+       if test "x$OPENJDK_TARGET_CPU" = xs390x; then
