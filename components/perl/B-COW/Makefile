@@ -11,18 +11,20 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Email::Valid
+#   $WS_TOOLS/perl-integrate-module B::COW
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		B-COW
+COMPONENT_PERL_MODULE =		B::COW
 HUMAN_VERSION =			0.004
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		B::COW - B::COW additional B helpers to check COW status
 COMPONENT_CPAN_AUTHOR =		ATOOMIC
-COMPONENT_ARCHIVE_HASH =	sha256:fcafb775ed84a45bc2c06c5ffd71342cb3c06fb0bdcd5c1b51b0c12f8b585f51
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:fcafb775ed84a45bc2c06c5ffd71342cb3c06fb0bdcd5c1b51b0c12f8b585f51
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
