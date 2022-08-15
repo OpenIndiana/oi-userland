@@ -14,88 +14,53 @@
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
+BUILD_BITS = NO_ARCH
+
 include ../../../make-rules/shared-macros.mk
 
-PERL_VERSION = 5.22
-GCC_VERSION= 10
-
-COMPONENT_NAME=	znapzend
-COMPONENT_VERSION=	0.20.0
-COMPONENT_SUMMARY=	zfs backup with remote capabilities and mbuffer integration
-COMPONENT_DESCRIPTION=	ZnapZend is a ZFS centric backup tool. It relies on snapshot,\
+COMPONENT_NAME =		znapzend
+COMPONENT_VERSION =		0.21.1
+COMPONENT_SUMMARY =		zfs backup with remote capabilities and mbuffer integration
+COMPONENT_DESCRIPTION =		ZnapZend is a ZFS centric backup tool. It relies on snapshot,\
  send and receive to do its work. It has the built-in ability to manage both local\
  snapshots as well as remote copies by thining them out as time progresses.\
  The ZnapZend configuration is stored as properties in the ZFS filesystem itself,\
  see znapzendzetup to get started.
-COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:c0a1ab9df5d6c4936560b5f8f08d393d4e99313da190fa404cd8ee5df420a7ca
-COMPONENT_ARCHIVE_URL=	\
-  https://github.com/oetiker/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://github.com/oetiker/$(COMPONENT_NAME)
-COMPONENT_FMRI=	backup/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=	Applications/System Utilities
-COMPONENT_LICENSE=	GPLv3
-COMPONENT_LICENSE_FILE=	LICENSE
+COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:1b438816a9a647a5bb3282ad26a6a8cd3ecce0a874f2fb506cbc156527e188f7
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/oetiker/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL =		https://github.com/oetiker/$(COMPONENT_NAME)
+COMPONENT_FMRI =		backup/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION =	Applications/System Utilities
+COMPONENT_LICENSE =		GPL-3.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION= ( cd $(SOURCE_DIR) \
-                     && mv thirdparty/cpanfile-5.26.1.snapshot thirdparty/cpanfile-5.22.4.snapshot \
-                     && autoreconf --force --install --verbose --make )
+CONFIGURE_LIBDIR.32 = $(CONFIGURE_PREFIX)/lib/znapzend
+CONFIGURE_OPTIONS += --enable-svcinstall=/lib/svc/manifest/system
+CONFIGURE_OPTIONS += --with-svcname-smf=system/filesystem/zfs/znapzend
 
-COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
+# Force SUBDIRS=lib to skip thirdparty subdir.  We do not need thirdparty perl
+# modules because we use system provided library/perl-5/* packages to satisfy
+# our dependencies.
+COMPONENT_BUILD_ARGS += SUBDIRS=lib
+COMPONENT_INSTALL_ARGS += SUBDIRS=lib
+COMPONENT_TEST_ARGS += SUBDIRS=lib
 
-# Preferred (build) version of gcc
-GCCLIBDIR  =	$(GCC_ROOT)/lib
-PKG_OPTIONS +=	-D GCC_RUNTIME_PKG="$(GCC_RUNTIME_PKG)"
+COMPONENT_TEST_TRANSFORMS += -n
+COMPONENT_TEST_TRANSFORMS += "-e '/\<ok\>/p'"
 
-# Note: Building and installing for one bitness, so for PATH to have
-# the binaries, it should be linked straight in bin/ (no $BITS magic)
-# In the second loop we help runtime linker find libssp.so that ListUtil's
-# library refers to. Note: for us, suffices if it is 32-bit.
-ELFEDIT = /usr/bin/elfedit
-COMPONENT_POST_INSTALL_ACTION =	( $(MKDIR) $(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin \
-        && ORIGDIR="../share/$(COMPONENT_NAME)/bin" \
-        && for BINFILE in znapzend znapzendzetup znapzendztatz ; do \
-            rm -f "$(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin/$$BINFILE" || true ; \
-            ln -sf "$$ORIGDIR/$$BINFILE" "$(PROTO_DIR)/$(CONFIGURE_PREFIX)/bin/" || exit ; \
-        done \
-        && find $(PROTO_DIR)/$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)/lib/ -type f -name '*.so*' \
-            | while read LIBFILE ; do \
-                $(CHMOD) +w "$$LIBFILE" \
-                && $(ELFEDIT) -e "dyn:rpath $(GCCLIBDIR)" "$$LIBFILE" \
-                && $(CHMOD) -w "$$LIBFILE" \
-                || exit ; \
-            done \
-        )
-
-CONFIGURE_ENV += PERL=$(PERL)
-
-# NOTE: znapzend is a script, but it can pull some PERL modules and some may be
-# ARCHed, and/or these may (package-)conflict with dependencies of other pkgs.
-# TODO: package dependency modules as separate IPS requirements, and build only
-# a 32-bit znapzend? For now we work around the mess by having it all in a
-# dedicated directory per ARCH, including the perl modules.
-CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)
-# Install man pages to /usr/share
-CONFIGURE_OPTIONS  =	--datarootdir=$(CONFIGURE_PREFIX)/share
-CONFIGURE_OPTIONS +=	--exec-prefix=$(CONFIGURE_PREFIX)/share/$(COMPONENT_NAME)
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--enable-svcinstall=/lib/svc/manifest/system
-CONFIGURE_OPTIONS +=	--with-svcname-smf=system/filesystem/zfs/znapzend
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(TEST_32)
-
-# build dependency
-REQUIRED_PACKAGES += developer/gcc-10
+# We are not able to detect these dependencies automatically.
+# The list is based on $(SOURCE_DIR)/cpanfile.
+REQUIRED_PACKAGES += library/perl-5/mojolicious
+REQUIRED_PACKAGES += library/perl-5/mojo-ioloop-forkcall
+REQUIRED_PACKAGES += library/perl-5/test-sharedfork
+REQUIRED_PACKAGES += library/perl-5/test-exception
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library

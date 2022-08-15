@@ -1,0 +1,132 @@
+ok 1 - use ZnapZend::ZFS;
+ok 2 - use ZnapZend::Time;
+ok 3 - instantiation of ZFS
+ok 4 - instantiation of Time
+ok 5 - list pools
+ok 6 - zpool status
+ok 7 - start scrub
+ok 8 - stop scrub
+ok 9 - scrub active
+ok 10 - last scrub time
+ok
+ok 1 - use ZnapZend;
+ok 2 - znapzend help
+ok 3 - znapzend
+ok 4 - znapzend dies with no backup sets defined or enabled at startup
+ok 5 - znapzend --runonce=tank/source with zend-delay==1
+ok 6 - znapzend --runonce=tank/source with zend-delay==1 and --nodelay (should ignore the plan setting)
+ok 7 - znapzend --runonce=tank/source with zend-delay==" qwe " complains but survives
+ok 8 - znapzend runonce without dataset specified succeeds (should find all backup plans)
+ok 9 - znapzend runonce with empty dataset == without dataset specified succeeds (should find all backup plans)
+ok 10 - znapzend runonce recursing from a dataset without plan (pool root) succeeds
+ok 11 - znapzend runonce of a dataset with only an inherited plan succeeds with --inherited flag
+ok 12 - znapzend runonce of a dataset with only an inherited plan succeeds with --inherited --recursive flag
+ok 13 - znapzend runonce of a dataset only whose descendants have a plan succeeds with --inherited --recursive flag
+ok 14 - znapzend runonce of a dataset without a plan fails also with --inherited flag
+ok 15 - znapzend runonce of a dataset with only an inherited plan fails with only --recursive flag and without --inherited
+ok 16 - znapzend runonce of a dataset with only an inherited plan fails without --inherit flag
+ok 17 - cover znapzend runonce of a dataset with original backup plan and a disabled destination - does not fail
+ok 18 - znapzend --runonce=tank/source --forcedSnapshotSuffix=manualsnap succeeds
+ok 19 - znapzend --runonce=tank/source --forcedSnapshotSuffix=@manualsnap succeeds (removes leading @)
+ok 20 - znapzend --runonce=tank/source --forcedSnapshotSuffix=manual@snap fails (invalid chars in string)
+ok 21 - znapzend --runonce=tank/source --forcedSnapshotSuffix=manual" "snap fails (invalid chars in string)
+ok 22 - znapzend --runonce=tank/source --forcedSnapshotSuffix=" " fails (snapname becomes empty after chomp)
+ok 23 - znapzend --forcedSnapshotSuffix=manualsnap fails (not in runonce mode)
+ok 24 - znapzend --runonce=tank/source --since=20200101-stableSystem succeeds
+ok 25 - znapzend --features=oracleMode,recvu,compressed --runonce=tank/source succeeds
+ok 26 - znapzend --features=skipIntermediates --runonce=tank/source succeeds
+ok 27 - znapzend --features=skipIntermediates --runonce=tank/source -i -I succeeds (should complain about both opposing flags used)
+ok 28 - znapzend sendRecvCleanup with a failed DST PRE command
+ok 29 - znapzend sendRecvCleanup with a failed DST PRE command and --skipOnPreSnapCmdFail
+ok 30 - znapzend sendRecvCleanup with a failed DST PRE command and --skipOnPreSendCmdFail
+ok 31 - znapzend sendRecvCleanup with a failed DST POST command
+ok 32 - znapzend sendRecvCleanup with a failed DST POST command and --skipOnPreSnapCmdFail
+ok 33 - znapzend sendRecvCleanup with a failed DST POST command and --skipOnPreSendCmdFail
+ok 34 - znapzend sendRecvCleanup with a failed ZFS SEND command
+ok 35 - znapzend sendRecvCleanup with a failed ZFS RECV command
+ok 36 - znapzend sendRecvCleanup with a failed ZFS DESTROY command
+ok 37 - znapzend sendRecvCleanup with a failed ZFS snapshot command
+ok 38 - znapzend sendRecvCleanup with a successful ZFS snapshot command
+ok 39 - znapzend --autoCreation --runonce=tank/source
+ok 40 - znapzend --autoCreation --runonce=tank/source with a failed ZFS create command - fails
+ok 41 - znapzend --features=zfsGetType --runonce=tank/source succeeds with new ZFS
+ok 42 - znapzend --inherited --features=zfsGetType --runonce=tank/source/child succeeds with new ZFS
+ok 43 - znapzend --features=zfsGetType --runonce=tank/source fails with old ZFS
+ok 44 - znapzend --features=zfsGetType --runonce=tank/source succeeds with new ZFS when it lists snapshots
+ok 45 - znapzend --runonce=tank/source succeeds with new ZFS when it lists snapshots
+ok 46 - znapzend --inherited --recursive --features=zfsGetType --runonce=tank/source/child succeeds with new ZFS when it lists snapshots
+ok 47 - znapzend --features=zfsGetType --runonce=tank/source fails with old ZFS when it lists snapshots
+ok 48 - znapzend --cleanOffline succeeds
+ok
+ok 1 - use ZnapZend;
+ok 2 - znapzendzetup help
+ok 3 - znapzendzetup list
+ok 4 - znapzendzetup create
+ok 5 - znapzendzetup edit
+ok 6 - znapzendzetup edit
+ok 7 - znapzendzetup edit
+ok 8 - znapzendzetup edit src_dataset
+ok 9 - znapzendzetup create --donotask
+ok 10 - znapzendzetup edit --donotask
+ok 11 - znapzendzetup enable
+ok 12 - znapzendzetup disable
+ok 13 - znapzendzetup delete
+ok 14 - znapzendzetup delete destination
+ok 15 - znapzendzetup export
+ok 16 - znapzendzetup import
+ok 17 - znapzendzetup import --write
+ok 18 - znapzendzetup enable-dst tank/source dst_0 - succeeds
+ok 19 - znapzendzetup disable-dst tank/source dst_0 - succeeds
+ok 20 - znapzendzetup enable-dst tank/source DST:0 - succeeds
+ok 21 - znapzendzetup disable-dst tank/source DST:0 - succeeds
+ok 22 - znapzendzetup enable-dst tank/source 0 - succeeds (0=>dst_0)
+ok 23 - znapzendzetup disable-dst tank/source 0 - succeeds (0=>dst_0)
+ok 24 - znapzendzetup enable-dst tank/dest-disabled dst_0 - succeeds (processing codepath with dst_0_enabled present in zfs args)
+ok 25 - znapzendzetup disable-dst tank/dest-disabled dst_0 - succeeds (processing codepath with dst_0_enabled present in zfs args)
+ok 26 - znapzendzetup enable-dst tank/source dst_1_badkey - fails (arg is not a dst ID pattern)
+ok 27 - znapzendzetup disable-dst tank/source dst_1_badkey - fails (arg is not a dst ID pattern)
+ok 28 - znapzendzetup enable-dst tank/source 1 - fails (no 1=>dst_1 there)
+ok 29 - znapzendzetup disable-dst tank/source 1 - fails (no 1=>dst_1 there)
+ok 30 - znapzendzetup enable-dst tank/sourcemissing dst_whatever - fails (no such dataset)
+ok 31 - znapzendzetup disable-dst tank/sourcemissing dst_whatever - fails (no such dataset)
+ok 32 - znapzendzetup enable-dst tank/sourcemissing - fails (bad arg list)
+ok 33 - znapzendzetup disable-dst tank/sourcemissing - fails (bad arg list)
+ok 34 - znapzendzetup list --features=lowmemRecurse --debug -r tank/source
+ok 35 - znapzendzetup list --debug --recursive tank/source
+ok 36 - znapzendzetup list
+ok 37 - znapzendzetup list two trees
+ok 38 - znapzendzetup list lowmem two trees
+ok 39 - znapzendzetup list with zfsGetType feature and new zfs - succeeds
+ok 40 - znapzendzetup list with zfsGetType feature and --inherited and new zfs - succeeds
+ok 41 - znapzendzetup list with zfsGetType feature and old zfs - fails
+ok 42 - znapzendzetup list with zfsGetType feature and --inherited and old zfs - fails
+ok 43 - znapzendzetup list --inherited tank/source/child succeeds
+ok 44 - znapzendzetup list --inherited -r tank/source/child succeeds (finds only it, not the grandchild)
+ok 45 - znapzendzetup list --inherited -r tank succeeds (finds only source and anothersource, not the descendants)
+ok 46 - znapzendzetup list --inherited -r tank tank/source/child succeeds (finds source and anothersource via recursion, and the explicit tank/source/child, but not other descendants)
+ok 47 - znapzendzetup list --inherited tank (non-recursive) fails
+ok 48 - znapzendzetup list tank/source/child (no inheritance) fails
+ok 49 - znapzendzetup list -r tank/source/child (no inheritance, no descendants with a local config) fails
+ok 50 - znapzendzetup list --inherited backup (non-recursive) fails
+ok 51 - znapzendzetup list --recursive backup fails
+ok 52 - znapzendzetup list --inherited --recursive backup fails
+ok 53 - znapzendzetup list backup (non-recursive) fails
+ok 54 - znapzendzetup list missingpool
+ok 55 - znapzendzetup list -r missingpool
+ok 56 - znapzendzetup list --features=lowmemRecurse missingpool
+ok 57 - znapzendzetup list --features=lowmemRecurse -r missingpool
+ok 58 - znapzendzetup export missingpool
+ok 59 - znapzendzetup list
+ok 60 - znapzendzetup <no main opt> - fails
+ok 61 - znapzendzetup <bogus main opt> - fails
+ok 62 - znapzendzetup delete <no src arg> - fails
+ok 63 - znapzendzetup enable <no src arg> - fails
+ok 64 - znapzendzetup disable <no src arg> - fails
+ok 65 - znapzendzetup enable-dst <no src arg> <no dst arg> - fails
+ok 66 - znapzendzetup disable-dst <no src arg> <no dst arg> - fails
+ok 67 - znapzendzetup export <no src arg> - fails
+ok
+ok 1 - use ZnapZend;
+ok 2 - znapzendztatz help
+ok 3 - znapzendztatz
+ok
