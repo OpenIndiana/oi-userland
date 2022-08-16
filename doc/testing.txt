@@ -32,7 +32,7 @@ something like the following in your x86 Userland workspace, then copied to
 the same locations in your SPARC workspace and retested there.
 
 When you run "gmake test", a check is made to see if there is a master
-file of test results. If there is, then a test-then-compare run is performed.
+file of test results. If there is, then a test-and-compare run is performed.
 If there isn't, then just a "normal" run of the test suite is performed.
 
 The name of the master test file (or files to be exact), will depend upon
@@ -42,14 +42,18 @@ Python or Perl component.
 The default master file name is defined in
 make-rules/shared-macros.mk and is:
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 where COMPONENT_TEST_RESULTS_DIR is:
 
 COMPONENT_TEST_RESULTS_DIR =    $(COMPONENT_DIR)/test
 
-so that means it will default to looking for the following test file
-master names:
+so that means one single common master test results file will be used.
+
+If the component needs different test result file based on bitness (32-bit vs.
+64-bit) then you should simply set USE_COMMON_TEST_MASTER to "no" in the
+component's Makefile before shared-macros.mk is included.  Then the master test
+result file names will be:
 
 32-bit: components/<component-name>/test/results-32.master
 
@@ -58,8 +62,11 @@ master names:
 both:   components/<component-name>/test/results-32.master
         components/<component-name>/test/results-64.master
 
-For Python, COMPONENT_TEST_MASTER is overridden in
-make-rules/setup.py.mk to be:
+For both Python and Perl the common master test result file
+$(COMPONENT_TEST_RESULTS_DIR)/results-all.master is used by default.
+
+If USE_COMMON_TEST_MASTER is set to "no" then for Python COMPONENT_TEST_MASTER
+is overridden in make-rules/setup.py.mk to be:
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PYTHON_VERSION)-$(BITS).master
 
@@ -71,27 +78,19 @@ so that means it's looking for one or more of:
 
 depending upon which versions of Python this component supports.
 
-Perl is similar, with COMPONENT_TEST_MASTER being overridden in:
-make-rules/makemaker.mk to be:
+Perl is similar, when USE_COMMON_TEST_MASTER is set to "no" the
+COMPONENT_TEST_MASTER is being overridden in make-rules/makemaker.mk to be:
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION)-$(BITS).master
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION).master
 
 so that means it's looking for one or more of:
 
-5.22:    components/perl_modules/<component>/test/results-5.22-32.master
-5.24:    components/perl_modules/<component>/test/results-5.24-64.master
+5.34:    components/perl/<component>/test/results-5.34.master
+5.36:    components/perl/<component>/test/results-5.36.master
 
 depending upon which versions of Perl this component supports.
 
-Note that if the test results are the same for both 32-bit and 64-bit or
-for all versions of Python or Perl, you can override the
-COMPONENT_TEST_MASTER definition in your component Makefile and just supply
-a single master files file. For example, in components/python/pep8 Makefile
-we have:
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-In order to do a test-then-compare run rather than just run the component
+In order to do a test-and-compare run rather than just run the component
 test suite, initially just create an empty master test file (or files).
 
 For example, for elinks, which just has 64-bit tests, do:
