@@ -263,6 +263,7 @@ function detect_license
 
 	if grep -i -A 1 "GENERAL PUBLIC LICENSE" "$F" | grep -q "Version 2, June 1991" ; then
 		D="GPL-2.0-only"
+		grep -A 2 "GNU General Public License as published by the" "$F" | grep -q "or (at your option) any" && D="GPL-2.0-or-later"
 		[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
 	fi
 
