@@ -136,7 +136,7 @@ git checkout perl-integrate-module.conf > /dev/null 2>&1
 touch perl-integrate-module.conf
 grep "^%patch%" perl-integrate-module.conf | while read TAG PATCH ; do
 	git checkout "patches/$PATCH" > /dev/null 2>&1
-	[[ -f "patches/$PATCH" ]] || printf "ERROR: Patch %s not found\n" "$PATCH" >&2
+	[[ -f "patches/$PATCH" ]] || printf "WARNING: Patch %s not found\n" "$PATCH" >&2
 done
 
 
@@ -435,7 +435,12 @@ grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\
 PERL_VERSIONS=$(gmake print-value-PERL_VERSIONS)
 
 
-# Run tests and create results master file(s)
+# Run tests to make sure they pass
+for v in $PERL_VERSIONS ; do
+	gmake PERL_VERSIONS=$v test > /dev/null 2>&1 || printf "ERROR: Testing failed for %s!\n" "$v" >&2
+done
+
+# Run tests again and create test results master file(s)
 COMPONENT_TEST_MASTER_PREV=
 for v in $PERL_VERSIONS ; do
 	COMPONENT_TEST_MASTER=$(gmake PERL_VERSION=$v print-value-COMPONENT_TEST_MASTER)
@@ -459,7 +464,7 @@ for v in $PERL_VERSIONS ; do
 		gmake PERL_VERSIONS=$v test > /dev/null 2>&1
 		TEST_RET=$?
 	fi
-	((TEST_RET != 0)) && printf "ERROR: 'gmake test' failed for %s!\n" "$v" >&2
+	((TEST_RET != 0)) && printf "ERROR: 'gmake test' results differ for %s!\n" "$v" >&2
 done
 
 
@@ -532,4 +537,4 @@ else
 fi
 
 # Commit the results
-git commit -m "$MSG" > /dev/null 2>&1 || printf "ERROR: 'git commit' failed!\n" >&2
+! git commit -m "$MSG" > /dev/null 2>&1 && printf "FATAL: 'git commit' failed!\n" >&2 && exit 1
