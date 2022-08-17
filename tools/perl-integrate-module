@@ -22,7 +22,7 @@ CURL="/usr/bin/curl -s"
 
 function usage
 {
-	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1"
+	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1" >&2
 	printf "Usage: perl-integrate-module [-l VERSION] [-o OBSOLETE].. [-u] MODULE\n" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
@@ -73,8 +73,8 @@ if [[ "$DISTRIBUTION" != "${MODULE//::/-}" ]] then
 	NEW_METACPAN_MODULE=$($CURL "$METACPANAPI/module/$NEW_MODULE")
 	NEW_DISTRIBUTION=$(printf "%s" "$NEW_METACPAN_MODULE" | /usr/bin/jq -r '.distribution')
 	if [[ "$NEW_DISTRIBUTION" == "$DISTRIBUTION" ]] ; then
-		printf "WARNING: Module %s does not match distribution %s\n" "$MODULE" "$DISTRIBUTION"
-		printf "WARNING: Continue with module %s instead of %s\n" "$NEW_MODULE" "$MODULE"
+		printf "WARNING: Module %s does not match distribution %s\n" "$MODULE" "$DISTRIBUTION" >&2
+		printf "WARNING: Continue with module %s instead of %s\n" "$NEW_MODULE" "$MODULE" >&2
 		MODULE="$NEW_MODULE"
 		METACPAN_MODULE="$NEW_METACPAN_MODULE"
 	fi
@@ -338,17 +338,17 @@ if [[ -z "$LICENSE" ]] ; then
 		for f in $(find "$SOURCE_DIR" -type f -name "*.pm" | LC_ALL=C sort | while read f ; do egrep -q "^=head1 (LICENSE|LICENCE|COPYRIGHT)" "$f" && echo "$f" ; done) ; do
 			COPYRIGHT=$(sed -e '1,/^=head1 LICENSE/d' -e '/^=/,$d' "$f" 2>/dev/null)
 			if [[ -n "$COPYRIGHT" ]] ; then
-				printf "WARNING: Using copyright notice from %s\n" "$f"
+				printf "WARNING: Using copyright notice from %s\n" "$f" >&2
 				break
 			fi
 			COPYRIGHT=$(sed -e '1,/^=head1 LICENCE/d' -e '/^=/,$d' "$f" 2>/dev/null)
 			if [[ -n "$COPYRIGHT" ]] ; then
-				printf "WARNING: Using copyright notice from %s\n" "$f"
+				printf "WARNING: Using copyright notice from %s\n" "$f" >&2
 				break
 			fi
 			COPYRIGHT=$(sed -e '1,/^=head1 COPYRIGHT/d' -e '/^=/,$d' "$f" 2>/dev/null)
 			if [[ -n "$COPYRIGHT" ]] ; then
-				printf "WARNING: Using copyright notice from %s\n" "$f"
+				printf "WARNING: Using copyright notice from %s\n" "$f" >&2
 				break
 			fi
 		done
@@ -424,7 +424,7 @@ git add Makefile
 
 
 # Check for Makefile completeness
-grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\n"
+grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\n" >&2
 
 
 # Make sure the build environment is setup properly and we do have all
@@ -482,7 +482,7 @@ for o in $(echo $OBSOLETE $PERL_VERSIONS_OBSOLETING | LC_ALL=C sort -u) ; do
 	FMRI_H=${FMRI%.*}
 	FMRI_T=${FMRI##*.}
 	if [[ "$FMRI_H" == "$FMRI" ]] ; then
-		printf "WARNING: Wrong fmri format: %s\n" "$FMRI"
+		printf "WARNING: Wrong fmri format: %s\n" "$FMRI" >&2
 		continue
 	fi
 	FMRI_T=$((FMRI_T + 1))
