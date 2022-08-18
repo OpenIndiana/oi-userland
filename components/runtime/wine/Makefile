@@ -12,10 +12,13 @@
 # Copyright (c) 2019 Evgeny Litvinenko
 #
 
+BUILD_BITS = 32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wine
 COMPONENT_VERSION=	4.17
+COMPONENT_REVISION =	1
 COMPONENT_PROJECT_URL=	https://www.winehq.org/
 COMPONENT_SUMMARY=	Wine - Run Windows applications.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,27 +32,17 @@ COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
-
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f --install )
 
 CONFIGURE_OPTIONS += AS="/usr/bin/gas"
 CONFIGURE_OPTIONS += --with-pulse
 CONFIGURE_OPTIONS += --with-oss
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TEST)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += audio/mpg123
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
@@ -60,7 +53,8 @@ REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libgphoto2-2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
