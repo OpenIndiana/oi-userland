@@ -55,7 +55,7 @@ stage_setup() {
 # we try to be smart and assume that all updates will always touch
 # the components Makefile also (to update COMPONENT_REVISION, etc)
 stage_build_changed() {
-	for f in $(git diff --name-only HEAD..origin/oi/hipster | grep Makefile); do
+	for f in $(git diff --name-only HEAD..origin/oi/hipster | grep Makefile; exit 0); do
 		echo "jenkinshelper: building for ${f%/*}..."
 		curpwd=$(pwd)
 		cd "${f%/*}" && COMPONENT_BUILD_ARGS=-j$(psrinfo -t -c) gmake publish
