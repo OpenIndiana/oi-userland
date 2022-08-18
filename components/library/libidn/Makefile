@@ -25,31 +25,32 @@
 # Copyright (c) 2020, Andreas Wacknitz
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 PATH=$(dir $(CC)):$(JAVA_HOME)/bin:/usr/bin:/usr/gnu/bin
 
-COMPONENT_NAME=		libidn
-COMPONENT_VERSION=	1.36
-COMPONENT_SUMMARY=	IDN - The Internationalized Domains Library
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libidn/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_NAME=         libidn
+COMPONENT_VERSION=      1.36
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      IDN - The Internationalized Domains Library
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=  https://www.gnu.org/software/libidn/
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
 	sha256:14b67108344d81ba844631640df77c9071d9fb0659b080326ff5424e86b14038
-COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/libidn/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		library/libidn
-COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_LICENSE=	LGPLv2.1, GPLv3, FDLv1.3
+COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/libidn/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/libidn
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_LICENSE=      LGPLv2.1, GPLv3, FDLv1.3
 
 COMPONENT_ARCHIVE_1 =   tld-0.7.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
 	sha256:7423f48d15fb1377ee0050c3e1f22e8a91668c2f158afed57b8ead3fed908785
 COMPONENT_ARCHIVE_URL_1 = https://sourceforge.net/projects/tldchk.berlios/files/$(COMPONENT_ARCHIVE_1)/download
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
@@ -113,8 +114,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	    $(FIND) ./lib -type f -name "*.pl" -exec chmod 0755 {} + ; \
 	    $(CLONEY) $(SOURCE_DIR) $(@D))
 
-build: $(BUILD_32_and_64)
-
 install: $(INSTALL_32_and_64)
 	$(MKDIR) $(HTMLDOCDIR) ; \
 	list1='$(HTMLDOCLIST)' ; for f in $$list1; do \
@@ -131,8 +130,6 @@ install: $(INSTALL_32_and_64)
 	    $(IDNDOCDIR)/
 	$(CP) -Rp $(PROTOUSRSHAREDIR)/locale/en@boldquot \
 	    $(PROTOUSRSHAREDIR)/locale/en
-
-test: $(TEST_32_and_64)
 
 # Manually added dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

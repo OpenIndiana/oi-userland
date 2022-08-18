@@ -13,26 +13,26 @@
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= crmsh
-COMPONENT_VERSION= 4.1.0
-COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION= System/Shells
-COMPONENT_PROJECT_URL= https://github.com/ClusterLabs/crmsh
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_NAME=         crmsh
+COMPONENT_VERSION=      4.1.0
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         application/cluster/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/Shells
+COMPONENT_PROJECT_URL=  https://github.com/ClusterLabs/crmsh
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:cccd51eb05a121e2b8d66e425057be0b022fa59d187978568411ff4164bf2d03
 COMPONENT_ARCHIVE_URL=  https://github.com/ClusterLabs/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_LICENSE= GPLv2
-COMPONENT_SUMMARY= crmsh is a command-line interface for High-Availability cluster management and part of the Clusterlabs project.
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_SUMMARY=      crmsh is a command-line interface for High-Availability cluster management and part of the Clusterlabs project.
 
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PYTHON_VERSION = 3.5
+PYTHON_VERSION = 3.9
 
 ENV += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
@@ -50,11 +50,6 @@ CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS += --sharedstatedir=/var/hacluster
 CONFIGURE_OPTIONS += --localstatedir=/var
 
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
 
-build:          $(BUILD_NO_ARCH)
-
-install:        $(INSTALL_NO_ARCH)
-
-test:           $(TESTS_64)
-
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-39

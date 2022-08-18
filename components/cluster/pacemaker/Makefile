@@ -15,25 +15,27 @@
 #
 
 BUILD_BITS=		64
+USE_OPENSSL11=          yes
 include ../../../make-rules/shared-macros.mk
 
 PATH= $(USRBINDIR64):$(PATH.gnu)
 
-COMPONENT_NAME=		pacemaker
-COMPONENT_VERSION=	2.0.3
-COMPONENT_FMRI=		application/cluster/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION= System/Services
-COMPONENT_SRC=		$(COMPONENT_NAME)-Pacemaker-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ca228f7f9745c7bc1e31bebe30e51475e95a82d9010d281f1701f2e3310bd3fe
-COMPONENT_PROJECT_URL=	https://www.clusterlab.org
-COMPONENT_ARCHIVE_URL=	https://github.com/Clusterlabs/$(COMPONENT_NAME)/archive/Pacemaker-$(COMPONENT_VERSION).tar.gz
-COMPONENT_LICENSE=	GPLv2,LGPLv2,BSD
-COMPONENT_SUMMARY=	Pacemaker is an advanced, scalable high-availability cluster resource manager.
+COMPONENT_NAME=         pacemaker
+COMPONENT_VERSION=      2.0.3
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         application/cluster/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/Services
+COMPONENT_SRC=          $(COMPONENT_NAME)-Pacemaker-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:ca228f7f9745c7bc1e31bebe30e51475e95a82d9010d281f1701f2e3310bd3fe
+COMPONENT_PROJECT_URL=  https://www.clusterlab.org
+COMPONENT_ARCHIVE_URL=  https://github.com/Clusterlabs/$(COMPONENT_NAME)/archive/Pacemaker-$(COMPONENT_VERSION).tar.gz
+COMPONENT_LICENSE=      GPLv2,LGPLv2,BSD
+COMPONENT_SUMMARY=      Pacemaker is an advanced, scalable high-availability cluster resource manager.
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION = 3.5
+PYTHON_VERSION = 3.9
 
 COMPONENT_PREP_ACTION=(cd $(SOURCE_DIR); $(CONFIG_SHELL) autogen.sh )
 
@@ -41,9 +43,11 @@ COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT= $(@D)/configure
 
-CFLAGS += -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS -lssp_nonshared -lssp -lnsl -lssl -lcrypto
+CFLAGS += -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS \
+	  -lssp_nonshared -lssp -lnsl -lssl \
+	  -L$(OPENSSL_LIBDIR.64) -R$(OPENSSL_LIBDIR.64) -lcrypto
 
-CONFIGURE_OPTIONS.64 += --libexecdir=$(CONFIGURE_PREFIX)/lib
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --sharedstatedir=/var/hacluster
 CONFIGURE_OPTIONS += --localstatedir=/var
@@ -89,16 +93,18 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/XPASS/p" ' \
 	'-e "/XFAIL/p" '
 
+PKG_MACROS+= PYVER="$(PYTHON_VERSION)"
+
 # added manually, not found as dependency
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += application/cluster/resource-agents
 REQUIRED_PACKAGES += library/libesmtp
 REQUIRED_PACKAGES += library/libstatgrab
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += text/asciidoc
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += application/cluster/cluster-glue
 REQUIRED_PACKAGES += application/cluster/corosync
 REQUIRED_PACKAGES += compress/bzip2
@@ -108,13 +114,11 @@ REQUIRED_PACKAGES += library/libqb
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 # Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

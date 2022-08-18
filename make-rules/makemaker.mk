@@ -21,30 +21,6 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-# Component defaults
-COMPONENT_VERSION ?=		$(shell $(WS_TOOLS)/perl-version-convert $(COMPONENT_NAME) $(HUMAN_VERSION))
-COMPONENT_CLASSIFICATION ?=	Development/Perl
-COMPONENT_SRC ?=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE ?=		$(COMPONENT_SRC).tar.gz
-COMPONENT_FMRI ?=		library/perl-5/$(shell echo $(COMPONENT_NAME) | tr [A-Z] [a-z])
-ifneq ($(strip $(COMPONENT_PERL_MODULE)),)
-COMPONENT_NAME ?=		$(subst ::,-,$(COMPONENT_PERL_MODULE))
-COMPONENT_PROJECT_URL ?=	https://metacpan.org/pod/$(COMPONENT_PERL_MODULE)
-endif
-ifneq ($(strip $(COMPONENT_CPAN_AUTHOR)),)
-COMPONENT_CPAN_AUTHOR1 =	$(shell echo $(COMPONENT_CPAN_AUTHOR) | cut -c 1)
-COMPONENT_CPAN_AUTHOR2 =	$(shell echo $(COMPONENT_CPAN_AUTHOR) | cut -c 1-2)
-COMPONENT_CPAN_AUTHOR_URL =	$(COMPONENT_CPAN_AUTHOR1)/$(COMPONENT_CPAN_AUTHOR2)/$(COMPONENT_CPAN_AUTHOR)
-COMPONENT_ARCHIVE_URL ?=	https://cpan.metacpan.org/authors/id/$(COMPONENT_CPAN_AUTHOR_URL)/$(COMPONENT_ARCHIVE)
-endif
-# Enable ASLR by default.  Component could disable ASLR by setting
-# COMPONENT_ASLR to 'no'.
-ifeq ($(strip $(COMPONENT_ASLR)),no)
-ASLR_MODE = $(ASLR_DISABLE)
-else
-ASLR_MODE = $(ASLR_ENABLE)
-endif
-
 # Common perl environment
 COMMON_PERL_ENV +=	MAKE=$(GMAKE)
 COMMON_PERL_ENV +=	PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:$(PATH)
@@ -127,12 +103,13 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 
 # Define bit specific and Perl version specific filenames.
 ifeq ($(strip $(USE_COMMON_TEST_MASTER)),no)
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION)-$(BITS).master
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION).master
 endif
-COMPONENT_TEST_OUTPUT = $(COMPONENT_TEST_BUILD_DIR)/test-$(PERL_VERSION)-$(BITS)-results
-COMPONENT_TEST_DIFFS =  $(COMPONENT_TEST_BUILD_DIR)/test-$(PERL_VERSION)-$(BITS)-diffs
-COMPONENT_TEST_SNAPSHOT = $(COMPONENT_TEST_BUILD_DIR)/results-$(PERL_VERSION)-$(BITS).snapshot
-COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PERL_VERSION)-$(BITS)-results
+COMPONENT_TEST_BUILD_DIR = $(BUILD_DIR)/test
+COMPONENT_TEST_OUTPUT = $(COMPONENT_TEST_BUILD_DIR)/test-$(PERL_VERSION)-results
+COMPONENT_TEST_DIFFS =  $(COMPONENT_TEST_BUILD_DIR)/test-$(PERL_VERSION)-diffs
+COMPONENT_TEST_SNAPSHOT = $(COMPONENT_TEST_BUILD_DIR)/results-$(PERL_VERSION).snapshot
+COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PERL_VERSION)-results
 
 # Normalize perl test results.
 COMPONENT_TEST_TRANSFORMS += '-e "0,/test_harness/d"'		# delete any lines up through test_harness
@@ -187,6 +164,7 @@ $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 
 
 # We need to add -$(PLV) to package fmri and generate runtime dependencies based on META.json
+GENERATE_EXTRA_DEPS += $(BUILD_DIR)/META.json
 GENERATE_EXTRA_CMD ?= \
 	$(GSED) -e 's/^\(set name=pkg.fmri [^@]*\)\(.*\)$$/\1-$$(PLV)\2/' | \
 	$(CAT) - <( \
@@ -194,22 +172,30 @@ GENERATE_EXTRA_CMD ?= \
 		echo "\# perl modules are unusable without perl runtime binary" ; \
 		echo "depend type=require fmri=__TBD pkg.debug.depend.file=perl \\" ; \
 		echo "    pkg.debug.depend.path=usr/perl5/\$$(PERLVER)/bin" ; \
-		[ -f $(SOURCE_DIR)/META.json ] && $(CAT) $(SOURCE_DIR)/META.json \
+		$(CAT) $(BUILD_DIR)/META.json \
 			| $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) runtime $(PERL_VERSION) \
 			| $(GSED) -e 's|^\(depend.*pkg:/runtime/perl-\$$(PLV).*\)$$|\#\1|g' \
 	)
 
 # Support for adding dependencies from META.json to REQUIRED_PACKAGES
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
-$(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
+$(BUILD_DIR)/META.depend.res: $(BUILD_DIR)/META.json
+	$(CAT) $(BUILD_DIR)/META.json | $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) $(PERL_VERSION) > $@
+
+$(BUILD_DIR)/META.json: $(SOURCE_DIR)/.prep
+	$(MKDIR) $(BUILD_DIR)
 	if [ -f $(SOURCE_DIR)/META.json ] ; then \
-		$(MKDIR) $(BUILD_DIR) ; \
-		$(CAT) $(SOURCE_DIR)/META.json | $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) $(PERL_VERSION) > $@ ; \
-	fi
-	$(TOUCH) $@
+		$(CAT) $(SOURCE_DIR)/META.json ; \
+	elif [ -f $(SOURCE_DIR)/META.yml ] ; then \
+		$(CAT) $(SOURCE_DIR)/META.yml \
+			| python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
+			| jq '{prereqs:{configure:{requires:.configure_requires},build:{requires:.build_requires},runtime:{requires}}}' ; \
+	fi > $@
 
 # perl-meta-deps requires jq
 USERLAND_REQUIRED_PACKAGES += text/jq
+# pyyaml is needed to convert META.yml to META.json
+USERLAND_REQUIRED_PACKAGES += library/python/pyyaml
 
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)

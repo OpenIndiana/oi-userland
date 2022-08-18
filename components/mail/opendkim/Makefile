@@ -12,12 +12,12 @@
 # Copyright 2022 Friedrich Kink
 #
 
-BUILD_BITS=		64 # for binaries or 32_and_64 for libraries
 USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         opendkim
 COMPONENT_VERSION=      2.10.3
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY=      OpenDKIM is an open source implementation of the DKIM (Domain Keys Identified Mail) sender authentication system
 COMPONENT_DESCRIPTION=	OpenDKIM is an open source implementation of the DKIM \
 			(Domain Keys Identified Mail) sender authentication system proposed \
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/opendkim/files/$(COMPON
 COMPONENT_ARCHIVE_HASH= sha256:43a0ba57bf942095fe159d0748d8933c6b1dd1117caf0273fa9a0003215e681b
 COMPONENT_LICENSE=      Copyright (c) 2009, 2010, 2012, 2013, The Trusted Domain Project.
 COMPONENT_LICENSE_FILE= LICENSE
+
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -60,7 +62,6 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc/mail \
 			--with-erlang \
 			--with-odbx \
 			--with-libcurl \
-			--with-libxml2 \
 			--with-milter \
 			--with-tre \
 			--with-libjansson \
@@ -76,20 +77,13 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc/mail \
 
 unexport SHELLOPTS
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-64.master
+COMPONENT_TEST_TRANSFORMS += "-e '/XFAIL: /p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/XPASS: /p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/^=======/p'"
 
-COMPONENT_TEST_TRANSFORMS += " -n " \
-	"-e '/TOTAL: /p' " \
-	"-e '/PASS: /p' " \
-	"-e '/SKIP: /p' " \
-	"-e '/XFAIL: /p' " \
-	"-e '/FAIL: /p' " \
-	"-e '/XPASS: /p' " \
-	"-e '/ERROR: /p' " \
-	"-e '/^=======/p' "
+REQUIRED_PACKAGES += runtime/erlang
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += image/rrdtool
@@ -101,7 +95,8 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/tre
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

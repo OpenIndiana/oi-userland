@@ -12,25 +12,27 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libcdio
-COMPONENT_VERSION=	0.94
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libcdio/
-COMPONENT_SUMMARY=	GNU Compact Disc Input and Control Library
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:96e2c903f866ae96f9f5b9048fa32db0921464a2286f5b586c0f02699710025a
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/libcdio/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv3
-COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_FMRI= 	library/audio/libcdio
+COMPONENT_NAME=         libcdio
+COMPONENT_VERSION=      0.94
+COMPONENT_REVISION=     1
+COMPONENT_PROJECT_URL=  http://www.gnu.org/software/libcdio/
+COMPONENT_SUMMARY=      GNU Compact Disc Input and Control Library
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:96e2c903f866ae96f9f5b9048fa32db0921464a2286f5b586c0f02699710025a
+COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/libcdio/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      GPLv3
+COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_FMRI=         library/audio/libcdio
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -52,13 +54,7 @@ COMPONENT_POST_INSTALL_ACTION= \
 
 ENV = /usr/bin/env -i
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/libcddb
 REQUIRED_PACKAGES += service/hal
 REQUIRED_PACKAGES += system/library

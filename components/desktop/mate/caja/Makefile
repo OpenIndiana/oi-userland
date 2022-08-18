@@ -13,43 +13,30 @@
 # Copyright 2016 Ken Mays
 # Copyright 2020 Michal Nowak
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
+# Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=		64
-
+MATE_CATEGORY= APP
+BUILD_STYLE= configure
+USE_COMMON_TEST_MASTER= no
 include ../../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		caja
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	1
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_PROJECT_URL=	https://www.mate-desktop.org
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	File manager for the MATE desktop
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:30fd6e6f00a38200f6e2e898ad7fa797876bb060f1d0341dd2f7393279e14c07
-COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_FMRI=		desktop/mate/$(COMPONENT_NAME)
 
+TEST_TARGET= $(TEST_$(MK_BITS))
 include $(WS_MAKE_RULES)/common.mk
-
-PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION=	\
 	( cp $(COMPONENT_DIR)/files/icons/*.png $(@D)/icons && \
 		cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
-CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/$(COMPONENT_NAME)
-
-CONFIGURE_ENV+= PYTHON="$(PYTHON)"
-
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # tests in different dirs, keep going if early tests fail
 COMPONENT_TEST_ARGS += -k -i
@@ -63,8 +50,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^. TOTAL: /,/^. ERROR: /p" '
 
 # Build dependencies
-REQUIRED_PACKAGES += library/desktop/mate/mate-common
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += developer/build/autoconf-archive
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libexif

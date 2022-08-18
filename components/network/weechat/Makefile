@@ -16,7 +16,7 @@ BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		weechat
-COMPONENT_VERSION=	3.5
+COMPONENT_VERSION=	3.6
 COMPONENT_PROJECT_URL=	https://weechat.org/
 COMPONENT_SUMMARY=	WeeChat - portable, fast, light and extensible IRC client
 COMPONENT_DESCRIPTION=	WeeChat (Wee Enhanced Environment for Chat) is a portable, fast, light and \
@@ -24,7 +24,7 @@ extensible chat client. Everything can be done with a keyboard. \
 It is customizable and extensible with scripts.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:ea904e4cec8edd0bd24f3ea17f6d6dff97ca00ee0571ee972e79e54c8c08170c
+COMPONENT_ARCHIVE_HASH=	sha256:9d85d71b3b7d04c03bd35ab6501afa8b5b3c609dce7691709ec740fecc31f2de
 COMPONENT_ARCHIVE_URL=	https://weechat.org/files/src/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=		network/chat/weechat
@@ -34,7 +34,7 @@ COMPONENT_LICENSE=	GPLv3
 include $(WS_MAKE_RULES)/common.mk
 
 # Use 64-bit perl
-PERL_VERSION = 5.24
+#PERL_VERSION = 5.34
 
 PATH= $(PATH.gnu)
 
@@ -54,13 +54,14 @@ COMPONENT_TEST_CMD =    ctest -V
 COMPONENT_TEST_TARGETS =
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/guile
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

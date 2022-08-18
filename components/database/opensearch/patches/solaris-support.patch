@@ -1,0 +1,182 @@
+diff -Nru OpenSearch-2.1.0.orig/buildSrc/src/main/java/org/opensearch/gradle/Jdk.java OpenSearch-2.1.0/buildSrc/src/main/java/org/opensearch/gradle/Jdk.java
+--- OpenSearch-2.1.0.orig/buildSrc/src/main/java/org/opensearch/gradle/Jdk.java	2022-06-30 21:56:06.000000000 +0000
++++ OpenSearch-2.1.0/buildSrc/src/main/java/org/opensearch/gradle/Jdk.java	2022-07-15 13:52:12.621491675 +0000
+@@ -51,7 +51,7 @@
+     private static final List<String> ALLOWED_ARCHITECTURES = Collections.unmodifiableList(Arrays.asList("aarch64", "x64"));
+     private static final List<String> ALLOWED_VENDORS = Collections.unmodifiableList(Arrays.asList("adoptium", "adoptopenjdk", "openjdk"));
+     private static final List<String> ALLOWED_PLATFORMS = Collections.unmodifiableList(
+-        Arrays.asList("darwin", "freebsd", "linux", "mac", "windows")
++        Arrays.asList("darwin", "freebsd", "sunos", "linux", "mac", "windows")
+     );
+     private static final Pattern VERSION_PATTERN = Pattern.compile("(\\d+)(\\.\\d+\\.\\d+)?\\+(\\d+(?:\\.\\d+)?)(@([a-f0-9]{32}))?");
+     private static final Pattern LEGACY_VERSION_PATTERN = Pattern.compile("(\\d)(u\\d+)(?:\\+|\\-)(b\\d+?)(@([a-f0-9]{32}))?");
+diff -Nru OpenSearch-2.1.0.orig/buildSrc/src/main/java/org/opensearch/gradle/OpenSearchDistribution.java OpenSearch-2.1.0/buildSrc/src/main/java/org/opensearch/gradle/OpenSearchDistribution.java
+--- OpenSearch-2.1.0.orig/buildSrc/src/main/java/org/opensearch/gradle/OpenSearchDistribution.java	2022-06-30 21:56:06.000000000 +0000
++++ OpenSearch-2.1.0/buildSrc/src/main/java/org/opensearch/gradle/OpenSearchDistribution.java	2022-07-15 13:56:10.833309329 +0000
+@@ -50,6 +50,7 @@
+     public enum Platform {
+         DARWIN,
+         FREEBSD,
++        SUNOS,
+         LINUX,
+         WINDOWS;
+ 
+@@ -87,6 +88,7 @@
+     // package private to tests can use
+     public static final Platform CURRENT_PLATFORM = OS.<Platform>conditional()
+         .onFreeBSD(() -> Platform.FREEBSD)
++        .onSunOS(() -> Platform.SUNOS)
+         .onLinux(() -> Platform.LINUX)
+         .onMac(() -> Platform.DARWIN)
+         .onWindows(() -> Platform.WINDOWS)
+diff -Nru OpenSearch-2.1.0.orig/buildSrc/src/main/java/org/opensearch/gradle/OS.java OpenSearch-2.1.0/buildSrc/src/main/java/org/opensearch/gradle/OS.java
+--- OpenSearch-2.1.0.orig/buildSrc/src/main/java/org/opensearch/gradle/OS.java	2022-06-30 21:56:06.000000000 +0000
++++ OpenSearch-2.1.0/buildSrc/src/main/java/org/opensearch/gradle/OS.java	2022-07-15 13:54:55.740651960 +0000
+@@ -39,6 +39,7 @@
+ 
+ public enum OS {
+     FREEBSD,
++    SUNOS,
+     LINUX,
+     MAC,
+     WINDOWS;
+@@ -48,6 +49,9 @@
+         if (os.startsWith("FreeBSD")) {
+             return OS.FREEBSD;
+         }
++        if (os.startsWith("SunOS")) {
++            return OS.SUNOS;
++        }
+         if (os.startsWith("Linux") || os.startsWith("LINUX")) {
+             return OS.LINUX;
+         }
+@@ -74,6 +78,11 @@
+             return this;
+         }
+ 
++        public Conditional<T> onSunOS(Supplier<T> supplier) {
++            conditions.put(SUNOS, supplier);
++            return this;
++        }
++
+         public Conditional<T> onMac(Supplier<T> supplier) {
+             conditions.put(MAC, supplier);
+             return this;
+@@ -81,6 +90,7 @@
+ 
+         public Conditional<T> onUnix(Supplier<T> supplier) {
+             conditions.put(FREEBSD, supplier);
++            conditions.put(SUNOS, supplier);
+             conditions.put(LINUX, supplier);
+             conditions.put(MAC, supplier);
+             return this;
+diff -Nru OpenSearch-2.1.0.orig/buildSrc/src/main/java/org/opensearch/gradle/VersionProperties.java OpenSearch-2.1.0/buildSrc/src/main/java/org/opensearch/gradle/VersionProperties.java
+--- OpenSearch-2.1.0.orig/buildSrc/src/main/java/org/opensearch/gradle/VersionProperties.java	2022-06-30 21:56:06.000000000 +0000
++++ OpenSearch-2.1.0/buildSrc/src/main/java/org/opensearch/gradle/VersionProperties.java	2022-07-15 13:57:33.652485423 +0000
+@@ -61,6 +61,8 @@
+                 return bundledJdkDarwin;
+             case "freebsd":
+                 return bundledJdkFreeBSD;
++            case "sunos":
++                return bundledJdkSunOS;
+             case "linux":
+                 return bundledJdkLinux;
+             case "windows":
+@@ -82,6 +84,7 @@
+     private static final String lucene;
+     private static final String bundledJdkDarwin;
+     private static final String bundledJdkFreeBSD;
++    private static final String bundledJdkSunOS;
+     private static final String bundledJdkLinux;
+     private static final String bundledJdkWindows;
+     private static final String bundledJdkVendor;
+@@ -95,6 +98,7 @@
+         final String bundledJdk = props.getProperty("bundled_jdk");
+         bundledJdkDarwin = props.getProperty("bundled_jdk_darwin", bundledJdk);
+         bundledJdkFreeBSD = props.getProperty("bundled_jdk_freebsd", bundledJdk);
++        bundledJdkSunOS = props.getProperty("bundled_jdk_sunos", bundledJdk);
+         bundledJdkLinux = props.getProperty("bundled_jdk_linux", bundledJdk);
+         bundledJdkWindows = props.getProperty("bundled_jdk_windows", bundledJdk);
+ 
+diff -Nru OpenSearch-2.1.0.orig/buildSrc/src/test/java/org/opensearch/gradle/JdkDownloadPluginTests.java OpenSearch-2.1.0/buildSrc/src/test/java/org/opensearch/gradle/JdkDownloadPluginTests.java
+--- OpenSearch-2.1.0.orig/buildSrc/src/test/java/org/opensearch/gradle/JdkDownloadPluginTests.java	2022-06-30 21:56:06.000000000 +0000
++++ OpenSearch-2.1.0/buildSrc/src/test/java/org/opensearch/gradle/JdkDownloadPluginTests.java	2022-07-15 13:59:13.749336563 +0000
+@@ -92,7 +92,7 @@
+             "11.0.2+33",
+             "unknown",
+             "x64",
+-            "unknown platform [unknown] for jdk [testjdk], must be one of [darwin, freebsd, linux, mac, windows]"
++            "unknown platform [unknown] for jdk [testjdk], must be one of [darwin, freebsd, sunos, linux, mac, windows]"
+         );
+     }
+ 
+diff -Nru OpenSearch-2.1.0.orig/distribution/archives/build.gradle OpenSearch-2.1.0/distribution/archives/build.gradle
+--- OpenSearch-2.1.0.orig/distribution/archives/build.gradle	2022-06-30 21:56:06.000000000 +0000
++++ OpenSearch-2.1.0/distribution/archives/build.gradle	2022-07-15 14:01:42.472606872 +0000
+@@ -130,6 +130,20 @@
+     }
+   }
+ 
++  sunosTar {
++    archiveClassifier = 'sunos-x64'
++    content {
++      archiveFiles(modulesFiles('sunos-x64'), 'tar', 'sunos', 'x64', false)
++    }
++  }
++
++  noJdkSunosTar {
++    archiveClassifier = 'no-jdk-sunos-x64'
++    content {
++      archiveFiles(modulesFiles('sunos-x64'), 'tar', 'sunos', 'x64', false)
++    }
++  }
++
+   linuxArm64Tar {
+     archiveClassifier = 'linux-arm64'
+     content {
+diff -Nru OpenSearch-2.1.0.orig/distribution/build.gradle OpenSearch-2.1.0/distribution/build.gradle
+--- OpenSearch-2.1.0.orig/distribution/build.gradle	2022-06-30 21:56:06.000000000 +0000
++++ OpenSearch-2.1.0/distribution/build.gradle	2022-07-15 14:02:28.649030055 +0000
+@@ -353,7 +353,7 @@
+           }
+         }
+         def buildModules = buildModulesTaskProvider
+-        List excludePlatforms = ['darwin-x64', 'freebsd-x64', 'linux-x64', 'linux-arm64', 'windows-x64', 'darwin-arm64']
++        List excludePlatforms = ['darwin-x64', 'freebsd-x64', 'sunos-x64', 'linux-x64', 'linux-arm64', 'windows-x64', 'darwin-arm64']
+         if (platform != null) {
+           excludePlatforms.remove(excludePlatforms.indexOf(platform))
+         } else {
+diff -Nru OpenSearch-2.1.0.orig/settings.gradle OpenSearch-2.1.0/settings.gradle
+--- OpenSearch-2.1.0.orig/settings.gradle	2022-06-30 21:56:06.000000000 +0000
++++ OpenSearch-2.1.0/settings.gradle	2022-07-15 14:03:22.133702452 +0000
+@@ -46,6 +46,8 @@
+   'distribution:archives:no-jdk-darwin-tar',
+   'distribution:archives:freebsd-tar',
+   'distribution:archives:no-jdk-freebsd-tar',
++  'distribution:archives:sunos-tar',
++  'distribution:archives:no-jdk-sunos-tar',
+   'distribution:archives:linux-arm64-tar',
+   'distribution:archives:linux-tar',
+   'distribution:archives:no-jdk-linux-tar',
+diff -Nru OpenSearch-2.1.0.orig/distribution/src/bin/opensearch-env OpenSearch-2.1.0/distribution/src/bin/opensearch-env
+--- OpenSearch-2.1.0.orig/distribution/src/bin/opensearch-env	2022-06-30 21:56:06.000000000 +0000
++++ OpenSearch-2.1.0/distribution/src/bin/opensearch-env	2022-07-16 13:20:17.137682947 +0000
+@@ -9,6 +9,8 @@
+ UNAME=$(uname -s)
+ if [ $UNAME = "FreeBSD" ]; then
+   OS="freebsd"
++elif [ $UNAME = "SunOS" ]; then
++  OS="sunos"
+ elif [ $UNAME = "Darwin" ]; then
+   OS="darwin"
+ else
+@@ -58,6 +60,9 @@
+   elif [ $OS = "freebsd" ]; then
+     # using FreeBSD default java from ports if JAVA_HOME is not set
+     JAVA="/usr/local/bin/java"
++  elif [ $OS = "sunos" ]; then
++    # using SunOS default java from repo if JAVA_HOME is not set
++    JAVA="/usr/bin/java"
+   else
+     JAVA="$OPENSEARCH_HOME/jdk/bin/java"
+   fi

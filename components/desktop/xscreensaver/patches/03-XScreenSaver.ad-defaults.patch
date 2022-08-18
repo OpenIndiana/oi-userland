@@ -1,0 +1,181 @@
+--- a/driver/XScreenSaver.ad.in	Sun May 29 19:41:47 2022
++++ b/driver/XScreenSaver.ad.in	Tue Aug  2 11:18:02 2022
+@@ -28,30 +28,30 @@
+ 
+ ! /* (xrdb prevention kludge: whole file)
+ 
+-*mode:			random
++*mode:			blank
+ *timeout:		0:10:00
+ *cycle:			0:10:00
+ *lockTimeout:		0:00:00
+-*passwdTimeout:		0:00:30
+-*dpmsEnabled:		False
++*passwdTimeout:		0:02:00
++*dpmsEnabled:		True
+ *dpmsQuickoffEnabled:	False
+-*dpmsStandby:		2:00:00
+-*dpmsSuspend:		2:00:00
+-*dpmsOff:		4:00:00
+-*grabDesktopImages:	True
++*dpmsStandby:		0:10:00
++*dpmsSuspend:		0:10:00
++*dpmsOff:		0:10:00
++*grabDesktopImages:	False
+ *grabVideoFrames:	False
+ *chooseRandomImages:	@DEFAULT_IMAGES_P@
+ ! This can be a local directory name, or the URL of an RSS or Atom feed.
+ *imageDirectory:	@DEFAULT_IMAGE_DIRECTORY@
+-*nice:			10
++*nice:			19
+ *memoryLimit:		0
+-*lock:			False
++*lock:			True
+ *verbose:		False
+ *fade:			True
+ *unfade:		True
+ *fadeSeconds:		0:00:03
+ *fadeTicks:		20
+-*splash:		True
++*splash:		False
+ *splashDuration:	0:00:05
+ *visualID:		default
+ *installColormap:	True
+@@ -58,10 +58,10 @@
+ *ignoreUninstalledPrograms: False
+ *authWarningSlack:	20
+ 
+-*textMode:		url
++*textMode:		date
+ *textLiteral:		XScreenSaver
+ *textFile:		@DEFAULT_TEXT_FILE@
+-*textProgram:		fortune
++*textProgram:		date
+ *textURL:		https://en.wikipedia.org/w/index.php?title=Special:NewPages&feed=rss
+ 
+ ! This is what the "Settings" button on the splash screen runs.
+@@ -347,23 +347,23 @@
+ @GL_KLUDGE@ GL: 				superquadrics -root			    \n\
+ 				attraction -root			    \n\
+ 				blitspin -root				    \n\
+-				greynetic -root				    \n\
+-				helix -root				    \n\
++-				greynetic -root				    \n\
++-				helix -root				    \n\
+ 				hopalong -root				    \n\
+ 				imsmap -root				    \n\
+ -				noseguy -root				    \n\
+ -				pyro -root				    \n\
+ 				qix -root				    \n\
+ -				rocks -root				    \n\
+-				rorschach -root				    \n\
++-				rorschach -root				    \n\
+ 				decayscreen -root			    \n\
+-				flame -root				    \n\
++-				flame -root				    \n\
+ 				halo -root				    \n\
+ 				slidescreen -root			    \n\
+-				pedal -root				    \n\
++-				pedal -root				    \n\
+ 				bouboule -root				    \n\
+ -				braid -root				    \n\
+-				coral -root				    \n\
++-				coral -root				    \n\
+ 				deco -root				    \n\
+ 				drift -root				    \n\
+ -				fadeplot -root				    \n\
+@@ -372,13 +372,13 @@
+ 				grav -root				    \n\
+ 				ifs -root				    \n\
+ @GL_KLUDGE@ GL: 				jigsaw -root				    \n\
+-				julia -root				    \n\
++-				julia -root				    \n\
+ -				kaleidescope -root			    \n\
+ @GL_KLUDGE@ GL: 				moebius -root				    \n\
+-				moire -root				    \n\
++-				moire -root				    \n\
+ @GL_KLUDGE@ GL: 				morph3d -root				    \n\
+ 				mountain -root				    \n\
+-				munch -root				    \n\
++-				munch -root				    \n\
+ 				penrose -root				    \n\
+ @GL_KLUDGE@ GL: 				pipes -root				    \n\
+ 				rd-bomb -root				    \n\
+@@ -393,7 +393,7 @@
+ 				xjack -root				    \n\
+ 				xlyap -root				    \n\
+ @GL_KLUDGE@ GL: 				atlantis -root				    \n\
+-				bsod -root				    \n\
++-				bsod -root				    \n\
+ @GL_KLUDGE@ GL: 				bubble3d -root				    \n\
+ @GL_KLUDGE@ GL: 				cage -root				    \n\
+ -				crystal -root				    \n\
+@@ -406,7 +406,7 @@
+ 				interference -root			    \n\
+ 				kumppa -root				    \n\
+ @GL_KLUDGE@ GL: 				lament -root				    \n\
+-				moire2 -root				    \n\
++-				moire2 -root				    \n\
+ @GL_KLUDGE@ GL: 				sonar -root				    \n\
+ @GL_KLUDGE@ GL: 				stairs -root				    \n\
+ 				truchet -root				    \n\
+@@ -414,9 +414,9 @@
+ 				blaster -root				    \n\
+ 				bumps -root				    \n\
+ 				ccurve -root				    \n\
+-				compass -root				    \n\
++-				compass -root				    \n\
+ 				deluxe -root				    \n\
+--				demon -root				    \n\
++				demon -root				    \n\
+ @GLE_KLUDGE@ GL: 				extrusion -root				    \n\
+ -				loop -root				    \n\
+ 				penetrate -root				    \n\
+@@ -430,7 +430,7 @@
+ 				squiral -root				    \n\
+ 				wander -root				    \n\
+ -				webcollage -root			    \n\
+-				xflame -root				    \n\
++				xflame -root -bitmap /usr/lib/xscreensaver/config/unlock-logo.png \n\
+ 				xmatrix -root				    \n\
+ @GL_KLUDGE@ GL: 				gflux -root				    \n\
+ -				nerverot -root				    \n\
+@@ -446,14 +446,14 @@
+ @GL_KLUDGE@ GL: 				molecule -root				    \n\
+ 				rotzoomer -root				    \n\
+ 				scooter -root				    \n\
+-				speedmine -root				    \n\
++-				speedmine -root				    \n\
+ @GL_KLUDGE@ GL: 				starwars -root				    \n\
+ @GL_KLUDGE@ GL: 				stonerview -root			    \n\
+ 				vermiculate -root			    \n\
+ 				whirlwindwarp -root			    \n\
+ 				zoom -root				    \n\
+ 				anemone -root				    \n\
+-				apollonian -root			    \n\
++-				apollonian -root			    \n\
+ @GL_KLUDGE@ GL: 				boxed -root				    \n\
+ @GL_KLUDGE@ GL: 				cubenetic -root				    \n\
+ @GL_KLUDGE@ GL: 				endgame -root				    \n\
+@@ -482,12 +482,11 @@
+ @GL_KLUDGE@ GL: 				cubestorm -root				    \n\
+ 				eruption -root				    \n\
+ @GL_KLUDGE@ GL: 				flipflop -root				    \n\
+-@GL_KLUDGE@ GL: 				flyingtoasters -root			    \n\
+ 				fontglide -root				    \n\
+ @GL_KLUDGE@ GL: 				gleidescope -root			    \n\
+ @GL_KLUDGE@ GL: 				glknots -root				    \n\
+ @GL_KLUDGE@ GL: 				glmatrix -root				    \n\
+-- GL: 				glslideshow -root			    \n\
++@GL_KLUDGE@ GL: 				glslideshow -root			    \n\
+ @GL_KLUDGE@ GL: 				hypertorus -root			    \n\
+ - GL: 				jigglypuff -root			    \n\
+ 				metaballs -root				    \n\
+@@ -507,7 +506,6 @@
+ 				intermomentary -root			    \n\
+ 				memscroller -root			    \n\
+ @GL_KLUDGE@ GL: 				noof -root				    \n\
+-				pacman -root				    \n\
+ @GL_KLUDGE@ GL: 				pinion -root				    \n\
+ @GL_KLUDGE@ GL: 				polyhedra -root				    \n\
+ - GL: 				providence -root			    \n\

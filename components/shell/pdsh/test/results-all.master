@@ -1,0 +1,170 @@
+PASS: t0001-basic.sh 1 - working success
+XFAIL: t0001-basic.sh 2 - pretend known breakage # TODO known breakage
+XFAIL: t0001-basic.sh 2 - pretend known breakage # TODO known breakage
+FAIL: t0001-basic.sh 3 - 3 pretend we have fixed a known breakage (run in sub test-lib)
+PASS: t0001-basic.sh 4 - test runs if prerequisite is satisfied
+PASS: t0001-basic.sh 5 - tests clean up after themselves
+FAIL: t0001-basic.sh 6 - 6 tests clean up even on failures
+PASS: t0001-basic.sh 7 - pdsh runs
+PASS: t0001-basic.sh 8 - pdsh -V works
+PASS: t0001-basic.sh 9 - pdsh -L works
+PASS: t0001-basic.sh 10 - pdsh -h works
+PASS: t0001-basic.sh 11 - rcmd/exec module is built
+PASS: t0001-basic.sh 12 - pdsh -N option works
+SKIP: t0001-basic.sh 13 # SKIP -u option is functional (missing LONGTESTS)
+PASS: t0001-basic.sh 14 - -f sets fanout
+PASS: t0001-basic.sh 15 - -l sets remote username
+PASS: t0001-basic.sh 16 - too long username fails gracefully
+PASS: t0001-basic.sh 17 - -t sets connect timeout
+PASS: t0001-basic.sh 18 - env PDSH_CONNECT_TIMEOUT sets connect timeout
+PASS: t0001-basic.sh 19 - -u sets command timeout
+PASS: t0001-basic.sh 20 - env PDSH_COMMAND_TIMEOUT sets command timeout
+PASS: t0001-basic.sh 21 - command timeout 0 by default
+PASS: t0001-basic.sh 22 - -b enables batch mode
+PASS: t0001-basic.sh 23 - pdsh -N option works
+ERROR: t0001-basic.sh - exited with status 1
+PASS: t0002-internal.sh 1 - working xstrerrorcat
+PASS: t0002-internal.sh 2 - working pipecmd
+PASS: t0003-wcoll.sh 1 - hostname range expansion works
+PASS: t0003-wcoll.sh 2 - host range expansion does not strip leading zeros
+PASS: t0003-wcoll.sh 3 - host range expansion handles mixed size suffixes
+PASS: t0003-wcoll.sh 4 - host range expansion works with "," embedded in range
+PASS: t0003-wcoll.sh 5 - host range expansion works with 2 sets of brackets
+PASS: t0003-wcoll.sh 6 - pdsh -x option works
+PASS: t0003-wcoll.sh 7 - pdsh -x option works with ranges
+PASS: t0003-wcoll.sh 8 - pdsh -x option works with ranges (gnats:118)
+PASS: t0003-wcoll.sh 9 - pdsh -x option works with non-numeric suffix (gnats:120)
+PASS: t0003-wcoll.sh 10 - pdsh -w- reads from stdin
+PASS: t0003-wcoll.sh 11 - pdsh -w- can be used with other -w args
+PASS: t0003-wcoll.sh 12 - WCOLL environment variable works
+PASS: t0003-wcoll.sh 13 - ranges can be embedded in wcoll files
+PASS: t0003-wcoll.sh 14 - ^file works
+PASS: t0003-wcoll.sh 15 - -x ^file works
+PASS: t0003-wcoll.sh 16 - ^file works with other args
+PASS: t0003-wcoll.sh 17 - Multiple ^file args
+PASS: t0003-wcoll.sh 18 - Multiple -w^file
+PASS: t0003-wcoll.sh 19 - -^file excludes hosts in file
+PASS: t0003-wcoll.sh 20 - ^file errors out if file doesnt exist
+PASS: t0003-wcoll.sh 21 - host exclusion with "-" works
+PASS: t0003-wcoll.sh 22 - regex filtering works
+PASS: t0003-wcoll.sh 23 - regex exclusion works
+PASS: t0003-wcoll.sh 24 - regex exclusion works from -x
+PASS: t0003-wcoll.sh 25 - multiple -w options
+PASS: t0003-wcoll.sh 26 - wcoll files support #include syntax
+PASS: t0003-wcoll.sh 27 - wcoll #include syntax searches dirname of orignal file
+PASS: t0003-wcoll.sh 28 - wcoll #include syntax ignores malformed lines
+PASS: t0003-wcoll.sh 29 - wcoll match #include exactly
+PASS: t0003-wcoll.sh 30 - wcoll: #include alone fails
+PASS: t0004-module-loading.sh 1 - PDSH_MODULE_DIR functionality
+PASS: t0004-module-loading.sh 2 - module A takes precedence over B
+PASS: t0004-module-loading.sh 3 - pdsh -M B ativates module B
+PASS: t0004-module-loading.sh 4 - PDSH_MISC_MODULES option works
+PASS: t0004-module-loading.sh 5 - -M option overrides PDSH_MISC_MODULES environment var
+FAIL: t0004-module-loading.sh 6 - 6 pdsh help string correctly displays options of loaded modules
+PASS: t0004-module-loading.sh 7 - Loading conflicting module with -M causes error
+PASS: t0004-module-loading.sh 8 - Conflicting modules dont run init()
+FAIL: t0004-module-loading.sh 9 - 9 Force loaded module runs init()
+PASS: t0004-module-loading.sh 10 - New conflicting module does not run init() with -M
+ERROR: t0004-module-loading.sh - exited with status 1
+PASS: t0005-rcmd_type-and-user.sh 1 - pdsh -l sets username for all hosts
+PASS: t0005-rcmd_type-and-user.sh 2 - Can set remote username via user@hosts
+PASS: t0005-rcmd_type-and-user.sh 3 - user@hosts works for a subset of hosts
+PASS: t0005-rcmd_type-and-user.sh 4 - Can set rcmd_type via rcmd_type:hosts
+PASS: t0005-rcmd_type-and-user.sh 5 - Can set rcmd_type and user via rcmd_type:user@hosts
+PASS: t0006-pdcp.sh 1 - Creating pdcp link to pdsh binary
+PASS: t0006-pdcp.sh 2 - Creating rpdcp link to pdsh binary
+PASS: t0006-pdcp.sh 3 - pdcp runs
+PASS: t0006-pdcp.sh 4 - rpdcp runs
+PASS: t0006-pdcp.sh 5 - pdcp -V works
+PASS: t0006-pdcp.sh 6 - pdcp -q works
+PASS: t0006-pdcp.sh 7 - -e sets remote program path
+PASS: t0006-pdcp.sh 8 - PDSH_REMOTE_PDCP_PATH sets remote program path
+PASS: t0006-pdcp.sh 9 - -f sets fanout
+PASS: t0006-pdcp.sh 10 - -l sets remote username
+PASS: t0006-pdcp.sh 11 - -t sets connect timeout
+PASS: t0006-pdcp.sh 12 - -u sets command timeout
+PASS: t0006-pdcp.sh 13 - command timeout 0 by default
+PASS: t0006-pdcp.sh 14 - Have pcptest rcmd module
+PASS: t0006-pdcp.sh 15 - pdcp basic functionality
+PASS: t0006-pdcp.sh 16 - rpdcp basic functionality
+PASS: t0006-pdcp.sh 17 - initialize directory tree
+PASS: t0006-pdcp.sh 18 - pdcp -r works
+PASS: t0006-pdcp.sh 19 - rpdcp -r works
+ERROR: t1001-genders.sh - missing test plan
+ERROR: t1001-genders.sh - exited with status 1
+PASS: t1002-dshgroup.sh 1 - dshgroup options are active
+PASS: t1002-dshgroup.sh 2 - dshgroup -g option works
+PASS: t1002-dshgroup.sh 3 - dshgroup -g option works with more than one group
+PASS: t1002-dshgroup.sh 4 - dshgroup -X option works
+PASS: t1002-dshgroup.sh 5 - dshgroup -X option works with -w
+PASS: t1002-dshgroup.sh 6 - dshgroup #include syntax works
+PASS: t1002-dshgroup.sh 7 - dshgroup #include syntax works with absolute paths
+PASS: t1002-dshgroup.sh 8 - dshgroup #include syntax detects loops
+SKIP: t1003-slurm.sh - skipping slurm tests, slurm module not available
+PASS: t2000-exec.sh 1 - exec module works
+PASS: t2000-exec.sh 2 - exec cmd substitution works
+PASS: t2000-exec.sh 3 - exec module works in interactive mode
+PASS: t2000-exec.sh 4 - exec cmd susbstitution works interactive mode
+PASS: t2001-ssh.sh 1 - create ssh dummy script
+PASS: t2001-ssh.sh 2 - ssh module runs
+PASS: t2001-ssh.sh 3 - ssh dummy script works
+PASS: t2001-ssh.sh 4 - ssh works with DSHPATH
+PASS: t2001-ssh.sh 5 - have ssh connect timeout option
+PASS: t2001-ssh.sh 6 - ssh works with connect timeout
+PASS: t2001-ssh.sh 7 - ssh and pdcp work together
+PASS: t2001-ssh.sh 8 - PDSH_SSH_ARGS works
+PASS: t2001-ssh.sh 9 - PDSH_SSH_ARGS does not require %h
+PASS: t2001-ssh.sh 10 - PDSH_SSH_ARGS does not require %u
+PASS: t2001-ssh.sh 11 - PDSH_SSH_ARGS does not force %u when ruser not set (Issue 39)
+PASS: t2001-ssh.sh 12 - ssh does not set -l%u by default (Issue 40)
+PASS: t2001-ssh.sh 13 - ssh sets -l%u when ruser != luser
+PASS: t2001-ssh.sh 14 - ssh does not set -l%u when ruser == luser (Issue 40)
+PASS: t2001-ssh.sh 15 - PDSH_SSH_ARGS without %u inserts %u before %h
+PASS: t2001-ssh.sh 16 - PDSH_SSH_ARGS does not require %u or %h
+PASS: t2001-ssh.sh 17 - PDSH_SSH_ARGS_APPEND works
+PASS: t2001-ssh.sh 18 - PDSH_SSH_ARGS_APPEND are added to PDSH_SSH_ARGS
+PASS: t2001-ssh.sh 19 - interactive mode works with ssh (Issue 14)
+PASS: t2001-ssh.sh 20 - create ssh dummy script for exit code testing
+PASS: t2001-ssh.sh 21 - ssh dummy script is functional
+PASS: t2001-ssh.sh 22 - ssh works with pdsh -S
+PASS: t2001-ssh.sh 23 - ssh works with pdsh -S and multiple targets
+SKIP: t2002-mrsh.sh - skipping mrsh tests, mrsh module not available
+PASS: t5000-dshbak.sh 1 - dshbak functionality
+PASS: t5000-dshbak.sh 2 - dshbak -c does not coalesce different length output
+PASS: t5000-dshbak.sh 3 - dshbak -c properly compresses multi-digit suffixes
+PASS: t5000-dshbak.sh 4 - dshbak -c properly compresses prefix with embedded numerals
+PASS: t5000-dshbak.sh 5 - dshbak -c does not strip leading zeros
+PASS: t5000-dshbak.sh 6 - dshbak -c does not coalesce different zero padding
+PASS: t5000-dshbak.sh 7 - dshbak -c properly coalesces zero padding of "00"
+PASS: t5000-dshbak.sh 8 - dshbak -c can detect suffixes
+XFAIL: t5000-dshbak.sh 9 - dshbak -c can detect suffix with numeral # TODO known breakage
+XFAIL: t5000-dshbak.sh 9 - dshbak -c can detect suffix with numeral # TODO known breakage
+PASS: t5000-dshbak.sh 10 - issue 19: missing commas in dshbak header output
+PASS: t5000-dshbak.sh 11 - dshbak properly joins 9,10
+PASS: t5000-dshbak.sh 12 - issue 33: dshbak does not coalesce 09,10
+PASS: t5000-dshbak.sh 13 - issue 33: dshbak does not coalesce 099,100
+PASS: t5000-dshbak.sh 14 - dshbak -d functionality
+PASS: t5000-dshbak.sh 15 - dshbak -f functionality
+PASS: t5000-dshbak.sh 16 - dshbak -f without -d fails
+PASS: t5000-dshbak.sh 17 - dshbak -d fails when output dir does not exist
+PASS: t5000-dshbak.sh 18 - dshbak -d fails gracefully for non-writable dir
+PASS: t5000-dshbak.sh 19 - Issue 70: dshbak fails on hostname of 0
+PASS: t6036-long-output-lines.sh 1 - pdsh does not truncate very long lines
+PASS: t6036-long-output-lines.sh 2 - pdsh does not truncate even longer lines
+PASS: t6114-no-newline-corruption.sh 1 - pdsh does not garble 1K with no newline
+PASS: t6114-no-newline-corruption.sh 2 - pdsh does not garble 8K with no newline
+PASS: t6114-no-newline-corruption.sh 3 - pdsh does not garble 8K+ with no newline
+PASS: t6114-no-newline-corruption.sh 4 - pdsh does not garble 10K with no newline
+PASS: t6114-no-newline-corruption.sh 5 - pdsh labels 1K with no newline only once
+PASS: t6114-no-newline-corruption.sh 6 - pdsh labels 8K with no newline only once
+PASS: t6114-no-newline-corruption.sh 7 - pdsh labels 8K+ with no newline only once
+PASS: t6114-no-newline-corruption.sh 8 - pdsh labels 10K with no newline only once
+# TOTAL: 159
+# PASS:  146
+# SKIP:  3
+# XFAIL: 2
+# XFAIL: 2
+# FAIL:  4
+# XPASS: 0
+# XPASS: 0
+# ERROR: 4

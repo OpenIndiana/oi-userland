@@ -10,33 +10,28 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module PDF::API2
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		PDF-API2
+COMPONENT_PERL_MODULE =		PDF::API2
 HUMAN_VERSION =			2.043
-COMPONENT_VERSION =		2.43
-COMPONENT_FMRI =		library/perl-5/pdf-api2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PDF::API2 - Create, modify, and examine PDF files
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/PDF::API2
+COMPONENT_CPAN_AUTHOR =		SSIMMS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:6312f605172973fa4d017639c217b61b1a8d6c533237ce58d5aacecfa273f0b2
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/S/SS/SSIMMS/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		LGPLv2.1
+COMPONENT_LICENSE =		LGPL-2.1-only
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += library/perl-5/font-ttf
-REQUIRED_PACKAGES += library/perl-5/test-exception
-REQUIRED_PACKAGES += library/perl-5/test-memory-cycle
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/font-ttf
+PERL_REQUIRED_PACKAGES += library/perl-5/test-exception
+PERL_REQUIRED_PACKAGES += library/perl-5/test-memory-cycle
+PERL_REQUIRED_PACKAGES += runtime/perl

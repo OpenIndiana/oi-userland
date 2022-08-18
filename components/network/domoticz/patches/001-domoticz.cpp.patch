@@ -1,0 +1,20 @@
+--- domoticz-2022.1/main/domoticz.cpp.bak	Tue Jun 14 06:06:44 2022
++++ domoticz-2022.1/main/domoticz.cpp	Tue Jun 14 06:15:19 2022
+@@ -452,6 +452,17 @@
+ 
+ 		return 0;
+ 	}
++#elif defined(__sun) /* elif of: #elif defined(__linux__) */
++	static size_t getExecutablePathName(char* pathName, size_t pathNameCapacity)
++	{
++		const char *p = getexecname();
++		size_t pathNameSize = strlen(p)+1;
++		if (pathNameSize > pathNameCapacity)
++			return 0;
++
++		strncpy ( pathName, p, pathNameSize );
++		return pathNameSize;
++	}
+ #else /* else of: #elif defined(__APPLE__) */
+ 	#error provide your own getExecutablePathName implementation
+ #endif /* end of: #if defined(_WIN32) */

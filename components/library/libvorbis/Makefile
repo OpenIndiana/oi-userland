@@ -20,38 +20,30 @@
 #
 # Copyright (c) David Hoeppner. All rights reserved.
 #
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libvorbis
-COMPONENT_VERSION=	1.3.6
-COMPONENT_REVISION= 1
+COMPONENT_VERSION=	1.3.7
 COMPONENT_FMRI=		library/libvorbis
 COMPONENT_CLASSIFICATION=		System/Libraries
 COMPONENT_SUMMARY=		libvorbis - general-purpose compressed audio format
-COMPONENT_PROJECT_URL=	http://xiph.org/vorbis/
+COMPONENT_PROJECT_URL=	https://xiph.org/vorbis/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:6ed40e0241089a42c48604dc00e362beee00036af2d8b3f46338031c9e0351cb
-COMPONENT_ARCHIVE_URL=\
-  http://downloads.xiph.org/releases/vorbis/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:b33cc4934322bcbf6efcbacf49e3ca01aadbea4114ec9589d1b1e9d20f72954b
+COMPONENT_ARCHIVE_URL= https://ftp.osuosl.org/pub/xiph/releases/vorbis/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--disable-docs
 CONFIGURE_OPTIONS  +=		--enable-shared
 
-# common targets
-build:		$(BUILD_32_and_64)
+# Test notes: run gmake test twice to get the final results.
 
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

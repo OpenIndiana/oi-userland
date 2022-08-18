@@ -21,7 +21,7 @@
 # Copyright (c) 2011, 2020, Oracle and/or its affiliates.
 #
 BUILD_BITS=32_and_64
-USE_COMMON_TEST_MASTER=yes
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION_SHORT= 1.1
@@ -31,6 +31,7 @@ COMPONENT_NAME=	openssl-$(COMPONENT_VERSION_SHORT)
 # and IPS_COMPONENT_VERSION.
 COMPONENT_VERSION=	1.1.1.17
 HUMAN_VERSION=		1.1.1q
+COMPONENT_REVISION =	1
 COMPONENT_FMRI=		library/security/openssl-11
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SUMMARY=	OpenSSL - a Toolkit for Transport Layer (TLS v1+) protocols and general purpose cryptographic library
@@ -161,6 +162,6 @@ REQUIRED_PACKAGES += developer/build/makedepend
 REQUIRED_PACKAGES += runtime/perl-522
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/perl-524
 REQUIRED_PACKAGES += system/library

@@ -13,29 +13,29 @@
 # Copyright 2018 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= geocode-glib
+COMPONENT_NAME=         geocode-glib
 COMPONENT_MJR_VERSION= 3.24
 COMPONENT_MNR_VERSION= 0
-COMPONENT_VERSION=$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION= 1
-COMPONENT_SUMMARY= A library for geocode and reverse geocoding
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=     2
+COMPONENT_SUMMARY=      A library for geocode and reverse geocoding
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:19c1fef4fd89eb4bfe6decca45ac45a2eca9bb7933be560ce6c172194840c35e
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.gnome.org
-COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
-COMPONENT_FMRI= library/desktop/geocode-glib
-COMPONENT_LICENSE= LGPLv2
+	sha256:19c1fef4fd89eb4bfe6decca45ac45a2eca9bb7933be560ce6c172194840c35e
+COMPONENT_ARCHIVE_URL=  \
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://www.gnome.org
+COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
+COMPONENT_FMRI=         library/desktop/geocode-glib
+COMPONENT_LICENSE=      LGPLv2
 COMPONENT_LICENSE_FILE= COPYING.LIB
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -66,12 +66,6 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 COMPONENT_INSTALL_ENV+=  GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/json-glib

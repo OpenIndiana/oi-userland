@@ -1,0 +1,44 @@
+pkg-config --list-all output relies on the order enforced by hash_table implementation 
+
+--- pkg-config-0.29.2/pkg.c.orig	2022-07-15 16:17:45.331952900 +0000
++++ pkg-config-0.29.2/pkg.c	2022-07-15 16:28:10.037642738 +0000
+@@ -1191,9 +1191,9 @@
+ }
+ 
+ static void
+-packages_foreach (gpointer key, gpointer value, gpointer data)
++packages_foreach (gpointer key, gpointer data)
+ {
+-  Package *pkg = value;
++  Package *pkg = g_hash_table_lookup (packages, key);
+   char *pad;
+ 
+   pad = g_strnfill (GPOINTER_TO_INT (data) - strlen (pkg->key), ' ');
+@@ -1213,7 +1213,11 @@
+   ignore_requires_private = TRUE;
+ 
+   g_hash_table_foreach (packages, max_len_foreach, &mlen);
+-  g_hash_table_foreach (packages, packages_foreach, GINT_TO_POINTER (mlen + 1));
++  /* Sort packages for consistent output */
++  GList *keys = g_hash_table_get_keys (packages);
++  keys = g_list_sort (keys, (GCompareFunc)g_strcmp0);
++  g_list_foreach (keys, packages_foreach, GINT_TO_POINTER (mlen + 1));
++  g_list_free (keys);
+ }
+ 
+ void
+--- pkg-config-0.29.2/check/check-print-options.orig	2022-07-15 16:33:01.504509089 +0000
++++ pkg-config-0.29.2/check/check-print-options	2022-07-15 16:33:36.819642587 +0000
+@@ -35,9 +35,9 @@
+ run_test --print-requires-private requires-test
+ 
+ # --list-all, limit to a subdirectory
+-RESULT="sub1   Subdirectory package 1 - Test package 1 for subdirectory
+-sub2   Subdirectory package 2 - Test package 2 for subdirectory
+-broken Broken package - Module with broken .pc file"
++RESULT="broken Broken package - Module with broken .pc file
++sub1   Subdirectory package 1 - Test package 1 for subdirectory
++sub2   Subdirectory package 2 - Test package 2 for subdirectory"
+ PKG_CONFIG_LIBDIR="$srcdir/sub" run_test --list-all
+ 
+ # Check handling when multiple incompatible options are set

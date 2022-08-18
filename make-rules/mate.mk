@@ -8,8 +8,11 @@
 #
 
 #
-# Copyright (c) 2021, Andreas Wacknitz. All rights reserved.
+# Copyright (c) 2022, Andreas Wacknitz. All rights reserved.
 #
+
+BUILD_BITS= 64
+BUILD_STYLE ?= configure
 
 COMPONENT_VERSION=  $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.mate-desktop.org
@@ -22,11 +25,15 @@ TEST_TARGET=        $(NO_TESTS)
 
 PATH=$(PATH.gnu)
 
+ifeq   ($(strip $(BUILD_STYLE)),configure)
 COMPONENT_PREP_ACTION= cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+endif
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))/mate
+ifeq   ($(strip $(BUILD_STYLE)),configure)
 CONFIGURE_OPTIONS+= --disable-static
+endif
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
@@ -38,23 +45,22 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 # Set defaults for Mate libraries
 #
 ifeq ($(strip $(MATE_CATEGORY)),LIB)
-BUILD_BITS = 32_and_64
-COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_FMRI=     		library/desktop/mate/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION ?=	System/Libraries
+COMPONENT_FMRI ?=     		library/desktop/mate/$(COMPONENT_NAME)
 endif
-
 
 #
 # Set defaults for Mate applications
 #
 ifeq ($(strip $(MATE_CATEGORY)),APP)
-BUILD_BITS = 64
-PREFERRED_BITS=	64
-COMPONENT_FMRI=     desktop/mate/$(COMPONENT_NAME)
+# APPs don't have a common COMPONENT_CLASSIFICATION and thus need to define it separately.
+COMPONENT_FMRI ?=     desktop/mate/$(COMPONENT_NAME)
 endif
 
 # Default build dependencies
+ifeq   ($(strip $(BUILD_STYLE)),configure)
 REQUIRED_PACKAGES += developer/build/autoconf
+endif
 REQUIRED_PACKAGES += developer/build/pkg-config
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/mate/mate-common

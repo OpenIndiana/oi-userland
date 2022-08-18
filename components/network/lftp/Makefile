@@ -24,11 +24,11 @@
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
-BUILD_BITS=				64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			lftp
 COMPONENT_VERSION=		4.9.2
+COMPONENT_REVISION =		1
 COMPONENT_FMRI=         network/ftp/lftp
 COMPONENT_SUMMARY=      lftp - Sophisticated file transfer program
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -58,12 +58,12 @@ ASLR_MODE = $(ASLR_ENABLE)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

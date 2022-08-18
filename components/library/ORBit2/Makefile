@@ -12,23 +12,23 @@
 # Copyright (c) 2014 Alexander Pyhalov. All rights reserved
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		ORBit2
-COMPONENT_VERSION=	2.14.19
-COMPONENT_REVISION=	3
-COMPONENT_PROJECT_URL=	https://projects.gnome.org/ORBit2/
-COMPONENT_SUMMARY=	High-performance CORBA Object Request Broker
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
+COMPONENT_NAME=         ORBit2
+COMPONENT_VERSION=      2.14.19
+COMPONENT_REVISION=     4
+COMPONENT_PROJECT_URL=  https://projects.gnome.org/ORBit2/
+COMPONENT_SUMMARY=      High-performance CORBA Object Request Broker
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= \
 	sha256:55c900a905482992730f575f3eef34d50bda717c197c97c08fa5a6eafd857550
     
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.14/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.14/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -46,18 +46,11 @@ CONFIGURE_OPTIONS.64 += --sysconfdir=/etc/$(MACH64)
 # and we don't want this
 $(INSTALL_32):	$(INSTALL_64)
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 # Build dependencies
 REQUIRED_PACKAGES+= developer/documentation-tool/gtk-doc
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libidl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

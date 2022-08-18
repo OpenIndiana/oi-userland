@@ -118,6 +118,7 @@ PKG_OS_VERSION ?= 0.$(PKG_SOLARIS_VERSION)
 i386_PLAT = pc
 sparc_PLAT = sun
 PLAT=$($(MACH)_PLAT)
+# For pre-gcc-9 the triplet matches the legacy definition
 GNU_TRIPLET=$(MACH)-$(PLAT)-solaris$(SOLARIS_VERSION)
 
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
@@ -649,7 +650,9 @@ F77.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 
 # GCC directory macros
-GCC_FULL_VERSION = $(shell $(CC.gcc.$(BITS)) -dumpversion)
+GCC_FULL_VERSION = $(shell $(GCC_ROOT)/bin/gcc -dumpversion)
+# Since gcc-9 the GNU triplet is x86_64-pc-solaris2.11 instead of i386-pc-solaris2.11
+GCC_GNU_TRIPLET  = $(shell $(GCC_ROOT)/bin/gcc -dumpmachine)
 GCC_BINDIR =	$(GCC_ROOT)/bin
 GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
 GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
@@ -768,11 +771,13 @@ PYTHON =	$(PYTHON.$(PYTHON_VERSION))
 # The default is site-packages, but that directory belongs to the end-user.
 # Modules which are shipped by the OS but not with the core Python distribution
 # belong in vendor-packages.
+PYTHON_DIR= /usr/lib/python$(PYTHON_VERSION)
 PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_DATA= $(PYTHON_LIB)
 
-JAVA7_HOME =	/usr/jdk/instances/openjdk1.7.0
 JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
+JAVA11_HOME =	/usr/jdk/instances/openjdk11.0.10
+JAVA18_HOME =	/usr/jdk/instances/openjdk18.0.1
 JAVA_HOME = $(JAVA8_HOME)
 
 # QT macros

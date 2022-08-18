@@ -10,28 +10,24 @@
 #
 
 #
-# Copyright 2022 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/perl-integrate-module Test::Without::Module
 #
 
 BUILD_STYLE = makemaker
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Test-Without-Module
-COMPONENT_VERSION =		0.20
-COMPONENT_FMRI =		library/perl-5/test-without-module
+COMPONENT_PERL_MODULE =		Test::Without::Module
+HUMAN_VERSION =			0.20
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Without::Module - Test fallback behaviour in absence of modules
-COMPONENT_CLASSIFICATION =	Development/Perl
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL =		https://metacpan.org/pod/Test::Without::Module
+COMPONENT_CPAN_AUTHOR =		CORION
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:8e9aeb7c32a6c6d0b8a93114db2a8c072721273a9d9a2dd4f9ca86cfd28aa524
-COMPONENT_ARCHIVE_URL =		https://cpan.metacpan.org/authors/id/C/CO/CORION/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE =		Artistic
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl

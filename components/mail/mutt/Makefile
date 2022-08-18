@@ -27,45 +27,46 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
-COMPONENT_VERSION=	2.2.6
-COMPONENT_REVISION =	1
+COMPONENT_VERSION=	2.2.7
+COMPONENT_SUMMARY=	The Mutt E-Mail Client
+COMPONENT_DESCRIPTION=	Mutt is a small but very powerful text-based mail client for Unix operating systems.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ffa2d93517cfc606fe01daffc5f12e42062a1c134d3b9af78484ebc5430888d3
+COMPONENT_ARCHIVE_HASH=	sha256:eb13858f58bb369f477bf652d90e9b6aaddd0d610acbea3455049e5efad36df1
 COMPONENT_ARCHIVE_URL=	http://ftp.mutt.org/pub/mutt/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.mutt.org/
+COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_FMRI=		mail/mutt
-COMPONENT_LICENSE_FILE=	mutt.license
 COMPONENT_LICENSE=	GPLv2
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS +=			-I$(USRINCDIR)/idn2
+CFLAGS += -I$(USRINCDIR)/idn2
 
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		--sysconfdir="$(ETCDIR)/$(COMPONENT_NAME)"
-CONFIGURE_OPTIONS  +=		--enable-pop
-CONFIGURE_OPTIONS  +=		--enable-imap
-CONFIGURE_OPTIONS  +=		--enable-smtp
-CONFIGURE_OPTIONS  +=		--enable-hcache
-CONFIGURE_OPTIONS  +=		--enable-sidebar
-CONFIGURE_OPTIONS  +=		--enable-debug
-CONFIGURE_OPTIONS  +=		--with-gdbm
-CONFIGURE_OPTIONS  +=		--with-regex
-CONFIGURE_OPTIONS  +=		--with-slang
-CONFIGURE_OPTIONS  +=		--with-ssl
-CONFIGURE_OPTIONS  +=		--with-idn2
-CONFIGURE_OPTIONS  +=		--with-wc-funcs
-CONFIGURE_OPTIONS  +=		--with-sasl
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS += --sysconfdir="$(ETCDIR)/$(COMPONENT_NAME)"
+CONFIGURE_OPTIONS += --enable-pop
+CONFIGURE_OPTIONS += --enable-imap
+CONFIGURE_OPTIONS += --enable-smtp
+CONFIGURE_OPTIONS += --enable-hcache
+CONFIGURE_OPTIONS += --enable-sidebar
+CONFIGURE_OPTIONS += --enable-debug
+CONFIGURE_OPTIONS += --with-gdbm
+CONFIGURE_OPTIONS += --with-regex
+CONFIGURE_OPTIONS += --with-slang
+CONFIGURE_OPTIONS += --with-ssl
+CONFIGURE_OPTIONS += --with-idn2
+CONFIGURE_OPTIONS += --with-wc-funcs
+CONFIGURE_OPTIONS += --with-sasl
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/slang
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl

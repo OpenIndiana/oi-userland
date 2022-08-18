@@ -41,6 +41,14 @@
 #
 COMMON_INCLUDED = yes
 
+# Assume components use a configure script-style build by default.
+BUILD_STYLE ?= configure
+
+# Some build styles might want to set some defaults before prep.mk is included.
+-include $(WS_MAKE_RULES)/$(strip $(BUILD_STYLE))-defaults.mk
+
+include $(WS_MAKE_RULES)/prep.mk
+
 # Override this to limit builds and publication to a single architecture.
 BUILD_ARCH ?= $(MACH)
 ifneq ($(strip $(BUILD_ARCH)),$(MACH))
@@ -55,8 +63,6 @@ TEST_TARGET ?= target-na
 SYSTEM_TEST_TARGET ?= target-na
 endif
 
-# Assume components use a configure script-style build by default.
-BUILD_STYLE ?= configure
 # If not an archive build (i.e. extract and copy) or pkg build (publish only),
 # include relevant makefile.
 ifneq ($(strip $(BUILD_STYLE)),archive)
@@ -64,8 +70,6 @@ ifneq ($(strip $(BUILD_STYLE)),pkg)
 include $(WS_MAKE_RULES)/$(strip $(BUILD_STYLE)).mk
 endif
 endif
-
-include $(WS_MAKE_RULES)/prep.mk
 
 ifeq ($(strip $(BUILD_STYLE)),configure)
 # Assume these items should always be set in the configure environment.  strip

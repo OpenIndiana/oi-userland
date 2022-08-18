@@ -24,29 +24,32 @@
 # Copyright 2017, Wiselabs Software Ltda - http://www.wiselabs.com.br. All rights reserved.
 #
 
+BUILD_STYLE = justmake
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ant
-COMPONENT_VERSION=	1.9.9
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.10.12
 COMPONENT_SUMMARY=	Apache Ant is a Java-based build tool
-COMPONENT_PROJECT_URL=	http://ant.apache.org/
+COMPONENT_PROJECT_URL=	https://ant.apache.org/
 COMPONENT_SRC_NAME=	apache-ant
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:69aa251ffb9f31312c21d67db197843e0b03b3c8cc3e0af6e6e92d98eb0f2ead
-COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/ant/source/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:044e2c0a66c90112d67789d267f049ae947fde384e29b1f8c14ada9bead0fe44
+COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/ant/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ant
 COMPONENT_FMRI=		developer/build/ant
 COMPONENT_CLASSIFICATION=	Development/Distribution Tools
 COMPONENT_LICENSE=	Apache v2.0
+COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/common.mk
 
-GMAKE=./build.sh
+PYTHON_VERSION= 3.9
+
+$(BUILD_$(MK_BITS)):	GMAKE=./build.sh
+$(INSTALL_$(MK_BITS)):	GMAKE=./build.sh
+$(TEST_$(MK_BITS)):	GMAKE=./build.sh
 
 ANT_ENV+=JAVA_HOME=$(JAVA_HOME)
 
@@ -64,6 +67,13 @@ OPTIONAL_LIBS+=/usr/share/antlr-2.7.7/antlr.jar
 
 COMPONENT_PRE_BUILD_ACTION = $(CP) $(OPTIONAL_LIBS) $(@D)/lib/optional
 
+# pkgdepend doesn't like the first line of a Python script to be:
+# '#!/usr/bin/python' so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
+#
+COMPONENT_POST_INSTALL_ACTION += \
+    $(GSED) -i -e 's?\/usr\/bin\/python?\/usr\/bin\/python$(PYTHON_VERSION)?' \
+    $(PROTOUSRBINDIR)/runant.py;
+
 COMPONENT_BUILD_ARGS =
 COMPONENT_BUILD_TARGETS =	build
 COMPONENT_BUILD_ENV +=		$(ANT_ENV)
@@ -74,12 +84,16 @@ COMPONENT_INSTALL_ENV +=	$(ANT_ENV)
 
 COMPONENT_TEST_TARGETS =	test
 COMPONENT_TEST_ENV +=		$(ANT_ENV)
-
-build:	$(BUILD_32)
-
-install: $(INSTALL_32)
-
-test:  $(TEST_32)
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+    '-e "s/[0-9]*\.*[0-9]* sec//" ' \
+    '-e "s/[0-9]*ms//" ' \
+    '-e "s/[0-9]* minutes//" ' \
+    '-e "s/[0-9]* seconds//" ' \
+	'-e "/BUILD/p" ' \
+	'-e "/Testsuite/p" ' \
+	'-e "/Testcase/p" ' \
+	'-e "/Tests run/p" '
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/java/openjdk8
@@ -88,6 +102,6 @@ REQUIRED_PACKAGES += runtime/java/openjdk8
 REQUIRED_PACKAGES += library/java/commons-bsf
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += runtime/python-39
+REQUIRED_PACKAGES += shell/ksh93

@@ -13,7 +13,8 @@
 # Copyright 2022 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,36 +23,22 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/perl5/5.22/bin/pod_cover
-file path=usr/perl5/5.22/lib/i86pc-solaris-64int/perllocal.pod
-file path=usr/perl5/5.22/man/man3/Pod::Coverage.3
-file path=usr/perl5/5.22/man/man3/Pod::Coverage::CountParents.3
-file path=usr/perl5/5.22/man/man3/Pod::Coverage::ExportOnly.3
-file path=usr/perl5/5.22/man/man3/Pod::Coverage::Overloader.3
-file path=usr/perl5/5.24/bin/pod_cover
-file path=usr/perl5/5.24/lib/i86pc-solaris-thread-multi-64/perllocal.pod
-file path=usr/perl5/5.24/man/man3/Pod::Coverage.3
-file path=usr/perl5/5.24/man/man3/Pod::Coverage::CountParents.3
-file path=usr/perl5/5.24/man/man3/Pod::Coverage::ExportOnly.3
-file path=usr/perl5/5.24/man/man3/Pod::Coverage::Overloader.3
-file path=usr/perl5/5.34/bin/pod_cover
-file path=usr/perl5/5.34/lib/i86pc-solaris-thread-multi-64/perllocal.pod
-file path=usr/perl5/5.34/man/man3/Pod::Coverage.3
-file path=usr/perl5/5.34/man/man3/Pod::Coverage::CountParents.3
-file path=usr/perl5/5.34/man/man3/Pod::Coverage::ExportOnly.3
-file path=usr/perl5/5.34/man/man3/Pod::Coverage::Overloader.3
-file path=usr/perl5/vendor_perl/5.22/Pod/Coverage.pm
-file path=usr/perl5/vendor_perl/5.22/Pod/Coverage/CountParents.pm
-file path=usr/perl5/vendor_perl/5.22/Pod/Coverage/ExportOnly.pm
-file path=usr/perl5/vendor_perl/5.22/Pod/Coverage/Overloader.pm
-file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/auto/Pod/Coverage/.packlist
-file path=usr/perl5/vendor_perl/5.24/Pod/Coverage.pm
-file path=usr/perl5/vendor_perl/5.24/Pod/Coverage/CountParents.pm
-file path=usr/perl5/vendor_perl/5.24/Pod/Coverage/ExportOnly.pm
-file path=usr/perl5/vendor_perl/5.24/Pod/Coverage/Overloader.pm
-file path=usr/perl5/vendor_perl/5.24/i86pc-solaris-thread-multi-64/auto/Pod/Coverage/.packlist
-file path=usr/perl5/vendor_perl/5.34/Pod/Coverage.pm
-file path=usr/perl5/vendor_perl/5.34/Pod/Coverage/CountParents.pm
-file path=usr/perl5/vendor_perl/5.34/Pod/Coverage/ExportOnly.pm
-file path=usr/perl5/vendor_perl/5.34/Pod/Coverage/Overloader.pm
-file path=usr/perl5/vendor_perl/5.34/i86pc-solaris-thread-multi-64/auto/Pod/Coverage/.packlist
+file path=usr/perl5/$(PERLVER)/bin/pod_cover
+file path=usr/perl5/$(PERLVER)/man/man3/Pod::Coverage.3
+file path=usr/perl5/$(PERLVER)/man/man3/Pod::Coverage::CountParents.3
+file path=usr/perl5/$(PERLVER)/man/man3/Pod::Coverage::ExportOnly.3
+file path=usr/perl5/$(PERLVER)/man/man3/Pod::Coverage::Overloader.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Pod/Coverage/.packlist
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Coverage.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Coverage/CountParents.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Coverage/ExportOnly.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Coverage/Overloader.pm
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/devel-symdump-$(PLV)@2.1
+depend type=require fmri=pkg:/library/perl-5/pod-parser-$(PLV)@1.13
+#depend type=require fmri=pkg:/runtime/perl-$(PLV)

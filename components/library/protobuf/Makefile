@@ -22,37 +22,33 @@
 # Copyright (c) 2015, Predrag Zecevic. All rights reserved.
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
+BUILD_STYLE=configure
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		protobuf
-COMPONENT_VERSION=	3.5.1
-COMPONENT_FMRI=		library/c++/protobuf
+COMPONENT_NAME=         protobuf
+COMPONENT_VERSION=      3.5.1
+COMPONENT_REVISION=     1
+COMPONENT_FMRI=         library/c++/protobuf
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	https://github.com/google/protobuf/
-COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:826425182ee43990731217b917c5c3ea7190cfda141af4869e6d4ad9085a740f
-COMPONENT_ARCHIVE_URL=	https://github.com/google/protobuf/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	BSD
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license 
-COMPONENT_SUMMARY=	Protocol Buffers - Google data interchange format
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=  https://github.com/google/protobuf/
+COMPONENT_ARCHIVE=      v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:826425182ee43990731217b917c5c3ea7190cfda141af4869e6d4ad9085a740f
+COMPONENT_ARCHIVE_URL=  https://github.com/google/protobuf/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      BSD
+COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license 
+COMPONENT_SUMMARY=      Protocol Buffers - Google data interchange format
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = cd $(SOURCE_DIR); ./autogen.sh
 
 CONFIGURE_OPTIONS+=	--disable-static --disable-64bit-solaris
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

@@ -75,6 +75,7 @@ LICENSE_TRANSFORMS =		$(WS_TOP)/transforms/license-changes
 PUBLISH_TRANSFORMS +=	$(LICENSE_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/variant-cleanup
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/autopyc
+PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/perl
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/defaults
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/actuators
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/devel
@@ -109,6 +110,7 @@ PKG_VARS += ARC_CASE TPNO
 PKG_VARS += MACH MACH32 MACH64
 PKG_VARS += BUILD_VERSION OS_VERSION PKG_SOLARIS_VERSION
 PKG_VARS += GNU_TRIPLET
+PKG_VARS += GCC_GNU_TRIPLET
 PKG_VARS += CONSOLIDATION
 PKG_VARS += COMPONENT_VERSION IPS_COMPONENT_VERSION HUMAN_VERSION
 PKG_VARS += COMPONENT_ARCHIVE_URL COMPONENT_PROJECT_URL COMPONENT_NAME
@@ -312,7 +314,7 @@ sample-manifest:	$(GENERATED).p5m
 # Since it is used in pipeline it needs to copy input to output.
 GENERATE_EXTRA_CMD ?= $(CAT)
 
-$(GENERATED).p5m:	install
+$(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 	[ ! -d $(SAMPLE_MANIFEST_DIR) ] && $(MKDIR) $(SAMPLE_MANIFEST_DIR) || true
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
@@ -513,10 +515,21 @@ $(RESOLVE_DEPS):	Makefile $(BUILD_DIR) $(DEPENDED)
 	$(PKGMOGRIFY) $(WS_TRANSFORMS)/PRINT_COMPONENT_FMRIS $(DEPENDED) | \
 		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' ;) | sort -u >$@
 
+$(BUILD_DIR)/runtime-perl.p5m: $(WS_TOOLS)/runtime-perl.p5m
+	$(CP) $< $@
+
 # resolve the dependencies all at once
-$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS)
-	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED)
+$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(BUILD_DIR)/runtime-perl.p5m
+	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED) $(BUILD_DIR)/runtime-perl.p5m
 	$(TOUCH) $@
+
+# generate list of sed rules to filter out component's own packages from
+# REQUIRED_PACKAGES list
+$(BUILD_DIR)/filter-own-pkgs: $(DEPENDED)
+	$(PKGMOGRIFY) $(WS_TRANSFORMS)/PRINT_COMPONENT_FMRIS $(DEPENDED) \
+		| $(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' -e 's/^\///g' -e 's/\//\\\//g' \
+		| sort -u \
+		| $(GSED) -e 's/^\(.*\)$$/\/^REQUIRED_PACKAGES += \1$$\/d/g' >$@
 
 # Set REQUIRED_PACKAGES macro substitution rules
 REQUIRED_PACKAGES_TRANSFORM += $(foreach p,$(REQUIRED_PACKAGES_SUBST), -e 's|$($(p))|$$($(p))|')
@@ -527,14 +540,16 @@ REQUIRED_PACKAGES_TRANSFORM += $(foreach p,$(REQUIRED_PACKAGES_SUBST), -e 's|$($
 # truly lazy among us.  This is only a piece of the REQUIRED_PACKAGES puzzle.
 # You must still include packages for tools you build and test with.
 #
-REQUIRED_PACKAGES::     $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED)
+REQUIRED_PACKAGES::     $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) $(BUILD_DIR)/filter-own-pkgs
 	$(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
 	@$(GSED) -i -e '/^# Auto-generated dependencies$$/,$$d' Makefile
 	@echo "# Auto-generated dependencies" >>Makefile
 	$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) \
 		| $(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' \
 		| tr '|' '\n' \
-		| $(GSED) -e 's,pkg:/,,g' -e 's/@.*$$//g' $(REQUIRED_PACKAGES_TRANSFORM) \
+		| $(GSED) -e 's,pkg:/,,g' -e 's/@.*$$//g' \
+			-f $(BUILD_DIR)/filter-own-pkgs \
+			$(REQUIRED_PACKAGES_TRANSFORM) \
 		| sort -u >>Makefile
 	@echo "*** Please edit your Makefile and verify the new or updated content at the end ***"
 

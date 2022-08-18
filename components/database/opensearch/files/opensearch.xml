@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<service_bundle type='manifest' name='opensearch'>
+<service name='network/opensearch' type='service' version='1'>
+<create_default_instance enabled='false' />
+<single_instance />
+<dependency name='fs-local' grouping='require_all' restart_on='none' type='service'>
+  <service_fmri value='svc:/system/filesystem/local' />
+</dependency>
+<exec_method type='method' name='start' exec='/usr/bin/opensearch -d' timeout_seconds='60'>
+  <method_context working_directory='/usr/share/opensearch'>
+    <method_credential user='opensearch' group='opensearch' />
+  </method_context>
+</exec_method>
+<exec_method type='method' name='stop' exec=':kill' timeout_seconds='60' />
+<property_group name='startd' type='framework'>
+  <!-- sub-process core dumps shouldn't restart session -->
+  <propval name='ignore_error' type='astring' value='core,signal' />
+</property_group>
+<stability value='External' />
+<template>
+  <common_name>
+    <loctext xml:lang='C'>OpenSearch server</loctext>
+  </common_name>
+</template>
+</service>
+</service_bundle>

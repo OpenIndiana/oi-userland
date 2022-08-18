@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= bonnie++
 COMPONENT_VERSION= 1.97.3
+COMPONENT_REVISION =	1
 HUMAN_VERSION= $(COMPONENT_VERSION)
 COMPONENT_SUMMARY= bonnie++ - Benchmark Harddrive utility
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -27,9 +28,9 @@ COMPONENT_ARCHIVE_URL= \
   http://www.coker.com.au/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.coker.com.au/bonnie++/
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -39,13 +40,9 @@ gcc_OPT= -O2
 COMPONENT_BUILD_ARGS+= CXXFLAGS="$(gcc_OPT) $(CXXFLAGS)"
 COMPONENT_BUILD_ARGS+= LDFLAGS="$(LDFLAGS)"
 
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

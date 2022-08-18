@@ -11,23 +11,25 @@
 #
 # Copyright 2022 Niklas Poslovski
 #
+BUILD_BITS=64
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gmime3
 COMPONENT_VERSION=      3.2.7
-#COMPONENT_REVISION=     1
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://github.com/jstedfast/gmime
 COMPONENT_SUMMARY=      A C/C++ MIME creation and parser library with support for S/MIME, PGP, and Unix mbox spools
 COMPONENT_FMRI=         library/gmime3
 COMPONENT_SRC=          gmime-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:2aea96647a468ba2160a64e17c6dc6afe674ed9ac86070624a3f584c10737d44
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/gmime/3.2/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION=	System/Libraries
+	sha256:2aea96647a468ba2160a64e17c6dc6afe674ed9ac86070624a3f584c10737d44
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/gmime/3.2/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      LGPLv2.1
-COMPONENT_LICENSE_FILE= gmime3.license
 
 CONFIGURE_OPTIONS += MAKE=gmake
 

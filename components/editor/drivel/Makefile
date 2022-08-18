@@ -12,26 +12,27 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_STYLE=configure
+BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		drivel
-COMPONENT_VERSION=	3.0.5
-COMPONENT_REVISION=	3
-COMPONENT_PROJECT_URL=	http://drivel.sourceforge.net/
-COMPONENT_SUMMARY=	Drivel is a GNOME client for editing blog
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:71b4af2552c22124a20e0b40958103f41beb3cb591b7b7e0c184e2817554a3fb
-COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	editor/blog/drivel
-COMPONENT_CLASSIFICATION=	Applications/Internet
-COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_LICENSE=	GPLv2
+COMPONENT_NAME=         drivel
+COMPONENT_VERSION=      3.0.5
+COMPONENT_REVISION=     4
+COMPONENT_PROJECT_URL=  http://drivel.sourceforge.net/
+COMPONENT_SUMMARY=      Drivel is a GNOME client for editing blog
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= \
+	sha256:71b4af2552c22124a20e0b40958103f41beb3cb591b7b7e0c184e2817554a3fb
+COMPONENT_ARCHIVE_URL=  http://prdownloads.sourceforge.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         editor/blog/drivel
+COMPONENT_CLASSIFICATION=Applications/Internet
+COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_LICENSE=      GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -42,13 +43,7 @@ CONFIGURE_ENV += 	LIBS=-lm
 
 COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
@@ -61,4 +56,3 @@ REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus-glib
-REQUIRED_PACKAGES += system/library/math

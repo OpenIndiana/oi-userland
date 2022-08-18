@@ -24,13 +24,11 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-PREFERRED_BITS=	64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groff
 COMPONENT_VERSION=	1.22.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/groff/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -40,9 +38,7 @@ COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCH
 COMPONENT_BUGDB=	utility/groff
 COMPONENT_FMRI=		text/groff
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/common.mk
 
 CONFIGURE_OPTIONS += --with-appresdir=$(CONFIGURE_PREFIX)/X11/lib/X11/app-defaults
 
@@ -53,21 +49,15 @@ COMPONENT_INSTALL_ARGS += sys_tmac_prefix=/usr/share/lib/tmac/
 COMPONENT_TEST_TRANSFORMER	= $(NAWK)
 COMPONENT_TEST_TRANSFORMS	= "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
 REQUIRED_PACKAGES += developer/test/dejagnu
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/perl-524
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += x11/library/libx11

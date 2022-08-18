@@ -1,0 +1,48 @@
+diff --git a/ipc/chromium/src/third_party/libevent/solaris/event2/event-config.h b/ipc/chromium/src/third_party/libevent/solaris/event2/event-config.h
+index 308abc5..0df9db0 100644
+--- a/ipc/chromium/src/third_party/libevent/solaris/event2/event-config.h
++++ b/ipc/chromium/src/third_party/libevent/solaris/event2/event-config.h
+@@ -390,12 +390,15 @@
+ 
+ /* Define to 1 if the system has the type `uint16_t'. */
+ #define EVENT__HAVE_UINT16_T 1
++#define _EVENT_HAVE_UINT16_T 1
+ 
+ /* Define to 1 if the system has the type `uint32_t'. */
+ #define EVENT__HAVE_UINT32_T 1
++#define _EVENT_HAVE_UINT32_T 1
+ 
+ /* Define to 1 if the system has the type `uint64_t'. */
+ #define EVENT__HAVE_UINT64_T 1
++#define _EVENT_HAVE_UINT64_T 1
+ 
+ /* Define to 1 if the system has the type `uint8_t'. */
+ #define EVENT__HAVE_UINT8_T 1
+@@ -497,6 +500,7 @@
+ /* The size of `size_t', as computed by sizeof. */
+ #ifdef __LP64__
+ #define EVENT__SIZEOF_SIZE_T 8
++#define _EVENT_SIZEOF_SIZE_T 8
+ #else
+ #define EVENT__SIZEOF_SIZE_T 4
+ #endif
+@@ -508,6 +508,7 @@
+ /* The size of `time_t', as computed by sizeof. */
+ #ifdef __LP64__
+ #define EVENT__SIZEOF_TIME_T 8
++#define _EVENT_SIZEOF_TIME_T 8
+ #else
+ #define EVENT__SIZEOF_TIME_T 4
+ #endif
+diff --git a/ipc/chromium/chromium-config.mozbuild b/ipc/chromium/chromium-config.mozbuild
+index 968eb01..c013c87 100644
+--- a/ipc/chromium/chromium-config.mozbuild
++++ b/ipc/chromium/chromium-config.mozbuild
+@@ -7,6 +7,7 @@
+ LOCAL_INCLUDES += [
+     '!/ipc/ipdl/_ipdlheaders',
+     '/ipc/chromium/src',
++    '/ipc/chromium/src/third_party/libevent/solaris',
+ ]
+ 
+ if CONFIG['OS_ARCH'] == 'WINNT':

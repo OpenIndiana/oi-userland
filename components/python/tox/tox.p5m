@@ -9,6 +9,7 @@
 
 # Copyright 2021 <contributor>
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -20,12 +21,11 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 depend type=require fmri=__TBD pkg.debug.depend.file=python3.9 \
     pkg.debug.depend.path=usr/bin
 
+# The following packages are required to run tox according to its setup.cfg:
 depend type=require fmri=library/python/filelock-39
-depend type=require fmri=library/python/freezegun-39
 depend type=require fmri=library/python/packaging-39
 depend type=require fmri=library/python/pluggy-39
 depend type=require fmri=library/python/py-39
-depend type=require fmri=library/python/pyparsing-39
 depend type=require fmri=library/python/six-39
 depend type=require fmri=library/python/toml-39
 depend type=require fmri=library/python/virtualenv-39

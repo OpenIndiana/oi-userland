@@ -28,7 +28,7 @@
 #
 
 BUILD_BITS= 64
-
+USE_COMMON_TEST_MASTER=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
@@ -48,9 +48,6 @@ PATH=$(PATH.gnu)
 
 CONFIGURE_PREFIX =	/usr/gnu
 
-# Since gcc-9 the GNU triple is x86_64-pc-solaris2.11 instead of i386-pc-solaris2.11
-GNU_TRIPLET=$(shell $(CC) -dumpmachine)
-
 CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--enable-64-bit-bfd
@@ -60,9 +57,9 @@ CONFIGURE_OPTIONS +=    --enable-nls
 CONFIGURE_OPTIONS +=    --disable-libtool-lock
 CONFIGURE_OPTIONS +=    --enable-largefile=yes
 CONFIGURE_OPTIONS +=	--with-system-zlib
-CONFIGURE_OPTIONS +=    --host=$(GNU_TRIPLET)
-CONFIGURE_OPTIONS +=    --build=$(GNU_TRIPLET)
-CONFIGURE_OPTIONS +=    --target=$(GNU_TRIPLET)
+CONFIGURE_OPTIONS +=    --host=$(GCC_GNU_TRIPLET)
+CONFIGURE_OPTIONS +=    --build=$(GCC_GNU_TRIPLET)
+CONFIGURE_OPTIONS +=    --target=$(GCC_GNU_TRIPLET)
 
 COMPONENT_TEST_ARGS += -k
 
