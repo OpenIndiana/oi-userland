@@ -1,13 +1,11 @@
-diff --git a/configure.ac b/configure.ac
-index b9339b90aa..9c3b09eb64 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -941,13 +941,19 @@ case $host_os in
+--- wine-4.17/configure.orig	2022-08-18 09:20:50.879757659 +0000
++++ wine-4.17/configure	2022-08-18 09:23:59.929503472 +0000
+@@ -9298,13 +9298,19 @@
      ;;
  
    *)
 -    case $host_cpu in
--      *i[[3456789]]86*)
+-      *i[3456789]86*)
 -        DLLFLAGS="$DLLFLAGS -fno-PIC"
 -        LDDLLFLAGS="-fno-PIC" ;;
 -      *)
@@ -17,7 +15,7 @@ index b9339b90aa..9c3b09eb64 100644
          LDDLLFLAGS="-fPIC" ;;
 +      *)
 +        case $host_cpu in
-+          *i[[3456789]]86*)
++          *i[3456789]86*)
 +            DLLFLAGS="$DLLFLAGS -fno-PIC"
 +            LDDLLFLAGS="-fno-PIC" ;;
 +          *)
@@ -25,8 +23,5 @@ index b9339b90aa..9c3b09eb64 100644
 +            LDDLLFLAGS="-fPIC" ;;
 +        esac ;;
      esac
-     AC_CACHE_CHECK([whether we can build a GNU style ELF dll], ac_cv_c_dll_gnuelf,
-         [WINE_TRY_SHLIB_FLAGS([-fPIC -shared -Wl,-Bsymbolic],
--- 
-2.23.0
-
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we can build a GNU style ELF dll" >&5
+ $as_echo_n "checking whether we can build a GNU style ELF dll... " >&6; }
