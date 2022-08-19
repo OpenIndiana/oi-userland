@@ -74,7 +74,7 @@
      both for JAVA and the JAR itself... Or keep it simple? -->
         <exec_method type='method'
                    name='start'
-                   exec='/usr/bin/java -DsessionTimeout=%{httpd/sessionTimeout} -DsessionEviction=%{httpd/sessionEviction} -jar %{httpd/jenkins_war_file} --httpPort=%{httpd/httpPort} --httpListenAddress=%{httpd/httpHost} --webroot=%{httpd/jenkins_war_dir}'
+                   exec='/usr/bin/java -DsessionTimeout=%{httpd/sessionTimeout} -DsessionEviction=%{httpd/sessionEviction} -jar %{httpd/jenkins_war_file} --httpPort=%{httpd/httpPort} --httpListenAddress=%{httpd/httpHost} --webroot=%{httpd/jenkins_war_dir} &amp;'
                    timeout_seconds='240'>
           <method_context>
             <method_credential user='jenkins' group='jenkins' privileges='basic,net_privaddr'/>
@@ -143,7 +143,7 @@
                 session -->
             <propval name='ignore_error' type='astring'
                 value='core,signal' />
-            <propval name='duration' type='astring' value='child' />
+            <propval name='duration' type='astring' value='contract' />
         </property_group>
 
         <template>
