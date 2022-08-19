@@ -24,10 +24,13 @@
 # Copyright (c) 2014 David Mackay. All rights reserved.
 #
 
+BUILD_BITS = NO_ARCH
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autoconf
 COMPONENT_VERSION=	2.13
+COMPONENT_REVISION =	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autoconf/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -35,9 +38,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f0611136bee505811e9ca11ca7ac188ef5323a8e2ef19cffd3edb3cf08fd791e
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autoconf/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -51,14 +52,19 @@ CONFIGURE_OPTIONS  +=		--program-suffix=-2.13
 
 CONFIGURE_ENV =
 
-# common targets
-build:		$(BUILD_32)
+# test needs to find g77
+COMPONENT_TEST_ENV += PATH=$(PATH):/usr/sfw/bin
+COMPONENT_TEST_ENV += F77=g77
+COMPONENT_TEST_ENV += CC=gcc
 
-install:	$(INSTALL_32)
+COMPONENT_TEST_TRANSFORMS += '-e "/^make\[/d"'			# delete make logs
+COMPONENT_TEST_TRANSFORMS += '-e "/^Test run by /d"'		# delete line with timestamp and username
+COMPONENT_TEST_TRANSFORMS += '-e "/^Making a new site\.exp file\.\.\.$$/d"'	# delete optional line
 
-test:		$(TEST_32)
+# fortran (g77) is needed to run tests
+REQUIRED_PACKAGES += developer/gcc-3
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/macro/gnu-m4
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/ksh93
