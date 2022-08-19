@@ -111,7 +111,7 @@ clean:		$(COMPONENT_DIRS.nosetup)
 
 clobber:	$(COMPONENT_DIRS.nosetup) clean
 	@cd $(WS_TOP)/tools ; echo "clobbering tools..." ; $(GMAKE) clobber
-	$(RM) -r $(WS_REPO) $(WS_LOGS) $(WS_LINT_CACHE)
+	$(RM) -r $(WS_REPO) $(WS_LOGS) $(WS_LINT_CACHE) $(WS_MACH)/perl-meta-deps-cache
 
 
 setup:	install_build_essential $(WS_LOGS) $(WS_REPO) tools $(WS_LINT_CACHE)
