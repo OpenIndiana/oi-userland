@@ -13,13 +13,11 @@
 #
 
 BUILD_BITS=		64
-#BUILD_STYLE=	cmake
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fuse-ext2
 COMPONENT_VERSION=	0.0.10
-#COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Fuse-ext2 is an EXT2/EXT3/EXT4 filesystem for FUSE
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
@@ -32,25 +30,18 @@ COMPONENT_FMRI=		library/fuse-ext2
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	gnu-gpl-v2
 
-#GCC_VERSION= 10
-#CFLAGS += -include semaphore.h 
 CFLAGS += -include /usr/include/sys/fm/io/disk.h
 LDFLAGS += -luuid -lcom_err -lpthread  
-#-shared  -luuid -lcom_err -lpthread -llibext2fs
 
-#COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 COMPONENT_PREP_ACTION = ( cd $(@D) && ../fuse-ext2-0.0.10/autogen.sh )
 
 CONFIGURE_OPTIONS+=--host=x86_64-pc-solaris2.11
-#CONFIGURE_OPTIONS+=--host=i386-pc-solaris2.11
-
-#COMPONENT_PRE_BUILD_ACTION = \
-# patches/convert-Makefiles.sh $(@D)
 
 TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/prep-patch.mk
 include $(WS_MAKE_RULES)/common.mk
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libfuse
 REQUIRED_PACKAGES += system/library
