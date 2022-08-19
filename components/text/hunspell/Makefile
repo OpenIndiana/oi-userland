@@ -13,10 +13,13 @@
 # Copyright (c) 2017 Ken Mays
 #
 
+BUILD_BITS = 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           hunspell
 COMPONENT_VERSION=        1.6.2
+COMPONENT_REVISION =	1
 COMPONENT_PROJECT_URL=    http://hunspell.github.io/
 COMPONENT_SUMMARY=        Improved spellchecker
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,9 +31,9 @@ COMPONENT_LICENSE=	GPLv3, LGPLv3, MPLv1.1
 COMPONENT_FMRI= text/hunspell
 COMPONENT_CLASSIFICATION = System/Text Tools
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -55,28 +58,11 @@ CONFIGURE_OPTIONS+=        --with-readline
 
 unexport SHELLOPTS
 
-COMPONENT_TEST_MASTER =     $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS += \
-     '-n ' \
-     '-e "/TOTAL:/p" ' \
-     '-e "/SKIP:/p" ' \
-     '-e "/PASS:/p" ' \
-     '-e "/FAIL:/p" ' \
-     '-e "/ERROR:/p" '
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
