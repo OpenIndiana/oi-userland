@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glibmm
 COMPONENT_VERSION=	2.58.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	glibmm - C++ Wrapper for the Glib2 Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -49,9 +49,6 @@ ENV=/usr/bin/env -i
 
 # Build dependency
 REQUIRED_PACKAGES += library/desktop/c++/mm-common
-
-# Not found automatically
-REQUIRED_PACKAGES += runtime/perl-522
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
