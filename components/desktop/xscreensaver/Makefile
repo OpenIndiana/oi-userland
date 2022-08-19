@@ -15,13 +15,12 @@
 # Copyright 2018-2019 Michal Nowak
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xscreensaver
 COMPONENT_VERSION=      6.4
 HUMAN_VERSION=      	6.04
+COMPONENT_REVISION =	1
 COMPONENT_PROJECT_URL=  https://www.jwz.org/xscreensaver/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -91,26 +90,22 @@ $(INSTALL) -d $(PROTO_DIR)/usr/share/pixmaps ;						\
 $(INSTALL) -m 644 $(@D)/utils/images/xscreensaver.xpm $(PROTO_DIR)/usr/share/pixmaps ;	\
 ) 
 
-# common targets
-test:		$(NO_TESTS)
-
 # Build dependencies
 REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/perl-5/xml-parser
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += service/opengl/ogl-select
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/glu
@@ -119,9 +114,6 @@ REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxft
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxinerama
-REQUIRED_PACKAGES += x11/library/libxkbfile
-REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/libxrandr
-REQUIRED_PACKAGES += x11/library/libxxf86misc
 REQUIRED_PACKAGES += x11/library/libxxf86vm
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
