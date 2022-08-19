@@ -1,0 +1,48 @@
+This is backport of upstream changeset 04c85fc to allow building with gettext
+0.21+.
+
+--- hunspell-1.6.2/Makefile.am.orig	2022-07-19 23:28:49.300451029 +0000
++++ hunspell-1.6.2/Makefile.am	2022-07-19 23:29:25.011396588 +0000
+@@ -1,6 +1,6 @@
+ ACLOCAL_AMFLAGS = -I m4
+ 
+-SUBDIRS= intl po src man tests
++SUBDIRS= po src man tests
+ 
+ pkgconfdir = $(libdir)/pkgconfig
+ pkgconf_DATA = hunspell.pc
+--- hunspell-1.6.2/configure.ac.orig	2022-07-19 23:30:46.514399340 +0000
++++ hunspell-1.6.2/configure.ac	2022-07-19 23:34:53.643734874 +0000
+@@ -23,6 +23,7 @@
+ AC_LIBTOOL_WIN32_DLL
+ 
+ # Checks for libraries.
++AM_ICONV
+ 
+ # Checks for header files.
+ 
+@@ -31,6 +32,7 @@
+ # Checks for typedefs, structures, and compiler characteristics.
+ AC_C_CONST
+ AC_C_INLINE
++gl_VISIBILITY
+ 
+ # Checks for library functions.
+ AC_FUNC_ERROR_AT_LINE
+@@ -38,7 +40,7 @@
+ AC_CHECK_FUNCS([memchr setlocale strchr strstr])
+ 
+ dnl internationalization macros
+-AM_GNU_GETTEXT
++AM_GNU_GETTEXT([external])
+ AM_GNU_GETTEXT_REQUIRE_VERSION(0.17)
+ 
+ AC_ARG_WITH(warnings,[  --with-warnings         compile with warning messages], [
+@@ -98,7 +100,6 @@
+ 		 hunspell.pc
+                  man/Makefile
+                  man/hu/Makefile
+-                 intl/Makefile
+                  po/Makefile.in
+ 		 src/Makefile
+ 		 src/hunspell/Makefile
