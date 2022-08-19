@@ -118,7 +118,8 @@ COMPONENT_TEST_TRANSFORMS += '-e "/^\#/d"'			# delete comments
 COMPONENT_TEST_TRANSFORMS += '-e "/^make\[/d"'			# delete make logs
 
 # Add the expected 'test_harness' line if it is missing in the test results.
-COMPONENT_POST_TEST_ACTION += $(GNU_GREP) -q test_harness $(COMPONENT_TEST_OUTPUT) \
+$(BUILD_DIR)/%/.tested-and-compared:	COMPONENT_POST_TEST_ACTION += \
+	$(GNU_GREP) -q test_harness $(COMPONENT_TEST_OUTPUT) \
 	|| $(GSED) -i -e '1i\test_harness' $(COMPONENT_TEST_OUTPUT) ;
 
 COMPONENT_TEST_TARGETS =	test
