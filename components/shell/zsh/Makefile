@@ -30,14 +30,14 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/shared-targets.mk
 
 COMPONENT_NAME=         zsh
-COMPONENT_VERSION=      5.8.1
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      5.9
 COMPONENT_PROJECT_URL=  https://www.zsh.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b6973520bace600b4779200269b1e5d79e5f505ac4952058c11ad5bbf0dd9919
+COMPONENT_ARCHIVE_HASH= sha256:9b8d1ecedd5b5e81fbf1918e876752a7dd948e05c1a0dba10ab863842d45acd5
 COMPONENT_ARCHIVE_URL=  https://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
+COMPONENT_CLASSIFICATION=	System/Shells
 COMPONENT_FMRI=         shell/zsh
 
 include $(WS_MAKE_RULES)/common.mk
@@ -49,6 +49,7 @@ CONFIGURE_LIBDIR.64= $(USRLIBDIR)
 
 CONFIGURE_OPTIONS += -n
 CONFIGURE_OPTIONS += --enable-cppflags="$(CPP_LARGEFILES)"
+CONFIGURE_OPTIONS += --enable-cap
 CONFIGURE_OPTIONS += --enable-dynamic
 CONFIGURE_OPTIONS += --enable-etcdir=/etc
 CONFIGURE_OPTIONS += --enable-function-subdirs

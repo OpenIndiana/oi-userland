@@ -58,13 +58,28 @@ $(SOURCE_DIR)/Test/B09hash.ztst: starting.
 $(SOURCE_DIR)/Test/B09hash.ztst: all tests successful.
 $(SOURCE_DIR)/Test/B10getopts.ztst: starting.
 $(SOURCE_DIR)/Test/B10getopts.ztst: all tests successful.
+$(SOURCE_DIR)/Test/B11kill.ztst: starting.
+$(SOURCE_DIR)/Test/B11kill.ztst: all tests successful.
+$(SOURCE_DIR)/Test/B12limit.ztst: starting.
+$(SOURCE_DIR)/Test/B12limit.ztst: all tests successful.
+$(SOURCE_DIR)/Test/B13whence.ztst: starting.
+$(SOURCE_DIR)/Test/B13whence.ztst: all tests successful.
 $(SOURCE_DIR)/Test/C01arith.ztst: starting.
 $(SOURCE_DIR)/Test/C01arith.ztst: all tests successful.
 $(SOURCE_DIR)/Test/C02cond.ztst: starting.
-Warning: Not testing [[ -b blockdevice ]] (no devices found)
-Warning: Not testing [[ -f blockdevice ]] (no devices found)
-This test takes up to 60 seconds...
-$(SOURCE_DIR)/Test/C02cond.ztst: all tests successful.
+Test $(SOURCE_DIR)/Test/C02cond.ztst failed: bad status 1, expected 0 from:
+  if (( EUID == 0 )); then
+    print -u$ZTST_fd 'Warning: Not testing [[ ! -r file ]] (root reads anything)'
+    [[ -r zerolength && -r unmodish ]]
+  elif [[ $OSTYPE = cygwin ]]; then
+    print -u$ZTST_fd 'Warning: Not testing [[ ! -r file ]]
+   (all files created by user may be readable)'
+   [[ -r zerolength ]]
+  else
+    [[ -r zerolength && ! -r unmodish ]]
+  fi
+Was testing: -r cond
+$(SOURCE_DIR)/Test/C02cond.ztst: test failed.
 $(SOURCE_DIR)/Test/C03traps.ztst: starting.
 This test takes at least three seconds...
 This test, too, takes at least three seconds...
@@ -77,8 +92,33 @@ $(SOURCE_DIR)/Test/C05debug.ztst: all tests successful.
 $(SOURCE_DIR)/Test/D01prompt.ztst: starting.
 $(SOURCE_DIR)/Test/D01prompt.ztst: all tests successful.
 $(SOURCE_DIR)/Test/D02glob.ztst: starting.
-$(SOURCE_DIR)/Test/D02glob.ztst: all tests successful.
+--- /tmp/zsh.ztst.28305/ztst.out	2022-08-19 10:29:58.992191906 +0000
++++ /tmp/zsh.ztst.28305/ztst.tout	2022-08-19 10:29:59.030488701 +0000
+@@ -1,3 +1,7 @@
++glob.tmp/secret-d000/dir   glob.tmp/secret-d000/file
++glob.tmp/secret-d111/dir   glob.tmp/secret-d111/file
+ glob.tmp/secret-d444/dir   glob.tmp/secret-d444/file
++glob.tmp/secret-s000/dir   glob.tmp/secret-s000/file
++glob.tmp/secret-s111/dir   glob.tmp/secret-s111/file
+ glob.tmp/secret-s444/dir   glob.tmp/secret-s444/file
+ glob.tmp/secret-d111/file  glob.tmp/secret-s111/file
+Test $(SOURCE_DIR)/Test/D02glob.ztst failed: output differs from expected as shown above for:
+ for 1 in 000 111 444 ; do
+  chmod 777 glob.tmp/secret-d$1
+  touch glob.tmp/secret-d$1/file
+  mkdir -m 777 glob.tmp/secret-d$1/dir
+  touch glob.tmp/secret-d$1/dir/file
+  chmod $1 glob.tmp/secret-d$1
+ done
+ if (( EUID == 0 )); then
+   ZTST_skip='Not testing unreadable directories (root reads anything)'
+ else
+   print -raC 2 -- glob.tmp/secret-*/* glob.tmp/secret-*/file
+ fi
+Was testing: names inside unreadable directories can be globbed if searchable
+$(SOURCE_DIR)/Test/D02glob.ztst: test failed.
 $(SOURCE_DIR)/Test/D03procsubst.ztst: starting.
+This test hangs the shell when it fails...
 $(SOURCE_DIR)/Test/D03procsubst.ztst: all tests successful.
 $(SOURCE_DIR)/Test/D04parameter.ztst: starting.
 $(SOURCE_DIR)/Test/D04parameter.ztst: all tests successful.
@@ -98,6 +138,8 @@ This test hangs the shell when it fails...
 $(SOURCE_DIR)/Test/E01options.ztst: all tests successful.
 $(SOURCE_DIR)/Test/E02xtrace.ztst: starting.
 $(SOURCE_DIR)/Test/E02xtrace.ztst: all tests successful.
+$(SOURCE_DIR)/Test/E03posix.ztst: starting.
+$(SOURCE_DIR)/Test/E03posix.ztst: all tests successful.
 $(SOURCE_DIR)/Test/P01privileged.ztst: starting.
 $(SOURCE_DIR)/Test/P01privileged.ztst: skipped (PRIVILEGED tests require super-user privileges (or env var))
 $(SOURCE_DIR)/Test/V01zmodload.ztst: starting.
@@ -127,11 +169,17 @@ $(SOURCE_DIR)/Test/V11db_gdbm.ztst: starting.
 $(SOURCE_DIR)/Test/V11db_gdbm.ztst: skipped (can't load zsh/db/gdbm module for testing)
 $(SOURCE_DIR)/Test/V12zparseopts.ztst: starting.
 $(SOURCE_DIR)/Test/V12zparseopts.ztst: all tests successful.
+$(SOURCE_DIR)/Test/V13zformat.ztst: starting.
+$(SOURCE_DIR)/Test/V13zformat.ztst: all tests successful.
+$(SOURCE_DIR)/Test/V14system.ztst: starting.
+$(SOURCE_DIR)/Test/V14system.ztst: all tests successful.
 $(SOURCE_DIR)/Test/W01history.ztst: starting.
 History tests write to /dev/tty
 $(SOURCE_DIR)/Test/W01history.ztst: all tests successful.
 $(SOURCE_DIR)/Test/W02jobs.ztst: starting.
 $(SOURCE_DIR)/Test/W02jobs.ztst: all tests successful.
+$(SOURCE_DIR)/Test/W03jobparameters.ztst: starting.
+$(SOURCE_DIR)/Test/W03jobparameters.ztst: all tests successful.
 $(SOURCE_DIR)/Test/X02zlevi.ztst: starting.
 This test may hang the shell when it fails...
 $(SOURCE_DIR)/Test/X02zlevi.ztst: all tests successful.
@@ -140,13 +188,30 @@ $(SOURCE_DIR)/Test/X03zlebindkey.ztst: all tests successful.
 $(SOURCE_DIR)/Test/X04zlehighlight.ztst: starting.
 $(SOURCE_DIR)/Test/X04zlehighlight.ztst: all tests successful.
 $(SOURCE_DIR)/Test/Y01completion.ztst: starting.
-$(SOURCE_DIR)/Test/Y01completion.ztst: all tests successful.
+--- /tmp/zsh.ztst.3865/ztst.out	2022-08-19 10:31:01.818430486 +0000
++++ /tmp/zsh.ztst.3865/ztst.tout	2022-08-19 10:31:01.844945863 +0000
+@@ -1 +1 @@
+-line: {ztst.zsh }{}
++line: {ztst.zsh}{}
+Test $(SOURCE_DIR)/Test/Y01completion.ztst failed: output differs from expected as shown above for:
+  comptesteval "path=( $ZTST_srcdir:A )"
+  comptest $'zt\t'
+Was testing: command
+$(SOURCE_DIR)/Test/Y01completion.ztst: test failed.
 $(SOURCE_DIR)/Test/Y02compmatch.ztst: starting.
 $(SOURCE_DIR)/Test/Y02compmatch.ztst: all tests successful.
 $(SOURCE_DIR)/Test/Y03arguments.ztst: starting.
 $(SOURCE_DIR)/Test/Y03arguments.ztst: all tests successful.
+$(SOURCE_DIR)/Test/Z01is-at-least.ztst: starting.
+$(SOURCE_DIR)/Test/Z01is-at-least.ztst: all tests successful.
+$(SOURCE_DIR)/Test/Z02zmathfunc.ztst: starting.
+$(SOURCE_DIR)/Test/Z02zmathfunc.ztst: all tests successful.
+$(SOURCE_DIR)/Test/Z03run-help.ztst: starting.
+$(SOURCE_DIR)/Test/Z03run-help.ztst: all tests successful.
 **************************************
-52 successful test scripts, 0 failures, 2 skipped
+59 successful test scripts, 3 failures, 2 skipped
 **************************************
+make[2]: *** [Makefile:190: check] Error 1
 make[2]: Leaving directory '$(@D)/Test'
+make[1]: *** [Makefile:263: check] Error 2
 make[1]: Leaving directory '$(@D)'
