@@ -16,11 +16,15 @@
 # Copyright 2022 David Stes
 #
 
+BUILD_STYLE = archive
+BUILD_BITS = NO_ARCH
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ca-certificates
 COMPONENT_VERSION_MAJOR=3
 COMPONENT_VERSION_MINOR=81
+COMPONENT_REVISION =	1
 COMPONENT_VERSION=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
 COMPONENT_SUMMARY=	Common CA certificates
 COMPONENT_SRC=		nss-$(COMPONENT_VERSION)
@@ -36,14 +40,16 @@ COMPONENT_LICENSE_FILE=	nss/COPYING
 
 HUMAN_VERSION=20220721
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_TARGET = $(BUILD_$(MK_BITS))
+INSTALL_TARGET = $(INSTALL_$(MK_BITS))
+
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_OPTIONS+= -I $(COMPONENT_DIR)
 
 CLEAN_PATHS += $(BUILD_DIR) $(PROTO_DIR)
 
-$(BUILD_32): $(BUILD_DIR_32)/.certs_renamed
+$(BUILD_$(MK_BITS)): $(BUILD_DIR_$(MK_BITS))/.certs_renamed
 
 # some filenames are UTF-8 not 7bit ASCII because 
 # certdata.txt has CKA_LABEL UTF8 entries that are not 7bit ASCII
@@ -52,8 +58,8 @@ $(BUILD_32): $(BUILD_DIR_32)/.certs_renamed
 # to avoid packaging UTF-8 non-ASCII paths in /etc, process by iconv
 # see Illumos bug #14510 and bug #11625
 
-$(BUILD_DIR_32)/.certs_renamed: $(BUILD_DIR_32)/.certs_extracted
-	for i in $(BUILD_DIR_32)/xx*; do \
+$(BUILD_DIR_$(MK_BITS))/.certs_renamed: $(BUILD_DIR_$(MK_BITS))/.certs_extracted
+	for i in $(@D)/xx*; do \
 		FILE_LEN=$$(wc -l  "$$i" |awk ' { print $$1; }' ); \
 		BEGIN=$$(grep -n "BEGIN CERT" "$$i" |cut -d : -f 1); \
 		TAIL=$$(($$FILE_LEN-$$BEGIN+1)); \
@@ -61,32 +67,32 @@ $(BUILD_DIR_32)/.certs_renamed: $(BUILD_DIR_32)/.certs_extracted
 			iconv -c -f UTF-8 -t ASCII | \
 			tr -d '?' | tr -d '(' | tr -d ')' \
 		); \
-		tail -n $$TAIL  "$$i" > $(BUILD_DIR_32)/$${NAME}.pem ;\
+		tail -n $$TAIL  "$$i" > $(@D)/$${NAME}.pem ;\
 	done
 	$(TOUCH) $@
 
-$(BUILD_DIR_32)/.certs_extracted: $(BUILD_DIR_32)/ca-bundle.processed
-	cd $(BUILD_DIR_32) &&\
-	NUM=$$(awk '/BEGIN/{n++} END{print n-2}' $(BUILD_DIR_32)/ca-bundle.processed) &&\
-	csplit -s -n 3 $(BUILD_DIR_32)/ca-bundle.processed '/END CERT/1' "{$$NUM}"
+$(BUILD_DIR_$(MK_BITS))/.certs_extracted: $(BUILD_DIR_$(MK_BITS))/ca-bundle.processed
+	cd $(@D) &&\
+	NUM=$$(awk '/BEGIN/{n++} END{print n-2}' $(@D)/ca-bundle.processed) &&\
+	csplit -s -n 3 $(@D)/ca-bundle.processed '/END CERT/1' "{$$NUM}"
 	$(TOUCH) $@
 
-$(BUILD_DIR_32)/ca-bundle.processed: $(BUILD_DIR_32)/ca-bundle.crt
-	grep -v '^#' $(BUILD_DIR_32)/ca-bundle.crt | grep -v '^$$' > $@
+$(BUILD_DIR_$(MK_BITS))/ca-bundle.processed: $(BUILD_DIR_$(MK_BITS))/ca-bundle.crt
+	grep -v '^#' $(@D)/ca-bundle.crt | grep -v '^$$' > $@
 
-$(BUILD_DIR_32)/ca-bundle.crt: $(BUILD_DIR_32)/certdata.txt
-	cd $(BUILD_DIR_32) && $(PERL) $(COMPONENT_DIR)/files/mk-ca-bundle.pl -n
+$(BUILD_DIR_$(MK_BITS))/ca-bundle.crt: $(BUILD_DIR_$(MK_BITS))/certdata.txt
+	cd $(@D) && $(PERL) $(COMPONENT_DIR)/files/mk-ca-bundle.pl -n
 	
 
-$(BUILD_DIR_32)/certdata.txt: $(SOURCE_DIR)/nss/lib/ckfw/builtins/certdata.txt
-	$(MKDIR)  $(BUILD_DIR_32)
+$(BUILD_DIR_$(MK_BITS))/certdata.txt: $(SOURCE_DIR)/nss/lib/ckfw/builtins/certdata.txt
+	$(MKDIR) $(@D)
 	$(CP) $(SOURCE_DIR)/nss/lib/ckfw/builtins/certdata.txt $@
 
 $(SOURCE_DIR)/nss/lib/ckfw/builtins/certdata.txt: $(SOURCE_DIR)/.prep
 
-$(INSTALL_32):	$(BUILD_32)
+$(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
 	$(MKDIR) $(PROTO_DIR)/etc/certs/CA $(PROTO_DIR)/etc/openssl/certs
-	$(CP) $(BUILD_DIR_32)/*.pem $(PROTO_DIR)/etc/certs/CA/
+	$(CP) $(@D)/*.pem $(PROTO_DIR)/etc/certs/CA/
 	cd $(PROTO_DIR)/etc/certs/CA &&\
 	for i in *.pem ; do  \
 	   HASH=$$(openssl x509 -noout -hash -in $$i); \
@@ -94,17 +100,12 @@ $(INSTALL_32):	$(BUILD_32)
 	done; 
 	touch $@
 	
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += library/perl-5/libwww-perl-522  
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += library/perl-5/libwww-perl
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += system/library/iconv/utf-8
 # Auto-generated dependencies
+REQUIRED_PACKAGES += system/ca-certificates
