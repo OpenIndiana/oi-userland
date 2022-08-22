@@ -23,14 +23,21 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# files with attribute path=usr/lib/$(MACH64)/cmake/ are excluded because the
+# cmake definitions do not work
+# in that location and the files are duplicates.
+# See https://github.com/libexpat/libexpat/issues/501
+# opencolorio which uncovered this links properly to the 64bit libraries
+
+
 file path=usr/bin/xmlwf
 file path=usr/include/expat.h
 file path=usr/include/expat_config.h
 file path=usr/include/expat_external.h
-file path=usr/lib/$(MACH64)/cmake/expat-$(COMPONENT_VERSION)/expat-config-version.cmake
-file path=usr/lib/$(MACH64)/cmake/expat-$(COMPONENT_VERSION)/expat-config.cmake
-file path=usr/lib/$(MACH64)/cmake/expat-$(COMPONENT_VERSION)/expat-noconfig.cmake
-file path=usr/lib/$(MACH64)/cmake/expat-$(COMPONENT_VERSION)/expat.cmake
+#file path=usr/lib/$(MACH64)/cmake/expat-$(COMPONENT_VERSION)/expat-config-version.cmake
+#file path=usr/lib/$(MACH64)/cmake/expat-$(COMPONENT_VERSION)/expat-config.cmake
+#file path=usr/lib/$(MACH64)/cmake/expat-$(COMPONENT_VERSION)/expat-noconfig.cmake
+#file path=usr/lib/$(MACH64)/cmake/expat-$(COMPONENT_VERSION)/expat.cmake
 link path=usr/lib/$(MACH64)/libexpat.so target=libexpat.so.1.8.8
 link path=usr/lib/$(MACH64)/libexpat.so.1 target=libexpat.so.1.8.8
 file path=usr/lib/$(MACH64)/libexpat.so.1.8.8
