@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 COMPILER=gcc
 COMPONENT_NAME=		extra-cmake-modules
 COMPONENT_VERSION=	5.93.0
-COMPONENT_FMRI=		developer/kde/ECM
+COMPONENT_FMRI=		developer/kde/$(COMPONENT_NAME)
 COMPONENT_PROJECT_URL=	https://kde.org/
 COMPONENT_SUMMARY=	KDE extra modules and scripts for CMake
 COMPONENT_CLASSIFICATION= Development/Other Languages
