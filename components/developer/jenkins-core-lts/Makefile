@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016-2021 Jim Klimov
+# Copyright 2022 Till Wegmueller
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -86,4 +87,4 @@ install: $(INSTALL_32)
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/java/openjdk8
+REQUIRED_PACKAGES += runtime/java/openjdk17

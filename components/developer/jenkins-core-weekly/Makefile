@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016-2021 Jim Klimov
+# Copyright 2022 Till Wegmueller
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -27,8 +28,8 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=				jenkins
 JENKINS_RELEASE=			weekly
 COMPONENT_MAJOR_VERSION=	2
-COMPONENT_MINOR_VERSION=	358
-COMPONENT_ARCHIVE_HASH=		sha256:067c057087f751e259adb75b07c7533b3a803feb95f554be9f4fd7623ffaaba1
+COMPONENT_MINOR_VERSION=	364
+COMPONENT_ARCHIVE_HASH=		sha256:9b4f1a33b211591f136af02aee611aa6ad4ed92b7b682587a242c1c5a27bb765
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
 # or for LTS
@@ -85,4 +86,4 @@ install: $(INSTALL_32)
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/java/openjdk8
+REQUIRED_PACKAGES += runtime/java/openjdk17

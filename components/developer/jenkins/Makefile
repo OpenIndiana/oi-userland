@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016-2018 Jim Klimov
+# Copyright 2022 Till Wegmueller
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -19,8 +20,7 @@ include ../../../make-rules/shared-macros.mk
 # Due to this, initial version for helper packages starts from that.
 
 COMPONENT_NAME=		jenkins
-COMPONENT_VERSION=	2.65
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	2.364
 COMPONENT_FMRI=		developer/jenkins
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_PROJECT_URL=	http://jenkins-ci.org/
@@ -49,4 +49,4 @@ test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/java/openjdk8
+REQUIRED_PACKAGES += runtime/java/openjdk17
