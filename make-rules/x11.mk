@@ -67,6 +67,16 @@ COMPONENT_LICENSE        = MIT License
 endif
 
 #
+# Set defaults for X11 documentation
+#
+ifeq ($(strip $(X11_CATEGORY)),DOC)
+BUILD_BITS = 64
+PATH=$(PATH.gnu)
+COMPONENT_CLASSIFICATION = System/X11
+COMPONENT_LICENSE        = MIT License
+endif
+
+#
 # Set defaults for X11 libraries
 #
 ifeq ($(strip $(X11_CATEGORY)),LIB)
