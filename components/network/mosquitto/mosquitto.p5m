@@ -23,14 +23,16 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file files/$(COMPONENT_NAME).xml path=lib/svc/manifest/network/$(COMPONENT_NAME).xml restart_fmri=svc:/system/manifest-import:default
+
+file path=etc/mosquitto/aclfile.example
+file path=etc/mosquitto/mosquitto.conf preserve=true
+file path=etc/mosquitto/pskfile.example
+file path=etc/mosquitto/pwfile.example
 file path=usr/bin/mosquitto_passwd
 file path=usr/bin/mosquitto_pub
 file path=usr/bin/mosquitto_rr
 file path=usr/bin/mosquitto_sub
-file path=usr/etc/mosquitto/aclfile.example
-file path=usr/etc/mosquitto/mosquitto.conf
-file path=usr/etc/mosquitto/pskfile.example
-file path=usr/etc/mosquitto/pwfile.example
 file path=usr/include/mosquitto.h
 file path=usr/include/mosquitto_broker.h
 file path=usr/include/mosquitto_plugin.h
