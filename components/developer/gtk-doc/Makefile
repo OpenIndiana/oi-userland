@@ -13,15 +13,13 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk-doc
 COMPONENT_MAJOR_VERSION=        1.33
 COMPONENT_MINOR_VERSION=        2
 COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.gtk.org/gtk-doc/
 COMPONENT_SUMMARY=	GTK+ DocBook Documentation Generator
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,11 +55,11 @@ CONFIGURE_OPTIONS+=	--bindir=$(USRBINDIR)
 CONFIGURE_OPTIONS+=	--sbindir=$(USRSBINDIR)
 CONFIGURE_OPTIONS+=	--sysconfdir=$(ETCDIR)
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
-CONFIGURE_ENV+=		PERL=$(PERL)
 
 # Manually added dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += text/itstool
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += library/python/pygments-37
+
+# Auto-generated dependencies
