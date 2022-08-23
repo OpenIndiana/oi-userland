@@ -14,6 +14,8 @@
 # Copyright 2017 Gary Mills
 #
 
+BUILD_BITS = 32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nwam-manager
@@ -36,15 +38,13 @@ GIT_CHANGESET=HEAD
 PATH = $(PATH.gnu)
 
 COMPONENT_PREP_GIT=no
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
 
 # The ugly hack with update-publish target is necessary to update
 # source from git repository on each "gmake publish".
-# publish: target should appear before inclusion of ips.mk
+# publish: target should appear before inclusion of common.mk
 publish: update-publish
 
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
@@ -65,8 +65,6 @@ COMPONENT_PREP_ACTION = \
 # Missing include files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_SCRIPT = $(@D)/configure
-
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS += --localstatedir=/var/lib
@@ -85,18 +83,20 @@ update-publish:
 
 $(SOURCE_DIR)/.prep: $(SOURCE_DIR)/.downloaded Makefile
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
 download:: $(SOURCE_DIR)/.downloaded
 
+# scrollkeeper-config is needed for building help
+REQUIRED_PACKAGES += text/rarian
+# XML::Parser is needed for i18n support
+REQUIRED_PACKAGES += library/perl-5/xml-parser
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libnotify
-REQUIRED_PACKAGES += library/perl-5/xml-parser-522
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
