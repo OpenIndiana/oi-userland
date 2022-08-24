@@ -30,17 +30,15 @@ BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libtool
-COMPONENT_VERSION=      2.4.6
-COMPONENT_REVISION=     4
+COMPONENT_VERSION=      2.4.7
 COMPONENT_FMRI=         developer/build/libtool
 COMPONENT_SUMMARY=      GNU libtool
 COMPONENT_CLASSIFICATION=Development/GNU
-COMPONENT_PROJECT_URL=  http://www.gnu.org/software/libtool/
+COMPONENT_PROJECT_URL=  https://www.gnu.org/software/libtool/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:e3bd4d5d3d025a36c21dd6af7ea818a2afcd4dfc1ea5a17b39d7854bcd0c06e3
-COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:4f7f217f057ce655ff22559ad221a0fd8ef84ad1fc5fcb6990cecc333aa1635d
+COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2, FDLv1.3
 
 # For now, we want to continue to provide the libltdl.so's (and their
@@ -51,7 +49,7 @@ COMPONENT_SRC_1 =	$(COMPONENT_NAME)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
     sha256:88e9ffaaade21c1ddaf6297723dd2fb4ca18ccaef0499a28b6e672f02c8ceb5d
-COMPONENT_ARCHIVE_URL_1 = http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_URL_1 = https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE_1)
 SOURCE_DIR_1 =		$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -73,6 +71,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 			-e 's|^LTCC="/.*$$|LTCC="gcc"|' \
 			-e 's|^CC="/.*$$|CC="gcc"|' libtool ; \
 	done)
+
+unexport SHELLOPTS
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
