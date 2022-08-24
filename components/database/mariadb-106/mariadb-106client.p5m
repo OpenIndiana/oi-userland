@@ -1,0 +1,119 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016-2017, Wiselabs Software Ltda - http://www.wiselabs.com.br . All rights reserved.
+# Copyright 2018, Michal Nowak
+# Copyright 2022, Daniel Bell
+#
+
+set name=pkg.fmri \
+    value=pkg:/database/mariadb-106/client@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary \
+    value="MariaDB 10.6 Database Management System - client tools"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Databases
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
+<transform file path=.*/bin/.+ -> default mode 0555>
+
+license mariadb-106.license license=GPLv2
+
+link path=usr/bin/mysql target=../mariadb/10.6/bin/mysql mediator=mysql mediator-version=10.6 mediator-implementation=mariadb
+link path=usr/bin/mysql_config target=../mariadb/10.6/bin/mysql_config mediator=mysql mediator-version=10.6 mediator-implementation=mariadb
+link path=usr/share/man/man1/mysql.1 target=../../../mariadb/10.6/man/man1/mysql.1 mediator=mysql mediator-version=10.6 mediator-implementation=mariadb
+link path=usr/share/man/man1/mysql_config.1 target=../../../mariadb/10.6/man/man1/mysql_config.1 mediator=mysql mediator-version=10.6 mediator-implementation=mariadb
+
+depend fmri=database/mysql-common type=require
+
+file path=usr/mariadb/10.6/bin/mytop mode=0555
+file path=usr/mariadb/10.6/bin/msql2mysql mode=0555
+
+link path=usr/mariadb/10.6/bin/mysql target=mariadb
+file path=usr/mariadb/10.6/bin/mariadb mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb.1
+
+link path=usr/mariadb/10.6/bin/mysql_convert_table_format target=mariadb-convert-table-format
+file path=usr/mariadb/10.6/bin/mariadb-convert-table-format mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-convert-table-format.1
+
+link path=usr/mariadb/10.6/bin/mysql_find_rows target=mariadb-find-rows
+file path=usr/mariadb/10.6/bin/mariadb-find-rows mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-find-rows.1
+
+link path=usr/mariadb/10.6/bin/mysql_setpermission target=mariadb-setpermission
+file path=usr/mariadb/10.6/bin/mariadb-setpermission mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-setpermission.1
+
+link path=usr/mariadb/10.6/bin/mysql_tzinfo_to_sql target=mariadb-tzinfo-to-sql
+file path=usr/mariadb/10.6/bin/mariadb-tzinfo-to-sql mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-tzinfo-to-sql.1
+
+link path=usr/mariadb/10.6/bin/mysql_waitpid target=mariadb-waitpid
+file path=usr/mariadb/10.6/bin/mariadb-waitpid mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-waitpid.1
+
+link path=usr/mariadb/10.6/bin/mysqlaccess target=mariadb-access
+file path=usr/mariadb/10.6/bin/mariadb-access mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-access.1
+
+link path=usr/mariadb/10.6/bin/mysqladmin target=mariadb-admin
+file path=usr/mariadb/10.6/bin/mariadb-admin mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-admin.1
+
+link path=usr/mariadb/10.6/bin/mysqlcheck target=mariadb-check
+file path=usr/mariadb/10.6/bin/mariadb-check mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-check.1
+
+link path=usr/mariadb/10.6/bin/mysqldump target=mariadb-dump
+file path=usr/mariadb/10.6/bin/mariadb-dump mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-dump.1
+
+link path=usr/mariadb/10.6/bin/mysqldumpslow target=mariadb-dumpslow
+file path=usr/mariadb/10.6/bin/mariadb-dumpslow mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-dumpslow.1
+
+link path=usr/mariadb/10.6/bin/mysqlimport target=mariadb-import
+file path=usr/mariadb/10.6/bin/mariadb-import mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-import.1
+
+link path=usr/mariadb/10.6/bin/mysqlshow target=mariadb-show
+file path=usr/mariadb/10.6/bin/mariadb-show mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-show.1
+
+link path=usr/mariadb/10.6/bin/mysqlslap target=mariadb-slap
+file path=usr/mariadb/10.6/bin/mariadb-slap mode=0555
+file path=usr/mariadb/10.6/man/man1/mariadb-slap.1
+
+file path=usr/mariadb/10.6/bin/mysql_config mode=0555
+file path=usr/mariadb/10.6/bin/test-connect-t
+file path=usr/mariadb/10.6/man/man1/msql2mysql.1
+file path=usr/mariadb/10.6/man/man1/mysql.1
+file path=usr/mariadb/10.6/man/man1/mysql_config.1
+file path=usr/mariadb/10.6/man/man1/mysql_convert_table_format.1
+file path=usr/mariadb/10.6/man/man1/mysql_find_rows.1
+file path=usr/mariadb/10.6/man/man1/mysql_setpermission.1
+file path=usr/mariadb/10.6/man/man1/mysql_tzinfo_to_sql.1
+file path=usr/mariadb/10.6/man/man1/mysql_waitpid.1
+file path=usr/mariadb/10.6/man/man1/mysqlaccess.1
+file path=usr/mariadb/10.6/man/man1/mysqladmin.1
+file path=usr/mariadb/10.6/man/man1/mysqlcheck.1
+file path=usr/mariadb/10.6/man/man1/mysqldump.1
+file path=usr/mariadb/10.6/man/man1/mysqldumpslow.1
+file path=usr/mariadb/10.6/man/man1/mysqlimport.1
+file path=usr/mariadb/10.6/man/man1/mysqlshow.1
+file path=usr/mariadb/10.6/man/man1/mysqlslap.1
+file path=usr/mariadb/10.6/man/man1/mytop.1

@@ -1,0 +1,11 @@
+--- a/mysys/my_gethwaddr.c	Wed Aug 10 11:31:53 2022
++++ b/mysys/my_gethwaddr.c	Wed Aug 17 21:06:36 2022
+@@ -113,6 +113,8 @@
+ #if !defined(_AIX) || !defined(__linux__)
+ #if defined(__linux___)
+ #define HWADDR_DATA ifr[i].ifr_hwaddr.sa_data
++#elif defined(__sun)
++#define HWADDR_DATA ifr[i].ifr_enaddr
+ #else
+ #define HWADDR_DATA ifr[i].ifr_hwaddr
+ #endif
