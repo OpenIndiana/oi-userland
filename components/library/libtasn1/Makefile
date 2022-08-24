@@ -11,21 +11,19 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS= 32_and_64
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libtasn1
-COMPONENT_VERSION= 4.16.0
+COMPONENT_VERSION= 4.18.0
 COMPONENT_SUMMARY= Tiny ASN.1 library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:0e0fb0903839117cb6e3b56e68222771bebf22ad7fc2295a0ed7d576e8d4329d
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnu.org/gnu/libtasn1/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:4365c154953563d64c67a024b607d1ee75c6db76e0d0f65709ea80a334cd1898
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/libtasn1/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.gnu.org/software/libtasn1/
 COMPONENT_FMRI= library/libtasn1
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -41,8 +39,6 @@ CONFIGURE_OPTIONS += --enable-shared
 
 # Two tests fail otherwise
 unexport SHELLOPTS
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 COMPONENT_TEST_TRANSFORMS= \
   '-n ' \
