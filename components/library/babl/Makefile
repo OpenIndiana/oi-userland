@@ -20,11 +20,11 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	babl
-COMPONENT_VERSION=	0.1.92
+COMPONENT_VERSION=	0.1.96
 COMPONENT_SUMMARY=	Babl is a dynamic, any to any, pixel format conversion library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= 
+COMPONENT_ARCHIVE_HASH= sha256:33673fe459a983f411245a49f81fd7f1966af1ea8eca9b095a940c542b8545f6
 COMPONENT_ARCHIVE_URL=	https://download.gimp.org/pub/babl/0.1/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://gegl.org/babl/
 COMPONENT_FMRI=	image/library/babl
