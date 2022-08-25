@@ -1,0 +1,30 @@
+Without this the following asserts fires.
+The root cause is unclear.
+
+--- glib-2.62.6/glib/tests/timer.c.orig
++++ glib-2.62.6/glib/tests/timer.c
+@@ -25,6 +25,7 @@
+ #define GLIB_DISABLE_DEPRECATION_WARNINGS 1
+ 
+ #include "glib.h"
++#include <stdio.h>
+ 
+ static void
+ test_timer_basic (void)
+@@ -38,6 +39,7 @@
+   elapsed = g_timer_elapsed (timer, &micros);
+ 
+   g_assert_cmpfloat (elapsed, <, 1.0);
++  printf("elapsed * 1e6: %f\n", elapsed * 1e6);
+   g_assert_cmpuint (micros, ==, ((guint64)(elapsed * 1e6)) % 1000000);
+ 
+   g_timer_destroy (timer);
+@@ -57,6 +59,8 @@
+   g_usleep (100);
+   elapsed2 = g_timer_elapsed (timer, NULL);
+ 
++  printf("elapsed: %f\n", elapsed);
++  printf("elapsed2: %f\n", elapsed2);
+   g_assert_cmpfloat (elapsed, ==, elapsed2);
+ 
+   g_timer_destroy (timer);

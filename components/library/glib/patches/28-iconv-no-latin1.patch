@@ -1,0 +1,22 @@
+illumos does not support latin1.  Use iso-8859-1 instead.
+
+--- glib-2.62.6/gio/tests/converter-stream.c.orig
++++ glib-2.62.6/gio/tests/converter-stream.c
+@@ -1169,7 +1169,7 @@
+   gchar *to;
+   gchar *from;
+ 
+-  converter = (GConverter *)g_charset_converter_new ("utf-8", "latin1", &error);
++  converter = (GConverter *)g_charset_converter_new ("utf-8", "iso-8859-1", &error);
+   g_assert_no_error (error);
+   g_object_get (converter,
+                 "to-charset", &to,
+@@ -1177,7 +1177,7 @@
+                 NULL);
+ 
+   g_assert_cmpstr (to, ==, "utf-8");
+-  g_assert_cmpstr (from, ==, "latin1");
++  g_assert_cmpstr (from, ==, "iso-8859-1");
+ 
+   g_free (to);
+   g_free (from);

@@ -1,0 +1,33 @@
+--- glib-2.62.6/glib/tests/convert.c.orig
++++ glib-2.62.6/glib/tests/convert.c
+@@ -82,9 +82,14 @@ test_one_half (void)
+ 		   &bytes_read, &bytes_written,
+ 		   &error);
+ 
++  /* Characters that do not exist in target codeset are converted to
++   * implementation-defined character by underlying iconv().  On illumos it is
++   * '?'.  This is detected by g_convert() so error is set and NULL is
++   * returned, but both bytes_read and bytes_written are left updated.  More
++   * details: https://gitlab.gnome.org/GNOME/glib/-/issues/1303 */
+   g_assert_error (error, G_CONVERT_ERROR, G_CONVERT_ERROR_ILLEGAL_SEQUENCE);
+-  g_assert_cmpint (bytes_read, ==, 0);
+-  g_assert_cmpint (bytes_written, ==, 0);
++  g_assert_cmpint (bytes_read, ==, 2);
++  g_assert_cmpint (bytes_written, ==, 1);
+   g_assert_cmpstr (out, ==, NULL);
+   g_clear_error (&error);
+   g_free (out);
+@@ -95,10 +100,12 @@ test_one_half (void)
+ 				 &bytes_read, &bytes_written,
+ 				 &error);
+ 
++  /* This is similar case as above so the "vulgar fraction one half" got
++   * converted to '?' and the fallback was not used. */
+   g_assert_no_error (error);
+   g_assert_cmpint (bytes_read, ==, 2);
+   g_assert_cmpint (bytes_written, ==, 1);
+-  g_assert_cmpstr (out, ==, "a");
++  g_assert_cmpstr (out, ==, "?");
+   g_free (out);
+ }
+ 

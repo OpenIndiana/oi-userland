@@ -1,0 +1,40 @@
+--- glib-2.62.6/glib/tests/meson.build.orig
++++ glib-2.62.6/glib/tests/meson.build
+@@ -30,6 +30,7 @@
+   'gwakeup' : {
+     'source' : ['gwakeuptest.c', '../gwakeup.c'],
+     'install' : false,
++    'suite' : ['slow'],
+   },
+   'hash' : {},
+   'hmac' : {},
+@@ -39,7 +40,9 @@
+   'list' : {},
+   'logging' : {},
+   'macros' : {},
+-  'mainloop' : {},
++  'mainloop' : {
++    'suite' : ['slow'],
++  },
+   'mappedfile' : {},
+   'markup' : {},
+   'markup-parse' : {},
+@@ -101,7 +104,9 @@
+   'utils' : {},
+   'unicode' : {},
+   'uri' : {},
+-  '1bit-mutex' : {},
++  '1bit-mutex' : {
++    'suite' : ['slow'],
++  },
+   '1bit-emufutex' : {
+     'source' : '1bit-mutex.c',
+     'c_args' : ['-DTEST_EMULATED_FUTEX'],
+@@ -128,6 +133,7 @@
+       'source' : ['gwakeuptest.c', '../gwakeup.c'],
+       'c_args' : ['-DTEST_EVENTFD_FALLBACK'],
+       'install' : false,
++      'suite' : ['slow'],
+     },
+   }
+ endif
