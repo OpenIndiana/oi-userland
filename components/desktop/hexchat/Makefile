@@ -23,13 +23,14 @@ COMPONENT_NAME=		hexchat
 COMPONENT_VERSION=	2.16.1
 COMPONENT_PROJECT_URL=	https://hexchat.github.io/
 COMPONENT_SUMMARY=	HexChat IRC client
-COMPONENT_FMRI=		desktop/irc/hexchat
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:a7e497da71df419daf9855582d51c723a2611de25d5e97b5efc33fe78da5c4c7
 COMPONENT_ARCHIVE_URL=	https://dl.hexchat.net/hexchat/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION= "org.opensolaris.category.2008:Applications/Internet"
+COMPONENT_FMRI=		desktop/irc/hexchat
+COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE= GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 
 # We need to use non-default User-Agent for the fetch, otherwise we are denied
