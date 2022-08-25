@@ -1,0 +1,18 @@
+illumos asprintf()/vasprintf() does not work as expected by glib.
+See https://www.illumos.org/issues/14933
+
+--- glib-2.62.6/glib/gprintf.c.orig
++++ glib-2.62.6/glib/gprintf.c
+@@ -325,12 +325,6 @@
+   if (len < 0)
+     *string = NULL;
+ 
+-#elif defined (HAVE_VASPRINTF)
+-
+-  len = vasprintf (string, format, args);
+-  if (len < 0)
+-    *string = NULL;
+-
+ #else
+ 
+   {

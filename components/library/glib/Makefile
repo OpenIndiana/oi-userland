@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         glib
 COMPONENT_MJR_VERSION=	2.62
 COMPONENT_MNR_VERSION=	6
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 # Note: When updating this component make sure that it still works with our HAL.
 # Version 2.66.x is known for its problems eg. when plugging/unplugging USB devices under X11.
 # 2.62.6 is the last known working version (2.63.x, 2.64.x untested).
@@ -38,52 +38,47 @@ COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(C
 COMPONENT_PROJECT_URL=  https://www.gtk.org/
 COMPONENT_FMRI=         library/glib2
 
-PATH=$(PATH.gnu)
-
 include $(WS_MAKE_RULES)/common.mk
 
 PYTHON_VERSION = 3.5
 
-LDFLAGS += -lsocket -lsecdb -lnsl
+# dbus-daemon is in /usr/lib
+PATH = $(PATH.gnu):/usr/lib
 
-# GCC 6
-CFLAGS += -Wno-error=format-nonliteral
+# socketpair(3socket) requires -lsocket -lnsl
+LDFLAGS += -lsocket -lnsl
+
+# Support for hexadecimal strings in strtod() is available in C99 mode only,
+# but we cannot use -std=c99 because float/double support is broken there
+# (https://www.illumos.org/issues/14935)
+CFLAGS += -std=gnu99
+
+# We need standard conforming getpwnam_r()/getpwuid_r()
 CPPFLAGS += $(CPP_XPG6MODE)
 
-CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
-CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
+# Some warnings are treated as errors by default but we do not want that
+CFLAGS += -Wno-error=format-nonliteral
+CFLAGS += -Wno-error=format-security
+
+# We do not have getxattr() so disable xattr
 CONFIGURE_OPTIONS += -Dxattr=false
 CONFIGURE_OPTIONS += -Dfam=true
 CONFIGURE_OPTIONS += -Dman=true
 
-CONFIGURE_ENV    += PERL=$(PERL)
-CONFIGURE_ENV    += PYTHON=$(PYTHON)
-CONFIGURE_ENV    += CPPFLAGS="$(CPPFLAGS)"
-
-# Dtrace flags
-DFLAGS.64 = -64
-COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
-
 COMPONENT_POST_CONFIGURE_ACTION= \
   ( cd $(@D); $(GSED) -i "s/_FILE_OFFSET_BITS=64/_FILE_OFFSET_BITS=$(BITS)/g" ./build.ninja )
-
-# Otherwise tests fail
-#ENV = /usr/bin/env -i
 
 # We need to install libraries and set correct LD_LIBRARY_PATH before test
 $(TEST_TARGET): $(INSTALL_TARGET)
 
-COMPONENT_TEST_ENV.32 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib PATH=$(PATH):/usr/lib
-COMPONENT_TEST_ENV.64 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64) PATH=$(PATH)/usr/lib/$(MACH64)
-COMPONENT_TEST_ENV = $(COMPONENT_TEST_ENV.$(BITS))
-COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/^(Fail|Ok|Expected Fail|Unexpected Pass|Skipped|Timeout)/'"
 
-REQUIRED_PACKAGES += runtime/perl-522
+# dbus-daemon is needed for testing
 REQUIRED_PACKAGES += system/library/dbus
+
+# update-desktop-database is needed for testing
+REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/file-monitor/gamin

@@ -1,0 +1,13 @@
+--- glib-2.62.6/tests/mapping-test.c.orig
++++ glib-2.62.6/tests/mapping-test.c
+@@ -40,6 +40,10 @@
+ static void
+ handle_usr1 (int signum)
+ {
++  /* On illumos the signal disposition is reset to SIG_DFL so we need to set
++   * signal handler again ASAP. */
++  signal (SIGUSR1, handle_usr1);
++
+   stop = TRUE;
+ }
+ 

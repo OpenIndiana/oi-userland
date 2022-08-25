@@ -1,0 +1,12 @@
+--- glib-2.62.6/gio/gcharsetconverter.c.orig
++++ glib-2.62.6/gio/gcharsetconverter.c
+@@ -451,6 +451,9 @@
+ 
+   if (conv->iconv == (GIConv)-1)
+     {
++      /* Clear conv->iconv so iconv_close(-1) is not called - see
++       * https://www.illumos.org/issues/14937 */
++      conv->iconv = NULL;
+       if (errsv == EINVAL)
+ 	g_set_error (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
+ 		     _("Conversion from character set “%s” to “%s” is not supported"),
