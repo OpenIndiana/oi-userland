@@ -20,12 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		CryptX
-HUMAN_VERSION =			0.076
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.077
 COMPONENT_SUMMARY =		CryptX - Cryptographic toolkit
 COMPONENT_CPAN_AUTHOR =		MIK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bb84ac012438c7cecdb51a5a6fffb4f1fee3b0eae0022e96cebc2e167522621c
+	sha256:f741cd3a371f7754e790d174ff80c8f7fc1b120f95a0ab482bbe26a5246726a9
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
