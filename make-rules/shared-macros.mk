@@ -818,7 +818,7 @@ PERL_64_ONLY_VERSIONS = $(PERL_VERSIONS)
 #
 # This list should be usually empty.  Intersection of PERL_VERSIONS_OBSOLETING
 # and PERL_VERSIONS lists MUST be always empty.
-PERL_VERSIONS_OBSOLETING = 5.22 5.24
+PERL_VERSIONS_OBSOLETING =
 
 define perl-path-rule
 PERL.$(1) =		/usr/perl5/$(1)/bin/perl
