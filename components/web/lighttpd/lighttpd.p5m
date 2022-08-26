@@ -22,24 +22,17 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/web/server/lighttpd-14@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="The Lighttpd Web Server"
-set name=com.oracle.info.description value="the Lighttpd web server"
-set name=com.oracle.info.tpno value=5585
-set name=info.classification \
-    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=info.source-url \
-    value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/191
-set name=org.opensolaris.consolidation \
-    value=$(CONSOLIDATION)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license lighttpd.license license='Lighttpd license'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 dir path=var/lighttpd/1.4/docroot
 dir path=var/lighttpd/1.4/errors
