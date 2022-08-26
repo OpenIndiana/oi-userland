@@ -15,11 +15,12 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS=32_and_64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           freetype
 COMPONENT_VERSION=        2.12.1
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           system/library/freetype-2
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SUMMARY=  	FreeType 2 font engine
@@ -36,7 +37,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-gcc_OPT=-O2
+#gcc_OPT=-O2
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
