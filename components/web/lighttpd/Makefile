@@ -25,17 +25,20 @@
 #
 
 BUILD_BITS = 64
+#USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
-COMPONENT_VERSION=	1.4.64
-COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
+COMPONENT_VERSION=	1.4.66
+COMPONENT_SUMMARY=	The Lighttpd Web Server
+COMPONENT_PROJECT_URL=	https://www.lighttpd.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:71e46403fb28371a06b23ef1cceffd75285140c6f62a879c777ee5af0d248801
+COMPONENT_ARCHIVE_HASH= sha256:d919c3f9031e2580b94b311a3749eaa1e3b4a6a57b2d5c4cbcad40c0a73a7200
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/lighttpd
+COMPONENT_FMRI=	web/server/$(COMPONENT_NAME)-14
+COMPONENT_CLASSIFICATION= Web Services/Application and Web Servers
+COMPONENT_LICENSE=	Lighttpd license
 
 LIGHTTPD_INSTALLDIR=/usr/lighttpd/1.4
 
@@ -61,7 +64,7 @@ CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
 CONFIGURE_OPTIONS +=	--with-pic
 CONFIGURE_OPTIONS +=	--without-lua
-CONFIGURE_OPTIONS +=	--with-openssl
+CONFIGURE_OPTIONS +=	--with-openssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS +=	--with-pcre
 CONFIGURE_OPTIONS +=	--with-mysql=$(MYSQL_CONFIG)
 CONFIGURE_OPTIONS +=	--with-ldap
@@ -70,11 +73,11 @@ CONFIGURE_OPTIONS +=	--with-ldap
 ASLR_MODE = $(ASLR_ENABLE)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/fastcgi/spawn-fcgi
