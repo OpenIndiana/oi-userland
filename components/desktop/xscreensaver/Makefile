@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         xscreensaver
 COMPONENT_VERSION=      6.4
 HUMAN_VERSION=      	6.04
-COMPONENT_REVISION =	1
+COMPONENT_REVISION =	2
 COMPONENT_PROJECT_URL=  https://www.jwz.org/xscreensaver/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
