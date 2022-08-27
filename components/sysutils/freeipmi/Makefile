@@ -15,24 +15,24 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_SYSTEM=		configure
-
+BUILD_TYPE= configure
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freeipmi
-COMPONENT_VERSION=	1.6.8
+COMPONENT_VERSION=	1.6.9
 COMPONENT_SUMMARY=	GNU FreeIPMI - in-band and out-of-band IPMI
 COMPONENT_DESCRIPTION=	GNU FreeIPMI - in-band and out-of-band IPMI software based on the \
 IPMI v1.5/2.0 specification ($(COMPONENT_VERSION))
-COMPONENT_FMRI=		system/management/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=	System/Hardware
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:4aa46a269ecc1bbff9412451f17b5408f64395e7dc45b713edf5eb5362700a71
+COMPONENT_ARCHIVE_HASH= sha256:f25e1c35f3d0f1b5a99cc31ecc2353ca83ed46a15163842fba870127dc9c8206
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/freeipmi/
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_FMRI=		system/management/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	System/Hardware
 COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -56,6 +56,8 @@ $(INSTALL_32): $(INSTALL_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += driver/ipmi
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libgcrypt
