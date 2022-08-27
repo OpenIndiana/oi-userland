@@ -13,8 +13,10 @@
 # Copyright 2019 Michal Nowak
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -41,6 +43,7 @@ file path=usr/include/freerdp2/freerdp/cache/nine_grid.h
 file path=usr/include/freerdp2/freerdp/cache/offscreen.h
 file path=usr/include/freerdp2/freerdp/cache/palette.h
 file path=usr/include/freerdp2/freerdp/cache/pointer.h
+file path=usr/include/freerdp2/freerdp/channels/ainput.h
 file path=usr/include/freerdp2/freerdp/channels/audin.h
 file path=usr/include/freerdp2/freerdp/channels/channels.h
 file path=usr/include/freerdp2/freerdp/channels/cliprdr.h
@@ -51,15 +54,18 @@ file path=usr/include/freerdp2/freerdp/channels/geometry.h
 file path=usr/include/freerdp2/freerdp/channels/log.h
 file path=usr/include/freerdp2/freerdp/channels/rail.h
 file path=usr/include/freerdp2/freerdp/channels/rdpdr.h
+file path=usr/include/freerdp2/freerdp/channels/rdpecam.h
 file path=usr/include/freerdp2/freerdp/channels/rdpei.h
 file path=usr/include/freerdp2/freerdp/channels/rdpgfx.h
 file path=usr/include/freerdp2/freerdp/channels/rdpsnd.h
 file path=usr/include/freerdp2/freerdp/channels/remdesk.h
+file path=usr/include/freerdp2/freerdp/channels/telemetry.h
 file path=usr/include/freerdp2/freerdp/channels/tsmf.h
 file path=usr/include/freerdp2/freerdp/channels/urbdrc.h
 file path=usr/include/freerdp2/freerdp/channels/video.h
 file path=usr/include/freerdp2/freerdp/channels/wtsvc.h
 file path=usr/include/freerdp2/freerdp/client.h
+file path=usr/include/freerdp2/freerdp/client/ainput.h
 file path=usr/include/freerdp2/freerdp/client/audin.h
 file path=usr/include/freerdp2/freerdp/client/channels.h
 file path=usr/include/freerdp2/freerdp/client/cliprdr.h
@@ -137,6 +143,7 @@ file path=usr/include/freerdp2/freerdp/primitives.h
 file path=usr/include/freerdp2/freerdp/rail.h
 file path=usr/include/freerdp2/freerdp/scancode.h
 file path=usr/include/freerdp2/freerdp/secondary.h
+file path=usr/include/freerdp2/freerdp/server/ainput.h
 file path=usr/include/freerdp2/freerdp/server/audin.h
 file path=usr/include/freerdp2/freerdp/server/channels.h
 file path=usr/include/freerdp2/freerdp/server/cliprdr.h
@@ -146,17 +153,21 @@ file path=usr/include/freerdp2/freerdp/server/echo.h
 file path=usr/include/freerdp2/freerdp/server/encomsp.h
 file path=usr/include/freerdp2/freerdp/server/rail.h
 file path=usr/include/freerdp2/freerdp/server/rdpdr.h
+file path=usr/include/freerdp2/freerdp/server/rdpecam-enumerator.h
+file path=usr/include/freerdp2/freerdp/server/rdpecam.h
 file path=usr/include/freerdp2/freerdp/server/rdpei.h
 file path=usr/include/freerdp2/freerdp/server/rdpgfx.h
 file path=usr/include/freerdp2/freerdp/server/rdpsnd.h
 file path=usr/include/freerdp2/freerdp/server/remdesk.h
 file path=usr/include/freerdp2/freerdp/server/server-common.h
 file path=usr/include/freerdp2/freerdp/server/shadow.h
+file path=usr/include/freerdp2/freerdp/server/telemetry.h
 file path=usr/include/freerdp2/freerdp/session.h
 file path=usr/include/freerdp2/freerdp/settings.h
 file path=usr/include/freerdp2/freerdp/svc.h
 file path=usr/include/freerdp2/freerdp/types.h
 file path=usr/include/freerdp2/freerdp/update.h
+file path=usr/include/freerdp2/freerdp/utils/cliprdr_utils.h
 file path=usr/include/freerdp2/freerdp/utils/passphrase.h
 file path=usr/include/freerdp2/freerdp/utils/pcap.h
 file path=usr/include/freerdp2/freerdp/utils/profiler.h
@@ -166,6 +177,7 @@ file path=usr/include/freerdp2/freerdp/utils/stopwatch.h
 file path=usr/include/freerdp2/freerdp/version.h
 file path=usr/include/freerdp2/freerdp/window.h
 file path=usr/include/winpr2/winpr/asn1.h
+file path=usr/include/winpr2/winpr/assert.h
 file path=usr/include/winpr2/winpr/bcrypt.h
 file path=usr/include/winpr2/winpr/bitstream.h
 file path=usr/include/winpr2/winpr/clipboard.h
@@ -253,6 +265,7 @@ file path=usr/lib/$(MACH64)/cmake/WinPR2/WinPRConfig.cmake
 file path=usr/lib/$(MACH64)/cmake/WinPR2/WinPRConfigVersion.cmake
 file path=usr/lib/$(MACH64)/cmake/WinPR2/WinPRTargets-release.cmake
 file path=usr/lib/$(MACH64)/cmake/WinPR2/WinPRTargets.cmake
+file path=usr/lib/$(MACH64)/freerdp2/libainput-client.so
 file path=usr/lib/$(MACH64)/freerdp2/libaudin-client-pulse.so
 file path=usr/lib/$(MACH64)/freerdp2/libaudin-client.so
 file path=usr/lib/$(MACH64)/freerdp2/libdisp-client.so
