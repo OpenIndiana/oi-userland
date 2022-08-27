@@ -11,24 +11,30 @@
 #
 # Copyright 2017 Aurelien Larcher
 # Copyright 2019 Michal Nowak
+# Copyright 2022 Andreas Wacknitz
 #
-
+X11_CATEGORY= DATA
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xkeyboard-config
-COMPONENT_VERSION=      2.34
-COMPONENT_REVISION=     1
-COMPONENT_FMRI=         x11/keyboard/data-xkb
+COMPONENT_VERSION=      2.36
 COMPONENT_SUMMARY=      X Keyboard Configuration Database
-COMPONENT_CLASSIFICATION=System/X11
 COMPONENT_PROJECT_URL=  https://freedesktop.org/wiki/Software/XKeyboardConfig/
 COMPONENT_ARCHIVE_URL=  https://www.x.org/releases/individual/data/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:b321d27686ee7e6610ffe7b56e28d5bbf60625a1f595124cd320c0caa717b8ce
-COMPONENT_LICENSE=      MIT
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:1f1bb1292a161d520a3485d378609277d108cd07cde0327c16811ff54c3e1595
+COMPONENT_FMRI=         x11/keyboard/data-xkb
+COMPONENT_CLASSIFICATION=System/X11
+COMPONENT_LICENSE=		MIT
 
 include $(WS_MAKE_RULES)/common.mk
+
+PATH= $(PATH.gnu)
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += text/intltool
 REQUIRED_PACKAGES += x11/keyboard/xkbcomp
+
+# Auto-generated dependencies
