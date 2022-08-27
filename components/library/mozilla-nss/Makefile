@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nss
 COMPONENT_VERSION=	3.51.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
