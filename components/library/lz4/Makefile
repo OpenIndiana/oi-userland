@@ -14,29 +14,27 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_BITS= 64_and_32
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lz4
-COMPONENT_VERSION=	1.9.1
+COMPONENT_VERSION=	1.9.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	Extremely Fast Compression algorithm
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:f8377c89dad5c9f266edc0be9b73595296ecafd5bfa1000de148096c50052dc4
-COMPONENT_ARCHIVE_URL= \
-	https://github.com/lz4/lz4/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:0b0e3aa07c8c063ddf40b082bdf7e37a1562bda40a0ff5272957f3e987e0e54b
+COMPONENT_ARCHIVE_URL=	https://github.com/lz4/lz4/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	https://lz4.github.io/lz4/
 COMPONENT_FMRI=		library/lz4
 COMPONENT_LICENSE=	BSD,GPLv2
 COMPONENT_LICENSE_FILE=	lz4.license
 COMPONENT_CLASSIFICATION= System/Libraries
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-BINDIR.32=/usr/bin
-BINDIR.64=/usr/bin/$(MACH64)
+BINDIR.32=/usr/bin/$(MACH32)
+BINDIR.64=/usr/bin
 LIBDIR.32=/usr/lib
 LIBDIR.64=/usr/lib/$(MACH64)
 
@@ -50,12 +48,5 @@ COMPONENT_BUILD_ENV = $(COMMON_ENV)
 COMPONENT_INSTALL_ENV = $(COMMON_ENV)
 COMPONENT_TEST_ENV = $(COMMON_ENV)
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
