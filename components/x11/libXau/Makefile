@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXau
-COMPONENT_VERSION= 1.0.9
+COMPONENT_VERSION= 1.0.10
 COMPONENT_FMRI=    x11/library/libxau
 COMPONENT_SUMMARY= libXau - X11 Authorization Protocol library
-COMPONENT_ARCHIVE_HASH= \
-  sha256:ccf8cbf0dbf676faa2ea0a6d64bcc3b6746064722b606c8c52917ed00dcb73ec
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:8be6f292334d2f87e5b919c001e149a9fdc27005d6b3e053862ac6ebbf1a0c0a
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -37,4 +37,5 @@ CONFIGURE_OPTIONS+= --with-pic
 
 LD_OPTIONS += -M$(COMPONENT_DIR)/mapfile-vers
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
