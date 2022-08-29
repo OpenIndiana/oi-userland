@@ -12,36 +12,26 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= speex
-COMPONENT_VERSION= 1.2rc2
-IPS_COMPONENT_VERSION= 1.2.0.2
+COMPONENT_VERSION= 1.2.1
 COMPONENT_SUMMARY= Open Source speech codec
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:caa27c7247ff15c8521c2ae0ea21987c9e9710a8f2d3448e8b79da9806bce891
-COMPONENT_ARCHIVE_URL= \
-  http://downloads.xiph.org/releases/speex/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.speex.org/
+COMPONENT_ARCHIVE_HASH= sha256:4b44d4f2b38a370a2d98a78329fefc56a0cf93d1c1be70029217baae6628feea
+COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/speex/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.speex.org/
 COMPONENT_FMRI=	codec/speex
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE = BSD
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libogg
