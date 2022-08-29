@@ -10,38 +10,27 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
-#
-
+# Copyright 2015 Alexander Pyhalov#
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= speexdsp
-COMPONENT_VERSION= 1.2rc3
-IPS_COMPONENT_VERSION= 1.2.0.3
+COMPONENT_VERSION= 1.2.1
 COMPONENT_SUMMARY= Speex DSP library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:4ae688600039f5d224bdf2e222d2fbde65608447e4c2f681585e4dca6df692f1
-COMPONENT_ARCHIVE_URL= \
-  http://downloads.xiph.org/releases/speex/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.speex.org/
+COMPONENT_ARCHIVE_HASH= sha256:8c777343e4a6399569c72abc38a95b24db56882c83dbdb6c6424a5f4aeb54d3d
+COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/speex/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.speex.org/
 COMPONENT_FMRI=	library/speexdsp
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE = BSD
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
