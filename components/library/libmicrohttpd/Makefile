@@ -13,28 +13,27 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS=		32_and_64
-
+BUILD_BITS=		64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmicrohttpd
-COMPONENT_VERSION=	0.9.71
+COMPONENT_VERSION=	0.9.75
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libmicrohttpd/
 COMPONENT_FMRI=		library/libmicrohttpd
 COMPONENT_SUMMARY=	GNU libmicrohttpd is a small HTTP server as a C library
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:e8f445e85faf727b89e9f9590daea4473ae00ead38b237cf1eda55172b89b182
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE).sig
+COMPONENT_ARCHIVE_HASH= sha256:9278907a6f571b391aab9644fd646a5108ed97311ec66f6359cebbedb0a4e3bb
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE).sig
 COMPONENT_LICENSE=	LGPL2.1+
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
 # Tests work properly only for curl with GnuTLS SSL backend (we use OpenSSL only),
 # see https://gnunet.org/bugs/view.php?id=5564.
-TEST_TARGET=		$(TEST_32_and_64)
+#TEST_TARGET=		$(TEST_32_and_64)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -56,6 +55,7 @@ unexport SHELLOPTS
 COMPONENT_TEST_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
 REQUIRED_PACKAGES += system/library/security/libgcrypt
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += system/library
