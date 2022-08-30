@@ -24,9 +24,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# This link is always mediated.
-link path=usr/bin/perl target=../perl5/$(PERLVER)/bin/perl \
-    mediator=perl mediator-version=$(PERLVER)
+# Some automatically generated mediated symlinks clash with runtime/ocaml so we
+# drop them until a better solution is implemented
+<transform link path=usr/share/man/man3/Config.3$ -> drop>
+<transform link path=usr/share/man/man3/Digest.3$ -> drop>
+<transform link path=usr/share/man/man3/Thread.3$ -> drop>
 
 link path=usr/perl5/bin target=./$(PERLVER)/bin mediator=system-perl mediator-version=$(PERLVER)
 link path=usr/perl5/man target=./$(PERLVER)/man mediator=system-perl mediator-version=$(PERLVER)
@@ -78,7 +80,6 @@ file path=usr/perl5/$(PERLVER)/bin/splain
 file path=usr/perl5/$(PERLVER)/bin/streamzip
 file path=usr/perl5/$(PERLVER)/bin/xsubpp
 file path=usr/perl5/$(PERLVER)/bin/zipdetails
-file path=usr/perl5/$(PERLVER)/lib/$(PERL_ARCH)/.packlist
 file path=usr/perl5/$(PERLVER)/lib/$(PERL_ARCH)/B.pm
 file path=usr/perl5/$(PERLVER)/lib/$(PERL_ARCH)/B/Concise.pm
 file path=usr/perl5/$(PERLVER)/lib/$(PERL_ARCH)/B/Showlex.pm

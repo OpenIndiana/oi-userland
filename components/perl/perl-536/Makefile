@@ -22,15 +22,12 @@
 # Copyright (c) 2021, Tim Mooney.  All rights reserved.
 #
 
-BUILD_STYLE = configure
-BUILD_BITS = 64
-USE_COMMON_TEST_MASTER = yes
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
 COMPONENT_VERSION_MAJOR =	5.36
 COMPONENT_VERSION =		$(COMPONENT_VERSION_MAJOR).0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Perl $(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)

@@ -803,7 +803,7 @@ QT6_PKG_CONFIG_PATH = $(QT6_LIBDIR)/pkgconfig
 
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
-PERL_VERSION =  5.34
+PERL_VERSION =  5.36
 
 PERL_VERSIONS = 5.34 5.36
 # Perl up to 5.22 was built 32-bit only.  Starting with 5.24 the perl package
