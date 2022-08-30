@@ -33,6 +33,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_CXX_FLAGS += -std=c++11
 
+# This is to get libraries to install into /usr/lib/$(MACH64)
+CMAKE_OPTIONS += -DLIB_POSTFIX=/$(MACH64)
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
