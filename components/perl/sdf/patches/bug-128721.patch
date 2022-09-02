@@ -1,0 +1,130 @@
+https://rt.cpan.org/Public/Bug/Display.html?id=128721
+
+--- sdf-2.001/perllib/sdf/subs.pl.orig	2022-09-02 16:40:25.127314157 +0000
++++ sdf-2.001/perllib/sdf/subs.pl	2022-09-02 16:42:09.751420229 +0000
+@@ -620,10 +620,6 @@
+     local($event, $action, $mask);
+     local($old_match_rule);
+ 
+-    # Ensure multi-line matching is enabled
+-    $old_match_rule = $*;
+-    $* = 1;
+-
+     for ($event = $#code; $event >= 0; $event--) {
+ 
+         # get the action to execute, if any
+@@ -632,16 +628,13 @@
+ 
+         # Mask out events
+         $mask = $mask[$event];
+-        next if $mask ne '' && $style !~ /^$mask$/;
++        next if $mask ne '' && $style !~ /^$mask$/ms;
+         return if $attr{'noevents'};
+ 
+         # execute the action
+         eval $action;
+         &'AppMsg("warning", "execution of '$action' failed: $@") if $@;
+     }
+-
+-    # Restore the multi-line match flag setting
+-    $* = $old_match_rule;
+ }
+ 
+ #
+@@ -656,10 +649,6 @@
+     local($event, $action, $mask);
+     local($old_match_rule);
+ 
+-    # Ensure multi-line matching is enabled
+-    $old_match_rule = $*;
+-    $* = 1;
+-
+     for ($event = $#code; $event >= 0; $event--) {
+ 
+         # get the action to execute, if any
+@@ -668,15 +657,12 @@
+ 
+         # Mask out events
+         $mask = $mask[$event];
+-        next if $mask ne '' && $name !~ /^$mask$/;
++        next if $mask ne '' && $name !~ /^$mask$/ms;
+ 
+         # execute the action
+         eval $action;
+         &'AppMsg("warning", "execution of '$action' failed: $@") if $@;
+     }
+-
+-    # Restore the multi-line match flag setting
+-    $* = $old_match_rule;
+ }
+ #
+ # >>Description::
+--- sdf-2.001/perllib/sdf/tohtml.pl.orig	2022-09-02 16:44:56.817544089 +0000
++++ sdf-2.001/perllib/sdf/tohtml.pl	2022-09-02 16:46:30.014923539 +0000
+@@ -840,18 +840,11 @@
+ #   local($result);
+     local($old_match_flag);
+ 
+-    # Enable multi-line matching
+-    $old_match_flag = $*;
+-    $* = 1;
+-
+     # Escape the symbols
+-    $text =~ s/\&/&amp;/g;
+-    $text =~ s/\</&lt;/g;
+-    $text =~ s/\>/&gt;/g;
+-    $text =~ s/\"/&quot;/g;
+-
+-    # Reset multi-line matching flag
+-    $* = $old_match_flag;
++    $text =~ s/\&/&amp;/msg;
++    $text =~ s/\</&lt;/msg;
++    $text =~ s/\>/&gt;/msg;
++    $text =~ s/\"/&quot;/msg;
+ 
+     # Return result
+     $text;
+@@ -980,10 +973,6 @@
+     local($user_ext);
+     local($old_match_flag);
+ 
+-    # Enable multi-line matching
+-    $old_match_flag = $*;
+-    $* = 1;
+-
+     # For hypertext jumps, surround the text. If the
+     # text contains a jump, the existing jump is removed.
+     if ($attr{'jump'} ne '') {
+@@ -994,11 +983,11 @@
+         $value = $attr{'jump'};
+         $user_ext = $SDF_USER'var{'HTML_EXT'};
+         if ($user_ext) {
+-            $value =~ s/\.html/.$user_ext/;
++            $value =~ s/\.html/.$user_ext/ms;
+         }
+         $value = &_HtmlEscape($value);
+ 
+-        $text =~ s/\<A HREF\=[^>]+\>(.*)\<\/A\>/$1/;
++        $text =~ s/\<A HREF\=[^>]+\>(.*)\<\/A\>/$1/ms;
+         $text = "<A HREF=\"$value\">$text</A>";
+         delete $attr{'jump'};
+         $result++;
+@@ -1009,7 +998,7 @@
+     # jump and id definitions don't clash.
+     if ($attr{'id'} ne '') {
+         $value = &_HtmlEscape($attr{'id'});
+-        if ($text =~ /\<A /) {
++        if ($text =~ /\<A /ms) {
+             $text = "<A NAME=\"$value\"> </A>$text";
+         }
+         else {
+@@ -1019,9 +1008,6 @@
+         $result++;
+     }
+ 
+-    # Reset multi-line matching flag
+-    $* = $old_match_flag;
+-
+     # Return result
+     return $result;
+ }
