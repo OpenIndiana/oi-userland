@@ -61,6 +61,7 @@ UID   | User name
 80    | webservd
 81    | udpxy
 82    | asterisk
+84    | nrpe
 88    | powerdns
 90    | postgres
 91    | barman
@@ -131,6 +132,7 @@ GID   | Group name
 80    | webservd
 81    | udpxy
 82    | asterisk
+84    | nrpe
 88    | powerdns
 90    | postgres
 91    | barman
