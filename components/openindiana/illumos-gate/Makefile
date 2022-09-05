@@ -99,10 +99,6 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	  echo export PERL_VARIANT=\"-thread-multi\" ; \
 	  echo export PERL_PKGVERS=\"-536\"; \
 	  echo export BUILDPERL32=\"#\"; \
-	  echo export BUILDPY2=\"#\"; \
-	  echo export BUILDPY2TOOLS=\"#\"; \
-	  echo export PYTHON3b_VERSION="3.9"; \
-	  echo export PYTHON3b_SUFFIX=""; \
 	  echo export BUILDPY3b=""; \
 	  echo export BLD_JAVA_8=; \
 	  echo export CW_NO_SHADOW=1; \
