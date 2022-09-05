@@ -1,0 +1,29 @@
+# This is /etc/zrepl/zrepl.yml .  It must be modified before zrepl
+# will work.  Start with the sample configurations in
+# /usr/share/zrepl/config .  For more details on zrepl configurations,
+# see https://zrepl.github.io/configuration.html .
+# 
+# Zrepl is a one-stop ZFS backup and replication solution, written in
+# the GO language.  The OI version has man pages and sample
+# configuration files.  It also has SMF support.  All errors from the
+# daemon appear in /var/svc/log/application-backup-zrepl:default.log .
+# The zrepl client also has RBAC support.
+#     
+# You can test configurations with "zrepl configcheck" run as root.
+#     
+# To run the zrepl service, enable svc:/application/backup/zrepl:default
+# and watch the service log file.  If it reports "... has been
+# modified", add '"atime": "off"' to the configuration, as shown in one
+# of the sample config files.  Likewise, if it reports "cannot create
+# placeholder filesystem", add "encryption: inherit" to the
+# configuration.
+# 
+# You may notice other errors that do not require a configuration
+# change.  If the SMF log file reports "pool must be upgraded", you must
+# upgrade the pool.  The usual command is "zpool upgrade ...".  The
+# client commands like "zrepl status" and "zrepl version" require the
+# RBAC privilege file_dac_search .  You can provide that privilege by
+# prefixing the commmand with "pfexec".  Finally, if the backup
+# filesystems exist but are not mounted they can be mounted manually by
+# ZFS.  You will need to override or remove the property
+# "mountpoint=none" before the ZFS mount will succeed.

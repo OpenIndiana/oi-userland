@@ -1,0 +1,82 @@
+#!/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright 2022 Gary Mills
+#
+
+. /lib/svc/share/smf_include.sh
+
+SVC_FMRI=svc:/application/backup/zrepl
+DEFAULT_FMRI=${SVC_FMRI}:default
+ZREPL_BIN=/usr/bin/zrepl
+ZREPL_YML=/etc/zrepl/zrepl.yml
+ZREPL_REF=${ZREPL_YML}-ref
+SOCK_DIR=/var/run/zrepl
+SOCK_PERM=0750
+SOCK_CTL=${SOCK_DIR}/control
+
+if [ ! -f ${ZREPL_YML} ]; then
+	echo "${ZREPL_YML} not found. Exiting."
+	exit $SMF_EXIT_ERR_CONFIG
+fi
+
+if [ ! -f ${ZREPL_BIN} ]; then
+	echo "${ZREPL_BIN} not found. Exiting."
+	exit $SMF_EXIT_ERR_CONFIG
+fi
+
+if [ ! -x ${ZREPL_BIN} ]; then
+	echo "${ZREPL_BIN} not executable. Exiting."
+	exit $SMF_EXIT_ERR_CONFIG
+fi
+
+/usr/bin/cmp -s $ZREPL_YML $ZREPL_REF
+if [ $? -eq 0 ]; then
+	echo "${ZREPL_YML} not modified. Exiting."
+	exit $SMF_EXIT_ERR_CONFIG
+fi
+
+${ZREPL_BIN} configcheck
+if [ $? -ne 0 ]; then
+	echo "${ZREPL_YML} has errors. Exiting."
+	exit $SMF_EXIT_ERR_CONFIG
+fi
+
+if [ ! -d ${SOCK_DIR} ]; then
+	/usr/bin/mkdir -m ${SOCK_PERM} ${SOCK_DIR}
+	if [ $? -ne 0 ]; then
+		echo "Failed to create ${SOCK_DIR}. Exiting."
+		exit $SMF_EXIT_ERR_CONFIG
+	fi
+fi
+
+# Start the zrepl daemon
+${ZREPL_BIN} daemon &
+
+# Wait for socket creation
+sleep 5
+
+# Fix permissions
+/usr/bin/chmod go+w ${SOCK_CTL}
+
+# Report zero
+exit $SMF_EXIT_OK
+
