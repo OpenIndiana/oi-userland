@@ -12,12 +12,12 @@
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
-
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gc
 
-COMPONENT_VERSION= 8.0.6
+COMPONENT_VERSION= 8.2.2
 COMPONENT_FMRI= library/gc
 COMPONENT_SUMMARY= Boehm-Demers-Weiser garbage collector for C/C++
 COMPONENT_CLASSIFICATION= Development/C++
@@ -25,23 +25,22 @@ COMPONENT_PROJECT_URL= http://www.hboehm.info/gc/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3b4914abc9fa76593596773e4da671d7ed4d5390e3d46fbf2e5f155e121bea11
+  sha256:f30107bcb062e0920a790ffffa56d9512348546859364c23a14be264b38836a0
 COMPONENT_ARCHIVE_URL= \
   https://github.com/ivmai/bdwgc/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, MIT
 
 COMPONENT_NAME_1= libatomic_ops
-COMPONENT_VERSION_1= 7.6.12
+COMPONENT_VERSION_1= 7.6.14
 COMPONENT_SRC_1= $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1= $(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
-  sha256:f0ab566e25fce08b560e1feab6a3db01db4a38e5bc687804334ef3920c549f3e
+  sha256:390f244d424714735b7050d056567615b3b8f29008a663c262fb548f1802d292
 COMPONENT_ARCHIVE_URL_1= \
   https://github.com/ivmai/libatomic_ops/releases/download/v$(COMPONENT_VERSION_1)/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+USE_DEFAULT_TEST_TRANSFORMS = yes
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION= (cd $(@D);\
   autoreconf -f -i; $(CP) -rf ../$(COMPONENT_SRC_1) $(COMPONENT_NAME_1))
@@ -57,22 +56,6 @@ COMPONENT_POST_INSTALL_ACTION= ( cd $(@D)/libatomic_ops && \
   env $(COMPONENT_INSTALL_ENV) gmake $(COMPONENT_INSTALL_ARGS) install )
 
 unexport SHELLOPTS
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/SKIP/p" ' \
-	'-e "/PASS/p" ' \
-	'-e "/FAIL/p" ' \
-	'-e "/ERROR/p" '
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
