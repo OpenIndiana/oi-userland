@@ -12,7 +12,7 @@
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
-
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gc
@@ -56,12 +56,6 @@ COMPONENT_POST_INSTALL_ACTION= ( cd $(@D)/libatomic_ops && \
   env $(COMPONENT_INSTALL_ENV) gmake $(COMPONENT_INSTALL_ARGS) install )
 
 unexport SHELLOPTS
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
