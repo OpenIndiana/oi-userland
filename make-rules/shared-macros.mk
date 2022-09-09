@@ -554,14 +554,8 @@ $(BUILD_DIR_64)/.tested-and-compared:	BITS=64
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS ?=	/opt
 
-SPRO_VERSION =	12.1
-SPRO_ROOT =	$(BUILD_TOOLS)/sunstudio$(SPRO_VERSION)
-SPRO_VROOT =	$(SPRO_ROOT)
-
 PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.0.1/
 PARFAIT= $(PARFAIT_ROOT)/bin/parfait
-export PARFAIT_NATIVESUNCC=$(SPRO_VROOT)/bin/cc
-export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
 export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
 export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 
@@ -630,16 +624,6 @@ GXX_RUNTIME_PKG      = system/library/g++-$(GCC_VERSION_MAJOR)-runtime
 GFORTRAN_RUNTIME_PKG = system/library/gfortran-$(GCC_VERSION_MAJOR)-runtime
 GOBJC_RUNTIME_PKG    = system/library/gobjc-$(GCC_VERSION_MAJOR)-runtime
 
-CC.studio.32 =	$(SPRO_VROOT)/bin/cc
-CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
-F77.studio.32 = $(SPRO_VROOT)/bin/f77
-FC.studio.32 =  $(SPRO_VROOT)/bin/f90
-
-CC.studio.64 =	$(SPRO_VROOT)/bin/cc
-CXX.studio.64 =	$(SPRO_VROOT)/bin/CC
-F77.studio.64 = $(SPRO_VROOT)/bin/f77
-FC.studio.64 =  $(SPRO_VROOT)/bin/f90
-
 CC.gcc.32 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.32 =	$(GCC_ROOT)/bin/g++
 F77.gcc.32 =	$(GCC_ROOT)/bin/gfortran
@@ -684,11 +668,6 @@ endif
 
 endif
 
-lint.32 =	$(SPRO_VROOT)/bin/lint -m32
-lint.64 =	$(SPRO_VROOT)/bin/lint -m64
-
-LINT =		$(lint.$(BITS))
-
 LD =		/usr/bin/ld
 
 PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
@@ -708,10 +687,6 @@ PYTHON.3.9.VENDOR_PACKAGES.32 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES = $(PYTHON.3.9.VENDOR_PACKAGES.$(BITS))
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-CC.studio.32 =	$(WS_TOOLS)/parfait/cc
-CXX.studio.32 =	$(WS_TOOLS)/parfait/CC
-CC.studio.64 =	$(WS_TOOLS)/parfait/cc
-CXX.studio.64 =	$(WS_TOOLS)/parfait/CC
 CC.gcc.32 =	$(WS_TOOLS)/parfait/gcc
 CXX.gcc.32 =	$(WS_TOOLS)/parfait/g++
 CC.gcc.64 =	$(WS_TOOLS)/parfait/gcc
@@ -836,7 +811,7 @@ PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
 # Optimally we should ask perl which C compiler was used but it doesn't
 # result in a full path name.  Only "c" is being recorded
 # inside perl builds while we actually need a full path to
-# the studio compiler.
+# the compiler.
 #PERL_CC :=	$(shell $(PERL) -e 'use Config; print $$Config{cc}')
 
 PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
@@ -1044,7 +1019,7 @@ CPP_XPG7MODE=	-D_XOPEN_SOURCE=700 -D__EXTENSIONS__=1 -D_XPG7
 # XPG6 mode.  This option enables XPG6 conformance, plus extensions.
 # Amongst other things, this option will cause system calls like
 # popen (3C) and system (3C) to invoke the standards-conforming
-# shell, /usr/xpg4/bin/sh, instead of /usr/bin/sh.  Add studio_XPG6MODE to
+# shell, /usr/xpg4/bin/sh, instead of /usr/bin/sh.  Add CPP_XPG6MODE to
 # CFLAGS instead of using this directly
 CPP_XPG6MODE=	-D_XOPEN_SOURCE=600 -D__EXTENSIONS__=1 -D_XPG6
 
@@ -1052,121 +1027,23 @@ CPP_XPG6MODE=	-D_XOPEN_SOURCE=600 -D__EXTENSIONS__=1 -D_XPG6
 # _XOPEN_SOURCE=600 and C99 are illegal. -D__EXTENSIONS__=1 is legal in C++.
 CPP_XPG5MODE=   -D_XOPEN_SOURCE=500 -D__EXTENSIONS__=1 -D_XPG5
 
-#
-# Studio C compiler flag sets to ease feature selection.  Add the required
-# feature to your Makefile with CFLAGS += $(FEATURE_MACRO) and add to the
-# component build with CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" or similiar.
-#
-
 # Generate 32/64 bit objects
 CC_BITS =	-m$(BITS)
-
-# Code generation instruction set and optimization 'hints'.  Use studio_XBITS
-# and not the .arch.bits variety directly.
-studio_XBITS.sparc.32 =	-xtarget=ultra2 -xarch=sparcvis -xchip=ultra2
-studio_XBITS.sparc.64 =
-ifneq   ($(strip $(PARFAIT_BUILD)),yes)
-studio_XBITS.sparc.64 += -xtarget=ultra2
-endif
-studio_XBITS.sparc.64 += -xarch=sparcvis -xchip=ultra2
-studio_XBITS.i386.32 =	-xchip=pentium
-studio_XBITS.i386.64 =	-xchip=generic -Ui386 -U__i386
-studio_XBITS = $(studio_XBITS.$(MACH).$(BITS))
-
-# Turn on recognition of supported C99 language features and enable the 1999 C
-# standard library semantics of routines that appear in	both the 1990 and
-# 1999 C standard. To use set studio_C99MODE=$(studio_99_ENABLE) in your
-# component Makefile.
-studio_C99_ENABLE =		-xc99=all
-
-# Turn off recognition of C99 language features, and do not enable the 1999 C
-# standard library semantics of routines that appeared in both the 1990	and
-# 1999 C standard.  To use set studio_C99MODE=$(studio_99_DISABLE) in your
-# component Makefile.
-studio_C99_DISABLE =	-xc99=none
-
-# Use the compiler default 'xc99=all,no_lib'
-studio_C99MODE =
-
-# For C++, compatibility with C99 (which is technically illegal) is
-# enabled in a different way. So, we must use a different macro for it.
-studio_cplusplus_C99_ENABLE = 	-xlang=c99
-
-# Turn it off.
-studio_cplusplus_C99_DISABLE =
-
-# And this is the macro you should actually use
-studio_cplusplus_C99MODE =
 
 # Turn on C99 for gcc
 gcc_C99_ENABLE =	-std=c99
 
-# Allow zero-sized struct/union declarations and void functions with return
-# statements.
-studio_FEATURES_EXTENSIONS =	-features=extensions
-
-# Control the Studio optimization level.
-studio_OPT.sparc.32 =	-xO4
-studio_OPT.sparc.64 =	-xO4
-studio_OPT.i386.32 =	-xO4
-studio_OPT.i386.64 =	-xO4
-studio_OPT =		$(studio_OPT.$(MACH).$(BITS))
-
-# Studio PIC code generation.  Use CC_PIC instead to select PIC code generation.
-studio_PIC = 	-KPIC -DPIC
-
-# The Sun Studio 11 compiler has changed the behaviour of integer
-# wrap arounds and so a flag is needed to use the legacy behaviour
-# (without this flag panics/hangs could be exposed within the source).
-# This is used through studio_IROPTS, not the 'sparc' variety.
-studio_IROPTS.sparc =	-W2,-xwrap_int
-studio_IROPTS =		$(studio_IROPTS.$(MACH))
-
 # Control register usage for generated code.  SPARC ABI requires system
-# libraries not to use application registers.  x86 requires 'no%frameptr' at
-# x04 or higher.
-
-# We should just use -xregs but we need to workaround 7030022. Note
-# that we can't use the (documented) -Wc,-xregs workaround because
-# libtool really hates -Wc and thinks it should be -Wl. Instead
-# we use an (undocumented) option which actually happens to be what
-# CC would use.
-studio_XREGS.sparc =	-Qoption cg -xregs=no%appl
-studio_XREGS.i386 =	-xregs=no%frameptr
-studio_XREGS =		$(studio_XREGS.$(MACH))
-
+# libraries not to use application registers.
 gcc_XREGS.sparc =	-mno-app-regs
 gcc_XREGS.i386 =
 gcc_XREGS =		$(gcc_XREGS.$(MACH))
 
-# Set data alignment on sparc to reasonable values, 8 byte alignment for 32 bit
-# objects and 16 byte alignment for 64 bit objects.  This is added to CFLAGS by
-# default.
-studio_ALIGN.sparc.32 =	-xmemalign=8s
-studio_ALIGN.sparc.64 =	-xmemalign=16s
-studio_ALIGN =		$(studio_ALIGN.$(MACH).$(BITS))
-
-# Studio shorthand for building multi-threaded code,  enables -D_REENTRANT and
-# linking with threadin support.  This is added to CFLAGS by default, override
-# studio_MT to turn this off.
-studio_MT =		-mt
-
 # See CPP_XPG6MODE comment above.
-studio_XPG6MODE =	$(studio_C99MODE) $(CPP_XPG6MODE)
-XPG6MODE =		$(studio_XPG6MODE)
+XPG6MODE =		$(CPP_XPG6MODE)
 
 # See CPP_XPG5MODE comment above. You can only use this in C++, not in C99.
-studio_XPG5MODE =	$(studio_cplusplus_C99MODE) $(CPP_XPG5MODE)
-XPG5MODE =		$(studio_XPG5MODE)
-
-# Default Studio C compiler flags.  Add the required feature to your Makefile
-# with CFLAGS += $(FEATURE_MACRO) and add to the component build with
-# CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" or similiar.  In most cases, it
-# should not be necessary to add CFLAGS to any environment other than the
-# configure environment.
-CFLAGS.studio +=	$(studio_OPT) $(studio_XBITS) $(studio_XREGS) \
-			$(studio_IROPTS) $(studio_C99MODE) $(studio_ALIGN) \
-			$(studio_MT)
+XPG5MODE =		$(CPP_XPG5MODE)
 
 #
 # GNU C compiler flag sets to ease feature selection.  Add the required
@@ -1218,33 +1095,6 @@ CFLAGS +=	$(CC_BITS)
 
 # Add compiler specific 'default' features
 CFLAGS +=	$(CFLAGS.$(COMPILER))
-
-
-# Studio C++ requires -norunpath to avoid adding its location into the RUNPATH
-# to C++ applications.
-studio_NORUNPATH =	 -norunpath
-
-# To link in standard mode (the default mode) without any C++ libraries
-# (except libCrun), use studio_LIBRARY_NONE in your component Makefile.
-studio_LIBRARY_NONE =	 -library=%none
-
-# Don't link C++ with any C++ Runtime or Standard C++ library
-studio_CXXLIB_NONE =	-xnolib
-
-# Link C++ with the Studio C++ Runtime and Standard C++ library.  This is the
-# default for "standard" mode.
-studio_CXXLIB_CSTD =	-library=Cstd,Crun
-
-# link C++ with the Studio  C++ Runtime and Apache Standard C++ library
-studio_CXXLIB_APACHE =	-library=stdcxx4,Crun
-
-# Add the C++ ABI compatibility flags for older ABI compatibility.  The default
-# is "standard mode" (-compat=5)
-studio_COMPAT_VERSION_4 =	-compat=4
-
-# Tell the compiler that we don't want the studio runpath added to the
-# linker flags.  We never want the Studio location added to the RUNPATH.
-CXXFLAGS +=	$($(COMPILER)_NORUNPATH)
 
 # Build 32 or 64 bit objects in C++ as well.
 CXXFLAGS +=	$(CC_BITS)
@@ -1357,11 +1207,7 @@ COMPONENT_INSTALL_ENV= \
     LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 
 # PERL options which depend on C options should be placed here
-# Don't trust Perl $Config{optimize}, we can get Studio flags
-PERL_OPTIMIZE =$(gcc_OPT)
-
-# We need this to overwrite options of perl used to compile illumos-gate
-PERL_STUDIO_OVERWRITE = cc="$(CC)" cccdlflags="$(CC_BITS) $(CC_PIC)" ld="$(CC) $(CC_BITS)" ccname="$(shell basename $(CC))" optimize="$(gcc_OPT)"
+PERL_OPTIMIZE :=	$(shell $(PERL) -e 'use Config; print $$Config{optimize}')
 
 # Allow user to override default maximum number of archives
 NUM_EXTRA_ARCHIVES= 1 2 3 4 5 6 7 8 9 10

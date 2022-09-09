@@ -46,8 +46,6 @@ my @ignore = (
 	'^/usr/lib/locale/',	# ignore locale support
 	'^/usr/share/lib/make/',	# ignore make bits
 	'^/usr/share/lib/zoneinfo/',	# ignore timezone info
-	'/SUNWspro/',		# ignore compiler bits
-	'/sunstudio12.1/',	# ignore more compiler bits
 	'^/ws/',		# nothing in /ws can be interesting
 	'^\.[/\.]{0,1}$'	# ignore ., .., and ./
 );
