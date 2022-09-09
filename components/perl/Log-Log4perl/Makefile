@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Log::Log4perl
-HUMAN_VERSION =			1.55
+HUMAN_VERSION =			1.56
 COMPONENT_SUMMARY =		Log::Log4perl - Log4j implementation for Perl
 COMPONENT_CPAN_AUTHOR =		ETJ
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c4f3caa1328fdc48595ccd0d1e16c40bd74af2547552370125b4b7e5eae1ff44
+	sha256:47e08d63c9a940743308c8ba39fa51e4c15459c7d70acfc3b131b981f843a941
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
