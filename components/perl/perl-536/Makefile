@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		perl
 COMPONENT_VERSION_MAJOR =	5.36
 COMPONENT_VERSION =		$(COMPONENT_VERSION_MAJOR).0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Perl $(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -50,27 +50,33 @@ COMPONENT_BUILD_ARGS =
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
 CONFIGURE_ENV += MAKE=$(GMAKE)
 
-CONFIGURE_OPTIONS = \
-			-de \
-			-Dmksymlinks \
-			-Ulocincpth= \
-			-Uloclibpth= \
-			-Dbin=/usr/perl5/$(PERL_VERSION)/bin \
-			-Dcc="$(CC) $(CC_BITS)" \
-			-Dcf_email="oi-dev@openindiana.org" \
-			-Dcf_by="perl-bugs" \
-			-Dlibperl=libperl.so \
-			-Dmyhostname="localhost" \
-			-Dprefix=/usr/perl5/$(PERL_VERSION) \
-			-Dprivlib=/usr/perl5/$(PERL_VERSION)/lib \
-			-Dsitelib=/usr/perl5/site_perl/$(PERL_VERSION) \
-			-Dsiteprefix=/usr/perl5/$(PERL_VERSION) \
-			-Dvendorlib=/usr/perl5/vendor_perl/$(PERL_VERSION) \
-			-Dvendorprefix=/usr/perl5/$(PERL_VERSION) \
-			-Duseshrplib \
-			-Dusedtrace \
-			-Dusethreads \
-			-Dlibpth="/lib/64 /usr/lib/64"
+CONFIGURE_OPTIONS =	-de
+CONFIGURE_OPTIONS +=	-Dmksymlinks
+CONFIGURE_OPTIONS +=	-Ulocincpth=
+CONFIGURE_OPTIONS +=	-Uloclibpth=
+
+CONFIGURE_OPTIONS +=	-Dprefix=/usr/perl5/$(PERL_VERSION)
+CONFIGURE_OPTIONS +=	-Dprivlib=/usr/perl5/$(PERL_VERSION)/lib
+CONFIGURE_OPTIONS +=	-Dsitelib=/usr/perl5/site_perl/$(PERL_VERSION)
+CONFIGURE_OPTIONS +=	-Dvendorprefix=/usr/perl5/$(PERL_VERSION)
+CONFIGURE_OPTIONS +=	-Dvendorlib=/usr/perl5/vendor_perl/$(PERL_VERSION)
+CONFIGURE_OPTIONS +=	-Dman3dir=/usr/perl5/$(PERL_VERSION)/man/man3perl
+CONFIGURE_OPTIONS +=	-Dman3ext=3perl
+
+CONFIGURE_OPTIONS +=	-Dmyhostname="localhost"
+CONFIGURE_OPTIONS +=	-Dcf_email="oi-dev@openindiana.org"
+CONFIGURE_OPTIONS +=	-Dcf_by="perl-bugs"
+
+CONFIGURE_OPTIONS +=	-Duseshrplib
+CONFIGURE_OPTIONS +=	-Dlibperl=libperl.so
+
+CONFIGURE_OPTIONS +=	-Dusedtrace
+CONFIGURE_OPTIONS +=	-Dusethreads
+
+CONFIGURE_OPTIONS +=	-Dcc="$(CC) $(CC_BITS)"
+CONFIGURE_OPTIONS +=	-Doptimize="$(gcc_OPT)"
+CONFIGURE_OPTIONS +=	-Dlibpth="/lib/64 /usr/lib/64"
+
 
 COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
 
