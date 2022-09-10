@@ -22,17 +22,18 @@
 # Copyright (c) 2018, Michal Nowak
 #
 BUILD_BITS= 64_and_32
+USE_COMMON_TEST_MASTER= no
 #USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
-COMPONENT_VERSION=      7.84.0
+COMPONENT_VERSION=      7.85.0
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:2d118b43f547bfe5bae806d8d47b4e596ea5b25a6c1f080aef49fbcd817c5db8
+COMPONENT_ARCHIVE_HASH= sha256:88b54a6d4b9a48cb4d873c7056dcba997ddd5b7be5a2d537a4acb55c20b04be6
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=  	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE).asc
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -49,8 +50,6 @@ GSSAPI_LIBDIR_32 = /usr/lib
 GSSAPI_LIBDIR_64 = /usr/lib/$(MACH64)
 
 CFLAGS += $(CPP_LARGEFILES)
-#CFLAGS += `pkg-config --cflags libidn`
-#CPPFLAGS += `pkg-config --cflags libidn`
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS) -I/usr/include/openldap"
 
