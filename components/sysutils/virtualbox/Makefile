@@ -14,30 +14,36 @@
 # Copyright 2019 Tim Mooney
 # Copyright 2020 Jim Klimov
 # Copyright 2021 omnios.org wrt the ctx patches
+# Copyright 2022 Daniel Bell
 
 #USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      6.1.36
+COMPONENT_VERSION=      6.1.38
 COMPONENT_REVISION =	0
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
 COMPONENT_FMRI=         system/virtualbox
 COMPONENT_CLASSIFICATION= System/Virtualization
-COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
+
 COMPONENT_DOWNLOAD_URL= https://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:e47942e42892c13c621869865e2b7b320340154f0fa74ecbdaf18fdaf70ef047
+COMPONENT_ARCHIVE_HASH= $(shell sed -E '/ [ \*]$(COMPONENT_ARCHIVE)$$/!d;s/(^[0-9a-fA-F]+)( .*)/sha256:\1/' $(COMPONENT_DIR)/$(COMPONENT_NAME).sums)
 COMPONENT_LICENSE=      GPLv2
 
+# Get build number from SDK zip entry in the checksum file
+SDK_BUILD_NUMBER=	$(shell sed -E '/ [ \*]VirtualBoxSDK.*zip/!d;s/(^[0-9a-fA-F]+ [ \*]VirtualBoxSDK-[0-9\.]+-)([0-9]+)(.*$$)/\2/' $(COMPONENT_DIR)/$(COMPONENT_NAME).sums)
+
 COMPONENT_NAME_1=       VirtualBoxSDK
-COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-152435
+COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-$(SDK_BUILD_NUMBER)
 COMPONENT_SRC_1=        $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).zip
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE_1)
-COMPONENT_ARCHIVE_HASH_1=	sha256:eb6ffa0ca0e8d6b89bf7a74fb37151a896c636e7720a55b4311185229da9a676
+COMPONENT_ARCHIVE_HASH_1= $(shell sed -E '/ [ \*]$(COMPONENT_ARCHIVE_1)$$/!d;s/(^[0-9a-fA-F]+)( .*)/sha256:\1/' $(COMPONENT_DIR)/$(COMPONENT_NAME).sums)
 COMPONENT_LICENSE_1=	GPLv2
 
 UNPACK_ARGS_1=		-r $(COMPONENT_SRC_1)
