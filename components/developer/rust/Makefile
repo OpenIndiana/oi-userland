@@ -33,19 +33,19 @@ USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.61.0
+COMPONENT_VERSION=	1.64.0
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ad0b4351675aa9abdf4c7e066613bd274c4391c5506db152983426376101daed
+COMPONENT_ARCHIVE_HASH=	sha256:b3cd9f481e1a2901bf6f3808d30c69cc4ea80d93c4cc4e2ed52258b180381205
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT or Apache-2.0
 COMPONENT_LICENSE_FILE=	LICENSE-APACHE
 
-RUST_PRE_VERSION=	1.60.0
+RUST_PRE_VERSION=	1.63.0
 RUST_BOOTSTRAP_PATH=	$(BUILD_DIR)/$(MACH64)
 RUST_ARCH=		x86_64-unknown-illumos
 
@@ -64,7 +64,7 @@ CARGO_HOME=             $(BUILD_DIR)/$(MACH64)
 
 PATH=                   $(CARGO_HOME)/bin:$(GCC_BINDIR):$(PATH.gnu)
 
-#  workaround the symlink name lenght 100 problem, but hope it is not neccessary with
+# workaround the symlink name lenght 100 problem, but hope it is not neccessary with
 # but also with patch src_tools_rust-installer_src_generator.rs.patch 
 COMPONENT_BUILD_ENV+=	CARGO_HOME=$(CARGO_HOME)
 COMPONENT_INSTALL_ENV+=	CARGO_HOME=$(CARGO_HOME)
@@ -72,6 +72,20 @@ COMPONENT_TEST_ENV+=	CARGO_HOME=$(CARGO_HOME)
 COMPONENT_BUILD_ENV+=	RUSTUP_HOME=$(RUSTUP_HOME)
 COMPONENT_INSTALL_ENV+=	RUSTUP_HOME=$(RUSTUP_HOME)
 COMPONENT_TEST_ENV+=	RUSTUP_HOME=$(RUSTUP_HOME)
+
+# currently there is no system/library/g++-4-runtime installed only two links are needed
+# to build the package:
+#
+#	ln -s $(GCC_LIBDIR)/libgcc_s.so.1 /usr/lib/$(MACH64)/libgcc_s.so.1
+#	ln -s $(GCC_LIBDIR)/liblibssp.so.0 /usr/lib/$(MACH64)/libssp.so.0
+#
+# another idea could be to usr LD_LIBRARY_PATH only caveat it starts building included 
+# llvm and fails (maybe someone can chime in)
+#	export LD_LIBRARY_PATH=$(GCC_LIBDIR)
+#
+# Also some other package can provide this two links (which one?)
+# Basically it proves that the very old gcc is not needed as also mentioned by Joshua 
+# M. Clulow
 
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	CLONEY_MODE=hardlink $(CLONEY) $(SOURCE_DIR) $(@D); \
@@ -120,19 +134,18 @@ CONFIGURE_OPTIONS += --enable-rpath
 CONFIGURE_OPTIONS += --disable-codegen-tests
 CONFIGURE_OPTIONS += --disable-dist-src
 CONFIGURE_OPTIONS += --disable-llvm-static-stdcpp
-CONFIGURE_OPTIONS += --enable-ninja
 CONFIGURE_OPTIONS += --enable-vendor
 CONFIGURE_OPTIONS += --disable-docs
 CONFIGURE_OPTIONS += --disable-compiler-docs
 CONFIGURE_OPTIONS += --disable-cargo-native-static
 CONFIGURE_OPTIONS += --enable-option-checking
-CONFIGURE_OPTIONS += --enable-optimize
 CONFIGURE_OPTIONS += --release-channel=stable
 CONFIGURE_OPTIONS += --python=$(PYTHON)
 CONFIGURE_OPTIONS += --enable-llvm-link-shared
 CONFIGURE_OPTIONS += --llvm-root=$(CLANG_ROOT)
-
-COMPONENT_PRE_BUILD_ACTION=	rustup default  $(RUST_PRE_VERSION)-$(RUST_ARCH);
+CONFIGURE_OPTIONS += --enable-llvm-version-check
+CONFIGURE_OPTIONS += --enable-optimize-llvm
+CONFIGURE_OPTIONS += --enable-control-flow-guard
 
 # Cleanup standard environment!
 COMPONENT_BUILD_ENV =
@@ -146,6 +159,7 @@ COMPONENT_BUILD_ENV += CXX=$(CXX)
 COMPONENT_BUILD_ENV += CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_BUILD_ENV += AR=$(GNUAR)
 COMPONENT_BUILD_ENV += RUSTC=$(CARGO_HOME)/bin/rustc
+COMPONENT_BUILD_ENV += MAKE=$(PYTHON)
 # Enforce linker consistency
 COMPONENT_BUILD_ENV += RUSTFLAGS="-C linker=$(CC)"
 COMPONENT_BUILD_ENV += RUST_BACKTRACE=1
@@ -168,6 +182,9 @@ RUSTC_BIN_POST+= clippy-driver
 RUSTC_BIN_POST+= rls
 RUSTC_BIN_POST+= rustc
 RUSTC_BIN_POST+= rustdoc
+
+# manually added
+REQUIRED_PACKAGES += developer/clang-13
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
