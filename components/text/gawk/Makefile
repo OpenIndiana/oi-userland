@@ -29,14 +29,14 @@ BUILD_BITS=				64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gawk
-COMPONENT_VERSION=		5.1.1
+COMPONENT_VERSION=		5.2.0
 COMPONENT_SUMMARY=		GNU awk
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gawk/
 COMPONENT_FMRI=			text/gawk
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:d87629386e894bbea11a5e00515fc909dc9b7249529dad9e6a3a2c77085f7ea2
+COMPONENT_ARCHIVE_HASH= sha256:e4ddbad1c2ef10e8e815ca80208d0162d4c983e6cca16f925e8418632d639018
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=		GPLv3, FDLv1.3
 
@@ -52,6 +52,7 @@ COMPONENT_TEST_ENV+= LANG=C LC_ALL=C
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/\/usr\/gnu\/bin\/make/d" ' \
+	'-e "/\/usr\/gcc/d" ' \
 	'-e "/^make/d" ' \
 	'-e "/^Making/d" ' \
 	'-e "/^--- _/d" ' \
@@ -62,5 +63,6 @@ REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libsigsegv
 REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
