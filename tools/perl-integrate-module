@@ -97,6 +97,13 @@ if (($? != 0)) || [[ -z "$AUTHOR" || "$AUTHOR" == "null" ]] ; then
 	exit 1
 fi
 
+# Get download_url
+DOWNLOAD_URL=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.download_url')
+if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
+	printf "WARNING: Failed to get download_url for module %s from metacpan\n" "$MODULE" >&2
+	DOWNLOAD_URL=
+fi
+
 
 # Prepare the directory
 DIR="$DIR/$DISTRIBUTION"
@@ -175,6 +182,14 @@ printf "\ninclude \$(WS_MAKE_RULES)/common.mk\n"
 cat perl-integrate-module.conf | gsed -e '0,/^%include-3%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\n"
 ) > Makefile
+
+# If the automatically constructed COMPONENT_ARCHIVE_URL is not correct then we
+# do not need COMPONENT_CPAN_AUTHOR.  We need COMPONENT_ARCHIVE_URL instead.
+if [[ -n "$DOWNLOAD_URL" ]] ; then
+	COMPONENT_ARCHIVE_URL=$(gmake print-value-COMPONENT_ARCHIVE_URL)
+	[[ "$COMPONENT_ARCHIVE_URL" == "$DOWNLOAD_URL" ]] && DOWNLOAD_URL=
+fi
+[[ -n "$DOWNLOAD_URL" ]] && sed -i -e 's|^COMPONENT_CPAN_AUTHOR.*|COMPONENT_ARCHIVE_URL=\t\t'"$DOWNLOAD_URL"'|g' Makefile
 
 # Remove COMPONENT_REVISION if not needed
 COMPONENT_VERSION=$(gmake print-value-COMPONENT_VERSION)
