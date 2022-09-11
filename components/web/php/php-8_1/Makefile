@@ -19,7 +19,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.1
-COMPONENT_MNR_VERSION=	9
+COMPONENT_MNR_VERSION=	10
 COMPONENT_SUMMARY=      PHP 8.1
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_CLASSIFICATION=Meta Packages/Group Packages
@@ -28,7 +28,7 @@ COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:954cf77f7e0a70dc765e7639acdfdccd164be5cd1bce3dbe9d10c58dca631e76
+COMPONENT_ARCHIVE_HASH= sha256:3ea4f323109dfbc8d2631d08aa0e08602c1f713678e9dc6c750f081ef49eab0f
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_LICENSE=      PHP License
@@ -36,11 +36,12 @@ COMPONENT_LICENSE_FILE= LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-PG_BINDIR=		/usr/postgres/12/bin
-MYSQL_DIR=		/usr/mariadb/10.3
-MYSQL_BINDIR=		/usr/mariadb/10.3/bin
-MYSQL_LIBDIR=		/usr/mariadb/10.3/lib
-MYSQL_INCDIR=		/usr/mariadb/10.3/include
+PG_VERSION=		14
+PG_BINDIR=              /usr/postgres/$(PG_VERSION)/bin
+MYSQL_DIR=		/usr/mariadb/10.6
+MYSQL_BINDIR=		/usr/mariadb/10.6/bin
+MYSQL_LIBDIR=		/usr/mariadb/10.6/lib
+MYSQL_INCDIR=		/usr/mariadb/10.6/include
 
 # Apache Paths
 AP_PREFIX=		/usr/apache2/2.4
@@ -220,14 +221,17 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/.*/d" '
 
 # Manually added build dependencies
-REQUIRED_PACKAGES += database/mariadb-103/client
+REQUIRED_PACKAGES += database/mariadb-106/client
+REQUIRED_PACKAGES += database/postgres-14/developer
+REQUIRED_PACKAGES += service/database/postgres-14
+REQUIRED_PACKAGES += web/server/apache-24
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += database/mariadb-103/library
+REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/gmp
