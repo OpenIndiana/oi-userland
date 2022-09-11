@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Exporter::Tiny
-HUMAN_VERSION =			1.004000
+HUMAN_VERSION =			1.004001
 COMPONENT_SUMMARY =		Exporter::Tiny - an exporter with the features of Sub::Exporter but only core dependencies
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7f7b3b4fbe923355317243cd434d2319ffbad81c98cf8c8e189a6943b42bfeca
+	sha256:4cb9c2676f34e32bd987bd7880b06a2475b530c77606c3c2bed255f904d1825b
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
