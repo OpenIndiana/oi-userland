@@ -351,7 +351,7 @@ def download_from_paths(search_list, file_arg, url, link_arg, quiet=False):
 def usage():
     print("Usage: %s [-a|--user-agent (user-agent)] [-f|--file (file)] [-l|--link] " \
         "[-k|--keep] [-h|--hash (hash)] [-s|--search (search-dir)] " \
-        "[-S|--sigurl (signature-url)] --url (url)" % (sys.argv[0].split('/')[-1]))
+        "[-S|--sigurl (signature-url)] [-N|--need-sig] --url (url)" % (sys.argv[0].split('/')[-1]))
     sys.exit(1)
 
 
@@ -367,12 +367,13 @@ def main():
     hash_arg = None
     url_arg = None
     sig_arg = None
+    need_sig = False
     search_list = list()
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "a:f:h:lks:u:",
+        opts, args = getopt.getopt(sys.argv[1:], "a:f:h:lks:u:N",
                                    ["file=", "link", "keep", "hash=", "search=", "url=",
-                                    "sigurl=", "user-agent="])
+                                    "sigurl=", "user-agent=", "need-sig"])
     except getopt.GetoptError as err:
         print(str(err))
         usage()
@@ -394,6 +395,8 @@ def main():
             sig_arg = arg
         elif opt in ["-u", "--url"]:
             url_arg = arg
+        elif opt in ["-N", "--need-sig"]:
+            need_sig = True
         else:
             assert False, "unknown option"
 
@@ -410,7 +413,7 @@ def main():
             # Put the signature file in the same directory as the
             # file we're downloading.
             sig_file = os.path.join(
-                os.path.dirname(file_arg),
+                os.path.dirname(file_arg) if file_arg else os.curdir,
                 os.path.basename(sig_arg))
             # Validate with the first signature we find.
             for sig_file in download_from_paths(search_list, sig_file,
@@ -426,6 +429,9 @@ def main():
                     continue
             else:
                 print("failed (couldn't fetch signature)")
+        if need_sig and not sig_valid:
+            print("Exitting due to -N/--need-sig.")
+            sys.exit(2)
 
         print("    validating hash...", end=' ')
         realhash = validate_container(name, hash_arg)
