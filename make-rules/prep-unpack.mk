@@ -36,8 +36,13 @@ define unpack-rules
 ifdef COMPONENT_ARCHIVE$(1)
 ifdef COMPONENT_SRC$(1)
 
-CLEAN_PATHS += $$(COMPONENT_SRC$(1))
-SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$$(COMPONENT_SRC$(1))
+# Set source dir if not overridden, then make it absolute.
+SOURCE_DIR$(1) ?= $$(COMPONENT_SRC$(1))
+SOURCE_DIR$(1) := $$(COMPONENT_DIR)/$$(SOURCE_DIR$(1))
+
+# Clean is done from COMPONENT_DIR, so we can short the filenames.
+CLEAN_PATHS += $$(shell basename $$(SOURCE_DIR$(1)))
+
 
 UNPACK_STAMP$(1) =	$$(SOURCE_DIR$(1))/.unpacked
 
