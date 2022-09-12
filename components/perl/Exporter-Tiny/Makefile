@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Exporter::Tiny
 HUMAN_VERSION =			1.004001
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Exporter::Tiny - an exporter with the features of Sub::Exporter but only core dependencies
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
