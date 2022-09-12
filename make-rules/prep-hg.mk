@@ -29,12 +29,6 @@ MKTEMP = 	/usr/gnu/bin/mktemp
 COMPONENT_PREP_HG?=yes
 ifeq ($(strip $(COMPONENT_PREP_HG)), yes)
 
-#
-# Anything that we pull from a Mercurial repo must have a HG_REPO{_[0-9]+} and
-# HG_REV{_[0-9]+} to match.
-#
-
-HG_SUFFIXES = $(subst HG_REPO_,, $(filter HG_REPO_%, $(.VARIABLES)))
 
 # Templates for download variables and rules.  We separate the variable
 # assignments from the rules so that all the variable assignments are given a
@@ -51,9 +45,6 @@ COMPONENT_SRC$(1) ?= $$(COMPONENT_NAME$(1))$$(COMPONENT_LABEL$(1):%=-%)$$($$(or 
 COMPONENT_ARCHIVE$(1) ?= $$(COMPONENT_SRC$(1)).tar.gz
 COMPONENT_ARCHIVE_SRC$(1) = hg
 
-CLEAN_PATHS += $$(COMPONENT_SRC$(1))
-CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
-SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$$(COMPONENT_SRC$(1))
 endif
 endif
 endef

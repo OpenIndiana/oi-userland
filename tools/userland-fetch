@@ -39,11 +39,25 @@ import gzip
 import bz2
 from urllib.parse import splittype, splithost
 from urllib.request import urlopen
-from urllib.error import HTTPError
+from urllib.error import HTTPError,URLError
 from urllib.request import Request
 import hashlib
 from http.client import BadStatusLine
 
+try:
+    DEFAULT_HASH_ALGO=os.environ["DEFAULT_HASH_ALGO"]
+except KeyError:
+    DEFAULT_HASH_ALGO="sha256"
+try:
+    DEFAULT_HASH_FILES=os.environ["DEFAULT_HASH_FILES"].split(" ")
+except KeyError:
+    DEFAULT_HASH_FILES=["SHA256SUMS","sha256sums.txt"]
+try:
+    HASH_DIR = os.path.realpath(os.environ["HASH_DIR"])
+except KeyError:
+    HASH_DIR = os.path.realpath('hashes')
+
+SIGNATURE_EXTENSIONS=["sig","asc"]
 
 def printIOError(e, txt):
     """ Function to decode and print IOError type exception """
@@ -101,15 +115,16 @@ def validate(file, hash):
     try:
         algorithm, hashvalue = hash.split(':')
     except:
-        algorithm = "sha256"
+        algorithm = DEFAULT_HASH_ALGO
 
     # force migration away from sha1
     if algorithm == "sha1":
-        algorithm = "sha256"
+        algorithm = DEFAULT_HASH_ALGO
 
     try:
         m = hashlib.new(algorithm)
     except ValueError:
+        print("Unable to generate hashlib instance for",algorithm)
         return False
 
     try:
@@ -117,6 +132,8 @@ def validate(file, hash):
         m.update(block)
         return "%s:%s" % (algorithm, m.hexdigest())
     except IOError as err:
+        print(str(err), end=' ')
+    except EOFError as err:
         print(str(err), end=' ')
 
     return "%s:" % (algorithm)
@@ -139,9 +156,10 @@ def validate_payload(filename, hash):
     """Given a file path and a hash string, verify that the hash matches the
     payload (uncompressed content) of the file."""
 
-    expr_bz = re.compile('.+\.bz2$', re.IGNORECASE)
+    expr_bz = re.compile('.+\.bz2?$', re.IGNORECASE)
     expr_gz = re.compile('.+\.gz$', re.IGNORECASE)
     expr_tgz = re.compile('.+\.tgz$', re.IGNORECASE)
+    expr_tbz = re.compile('.+\.tbz2?$', re.IGNORECASE)
 
     try:
         if expr_bz.match(filename):
@@ -150,6 +168,8 @@ def validate_payload(filename, hash):
             file = gzip.GzipFile(filename, 'rb')
         elif expr_tgz.match(filename):
             file = gzip.GzipFile(filename, 'rb')
+        elif expr_tbz.match(filename):
+            file = bz2.GzipFile(filename, 'rb')
         else:
             return False
     except IOError as e:
@@ -158,52 +178,81 @@ def validate_payload(filename, hash):
     return validate(file, hash)
 
 
-def download(url, filename=None, user_agent_arg=None, quiet=None):
+def download(url, filename=None, user_agent_arg=None, quiet=None,allow_partial=True):
     """Download the content at the given URL to the given filename
     (defaulting to the basename of the URL if not given.  If 'quiet' is
     True, throw away any error messages.  Returns the name of the file to
     which the content was donloaded."""
-
-    src = None
-
+    retval = None
     try:
-        req = Request(url)
+        req = Request(url,method="HEAD")
         if user_agent_arg is not None:
             req.add_header("User-Agent", user_agent_arg)
-        src = urlopen(req)
+        if filename is None:
+            filename = req.get_full_url().split('/')[-1]
+        retry = 1
+        dl = 0
+        i = urlopen(req)
+        if 'transfer-encoding' in i.headers and i.headers['transfer-encoding'] == 'chunked':
+            length = 0
+            print("length unknown (streamed/chunked)")
+        else:
+            length = int(i.headers['content-length'])
+            print("length %i bytes" % (length))
+        if not 'accept-ranges' in i.headers or i.headers['accept-ranges'] != 'bytes':
+            print("No partial download support from server")
+            allow_partial = False
+        i.close()
+        req.method = "GET"
+        # This might speed things up and keep memory usage down
+        while retry <= 3:
+            with open(filename + ".part","ab" if allow_partial else "wb") as o:
+                try:
+                    # seek to end of the file if applicable
+                    if allow_partial:
+                        o.seek(0,2)
+                    with urlopen(req) as i: 
+                        curpos = o.tell()
+                        print("(%i of 3%s)..." % (retry,"; %i bytes done"%(curpos) if curpos else ""),end=" ")
+                        if curpos > 0:
+                            req.add_header("Range","bytes=%i-"%(curpos+1))
+                        
+                        src = i.read(65536)
+                        while len(src) > 0:
+                            o.write(src)
+                            src = i.read(65536)
+                        retry = 4
+                        
+                    if length > 0 and o.tell() < length:
+                        print("Download of %s stopped abruptly." % (str(url)))
+                        retry += 1
+                        req.add_header("Range","bytes=%i-"%(o.tell()+1))
+
+                except URLError as e:
+                    print("Error downloading %s at %i bytes: %s" % (str(url),dl,str(e)))
+                    # if we haven't downloaded any bytes since the last URLError, cancel the download.
+                    if dl > 0 and o.tell() > dl:
+                        dl = o.tell()
+                        retry += 1
+                        req.add_header("Range","bytes=%i-"%(o.tell()+1))
+                    else:
+                        retry = 4
+                except HTTPError as e:
+                    print("Error downloading %s: %s" % (str(url),str(e)))
+                    retry = 4
+    # return the name of the file that we downloaded the data to.
+        os.rename(filename+".part",filename)
+        retval = filename
     except IOError as e:
         if not quiet:
             printIOError(e, "Can't open url " + url)
-        return None
     except BadStatusLine as e:
         if not quiet:
             print("Can't open url %s: server answered with code which we couldn't understand " % (url))
-        return None
+    except KeyboardInterrupt:
+        print("Cancelling download...")
 
-    # 3xx, 4xx and 5xx (f|ht)tp codes designate unsuccessfull action
-    if src.getcode() and (3 <= int(src.getcode() / 100) <= 5):
-        if not quiet:
-            print("Error code: " + str(src.getcode()))
-        return None
-
-    if filename is None:
-        filename = src.geturl().split('/')[-1]
-
-    try:
-        dst = open(filename, 'wb')
-    except IOError as e:
-        if not quiet:
-            printIOError(e, "Can't open file " + filename + " for writing")
-        src.close()
-        return None
-
-    dst.write(src.read())
-
-    src.close()
-    dst.close()
-
-    # return the name of the file that we downloaded the data to.
-    return filename
+    return retval
 
 
 def download_paths(search, filename, url):
@@ -264,7 +313,7 @@ def pypi_url(url, filename):
 	# We have to use ==; anything fancier would require pkg_resources, but
 	# really that's the only thing that makes sense in this context.
 	try:
-		name, version = re.match("/(.*)==(.*)$", path).groups()
+	        name, version = re.match("/(.*)==(.*)$", path).groups()
 	except AttributeError:
 		print("PyPI URLs must be of the form 'pypi:///component==version'")
 		return None
@@ -339,13 +388,44 @@ def download_from_paths(search_list, file_arg, url, link_arg, quiet=False):
         elif scheme in ['http', 'https', 'ftp']:
             if not quiet:
                 print("\n    downloading...", end=' ')
-            name = download(url, file_arg, quiet)
+            name = download(url, file_arg, quiet,(scheme != 'ftp'))
             if name is None:
                 if not quiet:
                     print("failed")
                 continue
 
         yield name
+
+def find_hash_for_file(filename):
+    hash_value = None
+    try:
+        regex = re.compile('([0-9a-fA-F]+)( [ \*]'+os.path.basename(filename)+'$)')
+        if not os.path.exists(HASH_DIR):
+            return None, None
+        for hash_file in sorted(os.listdir(HASH_DIR)):
+            splits = hash_file.split('.')
+            if '.'.join(splits[:-1]) in SIGNATURE_EXTENSIONS:
+                continue
+            if '.'.join(splits[:-1]) == filename:
+                algo = re.match('([a-zA-Z0-9]+)(sum(s?)?)',hash_file.split('.')[-1])
+            elif hash_file in DEFAULT_HASH_FILES:
+                algo = DEFAULT_HASH_ALGO
+            
+            with open(os.path.join(HASH_DIR,hash_file),"r") as file:
+                hash_value = None
+                for line in file.readlines():
+                    hash_value = regex.match(line)
+                    if hash_value is not None:
+                        print(hash_value)
+                        hash_value = hash_value.group(1)
+                        break
+            if hash_value is not None:
+                return "%s:%s" % (algo,hash_value), hash_file
+        return None, None
+    except NotADirectoryError:
+        print(HASH_DIR,"should be a directory containing hashfiles in the",DEFAULT_HASH_ALGO+"sum","format.")
+    except IsADirectoryError:
+        print(hash_file,"should be a file containing hashes, not a directory.")
 
 
 def usage():
@@ -399,10 +479,15 @@ def main():
             need_sig = True
         else:
             assert False, "unknown option"
-
     if url_arg is None:
         usage()
-
+    filename = os.path.basename(file_arg) if file_arg else os.path.basename(url_arg)
+    if hash_arg is None:
+        hash_arg, hash_file = find_hash_for_file(file_arg if file_arg else os.path.basename(url_arg))
+        if hash_file is not None:
+            print("INFO: hash found for",filename,"in",hash_file,"[",hash_arg,"]")
+    else:
+        print("INFO: not searching %s for" % (HASH_DIR),filename,"(overridden with --hash)")
     for name in download_from_paths(search_list, file_arg, url_arg, link_arg):
         print("\n    validating signature...", end=' ')
 

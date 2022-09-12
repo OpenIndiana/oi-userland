@@ -23,34 +23,24 @@
 
 FETCH =		$(WS_TOOLS)/userland-fetch
 
-#
-# Anything that we download must have a COMPONENT_ARCHIVE_URL{_[0-9]+} macro
-# that tells us where the canonical source for the archive can be found.  The
-# macro for the first archive is typically un-suffixed.  By convention,
-# subsequent archives will include a _[0-9]+ in the macro name.  This allows
-# an arbitrary number of archives to be downloaded for a particular component
-# Makefile.  It is also important to note that there is a corresponding
-# COMPONENT_ARCHIVE macro defining a local file name for the archive, and
-# optional COMPONENT_ARCHIVE_HASH and COMPONENT_SIG_URL containing a hash of
-# the file and signature for verification of its contents.
-#
-
-URL_SUFFIXES = $(subst COMPONENT_ARCHIVE_URL_,, \
-		$(filter COMPONENT_ARCHIVE_URL_%, $(.VARIABLES)))
-
 # Argument to "userland-fetch" script that causes it to download and verify
 # files, but not to remove mismatches; good to save traffic when initially
 # fetching a new archive just to learn what checksum to expect in Makefile.
 #FETCH_KEEP ?= --keep
 FETCH_KEEP ?=
 
+
 # Template for download rules.
 define download-rules
 ifdef COMPONENT_ARCHIVE$(1)
 ifdef COMPONENT_ARCHIVE_URL$(1)
 
+
 ARCHIVES += $$(COMPONENT_ARCHIVE$(1))
-CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
+
+ifneq (,$$(COMPONENT_HASH_FILE$(1)))
+DEFAULT_HASH_FILES += $$(COMPONENT_HASH_FILE$(1))
+endif
 
 fetch::	FETCH_KEEP=--keep
 fetch::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
@@ -58,8 +48,8 @@ fetch::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 download::	$$(USERLAND_ARCHIVES)
 download::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 
-$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
-	$$(FETCH) $$(FETCH_KEEP) --file $$@ \
+$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$$(MAKEFILE_PREREQ)
+	$$(FETCH) $$(FETCH_KEEP) $$(NEED_HASH$(1)) $$(NEED_SIG$(1)) --file $$@ \
 		$$(COMPONENT_ARCHIVE_URL$(1):%=--url %) \
 		$$(COMPONENT_ARCHIVE_HASH$(1):%=--hash %) \
 		$$(COMPONENT_SIG_URL$(1):%=--sigurl %) \
@@ -79,6 +69,7 @@ $(USERLAND_ARCHIVES):
 # Define the rules required to download any source archives and augment any
 # cleanup macros.
 #
+
 $(eval $(call download-rules,))
 $(foreach suffix, $(URL_SUFFIXES), $(eval $(call download-rules,_$(suffix))))
 

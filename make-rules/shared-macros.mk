@@ -22,6 +22,22 @@
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+
+# Whitespace-separated list of filenames to search in HASH_DIR
+# userland-fetch will search every file in this list, along with COMPONENT_ARCHIVE.sha256sum
+DEFAULT_HASH_FILENAMES= sha256sums.txt SHA256SUMS
+
+# a list of protocols considered secure by userland-fetch
+SECURE_PROTOCOLS= https
+
+# Default download path
+# COMPONENT_DOWNLOAD_BASE_x are also available
+COMPONENT_DOWNLOAD_BASE=$(shell basename $(COMPONENT_ARCHIVE_URL))
+
+# Try to download this file from COMPONENT_DOWNLOAD_BASE, along with
+# COMPONENT_HASH_FILE*.
+COMPONENT_DEFAULT_HASH_FILE=SHA256SUMS
+
 # These symbols should be used in component Makefiles
 # whenever PATH is to be defined there:
 #     PATH = $(PATH.illumos)
@@ -217,13 +233,14 @@ PKG_REPO =	file:$(WS_REPO)
 
 HUMAN_VERSION ?=	$(COMPONENT_VERSION)
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
 COMPONENT_LICENSE_FILE ?= $(COMPONENT_NAME).license
 
 COMPONENT_DIR :=	$(shell pwd)
-SOURCE_DIR =	$(COMPONENT_DIR)/$(COMPONENT_SRC)
 BUILD_DIR =	$(COMPONENT_DIR)/build
 PROTO_DIR =	$(BUILD_DIR)/prototype/$(MACH)
+HASH_DIR =	$(COMPONENT_DIR)/hashes
 
 ARCHLIBSUBDIR32	=
 ARCHLIBSUBDIR64	= $(MACH64)

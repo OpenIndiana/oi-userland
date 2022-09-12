@@ -18,6 +18,9 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		illumos-gate
 COMPONENT_SRC=		$(COMPONENT_NAME)
 
+# SOURCE_DIR is set in prep.mk, which isn't used in this custom Makefile
+SOURCE_DIR=$(COMPONENT_DIR)/$(COMPONENT_SRC)
+
 GIT=git
 GIT_REPO=https://github.com/illumos/illumos-gate.git
 GIT_BRANCH=master

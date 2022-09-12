@@ -29,13 +29,6 @@ MKTEMP = 	/usr/gnu/bin/mktemp
 COMPONENT_PREP_SVN?=yes
 ifeq ($(strip $(COMPONENT_PREP_SVN)), yes)
 
-#
-# Anything that we pull from a Subversion repo must have a SVN_REPO{_[0-9]+} and
-# SVN_REV{_[0-9]+} to match.
-#
-
-SVN_SUFFIXES = $(subst SVN_REPO_,, $(filter SVN_REPO_%, $(.VARIABLES)))
-
 define subversion-rules
 ifdef SVN_REPO$(1)
 ifdef SVN_REV$(1)
@@ -44,9 +37,6 @@ COMPONENT_SRC$(1) = $$(COMPONENT_NAME$(1))-$$(SVN_REV$(1))
 COMPONENT_ARCHIVE$(1) = $$(COMPONENT_SRC$(1)).tar.bz2
 COMPONENT_ARCHIVE_SRC$(1) = svn
 
-CLEAN_PATHS += $$(COMPONENT_SRC$(1))
-CLOBBER_PATHS += COMPONENT_ARCHIVE$(1)
-SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$$(COMPONENT_SRC$(1))
 
 download::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 

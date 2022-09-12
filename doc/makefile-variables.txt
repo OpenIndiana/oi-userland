@@ -11,7 +11,15 @@ The following are the basics that just about every Makefile should have.
 * COMPONENT_ARCHIVE is the base name of the archive to be downloaded.  A common
   value for this is "$(COMPONENT_SRC).tar.gz".
 * COMPONENT_ARCHIVE_HASH is typically "sha256:" followed by the first output
-  field of `sha256sum $(COMPONENT_ARCHIVE)`.
+  field of `sha256sum $(COMPONENT_ARCHIVE)`. Placing this in a Makefile will
+  disable hash file checking for that specific COMPONENT_ARCHIVE.
+* COMPONENT_HASH_FILE can be set to a filename in $(HASH_DIR) containing hash
+  lines in the format output by `sha256sum`. This file will be used to verify
+  $(COMPONENT_ARCHIVE) unless overridden by $(COMPONENT_ARCHIVE_HASH) or
+  $(COMPONENT_SIG_URL).
+**  NOTE: A default hash file ( $(HASH_DIR)/$(DEFAULT_HASH_FILE) ) is always
+          checked as a last resort, unless overridden by $(COMPONENT_ARCHIVE_HASH)
+          or $(COMPONENT_SIG_URL). The filename is typically SHA256SUMS.
 * COMPONENT_ARCHIVE_URL is where the archive can be downloaded from.  This is
   typically constructed from $(COMPONENT_PROJECT_URL) and $(COMPONENT_ARCHIVE).
 * COMPONENT_BUGDB is the lower-case rendering of the BugDB cat/subcat.
@@ -25,11 +33,28 @@ The following are the basics that just about every Makefile should have.
   the correct version. To check if key is imported, run:
 	gpg2 --homedir=$(git rev-parse --show-toplevel)/tools/.gnupg --list-keys 
   before you 'git commit' your merge.
+  ** NOTE: Placing COMPONENT_SIG_URL in a Makefile will disable hash file checks
+           for that specific COMPONENT_ARCHIVE.
 
-These two are both initialized in make-rules/shared-macros.mk rather than any
+---
+These rules are checked in order to ensure the archive is downloaded securely:
+* COMPONENT_SIG_URL must be set, OR
+* COMPONENT_ARCHIVE_HASH must be set, OR
+* COMPONENT_HASH_FILE must be set and the file must be in $(HASH_DIR), OR
+* DEFAULT_HASH_FILE must be in $(HASH_DIR)
+
+For additional archives (like COMPONENT_ARCHIVE_x),
+COMPONENT_HASH_FILE_x is checked first, then COMPONENT_HASH_FILE.
+
+Setting ALLOW_UNVERIFIED_DOWNLOADS=yes overrides these rules. However, all 
+unverified downloads must use https.
+---
+
+These three are all initialized in make-rules/shared-macros.mk rather than any
 component-level Makefile, but are frequently referenced from the latter.
 * COMPONENT_DIR is the top-level directory of the given component in question.
 * SOURCE_DIR is set to $(COMPONENT_DIR)/$(COMPONENT_SRC).
+* HASH_DIR is set to $(COMPONENT_DIR)/hashes
 
 Additional pre/post configure, build, or install actions can be specified in
 a component Makefile by setting them in one of the following macros.  None of

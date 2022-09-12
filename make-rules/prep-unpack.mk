@@ -24,20 +24,11 @@
 
 UNPACK =		$(WS_TOOLS)/userland-unpack
 
-#
-# Anything that we downloaded and want to unpack must have a
-# COMPONENT_ARCHIVE{_[0-9]+} macro.
-#
-PCK_SUFFIXES = $(subst COMPONENT_ARCHIVE_,, \
-                $(filter COMPONENT_ARCHIVE_%, $(.VARIABLES)))
-
 # Template for unpacking rules.
 define unpack-rules
 ifdef COMPONENT_ARCHIVE$(1)
 ifdef COMPONENT_SRC$(1)
 
-CLEAN_PATHS += $$(COMPONENT_SRC$(1))
-SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$$(COMPONENT_SRC$(1))
 
 UNPACK_STAMP$(1) =	$$(SOURCE_DIR$(1))/.unpacked
 

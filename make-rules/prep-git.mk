@@ -28,13 +28,6 @@ GIT =		/usr/bin/git
 COMPONENT_PREP_GIT?=yes
 ifeq ($(strip $(COMPONENT_PREP_GIT)), yes)
 
-#
-# Anything that we pull from a GIT repo must have a GIT_REPO{_[0-9]+} and
-# GIT_COMMIT_ID{_[0-9]+} to match.
-#
-
-GIT_SUFFIXES = $(subst GIT_REPO_,, $(filter GIT_REPO_%, $(.VARIABLES)))
-
 # Templates for git variables and rules.  We separate the variable assignments
 # from the rules so that all the variable assignments are given a chance to
 # complete before those variables are used in targets or prerequisites, where
@@ -69,9 +62,6 @@ else
   COMPONENT_ARCHIVE_SRC$(1) = git
 endif
 
-CLEAN_PATHS += $$(COMPONENT_SRC$(1))
-CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
-SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$$(COMPONENT_SRC$(1))
 endif
 endef
 
