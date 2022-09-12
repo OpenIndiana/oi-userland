@@ -13,30 +13,37 @@
 # Copyright 2016, Adam Stevko
 #
 
+BUILD_STYLE = justmake
+BUILD_BITS = NO_ARCH
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-fusefs
 COMPONENT_VERSION=	ef9a33d4a18131a8c0e50002b138b0431e5db616
 IPS_COMPONENT_VERSION=	1.4
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=	sha256:c050307b9364266a06b83b19c288763b1e9173ac8121431d026ccf5cdb1203b4
 COMPONENT_ARCHIVE_URL=	https://github.com/jurikm/illumos-fusefs/archive/$(COMPONENT_VERSION).zip
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
 
-PATH=/opt/onbld/bin/i386:/opt/onbld/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:/sbin
+include $(WS_MAKE_RULES)/common.mk
 
-$(BUILD_32):    $(SOURCE_DIR)/.prep
+# Force gcc 7 for a case we would switch our default gcc to something else.
+# This should match the compiler used to build illumos-gate.
+GCC_VERSION = 7
+
+PATH=/opt/onbld/bin/i386:$(PATH.illumos)
+
+$(BUILD_$(MK_BITS)):	$(SOURCE_DIR)/.prep
 	$(MKDIR) $(@D)
 	$(CLONEY) $(SOURCE_DIR) $(@D)
-	(cd $(@D)/kernel && dmake)
+	(cd $(@D)/kernel && $(ENV) - CC=$(CC) PATH=$(PATH) dmake -e)
 	$(TOUCH) $@
 
-$(INSTALL_32): $(BUILD_32)
+$(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
 	$(MKDIR) $(PROTO_DIR)
 
 	(cd $(@D)/kernel && dmake install)
@@ -49,7 +56,4 @@ $(INSTALL_32): $(BUILD_32)
 
 	$(TOUCH) $@
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
+# Auto-generated dependencies
