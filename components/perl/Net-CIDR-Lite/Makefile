@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::CIDR::Lite
 HUMAN_VERSION =			0.22
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Net::CIDR::Lite - Perl extension for merging IPv4 or IPv6 CIDR addresses
 COMPONENT_CPAN_AUTHOR =		STIGTSP
 COMPONENT_ARCHIVE_HASH =	\
