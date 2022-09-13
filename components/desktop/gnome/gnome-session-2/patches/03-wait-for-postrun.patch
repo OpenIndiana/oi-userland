@@ -1,0 +1,91 @@
+--- gnome-session-2.25.2/gnome-session/main.c.ori	2008-12-26 04:12:40.809055588 +0000
++++ gnome-session-2.25.2/gnome-session/main.c	2008-12-26 04:13:08.028135902 +0000
+@@ -31,6 +31,9 @@
+ #include <glib/gi18n.h>
+ #include <glib.h>
+ #include <gdk/gdkx.h>
++#include <gtk/gtklabel.h>
++#include <gtk/gtkvbox.h>
++#include <gtk/gtkprogressbar.h>
+ #include <gtk/gtk.h>
+ 
+ #include <dbus/dbus.h>
+@@ -489,6 +492,69 @@
+         return TRUE;
+ }
+ 
++
++static gboolean
++postrun_progress_update (gpointer data)
++{
++	int status = 0;
++  	static int count = 0;
++  	GError *error = NULL;
++  	gtk_progress_bar_pulse (GTK_PROGRESS_BAR (data));
++
++  	if (count == 30) {
++    		g_spawn_command_line_sync ("/usr/lib/postrun-query -c JDS_wait -e", NULL, NULL, &status, &error);
++    		count = 0;
++  	}
++
++  	if (status == 0) {
++    		count++;
++    		return TRUE;
++  	}
++
++  	gtk_main_quit ();
++  	return FALSE;
++}
++
++static void
++gsm_wait_for_unfinished_postrun () 
++{
++  	int status = 0;
++  	GError *error = NULL; 
++
++  	if (!g_spawn_command_line_sync ("/usr/lib/postrun-query -c JDS_wait -e",
++				        NULL, NULL, &status, &error)) {
++        /* no postrun-query? WTF? bail out and hope for the best :) */
++		return;
++  	}
++
++  	if (status == 0) {
++    		GtkWidget *window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
++    		GtkWidget *vbox = gtk_vbox_new (TRUE, 10);
++    		GtkWidget *progress = gtk_progress_bar_new ();
++    		GtkWidget *label;
++    		gint func_ref;
++
++    		/* SUN_BRANDING */
++    		label = gtk_label_new (_("Completing post install setup..."));
++
++    		gtk_container_add (GTK_CONTAINER (window), vbox);
++    		gtk_container_set_border_width (GTK_CONTAINER (window), 10);
++    		gtk_box_pack_start_defaults (GTK_BOX (vbox), label);
++    		gtk_progress_bar_pulse (GTK_PROGRESS_BAR (progress));
++    		func_ref = g_timeout_add (100, postrun_progress_update, progress);
++    		gtk_box_pack_start_defaults (GTK_BOX (vbox), progress);
++
++    		gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);
++
++    		gtk_widget_show_all (window);
++    		gtk_main ();
++  
++    		gtk_widget_destroy (window);
++    		g_source_remove (func_ref);
++  	}
++}
++
++  
+ int
+ main (int argc, char **argv)
+ {
+@@ -564,6 +630,8 @@
+ 	xdisp = gdk_x11_display_get_xdisplay (gdisp);
+ 	XInternAtom (xdisp, "GNOME_SM_DESKTOP", FALSE);
+ 
++	gsm_wait_for_unfinished_postrun ();
++
+         /* Some third-party programs rely on GNOME_DESKTOP_SESSION_ID to
+          * detect if GNOME is running. We keep this for compatibility reasons.
+          */

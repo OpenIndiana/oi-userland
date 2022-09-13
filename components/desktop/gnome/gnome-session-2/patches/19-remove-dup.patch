@@ -1,0 +1,77 @@
+diff -urN -x'*.orig' gnome-session-2.28.0/gnome-session/gsm-manager.c ../SUNWgnome-session-2.28.0.hacked/gnome-session-2.28.0/gnome-session/gsm-manager.c
+--- gnome-session-2.28.0/gnome-session/gsm-manager.c	2009-10-19 16:38:47.843586847 +0100
++++ ../SUNWgnome-session-2.28.0.hacked/gnome-session-2.28.0/gnome-session/gsm-manager.c	2009-10-21 11:07:57.284947656 +0100
+@@ -3404,14 +3404,40 @@
+         }
+ 
+         while ((name = g_dir_read_name (dir))) {
+-                char *desktop_file;
++                char  *desktop_file;
++		char  **provides;
++		GError *error=NULL;
++	        gsize len;
++		EggDesktopFile *egg_df;
+ 
+                 if (!g_str_has_suffix (name, ".desktop")) {
+                         continue;
+                 }
+ 
+                 desktop_file = g_build_filename (path, name, NULL);
+-                gsm_manager_add_autostart_app (manager, desktop_file, NULL);
++		egg_df = egg_desktop_file_new ( desktop_file , &error);
++		if (egg_df == NULL)  {
++			g_warning ("Could not parse desktop file %s: %s", desktop_file, error->message);
++			g_error_free (error);
++                	continue;
++		}
++		else {
++			error = NULL;
++			provides = NULL;
++			provides = egg_desktop_file_get_string_list (egg_df,
++                                                     	GSM_AUTOSTART_APP_PROVIDES_KEY,
++                                                        &len, &error);
++			if (!provides) {
++				g_debug ("GsmManager: *** desktop file: %s doesnot have Provides key\n", desktop_file);
++                		gsm_manager_add_autostart_app (manager, desktop_file, NULL);
++			}
++			else {
++				g_debug ("GsmManager: *** desktop file: %s provides %s\n", desktop_file, provides[0]);
++                		gsm_manager_add_autostart_app (manager, desktop_file, provides[0]);
++			}
++			g_strfreev (provides);
++			egg_desktop_file_free (egg_df);
++		}
+                 g_free (desktop_file);
+         }
+ 
+diff -urN -x'*.orig' gnome-session-2.28.0/gnome-session/main.c ../SUNWgnome-session-2.28.0.hacked/gnome-session-2.28.0/gnome-session/main.c
+--- gnome-session-2.28.0/gnome-session/main.c	2009-10-19 16:38:47.829824877 +0100
++++ ../SUNWgnome-session-2.28.0.hacked/gnome-session-2.28.0/gnome-session/main.c	2009-10-19 16:43:20.143550467 +0100
+@@ -210,7 +210,8 @@
+ }
+ 
+ static void
+-append_required_apps (GsmManager *manager)
++append_required_apps (GsmManager *manager,
++		      char      **autostart_dirs)
+ {
+         GSList      *required_components;
+         GSList      *r;
+@@ -247,7 +248,7 @@
+                 if (default_provider != NULL) {
+                         char *app_path;
+ 
+-                        app_path = gsm_util_find_desktop_file_for_app_name (default_provider, NULL);
++                        app_path = gsm_util_find_desktop_file_for_app_name (default_provider, autostart_dirs);
+                         if (app_path != NULL) {
+                                 gsm_manager_add_autostart_app (manager, app_path, component);
+                         } else {
+@@ -308,7 +309,7 @@
+         /* We do this at the end in case a saved session contains an
+          * application that already provides one of the components. */
+         append_default_apps (manager, default_session_key, autostart_dirs);
+-        append_required_apps (manager);
++        append_required_apps (manager, autostart_dirs);
+ 
+         g_strfreev (autostart_dirs);
+ }
