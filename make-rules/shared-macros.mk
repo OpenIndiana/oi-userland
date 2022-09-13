@@ -818,8 +818,10 @@ PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 
 # Config magic for Postgres/EnterpriseDB/...
-# Default DB version is the oldest one, for hopefully best built complatibility
-PG_VERSION ?=   12
+# Default DB version should be the newest one we do have so we detect any
+# incompatibilities as soon as possible.  Components could override this when
+# they are not ready yet to compile with so new version.
+PG_VERSION ?=   14
 PG_IMPLEM ?=    postgres
 PG_VERNUM =     $(subst .,,$(PG_VERSION))
 # For dependencies, including REQUIRED_PACKAGES if needed
@@ -850,10 +852,12 @@ PKG_MACROS +=   PG_VERNUM=$(PG_VERNUM)
 PKG_MACROS +=   PG_BASEPKG=$(PG_BASEPKG)
 
 # Config magic for MySQL/MariaDB/Percona/...
-# Default DB version is the oldest one, for hopefully best built compatibility
+# Default DB version should be the newest one we do have so we detect any
+# incompatibilities as soon as possible.  Components could override this when
+# they are not ready yet to compile with so new version.
 # NOTE: At this time the gate does not provide a recipe for actual "mysql"
 # The "/usr/mysql/*" trees are mediated to preferred MariaDB or Percona variant
-MYSQL_VERSION ?=   10.1
+MYSQL_VERSION ?=   10.6
 MYSQL_IMPLEM ?=    mariadb
 MYSQL_VERNUM =     $(subst .,,$(MYSQL_VERSION))
 # For dependencies, including REQUIRED_PACKAGES if needed
