@@ -69,9 +69,6 @@ ifneq ($(GCC_ROOT), /usr/gcc/4.9)
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/ignore-gcc-usr-lib
 endif
 
-COMPARISON_TRANSFORMS +=	$(WS_TOP)/transforms/comparison-cleanup
-COMPARISON_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
-
 LICENSE_TRANSFORMS =		$(WS_TOP)/transforms/license-changes
 
 # order is important
