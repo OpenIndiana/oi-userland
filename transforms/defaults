@@ -128,7 +128,9 @@ set name=variant.arch value=$(MACH)
 #
 # Set the default Python for mediated links
 #
-<transform link mediator=python mediator-version=3.9 -> default mediator-priority vendor>
+<transform link mediator=python mediator-version=3.9 -> default tmp.fmri %{pkg.fmri} >
+<transform link tmp.fmri=.*runtime/python -> default mediator-priority vendor>
+<transform link tmp.fmri=.* -> delete tmp.fmri .* >
 
 #
 # Set the default Perl for mediated links
