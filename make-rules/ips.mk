@@ -58,6 +58,9 @@ COPYRIGHT_TEMPLATE =		$(WS_TOP)/transforms/copyright-template
 
 # order is important
 GENERATE_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
+ifneq	($(strip $(DROP_STATIC_LIBRARIES)),no)
+GENERATE_TRANSFORMS +=		$(WS_TOP)/transforms/archive-libraries-drop
+endif
 
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/libtool-drop
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/ignore-libs
