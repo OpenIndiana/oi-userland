@@ -1,0 +1,56 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Gary Mills
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/bin/zrepl
+file path=usr/share/bash-completion/completions/zrepl
+file path=usr/share/man/man5/zrepl.yml.5
+file path=usr/share/man/man8/zrepl.8
+file path=usr/share/zrepl/config/bandwidth_limit.yml
+file path=usr/share/zrepl/config/illumos.yml
+file path=usr/share/zrepl/config/local.yml
+file path=usr/share/zrepl/config/pull.yml
+file path=usr/share/zrepl/config/pull_ssh.yml
+file path=usr/share/zrepl/config/push.yml
+file path=usr/share/zrepl/config/quickstart_backup_to_external_disk.yml
+file path=usr/share/zrepl/config/quickstart_continuous_server_backup_receiver.yml
+file path=usr/share/zrepl/config/quickstart_continuous_server_backup_sender.yml
+file path=usr/share/zrepl/config/quickstart_fan_out_replication_source.yml
+file path=usr/share/zrepl/config/quickstart_fan_out_replication_target.yml
+file path=usr/share/zrepl/config/sink.yml
+file path=usr/share/zrepl/config/snap.yml
+file path=usr/share/zrepl/config/source.yml
+file path=usr/share/zrepl/config/source_ssh.yml
+file path=usr/share/zsh/site-functions/_zrepl
+
+# Files in the files directory
+file zrepl.yml path=etc/zrepl/zrepl.yml \
+    mode=0644 preserve=true
+file zrepl.yml path=etc/zrepl/zrepl.yml-ref \
+    mode=0444
+file zrepl.xml path=lib/svc/manifest/application/zrepl.xml
+file zrepl path=lib/svc/method/zrepl \
+    mode=0555
+file exec_attr path=etc/security/exec_attr.d/zrepl
+

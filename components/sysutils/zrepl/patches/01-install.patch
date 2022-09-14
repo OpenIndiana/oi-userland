@@ -1,0 +1,20 @@
+This patch adds an install target for illumos and OI
+
+--- zrepl-0.5.0/Makefile-orig	Sun Jan  9 05:51:00 2022
++++ zrepl-0.5.0/Makefile	Wed Apr 20 16:44:47 2022
+@@ -230,6 +230,15 @@
+ generate-platform-test-list:
+ 	$(GO_BUILD) -o $(ARTIFACTDIR)/generate-platform-test-list ./platformtest/tests/gen
+ 
++# Install target for illumos
++.PHONY: install
++install:
++	$(GO_BUILD) -o "$(ARTIFACTDIR)/usr/bin/zrepl"
++	$(ARTIFACTDIR)/usr/bin/zrepl gencompletion bash "$(ARTIFACTDIR)/usr/share/bash-completion/completions/zrepl"
++	$(ARTIFACTDIR)/usr/bin/zrepl gencompletion zsh "$(ARTIFACTDIR)/usr/share/zsh/site-functions/_zrepl"
++	rst2man.py docs/configuration/overview.rst $(ARTIFACTDIR)/usr/share/man/man5/zrepl.yml.5
++	rst2man.py docs/usage.rst $(ARTIFACTDIR)/usr/share/man/man8/zrepl.8
++
+ COVER_PLATFORM_BIN_PATH := $(ARTIFACTDIR)/platformtest-cover-$(ZREPL_TARGET_TUPLE)
+ cover-platform-bin:
+ 	$(GO_ENV_VARS) $(GO) test $(GO_BUILDFLAGS) \
