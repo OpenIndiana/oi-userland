@@ -1,0 +1,63 @@
+make[1]: Entering directory '$(@D)'
+Building with optimizations for native
+gcc -std=c89 -O3 -Wall -g -Iinclude -Isrc -pthread -march=native -D_REENTRANT  -Wextra -Wno-type-limits src/argon2.c src/core.c src/blake2/blake2b.c src/thread.c src/encoding.c src/opt.c src/test.c -o testcase
+Default build
+argon2i v=16: OK
+argon2d v=16: OK
+argon2id v=16: OK
+argon2i v=19: OK
+argon2d v=19: OK
+argon2id v=19: OK
+Force OPTTEST=1
+argon2i v=16: OK
+argon2d v=16: OK
+argon2id v=16: OK
+argon2i v=19: OK
+argon2d v=19: OK
+argon2id v=19: OK
+./testcase
+Test Argon2i version number: 10
+Hash test: $v=16 t=2, m=16, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=16 t=2, m=18, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=16 t=2, m=8, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=16 t=2, m=8, p=2, pass=password, salt=somesalt: PASS
+Hash test: $v=16 t=1, m=16, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=16 t=4, m=16, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=16 t=2, m=16, p=1, pass=differentpassword, salt=somesalt: PASS
+Hash test: $v=16 t=2, m=16, p=1, pass=password, salt=diffsalt: PASS
+Recognise an invalid encoding: PASS
+Recognise an invalid encoding: PASS
+Recognise an invalid salt in encoding: PASS
+Verify with mismatched password: PASS
+Decode an error message: PASS
+
+Test Argon2i version number: 13
+Hash test: $v=19 t=2, m=16, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=19 t=2, m=18, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=19 t=2, m=8, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=19 t=2, m=8, p=2, pass=password, salt=somesalt: PASS
+Hash test: $v=19 t=1, m=16, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=19 t=4, m=16, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=19 t=2, m=16, p=1, pass=differentpassword, salt=somesalt: PASS
+Hash test: $v=19 t=2, m=16, p=1, pass=password, salt=diffsalt: PASS
+Recognise an invalid encoding: PASS
+Recognise an invalid encoding: PASS
+Recognise an invalid salt in encoding: PASS
+Verify with mismatched password: PASS
+Decode an error message: PASS
+
+Test Argon2id version number: 13
+Hash test: $v=19 t=2, m=16, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=19 t=2, m=18, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=19 t=2, m=8, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=19 t=2, m=8, p=2, pass=password, salt=somesalt: PASS
+Hash test: $v=19 t=1, m=16, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=19 t=4, m=16, p=1, pass=password, salt=somesalt: PASS
+Hash test: $v=19 t=2, m=16, p=1, pass=differentpassword, salt=somesalt: PASS
+Hash test: $v=19 t=2, m=16, p=1, pass=password, salt=diffsalt: PASS
+
+Common error state tests
+Fail on invalid memory: PASS
+Fail on invalid null pointer: PASS
+Fail on salt too short: PASS
+make[1]: Leaving directory '$(@D)'
