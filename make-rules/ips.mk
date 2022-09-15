@@ -58,7 +58,7 @@ COPYRIGHT_TEMPLATE =		$(WS_TOP)/transforms/copyright-template
 
 # order is important
 GENERATE_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
-ifneq	($(strip $(DROP_STATIC_LIBRARIES)),no)
+ifeq	($(strip $(DROP_STATIC_LIBRARIES)),yes)
 GENERATE_TRANSFORMS +=		$(WS_TOP)/transforms/archive-libraries-drop
 endif
 
