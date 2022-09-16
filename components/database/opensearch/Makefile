@@ -17,15 +17,15 @@ BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= opensearch
-COMPONENT_VERSION= 2.1.0
+COMPONENT_VERSION= 2.3.0
 COMPONENT_SUMMARY= Open source distributed and RESTful search engine
 COMPONENT_PROJECT_URL= https://opensearch.org
-COMPONENT_FMRI= database/opensearch
-COMPONENT_CLASSIFICATION= System/Databases
 COMPONENT_SRC=          OpenSearch-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/opensearch-project/OpenSearch/archive/refs/tags/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:608f3de99bb98b570e19c565bde908e1fce074c3a6bd354da15c857348f00278
+COMPONENT_ARCHIVE_HASH= sha256:a69d819f83420b5c0473548310051e7a79a0ef54603ab5544e3b9bd9dc2bae87
+COMPONENT_FMRI= database/opensearch
+COMPONENT_CLASSIFICATION= System/Databases
 COMPONENT_LICENSE= APACHE
 
 include $(WS_MAKE_RULES)/common.mk
@@ -36,3 +36,6 @@ COMPONENT_INSTALL_ACTION = env DIR=$(@D) COMPONENT_VERSION=$(COMPONENT_VERSION) 
 
 # Manually added dependencies
 REQUIRED_PACKAGES += runtime/java/openjdk18
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
