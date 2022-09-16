@@ -1,0 +1,24 @@
+--- percona-server-5.7.39-42/client/mysql.cc.1	2022-09-16 13:48:14.940634746 +0000
++++ percona-server-5.7.39-42/client/mysql.cc	2022-09-16 13:55:23.168238812 +0000
+@@ -54,10 +54,6 @@
+ #include <sys/ioctl.h>
+ #endif
+ 
+-#if defined(USE_LIBEDIT_INTERFACE)
+-#include <locale.h>
+-#endif
+-
+ #ifdef   HAVE_PWD_H
+ #include <pwd.h>
+ #endif
+@@ -81,6 +77,10 @@
+ #define USE_POPEN
+ #endif
+ 
++#ifdef HAVE_READLINE
++#include <locale.h>
++#endif
++
+ #include <algorithm>
+ #include <sql_common.h>
+ #include <mysqld_error.h>
