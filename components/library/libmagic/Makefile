@@ -14,8 +14,7 @@
 # Copyright 2020 Michal Nowak
 #
 
-BUILD_BITS=		32_and_64
-
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 # The primary component delivered here is libmagic.
@@ -24,11 +23,11 @@ include ../../../make-rules/shared-macros.mk
 # we also deliver "gfile" built from darwinsys sources, as a bonus.
 COMPONENT_NAME=		file
 COMPONENT_FMRI=		library/magic
-COMPONENT_VERSION=	5.40
+COMPONENT_VERSION=	5.43
 COMPONENT_PROJECT_URL=	https://www.darwinsys.com/file/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:167321f43c148a553f68a0ea7f579821ef3b11c27b8cbe158e4df897e4a5dd57
+COMPONENT_ARCHIVE_HASH=	sha256:8c8015e91ae0e8d0321d94c78239892ef9dbc70c4ade0008c0e95894abfb1991
 COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/file/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	libmagic for recognizing the type of data contained in a computer file using magic numbers
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -41,6 +40,5 @@ include $(WS_MAKE_RULES)/common.mk
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
-REQUIRED_PACKAGES += library/magic
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
