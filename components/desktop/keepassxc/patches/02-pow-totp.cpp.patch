@@ -1,0 +1,13 @@
+diff --git a/src/totp/totp.cpp b/src/totp/totp.cpp
+index 82d9bb8..07f5287 100644
+--- a/src/totp/totp.cpp
++++ b/src/totp/totp.cpp
+@@ -238,7 +238,7 @@ QString Totp::generateTotp(const QSharedPointer<Totp::Settings>& settings, const
+         direction = 1;
+         startpos = 0;
+     }
+-    quint32 digitsPower = pow(encoder.alphabet.size(), digits);
++    quint32 digitsPower = pow((double)encoder.alphabet.size(), (double)digits);
+ 
+     quint64 password = binary % digitsPower;
+     QString retval(int(digits), encoder.alphabet[0]);
