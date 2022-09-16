@@ -118,7 +118,7 @@ def FindComponentPaths(path, debug=False, subdir='components',
 
             # Only 'openindiana' category.
             category = line.split('/')[0]
-            if category is 'openindiana':
+            if category == 'openindiana':
                 continue
 
             filename = os.path.basename(line)
@@ -131,10 +131,10 @@ def FindComponentPaths(path, debug=False, subdir='components',
 
         # Add meta-packages/history only if we build the main repository, where
         # subdir is equal to 'components'.
-        if subdir is 'components':
+        if subdir == 'components':
             paths.append('meta-packages/history')
         # Add encumbered/meta-packages/history only if we build the encumbered repository
-        if subdir is 'components/encumbered':
+        if subdir == 'components/encumbered':
             paths.append('encumbered/meta-packages/history')
 
         paths = list(set(paths))

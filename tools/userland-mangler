@@ -202,7 +202,7 @@ def mangle_manpage(manifest, action, text):
 #
 def mangle_elf(manifest, action, src, dest):
         strip_elf_runpath = action.attrs.pop('mangler.elf.strip_runpath', 'true')
-        if strip_elf_runpath is 'false':
+        if strip_elf_runpath == 'false':
                 return
 
         #
@@ -290,7 +290,7 @@ def mangle_script(manifest, action, text):
 #
 def mangle_cddl(manifest, action, text):
         strip_cddl = action.attrs.pop('mangler.strip_cddl', 'false')
-        if strip_cddl is 'false':
+        if strip_cddl == 'false':
                 return text
         cddl_re = re.compile('^[^\n]*CDDL HEADER START.+CDDL HEADER END[^\n]*$',
                              re.MULTILINE|re.DOTALL)
