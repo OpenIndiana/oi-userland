@@ -28,16 +28,16 @@ BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         autoconf-archive
-COMPONENT_VERSION=      2022.2.11
-HUMAN_VERSION=  		2022.02.11
-COMPONENT_FMRI=         developer/build/autoconf-archive
+COMPONENT_VERSION=      2022.9.3
+HUMAN_VERSION=  		2022.09.03
 COMPONENT_SUMMARY=      GNU Autoconf Archive
-COMPONENT_CLASSIFICATION=Development/GNU
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/autoconf-archive/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:78a61b611e2eeb55a89e0398e0ce387bcaf57fe2dd53c6fe427130f777ad1e8c
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/autoconf-archive/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:e07454f00d8cae7907bed42d0747798927809947684d94c37207a4d63a32f423
+COMPONENT_FMRI=         developer/build/autoconf-archive
+COMPONENT_CLASSIFICATION=Development/GNU
 COMPONENT_LICENSE=      GPLv3  
 
 include $(WS_MAKE_RULES)/common.mk
