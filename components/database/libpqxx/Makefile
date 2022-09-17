@@ -18,13 +18,13 @@ BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libpqxx
-COMPONENT_VERSION= 6.2.5
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 6.4.8
+COMPONENT_REVISION= 0
 COMPONENT_SUMMARY= C++ binding library for PostgreSQL
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:36fcf8439ac7f7cc68b21e95b20e921ece4487cda1cc1d09b798a84e7cb3a4b7
+  sha256:3f7aba951822e01f1b9f9f353702954773323dd9f9dc376ffb57cb6bbd9a7a2f
 COMPONENT_ARCHIVE_URL= \
   https://github.com/jtv/libpqxx/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL= https://pqxx.org/development/libpqxx/
@@ -48,8 +48,8 @@ CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-documentation
 CONFIGURE_OPTIONS+= --enable-shared
 
-COMPONENT_POST_INSTALL_ACTION.64= ( mkdir -p $(PROTO_DIR)/usr/share/doc/libpqxx-$(COMPONENT_VERSION) && \
-	$(CP) -a $(BUILD_DIR)/$(MACH64)/doc/html/* $(PROTO_DIR)/usr/share/doc/libpqxx-$(COMPONENT_VERSION) )
+COMPONENT_POST_INSTALL_ACTION.64 = ( mkdir -p $(PROTO_DIR)/usr/share/doc/libpqxx-$(COMPONENT_VERSION) && \
+	$(CP) -a $(BUILD_DIR)/$(MACH64)/doc/html/* $(PROTO_DIR)/usr/share/doc/libpqxx-$(COMPONENT_VERSION)/ )
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)

@@ -16,6 +16,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -24,7 +25,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Avoid dependency on particular libpq version
+# avoid dependency on particular libpq version
 <transform file -> add pkg.depend.bypass-generate 'libpq\.so\.5'>
 depend type=require fmri=database/postgres-common
 
@@ -55,6 +56,8 @@ file path=usr/include/pqxx/except.hxx
 file path=usr/include/pqxx/field
 file path=usr/include/pqxx/field.hxx
 file path=usr/include/pqxx/internal/callgate.hxx
+file path=usr/include/pqxx/internal/encoding_group.hxx
+file path=usr/include/pqxx/internal/encodings.hxx
 file path=usr/include/pqxx/internal/gates/connection-dbtransaction.hxx
 file path=usr/include/pqxx/internal/gates/connection-errorhandler.hxx
 file path=usr/include/pqxx/internal/gates/connection-largeobject.hxx
@@ -72,12 +75,19 @@ file path=usr/include/pqxx/internal/gates/result-connection.hxx
 file path=usr/include/pqxx/internal/gates/result-creation.hxx
 file path=usr/include/pqxx/internal/gates/result-row.hxx
 file path=usr/include/pqxx/internal/gates/result-sql_cursor.hxx
+file path=usr/include/pqxx/internal/gates/transaction-sql_cursor.hxx
+file path=usr/include/pqxx/internal/gates/transaction-stream_from.hxx
+file path=usr/include/pqxx/internal/gates/transaction-stream_to.hxx
 file path=usr/include/pqxx/internal/gates/transaction-subtransaction.hxx
 file path=usr/include/pqxx/internal/gates/transaction-tablereader.hxx
 file path=usr/include/pqxx/internal/gates/transaction-tablewriter.hxx
 file path=usr/include/pqxx/internal/gates/transaction-transactionfocus.hxx
+file path=usr/include/pqxx/internal/ignore-deprecated-post.hxx
+file path=usr/include/pqxx/internal/ignore-deprecated-pre.hxx
 file path=usr/include/pqxx/internal/libpq-forward.hxx
+file path=usr/include/pqxx/internal/sql_cursor.hxx
 file path=usr/include/pqxx/internal/statement_parameters.hxx
+file path=usr/include/pqxx/internal/type_utils.hxx
 file path=usr/include/pqxx/isolation
 file path=usr/include/pqxx/isolation.hxx
 file path=usr/include/pqxx/largeobject
@@ -100,6 +110,11 @@ file path=usr/include/pqxx/row
 file path=usr/include/pqxx/row.hxx
 file path=usr/include/pqxx/strconv
 file path=usr/include/pqxx/strconv.hxx
+file path=usr/include/pqxx/stream_base.hxx
+file path=usr/include/pqxx/stream_from
+file path=usr/include/pqxx/stream_from.hxx
+file path=usr/include/pqxx/stream_to
+file path=usr/include/pqxx/stream_to.hxx
 file path=usr/include/pqxx/subtransaction
 file path=usr/include/pqxx/subtransaction.hxx
 file path=usr/include/pqxx/tablereader
@@ -120,9 +135,9 @@ file path=usr/include/pqxx/util
 file path=usr/include/pqxx/util.hxx
 file path=usr/include/pqxx/version
 file path=usr/include/pqxx/version.hxx
-file path=usr/lib/$(MACH64)/libpqxx-6.2.so
-link path=usr/lib/$(MACH64)/libpqxx.so target=libpqxx-6.2.so
+file path=usr/lib/$(MACH64)/libpqxx-6.4.so
+link path=usr/lib/$(MACH64)/libpqxx.so target=libpqxx-6.4.so
 file path=usr/lib/$(MACH64)/pkgconfig/libpqxx.pc
-file path=usr/lib/libpqxx-6.2.so
-link path=usr/lib/libpqxx.so target=libpqxx-6.2.so
+file path=usr/lib/libpqxx-6.4.so
+link path=usr/lib/libpqxx.so target=libpqxx-6.4.so
 file path=usr/lib/pkgconfig/libpqxx.pc
