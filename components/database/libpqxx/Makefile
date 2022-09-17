@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libpqxx
 COMPONENT_VERSION= 6.4.8
-COMPONENT_REVISION= 0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= C++ binding library for PostgreSQL
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
@@ -49,7 +49,7 @@ CONFIGURE_OPTIONS+= --disable-documentation
 CONFIGURE_OPTIONS+= --enable-shared
 
 COMPONENT_POST_INSTALL_ACTION.64 = ( mkdir -p $(PROTO_DIR)/usr/share/doc/libpqxx-$(COMPONENT_VERSION) && \
-	$(CP) -a $(BUILD_DIR)/$(MACH64)/doc/html/* $(PROTO_DIR)/usr/share/doc/libpqxx-$(COMPONENT_VERSION)/ )
+	$(CP) -a $(BUILD_DIR)/$(MACH64)/doc/html/* $(PROTO_DIR)/usr/share/doc/libpqxx-$(COMPONENT_VERSION) )
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
