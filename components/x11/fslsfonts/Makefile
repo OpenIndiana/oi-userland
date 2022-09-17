@@ -18,14 +18,14 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           fslsfonts
-COMPONENT_VERSION=        1.0.5
-COMPONENT_REVISION=       1
+COMPONENT_VERSION=        1.0.6
 COMPONENT_FMRI=           x11/xfs/fslsfonts
 COMPONENT_SUMMARY=  the fslsfonts utility to list fonts from an xfs font server
-COMPONENT_ARCHIVE_HASH= \
-  sha256:f1ed55093356b78daec2678d22f52d42ec11fe88575562d734396962e626d7f6
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:01cb0c5a7dbddadef846ca3b52c2ab9c60f2c32c3f16584cd97a6c7f293341ee
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libfs
