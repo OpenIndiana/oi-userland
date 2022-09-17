@@ -26,7 +26,8 @@ OPENJDK_BUILD=	2
 OPENJDK_PATCH=	-ga
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
-COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(COMPONENT_VERSION)
+COMPONENT_REVISION=	1
+COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)$(OPENJDK_PATCH)
 COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)$(OPENJDK_PATCH).tar.gz
@@ -48,9 +49,12 @@ PKG_PROTO_DIRS += $(COMPONENT_SRC_1)
 OPENJDK_INSTANCE=	openjdk$(COMPONENT_VERSION)
 CACERTS_STORE=	cacerts.out
 
+TEST_TARGET = $(NO_TESTS)
+
 include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS  += OPENJDK_INSTANCE=$(OPENJDK_INSTANCE)
+PKG_MACROS  += OPENJDK_VERSION=$(OPENJDK_VERSION)
 
 CLEAN_PATHS += $(BUILD_DIR)
 CLEAN_PATHS += $(CACERTS_STORE)
@@ -131,8 +135,6 @@ $(CACERTS_STORE): $(BUILD_DIR_64)/.built $(CACERTS_INSTALLED)
                   -storepass changeit;                                 \
         done
 
-build:		$(BUILD_64)
-
 install: $(BUILD_DIR_64)/.built	$(CACERTS_STORE)
 	$(RM) -r $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)
 	$(MKDIR) $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)
@@ -140,8 +142,6 @@ install: $(BUILD_DIR_64)/.built	$(CACERTS_STORE)
 	$(CHMOD) +x $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/jspawnhelper
 	$(CP) $(CACERTS_STORE) $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/cacerts
 	$(TOUCH) $@
-
-test:		$(NO_TESTS)
 
 # manually added to support audio
 REQUIRED_PACKAGES += system/header/header-audio
