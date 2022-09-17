@@ -29,16 +29,15 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
-COMPONENT_VERSION=	3.7
-COMPONENT_FMRI=		text/gnu-grep
+COMPONENT_VERSION=	3.8
 COMPONENT_SUMMARY= 	GNU grep utilities
-COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_PROJECT_URL=	https://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:5c10da312460aec721984d5d83246d24520ec438dd48d7ab5a05dbc0d6d6823c
+COMPONENT_ARCHIVE_HASH= sha256:498d7cc1b4fb081904d87343febb73475cf771e424fb7e6141aff66013abc382
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		text/gnu-grep
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
 include $(WS_MAKE_RULES)/common.mk
@@ -75,7 +74,8 @@ REQUIRED_PACKAGES += developer/versioning/cvs
 REQUIRED_PACKAGES += locale/tr
 REQUIRED_PACKAGES += locale/ru-extra
 REQUIRED_PACKAGES += locale/zh_cn-extra
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
