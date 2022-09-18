@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
-# Copyright (c) 2019, Friedrich Kink
+# Copyright (c) 2022, Friedrich Kink
 #
 
 BUILD_BITS=             64
@@ -30,7 +30,7 @@ USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      5.6
+COMPONENT_VERSION=      5.7
 COMPONENT_SUMMARY=      Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
 #No https connection available at all
@@ -38,7 +38,7 @@ COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v5/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:38d27338a347597ce0e93d0c3be6e5f66b6750417c474ca87ee0d61bb6d148db
+COMPONENT_ARCHIVE_HASH= sha256:6b0753aaba4c9c4efd333e67124caecf7ad6cc2d38581f19d2f0321f5b7ecd81
 COMPONENT_FMRI=         web/proxy/squid
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_LICENSE=      GPLv2
@@ -130,12 +130,12 @@ CONFIGURE_OPTIONS += --disable-arch-native
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/=====/p" ' \
+	'-e "/squidconf/d" ' \
 	'-e "/TOTAL/p" ' \
 	'-e "/SKIP/p" ' \
 	'-e "/PASS/p" ' \
 	'-e "/FAIL/p" ' \
-	'-e "/Can not open file/d" ' \
-	'-e "/ERROR/p" '
+	'-e "/^\# ERROR/p" '
 
 # Build dependencies (manually added)
 REQUIRED_PACKAGES += developer/cppunit
@@ -151,7 +151,7 @@ REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/tdb
-REQUIRED_PACKAGES += runtime/perl-534
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
