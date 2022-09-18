@@ -12,11 +12,12 @@
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 # Copyright 2018 Michal Nowak
 #
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		GeoIP
 COMPONENT_VERSION=	1.6.12
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_FMRI=		database/geoip
@@ -28,9 +29,7 @@ COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	LGPLv2
 COMPONENT_LICENSE_FILE=	geoip.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS +=	--with-pic
 CONFIGURE_OPTIONS +=	--no-recursion
@@ -51,12 +50,6 @@ COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
 
 # Needed for tests to pass.
 unexport SHELLOPTS
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
