@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pidgin
 COMPONENT_VERSION=      2.14.10
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_PROJECT_URL=  https://www.pidgin.im
 COMPONENT_SUMMARY=      Multiprotocol Instant Messaging Client
 COMPONENT_FMRI=         communication/im/pidgin
@@ -36,7 +36,7 @@ TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Use 64-bit perl
-PERL_VERSION = 5.34
+PERL_VERSION = 5.36
 
 PYTHON_VERSION = 3.9
 
