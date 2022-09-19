@@ -13,6 +13,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -28,10 +29,9 @@ depend fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 # Force dependencies on packages according to setup.cfg:
 depend type=require fmri=library/python/distlib-$(PYV)
 depend type=require fmri=library/python/filelock-$(PYV)
-# We don't have platformdirs-35:
-$(PYTHON_3.5_EXCL)depend type=require fmri=library/python/platformdirs-$(PYV)
+depend type=require fmri=library/python/platformdirs-$(PYV)
 # importlib-metadata is only needed for python version < 3.8:
-$(PYTHON_3.9_EXCL)depend type=require fmri=library/python/importlib-metadata-$(PYV)
+$(PYTHON_3.7_ONLY)depend type=require fmri=library/python/importlib-metadata-$(PYV)
 depend type=require fmri=library/python/six-$(PYV)
 
 <transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >

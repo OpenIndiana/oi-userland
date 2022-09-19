@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		virtualenv
 COMPONENT_VERSION=	20.13.1
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/python/virtualenv
 COMPONENT_SUMMARY=	A tool to create isolated Python environments
 COMPONENT_PROJECT_URL=	https://virtualenv.pypa.io/en/latest/
@@ -29,13 +30,14 @@ COMPONENT_ARCHIVE_HASH= sha256:e0621bcbf4160e4e1030f05065c8834b4e93f4fcc223255db
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
+PYTHON_VERSIONS=	3.7 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Tests don't work successfully yet.
+# Tests still fails.
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
-COMPONENT_TEST_CMD=		tox -e py$(PYV)
+COMPONENT_TEST_ARGS =
+COMPONENT_TEST_CMD =	tox -e py$(shell echo $(PYTHON_VERSION) | tr -d .)
 
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
 COMPONENT_POST_INSTALL_ACTION += \
@@ -47,45 +49,32 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 # Manually added test dependencies
 # Note that we still missing some test dependencies and have many failing tests.
-REQUIRED_PACKAGES += library/python/coverage-35
 REQUIRED_PACKAGES += library/python/coverage-37
 REQUIRED_PACKAGES += library/python/coverage-39
-#REQUIRED_PACKAGES += library/python/coverage-enable-subprocess-35
 #REQUIRED_PACKAGES += library/python/coverage-enable-subprocess-37
 #REQUIRED_PACKAGES += library/python/coverage-enable-subprocess-39
-REQUIRED_PACKAGES += library/python/flaky-35
 REQUIRED_PACKAGES += library/python/flaky-37
 REQUIRED_PACKAGES += library/python/flaky-39
-#REQUIRED_PACKAGES += library/python/freezegun-35
 REQUIRED_PACKAGES += library/python/freezegun-37
 REQUIRED_PACKAGES += library/python/freezegun-39
-REQUIRED_PACKAGES += library/python/packaging-35
 REQUIRED_PACKAGES += library/python/packaging-37
 REQUIRED_PACKAGES += library/python/packaging-39
-REQUIRED_PACKAGES += library/python/pytest-35
 REQUIRED_PACKAGES += library/python/pytest-37
 REQUIRED_PACKAGES += library/python/pytest-39
-#REQUIRED_PACKAGES += library/python/pytest-env-35
 #REQUIRED_PACKAGES += library/python/pytest-env-37
 #REQUIRED_PACKAGES += library/python/pytest-env-39
-#REQUIRED_PACKAGES += library/python/pytest-mock-35
 REQUIRED_PACKAGES += library/python/pytest-mock-37
 REQUIRED_PACKAGES += library/python/pytest-mock-39
-#REQUIRED_PACKAGES += library/python/pytest-randomly-35
 REQUIRED_PACKAGES += library/python/pytest-randomly-37
 REQUIRED_PACKAGES += library/python/pytest-randomly-39
-#REQUIRED_PACKAGES += library/python/pytest-timeout-35
 REQUIRED_PACKAGES += library/python/pytest-timeout-37
 REQUIRED_PACKAGES += library/python/pytest-timeout-39
 REQUIRED_PACKAGES += library/python/tox
-#REQUIRED_PACKAGES += library/python/wheel-35
 REQUIRED_PACKAGES += library/python/wheel-37
 REQUIRED_PACKAGES += library/python/wheel-39
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += library/python/setuptools-37
 REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/python-39
