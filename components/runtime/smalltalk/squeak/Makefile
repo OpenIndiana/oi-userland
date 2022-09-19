@@ -55,14 +55,15 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.19.15
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/smalltalk/squeak
 COMPONENT_CLASSIFICATION=	Development/Smalltalk
 SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=                3818
-SVN_HASH=  sha256:80e439c82e14b84dcb64d933f34bf2bbda6bb292c085ba34dfd4364175835bd8
+SVN_REV=                3822
+SVN_HASH=  sha256:5b8cbf212bc6913c25699cd4e22dbd1ee8778deb5130b07c99033ede1b46ad19
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
