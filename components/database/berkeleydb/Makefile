@@ -23,23 +23,24 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
 #
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		berkeleydb
 COMPONENT_VERSION=	5.3.28
-COMPONENT_PROJECT_URL=	http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	Berkeley DB is a computer software library that provides a high-performance embedded database for key/value data
+COMPONENT_PROJECT_URL=	https://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html
 COMPONENT_SRC_NAME=	db
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:e0a992d740709892e81f9d93f06daf305cf73fb81b545afe72478043172c3628
-COMPONENT_ARCHIVE_URL=	http://download.oracle.com/berkeley-db/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:e0a992d740709892e81f9d93f06daf305cf73fb81b545afe72478043172c3628
+COMPONENT_ARCHIVE_URL=	https://download.oracle.com/berkeley-db/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	database/berkeleydb-5
+COMPONENT_CLASSIFICATION=	System/Databases
+COMPONENT_LICENSE=	berkeleydb license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=/usr/gnu/bin:$(JAVA_HOME)/bin:/usr/bin
 
@@ -113,18 +114,13 @@ $(BUILD_DIR)/%/.tested: configure_test= --enable-test
 # Do not apply the standard licence transforms for this component.
 LICENSE_TRANSFORMS =
 
-# common targets
-build:		$(BUILD_32_and_64)
-
 install:	$(INSTALL_32_and_64)
 		$(CP) berkeleydb.license $(PROTOUSRDIR)/docs/LICENSE
-
-test:		$(TEST_32_and_64) 
 
 # By default "gmake test" runs standard tests, takes ~2 days per $(BITS).
 RUN=run_std
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library

@@ -24,65 +24,50 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
-<transform file path=usr/share/doc/bdb/(.*) -> set action.hash usr/docs/%<\1> >
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Oracle Berkeley DB"
-set name=pkg.description \
-    value="Berkeley DB is a computer software library that provides a high-performance embedded database for key/value data."
-set name=info.classification value=org.opensolaris.category.2008:System/Databases
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.keyword value=bdb
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license berkeleydb.license license="berkeleydb license"
-file path=usr/share/doc/bdb/LICENSE
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file usr/bin/db_archive path=usr/bin/$(MACH32)/db_archive
-file usr/bin/db_checkpoint path=usr/bin/$(MACH32)/db_checkpoint
-file usr/bin/db_deadlock path=usr/bin/$(MACH32)/db_deadlock
-file usr/bin/db_dump path=usr/bin/$(MACH32)/db_dump
-file usr/bin/db_hotbackup path=usr/bin/$(MACH32)/db_hotbackup
-file usr/bin/db_load path=usr/bin/$(MACH32)/db_load
-file usr/bin/db_log_verify path=usr/bin/$(MACH32)/db_log_verify
-file usr/bin/db_printlog path=usr/bin/$(MACH32)/db_printlog
-file usr/bin/db_recover path=usr/bin/$(MACH32)/db_recover
-file usr/bin/db_replicate path=usr/bin/$(MACH32)/db_replicate
-file usr/bin/db_sql_codegen path=usr/bin/$(MACH32)/db_sql_codegen
-file usr/bin/db_stat path=usr/bin/$(MACH32)/db_stat
-file usr/bin/db_upgrade path=usr/bin/$(MACH32)/db_upgrade
-file usr/bin/db_verify path=usr/bin/$(MACH32)/db_verify
-file usr/bin/dbsql path=usr/bin/$(MACH32)/dbsql
-file path=usr/bin/$(MACH64)/db_archive
-file path=usr/bin/$(MACH64)/db_checkpoint
-file path=usr/bin/$(MACH64)/db_deadlock
-file path=usr/bin/$(MACH64)/db_dump
-file path=usr/bin/$(MACH64)/db_hotbackup
-file path=usr/bin/$(MACH64)/db_load
-file path=usr/bin/$(MACH64)/db_log_verify
-file path=usr/bin/$(MACH64)/db_printlog
-file path=usr/bin/$(MACH64)/db_recover
-file path=usr/bin/$(MACH64)/db_replicate
-file path=usr/bin/$(MACH64)/db_sql_codegen
-file path=usr/bin/$(MACH64)/db_stat
-file path=usr/bin/$(MACH64)/db_upgrade
-file path=usr/bin/$(MACH64)/db_verify
-file path=usr/bin/$(MACH64)/dbsql
-hardlink path=usr/bin/db_archive target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_checkpoint target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_deadlock target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_dump target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_hotbackup target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_load target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_log_verify target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_printlog target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_recover target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_replicate target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_sql_codegen target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_stat target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_upgrade target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/db_verify target=../lib/isaexec pkg.linted.userland.action002.0=true
-hardlink path=usr/bin/dbsql target=../lib/isaexec pkg.linted.userland.action002.0=true
+<transform file path=usr/share/doc/bdb/(.*) -> set action.hash usr/docs/%<\1> >
+
+file path=usr/share/doc/bdb/LICENSE
+file path=usr/bin/$(MACH32)/db_archive
+file path=usr/bin/$(MACH32)/db_checkpoint
+file path=usr/bin/$(MACH32)/db_deadlock
+file path=usr/bin/$(MACH32)/db_dump
+file path=usr/bin/$(MACH32)/db_hotbackup
+file path=usr/bin/$(MACH32)/db_load
+file path=usr/bin/$(MACH32)/db_log_verify
+file path=usr/bin/$(MACH32)/db_printlog
+file path=usr/bin/$(MACH32)/db_recover
+file path=usr/bin/$(MACH32)/db_replicate
+file path=usr/bin/$(MACH32)/db_sql_codegen
+file path=usr/bin/$(MACH32)/db_stat
+file path=usr/bin/$(MACH32)/db_upgrade
+file path=usr/bin/$(MACH32)/db_verify
+file path=usr/bin/$(MACH32)/dbsql
+file path=usr/bin/db_archive
+file path=usr/bin/db_checkpoint
+file path=usr/bin/db_deadlock
+file path=usr/bin/db_dump
+file path=usr/bin/db_hotbackup
+file path=usr/bin/db_load
+file path=usr/bin/db_log_verify
+file path=usr/bin/db_printlog
+file path=usr/bin/db_recover
+file path=usr/bin/db_replicate
+file path=usr/bin/db_sql_codegen
+file path=usr/bin/db_stat
+file path=usr/bin/db_upgrade
+file path=usr/bin/db_verify
+file path=usr/bin/dbsql
 file path=usr/include/db.h
 file path=usr/include/db_cxx.h
 file path=usr/include/dbsql.h
