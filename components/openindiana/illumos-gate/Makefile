@@ -99,7 +99,6 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	  echo export PERL_VARIANT=\"-thread-multi\" ; \
 	  echo export PERL_PKGVERS=\"-536\"; \
 	  echo export BUILDPERL32=\"#\"; \
-	  echo export BUILDPY3b=""; \
 	  echo export BLD_JAVA_8=; \
 	  echo export CW_NO_SHADOW=1; \
 	  echo export __GNUC=\"\"; \
