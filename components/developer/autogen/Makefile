@@ -23,12 +23,12 @@
 #
 
 BUILD_STYLE=configure
-BUILD_BITS=64
+BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         autogen
 COMPONENT_VERSION=      5.18.16
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_FMRI=         developer/build/autogen
 COMPONENT_SUMMARY=      GNU autogen utility
 COMPONENT_CLASSIFICATION=Development/Other Languages
