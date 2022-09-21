@@ -22,12 +22,12 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
-PREFERRED_BITS=64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		patch
 COMPONENT_VERSION=	2.7.6
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		The GNU Patch utility
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/patch/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -35,21 +35,17 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:ac610bda97abe0d9f6b7c963255a11dcb196c25e337c61f94e4778d632f1d8fd
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/patch/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/gnu-patch
+COMPONENT_CLASSIFICATION =	Development/GNU
+COMPONENT_LICENSE =		GPLv2
+COMPONENT_LICENSE_FILE =	patch.license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# Note: CVE-2019-20633 and CVE-2021-45261 are not fixed yet.
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
-ENV = /usr/bin/env -i
+include $(WS_MAKE_RULES)/common.mk
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
+COMPONENT_TEST_ENV_CMD = $(ENV) -i
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
