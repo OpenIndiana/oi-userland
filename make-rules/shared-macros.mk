@@ -554,11 +554,6 @@ $(BUILD_DIR_64)/.tested-and-compared:	BITS=64
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS ?=	/opt
 
-PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.0.1/
-PARFAIT= $(PARFAIT_ROOT)/bin/parfait
-export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
-export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
-
 #
 # The CCACHE makefile variable should evaluate to empty string or a pathname
 # like /usr/bin/ccache depending on your PATH value and "which" implementation.
@@ -685,14 +680,6 @@ PYTHON.3.7.VENDOR_PACKAGES = $(PYTHON.3.7.VENDOR_PACKAGES.$(BITS))
 PYTHON.3.9.VENDOR_PACKAGES.64 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES.32 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES = $(PYTHON.3.9.VENDOR_PACKAGES.$(BITS))
-
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-CC.gcc.32 =	$(WS_TOOLS)/parfait/gcc
-CXX.gcc.32 =	$(WS_TOOLS)/parfait/g++
-CC.gcc.64 =	$(WS_TOOLS)/parfait/gcc
-CXX.gcc.64 =	$(WS_TOOLS)/parfait/g++
-LD =		$(WS_TOOLS)/parfait/ld
-endif
 
 CC =		$(CC.$(COMPILER).$(BITS))
 CXX =		$(CXX.$(COMPILER).$(BITS))
@@ -1260,7 +1247,7 @@ COMPONENT_INSTALL_ENV += $(COMPONENT_INSTALL_ENV.$(BITS))
 COMPONENT_INSTALL_ARGS += $(COMPONENT_INSTALL_ARGS.$(BITS))
 
 # declare these phony so that we avoid filesystem conflicts.
-.PHONY:	prep build install publish test clean clobber parfait
+.PHONY:	prep build install publish test clean clobber
 
 # If there are no tests to execute
 NO_TESTS =	test-nothing

@@ -61,9 +61,6 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(COMPONENT_PRE_BUILD_ACTION)
 	($(COMPONENT_BUILD_ACTION))
 	$(COMPONENT_POST_BUILD_ACTION)
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-	-$(PARFAIT) build
-endif
 	$(TOUCH) $@
 
 COMPONENT_INSTALL_ACTION ?= \
@@ -103,14 +100,6 @@ $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 	$(COMPONENT_POST_TEST_ACTION)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
-
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-parfait: install
-	-$(PARFAIT) build
-else
-parfait:
-	$(MAKE) PARFAIT_BUILD=yes parfait
-endif
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)

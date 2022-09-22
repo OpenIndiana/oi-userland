@@ -199,12 +199,5 @@ USERLAND_REQUIRED_PACKAGES += text/jq
 USERLAND_REQUIRED_PACKAGES += library/python/pyyaml
 
 
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-parfait: build
-else
-parfait:
-	$(MAKE) PARFAIT_BUILD=yes parfait
-endif
-
 clean:: 
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)

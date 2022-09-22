@@ -32,9 +32,6 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
 		$(ANT) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
 	$(COMPONENT_POST_BUILD_ACTION)
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-	-$(PARFAIT) $(@D)
-endif
 	$(TOUCH) $@
 
 COMPONENT_INSTALL_ENV += JAVA_HOME="$(JAVA_HOME)"
@@ -76,13 +73,6 @@ $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 	$(COMPONENT_POST_TEST_ACTION)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
-
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-parfait: build
-else
-parfait:
-	$(MAKE) PARFAIT_BUILD=yes parfait
-endif
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)

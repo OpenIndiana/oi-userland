@@ -93,9 +93,6 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep $(BUILD_DIR)/config-%/$(CFG)
 	(cd $(SOURCE_DIR) ; $(ENV) HOME=$(BUILD_DIR)/config-$* $(COMPONENT_BUILD_ENV) \
 		$(PYTHON) ./setup.py build $(COMPONENT_BUILD_ARGS))
 	$(COMPONENT_POST_BUILD_ACTION)
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-	-$(PARFAIT) $(SOURCE_DIR)/$(@D:$(BUILD_DIR)/%=%)
-endif
 	$(TOUCH) $@
 
 
@@ -165,14 +162,6 @@ $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
 	$(COMPONENT_POST_TEST_ACTION)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
-
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-parfait: install
-	-$(PARFAIT) build
-else
-parfait:
-	$(MAKE) PARFAIT_BUILD=yes parfait
-endif
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)

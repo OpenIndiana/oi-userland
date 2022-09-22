@@ -128,9 +128,6 @@ $(BUILD_DIR)/%/.built:	$(BUILD_DIR)/%/.configured
 	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
 		$(WAF) $(COMPONENT_BUILD_TARGETS) $(COMPONENT_BUILD_ARGS))
 	$(COMPONENT_POST_BUILD_ACTION)
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-	-$(PARFAIT) $(@D)
-endif
 	$(TOUCH) $@
 
 # If BUILD_STYLE is set, provide a default configure target.
@@ -234,13 +231,6 @@ $(BUILD_DIR)/%/.system-tested:    $(SOURCE_DIR)/.prep
 	$(COMPONENT_POST_SYSTEM_TEST_ACTION)
 	$(COMPONENT_SYSTEM_TEST_CLEANUP)
 	$(TOUCH) $@
-
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-parfait: build
-else
-parfait:
-	$(MAKE) PARFAIT_BUILD=yes parfait
-endif
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
