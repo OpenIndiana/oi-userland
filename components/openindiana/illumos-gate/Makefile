@@ -171,6 +171,10 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	# Settings for tagged pointers
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/kernel@.* -> emit file path=etc/system.d/reserve_bits_for_tagged_pointers group=sys mode=0644 owner=root preserve=true>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
+	# Fix dependencies on renamed runtime/java and runtime/java/runtime64 packages
+	echo '<transform depend fmri=runtime/java$$ -> set fmri runtime/java/openjdk8>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo '<transform depend fmri=runtime/java/runtime64$$ -> set fmri runtime/java/openjdk8>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
+
 	for i in $$(cd $(BUILD_DIR)/$(MACH)/overlay; find . -type f | \
 	  cut -c 3- | sort); do \
 	  echo "<transform file path=$$i -> set action.hash $$i >" >> \
