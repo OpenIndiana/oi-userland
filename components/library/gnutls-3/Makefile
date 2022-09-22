@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		gnutls
 COMPONENT_MJR_VERSION=	3.6
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).16
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=  https://gnutls.org/
 COMPONENT_SUMMARY=	GNU transport layer security library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,6 +49,9 @@ CFLAGS += -I$(USRINCDIR)/idn2
 
 CONFIGURE_OPTIONS += --disable-guile
 CONFIGURE_OPTIONS += --disable-dependency-tracking
+CONFIGURE_OPTIONS += --with-default-trust-store-file=/etc/certs/ca-certificates.crt
+CONFIGURE_OPTIONS += --with-default-trust-store-dir=/etc/certs/CA
+COMPONENT_PRE_CONFIGURE_ACTION= ( cd $(SOURCE_DIR) && autoreconf -if )
 
 unexport SHELLOPTS
 

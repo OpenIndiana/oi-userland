@@ -29,18 +29,19 @@ BUILD_BITS= 64
 USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gnupg
-COMPONENT_VERSION=	2.3.7
-COMPONENT_SUMMARY=	GNU Privacy Guard
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	https://gnupg.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=         gnupg
+COMPONENT_VERSION=      2.3.7
+COMPONENT_REVISION=     1
+COMPONENT_SUMMARY=      GNU Privacy Guard
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=  https://gnupg.org/
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= sha256:ee163a5fb9ec99ffc1b18e65faef8d086800c5713d15a672ab57d3799da83669
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		crypto/gnupg
-COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         crypto/gnupg
+COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_DESCRIPTION=		A complete and free implementation of the OpenPGP Standard as defined by RFC4880
-COMPONENT_LICENSE=	GPLv3, GPLv2, LGPLv3, LGPLv2.1, Creative Commons 1.0, others
+COMPONENT_LICENSE=      GPLv3, GPLv2, LGPLv3, LGPLv2.1, Creative Commons 1.0, others
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -68,6 +69,7 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-nls
 CONFIGURE_OPTIONS  +=		--enable-largefile
 CONFIGURE_OPTIONS  +=		--disable-selinux-support
+CONFIGURE_OPTIONS  +=		--disable-libdns
 # gpg -> gpg2
 CONFIGURE_OPTIONS  +=		--enable-gpg-is-gpg2
 CONFIGURE_OPTIONS  +=		--with-pinentry-pgm=$(CONFIGURE_PREFIX)/lib/pinentry
