@@ -178,9 +178,6 @@ $(BUILD_DIR)/%/.built:	$(BUILD_DIR)/%/.configured
 		$(GMAKE) $(COMPONENT_BUILD_GMAKE_ARGS) $(COMPONENT_BUILD_ARGS) \
 		$(COMPONENT_BUILD_TARGETS))
 	$(COMPONENT_POST_BUILD_ACTION)
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-	-$(PARFAIT) build
-endif
 	$(TOUCH) $@
 
 # install the built source into a prototype area
@@ -217,14 +214,6 @@ $(BUILD_DIR)/%/.tested:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_POST_TEST_ACTION)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
-
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-parfait: install
-	-$(PARFAIT) build
-else
-parfait:
-	$(MAKE) PARFAIT_BUILD=yes parfait
-endif
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
