@@ -1,0 +1,116 @@
+--- nagios-plugins-2.4.0/lib/tests/Makefile.in.orig
++++ nagios-plugins-2.4.0/lib/tests/Makefile.in
+@@ -206,8 +206,8 @@
+ test_base64_OBJECTS = test_base64.$(OBJEXT)
+ test_base64_LDADD = $(LDADD)
+ am__DEPENDENCIES_1 =
+-test_base64_DEPENDENCIES = $(top_srcdir)/lib/libnagiosplug.a \
+-	$(top_srcdir)/gl/libgnu.a $(am__DEPENDENCIES_1)
++test_base64_DEPENDENCIES = $(top_builddir)/lib/libnagiosplug.a \
++	$(top_builddir)/gl/libgnu.a $(am__DEPENDENCIES_1)
+ AM_V_lt = $(am__v_lt_@AM_V@)
+ am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+ am__v_lt_0 = --silent
+@@ -215,48 +215,48 @@
+ test_cmd_SOURCES = test_cmd.c
+ test_cmd_OBJECTS = test_cmd.$(OBJEXT)
+ test_cmd_LDADD = $(LDADD)
+-test_cmd_DEPENDENCIES = $(top_srcdir)/lib/libnagiosplug.a \
+-	$(top_srcdir)/gl/libgnu.a $(am__DEPENDENCIES_1)
++test_cmd_DEPENDENCIES = $(top_builddir)/lib/libnagiosplug.a \
++	$(top_builddir)/gl/libgnu.a $(am__DEPENDENCIES_1)
+ test_disk_SOURCES = test_disk.c
+ test_disk_OBJECTS = test_disk.$(OBJEXT)
+ test_disk_LDADD = $(LDADD)
+-test_disk_DEPENDENCIES = $(top_srcdir)/lib/libnagiosplug.a \
+-	$(top_srcdir)/gl/libgnu.a $(am__DEPENDENCIES_1)
++test_disk_DEPENDENCIES = $(top_builddir)/lib/libnagiosplug.a \
++	$(top_builddir)/gl/libgnu.a $(am__DEPENDENCIES_1)
+ test_ini1_SOURCES = test_ini1.c
+ test_ini1_OBJECTS = test_ini1.$(OBJEXT)
+ test_ini1_LDADD = $(LDADD)
+-test_ini1_DEPENDENCIES = $(top_srcdir)/lib/libnagiosplug.a \
+-	$(top_srcdir)/gl/libgnu.a $(am__DEPENDENCIES_1)
++test_ini1_DEPENDENCIES = $(top_builddir)/lib/libnagiosplug.a \
++	$(top_builddir)/gl/libgnu.a $(am__DEPENDENCIES_1)
+ test_ini3_SOURCES = test_ini3.c
+ test_ini3_OBJECTS = test_ini3.$(OBJEXT)
+ test_ini3_LDADD = $(LDADD)
+-test_ini3_DEPENDENCIES = $(top_srcdir)/lib/libnagiosplug.a \
+-	$(top_srcdir)/gl/libgnu.a $(am__DEPENDENCIES_1)
++test_ini3_DEPENDENCIES = $(top_builddir)/lib/libnagiosplug.a \
++	$(top_builddir)/gl/libgnu.a $(am__DEPENDENCIES_1)
+ test_opts1_SOURCES = test_opts1.c
+ test_opts1_OBJECTS = test_opts1.$(OBJEXT)
+ test_opts1_LDADD = $(LDADD)
+-test_opts1_DEPENDENCIES = $(top_srcdir)/lib/libnagiosplug.a \
+-	$(top_srcdir)/gl/libgnu.a $(am__DEPENDENCIES_1)
++test_opts1_DEPENDENCIES = $(top_builddir)/lib/libnagiosplug.a \
++	$(top_builddir)/gl/libgnu.a $(am__DEPENDENCIES_1)
+ test_opts2_SOURCES = test_opts2.c
+ test_opts2_OBJECTS = test_opts2.$(OBJEXT)
+ test_opts2_LDADD = $(LDADD)
+-test_opts2_DEPENDENCIES = $(top_srcdir)/lib/libnagiosplug.a \
+-	$(top_srcdir)/gl/libgnu.a $(am__DEPENDENCIES_1)
++test_opts2_DEPENDENCIES = $(top_builddir)/lib/libnagiosplug.a \
++	$(top_builddir)/gl/libgnu.a $(am__DEPENDENCIES_1)
+ test_opts3_SOURCES = test_opts3.c
+ test_opts3_OBJECTS = test_opts3.$(OBJEXT)
+ test_opts3_LDADD = $(LDADD)
+-test_opts3_DEPENDENCIES = $(top_srcdir)/lib/libnagiosplug.a \
+-	$(top_srcdir)/gl/libgnu.a $(am__DEPENDENCIES_1)
++test_opts3_DEPENDENCIES = $(top_builddir)/lib/libnagiosplug.a \
++	$(top_builddir)/gl/libgnu.a $(am__DEPENDENCIES_1)
+ test_tcp_SOURCES = test_tcp.c
+ test_tcp_OBJECTS = test_tcp.$(OBJEXT)
+ test_tcp_LDADD = $(LDADD)
+-test_tcp_DEPENDENCIES = $(top_srcdir)/lib/libnagiosplug.a \
+-	$(top_srcdir)/gl/libgnu.a $(am__DEPENDENCIES_1)
++test_tcp_DEPENDENCIES = $(top_builddir)/lib/libnagiosplug.a \
++	$(top_builddir)/gl/libgnu.a $(am__DEPENDENCIES_1)
+ test_utils_SOURCES = test_utils.c
+ test_utils_OBJECTS = test_utils.$(OBJEXT)
+ test_utils_LDADD = $(LDADD)
+-test_utils_DEPENDENCIES = $(top_srcdir)/lib/libnagiosplug.a \
+-	$(top_srcdir)/gl/libgnu.a $(am__DEPENDENCIES_1)
++test_utils_DEPENDENCIES = $(top_builddir)/lib/libnagiosplug.a \
++	$(top_builddir)/gl/libgnu.a $(am__DEPENDENCIES_1)
+ AM_V_P = $(am__v_P_@AM_V@)
+ am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+ am__v_P_0 = false
+@@ -1696,18 +1696,18 @@
+ TESTS = @EXTRA_TEST@
+ check_PROGRAMS = @EXTRA_TEST@
+ AM_CPPFLAGS = -DNP_STATE_DIR_PREFIX=\"$(localstatedir)\" \
+-	-I$(top_srcdir)/lib -I$(top_srcdir)/gl -I$(top_srcdir)/intl -I$(top_srcdir)/plugins
++	-I$(top_srcdir) -I$(top_srcdir)/lib -I$(top_srcdir)/gl -I$(top_srcdir)/intl -I$(top_srcdir)/plugins
+ 
+ np_test_scripts = test_base64.t test_cmd.t test_disk.t test_ini1.t test_ini3.t test_opts1.t test_opts2.t test_opts3.t test_tcp.t test_utils.t
+ np_test_files = config-dos.ini config-opts.ini config-tiny.ini plugin.ini plugins.ini
+ EXTRA_DIST = $(np_test_scripts) $(np_test_files) var
+ @USE_LIBTAP_LOCAL_TRUE@tap_cflags = -I$(top_srcdir)/tap
+ @USE_LIBTAP_LOCAL_FALSE@tap_ldflags = -L/usr/local/lib
+-@USE_LIBTAP_LOCAL_TRUE@tap_ldflags = -L$(top_srcdir)/tap
+-@USE_LIBTAP_LOCAL_TRUE@tap_ldadd = $(top_srcdir)/gl/libgnu.a
++@USE_LIBTAP_LOCAL_TRUE@tap_ldflags = -L$(top_builddir)/tap
++@USE_LIBTAP_LOCAL_TRUE@tap_ldadd = $(top_builddir)/gl/libgnu.a
+ AM_CFLAGS = -g -I$(top_srcdir)/lib -I$(top_srcdir)/gl $(tap_cflags)
+ AM_LDFLAGS = $(tap_ldflags) -ltap
+-LDADD = $(top_srcdir)/lib/libnagiosplug.a $(top_srcdir)/gl/libgnu.a $(SSLLIBS)
++LDADD = $(top_builddir)/lib/libnagiosplug.a $(top_builddir)/gl/libgnu.a $(SSLLIBS)
+ SOURCES = test_utils.c test_disk.c test_tcp.c test_cmd.c test_base64.c test_ini1.c test_ini3.c test_opts1.c test_opts2.c test_opts3.c
+ all: all-am
+ 
+@@ -2213,10 +2213,10 @@
+ 
+ 
+ test: ${noinst_PROGRAMS}
+-	perl -MTest::Harness -e '$$Test::Harness::switches=""; runtests(map {$$_ .= ".t"} @ARGV)' $(EXTRA_PROGRAMS)
++	perl -MTest::Harness -e '$$Test::Harness::switches=""; runtests(map {$$_ .= ".t"} @ARGV)' $(patsubst %,$(srcdir)/%,$(EXTRA_PROGRAMS))
+ 
+ test-debug: ${noinst_PROGRAMS}
+-	perl -MTest::Harness -e '$$Test::Harness::verbose=1; $$Test::Harness::switches=""; runtests(map {$$_ .= ".t"} @ARGV)' $(EXTRA_PROGRAMS)
++	perl -MTest::Harness -e '$$Test::Harness::verbose=1; $$Test::Harness::switches=""; runtests(map {$$_ .= ".t"} @ARGV)' $(patsubst %,$(srcdir)/%,$(EXTRA_PROGRAMS))
+ 
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+ # Otherwise a system limit (for SysV at least) may be exceeded.
