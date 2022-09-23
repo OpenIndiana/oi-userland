@@ -29,6 +29,7 @@ COMPONENT_LICENSE=	OSGPL
 COMPONENT_LICENSE_FILE=	LICENSE.txt
 COMPONENT_CLASSIFICATION =	System/Libraries
 
+include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_CXX_FLAGS += -std=c++11
@@ -58,6 +59,7 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += video/ffmpeg
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxinerama
