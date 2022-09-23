@@ -118,3 +118,6 @@ PACKAGE_NAMES += system/zones/brand/nlipkg
 # Manually added dependencies
 REQUIRED_PACKAGES += developer/opensolaris/pkg5
 REQUIRED_PACKAGES += system/zones/internal
+REQUIRED_PACKAGES += library/python/cherrypy-39
+REQUIRED_PACKAGES += library/python/rapidjson-39
+REQUIRED_PACKAGES += library/python/jsonschema-39
