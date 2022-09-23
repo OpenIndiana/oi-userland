@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= opensearch
 COMPONENT_VERSION= 2.3.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Open source distributed and RESTful search engine
 COMPONENT_PROJECT_URL= https://opensearch.org
 COMPONENT_SRC=          OpenSearch-$(COMPONENT_VERSION)
@@ -30,7 +31,7 @@ COMPONENT_LICENSE= APACHE
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_BUILD_ACTION = cd $(@D); env JAVA_HOME="/usr/jdk/openjdk18.0.1" ./gradlew localDistro
+COMPONENT_BUILD_ACTION = cd $(@D); env JAVA_HOME="/usr/jdk/openjdk18" ./gradlew localDistro
 
 COMPONENT_INSTALL_ACTION = env DIR=$(@D) COMPONENT_VERSION=$(COMPONENT_VERSION) PROTO_DIR=$(PROTO_DIR) files/install.sh
 
