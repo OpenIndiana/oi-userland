@@ -16,21 +16,22 @@
 # Copyright 2022, Daniel Bell
 #
 
-BUILD_BITS= 64
-BITS=		64
-BUILD_STYLE=cmake
+BUILD_BITS= 		64
+BUILD_STYLE=		cmake
+USE_OPENSSL11=          yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
 COMPONENT_MAJOR_VERSION=10.6
-COMPONENT_MINOR_VERSION=9
+COMPONENT_MINOR_VERSION=10
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:6ad9fa86f0c85c8eeafad2643549d5ff5dd2872002964e754752de91863aa3b7
 COMPONENT_PROJECT_URL=	https://www.mariadb.org/
-COMPONENT_ARCHIVE_URL=	https://dlm.mariadb.com/2364021/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	https://dlm.mariadb.com/2364020/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE).asc
+COMPONENT_ARCHIVE_URL=	https://dlm.mariadb.com/2501151/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	https://dlm.mariadb.com/2501154/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE).asc
 
 include $(WS_MAKE_RULES)/common.mk
 JAVA_HOME=/usr/jdk/openjdk1.8.0
@@ -43,7 +44,7 @@ CXXFLAGS += -fPIC
 CPPFLAGS += -I$(PCRE_INCLUDE) -I$(JAVA_HOME)/include/solaris
 # Prevents "Text relocation remains referenced against symbol offset
 # in file ../../sql/mysqld_dtrace_all.o" error
-LDFLAGS += -Bsymbolic -mimpure-text -lrt
+LDFLAGS += -Bsymbolic -mimpure-text -lrt -L$(OPENSSL_PREFIX)/lib/$(MACH64)
 
 CONFIGURE_PREFIX=/usr/mariadb/$(COMPONENT_MAJOR_VERSION)
 CONFDIR=/etc/mariadb/$(COMPONENT_MAJOR_VERSION)
@@ -83,7 +84,7 @@ CMAKE_OPTIONS+= -DWITH_PCRE=system
 CMAKE_OPTIONS+= -DWITH_SSL=system
 CMAKE_OPTIONS+= -DINSTALL_SUPPORTFILESDIR=share/mysql
 CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=Release
-CMAKE_OPTIONS+= -DCMAKE_REQUIRED_INCLUDES=$(PCRE_INCLUDE)
+CMAKE_OPTIONS+= -DCMAKE_REQUIRED_INCLUDES=$(PCRE_INCLUDE) $(OPENSSL_PREFIX)/include
 CMAKE_OPTIONS+= -DWITH_INNOBASE_STORAGE_ENGINE=1
 CMAKE_OPTIONS+= -DWITH_INNODB_MEMCACHED=ON
 CMAKE_OPTIONS+= -DWITH_COMMENT="OpenIndiana MariaDB"
@@ -94,7 +95,7 @@ CMAKE_OPTIONS+= -DJAVA_INCLUDE_PATH=$(JAVA_HOME)/include
 CMAKE_OPTIONS+= -DJAVA_AWT_LIBRARY=/usr/java/jre/lib/amd64/libjawt.so
 CMAKE_OPTIONS+= -DJAVA_JVM_LIBRARY=/usr/java/jre/lib/amd64/server/libjvm.so
 
-CMAKE_ENV += CPPFLAGS="$(CPPFLAGS)"
+CMAKE_ENV += CPPFLAGS="$(CPPFLAGS) -I$(OPENSSL_PREFIX)/include"
 
 COMPONENT_TEST_TRANSFORMS= \
 	'-n ' \
@@ -123,20 +124,22 @@ REQUIRED_PACKAGES += compress/zstd
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/lzo
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/security/cracklib
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/security/kerberos-5
-REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
+REQUIRED_PACKAGES += web/curl
