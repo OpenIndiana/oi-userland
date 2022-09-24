@@ -1,0 +1,21 @@
+
+As of "14768: retire nca", the sockfs module no longer contains CTF data for
+the types that lsof needs. However, these are present in genunix and apparently
+always have been (at least back to r151038) so we can safely patch lsof to read
+those instead.
+
+The patch doesn't adjust the 32-bit kernel line since it would be changing
+one non-existent path (/kernel/fs/sockfs) to another.
+
+diff -wpruN '--exclude=*.orig' a~/dialects/sun/dnode.c a/dialects/sun/dnode.c
+--- a~/dialects/sun/dnode.c	1970-01-01 00:00:00
++++ a/dialects/sun/dnode.c	1970-01-01 00:00:00
+@@ -88,7 +88,7 @@ static	int	Sockfs_ctfs = 0;	/* CTF initi
+ 					 * sockfs */
+ 
+ #  if	defined(_LP64)
+-#define	SOCKFS_MOD_FORMAT "/kernel/fs/%s/sockfs"
++#define	SOCKFS_MOD_FORMAT "/kernel/%s/genunix"
+ #  else	/* !defined(_LP64) */
+ #define	SOCKFS_MOD_FORMAT "/kernel/fs/sockfs"
+ # endif	/* defined(_LP64) */
