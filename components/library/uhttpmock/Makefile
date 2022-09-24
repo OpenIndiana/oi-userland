@@ -25,16 +25,17 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		uhttpmock
 COMPONENT_VERSION=	0.5.3
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A library for mocking web service APIs which use HTTP or HTTPS
 COMPONENT_PROJECT_URL=	https://gitlab.com/uhttpmock/
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:90843223c3a30bdb7f1eb3442373a03fee425af85a9df289cd687698ccff112f
 COMPONENT_ARCHIVE_URL=	https://tecnocode.co.uk/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=	library/uhttpmock
-COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -46,6 +47,7 @@ COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=""
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-gtk-doc
 # Required for other components.
+CONFIGURE_OPTIONS.32 += --disable-introspection
 CONFIGURE_OPTIONS.64 += --enable-introspection
 CONFIGURE_OPTIONS += --enable-shared
 # Required for other components.
@@ -55,7 +57,6 @@ CONFIGURE_OPTIONS += --with-pic
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_ARGS =   -k -i
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
