@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           ico
-COMPONENT_VERSION=        1.0.5
+COMPONENT_VERSION=        1.0.6
 COMPONENT_SUMMARY=        ico X11 animation demo
+COMPONENT_ARCHIVE_HASH=   sha256:38f369d431e753280fde70fa489cc94ce204f9f8eabd2f49fc7d32afa69f4405
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
 COMPONENT_FMRI=           x11/ico
-COMPONENT_ARCHIVE_HASH= \
-  sha256:d73b62f29eb98d850f16b76d759395180b860b613fbe1686b18eee99a6e3773f
 COMPONENT_LICENSE_FILE=   COPYING
 
 include $(WS_MAKE_RULES)/common.mk
