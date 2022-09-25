@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Most
-HUMAN_VERSION =			0.37
+HUMAN_VERSION =			0.38
 COMPONENT_SUMMARY =		Test::Most - Most commonly needed test functions and features.
 COMPONENT_CPAN_AUTHOR =		OVID
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:533370141eb9f18cf4ac380f6ded2ab57802a6e184008a80fd2304bfcc474fc7
+	sha256:089eb894f7bace4c37c6334e0e290eb20338ee10223af0c82cbe7281c78382df
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
