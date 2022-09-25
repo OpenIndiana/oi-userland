@@ -10,13 +10,19 @@
 #
 
 #
+# Copyright 2022 <contributor>
+#
+
+#
 # Copyright 2019 Alexander Pyhalov
-# Copyright 2020 Andreas Wacknitz
+# Copyright 2020, 2022 Andreas Wacknitz
 # Copyright 2022 Marco van Wieringen
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -24,14 +30,17 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file path=usr/postgres/14/bin/pg_send_cancellation
 file path=usr/postgres/14/include/server/citus_version.h
 file path=usr/postgres/14/include/server/distributed/adaptive_executor.h
 file path=usr/postgres/14/include/server/distributed/argutils.h
 file path=usr/postgres/14/include/server/distributed/backend_data.h
+file path=usr/postgres/14/include/server/distributed/background_jobs.h
 file path=usr/postgres/14/include/server/distributed/cancel_utils.h
 file path=usr/postgres/14/include/server/distributed/citus_acquire_lock.h
 file path=usr/postgres/14/include/server/distributed/citus_clauses.h
 file path=usr/postgres/14/include/server/distributed/citus_custom_scan.h
+file path=usr/postgres/14/include/server/distributed/citus_depended_object.h
 file path=usr/postgres/14/include/server/distributed/citus_nodefuncs.h
 file path=usr/postgres/14/include/server/distributed/citus_nodes.h
 file path=usr/postgres/14/include/server/distributed/citus_ruleutils.h
@@ -61,6 +70,7 @@ file path=usr/postgres/14/include/server/distributed/insert_select_executor.h
 file path=usr/postgres/14/include/server/distributed/insert_select_planner.h
 file path=usr/postgres/14/include/server/distributed/intermediate_result_pruning.h
 file path=usr/postgres/14/include/server/distributed/intermediate_results.h
+file path=usr/postgres/14/include/server/distributed/jsonbutils.h
 file path=usr/postgres/14/include/server/distributed/listutils.h
 file path=usr/postgres/14/include/server/distributed/local_distributed_join_planner.h
 file path=usr/postgres/14/include/server/distributed/local_executor.h
@@ -80,12 +90,18 @@ file path=usr/postgres/14/include/server/distributed/multi_explain.h
 file path=usr/postgres/14/include/server/distributed/multi_join_order.h
 file path=usr/postgres/14/include/server/distributed/multi_logical_optimizer.h
 file path=usr/postgres/14/include/server/distributed/multi_logical_planner.h
+file path=usr/postgres/14/include/server/distributed/multi_logical_replication.h
 file path=usr/postgres/14/include/server/distributed/multi_partitioning_utils.h
 file path=usr/postgres/14/include/server/distributed/multi_physical_planner.h
 file path=usr/postgres/14/include/server/distributed/multi_progress.h
 file path=usr/postgres/14/include/server/distributed/multi_router_planner.h
 file path=usr/postgres/14/include/server/distributed/multi_server_executor.h
 file path=usr/postgres/14/include/server/distributed/namespace_utils.h
+file path=usr/postgres/14/include/server/distributed/param_utils.h
+file path=usr/postgres/14/include/server/distributed/pg_dist_background_job.h
+file path=usr/postgres/14/include/server/distributed/pg_dist_background_task.h
+file path=usr/postgres/14/include/server/distributed/pg_dist_backrgound_task_depend.h
+file path=usr/postgres/14/include/server/distributed/pg_dist_cleanup.h
 file path=usr/postgres/14/include/server/distributed/pg_dist_colocation.h
 file path=usr/postgres/14/include/server/distributed/pg_dist_local_group.h
 file path=usr/postgres/14/include/server/distributed/pg_dist_node.h
@@ -98,6 +114,7 @@ file path=usr/postgres/14/include/server/distributed/pg_dist_transaction.h
 file path=usr/postgres/14/include/server/distributed/pg_version_constants.h
 file path=usr/postgres/14/include/server/distributed/placement_access.h
 file path=usr/postgres/14/include/server/distributed/placement_connection.h
+file path=usr/postgres/14/include/server/distributed/priority.h
 file path=usr/postgres/14/include/server/distributed/query_colocation_checker.h
 file path=usr/postgres/14/include/server/distributed/query_pushdown_planning.h
 file path=usr/postgres/14/include/server/distributed/query_stats.h
@@ -110,15 +127,18 @@ file path=usr/postgres/14/include/server/distributed/relation_utils.h
 file path=usr/postgres/14/include/server/distributed/relay_utility.h
 file path=usr/postgres/14/include/server/distributed/remote_commands.h
 file path=usr/postgres/14/include/server/distributed/remote_transaction.h
-file path=usr/postgres/14/include/server/distributed/repair_shards.h
 file path=usr/postgres/14/include/server/distributed/repartition_join_execution.h
 file path=usr/postgres/14/include/server/distributed/resource_lock.h
 file path=usr/postgres/14/include/server/distributed/run_from_same_connection.h
 file path=usr/postgres/14/include/server/distributed/shard_cleaner.h
 file path=usr/postgres/14/include/server/distributed/shard_pruning.h
 file path=usr/postgres/14/include/server/distributed/shard_rebalancer.h
+file path=usr/postgres/14/include/server/distributed/shard_split.h
+file path=usr/postgres/14/include/server/distributed/shard_transfer.h
 file path=usr/postgres/14/include/server/distributed/shard_utils.h
 file path=usr/postgres/14/include/server/distributed/shardinterval_utils.h
+file path=usr/postgres/14/include/server/distributed/shardsplit_logical_replication.h
+file path=usr/postgres/14/include/server/distributed/shardsplit_shared_memory.h
 file path=usr/postgres/14/include/server/distributed/shared_connection_stats.h
 file path=usr/postgres/14/include/server/distributed/shared_library_init.h
 file path=usr/postgres/14/include/server/distributed/statistics_collection.h
@@ -138,9 +158,11 @@ file path=usr/postgres/14/include/server/distributed/worker_create_or_replace.h
 file path=usr/postgres/14/include/server/distributed/worker_log_messages.h
 file path=usr/postgres/14/include/server/distributed/worker_manager.h
 file path=usr/postgres/14/include/server/distributed/worker_protocol.h
+file path=usr/postgres/14/include/server/distributed/worker_shard_copy.h
 file path=usr/postgres/14/include/server/distributed/worker_shard_visibility.h
 file path=usr/postgres/14/include/server/distributed/worker_transaction.h
 file path=usr/postgres/14/lib/$(MACH64)/citus.so
+file path=usr/postgres/14/lib/$(MACH64)/citus_columnar.so
 file path=usr/postgres/14/share/extension/citus--10.0-1--10.0-2.sql
 file path=usr/postgres/14/share/extension/citus--10.0-2--10.0-3.sql
 file path=usr/postgres/14/share/extension/citus--10.0-3--10.0-4.sql
@@ -149,6 +171,14 @@ file path=usr/postgres/14/share/extension/citus--10.1-1--10.2-1.sql
 file path=usr/postgres/14/share/extension/citus--10.2-1--10.2-2.sql
 file path=usr/postgres/14/share/extension/citus--10.2-2--10.2-3.sql
 file path=usr/postgres/14/share/extension/citus--10.2-3--10.2-4.sql
+file path=usr/postgres/14/share/extension/citus--10.2-4--10.2-5.sql
+file path=usr/postgres/14/share/extension/citus--10.2-5--10.2-4.sql
+file path=usr/postgres/14/share/extension/citus--10.2-5--11.0-1.sql
+file path=usr/postgres/14/share/extension/citus--11.0-1--11.0-2.sql
+file path=usr/postgres/14/share/extension/citus--11.0-2--11.0-3.sql
+file path=usr/postgres/14/share/extension/citus--11.0-3--11.0-4.sql
+file path=usr/postgres/14/share/extension/citus--11.0-4--11.0-3.sql
+file path=usr/postgres/14/share/extension/citus--11.0-4--11.1-1.sql
 file path=usr/postgres/14/share/extension/citus--8.0-1--8.0-2.sql
 file path=usr/postgres/14/share/extension/citus--8.0-1.sql
 file path=usr/postgres/14/share/extension/citus--8.0-10--8.0-11.sql
@@ -188,3 +218,25 @@ file path=usr/postgres/14/share/extension/citus--9.5-2--9.5-1.sql
 file path=usr/postgres/14/share/extension/citus--9.5-2--9.5-3.sql
 file path=usr/postgres/14/share/extension/citus--9.5-3--9.5-2.sql
 file path=usr/postgres/14/share/extension/citus.control
+file path=usr/postgres/14/share/extension/citus_columnar--11.1-0--11.1-1.sql
+file path=usr/postgres/14/share/extension/citus_columnar--11.1-0.sql
+file path=usr/postgres/14/share/extension/citus_columnar--11.1-1--11.1-0.sql
+file path=usr/postgres/14/share/extension/citus_columnar--11.1-1.sql
+file path=usr/postgres/14/share/extension/citus_columnar.control
+file path=usr/postgres/14/share/extension/columnar--10.0-1--10.0-2.sql
+file path=usr/postgres/14/share/extension/columnar--10.0-1--9.5-1.sql
+file path=usr/postgres/14/share/extension/columnar--10.0-2--10.0-1.sql
+file path=usr/postgres/14/share/extension/columnar--10.0-3--10.1-1.sql
+file path=usr/postgres/14/share/extension/columnar--10.1-1--10.0-3.sql
+file path=usr/postgres/14/share/extension/columnar--10.1-1--10.2-1.sql
+file path=usr/postgres/14/share/extension/columnar--10.2-1--10.1-1.sql
+file path=usr/postgres/14/share/extension/columnar--10.2-1--10.2-2.sql
+file path=usr/postgres/14/share/extension/columnar--10.2-2--10.2-1.sql
+file path=usr/postgres/14/share/extension/columnar--10.2-2--10.2-3.sql
+file path=usr/postgres/14/share/extension/columnar--10.2-3--10.2-2.sql
+file path=usr/postgres/14/share/extension/columnar--10.2-3--10.2-4.sql
+file path=usr/postgres/14/share/extension/columnar--10.2-4--10.2-3.sql
+file path=usr/postgres/14/share/extension/columnar--11.0-2--11.0-3.sql
+file path=usr/postgres/14/share/extension/columnar--11.0-3--11.1-1.sql
+file path=usr/postgres/14/share/extension/columnar--11.1-1--11.0-3.sql
+file path=usr/postgres/14/share/extension/columnar--9.5-1--10.0-1.sql
