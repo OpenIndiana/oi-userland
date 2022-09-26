@@ -1,16 +1,19 @@
+gmake[1]: Entering directory '$(@D)/builtins'
+gmake[1]: 'pipesize.h' is up to date.
+gmake[1]: Leaving directory '$(@D)/builtins'
 
 	  ***********************************************************
 	  *                                                         *
-	  * GNU bash, version 5.1.4(1)-release (i386-pc-solaris2.11)
+	  * GNU bash, version 5.2.0(1)-release (x86_64-pc-solaris2.11)
 	  *                                                         *
 	  ***********************************************************
 
-Testing /oibuild/oi-userland/components/shell/bash/build/amd64/bash
-version: 5.1.4(1)-release
-versinfo: 5 1 4 1 release i386-pc-solaris2.11
-HOSTTYPE = i386
+Testing $(@D)/bash
+version: 5.2.0(1)-release
+versinfo: 5 2 0 1 release x86_64-pc-solaris2.11
+HOSTTYPE = x86_64
 OSTYPE = solaris2.11
-MACHTYPE = i386-pc-solaris2.11
+MACHTYPE = x86_64-pc-solaris2.11
 Any output from any test, unless otherwise noted, indicates a possible anomaly
 run-alias
 run-appendop
@@ -27,24 +30,24 @@ warning: been compiled into the shell
 run-assoc
 warning: all of these tests will fail if arrays have not
 warning: been compiled into the shell
-239c239
+242c242
 < foo=( echo "\" "5" "@" "3" "holy hell this works" "4" "a b" "1" "spa ces" "2" )
 ---
 > foo=( echo "\\" "5" "@" "3" "holy hell this works" "4" "a b" "1" "spa ces" "2" )
-244c244
+247c247
 < foo=( "'" "squote" "\"" "dquote" "\" "bslash" "\`" "backquote" )
 ---
 > foo=( "'" "squote" "\"" "dquote" "\\" "bslash" "\`" "backquote" )
-250c250
+253c253
 < dict=( "?" "quest" "*" "star" "'" "squote" "\$" "dol" "\"" "dquote" "\" "bslash" "@" "at" "}" "rbrace" "{" "lbrace" "\`" "bquote" )
 ---
 > dict=( "?" "quest" "*" "star" "'" "squote" "\$" "dol" "\"" "dquote" "\\" "bslash" "@" "at" "}" "rbrace" "{" "lbrace" "\`" "bquote" )
-255,256c255,256
-< ")" "rparen" "\"" "dquote" "]" "rbrace" "\" "bs"
-< declare -A a=([")"]="rparen" ["\""]="dquote" ["]"]="rbrace" ["\"]="bs" )
+258,259c258,259
+< ")" "rparen" "\"" "dquote" "]" "rbracket" "\" "bs"
+< declare -A a=([")"]="rparen" ["\""]="dquote" ["]"]="rbracket" ["\"]="bs" )
 ---
-> ")" "rparen" "\"" "dquote" "]" "rbrace" "\\" "bs"
-> declare -A a=([")"]="rparen" ["\""]="dquote" ["]"]="rbrace" ["\\"]="bs" )
+> ")" "rparen" "\"" "dquote" "]" "rbracket" "\\" "bs"
+> declare -A a=([")"]="rparen" ["\""]="dquote" ["]"]="rbracket" ["\\"]="bs" )
 run-attr
 run-braces
 run-builtins
@@ -73,18 +76,14 @@ run-errors
 run-execscript
 warning: the text of a system error message may vary between systems and
 warning: produce diff output.
+warning: UNIX versions number signals differently.
+warning: If output differing only in line numbers is produced, please
+warning: do not consider this a test failure.
 warning: if the text of the error messages concerning `notthere' or
 warning: `/tmp/bash-notthere' not being found or `/' being a directory
 warning: produce diff output, please do not consider this a test failure
 warning: if diff output differing only in the location of the bash
 warning: binary appears, please do not consider this a test failure
-47,48d46
-< 0
-< 1
-50a49
-> 0
-52a52
-> 1
 run-exp-tests
 185c185
 < \[\e[0;31m\]
@@ -100,45 +99,26 @@ warning: they may show up as diff output.
 warning: if so, please do not consider this a test failure
 run-getopts
 run-glob-test
-7,8c7
-< ./glob2.sub: line 36: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
-< c
+2,3d1
+< glob2.sub: warning: you do not have the zh_HK.big5hkscs locale installed;
+< glob2.sub: warning: that will cause some of these tests to fail.
+9d6
+< ./glob2.sub: line 44: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
+11c8
+< argv[1] = <A?B>
 ---
-> b
-16,20c15
-< ./glob2.sub: line 57: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
-< /oibuild/oi-userland/components/shell/bash/build/amd64/bash: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
-< /oibuild/oi-userland/components/shell/bash/build/amd64/bash: -c: line 1: conditional binary operator expected
-< /oibuild/oi-userland/components/shell/bash/build/amd64/bash: -c: line 1: syntax error near `]]'
-< /oibuild/oi-userland/components/shell/bash/build/amd64/bash: -c: line 1: `[[ £\ = £\ ]]'
+> argv[1] = <A£\B>
+14,16c11,13
+< argv[1] = <a?b>
+< 0000000 141 077 142
+< 0000003
 ---
-> ok 7
-86,87c81,82
-< argv[1] = <./tmp/a/b>
-< argv[1] = <./tmp/a/b>
----
-> argv[1] = <./tmp/a/*>
-> argv[1] = <./tmp/a/*>
-89c84
-< argv[1] = <./tmp/a/b>
----
-> argv[1] = <./tmp/a/*>
-91c86
-< argv[1] = <./tmp/a/b>
----
-> argv[1] = <./t\mp/a/*>
-97c92
-< argv[1] = <./tmp/a/b>
----
-> argv[1] = <./tmp/a/*>
-100c95
-< argv[1] = <./tmp/a/b>
----
-> argv[1] = <./tmp/a/b*>
-102c97
-< argv[1] = <./tmp/a/b>
----
-> argv[1] = <./tmp/a/b*>
+> argv[1] = <a£\b>
+> 0000000 141 243 134 142
+> 0000004
+18,19d14
+< ./glob2.sub: line 65: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
+< $(@D)/bash: warning: setlocale: LC_ALL: cannot change locale (zh_HK.big5hkscs): Invalid argument
 run-globstar
 run-heredoc
 warning: UNIX versions number signals and schedule processes differently.
@@ -155,8 +135,12 @@ run-ifs
 run-ifs-posix
 run-input-test
 run-intl
-warning: some of these tests will fail if you do not have UTF-8
-warning: locales installed on your system.
+unicode1.sub: warning: you do not have the ja_JP.SJIS locale installed;
+unicode1.sub: that will cause some of these tests to be skipped.
+24c24
+< Passed all 1251 Unicode tests
+---
+> Passed all 1378 Unicode tests
 run-invert
 run-iquote
 run-jobs
@@ -178,6 +162,28 @@ warning: this a test failure
 warning: if you have exported variables beginning with the string _Q,
 warning: diff output may be generated.  If so, please do not consider
 warning: this a test failure
+755c755
+< bc defg
+---
+> \abc defg
+758c758
+< bcdefg
+---
+> \abcdefg
+761,762c761,762
+< bcdefg
+< \&defg
+---
+> \abcdefg
+> \\&defg
+767c767
+< \&defg
+---
+> \\&defg
+777c777
+< let\ssee
+---
+> let\\ssee
 run-nquote
 run-nquote1
 warning: several of these tests will fail if arrays have not
@@ -206,6 +212,7 @@ warning: been compiled into the shell or if the OS does not provide
 warning: FIFOs or /dev/fd. Some tests may fail if the OS does not
 warning: provide FIFOs.
 run-quote
+run-quotearray
 run-read
 warning: please do not consider output differing only in the amount of
 warning: white space to be an error.
@@ -222,15 +229,7 @@ run-set-x
 run-shopt
 run-strip
 run-test
-46c46
-< 0
----
-> 1
-68c68
-< 0
----
-> 1
-295c295
+297c297
 < 1
 ---
 > 0
@@ -240,6 +239,10 @@ run-trap
 warning: UNIX versions number signals and schedule processes differently.
 warning: If output differing only in line numbers is produced, please
 warning: do not consider this a test failure.
+81c81
+< false
+---
+> +[8] false
 run-type
 run-varenv
 warning: some of these tests will fail if arrays have not
@@ -299,12 +302,12 @@ warning: been compiled into the shell
 > outside 3.0: var=value
 > inside func2: var=global
 > outside 4.0: var=outside
-243,244c226
+242,243c225
 < foo=showfoo-n  environment foo=
 < showfoo
 ---
 > foo=showfoo environment foo=showfoo
-246,249c228,229
+245,248c227,228
 < foo=showfoo-n  environment foo=
 < showfoo
 < foo=showfoo-n  environment foo=
@@ -312,12 +315,12 @@ warning: been compiled into the shell
 ---
 > foo=showfoo environment foo=showfoo
 > foo=showfoo environment foo=showfoo
-251,252c231
+250,251c230
 < foo=<unset>-n  environment foo=
 < 
 ---
 > foo=<unset> environment foo=
-254,257c233,234
+253,256c232,233
 < foo=foo-n  environment foo=
 < foo
 < foo=<unset>-n  environment foo=
@@ -328,3 +331,7 @@ warning: been compiled into the shell
 run-vredir
 warning: the text of a system error message may vary between systems and
 warning: produce diff output.
+101c101
+< ./vredir8.sub: line 12: $fd: Bad file number
+---
+> ./vredir8.sub: line 12: $fd: Bad file descriptor
