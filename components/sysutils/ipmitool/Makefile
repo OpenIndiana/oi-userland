@@ -13,31 +13,28 @@
 # Copyright 2017 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2022 Niklas Poslovski
 #
-
-PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ipmitool
-COMPONENT_VERSION=	1.8.18
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.8.19
+#COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	IPMI management tool
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_SRC=		$(COMPONENT_NAME)-IPMITOOL_1_8_19
+COMPONENT_ARCHIVE=	IPMITOOL_1_8_19.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:0c1ba3b1555edefb7c32ae8cd6a3e04322056bc087918f07189eeedfc8b81e01
+	sha256:48b010e7bcdf93e4e4b6e43c53c7f60aa6873d574cbd45a8d86fa7aaeebaff9c
 COMPONENT_ARCHIVE_URL= \
-	https://sourceforge.net/projects/ipmitool/files/ipmitool/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/ipmitool/
+	https://github.com/ipmitool/ipmitool/archive/refs/tags/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://github.com/impitool/ipmitool
 COMPONENT_CLASSIFICATION=	System/Hardware
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_FMRI=		system/management/ipmitool
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -D__EXTENSIONS__
 
@@ -52,16 +49,11 @@ CONFIGURE_OPTIONS += --enable-solaris-opt
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
 REQUIRED_PACKAGES += driver/ipmi
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/extended-system-utilities
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
