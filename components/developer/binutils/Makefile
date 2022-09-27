@@ -25,6 +25,7 @@
 # Copyright (c) 2018 Ken Mays
 # Copyright (c) 2020 Michal Nowak
 # Copyright (c) 2022 Klaus Ziegler
+# Copyright (c) 2022 Niklas Poslovski
 #
 
 BUILD_BITS= 64
@@ -32,13 +33,13 @@ USE_COMMON_TEST_MASTER=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.38
+COMPONENT_VERSION=	2.39
 COMPONENT_SUMMARY=	GNU collection of binary tools like ld, as
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:e316477a914f567eccc34d5d29785b8b0f5a10208d36bbacedcc39048ecfe024
+COMPONENT_ARCHIVE_HASH= sha256:645c25f563b8adc0a81dbd6a41cffbf4d37083a382e02d5d3df4f65c09516d00
 COMPONENT_FMRI=		developer/gnu-binutils
 COMPONENT_CLASSIFICATION=Development/GNU
 
@@ -74,5 +75,6 @@ COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH64).master
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/msgpack
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
