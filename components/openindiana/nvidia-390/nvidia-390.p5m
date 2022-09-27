@@ -26,12 +26,11 @@
 <transform dir path=usr/share/icons$ -> default group other>
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=pkg.description \
-    value="X and OpenGL Drivers for NVIDIA Quadro graphics"
-set name=description value="NVIDIA Graphics System Software"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=variant.opensolaris.zone value=global value=nonglobal
 
@@ -226,11 +225,9 @@ link path=usr/lib/vdpau/libvdpau_nvidia.so.1 \
     target=../../X11/lib/NVIDIA/libvdpau_nvidia.so.1
 hardlink path=usr/bin/nvidia-settings target=../lib/isaexec pkg.linted=true
 hardlink path=usr/bin/nvidia-xconfig target=../lib/isaexec pkg.linted=true
-
 driver name=nvidia_modeset perms="* 0666 root root"
-
 driver name=nvidia perms="* 0666 root root" \
-    alias="pci10de,6c0" \
+	alias="pci10de,6c0" \
 	alias="pci10de,6c4" \
 	alias="pci10de,6ca" \
 	alias="pci10de,6cd" \
