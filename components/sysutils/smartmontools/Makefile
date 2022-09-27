@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= smartmontools
 COMPONENT_VERSION= 7.3
-COMPONENT_REVISION =	1
+COMPONENT_REVISION =	2
 COMPONENT_SUMMARY= smartmontools contains utilities that control and monitor storage devices
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= https://www.smartmontools.org/
@@ -50,6 +50,7 @@ CONFIGURE_OPTIONS += --with-drivedbdir=yes
 CONFIGURE_OPTIONS += --with-smartdscriptdir=$(USRSBINDIR)
 CONFIGURE_OPTIONS += --sbindir=$(USRSBINDIR)
 CONFIGURE_OPTIONS += --with-nvme-devicescan=yes
+CONFIGURE_OPTIONS += --with-gnupg=/usr/bin/gpg2
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
