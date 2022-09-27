@@ -38,48 +38,19 @@
  
      if (!uname(&uts))
      {
-@@ -1862,10 +1868,10 @@
- 
- fsfp_t PosixDirNotify::fsfingerprint() const
+@@ -1880,10 +1880,10 @@
+ #ifdef ENABLE_SYNC
+ fsfp_t PosixFileSystemAccess::fsFingerprint(const LocalPath& path) const
  {
 -    struct statfs statfsbuf;
 +    struct statvfs statfsbuf;
  
      // FIXME: statfs() does not really do what we want.
--    if (statfs(localbasepath.localpath.c_str(), &statfsbuf))
-+    if (statvfs(localbasepath.localpath.c_str(), &statfsbuf))
+-    if (statfs(path.localpath.c_str(), &statfsbuf))
++    if (statvfs(path.localpath.c_str(), &statfsbuf))
      {
          return 0;
      }
-@@ -1875,22 +1881,23 @@
- 
- bool PosixDirNotify::fsstableids() const
- {
--    struct statfs statfsbuf;
-+    struct statvfs statfsbuf;
- 
--    if (statfs(localbasepath.localpath.c_str(), &statfsbuf))
-+    if (statvfs(localbasepath.localpath.c_str(), &statfsbuf))
-     {
-         LOG_err << "Failed to get filesystem type. Error code: " << errno;
-         return true;
-     }
- 
--    LOG_info << "Filesystem type: " << statfsbuf.f_type;
-+    LOG_info << "Filesystem type: " << statfsbuf.f_basetype;
- 
- #ifdef __APPLE__
-     return statfsbuf.f_type != 0x1c // FAT32
-         && statfsbuf.f_type != 0x1d; // exFAT
- #else
--    return statfsbuf.f_type != 0x4d44 // FAT
--        && statfsbuf.f_type != 0x65735546; // FUSE
-+//    return statfsbuf.f_basetype != 0x4d44 // FAT
-+//        && statfsbuf.f_basetype != 0x65735546; // FUSE
-+	  return true;
- #endif
- }
- #endif // ENABLE_SYNC
 @@ -1927,9 +1934,9 @@
  bool PosixFileSystemAccess::getlocalfstype(const LocalPath& path, FileSystemType& type) const
  {
