@@ -19,24 +19,25 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2022 Niklas Poslovski
 #
 
 BUILD_BITS=		64
-
+USE_OPENSSL11=		yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_auth_mellon
-COMPONENT_VERSION=	0.14.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.18.0
+#COMPONENT_REVISION=	1
 COMPONENT_FMRI=		web/server/apache-24/module/apache-mellon
 COMPONENT_SUMMARY=	SAML2.0 authentication module for Apache
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
-COMPONENT_PROJECT_URL=	https://github.com/Uninett/mod_auth_mellon
+COMPONENT_PROJECT_URL=	https://github.com/latchset/mod_auth_mellon
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8290ba57394fb7c551b9902c32bded8711f9656e2d36e351618b952f2c162afc
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:55488d421b61d7c73c26e0f9b27cd32e0f8d35a974e9d555f4b1d7414bb876cc
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
@@ -57,10 +58,10 @@ CONFIGURE_OPTIONS+=	--enable-diagnostics
 
 REQUIRED_PACKAGES += web/server/apache-24
 
-#Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lasso
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
