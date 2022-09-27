@@ -9,71 +9,77 @@
 #
 
 #
-# Copyright 2012, Andrzej Szeszo 
+# Copyright 2012, Andrzej Szeszo
 # Copyright 2019, Michal Nowak
 # Copyright 2021, Andreas Wacknitz
 #
 
+BUILD_STYLE = archive
+BUILD_BITS = NO_ARCH
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		driver-graphics-nvidia-470
-COMPONENT_MJR_VERSION=	470.141
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).03
-IPS_COMPONENT_VERSION=	0.$(COMPONENT_MJR_VERSION)
-COMPONENT_FMRI=		driver/graphics/nvidia-470
-COMPONENT_SUMMARY=	NVIDIA Graphics System Software
-COMPONENT_CLASSIFICATION=Drivers/Display
-COMPONENT_PROJECT_URL=	https://www.nvidia.com/en-us/drivers/unix/
-COMPONENT_SRC=		NVIDIA-Solaris-x86-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH= sha256:a5484c5fa6f84ba37af6ea0c596bfec44ce695753396d46b61d346e8d6da58fa
-COMPONENT_ARCHIVE_URL=	https://us.download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
-COMPONENT_LICENSE=	NVIDIA
-COMPONENT_LICENSE_FILE=	driver-graphics-nvidia.license
+# This is NVIDIA Legacy GPU driver
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+COMPONENT_MJR_VERSION =		470
+COMPONENT_NAME =		nvidia-$(COMPONENT_MJR_VERSION)
+HUMAN_VERSION =			$(COMPONENT_MJR_VERSION).141.03
+COMPONENT_VERSION =		$(COMPONENT_MJR_VERSION).141.3
+COMPONENT_FMRI =		driver/graphics/nvidia-$(COMPONENT_MJR_VERSION)
+COMPONENT_SUMMARY =		NVIDIA Graphics System Software
+COMPONENT_CLASSIFICATION =	Drivers/Display
+COMPONENT_PROJECT_URL =		https://www.nvidia.com/en-us/drivers/unix/
+COMPONENT_SRC =			NVIDIA-Solaris-x86-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE =		$(COMPONENT_SRC).run
+COMPONENT_ARCHIVE_HASH =	sha256:a5484c5fa6f84ba37af6ea0c596bfec44ce695753396d46b61d346e8d6da58fa
+COMPONENT_ARCHIVE_URL =		https://us.download.nvidia.com/solaris/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE =		NVIDIA
+COMPONENT_LICENSE_FILE =	nvidia.license
 
-$(SOURCE_DIR)/.unpacked: download Makefile $(PATCHES)
-	$(RM) -r $(SOURCE_DIR)
-	$(SHELL) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) -x
+BUILD_TARGET = $(BUILD_$(MK_BITS))
+INSTALL_TARGET = $(INSTALL_$(MK_BITS))
+TEST_TARGET = $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
+
+CLEAN_PATHS += $(BUILD_DIR)
+
+# Hack to run proper unpack command
+UNPACK := $(SHELL) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE)
+UNPACK_ARGS = -x
+USERLAND_ARCHIVES = \#
+
+$(BUILD_$(MK_BITS)):	$(SOURCE_DIR)/.prep
+	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
 	$(TOUCH) $@
 
-$(BUILD_32):	$(SOURCE_DIR)/.prep
-	$(RM) -r $(@D) ; $(MKDIR) $(@D)
-	$(TOUCH) $@
-
-$(INSTALL_32): 	$(BUILD_32)
-	[ -d $(PROTO_DIR)/kernel/drv/amd64 ] || mkdir -p $(PROTO_DIR)/kernel/drv/amd64
+$(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
+	$(MKDIR) $(PROTO_DIR)/kernel/drv/amd64
 	for i in kernel/drv/amd64/nvidia kernel/drv/nvidia.conf kernel/drv/nvidia_modeset.conf kernel/drv/amd64/nvidia_modeset; do \
-	    cp $(SOURCE_DIR)/NVDAgraphicsr/reloc/$$i $(PROTO_DIR)/$$i; done
-	rm -fr $(PROTO_DIR)/usr
-	cp -a $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
-	$(COMPONENT_POST_INSTALL_ACTION)
+	    $(CP) $(SOURCE_DIR)/NVDAgraphicsr/reloc/$$i $(PROTO_DIR)/$$i; done
+	$(RM) -r $(PROTO_DIR)/usr
+	$(CP) -a $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
 	$(TOUCH) $@
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
-clean::
-	if [ -d $(BUILD_DIR) ] ;  then \
-	  rm -rf $(BUILD_DIR) ; \
-	fi
-
-# Manually added dependencies
-REQUIRED_PACKAGES += x11/compatibility/links-xorg
+GENERATE_EXTRA_CMD = \
+	$(CAT) - <( \
+		eval $$($(GNU_GREP) ^A $(SOURCE_DIR)/NVDAgraphicsr/install/postinstall) ; \
+		printf 'driver name=nvidia_modeset perms="* 0666 root root"\n' ; \
+		printf 'driver name=nvidia perms="* 0666 root root"' ; \
+		for i in $$ALIASES ; do \
+			printf ' \\\n\talias=%s' "$$i" ; \
+		done ; \
+		printf '\n' \
+	)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
