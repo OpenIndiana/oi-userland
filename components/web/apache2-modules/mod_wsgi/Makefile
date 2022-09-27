@@ -28,6 +28,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_wsgi
 COMPONENT_VERSION=	4.9.4
+COMPONENT_REVISION =	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:8e762662ea5b01afc386bbcfbaa079748eb6203ab1d6d3a3dac9237f5666cfc9
@@ -39,7 +40,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+PYTHON_VERSIONS=	3.7 3.9
 
 APACHE_USR_PREFIX=/usr/apache2/2.4
 
@@ -76,7 +77,9 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
+REQUIRED_PACKAGES += web/server/apache-24
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += web/server/apache-24
