@@ -10,6 +10,7 @@
 
 #
 # Copyright 2022, Daniel Chan
+# Copyright 2022, Niklas Poslovski
 #
 
 BUILD_BITS=		64
@@ -22,7 +23,7 @@ COMPONENT_VERSION_MAJOR=3
 COMPONENT_VERSION_MINOR=18
 COMPONENT_VERSION_PATCH=0
 COMPONENT_VERSION=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR).$(COMPONENT_VERSION_PATCH)
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	A library project for developers to support popular graphics image formats
 COMPONENT_PROJECT_URL=	https://freeimage.sourceforge.io
 COMPONENT_FMRI=		library/libfreeimage
