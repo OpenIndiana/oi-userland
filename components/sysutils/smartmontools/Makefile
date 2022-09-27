@@ -23,15 +23,14 @@
 # Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
-BUILD_BITS=64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= smartmontools
 COMPONENT_VERSION= 7.3
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY= smartmontools contains utilities that control and monitor storage devices
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL= https://downloads.sourceforge.net/smartmontools
+COMPONENT_PROJECT_URL= https://www.smartmontools.org/
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:a544f8808d0c58cfb0e7424ca1841cb858a974922b035d505d4e4c248be3a22b
 COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/smartmontools/files/smartmontools/${COMPONENT_VERSION}/$(COMPONENT_ARCHIVE)
@@ -57,5 +56,6 @@ PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
