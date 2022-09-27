@@ -23,20 +23,21 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
 # Copyright (c) 2021, Andreas Wacknitz
+# Copyright (c) 2022, Niklas Poslovski
 #
 
 BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
-COMPONENT_VERSION=	5.1
+COMPONENT_VERSION=	5.2
 COMPONENT_FMRI=		shell/bash
 COMPONENT_SUMMARY=	GNU Bourne-Again shell (bash)
 COMPONENT_CLASSIFICATION=	System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/bash/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = sha256:cc012bc860406dcf42f64431bcd3d2fa7560c02915a601aba9cd597a39329baa
+COMPONENT_ARCHIVE_HASH = sha256:a139c166df7ff4471c5e0733051642ee5556c1cc8a4a78f145583c5c81ab32fb
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3, FDLv1.2
 

@@ -1,11 +1,18 @@
-# We need both LANG and LC_ALL set on Solaris.
-# Solari-specific patch.
-# Not for upstream.
---- tests/printf2.sub	2009-02-24 11:12:32.000000000 -0800
-+++ tests/printf2.sub	2011-11-29 12:15:05.790234777 -0800
-@@ -1,4 +1,5 @@
+diff -Nru bash-5.2.orig/tests/printf2.sub bash-5.2/tests/printf2.sub
+--- tests/printf2.sub	2022-09-26 19:44:37.995231398 +0000
++++ tests/printf2.sub	2022-09-26 19:45:11.358414301 +0000
+@@ -1,12 +1,14 @@
+ unset LC_ALL LC_CTYPE
+ 
+ export LANG=C
++export LC_ALL=C
+ case $(printf %d\\n \'A) in
+ 65)	;;
+ *)	echo "printf2.sub: character conversion failed" >&2  ;;
+ esac
+ 
  export LANG=en_US.UTF-8
 +export LC_ALL=en_US.UTF-8
- 
  case $(printf %d\\n \'À) in
  192)	exit 0;;
+ *)	echo "printf2.sub: multibyte character conversion failed" >&2 ; exit 2 ;;
