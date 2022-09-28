@@ -157,7 +157,7 @@ cat <<EOF
 #   \$WS_TOOLS/perl-integrate-module $MODULE
 #
 
-BUILD_STYLE = makemaker
+BUILD_STYLE = modulebuild
 EOF
 gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < perl-integrate-module.conf
 cat <<EOF
@@ -207,8 +207,8 @@ git add Makefile
 ! gmake prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
 SOURCE_DIR=$(gmake print-value-SOURCE_DIR)
 
-# Switch to modulebuild if needed
-[[ ! -f "$SOURCE_DIR/Makefile.PL" && -f "$SOURCE_DIR/Build.PL" ]] && sed -i -e 's/makemaker/modulebuild/g' Makefile
+# Switch to makemaker if needed
+[[ ! -f "$SOURCE_DIR/Build.PL" && -f "$SOURCE_DIR/Makefile.PL" ]] && sed -i -e 's/modulebuild/makemaker/g' Makefile
 
 # Get abstract.  Either from metacpan, or directly from sources.
 ABSTRACT=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.abstract')
