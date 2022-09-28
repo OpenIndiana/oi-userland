@@ -20,22 +20,21 @@
 
 #
 # Copyright (c) 2021, Jim Klimov
+# Copyright (c) 2022, Niklas Poslovski
 #
-
-BUILD_BITS=		32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmodbus
-COMPONENT_VERSION=	3.1.6
+COMPONENT_VERSION=	3.1.8
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	Cross-platform library to send/receive data according to the Modbus protocol with RTU (serial) and TCP (Ethernet) communications
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d7d9fa94a16edb094e5fdf5d87ae17a0dc3f3e3d687fead81835d9572cf87c16
-COMPONENT_ARCHIVE_URL=	https://libmodbus.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://libmodbus.org/
+COMPONENT_ARCHIVE_HASH=	sha256:b122f2bc29f749702a22c0a760a7ca2182d541f5fa26bf25e3431f907b606f3c
+COMPONENT_ARCHIVE_URL=	https://github.com/stephane/libmodbus/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://libmodbus.org/
 COMPONENT_LICENSE=	LGPLv2.1+
 COMPONENT_LICENSE_FILE=	libmodbus.license
 
