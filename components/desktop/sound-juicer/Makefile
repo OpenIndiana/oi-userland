@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sound-juicer
 COMPONENT_VERSION=      2.32.0
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/SoundJuicer
 COMPONENT_SUMMARY=      CD ripping tool
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
