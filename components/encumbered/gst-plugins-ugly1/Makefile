@@ -23,6 +23,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-ugly1
 COMPONENT_VERSION=      1.20.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/ugly
