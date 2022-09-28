@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-ugly
 COMPONENT_VERSION=      0.10.19
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
