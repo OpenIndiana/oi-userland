@@ -19,56 +19,26 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2022 Niklas Poslovski
 #
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         librsync
-COMPONENT_VERSION=      0.9.7
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      2.3.2
+#COMPONENT_REVISION=     2
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://librsync.sourceforge.net/
+COMPONENT_PROJECT_URL=  https://librsync.github.io/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:6633e4605662763a03bb6388529cbdfd3b11a9ec55b8845351c1bd9a92bc41d6
-COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/$(COMPONENT_NAME)/files/librsync/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-
-# librsync documentation as originally found at:
-# http://librsync.sourcefrog.net/doc/librsync.html
-# http://librsync.sourcefrog.net/doc/librsync.pdf
-# The files there are not in an easily downloadable format so a local
-# archive has been created for them.
-COMPONENT_NAME_1=	librsync-docs
-COMPONENT_SRC_1=	$(COMPONENT_NAME_1)
-COMPONENT_ARCHIVE_1=	$(COMPONENT_NAME_1)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH_1=	\
-    sha256:e805819272f71b06823ee13f2dd7ddb92e75d75de18c33b7fd32133847c52afe
-COMPONENT_ARCHIVE_URL_1=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE_1)
-CLEAN_PATHS += $(COMPONENT_NAME_1)
-
-CONFIGURE_FIX_LIBTOOL_RPATH = no
+	sha256:ef8ce23df38d5076d25510baa2cabedffbe0af460d887d86c2413a1c2b0c676f
+COMPONENT_ARCHIVE_URL=  https://github.com/librsync/librsync/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_FMRI=         library/librsync
+COMPONENT_SUMMARY=      A library that implements the rsync remote-delta algorithm
+COMPONENT_CLASSIFICATION= System/Libraries
 
 include $(WS_MAKE_RULES)/common.mk
-
-COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -f && autoreconf -fi)
-
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D)) ; \
-	tar -xvf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
-
-CONFIGURE_OPTIONS  +=	--enable-shared
-
-CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
-
-PROTOUSRSHAREDOCDIR = $(PROTOUSRSHAREDIR)/doc/librsync-0.9.7
-
-PATCH_LEVEL = 1
-
-install: $(INSTALL_32_and_64)
-	$(MKDIR) -p $(PROTOUSRSHAREDOCDIR) ; \
-	$(CP) librsync-docs/librsync.pdf $(PROTOUSRSHAREDOCDIR) ; \
-	$(CP) -r librsync-docs/html $(PROTOUSRSHAREDOCDIR)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/popt
