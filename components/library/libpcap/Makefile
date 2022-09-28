@@ -10,23 +10,25 @@
 
 #
 # Copyright 2016 EveryCity Ltd. All rights reserved.
+# Copyright 2022 Niklas Poslovski
 #
-
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_BITS = 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libpcap
-COMPONENT_FMRI=         library/libpcap
-COMPONENT_VERSION=      1.8.1
-COMPONENT_REVISION=     1
+COMPONENT_FMRI=         system/library/libpcap
+COMPONENT_VERSION=      1.10.1
+#COMPONENT_REVISION=     1
 COMPONENT_LICENSE=      BSD
-COMPONENT_PROJECT_URL=  http://www.tcpdump.org/
+COMPONENT_PROJECT_URL=  https://www.tcpdump.org/
 COMPONENT_SUMMARY=      Packet Capture Library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:673dbc69fdc3f5a86fb5759ab19899039a8e5e6c631749e48dcd9c6f0c83541e
-COMPONENT_ARCHIVE_URL=  http://www.tcpdump.org/release/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:ed285f4accaf05344f90975757b3dbfe772ba41d1c401c2648b7fa45b711bdd4
+COMPONENT_ARCHIVE_URL=  https://www.tcpdump.org/release/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION= System/Libraries
+
+DROP_STATIC_LIBRARIES= yes
 
 include $(WS_MAKE_RULES)/common.mk
 
