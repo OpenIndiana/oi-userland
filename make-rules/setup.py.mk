@@ -69,13 +69,14 @@ COMPONENT_TEST_ENV += $(PYTHON_ENV)
 # Reset arguments specified as environmnent variables
 COMPONENT_BUILD_ARGS =
 
-# If we are building Python 3.5 support, build it and install it
-# before Python 2.7, so 2.7 is installed last and is the canonical version.
-# When we change the default, the new default should go last.
-ifneq ($(findstring 3.5,$(PYTHON_VERSIONS)),)
-$(BUILD_DIR)/%-2.7/.built:     $(BUILD_DIR)/%-3.5/.built
-$(BUILD_DIR)/%-2.7/.installed: $(BUILD_DIR)/%-3.5/.installed
-endif
+# Make sure the default python version is built and installed last and so is
+# the canonical version.
+define python-order-rule
+$(BUILD_DIR)/%-$(PYTHON_VERSION)/.built:     $(BUILD_DIR)/%-$(1)/.built
+$(BUILD_DIR)/%-$(PYTHON_VERSION)/.installed: $(BUILD_DIR)/%-$(1)/.installed
+endef
+
+$(foreach pyver,$(filter-out $(PYTHON_VERSION),$(PYTHON_VERSIONS)),$(eval $(call python-order-rule,$(pyver))))
 
 # Create a distutils config file specific to the combination of build
 # characteristics (bittedness x Python version), and put it in its own
