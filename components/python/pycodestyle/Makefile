@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycodestyle
 COMPONENT_VERSION=	2.5.0
+COMPONENT_REVISION =	1
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_FMRI=		library/python/pycodestyle
 COMPONENT_SUMMARY=	pycodestyle - Python style guide checker
@@ -40,7 +41,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS=	2.7 3.5 3.7 3.9
+PYTHON_VERSIONS=	3.7 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -82,11 +83,7 @@ COMPONENT_SYSTEM_TEST_ARGS =
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += library/python/setuptools-37
 REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/python-39
