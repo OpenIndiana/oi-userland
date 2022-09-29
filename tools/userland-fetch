@@ -37,7 +37,7 @@ import subprocess
 import re
 import gzip
 import bz2
-from urllib.parse import splittype, splithost
+from urllib.parse import splithost
 from urllib.request import urlopen
 from urllib.error import HTTPError
 from urllib.request import Request
@@ -204,6 +204,14 @@ def download(url, filename=None, user_agent_arg=None, quiet=None):
 
     # return the name of the file that we downloaded the data to.
     return filename
+
+
+def splittype(url):
+    match = re.match('([^/:]+):(.*)', url, re.DOTALL)
+    if match:
+        scheme, data = match.groups()
+        return scheme.lower(), data
+    return None, url
 
 
 def download_paths(search, filename, url):
