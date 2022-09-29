@@ -310,10 +310,6 @@ publish:		pre-publish update-metadata $(PUBLISH_STAMP)
 
 sample-manifest:	$(GENERATED).p5m
 
-# By default GENERATE_EXTRA_CMD is a no-op.
-# Since it is used in pipeline it needs to copy input to output.
-GENERATE_EXTRA_CMD ?= $(CAT)
-
 $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 	[ ! -d $(SAMPLE_MANIFEST_DIR) ] && $(MKDIR) $(SAMPLE_MANIFEST_DIR) || true
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
@@ -323,8 +319,7 @@ $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 		-e '/usr\/lib\/python3\..*\/__pycache__\/.*/d'  | \
 		$(PKGFMT) | \
 		uniq | \
-		cat $(METADATA_TEMPLATE) - | \
-		$(GENERATE_EXTRA_CMD) | \
+		cat $(METADATA_TEMPLATE) - $(GENERATE_EXTRA_CMD) | \
 		$(TEE) $@ $(SAMPLE_MANIFEST_FILE) >/dev/null
 	if [ "$(GENERATE_GENERIC_TRANSFORMS)X" != "X" ]; \
 	then sed $(GENERATE_GENERIC_TRANSFORMS) $(SAMPLE_MANIFEST_FILE) \

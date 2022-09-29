@@ -166,7 +166,7 @@ $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 
 # We need to add -$(PLV) to package fmri and generate runtime dependencies based on META.json
 GENERATE_EXTRA_DEPS += $(BUILD_DIR)/META.json
-GENERATE_EXTRA_CMD ?= \
+GENERATE_EXTRA_CMD += | \
 	$(GSED) -e 's/^\(set name=pkg.fmri [^@]*\)\(.*\)$$/\1-$$(PLV)\2/' | \
 	$(CAT) - <( \
 		echo "" ; \
