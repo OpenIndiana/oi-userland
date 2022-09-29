@@ -20,14 +20,16 @@
 #
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2022, Niklas Poslovski
 #
 BUILD_BITS= 64_and_32
 USE_COMMON_TEST_MASTER= no
-#USE_OPENSSL11= yes
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
 COMPONENT_VERSION=      7.85.0
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -51,8 +53,11 @@ GSSAPI_LIBDIR_64 = /usr/lib/$(MACH64)
 
 CFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS) -I/usr/include/openldap"
+OPENSSL_VERSION=1.1
+CONFIGURE_ENV += CFLAGS="-I$(OPENSSL_INCDIR) $(CFLAGS)"
+CONFIGURE_ENV += CPPFLAGS="-I$(OPENSSL_INCDIR) $(CPPFLAGS) -I/usr/include/openldap"
 
+CONFIGURE_OPTIONS += LDFLAGS="-L$(OPENSSL_LIBDIR.$(BITS)) $(LDFLAGS)"
 CONFIGURE_OPTIONS += --localstatedir=/var --enable-shared --disable-static
 CONFIGURE_OPTIONS += --enable-http --enable-ftp
 CONFIGURE_OPTIONS += --enable-file --enable-dict
@@ -66,7 +71,8 @@ CONFIGURE_OPTIONS += --disable-sspi --enable-crypto-auth
 CONFIGURE_OPTIONS += --enable-cookies --disable-hidden-symbols
 CONFIGURE_OPTIONS += --disable-soname-bump
 CONFIGURE_OPTIONS += --enable-ldap --with-random=/dev/urandom
-CONFIGURE_OPTIONS += --with-ssl=/usr --with-ldap-lib=ldap_r-2.4
+CONFIGURE_OPTIONS += --with-openssl=$(OPENSSL_PREFIX)
+CONFIGURE_OPTIONS += --with-ldap-lib=ldap_r-2.4
 CONFIGURE_OPTIONS += --with-lber-lib=lber-2.4
 CONFIGURE_OPTIONS += --with-gssapi-includes=/usr/include/gssapi
 CONFIGURE_OPTIONS += --with-gssapi-libs=$(GSSAPI_LIBDIR_$(BITS))
@@ -78,7 +84,7 @@ CONFIGURE_OPTIONS += --with-libssh2
 CONFIGURE_OPTIONS += --without-librtmp
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
-LINT_FLAGS += -I$(SOURCE_DIR)/include
+#LINT_FLAGS += -I$(SOURCE_DIR)/include
 
 # Generate configuration scripts form .am-files
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -fi)
@@ -113,7 +119,7 @@ REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
