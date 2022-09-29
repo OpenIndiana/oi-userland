@@ -19,11 +19,13 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2022 Niklas Poslovski
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
     value=pkg:/diagnostic/wireshark/wireshark-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary \
     value="Libraries and Tools used by Wireshark and TShark Network protocol analyzers"
 set name=com.oracle.info.description \
@@ -45,15 +47,15 @@ depend type=optional \
 file exec_attr.dumpcap \
     path=etc/security/exec_attr.d/diagnostic:wireshark:wireshark-common
 
-link path=usr/lib/$(MACH64)/libwireshark.so target=libwireshark.so.14
-link path=usr/lib/$(MACH64)/libwireshark.so.14 target=libwireshark.so.14.0.10
-file path=usr/lib/$(MACH64)/libwireshark.so.14.0.10
-link path=usr/lib/$(MACH64)/libwiretap.so target=libwiretap.so.11
-link path=usr/lib/$(MACH64)/libwiretap.so.11 target=libwiretap.so.11.0.10
-file path=usr/lib/$(MACH64)/libwiretap.so.11.0.10
-link path=usr/lib/$(MACH64)/libwsutil.so target=libwsutil.so.12
-link path=usr/lib/$(MACH64)/libwsutil.so.12 target=libwsutil.so.12.0.0
-file path=usr/lib/$(MACH64)/libwsutil.so.12.0.0
+link path=usr/lib/$(MACH64)/libwireshark.so target=libwireshark.so.15
+link path=usr/lib/$(MACH64)/libwireshark.so.15 target=libwireshark.so.15.0.8
+file path=usr/lib/$(MACH64)/libwireshark.so.15.0.8
+link path=usr/lib/$(MACH64)/libwiretap.so target=libwiretap.so.12
+link path=usr/lib/$(MACH64)/libwiretap.so.12 target=libwiretap.so.12.0.8
+file path=usr/lib/$(MACH64)/libwiretap.so.12.0.8
+link path=usr/lib/$(MACH64)/libwsutil.so target=libwsutil.so.13
+link path=usr/lib/$(MACH64)/libwsutil.so.13 target=libwsutil.so.13.1.0
+file path=usr/lib/$(MACH64)/libwsutil.so.13.1.0
 file path=usr/lib/$(MACH64)/pkgconfig/wireshark.pc
 file path=usr/lib/$(MACH64)/wireshark/cmake/FindGLIB2.cmake
 file path=usr/lib/$(MACH64)/wireshark/cmake/FindWSLibrary.cmake
@@ -67,22 +69,22 @@ file path=usr/lib/$(MACH64)/wireshark/cmake/WiresharkTargets-relwithdebinfo.cmak
 file path=usr/lib/$(MACH64)/wireshark/cmake/WiresharkTargets.cmake
 file path=usr/lib/$(MACH64)/wireshark/extcap/randpktdump
 file path=usr/lib/$(MACH64)/wireshark/extcap/udpdump
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/codecs/g711.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/codecs/l16mono.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/codecs/opus_dec.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/epan/ethercat.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/epan/gryphon.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/epan/irda.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/epan/mate.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/epan/opcua.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/epan/profinet.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/epan/stats_tree.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/epan/transum.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/epan/unistim.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/epan/wimax.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/epan/wimaxasncp.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/epan/wimaxmacphy.so
-file path=usr/lib/$(MACH64)/wireshark/plugins/$(MAJOR_VERSION)/wiretap/usbdump.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/codecs/g711.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/codecs/l16mono.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/codecs/opus_dec.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/epan/ethercat.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/epan/gryphon.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/epan/irda.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/epan/mate.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/epan/opcua.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/epan/profinet.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/epan/stats_tree.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/epan/transum.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/epan/unistim.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/epan/wimax.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/epan/wimaxasncp.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/epan/wimaxmacphy.so
+file path=usr/lib/$(MACH64)/wireshark/plugins/3.6/wiretap/usbdump.so
 file path=usr/sbin/capinfos
 file path=usr/sbin/captype
 file path=usr/sbin/dumpcap
@@ -93,53 +95,12 @@ file path=usr/sbin/rawshark
 file path=usr/sbin/reordercap
 file path=usr/sbin/sharkd
 file path=usr/sbin/text2pcap
-file path=usr/share/doc/wireshark/androiddump.html
-file path=usr/share/doc/wireshark/capinfos.html
-file path=usr/share/doc/wireshark/captype.html
-file path=usr/share/doc/wireshark/ciscodump.html
-file path=usr/share/doc/wireshark/dftest.html
-file path=usr/share/doc/wireshark/dumpcap.html
-file path=usr/share/doc/wireshark/editcap.html
-file path=usr/share/doc/wireshark/extcap.html
-file path=usr/share/doc/wireshark/mergecap.html
-file path=usr/share/doc/wireshark/randpkt.html
-file path=usr/share/doc/wireshark/randpktdump.html
-file path=usr/share/doc/wireshark/rawshark.html
-file path=usr/share/doc/wireshark/reordercap.html
-file path=usr/share/doc/wireshark/sshdump.html
-file path=usr/share/doc/wireshark/text2pcap.html
-file path=usr/share/doc/wireshark/udpdump.html
-file path=usr/share/doc/wireshark/wireshark-filter.html
-file path=usr/share/doc/wireshark/wireshark.html
-file path=usr/share/man/man1/androiddump.1
-file path=usr/share/man/man1/capinfos.1
-file path=usr/share/man/man1/captype.1
-file path=usr/share/man/man1/ciscodump.1
-file path=usr/share/man/man1/dftest.1
-file path=usr/share/man/man1/dumpcap.1
-file path=usr/share/man/man1/editcap.1
-file path=usr/share/man/man1/mergecap.1
-file path=usr/share/man/man1/randpkt.1
-file path=usr/share/man/man1/randpktdump.1
-file path=usr/share/man/man1/rawshark.1
-file path=usr/share/man/man1/reordercap.1
-file path=usr/share/man/man1/sshdump.1
-file path=usr/share/man/man1/text2pcap.1
-file path=usr/share/man/man1/udpdump.1
-file path=usr/share/man/man4/extcap.4
-file path=usr/share/man/man4/wireshark-filter.4
-file path=usr/share/wireshark/AUTHORS-SHORT
 file path=usr/share/wireshark/COPYING
-file path=usr/share/wireshark/androiddump.html
-file path=usr/share/wireshark/capinfos.html
-file path=usr/share/wireshark/captype.html
 file path=usr/share/wireshark/cfilters
-file path=usr/share/wireshark/ciscodump.html
 file path=usr/share/wireshark/colorfilters
 file path=usr/share/wireshark/console.lua
 file path=usr/share/wireshark/dfilter_macros
 file path=usr/share/wireshark/dfilters
-file path=usr/share/wireshark/dftest.html
 file path=usr/share/wireshark/diameter/AlcatelLucent.xml
 file path=usr/share/wireshark/diameter/Cisco.xml
 file path=usr/share/wireshark/diameter/CiscoSystems.xml
@@ -184,14 +145,10 @@ file path=usr/share/wireshark/dtds/smil.dtd
 file path=usr/share/wireshark/dtds/watcherinfo.dtd
 file path=usr/share/wireshark/dtds/xcap-caps.dtd
 file path=usr/share/wireshark/dtds/xcap-error.dtd
-file path=usr/share/wireshark/dumpcap.html
-file path=usr/share/wireshark/editcap.html
 file path=usr/share/wireshark/enterprises.tsv
-file path=usr/share/wireshark/extcap.html
 file path=usr/share/wireshark/init.lua
 file path=usr/share/wireshark/ipmap.html
 file path=usr/share/wireshark/manuf
-file path=usr/share/wireshark/mergecap.html
 file path=usr/share/wireshark/pdml2html.xsl
 file path=usr/share/wireshark/profiles/Bluetooth/colorfilters
 file path=usr/share/wireshark/profiles/Bluetooth/preferences
@@ -406,19 +363,10 @@ file path=usr/share/wireshark/radius/dictionary.yubico
 file path=usr/share/wireshark/radius/dictionary.zeus
 file path=usr/share/wireshark/radius/dictionary.zte
 file path=usr/share/wireshark/radius/dictionary.zyxel
-file path=usr/share/wireshark/randpkt.html
-file path=usr/share/wireshark/randpktdump.html
-file path=usr/share/wireshark/rawshark.html
-file path=usr/share/wireshark/reordercap.html
 file path=usr/share/wireshark/services
 file path=usr/share/wireshark/smi_modules
-file path=usr/share/wireshark/sshdump.html
-file path=usr/share/wireshark/text2pcap.html
 file path=usr/share/wireshark/tpncp/tpncp.dat
-file path=usr/share/wireshark/udpdump.html
 file path=usr/share/wireshark/wimaxasncp/dictionary.dtd
 file path=usr/share/wireshark/wimaxasncp/dictionary.xml
-file path=usr/share/wireshark/wireshark-filter.html
-file path=usr/share/wireshark/wireshark.html
 file path=usr/share/wireshark/wka
 file path=usr/share/wireshark/ws.css
