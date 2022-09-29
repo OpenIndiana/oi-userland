@@ -11,28 +11,28 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2022 Niklas Poslovski
 #
-
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libupnp
-COMPONENT_VERSION= 1.6.20
+COMPONENT_VERSION= 1.14.13
 COMPONENT_SUMMARY= Portable C library for UPnP
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ee3537081e3ea56f66ada10387486823989210bc98002f098305551c966e3a63
+  sha256:025d7aee1ac5ca8f0bd99cb58b83fcfca0efab0c5c9c1d48f72667fe40788a4e
 COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/pupnp/files/pupnp/libUPnP%20$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://pupnp.sourceforge.net/
+  https://sourceforge.net/projects/pupnp/files/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://pupnp.sourceforge.io/
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = system/library/libupnp
 COMPONENT_LICENSE = BSD
-COMPONENT_LICENSE_FILE = LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
+
+unexport SHELLOPTS
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -50,10 +50,5 @@ CONFIGURE_OPTIONS += --disable-static
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
