@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2022, Niklas Poslovski
 #
 
 BUILD_BITS=			64
@@ -27,11 +28,11 @@ USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.16.29
+COMPONENT_VERSION=	9.16.33
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://www.isc.org/software/bind/
-COMPONENT_ARCHIVE_HASH=	sha256:c8408f98ebbd566fc396a28cbda2d94d57efcb98a359618866dec229c8907466
+COMPONENT_ARCHIVE_HASH=	sha256:ec4fbea4b2e368d1824971509e33fa159224ad14b436034c6bcd46104c328d91
 COMPONENT_ARCHIVE_URL=	https://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			network/dns/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -40,7 +41,7 @@ COMPONENT_LICENSE_FILE=	COPYRIGHT
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION=3.5
+PYTHON_VERSION=3.9
 
 COMPONENT_PREP_ACTION =	(cd $(@D) && autoreconf -fi)
 
@@ -107,7 +108,6 @@ COMPONENT_TEST_TRANSFORMS += \
 $(TEST_64):	$(INSTALL_64)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libedit
@@ -115,9 +115,9 @@ REQUIRED_PACKAGES += library/libuv
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
-#REQUIRED_PACKAGES += network/dns/bind
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
