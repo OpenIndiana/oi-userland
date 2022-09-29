@@ -12,6 +12,7 @@
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2020, 2022 Nona Hansel
+# Copyright 2022 Niklas Poslovski
 #
 
 BUILD_BITS=		64
@@ -19,7 +20,7 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		logrotate
-COMPONENT_VERSION=	3.19.0
+COMPONENT_VERSION=	3.20.1
 COMPONENT_PROJECT_URL=	https://github.com/logrotate/logrotate
 COMPONENT_SUMMARY=	Logrotate - Rotates and compresses log files
 COMPONENT_FMRI=		system/file/logrotate
@@ -27,7 +28,7 @@ COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:ecaac5c5e9c19fbc497d258da271ed6f3f2eb5f9e2e809053592cae4ffd4af91
+	sha256:dbbe4e63f00aadbf7ee67bb4c654c2547cf391f51c180621077c9fbf83bd71ab
 COMPONENT_ARCHIVE_URL=	https://github.com/logrotate/logrotate/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
