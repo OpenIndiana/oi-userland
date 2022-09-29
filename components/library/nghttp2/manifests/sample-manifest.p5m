@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2018 <contributor>
+# Copyright 2022 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,16 +23,14 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file path=usr/bin/deflatehd
+file path=usr/bin/inflatehd
 file path=usr/include/nghttp2/nghttp2.h
 file path=usr/include/nghttp2/nghttp2ver.h
-link path=usr/lib/$(MACH64)/libnghttp2.so target=libnghttp2.so.14.17.2
-link path=usr/lib/$(MACH64)/libnghttp2.so.14 target=libnghttp2.so.14.17.2
-file path=usr/lib/$(MACH64)/libnghttp2.so.14.17.2
+link path=usr/lib/$(MACH64)/libnghttp2.so target=libnghttp2.so.14.24.0
+link path=usr/lib/$(MACH64)/libnghttp2.so.14 target=libnghttp2.so.14.24.0
+file path=usr/lib/$(MACH64)/libnghttp2.so.14.24.0
 file path=usr/lib/$(MACH64)/pkgconfig/libnghttp2.pc
-link path=usr/lib/libnghttp2.so target=libnghttp2.so.14.17.2
-link path=usr/lib/libnghttp2.so.14 target=libnghttp2.so.14.17.2
-file path=usr/lib/libnghttp2.so.14.17.2
-file path=usr/lib/pkgconfig/libnghttp2.pc
 file path=usr/share/doc/nghttp2/README.rst
 file path=usr/share/man/man1/h2load.1
 file path=usr/share/man/man1/nghttp.1
