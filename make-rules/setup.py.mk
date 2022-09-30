@@ -112,6 +112,16 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built $(BUILD_DIR)/config-%/$(CFG)
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
+# Rename binaries in /usr/bin to contain version number
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in $(PROTOUSRBINDIR)/* ; do \
+		[[ -f $$f ]] || continue ; \
+		for v in $(PYTHON_VERSIONS) ; do \
+			[[ "$$f" == "$${f%%-$$v}" ]] || continue 2 ; \
+		done ; \
+		$(MV) $$f $$f-$(PYTHON_VERSION) ; \
+	done ;
+
 # Define bit specific and Python version specific filenames.
 ifeq ($(strip $(USE_COMMON_TEST_MASTER)),no)
 COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-$(PYTHON_VERSION)-$(BITS).master
@@ -163,6 +173,12 @@ $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
 	$(COMPONENT_POST_TEST_ACTION)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
+
+
+# We need to add -$(PYV) to package fmri
+GENERATE_EXTRA_CMD += | \
+	$(GSED) -e 's/^\(set name=pkg.fmri [^@]*\)\(.*\)$$/\1-$$(PYV)\2/' \
+
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
