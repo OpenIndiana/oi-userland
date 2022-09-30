@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libmypaint
 COMPONENT_VERSION= 1.6.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= MyPaint Brush Library
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)

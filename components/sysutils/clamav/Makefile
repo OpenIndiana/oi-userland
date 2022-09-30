@@ -29,6 +29,7 @@ ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
 else
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
 endif
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	ClamAV $(IPS_COMPONENT_VERSION) opensource antivirus toolkit
 COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
 COMPONENT_DESCRIPTION=	ClamAV is an open source (GPLv2) anti-virus toolkit, designed \
