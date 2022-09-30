@@ -13,19 +13,20 @@
 # Copyright 2017 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2021 Andreas Wacknitz
+# Copyright 2022 Niklas Poslovski
 #
 BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         brltty
-COMPONENT_VERSION=      6.0
-COMPONENT_REVISION=     5
+COMPONENT_VERSION=      6.5
+#COMPONENT_REVISION=     5
 COMPONENT_SUMMARY=      Braille support
 COMPONENT_FMRI=         library/accessibility/brltty
 COMPONENT_CLASSIFICATION=Applications/Universal Access
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:af4bcd1e030416c2b669cc6904f73c30e73bb4ed8f743c2ada9edc87964ab752
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:2f173535291ba39b5a9fc8d80c349234333d92042d95d6dd88796c98a02f316b
 COMPONENT_PROJECT_URL=  http://www.mielke.cc/brltty/
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2,LGPLv2.1
@@ -58,6 +59,7 @@ CONFIGURE_OPTIONS +=    --disable-ocaml-bindings
 CONFIGURE_OPTIONS +=    --disable-tcl-bindings
 CONFIGURE_OPTIONS +=    --disable-speech-support
 CONFIGURE_OPTIONS +=    --disable-stripping
+CONFIGURE_OPTIONS +=    --disable-lua-bindings
 CONFIGURE_OPTIONS +=    --disable-polkit # requires SO_PEERCRED support
 CONFIGURE_OPTIONS +=    --without-midi-package
 CONFIGURE_OPTIONS +=    --without-writable-directory
@@ -98,11 +100,12 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/liblouis
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxtst
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
