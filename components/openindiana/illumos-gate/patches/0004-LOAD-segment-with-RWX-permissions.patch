@@ -1,0 +1,238 @@
+see https://www.illumos.org/issues/15028
+
+diff --git a/usr/src/boot/i386/gptzfsboot/Makefile b/usr/src/boot/i386/gptzfsboot/Makefile
+index ad97283ca4..dcde78e6c0 100644
+--- a/usr/src/boot/i386/gptzfsboot/Makefile
++++ b/usr/src/boot/i386/gptzfsboot/Makefile
+@@ -71,7 +71,7 @@ zfs_cmd.o := CPPFLAGS += -I$(SRC)/uts/common
+ part.o := CPPFLAGS += -I$(ZLIB)
+ smbios.o := CPPFLAGS += -DSMBIOS_SERIAL_NUMBERS
+ smbios.o := CPPFLAGS += -DSMBIOS_LITTLE_ENDIAN_UUID
+-gptldr.out := LD_FLAGS += $(GLDTARGET)
++gptldr.out := LD_FLAGS += $(GLDTARGET) --no-warn-rwx-segments
+ 
+ CLEANFILES=	gptzfsboot $(OBJS)
+ 
+@@ -93,7 +93,7 @@ gptzfsboot.bin: gptzfsboot.out
+ 	$(OBJCOPY) -S -O binary gptzfsboot.out $@
+ 
+ gptzfsboot.out: $(BTXCRT) $(OBJS) $(DPADD)
+-	$(GLD) $(LD_FLAGS) -T $(LDSCRIPT) -o $@ $(BTXCRT) $(OBJS) $(LIBS)
++	$(GLD) $(LD_FLAGS) --no-warn-rwx-segments -T $(LDSCRIPT) -o $@ $(BTXCRT) $(OBJS) $(LIBS)
+ 
+ machine:
+ 	$(RM) machine
+diff --git a/usr/src/boot/i386/isoboot/Makefile b/usr/src/boot/i386/isoboot/Makefile
+index 39b56debf6..51910f7a98 100644
+--- a/usr/src/boot/i386/isoboot/Makefile
++++ b/usr/src/boot/i386/isoboot/Makefile
+@@ -46,7 +46,7 @@ LDSCRIPT=	../boot.ldscript
+ LD_FLAGS=	-static -N --gc-sections
+ LIBSTAND=	../../libsa/$(MACH)/libsa.a
+ 
+-gptldr.out := LD_FLAGS += $(GLDTARGET)
++gptldr.out := LD_FLAGS += $(GLDTARGET) --no-warn-rwx-segments
+ 
+ isoboot.o := SMOFF += unreachable
+ 
+@@ -80,7 +80,7 @@ isoboot.bin: isoboot.out
+ 	$(OBJCOPY) -S -O binary isoboot.out $@
+ 
+ isoboot.out: $(BTXCRT) $(OBJS)
+-	$(GLD) $(LD_FLAGS) -T $(LDSCRIPT) -o $@ $(BTXCRT) $(OBJS) $(LIBSTAND)
++	$(GLD) $(LD_FLAGS) --no-warn-rwx-segments -T $(LDSCRIPT) -o $@ $(BTXCRT) $(OBJS) $(LIBSTAND)
+ 
+ machine:
+ 	$(RM) machine
+diff --git a/usr/src/boot/i386/loader/Makefile b/usr/src/boot/i386/loader/Makefile
+index f0a1a2e43b..6c02ea0f6b 100644
+--- a/usr/src/boot/i386/loader/Makefile
++++ b/usr/src/boot/i386/loader/Makefile
+@@ -145,7 +145,7 @@ OBJS=		$(SRCS:%.c=%.o)
+ $(OBJS): machine x86
+ 
+ $(PROG): $(OBJS) $(DPADD)
+-	$(GLD) $(LDFLAGS) -o $@ $(BTXCRT) $(OBJS) $(LDADD)
++	$(GLD) $(LDFLAGS) --no-warn-rwx-segments -o $@ $(BTXCRT) $(OBJS) $(LDADD)
+ 
+ clean: clobber
+ clobber:
+diff --git a/usr/src/grub/grub-0.97/stage1/Makefile.solaris b/usr/src/grub/grub-0.97/stage1/Makefile.solaris
+index 2873a21a17..14ef3cd235 100644
+--- a/usr/src/grub/grub-0.97/stage1/Makefile.solaris
++++ b/usr/src/grub/grub-0.97/stage1/Makefile.solaris
+@@ -43,7 +43,7 @@ all: $(PROGRAMS) $(DATA)
+ 
+ $(STAGE1_EXEC): $(STAGE1_ASMOBJS) $(STAGE1_OBJS)
+ 	$(RM) $@
+-	$(LINK) -o $@ $(STAGE1_ASMOBJS) $(STAGE1_OBJS) $(LIBS)
++	$(LINK) --no-warn-rwx-segments -o $@ $(STAGE1_ASMOBJS) $(STAGE1_OBJS) $(LIBS)
+ 
+ $(STAGE1_ASMOBJS): $$(@:.o=.S)
+ 	$(CCAS) $(CCASFLAGS) -c -o $@ $(@:.o=.S)
+diff --git a/usr/src/grub/grub-0.97/stage2/Makefile.solaris b/usr/src/grub/grub-0.97/stage2/Makefile.solaris
+index 1c70f2a71b..3e17102741 100644
+--- a/usr/src/grub/grub-0.97/stage2/Makefile.solaris
++++ b/usr/src/grub/grub-0.97/stage2/Makefile.solaris
+@@ -187,7 +187,7 @@ DISKLESS_OBJS		= diskless_exec-bios.o		\
+ 			  diskless_exec-terminfo.o	\
+ 			  diskless_exec-tparm.o
+ 
+-$(DISKLESS_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(PRE_STAGE2_LINK)
++$(DISKLESS_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(PRE_STAGE2_LINK) --no-warn-rwx-segments
+ $(DISKLESS_EXEC)	:= LIBS = $(LIBDRIVERS)
+ 
+ $(DISKLESS_ASMOBJS)	:= CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE2_CFLAGS) \
+@@ -215,7 +215,7 @@ E2FS_STAGE1_5_OBJS	= e2fs_stage1_5_exec-bios.o \
+ 			  e2fs_stage1_5_exec-moddiv.o \
+ 			  e2fs_stage1_5_exec-stage1_5.o
+ 
+-$(E2FS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK)
++$(E2FS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK) --no-warn-rwx-segments
+ 
+ $(E2FS_STAGE1_5_ASMOBJS) := CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE1_5_CFLAGS) \
+ 				-DFSYS_EXT2FS=1 -DNO_BLOCK_FILES=1
+@@ -240,7 +240,7 @@ FAT_STAGE1_5_OBJS	= fat_stage1_5_exec-bios.o \
+ 			  fat_stage1_5_exec-moddiv.o \
+ 			  fat_stage1_5_exec-stage1_5.o
+ 
+-$(FAT_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK)
++$(FAT_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK) --no-warn-rwx-segments
+ 
+ $(FAT_STAGE1_5_ASMOBJS) := CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE1_5_CFLAGS) \
+ 				-DFSYS_FAT=1 -DNO_BLOCK_FILES=1
+@@ -265,7 +265,7 @@ FFS_STAGE1_5_OBJS	= ffs_stage1_5_exec-bios.o \
+ 			  ffs_stage1_5_exec-moddiv.o \
+ 			  ffs_stage1_5_exec-stage1_5.o
+ 
+-$(FFS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK)
++$(FFS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK) --no-warn-rwx-segments
+ 
+ $(FFS_STAGE1_5_ASMOBJS) := CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE1_5_CFLAGS) \
+ 				-DFSYS_FFS=1 -DNO_BLOCK_FILES=1
+@@ -290,7 +290,7 @@ ISO9660_STAGE1_5_OBJS	= iso9660_stage1_5_exec-bios.o \
+ 			  iso9660_stage1_5_exec-moddiv.o \
+ 			  iso9660_stage1_5_exec-stage1_5.o
+ 
+-$(ISO9660_STAGE1_5_EXEC) := LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK)
++$(ISO9660_STAGE1_5_EXEC) := LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK) --no-warn-rwx-segments
+ 
+ $(ISO9660_STAGE1_5_ASMOBJS) := CCASFLAGS = $(BASE_CCASFLAGS) \
+ 				$(STAGE1_5_CFLAGS) \
+@@ -316,7 +316,7 @@ JFS_STAGE1_5_OBJS	= jfs_stage1_5_exec-bios.o \
+ 			  jfs_stage1_5_exec-moddiv.o \
+ 			  jfs_stage1_5_exec-stage1_5.o
+ 
+-$(JFS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK)
++$(JFS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK) --no-warn-rwx-segments
+ 
+ $(JFS_STAGE1_5_ASMOBJS)	:= CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE1_5_CFLAGS) \
+ 				-DFSYS_JFS=1 -DNO_BLOCK_FILES=1
+@@ -341,7 +341,7 @@ MINIX_STAGE1_5_OBJS	= minix_stage1_5_exec-bios.o \
+ 			  minix_stage1_5_exec-moddiv.o \
+ 			  minix_stage1_5_exec-stage1_5.o
+ 
+-$(MINIX_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK)
++$(MINIX_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK) --no-warn-rwx-segments
+ 
+ $(MINIX_STAGE1_5_ASMOBJS) := CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE1_5_CFLAGS) \
+ 				-DFSYS_MINIX=1 -DNO_BLOCK_FILES=1
+@@ -361,7 +361,7 @@ NBLOADER_DATA		= nbloader
+ NBLOADER_EXEC		= nbloader.exec
+ NBLOADER_ASMOBJS	= nbloader_exec-nbloader.o
+ NBLOADER_OBJS		=
+-$(NBLOADER_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(NBLOADER_LINK)
++$(NBLOADER_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(NBLOADER_LINK) --no-warn-rwx-segments
+ $(NBLOADER_ASMOBJS)	:= CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE2_CFLAGS)
+ 
+ #
+@@ -407,7 +407,7 @@ PRE_STAGE2_OBJS		= pre_stage2_exec-bios.o \
+ 			  pre_stage2_exec-terminfo.o \
+ 			  pre_stage2_exec-tparm.o
+ 
+-$(PRE_STAGE2_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(PRE_STAGE2_LINK)
++$(PRE_STAGE2_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(PRE_STAGE2_LINK) --no-warn-rwx-segments
+ $(STAGE2_NETBOOT)$(PRE_STAGE2_EXEC)	:= LIBS = $(LIBDRIVERS)
+ 
+ $(PRE_STAGE2_ASMOBJS)	:= CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE2_CFLAGS) \
+@@ -428,7 +428,7 @@ PXELOADER_DATA		= pxeloader
+ PXELOADER_EXEC		= pxeloader.exec
+ PXELOADER_ASMOBJS	= pxeloader_exec-pxeloader.o
+ PXELOADER_OBJS		=
+-$(PXELOADER_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(PXELOADER_LINK)
++$(PXELOADER_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(PXELOADER_LINK) --no-warn-rwx-segments
+ $(PXELOADER_ASMOBJS)	:= CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE2_CFLAGS)
+ 
+ #
+@@ -448,7 +448,7 @@ REISERFS_STAGE1_5_OBJS  = reiserfs_stage1_5_exec-bios.o \
+ 			  reiserfs_stage1_5_exec-moddiv.o \
+ 			  reiserfs_stage1_5_exec-stage1_5.o
+ 
+-$(REISERFS_STAGE1_5_EXEC) := LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK)
++$(REISERFS_STAGE1_5_EXEC) := LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK) --no-warn-rwx-segments
+ 
+ $(REISERFS_STAGE1_5_ASMOBJS) := CCASFLAGS = $(BASE_CCASFLAGS) \
+ 				$(STAGE1_5_CFLAGS) \
+@@ -474,7 +474,7 @@ START_DATA		= start
+ START_EXEC		= start.exec
+ START_ASMOBJS		= start_exec-start.o
+ START_OBJS		=
+-$(START_EXEC)		:= LDFLAGS = $(BASE_LDFLAGS) $(START_LINK)
++$(START_EXEC)		:= LDFLAGS = $(BASE_LDFLAGS) $(START_LINK) --no-warn-rwx-segments
+ $(START_ASMOBJS)	:= CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE2_CFLAGS)
+ 
+ #
+@@ -484,7 +484,7 @@ START_ELTORITO_DATA	= start_eltorito
+ START_ELTORITO_EXEC	= start_eltorito.exec
+ START_ELTORITO_ASMOBJS	= start_eltorito_exec-start_eltorito.o
+ START_ELTORITO_OBJS	=
+-$(START_ELTORITO_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(START_ELTORITO_LINK)
++$(START_ELTORITO_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(START_ELTORITO_LINK) --no-warn-rwx-segments
+ $(START_ELTORITO_ASMOBJS) := CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE2_CFLAGS)
+ 
+ #
+@@ -504,7 +504,7 @@ UFS2_STAGE1_5_OBJS	= ufs2_stage1_5_exec-bios.o \
+ 			  ufs2_stage1_5_exec-moddiv.o \
+ 			  ufs2_stage1_5_exec-stage1_5.o
+ 
+-$(UFS2_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK)
++$(UFS2_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK) --no-warn-rwx-segments
+ 
+ $(UFS2_STAGE1_5_ASMOBJS) := CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE1_5_CFLAGS) \
+ 				-DFSYS_UFS2=1 -DNO_BLOCK_FILES=1
+@@ -529,7 +529,7 @@ UFS_STAGE1_5_OBJS	= ufs_stage1_5_exec-bios.o \
+ 			  ufs_stage1_5_exec-moddiv.o \
+ 			  ufs_stage1_5_exec-stage1_5.o
+ 
+-$(UFS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK)
++$(UFS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK) --no-warn-rwx-segments
+ 
+ $(UFS_STAGE1_5_ASMOBJS)	:= CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE1_5_CFLAGS) \
+ 				-DFSYS_UFS=1 -DNO_BLOCK_FILES=1
+@@ -558,7 +558,7 @@ ZFS_STAGE1_5_OBJS	= zfs_stage1_5_exec-bios.o \
+ 			  zfs_stage1_5_exec-moddiv.o \
+ 			  zfs_stage1_5_exec-stage1_5.o
+ 
+-$(ZFS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK)
++$(ZFS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK) --no-warn-rwx-segments
+ 
+ $(ZFS_STAGE1_5_ASMOBJS)	:= CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE1_5_CFLAGS) \
+ 				-DFSYS_ZFS=1 -DNO_BLOCK_FILES=1
+@@ -583,7 +583,7 @@ VSTAFS_STAGE1_5_OBJS	= vstafs_stage1_5_exec-bios.o \
+ 			  vstafs_stage1_5_exec-moddiv.o \
+ 			  vstafs_stage1_5_exec-stage1_5.o
+ 
+-$(VSTAFS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK)
++$(VSTAFS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK) --no-warn-rwx-segments
+ 
+ $(VSTAFS_STAGE1_5_ASMOBJS) := CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE1_5_CFLAGS) \
+ 				-DFSYS_VSTAFS=1 -DNO_BLOCK_FILES=1
+@@ -608,7 +608,7 @@ XFS_STAGE1_5_OBJS	= xfs_stage1_5_exec-bios.o \
+ 			  xfs_stage1_5_exec-moddiv.o \
+ 			  xfs_stage1_5_exec-stage1_5.o
+ 
+-$(XFS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK)
++$(XFS_STAGE1_5_EXEC)	:= LDFLAGS = $(BASE_LDFLAGS) $(STAGE1_5_LINK) --no-warn-rwx-segments
+ 
+ $(XFS_STAGE1_5_ASMOBJS)	:= CCASFLAGS = $(BASE_CCASFLAGS) $(STAGE1_5_CFLAGS) \
+ 				-DFSYS_XFS=1 -DNO_BLOCK_FILES=1
