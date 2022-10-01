@@ -22,19 +22,21 @@
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2022, Niklas Poslovski
 #
-
 BUILD_BITS=			32_and_64
+USE_OPENSSL11=			yes
+USE_DEFAULT_TEST_TRANSFORMS=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libssh2
-COMPONENT_VERSION=	1.9.0
-COMPONENT_PROJECT_URL=	http://www.libssh2.org/
+COMPONENT_VERSION=	1.10.0
+COMPONENT_PROJECT_URL=	https://www.libssh2.org/
 COMPONENT_SUMMARY=	libssh2 - client-side C library implementing the SSH2 protocol
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:d5fb8bd563305fd1074dda90bd053fb2d29fc4bce048d182f96eaa466dfadafd
+	sha256:2d64e90f3ded394b91d3a2e774ca203a4179f69aebee03003e5a6fa621e41d51
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	library/libssh2
 COMPONENT_LICENSE=	BSD
@@ -44,11 +46,13 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS +=   --enable-shared
 CONFIGURE_OPTIONS +=   --disable-static
+CONFIGURE_OPTIONS +=   --with-libssl-prefix=/usr/openssl/1.1
 
 # Test suite needs this
 unexport SHELLOPTS
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/libgcrypt
