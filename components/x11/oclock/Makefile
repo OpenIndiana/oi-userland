@@ -18,15 +18,16 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     oclock
-COMPONENT_VERSION=  1.0.4
+COMPONENT_VERSION=  1.0.5
 COMPONENT_FMRI=     x11/oclock
 COMPONENT_SUMMARY=  oclock - round X clock 
 COMPONENT_CLASSIFICATION= Applications/Accessories
-COMPONENT_ARCHIVE_HASH= \
-  sha256:cc20cfc1c0d5128d89e1eecd9ba52e58f111075be163e0aeda5690dbaafbaefe
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:8f09979655e889d056b7a1e50b57f38b32529453e756b53ec659070fb3c3965c
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
