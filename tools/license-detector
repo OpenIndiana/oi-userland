@@ -19,15 +19,17 @@
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1" >&2
-	printf "Usage: license-detector LICENSE_FILE\n" >&2
+	printf "Usage: license-detector [-d] LICENSE_FILE\n" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
 
 
-while getopts ":hl:o:u" OPT ; do
+DEBUG=0
+while getopts ":hd" OPT ; do
 	case "$OPT" in
 	"?"|"h")	usage ;;
+	"d")		DEBUG=1 ;;
 	esac
 done
 shift $((OPTIND - 1))
@@ -39,6 +41,8 @@ LICENSE_FILE="$1"
 [[ -e "$LICENSE_FILE" ]] || usage "$LICENSE_FILE not found"
 [[ -d "$LICENSE_FILE" ]] && usage "$LICENSE_FILE is directory"
 [[ -r "$LICENSE_FILE" ]] || usage "Unable to read $LICENSE_FILE"
+
+WS_TOOLS=$(dirname $0)
 
 
 F="$LICENSE_FILE"
@@ -82,10 +86,32 @@ if grep -A 1 "GNU Lesser General Public License" "$F" | grep -q "Version 2\.1, F
 	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
 fi
 
-if grep -q "The MIT License" "$F" ; then
-	D="MIT-TODO"
-	grep -q "The above copyright notice and this permission notice" "$F" && D="MIT"
-	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
-fi
+for l in "$WS_TOOLS"/licenses/* ; do
+	[[ -f "$l" ]] || continue
+
+	LICCMD="$(grep '^# ' "$l" | sed -e 's/^# //')"
+	[[ -n "$LICCMD" ]] && LICCMD=" | $LICCMD"
+
+	CMD="awk '/^#/{next}/^\$/{\$0=\"\\n\"}1' ORS=' '"
+	CMD="$CMD | sed -E -e 's/ +/ /g' -e 's/^ //' -e 's/ \$//'"
+	CMD="$CMD$LICCMD"
+	CMD="$CMD | tr ' ' '\\n' | gfmt -w 80"
+
+	REDIRECT="/dev/null"
+
+	if ((DEBUG)) ; then
+		REDIRECT="/dev/stdout"
+		printf "[DBG] TEMPLATE %s\n" "$(basename "$l")"
+		eval $CMD < "$l"
+		printf "[DBG] FILE\n"
+		eval $CMD < "$F"
+		printf "[DBG] DIFFS\n"
+	fi
+
+	diff -i <(eval $CMD < "$l") <(eval $CMD < "$F") > "$REDIRECT" || continue
+
+	[[ -n "$L" ]] && L="$L OR "
+	L="$L$(basename "$l")"
+done
 
 [[ -n "$L" ]] && printf "%s\n" "$L"
