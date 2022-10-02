@@ -11,7 +11,7 @@
 
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
-# Copyright 2022 Friedrich Kink.  All rights reserved.
+# Copyright 2023 Friedrich Kink.  All rights reserved.
 #
 
 BUILD_BITS=64
@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		rrdtool
 
 COMPONENT_VERSION=	1.8.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		image/rrdtool
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SUMMARY=	Data analysis tool generating graphical representations
@@ -34,10 +35,6 @@ COMPONENT_ARCHIVE_URL=	https://github.com/oetiker/$(COMPONENT_NAME)-1.x/archive/
 COMPONENT_PROJECT_URL=	https://oss.oetiker.ch/rrdtool/
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	LICENSE
-
-PERL_VERSION=		5.34
-
-PYTHON_VERSION=		3.9
 
 RUBY_VER=		2.6
 
@@ -57,10 +54,6 @@ COMPONENT_POST_INSTALL_ACTION=	$(shell /bin/chmod -R u+w $(@D) )
 CONFIGURE_ENV+=		PYTHON=python$(PYTHON_VERSION)
 CONFIGURE_ENV+=		PERL=$(PERL)
 CONFIGURE_ENV+=		PERLCC=$(CC)
-# current gcc builds 32-bit by default which leads to the following error.
-# error "LONG_BIT definition appears wrong for platform (bad gcc/glibc config?)."
-# This setting fixes the issue with headers not found for python
-CONFIGURE_OPTIONS+=	CPPFLAGS=-m64
 CONFIGURE_OPTIONS+=	--with-ruby-options="sitedir=/usr/ruby/$(RUBY_VER)/lib/ruby/$(RUBY_LIB_VER)/$(MACH64)-solaris$(SOLARIS_VERSION) libdir=/usr/ruby/$(RUBY_VER)/lib/$(MACH64)"
 CONFIGURE_OPTIONS+=	--with-perl-options="CC=$(CC) LD=$(CC) LIB=/usr/perl5/$(PERL_VERSION)/lib"
 CONFIGURE_OPTIONS+= 	--enable-ruby
@@ -84,6 +77,9 @@ COMPONENT_TEST_TRANSFORMS += \
 
 #RRDs.so is installed with perm 555 which breaks RUNPATH stripping
 install: $(INSTALL_64) ; $(shell /bin/chmod -R u+w $(@D) )
+
+# manually added dependencies
+REQUIRED_PACKAGES += runtime/perl
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libpng16
