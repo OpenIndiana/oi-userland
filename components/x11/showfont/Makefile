@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     showfont
-COMPONENT_VERSION=  1.0.5
-COMPONENT_REVISION= 1
+COMPONENT_VERSION=  1.0.6
 COMPONENT_FMRI=     x11/xfs/showfont
 COMPONENT_SUMMARY=  showfont - font server data display utility
-COMPONENT_ARCHIVE_HASH= \
-  sha256:e9735c1c530b8a52edfab7415cc0fd7f8d2889095114f4cb689a27476461ac89
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:2b9b9f06e65e095ed76ce560b701b9fc47fa63310ee706b54c8787af061d0e56
 
 include $(WS_MAKE_RULES)/common.mk
 
