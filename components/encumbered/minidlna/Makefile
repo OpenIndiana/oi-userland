@@ -10,14 +10,14 @@
 
 #
 # Copyright 2020 Alexander Pyhalov
+# Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= minidlna
-COMPONENT_VERSION= 1.2.1
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.3.2
+#COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=  MiniDLNA DLNA/UPnP-AV media server
 COMPONENT_PROJECT_URL= https://sourceforge.net/projects/minidlna/
 COMPONENT_FMRI= media/minidlna
@@ -27,7 +27,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= \
 	https://sourceforge.net/projects/minidlna/files/minidlna/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-	sha256:67388ba23ab0c7033557a32084804f796aa2a796db7bb2b770fb76ac2a742eec
+	sha256:222ce45a1a60c3ce3de17527955d38e5ff7a4592d61db39577e6bf88e0ae1cb0
 COMPONENT_LICENSE= BSD
 COMPONENT_LICENSE_FILE= LICENCE.miniupnpd
 
