@@ -12,18 +12,18 @@
 # Copyright 2013 Adam Stevko. All rights reserved.
 # Copyright 2016 Jim Klimov
 # Copyright 2020 Michal Nowak
+# Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=		64
 USE_OPENSSL11=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openvpn
-COMPONENT_VERSION=	2.4.11
+COMPONENT_VERSION=	2.5.7
 COMPONENT_SUMMARY=	OpenVPN is a full-featured open source SSL VPN solution
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:e579eff218ab1d765965e64a917927504d8324717afdfcd56850f6b83ba8441b
+COMPONENT_ARCHIVE_HASH=	sha256:313bca7e996a4f59ef9940dd87c6c4b9168064db9be6cabebd37cd65f13759ed
 COMPONENT_PROJECT_URL=	https://openvpn.net
 COMPONENT_ARCHIVE_URL=	https://build.openvpn.net/downloads/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/openvpn
@@ -61,8 +61,8 @@ COMPONENT_TEST_TRANSFORMS= \
 REQUIRED_PACKAGES += driver/network/header-tun
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/lzo
 REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
