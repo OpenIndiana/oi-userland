@@ -19,35 +19,35 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2014-2017, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2022 Niklas Poslovski
 #
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openblas
-COMPONENT_VERSION=	0.2.19
-COMPONENT_VERSION_REV=	0
-COMPONENT_VERSION_TAG=	ga7126c2
-COMPONENT_REVISION_TAG= 9a7e0ec
+COMPONENT_VERSION=	0.3.21
 COMPONENT_FMRI=     	library/math/openblas
 COMPONENT_CLASSIFICATION=Development/High Performance Computing
-COMPONENT_SRC=		xianyi-OpenBLAS-$(COMPONENT_REVISION_TAG)
+COMPONENT_SRC=		OpenBLAS-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.openblas.net
-COMPONENT_ARCHIVE=	xianyi-OpenBLAS-v$(COMPONENT_VERSION)-$(COMPONENT_VERSION_REV)-$(COMPONENT_VERSION_TAG).tar.gz
+COMPONENT_ARCHIVE=	OpenBLAS-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:878353b52940e0d5be32011cd5ba8440758f5270c3fa0f6f6200c26eabc53f1c
-COMPONENT_ARCHIVE_URL=	http://github.com/xianyi/OpenBLAS/tarball/v$(COMPONENT_VERSION)
+    sha256:f36ba3d7a60e7c8bcc54cd9aaa9b1223dd42eaf02c811791c37e8ca707c241ca
+COMPONENT_ARCHIVE_URL=	http://github.com/xianyi/OpenBLAS/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD 3-Clause
 COMPONENT_SUMMARY=     	Optimized BLAS library based on GotoBLAS2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+# Numerical libraries should be shipped as static libs as it is still common in scientific computing projects
+# See discussion here: https://github.com/OpenIndiana/oi-userland/pull/9459
+DROP_STATIC_LIBRARIES= no
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
 # In a virtualized environment getarch cannot detect the architecture.
 # It falls back to INTEL_UKNOWN which causes failure of the build.
 # The option TARGET=GENERIC has to be passed to force detection.
-# Do not define NO_STATIC nor NO_SHARED to build both libraries
 COMPONENT_BUILD_GMAKE_ARGS= PREFIX=$(USRDIR) \
                             DYNAMIC_ARCH=1 \
                             TARGET=PRESCOTT \
@@ -58,19 +58,11 @@ COMPONENT_BUILD_GMAKE_ARGS= PREFIX=$(USRDIR) \
                             NO_LAPACKE=1 \
                             USE_OPENMP=0 \
                             USE_THREAD=1 \
-                            NUM_THREADS=64
+                            NUM_THREADS=64 \
+                            EXTRALIB=-lm
 
-MACHDIR.32=
-MACHDIR.64=$(MACH64)
-
-COMPONENT_INSTALL_ARGS= PREFIX=$(PROTOUSRDIR) MACHDIR=$(MACHDIR.$(BITS)) 
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+COMPONENT_INSTALL_ARGS= PREFIX=$(PROTOUSRDIR) MACHDIR=$(MACH64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GFORTRAN_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library/math

@@ -36,12 +36,12 @@
  ifeq ($(OSNAME), Darwin)
  	@-cp $(LIBDYNNAME) "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)"
  	@-install_name_tool -id "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)/$(LIBDYNNAME)" "$(DESTDIR)$(OPENBLAS_LIBRARY_DIR)/$(LIBDYNNAME)"
-@@ -101,7 +106,7 @@
+@@ -171,7 +171,7 @@
  
- ifndef NO_SHARED
+ ifneq ($(NO_SHARED),1)
  #ifeq logical or
--ifeq ($(OSNAME), $(filter $(OSNAME),Linux FreeBSD NetBSD))
-+ifeq ($(OSNAME), $(filter $(OSNAME),Linux FreeBSD NetBSD SunOS))
+-ifeq ($(OSNAME), $(filter $(OSNAME),Linux FreeBSD NetBSD OpenBSD DragonFly))
++ifeq ($(OSNAME), $(filter $(OSNAME),Linux FreeBSD NetBSD OpenBSD DragonFly SunOS))
  	@echo "SET(OpenBLAS_LIBRARIES ${OPENBLAS_LIBRARY_DIR}/$(LIBPREFIX).so)" >> "$(DESTDIR)$(OPENBLAS_CMAKE_DIR)/$(OPENBLAS_CMAKE_CONFIG)"
  endif
  ifeq ($(OSNAME), $(filter $(OSNAME),WINNT CYGWIN_NT))
