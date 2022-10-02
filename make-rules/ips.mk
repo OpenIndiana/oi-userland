@@ -226,7 +226,6 @@ PYV_FMRI_VERSION = PYV
 PYV_MANIFESTS = $(foreach v,$(PYV_VALUES),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
 PYNV_MANIFESTS = $(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER//')
 MKGENERIC_SCRIPTS += $(BUILD_DIR)/mkgeneric-python
-GENERATE_GENERIC_TRANSFORMS+=$(foreach v,$(PYTHON_VERSIONS), -e 's/$(subst .,\.,$(v))/\$$\(PYVER\)/g')
 else
 NOPY_MANIFESTS = $(UNVERSIONED_MANIFESTS)
 endif
@@ -315,8 +314,7 @@ $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' \
-		-e '/\.la$$/d' -e '/\.pyo$$/d' -e '/usr\/lib\/python[23]\..*\.pyc$$/d' \
-		-e '/usr\/lib\/python3\..*\/__pycache__\/.*/d'  | \
+		-e '/\.la$$/d' | \
 		$(PKGFMT) | \
 		uniq | \
 		cat $(METADATA_TEMPLATE) - $(GENERATE_EXTRA_CMD) | \

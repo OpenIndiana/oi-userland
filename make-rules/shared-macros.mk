@@ -172,6 +172,16 @@ PYTHON_VERSIONS_ALL= $(PYTHON_VERSIONS)
 # 64-bit only.
 PYTHON_64_ONLY_VERSIONS = $(PYTHON_VERSIONS)
 
+# List of python versions we are currently obsoleting.  We no longer build any
+# packages for these python versions, but there still might be hanging some not
+# obsoleted yet versioned packages built for PYTHON_VERSIONS_OBSOLETING python
+# versions.  Or there is just the versioned runtime/python package still
+# available.
+#
+# This list should be usually empty.  Intersection of
+# PYTHON_VERSIONS_OBSOLETING and PYTHON_VERSIONS lists MUST be always empty.
+PYTHON_VERSIONS_OBSOLETING = 2.7 3.5
+
 # PYTHON3_SOABI variable defines the naming scheme
 # of python3 extension libraries: cpython or abi3.
 # Currently, most of the components use cpython naming scheme by default,
