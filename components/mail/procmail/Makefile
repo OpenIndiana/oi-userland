@@ -21,25 +21,29 @@
 
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2022 Niklas Poslovski
 #
-
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		procmail
-COMPONENT_VERSION=	3.22
-COMPONENT_REVISION=	4
-COMPONENT_PROJECT_URL=	http://www.procmail.org
+COMPONENT_VERSION=	3.24
+#COMPONENT_REVISION=	4
+COMPONENT_PROJECT_URL=	https://github.com/BuGlessRB/procmail
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:087c75b34dd33d8b9df5afe9e42801c9395f4bf373a784d9bc97153b0062e117
+    sha256:514ea433339783e95df9321e794771e4887b9823ac55fdb2469702cf69bd3989
+COMPONENT_ARCHIVE_URL=	https://github.com/BuGlessRB/procmail/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=		mail/procmail
+COMPONENT_SUMMARY=	Mail processing program
+COMPONENT_DESCRIPTION=	Procmail can be used to create mail-servers, mailing lists, sort your incoming mail into separate folders/files (real convenient when subscribing to one or more mailing lists or for prioritising your mail), preprocess your mail, start any programs upon mail arrival (e.g. to generate different chimes on your workstation for different types of mail) or selectively forward certain incoming mail automatically to someone.
+COMPONENT_CLASSIFICATION= Applications/Internet
+COMPONENT_LICENSE= GPLv2+ or Artistic
 
-# ftp://ftp.procmail.org/pub/procmail/procmail-3.22.tar.gz no longer works.
-COMPONENT_ARCHIVE_URL=	 ftp://ftp.informatik.rwth-aachen.de/pub/packages/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+COMPONENT_BUILD_ARGS += LOCKINGTEST=110
 
 COMPONENT_INSTALL_ARGS +=	BASENAME=$(PROTOUSRDIR)
 COMPONENT_INSTALL_ARGS +=	MANDIR=$(PROTOUSRSHAREMANDIR)
@@ -51,13 +55,7 @@ ASLR_MODE = $(ASLR_ENABLE)
 COMPONENT_BUILD_ENV += CC=$(CC)
 COMPONENT_BUILD_ENV += RPM_OPT_FLAGS="$(CC_BITS)"
 
-# common targets
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(NO_TESTS)
-
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
