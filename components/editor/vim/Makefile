@@ -24,19 +24,19 @@
 # Copyright (c) 2017, Ken Mays
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2020, Nona Hansel
+# Copyright (c) 2022, Niklas Poslovski
 #
 
-BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	9.0.250
-HUMAN_VERSION=		9.0.0250
+COMPONENT_VERSION=	9.0.646
+HUMAN_VERSION=		9.0.0646
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:55ec3372b5d859d9e676f20b31f26468384b78ab3368dfa8eac540babbdeaccc
+COMPONENT_ARCHIVE_HASH=	sha256:8761334f19c7dd502a375ae79958f5d43b519bacd24d8416dbee558b2a3009a7
 
 include $(WS_MAKE_RULES)/common.mk
 
