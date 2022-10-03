@@ -41,7 +41,6 @@ COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
 
 CONFIGURE_DEFAULT_DIRS=	yes
-PERL_VERSION=		5.34
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -68,9 +67,9 @@ COMPONENT_PRE_BUILD_ACTION= ( \
 
 COMPONENT_TEST_TARGETS=	test
 
-REQUIRED_PACKAGES+=	library/apr
-REQUIRED_PACKAGES+=	library/apr-util
-REQUIRED_PACKAGES+=	runtime/perl-534
-REQUIRED_PACKAGES+=	system/library
-REQUIRED_PACKAGES+=	$(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES+=	web/server/apache-24
+# Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += library/apr
+REQUIRED_PACKAGES += library/apr-util
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += web/server/apache-24
