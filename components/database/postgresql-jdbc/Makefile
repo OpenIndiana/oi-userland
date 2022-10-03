@@ -11,28 +11,27 @@
 
 #
 # Copyright 2017 Alexander Pyhalov.  All rights reserved.
+# Copyright 2022 Niklas Poslovski
 #
-
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	postgresql-jdbc
-COMPONENT_VERSION=	42.0.0
+COMPONENT_VERSION=	42.5.0
 COMPONENT_SUMMARY=	JDBC driver for PostgreSQL
-COMPONENT_SRC=	$(COMPONENT_NAME)-42.0-0.src
+COMPONENT_SRC=	postgresql-$(COMPONENT_VERSION)-jdbc-src
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:99eaa62b49c9ef2be6ad6509fbb3ca8d00e7da6da414cfef574763555b77e1e4
+  sha256:64be079bdf39b3cf67fe84a4a5e7c8a5045f7a1a010957dbf7b9009ce65742a3
 COMPONENT_ARCHIVE_URL= \
-  http://jdbc.postgresql.org/download/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://jdbc.postgresql.org/
+  https://jdbc.postgresql.org/download/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://jdbc.postgresql.org/
 COMPONENT_FMRI=	database/postgres/connector/jdbc
 COMPONENT_CLASSIFICATION=	System/Databases
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV += JAVA_HOME=$(JAVA_HOME)
 
@@ -40,12 +39,8 @@ COMPONENT_BUILD_ACTION = cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) \
 				mvn install
 
 COMPONENT_INSTALL_ACTION = $(MKDIR) -p $(PROTO_DIR)/usr/postgres/jdbc && \
-        $(CP) $(BUILD_DIR_32)/pgjdbc/target/postgresql-*.jar $(PROTO_DIR)/usr/postgres/jdbc/postgresql-jdbc4.jar
+        $(CP) $(BUILD_DIR_64)/target/postgresql-*.jar $(PROTO_DIR)/usr/postgres/jdbc/postgresql-jdbc4.jar
 
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
 
 REQUIRED_PACKAGES += developer/build/maven
 REQUIRED_PACKAGES += developer/java/openjdk8
