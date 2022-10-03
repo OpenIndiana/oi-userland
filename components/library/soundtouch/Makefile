@@ -11,23 +11,22 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2022 Niklas Poslovski
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         soundtouch
-COMPONENT_VERSION=      1.9.2
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      2.3.1
+#COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Audio Processing Library
-COMPONENT_SRC=          $(COMPONENT_NAME)
-COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).zip
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:4aa443594d77986bf977c2856f5530a8015db406631e4b996f962b1e6809883e
+	sha256:6900996607258496ce126924a19fe9d598af9d892cf3f33d1e4daaa9b42ae0b1
 COMPONENT_ARCHIVE_URL=  \
-	http://www.surina.net/soundtouch/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://www.surina.net/soundtouch
+	https://www.surina.net/soundtouch/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://www.surina.net/soundtouch
 COMPONENT_LICENSE=      LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING.TXT
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
