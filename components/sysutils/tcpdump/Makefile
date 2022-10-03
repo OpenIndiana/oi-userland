@@ -19,17 +19,18 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2022 Niklas Poslovski
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcpdump
-COMPONENT_VERSION=	4.9.2
-COMPONENT_PROJECT_URL=	http://www.tcpdump.org/
+COMPONENT_VERSION=	4.99.1
+COMPONENT_PROJECT_URL=	https://www.tcpdump.org/
 COMPONENT_SUMMARY=	A tool for network monitoring and data acquisition
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:798b3536a29832ce0cbb07fafb1ce5097c95e308a6f592d14052e1ef1505fe79
+    sha256:79b36985fb2703146618d87c4acde3e068b91c553fb93f021a337f175fd10ebe
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI=	diagnostic/tcpdump
@@ -40,17 +41,12 @@ COMPONENT_LICENSE_FILE=	LICENSE
 # Prevent macro redefinition error 
 CFLAGS += -D _NETINET_IP_H
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # fix my alignment issues instead of falling over on sparc
 studio_ALIGN.sparc.64=-xmemalign=16i
 CONFIGURE_OPTIONS.sparc += ac_cv___attribute__=no
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
-
-# Install binaries to /usr/sbin
-CONFIGURE_SBINDIR.64 = $(CONFIGURE_SBINDIR.32)
 
 # lazyloading (indirectly enabled by -Bdirect) seems to cause problems with
 # libpcap device enumeration.
@@ -65,15 +61,9 @@ COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
 COMPONENT_PRE_TEST_ACTION = \
         ($(CP) -r $(SOURCE_DIR)/tests $(@D)/.)
 
-test:		$(TEST_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
