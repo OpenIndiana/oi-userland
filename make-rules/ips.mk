@@ -230,6 +230,16 @@ else
 NOPY_MANIFESTS = $(UNVERSIONED_MANIFESTS)
 endif
 
+# PYTHON_PYV_VALUES contains list of all possible PYV values we could encounter:
+# - for all currently supported python versions (from PYTHON_VERSIONS)
+# - for all python versions we are currently obsoleting (from PYTHON_VERSIONS_OBSOLETING)
+# - the $(PYV) string itself
+PYTHON_PYV_VALUES = $(shell echo $(PYTHON_VERSIONS) $(PYTHON_VERSIONS_OBSOLETING) | tr -d .) $$(PYV)
+# Convert REQUIRED_PACKAGES to PYTHON_REQUIRED_PACKAGES for runtime/python
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PYTHON_PYV_VALUES), -e 's|^\(.*runtime/python\)-$(v)$$|PYTHON_\1|g')
+# Convert REQUIRED_PACKAGES to PYTHON_REQUIRED_PACKAGES for library/python/*
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(PYTHON_PYV_VALUES), -e 's|^\(.*library/python/.*\)-$(v)$$|PYTHON_\1|g')
+
 # Look for manifests which need to be duplicated for each version of perl.
 ifeq ($(findstring -PERLVER,$(UNVERSIONED_MANIFESTS)),-PERLVER)
 VERSIONED_MANIFEST_TYPES+= PERL
