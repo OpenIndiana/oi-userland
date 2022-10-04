@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mkdocs
 COMPONENT_VERSION =		1.4.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		mkdocs - Project documentation with Markdown.
 COMPONENT_PROJECT_URL =		https://www.mkdocs.org
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,13 +33,8 @@ TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/click-37
-REQUIRED_PACKAGES += library/python/click-39
-REQUIRED_PACKAGES += library/python/colorama-37
-REQUIRED_PACKAGES += library/python/colorama-39
-REQUIRED_PACKAGES += library/python/importlib_metadata-37
-REQUIRED_PACKAGES += library/python/importlib_metadata-39
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/click
+PYTHON_REQUIRED_PACKAGES += library/python/colorama
+PYTHON_REQUIRED_PACKAGES += library/python/importlib_metadata
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += runtime/python
