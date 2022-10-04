@@ -1262,6 +1262,9 @@ REQUIRED_PACKAGES_SUBST+= GXX_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GFORTRAN_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GOBJC_RUNTIME_PKG
 
+# Generate requirements on all built python version variants for given packages
+REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(PYTHON_REQUIRED_PACKAGES:%=%-$(shell echo $(ver) | tr -d .)))
+
 # Generate requirements on all built perl version variants for given packages
 REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(PERL_REQUIRED_PACKAGES:%=%-$(shell echo $(ver) | tr -d .)))
 
