@@ -20,6 +20,7 @@ COMPONENT_ARCHIVE ?=		$(COMPONENT_SRC).tar.gz
 COMPONENT_FMRI ?=		library/python/$(shell echo $(COMPONENT_NAME) | tr [A-Z] [a-z])
 COMPONENT_PROJECT_URL ?=	https://pypi.org/project/$(COMPONENT_NAME)/
 COMPONENT_ARCHIVE_URL ?=	$(call pypi_url)
+COMPONENT_PYPI ?=		$(COMPONENT_NAME)
 # Enable ASLR by default.  Component could disable ASLR by setting
 # COMPONENT_ASLR to 'no'.
 ifeq ($(strip $(COMPONENT_ASLR)),no)
