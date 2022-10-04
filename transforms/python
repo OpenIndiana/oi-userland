@@ -1,0 +1,22 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Marcel Telka
+#
+
+# Create mediated symlinks in /usr/bin for python binaries
+<transform file path=usr/bin/[^/]+-3\.\d+$ -> default tmp.fmri %{pkg.fmri} >
+<transform file path=(usr/bin/)([^/]+)-(3\.\d+)$ tmp.fmri=.*runtime/python -> emit \
+    link path=%<1>%<2> target=%<2>-%<3> mediator=python mediator-version=%<3> >
+<transform file path=(usr/bin/)([^/]+)-(3\.\d+)$ tmp.fmri=.*library/python/ -> emit \
+    link path=%<1>%<2> target=%<2>-%<3> mediator=python mediator-version=%<3> >
+<transform link tmp.fmri=.* -> delete tmp.fmri .* >
