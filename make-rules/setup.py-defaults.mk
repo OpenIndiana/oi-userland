@@ -17,7 +17,7 @@
 COMPONENT_CLASSIFICATION ?=	Development/Python
 COMPONENT_SRC ?=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE ?=		$(COMPONENT_SRC).tar.gz
-COMPONENT_FMRI ?=		library/python/$(COMPONENT_NAME)
+COMPONENT_FMRI ?=		library/python/$(shell echo $(COMPONENT_NAME) | tr [A-Z] [a-z])
 COMPONENT_PROJECT_URL ?=	https://pypi.org/project/$(COMPONENT_NAME)/
 COMPONENT_ARCHIVE_URL ?=	$(call pypi_url)
 # Enable ASLR by default.  Component could disable ASLR by setting
