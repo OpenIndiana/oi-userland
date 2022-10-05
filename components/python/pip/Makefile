@@ -29,7 +29,7 @@ COMPONENT_ARCHIVE_HASH= sha256:016f8d509871b72fb05da911db513c11059d8a99f4591dda3
 COMPONENT_ARCHIVE_URL=	https://github.com/pypa/pip/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	https://github.com/pypa/pip
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_TOP)/make-rules/common.mk

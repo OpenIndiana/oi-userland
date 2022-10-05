@@ -38,7 +38,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://cffi.readthedocs.org/
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+
 
 TEST_TARGET=			$(TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk

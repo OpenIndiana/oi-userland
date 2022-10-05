@@ -37,7 +37,7 @@ COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/setuptools_scm/
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+
 
 TEST_TARGET=  $(NO_TESTS)
 include $(WS_TOP)/make-rules/common.mk

@@ -39,7 +39,7 @@ COMPONENT_ARCHIVE_URL=	http://www.dabeaz.com/ply/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.dabeaz.com/ply/
 COMPONENT_BUGDB=	python-mod/ply
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+
 
 include $(WS_MAKE_RULES)/common.mk
 

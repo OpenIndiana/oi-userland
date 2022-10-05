@@ -35,7 +35,7 @@ COMPONENT_ARCHIVE_HASH= sha256:acad2d8b20a1af07d4e4c9d2e9285c5ed9104354062f275f3
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pytz.sourceforge.net/
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+
 
 include $(WS_MAKE_RULES)/common.mk
 

@@ -31,7 +31,7 @@ COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/P/$(COMPONENT_NAM
 COMPONENT_PROJECT_URL = https://github.com/irmen/Pyro4
 COMPONENT_LICENSE_FILE=	$(COMPONENT_IPS_NAME).license
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+
 
 # Running tests need tox what we don't have yet:
 TEST_TARGET=	$(NO_TESTS)

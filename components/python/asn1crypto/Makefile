@@ -40,7 +40,6 @@ COMPONENT_PROJECT_URL=	https://github.com/wbond/asn1crypto
 COMPONENT_BUGDB=	python-mod/asn1crypto
 COMPONENT_ANITYA_ID=	15550
 
-PYTHON_VERSIONS = $(PYTHON_VERSIONS_ALL)
 
 TEST_TARGET=			$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk

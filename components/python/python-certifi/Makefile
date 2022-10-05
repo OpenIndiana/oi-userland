@@ -40,7 +40,7 @@ COMPONENT_ARCHIVE_URL= \
     https://github.com/certifi/python-certifi/archive/$(COMPONENT_VERSION).tar.gz
 
 TEST_TARGET= $(NO_TESTS)
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+
 
 include $(WS_MAKE_RULES)/common.mk
 

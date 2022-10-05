@@ -31,7 +31,7 @@ COMPONENT_LICENSE_FILE=	LICENSE.txt
 
 # contextlib2 isn't necessary on newer versions of python 3, but some things
 # in their current versions use it rather than the builtin 'contextlib' anyway
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
