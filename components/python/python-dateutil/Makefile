@@ -32,7 +32,7 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_SUMMARY=	powerful extensions to the standard datetime module
 COMPONENT_LICENSE=	Apache 2.0, BSD 3-clause
 
-PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
+
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk

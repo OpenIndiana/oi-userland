@@ -43,7 +43,7 @@ COMPONENT_FMRI=		library/python/pycparser
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	BSD
 
-PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
+
 # Tests can only be run for python 3 versions as we miss some necessary packages for python-2.7.
 #PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
 

@@ -29,7 +29,6 @@ COMPONENT_ARCHIVE_HASH= sha256:e9535b8c84dc9571a48999094fda7f33e63c3f1b74f3e5f3a
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/a/argh/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/argh
 
-PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk

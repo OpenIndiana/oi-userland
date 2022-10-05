@@ -40,7 +40,6 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/untitaker/python-atomicwrites
 COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS=$(PYTHON_ALL_VERSIONS)
 # Test can only be run for python3 versions:
 #PYTHON_VERSIONS=$(PYTHON3_VERSIONS)
 include $(WS_MAKE_RULES)/common.mk

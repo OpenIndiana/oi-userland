@@ -35,7 +35,7 @@ COMPONENT_ARCHIVE_HASH= sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e33
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.grantjenks.com/docs/sortedcontainers/
 
-PYTHON_VERSIONS= $(PYTHON_ALL_VERSIONS)
+
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk

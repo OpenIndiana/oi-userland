@@ -40,7 +40,7 @@ COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/n/$(COMPONENT_NAM
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE= nose.license
 
-PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
+
 
 include $(WS_MAKE_RULES)/common.mk
 

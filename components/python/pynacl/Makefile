@@ -35,7 +35,7 @@ COMPONENT_LICENSE_FILE=	LICENSE
 # This is the list of pythons versions we support tests for.
 # So, if you want to run tests activate this and deactivate the other PYTHON_VERSIONS definition:
 #PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
-PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
+
 
 include $(WS_MAKE_RULES)/common.mk
 

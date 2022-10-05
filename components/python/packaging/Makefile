@@ -40,7 +40,7 @@ COMPONENT_FMRI=		library/python/packaging
 COMPONENT_CLASSIFICATION=Development/Python
 COMPONENT_LICENSE=	Apache Software License, BSD-2
 
-PYTHON_VERSIONS= $(PYTHON_ALL_VERSIONS)
+
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk

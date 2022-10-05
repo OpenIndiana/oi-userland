@@ -40,7 +40,7 @@ COMPONENT_FMRI=		library/python/mako
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
+
 
 # Tests don't work yet as we are missing many dependencies:
 TEST_TARGET=	$(NO_TESTS)

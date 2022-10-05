@@ -35,7 +35,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:38f16b1317b8dd82df67ed5daa5f5e7c959e46579840d77a67a4ceb9cef0a50b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 
-PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
+
 
 # test requires PyContracts and gevent which haven't been integrated yet.
 TEST_TARGET=	$(NO_TESTS)

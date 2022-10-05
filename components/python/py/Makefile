@@ -39,7 +39,7 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://py.readthedocs.io/en/latest/
 COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS= $(PYTHON_ALL_VERSIONS)
+
 
 # Tests are failing
 include $(WS_MAKE_RULES)/common.mk
