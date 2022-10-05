@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::DNS
-HUMAN_VERSION =			1.34
+HUMAN_VERSION =			1.35
 COMPONENT_SUMMARY =		Net::DNS - Perl Interface to the Domain Name System
 COMPONENT_CPAN_AUTHOR =		NLNETLABS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:de756e3fb6addbd32beafc869c4dd1c6a0b3783c5ef56dbefc6809443a4b1d15
+	sha256:f1a1478e4acbdb6b96de63070b35050dec9b9fce6c95bb2215bfc64a2d98e167
 COMPONENT_LICENSE =		MIT
 
 include $(WS_MAKE_RULES)/common.mk
