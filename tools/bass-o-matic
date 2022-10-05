@@ -192,7 +192,17 @@ def main():
                         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',)
 
     if make_arg:
-        proc = subprocess.Popen(['gmake', '-s'] + [make_arg])
+        MAKE=os.getenv("MAKE","gmake")
+
+        # https://www.gnu.org/software/make/manual/html_node/POSIX-Jobserver.html
+        JOBFLAGS=re.match('.* (--jobserver-auth=([0-9]+),([0-9]+)) ?.*',os.getenv("MAKEFLAGS",""))
+        if JOBFLAGS:
+            JOBFDS=( JOBFLAGS.group(2), JOBFLAGS.group(3) )
+            JOBFLAGS=[JOBFLAGS.group(1)]
+        else:
+            JOBFDS=()
+            JOBFLAGS=[]
+        proc = subprocess.Popen([MAKE, '-s'] + [make_arg] + JOBFLAGS,pass_fds=JOBFDS)
         rc = proc.wait()
         sys.exit(rc)
 

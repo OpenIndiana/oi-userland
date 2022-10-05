@@ -44,6 +44,6 @@ download setup prep build install pre-publish publish validate clean clobber \
 test component-hook unpack patch: $(SUBDIRS)
 
 $(SUBDIRS):	FORCE
-	@+echo "$(TARGET) $@" ; $(GMAKE) -C $@ $(TARGET)
+	@+echo "$(TARGET) $@" ; $(GMAKE) -s -C $@ $(TARGET)
 
 FORCE:
