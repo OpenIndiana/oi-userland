@@ -38,7 +38,7 @@ COMPONENT_PROJECT_URL=  https://pyopenssl.org/
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_LICENSE=	Apache2
 
-PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
+
 
 include $(WS_MAKE_RULES)/common.mk
 

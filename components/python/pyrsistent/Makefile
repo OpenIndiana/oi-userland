@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  https://pypi.python.org/packages/source/p/pyrsistent/$(COMPONENT_ARCHIVE)
 
 BUILD_BITS=		64
-PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
+
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk

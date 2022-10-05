@@ -41,7 +41,6 @@ COMPONENT_FMRI= library/python/hyperlink
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_LICENSE= MIT
 
-PYTHON_VERSIONS = $(PYTHON3_VERSIONS)
 
 include $(WS_MAKE_RULES)/common.mk
 

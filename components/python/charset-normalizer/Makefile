@@ -40,7 +40,7 @@ COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_FMRI=	library/python/$(COMPONENT_NAME)
 COMPONENT_LICENSE= MIT
 
-PYTHON_VERSIONS= $(PYTHON3_VERSIONS)
+
 # iFor tests use the following as they don't work for python-3.5:
 #PYTHON_VERSIONS= 3.7 3.9
 

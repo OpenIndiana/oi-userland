@@ -28,7 +28,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:c8a85b28d377cc7737e46e2d9f2b4f44ee3c0e1deac6bf46ddefc7187d30797a
 COMPONENT_ARCHIVE_URL=  https://pypi.python.org/packages/source/j/jsonschema/$(COMPONENT_ARCHIVE)
 
-PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
+
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk

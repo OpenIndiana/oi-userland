@@ -40,7 +40,7 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://bitbucket.org/pypa/distlib/src/master/
 COMPONENT_LICENSE=	MIT
 
-PYTHON_VERSIONS=$(PYTHON3_VERSIONS)
+
 
 include $(WS_MAKE_RULES)/common.mk
 
