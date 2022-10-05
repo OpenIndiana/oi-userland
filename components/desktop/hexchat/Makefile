@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexchat
 COMPONENT_VERSION=	2.16.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://hexchat.github.io/
 COMPONENT_SUMMARY=	HexChat IRC client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -56,17 +57,14 @@ CONFIGURE_OPTIONS += -Dwith-python=python-3.9
 CONFIGURE_OPTIONS += -Dwith-lua=false
 CONFIGURE_ENV += AR="/usr/gnu/bin/ar"
 
-REQUIRED_PACKAGES += runtime/perl-534
-REQUIRED_PACKAGES += runtime/python-39
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libnotify
-REQUIRED_PACKAGES += library/libproxy
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus-glib
