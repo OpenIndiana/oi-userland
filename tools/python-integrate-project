@@ -157,8 +157,6 @@ COMPONENT_ARCHIVE_HASH =	\\
 	sha256:TODO
 COMPONENT_LICENSE =		license:TODO
 COMPONENT_LICENSE_FILE =	licfile:TODO
-
-TEST_TARGET = \$(NO_TESTS)
 EOF
 cat "$CONF" | gsed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\ninclude \$(WS_MAKE_RULES)/common.mk\n"
@@ -264,14 +262,6 @@ rm -f "$CONF"
 git checkout "$CONF" > /dev/null 2>&1
 
 
-# Detect support for tests
-TESTS=0
-if [[ -f "$SOURCE_DIR/runtests.py" ]] ; then
-	TESTS=1
-	sed -i -e '/^TEST_TARGET/,+1d' Makefile
-fi
-
-
 # Generate REQUIRED_PACKAGES
 gmake REQUIRED_PACKAGES > /dev/null 2>&1 || printf "ERROR: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
 git add Makefile
@@ -289,41 +279,37 @@ grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\
 PYTHON_VERSIONS=$(gmake print-value-PYTHON_VERSIONS)
 
 
-if ((TESTS == 0)) ; then
-	printf "WARNING: Testing not supported\n"
-else
-	# Run tests to make sure they pass
-	for v in $PYTHON_VERSIONS ; do
-		gmake PYTHON_VERSIONS=$v test > /dev/null 2>&1 || printf "ERROR: Testing failed for %s!\n" "$v" >&2
-	done
+# Run tests to make sure they pass
+for v in $PYTHON_VERSIONS ; do
+	gmake PYTHON_VERSIONS=$v test > /dev/null 2>&1 || printf "ERROR: Testing failed for %s!\n" "$v" >&2
+done
 
-	# Run tests again and create test results master file(s)
-	COMPONENT_TEST_MASTER_PREV=
-	for v in $PYTHON_VERSIONS ; do
-		COMPONENT_TEST_MASTER=$(gmake PYTHON_VERSION=$v print-value-COMPONENT_TEST_MASTER)
-		COMPONENT_TEST_SNAPSHOT=$(gmake PYTHON_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
-		mkdir -p $(dirname "$COMPONENT_TEST_MASTER")
-		touch "$COMPONENT_TEST_MASTER"
+# Run tests again and create test results master file(s)
+COMPONENT_TEST_MASTER_PREV=
+for v in $PYTHON_VERSIONS ; do
+	COMPONENT_TEST_MASTER=$(gmake PYTHON_VERSION=$v print-value-COMPONENT_TEST_MASTER)
+	COMPONENT_TEST_SNAPSHOT=$(gmake PYTHON_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
+	mkdir -p $(dirname "$COMPONENT_TEST_MASTER")
+	touch "$COMPONENT_TEST_MASTER"
+	gmake PYTHON_VERSIONS=$v test > /dev/null 2>&1
+	TEST_RET=$?
+	# If there is no snapshot produced the component likely does not support tests
+	if [[ ! -f "$COMPONENT_TEST_SNAPSHOT" ]] ; then
+		printf "WARNING: test unsupported for %s\n" "$v" >&2
+		rm -f "$COMPONENT_TEST_MASTER"
+		rmdir $(dirname "$COMPONENT_TEST_MASTER")
+		continue
+	fi
+	if [[ "$COMPONENT_TEST_MASTER_PREV" != "$COMPONENT_TEST_MASTER" ]] ; then
+		[[ -s "$COMPONENT_TEST_SNAPSHOT" ]] || printf "WARNING: 'gmake test' produced empty results for %s\n" "$v" >&2
+		cp -p "$COMPONENT_TEST_SNAPSHOT" "$COMPONENT_TEST_MASTER"
+		git add "$COMPONENT_TEST_MASTER"
+		COMPONENT_TEST_MASTER_PREV="$COMPONENT_TEST_MASTER"
 		gmake PYTHON_VERSIONS=$v test > /dev/null 2>&1
 		TEST_RET=$?
-		# If there is no snapshot produced the component likely does not support tests
-		if [[ ! -f "$COMPONENT_TEST_SNAPSHOT" ]] ; then
-			printf "WARNING: test unsupported for %s\n" "$v" >&2
-			rm -f "$COMPONENT_TEST_MASTER"
-			rmdir $(dirname "$COMPONENT_TEST_MASTER")
-			continue
-		fi
-		if [[ "$COMPONENT_TEST_MASTER_PREV" != "$COMPONENT_TEST_MASTER" ]] ; then
-			[[ -s "$COMPONENT_TEST_SNAPSHOT" ]] || printf "WARNING: 'gmake test' produced empty results for %s\n" "$v" >&2
-			cp -p "$COMPONENT_TEST_SNAPSHOT" "$COMPONENT_TEST_MASTER"
-			git add "$COMPONENT_TEST_MASTER"
-			COMPONENT_TEST_MASTER_PREV="$COMPONENT_TEST_MASTER"
-			gmake PYTHON_VERSIONS=$v test > /dev/null 2>&1
-			TEST_RET=$?
-		fi
-		((TEST_RET != 0)) && printf "ERROR: 'gmake test' results differ for %s!\n" "$v" >&2
-	done
-fi
+	fi
+	((TEST_RET != 0)) && printf "ERROR: 'gmake test' results differ for %s!\n" "$v" >&2
+done
 
 
 # Publish packages and create pkg5 file
