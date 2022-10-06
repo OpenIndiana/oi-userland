@@ -205,9 +205,22 @@ function detect_license
 	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
 }
 
+function get_PKGINFO_entry
+{
+	typeset ENTRY="$1"
+
+	[[ -f "$SOURCE_DIR/PKG-INFO" ]] || return
+
+	cat "$SOURCE_DIR/PKG-INFO" \
+		| sed -e '/^$/,$d' \
+		| awk 'END{printf("\n")}/^[^:]+: /{$0="\n"$0}1' ORS=' ' \
+		| grep "^$ENTRY: " \
+		| sed -e "s/^$ENTRY: //"
+}
+
 LICENSE=
 LICFILE=
-for f in LICENSE LICENSE.txt LICENSE.rst ; do
+for f in $(get_PKGINFO_entry "License-File") LICENSE ; do
 	[[ -f "$SOURCE_DIR/$f" ]] || continue
 	LICFILE="$f"
 
