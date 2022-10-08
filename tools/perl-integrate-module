@@ -16,14 +16,17 @@
 #
 
 
-METACPANAPI=https://fastapi.metacpan.org/v1
+THIS="perl-integrate-module"
+CONF="$THIS.conf"
+SNIPPET="$THIS.snippet"
+APIURL="https://fastapi.metacpan.org/v1"
 CURL="/usr/bin/curl -s"
 
 
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1" >&2
-	printf "Usage: perl-integrate-module [-l VERSION] [-o OBSOLETE].. [-u] MODULE\n" >&2
+	printf "Usage: %s [-l VERSION] [-o OBSOLETE].. [-u] MODULE\n" "$THIS" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
@@ -56,7 +59,7 @@ DIR="$WS_TOP/components/perl"
 
 
 # Get data from metacpan
-METACPAN_MODULE=$($CURL "$METACPANAPI/module/$MODULE")
+METACPAN_MODULE=$($CURL "$APIURL/module/$MODULE")
 if (($? != 0)) || [[ -z "$METACPAN_MODULE" ]] ; then
 	printf "FATAL: Failed to get data from metacpan\n" >&2
 	exit 1
@@ -70,7 +73,7 @@ if (($? != 0)) || [[ -z "$DISTRIBUTION" || "$DISTRIBUTION" == "null" ]] ; then
 fi
 if [[ "$DISTRIBUTION" != "${MODULE//::/-}" ]] then
 	NEW_MODULE="${DISTRIBUTION//-/::}"
-	NEW_METACPAN_MODULE=$($CURL "$METACPANAPI/module/$NEW_MODULE")
+	NEW_METACPAN_MODULE=$($CURL "$APIURL/module/$NEW_MODULE")
 	NEW_DISTRIBUTION=$(printf "%s" "$NEW_METACPAN_MODULE" | /usr/bin/jq -r '.distribution')
 	if [[ "$NEW_DISTRIBUTION" == "$DISTRIBUTION" ]] ; then
 		printf "WARNING: Module %s does not match distribution %s\n" "$MODULE" "$DISTRIBUTION" >&2
@@ -132,16 +135,16 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 	gmake clobber > /dev/null 2>&1
 fi
 
-# Remove everything from git (except known patches, history, and perl-integrate-module.conf)
-touch perl-integrate-module.conf
-grep "^%patch%" perl-integrate-module.conf | while read TAG PATCH ; do rm -f "patches/$PATCH" ; done
-rm -f history perl-integrate-module.conf
+# Remove everything from git (except known patches, history, and $CONF)
+touch "$CONF"
+grep "^%patch%" "$CONF" | while read TAG PATCH ; do rm -f "patches/$PATCH" ; done
+rm -f history "$CONF"
 find . -type f | while read f ; do git rm "$f" > /dev/null 2>&1 ; done
 rm -rf "$DIR" 2>/dev/null
 git checkout history > /dev/null 2>&1
-git checkout perl-integrate-module.conf > /dev/null 2>&1
-touch perl-integrate-module.conf
-grep "^%patch%" perl-integrate-module.conf | while read TAG PATCH ; do
+git checkout "$CONF" > /dev/null 2>&1
+touch "$CONF"
+grep "^%patch%" "$CONF" | while read TAG PATCH ; do
 	git checkout "patches/$PATCH" > /dev/null 2>&1
 	[[ -f "patches/$PATCH" ]] || printf "WARNING: Patch %s not found\n" "$PATCH" >&2
 done
@@ -154,12 +157,12 @@ cat <<EOF
 
 #
 # This file was automatically generated using the following command:
-#   \$WS_TOOLS/perl-integrate-module $MODULE
+#   \$WS_TOOLS/$THIS $MODULE
 #
 
 BUILD_STYLE = modulebuild
 EOF
-gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < perl-integrate-module.conf
+gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < "$CONF"
 cat <<EOF
 
 include ../../../make-rules/shared-macros.mk
@@ -177,9 +180,9 @@ COMPONENT_ARCHIVE_HASH =	\\
 COMPONENT_LICENSE =		license:TODO
 COMPONENT_LICENSE_FILE =	licfile:TODO
 EOF
-cat perl-integrate-module.conf | gsed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
+cat "$CONF" | gsed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\ninclude \$(WS_MAKE_RULES)/common.mk\n"
-cat perl-integrate-module.conf | gsed -e '0,/^%include-3%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
+cat "$CONF" | gsed -e '0,/^%include-3%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\n"
 ) > Makefile
 
@@ -338,9 +341,9 @@ if [[ -z "$LICENSE" ]] ; then
 	USE_DEFAULT_PERL_LICENSE=1
 
 	# Execute hook-no-license snippet
-	gsed -e '0,/^%hook-no-license%/d' -e '/^%/,$d' < perl-integrate-module.conf > perl-integrate-module.snippet
-	. ./perl-integrate-module.snippet
-	rm -f perl-integrate-module.snippet
+	gsed -e '0,/^%hook-no-license%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
+	. "./$SNIPPET"
+	rm -f "$SNIPPET"
 
 
 	if ((USE_DEFAULT_PERL_LICENSE)) ; then
@@ -374,21 +377,21 @@ if ! gmake sample-manifest > /dev/null 2>&1 ; then
 	printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
 else
 	cat manifests/sample-manifest.p5m \
-		| sed -e 's/^#.*Copyright.*<contributor>.*$/# This file was automatically generated using perl-integrate-module/g' \
+		| sed -e 's/^#.*Copyright.*<contributor>.*$/# This file was automatically generated using '"$THIS"'/g' \
 		> "$DISTRIBUTION-PERLVER.p5m"
 
 	# Execute hook-manifest snippet
-	gsed -e '0,/^%hook-manifest%/d' -e '/^%/,$d' < perl-integrate-module.conf > perl-integrate-module.snippet
-	. ./perl-integrate-module.snippet
-	rm -f perl-integrate-module.snippet
+	gsed -e '0,/^%hook-manifest%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
+	. "./$SNIPPET"
+	rm -f "$SNIPPET"
 
 	git add manifests/sample-manifest.p5m "$DISTRIBUTION-PERLVER.p5m"
 fi
 
 
-# perl-integrate-module.conf is no longer needed
-rm -f perl-integrate-module.conf
-git checkout perl-integrate-module.conf > /dev/null 2>&1
+# $CONF is no longer needed
+rm -f "$CONF"
+git checkout "$CONF" > /dev/null 2>&1
 
 
 # Generate REQUIRED_PACKAGES
