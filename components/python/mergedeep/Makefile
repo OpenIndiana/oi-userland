@@ -20,7 +20,8 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mergedeep
 COMPONENT_VERSION =		1.3.4
-COMPONENT_SUMMARY =		mergedeep - A deep merge function for 🐍.
+COMPONENT_REVISION=		1
+COMPONENT_SUMMARY =		mergedeep - A deep merge function for Python.
 COMPONENT_PROJECT_URL =		https://github.com/clarketm/mergedeep
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:0096d52e9dad9939c3d975a774666af186eda617e6ca84df4c94dec30004f2a8
