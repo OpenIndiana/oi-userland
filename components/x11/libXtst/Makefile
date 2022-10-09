@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXtst
-COMPONENT_VERSION= 1.2.3
+COMPONENT_VERSION= 1.2.4
 COMPONENT_FMRI=    x11/library/libxtst
 COMPONENT_SUMMARY= libXtst - Client library for X Record and Test extensions
-COMPONENT_ARCHIVE_HASH= \
-  sha256:4655498a1b8e844e3d6f21f3b2c4e2b571effb5fd83199d428a6ba7ea4bf5204
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:84f5f30b9254b4ffee14b5b0940e2622153b0d3aed8286a3c5b7eeb340ca33c8
 
 include $(WS_MAKE_RULES)/common.mk
 
