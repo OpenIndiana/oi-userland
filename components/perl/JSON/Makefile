@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		JSON
-HUMAN_VERSION =			4.09
+HUMAN_VERSION =			4.10
 COMPONENT_SUMMARY =		JSON - JSON (JavaScript Object Notation) encoder/decoder
 COMPONENT_CPAN_AUTHOR =		ISHIGAKI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6780a51f438c0932eec0534fc9cd2b1ad0d64817eda4add8ede5ec77d6d2c991
+	sha256:df8b5143d9a7de99c47b55f1a170bd1f69f711935c186a6dc0ab56dd05758e35
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
