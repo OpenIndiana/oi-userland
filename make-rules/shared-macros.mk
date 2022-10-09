@@ -821,12 +821,21 @@ PKG_MACROS +=   PG_BASEPKG=$(PG_BASEPKG)
 MYSQL_VERSION ?=   10.6
 MYSQL_IMPLEM ?=    mariadb
 MYSQL_VERNUM =     $(subst .,,$(MYSQL_VERSION))
+MYSQL_MINOR =      $(word 2,$(subst .,$(space),$(MYSQL_VERSION)))
+# Beginning with mariadb 10.6 we only ship 64 bit versions. That changes the paths.
+$(if $(shell [ $(MYSQL_MINOR) -ge 6 ] && echo "OK"), \
+    $(eval MYSQL_64_BIT_ONLY := true), \
+    $(eval MYSQL_64_BIT_ONLY := false))
 # For dependencies, including REQUIRED_PACKAGES if needed
 MYSQL_BASEPKG =    database/$(MYSQL_IMPLEM)-$(MYSQL_VERNUM)
 
 MYSQL_HOME =       $(USRDIR)/$(MYSQL_IMPLEM)/$(MYSQL_VERSION)
+ifeq ($(strip $(MYSQL_64_BIT_ONLY)),false)
 MYSQL_BINDIR.32 =  $(MYSQL_HOME)/bin
 MYSQL_BINDIR.64 =  $(MYSQL_HOME)/bin/$(MACH64)
+else
+MYSQL_BINDIR.64 =  $(MYSQL_HOME)/bin
+endif
 MYSQL_BINDIR =     $(MYSQL_BINDIR.$(BITS))
 MYSQL_INCDIR =     $(MYSQL_HOME)/include
 MYSQL_MANDIR =     $(MYSQL_HOME)/man
