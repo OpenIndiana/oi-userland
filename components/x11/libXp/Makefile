@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXp
-COMPONENT_VERSION= 1.0.3
+COMPONENT_VERSION= 1.0.4
 COMPONENT_FMRI=    x11/library/libxp
 COMPONENT_SUMMARY= libXp - X print library
-COMPONENT_ARCHIVE_HASH= \
-  sha256:7f360c9905849c3587d48efc0f0ecbc852c19f61a52b18530d6b005cb9148c57
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:1f19e3b8e82a34a8fd9889a7d9af0abe8588cb03fb57c37c569634cf3b9df1a4
 
 include $(WS_MAKE_RULES)/common.mk
 
