@@ -335,11 +335,8 @@ done
 
 
 # Publish packages and create pkg5 file
-if ! gmake publish > /dev/null 2>&1 ; then
-	printf "ERROR: 'gmake publish' failed!\n" >&2
-else
-	git add pkg5
-fi
+gmake publish > /dev/null 2>&1 || printf "ERROR: 'gmake publish' failed!\n" >&2
+git add pkg5 2>/dev/null
 
 
 # Handle history
