@@ -25,20 +25,18 @@
 # Copyright (c) 2021, Aurelien Larcher
 #
 
-BUILD_BITS= 64
 USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
-COMPONENT_VERSION=      3.9.14
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      3.9.15
 COMPONENT_FMRI=			runtime/python-39
 COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:651304d216c8203fe0adf1a80af472d8e92c3b0e0a7892222ae4d9f3ae4debcf
+COMPONENT_ARCHIVE_HASH= sha256:12daff6809528d9f6154216950423c9e30f0e47336cb57c6aa0b4387dd5eb4b2
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      PSFv2
 COMPONENT_LICENSE_FILE=	python39.license
@@ -184,6 +182,9 @@ COMPONENT_TEST_TARGETS = test < /dev/null
 # with "tests OK." and end with "Re-running failed tests..." for comparison.
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS  = "'/tests OK./ {results = 1}; /Total duration/ {results = 0}; /Re-running failed tests in verbose mode/ {results = 0} {if (results) print $0 }'"
+
+# Proper PYVER is needed for manifest processing
+PKG_MACROS += PYVER=$(COMPONENT_PYVER)
 
 # Required for dump(1)
 REQUIRED_PACKAGES += developer/object-file
