@@ -180,7 +180,7 @@ ifdef CANONICAL_REPO
 endif
 
 $(COMPONENT_DIRS.nosetup):	$(WS_LOGS) FORCE
-	@cd $(@:%.nosetup=%) && echo "$(TARGET) $(@:%.nosetup=%)" && \
+	@+cd $(@:%.nosetup=%) && echo "$(TARGET) $(@:%.nosetup=%)" && \
 	 $(BASS_O_MATIC) --make $(TARGET) $(LOG)
 
 .PHONY:
