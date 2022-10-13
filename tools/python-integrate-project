@@ -298,6 +298,12 @@ grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\
 ! gmake env-check > /dev/null 2>&1 && printf "FATAL: 'gmake env-check' failed!\n" >&2 && exit 1
 
 
+# Install everything before we start tests.
+# We need to do this explicitly now otherwise automatic rename of binaries in
+# usr/bin won't work properly during implicit install invoked by tests.
+gmake install > /dev/null 2>&1
+
+
 PYTHON_VERSIONS=$(gmake print-value-PYTHON_VERSIONS)
 
 
