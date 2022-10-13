@@ -12,20 +12,17 @@
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 #
 
+BUILD_STYLE = pkg
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		entire
+COMPONENT_NAME =		entire
+COMPONENT_VERSION =		0.5.11
+COMPONENT_REVISION =		1
+COMPONENT_FMRI =		entire
+COMPONENT_SUMMARY =		incorporation to lock all system packages to same build (empty package)
+COMPONENT_CLASSIFICATION =	Meta Packages/Group Packages
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-download:
-
-prep:
-
-build:
-
-install:
-	[ -d $(PROTO_DIR) ] || mkdir -p $(PROTO_DIR)
-
-clean:
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+# Auto-generated dependencies
