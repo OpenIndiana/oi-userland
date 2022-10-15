@@ -35,6 +35,7 @@
 #
 # This set of rules makes the "publish" target the default target for make(1)
 #
+.NOTPARALLEL:
 
 PKGDEPEND =	/usr/bin/pkgdepend
 PKGFMT =	/usr/bin/pkgfmt

@@ -25,6 +25,8 @@
 # Since common lisp libraries are all source code, there is no need for
 # BUILD_64 and INSTALL_64.
 
+.NOTPARALLEL:
+
 INSTALL_DIR =	$(PROTOCLDIR)/source/$(COMPONENT_NAME)
 
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep

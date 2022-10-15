@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+.NOTPARALLEL:
 
 #
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
