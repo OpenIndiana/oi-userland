@@ -16,7 +16,7 @@ BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=chezmoi
-COMPONENT_VERSION=2.20.0
+COMPONENT_VERSION=2.25.0
 COMPONENT_SUMMARY=Manage your dotfiles across multiple diverse machines, securely.
 COMPONENT_PROJECT_URL=https://github.com/twpayne/chezmoi
 COMPONENT_FMRI=application/chezmoi
@@ -24,7 +24,7 @@ COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=https://github.com/twpayne/chezmoi/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=sha256:7e22412a7a766d2156927e687e73c8c139cd014eb33846366884d8ffb7fdc654
+COMPONENT_ARCHIVE_HASH=sha256:045ef3fa4a3a53cdf5a9ff2bda34db95724c91a3f2df90dd752e8082f0cae00e
 COMPONENT_LICENSE=MIT
 COMPONENT_LICENSE_FILE=chezmoi.license
 TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
