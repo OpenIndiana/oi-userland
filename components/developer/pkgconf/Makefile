@@ -28,6 +28,8 @@ COMPONENT_FMRI=           developer/build/pkgconf
 COMPONENT_CLASSIFICATION= Development/System
 COMPONENT_LICENSE=        ISC
 
+TEST_TARGET = $(NO_TESTS)
+
 include $(WS_MAKE_RULES)/common.mk
 
 # do not build static library
