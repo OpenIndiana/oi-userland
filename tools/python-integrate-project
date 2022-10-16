@@ -19,7 +19,7 @@
 THIS="python-integrate-project"
 CONF="$THIS.conf"
 SNIPPET="$THIS.snippet"
-APIURL=https://pypi.org/pypi
+APIURL="https://pypi.org/pypi"
 CURL="/usr/bin/curl -s"
 
 
@@ -65,6 +65,9 @@ if (($? != 0)) || [[ -z "$PYPI_PROJECT" ]] ; then
 	exit 1
 fi
 
+# Distribution match project
+DISTRIBUTION="$PROJECT"
+
 # Get project homepage
 HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.home_page')
 if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
@@ -97,7 +100,7 @@ fi
 
 
 # Prepare the directory
-DIR="$DIR/$PROJECT"
+DIR="$DIR/$DISTRIBUTION"
 mkdir -p "$DIR"
 cd "$DIR"
 git restore --staged . > /dev/null 2>&1
@@ -155,7 +158,7 @@ cat <<EOF
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		$PROJECT
+COMPONENT_NAME =		$DISTRIBUTION
 COMPONENT_VERSION =		$VERSION
 COMPONENT_REVISION =		$((PREV_REV + 1))
 COMPONENT_SUMMARY =		$PROJECT - TODO
@@ -252,10 +255,10 @@ if [[ -z "$LICENSE" ]] ; then
 	. "./$SNIPPET"
 	rm -f "$SNIPPET"
 
-	if [[ -f "$PROJECT.license" ]] ; then
+	if [[ -f "$DISTRIBUTION.license" ]] ; then
 		sed -i -e '/^COMPONENT_LICENSE_FILE/d' Makefile
-		git add "$PROJECT.license"
-		[[ -z "$LICENSE" ]] && detect_license LICENSE "$PROJECT.license"
+		git add "$DISTRIBUTION.license"
+		[[ -z "$LICENSE" ]] && detect_license LICENSE "$DISTRIBUTION.license"
 	fi
 	[[ -z "$LICENSE" ]] && LICENSE="TODO"
 fi
@@ -269,15 +272,15 @@ if ! gmake sample-manifest > /dev/null 2>&1 ; then
 	printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
 else
 	cat manifests/sample-manifest.p5m \
-		| sed -e 's/^#.*Copyright.*<contributor>.*$/# This file was automatically generated using '$THIS'/g' \
-		> "$PROJECT-PYVER.p5m"
+		| sed -e 's/^#.*Copyright.*<contributor>.*$/# This file was automatically generated using '"$THIS"'/g' \
+		> "$DISTRIBUTION-PYVER.p5m"
 
 	# Execute hook-manifest snippet
 	gsed -e '0,/^%hook-manifest%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
 	. "./$SNIPPET"
 	rm -f "$SNIPPET"
 
-	git add manifests/sample-manifest.p5m "$PROJECT-PYVER.p5m"
+	git add manifests/sample-manifest.p5m "$DISTRIBUTION-PYVER.p5m"
 fi
 
 
@@ -405,7 +408,7 @@ else
 	fi
 	[[ -z "$MSG" ]] && MSG="rebuild"
 
-	MSG="python/$PROJECT: $MSG"
+	MSG="python/$DISTRIBUTION: $MSG"
 fi
 
 # Commit the results
