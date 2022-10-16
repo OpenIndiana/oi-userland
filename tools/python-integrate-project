@@ -69,7 +69,7 @@ fi
 HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.home_page')
 if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
 	printf "WARNING: Failed to get homepage for project %s from pypi\n" "$PROJECT" >&2
-	HOMEPAGE="TODO"
+	HOMEPAGE=
 fi
 
 # Find the latest version if not provided by user
@@ -159,7 +159,9 @@ COMPONENT_NAME =		$PROJECT
 COMPONENT_VERSION =		$VERSION
 COMPONENT_REVISION =		$((PREV_REV + 1))
 COMPONENT_SUMMARY =		$PROJECT - TODO
-COMPONENT_PROJECT_URL =		$HOMEPAGE
+EOF
+[[ -n "$HOMEPAGE" ]] && printf "COMPONENT_PROJECT_URL =\t\t%s\n" "$HOMEPAGE"
+cat <<EOF
 COMPONENT_ARCHIVE_URL =		\\
 	$DOWNLOAD_URL
 COMPONENT_ARCHIVE_HASH =	\\
