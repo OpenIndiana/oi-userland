@@ -24,20 +24,18 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS= 64
 USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
-COMPONENT_VERSION=      3.7.13
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      3.7.15
 COMPONENT_FMRI=		runtime/python-37
 COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:99f106275df8899c3e8cb9d7c01ce686c202ef275953301427194693de5bef84
+COMPONENT_ARCHIVE_HASH= sha256:5911475a07ac2b53d746e88a0716af6d2b4734941919136ea0d33fb9c75b9714
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      PSFv2
 COMPONENT_LICENSE_FILE=	python37.license
@@ -180,6 +178,11 @@ COMPONENT_TEST_TARGETS = test < /dev/null
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS  = "'/tests OK./ {results = 1}; /Total duration/ {results = 0}; /Re-running failed tests in verbose mode/ {results = 0} {if (results) print $0 }'"
 
+# Proper PYVER is needed for manifest processing
+PKG_MACROS += PYVER=3.7
+
+PKG_HARDLINKS += usr/bin/python3.7
+
 # Required for dump(1)
 REQUIRED_PACKAGES += developer/object-file
 # Required to build ossaudiodev module
@@ -196,7 +199,6 @@ REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
-#REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
