@@ -68,11 +68,27 @@ fi
 # Distribution match project
 DISTRIBUTION="$PROJECT"
 
+function get_PKGINFO_entry
+{
+	typeset ENTRY="$1"
+
+	[[ -f "$SOURCE_DIR/PKG-INFO" ]] || return
+
+	cat "$SOURCE_DIR/PKG-INFO" \
+		| sed -e '/^$/,$d' \
+		| awk 'END{printf("\n")}/^[^:]+: /{$0="\n"$0}1' ORS=' ' \
+		| grep "^$ENTRY: " \
+		| sed -e "s/^$ENTRY: //" -e 's/ *$//'
+}
+
 # Get project homepage
 HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.home_page')
 if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
-	printf "WARNING: Failed to get homepage for project %s from pypi\n" "$PROJECT" >&2
-	HOMEPAGE=
+	HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.project_urls.Homepage')
+	if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
+		printf "WARNING: Failed to get homepage for project %s from pypi\n" "$PROJECT" >&2
+		HOMEPAGE=$(get_PKGINFO_entry "Home-page")
+	fi
 fi
 
 # Find the latest version if not provided by user
@@ -198,7 +214,8 @@ SOURCE_DIR=$(gmake print-value-SOURCE_DIR)
 SUMMARY=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.summary')
 if (($? != 0)) || [[ -z "$SUMMARY" || "$SUMMARY" == "null" ]] ; then
 	printf "WARNING: Failed to get summary for project %s from pypi\n" "$PROJECT" >&2
-	SUMMARY="TODO"
+	SUMMARY=$(get_PKGINFO_entry "Summary")
+	[[ -z "$SUMMARY" ]] && SUMMARY="TODO"
 fi
 # Summary needs to be sanitized
 SUMMARY="${SUMMARY//\`/\\\\\`}"
@@ -217,19 +234,6 @@ function detect_license
 
 	D=$("$WS_TOP/tools/license-detector" "$F")
 	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
-}
-
-function get_PKGINFO_entry
-{
-	typeset ENTRY="$1"
-
-	[[ -f "$SOURCE_DIR/PKG-INFO" ]] || return
-
-	cat "$SOURCE_DIR/PKG-INFO" \
-		| sed -e '/^$/,$d' \
-		| awk 'END{printf("\n")}/^[^:]+: /{$0="\n"$0}1' ORS=' ' \
-		| grep "^$ENTRY: " \
-		| sed -e "s/^$ENTRY: //"
 }
 
 LICENSE=
