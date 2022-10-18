@@ -92,7 +92,8 @@ for l in "$WS_TOOLS"/licenses/* ; do
 	LICCMD="$(grep '^# ' "$l" | sed -e 's/^# //')"
 	[[ -n "$LICCMD" ]] && LICCMD=" | $LICCMD"
 
-	CMD="awk '/^#/{next}/^\$/{\$0=\"\\n\"}1' ORS=' '"
+	CMD="dos2unix -ascii"
+	CMD="$CMD | awk '/^#/{next}/^\$/{\$0=\"\\n\"}1' ORS=' '"
 	CMD="$CMD | sed -E -e 's/ +/ /g' -e 's/^ //' -e 's/ \$//'"
 	CMD="$CMD$LICCMD"
 	CMD="$CMD | tr ' ' '\\n' | gfmt -w 80"
