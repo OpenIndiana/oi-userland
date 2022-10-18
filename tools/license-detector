@@ -94,7 +94,7 @@ for l in "$WS_TOOLS"/licenses/* ; do
 
 	CMD="dos2unix -ascii"
 	CMD="$CMD | awk '/^#/{next}/^\$/{\$0=\"\\n\"}1' ORS=' '"
-	CMD="$CMD | sed -E -e 's/ +/ /g' -e 's/^ //' -e 's/ \$//'"
+	CMD="$CMD | sed -E -e 's/ +/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d'"
 	CMD="$CMD$LICCMD"
 	CMD="$CMD | tr ' ' '\\n' | gfmt -w 80"
 
