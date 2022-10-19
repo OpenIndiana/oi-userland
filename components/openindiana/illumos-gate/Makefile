@@ -122,7 +122,7 @@ $(BUILD_DIR)/$(MACH)/.overlay: $(BUILD_DIR)/$(MACH)/.built
 
 	$(TOUCH) $@
 
-$(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
+$(BUILD_DIR)/$(MACH)/publish.transforms: packages.ignore.in $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform set name=pkg.fmri -> edit value pkg://[^/]+/ pkg://$(PUBLISHER)/>" > \
 	  $(BUILD_DIR)/$(MACH)/publish.transforms
 
@@ -175,6 +175,10 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo '<transform depend fmri=runtime/java$$ -> set fmri runtime/java/openjdk8>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo '<transform depend fmri=runtime/java/runtime64$$ -> set fmri runtime/java/openjdk8>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
+	# Drop dependency on ignored packages
+	$(GSED) -e 's|^\(.*\)$$|<transform depend fmri=pkg:/\1@.* -> drop>|' $< >> $@
+
+	# Handle overlay files
 	for i in $$(cd $(BUILD_DIR)/$(MACH)/overlay; find . -type f | \
 	  cut -c 3- | sort); do \
 	  echo "<transform file path=$$i -> set action.hash $$i >" >> \
