@@ -19,19 +19,17 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Clone
-HUMAN_VERSION =			0.45
+HUMAN_VERSION =			0.46
 COMPONENT_SUMMARY =		Clone - recursively copy Perl datatypes
-COMPONENT_CPAN_AUTHOR =		ATOOMIC
+COMPONENT_CPAN_AUTHOR =		GARU
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cbb6ee348afa95432e4878893b46752549e70dc68fe6d9e430d1d2e99079a9e6
+	sha256:aadeed5e4c8bd6bbdf68c0dd0066cb513e16ab9e5b4382dc4a0aafd55890697b
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_TRANSFORMS += "-e '/^SV/d'"
-COMPONENT_TEST_TRANSFORMS += "-e '/PV/d'"
-COMPONENT_TEST_TRANSFORMS += "-e '/MG_PTR/d'"
-COMPONENT_TEST_TRANSFORMS += "-e '/MAGIC/d'"
+# Pointers varies with every run
+COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{1,\}/POINTER/g'"
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/b-cow
