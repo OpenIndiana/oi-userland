@@ -262,5 +262,4 @@ print-package-names:
 
 REQUIRED_PACKAGES += developer/gcc-7
 REQUIRED_PACKAGES += developer/illumos-closed
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += runtime/python
