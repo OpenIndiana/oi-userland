@@ -64,46 +64,31 @@ COMPONENT_TEST_ENV += $(PYTHON_ENV)
 # Reset arguments specified as environmnent variables
 COMPONENT_BUILD_ARGS =
 
-# Make sure the default python version is built and installed last and so is
-# the canonical version.
-define python-order-rule
-$(BUILD_DIR)/%-$(PYTHON_VERSION)/.built:     $(BUILD_DIR)/%-$(1)/.built
-$(BUILD_DIR)/%-$(PYTHON_VERSION)/.installed: $(BUILD_DIR)/%-$(1)/.installed
-endef
-
-$(foreach pyver,$(filter-out $(PYTHON_VERSION),$(PYTHON_VERSIONS)),$(eval $(call python-order-rule,$(pyver))))
-
-# Create a distutils config file specific to the combination of build
-# characteristics (bittedness x Python version), and put it in its own
-# directory.  We can set $HOME to point distutils at it later, allowing
-# the install phase to find the temporary build directories.
-CFG=.pydistutils.cfg
-$(BUILD_DIR)/config-%/$(CFG):
-	$(MKDIR) $(@D)
-	echo "[build]\nbuild_base = $(BUILD_DIR)/$*" > $@
+# We need to copy the source dir to avoid its modification by install target
+# where egg-info is re-generated
+CLONEY_ARGS = CLONEY_MODE="copy"
 
 # build the configured source
-$(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep $(BUILD_DIR)/config-%/$(CFG)
+$(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
+	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
-	(cd $(SOURCE_DIR) ; $(ENV) HOME=$(BUILD_DIR)/config-$* $(COMPONENT_BUILD_ENV) \
-		$(PYTHON) ./setup.py build $(COMPONENT_BUILD_ARGS))
+	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
+		$(PYTHON) setup.py --no-user-cfg build $(COMPONENT_BUILD_ARGS))
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
 
 COMPONENT_INSTALL_ARGS +=	--root $(PROTO_DIR) 
 COMPONENT_INSTALL_ARGS +=	--install-lib=$(PYTHON_LIB)
-COMPONENT_INSTALL_ARGS +=	--install-purelib=$(PYTHON_LIB)
-COMPONENT_INSTALL_ARGS +=	--install-platlib=$(PYTHON_LIB)
 COMPONENT_INSTALL_ARGS +=	--install-data=$(PYTHON_DATA)
-COMPONENT_INSTALL_ARGS +=	--force
+COMPONENT_INSTALL_ARGS +=	--skip-build
 
 # install the built source into a prototype area
-$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built $(BUILD_DIR)/config-%/$(CFG)
+$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(SOURCE_DIR) ; $(ENV) HOME=$(BUILD_DIR)/config-$* $(COMPONENT_INSTALL_ENV) \
-		$(PYTHON) ./setup.py install $(COMPONENT_INSTALL_ARGS))
+	(cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
+		$(PYTHON) setup.py --no-user-cfg install $(COMPONENT_INSTALL_ARGS))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
@@ -131,7 +116,6 @@ COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PYTHON_VE
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(Ran [0-9]\{1,\} tests\) in .*$$/\1/'"	# delete timing from test results
 
 COMPONENT_TEST_DEP =	$(BUILD_DIR)/%/.installed
-COMPONENT_TEST_DIR =	$(COMPONENT_SRC)
 COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 
 # determine the type of tests we want to run.
@@ -145,14 +129,26 @@ TEST_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested-and-compared)
 TEST_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested-and-compared)
 endif
 
+#
+# Warning:
+#
+# Testing does not work as expected and designed because we test modules from
+# build directory containing the cloned source instead of modules installed in
+# proto area.  Even explicit PYTHONPATH does not help because current directory
+# containing setup.py script is always searched before PYTHONPATH so testing
+# finds tested modules there and does not defer to provided PYTHONPATH.
+#
+# Currently there is no known way how to fix that.
+#
+
 # test the built source
 $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
 	-(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) HOME=$(BUILD_DIR)/config-$* $(COMPONENT_TEST_ENV) \
-		$(PYTHON) ./setup.py test $(COMPONENT_TEST_ARGS)) \
+		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
+		$(PYTHON) setup.py --no-user-cfg test $(COMPONENT_TEST_ARGS)) \
 		&> $(COMPONENT_TEST_OUTPUT)
 	$(COMPONENT_POST_TEST_ACTION)
 	$(COMPONENT_TEST_CREATE_TRANSFORMS)
@@ -164,8 +160,8 @@ $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
 $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
 	$(COMPONENT_PRE_TEST_ACTION)
 	(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) HOME=$(BUILD_DIR)/config-$* $(COMPONENT_TEST_ENV) \
-		$(PYTHON) ./setup.py test $(COMPONENT_TEST_ARGS))
+		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
+		$(PYTHON) setup.py --no-user-cfg test $(COMPONENT_TEST_ARGS))
 	$(COMPONENT_POST_TEST_ACTION)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
