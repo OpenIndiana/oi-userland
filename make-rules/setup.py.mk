@@ -64,6 +64,15 @@ COMPONENT_TEST_ENV += $(PYTHON_ENV)
 # Reset arguments specified as environmnent variables
 COMPONENT_BUILD_ARGS =
 
+# Make sure the default Python version is installed last and so is the
+# canonical version.  This is needed for components that keep PYTHON_VERSIONS
+# set to more than single value, but deliver unversioned binaries in usr/bin or
+# other overlapping files.
+define python-order-rule
+$(BUILD_DIR)/%-$(PYTHON_VERSION)/.installed:	$(BUILD_DIR)/%-$(1)/.installed
+endef
+$(foreach pyver,$(filter-out $(PYTHON_VERSION),$(PYTHON_VERSIONS)),$(eval $(call python-order-rule,$(pyver))))
+
 # We need to copy the source dir to avoid its modification by install target
 # where egg-info is re-generated
 CLONEY_ARGS = CLONEY_MODE="copy"
@@ -83,6 +92,7 @@ COMPONENT_INSTALL_ARGS +=	--root $(PROTO_DIR)
 COMPONENT_INSTALL_ARGS +=	--install-lib=$(PYTHON_LIB)
 COMPONENT_INSTALL_ARGS +=	--install-data=$(PYTHON_DATA)
 COMPONENT_INSTALL_ARGS +=	--skip-build
+COMPONENT_INSTALL_ARGS +=	--force
 
 # install the built source into a prototype area
 $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
