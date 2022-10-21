@@ -156,7 +156,7 @@ tools:
 	echo "export PATH WS_TOP" >>$@
 
 $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
-	@cd $@ && echo "$(TARGET) $@" && \
+	@+cd $@ && echo "$(TARGET) $@" && \
 	 $(BASS_O_MATIC) --make $(TARGET) $(LOG)
 
 incorporation:

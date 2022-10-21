@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+.NOTPARALLEL:
 
 include $(WS_MAKE_RULES)/prep-download.mk
 

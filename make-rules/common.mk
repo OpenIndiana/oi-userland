@@ -27,6 +27,7 @@
 # This file sets up the standard, default options and base requirements for
 # userland components.
 #
+.NOTPARALLEL:
 
 # Assume components use a configure script-style build by default.
 BUILD_STYLE ?= configure
