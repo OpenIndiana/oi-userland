@@ -34,6 +34,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
 COMPONENT_VERSION=	2.39
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU collection of binary tools like ld, as
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -61,6 +62,12 @@ CONFIGURE_OPTIONS +=	--with-system-zlib
 CONFIGURE_OPTIONS +=    --host=$(GCC_GNU_TRIPLET)
 CONFIGURE_OPTIONS +=    --build=$(GCC_GNU_TRIPLET)
 CONFIGURE_OPTIONS +=    --target=$(GCC_GNU_TRIPLET)
+#
+# This warning will break build of current illumos-gate
+# as warnings will be generated for grub and loader.
+# Once illumos-gate will get appropriate fix, this
+# option should be removed.
+CONFIGURE_OPTIONS +=	--enable-warn-rwx-segments=no
 
 COMPONENT_TEST_ARGS += -k
 
