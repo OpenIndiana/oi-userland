@@ -14,40 +14,35 @@
 # Copyright 2015, PALO Richard.
 #
 
-BUILD_STYLE=	setup.py
-BUILD_BITS=		32_and_64
-
+BUILD_STYLE= setup.py
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	psycopg2
-COMPONENT_VERSION= 	2.9.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION= 	2.9.4
 COMPONENT_SUMMARY= 	Python-PostgreSQL Database Adapter
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:de5303a6f1d0a7a34b9d40e4d3bef684ccc44a49bbe3eb85e3c0bffb4a131b7c
+COMPONENT_ARCHIVE_HASH=	sha256:d529926254e093a1b669f692a3aa50069bc71faf5b0ecd91686a78f62767d52f
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/psycopg2
 COMPONENT_FMRI=		library/python/psycopg2
 COMPONENT_CLASSIFICATION=	System/Databases
 COMPONENT_LICENSE=	LGPLv3
 
-PYTHON_VERSIONS=	3.7 3.9
-
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Don't depend on host default pg_config
-PATH				=	$(PG_BINDIR.$(BITS)):$(PATH.illumos)
+PATH= $(PG_BINDIR.$(BITS)):$(PATH.illumos)
 
-LDFLAGS 			+=	-L$(PG_LIBDIR.$(BITS)) -R$(PG_LIBDIR.$(BITS))
-COMPONENT_BUILD_ENV	+=	LDFLAGS="$(LDFLAGS)"
+LDFLAGS += -L$(PG_LIBDIR.$(BITS)) -R$(PG_LIBDIR.$(BITS))
+COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
 
 # Manually added build dependencies
-REQUIRED_PACKAGES	+= $(PG_DEVELOPER_PKG)
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
