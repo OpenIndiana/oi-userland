@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     viewres
-COMPONENT_VERSION=  1.0.6
-COMPONENT_FMRI=     x11/viewres
+COMPONENT_VERSION=  1.0.7
 COMPONENT_SUMMARY=  viewres - Xt widget class browser
-COMPONENT_ARCHIVE_HASH= \
-  sha256:11c15db02066c1d5fc3febf9b185d16c1112f87e37c4b101a484dcefffb80934
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:b15a62085b1a10f55ae1cf17b7ded75b72b21be240c68071685db377c4afc628
+COMPONENT_FMRI=     x11/viewres
 
 include $(WS_MAKE_RULES)/common.mk
 
