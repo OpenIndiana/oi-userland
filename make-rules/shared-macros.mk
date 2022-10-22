@@ -706,6 +706,10 @@ PYTHON.3.9.64 =	$(PYTHON.3.9)
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
 PYTHON =	$(PYTHON.$(PYTHON_VERSION))
 
+TOX.3.7 =	/usr/bin/tox-3.7
+TOX.3.9 =	/usr/bin/tox-3.9
+TOX =		$(TOX.$(PYTHON_VERSION))
+
 # The default is site-packages, but that directory belongs to the end-user.
 # Modules which are shipped by the OS but not with the core Python distribution
 # belong in vendor-packages.
