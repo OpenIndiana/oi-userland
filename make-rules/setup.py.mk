@@ -21,6 +21,9 @@
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+# Particular python runtime is always required (at least to run setup.py)
+PYTHON_REQUIRED_PACKAGES += runtime/python
+
 define python-rule
 $(BUILD_DIR)/%-$(1)/.built:		PYTHON_VERSION=$(1)
 $(BUILD_DIR)/%-$(1)/.installed:		PYTHON_VERSION=$(1)
@@ -125,8 +128,7 @@ COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PYTHON_VE
 # Normalize Python test results.
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(Ran [0-9]\{1,\} tests\) in .*$$/\1/'"	# delete timing from test results
 
-COMPONENT_TEST_DEP =	$(BUILD_DIR)/%/.installed
-COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
+COMPONENT_TEST_DEP =	$(BUILD_DIR)/%/.built
 
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
@@ -140,16 +142,55 @@ TEST_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested-and-compared)
 endif
 
 #
-# Warning:
+# Testing in the Python world is complex.  Python projects usually do not
+# support Makefile with common 'check' or 'test' target to get built bits
+# tested.
 #
-# Testing does not work as expected and designed because we test modules from
-# build directory containing the cloned source instead of modules installed in
-# proto area.  Even explicit PYTHONPATH does not help because current directory
-# containing setup.py script is always searched before PYTHONPATH so testing
-# finds tested modules there and does not defer to provided PYTHONPATH.
+# De facto standard way to test Python projects these days is tox which is
+# designed and used primarily for release testing; to make sure the released
+# python project runs on all supported Python versions, platforms, etc.  tox
+# does so using virtualenv and creates isolated test environments where the
+# tested package together with all its dependencies is automatically installed
+# (using pip) and tested.  This is great for Python projects developers but it
+# is hardly usable for operating system distributions like OpenIndiana.
 #
-# Currently there is no known way how to fix that.
+# We do not need such release testing.  Instead we need something closer to
+# integration testing: we need to test the built component in our real
+# environment without automatic installation of any dependencies using pip.  In
+# addition, we need to run tests only for Python versions we actually support
+# and the component is built for.
 #
+# To achieve that we do few things.  First, to avoid isolated environments
+# (virtualenv) we run tox with the tox-current-env plugin.  Second, to test
+# only Python versions we are interested in we use -e option for tox to select
+# single Python version only.  Since we run separate test target per Python
+# version this will make sure we test all needed Python versions.
+#
+# For projects that do not support testing using tox we offer (deprecated)
+# "setup.py test" testing too.  To switch from default "tox"-style testing to
+# "setup.py test"-style testing a component needs to set TEST_STYLE to
+# "setup.py" explicitly.
+#
+
+TEST_STYLE ?= tox
+ifeq ($(strip $(TEST_STYLE)),tox)
+COMPONENT_TEST_CMD =		$(TOX)
+COMPONENT_TEST_ARGS =		--current-env --no-provision --recreate
+COMPONENT_TEST_TARGETS =	-e py$(shell echo $(PYTHON_VERSION) | tr -d .)
+
+# Normalize tox test results.
+COMPONENT_TEST_TRANSFORMS += "-e '0,/^py[0-9]\{1,\} run-test: /d'"		# strip initial header
+COMPONENT_TEST_TRANSFORMS += "-e '/^  py[0-9]\{1,\}: commands succeeded$$/d'"	# remove line with Python version
+
+# tox package together with the tox-current-env plugin is needed
+USERLAND_REQUIRED_PACKAGES += library/python/tox
+USERLAND_REQUIRED_PACKAGES += library/python/tox-current-env
+else
+# Fallback to old and deprecated "setup.py test"-style testing
+COMPONENT_TEST_CMD =		$(PYTHON) setup.py
+COMPONENT_TEST_ARGS =		--no-user-cfg
+COMPONENT_TEST_TARGETS =	test
+endif
 
 # test the built source
 $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
@@ -158,7 +199,8 @@ $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
 	$(COMPONENT_PRE_TEST_ACTION)
 	-(cd $(COMPONENT_TEST_DIR) ; \
 		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		$(PYTHON) setup.py --no-user-cfg test $(COMPONENT_TEST_ARGS)) \
+		$(COMPONENT_TEST_CMD) \
+		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
 		&> $(COMPONENT_TEST_OUTPUT)
 	$(COMPONENT_POST_TEST_ACTION)
 	$(COMPONENT_TEST_CREATE_TRANSFORMS)
@@ -171,7 +213,8 @@ $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
 	$(COMPONENT_PRE_TEST_ACTION)
 	(cd $(COMPONENT_TEST_DIR) ; \
 		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		$(PYTHON) setup.py --no-user-cfg test $(COMPONENT_TEST_ARGS))
+		$(COMPONENT_TEST_CMD) \
+		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
 	$(COMPONENT_POST_TEST_ACTION)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
