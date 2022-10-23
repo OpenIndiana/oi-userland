@@ -118,7 +118,7 @@ COMPONENT_TEST_TRANSFORMS += '-e "/^\#/d"'			# delete comments
 COMPONENT_TEST_TRANSFORMS += '-e "/^make\[/d"'			# delete make logs
 
 # Add the expected 'test_harness' line if it is missing in the test results.
-$(BUILD_DIR)/%/.tested-and-compared:	COMPONENT_POST_TEST_ACTION += \
+COMPONENT_POST_TEST_ACTION += \
 	$(GNU_GREP) -q test_harness $(COMPONENT_TEST_OUTPUT) \
 	|| $(GSED) -i -e '1i\test_harness' $(COMPONENT_TEST_OUTPUT) ;
 
@@ -153,13 +153,19 @@ $(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 
+$(BUILD_DIR)/%/.tested:    SHELLOPTS=pipefail
 $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
+	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
+	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
 	(cd $(COMPONENT_TEST_DIR) ; \
 		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
 		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
+		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
+		|& $(TEE) $(COMPONENT_TEST_OUTPUT)
 	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CREATE_TRANSFORMS)
+	$(COMPONENT_TEST_PERFORM_TRANSFORM)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 
