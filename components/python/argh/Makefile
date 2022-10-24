@@ -10,32 +10,33 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
-# Copyright 2021 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project argh
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	argh
-COMPONENT_VERSION= 	0.26.2
-COMPONENT_REVISION=	3
-COMPONENT_SUMMARY= 	An unobtrusive argparse wrapper with natural syntax
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e9535b8c84dc9571a48999094fda7f33e63c3f1b74f3e5f3ac0105a58405bb65
-COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/a/argh/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/argh
+COMPONENT_NAME =		argh
+COMPONENT_VERSION =		0.26.2
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		argh - An unobtrusive argparse wrapper with natural syntax
+COMPONENT_PROJECT_URL =		http://github.com/neithere/argh/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/e3/75/1183b5d1663a66aebb2c184e0398724b624cecd4f4b679cb6e25de97ed15/argh-0.26.2.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:e9535b8c84dc9571a48999094fda7f33e63c3f1b74f3e5f3ac0105a58405bb65
+COMPONENT_LICENSE =		LGPL-3.0-or-later
 
-PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
+TEST_STYLE = setup.py
 
-TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# Remove lines with version info
+COMPONENT_TEST_TRANSFORMS += "-e '/^platform /d'"
+COMPONENT_TEST_TRANSFORMS += "-e '/^plugins: /d'"
+# The order of unit test reports varies with every run
+COMPONENT_TEST_TRANSFORMS += "-e '/^test\//,/^$$/d'"
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39

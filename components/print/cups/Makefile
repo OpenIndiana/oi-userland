@@ -26,12 +26,11 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
-COMPONENT_VERSION=	2.4.1
-COMPONENT_REVISION =	1
+COMPONENT_VERSION=	2.4.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://openprinting.github.io/cups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:df195c931349949293c832e1337527e7831e1225f567b60caf5d9c206c2bffdc
+COMPONENT_ARCHIVE_HASH=	sha256:7095b2977bb728ded5566a5c802866062840d6541fd027836865949a407c3682
 COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 
 include $(WS_MAKE_RULES)/common.mk
@@ -60,6 +59,7 @@ CONFIGURE_OPTIONS +=	--with-smfmanifestdir=/lib/svc/manifest/application
 CONFIGURE_OPTIONS +=	--with-printcap=/etc/printers.conf
 CONFIGURE_OPTIONS +=	--with-cups-user=lp
 CONFIGURE_OPTIONS +=	--with-cups-group=lp
+CONFIGURE_OPTIONS +=	--with-tls=gnutls
 CONFIGURE_OPTIONS +=	--disable-systemd
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-dbus
@@ -82,13 +82,14 @@ REQUIRED_PACKAGES += service/network/slp
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/ca-certificates
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math

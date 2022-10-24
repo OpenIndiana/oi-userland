@@ -190,6 +190,10 @@ else
 COMPONENT_TEST_CMD =		$(PYTHON) setup.py
 COMPONENT_TEST_ARGS =		--no-user-cfg
 COMPONENT_TEST_TARGETS =	test
+
+# Normalize setup.py test results.
+COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
+COMPONENT_TEST_TRANSFORMS += "-e 's/ in [0-9]\{1,\}\.[0-9]\{1,\}s / /'"		# remove timing
 endif
 
 # test the built source
@@ -209,13 +213,19 @@ $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 
+$(BUILD_DIR)/%/.tested:    SHELLOPTS=pipefail
 $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
+	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
+	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
 	(cd $(COMPONENT_TEST_DIR) ; \
 		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
 		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
+		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
+		|& $(TEE) $(COMPONENT_TEST_OUTPUT)
 	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CREATE_TRANSFORMS)
+	$(COMPONENT_TEST_PERFORM_TRANSFORM)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 

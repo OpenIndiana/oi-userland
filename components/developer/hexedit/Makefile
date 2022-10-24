@@ -22,45 +22,34 @@
 #
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Nona Hansel
+# Copyright (c) 2022, Andreas Wacknitz
 #
-
-PREFERRED_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexedit
-COMPONENT_VERSION=	1.2.13
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://merd.sourceforge.net/pixel/hexedit.html
-COMPONENT_SRC=		$(COMPONENT_NAME)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tgz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:6a126da30a77f5c0b08038aa7a881d910e3b65d13767fb54c58c983963b88dd7
-COMPONENT_ARCHIVE_URL=	http://rigaux.org/$(COMPONENT_ARCHIVE)
+COMPONENT_VERSION=	1.6
+COMPONENT_SUMMARY=	Hexedit - a command-line binary file editor
+COMPONENT_PROJECT_URL=	https://github.com/pixel/$(COMPONENT_NAME)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:598906131934f88003a6a937fab10542686ce5f661134bc336053e978c4baae3
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=	editor/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_LICENSE=	GPLv2
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
 
 COMPONENT_PRE_CONFIGURE_ACTION =  \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CFLAGS += "-Dinline"
 CFLAGS += -I/usr/include/ncurses
-
-LDFLAGS.32 = -L/usr/gnu/lib -R/usr/gnu/lib
-LDFLAGS.64 = -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library

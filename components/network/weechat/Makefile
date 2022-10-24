@@ -16,7 +16,7 @@ BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		weechat
-COMPONENT_VERSION=	3.6
+COMPONENT_VERSION=	3.7.1
 COMPONENT_PROJECT_URL=	https://weechat.org/
 COMPONENT_SUMMARY=	WeeChat - portable, fast, light and extensible IRC client
 COMPONENT_DESCRIPTION=	WeeChat (Wee Enhanced Environment for Chat) is a portable, fast, light and \
@@ -24,7 +24,7 @@ extensible chat client. Everything can be done with a keyboard. \
 It is customizable and extensible with scripts.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:9d85d71b3b7d04c03bd35ab6501afa8b5b3c609dce7691709ec740fecc31f2de
+COMPONENT_ARCHIVE_HASH=	sha256:c311c9de9f5d87404b667e0c690959388295485bce986fac4ab934ebd43589aa
 COMPONENT_ARCHIVE_URL=	https://weechat.org/files/src/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=		network/chat/weechat
@@ -33,10 +33,12 @@ COMPONENT_LICENSE=	GPLv3
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Use 64-bit perl
-#PERL_VERSION = 5.34
-
 PATH= $(PATH.gnu)
+
+# Force dependency on a single python runtime:
+PYTHON_VERSIONS= $(PYTHON_VERSION)
+# Force dependency on a single perl version:
+PERL_VERSIONS= $(PERL_VERSION)
 
 # We have strange crashes, so -O2 is a try to prevent from them:
 gcc_OPT = -O2
@@ -55,13 +57,13 @@ COMPONENT_TEST_TARGETS =
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/guile
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

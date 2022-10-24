@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Sender
-HUMAN_VERSION =			2.500
+HUMAN_VERSION =			2.600
 COMPONENT_SUMMARY =		Email::Sender - a library for sending email
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3c8ad904cac514e856bd9d35be331a5822c4dea277a0dde544d13414eb4c47b1
+	sha256:ecc675d030d79d9a4fb064567ea885c66b17c3862379ad30f8205a281cd8ee29
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,7 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/capture-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/email-abstract
-PERL_REQUIRED_PACKAGES += library/perl-5/email-address
+PERL_REQUIRED_PACKAGES += library/perl-5/email-address-xs
 PERL_REQUIRED_PACKAGES += library/perl-5/email-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
 PERL_REQUIRED_PACKAGES += library/perl-5/moo

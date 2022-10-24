@@ -22,25 +22,23 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Nona Hansel
+# Copyright (c) 2022, Andreas Wacknitz
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommited>
 set name=pkg.fmri \
-    value=pkg:/editor/hexedit@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="Hexedit - a command-line binary file editor"
-set name=com.oracle.info.description value="the hexedit binary file editor"
-set name=com.oracle.info.tpno value=9060
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=info.classification \
-    value="org.opensolaris.category.2008:Applications/System Utilities" \
+    value="$(COMPONENT_CLASSIFICATION)" \
     value="org.opensolaris.category.2008:Development/Editors"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/629
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommited>
 
 file path=usr/bin/hexedit
 file path=usr/share/man/man1/hexedit.1
-
-license hexedit.license license=GPLv2

@@ -1,44 +1,19 @@
-smf(5) support in cups upstream was introduced in times of
-Open Solaris enthusiasm. Currently the community do not like
-to support anything non-Apple.
-It might worth to ask to remove the smf(5) support from
-cups upstream entirely then keep it on by own.
+OpenIndiana doesn't have the Solaris identity:cert service which
+deploys or creates the X.509 certificates for WebUI and RAD connections using the TLS transport.
+Probably our ca-certificates service is an equivalent.
 
-diff -wpruN '--exclude=*.orig' a~/scheduler/cups.xml.in a/scheduler/cups.xml.in
---- a~/scheduler/cups.xml.in	1970-01-01 00:00:00
-+++ a/scheduler/cups.xml.in	1970-01-01 00:00:00
-@@ -41,7 +41,6 @@
-         <service_fmri value='svc:/network/loopback' />
+--- cups-2.4.2/scheduler/cups.xml.in.orig	2022-05-26 08:17:21.000000000 +0000
++++ cups-2.4.2/scheduler/cups.xml.in	2022-10-23 15:00:19.116296979 +0000
+@@ -54,7 +54,7 @@
+         grouping='require_all'
+         restart_on='refresh'
+         type='service'>
+-        <service_fmri value='svc:/system/identity:cert'/>
++        <service_fmri value='svc:/system/ca-certificates'/>
      </dependency>
  
--
-     <dependency
-         name='network'
-         grouping='optional_all'
-@@ -50,21 +49,13 @@
-         <service_fmri value='svc:/milestone/network' />
-     </dependency>
- 
--    <dependency
--        name='lpsched'
--        grouping='exclude_all'
--        restart_on='none'
--        type='service'>
--        <service_fmri value='svc:/application/print/server' />
--    </dependency>
--
      <exec_method
-         type='method'
-         name='stop'
-         exec=':kill'
-         timeout_seconds='60' />
- 
--    <instance name='default' enabled='false' >
-+    <instance name='default' enabled='true' >
- 
-         <dependency
-             name='config_data'
-@@ -79,16 +70,20 @@
+@@ -78,7 +78,7 @@
              name='start'
              exec='@sbindir@/cupsd'
              timeout_seconds='60' >
@@ -47,44 +22,7 @@ diff -wpruN '--exclude=*.orig' a~/scheduler/cups.xml.in a/scheduler/cups.xml.in
                  <method_credential user='root' group='@CUPS_GROUP@' />
              </method_context>
          </exec_method>
- 
-         <property_group name='general' type='framework'>
-+            <propval name='active' type='boolean'
-+                value='true' />
-             <propval name='action_authorization' type='astring'
-                 value='solaris.smf.manage.cups' />
-             <propval name='value_authorization' type='astring'
--                value='solaris.smf.value.cups' />
-+                value='solaris.smf.manage.cups' />
-+	    <!-- sub-process core dumps shouldn't restart session -->
-+	    <propval name='ignore_error' type='astring' value='core,signal' />
-         </property_group>
- 
-         <template>
-@@ -142,21 +137,13 @@
-         <service_fmri value='svc:/milestone/network' />
-     </dependency>
- 
--    <dependency
--        name='in-lpd'
--        grouping='exclude_all'
--        restart_on='none'
--        type='service'>
--        <service_fmri value='svc:/application/print/rfc1179' />
--    </dependency>
--
-     <exec_method
-         type='method'
-         name='stop'
-         exec=':kill'
-         timeout_seconds='60' />
- 
--    <instance name='default' enabled='false' >
-+    <instance name='default' enabled='true' >
-         <dependency
-             name='cupsd'
-             grouping='require_all'
-@@ -170,7 +157,7 @@
+@@ -165,7 +165,7 @@
              name='inetd_start'
              exec='@CUPS_SERVERBIN@/daemon/cups-lpd -o document-format=application/octet-stream'
              timeout_seconds='0'>
@@ -93,13 +31,3 @@ diff -wpruN '--exclude=*.orig' a~/scheduler/cups.xml.in a/scheduler/cups.xml.in
                  <method_credential user='@CUPS_USER@' group='@CUPS_GROUP@' />
              </method_context>
          </exec_method>
-@@ -188,7 +175,7 @@
-             <propval name='action_authorization' type='astring'
-                 value='solaris.smf.manage.cups' />
-             <propval name='value_authorization' type='astring'
--                value='solaris.smf.value.cups' />
-+                value='solaris.smf.manage.cups' />
-         </property_group>
- 
-         <template>
-

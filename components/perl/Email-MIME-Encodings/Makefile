@@ -19,17 +19,15 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::MIME::Encodings
-HUMAN_VERSION =			1.315
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.316
 COMPONENT_SUMMARY =		Email::MIME::Encodings - A unified interface to MIME encoding and decoding
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4c71045507b31ec853dd60152b40e33ba3741779c0f49bb143b50cf8d243ab5c
+	sha256:061856a023af0290bec8ebecfdc8e58bea6aafb0220a9e75748d4ad607ba9c66
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/capture-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl

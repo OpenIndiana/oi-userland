@@ -717,6 +717,35 @@ PYTHON_DIR= /usr/lib/python$(PYTHON_VERSION)
 PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_DATA= $(PYTHON_LIB)
 
+# If the component has python scripts then the first line should probably
+# point at the python version currently set by the $(PYTHON) variable so
+# as not to be influenced by the ips python mediator.
+# In the component's Makefile define PYTHON_SCRIPTS with a list of files
+# to be edited.
+
+# Edit the leading #!/usr/bin/python line in python scripts to use the
+# BUILD's $(PYTHON). The source file must be recompiled after that, as
+# the corresponding .pyc file is outdated now.
+PYTHON_SCRIPT_SHEBANG_FIX_FUNC = \
+    $(GSED) -i \
+        -e '1s@/usr/bin/python$$@$(PYTHON)@' \
+        -e '1s@/usr/bin/python\ @$(PYTHON) @' \
+        -e '1s@/usr/bin/env\ $(PYTHON)@$(PYTHON)@' \
+        -e '1s@/usr/bin/env\ python[23]@$(PYTHON)@' \
+        -e '1s@/usr/bin/env\ python@$(PYTHON)@' $(1); \
+    $(PYTHON) -m compileall $(1);
+
+# PYTHON_SCRIPTS is a list of files from the calling Makefile.
+PYTHON_SCRIPTS_PROCESS= \
+    $(foreach s,$(PYTHON_SCRIPTS), \
+            $(call PYTHON_SCRIPT_SHEBANG_FIX_FUNC,$(s)))
+
+# Finally if PYTHON_SCRIPTS is defined in a Makefile then process them here.
+# If multiple installs in the component then clear
+# COMPONENT_POST_INSTALL_ACTION =
+# and re-add $(PYTHON_SCRIPTS_PROCESS)
+COMPONENT_POST_INSTALL_ACTION += $(PYTHON_SCRIPTS_PROCESS)
+
 JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
 JAVA11_HOME =	/usr/jdk/instances/openjdk11.0.10
 JAVA18_HOME =	/usr/jdk/instances/openjdk18.0.1
