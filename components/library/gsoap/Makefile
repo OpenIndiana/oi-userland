@@ -12,23 +12,21 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_STYLE= configure
-BUILD_BITS= 64
 USE_OPENSSL11= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gsoap
-COMPONENT_VERSION=      2.8.122
+COMPONENT_MAJOR_VERSION= 2.8
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).123
 COMPONENT_SUMMARY=      Toolkit for SOAP/REST-based C/C++ server and client web service applications
 COMPONENT_PROJECT_URL=  https://www.genivia.com/products.html
 COMPONENT_FMRI=         library/gsoap
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_SRC=          $(COMPONENT_NAME)-2.8
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_MAJOR_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)_$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_URL=  https://downloads.sourceforge.net/project/gsoap2/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:3eb8486c986b44071bb5f19ef7b990791f819bb267c0bf640e95bd991070fad8
+COMPONENT_ARCHIVE_HASH= sha256:e018500ac942bb7627612cc9a8229610efe293a450359c413da1a006eb7c193d
 COMPONENT_LICENSE=      GPLv2+ with exceptions
-COMPONENT_LICENSE_FILE= gsoap.license
 
 include $(WS_MAKE_RULES)/common.mk
 
