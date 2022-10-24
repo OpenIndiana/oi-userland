@@ -15,24 +15,23 @@
 
 BUILD_BITS= 64
 BUILD_STYLE= cmake
-#USE_OPENSSL11= yes
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freerdp
-COMPONENT_VERSION=	2.8.0
+COMPONENT_VERSION=	2.8.1
 COMPONENT_SUMMARY=	Remote Desktop Viewer Client
 COMPONENT_PROJECT_URL=	https://www.freerdp.com
 COMPONENT_FMRI=		desktop/remote-desktop/freerdp
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:fd26a41c367ea1f23a06716725d19efa41fd572c4536348d39b3465b116b3703
+COMPONENT_ARCHIVE_HASH= sha256:ea8903b29914134202a972c06052432678c89cb5eebcc8f5a41553030c97376b
 COMPONENT_ARCHIVE_URL=  https://github.com/FreeRDP/FreeRDP/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
 
 TEST_TARGET= $(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 # https://github.com/FreeRDP/FreeRDP/issues/5504
@@ -101,7 +100,7 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/print/cups-libs
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
