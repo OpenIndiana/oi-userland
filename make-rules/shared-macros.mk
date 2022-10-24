@@ -744,7 +744,7 @@ PYTHON_SCRIPTS_PROCESS= \
 # If multiple installs in the component then clear
 # COMPONENT_POST_INSTALL_ACTION =
 # and re-add $(PYTHON_SCRIPTS_PROCESS)
-COMPONENT_POST_INSTALL_ACTION += $(PYTHON_SCRIPTS_PROCESS) ;
+COMPONENT_POST_INSTALL_ACTION += $(PYTHON_SCRIPTS_PROCESS)
 
 JAVA8_HOME =	/usr/jdk/instances/openjdk1.8.0
 JAVA11_HOME =	/usr/jdk/instances/openjdk11.0.10
