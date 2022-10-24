@@ -81,6 +81,21 @@ function get_PKGINFO_entry
 		| sed -e "s/^$ENTRY: //" -e 's/ *$//'
 }
 
+function is_installed
+{
+        is_installed_ret=True
+        command -v "$1"  >/dev/null 2>&1 || { 
+                is_installed_ret=False
+        }
+}
+# require text/jq
+is_installed "jq"
+if [[ "$is_installed_ret" == "False" ]]; then
+        echo "ERROR: package jq is missing, but required"
+        echo "To install:  pkg install text/jq"
+        exit 1
+fi
+
 # Get project homepage
 HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.home_page')
 if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
@@ -90,6 +105,17 @@ if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
 		HOMEPAGE=$(get_PKGINFO_entry "Home-page")
 	fi
 fi
+
+
+function get_info_tag
+{
+        get_info_tag_ret=""
+        get_info_tag_ret=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r  ".info."$1 )
+        if (($? != 0)) || [[ -z "$get_info_tag_ret" || "$get_info_tag_ret" == "null" ]] ; then
+		printf "FATAL: Failed to get %s for project %s from pypi\n" "$1" "$PROJECT" >&2
+		exit 1
+	fi
+}
 
 # Find the latest version if not provided by user
 if [[ -z "$VERSION" ]] ; then
@@ -106,6 +132,18 @@ if (($? != 0)) || [[ -z "$PYPI_PROJECT_RELEASE" ]] ; then
 	printf "FATAL: Failed to get data for version %s from pypi\n" "$VERSION" >&2
 	exit 1
 fi
+
+
+# Find project summary
+if [[ -z "$SUMMARY" ]] ; then # override with a cmdl opt: later maybe
+        get_info_tag "summary"
+        SUMMARY="$get_info_tag_ret"
+fi
+
+# Find project license type
+# Always retrieve the license type
+get_info_tag "license"
+PROJECTLICENSE="$get_info_tag_ret"
 
 # Get download url
 DOWNLOAD_URL=$(printf "%s" "$PYPI_PROJECT_RELEASE" | /usr/bin/jq -r '.urls[]|select(.packagetype=="sdist")|.url')
@@ -177,7 +215,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		$DISTRIBUTION
 COMPONENT_VERSION =		$VERSION
 COMPONENT_REVISION =		$((PREV_REV + 1))
-COMPONENT_SUMMARY =		$PROJECT - TODO
+COMPONENT_SUMMARY =		$SUMMARY
 EOF
 [[ -n "$HOMEPAGE" ]] && printf "COMPONENT_PROJECT_URL =\t\t%s\n" "$HOMEPAGE"
 cat <<EOF
@@ -185,7 +223,7 @@ COMPONENT_ARCHIVE_URL =		\\
 	$DOWNLOAD_URL
 COMPONENT_ARCHIVE_HASH =	\\
 	sha256:TODO
-COMPONENT_LICENSE =		license:TODO
+COMPONENT_LICENSE =		$PROJECTLICENSE
 COMPONENT_LICENSE_FILE =	licfile:TODO
 EOF
 cat "$CONF" | gsed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
