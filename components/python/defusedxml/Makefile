@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		defusedxml
 COMPONENT_VERSION =		0.7.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		XML bomb protection for Python stdlib modules
 COMPONENT_PROJECT_URL =		https://github.com/tiran/defusedxml
 COMPONENT_ARCHIVE_URL =		\
