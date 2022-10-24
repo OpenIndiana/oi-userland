@@ -15,22 +15,23 @@
 BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		rxvt-unicode
-COMPONENT_VERSION=	9.26
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=		terminal/urxvt
-COMPONENT_SUMMARY=	rxvt-unicode is a fork of the well known terminal emulator rxvt
-COMPONENT_CLASSIFICATION=	Applications/System Utilities
-COMPONENT_LICENSE_FILE=	urxvt.license
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:643116b9a25d29ad29f4890131796d42e6d2d21312282a613ef66c80c5b8c98b
-COMPONENT_ARCHIVE_URL=	http://dist.schmorp.de/rxvt-unicode/Attic/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://software.schmorp.de/pkg/rxvt-unicode.html
+COMPONENT_NAME=         rxvt-unicode
+COMPONENT_VERSION=      9.26
+COMPONENT_REVISION=     2
+COMPONENT_FMRI=         terminal/urxvt
+COMPONENT_SUMMARY=      rxvt-unicode is a fork of the well known terminal emulator rxvt
+COMPONENT_CLASSIFICATION=Applications/System Utilities
+COMPONENT_LICENSE_FILE= urxvt.license
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:643116b9a25d29ad29f4890131796d42e6d2d21312282a613ef66c80c5b8c98b
+COMPONENT_ARCHIVE_URL=  http://dist.schmorp.de/rxvt-unicode/Attic/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://software.schmorp.de/pkg/rxvt-unicode.html
 
 COMPONENT_ARCHIVE_1=	tabbedex
 COMPONENT_ARCHIVE_URL_1=	https://raw.github.com/stepb/urxvt-tabbedex/master/tabbedex
+COMPONENT_ARCHIVE_HASH_1= sha256:462af29c744cd3ba6c85ae11aadbd9a016ac9dc016f5bb7c1511751f60dd66a9
 
 TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
