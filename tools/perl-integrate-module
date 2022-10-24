@@ -161,6 +161,7 @@ cat <<EOF
 #
 
 BUILD_STYLE = modulebuild
+USE_COMMON_TEST_MASTER = no
 EOF
 gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < "$CONF"
 cat <<EOF
@@ -408,45 +409,61 @@ grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\
 ! gmake env-check > /dev/null 2>&1 && printf "FATAL: 'gmake env-check' failed!\n" >&2 && exit 1
 
 
-PERL_VERSIONS=$(gmake print-value-PERL_VERSIONS)
-
-
-# Run tests to make sure they pass
-for v in $PERL_VERSIONS ; do
-	gmake PERL_VERSIONS=$v test > /dev/null 2>&1 || printf "ERROR: Testing failed for %s!\n" "$v" >&2
-done
-
-# Run tests again and create test results master file(s)
-COMPONENT_TEST_MASTER_PREV=
-for v in $PERL_VERSIONS ; do
-	COMPONENT_TEST_MASTER=$(gmake PERL_VERSION=$v print-value-COMPONENT_TEST_MASTER)
-	COMPONENT_TEST_SNAPSHOT=$(gmake PERL_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
-	mkdir -p $(dirname "$COMPONENT_TEST_MASTER")
-	touch "$COMPONENT_TEST_MASTER"
-	gmake PERL_VERSIONS=$v test > /dev/null 2>&1
-	TEST_RET=$?
-	# If there is no snapshot produced the component likely does not support tests
-	if [[ ! -f "$COMPONENT_TEST_SNAPSHOT" ]] ; then
-		printf "WARNING: test unsupported for %s\n" "$v" >&2
-		rm -f "$COMPONENT_TEST_MASTER"
-		rmdir $(dirname "$COMPONENT_TEST_MASTER")
-		continue
-	fi
-	if [[ "$COMPONENT_TEST_MASTER_PREV" != "$COMPONENT_TEST_MASTER" ]] ; then
-		[[ -s "$COMPONENT_TEST_SNAPSHOT" ]] || printf "WARNING: 'gmake test' produced empty results for %s\n" "$v" >&2
-		cp -p "$COMPONENT_TEST_SNAPSHOT" "$COMPONENT_TEST_MASTER"
-		git add "$COMPONENT_TEST_MASTER"
-		COMPONENT_TEST_MASTER_PREV="$COMPONENT_TEST_MASTER"
-		gmake PERL_VERSIONS=$v test > /dev/null 2>&1
-		TEST_RET=$?
-	fi
-	((TEST_RET != 0)) && printf "ERROR: 'gmake test' results differ for %s!\n" "$v" >&2
-done
-
-
 # Publish packages and create pkg5 file
 gmake publish > /dev/null 2>&1 || printf "ERROR: 'gmake publish' failed!\n" >&2
 git add pkg5 2>/dev/null
+
+
+PERL_VERSIONS=$(gmake print-value-PERL_VERSIONS)
+
+
+# Run tests to make sure they pass and to create result snapshots
+for v in $PERL_VERSIONS ; do
+	! gmake PERL_VERSIONS=$v test > /dev/null 2>&1 && printf "ERROR: Testing failed for %s!\n" "$v" >&2 && continue
+
+	# If there is no snapshot produced the component likely does not support tests
+	COMPONENT_TEST_SNAPSHOT=$(gmake PERL_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
+	[[ ! -f "$COMPONENT_TEST_SNAPSHOT" ]] && printf "WARNING: Testing unsupported for %s\n" "$v" >&2 && continue
+
+	# Empty result snapshot is suspicious
+	[[ -s "$COMPONENT_TEST_SNAPSHOT" ]] || printf "WARNING: Empty test results for %s\n" "$v" >&2
+done
+
+# Save result snapshots and detect USE_COMMON_TEST_MASTER value
+TEST_MASTERS=
+for common_results in yes no ; do
+	for v in $PERL_VERSIONS ; do
+		COMPONENT_TEST_SNAPSHOT=$(gmake PERL_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
+		[[ ! -f "$COMPONENT_TEST_SNAPSHOT" ]] && continue
+		COMPONENT_TEST_MASTER=$(gmake PERL_VERSION=$v USE_COMMON_TEST_MASTER=$common_results print-value-COMPONENT_TEST_MASTER)
+
+		if [[ -f "$COMPONENT_TEST_MASTER" ]] ; then
+			# Switch to 'USE_COMMON_TEST_MASTER = no' if test results differ
+			if ! diff "$COMPONENT_TEST_SNAPSHOT" "$COMPONENT_TEST_MASTER" > /dev/null ; then
+				rm -f $TEST_MASTERS
+				TEST_MASTERS=
+				continue 2
+			fi
+		else
+			mkdir -p $(dirname "$COMPONENT_TEST_MASTER")
+			cp -p "$COMPONENT_TEST_SNAPSHOT" "$COMPONENT_TEST_MASTER"
+			TEST_MASTERS="$TEST_MASTERS $COMPONENT_TEST_MASTER"
+		fi
+	done
+	break
+done
+[[ -n "$TEST_MASTERS" ]] && git add $TEST_MASTERS
+
+# Run tests again to confirm the results are reproducible
+for v in $PERL_VERSIONS ; do
+	gmake PERL_VERSIONS=$v USE_COMMON_TEST_MASTER=$common_results test > /dev/null 2>&1 || printf "ERROR: Testing for %s is not reproducible!\n" "$v" >&2
+done
+
+# Remove USE_COMMON_TEST_MASTER from Makefile if it should be set to (default) 'yes'
+if [[ "$common_results" == "yes" ]] ; then
+	sed -i -e '/^USE_COMMON_TEST_MASTER/d' Makefile
+	git add Makefile
+fi
 
 
 # Handle history
