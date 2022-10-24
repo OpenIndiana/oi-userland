@@ -81,11 +81,6 @@ if grep -A 1 "GNU LIBRARY GENERAL PUBLIC LICENSE" "$F" | grep -q "Version 2, Jun
 	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
 fi
 
-if grep -A 1 "GNU Lesser General Public License" "$F" | grep -q "Version 2\.1, February 1999" ; then
-	D="LGPL-2.1-only"
-	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
-fi
-
 for l in "$WS_TOOLS"/licenses/* ; do
 	[[ -f "$l" ]] || continue
 
@@ -94,7 +89,7 @@ for l in "$WS_TOOLS"/licenses/* ; do
 
 	CMD="dos2unix -ascii"
 	CMD="$CMD | awk '/^#/{next}/^\$/{\$0=\"\\n\"}1' ORS=' '"
-	CMD="$CMD | sed -E -e 's/ +/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d'"
+	CMD="$CMD | sed -E -e 's/[[:space:]]+/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d'"
 	CMD="$CMD$LICCMD"
 	CMD="$CMD | tr ' ' '\\n' | gfmt -w 80"
 
