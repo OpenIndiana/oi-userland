@@ -190,6 +190,10 @@ else
 COMPONENT_TEST_CMD =		$(PYTHON) setup.py
 COMPONENT_TEST_ARGS =		--no-user-cfg
 COMPONENT_TEST_TARGETS =	test
+
+# Normalize setup.py test results.
+COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
+COMPONENT_TEST_TRANSFORMS += "-e 's/ in [0-9]\{1,\}\.[0-9]\{1,\}s / /'"		# remove timing
 endif
 
 # test the built source
