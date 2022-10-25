@@ -189,6 +189,8 @@ COMPONENT_ARCHIVE_HASH =	\\
 	sha256:TODO
 COMPONENT_LICENSE =		license:TODO
 COMPONENT_LICENSE_FILE =	licfile:TODO
+
+_TEST_STYLE = TODO
 EOF
 cat "$CONF" | gsed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\ninclude \$(WS_MAKE_RULES)/common.mk\n"
@@ -271,6 +273,39 @@ fi
 
 # Store the detected license into the Makefile
 sed -i -e 's/license:TODO/'"$LICENSE"'/g' Makefile
+
+
+# detect TEST_STYLE
+TEST_STYLE=
+cd "$SOURCE_DIR"
+while true ; do
+	tox -l && TEST_STYLE="tox" && break
+
+	pytest --setup-plan
+	(($? != 5)) && TEST_STYLE="pytest" && break
+
+	python setup.py test --help && TEST_STYLE="setup.py" && break
+
+	TEST_STYLE="none"
+	break
+done > /dev/null 2>&1
+cd "$DIR"
+
+if [[ "$TEST_STYLE" == "$(gmake print-value-TEST_STYLE)" ]] ; then
+	# If the detected TEST_STYLE is same as the default value or the value
+	# forced by the component, then we do not need to set the detected
+	# value.
+	sed -i -e '/^_TEST_STYLE = TODO$/d' Makefile
+else
+	# Set the detected TEST_STYLE value
+	sed -i -e 's/^_\(TEST_STYLE = \)TODO$/\1'"$TEST_STYLE/" Makefile
+
+	# If the component forces different test style than detected, then drop
+	# the detected value
+	if [[ "$TEST_STYLE" != "$(gmake print-value-TEST_STYLE)" ]] ; then
+		sed -i -e '/^TEST_STYLE = '"${TEST_STYLE//./\\.}/d" Makefile
+	fi
+fi
 
 
 # Create manifests
