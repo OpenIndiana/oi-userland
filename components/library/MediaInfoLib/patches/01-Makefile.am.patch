@@ -1,6 +1,6 @@
---- MediaInfoLib/Project/GNU/Library/Makefile.am	Fri Sep 17 17:10:35 2021
-+++ MediaInfoLib/Project/GNU/Library/Makefile1.am	Wed Feb 23 02:16:12 2022
-@@ -2,286 +2,286 @@
+--- MediaInfoLib-22.09/Project/GNU/Library/Makefile.am.orig	2022-10-05 08:08:16.000000000 +0000
++++ MediaInfoLib-22.09/Project/GNU/Library/Makefile.am	2022-10-25 10:24:03.927132171 +0000
+@@ -2,287 +2,287 @@
  
  lib_LTLIBRARIES = lib@MediaInfoLib_LibName@.la
  lib@MediaInfoLib_LibName@_la_SOURCES = \
@@ -156,6 +156,7 @@
 -                       ../../../Source/MediaInfo/Multiple/File_MpegTs.cpp \
 -                       ../../../Source/MediaInfo/Multiple/File_MpegTs_Duplicate.cpp \
 -                       ../../../Source/MediaInfo/Multiple/File_Mxf.cpp \
+-                       ../../../Source/MediaInfo/Multiple/File_Nsv.cpp \
 -                       ../../../Source/MediaInfo/Multiple/File_Nut.cpp \
 -                       ../../../Source/MediaInfo/Multiple/File_Ogg.cpp \
 -                       ../../../Source/MediaInfo/Multiple/File_Ogg_SubElement.cpp \
@@ -232,7 +233,8 @@
 -                       ../../../Source/MediaInfo/Video/File_Vp8.cpp \
 -                       ../../../Source/MediaInfo/Video/File_Y4m.cpp \
 -                       ../../../Source/MediaInfo/XmlUtils.cpp \
--                       ../../../Source/MediaInfo/OutputHelpers.cpp
+-                       ../../../Source/MediaInfo/OutputHelpers.cpp \
+-                       ../../../Source/ThirdParty/tfsxml/tfsxml.c
 +                       $(VPATH)/../../../Source/MediaInfo/File__Analyze.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/File__Analyze_Buffer.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/File__Analyze_Buffer_MinimizeSize.cpp \
@@ -385,6 +387,7 @@
 +                       $(VPATH)/../../../Source/MediaInfo/Multiple/File_MpegTs.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Multiple/File_MpegTs_Duplicate.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Multiple/File_Mxf.cpp \
++                       $(VPATH)/../../../Source/MediaInfo/Multiple/File_Nsv.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Multiple/File_Nut.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Multiple/File_Ogg.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Multiple/File_Ogg_SubElement.cpp \
@@ -461,7 +464,8 @@
 +                       $(VPATH)/../../../Source/MediaInfo/Video/File_Vp8.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Video/File_Y4m.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/XmlUtils.cpp \
-+                       $(VPATH)/../../../Source/MediaInfo/OutputHelpers.cpp
++                       $(VPATH)/../../../Source/MediaInfo/OutputHelpers.cpp \
++                       $(VPATH)/../../../Source/ThirdParty/tfsxml/tfsxml.c
  
  @MediaInfoLib_LibName@includedir = $(includedir)/MediaInfo
  @MediaInfoLib_LibName@include_HEADERS = \
@@ -527,17 +531,15 @@
  
  if COMPILE_TINYXML2
  lib@MediaInfoLib_LibName@_la_SOURCES += \
--                       ../../../Source/ThirdParty/tfsxml/tfsxml.c \
 -                       ../../../Source/ThirdParty/tinyxml2/tinyxml2.cpp
-+                       $(VPATH)/../../../Source/ThirdParty/tfsxml/tfsxml.c \
 +                       $(VPATH)/../../../Source/ThirdParty/tinyxml2/tinyxml2.cpp
  endif
  
  lib@MediaInfoLib_LibName@_la_LDFLAGS     = -no-undefined -version-info 0:0:0
-@@ -289,7 +289,7 @@
- pkgconfigdir = $(libdir)/pkgconfig
+@@ -291,7 +291,7 @@
  pkgconfig_DATA = libmediainfo.pc
  
+ AM_CXXFLAGS = -std=c++11
 -AM_CPPFLAGS = -I../../../Source -I../../../../ZenLib/Source
 +AM_CPPFLAGS = -I$(VPATH)/../../../Source -I../../../../ZenLib/Source
  
