@@ -26,18 +26,17 @@
 #
 
 BUILD_BITS= 64
-USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.37.1
+COMPONENT_VERSION=	2.38.1
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_FMRI=		developer/versioning/git
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:c8162c6b8b8f1c5db706ab01b4ee29e31061182135dc27c4860224aaec1b3500
+COMPONENT_ARCHIVE_HASH=	sha256:97ddf8ea58a2b9e0fbc2508e245028ca75911bd38d1551616b148c1aa5740ad9
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
@@ -46,14 +45,13 @@ COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control 
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:4dcece78fcb9c585f362d2607b05189afb6c8b4e47a21dfdccb5fefd27fa1e25
+COMPONENT_ARCHIVE_HASH_1=	sha256:47f9090252dc7d48fcca6c597495b912d81bf07de8547d1719bc950d9ad1759d
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
-PYTHON_VERSION=	3.9
 include $(WS_MAKE_RULES)/common.mk
 
-# With PATH.gnu gmake test stalls at t6030, so don't use it!
-#PATH = $(PATH.gnu)
+# With PATH.gnu gmake test gives a slightly better success rate:
+PATH = $(PATH.gnu)
 
 LDFLAGS += -lnsl -lsocket
 
@@ -165,8 +163,8 @@ REQUIRED_PACKAGES += developer/versioning/cvs
 REQUIRED_PACKAGES += system/library/iconv/extra
 REQUIRED_PACKAGES += system/library/iconv/unicode
 REQUIRED_PACKAGES += system/library/iconv/utf-8
-REQUIRED_PACKAGES += library/perl-5/database
-REQUIRED_PACKAGES += library/perl-5/sqlite-dbi
+REQUIRED_PACKAGES += library/perl-5/dbi
+REQUIRED_PACKAGES += library/perl-5/dbd-sqlite
 REQUIRED_PACKAGES += library/perl-5/subversion
 REQUIRED_PACKAGES += locale/is
 REQUIRED_PACKAGES += locale/is-extra
@@ -175,12 +173,15 @@ REQUIRED_PACKAGES += locale/is-extra
 REQUIRED_PACKAGES += text/asciidoc
 REQUIRED_PACKAGES += text/xmlto
 
+# As long as we disabled pkgdepend on git-p4 we need to add this manually:
+PYTHON_REQUIRED_PACKAGES += runtime/python
+
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-39
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
