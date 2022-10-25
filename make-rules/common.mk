@@ -35,6 +35,26 @@ BUILD_STYLE ?= configure
 # Some build styles might want to set some defaults before prep.mk is included.
 -include $(WS_MAKE_RULES)/$(strip $(BUILD_STYLE))-defaults.mk
 
+# The SINGLE_PERL_VERSION variable is used to select building a component for
+# single or multiple Perl versions.  By default we build for single Perl
+# version only unless the component is a Perl module.  If the default value of
+# SINGLE_PERL_VERSION is not what is needed for a component it could be
+# overridden in component's Makefile.
+SINGLE_PERL_VERSION ?= yes
+ifeq ($(strip $(SINGLE_PERL_VERSION)),yes)
+PERL_VERSIONS = $(PERL_VERSION)
+endif
+
+# The SINGLE_PYTHON_VERSION variable is used to select building a component for
+# single or multiple Python versions.  By default we build for single Python
+# version only unless the component is a Python project.  If the default value
+# of SINGLE_PYTHON_VERSION is not what is needed for a component it could be
+# overridden in component's Makefile.
+SINGLE_PYTHON_VERSION ?= yes
+ifeq ($(strip $(SINGLE_PYTHON_VERSION)),yes)
+PYTHON_VERSIONS = $(PYTHON_VERSION)
+endif
+
 include $(WS_MAKE_RULES)/prep.mk
 
 # Override this to limit builds and publication to a single architecture.

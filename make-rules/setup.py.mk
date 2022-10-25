@@ -105,6 +105,7 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
+ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
 # Rename binaries in /usr/bin to contain version number
 COMPONENT_POST_INSTALL_ACTION += \
 	for f in $(PROTOUSRBINDIR)/* ; do \
@@ -114,6 +115,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 		done ; \
 		$(MV) $$f $$f-$(PYTHON_VERSION) ; \
 	done ;
+endif
 
 # Define Python version specific filenames for tests.
 ifeq ($(strip $(USE_COMMON_TEST_MASTER)),no)
@@ -230,9 +232,11 @@ $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
 	$(TOUCH) $@
 
 
+ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
 # We need to add -$(PYV) to package fmri
 GENERATE_EXTRA_CMD += | \
-	$(GSED) -e 's/^\(set name=pkg.fmri [^@]*\)\(.*\)$$/\1-$$(PYV)\2/' \
+	$(GSED) -e 's/^\(set name=pkg.fmri [^@]*\)\(.*\)$$/\1-$$(PYV)\2/'
+endif
 
 
 clean::

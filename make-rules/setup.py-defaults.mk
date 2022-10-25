@@ -28,3 +28,6 @@ ASLR_MODE = $(ASLR_DISABLE)
 else
 ASLR_MODE = $(ASLR_ENABLE)
 endif
+
+# By default we build Python projects for all supported Python versions
+SINGLE_PYTHON_VERSION ?= no

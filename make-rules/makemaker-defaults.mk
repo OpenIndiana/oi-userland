@@ -39,3 +39,6 @@ ASLR_MODE = $(ASLR_DISABLE)
 else
 ASLR_MODE = $(ASLR_ENABLE)
 endif
+
+# By default we build Perl modules for all supported Perl versions
+SINGLE_PERL_VERSION ?= no
