@@ -18,10 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libxshmfence
-COMPONENT_VERSION= 1.3
-COMPONENT_FMRI =   x11/library/libxshmfence
+COMPONENT_VERSION= 1.3.1
 COMPONENT_SUMMARY= Shared memory SyncFence synchronization primitive
-COMPONENT_ARCHIVE_HASH=	sha256:b884300d26a14961a076fbebc762a39831cb75f92bed5ccf9836345b459220c7
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:1129f95147f7bfe6052988a087f1b7cb7122283d2c47a7dbf7135ce0df69b4f8
+COMPONENT_FMRI =   x11/library/libxshmfence
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
