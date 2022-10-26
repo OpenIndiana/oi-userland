@@ -30,13 +30,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	9.0.646
-HUMAN_VERSION=		9.0.0646
+COMPONENT_VERSION=	9.0.800
+HUMAN_VERSION=		9.0.0800
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:8761334f19c7dd502a375ae79958f5d43b519bacd24d8416dbee558b2a3009a7
+COMPONENT_ARCHIVE_HASH=	sha256:2665476c5b3cbf4005e0ed859fe75fbc258c519b0ee72707da2a3385719d1a09
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -57,8 +57,6 @@ TEST_64 = 	$(NOX_VARIANT)/.tested
 
 # vim uses self-defined INFINITY/NAN, which don't work well on illumos
 CFLAGS += -std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
-
-PYTHON_VERSION=	3.9
 
 CONFIGURE_ENV +=	PATH=$(PATH.gnu)
 # Make sure we use a 64-bit, multithreaded perl
@@ -113,13 +111,13 @@ install:	$(INSTALL_64) $(BUILD_DIR)/license
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 # Bogus dependency due to libssp
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += runtime/perl-534
-REQUIRED_PACKAGES += runtime/python-39
+# Manually added dependencies on perl and python runtimes
+PERL_REQUIRED_PACKAGES += runtime/perl
+PYTHON_REQUIRED_PACKAGES += runtime/python
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
