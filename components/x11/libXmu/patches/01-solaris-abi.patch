@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2008, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2008, 2018, Oracle and/or its affiliates. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -21,38 +21,40 @@
 # DEALINGS IN THE SOFTWARE.
 #
 
-diff -urp -x '*~' -x '*.orig' src/Makefile.am src/Makefile.am
---- a/src/Makefile.am	2009-10-16 14:26:51.000000000 -0700
-+++ b/src/Makefile.am	2011-02-11 16:42:34.881458929 -0800
-@@ -9,11 +9,13 @@ AM_CPPFLAGS = \
+$(libXmuu_la_SOURCES) removed from libXmu_la_SOURCES to avoid LD multiply defined errors between libs and mapfile
+
+--- libXmu-1.1.4/src/Makefile.am.orig	2022-10-17 23:09:41.000000000 +0000
++++ libXmu-1.1.4/src/Makefile.am	2022-11-18 21:47:31.752090303 +0000
+@@ -9,11 +9,15 @@
  
  AM_CFLAGS = $(CWARNFLAGS) $(XMU_CFLAGS)
  
 -libXmu_la_LDFLAGS = -version-number 6:2:0 -no-undefined
--libXmuu_la_LDFLAGS = -version-number 1:0:0 -no-undefined
-+libXmu_la_LDFLAGS = -version-number 4:0:0 -no-undefined -Wl,-M../../../mapfile-Xmu
-+libXmuu_la_LDFLAGS = -version-number 1:0:0 -no-undefined -Wl,-M../../../mapfile-Xmuu
++libXmu_la_LDFLAGS = -version-number 4:0:0 -no-undefined
++libXmu_la_LDFLAGS += -Wl,-M,../../../mapfile-Xmu
+ libXmuu_la_LDFLAGS = -version-number 1:0:0 -no-undefined
++libXmuu_la_LDFLAGS += -Wl,-M,../../../mapfile-Xmuu
  
--libXmu_la_LIBADD = $(XMU_LIBS)
+-libXmu_la_LIBADD = $(LTLIBOBJS) $(XMU_LIBS)
 -libXmuu_la_LIBADD = $(XMUU_LIBS)
 +libXmu_la_DEPENDENCIES = libXmuu.la
 +
-+libXmu_la_LIBADD = $(XMU_LIBS) libXmuu.la -lX11 -lc -lm
++libXmu_la_LIBADD = $(LTLIBOBJS) $(XMU_LIBS) libXmuu.la -lX11 -lc -lm
 +libXmuu_la_LIBADD = $(XMUU_LIBS) -lc
  
  libXmuu_la_SOURCES = \
  	ClientWin.c \
-@@ -23,7 +25,8 @@ libXmuu_la_SOURCES = \
+@@ -23,7 +27,8 @@
  	Lower.c
  
  libXmu_la_SOURCES = \
 -	$(libXmuu_la_SOURCES) \
 +	CmapEquiv.c \
 +	VisGamma.c \
+ 	Xmuint.h \
  	AllCmap.c \
  	Atoms.c \
- 	Clip.c \
-@@ -79,7 +82,7 @@ lintlibdir = $(libdir)
+@@ -79,7 +84,7 @@
  
  lintlib_DATA = $(LINTLIB) $(LINTLIBUU)
  

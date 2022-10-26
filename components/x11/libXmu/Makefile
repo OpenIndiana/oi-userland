@@ -18,23 +18,33 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXmu
-COMPONENT_VERSION= 1.1.3
-COMPONENT_FMRI=    x11/library/libxmu
+COMPONENT_VERSION= 1.1.4
 COMPONENT_SUMMARY= libXmu - miscellaneous utility functions for Xaw and Xt clients
-COMPONENT_ARCHIVE_HASH= \
-  sha256:9c343225e7c3dc0904f2122b562278da5fed639b1b5e880d25111561bac5b731
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:210de3ab9c3e9382572c25d17c2518a854ce6e2c62c5f8315deac7579e758244
+COMPONENT_FMRI=    x11/library/libxmu
 COMPONENT_LICENSE_FILE= COPYING
 
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
                           cd $(@D) &&  autoreconf -f  -i )
+
 CFLAGS += -I/usr/include/X11/xcms
 
 CONFIGURE_OPTIONS += --without-lint
 CONFIGURE_OPTIONS += --disable-lint-library
 
 COMPONENT_BUILD_ARGS += V=1
+
+unexport SHELLOPTS
+COMPONENT_TEST_TRANSFORMS += '-e "s/      [0-9].[0-9][0-9] s//" '
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/OK:/p" ' \
+        '-e "/PASS:/p" ' \
+        '-e "/FAIL:/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
