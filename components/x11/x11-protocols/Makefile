@@ -13,20 +13,18 @@
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Aurelien Larcher
 #
-BUILD_BITS=32
-
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xorgproto
-COMPONENT_VERSION= 2021.5
+COMPONENT_VERSION= 2022.2
 COMPONENT_FMRI= x11/header/x11-protocols
 COMPONENT_SUMMARY= X Window System protocol definitions
 COMPONENT_CLASSIFICATION= Development/X11
 OMPONENT_PROJECT_URL= $(XORG_PROJECT_URL)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:aa2f663b8dbd632960b24f7477aa07d901210057f6ab1a1db5158732569ca015
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:5d13dbf2be08f95323985de53352c4f352713860457b95ccaf894a647ac06b9e
 COMPONENT_ARCHIVE_URL= $(XORG_PROTO_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= MIT
 
@@ -48,3 +46,5 @@ COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
 # Build dependencies
 REQUIRED_PACKAGES += text/asciidoc
 REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
+
+# Auto-generated dependencies
