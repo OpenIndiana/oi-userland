@@ -24,34 +24,38 @@
 #
 
 BUILD_BITS=	64
-# Using openssl-1.1 makes many tests fail:
-#USE_OPENSSL11= yes
+USE_OPENSSL11= yes
+CLONEY_ARGS= CLONEY_MODE="copy"
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xmlsec
-COMPONENT_VERSION=	1.2.34
+COMPONENT_VERSION=	1.2.35
 COMPONENT_PROJECT_URL=	https://www.aleksey.com/xmlsec
 COMPONENT_FMRI=		library/xmlsec
 COMPONENT_SUMMARY=	XML Security Library
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_SRC=	$(COMPONENT_NAME)1-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:52ced4943f35bd7d0818a38298c1528ca4ac8a54440fd71134a07d2d1370a262
+COMPONENT_ARCHIVE_HASH= sha256:a39f86f6fe8e8cdc998b9a911ef1fae03f57a9ef99c2b704cd492007a52ac223
 COMPONENT_ARCHIVE_URL=	https://www.aleksey.com/xmlsec/download/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	Copyright
 
 PATH=	$(PATH.gnu)
-
 include $(WS_MAKE_RULES)/common.mk
-
-# Make docs does not like cloney, so a simple copy is used instead.
-COMPONENT_PRE_CONFIGURE_ACTION= \
-	$(CP) -rp $(SOURCE_DIR)/. $(@D)
 
 CONFIGURE_OPTIONS +=	--enable-static=no
 
-USE_DEFAULT_TEST_TRANSFORMS= yes
+COMPONENT_TEST_TRANSFORMS = \
+	'-n ' \
+	'-e "/^aleksey/p" ' \
+	'-e "/^merlin/p" ' \
+	'-e "/^phaos/p" ' \
+	'-e "/xmldsig2ed/p" ' \
+	'-e "/Test:/p" ' \
+	'-e "/Fail/p" ' \
+	'-e "/Skip/p" ' \
+	'-e "/OK/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gnutls-3
@@ -59,7 +63,7 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/nspr
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/mozilla-nss
