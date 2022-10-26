@@ -23,19 +23,18 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
 #
-BUILD_BITS=				64
 BUILD_STYLE=			justmake
 include ../../../make-rules/shared-macros.mk
 
 PATH=$(PATH.gnu)
 
 COMPONENT_NAME=			unrar
-COMPONENT_VERSION=		6.1.7
+COMPONENT_VERSION=		6.2.1
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_SUMMARY=		Rar archives extractor utility
 COMPONENT_PROJECT_URL=	https://www.rarlabs.com/rar_add.htm
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)src-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:de75b6136958173fdfc530d38a0145b72342cf0d3842bf7bb120d336602d88ed
+COMPONENT_ARCHIVE_HASH= sha256:5cc8f7ded262d27c29d01e7a119d2fd23edda427711820454f2eb667044a8900
 COMPONENT_ARCHIVE_URL=	https://www.rarlab.com/rar/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	archiver/unrar
 COMPONENT_CLASSIFICATION= Applications/System Utilities
