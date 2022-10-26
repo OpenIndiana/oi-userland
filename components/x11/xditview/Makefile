@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    xditview
-COMPONENT_VERSION= 1.0.5
-COMPONENT_FMRI=    document/viewer/xditview
+COMPONENT_VERSION= 1.0.6
 COMPONENT_SUMMARY= xditview - display ditroff output
-COMPONENT_ARCHIVE_HASH= \
-  sha256:eecb1ed51ab4edc7f454476d1248cfb7799a17c5679b3dd834e8b4658331c04b
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:517700df205d4fdf65db182698157c959f1e7c10597670a7f45b1fcb2319819f
+COMPONENT_FMRI=    document/viewer/xditview
 
 include $(WS_MAKE_RULES)/common.mk
 
