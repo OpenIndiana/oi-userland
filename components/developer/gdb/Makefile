@@ -35,7 +35,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdb
 COMPONENT_VERSION=	8.0
-# COMPONENT_REVISION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GDB: The GNU Project Debugger
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -46,9 +46,6 @@ COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gdb/
 
 CONFIGURE_DEFAULT_DIRS=no
-
-# Set python version used by this product
-PYTHON_VERSION=3.7
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -193,18 +190,15 @@ COMPONENT_POST_INSTALL_ACTION = \
 # altering the results of the debugging experiment.
 ASLR_MODE=$(ASLR_DISABLE)
 
+GENERATE_EXTRA_CMD += | $(GNU_GREP) -v -E '/.*\.pyc$$'
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += developer/babeltrace
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library/g++-7-runtime
-REQUIRED_PACKAGES += system/library/gcc-7-runtime
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += text/texinfo
