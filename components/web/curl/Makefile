@@ -28,18 +28,17 @@ USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
-COMPONENT_VERSION=      7.85.0
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      7.86.0
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:88b54a6d4b9a48cb4d873c7056dcba997ddd5b7be5a2d537a4acb55c20b04be6
+COMPONENT_ARCHIVE_HASH= sha256:2d61116e5f485581f6d59865377df4463f2e788677ac43222b496d4e49fb627b
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=  	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE).asc
-COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      CURL
 
 include $(WS_MAKE_RULES)/common.mk
@@ -83,8 +82,6 @@ CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-libssh2
 CONFIGURE_OPTIONS += --without-librtmp
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
-
-#LINT_FLAGS += -I$(SOURCE_DIR)/include
 
 # Generate configuration scripts form .am-files
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -fi)
