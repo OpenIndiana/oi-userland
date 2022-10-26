@@ -168,10 +168,21 @@ endif
 # single Python version only.  Since we run separate test target per Python
 # version this will make sure we test all needed Python versions.
 #
-# For projects that do not support testing using tox we offer (deprecated)
-# "setup.py test" testing too.  To switch from default "tox"-style testing to
-# "setup.py test"-style testing a component needs to set TEST_STYLE to
-# "setup.py" explicitly.
+# The tox tool itself uses some other tools under the hood to run tests, for
+# example pytest.  Some projects could even support pytest testing directly
+# without support for tox.  For such projects we offer separate "pytest"-style
+# testing.
+#
+# For projects that do not support testing using neither tox nor pytest we
+# offer (deprecated) "setup.py test" testing too.
+#
+# The TEST_STYLE variable is used to select (or force) particular test style
+# for Python projects.  Valid values are:
+#
+# 	tox		- "tox"-style testing
+# 	pytest		- "pytest"-style testing
+# 	setup.py	- "setup.py test"-style testing
+# 	none		- no testing is supported at all
 #
 
 TEST_STYLE ?= tox
@@ -187,8 +198,21 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^  py[0-9]\{1,\}: commands succeeded$$/d'"	# 
 # tox package together with the tox-current-env plugin is needed
 USERLAND_REQUIRED_PACKAGES += library/python/tox
 USERLAND_REQUIRED_PACKAGES += library/python/tox-current-env
-else
-# Fallback to old and deprecated "setup.py test"-style testing
+else ifeq ($(strip $(TEST_STYLE)),pytest)
+COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
+COMPONENT_TEST_ARGS =
+COMPONENT_TEST_TARGETS =
+
+# Normalize pytest test results.
+COMPONENT_TEST_TRANSFORMS += "-e '/^platform sunos5 --/d'"			# line with version details
+COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
+COMPONENT_TEST_TRANSFORMS += "-e '/^benchmark: /d'"				# line with version details
+COMPONENT_TEST_TRANSFORMS += "-e '/^plugins: /d'"				# order of listed plugins could vary
+COMPONENT_TEST_TRANSFORMS += "-e 's/ in [0-9]\{1,\}\.[0-9]\{1,\}s / /'"		# remove timing
+
+USERLAND_REQUIRED_PACKAGES += library/python/pytest
+else ifeq ($(strip $(TEST_STYLE)),setup.py)
+# Old and deprecated "setup.py test"-style testing
 COMPONENT_TEST_CMD =		$(PYTHON) setup.py
 COMPONENT_TEST_ARGS =		--no-user-cfg
 COMPONENT_TEST_TARGETS =	test
@@ -196,6 +220,8 @@ COMPONENT_TEST_TARGETS =	test
 # Normalize setup.py test results.
 COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
 COMPONENT_TEST_TRANSFORMS += "-e 's/ in [0-9]\{1,\}\.[0-9]\{1,\}s / /'"		# remove timing
+else ifeq ($(strip $(TEST_STYLE)),none)
+TEST_TARGET = $(NO_TESTS)
 endif
 
 # test the built source
