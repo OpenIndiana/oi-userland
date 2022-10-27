@@ -193,6 +193,7 @@ COMPONENT_TEST_TARGETS =	-e py$(shell echo $(PYTHON_VERSION) | tr -d .)
 
 # Normalize tox test results.
 COMPONENT_TEST_TRANSFORMS += "-e '0,/^py[0-9]\{1,\} run-test: /d'"		# strip initial header
+COMPONENT_TEST_TRANSFORMS += "-e '/^cachedir: /d'"				# depends on Python version and is useless
 COMPONENT_TEST_TRANSFORMS += "-e '/^  py[0-9]\{1,\}: commands succeeded$$/d'"	# remove line with Python version
 
 # tox package together with the tox-current-env plugin is needed
@@ -203,26 +204,24 @@ COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
 COMPONENT_TEST_TARGETS =
 
-# Normalize pytest test results.
-COMPONENT_TEST_TRANSFORMS += "-e '/^platform sunos5 --/d'"			# line with version details
-COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
-COMPONENT_TEST_TRANSFORMS += "-e '/^benchmark: /d'"				# line with version details
-COMPONENT_TEST_TRANSFORMS += "-e '/^plugins: /d'"				# order of listed plugins could vary
-COMPONENT_TEST_TRANSFORMS += "-e 's/ in [0-9]\{1,\}\.[0-9]\{1,\}s / /'"		# remove timing
-
 USERLAND_REQUIRED_PACKAGES += library/python/pytest
 else ifeq ($(strip $(TEST_STYLE)),setup.py)
 # Old and deprecated "setup.py test"-style testing
 COMPONENT_TEST_CMD =		$(PYTHON) setup.py
 COMPONENT_TEST_ARGS =		--no-user-cfg
 COMPONENT_TEST_TARGETS =	test
-
-# Normalize setup.py test results.
-COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
-COMPONENT_TEST_TRANSFORMS += "-e 's/ in [0-9]\{1,\}\.[0-9]\{1,\}s / /'"		# remove timing
 else ifeq ($(strip $(TEST_STYLE)),none)
 TEST_TARGET = $(NO_TESTS)
 endif
+
+# Normalize pytest test results.  The pytest framework could be used either
+# directly or via tox or setup.py so add these transforms for all test styles
+# unconditionally.
+COMPONENT_TEST_TRANSFORMS += "-e '/^platform sunos5 --/d'"			# line with version details
+COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
+COMPONENT_TEST_TRANSFORMS += "-e '/^benchmark: /d'"				# line with version details
+COMPONENT_TEST_TRANSFORMS += "-e '/^plugins: /d'"				# order of listed plugins could vary
+COMPONENT_TEST_TRANSFORMS += "-e 's/ in [0-9]\{1,\}\.[0-9]\{1,\}s / /'"		# remove timing
 
 # test the built source
 $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
