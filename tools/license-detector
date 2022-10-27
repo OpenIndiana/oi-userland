@@ -81,33 +81,38 @@ if grep -A 1 "GNU LIBRARY GENERAL PUBLIC LICENSE" "$F" | grep -q "Version 2, Jun
 	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
 fi
 
+TMPFILE=$(mktemp -q)
+[[ -z "$TMPFILE" ]] && printf "ERROR: Temporary file creation failed\n" >&2 && exit 1
+
 for l in "$WS_TOOLS"/licenses/* ; do
 	[[ -f "$l" ]] || continue
 
-	LICCMD="$(grep '^# ' "$l" | sed -e 's/^# //')"
-	[[ -n "$LICCMD" ]] && LICCMD=" | $LICCMD"
-
-	CMD="dos2unix -ascii"
-	CMD="$CMD | awk '/^#/{next}/^\$/{\$0=\"\\n\"}1' ORS=' '"
-	CMD="$CMD | sed -E -e 's/[[:space:]]+/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d'"
-	CMD="$CMD$LICCMD"
-	CMD="$CMD | tr ' ' '\\n' | gfmt -w 80"
+	LICCMD="$(grep '^# ' "$l" | sed -e 's/^# //' | tr '\n' ' ')"
+	cat <<#EOF > "$TMPFILE"
+		dos2unix -ascii \\
+			| awk '/^#/{next}/^\$/{\$0="\n"}1' ORS=' ' \\
+			| sed -E -e 's/[[:space:]]+/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d' \\
+			| ${LICCMD:-cat} \\
+			| tr ' ' '\\n' | gfmt -w 80
+	EOF
 
 	REDIRECT="/dev/null"
 
 	if ((DEBUG)) ; then
 		REDIRECT="/dev/stdout"
 		printf "[DBG] TEMPLATE %s\n" "$(basename "$l")"
-		eval $CMD < "$l"
+		. "$TMPFILE" < "$l"
 		printf "[DBG] FILE\n"
-		eval $CMD < "$F"
+		. "$TMPFILE" < "$F"
 		printf "[DBG] DIFFS\n"
 	fi
 
-	diff -i <(eval $CMD < "$l") <(eval $CMD < "$F") > "$REDIRECT" || continue
+	diff -i <(. "$TMPFILE" < "$l") <(. "$TMPFILE" < "$F") > "$REDIRECT" || continue
 
 	[[ -n "$L" ]] && L="$L OR "
 	L="$L$(basename "$l")"
 done
+
+rm -f "$TMPFILE"
 
 [[ -n "$L" ]] && printf "%s\n" "$L"
