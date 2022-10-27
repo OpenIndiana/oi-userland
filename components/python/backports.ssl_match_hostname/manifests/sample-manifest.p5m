@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2022 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,6 +23,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python2.7/vendor-packages/backports.ssl_match_hostname-$(COMPONENT_VERSION)-py2.7.egg-info
-file path=usr/lib/python2.7/vendor-packages/backports/__init__.py
-file path=usr/lib/python2.7/vendor-packages/backports/ssl_match_hostname/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/backports.ssl_match_hostname-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/backports/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/backports/ssl_match_hostname/__init__.py

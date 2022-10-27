@@ -1,59 +1,37 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2016, Aurelien Larcher.
-# Copyright 2019, Michal Nowak
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project backports.ssl_match_hostname
 #
+
+BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
+COMPONENT_NAME =		backports.ssl_match_hostname
+COMPONENT_VERSION =		3.7.0.1
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		backports.ssl_match_hostname - The ssl.match_hostname() function from Python 3.5
+COMPONENT_PROJECT_URL =		http://bitbucket.org/brandon/backports.ssl_match_hostname
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/ff/2b/8265224812912bc5b7a607c44bf7b027554e1b9775e9ee0de8032e3de4b2/backports.ssl_match_hostname-3.7.0.1.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:bb82e60f9fbf4c080eabd957c39f0641f0fc247d9a16e31e26d594d8f42b9fd2
+COMPONENT_LICENSE =		PSF-2.0
+COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-COMPONENT_NAME=		backports.ssl_match_hostname
-COMPONENT_VERSION=	3.7.0.1
-COMPONENT_SRC_VERSION=	312648aec6f0
-COMPONENT_FMRI=		library/python/backports.ssl_match_hostname
-COMPONENT_PROJECT_URL=	http://bitbucket.org/brandon/backports.ssl_match_hostname
-COMPONENT_SRC=		brandon-$(COMPONENT_NAME)-$(COMPONENT_SRC_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:1aa15145177efe58811528663aeac20f8b0fc6009dc74411dfe2a7b5a695dba4
-COMPONENT_ARCHIVE_URL= \
-	https://bitbucket.org/brandon/backports.ssl_match_hostname/get/$(COMPONENT_SRC_VERSION).tar.bz2
+TEST_STYLE = none
 
-PYTHON_VERSIONS=	2.7
-
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-# Test ought to be run manually as `tox` is not in oi-userland:
-# 	pip install --user tox
-#	cd brandon-backports.ssl_match_hostname-$(COMPONENT_SRC_VERSION)
-#	PATH=$HOME/.local/bin:$PATH tox -e py27,py34,py35
-test:		$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
