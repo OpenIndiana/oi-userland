@@ -69,6 +69,10 @@
 
 # python support
 <transform dir file link hardlink path=usr\/lib\/python3\.\d+\/(.*\/)?__pycache__\/ -> drop>
+# Drop backports/__init__.py because all supported Python versions are PEP 420
+# compliant so this file is no longer needed.
+# See https://github.com/jaraco/backports.entry_points_selectable/issues/5
+<transform dir file link hardlink path=usr\/lib\/python3\.\d+\/vendor-packages\/backports\/__init__\.py$ -> drop>
 <transform dir file link hardlink -> \
 	edit path "^(usr/bin/[^/]+-)3\.\d+$" "\1$!(PYVER)">
 <transform dir file link hardlink -> \
