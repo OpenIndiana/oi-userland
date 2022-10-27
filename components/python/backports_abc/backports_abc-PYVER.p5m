@@ -10,25 +10,18 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# This file was automatically generated using python-integrate-project
 #
 
-set name=pkg.fmri value=pkg:/library/python/backport_abc-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="A backport of recent additions to the 'collections.abc' module"
-set name=info.classification value="org.opensolaris.category.2008:Development/Python"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license $(COMPONENT_LICENSE_FILE) license='PSF-2'
-
-# force a dependency on the Python runtime
-depend fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-       pkg.debug.depend.path=usr/bin type=require
-
-# force a dependency on the package
-depend fmri=library/python/backport_abc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    type=require
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/lib/python$(PYVER)/vendor-packages/backports_abc-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/backports_abc-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt

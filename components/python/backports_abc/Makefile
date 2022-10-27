@@ -1,48 +1,36 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
+
 #
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project backports_abc
 #
-# CDDL HEADER END
-#
-# Copyright 2016, Aurelien Larcher.
-#
+
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
+COMPONENT_NAME =		backports_abc
+COMPONENT_VERSION =		0.5
+COMPONENT_SUMMARY =		backports_abc - A backport of recent additions to the 'collections.abc' module.
+COMPONENT_PROJECT_URL =		https://github.com/cython/backports_abc
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/68/3c/1317a9113c377d1e33711ca8de1e80afbaf4a3c950dd0edfaf61f9bfe6d8/backports_abc-0.5.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:033be54514a03e255df75c5aee8f9e672f663f93abb723444caec8fe43437bde
+COMPONENT_LICENSE =		PSF-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
-COMPONENT_NAME= backports_abc
-COMPONENT_VERSION= 0.4
-COMPONENT_FMRI= library/python/backports_abc
-COMPONENT_PROJECT_URL=  https://github.com/cython/backports_abc
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:8b3e4092ba3d541c7a2f9b7d0d9c0275b21c6a01c53a61c731eba6686939d0a5
-COMPONENT_ARCHIVE_URL= $(call pypi_url)
+TEST_STYLE = setup.py
 
-PYTHON_VERSIONS=	2.7
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:		$(NO_TESTS)
-
-REQUIRED_PACKAGES += runtime/python-27
+# Auto-generated dependencies
