@@ -10,22 +10,18 @@
 #
 
 #
-# Copyright 2018 Alexander Pyhalov
+# This file was automatically generated using python-integrate-project
 #
 
-set name=pkg.fmri value=pkg:/library/python/chardet-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Python 2/3 compatible character encoding detector"
-set name=info.classification value="org.opensolaris.category.2008:Development/Python"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license LICENSE license="LGPLv2.1"
-
-<transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
-
-link path=usr/bin/chardetect target=chardetect-$(PYVER) mediator=python \
-        mediator-version=$(PYVER)
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/chardetect-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
@@ -42,7 +38,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/chardet/charsetprober.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/cli/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/cli/chardetect.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/codingstatemachine.py
-file path=usr/lib/python$(PYVER)/vendor-packages/chardet/compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/cp949prober.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/enums.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/escprober.py
@@ -56,6 +51,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/chardet/gb2312freq.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/gb2312prober.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/hebrewprober.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/jisfreq.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/johabfreq.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/johabprober.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/jpcntx.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/langbulgarianmodel.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/langgreekmodel.py
@@ -74,5 +71,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/chardet/sbcharsetprober.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/sbcsgroupprober.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/sjisprober.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/universaldetector.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/utf1632prober.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/utf8prober.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/version.py
+<transform file path=usr/bin/chardetect-3\.7$ -> add pkg.depend.bypass-generate .*/importlib/(64/)?metadata.* >
