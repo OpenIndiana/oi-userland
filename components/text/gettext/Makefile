@@ -28,14 +28,17 @@ BUILD_BITS=			32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
-COMPONENT_VERSION=	0.21
+COMPONENT_VERSION=	0.21.1
+COMPONENT_SUMMARY=	GNU gettext - message handling utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:d20fcbb537e02dcf1383197ba05bd0734ef7bf5db06bdb241eb69b7d16b73192
+COMPONENT_ARCHIVE_HASH=	sha256:50dbc8f39797950aa2c98e939947c527e5ac9ebd2c1b99dd7b06ba33a6767ae6
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/gnu-gettext
+COMPONENT_CLASSIFICATION=	Development/GNU
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -60,15 +63,18 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/XPASS/p" ' \
 	'-e "/ERROR/p" '
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
 REQUIRED_PACKAGES += library/libcroco
+
+# Manually added test dependencies
+REQUIRED_PACKAGES += library/guile
+REQUIRED_PACKAGES += runtime/clisp
+REQUIRED_PACKAGES += runtime/tcl-8
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
