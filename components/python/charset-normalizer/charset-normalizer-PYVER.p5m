@@ -3,15 +3,18 @@
 # Common Development and Distribution License ("CDDL"), version 1.0.
 # You may only use this file in accordance with the terms of version
 # 1.0 of the CDDL.
+#
 # A full copy of the text of the CDDL should have accompanied this
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
+#
 
 #
-# Copyright 2022 Andreas Wacknitz
+# This file was automatically generated using python-integrate-project
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -19,11 +22,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-<transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
-
-link path=usr/bin/normalizer target=normalizer-$(PYVER) mediator=python \
-    mediator-version=$(PYVER)
 
 file path=usr/bin/normalizer-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/charset_normalizer-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
@@ -45,3 +43,4 @@ file path=usr/lib/python$(PYVER)/vendor-packages/charset_normalizer/models.py
 file path=usr/lib/python$(PYVER)/vendor-packages/charset_normalizer/py.typed
 file path=usr/lib/python$(PYVER)/vendor-packages/charset_normalizer/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/charset_normalizer/version.py
+<transform file path=usr/bin/normalizer-3\.7$ -> add pkg.depend.bypass-generate .*/importlib/(64/)?metadata.* >
