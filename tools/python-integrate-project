@@ -353,6 +353,7 @@ PYTHON_VERSIONS=$(gmake print-value-PYTHON_VERSIONS)
 
 
 # Run tests to make sure they pass and to create result snapshots
+TESTED_VERSIONS=
 for v in $PYTHON_VERSIONS ; do
 	! gmake PYTHON_VERSIONS=$v test > /dev/null 2>&1 && printf "ERROR: Testing failed for %s!\n" "$v" >&2 && continue
 
@@ -362,14 +363,15 @@ for v in $PYTHON_VERSIONS ; do
 
 	# Empty result snapshot is suspicious
 	[[ -s "$COMPONENT_TEST_SNAPSHOT" ]] || printf "WARNING: Empty test results for %s\n" "$v" >&2
+
+	TESTED_VERSIONS="$TESTED_VERSIONS $v"
 done
 
 # Save result snapshots and detect USE_COMMON_TEST_MASTER value
 TEST_MASTERS=
 for common_results in yes no ; do
-	for v in $PYTHON_VERSIONS ; do
+	for v in $TESTED_VERSIONS ; do
 		COMPONENT_TEST_SNAPSHOT=$(gmake PYTHON_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
-		[[ ! -f "$COMPONENT_TEST_SNAPSHOT" ]] && continue
 		COMPONENT_TEST_MASTER=$(gmake PYTHON_VERSION=$v USE_COMMON_TEST_MASTER=$common_results print-value-COMPONENT_TEST_MASTER)
 
 		if [[ -f "$COMPONENT_TEST_MASTER" ]] ; then
@@ -390,7 +392,7 @@ done
 [[ -n "$TEST_MASTERS" ]] && git add $TEST_MASTERS
 
 # Run tests again to confirm the results are reproducible
-for v in $PYTHON_VERSIONS ; do
+for v in $TESTED_VERSIONS ; do
 	gmake PYTHON_VERSIONS=$v USE_COMMON_TEST_MASTER=$common_results test > /dev/null 2>&1 || printf "ERROR: Testing for %s is not reproducible!\n" "$v" >&2
 done
 
