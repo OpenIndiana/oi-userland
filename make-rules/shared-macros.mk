@@ -478,11 +478,11 @@ COMPONENT_TEST_TRANSFORMS +=	"-e 's|$(PYTHON_DIR)|\$$(PYTHON_DIR)|g'"
 # of transforms to be applied to the test results to try to normalize them.
 COMPONENT_TEST_CREATE_TRANSFORMS = \
 	print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
+	print '$(CAT) $(COMPONENT_TEST_OUTPUT) | \\' \
+		>> $(COMPONENT_TEST_TRANSFORM_CMD); \
 	print '$(COMPONENT_TEST_TRANSFORMER) ' \
 		$(COMPONENT_TEST_TRANSFORMS) \
 		' \\' >> $(COMPONENT_TEST_TRANSFORM_CMD); \
-	print '$(COMPONENT_TEST_OUTPUT) \\' \
-		>> $(COMPONENT_TEST_TRANSFORM_CMD); \
 	print '> $(COMPONENT_TEST_SNAPSHOT)' \
 		>> $(COMPONENT_TEST_TRANSFORM_CMD); \
 
