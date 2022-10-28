@@ -221,10 +221,12 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^platform sunos5 --/d'"			# line with version
 COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
 COMPONENT_TEST_TRANSFORMS += "-e '/^benchmark: /d'"				# line with version details
 COMPONENT_TEST_TRANSFORMS += "-e '/^plugins: /d'"				# order of listed plugins could vary
+COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} coverage: /,/^TOTAL/d'"		# remove coverage report
 # sort list of pytest unit tests and drop percentage
 COMPONENT_TEST_TRANSFORMS += \
 	"| ( $(GSED) -u -e '/^=\{1,\} test session starts /q' ; $(GSED) -u -e '/^$$/q' ; $(GSED) -u -e 's/ *\[...%\]$$//' -e '/^$$/Q' | LC_ALL=C $(GSORT) ; echo ; $(CAT) ) | $(COMPONENT_TEST_TRANSFORMER)"
-COMPONENT_TEST_TRANSFORMS += "-e 's/ in [0-9]\{1,\}\.[0-9]\{1,\}s / /'"		# remove timing
+COMPONENT_TEST_TRANSFORMS += \
+	"-e 's/=\{1,\} \(.*\) in [0-9]\{1,\}\.[0-9]\{1,\}s =\{1,\}$$/======== \1 ========/'"	# remove timing
 
 # test the built source
 $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
