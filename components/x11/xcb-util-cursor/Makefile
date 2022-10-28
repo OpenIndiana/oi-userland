@@ -20,29 +20,23 @@
 #
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xcb-util-cursor
-COMPONENT_VERSION=	0.1.3
-COMPONENT_FMRI=     	x11/library/xcb-util-cursor
-COMPONENT_CLASSIFICATION= Development/X11
+COMPONENT_VERSION=	0.1.4
+COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): Port of Xcursor functions.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://xcb.freedesktop.org/XcbUtil
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:05a10a0706a1a789a078be297b5fb663f66a71fb7f7f1b99658264c35926394f
-COMPONENT_ARCHIVE_URL=	http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:28dcfe90bcab7b3561abe0dd58eb6832aa9cc77cfe42fcdfa4ebe20d605231fb
+COMPONENT_ARCHIVE_URL=	https://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     	x11/library/xcb-util-cursor
+COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_LICENSE=      MIT
-COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): Port of Xcursor functions.
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
