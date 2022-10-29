@@ -29,6 +29,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cog-spur
 COMPONENT_VERSION=	5.0.3254
+COMPONENT_REVISION=	1
 GIT_TAG=		sun-v5.0.54
 PLUGIN_REV=		5.0-202210151805-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
@@ -47,7 +48,8 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:9d4ed9f06796c036bcd6a7352036f12e33609071ce1d3499b144fd5095d8b324
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
-TEST_TARGET= $(NO_TESTS)
+# the tests are ran only on 64bit for cog-spur
+COMPONENT_TEST_CMD=	$(COMPONENT_TEST_RESULTS_DIR)/testrunner.sh $(BITS) $(COMPONENT_DIR) $(BUILD_DIR_64)
 
 include $(WS_MAKE_RULES)/common.mk
 
