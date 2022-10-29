@@ -714,7 +714,7 @@ TOX =		$(TOX.$(PYTHON_VERSION))
 # Modules which are shipped by the OS but not with the core Python distribution
 # belong in vendor-packages.
 PYTHON_DIR= /usr/lib/python$(PYTHON_VERSION)
-PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
+PYTHON_LIB= $(PYTHON_DIR)/vendor-packages
 PYTHON_DATA= $(PYTHON_LIB)
 
 # If the component has python scripts then the first line should probably
@@ -1306,6 +1306,7 @@ REQUIRED_PACKAGES_SUBST+= GFORTRAN_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GOBJC_RUNTIME_PKG
 
 # Generate requirements on all built python version variants for given packages
+USERLAND_REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(PYTHON_USERLAND_REQUIRED_PACKAGES:%=%-$(shell echo $(ver) | tr -d .)))
 REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(PYTHON_REQUIRED_PACKAGES:%=%-$(shell echo $(ver) | tr -d .)))
 
 # Generate requirements on all built perl version variants for given packages
