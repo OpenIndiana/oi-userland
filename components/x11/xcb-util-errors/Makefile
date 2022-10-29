@@ -12,38 +12,29 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
-
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           xcb-util-errors
-COMPONENT_VERSION=        1.0
-COMPONENT_FMRI=           x11/library/xcb-util-errors
-COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_NAME=     xcb-util-errors
+COMPONENT_VERSION=  1.0.1
 COMPONENT_SUMMARY=  The X protocol C-language Binding (XCB): utility library giving human readble names to error codes and event codes
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:682681769e818ba085870d1ccd65f1f282ca16ca7d6f0f73ee70bc3642aa1995
-COMPONENT_ARCHIVE_URL= \
-  http://xcb.freedesktop.org/dist/xcb-util-errors-1.0.tar.bz2
-COMPONENT_PROJECT_URL = http://xcb.freedesktop.org/
+COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:5628c87b984259ad927bacd8a42958319c36bdf4b065887803c9d820fb80f357
+COMPONENT_PROJECT_URL=	https://xcb.freedesktop.org/
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         x11/library/xcb-util-errors
+COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= xcb-util-errors.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxcb
