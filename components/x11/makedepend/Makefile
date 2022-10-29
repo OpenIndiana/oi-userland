@@ -12,26 +12,24 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
-BUILD_BITS=64
-
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           makedepend
-COMPONENT_VERSION=        1.0.6
+COMPONENT_VERSION=        1.0.7
+COMPONENT_SUMMARY=        makedepend - makefile dependency generation utility
+COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_URL=    $(XORG_UTIL_BASE_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=   sha256:a729cfd3c0f4e16c0db1da351e7f53335222e058e3434e84f91251fd6d407065
 COMPONENT_FMRI=           developer/build/makedepend
 COMPONENT_CLASSIFICATION= Development/X11
-COMPONENT_SUMMARY=  makedepend - makefile dependency generation utility
-COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:d558a52e8017d984ee59596a9582c8d699a1962391b632bec3bb6804bf4d501c
-COMPONENT_ARCHIVE_URL=    $(XORG_UTIL_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=        MIT License
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
