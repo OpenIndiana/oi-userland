@@ -20,31 +20,35 @@
 #
 # Copyright (c) 2013-2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xcb-proto
-COMPONENT_VERSION=        1.14.1
+COMPONENT_VERSION=        1.15.2
 COMPONENT_SUMMARY=        The X protocol C-language Binding (XCB): Protocol descriptions
-COMPONENT_PROJECT_URL=    http://xcb.freedesktop.org
-COMPONENT_FMRI=           x11/header/xcb-protocols
-COMPONENT_CLASSIFICATION= Development/X11
+COMPONENT_PROJECT_URL=    https://xcb.freedesktop.org
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:f04add9a972ac334ea11d9d7eb4fc7f8883835da3e4859c9afa971efdf57fcc3
+COMPONENT_ARCHIVE_HASH=	  sha256:7072beb1f680a2fe3f9e535b797c146d22528990c72f63ddb49d2f350a3653ed
 COMPONENT_ARCHIVE_URL=    https://xorg.freedesktop.org/archive/individual/proto/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=           x11/header/xcb-protocols
+COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_LICENSE=        MIT
 
 TEST_TARGET = $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
+PKG_MACROS+= PYVER="$(PYTHON_VERSION)"
+
 CONFIGURE_ENV += PYTHON=$(PYTHON)
+CONFIGURE_ENV += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
+REQUIRED_PACKAGES += library/libxml2
+
+# Manually added dependency on python runtime
+PYTHON_REQUIRED_PACKAGES += runtime/python
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += runtime/python-27
