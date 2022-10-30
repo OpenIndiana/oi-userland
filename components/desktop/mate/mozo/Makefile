@@ -22,21 +22,23 @@ include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mozo
 COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MNR_VERSION=	2
 COMPONENT_SUMMARY=	Simple menu editor for MATE
-COMPONENT_ARCHIVE_HASH=	sha256:0f24429a3b037bd0688ec4c391d9d8781e42b23ef345f5e50af1e72c5ef2fa39
+COMPONENT_ARCHIVE_HASH=	sha256:472c482e0ef2fb1629e61e17daaa1a487f64392b029849dc9a4082afb38bc9ee
 COMPONENT_FMRI=		desktop/xdg/menu-editor/mozo
 COMPONENT_CLASSIFICATION=	Applications/Configuration and Preferences
 COMPONENT_LICENSE= LGPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_ENV+= PYTHON=$(PYTHON.3.5.64)
-CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON.3.5.VENDOR_PACKAGES.64)"
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
+
+CONFIGURE_ENV+= PYTHON=$(PYTHON.3.9.64)
+CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON.3.9.VENDOR_PACKAGES.64)"
 
 # Build requirements
-REQUIRED_PACKAGES += library/python/pygobject-3
-REQUIRED_PACKAGES += library/python/pygobject-3-35
+#REQUIRED_PACKAGES += library/python/pygobject-3
+REQUIRED_PACKAGES += library/python/pygobject-3-39
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-35
+PYTHON_REQUIRED_PACKAGES += runtime/python
