@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xsetroot
-COMPONENT_VERSION=        1.1.2
+COMPONENT_VERSION=        1.1.3
 COMPONENT_SUMMARY=        xsetroot - X11 root window settings utility
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH=   sha256:6081b45a9eb4426e045d259d1e144b32417fb635e5b96aa90647365ac96638d1
 COMPONENT_FMRI=           x11/xsetroot
-COMPONENT_ARCHIVE_HASH= \
-  sha256:10c442ba23591fb5470cea477a0aa5f679371f4f879c8387a1d9d05637ae417c
 
 include $(WS_MAKE_RULES)/common.mk
 
