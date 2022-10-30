@@ -25,22 +25,24 @@ USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mosh
-COMPONENT_VERSION=	1.3.2
-COMPONENT_REVISION=	3
-COMPONENT_FMRI=	service/network/mosh
-COMPONENT_CLASSIFICATION=System/Security
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	https://mosh.mit.edu/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:da600573dfa827d88ce114e0fed30210689381bbdcff543c931e4d6a2e851216
-COMPONENT_ARCHIVE_URL=	https://mosh.mit.edu/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      GPLv3+
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license 
+COMPONENT_VERSION=	1.4.0
 COMPONENT_SUMMARY=	Mosh (mobile shell) - Remote terminal application that allows roaming, supports intermittent connectivity, and provides intelligent local echo and line editing of user keystrokes (replacement for SSH).
+COMPONENT_PROJECT_URL=	https://mosh.org
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:ae581fbddf038730af9eee4d319a483288395a0722d0c94c7efb7fdbdbb0dbac
+COMPONENT_ARCHIVE_URL=	https://github.com/mobile-shell/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	service/network/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/Security
+COMPONENT_LICENSE=      GPLv3+
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# The archive contains an uncommon base folder name, fix it:
+COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_NAME)-$(COMPONENT_SRC) $(COMPONENT_SRC) )
+
+COMPONENT_PREP_ACTION= ( cd $(@D); sh autogen.sh )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-examples
