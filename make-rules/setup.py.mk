@@ -64,9 +64,6 @@ COMPONENT_BUILD_ENV += $(PYTHON_ENV)
 COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 COMPONENT_TEST_ENV += $(PYTHON_ENV)
 
-# Reset arguments specified as environmnent variables
-COMPONENT_BUILD_ARGS =
-
 # Make sure the default Python version is installed last and so is the
 # canonical version.  This is needed for components that keep PYTHON_VERSIONS
 # set to more than single value, but deliver unversioned binaries in usr/bin or
@@ -80,16 +77,20 @@ $(foreach pyver,$(filter-out $(PYTHON_VERSION),$(PYTHON_VERSIONS)),$(eval $(call
 # where egg-info is re-generated
 CLONEY_ARGS = CLONEY_MODE="copy"
 
+COMPONENT_BUILD_CMD = $(PYTHON) setup.py --no-user-cfg build
+
 # build the configured source
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
 	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
 	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
-		$(PYTHON) setup.py --no-user-cfg build $(COMPONENT_BUILD_ARGS))
+		$(COMPONENT_BUILD_CMD) $(COMPONENT_BUILD_ARGS))
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
+
+COMPONENT_INSTALL_CMD = $(PYTHON) setup.py --no-user-cfg install
 
 COMPONENT_INSTALL_ARGS +=	--root $(PROTO_DIR) 
 COMPONENT_INSTALL_ARGS +=	--install-lib=$(PYTHON_LIB)
@@ -101,7 +102,7 @@ COMPONENT_INSTALL_ARGS +=	--force
 $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
 	(cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
-		$(PYTHON) setup.py --no-user-cfg install $(COMPONENT_INSTALL_ARGS))
+		$(COMPONENT_INSTALL_CMD) $(COMPONENT_INSTALL_ARGS))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
