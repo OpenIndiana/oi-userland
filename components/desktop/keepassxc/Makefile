@@ -18,13 +18,13 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		keepassxc
-COMPONENT_VERSION=	2.7.3
+COMPONENT_VERSION=	2.7.4
 COMPONENT_SUMMARY=	Cross-platform community-driven port of Keepass password manager
 COMPONENT_PROJECT_URL=	https://keepassxc.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-        sha256:3d5dd662ae1b9c48f4a796606088fb68a4f0e6f147458d477ee6fb0f4cb2a7de
+        sha256:560052961da0389327e759171f660230dfa4e0f4e1fab6139600fb85c6e5dece
 COMPONENT_ARCHIVE_URL=  https://github.com/keepassxreboot/keepassxc/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Applications/System Utilities
