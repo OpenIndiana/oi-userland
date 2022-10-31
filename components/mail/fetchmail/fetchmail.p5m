@@ -25,21 +25,19 @@
 
 set name=pkg.fmri \
     value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="fetch mail from a POP, IMAP, ETRN, or ODMR-capable server"
-set name=pkg.description \
-    value="Fetchmail is a full-featured, robust, well-documented remote-mail retrieval and forwarding utility intended to be used over on-demand TCP/IP links (such as SLIP or PPP connections). It supports every remote-mail protocol now in use on the Internet: POP2, POP3, RPOP, APOP, KPOP, all flavors of IMAP, ETRN, and ODMR. It can even support IPv6 and IPsec."
-set name=com.oracle.info.description value="the fetchmail utility"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Applications/Internet
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license fetchmail.license license=GPLv2
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/fetchmail
-#file path=usr/bin/fetchmailconf
+# Alas fetchmailconf is an outdated python script that doesn't work for us anymore:
+#file path=usr/bin/fetchmailconf pkg.depend.bypass-generate=.*
 file path=usr/share/locale/ca/LC_MESSAGES/fetchmail.mo
 file path=usr/share/locale/cs/LC_MESSAGES/fetchmail.mo
 file path=usr/share/locale/da/LC_MESSAGES/fetchmail.mo
@@ -61,4 +59,5 @@ file path=usr/share/locale/sv/LC_MESSAGES/fetchmail.mo
 file path=usr/share/locale/vi/LC_MESSAGES/fetchmail.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/fetchmail.mo
 file path=usr/share/man/man1/fetchmail.1
+# See comment for fetchmailconf script:
 #file path=usr/share/man/man1/fetchmailconf.1

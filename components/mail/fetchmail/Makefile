@@ -25,30 +25,38 @@
 # Copyright 2021, Nona Hansel
 #
 
-BUILD_BITS= 64
 USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
-COMPONENT_VERSION=	6.4.24
-COMPONENT_DESCRIPTION=	Full-featured, robust, well-documented remote-mail retrieval and forwarding utility
+COMPONENT_VERSION=	6.4.34
+COMPONENT_SUMMARY=	fetch mail from a POP, IMAP, ETRN, or ODMR-capable server
+COMPONENT_DESCRIPTION=	Fetchmail is a full-featured, robust, well-documented remote-mail retrieval and forwarding utility intended \
+to be used over on-demand TCP/IP links (such as SLIP or PPP connections). It supports every remote-mail protocol now in use on \
+	the Internet: POP2, POP3, RPOP, APOP, KPOP, all flavors of IMAP, ETRN, and ODMR. It can even support IPv6 and IPsec.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:9c961df25cd922f539218b0b56a77e7a47778e49ed907edaa5b4941ad3b253cf
+COMPONENT_ARCHIVE_HASH=	sha256:c3bdded1b5ce236960bd1ceeee3f3257220ed99c3eec84a5d76bb5618e3258d4
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/branch_6.4/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz/download 
 COMPONENT_PROJECT_URL=	https://www.fetchmail.info/
 COMPONENT_FMRI=		mail/fetchmail
+COMPONENT_CLASSIFICATION=	Applications/Internet
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET=	$(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  +=		--with-kerberos5
-# configure detects OpenSSL 1.0 despite USE_OPENSSL11 being set
-CONFIGURE_OPTIONS  +=		--with-ssl=/usr/openssl/1.1/
-CONFIGURE_OPTIONS  +=		--enable-NTLM
+# Change the shebang line to use our default Python version explicitly, drop the fixed file into /usr/bin,
+# where our package manifest expects it, and remove the superfluous script from the site-packages folder.
+COMPONENT_POST_INSTALL_ACTION = \
+	$(GSED) -e "s|/usr/bin/env python|$(PYTHON)|" \
+	$(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/site-packages/fetchmailconf.py > \
+	$(PROTOUSRBINDIR)/fetchmailconf && \
+	$(RM) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/site-packages/fetchmailconf.py
 
-# Block the fetchmailconf build - this option is taken from configure.ac
-CONFIGURE_ENV += PYTHON=:
+CONFIGURE_OPTIONS += --with-kerberos5
+CONFIGURE_OPTIONS += --with-ssl=$(OPENSSL_PREFIX)
+CONFIGURE_OPTIONS += --enable-NTLM
 
 COMPONENT_TEST_TRANSFORMS= \
 	'-e "s/^\# //" ' \
