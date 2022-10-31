@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mail::SPF
 HUMAN_VERSION =			2.9.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mail::SPF - An object-oriented implementation of Sender Policy Framework
 COMPONENT_ARCHIVE_URL=		https://cpan.metacpan.org/authors/id/J/JM/JMEHNLE/mail-spf/Mail-SPF-v2.9.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
@@ -34,8 +35,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # see https://rt.cpan.org/Ticket/Display.html?id=93241
 COMPONENT_PREP_ACTION =+ $(RM) -f $(SOURCE_DIR)/t/90-author-pod-validation.t
-GENERATE_EXTRA_CMD += | grep -v spfd
-
+GENERATE_EXTRA_CMD += | $(GNU_GREP) -v spfd
+GENERATE_EXTRA_CMD += | $(GNU_GREP) -v spfquery
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/error
