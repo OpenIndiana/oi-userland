@@ -211,6 +211,9 @@ else ifeq ($(strip $(TEST_STYLE)),setup.py)
 COMPONENT_TEST_CMD =		$(PYTHON) setup.py
 COMPONENT_TEST_ARGS =		--no-user-cfg
 COMPONENT_TEST_TARGETS =	test
+
+# Normalize setup.py test results.
+COMPONENT_TEST_TRANSFORMS += "-e '/SetuptoolsDeprecationWarning:/,+1d'"		# depends on Python version and is useless
 else ifeq ($(strip $(TEST_STYLE)),none)
 TEST_TARGET = $(NO_TESTS)
 endif
