@@ -225,7 +225,12 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^plugins: /d'"				# order of listed plugins c
 COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} coverage: /,/^TOTAL/d'"		# remove coverage report
 # sort list of pytest unit tests and drop percentage
 COMPONENT_TEST_TRANSFORMS += \
-	"| ( $(GSED) -u -e '/^=\{1,\} test session starts /q' ; $(GSED) -u -e '/^$$/q' ; $(GSED) -u -e 's/ *\[...%\]$$//' -e '/^$$/Q' | LC_ALL=C $(GSORT) ; echo ; $(CAT) ) | $(COMPONENT_TEST_TRANSFORMER)"
+	"| ( \
+		$(GSED) -u -e '/^=\{1,\} test session starts /q' ; \
+		$(GSED) -u -e '/^$$/q' ; \
+		$(GSED) -u -e 's/ *\[...%\]$$//' -e '/^$$/Q' | LC_ALL=C $(GSORT) | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
+		$(CAT) \
+	) | $(COMPONENT_TEST_TRANSFORMER)"
 COMPONENT_TEST_TRANSFORMS += \
 	"-e 's/=\{1,\} \(.*\) in [0-9]\{1,\}\.[0-9]\{1,\}s =\{1,\}$$/======== \1 ========/'"	# remove timing
 
