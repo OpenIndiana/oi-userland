@@ -30,63 +30,63 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	9.0.800
-HUMAN_VERSION=		9.0.0800
+COMPONENT_VERSION=	9.0.820
+HUMAN_VERSION=		9.0.0820
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2665476c5b3cbf4005e0ed859fe75fbc258c519b0ee72707da2a3385719d1a09
+COMPONENT_ARCHIVE_HASH=	sha256:0147cd0d57e3a895b4c59a5dc8c937a0c8fba1d5a74eaf6b6db3ffb2869a87e0
 
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_POST_UNPACK_ACTION += ( chmod +x $(@D)/configure  $(@D)/src/auto/configure $(@D)/src/configure $(@D)/src/mkinstalldirs ; \
 				  find $(@D) -name \*.sh  -exec chmod +x '{}' ';' ; rm $(@D)/src/po/{ko.po,zh_CN.po} ; )
 
+NOX_VARIANT = $(BUILD_DIR)/$(MACH64)-vim
 X_VARIANT =	$(BUILD_DIR)/$(MACH64)-gvim
-NOX_VARIANT =	$(BUILD_DIR)/$(MACH64)-vim
 
-VARIANTS =	$(X_VARIANT) $(NOX_VARIANT)
+VARIANTS = $(X_VARIANT) $(NOX_VARIANT)
 
-$(VARIANTS:%=%/.configured):	BITS=64
+$(VARIANTS:%=%/.configured): BITS=64
 
-BUILD_64 = 	$(VARIANTS:%=%/.built)
-INSTALL_64 = 	$(VARIANTS:%=%/.installed)
+BUILD_64 = $(VARIANTS:%=%/.built)
+INSTALL_64 = $(VARIANTS:%=%/.installed)
 # Test only the terminal variant.
-TEST_64 = 	$(NOX_VARIANT)/.tested
+TEST_64 = $(NOX_VARIANT)/.tested
 
 # vim uses self-defined INFINITY/NAN, which don't work well on illumos
 CFLAGS += -std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
-CONFIGURE_ENV +=	PATH=$(PATH.gnu)
+CONFIGURE_ENV += PATH=$(PATH.gnu)
 # Make sure we use a 64-bit, multithreaded perl
-CONFIGURE_ENV +=	vi_cv_path_perl=/usr/perl5/5.34/bin/perl
+CONFIGURE_ENV += vi_cv_path_perl=/usr/perl5/5.36/bin/perl
 # Vim's configure script looks for a "python3" executable, per PEP 394
-CONFIGURE_ENV +=	vi_cv_path_python3=/usr/bin/python$(PYTHON_VERSION)
+CONFIGURE_ENV += vi_cv_path_python3=/usr/bin/python$(PYTHON_VERSION)
 # zh_CN.cp936.po has invalid characters which GNU msgfmt seems to be able to ignore.
-CONFIGURE_ENV +=	MSGFMT=gmsgfmt
+CONFIGURE_ENV += MSGFMT=gmsgfmt
 
-CONFIGURE_OPTIONS +=	--with-features=huge
-CONFIGURE_OPTIONS +=	--with-compiledby="oi-userland build environment"
-CONFIGURE_OPTIONS +=	--with-modified-by="OpenIndiana <oi-dev@openindiana.org>"
-CONFIGURE_OPTIONS +=	--enable-luainterp=dynamic
-CONFIGURE_OPTIONS +=	--enable-perlinterp=dynamic
-CONFIGURE_OPTIONS +=	--enable-rubyinterp=dynamic
-CONFIGURE_OPTIONS +=	--with-ruby-command=/usr/bin/ruby26
-CONFIGURE_OPTIONS +=	--enable-pythoninterp=dynamic
-CONFIGURE_OPTIONS +=	--enable-python3interp=dynamic
-CONFIGURE_OPTIONS +=	--enable-terminal
+CONFIGURE_OPTIONS += --with-features=huge
+CONFIGURE_OPTIONS += --with-compiledby="oi-userland build environment"
+CONFIGURE_OPTIONS += --with-modified-by="OpenIndiana <oi-dev@openindiana.org>"
+CONFIGURE_OPTIONS += --enable-luainterp=dynamic
+CONFIGURE_OPTIONS += --enable-perlinterp=dynamic
+CONFIGURE_OPTIONS += --enable-rubyinterp=dynamic
+CONFIGURE_OPTIONS += --with-ruby-command=/usr/bin/ruby26
+CONFIGURE_OPTIONS += --enable-pythoninterp=dynamic
+CONFIGURE_OPTIONS += --enable-python3interp=dynamic
+CONFIGURE_OPTIONS += --enable-terminal
 
 # We build two variants: with and without X support.
+$(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --without-x
+$(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --disable-gui
+$(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --disable-gtktest
+$(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --disable-canberra
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --with-vim-name=gvim
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --with-x
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --enable-gui=gtk3
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --enable-gtk3-check
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --enable-canberra
-$(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --without-x
-$(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --disable-gui
-$(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --disable-gtktest
-$(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --disable-canberra
 
 # Vim's build is too smart for itself and configure can't run outside of a
 # complete source tree.
@@ -105,17 +105,15 @@ $(BUILD_DIR)/license: $(SOURCE_DIR)/runtime/doc/uganda.txt
 
 install:	$(INSTALL_64) $(BUILD_DIR)/license
 
-#  A lot of tests fail with 'Cannot create directory'
-
 # Manually added build dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 # Bogus dependency due to libssp
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-# Manually added dependencies on perl and python runtimes
-PERL_REQUIRED_PACKAGES += runtime/perl
+# Manually added dependency on python runtime
 PYTHON_REQUIRED_PACKAGES += runtime/python
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
