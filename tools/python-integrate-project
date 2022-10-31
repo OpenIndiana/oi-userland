@@ -168,7 +168,7 @@ cat <<EOF
 #   \$WS_TOOLS/$THIS $PROJECT
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 USE_COMMON_TEST_MASTER = no
 EOF
 gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < "$CONF"
@@ -213,6 +213,11 @@ git add Makefile
 # Unpack sources
 ! gmake prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
 SOURCE_DIR=$(gmake print-value-SOURCE_DIR)
+
+if [[ ! -f "$SOURCE_DIR/pyproject.toml" ]] ; then
+	[[ ! -f "$SOURCE_DIR/setup.py" ]] && printf "FATAL: Neither pyproject.toml nor setup.py found!\n" >&2 && exit 1
+	sed -i -e 's/^\(BUILD_STYLE = \).*$/\1setup.py/' Makefile
+fi
 
 # Get summary
 SUMMARY=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.summary')
@@ -284,7 +289,7 @@ while true ; do
 	pytest --setup-plan
 	(($? != 5)) && TEST_STYLE="pytest" && break
 
-	python setup.py test --help && TEST_STYLE="setup.py" && break
+	[[ -f setup.py ]] && python setup.py test --help && TEST_STYLE="setup.py" && break
 
 	TEST_STYLE="none"
 	break
