@@ -300,7 +300,7 @@ if [[ "$TEST_STYLE" == "$(gmake print-value-TEST_STYLE)" ]] ; then
 	# If the detected TEST_STYLE is same as the default value or the value
 	# forced by the component, then we do not need to set the detected
 	# value.
-	sed -i -e '/^_TEST_STYLE = TODO$/d' Makefile
+	sed -i -e '/^_TEST_STYLE = TODO$/,+1d' Makefile
 else
 	# Set the detected TEST_STYLE value
 	sed -i -e 's/^_\(TEST_STYLE = \)TODO$/\1'"$TEST_STYLE/" Makefile
@@ -308,7 +308,7 @@ else
 	# If the component forces different test style than detected, then drop
 	# the detected value
 	if [[ "$TEST_STYLE" != "$(gmake print-value-TEST_STYLE)" ]] ; then
-		sed -i -e '/^TEST_STYLE = '"${TEST_STYLE//./\\.}/d" Makefile
+		sed -i -e '/^TEST_STYLE = '"${TEST_STYLE//./\\.}/,+1d" Makefile
 	fi
 fi
 
