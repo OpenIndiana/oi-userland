@@ -11,13 +11,12 @@
 #
 # Copyright 2022 Vincent Torri
 #
-BUILD_BITS=64
-BUILD_STYLE=configure
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           pkgconf
 COMPONENT_VERSION=        1.9.3
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY=        Package compiler and linker metadata toolkit
 COMPONENT_PROJECT_URL=    http://pkgconf.org/
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
