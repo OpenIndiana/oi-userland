@@ -21,7 +21,6 @@
 # Copyright (c) 2011, 2020, Oracle and/or its affiliates.
 #
 BUILD_BITS=32_and_64
-
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION_SHORT= 1.1
@@ -29,16 +28,15 @@ COMPONENT_NAME=	openssl-$(COMPONENT_VERSION_SHORT)
 
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
 # and IPS_COMPONENT_VERSION.
-COMPONENT_VERSION=	1.1.1.17
-HUMAN_VERSION=		1.1.1q
-COMPONENT_REVISION =	2
+COMPONENT_VERSION=	1.1.1.19
+HUMAN_VERSION=		1.1.1s
 COMPONENT_FMRI=		library/security/openssl-11
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SUMMARY=	OpenSSL - a Toolkit for Transport Layer (TLS v1+) protocols and general purpose cryptographic library
 COMPONENT_PROJECT_URL=	https://www.openssl.org/
 COMPONENT_SRC=		openssl-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d7939ce614029cdff0b6c20f0e2e5703158a489a72b2507b8bd51bf8c8fd10ca
+COMPONENT_ARCHIVE_HASH=	sha256:c5ac01e760ee6ff0dab61d6b2bbd30146724d063eb322180c6f18a6f74e4b6aa
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	OpenSSL, SSLeay
 
@@ -160,6 +158,6 @@ COMPONENT_TEST_TRANSFORMS = \
 REQUIRED_PACKAGES += developer/build/makedepend
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
