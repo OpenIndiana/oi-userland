@@ -24,14 +24,15 @@
 #
 
 BUILD_BITS= 64_and_32
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		slang
-COMPONENT_VERSION=	2.3.2
+COMPONENT_VERSION=	2.3.3
 COMPONENT_SUMMARY=	S-Lang is a multi-platform programmer's library designed to allow a developer to create robust multi-platform software
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:fc9e3b0fc4f67c3c1f6d43c90c16a5c42d117b8e28457c5b46831b8b5d3ae31a
+COMPONENT_ARCHIVE_HASH= sha256:f9145054ae131973c61208ea82486d5dd10e3c5cdad23b7c4a0617743c8f5a18
 COMPONENT_ARCHIVE_URL=	https://www.jedsoft.org/releases/slang/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.jedsoft.org/slang/
 COMPONENT_FMRI=			library/$(COMPONENT_NAME)
