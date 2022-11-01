@@ -14,30 +14,26 @@
 # Copyright 2018 Harry Liebel <hliebel@gmail.com>
 # Copyright 2019 Michal Nowak
 #
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         slib
-COMPONENT_VERSION=      3b6
-COMPONENT_REVISION=     1
-IPS_COMPONENT_VERSION=  3.1.6
+COMPONENT_VERSION=      3b7
+IPS_COMPONENT_VERSION=  3.1.7
 COMPONENT_FMRI=         library/slib
 COMPONENT_PROJECT_URL=  https://people.csail.mit.edu/jaffer/SLIB.html
 COMPONENT_SUMMARY=      GNU slib - a portable library for the Scheme programming language
 COMPONENT_DESCRIPTION=	SLIB is a portable scheme library providing compatibility and utility functions for standard Scheme implementations.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:f87762730299758c3c53e0f8997565bac7b25814781ebae6e4bd4d80d110ad91
-COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/slib/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE_HASH= sha256:f5d5cdad335395a5a5aa37effe28aa8078b216ea39911f651929678f1ac228b6
+COMPONENT_ARCHIVE_URL=  https://groups.csail.mit.edu/mac/ftpdir/scm/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD-like, PD
 COMPONENT_CLASSIFICATION=Development/Other Languages
 
 TEST_TARGET= $(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_POST_UNPACK_ACTION = ( $(MV) $(COMPONENT_NAME) $(COMPONENT_SRC) )
 COMPONENT_PRE_CONFIGURE_ACTION += $(CLONEY) $(SOURCE_DIR) $(@D)
 
 # Remove configure options it does not understand, it is very simple.
@@ -56,9 +52,11 @@ COMPONENT_INSTALL_ARGS += INSTALL_INFO=install-info
 # This disables regenerating the color database, which does not work
 COMPONENT_PRE_INSTALL_ACTION += (touch $(SOURCE_DIR)/clrnamdb.scm);
 
+# Manually added dependencies
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/guile
 REQUIRED_PACKAGES += text/texinfo
 REQUIRED_PACKAGES += compress/gzip
+
 # Auto-generated dependencies
-# None...
+REQUIRED_PACKAGES += shell/ksh93
