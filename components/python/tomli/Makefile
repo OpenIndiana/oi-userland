@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tomli
 COMPONENT_VERSION =		2.0.1
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		tomli - A lil' TOML parser
 COMPONENT_PROJECT_URL =		https://github.com/hukkin/tomli
 COMPONENT_ARCHIVE_URL =		\
@@ -31,5 +31,8 @@ COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Manually added dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/flit_core
 
 # Auto-generated dependencies
