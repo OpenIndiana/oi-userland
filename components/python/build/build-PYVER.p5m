@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2022 Daniel Chan
+# This file was automatically generated using python-integrate-project
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,12 +23,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=.*/bin/ -> set pkg.depend.bypass-generate .*metadata.* >
-
-link path=usr/bin/pyproject-build \
-  target=pyproject-build-$(PYVER) \
-  mediator=python mediator-version=$(PYVER)
-
 file path=usr/bin/pyproject-build-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/build-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/build-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
@@ -35,8 +30,13 @@ file path=usr/lib/python$(PYVER)/vendor-packages/build-$(COMPONENT_VERSION)-py$(
 file path=usr/lib/python$(PYVER)/vendor-packages/build-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/build-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/build-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/build-$(COMPONENT_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/build-$(COMPONENT_VERSION).dist-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/build/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/build/__main__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/build/env.py
 file path=usr/lib/python$(PYVER)/vendor-packages/build/py.typed
 file path=usr/lib/python$(PYVER)/vendor-packages/build/util.py
+<transform file path=usr/lib/python3\.7/vendor-packages/build-.*\.dist-info -> drop >
+<transform file path=usr/lib/python3\.9/vendor-packages/build-.*-py3\.9\.egg-info -> drop >
+<transform file path=usr/bin/pyproject-build-3\.7$ -> add pkg.depend.bypass-generate .*/importlib/(64/)?metadata.* >
