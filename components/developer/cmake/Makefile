@@ -23,7 +23,6 @@
 # Copyright 2015 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 # Copyright 2016, 2021 Andreas Wacknitz <a.wacknitz@gmx.de>
 #
-BUILD_BITS= 64
 USE_COMMON_TEST_MASTER= no
 # parfait seems to hang on libcmsysTestDynload.so.bc, so for
 # now we have to disable it.
@@ -33,7 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
 COMPONENT_MAJOR_VERSION=3.24
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).2
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).3
 COMPONENT_PROJECT_URL=  https://www.cmake.org/
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
@@ -46,7 +45,7 @@ CMake generates native makefiles and workspaces that can be used in the \
 workspaces that can be used in the compiler environment of your choice.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:0d9020f06f3ddf17fb537dc228e1a56c927ee506b486f55fe2dc19f69bf0c8db
+COMPONENT_ARCHIVE_HASH=	sha256:b53aa10fa82bff84ccdb59065927b72d3bee49f4d86261249fc0984b3b367291
 COMPONENT_ARCHIVE_URL=	https://www.cmake.org/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD, MIT, GPLv2, Curl, PD
 
