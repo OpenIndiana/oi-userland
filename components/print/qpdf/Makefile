@@ -14,15 +14,16 @@
 # Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=	64
+BUILD_STYLE= cmake
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= qpdf
-COMPONENT_VERSION= 10.6.3
+COMPONENT_VERSION= 11.1.1
 COMPONENT_SUMMARY= QPDF is a command-line program that does structural, content-preserving transformations on PDF files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e8fc23b2a584ea68c963a897515d3eb3129186741dd19d13c86d31fa33493811
+COMPONENT_ARCHIVE_HASH= sha256:25e8ec60e290cd134405a51920015b6d351d4e0b93b7b736d257f10725f74b5a
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/qpdf/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://qpdf.sourceforge.net/
 COMPONENT_FMRI= print/qpdf
@@ -34,24 +35,34 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-# Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+# build with the distribution preferred libjpeg implementation
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
-CPPFLAGS += -I/usr/include/pcre
-CPPFLAGS += $(CPPFLAGS.$(BITS))
+CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
+CMAKE_OPTIONS += -DBUILD_STATIC_LIBS=OFF
 
-CONFIGURE_OPTIONS += --disable-static
-
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-
-# Remove the line containing date and time when the tests happen:
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "/STARTING TESTS/d" '
+	' -e "s/ [0-9]*\.[0-9]* sec//" '
+
+# Manually added dependencies
+# libqpdf.so seems to depend on them but they are not properly detected (why?):
+REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += library/brotli
+REQUIRED_PACKAGES += library/desktop/p11-kit
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/libidn2
+REQUIRED_PACKAGES += library/libtasn1
+REQUIRED_PACKAGES += library/libunistring
+REQUIRED_PACKAGES += library/nettle
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
