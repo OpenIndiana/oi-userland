@@ -14,11 +14,12 @@
 # Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	cups-filters
 COMPONENT_VERSION=	1.28.16
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	Additional backends, filters and other software for CUPS
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -51,8 +52,6 @@ LDFLAGS  += $(JPEG_LDFLAGS)
 LDFLAGS  += -lldap_r -lsocket
 
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
-#CPPFLAGS += -I/usr/include/cups/private
-#CPPFLAGS += -I/usr/include/cups/private/cups
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 # Ensure dynamic shared objects are linked using same LDFLAGS as executables.
 CONFIGURE_ENV += DSOFLAGS="$(LDFLAGS)"
@@ -99,8 +98,6 @@ $(SOURCE_DIR)/cups-filters.license:
 		$(COMPONENT_DIR)/GPL-3.txt \
 		$(COMPONENT_DIR)/LGPL-2.0.txt \
 		$(COMPONENT_DIR)/LGPL-2.1.txt > $@
-
-#$(INSTALL_64):	$(SOURCE_DIR)/cups-filters.license
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
