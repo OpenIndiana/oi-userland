@@ -11,23 +11,22 @@
 #
 # Copyright 2021 Benjamin S. Osenbach
 #
-BUILD_BITS=64 # for binaries or 32_and_64 for libraries
 BUILD_STYLE=justmake
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=chezmoi
-COMPONENT_VERSION=2.25.0
-COMPONENT_SUMMARY=Manage your dotfiles across multiple diverse machines, securely.
-COMPONENT_PROJECT_URL=https://github.com/twpayne/chezmoi
-COMPONENT_FMRI=application/chezmoi
-COMPONENT_CLASSIFICATION=Applications/System Utilities
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=https://github.com/twpayne/chezmoi/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=sha256:045ef3fa4a3a53cdf5a9ff2bda34db95724c91a3f2df90dd752e8082f0cae00e
-COMPONENT_LICENSE=MIT
-COMPONENT_LICENSE_FILE=chezmoi.license
-TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
+COMPONENT_NAME= chezmoi
+COMPONENT_VERSION= 2.26.0
+COMPONENT_SUMMARY= Manage your dotfiles across multiple diverse machines, securely.
+COMPONENT_PROJECT_URL= https://github.com/twpayne/chezmoi
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL= $(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:24cdceb0193abda1a07f82656661437e8080627c5f084482cf1bf3064e830c50
+COMPONENT_FMRI= application/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_LICENSE= MIT
+
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 DATE=$(shell date -u +%Y-%m-%d-T%TZ)
@@ -55,5 +54,6 @@ COMPONENT_PRE_BUILD_ACTION=(install -d "$(PROTO_DIR)/usr/bin")
 # Build dependencies
 REQUIRED_PACKAGES+=developer/golang
 REQUIRED_PACKAGES+=developer/versioning/git
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
