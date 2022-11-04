@@ -55,7 +55,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.19.15
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -71,7 +71,10 @@ SVN_HASH=  sha256:5b8cbf212bc6913c25699cd4e22dbd1ee8778deb5130b07c99033ede1b46ad
 COMPONENT_LICENSE=      Squeak4
 COMPONENT_LICENSE_FILE= squeak4.license
 
-TEST_TARGET= $(NO_TESTS)
+# the tests are ran only on 32bit for Squeak classical VM
+# because inisqueak downloads a 32 bit image (provided by squeak.org)
+# for OpenSmalltalk (see cog-spur and stack-spur) 32bit + 64bit
+COMPONENT_TEST_CMD=	$(COMPONENT_TEST_RESULTS_DIR)/testrunner.sh $(BITS) $(COMPONENT_DIR) $(BUILD_DIR_32)
 
 include $(WS_MAKE_RULES)/common.mk
 
