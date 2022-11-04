@@ -26,21 +26,19 @@
 # Copyright 2021, Carsten Grzemba
 #
 
-BUILD_BITS = 64
-
 include ../../../make-rules/shared-macros.mk
 
 # unfortunatly I see -m32 in CFLAGS despite that BUILD_BITS = 64 is set
 BITS = 64
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	102.4.1
+COMPONENT_VERSION =	102.4.2
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:d3766bf809f9083c0da0a1ae035509a43a10f79c614563b3e4278ae3eb6974a0
+	 sha256:ffc4a0499ccef41dccd99a683715199e9c839d628240dfb4b5f52bf1e6c902d5
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
