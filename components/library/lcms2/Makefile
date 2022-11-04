@@ -24,24 +24,24 @@ BUILD_BITS=				64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms2
-COMPONENT_MJR_VERSION=	2.13
-COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).1
+COMPONENT_MJR_VERSION=	2.14
+COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION)
 COMPONENT_FMRI=         library/lcms2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=      The Little Color Management System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.littlecms.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d473e796e7b27c5af01bd6d1552d42b45b43457e7182ce9903f38bb748203b88
+COMPONENT_ARCHIVE_HASH=	sha256:28474ea6f6591c4d4cee972123587001a4e6e353412a41b3e9e82219818d5740
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 
 include $(WS_MAKE_RULES)/common.mk
 
 # build with the distribution preferred libjpeg implementation
-CFLAGS             +=           $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS           +=           $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS            +=           $(JPEG_LDFLAGS)
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
 # Seems that we have no other way to designate that we want large file support.
 CFLAGS += $(CPP_LARGEFILES)
@@ -51,18 +51,17 @@ CFLAGS += $(CPP_LARGEFILES)
 # _MAX_ALIGNMENT definition in per-platform sections of <sys/isa_defs.h>
 CPPFLAGS += -DCMS_PTR_ALIGNMENT=_MAX_ALIGNMENT
 
-CONFIGURE_OPTIONS  +=           --includedir=/usr/include/lcms2
-CONFIGURE_OPTIONS  +=           --enable-shared
-CONFIGURE_OPTIONS  +=           --disable-static
-CONFIGURE_OPTIONS  +=           --with-jpeg
-CONFIGURE_OPTIONS  +=           --with-tiff
-CONFIGURE_OPTIONS  +=           --with-zlib
-CONFIGURE_OPTIONS  +=           --with-pic
+CONFIGURE_OPTIONS += --includedir=/usr/include/lcms2
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --with-jpeg
+CONFIGURE_OPTIONS += --with-tiff
+CONFIGURE_OPTIONS += --with-zlib
+CONFIGURE_OPTIONS += --with-pic
 
 COMPONENT_PRE_TEST_ACTION = ( cd $(@D); $(MAKE) -C testbed clean )
 
 COMPONENT_TEST_ARGS = -k -i
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*test bed.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^.*MPixel.*$$|XXX_REMOVE_XXX|g" ' \
