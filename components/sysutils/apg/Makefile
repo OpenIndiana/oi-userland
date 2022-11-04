@@ -13,39 +13,31 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apg
-COMPONENT_VERSION=	2.3.0b
-IPS_COMPONENT_VERSION=	2.3.0.2
-COMPONENT_PROJECT_URL=	http://www.adel.nursat.kz/apg/
+COMPONENT_VERSION=	2.3.0.2
+HUMAN_VERSION=		2.3.0b
+COMPONENT_REVISION=	1
+COMPONENT_PROJECT_URL=	https://github.com/wilx/apg
 COMPONENT_SUMMARY=	APG (Automated Pasword Generator)
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:d1e52029709e2d7f9cb99bedce3e02ee7a63cff7b8e2b4c2bc55b3dc03c28b92
-# Official website is now retired
-#COMPONENT_ARCHIVE_URL=	http://www.adel.nursat.kz/apg/download/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-userland/source-archives/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		security/apg
-COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_LICENSE=	BSD
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:89539aa734a47d68124fca5ba7acbe559edc5003b6791f5200ef9e706dd00fe9
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+COMPONENT_FMRI=		security/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=	$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_POST_UNPACK_ACTION += ( find $(COMPONENT_SRC) -type d -exec chmod u+rwx \{\} \; )
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/cracklib
