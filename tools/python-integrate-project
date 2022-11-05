@@ -201,9 +201,10 @@ printf "\n"
 # Remove COMPONENT_REVISION if not needed
 COMPONENT_VERSION=$(gmake print-value-COMPONENT_VERSION)
 [[ "$PREV_VER" != "$COMPONENT_VERSION" ]] && REBUILD=0 && sed -i -e '/^COMPONENT_REVISION/d' Makefile
+git add Makefile
 
 # Calculate sham256 sum for source package
-gmake fetch > /dev/null 2>&1
+! gmake fetch > /dev/null 2>&1 && printf "FATAL: 'gmake fetch' failed!\n" >&2 && exit 1
 USERLAND_ARCHIVES=$(gmake print-value-USERLAND_ARCHIVES)
 COMPONENT_ARCHIVE=$(gmake print-value-COMPONENT_ARCHIVE)
 SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES/$COMPONENT_ARCHIVE")
