@@ -23,12 +23,12 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-libav
-COMPONENT_VERSION=      1.20.3
+COMPONENT_VERSION=      1.20.4
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:3fedd10560fcdfaa1b6462cbf79a38c4e7b57d7f390359393fc0cef6dbf27dfe
-COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
+COMPONENT_ARCHIVE_HASH= sha256:04ccbdd58fb31dd94098da599209834a0e7661638c5703381dd0a862c56fc532
+COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/libav
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
@@ -47,6 +47,20 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
 # Most tests currently fail because of loader errors.
+# (first) delete the timing information from any line
+# delete the "exit status N", it can cause issues too
+# print lines that start with " N/NNN"
+# print everything between "^Ok:" and "^Timeout:"
+# delete the ninja log-related stuff at the end
+unexport SHELLOPTS
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "s/[        ]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
+        '-e "s/[        ]*exit status [0-9][0-9]*//" ' \
+        '-e "/^[        ]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
+        '-e "/^Summary of/p" ' \
+        '-e "/^Ok:/,/^Timeout:/p" ' \
+        '-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/gstreamer1

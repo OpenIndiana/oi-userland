@@ -19,13 +19,13 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-editing-services1
-COMPONENT_VERSION=	1.20.3
+COMPONENT_VERSION=	1.20.4
 COMPONENT_SUMMARY=	Multimedia graph framework - editing services
 COMPONENT_SRC_NAME=	gst-editing-services
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:5fd896de69fbe24421eb6b0ff8d2f8b4c3cba3f3025ceacd302172f39a8abaa2
-COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/
+COMPONENT_ARCHIVE_HASH=	sha256:aa03e983af5d79c1befffe3575b034e60960619a96bf877447cb73c28016fc41
+COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_FMRI=		library/audio/gstreamer1/editing-services
@@ -45,28 +45,33 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # Some tests are failing because we miss some packages
+# (first) delete the timing information from any line
+# delete the "exit status N", it can cause issues too
+# print lines that start with " N/NNN"
+# print everything between "^Ok:" and "^Timeout:"
+# delete the ninja log-related stuff at the end
 unexport SHELLOPTS
-
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/[0-9]*\.[0-9]*s//" ' \
-    '-n ' \
-    '-e "/Summary/p" ' \
-    '-e "/TIMEOUT/p" ' \
-    '-e "/Ok/p" ' \
-    '-e "/Fail/p" ' \
-    '-e "/Pass/p" ' \
-    '-e "/Skipped/p" ' \
-    '-e "/Timeout/p" '
+        '-n ' \
+        '-e "s/[        ]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
+        '-e "s/[        ]*exit status [0-9][0-9]*//" ' \
+        '-e "/^[        ]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
+        '-e "/^Summary of/p" ' \
+        '-e "/^Ok:/,/^Timeout:/p" ' \
+        '-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
 
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
 
+# Manually added dependencies
+REQUIRED_PACKAGES += runtime/python-39
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/devtools
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
