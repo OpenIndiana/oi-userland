@@ -119,5 +119,5 @@ $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 ifneq ($(strip $(COMPONENT_NAME)),pyproject_installer)
 # Once we obsolete Python 3.7 this should be changed to
 # PYTHON_USERLAND_REQUIRED_PACKAGES and '-39' suffix should be removed
-USERLAND_REQUIRED_PACKAGES += library/python/pyproject_installer-39
+USERLAND_REQUIRED_PACKAGES += library/python/pyproject-installer-39
 endif
