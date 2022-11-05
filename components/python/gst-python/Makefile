@@ -18,7 +18,7 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-python
-COMPONENT_VERSION=	1.20.3
+COMPONENT_VERSION=	1.20.4
 COMPONENT_SUMMARY=	Python bindings for the GStreamer streaming media framework
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,11 +43,14 @@ CONFIGURE_ENV+=		am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 
 # for the tests
 unexport SHELLOPTS
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
 COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/^Ran 39 tests/d" '
+        '-n ' \
+        '-e "s/[        ]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
+        '-e "s/[        ]*exit status [0-9][0-9]*//" ' \
+        '-e "/^[        ]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
+        '-e "/^Summary of/p" ' \
+        '-e "/^Ok:/,/^Timeout:/p" ' \
+        '-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
 
 # Build dependencies
 REQUIRED_PACKAGES += library/python/pygobject-3
