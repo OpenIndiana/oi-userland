@@ -48,6 +48,7 @@ CLEAN_PATHS += $$(COMPONENT_SRC$(1))
 CLOBBER_PATHS += COMPONENT_ARCHIVE$(1)
 SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$$(COMPONENT_SRC$(1))
 
+download::      $$(USERLAND_ARCHIVES)
 download::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 
 # First attempt to download a cached archive of the SCM repo at the proper
