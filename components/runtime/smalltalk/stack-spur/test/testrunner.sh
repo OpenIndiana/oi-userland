@@ -11,28 +11,24 @@ LOGFILE=testrunner-log.$BITS
 #       inisqueak -n;squeak squeak.image testrunner.st
 # or interactively simply by opening a Squeak image and going to TestRunner
 
-# however here we want to do this on the newly built 64bit VM
+# however here we want to do this on the newly built VM
 # so we start squeak from the BUILD_DIR directory
-# we only test the 64bit VM because inisqueak downloads a 64bit image
-# in the future we could improve inisqueak to also download the 32bit image
-
-# WARNING HACK : fake 32bit results because we don't want to run 32bit test
-case $BITS in
- 32) cat $COMPONENT_DIR/test/results-all.master ;exit 0;;
- 64) ;;
-  *) echo "Unknown BITS $BITS";exit 1;;
-esac
 
 # make sure that the newly built VM loads plugins fro the build dir
 # SQUEAK_PLUGINS=$PLUGIN_DIR
 # export SQUEAK_PLUGINS
 
 # download squeak.image to current directory
-$COMPONENT_DIR/inisqueak5 -n > $LOGFILE 2>&1
+case $BITS in
+ 32) $COMPONENT_DIR/inisqueak5 -32 -n > $LOGFILE 2>&1 ;;
+ 64) $COMPONENT_DIR/inisqueak5 -n > $LOGFILE 2>&1 ;;
+  *) echo "Unknown BITS $BITS";exit 1;;
+esac
+
 
 # start squeak binary from the build dir
 $BUILD_DIR/squeak squeak.image $COMPONENT_DIR/test/testrunner.st > $LOGFILE 2>&1
 
 # testrunner.st saves output in a file , dump that file as output
-cat results-64.vm
+cat results.vm
 

@@ -1,7 +1,7 @@
 | file result testRunner |
 testRunner _ TestRunner new runAll.
 result _ testRunner result.
-file _ StandardFileStream fileNamed:'results-64.vm'.
+file _ StandardFileStream fileNamed:'results.vm'.
 file nextPutAll: 'SUnit Results'; lf.
 file nextPutAll: Smalltalk version; lf.
 file nextPutAll: Smalltalk osVersion; lf.
