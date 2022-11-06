@@ -24,7 +24,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/idn2
+<transform file path=.+/share/info/dir -> drop>
+<transform path=usr/bin/$(MACH32) -> drop>
+
+file path=usr/bin/$(MACH32)/idn2
 file path=usr/bin/idn2
 file path=usr/include/idn2/idn2.h
 link path=usr/lib/$(MACH64)/libidn2.so target=libidn2.so.0.3.8
@@ -35,7 +38,7 @@ link path=usr/lib/libidn2.so target=libidn2.so.0.3.8
 link path=usr/lib/libidn2.so.0 target=libidn2.so.0.3.8
 file path=usr/lib/libidn2.so.0.3.8
 file path=usr/lib/pkgconfig/libidn2.pc
-#file path=usr/share/info/dir
+file path=usr/share/info/dir
 file path=usr/share/info/libidn2.info
 file path=usr/share/locale/cs/LC_MESSAGES/libidn2.mo
 file path=usr/share/locale/da/LC_MESSAGES/libidn2.mo
@@ -51,6 +54,7 @@ file path=usr/share/locale/id/LC_MESSAGES/libidn2.mo
 file path=usr/share/locale/it/LC_MESSAGES/libidn2.mo
 file path=usr/share/locale/ja/LC_MESSAGES/libidn2.mo
 file path=usr/share/locale/ka/LC_MESSAGES/libidn2.mo
+file path=usr/share/locale/ko/LC_MESSAGES/libidn2.mo
 file path=usr/share/locale/nl/LC_MESSAGES/libidn2.mo
 file path=usr/share/locale/pl/LC_MESSAGES/libidn2.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/libidn2.mo
