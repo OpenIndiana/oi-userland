@@ -204,10 +204,11 @@ COMPONENT_VERSION=$(gmake print-value-COMPONENT_VERSION)
 git add Makefile
 
 # Calculate sham256 sum for source package
-! gmake fetch > /dev/null 2>&1 && printf "FATAL: 'gmake fetch' failed!\n" >&2 && exit 1
+gmake fetch > /dev/null 2>&1
 USERLAND_ARCHIVES=$(gmake print-value-USERLAND_ARCHIVES)
 COMPONENT_ARCHIVE=$(gmake print-value-COMPONENT_ARCHIVE)
-SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES/$COMPONENT_ARCHIVE")
+[[ ! -f "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE" ]] && printf "FATAL: 'gmake fetch' failed!\n" >&2 && exit 1
+SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE")
 sed -i -e 's/sha256:TODO/sha256:'"$SHA256"'/g' Makefile
 git add Makefile
 
