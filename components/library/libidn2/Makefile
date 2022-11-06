@@ -14,15 +14,16 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libidn2
-COMPONENT_VERSION=	2.3.3
+COMPONENT_VERSION=	2.3.4
 COMPONENT_SUMMARY=	An implementation of IDNA2008 internationalized domain names
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:f3ac987522c00d33d44b323cae424e2cffcb4c63c6aa6cd1376edacbf1c36eb0
+COMPONENT_ARCHIVE_HASH= sha256:93caba72b4e051d1f8d4f5a076ab63c99b77faee019b72b9783b267986dbb45f
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/libidn/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libidn/
 COMPONENT_FMRI=		library/libidn2
@@ -37,13 +38,6 @@ CONFIGURE_OPTIONS += --includedir=/usr/include/idn2
 
 # Without the following one test (libidn2) fails: 
 unexport SHELLOPTS
-
-COMPONENT_TEST_TRANSFORMS += '-ne "/^SKIP/p" '
-COMPONENT_TEST_TRANSFORMS += '-ne "/^PASS/p" '
-COMPONENT_TEST_TRANSFORMS += '-ne "/^FAIL/p" '
-COMPONENT_TEST_TRANSFORMS += '-ne "/^TOTAL/p" '
-COMPONENT_TEST_TRANSFORMS += '-ne "/^===/p" '
-COMPONENT_TEST_TRANSFORMS += '-ne "/^\# /p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libunistring
