@@ -24,7 +24,8 @@ OPENJDK_BUILD=	5
 OPENJDK_PATCH=	8
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION)
-#COMPONENT_REVISION=	1
+# Remember to increment COMPONENT_REVISION for every new build as the COMPONENT_VERSION doesn't contain any update, build, or patch information:
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-$(OPENJDK_PATCH)
