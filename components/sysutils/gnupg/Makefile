@@ -22,16 +22,17 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2021, Nona Hansel
-# Copyright (c) 2021, Andreas Wacknitz
+# Copyright (c) 2021, 2022 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
-USE_COMMON_TEST_MASTER= no
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnupg
 COMPONENT_VERSION=      2.3.8
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNU Privacy Guard
+COMPONENT_DESCRIPTION=	A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://gnupg.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
@@ -39,7 +40,6 @@ COMPONENT_ARCHIVE_HASH= sha256:540b7a40e57da261fb10ef521a282e0021532a80fd023e75f
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         crypto/gnupg
 COMPONENT_CLASSIFICATION=Applications/System Utilities
-COMPONENT_DESCRIPTION=		A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_LICENSE=      GPLv3, GPLv2, LGPLv3, LGPLv2.1, Creative Commons 1.0, others
 
 include $(WS_MAKE_RULES)/common.mk
@@ -58,7 +58,7 @@ LD_OPTIONS += -z defs
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
-CONFIGURE_ENV +=	LDAPLIBS="-lldap-2.4 -llber-2.4"
+CONFIGURE_ENV +=	LDAPLIBS="-lldap-2.6 -llber-2.6"
 
 CONFIGURE_OPTIONS  +=		--localstatedir=/var
 CONFIGURE_OPTIONS  +=		--libexecdir=$(USRBINDIR)
@@ -87,12 +87,14 @@ install:	$(INSTALL_64)
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
 	    $(CP) -R 'en@boldquot' en )
 
-COMPONENT_TEST_TRANSFORMS += \
-         '-n ' \
-         '-e "/^PASS:/p" ' \
-         '-e "/^FAIL:/p" ' \
-         '-e "/^SKIP:/p" ' \
-         '-e "/^\# /p" '
+# The test scripts use gpg2 which we must provide in the build folder:
+COMPONENT_PRE_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin && $(LN) -sf gpg gpg2 )
+
+COMPONENT_TEST_TRANSFORMS += "-e '/Failed tests/p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/tests run/p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/test passed/p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/tests passed/p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/====/p'"
 
 # Missing dependencies for pinentry
 REQUIRED_PACKAGES += library/desktop/gtk2
