@@ -11,18 +11,20 @@
 
 #
 # Copyright 2019 Alexander Pyhalov
-# Copyright 2021 Andreas Wacknitz
+# Copyright 2021,2022 Andreas Wacknitz
 #
 
 BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mpg123
-COMPONENT_VERSION= 1.30.2
+COMPONENT_VERSION= 1.31.1
 COMPONENT_SUMMARY= Fast console MPEG Audio Player and decoder library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:c7ea863756bb79daed7cba2942ad3b267a410f26d2dfbd9aaf84451ff28a05d7
+COMPONENT_ARCHIVE_HASH= sha256:5dcb0936efd44cb583498b6585845206f002a7b19d5066a2683be361954d955a
 COMPONENT_ARCHIVE_URL=	https://mpg123.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_PROJECT_URL = https://mpg123.org/
@@ -30,8 +32,6 @@ COMPONENT_FMRI = audio/mpg123
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_LICENSE = LGPLv2,GPLv2
 
-# Tests are all failing
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -D__EXTENSIONS__
@@ -46,6 +46,8 @@ CONFIGURE_OPTIONS += --with-optimization=3
 CONFIGURE_OPTIONS.32 += --with-cpu=sse
 CONFIGURE_OPTIONS.64 += --with-cpu=x86-64
 CONFIGURE_OPTIONS += --with-default-audio=pulse
+
+unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/openal
