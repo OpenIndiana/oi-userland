@@ -1,42 +1,29 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
-set name=pkg.fmri \
-    value=pkg:/library/neon@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description \
-    value="An HTTP and WebDAV client library, with a C interface"
-set name=pkg.summary value="The Neon WebDAV library"
-set name=com.oracle.info.description value="the libneon WebDAV library"
-set name=info.classification \
-    value=org.opensolaris.category.2008:System/Libraries
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+#
+# Copyright 2022 Friedricch Kink
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2006/563
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-#
-#
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/bin/$(MACH32)/neon-config
 file path=usr/bin/neon-config
 file path=usr/include/neon/ne_207.h
 file path=usr/include/neon/ne_acl.h
@@ -62,9 +49,13 @@ file path=usr/include/neon/ne_uri.h
 file path=usr/include/neon/ne_utils.h
 file path=usr/include/neon/ne_xml.h
 file path=usr/include/neon/ne_xmlreq.h
-file path=usr/lib/$(MACH64)/libneon.so.27.2.6
+link path=usr/lib/$(MACH64)/libneon.so target=libneon.so.27.5.4
+link path=usr/lib/$(MACH64)/libneon.so.27 target=libneon.so.27.5.4
+file path=usr/lib/$(MACH64)/libneon.so.27.5.4
 file path=usr/lib/$(MACH64)/pkgconfig/neon.pc
-file path=usr/lib/libneon.so.27.2.6
+link path=usr/lib/libneon.so target=libneon.so.27.5.4
+link path=usr/lib/libneon.so.27 target=libneon.so.27.5.4
+file path=usr/lib/libneon.so.27.5.4
 file path=usr/lib/pkgconfig/neon.pc
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/api.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/biblio.html
@@ -86,10 +77,13 @@ file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refconfig.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/referr.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/reffeat.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refgetst.html
+file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refhash.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refi18n.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refiaddr.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refneon.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refopts.html
+file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refparam.html
+file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refproxy.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refreq.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refreqbody.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refreqflags.html
@@ -155,7 +149,10 @@ file path=usr/share/man/man3/ne_i18n_init.3
 file path=usr/share/man/man3/ne_iaddr_cmp.3
 file path=usr/share/man/man3/ne_iaddr_free.3
 file path=usr/share/man/man3/ne_iaddr_make.3
+file path=usr/share/man/man3/ne_iaddr_parse.3
 file path=usr/share/man/man3/ne_iaddr_print.3
+file path=usr/share/man/man3/ne_iaddr_raw.3
+file path=usr/share/man/man3/ne_iaddr_reverse.3
 file path=usr/share/man/man3/ne_iaddr_typeof.3
 file path=usr/share/man/man3/ne_malloc.3
 file path=usr/share/man/man3/ne_oom_callback.3
@@ -169,13 +166,15 @@ file path=usr/share/man/man3/ne_response_header_iterate.3
 file path=usr/share/man/man3/ne_session_create.3
 file path=usr/share/man/man3/ne_session_destroy.3
 file path=usr/share/man/man3/ne_session_proxy.3
+file path=usr/share/man/man3/ne_session_socks_proxy.3
+file path=usr/share/man/man3/ne_session_system_proxy.3
+file path=usr/share/man/man3/ne_set_addrlist.3
 file path=usr/share/man/man3/ne_set_connect_timeout.3
 file path=usr/share/man/man3/ne_set_error.3
 file path=usr/share/man/man3/ne_set_proxy_auth.3
 file path=usr/share/man/man3/ne_set_read_timeout.3
 file path=usr/share/man/man3/ne_set_request_body_buffer.3
 file path=usr/share/man/man3/ne_set_request_body_fd.3
-file path=usr/share/man/man3/ne_set_request_body_fd64.3
 file path=usr/share/man/man3/ne_set_request_flag.3
 file path=usr/share/man/man3/ne_set_server_auth.3
 file path=usr/share/man/man3/ne_set_session_flag.3
@@ -206,17 +205,13 @@ file path=usr/share/man/man3/ne_ssl_trust_cert.3
 file path=usr/share/man/man3/ne_ssl_trust_default_ca.3
 file path=usr/share/man/man3/ne_status.3
 file path=usr/share/man/man3/ne_strdup.3
+file path=usr/share/man/man3/ne_strhash.3
 file path=usr/share/man/man3/ne_strndup.3
+file path=usr/share/man/man3/ne_strparam.3
 file path=usr/share/man/man3/ne_token.3
 file path=usr/share/man/man3/ne_version_match.3
 file path=usr/share/man/man3/ne_version_string.3
+file path=usr/share/man/man3/ne_vstrhash.3
 file path=usr/share/man/man3/ne_xml_create.3
 file path=usr/share/man/man3/ne_xml_destroy.3
 file path=usr/share/man/man3/neon.3
-#
-license libneon.license license="LGPLv2, GPLv2"
-link path=usr/lib/$(MACH64)/libneon.so target=libneon.so.27.2.6
-link path=usr/lib/$(MACH64)/libneon.so.27 target=libneon.so.27.2.6
-link path=usr/lib/libneon.so target=libneon.so.27.2.6
-link path=usr/lib/libneon.so.27 target=libneon.so.27.2.6
-
