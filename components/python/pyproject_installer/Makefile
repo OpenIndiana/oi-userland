@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_installer
 COMPONENT_VERSION =		0.3.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pyproject_installer - Pyproject installer
 COMPONENT_ARCHIVE_URL =		\
 	https://files.pythonhosted.org/packages/3c/fa/d5cd59b42e7958526e756ee588effd1593d5c4adbc85fa5a55e0f906a876/pyproject_installer-0.3.0.tar.gz
@@ -27,34 +28,18 @@ COMPONENT_ARCHIVE_HASH =	\
 	sha256:bcec19bed803d2105b307ab64d779d1f9c75c6799a3fdce35d7ff5f7853d9730
 COMPONENT_LICENSE =		MIT
 
-# The pyproject_installer is small, PEP 517 compliant, self contained Python
-# project capable to build and install itself and other projects without
-# dependency on non-core Python modules.  It will be used to package full
-# featured 'build' and 'installer' projects.
+# The pyproject_installer is the bootstrapper so it cannot use any non-core
+# Python modules and it needs to be bootstrapped.
 PYTHON_BOOTSTRAP = yes
 
 # https://github.com/stanislavlevin/pyproject_installer/issues/13
 TEST_STYLE = none
 
-# This project requires Python >= 3.8
+# This project requires Python >= 3.8.  Once we add support for new Python
+# version (>= 3.8), such version needs to be added to PYTHON_VERSIONS below.
+# Once we obsolete Python 3.7 the PYTHON_VERSIONS line should be removed.
 PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Allow the bootstrapping pyproject_installer to find its own modules
-PYTHON_ENV += PYTHONPATH=$(@D)/src
-
-# Special self contained build command for bootstrap
-COMPONENT_BUILD_CMD =		$(PYTHON) -m pyproject_installer build
-COMPONENT_BUILD_ARGS =
-
-# Special self contained install command for bootstrap
-COMPONENT_INSTALL_CMD =		$(PYTHON) -m pyproject_installer install
-COMPONENT_INSTALL_ARGS =
-COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
-
-# pyproject_installer does not bytecompile after the install.  Since we need
-# pyc files we need to force that.
-COMPONENT_POST_INSTALL_ACTION +=	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_LIB) ;
 
 # Auto-generated dependencies
