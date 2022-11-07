@@ -14,23 +14,53 @@
 #   $WS_TOOLS/python-integrate-project importlib_metadata
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_metadata
-COMPONENT_VERSION =		4.10.1
+COMPONENT_VERSION =		5.0.0
 COMPONENT_SUMMARY =		importlib_metadata - Read metadata from Python packages
 COMPONENT_PROJECT_URL =		https://github.com/python/importlib_metadata
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f8/41/8ffb059708359ea14a3ec74a99a2bf0cd44a0c983a0c480d9eb7a69438bb/importlib_metadata-4.10.1.tar.gz
+	https://files.pythonhosted.org/packages/7e/ec/97f2ce958b62961fddd7258e0ceede844953606ad09b672fa03b86c453d3/importlib_metadata-5.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:951f0d8a5b7260e9db5e41d429285b5f451e928479f19d80818878527d36e95e
+	sha256:da31db32b304314d044d3c12c79bd59e307889b287ad12ff387b3500835fc2ab
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_TARGET = $(NO_TESTS)
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - build
+# - wheel
+PYTHON_BOOTSTRAP = yes
+
+# Disable tests because required packages are not available during bootstrap
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
+# importlib_metadata does not support setup.py build style so we cannot defer
+# to it for bootstrapping Python 3.7.  Use 'build' and 'installer' instead
+# (because pyproject_installer does not support Python 3.7).  Strictly speaking
+# this is not true bootstrap, but since we do not need to bootstrap Python 3.7
+# from scratch we can afford this fake bootstrap keeping in mind that Python
+# 3.7 should be EOLed in June 2023.
+$(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_CMD =		$(PYTHON) -m build
+$(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_ARGS =
+$(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_ARGS +=		--wheel
+$(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_ARGS +=		--no-isolation
+
+$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_CMD =		$(PYTHON) -m installer
+$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_ARGS =
+$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
+$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_ARGS +=	$(@D)/dist/*.whl
+
+USERLAND_REQUIRED_PACKAGES += library/python/build-37
+USERLAND_REQUIRED_PACKAGES += library/python/installer-37
+
+BOOTSTRAP_TRANSFORMS =
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
