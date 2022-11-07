@@ -16,34 +16,44 @@
 # Copyright 2021 omnios.org wrt the ctx patches
 # Copyright 2022 Daniel Bell
 
-#USE_OPENSSL11= yes
+BUILD_STYLE=configure
+BUILD_BITS=64
+USE_OPENSSL11=          yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      6.1.38
-COMPONENT_REVISION =	0
+COMPONENT_VERSION=      6.1.40
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
 COMPONENT_FMRI=         system/virtualbox
-COMPONENT_CLASSIFICATION= System/Virtualization
+COMPONENT_CLASSIFICATION=System/Virtualization
 
 COMPONENT_DOWNLOAD_URL= https://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
-COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
-COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= $(shell sed -E '/ [ \*]$(COMPONENT_ARCHIVE)$$/!d;s/(^[0-9a-fA-F]+)( .*)/sha256:\1/' $(COMPONENT_DIR)/$(COMPONENT_NAME).sums)
 COMPONENT_LICENSE=      GPLv2
 
-# Get build number from SDK zip entry in the checksum file
-SDK_BUILD_NUMBER=	$(shell sed -E '/ [ \*]VirtualBoxSDK.*zip/!d;s/(^[0-9a-fA-F]+ [ \*]VirtualBoxSDK-[0-9\.]+-)([0-9]+)(.*$$)/\2/' $(COMPONENT_DIR)/$(COMPONENT_NAME).sums)
+HASH_DIR=$(COMPONENT_DIR)/hashes
+export HASH_DIR
+
+FETCH_KEEP=-n --keep
+DEFAULT_HASH_FILES=SHA256SUMS
+export DEFAULT_HASH_FILES
+
+# We need the hashfile before even parsing the Makefile since we need the build number from it.
+ifeq (,$(wildcard $(HASH_DIR)/SHA256SUMS))
+$(shell curl -q -o $(HASH_DIR)/SHA256SUMS $(COMPONENT_DOWNLOAD_URL)/SHA256SUMS)
+endif
+SDK_BUILD_NUM=$(shell sed -E '/ [ \*]VirtualBoxSDK.*zip/!d;s/(^[0-9a-fA-F]+ [ \*]VirtualBoxSDK-[0-9\.]+-)([0-9]+)(.*$$)/\2/' $(HASH_DIR)/SHA256SUMS)
+
 
 COMPONENT_NAME_1=       VirtualBoxSDK
-COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-$(SDK_BUILD_NUMBER)
+COMPONENT_VERSION_1=    $(COMPONENT_VERSION)-$(SDK_BUILD_NUM)
 COMPONENT_SRC_1=        $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
-COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).zip
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE_1)
-COMPONENT_ARCHIVE_HASH_1= $(shell sed -E '/ [ \*]$(COMPONENT_ARCHIVE_1)$$/!d;s/(^[0-9a-fA-F]+)( .*)/sha256:\1/' $(COMPONENT_DIR)/$(COMPONENT_NAME).sums)
+COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).zip
 COMPONENT_LICENSE_1=	GPLv2
 
 UNPACK_ARGS_1=		-r $(COMPONENT_SRC_1)
@@ -51,9 +61,8 @@ UNPACK_ARGS_1=		-r $(COMPONENT_SRC_1)
 COMPONENT_POST_UNPACK_ACTION_1 = \
 	cd $(COMPONENT_SRC); $(LN) -s ../$(COMPONENT_SRC_1)/sdk .;
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=$(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -225,13 +234,11 @@ $(BUILD_32_and_64): GMAKE= cd $(@D)/src/VBox/HostDrivers && $(SHELL) -c ". $(@D)
 
 # Sometimes 32-bit build is skipped silently. Better build like this:
 #	gmake build install sample-manifest
-build:		$(BUILD_32_and_64)
 
 $(INSTALL_64): GMAKE= cd $(@D)/src/VBox/Installer && $(SHELL) -c ". $(@D)/env.sh && kmk solaris-install VBOX_PATH_SI_SCRATCH_PKG=$(PROTO_DIR)"
 
 install:	$(INSTALL_64) $(INSTALL_ADDITIONS)
 
-test:		$(NO_TESTS)
 
 # Build dependencies
 REQUIRED_PACKAGES += driver/usb
@@ -246,14 +253,15 @@ REQUIRED_PACKAGES += developer/object-file
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/gsoap
+REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
