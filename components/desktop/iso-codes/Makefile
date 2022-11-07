@@ -15,16 +15,15 @@
 # Copyright 2020, 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iso-codes
-COMPONENT_VERSION=	4.11.0
+COMPONENT_VERSION=	4.12.0
 COMPONENT_FMRI=		data/iso-codes
 COMPONENT_SUMMARY=	ISO code lists and translations
 COMPONENT_SRC=		$(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:5aed05f5053080fe55c3fb47f46677691efb59dfb215bd41484a391a7c4df9c5
+COMPONENT_ARCHIVE_HASH= sha256:84687912995042ed37eb96060fff750160441928518b2d4712d0f37f6cabfd88
 COMPONENT_PROJECT_URL=	https://salsa.debian.org/iso-codes-team/iso-codes
 COMPONENT_ARCHIVE_URL=	https://salsa.debian.org/iso-codes-team/$(COMPONENT_NAME)/-/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1
@@ -41,7 +40,7 @@ CLEAN_PATHS	+= build
 COMPONENT_POST_CONFIGURE_ACTION= \
   ( cd $(@D); $(GSED) -i '/^LN_S/s/s/sfvn/' */Makefile )
 
-# bin/xml_from_json.py script requires a Python 3 interpret
+# bin/xml_from_json.py script requires a Python 3 interpreter
 REQUIRED_PACKAGES+= $(PYTHON3_RUNTIME_PKG)
 
 # Auto-generated dependencies
