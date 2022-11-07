@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flit_core
 COMPONENT_VERSION =		3.8.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		flit_core - Distribution-building parts of Flit. See flit package for more information
 COMPONENT_ARCHIVE_URL =		\
 	https://files.pythonhosted.org/packages/10/e5/be08751d07b30889af130cec20955c987a74380a10058e6e8856e4010afc/flit_core-3.8.0.tar.gz
@@ -57,5 +58,7 @@ $(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_ARGS +=	$(@D)/dist/*.whl
 
 USERLAND_REQUIRED_PACKAGES += library/python/build-37
 USERLAND_REQUIRED_PACKAGES += library/python/installer-37
+
+BOOTSTRAP_TRANSFORMS =
 
 # Auto-generated dependencies
