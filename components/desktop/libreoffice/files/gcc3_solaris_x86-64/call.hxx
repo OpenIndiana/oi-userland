@@ -24,10 +24,13 @@
 
 #include <sal/types.h>
 
-extern "C" void __attribute__((noinline)) cpp_vtable_call(
-    sal_Int32 nFunctionIndex, sal_Int32 nVtableOffset,
-    void** pCallStack );
-
+extern "C" typelib_TypeClass cpp_mediate(
+    sal_Int32 nFunctionIndex,
+    sal_Int32 nVtableOffset,
+    void ** pCallStack,
+    void ** pRegs,
+    sal_Int64 * pRegisterReturn /* space for register return */ );
+ 
 #endif
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -25,7 +25,25 @@
 #include <exception>
 #include <cstddef>
 
+#include <sal/alloca.h>
+
+#include <uno/data.h>
+
+#include <typelib/typedescription.hxx>
+
+#include <com/sun/star/uno/genfunc.hxx>
+#include <com/sun/star/uno/Exception.hpp>
+#include "com/sun/star/uno/RuntimeException.hpp"
+
+#include "bridge.hxx"
+#include "types.hxx"
+
+
 extern "C" void asm_vtable_call_wrapper( ... );
+bool isSimple(typelib_TypeDescription const * type);
+bool isSimple(typelib_TypeDescriptionReference const * type);
+bool isSmallStruct(typelib_TypeDescription const * tDesc); 
+bool isStructReturnedByReference(typelib_StructTypeDescription const * tDesc);
 
 namespace CPPU_CURRENT_NAMESPACE
 {

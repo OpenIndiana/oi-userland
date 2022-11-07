@@ -16,7 +16,7 @@
  *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
  */
 
-	.extern cpp_vtable_call 		# probably unnecessary
+	.extern cpp_mediate		# probably unnecessary
 	.text
 	.align 2
 .globl asm_vtable_call_wrapper
@@ -29,7 +29,6 @@ asm_vtable_call_wrapper:
 .LCFI1:
 	subq	$0x80, %rsp
 .LCFI2:
-	movq	%r10, -0x08(%rbp)		# Save (nVtableOffset << 32) + nFunctionIndex
 
 	# General purpose registers 
 	movq	%rdi, -0x80(%rbp)		# rdi = arg1 = this
@@ -49,15 +48,51 @@ asm_vtable_call_wrapper:
 	movsd	%xmm6, -0x20(%rbp)
 	movsd	%xmm7, -0x18(%rbp)
 
-	# pCallStack = [ret ptr], this, params
-	leaq	-0x88(%rbp), %rdx		# 3rd param: void ** pCallStack
-	movl	-0x04(%rbp), %esi		# 2nd param: sal_int32 nVtableOffset
-	movl	-0x08(%rbp), %edi		# 1st param: sal_int32 nFunctionIndex
-	
-	call	cpp_vtable_call
+    # zero out return value
+    xor %r8, %r8
+    mov %r8, -0x10(%rbp)
+    mov %r8, -0x08(%rbp)
 
+    lea     -0x10(%rbp),%r8         # 5th param: return values
+    movq    %rsp, %rcx              # 4th param: void ** pRegs
+	movq	%rbp, %rdx	            # 3rd param: void ** pCallStack (before this call stack)
+    addq    $16, %rdx               # skip saved rbp and return address
+	movq	%r10, %rsi		        # Save (nVtableOffset << 32) + nFunctionIndex
+	shr 	$0x20, %rsi      		# 2nd param: sal_int32 nVtableOffset
+	movl	%r10d, %edi             # 1st param: sal_int32 nFunctionIndex
+	
+	call	cpp_mediate
+    // %rax = typelib_ClassType; return value in -0x10(%rbp)
+
+    cmp $11,%rax
+    ja __asm_vtable_call_wrapper__default_ret
+    je __asm_vtable_call_wrapper__double_ret
+    cmp $10, %rax
+    jb __asm_vtable_call_wrapper__default_ret
+    je __asm_vtable_call_wrapper__float_ret
+
+    # DOUBLE = 11
+__asm_vtable_call_wrapper__double_ret:
+    fldl -0x10(%rbp)
+    fst %st
 	leave
 	ret
+
+    # FLOAT = 10
+__asm_vtable_call_wrapper__float_ret:
+    flds -0x10(%rbp)
+    fst %st
+	leave
+	ret
+
+    # UNSIGNED_HYPER = 9
+    # HYPER = 8
+__asm_vtable_call_wrapper__default_ret:
+    movq -0x10(%rbp),%rax
+    movq -0x08(%rbp),%rdx
+	leave
+	ret
+
 .LFE3:
 	.size	asm_vtable_call_wrapper, .-asm_vtable_call_wrapper
 	# see http://refspecs.linuxfoundation.org/LSB_3.0.0/LSB-Core-generic/LSB-Core-generic/ehframechpt.html

@@ -23,21 +23,14 @@
 #include <typeinfo>
 
 #include <malloc.h>
-#include <sal/alloca.h>
 
-#include <com/sun/star/uno/genfunc.hxx>
-#include <com/sun/star/uno/Exception.hpp>
-#include "com/sun/star/uno/RuntimeException.hpp"
 #include <o3tl/runtimetooustring.hxx>
-#include <uno/data.h>
 
-#include "bridge.hxx"
-#include "types.hxx"
-#include "unointerfaceproxy.hxx"
 #include "vtables.hxx"
 
 #include "share.hxx"
 
+#include "unointerfaceproxy.hxx"
 #include "callvirtualmethod.hxx"
 
 using namespace ::com::sun::star::uno;
@@ -55,7 +48,22 @@ static void cpp_call(
       // max space for: [complex ret ptr], values|ptr ...
       char * pCppStack      =
           (char *)alloca( ((nParams+3) * sizeof(sal_Int64)) );
+      memset((void*)pCppStack,0,(nParams+3) * sizeof(sal_Int64));
       char * pCppStackStart = pCppStack;
+
+    // To reduce argument passing
+    void ** pCppRegisters = (void **)alloca( sizeof(void*) * 14);
+    memset((void*)pCppRegisters,0,14*sizeof(void*));
+    // gcc uses 8 xmm registers to pass floats in 64-bit
+    // These are always stored as 64-bit, even if single precision 
+    // If there are more than 8 floats, the rest go onto the stack
+    void ** pCppFPRs  = pCppRegisters + 6;
+    sal_uInt8 nFPRsUsed = 0;
+
+    // It's better to explicitly separate GPRs from the stack here
+    void ** pCppGPRs = pCppRegisters;
+    sal_uInt8 nGPRsUsed = 0;
+
 
     // return
     typelib_TypeDescription * pReturnTypeDescr = 0;
@@ -66,33 +74,32 @@ static void cpp_call(
 
     if (pReturnTypeDescr)
     {
-        if (bridges::cpp_uno::shared::isSimpleType( pReturnTypeDescr ))
+        if (isSimple( pReturnTypeDescr ))
         {
             pCppReturn = pUnoReturn; // direct way for simple types
         }
         else
         {
             // complex return via ptr
-            pCppReturn = *(void **)pCppStack
+            pCppReturn = pCppGPRs[nGPRsUsed++]
                 = (bridges::cpp_uno::shared::relatesToInterfaceType(
                        pReturnTypeDescr )
                    ? alloca( pReturnTypeDescr->nSize )
                    : pUnoReturn); // direct way
-            pCppStack += sizeof(void *);
         }
     }
     // push this
     void * pAdjustedThisPtr = reinterpret_cast< void ** >(pThis->getCppI())
         + aVtableSlot.offset;
-    *(void**)pCppStack = pAdjustedThisPtr;
-    pCppStack += sizeof( void* );
+    pCppGPRs[nGPRsUsed++] = pAdjustedThisPtr;
 
-    // stack space
-    static_assert(sizeof(void *) == sizeof(sal_Int64), "### unexpected size!");
     // args
     void ** pCppArgs  = (void **)alloca( 3 * sizeof(void *) * nParams );
+
+
     // indices of values this have to be converted (interface conversion cpp<=>uno)
     sal_Int32 * pTempIndices = (sal_Int32 *)(pCppArgs + nParams);
+
     // type descriptions for reconversions
     typelib_TypeDescription ** ppTempParamTypeDescr = (typelib_TypeDescription **)(pCppArgs + (2 * nParams));
 
@@ -104,21 +111,51 @@ static void cpp_call(
         typelib_TypeDescription * pParamTypeDescr = 0;
         TYPELIB_DANGER_GET( &pParamTypeDescr, rParam.pTypeRef );
 
-        if (!rParam.bOut
-            && bridges::cpp_uno::shared::isSimpleType( pParamTypeDescr ))
+        if (!rParam.bOut && isSimple( pParamTypeDescr ))
         {
-            uno_copyAndConvertData( pCppArgs[nPos] = pCppStack, pUnoArgs[nPos], pParamTypeDescr,
-                                    pThis->getBridge()->getUno2Cpp() );
+            if(pParamTypeDescr->eTypeClass == typelib_TypeClass_DOUBLE ||
+                            pParamTypeDescr->eTypeClass == typelib_TypeClass_FLOAT) { 
+                if( nFPRsUsed < 8) 
+                    pCppArgs[nPos] = &pCppFPRs[nFPRsUsed++];
+                else {
+                    pCppArgs[nPos] = pCppStack;
+                    pCppStack += sizeof(void*);
+                }
+
+            } else {
+                if( nGPRsUsed < 6) {
+                    pCppArgs[nPos] = &pCppGPRs[nGPRsUsed++];
+                } else {
+                    pCppArgs[nPos] = pCppStack;
+                    pCppStack += sizeof(void*);
+                }
+            }
+            if(pParamTypeDescr->eTypeClass == typelib_TypeClass_STRUCT &&
+                        isStructReturnedByReference( (typelib_StructTypeDescription*)pParamTypeDescr) ) {
+                // direct copy small structs that are explicitly passed by reference to a function, as
+                // UNO_copyAndConvertData erroneously copies the data ptr as the struct data itself
+                *(void**)pCppArgs[nPos] = *(void**)pUnoArgs[nPos];
+            } else {
+                uno_copyAndConvertData( pCppArgs[nPos], pUnoArgs[nPos], pParamTypeDescr,
+                        pThis->getBridge()->getUno2Cpp() );
+            }
             // no longer needed
             TYPELIB_DANGER_RELEASE( pParamTypeDescr );
         }
         else // ptr to complex value | ref
         {
+            void** pDest;
+            if( nGPRsUsed < 6)
+                pDest = (void**)&pCppGPRs[nGPRsUsed++];
+            else {
+                pDest = (void**)pCppStack;
+                pCppStack += sizeof(void*);
+            }
             if (! rParam.bIn) // is pure out
             {
                 // cpp out is constructed mem, uno out is not!
                 uno_constructData(
-                    *(void **)pCppStack = pCppArgs[nPos] = alloca( pParamTypeDescr->nSize ),
+                    *pDest = pCppArgs[nPos] = alloca( pParamTypeDescr->nSize ),
                     pParamTypeDescr );
                 pTempIndices[nTempIndices] = nPos; // default constructed for cpp call
                 // will be released at reconversion
@@ -129,7 +166,7 @@ static void cpp_call(
                          pParamTypeDescr ))
             {
                 uno_copyAndConvertData(
-                    *(void **)pCppStack = pCppArgs[nPos] = alloca( pParamTypeDescr->nSize ),
+                    *pDest = pCppArgs[nPos] = alloca( pParamTypeDescr->nSize ),
                     pUnoArgs[nPos], pParamTypeDescr,
                     pThis->getBridge()->getUno2Cpp() );
 
@@ -139,12 +176,11 @@ static void cpp_call(
             }
             else // direct way
             {
-                *(void **)pCppStack = pCppArgs[nPos] = pUnoArgs[nPos];
+                *pDest = pCppArgs[nPos] = pUnoArgs[nPos];
                 // no longer needed
                 TYPELIB_DANGER_RELEASE( pParamTypeDescr );
             }
         }
-        pCppStack += sizeof(sal_Int64); // standard parameter length
     }
 
     try
@@ -153,8 +189,8 @@ static void cpp_call(
         try {
             CPPU_CURRENT_NAMESPACE::callVirtualMethod(
                 pAdjustedThisPtr, aVtableSlot.index,
-                pCppReturn, pReturnTypeDescr->eTypeClass,
-                (sal_Int64 *)pCppStackStart, (pCppStack - pCppStackStart) / sizeof(sal_Int64) );
+                pCppReturn, pReturnTypeDescr,
+                (sal_Int64 *)pCppStackStart, (pCppStack - pCppStackStart) / sizeof(sal_Int64),pCppRegisters);
         } catch (css::uno::Exception &) {
             throw;
         } catch (std::exception & e) {

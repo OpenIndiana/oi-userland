@@ -8,14 +8,13 @@
  ifeq ($(COM),MSC)
  $(call gb_ExternalProject_get_state_target,coinmp,build) :
  	$(call gb_Trace_StartRange,coinmp,EXTERNAL)
-@@ -27,11 +26,14 @@
+@@ -27,11 +26,12 @@
  
  else
  $(call gb_ExternalProject_get_state_target,coinmp,build) :
-+	$(info COINMP_CFLAGS = $(COINMP_CFLAGS))
-+	$(info COINMP_CXXFLAGS = $(COINMP_CXXFLAGS))
  	$(call gb_Trace_StartRange,coinmp,EXTERNAL)
- 	+$(call gb_ExternalProject_run,build,\
+-	+$(call gb_ExternalProject_run,build,\
++	 $(call gb_ExternalProject_run,build,\
 -		$(gb_RUN_CONFIGURE) ./configure COIN_SKIP_PROJECTS="Data/Sample" \
 +		$(gb_RUN_CONFIGURE) CFLAGS="$(COINMP_CFLAGS)" CXXFLAGS="$(COINMP_CXXFLAGS)"  ./configure COIN_SKIP_PROJECTS="Data/Sample" \
  			$(if $(verbose),--disable-silent-rules,--enable-silent-rules) \

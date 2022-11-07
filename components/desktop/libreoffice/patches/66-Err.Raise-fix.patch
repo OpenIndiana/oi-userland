@@ -1,0 +1,25 @@
+--- a/basic/source/runtime/runtime.cxx	2022-10-28 13:47:11.791947574 +0000
++++ b/basic/source/runtime/runtime.cxx	2022-10-28 13:45:28.945491775 +0000
+@@ -511,15 +511,15 @@
+ 
+ void SbiInstance::ErrorVB( sal_Int32 nVBNumber, const OUString& rMsg )
+ {
+-    if( !bWatchMode )
++    if( !bWatchMode && nVBNumber != 0 )
+     {
+-        ErrCode n = StarBASIC::GetSfxFromVBError( static_cast< sal_uInt16 >( nVBNumber ) );
+-        if ( !n )
+-        {
+-            n = ErrCode(nVBNumber); // force orig number, probably should have a specific table of vb ( localized ) errors
+-        }
++        nErr = ERRCODE_NONE;
++        if( static_cast< sal_uInt32 >(nVBNumber) <= 0xFFFF)
++            nErr = StarBASIC::GetSfxFromVBError( static_cast< sal_uInt16 >( nVBNumber ) );
++        if ( nErr == ERRCODE_NONE ) // GetSfxFromVBError returns ERRCODE_NONE if it can't find that error number
++            nErr = ErrCode(nVBNumber); // force orig number, probably should have a specific table of vb ( localized ) errors
+         aErrorMsg = rMsg;
+-        SbiRuntime::translateErrorToVba( n, aErrorMsg );
++        SbiRuntime::translateErrorToVba( nErr, aErrorMsg );
+ 
+         pRun->Error( ERRCODE_BASIC_COMPAT, true/*bVBATranslationAlreadyDone*/ );
+     }

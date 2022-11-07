@@ -39,9 +39,10 @@ void callVirtualMethod(
     void * pAdjustedThisPtr,
     sal_Int32 nVtableIndex,
     void * pRegisterReturn,
-    typelib_TypeClass eReturnType,
+    typelib_TypeDescription* pReturnTypeDescr,
     sal_Int64 * pStackLongs,
-    sal_Int32 nStackLongs );
+    sal_Int32 nStackLongs,
+    void** pCppFPRs );
 
 }
 

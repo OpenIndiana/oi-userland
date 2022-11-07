@@ -14,23 +14,25 @@
 #
 
 
+USE_OPENSSL11=          yes
 include ../../../make-rules/shared-macros.mk
 BITS=64
 
-COMPONENT_NAME=	libreoffice
-COMPONENT_VERSION= 7.2.7
+COMPONENT_NAME=         libreoffice
+COMPONENT_VERSION=      7.2.7
+COMPONENT_REVISION=     1
 COMPONENT_RC_VERSION= 2
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION)
-COMPONENT_SUMMARY= LibreOffice is a powerful office suite
-COMPONENT_PROJECT_URL= https://www.libreoffice.org/
-COMPONENT_FMRI= desktop/office/libreoffice
-COMPONENT_CLASSIFICATION= Applications/Office
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_URL= https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SUMMARY=      LibreOffice is a powerful office suite
+COMPONENT_PROJECT_URL=  https://www.libreoffice.org/
+COMPONENT_FMRI=         desktop/office/libreoffice
+COMPONENT_CLASSIFICATION=Applications/Office
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_URL=  https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_ARCHIVE_HASH= sha256:6deaf83a0c2b83c5c8c53c2a9443e2ece51e19469494be2027d4fef3a61bc6a2
-COMPONENT_LICENSE= MPL2.0
+COMPONENT_LICENSE=      MPL2.0
 COMPONENT_LICENSE_FILE= COPYING.MPL
 
 COMPONENT_ARCHIVE_1 = 0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
@@ -38,7 +40,7 @@ COMPONENT_ARCHIVE_HASH_1 = sha256:983941d31ee8d366085cadf28db75eb1f5cb03ba1e5853
 COMPONENT_ARCHIVE_URL_1 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_1)
 
 COMPONENT_ARCHIVE_2 = 1f5def51ca0026cd192958ef07228b52-rasqal-0.9.33.tar.gz
-OMPONENT_ARCHIVE_HASH_2 = sha256:6924c9ac6570bd241a9669f83b467c728a322470bf34f4b2da4f69492ccfd97c
+COMPONENT_ARCHIVE_HASH_2 = sha256:6924c9ac6570bd241a9669f83b467c728a322470bf34f4b2da4f69492ccfd97c
 COMPONENT_ARCHIVE_URL_2 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_2)
 
 COMPONENT_ARCHIVE_3 = 26b3e95ddf3d9c077c480ea45874b3b8-lp_solve_5.5.tar.gz
@@ -147,13 +149,24 @@ COMPONENT_ARCHIVE_28 = libcmis-0.5.2.tar.xz
 COMPONENT_ARCHIVE_HASH_28 = sha256:d7b18d9602190e10d437f8a964a32e983afd57e2db316a07d87477a79f5000a2
 COMPONENT_ARCHIVE_URL_28 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_28)
 
+COMPONENT_ARCHIVE_29 = gpgme-1.13.1.tar.bz2
+COMPONENT_ARCHIVE_HASH_29 = sha256:c4e30b227682374c23cddc7fdb9324a99694d907e79242a25a4deeedb393be46
+COMPONENT_ARCHIVE_URL_29 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_29)
+
+COMPONENT_ARCHIVE_30 = libassuan-2.5.3.tar.bz2
+COMPONENT_ARCHIVE_HASH_30 = sha256:91bcb0403866b4e7c4bc1cc52ed4c364a9b5414b3994f718c70303f7f765e702
+COMPONENT_ARCHIVE_URL_30 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_30)
+
+COMPONENT_ARCHIVE_31 = libgpg-error-1.37.tar.bz2
+COMPONENT_ARCHIVE_HASH_31 = sha256:b32d6ff72a73cf79797f7f2d039e95e9c6f92f0c1450215410840ab62aea9763
+COMPONENT_ARCHIVE_URL_31 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_31)
 # ignore archive 7 (mariadb client)
 # ignore archive 21 (boost)
-NUM_EXTRA_ARCHIVES = $(shell seq 1 6) $(shell 8 20) $(shell 22 28)
+NUM_EXTRA_ARCHIVES = $(shell seq 1 6) $(shell 8 20) $(shell 22 31)
 
 include $(WS_MAKE_RULES)/common.mk
 
-GCC_VERSION=7
+GCC_VERSION=10
 PATH=$(GCC_ROOT)/bin:$(PATH.gnu)
 
 #Ensure asm is built in 64-bit.
@@ -166,10 +179,17 @@ CXX+= -m64
 COMPONENT_BUILD_ENV=   CONFIG_SHELL="$(CONFIG_SHELL)"
 COMPONENT_BUILD_ENV+=  SHELL="$(CONFIG_SHELL)"
 COMPONENT_BUILD_ENV+=  AFLAGS="$(AFLAGS)"
+COMPONENT_BUILD_ENV+=  LD_LIBRARY_PATH="$(GCC_LIBDIR)"
 
+COMPONENT_TEST_ENV= LD_LIBRARY_PATH='$(GCC_LIBDIR):$(BUILD_DIR)/instdir/program/' GMAKE_OPTIONS=-rsk
 
 CONFIGURE_ENV = $(COMPONENT_BUILD_ENV)
-CONFIGURE_ENV += PYTHON=/usr/bin/python3.5
+CONFIGURE_ENV += PYTHON=/usr/bin/python3.9
+CONFIGURE_ENV += GPG=/usr/bin/gpg2
+CONFIGURE_ENV += GPGCONF=/usr/bin/gpgconf
+
+CONFIGURE_ENV += MARIADBCONFIG=/usr/mariadb/10.3/bin/mysql_config
+MARIADB_LIBDIR=/usr/mariadb/10.3/lib/amd64
 
 CONFIGURE_LIBDIR= $(CONFIGURE_LIBDIR.64)
 
@@ -184,7 +204,9 @@ COMPONENT_PRE_BUILD_ACTION= ( rm -rf $(SOURCE_DIR)/bridges/source/cpp_uno/gcc3_s
 
 LDFLAGS += $(JPEG_LDFLAGS) -lX11-xcb -lX11 
 
-CFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS) -fstack-protector -lssp_nonshared
+CFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS) -lssp_nonshared
+#CONFIGURE_OPTIONS += --enable-debug
+#CONFIGURE_OPTIONS += --enable-optimized=no
 CXXFLAGS = $(CFLAGS)
 
 # 64-bit
@@ -213,8 +235,6 @@ CONFIGURE_OPTIONS += --with-system-harfbuzz
 
 CONFIGURE_OPTIONS += --with-system-graphite
 CONFIGURE_OPTIONS += --with-system-cppunit
-
-#CONFIGURE_OPTIONS += --enable-debug
 
 CONFIGURE_OPTIONS += --with-system-lcms2
 CONFIGURE_OPTIONS += --with-system-dicts
@@ -268,13 +288,21 @@ COMPONENT_INSTALL_TARGETS = distro-pack-install
 LIBREOFFICE_PROGRAM_DIR = /usr/lib/amd64/libreoffice/program
 
 NSS_LIB_DIR=/usr/lib/mps/amd64
-MARIADB_LIBDIR=/usr/mariadb/10.1/lib/amd64
 
 COMPONENT_POST_INSTALL_ACTION  = \
     for file in $(PROTO_DIR)$(LIBREOFFICE_PROGRAM_DIR)/*.so*; do \
         /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR):$(MARIADB_LIBDIR)"' $$file ; \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR):$(MARIADB_LIBDIR)"' $$file ; \
     done ; 
+
+
+# debug specific test
+testtrace:
+	@[ -n "$(SPECTEST)" ] || (echo "No SPECTEST specified."; exit 1;)
+	(cd $(BUILD_DIR); \
+		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) CPPUNITTRACE="gdb --args" \
+		$(COMPONENT_TEST_CMD) \
+		$(COMPONENT_TEST_ARGS) $(CPPUNIT_TEST_NAME) $(SPECTEST))
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/assembler/nasm
@@ -283,13 +311,13 @@ REQUIRED_PACKAGES += developer/gperf
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/c++/mdds
-REQUIRED_PACKAGES += database/mariadb-101/client
+REQUIRED_PACKAGES += database/mariadb-103/client
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += database/mariadb-103/library
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
@@ -299,7 +327,6 @@ REQUIRED_PACKAGES += library/c++/graphite2
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/c++/libabw
 REQUIRED_PACKAGES += library/c++/libcdr
-REQUIRED_PACKAGES += library/c++/libcmis
 REQUIRED_PACKAGES += library/c++/libe-book
 REQUIRED_PACKAGES += library/c++/libepubgen
 REQUIRED_PACKAGES += library/c++/libetonyek
@@ -329,20 +356,19 @@ REQUIRED_PACKAGES += library/liblangtag
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
-REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/mozilla-nss
-REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += text/hunspell
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libepoxy
