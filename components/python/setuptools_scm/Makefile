@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools_scm
 COMPONENT_VERSION =		7.0.5
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		setuptools_scm - the blessed package to manage your versions by scm tags
 COMPONENT_PROJECT_URL =		https://github.com/pypa/setuptools_scm/
 COMPONENT_ARCHIVE_URL =		\
@@ -29,6 +30,17 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - importlib_metadata
+PYTHON_BOOTSTRAP = yes
+
+# Disable tests because required packages are not available during bootstrap
+TEST_STYLE = none
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
