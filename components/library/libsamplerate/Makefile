@@ -20,26 +20,35 @@
 #
 # Copyright (c) 2015-2017 Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS= 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsamplerate
-COMPONENT_VERSION=	0.1.9
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=	library/libsamplerate
-COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_VERSION=	0.2.2
 COMPONENT_SUMMARY=	Secret Rabbit Code (aka libsamplerate) - Sample Rate Converter for audio 
 COMPONENT_PROJECT_URL=	https://libsndfile.github.io/libsamplerate/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0a7eb168e2f21353fb6d84da152e4512126f7dc48ccb0be80578c565413444c1
-COMPONENT_ARCHIVE_URL=	http://www.mega-nerd.com/SRC/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://github.com/libsndfile/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:16e881487f184250deb4fcb60432d7556ab12cb58caea71ef23960aec6c0405a
+COMPONENT_FMRI=	library/libsamplerate
+COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	BSD	
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--enable-shared
+COMPONENT_PREP_ACTION=  ( cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
+
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-n' \
+	'-e "/Pass/p"' \
+	'-e "/PASS/p"' \
+	'-e "/ok/p"' \
+	'-e "/passed/p"' \
+	'-e "/======/p"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libsndfile
