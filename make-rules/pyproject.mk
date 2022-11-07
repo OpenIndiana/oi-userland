@@ -66,7 +66,8 @@ $(BUILD_DIR)/%-3.9/.installed:	COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
 $(BUILD_DIR)/%-3.9/.installed:	COMPONENT_POST_INSTALL_ACTION +=	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_LIB) ;
 
 # Special transforms needed only until we drop support for Python 3.7
-PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-bootstrap
+BOOTSTRAP_TRANSFORMS =	$(WS_TOP)/transforms/python-bootstrap
+PUBLISH_TRANSFORMS +=	$(BOOTSTRAP_TRANSFORMS)
 else
 COMPONENT_BUILD_CMD =		$(PYTHON) -m build
 COMPONENT_BUILD_ARGS =
