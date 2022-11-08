@@ -1,0 +1,36 @@
+diff -u a/i18npool/CustomTarget_indexentry.mk b/i18npool/CustomTarget_indexentry.mk
+--- a/i18npool/CustomTarget_indexentry.mk	Fri May  6 16:49:44 2022
++++ b/i18npool/CustomTarget_indexentry.mk	Thu Nov  3 16:39:31 2022
+@@ -33,7 +33,7 @@
+ 	$(call gb_Helper_abbreviate_dirs, \
+ 		$(call gb_Helper_execute,genindex_data) $< $@.tmp $* && \
+ 		sed 's/\(^.*get_\)/SAL_DLLPUBLIC_EXPORT \1/' $@.tmp > $@ && \
+-		rm $@.tmp)
++		rm -f $@.tmp)
+ 	$(call gb_Trace_EndRange,$(subst $(WORKDIR)/,,$@),IND)
+ 
+ # vim: set noet sw=4 ts=4:
+diff -u a/i18npool/CustomTarget_localedata.mk b/i18npool/CustomTarget_localedata.mk
+--- a/i18npool/CustomTarget_localedata.mk	Fri May  6 16:49:44 2022
++++ b/i18npool/CustomTarget_localedata.mk	Thu Nov  3 16:39:44 2022
+@@ -27,7 +27,7 @@
+ 				-env:LO_LIB_DIR=$(call gb_Helper_make_url,$(INSTROOT_FOR_BUILD)/$(LIBO_LIB_FOLDER)) \
+ 				-env:URE_MORE_SERVICES=$(call gb_Helper_make_url,$(call gb_Rdb_get_target_for_build,saxparser))) && \
+ 		sed 's/\(^.*get[^;]*$$$$\)/SAL_DLLPUBLIC_EXPORT \1/' $$@.tmp > $$@ && \
+-		rm $$@.tmp)
++		rm -f $$@.tmp)
+ 	$$(call gb_Trace_EndRange,$$(subst $(WORKDIR)/,,$$@),SAX)
+ 
+ endef
+diff -u a/i18npool/CustomTarget_textconversion.mk b/i18npool/CustomTarget_textconversion.mk
+--- a/i18npool/CustomTarget_textconversion.mk	Fri May  6 16:49:44 2022
++++ b/i18npool/CustomTarget_textconversion.mk	Thu Nov  3 16:39:55 2022
+@@ -22,7 +22,7 @@
+ 	$(call gb_Helper_abbreviate_dirs, \
+ 		$(call gb_Helper_execute,genconv_dict) $* $< $@.tmp && \
+ 		sed 's/\(^.*get\)/SAL_DLLPUBLIC_EXPORT \1/' $@.tmp > $@ && \
+-		rm $@.tmp)
++		rm -f $@.tmp)
+ 	$(call gb_Trace_EndRange,$(subst $(WORKDIR)/,,$@),CDC)
+ 
+ # vim: set noet sw=4 ts=4:

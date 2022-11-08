@@ -1,0 +1,29 @@
+--- a/vcl/qa/cppunit/text.cxx	Sun Nov  6 22:31:47 2022
++++ b/vcl/qa/cppunit/text.cxx	Sun Nov  6 22:32:10 2022
+@@ -22,7 +22,7 @@
+ {
+     // if enabled - check the result images with:
+     // "xdg-open ./workdir/CppunitTest/vcl_text_test.test.core/"
+-    static constexpr const bool mbExportBitmap = false;
++    static constexpr const bool mbExportBitmap = true;
+ 
+     void exportDevice(const OUString& filename, const VclPtr<VirtualDevice>& device)
+     {
+@@ -189,7 +189,7 @@
+     tools::Long height72 = getCharacterLeftSideHeight(device, Point(0, 30));
+     CPPUNIT_ASSERT_DOUBLES_EQUAL(height36 * 2, height72, 4);
+     tools::Long width72 = getCharacterBaseWidth(device, Point(20, 99));
+-    CPPUNIT_ASSERT_DOUBLES_EQUAL(width36 * 2, width72, 4);
++    CPPUNIT_ASSERT_DOUBLES_EQUAL(width36 * 2, width72, 5);
+ 
+     font.SetOrientation(2700_deg10);
+     device->Erase();
+@@ -215,7 +215,7 @@
+     tools::Long height36pct200 = getCharacterLeftSideHeight(device, Point(0, 30));
+     CPPUNIT_ASSERT_DOUBLES_EQUAL(height36, height36pct200, 2);
+     tools::Long width36pct200 = getCharacterBaseWidth(device, Point(20, 99));
+-    CPPUNIT_ASSERT_DOUBLES_EQUAL(width36 * 2, width36pct200, 4);
++    CPPUNIT_ASSERT_DOUBLES_EQUAL(width36 * 2, width36pct200, 5);
+ 
+     // Test width scaled to 50%.
+     font = vcl::Font("DejaVu Sans", "Book", Size(18, 36));
