@@ -1,0 +1,162 @@
+diff -ru a/gdb/python/python-internal.h b/gdb/python/python-internal.h
+--- a/gdb/python/python-internal.h	2022-11-08 22:51:45.529953091 +0000
++++ b/gdb/python/python-internal.h	2022-11-08 17:54:26.449605233 +0000
+@@ -361,7 +361,7 @@
+ struct bpstats;
+ struct inferior;
+ 
+-extern int gdb_python_initialized;
++extern PyThreadState* gdb_python_initialized;
+ 
+ extern PyObject *gdb_module;
+ extern PyObject *gdb_python_module;
+diff -ru a/gdb/python/python.c b/gdb/python/python.c
+--- a/gdb/python/python.c	2022-11-08 22:51:45.530981476 +0000
++++ b/gdb/python/python.c	2022-11-08 22:54:58.542577932 +0000
+@@ -102,10 +102,9 @@
+ #include "py-ref.h"
+ #include "py-event.h"
+ 
+-/* True if Python has been successfully initialized, false
++/* Pointer to the main thread if Python has been successfully initialized, NULL
+    otherwise.  */
+-
+-int gdb_python_initialized;
++PyThreadState* gdb_python_initialized = NULL;
+ 
+ extern PyMethodDef python_GdbMethods[];
+ 
+@@ -209,11 +208,10 @@
+   m_language (python_language)
+ {
+   /* We should not ever enter Python unless initialized.  */
+-  if (!gdb_python_initialized)
++  if (!Py_IsInitialized())
+     error (_("Python not initialized"));
+ 
+   m_previous_active = set_active_ext_lang (&extension_language_python);
+-
+   m_state = PyGILState_Ensure ();
+ 
+   python_gdbarch = gdbarch;
+@@ -255,7 +253,11 @@
+ static int
+ gdbpy_check_quit_flag (const struct extension_language_defn *extlang)
+ {
+-  return PyOS_InterruptOccurred ();
++  if(!Py_IsInitialized()) return 0;
++  PyGILState_STATE gstate = PyGILState_Ensure();
++  int ret = PyOS_InterruptOccurred ();
++  PyGILState_Release(gstate);
++  return ret;
+ }
+ 
+ /* Evaluate a Python command like PyRun_SimpleString, but uses
+@@ -960,7 +962,7 @@
+ gdbpy_before_prompt_hook (const struct extension_language_defn *extlang,
+ 			  const char *current_gdb_prompt)
+ {
+-  if (!gdb_python_initialized)
++  if (!Py_IsInitialized())
+     return EXT_LANG_RC_NOP;
+ 
+   gdbpy_enter enter_py (get_current_arch (), current_language);
+@@ -1240,7 +1242,7 @@
+ 			     struct objfile *objfile, FILE *file,
+ 			     const char *filename)
+ {
+-  if (!gdb_python_initialized)
++  if (!Py_IsInitialized())
+     return;
+ 
+   gdbpy_enter enter_py (get_objfile_arch (objfile), current_language);
+@@ -1262,7 +1264,7 @@
+ 			      struct objfile *objfile, const char *name,
+ 			      const char *script)
+ {
+-  if (!gdb_python_initialized)
++  if (!Py_IsInitialized())
+     return;
+ 
+   gdbpy_enter enter_py (get_objfile_arch (objfile), current_language);
+@@ -1322,7 +1324,7 @@
+ {
+   PyObject *printers_obj = NULL;
+ 
+-  if (!gdb_python_initialized)
++  if (!Py_IsInitialized())
+     return;
+ 
+   gdbpy_enter enter_py (get_current_arch (), current_language);
+@@ -1367,7 +1369,7 @@
+   if (printers_obj == NULL)
+     return EXT_LANG_RC_NOP;
+ 
+-  if (!gdb_python_initialized)
++  if (!Py_IsInitialized())
+     return EXT_LANG_RC_NOP;
+ 
+   gdbpy_enter enter_py (get_current_arch (), current_language);
+@@ -1430,7 +1432,7 @@
+   if (printers == NULL)
+     return;
+ 
+-  if (!gdb_python_initialized)
++  if (!Py_IsInitialized())
+     return;
+ 
+   gdbpy_enter enter_py (get_current_arch (), current_language);
+@@ -1510,10 +1512,9 @@
+      SIGINT handler is gdb's.  We still need to tell it to notify Python.  */
+   previous_active = set_active_ext_lang (&extension_language_python);
+ 
+-  (void) PyGILState_Ensure ();
+   python_gdbarch = target_gdbarch ();
+   python_language = current_language;
+-
++  PyEval_RestoreThread (gdb_python_initialized);
+   Py_Finalize ();
+ 
+   restore_active_ext_lang (previous_active);
+@@ -1591,7 +1592,6 @@
+ #endif
+ 
+   Py_Initialize ();
+-  PyEval_InitThreads ();
+ 
+ #ifdef IS_PY3K
+   gdb_module = PyImport_ImportModule ("_gdb");
+@@ -1696,14 +1696,19 @@
+   if (gdbpy_value_cst == NULL)
+     return false;
+ 
+-  /* Release the GIL while gdb runs.  */
+-  PyThreadState_Swap (NULL);
+-  PyEval_ReleaseLock ();
++  /* Release the GIL while gdb runs. 
++    PyEval_SaveThread both NULLs the python thread state
++    and releases the GIL. We save the main thread info just
++    in case it's needed later, but it's probably the only
++    thread running. */
++
++  gdb_python_initialized = PyEval_SaveThread ();
++  // From this point forward any calls to PyThreadState_*
++  // will cause an exception, unless the thread is restored
++  // or a new one initialized.
+ 
+   make_final_cleanup (finalize_python, NULL);
+ 
+-  /* Only set this when initialization has succeeded.  */
+-  gdb_python_initialized = 1;
+   return true;
+ }
+ 
+@@ -1877,7 +1882,7 @@
+ static int
+ gdbpy_initialized (const struct extension_language_defn *extlang)
+ {
+-  return gdb_python_initialized;
++  return Py_IsInitialized();
+ }
+ 
+ #endif /* HAVE_PYTHON */
