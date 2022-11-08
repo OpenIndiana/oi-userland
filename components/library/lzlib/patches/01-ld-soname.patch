@@ -1,0 +1,12 @@
+diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
+--- a~/Makefile.in	1970-01-01 00:00:00
++++ a/Makefile.in	1970-01-01 00:00:00
+@@ -26,7 +26,7 @@ lib$(libname).a : lzlib.o
+ 	$(AR) $(ARFLAGS) $@ $<
+ 
+ lib$(libname).so.$(pkgversion) : lzlib_sh.o
+-	$(CC) $(CFLAGS) $(LDFLAGS) -fpic -fPIC -shared -Wl,--soname=lib$(libname).so.$(soversion) -o $@ $<
++	$(CC) $(CFLAGS) $(LDFLAGS) -fpic -fPIC -shared -Wl,-h,lib$(libname).so.$(soversion) -o $@ $<
+ 
+ $(progname) : $(objs) lib$(libname).a
+ 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(objs) lib$(libname).a
