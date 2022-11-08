@@ -51,6 +51,13 @@ shift $((OPTIND - 1))
 PROJECT="$1"
 
 
+# Prevent user's environment to affect the integration.
+# Allow one exception only: USERLAND_ARCHIVES
+GMAKE="env -"
+[[ -n "$USERLAND_ARCHIVES" ]] && GMAKE="$GMAKE USERLAND_ARCHIVES=$USERLAND_ARCHIVES"
+GMAKE="$GMAKE gmake"
+
+
 WS_TOP=$(git rev-parse --show-toplevel 2>/dev/null)
 [[ -z "$WS_TOP" ]] && usage "The script must be run in git repo"
 
@@ -131,16 +138,16 @@ PREV_REV=0
 if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 	NEW=0
 	REBUILD=1
-	PREV_VER=$(gmake print-value-COMPONENT_VERSION 2>/dev/null)
+	PREV_VER=$($GMAKE print-value-COMPONENT_VERSION 2>/dev/null)
 	(($? != 0)) && printf "FATAL: 'gmake print-value-COMPONENT_VERSION' failed!\n" >&2 && exit 1
-	PREV_REV=$(gmake print-value-COMPONENT_REVISION 2>/dev/null)
+	PREV_REV=$($GMAKE print-value-COMPONENT_REVISION 2>/dev/null)
 
 	# If we were asked to do version upgrade, but we do not have new
 	# version, then we are done.
-	PREV_HVER=$(gmake print-value-HUMAN_VERSION 2>/dev/null)
+	PREV_HVER=$($GMAKE print-value-HUMAN_VERSION 2>/dev/null)
 	((UPGRADE_ONLY)) && [[ "$PREV_HVER" == "$VERSION" ]] && exit 0
 
-	gmake clobber > /dev/null 2>&1
+	$GMAKE clobber > /dev/null 2>&1
 fi
 
 # Remove everything from git (except known patches, history, and $CONF)
@@ -199,22 +206,22 @@ printf "\n"
 ) > Makefile
 
 # Remove COMPONENT_REVISION if not needed
-COMPONENT_VERSION=$(gmake print-value-COMPONENT_VERSION)
+COMPONENT_VERSION=$($GMAKE print-value-COMPONENT_VERSION)
 [[ "$PREV_VER" != "$COMPONENT_VERSION" ]] && REBUILD=0 && sed -i -e '/^COMPONENT_REVISION/d' Makefile
 git add Makefile
 
 # Calculate sham256 sum for source package
-gmake fetch > /dev/null 2>&1
-USERLAND_ARCHIVES=$(gmake print-value-USERLAND_ARCHIVES)
-COMPONENT_ARCHIVE=$(gmake print-value-COMPONENT_ARCHIVE)
+$GMAKE fetch > /dev/null 2>&1
+USERLAND_ARCHIVES=$($GMAKE print-value-USERLAND_ARCHIVES)
+COMPONENT_ARCHIVE=$($GMAKE print-value-COMPONENT_ARCHIVE)
 [[ ! -f "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE" ]] && printf "FATAL: 'gmake fetch' failed!\n" >&2 && exit 1
 SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE")
 sed -i -e 's/sha256:TODO/sha256:'"$SHA256"'/g' Makefile
 git add Makefile
 
 # Unpack sources
-! gmake prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
-SOURCE_DIR=$(gmake print-value-SOURCE_DIR)
+! $GMAKE prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
+SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
 
 if [[ ! -f "$SOURCE_DIR/pyproject.toml" ]] ; then
 	[[ ! -f "$SOURCE_DIR/setup.py" ]] && printf "FATAL: Neither pyproject.toml nor setup.py found!\n" >&2 && exit 1
@@ -298,7 +305,7 @@ while true ; do
 done > /dev/null 2>&1
 cd "$DIR"
 
-if [[ "$TEST_STYLE" == "$(gmake print-value-TEST_STYLE)" ]] ; then
+if [[ "$TEST_STYLE" == "$($GMAKE print-value-TEST_STYLE)" ]] ; then
 	# If the detected TEST_STYLE is same as the default value or the value
 	# forced by the component, then we do not need to set the detected
 	# value.
@@ -309,14 +316,14 @@ else
 
 	# If the component forces different test style than detected, then drop
 	# the detected value
-	if [[ "$TEST_STYLE" != "$(gmake print-value-TEST_STYLE)" ]] ; then
+	if [[ "$TEST_STYLE" != "$($GMAKE print-value-TEST_STYLE)" ]] ; then
 		sed -i -e '/^TEST_STYLE = '"${TEST_STYLE//./\\.}/,+1d" Makefile
 	fi
 fi
 
 
 # Create manifests
-if ! gmake sample-manifest > /dev/null 2>&1 ; then
+if ! $GMAKE sample-manifest > /dev/null 2>&1 ; then
 	printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
 else
 	cat manifests/sample-manifest.p5m \
@@ -338,7 +345,7 @@ git checkout "$CONF" > /dev/null 2>&1
 
 
 # Generate REQUIRED_PACKAGES
-gmake REQUIRED_PACKAGES > /dev/null 2>&1 || printf "ERROR: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
+$GMAKE REQUIRED_PACKAGES > /dev/null 2>&1 || printf "ERROR: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
 git add Makefile
 
 
@@ -348,24 +355,24 @@ grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\
 
 # Make sure the build environment is setup properly and we do have all
 # requirements installed.  Otherwise we cannot continue.
-! gmake env-check > /dev/null 2>&1 && printf "FATAL: 'gmake env-check' failed!\n" >&2 && exit 1
+! $GMAKE env-check > /dev/null 2>&1 && printf "FATAL: 'gmake env-check' failed!\n" >&2 && exit 1
 
 
 # Publish packages and create pkg5 file
-gmake publish > /dev/null 2>&1 || printf "ERROR: 'gmake publish' failed!\n" >&2
+$GMAKE publish > /dev/null 2>&1 || printf "ERROR: 'gmake publish' failed!\n" >&2
 git add pkg5 2>/dev/null
 
 
-PYTHON_VERSIONS=$(gmake print-value-PYTHON_VERSIONS)
+PYTHON_VERSIONS=$($GMAKE print-value-PYTHON_VERSIONS)
 
 
 # Run tests to make sure they pass and to create result snapshots
 TESTED_VERSIONS=
 for v in $PYTHON_VERSIONS ; do
-	! gmake PYTHON_VERSIONS=$v test > /dev/null 2>&1 && printf "ERROR: Testing failed for %s!\n" "$v" >&2 && continue
+	! $GMAKE PYTHON_VERSIONS=$v test > /dev/null 2>&1 && printf "ERROR: Testing failed for %s!\n" "$v" >&2 && continue
 
 	# If there is no snapshot produced the component likely does not support tests
-	COMPONENT_TEST_SNAPSHOT=$(gmake PYTHON_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
+	COMPONENT_TEST_SNAPSHOT=$($GMAKE PYTHON_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
 	[[ ! -f "$COMPONENT_TEST_SNAPSHOT" ]] && printf "WARNING: Testing unsupported for %s\n" "$v" >&2 && continue
 
 	# Empty result snapshot is suspicious
@@ -378,8 +385,8 @@ done
 TEST_MASTERS=
 for common_results in yes no ; do
 	for v in $TESTED_VERSIONS ; do
-		COMPONENT_TEST_SNAPSHOT=$(gmake PYTHON_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
-		COMPONENT_TEST_MASTER=$(gmake PYTHON_VERSION=$v USE_COMMON_TEST_MASTER=$common_results print-value-COMPONENT_TEST_MASTER)
+		COMPONENT_TEST_SNAPSHOT=$($GMAKE PYTHON_VERSION=$v print-value-COMPONENT_TEST_SNAPSHOT)
+		COMPONENT_TEST_MASTER=$($GMAKE PYTHON_VERSION=$v USE_COMMON_TEST_MASTER=$common_results print-value-COMPONENT_TEST_MASTER)
 
 		if [[ -f "$COMPONENT_TEST_MASTER" ]] ; then
 			# Switch to 'USE_COMMON_TEST_MASTER = no' if test results differ
@@ -401,7 +408,7 @@ done
 
 # Run tests again to confirm the results are reproducible
 for v in $TESTED_VERSIONS ; do
-	gmake PYTHON_VERSIONS=$v USE_COMMON_TEST_MASTER=$common_results test > /dev/null 2>&1 || printf "ERROR: Testing for %s is not reproducible!\n" "$v" >&2
+	$GMAKE PYTHON_VERSIONS=$v USE_COMMON_TEST_MASTER=$common_results test > /dev/null 2>&1 || printf "ERROR: Testing for %s is not reproducible!\n" "$v" >&2
 done
 
 # Remove USE_COMMON_TEST_MASTER from Makefile if it should be set to (default) 'yes'
@@ -412,8 +419,8 @@ fi
 
 
 # Handle history
-COMPONENT_FMRI=$(gmake print-value-COMPONENT_FMRI)
-PYTHON_VERSIONS_OBSOLETING=$(gmake print-value-PYTHON_VERSIONS_OBSOLETING)
+COMPONENT_FMRI=$($GMAKE print-value-COMPONENT_FMRI)
+PYTHON_VERSIONS_OBSOLETING=$($GMAKE print-value-PYTHON_VERSIONS_OBSOLETING)
 OV=
 OV_PLURAL=
 for o in $(echo $OBSOLETE $PYTHON_VERSIONS_OBSOLETING | LC_ALL=C sort -u) ; do
