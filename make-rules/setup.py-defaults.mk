@@ -19,7 +19,7 @@ COMPONENT_SRC ?=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE ?=		$(COMPONENT_SRC).tar.gz
 # To make the package name comparable we normalize it here by following the
 # PyPA Core metadata specifications and PEP 503.
-COMPONENT_FMRI ?=		library/python/$(shell echo $(COMPONENT_NAME) | tr [A-Z] [a-z] | $(GSED) -e 's/[.-_]\{1,\}/-/g')
+COMPONENT_FMRI ?=		library/python/$(shell echo $(COMPONENT_NAME) | tr [A-Z] [a-z] | $(GSED) -e 's/[._-]\{1,\}/-/g')
 COMPONENT_PROJECT_URL ?=	https://pypi.org/project/$(COMPONENT_NAME)/
 COMPONENT_ARCHIVE_URL ?=	$(call pypi_url)
 COMPONENT_PYPI ?=		$(COMPONENT_NAME)
