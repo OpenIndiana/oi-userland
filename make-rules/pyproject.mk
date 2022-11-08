@@ -108,7 +108,7 @@ $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 			from pyproject_installer.build_cmd._build import parse_build_system_spec; \
 			[print(x) for x in parse_build_system_spec(Path("'$(SOURCE_DIR)'"))["requires"]]' \
 		| $(GSED) -e $$'s/^[ \t]*''\([a-zA-Z0-9]\([a-zA-Z0-9._-]*[a-zA-Z0-9]\)\{0,1\}\).*/\1/' \
-		| tr [A-Z] [a-z] | $(GSED) -e 's/[.-_]\{1,\}/-/g' \
+		| tr [A-Z] [a-z] | $(GSED) -e 's/[._-]\{1,\}/-/g' \
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' \
 		> $@
 
