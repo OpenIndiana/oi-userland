@@ -525,10 +525,10 @@ def download_from_paths(search_list, file_arg, url, link_arg, quiet=False,get_si
 
 def find_hash_in_file(filename,hash_file):
     splits = hash_file.split('.')
-    regex = re.compile('([0-9a-fA-F]+)( [ \*].*/)('+os.path.basename(filename)+'$)')
-    match = re.match("([a-z0-9]+)(sums?(.txt)?)",filename.lower())
+    regex = re.compile('([0-9a-fA-F]+)( [ \*](.*/)?)('+os.path.basename(filename)+'$)')
+    match = re.match("(^[a-z0-9]+)(sums?(.txt)?$)",hash_file.lower())
     if '.'.join(splits[:-1]) == filename:
-        algo = re.match('([a-zA-Z0-9]+)(sum(s?)?)',hash_file.split('.')[-1]).group(1)
+        algo = re.match('([a-zA-Z0-9]+)(sums?)',hash_file.split('.')[-1]).group(1)
     elif match:
         algo = match.group(1)
     else:
