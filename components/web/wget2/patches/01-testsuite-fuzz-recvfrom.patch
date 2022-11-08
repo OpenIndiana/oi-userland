@@ -1,0 +1,12 @@
+diff -wpruN '--exclude=*.orig' a~/fuzz/libwget_http_client_fuzzer.c a/fuzz/libwget_http_client_fuzzer.c
+--- a~/fuzz/libwget_http_client_fuzzer.c	1970-01-01 00:00:00
++++ a/fuzz/libwget_http_client_fuzzer.c	1970-01-01 00:00:00
+@@ -113,7 +113,7 @@ int connect(int sockfd, const struct soc
+ 	return libc_connect(sockfd, addr, addrlen);
+ }
+ 
+-ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen)
++ssize_t recvfrom(int sockfd, void * restrict buf, size_t len, int flags, struct sockaddr *src_addr, void *addrlen)
+ {
+ 	if (sockfd == connect_fd) {
+ 		if (mode == 1 && len > 1) {
