@@ -19,11 +19,18 @@ PYTHON_BOOTSTRAP ?= no
 
 ifeq ($(strip $(PYTHON_BOOTSTRAP)),yes)
 #
-# Both 'build' and 'installer' Python modules used for packaging regular Python
-# projects (see below) are not part of core Python, so we need to bootstrap
-# them together with their non-core dependencies.
+# The following Python projects needs to be build before any other Python
+# project because they are needed by the Userland build framework itself.  To
+# build them we need special set of rules that uses limited functionality of
+# the build framework just to bootstrap them together with their build time and
+# runtime dependencies.
 #
-# There are basically two ways how to bootstrap such projects:
+# - pyproject_installer (the bootstrapper)
+# - build (to build packages)
+# - installer (to install packages before publish)
+# - packaging (to detect runtime dependencies)
+#
+# There are basically two ways how to bootstrap these projects:
 #
 # 1) defer to default 'setup.py' build style for projects that still supports
 # it.  The 'setup.py' build style usually does not require anything outside
