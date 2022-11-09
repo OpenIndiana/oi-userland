@@ -13,6 +13,14 @@
 # Copyright 2022 Marcel Telka
 #
 
+ifeq ($(strip $(PYTHON_BOOTSTRAP)),yes)
+# Until we implement support for testing bootstrapped projects we simply
+# disable tests for them because required packages (e.g. tox and/or pytest) are
+# very likely not available during bootstrap so testing would very likely fail
+# anyway.
+TEST_STYLE = none
+endif
+
 include $(WS_MAKE_RULES)/setup.py.mk
 
 PYTHON_BOOTSTRAP ?= no
