@@ -19,21 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_installer
-COMPONENT_VERSION =		0.3.0
-COMPONENT_REVISION =		1
+COMPONENT_VERSION =		0.3.1
 COMPONENT_SUMMARY =		pyproject_installer - Pyproject installer
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3c/fa/d5cd59b42e7958526e756ee588effd1593d5c4adbc85fa5a55e0f906a876/pyproject_installer-0.3.0.tar.gz
+	https://files.pythonhosted.org/packages/7f/4f/e8eef34fcbe43f06309e52a0ca499fadb62213665d9be3e22969fba9a07c/pyproject_installer-0.3.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bcec19bed803d2105b307ab64d779d1f9c75c6799a3fdce35d7ff5f7853d9730
+	sha256:8cbfd68f7f3020a886d94eb4af8fc98eae3b91b53f656817a3fb1b01c93f2747
 COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
 # The pyproject_installer is the bootstrapper so it cannot use any non-core
 # Python modules and it needs to be bootstrapped.
 PYTHON_BOOTSTRAP = yes
-
-# https://github.com/stanislavlevin/pyproject_installer/issues/13
-TEST_STYLE = none
 
 # This project requires Python >= 3.8.  Once we add support for new Python
 # version (>= 3.8), such version needs to be added to PYTHON_VERSIONS below.
