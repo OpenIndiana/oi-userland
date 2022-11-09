@@ -277,6 +277,30 @@ GENERATE_EXTRA_CMD += | \
 	$(GSED) -e 's/^\(set name=pkg.fmri [^@]*\)\(.*\)$$/\1-$$(PYV)\2/'
 endif
 
+# Add runtime dependencies from project metadata to generated manifest
+GENERATE_EXTRA_DEPS += $(BUILD_DIR)/META.depend-runtime.res
+GENERATE_EXTRA_CMD += | \
+	$(CAT) - <( \
+		echo "" ; \
+		echo "\# Automatically generated dependencies based on distribution metadata" ; \
+		$(CAT) $(BUILD_DIR)/META.depend-runtime.res \
+	)
+
+# Add runtime dependencies from project metadata to REQUIRED_PACKAGES
+REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend-runtime.res
+
+
+# Generate raw lists of runtime dependencies per Python version
+COMPONENT_POST_INSTALL_ACTION += \
+	 PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) > $(@D)/.depend-runtime ;
+
+# Convert raw per version lists of runtime dependencies to single resolved
+# runtime dependency list
+$(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_TARGET)
+	$(CAT) $(INSTALL_TARGET:%.installed=%.depend-runtime) | LC_ALL=C $(GSORT) -u \
+		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' > $@
+
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
