@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wheel
-COMPONENT_VERSION =		0.38.2
+COMPONENT_VERSION =		0.38.3
 COMPONENT_SUMMARY =		wheel - A built-package format for Python
 COMPONENT_PROJECT_URL =		https://github.com/pypa/wheel
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a4/5b/0718aa11e3360f97feb81ddcb19cbb9306df0a17bef7c360f8939d2629b8/wheel-0.38.2.tar.gz
+	https://files.pythonhosted.org/packages/2e/c6/af5def6796940a8bd602d815f7f495f32d833c81b38d055ca0b23ab3b804/wheel-0.38.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3d492ef22379a156ec923d2a77051cedfd4df4b667864e9e41ba83f0b70b7149
+	sha256:4066646ef77d0e56cc44004c100381ee1957955cfc3151345dda96886f9896a5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -34,12 +34,9 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 # - packaging
 PYTHON_BOOTSTRAP = yes
 
-# Disable tests because required packages are not available during bootstrap
-TEST_STYLE = none
-
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib_metadata
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
