@@ -33,17 +33,17 @@ BUILD_BITS= 64
 # good results, even on SPARC.
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gdb
-COMPONENT_VERSION=	8.0
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY=	GDB: The GNU Project Debugger
+COMPONENT_NAME=         gdb
+COMPONENT_VERSION=      8.0
+COMPONENT_REVISION=     2
+COMPONENT_SUMMARY=      GDB: The GNU Project Debugger
 COMPONENT_CLASSIFICATION=Development/System
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-     sha256:8968a19e14e176ee026f0ca777657c43456514ad41bb2bc7273e8c4219555ac9
-COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gdb/
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+	sha256:8968a19e14e176ee026f0ca777657c43456514ad41bb2bc7273e8c4219555ac9
+COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://www.gnu.org/software/gdb/
 
 CONFIGURE_DEFAULT_DIRS=no
 
@@ -98,9 +98,10 @@ LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 # inserted into configrue option strings during
 # nested configure invocations within the gdb build.
 
-CONFIGURE_ENV += CFLAGS="`echo $(CFLAGS)`"
-CONFIGURE_ENV += CPPFLAGS="`echo $(CPPFLAGS)`"
-CONFIGURE_ENV += LDFLAGS="`echo $(LDFLAGS)`"
+CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 
 CONFIGURE_DEFAULT_DIRS=no
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
@@ -130,13 +131,13 @@ COMPONENT_BUILD_ENV += PATH=$(PATH)
 # Generate the newly added Solaris instruction and
 # register tables which weren't there by default.
 COMPONENT_PRE_CONFIGURE_ACTION = \
-  ( cd  $(SOURCE_DIR)/gdb/features ; \
-    $(GMAKE) all; )
+  +( cd  $(SOURCE_DIR)/gdb/features ; \
+    $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) all; )
 
 # build the manpages
 COMPONENT_POST_BUILD_ACTION = \
-	( cd $(BUILD_DIR_64)/gdb/doc ; \
-	$(GMAKE) man )
+	+( cd $(BUILD_DIR_64)/gdb/doc ; \
+    $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) man; )
 
 # Two tests hangs up the test run, so skip them.
 COMPONENT_PRE_TEST_ACTION += \

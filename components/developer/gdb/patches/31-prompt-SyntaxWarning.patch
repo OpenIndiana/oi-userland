@@ -1,0 +1,20 @@
+--- a/gdb/python/lib/gdb/command/prompt.py	Sun Jun  4 15:51:27 2017
++++ b/gdb/python/lib/gdb/command/prompt.py	Tue Nov  8 21:51:25 2022
+@@ -45,7 +45,7 @@
+         self.hook_set = False
+ 
+     def get_show_string (self, pvalue):
+-        if self.value is not '':
++        if self.value != '':
+            return "The extended prompt is: " + self.value
+         else:
+            return "The extended prompt is not set."
+@@ -57,7 +57,7 @@
+         return ""
+ 
+     def before_prompt_hook(self, current):
+-        if self.value is not '':
++        if self.value != '':
+             return gdb.prompt.substitute_prompt(self.value)
+         else:
+             return None
