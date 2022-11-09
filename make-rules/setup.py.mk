@@ -311,10 +311,15 @@ $(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_TARGET)
 USERLAND_REQUIRED_PACKAGES += library/python/importlib-metadata-37
 
 # The python-requires script requires packaging to provide useful output but
-# packaging might be unavailable during bootstrap of the pyproject_installer
-# (the bootstrapper), packaging itself (obviously), and pyparsing (required by
-# packaging).  So require it conditionally.
-ifeq ($(filter $(strip $(COMPONENT_NAME)),pyproject_installer packaging pyparsing),)
+# packaging might be unavailable during bootstrap of the following projects:
+#
+# - pyproject_installer (the bootstrapper)
+# - packaging (obviously),
+# - pyparsing (required by packaging)
+# - flit_core (required by pyparsing)
+#
+# So require it conditionally.
+ifeq ($(filter $(strip $(COMPONENT_NAME)),pyproject_installer packaging pyparsing flit_core),)
 PYTHON_USERLAND_REQUIRED_PACKAGES += library/python/packaging
 endif
 
