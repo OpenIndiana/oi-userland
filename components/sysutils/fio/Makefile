@@ -13,16 +13,16 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_BITS=		64
-#USE_OPENSSL11=	yes
+SINGLE_PYTHON_VERSION= yes
+USE_OPENSSL11=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fio
-COMPONENT_VERSION=	3.32
+COMPONENT_VERSION=	3.33
 COMPONENT_SUMMARY=	Flexible I/O tester
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:bb093c5c2577128c5aeb3cd2e56e4e68817d62aaf8028eb90be84efe4dff8e72
+COMPONENT_ARCHIVE_HASH= sha256:0ba3748e1ab7619bc749b3a233c3ac7f466aa3202119cff8e17e4f2c110f6c20
 COMPONENT_PROJECT_URL=	https://git.kernel.dk/cgit/fio/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/snapshot/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/test/$(COMPONENT_NAME)
@@ -32,20 +32,21 @@ COMPONENT_LICENSE=	GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Specify the python version used by this build
-PYTHON_VERSION=		3.9
-
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --cc="$(CC)"
 CONFIGURE_OPTIONS += --extra-cflags="$(CFLAGS)"
 
+LDFLAGS+="-L$(OPENSSL_LIBDIR.$(BITS))" 
+
+CONFIGURE_ENV += CFLAGS="-I$(OPENSSL_INCDIR) $(CFLAGS)"
+
 COMPONENT_TEST_TARGETS=	test
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/six-39
-REQUIRED_PACKAGES += library/security/openssl
+PYTHON_REQUIRED_PACKAGES += library/python/six
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
