@@ -282,6 +282,10 @@ GENERATE_EXTRA_DEPS += $(BUILD_DIR)/META.depend-runtime.res
 GENERATE_EXTRA_CMD += | \
 	$(CAT) - <( \
 		echo "" ; \
+		echo "\# python modules are unusable without python runtime binary" ; \
+		echo "depend type=require fmri=__TBD pkg.debug.depend.file=python\$$(PYVER) \\" ; \
+		echo "    pkg.debug.depend.path=usr/bin" ; \
+		echo "" ; \
 		echo "\# Automatically generated dependencies based on distribution metadata" ; \
 		$(CAT) $(BUILD_DIR)/META.depend-runtime.res \
 	)
