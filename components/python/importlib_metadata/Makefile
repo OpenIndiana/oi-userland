@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_metadata
 COMPONENT_VERSION =		5.0.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		importlib_metadata - Read metadata from Python packages
 COMPONENT_PROJECT_URL =		https://github.com/python/importlib_metadata
 COMPONENT_ARCHIVE_URL =		\
@@ -35,32 +36,11 @@ COMPONENT_LICENSE_FILE =	LICENSE
 # - wheel
 PYTHON_BOOTSTRAP = yes
 
-# Disable tests because required packages are not available during bootstrap
-TEST_STYLE = none
-
 include $(WS_MAKE_RULES)/common.mk
-
-# importlib_metadata does not support setup.py build style so we cannot defer
-# to it for bootstrapping Python 3.7.  Use 'build' and 'installer' instead
-# (because pyproject_installer does not support Python 3.7).  Strictly speaking
-# this is not true bootstrap, but since we do not need to bootstrap Python 3.7
-# from scratch we can afford this fake bootstrap keeping in mind that Python
-# 3.7 should be EOLed in June 2023.
-$(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_CMD =		$(PYTHON) -m build
-$(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_ARGS =
-$(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_ARGS +=		--wheel
-$(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_ARGS +=		--no-isolation
-
-$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_CMD =		$(PYTHON) -m installer
-$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_ARGS =
-$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
-$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_ARGS +=	$(@D)/dist/*.whl
-
-USERLAND_REQUIRED_PACKAGES += library/python/build-37
-USERLAND_REQUIRED_PACKAGES += library/python/installer-37
-
-BOOTSTRAP_TRANSFORMS =
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
+PYTHON_REQUIRED_PACKAGES += library/python/zipp
+PYTHON_REQUIRED_PACKAGES += runtime/python
