@@ -317,9 +317,11 @@ USERLAND_REQUIRED_PACKAGES += library/python/importlib-metadata-37
 # - packaging (obviously),
 # - pyparsing (required by packaging)
 # - flit_core (required by pyparsing)
+# - wheel (required by packaging)
+# - setuptools (required by packaging and wheel)
 #
 # So require it conditionally.
-ifeq ($(filter $(strip $(COMPONENT_NAME)),pyproject_installer packaging pyparsing flit_core),)
+ifeq ($(filter $(strip $(COMPONENT_NAME)),pyproject_installer packaging pyparsing flit_core wheel setuptools),)
 PYTHON_USERLAND_REQUIRED_PACKAGES += library/python/packaging
 endif
 
