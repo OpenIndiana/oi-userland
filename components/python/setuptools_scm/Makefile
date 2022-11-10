@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools_scm
 COMPONENT_VERSION =		7.0.5
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		setuptools_scm - the blessed package to manage your versions by scm tags
 COMPONENT_PROJECT_URL =		https://github.com/pypa/setuptools_scm/
 COMPONENT_ARCHIVE_URL =		\
