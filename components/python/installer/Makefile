@@ -1,58 +1,41 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 20200 Daniel Chan
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project installer
 #
 
-BUILD_BITS=			64
-BUILD_STYLE=		setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		installer
-COMPONENT_VERSION=	0.5.1
-COMPONENT_SUMMARY=	A library for installing Python wheels.
-COMPONENT_PROJECT_URL=	https://pypi.org/project/installer/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:f970995ec2bb815e2fdaf7977b26b2091e1e386f0f42eafd5ac811953dc5d445
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_FMRI=	library/python/installer
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=      MIT
-COMPONENT_LICENSE_FILE= LICENSE
+COMPONENT_NAME =		installer
+COMPONENT_VERSION =		0.5.1
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		installer - A library for installing Python wheels.
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/74/b7/9187323cd732840f1cddd6a9f05961406636b50c799eef37c920b63110c0/installer-0.5.1.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:f970995ec2bb815e2fdaf7977b26b2091e1e386f0f42eafd5ac811953dc5d445
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS=	3.7 3.9
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - Userland build framework (see pyproject.mk)
+PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/packaging-37
-REQUIRED_PACKAGES += library/python/packaging-39
-REQUIRED_PACKAGES += library/python/ply-37
-REQUIRED_PACKAGES += library/python/ply-39
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += library/python/toml-37
-REQUIRED_PACKAGES += library/python/toml-39
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
-REQUIRED_PACKAGES += system/library
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
+PYTHON_REQUIRED_PACKAGES += runtime/python
