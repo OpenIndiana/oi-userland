@@ -58,39 +58,30 @@ ifeq ($(strip $(COMPONENT_NAME)),pyproject_installer)
 PYTHON_ENV += PYTHONPATH=$(@D)/src
 endif
 
-# Since pyproject_installer requires Python >= 3.8 we need to defer to default
-# setup.py build style for Python 3.7, so we will use pyproject_installer for
-# Python 3.9 only.  Once we obsolete Python 3.7 we should set
-# COMPONENT_BUILD_CMD, COMPONENT_BUILD_ARGS, COMPONENT_INSTALL_CMD, and
-# COMPONENT_INSTALL_ARGS unconditionally below and replace $(PYTHON.3.9) by
-# $(PYTHON).
-$(BUILD_DIR)/%-3.9/.built:	COMPONENT_BUILD_CMD =		$(PYTHON.3.9) -m pyproject_installer build
+# Since pyproject_installer requires Python >= 3.8 we will use it for Python
+# 3.9 only.  Once we obsolete Python 3.7 we should set COMPONENT_BUILD_CMD,
+# COMPONENT_BUILD_ARGS, COMPONENT_INSTALL_CMD, and COMPONENT_INSTALL_ARGS
+# unconditionally below.
+$(BUILD_DIR)/%-3.9/.built:	COMPONENT_BUILD_CMD =		$(PYTHON) -m pyproject_installer build
 $(BUILD_DIR)/%-3.9/.built:	COMPONENT_BUILD_ARGS =
 
-$(BUILD_DIR)/%-3.9/.installed:	COMPONENT_INSTALL_CMD =		$(PYTHON.3.9) -m pyproject_installer install
+$(BUILD_DIR)/%-3.9/.installed:	COMPONENT_INSTALL_CMD =		$(PYTHON) -m pyproject_installer install
 $(BUILD_DIR)/%-3.9/.installed:	COMPONENT_INSTALL_ARGS =
 $(BUILD_DIR)/%-3.9/.installed:	COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
 
 # pyproject_installer does not bytecompile after the install.  Since we need
 # pyc files we need to force that.
 #
-# Since pyproject_installer requires Python >= 3.8 we need to defer to default
-# setup.py build style for Python 3.7, and so we do not need to compile for
-# Python 3.7.  Once we obsolete Python 3.7 we should set
+# Since pyproject_installer requires Python >= 3.8 we do need to compile for
+# Python 3.9 only.  Once we obsolete Python 3.7 we should set
 # COMPONENT_POST_INSTALL_ACTION unconditionally below.
 $(BUILD_DIR)/%-3.9/.installed:	COMPONENT_POST_INSTALL_ACTION +=	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_LIB) ;
 
-# Special transforms needed only until we drop support for Python 3.7
-BOOTSTRAP_TRANSFORMS =	$(WS_TOP)/transforms/python-bootstrap
-PUBLISH_TRANSFORMS +=	$(BOOTSTRAP_TRANSFORMS)
-
-ifeq ($(wildcard $(SOURCE_DIR)/setup.py),)
-# If the component does not support setup.py build style we cannot defer to it
-# for bootstrapping Python 3.7.  We will use 'build' and 'installer' instead.
-# Strictly speaking this is not true bootstrap, but since we do not need to
-# bootstrap Python 3.7 from scratch we can afford this fake bootstrap keeping
-# in mind that Python 3.7 should be EOLed in June 2023.
-
+# Since pyproject_installer requires Python >= 3.8 we cannot use it to
+# bootstrap Python 3.7.  We will use 'build' and 'installer' instead.  Strictly
+# speaking this is not true bootstrap, but since we do not need to bootstrap
+# Python 3.7 from scratch we can afford this fake bootstrap keeping in mind
+# that Python 3.7 should be EOLed in June 2023.
 $(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_CMD =		$(PYTHON) -m build
 $(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_ARGS =
 $(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_ARGS +=		--wheel
@@ -104,9 +95,6 @@ $(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_ARGS +=	$(@D)/dist/*.whl
 USERLAND_REQUIRED_PACKAGES += library/python/build-37
 USERLAND_REQUIRED_PACKAGES += library/python/installer-37
 
-# We do not need special transforms for fake bootstrap
-BOOTSTRAP_TRANSFORMS =
-
 # Remove all files from dist-info directory except METADATA to get similar
 # layout as with pyproject_installer
 $(BUILD_DIR)/%-3.7/.installed:	COMPONENT_POST_INSTALL_ACTION += \
@@ -116,7 +104,6 @@ $(BUILD_DIR)/%-3.7/.installed:	COMPONENT_POST_INSTALL_ACTION += \
 		[[ -f "$$f" ]] || continue ; \
 		$(RM) $$f ; \
 	done ) ;
-endif
 else
 COMPONENT_BUILD_CMD =		$(PYTHON) -m build
 COMPONENT_BUILD_ARGS =
