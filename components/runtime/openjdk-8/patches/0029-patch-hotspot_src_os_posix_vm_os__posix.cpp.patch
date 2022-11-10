@@ -35,9 +35,9 @@ rlim_t fixes.
  
  #ifdef __OpenBSD__
 @@ -208,7 +208,7 @@ void os::Posix::print_rlimit_info(output
+ 
    st->print(", AS ");
    getrlimit(RLIMIT_AS, &rlim);
- #endif
 -  if (rlim.rlim_cur == RLIM_INFINITY) st->print("infinity");
 +  if (rlim.rlim_cur == (rlim_t)RLIM_INFINITY) st->print("infinity");
    else st->print("%uk", rlim.rlim_cur >> 10);

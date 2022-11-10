@@ -1,0 +1,186 @@
+--- make/build-support/build-common.sh.orig	Mon Nov 14 16:29:30 2022
++++ make/build-support/build-common.sh	Mon Nov 14 16:39:40 2022
+@@ -64,26 +64,7 @@
+     fi
+ }
+ 
+-##
+-# Set up the checksum tool to use
+-#
+-setup_shasum() {
+-    if [ -n "${SHASUM:-}" ]; then
+-        return
+-    fi
+ 
+-    if [ -n "$(which sha1sum)" ]; then
+-        SHASUM="sha1sum"
+-        SHASUM_OPTIONS=""
+-    elif [ -n "$(which shasum)" ]; then
+-        SHASUM="shasum"
+-        SHASUM_OPTIONS="-a 1"
+-    else
+-        error "Can't find shasum or sha1sum"
+-        exit 1
+-    fi
+-}
+-
+ native_path() {
+     check_arguments "${FUNCNAME}" 1 $#
+ 
+@@ -96,107 +77,8 @@
+     if [ $CYGWIN_OR_MSYS -eq 1 ]; then echo $(cygpath -m $1); else echo "$1"; fi
+ }
+ 
+-##
+-# Download a file using wget
+-#
+-# wget options can be provided through the WGET_OPTIONS environment
+-# variable
+-#
+-download_using_wget() {
+-    check_arguments "${FUNCNAME}" 2 $#
+ 
+-    local url="$1"
+-    local destfile="$2"
+-
+-    set +e
+-    "${WGET}" ${WGET_OPTIONS} "${url}" -O "${destfile}"
+-    ret=$?
+-    if [ ! ${ret} = 0 ]; then
+-        error "wget exited with exit code ${ret}"
+-        exit 1
+-    fi
+-    set -e
+-}
+-
+ ##
+-# Download a file using curl
+-#
+-# curl options can be provided through the CURL_OPTIONS environment
+-# variable
+-#
+-download_using_curl() {
+-    check_arguments "${FUNCNAME}" 2 $#
+-
+-    local url="$1"
+-    local destfile="$2"
+-
+-    set +e
+-    "${CURL}" ${CURL_OPTIONS} "${url}" -o "${destfile}"
+-    ret=$?
+-     if [ ! ${ret} = 0 ]; then
+-        error "curl exited with exit code ${ret}"
+-        exit 1
+-    fi
+-    set -e
+-}
+-
+-##
+-# Download a file
+-#
+-# Will attempt to skip the download if the SKIP_DOWNLOAD environment
+-# variable is set and the destination file already exists
+-#
+-download() {
+-    check_arguments "${FUNCNAME}" 2 $#
+-
+-    local url="$1"
+-    local destfile="$2"
+-
+-    if [ "${SKIP_DOWNLOAD:-}" != "" -a -r "${destfile}" ]; then
+-        info "Skipping download of ${url}..."
+-        return
+-    fi
+-
+-    info "Downloading ${url} to ${destfile}"
+-    mkdir -p "$(dirname "${destfile}")"
+-    if [ -n "${WGET}" ]; then
+-        download_using_wget "${url}" "${destfile}"
+-    elif [ -n "${CURL}" ]; then
+-        download_using_curl "${url}" "${destfile}"
+-    else
+-        error "Cannot find a suitable tool for downloading fils (tried 'wget' and 'curl')"
+-        exit 1
+-    fi
+-}
+-
+-##
+-# Checksum a file
+-#
+-checksum() {
+-    check_arguments "${FUNCNAME}" 2 $#
+-
+-    local file="$1"
+-    local expected="$2"
+-
+-    if [ -n "${SKIP_CHECKSUM_CHECK:-}" ]; then
+-        return
+-    fi
+-
+-    if [ x"${expected}" = x"" ]; then
+-        error "Expected checksum unexpectedly empty.."
+-        exit 1
+-    fi
+-
+-    local actual="$("${SHASUM}" ${SHASUM_OPTIONS} "${dest}" | awk '{ print $1; }')"
+-    if [ ! x"${actual}" = x"${expected}" ]; then
+-        error "Checksum mismatch for ${dest}:"
+-        error "Expected: ${expected}"
+-        error "Actual  : ${actual}"
+-        exit 1
+-    fi
+-}
+-
+-##
+ # Download and checksum a file
+ #
+ download_and_checksum() {
+@@ -206,8 +88,8 @@
+     local dest="$2"
+     local shasum="$3"
+ 
+-    download "${url}" "${dest}"
+-    checksum "${dest}" "${shasum}"
++    rm -f "${dest}"; mkdir -p "`dirname ${dest}`"
++    ln -s "${USERLAND_ARCHIVES}/`basename ${url}`" "${dest}"
+ }
+ 
+ ##
+@@ -248,7 +130,8 @@
+     local unpackdir="$3"
+ 
+     rm -rf "${unpackdir}"/*
+-    download "${url}" "${destfile}"
++    rm -f "${destfile}"; mkdir -p "`dirname ${destfile}`"
++    ln -s "${USERLAND_ARCHIVES}/`basename ${url}`" "${destfile}"
+     unpack "${destfile}" "${unpackdir}"
+ }
+ 
+@@ -264,7 +147,8 @@
+     local shasum="$4"
+ 
+     rm -rf "${unpackdir}"/*
+-    download_and_checksum "${url}" "${destfile}" "${shasum}"
++    rm -f "${destfile}"; mkdir -p "`dirname ${destfile}`"
++    ln -s "${USERLAND_ARCHIVES}/`basename ${url}`" "${destfile}"
+     unpack "${destfile}" "${unpackdir}"
+ }
+ 
+@@ -320,17 +204,11 @@
+ export TAR_OPTIONS="${TAR_OPTIONS:-}"
+ export UNZIP_CMD="${UNZIP_CMD:-unzip}"
+ export UNZIP_OPTIONS="${UNZIP_OPTIONS:--q} -u"
+-export WGET="${WGET:-$(which wget)}"
+-export WGET_OPTIONS="${WGET_OPTIONS:--q}"
+-export CURL="${CURL:-$(which curl)}"
+-export CURL_OPTIONS="${CURL_OPTIONS:--s -f -L}"
+ 
+ export MAVEN_REPO_URL_BASE="${MAVEN_REPO_URL_BASE:-https://repo1.maven.org/maven2}"
+ export CODE_TOOLS_URL_BASE="${CODE_TOOLS_URL_BASE:-https://git.openjdk.java.net}"
+ export ANT_ARCHIVE_URL_BASE="${ANT_ARCHIVE_URL_BASE:-https://archive.apache.org/dist/ant/binaries}"
+ 
+-setup_shasum
+-
+ ##
+ # Support for Cygwin and MSYS2 (which may identify as MSYS, MINGW32 or MINGW64 (the default))
+ #

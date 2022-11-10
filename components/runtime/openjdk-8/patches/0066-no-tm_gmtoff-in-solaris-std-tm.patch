@@ -1,0 +1,20 @@
+--- hotspot/src/share/vm/runtime/os.cpp	Sun Jul 31 16:21:00 2022
++++ hotspot/src/share/vm/runtime/os.cpp	Thu Nov 10 02:02:59 2022
+@@ -148,7 +148,7 @@
+   const time_t seconds_per_hour = seconds_per_minute * minutes_per_hour;
+ 
+   time_t UTC_to_local = 0;
+-#if defined(_ALLBSD_SOURCE) || defined(_GNU_SOURCE)
++#if (defined(_ALLBSD_SOURCE) || defined(_GNU_SOURCE)) && !defined(__sun)
+     UTC_to_local = -(time_struct.tm_gmtoff);
+ #elif defined(_WINDOWS)
+   long zone;
+@@ -159,7 +159,7 @@
+ #endif
+ 
+   // tm_gmtoff already includes adjustment for daylight saving
+-#if !defined(_ALLBSD_SOURCE) && !defined(_GNU_SOURCE)
++#if (!defined(_ALLBSD_SOURCE) && !defined(_GNU_SOURCE)) || defined(__sun)
+   // If daylight savings time is in effect,
+   // we are 1 hour East of our time zone
+   if (time_struct.tm_isdst > 0) {
