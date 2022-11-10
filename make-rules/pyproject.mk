@@ -95,12 +95,13 @@ $(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_ARGS +=	$(@D)/dist/*.whl
 USERLAND_REQUIRED_PACKAGES += library/python/build-37
 USERLAND_REQUIRED_PACKAGES += library/python/installer-37
 
-# Remove all files from dist-info directory except METADATA to get similar
-# layout as with pyproject_installer
+# Remove all files from dist-info directory except METADATA and
+# entry_points.txt to get similar layout as with pyproject_installer
 $(BUILD_DIR)/%-3.7/.installed:	COMPONENT_POST_INSTALL_ACTION += \
 	( cd $(PROTO_DIR)/$(PYTHON_LIB)/$(COMPONENT_NAME)-$(COMPONENT_VERSION).dist-info ; \
 	for f in * ; do \
 		[[ "$$f" == "METADATA" ]] && continue ; \
+		[[ "$$f" == "entry_points.txt" ]] && continue ; \
 		[[ -f "$$f" ]] || continue ; \
 		$(RM) $$f ; \
 	done ) ;
