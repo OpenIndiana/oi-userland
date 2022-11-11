@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wheel
-COMPONENT_VERSION =		0.38.3
+COMPONENT_VERSION =		0.38.4
 COMPONENT_SUMMARY =		wheel - A built-package format for Python
 COMPONENT_PROJECT_URL =		https://github.com/pypa/wheel
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2e/c6/af5def6796940a8bd602d815f7f495f32d833c81b38d055ca0b23ab3b804/wheel-0.38.3.tar.gz
+	https://files.pythonhosted.org/packages/a2/b8/6a06ff0f13a00fc3c3e7d222a995526cbca26c1ad107691b6b1badbbabf1/wheel-0.38.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4066646ef77d0e56cc44004c100381ee1957955cfc3151345dda96886f9896a5
+	sha256:965f5259b566725405b05e7cf774052044b1ed30119b5d586b2703aafe8719ac
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -34,9 +34,22 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 # - packaging
 PYTHON_BOOTSTRAP = yes
 
+# The wheel component needs importlib-metadata package for Python 3.7 only.
+# Since wheel is needed by packaging and we want to keep the dependency tree of
+# packaging as small as possible (because packaging is needed by
+# python-requires) we will force the importlib-metadata dependency to stay
+# versioned.  We do not care about deep dependency tree for Python 3.7 because
+# we do fake bootstrap there anyway.  We will do that in two steps.
+#
+# Step 1: keep versioned importlib-metadata in REQUIRED_PACKAGES
+REQUIRED_PACKAGES_TRANSFORM += -e '/library\/python\/importlib-metadata/p'
+
 include $(WS_MAKE_RULES)/common.mk
 
+# Step 2: drop importlib-metadata from PYTHON_REQUIRED_PACKAGES
+REQUIRED_PACKAGES_TRANSFORM += -e '/^PYTHON_.*library\/python\/importlib-metadata/d'
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += library/python/importlib-metadata-37
