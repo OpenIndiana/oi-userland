@@ -1,80 +1,46 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2019 Tim Mooney
-# Copyright (c) 2021 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project virtualenv
 #
 
-BUILD_BITS= NO_ARCH
-BUILD_STYLE= setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		virtualenv
-COMPONENT_VERSION=	20.13.1
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=		library/python/virtualenv
-COMPONENT_SUMMARY=	A tool to create isolated Python environments
-COMPONENT_PROJECT_URL=	https://virtualenv.pypa.io/en/latest/
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e0621bcbf4160e4e1030f05065c8834b4e93f4fcc223255db2a823440aca9c14
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_LICENSE=	MIT
+COMPONENT_NAME =		virtualenv
+COMPONENT_VERSION =		20.16.6
+COMPONENT_SUMMARY =		virtualenv - Virtual Python Environment builder
+COMPONENT_PROJECT_URL =		https://virtualenv.pypa.io/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/b4/27/b71df0a723d879baa0af1ad897b2498ad78f284ae668b4420092e44c05fa/virtualenv-20.16.6.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:530b850b523c6449406dfba859d6345e48ef19b8439606c5d74d7d3c9e14d76e
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS=	3.7 3.9
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - tox (test bootstrap)
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Tests still fails.
-COMPONENT_TEST_DIR =	$(SOURCE_DIR)
-COMPONENT_TEST_ARGS =
-COMPONENT_TEST_CMD =	tox -e py$(shell echo $(PYTHON_VERSION) | tr -d .)
-
-# Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
-COMPONENT_POST_INSTALL_ACTION += \
-    $(FIND) $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) -name *.py \
-        -exec $(GSED) -i -e 's|env python|python$(PYTHON_VERSION)|' "{}" \; ;
-
-COMPONENT_POST_INSTALL_ACTION += \
-        (cd $(PROTOUSRBINDIR); $(MV) virtualenv virtualenv-$(PYTHON_VERSION)) ;
-
-# Manually added test dependencies
-# Note that we still missing some test dependencies and have many failing tests.
-REQUIRED_PACKAGES += library/python/coverage-37
-REQUIRED_PACKAGES += library/python/coverage-39
-#REQUIRED_PACKAGES += library/python/coverage-enable-subprocess-37
-#REQUIRED_PACKAGES += library/python/coverage-enable-subprocess-39
-REQUIRED_PACKAGES += library/python/flaky-37
-REQUIRED_PACKAGES += library/python/flaky-39
-REQUIRED_PACKAGES += library/python/freezegun-37
-REQUIRED_PACKAGES += library/python/freezegun-39
-REQUIRED_PACKAGES += library/python/packaging-37
-REQUIRED_PACKAGES += library/python/packaging-39
-REQUIRED_PACKAGES += library/python/pytest-37
-REQUIRED_PACKAGES += library/python/pytest-39
-#REQUIRED_PACKAGES += library/python/pytest-env-37
-#REQUIRED_PACKAGES += library/python/pytest-env-39
-REQUIRED_PACKAGES += library/python/pytest-mock-37
-REQUIRED_PACKAGES += library/python/pytest-mock-39
-REQUIRED_PACKAGES += library/python/pytest-randomly-37
-REQUIRED_PACKAGES += library/python/pytest-randomly-39
-REQUIRED_PACKAGES += library/python/pytest-timeout-37
-REQUIRED_PACKAGES += library/python/pytest-timeout-39
-REQUIRED_PACKAGES += library/python/tox
-REQUIRED_PACKAGES += library/python/wheel-37
-REQUIRED_PACKAGES += library/python/wheel-39
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/distlib
+PYTHON_REQUIRED_PACKAGES += library/python/filelock
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += runtime/python
