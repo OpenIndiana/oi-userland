@@ -24,11 +24,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	14
-COMPONENT_MNR_VERSION=	5
+COMPONENT_MNR_VERSION=	6
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:d4f72cb5fb857c9a9f75ec8cf091a1771272802f2178f0b2e65b7b6ff64f4a30
+COMPONENT_ARCHIVE_HASH=	sha256:508840fc1809d39ab72274d5f137dabb9fd7fb4f933da4168aeebb20069edf22
 COMPONENT_ARCHIVE_URL=	https://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.postgresql.org
 COMPONENT_FMRI=			database/postgres-$(COMPONENT_MJR_VERSION)
@@ -36,10 +36,7 @@ COMPONENT_CLASSIFICATION=	System/Databases
 COMPONENT_LICENSE=		Postgresql
 COMPONENT_LICENSE_FILE=	COPYRIGHT
 
-# Set python version used by this product
-PYTHON_VERSION=3.7
-
-TEST_TARGET=$(TEST_64)
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 # Missing files in build dir for configure without this.
@@ -119,6 +116,8 @@ COMPONENT_TEST_TRANSFORMS= \
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/postgres-common
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libxml2
@@ -126,10 +125,8 @@ REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-37
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
