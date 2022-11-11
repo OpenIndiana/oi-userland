@@ -1,79 +1,42 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2021, 2022 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project filelock
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		filelock
-COMPONENT_VERSION=	3.6.0
-COMPONENT_SUMMARY=	A platform independent file lock that supports the with-statement
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9cd540a9352e432c7246a48fe4e8712b10acb1df2ad1f30e8c070b82ae1fed85
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://github.com/tox-dev/py-filelock
-COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=	Unlicense
+COMPONENT_NAME =		filelock
+COMPONENT_VERSION =		3.8.0
+COMPONENT_SUMMARY =		filelock - A platform independent file lock.
+COMPONENT_PROJECT_URL =		https://github.com/tox-dev/py-filelock
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/95/55/b897882bffb8213456363e646bf9e9fa704ffda5a7d140edf935a9e02c7b/filelock-3.8.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:55447caa666f2198c5b6b13a26d2084d26fa5b115c00d065664b2124680c4edc
+COMPONENT_LICENSE =		public domain
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS=	3.7 3.9
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - tox (test bootstrap)
+PYTHON_TEST_BOOTSTRAP = yes
+
 include $(WS_MAKE_RULES)/common.mk
 
-# Tests fail because we are missing depencencies (pytest-timeout, covdefaults) 
-COMPONENT_TEST_DIR =	$(SOURCE_DIR)/tests
-COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
-COMPONENT_TEST_ARGS =
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/in [0-9]*\.[0-9]*s //"' \
-	'-n' \
-	'-e "/===/p"' \
-	'-e "/collected/p"' \
-	'-e "/test_/p"'
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# Manually added test dependencies
-REQUIRED_PACKAGES += library/python/coverage-37
-REQUIRED_PACKAGES += library/python/coverage-39
-REQUIRED_PACKAGES += library/python/flaky-37
-REQUIRED_PACKAGES += library/python/flaky-39
-REQUIRED_PACKAGES += library/python/hypothesis-37
-REQUIRED_PACKAGES += library/python/hypothesis-37
-REQUIRED_PACKAGES += library/python/pluggy-37
-REQUIRED_PACKAGES += library/python/pluggy-39
-REQUIRED_PACKAGES += library/python/py-37
-REQUIRED_PACKAGES += library/python/py-39
-REQUIRED_PACKAGES += library/python/pytest-37
-REQUIRED_PACKAGES += library/python/pytest-39
-REQUIRED_PACKAGES += library/python/pytest-benchmark-37
-REQUIRED_PACKAGES += library/python/pytest-benchmark-39
-REQUIRED_PACKAGES += library/python/pytest-reporter-37
-REQUIRED_PACKAGES += library/python/pytest-reporter-39
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += runtime/python
