@@ -21,34 +21,32 @@
 # Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_STYLE= configure
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libksba
-COMPONENT_VERSION=      1.3.5
-COMPONENT_REVISION=     1
-COMPONENT_FMRI=         library/security/libksba
+COMPONENT_VERSION=      1.6.2
 COMPONENT_SUMMARY=      GnuPG X.509 certificate library
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_PROJECT_URL=  https://www.gnupg.org/related_software/$(COMPONENT_NAME)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://www.gnupg.org/related_software/libksba/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-	sha256:41444fd7a6ff73a79ad9728f985e71c9ba8cd3e5e53358e70d5f066d35c1a340
-COMPONENT_ARCHIVE_URL=  ftp://ftp.gnupg.org/gcrypt/libksba/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:fce01ccac59812bddadffacff017dac2e4762bdb6ebc6ffe06f6ed4f6192c971
+COMPONENT_ARCHIVE_URL=  ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/security/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      GPLv3 
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
+CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		--enable-shared
-CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--with-pic
+CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --with-gpg-error-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --with-pic
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Making/d"' \
