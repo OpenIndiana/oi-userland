@@ -1,87 +1,42 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2021, Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project distlib
 #
 
-BUILD_BITS= NO_ARCH
-BUILD_STYLE= setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		distlib
-COMPONENT_VERSION=	0.3.4
-COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_SUMMARY=	A library which implements low-level functions that relate to packaging and distribution of Python software
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:e4b58818180336dc9c529bfb9a0b58728ffc09ad92027a3f30b7cd91e3458579
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://bitbucket.org/pypa/distlib/src/master/
-COMPONENT_LICENSE=	MIT
+COMPONENT_NAME =		distlib
+COMPONENT_VERSION =		0.3.6
+COMPONENT_SUMMARY =		distlib - Distribution utilities
+COMPONENT_PROJECT_URL =		https://github.com/pypa/distlib
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/58/07/815476ae605bcc5f95c87a62b95e74a1bce0878bc7a3119bc2bf4178f175/distlib-0.3.6.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:14bad2d9b04d3a36127ac97f30b12a19268f211063d8f8ee4f47108896e11b46
+COMPONENT_LICENSE =		PSF-2.0
+COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-PYTHON_VERSIONS=$(PYTHON3_VERSIONS)
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - virtualenv (test bootstrap)
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Some tests are failing and the tests don't finish so no test results are provided yet.
-COMPONENT_TEST_DIR =	$(SOURCE_DIR)/tests
-COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
-COMPONENT_TEST_ARGS =
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/in [0-9]*\.[0-9]*s //"' \
-	'-n' \
-	'-e "/===/p"' \
-	'-e "/collected/p"' \
-	'-e "/test_/p"'
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# Manually added test dependencies
-REQUIRED_PACKAGES += library/python/flaky-35
-REQUIRED_PACKAGES += library/python/flaky-37
-REQUIRED_PACKAGES += library/python/flaky-39
-REQUIRED_PACKAGES += library/python/hypothesis-35
-REQUIRED_PACKAGES += library/python/hypothesis-37
-REQUIRED_PACKAGES += library/python/hypothesis-39
-REQUIRED_PACKAGES += library/python/pyparsing-35
-REQUIRED_PACKAGES += library/python/pyparsing-37
-REQUIRED_PACKAGES += library/python/pyparsing-39
-REQUIRED_PACKAGES += library/python/pytest-35
-REQUIRED_PACKAGES += library/python/pytest-37
-REQUIRED_PACKAGES += library/python/pytest-39
-REQUIRED_PACKAGES += library/python/pytest-benchmark-35
-REQUIRED_PACKAGES += library/python/pytest-benchmark-37
-REQUIRED_PACKAGES += library/python/pytest-benchmark-39
-REQUIRED_PACKAGES += library/python/pytest-reporter-35
-REQUIRED_PACKAGES += library/python/pytest-reporter-37
-REQUIRED_PACKAGES += library/python/pytest-reporter-39
-REQUIRED_PACKAGES += library/python/sortedcontainers-35
-REQUIRED_PACKAGES += library/python/sortedcontainers-37
-REQUIRED_PACKAGES += library/python/sortedcontainers-39
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python

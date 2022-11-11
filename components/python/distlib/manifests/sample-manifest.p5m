@@ -13,7 +13,8 @@
 # Copyright 2022 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,63 +23,32 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python3.5/vendor-packages/distlib-$(COMPONENT_VERSION)-py3.5.egg-info
-file path=usr/lib/python3.5/vendor-packages/distlib/__init__.py
-file path=usr/lib/python3.5/vendor-packages/distlib/compat.py
-file path=usr/lib/python3.5/vendor-packages/distlib/database.py
-file path=usr/lib/python3.5/vendor-packages/distlib/index.py
-file path=usr/lib/python3.5/vendor-packages/distlib/locators.py
-file path=usr/lib/python3.5/vendor-packages/distlib/manifest.py
-file path=usr/lib/python3.5/vendor-packages/distlib/markers.py
-file path=usr/lib/python3.5/vendor-packages/distlib/metadata.py
-file path=usr/lib/python3.5/vendor-packages/distlib/resources.py
-file path=usr/lib/python3.5/vendor-packages/distlib/scripts.py
-file path=usr/lib/python3.5/vendor-packages/distlib/t32.exe
-file path=usr/lib/python3.5/vendor-packages/distlib/t64-arm.exe
-file path=usr/lib/python3.5/vendor-packages/distlib/t64.exe
-file path=usr/lib/python3.5/vendor-packages/distlib/util.py
-file path=usr/lib/python3.5/vendor-packages/distlib/version.py
-file path=usr/lib/python3.5/vendor-packages/distlib/w32.exe
-file path=usr/lib/python3.5/vendor-packages/distlib/w64-arm.exe
-file path=usr/lib/python3.5/vendor-packages/distlib/w64.exe
-file path=usr/lib/python3.5/vendor-packages/distlib/wheel.py
-file path=usr/lib/python3.7/vendor-packages/distlib-$(COMPONENT_VERSION)-py3.7.egg-info
-file path=usr/lib/python3.7/vendor-packages/distlib/__init__.py
-file path=usr/lib/python3.7/vendor-packages/distlib/compat.py
-file path=usr/lib/python3.7/vendor-packages/distlib/database.py
-file path=usr/lib/python3.7/vendor-packages/distlib/index.py
-file path=usr/lib/python3.7/vendor-packages/distlib/locators.py
-file path=usr/lib/python3.7/vendor-packages/distlib/manifest.py
-file path=usr/lib/python3.7/vendor-packages/distlib/markers.py
-file path=usr/lib/python3.7/vendor-packages/distlib/metadata.py
-file path=usr/lib/python3.7/vendor-packages/distlib/resources.py
-file path=usr/lib/python3.7/vendor-packages/distlib/scripts.py
-file path=usr/lib/python3.7/vendor-packages/distlib/t32.exe
-file path=usr/lib/python3.7/vendor-packages/distlib/t64-arm.exe
-file path=usr/lib/python3.7/vendor-packages/distlib/t64.exe
-file path=usr/lib/python3.7/vendor-packages/distlib/util.py
-file path=usr/lib/python3.7/vendor-packages/distlib/version.py
-file path=usr/lib/python3.7/vendor-packages/distlib/w32.exe
-file path=usr/lib/python3.7/vendor-packages/distlib/w64-arm.exe
-file path=usr/lib/python3.7/vendor-packages/distlib/w64.exe
-file path=usr/lib/python3.7/vendor-packages/distlib/wheel.py
-file path=usr/lib/python3.9/vendor-packages/distlib-$(COMPONENT_VERSION)-py3.9.egg-info
-file path=usr/lib/python3.9/vendor-packages/distlib/__init__.py
-file path=usr/lib/python3.9/vendor-packages/distlib/compat.py
-file path=usr/lib/python3.9/vendor-packages/distlib/database.py
-file path=usr/lib/python3.9/vendor-packages/distlib/index.py
-file path=usr/lib/python3.9/vendor-packages/distlib/locators.py
-file path=usr/lib/python3.9/vendor-packages/distlib/manifest.py
-file path=usr/lib/python3.9/vendor-packages/distlib/markers.py
-file path=usr/lib/python3.9/vendor-packages/distlib/metadata.py
-file path=usr/lib/python3.9/vendor-packages/distlib/resources.py
-file path=usr/lib/python3.9/vendor-packages/distlib/scripts.py
-file path=usr/lib/python3.9/vendor-packages/distlib/t32.exe
-file path=usr/lib/python3.9/vendor-packages/distlib/t64-arm.exe
-file path=usr/lib/python3.9/vendor-packages/distlib/t64.exe
-file path=usr/lib/python3.9/vendor-packages/distlib/util.py
-file path=usr/lib/python3.9/vendor-packages/distlib/version.py
-file path=usr/lib/python3.9/vendor-packages/distlib/w32.exe
-file path=usr/lib/python3.9/vendor-packages/distlib/w64-arm.exe
-file path=usr/lib/python3.9/vendor-packages/distlib/w64.exe
-file path=usr/lib/python3.9/vendor-packages/distlib/wheel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib-$(COMPONENT_VERSION).dist-info/LICENSE.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib-$(COMPONENT_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib-$(COMPONENT_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib-$(COMPONENT_VERSION).dist-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/compat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/database.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/index.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/locators.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/manifest.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/markers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/metadata.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/resources.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/scripts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/t32.exe
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/t64-arm.exe
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/t64.exe
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/w32.exe
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/w64-arm.exe
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/w64.exe
+file path=usr/lib/python$(PYVER)/vendor-packages/distlib/wheel.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
