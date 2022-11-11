@@ -21,6 +21,95 @@
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+#
+# The Python build infrastructure in setup.py.mk and pyproject.mk files uses
+# several Python projects to work properly.  Since we cannot use these projects
+# until they are actually built and installed we need to bootstrap.
+#
+# We do have several sequential bootstrap checkpoints during the process:
+#
+# (0)	Nothing works yet.
+#
+# 	Just core Python runtime is available (with no additional projects).
+# 	While here almost nothing works.  We cannot do following tasks with
+# 	regular Python projects:
+# 		- detect their requirements,
+# 		- build and publish them,
+# 		- test them.
+#
+# (1) 	The bootstrapper is ready.
+#
+# 	The bootstrapper is special tool that requires just core Python with no
+# 	dependency on other Python projects and it is able to build and publish
+# 	itself and other Python projects.
+#
+# 	For projects using the 'setup.py' build style we do not need any
+# 	special bootstrapper because such projects are built using their own
+# 	'setup.py' script.  The only issue with the 'setup.py' build style
+# 	projects is that their 'setup.py' script usually depends on some other
+# 	projects (typically setuptools) to get successfully built.
+#
+# 	For 'pyproject'-style projects we use pyproject_installer as the
+# 	bootstrapper.
+#
+# 	To achieve this checkpoint we just need to build pyproject_installer
+# 	using pyproject_installer without detecting its requirements (they are
+# 	none anyway) and without testing it (since no testing infrastrusture is
+# 	ready yet).
+#
+# (2)	The python-requires script works.
+#
+# 	Once the python-requires script works we can start to detect runtime
+# 	dependencie of other Python projects automatically.
+#
+# 	To achieve this checkpoint we need to build the packaging project
+# 	(directly needed by the python-requires script) and all projects
+# 	required by packaging.  During this all projects' dependencies needs to
+# 	be manually evaluated to make sure they are correct.
+#
+# (3)	The build infrastructure is fully working.
+#
+#	Once we are here we can build any Python project, but we cannot test it
+#	yet.
+#
+# 	For projects using the 'setup.py' build style we do not need any
+# 	special build infrastructure.  See checkpoint (1) above for detialed
+# 	discussion about 'setup.py' build style projects.
+#
+# 	For 'pyproject'-style projects we need to build both 'build' and
+# 	'installer' projects and all projects they depends on.
+#
+# (4)	The testing infrastructure is fully working.
+#
+# 	Once we are here we can finally use all features of the Python build
+# 	framework.  Including testing.
+#
+# 	To achieve this we need to build tox, tox-current-env, and pytest
+# 	projects together with their dependencies.
+#
+# All projects needed to achieve checkpoints (1), (2), and (3) should set
+# PYTHON_BOOTSTRAP to 'yes' in their Makefile to make sure the regular build
+# infrastructure is not used for them and special set of build rules is applied
+# instead.
+#
+# All projects needed to go from checkpoint (3) to checkpoint (4) should set
+# PYTHON_TEST_BOOTSTRAP to 'yes' in their Makefile to let the build
+# infrastructure know that testing for such projects might not work properly.
+#
+# The PYTHON_BOOTSTRAP set to 'yes' implies PYTHON_TEST_BOOTSTRAP set to 'yes'
+# too.
+#
+ifeq ($(strip $(PYTHON_BOOTSTRAP)),yes)
+PYTHON_TEST_BOOTSTRAP = yes
+endif
+
+ifeq ($(strip $(PYTHON_TEST_BOOTSTRAP)),yes)
+# Until we implement support for testing bootstrapped projects we simply
+# disable tests for them because required packages (e.g. tox and/or pytest) are
+# very likely not available during bootstrap so testing would fail anyway.
+TEST_STYLE = none
+endif
+
 # Particular python runtime is always required (at least to run setup.py)
 PYTHON_REQUIRED_PACKAGES += runtime/python
 
@@ -183,7 +272,7 @@ endif
 # 	tox		- "tox"-style testing
 # 	pytest		- "pytest"-style testing
 # 	setup.py	- "setup.py test"-style testing
-# 	none		- no testing is supported at all
+# 	none		- no testing is supported (or desired) at all
 #
 
 TEST_STYLE ?= tox
