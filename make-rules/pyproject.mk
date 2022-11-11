@@ -13,48 +13,11 @@
 # Copyright 2022 Marcel Telka
 #
 
-ifeq ($(strip $(PYTHON_BOOTSTRAP)),yes)
-# Until we implement support for testing bootstrapped projects we simply
-# disable tests for them because required packages (e.g. tox and/or pytest) are
-# very likely not available during bootstrap so testing would very likely fail
-# anyway.
-TEST_STYLE = none
-endif
-
 include $(WS_MAKE_RULES)/setup.py.mk
 
-PYTHON_BOOTSTRAP ?= no
-
 ifeq ($(strip $(PYTHON_BOOTSTRAP)),yes)
-#
-# The following Python projects needs to be build before any other Python
-# project because they are needed by the Userland build framework itself.  To
-# build them we need special set of rules that uses limited functionality of
-# the build framework just to bootstrap them together with their build time and
-# runtime dependencies.
-#
-# - pyproject_installer (the bootstrapper)
-# - build (to build packages)
-# - installer (to install packages before publish)
-# - packaging (to detect runtime dependencies)
-#
-# There are basically two ways how to bootstrap these projects:
-#
-# 1) defer to default 'setup.py' build style for projects that still supports
-# it.  The 'setup.py' build style usually does not require anything outside
-# core Python modules.  Also, it is likely that the set of projects that needs
-# to be bootstrapped (like setuptools) will support the 'setup.py' build style
-# for very long time (maybe forever).  Anyway, the main problem with the
-# 'setup.py' build style is that its results are not PEP 376 compliant.
-#
-# 2) use something else, preferably as simple as possible, to do the build.
-# Such tool needs to be PEP 376 and PEP 517 compliant and it also must be able
-# to build itself without requiring any other non-core Python modules.  We use
-# pyproject_installer to do the job.
-#
-
-ifeq ($(strip $(COMPONENT_NAME)),pyproject_installer)
 # To bootstrap the bootstrapper we need to make sure it finds its own modules
+ifeq ($(strip $(COMPONENT_NAME)),pyproject_installer)
 PYTHON_ENV += PYTHONPATH=$(@D)/src
 endif
 
