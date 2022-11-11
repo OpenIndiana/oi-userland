@@ -31,14 +31,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
 COMPONENT_VERSION=	5.2
-COMPONENT_FMRI=		shell/bash
 COMPONENT_SUMMARY=	GNU Bourne-Again shell (bash)
-COMPONENT_CLASSIFICATION=	System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/bash/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = sha256:a139c166df7ff4471c5e0733051642ee5556c1cc8a4a78f145583c5c81ab32fb
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		shell/bash
+COMPONENT_CLASSIFICATION=	System/Shells
 COMPONENT_LICENSE=	GPLv3, FDLv1.2
 
 include $(WS_MAKE_RULES)/common.mk
@@ -120,22 +120,19 @@ CONFIGURE_OPTIONS += --with-installed-readline=no
 COMPONENT_TEST_DIR      = $(BUILD_DIR_64)
 COMPONENT_TEST_ENV      = - $(TEST_PATH)
 # The bash test harness needs the GNU userland utilities
-#TEST_PATH   = "PATH=$(PATH.gnu)"
-# The bash test harness needs the GNU userland utilities
 TEST_PATH = "PATH=$(BUILD_DIR_64):$(GNUBIN):$(USRBINDIR)"
 
 # Results output is slightly different on Intel vs. SPARC.
-COMPONENT_TEST_MASTER       = \
+#COMPONENT_TEST_MASTER       = \
     $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
 # Bash tests can't pass if they don't have tty available. This script makes
 # sure to provide a tty if we are missing one
 COMPONENT_TEST_CMD = $(COMPONENT_DIR)/bash_test_wrapper
-
-# Due to a bug in Makefile gmake tries to remake few targets after application
-# of upstream patches. Following transform removes build related lines from the
-# test output.
-COMPONENT_TEST_TRANSFORMS += "-e '/^rm -f/,/^[[:digit:]]\+[[:space:]].*bash$$/d'"
+COMPONENT_TEST_TRANSFORMS += \
+	'-n' \
+	'-e "/run-/p"' \
+	'-e "/Passed/p"'
 
 # If the tests decided they need to execute itself in screen(1) then move the
 # resulting file to final location where the rest of userland infrastructure
