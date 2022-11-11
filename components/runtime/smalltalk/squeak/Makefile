@@ -41,6 +41,7 @@
 # in order to put the 64-bit objects in their usual usr/lib/amd64 location
 
 BUILD_BITS=32_and_64
+USE_COMMON_TEST_MASTER=no
 
 # the goal is to use libjpeg8-turbo but that links, but does not display
 # working jpeg images; needs to be fixed upstream by the Squeak team
@@ -55,7 +56,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.19.15
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
