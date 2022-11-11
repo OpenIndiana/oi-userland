@@ -1,40 +1,43 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2021 Aurelien Larcher
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project zipp
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		zipp
-COMPONENT_VERSION=	1.2.0
-COMPONENT_SUMMARY=	Backport of pathlib-compatible object wrapper for zip files
-COMPONENT_PROJECT_URL=	https://github.com/jaraco/zipp
-COMPONENT_FMRI=		library/python/zipp
-COMPONENT_CLASSIFICATION=Development/Python
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_ARCHIVE_HASH= \
-	sha256:c70410551488251b0fee67b460fb9a536af8d6f9f008ad10ac51f615b6a521b1
-COMPONENT_LICENSE=	MIT
+COMPONENT_NAME =		zipp
+COMPONENT_VERSION =		3.10.0
+COMPONENT_SUMMARY =		zipp - Backport of pathlib-compatible object wrapper for zip files
+COMPONENT_PROJECT_URL =		https://github.com/jaraco/zipp
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/8d/d7/1bd1e0a5bc95a27a6f5c4ee8066ddfc5b69a9ec8d39ab11a41a804ec8f0d/zipp-3.10.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:7a7262fd930bd3e36c50b9a64897aec3fafff3dfdeec9623ae22b40e93f99bb8
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS= $(PYTHON_VERSIONS_ALL)
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - importlib-metadata
+# - pep517
+PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += runtime/python
