@@ -27,14 +27,14 @@
 # Wrapper to run pg_regress using the test suite installed
 # with the PostgreSQL packages
 
-PG_ROOT=/usr/postgres/12
+PG_ROOT=/usr/postgres/14
 
 # Default values for arguments
 
 REG_ROOT=${PG_ROOT}/lib/64/regress
 PSQL_DIR=/usr/bin
 PGREG_BIN=${PG_ROOT}/lib/64/pgxs/src/test/regress/pg_regress
-PGREG_TMP=/var/tmp/pg_regress_12
+PGREG_TMP=/var/tmp/pg_regress_14
 
 if [ '$1' = '--help' ] ; then
   cat <<EOF
@@ -62,7 +62,7 @@ The environment variable PGPORT must be set if the server is not using
 the default 5432.
 
 A copy of the testsuite as well as output, will be placed in the directory
-/var/tmp/pg_regress_12 and subdirectories; any previous contents will be
+/var/tmp/pg_regress_14 and subdirectories; any previous contents will be
 removed before the test starts.
 EOF
 exit 0
