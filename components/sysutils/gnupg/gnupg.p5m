@@ -38,16 +38,13 @@ depend fmri=__TBD pkg.debug.depend.file=usr/lib/pinentry type=require
 <transform dir path=usr/share/gnupg$ -> default facet.locale true>
 <transform file path=usr/share/gnupg/help\.([^/]+)(\..+){0,1}(/.+){0,1}\.txt$ -> default facet.locale.%<\1> true>
 
-# gpg needs the proc_lock_memory privilege in order to be able to lock a
-# memory segment. If it can't do that, it utters
-#    gpg: Warning: using insecure memory!
-# Using the illumos forced privileges feature, we afford it the additional
-# privilege by making it setuid root and installing an exec_attr entry
-# to add just the necessary privilege. See files/exec_attr.
-<transform path=usr/bin/gpg2 -> set owner root>
-<transform path=usr/bin/gpg2 -> set mode 04555>
 
 file files/exec_attr.gnupg path=etc/security/exec_attr.d/gnupg
+
+link path=usr/bin/gpg2 target=gpg
+link path=usr/bin/gpgv2 target=gpgv
+link path=usr/share/man/man1/gpg2.1 target=gpg.1
+link path=usr/share/man/man1/gpgv2.1 target=gpgv.1
 
 file path=usr/bin/dirmngr
 file path=usr/bin/dirmngr-client
@@ -62,14 +59,20 @@ file path=usr/bin/gpg-preset-passphrase
 file path=usr/bin/gpg-protect-tool
 file path=usr/bin/gpg-wks-client
 file path=usr/bin/gpg-wks-server
-file path=usr/bin/gpg2
+# gpg needs the proc_lock_memory privilege in order to be able to lock a
+# memory segment. If it can't do that, it utters
+#    gpg: Warning: using insecure memory!
+# Using the illumos forced privileges feature, we afford it the additional
+# privilege by making it setuid (really needed here) root and installing an
+# exec_attr entry to add just the necessary privilege. See files/exec_attr.
+file path=usr/bin/gpg owner=root mode=04555
 file path=usr/bin/gpgconf
 file path=usr/bin/gpgparsemail
 file path=usr/bin/gpgscm
 file path=usr/bin/gpgsm
 file path=usr/bin/gpgsplit
 file path=usr/bin/gpgtar
-file path=usr/bin/gpgv2
+file path=usr/bin/gpgv
 file path=usr/bin/kbxutil
 file path=usr/bin/keyboxd
 file path=usr/bin/scdaemon
@@ -174,12 +177,12 @@ file path=usr/share/man/man1/gpg-connect-agent.1
 file path=usr/share/man/man1/gpg-preset-passphrase.1
 file path=usr/share/man/man1/gpg-wks-client.1
 file path=usr/share/man/man1/gpg-wks-server.1
-file path=usr/share/man/man1/gpg2.1
+file path=usr/share/man/man1/gpg.1
 file path=usr/share/man/man1/gpgconf.1
 file path=usr/share/man/man1/gpgparsemail.1
 file path=usr/share/man/man1/gpgsm.1
 file path=usr/share/man/man1/gpgtar.1
-file path=usr/share/man/man1/gpgv2.1
+file path=usr/share/man/man1/gpgv.1
 file path=usr/share/man/man1/scdaemon.1
 file path=usr/share/man/man1/watchgnupg.1
 file path=usr/share/man/man7/gnupg.7
