@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnupg
 COMPONENT_VERSION=      2.3.8
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=		3
 COMPONENT_SUMMARY=      GNU Privacy Guard
 COMPONENT_DESCRIPTION=	A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -69,8 +69,6 @@ CONFIGURE_OPTIONS  +=		--enable-nls
 CONFIGURE_OPTIONS  +=		--enable-largefile
 CONFIGURE_OPTIONS  +=		--disable-selinux-support
 CONFIGURE_OPTIONS  +=		--disable-libdns
-# gpg -> gpg2
-CONFIGURE_OPTIONS  +=		--enable-gpg-is-gpg2
 CONFIGURE_OPTIONS  +=		--with-pinentry-pgm=$(CONFIGURE_PREFIX)/lib/pinentry
 CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-libassuan-prefix=$(CONFIGURE_PREFIX)
@@ -86,9 +84,6 @@ MAN8LIST = addgnupghome applygnupgdefaults
 install:	$(INSTALL_64)
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
 	    $(CP) -R 'en@boldquot' en )
-
-# The test scripts use gpg2 which we must provide in the build folder:
-COMPONENT_PRE_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin && $(LN) -sf gpg gpg2 )
 
 COMPONENT_TEST_TRANSFORMS += "-e '/Failed tests/p'"
 COMPONENT_TEST_TRANSFORMS += "-e '/tests run/p'"
