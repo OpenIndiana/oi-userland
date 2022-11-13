@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXinerama
-COMPONENT_VERSION= 1.1.4
-COMPONENT_FMRI=    x11/library/libxinerama
+COMPONENT_VERSION= 1.1.5
 COMPONENT_SUMMARY= libXinerama - X PanoramiX extension library 
-COMPONENT_ARCHIVE_HASH= \
-  sha256:0008dbd7ecf717e1e507eed1856ab0d9cf946d03201b85d5dcf61489bb02d720
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:5094d1f0fcc1828cb1696d0d39d9e866ae32520c54d01f618f1a3c1e30c2085c
+COMPONENT_FMRI=    x11/library/libxinerama
 
 include $(WS_MAKE_RULES)/common.mk
 
