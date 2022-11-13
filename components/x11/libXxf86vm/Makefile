@@ -17,12 +17,12 @@ X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=    libXxf86vm
-COMPONENT_VERSION= 1.1.4
-COMPONENT_FMRI=    x11/library/libxxf86vm
-COMPONENT_SUMMARY= libXxf86vm - VidMode extension for modifying video attributes
-COMPONENT_ARCHIVE_HASH= \
-  sha256:afee27f93c5f31c0ad582852c0fb36d50e4de7cd585fcf655e278a633d85cd57
+COMPONENT_NAME=			libXxf86vm
+COMPONENT_VERSION=		1.1.5
+COMPONENT_SUMMARY= 		libXxf86vm - VidMode extension for modifying video attributes
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:247fef48b3e0e7e67129e41f1e789e8d006ba47dba1c0cdce684b9b703f888e7
+COMPONENT_FMRI=			x11/library/libxxf86vm
 
 include $(WS_MAKE_RULES)/common.mk
 
