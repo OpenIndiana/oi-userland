@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		backports_abc
 COMPONENT_VERSION =		0.5
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		backports_abc - A backport of recent additions to the 'collections.abc' module.
 COMPONENT_PROJECT_URL =		https://github.com/cython/backports_abc
 COMPONENT_ARCHIVE_URL =		\
@@ -34,3 +35,4 @@ TEST_STYLE = setup.py
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
