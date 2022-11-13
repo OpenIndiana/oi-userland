@@ -37,8 +37,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/argcomplete/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/argcomplete/_check_console_script.py
 file path=usr/lib/python$(PYVER)/vendor-packages/argcomplete/_check_module.py
 file path=usr/lib/python$(PYVER)/vendor-packages/argcomplete/bash_completion.d/python-argcomplete
-file path=usr/lib/python$(PYVER)/vendor-packages/argcomplete/compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/argcomplete/completers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/argcomplete/my_argparse.py
 file path=usr/lib/python$(PYVER)/vendor-packages/argcomplete/my_shlex.py
 file path=usr/lib/python$(PYVER)/vendor-packages/argcomplete/shell_integration.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/importlib-metadata-$(PYV)
