@@ -28,12 +28,12 @@ USE_OPENSSL11= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
-COMPONENT_VERSION=	2.2.8
+COMPONENT_VERSION=	2.2.9
 COMPONENT_SUMMARY=	Mutt is a small but very powerful text-based mail client for Unix operating systems.
 COMPONENT_PROJECT_URL=	http://www.mutt.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:03f3d237a2ee2a1d16336417c9a5f17b49cf7045eefea6021f0820bbf85d0a53
+COMPONENT_ARCHIVE_HASH=	sha256:fa531b231d58fe1f30ceda0ed626683ea9ebdfb76ce47ef8bb27c2f77422cffb
 COMPONENT_ARCHIVE_URL=	http://ftp.mutt.org/pub/mutt/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		mail/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
