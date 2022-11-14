@@ -74,4 +74,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/chardet/universaldetector.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/utf1632prober.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/utf8prober.py
 file path=usr/lib/python$(PYVER)/vendor-packages/chardet/version.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
 <transform file path=usr/bin/chardetect-3\.7$ -> add pkg.depend.bypass-generate .*/importlib/(64/)?metadata.* >
