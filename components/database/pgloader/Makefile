@@ -16,11 +16,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgloader
-COMPONENT_VERSION= 	3.6.8
+COMPONENT_VERSION= 	3.6.9
 COMPONENT_SUMMARY= 	Data loading tool for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:b7bfe70a62b0568ef1c4c418e60ac7f9fcade33cdc3f70dfd0212ec78338006b
+COMPONENT_ARCHIVE_HASH= sha256:f61afa06d30d152412da9a9ae4aaa6a7d9c27df89de09bec7f08bedc7fb4587a
 COMPONENT_ARCHIVE_URL=	https://github.com/dimitri/pgloader/archive/v$(COMPONENT_VERSION).zip
 COMPONENT_PROJECT_URL=	https://pgloader.io/
 
