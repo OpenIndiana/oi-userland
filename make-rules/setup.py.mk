@@ -292,6 +292,8 @@ USERLAND_REQUIRED_PACKAGES += library/python/tox-current-env
 else ifeq ($(strip $(TEST_STYLE)),pytest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
+COMPONENT_TEST_ARGS +=		--verbose
+COMPONENT_TEST_ARGS +=		--color=no
 COMPONENT_TEST_TARGETS =
 
 USERLAND_REQUIRED_PACKAGES += library/python/pytest
