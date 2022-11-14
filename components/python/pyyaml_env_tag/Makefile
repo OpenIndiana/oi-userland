@@ -14,12 +14,13 @@
 #   $WS_TOOLS/python-integrate-project pyyaml_env_tag
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyyaml_env_tag
 COMPONENT_VERSION =		0.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pyyaml_env_tag - A custom YAML tag for referencing environment variables in YAML files. 
 COMPONENT_PROJECT_URL =		https://github.com/waylan/pyyaml-env-tag
 COMPONENT_ARCHIVE_URL =		\
@@ -29,9 +30,11 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# setup.py does not support test command for this project
-TEST_TARGET = $(NO_TESTS)
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
+PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
+PYTHON_REQUIRED_PACKAGES += runtime/python
