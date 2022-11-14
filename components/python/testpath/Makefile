@@ -14,22 +14,21 @@
 #   $WS_TOOLS/python-integrate-project testpath
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		testpath
-COMPONENT_VERSION =		0.5.0
+COMPONENT_VERSION =		0.6.0
 COMPONENT_SUMMARY =		testpath - Test utilities for code working with files and commands
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/dd/bf/245f32010f761aaeff132278e91e0d0ae1c360d6f3708a11790fdc1410d2/testpath-0.5.0.tar.gz
+	https://files.pythonhosted.org/packages/08/ad/a3e7d580902f57e31d2181563fc4088894692bb6ef79b816344f27719cdc/testpath-0.6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1acf7a0bcd3004ae8357409fc33751e16d37ccc650921da1094a86581ad1e417
+	sha256:2f1b97e6442c02681ebe01bd84f531028a7caea1af3825000f52345c30285e0f
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# setup.py does not support test command for this project
-TEST_TARGET = $(NO_TESTS)
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -37,3 +36,5 @@ include $(WS_MAKE_RULES)/common.mk
 GENERATE_EXTRA_CMD += | $(GNU_GREP) -v -E '/cli-(32|64)\.exe$$'
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
+PYTHON_REQUIRED_PACKAGES += runtime/python
