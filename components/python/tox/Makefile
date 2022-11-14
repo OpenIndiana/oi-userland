@@ -19,18 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox
-COMPONENT_VERSION =		3.27.0
+COMPONENT_VERSION =		3.27.1
 COMPONENT_SUMMARY =		tox - tox is a generic virtualenv management and test command line tool
 COMPONENT_PROJECT_URL =		https://tox.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/86/71/604b19466b3310a02fdc2baf4b559d8f49bf932a7e6f976a238e2bb54516/tox-3.27.0.tar.gz
+	https://files.pythonhosted.org/packages/43/44/7e646042c3c3fde7be4ef8debd6bc42f32f36766ab526af302abd341a9a1/tox-3.27.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d2c945f02a03d4501374a3d5430877380deb69b218b1df9b7f1d2f2a10befaf9
+	sha256:b2a920e35a668cc06942ffd1cf3a4fb221a4d909ca72191fb6d84b0b18a7be04
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
+# - tox-current-env (test bootstrap)
 # - Userland testing framework (see setup.py.mk)
 PYTHON_TEST_BOOTSTRAP = yes
 
