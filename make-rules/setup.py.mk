@@ -207,6 +207,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 	done ;
 endif
 
+# Make sure the .depend-test file exists in a case the test style below does
+# not provide its own recipe.
+COMPONENT_POST_INSTALL_ACTION +=	$(TOUCH) $(@D)/.depend-test ;
+
 # Define Python version specific filenames for tests.
 ifeq ($(strip $(USE_COMMON_TEST_MASTER)),no)
 COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-$(PYTHON_VERSION).master
@@ -220,7 +224,8 @@ COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PYTHON_VE
 # Normalize Python test results.
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(Ran [0-9]\{1,\} tests\) in .*$$/\1/'"	# delete timing from test results
 
-COMPONENT_TEST_DEP =	$(BUILD_DIR)/%/.built
+COMPONENT_TEST_DEP +=	component-test-environment-prep
+COMPONENT_TEST_DEP +=	$(BUILD_DIR)/%/.built
 
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
@@ -289,6 +294,21 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^  py[0-9]\{1,\}: commands succeeded$$/d'"	# 
 # tox package together with the tox-current-env plugin is needed
 USERLAND_REQUIRED_PACKAGES += library/python/tox
 USERLAND_REQUIRED_PACKAGES += library/python/tox-current-env
+
+# Generate raw lists of test dependencies per Python version
+COMPONENT_POST_INSTALL_ACTION += \
+	cd $(@D) ; \
+	( $(COMPONENT_TEST_CMD) -qq --print-deps-to=- $(COMPONENT_TEST_TARGETS) \
+		| while read l ; do \
+			[ "$${l:0:2}" == "-r" ] && $(CAT) $${l\#-r} && continue ; \
+			echo "$$l" ; \
+		done \
+		| $(GSED) -e 's/\#.*//' -e $$'s/^[ \t]*//' -e '/^$$/d' \
+			-e 's/^\([a-zA-Z0-9]\([a-zA-Z0-9._-]*[a-zA-Z0-9]\)\{0,1\}\).*/\1/' ; \
+	for e in $(shell $(COMPONENT_TEST_CMD) -qq --print-extras-to=- $(COMPONENT_TEST_TARGETS)) ; do \
+		PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
+	done ) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' > $(@D)/.depend-test ;
 else ifeq ($(strip $(TEST_STYLE)),pytest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
@@ -388,14 +408,24 @@ REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend-runtime.res
 
 # Generate raw lists of runtime dependencies per Python version
 COMPONENT_POST_INSTALL_ACTION += \
-	 PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) > $(@D)/.depend-runtime ;
 
 # Convert raw per version lists of runtime dependencies to single resolved
-# runtime dependency list
-$(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_TARGET)
-	$(CAT) $(INSTALL_TARGET:%.installed=%.depend-runtime) | LC_ALL=C $(GSORT) -u \
+# runtime dependency list.  The dependency on META.depend-test.required here is
+# purely to get the file created as a side effect of this target.
+$(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_$(MK_BITS)) $(BUILD_DIR)/META.depend-test.required
+	$(CAT) $(INSTALL_$(MK_BITS):%.installed=%.depend-runtime) | LC_ALL=C $(GSORT) -u \
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' > $@
+
+# Convert raw per version lists of test dependencies to single list of
+# TEST_REQUIRED_PACKAGES entries
+$(BUILD_DIR)/META.depend-test.required:	$(INSTALL_$(MK_BITS))
+	$(CAT) $(INSTALL_$(MK_BITS):%.installed=%.depend-test) | LC_ALL=C $(GSORT) -u \
+		| $(GSED) -e 's/.*/TEST_REQUIRED_PACKAGES.python += library\/python\/&/' > $@
+
+# Add META.depend-test.required to the generated list of REQUIRED_PACKAGES
+REQUIRED_PACKAGES_TRANSFORM += -e '$$r $(BUILD_DIR)/META.depend-test.required'
 
 # The python-requires script requires importlib_metadata for Python 3.7 to
 # provide useful output.  Since we do fake bootstrap for Python 3.7 we require

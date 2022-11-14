@@ -17,6 +17,7 @@
 #
 # Print requirements for a package.
 # Evaluated and normalized.
+# With optional EXTRA parameter passed print requirements for such extra only.
 #
 
 import sys
@@ -35,13 +36,19 @@ except:
 if len(sys.argv) < 2:
     exit()
 
+e = {'extra': sys.argv[2]} if len(sys.argv) > 2 else None
+# packaging up to 21.3 raises UndefinedEnvironmentName when extra is not
+# defined in environment, but marker contains it.  This should change in new
+# packaging once released.  See https://github.com/pypa/packaging/pull/550.  To
+# workaround this (so we do not need to handle exceptions) we pass empty extra
+# in environment when we do not want any extra.
+noe = {'extra': ''}
+
 try:
     for req in requires(sys.argv[1]):
         r = Requirement(req)
-        try:
-            if not r.marker or r.marker.evaluate():
-                print(re.sub(r"[-_.]+", "-", r.name).lower())
-        except UndefinedEnvironmentName:
-            pass
+        m = r.marker
+        if (not m and not e) or m and ((not e and m.evaluate(noe)) or (e and not m.evaluate(noe) and m.evaluate(e))):
+            print(re.sub(r"[-_.]+", "-", r.name).lower())
 except:
     pass
