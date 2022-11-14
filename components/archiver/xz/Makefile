@@ -20,21 +20,21 @@
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS=			64_and_32
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xz
-COMPONENT_VERSION=	5.2.7
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_VERSION=	5.2.8
+COMPONENT_SUMMARY=	XZ Utils - loss-less file compression application and library
 COMPONENT_PROJECT_URL=	https://tukaani.org/xz/
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:06327c2ddc81e126a6d9a78b0be5014b976a2c0832f492dcfc4755d7facf6d33
+COMPONENT_ARCHIVE_HASH= sha256:ec5cda9f0b91336ab1b881d3d144e8203fcca604e607caca8ae678ddbc29207d
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		compress/xz
-COMPONENT_SUMMARY=	'XZ Utils - loss-less file compression application and library.'
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING.LGPLv2.1
-COMPONENT_CLASSIFICATION= Applications/System Utilities
 
 include $(WS_MAKE_RULES)/common.mk
 
