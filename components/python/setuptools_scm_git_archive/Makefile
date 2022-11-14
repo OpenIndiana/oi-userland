@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools_scm_git_archive
 COMPONENT_VERSION =		1.4
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		setuptools_scm_git_archive - setuptools_scm plugin for git archives
 COMPONENT_PROJECT_URL =		https://github.com/Changaco/setuptools_scm_git_archive/
 COMPONENT_ARCHIVE_URL =		\
@@ -34,3 +35,4 @@ TEST_STYLE = setup.py
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
