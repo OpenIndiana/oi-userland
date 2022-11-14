@@ -300,7 +300,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 	cd $(@D) ; \
 	( $(COMPONENT_TEST_CMD) -qq --print-deps-to=- $(COMPONENT_TEST_TARGETS) \
 		| while read l ; do \
-			[ "$${l:0:2}" == "-r" ] && $(CAT) $${l\#-r} && continue ; \
+			[ "$${l:0:2}" == "-c" ] && continue ; \
+			[ "$${l:0:12}" == "--constraint" ] && continue ; \
+			[ "$${l:0:2}" == "-r" ] && $(CAT) $${l:2} && continue ; \
+			[ "$${l:0:13}" == "--requirement" ] && $(CAT) $${l:14} && continue ; \
 			echo "$$l" ; \
 		done \
 		| $(GSED) -e 's/\#.*//' -e $$'s/^[ \t]*//' -e '/^$$/d' \
