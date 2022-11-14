@@ -320,7 +320,10 @@ COMPONENT_TEST_TRANSFORMS += \
 	"| ( \
 		$(GSED) -u -e '/^=\{1,\} test session starts /q' ; \
 		$(GSED) -u -e '/^$$/q' ; \
-		$(GSED) -u -e 's/ *\[...%\]$$//' -e '/^$$/Q' | LC_ALL=C $(GSORT) | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
+		$(GSED) -u -e 's/ *\[...%\]$$//' -e '/^$$/Q' | LC_ALL=C $(GSORT) | while read n s ; do \
+			[ "\$${n%::*}" == "\$$n" ] && s=\$$(echo \$$s | $(GSED) -e 's/./&\\\\n/g' | LC_ALL=C $(GSORT) | tr -d '\\\\n') ; \
+			echo \$$n \$$s ; \
+		done | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
 		$(CAT) \
 	) | $(COMPONENT_TEST_TRANSFORMER)"
 COMPONENT_TEST_TRANSFORMS += \
