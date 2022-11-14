@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		backports.ssl_match_hostname
 COMPONENT_VERSION =		3.7.0.1
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		backports.ssl_match_hostname - The ssl.match_hostname() function from Python 3.5
 COMPONENT_PROJECT_URL =		http://bitbucket.org/brandon/backports.ssl_match_hostname
 COMPONENT_ARCHIVE_URL =		\
@@ -30,8 +30,9 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-TEST_STYLE = none
+TEST_STYLE = setup.py
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
