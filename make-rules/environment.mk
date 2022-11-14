@@ -58,6 +58,24 @@ component-environment-prep::
 		  [ $$RETVAL -ne 7 ] && echo "pkg install returned $$RETVAL" && exit 1; \
 		  sleep 10; \
 		done; }
+
+component-test-environment-check:: component-environment-check
+	$(call separator-line,Required Additional Packages Needed for Testing Only)
+	@[ -z "$(strip $(TEST_REQUIRED_PACKAGES))" ] || /usr/bin/pkg list -vH $(TEST_REQUIRED_PACKAGES:%=/%)
+	$(call separator-line)
+
+component-test-environment-prep::
+	@[ -z "$(strip $(TEST_REQUIRED_PACKAGES))" ] || /usr/bin/pkg list -vH $(TEST_REQUIRED_PACKAGES:%=/%) >/dev/null || \
+		{ echo "Adding required packages to testing environment..."; \
+		while true ; do \
+		  $(PFEXEC) /usr/bin/pkg install --accept -v $(TEST_REQUIRED_PACKAGES:%=/%) ; \
+		  RETVAL=$$? ; \
+		  [ $$RETVAL -eq 0 ] && break; \
+		  [ $$RETVAL -eq 4 ] && break; \
+		  [ $$RETVAL -ne 7 ] && echo "pkg install returned $$RETVAL" && exit 1; \
+		  sleep 10; \
+		done; }
+
 ZONENAME_PREFIX = bz
 ZONENAME_ID = $(shell echo "$(WS_TOP)" | sha1sum | cut -c0-7)-$(COMPONENT_NAME)
 ZONENAME = $(ZONENAME_PREFIX)-$(ZONENAME_ID)
@@ -118,3 +136,5 @@ component-zone-cleanup:
 # Short aliases for user convenience
 env-check:: component-environment-check
 env-prep:: component-environment-prep
+test-env-check:: component-test-environment-check
+test-env-prep:: component-test-environment-prep
