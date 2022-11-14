@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		outcome
 COMPONENT_VERSION =		1.2.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		outcome - Capture the outcome of Python function calls.
 COMPONENT_PROJECT_URL =		https://github.com/python-trio/outcome
 COMPONENT_ARCHIVE_URL =		\
@@ -37,3 +38,5 @@ COMPONENT_TEST_ENV += PYTHONPATH=$(@D)/src
 COMPONENT_TEST_ENV += TOX_TESTENV_PASSENV=PYTHONPATH
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/attrs
+PYTHON_REQUIRED_PACKAGES += runtime/python
