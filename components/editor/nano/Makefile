@@ -12,21 +12,21 @@
 # Copyright (c) 2014 Rouven Wachhaus
 # Copyright (c) 2020 Michal Nowak
 # Copyright (c) 2019 Solene Rapenne
-# Copyright (c) 2021 Nona Hansel
+# Copyright (c) 2021, 2022 Nona Hansel
 #
 
 BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nano
-COMPONENT_VERSION=	6.4
+COMPONENT_VERSION=	7.0
 COMPONENT_FMRI=		editor/nano
 COMPONENT_SUMMARY=	GNU implementation of nano, a text editor emulating pico
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_PROJECT_URL=	https://www.nano-editor.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:4199ae8ca78a7796de56de1a41b821dc47912c0307e9816b56cc317df34661c0
+COMPONENT_ARCHIVE_HASH= sha256:8dd6eac38b2b8786d82681f0e1afd84f6b75210d17391b6443c437e451552149
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/nano/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv3
 
