@@ -352,7 +352,7 @@ COMPONENT_TEST_TRANSFORMS += \
 		$(CAT) \
 	) | $(COMPONENT_TEST_TRANSFORMER)"
 COMPONENT_TEST_TRANSFORMS += \
-	"-e 's/=\{1,\} \(.*\) in [0-9]\{1,\}\.[0-9]\{1,\}s =\{1,\}$$/======== \1 ========/'"	# remove timing
+	"-e 's/^=\{1,\} \(.*\) in [0-9]\{1,\}\.[0-9]\{1,\}s \(([^)]*) \)\?=\{1,\}$$/======== \1 ========/'"	# remove timing
 
 # test the built source
 $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
