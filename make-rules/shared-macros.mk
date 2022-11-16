@@ -1219,9 +1219,6 @@ COMPONENT_INSTALL_ENV= \
 # PERL options which depend on C options should be placed here
 PERL_OPTIMIZE :=	$(shell $(PERL) -e 'use Config; print $$Config{optimize}')
 
-# Allow user to override default maximum number of archives
-NUM_EXTRA_ARCHIVES= 1 2 3 4 5 6 7 8 9 10
-
 # Rewrite absolute source-code paths into relative for ccache, so that any
 # workspace with a shared CCACHE_DIR can benefit when compiling a component
 ifneq ($(strip $(CCACHE)),)
