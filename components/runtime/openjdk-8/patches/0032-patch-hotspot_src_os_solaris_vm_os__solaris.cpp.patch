@@ -4,19 +4,6 @@ Misc SunOS casts.
 
 --- hotspot/src/os/solaris/vm/os_solaris.cpp.orig	2015-06-10 10:31:52.000000000 +0000
 +++ hotspot/src/os/solaris/vm/os_solaris.cpp
-@@ -113,6 +113,12 @@
- 
- #define MAX_PATH (2 * K)
- 
-+/* Declare madvise where it is not declared for C++, like Solaris */
-+#if defined(__sun) && defined(_XOPEN_SOURCE)
-+extern "C" int memcntl(caddr_t, size_t, int, caddr_t, int, int);
-+extern "C" int madvise(caddr_t, size_t, int);
-+#endif
-+
- // for timer info max values which include all bits
- #define ALL_64_BITS CONST64(0xFFFFFFFFFFFFFFFF)
- 
 @@ -534,7 +540,7 @@ static bool assign_distribution(processo
    const processorid_t limit_id = max_id + 1;
    // Make up markers for available processors.

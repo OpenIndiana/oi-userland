@@ -1,29 +1,29 @@
 --- jdk/make/CompileLaunchers.gmk.1	2016-07-17 16:06:05.820143551 +0300
 +++ jdk/make/CompileLaunchers.gmk	2016-07-17 16:06:39.159097738 +0300
 @@ -177,7 +177,7 @@
+           -DPROGNAME='"$1"' $(DPACKAGEPATH) \
            -DPACKAGE_PATH='"$(PACKAGE_PATH)"' \
            $2, \
-       CFLAGS_linux := -fPIC, \
--      CFLAGS_solaris := -KPIC -DHAVE_GETHRTIME, \
-+      CFLAGS_solaris := -fPIC -DHAVE_GETHRTIME, \
-       CFLAGS_bsd := -fPIC, \
+-      CFLAGS_solaris := -KPIC, \
++      CFLAGS_solaris := -fPIC, \
        LDFLAGS := $(LDFLAGS_JDKEXE) \
            $(ORIGIN_ARG) \
+           $$($1_LDFLAGS), \
 @@ -489,7 +489,7 @@
          -DFULL, \
      CFLAGS_release := -DPRODUCT, \
      CFLAGS_linux := -fPIC, \
 -    CFLAGS_solaris := -KPIC, \
 +    CFLAGS_solaris := -fPIC, \
-     CFLAGS_bsd := -fPIC, \
      CFLAGS_macosx := -fPIC, \
      MAPFILE := $(UNPACK_MAPFILE),\
+     ldflags := $(unpackexe_zipobjs), \
 @@ -586,7 +586,7 @@
        CFLAGS := $(CFLAGS_JDKEXE) \
            $(BUILD_JEXEC_INC), \
        CFLAGS_linux := -fPIC, \
 -      CFLAGS_solaris := -KPIC, \
 +      CFLAGS_solaris := -fPIC, \
-       CFLAGS_bsd := -fPIC, \
        LDFLAGS := $(LDFLAGS_JDKEXE) \
            $(call SET_SHARED_LIBRARY_NAME,$(LIBRARY_PREFIX)$(SHARED_LIBRARY_SUFFIX)), \
+       OBJECT_DIR := $(JDK_OUTPUTDIR)/objs/jexec_obj, \

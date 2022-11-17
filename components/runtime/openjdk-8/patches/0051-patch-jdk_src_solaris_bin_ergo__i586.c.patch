@@ -27,8 +27,8 @@ GCC compatability.
  
  #endif /* __solaris__ */
  
--#if defined(__linux__) || defined(_ALLBSD_SOURCE)
-+#if (defined(__linux__) || defined(_ALLBSD_SOURCE)) || (defined(__solaris__) && defined(_GNU_SOURCE))
+-#ifdef __linux__
++#if defined(__linux__) || (defined(__solaris__) && defined(_GNU_SOURCE))
  
  /*
   * A utility method for asking the CPU about itself.
@@ -45,6 +45,6 @@ GCC compatability.
    return result;
  }
 +#endif /* !__solaris__ */
- #endif /* __linux__ || _ALLBSD_SOURCE */
+ #endif /* __linux__ */
  
  /*

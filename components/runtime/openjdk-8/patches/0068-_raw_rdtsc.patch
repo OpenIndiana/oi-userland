@@ -1,0 +1,25 @@
+--- hotspot/src/os_cpu/solaris_x86/vm/solaris_x86_64.s	Sun Jul 31 16:21:00 2022
++++ hotspot/src/os_cpu/solaris_x86/vm/solaris_x86_64.s	Thu Nov 10 11:10:39 2022
+@@ -38,8 +38,11 @@
+         .globl _Copy_conjoint_jlongs_atomic
+         .globl _Copy_arrayof_conjoint_jlongs
+ 
++        .globl _raw_rdtsc
++
+         .section .text,"ax"
+ 
++
+         / Fast thread accessors, used by threadLS_solaris_amd64.cpp
+         .align   16
+ fs_load:
+@@ -383,4 +386,10 @@
+         jge      5b
+         addq     $4,%rdx
+         jg       4b
++        ret
++// Needed because .il files are not compiled with gcc
++_raw_rdtsc:
++        rdtsc
++        salq $32, %rdx
++        orq  %rdx, %rax
+         ret

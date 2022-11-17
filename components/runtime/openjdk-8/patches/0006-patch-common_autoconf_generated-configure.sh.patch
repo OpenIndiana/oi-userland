@@ -317,16 +317,6 @@ pkg/53223.
        LDFLAGS_JDK="$LDFLAGS_JDK -Wl,-z,relro"
        LEGACY_EXTRA_LDFLAGS="$LEGACY_EXTRA_LDFLAGS -Wl,-z,relro"
      fi
-@@ -42798,7 +42802,8 @@ $as_echo "alsa pulse x11" >&6; }
-   if test "x$OPENJDK_TARGET_OS" = xbsd; then
-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking what is not needed on BSD?" >&5
- $as_echo_n "checking what is not needed on BSD?... " >&6; }
--    if test "x$OPENJDK_TARGET_OS_VENDOR" = xopenbsd; then
-+    if test "x$OPENJDK_TARGET_OS_VENDOR" = xopenbsd -o "x$OPENJDK_TARGET_OS_VENDOR" = xnetbsd -o "x$OPENJDK_TARGET_OS_VENDOR" = xfreebsd; then
-+# XXX revisit this
-       ALSA_NOT_NEEDED=yes
-       PULSE_NOT_NEEDED=yes
-       { $as_echo "$as_me:${as_lineno-$LINENO}: result: alsa pulse" >&5
 @@ -44028,7 +44033,7 @@ $as_echo "$as_me: WARNING: Can't find pr
      BUILD_FREETYPE=no
    fi
