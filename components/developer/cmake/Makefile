@@ -21,18 +21,14 @@
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2015 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
-# Copyright 2016, 2021 Andreas Wacknitz <a.wacknitz@gmx.de>
+# Copyright 2016, 2022 Andreas Wacknitz <a.wacknitz@gmx.de>
 #
 USE_COMMON_TEST_MASTER= no
-# parfait seems to hang on libcmsysTestDynload.so.bc, so for
-# now we have to disable it.
-#PARFAIT_BUILD=			no
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
-COMPONENT_MAJOR_VERSION=3.24
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).3
+COMPONENT_MAJOR_VERSION=3.25
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).0
 COMPONENT_PROJECT_URL=  https://www.cmake.org/
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
@@ -45,20 +41,24 @@ CMake generates native makefiles and workspaces that can be used in the \
 workspaces that can be used in the compiler environment of your choice.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b53aa10fa82bff84ccdb59065927b72d3bee49f4d86261249fc0984b3b367291
+COMPONENT_ARCHIVE_HASH=	sha256:306463f541555da0942e6f5a0736560f70c487178b9d94a5ae7f34d0538cdd48
 COMPONENT_ARCHIVE_URL=	https://www.cmake.org/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD, MIT, GPLv2, Curl, PD
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Pass cmake "major" version number to the publish phase to hopefully reduce
+# the amount of change needed between each update.
+PKG_MACROS+= CMAKE_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
 
 # Need to remove this option from LD_OPTIONS (only affects sparc build);
 # it causes a SegFault failure in kwsys/testSystemInformation
 # when testing on sparc
 LD_MAP_NOEXBSS=
 
-LDFLAGS +=	$($(COMPILER)_NORUNPATH)
+LDFLAGS += $($(COMPILER)_NORUNPATH)
 
-CONFIGURE_ENV +=	MAKE="$(GMAKE)"
+CONFIGURE_ENV += MAKE="$(GMAKE)"
 
 # Remove undesriable /opt/csw lines from the Modules/*.cmake files.
 COMPONENT_PREP_ACTION += \
@@ -83,12 +83,16 @@ CONFIGURE_OPTIONS += 	--mandir=/share/man
 
 # Use system-installed third-party libraries, rather than the private
 # copies in the cmake source.
-CONFIGURE_OPTIONS +=	--system-curl
-CONFIGURE_OPTIONS +=	--system-expat
-CONFIGURE_OPTIONS +=	--system-zlib
-CONFIGURE_OPTIONS +=	--system-bzip2
-CONFIGURE_OPTIONS +=	--system-libarchive
-CONFIGURE_OPTIONS += 	--system-liblzma
+CONFIGURE_OPTIONS +=   --system-bzip2
+CONFIGURE_OPTIONS +=   --system-curl
+CONFIGURE_OPTIONS +=   --system-expat
+CONFIGURE_OPTIONS +=   --system-jsoncpp
+CONFIGURE_OPTIONS +=   --system-libarchive
+CONFIGURE_OPTIONS +=   --system-liblzma
+CONFIGURE_OPTIONS +=   --system-libuv
+CONFIGURE_OPTIONS +=   --system-nghttp2
+CONFIGURE_OPTIONS +=   --system-zlib
+CONFIGURE_OPTIONS +=   --system-zstd
 
 COMPONENT_BUILD_ENV +=	CC="$(CC)"
 COMPONENT_BUILD_ENV +=	CXX="$(CXX)"
@@ -99,10 +103,6 @@ COMPONENT_BUILD_ENV +=	FCFLAGS="$(FCFLAGS)"
 COMPONENT_BUILD_ENV +=	LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"
 COMPONENT_BUILD_TARGETS =	all
-
-# Pass cmake "major" version number to the publish phase to hopefully reduce
-# the amount of change needed between each update.
-PKG_MACROS+= CMAKE_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
 
 #ASLR_MODE = $(ASLR_ENABLE)
 
@@ -138,7 +138,9 @@ COMPONENT_TEST_TRANSFORMS += \
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/jsoncpp
 REQUIRED_PACKAGES += library/libarchive
+REQUIRED_PACKAGES += library/libuv
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
