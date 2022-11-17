@@ -15,10 +15,9 @@ LOGFILE=testrunner-log.$BITS
 # so we start squeak from the BUILD_DIR directory
 # we only test the 32bit VM because inisqueak downloads a 32bit image
 
-# WARNING HACK : fake 64bit results because we don't want to run 64bit test
 case $BITS in
  32) ;;
- 64) cat $COMPONENT_DIR/test/results-all.master ;exit 0;;
+ 64) echo "Squeak only tested in 32bit.  See OpenSmalltalk for 64bit.";exit 0;;
   *) echo "Unknown BITS $BITS";exit 1;;
 esac
 
