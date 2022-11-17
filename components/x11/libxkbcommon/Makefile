@@ -14,45 +14,38 @@
 #
 
 X11_CATEGORY=LIB
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-COMPONENT_NAME=     libxkbcommon
-COMPONENT_VERSION=  0.8.0
-COMPONENT_REVISION= 1
-COMPONENT_FMRI=     x11/library/libxkbcommon
-COMPONENT_SUMMARY=  xkbcommon - library to handle keyboard descriptions
-COMPONENT_PROJECT_URL = http://xkbcommon.org/
-COMPONENT_SRC=      $(COMPONENT_NAME)-xkbcommon-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  xkbcommon-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:0683c42c7e39b8f68786eab9140461031c8f2dd9616442cf77770d2aea956e7d
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/xkbcommon/libxkbcommon/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=			libxkbcommon
+COMPONENT_VERSION=		1.4.1
+COMPONENT_SUMMARY=		xkbcommon - library to handle keyboard descriptions
+COMPONENT_PROJECT_URL=	https://xkbcommon.org/
+COMPONENT_SRC=			$(COMPONENT_NAME)-xkbcommon-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		xkbcommon-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:3b86670dd91441708dedc32bc7f684a034232fd4a9bb209f53276c9783e9d40e
+COMPONENT_ARCHIVE_URL=	https://github.com/xkbcommon/libxkbcommon/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			x11/library/libxkbcommon
+COMPONENT_LICENSE_FILE=	LICENSE
 
+TEST_TARGET=	$(TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D) && \
-                         libtoolize --automake --copy --force && \
-                         aclocal -Im4 && \
-                         autoheader && \
-                         automake -a -f -c && \
-                         autoconf )
+CONFIGURE_OPTIONS += -Denable-wayland=false
+CONFIGURE_ENV += $(COMPONENT_BUILD_ENV)
 
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --with-default-rules=/usr/share/X11/xkb/rules
-CONFIGURE_OPTIONS+= --enable-docs
+# for tests
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/Ok:/p" ' \
+        '-e "/Pass:/p" ' \
+        '-e "/Fail:/p" ' \
+        '-e "/Skipped:/p" ' \
+        '-e "/Timeout:/p" '
 
-COMPONENT_TEST_TRANSFORMS= \
-  '-n ' \
-  '-e "/TOTAL/p" ' \
-  '-e "/PASS/p" '  \
-  '-e "/SKIP/p" '  \
-  '-e "/XFAIL/p" ' \
-  '-e "/FAIL/p" '  \
-  '-e "/XPASS/p" ' \
-  '-e "/ERROR/p" ' 
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxcb
