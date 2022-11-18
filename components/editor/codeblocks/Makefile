@@ -14,7 +14,6 @@
 # Copyright 2020 Andreas Wacknitz
 #
 
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 # https://sourceforge.net/projects/codeblocks/files/Sources/20.03/codeblocks-20.03.tar.bz2
@@ -22,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         codeblocks
 COMPONENT_VERSION=      20.3
 HUMAN_VERSION=          20.03
-COMPONENT_REVISION=     0
+COMPONENT_REVISION=     1
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=         editor/codeblocks
 COMPONENT_SUMMARY=      A fast and lightweight C/C++ IDE
@@ -36,17 +35,13 @@ COMPONENT_LICENSE=      GPLv2
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+GCC_VERSION=10
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/c++/harfbuzz
-REQUIRED_PACKAGES += library/desktop/atk
-REQUIRED_PACKAGES += library/desktop/cairo
-REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/pango
-REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/wxwidgets-3
+REQUIRED_PACKAGES += library/tinyxml
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
