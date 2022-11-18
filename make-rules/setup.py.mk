@@ -224,8 +224,12 @@ COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PYTHON_VE
 # Normalize Python test results.
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(Ran [0-9]\{1,\} tests\) in .*$$/\1/'"	# delete timing from test results
 
+# Make sure the test environment is prepared before we start tests
 COMPONENT_TEST_DEP +=	component-test-environment-prep
-COMPONENT_TEST_DEP +=	$(BUILD_DIR)/%/.built
+# Testing depends on install target because we want to test installed modules
+COMPONENT_TEST_DEP +=	$(BUILD_DIR)/%/.installed
+# Point Python to the proto area so it is able to find installed modules there
+COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
 
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
