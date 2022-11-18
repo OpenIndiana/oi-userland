@@ -286,6 +286,7 @@ endif
 
 TEST_STYLE ?= tox
 ifeq ($(strip $(TEST_STYLE)),tox)
+COMPONENT_TEST_ENV +=		PATH=$(PATH)	# https://github.com/tox-dev/tox/issues/2538
 COMPONENT_TEST_CMD =		$(TOX)
 COMPONENT_TEST_ARGS =		--current-env --no-provision --recreate
 COMPONENT_TEST_TARGETS =	-e py$(shell echo $(PYTHON_VERSION) | tr -d .)
