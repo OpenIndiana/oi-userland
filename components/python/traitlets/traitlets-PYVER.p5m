@@ -23,7 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python$(PYVER)/vendor-packages/traitlets-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/traitlets-$(COMPONENT_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/traitlets-$(COMPONENT_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/traitlets-$(COMPONENT_VERSION).dist-info/licenses/COPYING.md
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/_version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/config/__init__.py
@@ -37,6 +39,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/config/tests/test_app
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/config/tests/test_configurable.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/config/tests/test_loader.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/log.py
+file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/py.typed
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/tests/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/tests/_warnings.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/tests/test_traitlets.py
@@ -49,9 +52,16 @@ file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/utils/decorators.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/utils/descriptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/utils/getargspec.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/utils/importstring.py
+file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/utils/nested_update.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/utils/sentinel.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/utils/tests/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/utils/tests/test_bunch.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/utils/tests/test_decorators.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/utils/tests/test_importstring.py
 file path=usr/lib/python$(PYVER)/vendor-packages/traitlets/utils/text.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
