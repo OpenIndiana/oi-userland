@@ -23,16 +23,15 @@
 #
 
 BUILD_BITS=			64_and_32
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
-COMPONENT_VERSION=      3.39.4
-TARBALL_VERSION=		3390400
+COMPONENT_VERSION=      3.40.0
+TARBALL_VERSION=		3400000
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:02d96c6ccf811ab9b63919ef717f7e52a450c420e06bd129fb483cd70c3b3bba
+COMPONENT_ARCHIVE_HASH= sha256:48550828142051293e179ffc6a8520f6fbfd82e1cdca78b93792f766cc89b8e2
 COMPONENT_PROJECT_URL=  https://www.sqlite.org
 COMPONENT_ARCHIVE_URL=  https://www.sqlite.org/2022/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Development/Databases
@@ -100,7 +99,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	' -e "/No /p" ' 
 
 # Auto-generated dependencies
-#REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
