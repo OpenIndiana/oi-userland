@@ -45,3 +45,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/click/termui.py
 file path=usr/lib/python$(PYVER)/vendor-packages/click/testing.py
 file path=usr/lib/python$(PYVER)/vendor-packages/click/types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/click/utils.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/importlib-metadata-$(PYV)
