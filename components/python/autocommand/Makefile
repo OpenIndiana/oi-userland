@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = setup.py
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		autocommand
 COMPONENT_VERSION =		2.2.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		autocommand - A library to create a command-line program from a function
 COMPONENT_PROJECT_URL =		https://github.com/Lucretiel/autocommand
 COMPONENT_ARCHIVE_URL =		\
@@ -29,6 +31,9 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
+TEST_STYLE = pytest
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
