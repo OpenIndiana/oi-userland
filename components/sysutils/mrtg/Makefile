@@ -11,30 +11,29 @@
 
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
-# Copyright 2020 Andreas Wacknitz
+# Copyright 2020, 2022 Andreas Wacknitz
 
-BUILD_BITS= 32
+SINGLE_PERL_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mrtg
-COMPONENT_VERSION= 2.17.8
-COMPONENT_REVISION =	1
+COMPONENT_VERSION= 2.17.10
 COMPONENT_SUMMARY= mrtg - The Multi Router Traffic Grapher
-COMPONENT_FMRI= diagnostic/mrtg
-COMPONENT_CLASSIFICATION= Applications/Internet
+COMPONENT_PROJECT_URL = https://oss.oetiker.ch/mrtg/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1ac2e0af69e0ecdef755e798ca59834ab78ac185c2a5effdb7685c58f2ef01b4
-COMPONENT_ARCHIVE_URL=	https://oss.oetiker.ch/mrtg/pub/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://oss.oetiker.ch/mrtg/
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/pub/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:c7f11cb5e217a500d87ee3b5d26c58a8652edbc0d3291688bb792b010fae43ac
+COMPONENT_FMRI= diagnostic/mrtg
+COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE= GPLv2
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_SCRIPT=       $(@D)/configure
+CONFIGURE_SCRIPT= $(@D)/configure
 CONFIGURE_OPTIONS+=	--with-gd-lib=/usr/lib
 CONFIGURE_OPTIONS+=	--with-gd-inc=/usr/include/gd2
 
