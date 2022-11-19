@@ -295,6 +295,8 @@ endif
 TEST_STYLE ?= tox
 ifeq ($(strip $(TEST_STYLE)),tox)
 COMPONENT_TEST_ENV +=		PATH=$(PATH)	# https://github.com/tox-dev/tox/issues/2538
+COMPONENT_TEST_ENV +=		PYTEST_ADDOPTS=--verbose
+COMPONENT_TEST_ENV +=		TOX_TESTENV_PASSENV="PYTHONPATH PYTEST_ADDOPTS"
 COMPONENT_TEST_CMD =		$(TOX)
 COMPONENT_TEST_ARGS =		--current-env --no-provision --recreate
 COMPONENT_TEST_TARGETS =	-e py$(shell echo $(PYTHON_VERSION) | tr -d .)
@@ -359,10 +361,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	"| ( \
 		$(GSED) -u -e '/^=\{1,\} test session starts /q' ; \
 		$(GSED) -u -e '/^$$/q' ; \
-		$(GSED) -u -e 's/ *\[...%\]$$//' -e '/^$$/Q' | LC_ALL=C $(GSORT) | while read n s ; do \
-			[ "\$${n%::*}" == "\$$n" ] && s=\$$(echo \$$s | $(GSED) -e 's/./&\\\\n/g' | LC_ALL=C $(GSORT) | tr -d '\\\\n') ; \
-			echo \$$n \$$s ; \
-		done | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
+		$(GSED) -u -e 's/ *\[...%\]$$//' -e '/^$$/Q' | LC_ALL=C $(GSORT) | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
 		$(CAT) \
 	) | $(COMPONENT_TEST_TRANSFORMER)"
 COMPONENT_TEST_TRANSFORMS += \
