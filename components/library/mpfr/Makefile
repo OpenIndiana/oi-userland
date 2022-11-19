@@ -24,20 +24,20 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS=				32_and_64
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mpfr
-COMPONENT_VERSION=      4.1.0
+COMPONENT_VERSION=      4.1.1
 COMPONENT_SUMMARY=      The GNU Multiple Precision with IEEE Rounding Floating-Point Library
 COMPONENT_PROJECT_URL=	https://www.mpfr.org/
-COMPONENT_FMRI=		library/mpfr
-COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-	sha256:feced2d430dd5a97805fa289fed3fc8ff2b094c02d05287fd6133e7f1f0ec926
+COMPONENT_ARCHIVE_HASH= sha256:85fdf11614cc08e3545386d6b9c8c9035e3db1e506211a45f4e108117fe3c951
+COMPONENT_FMRI=			library/mpfr
+COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_LICENSE=      LGPLv2.1,GPLv2,FDLv1.2	
 
 include $(WS_MAKE_RULES)/common.mk
@@ -77,7 +77,7 @@ CONFIGURE_OPTIONS += --with-gmp-lib=$(GMPLIBDIR_$(BITS))
 CONFIGURE_OPTIONS += --with-mulhigh-size=$(MPFRMULHIGH)
 CONFIGURE_OPTIONS += --with-pic
 
-COMPONENT_TEST_TRANSFORMS= \
+#COMPONENT_TEST_TRANSFORMS= \
 	'-e "/^make/d" ' \
 	'-e "/^Making/d" ' \
 	'-e "/^\//d" ' \
