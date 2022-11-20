@@ -1,0 +1,23 @@
+Replace getpass() with getpassphrase(), to avoid sctrict password length
+limitation. The former one, as provided in Solaris libc, only accepts 8
+characters, while latter one accepts 256 characters. See getpass(3C) manual
+page.
+
+On Linux, the problem doesn't exist, the glibc version of getpass() is
+unlimited. To match it on Solaris, we would have to provide own function, but
+then the secret-tool internally doesn't care too much about long passwords too,
+e.g. the function that reads password from standard input (read_password_stdin)
+limits the input by reading into single 8k buffer.
+
+diff -ur libsecret-0.20.4.orig/tool/secret-tool.c libsecret-0.20.4/tool/secret-tool.c
+--- libsecret-0.20.4.orig/tool/secret-tool.c	2019-10-12 02:46:23.000000000 +0000
++++ libsecret-0.20.4/tool/secret-tool.c	2021-11-16 08:21:18.880630279 +0000
+@@ -267,7 +267,7 @@
+ {
+ 	gchar *password;
+ 
+-	password = getpass ("Password: ");
++	password = getpassphrase ("Password: ");
+ 	return secret_value_new_full (password, -1, "text/plain",
+ 	                              (GDestroyNotify)secret_password_wipe);
+ }
