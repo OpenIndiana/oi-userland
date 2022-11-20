@@ -1,0 +1,41 @@
+# Enhance emacs to use the basename(realpath(argv[0])) when looking for
+# the pdmp file in PATH_EXEC, rather than the basename(argv[0]). This
+# avoids looking for the pdmp file based on the name of a symlink pointing
+# at emacs. Emacs is typically run via the mediated /usr/bin/emacs symlink,
+# which points at one of the emacs variants (emacs-gtk, emacs-x, emacs-nox).
+# This change allows the actual emacs binary to find its pdump file.
+#
+# This is an unresolved issue for the upstream emacs community:
+#
+#	https://lists.gnu.org/archive/html/emacs-devel/2021-04/msg00875.html
+#
+# We will therefore reevaluate it with each update, hoping that future
+# changes will handle it without a patch.
+#
+--- emacs-28.2.orig/src/emacs.c	2022-09-06 15:31:54.000000000 -0600
++++ emacs-28.2/src/emacs.c	2022-10-12 08:48:04.962420509 -0600
+@@ -967,13 +967,22 @@
+ 	 This way, they can rename both the executable and its pdump
+ 	 file in PATH_EXEC, and have several Emacs configurations in
+ 	 the same versioned libexec subdirectory.  */
++
++      /* SOLARIS PATCH: Emacs may be invoked by a symlink, and while that
++	 symlink is typically the mediated /usr/bin/emacs, it can also be
++	 any arbitrary user specified name. As delivered by GNU, stock
++	 emacs will require a pdump file with a matching name to exist
++	 in PATH_EXEC. Rather than examine argv[0], use emacs_executable,
++	 which has been resolved with realpath(), and which will always
++	 point at one of the 3 supported variants we deliver in PATH_EXEC.  */
++      char *argv0 = emacs_executable;
+       char *p, *last_sep = NULL;
+-      for (p = argv[0]; *p; p++)
++      for (p = argv0; *p; p++)
+ 	{
+ 	  if (IS_DIRECTORY_SEP (*p))
+ 	    last_sep = p;
+ 	}
+-      argv0_base = last_sep ? last_sep + 1 : argv[0];
++      argv0_base = last_sep ? last_sep + 1 : argv0;
+       ptrdiff_t needed = (strlen (path_exec)
+ 			  + 1
+ 			  + strlen (argv0_base)
