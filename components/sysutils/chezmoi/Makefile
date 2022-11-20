@@ -11,17 +11,17 @@
 #
 # Copyright 2021 Benjamin S. Osenbach
 #
-BUILD_STYLE=justmake
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= chezmoi
-COMPONENT_VERSION= 2.26.0
+COMPONENT_VERSION= 2.27.1
 COMPONENT_SUMMARY= Manage your dotfiles across multiple diverse machines, securely.
 COMPONENT_PROJECT_URL= https://github.com/twpayne/chezmoi
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= $(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:24cdceb0193abda1a07f82656661437e8080627c5f084482cf1bf3064e830c50
+COMPONENT_ARCHIVE_HASH= sha256:90f2fd5982cc4a05655cbfbe5495bf060ebda0389d56a34b91da3e8415387caf
 COMPONENT_FMRI= application/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE= MIT
