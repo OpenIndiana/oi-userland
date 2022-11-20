@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXdmcp
-COMPONENT_VERSION= 1.1.3
-COMPONENT_FMRI=    x11/library/libxdmcp
+COMPONENT_VERSION= 1.1.4
 COMPONENT_SUMMARY= libXdmcp - X Display Manager Control Protocol (XDMCP) library
-COMPONENT_ARCHIVE_HASH= \
-  sha256:20523b44aaa513e17c009e873ad7bbc301507a3224c232610ce2e099011c6529
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:2dce5cc317f8f0b484ec347d87d81d552cdbebb178bd13c5d8193b6b7cd6ad00
+COMPONENT_FMRI=    x11/library/libxdmcp
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
