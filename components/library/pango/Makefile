@@ -15,20 +15,20 @@
 # Copyright 2020, 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=				64_and_32
-BUILD_STYLE=			meson
+BUILD_BITS= 64_and_32
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pango
 COMPONENT_VERSION_MAJOR=	1
 COMPONENT_VERSION_MINOR=	50
-COMPONENT_VERSION_MICRO=	11
+COMPONENT_VERSION_MICRO=	12
 COMPONENT_VERSION_DL=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
 COMPONENT_VERSION=      $(COMPONENT_VERSION_DL).$(COMPONENT_VERSION_MICRO)
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:8800f812d89ee61388188703203f3a7878963c22f8695aaf1fa0a1a1428d17ae
+COMPONENT_ARCHIVE_HASH= sha256:caef96d27bbe792a6be92727c73468d832b13da57c8071ef79b9df69ee058fe3
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_DL)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.pango.org/
 COMPONENT_FMRI=         library/desktop/pango
@@ -71,7 +71,7 @@ COMPONENT_TEST_TARGETS += ; cd tests; ./cxx-test; ./markup-parse; \
         ./test-break; ./test-converage; ./test-font ; ./test-ot-tags; \
         ./testboundaries; ./testcolor; ./testiter; ./testscript; \
     ./test-ellipsize; ./test-harfbuzz; ./test-itemize; ./test-layout; \
-    ./test-pangocairo-threads; ./test-shape; ./testmisc; ./testattributes;
+	./test-pangocairo-threads; ./test-shape; ./testmisc; ./testattributes;
 COMPONENT_TEST_TRANSFORMS += '-e "s/      [0-9].[0-9][0-9]s//" '
 COMPONENT_TEST_TRANSFORMS += '-e "s/      [0-9][0-9].[0-9][0-9]s//" '
 COMPONENT_TEST_TRANSFORMS += \
