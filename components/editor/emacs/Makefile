@@ -24,12 +24,11 @@
 # Copyright (c) 2021, Klaus Ziegler
 #
 
-BUILD_BITS=			64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
 COMPONENT_VERSION=      28.2
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -39,28 +38,28 @@ COMPONENT_FMRI=			editor/gnu-emacs
 COMPONENT_CLASSIFICATION=	Development/Editors
 COMPONENT_LICENSE=		GPLv3
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # we build three different variants of emacs for our users. As Solaris
 # always has a 64-bit kernel, and 64-bit emacs can handle larger files,
 # we only build and deliver 64-bit binaries.
-X_VARIANT =	$(BUILD_DIR)/$(MACH64)-x
-NOX_VARIANT =	$(BUILD_DIR)/$(MACH64)-nox
-GTK_VARIANT =	$(BUILD_DIR)/$(MACH64)-gtk
-VARIANTS =	$(NOX_VARIANT) $(X_VARIANT) $(GTK_VARIANT)
+X_VARIANT=	$(BUILD_DIR)/$(MACH64)-x
+NOX_VARIANT=	$(BUILD_DIR)/$(MACH64)-nox
+GTK_VARIANT=	$(BUILD_DIR)/$(MACH64)-gtk
+VARIANTS=	$(NOX_VARIANT) $(X_VARIANT) $(GTK_VARIANT)
 
 $(VARIANTS:%=%/.configured):	BITS=64
 
-BUILD_64 = $(VARIANTS:%=%/.built)
-INSTALL_64 = $(VARIANTS:%=%/.installed)
+BUILD_64= $(VARIANTS:%=%/.built)
+INSTALL_64= $(VARIANTS:%=%/.installed)
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
-CFLAGS	+= $(shell pkg-config --cflags lcms2)
+CFLAGS += $(shell pkg-config --cflags lcms2)
 
 # LD_OPTIONS is defined to apply desirable link-editor options to Userland
 # components. Non-executable stack and data break sparc emacs.
@@ -74,7 +73,7 @@ LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 # configure script has problems using a non-GNU cpp. I am not aware of
 # any reason Sun Studio could not be made to work, but simply made a
 # cost/benefit decision not to pursue it at this time
-COMPILER =	gcc
+COMPILER=	gcc
 
 # Uncomment this for debugging only. It configures emacs to run from the
 # local proto instead of from its final installed location.
@@ -213,7 +212,6 @@ install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed
 REQUIRED_PACKAGES += mail/mailutils
 
 # Auto-generated dependencies
-#REQUIRED_PACKAGES += editor/gnu-emacs
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
@@ -250,6 +248,5 @@ REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/libxpm
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
-#REQUIRED_PACKAGES += x11/library/toolkit/libxaw3d
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
