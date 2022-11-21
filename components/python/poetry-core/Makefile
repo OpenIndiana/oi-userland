@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		poetry-core
 COMPONENT_VERSION =		1.3.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		poetry-core - Poetry PEP 517 Build Backend
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/poetry-core
 COMPONENT_ARCHIVE_URL =		\
