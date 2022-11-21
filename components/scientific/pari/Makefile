@@ -21,7 +21,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pari
-COMPONENT_VERSION=	2.15.0
+COMPONENT_VERSION=	2.15.1
 COMPONENT_SUMMARY=	The PARI Computer Algebra System
 COMPONENT_PROJECT_URL=	https://pari.math.u-bordeaux.fr
 COMPONENT_FMRI=		library/math/pari
@@ -29,7 +29,7 @@ COMPONENT_CLASSIFICATION=	Development/Other Languages
 
 COMPONENT_SRC=		pari-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:e474851e0d16d4e4f9a0d9612c746a2ae7c9a1ec185d04c440b1c74a85755685
+COMPONENT_ARCHIVE_HASH=	sha256:45419db77c6685bee67e42e0ecb78e19ef562be7aafc637c8a41970f2e909e3d
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/pub/pari/unix/$(COMPONENT_ARCHIVE)
 
 COMPONENT_LICENSE=     	GPLv2
@@ -64,12 +64,14 @@ CONFIGURE_ENV+= 	CFLAGS="$(CFLAGS)"
 # all does not work because documentation requires Tex typesetting
 COMPONENT_BUILD_TARGETS = gp
 
-# dobench is a quicktest
-COMPONENT_TEST_TARGETS = test-all
+# dobench is a quicktest, test-all takes more time and also compares gp-static
+# try to do all regression tests but only on the dynamic executable gp-dyn
+COMPONENT_TEST_TARGETS = dyntest-all
 
-# I believe PARI measures the difference between statically linked gp
-# and dynamically linked gp (but have to check); anyway don't want timings
-# strip timings to make the result of tests comparable between releases
+# I believe PARI measures with test-all diffs between static and dyn linked gp
+# the test script is in : src/test/dotest
+# I think it prints timing information and checks for correctness
+# the timing info could be useful but for our purprose remove/transform it
 COMPONENT_TEST_TRANSFORMS+= '-e "s/gp-sta..TIME=[ ]*[0-9]*//g"'
 COMPONENT_TEST_TRANSFORMS+= '-e "s/gp-dyn..TIME=[ ]*[0-9]*//g"'
 COMPONENT_TEST_TRANSFORMS+= '-e "/Total bench/d"'
