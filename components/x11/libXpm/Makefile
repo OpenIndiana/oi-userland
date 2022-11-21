@@ -18,23 +18,17 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXpm
-COMPONENT_VERSION= 3.5.13
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=    x11/library/libxpm
+COMPONENT_VERSION= 3.5.14
 COMPONENT_SUMMARY= libXpm - X Pixmap library 
-COMPONENT_ARCHIVE_HASH= \
-  sha256:9cd1da57588b6cb71450eff2273ef6b657537a9ac4d02d0014228845b935ac25
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:f7eb8f69c039281def8258ae6859adb5f050fbe161ab3d6a2d6ef109a603eac2
+COMPONENT_FMRI=    x11/library/libxpm
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
-                          cd $(@D) &&  autoreconf -f  -i )
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
 
-CONFIGURE_DEFAULT_DIRS=no
-CONFIGURE_OPTIONS+= --mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS+= --bindir=$(USRBINDIR$(BITS))
-CONFIGURE_OPTIONS+= --libdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+= --sbindir=$(USRSBINDIR$(BITS))
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 
