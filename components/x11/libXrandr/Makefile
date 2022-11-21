@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXrandr
-COMPONENT_VERSION= 1.5.2
-COMPONENT_FMRI=    x11/library/libxrandr
+COMPONENT_VERSION= 1.5.3
 COMPONENT_SUMMARY= libXrandr - X Resize and Rotate extension library 
-COMPONENT_ARCHIVE_HASH= \
-  sha256:8aea0ebe403d62330bb741ed595b53741acf45033d3bda1792f1d4cc3daee023
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:897639014a78e1497704d669c5dd5682d721931a4452c89a7ba62676064eb428
+COMPONENT_FMRI=    x11/library/libxrandr
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
