@@ -315,13 +315,7 @@ USERLAND_REQUIRED_PACKAGES += library/python/tox-current-env
 COMPONENT_POST_INSTALL_ACTION += \
 	cd $(@D) ; \
 	( $(COMPONENT_TEST_CMD) -qq --print-deps-to=- $(COMPONENT_TEST_TARGETS) \
-		| while read l ; do \
-			[ "$${l:0:2}" == "-c" ] && continue ; \
-			[ "$${l:0:12}" == "--constraint" ] && continue ; \
-			[ "$${l:0:2}" == "-r" ] && $(CAT) $${l:2} && continue ; \
-			[ "$${l:0:13}" == "--requirement" ] && $(CAT) $${l:14} && continue ; \
-			echo "$$l" ; \
-		done \
+		| $(WS_TOOLS)/python-resolve-deps \
 		| $(GSED) -e 's/\#.*//' -e $$'s/^[ \t]*//' -e '/^$$/d' \
 			-e 's/^\([a-zA-Z0-9]\([a-zA-Z0-9._-]*[a-zA-Z0-9]\)\{0,1\}\).*/\1/' \
 			-e 's/[._-]\{1,\}/-/g' ; \
