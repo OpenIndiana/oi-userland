@@ -336,10 +336,6 @@ else ifeq ($(strip $(TEST_STYLE)),setup.py)
 COMPONENT_TEST_CMD =		$(PYTHON) setup.py
 COMPONENT_TEST_ARGS =		--no-user-cfg
 COMPONENT_TEST_TARGETS =	test
-
-# Normalize setup.py test results.
-COMPONENT_TEST_TRANSFORMS += "-e '/SetuptoolsDeprecationWarning:/,+1d'"		# depends on Python version and is useless
-COMPONENT_TEST_TRANSFORMS += "-e 's/^\(Ran [0-9]\{1,\} tests\) in .*$$/\1/'"	# delete timing from test results
 else ifeq ($(strip $(TEST_STYLE)),none)
 TEST_TARGET = $(NO_TESTS)
 endif
@@ -367,6 +363,12 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} slowest [0-9]\{1,\} durations =\{1,\}$$/,/^=/{/^=/!d}'"
 # Remove short test summary info for projects that run pytest with -r option
 COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} short test summary info =\{1,\}$$/,/^=/{/^=/!d}'"
+
+# Normalize setup.py test results.  The setup.py testing could be used either
+# directly or via tox so add these transforms for all test styles
+# unconditionally.
+COMPONENT_TEST_TRANSFORMS += "-e '/SetuptoolsDeprecationWarning:/,+1d'"		# depends on Python version and is useless
+COMPONENT_TEST_TRANSFORMS += "-e 's/^\(Ran [0-9]\{1,\} tests\) in .*$$/\1/'"	# delete timing from test results
 
 # test the built source
 $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
