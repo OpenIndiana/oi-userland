@@ -15,56 +15,48 @@
 # Copyright 2019 Michal Nowak
 #
 
+# IMPORTANT if the umask of the builder isn't set to 0022
+# the resulting: /usr/lib/sparcv9/gobject-introspection/giscanner/__pycache__
+# directory ends up with 700 - in the final installation and therefore
+# can't be used by end-users !!!
+
+BUILD_STYLE= meson
+SINGLE_PYTHON_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gobject-introspection
 
-COMPONENT_VERSION_MAJOR=1
-COMPONENT_VERSION_MINOR=60
-COMPONENT_VERSION_MICRO=1
-COMPONENT_VERSION_DL=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
-COMPONENT_VERSION=	$(COMPONENT_VERSION_DL).$(COMPONENT_VERSION_MICRO)
-COMPONENT_REVISION=	2
-COMPONENT_SUMMARY=	Introspection for GObject libraries
-COMPONENT_FMRI=		library/desktop/gobject/gobject-introspection
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:d844d1499ecd36f3ec8a3573616186d36626ec0c9a7981939e99aa02e9c824b3
-COMPONENT_ARCHIVE_URL= \
-	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_DL)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://live.gnome.org/GObjectIntrospection
-COMPONENT_LICENSE_FILE=	gobject-introspection.license
-COMPONENT_LICENSE=	GPLv2, LGPLv2
-
-USE_DEFAULT_TEST_TRANSFORMS = yes
+COMPONENT_VERSION_MAJOR= 1
+COMPONENT_VERSION_MINOR= 72
+COMPONENT_VERSION_MICRO= 0
+COMPONENT_VERSION_DL= $(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
+COMPONENT_VERSION= $(COMPONENT_VERSION_DL).$(COMPONENT_VERSION_MICRO)
+COMPONENT_SUMMARY= Introspection for GObject libraries
+COMPONENT_PROJECT_URL= https://live.gnome.org/GObjectIntrospection
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:02fe8e590861d88f83060dd39cda5ccaa60b2da1d21d0f95499301b186beaabc
+COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_DL)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI= library/desktop/gobject/gobject-introspection
+COMPONENT_CLASSIFICATION= Development/GNOME and GTK+
+COMPONENT_LICENSE= GPLv2, LGPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION = 3.5
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 
-CPPFLAGS += $(CC_BITS)
+# We have transfrom rules that re-add cpython-$(PYV) to manifest files. Thus, remove it here:
+COMPONENT_POST_INSTALL_ACTION = (cd $(PROTOUSRLIBDIR)/$(MACH64)/$(COMPONENT_NAME)/giscanner; \
+	$(MV) _giscanner.cpython-39.so _giscanner.so)
 
-COMPONENT_POST_UNPACK_ACTION = \
-        /usr/bin/find $(SOURCE_DIR) -name *.py \
-                -exec $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' "{}" \; ;
-
-COMPONENT_PREP_ACTION += \
-	( cd $(@D) && \
-	aclocal -I ./m4 && \
-	autoheader && \
-	automake -a -f -c --gnu && \
-	autoconf )
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
-CONFIGURE_ENV += PYTHON=$(PYTHON.$(PYTHON_VERSION).$(BITS))
-CONFIGURE_ENV += CPP="$(CC) -E"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-
-unexport SHELLOPTS
-
-REQUIRED_PACKAGES += developer/build/autoconf-archive
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/^Ok/p" ' \
+	'-e "/^Expected/p" ' \
+	'-e "/^Fail/p" ' \
+	'-e "/^Unexpected/p" ' \
+	'-e "/^Skipped/p" ' \
+	'-e "/^Timeout/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
