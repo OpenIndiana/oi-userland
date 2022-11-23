@@ -86,21 +86,25 @@ TMPFILE=$(mktemp -q)
 
 for l in "$WS_TOOLS"/licenses/* ; do
 	[[ -f "$l" ]] || continue
+	# skip filters
+	[[ "$l" != "${l%.filter}" ]] && continue
 
-	LICCMD="$(grep '^# ' "$l" | sed -e 's/^# //' | tr '\n' ' ')"
 	cat <<#EOF > "$TMPFILE"
 		dos2unix -ascii \\
 			| awk '/^#/{next}/^\$/{\$0="\n"}1' ORS=' ' \\
 			| sed -E -e 's/[[:space:]]+/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d' \\
-			| ${LICCMD:-cat} \\
-			| tr ' ' '\\n' | gfmt -w 80
+	EOF
+	# Apply filter if any
+	[[ -x "$l.filter" ]] && printf "\t| %s \\\n" "$l.filter" >> "$TMPFILE"
+	cat <<#EOF >> "$TMPFILE"
+			| tr ' ' '\\n' | fmt
 	EOF
 
 	REDIRECT="/dev/null"
 
 	if ((DEBUG)) ; then
 		REDIRECT="/dev/stdout"
-		printf "[DBG] TEMPLATE %s\n" "$(basename "$l")"
+		printf "[DBG] TEMPLATE %s\n" "${l##*/}"
 		. "$TMPFILE" < "$l"
 		printf "[DBG] FILE\n"
 		. "$TMPFILE" < "$F"
@@ -110,7 +114,10 @@ for l in "$WS_TOOLS"/licenses/* ; do
 	diff -i <(. "$TMPFILE" < "$l") <(. "$TMPFILE" < "$F") > "$REDIRECT" || continue
 
 	[[ -n "$L" ]] && L="$L OR "
-	L="$L$(basename "$l")"
+	l="${l##*/}"
+	l="${l#header.}"
+	l="${l#license.}"
+	L="$L$l"
 done
 
 rm -f "$TMPFILE"
