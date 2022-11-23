@@ -22,14 +22,15 @@ include ../../../make-rules/shared-macros.mk
 # This is latest NVIDIA Production Branch driver
 
 COMPONENT_NAME =		nvidia
-COMPONENT_VERSION =		515.76
+HUMAN_VERSION =			515.86.01
+COMPONENT_VERSION =		515.86.1
 COMPONENT_FMRI =		driver/graphics/nvidia
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
 COMPONENT_CLASSIFICATION =	Drivers/Display
 COMPONENT_PROJECT_URL =		https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC =			NVIDIA-Solaris-x86-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH =	sha256:bfa8d273428407a985095d56060d05de1b96799d582713e8562f1238c088e4bd
+COMPONENT_ARCHIVE_HASH =	sha256:17fca52344f1a6e4c940320fef4feec617167bd9e55f1822e6d3605a40fff37b
 COMPONENT_ARCHIVE_URL =		https://us.download.nvidia.com/solaris/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		NVIDIA
 COMPONENT_LICENSE_FILE =	nvidia.license
@@ -59,7 +60,7 @@ $(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
 	$(CP) -a $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
 	$(TOUCH) $@
 
-GENERATE_EXTRA_CMD = \
+GENERATE_EXTRA_CMD += | \
 	$(CAT) - <( \
 		eval $$($(GNU_GREP) ^A $(SOURCE_DIR)/NVDAgraphicsr/install/postinstall) ; \
 		printf 'driver name=nvidia_modeset perms="* 0666 root root"\n' ; \
