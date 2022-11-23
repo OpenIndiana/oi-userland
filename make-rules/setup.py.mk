@@ -348,7 +348,7 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_TRANSFORMS += "-e '/^Using --randomly-seed=[0-9]\{1,\}$$/d'"	# this is random
 COMPONENT_TEST_TRANSFORMS += "-e '/^benchmark: /d'"				# line with version details
 COMPONENT_TEST_TRANSFORMS += "-e '/^plugins: /d'"				# order of listed plugins could vary
-COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} coverage: /,/^TOTAL/d'"		# remove coverage report
+COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} coverage: /,/^$$/d'"		# remove coverage report
 # sort list of pytest unit tests and drop percentage
 COMPONENT_TEST_TRANSFORMS += \
 	"| ( \
