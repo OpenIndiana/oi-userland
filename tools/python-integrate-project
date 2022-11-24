@@ -369,13 +369,21 @@ git add pkg5 2>/dev/null
 
 
 PYTHON_VERSIONS=$($GMAKE print-value-PYTHON_VERSIONS)
+PYTHON_TEST_BOOTSTRAP=$($GMAKE print-value-PYTHON_TEST_BOOTSTRAP)
 
 
 # Run tests to make sure they pass and to create result snapshots
 TESTED_VERSIONS=
 for v in $PYTHON_VERSIONS ; do
 	# Check the test environment
-	! $GMAKE PYTHON_VERSIONS=$v test-env-check > /dev/null 2>&1 && printf "ERROR: 'gmake test-env-check' failed for %s!\n" "$v" >&2 && continue
+	if ! $GMAKE PYTHON_VERSIONS=$v test-env-check > /dev/null 2>&1 ; then
+		if [[ "$PYTHON_TEST_BOOTSTRAP" == "yes" ]] ; then
+			printf "WARNING: Test environment for %s is not ready yet (bootstrap)\n" "$v" >&2
+		else
+			printf "ERROR: 'gmake test-env-check' failed for %s!\n" "$v" >&2
+		fi
+		continue
+	fi
 
 	# Run the test
 	! $GMAKE PYTHON_VERSIONS=$v test > /dev/null 2>&1 && printf "ERROR: Testing failed for %s!\n" "$v" >&2 && continue
