@@ -103,13 +103,6 @@ ifeq ($(strip $(PYTHON_BOOTSTRAP)),yes)
 PYTHON_TEST_BOOTSTRAP = yes
 endif
 
-ifeq ($(strip $(PYTHON_TEST_BOOTSTRAP)),yes)
-# Until we implement support for testing bootstrapped projects we simply
-# disable tests for them because required packages (e.g. tox and/or pytest) are
-# very likely not available during bootstrap so testing would fail anyway.
-TEST_STYLE = none
-endif
-
 # Particular python runtime is always required (at least to run setup.py)
 PYTHON_REQUIRED_PACKAGES += runtime/python
 
