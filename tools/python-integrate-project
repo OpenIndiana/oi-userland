@@ -321,6 +321,11 @@ else
 	fi
 fi
 
+# Warn if pytest is called directly by tox
+[[ "$($GMAKE print-value-TEST_STYLE)" == "tox" && -f "$SOURCE_DIR/tox.ini" ]] \
+	&& grep -q '^ *pytest' "$SOURCE_DIR/tox.ini" \
+	&& printf "WARNING: pytest is called directly in tox.ini\n" >&2
+
 
 # Create manifests
 if ! $GMAKE sample-manifest > /dev/null 2>&1 ; then
