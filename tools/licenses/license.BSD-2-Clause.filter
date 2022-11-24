@@ -1,0 +1,23 @@
+#! /usr/bin/sh
+#
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2022 Marcel Telka
+#
+
+sed -E -n \
+	-e 's/[0-9]+\. *(Redistributions)/\1/g' \
+	-e 's/``/"/g' -e "s/''/\"/g" \
+	-e 's/(THIS SOFTWARE IS PROVIDED BY).*("AS IS" AND ANY).*(OR IMPLIED WARRANTIES)/\1 REPLACEABLE \2 REPLACEABLE \3/' \
+	-e 's/(IN NO EVENT SHALL).*(BE LIABLE)/\1 REPLACEABLE \2/' \
+	-e '/^Redistribution and use/,/^THIS SOFTWARE/p'
