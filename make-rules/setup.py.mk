@@ -296,7 +296,7 @@ COMPONENT_TEST_ARGS =		--current-env --no-provision --recreate
 COMPONENT_TEST_TARGETS =	-e py$(shell echo $(PYTHON_VERSION) | tr -d .)
 
 # Make sure pytest is called indirectly to properly support tox-current-env
-COMPONENT_PRE_TEST_ACTION +=	[ -f $(@D)/tox.ini ] && $(GSED) -i -e 's/^\( *\)pytest/\1python -m pytest/' $(@D)/tox.ini ;
+COMPONENT_PRE_TEST_ACTION +=	[ -f $(@D)/tox.ini ] && $(GSED) -i -e 's/^\(\(commands *=\)\? *\)pytest/\1python -m pytest/' $(@D)/tox.ini ;
 
 # Normalize tox test results.
 COMPONENT_TEST_TRANSFORMS += "-e 's/py$(shell echo $(PYTHON_VERSION) | tr -d .)/py\$$(PYV)/g'"	# normalize PYV
