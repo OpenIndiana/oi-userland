@@ -3,18 +3,26 @@
 # Common Development and Distribution License ("CDDL"), version 1.0.
 # You may only use this file in accordance with the terms of version
 # 1.0 of the CDDL.
+#
 # A full copy of the text of the CDDL should have accompanied this
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
+#
 
-# Copyright 2020 <contributor>
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+#
+# Copyright 2022 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
 file path=usr/lib/python$(PYVER)/vendor-packages/zope.interface-$(COMPONENT_VERSION)-py$(PYVER)-nspkg.pth
 file path=usr/lib/python$(PYVER)/vendor-packages/zope.interface-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/zope.interface-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
@@ -23,7 +31,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/zope.interface-$(COMPONENT_VERS
 file path=usr/lib/python$(PYVER)/vendor-packages/zope.interface-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/zope.interface-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/zope.interface-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/64/_zope_interface_coptimizations.so
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/_compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/_flatten.py
@@ -63,6 +70,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/tests/m1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/tests/odd.py
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/tests/test_adapter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/tests/test_advice.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/tests/test_compile_flags.py
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/tests/test_declarations.py
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/tests/test_document.py
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/tests/test_element.py
@@ -75,6 +83,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/tests/test_ro.py
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/tests/test_sorting.py
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/tests/test_verify.py
 file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/verify.py
-file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/_zope_interface_coptimizations.cpython-35m.so
-file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/_zope_interface_coptimizations.cpython-37m.so
-file path=usr/lib/python$(PYVER)/vendor-packages/zope/interface/_zope_interface_coptimizations.cpython-39.so
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/setuptools-$(PYV)
