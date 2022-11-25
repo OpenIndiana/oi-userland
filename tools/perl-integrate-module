@@ -440,6 +440,7 @@ for common_results in yes no ; do
 		if [[ -f "$COMPONENT_TEST_MASTER" ]] ; then
 			# Switch to 'USE_COMMON_TEST_MASTER = no' if test results differ
 			if ! diff "$COMPONENT_TEST_SNAPSHOT" "$COMPONENT_TEST_MASTER" > /dev/null ; then
+				printf "WARNING: Test results differ so switch to 'USE_COMMON_TEST_MASTER = no'\n" >&2
 				rm -f $TEST_MASTERS
 				TEST_MASTERS=
 				continue 2
