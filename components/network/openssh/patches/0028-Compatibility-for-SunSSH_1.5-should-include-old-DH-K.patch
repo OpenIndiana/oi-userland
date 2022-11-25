@@ -29,7 +29,7 @@ diff -wpruN '--exclude=*.orig' a~/compat.c a/compat.c
  		{ "OpenSSH_2*,"
  		  "OpenSSH_3*,"
  		  "OpenSSH_4*",		SSH_BUG_SIGTYPE },
-@@ -184,6 +188,31 @@ compat_pkalg_proposal(struct ssh *ssh, c
+@@ -186,6 +190,31 @@ compat_pkalg_proposal(struct ssh *ssh, c
  	return pkalg_prop;
  }
  
@@ -58,15 +58,15 @@ diff -wpruN '--exclude=*.orig' a~/compat.c a/compat.c
 +	return fix_prop;
 +}
 +
+ /* Always returns pointer to allocated memory, caller must free. */
  char *
  compat_kex_proposal(struct ssh *ssh, char *p)
- {
-@@ -199,6 +228,8 @@ compat_kex_proposal(struct ssh *ssh, cha
+@@ -205,6 +234,8 @@ compat_kex_proposal(struct ssh *ssh, cha
  		    "diffie-hellman-group-exchange-sha256,"
  		    "diffie-hellman-group-exchange-sha1")) == NULL)
  			fatal("match_filter_denylist failed");
 +		p = append_proposal(p, "diffie-hellman-group14-sha1");
 +		p = append_proposal(p, "diffie-hellman-group1-sha1");
+ 		free(cp);
  	}
  	debug2_f("compat KEX proposal: %s", p);
- 	if (*p == '\0')
