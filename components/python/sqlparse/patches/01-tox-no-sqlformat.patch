@@ -1,0 +1,16 @@
+We remove the sqlformat call because such (unversioned) binary does not exist
+yet.  And, if it would exist, it would just print version info we are not
+interested in anyway.
+
+--- sqlparse-0.4.3/tox.ini.orig
++++ sqlparse-0.4.3/tox.ini
+@@ -13,8 +13,7 @@
+     pytest
+     pytest-cov
+ commands =
+-    sqlformat --version
+-    pytest --cov=sqlparse {posargs}
++    python -m pytest --cov=sqlparse {posargs}
+ 
+ [testenv:flake8]
+ deps =

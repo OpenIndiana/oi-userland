@@ -1,0 +1,459 @@
+py$(PYV) create: $(@D)/.tox/py$(PYV)
+py$(PYV) run-test: commands[0] | python -m pytest --cov=sqlparse
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D), configfile: setup.cfg
+collecting ... collected 428 items
+
+tests/test_cli.py::test_cli_main_empty PASSED
+tests/test_cli.py::test_encoding PASSED
+tests/test_cli.py::test_encoding_output_file[encoding_gbk.sql-gbk] PASSED
+tests/test_cli.py::test_encoding_output_file[encoding_utf8.sql-utf-8] PASSED
+tests/test_cli.py::test_encoding_stdin[encoding_gbk.sql-gbk] PASSED
+tests/test_cli.py::test_encoding_stdin[encoding_utf8.sql-utf-8] PASSED
+tests/test_cli.py::test_encoding_stdout[encoding_gbk.sql-gbk] PASSED
+tests/test_cli.py::test_encoding_stdout[encoding_utf8.sql-utf-8] PASSED
+tests/test_cli.py::test_invalid_args PASSED
+tests/test_cli.py::test_invalid_choice PASSED
+tests/test_cli.py::test_invalid_infile PASSED
+tests/test_cli.py::test_invalid_outfile PASSED
+tests/test_cli.py::test_main_help PASSED
+tests/test_cli.py::test_parser_empty PASSED
+tests/test_cli.py::test_script PASSED
+tests/test_cli.py::test_stdout PASSED
+tests/test_cli.py::test_valid_args PASSED
+tests/test_format.py::TestFormat::test_identifiercase PASSED
+tests/test_format.py::TestFormat::test_identifiercase_invalid_option PASSED
+tests/test_format.py::TestFormat::test_identifiercase_quotes PASSED
+tests/test_format.py::TestFormat::test_keywordcase PASSED
+tests/test_format.py::TestFormat::test_keywordcase_invalid_option PASSED
+tests/test_format.py::TestFormat::test_notransform_of_quoted_crlf PASSED
+tests/test_format.py::TestFormat::test_preserve_ws PASSED
+tests/test_format.py::TestFormat::test_strip_comments_invalid_option PASSED
+tests/test_format.py::TestFormat::test_strip_comments_multi PASSED
+tests/test_format.py::TestFormat::test_strip_comments_preserves_linebreak PASSED
+tests/test_format.py::TestFormat::test_strip_comments_single PASSED
+tests/test_format.py::TestFormat::test_strip_ws PASSED
+tests/test_format.py::TestFormat::test_strip_ws_invalid_option PASSED
+tests/test_format.py::TestFormatReindent::test_case PASSED
+tests/test_format.py::TestFormatReindent::test_case2 PASSED
+tests/test_format.py::TestFormatReindent::test_duplicate_linebreaks PASSED
+tests/test_format.py::TestFormatReindent::test_identifier_and_functions PASSED
+tests/test_format.py::TestFormatReindent::test_identifier_list PASSED
+tests/test_format.py::TestFormatReindent::test_identifier_list_comment_first PASSED
+tests/test_format.py::TestFormatReindent::test_identifier_list_with_functions PASSED
+tests/test_format.py::TestFormatReindent::test_identifier_list_with_wrap_after PASSED
+tests/test_format.py::TestFormatReindent::test_insert_values PASSED
+tests/test_format.py::TestFormatReindent::test_join PASSED
+tests/test_format.py::TestFormatReindent::test_keywordfunctions PASSED
+tests/test_format.py::TestFormatReindent::test_keywords PASSED
+tests/test_format.py::TestFormatReindent::test_keywords_between PASSED
+tests/test_format.py::TestFormatReindent::test_long_identifier_list_with_functions PASSED
+tests/test_format.py::TestFormatReindent::test_nested_identifier_list PASSED
+tests/test_format.py::TestFormatReindent::test_option PASSED
+tests/test_format.py::TestFormatReindent::test_parenthesis PASSED
+tests/test_format.py::TestFormatReindent::test_stmts PASSED
+tests/test_format.py::TestFormatReindent::test_where PASSED
+tests/test_format.py::TestFormatReindentAligned::test_basic PASSED
+tests/test_format.py::TestFormatReindentAligned::test_case_statement PASSED
+tests/test_format.py::TestFormatReindentAligned::test_case_statement_with_between PASSED
+tests/test_format.py::TestFormatReindentAligned::test_group_by PASSED
+tests/test_format.py::TestFormatReindentAligned::test_group_by_subquery PASSED
+tests/test_format.py::TestFormatReindentAligned::test_joins PASSED
+tests/test_format.py::TestFormatReindentAligned::test_window_functions PASSED
+tests/test_format.py::TestOutputFormat::test_invalid_option PASSED
+tests/test_format.py::TestOutputFormat::test_php PASSED
+tests/test_format.py::TestOutputFormat::test_python PASSED
+tests/test_format.py::TestOutputFormat::test_python_multiple_statements PASSED
+tests/test_format.py::TestOutputFormat::test_python_multiple_statements_with_formatting XFAIL
+tests/test_format.py::TestOutputFormat::test_sql PASSED
+tests/test_format.py::TestSpacesAroundOperators::test_basic PASSED
+tests/test_format.py::TestSpacesAroundOperators::test_bools PASSED
+tests/test_format.py::TestSpacesAroundOperators::test_nested PASSED
+tests/test_format.py::TestSpacesAroundOperators::test_wildcard_vs_mult PASSED
+tests/test_format.py::test_format_column_ordering PASSED
+tests/test_format.py::test_format_right_margin XFAIL (Needs fixing)
+tests/test_format.py::test_format_right_margin_invalid_option[2] PASSED
+tests/test_format.py::test_format_right_margin_invalid_option[ten] PASSED
+tests/test_format.py::test_having_produces_newline PASSED
+tests/test_format.py::test_truncate_strings PASSED
+tests/test_format.py::test_truncate_strings_doesnt_truncate_identifiers[select "verrrylongcolumn" from "foo"] PASSED
+tests/test_format.py::test_truncate_strings_doesnt_truncate_identifiers[select verrrylongcolumn from foo] PASSED
+tests/test_format.py::test_truncate_strings_invalid_option2[-1] PASSED
+tests/test_format.py::test_truncate_strings_invalid_option2[0] PASSED
+tests/test_format.py::test_truncate_strings_invalid_option2[bar] PASSED
+tests/test_grouping.py::test_aliased_column_without_as PASSED
+tests/test_grouping.py::test_aliased_function_without_as PASSED
+tests/test_grouping.py::test_aliased_literal_without_as PASSED
+tests/test_grouping.py::test_begin PASSED
+tests/test_grouping.py::test_compare_expr[select a from b where c < current_timestamp - interval '1 day'-Token-TypedLiteral] PASSED
+tests/test_grouping.py::test_compare_expr[select a from b where c < d + e-Identifier-Identifier] PASSED
+tests/test_grouping.py::test_compare_expr[select a from b where c < d + interval '1 day'-Identifier-TypedLiteral] PASSED
+tests/test_grouping.py::test_compare_expr[select a from b where c < d + interval '6' month-Identifier-TypedLiteral] PASSED
+tests/test_grouping.py::test_comparison_with_floats PASSED
+tests/test_grouping.py::test_comparison_with_functions PASSED
+tests/test_grouping.py::test_comparison_with_keywords PASSED
+tests/test_grouping.py::test_comparison_with_parenthesis PASSED
+tests/test_grouping.py::test_comparison_with_strings[!=] PASSED
+tests/test_grouping.py::test_comparison_with_strings[!~~] PASSED
+tests/test_grouping.py::test_comparison_with_strings[<=] PASSED
+tests/test_grouping.py::test_comparison_with_strings[<] PASSED
+tests/test_grouping.py::test_comparison_with_strings[=] PASSED
+tests/test_grouping.py::test_comparison_with_strings[>=] PASSED
+tests/test_grouping.py::test_comparison_with_strings[>] PASSED
+tests/test_grouping.py::test_comparison_with_strings[ILIKE] PASSED
+tests/test_grouping.py::test_comparison_with_strings[LIKE] PASSED
+tests/test_grouping.py::test_comparison_with_strings[NOT ILIKE] PASSED
+tests/test_grouping.py::test_comparison_with_strings[NOT LIKE] PASSED
+tests/test_grouping.py::test_comparison_with_strings[~] PASSED
+tests/test_grouping.py::test_comparison_with_strings[~~] PASSED
+tests/test_grouping.py::test_comparison_with_typed_literal PASSED
+tests/test_grouping.py::test_forloops[FOREACH] PASSED
+tests/test_grouping.py::test_forloops[FOR] PASSED
+tests/test_grouping.py::test_group_identifier_list[foo, bar] PASSED
+tests/test_grouping.py::test_group_identifier_list[sum(a) as x, b as y] PASSED
+tests/test_grouping.py::test_group_identifier_list[sum(a), sum(b)] PASSED
+tests/test_grouping.py::test_group_identifier_list[sum(a)/count(b) as x, y] PASSED
+tests/test_grouping.py::test_group_identifier_list[sum(a)::integer as x, y] PASSED
+tests/test_grouping.py::test_group_identifier_list[sum(a)::integer, b] PASSED
+tests/test_grouping.py::test_group_identifier_list[sum(a)::integer/count(b) as x, y] PASSED
+tests/test_grouping.py::test_grouping_alias PASSED
+tests/test_grouping.py::test_grouping_alias_case PASSED
+tests/test_grouping.py::test_grouping_alias_ctas PASSED
+tests/test_grouping.py::test_grouping_alias_returns_none[foo.bar] PASSED
+tests/test_grouping.py::test_grouping_alias_returns_none[x / y] PASSED
+tests/test_grouping.py::test_grouping_alias_returns_none[x > y] PASSED
+tests/test_grouping.py::test_grouping_alias_returns_none[x, y] PASSED
+tests/test_grouping.py::test_grouping_as_cte PASSED
+tests/test_grouping.py::test_grouping_assignment[foo := 1;] PASSED
+tests/test_grouping.py::test_grouping_assignment[foo := 1] PASSED
+tests/test_grouping.py::test_grouping_comments PASSED
+tests/test_grouping.py::test_grouping_comparison_exclude PASSED
+tests/test_grouping.py::test_grouping_create_table PASSED
+tests/test_grouping.py::test_grouping_function PASSED
+tests/test_grouping.py::test_grouping_function_not_in PASSED
+tests/test_grouping.py::test_grouping_identifer_as[foo as (select *)] PASSED
+tests/test_grouping.py::test_grouping_identifer_as[foo as(select *)] PASSED
+tests/test_grouping.py::test_grouping_identifier_as_invalid PASSED
+tests/test_grouping.py::test_grouping_identifier_function PASSED
+tests/test_grouping.py::test_grouping_identifier_invalid PASSED
+tests/test_grouping.py::test_grouping_identifier_invalid_in_middle PASSED
+tests/test_grouping.py::test_grouping_identifier_list PASSED
+tests/test_grouping.py::test_grouping_identifier_list_case PASSED
+tests/test_grouping.py::test_grouping_identifier_list_other PASSED
+tests/test_grouping.py::test_grouping_identifier_list_subquery PASSED
+tests/test_grouping.py::test_grouping_identifier_list_with_inline_comments PASSED
+tests/test_grouping.py::test_grouping_identifier_list_with_order PASSED
+tests/test_grouping.py::test_grouping_identifier_name_wildcard PASSED
+tests/test_grouping.py::test_grouping_identifier_wildcard PASSED
+tests/test_grouping.py::test_grouping_identifiers PASSED
+tests/test_grouping.py::test_grouping_identifiers_with_operators PASSED
+tests/test_grouping.py::test_grouping_idlist_function PASSED
+tests/test_grouping.py::test_grouping_operation[foo + 100] PASSED
+tests/test_grouping.py::test_grouping_operation[foo*100] PASSED
+tests/test_grouping.py::test_grouping_operation[foo+100] PASSED
+tests/test_grouping.py::test_grouping_parenthesis PASSED
+tests/test_grouping.py::test_grouping_subquery_no_parens PASSED
+tests/test_grouping.py::test_grouping_typecast[select (current_database())::information_schema.sql_identifier-information_schema.sql_identifier] PASSED
+tests/test_grouping.py::test_grouping_typecast[select foo::integer from bar-integer] PASSED
+tests/test_grouping.py::test_grouping_typed_literal[x > DATE '2020-01-01'] PASSED
+tests/test_grouping.py::test_grouping_typed_literal[x > TIMESTAMP '2020-01-01 00:00:00'] PASSED
+tests/test_grouping.py::test_grouping_varchar PASSED
+tests/test_grouping.py::test_grouping_where PASSED
+tests/test_grouping.py::test_grouping_where_union[select 1 where 1 = 2 union all select 2] PASSED
+tests/test_grouping.py::test_grouping_where_union[select 1 where 1 = 2 union select 2] PASSED
+tests/test_grouping.py::test_identifier_consumes_ordering PASSED
+tests/test_grouping.py::test_identifier_with_op_trailing_ws PASSED
+tests/test_grouping.py::test_identifier_with_operators PASSED
+tests/test_grouping.py::test_identifier_with_string_literals PASSED
+tests/test_grouping.py::test_in_comparison PASSED
+tests/test_grouping.py::test_into_kw_ends_where_clause PASSED
+tests/test_grouping.py::test_keyword_followed_by_parenthesis PASSED
+tests/test_grouping.py::test_like_and_ilike_comparison PASSED
+tests/test_grouping.py::test_nested_begin PASSED
+tests/test_grouping.py::test_nested_for PASSED
+tests/test_grouping.py::test_qualified_function PASSED
+tests/test_grouping.py::test_returning_kw_ends_where_clause PASSED
+tests/test_grouping.py::test_simple_identifiers[1 as f] PASSED
+tests/test_grouping.py::test_simple_identifiers[1/2 as f] PASSED
+tests/test_grouping.py::test_simple_identifiers[1/2 f] PASSED
+tests/test_grouping.py::test_simple_identifiers[1<2 as f] PASSED
+tests/test_grouping.py::test_simple_identifiers[1<2 f] PASSED
+tests/test_grouping.py::test_simple_identifiers[foo as f] PASSED
+tests/test_grouping.py::test_simple_identifiers[foo f] PASSED
+tests/test_grouping.py::test_statement_get_type PASSED
+tests/test_keywords.py::TestSQLREGEX::test_float_numbers[-.1] PASSED
+tests/test_keywords.py::TestSQLREGEX::test_float_numbers[-1.0] PASSED
+tests/test_keywords.py::TestSQLREGEX::test_float_numbers[-1.] PASSED
+tests/test_keywords.py::TestSQLREGEX::test_float_numbers[.1] PASSED
+tests/test_keywords.py::TestSQLREGEX::test_float_numbers[1.0] PASSED
+tests/test_keywords.py::TestSQLREGEX::test_float_numbers[1.] PASSED
+tests/test_parse.py::test_2d_array_index PASSED
+tests/test_parse.py::test_aliased_array_index PASSED
+tests/test_parse.py::test_array_index_function_result PASSED
+tests/test_parse.py::test_array_literal PASSED
+tests/test_parse.py::test_dbldollar_as_literal[$$foo$$-True] PASSED
+tests/test_parse.py::test_dbldollar_as_literal[$A$ foo $B$-False] PASSED
+tests/test_parse.py::test_dbldollar_as_literal[$_$ foo $token$bar$token$ baz$_$-True] PASSED
+tests/test_parse.py::test_dbldollar_as_literal[$_$foo$_$-True] PASSED
+tests/test_parse.py::test_dbldollar_as_literal[$token$ foo $token$-True] PASSED
+tests/test_parse.py::test_double_precision_is_builtin PASSED
+tests/test_parse.py::test_double_quotes_are_identifiers PASSED
+tests/test_parse.py::test_from_subquery PASSED
+tests/test_parse.py::test_get_real_name PASSED
+tests/test_parse.py::test_get_token_at_offset PASSED
+tests/test_parse.py::test_names_and_special_names[##foo] PASSED
+tests/test_parse.py::test_names_and_special_names[#foo] PASSED
+tests/test_parse.py::test_names_and_special_names[@foo] PASSED
+tests/test_parse.py::test_names_and_special_names[foo] PASSED
+tests/test_parse.py::test_non_ascii PASSED
+tests/test_parse.py::test_parenthesis PASSED
+tests/test_parse.py::test_parse_access_symbol PASSED
+tests/test_parse.py::test_parse_child_of PASSED
+tests/test_parse.py::test_parse_div_operator PASSED
+tests/test_parse.py::test_parse_float[.51] PASSED
+tests/test_parse.py::test_parse_float[.5] PASSED
+tests/test_parse.py::test_parse_float[1.5] PASSED
+tests/test_parse.py::test_parse_float[12.5] PASSED
+tests/test_parse.py::test_parse_function_param_single_literal PASSED
+tests/test_parse.py::test_parse_function_parameter PASSED
+tests/test_parse.py::test_parse_has_ancestor PASSED
+tests/test_parse.py::test_parse_keyword_like_identifier PASSED
+tests/test_parse.py::test_parse_modulo_not_placeholder PASSED
+tests/test_parse.py::test_parse_multistatement PASSED
+tests/test_parse.py::test_parse_nested_function PASSED
+tests/test_parse.py::test_parse_newlines[select\n*from foo;] PASSED
+tests/test_parse.py::test_parse_newlines[select\r*from foo] PASSED
+tests/test_parse.py::test_parse_newlines[select\r\n*from foo\n] PASSED
+tests/test_parse.py::test_parse_newlines[select\r\n*from foo] PASSED
+tests/test_parse.py::test_parse_placeholder[select * from foo where user = $a-$a] PASSED
+tests/test_parse.py::test_parse_placeholder[select * from foo where user = %s-%s] PASSED
+tests/test_parse.py::test_parse_placeholder[select * from foo where user = :1-:1] PASSED
+tests/test_parse.py::test_parse_placeholder[select * from foo where user = :name-:name] PASSED
+tests/test_parse.py::test_parse_placeholder[select * from foo where user = ?-?] PASSED
+tests/test_parse.py::test_parse_square_brackets_notation_isnt_too_greedy PASSED
+tests/test_parse.py::test_parse_square_brackets_notation_isnt_too_greedy2 PASSED
+tests/test_parse.py::test_parse_tokenize PASSED
+tests/test_parse.py::test_parse_within PASSED
+tests/test_parse.py::test_placeholder[%(foo)s] PASSED
+tests/test_parse.py::test_placeholder[%s] PASSED
+tests/test_parse.py::test_placeholder[:1] PASSED
+tests/test_parse.py::test_placeholder[:foo] PASSED
+tests/test_parse.py::test_placeholder[?] PASSED
+tests/test_parse.py::test_pprint PASSED
+tests/test_parse.py::test_psql_quotation_marks PASSED
+tests/test_parse.py::test_quoted_identifier PASSED
+tests/test_parse.py::test_schema_qualified_array_index PASSED
+tests/test_parse.py::test_scientific_numbers[1.988e33-expected1] PASSED
+tests/test_parse.py::test_scientific_numbers[1e-12-expected2] PASSED
+tests/test_parse.py::test_scientific_numbers[6.67428E-8-expected0] PASSED
+tests/test_parse.py::test_scientific_numbers[e1-None] PASSED
+tests/test_parse.py::test_simple_1d_array_index PASSED
+tests/test_parse.py::test_single_line_comments[select 1 # foo] PASSED
+tests/test_parse.py::test_single_line_comments[select 1 -- foo] PASSED
+tests/test_parse.py::test_single_quotes_are_strings PASSED
+tests/test_parse.py::test_single_quotes_with_linebreaks PASSED
+tests/test_parse.py::test_sqlite_identifiers PASSED
+tests/test_parse.py::test_stmt_tokens_parents PASSED
+tests/test_parse.py::test_typed_array_definition PASSED
+tests/test_parse.py::test_valid_identifier_names[1_data] PASSED
+tests/test_parse.py::test_valid_identifier_names[\u696d\u8005\u540d\u7a31] PASSED
+tests/test_parse.py::test_valid_identifier_names[_foo] PASSED
+tests/test_parse.py::test_valid_identifier_names[foo] PASSED
+tests/test_parse.py::test_wildcard_multiplication PASSED
+tests/test_regressions.py::test_as_in_parentheses_indents PASSED
+tests/test_regressions.py::test_comment_encoding_when_reindent PASSED
+tests/test_regressions.py::test_dont_alias_keywords PASSED
+tests/test_regressions.py::test_except_formatting PASSED
+tests/test_regressions.py::test_format_accepts_encoding PASSED
+tests/test_regressions.py::test_format_invalid_where_clause PASSED
+tests/test_regressions.py::test_issue13 PASSED
+tests/test_regressions.py::test_issue186_get_type PASSED
+tests/test_regressions.py::test_issue190_open_file PASSED
+tests/test_regressions.py::test_issue193_splitting_function PASSED
+tests/test_regressions.py::test_issue194_splitting_function PASSED
+tests/test_regressions.py::test_issue207_runaway_format PASSED
+tests/test_regressions.py::test_issue212_py2unicode PASSED
+tests/test_regressions.py::test_issue213_leadingws PASSED
+tests/test_regressions.py::test_issue227_gettype_cte PASSED
+tests/test_regressions.py::test_issue26[-- hello] PASSED
+tests/test_regressions.py::test_issue26[--\n] PASSED
+tests/test_regressions.py::test_issue26[--] PASSED
+tests/test_regressions.py::test_issue26[--hello\n] PASSED
+tests/test_regressions.py::test_issue26[--hello] PASSED
+tests/test_regressions.py::test_issue284_as_grouping[AS] PASSED
+tests/test_regressions.py::test_issue284_as_grouping[SELECT x AS] PASSED
+tests/test_regressions.py::test_issue315_utf8_by_default PASSED
+tests/test_regressions.py::test_issue322_concurrently_is_keyword PASSED
+tests/test_regressions.py::test_issue34[CREATE] PASSED
+tests/test_regressions.py::test_issue34[create] PASSED
+tests/test_regressions.py::test_issue35 PASSED
+tests/test_regressions.py::test_issue359_index_error_assignments[SELECT @min_price:=MIN(price), @max_price:=MAX(price) FROM shop;] PASSED
+tests/test_regressions.py::test_issue359_index_error_assignments[SELECT @min_price:=MIN(price), @max_price:=MAX(price) FROM shop] PASSED
+tests/test_regressions.py::test_issue38 PASSED
+tests/test_regressions.py::test_issue39 PASSED
+tests/test_regressions.py::test_issue40 PASSED
+tests/test_regressions.py::test_issue469_copy_as_psql_command PASSED
+tests/test_regressions.py::test_issue484_comments_and_newlines XFAIL
+tests/test_regressions.py::test_issue485_split_multi PASSED
+tests/test_regressions.py::test_issue489_tzcasts PASSED
+tests/test_regressions.py::test_issue562_tzcasts PASSED
+tests/test_regressions.py::test_issue78[get_alias-z-select "x"."y"::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_alias-z-select "x"."y"::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_alias-z-select "x".y::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_alias-z-select "x".y::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_alias-z-select x."y"::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_alias-z-select x."y"::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_alias-z-select x.y::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_alias-z-select x.y::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_name-z-select "x"."y"::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_name-z-select "x"."y"::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_name-z-select "x".y::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_name-z-select "x".y::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_name-z-select x."y"::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_name-z-select x."y"::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_name-z-select x.y::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_name-z-select x.y::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_parent_name-x-select "x"."y"::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_parent_name-x-select "x"."y"::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_parent_name-x-select "x".y::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_parent_name-x-select "x".y::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_parent_name-x-select x."y"::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_parent_name-x-select x."y"::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_parent_name-x-select x.y::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_parent_name-x-select x.y::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_real_name-y-select "x"."y"::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_real_name-y-select "x"."y"::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_real_name-y-select "x".y::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_real_name-y-select "x".y::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_real_name-y-select x."y"::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_real_name-y-select x."y"::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_real_name-y-select x.y::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_real_name-y-select x.y::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_typecast-text-select "x"."y"::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_typecast-text-select "x"."y"::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_typecast-text-select "x".y::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_typecast-text-select "x".y::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_typecast-text-select x."y"::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_typecast-text-select x."y"::text as z from foo] PASSED
+tests/test_regressions.py::test_issue78[get_typecast-text-select x.y::text as "z" from foo] PASSED
+tests/test_regressions.py::test_issue78[get_typecast-text-select x.y::text as z from foo] PASSED
+tests/test_regressions.py::test_issue83 PASSED
+tests/test_regressions.py::test_issue9 PASSED
+tests/test_regressions.py::test_issue90 PASSED
+tests/test_regressions.py::test_null_with_as PASSED
+tests/test_regressions.py::test_parse_sql_with_binary PASSED
+tests/test_regressions.py::test_splitting_at_and_backticks_issue588 PASSED
+tests/test_regressions.py::test_stream PASSED
+tests/test_regressions.py::test_token_next_doesnt_ignore_skip_cm PASSED
+tests/test_split.py::test_split_backslash PASSED
+tests/test_split.py::test_split_begintag PASSED
+tests/test_split.py::test_split_begintag_2 PASSED
+tests/test_split.py::test_split_casewhen PASSED
+tests/test_split.py::test_split_casewhen_procedure PASSED
+tests/test_split.py::test_split_comment_end_of_line PASSED
+tests/test_split.py::test_split_comment_with_umlaut PASSED
+tests/test_split.py::test_split_create_function[function.sql] PASSED
+tests/test_split.py::test_split_create_function[function_psql.sql] PASSED
+tests/test_split.py::test_split_create_function[function_psql2.sql] PASSED
+tests/test_split.py::test_split_create_function[function_psql3.sql] PASSED
+tests/test_split.py::test_split_create_function[function_psql4.sql] PASSED
+tests/test_split.py::test_split_cursor_declare PASSED
+tests/test_split.py::test_split_dashcomments PASSED
+tests/test_split.py::test_split_dashcomments_eol[select foo; -- comment\n] PASSED
+tests/test_split.py::test_split_dashcomments_eol[select foo; -- comment\r\n] PASSED
+tests/test_split.py::test_split_dashcomments_eol[select foo; -- comment\r] PASSED
+tests/test_split.py::test_split_dashcomments_eol[select foo; -- comment] PASSED
+tests/test_split.py::test_split_dropif PASSED
+tests/test_split.py::test_split_encoding_parsestream PASSED
+tests/test_split.py::test_split_if_function PASSED
+tests/test_split.py::test_split_ignores_empty_newlines PASSED
+tests/test_split.py::test_split_mysql_handler_for PASSED
+tests/test_split.py::test_split_quotes_with_new_line PASSED
+tests/test_split.py::test_split_semicolon PASSED
+tests/test_split.py::test_split_simple PASSED
+tests/test_split.py::test_split_stream PASSED
+tests/test_split.py::test_split_unicode_parsestream PASSED
+tests/test_tokenize.py::test_cli_commands PASSED
+tests/test_tokenize.py::test_like_and_ilike_parsed_as_comparisons[ILIKE] PASSED
+tests/test_tokenize.py::test_like_and_ilike_parsed_as_comparisons[LIKE] PASSED
+tests/test_tokenize.py::test_like_and_ilike_parsed_as_comparisons[NOT    ILIKE] PASSED
+tests/test_tokenize.py::test_like_and_ilike_parsed_as_comparisons[NOT   LIKE] PASSED
+tests/test_tokenize.py::test_like_and_ilike_parsed_as_comparisons[NOT ILIKE] PASSED
+tests/test_tokenize.py::test_like_and_ilike_parsed_as_comparisons[NOT LIKE] PASSED
+tests/test_tokenize.py::test_near_like_and_ilike_parsed_appropriately[LIKEaaa] PASSED
+tests/test_tokenize.py::test_near_like_and_ilike_parsed_appropriately[NOTILIKE] PASSED
+tests/test_tokenize.py::test_near_like_and_ilike_parsed_appropriately[NOTLIKE] PASSED
+tests/test_tokenize.py::test_near_like_and_ilike_parsed_appropriately[aaILIKEbb] PASSED
+tests/test_tokenize.py::test_near_like_and_ilike_parsed_appropriately[bILIKE] PASSED
+tests/test_tokenize.py::test_parse_endifloop[END   IF] PASSED
+tests/test_tokenize.py::test_parse_endifloop[END   LOOP] PASSED
+tests/test_tokenize.py::test_parse_endifloop[END IF] PASSED
+tests/test_tokenize.py::test_parse_endifloop[END LOOP] PASSED
+tests/test_tokenize.py::test_parse_endifloop[END\t\nIF] PASSED
+tests/test_tokenize.py::test_parse_endifloop[END\t\nLOOP] PASSED
+tests/test_tokenize.py::test_parse_group_by PASSED
+tests/test_tokenize.py::test_parse_identifiers[FOO] PASSED
+tests/test_tokenize.py::test_parse_identifiers[Foo] PASSED
+tests/test_tokenize.py::test_parse_identifiers[foo] PASSED
+tests/test_tokenize.py::test_parse_identifiers[v$name] PASSED
+tests/test_tokenize.py::test_parse_join[CROSS JOIN] PASSED
+tests/test_tokenize.py::test_parse_join[FULL OUTER JOIN] PASSED
+tests/test_tokenize.py::test_parse_join[INNER JOIN] PASSED
+tests/test_tokenize.py::test_parse_join[JOIN] PASSED
+tests/test_tokenize.py::test_parse_join[LEFT INNER JOIN] PASSED
+tests/test_tokenize.py::test_parse_join[LEFT JOIN] PASSED
+tests/test_tokenize.py::test_parse_join[LEFT OUTER JOIN] PASSED
+tests/test_tokenize.py::test_parse_join[NATURAL JOIN] PASSED
+tests/test_tokenize.py::test_parse_join[STRAIGHT JOIN] PASSED
+tests/test_tokenize.py::test_parse_nulls[NULLS FIRST] PASSED
+tests/test_tokenize.py::test_parse_nulls[NULLS LAST] PASSED
+tests/test_tokenize.py::test_parse_order_by PASSED
+tests/test_tokenize.py::test_parse_tzcast[AT TIME ZONE 'UTC'] PASSED
+tests/test_tokenize.py::test_parse_union PASSED
+tests/test_tokenize.py::test_parse_window_as PASSED
+tests/test_tokenize.py::test_single_quotes PASSED
+tests/test_tokenize.py::test_stream_error PASSED
+tests/test_tokenize.py::test_stream_simple PASSED
+tests/test_tokenize.py::test_token_flatten PASSED
+tests/test_tokenize.py::test_token_repr PASSED
+tests/test_tokenize.py::test_token_str PASSED
+tests/test_tokenize.py::test_tokenize_backticks PASSED
+tests/test_tokenize.py::test_tokenize_inline_keywords PASSED
+tests/test_tokenize.py::test_tokenize_linebreaks[foo\nbar\n] PASSED
+tests/test_tokenize.py::test_tokenize_linebreaks[foo\r\nbar\n] PASSED
+tests/test_tokenize.py::test_tokenize_linebreaks[foo\r\nbar\r\n] PASSED
+tests/test_tokenize.py::test_tokenize_linebreaks[foo\rbar\r] PASSED
+tests/test_tokenize.py::test_tokenize_negative_numbers PASSED
+tests/test_tokenize.py::test_tokenize_simple PASSED
+tests/test_tokenize.py::test_tokenlist_first PASSED
+tests/test_tokenize.py::test_tokenlist_repr PASSED
+tests/test_tokenize.py::test_tokenlist_token_matching PASSED
+tests/test_utils.py::test_remove_quotes["foo"-foo] PASSED
+tests/test_utils.py::test_remove_quotes['foo'-foo] PASSED
+tests/test_utils.py::test_remove_quotes[None-None] PASSED
+tests/test_utils.py::test_remove_quotes[`foo`-foo] PASSED
+
+=============================== warnings summary ===============================
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256
+  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_configure_node uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(optionalhook=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    def pytest_configure_node(self, node):
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265
+  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_testnodedown uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(optionalhook=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    def pytest_testnodedown(self, node, error):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+======== 425 passed, 3 xfailed, 2 warnings ========
+___________________________________ summary ____________________________________
+  py$(PYV): commands succeeded
+  congratulations :)
