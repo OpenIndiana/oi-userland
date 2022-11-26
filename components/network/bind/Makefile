@@ -23,15 +23,15 @@
 # Copyright (c) 2022, Niklas Poslovski
 #
 
-USE_OPENSSL11=		yes
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.16.34
+COMPONENT_VERSION=	9.16.35
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://www.isc.org/software/bind/
-COMPONENT_ARCHIVE_HASH=	sha256:513d2efcf5d526c14a0b33af698b6df17d21cd2e011a43f4a94a4f0c84472f16
+COMPONENT_ARCHIVE_HASH=	sha256:3e159617f182465c300a917eef880492c37183341b1091cc6654710c1d8d7b3e
 COMPONENT_ARCHIVE_URL=	https://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			network/dns/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -42,10 +42,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
 
-COMPONENT_PREP_ACTION =	(cd $(@D) && autoreconf -fi)
+COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -fi)
 
 # Missing files in build dir without this.
-COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CFLAGS += $(CPP_XPG6MODE)
 
@@ -56,21 +56,21 @@ CFLAGS += $(CPP_XPG6MODE)
 # pathnames.
 
 # DNS libraries are in usr/lib/dns - Override settings from configure.mk
-CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib/dns/$(MACH64)
+CONFIGURE_LIBDIR.64= $(CONFIGURE_PREFIX)/lib/dns/$(MACH64)
 
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--with-libtool
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--localstatedir=/var
-CONFIGURE_OPTIONS +=	--with-openssl=/usr
-CONFIGURE_OPTIONS +=	--enable-devpoll=yes
-CONFIGURE_OPTIONS +=	--enable-fixed-rrset
-CONFIGURE_OPTIONS +=	--with-pkcs11=/usr/lib/$(MACH64)/libpkcs11.so
-CONFIGURE_OPTIONS +=	--with-libxml2
-CONFIGURE_OPTIONS +=	--with-python-install-dir=$(PYTHON_VENDOR_PACKAGES.32)
-CONFIGURE_OPTIONS +=	--with-json-c
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --with-libtool
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --with-openssl=/usr
+CONFIGURE_OPTIONS += --enable-devpoll=yes
+CONFIGURE_OPTIONS += --enable-fixed-rrset
+CONFIGURE_OPTIONS += --with-pkcs11=/usr/lib/$(MACH64)/libpkcs11.so
+CONFIGURE_OPTIONS += --with-libxml2
+CONFIGURE_OPTIONS += --with-python-install-dir=$(PYTHON_VENDOR_PACKAGES.32)
+CONFIGURE_OPTIONS += --with-json-c
 
-CONFIGURE_ENV +=	PYTHON=$(PYTHON)
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 COMPONENT_BUILD_ENV += PYTHON_VENDOR_DIR=$(PYTHON_VENDOR_PACKAGES)
 COMPONENT_INSTALL_ENV += PYTHON_VENDOR_DIR=$(PYTHON_VENDOR_PACKAGES)
@@ -78,9 +78,8 @@ COMPONENT_INSTALL_ENV += PYTHON_VENDOR_DIR=$(PYTHON_VENDOR_PACKAGES)
 # Install.
 #
 # Currently manual pages are distributed from pkg:/system/manual@.
-# While there are some changes in our manuals, for example section
-# numbering and additions to named(1M) for SMF - that could be fixed
-# by patch.
+# While there are some changes in our manuals, additions to named(1M) for SMF - that could be fixed
+# by a patch.
 #
 # In addition to BIND deliverables we also deliver SMF files and
 # migration notes.  There is no need to install these extras into the
@@ -90,9 +89,9 @@ COMPONENT_INSTALL_ENV += PYTHON_VENDOR_DIR=$(PYTHON_VENDOR_PACKAGES)
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 # The user running the test needs an profiles=Network Management entry in /etc/user_attr in order to successfully run the following ifconfig.sh up script:
-COMPONENT_PRE_TEST_ACTION=      ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh up )
-COMPONENT_POST_TEST_ACTION=     ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh down )
-COMPONENT_TEST_TARGETS=		test
+COMPONENT_PRE_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh up )
+COMPONENT_POST_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh down )
+COMPONENT_TEST_TARGETS= test
 COMPONENT_TEST_TRANSFORMS += \
 	' -n ' \
 	' -e "/^R:.*:FAIL/p"' \
