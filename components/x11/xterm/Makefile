@@ -15,22 +15,21 @@
 # Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xterm
-COMPONENT_VERSION=	376
+COMPONENT_VERSION=	377
 COMPONENT_SUMMARY=	Xterm - terminal emulator for X 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:1e5bb7aad068fb31d6d3cbb77f80c7ad1526cd4c956a4ddcf2c5cf28af5334e1
+COMPONENT_ARCHIVE_HASH=	sha256:db108fe7a45d8ed97e604721b58443b473649e61e263631bf8759f8618a990b2
 COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/xterm/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://invisible-island.net/xterm/
 COMPONENT_FMRI=		terminal/xterm
 COMPONENT_LICENSE=	MIT
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
