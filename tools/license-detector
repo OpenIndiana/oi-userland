@@ -79,10 +79,21 @@ fi
 TMPFILE=$(mktemp -q)
 [[ -z "$TMPFILE" ]] && printf "ERROR: Temporary file creation failed\n" >&2 && exit 1
 
+typeset -A matched
 for l in "$WS_TOOLS"/licenses/* ; do
 	[[ -f "$l" ]] || continue
 	# skip filters
 	[[ "$l" != "${l%.filter}" ]] && continue
+
+	# extract license identifier
+	license_id="${l##*/}"
+	license_id="${license_id#header.}"
+	license_id="${license_id#license.}"
+	# sanity check, this should never happen
+	[[ -z "$license_id" ]] && continue
+
+	# make sure we do not match one license twice
+	[[ -n "$matched[$license_id]" ]] && continue
 
 	cat <<#EOF > "$TMPFILE"
 		dos2unix -ascii \\
@@ -108,11 +119,10 @@ for l in "$WS_TOOLS"/licenses/* ; do
 
 	diff -i <(. "$TMPFILE" < "$l") <(. "$TMPFILE" < "$F") > "$REDIRECT" || continue
 
+	matched[$license_id]="$l"
+
 	[[ -n "$L" ]] && L="$L OR "
-	l="${l##*/}"
-	l="${l#header.}"
-	l="${l#license.}"
-	L="$L$l"
+	L="$L$license_id"
 done
 
 rm -f "$TMPFILE"
