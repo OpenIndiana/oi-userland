@@ -19,27 +19,33 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2022 Friedrich Kink
 #
+
+BUILD_BITS =		64_and_32
+USE_OPENSSL11=          yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME = libneon
-COMPONENT_VERSION = 0.29.6
-COMPONENT_REVISION = 1
-COMPONENT_PROJECT_URL=	http://www.webdav.org/neon/
-COMPONENT_SRC_NAME = neon
+COMPONENT_NAME =	libneon
+COMPONENT_VERSION =	0.32.4
+COMPONENT_SRC_NAME = 	neon
+COMPONENT_SUMMARY=	The Neon WebDAV library
+COMPONENT_DESCRIPTION=	An HTTP and WebDAV client library, with a C interface
+COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_FMRI=		library/neon
+COMPONENT_PROJECT_URL=	https://notroj.github.io/$(COMPONENT_SRC_NAME)/
 COMPONENT_SRC = $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = \
-    sha256:9c640b728d6dc80ef1e48f83181166ab6bc95309cece5537e01ffdd01b96eb43
-COMPONENT_ARCHIVE_URL = ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/distfiles/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH = sha256:b1e2120e4ae07df952c4a858731619733115c5f438965de4fab41d6bf7e7a508
+COMPONENT_ARCHIVE_URL = https://notroj.github.io/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE =     GPLv2
+COMPONENT_LICENSE_FILE =$(COMPONENT_NAME).license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATCH_LEVEL = 0
+COMPONENT_PRE_CONFIGURE_ACTION += (  $(CLONEY) $(SOURCE_DIR) $(@D); )
 
-CC += $(CC_BITS)
 CPPFLAGS += $(CPP_LARGEFILES)
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
@@ -58,20 +64,15 @@ CONFIGURE_OPTIONS += --with-zlib
 CONFIGURE_OPTIONS += --with-ssl=openssl
 CONFIGURE_OPTIONS += --with-libproxy
 CONFIGURE_OPTIONS += --with-libxml2
+CONFIGURE_OPTIONS += --with-expat
 
 COMPONENT_TEST_ENV +=	PATH="$(PATH.gnu)"
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libproxy
-REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
