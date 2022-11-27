@@ -24,18 +24,23 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
-BUILD_BITS=32_and_64
+BUILD_BITS= 64_and_32
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		expect
 COMPONENT_VERSION=	5.45.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
+COMPONENT_SUMMARY=	expect - Programmed dialogue with other interactive programs
+COMPONENT_DESCRIPTION=	Expect is a tool for automating interactive applications, such as telnet, ftp, passwd, fsck, rlogin, tip, etc.
 COMPONENT_PROJECT_URL=	https://core.tcl.tk/expect/index
 COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:49a7da83b0bdd9f46d04a04deec19c7767bb9a323e40c4781f89caf760b92c34
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/expect/files/Expect/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_HASH= sha256:49a7da83b0bdd9f46d04a04deec19c7767bb9a323e40c4781f89caf760b92c34
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/expect/files/Expect/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_FMRI=			shell/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_LICENSE=		BSD-like, GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -71,7 +76,7 @@ $(CONFIGURE_32):	../tcl/build/$(MACH32)/.built
 $(CONFIGURE_64):	../tcl/build/$(MACH64)/.built
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
