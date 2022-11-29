@@ -19,11 +19,11 @@ USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= qpdf
-COMPONENT_VERSION= 11.1.1
+COMPONENT_VERSION= 11.2.0
 COMPONENT_SUMMARY= QPDF is a command-line program that does structural, content-preserving transformations on PDF files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:25e8ec60e290cd134405a51920015b6d351d4e0b93b7b736d257f10725f74b5a
+COMPONENT_ARCHIVE_HASH= sha256:fbd2d75050933487929dbbe1b5c50a238487194bc7263c277d6e49abb90ab7f2
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/qpdf/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://qpdf.sourceforge.net/
 COMPONENT_FMRI= print/qpdf
