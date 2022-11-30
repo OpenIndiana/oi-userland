@@ -275,13 +275,14 @@ endif
 # testing.
 #
 # For projects that do not support testing using neither tox nor pytest we
-# offer (deprecated) "setup.py test" testing too.
+# offer either unittest or (deprecated) "setup.py test" testing too.
 #
 # The TEST_STYLE variable is used to select (or force) particular test style
 # for Python projects.  Valid values are:
 #
 # 	tox		- "tox"-style testing
 # 	pytest		- "pytest"-style testing
+# 	unittest	- "unittest"-style testing
 # 	setup.py	- "setup.py test"-style testing
 # 	none		- no testing is supported (or desired) at all
 #
@@ -328,6 +329,11 @@ COMPONENT_TEST_ARGS +=		--color=no
 COMPONENT_TEST_TARGETS =
 
 USERLAND_REQUIRED_PACKAGES += library/python/pytest
+else ifeq ($(strip $(TEST_STYLE)),unittest)
+COMPONENT_TEST_CMD =		$(PYTHON) -m unittest
+COMPONENT_TEST_ARGS =
+COMPONENT_TEST_ARGS +=		--verbose
+COMPONENT_TEST_TARGETS =
 else ifeq ($(strip $(TEST_STYLE)),setup.py)
 # Old and deprecated "setup.py test"-style testing
 COMPONENT_TEST_CMD =		$(PYTHON) setup.py
