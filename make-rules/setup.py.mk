@@ -305,6 +305,9 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/py$(shell echo $(PYTHON_VERSION) | tr -d .)/
 COMPONENT_TEST_TRANSFORMS += "-e '/^py\$$(PYV) installed:/d'"		# depends on set of installed packages
 COMPONENT_TEST_TRANSFORMS += "-e '/PYTHONHASHSEED/d'"			# this is random
 
+# Normalize zope.testrunner test results
+COMPONENT_TEST_TRANSFORMS += "-e 's/ in [0-9]\{1,\}\.[0-9]\{3\} seconds//'"	# timing
+
 # tox package together with the tox-current-env plugin is needed
 USERLAND_REQUIRED_PACKAGES += library/python/tox
 USERLAND_REQUIRED_PACKAGES += library/python/tox-current-env
