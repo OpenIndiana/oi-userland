@@ -321,11 +321,15 @@ else
 	fi
 fi
 
-# Warn if pytest is called directly by tox
-[[ "$($GMAKE print-value-TEST_STYLE)" == "tox" && -f "$SOURCE_DIR/tox.ini" ]] \
-	&& sed -n -e '/^commands *=/,/^$/p' "$SOURCE_DIR/tox.ini" \
-		| grep -q '^\(commands *=\)\? *pytest' \
-	&& printf "WARNING: pytest is called directly in tox.ini\n" >&2
+# Warn if a testing tool is called directly by tox
+if [[ "$($GMAKE print-value-TEST_STYLE)" == "tox" && -f "$SOURCE_DIR/tox.ini" ]] ; then
+	TOX_CALL_INDIRECTLY=$($GMAKE print-value-TOX_CALL_INDIRECTLY)
+	for p in $TOX_CALL_INDIRECTLY ; do
+		sed -n -e '/^commands *=/,/^$/p' "$SOURCE_DIR/tox.ini" \
+			| grep -q '^\(commands *=\)\? *'"$p" \
+		&& printf "WARNING: %s is called directly in tox.ini\n" "$p" >&2
+	done
+fi
 
 
 # Create manifests
