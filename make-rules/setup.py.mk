@@ -296,9 +296,14 @@ COMPONENT_TEST_CMD =		$(TOX)
 COMPONENT_TEST_ARGS =		--current-env --no-provision --recreate
 COMPONENT_TEST_TARGETS =	-e py$(shell echo $(PYTHON_VERSION) | tr -d .)
 
-# Make sure pytest is called indirectly to properly support tox-current-env
+# Make sure following tools are called indirectly to properly support tox-current-env
+TOX_CALL_INIDIRECTLY += pytest
+TOX_CALL_INIDIRECTLY += coverage
+TOX_CALL_INIDIRECTLY += zope.testrunner
 COMPONENT_PRE_TEST_ACTION += \
-	[ -f $(@D)/tox.ini ] && $(GSED) -i -e '/^commands *=/,/^$$/{s/^\(\(commands *=\)\? *\)pytest/\1python -m pytest/}' $(@D)/tox.ini ;
+	[ -f $(@D)/tox.ini ] && for c in $(TOX_CALL_INIDIRECTLY) ; do \
+		$(GSED) -i -e '/^commands *=/,/^$$/{s/^\(\(commands *=\)\? *\)'$$c'/\1python -m '$$c'/}' $(@D)/tox.ini ; \
+	done ;
 
 # Normalize tox test results.
 COMPONENT_TEST_TRANSFORMS += "-e 's/py$(shell echo $(PYTHON_VERSION) | tr -d .)/py\$$(PYV)/g'"	# normalize PYV
