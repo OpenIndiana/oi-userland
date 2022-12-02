@@ -15,9 +15,10 @@
 #
 
 #
-# Print requirements for a package.
+# Print requirements for a package (first argument).
 # Evaluated and normalized.
-# With optional EXTRA parameter passed print requirements for such extra only.
+# If the package specified is - evaluate and normalize stdin.
+# With optional EXTRA argument passed print requirements for such extra only.
 #
 
 import sys
@@ -44,8 +45,10 @@ e = {'extra': sys.argv[2]} if len(sys.argv) > 2 else None
 # in environment when we do not want any extra.
 noe = {'extra': ''}
 
+reqs = requires(sys.argv[1]) if sys.argv[1] != "-" else sys.stdin.readlines()
+
 try:
-    for req in requires(sys.argv[1]):
+    for req in reqs:
         r = Requirement(req)
         m = r.marker
         if (not m and not e) or m and ((not e and m.evaluate(noe)) or (e and not m.evaluate(noe) and m.evaluate(e))):

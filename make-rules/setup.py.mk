@@ -324,9 +324,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 		| $(WS_TOOLS)/python-resolve-deps \
 			PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 			$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
-		| $(GSED) -e 's/\#.*//' -e $$'s/^[ \t]*//' -e '/^$$/d' \
-			-e 's/^\([a-zA-Z0-9]\([a-zA-Z0-9._-]*[a-zA-Z0-9]\)\{0,1\}\).*/\1/' \
-		| tr '[A-Z]' '[a-z]' | $(GSED) -e 's/[._-]\{1,\}/-/g' ; \
+		| $(PYTHON) $(WS_TOOLS)/python-requires - ; \
 	for e in $$($(COMPONENT_TEST_CMD) -qq --print-extras-to=- $(COMPONENT_TEST_TARGETS)) ; do \
 		PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 			$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
