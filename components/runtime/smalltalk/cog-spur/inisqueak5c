@@ -36,6 +36,7 @@
 # Author: David Stes
 # -r option to use wget and download image from files.squeak.org
 # -32 and -64 options to choose 32bit or 64bit image (64 default)
+# -v6 option to download Squeak 6.0 image
 # $Id: inisqueak5,v 1.1 2020/12/01 11:19:19 stes Exp $
 # 
 
@@ -46,7 +47,6 @@ VERSION=5.3-19481
 BIT=64
 
 REMOTESRC="http://files.squeak.org/sources_files/"
-REMOTESOURCES=SqueakV${MAJORV}.sources.gz
 REMSUFFIX="-64bit"
 
 prefix=/usr
@@ -77,6 +77,7 @@ while true; do
     -r) remote=true; shift;;
     -32) BIT=32;REMSUFFIX='-32bit'; shift;;
     -64) shift;;
+    -v6) MAJOR=6.0; MAJORV=60; VERSION=6.0-22104; shift ;;
     -R) remote=false; shift;;
     -b) batch=true; interactive=false; shift;;
     -h|-help|--help)
@@ -84,6 +85,7 @@ while true; do
         echo '    -b      batch (avoid interaction, exit status reflects success)'
         echo '    -h      you already know about'
         echo '    -r      download Squeak from remote server (default)'
+        echo '    -v6     download Squeak 6.0 images'
         echo '    -32     download 32 bit images'
         echo '    -64     download 64 bit images (default)'
         echo '    -R      do not download Squeak from remote server'
@@ -117,6 +119,8 @@ missing()
   echo "Please check your Squeak installation." >&2
   exit 1
 }
+
+REMOTESOURCES=SqueakV${MAJORV}.sources.gz
 
 if ${remotesrc}; then
   echo "Downloading $REMOTESOURCES from $REMOTESRC"
