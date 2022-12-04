@@ -23,8 +23,8 @@
 # we deliver our own script squeak.ips as driver script
 #
 # the driver script checks (with ckformat) the Smalltalk image
-# image format 6521  : start VM 32bit 
-# image format 68021 : start VM 64bit
+# image format 6521 or 7033 : start VM 32bit 
+# image format 68021 or 68533 : start VM 64bit
 BUILD_BITS=32_and_64
 USE_COMMON_TEST_MASTER= no
 
@@ -36,6 +36,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stack-spur
 COMPONENT_VERSION=	5.0.3275
+COMPONENT_REVISION=	1
 GIT_TAG=		sun-v5.0.55
 PLUGIN_REV=		5.0-202211181739
 COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
