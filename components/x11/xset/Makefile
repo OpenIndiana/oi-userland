@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xset
-COMPONENT_VERSION=        1.2.4
+COMPONENT_VERSION=        1.2.5
 COMPONENT_SUMMARY=        the xset X server configuration utility
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=   sha256:9f692d55635b3862cd63633b1222a87680ec283c7a8e8ed6dd698a3147f75e2f
 COMPONENT_FMRI=           x11/xset
-COMPONENT_ARCHIVE_HASH= \
-  sha256:e4fd95280df52a88e9b0abc1fee11dcf0f34fc24041b9f45a247e52df941c957
 
 include $(WS_MAKE_RULES)/common.mk
 
