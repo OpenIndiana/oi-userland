@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXScrnSaver
-COMPONENT_VERSION= 1.2.3
+COMPONENT_VERSION= 1.2.4
+COMPONENT_SUMMARY= libXScrnSaver - X screen saver library
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:75cd2859f38e207a090cac980d76bc71e9da99d48d09703584e00585abc920fe
 COMPONENT_FMRI=    x11/library/libxscrnsaver
-COMPONENT_SUMMARY= libXss - X screen saver library
-COMPONENT_ARCHIVE_HASH= \
-  sha256:f917075a1b7b5a38d67a8b0238eaab14acd2557679835b154cf2bca576e89bf8
 
 include $(WS_MAKE_RULES)/common.mk
 
