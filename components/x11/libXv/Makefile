@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXv
-COMPONENT_VERSION= 1.0.11
-COMPONENT_FMRI=    x11/library/libxv
+COMPONENT_VERSION= 1.0.12
 COMPONENT_SUMMARY= libXv - X Video extension library
-COMPONENT_ARCHIVE_HASH= \
-  sha256:d26c13eac99ac4504c532e8e76a1c8e4bd526471eb8a0a4ff2a88db60cb0b088
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:aaf7fa09f689f7a2000fe493c0d64d1487a1210db154053e9e2336b860c63848
+COMPONENT_FMRI=    x11/library/libxv
 
 include $(WS_MAKE_RULES)/common.mk
 
