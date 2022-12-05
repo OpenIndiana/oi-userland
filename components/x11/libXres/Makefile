@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXres
-COMPONENT_VERSION= 1.2.1
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=    x11/library/libxres
+COMPONENT_VERSION= 1.2.2
 COMPONENT_SUMMARY= libXres - X Resource extension library
-COMPONENT_ARCHIVE_HASH= sha256:b6e6fb1ebb61610e56017edd928fb89a5f53b3f4f990078309877468663b2b11
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:9a7446f3484b9b7538ac5ee30d2c1ce9e5b7fbbaf1440e02f6cca186a1fa745f
+COMPONENT_FMRI=    x11/library/libxres
 
 include $(WS_MAKE_RULES)/common.mk
 
