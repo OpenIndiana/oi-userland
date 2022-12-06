@@ -1,56 +1,42 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2021 Gary Mills
-# Copyright 2022 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project hypothesis
 #
 
 BUILD_STYLE = setup.py
-BUILD_BITS = NO_ARCH
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		hypothesis
-COMPONENT_VERSION=	4.57.1
-COMPONENT_SUMMARY=	Hypothesis is an advanced testing library for Python
-COMPONENT_DESCRIPTION=	Hypothesis is an advanced testing library for Python. \
-						It lets you write tests which are parametrized by a source of examples, \
-						and then generates simple and comprehensible examples that make your tests fail. \
-						This lets you find more bugs in your code with less work.
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:3c4369a4b0a1348561048bcda5f1db951a1b8e2a514ea8e8c70d36e656bf6fa0
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://github.com/HypothesisWorks/hypothesis
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_FMRI=	library/python/$(COMPONENT_NAME)
-COMPONENT_LICENSE=	MPLv2
+COMPONENT_NAME =		hypothesis
+COMPONENT_VERSION =		6.60.0
+COMPONENT_SUMMARY =		hypothesis - A library for property-based testing
+COMPONENT_PROJECT_URL =		https://hypothesis.works
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/93/01/9eb666fa63b2de2b143d7ff69a4bf8aadb965b25eccbdc9addde37f2c42c/hypothesis-6.60.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:39c06cd49f491204380d7c7aa45389d3fb84ee80ea1e3f10afc744044aceb751
+COMPONENT_LICENSE =		MPL-2.0
+COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-PYTHON_VERSIONS = 3.5 3.7 3.9
+TEST_STYLE = pytest
 
-TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/attrs
+PYTHON_REQUIRED_PACKAGES += library/python/exceptiongroup
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/sortedcontainers
+PYTHON_REQUIRED_PACKAGES += runtime/python
