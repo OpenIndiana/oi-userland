@@ -54,7 +54,7 @@
 #
 # 	To achieve this checkpoint we just need to build pyproject_installer
 # 	using pyproject_installer without detecting its requirements (they are
-# 	none anyway) and without testing it (since no testing infrastrusture is
+# 	none anyway) and without testing it (since no testing infrastructure is
 # 	ready yet).
 #
 # (2)	The python-requires script works.
@@ -102,6 +102,20 @@
 ifeq ($(strip $(PYTHON_BOOTSTRAP)),yes)
 PYTHON_TEST_BOOTSTRAP = yes
 endif
+
+#
+# Lists of Python projects needed to achieve particular bootstrap checkpoint.
+# Indentation shows project dependencies (e.g. packaging requires pyparsing).
+#
+PYTHON_BOOTSTRAP_CHECKPOINT_1 +=	pyproject_installer
+#
+PYTHON_BOOTSTRAP_CHECKPOINT_2 +=	$(PYTHON_BOOTSTRAP_CHECKPOINT_1)
+PYTHON_BOOTSTRAP_CHECKPOINT_2 +=	packaging
+PYTHON_BOOTSTRAP_CHECKPOINT_2 +=		pyparsing
+PYTHON_BOOTSTRAP_CHECKPOINT_2 +=			flit_core
+PYTHON_BOOTSTRAP_CHECKPOINT_2 +=		setuptools
+PYTHON_BOOTSTRAP_CHECKPOINT_2 +=		wheel
+PYTHON_BOOTSTRAP_CHECKPOINT_2 +=			setuptools
 
 # Particular python runtime is always required (at least to run setup.py)
 PYTHON_REQUIRED_PACKAGES += runtime/python
@@ -465,17 +479,9 @@ REQUIRED_PACKAGES_TRANSFORM += -e '$$r $(BUILD_DIR)/META.depend-test.required'
 USERLAND_REQUIRED_PACKAGES += library/python/importlib-metadata-37
 
 # The python-requires script requires packaging to provide useful output but
-# packaging might be unavailable during bootstrap of the following projects:
-#
-# - pyproject_installer (the bootstrapper)
-# - packaging (obviously),
-# - pyparsing (required by packaging)
-# - flit_core (required by pyparsing)
-# - wheel (required by packaging)
-# - setuptools (required by packaging and wheel)
-#
-# So require it conditionally.
-ifeq ($(filter $(strip $(COMPONENT_NAME)),pyproject_installer packaging pyparsing flit_core wheel setuptools),)
+# packaging might be unavailable during bootstrap until we reach bootstrap
+# checkpoint 2.  So require it conditionally.
+ifeq ($(filter $(strip $(COMPONENT_NAME)),$(PYTHON_BOOTSTRAP_CHECKPOINT_2)),)
 PYTHON_USERLAND_REQUIRED_PACKAGES += library/python/packaging
 endif
 

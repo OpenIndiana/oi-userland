@@ -92,6 +92,21 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ; \
 	fi ;
 
+# To make the package names comparable we normalize them by following the PyPA
+# Core metadata specifications and PEP 503.
+#
+# Before we reach bootstrap checkpoint 2 we use simple normalizer for build
+# dependencies.  After that we use python-requires to get dependencies
+# evaluated too.
+ifneq ($(filter $(strip $(COMPONENT_NAME)),$(PYTHON_BOOTSTRAP_CHECKPOINT_2)),)
+PYTHON_PACKAGE_NORMALIZER = \
+	$(GSED) -e $$'s/^[ \t]*''\([a-zA-Z0-9]\([a-zA-Z0-9._-]*[a-zA-Z0-9]\)\{0,1\}\).*/\1/' \
+	| tr [A-Z] [a-z] | $(GSED) -e 's/[._-]\{1,\}/-/g'
+else
+PYTHON_PACKAGE_NORMALIZER = \
+	$(PYTHON) $(WS_TOOLS)/python-requires -
+endif
+
 # Add build dependencies from project metadata to REQUIRED_PACKAGES
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
 $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
@@ -99,16 +114,12 @@ $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 	# PYTHON_ENV is needed here to have the PYTHONPATH set properly when we
 	# bootstrap the pyproject_installer bootstrapper.
 	#
-	# To make the package names comparable we normalize them here by
-	# following the PyPA Core metadata specifications and PEP 503.
-	#
 	# Once we obsolete Python 3.7 we should change $(PYTHON.3.9) to $(PYTHON) here
 	$(PYTHON_ENV) $(PYTHON.3.9) -c ' \
 			from pathlib import Path; \
 			from pyproject_installer.build_cmd._build import parse_build_system_spec; \
 			[print(x) for x in parse_build_system_spec(Path("'$(SOURCE_DIR)'"))["requires"]]' \
-		| $(GSED) -e $$'s/^[ \t]*''\([a-zA-Z0-9]\([a-zA-Z0-9._-]*[a-zA-Z0-9]\)\{0,1\}\).*/\1/' \
-		| tr [A-Z] [a-z] | $(GSED) -e 's/[._-]\{1,\}/-/g' \
+		| $(PYTHON_PACKAGE_NORMALIZER) \
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' \
 		> $@
 
