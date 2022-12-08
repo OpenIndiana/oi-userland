@@ -105,17 +105,13 @@ endif
 
 #
 # Lists of Python projects needed to achieve particular bootstrap checkpoint.
-# Indentation shows project dependencies (e.g. packaging requires pyparsing).
+# Indentation shows project dependencies (e.g. packaging requires flit_core).
 #
 PYTHON_BOOTSTRAP_CHECKPOINT_1 +=	pyproject_installer
 #
 PYTHON_BOOTSTRAP_CHECKPOINT_2 +=	$(PYTHON_BOOTSTRAP_CHECKPOINT_1)
 PYTHON_BOOTSTRAP_CHECKPOINT_2 +=	packaging
-PYTHON_BOOTSTRAP_CHECKPOINT_2 +=		pyparsing
-PYTHON_BOOTSTRAP_CHECKPOINT_2 +=			flit_core
-PYTHON_BOOTSTRAP_CHECKPOINT_2 +=		setuptools
-PYTHON_BOOTSTRAP_CHECKPOINT_2 +=		wheel
-PYTHON_BOOTSTRAP_CHECKPOINT_2 +=			setuptools
+PYTHON_BOOTSTRAP_CHECKPOINT_2 +=		flit_core
 
 # Particular python runtime is always required (at least to run setup.py)
 PYTHON_REQUIRED_PACKAGES += runtime/python
