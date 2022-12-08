@@ -212,7 +212,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	for f in $(PROTOUSRBINDIR)/* ; do \
 		[[ -f $$f ]] || continue ; \
 		for v in $(PYTHON_VERSIONS) ; do \
-			[[ "$$f" == "$${f%%-$$v}" ]] || continue 2 ; \
+			[[ "$$f" == "$${f%%$$v}" ]] || continue 2 ; \
 		done ; \
 		$(MV) $$f $$f-$(PYTHON_VERSION) ; \
 	done ;
