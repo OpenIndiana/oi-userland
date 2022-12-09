@@ -1,0 +1,270 @@
+Fix the libarchive man pages by removing all references to cpio(5)
+and tar(5) which we don't provide in Solaris. Also remove a reference
+to mtree(8) in the mtree(5) man page (which is a utility that's only
+available for NetBSD and FreeBSD).
+
+These changes will not be submitted upstream.
+
+diff --git a/libarchive/archive_read.3 b/libarchive/archive_read.3
+index cbedd0a..8904834 100644
+--- a/libarchive/archive_read.3
++++ b/libarchive/archive_read.3
+@@ -226,8 +226,7 @@ myclose(struct archive *a, void *client_data)
+ .Xr archive_read_open 3 ,
+ .Xr archive_read_set_options 3 ,
+ .Xr archive_util 3 ,
+-.Xr libarchive 3 ,
+-.Xr tar 5
++.Xr libarchive 3
+ .Sh HISTORY
+ The
+ .Nm libarchive
+diff --git a/libarchive/archive_read_data.3 b/libarchive/archive_read_data.3
+index 78c0c90..9800ec9 100644
+--- a/libarchive/archive_read_data.3
++++ b/libarchive/archive_read_data.3
+@@ -126,5 +126,4 @@ functions.
+ .Xr archive_read_open 3 ,
+ .Xr archive_read_set_options 3 ,
+ .Xr archive_util 3 ,
+-.Xr libarchive 3 ,
+-.Xr tar 5
++.Xr libarchive 3
+diff --git a/libarchive/archive_read_extract.3 b/libarchive/archive_read_extract.3
+index 858f397..939c5f7 100644
+--- a/libarchive/archive_read_extract.3
++++ b/libarchive/archive_read_extract.3
+@@ -133,5 +133,4 @@ functions.
+ .Xr archive_read_open 3 ,
+ .Xr archive_read_set_options 3 ,
+ .Xr archive_util 3 ,
+-.Xr libarchive 3 ,
+-.Xr tar 5
++.Xr libarchive 3
+diff --git a/libarchive/archive_read_format.3 b/libarchive/archive_read_format.3
+index f3804ce..a55c8aa 100644
+--- a/libarchive/archive_read_format.3
++++ b/libarchive/archive_read_format.3
+@@ -157,8 +157,7 @@ functions.
+ .Xr archive_read_filter 3 ,
+ .Xr archive_read_set_options 3 ,
+ .Xr archive_util 3 ,
+-.Xr libarchive 3 ,
+-.Xr tar 5
++.Xr libarchive 3
+ .Sh BUGS
+ Many traditional archiver programs treat
+ empty files as valid empty archives.
+diff --git a/libarchive/archive_read_header.3 b/libarchive/archive_read_header.3
+index 1e97f3a..6af1147 100644
+--- a/libarchive/archive_read_header.3
++++ b/libarchive/archive_read_header.3
+@@ -87,5 +87,4 @@ functions.
+ .Xr archive_read_open 3 ,
+ .Xr archive_read_set_options 3 ,
+ .Xr archive_util 3 ,
+-.Xr libarchive 3 ,
+-.Xr tar 5
++.Xr libarchive 3
+diff --git a/libarchive/archive_read_new.3 b/libarchive/archive_read_new.3
+index 8bb6b84..144972c 100644
+--- a/libarchive/archive_read_new.3
++++ b/libarchive/archive_read_new.3
+@@ -55,5 +55,4 @@ object can be found in the overview manual page for
+ .Xr archive_read_format 3 ,
+ .Xr archive_read_set_options 3 ,
+ .Xr archive_util 3 ,
+-.Xr libarchive 3 ,
+-.Xr tar 5
++.Xr libarchive 3
+diff --git a/libarchive/archive_read_open.3 b/libarchive/archive_read_open.3
+index f676778..8177c77 100644
+--- a/libarchive/archive_read_open.3
++++ b/libarchive/archive_read_open.3
+@@ -229,5 +229,4 @@ functions.
+ .Xr archive_read_format 3 ,
+ .Xr archive_read_set_options 3 ,
+ .Xr archive_util 3 ,
+-.Xr libarchive 3 ,
+-.Xr tar 5
++.Xr libarchive 3
+diff --git a/libarchive/archive_write.3 b/libarchive/archive_write.3
+index e7f7f13..a9d0fb3 100644
+--- a/libarchive/archive_write.3
++++ b/libarchive/archive_write.3
+@@ -227,9 +227,7 @@ int main(int argc, const char **argv)
+ .Xr tar 1 ,
+ .Xr archive_write_set_options 3 ,
+ .Xr libarchive 3 ,
+-.Xr cpio 5 ,
+-.Xr mtree 5 ,
+-.Xr tar 5
++.Xr mtree 5
+ .Sh HISTORY
+ The
+ .Nm libarchive
+diff --git a/libarchive/archive_write_blocksize.3 b/libarchive/archive_write_blocksize.3
+index 4973f99..fb1bc0e 100644
+--- a/libarchive/archive_write_blocksize.3
++++ b/libarchive/archive_write_blocksize.3
+@@ -109,6 +109,4 @@ functions.
+ .Xr tar 1 ,
+ .Xr archive_write_set_options 3 ,
+ .Xr libarchive 3 ,
+-.Xr cpio 5 ,
+-.Xr mtree 5 ,
+-.Xr tar 5
++.Xr mtree 5
+diff --git a/libarchive/archive_write_data.3 b/libarchive/archive_write_data.3
+index bc208b4..375b0c7 100644
+--- a/libarchive/archive_write_data.3
++++ b/libarchive/archive_write_data.3
+@@ -85,6 +85,4 @@ and consider any non-negative value as success.
+ .Xr archive_write_finish_entry 3 ,
+ .Xr archive_write_set_options 3 ,
+ .Xr libarchive 3 ,
+-.Xr cpio 5 ,
+-.Xr mtree 5 ,
+-.Xr tar 5
++.Xr mtree 5
+diff --git a/libarchive/archive_write_filter.3 b/libarchive/archive_write_filter.3
+index c83eb77..8ba4de4 100644
+--- a/libarchive/archive_write_filter.3
++++ b/libarchive/archive_write_filter.3
+@@ -129,6 +129,4 @@ functions.
+ .Xr archive_write_format 3 ,
+ .Xr archive_write_set_options 3 ,
+ .Xr libarchive 3 ,
+-.Xr cpio 5 ,
+-.Xr mtree 5 ,
+-.Xr tar 5
++.Xr mtree 5
+diff --git a/libarchive/archive_write_finish_entry.3 b/libarchive/archive_write_finish_entry.3
+index 5797e16..683664a 100644
+--- a/libarchive/archive_write_finish_entry.3
++++ b/libarchive/archive_write_finish_entry.3
+@@ -74,6 +74,4 @@ functions.
+ .Xr archive_write_data 3 ,
+ .Xr archive_write_set_options 3 ,
+ .Xr libarchive 3 ,
+-.Xr cpio 5 ,
+-.Xr mtree 5 ,
+-.Xr tar 5
++.Xr mtree 5
+diff --git a/libarchive/archive_write_format.3 b/libarchive/archive_write_format.3
+index 47a7403..571a3d8 100644
+--- a/libarchive/archive_write_format.3
++++ b/libarchive/archive_write_format.3
+@@ -169,7 +169,5 @@ functions.
+ .Xr archive_write 3 ,
+ .Xr archive_write_set_options 3 ,
+ .Xr libarchive 3 ,
+-.Xr cpio 5 ,
+ .Xr libarchive-formats 5 ,
+-.Xr mtree 5 ,
+-.Xr tar 5
++.Xr mtree 5
+diff --git a/libarchive/archive_write_free.3 b/libarchive/archive_write_free.3
+index 5210e2a..c7ce73d 100644
+--- a/libarchive/archive_write_free.3
++++ b/libarchive/archive_write_free.3
+@@ -91,6 +91,4 @@ functions.
+ .Xr tar 1 ,
+ .Xr archive_write_set_options 3 ,
+ .Xr libarchive 3 ,
+-.Xr cpio 5 ,
+-.Xr mtree 5 ,
+-.Xr tar 5
++.Xr mtree 5
+diff --git a/libarchive/archive_write_header.3 b/libarchive/archive_write_header.3
+index 2217b18..01101c0 100644
+--- a/libarchive/archive_write_header.3
++++ b/libarchive/archive_write_header.3
+@@ -68,6 +68,4 @@ functions.
+ .Xr tar 1 ,
+ .Xr archive_write_set_options 3 ,
+ .Xr libarchive 3 ,
+-.Xr cpio 5 ,
+-.Xr mtree 5 ,
+-.Xr tar 5
++.Xr mtree 5
+diff --git a/libarchive/archive_write_new.3 b/libarchive/archive_write_new.3
+index 788cbb8..5ed295b 100644
+--- a/libarchive/archive_write_new.3
++++ b/libarchive/archive_write_new.3
+@@ -53,6 +53,4 @@ object can be found in the overview manual page for
+ .Xr archive_write 3 ,
+ .Xr archive_write_set_options 3 ,
+ .Xr libarchive 3 ,
+-.Xr cpio 5 ,
+-.Xr mtree 5 ,
+-.Xr tar 5
++.Xr mtree 5
+diff --git a/libarchive/archive_write_open.3 b/libarchive/archive_write_open.3
+index 0129d10..8839355 100644
+--- a/libarchive/archive_write_open.3
++++ b/libarchive/archive_write_open.3
+@@ -241,6 +241,4 @@ functions.
+ .Xr archive_write_new 3 ,
+ .Xr archive_write_set_options 3 ,
+ .Xr libarchive 3 ,
+-.Xr cpio 5 ,
+-.Xr mtree 5 ,
+-.Xr tar 5
++.Xr mtree 5
+diff --git a/libarchive/libarchive-formats.5 b/libarchive/libarchive-formats.5
+index 62359dd..04cc2ec 100644
+--- a/libarchive/libarchive-formats.5
++++ b/libarchive/libarchive-formats.5
+@@ -401,8 +401,7 @@ This format is not a true archive format, but rather a textual description
+ of a file hierarchy in which each line specifies the name of a file and
+ provides specific metadata about that file.
+ Libarchive can read all of the keywords supported by both
+-the NetBSD and FreeBSD versions of
+-.Xr mtree 8 ,
++the NetBSD and FreeBSD versions of mtree (not available for Solaris),
+ although many of the keywords cannot currently be stored in an
+ .Tn archive_entry
+ object.
+@@ -454,12 +453,9 @@ Libarchive can read and write the XAR format used by many Apple tools.
+ TODO: Need more information
+ .Sh SEE ALSO
+ .Xr ar 1 ,
+-.Xr cpio 1 ,
+ .Xr mkisofs 1 ,
+ .Xr shar 1 ,
+ .Xr tar 1 ,
+ .Xr zip 1 ,
+ .Xr zlib 3 ,
+-.Xr cpio 5 ,
+-.Xr mtree 5 ,
+-.Xr tar 5
++.Xr mtree 5
+diff --git a/libarchive/libarchive.3 b/libarchive/libarchive.3
+index c6894d2..7be5ddc 100644
+--- a/libarchive/libarchive.3
++++ b/libarchive/libarchive.3
+@@ -254,8 +254,7 @@ functions that are impacted by the currently-selected locale.
+ .Xr archive_entry 3 ,
+ .Xr archive_read 3 ,
+ .Xr archive_util 3 ,
+-.Xr archive_write 3 ,
+-.Xr tar 5
++.Xr archive_write 3
+ .Sh HISTORY
+ The
+ .Nm libarchive
+diff --git a/libarchive/mtree.5 b/libarchive/mtree.5
+index 8147796..9ba5868 100644
+--- a/libarchive/mtree.5
++++ b/libarchive/mtree.5
+@@ -289,8 +289,7 @@ The file owner as a symbolic name.
+ .El
+ .Sh SEE ALSO
+ .Xr cksum 1 ,
+-.Xr find 1 ,
+-.Xr mtree 8
++.Xr find 1
+ .Sh HISTORY
+ The
+ .Nm
