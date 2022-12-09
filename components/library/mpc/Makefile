@@ -27,43 +27,33 @@
 #
 
 BUILD_BITS=	64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		mpc
-COMPONENT_VERSION=	1.2.1
-COMPONENT_SUMMARY=	Multiprecision complex data type evaluation library
-COMPONENT_PROJECT_URL=	http://www.multiprecision.org/
-COMPONENT_FMRI=		library/mpc
-COMPONENT_CLASSIFICATION=	Development/High Performance Computing
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/mpc/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:17503d2c395dfcf106b622dc142683c1199431d095367c6aacba6eec30340459
-COMPONENT_SIG_URL=  $(COMPONENT_ARCHIVE_URL).sig
-COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_NAME= mpc
+COMPONENT_VERSION= 1.3.0
+COMPONENT_SUMMARY= Multiprecision complex data type evaluation library
+COMPONENT_PROJECT_URL= https://www.multiprecision.org/
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL= https://ftp.gnu.org/gnu/mpc/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:0e3b12181d37207230f5a7a7ddcfc22abfc5fc9c05825e1a65401a489a432a2a
+COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).sig
+COMPONENT_FMRI= library/mpc
+COMPONENT_CLASSIFICATION= Development/High Performance Computing
+COMPONENT_LICENSE= LGPLv2.1
 
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS +=		`pkg-config --cflags mpfr`
+CFLAGS += `pkg-config --cflags mpfr`
 
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --disable-static
 
-COMPONENT_TEST_DIR =	$(BUILD_DIR)/$(MACH$(BITS))/tests
-COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-    '-n ' \
-	'-e "/====/p" ' \
-	'-e "/^Testsuite/p" ' \
-    '-e "/TOTAL:/p" ' \
-    '-e "/PASS:/p" ' \
-    '-e "/SKIP:/p" ' \
-    '-e "/XFAIL:/p" ' \
-    '-e "/FAIL:/p" ' \
-    '-e "/XPASS:/p" ' \
-    '-e "/ERROR:/p" '
+COMPONENT_TEST_DIR= $(BUILD_DIR)/$(MACH$(BITS))/tests
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
