@@ -10,11 +10,11 @@
 #
 
 #
-# Copyright 2018 Alexander Pyhalov
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -23,6 +23,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+<transform file path=.*/bin/$(MACH32)/.+ -> drop>
+
+file path=usr/bin/$(MACH32)/json-glib-format
+file path=usr/bin/$(MACH32)/json-glib-validate
 file path=usr/bin/json-glib-format
 file path=usr/bin/json-glib-validate
 file path=usr/include/json-glib-1.0/json-glib/json-builder.h
@@ -61,6 +65,10 @@ file path=usr/lib/installed-tests/json-glib-1.0/serialize-full
 file path=usr/lib/installed-tests/json-glib-1.0/serialize-simple
 file path=usr/lib/installed-tests/json-glib-1.0/skip-bom.json
 file path=usr/lib/installed-tests/json-glib-1.0/stream-load.json
+link path=usr/lib/libjson-glib-1.0.so target=libjson-glib-1.0.so.0
+link path=usr/lib/libjson-glib-1.0.so.0 target=libjson-glib-1.0.so.0.600.6
+file path=usr/lib/libjson-glib-1.0.so.0.600.6
+file path=usr/lib/pkgconfig/json-glib-1.0.pc
 file path=usr/share/gir-1.0/Json-1.0.gir
 file path=usr/share/installed-tests/json-glib-1.0/array.test
 file path=usr/share/installed-tests/json-glib-1.0/boxed.test
