@@ -11,60 +11,57 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2022 Andreas Wacknitz
 #
 
+BUILD_STYLE= meson
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgdata
-COMPONENT_MJR_VERSION= 0.17
-COMPONENT_MNR_VERSION= 9
-COMPONENT_REVISION= 2
+COMPONENT_MJR_VERSION= 0.18
+COMPONENT_MNR_VERSION= 1
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY= libgdata is a collection library providing GObject-based interfaces and classes for commonly used data structures
+COMPONENT_PROJECT_URL= https://www.gnome.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:85c4f7674c0098ffaf060ae01b6b832cb277b3673d54ace3bdedaad6b127453a
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
-COMPONENT_CLASSIFICATION = Development/GNOME and GTK+
+COMPONENT_ARCHIVE_HASH= sha256:dd8592eeb6512ad0a8cf5c8be8c72e76f74bfe6b23e4dd93f0756ee0716804c7
+COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= library/desktop/libgdata
+COMPONENT_CLASSIFICATION = Development/GNOME and GTK+
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_LICENSE= LGPLv2.1
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# All 32 bit tests fail because of missing TLS support:
+TEST_TARGET= $(TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
+CONFIGURE_ENV += PATH="$(PATH)"
+COMPONENT_INSTALL_ENV += PATH="$(PATH)"
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --disable-goa
+#CONFIGURE_OPTIONS += -Dinstalled_tests=true
+#CONFIGURE_OPTIONS += -Dgtk_doc=true
+#CONFIGURE_OPTIONS += -Dman=true
+# We don't have goa:
+CONFIGURE_OPTIONS += -Dgoa=disabled
+# introspection needs linux compatible ld:
+CONFIGURE_OPTIONS += -Dintrospection=false
 
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_TEST_TRANSFORMS += '-e "s/      [0-9]*.[0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/GLib-Net-WARNING/d" ' \
+        '-e "/OK/p" ' \
+        '-e "/Fail/p" ' \
+        '-e "/Pass/p" ' \
+        '-e "/Ok/p" ' \
+        '-e "/ok/p" '
 
 # for the tests
 unexport SHELLOPTS
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_ARGS =   -k -i
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/ERROR:/p" '
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += library/uhttpmock
@@ -73,7 +70,6 @@ REQUIRED_PACKAGES += library/uhttpmock
 REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/gcr
-REQUIRED_PACKAGES += library/liboauth
 REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
