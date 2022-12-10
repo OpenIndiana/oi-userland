@@ -307,6 +307,7 @@ COMPONENT_TEST_ARGS =		--current-env --no-provision --recreate
 COMPONENT_TEST_TARGETS =	-e py$(shell echo $(PYTHON_VERSION) | tr -d .)
 
 # Make sure following tools are called indirectly to properly support tox-current-env
+TOX_CALL_INDIRECTLY += py.test
 TOX_CALL_INDIRECTLY += pytest
 TOX_CALL_INDIRECTLY += coverage
 TOX_CALL_INDIRECTLY += zope.testrunner
