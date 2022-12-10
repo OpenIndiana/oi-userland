@@ -22,19 +22,21 @@
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=		32_and_64
-
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libusb
-COMPONENT_VERSION=	1.0.23
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:db11c06e958a82dac52cf3c65cb4dd2c3f339c8a988665110e0d24d19312ad8d
-COMPONENT_ARCHIVE_URL=  https://github.com/libusb/libusb/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://libusb.info/
-COMPONENT_LICENSE=	LGPLv2.1
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_NAME= libusb
+COMPONENT_VERSION= 1.0.26
+COMPONENT_SUMMARY= A cross-platform user library to access USB devices
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:12ce7a61fc9854d1d2a1ffe095f7b5fac19ddba095c259e6067a46500381b5a5
+COMPONENT_ARCHIVE_URL= https://github.com/libusb/libusb/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://libusb.info/
+COMPONENT_FMRI= library/libusb-1
+COMPONENT_CLASSIFICATION= Development/C
+COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -43,13 +45,13 @@ LD_OPTIONS += $(LD_Z_DEFS)
 
 COMPONENT_PREP_ACTION = ( cd $(@D); $(AUTORECONF) -if )
 
-CONFIGURE_OPTIONS +=	--enable-static=no
-CONFIGURE_OPTIONS +=	--enable-log
-CONFIGURE_OPTIONS +=	--enable-tests-build
+CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --enable-log
+CONFIGURE_OPTIONS += --enable-tests-build
 
-COMPONENT_BUILD_ARGS +=	"LDFLAGS=$(LDFLAGS) -lnvpair"
-COMPONENT_BUILD_ARGS +=	"INSTALL=$(INSTALL)"
-COMPONENT_BUILD_ARGS +=	"MAKE=$(GMAKE)"
+COMPONENT_BUILD_ARGS += "LDFLAGS=$(LDFLAGS) -lnvpair"
+COMPONENT_BUILD_ARGS += "INSTALL=$(INSTALL)"
+COMPONENT_BUILD_ARGS += "MAKE=$(GMAKE)"
 
 # Test target just runs the 'stress' binary; requires Global Zone
 COMPONENT_TEST_TARGETS=
@@ -60,3 +62,5 @@ COMPONENT_TEST_CMD= ./stress
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-usb
 REQUIRED_PACKAGES += system/header/header-ugen
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
