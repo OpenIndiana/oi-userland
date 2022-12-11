@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gsoap
 COMPONENT_MAJOR_VERSION= 2.8
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).123
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).124
 COMPONENT_SUMMARY=      Toolkit for SOAP/REST-based C/C++ server and client web service applications
 COMPONENT_PROJECT_URL=  https://www.genivia.com/products.html
 COMPONENT_FMRI=         library/gsoap
@@ -25,7 +25,7 @@ COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_MAJOR_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)_$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_URL=  https://downloads.sourceforge.net/project/gsoap2/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:e018500ac942bb7627612cc9a8229610efe293a450359c413da1a006eb7c193d
+COMPONENT_ARCHIVE_HASH= sha256:4b798780989338f665ef8e171bbcc422a271004d62d5852666d5eeca33a6a636
 COMPONENT_LICENSE=      GPLv2+ with exceptions
 
 include $(WS_MAKE_RULES)/common.mk
