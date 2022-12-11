@@ -13,40 +13,29 @@
 # Copyright 2022 Niklas Poslovski
 #
 
+BUILD_STYLE= archive
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=	twemoji
-COMPONENT_VERSION= 13.1.0
+COMPONENT_NAME= twemoji
+COMPONENT_VERSION= 14.0.2
 COMPONENT_SUMMARY= A color and B&W emoji SVG-in-OpenType font by Twitter with support for ZWJ, skin tone modifiers and country flags.
 COMPONENT_PROJECT_URL= https://twemoji.twitter.com
-COMPONENT_FMRI=		system/font/emoji/twemoji
-COMPONENT_CLASSIFICATION=	System/Fonts
-COMPONENT_SRC=		TwitterColorEmoji-SVGinOT-Linux-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	https://github.com/eosrei/twemoji-color-font/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-  sha256:57c0d651400af872c33dcab78b33ecd7be0f7d49da49e2c1c83a59c215085f94
+COMPONENT_SRC= TwitterColorEmoji-SVGinOT-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE_URL= https://github.com/13rac1/twemoji-color-font/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:8e2c6cb768b5a578b1dacb8f70d3b91e782a8098821484af77cf322ac499f28a
+COMPONENT_FMRI= system/font/emoji/twemoji
+COMPONENT_CLASSIFICATION= System/Fonts
 COMPONENT_LICENSE=	Creative Commons Attribution 4.0 International
-COMPONENT_LICENSE_FILE=	twemoji.license
+COMPONENT_LICENSE_FILE=	LICENSE-CC-BY.txt
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+FONT_TYPE= TTF
 
-FONT_TTF_DIR=/usr/share/fonts/TrueType
-THIS_FONT_DIR=$(FONT_TTF_DIR)/twemoji
+include $(WS_MAKE_RULES)/font.mk
 
-COMPONENT_BUILD_ACTION= cd $(@D) ; mkfontscale ; mkfontdir
+COMPONENT_FONT_FILES += *.ttf
+COMPONENT_FONT_SRC_DIR=
+COMPONENT_FONTCONF_SRC_DIR=                                                                                                         
+COMPONENT_FONTCONF_FILES=
 
-COMPONENT_INSTALL_ACTION= cd $(@D) && \
-    rm -rf $(PROTO_DIR)$(THIS_FONT_DIR) && mkdir -p $(PROTO_DIR)$(THIS_FONT_DIR) && \
-	$(INSTALL) -c -m 0444 *.ttf fonts.dir fonts.scale $(PROTO_DIR)$(THIS_FONT_DIR);
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(NO_TESTS)
-
-REQUIRED_PACKAGES+= x11/mkfontdir
-REQUIRED_PACKAGES+= x11/mkfontscale
+# Auto-generated dependencies
