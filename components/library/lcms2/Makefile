@@ -20,20 +20,22 @@
 #
 # Copyright (c) 2015-2017, Aurelien Larcher 
 #
-BUILD_BITS=				64_and_32
+BUILD_BITS= 64_and_32
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms2
 COMPONENT_MJR_VERSION=	2.14
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION)
-COMPONENT_FMRI=         library/lcms2
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      The Little Color Management System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.littlecms.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:28474ea6f6591c4d4cee972123587001a4e6e353412a41b3e9e82219818d5740
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/lcms2
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MIT
 
 include $(WS_MAKE_RULES)/common.mk
@@ -75,8 +77,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^XXX_REMOVE_XXX$$/d" '
 
 # Auto-generated dependencies
-#REQUIRED_PACKAGES += image/library/libjpeg8-turbo
-REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
