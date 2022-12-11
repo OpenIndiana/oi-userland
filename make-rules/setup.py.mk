@@ -300,7 +300,7 @@ endif
 TEST_STYLE ?= tox
 ifeq ($(strip $(TEST_STYLE)),tox)
 COMPONENT_TEST_ENV +=		PATH=$(PATH)	# https://github.com/tox-dev/tox/issues/2538
-COMPONENT_TEST_ENV +=		PYTEST_ADDOPTS=--verbose
+COMPONENT_TEST_ENV +=		PYTEST_ADDOPTS="$(PYTEST_ADDOPTS)"
 COMPONENT_TEST_ENV +=		TOX_TESTENV_PASSENV="PYTHONPATH PYTEST_ADDOPTS"
 COMPONENT_TEST_CMD =		$(TOX)
 COMPONENT_TEST_ARGS =		--current-env --no-provision --recreate
@@ -342,10 +342,11 @@ COMPONENT_POST_INSTALL_ACTION += \
 	done ) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' > $(@D)/.depend-test ;
 else ifeq ($(strip $(TEST_STYLE)),pytest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
-COMPONENT_TEST_ARGS =
-COMPONENT_TEST_ARGS +=		--verbose
-COMPONENT_TEST_ARGS +=		--color=no
+COMPONENT_TEST_ARGS =		$(PYTEST_ADDOPTS)
 COMPONENT_TEST_TARGETS =
+
+# Force pytest to not use colored output so the results normalization is unaffected
+PYTEST_ADDOPTS += --color=no
 
 USERLAND_REQUIRED_PACKAGES += library/python/pytest
 else ifeq ($(strip $(TEST_STYLE)),unittest)
@@ -361,6 +362,9 @@ COMPONENT_TEST_TARGETS =	test
 else ifeq ($(strip $(TEST_STYLE)),none)
 TEST_TARGET = $(NO_TESTS)
 endif
+
+# Run pytest verbose to get separate line per test in results output
+PYTEST_ADDOPTS += --verbose
 
 # Normalize pytest test results.  The pytest framework could be used either
 # directly or via tox or setup.py so add these transforms for all test styles
