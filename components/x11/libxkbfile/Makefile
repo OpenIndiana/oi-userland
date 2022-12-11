@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     libxkbfile
-COMPONENT_VERSION=  1.1.1
+COMPONENT_VERSION=  1.1.2
 COMPONENT_SUMMARY=  libxkbfile - XKB file library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:8623dc26e7aac3c5ad8a25e57b566f4324f5619e5db38457f0804ee4ed953443
+COMPONENT_ARCHIVE_HASH= sha256:b8a3784fac420b201718047cfb6c2d5ee7e8b9481564c2667b4215f6616644b1
 COMPONENT_FMRI=     x11/library/libxkbfile
 
 include $(WS_MAKE_RULES)/common.mk
