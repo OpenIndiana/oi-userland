@@ -14,21 +14,18 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cairo
 COMPONENT_VERSION=      1.16.0
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_SUMMARY=      Vector graphics library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:5e7b29b3f113ef870d1e3ecf8adf21f923396401604bda16d44be45e66052331
-COMPONENT_ARCHIVE_URL=  \
-	http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://cairographics.org/
+COMPONENT_ARCHIVE_HASH= sha256:5e7b29b3f113ef870d1e3ecf8adf21f923396401604bda16d44be45e66052331
+COMPONENT_ARCHIVE_URL=  https://cairographics.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://cairographics.org/
 COMPONENT_FMRI=         library/desktop/cairo
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=      LGPLv2.1
