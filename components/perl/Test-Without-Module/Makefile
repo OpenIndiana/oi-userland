@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Without::Module
-HUMAN_VERSION =			0.20
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.21
 COMPONENT_SUMMARY =		Test::Without::Module - Test fallback behaviour in absence of modules
 COMPONENT_CPAN_AUTHOR =		CORION
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8e9aeb7c32a6c6d0b8a93114db2a8c072721273a9d9a2dd4f9ca86cfd28aa524
+	sha256:3cdeafadac4853ebeafe689346d555da5dfa3cfa9d4c84e3e5e7bfee50beec46
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
