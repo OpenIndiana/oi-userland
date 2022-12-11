@@ -21,13 +21,12 @@
 # Copyright (c) 2015, Apostolos Syropoulos. All rights reserved.
 # Copyright (c) 2015-207, Aurelien Larcher. All rights reserved.
 #
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         librevenge
 COMPONENT_VERSION=      0.0.4
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_FMRI=         library/c++/librevenge
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=  https://sourceforge.net/p/libwpd/wiki/librevenge/
@@ -54,8 +53,8 @@ CONFIGURE_OPTIONS+=	--disable-werror
 REQUIRED_PACKAGES += system/library/boost
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
