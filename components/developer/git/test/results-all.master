@@ -9712,24 +9712,28 @@ ok 24 - branch --merged with --verbose
 # passed all 24 test(s)
 1..24
 *** t3202-show-branch.sh ***
-ok 1 - setup
-ok 2 - show-branch with more than 8 branches
-ok 3 - show-branch with showbranch.default
-ok 4 - show-branch --color output
-ok 5 - show branch --remotes
-ok 6 - setup show branch --list
-ok 7 - show branch --list
-ok 8 - show branch --list has no --color output
-ok 9 - show branch --merge-base with one argument
-ok 10 - show branch --merge-base with two arguments
-ok 11 - show branch --merge-base with N arguments
-ok 12 - show branch --reflog=2
-ok 13 - show-branch --all --reflog (should fail)
-ok 14 - show-branch --merge-base --reflog (should fail)
-ok 15 - show-branch --list --merge-base (should fail)
-ok 16 - show-branch --reflog --current (should fail)
-# passed all 16 test(s)
-1..16
+ok 1 - error descriptions on empty repository
+ok 2 - fatal descriptions on empty repository
+ok 3 - setup
+ok 4 - show-branch with more than 8 branches
+ok 5 - show-branch with showbranch.default
+ok 6 - show-branch --color output
+ok 7 - show branch --remotes
+ok 8 - setup show branch --list
+ok 9 - show branch --list
+ok 10 - show branch --list has no --color output
+ok 11 - show branch --merge-base with one argument
+ok 12 - show branch --merge-base with two arguments
+ok 13 - show branch --merge-base with N arguments
+ok 14 - show branch --reflog=2
+ok 15 - show-branch --all --reflog (should fail)
+ok 16 - show-branch --merge-base --reflog (should fail)
+ok 17 - show-branch --list --merge-base (should fail)
+ok 18 - show-branch --reflog --current (should fail)
+ok 19 - error descriptions on non-existent branch
+ok 20 - fatal descriptions on non-existent branch
+# passed all 20 test(s)
+1..20
 *** t3203-branch-output.sh ***
 ok 1 - make commits
 ok 2 - make branches
@@ -10516,7 +10520,10 @@ not ok 121 - --update-refs updates refs correctly
 #		test_cmp expect err.trimmed
 #	
 ok 122 - respect user edits to update-ref steps
-not ok 123 - --update-refs: check failed ref update
+ok 123 - --update-refs: all update-ref lines removed
+ok 124 - --update-refs: all update-ref lines removed, then some re-added
+ok 125 - --update-refs: --edit-todo with no update-ref lines
+not ok 126 - --update-refs: check failed ref update
 #	
 #		git checkout -B update-refs-error no-conflict-branch &&
 #		git branch -f base HEAD~4 &&
@@ -10568,9 +10575,9 @@ not ok 123 - --update-refs: check failed ref update
 #			<err.last >err.trimmed &&
 #		test_cmp expect err.trimmed
 #	
-ok 124 - $EDITOR and friends are unchanged
-# failed 2 among 124 test(s)
-1..124
+ok 127 - $EDITOR and friends are unchanged
+# failed 2 among 127 test(s)
+1..127
 *** t3405-rebase-malformed.sh ***
 ok 1 - setup
 ok 2 - rebase commit with multi-line subject
@@ -10682,22 +10689,23 @@ ok 7 - auto squash that matches 2 commits
 ok 8 - auto squash that matches a commit after the squash
 ok 9 - auto squash that matches a sha1
 ok 10 - auto squash that matches longer sha1
-ok 11 - use commit --fixup
-ok 12 - use commit --squash
-ok 13 - fixup! fixup!
-ok 14 - fixup! squash!
-ok 15 - squash! squash!
-ok 16 - squash! fixup!
-ok 17 - autosquash with custom inst format
-ok 18 - autosquash with empty custom instructionFormat
-ok 19 - autosquash with multiple empty patches
-ok 20 - extra spaces after fixup!
-ok 21 - wrapped original subject
-ok 22 - abort last squash
-ok 23 - fixup a fixup
-ok 24 - fixup does not clean up commit message
-# passed all 24 test(s)
-1..24
+ok 11 - auto squash of fixup commit that matches branch name which points back to fixup commit
+ok 12 - use commit --fixup
+ok 13 - use commit --squash
+ok 14 - fixup! fixup!
+ok 15 - fixup! squash!
+ok 16 - squash! squash!
+ok 17 - squash! fixup!
+ok 18 - autosquash with custom inst format
+ok 19 - autosquash with empty custom instructionFormat
+ok 20 - autosquash with multiple empty patches
+ok 21 - extra spaces after fixup!
+ok 22 - wrapped original subject
+ok 23 - abort last squash
+ok 24 - fixup a fixup
+ok 25 - fixup does not clean up commit message
+# passed all 25 test(s)
+1..25
 *** t3416-rebase-onto-threedots.sh ***
 ok 1 - setup
 ok 2 - rebase --onto main...topic
@@ -11329,6 +11337,17 @@ ok 10 - sequence squash, fixup & fixup -c gives combined message
 ok 11 - fixup -C works upon --autosquash with amend!
 # passed all 11 test(s)
 1..11
+*** t3438-rebase-broken-files.sh ***
+ok 1 - set up conflicting branches
+ok 2 - detect missing GIT_AUTHOR_NAME
+ok 3 - detect missing GIT_AUTHOR_EMAIL
+ok 4 - detect missing GIT_AUTHOR_DATE
+ok 5 - detect duplicate GIT_AUTHOR_NAME
+ok 6 - detect duplicate GIT_AUTHOR_EMAIL
+ok 7 - detect duplicate GIT_AUTHOR_DATE
+ok 8 - unknown key in author-script
+# passed all 8 test(s)
+1..8
 *** t3500-cherry.sh ***
 ok 1 - prepare repository with topic branch, and check cherry finds the 2 patches from there
 ok 2 - check that cherry with limit returns only the top patch
@@ -15833,8 +15852,9 @@ ok 21 - Check conflicted oids and modes without messages
 ok 22 - NUL terminated conflicted file "lines"
 ok 23 - error out by default for unrelated histories
 ok 24 - can override merge of unrelated histories
-# passed all 24 test(s)
-1..24
+ok 25 # skip merge-ort fails gracefully in a read-only repository (missing SANITY)
+# passed all 25 test(s)
+1..25
 *** t5000-tar-tree.sh ***
 ok 1 - setup
 ok 2 - populate workdir
@@ -16124,13 +16144,12 @@ ok 42 - mailinfo -k
 ok 43 - mailinfo -b no [PATCH]
 ok 44 - mailinfo -b leading [PATCH]
 ok 45 - mailinfo -b double [PATCH]
-not ok 46 - mailinfo -b trailing [PATCH] # TODO known breakage
-not ok 47 - mailinfo -b separated double [PATCH] # TODO known breakage
+ok 46 - mailinfo -b trailing [PATCH]
+ok 47 - mailinfo -b separated double [PATCH]
 ok 48 - mailinfo handles unusual header whitespace
 ok 49 - split base64 email with quoted-cr
 ok 50 - mailinfo warn CR in base64 encoded email
-# still have 2 known breakage(s)
-# passed all remaining 48 test(s)
+# passed all 50 test(s)
 1..50
 *** t5150-request-pull.sh ***
 ok 1 - setup
@@ -16797,16 +16816,19 @@ ok 64 - expire removes unreferenced packs
 ok 65 - repack with minimum size does not alter existing packs
 ok 66 - repack respects repack.packKeptObjects=false
 ok 67 - repack creates a new pack
-ok 68 - expire removes repacked packs
-ok 69 - expire works when adding new packs
-ok 70 - expire respects .keep files
-ok 71 - repack --batch-size=0 repacks everything
-ok 72 - repack --batch-size=<large> repacks everything
-ok 73 - load reverse index when missing .idx, .pack
-ok 74 - usage shown without sub-command
-ok 75 - complains when run outside of a repository
-# passed all 75 test(s)
-1..75
+ok 68 - repack (all) ignores cruft pack
+ok 69 - repack (--batch-size) ignores cruft pack
+ok 70 - expire removes repacked packs
+ok 71 - expire works when adding new packs
+ok 72 - expire respects .keep files
+ok 73 - expiring unreferenced cruft pack retains pack
+ok 74 - repack --batch-size=0 repacks everything
+ok 75 - repack --batch-size=<large> repacks everything
+ok 76 - load reverse index when missing .idx, .pack
+ok 77 - usage shown without sub-command
+ok 78 - complains when run outside of a repository
+# passed all 78 test(s)
+1..78
 *** t5320-delta-islands.sh ***
 ok 1 - setup commits
 ok 2 - vanilla repack deltas one against two
@@ -18459,58 +18481,59 @@ ok 58 - rename a remote
 ok 59 - rename a remote renames repo remote.pushDefault
 ok 60 - rename a remote renames repo remote.pushDefault but ignores global
 ok 61 - rename a remote renames repo remote.pushDefault but keeps global
-ok 62 - rename does not update a non-default fetch refspec
-ok 63 - rename a remote with name part of fetch spec
-ok 64 - rename a remote with name prefix of other remote
-ok 65 - rename succeeds with existing remote.<target>.prune
-ok 66 - remove a remote
-ok 67 - remove a remote removes repo remote.pushDefault
-ok 68 - remove a remote removes repo remote.pushDefault but ignores global
-ok 69 - remove a remote removes repo remote.pushDefault but keeps global
-ok 70 - migrate a remote from named file in $GIT_DIR/remotes
-ok 71 - migrate a remote from named file in $GIT_DIR/branches
-ok 72 - migrate a remote from named file in $GIT_DIR/branches (2)
-ok 73 - remote prune to cause a dangling symref
-ok 74 - show empty remote
-ok 75 - remote set-branches requires a remote
-ok 76 - remote set-branches
-ok 77 - remote set-branches with --mirror
-ok 78 - new remote
-ok 79 - get-url on new remote
-ok 80 - remote set-url with locked config
-ok 81 - remote set-url bar
-ok 82 - remote set-url baz bar
-ok 83 - remote set-url zot bar
-ok 84 - remote set-url --push zot baz
-ok 85 - remote set-url --push zot
-ok 86 - get-url with different urls
-ok 87 - remote set-url --push qux zot
-ok 88 - remote set-url --push foo qu+x
-ok 89 - remote set-url --push --add aaa
-ok 90 - get-url on multi push remote
-ok 91 - remote set-url --push bar aaa
-ok 92 - remote set-url --push --delete bar
-ok 93 - remote set-url --push --delete foo
-ok 94 - remote set-url --add bbb
-ok 95 - get-url on multi fetch remote
-ok 96 - remote set-url --delete .*
-ok 97 - remote set-url --delete bbb
-ok 98 - remote set-url --delete baz
-ok 99 - remote set-url --add ccc
-ok 100 - remote set-url --delete baz
-ok 101 - extra args: setup
-ok 102 - extra args: add nick url
-ok 103 - extra args: rename origin newname
-ok 104 - extra args: remove origin
-ok 105 - extra args: set-head origin main
-ok 106 - extra args: get-url origin newurl
-ok 107 - extra args: set-url origin newurl oldurl
-ok 108 - add remote matching the "insteadOf" URL
-ok 109 - unqualified <dst> refspec DWIM and advice
-ok 110 - refs/remotes/* <src> refspec and unqualified <dst> DWIM and advice
+ok 62 - rename handles remote without fetch refspec
+ok 63 - rename does not update a non-default fetch refspec
+ok 64 - rename a remote with name part of fetch spec
+ok 65 - rename a remote with name prefix of other remote
+ok 66 - rename succeeds with existing remote.<target>.prune
+ok 67 - remove a remote
+ok 68 - remove a remote removes repo remote.pushDefault
+ok 69 - remove a remote removes repo remote.pushDefault but ignores global
+ok 70 - remove a remote removes repo remote.pushDefault but keeps global
+ok 71 - migrate a remote from named file in $GIT_DIR/remotes
+ok 72 - migrate a remote from named file in $GIT_DIR/branches
+ok 73 - migrate a remote from named file in $GIT_DIR/branches (2)
+ok 74 - remote prune to cause a dangling symref
+ok 75 - show empty remote
+ok 76 - remote set-branches requires a remote
+ok 77 - remote set-branches
+ok 78 - remote set-branches with --mirror
+ok 79 - new remote
+ok 80 - get-url on new remote
+ok 81 - remote set-url with locked config
+ok 82 - remote set-url bar
+ok 83 - remote set-url baz bar
+ok 84 - remote set-url zot bar
+ok 85 - remote set-url --push zot baz
+ok 86 - remote set-url --push zot
+ok 87 - get-url with different urls
+ok 88 - remote set-url --push qux zot
+ok 89 - remote set-url --push foo qu+x
+ok 90 - remote set-url --push --add aaa
+ok 91 - get-url on multi push remote
+ok 92 - remote set-url --push bar aaa
+ok 93 - remote set-url --push --delete bar
+ok 94 - remote set-url --push --delete foo
+ok 95 - remote set-url --add bbb
+ok 96 - get-url on multi fetch remote
+ok 97 - remote set-url --delete .*
+ok 98 - remote set-url --delete bbb
+ok 99 - remote set-url --delete baz
+ok 100 - remote set-url --add ccc
+ok 101 - remote set-url --delete baz
+ok 102 - extra args: setup
+ok 103 - extra args: add nick url
+ok 104 - extra args: rename origin newname
+ok 105 - extra args: remove origin
+ok 106 - extra args: set-head origin main
+ok 107 - extra args: get-url origin newurl
+ok 108 - extra args: set-url origin newurl oldurl
+ok 109 - add remote matching the "insteadOf" URL
+ok 110 - unqualified <dst> refspec DWIM and advice
+ok 111 - refs/remotes/* <src> refspec and unqualified <dst> DWIM and advice
 # still have 1 known breakage(s)
-# passed all remaining 109 test(s)
-1..110
+# passed all remaining 110 test(s)
+1..111
 *** t5506-remote-groups.sh ***
 ok 1 - setup
 ok 2 - no group updates all
@@ -20036,7 +20059,7 @@ ok 1 - setup
 ok 2 - submodule.stickyRecursiveClone flag manipulates submodule.recurse value
 ok 3 - clone -o
 ok 4 - rejects invalid -o/--origin
-ok 5 - disallows --bare with --origin
+ok 5 - clone --bare -o
 ok 6 - disallows --bare with --separate-git-dir
 ok 7 - disallows --bundle-uri with shallow options
 ok 8 - reject cloning shallow repository
@@ -28408,7 +28431,7 @@ missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !REFFILES !RUNS_COMMANDS_FROM_PWD
 failed test(s): t1700 t2501 t3200 t3404 t4150 t4202 t7609 t9210 t9902
 
 fixed   1
-success 24492
+success 24514
 failed  18
-broken  211
-total   25207
+broken  209
+total   25228
