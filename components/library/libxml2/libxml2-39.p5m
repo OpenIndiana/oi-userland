@@ -20,20 +20,74 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2013  Erol Zavidic. All rights reserved.
+# Copyright (c) 2022  Friedrich Kink. All rights reserved.
 #
 
-set name=pkg.fmri \
-    value=pkg:/library/python/libxml2-39@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="The XML library - Python 3.9 bindings"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Python
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+#<transform path=usr/lib/python$(PYVER)/vendor-packages/libxml2mod.so -> default pkg.linted.userland.action001.2 true>
+
+set name=pkg.fmri value=pkg:/library/python/libxml2-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-file path=usr/lib/python3.9/vendor-packages/drv_libxml2.py
-file path=usr/lib/python3.9/vendor-packages/libxml2.py
-# Use implicit transform for so ABI rename
-file usr/lib/python3.9/vendor-packages/libxml2mod.so path=usr/lib/python3.9/vendor-packages/libxml2mod.so
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-license libxml2.license license="libxml license"
+file path=usr/lib/python$(PYVER)/vendor-packages/drv_libxml2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/libxml2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/libxml2mod.so
+
+file path=usr/share/doc/libxml2/python/TODO
+file path=usr/share/doc/libxml2/python/examples/attribs.py
+file path=usr/share/doc/libxml2/python/examples/build.py
+file path=usr/share/doc/libxml2/python/examples/compareNodes.py
+file path=usr/share/doc/libxml2/python/examples/ctxterror.py
+file path=usr/share/doc/libxml2/python/examples/cutnpaste.py
+file path=usr/share/doc/libxml2/python/examples/dtdvalid.py
+file path=usr/share/doc/libxml2/python/examples/error.py
+file path=usr/share/doc/libxml2/python/examples/inbuf.py
+file path=usr/share/doc/libxml2/python/examples/indexes.py
+file path=usr/share/doc/libxml2/python/examples/input_callback.py
+file path=usr/share/doc/libxml2/python/examples/invalid.xml
+file path=usr/share/doc/libxml2/python/examples/nsdel.py
+file path=usr/share/doc/libxml2/python/examples/outbuf.py
+file path=usr/share/doc/libxml2/python/examples/push.py
+file path=usr/share/doc/libxml2/python/examples/pushSAX.py
+file path=usr/share/doc/libxml2/python/examples/pushSAXhtml.py
+file path=usr/share/doc/libxml2/python/examples/reader.py
+file path=usr/share/doc/libxml2/python/examples/reader2.py
+file path=usr/share/doc/libxml2/python/examples/reader3.py
+file path=usr/share/doc/libxml2/python/examples/reader4.py
+file path=usr/share/doc/libxml2/python/examples/reader5.py
+file path=usr/share/doc/libxml2/python/examples/reader6.py
+file path=usr/share/doc/libxml2/python/examples/reader7.py
+file path=usr/share/doc/libxml2/python/examples/reader8.py
+file path=usr/share/doc/libxml2/python/examples/readererr.py
+file path=usr/share/doc/libxml2/python/examples/readernext.py
+file path=usr/share/doc/libxml2/python/examples/regexp.py
+file path=usr/share/doc/libxml2/python/examples/relaxng.py
+file path=usr/share/doc/libxml2/python/examples/resolver.py
+file path=usr/share/doc/libxml2/python/examples/schema.py
+file path=usr/share/doc/libxml2/python/examples/serialize.py
+file path=usr/share/doc/libxml2/python/examples/sync.py
+file path=usr/share/doc/libxml2/python/examples/test.dtd
+file path=usr/share/doc/libxml2/python/examples/thread2.py
+file path=usr/share/doc/libxml2/python/examples/tst.py
+file path=usr/share/doc/libxml2/python/examples/tst.xml
+file path=usr/share/doc/libxml2/python/examples/tstLastError.py
+file path=usr/share/doc/libxml2/python/examples/tstURI.py
+file path=usr/share/doc/libxml2/python/examples/tstmem.py
+file path=usr/share/doc/libxml2/python/examples/tstxpath.py
+file path=usr/share/doc/libxml2/python/examples/valid.xml
+file path=usr/share/doc/libxml2/python/examples/validDTD.py
+file path=usr/share/doc/libxml2/python/examples/validRNG.py
+file path=usr/share/doc/libxml2/python/examples/validSchemas.py
+file path=usr/share/doc/libxml2/python/examples/validate.py
+file path=usr/share/doc/libxml2/python/examples/walker.py
+file path=usr/share/doc/libxml2/python/examples/xpath.py
+file path=usr/share/doc/libxml2/python/examples/xpathext.py
+file path=usr/share/doc/libxml2/python/examples/xpathleak.py
+file path=usr/share/doc/libxml2/python/examples/xpathns.py
+file path=usr/share/doc/libxml2/python/examples/xpathret.py

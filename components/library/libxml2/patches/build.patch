@@ -1,0 +1,242 @@
+From 0d9012585926d6dc0f9bf563b8302c0f2e54876c Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Sun, 4 Sep 2022 16:41:43 +0200
+Subject: [PATCH] Fix Windows compiler warnings in python/types.c
+
+---
+ include/libxml/xmlversion.h.in | 44 ++++++++++++++++++++--------------
+ libxml.h                       | 12 ----------
+ python/libxml_wrap.h           |  5 +---
+ python/types.c                 | 33 +++++++++++++------------
+ xmlmodule.c                    |  2 +-
+ xpath.c                        |  4 ++--
+ 6 files changed, 48 insertions(+), 52 deletions(-)
+
+diff --git a/include/libxml/xmlversion.h.in b/include/libxml/xmlversion.h.in
+index dfd3c30f8..e83fb7872 100644
+--- a/include/libxml/xmlversion.h.in
++++ b/include/libxml/xmlversion.h.in
+@@ -409,12 +409,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
+ #endif
+ 
+ #ifdef __GNUC__
+-
+-/**
+- * ATTRIBUTE_UNUSED:
+- *
+- * Macro used to signal to GCC unused function parameters
+- */
++/** DOC_DISABLE */
+ 
+ #ifndef ATTRIBUTE_UNUSED
+ # if ((__GNUC__ > 2) || ((__GNUC__ == 2) && (__GNUC_MINOR__ >= 7)))
+@@ -424,12 +419,6 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
+ # endif
+ #endif
+ 
+-/**
+- * LIBXML_ATTR_ALLOC_SIZE:
+- *
+- * Macro used to indicate to GCC this is an allocator function
+- */
+-
+ #ifndef LIBXML_ATTR_ALLOC_SIZE
+ # if (!defined(__clang__) && ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3))))
+ #  define LIBXML_ATTR_ALLOC_SIZE(x) __attribute__((alloc_size(x)))
+@@ -440,12 +429,6 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
+ # define LIBXML_ATTR_ALLOC_SIZE(x)
+ #endif
+ 
+-/**
+- * LIBXML_ATTR_FORMAT:
+- *
+- * Macro used to indicate to GCC the parameter are printf like
+- */
+-
+ #ifndef LIBXML_ATTR_FORMAT
+ # if ((__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)))
+ #  define LIBXML_ATTR_FORMAT(fmt,args) __attribute__((__format__(__printf__,fmt,args)))
+@@ -465,6 +448,19 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
+ #  endif
+ #endif
+ 
++#if defined(__clang__) || (__GNUC__ * 100 + __GNUC_MINOR__ >= 406)
++#define XML_IGNORE_FPTR_CAST_WARNINGS \
++    _Pragma("GCC diagnostic push") \
++    _Pragma("GCC diagnostic ignored \"-Wpedantic\"") \
++    _Pragma("GCC diagnostic ignored \"-Wcast-function-type\"")
++#define XML_POP_WARNINGS \
++    _Pragma("GCC diagnostic pop")
++#else
++#define XML_IGNORE_FPTR_CAST_WARNINGS
++#define XML_POP_WARNINGS
++#endif
++
++/** DOC_ENABLE */
+ #else /* ! __GNUC__ */
+ /**
+  * ATTRIBUTE_UNUSED:
+@@ -493,6 +489,18 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
+ #ifndef XML_DEPRECATED
+ #define XML_DEPRECATED
+ #endif
++/**
++ * LIBXML_IGNORE_FPTR_CAST_WARNINGS:
++ *
++ * Macro used to ignore pointer cast warnings that can't be worked around.
++ */
++#define XML_IGNORE_FPTR_CAST_WARNINGS
++/**
++ * LIBXML_POP_WARNINGS:
++ *
++ * Macro used to restore warnings state.
++ */
++#define XML_POP_WARNINGS
+ #endif /* __GNUC__ */
+ 
+ #ifdef __cplusplus
+diff --git a/libxml.h b/libxml.h
+index a38f4f7c7..59294473c 100644
+--- a/libxml.h
++++ b/libxml.h
+@@ -54,18 +54,6 @@ int vfprintf(FILE *, const char *, va_list);
+ #include "trio.h"
+ #endif
+ 
+-#if defined(__clang__) || \
+-    (defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 406))
+-#define XML_IGNORE_PEDANTIC_WARNINGS \
+-    _Pragma("GCC diagnostic push") \
+-    _Pragma("GCC diagnostic ignored \"-Wpedantic\"")
+-#define XML_POP_WARNINGS \
+-    _Pragma("GCC diagnostic pop")
+-#else
+-#define XML_IGNORE_PEDANTIC_WARNINGS
+-#define XML_POP_WARNINGS
+-#endif
+-
+ #if defined(__clang__) || \
+     (defined(__GNUC__) && (__GNUC__ >= 8))
+ #define ATTRIBUTE_NO_SANITIZE(arg) __attribute__((no_sanitize(arg)))
+diff --git a/python/libxml_wrap.h b/python/libxml_wrap.h
+index 478a20df3..2ba7571a6 100644
+--- a/python/libxml_wrap.h
++++ b/python/libxml_wrap.h
+@@ -68,11 +68,8 @@
+ #define XML_IGNORE_DEPRECATION_WARNINGS \
+     _Pragma("GCC diagnostic push") \
+     _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+-#define XML_POP_WARNINGS \
+-    _Pragma("GCC diagnostic pop")
+ #else
+-#define XML_IGNORE_PEDANTIC_WARNINGS
+-#define XML_POP_WARNINGS
++#define XML_IGNORE_DEPRECATION_WARNINGS
+ #endif
+ 
+ #define PyxmlNode_Get(v) (((v) == Py_None) ? NULL : \
+diff --git a/python/types.c b/python/types.c
+index 644752ec7..5efeef99e 100644
+--- a/python/types.c
++++ b/python/types.c
+@@ -78,7 +78,6 @@ myInvalidParameterHandler(const wchar_t *expression,
+ 
+ FILE *
+ libxml_PyFileGet(PyObject *f) {
+-    int flags;
+     FILE *res;
+     const char *mode;
+     int fd = PyObject_AsFileDescriptor(f);
+@@ -112,8 +111,9 @@ libxml_PyFileGet(PyObject *f) {
+ 
+     if (hntdll == NULL)
+         return(NULL);
+-
++XML_IGNORE_FPTR_CAST_WARNINGS
+     NtQueryInformationFile = (t_NtQueryInformationFile)GetProcAddress(hntdll, "NtQueryInformationFile");
++XML_POP_WARNINGS
+ 
+     if (NtQueryInformationFile != NULL &&
+         (NtQueryInformationFile((HANDLE)w_fh,
+@@ -129,23 +129,24 @@ libxml_PyFileGet(PyObject *f) {
+             if (ai.AccessFlags & FILE_APPEND_DATA)
+                 is_append = TRUE;
+ 
+-            if (is_write && is_read)
+-                if (is_append)
+-                    mode = "a+";
+-                else
+-                    mode = "rw";
+-
+-            if (!is_write && is_read)
++            if (is_write) {
++                if (is_read) {
++                    if (is_append)
++                        mode = "a+";
++                    else
++                        mode = "rw";
++                } else {
++                    if (is_append)
++                        mode = "a";
++                    else
++                        mode = "w";
++                }
++            } else {
+                 if (is_append)
+                     mode = "r+";
+                 else
+                     mode = "r";
+-
+-            if (is_write && !is_read)
+-                if (is_append)
+-                    mode = "a";
+-                else
+-                    mode = "w";
++            }
+         }
+ 
+     FreeLibrary(hntdll);
+@@ -153,6 +154,8 @@ libxml_PyFileGet(PyObject *f) {
+     if (!is_write && !is_read) /* also happens if we did not load or run NtQueryInformationFile() successfully */
+         return(NULL);
+ #else
++    int flags;
++
+     /*
+      * macOS returns O_RDWR for standard streams, but fails to write to
+      * stdout or stderr when opened with fdopen(dup_fd, "rw").
+diff --git a/xmlmodule.c b/xmlmodule.c
+index af47514bc..cbb25a6d2 100644
+--- a/xmlmodule.c
++++ b/xmlmodule.c
+@@ -342,7 +342,7 @@ xmlModulePlatformClose(void *handle)
+ static int
+ xmlModulePlatformSymbol(void *handle, const char *name, void **symbol)
+ {
+-XML_IGNORE_PEDANTIC_WARNINGS
++XML_IGNORE_FPTR_CAST_WARNINGS
+     *symbol = GetProcAddress(handle, name);
+     return (NULL == *symbol) ? -1 : 0;
+ XML_POP_WARNINGS
+diff --git a/xpath.c b/xpath.c
+index aa8df6132..54196fc1a 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -4855,7 +4855,7 @@ xmlXPathRegisterFuncNS(xmlXPathContextPtr ctxt, const xmlChar *name,
+ 	return(-1);
+     if (f == NULL)
+         return(xmlHashRemoveEntry2(ctxt->funcHash, name, ns_uri, NULL));
+-XML_IGNORE_PEDANTIC_WARNINGS
++XML_IGNORE_FPTR_CAST_WARNINGS
+     return(xmlHashAddEntry2(ctxt->funcHash, name, ns_uri, (void *) f));
+ XML_POP_WARNINGS
+ }
+@@ -4938,7 +4938,7 @@ xmlXPathFunctionLookupNS(xmlXPathContextPtr ctxt, const xmlChar *name,
+     if (ctxt->funcHash == NULL)
+ 	return(NULL);
+ 
+-XML_IGNORE_PEDANTIC_WARNINGS
++XML_IGNORE_FPTR_CAST_WARNINGS
+     ret = (xmlXPathFunction) xmlHashLookup2(ctxt->funcHash, name, ns_uri);
+ XML_POP_WARNINGS
+     return(ret);
