@@ -23,11 +23,12 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
-BUILD_BITS=		32_and_64
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre2
 COMPONENT_VERSION=	10.40
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= sha256:14e4b83c4783933dc17e964318e6324f7cae1bc75d8f3c79bc6969f00c159d68
@@ -102,10 +103,6 @@ COMPONENT_INSTALL_ARGS +=	"INSTALL=$(INSTALL)"
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
 
-# Master test results are the same for 32-bit and 64-bit, so override
-# here, rather than create multiple identical master files.
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
 # Get correct libpcre2-8.so.0 from the build area.
 TEST_LIBPATH.32 =	$(PROTOUSRLIBDIR)
 TEST_LIBPATH.64 =	$(PROTOUSRLIBDIR64)
@@ -120,5 +117,5 @@ COMPONENT_TEST_TRANSFORMS += \
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
