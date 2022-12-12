@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ghp-import
 COMPONENT_VERSION =		2.1.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		ghp-import - Copy your docs directly to the gh-pages branch.
 COMPONENT_PROJECT_URL =		https://github.com/c-w/ghp-import
 COMPONENT_ARCHIVE_URL =		\
@@ -29,10 +30,12 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
+TEST_STYLE = pytest
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib_metadata
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
