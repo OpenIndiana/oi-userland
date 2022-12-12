@@ -32,4 +32,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/ghp_import-$(COMPONENT_VERSION)
 file path=usr/lib/python$(PYVER)/vendor-packages/ghp_import-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/ghp_import-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/ghp_import.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/python-dateutil-$(PYV)
 <transform file path=usr/bin/ghp-import-3\.7$ -> add pkg.depend.bypass-generate .*/importlib/(64/)?metadata.* >
