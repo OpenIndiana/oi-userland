@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hylafax
 COMPONENT_VERSION=	6.0.7
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		network/hylafax
 COMPONENT_SUMMARY=	HylaFAX Open Source is an enterprise-class system for sending and \
 	receiving facsimiles as well as for sending alpha-numeric pages.
@@ -54,7 +54,11 @@ COMPONENT_POST_CONFIGURE_ACTION += ( \
 
 # this is to avoid a conflict to usr/share/man/man1/notify.1
 # delivered by SUNWcs
-COMPONENT_POST_INSTALL_ACTION += ( $(MV) $(PROTO_DIR)/usr/share/man/man1/notify.1 $(PROTO_DIR)/usr/share/man/man1/faxnotify.1 );
+COMPONENT_POST_INSTALL_ACTION += ( \
+	$(MV) $(PROTO_DIR)/usr/share/man/man1/notify.1 $(PROTO_DIR)/usr/share/man/man1/faxnotify.1; \
+	$(GSED) -i -e "s:$(PROTO_DIR)::" $(PROTO_DIR)/usr/share/man/man1/*; \
+	$(GSED) -i -e "s:$(PROTO_DIR)::" $(PROTO_DIR)/usr/share/man/man4/*; \
+ );
 
 CONFIGURE_OPTIONS =
 CONFIGURE_OPTIONS +=    --srcdir=.
