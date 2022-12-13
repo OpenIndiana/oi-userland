@@ -24,39 +24,33 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		testdisk
-COMPONENT_VERSION=	7.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	7.1
 COMPONENT_PROJECT_URL=	https://www.cgsecurity.org/wiki/TestDisk
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:00bb3b6b22e6aba88580eeb887037aef026968c21a87b5f906c6652cbee3442d
+COMPONENT_ARCHIVE_HASH=	sha256:1413c47569e48c5b22653b943d48136cb228abcbd6f03da109c4df63382190fe
 COMPONENT_ARCHIVE_URL=	https://www.cgsecurity.org/$(COMPONENT_ARCHIVE)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # build with the distribution default libjpeg
-CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS           +=    $(JPEG_LDFLAGS)
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS  +=		--enable-qt
+QT5_ROOT=/usr/lib/qt/5.15
+PATH=$(PATH.gnu):$(QT5_BINDIR)
+PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS)):$(QT5_PKG_CONFIG_PATH)
+LD_OPTIONS += -L$(QT5_LIBDIR) -R$(QT5_LIBDIR)
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+CONFIGURE_OPTIONS += --enable-qt
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
-REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/qt4
-REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/file-system/ntfsprogs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/qt5
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += sysutils/e2fsprogs
