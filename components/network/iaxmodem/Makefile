@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iaxmodem
 COMPONENT_VERSION=	1.3.3
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		network/iaxmodem
 COMPONENT_SUMMARY=	IAXmodem is a software modem written in C that uses an IAX channel
 COMPONENT_DESCRIPTION=	IAXmodem is a software modem written in C that uses an IAX channel \
@@ -48,7 +49,6 @@ COMPONENT_POST_CONFIGURE_ACTION += ( \
 	 $(GSED) -i -e 's/-DSTATICLIBS -DUSE_UNIX98_PTY/-DSTATICLIBS -D__EXTENSIONS__ -DSOLARIS -DUSE_UNIX98_PTY/' $(@D)/Makefile; \
 	 $(GSED) -i -e 's/-DMODEMVER/-m64 -DMODEMVER/' $(@D)/Makefile; \
 	 $(GSED) -i -e 's:Ilib/libiax2/src:I/usr/include/iax:' $(@D)/Makefile; \
-	 $(GSED) -i -e 's: lib/spandsp/src/.libs/libspandsp.a: -lspandsp:' $(@D)/Makefile; \
 	 $(GSED) -i -e 's: lib/libiax2/src/.libs/libiax.a: -liax:' $(@D)/Makefile; \
 	 $(GSED) -i -e 's/-lm -lutil -ltiff/-m64 -lm -lnsl -lsocket -ltiff/' $(@D)/Makefile; \
 	 );
@@ -72,5 +72,5 @@ COMPONENT_POST_INSTALL_ACTION= ( \
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libiax2
-REQUIRED_PACKAGES += library/spandsp
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
