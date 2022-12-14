@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xz
 COMPONENT_VERSION=	5.2.9
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	XZ Utils - loss-less file compression application and library
 COMPONENT_PROJECT_URL=	https://tukaani.org/xz/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
