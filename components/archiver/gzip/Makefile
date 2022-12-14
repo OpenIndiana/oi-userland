@@ -23,16 +23,22 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
 #
-BUILD_BITS= 64
+
+USE_DEFAULT_TEST_TRANSFORMS= yess
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gzip
 COMPONENT_VERSION=	1.12
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	The GNU Zip (gzip) compression utility
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gzip/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:ce5e03e519f637e1f814011ace35c4f87b33c0bbabeec35baf5fbd3479e91956
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		compress/gzip
+COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -56,14 +62,6 @@ COMPONENT_PREP_ACTION = (cd $(SOURCE_DIR); $(AUTORECONF) -if)
 # Get the binaries to test from the component build area.
 COMPONENT_TEST_ENV +=	PATH=$(BUILD_DIR_$(BITS)):/usr/xpg4/bin:/usr/bin
 COMPONENT_TEST_TARGETS = check
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/ERROR:/p" '
 
 # Fix references to Solaris renamed programs (z*->gz*) in man pages, info
 # pages and in wrapper scripts.
