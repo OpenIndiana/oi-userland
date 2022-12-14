@@ -24,20 +24,22 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS=		32_and_64
-BUILD_STYLE=		justmake
+BUILD_BITS= 32_and_64
+BUILD_STYLE= justmake
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bzip2
 COMPONENT_VERSION=	1.0.8
+COMPONENT_REVISION= 1
+COMPONENT_SUMMARY=	high-quality block-sorting file compressor
 COMPONENT_PROJECT_URL=	https://sourceware.org/bzip2/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269
+COMPONENT_ARCHIVE_HASH=	sha256:ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269
 COMPONENT_ARCHIVE_URL=	https://sourceware.org/pub/bzip2/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		compress/bzip2
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	bzip2
 COMPONENT_LICENSE_FILE=	LICENSE
 
@@ -69,5 +71,5 @@ install:	build $(INSTALL_32_and_64)
 	cd $(PROTOUSRLIBDIR64); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
