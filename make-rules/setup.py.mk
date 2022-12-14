@@ -156,8 +156,8 @@ COMPONENT_BUILD_ENV += $(PYTHON_ENV)
 # We need to set GIT_DIR to workaround the nasty poetry bug:
 # https://github.com/python-poetry/poetry/issues/5547.  Technically, we should
 # set this on per-project basis, but we would need to check every newly
-# inegrated project to see if it is build by poetry backend or not.  We would
-# also need to do similar check on every version bump, becasue any project
+# integrated project to see if it is build by poetry backend or not.  We would
+# also need to do similar check on every version bump, because any project
 # could switch to poetry anytime.  Since this would be a lot of work we simply
 # opted to set GIT_DIR for every python project.
 COMPONENT_BUILD_ENV += GIT_DIR=$(BUILD_DIR)
@@ -329,14 +329,16 @@ USERLAND_REQUIRED_PACKAGES += library/python/tox
 USERLAND_REQUIRED_PACKAGES += library/python/tox-current-env
 
 # Generate raw lists of test dependencies per Python version
+# Please note we set PATH below twice for $(COMPONENT_TEST_CMD) (aka tox) to
+# workaround https://github.com/tox-dev/tox/issues/2538
 COMPONENT_POST_INSTALL_ACTION += \
 	cd $(@D) ; \
-	( $(COMPONENT_TEST_CMD) -qq --print-deps-to=- $(COMPONENT_TEST_TARGETS) \
+	( PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --print-deps-to=- $(COMPONENT_TEST_TARGETS) \
 		| $(WS_TOOLS)/python-resolve-deps \
 			PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 			$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
 		| $(PYTHON) $(WS_TOOLS)/python-requires - ; \
-	for e in $$($(COMPONENT_TEST_CMD) -qq --print-extras-to=- $(COMPONENT_TEST_TARGETS)) ; do \
+	for e in $$(PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --print-extras-to=- $(COMPONENT_TEST_TARGETS)) ; do \
 		PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 			$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
 	done ) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' > $(@D)/.depend-test ;
