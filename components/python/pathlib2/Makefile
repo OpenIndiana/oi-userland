@@ -10,37 +10,29 @@
 #
 
 #
-# Copyright 2018 Alexander Pyhalov
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project pathlib2
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	pathlib2
-COMPONENT_VERSION= 	2.3.5
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	https://github.com/mcmtroffaes/pathlib2
-COMPONENT_FMRI=	library/python/pathlib2
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:6cd9a47b597b37cc57de1c05e56fb1a1c9cc9fab04fe78c29acd090418529868
-COMPONENT_ARCHIVE_URL= \
-  $(call pypi_url)
-COMPONENT_CLASSIFICATION=Development/Python
-COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	LICENSE.rst
+COMPONENT_NAME =		pathlib2
+HUMAN_VERSION =			2.3.7.post1
+COMPONENT_SUMMARY =		pathlib2 - Object-oriented filesystem paths
+COMPONENT_PROJECT_URL =		https://github.com/jazzband/pathlib2
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/31/51/99caf463dc7c18eb18dad1fffe465a3cf3ee50ac3d1dccbd1781336fe9c7/pathlib2-2.3.7.post1.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:9fe0edad898b83c0c3e199c842b27ed216645d2e177757b2dd67384d4113c641
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE.rst
 
-PYTHON_VERSIONS=	2.7 3.5 3.7
+TEST_STYLE = pytest
 
-TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_DIR = $(SOURCE_DIR)/tests
-COMPONENT_TEST_ARGS = -m unittest discover --pattern=*.py
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
+PYTHON_REQUIRED_PACKAGES += library/python/six
+PYTHON_REQUIRED_PACKAGES += runtime/python
