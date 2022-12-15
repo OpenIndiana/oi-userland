@@ -14,13 +14,13 @@
 # Copyright 2021 Marco van Wieringen
 #
 
-BUILD_BITS=		64_and_32
-BUILD_STYLE=		cmake
-PREFERRED_BITS=		64
+BUILD_BITS= 64_and_32
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zstd
 COMPONENT_VERSION=	1.5.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Zstandard, or zstd for short, is a fast lossless compression algorithm, targeting real-time compression scenarios
 COMPONENT_PROJECT_URL=	https://facebook.github.io/zstd/
 COMPONENT_FMRI=		compress/zstd
@@ -58,5 +58,5 @@ COMPONENT_TEST_TARGETS=	tests test-zstd
 COMPONENT_TEST_ENV=	$(CMAKE_ENV)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
