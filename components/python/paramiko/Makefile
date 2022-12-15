@@ -1,49 +1,41 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2018 Alexander Pyhalov
-# Copyright 2021 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project paramiko
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		paramiko
-COMPONENT_VERSION=	2.9.2
-COMPONENT_SUMMARY=	Library for making SSH2 connections
-COMPONENT_PROJECT_URL=	https://github.com/pyca/paramiko/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:944a9e5dbdd413ab6c7951ea46b0ab40713235a9c4c5ca81cfe45c6f14fa677b
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_FMRI=	library/python/paramiko
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=	LGPLv2.1
-COMPONENT_LICENSE_FILE=	LICENSE
+COMPONENT_NAME =		paramiko
+HUMAN_VERSION =			2.12.0
+COMPONENT_SUMMARY =		paramiko - SSH2 protocol library
+COMPONENT_PROJECT_URL =		https://paramiko.org
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/98/75/e78ddbe671a4a59514b59bc6a321263118e4ac3fe88175dd784d1a47a00f/paramiko-2.12.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:376885c05c5d6aa6e1f4608aac2a6b5b0548b1add40274477324605903d9cd49
+COMPONENT_LICENSE =		LGPL-2.1-only
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS=	$(PYTHON_ALL_VERSIONS)
+TEST_STYLE = pytest
 
-# Tests fail - depend on pytest-relaxed and pytest > 3
-TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_DIR =    $(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD =    $(PYTHON) /usr/bin/py.test-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS =
-
-# Test dependencies
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/bcrypt
+PYTHON_REQUIRED_PACKAGES += library/python/cryptography
+PYTHON_REQUIRED_PACKAGES += library/python/pynacl
+PYTHON_REQUIRED_PACKAGES += library/python/six
+PYTHON_REQUIRED_PACKAGES += runtime/python
