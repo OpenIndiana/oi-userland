@@ -15,28 +15,23 @@
 # Copyright 2014 Andrzej Szeszo.  All rights reserved.
 #
 
-BUILD_BITS=		32_and_64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		poppler
 COMPONENT_VERSION=	0.56.0
-COMPONENT_REVISION=	8
+COMPONENT_REVISION=	9
+COMPONENT_SUMMARY=	Poppler is a PDF rendering library based on the xpdf-3.0 code base
+COMPONENT_PROJECT_URL=	https://poppler.freedesktop.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-     sha256:869dbadf99ed882e776acbdbc06689d8a81872a2963440b1e8516cd7a2577173
-COMPONENT_ARCHIVE_URL= \
-     http://poppler.freedesktop.org/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://poppler.freedesktop.org/
+COMPONENT_ARCHIVE_HASH=	sha256:869dbadf99ed882e776acbdbc06689d8a81872a2963440b1e8516cd7a2577173
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libpoppler
-COMPONENT_SUMMARY=	Poppler is a PDF rendering library based on the xpdf-3.0 code base
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 
 TEST_TARGET= $(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(QT5_BINDIR):$(PATH.gnu)
@@ -71,7 +66,6 @@ COMPONENT_BUILD_ENV += CXX="$(CXX)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
@@ -82,6 +76,7 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/libpoppler-data
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/zlib
