@@ -1,53 +1,42 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2021 Aurelien Larcher
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project py-cpuinfo
 #
 
-BUILD_BITS= NO_ARCH
-BUILD_STYLE= setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		py-cpuinfo
-COMPONENT_VERSION=	7.0.0
-COMPONENT_REVISION=	2
-COMPONENT_FMRI=		library/python/py-cpuinfo
-COMPONENT_CLASSIFICATION=Development/Python
-COMPONENT_SUMMARY=	Get CPU info with pure Python
-COMPONENT_PROJECT_URL=	https://github.com/workhorsy/py-cpuinfo
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9aa2e49675114959697d25cf57fec41c29b55887bff3bc4809b44ac6f5730097
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_LICENSE=	MIT
+COMPONENT_NAME =		py-cpuinfo
+HUMAN_VERSION =			9.0.0
+COMPONENT_SUMMARY =		py-cpuinfo - Get CPU info with pure Python
+COMPONENT_PROJECT_URL =		https://github.com/workhorsy/py-cpuinfo
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/37/a8/d832f7293ebb21690860d2e01d8115e5ff6f2ae8bbdc953f0eb0fa4bd2c7/py-cpuinfo-9.0.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:3cdbbf3fac90dc6f118bfd64384f309edeadd902d7c8fb17f02ffa1fc3f49690
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS= $(PYTHON3_VERSIONS)
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_INSTALL_ACTION += \
-        $(MV) $(PROTOUSRBINDIR)/cpuinfo $(PROTOUSRBINDIR)/cpuinfo-$(PYTHON_VERSION);
-
-COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
-COMPONENT_TEST_ARGS =	test_solaris_11_x86_32.py
-
-COMPONENT_TEST_TRANSFORMS += '-n -e "/\.\.\./p"'
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+# Testing fails withiout PATH
+COMPONENT_TEST_ENV += PATH=$(PATH)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
