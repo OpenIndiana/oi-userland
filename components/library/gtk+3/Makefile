@@ -15,22 +15,24 @@
 # Copyright 2020 Marco van Wieringen
 #
 
-BUILD_BITS=		32_and_64
+BUILD_BITS= 32_and_64
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gtk+
 COMPONENT_MJR_VERSION=	3.24
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).34
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:dbc69f90ddc821b8d1441f00374dc1da4323a2eafa9078e61edbe5eeefa852ec
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.gtk.org/
-COMPONENT_LICENSE=      LGPLv2
-COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_FMRI=         library/desktop/gtk3
+COMPONENT_LICENSE=      LGPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -91,14 +93,9 @@ REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/json-glib
-REQUIRED_PACKAGES += library/desktop/librest
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/fribidi
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libsoup
-REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
