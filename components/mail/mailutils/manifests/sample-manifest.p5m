@@ -14,6 +14,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -217,7 +218,7 @@ file path=usr/include/mailutils/version.h
 file path=usr/include/mailutils/wordsplit.h
 file path=usr/include/mailutils/yyloc.h
 file path=usr/lib/$(MACH64)/charset.alias
-link path=usr/lib/$(MACH64)/libguile-mailutils-v-$(COMPONENT_VERSION).so \
+link path=usr/lib/$(MACH64)/libguile-mailutils-v-$(HUMAN_VERSION).so \
     target=libmu_scm.so.9
 link path=usr/lib/$(MACH64)/libmailutils.so target=libmailutils.so.9.0.0
 link path=usr/lib/$(MACH64)/libmailutils.so.9 target=libmailutils.so.9.0.0
@@ -269,31 +270,32 @@ file path=usr/lib/$(MACH64)/mailutils/pipe.so
 file path=usr/lib/$(MACH64)/mailutils/spamd.so
 file path=usr/lib/$(MACH64)/mailutils/timestamp.so
 file path=usr/lib/$(MACH64)/mailutils/vacation.so
-file path=usr/lib/python3.9/vendor-packages/mailutils/__init__.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/address.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/attribute.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/auth.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/body.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/c_api.cpython-39.so
-hardlink path=usr/lib/python3.9/vendor-packages/mailutils/c_api.so \
-    target=c_api.cpython-39.so
-file path=usr/lib/python3.9/vendor-packages/mailutils/envelope.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/error.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/filter.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/folder.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/header.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/mailbox.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/mailcap.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/mailer.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/message.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/mime.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/nls.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/registrar.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/secret.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/sieve.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/stream.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/url.py
-file path=usr/lib/python3.9/vendor-packages/mailutils/util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/address.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/attribute.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/auth.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/body.py
+hardlink \
+    path=usr/lib/python$(PYVER)/vendor-packages/mailutils/c_api.cpython-39.so \
+    target=c_api.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/c_api.so
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/envelope.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/error.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/filter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/folder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/header.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/mailbox.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/mailcap.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/mailer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/message.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/mime.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/nls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/registrar.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/secret.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/sieve.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/stream.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/url.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/util.py
 file path=usr/sbin/comsatd
 file path=usr/sbin/imap4d
 file path=usr/sbin/lmtpd

@@ -23,24 +23,23 @@
 # Copyright 2021, Klaus Ziegler
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mailutils
 COMPONENT_VERSION=	3.15
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU-mailutils provides IMAP4D LMTPD MDA POP3D servers and various mail programs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:b7d0c286c352fcc7da7978cfd617cc66736b21fa891aa4f88855f516354f2ddb
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://mailutils.org/
+COMPONENT_FMRI=		mail/mailutils
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv3,LGPLv3
-COMPONENT_FMRI=		mail/mailutils
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION=	3.9
 CONFIGURE_ENV += PYTHON_CONFIG=/usr/bin/python3.9-config
 
 # cpp flags.
@@ -51,8 +50,8 @@ CONFIGURE_ENV += CPPFLAGS="-I/usr/include/openldap \
 # library link flags.
 CONFIGURE_ENV += LIBS="-lldap-2.4"
 # needed for 01-pg-mariadb.patch
-CONFIGURE_ENV += MYSQL_LIB="$(MYSQL_HOME)/lib/$(MACH64)"
-CONFIGURE_ENV += PG_LIB="$(PG_LIBDIR.64)"
+CONFIGURE_ENV += MYSQL_LIB="$(MYSQL_LIBDIR)"
+CONFIGURE_ENV += PG_LIB="$(PG_LIBDIR)"
 
 CONFIGURE_OPTIONS  +=		--libexecdir=/usr/gnu/libexec
 CONFIGURE_OPTIONS  +=		--enable-static=no
@@ -75,9 +74,10 @@ COMPONENT_TEST_TRANSFORMS= \
 REQUIRED_PACKAGES += editor/gnu-emacs
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += database/berkeleydb-5
-REQUIRED_PACKAGES += database/mariadb-101/library
+REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/fribidi
 REQUIRED_PACKAGES += library/gnutls-3
@@ -87,7 +87,6 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
