@@ -16,12 +16,12 @@
 # Copyright 2022 Daniel Chan
 #
 
-BUILD_BITS=		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			qt
 COMPONENT_VERSION_MJR=	5.15
 COMPONENT_VERSION=		$(COMPONENT_VERSION_MJR).4
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=	https://www.qt.io/
 COMPONENT_SUMMARY=		Qt cross-platform application and UI framework
 COMPONENT_SRC=			$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
@@ -33,16 +33,14 @@ COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		QT5
 COMPONENT_LICENSE_FILE=	qt5.license
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PG_BINDIR.$(BITS)):$(MYSQL_BINDIR.$(BITS)):$(GCC_ROOT)/bin:$(PATH.gnu)
+PATH=$(PG_BINDIR):$(MYSQL_BINDIR):$(GCC_BINDIR):$(PATH.gnu)
 
-QT_PREFIX=$(USRLIBDIR)/$(COMPONENT_NAME)/$(COMPONENT_VERSION_MJR)
+QT_PREFIX=$(QT5_BASEDIR)
 
-QT_ARCHSUBDIR.32=
 QT_ARCHSUBDIR.64=$(MACH64)
-QT_PLATFORM.32= solaris-g++
 QT_PLATFORM.64= solaris-g++-64
 
 # build with the distribution preferred libjpeg implementation
@@ -50,47 +48,47 @@ CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
-OPENSSL_VERSION=1.1
-CONFIGURE_ENV.32+=OPENSSL_LIBS='-L/usr/openssl/1.1/lib -lssl -lcrypto'
-CONFIGURE_ENV.64+=OPENSSL_LIBS='-L/usr/openssl/1.1/lib/64 -lssl -lcrypto'
-CONFIGURE_ENV+=OPENSSL_INCLUDE_PATH=$(OPENSSL_INCDIR)
+OPENSSL_VERSION= 1.1
+CONFIGURE_ENV += OPENSSL_LIBS='-L$(OPENSSL_LIBDIR) -lssl -lcrypto'
+CONFIGURE_ENV += OPENSSL_INCLUDE_PATH=$(OPENSSL_INCDIR)
 CONFIGURE_OPTIONS = -prefix $(QT_PREFIX)
-#CONFIGURE_OPTIONS+= -verbose
-CONFIGURE_OPTIONS+= -opensource
-CONFIGURE_OPTIONS+= -confirm-license
-CONFIGURE_OPTIONS+= -nomake examples
-CONFIGURE_OPTIONS+= -nomake tests
-CONFIGURE_OPTIONS+= -c++std c++11
-CONFIGURE_OPTIONS+= -disable-reduce-exports
-CONFIGURE_OPTIONS+= -xcb
-CONFIGURE_OPTIONS+= -xcb-xlib
-CONFIGURE_OPTIONS+= -bundled-xcb-xinput
-CONFIGURE_OPTIONS+= -bindir $(QT_PREFIX)/bin/$(QT_ARCHSUBDIR.$(BITS))
-CONFIGURE_OPTIONS+= -libdir $(QT_PREFIX)/lib/$(QT_ARCHSUBDIR.$(BITS))
-CONFIGURE_OPTIONS+= -plugindir $(QT_PREFIX)/plugins/$(QT_ARCHSUBDIR.$(BITS))
-CONFIGURE_OPTIONS+= -importdir $(QT_PREFIX)/imports/$(QT_ARCHSUBDIR.$(BITS))
-CONFIGURE_OPTIONS+= -qmldir $(QT_PREFIX)/qml/$(QT_ARCHSUBDIR.$(BITS))
-CONFIGURE_OPTIONS+= -platform $(QT_PLATFORM.$(BITS))
-CONFIGURE_OPTIONS+= -plugin-sql-mysql
-CONFIGURE_OPTIONS+= -plugin-sql-psql
-CONFIGURE_OPTIONS+= -plugin-sql-sqlite
-CONFIGURE_OPTIONS+= -system-sqlite
-CONFIGURE_OPTIONS+= -openssl-linked
-CONFIGURE_OPTIONS+= OPENSSL_INCDIR='/usr/openssl/1.1/include'
-CONFIGURE_OPTIONS.32+= OPENSSL_LIBDIR=$(OPENSSL_LIBDIR.32)
-CONFIGURE_OPTIONS.64+= OPENSSL_LIBDIR=$(OPENSSL_LIBDIR.64)
-CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(BITS))
+#CONFIGURE_OPTIONS += -verbose
+CONFIGURE_OPTIONS += -opensource
+CONFIGURE_OPTIONS += -confirm-license
+CONFIGURE_OPTIONS += -nomake examples
+CONFIGURE_OPTIONS += -nomake tests
+CONFIGURE_OPTIONS += -c++std c++11
+CONFIGURE_OPTIONS += -disable-reduce-exports
+CONFIGURE_OPTIONS += -xcb
+CONFIGURE_OPTIONS += -xcb-xlib
+CONFIGURE_OPTIONS += -bundled-xcb-xinput
+CONFIGURE_OPTIONS += -bindir $(QT_PREFIX)/bin/$(QT_ARCHSUBDIR.$(BITS))
+CONFIGURE_OPTIONS += -libdir $(QT_PREFIX)/lib/$(QT_ARCHSUBDIR.$(BITS))
+CONFIGURE_OPTIONS += -plugindir $(QT_PREFIX)/plugins/$(QT_ARCHSUBDIR.$(BITS))
+CONFIGURE_OPTIONS += -importdir $(QT_PREFIX)/imports/$(QT_ARCHSUBDIR.$(BITS))
+CONFIGURE_OPTIONS += -qmldir $(QT_PREFIX)/qml/$(QT_ARCHSUBDIR.$(BITS))
+CONFIGURE_OPTIONS += -platform $(QT_PLATFORM.$(BITS))
+CONFIGURE_OPTIONS += -plugin-sql-mysql
+CONFIGURE_OPTIONS += -plugin-sql-psql
+CONFIGURE_OPTIONS += -plugin-sql-sqlite
+CONFIGURE_OPTIONS += -system-sqlite
+CONFIGURE_OPTIONS += -openssl-linked
+CONFIGURE_OPTIONS += OPENSSL_INCDIR='/usr/openssl/1.1/include'
+CONFIGURE_OPTIONS += OPENSSL_LIBDIR=$(OPENSSL_LIBDIR)
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
+
 COMPONENT_INSTALL_ENV+=	INSTALL_ROOT=$(PROTO_DIR)
+
 # Set runpaths to sql/egl plugins
-QT_LIBDIR    =$(QT_PREFIX)/lib/$(QT_ARCHSUBDIR.$(BITS))
-QT_SQLDIR    =$(QT_PREFIX)/plugins/$(QT_ARCHSUBDIR.$(BITS))/sqldrivers
-QT_EGLDIR    =$(QT_PREFIX)/plugins/$(QT_ARCHSUBDIR.$(BITS))/egldeviceintegrations
-QT_XORGDIR   =$(QT_PREFIX)/lib/xorg/$(QT_ARCHSUBDIR.$(BITS))
+QT_LIBDIR= $(QT_PREFIX)/lib/$(QT_ARCHSUBDIR.$(BITS))
+QT_SQLDIR= $(QT_PREFIX)/plugins/$(QT_ARCHSUBDIR.$(BITS))/sqldrivers
+QT_EGLDIR= $(QT_PREFIX)/plugins/$(QT_ARCHSUBDIR.$(BITS))/egldeviceintegrations
+QT_XORGDIR= $(QT_PREFIX)/lib/xorg/$(QT_ARCHSUBDIR.$(BITS))
 
 COMPONENT_POST_INSTALL_ACTION= ( \
-/usr/bin/elfedit -e 'dyn:runpath "$(GCC_LIBDIR):$(QT_LIBDIR):$(MYSQL_LIBDIR.$(BITS))"' \
+/usr/bin/elfedit -e 'dyn:runpath "$(GCC_LIBDIR):$(QT_LIBDIR):$(MYSQL_LIBDIR)"' \
 	$(PROTO_DIR)$(QT_SQLDIR)/libqsqlmysql.so; \
-/usr/bin/elfedit -e 'dyn:runpath "$(GCC_LIBDIR):$(QT_LIBDIR):$(PG_LIBDIR.$(BITS))"' \
+/usr/bin/elfedit -e 'dyn:runpath "$(GCC_LIBDIR):$(QT_LIBDIR):$(PG_LIBDIR)"' \
 	$(PROTO_DIR)$(QT_SQLDIR)/libqsqlpsql.so; \
 /usr/bin/elfedit -e 'dyn:runpath "$(GCC_LIBDIR):$(QT_LIBDIR):$(QT_XORGDIR)"' \
 	$(PROTO_DIR)$(QT_EGLDIR)/libqeglfs-kms-integration.so; \
@@ -103,7 +101,7 @@ COMPONENT_POST_INSTALL_ACTION= ( \
 # Build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += database/freetds
-REQUIRED_PACKAGES += database/mariadb-101/client
+REQUIRED_PACKAGES += database/mariadb-106/client
 REQUIRED_PACKAGES += system/header/header-drm
 REQUIRED_PACKAGES += x11/keyboard/data-xkb
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
@@ -113,10 +111,9 @@ REQUIRED_PACKAGES += x11/library/libpthread-stubs
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += database/mariadb-101/library
+REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
@@ -134,11 +131,13 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/libmng
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libwebp
+REQUIRED_PACKAGES += library/md4c
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/clang-13
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
