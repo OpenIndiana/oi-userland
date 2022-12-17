@@ -40,6 +40,8 @@ COMPONENT_LICENSE=	GPLv3,LGPLv3
 
 include $(WS_MAKE_RULES)/common.mk
 
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
+
 CONFIGURE_ENV += PYTHON_CONFIG=/usr/bin/python3.9-config
 
 # cpp flags.
