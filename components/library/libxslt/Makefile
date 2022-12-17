@@ -21,27 +21,32 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2022, Friedrich Kink. All rights reserved.
 #
+
+BUILD_BITS=	64_and_32
+USEOPENSSL11=	yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxslt
-COMPONENT_VERSION=	1.1.29
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.1.37
+COMPONENT_FMRI=         library/libxslt
+COMPONENT_SUMMARY=      XSLT support for libxml2 (XML toolkit from the GNOME project)
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/XSLT/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:b5976e3857837e7617b29f2249ebb5eeac34e249208d31f1fbf7a6ba7a4090ce
-COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxslt/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:3a4b27dc8027ccd6146725950336f1ec520928f320f144eb5fa7990ae6123ab4
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libxslt/1.1/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE=      Copyright
 COMPONENT_BUGDB=	library/libxslt
 
-# When CONFIGURE_FIX_LIBTOOL_RPATH is integrated, we can remove local fix and enable it
-CONFIGURE_FIX_LIBTOOL_RPATH=no
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+PYV=		$(shell echo $(PYTHON_VERSIONS) | tr -d .)
+PKG_MACROS +=	PYVER=$(PYTHON_VERSION)
+PKG_MACROS +=	PYV=$(PYV)
 
 LINT_FLAGS +=	-I/usr/include/libxml2 
 
@@ -50,13 +55,18 @@ LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
-CONFIGURE_OPTIONS += --with-python=$(PYTHON.$(BITS))
-CONFIGURE_OPTIONS += --without-crypto
-CONFIGURE_OPTIONS += --with-html-dir=/usr/share/lib/xslt/doc
-CONFIGURE_OPTIONS += --with-html-subdir=html
+CONFIGURE_OPTIONS.64 += --with-python=$(PYTHON)
+CONFIGURE_OPTIONS.32 += --with-python=no
+CONFIGURE_OPTIONS += --with-crypto
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
+
+CONFIGURE_ENV.64     += PYTHON=$(PYTHON.$(PYTHON_VERSION))
+COMPONENT_INSTALL_ARGS.64 += pythondir=$(PYTHON_VENDOR_PACKAGES)
+COMPONENT_INSTALL_ARGS.64 += pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+COMPONENT_BUILD_ARGS.64 += pythondir=$(PYTHON_VENDOR_PACKAGES)
+COMPONENT_BUILD_ARGS.64 += pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 
 CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
@@ -66,17 +76,47 @@ COMPONENT_PREP_ACTION = \
 		    libtoolize --force --copy ; aclocal ; \
 		    automake -f -a --copy ; autoconf)
 
-# common targets
-build:		$(BUILD_32_and_64)
+USE_COMMON_TEST_MASTER= no
 
-install:	$(INSTALL_32_and_64)
-	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
+# After we have built/installed libxml2, build/install the python
+# support for python (only 64 bit is available)
+COMPONENT_POST_INSTALL_ACTION.64 = ( \
+        cd $(@D)/python; \
+         $(GMAKE) pythondir=$(PYTHON_VENDOR_PACKAGES) \
+        pyexecdir=$(PYTHON_VENDOR_PACKAGES) \
+        DESTDIR=$(PROTO_DIR) \
+        install ; \
+        $(MV) $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/libxsltmod.so $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/libxsltmod.cpython-$(PYV).so; \
+        $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES); \
+);
 
-test:		$(TEST_32_and_64)
+# system-test should really use system version library
+COMPONENT_PRE_SYSTEM_TEST_ACTION = ($(RM) $(@D)/libxslt/.libs/*)
+
+# It's nice to test also python modules (LC_ALL is set to avoid test failure).
+COMPONENT_POST_TEST_ACTION.64 = \
+    cd $(@D)/python; \
+    LC_ALL=en_US.UTF-8 $(GMAKE) $(COMPONENT_TEST_ARGS) check
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
+
+COMPONENT_TEST_TRANSFORMS = \
+        '-e "/^-- /p" ' \
+        '-e "/^OK /p" ' \
+        '-e "/^\#\# Running .* tests/p" ' \
+        '-e "/^\#\# running Python regression tests/p" ' \
+        '-e "/ result /p" ' \
+        '-e "/.*/d" '
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/security/libgpg-error
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/libgcrypt
