@@ -13,25 +13,24 @@
 # Copyright 2022 Daniel Bell
 #
 
-
-USE_OPENSSL11=          yes
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 BITS=64
 
 COMPONENT_NAME=         libreoffice
 COMPONENT_VERSION=      7.2.7
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_RC_VERSION= 2
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION)
 COMPONENT_SUMMARY=      LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL=  https://www.libreoffice.org/
-COMPONENT_FMRI=         desktop/office/libreoffice
-COMPONENT_CLASSIFICATION=Applications/Office
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=  https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_ARCHIVE_HASH= sha256:6deaf83a0c2b83c5c8c53c2a9443e2ece51e19469494be2027d4fef3a61bc6a2
+COMPONENT_FMRI=         desktop/office/libreoffice
+COMPONENT_CLASSIFICATION= Applications/Office
 COMPONENT_LICENSE=      MPL2.0
 COMPONENT_LICENSE_FILE= COPYING.MPL
 
@@ -166,8 +165,8 @@ NUM_EXTRA_ARCHIVES = $(shell seq 1 6) $(shell 8 20) $(shell 22 31)
 
 include $(WS_MAKE_RULES)/common.mk
 
-GCC_VERSION=10
-PATH=$(GCC_ROOT)/bin:$(PATH.gnu)
+GCC_VERSION= 10
+PATH= $(GCC_BINDIR):$(PATH.gnu)
 
 #Ensure asm is built in 64-bit.
 AFLAGS= -m64
@@ -188,8 +187,8 @@ CONFIGURE_ENV += PYTHON=/usr/bin/python3.9
 CONFIGURE_ENV += GPG=/usr/bin/gpg2
 CONFIGURE_ENV += GPGCONF=/usr/bin/gpgconf
 
-CONFIGURE_ENV += MARIADBCONFIG=/usr/mariadb/10.3/bin/mysql_config
-MARIADB_LIBDIR=/usr/mariadb/10.3/lib/amd64
+CONFIGURE_ENV += MARIADBCONFIG=$(MYSQL_CONFIG)
+MARIADB_LIBDIR= $(MYSQL_LIBDIR)
 
 CONFIGURE_LIBDIR= $(CONFIGURE_LIBDIR.64)
 
@@ -311,13 +310,13 @@ REQUIRED_PACKAGES += developer/gperf
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/c++/mdds
-REQUIRED_PACKAGES += database/mariadb-103/client
+REQUIRED_PACKAGES += $(MYSQL_BASEPKG)/client
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += compress/xz
-REQUIRED_PACKAGES += database/mariadb-103/library
+REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
