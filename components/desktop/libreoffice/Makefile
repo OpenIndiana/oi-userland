@@ -19,8 +19,8 @@ BITS=64
 
 COMPONENT_NAME=         libreoffice
 COMPONENT_VERSION=      7.2.7
-COMPONENT_REVISION=     3
-COMPONENT_RC_VERSION= 2
+COMPONENT_REVISION=     4
+COMPONENT_RC_VERSION=	2
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION)
 COMPONENT_SUMMARY=      LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL=  https://www.libreoffice.org/
@@ -165,7 +165,6 @@ NUM_EXTRA_ARCHIVES = $(shell seq 1 6) $(shell 8 20) $(shell 22 31)
 
 include $(WS_MAKE_RULES)/common.mk
 
-GCC_VERSION= 10
 PATH= $(GCC_BINDIR):$(PATH.gnu)
 
 #Ensure asm is built in 64-bit.
@@ -239,7 +238,8 @@ CONFIGURE_OPTIONS += --with-system-lcms2
 CONFIGURE_OPTIONS += --with-system-dicts
 CONFIGURE_OPTIONS += --with-system-epoxy
 CONFIGURE_OPTIONS += --with-system-hunspell
-CONFIGURE_OPTIONS += --with-system-mdds
+# We have mdds-2.0.3 now which is not compatible with this libreoffice version:
+#CONFIGURE_OPTIONS += --with-system-mdds
 CONFIGURE_OPTIONS += --with-system-libabw
 CONFIGURE_OPTIONS += --with-system-libcdr
 # libreoffice uses functionality not packaged in latest libcmis (0.5.2)
