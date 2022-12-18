@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2022 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,7 +23,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=etc/bash_completion.d/gammu
 file path=usr/bin/gammu
 file path=usr/bin/gammu-config
 file path=usr/bin/gammu-detect
@@ -58,14 +58,15 @@ file path=usr/include/gammu/gammu-types.h
 file path=usr/include/gammu/gammu-unicode.h
 file path=usr/include/gammu/gammu-wap.h
 file path=usr/include/gammu/gammu.h
-link path=usr/lib/libGammu.so target=libGammu.so.7
-link path=usr/lib/libGammu.so.7 target=libGammu.so.7.$(COMPONENT_VERSION)
-file path=usr/lib/libGammu.so.7.$(COMPONENT_VERSION)
-link path=usr/lib/libgsmsd.so target=libgsmsd.so.7
-link path=usr/lib/libgsmsd.so.7 target=libgsmsd.so.7.$(COMPONENT_VERSION)
-file path=usr/lib/libgsmsd.so.7.$(COMPONENT_VERSION)
-file path=usr/lib/pkgconfig/gammu-smsd.pc
-file path=usr/lib/pkgconfig/gammu.pc
+link path=usr/lib/$(MACH64)/libGammu.so target=libGammu.so.7
+link path=usr/lib/$(MACH64)/libGammu.so.7 target=libGammu.so.7.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libGammu.so.7.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libgsmsd.so target=libgsmsd.so.7
+link path=usr/lib/$(MACH64)/libgsmsd.so.7 target=libgsmsd.so.7.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libgsmsd.so.7.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/pkgconfig/gammu-smsd.pc
+file path=usr/lib/$(MACH64)/pkgconfig/gammu.pc
+file path=usr/share/bash-completion/completions/gammu
 file path=usr/share/doc/gammu/COPYING
 file path=usr/share/doc/gammu/ChangeLog
 file path=usr/share/doc/gammu/README.rst
