@@ -12,32 +12,28 @@
 # Copyright 2022 Daniel Chan
 #
 
-BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
-COMPILER=gcc
 COMPONENT_NAME=				qt
 COMPONENT_VERSION_MJR=		$(QT6_VERSION)
 COMPONENT_VERSION=			$(COMPONENT_VERSION_MJR).4
-COMPONENT_REVISION=     	1
-COMPONENT_FMRI=				library/qt6
-COMPONENT_PROJECT_URL=		https://www.qt.io/
+COMPONENT_REVISION=     	2
 COMPONENT_SUMMARY=			Qt cross-platform application and UI framework
-COMPONENT_CLASSIFICATION= 	Desktop (GNOME)/Libraries
+COMPONENT_PROJECT_URL=		https://www.qt.io/
 COMPONENT_SRC=				$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=			$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=		sha256:cfe41905b6bde3712c65b102ea3d46fc80a44c9d1487669f14e4a6ee82ebb8fd
 COMPONENT_ARCHIVE_URL=		https://download.qt.io/official_releases/qt/$(COMPONENT_VERSION_MJR)/$(COMPONENT_VERSION)/single/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=				library/qt6
+COMPONENT_CLASSIFICATION= 	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=			FDLv1.3, GPLv2, GPLv3, LGPLv2.1, LGPLv3
 COMPONENT_LICENSE_FILE=		qt6.license
 
-TEST_TARGET=		$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-PATH=$(PG_BINDIR.$(BITS)):$(MYSQL_BINDIR.$(BITS)):$(GCC_ROOT)/bin:$(PATH.gnu)
+PATH=$(PG_BINDIR):$(MYSQL_BINDIR):$(GCC_BINDIR):$(PATH.gnu)
 
-QT_PREFIX=$(USRLIBDIR)/$(COMPONENT_NAME)/$(COMPONENT_VERSION_MJR)
+QT_PREFIX=$(QT6_BASEDIR)
 
 #QT_ARCHSUBDIR.32=
 QT_ARCHSUBDIR.64=$(MACH64)
@@ -50,13 +46,10 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
 GCC_VERSION 	= 10
-MYSQL_VERSION	= 10.3
-PG_VERSION		= 14
 OPENSSL_VERSION	= 1.1
 Clang_VERSION	= 13.0
 
-
-LDFLAGS += -Wl,-rpath,$(QT_PREFIX)/lib/$(QT_ARCHSUBDIR.$(BITS)):/usr/clang/$(Clang_VERSION)/lib:$(MYSQL_LIBDIR):$(PG_LIBDIR)
+LDFLAGS += -Wl,-rpath,$(QT6_LIBDIR):/usr/clang/$(Clang_VERSION)/lib:$(MYSQL_LIBDIR):$(PG_LIBDIR)
 #CONFIGURE_ENV+= MySQL_LIBRARY=/usr/mysql/lib/amd64
 #CONFIGURE_ENV+= MySQL_INCLUDE_DIR=/usr/mysql/include
 CONFIGURE_OPTIONS = -prefix $(QT_PREFIX)
@@ -109,7 +102,7 @@ COMPONENT_INSTALL_ENV+=	INSTALL_ROOT=$(PROTO_DIR)
 # Build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += database/freetds
-REQUIRED_PACKAGES += database/mariadb-101/client
+REQUIRED_PACKAGES += database/mariadb-106/client
 REQUIRED_PACKAGES += system/header/header-drm
 REQUIRED_PACKAGES += x11/keyboard/data-xkb
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
@@ -124,7 +117,7 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += database/mariadb-103/library
+REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += image/library/libjpeg6
 REQUIRED_PACKAGES += image/library/libjpeg6-ijg
@@ -139,7 +132,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/libmng
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libwebp
-REQUIRED_PACKAGES += library/md4c
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/unixodbc
