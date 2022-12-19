@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dbus
 COMPONENT_VERSION=	1.12.24
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Simple IPC library based on messages
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/dbus/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -65,6 +66,6 @@ REQUIRED_PACKAGES += text/xmlto
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-#REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += x11/library/libx11

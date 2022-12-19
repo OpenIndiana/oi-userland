@@ -25,12 +25,13 @@
 # Copyright (c) 2021-2022, Andreas Wacknitz
 #
 
-BUILD_BITS=				64_and_32
-BUILD_STYLE=			meson
+BUILD_BITS= 64_and_32
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         harfbuzz
 COMPONENT_VERSION=      5.3.1
+COMPONENT_REVISION=		1
 COMPONENT_FMRI=         library/c++/harfbuzz
 COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine. 
 COMPONENT_CLASSIFICATION=System/Libraries

@@ -20,14 +20,14 @@
 #
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=32_and_64
+
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libcmis
 COMPONENT_VERSION=	0.5.2
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=     	library/c++/libcmis
-COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://github.com/tdf/libcmis
 COMPONENT_SUMMARY=      libcmis - C++ client library for the CMIS interface
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,6 +36,8 @@ COMPONENT_ARCHIVE_HASH=	\
   sha256:d7b18d9602190e10d437f8a964a32e983afd57e2db316a07d87477a79f5000a2
 COMPONENT_ARCHIVE_URL=	\
   https://github.com/tdf/libcmis/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     	library/c++/libcmis
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      GPLv2, LGPLv2.1, MPLv2
 
 include $(WS_MAKE_RULES)/common.mk
@@ -50,15 +52,7 @@ CONFIGURE_OPTIONS+=	--with-man=no
 
 unexport SHELLOPTS
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/TOTAL:/p" ' \
-        '-e "/SKIP:/p" ' \
-        '-e "/PASS:/p" ' \
-        '-e "/FAIL:/p" ' \
-        '-e "/ERROR:/p" '
+# Note that tests are broken at the mmoment
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/cppunit
