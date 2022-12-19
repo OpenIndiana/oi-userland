@@ -20,17 +20,18 @@
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
 BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xz
-COMPONENT_VERSION=	5.2.9
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	5.4.0
 COMPONENT_SUMMARY=	XZ Utils - loss-less file compression application and library
 COMPONENT_PROJECT_URL=	https://tukaani.org/xz/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e982ea31b81543d7ee2b6fa34c2ad11760e1c50c6f4475add8ba0f2f005f07b4
+COMPONENT_ARCHIVE_HASH= sha256:7471ef5991f690268a8f2be019acec2e0564b7b233ca40035f339fe9a07f830b
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		compress/xz
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -44,20 +45,12 @@ CONFIGURE_OPTIONS += --disable-rpath
 
 CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"
 
+unexport SHELLOPTS
+
 COMPONENT_TEST_DIR = $(@D)/tests
 
-# The additional xz specific set of transforms to be applied to the
-# test results to try to normalize them.
-COMPONENT_TEST_TRANSFORMS += \
-        '-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
-        '-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
-        '-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
-        '-e "/^XXX_CC_XXX$$/d" ' \
-		'-e "/^make/d" ' \
-		'-e "/^mv -f/d" '
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/xopen/xcu4
