@@ -314,7 +314,7 @@ TOX_CALL_INDIRECTLY += zope.testrunner
 COMPONENT_PRE_TEST_ACTION += \
 	[ -f $(@D)/tox.ini ] && for c in $(TOX_CALL_INDIRECTLY) ; do \
 		$(GSED) -i -e '/^commands *=/,/^$$/{s/^\(\(commands *=\)\? *\)'$$c'/\1python -m '$$c'/}' $(@D)/tox.ini ; \
-	done ;
+	done ; true ;
 
 # Normalize tox test results.
 COMPONENT_TEST_TRANSFORMS += "-e 's/py$(shell echo $(PYTHON_VERSION) | tr -d .)/py\$$(PYV)/g'"	# normalize PYV
