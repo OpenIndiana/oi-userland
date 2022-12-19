@@ -25,22 +25,24 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS=		64_and_32
+BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libexpat
 COMPONENT_VERSION=	2.5.0
-COMPONENT_VERSION_U=	$(shell echo $(COMPONENT_VERSION) | tr . _)
-COMPONENT_FMRI=		library/expat
+COMPONENT_VERSION_U=$(shell echo $(COMPONENT_VERSION) | tr . _)
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	libexpat - XML parser library
 COMPONENT_DESCRIPTION=	A fast, non-validating, stream-oriented XML parsing library	
-COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_PROJECT_URL=	https://libexpat.github.io
 COMPONENT_SRC_NAME=	expat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.lz
 COMPONENT_ARCHIVE_HASH=	sha256:9a51edebc8c2910d8cc2b5e6b8d98350dea559922208f3e1a6bb5de33b6c2dc6
 COMPONENT_ARCHIVE_URL=	https://github.com/libexpat/libexpat/releases/download/R_$(COMPONENT_VERSION_U)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		library/expat
+COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	expat license
 
 include $(WS_MAKE_RULES)/common.mk
@@ -48,21 +50,8 @@ include $(WS_MAKE_RULES)/common.mk
 CFLAGS += $(CPP_LARGEFILES)
 
 # Deliver only 64-bit binary
-CONFIGURE_OPTIONS.64+= --bindir=/usr/bin
-CONFIGURE_OPTIONS+= --disable-static
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS= \
-	'-e "s/^\# //" ' \
-	'-n ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/PASS/p" '  \
-	'-e "/SKIP/p" '  \
-	'-e "/XFAIL/p" ' \
-	'-e "/FAIL/p" '  \
-	'-e "/XPASS/p" ' \
-	'-e "/ERROR/p" ' \
+CONFIGURE_OPTIONS.64 += --bindir=/usr/bin
+CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
