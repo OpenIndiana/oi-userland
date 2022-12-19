@@ -13,15 +13,15 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS=64_and_32
-USE_COMMON_TEST_MASTER=yes
-USE_DEFAULT_TEST_TRANSFORMS=yes
+BUILD_BITS= 64_and_32
+USE_COMMON_TEST_MASTER= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tiff
 COMPONENT_VERSION= 4.4.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= libtiff - library for reading and writing TIFF
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -61,7 +61,7 @@ COMPONENT_TEST_ENV+= PATH=$(PATH.gnu)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

@@ -15,12 +15,13 @@
 # Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS=			64_and_32
-BUILD_STYLE=		cmake
+BUILD_BITS= 64_and_32
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zziplib
 COMPONENT_VERSION=	0.13.72
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Lightweight ZIP library
 COMPONENT_PROJECT_URL=	https://github.com/gdraheim/zziplib
 COMPONENT_FMRI=		compress/zziplib
@@ -31,7 +32,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:93ef44bf1f1ea24fc66080426a469df82fa631d13ca3b2e4a
 COMPONENT_ARCHIVE_URL=	https://github.com/gdraheim/zziplib/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=	GPLv2
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)

@@ -27,11 +27,11 @@
 
 BUILD_BITS=             32_and_64
 USE_COMMON_TEST_MASTER= no
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         zlib
 COMPONENT_VERSION=      1.2.13
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      The Zip compression library
 COMPONENT_PROJECT_URL=  https://zlib.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)

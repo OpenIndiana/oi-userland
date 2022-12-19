@@ -25,18 +25,17 @@
 # Copyright (c) 2021, Nona Hansel
 #
 
-BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tar
 COMPONENT_VERSION=	1.34
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/tar/
+COMPONENT_REVISION=	1
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/tar/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:63bebd26879c5e1eea4352f0d03c991f966aeb3ddeb3c7445c902568d5411d28
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/tar/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/tar/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		archiver/gnu-tar
 
 include $(WS_MAKE_RULES)/common.mk
@@ -50,6 +49,7 @@ CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
 # rmt(1M)
 REQUIRED_PACKAGES += service/network/network-clients
 REQUIRED_PACKAGES += SUNWcs
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/gzip

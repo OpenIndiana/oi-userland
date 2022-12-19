@@ -13,11 +13,12 @@
 # Copyright 2013, Adam Stevko. All rights reserved.
 #
 
-BUILD_BITS=			64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cabextract
 COMPONENT_VERSION=	1.9.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	cabextract - extract Microsoft cabinet files
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -29,7 +30,7 @@ COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TAGET=			$(NO_TESTS)
+TEST_TAGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies

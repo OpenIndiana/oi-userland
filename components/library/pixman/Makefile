@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pixman
 COMPONENT_VERSION=	0.42.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Pixman: The pixel-manipulation library for X and Cairo
 COMPONENT_PROJECT_URL=	https://www.pixman.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,7 +33,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CONFIGURE_OPTIONS += --disable-gtk
 CONFIGURE_OPTIONS += --enable-static=no

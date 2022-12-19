@@ -14,22 +14,23 @@
 # Copyright 2019 Jason Martin
 #
 
-BUILD_BITS=64_and_32
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libwebp
 COMPONENT_VERSION= 1.2.4
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= library/libwebp
 COMPONENT_SUMMARY= WebP image format library
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= 
-COMPONENT_ARCHIVE_URL=	https://storage.googleapis.com/downloads.webmproject.org/releases/webp/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://developers.google.com/speed/webp/
+COMPONENT_ARCHIVE_HASH= sha256:7bf5a8a28cc69bcfa8cb214f2c3095703c6b73ac5fba4d5480c205331d9494df
+COMPONENT_ARCHIVE_URL= https://storage.googleapis.com/downloads.webmproject.org/releases/webp/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://developers.google.com/speed/webp/
 COMPONENT_LICENSE= BSD
 
-TEST_TARGET=	$(NO_TESTS)
+#TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)

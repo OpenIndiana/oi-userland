@@ -24,45 +24,38 @@
 # Copyright (c) 2016, Jim Klimov
 #
 
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pbzip2
 COMPONENT_VERSION=	1.1.13
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://compression.ca/pbzip2/
+COMPONENT_REVISION=	2
+COMPONENT_SUMMARY=	parallel implementation of bzip2
+COMPONENT_PROJECT_URL=	http://compression.great-site.net
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:8fd13eaaa266f7ee91f85c1ea97c86d9c9cc985969db9059cdebcb1e1b7bdbe6
+COMPONENT_ARCHIVE_HASH=	sha256:8fd13eaaa266f7ee91f85c1ea97c86d9c9cc985969db9059cdebcb1e1b7bdbe6
 COMPONENT_ARCHIVE_URL=	https://launchpad.net/pbzip2/1.1/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/pbzip2
+COMPONENT_FMRI=	compress/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_LICENSE=	pbzip2 license
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-#ASLR_MODE = $(ASLR_ENABLE)
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Trailing flags are those our CXXFLAGS override in original project Makefile
 CXXFLAGS += $(CPP_LARGEFILES) -DUSE_STACKSIZE_CUSTOMIZATION -pthread -D_POSIX_PTHREAD_SEMANTICS
-
-COMPONENT_POST_INSTALL_ACTION = \
-	( $(MKDIR) $(PROTOUSRBINDIR)/$(MACH$(BITS)) && \
-	  $(MV) $(PROTOUSRBINDIR)/pbzip2 $(PROTOUSRBINDIR)/$(MACH$(BITS))/pbzip2 )
 
 COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CXX="$(CXX)"
 COMPONENT_BUILD_ARGS += CXXFLAGS="$(CXXFLAGS)"
 
-# common targets
-build:		$(BUILD_32_and_64)
+# Manually added dependencies
+REQUIRED_PACKAGES += system/library/math
 
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += system/library/math

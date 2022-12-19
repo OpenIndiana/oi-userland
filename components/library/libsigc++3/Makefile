@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         libsigc++
 COMPONEN_MAJOR_VERSION=	3.0
 COMPONENT_VERSION=      $(COMPONEN_MAJOR_VERSION).6
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_FMRI=         library/c++/sigcpp3
 COMPONENT_SUMMARY=      Libsigc++ - a library that implements a typesafe callback system for standard C++
 COMPONENT_CLASSIFICATION=Development/C++ 
@@ -39,6 +39,8 @@ CONFIGURE_OPTIONS += -Dbuild-documentation=true
 unexport SHELLOPTS
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
+
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9]*\.[0-9]*s/X.XXs/" '
 
 # The tests need $(PROTOUSRLIBDIR) and $(PROTOUSRLIBDIR64) and pre-publish provides them:
 test: pre-publish

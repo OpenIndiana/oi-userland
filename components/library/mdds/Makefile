@@ -20,19 +20,20 @@
 #
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mdds
-COMPONENT_VERSION=	1.7.0
-COMPONENT_FMRI=     	library/c++/mdds
-COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=	https://gitlab.com/mdds/mdds
+COMPONENT_MAJOR_VERSION=	2.0
+COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).3
 COMPONENT_SUMMARY=      mdds - A collection of multi-dimensional data structures and indexing algorithms
+COMPONENT_PROJECT_URL=	https://gitlab.com/mdds/mdds
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5e2ae7a7a4e8e8fa1e7f1aa640731198be3b124445a3d8ac5d19da6993063371
-COMPONENT_ARCHIVE_URL=	https://gitlab.com/mdds/mdds/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:5d6dae6e1650685e62f744a2cc4d60257a286b97447cec07261720410c30d990
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     	library/c++/mdds
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MIT
 
 include $(WS_MAKE_RULES)/common.mk

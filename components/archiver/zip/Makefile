@@ -21,26 +21,27 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zip
 COMPONENT_VERSION=	3.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
+COMPONENT_SUMMARY=	The Info-Zip (zip) compression utility
 COMPONENT_PROJECT_URL=	http://www.info-zip.org/Zip.html
 COMPONENT_SRC=		$(COMPONENT_NAME)30
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f0e8bb1f9b7eb0b01285495a2699df3a4b766784c1765a8f1aeedf63c0806369
+COMPONENT_ARCHIVE_HASH= sha256:f0e8bb1f9b7eb0b01285495a2699df3a4b766784c1765a8f1aeedf63c0806369
 COMPONENT_ARCHIVE_URL=	ftp://ftp.info-zip.org/pub/infozip/src/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/zip
 COMPONENT_FMRI=		compress/zip
+COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_LICENSE=	Info-ZIP
+COMPONENT_LICENSE_FILE=	info-zip.license
+
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 LD_OPTIONS=
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
 
 # remove the unwanted file.
 COMPONENT_PREP_ACTION = rm -f $(SOURCE_DIR)/match.S
@@ -54,12 +55,6 @@ COMPONENT_INSTALL_ARGS  += -f unix/Makefile
 COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRBINDIR)
 COMPONENT_INSTALL_ARGS += MANDIR=$(PROTOUSRSHAREMAN1DIR)
 
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += system/library

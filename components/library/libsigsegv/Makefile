@@ -23,21 +23,21 @@
 # Copyright (c) 2020, Michal Nowak
 #
 
-BUILD_BITS=		32_and_64
-
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsigsegv
 COMPONENT_VERSION=	2.12
-COMPONENT_FMRI=		library/libsigsegv
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	libsigsegv - handling page faults in user mode
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libsigsegv/
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libsigsegv/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:3ae1af359eebaa4ffc5896a1aee3568c052c99879316a1ab57f8fe1789c390b6
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/libsigsegv/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:3ae1af359eebaa4ffc5896a1aee3568c052c99879316a1ab57f8fe1789c390b6
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/libsigsegv/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		library/libsigsegv
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
@@ -49,14 +49,6 @@ CONFIGURE_OPTIONS  +=	--enable-shared
 unexport SHELLOPTS
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS += \
- 	'-n ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/SKIP/p" ' \
-	'-e "/PASS/p" ' \
-	'-e "/FAIL/p" ' \
-	'-e "/ERROR/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
