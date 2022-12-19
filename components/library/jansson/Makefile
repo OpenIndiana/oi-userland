@@ -12,19 +12,21 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS=			32_and_64
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jansson
 COMPONENT_VERSION=	2.14
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	C library for encoding, decoding and manipulating JSON data
 COMPONENT_PROJECT_URL=	https://www.digip.org/jansson
-COMPONENT_FMRI=		library/jansson
-COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/akheron/jansson/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	sha256:5798d010e41cf8d76b66236cfb2f2543c8d082181d16bc3085ab49538d4b9929
+COMPONENT_FMRI=		library/jansson
+COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
@@ -35,18 +37,6 @@ CONFIGURE_OPTIONS += --disable-static
 
 # The test/suites/api/check-exports uses nm and expects it to be the GNU kind.
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS= \
-	'-n ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/PASS/p" '  \
-	'-e "/SKIP/p" '  \
-	'-e "/XFAIL/p" ' \
-	'-e "/FAIL/p" '  \
-	'-e "/XPASS/p" ' \
-	'-e "/ERROR/p" ' 
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
