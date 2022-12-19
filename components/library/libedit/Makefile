@@ -24,45 +24,36 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libedit
-COMPONENT_VERSION_DATE=	20181209
+COMPONENT_VERSION_DATE=	20221030
 COMPONENT_VERSION=	3.1.$(COMPONENT_VERSION_DATE)
-COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Libedit - Command line editor library
-COMPONENT_PROJECT_URL=	http://www.thrysoee.dk/editline/
+COMPONENT_PROJECT_URL=	https://www.thrysoee.dk/editline/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION_DATE)-3.1
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:2811d70c0b000f2ca91b7cb1a37203134441743c4fcc9c37b0b687f328611064
-COMPONENT_ARCHIVE_URL=	http://www.thrysoee.dk/editline/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_ARCHIVE_HASH=	sha256:f0925a5adf4b1bf116ee19766b7daa766917aec198747943b1c4edf67a4be2bb
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libedit
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Uses GNU awk
 PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f)
 
-CONFIGURE_OPTIONS +=   --disable-silent-rules
-CONFIGURE_OPTIONS +=   --disable-static
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
+CONFIGURE_OPTIONS += --disable-static
 
 # Build dependencies
 REQUIRED_PACKAGES += text/gawk
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
