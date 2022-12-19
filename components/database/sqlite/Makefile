@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         sqlite
 COMPONENT_VERSION=      3.40.0
 TARBALL_VERSION=		3400000
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
