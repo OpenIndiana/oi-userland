@@ -12,12 +12,14 @@
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 #
+
 BUILD_BITS=	64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dbus-glib
 COMPONENT_VERSION=      0.112
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_PROJECT_URL=  https://dbus.freedesktop.org/doc/dbus-glib/
 COMPONENT_SUMMARY=      D-Bus GLib bindings
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,6 +42,10 @@ CONFIGURE_OPTIONS+=	--disable-static
 
 # For tests to pass
 unexport SHELLOPTS
+
+COMPONENT_TEST_TRANSFORMS += \
+	' -e "/===/p" ' \
+	' -e "/Testsuite/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/expat
