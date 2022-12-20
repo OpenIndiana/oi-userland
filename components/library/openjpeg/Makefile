@@ -23,18 +23,20 @@
 #
 BUILD_BITS= 64_and_32
 BUILD_STYLE= cmake
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openjpeg
-COMPONENT_SUMMARY=	OpenJPEG library : Open source JPEG 2000 codecs
 COMPONENT_VERSION=	2.5.0
-COMPONENT_FMRI=     	image/library/openjpeg
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	OpenJPEG library : Open source JPEG 2000 codecs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openjpeg.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:0333806d6adecc6f7a91243b2b839ff4d2053823634d4f6ed7a59bc87409122a
 COMPONENT_ARCHIVE_URL=	https://github.com/uclouvain/openjpeg/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=     	image/library/openjpeg
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	BSD
 
 #
