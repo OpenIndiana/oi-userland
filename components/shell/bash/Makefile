@@ -26,7 +26,6 @@
 # Copyright (c) 2022, Niklas Poslovski
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
