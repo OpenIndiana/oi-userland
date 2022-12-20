@@ -21,20 +21,20 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2020, Andreas Wacknitz
 #
-BUILD_BITS=32_and_64
+
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         apr
 COMPONENT_VERSION=      1.7.0
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_PROJECT_URL=  https://apr.apache.org/
 COMPONENT_FMRI=         library/apr
 COMPONENT_SUMMARY=      Apache Portable Runtime (APR) Shared Libraries
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:48e9dbf45ae3fdc7b491259ffb6ccf7d63049ffacbc1c0977cced095e4c2d5a2
+COMPONENT_ARCHIVE_HASH= sha256:48e9dbf45ae3fdc7b491259ffb6ccf7d63049ffacbc1c0977cced095e4c2d5a2
 COMPONENT_ARCHIVE_URL=  https://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      Apache v2.0
 
@@ -52,12 +52,12 @@ CONFIGURE_SCRIPT=       $(@D)/configure
 
 CONFIGURE_PREFIX=		$(USRDIR)/apr
 
-CONFIGURE_OPTIONS +=	--enable-threads
-CONFIGURE_OPTIONS +=	--enable-other-child
-CONFIGURE_OPTIONS +=	--enable-nonportable-atomics
-CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	LTFLAGS="--tag=CC --silent"
+CONFIGURE_OPTIONS += --enable-threads
+CONFIGURE_OPTIONS += --enable-other-child
+CONFIGURE_OPTIONS += --enable-nonportable-atomics
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += LTFLAGS="--tag=CC --silent"
 CONFIGURE_OPTIONS.32 +=	--enable-layout=OpenSolaris
 CONFIGURE_OPTIONS.64 +=	--enable-layout=OpenSolaris-$(MACH64)
 
