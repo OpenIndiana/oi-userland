@@ -14,8 +14,8 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_STYLE= configure
 BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libpng
@@ -28,6 +28,7 @@ COMPONENT_VERSION=      $(COMPONENT_VERSION_SUP).$(COMPONENT_VERSION_MAJ).$(COMP
 COMPONENT_VERSION_TAG=$(COMPONENT_VERSION_SUP)$(COMPONENT_VERSION_MAJ)
 # Suffix of shared libs:
 COMPONENT_VERSION_SONAME=$(COMPONENT_VERSION_TAG).$(COMPONENT_VERSION_MIN).$(COMPONENT_VERSION_PAT)
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=  http://www.libpng.org/pub/png/
 COMPONENT_SUMMARY=      Portable Network Graphics library version $(COMPONENT_VERSION)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -50,16 +51,6 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 # for tests to pass
 unexport SHELLOPTS
-
-COMPONENT_TEST_TRANSFORMS= \
-	'-n ' \
-  '-e "/TOTAL/p" ' \
-  '-e "/PASS/p" '  \
-  '-e "/SKIP/p" '  \
-  '-e "/XFAIL/p" ' \
-  '-e "/FAIL/p" '  \
-  '-e "/XPASS/p" ' \
-  '-e "/ERROR/p" ' 
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
