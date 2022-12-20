@@ -20,23 +20,25 @@
 #
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
+
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bullet
 COMPONENT_VERSION=	2.83.5
-COMPONENT_FMRI=     	library/bullet
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=  Bullet Physics Library
 COMPONENT_SRC=		bullet3-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://bulletphysics.org/
+COMPONENT_PROJECT_URL=	https://pybullet.org/wordpress/
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:9ed1cbf4388a34ff1913493cc3558b0f9cbced9de32fee3171f7d4b4e3b0a464
 COMPONENT_ARCHIVE_URL=	https://github.com/bulletphysics/bullet3/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=     	library/bullet
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      BSD3c
-COMPONENT_SUMMARY=      Bullet Physics Library
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_OPTIONS+=	-DBUILD_SHARED_LIBS=ON 
 CMAKE_OPTIONS+=	-DBUILD_EXTRAS=ON
@@ -48,14 +50,8 @@ CMAKE_OPTIONS+=	-DINSTALL_EXTRA_LIBS=ON
 CMAKE_OPTIONS+=	-DCMAKE_BUILD_TYPE=Release 
 CMAKE_OPTIONS+=	-DLIB_SUFFIX=/$(ARCHLIBSUBDIR)
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
