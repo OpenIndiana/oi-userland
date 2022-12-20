@@ -15,29 +15,29 @@
 # Copyright 2021 Andreas Wacknitz
 # Copyright 2022 Niklas Poslovski
 #
-BUILD_BITS=	64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         brltty
 COMPONENT_VERSION=      6.5
-#COMPONENT_REVISION=     5
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Braille support
-COMPONENT_FMRI=         library/accessibility/brltty
-COMPONENT_CLASSIFICATION=Applications/Universal Access
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:2f173535291ba39b5a9fc8d80c349234333d92042d95d6dd88796c98a02f316b
 COMPONENT_PROJECT_URL=  http://www.mielke.cc/brltty/
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/accessibility/brltty
+COMPONENT_CLASSIFICATION=Applications/Universal Access
 COMPONENT_LICENSE=      GPLv2,LGPLv2.1
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=	$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # Missing files on install without this
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D)) ;
+COMPONENT_PRE_CONFIGURE_ACTION= ($(CLONEY) $(SOURCE_DIR) $(@D)) ;
 
 # Needed because we patch configure.ac
 COMPONENT_PRE_CONFIGURE_ACTION += (cd $(@D) ; ./autogen) ;
@@ -48,7 +48,6 @@ CFLAGS +=	-I /usr/include/pcre -I /usr/include/liblouis
 CPPFLAGS +=	-D_SYS_UCONTEXT_H # Workaround Bug Id 15558893
 
 # Disable python bindings for now.
-PYTHON_VERSION = 3.9
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 PKG_MACROS += PYVER="$(PYTHON_VERSION)"
 
