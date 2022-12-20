@@ -10,12 +10,11 @@
 #
 
 #
-# Copyright 2016 Jim Klimov
+# Copyright 2022 Andreas Wacknitz
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -24,9 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/cxxtools-config
-file path=usr/bin/cxxtools-config
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
+file path=usr/bin/cxxtools-config
 file path=usr/include/cxxtools/allocator.h
 file path=usr/include/cxxtools/api.h
 file path=usr/include/cxxtools/application.h
@@ -234,55 +233,38 @@ file path=usr/include/cxxtools/xmlrpc/responder.h
 file path=usr/include/cxxtools/xmlrpc/scanner.h
 file path=usr/include/cxxtools/xmlrpc/service.h
 file path=usr/include/cxxtools/xmltag.h
-
+file path=usr/lib/$(MACH64)/libcxxtools-bin.a
 link path=usr/lib/$(MACH64)/libcxxtools-bin.so target=libcxxtools-bin.so.9.0.0
 link path=usr/lib/$(MACH64)/libcxxtools-bin.so.9 target=libcxxtools-bin.so.9.0.0
 file path=usr/lib/$(MACH64)/libcxxtools-bin.so.9.0.0
+file path=usr/lib/$(MACH64)/libcxxtools-http.a
 link path=usr/lib/$(MACH64)/libcxxtools-http.so target=libcxxtools-http.so.9.0.0
-link path=usr/lib/$(MACH64)/libcxxtools-http.so.9 target=libcxxtools-http.so.9.0.0
+link path=usr/lib/$(MACH64)/libcxxtools-http.so.9 \
+    target=libcxxtools-http.so.9.0.0
 file path=usr/lib/$(MACH64)/libcxxtools-http.so.9.0.0
+file path=usr/lib/$(MACH64)/libcxxtools-json.a
 link path=usr/lib/$(MACH64)/libcxxtools-json.so target=libcxxtools-json.so.9.0.0
-link path=usr/lib/$(MACH64)/libcxxtools-json.so.9 target=libcxxtools-json.so.9.0.0
+link path=usr/lib/$(MACH64)/libcxxtools-json.so.9 \
+    target=libcxxtools-json.so.9.0.0
 file path=usr/lib/$(MACH64)/libcxxtools-json.so.9.0.0
+file path=usr/lib/$(MACH64)/libcxxtools-unit.a
 link path=usr/lib/$(MACH64)/libcxxtools-unit.so target=libcxxtools-unit.so.9.0.0
-link path=usr/lib/$(MACH64)/libcxxtools-unit.so.9 target=libcxxtools-unit.so.9.0.0
+link path=usr/lib/$(MACH64)/libcxxtools-unit.so.9 \
+    target=libcxxtools-unit.so.9.0.0
 file path=usr/lib/$(MACH64)/libcxxtools-unit.so.9.0.0
-link path=usr/lib/$(MACH64)/libcxxtools-xmlrpc.so target=libcxxtools-xmlrpc.so.9.0.0
-link path=usr/lib/$(MACH64)/libcxxtools-xmlrpc.so.9 target=libcxxtools-xmlrpc.so.9.0.0
+file path=usr/lib/$(MACH64)/libcxxtools-xmlrpc.a
+link path=usr/lib/$(MACH64)/libcxxtools-xmlrpc.so \
+    target=libcxxtools-xmlrpc.so.9.0.0
+link path=usr/lib/$(MACH64)/libcxxtools-xmlrpc.so.9 \
+    target=libcxxtools-xmlrpc.so.9.0.0
 file path=usr/lib/$(MACH64)/libcxxtools-xmlrpc.so.9.0.0
+file path=usr/lib/$(MACH64)/libcxxtools.a
 link path=usr/lib/$(MACH64)/libcxxtools.so target=libcxxtools.so.9.0.0
 link path=usr/lib/$(MACH64)/libcxxtools.so.9 target=libcxxtools.so.9.0.0
 file path=usr/lib/$(MACH64)/libcxxtools.so.9.0.0
-
-link path=usr/lib/libcxxtools-bin.so target=libcxxtools-bin.so.9.0.0
-link path=usr/lib/libcxxtools-bin.so.9 target=libcxxtools-bin.so.9.0.0
-file path=usr/lib/libcxxtools-bin.so.9.0.0
-link path=usr/lib/libcxxtools-http.so target=libcxxtools-http.so.9.0.0
-link path=usr/lib/libcxxtools-http.so.9 target=libcxxtools-http.so.9.0.0
-file path=usr/lib/libcxxtools-http.so.9.0.0
-link path=usr/lib/libcxxtools-json.so target=libcxxtools-json.so.9.0.0
-link path=usr/lib/libcxxtools-json.so.9 target=libcxxtools-json.so.9.0.0
-file path=usr/lib/libcxxtools-json.so.9.0.0
-link path=usr/lib/libcxxtools-unit.so target=libcxxtools-unit.so.9.0.0
-link path=usr/lib/libcxxtools-unit.so.9 target=libcxxtools-unit.so.9.0.0
-file path=usr/lib/libcxxtools-unit.so.9.0.0
-link path=usr/lib/libcxxtools-xmlrpc.so target=libcxxtools-xmlrpc.so.9.0.0
-link path=usr/lib/libcxxtools-xmlrpc.so.9 target=libcxxtools-xmlrpc.so.9.0.0
-file path=usr/lib/libcxxtools-xmlrpc.so.9.0.0
-link path=usr/lib/libcxxtools.so target=libcxxtools.so.9.0.0
-link path=usr/lib/libcxxtools.so.9 target=libcxxtools.so.9.0.0
-file path=usr/lib/libcxxtools.so.9.0.0
-
 file path=usr/lib/$(MACH64)/pkgconfig/cxxtools-bin.pc
 file path=usr/lib/$(MACH64)/pkgconfig/cxxtools-http.pc
 file path=usr/lib/$(MACH64)/pkgconfig/cxxtools-json.pc
 file path=usr/lib/$(MACH64)/pkgconfig/cxxtools-unit.pc
 file path=usr/lib/$(MACH64)/pkgconfig/cxxtools-xmlrpc.pc
 file path=usr/lib/$(MACH64)/pkgconfig/cxxtools.pc
-
-file path=usr/lib/pkgconfig/cxxtools-bin.pc
-file path=usr/lib/pkgconfig/cxxtools-http.pc
-file path=usr/lib/pkgconfig/cxxtools-json.pc
-file path=usr/lib/pkgconfig/cxxtools-unit.pc
-file path=usr/lib/pkgconfig/cxxtools-xmlrpc.pc
-file path=usr/lib/pkgconfig/cxxtools.pc
