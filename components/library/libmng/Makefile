@@ -14,16 +14,18 @@
 # Copyright 2019 Tim Mooney <Timothy.V.Mooney@gmail.com>
 #
 
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmng
 COMPONENT_VERSION=	2.0.3
-COMPONENT_FMRI=		library/graphics/libmng
-COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libmng/
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The Multiple Image Network Graphics Library
+COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libmng/
 COMPONENT_DESCRIPTION=	A PNG-like image format library supporting multiple images, animations and transparent JPEG.
-COMPONENT_LICENSE=	MNG License (BSD-like)
+COMPONENT_FMRI=		library/graphics/libmng
 COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE=	MNG License (BSD-like)
 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -51,10 +53,8 @@ COMPONENT_ARCHIVE_HASH_5 = \
     sha256:fe8e0a7aa7371c4c1369b56485fdbd96699e53f0078d7369162c883bb7dac1ca
 COMPONENT_ARCHIVE_URL_5 = http://www.libpng.org/pub/mng/spec/index.html
 
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # because Solaris installed the lcms headers elsewhere
 CFLAGS += `pkg-config --cflags lcms2`
@@ -90,15 +90,8 @@ COMPONENT_PREP_ACTION = \
 
 PKG_PROTO_DIRS += $(USERLAND_ARCHIVES)
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:	$(NO_TESTS)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/$(JPEG_IMPLEM)
+REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
