@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Imath
 COMPONENT_VERSION=	3.1.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	C++ representation of 2D and 3D vectors
 COMPONENT_PROJECT_URL=	https://github.com/AcademySoftwareFoundation/$(COMPONENT_NAME)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,7 +33,7 @@ COMPONENT_LICENSE_FILE=	LICENSE.md
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CMAKE_OPTIONS += -DCMAKE_INSTALL_PREFIX=/usr
 CMAKE_OPTIONS.32 += -DCMAKE_INSTALL_LIBDIR=lib
