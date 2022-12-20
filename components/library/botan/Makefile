@@ -17,15 +17,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		botan
 COMPONENT_VERSION=	2.19.3
-COMPONENT_LICENSE=	BSD-2-Clause
-COMPONENT_PROJECT_URL=	https://botan.randombit.net/
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	Crypto and TLS for C++11
+COMPONENT_PROJECT_URL=	https://botan.randombit.net/
 COMPONENT_SRC=		Botan-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:dae047f399c5a47f087db5d3d9d9e8f11ae4985d14c928d71da1aff801802d55
 COMPONENT_ARCHIVE_URL=	https://botan.randombit.net/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=library/security/botan
 COMPONENT_CLASSIFICATION=System/Security
+COMPONENT_LICENSE=	BSD-2-Clause
 COMPONENT_LICENSE_FILE=license.txt
 
 # add for using variable in manifest
