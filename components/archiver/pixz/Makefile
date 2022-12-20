@@ -23,19 +23,21 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pixz
-COMPONENT_VERSION=	1.0.7
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_NAME=			pixz
+COMPONENT_VERSION=		1.0.7
+COMPONENT_REVISION=		1
+COMPONENT_SUMMARY=		parallel indexing version of XZ
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://github.com/vasi/$(COMPONENT_NAME)/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:e5e32c6eb0bf112b98e74a5da8fb63b9f2cae71800f599d97ce540e150c8ddc5
-COMPONENT_ARCHIVE_URL=	\
-    $(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/pixz
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:e5e32c6eb0bf112b98e74a5da8fb63b9f2cae71800f599d97ce540e150c8ddc5
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			compress/pixz
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_LICENSE=		BSD-like
+COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -49,10 +51,14 @@ studio_MT =
 
 COMPONENT_PREP_ACTION = (cd $(SOURCE_DIR) && $(AUTORECONF) -if)
 
+CONFIGURE_OPTIONS += --with-libiconv-prefix=$(CONFIGURE_PREFIX)
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # Build dependencies added manually
 REQUIRED_PACKAGES += text/asciidoc
+
+# Note: We have one failing test because we don't have cppcheck.
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/xz
