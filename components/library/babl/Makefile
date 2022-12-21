@@ -15,16 +15,15 @@
 # Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=	babl
-COMPONENT_VERSION=	0.1.96
+COMPONENT_NAME=		babl
+COMPONENT_VERSION=	0.1.98
 COMPONENT_SUMMARY=	Babl is a dynamic, any to any, pixel format conversion library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:33673fe459a983f411245a49f81fd7f1966af1ea8eca9b095a940c542b8545f6
+COMPONENT_ARCHIVE_HASH= sha256:f3b222f84e462735de63fa9c3651942f2b78fd314c73a22e05ff7c73afd23af1
 COMPONENT_ARCHIVE_URL=	https://download.gimp.org/pub/babl/0.1/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://gegl.org/babl/
 COMPONENT_FMRI=	image/library/babl
@@ -34,15 +33,16 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CPPFLAGS += -I/usr/include/lcms2
 
 CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS+= --infodir=$(USRSHAREDIR)/info
-CONFIGURE_OPTIONS+= -Denable-mmx=false
-CONFIGURE_OPTIONS+= -Denable-sse=false
+# Support x86 extensions up to sse2 introduced with Pentium 4:
+CONFIGURE_OPTIONS+= -Denable-sse4_1=false
+CONFIGURE_OPTIONS+= -Denable-f16c=false
 
 # gobject-introspection requires this
 COMPONENT_BUILD_ENV += CC="$(CC)"
