@@ -23,22 +23,22 @@
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2022, Daniel Chan
 
-BUILD_BITS=		64_and_32
-BUILD_STYLE=	cmake
-
+BUILD_BITS= 64_and_32
+BUILD_STYLE= cmake
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openexr
 COMPONENT_VERSION=      3.1.5
-COMPONENT_FMRI=         library/openexr
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      OpenEXR header files and libraries used to read and write OpenEXR images
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://www.openexr.com/
-COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=  https://www.openexr.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:93925805c1fc4f8162b35f0ae109c4a75344e6decae5a240afdfce25f8a433ec
 COMPONENT_ARCHIVE_URL=  https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=         library/openexr
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      BSD
 
 include $(WS_MAKE_RULES)/common.mk
@@ -50,12 +50,22 @@ CMAKE_OPTIONS += -DOPENEXR_FORCE_INTERNAL_ZLIB=OFF
 CMAKE_OPTIONS += -DOPENEXR_USE_DEFAULT_VISIBILITY=OFF
 CMAKE_OPTIONS.32 += -DCMAKE_INSTALL_BINDIR=bin
 CMAKE_OPTIONS.64 += -DCMAKE_INSTALL_BINDIR=bin/amd64
-TEST_TARGET=	$(TEST_32_and_64)
+
+COMPONENT_TEST_TRANSFORMS= \
+	' -e "s/[0-9]*\.[0-9]* sec/X.XX sec/" ' \
+	'-n ' \
+    '-e "/Test /p" ' \
+    '-e "/Start /p" ' \
+    '-e "/TOTAL:/p" ' \
+    '-e "/SKIP:/p" ' \
+    '-e "/PASS:/p" ' \
+    '-e "/FAIL:/p" ' \
+    '-e "/ERROR:/p" '
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/imath
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
