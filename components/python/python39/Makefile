@@ -30,27 +30,26 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
 COMPONENT_VERSION=      3.9.16
-COMPONENT_FMRI=			runtime/python-39
-COMPONENT_PROJECT_URL=  https://python.org/
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
-COMPONENT_CLASSIFICATION= Development/Python
+COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:22dddc099246dd2760665561e8adb7394ea0cc43a72684c6480f9380f7786439
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			runtime/python-39
+COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_LICENSE=      PSFv2
 COMPONENT_LICENSE_FILE=	python39.license
 
 CONFIGURE_FIX_LIBTOOL_RPATH = no
 
-TEST_TARGET= $(TEST_64)
-
 # Define to avoid modifications at each major bump
-COMPONENT_PYVER=3.9
+COMPONENT_PYVER= 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # Need to preserve timestamp for Grammar files.  If the pickle files are older,
 # Python will try to rebuild them.
@@ -84,12 +83,12 @@ CFLAGS += $(CC_PIC)
 CFLAGS += $(CFLAGS.$(MACH))
 
 # XPG6
-CFLAGS +=       $(CPP_XPG6MODE)
+CFLAGS += $(CPP_XPG6MODE)
 
 # The python build is profile-guided for gcc.  Use of xprofile requires that
 # the same options be used during compilation and linking.  The targets chosen
 # are based on Solaris 11 minimum supported system requirements.
-XPROFILE_DIR = $(BUILD_DIR_$(BITS))/.profile
+XPROFILE_DIR= $(BUILD_DIR_$(BITS))/.profile
 
 # PYTHONPATH in the environment can be harmful, but setting it to empty via
 # _INSTALL_ENV causes problems too, so just ignore the entire environment.
@@ -107,23 +106,23 @@ CONFIGURE_ENV += ac_cv_func_epoll_create1=no
 
 CONFIGURE_ENV += ac_cv_func_getentropy=no
 
-CONFIGURE_OPTIONS  +=           --infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=           --enable-shared
-CONFIGURE_OPTIONS  +=           --enable-optimizations
-CONFIGURE_OPTIONS  +=           --with-dtrace
-CONFIGURE_OPTIONS  +=           --with-system-expat
-CONFIGURE_OPTIONS  +=           --with-system-ffi
-CONFIGURE_OPTIONS  +=           --without-ensurepip
-CONFIGURE_OPTIONS  +=           --enable-ipv6
-CONFIGURE_OPTIONS  +=           --with-c-locale-coercion
-CONFIGURE_OPTIONS  +=           --bindir=$(USRBINDIR)
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --enable-optimizations
+CONFIGURE_OPTIONS += --with-dtrace
+CONFIGURE_OPTIONS += --with-system-expat
+CONFIGURE_OPTIONS += --with-system-ffi
+CONFIGURE_OPTIONS += --without-ensurepip
+CONFIGURE_OPTIONS += --enable-ipv6
+CONFIGURE_OPTIONS += --with-c-locale-coercion
+CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)
 # https://bugs.python.org/issue25003
 # CONFIGURE_OPTIONS  +=         "ac_cv_func_getentropy=no"
-CONFIGURE_OPTIONS  +=           CPPFLAGS="$(CPPFLAGS) -DSKIP_ZIP_PATH "
-CONFIGURE_OPTIONS  +=           LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS  +=           CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=           DFLAGS="-$(BITS)"
-CONFIGURE_OPTIONS  +=           XPROFILE_DIR="$(XPROFILE_DIR)"
+CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -DSKIP_ZIP_PATH "
+CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS += DFLAGS="-$(BITS)"
+CONFIGURE_OPTIONS += XPROFILE_DIR="$(XPROFILE_DIR)"
 
 COMPONENT_BUILD_ENV += DFLAGS="-$(BITS)"
 COMPONENT_BUILD_ENV += XPROFILE_DIR="$(XPROFILE_DIR)"
@@ -134,7 +133,7 @@ COMPONENT_BUILD_ENV += PATH="$(PATH)"
 COMPONENT_PUBLISH_ENV += LC_ALL=en_US.UTF-8
 
 # 64 bit shared objects need to go in a 64-bit directory
-COMPONENT_INSTALL_ARGS.64 += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python$(COMPONENT_PYVER)/lib-dynload
+COMPONENT_INSTALL_ARGS += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python$(COMPONENT_PYVER)/lib-dynload
 
 # Simplify the definitions of CC, CXX, CFLAGS and LDFLAGS so they hard-code
 # neither paths from our build systems nor Studio-specific options.
@@ -167,21 +166,23 @@ COMPONENT_POST_INSTALL_ACTION= \
 # You can set TESTOPTS_PYTHON_TEST to a particular test if you want to run just
 # one test.  For example:
 # $ TESTOPTS_PYTHON_TEST=test_sys
-TESTOPTS_PYTHON_TEST =
-COMPONENT_TEST_ENV = PATH="$(PATH)"
+TESTOPTS_PYTHON_TEST=
+COMPONENT_TEST_ENV= PATH="$(PATH)"
+
 # Using "-uall,-network" ensures all tests are run except the network tests.
 # The network tests contain many expected failures when run behind a firewall.
 # The "-v" ensures verbose mode.
 COMPONENT_TEST_ENV += EXTRATESTOPTS="-v -uall,-network $(TESTOPTS_PYTHON_TEST)"
+
 # Prevent the tests from getting stuck waiting for input.
-COMPONENT_TEST_TARGETS = test < /dev/null
+COMPONENT_TEST_TARGETS= test < /dev/null
 
 # The test output contains details from each test, in whatever order they
 # complete.  The default _TRANSFORMER is not powerful enough to deal with
 # this; we need heavier artillery.  Extract just the sections that start
 # with "tests OK." and end with "Re-running failed tests..." for comparison.
-COMPONENT_TEST_TRANSFORMER = $(NAWK)
-COMPONENT_TEST_TRANSFORMS  = "'/tests OK./ {results = 1}; /Total duration/ {results = 0}; /Re-running failed tests in verbose mode/ {results = 0} {if (results) print $0 }'"
+COMPONENT_TEST_TRANSFORMER= $(NAWK)
+COMPONENT_TEST_TRANSFORMS= "'/tests OK./ {results = 1}; /Total duration/ {results = 0}; /Re-running failed tests in verbose mode/ {results = 0} {if (results) print $0 }'"
 
 # Proper PYVER is needed for manifest processing
 PKG_MACROS += PYVER=$(COMPONENT_PYVER)
