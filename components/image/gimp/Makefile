@@ -13,26 +13,29 @@
 # Copyright (c) 2019 Tim Mooney
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
 COMPONENT_VERSION=	2.10.32
-COMPONENT_REVISION= 1
-COMPONENT_PROJECT_URL=	https://www.gimp.org/
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
-COMPONENT_FMRI=		image/editor/gimp
-COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
+COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= sha256:3f15c70554af5dcc1b46e6dc68f3d8f0a6cc9fe56b6d78ac08c0fd859ab89a25
 COMPONENT_ARCHIVE_URL=	https://download.gimp.org/pub/gimp/v2.10/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		image/editor/gimp
+COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
+
+# Gimp depends on Python 2.7 still:
+PYTHON_VERSION= 2.7
+PYTHON=/usr/bin/$(MACH64)/python2.7
 
 CFLAGS += -I/usr/include/glib-2.0 -I/usr/lib/$(MACH64)/glib-2.0/include
 CFLAGS += -I/usr/include/libmng
@@ -83,10 +86,14 @@ REQUIRED_PACKAGES += library/python/pygobject
 REQUIRED_PACKAGES += library/python/pygtk2
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject
+PYTHON_REQUIRED_PACKAGES += library/python/pygtk2
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += image/library/babl
 REQUIRED_PACKAGES += image/library/gegl
 REQUIRED_PACKAGES += image/library/gexiv2
@@ -108,12 +115,10 @@ REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libmypaint
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libwebp
+REQUIRED_PACKAGES += library/mypaint-brushes
 REQUIRED_PACKAGES += library/openexr
-REQUIRED_PACKAGES += library/python/pygobject-27
-REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
