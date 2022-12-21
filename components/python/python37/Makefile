@@ -29,20 +29,19 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
 COMPONENT_VERSION=      3.7.16
-COMPONENT_FMRI=		runtime/python-37
-COMPONENT_PROJECT_URL=  https://python.org/
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
-COMPONENT_CLASSIFICATION= Development/Python
+COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:8338f0c2222d847e904c955369155dc1beeeed806e8d5ef04b00ef4787238bfd
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		runtime/python-37
+COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_LICENSE=      PSFv2
 COMPONENT_LICENSE_FILE=	python37.license
 
-CONFIGURE_FIX_LIBTOOL_RPATH = no
-
-TEST_TARGET= $(TEST_64)
+CONFIGURE_FIX_LIBTOOL_RPATH= no
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -59,8 +58,6 @@ COMPONENT_PREP_ACTION = (cd $(@D) ; autoheader ; autoconf -f)
 # we don't want to leak $(CC_BITS) into BASECFLAGS as it causes problems with
 # python-config
 CC += $(CFLAGS)
-
-gcc_OPT = -O2
 
 CPPFLAGS += -IPython
 
@@ -80,7 +77,7 @@ CFLAGS += $(CC_PIC)
 CFLAGS += $(CFLAGS.$(MACH))
 
 # XPG6
-CFLAGS +=       $(CPP_XPG6MODE)
+CFLAGS += $(CPP_XPG6MODE)
 
 # The python build is profile-guided for gcc.  Use of xprofile requires that
 # the same options be used during compilation and linking.  The targets chosen
