@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2017 <contributor>
+# Copyright 2022 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -58,6 +59,8 @@ file path=usr/include/ck/ck_stdlib.h
 file path=usr/include/ck/ck_string.h
 file path=usr/include/ck/ck_swlock.h
 file path=usr/include/ck/ck_tflock.h
+file path=usr/include/ck/gcc/$(MACH64)/ck_f_pr.h
+file path=usr/include/ck/gcc/$(MACH64)/ck_pr.h
 file path=usr/include/ck/gcc/aarch64/ck_f_pr.h
 file path=usr/include/ck/gcc/aarch64/ck_pr.h
 file path=usr/include/ck/gcc/aarch64/ck_pr_llsc.h
@@ -71,8 +74,6 @@ file path=usr/include/ck/gcc/ppc/ck_f_pr.h
 file path=usr/include/ck/gcc/ppc/ck_pr.h
 file path=usr/include/ck/gcc/ppc64/ck_f_pr.h
 file path=usr/include/ck/gcc/ppc64/ck_pr.h
-file path=usr/include/ck/gcc/sparcv9/ck_f_pr.h
-file path=usr/include/ck/gcc/sparcv9/ck_pr.h
 file path=usr/include/ck/gcc/x86/ck_f_pr.h
 file path=usr/include/ck/gcc/x86/ck_pr.h
 file path=usr/include/ck/gcc/x86_64/ck_f_pr.h
@@ -87,15 +88,10 @@ file path=usr/include/ck/spinlock/hclh.h
 file path=usr/include/ck/spinlock/mcs.h
 file path=usr/include/ck/spinlock/ticket.h
 file path=usr/lib/$(MACH64)/libck.a
-link path=usr/lib/$(MACH64)/libck.so target=libck.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libck.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libck.so.0 target=libck.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libck.so target=libck.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libck.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libck.so.0 target=libck.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/ck.pc
-file path=usr/lib/libck.a
-link path=usr/lib/libck.so target=libck.so.$(COMPONENT_VERSION)
-file path=usr/lib/libck.so.$(COMPONENT_VERSION)
-link path=usr/lib/libck.so.0 target=libck.so.$(COMPONENT_VERSION)
-file path=usr/lib/pkgconfig/ck.pc
 file path=usr/share/man/man3/CK_ARRAY_FOREACH.3
 file path=usr/share/man/man3/CK_COHORT_INIT.3
 file path=usr/share/man/man3/CK_COHORT_INSTANCE.3
