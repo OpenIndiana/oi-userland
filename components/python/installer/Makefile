@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		installer
-COMPONENT_VERSION =		0.5.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.6.0
 COMPONENT_SUMMARY =		installer - A library for installing Python wheels.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/74/b7/9187323cd732840f1cddd6a9f05961406636b50c799eef37c920b63110c0/installer-0.5.1.tar.gz
+	https://files.pythonhosted.org/packages/c9/ab/a9141dc175ec7b620fffe7e0295251a7b6a0ffb4325d64aeb128dff8c698/installer-0.6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f970995ec2bb815e2fdaf7977b26b2091e1e386f0f42eafd5ac811953dc5d445
+	sha256:f3bd36cd261b440a88a1190b1becca0578fee90b4b62decc796932fdd5ae8839
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+TEST_STYLE = pytest
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
