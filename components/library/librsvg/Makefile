@@ -14,8 +14,8 @@
 # Copyright 2018 Michal Nowak
 #
 
-BUILD_BITS=32_and_64
-
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
@@ -45,27 +45,29 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && aclocal && \
 			gtkdocize && \
 			autoreconf -fi )
 
-CONFIGURE_OPTIONS.32 =	--sysconfdir=/etc
-CONFIGURE_OPTIONS.64 =	--sysconfdir=/etc/$(MACH64)
-CONFIGURE_OPTIONS +=	--with-html-dir=/usr/share/gtk-doc/html/librsvg
-CONFIGURE_OPTIONS +=	--disable-Bsymbolic
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS.32 =	--disable-introspection
+CONFIGURE_OPTIONS += --sysconfdir=/etc/$(MACH64)
+CONFIGURE_OPTIONS += --with-html-dir=/usr/share/gtk-doc/html/librsvg
+CONFIGURE_OPTIONS += --disable-Bsymbolic
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS += --enable-vala
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-COMPONENT_TEST_TRANSFORMER = $(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
+#COMPONENT_TEST_TRANSFORMER = $(NAWK)
+#COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
 
 # To prevent "ERROR: loading - missing test plan"
 unexport SHELLOPTS
 
-# Auto-generated dependencies
+# Manually added dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2

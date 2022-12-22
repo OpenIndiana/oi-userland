@@ -17,19 +17,20 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	xmlto
 COMPONENT_VERSION= 	0.0.28
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	xmlto is a shell-script tool for converting XML files to various formats
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:1130df3a7957eb9f6f0d29e4aa1c75732a7dfb6d639be013859b5c7ec5421276
+COMPONENT_ARCHIVE_HASH= sha256:1130df3a7957eb9f6f0d29e4aa1c75732a7dfb6d639be013859b5c7ec5421276
 # Official hosting at Fedora has been retired
-COMPONENT_ARCHIVE_URL= \
-  http://dlc.openindiana.org/oi-userland/source-archives//$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://fedorahosted.org/xmlto/
+COMPONENT_ARCHIVE_URL= http://dlc.openindiana.org/oi-userland/source-archives//$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://fedorahosted.org/xmlto/
+COMPONENT_FMRI=	text/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	System/Text Tools
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV += GETOPT=/usr/gnu/bin/getopt
 
@@ -42,12 +43,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
-test: $(TEST_32)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs

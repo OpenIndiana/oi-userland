@@ -15,6 +15,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -31,8 +32,6 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 depend type=require fmri=pkg:/service/gnome/desktop-cache@0.2.2,5.11-2014.0.1.0
 
-file path=usr/bin/$(MACH64)/rsvg-convert
-file path=usr/bin/$(MACH64)/rsvg-view-3
 file path=usr/bin/rsvg-convert
 file path=usr/bin/rsvg-view-3
 file path=usr/include/librsvg-2.0/librsvg/librsvg-enum-types.h
@@ -41,17 +40,10 @@ file path=usr/include/librsvg-2.0/librsvg/rsvg-cairo.h
 file path=usr/include/librsvg-2.0/librsvg/rsvg.h
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.so
 file path=usr/lib/$(MACH64)/girepository-1.0/Rsvg-2.0.typelib
-link path=usr/lib/$(MACH64)/librsvg-2.so \
-    target=librsvg-2.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/librsvg-2.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/librsvg-2.so.2 \
-    target=librsvg-2.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/librsvg-2.so target=librsvg-2.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/librsvg-2.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/librsvg-2.so.2 target=librsvg-2.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/librsvg-2.0.pc
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.so
-link path=usr/lib/librsvg-2.so target=librsvg-2.so.$(COMPONENT_VERSION)
-file path=usr/lib/librsvg-2.so.$(COMPONENT_VERSION)
-link path=usr/lib/librsvg-2.so.2 target=librsvg-2.so.$(COMPONENT_VERSION)
-file path=usr/lib/pkgconfig/librsvg-2.0.pc
 file path=usr/share/gir-1.0/Rsvg-2.0.gir
 file path=usr/share/gtk-doc/html/librsvg/rsvg-2.0/RsvgHandle.html
 file path=usr/share/gtk-doc/html/librsvg/rsvg-2.0/annotation-glossary.html
@@ -75,3 +67,4 @@ file path=usr/share/gtk-doc/html/librsvg/rsvg-2.0/up-insensitive.png
 file path=usr/share/gtk-doc/html/librsvg/rsvg-2.0/up.png
 file path=usr/share/man/man1/rsvg-convert.1
 file path=usr/share/thumbnailers/librsvg.thumbnailer
+file path=usr/share/vala/vapi/librsvg-2.0.vapi
