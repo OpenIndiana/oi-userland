@@ -1,0 +1,62 @@
+py$(PYV) create: $(@D)/.tox/py$(PYV)
+py$(PYV) run-test: commands[0] | python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D), configfile: tox.ini, testpaths: testing
+collecting ... collected 42 items
+
+testing/test_iniconfig.py::test_ParseError PASSED
+testing/test_iniconfig.py::test_api_import PASSED
+testing/test_iniconfig.py::test_config_contains PASSED
+testing/test_iniconfig.py::test_config_iter PASSED
+testing/test_iniconfig.py::test_continuation_cant_be_after_section PASSED
+testing/test_iniconfig.py::test_continuation_needs_perceeding_token PASSED
+testing/test_iniconfig.py::test_error_on_weird_lines[!!] PASSED
+testing/test_iniconfig.py::test_example_pypirc PASSED
+testing/test_iniconfig.py::test_iniconfig_duplicate_key_fails PASSED
+testing/test_iniconfig.py::test_iniconfig_from_file PASSED
+testing/test_iniconfig.py::test_iniconfig_get_convert PASSED
+testing/test_iniconfig.py::test_iniconfig_get_missing PASSED
+testing/test_iniconfig.py::test_iniconfig_lineof PASSED
+testing/test_iniconfig.py::test_iniconfig_section_first PASSED
+testing/test_iniconfig.py::test_iniconig_section_duplicate_fails PASSED
+testing/test_iniconfig.py::test_iscommentline_true[  #qwe] PASSED
+testing/test_iniconfig.py::test_iscommentline_true[ ;qwe] PASSED
+testing/test_iniconfig.py::test_iscommentline_true[#qwe] PASSED
+testing/test_iniconfig.py::test_iscommentline_true[;qwe] PASSED
+testing/test_iniconfig.py::test_iter_file_order PASSED
+testing/test_iniconfig.py::test_missing_section PASSED
+testing/test_iniconfig.py::test_parse_empty PASSED
+testing/test_iniconfig.py::test_section_cant_be_empty PASSED
+testing/test_iniconfig.py::test_section_get PASSED
+testing/test_iniconfig.py::test_section_getitem PASSED
+testing/test_iniconfig.py::test_section_iter PASSED
+testing/test_iniconfig.py::test_tokenize[assignment in value] PASSED
+testing/test_iniconfig.py::test_tokenize[blank line] PASSED
+testing/test_iniconfig.py::test_tokenize[comment on section] PASSED
+testing/test_iniconfig.py::test_tokenize[comment on value] PASSED
+testing/test_iniconfig.py::test_tokenize[comment2 on section] PASSED
+testing/test_iniconfig.py::test_tokenize[comment2] PASSED
+testing/test_iniconfig.py::test_tokenize[comment] PASSED
+testing/test_iniconfig.py::test_tokenize[equality gets precedence] PASSED
+testing/test_iniconfig.py::test_tokenize[pseudo section syntax in value] PASSED
+testing/test_iniconfig.py::test_tokenize[section] PASSED
+testing/test_iniconfig.py::test_tokenize[use of colon for name-values] PASSED
+testing/test_iniconfig.py::test_tokenize[use of colon without space] PASSED
+testing/test_iniconfig.py::test_tokenize[value in section] PASSED
+testing/test_iniconfig.py::test_tokenize[value with aligned continuation] PASSED
+testing/test_iniconfig.py::test_tokenize[value with continuation] PASSED
+testing/test_iniconfig.py::test_tokenize[value] PASSED
+
+=============================== warnings summary ===============================
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: 84 warnings
+  $(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+    if LooseVersion(pytest.__version__) < LooseVersion('3.6.0'):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 42 passed, 84 warnings ========
+___________________________________ summary ____________________________________
+  py$(PYV): commands succeeded
+  congratulations :)
