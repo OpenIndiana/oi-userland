@@ -19,8 +19,8 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		iniconfig
-COMPONENT_VERSION =		1.1.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.1.1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		iniconfig - iniconfig: brain-dead simple config-ini parsing
 COMPONENT_PROJECT_URL =		http://github.com/RonnyPfannschmidt/iniconfig
 COMPONENT_ARCHIVE_URL =		\
@@ -42,3 +42,4 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
