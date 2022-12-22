@@ -19,7 +19,8 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-freezegun
-COMPONENT_VERSION =		0.4.2
+HUMAN_VERSION =			0.4.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pytest-freezegun - Wrap tests with fixtures in freeze_time
 COMPONENT_PROJECT_URL =		https://github.com/ktosiek/pytest-freezegun
 COMPONENT_ARCHIVE_URL =		\
