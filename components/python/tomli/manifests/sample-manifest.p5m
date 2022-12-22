@@ -23,11 +23,15 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python$(PYVER)/vendor-packages/tomli-$(COMPONENT_VERSION).dist-info/LICENSE
-file path=usr/lib/python$(PYVER)/vendor-packages/tomli-$(COMPONENT_VERSION).dist-info/METADATA
-file path=usr/lib/python$(PYVER)/vendor-packages/tomli-$(COMPONENT_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/tomli-$(HUMAN_VERSION).dist-info/METADATA
 file path=usr/lib/python$(PYVER)/vendor-packages/tomli/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/tomli/_parser.py
 file path=usr/lib/python$(PYVER)/vendor-packages/tomli/_re.py
 file path=usr/lib/python$(PYVER)/vendor-packages/tomli/_types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/tomli/py.typed
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata

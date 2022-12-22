@@ -19,8 +19,8 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tomli
-COMPONENT_VERSION =		2.0.1
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			2.0.1
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		tomli - A lil' TOML parser
 COMPONENT_PROJECT_URL =		https://github.com/hukkin/tomli
 COMPONENT_ARCHIVE_URL =		\
@@ -30,9 +30,19 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - build
+# - flit_scm (test bootstrap)
+# - hatchling (test bootstrap)
+# - pep517
+# - pytest (test bootstrap)
+# - setuptools_scm
+# - tox (test bootstrap)
+PYTHON_BOOTSTRAP = yes
+
 include $(WS_MAKE_RULES)/common.mk
 
-# Manually added dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit_core
-
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
+PYTHON_REQUIRED_PACKAGES += runtime/python
