@@ -13,21 +13,22 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS=		64_and_32
+BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmicrohttpd
 COMPONENT_VERSION=	0.9.75
-COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libmicrohttpd/
-COMPONENT_FMRI=		library/libmicrohttpd
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU libmicrohttpd is a small HTTP server as a C library
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libmicrohttpd/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:9278907a6f571b391aab9644fd646a5108ed97311ec66f6359cebbedb0a4e3bb
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE).sig
+COMPONENT_FMRI=		library/libmicrohttpd
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	LGPL2.1+
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
