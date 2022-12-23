@@ -16,13 +16,13 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=		32_and_64
-BUILD_STYLE=	meson
-
+BUILD_BITS= 32_and_64
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gstreamer1
 COMPONENT_VERSION=      1.20.4
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNOME streaming media framework
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC_NAME=		gstreamer
@@ -31,13 +31,10 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:67c1edf8c3c339cda5dde85f4f7b953bb9607c2d13ae970e2491c5c4c055ef5f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Optimisation has been lowered in past for an unknown reason. Nowadays it doesn't seem to make any difference in the test results:
-#gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
 
@@ -48,7 +45,6 @@ CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR.$(BITS))
 CONFIGURE_OPTIONS += -Dexamples=disabled
 CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
 CONFIGURE_OPTIONS.64 += -Dintrospection=enabled
-#CONFIGURE_OPTIONS += --program-suffix=""
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
@@ -63,6 +59,7 @@ COMPONENT_INSTALL_ENV += CC="$(CC)"
 # print everything between "^Ok:" and "^Timeout:"
 # delete the ninja log-related stuff at the end
 unexport SHELLOPTS
+
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "s/[ 	]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
