@@ -13,34 +13,30 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-BUILD_BITS = 32_and_64
-USE_COMMON_TEST_MASTER = no
-
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-base
 COMPONENT_VERSION= 0.10.36
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:2cd3b0fa8e9b595db8f514ef7c2bdbcd639a0d63d154c00f8c9b609321f49976
-COMPONENT_ARCHIVE_URL= \
-  http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://gstreamer.freedesktop.org/
-COMPONENT_FMRI = library/audio/gstreamer/plugin/base
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_LICENSE_FILE = gstreamer-plugin-base.license
-COMPONENT_LICENSE = GPLv2, LGPLv2
-
-USE_DEFAULT_TEST_TRANSFORMS = yes
+COMPONENT_PROJECT_URL= https://gstreamer.freedesktop.org/
+COMPONENT_ARCHIVE_URL= $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:2cd3b0fa8e9b595db8f514ef7c2bdbcd639a0d63d154c00f8c9b609321f49976
+COMPONENT_FMRI= library/audio/gstreamer/plugin/base
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_LICENSE_FILE= gstreamer-plugin-base.license
+COMPONENT_LICENSE= GPLv2, LGPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-gcc_OPT = -O2
+gcc_OPT= -O2
 
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
