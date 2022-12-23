@@ -14,6 +14,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -23,23 +24,25 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # We only deliver 64-bit applications:
-#file path=usr/bin/$(MACH32)/addmoddel
-#file path=usr/bin/$(MACH32)/exifcomment
-#file path=usr/bin/$(MACH32)/exifdata
-#file path=usr/bin/$(MACH32)/exifprint
-#file path=usr/bin/$(MACH32)/exifvalue
-#file path=usr/bin/$(MACH32)/exiv2
-#file path=usr/bin/$(MACH32)/exiv2json
-#file path=usr/bin/$(MACH32)/geotag
-#file path=usr/bin/$(MACH32)/iptceasy
-#file path=usr/bin/$(MACH32)/iptcprint
-#file path=usr/bin/$(MACH32)/metacopy
-#file path=usr/bin/$(MACH32)/mrwthumb
-#file path=usr/bin/$(MACH32)/taglist
-#file path=usr/bin/$(MACH32)/xmpdump
-#file path=usr/bin/$(MACH32)/xmpparse
-#file path=usr/bin/$(MACH32)/xmpprint
-#file path=usr/bin/$(MACH32)/xmpsample
+<transform path=.*/bin/$(MACH32) -> drop>
+
+file path=usr/bin/$(MACH32)/addmoddel
+file path=usr/bin/$(MACH32)/exifcomment
+file path=usr/bin/$(MACH32)/exifdata
+file path=usr/bin/$(MACH32)/exifprint
+file path=usr/bin/$(MACH32)/exifvalue
+file path=usr/bin/$(MACH32)/exiv2
+file path=usr/bin/$(MACH32)/exiv2json
+file path=usr/bin/$(MACH32)/geotag
+file path=usr/bin/$(MACH32)/iptceasy
+file path=usr/bin/$(MACH32)/iptcprint
+file path=usr/bin/$(MACH32)/metacopy
+file path=usr/bin/$(MACH32)/mrwthumb
+file path=usr/bin/$(MACH32)/taglist
+file path=usr/bin/$(MACH32)/xmpdump
+file path=usr/bin/$(MACH32)/xmpparse
+file path=usr/bin/$(MACH32)/xmpprint
+file path=usr/bin/$(MACH32)/xmpsample
 file path=usr/bin/addmoddel
 file path=usr/bin/exifcomment
 file path=usr/bin/exifdata

@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= exiv2
 COMPONENT_VERSION= 0.27.5
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Image metadata library and tools
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -30,11 +31,11 @@ COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_LICENSE = GPLv2
 
 # We don't have GTest
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # mkdir option '-v' is used
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # We don't have GTest
 #CMAKE_OPTIONS += -DEXIV2_BUILD_UNIT_TESTS=On
