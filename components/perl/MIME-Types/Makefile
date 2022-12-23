@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		MIME::Types
-HUMAN_VERSION =			2.22
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.23
 COMPONENT_SUMMARY =		MIME::Types - Definition of MIME types
 COMPONENT_CPAN_AUTHOR =		MARKOV
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c2545eb30b094e942860ff8444f0f6cb54641caa8f7d386aaa2d925da4b02400
+	sha256:a28df6319a3e8c5ce117fbe5dcdad0bc9eae8eef65c1a0a2f0c00e00e77d7e30
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
