@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox
-COMPONENT_VERSION =		3.27.1
+HUMAN_VERSION =			3.28.0
 COMPONENT_SUMMARY =		tox - tox is a generic virtualenv management and test command line tool
-COMPONENT_PROJECT_URL =		https://tox.readthedocs.io
+COMPONENT_PROJECT_URL =		http://tox.readthedocs.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/43/44/7e646042c3c3fde7be4ef8debd6bc42f32f36766ab526af302abd341a9a1/tox-3.27.1.tar.gz
+	https://files.pythonhosted.org/packages/03/39/7890784b9d6b3be12b88d3139ddbaccfd21167dcdcc6ddbf0182952b4c23/tox-3.28.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b2a920e35a668cc06942ffd1cf3a4fb221a4d909ca72191fb6d84b0b18a7be04
+	sha256:d0d28f3fe6d6d7195c27f8b054c3e99d5451952b54abdae673b71609a581f640
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -50,3 +50,9 @@ PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/flaky
+TEST_REQUIRED_PACKAGES.python += library/python/freezegun
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly
