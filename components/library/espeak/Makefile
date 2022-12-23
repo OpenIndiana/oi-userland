@@ -15,31 +15,30 @@
 # Copyright 2021,2022 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= espeak
-COMPONENT_VERSION= 1.48.04
-IPS_COMPONENT_VERSION= 1.48.4
+COMPONENT_VERSION= 1.48.4
+HUMAN_VERSION= 1.48.04
 COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= eSpeak - compact open source software speech synthesizer
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)-source
+COMPONENT_SRC= $(COMPONENT_NAME)-$(HUMAN_VERSION)-source
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH= sha256:bf9a17673adffcc28ff7ea18764f06136547e97bbd9edf2ec612f09b207f0659
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/espeak/espeak/espeak-1.48/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://espeak.sourceforge.net/
-COMPONENT_FMRI = library/speech/espeak
-COMPONENT_CLASSIFICATION = Applications/Universal Access
-COMPONENT_LICENSE = GPLv3
+COMPONENT_FMRI= library/speech/espeak
+COMPONENT_CLASSIFICATION= Applications/Universal Access
+COMPONENT_LICENSE= GPLv3
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CXXFLAGS += -fpermissive
 
-BINDIR=/usr/bin/
-LIBDIR=/usr/lib/$(MACH64)
+BINDIR= /usr/bin/
+LIBDIR= /usr/lib/$(MACH64)
 
 COMPONENT_COMMON_ARGS += -C $(BUILD_DIR_$(BITS))/src
 COMPONENT_COMMON_ARGS += EXTRA_LIBS=-lm 
