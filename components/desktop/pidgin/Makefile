@@ -15,46 +15,40 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pidgin
 COMPONENT_VERSION=      2.14.10
-COMPONENT_REVISION=     2
-COMPONENT_PROJECT_URL=  https://www.pidgin.im
+COMPONENT_REVISION=     3
 COMPONENT_SUMMARY=      Multiprotocol Instant Messaging Client
-COMPONENT_FMRI=         communication/im/pidgin
+COMPONENT_PROJECT_URL=  https://www.pidgin.im
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= sha256:454b1b928bc6bcbb183353af30fbfde5595f2245a3423a1a46e6c97a2df22810
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/$(COMPONENT_NAME)/files/Pidgin/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_FMRI=         communication/im/pidgin
 COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= pidgin.license
 
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-
-# Use 64-bit perl
-PERL_VERSION = 5.36
-
-PYTHON_VERSION = 3.9
 
 PATH = $(PATH.gnu)
 
 # We use libncurses and libpanel from /usr/gnu/lib/$(MACH64)
 LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && \
+COMPONENT_PREP_ACTION= ( cd $(@D) && \
 	libtoolize --force && \
 	intltoolize --force --copy --automake && \
 	aclocal -I. && \
 	automake -a -f -c && \
 	autoconf )
 
-COMPONENT_PRE_CONFIGURE_ACTION = ( cp -rp $(SOURCE_DIR)/* $(@D) && \
-                                        cp -rp $(COMPONENT_DIR)/files/po-sun $(@D) && \
-                                        cd $(@D)/po-sun && $(MAKE))
+COMPONENT_PRE_CONFIGURE_ACTION= ( cp -rp $(SOURCE_DIR)/* $(@D) && \
+	cp -rp $(COMPONENT_DIR)/files/po-sun $(@D) && \
+	cd $(@D)/po-sun && $(MAKE) )
 
 CONFIGURE_SCRIPT=	$(@D)/configure
 
@@ -84,6 +78,8 @@ CONFIGURE_ENV+=	CPPFLAGS="$(CPPFLAGS)"
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+PYTHON_REQUIRED_PACKAGES += library/python/python-dbus
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/desktop/atk
@@ -98,8 +94,6 @@ REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/nspr
-REQUIRED_PACKAGES += library/python/python-dbus-35
-REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += shell/ksh93
