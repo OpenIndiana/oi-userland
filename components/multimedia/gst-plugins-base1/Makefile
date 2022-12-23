@@ -15,12 +15,13 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=		32_and_64
-BUILD_STYLE=	meson
+BUILD_BITS= 32_and_64
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-base1
 COMPONENT_VERSION=      1.20.4
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME= 	gst-plugins-base
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -28,16 +29,13 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:8d181b7abe4caf23ee9f9ec5b4d3e232640452464e39495bfffb6d776fc97225
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/base
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_LICENSE=      GPLv2,LGPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Optimisation has been reduced for unknown reasons in the past. Nowadays it doesn't seem to make a difference in the test results:
-#gcc_OPT = -O2
-
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include -lsocket
 # build with the distribution preferred libjpeg implementation
