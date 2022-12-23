@@ -11,23 +11,22 @@
 #
 # Copyright 2014 (c) Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=			32_and_64
+
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flac
 COMPONENT_VERSION=	1.3.3
-COMPONENT_FMRI=		codec/flac
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	An Open Source Lossless Audio Codec
 COMPONENT_PROJECT_URL=	https://flac.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:213e82bd716c9de6db2f98bcadbc4c24c7e2efe8c75939a1a84e28539c4e1748
-COMPONENT_ARCHIVE_URL=\
-	https://downloads.us.xiph.org/releases/flac/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	$(COMPONENT_FMRI)
+COMPONENT_ARCHIVE_HASH= sha256:213e82bd716c9de6db2f98bcadbc4c24c7e2efe8c75939a1a84e28539c4e1748
+COMPONENT_ARCHIVE_URL=	https://downloads.us.xiph.org/releases/flac/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		codec/flac
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=	Xiph.org BSD-style, binaries & media player plugins also use GPL v2, LGPL v2.1, documentation uses FDL v1.2
-COMPONENT_SUMMARY=	An Open Source Lossless Audio Codec
 
 include $(WS_MAKE_RULES)/common.mk
 
