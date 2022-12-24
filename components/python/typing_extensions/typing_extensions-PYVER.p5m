@@ -23,9 +23,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python$(PYVER)/vendor-packages/typing_extensions-$(COMPONENT_VERSION).dist-info/LICENSE
-file path=usr/lib/python$(PYVER)/vendor-packages/typing_extensions-$(COMPONENT_VERSION).dist-info/METADATA
-file path=usr/lib/python$(PYVER)/vendor-packages/typing_extensions-$(COMPONENT_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/typing_extensions-$(HUMAN_VERSION).dist-info/METADATA
 file path=usr/lib/python$(PYVER)/vendor-packages/typing_extensions.py
-<transform file path=usr/lib/python3\.9/vendor-packages/typing_extensions-.*\.dist-info/LICENSE -> drop >
-<transform file path=usr/lib/python3\.9/vendor-packages/typing_extensions-.*\.dist-info/WHEEL -> drop >
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
