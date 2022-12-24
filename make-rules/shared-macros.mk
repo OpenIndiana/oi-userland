@@ -656,6 +656,10 @@ endif
 
 LD =		/usr/bin/ld
 
+PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
+PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
+PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
+
 PYTHON.3.7.VENDOR_PACKAGES.64 = /usr/lib/python3.7/vendor-packages
 PYTHON.3.7.VENDOR_PACKAGES.32 = /usr/lib/python3.7/vendor-packages
 PYTHON.3.7.VENDOR_PACKAGES = $(PYTHON.3.7.VENDOR_PACKAGES.$(BITS))
@@ -697,6 +701,9 @@ PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 # python2 was built for both 32- and 64-bits.
 # python3 is built for 64-bits only.
 
+PYTHON.2.7 =	/usr/bin/python2.7
+PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
+
 PYTHON.3.7 =	/usr/bin/python3.7
 PYTHON.3.7.64 =	$(PYTHON.3.7)
 
@@ -704,6 +711,7 @@ PYTHON.3.9 =	/usr/bin/python3.9
 PYTHON.3.9.64 =	$(PYTHON.3.9)
 
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
+PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION))
 PYTHON =	$(PYTHON.$(PYTHON_VERSION))
 
 TOX.3.7 =	/usr/bin/tox-3.7
