@@ -13,44 +13,42 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gnome-vfs
 COMPONENT_VERSION= 2.24.4
-COMPONENT_REVISION= 6
+COMPONENT_REVISION= 7
 COMPONENT_FMRI= library/gnome/gnome-vfs
 COMPONENT_SUMMARY= GNOME virtual file system framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:62de64b5b804eb04104ff98fcd6a8b7276d510a49fbd9c0feb568f8996444faa
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL= http://www.gnome.org
+COMPONENT_ARCHIVE_HASH= sha256:62de64b5b804eb04104ff98fcd6a8b7276d510a49fbd9c0feb568f8996444faa
+COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://www.gnome.org
 COMPONENT_CLASSIFICATION=  Desktop (GNOME)/Libraries
 COMPONENT_LICENSE= GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
-					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
-					cd $(@D)/po-sun && $(MAKE) all &&\
-					cd $(@D) && glib-gettextize --force --copy &&\
-					libtoolize --automake --copy --force && \
-					glib-gettextize --force &&\
-					intltoolize --force --copy --automake &&\
-					aclocal -I . &&\
-					gtkdocize &&\
-					autoheader &&\
-					automake -a -f -c --gnu &&\
-					autoconf )
+COMPONENT_PRE_CONFIGURE_ACTION= ( cp -r $(SOURCE_DIR)/* $(@D) && \
+	cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
+	cd $(@D)/po-sun && $(MAKE) all &&\
+	cd $(@D) && glib-gettextize --force --copy &&\
+	libtoolize --automake --copy --force && \
+	glib-gettextize --force &&\
+	intltoolize --force --copy --automake &&\
+	aclocal -I . &&\
+	gtkdocize &&\
+	autoheader &&\
+	automake -a -f -c --gnu &&\
+	autoconf )
 
-CONFIGURE_SCRIPT=       $(@D)/configure
+CONFIGURE_SCRIPT= $(@D)/configure
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH= $(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-fam
@@ -61,15 +59,12 @@ CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS.64 += --disable-avahi
 
-CONFIGURE_ENV+= PERL=$(PERL)
+CONFIGURE_ENV += PERL=$(PERL)
 
-COMPONENT_INSTALL_ENV+=  GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+COMPONENT_INSTALL_ENV +=  GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
+# Tests fail with SHELLOPTS set:
+unexport SHELLOPTS
 
 # Build dependencies
 REQUIRED_PACKAGES += desktop/gnome-mime-data
@@ -88,4 +83,3 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/network/avahi
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

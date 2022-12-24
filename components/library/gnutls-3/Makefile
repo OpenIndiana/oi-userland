@@ -26,14 +26,17 @@
 # Copyright (c) 2022, Niklas Poslovski
 #
 
-BUILD_BITS=		64_and_32
+BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
 COMPONENT_MJR_VERSION=	3.7
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).8
-COMPONENT_PROJECT_URL=  https://gnutls.org/
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU transport layer security library
+COMPONENT_PROJECT_URL=  https://gnutls.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:c58ad39af0670efe6a8aee5e3a8b2331a1200418b64b7c51977fb396d4617114
@@ -51,18 +54,10 @@ CONFIGURE_OPTIONS += --disable-guile
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --with-default-trust-store-file=/etc/certs/ca-certificates.crt
 CONFIGURE_OPTIONS += --with-default-trust-store-dir=/etc/certs/CA
+
 COMPONENT_PRE_CONFIGURE_ACTION= ( cd $(SOURCE_DIR) && autoreconf -if )
 
 unexport SHELLOPTS
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-n -e "/SKIP/p" ' \
-	'-e "/PASS/p" ' \
-	'-e "/FAIL/p" ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/ERROR/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
