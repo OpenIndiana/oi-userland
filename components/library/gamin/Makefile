@@ -13,39 +13,36 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS=32_and_64
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gamin
 COMPONENT_VERSION= 0.1.10
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Library providing the FAM File Alteration Monitor API
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:28085f0ae8be10eab582ff186af4fb0be92cc6c62b5cc19cd09b295c7c2899a1
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/0.1/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
-COMPONENT_CLASSIFICATION = System/Libraries
+COMPONENT_ARCHIVE_HASH= sha256:28085f0ae8be10eab582ff186af4fb0be92cc6c62b5cc19cd09b295c7c2899a1
+COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/0.1/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://www.gnome.org
 COMPONENT_FMRI= library/file-monitor/gamin
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE= LGPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET=$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Later python is not supported
-PYTHON_VERSION = 2.7
+PYTHON_VERSION= 2.7
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					libtoolize --copy --force &&\
-					aclocal -I . &&\
-					automake -c -f -a &&\
-					autoconf )
+COMPONENT_PREP_ACTION= ( cd $(@D)  && \
+	libtoolize --copy --force &&\
+	aclocal -I . &&\
+	automake -c -f -a &&\
+	autoconf )
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
@@ -54,6 +51,7 @@ CONFIGURE_OPTIONS += --with-python=$(PYTHON.$(BITS))
 
 CONFIGURE_ENV += pythondir=$(PYTHON_VENDOR_PACKAGES)
 
+# Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
