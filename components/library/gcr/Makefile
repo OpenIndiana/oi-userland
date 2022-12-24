@@ -24,15 +24,17 @@
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2022, Andreas Wacknitz
 #
+
 BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gcr
 COMPONENT_MJR_VERSION=	3.38
 COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).1
-COMPONENT_REVISION=		1
-COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/gcr/
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=	A GNOME library for displaying certificates and crypto UI
+COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/gcr/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:17fcaf9c4a93a65fb1c72b82643bb102c13344084687d5886ea66313868d9ec9
@@ -71,15 +73,7 @@ LIBS	+= -lsocket
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_ARGS =   -k -i
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/TOTAL:/p" ' \
-        '-e "/SKIP:/p" ' \
-        '-e "/PASS:/p" ' \
-        '-e "/FAIL:/p" ' \
-        '-e "/ERROR:/p" '
+COMPONENT_TEST_ARGS= -k -i
 
 # Build dependencies
 REQUIRED_PACKAGES += crypto/gnupg
