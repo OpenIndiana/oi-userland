@@ -27,15 +27,14 @@ BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre2
-COMPONENT_VERSION=	10.40
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	10.42
+COMPONENT_SUMMARY=	Version 2 of Perl-Compatible Regular Expressions
+COMPONENT_PROJECT_URL=  https://pcre.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:14e4b83c4783933dc17e964318e6324f7cae1bc75d8f3c79bc6969f00c159d68
+COMPONENT_ARCHIVE_HASH= sha256:8d36cd8cb6ea2a4c2bb358ff6411b0c788633a2a45dabbf1aeb4b701d1b5e840
 COMPONENT_ARCHIVE_URL=  https://github.com/PhilipHazel/pcre2/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
-COMPONENT_SUMMARY=	Version 2 of Perl-Compatible Regular Expressions
 COMPONENT_CLASSIFICATION=Development/C
-COMPONENT_PROJECT_URL=  https://pcre.org/
 COMPONENT_FMRI=		library/pcre2
 COMPONENT_CLASSIFICATION=	Development/C
 COMPONENT_LICENSE=	BSD
@@ -46,54 +45,54 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_TARGET= install $(TEST_32_and_64)
 
 # pick up -std=c99 in CFLAGS
-CFLAGS +=	-std=c99
+CFLAGS += -std=c99
 
 # turn on largefile support
-CFLAGS +=	$(CPP_LARGEFILES)
+CFLAGS += $(CPP_LARGEFILES)
 
 # Although -norunpath is set for CXXFLAGS, we need to put -norunpath
 # here, otherwise -norunpath doesn't get set when creating the shared
 # libraries (CC -G).
-CXX +=	$(studio_NORUNPATH)
+CXX += $(studio_NORUNPATH)
 
-CXXFLAGS+=	$(CC_PIC)
+CXXFLAGS +=	$(CC_PIC)
 
 # turn on support for large files
 CXXFLAGS +=	$(CPP_LARGEFILES)
 
-CONFIGURE_ENV +=	"CPP=$(CC) $(CPPFLAGS) $(CFLAGS) -E"
-CONFIGURE_ENV +=	"CXXCPP=$(CXX) $(CPPFLAGS) $(CXXFLAGS) -E"
-CONFIGURE_ENV +=	"CXXLDFLAGS=$(LDFLAGS)"
-CONFIGURE_ENV +=	"CXXLD=$(CXX) $(CXXFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV +=	"INSTALL=$(INSTALL)"
-CONFIGURE_ENV +=	"MAKE=$(GMAKE)"
+CONFIGURE_ENV += "CPP=$(CC) $(CPPFLAGS) $(CFLAGS) -E"
+CONFIGURE_ENV += "CXXCPP=$(CXX) $(CPPFLAGS) $(CXXFLAGS) -E"
+CONFIGURE_ENV += "CXXLDFLAGS=$(LDFLAGS)"
+CONFIGURE_ENV += "CXXLD=$(CXX) $(CXXFLAGS) $(LDFLAGS)"
+CONFIGURE_ENV += "INSTALL=$(INSTALL)"
+CONFIGURE_ENV += "MAKE=$(GMAKE)"
 
 CONFIGURE_ENV.64 +=	"CXXLINKLIB=$(CXX) $(CCFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV.64 +=	"MACH64=$(MACH64)"
 
-CONFIGURE_OPTIONS +=	--includedir=$(CONFIGURE_INCLUDEDIR)/pcre
-CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--enable-rebuild-chartables
-CONFIGURE_OPTIONS +=	--enable-newline-is-any
-CONFIGURE_OPTIONS +=	--enable-pcre2grep-libz
-CONFIGURE_OPTIONS +=	--enable-pcre2grep-libbz2
-CONFIGURE_OPTIONS +=	--enable-pcre2-32
-CONFIGURE_OPTIONS +=	--with-link-size=4
-CONFIGURE_OPTIONS +=	--with-match-limit=10000000
-CONFIGURE_OPTIONS +=	--with-pic
+CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/pcre
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-rebuild-chartables
+CONFIGURE_OPTIONS += --enable-newline-is-any
+CONFIGURE_OPTIONS += --enable-pcre2grep-libz
+CONFIGURE_OPTIONS += --enable-pcre2grep-libbz2
+CONFIGURE_OPTIONS += --enable-pcre2-32
+CONFIGURE_OPTIONS += --with-link-size=4
+CONFIGURE_OPTIONS += --with-match-limit=10000000
+CONFIGURE_OPTIONS += --with-pic
 # Enable UTF8 support    (was --enable-utf8 in pcre(1) configure).
-CONFIGURE_OPTIONS +=	--enable-pcre2-8
+CONFIGURE_OPTIONS += --enable-pcre2-8
 # Enable Unicode support (was --enable-unicode-properties in pcre(1) configure).
-CONFIGURE_OPTIONS +=	--enable-unicode
+CONFIGURE_OPTIONS += --enable-unicode
 
-COMPONENT_BUILD_ENV +=	"LDFLAGS=$(LDFLAGS)"
-COMPONENT_BUILD_ENV +=	"INSTALL=$(INSTALL)"
-COMPONENT_BUILD_ENV +=	"MAKE=$(GMAKE)"
+COMPONENT_BUILD_ENV += "LDFLAGS=$(LDFLAGS)"
+COMPONENT_BUILD_ENV += "INSTALL=$(INSTALL)"
+COMPONENT_BUILD_ENV += "MAKE=$(GMAKE)"
 
 COMPONENT_BUILD_ARGS +=	-e
 
-COMPONENT_INSTALL_ARGS +=	"INSTALL=$(INSTALL)"
+COMPONENT_INSTALL_ARGS += "INSTALL=$(INSTALL)"
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -104,9 +103,9 @@ COMPONENT_INSTALL_ARGS +=	"INSTALL=$(INSTALL)"
 unexport SHELLOPTS
 
 # Get correct libpcre2-8.so.0 from the build area.
-TEST_LIBPATH.32 =	$(PROTOUSRLIBDIR)
-TEST_LIBPATH.64 =	$(PROTOUSRLIBDIR64)
-COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
+TEST_LIBPATH.32 = $(PROTOUSRLIBDIR)
+TEST_LIBPATH.64 = $(PROTOUSRLIBDIR64)
+COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/Nothing to be done/d"' \
