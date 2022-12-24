@@ -22,19 +22,21 @@
 # Copyright (c) 2018, Michal Nowak
 # Copyright (c) 2022, Niklas Poslovski
 #
+
 BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 USE_COMMON_TEST_MASTER= no
 USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
-COMPONENT_VERSION=      7.86.0
+COMPONENT_VERSION=      7.87.0
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:2d61116e5f485581f6d59865377df4463f2e788677ac43222b496d4e49fb627b
+COMPONENT_ARCHIVE_HASH= sha256:ee5f1a1955b0ed413435ef79db28b834ea5f0fb7c8cfb1ce47175cc3bee08fff
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=  	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)
@@ -47,12 +49,12 @@ include $(WS_MAKE_RULES)/common.mk
 $(BUILD_DIR_32)/.configured:   CPPFLAGS += -D__ILP32=32
 $(BUILD_DIR_64)/.configured:   CPPFLAGS += -D__LP64=64
 
-GSSAPI_LIBDIR_32 = /usr/lib
-GSSAPI_LIBDIR_64 = /usr/lib/$(MACH64)
+GSSAPI_LIBDIR_32= /usr/lib
+GSSAPI_LIBDIR_64= /usr/lib/$(MACH64)
 
 CFLAGS += $(CPP_LARGEFILES)
 
-OPENSSL_VERSION=1.1
+OPENSSL_VERSION= 1.1
 CONFIGURE_ENV += CFLAGS="-I$(OPENSSL_INCDIR) $(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="-I$(OPENSSL_INCDIR) $(CPPFLAGS) -I/usr/include/openldap"
 
@@ -84,7 +86,7 @@ CONFIGURE_OPTIONS += --without-librtmp
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
 # Generate configuration scripts form .am-files
-COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -fi)
+COMPONENT_PREP_ACTION= (cd $(@D) ; autoreconf -fi)
 
 ENV = /usr/bin/env -i
 COMPONENT_TEST_ENV += CC="$(CC)"
@@ -92,21 +94,13 @@ COMPONENT_TEST_ENV += USER=`id -un`
 COMPONENT_TEST_ENV += PATH="$(GCC_ROOT)/bin:$(GNUBIN):$(PATH)"
 COMPONENT_TEST_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_TEST_ENV += LC_ALL=C
-COMPONENT_TEST_ARGS+= -k -i
+COMPONENT_TEST_ARGS += -k -i
 
 # Only the #'s of passed/failed tests are verified for change
 COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
 	'-e "s/ during [0-9][0-9]* seconds.//" ' \
 	'-e "/TESTDONE:/p" ' \
-	'-e "/TESTFAIL:/p" ' \
-	'-e "/ TOTAL:/p" ' \
-	'-e "/ PASS:/p" ' \
-	'-e "/ SKIP:/p" ' \
-	'-e "/ XFAIL:/p" ' \
-	'-e "/ FAIL:/p" ' \
-	'-e "/ XPASS:/p" ' \
-	'-e "/ ERROR:/p" '
+	'-e "/TESTFAIL:/p" ' 
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
