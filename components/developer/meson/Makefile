@@ -19,31 +19,30 @@ TEST_STYLE = run_tests.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         meson
-COMPONENT_VERSION=      0.64.1
+COMPONENT_VERSION=      1.0.0
 COMPONENT_SUMMARY=      The Meson Build system
 COMPONENT_PROJECT_URL=  https://mesonbuild.com/
-COMPONENT_FMRI=         developer/build/meson
-COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mesonbuild/meson/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:1d12a4bc1cf3ab18946d12cf0b6452e5254ada1ad50aacc97f87e2cccd7da315
+COMPONENT_ARCHIVE_HASH= sha256:a2ada84d43c7e57400daee80a880a1f5003d062b2cb6c9be1747b0db38f2eb8d
+COMPONENT_FMRI=         developer/build/meson
+COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_LICENSE=      APLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
-
-GCC_VERSION= 10
 
 # Assumes GNU msgfmt is first in PATH
 PYTHON_ENV += PATH="$(GCC_ROOT)/bin:$(PATH.gnu)"
 
-COMPONENT_INSTALL_ARGS = --root $(PROTO_DIR) --force --prefix=/usr --install-lib=$(PYTHON_LIB)
+COMPONENT_INSTALL_ARGS= --root $(PROTO_DIR) --force --prefix=/usr --install-lib=$(PYTHON_LIB)
 
 PROTO_PY_MESONBUILD_DIR= $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/mesonbuild
+
 COMPONENT_POST_INSTALL_ACTION= \
 	( $(GSED) -i -e 's/env python3/python$(PYTHON_VERSION)/' $(PROTO_PY_MESONBUILD_DIR)/rewriter.py ; )
 
