@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= gexiv2
 COMPONENT_MJR_VERSION=	0.12
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).3
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GObject wrapper around the Exiv2 photo metadata library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -31,13 +32,15 @@ COMPONENT_FMRI = image/library/gexiv2
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_LICENSE = GPLv2
 
+include $(WS_MAKE_RULES)/common.mk
+
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
+
 CONFIGURE_OPTIONS.32 += -Dintrospection=false
 
 # gobject-introspection requires this
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
