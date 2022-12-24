@@ -26,13 +26,13 @@
 # Copyright (c) 2020  Michal Nowak
 #
 
-BUILD_BITS=		32_and_64
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncurses
 COMPONENT_VERSION=	6.3
 COMPONENT_REV=		20211021
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 # With the next version we should remove the COMPONENT_REV part as doesn't seem to be used by other distributions:
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_REV)
 COMPONENT_SUMMARY=	A CRT screen handling and optimization package.
@@ -45,14 +45,14 @@ COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		library/ncurses
 COMPONENT_LICENSE=	MIT
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Needed for the 'test' target to work
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_PREFIX =	/usr/gnu
+CONFIGURE_PREFIX= /usr/gnu
 
 # force XPG6 standard
 CXXFLAGS += -D_XPG6
@@ -60,23 +60,23 @@ LDFLAGS += -D_XPG6
 CPPFLAGS += -D_XPG6
 CFLAGS += -std=c99 -D_POSIX_C_SOURCE=200112L
 
-CONFIGURE_OPTIONS +=	--enable-rpath
+CONFIGURE_OPTIONS += --enable-rpath
 # From INSTALL file:
 # NOTE: applications compiled with this configuration are not compatible
 # with those built for 8-bit characters.  You cannot simply make a
 # symbolic link to equate libncurses.so with libncursesw.so.
-CONFIGURE_OPTIONS +=	--enable-widec
-CONFIGURE_OPTIONS +=	--enable-symlinks
-CONFIGURE_OPTIONS +=	--enable-pc-files
-CONFIGURE_OPTIONS +=	--disable-lib-suffixes
-CONFIGURE_OPTIONS +=	--with-pkg-config-libdir=$(PKG_CONFIG_PATH.$(BITS))
-CONFIGURE_OPTIONS +=	--with-pcre2
-CONFIGURE_OPTIONS +=	--with-shared
+CONFIGURE_OPTIONS += --enable-widec
+CONFIGURE_OPTIONS += --enable-symlinks
+CONFIGURE_OPTIONS += --enable-pc-files
+CONFIGURE_OPTIONS += --disable-lib-suffixes
+CONFIGURE_OPTIONS += --with-pkg-config-libdir=$(PKG_CONFIG_PATH.$(BITS))
+CONFIGURE_OPTIONS += --with-pcre2
+CONFIGURE_OPTIONS += --with-shared
 # Compatibility with older programs
-CONFIGURE_OPTIONS +=	--with-abi-version=5
-CONFIGURE_OPTIONS +=	--with-normal
-CONFIGURE_OPTIONS +=	--without-debug
-CONFIGURE_OPTIONS +=	--includedir=$(USRINCDIR)/ncurses
+CONFIGURE_OPTIONS += --with-abi-version=5
+CONFIGURE_OPTIONS += --with-normal
+CONFIGURE_OPTIONS += --without-debug
+CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/ncurses
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -85,8 +85,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MV) $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/libncurses.so* $(PROTO_DIR)/usr/lib/ || \
 	$(MV) $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/$(MACH64)/libncurses.so* $(PROTO_DIR)/usr/lib/$(MACH64)/ ;
 
-COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/test
-COMPONENT_TEST_TARGETS =
+COMPONENT_TEST_DIR= $(BUILD_DIR)/$(MACH$(BITS))/test
+COMPONENT_TEST_TARGETS=
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/pcre2
