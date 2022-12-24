@@ -13,53 +13,43 @@
 # Copyright 2019 Jason Martin
 #
 
-BUILD_BITS=64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     goffice
 COMPONENT_VERSION=  0.10.53
-COMPONENT_PROJECT_URL=  https://www.gnome.org
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=  goffice - Document centric set of APIs
+COMPONENT_PROJECT_URL=  https://www.gnome.org
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:27fd58796faa1cd4cc0120c34ea85315a0891ec71f55bc6793c14ecf168a3f57
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/0.10/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     library/desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=  Development/System
 COMPONENT_LICENSE=  GPLv2
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_FMRI=     library/desktop/$(COMPONENT_NAME)
-
-PYTHON_VERSION=3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-                    libtoolize --copy --force &&\
-                    aclocal -I . &&\
-                    automake -c -f -a &&\
-                    autoconf )
+COMPONENT_PREP_ACTION= ( cd $(@D)  && \
+    libtoolize --copy --force &&\
+	aclocal -I . &&\
+    automake -c -f -a &&\
+    autoconf )
 
 CFLAGS += $(CPP_XPG6MODE) -std=c99
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 
-CONFIGURE_ENV+= PYTHON=$(PYTHON)
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 
-COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 COMPONENT_TEST_ENV += CC=$(CC)
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-    '-ne "/^\# TOTAL:/p" ' \
-    '-ne "/^\# PASS:/p" ' \
-    '-ne "/^\# SKIP:/p" ' \
-    '-ne "/^\# XFAIL:/p" ' \
-    '-ne "/^\# FAIL:/p" ' \
-    '-ne "/^\# XPASS:/p" ' \
-    '-ne "/^\# ERROR::/p" '
 
 # To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
