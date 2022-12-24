@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mpfr
 COMPONENT_VERSION=      4.1.1
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      The GNU Multiple Precision with IEEE Rounding Floating-Point Library
 COMPONENT_PROJECT_URL=	https://www.mpfr.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -76,15 +77,6 @@ CONFIGURE_OPTIONS += --enable-tests-timeout=0
 CONFIGURE_OPTIONS += --with-gmp-lib=$(GMPLIBDIR_$(BITS))
 CONFIGURE_OPTIONS += --with-mulhigh-size=$(MPFRMULHIGH)
 CONFIGURE_OPTIONS += --with-pic
-
-#COMPONENT_TEST_TRANSFORMS= \
-	'-e "/^make/d" ' \
-	'-e "/^Making/d" ' \
-	'-e "/^\//d" ' \
-	'-e "/^mv/d" ' \
-	'-e "/^libtool/d" ' \
-	'-e "/^depbase/d" ' \
-	'-e "/^\[/d" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
