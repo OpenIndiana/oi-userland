@@ -19,24 +19,27 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		filelock
-COMPONENT_VERSION =		3.8.0
+HUMAN_VERSION =			3.9.0
 COMPONENT_SUMMARY =		filelock - A platform independent file lock.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/py-filelock
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/95/55/b897882bffb8213456363e646bf9e9fa704ffda5a7d140edf935a9e02c7b/filelock-3.8.0.tar.gz
+	https://files.pythonhosted.org/packages/0b/dc/eac02350f06c6ed78a655ceb04047df01b02c6b7ea3fc02d4df24ca87d24/filelock-3.9.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:55447caa666f2198c5b6b13a26d2084d26fa5b115c00d065664b2124680c4edc
-COMPONENT_LICENSE =		public domain
+	sha256:7b319f24340b51f55a2bf7a12ac0755a9b03e718311dac567a0f4f7fabd2f5de
+COMPONENT_LICENSE =		Unlicense
 COMPONENT_LICENSE_FILE =	LICENSE
+
+TEST_STYLE = pytest
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
 # - tox (test bootstrap)
+# - virtualenv (test bootstrap)
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += runtime/python
