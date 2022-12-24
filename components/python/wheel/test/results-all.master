@@ -1,0 +1,85 @@
+py$(PYV) create: $(@D)/.tox/py$(PYV)
+py$(PYV) run-test: commands[0] | $(@D)/.tox/py$(PYV)/bin/python -b -m pytest -W always
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D), configfile: setup.cfg, testpaths: tests
+collecting ... collected 77 items
+
+::project PASSED
+tests/cli/test_convert.py::test_convert_egg PASSED
+tests/cli/test_convert.py::test_egg_re PASSED
+tests/cli/test_pack.py::test_pack[erasebuildnum] PASSED
+tests/cli/test_pack.py::test_pack[newbuildarg] PASSED
+tests/cli/test_pack.py::test_pack[nobuildnum] PASSED
+tests/cli/test_pack.py::test_pack[oldbuildnum] PASSED
+tests/cli/test_unpack.py::test_unpack PASSED
+tests/test_bdist_wheel.py::test_build_from_readonly_tree PASSED
+tests/test_bdist_wheel.py::test_build_number PASSED
+tests/test_bdist_wheel.py::test_compression[deflated] PASSED
+tests/test_bdist_wheel.py::test_compression[stored] PASSED
+tests/test_bdist_wheel.py::test_get_abi_tag_new PASSED
+tests/test_bdist_wheel.py::test_get_abi_tag_old PASSED
+tests/test_bdist_wheel.py::test_licenses_default PASSED
+tests/test_bdist_wheel.py::test_licenses_deprecated PASSED
+tests/test_bdist_wheel.py::test_licenses_disabled PASSED
+tests/test_bdist_wheel.py::test_licenses_override[setup.cfg-[metadata]\nlicense_files=licenses/*, LICENSE] PASSED
+tests/test_bdist_wheel.py::test_licenses_override[setup.cfg-[metadata]\nlicense_files=licenses/*\n  LICENSE] PASSED
+tests/test_bdist_wheel.py::test_licenses_override[setup.py-from setuptools import setup\n\nsetup(\n    name='dummy_dist',\n    version='1.0',\n  license_files=['licenses/DUMMYFILE', 'LICENSE'])\n] PASSED
+tests/test_bdist_wheel.py::test_limited_abi PASSED
+tests/test_bdist_wheel.py::test_no_scripts PASSED
+tests/test_bdist_wheel.py::test_preserve_unicode_metadata PASSED
+tests/test_bdist_wheel.py::test_unicode_record PASSED
+tests/test_bdist_wheel.py::test_unix_epoch_timestamps PASSED
+tests/test_bdist_wheel.py::test_wheelfile_line_endings PASSED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_bugfix_release_platform_tag SKIPPED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_bump_platform_tag_by_env_variable SKIPPED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_get_platform_bigsur_env SKIPPED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_get_platform_bigsur_platform SKIPPED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_information_about_problematic_files_env_variable SKIPPED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_information_about_problematic_files_python_version SKIPPED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_simple PASSED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_version_bump SKIPPED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_warning_on_to_low_env_variable SKIPPED
+tests/test_macosx_libfile.py::test_get_platform_linux PASSED
+tests/test_macosx_libfile.py::test_read_from_dylib SKIPPED (always f...)
+tests/test_metadata.py::test_pkginfo_to_metadata PASSED
+tests/test_tagopt.py::test_build_number PASSED
+tests/test_tagopt.py::test_default_tag PASSED
+tests/test_tagopt.py::test_explicit_tag PASSED
+tests/test_tagopt.py::test_legacy_wheel_section_in_setup_cfg PASSED
+tests/test_tagopt.py::test_nocompile_skips[temp_pkg0] SKIPPED (Canno...)
+tests/test_tagopt.py::test_plat_name_ext[temp_pkg0] PASSED
+tests/test_tagopt.py::test_plat_name_ext_in_setupcfg[temp_pkg0] PASSED
+tests/test_tagopt.py::test_plat_name_purepy PASSED
+tests/test_tagopt.py::test_plat_name_purepy_in_setupcfg PASSED
+tests/test_tagopt.py::test_pythontag_in_setup_cfg PASSED
+tests/test_tagopt.py::test_universal_beats_explicit_tag PASSED
+tests/test_tagopt.py::test_universal_in_setup_cfg PASSED
+tests/test_tagopt.py::test_universal_tag PASSED
+tests/test_wheelfile.py::test_attributes PASSED
+tests/test_wheelfile.py::test_bad_wheel_filename[test-1.0-py 2-none-any.whl] PASSED
+tests/test_wheelfile.py::test_bad_wheel_filename[test-1.0-py2-none-any] PASSED
+tests/test_wheelfile.py::test_bad_wheel_filename[test-1.0-py2-none.whl] PASSED
+tests/test_wheelfile.py::test_bad_wheel_filename[test-1.0-py2.whl] PASSED
+tests/test_wheelfile.py::test_bad_wheel_filename[test-1.0.whl] PASSED
+tests/test_wheelfile.py::test_bad_wheel_filename[test.whl] PASSED
+tests/test_wheelfile.py::test_missing_record PASSED
+tests/test_wheelfile.py::test_testzip[sha256] PASSED
+tests/test_wheelfile.py::test_testzip[sha384] PASSED
+tests/test_wheelfile.py::test_testzip[sha512] PASSED
+tests/test_wheelfile.py::test_testzip_bad_hash PASSED
+tests/test_wheelfile.py::test_testzip_missing_hash PASSED
+tests/test_wheelfile.py::test_timestamp PASSED
+tests/test_wheelfile.py::test_unsupported_hash_algorithm PASSED
+tests/test_wheelfile.py::test_weak_hash_algorithm[md5] PASSED
+tests/test_wheelfile.py::test_weak_hash_algorithm[sha1] PASSED
+tests/test_wheelfile.py::test_wheelfile_re[foo-2-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl] PASSED
+tests/test_wheelfile.py::test_wheelfile_re[foo-2-py3-none-any.whl] PASSED
+tests/test_wheelfile.py::test_write_str PASSED
+
+======== 61 passed, 10 skipped ========
+___________________________________ summary ____________________________________
+  py$(PYV): commands succeeded
+  congratulations :)
