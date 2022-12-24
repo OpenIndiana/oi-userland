@@ -13,9 +13,7 @@
 # Copyright 2022, Niklas Poslovski
 #
 
-BUILD_BITS=		64
-BUILD_STYLE=	justmake
-
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		FreeImage
@@ -23,18 +21,19 @@ COMPONENT_VERSION_MAJOR=3
 COMPONENT_VERSION_MINOR=18
 COMPONENT_VERSION_PATCH=0
 COMPONENT_VERSION=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR).$(COMPONENT_VERSION_PATCH)
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	A library project for developers to support popular graphics image formats
 COMPONENT_PROJECT_URL=	https://freeimage.sourceforge.io
-COMPONENT_FMRI=		library/libfreeimage
-COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)$(COMPONENT_VERSION_MAJOR)$(COMPONENT_VERSION_MINOR)$(COMPONENT_VERSION_PATCH).zip
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/freeimage/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	sha256:f41379682f9ada94ea7b34fe86bf9ee00935a3147be41b6569c9605a53e438fd
+COMPONENT_FMRI=		library/libfreeimage
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	license-gplv3.txt
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # build with the distribution preferred libjpeg implementation
@@ -58,12 +57,12 @@ COMPONENT_PRE_BUILD_ACTION = \
 	cd $(@D) && ./genfipsrclist.sh
 COMPONENT_BUILD_GMAKE_ARGS="file=Makefile.gnu"
 
-FIFLAGS=-fPIC
-FIFLAGS+=-fexceptions
-FIFLAGS+=-fvisibility=default
-CFLAGS+= $(FIFLAGS)
-CXXFLAGS+=$(FIFLAGS)
-CXXFLAGS+=-Wno-ctor-dtor-privacy
+FIFLAGS= -fPIC
+FIFLAGS += -fexceptions
+FIFLAGS += -fvisibility=default
+CFLAGS += $(FIFLAGS)
+CXXFLAGS += $(FIFLAGS)
+CXXFLAGS += -Wno-ctor-dtor-privacy
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

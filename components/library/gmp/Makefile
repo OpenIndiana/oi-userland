@@ -24,27 +24,28 @@
 # Copyright (c) 2020, Andreas Wacknitz
 #
 
-BUILD_BITS=				32_and_64
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
-
-PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=         gmp
 COMPONENT_VERSION=      6.2.1
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNU Multiple Precision Bignum Library
 COMPONENT_PROJECT_URL=  https://gmplib.org/
-COMPONENT_FMRI=         library/gmp    
-COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-	sha256:eae9326beb4158c386e39a356818031bd28f3124cf915f8c5b1dc4c7a36b4d7c
+COMPONENT_ARCHIVE_HASH= sha256:eae9326beb4158c386e39a356818031bd28f3124cf915f8c5b1dc4c7a36b4d7c
+COMPONENT_FMRI=         library/gmp    
+COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_LICENSE=      LGPLv3,GPLv3,FDLv1.3
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
+
+PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 CLOBBER_PATHS += libgmp.pc libgmpxx.pc
 
