@@ -25,13 +25,13 @@
 # Copyright (c) 2022, Friedrich Kink
 #
 
-BUILD_BITS=             64_and_32
-USE_OPENSSL11=		yes
+BUILD_BITS= 64_and_32
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openldap
 COMPONENT_VERSION=      2.6.3
-COMPONENT_REVISION =	1
+COMPONENT_REVISION =	2
 COMPONENT_SUMMARY=      OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
@@ -80,9 +80,8 @@ CONFIGURE_OPTIONS += --with-tls=openssl
 CONFIGURE_OPTIONS += --with-mp=gmp
 CONFIGURE_OPTIONS += --with-odbc=unixodbc
 CONFIGURE_OPTIONS.32 += --disable-slapd
-CONFIGURE_OPTIONS.64 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/$(MACH64)
-CONFIGURE_OPTIONS.32 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib
-CONFIGURE_OPTIONS += CPPFLAGS="-I$(OPENSSL_PREFIX)/include -I/usr/include/odbc"
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
+CONFIGURE_OPTIONS += CPPFLAGS="-I$(OPENSSL_INCDIR) -I/usr/include/odbc"
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
 COMPONENT_TEST_ENV += PATH="$(PROTOUSRSBINDIR):$(PROTOUSRBINDIR):/usr/bin"
@@ -94,9 +93,9 @@ COMPONENT_POST_INSTALL_ACTION.64 = $(GSED) -i -e 's:.la$$:.so:' $(PROTOETCDIR)/$
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libtool/libltdl
-REQUIRED_PACKAGES += library/security/libsodium
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/unixodbc
+REQUIRED_PACKAGES += security/argon2
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
