@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		distlib
-COMPONENT_VERSION =		0.3.6
+HUMAN_VERSION =			0.3.7
 COMPONENT_SUMMARY =		distlib - Distribution utilities
 COMPONENT_PROJECT_URL =		https://github.com/pypa/distlib
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/58/07/815476ae605bcc5f95c87a62b95e74a1bce0878bc7a3119bc2bf4178f175/distlib-0.3.6.tar.gz
+	https://github.com/pypa/distlib/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:14bad2d9b04d3a36127ac97f30b12a19268f211063d8f8ee4f47108896e11b46
+	sha256:2502e77afc319529e623dd7bfa29a92cb309656a0597b2c14e62090bbf439d13
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
