@@ -25,46 +25,45 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libtool
 COMPONENT_VERSION=      2.4.7
-COMPONENT_FMRI=         developer/build/libtool
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNU libtool
-COMPONENT_CLASSIFICATION=Development/GNU
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/libtool/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:4f7f217f057ce655ff22559ad221a0fd8ef84ad1fc5fcb6990cecc333aa1635d
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         developer/build/libtool
+COMPONENT_CLASSIFICATION=Development/GNU
 COMPONENT_LICENSE=      GPLv2, FDLv1.3
 
 # For now, we want to continue to provide the libltdl.so's (and their
 # links) from libtool 1.5.22.
 #
-COMPONENT_VERSION_1 =	1.5.22
-COMPONENT_SRC_1 =	$(COMPONENT_NAME)-$(COMPONENT_VERSION_1)
-COMPONENT_ARCHIVE_1 =	$(COMPONENT_SRC_1).tar.gz
-COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:88e9ffaaade21c1ddaf6297723dd2fb4ca18ccaef0499a28b6e672f02c8ceb5d
-COMPONENT_ARCHIVE_URL_1 = https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE_1)
-SOURCE_DIR_1 =		$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
+COMPONENT_VERSION_1= 1.5.22
+COMPONENT_SRC_1= $(COMPONENT_NAME)-$(COMPONENT_VERSION_1)
+COMPONENT_ARCHIVE_1= $(COMPONENT_SRC_1).tar.gz
+COMPONENT_ARCHIVE_HASH_1= sha256:88e9ffaaade21c1ddaf6297723dd2fb4ca18ccaef0499a28b6e672f02c8ceb5d
+COMPONENT_ARCHIVE_URL_1= https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE_1)
+SOURCE_DIR_1= $(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += PERL="$(PERL)"
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; $(TOUCH) $(SOURCE_DIR)/README-release ; ./bootstrap --force --no-git)
+COMPONENT_PREP_ACTION= ( cd $(@D) ; $(TOUCH) $(SOURCE_DIR)/README-release ; ./bootstrap --force --no-git )
 
 # Remove the hard-wired compiler locations in the LTCC and two CC lines
 # in the two versions of the libtool script.
-COMPONENT_POST_INSTALL_ACTION = \
+COMPONENT_POST_INSTALL_ACTION= \
 	(for dir in $(PROTOUSRBINDIR) $(PROTOUSRBINDIR)/$(MACH64) ; do \
 		cd $$dir; \
 		/usr/gnu/bin/sed -i \
@@ -83,8 +82,8 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAILED/p" '
 
 # Macros to configure, build, and install the old version for the time being.
-BUILD_OLD_DIR_32 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
-BUILD_OLD_DIR_64 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH64)
+BUILD_OLD_DIR_32= $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
+BUILD_OLD_DIR_64= $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH64)
 
 $(BUILD_OLD_DIR_32)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
 $(BUILD_OLD_DIR_64)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
