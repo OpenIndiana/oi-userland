@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		platformdirs
-COMPONENT_VERSION =		2.5.3
+HUMAN_VERSION =			2.6.0
 COMPONENT_SUMMARY =		platformdirs - A small Python package for determining appropriate platform-specific dirs, e.g. a \\\\\\\"user data dir\\\\\\\".
 COMPONENT_PROJECT_URL =		https://github.com/platformdirs/platformdirs
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/32/3d/711a708e9b69b263e5cf190a030a77fd79a05613820f6ce0c7ea6f92f99f/platformdirs-2.5.3.tar.gz
+	https://files.pythonhosted.org/packages/ec/4c/9af851448e55c57b30a13a72580306e628c3b431d97fdae9e0b8d4fa3685/platformdirs-2.6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6e52c21afff35cb659c6e52d8b4d61b9bd544557180440538f255d9382c8cbe0
+	sha256:b46ffafa316e6b83b47489d240ce17173f123a9b9c83282141c3daf26ad9ac2e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -40,3 +40,7 @@ include $(WS_MAKE_RULES)/common.mk
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/appdirs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
