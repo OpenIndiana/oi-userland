@@ -19,7 +19,8 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8
-COMPONENT_VERSION =		5.0.4
+HUMAN_VERSION =			5.0.4
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		flake8 - the modular source code checker: pep8 pyflakes and co
 COMPONENT_PROJECT_URL =		https://github.com/pycqa/flake8
 COMPONENT_ARCHIVE_URL =		\
@@ -29,13 +30,15 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Dependency loop: flake8 needs pycodestyle to run test, pycodestyle needs
-# configparser to run, configparser needs flake8 to run its tests.  To break
-# the dependency loop we need to set PYTHON_TEST_BOOTSTRAP either in
-# configparser or here in flake8.
-PYTHON_TEST_BOOTSTRAP = yes
-
 include $(WS_MAKE_RULES)/common.mk
+
+# The test_local_plugin_can_add_option depends on list of installed flake8
+# plugins.  To get consistent test results we need to make sure flake8-2020 is
+# always installed.
+TEST_REQUIRED_PACKAGES.python += library/python/flake8-2020
+
+# Warning: With flake8-noqa installed some tests fail so to see all tests
+# passed the flake8-noqa should not be installed.
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
@@ -44,3 +47,5 @@ PYTHON_REQUIRED_PACKAGES += library/python/pycodestyle
 PYTHON_REQUIRED_PACKAGES += library/python/pyflakes
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
