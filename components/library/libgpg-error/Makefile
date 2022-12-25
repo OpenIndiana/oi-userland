@@ -22,12 +22,14 @@
 # Copyright 2011 Audioboo Ltd. All rights reserved.
 # Copyright 2019 Michal Nowak
 #
-BUILD_BITS = 64_and_32
+
+BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgpg-error
 COMPONENT_VERSION=	1.46
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GnuPG Error Library
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/libgpg-error/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,13 +44,13 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
 
-CONFIGURE_OPTIONS  +=	--disable-static
-CONFIGURE_OPTIONS  +=	--enable-shared
-CONFIGURE_OPTIONS  +=	--enable-threads=posix
-CONFIGURE_OPTIONS  +=	--enable-install-gpg-error-config
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --enable-threads=posix
+CONFIGURE_OPTIONS += --enable-install-gpg-error-config
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/xopen/xcu4
