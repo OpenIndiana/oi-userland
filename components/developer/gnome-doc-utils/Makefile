@@ -12,25 +12,25 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnome-doc-utils
 COMPONENT_VERSION=      0.20.10
-COMPONENT_REVISION=     3
-COMPONENT_PROJECT_URL=  http://www.gnome.org
+COMPONENT_REVISION=     4
 COMPONENT_SUMMARY=      Documentation utilities for GNOME
+COMPONENT_PROJECT_URL=  https://www.gnome.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:cb0639ffa9550b6ddf3b62f3b1add92fb92ab4690d351f2353cffe668be8c4a6
+COMPONENT_ARCHIVE_HASH= sha256:cb0639ffa9550b6ddf3b62f3b1add92fb92ab4690d351f2353cffe668be8c4a6
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/0.20/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			developer/gnome/gnome-doc-utils
+COMPONENT_CLASSIFICATION=	Development/GNOME and GTK+
+COMPONENT_LICENSE=		GPLv2, LGPLv2
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION=3.9
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
 
 PATH=$(PATH.gnu)
 
@@ -46,6 +46,6 @@ CONFIGURE_ENV+=  am_cv_python_pythondir="$(PYTHON.$(PYTHON_VERSION).VENDOR_PACKA
 COMPONENT_BUILD_ARGS += V=1
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93

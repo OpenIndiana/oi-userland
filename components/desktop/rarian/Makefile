@@ -14,21 +14,20 @@
 # Copyright 2019 Nona Hansel
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         rarian
 COMPONENT_VERSION=      0.8.1
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_SUMMARY=      Documentation meta-data library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-	sha256:aafe886d46e467eb3414e91fa9e42955bd4b618c3e19c42c773026b205a84577
-COMPONENT_ARCHIVE_URL=  \
-	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.8/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://www.freedesktop.org
+COMPONENT_ARCHIVE_HASH= sha256:aafe886d46e467eb3414e91fa9e42955bd4b618c3e19c42c773026b205a84577
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.8/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.freedesktop.org
+COMPONENT_FMRI=			text/rarian
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=		LGPLv2, GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
