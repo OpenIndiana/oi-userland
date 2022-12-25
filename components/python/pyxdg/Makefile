@@ -12,25 +12,28 @@
 # Copyright (c) 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-BUILD_STYLE=setup.py
-BUILD_BITS=NO_ARCH
-
+BUILD_STYLE= setup.py
+BUILD_BITS= NO_ARCH
+TEST_STYLE= pytest
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyxdg
-COMPONENT_VERSION=	0.26
-COMPONENT_PROJECT_URL=	http://freedesktop.org/wiki/Software/pyxdg/
+COMPONENT_VERSION=	0.28
+COMPONENT_SUMMARY=	A python library to access freedesktop.org standards
+COMPONENT_PROJECT_URL=	https://freedesktop.org/wiki/Software/pyxdg/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:fe2928d3f532ed32b39c32a482b54136fe766d19936afc96c8f00645f9da1a06
+COMPONENT_ARCHIVE_HASH=	sha256:3267bb3074e934df202af2ee0868575484108581e6f3cb006af1da35395e88b4
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_FMRI=		library/python/pyxdg
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_LICENSE=	LGPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-PYTHON_VERSIONS=	2.7 3.5
-
-TEST_TARGET= $(NO_TESTS)
+PYTHON_VERSIONS= 3.7 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
+# Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
