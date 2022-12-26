@@ -13,30 +13,28 @@
 # Copyright 2017 Geoffrey Weiss
 #
 
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtksourceview
 COMPONENT_MAJOR_MINOR=	3.14
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_MINOR).4
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	Multiline text editing library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_MINOR)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-	sha256:1c9d6155705d50ae5cd1cd61167cc4824e413896f10d30ee158a83e8961a4d8b
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_MINOR)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:1c9d6155705d50ae5cd1cd61167cc4824e413896f10d30ee158a83e8961a4d8b
 COMPONENT_FMRI = library/desktop/gtksourceview3
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Documentation
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # gobject-introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
@@ -52,24 +50,22 @@ CONFIGURE_OPTIONS += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS += --localstatedir=/var/lib
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS.32 += --disable-introspection
 CONFIGURE_OPTIONS.64 += --enable-introspection
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
-# likely requires more fresh vala
-CONFIGURE_OPTIONS += --disable-vala
 
-build:	$(BUILD_32_and_64)
+# Some options make the tests fail:
+unexport SHELLOPTS
 
-install:	$(INSTALL_32_and_64)
-
-# Require X11
-test:	$(NO_TESTS)
+# Manually added dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += developer/vala
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
