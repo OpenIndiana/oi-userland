@@ -13,28 +13,28 @@
 # Copyright 2017 Geoffrey Weiss
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
-BUILD_STYLE=		meson
-BUILD_BITS=		64_and_32
+
+BUILD_STYLE= meson
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtksourceview
 COMPONENT_MAJOR_MINOR=	4.8
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_MINOR).2
-COMPONENT_FMRI=		library/desktop/gtksourceview4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Multiline text editing library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_MINOR)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-	sha256:842de7e5cb52000fd810e4be39cd9fe29ffa87477f15da85c18f7b82d45637cc
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_MINOR)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:842de7e5cb52000fd810e4be39cd9fe29ffa87477f15da85c18f7b82d45637cc
+COMPONENT_FMRI=		library/desktop/gtksourceview4
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 COMPONENT_LICENSE = GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # gobject-introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
@@ -52,9 +52,6 @@ CONFIGURE_OPTIONS.64 += -Dgir=true
 # fairly optional, disable if it causes problems for later builds
 CONFIGURE_OPTIONS.64 += -Dglade_catalog=true
 
-# Require X11
-test:	$(NO_TESTS)
-
 # if you do run the tests, use these transforms  
 # (first) delete the timing information from any line
 # delete the "exit status N", it can cause issues too
@@ -62,13 +59,15 @@ test:	$(NO_TESTS)
 # print everything between "^Ok:" and "^Timeout:"
 # delete the ninja log-related stuff at the end
 unexport SHELLOPTS
+
 COMPONENT_TEST_TRANSFORMS += \
     '-n ' \
-    '-e "s/[ 	]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
-    '-e "s/[ 	]*exit status [0-9][0-9]*//" ' \
-    '-e "/^[ 	]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
-    '-e "/^Summary of/p" ' \
-    '-e "/^Ok:/,/^Timeout:/p" ' \
+    '-e "/^Ok:/p" ' \
+    '-e "/^Expected Fail:/p" ' \
+    '-e "/^Fail:/p" ' \
+	'-e "/^Skipped:/p" ' \
+	'-e "/^Timeout:/p" ' \
+    '-e "/^Unexpected Pass:/p" ' \
     '-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
 
 
@@ -77,7 +76,6 @@ REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += developer/vala
 # required for the glade_catalog option
 REQUIRED_PACKAGES += developer/ui-designer/glade
-
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
