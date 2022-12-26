@@ -12,33 +12,31 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gtksourceview
-COMPONENT_VERSION=	2.10.5
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	http://www.gnome.org
-COMPONENT_SUMMARY=	GNOME syntax highlighting text widget
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:c585773743b1df8a04b1be7f7d90eecdf22681490d6810be54c81a7ae152191e
+COMPONENT_NAME=			gtksourceview
+COMPONENT_VERSION=		2.10.5
+COMPONENT_REVISION=		3
+COMPONENT_SUMMARY=		GNOME syntax highlighting text widget
+COMPONENT_PROJECT_URL=	https://www.gnome.org
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH=	sha256:c585773743b1df8a04b1be7f7d90eecdf22681490d6810be54c81a7ae152191e
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.10/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			library/desktop/gtksourceview
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=		GPLv2, LGPLv2.1
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
+# Manually added dependencies
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -48,4 +46,3 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

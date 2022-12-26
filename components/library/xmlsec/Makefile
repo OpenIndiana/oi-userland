@@ -23,28 +23,29 @@
 # Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=	64
 USE_OPENSSL11= yes
 CLONEY_ARGS= CLONEY_MODE="copy"
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xmlsec
 COMPONENT_VERSION=	1.2.37
-COMPONENT_PROJECT_URL=	https://www.aleksey.com/xmlsec
-COMPONENT_FMRI=		library/xmlsec
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	XML Security Library
-COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_PROJECT_URL=	https://www.aleksey.com/xmlsec
 COMPONENT_SRC=	$(COMPONENT_NAME)1-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:5f8dfbcb6d1e56bddd0b5ec2e00a3d0ca5342a9f57c24dffde5c796b2be2871c
 COMPONENT_ARCHIVE_URL=	https://www.aleksey.com/xmlsec/download/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		library/xmlsec
+COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	Copyright
 
-PATH=	$(PATH.gnu)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=	--enable-static=no
+PATH= $(PATH.gnu)
+
+CONFIGURE_OPTIONS += --enable-static=no
 
 COMPONENT_TEST_TRANSFORMS = \
 	'-n ' \
