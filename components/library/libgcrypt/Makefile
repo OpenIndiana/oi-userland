@@ -22,12 +22,13 @@
 # Copyright 2011 Audioboo Ltd. All rights reserved.
 #
 
-BUILD_BITS=		32_and_64
+BUILD_BITS= 32_and_64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgcrypt
 COMPONENT_VERSION=	1.10.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GnuPG libgcrypt library
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libgcrypt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
