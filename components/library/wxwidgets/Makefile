@@ -21,22 +21,20 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wxwidgets
 COMPONENT_VERSION=      2.8.12
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SRC_NAME=	wxGTK
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:13cf89f2c29bcb90bb56a31ac1af10f23003d3d43c3e4b24991518f5dc4e5abe
-COMPONENT_ARCHIVE_URL=  http://prdownloads.sourceforge.net/wxwindows/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://www.wxwidgets.org/
+COMPONENT_ARCHIVE_HASH= sha256:13cf89f2c29bcb90bb56a31ac1af10f23003d3d43c3e4b24991518f5dc4e5abe
+COMPONENT_ARCHIVE_URL=  https://prdownloads.sourceforge.net/wxwindows/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://www.wxwidgets.org/
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/man
@@ -80,6 +78,8 @@ install:	$(INSTALL_32_and_64) \
 		$(BUILD_DIR_64)/contrib/.installed
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/libjpeg6
 REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += image/library/libpng16
@@ -91,9 +91,8 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
