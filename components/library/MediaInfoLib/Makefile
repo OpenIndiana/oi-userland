@@ -17,23 +17,24 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		MediaInfoLib
-COMPONENT_VERSION=	22.09
-IPS_COMPONENT_VERSION=	22.9
-HUMAN_VERSION= $(COMPONENT_VERSION)
+COMPONENT_VERSION=	22.9
+HUMAN_VERSION= 		22.09
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	MediaInfo(Lib) is a convenient unified display of the most relevant technical and tag data for video and audio files.
-COMPONENT_PROJECT_URL=	https://github.com/MediaArea/MediaInfoLib
+COMPONENT_PROJECT_URL=	https://github.com/MediaArea/$(COMPONENT_NAME)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:09c04701788b79bb9632e811af7a42352a71c75445c7ac104a00d70c75387978
 COMPONENT_FMRI=		library/libmediainfo
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	https://github.com/MediaArea/$(COMPONENT_NAME)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:09c04701788b79bb9632e811af7a42352a71c75445c7ac104a00d70c75387978
 COMPONENT_LICENSE=	BSD 2-Clause
 COMPONENT_LICENSE_FILE= LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION=	( cd $(SOURCE_DIR)/Project/GNU/Library/ && ./autogen.sh; )
+
 CONFIGURE_SCRIPT =	$(SOURCE_DIR)/Project/GNU/Library/configure
 
 CONFIGURE_OPTIONS+=	--enable-shared
@@ -43,8 +44,8 @@ CONFIGURE_OPTIONS+=	--with-libmms
 CONFIGURE_OPTIONS+=	--with-graphviz
 CONFIGURE_OPTIONS+= "builddir=$(SOURCE_DIR)/../build/amd64"
 CONFIGURE_ENV += CPPFLAGS="$(CXXFLAGS) -DUNICODE -I/usr/include -DMEDIAINFO_GRAPHVIZ_NO -DMEDIAINFO_LIBCURL_NO -DMEDIAINFO_LIBMMS_NO -I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -I$(SOURCE_DIR)/Source/ThirdParty/tinyxml2 -I$(SOURCE_DIR)/Source/ThirdParty/base64 -DUNICODE -fPIC -O2"
-CFLAGS+=-I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -fPIC -O2
-CXXFLAGS+=-DUNICODE -DSIZE_T_IS_LONG  -I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -I$(SOURCE_DIR)/Source/ThirdParty/tinyxml2 -I$(SOURCE_DIR)/Source/ThirdParty/base64 -DUNICODE -fPIC -O2
+CFLAGSi += -I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -fPIC -O2
+CXXFLAGS += -DUNICODE -DSIZE_T_IS_LONG  -I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -I$(SOURCE_DIR)/Source/ThirdParty/tinyxml2 -I$(SOURCE_DIR)/Source/ThirdParty/base64 -DUNICODE -fPIC -O2
 
 # Manually added dependencies
 REQUIRED_PACKAGES += image/graphviz
