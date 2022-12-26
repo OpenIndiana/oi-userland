@@ -13,32 +13,29 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gvfs
 COMPONENT_VERSION=      1.26.0
-COMPONENT_REVISION=     5
+COMPONENT_REVISION=     6
 COMPONENT_SUMMARY=      GNOME virtual file system framework
-COMPONENT_FMRI=         library/gnome/gvfs
+COMPONENT_PROJECT_URL=  https://www.gnome.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:6d43e8b33a5c1588525875f9d3979b515f648da1d567d0ce3d337a18f5ff8c32
-COMPONENT_ARCHIVE_URL=  \
-	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.26/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://www.gnome.org
+COMPONENT_ARCHIVE_HASH= sha256:6d43e8b33a5c1588525875f9d3979b515f648da1d567d0ce3d337a18f5ff8c32
+COMPONENT_ARCHIVE_URL= 	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.26/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/gnome/gvfs
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=      LGPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION =        (cd $(@D) && \
-					autoreconf -if)
+COMPONENT_PREP_ACTION= ( cd $(@D) && \
+	autoreconf -if)
 
 CFLAGS += -D_XPG4_2
 CFLAGS += -D__EXTENSIONS__
@@ -69,10 +66,9 @@ CONFIGURE_OPTIONS.32 += --with-samba-libs=/usr/lib/libsmbclient
 
 CONFIGURE_ENV+= PERL=$(PERL)
 
-$(INSTALL_32):	$(INSTALL_64)
-
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/gnome-mount
 REQUIRED_PACKAGES += library/desktop/gtk3
