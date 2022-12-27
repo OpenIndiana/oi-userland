@@ -13,26 +13,26 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_BITS=			64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	asciidoc
 COMPONENT_VERSION= 	9.1.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	Text based document generation tool
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:ea39760ac2739496c14002902571592dc2ae2fa673296ec141a9e491d9c11fca
 COMPONENT_ARCHIVE_URL=	https://github.com/asciidoc/asciidoc-py3/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://asciidoc.org/
+COMPONENT_FMRI=		text/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	System/Text Tools
 COMPONENT_LICENSE=	GPLv2
-
-PYTHON_VERSION=		3.7
 
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
+COMPONENT_PRE_CONFIGURE_ACTION= \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # pkgdepend doesn't like the first line of a Python script to be:
@@ -47,12 +47,12 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 # AsciiDoc configuration and data files belong in /usr/share, not /etc based
 # (Following what Oracle does for Solaris
-CONFIGURE_OPTIONS +=    --sysconfdir=$(USRSHAREDIR)
+CONFIGURE_OPTIONS += --sysconfdir=$(USRSHAREDIR)
 
-COMPONENT_TEST_DIR =    $(@D)/tests
-COMPONENT_TEST_ENV_CMD =
-COMPONENT_TEST_ENV =    export PATH=$(@D):$$PATH;
-COMPONENT_TEST_CMD =    \
+COMPONENT_TEST_DIR= $(@D)/tests
+COMPONENT_TEST_ENV_CMD=
+COMPONENT_TEST_ENV= export PATH=$(@D):$$PATH;
+COMPONENT_TEST_CMD= \
     $(PYTHON) ../asciidocapi.py; \
     if [ $$? -eq 0 ] ; \
         then print "asciidocapi test passed"; \
@@ -60,7 +60,7 @@ COMPONENT_TEST_CMD =    \
     fi; \
     $(PYTHON) ./testasciidoc.py update --force; \
     $(PYTHON) ./testasciidoc.py run
-COMPONENT_TEST_TARGETS =
+COMPONENT_TEST_TARGETS=
 
 COMPONENT_TEST_TRANSFORMS += \
     '-n ' \
@@ -73,11 +73,11 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/^TOTAL/p" '
 
 # Manually added dependencies:
+PYTHON_REQUIRED_PACKAGES += runtime/python
+PYTHON_REQUIRED_PACKAGES += library/python/pygments
 REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
-REQUIRED_PACKAGES += library/python/pygments
 REQUIRED_PACKAGES += web/browser/w3m
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-37
