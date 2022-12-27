@@ -23,40 +23,46 @@
 # Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=	64
-#USE_OPENSSL11= yes
+USE_OPENSSL11= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=	lasso
-COMPONENT_VERSION=	2.8.0
-COMPONENT_FMRI=	library/lasso
-COMPONENT_SUMMARY=	Lasso - library implementing the SAML 2.0 and ID-FF 1.2 protocols
-COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_NAME= lasso
+COMPONENT_VERSION= 2.8.0
+COMPONENT_REVISION= 1
+COMPONENT_SUMMARY= Lasso - library implementing the SAML 2.0 and ID-FF 1.2 protocols
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=	https://dev.entrouvert.org/projects/lasso
-COMPONENT_ARCHIVE_HASH=	sha256:ffcbd5851d98586c7e1caf43bad66164211a3b61d12bf860a0598448ff9f2b38
-COMPONENT_ARCHIVE_URL=	https://dev.entrouvert.org/releases/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_PROJECT_URL= https://dev.entrouvert.org/projects/lasso
+COMPONENT_ARCHIVE_HASH= sha256:ffcbd5851d98586c7e1caf43bad66164211a3b61d12bf860a0598448ff9f2b38
+COMPONENT_ARCHIVE_URL= https://dev.entrouvert.org/releases/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	library/lasso
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE= GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-USE_DEFAULT_TEST_TRANSFORMS= yes
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=	$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS +=	--disable-perl
-CONFIGURE_OPTIONS +=	--disable-java
-CONFIGURE_OPTIONS +=	--disable-python
-CONFIGURE_OPTIONS +=	--with-pkg-config=$(PKG_CONFIG_PATH.$(BITS))
+CONFIGURE_OPTIONS += --disable-perl
+CONFIGURE_OPTIONS += --disable-java
+CONFIGURE_OPTIONS += --disable-python
+CONFIGURE_OPTIONS += --with-pkg-config=$(PKG_CONFIG_PATH.$(BITS))
+CONFIGURE_OPTIONS += CPPFLAGS=-I$(OPENSSL_INCDIR)
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
 
 unexport SHELLOPTS
+
+# Manually added dependencies
+# inkscape is needed for png file creation:
+REQUIRED_PACKAGES += image/editor/inkscape
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/xmlsec
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
