@@ -11,18 +11,19 @@
 
 #
 # Copyright 2016 Jim Klimov
+# Copyright 2022 Friedrich Kink
 #
+
 BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tntdb
-COMPONENT_VERSION=      1.3
-COMPONENT_REVISION=     5
+COMPONENT_VERSION=      1.4
 COMPONENT_SUMMARY=      C++ library to access SQL databases, easy and robust
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:093ab2694bc66bc05ae0a5c8a505d75ae84d4c35c2ddc0ff0283c5b9574b474b
+	sha256:48cefd354acf2579c80b77d789d67f8b8162f1a02a3c2fb8157a9a32dc332859
 COMPONENT_ARCHIVE_URL=  \
 	http://www.tntnet.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.tntnet.org/tntdb.html
@@ -33,6 +34,8 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+TEST_TARGET= $(NO_TESTS)
+
 CFLAGS +=	$(CPP_LARGEFILES)
 CXXFLAGS +=	$(CPP_LARGEFILES)
 CPPFLAGS +=	$(CPP_LARGEFILES)
@@ -40,6 +43,9 @@ CPPFLAGS +=	$(CPP_LARGEFILES)
 # We use a fixed default mysql and postgres implementation+version as defined
 # in `make-rules/*.mk` files included above
 PATH=$(MYSQL_BINDIR.64):$(PG_BINDIR.64):$(PATH.gnu)
+
+COMPONENT_POST_CONFIGURE_ACTION+= ( $(GSED) -i -e 's:$(MYSQL_LIBDIR):$(MYSQL_LIBDIR) -R$(MYSQL_LIBDIR):' $(@D)/src/mysql/Makefile; );
+COMPONENT_POST_CONFIGURE_ACTION+= ( $(GSED) -i -e 's:$(PG_LIBDIR):$(PG_LIBDIR) -R$(PG_LIBDIR):' $(@D)/src/postgresql/Makefile; );
 
 COMPONENT_COMMON_ENV += PATH="$(PATH)"
 COMPONENT_COMMON_ENV += CC="$(CC)"
@@ -63,12 +69,11 @@ REQUIRED_PACKAGES += $(MYSQL_BASEPKG)/client
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += database/mariadb-101/library
-REQUIRED_PACKAGES += database/postgres-14/library
+REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/cxxtools
-REQUIRED_PACKAGES += library/tntdb/common
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
