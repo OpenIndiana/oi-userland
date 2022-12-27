@@ -11,19 +11,21 @@
 
 #
 # Copyright 2016 Jim Klimov
+# Copyright 2022 Friedrich Kink
 #
+
+USE_OPENSSL11=	yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cxxtools
-COMPONENT_VERSION=      2.2.1
-COMPONENT_REVISION=     3
+COMPONENT_VERSION=      3.0
 COMPONENT_SUMMARY=      Cxxtools is a comprehensive C++ class library for Unix and Linux
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:8cebb6d6cda7c93cc4f7c0d552a68d50dd5530b699cf87916bb3b708fdc4e342
-COMPONENT_ARCHIVE_URL=	https://www.tntnet.org/download/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  https://www.tntnet.org/cxxtools.html
+COMPONENT_ARCHIVE_HASH= sha256:07b18037fb0983f6292f5c8d53e2369e9e7a9711df2c9ad50838aacbc8c62f7c
+COMPONENT_ARCHIVE_URL=	http://www.tntnet.org/download/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://www.tntnet.org/cxxtools.html
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      LGPLv2.1
@@ -33,10 +35,15 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --with-ssl=yes
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
+CONFIGURE_OPTIONS += CPPFLAGS=-I$(OPENSSL_INCDIR)
+CONFIGURE_OPTIONS += PKG_CONFIG_PATH=$(OPENSSL_PKG_CONFIG_PATH)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
