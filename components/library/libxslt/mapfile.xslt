@@ -20,6 +20,10 @@ SYMBOL_VERSION SUNW_1.5 {
 		xsltMaxVars;
 		xsltFreeLocales;
 		xsltXPathCompileFlags;
+		xsltDecimalFormatGetByQName;
+		xsltFlagRVTs;
+		xsltInitCtxtKey;
+		xsltParseStylesheetUser;
 } SUNW_1.4;
 
 SYMBOL_VERSION SUNW_1.4 {
@@ -59,7 +63,6 @@ SYMBOL_VERSION SUNW_1.2 {
 		xsltDebugGetDefaultTrace;
 		xsltDebugSetDefaultTrace;
 		xsltDefaultSortFunction;
-		xsltDefaultTrace;
 		xsltEvalAVT;
 		xsltEvalXPathStringNs;
 		xsltFreeAVTList;
@@ -127,7 +130,6 @@ SYMBOL_VERSION SUNW_1.1 {
 		xsltCopyNamespace;
 		xsltCopyNamespaceList;
 		xsltCopyOf;
-		xsltCopyTree;
 		xsltDebug;
 		xsltDebugDumpExtensions;
 		xsltDecimalFormatGetByName;
