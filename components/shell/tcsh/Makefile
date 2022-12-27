@@ -27,14 +27,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcsh
-COMPONENT_VERSION=	6.24.6
-HUMAN_VERSION=		6.24.06
+COMPONENT_VERSION=	6.24.7
+HUMAN_VERSION=		6.24.07
 COMPONENT_SUMMARY=	Tenex C-shell (tcsh)
 COMPONENT_DESCRIPTION=	C shell with file name completion and command line editing
 COMPONENT_PROJECT_URL=	https://github.com/tcsh-org/tcsh
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a8cd0cd1ddc94f870681ccbd09a3511050e9a71e5fe99a2b007941f5e1b2b7a5
+COMPONENT_ARCHIVE_HASH= sha256:74e4e9805cbd9413ed34b4ffa1d72fc8d0ef81a5b79476854091416ce9336995
 COMPONENT_ARCHIVE_URL=	https://astron.com/pub/tcsh/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/tcsh
 COMPONENT_CLASSIFICATION= System/Shells
@@ -42,10 +42,6 @@ COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	Copyright
 
 include $(WS_MAKE_RULES)/common.mk
-
-GCC_VERSION= 10
-# Default GCC opt -O3 fails on GCC 7: https://bugs.astron.com/view.php?id=80
-#gcc_OPT = -O2
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
