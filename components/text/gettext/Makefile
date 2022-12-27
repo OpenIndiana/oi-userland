@@ -24,11 +24,13 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS=			32_and_64
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
 COMPONENT_VERSION=	0.21.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU gettext - message handling utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,30 +44,24 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=	--disable-java
-CONFIGURE_OPTIONS +=	--disable-libasprintf
-CONFIGURE_OPTIONS +=	--disable-openmp
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--without-emacs
+CONFIGURE_OPTIONS += --disable-java
+CONFIGURE_OPTIONS += --disable-libasprintf
+CONFIGURE_OPTIONS += --disable-openmp
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --without-emacs
 
 # Tests should run in a clean environment
-COMPONENT_TEST_ENV =	-i PATH=${PATH}
+COMPONENT_TEST_ENV= -i PATH=${PATH}
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/=========/p" ' \
-	'-e "/Testsuite summary for/p" ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/PASS/p" ' \
-	'-e "/SKIP/p" ' \
-	'-e "/XFAIL/p" ' \
-	'-e "/FAIL/p" ' \
-	'-e "/XPASS/p" ' \
-	'-e "/ERROR/p" '
+	'-e "/Testsuite summary for/p" '
 
+
+# Manually added dependencies
 REQUIRED_PACKAGES += library/libcroco
-
-# Manually added test dependencies
+# for tests
 REQUIRED_PACKAGES += library/guile
 REQUIRED_PACKAGES += runtime/clisp
 REQUIRED_PACKAGES += runtime/tcl-8
