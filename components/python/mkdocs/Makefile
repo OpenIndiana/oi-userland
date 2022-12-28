@@ -14,27 +14,40 @@
 #   $WS_TOOLS/python-integrate-project mkdocs
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mkdocs
-COMPONENT_VERSION =		1.4.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.4.2
 COMPONENT_SUMMARY =		mkdocs - Project documentation with Markdown.
-COMPONENT_PROJECT_URL =		https://www.mkdocs.org
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/ff/2c/932a6df2847c0ecf0875cd00bede939225734b2815fc866c78edb46d9e5d/mkdocs-1.4.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e5549a22d59e7cb230d6a791edd2c3d06690908454c0af82edc31b35d57e3069
+	sha256:8947af423a6d0facf41ea1195b8e1e8c85ad94ac95ae307fe11232e0424b11c5
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_TARGET = $(NO_TESTS)
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Remove unpatched version of files from proto area to make sure they do not
+# leak into sample manifest.
+COMPONENT_POST_INSTALL_ACTION += \
+	$(FIND) $(PROTO_DIR)/$(PYTHON_LIB) -name '*.~*~' -exec rm {} \; ;
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/click
-PYTHON_REQUIRED_PACKAGES += library/python/colorama
-PYTHON_REQUIRED_PACKAGES += library/python/importlib_metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/ghp-import
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/jinja2
+PYTHON_REQUIRED_PACKAGES += library/python/markdown
+PYTHON_REQUIRED_PACKAGES += library/python/mergedeep
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
+PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
+PYTHON_REQUIRED_PACKAGES += library/python/pyyaml-env-tag
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
+PYTHON_REQUIRED_PACKAGES += library/python/watchdog
 PYTHON_REQUIRED_PACKAGES += runtime/python
