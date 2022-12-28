@@ -46,36 +46,37 @@ LDFLAGS+=       $(JPEG_LDFLAGS)
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 
 COMPONENT_POST_CONFIGURE_ACTION += ( \
+	$(GSED) -i -e "s:$(PROTO_DIR)::" $(@D)/config.h; \
 	$(GSED) -i -e "s:/usr/local/share/locale:$(PROTO_DIR)/usr/share/locale:" $(@D)/defs; \
 	$(GSED) -i -e 's:-L/usr/local/lib -R/usr/local/lib::' $(@D)/defs; \
 	$(GSED) -i -e 's:-R$${LIBDIR} -lstdc++:-lstdc++:' $(@D)/defs; \
-	$(MKDIR) -p  $(PROTO_DIR)/usr/lib; \
+	$(MKDIR) -p  $(PROTO_DIR)$(USRLIBDIR64); \
 );
 
 # this is to avoid a conflict to usr/share/man/man1/notify.1
 # delivered by SUNWcs
 COMPONENT_POST_INSTALL_ACTION += ( \
-	$(MV) $(PROTO_DIR)/usr/share/man/man1/notify.1 $(PROTO_DIR)/usr/share/man/man1/faxnotify.1; \
-	$(GSED) -i -e "s:$(PROTO_DIR)::" $(PROTO_DIR)/usr/share/man/man1/*; \
-	$(GSED) -i -e "s:$(PROTO_DIR)::" $(PROTO_DIR)/usr/share/man/man4/*; \
+	$(MV) $(PROTO_DIR)/usr/share/man/man1/notify.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/faxnotify.1; \
+	$(GSED) -i -e "s:$(PROTO_DIR)::" $(PROTO_DIR)$(USRSHAREMAN1DIR)/*; \
+	$(GSED) -i -e "s:$(PROTO_DIR)::" $(PROTO_DIR)$(USRSHAREMAN4DIR)/*; \
  );
 
 CONFIGURE_OPTIONS =
 CONFIGURE_OPTIONS +=    --srcdir=.
-CONFIGURE_OPTIONS +=    --with-DIR_BIN=$(PROTO_DIR)/usr/bin
-CONFIGURE_OPTIONS +=    --with-DIR_MAN=$(PROTO_DIR)/usr/share/man
-CONFIGURE_OPTIONS +=    --with-DIR_SBIN=$(PROTO_DIR)/usr/sbin
-CONFIGURE_OPTIONS +=    --with-DIR_LIB=$(PROTO_DIR)/usr/lib
-CONFIGURE_OPTIONS +=    --with-DIR_LIBEXEC=$(PROTO_DIR)/usr/sbin
+CONFIGURE_OPTIONS +=    --with-DIR_BIN=$(PROTO_DIR)$(USRBINDIR)
+CONFIGURE_OPTIONS +=    --with-DIR_MAN=$(PROTO_DIR)$(USRSHAREMANDIR)
+CONFIGURE_OPTIONS +=    --with-DIR_SBIN=$(PROTO_DIR)$(USRSBINDIR)
+CONFIGURE_OPTIONS +=    --with-DIR_LIB=$(PROTO_DIR)$(USRLIBDIR64)
+CONFIGURE_OPTIONS +=    --with-DIR_LIBEXEC=$(PROTO_DIR)$(USRSBINDIR)
 CONFIGURE_OPTIONS +=    --with-DIR_LIBDATA=$(PROTO_DIR)/etc/hylafax
 CONFIGURE_OPTIONS +=    --with-DIR_SPOOL=$(PROTO_DIR)/var/spool/hylafax
-CONFIGURE_OPTIONS +=    --with-DIR_LOCALEDIR=$(PROTO_DIR)/usr/share/locale
+CONFIGURE_OPTIONS +=    --with-DIR_LOCALEDIR=$(PROTO_DIR)$(USRSHAREDIR)/locale
 CONFIGURE_OPTIONS +=    --with-DIR_LOCKS=$(PROTO_DIR)/var/lock
-CONFIGURE_OPTIONS +=    --with-LIBDIR=/usr/lib
-CONFIGURE_OPTIONS +=    --with-TIFFBIN=/usr/bin
+CONFIGURE_OPTIONS +=    --with-LIBDIR=$(USRLIBDIR64)
+CONFIGURE_OPTIONS +=    --with-TIFFBIN=$(USRBINDIR)
 CONFIGURE_OPTIONS +=    --with-LIBINTL=-lintl
 CONFIGURE_OPTIONS +=    --with-PATH_GSRIP=/usr/bin/gs
-CONFIGURE_OPTIONS +=    --with-DBLIBINC=/usr/include
+CONFIGURE_OPTIONS +=    --with-DBLIBINC=$(USRINCDIR)
 CONFIGURE_OPTIONS +=    --with-AFM=no
 CONFIGURE_OPTIONS +=    --with-MKDIR="/bin/mkdir -p"
 CONFIGURE_OPTIONS +=    --with-AWK=/usr/bin/gawk
