@@ -23,35 +23,38 @@
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=64_and_32
+BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		a2ps
 COMPONENT_VERSION=	4.14
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
+COMPONENT_SUMMARY=	GNU a2ps - 'Anything to PostScript' converter and pretty printer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/a2ps/
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/a2ps/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f3ae8d3d4564a41b6e2a21f237d2f2b104f48108591e8b83497500182a3ab3a4
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/a2ps/$(COMPONENT_ARCHIVE)
-
-USE_DEFAULT_TEST_TRANSFORMS = yes
+COMPONENT_ARCHIVE_HASH= sha256:f3ae8d3d4564a41b6e2a21f237d2f2b104f48108591e8b83497500182a3ab3a4
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/a2ps/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		print/filter/a2ps
+COMPONENT_CLASSIFICATION= System/Printing
+COMPONENT_LICENSE=	GPLv3
 
 include $(WS_MAKE_RULES)/common.mk
 
 # don't use LD_Z_IGNORE: causes linker problems
 LD_Z_IGNORE=
 
-CONFIGURE_OPTIONS  +=		--enable-shared
-CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--sysconfdir=/etc/gnu
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		--with-medium=letter
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --sysconfdir=/etc/gnu
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --with-medium=a4
 
 # because viewpathing isn't quite right in this version of a2ps
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; ln -s $(SOURCE_DIR)/auxdir/mkinstalldirs)
+
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(cd $(@D)/contrib ; \
 	 ln -s $(SOURCE_DIR)/contrib/shell.m4) ; \
@@ -64,7 +67,7 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	 done)
 
 # Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE= $(ASLR_ENABLE)
 
 # Build dependency manually added
 REQUIRED_PACKAGES += developer/gperf 
