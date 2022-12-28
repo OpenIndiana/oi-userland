@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mpg123
 COMPONENT_VERSION= 1.31.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Fast console MPEG Audio Player and decoder library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
