@@ -1,7 +1,6 @@
-Solaris specific patch developed inhouse, not suitable for upstream
---- net-snmp-5.7.3.old/snmplib/scapi.c	2018-09-23 03:42:39.347542319 +0000
-+++ net-snmp-5.7.3/snmplib/scapi.c	2018-09-23 03:46:40.619107851 +0000
-@@ -132,7 +132,7 @@
+--- net-snmp-5.9.1/snmplib/scapi.c.orig	2022-12-25 14:17:00.844847777 +0000
++++ net-snmp-5.9.1/snmplib/scapi.c	2022-12-25 14:17:51.957349229 +0000
+@@ -212,7 +212,7 @@
  static
  int EVP_decrypt(const EVP_CIPHER *type, u_char * key,
                  u_int keylen, u_char * iv, u_char * ciphertext,
@@ -10,16 +9,16 @@ Solaris specific patch developed inhouse, not suitable for upstream
  static
  int EVP_encrypt(const EVP_CIPHER *type, u_char * key,
                  u_int keylen, u_char * iv, const u_char * plaintext,
-@@ -1030,7 +1030,7 @@
-     if (ISTRANSFORM(privtype, DESPriv)) {
+@@ -1504,7 +1504,7 @@
+     if (USM_CREATE_USER_PRIV_DES == (pai->type & USM_PRIV_MASK_ALG)) {
          if(!EVP_decrypt(EVP_des_cbc(), key,
                          keylen, iv, ciphertext,
 -                        ctlen, plaintext)) {
 +                        ctlen, plaintext, ptlen)) {
              QUITFUN(SNMPERR_GENERR, sc_decrypt_quit);
-         }
+        }
      }
-@@ -1400,20 +1400,36 @@
+@@ -1899,20 +1899,36 @@
           return FALSE;
        }
        EVP_CIPHER_CTX_set_key_length(ctx, keylen);
@@ -56,7 +55,7 @@ Solaris specific patch developed inhouse, not suitable for upstream
        *ctlen = outlen;
  
        return TRUE;
-@@ -1422,12 +1438,12 @@
+@@ -1921,12 +1937,12 @@
  static
  int EVP_decrypt(const EVP_CIPHER *type, u_char * key,
                  u_int keylen, u_char * iv, u_char * ciphertext,
@@ -71,7 +70,7 @@ Solaris specific patch developed inhouse, not suitable for upstream
        if((ctx = EVP_CIPHER_CTX_new()) == NULL) {
           snmp_log(LOG_ERR, "EVP_CIPHER_CTX_new failure.\n");
           return FALSE;
-@@ -1441,21 +1457,39 @@
+@@ -1940,21 +1956,39 @@
            return FALSE;
        }
        EVP_CIPHER_CTX_set_key_length(ctx, keylen);

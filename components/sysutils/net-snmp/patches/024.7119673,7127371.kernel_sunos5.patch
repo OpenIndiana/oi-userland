@@ -1,6 +1,6 @@
---- net-snmp-5.4.1/agent/mibgroup/kernel_sunos5.c	Tue Apr 24 14:13:10 2012
-+++ kernel_sunos5.c.latest	Tue Apr 24 14:11:58 2012
-@@ -1045,18 +1045,21 @@
+--- net-snmp-5.9.1/agent/mibgroup/kernel_sunos5.c.orig	2022-12-25 13:03:38.889396309 +0000
++++ net-snmp-5.9.1/agent/mibgroup/kernel_sunos5.c	2022-12-25 13:20:20.255771354 +0000
+@@ -1087,18 +1087,21 @@
  static int
  _dlpi_open(const char *devname)
  {
@@ -27,7 +27,7 @@
      DEBUGMSGTL(("kernel_sunos5:dlpi", "devstr(%s)\n", devstr));
      /*
       * First try opening the device using style 1, if the device does not
-@@ -1067,13 +1070,49 @@
+@@ -1109,13 +1112,49 @@
      DEBUGMSGTL(("kernel_sunos5:dlpi", "style1 open(%s)\n", devstr));
      if ((fd = open(devstr, O_RDWR | O_NONBLOCK)) < 0) {
          DEBUGMSGTL(("kernel_sunos5:dlpi", "style1 open failed\n"));
@@ -40,8 +40,7 @@
 +    } else {
 +      DEBUGMSGTL(("kernel_sunos5:dlpi", "style1 open succeeded\n"));
 +    }
- 
--            if ((fd = open(devstr, O_RDWR | O_NONBLOCK)) != -1) {
++
 +    /* Creating a copy of the devname incase style 3 open
 +     *  is required
 +     */
@@ -78,12 +77,13 @@
 +                       devstrcpy, ppa));
 +            /* try style 3 */
 +            DEBUGMSGTL(("kernel_sunos5:dlpi", "style3 open(%s)\n", devstrcpy));
-+
+ 
+-            if ((fd = open(devstr, O_RDWR | O_NONBLOCK)) != -1) {
 +            if ((fd = open(devstrcpy, O_RDWR | O_NONBLOCK)) != -1) {
                  if (_dlpi_attach(fd, ppa) == 0) {
                      DEBUGMSGTL(("kernel_sunos5:dlpi", "attached\n"));
                  } else {
-@@ -1082,16 +1121,11 @@
+@@ -1124,16 +1163,11 @@
                      fd = -1;
                  }
              } else {
@@ -101,7 +101,7 @@
      return (fd);
  }
  
-@@ -1106,7 +1140,9 @@
+@@ -1148,7 +1182,9 @@
      struct strbuf       ctlbuf;
      char                buf[MAX(DL_PHYS_ADDR_ACK_SIZE+64, DL_ERROR_ACK_SIZE)];
      int                 flag = 0;
@@ -112,7 +112,7 @@
      DEBUGMSGTL(("kernel_sunos5:dlpi", "_dlpi_get_phys_address\n"));
  
      paddr_req.dl_primitive = DL_PHYS_ADDR_REQ;
-@@ -1119,7 +1155,22 @@
+@@ -1161,7 +1197,22 @@
      ctlbuf.maxlen = sizeof(buf);
      ctlbuf.len = 0;
      ctlbuf.buf = buf;
@@ -136,7 +136,7 @@
          return (-1);
  
      if (ctlbuf.len < sizeof(uint32_t))
-@@ -1161,6 +1212,8 @@
+@@ -1203,6 +1254,8 @@
      struct strbuf       ctlbuf;
      char                buf[MAX(DL_INFO_ACK_SIZE, DL_ERROR_ACK_SIZE)];
      int                 flag = 0;
@@ -145,7 +145,7 @@
  
      DEBUGMSGTL(("kernel_sunos5:dlpi", "_dlpi_get_iftype\n"));
  
-@@ -1175,7 +1228,22 @@
+@@ -1217,7 +1270,22 @@
      ctlbuf.maxlen = sizeof(buf);
      ctlbuf.len = 0;
      ctlbuf.buf = buf;

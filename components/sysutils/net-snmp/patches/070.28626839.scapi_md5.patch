@@ -1,7 +1,6 @@
-Solaris specific patch developed inhouse, not suitable for upstream
---- net-snmp-5.7.3.old/snmplib/scapi.c	2018-09-19 07:21:14.013788798 +0000
-+++ net-snmp-5.7.3/snmplib/scapi.c	2018-09-19 07:24:46.688897258 +0000
-@@ -127,8 +127,8 @@
+--- net-snmp-5.9.1/snmplib/scapi.c.orig	2022-12-25 14:13:51.041657458 +0000
++++ net-snmp-5.9.1/snmplib/scapi.c	2022-12-25 14:17:00.844847777 +0000
+@@ -207,8 +207,8 @@
  #ifdef NETSNMP_USE_OPENSSL
  static
  void EVP_hmac(const EVP_MD *evp_md, const void *key,
@@ -12,8 +11,8 @@ Solaris specific patch developed inhouse, not suitable for upstream
  static
  int EVP_decrypt(const EVP_CIPHER *type, u_char * key,
                  u_int keylen, u_char * iv, u_char * ciphertext,
-@@ -349,7 +349,7 @@
-     }      
+@@ -796,7 +796,7 @@
+     }
  #ifndef NETSNMP_DISABLE_MD5
      if (auth_type == NETSNMP_USMAUTH_HMACMD5)
 -        EVP_hmac(hashfn, key, message, buf, &buf_len);
@@ -21,7 +20,7 @@ Solaris specific patch developed inhouse, not suitable for upstream
      else
  #endif
          HMAC(hashfn, key, keylen, message, msglen, buf, &buf_len);
-@@ -1337,8 +1337,8 @@
+@@ -1836,8 +1836,8 @@
  #ifdef NETSNMP_USE_OPENSSL
  static
  void EVP_hmac(const EVP_MD *evp_md, const void *key,
@@ -32,7 +31,7 @@ Solaris specific patch developed inhouse, not suitable for upstream
  {
          EVP_MD_CTX* mdctx = NULL;
          EVP_PKEY *pkey = NULL;
-@@ -1362,7 +1362,7 @@
+@@ -1861,7 +1861,7 @@
              EVP_PKEY_free(pkey);
              return;
          }
