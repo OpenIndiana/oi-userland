@@ -1,14 +1,14 @@
 Patch developed inhouse, submitted upstream.
 Details at
 https://sourceforge.net/p/net-snmp/bugs/2940/
---- net-snmp-5.8.old/net-snmp-create-v3-user.in	2019-02-26 11:29:32.003694411 +0000
-+++ net-snmp-5.8/net-snmp-create-v3-user.in	2019-03-04 03:55:07.606161596 +0000
-@@ -124,7 +124,7 @@
+--- net-snmp-5.9.3/net-snmp-create-v3-user.in.orig	2022-12-25 14:55:06.731078431 +0000
++++ net-snmp-5.9.3/net-snmp-create-v3-user.in	2022-12-25 14:58:07.440774009 +0000
+@@ -122,7 +122,7 @@
+ if test "x$xpassphrase" = "x" ; then
+     line="createUser $user $Aalgorithm \"$apassphrase\" $Xalgorithm"
+ else
+-    line="createUser $user $Aalgorithm \"$apassphrase\" $Xalgorithm \"$xpassphrase\""
++    line="createUser $user $Aalgorithm \"$apassphrase\" $Xalgorithm $xpassphrase
  fi
- outdir="@PERSISTENT_DIRECTORY@"
- outfile="$outdir/snmpd.conf"
--line="createUser $user $Aalgorithm \"$apassphrase\" $Xalgorithm \"$xpassphrase\""
-+line="createUser $user $Aalgorithm \"$apassphrase\" $Xalgorithm $xpassphrase"
  echo "adding the following line to $outfile:"
- echo "  " $line
- # in case it hasn't ever been started yet, start it.
+ echo "   $line"

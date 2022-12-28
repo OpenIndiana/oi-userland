@@ -6,9 +6,9 @@ has been submitted to the community but has not been accepted yet.
 The details can be found in the following location
 https://sourceforge.net/p/net-snmp/bugs/2605/
 
---- a/agent/mibgroup/kernel_sunos5.c	Thu Apr 16 21:13:47 2015
-+++ b/agent/mibgroup/kernel_sunos5.c	Thu Apr 16 21:18:28 2015
-@@ -1922,8 +1922,8 @@
+--- net-snmp-5.9.3/agent/mibgroup/kernel_sunos5.c.~3~	2022-12-25 14:43:54.219000322 +0000
++++ net-snmp-5.9.3/agent/mibgroup/kernel_sunos5.c	2022-12-25 14:43:54.312888822 +0000
+@@ -1739,8 +1739,8 @@
      if (ifp->ifAdminStatus == 1) {
          int i_tmp;
          /* only UPed interfaces get correct link status - if any */
@@ -16,6 +16,6 @@ https://sourceforge.net/p/net-snmp/bugs/2605/
 -            ifp->ifOperStatus = i_tmp ? 1 : 2;
 +        if (getKstatInt("link", name,"phys_state",&i_tmp) == 0) {
 +            ifp->ifOperStatus = (i_tmp == 1) ? 1 : ((i_tmp == 0) ? 2 : 4);
-         } else if(link_to_phydev(name, phydevname) == 0) {
-                  strcpy(devbasename, phydevname);
-                  DEBUGMSGTL(("kernel_sunos5","phydevname = %s\n", phydevname));
+ #ifdef IFF_FAILED
+         } else if (flags & IFF_FAILED) {
+             /*

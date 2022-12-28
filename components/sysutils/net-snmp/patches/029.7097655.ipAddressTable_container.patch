@@ -6,22 +6,22 @@
 # Developed in-house. Bug submitted upstream
 # https://sourceforge.net/p/net-snmp/bugs/2589
 #
---- net-snmp-5.7.2/agent/mibgroup/ip-mib/ipAddressTable/ipAddressTable_data_access.c	Wed Jan 30 02:01:56 2013
-+++ net-snmp-5.7.2/agent/mibgroup/ip-mib/ipAddressTable/ipAddressTable_data_access.c	Wed Jan 30 02:04:46 2013
-@@ -348,6 +348,8 @@
-      * what we've already got, and make any adjustments, saving
-      * missing addresses to be deleted.
+--- net-snmp-5.9.3/agent/mibgroup/ip-mib/ipAddressTable/ipAddressTable_data_access.c.~1~	2022-07-13 23:14:14.000000000 +0000
++++ net-snmp-5.9.3/agent/mibgroup/ip-mib/ipAddressTable/ipAddressTable_data_access.c	2022-12-25 14:43:54.178517905 +0000
+@@ -370,6 +370,8 @@
+      * missing addresses to be deleted. Also, prune interfaces in
+      * ipaddress_container, so only the new interfaces remain.
       */
 +    if(ipaddress_container != NULL)
 +    {
      tmp_ptr[0] = ipaddress_container->next;
-     tmp_ptr[1] = NULL;
-     CONTAINER_FOR_EACH(container, (netsnmp_container_obj_func *)
-@@ -443,6 +443,7 @@
-             netsnmp_access_ipaddress_entry_free(ipaddress_entry);
+     tmp_ptr[1] = NULL; /* list of interfaces to be removed from 'container' */
+     tmp_ptr[2] = NULL; /* list of interfaces to be ignored in ipaddress_container */
+@@ -434,6 +436,7 @@
          }
          CONTAINER_FREE(to_ignore);
-+    }
      }
-  
++    }
+ 
      DEBUGMSGT(("verbose:ipAddressTable:ipAddressTable_cache_load",
+                "%lu records\n", (unsigned long)CONTAINER_SIZE(container)));
