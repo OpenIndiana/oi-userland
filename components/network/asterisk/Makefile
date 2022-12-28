@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
 COMPONENT_VERSION=	20.0.1
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		network/asterisk
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_CLASSIFICATION=Applications/Internet
@@ -46,6 +47,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 #
 # res_geolocation does not build with the illumos linker due to missing capabilities/options
 # no workaround known so far
+# also remove deprecated functions
 #
 COMPONENT_POST_CONFIGURE_ACTION += ( \
 	cd $(@D); \
@@ -70,6 +72,9 @@ COMPONENT_POST_CONFIGURE_ACTION += ( \
 	./menuselect/menuselect --enable app_statsd menuselect.makeopts; \
 	./menuselect/menuselect --enable G711_NEW_ALGORITHM menuselect.makeopts; \
 	./menuselect/menuselect --enable G711_REDUCED_BRANCHING menuselect.makeopts; \
+	./menuselect/menuselect --disable app_adsiprog menuselect.makeopts; \
+	./menuselect/menuselect --disable app_getcpeid menuselect.makeopts; \
+	./menuselect/menuselect --disable res_adsi menuselect.makeopts; \
 	);
 
 CONFIGURE_BINDIR=	/usr/bin
@@ -101,7 +106,7 @@ CONFIGURE_OPTIONS +=	--with-libxslt
 CONFIGURE_OPTIONS +=	--with-libcurl
 CONFIGURE_OPTIONS +=	--with-gtk2
 CONFIGURE_OPTIONS +=	--with-popt
-#CONFIGURE_OPTIONS +=	--with-spandsp
+CONFIGURE_OPTIONS +=	--with-spandsp
 CONFIGURE_OPTIONS +=	--with-speex
 CONFIGURE_OPTIONS +=	--with-speexdsp
 CONFIGURE_OPTIONS +=	--with-mysqlclient=$(MYSQL_HOME)
@@ -109,11 +114,11 @@ CONFIGURE_OPTIONS +=	--with-mysqlclient=$(MYSQL_HOME)
 CONFIGURE_OPTIONS +=	--with-postgres=$(PG_HOME)
 CONFIGURE_OPTIONS +=	NOISY_BUILD=yes
 CONFIGURE_OPTIONS +=	PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
-CONFIGURE_OPTIONS +=	LDFLAGS="-m64 -lldap-2.6"
+CONFIGURE_OPTIONS +=	LDFLAGS="-m64 -lldap-2.6 -L$(JPEG_LIBDIR)"
 CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/jansson -I/usr/include/odbc -I/usr/include/openldap"
 # HAVE_OPENSSL_BIO_METHOD not properly recognised by configure therefore expiclitly set
-CONFIGURE_OPTIONS +=	CFLAGS="-m64 -I/usr/include/odbc -DHAVE_OPENSSL_BIO_METHOD"
-CONFIGURE_OPTIONS +=	CXXFLAGS="-m64"
+CONFIGURE_OPTIONS +=	CFLAGS="-m64 -I/usr/include/odbc -DHAVE_OPENSSL_BIO_METHOD $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)"
+CONFIGURE_OPTIONS +=	CXXFLAGS="-m64 $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)"
 
 COMPONENT_INSTALL_TARGETS += samples
 
@@ -141,6 +146,7 @@ REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/spandsp
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
