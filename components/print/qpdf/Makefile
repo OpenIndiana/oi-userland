@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= qpdf
 COMPONENT_VERSION= 11.2.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= QPDF is a command-line program that does structural, content-preserving transformations on PDF files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -33,7 +34,7 @@ COMPONENT_LICENSE_FILE= Artistic-2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)

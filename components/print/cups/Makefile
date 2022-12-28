@@ -22,11 +22,13 @@
 #
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
+
 BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
 COMPONENT_VERSION=	2.4.2
+COMPONENT_REVISION= 1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://openprinting.github.io/cups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
@@ -35,43 +37,44 @@ COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v
 
 include $(WS_MAKE_RULES)/common.mk
 
-# don't use LD_Z_IGNORE: causes linker problems
-LD_Z_IGNORE=
+$(CONFIGURE_32):    LDFLAGS += -m32
+$(CONFIGURE_64):    LDFLAGS += -m64
+
+COMPONENT_PRE_CONFIGURE_ACTION += $(CLONEY) $(SOURCE_DIR) $(@D)
+
+COMPONENT_PREP_ACTION= ( cd $(@D) ; autoconf -f )
+
+# Make sure that "install-sh -s" calls "strip -x" and not "strip";
+# we want to remove debugging data but not the symbols.
+COMPONENT_INSTALL_ENV += STRIPPROG="strip -x"
 
 CFLAGS += -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 LDFLAGS += -lsocket
 
+# Ensure dynamic shared objects are linked using same LDFLAGS as executables.
 CONFIGURE_ENV += DSOFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-CONFIGURE_OPTIONS +=	--prefix=/usr
-CONFIGURE_OPTIONS +=	--mandir=/usr/share/man
-CONFIGURE_OPTIONS +=	--localedir=$(USRSHARELOCALEDIR)
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS +=	--localstatedir=/var
-CONFIGURE_OPTIONS +=	--with-fontpath=/usr/openwin/lib
-CONFIGURE_OPTIONS +=	--with-logdir=/var/log/cups
-CONFIGURE_OPTIONS +=	--with-domainsocket=/var/run/cups-socket
-CONFIGURE_OPTIONS +=	--with-smfmanifestdir=/lib/svc/manifest/application
-CONFIGURE_OPTIONS +=	--with-printcap=/etc/printers.conf
-CONFIGURE_OPTIONS +=	--with-cups-user=lp
-CONFIGURE_OPTIONS +=	--with-cups-group=lp
-CONFIGURE_OPTIONS +=	--with-tls=gnutls
-CONFIGURE_OPTIONS +=	--disable-systemd
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--enable-dbus
-CONFIGURE_OPTIONS +=	--enable-threads
-CONFIGURE_OPTIONS += 	--with-archflags="$(CC_BITS)"
-
-#$(BUILD_DIR)/%/.installed:	ENV +=	DSTROOT="$(PROTO_DIR)"
-
-COMPONENT_PRE_CONFIGURE_ACTION = \
- $(CLONEY) $(SOURCE_DIR) $(@D) ; \
- find $(@D) -name '*.in' | sed -e 's/.in$$//' | xargs $(RM) ; \
- ( cd $(SOURCE_DIR) ; autoconf -f )
+CONFIGURE_OPTIONS += --prefix=/usr
+CONFIGURE_OPTIONS += --mandir=/usr/share/man
+CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --with-rundir=/system/volatile/cups
+CONFIGURE_OPTIONS += --with-smfmanifestdir=/lib/svc/manifest/application
+CONFIGURE_OPTIONS += --with-printcap=/etc/printers.conf
+CONFIGURE_OPTIONS += --with-cups-user=lp
+CONFIGURE_OPTIONS += --with-cups-group=lp
+CONFIGURE_OPTIONS += --with-tls=gnutls
+CONFIGURE_OPTIONS += --without-rcdir
+CONFIGURE_OPTIONS += --disable-systemd
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-dbus
+CONFIGURE_OPTIONS += --enable-threads
+CONFIGURE_OPTIONS += --with-archflags="$(CC_BITS)"
 
 # Build dependencies
 REQUIRED_PACKAGES += image/library/libpng16
@@ -82,13 +85,13 @@ REQUIRED_PACKAGES += service/network/slp
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/ca-certificates
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
