@@ -13,39 +13,32 @@
 # Copyright 2016-2017 Aurelien Larcher. All rights reserved.
 #
 
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=       opus
-COMPONENT_VERSION=    1.1.5
-COMPONENT_REVISION=   1
-COMPONENT_PROJECT_URL=http://opus-codec.org/
-COMPONENT_SUMMARY=    Opus is an open, royalty-free, versatile audio codec for interactive speech and music transmission over the Internet
-COMPONENT_FMRI=       library/opus
+COMPONENT_NAME=			opus
+COMPONENT_VERSION=		1.1.5
+COMPONENT_REVISION=		2
+COMPONENT_SUMMARY=		Opus is an open, royalty-free, versatile audio codec for interactive speech and music transmission over the Internet
+COMPONENT_PROJECT_URL=	https://opus-codec.org/
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:eb84981ca0f40a3e5d5e58d2e8582cb2fee05a022825a6dfe14d14b04eb563e4
+COMPONENT_ARCHIVE_URL=	https://downloads.xiph.org/releases/opus/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			library/opus
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_SRC=        $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=    $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:eb84981ca0f40a3e5d5e58d2e8582cb2fee05a022825a6dfe14d14b04eb563e4
-COMPONENT_ARCHIVE_URL= \
-  http://downloads.xiph.org/releases/opus/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=    BSD
+COMPONENT_LICENSE=		BSD
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
-
-unexport SHELLOPTS
+PATH= $(PATH.gnu)
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 
-build:    $(BUILD_32_and_64)
+unexport SHELLOPTS
 
-install:  $(INSTALL_32_and_64)
-
-test:  $(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

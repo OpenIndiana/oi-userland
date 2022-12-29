@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		spandsp
 COMPONENT_VERSION=	3.0.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A DSP library for telephony
 COMPONENT_DESCRIPTION=  \
 	SpanDSP is a low-level signal processing library that modulates and demodulates \
@@ -26,16 +27,16 @@ COMPONENT_ARCHIVE=	master.zip
 COMPONENT_ARCHIVE_HASH= sha256:fdee8fbba0b471500928cd88207a96e1eb89bbca6b518249cf58c11b767de2a1
 COMPONENT_PROJECT_URL=	https://github.com/freeswitch/spandsp
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/heads/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_LICENSE=	LPGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION  = ( \
+COMPONENT_PRE_CONFIGURE_ACTION= ( \
 	cd $(SOURCE_DIR); \
 	$(GSED) -i -e '/^elif/d' autogen.sh; \
 	$(GSED) -i -e '/^else/d' autogen.sh; \
@@ -46,13 +47,13 @@ COMPONENT_PRE_CONFIGURE_ACTION  = ( \
 	$(CLONEY) $(SOURCE_DIR) $(@D); \
 	);
 
-CONFIGURE_OPTIONS +=    --sysconfdir=/etc
-CONFIGURE_OPTIONS +=    --localstatedir=/var
-CONFIGURE_OPTIONS +=    --enable-static=no
-CONFIGURE_OPTIONS +=    --enable-mmx
-CONFIGURE_OPTIONS +=    --enable-sse
-CONFIGURE_OPTIONS +=    --enable-sse2
-CONFIGURE_OPTIONS +=    --enable-sse3
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --enable-mmx
+CONFIGURE_OPTIONS += --enable-sse
+CONFIGURE_OPTIONS += --enable-sse2
+CONFIGURE_OPTIONS += --enable-sse3
 
 CFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)

@@ -14,23 +14,22 @@
 # Copyright 2020 Andreas Wacknitz
 #
 
-BUILD_BITS= 32_and_64
-PREFERRED_BITS= 64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lame
 COMPONENT_VERSION= 3.100
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY= LAME is a high quality MPEG Audio Layer III (MP3) encoder licensed under the LGPL 
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e
 COMPONENT_ARCHIVE_URL= https://downloads.sourceforge.net/sourceforge/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://lame.sourceforge.io/
-COMPONENT_LICENSE = LGPLv2
-COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_CLASSIFICATION = System/Media
-COMPONENT_FMRI = audio/lame
+COMPONENT_PROJECT_URL= https://lame.sourceforge.io/
+COMPONENT_LICENSE= LGPLv2
+COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_CLASSIFICATION= System/Media
+COMPONENT_FMRI= audio/lame
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -40,7 +39,6 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-rpath
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library

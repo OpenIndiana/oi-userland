@@ -14,39 +14,35 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+BUILD_BITS= 64_and_32
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= openal
 COMPONENT_VERSION= 1.16.0
 COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= OpenAL is a cross-platform 3D audio API
+COMPONENT_PROJECT_URL= https://openal-soft.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-soft-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:2f3dcd313fe26391284fbf8596863723f99c65d6c6846dccb48e79cadaf40d5f
-COMPONENT_ARCHIVE_URL= \
-  http://kcat.strangesoft.net/openal-releases/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://kcat.strangesoft.net/openal.html
-COMPONENT_LICENSE = LGPLv2
-COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_FMRI = library/audio/openal
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:8abf25d79a3d53c4036aa2d1f52d68c6951a55637b788e439fa54cda1b7ff82b
+COMPONENT_ARCHIVE_URL= https://github.com/kcat/openal-soft/archive/refs/tags/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI= library/audio/openal
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_LICENSE= LGPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/cmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_POST_UNPACK_ACTION= \
+	$(MV) $(COMPONENT_NAME)-soft-$(COMPONENT_SRC) $(COMPONENT_SRC)
 
 CMAKE_OPTIONS += -DSSE=OFF
 CMAKE_OPTIONS += -DEXAMPLES:INTERNAL=OFF
 
-CMAKE_OPTIONS.64 = -DLIB_SUFFIX=/$(MACH64)
-CMAKE_OPTIONS += $(CMAKE_OPTIONS.$(BITS))
-
-$(INSTALL_32):	$(INSTALL_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/audio/sdl-sound
+REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
