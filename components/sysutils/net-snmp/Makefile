@@ -44,6 +44,9 @@ COMPONENT_CLASSIFICATION= System/Enterprise Management
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Our build server doesn't like parallel builds of this package:
+COMPONENT_BUILD_ARGS=-j1
+
 PYV=          $(shell echo $(PYTHON_VERSION) | tr -d .)
 PKG_MACROS += PYV=$(PYV)
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
