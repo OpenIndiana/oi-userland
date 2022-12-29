@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mkdocs
 HUMAN_VERSION =			1.4.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		mkdocs - Project documentation with Markdown.
 COMPONENT_ARCHIVE_URL =		\
 	https://files.pythonhosted.org/packages/ff/2c/932a6df2847c0ecf0875cd00bede939225734b2815fc866c78edb46d9e5d/mkdocs-1.4.2.tar.gz
@@ -36,6 +37,9 @@ include $(WS_MAKE_RULES)/common.mk
 # leak into sample manifest.
 COMPONENT_POST_INSTALL_ACTION += \
 	$(FIND) $(PROTO_DIR)/$(PYTHON_LIB) -name '*.~*~' -exec rm {} \; ;
+
+# We are unable to automatically detect the babel build dependency (yet)
+PYTHON_REQUIRED_PACKAGES += library/python/babel
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/click
