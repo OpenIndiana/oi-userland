@@ -20,7 +20,8 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyfakefs
-COMPONENT_VERSION =		5.0.0
+HUMAN_VERSION =			5.0.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pyfakefs - pyfakefs implements a fake file system that mocks the Python file system modules.
 COMPONENT_PROJECT_URL =		http://pyfakefs.org
 COMPONENT_ARCHIVE_URL =		\
@@ -30,6 +31,9 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	COPYING
 
+TEST_STYLE = pytest
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
