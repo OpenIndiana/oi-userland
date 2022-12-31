@@ -13,23 +13,22 @@
 # Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
-COMPONENT_VERSION=	2.2.11
+COMPONENT_VERSION=	2.3.0
+COMPONENT_SUMMARY=	sbcl - Steel Bank Common Lisp
 COMPONENT_PROJECT_URL=	https://sbcl.sourceforge.io/
-COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:3607d68016731880845ced5d5d55c6054cc49f19121a15027e6c5607ae8496df
+COMPONENT_ARCHIVE_HASH=	sha256:bf743949712ae02cb7493f3b8b57ce241948bf61131e36860ddb334da1439c97
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/sbcl/sbcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	BSD-PublicDomain
-COMPONENT_SUMMARY=	sbcl - Steel Bank Common Lisp
+COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_CLASSIFICATION=	Development/Other Languages
+COMPONENT_LICENSE=	BSD-PublicDomain
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_ENV  =	PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/gnu/bin
