@@ -21,21 +21,21 @@
 # Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_STYLE= configure
 BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libksba
-COMPONENT_VERSION=      1.6.2
+COMPONENT_VERSION=      1.6.3
 COMPONENT_SUMMARY=      GnuPG X.509 certificate library
 COMPONENT_PROJECT_URL=  https://www.gnupg.org/related_software/$(COMPONENT_NAME)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:fce01ccac59812bddadffacff017dac2e4762bdb6ebc6ffe06f6ed4f6192c971
-COMPONENT_ARCHIVE_URL=  ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:3f72c68db30971ebbf14367527719423f0a4d5f8103fc9f4a1c01a9fa440de5c
+COMPONENT_ARCHIVE_URL=  https://gnupg.org/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/security/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_LICENSE=      GPLv3 
+COMPONENT_LICENSE=      GPLv3
+COMPONENT_LICENSE_FILE=	COPYING.GPLv3
 
 include $(WS_MAKE_RULES)/common.mk
 
