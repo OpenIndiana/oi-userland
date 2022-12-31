@@ -18,31 +18,31 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lsof
-COMPONENT_VERSION=	4.96.4
+COMPONENT_VERSION=	4.96.5
 COMPONENT_SUMMARY=	LSOF - lister of opened files
 COMPONENT_PROJECT_URL=	https://github.com/lsof-org/lsof
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/lsof-org/lsof/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:b5a052cac8d6b2726bbb1de2b98c6d9204c7619263fb63e9b6b1bd6bbb37bf14
+COMPONENT_ARCHIVE_HASH= sha256:e9030af1123ff052ab69e12ef55b8a17dc47ac4bccfba85ee1ca1f31acf29607
 COMPONENT_FMRI=		system/storage/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Administration and Configuration
 COMPONENT_LICENSE=	LSOF Copyright (no license)
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( cp -a $(SOURCE_DIR)/* $(@D) )
 
-CONFIGURE_SCRIPT =	./Configure
-CONFIGURE_OPTIONS =	-n solaris
+CONFIGURE_SCRIPT=	./Configure
+CONFIGURE_OPTIONS=	-n solaris
 
 # The p5m manifest directly pulls from source dirs (the "make install" action
 # for Solaris in LSOF sources only prints hints what/how should be set up),
 # therefore the "sample-manifest" target does not work.
 
 # Including version to the man page
-COMPONENT_POST_INSTALL_ACTION=	(cd $(@D) && soelim Lsof.8 > lsof.8)
+COMPONENT_POST_INSTALL_ACTION=	( cd $(@D) && soelim Lsof.8 > lsof.8 )
 
 # Necessary for soelim
 REQUIRED_PACKAGES += text/doctools
