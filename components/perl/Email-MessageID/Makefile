@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::MessageID
-HUMAN_VERSION =			1.407
+HUMAN_VERSION =			1.408
 COMPONENT_SUMMARY =		Email::MessageID - Generate world unique message-ids.
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d91fce456f0b32308f8dee9fa4effb620b1daa3cbae5e1b7012bf5de7d1514fe
+	sha256:1f3d5b4ff0b1c7b39e9ac7c318fb37adcd0bac9556036546494d14f06dc5643c
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
