@@ -21,6 +21,7 @@
 #
 # Copyright (c) 2017, 2018, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2023, Till Wegmueller
 #
 
 BUILD_BITS= 32_and_64
@@ -28,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre2
 COMPONENT_VERSION=	10.42
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Version 2 of Perl-Compatible Regular Expressions
 COMPONENT_PROJECT_URL=  https://pcre.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -77,6 +79,7 @@ CONFIGURE_OPTIONS += --enable-rebuild-chartables
 CONFIGURE_OPTIONS += --enable-newline-is-any
 CONFIGURE_OPTIONS += --enable-pcre2grep-libz
 CONFIGURE_OPTIONS += --enable-pcre2grep-libbz2
+CONFIGURE_OPTIONS += --enable-pcre2-16
 CONFIGURE_OPTIONS += --enable-pcre2-32
 CONFIGURE_OPTIONS += --with-link-size=4
 CONFIGURE_OPTIONS += --with-match-limit=10000000
