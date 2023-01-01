@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Sub::Install
-HUMAN_VERSION =			0.928
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.929
 COMPONENT_SUMMARY =		Sub::Install - install subroutines into packages easily
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:61e567a7679588887b7b86d427bc476ea6d77fffe7e0d17d640f89007d98ef0f
+	sha256:80b1e281d8cd3b2b31dac711f5c8a1657a87cd80bbe69af3924bcbeb4e5db077
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
