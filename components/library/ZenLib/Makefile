@@ -15,14 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ZenLib
-COMPONENT_VERSION=	0.4.39
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.4.40
 COMPONENT_SUMMARY=	Small C++ derivate classes to have an easier life
 COMPONENT_PROJECT_URL=	https://github.com/MediaArea/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:a29fcafe41afac4ff818414ada18e4549bb2e77b2962bba2dd39db5cf747044e
+COMPONENT_ARCHIVE_HASH=	sha256:63ac6750be766c9566fff22eec357ef32b67ccf1d2aa310e1eccfa6bd6b44554
 COMPONENT_FMRI=		library/libzen
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	GPLv3
@@ -39,8 +38,8 @@ CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 
 COMPONENT_POST_UNPACK_ACTION= \
-			mv ZenLib-0.4.39/Source/ZenLib/Thread.cpp ZenLib-0.4.39/Source/ZenLib/Thread.cpp.old; \
-			dos2unix ZenLib-0.4.39/Source/ZenLib/Thread.cpp.old &> ZenLib-0.4.39/Source/ZenLib/Thread.cpp
+	mv $(COMPONENT_SRC)/Source/ZenLib/Thread.cpp $(COMPONENT_SRC)/Source/ZenLib/Thread.cpp.old; \
+	dos2unix $(COMPONENT_SRC)/Source/ZenLib/Thread.cpp.old &> $(COMPONENT_SRC)/Source/ZenLib/Thread.cpp
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
