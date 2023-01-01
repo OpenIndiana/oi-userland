@@ -1,0 +1,22 @@
+--- samba-4.17.4//source3/modules/vfs_solarisacl.c	2022-08-08 16:15:39.408192400 +0000
++++ samba-4.17.4//source3/modules/vfs_solarisacl.c.new	2022-12-21 12:23:41.015910848 +0000
+@@ -62,7 +62,7 @@
+ 
+ /* public functions - the api */
+ 
+-static SMB_ACL_T solarisacl_sys_acl_get_file(vfs_handle_struct *handle,
++SMB_ACL_T solarisacl_sys_acl_get_file(vfs_handle_struct *handle,
+ 				const struct smb_filename *smb_fname,
+ 				SMB_ACL_TYPE_T type,
+ 				TALLOC_CTX *mem_ctx)
+--- samba-4.17.0/source3/modules/vfs_solarisacl.c	2022-08-08 07:15:39.408192400 +0000
++++ samba-4.17.0/source3/modules/vfs_solarisacl.c.new	2022-09-17 09:16:38.514619461 +0000
+@@ -252,7 +252,7 @@
+ 	}
+ 	ret = acl(fsp->fsp_name->base_name, SETACL, count, solaris_acl);
+ 	if (ret != 0) {
+-		DBG_DEBG("settinge file acl failed!\n");
++		DBG_DEBUG("settinge file acl failed!\n");
+ 	}
+ 
+  done:
