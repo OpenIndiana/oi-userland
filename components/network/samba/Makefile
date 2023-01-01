@@ -28,25 +28,23 @@
 BUILD_BITS =			64_and_32
 BUILD_STYLE =			waf
 USE_OPENSSL11 =			yes
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
-COMPONENT_FMRI =		service/network/samba
 COMPONENT_VERSION =		4.17.4
+COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = 	sha256:c0512079db4cac707ccea4c18aebbd6b2eb3acf6e90735e7f645a326be1f4537
 COMPONENT_ARCHIVE_URL =		https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL = 		https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
-COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
+#COMPONENT_SIG_URL = 		https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
+COMPONENT_FMRI =		service/network/samba
+COMPONENT_CLASSIFICATION =	System/File System
 COMPONENT_LICENSE =		GPLv3
 COMPONENT_LICENSE_FILE = 	COPYING
-COMPONENT_CLASSIFICATION =	System/File System
 
-TEST_TARGET =		$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PYV =		$(shell echo $(PYTHON_VERSION) | tr -d .)
