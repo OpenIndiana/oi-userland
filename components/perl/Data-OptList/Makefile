@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Data::OptList
-HUMAN_VERSION =			0.112
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.113
 COMPONENT_SUMMARY =		Data::OptList - parse and validate simple name/value option pairs
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:62c60ccaae88d5339ae36bcc8940b03388cf84adbf27828b1f8b300307103bab
+	sha256:36aebc5817b7d4686b649434c2ee41f45c8bf97d4ca5a99f607cc40f695a4285
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
