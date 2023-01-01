@@ -25,13 +25,12 @@
 #
 
 BUILD_BITS=	64_and_32
-USEOPENSSL11=	yes
-
+USEOPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxslt
 COMPONENT_VERSION=	1.1.37
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=         library/libxslt
 COMPONENT_SUMMARY=      XSLT support for libxml2 (XML toolkit from the GNOME project)
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/XSLT/
