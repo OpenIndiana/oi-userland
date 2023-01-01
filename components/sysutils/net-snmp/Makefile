@@ -33,6 +33,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.9.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Net-SNMP Agent files and libraries
 COMPONENT_PROJECT_URL=	https://www.net-snmp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

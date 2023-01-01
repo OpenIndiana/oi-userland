@@ -23,6 +23,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license COPYING license="BSD, BSD-like"
 
+file $(MACH64)/sun/snmpd.conf path=etc/net-snmp/snmp/snmpd.conf mode=0600 \
+    overlay=allow preserve=renamenew
+file sun/net-snmp.xml path=lib/svc/manifest/application/management/net-snmp.xml \
+    restart_fmri=svc:/system/manifest-import:default
+file sun/svc-net-snmp path=lib/svc/method/svc-net-snmp
+
 file path=etc/net-snmp/snmp/mib2c-data/default-mfd-top.m2c
 file path=etc/net-snmp/snmp/mib2c-data/details-enums.m2i
 file path=etc/net-snmp/snmp/mib2c-data/details-node.m2i
