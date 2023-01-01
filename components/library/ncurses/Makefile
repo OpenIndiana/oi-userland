@@ -30,22 +30,18 @@ BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncurses
-COMPONENT_VERSION=	6.3
-COMPONENT_REV=		20211021
-COMPONENT_REVISION=	3
-# With the next version we should remove the COMPONENT_REV part as doesn't seem to be used by other distributions:
-IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_REV)
+COMPONENT_VERSION=	6.4
 COMPONENT_SUMMARY=	A CRT screen handling and optimization package.
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/ncurses/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:97fc51ac2b085d4cde31ef4d2c3122c21abc217e9090a43a30fc5ec21684e059
+COMPONENT_ARCHIVE_HASH=	sha256:6931283d9ac87c5073f30b6290c4c75f21632bb4fc3603ac8100812bed248159
 COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		library/ncurses
 COMPONENT_LICENSE=	MIT
 
-TEST_TARGET= $(NO_TESTS)
+#TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Needed for the 'test' target to work
@@ -85,8 +81,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MV) $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/libncurses.so* $(PROTO_DIR)/usr/lib/ || \
 	$(MV) $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/$(MACH64)/libncurses.so* $(PROTO_DIR)/usr/lib/$(MACH64)/ ;
 
+# The provided test programs are interactive, so they won't be usable for our machinery.
 COMPONENT_TEST_DIR= $(BUILD_DIR)/$(MACH$(BITS))/test
-COMPONENT_TEST_TARGETS=
+COMPONENT_TEST_TARGETS= check
+COMPONENT_PRE_TEST_ACTION= ( cd $(COMPONENT_TEST_DIR) && configure )
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/pcre2
