@@ -30,18 +30,17 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxslt
 COMPONENT_VERSION=	1.1.37
-COMPONENT_REVISION=	2
-COMPONENT_FMRI=         library/libxslt
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=      XSLT support for libxml2 (XML toolkit from the GNOME project)
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/XSLT/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:3a4b27dc8027ccd6146725950336f1ec520928f320f144eb5fa7990ae6123ab4
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libxslt/1.1/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/libxslt
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= Copyright
-COMPONENT_BUGDB=	library/libxslt
 
 include $(WS_MAKE_RULES)/common.mk
 
