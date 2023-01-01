@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::MIME::Encodings
-HUMAN_VERSION =			1.316
+HUMAN_VERSION =			1.317
 COMPONENT_SUMMARY =		Email::MIME::Encodings - A unified interface to MIME encoding and decoding
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:061856a023af0290bec8ebecfdc8e58bea6aafb0220a9e75748d4ad607ba9c66
+	sha256:4a9a41671a9d1504c4da241be419a9503fa3486262526edb81eca9e2ebea0baf
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
