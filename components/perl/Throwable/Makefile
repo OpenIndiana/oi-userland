@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Throwable
-HUMAN_VERSION =			1.000
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.001
 COMPONENT_SUMMARY =		Throwable - a role for classes that can be thrown
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:023aac67baad5b7bcdc08dc858ea5e6a8ddb0e291d15dd6d24818cdd702d318f
+	sha256:d0cb5e9d7d06d70f2cc56eecf857a83a45eaca43850dcdda91d3feb4ddde4c51
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
