@@ -14,19 +14,22 @@
 #   $WS_TOOLS/python-integrate-project nbformat
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nbformat
-COMPONENT_VERSION =		5.4.0
+HUMAN_VERSION =			5.7.2
 COMPONENT_SUMMARY =		nbformat - The Jupyter Notebook format
+COMPONENT_PROJECT_URL =		https://jupyter.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2c/ed/ce3e63f5e757442cbb01ac45683fb0338d48f7e824606957d933bc831a58/nbformat-5.4.0.tar.gz
+	https://files.pythonhosted.org/packages/dc/55/a5f62c430f1187b739f897fac0eea1cef62d805cf2a325e3587719cf3de5/nbformat-5.7.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:44ba5ca6acb80c5d5a500f1e5b83ede8cbe364d5a495c4c8cf60aaf1ba656501
+	sha256:796469290e50e1bf9c19a55ca4fbe66319d99349e47ab94780247edde4bd7618
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	COPYING.md
+
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -36,6 +39,11 @@ COMPONENT_TEST_TRANSFORMS +=	"-e 's/:[0-9]\{1,\}\(: UserWarning: nbformat\.curre
 COMPONENT_TEST_TRANSFORMS +=	"-e '/^  /,/^$$/d'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib_metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/fastjsonschema
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-nodejs-version
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/jsonschema
+PYTHON_REQUIRED_PACKAGES += library/python/jupyter-core
+PYTHON_REQUIRED_PACKAGES += library/python/traitlets
 PYTHON_REQUIRED_PACKAGES += runtime/python
