@@ -473,6 +473,8 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "s|$(PERL)|\\$$(PERL)|g" ' \
 	'-e "s|$(PYTHON)|\\$$(PYTHON)|g" ' \
 	'-e "s|$(SOURCE_DIR)|\\$$(SOURCE_DIR)|g" '
+COMPONENT_TEST_TRANSFORMS +=	"-e 's|$(PROTO_DIR)|\$$(PROTO_DIR)|g'"
+COMPONENT_TEST_TRANSFORMS +=	"-e 's|$(BUILD_DIR)|\$$(BUILD_DIR)|g'"
 
 # set the default commands used to generate the file containing the set
 # of transforms to be applied to the test results to try to normalize them.
