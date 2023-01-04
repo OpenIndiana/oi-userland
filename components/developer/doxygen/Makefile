@@ -21,45 +21,45 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, 2021, Andreas Wacknitz
 #
-BUILD_BITS= 64
+
 BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			doxygen
-COMPONENT_VERSION=		1.9.5
+COMPONENT_VERSION=		1.9.6
 COMPONENT_VERSION_=		$(subst .,_,$(COMPONENT_VERSION))
-COMPONENT_FMRI=			developer/documentation-tool/doxygen		
 COMPONENT_SUMMARY=		Doxygen - Source Code Documentation Tool 
-COMPONENT_CLASSIFICATION=Development/Distribution Tools
-COMPONENT_PROJECT_URL=	https://www.stack.nl/~dimitri/doxygen/index.html
+COMPONENT_PROJECT_URL=	https://www.doxygen.nl
 COMPONENT_FILE=			Release_$(COMPONENT_VERSION_)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_FILE)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1c5c9cd4445f694e43f089c17529caae6fe889b732fb0b145211025a1fcda1bb
+COMPONENT_ARCHIVE_HASH=	sha256:2a3ee47f7276b759f74bac7614c05a1296a5b028d3f6a79a88e4c213db78e7dc
 COMPONENT_ARCHIVE_URL=	https://github.com/doxygen/doxygen/archive/$(COMPONENT_FILE).tar.gz
+COMPONENT_FMRI=			developer/documentation-tool/doxygen		
+COMPONENT_CLASSIFICATION= Development/Distribution Tools
 COMPONENT_LICENSE=		GPLv2
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1=	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
-COMPONENT_ARCHIVE_HASH_1=	sha256:86f03a85a05b2eb09505892f42e33923269332c68f7abd3f1f593664c7a5baae
+COMPONENT_ARCHIVE_HASH_1=	sha256:12fc16ef1fa541d5e3050d4aef0f823fc500bb9ed012862903333dc72eda3639
 COMPONENT_ARCHIVE_URL_1=	https://doxygen.nl/files/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CMAKE_OPTIONS+= -G "Unix Makefiles"
-CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=Release
+CMAKE_OPTIONS += -G "Unix Makefiles"
+CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 
-ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE= $(ASLR_ENABLE)
 
 # Test 12 is a known failure (we don't have bibtex in Solaris).
-COMPONENT_TEST_ENV =		PATH="$(PROTO_DIR)/usr/bin:$(PATH)"
-COMPONENT_TEST_DIR =		$(BUILD_DIR_64)/testing
-COMPONENT_TEST_TARGETS =	tests
+COMPONENT_TEST_ENV=		PATH="$(PROTO_DIR)/usr/bin:$(PATH)"
+COMPONENT_TEST_DIR=		$(BUILD_DIR_64)/testing
+COMPONENT_TEST_TARGETS=	tests
 
 # The additional doxygen specific set of transforms to be applied to the
 # test results to try to normalize them.
