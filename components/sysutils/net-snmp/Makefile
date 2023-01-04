@@ -27,13 +27,13 @@
 #
 
 USE_OPENSSL11= yes
-#BUILD_BITS=64_and_32
+BUILD_BITS=64_and_32
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.9.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Net-SNMP Agent files and libraries
 COMPONENT_PROJECT_URL=	https://www.net-snmp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -91,6 +91,7 @@ CONFIGURE_OPTIONS += --with-mib-modules="$(MIB_MODULES)"
 # Python bindings support.
 PYTHON_ARGS= --basedir=/usr/bin
 CONFIGURE_OPTIONS.64 += --with-python-modules="$(PYTHON_ARGS)"
+CONFIGURE_OPTIONS.32 += --with-python-modules="no"
 
 # Only build 64 bit Perl support
 PERL_ARGS=		DESTDIR=$(PROTO_DIR) INSTALLDIRS=vendor
@@ -98,7 +99,8 @@ CONFIGURE_OPTIONS.64 += PERLPROG="$(PERL)"
 CONFIGURE_OPTIONS.64 +=	--disable-embedded-perl
 CONFIGURE_OPTIONS.64 += --with-perl-modules="$(PERL_ARGS)"
 CONFIGURE_OPTIONS.32 += --disable-perl-cc-checks
-CONFIGURE_OPTIONS.32 += --without-perl-modules
+CONFIGURE_OPTIONS.32 += --with-perl-modules="no"
+CONFIGURE_OPTIONS.32 +=	--disable-embedded-perl
 
 COMPONENT_PRE_CONFIGURE_ACTION= \
 	($(CLONEY) $(SOURCE_DIR) $(@D); $(CLONEY) $(COMPONENT_DIR)/sun $(@D)/sun;)
@@ -110,7 +112,7 @@ CCSMAKE_ARGS +=	CFGLIB64=$(USRLIBDIR64) ARCH=$(ARCH) ROOT=$(PROTO_DIR)
 
 COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
-USE_COMMON_TEST_MASTER= no
+TEST_TARGET=            $(TEST_64)
 
 COMPONENT_TEST_DIR= $(@D)/testing/
 COMPONENT_TEST_CMD= $(KSH93)
@@ -118,7 +120,7 @@ COMPONENT_TEST_TARGETS= ./RUNTESTS
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(simple-\).*|\1XXXXXX|g"' \
 	'-e "s|\(output (\)\(.*\)|\2|g"'
-COMPONENT_TEST_MASTER=	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
+#COMPONENT_TEST_MASTER=	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
 # Get correct binaries from the proto area.
 COMPONENT_TEST_ENV += PATH=$(PROTOUSRBINDIR):$(PATH)
 # Get correct libraries from the proto area.
@@ -127,11 +129,17 @@ COMPONENT_TEST_ENV +=   LD_LIBRARY_PATH=$(PROTOUSRLIBDIR$(BITS))
 COMPONENT_POST_BUILD_ACTION = \
 	(cd $(@D)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS))
 
-COMPONENT_POST_INSTALL_ACTION= \
+COMPONENT_POST_INSTALL_ACTION.64= \
 	($(MKDIR) $(PROTOETCDIR)/$(COMPONENT_NAME)/snmp/mibs; \
 	 cd $(@D)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install; \
 	$(MKDIR) $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME); \
 	$(CP) -a $(@D)/docs/html $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME); \
+	)
+
+COMPONENT_POST_INSTALL_ACTION.32= \
+	($(MKDIR) $(PROTOETCDIR)/$(COMPONENT_NAME)/snmp/mibs; \
+	 cd $(@D)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install; \
+	$(MKDIR) $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME); \
 	)
 
 COMPONENT_PRE_INSTALL_ACTION.64 += ( \
@@ -147,6 +155,7 @@ REQUIRED_PACKAGES += system/header/header-picl
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += service/picl
 REQUIRED_PACKAGES += service/security/kerberos-5
