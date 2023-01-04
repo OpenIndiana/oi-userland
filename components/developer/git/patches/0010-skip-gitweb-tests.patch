@@ -1,0 +1,18 @@
+The various git gitweb tests require that the perl HTML::Entities module
+be present in order for the tests to work. If it isn't located, then the
+tests should be skipped.
+
+This change should be sent upstream.
+
+--- git-2.31.1/t/lib-gitweb.sh.orig	2021-05-19 16:39:10.020073754 +0200
++++ git-2.31.1/t/lib-gitweb.sh	2021-05-19 16:39:48.139323972 +0200
+@@ -120,4 +120,9 @@
+ 	test_done
+ }
+ 
++perl -mHTML::Entities -e 0 >/dev/null 2>&1 || {
++		skip_all='skipping gitweb tests, HTML::Entities module not available'
++	test_done
++}
++
+ gitweb_init

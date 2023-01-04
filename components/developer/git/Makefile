@@ -28,71 +28,71 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.38.2
+COMPONENT_VERSION=	2.39.0
 COMPONENT_SUMMARY=	git - Fast Version Control System
+COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 COMPONENT_PROJECT_URL=	https://git-scm.com/
-COMPONENT_FMRI=		developer/versioning/git
-COMPONENT_CLASSIFICATION=	Development/Source Code Management
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:115a1f8245cc67d4b1ac867047878b3130aa03d6acf22380b029239ed7170664
+COMPONENT_ARCHIVE_HASH=	sha256:ba199b13fb5a99ca3dec917b0bd736bc0eb5a9df87737d435eddfdf10d69265b
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		developer/versioning/git
+COMPONENT_CLASSIFICATION=	Development/Source Code Management
 COMPONENT_LICENSE=	GPLv2
-COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 
 #
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1=		$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1=	sha256:496a228dba2a166a4d931b62ccac3e43b4cc0fbb34a91c1fee90b1133921dcca
+COMPONENT_ARCHIVE_HASH_1=	sha256:7770f6d542cc34a2ccfaf02b82d7f9aefcd5d5156db847f36c218322671e9467
 COMPONENT_ARCHIVE_URL_1=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/common.mk
 
 # With PATH.gnu gmake test gives a slightly better success rate:
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 LDFLAGS += -lnsl -lsocket
 
-CONFIGURE_PREFIX    =	/usr
-CONFIGURE_OPTIONS  +=	--with-libpcre2
-CONFIGURE_OPTIONS  +=	--without-openssl
-CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
-CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON)
-CONFIGURE_OPTIONS  +=	CPPFLAGS="-I/usr/include/pcre"
+CONFIGURE_PREFIX= /usr
+CONFIGURE_OPTIONS += --with-libpcre2
+CONFIGURE_OPTIONS += --without-openssl
+CONFIGURE_OPTIONS += --libexecdir=/usr/lib
+CONFIGURE_OPTIONS += --with-perl=$(PERL)
+CONFIGURE_OPTIONS += --with-python=$(PYTHON)
+CONFIGURE_OPTIONS += CPPFLAGS="-I/usr/include/pcre"
 
-COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1
-COMPONENT_BUILD_ENV+=	V=1
-COMPONENT_INSTALL_ENV+=	NO_PERL_MAKEMAKER=1
+COMPONENT_BUILD_ENV += NO_PERL_MAKEMAKER=1
+COMPONENT_BUILD_ENV += V=1
+COMPONENT_INSTALL_ENV += NO_PERL_MAKEMAKER=1
 
-PKG_MACROS +=		PERLVER=$(PERL_VERSION)
+PKG_MACROS += PERLVER=$(PERL_VERSION)
 
 # This runs configure but configure doesn't generate a Makefile.
 # Instead a Makefile comes with git.
 # Anyways viewpathing doesn't work.
 # Therefore we need cloney to copy a set of files to build.
 # Overwrite symlinked tests, because they are relying on test assets being regular files.
-COMPONENT_PRE_CONFIGURE_ACTION = \
+COMPONENT_PRE_CONFIGURE_ACTION= \
 	(chmod u+x $(COMPONENT_SRC)/t/*.sh  && $(CLONEY) $(SOURCE_DIR) $(@D) && \
 	$(RM) -r $(@D)/t && $(CP) -rp $(COMPONENT_SRC)/t $(@D))
 
-PKG_HARDLINKS +=        usr/lib/git-core/git
-PKG_HARDLINKS +=        usr/lib/git-core/git-cvsserver
-PKG_HARDLINKS +=        usr/lib/git-core/git-gui
-PKG_HARDLINKS +=        usr/lib/git-core/git-remote-ftps
-PKG_HARDLINKS +=        usr/lib/git-core/git-shell
-PKG_HARDLINKS +=        usr/lib/git-core/git-upload-pack
+PKG_HARDLINKS += usr/lib/git-core/git
+PKG_HARDLINKS += usr/lib/git-core/git-cvsserver
+PKG_HARDLINKS += usr/lib/git-core/git-gui
+PKG_HARDLINKS += usr/lib/git-core/git-remote-ftps
+PKG_HARDLINKS += usr/lib/git-core/git-shell
+PKG_HARDLINKS += usr/lib/git-core/git-upload-pack
 
 # We want the perl modules to install the vendor_perl directory, and their
 # manpages to install in the normal perl manpage directory, but the default
 # behavior is to put the modules in /usr/lib.  Setting these four variables
 # massages the perl to get files to go where we want.
-COMPONENT_INSTALL_ARGS+=        INSTALL="$(INSTALL)"
-COMPONENT_INSTALL_ARGS+=        perllibdir=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
-COMPONENT_INSTALL_ARGS+=        VENDORPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
-COMPONENT_INSTALL_ARGS+=        PERLPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
-COMPONENT_INSTALL_ARGS+=        INSTALLVENDORLIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
+COMPONENT_INSTALL_ARGS += INSTALL="$(INSTALL)"
+COMPONENT_INSTALL_ARGS += perllibdir=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
+COMPONENT_INSTALL_ARGS += VENDORPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
+COMPONENT_INSTALL_ARGS += PERLPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
+COMPONENT_INSTALL_ARGS += INSTALLVENDORLIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
 
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
@@ -106,7 +106,7 @@ COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_TARGETS += GIT_TEST_OPTS=--tee
 COMPONENT_TEST_TARGETS += DEFAULT_TEST_TARGET=test-noclean
 # Compile the test results and put that into the test output file instead
-COMPONENT_POST_TEST_ACTION = \
+COMPONENT_POST_TEST_ACTION= \
 	(cd $(COMPONENT_TEST_DIR)/t/test-results; for i in *.out; do \
 		echo "*** $${i%.out}.sh ***"; \
 		cat $$i; \
@@ -119,22 +119,22 @@ COMPONENT_POST_TEST_ACTION = \
 # do it manually here.
 $(BUILD_DIR)/.manpages:
 	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
-	$(MKDIR) $(PROTOUSRSHAREMAN1DIR)
-	$(MKDIR) $(PROTOUSRSHAREMAN4DIR)
-	$(MKDIR) $(PROTOUSRSHAREMAN5DIR)
-	cd $(BUILD_DIR) ; for manfile in man*/* ; \
-	do \
-		filename=`basename $$manfile`; \
-		fname=$${filename%.*}; \
-		ext=$${filename##*.}; \
-		newext=1; \
-		if [ $$ext = 5 ]; then newext=4; fi; \
-		if [ $$ext = 7 ]; then newext=5; fi; \
-		$(GSED) -e 's/\\m\[blue\]//g' -e 's/\\m\[\]//g' \
-		        -e 's/"5"/"4"/' -e 's/(5)/(4)/g' \
-			-e 's/"7"/"5"/' -e 's/(7)/(5)/g' $$manfile > \
-		   $(PROTOUSRSHAREMANDIR)/man$$newext/$$fname.$$newext; \
-	done
+		$(MKDIR) $(PROTOUSRSHAREMAN1DIR)
+		$(MKDIR) $(PROTOUSRSHAREMAN4DIR)
+		$(MKDIR) $(PROTOUSRSHAREMAN5DIR)
+		cd $(BUILD_DIR) ; for manfile in man*/* ; \
+		do \
+			filename=`basename $$manfile`; \
+			fname=$${filename%.*}; \
+			ext=$${filename##*.}; \
+			newext=1; \
+			if [ $$ext = 5 ]; then newext=4; fi; \
+			if [ $$ext = 7 ]; then newext=5; fi; \
+			$(GSED) -e 's/\\m\[blue\]//g' -e 's/\\m\[\]//g' \
+        			-e 's/"5"/"4"/' -e 's/(5)/(4)/g' \
+        			-e 's/"7"/"5"/' -e 's/(7)/(5)/g' $$manfile > \
+        		$(PROTOUSRSHAREMANDIR)/man$$newext/$$fname.$$newext; \
+		done
 	$(TOUCH) $@
 
 $(BUILD_DIR_64)/.contrib: $(BUILD_DIR_64)/.contrib-subtree
