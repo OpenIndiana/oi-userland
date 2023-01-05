@@ -11,17 +11,18 @@
 #
 # Copyright 2021 Benjamin S. Osenbach
 #
+
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= chezmoi
-COMPONENT_VERSION= 2.28.0
+COMPONENT_VERSION= 2.29.1
 COMPONENT_SUMMARY= Manage your dotfiles across multiple diverse machines, securely.
 COMPONENT_PROJECT_URL= https://github.com/twpayne/chezmoi
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= $(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:00118648ecbff7b951534a80b0c33b73c42b070706bfec58c7b35c85e34cd04d
+COMPONENT_ARCHIVE_HASH= sha256:2928dba907af1d2a039abf53b567de9ce0e940394eeb121c714cb6636acb9af2
 COMPONENT_FMRI= application/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE= MIT
@@ -46,10 +47,10 @@ COMPONENT_INSTALL_ENV += DATE="'$(DATE)'"
 COMPONENT_INSTALL_ENV += BUILT_BY="oi-userland"
 
 # Go doesn't like symbolic links, so copy the source directory
-COMPONENT_COPY_ACTION=(cp -rL $(SOURCE_DIR)/* $(@D))
+COMPONENT_COPY_ACTION= ( cp -rL $(SOURCE_DIR)/* $(@D) )
 
 # Upstream Makefile doesn't create PROTO_DIR
-COMPONENT_PRE_BUILD_ACTION=(install -d "$(PROTO_DIR)/usr/bin")
+COMPONENT_PRE_BUILD_ACTION= ( install -d "$(PROTO_DIR)/usr/bin" )
 
 # Build dependencies
 REQUIRED_PACKAGES+=developer/golang
