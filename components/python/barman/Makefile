@@ -14,37 +14,30 @@
 # Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
-
+BUILD_STYLE= setup.py
+SINGLE_PYTHON_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	barman
-COMPONENT_VERSION= 	3.2.0
+COMPONENT_VERSION= 	3.3.0
 COMPONENT_SUMMARY= 	An administration tool for disaster recovery of PostgreSQL servers 
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2603776a805a5595eb466d493c4529ad8f7581a7266d5e131ee97ac06c0de8e2
+COMPONENT_ARCHIVE_HASH=	sha256:a82f78bc047a5ba4e55f05896d7510ab656c9275748ed4fdbd75913dedc0de8b
 COMPONENT_ARCHIVE_URL=	https://github.com/EnterpriseDB/barman/releases/download/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://pgbarman.org/
 COMPONENT_CLASSIFICATION=	System/Databases
 COMPONENT_FMRI=		database/postgres/barman
 COMPONENT_LICENSE=	GPLv3
 
-PYTHON_VERSIONS= $(PYTHON_VERSION)
-
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
+PKG_MACROS += PYV=$(shell echo $(PYTHON_VERSION) | tr -d .)
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_TOP)/make-rules/common.mk
 
-# Remove the default post install actions for python packages:
-COMPONENT_POST_INSTALL_ACTION=
-# Suppress the automatic addition of $(PYV) to the package fmri:
-GENERATE_EXTRA_CMD=
-
 # Install example configuration files
-DOC_DIR=$(PROTO_DIR)/usr/share/barman
+DOC_DIR= $(PROTO_DIR)/usr/share/barman
 
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(DOC_DIR); \
@@ -54,5 +47,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 	done
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/argcomplete
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/psycopg2
+PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
