@@ -19,13 +19,13 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Deep
-HUMAN_VERSION =			1.130
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.202
 COMPONENT_SUMMARY =		Test::Deep - Extremely flexible deep comparison
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4064f494f5f62587d0ae501ca439105821ee5846c687dc6503233f55300a7c56
-COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
+	sha256:2aa985eede185d594d7227b2fb7399cf70bda317aa7781234c40edf01b8a32b1
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
