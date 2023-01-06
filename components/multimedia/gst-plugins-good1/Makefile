@@ -13,7 +13,7 @@
 # Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Tim Mooney.  All rights reserved.
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022-2023 Niklas Poslovski
 #
 
 BUILD_BITS= 32_and_64
@@ -22,12 +22,12 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-good1
-COMPONENT_VERSION=      1.20.4
+COMPONENT_VERSION=      1.20.5
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=		gst-plugins-good
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b16130fbe632fa8547c2147a0ef575b0140fb521065c5cb121c72ddbd23b64da
+COMPONENT_ARCHIVE_HASH= sha256:e83ab4d12ca24959489bbb0ec4fac9b90e32f741d49cda357cb554b2cb8b97f9
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/good
