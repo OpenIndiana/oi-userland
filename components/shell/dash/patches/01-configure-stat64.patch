@@ -1,19 +1,26 @@
---- dash-0.5.11.5/configure.ac.orig	2021-09-03 09:03:16.000000000 +0000
-+++ dash-0.5.11.5/configure.ac	2022-11-26 22:26:39.599209483 +0000
-@@ -140,19 +140,23 @@
+--- dash-0.5.12/configure.ac.orig	2022-12-11 07:33:43.000000000 +0000
++++ dash-0.5.12/configure.ac	2023-01-06 11:13:22.359719502 +0000
+@@ -140,12 +140,13 @@
  fi
  
  dnl Check for stat64 (dietlibc/klibc).
--AC_CHECK_FUNC(stat64,, [
+-AC_CHECK_DECL(stat64, AC_CHECK_FUNC(stat64))
+-if test "$ac_cv_func_stat64" != yes; then
 -	AC_DEFINE(fstat64, fstat, [64-bit operations are the same as 32-bit])
 -	AC_DEFINE(lstat64, lstat, [64-bit operations are the same as 32-bit])
 -	AC_DEFINE(stat64, stat, [64-bit operations are the same as 32-bit])
+-fi
 +AC_CHECK_DECL(stat64,, [
 +    AC_CHECK_FUNC(stat64,, [
-+	    AC_DEFINE(fstat64, fstat, [64-bit operations are the same as 32-bit])
-+	    AC_DEFINE(lstat64, lstat, [64-bit operations are the same as 32-bit])
-+	    AC_DEFINE(stat64, stat, [64-bit operations are the same as 32-bit])
++        AC_DEFINE(fstat64, fstat, [64-bit operations are the same as 32-bit])
++        AC_DEFINE(lstat64, lstat, [64-bit operations are the same as 32-bit])
++        AC_DEFINE(stat64, stat, [64-bit operations are the same as 32-bit])
 +    ])
++])
+ 
+ AC_CHECK_FUNC(glob64,, [
+ 	AC_DEFINE(glob64_t, glob_t, [64-bit operations are the same as 32-bit])
+@@ -155,12 +156,12 @@
  ])
  
  dnl OS X apparently has stat64 but not open64.
@@ -26,10 +33,8 @@
 +AC_CHECK_DECL(stat64,, [
 +    AC_CHECK_FUNC(open64,, [
 +        AC_DEFINE(open64, open, [64-bit operations are the same as 32-bit])
-+        AC_DEFINE(readdir64, readdir,
-+            [64-bit operations are the same as 32-bit])
-+        AC_DEFINE(dirent64, dirent,
-+            [64-bit operations are the same as 32-bit])
++        AC_DEFINE(readdir64, readdir, [64-bit operations are the same as 32-bit])
++        AC_DEFINE(dirent64, dirent, [64-bit operations are the same as 32-bit])
 +    ])
  ])
  
