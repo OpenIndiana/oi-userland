@@ -11,6 +11,7 @@
 #
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
+# Copyright 2023 Niklas Poslovski
 #
 
 BUILD_BITS= 64
@@ -19,14 +20,14 @@ USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freerdp
-COMPONENT_VERSION=	2.8.1
+COMPONENT_VERSION=	2.9.0
 COMPONENT_SUMMARY=	Remote Desktop Viewer Client
 COMPONENT_PROJECT_URL=	https://www.freerdp.com
 COMPONENT_FMRI=		desktop/remote-desktop/freerdp
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:ea8903b29914134202a972c06052432678c89cb5eebcc8f5a41553030c97376b
+COMPONENT_ARCHIVE_HASH= sha256:fcf71cf5b09c5c2636341ba212f34b8fb728246ea28e08caf6cef8b4a96184b7
 COMPONENT_ARCHIVE_URL=  https://github.com/FreeRDP/FreeRDP/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
