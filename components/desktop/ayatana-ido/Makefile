@@ -31,6 +31,8 @@ COMPONENT_LICENSE=      LGPLv3
 TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_BUILD_ENV += CC="$(CC)"
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
