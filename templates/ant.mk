@@ -10,10 +10,10 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2023 <contributor>
 #
 
-BUILD_BITS=32
+BUILD_BITS=64
 BUILD_STYLE=ant
 include ../../../make-rules/shared-macros.mk
 
