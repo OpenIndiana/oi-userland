@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2023 <contributor>
 #
 
 BUILD_BITS=64 # for binaries or 32_and_64 for libraries
