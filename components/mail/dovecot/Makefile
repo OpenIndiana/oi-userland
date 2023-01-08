@@ -10,14 +10,15 @@
 
 #
 # Copyright 2022 Friedrich Kink
+# Copyright 2023 Niklas Poslovski
 #
 
 USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dovecot
-COMPONENT_VERSION=      2.3.19.1
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      2.3.20
+#COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      DOVECOT - The Secure IMAP server
 COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for \
 		Linux/UNIX-like systems, written with security primarily in mind. \
@@ -29,7 +30,7 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_SIG_URL=	$(COMPONENT_PROJECT_URL)/releases/2.3/$(COMPONENT_ARCHIVE).sig
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/2.3/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:db5abcd87d7309659ea6b45b2cb6ee9c5f97486b2b719a5dd05a759e1f6a5c51
+COMPONENT_ARCHIVE_HASH= sha256:caa832eb968148abdf35ee9d0f534b779fa732c0ce4a913d9ab8c3469b218552
 COMPONENT_FMRI=         mail/dovecot
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=      MIT,LGPLv2.1
