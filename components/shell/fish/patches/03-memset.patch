@@ -1,0 +1,16 @@
+We need to include <cstring> because memset() is defined there.
+    oi-userland/components/shell/fish/fish-3.6.0/src/fds.cpp:204:5: error: 'memset' was not declared in this scope
+      204 |     FD_ZERO(&fds);
+
+--- fish-3.6.0/src/fds.cpp.orig	2023-01-07 15:12:25.000000000 +0000
++++ fish-3.6.0/src/fds.cpp	2023-01-08 10:55:33.610119460 +0000
+@@ -17,6 +17,9 @@
+ #include <sys/eventfd.h>
+ #endif
+ 
++// memset() is defined in cstring:
++#include <cstring>
++
+ // The first fd in the "high range." fds below this are allowed to be used directly by users in
+ // redirections, e.g. >&3
+ const int k_first_high_fd = 10;
