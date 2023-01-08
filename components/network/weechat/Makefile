@@ -12,38 +12,32 @@
 # Copyright (c) 2020 Evgeny Litvinenko
 #
 
-BUILD_BITS=			64
+SINGLE_PYTHON_VERSION= yes
+SINGLE_PERL_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		weechat
-COMPONENT_VERSION=	3.7.1
-COMPONENT_PROJECT_URL=	https://weechat.org/
+COMPONENT_VERSION=	3.8
 COMPONENT_SUMMARY=	WeeChat - portable, fast, light and extensible IRC client
 COMPONENT_DESCRIPTION=	WeeChat (Wee Enhanced Environment for Chat) is a portable, fast, light and \
 extensible chat client. Everything can be done with a keyboard. \
 It is customizable and extensible with scripts.
+COMPONENT_PROJECT_URL=	https://weechat.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:c311c9de9f5d87404b667e0c690959388295485bce986fac4ab934ebd43589aa
-COMPONENT_ARCHIVE_URL=	https://weechat.org/files/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:f7cb65c200f8c090c56f2cf98c0b184051e516e5f7099a4308cacf86f174bf28
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/src/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=		network/chat/weechat
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv3
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-# Force dependency on a single python runtime:
-PYTHON_VERSIONS= $(PYTHON_VERSION)
-# Force dependency on a single perl version:
-PERL_VERSIONS= $(PERL_VERSION)
-
-# We have strange crashes, so -O2 is a try to prevent from them:
-gcc_OPT = -O2
-
-COMPONENT_PREP_ACTION = ( cd $(@D) && ./autogen.sh )
+COMPONENT_PREP_ACTION= ( cd $(@D) && ./autogen.sh )
 
 CONFIGURE_OPTIONS += --enable-doc
 CONFIGURE_OPTIONS += --disable-ruby
@@ -52,8 +46,8 @@ CONFIGURE_OPTIONS += --enable-tests
 CONFIGURE_ENV += CA_FILE="/etc/certs/ca-certificates.crt"
 CONFIGURE_ENV += PERL=$(PERL)
 
-COMPONENT_TEST_CMD =    ctest -V
-COMPONENT_TEST_TARGETS =
+COMPONENT_TEST_CMD=    ctest -V
+COMPONENT_TEST_TARGETS=
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
