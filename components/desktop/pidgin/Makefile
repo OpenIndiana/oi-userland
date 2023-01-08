@@ -18,13 +18,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pidgin
-COMPONENT_VERSION=      2.14.10
-COMPONENT_REVISION=     3
+COMPONENT_VERSION=      2.14.12
 COMPONENT_SUMMARY=      Multiprotocol Instant Messaging Client
 COMPONENT_PROJECT_URL=  https://www.pidgin.im
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:454b1b928bc6bcbb183353af30fbfde5595f2245a3423a1a46e6c97a2df22810
+COMPONENT_ARCHIVE_HASH= sha256:2b05246be208605edbb93ae9edc079583d449e2a9710db6d348d17f59020a4b7
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/$(COMPONENT_NAME)/files/Pidgin/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=         communication/im/pidgin
 COMPONENT_CLASSIFICATION=Applications/Internet
@@ -34,7 +33,7 @@ COMPONENT_LICENSE_FILE= pidgin.license
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # We use libncurses and libpanel from /usr/gnu/lib/$(MACH64)
 LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
