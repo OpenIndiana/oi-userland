@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D), configfile: setup.cfg
-collecting ... collected 496 items
+collecting ... collected 502 items
 
 ::project PASSED
 mock/tests/testasync.py::AsyncArguments::test_add_return_value PASSED
@@ -20,7 +20,6 @@ mock/tests/testasync.py::AsyncArguments::test_side_effect_is_AsyncMock PASSED
 mock/tests/testasync.py::AsyncArguments::test_wraps_coroutine PASSED
 mock/tests/testasync.py::AsyncArguments::test_wraps_normal_function PASSED
 mock/tests/testasync.py::AsyncAutospecTest::test_create_autospec PASSED
-mock/tests/testasync.py::AsyncAutospecTest::test_create_autospec_awaitable_class PASSED
 mock/tests/testasync.py::AsyncAutospecTest::test_create_autospec_instance PASSED
 mock/tests/testasync.py::AsyncAutospecTest::test_is_AsyncMock_patch PASSED
 mock/tests/testasync.py::AsyncAutospecTest::test_patch_with_autospec PASSED
@@ -68,6 +67,8 @@ mock/tests/testasync.py::AsyncPatchCMTest::test_async_def_cm PASSED
 mock/tests/testasync.py::AsyncPatchCMTest::test_is_AsyncMock_cm PASSED
 mock/tests/testasync.py::AsyncPatchCMTest::test_is_async_cm PASSED
 mock/tests/testasync.py::AsyncPatchCMTest::test_is_async_function_cm PASSED
+mock/tests/testasync.py::AsyncPatchCMTest::test_patch_dict_async_def PASSED
+mock/tests/testasync.py::AsyncPatchCMTest::test_patch_dict_async_def_context PASSED
 mock/tests/testasync.py::AsyncPatchDecoratorTest::test_async_def_patch PASSED
 mock/tests/testasync.py::AsyncPatchDecoratorTest::test_is_AsyncMock_patch PASSED
 mock/tests/testasync.py::AsyncPatchDecoratorTest::test_is_AsyncMock_patch_classmethod PASSED
@@ -81,11 +82,13 @@ mock/tests/testasync.py::AsyncSpecSetTest::test_magicmock_lambda_spec PASSED
 mock/tests/testasync.py::AsyncSpecTest::test_spec_as_normal_kw_AsyncMock PASSED
 mock/tests/testasync.py::AsyncSpecTest::test_spec_as_normal_positional_AsyncMock PASSED
 mock/tests/testasync.py::AsyncSpecTest::test_spec_async_attributes PASSED
+mock/tests/testasync.py::AsyncSpecTest::test_spec_async_attributes_instance PASSED
 mock/tests/testasync.py::AsyncSpecTest::test_spec_async_mock PASSED
 mock/tests/testasync.py::AsyncSpecTest::test_spec_mock_type_kw PASSED
 mock/tests/testasync.py::AsyncSpecTest::test_spec_mock_type_positional PASSED
 mock/tests/testasync.py::AsyncSpecTest::test_spec_normal_methods_on_class PASSED
 mock/tests/testasync.py::AsyncSpecTest::test_spec_normal_methods_on_class_with_mock PASSED
+mock/tests/testasync.py::AsyncSpecTest::test_spec_normal_methods_on_class_with_mock_seal PASSED
 mock/tests/testasync.py::AsyncSpecTest::test_spec_parent_not_async_attribute_is PASSED
 mock/tests/testasync.py::AsyncSpecTest::test_target_async_spec_not PASSED
 mock/tests/testasync.py::AsyncSpecTest::test_target_not_async_spec_is PASSED
@@ -245,6 +248,7 @@ mock/tests/testmock.py::MockTest::test_attach_mock_return_value PASSED
 mock/tests/testmock.py::MockTest::test_attribute_access_returns_mocks PASSED
 mock/tests/testmock.py::MockTest::test_attribute_deletion PASSED
 mock/tests/testmock.py::MockTest::test_attributes_have_name_and_parent_set PASSED
+mock/tests/testmock.py::MockTest::test_autospec_mock PASSED
 mock/tests/testmock.py::MockTest::test_autospec_side_effect PASSED
 mock/tests/testmock.py::MockTest::test_autospec_side_effect_exception PASSED
 mock/tests/testmock.py::MockTest::test_baseexceptional_side_effect PASSED
@@ -283,6 +287,7 @@ mock/tests/testmock.py::MockTest::test_magic_methods_mock_calls PASSED
 mock/tests/testmock.py::MockTest::test_manager_mock PASSED
 mock/tests/testmock.py::MockTest::test_method_calls_compare_easily PASSED
 mock/tests/testmock.py::MockTest::test_method_calls_recorded PASSED
+mock/tests/testmock.py::MockTest::test_misspelled_arguments PASSED
 mock/tests/testmock.py::MockTest::test_mock_add_spec PASSED
 mock/tests/testmock.py::MockTest::test_mock_add_spec_magic_methods PASSED
 mock/tests/testmock.py::MockTest::test_mock_call_not_equal_leaf PASSED
@@ -463,6 +468,7 @@ mock/tests/testsealable.py::TestSealable::test_integration_with_spec_method_defi
 mock/tests/testsealable.py::TestSealable::test_new_attributes_cannot_be_accessed_on_seal PASSED
 mock/tests/testsealable.py::TestSealable::test_new_attributes_cannot_be_set_on_child_of_seal PASSED
 mock/tests/testsealable.py::TestSealable::test_new_attributes_cannot_be_set_on_seal PASSED
+mock/tests/testsealable.py::TestSealable::test_seal_with_autospec PASSED
 mock/tests/testsealable.py::TestSealable::test_sealed_exception_has_attribute_name PASSED
 mock/tests/testsealable.py::TestSealable::test_seals_dont_recurse_on_manual_attributes PASSED
 mock/tests/testsealable.py::TestSealable::test_seals_recurse_on_added_attributes PASSED
@@ -501,4 +507,4 @@ mock/tests/testwith.py::WithTest::test_with_statement_nested PASSED
 mock/tests/testwith.py::WithTest::test_with_statement_same_attribute PASSED
 mock/tests/testwith.py::WithTest::test_with_statement_specified PASSED
 
-======== 495 passed ========
+======== 501 passed ========
