@@ -22,30 +22,29 @@
 # Copyright (c) 2020 Michal Nowak
 #
 
-BUILD_BITS=			64_and_32
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
-COMPONENT_VERSION=      3.40.0
-TARBALL_VERSION=		3400000
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      3.40.1
+TARBALL_VERSION=		3400100
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:48550828142051293e179ffc6a8520f6fbfd82e1cdca78b93792f766cc89b8e2
+COMPONENT_ARCHIVE_HASH= sha256:5064126aa50db20c35578b612b56c3129425c0506ed4d1610efa4a0f01bdf8d0
 COMPONENT_PROJECT_URL=  https://www.sqlite.org
-COMPONENT_ARCHIVE_URL=  https://www.sqlite.org/2022/$(COMPONENT_ARCHIVE)
-COMPONENT_CLASSIFICATION=	Development/Databases
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/2022/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         database/sqlite-3
+COMPONENT_CLASSIFICATION=	Development/Databases
 COMPONENT_LICENSE=      Public Domain
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION	+= $(CP) $(COMPONENT_DIR)/files/mapfile $(@D) ;
+COMPONENT_PRE_CONFIGURE_ACTION += $(CP) $(COMPONENT_DIR)/files/mapfile $(@D) ;
 
 # 'oserror' test has too low threshold for file descriptor depletion. When it's
 # bumped 32-bit is fine, however on 64-bit the whole test suite crashes.
-COMPONENT_PRE_CONFIGURE_ACTION	+= $(RM) $(SOURCE_DIR)/test/oserror.test ;
+COMPONENT_PRE_CONFIGURE_ACTION += $(RM) $(SOURCE_DIR)/test/oserror.test ;
 
 CFLAGS			+= -D_POSIX_PTHREAD_SEMANTICS
 CFLAGS			+= -DNDEBUG
@@ -65,9 +64,6 @@ CFLAGS			+= -DSQLITE_ENABLE_UNLOCK_NOTIFY
 CFLAGS			+= -DSQLITE_ENABLE_STAT2
 CFLAGS			+= -DSQLITE_ENABLE_STMT_SCANSTATUS
 CFLAGS			+= -DSQLITE_ENABLE_COLUMN_METADATA
-
-# Fixes firefox crash with new sqlite, don't remove until proper fix
-#gcc_OPT                 =  -O2
 
 CONFIGURE_OPTIONS.32	+= --with-tcl="$(USRLIBDIR)"
 CONFIGURE_OPTIONS.64	+= --with-tcl="$(USRLIBDIR64)"
