@@ -1,55 +1,46 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2021 Aurelien Larcher
-# Copyright 2022 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project pytest-benchmark
 #
 
-BUILD_BITS= NO_ARCH
-BUILD_STYLE= setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pytest-benchmark
-COMPONENT_VERSION=	3.4.1
-COMPONENT_SUMMARY=	A pytest fixture for benchmarking code.
-COMPONENT_PROJECT_URL=	https://github.com/ionelmc/pytest-benchmark
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:40e263f912de5a81d891619032983557d62a3d85843f9a9f30b98baea0cd7b47
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)
-COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	LICENSE
-
-PYTHON_VERSIONS= $(PYTHON3_VERSIONS)
+COMPONENT_NAME =		pytest-benchmark
+HUMAN_VERSION =			4.0.0
+COMPONENT_SUMMARY =		pytest-benchmark - A \`\`pytest\`\` fixture for benchmarking code. It will group the tests into rounds that are calibrated to the chosen timer.
+COMPONENT_PROJECT_URL =		https://github.com/ionelmc/pytest-benchmark
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/28/08/e6b0067efa9a1f2a1eb3043ecd8a0c48bfeb60d3255006dcc829d72d5da2/pytest-benchmark-4.0.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:fb0785b83efe599a6a956361c0691ae1dbb5318018561af10f3e915caa0048d1
+COMPONENT_LICENSE =		BSD-2-Clause
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_INSTALL_ACTION += \
-($(MV) $(PROTOUSRBINDIR)/py.test-benchmark $(PROTOUSRBINDIR)/py.test-benchmark-$(PYTHON_VERSION); \
- $(MV) $(PROTOUSRBINDIR)/pytest-benchmark $(PROTOUSRBINDIR)/pytest-benchmark-$(PYTHON_VERSION))
-
-COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
-COMPONENT_TEST_ARGS =	test_benchmark.py
-
-COMPONENT_TEST_TRANSFORMS += '-n -e "/\.\.\./p"'
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/py-cpuinfo
+PYTHON_REQUIRED_PACKAGES += library/python/pytest
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/aspectlib
+TEST_REQUIRED_PACKAGES.python += library/python/elasticsearch
+TEST_REQUIRED_PACKAGES.python += library/python/freezegun
+TEST_REQUIRED_PACKAGES.python += library/python/hunter
+TEST_REQUIRED_PACKAGES.python += library/python/pygal
+TEST_REQUIRED_PACKAGES.python += library/python/pygaljs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-instafail
