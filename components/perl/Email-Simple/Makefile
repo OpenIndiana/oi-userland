@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Simple
-HUMAN_VERSION =			2.216
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.218
 COMPONENT_SUMMARY =		Email::Simple - simple parsing of RFC2822 message format and headers
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d85f63cd1088d11311103676a8cf498fff564a201b538de52cd753b5e5ca8bd4
+	sha256:2dce1d68fde99d53db9ca43e211b69b169ba2efaecf87a55cb33a9336047c96d
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
