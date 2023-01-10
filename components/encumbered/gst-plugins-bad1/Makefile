@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-bad1
 COMPONENT_VERSION=      1.20.5
-#COMPONENT_REVISION=		1
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=	gst-plugins-bad
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -57,6 +57,7 @@ CONFIGURE_OPTIONS += -Dexamples=disabled
 CONFIGURE_OPTIONS += -Dopenexr=enabled
 CONFIGURE_OPTIONS += -Dintrospection=enabled
 CONFIGURE_OPTIONS += -Dgpl=enabled
+CONFIGURE_OPTIONS += -Dspandsp=disabled
 # if someone can weigh in on the fdk-aac license, adding fdk-aac might be
 # be nice.
 # Openh264 has no licensing issues but needs some porting
