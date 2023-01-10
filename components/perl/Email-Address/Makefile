@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Address
-HUMAN_VERSION =			1.912
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.913
 COMPONENT_SUMMARY =		Email::Address - RFC 2822 Address Parsing and Creation
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0fa3785298cc2f6780e63e3a5fb1ca814dcbc360ceb59ed8fa84eb4ffa06f9ef
+	sha256:6afb541f6df6b535ccf7642d361ae18d7a95a3f93ace1bc5373f64c2410ca5af
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
