@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::X509
-HUMAN_VERSION =			0.54
+HUMAN_VERSION =			0.55
 COMPONENT_SUMMARY =		Crypt::X509 - Parse a X.509 certificate
 COMPONENT_CPAN_AUTHOR =		MRSCOTTY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:296d01890716df71dacd1c827af45bcf92c0c5baeb17e997ebbd1279160b9728
+	sha256:14796b11d15f76ad7444e78a619b70ffdd9130868dd0b00d858579c9303821c7
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
