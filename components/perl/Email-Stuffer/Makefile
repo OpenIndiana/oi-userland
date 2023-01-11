@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Stuffer
-HUMAN_VERSION =			0.019
+HUMAN_VERSION =			0.020
 COMPONENT_SUMMARY =		Email::Stuffer - A more casual approach to creating and sending Email:: emails
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:30d492986fde6d00842e45e1155846ccf85573401e0656295c09de6e4b7e3d08
+	sha256:0a1efb7f2dedd39052b126f718ca2d3b5845a4123a39392fd9dfa0c76e6057c7
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
