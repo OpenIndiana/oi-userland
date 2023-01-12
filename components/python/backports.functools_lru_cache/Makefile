@@ -1,48 +1,45 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project backports.functools_lru_cache
 #
+
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		backports.functools_lru_cache
-COMPONENT_VERSION=	1.5
-COMPONENT_SUMMARY=	'Backport of functools.lru_cache from Python 3.3'
-COMPONENT_PROJECT_URL=	https://pypi.org/project/backports.functools_lru_cache/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:9d98697f088eb1b0fa451391f91afb5e3ebde16bbdb272819fd091151fda4f1a
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_FMRI=	library/python/backports.functools_lru_cache
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	LICENSE
+COMPONENT_NAME =		backports.functools_lru_cache
+HUMAN_VERSION =			1.6.4
+COMPONENT_SUMMARY =		backports.functools_lru_cache - Backport of functools.lru_cache
+COMPONENT_PROJECT_URL =		https://github.com/jaraco/backports.functools_lru_cache
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/95/9f/122a41912932c77d5b8e6cab6bd456e6270211a3ed7248a80c235179a012/backports.functools_lru_cache-1.6.4.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:d5ed2169378b67d3c545e5600d363a923b09c456dab1593914935a68ad478271
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS=	2.7
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-COMPONENT_BUILD_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
-COMPONENT_INSTALL_ENV += SETUPTOOLS_SCM_PRETEND_VERSION=$(COMPONENT_VERSION)
-
-# common targets
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:           $(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += library/python/setuptools_scm-27
+# Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
