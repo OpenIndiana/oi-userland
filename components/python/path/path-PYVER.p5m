@@ -23,13 +23,24 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python$(PYVER)/vendor-packages/path-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
-file path=usr/lib/python$(PYVER)/vendor-packages/path-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/path-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/path-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/path-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/path-$(HUMAN_VERSION).dist-info/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/path-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/path-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/path-$(HUMAN_VERSION).dist-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/path/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/path/__init__.pyi
 file path=usr/lib/python$(PYVER)/vendor-packages/path/classes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/path/classes.pyi
 file path=usr/lib/python$(PYVER)/vendor-packages/path/masks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/path/masks.pyi
 file path=usr/lib/python$(PYVER)/vendor-packages/path/matchers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/path/matchers.pyi
+file path=usr/lib/python$(PYVER)/vendor-packages/path/py.typed
 file path=usr/lib/python$(PYVER)/vendor-packages/path/py37compat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/path/py37compat.pyi
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata

@@ -14,21 +14,35 @@
 #   $WS_TOOLS/python-integrate-project path
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		path
-COMPONENT_VERSION =		16.3.0
+HUMAN_VERSION =			16.6.0
 COMPONENT_SUMMARY =		path - A module wrapper for os.path
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/path
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/63/3c/e7aa896607ec85b9eb722f7258c9e648d8d1224bb14ec437fd5421487401/path-16.3.0.tar.gz
+	https://files.pythonhosted.org/packages/0a/52/94faab34ea4ddff296d99d32d16a7c342f70b1cd0f1d1d65b49e2a04b7a6/path-16.6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5d8c2063ffade0766e0aa04255f8c0a0fd0eda5fdfb190375871b2f2b2e4afd7
+	sha256:bea3816e1d54f4e33aac78d2031a0b0ed2f95e69db85b45d51f17df97071da69
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/appdirs
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/packaging
+TEST_REQUIRED_PACKAGES.python += library/python/pygments
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
