@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
 COMPONENT_VERSION=	2.10.3
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/libxml2
 COMPONENT_SUMMARY=	The XML library
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -61,6 +62,8 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
         $(CLONEY) $(SOURCE_DIR) $(@D); \
          );
 
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --localstatedir="$(VARDIR)"
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-icu
