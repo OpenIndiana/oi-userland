@@ -19,7 +19,8 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.envs
-COMPONENT_VERSION =		2.4.0
+HUMAN_VERSION =			2.4.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		jaraco.envs - Classes for orchestrating Python (virtual) environments
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.envs
 COMPONENT_ARCHIVE_URL =		\
@@ -32,3 +33,16 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/path
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/tox
+PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy

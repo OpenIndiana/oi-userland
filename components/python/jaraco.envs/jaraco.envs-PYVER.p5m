@@ -23,8 +23,17 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python$(PYVER)/vendor-packages/jaraco.envs-$(COMPONENT_VERSION).dist-info/LICENSE
-file path=usr/lib/python$(PYVER)/vendor-packages/jaraco.envs-$(COMPONENT_VERSION).dist-info/METADATA
-file path=usr/lib/python$(PYVER)/vendor-packages/jaraco.envs-$(COMPONENT_VERSION).dist-info/WHEEL
-file path=usr/lib/python$(PYVER)/vendor-packages/jaraco.envs-$(COMPONENT_VERSION).dist-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/jaraco.envs-$(HUMAN_VERSION).dist-info/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/jaraco.envs-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/jaraco.envs-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/jaraco.envs-$(HUMAN_VERSION).dist-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/jaraco/envs.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/path-$(PYV)
+depend type=require fmri=pkg:/library/python/tox-$(PYV)
+depend type=require fmri=pkg:/library/python/virtualenv-$(PYV)
