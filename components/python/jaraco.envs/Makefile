@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.envs
 HUMAN_VERSION =			2.4.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		jaraco.envs - Classes for orchestrating Python (virtual) environments
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.envs
 COMPONENT_ARCHIVE_URL =		\
