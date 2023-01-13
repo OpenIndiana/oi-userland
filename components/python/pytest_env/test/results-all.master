@@ -1,0 +1,40 @@
+py$(PYV) create: $(@D)/.tox/py$(PYV)
+py$(PYV) run-test: commands[0] | python -m coverage erase
+py$(PYV) run-test: commands[1] | python -m coverage run -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml tests
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+asyncio: mode=strict
+collecting ... collected 14 items
+
+tests/test_env.py::test_env[D exists - original val kept] PASSED
+tests/test_env.py::test_env[D flag - add to env] PASSED
+tests/test_env.py::test_env[R exists - not interpolate var] PASSED
+tests/test_env.py::test_env[curly exist - interpolate var] PASSED
+tests/test_env.py::test_env[empty ini works] PASSED
+tests/test_env.py::test_env[incremental interpolation] PASSED
+tests/test_env.py::test_env[key exists in env - overwrite] PASSED
+tests/test_env.py::test_env[lowercase flags] PASSED
+tests/test_env.py::test_env[new key - add to env] PASSED
+tests/test_env.py::test_env[two flags - reversed] PASSED
+tests/test_env.py::test_env[two flags] PASSED
+tests/test_env.py::test_env[two new keys - add to env] PASSED
+tests/test_env.py::test_env[whitespace is ignored] PASSED
+tests/test_version.py::test_version PASSED
+
+=============================== warnings summary ===============================
+tests/test_env.py: 13 warnings
+  $(PYTHON_DIR)/vendor-packages/pytest_travis_fold.py:186: PytestDeprecationWarning: The hookimpl pytest_configure uses old-style configuration options (marks or attributes).
+  Please use the pytest.hookimpl(trylast=True) decorator instead
+   to configure the hooks.
+   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
+    @pytest.mark.trylast  # to let 'terminalreporter' be registered first
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
+======== 14 passed, 13 warnings ========
+___________________________________ summary ____________________________________
+  py$(PYV): commands succeeded
+  congratulations :)
