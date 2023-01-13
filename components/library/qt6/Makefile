@@ -10,19 +10,20 @@
 
 #
 # Copyright 2022 Daniel Chan
+# Copyright 2023 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=				qt
-COMPONENT_VERSION_MJR=		$(QT6_VERSION)
-COMPONENT_VERSION=			$(COMPONENT_VERSION_MJR).4
-COMPONENT_REVISION=     	3
+COMPONENT_VERSION_MJR=		6.4
+COMPONENT_VERSION=			$(COMPONENT_VERSION_MJR).2
+#COMPONENT_REVISION=     	1
 COMPONENT_SUMMARY=			Qt cross-platform application and UI framework
 COMPONENT_PROJECT_URL=		https://www.qt.io/
 COMPONENT_SRC=				$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=			$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=		sha256:cfe41905b6bde3712c65b102ea3d46fc80a44c9d1487669f14e4a6ee82ebb8fd
+COMPONENT_ARCHIVE_HASH=		sha256:689f53e6652da82fccf7c2ab58066787487339f28d1ec66a8765ad357f4976be
 COMPONENT_ARCHIVE_URL=		https://download.qt.io/official_releases/qt/$(COMPONENT_VERSION_MJR)/$(COMPONENT_VERSION)/single/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=				library/qt6
 COMPONENT_CLASSIFICATION= 	Desktop (GNOME)/Libraries
@@ -33,12 +34,11 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 PATH=$(PG_BINDIR):$(MYSQL_BINDIR):$(GCC_BINDIR):$(PATH.gnu)
 
+QT6_VERSION=$(COMPONENT_VERSION_MJR)
 QT_PREFIX= $(QT6_BASEDIR)
 
-#QT_ARCHSUBDIR.32=
-QT_ARCHSUBDIR.64=$(MACH64)
-#QT_PLATFORM.32= solaris-g++
-QT_PLATFORM.64= solaris-g++-64
+QT_ARCHSUBDIR=$(MACH64)
+QT_PLATFORM= solaris-g++-64
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
@@ -46,9 +46,9 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
 OPENSSL_VERSION	= 1.1
-Clang_VERSION	= 13.0
+Clang_VERSION	= 15.0
 
-LDFLAGS += -Wl,-rpath,$(QT6_LIBDIR):/usr/clang/$(Clang_VERSION)/lib:$(MYSQL_LIBDIR):$(PG_LIBDIR)
+LDFLAGS += -Wl,-rpath,$(QT6_LIBDIR):$(USRLIBDIR)/xorg/$(MACH64)/:/usr/clang/$(Clang_VERSION)/lib:$(MYSQL_LIBDIR):$(PG_LIBDIR)
 #CONFIGURE_ENV+= MySQL_LIBRARY=/usr/mysql/lib/amd64
 #CONFIGURE_ENV+= MySQL_INCLUDE_DIR=/usr/mysql/include
 CONFIGURE_OPTIONS = -prefix $(QT_PREFIX)
@@ -63,28 +63,24 @@ CONFIGURE_OPTIONS+= -xcb
 CONFIGURE_OPTIONS+= -xcb-xlib
 CONFIGURE_OPTIONS+= -bundled-xcb-xinput
 CONFIGURE_OPTIONS+= -openssl-linked
-CONFIGURE_OPTIONS+= -bindir $(QT_PREFIX)/bin/$(QT_ARCHSUBDIR.$(BITS))
-CONFIGURE_OPTIONS+= -libexecdir $(QT_PREFIX)/bin/$(QT_ARCHSUBDIR.$(BITS))
-CONFIGURE_OPTIONS+= -libdir $(QT_PREFIX)/lib/$(QT_ARCHSUBDIR.$(BITS))
-CONFIGURE_OPTIONS+= -plugindir $(QT_PREFIX)/plugins/$(QT_ARCHSUBDIR.$(BITS))
-CONFIGURE_OPTIONS+= -qmldir $(QT_PREFIX)/qml/$(QT_ARCHSUBDIR.$(BITS))
-CONFIGURE_OPTIONS+= -platform $(QT_PLATFORM.$(BITS))
+CONFIGURE_OPTIONS+= -bindir $(QT_PREFIX)/bin/$(QT_ARCHSUBDIR)
+CONFIGURE_OPTIONS+= -libexecdir $(QT_PREFIX)/bin/$(QT_ARCHSUBDIR)
+CONFIGURE_OPTIONS+= -libdir $(QT_PREFIX)/lib/$(QT_ARCHSUBDIR)
+CONFIGURE_OPTIONS+= -plugindir $(QT_PREFIX)/plugins/$(QT_ARCHSUBDIR)
+CONFIGURE_OPTIONS+= -qmldir $(QT_PREFIX)/qml/$(QT_ARCHSUBDIR)
+CONFIGURE_OPTIONS+= -platform $(QT_PLATFORM)
 CONFIGURE_OPTIONS+= -plugin-sql-mysql
 CONFIGURE_OPTIONS+= -plugin-sql-psql
 CONFIGURE_OPTIONS+= -plugin-sql-sqlite
 CONFIGURE_OPTIONS+= -plugin-system-sqlite
 CONFIGURE_OPTIONS+= -cmake-generator 'Unix Makefiles'
-CONFIGURE_OPTIONS+= -no-gstreamer
 CONFIGURE_OPTIONS+= -no-pch
-#CONFIGURE_OPTIONS.32+= CMAKE_PREFIX_PATH=$(BUILD_DIR)/i86/qtbase/lib/cmake
-CONFIGURE_OPTIONS.64+= CMAKE_PREFIX_PATH="$(BUILD_DIR)/amd64/qtbase/lib/amd64/cmake;/usr/clang/$(Clang_VERSION)"
-CONFIGURE_OPTIONS.64+= MySQL_LIBRARY=$(MYSQL_LIBDIR)/libmysqlclient.so
-CONFIGURE_OPTIONS.64+= MySQL_INCLUDE_DIR=$(MYSQL_INCDIR)
-CONFIGURE_OPTIONS.64+= PostgreSQL_LIBRARY=$(PG_LIBDIR)/libpq.so
-CONFIGURE_OPTIONS.64+= PostgreSQL_INCLUDE_DIR=$(PG_INCDIR)
-CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(BITS))
-#COMPONENT_POST_CONFIGURE_ACTION.32= mkdir -p $(BUILD_DIR)/i86/qtbase/translations
-COMPONENT_POST_CONFIGURE_ACTION.64= mkdir -p $(BUILD_DIR)/amd64/qtbase/translations
+CONFIGURE_OPTIONS+= CMAKE_PREFIX_PATH="$(BUILD_DIR)/amd64/qtbase/lib/amd64/cmake;/usr/clang/$(Clang_VERSION)"
+CONFIGURE_OPTIONS+= MySQL_LIBRARY=$(MYSQL_LIBDIR)/libmysqlclient.so
+CONFIGURE_OPTIONS+= MySQL_INCLUDE_DIR=$(MYSQL_INCDIR)
+CONFIGURE_OPTIONS+= PostgreSQL_LIBRARY=$(PG_LIBDIR)/libpq.so
+CONFIGURE_OPTIONS+= PostgreSQL_INCLUDE_DIR=$(PG_INCDIR)
+COMPONENT_POST_CONFIGURE_ACTION= mkdir -p $(BUILD_DIR)/amd64/qtbase/translations
 
 include $(WS_MAKE_RULES)/cmake.mk
 
@@ -111,6 +107,7 @@ REQUIRED_PACKAGES += x11/library/libpthread-stubs
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
@@ -122,20 +119,26 @@ REQUIRED_PACKAGES += image/library/libjpeg6
 REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/c++/harfbuzz
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/speech-dispatcher
 REQUIRED_PACKAGES += library/double-conversion
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/libmng
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libwebp
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/clang-13
+REQUIRED_PACKAGES += runtime/clang-15
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
