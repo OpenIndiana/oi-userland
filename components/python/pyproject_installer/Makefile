@@ -19,14 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_installer
-COMPONENT_VERSION =		0.3.1
+HUMAN_VERSION =			0.4.0
 COMPONENT_SUMMARY =		pyproject_installer - Pyproject installer
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/7f/4f/e8eef34fcbe43f06309e52a0ca499fadb62213665d9be3e22969fba9a07c/pyproject_installer-0.3.1.tar.gz
+	https://files.pythonhosted.org/packages/da/a2/f890a712f956027ffcb49c1b36e2e4f0c5d123bdfb77b9226855766e76e2/pyproject_installer-0.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8cbfd68f7f3020a886d94eb4af8fc98eae3b91b53f656817a3fb1b01c93f2747
+	sha256:f65957c020a7cf4d1bfd1fe29862ef7b0aa9f3ac25e7dd011eca71b7a8e8b301
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+TEST_STYLE = pytest
 
 # The pyproject_installer is the bootstrapper so it cannot use any non-core
 # Python modules and it needs to be bootstrapped.
@@ -39,4 +41,8 @@ PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/stanislavlevin/pyproject_installer/issues/32
+COMPONENT_TEST_ENV += PATH=$(PATH)
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
