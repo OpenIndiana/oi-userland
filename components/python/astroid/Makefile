@@ -1,80 +1,42 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2021 Gary Mills
-# Copyright 2021, 2022 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project astroid
 #
 
-BUILD_STYLE= setup.py
-BUILD_BITS= NO_ARCH
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		astroid
-COMPONENT_VERSION=	2.9.3
-COMPONENT_SUMMARY=	A common base representation of python source code
-COMPONENT_PROJECT_URL=	https://github.com/PyCQA/astroid
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:07234423c3722df6aa067c15f5fa60adf4f1d6ae659d2ab147acb40a8a1904f7
-# Downloading the package source from pypi misses the tests, thus we a download from Github:
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_FMRI=		library/python/astroid
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=	LGPLv2.1, GPLv2
+COMPONENT_NAME =		astroid
+HUMAN_VERSION =			2.13.2
+COMPONENT_SUMMARY =		astroid - An abstract syntax tree for Python with inference support.
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/c2/49/5dd5f36b2cd2b315d45023ed4e2d6f1ba57d054ea9a1378f91f093ec57bb/astroid-2.13.2.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:3bc7834720e1a24ca797fd785d77efb14f7a28ee8e635ef040b6e2d80ccb3303
+COMPONENT_LICENSE =		LGPL-2.1-only
+COMPONENT_LICENSE_FILE =	LICENSE
 
-# Set python version used by this product
-PYTHON_VERSION=		3.9
-PYTHON_VERSIONS=	3.9
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Tests fail because numpy cannot be compiled.
-COMPONENT_TEST_DIR = $(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD = tox -e py39
-COMPONENT_TEST_ARGS =
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/in [0-9]*\.[0-9]*s //"' \
-	'-n' \
-	'-e "/===/p"' \
-	'-e "/collected/p"' \
-	'-e "/^FAILED/p"' \
-	'-e "/^E /p"' \
-	'-e "/^\.\.\./p"' \
-	'-e "/^unittest_/p"'
-
-# Manually added test dependencies:
-REQUIRED_PACKAGES += library/python/flaky-39
-REQUIRED_PACKAGES += library/python/hypothesis-39
-REQUIRED_PACKAGES += library/python/lazy_object_proxy-39
-REQUIRED_PACKAGES += library/python/pluggy-39
-REQUIRED_PACKAGES += library/python/py-39
-REQUIRED_PACKAGES += library/python/pytest-39
-REQUIRED_PACKAGES += library/python/pytest-benchmark-39
-REQUIRED_PACKAGES += library/python/pytest-reporter-39
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += library/python/typing_extensions-39
-REQUIRED_PACKAGES += library/python/wrapt-39
-REQUIRED_PACKAGES += library/python/tox
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/lazy-object-proxy
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/typed-ast
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += library/python/wrapt
+PYTHON_REQUIRED_PACKAGES += runtime/python
