@@ -45,6 +45,7 @@ COMPONENT_TEST_TRANSFORMS += \
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += library/lzlib
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
