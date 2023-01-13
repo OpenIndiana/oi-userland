@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lazy-object-proxy
 HUMAN_VERSION =			1.9.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		lazy-object-proxy - A fast and thorough lazy object proxy.
 COMPONENT_PROJECT_URL =		https://github.com/ionelmc/python-lazy-object-proxy
 COMPONENT_ARCHIVE_URL =		\
