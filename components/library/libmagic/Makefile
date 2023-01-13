@@ -22,23 +22,29 @@ include ../../../make-rules/shared-macros.mk
 # still, for the sake of completeness and to match GNU/Linux userland
 # we also deliver "gfile" built from darwinsys sources, as a bonus.
 COMPONENT_NAME=		file
-COMPONENT_FMRI=		library/magic
-COMPONENT_VERSION=	5.43
+COMPONENT_VERSION=	5.44
+COMPONENT_SUMMARY=	libmagic for recognizing the type of data contained in a computer file using magic numbers
 COMPONENT_PROJECT_URL=	https://www.darwinsys.com/file/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:8c8015e91ae0e8d0321d94c78239892ef9dbc70c4ade0008c0e95894abfb1991
+COMPONENT_ARCHIVE_HASH=	sha256:3751c7fba8dbc831cb8d7cc8aff21035459b8ce5155ef8b0880a27d028475f3b
 COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/file/$(COMPONENT_ARCHIVE)
-COMPONENT_SUMMARY=	libmagic for recognizing the type of data contained in a computer file using magic numbers
+COMPONENT_FMRI=		library/magic
 COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-n' \
+	'-e "/Running test/p"' \
+	'-e "/\.testfile/p"'
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
