@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox-current-env
-HUMAN_VERSION =			0.0.10
+HUMAN_VERSION =			0.0.11
 COMPONENT_SUMMARY =		tox-current-env - Use current environment instead of virtualenv for tox testenvs
 COMPONENT_PROJECT_URL =		https://github.com/fedora-python/tox-current-env
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9d/6a/0097135fb7c8835f31ebfb03ba7cddaeedad13b0ebddc6b11ba1ab0f0bd8/tox-current-env-0.0.10.tar.gz
+	https://files.pythonhosted.org/packages/8b/a4/82c5c771ed7defdae4d1ad814cc4f86377d2bf893aea015d9fb6994e6eaf/tox-current-env-0.0.11.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ba3229ff0c5d01d56c70bd5e87ccf43158c4ead7f7769d3efb7a78ad2dea87a5
+	sha256:5b05d7a169e323ca73c8bacd90cfcfe38e2672b705f944f94d1d6c0f56f31c51
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
