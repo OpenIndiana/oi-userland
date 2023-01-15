@@ -1,31 +1,3 @@
-One of the tests need patching:
-
-  - Because we're doing the build in a symlink farm, one of the diff tests
-    thinks that we're changing the type of the files from symlink to file,
-    so the diffs come out wrong.  Rather than cleverly mucking around with
-    the working directory vs the repo directory, we just cat the files as
-    real files into place.
-
-Unclear whether this patch should be sent upstream.
-
---- git-2.4.5/t/t4018-diff-funcname.sh	Thu Jun 25 12:15:40 2015
-+++ git-2.4.5/t/t4018-diff-funcname.sh	Thu Jul  2 14:11:09 2015
-@@ -79,8 +79,11 @@
- 
- 	# add all test files to the index
- 	(
--		cd "$TEST_DIRECTORY"/t4018 &&
--		git --git-dir="$TRASH_DIRECTORY/.git" add .
-+		( cd "$TEST_DIRECTORY"/t4018 && printf "%s\n" * ) | while read f
-+		do
-+			cat "$TEST_DIRECTORY"/t4018/$f > $f
-+			git add -v $f
-+		done
- 	) &&
- 
- 	# place modified files in the worktree
-
-
 This simply adds a couple of targets to the test Makefile which allow us to
 run the tests in parallel cleanly.  This way the results don't get cleaned
 up automatically after running the tests, and we can emit those results to
