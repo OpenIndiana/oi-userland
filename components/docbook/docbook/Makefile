@@ -10,29 +10,24 @@
 
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
+# Copyright 2023 Friedrich Kink. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= docbook
 COMPONENT_VERSION= 2.30.0
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= docbook SGML and XML stylesheets
+COMPONENT_FMRI= data/docbook
+COMPONENT_CLASSIFICATION= Desktop (GNOME)/Documentation
 
-include ../../../make-rules/ips.mk
-
-download:
-
-prep:
-
-build:
+include $(WS_MAKE_RULES)/ips.mk
 
 install:
 	[ -d $(PROTO_DIR) ] || mkdir -p $(PROTO_DIR)
 
-clean:
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
