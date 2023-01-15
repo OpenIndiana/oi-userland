@@ -368,6 +368,11 @@ $(MANIFEST_BASE)-%-$(2).p5m: %-PYVER.p5m
 endef
 $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver),$(shell echo $(ver)|tr -d .))))
 
+ifeq ($(strip $(SINGLE_PYTHON_VERSION)),yes)
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
+PKG_MACROS += PYV=$(shell echo $(PYTHON_VERSION)|tr -d .)
+endif
+
 # A rule to create a helper transform package for python, that will insert the
 # appropriate conditional dependencies into a python library's
 # runtime-version-generic package to pull in the version-specific bits when the
@@ -392,6 +397,11 @@ $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PERLVER.p5m
 		-D PERL_ARCH=$(call PERL_ARCH_FUNC,$(PERL.$(1))) $$< > $$@
 endef
 $(foreach ver,$(PERL_VERSIONS),$(eval $(call perl-manifest-rule,$(ver))))
+
+ifeq ($(strip $(SINGLE_PERL_VERSION)),yes)
+PKG_MACROS += PERLVER=$(PERL_VERSION)
+PKG_MACROS += PLV=$(shell echo $(PERL_VERSION)|tr -d .)
+endif
 
 # A rule to create a helper transform package for perl, that will insert the
 # appropriate conditional dependencies into a perl library's
