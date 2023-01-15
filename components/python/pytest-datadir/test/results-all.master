@@ -1,0 +1,22 @@
+py$(PYV) create: $(@D)/.tox/py$(PYV)
+py$(PYV) run-test: commands[0] | python -m pytest tests
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+asyncio: mode=strict
+collecting ... collected 7 items
+
+tests/test_hello.py::test_change_test_files PASSED
+tests/test_hello.py::test_file_override PASSED
+tests/test_hello.py::test_local_directory PASSED
+tests/test_hello.py::test_read_hello PASSED
+tests/test_hello.py::test_read_spam_from_other_dir PASSED
+tests/test_hello.py::test_shared_directory PASSED
+tests/test_nonexistent.py::test_missing_data_dir_starts_empty PASSED
+
+======== 7 passed ========
+___________________________________ summary ____________________________________
+  py$(PYV): commands succeeded
+  congratulations :)
