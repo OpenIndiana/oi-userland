@@ -25,19 +25,17 @@
 #
 
 BUILD_STYLE = justmake
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ant
-COMPONENT_VERSION=	1.10.12
+COMPONENT_VERSION=	1.10.13
 COMPONENT_SUMMARY=	Apache Ant is a Java-based build tool
 COMPONENT_PROJECT_URL=	https://ant.apache.org/
 COMPONENT_SRC_NAME=	apache-ant
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:044e2c0a66c90112d67789d267f049ae947fde384e29b1f8c14ada9bead0fe44
+COMPONENT_ARCHIVE_HASH= sha256:06a8f6f11529aeadcd10f96335dcd8b166188e2b970d27a648006a1be79b29f7
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/ant/source/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/ant
 COMPONENT_FMRI=		developer/build/ant
 COMPONENT_CLASSIFICATION=	Development/Distribution Tools
 COMPONENT_LICENSE=	Apache v2.0
@@ -45,25 +43,23 @@ COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_TOP)/make-rules/common.mk
 
-PYTHON_VERSION= 3.9
-
 $(BUILD_$(MK_BITS)):	GMAKE=./build.sh
 $(INSTALL_$(MK_BITS)):	GMAKE=./build.sh
 $(TEST_$(MK_BITS)):	GMAKE=./build.sh
 
-ANT_ENV+=JAVA_HOME=$(JAVA_HOME)
+ANT_ENV += JAVA_HOME=$(JAVA_HOME)
 
-ANT_DIST_DIRS+=-Ddist.dir=$(PROTO_DIR)
-ANT_DIST_DIRS+=-Ddist.bin=$(PROTO_DIR)/usr/bin
-ANT_DIST_DIRS+=-Ddist.etc=$(PROTO_DIR)/usr/share/lib/ant
-ANT_DIST_DIRS+=-Ddist.docs=$(PROTO_DIR)/usr/share/doc/ant
-ANT_DIST_DIRS+=-Ddist.manual=$(PROTO_DIR)/usr/share/doc/ant/manual
-ANT_DIST_DIRS+=-Ddist.javadocs=$(PROTO_DIR)/usr/share/doc/ant/manual/api
-ANT_DIST_DIRS+=-Ddist.lib=$(PROTO_DIR)/usr/share/lib/ant
+ANT_DIST_DIRS += -Ddist.dir=$(PROTO_DIR)
+ANT_DIST_DIRS += -Ddist.bin=$(PROTO_DIR)/usr/bin
+ANT_DIST_DIRS += -Ddist.etc=$(PROTO_DIR)/usr/share/lib/ant
+ANT_DIST_DIRS += -Ddist.docs=$(PROTO_DIR)/usr/share/doc/ant
+ANT_DIST_DIRS += -Ddist.manual=$(PROTO_DIR)/usr/share/doc/ant/manual
+ANT_DIST_DIRS += -Ddist.javadocs=$(PROTO_DIR)/usr/share/doc/ant/manual/api
+ANT_DIST_DIRS += -Ddist.lib=$(PROTO_DIR)/usr/share/lib/ant
 
-OPTIONAL_LIBS+=/usr/share/lib/java/junit.jar
-OPTIONAL_LIBS+=/usr/share/lib/java/bsf.jar
-OPTIONAL_LIBS+=/usr/share/antlr-2.7.7/antlr.jar
+OPTIONAL_LIBS += /usr/share/lib/java/junit.jar
+OPTIONAL_LIBS += /usr/share/lib/java/bsf.jar
+OPTIONAL_LIBS += /usr/share/antlr-2.7.7/antlr.jar
 
 COMPONENT_PRE_BUILD_ACTION = $(CP) $(OPTIONAL_LIBS) $(@D)/lib/optional
 
@@ -102,6 +98,6 @@ REQUIRED_PACKAGES += runtime/java/openjdk8
 REQUIRED_PACKAGES += library/java/commons-bsf
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += shell/ksh93
