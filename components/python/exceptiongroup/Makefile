@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		exceptiongroup
-HUMAN_VERSION =			1.0.4
+HUMAN_VERSION =			1.1.0
 COMPONENT_SUMMARY =		exceptiongroup - Backport of PEP 654 (exception groups)
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/fa/e1/4f89a2608978a78876a76e69e82fa1fc5ce3fb346297eed2a51dd3df2dcf/exceptiongroup-1.0.4.tar.gz
+	https://files.pythonhosted.org/packages/15/ab/dd27fb742b19a9d020338deb9ab9a28796524081bca880ac33c172c9a8f6/exceptiongroup-1.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bd14967b79cd9bdb54d97323216f8fdf533e278df937aa2a90089e7d6e06e5ec
+	sha256:bcb67d800a4497e1b404c2dd44fca47d3b7a5e5433dbab67f96c1a685cdfdf23
 COMPONENT_LICENSE =		MIT AND PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
