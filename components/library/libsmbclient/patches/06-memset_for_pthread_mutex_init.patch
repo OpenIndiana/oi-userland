@@ -1,0 +1,31 @@
+# This patch is related to https://www.illumos.org/issues/9959.
+# For some reason the underlying OS does not memset the mutex to zero.
+# Therefore this patch does it.
+
+diff -Naur samba-4.10.2.orig/lib/tdb/common/mutex.c samba-4.10.2/lib/tdb/common/mutex.c
+--- samba-4.10.2.orig/lib/tdb/common/mutex.c	2019-04-20 07:46:16.548548581 +0000
++++ samba-4.10.2/lib/tdb/common/mutex.c	2019-04-21 11:12:25.665046799 +0000
+@@ -587,6 +587,7 @@
+ 	for (i=0; i<tdb->hash_size+1; i++) {
+ 		pthread_mutex_t *chain = &m->hashchains[i];
+ 
++                (void) memset(chain, 0, sizeof(*chain));
+ 		ret = pthread_mutex_init(chain, &ma);
+ 		if (ret != 0) {
+ 			goto fail;
+@@ -595,6 +596,7 @@
+ 
+ 	m->allrecord_lock = F_UNLCK;
+ 
++        (void) memset(&m->allrecord_mutex, 0, sizeof(m->allrecord_mutex));
+ 	ret = pthread_mutex_init(&m->allrecord_mutex, &ma);
+ 	if (ret != 0) {
+ 		goto fail;
+@@ -885,6 +887,7 @@
+ 	if (ret != 0) {
+ 		goto cleanup;
+ 	}
++        (void) memset(ptr, 0, sizeof(*ptr));
+ 	ret = pthread_mutex_init(ptr, &ma);
+ 	if (ret != 0) {
+ 		goto cleanup;

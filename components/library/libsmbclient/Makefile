@@ -21,91 +21,105 @@
 
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2023 Friedrich Kink. All rights reserved.
 #
 
-# Samba does not work properly on i386 when built by studio with -xO3+.
-ifeq ($(MACH), sparc)
-# parallelize up to 64 concurent tasks for sparc
-WAFOPT1 = -j64
-else
-# parallelize up to 16 concurent tasks for i386
-WAFOPT1 = -j16
-endif
+BUILD_BITS =            64_and_32
+BUILD_STYLE =           waf
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.4.16
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	4.17.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
-COMPONENT_PROJECT_URL=	http://www.samba.org/
+COMPONENT_PROJECT_URL=	https://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:2681f6d9d838d90273f151539331a2051b2292fc8784d4bbc416caae5d0c438e
-COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:c0512079db4cac707ccea4c18aebbd6b2eb3acf6e90735e7f645a326be1f4537
+COMPONENT_ARCHIVE_URL=	https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
+#COMPONENT_SIG_URL =     https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI=		library/samba/libsmbclient
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
+TEST_TARGET =           $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/common.mk
 
 # waf
-WAF_PATH	=	PATH=$(BUILD_DIR)/samba/buildtools/bin:$(PROTO_DIR)/usr/bin:$$PATH:/usr/perl5/bin
-# Verbosed waf produces unreadable output if parallelized.
-# Uncomment to enable verbose build.
-#override WAFOPT1	=	-v -j1
-
-include $(WS_MAKE_RULES)/ips.mk
+WAF = PYTHONHASHSEED=1 $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf
 
 # Compiler settings
-CFLAGS	+=	$($(COMPILER)_C99_ENABLE)
+CFLAGS	+=	$($(COMPILER)_C99_ENABLE) -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto
 
-LIBS +=		-lrt -lsec -lcrypt -lmd5 -lsocket -lnsl
+LDFLAGS.32 +=	-R/usr/lib/libsmbclient
+LDFLAGS.64 +=	-R/usr/lib/libsmbclient/$(MACH64)
+LDFLAGS.32 +=	-R/usr/lib/libsmbclient/private
+LDFLAGS.64 +=	-R/usr/lib/libsmbclient/private/$(MACH64)
+LDFLAGS +=	$(LDFLAGS.$(BITS))
 
-LDFLAGS.32 +=   -R/usr/lib/libsmbclient
-LDFLAGS.32 +=   -R/usr/lib/libsmbclient/private
-LDFLAGS += $(LDFLAGS.$(BITS))
+LDFLAGS +=      -lrt -lsec -lcrypt -lmd5 -lsocket -lnsl -lsendfile
+LDFLAGS +=      -lldap-2.6 -lsendfile -lavahi-common -lavahi-core
 
-CPPFLAGS +=	$(CPP_LARGEFILES)
-CPPFLAGS +=	$(CPP_XPG6MODE)
-CPPFLAGS +=	-I/usr/include/openldap
+CPPFLAGS +=	$(CPP_LARGEFILES) $(CPP_XPG6MODE)
+CPPFLAGS +=	-I/usr/include/openldap -I/usr/include/jansson
+
+# Flag is not picked up for lib/replace
+LDFLAGS +=     $(LD_SSP)
 
 LD_OPTIONS += 	-B direct
 
+# to avoid a clash with system gssapi.h (some declaration are not compatible)
+COMPONENT_POST_CONFIGURE_ACTION= ( \
+        $(RM) $(@D)/third_party/heimdal/lib/gssapi/gssapi.h; \
+         );
+
+CONFIGURE_PREFIX =      /usr/lib/libsmbclient
+
 # !!! Note, this is not a configure.mk-based Makefile !!!
-CONFIGURE_OPTIONS =	--prefix=/usr
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc/samba
-CONFIGURE_OPTIONS +=	--includedir=/usr/include/libsmbclient
-CONFIGURE_OPTIONS +=	--with-privatedir=/etc/samba/private
-CONFIGURE_OPTIONS +=	--localstatedir=/var/samba
-CONFIGURE_OPTIONS +=	--with-logfilebase=/var/samba/log
-CONFIGURE_OPTIONS +=	--sharedstatedir=/var/samba/com
-CONFIGURE_OPTIONS.32 += --libdir=/usr/lib/libsmbclient
-CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/libsmbclient/$(MACH64)
+# --enable-fhs should not be on
+CONFIGURE_OPTIONS +=    --prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS +=    --exec-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS.32 += --bindir=$(CONFIGURE_PREFIX)/bin
+CONFIGURE_OPTIONS.64 += --bindir=$(CONFIGURE_PREFIX)/bin/$(MACH64)
+CONFIGURE_OPTIONS.32 += --sbindir=$(CONFIGURE_PREFIX)/sbin
+CONFIGURE_OPTIONS.64 += --sbindir=$(CONFIGURE_PREFIX)/sbin/$(MACH64)
+CONFIGURE_OPTIONS.32 += --libdir=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS.64 += --libdir=$(CONFIGURE_PREFIX)/$(MACH64)
+CONFIGURE_OPTIONS.32 += --with-privatelibdir=$(CONFIGURE_PREFIX)/private
+CONFIGURE_OPTIONS.64 += --with-privatelibdir=$(CONFIGURE_PREFIX)/private/$(MACH64)
+CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)/samba
+CONFIGURE_OPTIONS.32 += --with-pammodulesdir=$(CONFIGURE_PREFIX)/security
+CONFIGURE_OPTIONS.64 += --with-pammodulesdir=$(CONFIGURE_PREFIX)/security/$(MACH64)
+CONFIGURE_OPTIONS +=    --datarootdir=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS +=    --mandir=$(USRSHAREMANDIR)
+CONFIGURE_OPTIONS +=    --htmldir=/usr/share/samba/swat/help
+CONFIGURE_OPTIONS +=    --includedir=$(USRINCDIR)/libsmbclient
+CONFIGURE_OPTIONS +=    --with-privatedir=$(ETCDIR)/samba/private
+CONFIGURE_OPTIONS +=    --localstatedir=$(VARDIR)/samba
+CONFIGURE_OPTIONS +=    --with-logfilebase=$(VARDIR)/samba/log
+CONFIGURE_OPTIONS +=    --sharedstatedir=$(VARDIR)/samba/com
+CONFIGURE_OPTIONS +=    --libexecdir=$(CONFIGURE_PREFIX)/libexec/$(MACH64)
+CONFIGURE_OPTIONS +=    --with-bind-dns-dir=$(CONFIGURE_PREFIX)/bind-dns
+
 CONFIGURE_OPTIONS +=	--with-static-modules=
 CONFIGURE_OPTIONS +=	--with-shared-modules=
 CONFIGURE_OPTIONS +=	--with-ads
 CONFIGURE_OPTIONS +=	--with-winbind
 CONFIGURE_OPTIONS +=	--with-ldap
-CONFIGURE_OPTIONS +=	--with-libldap=ldap_r
-CONFIGURE_OPTIONS +=	--nocache
 CONFIGURE_OPTIONS +=	--nopyo
 CONFIGURE_OPTIONS +=	--disable-rpath
 CONFIGURE_OPTIONS +=	--disable-rpath-private-install 
 CONFIGURE_OPTIONS +=	--bundled-libraries=ALL
+CONFIGURE_OPTIONS +=	--disable-python
+CONFIGURE_OPTIONS +=	--without-ad-dc
+CONFIGURE_OPTIONS +=    --disable-spotlight
 
-CONFIGURE_ENV += 	CC="$(CC)"
-CONFIGURE_ENV += 	CPP="$(CC) -E"
-CONFIGURE_ENV += 	AWK=gawk
-CONFIGURE_ENV += 	PERL=$(PERL)
-CONFIGURE_ENV += 	LD="$(LD)"
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=     	CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += 	LDFLAGS="$(LDFLAGS)"
-CONFIGURE_ENV +=	LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
-CONFIGURE_ENV +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
-CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
+CONFIGURE_ENV +=        CPP="$(CC) -E"
+CONFIGURE_ENV +=        CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV +=        CUPS_CONFIG=$(USRBINDIR)/cups-config
+CONFIGURE_ENV +=        PATH=$(GNUBIN.$(BITS)):$(USRBINDIR.$(BITS)):$(PATH.gnu)
 
 # Build targets for WAF:
 # (motivation) Samba started to use WAF (build system from Google) from the 3.x
@@ -122,24 +136,26 @@ $(BUILD_DIR_32)/.BDprep:	$(SOURCE_DIR)/.prep
 	$(MKDIR) $(@D)
 	# Clone SOURCE_DIR
 	$(CLONEY) $(SOURCE_DIR) $(@D)
-	# clenup of clone
-	(cd $(@D) ; $(ENV) $(WAF_PATH) $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf distclean $(WAFOPT1) )
+	# cleanup of clone
+	(cd $(@D) ; $(ENV) $(WAF) distclean )
 	$(TOUCH) $@
 
 # Configure of Samba
 $(BUILD_DIR_32)/.configured:	$(BUILD_DIR_32)/.BDprep
-	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) \
-		$(CONFIGURE_ENV.32) $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.32) )
+	(cd $(@D) ; $(ENV) $(CONFIGURE_ENV) \
+		$(CONFIGURE_ENV.32) $(WAF) configure $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.32) )
 	$(TOUCH) $@
 
 # Build of Samba + Winbind.
 $(BUILD_DIR_32)/.built:	$(BUILD_DIR_32)/.configured
-	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf build $(WAFOPT1) --targets=smbclient)
+	(cd $(@D) ; \
+        $(GSED) -i -e 's:/usr/lib/amd64:/usr/lib:' bin/c4che/default_cache.py; \
+	 $(ENV) $(WAF) build --targets=smbclient)
 	$(TOUCH) $@
 
 # Install of Samba + Winbind.
 $(BUILD_DIR_32)/.installed:	$(BUILD_DIR_32)/.built
-	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf install $(WAFOPT1) --targets=smbclient --destdir=$(PROTO_DIR) )
+	(cd $(@D) ; $(ENV) $(WAF) install --targets=smbclient --destdir=$(PROTO_DIR) )
 	$(TOUCH) $@
 
 $(BUILD_DIR)/.pc.fixed:	$(INSTALL_32)
@@ -147,18 +163,15 @@ $(BUILD_DIR)/.pc.fixed:	$(INSTALL_32)
 	$(TOUCH) $@
 
 # common targets
-build:		$(BUILD_32)
-
 install:	$(INSTALL_32) $(BUILD_DIR)/.pc.fixed
 
-test:		$(NO_TESTS)
-
-clean::
-	$(RM) -r $(BUILD_DIR)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += system/network/avahi
