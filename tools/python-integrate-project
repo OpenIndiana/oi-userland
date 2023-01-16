@@ -294,7 +294,9 @@ sed -i -e 's/license:TODO/'"$LICENSE"'/g' Makefile
 TEST_STYLE=
 cd "$SOURCE_DIR"
 while true ; do
-	tox -l && TEST_STYLE="tox" && break
+	TOX_OUT=$(tox -l)
+	TOX_RET=$?
+	((TOX_RET == 0)) && ! printf "%s" "$TOX_OUT" | grep -q 'assuming empty tox\.ini' && TEST_STYLE="tox" && break
 
 	pytest --setup-plan
 	(($? != 5)) && TEST_STYLE="pytest" && break
