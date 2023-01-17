@@ -1,55 +1,42 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright 2016, Aurelien Larcher.
-# Copyright 2019, Michal Nowak
-# Copyright 2021, Nona Hansel
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+#
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project markdown
+#
+
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
+
 include ../../../make-rules/shared-macros.mk
 
+COMPONENT_NAME =		markdown
+HUMAN_VERSION =			3.4.1
+COMPONENT_SUMMARY =		markdown - Python implementation of Markdown.
+COMPONENT_PROJECT_URL =		https://Python-Markdown.github.io/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/85/7e/133e943e97a943d2f1d8bae0c5060f8ac50e6691754eb9dbe036b047a9bb/Markdown-3.4.1.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:3b809086bb6efad416156e00a0da66fe47618a5d6918dd688f53f40c8e4cfeff
+COMPONENT_LICENSE =		BSD-3-Clause
+COMPONENT_LICENSE_FILE =	LICENSE.md
 
-COMPONENT_NAME=		Markdown
-COMPONENT_VERSION=	3.1
-COMPONENT_REVISION=	4
-COMPONENT_SUMMARY=	'Python implementation of Markdown'
-COMPONENT_FMRI=		library/python/markdown
-COMPONENT_PROJECT_URL=	https://python-markdown.github.io
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:fc4a6f69a656b8d858d7503bda633f4dd63c2d70cf80abdc6eafa64c4ae8c250
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_LICENSE=	BSD
-COMPONENT_LICENSE_FILE=	LICENSE.md
+COMPONENT_SRC = Markdown-$(COMPONENT_VERSION)
+TEST_STYLE = setup.py
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
-
-TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
