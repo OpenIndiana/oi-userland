@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		iniconfig
-HUMAN_VERSION =			1.1.1
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		iniconfig - iniconfig: brain-dead simple config-ini parsing
-COMPONENT_PROJECT_URL =		http://github.com/RonnyPfannschmidt/iniconfig
+HUMAN_VERSION =			2.0.0
+COMPONENT_SUMMARY =		iniconfig - brain-dead simple config-ini parsing
+COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/iniconfig
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/23/a2/97899f6bd0e873fed3a7e67ae8d3a08b21799430fb4da15cfedf10d6e2c2/iniconfig-1.1.1.tar.gz
+	https://files.pythonhosted.org/packages/d7/4b/cbd8e699e64a6f16ca3a8220661b5f83792b3017d0f79807cb8708d33913/iniconfig-2.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32
+	sha256:2d91e135bf72d31a410b17c16da610a82cb55f6b0477d1a902134b24a455b8b3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+TEST_STYLE = pytest
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
@@ -38,8 +39,6 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/pytest
