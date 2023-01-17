@@ -204,8 +204,14 @@ ok 27 - set up symlink tests
 ok 28 - symlinks respected in core.attributesFile
 ok 29 - symlinks respected in info/attributes
 ok 30 - symlinks not respected in-tree
-# passed all 30 test(s)
-1..30
+ok 31 - large attributes line ignored in tree
+ok 32 - large attributes line ignores trailing content in tree
+ok 33 # skip large attributes file ignored in tree (missing EXPENSIVE)
+ok 34 - large attributes line ignored in index
+ok 35 - large attributes line ignores trailing content in index
+ok 36 # skip large attributes file ignored in index (missing EXPENSIVE)
+# passed all 36 test(s)
+1..36
 *** t0004-unwritable.sh ***
 ok 1 - setup
 ok 2 # skip write-tree should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
@@ -3059,12 +3065,7 @@ ok 10 # skip unreadable directory in PATH (missing SANITY of POSIXPERM,SANITY)
 ok 11 - run_command runs in parallel with more jobs available than tasks
 ok 12 - run_command runs ungrouped in parallel with more jobs available than tasks
 ok 13 - run_command runs in parallel with as many jobs as tasks
-not ok 14 - run_command runs ungrouped in parallel with as many jobs as tasks
-#	
-#		test-tool run-command --ungroup run-command-parallel 4 sh -c "printf \"%s\n%s\n\" Hello World" >out 2>err &&
-#		test_line_count = 8 out &&
-#		test_line_count = 4 err
-#	
+ok 14 - run_command runs ungrouped in parallel with as many jobs as tasks
 ok 15 - run_command runs in parallel with more tasks than jobs available
 ok 16 - run_command runs ungrouped in parallel with more tasks than jobs available
 ok 17 - run_command is asked to abort gracefully
@@ -3074,7 +3075,7 @@ ok 20 - run_command outputs (ungroup)
 ok 21 - GIT_TRACE with environment variables
 ok 22 # skip verify curlies are quoted properly (missing MINGW)
 ok 23 # skip can spawn .bat with argv[0] containing spaces (missing MINGW)
-# failed 1 among 23 test(s)
+# passed all 23 test(s)
 1..23
 *** t0062-revision-walking.sh ***
 ok 1 - setup
@@ -6310,8 +6311,10 @@ ok 86 - fsck $name notices bogus $name
 ok 87 - bogus head does not fallback to all heads
 ok 88 - detect corrupt index file in fsck
 ok 89 - fsck error and recovery on invalid object type
-# passed all 89 test(s)
-1..89
+ok 90 - fsck error on gitattributes with excessive line lengths
+ok 91 - fsck error on gitattributes with excessive size
+# passed all 91 test(s)
+1..91
 *** t1500-rev-parse.sh ***
 ok 1 - setup
 ok 2 - toplevel: --is-bare-repository
@@ -16335,9 +16338,20 @@ ok 106 - %(describe:match=...) vs git describe --match ...
 ok 107 - %(describe:exclude=...) vs git describe --exclude ...
 ok 108 - %(describe:tags) vs git describe --tags
 ok 109 - %(describe:abbrev=...) vs git describe --abbrev=...
+ok 110 - log --pretty with space stealing
+ok 111 - log --pretty with invalid padding format
+ok 112 - log --pretty with magical wrapping directives
+ok 113 - log --pretty with overflowing wrapping directive
+ok 114 - log --pretty with overflowing padding directive
+ok 115 - log --pretty with padding and preceding control chars
+ok 116 - log --pretty truncation with control chars
+ok 117 # skip log --pretty with huge commit message (missing EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT)
+ok 118 # skip set up huge commit (missing EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT)
+ok 119 # skip log --pretty with huge commit message (missing EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT)
+ok 120 # skip log --pretty with huge commit message does not cause allocation failure (missing EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT)
 # still have 1 known breakage(s)
-# passed all remaining 108 test(s)
-1..109
+# passed all remaining 119 test(s)
+1..120
 *** t4206-log-follow-harder-copies.sh ***
 ok 1 - add a file path0 and commit.
 ok 2 - Change path0.
@@ -29549,10 +29563,10 @@ ok 67 - prompt - conflict indicator
 missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !REFFILES !RUNS_COMMANDS_FROM_PWD ADD_OUT AUTOIDENT BUILTIN_TXT_BISECT__HELPER BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_ENV__HELPER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS COMMIT_OUT EXPENSIVE FSMONITOR_DAEMON GPG GPGSM GPGSSH_VERIFYTIME JGIT LONG_REF MINGW NATIVE_CRLF PTHREAD RFC1991 RUNTIME_PREFIX SANITY SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK TTY UPDATE_INDEX_OUT UTF8_NFD_TO_NFC WINDOWS WRITE_TREE_OUT
 
 
-failed test(s): t0061 t0211 t1700 t2501 t3200 t3404 t4150 t4202 t7609 t9210 t9902
+failed test(s): t0211 t1700 t2501 t3200 t3404 t4150 t4202 t7609 t9210 t9902
 
 fixed   1
-success 25530
-failed  20
+success 25544
+failed  19
 broken  266
-total   26333
+total   26352
