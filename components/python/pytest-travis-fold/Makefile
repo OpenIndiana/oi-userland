@@ -19,7 +19,8 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-travis-fold
-COMPONENT_VERSION =		1.3.0
+HUMAN_VERSION =			1.3.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pytest-travis-fold - Folds captured output sections in Travis CI build log
 COMPONENT_PROJECT_URL =		https://github.com/abusalimov/pytest-travis-fold
 COMPONENT_ARCHIVE_URL =		\
