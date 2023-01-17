@@ -1,4 +1,5 @@
 | file result testRunner |
+BitmapStreamTests removeFromSystem.
 testRunner _ TestRunner new runAll.
 result _ testRunner result.
 file _ StandardFileStream fileNamed:'results.vm'.
