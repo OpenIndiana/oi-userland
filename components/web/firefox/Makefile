@@ -23,7 +23,7 @@ include ../../../make-rules/shared-macros.mk
 ESR = esr
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	102.6.0
+COMPONENT_VERSION =	102.7.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,7 +34,7 @@ else
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 COMPONENT_ARCHIVE_HASH= \
-	sha256:d23154a4d876d76122161e7be2659de6e88985802d9e5125baf1d133f37f0ffe
+	sha256:a7a4603417fcb42ec37f2cff9034280ce2ec772c0a5fc500fada4286ba3114aa
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -48,7 +48,7 @@ COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.61.0
+RUST_VERSION = 1.66.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -223,11 +223,12 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/.*/d" '
 
 # Build dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += developer/build/autoconf-213
+REQUIRED_PACKAGES += developer/clang-15
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += library/python/psutil
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/http-parser
@@ -247,6 +248,7 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/gcc-10-compat-links
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
