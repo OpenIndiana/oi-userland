@@ -20,16 +20,15 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2023, Klaus Ziegler
 #
 
-PREFERRED_BITS=	64
-BUILD_BITS=	32_and_64
+BUILD_BITS= 64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-backends
-COMPONENT_VERSION=	1.0.28
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.1.1
 COMPONENT_FMRI=         image/scanner/xsane/sane-backends
 COMPONENT_SUMMARY=      SANE library and backends
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -37,8 +36,8 @@ COMPONENT_PROJECT_URL=	http://www.sane-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:31260f3f72d82ac1661c62c5a4468410b89fb2b4a811dabbfcc0350c1346de03
-COMPONENT_ARCHIVE_URL=	https://gitlab.com/sane-project/backends/uploads/9e718daff347826f4cfe21126c8d5091/$(COMPONENT_ARCHIVE)
+	sha256:dd4b04c37a42f14c4619e8eea6a957f4c7c617fe59e32ae2872b373940a8b603
+COMPONENT_ARCHIVE_URL=	https://gitlab.com/sane-project/backends/uploads/7d30fab4e115029d91027b6a58d64b43/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2+ and GPLv2+ with exceptions and Public Domain and IJG and LGPLv2+ and MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
@@ -51,17 +50,11 @@ CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
-SNMP_CONFIG_PATH.32 = /usr/bin/net-snmp-config
-SNMP_CONFIG_PATH.64 = /usr/bin/$(MACH64)/net-snmp-config
-
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--disable-locking
 CONFIGURE_OPTIONS +=	--enable-pthread
 CONFIGURE_OPTIONS +=	--with-gphoto2
 CONFIGURE_OPTIONS +=	--with-usb
-CONFIGURE_OPTIONS +=	--without-api-spec
-
-CONFIGURE_ENV += SNMP_CONFIG_PATH="$(SNMP_CONFIG_PATH.$(BITS))"
 
 COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
 
@@ -71,9 +64,15 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libgphoto2-2
+REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libusb-1
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
+REQUIRED_PACKAGES += system/network/avahi
+REQUIRED_PACKAGES += web/curl
