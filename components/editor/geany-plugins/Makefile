@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany-plugins
 COMPONENT_VERSION=      1.38
-COMPONENT_REVISION=     4
+COMPONENT_REVISION=     5
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=         editor/geany/plugins
 COMPONENT_SUMMARY=      Plugins for Geany editor
@@ -33,7 +33,7 @@ COMPONENT_LICENSE=      GPLv2
 
 PYTHON_VERSION= 3.9
 
-COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -f)
+COMPONENT_PREP_ACTION += ( cd $(@D) && rm ltmain.sh; autoreconf -fi )
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
