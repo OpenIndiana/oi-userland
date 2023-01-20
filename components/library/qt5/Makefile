@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=			qt
 COMPONENT_VERSION_MJR=	5.15
 COMPONENT_VERSION=		$(COMPONENT_VERSION_MJR).4
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=		3
 COMPONENT_SUMMARY=		Qt cross-platform application and UI framework
 COMPONENT_PROJECT_URL=	https://www.qt.io/
 COMPONENT_SRC=			$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
@@ -36,11 +36,11 @@ COMPONENT_LICENSE_FILE=	qt5.license
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PG_BINDIR):$(MYSQL_BINDIR):$(GCC_BINDIR):$(PATH.gnu)
+PATH= $(PG_BINDIR):$(MYSQL_BINDIR):$(GCC_BINDIR):$(PATH.gnu)
 
-QT_PREFIX=$(QT5_BASEDIR)
+QT_PREFIX= $(QT5_BASEDIR)
 
-QT_ARCHSUBDIR.64=$(MACH64)
+QT_ARCHSUBDIR.64= $(MACH64)
 QT_PLATFORM.64= solaris-g++-64
 
 # build with the distribution preferred libjpeg implementation
@@ -73,7 +73,7 @@ CONFIGURE_OPTIONS += -plugin-sql-psql
 CONFIGURE_OPTIONS += -plugin-sql-sqlite
 CONFIGURE_OPTIONS += -system-sqlite
 CONFIGURE_OPTIONS += -openssl-linked
-CONFIGURE_OPTIONS += OPENSSL_INCDIR='/usr/openssl/1.1/include'
+CONFIGURE_OPTIONS += OPENSSL_INCDIR=$(OPENSSL_INCDIR)
 CONFIGURE_OPTIONS += OPENSSL_LIBDIR=$(OPENSSL_LIBDIR)
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
@@ -99,9 +99,9 @@ COMPONENT_POST_INSTALL_ACTION= ( \
 )
 
 # Build dependencies
+REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += database/freetds
-REQUIRED_PACKAGES += database/mariadb-106/client
 REQUIRED_PACKAGES += system/header/header-drm
 REQUIRED_PACKAGES += x11/keyboard/data-xkb
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
@@ -110,10 +110,10 @@ REQUIRED_PACKAGES += x11/library/libpthread-stubs
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
@@ -132,11 +132,12 @@ REQUIRED_PACKAGES += library/graphics/libmng
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/md4c
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/clang-13
+REQUIRED_PACKAGES += runtime/clang-15
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
