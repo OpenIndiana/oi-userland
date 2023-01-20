@@ -28,10 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
 COMPONENT_MAJOR_VERSION=3.25
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).1
-COMPONENT_PROJECT_URL=  https://www.cmake.org/
-COMPONENT_FMRI=         developer/build/cmake
-COMPONENT_CLASSIFICATION=Development/Distribution Tools
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).2
 COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_DESCRIPTION= \
 CMake is a family of tools designed to build, test and package software. \
@@ -39,17 +36,20 @@ It is used to control the software compilation process using simple platform \
 and compiler-independent configuration files. \
 CMake generates native makefiles and workspaces that can be used in the \
 workspaces that can be used in the compiler environment of your choice.
+COMPONENT_PROJECT_URL=  https://www.cmake.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1c511d09516af493694ed9baf13c55947a36389674d657a2d5e0ccedc6b291d8
+COMPONENT_ARCHIVE_HASH=	sha256:c026f22cb931dd532f648f087d587f07a1843c6e66a3dfca4fb0ea21944ed33c
 COMPONENT_ARCHIVE_URL=	https://www.cmake.org/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         developer/build/cmake
+COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_LICENSE=      BSD, MIT, GPLv2, Curl, PD
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Pass cmake "major" version number to the publish phase to hopefully reduce
 # the amount of change needed between each update.
-PKG_MACROS+= CMAKE_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
+PKG_MACROS += CMAKE_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
 
 # Need to remove this option from LD_OPTIONS (only affects sparc build);
 # it causes a SegFault failure in kwsys/testSystemInformation
@@ -122,7 +122,7 @@ COMPONENT_TEST_ENV += CLICOLOR=0
 # Results output is different on Intel vs. SPARC.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
-COMPONENT_TEST_TARGETS =	test
+COMPONENT_TEST_TARGETS = test
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/\s\s*[0-9][0-9]*\.[0-9][0-9]* sec//"' \
