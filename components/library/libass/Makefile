@@ -19,8 +19,8 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libass
 COMPONENT_VERSION=	0.17.0
-COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	Portable renderer for the ASS/SSA (Substation Alpha) subtitle format
+COMPONENT_REVISION= 2
 COMPONENT_PROJECT_URL=	https://github.com/libass/libass
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -35,8 +35,13 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
+ifeq ($(strip $(MACH)),i386)
 CONFIGURE_OPTIONS.64 += --host=amd64-pc-solaris2.11
 CONFIGURE_OPTIONS.32 += --host=i686-pc-solaris2.11
+else
+CONFIGURE_OPTIONS.64 += --host=sparcv9-sun-solaris2.11
+CONFIGURE_OPTIONS.32 += --host=sparc-sun-solaris2.11
+endif
 
 # build requirement
 REQUIRED_PACKAGES += developer/assembler/nasm
