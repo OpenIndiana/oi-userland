@@ -1,4 +1,5 @@
 | file result testRunner |
+AllocationTest removeFromSystem.
 BitmapStreamTests removeFromSystem.
 testRunner _ TestRunner new runAll.
 result _ testRunner result.
