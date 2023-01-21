@@ -18,24 +18,21 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= exiv2
-COMPONENT_VERSION= 0.27.5
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 0.27.6
 COMPONENT_SUMMARY= Image metadata library and tools
+COMPONENT_PROJECT_URL= https://www.exiv2.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1da1721f84809e4d37b3f106adb18b70b1b0441c860746ce6812bb3df184ed6c
-COMPONENT_ARCHIVE_URL=	https://github.com/Exiv2/exiv2/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL = https://www.exiv2.org
-COMPONENT_FMRI = image/library/exiv2
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_LICENSE = GPLv2
+COMPONENT_ARCHIVE_HASH=	sha256:f16ee5ff08b6994c66106109417857f13e711fca100ac43c6a403d4f02b59602
+COMPONENT_ARCHIVE_URL= https://github.com/Exiv2/exiv2/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI= image/library/exiv2
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_LICENSE= GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 # We don't have GTest
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-
-# mkdir option '-v' is used
-PATH= $(PATH.gnu)
 
 # We don't have GTest
 #CMAKE_OPTIONS += -DEXIV2_BUILD_UNIT_TESTS=On
