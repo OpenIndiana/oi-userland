@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=				qt
 COMPONENT_VERSION_MJR=		$(QT6_VERSION)
 COMPONENT_VERSION=			$(COMPONENT_VERSION_MJR).4
-COMPONENT_REVISION=     	3
+COMPONENT_REVISION=     	4
 COMPONENT_SUMMARY=			Qt cross-platform application and UI framework
 COMPONENT_PROJECT_URL=		https://www.qt.io/
 COMPONENT_SRC=				$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
@@ -35,9 +35,7 @@ PATH=$(PG_BINDIR):$(MYSQL_BINDIR):$(GCC_BINDIR):$(PATH.gnu)
 
 QT_PREFIX= $(QT6_BASEDIR)
 
-#QT_ARCHSUBDIR.32=
-QT_ARCHSUBDIR.64=$(MACH64)
-#QT_PLATFORM.32= solaris-g++
+QT_ARCHSUBDIR.64= $(MACH64)
 QT_PLATFORM.64= solaris-g++-64
 
 # build with the distribution preferred libjpeg implementation
@@ -46,7 +44,7 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
 OPENSSL_VERSION	= 1.1
-Clang_VERSION	= 13.0
+Clang_VERSION	= 15.0
 
 LDFLAGS += -Wl,-rpath,$(QT6_LIBDIR):/usr/clang/$(Clang_VERSION)/lib:$(MYSQL_LIBDIR):$(PG_LIBDIR)
 #CONFIGURE_ENV+= MySQL_LIBRARY=/usr/mysql/lib/amd64
@@ -113,10 +111,10 @@ REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += image/library/libjpeg6
 REQUIRED_PACKAGES += image/library/libjpeg6-ijg
@@ -131,11 +129,12 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/libmng
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libwebp
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/clang-13
+REQUIRED_PACKAGES += runtime/clang-15
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
