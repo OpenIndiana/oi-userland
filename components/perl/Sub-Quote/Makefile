@@ -15,20 +15,20 @@
 #
 
 BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Sub::Quote
-HUMAN_VERSION =			2.006006
+HUMAN_VERSION =			2.006008
 COMPONENT_SUMMARY =		Sub::Quote - Efficient generation of subroutines via string eval
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6e4e2af42388fa6d2609e0e82417de7cc6be47223f576592c656c73c7524d89d
+	sha256:94bebd500af55762e83ea2f2bc594d87af828072370c7110c60c238a800d15b2
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
 PERL_REQUIRED_PACKAGES += runtime/perl
