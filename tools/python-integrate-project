@@ -298,7 +298,7 @@ while true ; do
 	TOX_RET=$?
 	((TOX_RET == 0)) && ! printf "%s" "$TOX_OUT" | grep -q 'assuming empty tox\.ini' && TEST_STYLE="tox" && break
 
-	pytest --setup-plan
+	pytest -p no:checkdocs --setup-plan
 	(($? != 5)) && TEST_STYLE="pytest" && break
 
 	[[ -f setup.py ]] && python setup.py test --help && TEST_STYLE="setup.py" && break
