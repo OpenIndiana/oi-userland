@@ -10,20 +10,21 @@
 
 #
 # Copyright 2016 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+# Copyright 2023 Klaus Ziegler
 #
 
 BUILD_BITS=64
+USE_OPENSSL11=yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdns-recursor
-COMPONENT_VERSION=	4.5.5
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.8.1
 COMPONENT_PROJECT_URL=	https://www.powerdns.com/downloads.html
 COMPONENT_FMRI=		service/network/dns/powerdns-recursor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:a836a39b99fcc21873e4ba3a60aa9915a33fac7b44922696e9a257f551fe05fb
+	sha256:d7b03447009257e512f01fcc46cbdb9c859b672a1c9b23faf382e870765b0f0d
 COMPONENT_ARCHIVE_URL=	http://downloads.powerdns.com/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_SUMMARY=	a DNS server
@@ -40,8 +41,9 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
+CONFIGURE_OPTIONS += ac_cv_func_EVP_MD_CTX_new=yes
+CONFIGURE_OPTIONS += ac_cv_func_EVP_MD_CTX_free=yes
 CONFIGURE_OPTIONS += --sysconfdir=/etc/powerdns
-CONFIGURE_OPTIONS += --without-luajit
 CONFIGURE_OPTIONS += --with-lua
 CONFIGURE_OPTIONS += --enable-reproducible
 CONFIGURE_OPTIONS += --enable-unit-tests
@@ -57,7 +59,7 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/c++/protobuf
 REQUIRED_PACKAGES += library/security/libsodium
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/boost
