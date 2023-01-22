@@ -12,18 +12,20 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
+# Copyright 2023 Friedrich Kink
 #
+
+BUILD_BITS=	64_and_32
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mm-common
-COMPONENT_VERSION=      0.9.12
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      1.0.5
 COMPONENT_SUMMARY=      GNOME C++ bindings effort http://www.gtkmm.org support tools
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ceffdcce1e5b52742884c233ec604bf6fded12eea9da077ce7a62c02c87e7c0b
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.9/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:705c6d29f4116a29bde4e36cfc1b046c92b6ef8c6dae4eaec85018747e6da5aa
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.0/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_FMRI=         library/desktop/c++/mm-common
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
@@ -31,12 +33,22 @@ COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
 TEST_TARGET= $(NO_TESTS)
+
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PRE_CONFIGURE_ACTION += ( \
+		cd $(SOURCE_DIR); \
+		./autogen.sh; \
+		$(CLONEY) $(SOURCE_DIR) $(@D); \
+		$(GMAKE) distclean; \
+		);
 
 PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib
+
+COMPONENT_POST_INSTALL_ACTION.64= $(GSED) -i -e 's:env python3:python$(PYTHON_VERSION):' $(PROTOUSRBINDIR)/mm-common-get
 
 # Configure checks
 REQUIRED_PACKAGES += text/gawk
@@ -44,5 +56,5 @@ REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += web/wget
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += text/gnu-sed
