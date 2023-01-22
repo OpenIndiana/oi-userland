@@ -15,11 +15,13 @@
 #
 
 BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libexif
 COMPONENT_RELEASE= 0.6
 COMPONENT_VERSION= $(COMPONENT_RELEASE).24
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= EXIF tag parsing library for digital cameras
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -27,27 +29,18 @@ COMPONENT_ARCHIVE_HASH= sha256:e5f15eeab693028cfdc4c0d78f024e1ca78baa0e1f636dc44
 COMPONENT_ARCHIVE_URL= https://github.com/libexif/libexif/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL= https://libexif.github.io/
 COMPONENT_FMRI= image/library/libexif
-COMPONENT_LICENSE= LGPLv2.1
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
+COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -fi)
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-docs
 
 unexport SHELLOPTS
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/XPASS:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/XFAIL:/p" ' \
-	'-e "/ERROR:/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

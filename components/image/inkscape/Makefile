@@ -13,30 +13,27 @@
 # Copyright 2020 Michal Nowak
 #
 
-BUILD_BITS=		64
-BUILD_STYLE=		cmake
-
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
 COMPONENT_VERSION=	0.92.4
-COMPONENT_REVISION=	3
-COMPONENT_FMRI=		image/editor/inkscape
-COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	Opensource professional vector graphics editor
-COMPONENT_PROJECT_URL=	http://www.inkscape.org/
+COMPONENT_PROJECT_URL=	https://www.inkscape.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:57ec2da8177b36614a513e2822efd73af721e690f7ddc6bd0a5fbb1525b4515e
 COMPONENT_ARCHIVE_URL=	https://media.inkscape.org/dl/resources/file/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		image/editor/inkscape
+COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_LICENSE=	GPLv2
 
-TEST_TARGET=		$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 LDFLAGS+= $(JPEG_LDFLAGS)
 
@@ -57,13 +54,15 @@ CMAKE_OPTIONS+=  -DJPEG_INCLUDE_DIR=$(JPEG_INCDIR)
 CMAKE_OPTIONS+=  -DJPEG_LIBRARY=$(JPEG_LIBDIR)/libjpeg.so
 
 REQUIRED_PACKAGES += system/library/boost
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += developer/gsl
 REQUIRED_PACKAGES += image/imagemagick
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/potrace
 REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/c++/libcdr
 REQUIRED_PACKAGES += library/c++/librevenge
