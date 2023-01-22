@@ -928,6 +928,9 @@ JPEG_LDFLAGS.32 =  -L$(JPEG_LIBDIR.32) -R$(JPEG_LIBDIR.32)
 JPEG_LDFLAGS.64 =  -L$(JPEG_LIBDIR.64) -R$(JPEG_LIBDIR.64)
 JPEG_LDFLAGS =     $(JPEG_LDFLAGS.$(BITS))
 
+JPEG_IMPLEM_PKG = image/library/$(JPEG_IMPLEM)
+REQUIRED_PACKAGES_SUBST += JPEG_IMPLEM_PKG
+
 # This is the default BUILD version of tcl
 # Not necessarily the system's default version, i.e. /usr/bin/tclsh
 TCL_VERSION =  8.6
