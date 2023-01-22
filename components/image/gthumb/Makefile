@@ -13,14 +13,12 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gthumb
 # Later versions use symbolic icons
 COMPONENT_VERSION=      3.6.2
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/gthumb
 COMPONENT_SUMMARY=      GNOME image organizer (gthumb)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,7 +31,7 @@ COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
