@@ -25,33 +25,31 @@
 # Copyright 2021, Andreas Wacknitz
 #
 
-BUILD_BITS= 64
-BUILD_STYLE= configure
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnuplot
 COMPONENT_VERSION=	5.4.5
-COMPONENT_FMRI=	image/gnuplot
-COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SUMMARY=	gnuplot - plotting utility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://gnuplot.info/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:66f679115dd30559e110498fc94d926949d4d370b4999a042e724b8e910ee478
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_FMRI=	image/gnuplot
+COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_LICENSE=	gnuplot License
 
-COMPONENT_BUILD_TARGETS = all info
+COMPONENT_BUILD_TARGETS= all info
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -fi)
+COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -fi)
 
 CPPFLAGS += -I/usr/include/gd2
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-PATH=$(USRBINDIR.64):$(PATH.gnu)
+PATH= $(USRBINDIR.64):$(PATH.gnu)
 
 CONFIGURE_OPTIONS  += --libexecdir=$(CONFIGURE_LIBDIR.64)
 CONFIGURE_OPTIONS  += --sysconfdir=/etc/gnu
