@@ -56,12 +56,13 @@ REQUIRED_PACKAGES += system/library/boost
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/c++/protobuf
 REQUIRED_PACKAGES += library/security/libsodium
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += runtime/lua-53
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
+REQUIRED_PACKAGES += web/curl
