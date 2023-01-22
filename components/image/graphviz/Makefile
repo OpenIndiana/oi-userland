@@ -24,30 +24,28 @@
 # Copyright 2023 Friedrich Kink
 #
 
-# build 64-bit only
-BUILD_BITS =	64
-
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		graphviz
-COMPONENT_VERSION =		7.1.0
-COMPONENT_FMRI=			image/graphviz
-COMPONENT_DESCRIPTION =		The Graphviz layout programs take descriptions of graphs in a \
+COMPONENT_NAME=			graphviz
+COMPONENT_VERSION=		7.1.0
+COMPONENT_REVISION=		1
+COMPONENT_DESCRIPTION=	The Graphviz layout programs take descriptions of graphs in a \
             simple text language, and make diagrams in useful formats, such as images and SVG \
             for web pages, PDF or PostScript for inclusion in other documents; or display in an \
             interactive graph browser.  Graphviz has many useful features for concrete diagrams, \
             such as options for colors, fonts, tabular node layouts, line styles, hyperlinks, \
             and custom shapes.
-COMPONENT_SUMMARY =		Graph visualization software
-COMPONENT_PROJECT_URL =		https://www.graphviz.org/
-COMPONENT_CLASSIFICATION =	Applications/System Utilities
-COMPONENT_LICENSE_FILE =	COPYING
-COMPONENT_LICENSE =		EPL1.0
-COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH = sha256:8e1f773aa5728fad0c9d5fda3eb83ec749e64dde8e8852071154b08a64d63ca9
-COMPONENT_ARCHIVE_URL = \
+COMPONENT_SUMMARY=		Graph visualization software
+COMPONENT_PROJECT_URL=	https://www.graphviz.org/
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:8e1f773aa5728fad0c9d5fda3eb83ec749e64dde8e8852071154b08a64d63ca9
+COMPONENT_ARCHIVE_URL= \
     https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			image/graphviz
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_LICENSE=		EPL1.0
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
