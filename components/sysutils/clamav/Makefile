@@ -10,7 +10,7 @@
 
 #
 # Copyright 2016, Jim Klimov. All rights reserved.
-# Copyright 2022, Friedrich Kink. All rights reserved.
+# Copyright 2023, Friedrich Kink. All rights reserved.
 #
 
 BUILD_BITS=             64
@@ -24,7 +24,7 @@ COMPONENT_NAME=		clamav
 ### But our IPS version should better have same number of components.
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
-COMPONENT_VERSION=	1.0.0
+COMPONENT_VERSION=	1.0.1
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -41,7 +41,7 @@ COMPONENT_DESCRIPTION=	ClamAV is an open source (GPLv2) anti-virus toolkit, desi
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:bda39bb856902e6dd6077ea313a3eb8beccd487e0082a95917877f2b299cd86e
+COMPONENT_ARCHIVE_HASH=	sha256:0872dc1b82ff4cd7e8e4323faf5ee41a1f66ae80865d05429085b946355d86ee
 COMPONENT_PROJECT_URL=	http://www.clamav.net/
 COMPONENT_ARCHIVE_URL=	http://www.clamav.net/downloads/production/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
@@ -54,7 +54,7 @@ COMPONENT_FETCH_USER_AGENT=	fetch
 include $(WS_MAKE_RULES)/common.mk
 
 # clamav now additionally also depends on rust :-(
-RUST_VERSION=		1.65.0
+RUST_ARCH=		x86_64-unknown-illumos
 RUSTUP_HOME=		$(BUILD_DIR)/.rust_up
 CARGO_HOME=		$(BUILD_DIR)/.cargo
 
@@ -65,12 +65,8 @@ COMPONENT_PRE_CMAKE_ACTION += ( \
         export RUSTUP_HOME=$(RUSTUP_HOME); \
         export CARGO_HOME=$(CARGO_HOME); \
         export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
-        curl https://sh.rustup.rs -sSf | bash -s -- -y --no-modify-path; \
-        source $(CARGO_HOME)/env; \
-        rustup install $(RUST_VERSION); \
-        rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --default-toolchain  stable-$(RUST_ARCH) -y; \
         rustup show; \
-        cargo install --root=$(CARGO_HOME) cbindgen; \
         );
 
 ENV+=			RUSTUP_HOME=$(RUSTUP_HOME)
@@ -118,20 +114,6 @@ COMPONENT_TEST_TRANSFORMS += \
 # Needed for cmake tests
 REQUIRED_PACKAGES += system/library/iconv/unicode
 REQUIRED_PACKAGES += developer/check
-
-# currently there is no system/library/g++-4-runtime installed only two links are needed
-# to build the package:
-#
-#       ln -s $(GCC_LIBDIR)/libgcc_s.so.1 /usr/lib/$(MACH64)/libgcc_s.so.1
-#       ln -s $(GCC_LIBDIR)/liblibssp.so.0 /usr/lib/$(MACH64)/libssp.so.0
-#
-# Also some other package can provide this two links (which one?)
-# Basically it proves that the very old gcc is not needed as also mentioned by Joshua
-# M. Clulow
-
-# Rustup needs gcc-49 libraries (otherwise build fails):
-REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
