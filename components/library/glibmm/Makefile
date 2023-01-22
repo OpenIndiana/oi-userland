@@ -12,37 +12,36 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
+# Copyright 2023 Friedrich Kink
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
+BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glibmm
-COMPONENT_VERSION=	2.58.0
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	2.74.0
 COMPONENT_SUMMARY=	glibmm - C++ Wrapper for the Glib2 Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:d34189237b99e88228e6f557f7d6e62f767fe356f395a244f5ad0e486254b645
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/glibmm/2.58/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:2b472696cbac79db8e405724118ec945219c5b9b18af63dc8cfb7f1d89b0f1fa
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/glibmm/2.74/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gtkmm.org/
 COMPONENT_FMRI=		library/c++/glibmm
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-
 include $(WS_MAKE_RULES)/common.mk
 
-CXXFLAGS += -std=c++11
-
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i)
+CXXFLAGS+=		-std=c++17
 
 PATH= $(PATH.gnu)
 
-# for tests to pass
-ENV=/usr/bin/env -i
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "/^Full log written to/d" ' \
+        '-e "s/ [0-9].[0-9][0-9]s//" '
 
 # Build dependency
 REQUIRED_PACKAGES += library/desktop/c++/mm-common
@@ -50,7 +49,6 @@ REQUIRED_PACKAGES += library/desktop/c++/mm-common
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/c++/sigcpp
+REQUIRED_PACKAGES += library/c++/sigcpp3
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
