@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= exiv2
 COMPONENT_VERSION= 0.27.6
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Image metadata library and tools
 COMPONENT_PROJECT_URL= https://www.exiv2.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,6 +37,11 @@ include $(WS_MAKE_RULES)/common.mk
 
 # We don't have GTest
 #CMAKE_OPTIONS += -DEXIV2_BUILD_UNIT_TESTS=On
+
+# iconv-0.27 has an outdated, erratic FindIconv.cmake, remove this:
+# See https://www.illumos.org/issues/13824#change-40077 for details.
+COMPONENT_POST_UNPACK_ACTION += \
+	$(RM) $(SOURCE_DIR)/cmake/FindIconv.cmake
 
 LDFLAGS += -lnsl -lsocket
 
