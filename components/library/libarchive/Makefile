@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
 COMPONENT_VERSION=	3.6.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	multi-format archive and compression library
 COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
  interface for reading and writing archives in various formats such as\
@@ -53,6 +53,8 @@ include $(WS_MAKE_RULES)/common.mk
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-largefile
+# We don't have an iconv library and using this will make depending packages fail when trying to find it:
+CONFIGURE_OPTIONS += --without-iconv
 # Linking libarchive with lzo violates LZO GPL licence
 CONFIGURE_OPTIONS += --without-lzo
 # We prefer openssl over nettle.
