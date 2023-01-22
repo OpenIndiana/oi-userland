@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2023 Friedrich Kink
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
@@ -27,7 +28,7 @@
     -> set pkg.linted true>
 
 set name=pkg.fmri \
-    value=pkg:/image/graphviz/graphviz-ruby@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/$(COMPONENT_FMRI)/graphviz-ruby@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Ruby bindings for Graphviz"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -40,5 +41,4 @@ license graphviz.license.extra license="Other Notices"
 link path=usr/lib/$(MACH64)/graphviz/ruby/gv.so target=libgv_ruby.so
 file path=usr/lib/$(MACH64)/graphviz/ruby/libgv_ruby.so
 file path=usr/ruby/2.6/lib/ruby/vendor_ruby/2.6.0/amd64-solaris2.11/gv.so
-file path=usr/share/graphviz/demo/modgraph.rb
 file path=usr/share/man/man3/gv-ruby.3
