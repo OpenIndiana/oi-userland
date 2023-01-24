@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
 BUILD_STYLE = archive
@@ -19,13 +20,12 @@ BUILD_BITS = NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= awstats
-COMPONENT_VERSION= 7.8
-COMPONENT_REVISION =	1
+COMPONENT_VERSION= 7.9
 COMPONENT_SUMMARY= AWStats - Log File Analyzer for Advanced Statistics
 COMPONENT_FMRI= web/analytics/awstats
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4a65867e01bef6a9bdba3e9e411fb2a0e0d87bc4c85ff02e3cbfca001a04d4b8
+COMPONENT_ARCHIVE_HASH=	sha256:615178ed313d34315f15a522db1a5d12ca9c395e3785bb06280abff95d9a0546
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/awstats/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://awstats.sourceforge.net/
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
