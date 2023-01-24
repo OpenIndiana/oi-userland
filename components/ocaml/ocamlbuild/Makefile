@@ -10,6 +10,7 @@
 
 #
 # Copyright 2020 Aurelien Larcher
+# Copyright 2023 Friedrich Kink
 #
 
 BUILD_BITS= 64
@@ -17,8 +18,7 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	ocamlbuild
-COMPONENT_VERSION=	0.14.0
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	0.14.2
 COMPONENT_SUMMARY=	ocamlbuild - OCaml build tool
 COMPONENT_PROJECT_URL=	https://github.com/ocaml/ocamlbuild
 COMPONENT_FMRI=	library/ocaml/ocamlbuild
@@ -26,7 +26,7 @@ COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/ocaml/ocamlbuild/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:87b29ce96958096c0a1a8eeafeb6268077b2d11e1bf2b3de0f5ebc9cf8d42e78
+COMPONENT_ARCHIVE_HASH=	sha256:62d2dab6037794c702a83ac584a7066d018cf1645370d1f3d5764c2b458791b1
 COMPONENT_LICENSE= GPLv2
 
 TEST_TARGET=$(NO_TESTS)
