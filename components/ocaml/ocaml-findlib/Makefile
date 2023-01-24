@@ -10,13 +10,14 @@
 
 #
 # Copyright 2020 Aurelien Larcher
+# Copyright 2023 Friedrich Kink
 #
 
 BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ocaml-findlib
-COMPONENT_VERSION= 1.9.1
+COMPONENT_VERSION= 1.9.6
 COMPONENT_SUMMARY= ocaml-find - OCaml library manager
 COMPONENT_PROJECT_URL= http://projects.camlcity.org/projects/findlib.html
 COMPONENT_FMRI= library/ocaml/ocaml-findlib
@@ -24,12 +25,14 @@ COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_SRC=		ocamlfind-findlib-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/ocaml/ocamlfind/archive/findlib-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4cf6f1ac15564d5e4e4d9c2066f894c4bba2f9cb20ccedc9959089c5545dab9d
+COMPONENT_ARCHIVE_HASH=	sha256:caf11884c7fa33175371b1d2cd26334ae36d0aa2733f6651833c57cc86367118
 COMPONENT_LICENSE= MIT
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 include $(WS_MAKE_RULES)/ocaml.mk
+
+COMPONENT_BUILD_ARGS += -j1
 
 PATH=$(PATH.gnu)
 
@@ -41,7 +44,7 @@ CONFIGURE_OPTIONS = -sitelib $(OCAML_LIBDIR)
 CONFIGURE_OPTIONS+= -config $(OCAML_ETCDIR)/findlib.conf
 CONFIGURE_OPTIONS+= -mandir $(USRSHAREMANDIR) 
 
-COMPONENT_INSTALL_ARGS+= prefix=$(PROTO_DIR)
+COMPONENT_POST_INSTALL_ACTION= $(CP) $(@D)/src/findlib/ocamlfind_opt $(PROTOUSRBINDIR)
 
 # Build dependencies
 REQUIRED_PACKAGES+= developer/documentation-tool/openjade 
