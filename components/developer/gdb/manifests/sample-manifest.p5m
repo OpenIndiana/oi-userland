@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -25,16 +25,21 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/gcore
 file path=usr/bin/gdb
+file path=usr/bin/gdb-add-index
 file path=usr/bin/gdbtui
 file path=usr/include/ansidecl.h
 file path=usr/include/bfd.h
 file path=usr/include/bfdlink.h
+file path=usr/include/ctf-api.h
+file path=usr/include/ctf.h
+file path=usr/include/diagnostics.h
 file path=usr/include/dis-asm.h
 file path=usr/include/gdb/jit-reader.h
 file path=usr/include/plugin-api.h
 file path=usr/include/symcat.h
-file path=usr/lib/$(MACH64)/charset.alias
 file path=usr/lib/$(MACH64)/libbfd.a
+file path=usr/lib/$(MACH64)/libctf-nobfd.a
+file path=usr/lib/$(MACH64)/libctf.a
 file path=usr/lib/$(MACH64)/libopcodes.a
 file path=usr/share/gdb/python/gdb/FrameDecorator.py
 file path=usr/share/gdb/python/gdb/FrameIterator.py
@@ -56,32 +61,33 @@ file path=usr/share/gdb/python/gdb/printer/__init__.py
 file path=usr/share/gdb/python/gdb/printer/bound_registers.py
 file path=usr/share/gdb/python/gdb/printing.py
 file path=usr/share/gdb/python/gdb/prompt.py
+file path=usr/share/gdb/python/gdb/styling.py
 file path=usr/share/gdb/python/gdb/types.py
 file path=usr/share/gdb/python/gdb/unwinder.py
 file path=usr/share/gdb/python/gdb/xmethod.py
 file path=usr/share/gdb/syscalls/aarch64-linux.xml
+file path=usr/share/gdb/syscalls/amd64-illumos.xml
 file path=usr/share/gdb/syscalls/amd64-linux.xml
-file path=usr/share/gdb/syscalls/amd64-solaris.xml
 file path=usr/share/gdb/syscalls/arm-linux.xml
 file path=usr/share/gdb/syscalls/freebsd.xml
 file path=usr/share/gdb/syscalls/gdb-syscalls.dtd
+file path=usr/share/gdb/syscalls/i386-illumos.xml
 file path=usr/share/gdb/syscalls/i386-linux.xml
-file path=usr/share/gdb/syscalls/i386-solaris.xml
 file path=usr/share/gdb/syscalls/mips-n32-linux.xml
 file path=usr/share/gdb/syscalls/mips-n64-linux.xml
 file path=usr/share/gdb/syscalls/mips-o32-linux.xml
+file path=usr/share/gdb/syscalls/netbsd.xml
 file path=usr/share/gdb/syscalls/ppc-linux.xml
 file path=usr/share/gdb/syscalls/ppc64-linux.xml
 file path=usr/share/gdb/syscalls/s390-linux.xml
 file path=usr/share/gdb/syscalls/s390x-linux.xml
 file path=usr/share/gdb/syscalls/sparc-linux.xml
-file path=usr/share/gdb/syscalls/sparc-solaris.xml
 file path=usr/share/gdb/syscalls/sparc64-linux.xml
-file path=usr/share/gdb/syscalls/sparc64-solaris.xml
 file path=usr/share/gdb/system-gdbinit/elinos.py
 file path=usr/share/gdb/system-gdbinit/wrs-linux.py
 file path=usr/share/info/annotate.info
 file path=usr/share/info/bfd.info
+file path=usr/share/info/ctf-spec.info
 file path=usr/share/info/dir
 file path=usr/share/info/gdb.info
 file path=usr/share/info/gdb.info-1
@@ -91,6 +97,7 @@ file path=usr/share/info/gdb.info-4
 file path=usr/share/info/gdb.info-5
 file path=usr/share/info/gdb.info-6
 file path=usr/share/info/gdb.info-7
+file path=usr/share/info/gdb.info-8
 file path=usr/share/info/stabs.info
 file path=usr/share/locale/da/LC_MESSAGES/bfd.mo
 file path=usr/share/locale/da/LC_MESSAGES/opcodes.mo
@@ -102,11 +109,13 @@ file path=usr/share/locale/fi/LC_MESSAGES/opcodes.mo
 file path=usr/share/locale/fr/LC_MESSAGES/bfd.mo
 file path=usr/share/locale/fr/LC_MESSAGES/opcodes.mo
 file path=usr/share/locale/ga/LC_MESSAGES/opcodes.mo
+file path=usr/share/locale/hr/LC_MESSAGES/bfd.mo
 file path=usr/share/locale/id/LC_MESSAGES/bfd.mo
 file path=usr/share/locale/id/LC_MESSAGES/opcodes.mo
 file path=usr/share/locale/it/LC_MESSAGES/opcodes.mo
 file path=usr/share/locale/ja/LC_MESSAGES/bfd.mo
 file path=usr/share/locale/nl/LC_MESSAGES/opcodes.mo
+file path=usr/share/locale/pt/LC_MESSAGES/bfd.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/opcodes.mo
 file path=usr/share/locale/ro/LC_MESSAGES/bfd.mo
 file path=usr/share/locale/ro/LC_MESSAGES/opcodes.mo
@@ -124,4 +133,8 @@ file path=usr/share/locale/vi/LC_MESSAGES/bfd.mo
 file path=usr/share/locale/vi/LC_MESSAGES/opcodes.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/bfd.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/opcodes.mo
+file path=usr/share/man/man1/gcore.1
+file path=usr/share/man/man1/gdb-add-index.1
 file path=usr/share/man/man1/gdb.1
+file path=usr/share/man/man1/gdbserver.1
+file path=usr/share/man/man5/gdbinit.5

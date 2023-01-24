@@ -23,6 +23,7 @@
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2017, 2021 Gary Mills
 # Copyright 2019 Andreas Wacknitz
+# Copyright 2023 Carsten Grzemba
 #
 
 BUILD_BITS= 64
@@ -34,16 +35,17 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdb
-COMPONENT_VERSION=      8.0
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      12.1
+COMPONENT_REVISION=     0
 COMPONENT_SUMMARY=      GDB: The GNU Project Debugger
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:8968a19e14e176ee026f0ca777657c43456514ad41bb2bc7273e8c4219555ac9
+	sha256:87296a3a9727356b56712c793704082d5df0ff36a34ca9ec9734fc9a8bdfdaab
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/gdb/
+COMPONENT_FMRI= developer/debug/gdb
 
 CONFIGURE_DEFAULT_DIRS=no
 
@@ -128,9 +130,16 @@ COMPONENT_BUILD_ENV += $(CONFIGURE_ENV)
 # pod2man perl script, used to create manpages
 COMPONENT_BUILD_ENV += PATH=$(PATH)
 
+# Generate illumos data files describing system calls and structures
+# found in core files.
+COMPONENT_POST_UNPACK_ACTION = \
+    GCC_VERSION=$(GCC_VERSION) COMPONENT_DIR=$(COMPONENT_DIR) \
+    SOURCE_DIR=$(SOURCE_DIR) \
+    $(COMPONENT_DIR)/Solaris/gen_syscall_table.sh
+
 # Generate the newly added Solaris instruction and
 # register tables which weren't there by default.
-COMPONENT_PRE_CONFIGURE_ACTION = \
+COMPONENT_PRE_CONFIGURE_ACTION += \
   +( cd  $(SOURCE_DIR)/gdb/features ; \
     $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) all; )
 
@@ -178,14 +187,13 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(PROTOUSRSHAREDIR)/info/ ; \
       $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/gdb.info-7  \
 	$(PROTOUSRSHAREDIR)/info/ ; \
+      $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/gdb.info-8  \
+	$(PROTOUSRSHAREDIR)/info/ ; \
       $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/annotate.info  \
 	$(PROTOUSRSHAREDIR)/info/ ; \
       $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/stabs.info  \
 	$(PROTOUSRSHAREDIR)/info/ ; \
-      $(MKDIR) $(PROTOGNUSHAREMAN1) ; \
-      $(MKDIR) $(PROTOUSRSHAREMAN1DIR) ; \
-      $(INSTALL) -m 0444 $(BUILD_DIR_64)/gdb/doc/gdb.1 \
-	$(PROTOUSRSHAREMAN1DIR) )
+	 )
 
 # Disable ASLR: it's a debugger and we do not want to risk
 # altering the results of the debugging experiment.
@@ -195,9 +203,13 @@ GENERATE_EXTRA_CMD += | $(GNU_GREP) -v -E '/.*\.pyc$$'
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += developer/babeltrace
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
