@@ -3,7 +3,8 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-collecting ... collected 26043 items
+asyncio: mode=strict
+collecting ... collected 26340 items
 
 ::project PASSED
 tests/test_elffile.py::test_elffile_bad_ident[no-magic] PASSED
@@ -63,6 +64,7 @@ tests/test_markers.py::TestMarker::test_different_markers_different_hashes[pytho
 tests/test_markers.py::TestMarker::test_different_markers_different_hashes[python_version == "2.7"-python_version == "2.7" and os_name == "linux"] PASSED
 tests/test_markers.py::TestMarker::test_different_markers_different_hashes[python_version == "2.7"-python_version == "3.7"] PASSED
 tests/test_markers.py::TestMarker::test_environment_assumes_empty_extra PASSED
+tests/test_markers.py::TestMarker::test_environment_with_extra_none PASSED
 tests/test_markers.py::TestMarker::test_evaluate_pep345_markers[os.name == 'posix'-None-True] PASSED
 tests/test_markers.py::TestMarker::test_evaluate_pep345_markers[platform.machine=='x86_64'-environment3-True] PASSED
 tests/test_markers.py::TestMarker::test_evaluate_pep345_markers[platform.python_implementation=='Jython'-environment4-False] PASSED
@@ -2523,6 +2525,30 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_v
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-==={ws}arbitrarystring-extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-==={ws}arbitrarystring-extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-==={ws}arbitrarystring-extras3-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-extras0-Package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-extras0-android12] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-extras0-foo-bar.quux_bAz] PASSED
@@ -2907,6 +2933,30 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-===
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-==={ws}arbitrarystring-extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-==={ws}arbitrarystring-extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-==={ws}arbitrarystring-extras3-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras0-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras0-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras0-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras0-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras0-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras0-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras1-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras1-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras1-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras1-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras1-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras1-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras2-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras2-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras2-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras2-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras2-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras2-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras3-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras3-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras3-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras3-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras3-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-alpha-extras3-package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-extras0-Package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-extras0-android12] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -None-None-=={ws}1.0-extras0-foo-bar.quux_bAz] PASSED
@@ -3291,6 +3341,30 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_versio
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-==={ws}arbitrarystring-extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-==={ws}arbitrarystring-extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-==={ws}arbitrarystring-extras3-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-extras0-Package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-extras0-android12] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -python_version{ws}>={ws}'3.3'-None-=={ws}1.0-extras0-foo-bar.quux_bAz] PASSED
@@ -3675,6 +3749,30 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-==={ws}arbitrarystring-extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-==={ws}arbitrarystring-extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-==={ws}arbitrarystring-extras3-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-extras0-Package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-extras0-android12] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[ -sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-extras0-foo-bar.quux_bAz] PASSED
@@ -4059,6 +4157,30 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_ve
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-==={ws}arbitrarystring-extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-==={ws}arbitrarystring-extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-==={ws}arbitrarystring-extras3-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-extras0-Package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-extras0-android12] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-extras0-foo-bar.quux_bAz] PASSED
@@ -4443,6 +4565,30 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-==={
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-==={ws}arbitrarystring-extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-==={ws}arbitrarystring-extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-==={ws}arbitrarystring-extras3-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras0-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras0-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras0-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras0-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras0-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras0-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras1-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras1-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras1-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras1-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras1-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras1-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras2-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras2-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras2-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras2-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras2-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras2-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras3-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras3-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras3-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras3-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras3-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-alpha-extras3-package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-extras0-Package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-extras0-android12] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-None-None-=={ws}1.0-extras0-foo-bar.quux_bAz] PASSED
@@ -4827,6 +4973,30 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-==={ws}arbitrarystring-extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-==={ws}arbitrarystring-extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-==={ws}arbitrarystring-extras3-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-extras0-Package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-extras0-android12] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-extras0-foo-bar.quux_bAz] PASSED
@@ -5211,6 +5381,30 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{w
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-==={ws}arbitrarystring-extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-==={ws}arbitrarystring-extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-==={ws}arbitrarystring-extras3-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-extras0-Package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-extras0-android12] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-extras0-foo-bar.quux_bAz] PASSED
@@ -5595,6 +5789,30 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-==={ws}arbitrarystring-extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-==={ws}arbitrarystring-extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-==={ws}arbitrarystring-extras3-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras0-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras1-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras2-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-alpha-extras3-package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-extras0-Package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-extras0-android12] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-({ws}python_version{ws}>={ws}"3.4"{ws}){ws}and extra{ws}=={ws}"oursql"-None-=={ws}1.0-extras0-foo-bar.quux_bAz] PASSED
@@ -5979,6 +6197,30 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-==
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-==={ws}arbitrarystring-extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-==={ws}arbitrarystring-extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-==={ws}arbitrarystring-extras3-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras0-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras0-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras0-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras0-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras0-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras0-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras1-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras1-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras1-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras1-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras1-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras1-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras2-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras2-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras2-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras2-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras2-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras2-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras3-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras3-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras3-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras3-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras3-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-alpha-extras3-package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-extras0-Package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-extras0-android12] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-None-None-=={ws}1.0-extras0-foo-bar.quux_bAz] PASSED
@@ -6363,6 +6605,30 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_versi
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-==={ws}arbitrarystring-extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-==={ws}arbitrarystring-extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-==={ws}arbitrarystring-extras3-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras0-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras1-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras2-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-alpha-extras3-package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-extras0-Package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-extras0-android12] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-python_version{ws}>={ws}'3.3'-None-=={ws}1.0-extras0-foo-bar.quux_bAz] PASSED
@@ -6747,6 +7013,30 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-==={ws}arbitrarystring-extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-==={ws}arbitrarystring-extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-==={ws}arbitrarystring-extras3-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras0-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras1-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras2-package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-Package] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-android12] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-foo-bar.quux_bAz] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-installer] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-pAcKaGe] PASSED
+tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-alpha-extras3-package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-extras0-Package] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-extras0-android12] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-None-=={ws}1.0-extras0-foo-bar.quux_bAz] PASSED
@@ -7833,9 +8123,17 @@ tests/test_tags.py::TestCompatibleTags::test_default_platforms PASSED
 tests/test_tags.py::TestCompatibleTags::test_default_python_version PASSED
 tests/test_tags.py::TestCompatibleTags::test_default_python_version_needs_underscore PASSED
 tests/test_tags.py::TestCompatibleTags::test_major_only_python_version PASSED
-tests/test_tags.py::TestGenericTags::test__generic_abi PASSED
-tests/test_tags.py::TestGenericTags::test__generic_abi_no_soabi PASSED
-tests/test_tags.py::TestGenericTags::test__generic_abi_soabi_provided PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_agree PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_error[None] PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_error[invalid] PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_graal PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_jp PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_linux_cpython PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_linux_pypy PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_macos PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_none PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_old_windows PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_windows PASSED
 tests/test_tags.py::TestGenericTags::test_abi_unspecified[abi0] PASSED
 tests/test_tags.py::TestGenericTags::test_abi_unspecified[abi1] PASSED
 tests/test_tags.py::TestGenericTags::test_abis_default PASSED
@@ -26049,4 +26347,4 @@ tests/test_version.py::TestVersion::test_version_str_repr[7!1.1.dev1-7!1.1.dev1]
 tests/test_version.py::test_parse PASSED
 tests/test_version.py::test_parse_raises PASSED
 
-======== 26042 passed, 1 skipped ========
+======== 26339 passed, 1 skipped ========

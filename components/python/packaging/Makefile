@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		packaging
-COMPONENT_VERSION =		22.0
+HUMAN_VERSION =			23.0
 COMPONENT_SUMMARY =		packaging - Core utilities for Python packages
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/6b/f7/c240d7654ddd2d2f3f328d8468d4f1f876865f6b9038b146bec0a6737c65/packaging-22.0.tar.gz
+	https://files.pythonhosted.org/packages/47/d5/aca8ff6f49aa5565df1c826e7bf5e85a6df852ee063600c1efa5b932968c/packaging-23.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2198ec20bd4c017b8f9717e00f0c8714076fc2fd93816750ab48e2c41de2cfd3
+	sha256:b6ad297f8907de0fa2fe1ccbd26fdaf387f5f47c7275fedf8cce89f99446cf97
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-2-Clause
 
 TEST_STYLE = pytest
@@ -33,6 +33,7 @@ TEST_STYLE = pytest
 # bootstrapped too.
 # - build
 # - hatchling (test bootstrap)
+# - pyproject_api (test bootstrap)
 # - pytest (test bootstrap)
 # - setuptools_scm
 # - tox (test bootstrap)
