@@ -329,6 +329,7 @@ if [[ "$($GMAKE print-value-TEST_STYLE)" == "tox" && -f "$SOURCE_DIR/tox.ini" ]]
 	TOX_CALL_INDIRECTLY=$($GMAKE print-value-TOX_CALL_INDIRECTLY)
 	for p in $TOX_CALL_INDIRECTLY ; do
 		sed -n -e '/^commands *=/,/^$/p' "$SOURCE_DIR/tox.ini" \
+			| tr '\t' ' ' \
 			| grep -q '^\(commands *=\)\? *'"$p" \
 		&& printf "WARNING: %s is called directly in tox.ini\n" "$p" >&2
 	done
