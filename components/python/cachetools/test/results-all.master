@@ -1,12 +1,12 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m py.test --basetemp=$(@D)/.tox/py$(PYV)/tmp --cov=cachetools
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m py.test --basetemp=$(@D)/.tox/py$(PYV)/tmp --cov=cachetools
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 asyncio: mode=strict
-collecting ... collected 213 items
+collecting ... collected 217 items
 
 ::project PASSED
 tests/test_cache.py::CacheTest::test_defaults PASSED
@@ -27,22 +27,26 @@ tests/test_cached.py::CacheWrapperTest::test_decorator_attributes PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_attributes_lock PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_clear PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_clear_lock PASSED
-tests/test_cached.py::CacheWrapperTest::test_decorator_clear_none PASSED
+tests/test_cached.py::CacheWrapperTest::test_decorator_info PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_lock PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_typed PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_wrapped PASSED
 tests/test_cached.py::CacheWrapperTest::test_zero_size_cache_decorator PASSED
+tests/test_cached.py::CacheWrapperTest::test_zero_size_cache_decorator_info PASSED
 tests/test_cached.py::CacheWrapperTest::test_zero_size_cache_decorator_lock PASSED
 tests/test_cached.py::DictWrapperTest::test_decorator PASSED
 tests/test_cached.py::DictWrapperTest::test_decorator_attributes PASSED
 tests/test_cached.py::DictWrapperTest::test_decorator_attributes_lock PASSED
 tests/test_cached.py::DictWrapperTest::test_decorator_clear PASSED
 tests/test_cached.py::DictWrapperTest::test_decorator_clear_lock PASSED
-tests/test_cached.py::DictWrapperTest::test_decorator_clear_none PASSED
+tests/test_cached.py::DictWrapperTest::test_decorator_info PASSED
 tests/test_cached.py::DictWrapperTest::test_decorator_lock PASSED
 tests/test_cached.py::DictWrapperTest::test_decorator_typed PASSED
 tests/test_cached.py::DictWrapperTest::test_decorator_wrapped PASSED
 tests/test_cached.py::NoneWrapperTest::test_decorator PASSED
+tests/test_cached.py::NoneWrapperTest::test_decorator_attributes PASSED
+tests/test_cached.py::NoneWrapperTest::test_decorator_clear PASSED
+tests/test_cached.py::NoneWrapperTest::test_decorator_info PASSED
 tests/test_cachedmethod.py::CachedMethodTest::test_attributes PASSED
 tests/test_cachedmethod.py::CachedMethodTest::test_attributes_lock PASSED
 tests/test_cachedmethod.py::CachedMethodTest::test_clear PASSED
@@ -221,7 +225,6 @@ tests/test_ttl.py::TTLCacheTest::test_ttl_tuple_key PASSED
 tests/test_ttl.py::TTLCacheTest::test_update PASSED
 
 
-======== 211 passed ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 215 passed ========
+  py$(PYV): OK
   congratulations :)
