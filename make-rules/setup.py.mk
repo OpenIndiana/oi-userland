@@ -313,7 +313,7 @@ TOX_CALL_INDIRECTLY += coverage
 TOX_CALL_INDIRECTLY += zope.testrunner
 COMPONENT_PRE_TEST_ACTION += \
 	[ -f $(@D)/tox.ini ] && for c in $(TOX_CALL_INDIRECTLY) ; do \
-		$(GSED) -i -e '/^commands *=/,/^$$/{s/^\(\(commands *=\)\? *\)'$$c'/\1python -m '$$c'/}' $(@D)/tox.ini ; \
+		$(GSED) -i -e '/^commands *=/,/^$$/{s/^\(\(commands *=\)\?[ \t]*\)'$$c'/\1python -m '$$c'/}' $(@D)/tox.ini ; \
 	done ; true ;
 
 # Normalize tox test results.
