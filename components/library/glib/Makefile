@@ -12,21 +12,21 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
+# Copyright 2023 Friedrich Kink
 #
 
-BUILD_BITS = 32_and_64
+BUILD_BITS = 64_and_32
 BUILD_STYLE = meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
-COMPONENT_MJR_VERSION=	2.73
-COMPONENT_MNR_VERSION=	3
+COMPONENT_MJR_VERSION=	2.74
+COMPONENT_MNR_VERSION=	5
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME core libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:df1a2b841667d6b48b2ef6969ebda4328243829f6e45866726f806f90f64eead
+COMPONENT_ARCHIVE_HASH=	sha256:ceba83a5999ceb31a4c4fc9921207cb9ffffd2ab1d6ec03c162d3f608a5c14c8
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GLib/
 COMPONENT_FMRI=		library/glib2
@@ -36,7 +36,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
+# /usr/lib and /usr/lib/$(MACH64) needed to make dbus-daemon program available
+PATH = $(PATH.gnu):/usr/lib:/usr/lib/$(MACH64)
 
 # socketpair(3socket) requires -lsocket -lnsl
 LDFLAGS += -lsocket -lnsl
@@ -67,8 +68,8 @@ $(TEST_TARGET): $(INSTALL_TARGET)
 DFLAGS.64 = -64
 COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
 
-COMPONENT_POST_CONFIGURE_ACTION= \
-  ( cd $(@D); $(GSED) -i "s/_FILE_OFFSET_BITS=64/_FILE_OFFSET_BITS=$(BITS)/g" ./build.ninja )
+# necessary otherwise make REQUIRED_PACKAGES will fail
+COMPONENT_POST_INSTALL_ACTION.64= $(GSED) -i -e "s:\#!/usr/bin/env .*$$:/usr/bin/python$(PYTHON_VERSION):" $(PROTOUSRBINDIR)/g*
 
 # Otherwise tests fail
 unexport SHELLOPTS
@@ -85,6 +86,8 @@ COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/^(Fail|Ok|Expected Fail|Unexpected Pass|Skipped|Timeout)/'"
 
+PYTHON_REQUIRED_PACKAGES += runtime/python
+
 # dbus-daemon is needed for testing
 REQUIRED_PACKAGES += system/library/dbus
 
@@ -92,7 +95,6 @@ REQUIRED_PACKAGES += system/library/dbus
 REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/zlib
