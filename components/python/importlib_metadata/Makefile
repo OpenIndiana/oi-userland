@@ -19,21 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_metadata
-HUMAN_VERSION =			5.2.0
+HUMAN_VERSION =			6.0.0
 COMPONENT_SUMMARY =		importlib_metadata - Read metadata from Python packages
 COMPONENT_PROJECT_URL =		https://github.com/python/importlib_metadata
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a6/1d/7a01bc53a248ddb14eb0dca86f089ddf848d7b9485c31d7f840f27acbcfe/importlib_metadata-5.2.0.tar.gz
+	https://files.pythonhosted.org/packages/90/07/6397ad02d31bddf1841c9ad3ec30a693a3ff208e09c2ef45c9a8a5f85156/importlib_metadata-6.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:404d48d62bba0b7a77ff9d405efd91501bef2e67ff4ace0bed40a0cf28c3c7cd
+	sha256:e354bedeb60efa6affdcc8ae121b73544a7aa74156d047311948f6d711cd378d
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
 # - build
+# - chardet (test bootstrap)
 # - hatchling (test bootstrap)
-# - pep517
 # - pluggy (test bootstrap)
 # - pytest (test bootstrap)
 # - tox (test bootstrap)
