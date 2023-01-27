@@ -19,19 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tempora
-HUMAN_VERSION =			5.2.0
+HUMAN_VERSION =			5.2.1
 COMPONENT_SUMMARY =		tempora - Objects and routines pertaining to date and time (tempora)
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/tempora
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/97/70/5cf5031a83ca6d0431a53459b2a98aa387ba23d06710a5e48d681ff3956f/tempora-5.2.0.tar.gz
+	https://files.pythonhosted.org/packages/03/01/ab56dcb400513c6d1658d177cc68c83bc4e6ce5624dff717e4bf4a1f8b00/tempora-5.2.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:af82eb016decda8daf566d1e4836f94f7f8ba8c7153637460156e081aadc64df
+	sha256:b7176486c5948a75201e8d0b21ef2c23ca808474060df47218c92295bdce5276
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
 PYTHON_REQUIRED_PACKAGES += library/python/pytz
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
