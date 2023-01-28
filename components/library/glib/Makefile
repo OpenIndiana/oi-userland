@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		glib
 COMPONENT_MJR_VERSION=	2.74
 COMPONENT_MNR_VERSION=	5
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY=	GNOME core libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -69,7 +70,7 @@ DFLAGS.64 = -64
 COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
 
 # necessary otherwise make REQUIRED_PACKAGES will fail
-COMPONENT_POST_INSTALL_ACTION.64= $(GSED) -i -e "s:\#!/usr/bin/env .*$$:/usr/bin/python$(PYTHON_VERSION):" $(PROTOUSRBINDIR)/g*
+COMPONENT_POST_INSTALL_ACTION.64= $(GSED) -i -e "s:\#!/usr/bin/env .*$$:\#!/usr/bin/python$(PYTHON_VERSION):" $(PROTOUSRBINDIR)/g*
 
 # Otherwise tests fail
 unexport SHELLOPTS
@@ -95,6 +96,7 @@ REQUIRED_PACKAGES += system/library/dbus
 REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/zlib
