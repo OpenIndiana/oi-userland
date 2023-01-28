@@ -15,18 +15,18 @@
 #
 
 BUILD_STYLE= meson
-USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
 COMPONENT_MJR_VERSION= 0.4
-COMPONENT_VERSION=$(COMPONENT_MJR_VERSION).40
+COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).40
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:cdde80d15a49dab9a614ef98f804c8ce6e4cfe1339a3c240c34f3fb45436b85d
-COMPONENT_ARCHIVE_URL=	https://download.gimp.org/pub/gegl/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://www.gegl.org/
+COMPONENT_ARCHIVE_URL= https://download.gimp.org/pub/gegl/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL= https://www.gegl.org/
 COMPONENT_FMRI=	image/library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE= GPLv3, LGPLv3
@@ -62,9 +62,9 @@ COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/babl
 REQUIRED_PACKAGES += image/library/lensfun
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
