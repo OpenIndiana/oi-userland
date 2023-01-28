@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
 COMPONENT_VERSION=      28.2
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=		3
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -116,7 +116,7 @@ $(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3
 # facilitates the use of 'gmake sample-manifest'.
 PBIN=		$(PROTO_DIR)/usr/bin
 PETC=		$(PROTO_DIR)/usr/share/emacs/$(COMPONENT_VERSION)/etc
-PPDMP=		$(PROTO_DIR)/usr/lib/emacs/$(COMPONENT_VERSION)/$(GNU_TRIPLET)
+PPDMP=		$(PROTO_DIR)/usr/lib/emacs/$(COMPONENT_VERSION)/$(GCC_GNU_TRIPLET)
 PGBIN=		$(PROTO_DIR)/usr/gnu/bin
 PGSHAREMAN1=	$(PROTO_DIR)/usr/gnu/share/man/man1
 PSHAREMAN1=	$(PROTO_DIR)/usr/share/man/man1
