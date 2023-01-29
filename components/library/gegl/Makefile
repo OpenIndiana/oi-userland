@@ -44,6 +44,8 @@ LDFLAGS		+=    $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS+= --infodir=$(USRSHAREDIR)/info
+CONFIGURE_OPTIONS+= -Ddocs=false
+CONFIGURE_OPTIONS+= -Dvapigen=disabled
 CONFIGURE_OPTIONS+= -Dworkshop=true
 # libav is from encumbered
 CONFIGURE_OPTIONS+= -Dlibav=disabled
