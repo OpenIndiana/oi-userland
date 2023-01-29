@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libvdpau
 COMPONENT_VERSION=      1.5
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      VDPAU libaries and headers
 COMPONENT_PROJECT_URL=  https://freedesktop.org/wiki/Software/VDPAU/
 COMPONENT_FMRI=         library/graphics/libvdpau

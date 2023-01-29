@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		babl
 COMPONENT_VERSION=	0.1.98
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Babl is a dynamic, any to any, pixel format conversion library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz

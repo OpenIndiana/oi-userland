@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-editing-services1
 COMPONENT_VERSION=	1.20.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Multimedia graph framework - editing services
 COMPONENT_SRC_NAME=	gst-editing-services
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)

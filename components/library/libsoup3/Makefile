@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsoup3
 COMPONENT_VERSION= 3.2.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Libsoup is an HTTP client/server library for GNOME
 COMPONENT_SRC= libsoup-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz

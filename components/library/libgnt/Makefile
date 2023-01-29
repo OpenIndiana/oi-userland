@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgnt
 COMPONENT_VERSION=	2.14.3
-#COMPONENT_REVISION=	1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://keep.imfreedom.org/libgnt/libgnt/
 COMPONENT_SUMMARY=	The GLib Ncurses Toolkit
 COMPONENT_FMRI=		library/libgnt

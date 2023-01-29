@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gstreamer1
 COMPONENT_VERSION=      1.20.5
-#COMPONENT_REVISION=		1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      GNOME streaming media framework
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC_NAME=		gstreamer

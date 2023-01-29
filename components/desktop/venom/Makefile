@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         venom
 COMPONENT_VERSION=      0.5.5
-#COMPONENT_REVISION=     1
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://github.com/naxuroqa/venom
 COMPONENT_SUMMARY=      A modern Tox client for the desktop
 COMPONENT_FMRI=         communication/im/venom

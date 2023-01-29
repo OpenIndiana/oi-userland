@@ -1,0 +1,16 @@
+--- glib-2.75.2/gio/meson.build.orig	2023-01-06 13:49:52.000000000 +0000
++++ glib-2.75.2/gio/meson.build	2023-01-27 18:25:43.937734464 +0000
+@@ -945,8 +945,11 @@
+   have_libelf = have_libelf and cc.has_header('libelf.h')
+ endif
+ 
+-if have_libelf
+-  glib_conf.set('HAVE_LIBELF', 1)
++# Large file support only on 64-bit
++if '-m64' in get_option('c_args')
++  if have_libelf
++    glib_conf.set('HAVE_LIBELF', 1)
++  endif
+ else
+   libelf = []
+ endif

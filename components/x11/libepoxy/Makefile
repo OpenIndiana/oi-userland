@@ -22,6 +22,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libepoxy
 COMPONENT_VERSION= 1.5.10
+COMPONENT_REVISION= 1
 COMPONENT_FMRI=	   x11/library/libepoxy
 COMPONENT_SUMMARY= library for handling OpenGL function pointers
 COMPONENT_CLASSIFICATION=System/Hardware

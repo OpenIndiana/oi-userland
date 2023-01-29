@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		glib
 COMPONENT_MJR_VERSION=	2.74
 COMPONENT_MNR_VERSION=	5
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY=	GNOME core libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -58,9 +58,6 @@ CFLAGS += -Wno-error=format-security
 # We do not have getxattr() so disable xattr
 CONFIGURE_OPTIONS += -Dxattr=false
 CONFIGURE_OPTIONS += -Dman=true
-
-COMPONENT_POST_CONFIGURE_ACTION= \
-  ( cd $(@D); $(GSED) -i "s/_FILE_OFFSET_BITS=64/_FILE_OFFSET_BITS=$(BITS)/g" ./build.ninja )
 
 # We need to install libraries and set correct LD_LIBRARY_PATH before test
 $(TEST_TARGET): $(INSTALL_TARGET)

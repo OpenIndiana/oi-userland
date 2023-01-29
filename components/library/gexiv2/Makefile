@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gexiv2
 COMPONENT_MJR_VERSION=	0.14
+COMPONENT_REVISION=	1
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).0
 COMPONENT_SUMMARY= GObject wrapper around the Exiv2 photo metadata library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)

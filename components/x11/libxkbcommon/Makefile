@@ -20,6 +20,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=			libxkbcommon
 COMPONENT_VERSION=		1.4.1
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		xkbcommon - library to handle keyboard descriptions
 COMPONENT_PROJECT_URL=	https://xkbcommon.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-xkbcommon-$(COMPONENT_VERSION)

@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dav1d
 COMPONENT_VERSION=      1.0.0
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=         codec/dav1d
 COMPONENT_SUMMARY=      A fast, cross-platform AV1 decoder
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries

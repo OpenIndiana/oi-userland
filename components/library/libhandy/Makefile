@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libhandy
 COMPONENT_VERSION=      1.5.90
-#COMPONENT_REVISION=     1
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://gitlab.gnome.org/GNOME/libhandy
 COMPONENT_SUMMARY=      Library full of GTK+ widgets for mobile phones
 COMPONENT_FMRI=         library/libhandy

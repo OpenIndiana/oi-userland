@@ -20,6 +20,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xkeyboard-config
 COMPONENT_VERSION=      2.37
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      X Keyboard Configuration Database
 COMPONENT_PROJECT_URL=  https://freedesktop.org/wiki/Software/XKeyboardConfig/
 COMPONENT_ARCHIVE_URL=  https://www.x.org/releases/individual/data/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)

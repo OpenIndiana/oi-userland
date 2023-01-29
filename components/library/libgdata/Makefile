@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= libgdata
 COMPONENT_MJR_VERSION= 0.18
 COMPONENT_MNR_VERSION= 1
+COMPONENT_REVISION= 1
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY= libgdata is a collection library providing GObject-based interfaces and classes for commonly used data structures
 COMPONENT_PROJECT_URL= https://www.gnome.org
