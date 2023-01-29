@@ -24,13 +24,12 @@
 # Copyright (c) 2022, Friedrich Kink
 #
 
-PREFERRED_BITS= 64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
 COMPONENT_VERSION=      10.0.0
-COMPONENT_SUMMARY=	GPL Ghostscript
+COMPONENT_REVISION=		1
+COMPONENT_SUMMARY=		Ghostscript is an interpreter for the PostScript language and PDF files
 COMPONENT_PROJECT_URL=	https://ghostscript.com
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -43,10 +42,10 @@ COMPONENT_LICENSE=      GPLv3
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # Enforce C standard
-CFLAGS   += -std=c11 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
+CFLAGS += -std=c11 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
@@ -115,7 +114,7 @@ test: $(NO_TESTS)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/cairo
