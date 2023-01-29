@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-input-keyboard
 COMPONENT_VERSION= 1.9.0
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-keyboard
 COMPONENT_SUMMARY= \
   xf86-input-keyboard - Keyboard input driver for the Xorg X server

@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-input-void
 COMPONENT_VERSION= 1.4.1
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-void
 COMPONENT_SUMMARY= xf86-input-void - null input driver for Xorg server
 COMPONENT_ARCHIVE_HASH= \
