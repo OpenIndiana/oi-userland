@@ -1,59 +1,46 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2021 Aurelien Larcher
-# Copyright 2021 Nona Hansel
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project pipdeptree
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pipdeptree
-COMPONENT_VERSION=	2.2.1
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=		library/python/pipdeptree
-COMPONENT_CLASSIFICATION=Development/Python
-COMPONENT_SUMMARY=	Command line utility to show dependency tree of packages
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:2b97d80c64d229e01ad242f14229a899263c6e8645c588ec5b054c1b81f3065d
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=  https://github.com/naiquevin/pipdeptree
-COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	LICENSE
+COMPONENT_NAME =		pipdeptree
+HUMAN_VERSION =			2.3.3
+COMPONENT_SUMMARY =		pipdeptree - Command line utility to show dependency tree of packages.
+COMPONENT_PROJECT_URL =		https://github.com/tox-dev/pipdeptree
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/99/02/1f0f5e6ec82d22bb7c68b699d626f46a41d05f8e32269b2543348d345734/pipdeptree-2.3.3.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:9d666f77ff1b9528d01b3d98594096484f56de70d752abe22f13e681be239bd8
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS = $(PYTHON3_VERSIONS)
-
-TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_INSTALL_ACTION += \
-        $(MV) $(PROTOUSRBINDIR)/pipdeptree $(PROTOUSRBINDIR)/pipdeptree-$(PYTHON_VERSION);
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
+TEST_REQUIRED_PACKAGES.python += library/python/diff-cover
+TEST_REQUIRED_PACKAGES.python += library/python/graphviz
+TEST_REQUIRED_PACKAGES.python += library/python/pip
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
