@@ -19,20 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zipp
-HUMAN_VERSION =			3.11.0
+HUMAN_VERSION =			3.12.0
 COMPONENT_SUMMARY =		zipp - Backport of pathlib-compatible object wrapper for zip files
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/zipp
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8e/b3/8b16a007184714f71157b1a71bbe632c5d66dd43bc8152b3c799b13881e1/zipp-3.11.0.tar.gz
+	https://files.pythonhosted.org/packages/35/05/f81a74656c04e94f05c1ef186127cceb913493f1f8a21bb142a93c786ee8/zipp-3.12.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a7a22e05929290a67401440b39690ae6563279bced5f314609d9d03798f56766
+	sha256:73efd63936398aac78fd92b6f4865190119d6c91b531532e798977ea8dd402eb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
 # - importlib-metadata
-# - pep517
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
