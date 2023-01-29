@@ -12,21 +12,23 @@
 # Copyright (c) 2017 Dariusz Sendkowski
 #
 
-BUILD_BITS=	32_and_64
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		GraphicsMagick
-COMPONENT_MAJOR_VERSION=1.3
-COMPONENT_MINOR_VERSION=38
-COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_PROJECT_URL=	http://www.graphicsmagick.org/	
-COMPONENT_SUMMARY=	A collection of utilities to support file format conversion,image processing, and 2D vector rendering.
-COMPONENT_FMRI=		image/graphicsmagick
-COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
+COMPONENT_NAME= GraphicsMagick
+COMPONENT_MAJOR_VERSION= 1.3
+COMPONENT_MINOR_VERSION= 38
+COMPONENT_VERSION= $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
+COMPONENT_REVISION= 1
+COMPONENT_PROJECT_URL= http://www.graphicsmagick.org/
+COMPONENT_SUMMARY= A collection of utilities to support file format conversion,image processing, and 2D vector rendering.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:d60cd9db59351d2b9cb19beb443170acaa28f073d13d258f67b3627635e32675
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_FMRI= image/graphicsmagick
+COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	Copyright.txt
 
@@ -41,24 +43,16 @@ CONFIGURE_OPTIONS+= --enable-shared
 unexport SHELLOPTS
 
 COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
 	'-e "/=========/p" ' \
-	'-e "/Testsuite summary for/p" ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/PASS/p" ' \
-	'-e "/SKIP/p" ' \
-	'-e "/FAIL/p" ' \
-	'-e "/ERROR/p" '
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+	'-e "/Testsuite summary for/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/lcms2
