@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-mga
 COMPONENT_VERSION= 1.6.5
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-mga
 COMPONENT_SUMMARY= xf86-video-mga - Matrox MGA driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \

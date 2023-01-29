@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-savage
 COMPONENT_VERSION= 2.3.9
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-savage
 COMPONENT_SUMMARY= xf86-video-savage - S3 Savage video driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \

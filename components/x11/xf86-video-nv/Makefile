@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-nv
 COMPONENT_VERSION= 2.1.21
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-nv
 COMPONENT_SUMMARY= xf86-video-nv - NVIDIA video driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \
