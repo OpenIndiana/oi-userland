@@ -22,7 +22,9 @@
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
+
 BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
@@ -30,15 +32,15 @@ COMPONENT_VERSION=		6.9.12
 COMPONENT_SUBVERSION=		38
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
-COMPONENT_REVISION=		2
-COMPONENT_FMRI=			image/imagemagick
-COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
+COMPONENT_REVISION=		3
 COMPONENT_SUMMARY=		ImageMagick - Image Manipulation Utilities and Libraries
 COMPONENT_PROJECT_URL=	https://legacy.imagemagick.org
 COMPONENT_SRC=			$(COMPONENT_NAME)6-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:209d2c60e19372da6da308004826f8e5004489bc281b6d9410c108655915634c
 COMPONENT_ARCHIVE_URL=	https://github.com/ImageMagick/ImageMagick6/archive/$(HUMAN_VERSION).tar.gz
+COMPONENT_FMRI=			image/imagemagick
+COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_LICENSE= Apache 2.0 license
 COMPONENT_LICENSE_FILE= LICENSE
 
@@ -90,12 +92,6 @@ CONFIGURE_OPTIONS.64 += --with-perl=$(PERL)
 CONFIGURE_OPTIONS.64 += --with-perl-options="INSTALLDIRS=vendor"
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 
-# common targets
-#
-# Doing it twice because /usr/lib is deep...
-# Remove build machine runpath from libMagick++-6.Q16.so.1.0.0
-#install:	$(INSTALL_32_and_64)
-
 # Needed for "gmake test" to work successfully.  If SHELLOPTS is exported (as
 # it is by the Userland Makefiles), then all shell options get exported to
 # child invocations of bash, which results in test failures due to nounset and
@@ -106,17 +102,6 @@ unexport SHELLOPTS
 # Tests hang waiting for input unless stdin is redirected.
 COMPONENT_TEST_TARGETS = check < /dev/null
 
-# Master test transforms
-COMPONENT_TEST_TRANSFORMS += \
-       '-n '\
-       '-e "/TOTAL/p" ' \
-       '-e "/SKIP/p" ' \
-       '-e "/PASS/p" ' \
-       '-e "/FAIL/p" ' \
-       '-e "/ERROR/p" ' 
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
 # PKGVERS is needed for manifest processing
 PKG_MACROS += PERLVER=$(PERL_VERSION)
 
@@ -126,10 +111,10 @@ REQUIRED_PACKAGES += print/filter/ghostscript/fonts/gnu-gs-fonts-std
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += image/djvulibre
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/libtiff
