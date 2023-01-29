@@ -658,6 +658,17 @@ endif
 
 LD =		/usr/bin/ld
 
+# Clang definitions (we only have 64 bit clang)
+CLANG_VERSION           ?= 15
+CLANG_FULL_VERSION      ?= $(CLANG_VERSION).0
+CLANG_PREFIX             = /usr/clang/$(CLANG_FULL_VERSION)
+CLANG_LIBDIR             = $(CLANG_PREFIX)/lib
+CLANG_DEVELOPER_PKG      = developer/clang-$(CLANG_VERSION)
+CLANG_RUNTIME_PKG        = runtime/clang-$(CLANG_VERSION)
+REQUIRED_PACKAGES_SUBST += CLANG_DEVELOPER_PKG
+REQUIRED_PACKAGES_SUBST += CLANG_RUNTIME_PKG
+
+# Python definitions
 PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
 PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
 PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
