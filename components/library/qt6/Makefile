@@ -12,12 +12,13 @@
 # Copyright 2022 Daniel Chan
 #
 
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=				qt
 COMPONENT_VERSION_MJR=		$(QT6_VERSION)
 COMPONENT_VERSION=			$(COMPONENT_VERSION_MJR).4
-COMPONENT_REVISION=     	4
+COMPONENT_REVISION=     	5
 COMPONENT_SUMMARY=			Qt cross-platform application and UI framework
 COMPONENT_PROJECT_URL=		https://www.qt.io/
 COMPONENT_SRC=				$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
@@ -44,11 +45,8 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
 OPENSSL_VERSION	= 1.1
-Clang_VERSION	= 15.0
 
-LDFLAGS += -Wl,-rpath,$(QT6_LIBDIR):/usr/clang/$(Clang_VERSION)/lib:$(MYSQL_LIBDIR):$(PG_LIBDIR)
-#CONFIGURE_ENV+= MySQL_LIBRARY=/usr/mysql/lib/amd64
-#CONFIGURE_ENV+= MySQL_INCLUDE_DIR=/usr/mysql/include
+LDFLAGS += -Wl,-rpath,$(QT6_LIBDIR):$(CLANG_LIBDIR):$(MYSQL_LIBDIR):$(PG_LIBDIR)
 CONFIGURE_OPTIONS = -prefix $(QT_PREFIX)
 #CONFIGURE_OPTIONS+= -verbose
 CONFIGURE_OPTIONS+= -opensource
@@ -74,14 +72,12 @@ CONFIGURE_OPTIONS+= -plugin-system-sqlite
 CONFIGURE_OPTIONS+= -cmake-generator 'Unix Makefiles'
 CONFIGURE_OPTIONS+= -no-gstreamer
 CONFIGURE_OPTIONS+= -no-pch
-#CONFIGURE_OPTIONS.32+= CMAKE_PREFIX_PATH=$(BUILD_DIR)/i86/qtbase/lib/cmake
-CONFIGURE_OPTIONS.64+= CMAKE_PREFIX_PATH="$(BUILD_DIR)/amd64/qtbase/lib/amd64/cmake;/usr/clang/$(Clang_VERSION)"
+CONFIGURE_OPTIONS.64+= CMAKE_PREFIX_PATH="$(BUILD_DIR)/amd64/qtbase/lib/amd64/cmake;$(CLANG_PREFIX)"
 CONFIGURE_OPTIONS.64+= MySQL_LIBRARY=$(MYSQL_LIBDIR)/libmysqlclient.so
 CONFIGURE_OPTIONS.64+= MySQL_INCLUDE_DIR=$(MYSQL_INCDIR)
 CONFIGURE_OPTIONS.64+= PostgreSQL_LIBRARY=$(PG_LIBDIR)/libpq.so
 CONFIGURE_OPTIONS.64+= PostgreSQL_INCLUDE_DIR=$(PG_INCDIR)
 CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(BITS))
-#COMPONENT_POST_CONFIGURE_ACTION.32= mkdir -p $(BUILD_DIR)/i86/qtbase/translations
 COMPONENT_POST_CONFIGURE_ACTION.64= mkdir -p $(BUILD_DIR)/amd64/qtbase/translations
 
 include $(WS_MAKE_RULES)/cmake.mk
@@ -97,18 +93,19 @@ $(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
 COMPONENT_INSTALL_ENV+=	INSTALL_ROOT=$(PROTO_DIR)
 
 # Build dependencies
+REQUIRED_PACKAGES += $(CLANG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
+REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 REQUIRED_PACKAGES += database/freetds
-REQUIRED_PACKAGES += database/mariadb-106/client
 REQUIRED_PACKAGES += system/header/header-drm
 REQUIRED_PACKAGES += x11/keyboard/data-xkb
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
-#REQUIRED_PACKAGES += x11/library/libxi
 
 # Manually added dependencies
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(CLANG_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
@@ -134,7 +131,6 @@ REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/clang-15
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
