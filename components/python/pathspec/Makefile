@@ -19,13 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pathspec
-HUMAN_VERSION =			0.10.3
+HUMAN_VERSION =			0.11.0
 COMPONENT_SUMMARY =		pathspec - Utility library for gitignore style pattern matching of file paths.
-COMPONENT_PROJECT_URL =		https://github.com/cpburnz/python-pathspec
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/32/1a/6baf904503c3e943cae9605c9c88a43b964dea5b59785cf956091b341b08/pathspec-0.10.3.tar.gz
+	https://files.pythonhosted.org/packages/f4/8e/f91cffb32740b251cff04cad1e7cdd2c710582c735a01f56307316c148f2/pathspec-0.11.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:56200de4077d9d0791465aa9095a01d421861e405b5096955051deefd697d6f6
+	sha256:64d338d4e0914e91c1792321e6907b5a593f1ab1851de7fc269557a21b30ebbc
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,5 +36,5 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += runtime/python
