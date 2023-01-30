@@ -29,15 +29,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-backends
 COMPONENT_VERSION=	1.1.1
-COMPONENT_FMRI=         image/scanner/xsane/sane-backends
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=      SANE library and backends
-COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	http://www.sane-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:dd4b04c37a42f14c4619e8eea6a957f4c7c617fe59e32ae2872b373940a8b603
 COMPONENT_ARCHIVE_URL=	https://gitlab.com/sane-project/backends/uploads/7d30fab4e115029d91027b6a58d64b43/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         image/scanner/xsane/sane-backends
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      GPLv2+ and GPLv2+ with exceptions and Public Domain and IJG and LGPLv2+ and MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
@@ -61,7 +62,7 @@ COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/cairo
