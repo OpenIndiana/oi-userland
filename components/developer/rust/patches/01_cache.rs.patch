@@ -1,0 +1,25 @@
+see https://github.com/rust-lang/rust/pull/105624
+
+--- rustc-1.67.0-src/src/bootstrap/cache.rs	2023-01-29 14:16:17.167494385 +0100
++++ rustc-1.67.0-src/src/bootstrap/cache.rs.new	2023-01-29 14:18:53.126333402 +0100
+@@ -89,16 +89,16 @@
+ 
+ impl<T: Internable + Deref> Deref for Interned<T> {
+     type Target = T::Target;
+-    fn deref(&self) -> &'static Self::Target {
++    fn deref(&self) -> &Self::Target {
+         let l = T::intern_cache().lock().unwrap();
+-        unsafe { mem::transmute::<&Self::Target, &'static Self::Target>(l.get(*self)) }
++        unsafe { mem::transmute::<&Self::Target, &Self::Target>(l.get(*self)) }
+     }
+ }
+ 
+ impl<T: Internable + AsRef<U>, U: ?Sized> AsRef<U> for Interned<T> {
+-    fn as_ref(&self) -> &'static U {
++    fn as_ref(&self) -> &U {
+         let l = T::intern_cache().lock().unwrap();
+-        unsafe { mem::transmute::<&U, &'static U>(l.get(*self).as_ref()) }
++        unsafe { mem::transmute::<&U, &U>(l.get(*self).as_ref()) }
+     }
+ }
+ 
