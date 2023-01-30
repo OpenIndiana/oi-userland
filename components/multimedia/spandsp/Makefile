@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		spandsp
 COMPONENT_VERSION=	3.0.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	A DSP library for telephony
 COMPONENT_DESCRIPTION=  \
 	SpanDSP is a low-level signal processing library that modulates and demodulates \
@@ -64,7 +64,7 @@ CONFIGURE_ENV += CPPFLAGS="$(JPEG_CPPFLAGS)"
 REQUIRED_PACKAGES += developer/build/libtool
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
