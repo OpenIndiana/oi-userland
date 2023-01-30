@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdk-pixbuf
 COMPONENT_VERSION=      2.36.12
-COMPONENT_REVISION=     4
+COMPONENT_REVISION=     5
 COMPONENT_SUMMARY=      GNOME gdk-pixbuf
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -84,7 +84,7 @@ COMPONENT_TEST_TRANSFORMS += '-ne "/^ERROR/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^\# /p" '
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/glib2
