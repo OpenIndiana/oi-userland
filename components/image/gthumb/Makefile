@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         gthumb
 # Later versions use symbolic icons
 COMPONENT_VERSION=      3.6.2
-COMPONENT_REVISION=     4
+COMPONENT_REVISION=     5
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/gthumb
 COMPONENT_SUMMARY=      GNOME image organizer (gthumb)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -67,9 +67,9 @@ REQUIRED_PACKAGES += text/itstool
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += desktop/cd-burning/brasero
 REQUIRED_PACKAGES += image/library/exiv2
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
