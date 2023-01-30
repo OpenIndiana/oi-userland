@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
 COMPONENT_VERSION=	2.10.32
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
 COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,6 +45,9 @@ CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 CONFIGURE_ENV += CPPFLAGS="$(JPEG_CPPFLAGS)"
+
+#äCONFIGURE_ENV += LIBDIR="$(USRLIBDIR64)"
+#COMPONENT_BUILD_ENV += LIBDIR="$(USRLIBDIR64)"
 
 COMPONENT_PREP_ACTION =	( cd $(@D)  && \
 				libtoolize --force &&\
@@ -91,13 +94,13 @@ PYTHON_REQUIRED_PACKAGES += library/python/pygtk2
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += image/library/babl
 REQUIRED_PACKAGES += image/library/gegl
 REQUIRED_PACKAGES += image/library/gexiv2
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
