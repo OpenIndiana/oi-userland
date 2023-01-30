@@ -17,8 +17,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libgdiplus
 COMPONENT_VERSION=      6.1
-COMPONENT_PROJECT_URL=  https://www.mono-project.com/docs/gui/libgdiplus/
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Open Source Implementation of the GDI+ API
+COMPONENT_PROJECT_URL=  https://www.mono-project.com/docs/gui/libgdiplus/
 COMPONENT_FMRI=         library/desktop/libgdiplus
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -30,7 +31,7 @@ COMPONENT_LICENSE=      MIT
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 unexport SHELLOPTS
 
 # build with the distribution preferred libjpeg implementation
@@ -42,8 +43,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libexif
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/c++/harfbuzz
