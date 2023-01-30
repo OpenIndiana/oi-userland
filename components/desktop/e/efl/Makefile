@@ -25,13 +25,12 @@
 # Copyright 2022 Gary Mills
 #
 
-BUILD_BITS=		64
-
+BUILD_BITS= 64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		efl
 COMPONENT_VERSION=	1.18.5
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_SUMMARY=	Enlightenment Foundation Libraries
 COMPONENT_FMRI=		library/e/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -44,12 +43,10 @@ COMPONENT_ARCHIVE_URL= \
 	http://download.enlightenment.org/rel/libs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD 2-clause, GPLv2, LGPLv2.1, Small
 
-PYTHON_VERSION=		3.9
-
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_BINDIR.64=$(USRBINDIR)
-CONFIGURE_SBINDIR.64=$(USRSBINDIR)
+CONFIGURE_BINDIR.64= $(USRBINDIR)
+CONFIGURE_SBINDIR.64= $(USRSBINDIR)
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
@@ -83,8 +80,10 @@ COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VE
 REQUIRED_PACKAGES += x11/library/mesa
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
@@ -102,12 +101,11 @@ REQUIRED_PACKAGES += library/libspectre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/python-39
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/input-method/ibus
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
