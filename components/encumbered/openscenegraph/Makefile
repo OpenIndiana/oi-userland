@@ -17,17 +17,18 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		OpenSceneGraph
 COMPONENT_VERSION=	3.6.5
-COMPONENT_PROJECT_URL=	http://www.openscenegraph.com
+COMPONENT_REVISION= 1
+COMPONENT_PROJECT_URL=	https://www.openscenegraph.com
 COMPONENT_SUMMARY=	OpenSceneGraph - High performance 3D graphics toolkit.
 COMPONENT_SRC=		OpenSceneGraph-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:0e9e3e4cc6f463f21a901934a95e9264b231a1d5db90f72dcb4b8cc94b0d1b3b
 COMPONENT_ARCHIVE_URL=  https://github.com/openscenegraph/OpenSceneGraph/archive/refs/tags/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI =	library/openscenegraph
+COMPONENT_FMRI=	library/openscenegraph
+COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	OSGPL
 COMPONENT_LICENSE_FILE=	LICENSE.txt
-COMPONENT_CLASSIFICATION =	System/Libraries
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
