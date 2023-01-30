@@ -16,13 +16,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		geeqie
 COMPONENT_VERSION=	1.7.3
-COMPONENT_PROJECT_URL=	https://www.geeqie.org/
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	Geeqie is a lightweight Gtk+ based image viewer
+COMPONENT_PROJECT_URL=	https://www.geeqie.org/
 COMPONENT_PROJECT_URL=	https://www.geeqie.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:25b1f71cf91bd9a96f399d2a9e70507e54bb377a56e64d89521c0f7a9ce5dd38
-#COMPONENT_ARCHIVE_HASH=	sha256:4854d5d323c31f8f4068fd73ab2c454ff91e826c4ca4d37b22c246ad14dea10a
 COMPONENT_ARCHIVE_URL=	https://www.geeqie.org/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         image/viewer/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
