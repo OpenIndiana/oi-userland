@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hylafax
 COMPONENT_VERSION=	6.0.7
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_FMRI=		network/hylafax
 COMPONENT_SUMMARY=	HylaFAX Open Source is an enterprise-class system for sending and \
 	receiving facsimiles as well as for sending alpha-numeric pages.
@@ -95,10 +95,10 @@ REQUIRED_PACKAGES += print/filter/ghostscript
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/extended-system-utilities
 REQUIRED_PACKAGES += system/library
