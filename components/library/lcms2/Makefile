@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =        lcms2
 COMPONENT_MJR_VERSION=	2.14
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION)
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      The Little Color Management System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.littlecms.com/
@@ -77,7 +77,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^XXX_REMOVE_XXX$$/d" '
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
