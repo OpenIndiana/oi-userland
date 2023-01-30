@@ -33,7 +33,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gd2
 COMPONENT_VERSION=	2.3.3
-COMPONENT_REVISION =	2
+COMPONENT_REVISION =	3
 COMPONENT_SUMMARY=	The Graphics Draw Library
 COMPONENT_PROJECT_URL=	https://libgd.github.io/
 COMPONENT_SRC_NAME=	gd
@@ -47,7 +47,7 @@ COMPONENT_LICENSE=	GD2 License
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CFLAGS     += $(CPP_LARGEFILES)
 CPPFLAGS   += $(CPP_LARGEFILES)
@@ -102,7 +102,7 @@ REQUIRED_PACKAGES += library/zlib
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/libwebp
