@@ -22,19 +22,18 @@ BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           fcron
-COMPONENT_FMRI=           sysutils/fcron
-COMPONENT_VERSION=        3.3.0
+COMPONENT_VERSION=        3.3.1
 COMPONENT_SUMMARY=        Frequency Cron
 COMPONENT_PROJECT_URL=    http://fcron.free.fr
-COMPONENT_CLASSIFICATION= System/Administration and Configuration
-COMPONENT_LICENSE=        GPLv2
 COMPONENT_SRC=		  fcron-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	  $(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	  sha256:9aead33a0926e2eec123698c502114c6d67b483fe1ec232969fae6809b0bab60
+COMPONENT_ARCHIVE_HASH=	  sha256:f359daa08a63ddfb7fe2f964bb3f5c52244c25aa36f9225a3cc54d36f4681106
 COMPONENT_ARCHIVE_URL=	  http://fcron.free.fr/archives/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=           sysutils/fcron
+COMPONENT_CLASSIFICATION= System/Administration and Configuration
+COMPONENT_LICENSE=        GPLv2
 
 TEST_TARGET= $(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 # a modified copy of the sysVinit-launcher script
