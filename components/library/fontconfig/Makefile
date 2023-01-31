@@ -19,27 +19,23 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fontconfig
-COMPONENT_VERSION=	2.14.1
-COMPONENS_REVISION=	1
+COMPONENT_VERSION=	2.14.2
 COMPONENT_SUMMARY=	Fontconfig - Font configuration and customization library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:298e883f6e11d2c5e6d53c8a8394de58d563902cfab934e6be12fb5a5f361ef0
+COMPONENT_ARCHIVE_HASH= sha256:dba695b57bce15023d2ceedef82062c2b925e51f5d4cc4aef736cf13f60a468b
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/fontconfig/
 COMPONENT_ARCHIVE_URL= 	https://www.freedesktop.org/software/fontconfig/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_CLASSIFICATION= System/Libraries
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-gcc_OPT=-O2
-
-# This is necessary to pass tests
-unexport SHELLOPTS
+gcc_OPT= -O2
 
 COMPONENT_PREP_ACTION=  ( cd $(@D); autoreconf )
 
@@ -64,6 +60,9 @@ $(BUILD_DIR)/.fonts_installed: $(INSTALL_32_and_64)
 	$(TOUCH) $@
 
 install:	$(INSTALL_32_and_64) $(BUILD_DIR)/.fonts_installed
+
+# This is necessary to pass tests
+unexport SHELLOPTS
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += developer/gperf
