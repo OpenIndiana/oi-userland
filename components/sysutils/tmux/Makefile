@@ -22,31 +22,31 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		tmux
 COMPONENT_VERSION=	3.3.1
 HUMAN_VERSION=		3.3a
-COMPONENT_FMRI=		terminal/tmux
-COMPONENT_PROJECT_URL=	https://$(COMPONENT_NAME).github.io
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	tmux terminal multiplexer
-COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_PROJECT_URL=	https://$(COMPONENT_NAME).github.io
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:e4fd347843bd0772c4f48d6dde625b0b109b7a380ff15db21e97c11a4dcdf93f
 COMPONENT_ARCHIVE_URL=	https://github.com/tmux/tmux/releases/download/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		terminal/tmux
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	BSD
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS +=	-I/usr/include/ncurses
+CFLAGS += -I/usr/include/ncurses
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
 
-CONFIGURE_OPTIONS +=	--enable-utempter
-CONFIGURE_OPTIONS +=	LIBS="-lncurses"
+CONFIGURE_OPTIONS += --enable-utempter
+CONFIGURE_OPTIONS += LIBS="-lncurses"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libutempter
 REQUIRED_PACKAGES += system/library/math
