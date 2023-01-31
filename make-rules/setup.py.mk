@@ -328,6 +328,19 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/ in [0-9]\{1,\}\.[0-9]\{3\} seconds//'"	# ti
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  py\$$(PYV): OK\) (.* seconds)$$/\1/'"
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  congratulations :)\) (.* seconds)$$/\1/'"
 
+# sort list of Sphinx doctest results
+COMPONENT_TEST_TRANSFORMS += \
+	"| ( \
+		$(GSED) -u -e '/^running tests\.\.\.$$/q' ; \
+		$(GSED) -u -e '/^Doctest summary/Q' \
+			| $(NAWK) '/^$$/{\$$0=\"\\\\n\"}1' ORS='|' \
+			| $(GNU_GREP) -v '^|$$' \
+			| LC_ALL=C $(GSORT) \
+			| tr -d '\\\\n' | tr '|' '\\\\n' \
+			| $(NAWK) '{print}END{if(NR>0)printf(\"\\\\nDoctest summary\\\\n\")}' ; \
+		$(CAT) \
+	) | $(COMPONENT_TEST_TRANSFORMER)"
+
 # tox package together with the tox-current-env plugin is needed
 USERLAND_REQUIRED_PACKAGES += library/python/tox
 USERLAND_REQUIRED_PACKAGES += library/python/tox-current-env
