@@ -310,11 +310,18 @@ COMPONENT_TEST_TARGETS =	-e py$(shell echo $(PYTHON_VERSION) | tr -d .)
 TOX_CALL_INDIRECTLY += py.test
 TOX_CALL_INDIRECTLY += pytest
 TOX_CALL_INDIRECTLY += coverage
-TOX_CALL_INDIRECTLY += zope.testrunner
+TOX_CALL_INDIRECTLY += zope-testrunner
+TOX_CALL_INDIRECTLY.zope-testrunner = zope.testrunner
+TOX_CALL_INDIRECTLY += sphinx-build
+TOX_CALL_INDIRECTLY.sphinx-build = sphinx.cmd.build
+$(foreach indirectly, $(TOX_CALL_INDIRECTLY), $(eval TOX_CALL_INDIRECTLY.$(indirectly) ?= $(indirectly)))
+COMPONENT_PRE_TEST_ACTION += COMPONENT_TEST_DIR=$(COMPONENT_TEST_DIR) ;
 COMPONENT_PRE_TEST_ACTION += \
-	[ -f $(@D)/tox.ini ] && for c in $(TOX_CALL_INDIRECTLY) ; do \
-		$(GSED) -i -e '/^commands *=/,/^$$/{s/^\(\(commands *=\)\?[ \t]*\)'$$c'/\1python -m '$$c'/}' $(@D)/tox.ini ; \
-	done ; true ;
+	$(foreach indirectly, $(TOX_CALL_INDIRECTLY), \
+		[ -f $$COMPONENT_TEST_DIR/tox.ini ] && \
+			$(GSED) -i -e '/^commands *=/,/^$$/{s/^\(\(commands *=\)\?[ \t]*\)'$(indirectly)'/\1python -m '$(TOX_CALL_INDIRECTLY.$(indirectly))'/}' $$COMPONENT_TEST_DIR/tox.ini ; \
+	)
+COMPONENT_PRE_TEST_ACTION += true ;
 
 # Normalize tox test results.
 COMPONENT_TEST_TRANSFORMS += "-e 's/py$(shell echo $(PYTHON_VERSION) | tr -d .)/py\$$(PYV)/g'"	# normalize PYV
