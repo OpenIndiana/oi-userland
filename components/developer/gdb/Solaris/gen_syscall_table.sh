@@ -1,12 +1,12 @@
+#!/usr/bin/bash
 # Generate illumos data files describing system calls and structures
 # found in core files.
 CW=/opt/onbld/bin/i386/cw
 GENOFFSETS=/opt/onbld/bin/genoffsets
-TMPDIR=/tmp
+TMPDIR=${COMPONENT_DIR}/tmp
 CTFSTABS=/opt/onbld/bin/i386/ctfstabs
 CTFCONVERT=/opt/onbld/bin/i386/ctfconvert
 GENOFFSETS_CFLAGS="-gdwarf-2 -_gcc=-fno-eliminate-unused-debug-symbols -_gcc=-fno-eliminate-unused-debug-types"
-SRCDIR=.
 EGREP=/usr/gnu/bin/egrep
 GCC=/usr/gcc/${GCC_VERSION}/bin/gcc
 CFLAGS32=-m32
@@ -32,9 +32,9 @@ EOM
     } > $TMPDIR/syscalls.xml
     echo $TMPDIR/syscalls.xml
     for arch in i386 amd64; do
-        cp $TMPDIR/syscalls.xml \
+        cp ${TMPDIR}/syscalls.xml \
             ${SOURCE_DIR}/gdb/syscalls/$arch-illumos.xml \
-            || logerr "Could not install $arch system call table"
+            || echo "Could not install $arch system call table"
     done
 
     for bits in 32 64; do
@@ -42,15 +42,15 @@ EOM
         $GENOFFSETS -s $CTFSTABS -r $CTFCONVERT \
             $CW --primary gcc,${GCC},gnu --noecho -- \
             $GENOFFSETS_CFLAGS ${!flags} \
-            < ${COMPONENTS_DIR}/Solaris/offsets.in > offsets$bits.h
+            < ${COMPONENT_DIR}/Solaris/offsets.in > $TMPDIR/offsets$bits.h
     done
     {   
-        sed < offsets32.h 's/\t0x/_32&/'
-        sed < offsets64.h 's/\t0x/_64&/'
+        sed < $TMPDIR/offsets32.h 's/\t0x/_32&/'
+        sed < $TMPDIR/offsets64.h 's/\t0x/_64&/'
         $EGREP $'define\tPR(FN|ARG)SZ' /usr/include/sys/old_procfs.h
     } | tee illumos-offsets.h > ${SOURCE_DIR}/bfd/illumos-offsets.h
 
 }
 
-env
+[ ! -d ${TMPDIR} ] && mkdir ${TMPDIR}
 generate
