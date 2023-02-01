@@ -15,17 +15,18 @@
 #
 
 BUILD_STYLE = setup.py
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.testrunner
-COMPONENT_VERSION =		5.5.1
+HUMAN_VERSION =			5.6
 COMPONENT_SUMMARY =		zope.testrunner - Zope testrunner script.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testrunner
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e4/79/d33efa98d6d9edf652c811f18681ca8cd1836fb8ce34e95b4bd58544ced1/zope.testrunner-5.5.1.tar.gz
+	https://files.pythonhosted.org/packages/f6/b3/46a3e5b2d79170e9b04944ba26cf520f1d3fd8cb122076dd730d5e173404/zope.testrunner-5.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6a10d3835459eed3bc8431f21aaf604bc754ff8392a29797cd20e5a941c143be
+	sha256:d6bd72f44ea32caa415b96cfe14152b2786317aef1cd6f48a827b62def058fd4
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
@@ -41,6 +42,9 @@ COMPONENT_LICENSE_FILE =	LICENSE.md
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Force no colors and more verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
