@@ -19,24 +19,25 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2023 Friedrich Kink
 #
 BUILD_STYLE=configure
 BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         swig
-COMPONENT_VERSION=      3.0.12
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      4.1.1
 COMPONENT_SUMMARY=      Simplified Wrapper and Interface Generator
 COMPONENT_PROJECT_URL=  http://www.swig.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:7cf9f447ae7ed1c51722efc45e7f14418d15d7a1e143ac9f09a668999f4fc94d
+	sha256:2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b
 COMPONENT_ARCHIVE_URL=  http://prdownloads.sourceforge.net/swig/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/swig
 COMPONENT_CLASSIFICATION=Development/Other Languages
 COMPONENT_LICENSE=      GPLv3
+COMPONENT_LICENSE_FILE= COPYRIGHT
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -48,6 +49,7 @@ PATH=$(JAVA_HOME)/bin:/usr/bin
 COMPONENT_PRE_CONFIGURE_ACTION =      ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 PHP=/usr/bin/php
+RUBY_VERSION=	2.6
 
 CONFIGURE_ENV += JAVA_HOME="$(JAVA11_HOME)"
 CONFIGURE_OPTIONS +=	--with-javaincl="$(JAVA11_HOME)/include"
@@ -64,6 +66,8 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/Entering directory/d" ' \
+	'-e "/^cp:/d" ' \
+	'-e "/: Warning /d" ' \
 	'-e "/Leaving directory/d" '
 
 # The test-suite can be run in a partialcheck mode where just SWIG is
@@ -74,22 +78,24 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_TARGETS = \
         partialcheck-guile-test-suite \
         partialcheck-lua-test-suite \
+        partialcheck-ocaml-test-suite \
         partialcheck-perl5-test-suite \
         partialcheck-php-test-suite \
         partialcheck-python-test-suite \
         partialcheck-ruby-test-suite
 
 # Build dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += runtime/java/openjdk11
-REQUIRED_PACKAGES += developer/parser/bison
+REQUIRED_PACKAGES += developer/parser/bison-37
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/ocaml
-REQUIRED_PACKAGES += runtime/python-39
-REQUIRED_PACKAGES += runtime/ruby-23
+REQUIRED_PACKAGES += library/ocaml/ocaml-findlib
+REQUIRED_PACKAGES += runtime/ruby-26
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
