@@ -1,0 +1,14 @@
+source: in-house
+"de-linuxize" the ps args
+
+diff --git a/base/utils.py b/base/utils.py
+index f268cf8..7c31f7f 100644
+--- a/base/utils.py
++++ b/base/utils.py
+@@ -2339,7 +2339,7 @@ return False, {}
+ 
+     try:
+         process = {}
+-        p1 = Popen(["ps", "-w", "-w", "aux"], stdout=PIPE)
++        p1 = Popen(["ps", "-ef"], stdout=PIPE)
+         p2 = Popen(["grep", process_name], stdin=p1.stdout, stdout=PIPE)
