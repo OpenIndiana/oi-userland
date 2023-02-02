@@ -53,56 +53,34 @@ case $METHOD in
 esac
 
 NEED_COMPILE=0
-MODULE_DIR_32="/usr/lib/gio/modules"
-MODULE_DIR_64="/usr/lib/64/gio/modules"
-CACHE_FILE_32="${MODULE_DIR_32}/giomodule.cache"
-CACHE_FILE_64="${MODULE_DIR_64}/giomodule.cache"
+MODULE_DIR="/usr/lib/64/gio/modules"
+CACHE_FILE="${MODULE_DIR}/giomodule.cache"
 
-if [[ ! -r "${CACHE_FILE_32}" ]] ; then
+if [[ ! -r "${CACHE_FILE}" ]] ; then
 	# Need to create initial file
 	NEED_COMPILE=1
-elif [[ ! -r "${CACHE_FILE_64}" ]] ; then
-	# Need to create initial file
-	NEED_COMPILE=1
-elif [[ "${MODULE_DIR_32}" -nt "${CACHE_FILE_32}" ]] ; then
+elif [[ "${MODULE_DIR}" -nt "${CACHE_FILE}" ]] ; then
 	# Directory has been updated - file may have been added or removed
 	NEED_COMPILE=1
-elif [[ "${MODULE_DIR_64}" -nt "${CACHE_FILE_64}" ]] ; then
-	# Directory has been updated - file may have been added or removed
-	NEED_COMPILE=1
-elif [[ -n "$(find ${MODULE_DIR_32} -newer ${CACHE_FILE_32})" ]] ; then
-	# At least one file has been updated
-	NEED_COMPILE=1
-elif [[ -n "$(find ${MODULE_DIR_64} -newer ${CACHE_FILE_64})" ]] ; then
+elif [[ -n "$(find ${MODULE_DIR} -newer ${CACHE_FILE})" ]] ; then
 	# At least one file has been updated
 	NEED_COMPILE=1
 fi
 
 if [[ "${NEED_COMPILE}" -ne 0 ]] ; then
 	umask 022
-	/usr/bin/gio-querymodules "${MODULE_DIR_32}"
+	/usr/bin/gio-querymodules "${MODULE_DIR}"
 	result=$?
 	if [[ $result -ne 0 ]] ; then
 		print "/usr/bin/gio-querymodules failed with exit code $result"
 		exit $SMF_EXIT_ERR_FATAL
 	fi
-	if [[ ! -r "${CACHE_FILE_32}" ]] ; then
+	if [[ ! -r "${CACHE_FILE}" ]] ; then
 		exit $SMF_EXIT_ERR_FATAL
 	fi
 	# Since gio-querymodules renames the result into place, update
 	# the file mtime after moving so it matches the directory mtime.
-	touch -c -r "${MODULE_DIR_32}" "${CACHE_FILE_32}"
-
-	/usr/bin/amd64/gio-querymodules "${MODULE_DIR_64}"
-	result=$?
-	if [[ $result -ne 0 ]] ; then
-		print "/usr/bin/amd64/gio-querymodules failed with exit code $result"
-		exit $SMF_EXIT_ERR_FATAL
-	fi
-	if [[ ! -r "${CACHE_FILE_64}" ]] ; then
-		exit $SMF_EXIT_ERR_FATAL
-	fi
-	touch -c -r "${MODULE_DIR_64}" "${CACHE_FILE_64}"
+	touch -c -r "${MODULE_DIR}" "${CACHE_FILE}"
 fi
 
 exit $SMF_EXIT_OK
