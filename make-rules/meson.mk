@@ -47,7 +47,7 @@ else
 MESON_OPTIMIZATION ?=	3
 endif
 
-MESON_BUILDPIE ?=	true
+MESON_BUILDPIE ?=	false
 
 # If the component prefers 64-bit binaries, then ensure builds deliver 64-bit
 # binaries to the standard directories and 32-bit binaries to the non-standard
