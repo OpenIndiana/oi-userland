@@ -14,15 +14,17 @@
 # Copyright 2019 Jason Martin
 # Copyright 2021 Andreas Wacknitz
 #
+
 BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgsf
-COMPONENT_VERSION= 1.14.49
+COMPONENT_VERSION= 1.14.50
 COMPONENT_SUMMARY= GNOME Structured File Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:e9ebe36688f010c9e6e40c8903f3732948deb8aca032578d07d0751bd82cf857
+COMPONENT_ARCHIVE_HASH= sha256:6e6c20d0778339069d583c0d63759d297e817ea10d0d897ebbe965f16e2e8e52
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.14/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_FMRI= library/desktop/libgsf
@@ -32,7 +34,7 @@ COMPONENT_LICENSE_FILE = COPYING.LIB
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION= ( cd $(@D)  && \
                             libtoolize --copy --force &&\
@@ -55,15 +57,7 @@ CONFIGURE_OPTIONS.32 += --disable-introspection
 CONFIGURE_OPTIONS.64 += --enable-introspection
 
 COMPONENT_TEST_ENV += CC=$(CC)
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_ARGS =   -k -i
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/TOTAL:/p" ' \
-        '-e "/SKIP:/p" ' \
-        '-e "/PASS:/p" ' \
-        '-e "/FAIL:/p" ' \
-        '-e "/ERROR:/p" '
 
 # To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
