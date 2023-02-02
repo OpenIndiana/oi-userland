@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gvfs
 COMPONENT_VERSION=      1.26.0
-COMPONENT_REVISION=     6
+COMPONENT_REVISION=     7
 COMPONENT_SUMMARY=      GNOME virtual file system framework
 COMPONENT_PROJECT_URL=  https://www.gnome.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -37,12 +37,8 @@ PATH= $(PATH.gnu)
 COMPONENT_PREP_ACTION= ( cd $(@D) && \
 	autoreconf -if)
 
-CFLAGS += -D_XPG4_2
-CFLAGS += -D__EXTENSIONS__
-CFLAGS.32 += -I/usr/include/libsmbclient
-LDFLAGS += -lxml2
-LDFLAGS.32 = -L/usr/lib/libsmbclient -R/usr/lib/libsmbclient
-LDFLAGS += $(LDFLAGS.$(BITS))
+CPPFLAGS += -D_XPG4_2 -D__EXTENSIONS__
+LDFLAGS += -lxml2 -L/usr/lib/libsmbclient/$(MACH64) -R/usr/lib/libsmbclient/$(MACH64)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-fuse
@@ -60,11 +56,15 @@ CONFIGURE_OPTIONS += --enable-http
 CONFIGURE_OPTIONS += --enable-keyring
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
+CONFIGURE_OPTIONS += --with-samba-includes=/usr/include/libsmbclient
 
-CONFIGURE_OPTIONS.32 += --with-samba-includes=/usr/include/libsmbclient
-CONFIGURE_OPTIONS.32 += --with-samba-libs=/usr/lib/libsmbclient
+CONFIGURE_OPTIONS.32 += --without-samba
+CONFIGURE_OPTIONS.64 += --with-samba
+#CONFIGURE_OPTIONS.64 += --with-samba-libs=/usr/lib/libsmbclient/$(MACH64)
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 CONFIGURE_ENV+= PERL=$(PERL)
+CONFIGURE_ENV+= GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
