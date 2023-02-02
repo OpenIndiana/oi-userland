@@ -16,13 +16,12 @@ BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libjpeg-turbo
-COMPONENT_VERSION= 2.1.4
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.1.5
 COMPONENT_SUMMARY= libjpeg -JPEG Turbo libraries
 COMPONENT_PROJECT_URL= https://www.libjpeg-turbo.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d3ed26a1131a13686dfca4935e520eb7c90ae76fbc45d98bb50a8dc86230342b
+COMPONENT_ARCHIVE_HASH=	sha256:bc12bc9dce55300c6bf4342bc233bcc26bd38bf289eedf147360d731c668ddaf
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libjpeg-turbo/files/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz/download
 COMPONENT_FMRI= image/library/libjpeg-turbo
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -32,7 +31,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CMAKE_DEFAULT_DIRS=no
+CMAKE_DEFAULT_DIRS= no
 
 # Warnings are normal: libtool:   error: ignoring unknown tag NASM
 
