@@ -10,27 +10,27 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2023 Andreas Wacknitz
 #
+
+BUILD_BITS= 64_and_32
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libid3tag
-COMPONENT_VERSION=	0.15.1b
-IPS_COMPONENT_VERSION=	0.15.1.2
+COMPONENT_VERSION=	0.16.2
 COMPONENT_SUMMARY=	ID3 tag reading library from the MAD project
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_PROJECT_URL=	http://www.underbit.com/products/mad/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:63da4f6e7997278f8a3fef4c6a372d342f705051d1eeb6a46a86b03610e26151
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/mad/files/libid3tag/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download/
+COMPONENT_PROJECT_URL=	https://www.underbit.com/products/mad/
+COMPONENT_SRC=		$(COMPONENT_NAME)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:02721346d554c4b4aa3966b134152be65eb4df1fb9322d2d019133238d2ba017
+COMPONENT_ARCHIVE_URL=	https://codeberg.org/tenacityteam/libid3tag/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		library/audio/libid3tag
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 FP_ARCH.32 = default
 FP_ARCH.64 = 64bit
@@ -40,11 +40,6 @@ CONFIGURE_OPTIONS  += --enable-shared
 CONFIGURE_OPTIONS  += --disable-static
 CONFIGURE_OPTIONS  += --enable-accuracy
 CONFIGURE_OPTIONS  += --enable-fpm=$(FP_ARCH.$(BITS))
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/zlib
