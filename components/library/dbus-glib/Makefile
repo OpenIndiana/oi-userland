@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dbus-glib
 COMPONENT_VERSION=      0.112
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_PROJECT_URL=  https://dbus.freedesktop.org/doc/dbus-glib/
 COMPONENT_SUMMARY=      D-Bus GLib bindings
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -39,6 +39,7 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_ENV+=	GLIB_GENMARSHAL=/usr/bin/glib-genmarshal
 
 # For tests to pass
 unexport SHELLOPTS
