@@ -40,6 +40,9 @@ PATH= $(PATH.gnu)
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/vala
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/ui-designer/glade
 REQUIRED_PACKAGES += library/desktop/atk
