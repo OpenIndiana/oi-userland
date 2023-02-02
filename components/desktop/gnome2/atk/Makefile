@@ -11,7 +11,7 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
-# Copyright 2020 Andreas Wacknitz
+# Copyright 2020, 2023 Andreas Wacknitz
 #
 
 BUILD_BITS= 32_and_64
@@ -19,9 +19,10 @@ BUILD_STYLE= meson
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         atk
-COMPONENT_MJR_VERSION=2.38
-COMPONENT_MNR_VERSION=0
+COMPONENT_MJR_VERSION=	2.38
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNOME accesibility toolkit libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
