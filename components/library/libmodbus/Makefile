@@ -23,20 +23,21 @@
 # Copyright (c) 2022, Niklas Poslovski
 #
 
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmodbus
-COMPONENT_VERSION=	3.1.8
-COMPONENT_FMRI=		library/$(COMPONENT_NAME)
+COMPONENT_VERSION=	3.1.10
 COMPONENT_SUMMARY=	Cross-platform library to send/receive data according to the Modbus protocol with RTU (serial) and TCP (Ethernet) communications
-COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b122f2bc29f749702a22c0a760a7ca2182d541f5fa26bf25e3431f907b606f3c
+COMPONENT_ARCHIVE_HASH=	sha256:899be4e25ab7fe5799d43f9567510d6f063d2e8f56136dd726b6fd976f9b2253
 COMPONENT_ARCHIVE_URL=	https://github.com/stephane/libmodbus/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://libmodbus.org/
+COMPONENT_FMRI=		library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1+
-COMPONENT_LICENSE_FILE=	libmodbus.license
+COMPONENT_LICENSE_FILE=	COPYING.LESSER
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -50,6 +51,9 @@ CONFIGURE_OPTIONS +=	--enable-static=no
 COMPONENT_BUILD_ARGS +=	"LDFLAGS=$(LDFLAGS) -lsocket"
 COMPONENT_BUILD_ARGS +=	"INSTALL=$(INSTALL)"
 COMPONENT_BUILD_ARGS +=	"MAKE=$(GMAKE)"
+
+# This is needed to make the tests successful:
+unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
