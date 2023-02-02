@@ -11,25 +11,26 @@
 #
 # Copyright 2017 Alexander Pyhalov
 #
-BUILD_BITS=64_and_32
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmtp
-COMPONENT_VERSION=	1.1.19
+COMPONENT_VERSION=	1.1.20
 COMPONENT_SUMMARY=	libmtp is an Initiator implementation of the Media Transfer Protocol
-COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://libmtp.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:deb4af6f63f5e71215cfa7fb961795262920b4ec6cb4b627f55b30b18aa33228
+COMPONENT_ARCHIVE_HASH= sha256:c9191dac2f5744cf402e08641610b271f73ac21a3c802734ec2cedb2c6bc56d0
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libmtp/files/libmtp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download/
 COMPONENT_FMRI=		library/libmtp
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+COMPONENT_PREP_ACTION = ( cd $(@D)  && \
 					libtoolize --copy --force &&\
 					aclocal -I m4 &&\
 					autoheader &&\
