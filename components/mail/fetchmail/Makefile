@@ -30,14 +30,14 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
-COMPONENT_VERSION=	6.4.35
+COMPONENT_VERSION=	6.4.36
 COMPONENT_SUMMARY=	fetch mail from a POP, IMAP, ETRN, or ODMR-capable server
 COMPONENT_DESCRIPTION=	Fetchmail is a full-featured, robust, well-documented remote-mail retrieval and forwarding utility intended \
 to be used over on-demand TCP/IP links (such as SLIP or PPP connections). It supports every remote-mail protocol now in use on \
 	the Internet: POP2, POP3, RPOP, APOP, KPOP, all flavors of IMAP, ETRN, and ODMR. It can even support IPv6 and IPsec.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:7b0b56cbc0fca854504f167795fab532d5a54d5a7d3b6e3e36a33f34a0960a01
+COMPONENT_ARCHIVE_HASH=	sha256:700d433838d3e29e304452aec56b21874f538ec24113fdcbb25139c5f2edc23a
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/branch_6.4/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz/download 
 COMPONENT_PROJECT_URL=	https://www.fetchmail.info/
 COMPONENT_FMRI=		mail/fetchmail
@@ -49,11 +49,19 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Change the shebang line to use our default Python version explicitly, drop the fixed file into /usr/bin,
 # where our package manifest expects it, and remove the superfluous script from the site-packages folder.
-COMPONENT_POST_INSTALL_ACTION = \
+COMPONENT_POST_INSTALL_ACTION += \
 	$(GSED) -e "s|/usr/bin/env python|$(PYTHON)|" \
-	$(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/site-packages/fetchmailconf.py > \
-	$(PROTOUSRBINDIR)/fetchmailconf && \
-	$(RM) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/site-packages/fetchmailconf.py
+		$(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/site-packages/fetchmailconf.py && \
+    $(GSED) -i -e 's?\/usr\/bin\/python?\/usr\/bin\/python$(PYTHON_VERSION)?' \
+    	$(PROTOUSRBINDIR)/fetchmailconf && \
+    $(GSED) -i -e 's?site-packages?vendor-packages?' \
+    	$(PROTOUSRBINDIR)/fetchmailconf && \
+	if [ -d  $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)  ]; then \
+        $(MKDIR) -p  $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages && \
+        $(MV) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/site-packages/* $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages && \
+    	$(RM) -fr  $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/site-packages && \
+        $(PYTHON) -m compileall $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages ; \
+    fi ;
 
 CONFIGURE_OPTIONS += --with-kerberos5
 CONFIGURE_OPTIONS += --with-ssl=$(OPENSSL_PREFIX)
@@ -62,4 +70,5 @@ CONFIGURE_OPTIONS += --enable-NTLM
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += service/security/kerberos-5
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
