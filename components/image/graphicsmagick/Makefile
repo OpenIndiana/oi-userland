@@ -18,14 +18,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= GraphicsMagick
 COMPONENT_MAJOR_VERSION= 1.3
-COMPONENT_MINOR_VERSION= 38
+COMPONENT_MINOR_VERSION= 40
 COMPONENT_VERSION= $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
-COMPONENT_REVISION= 1
 COMPONENT_PROJECT_URL= http://www.graphicsmagick.org/
 COMPONENT_SUMMARY= A collection of utilities to support file format conversion,image processing, and 2D vector rendering.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:d60cd9db59351d2b9cb19beb443170acaa28f073d13d258f67b3627635e32675
+COMPONENT_ARCHIVE_HASH=	sha256:97dc1a9d4e89c77b25a3b24505e7ff1653b88f9bfe31f189ce10804b8efa7746
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI= image/graphicsmagick
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
