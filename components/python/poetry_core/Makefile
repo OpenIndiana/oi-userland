@@ -11,30 +11,25 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project poetry-core
+#   $WS_TOOLS/python-integrate-project poetry_core
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		poetry-core
-COMPONENT_VERSION =		1.3.2
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		poetry-core - Poetry PEP 517 Build Backend
+COMPONENT_NAME =		poetry_core
+HUMAN_VERSION =			1.5.0
+COMPONENT_SUMMARY =		poetry_core - Poetry PEP 517 Build Backend
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/poetry-core
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/0d/07/2a30643e4177c8edafa037c8ee3c62e4390950ab01d5ebc86e04379e2ba7/poetry-core-1.3.2.tar.gz
+	https://files.pythonhosted.org/packages/57/bb/2435fef60bb01f6c0891d9482c7053b50e90639f0f74d7658e99bdd4da69/poetry_core-1.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0ab006a40cb38d6a38b97264f6835da2f08a96912f2728ce668e9ac6a34f686f
+	sha256:253521bb7104e1df81f64d7b49ea1825057c91fa156d7d0bd752fefdad6f8c7a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# poetry-core needs poetry to run tests, but poetry needs poetry-core to build
-# itself.  This is special case when we need to set PYTHON_TEST_BOOTSTRAP to
-# make sure the poetry-core tests are not run when there is no poetry available
-# yet.
-PYTHON_TEST_BOOTSTRAP = yes
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
