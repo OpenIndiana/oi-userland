@@ -1,9 +1,13 @@
 --- cryptography-3.2.1/src/cryptography/hazmat/bindings/openssl/binding.py.orig
 +++ cryptography-3.2.1/src/cryptography/hazmat/bindings/openssl/binding.py
-@@ -171,22 +171,12 @@
-         lib.CRYPTOGRAPHY_OPENSSL_LESS_THAN_110
-         and not lib.CRYPTOGRAPHY_IS_LIBRESSL
-     ):
+@@ -167,26 +167,7 @@
+ 
+ 
+ def _verify_openssl_version(lib):
+-    if (
+-        lib.CRYPTOGRAPHY_OPENSSL_LESS_THAN_110
+-        and not lib.CRYPTOGRAPHY_IS_LIBRESSL
+-    ):
 -        if os.environ.get("CRYPTOGRAPHY_ALLOW_OPENSSL_102"):
 -            warnings.warn(
 -                "OpenSSL version 1.0.2 is no longer supported by the OpenSSL "
@@ -20,12 +24,7 @@
 -                "environment variable CRYPTOGRAPHY_ALLOW_OPENSSL_102 to "
 -                "allow OpenSSL 1.0.2."
 -            )
-+        warnings.warn(
-+            "OpenSSL version 1.0.2 is no longer supported by the OpenSSL "
-+            "project, please upgrade. The next version of cryptography "
-+            "will completely remove support for it.",
-+            utils.CryptographyDeprecationWarning,
-+        )
++    pass
  
  
  def _verify_package_version(version):
