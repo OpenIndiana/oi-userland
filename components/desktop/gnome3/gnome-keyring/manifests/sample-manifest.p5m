@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2018 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -25,6 +26,9 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 file path=etc/xdg/autostart/gnome-keyring-pkcs11.desktop
 file path=etc/xdg/autostart/gnome-keyring-secrets.desktop
 file path=etc/xdg/autostart/gnome-keyring-ssh.desktop
+link path=usr/bin/$(MACH32)/gnome-keyring target=gnome-keyring-3
+file path=usr/bin/$(MACH32)/gnome-keyring-3
+file path=usr/bin/$(MACH32)/gnome-keyring-daemon
 link path=usr/bin/gnome-keyring target=gnome-keyring-3
 file path=usr/bin/gnome-keyring-3
 file path=usr/bin/gnome-keyring-daemon

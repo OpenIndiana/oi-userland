@@ -13,15 +13,16 @@
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018 Michal Nowak
 # Copyright (c) 2021 Andreas Wacknitz
+# Copyright (c) 2023 Klaus Ziegler
 #
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-keyring
 COMPONENT_MJR_VERSION=	3.28
 COMPONENT_MNR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SUMMARY=	GNOME Keyring
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,10 +44,7 @@ PAM_MODULE_DIR.32 = $(USRLIBDIR)/security
 PAM_MODULE_DIR.64 = $(PAM_MODULE_DIR.32)/$(MACH64)
 PAM_MODULE_DIR = $(PAM_MODULE_DIR.$(BITS))
 
-CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
-
-# Overwrite files in /usr/bin
-$(INSTALL_64):	$(INSTALL_32)
+CONFIGURE_ENV =	GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
