@@ -1,60 +1,48 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project ipython
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		ipython
-COMPONENT_VERSION=	5.10.0
-COMPONENT_PROJECT_URL=	http://ipython.org/
-COMPONENT_SUMMARY=	Enhanced interactive Python shell
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:d1f9e2d02bb0900ddef7b6af114aca3a5cf3dc43b9de1f19d37c4aedbc724fee
-COMPONENT_ARCHIVE_URL=	http://archive.ipython.org/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	library/python/ipython
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=	BSD
+COMPONENT_NAME =		ipython
+HUMAN_VERSION =			7.34.0
+COMPONENT_SUMMARY =		ipython - IPython: Productive Interactive Computing
+COMPONENT_PROJECT_URL =		https://ipython.org
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/db/6c/3fcf0b8ee46656796099ac4b7b72497af5f090da3e43fd305f2a24c73915/ipython-7.34.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:af3bdb46aa292bce5615b1b2ebc76c2080c5f77f54bda2ec72461317273e7cd6
+COMPONENT_LICENSE =		BSD-3-Clause
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS= 3.5
+TEST_STYLE = pytest
 
-TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-# Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
-COMPONENT_PRE_BUILD_ACTION = \
-	/usr/bin/find $(SOURCE_DIR) -name *.py \
-		-exec $(GSED) -i -e 's/env python/python$(PYTHON_VERSION)/' "{}" \; ;
-
-COMPONENT_POST_INSTALL_ACTION = \
-        (cd $(PROTO_DIR)/usr/bin ; \
-                $(MV) ipython ipython-$(PYTHON_VERSION);\
-		$(MV) iptest iptest-$(PYTHON_VERSION); )
-
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-35
+PYTHON_REQUIRED_PACKAGES += library/python/backcall
+PYTHON_REQUIRED_PACKAGES += library/python/decorator
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/jedi
+PYTHON_REQUIRED_PACKAGES += library/python/matplotlib-inline
+PYTHON_REQUIRED_PACKAGES += library/python/pexpect
+PYTHON_REQUIRED_PACKAGES += library/python/pickleshare
+PYTHON_REQUIRED_PACKAGES += library/python/prompt-toolkit
+PYTHON_REQUIRED_PACKAGES += library/python/pygments
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/traitlets
+PYTHON_REQUIRED_PACKAGES += runtime/python
