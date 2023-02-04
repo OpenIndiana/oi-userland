@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgpool-II
 COMPONENT_VERSION= 	4.4.2
+COMPONENT_REVISION= 	1
 COMPONENT_SUMMARY= 	A connection pooling/replication server for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
