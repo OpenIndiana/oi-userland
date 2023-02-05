@@ -1,55 +1,46 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright 2016, Aurelien Larcher.
-# Copyright 2021, Nona Hansel.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
-BUILD_BITS=	NO_ARCH
-BUILD_STYLE=	setup.py
+#
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project singledispatch
+#
+
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
+COMPONENT_NAME =		singledispatch
+HUMAN_VERSION =			4.0.0
+COMPONENT_SUMMARY =		singledispatch - Backport functools.singledispatch to older Pythons.
+COMPONENT_PROJECT_URL =		https://github.com/jaraco/singledispatch
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/dd/63/3a100956b06f24b200feaadac4b37e57409fb74d6307b3dbb8d8eff033e8/singledispatch-4.0.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:f3c327a968651a7f4b03586eab7d90a07b05ff3ef7942d1967036eb9f75ab8fc
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-COMPONENT_NAME= singledispatch
-COMPONENT_VERSION= 3.4.0.3
-COMPONENT_REVISION= 2
-COMPONENT_FMRI= library/python/singledispatch
-COMPONENT_PROJECT_URL= http://docs.python.org/3/library/functools.html#functools.singledispatch
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:5b06af87df13818d14f08a028e42f566640aef80805c3b50c5056b086e3c2b9c
-COMPONENT_ARCHIVE_URL= $(call pypi_url)
-
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
-
-TEST_TARGET:	$(NO_TESTS)
-include $(WS_TOP)/make-rules/common.mk
-
-COMPONENT_POST_INSTALL_ACTION= \
-  gfind $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32) -type f \
-    -exec gawk '/^\#!.*python/{print FILENAME}{nextfile}' {} + \
-  | xargs gsed -i -e '1 s;^.*$$;\#!$(PYTHON.32);'
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
