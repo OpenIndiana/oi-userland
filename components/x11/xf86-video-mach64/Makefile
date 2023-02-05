@@ -40,6 +40,8 @@ CONFIGURE_OPTIONS += --disable-dri
 CONFIGURE_OPTIONS += --enable-exa
 CONFIGURE_OPTIONS += --enable-xaa
 
+CONFIGURE_ENV += with_xorg_module_dir=/usr/lib/xorg/modules/drivers/$(MACH64)
+
 COMPONENT_BUILD_ARGS += $(COMPONENT_COMMON_ARGS)
 COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
 
