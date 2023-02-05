@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-savage
 COMPONENT_VERSION= 2.3.9
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-savage
 COMPONENT_SUMMARY= xf86-video-savage - S3 Savage video driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \
@@ -34,6 +34,8 @@ LD_OPTIONS= -M$(COMPONENT_DIR)/mapfile.externs \
 
 # - Disable DRI since the kernel module isn't ported
 CONFIGURE_OPTIONS += --disable-dri
+
+CONFIGURE_ENV += with_xorg_module_dir=/usr/lib/xorg/modules/drivers/$(MACH64)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/x11-protocols
