@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-ast
 COMPONENT_VERSION= 1.1.5
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-ast
 COMPONENT_SUMMARY= xf86-video-ast - ASPEED AST driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \
@@ -35,6 +35,8 @@ AST_LIBRARIES = -lfb -lint10 -lpciaccess -lvbe -lvgahw
 
 LD_OPTIONS+= -L$(X11_SERVERMODS_DIR) -R$(X11_SERVERMODS_DIR) \
 	     $(AST_LIBRARIES)
+
+CONFIGURE_ENV += with_xorg_module_dir=/usr/lib/xorg/modules/drivers/$(MACH64)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/x11-protocols
