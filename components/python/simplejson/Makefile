@@ -1,57 +1,37 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2021 Nona Hansel
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project simplejson
 #
 
-BUILD_BITS=32_and_64
-BUILD_STYLE=setup.py
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		simplejson
-COMPONENT_VERSION=	3.8.2
-COMPONENT_REVISION=	5
-COMPONENT_PROJECT_URL=	http://undefined.org/python/#simplejson
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:d58439c548433adcda98e695be53e526ba940a4b9c44fb9a05d92cd495cdd47f
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_NAME =		simplejson
+HUMAN_VERSION =			3.18.2
+COMPONENT_SUMMARY =		simplejson - Simple, fast, extensible JSON encoder/decoder for Python
+COMPONENT_PROJECT_URL =		https://github.com/simplejson/simplejson
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/0e/4d/bc45300f0c6ae36462166faec34b62827b8e0a9f71c987ee36e7e5435294/simplejson-3.18.2.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:663e9109d0a2f883472080b776ec4a4a66f8931efa4cfe4714021dbc8ef7d0d6
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-
-CFLAGS+= -std=c99
-
-COMPONENT_TEST_DIR= $(COMPONENT_SRC)
-COMPONENT_TEST_ARGS= ./setup.py test
-
-#ASLR_MODE = $(ASLR_ENABLE)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
-REQUIRED_PACKAGES += system/library
+PYTHON_REQUIRED_PACKAGES += runtime/python
