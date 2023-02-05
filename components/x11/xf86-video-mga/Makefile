@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-mga
 COMPONENT_VERSION= 1.6.5
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-mga
 COMPONENT_SUMMARY= xf86-video-mga - Matrox MGA driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \
@@ -34,6 +34,8 @@ DRIVER_LD_FLAGS = -L$(X11_SERVERMODS_DIR) -R$(X11_SERVERMODS_DIR)
 CONFIGURE_OPTIONS += --disable-dri
 
 CONFIGURE_OPTIONS += XORG_LIBS="$(DRIVER_LD_FLAGS)"
+
+CONFIGURE_ENV += with_xorg_module_dir=/usr/lib/xorg/modules/drivers/$(MACH64)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/x11-protocols
