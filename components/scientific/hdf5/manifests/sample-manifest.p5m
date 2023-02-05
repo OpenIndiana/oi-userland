@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2017 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,34 +23,16 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/gif2h5
-file path=usr/bin/$(MACH64)/h52gif
-file path=usr/bin/$(MACH64)/h5c++
-file path=usr/bin/$(MACH64)/h5cc
-file path=usr/bin/$(MACH64)/h5copy
-file path=usr/bin/$(MACH64)/h5debug
-file path=usr/bin/$(MACH64)/h5diff
-file path=usr/bin/$(MACH64)/h5dump
-file path=usr/bin/$(MACH64)/h5fc
-file path=usr/bin/$(MACH64)/h5import
-file path=usr/bin/$(MACH64)/h5jam
-file path=usr/bin/$(MACH64)/h5ls
-file path=usr/bin/$(MACH64)/h5mkgrp
-file path=usr/bin/$(MACH64)/h5perf_serial
-file path=usr/bin/$(MACH64)/h5redeploy
-file path=usr/bin/$(MACH64)/h5repack
-file path=usr/bin/$(MACH64)/h5repart
-file path=usr/bin/$(MACH64)/h5stat
-file path=usr/bin/$(MACH64)/h5unjam
-file path=usr/bin/gif2h5
-file path=usr/bin/h52gif
 file path=usr/bin/h5c++
 file path=usr/bin/h5cc
+file path=usr/bin/h5clear
 file path=usr/bin/h5copy
 file path=usr/bin/h5debug
+file path=usr/bin/h5delete
 file path=usr/bin/h5diff
 file path=usr/bin/h5dump
 file path=usr/bin/h5fc
+file path=usr/bin/h5format_convert
 file path=usr/bin/h5import
 file path=usr/bin/h5jam
 file path=usr/bin/h5ls
@@ -60,6 +43,7 @@ file path=usr/bin/h5repack
 file path=usr/bin/h5repart
 file path=usr/bin/h5stat
 file path=usr/bin/h5unjam
+file path=usr/bin/h5watch
 file path=usr/include/hdf5/H5ACpublic.h
 file path=usr/include/hdf5/H5AbstractDs.h
 file path=usr/include/hdf5/H5Apublic.h
@@ -74,26 +58,38 @@ file path=usr/include/hdf5/H5CppDoc.h
 file path=usr/include/hdf5/H5Cpublic.h
 file path=usr/include/hdf5/H5DOpublic.h
 file path=usr/include/hdf5/H5DSpublic.h
+file path=usr/include/hdf5/H5DaccProp.h
 file path=usr/include/hdf5/H5DataSet.h
 file path=usr/include/hdf5/H5DataSpace.h
 file path=usr/include/hdf5/H5DataType.h
 file path=usr/include/hdf5/H5DcreatProp.h
 file path=usr/include/hdf5/H5Dpublic.h
 file path=usr/include/hdf5/H5DxferProp.h
+file path=usr/include/hdf5/H5ESdevelop.h
+file path=usr/include/hdf5/H5ESpublic.h
 file path=usr/include/hdf5/H5EnumType.h
 file path=usr/include/hdf5/H5Epubgen.h
 file path=usr/include/hdf5/H5Epublic.h
 file path=usr/include/hdf5/H5Exception.h
 file path=usr/include/hdf5/H5FDcore.h
+file path=usr/include/hdf5/H5FDdevelop.h
 file path=usr/include/hdf5/H5FDdirect.h
 file path=usr/include/hdf5/H5FDfamily.h
+file path=usr/include/hdf5/H5FDhdfs.h
+file path=usr/include/hdf5/H5FDioc.h
 file path=usr/include/hdf5/H5FDlog.h
+file path=usr/include/hdf5/H5FDmirror.h
 file path=usr/include/hdf5/H5FDmpi.h
 file path=usr/include/hdf5/H5FDmpio.h
 file path=usr/include/hdf5/H5FDmulti.h
+file path=usr/include/hdf5/H5FDonion.h
 file path=usr/include/hdf5/H5FDpublic.h
+file path=usr/include/hdf5/H5FDros3.h
 file path=usr/include/hdf5/H5FDsec2.h
+file path=usr/include/hdf5/H5FDsplitter.h
 file path=usr/include/hdf5/H5FDstdio.h
+file path=usr/include/hdf5/H5FDsubfiling.h
+file path=usr/include/hdf5/H5FDwindows.h
 file path=usr/include/hdf5/H5FaccProp.h
 file path=usr/include/hdf5/H5FcreatProp.h
 file path=usr/include/hdf5/H5File.h
@@ -103,15 +99,20 @@ file path=usr/include/hdf5/H5Gpublic.h
 file path=usr/include/hdf5/H5Group.h
 file path=usr/include/hdf5/H5IMpublic.h
 file path=usr/include/hdf5/H5IdComponent.h
+file path=usr/include/hdf5/H5Idevelop.h
 file path=usr/include/hdf5/H5Include.h
 file path=usr/include/hdf5/H5IntType.h
 file path=usr/include/hdf5/H5Ipublic.h
+file path=usr/include/hdf5/H5LDpublic.h
 file path=usr/include/hdf5/H5LTpublic.h
 file path=usr/include/hdf5/H5LaccProp.h
+file path=usr/include/hdf5/H5LcreatProp.h
+file path=usr/include/hdf5/H5Ldevelop.h
 file path=usr/include/hdf5/H5Library.h
 file path=usr/include/hdf5/H5Location.h
 file path=usr/include/hdf5/H5Lpublic.h
 file path=usr/include/hdf5/H5MMpublic.h
+file path=usr/include/hdf5/H5Mpublic.h
 file path=usr/include/hdf5/H5Object.h
 file path=usr/include/hdf5/H5OcreatProp.h
 file path=usr/include/hdf5/H5Opublic.h
@@ -126,8 +127,16 @@ file path=usr/include/hdf5/H5Rpublic.h
 file path=usr/include/hdf5/H5Spublic.h
 file path=usr/include/hdf5/H5StrType.h
 file path=usr/include/hdf5/H5TBpublic.h
+file path=usr/include/hdf5/H5TSdevelop.h
+file path=usr/include/hdf5/H5Tdevelop.h
 file path=usr/include/hdf5/H5Tpublic.h
+file path=usr/include/hdf5/H5VLconnector.h
+file path=usr/include/hdf5/H5VLconnector_passthru.h
+file path=usr/include/hdf5/H5VLnative.h
+file path=usr/include/hdf5/H5VLpassthru.h
+file path=usr/include/hdf5/H5VLpublic.h
 file path=usr/include/hdf5/H5VarLenType.h
+file path=usr/include/hdf5/H5Zdevelop.h
 file path=usr/include/hdf5/H5Zpublic.h
 file path=usr/include/hdf5/H5api_adpt.h
 file path=usr/include/hdf5/H5f90i.h
@@ -136,82 +145,58 @@ file path=usr/include/hdf5/H5overflow.h
 file path=usr/include/hdf5/H5pubconf.h
 file path=usr/include/hdf5/H5public.h
 file path=usr/include/hdf5/H5version.h
-file path=usr/include/hdf5/h5_dble_interface.mod
+file path=usr/include/hdf5/h5_gen.mod
 file path=usr/include/hdf5/h5a.mod
-file path=usr/include/hdf5/h5a_provisional.mod
 file path=usr/include/hdf5/h5d.mod
-file path=usr/include/hdf5/h5d_provisional.mod
 file path=usr/include/hdf5/h5ds.mod
 file path=usr/include/hdf5/h5e.mod
-file path=usr/include/hdf5/h5e_provisional.mod
 file path=usr/include/hdf5/h5f.mod
-file path=usr/include/hdf5/h5f_provisional.mod
+file path=usr/include/hdf5/h5fortkit.mod
 file path=usr/include/hdf5/h5fortran_types.mod
 file path=usr/include/hdf5/h5g.mod
 file path=usr/include/hdf5/h5global.mod
 file path=usr/include/hdf5/h5i.mod
 file path=usr/include/hdf5/h5im.mod
 file path=usr/include/hdf5/h5l.mod
-file path=usr/include/hdf5/h5l_provisional.mod
 file path=usr/include/hdf5/h5lib.mod
-file path=usr/include/hdf5/h5lib_provisional.mod
 file path=usr/include/hdf5/h5lt.mod
+file path=usr/include/hdf5/h5lt_const.mod
 file path=usr/include/hdf5/h5o.mod
-file path=usr/include/hdf5/h5o_provisional.mod
 file path=usr/include/hdf5/h5p.mod
-file path=usr/include/hdf5/h5p_provisional.mod
 file path=usr/include/hdf5/h5r.mod
-file path=usr/include/hdf5/h5r_provisional.mod
 file path=usr/include/hdf5/h5s.mod
 file path=usr/include/hdf5/h5t.mod
-file path=usr/include/hdf5/h5t_provisional.mod
 file path=usr/include/hdf5/h5tb.mod
-file path=usr/include/hdf5/h5test_kind_storage_size_mod.mod
+file path=usr/include/hdf5/h5tb_const.mod
+file path=usr/include/hdf5/h5vl.mod
 file path=usr/include/hdf5/h5z.mod
 file path=usr/include/hdf5/hdf5.h
 file path=usr/include/hdf5/hdf5.mod
 file path=usr/include/hdf5/hdf5_hl.h
 file path=usr/lib/$(MACH64)/libhdf5.settings
-link path=usr/lib/$(MACH64)/libhdf5.so target=libhdf5.so.10.3.1
-link path=usr/lib/$(MACH64)/libhdf5.so.10 target=libhdf5.so.10.3.1
-file path=usr/lib/$(MACH64)/libhdf5.so.10.3.1
-link path=usr/lib/$(MACH64)/libhdf5_cpp.so target=libhdf5_cpp.so.15.0.0
-link path=usr/lib/$(MACH64)/libhdf5_cpp.so.15 target=libhdf5_cpp.so.15.0.0
-file path=usr/lib/$(MACH64)/libhdf5_cpp.so.15.0.0
-link path=usr/lib/$(MACH64)/libhdf5_fortran.so target=libhdf5_fortran.so.10.0.5
-link path=usr/lib/$(MACH64)/libhdf5_fortran.so.10 \
-    target=libhdf5_fortran.so.10.0.5
-file path=usr/lib/$(MACH64)/libhdf5_fortran.so.10.0.5
-link path=usr/lib/$(MACH64)/libhdf5_hl.so target=libhdf5_hl.so.10.2.1
-link path=usr/lib/$(MACH64)/libhdf5_hl.so.10 target=libhdf5_hl.so.10.2.1
-file path=usr/lib/$(MACH64)/libhdf5_hl.so.10.2.1
-link path=usr/lib/$(MACH64)/libhdf5_hl_cpp.so target=libhdf5_hl_cpp.so.11.1.1
-link path=usr/lib/$(MACH64)/libhdf5_hl_cpp.so.11 target=libhdf5_hl_cpp.so.11.1.1
-file path=usr/lib/$(MACH64)/libhdf5_hl_cpp.so.11.1.1
+link path=usr/lib/$(MACH64)/libhdf5.so target=libhdf5.so.310.0.0
+link path=usr/lib/$(MACH64)/libhdf5.so.310 target=libhdf5.so.310.0.0
+file path=usr/lib/$(MACH64)/libhdf5.so.310.0.0
+link path=usr/lib/$(MACH64)/libhdf5_cpp.so target=libhdf5_cpp.so.310.0.0
+link path=usr/lib/$(MACH64)/libhdf5_cpp.so.310 target=libhdf5_cpp.so.310.0.0
+file path=usr/lib/$(MACH64)/libhdf5_cpp.so.310.0.0
+link path=usr/lib/$(MACH64)/libhdf5_fortran.so target=libhdf5_fortran.so.310.0.0
+link path=usr/lib/$(MACH64)/libhdf5_fortran.so.310 \
+    target=libhdf5_fortran.so.310.0.0
+file path=usr/lib/$(MACH64)/libhdf5_fortran.so.310.0.0
+link path=usr/lib/$(MACH64)/libhdf5_hl.so target=libhdf5_hl.so.310.0.0
+link path=usr/lib/$(MACH64)/libhdf5_hl.so.310 target=libhdf5_hl.so.310.0.0
+file path=usr/lib/$(MACH64)/libhdf5_hl.so.310.0.0
+link path=usr/lib/$(MACH64)/libhdf5_hl_cpp.so target=libhdf5_hl_cpp.so.310.0.0
+link path=usr/lib/$(MACH64)/libhdf5_hl_cpp.so.310 \
+    target=libhdf5_hl_cpp.so.310.0.0
+file path=usr/lib/$(MACH64)/libhdf5_hl_cpp.so.310.0.0
+link path=usr/lib/$(MACH64)/libhdf5_hl_fortran.so target=libhdf5hl_fortran.so
 link path=usr/lib/$(MACH64)/libhdf5hl_fortran.so \
-    target=libhdf5hl_fortran.so.10.0.4
-link path=usr/lib/$(MACH64)/libhdf5hl_fortran.so.10 \
-    target=libhdf5hl_fortran.so.10.0.4
-file path=usr/lib/$(MACH64)/libhdf5hl_fortran.so.10.0.4
-file path=usr/lib/libhdf5.settings
-link path=usr/lib/libhdf5.so target=libhdf5.so.10.3.1
-link path=usr/lib/libhdf5.so.10 target=libhdf5.so.10.3.1
-file path=usr/lib/libhdf5.so.10.3.1
-link path=usr/lib/libhdf5_cpp.so target=libhdf5_cpp.so.15.0.0
-link path=usr/lib/libhdf5_cpp.so.15 target=libhdf5_cpp.so.15.0.0
-file path=usr/lib/libhdf5_cpp.so.15.0.0
-link path=usr/lib/libhdf5_fortran.so target=libhdf5_fortran.so.10.0.5
-link path=usr/lib/libhdf5_fortran.so.10 target=libhdf5_fortran.so.10.0.5
-file path=usr/lib/libhdf5_fortran.so.10.0.5
-link path=usr/lib/libhdf5_hl.so target=libhdf5_hl.so.10.2.1
-link path=usr/lib/libhdf5_hl.so.10 target=libhdf5_hl.so.10.2.1
-file path=usr/lib/libhdf5_hl.so.10.2.1
-link path=usr/lib/libhdf5_hl_cpp.so target=libhdf5_hl_cpp.so.11.1.1
-link path=usr/lib/libhdf5_hl_cpp.so.11 target=libhdf5_hl_cpp.so.11.1.1
-file path=usr/lib/libhdf5_hl_cpp.so.11.1.1
-link path=usr/lib/libhdf5hl_fortran.so target=libhdf5hl_fortran.so.10.0.4
-link path=usr/lib/libhdf5hl_fortran.so.10 target=libhdf5hl_fortran.so.10.0.4
-file path=usr/lib/libhdf5hl_fortran.so.10.0.4
+    target=libhdf5hl_fortran.so.310.0.0
+link path=usr/lib/$(MACH64)/libhdf5hl_fortran.so.310 \
+    target=libhdf5hl_fortran.so.310.0.0
+file path=usr/lib/$(MACH64)/libhdf5hl_fortran.so.310.0.0
 file path=usr/share/hdf5/examples/README
 file path=usr/share/hdf5/examples/c++/chunks.cpp
 file path=usr/share/hdf5/examples/c++/compound.cpp
@@ -239,6 +224,7 @@ file path=usr/share/hdf5/examples/c/h5_crtdat.c
 file path=usr/share/hdf5/examples/c/h5_crtgrp.c
 file path=usr/share/hdf5/examples/c/h5_crtgrpar.c
 file path=usr/share/hdf5/examples/c/h5_crtgrpd.c
+file path=usr/share/hdf5/examples/c/h5_debug_trace.c
 file path=usr/share/hdf5/examples/c/h5_drivers.c
 file path=usr/share/hdf5/examples/c/h5_elink_unix2win.c
 file path=usr/share/hdf5/examples/c/h5_extend.c
@@ -248,15 +234,30 @@ file path=usr/share/hdf5/examples/c/h5_group.c
 file path=usr/share/hdf5/examples/c/h5_mount.c
 file path=usr/share/hdf5/examples/c/h5_rdwt.c
 file path=usr/share/hdf5/examples/c/h5_read.c
-file path=usr/share/hdf5/examples/c/h5_ref2reg.c
-file path=usr/share/hdf5/examples/c/h5_reference.c
+file path=usr/share/hdf5/examples/c/h5_ref2reg_deprec.c
+file path=usr/share/hdf5/examples/c/h5_ref_compat.c
+file path=usr/share/hdf5/examples/c/h5_ref_extern.c
+file path=usr/share/hdf5/examples/c/h5_reference_deprec.c
 file path=usr/share/hdf5/examples/c/h5_select.c
 file path=usr/share/hdf5/examples/c/h5_shared_mesg.c
 file path=usr/share/hdf5/examples/c/h5_subset.c
+file path=usr/share/hdf5/examples/c/h5_vds-eiger.c
+file path=usr/share/hdf5/examples/c/h5_vds-exc.c
+file path=usr/share/hdf5/examples/c/h5_vds-exclim.c
+file path=usr/share/hdf5/examples/c/h5_vds-percival-unlim-maxmin.c
+file path=usr/share/hdf5/examples/c/h5_vds-percival-unlim.c
+file path=usr/share/hdf5/examples/c/h5_vds-percival.c
+file path=usr/share/hdf5/examples/c/h5_vds-simpleIO.c
+file path=usr/share/hdf5/examples/c/h5_vds.c
 file path=usr/share/hdf5/examples/c/h5_write.c
+file path=usr/share/hdf5/examples/c/ph5_filtered_writes.c
+file path=usr/share/hdf5/examples/c/ph5_filtered_writes_no_sel.c
+file path=usr/share/hdf5/examples/c/ph5_subfiling.c
 file path=usr/share/hdf5/examples/c/ph5example.c
 file path=usr/share/hdf5/examples/c/run-c-ex.sh
 file path=usr/share/hdf5/examples/fortran/compound.f90
+file path=usr/share/hdf5/examples/fortran/compound_complex_fortran2003.f90
+file path=usr/share/hdf5/examples/fortran/compound_fortran2003.f90
 file path=usr/share/hdf5/examples/fortran/h5_cmprss.f90
 file path=usr/share/hdf5/examples/fortran/h5_crtatt.f90
 file path=usr/share/hdf5/examples/fortran/h5_crtdat.f90
@@ -268,10 +269,12 @@ file path=usr/share/hdf5/examples/fortran/h5_rdwt.f90
 file path=usr/share/hdf5/examples/fortran/h5_subset.f90
 file path=usr/share/hdf5/examples/fortran/hyperslab.f90
 file path=usr/share/hdf5/examples/fortran/mountexample.f90
+file path=usr/share/hdf5/examples/fortran/nested_derived_type.f90
 file path=usr/share/hdf5/examples/fortran/ph5example.f90
 file path=usr/share/hdf5/examples/fortran/refobjexample.f90
 file path=usr/share/hdf5/examples/fortran/refregexample.f90
 file path=usr/share/hdf5/examples/fortran/run-fortran-ex.sh
+file path=usr/share/hdf5/examples/fortran/rwdset_fortran2003.f90
 file path=usr/share/hdf5/examples/fortran/selectele.f90
 file path=usr/share/hdf5/examples/hl/c++/ptExampleFL.cpp
 file path=usr/share/hdf5/examples/hl/c++/run-hlc++-ex.sh
