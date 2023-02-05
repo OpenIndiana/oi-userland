@@ -21,23 +21,21 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pari
-COMPONENT_VERSION=	2.15.1
+COMPONENT_VERSION=	2.15.2
 COMPONENT_SUMMARY=	The PARI Computer Algebra System
 COMPONENT_PROJECT_URL=	https://pari.math.u-bordeaux.fr
-COMPONENT_FMRI=		library/math/pari
-COMPONENT_CLASSIFICATION=	Development/Other Languages
-
 COMPONENT_SRC=		pari-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:45419db77c6685bee67e42e0ecb78e19ef562be7aafc637c8a41970f2e909e3d
+COMPONENT_ARCHIVE_HASH=	sha256:b04628111ee22876519a4b1cdafb32febaa34eafa24f9e81f58f8d057fbee0dd
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/pub/pari/unix/$(COMPONENT_ARCHIVE)
-
+COMPONENT_FMRI=		library/math/pari
+COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=     	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # Configure complains when built outside of source tree
 # The PARI script config/genfunclist uses find -type f and fails on symlinks
@@ -48,18 +46,11 @@ CONFIGURE_SCRIPT= 	$(SOURCE_DIR)/Configure
 
 # reset all options because Configure does not understand --sbindir= only --dir
 CONFIGURE_OPTIONS=     --prefix=$(CONFIGURE_PREFIX)
-
 # PARI/gp installs its 64bit library in /usr/lib
-CONFIGURE_OPTIONS+=	--libdir=$(USRLIBDIR64)
+CONFIGURE_OPTIONS +=	--libdir=$(USRLIBDIR64)
+CONFIGURE_OPTIONS +=	--with-readline
 
-# PARI/gp can be compiled with GMP but does not find gmp.h in /usr/include/gmp
-# CONFIGURE_OPTIONS=	--with-gmp-include=/usr/include/gmp
-# our choice is to use the native kernel i.e., compile without GMP 
-CONFIGURE_OPTIONS+=	--without-gmp
-
-CONFIGURE_OPTIONS+=	--with-readline
-
-CONFIGURE_ENV+= 	CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV += 	CFLAGS="$(CFLAGS)"
 
 # all does not work because documentation requires Tex typesetting
 COMPONENT_BUILD_TARGETS = gp
@@ -72,11 +63,12 @@ COMPONENT_TEST_TARGETS = dyntest-all
 # the test script is in : src/test/dotest
 # I think it prints timing information and checks for correctness
 # the timing info could be useful but for our purprose remove/transform it
-COMPONENT_TEST_TRANSFORMS+= '-e "s/gp-sta..TIME=[ ]*[0-9]*//g"'
-COMPONENT_TEST_TRANSFORMS+= '-e "s/gp-dyn..TIME=[ ]*[0-9]*//g"'
-COMPONENT_TEST_TRANSFORMS+= '-e "/Total bench/d"'
+COMPONENT_TEST_TRANSFORMS += '-e "s/gp-sta..TIME=[ ]*[0-9]*//g"'
+COMPONENT_TEST_TRANSFORMS += '-e "s/gp-dyn..TIME=[ ]*[0-9]*//g"'
+COMPONENT_TEST_TRANSFORMS += '-e "/Total bench/d"'
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
