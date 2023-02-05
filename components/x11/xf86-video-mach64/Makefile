@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-mach64
 COMPONENT_VERSION= 6.9.6
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-mach64
 COMPONENT_SUMMARY= xf86-video-mach64 - MACH64 driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \
@@ -39,6 +39,8 @@ CONFIGURE_OPTIONS += --disable-dri
 
 CONFIGURE_OPTIONS += --enable-exa
 CONFIGURE_OPTIONS += --enable-xaa
+
+CONFIGURE_ENV += with_xorg_module_dir=/usr/lib/xorg/modules/drivers/$(MACH64)
 
 COMPONENT_BUILD_ARGS += $(COMPONENT_COMMON_ARGS)
 COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
