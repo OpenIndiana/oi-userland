@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hylafax
 COMPONENT_VERSION=	6.0.7
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_FMRI=		network/hylafax
 COMPONENT_SUMMARY=	HylaFAX Open Source is an enterprise-class system for sending and \
 	receiving facsimiles as well as for sending alpha-numeric pages.
