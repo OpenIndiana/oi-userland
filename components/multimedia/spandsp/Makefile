@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		spandsp
 COMPONENT_VERSION=	3.0.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	A DSP library for telephony
 COMPONENT_DESCRIPTION=  \
 	SpanDSP is a low-level signal processing library that modulates and demodulates \
@@ -50,10 +50,12 @@ COMPONENT_PRE_CONFIGURE_ACTION= ( \
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --enable-static=no
+ifeq ($(strip $(MACH)),i386)
 CONFIGURE_OPTIONS += --enable-mmx
 CONFIGURE_OPTIONS += --enable-sse
 CONFIGURE_OPTIONS += --enable-sse2
 CONFIGURE_OPTIONS += --enable-sse3
+endif
 
 CFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
