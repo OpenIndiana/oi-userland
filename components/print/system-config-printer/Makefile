@@ -14,46 +14,46 @@
 # Copyright 2018 Michal Nowak
 #
 
-BUILD_BITS=64
-
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= system-config-printer
-COMPONENT_VERSION= 1.5.12
-COMPONENT_REVISION= 3
-IPS_COMPONENT_VERSION= 2.30.0
-COMPONENT_SUMMARY= Print Manager for CUPS
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:6b16717dfe1f64ada6ef9398dcab07b8b7c864f006588d03002e41b743cf1e14
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/OpenPrinting/system-config-printer/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://cyberelk.net/tim/software/system-config-printer/
-
-PYTHON_VERSION= 3.5
-
-TEST_TARGET= $(NO_TESTS)
+COMPONENT_NAME =		system-config-printer
+HUMAN_VERSION =			1.5.18
+COMPONENT_VERSION =		2.30.0
+COMPONENT_REVISION =		5
+COMPONENT_FMRI =		print/cups/system-config-printer
+COMPONENT_SUMMARY =		Print Manager for CUPS
+COMPONENT_CLASSIFICATION =	System/Administration and Configuration
+COMPONENT_PROJECT_URL =		https://github.com/OpenPrinting/system-config-printer
+COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH =	sha256:b1a69e1b4ec2add569a87aeca811a37c5361ee6ae327ec852b79e64223e34bee
+COMPONENT_ARCHIVE_URL =		$(COMPONENT_PROJECT_URL)/releases/download/v$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE =		GPL-2.0-only
+COMPONENT_LICENSE_FILE =	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+CONFIGURE_ENV +=	PYTHON=$(PYTHON)
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 
-COMPONENT_PRE_CONFIGURE_ACTION =	(chmod -R u+r  $(SOURCE_DIR) && \
-					cp -rp $(SOURCE_DIR)/* $(@D))
+# Fix shebang for Python scripts
+PYTHON_SCRIPTS +=	$(USRSHAREDIR)/system-config-printer/applet.py
 
-CONFIGURE_SCRIPT = $(@D)/configure
+# Move the applet
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTOUSRLIBDIR)/system-config-printer ; \
+	$(MV) $(PROTOUSRBINDIR)/system-config-printer-applet $(PROTOUSRLIBDIR)/system-config-printer ;
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
-CONFIGURE_ENV	+= PYTHON=$(PYTHON)
+# Remove pyc files we do not want to distribute
+COMPONENT_POST_INSTALL_ACTION += \
+	$(RM) -r $(PROTOUSRSHAREDIR)/system-config-printer/__pycache__
 
 # Build dependencies
 REQUIRED_PACKAGES += text/xmlto
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/pycups-35
-REQUIRED_PACKAGES += library/python/pygobject-3-35
-REQUIRED_PACKAGES += library/python/python-dbus-35
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += SUNWcs
+PYTHON_REQUIRED_PACKAGES += library/python/pycups
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += library/python/python-dbus
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += shell/ksh93

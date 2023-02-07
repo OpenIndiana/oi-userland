@@ -1,0 +1,40 @@
+make[1]: Entering directory '$(@D)'
+Making check in .
+make[2]: Entering directory '$(@D)'
+$(PYTHON) setup.py build
+make  check-TESTS
+make[3]: Entering directory '$(@D)'
+make[4]: Entering directory '$(@D)'
+echo "#!/bin/bash" > "test-xml-validity.sh"
+echo "set -e" >> "test-xml-validity.sh"
+echo "xmllint --relaxng \\" >> "test-xml-validity.sh"
+echo "    $(SOURCE_DIR)/xml/preferreddrivers.rng \\" >> "test-xml-validity.sh"
+echo "    $(SOURCE_DIR)/xml/preferreddrivers.xml >/dev/null" >> "test-xml-validity.sh"
+echo "$(PYTHON) $(SOURCE_DIR)/xml/validate.py \\" >> "test-xml-validity.sh"
+echo "    $(SOURCE_DIR)/xml/preferreddrivers.xml" >> "test-xml-validity.sh"
+chmod 755 "test-xml-validity.sh"
+PASS: test-xml-validity.sh
+echo "#!/bin/bash" > "py.test.sh"
+echo "exec " >> "py.test.sh"
+chmod 755 "py.test.sh"
+PASS: py.test.sh
+============================================================================
+Testsuite summary for system-config-printer 1.5.18
+============================================================================
+# TOTAL: 2
+# PASS:  2
+# SKIP:  0
+# XFAIL: 0
+# FAIL:  0
+# XPASS: 0
+# ERROR: 0
+============================================================================
+make[4]: Leaving directory '$(@D)'
+make[3]: Leaving directory '$(@D)'
+make[2]: Leaving directory '$(@D)'
+Making check in po
+make[2]: Entering directory '$(@D)/po'
+Makefile:222: warning: ignoring prerequisites on suffix rule definition
+make[2]: Nothing to be done for 'check'.
+make[2]: Leaving directory '$(@D)/po'
+make[1]: Leaving directory '$(@D)'
