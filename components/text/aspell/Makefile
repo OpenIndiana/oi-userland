@@ -23,11 +23,14 @@
 # Copyright 2022 Andreas Wacknitz
 #
 
+PREFERRED_BITS=64
+BUILD_BITS = 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		aspell
 COMPONENT_VERSION=	0.60.8
-COMPONENT_REVISION =	2
+COMPONENT_REVISION =	3
 COMPONENT_FMRI=		text/aspell
 COMPONENT_SUMMARY=	GNU Aspell spell checking library
 COMPONENT_CLASSIFICATION=System/Text Tools
@@ -58,6 +61,7 @@ CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS.64)"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
