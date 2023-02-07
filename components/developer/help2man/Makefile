@@ -16,11 +16,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		help2man
-COMPONENT_VERSION=	1.49.2
+COMPONENT_VERSION=	1.49.3
 COMPONENT_SUMMARY=	help2man is a tool for automatically generating simple manual pages from program output
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:9e2e0e213a7e0a36244eed6204d902b6504602a578b6ecd15268b1454deadd36	
+COMPONENT_ARCHIVE_HASH=	sha256:4d7e4fdef2eca6afe07a2682151cea78781e0a4e8f9622142d9f70c083a2fd4f
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/help2man/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/help2man/
 COMPONENT_FMRI=		developer/build/$(COMPONENT_NAME)
