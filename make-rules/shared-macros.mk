@@ -749,12 +749,12 @@ PYTHON_DATA= $(PYTHON_LIB)
 # the corresponding .pyc file is outdated now.
 PYTHON_SCRIPT_SHEBANG_FIX_FUNC = \
     $(GSED) -i \
-        -e '1s@/usr/bin/python$$@$(PYTHON)@' \
-        -e '1s@/usr/bin/python\ @$(PYTHON) @' \
-        -e '1s@/usr/bin/env\ $(PYTHON)@$(PYTHON)@' \
-        -e '1s@/usr/bin/env\ python[23]@$(PYTHON)@' \
-        -e '1s@/usr/bin/env\ python@$(PYTHON)@' $(1); \
-    $(PYTHON) -m compileall $(1);
+        -e '1s@/usr/bin/python3\{0,1\}$$@$(PYTHON)@' \
+        -e '1s@/usr/bin/python3\{0,1\} @$(PYTHON) @' \
+        -e '1s@/usr/bin/env python3\.[0-9]\{1,\}@$(PYTHON)@' \
+        -e '1s@/usr/bin/env python3\{0,1\}@$(PYTHON)@' \
+	$(PROTO_DIR)/$(1); \
+    $(PYTHON) -m compileall $(PROTO_DIR)/$(1);
 
 # PYTHON_SCRIPTS is a list of files from the calling Makefile.
 PYTHON_SCRIPTS_PROCESS= \
