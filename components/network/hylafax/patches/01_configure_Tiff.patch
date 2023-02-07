@@ -1,5 +1,9 @@
---- hylafax-6.0.7/configure	2018-09-18 20:51:17.000000000 +0000
-+++ hylafax-6.0.7/configure.new	2022-12-11 14:48:53.248406453 +0000
+inhouse - not valid for upstream.
+
+SPARC needs fPIC instead of fpic.
+
+--- hylafax-6.0.7/configure.~1~	2018-09-18 20:51:17.000000000 +0200
++++ hylafax-6.0.7/configure	2023-02-06 18:50:54.173063804 +0100
 @@ -2563,7 +2563,7 @@
  				tiff_offset_t="uint32"
  				tiff_bytecount_t="uint32"
@@ -9,3 +13,14 @@
  				tiff_offset_t="uint64"
  				tiff_bytecount_t="uint64"
  				echo '#define TIFFHeader	TIFFHeaderClassic'
+@@ -3498,8 +3498,8 @@
+ 	if [ ${ISGCC} = "yes" ] ; then
+ 	    DSOOPTS='-shared -Wl,-G,-h,$@'
+ 	    LLDOPTS="$USE_RPATH -lstdc++"
+-	    GCOPTS="${GCOPTS} -fpic"
+-	    GCXXOPTS="${GCXXOPTS} -fpic"
++	    GCOPTS="${GCOPTS} -fPIC"
++	    GCXXOPTS="${GCXXOPTS} -fPIC"
+ 	else
+ 	    DSOOPTS='-G -h $@'
+ 	    LLDOPTS='-L${UTIL} -R${LIBDIR} -lhylafax-${ABI_VERSION} -lCrun'
