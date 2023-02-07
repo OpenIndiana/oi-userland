@@ -25,16 +25,17 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libspectre
-COMPONENT_VERSION=      0.2.11
-COMPONENT_FMRI=         library/libspectre
+COMPONENT_VERSION=      0.2.12
 COMPONENT_SUMMARY=      libspectre - A small library for rendering Postscript documents
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/libspectre/
-COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:79d44d65f835c5114592b60355d2fce117bace5c47a62fc63a07f10f133bd49c
+COMPONENT_ARCHIVE_HASH= sha256:55a7517cd3572bd2565df0cf450944a04d5273b279ebb369a895391957f0f960
 COMPONENT_ARCHIVE_URL=	https://libspectre.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/libspectre
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
