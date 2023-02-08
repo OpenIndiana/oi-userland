@@ -19,7 +19,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.1
-COMPONENT_MNR_VERSION=	14
+COMPONENT_MNR_VERSION=	15
 COMPONENT_SUMMARY=      PHP 8.1
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_CLASSIFICATION=Meta Packages/Group Packages
@@ -28,7 +28,7 @@ COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:4755af2563ad187ceaf4a3632359c55e3f3be4050e0299e0f713bbb5e0531965
+COMPONENT_ARCHIVE_HASH= sha256:4035236180efac535ff4f22db9ef3195672f31e3e0aa88f89c38ac0715beca3b
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_LICENSE=      PHP License
@@ -134,6 +134,8 @@ CONFIGURE_OPTIONS+=	--enable-xmlreader=shared
 CONFIGURE_OPTIONS+=	--enable-xmlwriter=shared
 CONFIGURE_OPTIONS+=	--enable-soap=shared
 CONFIGURE_OPTIONS+=	--enable-sockets=shared
+CONFIGURE_OPTIONS+=	--enable-mysqlnd=shared
+CONFIGURE_OPTIONS+=	--with-snmp=shared
 
 # Extensions, dependent on other packages
 
@@ -174,7 +176,6 @@ CONFIGURE_OPTIONS+=	--with-webp
 CONFIGURE_OPTIONS+=	--with-jpeg
 CONFIGURE_OPTIONS+=	--with-xpm
 CONFIGURE_OPTIONS+=	--with-freetype
-CONFIGURE_OPTIONS+=	--with-snmp
 CONFIGURE_OPTIONS+=	--with-gmp
 CONFIGURE_OPTIONS+=	--with-external-pcre
 CONFIGURE_OPTIONS+=	--with-enchant
@@ -184,7 +185,8 @@ CONFIGURE_OPTIONS+=	--with-openssl-dir=$(OPENSSL_PREFIX)
 # remove EXTRA_FLAGS to get the right ssl and crypto libs
 # now with fix to cover all EXTRA_LDFLAGS conditions
 COMPONENT_POST_CONFIGURE_ACTION= \
-	(cd $(@D) ; $(GSED) -i -e 's:^EXTRA_LDFLAGS = .*:EXTRA_LDFLAGS = -avoid-version -module:' Makefile )
+	(cd $(@D) ; \
+        $(GSED) -i -e 's:^EXTRA_LDFLAGS = .*:EXTRA_LDFLAGS = -avoid-version -module:' -e 's:-L/usr/lib/amd64 ::' -e 's:-R/usr/lib/amd64 ::' Makefile )
 
 # Installation Arguments
 COMPONENT_INSTALL_ARGS+=INSTALL_ROOT=$(PROTO_DIR)
@@ -228,10 +230,10 @@ REQUIRED_PACKAGES += web/server/apache-24
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/gmp
