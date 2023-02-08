@@ -25,11 +25,12 @@
 #
 
 BUILD_STYLE=	setup.py
-BUILD_BITS=	NO_ARCH
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylint
 COMPONENT_VERSION=	2.12.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Pylint is a Python static code analysis tool
 COMPONENT_DESCRIPTION=	Pylint is a Python static code analysis tool which looks for programming errors, helps enforcing a coding standard, sniffs for code smells and offers simple refactoring suggestions.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,9 +44,7 @@ COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_FMRI=			developer/python/$(COMPONENT_NAME)
 COMPONENT_LICENSE=	GPLv2
 
-# Set python version used by this product
-PYTHON_VERSION=		3.9
-PYTHON_VERSIONS=	3.9
+SINGLE_PYTHON_VERSION = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -61,57 +60,58 @@ PDOC_PYLINT_EXAMPLES =	$(PDOC_PYLINT)/examples
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/doc/tutorial.rst $(PDOC_PYLINT) ;
+	$(CP) $(SOURCE_DIR)/doc/tutorial.rst $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/doc/faq.rst $(PDOC_PYLINT) ;
+	$(CP) $(SOURCE_DIR)/doc/faq.rst $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/doc/index.rst $(PDOC_PYLINT) ;
+	$(CP) $(SOURCE_DIR)/doc/index.rst $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/doc/intro.rst $(PDOC_PYLINT) ;
+	$(CP) $(SOURCE_DIR)/doc/intro.rst $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/doc/support.rst $(PDOC_PYLINT) ;
+	$(CP) $(SOURCE_DIR)/doc/support.rst $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/README.rst $(PDOC_PYLINT) ;
+	$(CP) $(SOURCE_DIR)/README.rst $(PDOC_PYLINT) ;
 
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PDOC_PYLINT_EXAMPLES) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/examples/custom.py $(PDOC_PYLINT_EXAMPLES) ;
+	$(CP) $(SOURCE_DIR)/examples/custom.py $(PDOC_PYLINT_EXAMPLES) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/examples/custom_raw.py $(PDOC_PYLINT_EXAMPLES) ;
+	$(CP) $(SOURCE_DIR)/examples/custom_raw.py $(PDOC_PYLINT_EXAMPLES) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/elisp/pylint.el $(PDOC_PYLINT_EXAMPLES) ;
+	$(CP) $(SOURCE_DIR)/elisp/pylint.el $(PDOC_PYLINT_EXAMPLES) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/examples/pylintrc_camelcase $(PDOC_PYLINT_EXAMPLES) ;
+	$(CP) $(SOURCE_DIR)/examples/pylintrc_camelcase $(PDOC_PYLINT_EXAMPLES) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/examples/pylintrc $(PDOC_PYLINT_EXAMPLES) ;
-
-COMPONENT_TEST_DIR= $(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD= tox -e py39
-COMPONENT_TEST_ARGS=
-COMPONENT_TEST_MASTER= $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-# remove times and timings:
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/in [0-9]*\.[0-9]*s //"' \
-	'-e "s/[0-9]*:[0-9]*:[0-9]*//"'
-
-# Manually added test dependencies
-REQUIRED_PACKAGES += library/python/flaky-39
-REQUIRED_PACKAGES += library/python/hypothesis-39
-REQUIRED_PACKAGES += library/python/pluggy-39
-REQUIRED_PACKAGES += library/python/py-39
-REQUIRED_PACKAGES += library/python/pytest-39
-REQUIRED_PACKAGES += library/python/pytest-benchmark-39
-REQUIRED_PACKAGES += library/python/pytest-reporter-39
-
-# Manually added build dependencies (according to setup.cfg):
-REQUIRED_PACKAGES += library/python/astroid-39
-REQUIRED_PACKAGES += library/python/isort-39
-REQUIRED_PACKAGES += library/python/mccabe-39
-REQUIRED_PACKAGES += library/python/toml-39
-REQUIRED_PACKAGES += library/python/typing_extensions-39
+	$(CP) $(SOURCE_DIR)/examples/pylintrc $(PDOC_PYLINT_EXAMPLES) ;
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/importlib-metadata-39
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/astroid
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/isort
+PYTHON_REQUIRED_PACKAGES += library/python/mccabe
+PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/toml
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/astroid
+TEST_REQUIRED_PACKAGES.python += library/python/black
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/coveralls
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/flake8-typing-imports
+TEST_REQUIRED_PACKAGES.python += library/python/gitpython
+TEST_REQUIRED_PACKAGES.python += library/python/isort
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/pip
+TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
+TEST_REQUIRED_PACKAGES.python += library/python/pyenchant
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-profiling
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/tbump
+TEST_REQUIRED_PACKAGES.python += library/python/types-pkg-resources
+TEST_REQUIRED_PACKAGES.python += library/python/types-toml
