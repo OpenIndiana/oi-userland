@@ -14,6 +14,7 @@
 # Copyright 2016-2017, Wiselabs Software Ltda - http://www.wiselabs.com.br . All rights reserved.
 # Copyright 2018, Michal Nowak
 # Copyright 2022 Daniel Bell
+# Copyright 2023 Friedrich Kink
 #
 
 set name=pkg.fmri value=pkg:/database/mariadb-106@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -67,6 +68,7 @@ file path=usr/mariadb/10.6/bin/aria_read_log
 file path=usr/mariadb/10.6/bin/aria_s3_copy
 file path=usr/mariadb/10.6/man/man1/aria_s3_copy.1
 file path=usr/mariadb/10.6/bin/innochecksum
+link path=usr/mariadb/10.6/bin/mariadb-config target=mariadb_config
 file path=usr/mariadb/10.6/bin/mbstream
 file path=usr/mariadb/10.6/bin/myisamchk
 file path=usr/mariadb/10.6/bin/myisam_ftdump
@@ -130,6 +132,12 @@ link path=usr/mariadb/10.6/bin/mariadb-config target=mariadb_config
 file path=usr/mariadb/10.6/bin/mariadb_config
 file path=usr/mariadb/10.6/man/man1/mariadb_config.1
 
+link path=usr/mariadb/10.6/bin/mysqldump target=mariadb-dump
+link path=usr/mariadb/10.6/bin/mysqldumpslow target=mariadb-dumpslow
+link path=usr/mariadb/10.6/bin/mysqlhotcopy target=mariadb-hotcopy
+link path=usr/mariadb/10.6/bin/mysqlimport target=mariadb-import
+link path=usr/mariadb/10.6/bin/mysqlshow target=mariadb-show
+link path=usr/mariadb/10.6/bin/mysqlslap target=mariadb-slap
 file path=usr/mariadb/10.6/bin/myisamlog
 file path=usr/mariadb/10.6/bin/myisampack
 file path=usr/mariadb/10.6/bin/perror
@@ -154,7 +162,6 @@ file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/auth_gssapi.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/auth_gssapi_client.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/auth_pam.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/auth_pam_v1.so
-file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/auth_test_plugin.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/caching_sha2_password.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/client_ed25519.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/cracklib_password_check.so
@@ -164,7 +171,6 @@ file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/dialog.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/dialog_examples.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/example_key_management.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/file_key_management.so
-file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/func_test.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/ha_archive.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/ha_blackhole.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/ha_connect.so
@@ -174,7 +180,6 @@ file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/ha_federatedx.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/ha_s3.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/ha_sphinx.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/ha_spider.so
-file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/ha_test_sql_discovery.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/handlersocket.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/libdaemon_example.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/locales.so
@@ -191,9 +196,6 @@ file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/sha256_password.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/simple_password_check.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/sql_errlog.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/type_mysql_json.so
-file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/test_sql_service.so
-file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/type_test.so
-file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/test_versioning.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/wsrep_info.so
 file path=usr/mariadb/10.6/lib/$(MACH64)/plugin/zstd.so
 file path=usr/mariadb/10.6/man/man1/aria_chk.1
@@ -240,6 +242,7 @@ file path=usr/mariadb/10.6/share/JdbcInterface.jar
 file path=usr/mariadb/10.6/share/Mongo2.jar
 file path=usr/mariadb/10.6/share/Mongo3.jar
 
+file path=usr/mariadb/10.6/share/bulgarian/errmsg.sys
 file path=usr/mariadb/10.6/share/charsets/Index.xml
 file path=usr/mariadb/10.6/share/charsets/README
 file path=usr/mariadb/10.6/share/charsets/armscii8.xml
@@ -266,6 +269,7 @@ file path=usr/mariadb/10.6/share/charsets/latin7.xml
 file path=usr/mariadb/10.6/share/charsets/macce.xml
 file path=usr/mariadb/10.6/share/charsets/macroman.xml
 file path=usr/mariadb/10.6/share/charsets/swe7.xml
+file path=usr/mariadb/10.6/share/chinese/errmsg.sys
 file path=usr/mariadb/10.6/share/czech/errmsg.sys
 file path=usr/mariadb/10.6/share/danish/errmsg.sys
 file path=usr/mariadb/10.6/share/dutch/errmsg.sys
@@ -273,7 +277,6 @@ file path=usr/mariadb/10.6/share/english/errmsg.sys
 file path=usr/mariadb/10.6/share/errmsg-utf8.txt
 file path=usr/mariadb/10.6/share/estonian/errmsg.sys
 file path=usr/mariadb/10.6/share/fill_help_tables.sql
-file path=usr/mariadb/10.6/share/mysql_sys_schema.sql
 file path=usr/mariadb/10.6/share/french/errmsg.sys
 file path=usr/mariadb/10.6/share/german/errmsg.sys
 file path=usr/mariadb/10.6/share/greek/errmsg.sys
@@ -289,13 +292,19 @@ file path=usr/mariadb/10.6/share/mysql/magic
 file path=usr/mariadb/10.6/share/mysql/mysql-log-rotate mode=0555
 file path=usr/mariadb/10.6/share/mysql/mysql.server mode=0555
 file path=usr/mariadb/10.6/share/mysql/mysqld_multi.server mode=0555
+file path=usr/mariadb/10.6/share/mysql/policy/apparmor/README
+file path=usr/mariadb/10.6/share/mysql/policy/apparmor/usr.sbin.mysqld
+file path=usr/mariadb/10.6/share/mysql/policy/apparmor/usr.sbin.mysqld.local
+file path=usr/mariadb/10.6/share/mysql/policy/selinux/README
+file path=usr/mariadb/10.6/share/mysql/policy/selinux/mariadb-server.fc
+file path=usr/mariadb/10.6/share/mysql/policy/selinux/mariadb-server.te
+file path=usr/mariadb/10.6/share/mysql/policy/selinux/mariadb.te
 file path=usr/mariadb/10.6/share/mysql/wsrep.cnf
 file path=usr/mariadb/10.6/share/mysql/wsrep_notify
 file path=usr/mariadb/10.6/share/mysql_performance_tables.sql
+file path=usr/mariadb/10.6/share/mysql_sys_schema.sql
 file path=usr/mariadb/10.6/share/mysql_system_tables.sql
 file path=usr/mariadb/10.6/share/mysql_system_tables_data.sql
-file path=usr/mariadb/10.6/share/mysql_test_data_timezone.sql
-file path=usr/mariadb/10.6/share/mysql_test_db.sql
 file path=usr/mariadb/10.6/share/norwegian-ny/errmsg.sys
 file path=usr/mariadb/10.6/share/norwegian/errmsg.sys
 file path=usr/mariadb/10.6/share/polish/errmsg.sys
@@ -307,5 +316,3 @@ file path=usr/mariadb/10.6/share/slovak/errmsg.sys
 file path=usr/mariadb/10.6/share/spanish/errmsg.sys
 file path=usr/mariadb/10.6/share/swedish/errmsg.sys
 file path=usr/mariadb/10.6/share/ukrainian/errmsg.sys
-file path=usr/mariadb/10.6/share/bulgarian/errmsg.sys
-file path=usr/mariadb/10.6/share/chinese/errmsg.sys
