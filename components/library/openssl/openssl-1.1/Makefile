@@ -20,7 +20,8 @@
 #
 # Copyright (c) 2011, 2020, Oracle and/or its affiliates.
 #
-BUILD_BITS=32_and_64
+
+BUILD_BITS= 32_and_64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION_SHORT= 1.1
@@ -28,16 +29,15 @@ COMPONENT_NAME=	openssl-$(COMPONENT_VERSION_SHORT)
 
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
 # and IPS_COMPONENT_VERSION.
-COMPONENT_VERSION=	1.1.1.19
-HUMAN_VERSION=		1.1.1s
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.1.1.20
+HUMAN_VERSION=		1.1.1t
 COMPONENT_FMRI=		library/security/openssl-11
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SUMMARY=	OpenSSL - a Toolkit for Transport Layer (TLS v1+) protocols and general purpose cryptographic library
 COMPONENT_PROJECT_URL=	https://www.openssl.org/
 COMPONENT_SRC=		openssl-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c5ac01e760ee6ff0dab61d6b2bbd30146724d063eb322180c6f18a6f74e4b6aa
+COMPONENT_ARCHIVE_HASH=	sha256:8dee9b24bdb1dcbf0c3d1e9b02fb8f6bf22165e807f45adeb7c9677536859d3b
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	OpenSSL, SSLeay
 
@@ -50,7 +50,7 @@ COPY_COMMON_FILES:= rm -rf $(PATCH_DIR) && $(shell rsync -ac patches/ $(PATCH_DI
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(GCC_ROOT)/bin:$(PATH.illumos)
+PATH= $(GCC_ROOT)/bin:$(PATH.illumos)
 
 # OpenSSL does not use autoconf but its own configure system.
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
@@ -159,6 +159,6 @@ COMPONENT_TEST_TRANSFORMS = \
 REQUIRED_PACKAGES += developer/build/makedepend
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
