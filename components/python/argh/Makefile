@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		argh
-HUMAN_VERSION =			0.27.1
+HUMAN_VERSION =			0.27.2
 COMPONENT_SUMMARY =		argh - An unobtrusive argparse wrapper with natural syntax
 COMPONENT_PROJECT_URL =		http://github.com/neithere/argh/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/10/94/97a104617111e65e6342452ac619baf7947c494474b5bff4b4823159fa54/argh-0.27.1.tar.gz
+	https://files.pythonhosted.org/packages/ce/0a/53d01454690fa143537bf4b028dd6f02e17389713c75b1ffb8d46c8eecf0/argh-0.27.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:db06d91081f1724e347ccdb789c9570fec94737e755af1598837293e01fc4cd2
+	sha256:00c9027f6f461bcf24afe599a281bbda5cbd5dee4b6705befbea293a4ca7d221
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	COPYING.LESSER
 
@@ -33,7 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/iocapture
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
