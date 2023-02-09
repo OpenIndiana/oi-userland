@@ -10,12 +10,10 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
-# Copyright 2022 Niklas Poslovski
+# Copyright 2023 Andreas Wacknitz
 #
 
-set name=pkg.fmri \
-    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
@@ -48,10 +46,15 @@ file path=usr/bin/lou_tableinfo
 file path=usr/bin/lou_trace
 file path=usr/bin/lou_translate
 file path=usr/include/liblouis/liblouis.h
-link path=usr/lib/$(MACH64)/liblouis.so target=liblouis.so.20.0.11
-link path=usr/lib/$(MACH64)/liblouis.so.20 target=liblouis.so.20.0.11
-file path=usr/lib/$(MACH64)/liblouis.so.20.0.11
+link path=usr/lib/$(MACH64)/liblouis.so target=liblouis.so.20.0.12
+link path=usr/lib/$(MACH64)/liblouis.so.20 target=liblouis.so.20.0.12
+file path=usr/lib/$(MACH64)/liblouis.so.20.0.12
 file path=usr/lib/$(MACH64)/pkgconfig/liblouis.pc
+file path=usr/lib/python$(PYVER)/vendor-packages/louis-$(HUMAN_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/louis-$(HUMAN_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/louis-$(HUMAN_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/louis-$(HUMAN_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/louis/__init__.py
 file path=usr/share/doc/liblouis/liblouis.html
 file path=usr/share/doc/liblouis/liblouis.txt
 file path=usr/share/info/dir
@@ -113,18 +116,28 @@ file path=usr/share/liblouis/tables/cy-cy-g1.utb
 file path=usr/share/liblouis/tables/cy-cy-g2.ctb
 file path=usr/share/liblouis/tables/cy.tbl
 file path=usr/share/liblouis/tables/da-dk-6miscChars.cti
+file path=usr/share/liblouis/tables/da-dk-6miscChars_1993.cti
 file path=usr/share/liblouis/tables/da-dk-8miscChars.cti
+file path=usr/share/liblouis/tables/da-dk-8miscChars_1993.cti
 file path=usr/share/liblouis/tables/da-dk-g08.ctb
-file path=usr/share/liblouis/tables/da-dk-g16-lit.ctb
+file path=usr/share/liblouis/tables/da-dk-g08_1993.ctb
+file path=usr/share/liblouis/tables/da-dk-g16-lit_1993.ctb
 file path=usr/share/liblouis/tables/da-dk-g16.ctb
+file path=usr/share/liblouis/tables/da-dk-g16_1993.ctb
 file path=usr/share/liblouis/tables/da-dk-g18.ctb
-file path=usr/share/liblouis/tables/da-dk-g26-lit.ctb
+file path=usr/share/liblouis/tables/da-dk-g18_1993.ctb
+file path=usr/share/liblouis/tables/da-dk-g2.dic
+file path=usr/share/liblouis/tables/da-dk-g26-lit_1993.ctb
 file path=usr/share/liblouis/tables/da-dk-g26.ctb
-file path=usr/share/liblouis/tables/da-dk-g26l-lit.ctb
-file path=usr/share/liblouis/tables/da-dk-g26l.ctb
+file path=usr/share/liblouis/tables/da-dk-g26_1993.ctb
+file path=usr/share/liblouis/tables/da-dk-g26l-lit_1993.ctb
+file path=usr/share/liblouis/tables/da-dk-g26l_1993.ctb
 file path=usr/share/liblouis/tables/da-dk-g28.ctb
-file path=usr/share/liblouis/tables/da-dk-g28l.ctb
+file path=usr/share/liblouis/tables/da-dk-g28_1993.ctb
+file path=usr/share/liblouis/tables/da-dk-g28l_1993.ctb
+file path=usr/share/liblouis/tables/da-dk-g2_1993.dic
 file path=usr/share/liblouis/tables/da-dk-octobraille.dis
+file path=usr/share/liblouis/tables/da-dk-octobraille_1993.dis
 file path=usr/share/liblouis/tables/de-accents-detailed.cti
 file path=usr/share/liblouis/tables/de-accents.cti
 file path=usr/share/liblouis/tables/de-chardefs6.cti
@@ -241,7 +254,6 @@ file path=usr/share/liblouis/tables/hu-hu-g2_exceptions.cti
 file path=usr/share/liblouis/tables/hu.tbl
 file path=usr/share/liblouis/tables/hy.ctb
 file path=usr/share/liblouis/tables/hy.tbl
-file path=usr/share/liblouis/tables/hyph_brl_da_dk.dic
 file path=usr/share/liblouis/tables/hyph_cs_CZ.dic
 file path=usr/share/liblouis/tables/hyph_da_DK.dic
 file path=usr/share/liblouis/tables/hyph_de_DE.dic
@@ -268,6 +280,7 @@ file path=usr/share/liblouis/tables/it.tbl
 file path=usr/share/liblouis/tables/iu-ca-g1.ctb
 file path=usr/share/liblouis/tables/ja-kantenji.utb
 file path=usr/share/liblouis/tables/ka-in-g1.utb
+file path=usr/share/liblouis/tables/ka.utb
 file path=usr/share/liblouis/tables/kannada.cti
 file path=usr/share/liblouis/tables/kh-in-g1.utb
 file path=usr/share/liblouis/tables/kha.tbl
@@ -349,6 +362,7 @@ file path=usr/share/liblouis/tables/no-no.dis
 file path=usr/share/liblouis/tables/np-in-g1.utb
 file path=usr/share/liblouis/tables/nso-za-g1.utb
 file path=usr/share/liblouis/tables/nso-za-g2.ctb
+file path=usr/share/liblouis/tables/ny-mw.utb
 file path=usr/share/liblouis/tables/or-in-g1.utb
 file path=usr/share/liblouis/tables/or.tbl
 file path=usr/share/liblouis/tables/oriya.cti
@@ -400,6 +414,12 @@ file path=usr/share/liblouis/tables/sv-1996.ctb
 file path=usr/share/liblouis/tables/sv-g0.utb
 file path=usr/share/liblouis/tables/sv-g1.ctb
 file path=usr/share/liblouis/tables/sv-g2.ctb
+file path=usr/share/liblouis/tables/sw-ke-g1-2.ctb
+file path=usr/share/liblouis/tables/sw-ke-g1-3.ctb
+file path=usr/share/liblouis/tables/sw-ke-g1-4.ctb
+file path=usr/share/liblouis/tables/sw-ke-g1-5.ctb
+file path=usr/share/liblouis/tables/sw-ke-g1.utb
+file path=usr/share/liblouis/tables/sw-ke-g2.ctb
 file path=usr/share/liblouis/tables/ta-ta-g1.ctb
 file path=usr/share/liblouis/tables/ta.ctb
 file path=usr/share/liblouis/tables/ta.tbl
@@ -448,7 +468,6 @@ file path=usr/share/liblouis/tables/zh-hk.ctb
 file path=usr/share/liblouis/tables/zh-tw.ctb
 file path=usr/share/liblouis/tables/zh_CHN.tbl
 file path=usr/share/liblouis/tables/zh_HK.tbl
-file path=usr/share/liblouis/tables/zh_TW.tbl
 file path=usr/share/liblouis/tables/zhcn-cbs.ctb
 file path=usr/share/liblouis/tables/zhcn-g1.ctb
 file path=usr/share/liblouis/tables/zhcn-g2.ctb
