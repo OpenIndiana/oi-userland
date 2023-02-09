@@ -10,38 +10,30 @@
 #
 
 #
-# Copyright 2018 Alexander Pyhalov
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project ptyprocess
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
-PYTHON3_ONLY=yes
-USE_COMMON_TEST_MASTER=yes
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         ptyprocess
-COMPONENT_VERSION=      0.7.0
-COMPONENT_PROJECT_URL=  https://github.com/pexpect/ptyprocess
-COMPONENT_FMRI=         library/python/ptyprocess
-COMPONENT_SUMMARY=	Module for launching a subprocess in a pseudo terminal (pty)
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:5c5d0a3b48ceee0b48485e0c26037c0acd7d29765ca3fbb5cb3831d347423220
-COMPONENT_ARCHIVE_URL=  $(call pypi_url)
-COMPONENT_CLASSIFICATION=Development/Python
-COMPONENT_LICENSE=      ISC
-COMPONENT_LICENSE_FILE= LICENSE
+COMPONENT_NAME =		ptyprocess
+HUMAN_VERSION =			0.7.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		ptyprocess - Run a subprocess in a pseudo terminal
+COMPONENT_PROJECT_URL =		https://github.com/pexpect/ptyprocess
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/20/e5/16ff212c1e452235a90aeb09066144d0c5a6a8c0834397e03f5224495c4e/ptyprocess-0.7.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:5c5d0a3b48ceee0b48485e0c26037c0acd7d29765ca3fbb5cb3831d347423220
+COMPONENT_LICENSE =		ISC
+COMPONENT_LICENSE_FILE =	LICENSE
+
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_DIR = $(SOURCE_DIR)/tests
-COMPONENT_TEST_CMD = $(PYTHON) -m pytest
-COMPONENT_TEST_ARGS =
-
-COMPONENT_TEST_TRANSFORMS= '-n' \
-	'-e "/^test_/p"'
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
+PYTHON_REQUIRED_PACKAGES += runtime/python
