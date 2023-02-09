@@ -1,11 +1,12 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m py.test
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-collecting ... collected 83 items
+asyncio: mode=strict
+collecting ... collected 89 items
 
 ::project PASSED
 test/test_assembling.py::test_add_subparsers_when_default_command_exists__supported PASSED
@@ -24,7 +25,6 @@ test/test_assembling.py::test_set_default_command_mixed_arg_types PASSED
 test/test_assembling.py::test_set_default_command_varargs PASSED
 test/test_assembling.py::test_set_default_command_when_subparsers_exist__supported PASSED
 test/test_assembling.py::test_set_default_command_when_subparsers_exist__unsupported SKIPPED
-test/test_compat.py::test_ordered_dict PASSED
 test/test_decorators.py::test_aliases PASSED
 test/test_decorators.py::test_arg PASSED
 test/test_decorators.py::test_expects_obj PASSED
@@ -59,7 +59,6 @@ test/test_integration.py::test_default_arg_values_in_help PASSED
 test/test_integration.py::test_default_arg_values_in_help__regression PASSED
 test/test_integration.py::test_echo PASSED
 test/test_integration.py::test_explicit_cmd_name PASSED
-test/test_integration.py::test_guessing_integration XFAIL (TODO)
 test/test_integration.py::test_help_alias PASSED
 test/test_integration.py::test_help_formatting_is_preserved PASSED
 test/test_integration.py::test_invalid_choice PASSED
@@ -83,14 +82,21 @@ test/test_integration.py::test_unrecognized_arguments PASSED
 test/test_interaction.py::test_encoding PASSED
 test/test_interaction.py::test_prompt PASSED
 test/test_interaction.py::test_simple PASSED
+test/test_regressions.py::test_regression_issue104 PASSED
 test/test_regressions.py::test_regression_issue12 PASSED
 test/test_regressions.py::test_regression_issue12_help_flag PASSED
 test/test_regressions.py::test_regression_issue27 PASSED
 test/test_regressions.py::test_regression_issue31 PASSED
 test/test_regressions.py::test_regression_issue47 PASSED
 test/test_regressions.py::test_regression_issue76 PASSED
+test/test_utils.py::test_get_arg_spec__decorated_func PASSED
+test/test_utils.py::test_get_arg_spec__method PASSED
+test/test_utils.py::test_get_arg_spec__plain_func PASSED
+test/test_utils.py::test_get_arg_spec__static_method PASSED
+test/test_utils.py::test_get_arg_spec__wrapped PASSED
+test/test_utils.py::test_get_arg_spec__wrapped_complex PASSED
+test/test_utils.py::test_get_arg_spec__wrapped_nested PASSED
 
-======== 76 passed, 2 skipped, 4 xfailed ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 83 passed, 2 skipped, 3 xfailed ========
+  py$(PYV): OK
   congratulations :)
