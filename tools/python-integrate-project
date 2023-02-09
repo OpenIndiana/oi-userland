@@ -118,7 +118,7 @@ fi
 DOWNLOAD_URL=$(printf "%s" "$PYPI_PROJECT_RELEASE" | /usr/bin/jq -r '.urls[]|select(.packagetype=="sdist")|.url')
 if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
 	printf "WARNING: Failed to get download url for project %s, version %s from pypi\n" "$PROJECT" "$VERSION" >&2
-	DOWNLOAD_URL="TODO"
+	DOWNLOAD_URL=
 fi
 
 
@@ -189,9 +189,8 @@ COMPONENT_REVISION =		$((PREV_REV + 1))
 COMPONENT_SUMMARY =		$PROJECT - TODO
 EOF
 [[ -n "$HOMEPAGE" ]] && printf "COMPONENT_PROJECT_URL =\t\t%s\n" "$HOMEPAGE"
+[[ -n "$DOWNLOAD_URL" ]] && printf "COMPONENT_ARCHIVE_URL =\t\t\\\n\t%s\n" "$DOWNLOAD_URL"
 cat <<EOF
-COMPONENT_ARCHIVE_URL =		\\
-	$DOWNLOAD_URL
 COMPONENT_ARCHIVE_HASH =	\\
 	sha256:TODO
 COMPONENT_LICENSE =		license:TODO
