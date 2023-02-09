@@ -1,39 +1,43 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
-# Copyright 2021, Richard Lowe.
+#
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project pyrsistent
+#
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         pyrsistent
-COMPONENT_VERSION=      0.18.0
-COMPONENT_PROJECT_URL=  https://pypi.python.org/pypi/pyrsistent
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:773c781216f8c2900b42a7b638d5b517bb134ae1acbebe4d1e8f1f41ea60eb4b
-COMPONENT_ARCHIVE_URL=  https://pypi.python.org/packages/source/p/pyrsistent/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME =		pyrsistent
+HUMAN_VERSION =			0.19.3
+COMPONENT_SUMMARY =		pyrsistent - Persistent/Functional/Immutable data structures
+COMPONENT_PROJECT_URL =		https://github.com/tobgu/pyrsistent/
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/bf/90/445a7dbd275c654c268f47fa9452152709134f61f09605cf776407055a89/pyrsistent-0.19.3.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:1a2994773706bbb4995c31a97bc94f1418314923bd1048c6d964837040376440
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE.mit
 
-BUILD_BITS=		64
-PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
+TEST_STYLE = pytest
 
-TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/tobgu/pyrsistent/issues/228
+PYTEST_ADDOPTS += -p no:randomly
+
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-35
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
