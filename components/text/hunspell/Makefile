@@ -11,21 +11,22 @@
 #
 # Copyright (c) 2016 Alexander Pyhalov
 # Copyright (c) 2017 Ken Mays
+# Copyright (c) 2023 Klaus Ziegler
 #
 
+PREFERRED_BITS=64
 BUILD_BITS = 32_and_64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           hunspell
-COMPONENT_VERSION=        1.6.2
-COMPONENT_REVISION =	1
+COMPONENT_VERSION=        1.7.2
 COMPONENT_PROJECT_URL=    http://hunspell.github.io/
 COMPONENT_SUMMARY=        Improved spellchecker
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=        \
-    sha256:3cd9ceb062fe5814f668e4f22b2fa6e3ba0b339b921739541ce180cac4d6f4c4 
+    sha256:69fa312d3586c988789266eaf7ffc9861d9f6396c31fc930a014d551b59bbd6e
 COMPONENT_ARCHIVE_URL=        https://github.com/hunspell/hunspell/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=	GPLv3, LGPLv3, MPLv1.1
 COMPONENT_FMRI= text/hunspell
