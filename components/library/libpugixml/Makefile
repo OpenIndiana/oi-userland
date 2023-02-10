@@ -12,36 +12,28 @@
 # Copyright 2018 Aurelien Larcher
 #
 
+BUILD_BITS= 32_and_64
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=        pugixml
-COMPONENT_VERSION=     1.9
-COMPONENT_REVISION=    1
+COMPONENT_VERSION=     1.13
 COMPONENT_SUMMARY=     pugixml - light-weight C++ XML processing library
 COMPONENT_PROJECT_URL= https://pugixml.org/
-COMPONENT_FMRI=        library/pugixml
-COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL= \
-  http://github.com/zeux/pugixml/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-  sha256:d156d35b83f680e40fd6412c4455fdd03544339779134617b9b28d19e11fdba6
+COMPONENT_ARCHIVE_URL= https://github.com/zeux/pugixml/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:40c0b3914ec131485640fa57e55bf1136446026b41db91c1bef678186a12abbe
+COMPONENT_FMRI=        library/pugixml
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=     MIT
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_OPTIONS+= -DBUILD_SHARED_LIBS=ON
 CMAKE_OPTIONS+= -DBUILD_TESTS=OFF
 CMAKE_OPTIONS+= -DBUILD_PKGCONFIG=ON
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
