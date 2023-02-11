@@ -28,13 +28,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		texinfo
-COMPONENT_VERSION=	6.8
-COMPONENT_REVISION =	1
+COMPONENT_VERSION=	7.0.2
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/texinfo/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:8eb753ed28bca21f8f56c1a180362aed789229bd62fff58bf8368e9beb59fec4
+	sha256:f211ec3261383e1a89e4555a93b9d017fe807b9c3992fb2dff4871dae6da54ad
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/texinfo/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/texinfo
 
@@ -51,7 +50,8 @@ CPPFLAGS += -DDEFAULT_INFOPATH=\\\"$(INFOPATH)\\\"
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+# Set PATH to make sure run_parser_all.sh is able to find GNU diff
+COMPONENT_TEST_ENV +=		PATH=$(PATH.gnu)
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
@@ -66,10 +66,10 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^XXX_CC_XXX$$/d" '
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
