@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lasso
 COMPONENT_VERSION= 2.8.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Lasso - library implementing the SAML 2.0 and ID-FF 1.2 protocols
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -53,10 +53,6 @@ CONFIGURE_OPTIONS += CPPFLAGS=-I$(OPENSSL_INCDIR)
 CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
 
 unexport SHELLOPTS
-
-# Manually added dependencies
-# inkscape is needed for png file creation:
-REQUIRED_PACKAGES += image/editor/inkscape
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
