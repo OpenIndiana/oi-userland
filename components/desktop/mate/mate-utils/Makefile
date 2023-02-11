@@ -24,7 +24,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-utils
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Basic MATE utils
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:7ca56ab242e8efaa64f93ffb84f6e4bf8d4d0df01e20b3b6ef8956ce3192782e
@@ -36,8 +36,6 @@ COMPONENT_LICENSE_FILE= COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+=	--disable-disk-image-mounter
-
-REQUIRED_PACKAGES += image/editor/inkscape
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel
