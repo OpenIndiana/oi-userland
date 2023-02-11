@@ -2,6 +2,7 @@ PASS: test-accept
 PASS: test-alloca-opt
 PASS: test-arpa_inet
 PASS: test-array_list
+PASS: test-assert
 PASS: test-binary-io.sh
 PASS: test-bind
 PASS: test-bitrotate
@@ -9,6 +10,7 @@ PASS: test-byteswap
 PASS: test-c-ctype
 PASS: test-c-strcase.sh
 PASS: test-calloc-gnu
+PASS: test-canonicalize-lgpl
 PASS: test-cloexec
 PASS: test-close
 PASS: test-connect
@@ -53,6 +55,7 @@ PASS: test-getline
 PASS: test-getpeername
 PASS: test-getprogname
 PASS: test-gettimeofday
+PASS: test-scratch-buffer
 PASS: test-hash
 PASS: test-ignore-value
 PASS: test-inet_ntop
@@ -65,6 +68,7 @@ PASS: test-isblank
 PASS: test-langinfo
 PASS: test-limits-h
 PASS: test-linked_list
+PASS: test-linkedhash_list
 PASS: test-listen
 PASS: test-locale
 PASS: test-localename
@@ -87,12 +91,15 @@ PASS: test-pathmax
 PASS: test-perror.sh
 PASS: test-perror2
 PASS: test-pipe
+PASS: test-pselect
 PASS: test-pthread
 PASS: test-pthread-thread
 PASS: test-pthread_sigmask1
 PASS: test-pthread_sigmask2
 PASS: test-raise
+PASS: test-rawmemchr
 PASS: test-read-file
+PASS: test-readlink
 PASS: test-realloc-gnu
 PASS: test-reallocarray
 PASS: test-recv
@@ -111,7 +118,6 @@ PASS: test-setlocale1.sh
 PASS: test-setlocale2.sh
 PASS: test-setsockopt
 PASS: test-shutdown
-PASS: test-sigaction
 PASS: test-signal-h
 PASS: test-sigprocmask
 PASS: test-sleep
@@ -121,6 +127,7 @@ PASS: test-stat
 PASS: test-stat-time
 PASS: test-stdalign
 PASS: test-stdbool
+PASS: test-stdckdint
 PASS: test-stddef
 PASS: test-stdint
 PASS: test-stdio
@@ -145,6 +152,7 @@ PASS: test-thread_self
 PASS: test-thread_create
 PASS: test-time
 PASS: test-timespec
+PASS: test-tls
 PASS: test-unistd
 PASS: test-unsetenv
 PASS: test-usleep
@@ -155,8 +163,8 @@ PASS: test-verify.sh
 PASS: test-vsnprintf
 PASS: test-wchar
 PASS: test-xalloc-die.sh
-# TOTAL: 157
-# PASS:  157
+# TOTAL: 165
+# PASS:  165
 # SKIP:  0
 # XFAIL: 0
 # FAIL:  0
@@ -257,7 +265,7 @@ PASS: sign-verify-ed25519-rfc8080
 PASS: trustdb-tofu
 PASS: dtls-rehandshake-anon
 PASS: mini-alpn
-PASS: mini-dtls-large
+SKIP: mini-dtls-large
 PASS: mini-termination
 PASS: mini-x509-cas
 PASS: mini-x509-2
@@ -267,7 +275,7 @@ PASS: mini-emsgsize-dtls
 PASS: chainverify-unsorted
 PASS: mini-overhead
 PASS: tls12-ffdhe
-PASS: mini-dtls-heartbeat
+SKIP: mini-dtls-heartbeat
 PASS: mini-x509-callbacks
 PASS: key-openssl
 PASS: priorities
@@ -313,6 +321,7 @@ PASS: set_x509_key_file
 PASS: tls12-rehandshake-cert-auto
 PASS: tls12-rehandshake-set-prio
 PASS: mini-chain-unsorted
+PASS: x509-verify-duplicate
 PASS: x509-verify-with-crl
 PASS: mini-dtls-mtu
 PASS: privkey-verify-broken
@@ -406,9 +415,9 @@ PASS: send-client-cert
 PASS: custom-urls-override
 PASS: hex
 PASS: rehandshake-switch-psk-id
-PASS: rehandshake-switch-srp-id
+SKIP: rehandshake-switch-srp-id
 PASS: base64
-PASS: srpbase64
+SKIP: srpbase64
 PASS: pkcs1-digest-info
 PASS: set_x509_key
 PASS: set_x509_key_file_der
@@ -432,7 +441,7 @@ PASS: resume-with-false-start
 PASS: set_x509_key_file_ocsp
 PASS: client-fastopen
 SKIP: rng-sigint
-PASS: srp
+SKIP: srp
 PASS: rng-pthread
 PASS: safe-renegotiation/srn0
 PASS: safe-renegotiation/srn1
@@ -473,6 +482,7 @@ PASS: dtls1-2-mtu-check
 PASS: crl_apis
 PASS: cert_verify_inv_utf8
 PASS: no-extensions
+PASS: no-status-request
 PASS: hostname-check-utf8
 PASS: pkcs8-key-decode-encrypted
 PASS: priority-mix
@@ -524,9 +534,12 @@ PASS: id-on-xmppAddr
 PASS: tls13-compat-mode
 PASS: ciphersuite-name
 PASS: x509-upnconstraint
+SKIP: xts-key-check
 PASS: cipher-padding
 PASS: pkcs7-verify-double-free
 SKIP: fips-rsa-sizes
+PASS: tls12-rehandshake-ticket
+PASS: pathbuf
 PASS: tls-channel-binding
 PASS: strict-der
 PASS: system-prio-file
@@ -646,9 +659,9 @@ SKIP: p11-kit-trust.sh
 SKIP: testpkcs11.sh
 SKIP: certtool-pkcs11.sh
 SKIP: tpmtool_test.sh
-# TOTAL: 484
-# PASS:  420
-# SKIP:  43
+# TOTAL: 489
+# PASS:  419
+# SKIP:  49
 # XFAIL: 0
 # FAIL:  21
 # XPASS: 0
