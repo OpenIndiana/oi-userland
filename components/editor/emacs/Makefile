@@ -21,14 +21,14 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2020, Andreas Wacknitz
-# Copyright (c) 2021, Klaus Ziegler
+# Copyright (c) 2023, Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
 COMPONENT_VERSION=      28.2
-COMPONENT_REVISION=		3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -93,6 +93,11 @@ CONFIGURE_OPTIONS +=	--with-mailutils
 # Disable imagemagick (fixes https://www.illumos.org/issues/10354)
 CONFIGURE_OPTIONS +=	--without-imagemagick
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
+
+# SPARC needs this to be set in order to publish correctly.
+ifeq ($(strip $(MACH)),sparc)
+CONFIGURE_OPTIONS +=	--build=$(GCC_GNU_TRIPLET)
+endif
 
 # ASLR should remain disabled for emacs (the default);
 # build consistently core dumps with ASLR
