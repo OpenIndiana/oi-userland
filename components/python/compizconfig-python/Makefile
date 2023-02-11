@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compizconfig-python
 COMPONENT_VERSION=	0.8.18
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	compizconfig libraries - is an alternative configuration system for compiz
 COMPONENT_CLASSIFICATION=	Development/Python
 COMPONENT_PROJECT_URL=	http://www.northfield.ws
