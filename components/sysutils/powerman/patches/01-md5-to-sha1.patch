@@ -1,0 +1,22 @@
+--- powerman-2.3.25/snmppower/snmppower.c.orig	2019-01-10 23:49:55.000000000 +0100
++++ powerman-2.3.25/snmppower/snmppower.c	2023-02-11 09:36:10.635554323 +0100
+@@ -34,6 +34,7 @@
+ 
+ #include <net-snmp/net-snmp-config.h>
+ #include <net-snmp/net-snmp-includes.h>
++#include <net-snmp/library/snmp_api.h>
+ 
+ #include "xtypes.h"
+ #include "xmalloc.h"
+@@ -207,9 +208,9 @@
+     session.securityNameLen = strlen (av[1]);
+ 
+     session.securityLevel = SNMP_SEC_LEVEL_AUTHNOPRIV;
+-    session.securityAuthProto = usmHMACMD5AuthProtocol;
++    session.securityAuthProto = SNMP_DEFAULT_AUTH_PROTO;
+     session.securityAuthProtoLen =
+-                              sizeof (usmHMACMD5AuthProtocol) / sizeof (oid);
++                              sizeof (SNMP_DEFAULT_AUTH_PROTO) / sizeof (oid);
+     session.securityAuthKeyLen = USM_AUTH_KU_LEN;
+ 
+     if (generate_Ku (session.securityAuthProto,
