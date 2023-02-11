@@ -37,7 +37,7 @@ BUILD_FIASCO = Y
 #CC = gcc
 # Note that 'cc' is usually an alias for whatever is the main compiler
 # on a system, e.g. the GNU Compiler on Linux.
-CC = cc
+#CC = cc
 
 # The linker.
 LD = $(CC)
@@ -681,7 +681,7 @@ STATICLIB_TOO=N
 NETPBMLIB_RUNTIME_PATH=/usr/lib/amd64
 LDSHLIB = -m64 -Wl,-Bdynamic,-G,-h,$(SONAME)
 NEED_RUNTIME_PATH = N
-CC = gcc
+#CC = gcc
 CFLAGS = -O3 -m64 -ffast-math  -pedantic -fno-common -Wall -Wno-uninitialized -Wmissing-declarations -Wimplicit -Wwrite-strings -Wmissing-prototypes -Wundef -Wno-unknown-pragmas
 #RPATHOPTNAME = -R
 NETWORKLD = -lsocket -lnsl

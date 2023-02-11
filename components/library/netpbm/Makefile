@@ -15,13 +15,13 @@
 #
 
 BUILD_STYLE=	justmake
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= netpbm
 COMPONENT_VERSION= 10.73.42
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Netpbm is a toolkit for manipulation of graphic images, including conversion of images between a variety of different formats.
-COMPONENT_PROJECT_URL= http://netpbm.sourceforge.net/
+COMPONENT_PROJECT_URL= https://netpbm.sourceforge.net/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= sha256:f1ddaa753d189aa7760a75265b6f7ab96eeedac3e2493ef57227824d058d528c
@@ -29,6 +29,7 @@ COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/$(COMPONENT_NAME)/files/
 COMPONENT_FMRI= library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	GPL,BSD,MIT,BSD
+COMPONENT_LICENSE_FILE= doc/copyright_summary
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -47,7 +48,7 @@ LDFLAGS  +=  $(JPEG_LDFLAGS)
 COMPONENT_INSTALL_ARGS=		package
 COMPONENT_INSTALL_TARGETS=	pkgdir=$(PROTO_DIR)/usr
 
-COMPONENT_TEST_ENV+= -i PATH=$(PATH.gnu)
+COMPONENT_TEST_ENV += -i PATH=$(PATH.gnu)
 COMPONENT_TEST_TARGETS=	check-tree
 COMPONENT_TEST_TRANSFORMS= \
         '-n ' \
