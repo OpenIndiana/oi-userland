@@ -20,13 +20,13 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-base1
-COMPONENT_VERSION=      1.20.5
+COMPONENT_VERSION=      1.22.0
 #COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME= 	gst-plugins-base
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:11f911ef65f3095d7cf698a1ad1fc5242ac3ad6c9270465fb5c9e7f4f9c19b35
+COMPONENT_ARCHIVE_HASH= sha256:f53672294f3985d56355c8b1df8f6b49c8c8721106563e19f53be3507ff2229d
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/base
@@ -98,8 +98,8 @@ COMPONENT_TEST_TRANSFORMS += \
 REQUIRED_PACKAGES += x11/library/mesa
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += codec/libtheora
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -116,4 +116,5 @@ REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxv
