@@ -1,42 +1,3 @@
-diff -ur gstreamer-1.18.5.orig/gst/meson.build gstreamer-1.18.5/gst/meson.build
---- gstreamer-1.18.5.orig/gst/meson.build	2021-09-08 14:01:48.743989500 +0000
-+++ gstreamer-1.18.5/gst/meson.build	2021-10-25 23:38:36.506424498 +0000
-@@ -246,8 +246,8 @@
-     # HACK, change include paths in .y and .l in final version.
-     include_directories('parse')],
-   install : true,
--  dependencies : [gobject_dep, gmodule_dep, glib_dep, mathlib, dl_dep] + backtrace_deps
--                   + platform_deps,
-+  dependencies : [gobject_dep, gmodule_dep, glib_dep, mathlib, dl_dep]
-+	+ network_deps + backtrace_deps + platform_deps,
- )
- 
- if build_gir
-diff -ur gstreamer-1.18.5.orig/libs/gst/helpers/meson.build gstreamer-1.18.5/libs/gst/helpers/meson.build
---- gstreamer-1.18.5.orig/libs/gst/helpers/meson.build	2021-09-08 14:01:48.755989600 +0000
-+++ gstreamer-1.18.5/libs/gst/helpers/meson.build	2021-10-25 23:38:36.506659793 +0000
-@@ -112,7 +112,8 @@
-   executable('gst-ptp-helper', 'gst-ptp-helper.c',
-     c_args : gst_c_args,
-     include_directories : [configinc, libsinc],
--    dependencies : [gio_dep, gobject_dep, glib_dep, mathlib, gst_dep, cap_dep],
-+    dependencies : [gio_dep, gobject_dep, glib_dep, mathlib, gst_dep, cap_dep]
-+	+ network_deps,
-     install_dir : helpers_install_dir,
-     install : true)
- 
-diff -ur gstreamer-1.18.5.orig/libs/gst/net/meson.build gstreamer-1.18.5/libs/gst/net/meson.build
---- gstreamer-1.18.5.orig/libs/gst/net/meson.build	2021-09-08 14:01:48.755989600 +0000
-+++ gstreamer-1.18.5/libs/gst/net/meson.build	2021-10-25 23:38:36.506823841 +0000
-@@ -32,7 +32,7 @@
-   soversion : soversion,
-   darwin_versions : osxversion,
-   install : true,
--  dependencies : [gio_dep, gst_base_dep],
-+  dependencies : [gio_dep, gst_base_dep] + network_deps,
- )
- 
- if build_gir
 diff -ur gstreamer-1.18.5.orig/meson.build gstreamer-1.18.5/meson.build
 --- gstreamer-1.18.5.orig/meson.build	2021-09-08 14:01:48.759989500 +0000
 +++ gstreamer-1.18.5/meson.build	2021-10-25 23:45:39.509464275 +0000
@@ -61,25 +22,59 @@ diff -ur gstreamer-1.18.5.orig/meson.build gstreamer-1.18.5/meson.build
 +
  gir = find_program('g-ir-scanner', required : get_option('introspection'))
  gnome = import('gnome')
+ diff -Nru gstreamer-1.22.0.orig/gst/meson.build gstreamer-1.22.0/gst/meson.build
+--- gstreamer-1.22.0.orig/gst/meson.build	2023-01-23 20:29:34.000000000 +0100
++++ gstreamer-1.22.0/gst/meson.build	2023-02-12 18:35:46.666928131 +0100
+@@ -262,7 +262,7 @@
+   link_with : printf_lib,
+   install : true,
+   dependencies : [gobject_dep, gmodule_dep, glib_dep, mathlib, dl_dep,
+-                  backtrace_deps, platform_deps, extra_deps],
++                  network_deps, backtrace_deps, platform_deps, extra_deps],
+ )
  
-diff -ur gstreamer-1.18.5.orig/tests/check/meson.build gstreamer-1.18.5/tests/check/meson.build
---- gstreamer-1.18.5.orig/tests/check/meson.build	2021-09-08 14:01:48.787989100 +0000
-+++ gstreamer-1.18.5/tests/check/meson.build	2021-10-25 23:38:36.507237568 +0000
-@@ -150,7 +150,7 @@
-         cpp_args : gst_c_args + test_defines,
-         include_directories : [configinc],
-         link_with : link_with_libs,
--        dependencies : test_deps + glib_deps + gst_deps,
-+        dependencies : test_deps + glib_deps + gst_deps + network_deps,
-     )
+ pkg_name = 'gstreamer-1.0'
+diff -Nru gstreamer-1.22.0.orig/libs/gst/helpers/meson.build gstreamer-1.22.0/libs/gst/helpers/meson.build
+--- gstreamer-1.22.0.orig/libs/gst/helpers/meson.build	2023-01-23 20:29:34.000000000 +0100
++++ gstreamer-1.22.0/libs/gst/helpers/meson.build	2023-02-12 18:40:59.511935360 +0100
+@@ -115,7 +115,7 @@
+   exe = executable('gst-ptp-helper', 'gst-ptp-helper.c',
+     c_args : gst_c_args,
+     include_directories : [configinc, libsinc],
+-    dependencies : [gst_dep, gio_dep, mathlib, cap_dep],
++    dependencies : [gst_dep, gio_dep, mathlib, cap_dep, network_deps],
+     install_dir : helpers_install_dir,
+     install : true)
  
-     env = environment()
-diff -ur gstreamer-1.18.5.orig/tests/misc/meson.build gstreamer-1.18.5/tests/misc/meson.build
---- gstreamer-1.18.5.orig/tests/misc/meson.build	2021-09-08 14:01:48.787989100 +0000
-+++ gstreamer-1.18.5/tests/misc/meson.build	2021-10-25 23:38:36.507365598 +0000
-@@ -1,3 +1,4 @@
+diff -Nru gstreamer-1.22.0.orig/libs/gst/net/meson.build gstreamer-1.22.0/libs/gst/net/meson.build
+--- gstreamer-1.22.0.orig/libs/gst/net/meson.build	2023-01-23 20:29:34.000000000 +0100
++++ gstreamer-1.22.0/libs/gst/net/meson.build	2023-02-12 18:39:43.244261493 +0100
+@@ -32,7 +32,7 @@
+   soversion : soversion,
+   darwin_versions : osxversion,
+   install : true,
+-  dependencies : [gio_dep, gst_base_dep],
++  dependencies : [gio_dep, gst_base_dep, network_deps],
+ )
+ 
+ library_def = {'lib': gst_net}
+diff -Nru gstreamer-1.22.0.orig/tests/check/meson.build gstreamer-1.22.0/tests/check/meson.build
+--- gstreamer-1.22.0.orig/tests/check/meson.build	2023-01-23 20:29:34.000000000 +0100
++++ gstreamer-1.22.0/tests/check/meson.build	2023-02-12 18:39:08.934746694 +0100
+@@ -135,7 +135,7 @@
+   endif
+ endif
+ 
+-gst_deps = [gst_dep, gst_base_dep, gst_check_dep, gst_net_dep, gst_controller_dep, gio_dep, gmodule_dep]
++gst_deps = [gst_dep, gst_base_dep, gst_check_dep, gst_net_dep, gst_controller_dep, gio_dep, gmodule_dep, network_deps]
+ 
+ foreach t : core_tests
+   fname = t[0]
+diff -Nru gstreamer-1.22.0.orig/tests/misc/meson.build gstreamer-1.22.0/tests/misc/meson.build
+--- gstreamer-1.22.0.orig/tests/misc/meson.build	2023-01-23 20:29:34.000000000 +0100
++++ gstreamer-1.22.0/tests/misc/meson.build	2023-02-12 18:38:23.392008161 +0100
+@@ -1,3 +1,3 @@
  executable('netclock-replay', 'netclock-replay.c',
      include_directories: libsinc,
 -    dependencies : [gio_dep, gst_dep])
-+    dependencies : [gio_dep, gst_dep] + network_deps
-+)
++    dependencies : [gio_dep, gst_dep, network_deps])
