@@ -22,12 +22,13 @@
 #
 # Copyright (c) 2015, 2020, Oracle and/or its affiliates.
 # Copyright (c) 2020, Andreas Wacknitz
+# Copyright (c) 2023, Friedrich Kink
 #
 BUILD_BITS=				64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			re2c
-COMPONENT_VERSION=		2.0.3
+COMPONENT_VERSION=		3.0
 COMPONENT_SUMMARY=		re2c is a free and open-source lexer generator for C, C++ and Go.
 COMPONENT_DESCRIPTION=	Its main goal is generating fast lexers: at least as \
 	fast as their reasonably optimized hand-coded counterparts. Instead of \
@@ -43,11 +44,11 @@ COMPONENT_FMRI=			developer/lexer/re2c
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_PROJECT_URL=	https://re2c.org
-COMPONENT_ARCHIVE_HASH=	sha256:b2bc1eb8aaaa21ff2fcd26507b7e6e72c5e3d887e58aa515c2155fb17d744278
+COMPONENT_PROJECT_URL=		https://re2c.org
+COMPONENT_ARCHIVE_HASH=	sha256:b3babbbb1461e13fe22c630a40c43885efcfbbbb585830c6f4c0d791cf82ba0b
 COMPONENT_ARCHIVE_URL=	https://github.com/skvadrik/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=		public domain
-COMPONENT_LICENS_FILE=	$(COMPONENT_NAME).license
+COMPONENT_LICENSE_FILE=		LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -63,6 +64,12 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 # set unexpectedly, and errors such as "$1: unbound variable" and
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
+COMPONENT_TEST_TRANSFORMS= \
+        '-n ' \
+        '-e "/=======$$/p"' \
+        '-e "/^Testsuite/p"' \
+        '-e "/^PASS:/p"' \
+        '-e "/^\# /p"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
