@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= netpbm
 COMPONENT_VERSION= 10.73.42
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Netpbm is a toolkit for manipulation of graphic images, including conversion of images between a variety of different formats.
 COMPONENT_PROJECT_URL= https://netpbm.sourceforge.net/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -47,6 +47,17 @@ LDFLAGS  +=  $(JPEG_LDFLAGS)
 
 COMPONENT_INSTALL_ARGS=		package
 COMPONENT_INSTALL_TARGETS=	pkgdir=$(PROTO_DIR)/usr
+COMPONENT_POST_INSTALL_ACTION=	( \
+	$(GSED) -i -e 's/@VERSION@/$(COMPONENT_VERSION)/' $(PROTO_DIR)/usr/pkgconfig_template; \
+	$(GSED) -i -e 's/-L@LINKDIR@ //' $(PROTO_DIR)/usr/pkgconfig_template; \
+	$(GSED) -i -e 's:@INCLUDEDIR@:/usr/include/$(COMPONENT_NAME):' $(PROTO_DIR)/usr/pkgconfig_template; \
+	$(GSED) -i -e 's/@VERSION@/$(COMPONENT_VERSION)/' $(PROTO_DIR)/usr/config_template; \
+	$(GSED) -i -e 's:@INCLUDEDIR@:/usr/include/$(COMPONENT_NAME):' $(PROTO_DIR)/usr/config_template; \
+	$(GSED) -i -e 's:@INCLUDEDIR@:/usr/include/$(COMPONENT_NAME):' $(PROTO_DIR)/usr/config_template; \
+	$(GSED) -i -e 's:@BINDIR@:/usr/bin:' $(PROTO_DIR)/usr/config_template; \
+	$(GSED) -i -e 's:@DATADIR@:/usr/share/$(COMPONENT_NAME):' $(PROTO_DIR)/usr/config_template; \
+	$(GSED) -i -e 's/@LINKDIR@//' $(PROTO_DIR)/usr/config_template; \
+	)
 
 COMPONENT_TEST_ENV += -i PATH=$(PATH.gnu)
 COMPONENT_TEST_TARGETS=	check-tree
