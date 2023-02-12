@@ -10,11 +10,11 @@
 #
 
 #
-# Copyright (c) 2013-2016, Louis M. Picciano. All rights reserved.
-# Copyright 2017 Dariusz Sendkowski
+# Copyright 2023 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -23,9 +23,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/gsl-config
-file path=usr/bin/$(MACH64)/gsl-histogram
-file path=usr/bin/$(MACH64)/gsl-randist
 file path=usr/bin/gsl-config
 file path=usr/bin/gsl-histogram
 file path=usr/bin/gsl-randist
@@ -47,6 +44,10 @@ file path=usr/include/gsl/gsl_block_uint.h
 file path=usr/include/gsl/gsl_block_ulong.h
 file path=usr/include/gsl/gsl_block_ushort.h
 file path=usr/include/gsl/gsl_bspline.h
+file path=usr/include/gsl/gsl_bst.h
+file path=usr/include/gsl/gsl_bst_avl.h
+file path=usr/include/gsl/gsl_bst_rb.h
+file path=usr/include/gsl/gsl_bst_types.h
 file path=usr/include/gsl/gsl_cblas.h
 file path=usr/include/gsl/gsl_cdf.h
 file path=usr/include/gsl/gsl_chebyshev.h
@@ -74,6 +75,7 @@ file path=usr/include/gsl/gsl_fft_halfcomplex.h
 file path=usr/include/gsl/gsl_fft_halfcomplex_float.h
 file path=usr/include/gsl/gsl_fft_real.h
 file path=usr/include/gsl/gsl_fft_real_float.h
+file path=usr/include/gsl/gsl_filter.h
 file path=usr/include/gsl/gsl_fit.h
 file path=usr/include/gsl/gsl_heapsort.h
 file path=usr/include/gsl/gsl_histogram.h
@@ -109,6 +111,7 @@ file path=usr/include/gsl/gsl_monte.h
 file path=usr/include/gsl/gsl_monte_miser.h
 file path=usr/include/gsl/gsl_monte_plain.h
 file path=usr/include/gsl/gsl_monte_vegas.h
+file path=usr/include/gsl/gsl_movstat.h
 file path=usr/include/gsl/gsl_multifit.h
 file path=usr/include/gsl/gsl_multifit_nlin.h
 file path=usr/include/gsl/gsl_multifit_nlinear.h
@@ -203,6 +206,7 @@ file path=usr/include/gsl/gsl_sf_mathieu.h
 file path=usr/include/gsl/gsl_sf_pow_int.h
 file path=usr/include/gsl/gsl_sf_psi.h
 file path=usr/include/gsl/gsl_sf_result.h
+file path=usr/include/gsl/gsl_sf_sincos_pi.h
 file path=usr/include/gsl/gsl_sf_synchrotron.h
 file path=usr/include/gsl/gsl_sf_transport.h
 file path=usr/include/gsl/gsl_sf_trig.h
@@ -238,6 +242,20 @@ file path=usr/include/gsl/gsl_splinalg.h
 file path=usr/include/gsl/gsl_spline.h
 file path=usr/include/gsl/gsl_spline2d.h
 file path=usr/include/gsl/gsl_spmatrix.h
+file path=usr/include/gsl/gsl_spmatrix_char.h
+file path=usr/include/gsl/gsl_spmatrix_complex_double.h
+file path=usr/include/gsl/gsl_spmatrix_complex_float.h
+file path=usr/include/gsl/gsl_spmatrix_complex_long_double.h
+file path=usr/include/gsl/gsl_spmatrix_double.h
+file path=usr/include/gsl/gsl_spmatrix_float.h
+file path=usr/include/gsl/gsl_spmatrix_int.h
+file path=usr/include/gsl/gsl_spmatrix_long.h
+file path=usr/include/gsl/gsl_spmatrix_long_double.h
+file path=usr/include/gsl/gsl_spmatrix_short.h
+file path=usr/include/gsl/gsl_spmatrix_uchar.h
+file path=usr/include/gsl/gsl_spmatrix_uint.h
+file path=usr/include/gsl/gsl_spmatrix_ulong.h
+file path=usr/include/gsl/gsl_spmatrix_ushort.h
 file path=usr/include/gsl/gsl_statistics.h
 file path=usr/include/gsl/gsl_statistics_char.h
 file path=usr/include/gsl/gsl_statistics_double.h
@@ -273,20 +291,14 @@ file path=usr/include/gsl/gsl_vector_ushort.h
 file path=usr/include/gsl/gsl_version.h
 file path=usr/include/gsl/gsl_wavelet.h
 file path=usr/include/gsl/gsl_wavelet2d.h
-link path=usr/lib/$(MACH64)/libgsl.so target=libgsl.so.23.0.0
-link path=usr/lib/$(MACH64)/libgsl.so.23 target=libgsl.so.23.0.0
-file path=usr/lib/$(MACH64)/libgsl.so.23.0.0
+file path=usr/include/gsl/test_source.c
+link path=usr/lib/$(MACH64)/libgsl.so target=libgsl.so.27.0.0
+link path=usr/lib/$(MACH64)/libgsl.so.27 target=libgsl.so.27.0.0
+file path=usr/lib/$(MACH64)/libgsl.so.27.0.0
 link path=usr/lib/$(MACH64)/libgslcblas.so target=libgslcblas.so.0.0.0
 link path=usr/lib/$(MACH64)/libgslcblas.so.0 target=libgslcblas.so.0.0.0
 file path=usr/lib/$(MACH64)/libgslcblas.so.0.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/gsl.pc
-link path=usr/lib/libgsl.so target=libgsl.so.23.0.0
-link path=usr/lib/libgsl.so.23 target=libgsl.so.23.0.0
-file path=usr/lib/libgsl.so.23.0.0
-link path=usr/lib/libgslcblas.so target=libgslcblas.so.0.0.0
-link path=usr/lib/libgslcblas.so.0 target=libgslcblas.so.0.0.0
-file path=usr/lib/libgslcblas.so.0.0.0
-file path=usr/lib/pkgconfig/gsl.pc
 file path=usr/share/aclocal/gsl.m4
 file path=usr/share/info/gsl-ref.info
 file path=usr/share/man/man1/gsl-config.1
