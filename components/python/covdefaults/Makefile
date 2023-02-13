@@ -19,17 +19,17 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		covdefaults
-COMPONENT_VERSION =		2.2.0
+HUMAN_VERSION =			2.2.2
 COMPONENT_SUMMARY =		covdefaults - A coverage plugin to provide sensible default settings
 COMPONENT_PROJECT_URL =		https://github.com/asottile/covdefaults
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/81/3e/18eb2d305c26fce0a24050334b6ab66e5bd86ce5615b485665bd0901ca6e/covdefaults-2.2.0.tar.gz
+	https://files.pythonhosted.org/packages/9b/24/36a45f0734a1553ccbbd92683af7369bc919dce219ff42f921323d0be7db/covdefaults-2.2.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:237c9a2cf4a6c821a908dd54635027a813988419c9fda83c7e654a61b8c19d56
+	sha256:e543862ee0347769b47b27fa586d690e6b91587a3dcaaf8552fcfb1fac03d061
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+TEST_STYLE = setup.py
 
 include $(WS_MAKE_RULES)/common.mk
 
