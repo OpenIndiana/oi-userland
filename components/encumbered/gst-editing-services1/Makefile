@@ -19,12 +19,12 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-editing-services1
-COMPONENT_VERSION=	1.20.5
+COMPONENT_VERSION=	1.22.0
 COMPONENT_SUMMARY=	Multimedia graph framework - editing services
 COMPONENT_SRC_NAME=	gst-editing-services
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:363f2b13675877b926b4be5259dbbeea8cc976805b40c871fc254bb8f382017d
+COMPONENT_ARCHIVE_HASH=	sha256:2a23856379af03586b66c193910fa8bb963024580bc2337c7405578dc077aa79
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -62,14 +62,11 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
-
-# Manually added dependencies
-REQUIRED_PACKAGES += runtime/python-39
+REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/bad
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/devtools
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
