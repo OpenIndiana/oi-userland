@@ -1,5 +1,5 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m pytest --no-cov-on-fail --cov-context=test --cov=$(@D)/.tox/py$(PYV)/lib/python3.9/site-packages/pyproject_api --cov=$(@D)/tests --cov-config=$(@D)/pyproject.toml --cov-report=term-missing:skip-covered --cov-report=html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report=xml:$(@D)/.tox/coverage.py$(PYV).xml --junitxml=$(@D)/.tox/junit.py$(PYV).xml tests
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --no-cov-on-fail --cov-context=test --cov=$(PYTHON_DIR)/site-packages/pyproject_api --cov=$(@D)/tests --cov-config=$(@D)/pyproject.toml --cov-report=term-missing:skip-covered --cov-report=html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report=xml:$(@D)/.tox/coverage.py$(PYV).xml --junitxml=$(@D)/.tox/junit.py$(PYV).xml tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
@@ -10,10 +10,11 @@ collecting ... collected 55 items
 
   self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
 ::project PASSED
+PASSED
 tests/test_backend.py::test_exception PASSED
 tests/test_backend.py::test_invalid_module PASSED
 tests/test_backend.py::test_invalid_request PASSED
-tests/test_backend.py::test_reuse_process PASSED                         [100%]$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(@D)/.tox/py$(PYV)/lib/python3.9/site-packages/pyproject_api was never imported. (module-not-imported)
+tests/test_backend.py::test_reuse_process PASSED
 tests/test_backend.py::test_valid_request PASSED
 tests/test_frontend.py::test_backend_build_editable PASSED
 tests/test_frontend.py::test_backend_build_editable_bad PASSED
@@ -21,7 +22,7 @@ tests/test_frontend.py::test_backend_build_sdist_demo_pkg_inline PASSED
 tests/test_frontend.py::test_backend_get_requires_for_build_editable PASSED
 tests/test_frontend.py::test_backend_get_requires_for_build_editable_bad PASSED
 tests/test_frontend.py::test_backend_get_requires_for_build_editable_miss PASSED
-tests/test_frontend.py::test_backend_no_prepare_wheel PASSED
+tests/test_frontend.py::test_backend_no_prepare_wheel $(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/pyproject_api was never imported. (module-not-imported)
 tests/test_frontend.py::test_backend_obj PASSED
 tests/test_frontend.py::test_backend_prepare_editable PASSED
 tests/test_frontend.py::test_backend_prepare_editable_bad PASSED
@@ -65,15 +66,13 @@ tests/test_util.py::test_ensure_empty_dir_on_path_folder PASSED
 tests/test_util.py::test_ensure_empty_dir_on_path_missing PASSED
 tests/test_version.py::test_version PASSED
 
-
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
-8 files skipped due to complete coverage.
+7 files skipped due to complete coverage.
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 88.0% reached. Total coverage: 100.00%
+Required test coverage of 88.0% reached. Total coverage: 98.12%
 ======== 55 passed ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+  py$(PYV): OK
   congratulations :)
