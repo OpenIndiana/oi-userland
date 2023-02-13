@@ -19,22 +19,27 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatchling
-HUMAN_VERSION =			1.12.2
+HUMAN_VERSION =			1.13.0
 COMPONENT_SUMMARY =		hatchling - Modern, extensible Python build backend
 COMPONENT_PROJECT_URL =		https://hatch.pypa.io/latest/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f5/ea/3ed5a7ecdd8a8f7e84cffd3b5ec24279a09ce2694c218ff922c35c6f1a77/hatchling-1.12.2.tar.gz
+	https://files.pythonhosted.org/packages/26/d3/96fa0ee6328ee141f6be444bd913d68c1105f5cca3f7622bced939a34bc5/hatchling-1.13.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8a6d719d96653a0f3901072b12710c9c3cc934f9061b443775c6789b45333495
+	sha256:f8d275a2cc720735286b7c2e2bc35da05761e6d3695c2fa416550395f10c53c7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-TEST_STYLE = pytest
+TEST_STYLE = none
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
+# - colorama (test bootstrap)
+# - filelock (test bootstrap)
 # - hatch_vcs (test bootstrap)
+# - iniconfig (test bootstrap)
 # - platformdirs (test bootstrap)
+# - pyproject_api (test bootstrap)
+# - tox (test bootstrap)
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
