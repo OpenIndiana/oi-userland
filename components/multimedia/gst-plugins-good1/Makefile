@@ -22,12 +22,12 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-good1
-COMPONENT_VERSION=      1.20.5
+COMPONENT_VERSION=      1.22.0
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=		gst-plugins-good
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:e83ab4d12ca24959489bbb0ec4fac9b90e32f741d49cda357cb554b2cb8b97f9
+COMPONENT_ARCHIVE_HASH= sha256:582e617271e7f314d1a2211e3e3856ae2e4303c8c0d6114e9c4a5ea5719294b0
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/good
@@ -55,6 +55,7 @@ CONFIGURE_OPTIONS += -Dlame=enabled
 CONFIGURE_OPTIONS += -Doss=enabled
 CONFIGURE_OPTIONS += -Doss4=enabled
 CONFIGURE_OPTIONS += -Dqt5=disabled
+CONFIGURE_OPTIONS += -Dqt6=disabled
 CONFIGURE_OPTIONS += -Dtwolame=enabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
@@ -91,6 +92,7 @@ REQUIRED_PACKAGES += system/header/header-audio
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += audio/lame
 REQUIRED_PACKAGES += audio/mpg123
 REQUIRED_PACKAGES += audio/twolame
@@ -98,7 +100,6 @@ REQUIRED_PACKAGES += audio/wavpack
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/aalib
 REQUIRED_PACKAGES += library/audio/gstreamer1
@@ -109,6 +110,8 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
