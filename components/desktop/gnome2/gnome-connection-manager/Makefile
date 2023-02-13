@@ -13,6 +13,8 @@
 # Copyright (c) 2015-2021 Jim Klimov
 #
 
+BUILD_STYLE = justmake
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME_LONG=	gnome-connection-manager
@@ -20,6 +22,7 @@ COMPONENT_NAME_SHORT=	gcm
 # The value below should match the .p5m and .license filenames, in particular:
 COMPONENT_NAME=  		$(COMPONENT_NAME_LONG)
 COMPONENT_VERSION=	1.2.1
+COMPONENT_REVISION=	1
 # Currently the latest release is a bit behind the Git HEAD on features
 # Comment away when switching to future "vanilla" release
 COMPONENT_GIT_ORG=	kuthulux
@@ -54,38 +57,21 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
 
-PYTHON_VERSION =	3.5
-PYV =	$(subst .,,$(PYTHON_VERSION))
-PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
-PKG_MACROS +=		PYV=$(PYV)
-
-CLEAN_PATHS+= $(BUILD_DIR)
+include $(WS_MAKE_RULES)/common.mk
 
 # rules are very simple, because the project is a script - just deliver and run
 # unpacked directory is among search paths for the p5m installation anyway
 
-$(BUILD_DIR)/.built:	$(SOURCE_DIR)/.prep
-	$(RM) -r $(@D) ; $(MKDIR) $(@D)
-	$(CLONEY) $(SOURCE_DIR) $(@D)
-	find $(@D) -name '*.pyc' -exec rm -f '{}' \;
-	$(PYTHON) -m compileall $(@D)
-	$(TOUCH) $@
+COMPONENT_PRE_BUILD_ACTION =	find $(@D) -name '*.pyc' -exec rm -f '{}' \;
+COMPONENT_BUILD_ACTION =	$(PYTHON) -m compileall $(@D)
 
-$(BUILD_DIR)/.installed:	$(BUILD_DIR)/.built
-	$(TOUCH) $@
+COMPONENT_INSTALL_ACTION =	true
 
-build:		$(BUILD_DIR)/.built files/gcm Makefile
-
-install:	$(BUILD_DIR)/.installed Makefile
-
-test:		$(NO_TESTS)
-
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/desktop/vte-291
-REQUIRED_PACKAGES += library/python/pygobject-3-$(PYV)
-REQUIRED_PACKAGES += library/python/pycairo-$(PYV)
-REQUIRED_PACKAGES += runtime/python-$(PYV)
+# Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/pycairo
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += shell/expect
+REQUIRED_PACKAGES += shell/ksh93
