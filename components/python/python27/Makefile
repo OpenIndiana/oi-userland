@@ -22,11 +22,12 @@
 # Copyright (c) 2019, Michal Nowak
 
 BUILD_BITS=		32_and_64
+USE_COMMON_TEST_MASTER=	no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
 COMPONENT_VERSION=	2.7.18
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	https://python.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -91,6 +92,9 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		DFLAGS="-$(BITS)"
 
 COMPONENT_BUILD_ENV  +=		DFLAGS="-$(BITS)"
+COMPONENT_BUILD_ENV +=		PATH="$(PATH)"
+
+COMPONENT_INSTALL_ENV +=	PATH="$(PATH)"
 
 # 64 bit shared objects need to go in a 64-bit directory
 COMPONENT_INSTALL_ARGS.64 += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python2.7/lib-dynload
@@ -130,24 +134,22 @@ COMPONENT_TEST_TRANSFORMS = "'/tests OK/ { results = 1 }; /Total duration/ { \$$
 
 test:		$(TEST_32_and_64)
 
+# Required to build ossaudiodev module
+REQUIRED_PACKAGES += system/header/header-audio
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/python-2/tkinter-27
-REQUIRED_PACKAGES += library/python/pip-27
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-27/tests
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-# Required to build ossaudiodev module
-REQUIRED_PACKAGES += system/header/header-audio
