@@ -13,13 +13,11 @@
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         crmsh
 COMPONENT_VERSION=      4.1.0
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_FMRI=         application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Shells
 COMPONENT_PROJECT_URL=  https://github.com/ClusterLabs/crmsh
@@ -32,14 +30,12 @@ COMPONENT_SUMMARY=      crmsh is a command-line interface for High-Availability 
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_VERSION = 3.9
-
 ENV += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 ENV += PYTHON_SITELIB=$(PYTHON_VENDOR_PACKAGES)
 ENV += PYTHON=$(PYTHON)
 
-COMPONENT_PREP_ACTION=(cd $(SOURCE_DIR); $(CONFIG_SHELL) autogen.sh )
+COMPONENT_PREP_ACTION=(cd $(SOURCE_DIR); PATH=$(PATH) $(CONFIG_SHELL) autogen.sh )
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -50,6 +46,6 @@ CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS += --sharedstatedir=/var/hacluster
 CONFIGURE_OPTIONS += --localstatedir=/var
 
-PKG_MACROS += PYVER=$(PYTHON_VERSION)
-
-REQUIRED_PACKAGES += runtime/python-39
+# Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/lxml
+PYTHON_REQUIRED_PACKAGES += runtime/python
