@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2019 Rouven Weiler
-# Copyright 2022 Friedrich Kink
+# Copyright 2023 Friedrich Kink
 #
 
 BUILD_BITS =			64_and_32
@@ -31,12 +31,12 @@ USE_OPENSSL11 =			yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
-COMPONENT_VERSION =		4.17.4
+COMPONENT_VERSION =		4.17.5
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:c0512079db4cac707ccea4c18aebbd6b2eb3acf6e90735e7f645a326be1f4537
+COMPONENT_ARCHIVE_HASH = 	sha256:ebb7880d474ffc09d73b5fc77bcbd657f6235910337331a9c24d7f69ca11442b
 COMPONENT_ARCHIVE_URL =		https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL = 		https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI =		service/network/samba
