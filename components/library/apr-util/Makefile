@@ -20,18 +20,19 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Andreas Wacknitz
+# Copyright (c) 2023, Niklas Poslovski
 #
 BUILD_BITS=			32_and_64
+USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr-util
-COMPONENT_VERSION=	1.6.1
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	1.6.3
 COMPONENT_PROJECT_URL=	https://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b65e40713da57d004123b6319828be7f1273fbc6490e145874ee1177e112c459
+	sha256:2b74d8932703826862ca305b094eef2983c27b39d5c9414442e9976a9acf1983
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 
 CONFIGURE_DEFAULT_DIRS=no
@@ -82,13 +83,13 @@ REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 # The MariaDB client must be installed to get mysql_config:
 REQUIRED_PACKAGES += database/mariadb-101/client
+REQUIRED_PACKAGES += database/mariadb-101/library
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += database/mariadb-101/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
