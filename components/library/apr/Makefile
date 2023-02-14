@@ -20,21 +20,22 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2020, Andreas Wacknitz
+# Copyright 2023, Niklas Poslovski
 #
 
 BUILD_BITS= 32_and_64
+USE_COMMON_TEST_MASTER=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         apr
-COMPONENT_VERSION=      1.7.0
-COMPONENT_REVISION=     4
+COMPONENT_VERSION=      1.7.2
 COMPONENT_PROJECT_URL=  https://apr.apache.org/
 COMPONENT_FMRI=         library/apr
 COMPONENT_SUMMARY=      Apache Portable Runtime (APR) Shared Libraries
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:48e9dbf45ae3fdc7b491259ffb6ccf7d63049ffacbc1c0977cced095e4c2d5a2
+COMPONENT_ARCHIVE_HASH= sha256:3d8999b216f7b6235343a4e3d456ce9379aa9a380ffb308512f133f0c5eb2db9
 COMPONENT_ARCHIVE_URL=  https://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      Apache v2.0
 
