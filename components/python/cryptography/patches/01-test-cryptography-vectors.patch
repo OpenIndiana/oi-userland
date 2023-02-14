@@ -1,0 +1,20 @@
+--- cryptography-37.0.4/tests/x509/test_x509.py.orig
++++ cryptography-37.0.4/tests/x509/test_x509.py
+@@ -77,6 +77,7 @@
+ 
+ 
+ class TestCertificateRevocationList:
++    @pytest.mark.skip(reason="cryptography-vectors version mismatch")
+     def test_load_pem_crl(self, backend):
+         crl = _load_cert(
+             os.path.join("x509", "custom", "crl_all_reasons.pem"),
+--- cryptography-37.0.4/tests/test_utils.py.orig
++++ cryptography-37.0.4/tests/test_utils.py
+@@ -4408,6 +4408,7 @@
+     ]
+ 
+ 
++@pytest.mark.skip(reason="cryptography-vectors version mismatch")
+ def test_vector_version():
+     assert cryptography.__version__ == cryptography_vectors.__version__
+ 
