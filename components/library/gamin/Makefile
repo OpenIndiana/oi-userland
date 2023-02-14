@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gamin
 COMPONENT_VERSION= 0.1.10
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= Library providing the FAM File Alteration Monitor API
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -33,9 +33,6 @@ COMPONENT_LICENSE_FILE= COPYING
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-# Later python is not supported
-PYTHON_VERSION= 2.7
-
 PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION= ( cd $(@D)  && \
@@ -44,12 +41,15 @@ COMPONENT_PREP_ACTION= ( cd $(@D)  && \
 	automake -c -f -a &&\
 	autoconf )
 
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	EXT_SUFFIX=$(shell $(PYTHON) -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))") ; \
+	$(MV) $(PROTO_DIR)$(PYTHON_LIB)/_gamin.so $(PROTO_DIR)$(PYTHON_LIB)/_gamin$$EXT_SUFFIX ;
+
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --with-python=$(PYTHON.$(BITS))
-
-CONFIGURE_ENV += pythondir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_OPTIONS.32 += --with-python=no
+CONFIGURE_OPTIONS.64 += --with-python=/usr
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
