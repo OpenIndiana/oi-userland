@@ -3123,8 +3123,10 @@ ok 7 # skip advance should fail on errors, w/ pedantic flag (missing SANITY of P
 ok 8 - setup dirs with symlinks
 ok 9 - dir-iterator should not follow symlinks by default
 ok 10 - dir-iterator should follow symlinks w/ follow flag
-# passed all 10 test(s)
-1..10
+ok 11 - dir-iterator does not resolve top-level symlinks
+ok 12 - dir-iterator resolves top-level symlinks w/ follow flag
+# passed all 12 test(s)
+1..12
 *** t0067-parse_pathspec_file.sh ***
 ok 1 - one item from stdin
 ok 2 - one item from file
@@ -15396,8 +15398,12 @@ ok 12 - directory becomes symlink
 ok 1 - setup
 ok 2 - apply symlink patch
 ok 3 - apply --index symlink patch
-# passed all 3 test(s)
-1..3
+ok 4 - symlink setup
+ok 5 - symlink escape when creating new files
+ok 6 - symlink escape when modifying file
+ok 7 - symlink escape when deleting file
+# passed all 7 test(s)
+1..7
 *** t4116-apply-reverse.sh ***
 ok 1 - setup
 ok 2 - apply in forward
@@ -21037,8 +21043,9 @@ ok 30 - setup repo with garbage in objects/*
 ok 31 - clone a repo with garbage in objects/*
 ok 32 - setup repo with manually symlinked or unknown files at objects/
 ok 33 - clone repo with symlinked or unknown files at objects/
-# passed all 33 test(s)
-1..33
+ok 34 - clone repo with symlinked objects directory
+# passed all 34 test(s)
+1..34
 *** t5605-clone-local.sh ***
 ok 1 - preparing origin repository
 ok 2 - local clone without .git suffix
@@ -21271,6 +21278,8 @@ ok 5 - limiting with alternateRefsPrefixes
 ok 6 - log --source shows .alternate marker
 # passed all 6 test(s)
 1..6
+*** t5619-clone-local-ambiguous-transport.sh ***
+1..0 # SKIP no web server found at '/usr/sbin/apache2'
 *** t5700-protocol-v1.sh ***
 ok 1 - create repo to be served by git-daemon
 ok 2 - clone with git:// using protocol v1
@@ -29566,7 +29575,7 @@ missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !REFFILES !RUNS_COMMANDS_FROM_PWD
 failed test(s): t0211 t1700 t2501 t3200 t3404 t4150 t4202 t7609 t9210 t9902
 
 fixed   1
-success 25544
+success 25551
 failed  19
 broken  266
-total   26352
+total   26359
