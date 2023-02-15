@@ -25,14 +25,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_security2
-COMPONENT_VERSION=	2.9.6
-#COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.9.7
 COMPONENT_PROJECT_URL=	https://www.modsecurity.org/
 COMPONENT_SRC_NAME=	modsecurity
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:626a831aca92cdff73ea68a85b7f5c105d9a15365fa270fbed3139a81eaf3344
+    sha256:2a28fcfccfef21581486f98d8d5fe0397499749b8380f60ec7bb1c08478e1839
 COMPONENT_ARCHIVE_URL=	https://github.com/SpiderLabs/ModSecurity/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/server/apache-24/module/apache-security
 COMPONENT_SUMMARY=	Mod Security plugin for Apache Web Server V2.4
