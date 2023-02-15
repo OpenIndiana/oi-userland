@@ -1,0 +1,85 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/lib/python$(PYVER)/vendor-packages/scikit_build-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/scikit_build-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/scikit_build-$(HUMAN_VERSION).dist-info/licenses/AUTHORS.rst
+file path=usr/lib/python$(PYVER)/vendor-packages/scikit_build-$(HUMAN_VERSION).dist-info/licenses/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/_compat/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/_compat/tomllib.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/_compat/typing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/_version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/_version.pyi
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/cmaker.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/bdist.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/bdist_wheel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/build.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/build_ext.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/build_py.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/clean.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/egg_info.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/generate_source_manifest.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/install.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/install_lib.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/install_scripts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/sdist.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/command/test.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/platform_specifics/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/platform_specifics/abstract.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/platform_specifics/bsd.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/platform_specifics/cygwin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/platform_specifics/linux.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/platform_specifics/osx.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/platform_specifics/platform_factory.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/platform_specifics/sunos.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/platform_specifics/unix.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/platform_specifics/windows.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/resources/cmake/FindCython.cmake
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/resources/cmake/FindF2PY.cmake
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/resources/cmake/FindNumPy.cmake
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/resources/cmake/FindPythonExtensions.cmake
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/resources/cmake/UseCython.cmake
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/resources/cmake/UseF2PY.cmake
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/resources/cmake/UsePythonExtensions.cmake
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/resources/cmake/targetLinkLibrariesWithDynamicLookup.cmake
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/setuptools_wrap.py
+file path=usr/lib/python$(PYVER)/vendor-packages/skbuild/utils/__init__.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/distro-$(PYV)
+depend type=require fmri=pkg:/library/python/packaging-$(PYV)
+depend type=require fmri=pkg:/library/python/setuptools-$(PYV)
+depend type=require fmri=pkg:/library/python/tomli-$(PYV)
+depend type=require fmri=pkg:/library/python/typing-extensions-$(PYV)
+depend type=require fmri=pkg:/library/python/wheel-$(PYV)
