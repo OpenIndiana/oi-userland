@@ -30,19 +30,19 @@ USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openldap
-COMPONENT_VERSION=      2.6.3
-COMPONENT_REVISION =	2
+COMPONENT_VERSION=      2.6.4
 COMPONENT_SUMMARY=      OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
 COMPONENT_PROJECT_URL=  https://www.openldap.org/
-COMPONENT_ARCHIVE_HASH= sha256:d2a2a1d71df3d77396b1c16ad7502e674df446e06072b0e5a4e941c3d06c0d46
+COMPONENT_ARCHIVE_HASH= sha256:d51704e50178430c06cf3d8aa174da66badf559747a47d920bb54b2d4aa40991
 COMPONENT_ARCHIVE_URL=  https://openldap.org/software/download/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/openldap
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      The OpenLDAP Public License
 COMPONENT_LICENSE_FILE= LICENSE
 
+TEST_TARGET = $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -84,10 +84,20 @@ CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
 CONFIGURE_OPTIONS += CPPFLAGS="-I$(OPENSSL_INCDIR) -I/usr/include/odbc"
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
-COMPONENT_TEST_ENV += PATH="$(PROTOUSRSBINDIR):$(PROTOUSRBINDIR):/usr/bin"
+COMPONENT_TEST_ENV += PATH="$(PROTOUSRSBINDIR):$(PROTOUSRBINDIR):/usr/bin:$(PATH.gnu)"
 
 # to remove plugin.la dependency
 COMPONENT_POST_INSTALL_ACTION.64 = $(GSED) -i -e 's:.la$$:.so:' $(PROTOETCDIR)/$(COMPONENT_NAME)/slapd.*
+
+COMPONENT_TEST_TRANSFORMS += \
+	' -n ' \
+	' -e "/Comparing/p" ' \
+	' -e "/Filtering/p" ' \
+	' -e "/Running/p" ' \
+	' -e "/Testing/p" ' \
+	' -e "/Result/p" ' \
+	' -e "/failed/p" ' \
+	' -e "/succeeded/p" '
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
