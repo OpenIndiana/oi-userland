@@ -16,12 +16,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ngtcp2
-COMPONENT_VERSION=	0.13.0
+COMPONENT_VERSION=	0.13.1
 COMPONENT_SUMMARY=	ngtcp2 project is an effort to implement RFC9000 QUIC protocol.
 COMPONENT_PROJECT_URL=	https://ngtcp2.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:2e25642b9a6305890124cfc3f2ba45ef826f7cd69292418c0bf45ae1ee5c3238
+COMPONENT_ARCHIVE_HASH= sha256:6485e94a551642d119c17fcb2a8c4844ea6c9fd6da722920da718af9bcf6c714
 COMPONENT_ARCHIVE_URL=	https://github.com/ngtcp2/ngtcp2/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/ngtcp2
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -30,8 +30,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--with-gnutls
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --with-gnutls
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/cunit
