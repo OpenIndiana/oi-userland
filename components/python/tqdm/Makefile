@@ -1,57 +1,52 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2019-2020 Nona Hansel
-# Copyright 2022 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project tqdm
 #
 
-BUILD_BITS= NO_ARCH
-BUILD_STYLE= setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		tqdm
-COMPONENT_VERSION=	4.64.0
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY=	Fast, extensible progress bar for Python and CLI
-COMPONENT_PROJECT_URL=	https://github.com/tqdm/tqdm
-COMPONENT_FMRI=		library/python/tqdm		
-COMPONENT_CLASSIFICATION= Development/Python 
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_ARCHIVE_HASH= sha256:40be55d30e200777a307a7585aee69e4eabb46b4ec6a4b4a5f2d9f11e7d5408d
-COMPONENT_LICENSE=	MPLv2.0,MIT
-COMPONENT_LICENSE_FILE=	LICENCE
+COMPONENT_NAME =		tqdm
+HUMAN_VERSION =			4.64.1
+COMPONENT_SUMMARY =		tqdm - Fast, Extensible Progress Meter
+COMPONENT_PROJECT_URL =		https://tqdm.github.io
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/c1/c2/d8a40e5363fb01806870e444fc1d066282743292ff32a9da54af51ce36a2/tqdm-4.64.1.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:5f4f682a004951c1b450bc753c710e9280c5746ce6ffedee253ddbcbf54cf1e4
+COMPONENT_LICENSE =		MIT AND MPL-2.0
+COMPONENT_LICENSE_FILE =	LICENCE
 
-PYTHON_VERSIONS=	3.7 3.9
-
-# Tests are failing because numpy package cannot be build.
-TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_INSTALL_ACTION += \
-        (cd $(PROTOUSRBINDIR); $(MV) tqdm tqdm-$(PYTHON_VERSION)) ;
-
-#COMPONENT_TEST_DIR= $(SOURCE_DIR)
-#COMPONENT_TEST_CMD= tox -e py$(PYV)
-
-# Manually added test dependencies
-REQUIRED_PACKAGES += library/python/tox
-
-# Manually added dependencies
-REQUIRED_PACKAGES += library/python/importlib-metadata-37
-REQUIRED_PACKAGES += library/python/importlib-metadata-39
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/python/setuptools-37
-REQUIRED_PACKAGES += library/python/setuptools-39
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/codecov
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/coveralls
+TEST_REQUIRED_PACKAGES.python += library/python/cython
+TEST_REQUIRED_PACKAGES.python += library/python/dask
+TEST_REQUIRED_PACKAGES.python += library/python/ipywidgets
+TEST_REQUIRED_PACKAGES.python += library/python/matplotlib
+TEST_REQUIRED_PACKAGES.python += library/python/numpy
+TEST_REQUIRED_PACKAGES.python += library/python/pandas
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
+TEST_REQUIRED_PACKAGES.python += library/python/rich
