@@ -14,28 +14,27 @@
 #   $WS_TOOLS/python-integrate-project flake8-noqa
 #
 
-BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8-noqa
-COMPONENT_VERSION =		1.2.9
+HUMAN_VERSION =			1.3.0
 COMPONENT_SUMMARY =		flake8-noqa - Flake8 noqa comment validation
-COMPONENT_PROJECT_URL =		https://github.com/plinss/flake8-noqa/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a1/83/9d09d6bb3f8a2437496ff51f3b8dac04b829f6111fbbcff362624ad151e2/flake8-noqa-1.2.9.tar.gz
+	https://files.pythonhosted.org/packages/e2/75/fb5629dbdcd6f0e03757af78d6c233ea3714e46e6c931b144f19e0029abb/flake8-noqa-1.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:26d92ca6b72dec732d294e587a2bdeb66dab01acc609ed6a064693d6baa4e789
+	sha256:da613a371370373283c446da8067ff9d6a9b5c4e5b1f49ed6a32f7fa653c1f51
 COMPONENT_LICENSE =		LGPL-3.0-only
-COMPONENT_LICENSE_FILE =	COPYING.LESSER
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flake8
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
