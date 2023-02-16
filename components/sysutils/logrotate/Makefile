@@ -15,21 +15,20 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=		64
-
+BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		logrotate
-COMPONENT_VERSION=	3.20.1
-COMPONENT_PROJECT_URL=	https://github.com/logrotate/logrotate
+COMPONENT_VERSION=	3.21.0
 COMPONENT_SUMMARY=	Logrotate - Rotates and compresses log files
-COMPONENT_FMRI=		system/file/logrotate
-COMPONENT_CLASSIFICATION=	System/Administration and Configuration
+COMPONENT_PROJECT_URL=	https://github.com/logrotate/logrotate
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:dbbe4e63f00aadbf7ee67bb4c654c2547cf391f51c180621077c9fbf83bd71ab
-COMPONENT_ARCHIVE_URL=	https://github.com/logrotate/logrotate/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:1680947a9431de1aaa629fedde358696ff49a808ae903feecf996682949e3cff
+COMPONENT_FMRI=		system/file/logrotate
+COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
@@ -37,18 +36,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
-PATH=$(PATH.gnu)
+PATH = $(PATH.gnu)
 
 # Tests otherwise fail
 unexport SHELLOPTS
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/ERROR:/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/popt
