@@ -65,7 +65,7 @@ gfind . -type d | \
     gsed -e 's,^\./,,' | \
     while read i;
 do
-        mkdir -p "${destdir}/$i"
+	mkdir -p "${destdir}/$i"
 done
 
 # Copy files and symlinks, making sure we ignore the gnu-patch backup
@@ -75,11 +75,29 @@ gfind . -type f -o -type l | \
     gsed -e 's,^\./,,' | \
     while read i;
 do
-        rm -f "${destdir}/$i"
-        ln "${srcdir}/$i" "${destdir}/$i"
+	rm -f "${destdir}/$i"
+	ln "${srcdir}/$i" "${destdir}/$i"
 done
 elif [ "$CLONEY_MODE" = "copy" ]; then
-	cp -r ${srcdir}/* ${destdir}/
+cd ${srcdir}
+gfind . -type d | \
+    grep -v '^.$' | \
+    gsed -e 's,^\./,,' | \
+    while read i;
+do
+	mkdir -p "${destdir}/$i"
+done
+
+# Copy files and symlinks, making sure we ignore the gnu-patch backup
+# files, too.
+gfind . -type f -o -type l | \
+    egrep -v '~[0-9]+~' | \
+    gsed -e 's,^\./,,' | \
+    while read i;
+do
+	rm -f "${destdir}/$i"
+	cp "${srcdir}/$i" "${destdir}/$i"
+done
 else
 	echo "CLONEY_MODE=$CLONEY_MODE not supported"
 	exit 1
