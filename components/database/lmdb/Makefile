@@ -18,17 +18,17 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =			lmdb
-COMPONENT_VERSION =			0.9.29
+COMPONENT_VERSION =			0.9.30
 COMPONENT_SUMMARY =			Lightning memory-mapped database library
-COMPONENT_SRC =				lmdb-LMDB_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE =			LMDB_$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH =		sha256:22054926b426c66d8f2bc22071365df6e35f3aacf19ad943bc6167d4cae3bebb
-COMPONENT_ARCHIVE_URL =			https://github.com/LMDB/lmdb/archive/LMDB_$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL =			https://github.com/LMDB/lmdb
+COMPONENT_SRC =				openldap-LMDB_$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE =			$(COMPONENT_SRC).tar.bz2
+COMPONENT_PROJECT_URL =		https://www.symas.com/lmdb
+COMPONENT_ARCHIVE_URL =		https://git.openldap.org/openldap/openldap/-/archive/LMDB_$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH =	sha256:eb16ed6fd535b85857c331b93e7f9fd790bc9fcea3fa26162befdc1ba2775668
 COMPONENT_FMRI =			database/lmdb
-COMPONENT_CLASSIFICATION =		System/Databases
+COMPONENT_CLASSIFICATION =	System/Databases
 COMPONENT_LICENSE =			OpenLDAP Public License
-COMPONENT_LICENSE_FILE =		$(COMPONENT_NAME).license
+COMPONENT_LICENSE_FILE =	$(COMPONENT_NAME).license
 
 include $(WS_MAKE_RULES)/common.mk
 
