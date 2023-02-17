@@ -107,6 +107,7 @@ REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/libgsasl
 REQUIRED_PACKAGES += library/libidn2
+REQUIRED_PACKAGES += library/libpsl
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
