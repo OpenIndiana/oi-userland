@@ -22,8 +22,8 @@
 #
 # Copyright (c) 2011, 2019, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
-# Copyright 2022 Klaus Ziegler
 # Copyright 2022 Friedrich Kink
+# Copyright 2023 Klaus Ziegler
 #
 
 USE_OPENSSL11= yes
@@ -33,7 +33,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.9.3
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Net-SNMP Agent files and libraries
 COMPONENT_PROJECT_URL=	https://www.net-snmp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -48,9 +48,6 @@ include $(WS_MAKE_RULES)/common.mk
 # Our build server doesn't like parallel builds of this package:
 COMPONENT_BUILD_ARGS=-j1
 
-PYV=          $(shell echo $(PYTHON_VERSION) | tr -d .)
-PKG_MACROS += PYV=$(PYV)
-PKG_MACROS += PYVER=$(PYTHON_VERSION)
 PKG_MACROS += PERL_ARCH=$(PERL_ARCH)
 
 PATH= $(VPATH):$(PATH.gnu)
@@ -82,10 +79,7 @@ CONFIGURE_OPTIONS += --with-openssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS += --with-transports="UDP TCP UDPIPv6 TCPIPv6 TLSTCP"
 
 # Which MIB modules do we want to build
-MIB_MODULES.sparc= ucd-snmp/lmSensors
-MIB_MODULES.i386= ucd-snmp/lmSensors
-MIB_MODULES= host disman/event-mib ucd-snmp/diskio udp-mib tcp-mib if-mib mibII/mta_sendmail smux agentx
-MIB_MODULES += $(MIB_MODULES.$(MACH))
+MIB_MODULES= host disman/event-mib ucd-snmp/diskio udp-mib tcp-mib if-mib mibII/mta_sendmail smux agentx ucd-snmp/lmSensors
 CONFIGURE_OPTIONS += --with-mib-modules="$(MIB_MODULES)"
 
 # Python bindings support.
