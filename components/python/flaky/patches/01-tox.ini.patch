@@ -1,0 +1,72 @@
+https://github.com/box/flaky/issues/190
+
+--- flaky-3.7.0.orig/requirements-dev.txt
++++ flaky-3.7.0/requirements-dev.txt
+@@ -0,0 +1,11 @@
++coveralls
++genty
++mock
++nose
++ordereddict
++pycodestyle
++pylint
++pytest
++pytest-cov
++pytest-xdist
++tox
+--- flaky-3.7.0.orig/tox.ini
++++ flaky-3.7.0/tox.ini
+@@ -0,0 +1,53 @@
++[tox]
++envlist =
++    py27,
++    py34,
++    py35,
++    py36,
++    py37,
++    pypy,
++    pycodestyle,
++    pylint,
++    readme,
++    coverage
++
++[testenv]
++deps = -rrequirements-dev.txt
++usedevelop = True
++commands =
++    nosetests --with-flaky --exclude="test_nose_options_example" test/test_nose/
++    pytest -k 'example and not options' --doctest-modules test/test_pytest/
++    pytest -k 'example and not options' -n 1 test/test_pytest/
++    pytest -p no:flaky test/test_pytest/test_flaky_pytest_plugin.py
++    nosetests --with-flaky --force-flaky --max-runs 2 test/test_nose/test_nose_options_example.py
++    pytest --force-flaky --max-runs 2  test/test_pytest/test_pytest_options_example.py
++
++[testenv:pycodestyle]
++commands =
++    pycodestyle --ignore=E501 flaky
++    pycodestyle --ignore=E501 test
++
++[testenv:pylint]
++commands =
++    pylint --rcfile=.pylintrc flaky
++    pylint --rcfile=.pylintrc test -d C0330,W0621,C0411
++
++[testenv:coverage]
++commands =
++    python setup.py develop
++    nosetests --with-flaky --with-coverage --cover-package=flaky --exclude="test_nose_options_example" --no-flaky-report --cover-erase test/test_nose/
++    pytest -k 'example and not options' --doctest-modules --no-flaky-report --cov flaky --cov-report term-missing  test/test_pytest/
++    pytest -p no:flaky --cov flaky --cov-report term-missing test/test_pytest/test_flaky_pytest_plugin.py
++
++[testenv:readme]
++deps =
++    docutils
++    pygments
++commands =
++  rst2html.py --strict README.rst
++  rst2html.py --strict HISTORY.rst
++  rst2html.py --strict CONTRIBUTING.rst
++
++[pycodestyle]
++show-pep8 = True
++show-source = True
