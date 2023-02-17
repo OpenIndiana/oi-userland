@@ -1,49 +1,46 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2021, Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project flaky
 #
 
-BUILD_BITS= NO_ARCH
-BUILD_STYLE= setup.py
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		flaky
-COMPONENT_VERSION=	3.7.0
-COMPONENT_SUMMARY=	A plugin for nose or pytest that automatically reruns flaky tests
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_FMRI=		library/python/flaky
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	https://github.com/box/flaky
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:3ad100780721a1911f57a165809b7ea265a7863305acb66708220820caf8aa0d
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_LICENSE=	Apache2
+COMPONENT_NAME =		flaky
+HUMAN_VERSION =			3.7.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		flaky - Plugin for nose or pytest that automatically reruns flaky tests.
+COMPONENT_PROJECT_URL =		https://github.com/box/flaky
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/d5/dd/422c7c5c8c9f4982f3045c73d0571ed4a4faa5754699cc6a6384035fbd80/flaky-3.7.0.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:3ad100780721a1911f57a165809b7ea265a7863305acb66708220820caf8aa0d
+COMPONENT_LICENSE =		Apache-2.0
+COMPONENT_LICENSE_FILE =	LICENSE
 
-PYTHON_VERSIONS=	$(PYTHON3_VERSIONS)
-
-TEST_TARGET=	$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/coveralls
+TEST_REQUIRED_PACKAGES.python += library/python/genty
+TEST_REQUIRED_PACKAGES.python += library/python/mock
+TEST_REQUIRED_PACKAGES.python += library/python/nose
+TEST_REQUIRED_PACKAGES.python += library/python/ordereddict
+TEST_REQUIRED_PACKAGES.python += library/python/pycodestyle
+TEST_REQUIRED_PACKAGES.python += library/python/pylint
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
