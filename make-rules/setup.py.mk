@@ -319,7 +319,9 @@ COMPONENT_PRE_TEST_ACTION += COMPONENT_TEST_DIR=$(COMPONENT_TEST_DIR) ;
 COMPONENT_PRE_TEST_ACTION += \
 	$(foreach indirectly, $(TOX_CALL_INDIRECTLY), \
 		[ -f $$COMPONENT_TEST_DIR/tox.ini ] && \
-			$(GSED) -i -e '/^commands *=/,/^$$/{s/^\(\(commands *=\)\?[ \t]*\)'$(indirectly)'/\1python -m '$(TOX_CALL_INDIRECTLY.$(indirectly))'/}' $$COMPONENT_TEST_DIR/tox.ini ; \
+			$(GSED) -i -e '/^commands *=/,/^$$/{ \
+				s/^\(\(commands *=\)\{0,1\}[ \t]*\)'$(indirectly)'\([ \t]\{1,\}.*\)\{0,1\}$$/\1python -m '$(TOX_CALL_INDIRECTLY.$(indirectly))'\3/ \
+			}' $$COMPONENT_TEST_DIR/tox.ini ; \
 	)
 COMPONENT_PRE_TEST_ACTION += true ;
 
