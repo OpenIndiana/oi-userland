@@ -20,10 +20,14 @@
 
 include ../../../make-rules/shared-macros.mk
 
-ESR = esr
+# ESR = esr
+ESR = 
+
+CANDIDATE_BUILD=3
+# CANDIDATE_BETA=9
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	102.7.0
+COMPONENT_VERSION =	110.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,8 +37,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ES
 else
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
-COMPONENT_ARCHIVE_HASH= \
-	sha256:a7a4603417fcb42ec37f2cff9034280ce2ec772c0a5fc500fada4286ba3114aa
+COMPONENT_ARCHIVE_HASH= sha256:d3882492190e4fdcfa142772cf35de5403effb011d24357b315d643ed9168a39
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -48,7 +51,7 @@ COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.66.0
+RUST_VERSION = 1.67.1
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -62,13 +65,23 @@ LANG_LIST= ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb
 ifdef CANDIDATE_BETA
 LANG_FILES_LOCATION= \
 	https://ftp.mozilla.org/pub/firefox/candidates/$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ESR)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
+FIREFOX_UPDATE_CHANNEL=beta
 else
   ifdef CANDIDATE_BUILD
 LANG_FILES_LOCATION= \
 	https://ftp.mozilla.org/pub/firefox/candidates/$(COMPONENT_VERSION)$(ESR)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
+FIREFOX_UPDATE_CHANNEL=default
   else
 LANG_FILES_LOCATION= \
 	https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)$(ESR)/linux-x86_64/xpi
+FIREFOX_UPDATE_CHANNEL=default
+  endif
+endif
+
+# handle esr case to set FIREFOX_UPDATE_CHANNEL
+ifdef ESR
+  ifeq ($(ESR), esr)
+    FIREFOX_UPDATE_CHANNEL=esr
   endif
 endif
 
@@ -127,7 +140,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --disable-install-strip" >> $(MOZCONFIG_DEBUG) ; \
 	echo "ac_add_options --disable-optimize" >> $(MOZCONFIG_DEBUG) ; \
 	echo "ac_add_options --disable-tests" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
+ 	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-debug" >> $(MOZCONFIG_DEBUG) ; \
 	echo "ac_add_options --enable-jemalloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-js-shell" >> $(MOZCONFIG) ; \
@@ -136,12 +149,14 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-pulseaudio" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-update-channel=esr" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-update-channel=$(FIREFOX_UPDATE_CHANNEL)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --host=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --target=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --without-wasm-sandboxed-libraries" >> $(MOZCONFIG) ; \
+# 	echo "ac_add_options --enable-bootstrap" >> $(MOZCONFIG) ; \
+#	echo "ac_add_options --with-wasi-sysroot=" >> $(MOZCONFIG) ; \
 
 LD_SECEXT_OPTIONS += $(SSBD_ENABLE)
 
@@ -157,12 +172,8 @@ LD_B_DIRECT=
 # hope to get args data in stacks of core dumps
 LD_OPTIONS += -msave-args
 
-# because we touched old-configure.in and js/src/old-configure.in
+# use a local installed rust since the system version may not be compatible
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
-	cd $(COMPONENT_NAME)-$(COMPONENT_VERSION); \
-	cp configure.in configure; \
-	cd js/src; \
-	cp configure.in configure; \
 	export RUSTUP_HOME=$(RUSTUP_HOME); \
 	export CARGO_HOME=$(CARGO_HOME); \
 	export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
@@ -171,7 +182,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	rustup install $(RUST_VERSION); \
 	rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
 	rustup show; \
-	cargo install --root=$(CARGO_HOME) --vers 0.24.2 cbindgen; \
+	cargo install --root=$(CARGO_HOME) --vers 0.24.3 cbindgen; \
 	);
 
 ENV +=	CFLAGS="$(CFLAGS)"
@@ -203,15 +214,9 @@ COMPONENT_POST_INSTALL_ACTION  = \
     for file in `find $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/ -name "*.so"`; do \
         /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
-    done ;
-
-SIGNED_LIST = libsoftokn3.so libfreebl3.so
-
-COMPONENT_POST_INSTALL_ACTION += \
-        slist='$(SIGNED_LIST)' ; for f in $$slist ; do \
-            mcs -d $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/$$f ; \
-            LD_LIBRARY_PATH=$(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox $(BUILD_DIR_64)/dist/bin/shlibsign -v -i $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/$$f ; \
-        done ;
+    done ; \
+    unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/toolkit/content/global/license.html \
+    | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
@@ -222,16 +227,22 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/^FAILURES:/,/Failed:/p" ' \
 	'-e "/.*/d" '
 
+# the license file is dynamically build, thus we need to remove it:
+clean::
+	$(RM) $(COMPONENT_LICENSE_FILE)
+
 # Build dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+PYTHON_REQUIRED_PACKAGES += library/python/psutil
 REQUIRED_PACKAGES += developer/build/autoconf-213
 REQUIRED_PACKAGES += developer/clang-15
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += system/header/header-audio
+REQUIRED_PACKAGES += developer/lang/rustc
 REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += library/python/psutil
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/http-parser
+REQUIRED_PACKAGES += web/browser/lynx
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

@@ -1,0 +1,20 @@
+shows up on stderr when performing about:plugins:
+[fluent][resolver] errors in en-US/file-dd: Resolver error: Unknown variable: $pluginLibraries
+[fluent][resolver] errors in en-US/path-dd: Resolver error: Unknown variable: $pluginFullPath
+[fluent][resolver] errors in en-US/version-dd: Resolver error: Unknown variable: $version
+
+This patch is too aggresive since it doesn't show the OpenH264 Video Codec
+plugin, not that it is even available for OpenIndiana/Solaris. And not that
+any of DRM plugins are available either.
+
+--- gecko-dev-master/toolkit/mozapps/extensions/internal/GMPProvider.sys.mjs.old	2022-08-31 14:15:31.574478845 +0000
++++ gecko-dev-master/toolkit/mozapps/extensions/internal/GMPProvider.sys.mjs	2022-08-31 14:16:17.173585441 +0000
+@@ -64,7 +64,7 @@
+ ];
+ 
+ XPCOMUtils.defineLazyGetter(
+-  lazy,
++  this,
+   "pluginsBundle",
+   () => new Localization(["toolkit/about/aboutPlugins.ftl"], true)
+ );

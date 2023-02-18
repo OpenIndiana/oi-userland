@@ -1,0 +1,17 @@
+Solaris/Illumos does not have sysfs support for pci bus
+--- gecko-dev-master/toolkit/xre/glxtest.cpp.old	2022-08-08 12:41:23.767919809 +0000
++++ gecko-dev-master/toolkit/xre/glxtest.cpp	2022-08-08 12:43:43.585115149 +0000
+@@ -262,11 +262,13 @@
+ #define PCI_BASE_CLASS_DISPLAY 0x03
+ 
+ static void get_pci_status() {
++#if !defined(__sun)
+   if (access("/sys/bus/pci/", F_OK) != 0 &&
+       access("/sys/bus/pci_express/", F_OK) != 0) {
+     record_warning("cannot access /sys/bus/pci");
+     return;
+   }
++#endif
+ 
+   void* libpci = dlopen("libpci.so.3", RTLD_LAZY);
+   if (!libpci) {

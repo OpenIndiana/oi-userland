@@ -1,0 +1,21 @@
+Starting in version 103, messages like this appear when Firefox closes:
+[Parent 3223, Main Thread] WARNING: ContentParent: id=7fff6acf8c00 - ShutDownProcess: Sent shutdown message.: file /foo/firefox-nightly/gecko-dev-master/dom/ipc/ContentParent.cpp:1791
+[Parent 3223, Main Thread] WARNING: ContentParent: id=7fff8a050400 - ShutDownProcess: Closing channel.: file /foo/firefox-nightly/gecko-dev-master/dom/ipc/ContentParent.cpp:1826
+[Parent 3223, Main Thread] WARNING: ContentParent: id=7fff8a050400 - RemoveShutdownBlockers: file /foo/firefox-nightly/gecko-dev-master/dom/ipc/ContentParent.cpp:3689
+
+Workaround: don't log these messages
+
+Somebody may want to check to see if Solaris/Illumos is doing something actually
+concerning.
+
+--- firefox-103.0/dom/ipc/ContentParent.cpp.old	2022-07-13 04:34:21.522916118 +0000
++++ firefox-103.0/dom/ipc/ContentParent.cpp	2022-07-13 04:37:03.996958739 +0000
+@@ -1750,7 +1750,7 @@
+ 
+ void MaybeLogBlockShutdownDiagnostics(ContentParent* aSelf, const char* aMsg,
+                                       const char* aFile, int32_t aLine) {
+-#if defined(MOZ_DIAGNOSTIC_ASSERT_ENABLED)
++#if 0
+   if (aSelf->IsBlockingShutdown()) {
+     nsAutoCString logmsg;
+     logmsg.AppendPrintf("ContentParent: id=%p - ", aSelf);
