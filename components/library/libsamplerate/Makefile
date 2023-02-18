@@ -21,10 +21,12 @@
 # Copyright (c) 2015-2017 Aurelien Larcher. All rights reserved.
 #
 
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsamplerate
 COMPONENT_VERSION=	0.2.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	Secret Rabbit Code (aka libsamplerate) - Sample Rate Converter for audio 
 COMPONENT_PROJECT_URL=	https://libsndfile.github.io/libsamplerate/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,6 +36,7 @@ COMPONENT_ARCHIVE_HASH= sha256:16e881487f184250deb4fcb60432d7556ab12cb58caea71ef
 COMPONENT_FMRI=	library/libsamplerate
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	BSD	
+COMPONENT_LICENSE_FILE=	COPYING	
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -50,7 +53,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/passed/p"' \
 	'-e "/======/p"'
 
-# Auto-generated dependencies
+# Manually added dependencies
 REQUIRED_PACKAGES += library/libsndfile
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
