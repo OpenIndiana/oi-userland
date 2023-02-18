@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2023 Klaus Ziegler
+# Copyright 2023 Andreas Wacknitz
 #
 
 set name=pkg.fmri \
@@ -23,6 +23,9 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# We don't deliver static libraries
+<transform path=.+/lib/.+\.a -> drop>
 
 file path=usr/bin/$(MACH64)/sdl2-config
 file path=usr/bin/sdl2-config
@@ -106,19 +109,17 @@ file path=usr/include/SDL2/begin_code.h
 file path=usr/include/SDL2/close_code.h
 file path=usr/lib/$(MACH64)/cmake/SDL2/sdl2-config-version.cmake
 file path=usr/lib/$(MACH64)/cmake/SDL2/sdl2-config.cmake
-link path=usr/lib/$(MACH64)/libSDL2-2.0.so.0 target=libSDL2-2.0.so.0.2600.2
-file path=usr/lib/$(MACH64)/libSDL2-2.0.so.0.2600.2
-file path=usr/lib/$(MACH64)/libSDL2.a
-link path=usr/lib/$(MACH64)/libSDL2.so target=libSDL2-2.0.so.0.2600.2
+link path=usr/lib/$(MACH64)/libSDL2-2.0.so.0 target=libSDL2-2.0.so.0.2600.3
+file path=usr/lib/$(MACH64)/libSDL2-2.0.so.0.2600.3
+link path=usr/lib/$(MACH64)/libSDL2.so target=libSDL2-2.0.so.0.2600.3
 file path=usr/lib/$(MACH64)/libSDL2_test.a
 file path=usr/lib/$(MACH64)/libSDL2main.a
 file path=usr/lib/$(MACH64)/pkgconfig/sdl2.pc
 file path=usr/lib/cmake/SDL2/sdl2-config-version.cmake
 file path=usr/lib/cmake/SDL2/sdl2-config.cmake
-link path=usr/lib/libSDL2-2.0.so.0 target=libSDL2-2.0.so.0.2600.2
-file path=usr/lib/libSDL2-2.0.so.0.2600.2
-file path=usr/lib/libSDL2.a
-link path=usr/lib/libSDL2.so target=libSDL2-2.0.so.0.2600.2
+link path=usr/lib/libSDL2-2.0.so.0 target=libSDL2-2.0.so.0.2600.3
+file path=usr/lib/libSDL2-2.0.so.0.2600.3
+link path=usr/lib/libSDL2.so target=libSDL2-2.0.so.0.2600.3
 file path=usr/lib/libSDL2_test.a
 file path=usr/lib/libSDL2main.a
 file path=usr/lib/pkgconfig/sdl2.pc
