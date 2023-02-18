@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -25,11 +25,15 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/include/samplerate.h
 link path=usr/lib/$(MACH64)/libsamplerate.so \
-    target=libsamplerate.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libsamplerate.so.$(COMPONENT_VERSION)
+    target=libsamplerate.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libsamplerate.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libsamplerate.so.0 \
-    target=libsamplerate.so.$(COMPONENT_VERSION)
+    target=libsamplerate.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/samplerate.pc
+link path=usr/lib/libsamplerate.so target=libsamplerate.so.$(HUMAN_VERSION)
+file path=usr/lib/libsamplerate.so.$(HUMAN_VERSION)
+link path=usr/lib/libsamplerate.so.0 target=libsamplerate.so.$(HUMAN_VERSION)
+file path=usr/lib/pkgconfig/samplerate.pc
 file path=usr/share/doc/libsamplerate/SRC.css
 file path=usr/share/doc/libsamplerate/SRC.png
 file path=usr/share/doc/libsamplerate/api.md
