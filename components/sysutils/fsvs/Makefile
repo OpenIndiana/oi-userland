@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			fsvs
 COMPONENT_VERSION=		1.2.7
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		FSVS backup/restore/versioning/deployment tool
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
