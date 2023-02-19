@@ -1,0 +1,42 @@
+--- libgnt-2.14.3/meson_options.txt.orig	2021-09-26 06:56:33.000000000 +0300
++++ libgnt-2.14.3/meson_options.txt	2023-02-17 19:37:40.146200213 +0200
+@@ -1,5 +1,5 @@
+ option(
+-	'python2',
++	'python3-embed',
+ 	type: 'boolean', value: true,
+ 	description: 'Whether or not to include python support.',
+ )
+--- libgnt-2.14.3/meson.build.orig	2023-02-17 19:43:39.110429791 +0200
++++ libgnt-2.14.3/meson.build	2023-02-17 19:49:37.038336404 +0200
+@@ -192,17 +192,17 @@
+ 
+ # Check for Python headers
+ python_dep = disabler()
+-if get_option('python2')
+-	python_dep = dependency('python2', required : false)
++if get_option('python3-embed')
++	python_dep = dependency('python3-embed', required : false)
+ 	if not python_dep.found()
+-		python_dep = dependency('python-2.7', required : false)
++		python_dep = dependency('python3-embed', required : false)
+ 	endif
+ 
+ 	if not python_dep.found()
+ 		error('failed to find python')
+ 	endif
+ endif
+-gnt_config.set('USE_PYTHON', get_option('python2'))
++gnt_config.set('USE_PYTHON', get_option('python3-embed'))
+ 
+ configure_file(output : 'gntconfig.h',
+     configuration : gnt_config)
+@@ -221,7 +221,7 @@
+ 
+ libgnt_inc = include_directories('.')
+ libgnt_dependencies= [ncurses, libxml, glib, gobject, gmodule]
+-if get_option('python2')
++if get_option('python3-embed')
+ 	libgnt_dependencies += python_dep
+ endif
+ libgnt = library('gnt',

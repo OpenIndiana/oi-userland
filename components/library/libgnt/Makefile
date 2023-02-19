@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgnt
 COMPONENT_VERSION=	2.14.3
-#COMPONENT_REVISION=	1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://keep.imfreedom.org/libgnt/libgnt/
 COMPONENT_SUMMARY=	The GLib Ncurses Toolkit
 COMPONENT_FMRI=		library/libgnt
@@ -39,9 +39,8 @@ PATH = $(PATH.gnu)
 LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
