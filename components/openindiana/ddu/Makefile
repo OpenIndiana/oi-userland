@@ -11,6 +11,7 @@
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
 # Copyright 2019 Alexander Pyhalov
+# Copyright 2023 Till Wegmüller
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -83,12 +84,12 @@ REQUIRED_PACKAGES += system/library/storage/libmpapi
 REQUIRED_PACKAGES += text/locale
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += library/python/simplejson
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += gnome/help-viewer/yelp
-REQUIRED_PACKAGES += library/python/notify2-35
-REQUIRED_PACKAGES += library/python/pygobject-3-35
-REQUIRED_PACKAGES += library/python/simplejson-35
-REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += service/hal
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
