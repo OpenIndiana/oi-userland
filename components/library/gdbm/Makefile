@@ -19,37 +19,34 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2023 Klaus Ziegler
 #
 
+PREFERRED_BITS= 64
 BUILD_BITS= 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdbm
-COMPONENT_VERSION=	1.8.3
-COMPONENT_REVISION=	2
-COMPONENT_SUMMARY=	GNU Database Manager
-COMPONENT_DESCRIPTION= GNU dbm is a set of database routines that use extensible hashing. It works similar to the standard UNIX dbm routines
+COMPONENT_VERSION=	1.23
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gdbm/
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gdbm/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:cc340338a2e28b40058ab9eb5354a21d53f88a1582ea21ba0bb185c37a281dc9
-COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	library/database/gdbm
-COMPONENT_CLASSIFICATION=	Development/Databases
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:74b1081d21fff13ae4bd7c16e5d6e504a4c26f7cde1dca0d963a484174bbcacd
+COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/libgdbm
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS +=	--enable-shared
 
-COMPONENT_INSTALL_ENV += INSTALL_ROOT="$(PROTO_DIR)"
+COMPONENT_INSTALL_ENV +=	INSTALL_ROOT="$(PROTO_DIR)"
 
-# The tests build but they are not run automatically.  You have to
-# manually run the tests (testdbm, testgdbm, etc) by hand and verify
-# the DB operations.
-COMPONENT_TEST_TARGETS=	progs
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/ ok| skipped| successful/'"
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += system/library
