@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mpg123
 COMPONENT_VERSION= 1.31.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Fast console MPEG Audio Player and decoder library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -43,8 +44,10 @@ CONFIGURE_OPTIONS += --enable-fifo
 CONFIGURE_OPTIONS += --enable-network
 CONFIGURE_OPTIONS += --enable-ipv6=yes
 CONFIGURE_OPTIONS += --with-optimization=3
+ifeq ($(strip $(MACH)),i386)
 CONFIGURE_OPTIONS.32 += --with-cpu=sse
 CONFIGURE_OPTIONS.64 += --with-cpu=x86-64
+endif
 CONFIGURE_OPTIONS += --with-default-audio=pulse
 
 unexport SHELLOPTS
