@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wget
 COMPONENT_VERSION=      1.21.3
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/wget/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.lz
@@ -64,6 +65,7 @@ REQUIRED_PACKAGES += library/perl-5/http-message
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libidn2
+REQUIRED_PACKAGES += library/libpsl
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
