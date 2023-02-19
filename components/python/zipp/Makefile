@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zipp
-HUMAN_VERSION =			3.13.0
+HUMAN_VERSION =			3.14.0
 COMPONENT_SUMMARY =		zipp - Backport of pathlib-compatible object wrapper for zip files
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/zipp
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d1/2f/ba544a8a6ad5ad9dcec1b00f536bb9fb078f5f50d1a1408876de18a9151b/zipp-3.13.0.tar.gz
+	https://files.pythonhosted.org/packages/ab/47/b47d02b741e0aa6f998fc80457d3dfc05cb7732ef480597c2971cbc79260/zipp-3.14.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:23f70e964bc11a34cef175bc90ba2914e1e4545ea1e3e2f67c079671883f9cb6
+	sha256:9e5421e176ef5ab4c0ad896624e87a7b2f07aca746c9b2aa305952800cb8eecb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
