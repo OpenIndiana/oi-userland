@@ -68,6 +68,7 @@ CONFIGURE_OPTIONS += --enable-tests
 CONFIGURE_ENV	+= CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV	+= PERL=$(PERL)
 CONFIGURE_ENV	+= PYTHON=$(PYTHON)
+CONFIGURE_ENV	+= GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas
 
 # Required due to patches; must use special bootstrap script and not standard
 # autoreconf due to use of both gettext and intltool in the same project! If
@@ -88,7 +89,6 @@ COMPONENT_TEST_TRANSFORMS = "'/TOTAL|PASS|FAIL|XFAIL|SKIP|XPASS|ERROR/'"
 REQUIRED_PACKAGES += developer/check
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/audio/soxr
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/fftw-3
@@ -98,6 +98,7 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
