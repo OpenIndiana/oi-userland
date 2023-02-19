@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
 COMPONENT_VERSION=	2.2.9
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Mutt is a small but very powerful text-based mail client for Unix operating systems.
 COMPONENT_PROJECT_URL=	http://www.mutt.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
