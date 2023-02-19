@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
 COMPONENT_VERSION=	3.3.2
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Postfix is a free and open-source mail transfer agent (MTA) that routes and delivers electronic mail, intended as an alternative to Sendmail MTA.
 COMPONENT_PROJECT_URL=	http://www.postfix.org/
 COMPONENT_FMRI=		service/network/smtp/postfix
@@ -52,8 +52,8 @@ AUXLIBS+=	-lsasl
 
 COMPONENT_BUILD_ENV+= CC=$(CC)
 COMPONENT_BUILD_ENV+= CCARGS="$(CCARGS)"
-COMPONENT_BUILD_ENV+= OPT="$(CFLAGS)"
-COMPONENT_BUILD_ENV+= DEBUG="$(CFLAGS)"
+COMPONENT_BUILD_ENV+= OPT="$(CFLAGS) -fcommon"
+COMPONENT_BUILD_ENV+= DEBUG="$(CFLAGS) -fcommon"
 COMPONENT_BUILD_ENV+= AUXLIBS="$(AUXLIBS)"
 
 COMPONENT_INSTALL_TARGETS = non-interactive-package install_root="$(PROTO_DIR)"
@@ -67,11 +67,13 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += developer/icu
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl
