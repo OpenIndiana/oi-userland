@@ -19,9 +19,9 @@ BITS=64
 
 COMPONENT_NAME=         libreoffice
 COMPONENT_VERSION=      7.2.7
-COMPONENT_REVISION=     4
 COMPONENT_RC_VERSION=	2
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION)
+COMPONENT_REVISION=     5
 COMPONENT_SUMMARY=      LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL=  https://www.libreoffice.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
@@ -315,10 +315,9 @@ REQUIRED_PACKAGES += $(MYSQL_BASEPKG)/client
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += compress/xz
-REQUIRED_PACKAGES += database/mariadb-106/library
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += gnome/config/dconf
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
