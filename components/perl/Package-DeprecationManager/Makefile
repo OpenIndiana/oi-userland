@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Package::DeprecationManager
-HUMAN_VERSION =			0.17
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.18
 COMPONENT_SUMMARY =		Package::DeprecationManager - Manage deprecation warnings for your distribution
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1d743ada482b5c9871d894966e87d4c20edc96931bb949fb2638b000ddd6684b
+	sha256:b68d3f0ced55b7615fddbb6029b89f92a34fe0dd8c6fd6bceffc157d56834fe8
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,7 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_REQUIRED_PACKAGES += library/perl-5/package-stash
 PERL_REQUIRED_PACKAGES += library/perl-5/params-util
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-install
-PERL_REQUIRED_PACKAGES += library/perl-5/sub-name
 PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
 PERL_REQUIRED_PACKAGES += library/perl-5/test-warnings
 PERL_REQUIRED_PACKAGES += runtime/perl
