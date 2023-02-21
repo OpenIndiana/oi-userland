@@ -11,21 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-socket
+#   $WS_TOOLS/python-integrate-project pytest_socket
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-socket
-HUMAN_VERSION =			0.5.1
-COMPONENT_SUMMARY =		pytest-socket - Pytest Plugin to disable socket calls during tests
+COMPONENT_NAME =		pytest_socket
+HUMAN_VERSION =			0.6.0
+COMPONENT_SUMMARY =		pytest_socket - Pytest Plugin to disable socket calls during tests
 COMPONENT_PROJECT_URL =		https://pypi.org/project/pytest-socket/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ef/46/317dc67d71bf442c1f53af4211428d16f322769cd13fb8bf342419f70fca/pytest-socket-0.5.1.tar.gz
+	https://files.pythonhosted.org/packages/03/be/908339cd5734b4fc2e12c8f2c30b1d0d2e032db8e85807028cea4ec15229/pytest_socket-0.6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7c4b81dc6a51cbc0093f11791de00ff4a15ac698f5da96879a80f5d9ad4179b6
+	sha256:363c1d67228315d4fc7912f1aabfd570de29d0e3db6217d61db5728adacd7138
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
