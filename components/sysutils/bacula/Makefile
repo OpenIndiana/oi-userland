@@ -19,12 +19,11 @@ USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bacula
-COMPONENT_VERSION=      13.0.1
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      13.0.2
 COMPONENT_SUMMARY=      Bacula (network backup solution)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:d63848d695ac15c1ccfc117892753314bcb9232a852c40e32cca88c0e918978a
+COMPONENT_ARCHIVE_HASH= sha256:6e08bcbe6a4ab070e17e9e9c4e9bc4e944d2e5bd376521ca342c6fe96a20687d
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/bacula/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.bacula.org
 COMPONENT_LICENSE=      AGPLv3 with exceptions
@@ -79,8 +78,8 @@ REQUIRED_PACKAGES += library/openldap
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/lzo
 REQUIRED_PACKAGES += library/ncurses
