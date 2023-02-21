@@ -30,13 +30,13 @@ USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
-COMPONENT_VERSION=      7.88.0
+COMPONENT_VERSION=      7.88.1
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:fd17432cf28714a4cf39d89e26b8ace0d8901199fe5d01d75eb0ae3bbfcc731f
+COMPONENT_ARCHIVE_HASH= sha256:1dae31b2a7c1fe269de99c0c31bb488346aab3459b5ffca909d6938249ae415f
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=  	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)
@@ -52,7 +52,7 @@ $(BUILD_DIR_64)/.configured:   CPPFLAGS += -D__LP64=64
 GSSAPI_LIBDIR_32= /usr/lib
 GSSAPI_LIBDIR_64= /usr/lib/$(MACH64)
 
-CFLAGS += $(CPP_LARGEFILES)
+CPPFLAGS += $(CPP_LARGEFILES)
 
 OPENSSL_VERSION= 1.1
 CONFIGURE_ENV += CFLAGS="-I$(OPENSSL_INCDIR) $(CFLAGS)"
@@ -72,6 +72,8 @@ CONFIGURE_OPTIONS += --disable-sspi --enable-crypto-auth
 CONFIGURE_OPTIONS += --enable-cookies --disable-hidden-symbols
 CONFIGURE_OPTIONS += --disable-soname-bump
 CONFIGURE_OPTIONS += --enable-ldap --with-random=/dev/urandom
+CONFIGURE_OPTIONS += --enable-ares
+CONFIGURE_OPTIONS += --enable-websockets
 CONFIGURE_OPTIONS += --with-openssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS += --with-ldap-lib=ldap_r-2.4
 CONFIGURE_OPTIONS += --with-lber-lib=lber-2.4
@@ -105,6 +107,7 @@ COMPONENT_TEST_TRANSFORMS += \
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/brotli
+REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/libgsasl
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libpsl
