@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mypy
-HUMAN_VERSION =			0.991
+HUMAN_VERSION =			1.0.1
 COMPONENT_SUMMARY =		mypy - Optional static typing for Python
 COMPONENT_PROJECT_URL =		http://www.mypy-lang.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/0e/5c/fbe112ca73d4c6a9e65336f48099c60800514d8949b4129c093a84a28dc8/mypy-0.991.tar.gz
+	https://files.pythonhosted.org/packages/52/56/afddb0a1654cf7f192419fbd9e46e01bceb11b1a6778a9d4257387f71dd8/mypy-1.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3c0165ba8f354a6d9881809ef29f1a9318a236a6d81c690094c5df32107bde06
+	sha256:28cea5a6392bb43d266782983b5a4216c25544cd7d80be681a155ddcdafd152d
 COMPONENT_LICENSE =		MIT AND PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
