@@ -19,15 +19,18 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		stevedore
-COMPONENT_VERSION =		4.1.1
+HUMAN_VERSION =			5.0.0
 COMPONENT_SUMMARY =		stevedore - Manage dynamic plugins for Python applications
 COMPONENT_PROJECT_URL =		https://docs.openstack.org/stevedore/latest/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/66/c0/26afabea111a642f33cfd15f54b3dbe9334679294ad5c0423c556b75eba2/stevedore-4.1.1.tar.gz
+	https://files.pythonhosted.org/packages/f1/25/993d09dc7be3e7927228853c75324104d734bb784bd766b025ebf9f47b16/stevedore-5.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7f8aeb6e3f90f96832c301bff21a7eb5eefbe894c88c506483d355565d88cc1a
+	sha256:2c428d2338976279e8eb2196f7a94910960d9f7ba2f41f3988511e95ca447021
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# stevedore >= 4.0.0 requires Python >= 3.8
+PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
