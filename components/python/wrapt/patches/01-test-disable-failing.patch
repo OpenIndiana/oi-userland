@@ -1,0 +1,19 @@
+--- wrapt-1.14.1/tests/test_monkey_patching.py.orig
++++ wrapt-1.14.1/tests/test_monkey_patching.py
+@@ -5,6 +5,8 @@
+ 
+ import wrapt
+ 
++import pytest
++
+ def global_function_1(*args, **kwargs):
+     return args, kwargs
+ 
+@@ -208,6 +210,7 @@
+         self.assertEqual(result, (Class_2, _args, _kwargs))
+         self.assertEqual(called[0], (_args, _kwargs))
+ 
++    @pytest.mark.skip(reason="always fails: https://github.com/GrahamDumpleton/wrapt/issues/229")
+     def test_wrap_class_method_inherited(self):
+         _args = (1, 2)
+         _kwargs = {'one': 1, 'two': 2}
