@@ -1,0 +1,174 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2017 Alexander Pyhalov
+# Copyright 2018 Michal Nowak
+# Copyright 2022 Marco van Wieringen
+# Copyright 2022 Andreas Wacknitz
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="PostgreSQL 15 client tools"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+link path=usr/bin/clusterdb target=../postgres/15/bin/clusterdb mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/createdb target=../postgres/15/bin/createdb mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/createuser target=../postgres/15/bin/createuser mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/dropdb target=../postgres/15/bin/dropdb mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/dropuser target=../postgres/15/bin/dropuser mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_basebackup target=../postgres/15/bin/pg_basebackup mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_dump target=../postgres/15/bin/pg_dump mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_dumpall target=../postgres/15/bin/pg_dumpall mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_isready target=../postgres/15/bin/pg_isready mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_receivewal target=../postgres/15/bin/pg_receivewal mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_recvlogical target=../postgres/15/bin/pg_recvlogical mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_restore target=../postgres/15/bin/pg_restore mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_rewind target=../postgres/15/bin/pg_rewind mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/pg_upgrade target=../postgres/15/bin/pg_upgrade mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/psql target=../postgres/15/bin/psql mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/reindexdb target=../postgres/15/bin/reindexdb mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/bin/vacuumdb target=../postgres/15/bin/vacuumdb mediator=postgres mediator-implementation=postgresql mediator-version=15
+
+# man pages mediators
+link path=usr/share/man/man1/clusterdb.1 target=../../../postgres/15/man/man1/clusterdb.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/createdb.1 target=../../../postgres/15/man/man1/createdb.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/createuser.1 target=../../../postgres/15/man/man1/createuser.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/dropdb.1 target=../../../postgres/15/man/man1/dropdb.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/dropuser.1 target=../../../postgres/15/man/man1/dropuser.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_basebackup.1 target=../../../postgres/15/man/man1/pg_basebackup.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_dump.1 target=../../../postgres/15/man/man1/pg_dump.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_dumpall.1 target=../../../postgres/15/man/man1/pg_dumpall.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_isready.1 target=../../../postgres/15/man/man1/pg_isready.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_receivewal.1 target=../../../postgres/15/man/man1/pg_receivewal.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_recvlogical.1 target=../../../postgres/15/man/man1/pg_recvlogical.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_restore.1 target=../../../postgres/15/man/man1/pg_restore.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_rewind.1 target=../../../postgres/15/man/man1/pg_rewind.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/pg_upgrade.1 target=../../../postgres/15/man/man1/pg_upgrade.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/psql.1 target=../../../postgres/15/man/man1/psql.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/reindexdb.1 target=../../../postgres/15/man/man1/reindexdb.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+link path=usr/share/man/man1/vacuumdb.1 target=../../../postgres/15/man/man1/vacuumdb.1 mediator=postgres mediator-implementation=postgresql mediator-version=15
+
+file path=usr/postgres/15/bin/clusterdb
+file path=usr/postgres/15/bin/createdb
+file path=usr/postgres/15/bin/createuser
+file path=usr/postgres/15/bin/dropdb
+file path=usr/postgres/15/bin/dropuser
+file path=usr/postgres/15/bin/pg_basebackup
+file path=usr/postgres/15/bin/pg_dump
+file path=usr/postgres/15/bin/pg_dumpall
+file path=usr/postgres/15/bin/pg_isready
+file path=usr/postgres/15/bin/pg_receivewal
+file path=usr/postgres/15/bin/pg_recvlogical
+file path=usr/postgres/15/bin/pg_restore
+file path=usr/postgres/15/bin/pg_rewind
+file path=usr/postgres/15/bin/pg_upgrade
+file path=usr/postgres/15/bin/psql
+file path=usr/postgres/15/bin/reindexdb
+file path=usr/postgres/15/bin/vacuumdb
+file path=usr/postgres/15/man/man1/clusterdb.1
+file path=usr/postgres/15/man/man1/createdb.1
+file path=usr/postgres/15/man/man1/createuser.1
+file path=usr/postgres/15/man/man1/dropdb.1
+file path=usr/postgres/15/man/man1/dropuser.1
+file path=usr/postgres/15/man/man1/pg_basebackup.1
+file path=usr/postgres/15/man/man1/pg_dump.1
+file path=usr/postgres/15/man/man1/pg_dumpall.1
+file path=usr/postgres/15/man/man1/pg_isready.1
+file path=usr/postgres/15/man/man1/pg_receivewal.1
+file path=usr/postgres/15/man/man1/pg_recvlogical.1
+file path=usr/postgres/15/man/man1/pg_restore.1
+file path=usr/postgres/15/man/man1/pg_rewind.1
+file path=usr/postgres/15/man/man1/pg_upgrade.1
+file path=usr/postgres/15/man/man1/psql.1
+file path=usr/postgres/15/man/man1/reindexdb.1
+file path=usr/postgres/15/man/man1/vacuumdb.1
+file path=usr/postgres/15/share/psqlrc.sample
+file path=usr/share/locale/cs/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/cs/LC_MESSAGES/pg_upgrade-15.mo
+file path=usr/share/locale/cs/LC_MESSAGES/pgscripts-15.mo
+file path=usr/share/locale/cs/LC_MESSAGES/psql-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_basebackup-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_rewind-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_upgrade-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pgscripts-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/psql-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_basebackup-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_rewind-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pgscripts-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/psql-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_basebackup-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_rewind-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_upgrade-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pgscripts-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/psql-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_basebackup-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_rewind-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_upgrade-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pgscripts-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/psql-15.mo
+file path=usr/share/locale/it/LC_MESSAGES/pg_basebackup-15.mo
+file path=usr/share/locale/it/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/it/LC_MESSAGES/pg_rewind-15.mo
+file path=usr/share/locale/it/LC_MESSAGES/pg_upgrade-15.mo
+file path=usr/share/locale/it/LC_MESSAGES/psql-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_basebackup-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_rewind-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_upgrade-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pgscripts-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/psql-15.mo
+file path=usr/share/locale/ka/LC_MESSAGES/pg_basebackup-15.mo
+file path=usr/share/locale/ka/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/ka/LC_MESSAGES/pg_rewind-15.mo
+file path=usr/share/locale/ka/LC_MESSAGES/pg_upgrade-15.mo
+file path=usr/share/locale/ka/LC_MESSAGES/psql-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pg_basebackup-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pg_rewind-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pg_upgrade-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pgscripts-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/psql-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_basebackup-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_rewind-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_upgrade-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pgscripts-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/psql-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_basebackup-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_rewind-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_upgrade-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pgscripts-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/psql-15.mo
+file path=usr/share/locale/tr/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/tr/LC_MESSAGES/pgscripts-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_basebackup-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_rewind-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_upgrade-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pgscripts-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/psql-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/pg_dump-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/pg_rewind-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/pg_upgrade-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/pgscripts-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/psql-15.mo

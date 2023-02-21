@@ -1,0 +1,228 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 Andreas Wacknitz
+#
+
+set name=pkg.fmri value=pkg:/service/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="PostgreSQL 15 database server"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=pkg:/$(COMPONENT_FMRI) type=require
+depend fmri=pkg:/database/postgres-common type=require
+
+file files/auth_attr path=etc/security/auth_attr.d/postgres-15
+file files/exec_attr path=etc/security/exec_attr.d/postgres-15
+file files/prof_attr path=etc/security/prof_attr.d/postgres-15
+file files/user_attr path=etc/user_attr.d/postgres-15
+file files/postgresql_15.xml path=lib/svc/manifest/application/database/postgresql_15.xml restart_fmri=svc:/system/manifest-import:default
+file files/postgres_15 mode=0555 path=lib/svc/method/postgres_15
+
+dir group=postgres mode=0755 owner=postgres path=var/postgres/15
+dir group=postgres mode=0700 owner=postgres path=var/postgres/15/backups
+dir group=postgres mode=0700 owner=postgres path=var/postgres/15/data
+link path=usr/postgres/15/bin/postmaster target=postgres
+file path=usr/postgres/15/bin/initdb
+file path=usr/postgres/15/bin/pg_checksums
+file path=usr/postgres/15/bin/pg_controldata
+file path=usr/postgres/15/bin/pg_ctl
+file path=usr/postgres/15/bin/pg_resetwal
+file path=usr/postgres/15/bin/postgres
+file path=usr/postgres/15/lib/$(MACH64)/cyrillic_and_mic.so
+file path=usr/postgres/15/lib/$(MACH64)/dict_snowball.so
+file path=usr/postgres/15/lib/$(MACH64)/euc_cn_and_mic.so
+file path=usr/postgres/15/lib/$(MACH64)/euc_jp_and_sjis.so
+file path=usr/postgres/15/lib/$(MACH64)/euc_kr_and_mic.so
+file path=usr/postgres/15/lib/$(MACH64)/euc_tw_and_big5.so
+file path=usr/postgres/15/lib/$(MACH64)/euc2004_sjis2004.so
+file path=usr/postgres/15/lib/$(MACH64)/latin2_and_win1250.so
+file path=usr/postgres/15/lib/$(MACH64)/latin_and_mic.so
+file path=usr/postgres/15/lib/$(MACH64)/pgoutput.so
+file path=usr/postgres/15/lib/$(MACH64)/plpgsql.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_big5.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_cyrillic.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_euc_cn.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_euc_jp.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_euc_kr.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_euc_tw.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_euc2004.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_gb18030.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_gbk.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_iso8859.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_iso8859_1.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_johab.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_sjis.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_sjis2004.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_uhc.so
+file path=usr/postgres/15/lib/$(MACH64)/utf8_and_win.so
+file path=usr/postgres/15/man/man1/initdb.1
+file path=usr/postgres/15/man/man1/pg_checksums.1
+file path=usr/postgres/15/man/man1/pg_controldata.1
+file path=usr/postgres/15/man/man1/pg_ctl.1
+file path=usr/postgres/15/man/man1/pg_resetwal.1
+file path=usr/postgres/15/man/man1/postgres.1
+file path=usr/postgres/15/man/man1/postmaster.1
+file path=usr/postgres/15/share/errcodes.txt
+file path=usr/postgres/15/share/information_schema.sql
+file path=usr/postgres/15/share/pg_hba.conf.sample
+file path=usr/postgres/15/share/pg_ident.conf.sample
+file path=usr/postgres/15/share/pg_service.conf.sample
+file path=usr/postgres/15/share/postgres.bki
+file path=usr/postgres/15/share/postgresql.conf.sample
+file path=usr/postgres/15/share/snowball_create.sql
+file path=usr/postgres/15/share/sql_features.txt
+file path=usr/postgres/15/share/system_constraints.sql
+file path=usr/postgres/15/share/system_functions.sql
+file path=usr/postgres/15/share/system_views.sql
+file path=usr/postgres/15/share/extension/plpgsql--1.0.sql
+file path=usr/postgres/15/share/extension/plpgsql.control
+file path=usr/postgres/15/share/timezonesets/Africa.txt
+file path=usr/postgres/15/share/timezonesets/America.txt
+file path=usr/postgres/15/share/timezonesets/Antarctica.txt
+file path=usr/postgres/15/share/timezonesets/Asia.txt
+file path=usr/postgres/15/share/timezonesets/Atlantic.txt
+file path=usr/postgres/15/share/timezonesets/Australia
+file path=usr/postgres/15/share/timezonesets/Australia.txt
+file path=usr/postgres/15/share/timezonesets/Default
+file path=usr/postgres/15/share/timezonesets/Etc.txt
+file path=usr/postgres/15/share/timezonesets/Europe.txt
+file path=usr/postgres/15/share/timezonesets/India
+file path=usr/postgres/15/share/timezonesets/Indian.txt
+file path=usr/postgres/15/share/timezonesets/Pacific.txt
+file path=usr/postgres/15/share/tsearch_data/danish.stop
+file path=usr/postgres/15/share/tsearch_data/dutch.stop
+file path=usr/postgres/15/share/tsearch_data/english.stop
+file path=usr/postgres/15/share/tsearch_data/finnish.stop
+file path=usr/postgres/15/share/tsearch_data/french.stop
+file path=usr/postgres/15/share/tsearch_data/german.stop
+file path=usr/postgres/15/share/tsearch_data/hungarian.stop
+file path=usr/postgres/15/share/tsearch_data/hunspell_sample.affix
+file path=usr/postgres/15/share/tsearch_data/hunspell_sample_long.affix
+file path=usr/postgres/15/share/tsearch_data/hunspell_sample_long.dict
+file path=usr/postgres/15/share/tsearch_data/hunspell_sample_num.affix
+file path=usr/postgres/15/share/tsearch_data/hunspell_sample_num.dict
+file path=usr/postgres/15/share/tsearch_data/ispell_sample.affix
+file path=usr/postgres/15/share/tsearch_data/ispell_sample.dict
+file path=usr/postgres/15/share/tsearch_data/italian.stop
+file path=usr/postgres/15/share/tsearch_data/nepali.stop
+file path=usr/postgres/15/share/tsearch_data/norwegian.stop
+file path=usr/postgres/15/share/tsearch_data/portuguese.stop
+file path=usr/postgres/15/share/tsearch_data/russian.stop
+file path=usr/postgres/15/share/tsearch_data/spanish.stop
+file path=usr/postgres/15/share/tsearch_data/swedish.stop
+file path=usr/postgres/15/share/tsearch_data/synonym_sample.syn
+file path=usr/postgres/15/share/tsearch_data/thesaurus_sample.ths
+file path=usr/postgres/15/share/tsearch_data/turkish.stop
+file path=usr/postgres/15/share/tsearch_data/unaccent.rules
+file path=usr/postgres/15/share/tsearch_data/xsyn_sample.rules
+file path=usr/share/locale/cs/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/cs/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/cs/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/cs/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_checksums-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/de/LC_MESSAGES/postgres-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_checksums-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/el/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_checksums-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/es/LC_MESSAGES/postgres-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_checksums-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/fr/LC_MESSAGES/postgres-15.mo
+file path=usr/share/locale/it/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/it/LC_MESSAGES/pg_checksums-15.mo
+file path=usr/share/locale/it/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/it/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/it/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/it/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/it/LC_MESSAGES/postgres-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_checksums-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/ja/LC_MESSAGES/postgres-15.mo
+file path=usr/share/locale/ka/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/ka/LC_MESSAGES/pg_checksums-15.mo
+file path=usr/share/locale/ka/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/ka/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/ka/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/ka/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pg_checksums-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/ko/LC_MESSAGES/postgres-15.mo
+file path=usr/share/locale/pl/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/pg_checksums-15.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_checksums-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/ru/LC_MESSAGES/postgres-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_checksums-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/sv/LC_MESSAGES/postgres-15.mo
+file path=usr/share/locale/tr/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/tr/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/tr/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_checksums-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/uk/LC_MESSAGES/postgres-15.mo
+file path=usr/share/locale/vi/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/initdb-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/pg_controldata-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/pg_ctl-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/pg_resetwal-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/plpgsql-15.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/postgres-15.mo
