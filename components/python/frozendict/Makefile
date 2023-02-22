@@ -10,42 +10,30 @@
 #
 
 #
-# Copyright 2022 erwinlem
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project frozendict
 #
 
-BUILD_STYLE=setup.py
-USE_COMMON_TEST_MASTER=no
+BUILD_STYLE = setup.py
+USE_COMMON_TEST_MASTER = no
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		frozendict
-COMPONENT_VERSION=	2.3.4
-COMPONENT_SUMMARY=	An immutable dictionary 
-COMPONENT_PROJECT_URL=	https://pypi.org/project/$(COMPONENT_NAME)
-COMPONENT_FMRI=		library/python/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=Development/Python
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_ARCHIVE_HASH=	sha256:15b4b18346259392b0d27598f240e9390fafbff882137a9c48a1e0104fb17f78
-COMPONENT_LICENSE=	MIT
-COMPONENT_LICENSE_FILE=	LICENSE.txt
+COMPONENT_NAME =		frozendict
+HUMAN_VERSION =			2.3.5
+COMPONENT_SUMMARY =		frozendict - A simple immutable dictionary
+COMPONENT_PROJECT_URL =		https://github.com/Marco-Sulla/python-frozendict
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/41/44/1892c9b2a21f471ef2681559f9e57470795199330dad8eca734bce408434/frozendict-2.3.5.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:65d7e3995c9174b77d7d80514d7062381750491e112bbeb44323368baa3e636a
+COMPONENT_LICENSE =		LGPL-3.0-only
+COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-PYTHON_VERSIONS=    3.9
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_CMD =    $(PYTHON) -m pytest 
-COMPONENT_TEST_ARGS =   test_frozendict.py
-COMPONENT_TEST_DIR =    $(COMPONENT_SRC)/test
-COMPONENT_TEST_TRANSFORMS += '-e "s/ [0-9]*[0-9].[0-9][0-9]s/ X.XXs/" '
-COMPONENT_TEST_TRANSFORMS += '-e "s/^Using --randomly-seed=[0-9]*/Using --randomly-seed=XXXXXXXXXX/" '
-
-$(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
-	sed -i 's/cpython-39.so/so/g' $(BUILD_DIR)/*.mangled
-	$(PKGDEPEND) generate $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
-
-# Build dependencies
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
