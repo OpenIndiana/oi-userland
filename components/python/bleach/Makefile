@@ -19,15 +19,26 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bleach
-COMPONENT_VERSION =		5.0.1
+HUMAN_VERSION =			6.0.0
 COMPONENT_SUMMARY =		bleach - An easy safelist-based HTML-sanitizing tool.
 COMPONENT_PROJECT_URL =		https://github.com/mozilla/bleach
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c2/5d/d5d45a38163ede3342d6ac1ca01b5d387329daadf534a25718f9a9ba818c/bleach-5.0.1.tar.gz
+	https://files.pythonhosted.org/packages/7e/e6/d5f220ca638f6a25557a611860482cb6e54b2d97f0332966b1b005742e1f/bleach-6.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0d03255c47eb9bd2f26aa9bb7f2107732e7e8fe195ca2f64709fcf3b0a4a085c
+	sha256:1a1a85c1595e07d8db14c5f09f09e6433502c51c595970edc090551f0db99414
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
+
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# bleach --> twine ==> readme_renderer ==> bleach
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -37,11 +48,9 @@ PYTHON_REQUIRED_PACKAGES += library/python/webencodings
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/build
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
-TEST_REQUIRED_PACKAGES.python += library/python/hashin
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
-TEST_REQUIRED_PACKAGES.python += library/python/pip-tools
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
+TEST_REQUIRED_PACKAGES.python += library/python/tox-gh-actions
 TEST_REQUIRED_PACKAGES.python += library/python/twine
 TEST_REQUIRED_PACKAGES.python += library/python/wheel
