@@ -22,12 +22,13 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS=	64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libevent
 COMPONENT_VERSION=	1.4.15
 HUMAN_VERSION=		1.4.15
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	libevent - an event notification library
 COMPONENT_PROJECT_URL=	https://libevent.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-release-$(HUMAN_VERSION)-stable
