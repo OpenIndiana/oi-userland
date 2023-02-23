@@ -16,12 +16,12 @@
 # Copyright (c) 2022 Friedrich Kink
 #
 
-BUILD_BITS=             64
 USE_OPENSSL11=          yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xdebug
 COMPONENT_VERSION=	3.1.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	Xdebug is a debugging and productivity extension for PHP
 COMPONENT_FMRI=		web/php-81/extension/php-xdebug
@@ -55,7 +55,11 @@ CONFIGURE_OPTIONS  +=   --datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS  +=   --mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS  +=   --localstatedir=$(PHP_DATADIR)
 
+ifeq ($(strip $(MACH)),i386)
 CONFIGURE_OPTIONS  +=	--build=x86_64-pc-solaris2.10
+else
+CONFIGURE_OPTIONS  +=	--build=sparcv9-sun-solaris$(SOLARIS_VERSION)
+endif
 CONFIGURE_OPTIONS  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
 CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 
