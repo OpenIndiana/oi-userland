@@ -13,29 +13,27 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_STYLE=justmake
-BUILD_BITS=64
+BUILD_STYLE= justmake
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         toolame
-COMPONENT_VERSION=      02l
-COMPONENT_REVISION=     1
-IPS_COMPONENT_VERSION=0.2.12
+COMPONENT_VERSION=		0.2.12
+HUMAN_VERSION=			02l
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      optimized MPEG Audio Layer 2 encoder
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:3b95cd2504bceac4aab2fca03bb3b5974d1d44b5afdd8eb4cc0f0899521bffc4
-COMPONENT_ARCHIVE_URL=  \
-	http://tenet.dl.sourceforge.net/project/toolame/toolame%200.2/toolame%2002l/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://toolame.sourceforge.net/
+COMPONENT_ARCHIVE_HASH= sha256:3b95cd2504bceac4aab2fca03bb3b5974d1d44b5afdd8eb4cc0f0899521bffc4
+COMPONENT_ARCHIVE_URL=	https://tenet.dl.sourceforge.net/project/toolame/toolame%200.2/toolame%2002l/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://toolame.sourceforge.net/
+COMPONENT_FMRI=         audio/toolame
+COMPONENT_CLASSIFICATION=System/Media
 COMPONENT_LICENSE=      LGPLv2.1
 COMPONENT_LICENSE_FILE= LGPL.txt
-COMPONENT_CLASSIFICATION=System/Media
-COMPONENT_FMRI=         audio/toolame
 
 # GCC 10 build failure
-CFLAGS+= -fcommon
+CFLAGS += -fcommon
 
 COMPONENT_ENV += CC="$(CC)"
 COMPONENT_ENV += CFLAGS="$(CFLAGS) "
@@ -44,7 +42,8 @@ COMPONENT_BUILD_ENV += $(COMPONENT_ENV)
 COMPONENT_INSTALL_ENV += $(COMPONENT_ENV)
 
 include $(WS_MAKE_RULES)/encumbered.mk
-TEST_TARGET=$(NO_TESTS)
+
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
