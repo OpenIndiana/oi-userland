@@ -14,17 +14,16 @@
 # Copyright (c) 2022, Friedrich Kink
 #
 
-BUILD_BITS =                    32_and_64
-BUILD_STYLE =                   waf
-
+BUILD_BITS= 32_and_64
+BUILD_STYLE= waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tdb
-COMPONENT_VERSION= 1.4.7
+COMPONENT_VERSION= 1.4.8
 COMPONENT_SUMMARY= Trivial Database Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a4fb168def533f31ff2c07f7d9844bb3131e6799f094ebe77d0380adc987c20e
+COMPONENT_ARCHIVE_HASH= sha256:8434c9c857d13ce3fa8466f75601f25c3693676b36919f159e0ad6121baf5ce8
 COMPONENT_ARCHIVE_URL= https://download.samba.org/pub/tdb/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://wiki.samba.org/index.php/TDB
 COMPONENT_FMRI = library/tdb
@@ -33,8 +32,6 @@ COMPONENT_CLASSIFICATION = Development/Databases
 COMPONENT_LICENSE = LGPLv3
 
 include $(WS_MAKE_RULES)/common.mk
-
-PYTHON_VERSION = 3.9
 
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	$(CLONEY) $(SOURCE_DIR) $(@D); \
