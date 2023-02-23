@@ -1079,12 +1079,6 @@ CC_BITS =	-m$(BITS)
 # Turn on C99 for gcc
 gcc_C99_ENABLE =	-std=c99
 
-# Control register usage for generated code.  SPARC ABI requires system
-# libraries not to use application registers.
-gcc_XREGS.sparc =	-mno-app-regs
-gcc_XREGS.i386 =
-gcc_XREGS =		$(gcc_XREGS.$(MACH))
-
 # See CPP_XPG6MODE comment above.
 XPG6MODE =		$(CPP_XPG6MODE)
 
@@ -1098,8 +1092,8 @@ XPG5MODE =		$(CPP_XPG5MODE)
 #
 
 # Control the GCC optimization level.
-gcc_OPT.sparc.32 =	-O3 -mcpu=ultrasparc -mvis
-gcc_OPT.sparc.64 =	-O3 -mcpu=ultrasparc -mvis
+gcc_OPT.sparc.32 =	-O3 -mcpu=ultrasparc -mvis -mfsmuld
+gcc_OPT.sparc.64 =	-O3 -mcpu=ultrasparc -mvis -mfsmuld
 gcc_OPT.i386.32 =	-O3
 gcc_OPT.i386.64 =	-O3
 gcc_OPT =		$(gcc_OPT.$(MACH).$(BITS))
