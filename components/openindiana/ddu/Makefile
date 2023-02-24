@@ -78,6 +78,8 @@ install: $(INSTALL_32)
 
 download:: $(SOURCE_DIR)/.downloaded
 
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
+
 REQUIRED_PACKAGES += developer/versioning/git
 REQUIRED_PACKAGES += system/header
 REQUIRED_PACKAGES += system/library/storage/libmpapi
