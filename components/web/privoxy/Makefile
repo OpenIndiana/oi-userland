@@ -27,7 +27,7 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		privoxy
-COMPONENT_VERSION=	3.0.33
+COMPONENT_VERSION=	3.0.34
 COMPONENT_SUMMARY=	Privacy-enhancing, ad-removing web proxy
 COMPONENT_DESCRIPTION=	Privoxy is a non-caching web proxy with advanced\
  filtering capabilities for enhancing privacy, modifying web page data\
@@ -36,7 +36,7 @@ COMPONENT_DESCRIPTION=	Privoxy is a non-caching web proxy with advanced\
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-stable
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_PROJECT_URL=	https://www.privoxy.org/
-COMPONENT_ARCHIVE_HASH= sha256:04b104e70dac61561b9dd110684b250fafc8c13dbe437a60fae18ddd9a881fae
+COMPONENT_ARCHIVE_HASH= sha256:e6ccbca1656f4e616b4657f8514e33a70f6697e9d7294356577839322a3c5d2c
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/ijbswa/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	web/proxy/privoxy
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
@@ -76,8 +76,8 @@ install:	$(INSTALL_64)
 # Oracle proxy to access pages in your web browser with privoxy running. 
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
