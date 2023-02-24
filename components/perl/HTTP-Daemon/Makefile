@@ -19,11 +19,11 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTTP::Daemon
-HUMAN_VERSION =			6.15
+HUMAN_VERSION =			6.16
 COMPONENT_SUMMARY =		HTTP::Daemon - A simple http server class
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c42dddb589bdb3b5a114ec2f01ac636a09228dce9b35ceae1dc03c6796e8fe2b
+	sha256:b38d092725e6fa4e0c4dc2a47e157070491bafa0dbe16c78a358e806aa7e173d
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENCE
 
