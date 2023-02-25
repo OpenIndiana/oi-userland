@@ -21,19 +21,24 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
 # Copyright (c) 2022, Niklas Poslovski
+# Copyright (c) 2023, Friedrich Kink
 #
 
 USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.16.38
+COMPONENT_VERSION=	9.18.12
+COMPONENT_SUMMARY=	BIND DNS name server and configuration tools.
+COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain Name System \
+                        (DNS) protocols for the Internet.  This package contains the DNS \
+                        server 'named' and tools used to setup and validate configuration.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://www.isc.org/software/bind/
-COMPONENT_ARCHIVE_HASH=	sha256:8df44c9d9a84a28ab8b49d55f3c33b624b90ef8f6a8b9ee6a4c33cc17c14c50f
+COMPONENT_ARCHIVE_HASH=	sha256:47766bb7b063aabbad054386b190aa7f6c14524427afd427c30ec426512027e7
 COMPONENT_ARCHIVE_URL=	https://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=			network/dns/$(COMPONENT_NAME)
+COMPONENT_FMRI=		network/dns/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	MPL v2.0
 COMPONENT_LICENSE_FILE=	COPYRIGHT
@@ -59,21 +64,17 @@ CFLAGS += $(CPP_XPG6MODE)
 CONFIGURE_LIBDIR.64= $(CONFIGURE_PREFIX)/lib/dns/$(MACH64)
 
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --with-libtool
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --with-openssl=/usr
 CONFIGURE_OPTIONS += --enable-devpoll=yes
 CONFIGURE_OPTIONS += --enable-fixed-rrset
-CONFIGURE_OPTIONS += --with-pkcs11=/usr/lib/$(MACH64)/libpkcs11.so
+CONFIGURE_OPTIONS += --enable-full-report
+CONFIGURE_OPTIONS += --with-gssapi
+CONFIGURE_OPTIONS += --with-libidn2
 CONFIGURE_OPTIONS += --with-libxml2
-CONFIGURE_OPTIONS += --with-python-install-dir=$(PYTHON_VENDOR_PACKAGES.32)
 CONFIGURE_OPTIONS += --with-json-c
-
-CONFIGURE_ENV += PYTHON=$(PYTHON)
-
-COMPONENT_BUILD_ENV += PYTHON_VENDOR_DIR=$(PYTHON_VENDOR_PACKAGES)
-COMPONENT_INSTALL_ENV += PYTHON_VENDOR_DIR=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_OPTIONS += --disable-linux-caps
 
 # Install.
 #
@@ -94,24 +95,26 @@ COMPONENT_POST_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh .
 COMPONENT_TEST_TARGETS= test
 COMPONENT_TEST_TRANSFORMS += \
 	' -n ' \
-	' -e "/^R:.*:FAIL/p"' \
-	' -e "/^I:System test result summary/p"' \
-	' -e "/^I:.* PASS$$/p"' \
-	' -e "/^I:.* FAIL$$/p"' \
-	' -e "/^I:.* SKIPPED$$/p"' \
-	' -e "/^I:.* UNTESTED$$/p"'
+	' -e "/TOTAL:/p"' \
+	' -e "/PASS:/p"' \
+	' -e "/SKIP:/p"' \
+	' -e "/XFAIL:/p"' \
+	' -e "/FAIL:/p"' \
+	' -e "/XPASS:/p"' \
+	' -e "/ERROR:/p"'
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libuv
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
