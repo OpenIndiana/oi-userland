@@ -301,6 +301,7 @@ TEST_STYLE ?= tox
 ifeq ($(strip $(TEST_STYLE)),tox)
 COMPONENT_TEST_ENV +=		PATH=$(PATH)	# https://github.com/tox-dev/tox/issues/2538
 COMPONENT_TEST_ENV +=		PYTEST_ADDOPTS="$(PYTEST_ADDOPTS)"
+COMPONENT_TEST_ENV +=		NOSE_VERBOSE=2
 COMPONENT_TEST_ENV +=		TOX_TESTENV_PASSENV="PYTHONPATH PYTEST_ADDOPTS"
 COMPONENT_TEST_CMD =		$(TOX)
 COMPONENT_TEST_ARGS =		--current-env --no-provision --recreate
@@ -314,6 +315,8 @@ TOX_CALL_INDIRECTLY += zope-testrunner
 TOX_CALL_INDIRECTLY.zope-testrunner = zope.testrunner
 TOX_CALL_INDIRECTLY += sphinx-build
 TOX_CALL_INDIRECTLY.sphinx-build = sphinx.cmd.build
+TOX_CALL_INDIRECTLY += nosetests
+TOX_CALL_INDIRECTLY.nosetests = nose
 $(foreach indirectly, $(TOX_CALL_INDIRECTLY), $(eval TOX_CALL_INDIRECTLY.$(indirectly) ?= $(indirectly)))
 COMPONENT_PRE_TEST_ACTION += COMPONENT_TEST_DIR=$(COMPONENT_TEST_DIR) ;
 COMPONENT_PRE_TEST_ACTION += \
