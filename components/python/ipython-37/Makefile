@@ -14,46 +14,33 @@
 #   $WS_TOOLS/python-integrate-project ipython
 #
 
-BUILD_STYLE = pyproject
+BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ipython
-HUMAN_VERSION =			8.13.1
+HUMAN_VERSION =			7.34.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		ipython - IPython: Productive Interactive Computing
 COMPONENT_PROJECT_URL =		https://ipython.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/0f/89/5a81b01529537e0f59c72679846d8b33c66225055b3ba520e161c42c8e02/ipython-8.13.1.tar.gz
+	https://files.pythonhosted.org/packages/db/6c/3fcf0b8ee46656796099ac4b7b72497af5f090da3e43fd305f2a24c73915/ipython-7.34.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9c8487ac18f330c8a683fc50ab6d7bc0fcf9ef1d7a9f6ce7926938261067b81f
+	sha256:af3bdb46aa292bce5615b1b2ebc76c2080c5f77f54bda2ec72461317273e7cd6
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 # ipython >= 8.0.0 requires Python >= 3.8
-PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
+PYTHON_VERSIONS = 3.7
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Rename section 1 man page(s) to contain version number
-COMPONENT_POST_INSTALL_ACTION += \
-	for f in $(PROTOUSRSHAREMAN1DIR)/*.1 ; do \
-		[[ -f $$f ]] || continue ; \
-		for v in $(PYTHON_VERSIONS) ; do \
-			[[ "$$f" == "$${f%%$$v.1}" ]] || continue 2 ; \
-		done ; \
-		$(MV) $$f $${f%%.1}-$(PYTHON_VERSION).1 ; \
-	done ;
-
-# Testing fails with the checkdocs plugin installed
-PYTEST_ADDOPTS += -p no:checkdocs
-# Testing fails with the randomly plugin installed
-PYTEST_ADDOPTS += -p no:randomly
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/backcall
 PYTHON_REQUIRED_PACKAGES += library/python/decorator
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/jedi
 PYTHON_REQUIRED_PACKAGES += library/python/matplotlib-inline
 PYTHON_REQUIRED_PACKAGES += library/python/pexpect
@@ -61,8 +48,5 @@ PYTHON_REQUIRED_PACKAGES += library/python/pickleshare
 PYTHON_REQUIRED_PACKAGES += library/python/prompt-toolkit
 PYTHON_REQUIRED_PACKAGES += library/python/pygments
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/stack-data
 PYTHON_REQUIRED_PACKAGES += library/python/traitlets
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
