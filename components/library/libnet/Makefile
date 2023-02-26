@@ -21,41 +21,38 @@
 
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2023, Friedrich Kink
 #
+
+BUILD_BITS=	64_and_32
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libnet
-COMPONENT_VERSION=	1.1.5
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.2
+COMPONENT_SUMMARY=	libnet - a library for portable network packet construction
+COMPONENT_DESCRIPTION=	the libnet network packet construction library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/libnet-dev/
+COMPONENT_PROJECT_URL=	https://github.com/libnet/libnet
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:75588f8d1232e1df34eccf2dba5e66be197b345a07fae80d8275db994496a20d
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/libnet-dev/$(COMPONENT_ARCHIVE)
+    sha256:caa4868157d9e5f32e9c7eac9461efeff30cb28357f7f6bf07e73933fb4edaa7
+COMPONENT_ARCHIVE_URL=	https://github.com/libnet/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		system/library/libnet
 COMPONENT_BUGDB=	library/libnet
+COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc/man/man3
-COMPILER=	gcc
-CFLAGS += -g -fPIC
-CONFIGURE_OPTIONS.32 += --srcdir=$(BUILD_DIR_32)
-CONFIGURE_OPTIONS.64 += --srcdir=$(BUILD_DIR_64)
-
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --disable-doxygen-html
+CONFIGURE_OPTIONS += --enable-doxygen-pdf
 
 test:		$(NO_TESTS)
-
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
