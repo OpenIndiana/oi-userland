@@ -19,18 +19,19 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8
-HUMAN_VERSION =			6.0.0
+HUMAN_VERSION =			5.0.4
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		flake8 - the modular source code checker: pep8 pyflakes and co
 COMPONENT_PROJECT_URL =		https://github.com/pycqa/flake8
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/66/53/3ad4a3b74d609b3b9008a10075c40e7c8909eae60af53623c3888f7a529a/flake8-6.0.0.tar.gz
+	https://files.pythonhosted.org/packages/ad/00/9808c62b2d529cefc69ce4e4a1ea42c0f855effa55817b7327ec5b75e60a/flake8-5.0.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c61007e76655af75e6785a931f452915b371dc48f56efd765247c8fe68f2b181
+	sha256:6fbe320aad8d6b95cec8b8e47bc933004678dc63095be98528b7bdd2a9f510db
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # flake8 >= 6.0.0 requires Python >= 3.8
-PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
+PYTHON_VERSIONS = 3.7
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -44,10 +45,10 @@ include $(WS_MAKE_RULES)/common.mk
 #	flake8-2020
 #	flake8-noqa
 #	flake8-typing-imports
-#	teamcity-messages
 #
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/mccabe
 PYTHON_REQUIRED_PACKAGES += library/python/pycodestyle
 PYTHON_REQUIRED_PACKAGES += library/python/pyflakes
