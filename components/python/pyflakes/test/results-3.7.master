@@ -1,10 +1,12 @@
 ============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-asyncio: mode=legacy
-collecting ... collected 746 items
+asyncio: mode=strict
+collecting ... collected 723 items
 
+::project PASSED
 pyflakes/test/test_api.py::CheckTests::test_CRLFLineEndings PASSED
 pyflakes/test/test_api.py::CheckTests::test_checkPathNonExisting PASSED
 pyflakes/test/test_api.py::CheckTests::test_checkRecursive PASSED
@@ -47,21 +49,6 @@ pyflakes/test/test_api.py::TestReporter::test_syntaxErrorNoText PASSED
 pyflakes/test/test_api.py::TestReporter::test_unexpectedError PASSED
 pyflakes/test/test_builtin.py::TestBuiltins::test_builtin_unbound_local PASSED
 pyflakes/test/test_builtin.py::TestBuiltins::test_global_shadowing_builtin PASSED
-pyflakes/test/test_checker.py::CollectTypeCommentsTests::test_bytes PASSED
-pyflakes/test/test_checker.py::CollectTypeCommentsTests::test_function_def_assigned_comments PASSED
-pyflakes/test/test_checker.py::CollectTypeCommentsTests::test_last_node_wins PASSED
-pyflakes/test/test_checker.py::CollectTypeCommentsTests::test_non_type_comment_ignored PASSED
-pyflakes/test/test_checker.py::CollectTypeCommentsTests::test_text PASSED
-pyflakes/test/test_checker.py::CollectTypeCommentsTests::test_type_comment_before_typeable PASSED
-pyflakes/test/test_checker.py::CollectTypeCommentsTests::test_type_comment_starts_with_word_ignore PASSED
-pyflakes/test/test_checker.py::CollectTypeCommentsTests::test_type_comment_with_extra_still_collected PASSED
-pyflakes/test/test_checker.py::CollectTypeCommentsTests::test_type_comment_without_whitespace PASSED
-pyflakes/test/test_checker.py::CollectTypeCommentsTests::test_type_ignore_comment_ignored PASSED
-pyflakes/test/test_checker.py::CollectTypeCommentsTests::test_type_ignore_with_other_things_ignored PASSED
-pyflakes/test/test_checker.py::TypeableVisitorTests::test_last_node_wins PASSED
-pyflakes/test/test_checker.py::TypeableVisitorTests::test_node_types PASSED
-pyflakes/test/test_checker.py::TypeableVisitorTests::test_py35_node_types PASSED
-pyflakes/test/test_checker.py::TypeableVisitorTests::test_visitor_recurses PASSED
 pyflakes/test/test_code_segment.py::TestCodeSegments::test_class_segment PASSED
 pyflakes/test/test_code_segment.py::TestCodeSegments::test_function_segment PASSED
 pyflakes/test/test_code_segment.py::TestCodeSegments::test_scope_async_function PASSED
@@ -569,6 +556,7 @@ pyflakes/test/test_other.py::TestAsyncStatements::test_matmul PASSED
 pyflakes/test/test_other.py::TestAsyncStatements::test_raise_notimplemented PASSED
 pyflakes/test/test_other.py::TestIncompatiblePrintOperator::test_invalid_print_when_imported_from_future PASSED
 pyflakes/test/test_other.py::TestIncompatiblePrintOperator::test_print_as_condition_test PASSED
+pyflakes/test/test_other.py::TestIncompatiblePrintOperator::test_print_augmented_assign PASSED
 pyflakes/test/test_other.py::TestIncompatiblePrintOperator::test_print_function_assignment PASSED
 pyflakes/test/test_other.py::TestIncompatiblePrintOperator::test_print_in_lambda PASSED
 pyflakes/test/test_other.py::TestIncompatiblePrintOperator::test_print_returned_in_function PASSED
@@ -661,19 +649,6 @@ pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_quoted_type_ca
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_quoted_type_cast_renamed_import PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_return_annotation_is_class_scope_variable PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_return_annotation_is_function_body_variable PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeCommentsAdditionalComment PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeCommentsAssignedToPreviousNode PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeCommentsFullSignature PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeCommentsFullSignatureWithDocstring PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeCommentsInvalidDoesNotMarkAsUsed PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeCommentsMarkImportsAsUsed PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeCommentsNoWhitespaceAnnotation PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeCommentsStarArgs PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeCommentsSyntaxError PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeCommentsSyntaxErrorCorrectLine PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeIgnore PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeIgnoreBogus PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typeIgnoreBogusUnicode PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_type_annotation_clobbers_all PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_type_cast_literal_str_to_str PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typednames_correct_forward_ref PASSED
@@ -681,7 +656,9 @@ pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typingExtensio
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typingOverload PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typingOverloadAsync PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typing_guard_for_protocol PASSED
+pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_unassigned_annotation_is_undefined PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_unused_annotation PASSED
+pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_variable_annotation_references_self_name_undefined PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_variable_annotations PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_variadic_generics SKIPPED
 pyflakes/test/test_undefined_names.py::NameTests::test_impossibleContext PASSED
@@ -752,10 +729,4 @@ pyflakes/test/test_undefined_names.py::Test::test_unusedAsStarUnpack PASSED
 pyflakes/test/test_undefined_names.py::Test::test_unused_global SKIPPED
 pyflakes/test/test_undefined_names.py::Test::test_usedAsStarUnpack PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:191
-  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:191: DeprecationWarning: The 'asyncio_mode' default value will change to 'strict' in future, please explicitly use 'asyncio_mode=strict' or 'asyncio_mode=auto' in pytest configuration file.
-    config.issue_config_time_warning(LEGACY_MODE, stacklevel=2)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 719 passed, 27 skipped, 1 warning ========
+======== 695 passed, 27 skipped ========
