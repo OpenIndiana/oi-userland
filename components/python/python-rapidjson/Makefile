@@ -1,58 +1,41 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2020 OmniOS Community Edition (OmniOSce) Association.
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project python-rapidjson
 #
 
-BUILD_BITS=			64
-BUILD_STYLE=		setup.py
+BUILD_STYLE = setup.py
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		python-rapidjson
-COMPONENT_VERSION=	1.4
-COMPONENT_SUMMARY=	JSON (Java Script Object Notation) encoder/decoder for Python
-COMPONENT_PROJECT_URL=	https://pypi.org/project/python-rapidjson/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:018c20d3983cccfdc9cfed64407d4ba861ef3d64fe324a486f7130431afdefa7
-COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_FMRI=	library/python/rapidjson
-COMPONENT_CLASSIFICATION=	Development/Python
-COMPONENT_LICENSE=      MIT
-
-PYTHON_VERSIONS=	3.7 3.9
+COMPONENT_NAME =		python-rapidjson
+HUMAN_VERSION =			1.9
+COMPONENT_SUMMARY =		python-rapidjson - Python wrapper around rapidjson
+COMPONENT_PROJECT_URL =		https://github.com/python-rapidjson/python-rapidjson
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/de/df/1f3e0a73f6ae6f76389d3ea55e3d9a17bfe1eac42dfe5498f34e052e984d/python-rapidjson-1.9.tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:be7d351c7112dac608133a23f60e95395668d0981a07f4037f63e0e88afcf01a
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Tests require the pytest package to be installed, our pytest is too old, so
-# we get some errors
-COMPONENT_TEST_DIR=	$(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD=	$(PYTHON) -m pytest
-COMPONENT_TEST_ARGS=
-
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytz
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx
