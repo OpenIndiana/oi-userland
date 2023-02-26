@@ -17,16 +17,17 @@ BUILD_STYLE=cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         olm
-COMPONENT_VERSION=      3.2.13
+COMPONENT_VERSION=      3.2.14
 COMPONENT_SUMMARY=      Implementation of the olm and megolm cryptographic ratchets
 COMPONENT_PROJECT_URL=  https://gitlab.matrix.org/matrix-org/olm
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:8ac0c5e4a62d5464f0a6f3f35dd41b53d31bc3a188e93e3614d38237e0a32f81
+COMPONENT_ARCHIVE_HASH= sha256:099d93ef93cc9d6efb3dd0ed5eb5f675b550579d6ccff01abaeca18f8a5f7e77
 COMPONENT_ARCHIVE_URL=	https://gitlab.matrix.org/matrix-org/$(COMPONENT_NAME)/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/olm
 COMPONENT_CLASSIFICATION=       System/Libraries
 COMPONENT_LICENSE=      Apache License 2.0
+COMPONENT_LICENSE_FILE=	LICENSE
 
 CMAKE_OPTIONS += -DOLM_TESTS=NO
 
