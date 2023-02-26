@@ -19,17 +19,18 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mypy_extensions
-COMPONENT_VERSION =		0.4.3
-COMPONENT_SUMMARY =		mypy_extensions - Experimental type system extensions for programs checked with the mypy typechecker.
+HUMAN_VERSION =			1.0.0
+COMPONENT_SUMMARY =		mypy_extensions - Type system extensions for programs checked with the mypy type checker.
 COMPONENT_PROJECT_URL =		https://github.com/python/mypy_extensions
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/63/60/0582ce2eaced55f65a4406fc97beba256de4b7a95a0034c6576458c6519f/mypy_extensions-0.4.3.tar.gz
+	https://files.pythonhosted.org/packages/98/a4/1ab47638b92648243faf97a5aeb6ea83059cc3624972ab6b8d2316078d3f/mypy_extensions-1.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8
+	sha256:75dbf8955dc00442a438fc4d0666508a9a97b6bd41aa2f0ffe9d2f2725af0782
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+# https://github.com/python/mypy_extensions/issues/36
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
