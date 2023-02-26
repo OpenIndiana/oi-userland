@@ -6,18 +6,26 @@ the compiler of choice.
 For more background for this change, see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90912
 
 (cherry picked from commit d584223653e17930109f37f5203acecca4090ca6)
---- bind-9.16.10/configure.ac.orig	2020-12-07 09:16:53.000000000 +0000
-+++ bind-9.16.10/configure.ac	2020-12-18 12:59:06.922199858 +0000
-@@ -377,12 +377,6 @@
+--- bind-9.18.12/configure.ac	2023-02-03 12:25:47.438145409 +0100
++++ bind-9.18.12/configure.ac.new	2023-02-25 17:58:08.392224650 +0100
+@@ -280,13 +280,13 @@
+ #
  # Using Solaris linker with gcc on Solaris breaks Thread Local Storage
  #
- AS_CASE([$host],
+-AS_CASE([$host],
 -	[*-solaris*],[
 -	    AS_IF([test "$GCC" = "yes"],
 -		  [LDFLAGS="$LDFLAGS -zrelax=transtls"
 -		   AC_MSG_WARN([When using GNU C Compiler on Solaris, -zrelax=transtls linker flag is used to fix bug in Thread Local Storage])
 -		  ])
--	],
- 	[*-darwin*],[LDFLAGS="$LDFLAGS -Wl,-flat_namespace"])
+-	])
++#AS_CASE([$host],
++#	[*-solaris*],[
++#	    AS_IF([test "$GCC" = "yes"],
++#		  [LDFLAGS="$LDFLAGS -zrelax=transtls"
++#		   AC_MSG_WARN([When using GNU C Compiler on Solaris, -zrelax=transtls linker flag is used to fix bug in Thread Local Storage])
++#		  ])
++#	])
  
- #
+ AC_CHECK_HEADERS([fcntl.h regex.h sys/time.h unistd.h sys/mman.h sys/sockio.h sys/select.h sys/param.h sys/sysctl.h net/if6.h sys/socket.h net/route.h linux/netlink.h linux/rtnetlink.h], [], [],
+ 		 [$ac_includes_default
