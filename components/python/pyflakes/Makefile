@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyflakes
-COMPONENT_VERSION =		2.5.0
+HUMAN_VERSION =			3.0.1
 COMPONENT_SUMMARY =		pyflakes - passive checker of Python programs
 COMPONENT_PROJECT_URL =		https://github.com/PyCQA/pyflakes
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/07/92/f0cb5381f752e89a598dd2850941e7f570ac3cb8ea4a344854de486db152/pyflakes-2.5.0.tar.gz
+	https://files.pythonhosted.org/packages/f2/51/506ddcfab10d708e8460554cc1cf37c727a6a2cccbad8dfe57766cfce33c/pyflakes-3.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:491feb020dca48ccc562a8c0cbe8df07ee13078df59813b83959cbdada312ea3
+	sha256:ec8b276a6b60bd80defed25add7e439881c19e64850afd9b346283d4165fd0fd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
