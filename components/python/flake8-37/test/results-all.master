@@ -8,7 +8,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D), configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 464 items
+collecting ... collected 480 items
 
 ::project PASSED
 tests/integration/test_aggregator.py::test_aggregate_options_when_isolated PASSED
@@ -41,13 +41,12 @@ tests/integration/test_main.py::test_bug_report_successful PASSED
 tests/integration/test_main.py::test_cli_config_option_respected PASSED
 tests/integration/test_main.py::test_cli_isolated_overrides_config_option PASSED
 tests/integration/test_main.py::test_config_file_not_found PASSED
+tests/integration/test_main.py::test_diff_option PASSED
 tests/integration/test_main.py::test_e101_indent_char_does_not_reset PASSED
 tests/integration/test_main.py::test_early_keyboard_interrupt_does_not_crash PASSED
-tests/integration/test_main.py::test_errors_sorted PASSED
 tests/integration/test_main.py::test_extend_exclude PASSED
 tests/integration/test_main.py::test_file_not_found PASSED
 tests/integration/test_main.py::test_form_feed_line_split PASSED
-tests/integration/test_main.py::test_format_option_help PASSED
 tests/integration/test_main.py::test_malformed_per_file_ignores_error PASSED
 tests/integration/test_main.py::test_obtaining_args_from_sys_argv_when_not_explicity_provided PASSED
 tests/integration/test_main.py::test_output_file PASSED
@@ -78,6 +77,13 @@ tests/unit/plugins/finder_test.py::test_find_plugins_plugin_is_present PASSED
 tests/unit/plugins/finder_test.py::test_flake8_plugins PASSED
 tests/unit/plugins/finder_test.py::test_import_plugins_extends_sys_path PASSED
 tests/unit/plugins/finder_test.py::test_importlib_plugins PASSED
+tests/unit/plugins/finder_test.py::test_invalid_plugin_prefixes[A1234] PASSED
+tests/unit/plugins/finder_test.py::test_invalid_plugin_prefixes[ABCD] PASSED
+tests/unit/plugins/finder_test.py::test_invalid_plugin_prefixes[A\U0001d7d7] PASSED
+tests/unit/plugins/finder_test.py::test_invalid_plugin_prefixes[\u2603] PASSED
+tests/unit/plugins/finder_test.py::test_invalid_plugin_prefixes[] PASSED
+tests/unit/plugins/finder_test.py::test_invalid_plugin_prefixes[a-b] PASSED
+tests/unit/plugins/finder_test.py::test_invalid_plugin_prefixes[abc] PASSED
 tests/unit/plugins/finder_test.py::test_load_plugin_import_error PASSED
 tests/unit/plugins/finder_test.py::test_load_plugin_not_callable PASSED
 tests/unit/plugins/finder_test.py::test_load_plugin_ok PASSED
@@ -93,6 +99,12 @@ tests/unit/plugins/finder_test.py::test_parse_plugin_options_local_plugin_paths_
 tests/unit/plugins/finder_test.py::test_parse_plugin_options_not_specified PASSED
 tests/unit/plugins/finder_test.py::test_plugins_all_plugins PASSED
 tests/unit/plugins/finder_test.py::test_plugins_versions_str PASSED
+tests/unit/plugins/finder_test.py::test_valid_plugin_prefixes[ABC123] PASSED
+tests/unit/plugins/finder_test.py::test_valid_plugin_prefixes[ABC1] PASSED
+tests/unit/plugins/finder_test.py::test_valid_plugin_prefixes[ABC] PASSED
+tests/unit/plugins/finder_test.py::test_valid_plugin_prefixes[E123] PASSED
+tests/unit/plugins/finder_test.py::test_valid_plugin_prefixes[E1] PASSED
+tests/unit/plugins/finder_test.py::test_valid_plugin_prefixes[E] PASSED
 tests/unit/plugins/pycodestyle_test.py::test_up_to_date PASSED
 tests/unit/plugins/reporter_test.py::test_make_formatter_custom PASSED
 tests/unit/plugins/reporter_test.py::test_make_formatter_default PASSED
@@ -128,6 +140,7 @@ tests/unit/test_base_formatter.py::test_write_uses_an_output_file[False] PASSED
 tests/unit/test_base_formatter.py::test_write_uses_an_output_file[True] PASSED
 tests/unit/test_checker_manager.py::test_make_checkers PASSED
 tests/unit/test_checker_manager.py::test_multiprocessing_cpu_count_not_implemented PASSED
+tests/unit/test_checker_manager.py::test_multiprocessing_is_disabled PASSED
 tests/unit/test_checker_manager.py::test_oserrors_are_reraised PASSED
 tests/unit/test_checker_manager.py::test_oserrors_cause_serial_fall_back PASSED
 tests/unit/test_debug.py::test_debug_information PASSED
@@ -186,21 +199,9 @@ tests/unit/test_decision_engine.py::test_was_selected_selects_errors[select_list
 tests/unit/test_decision_engine.py::test_was_selected_selects_errors[select_list6-extend_select6-E211] PASSED
 tests/unit/test_decision_engine.py::test_was_selected_selects_errors[select_list7-extend_select7-E211] PASSED
 tests/unit/test_decision_engine.py::test_was_selected_selects_errors[select_list8-extend_select8-E121] PASSED
-tests/unit/test_defaults.py::test_invalid_plugin_prefixes[A1234] PASSED
-tests/unit/test_defaults.py::test_invalid_plugin_prefixes[ABCD] PASSED
-tests/unit/test_defaults.py::test_invalid_plugin_prefixes[A\U0001d7d7] PASSED
-tests/unit/test_defaults.py::test_invalid_plugin_prefixes[\u2603] PASSED
-tests/unit/test_defaults.py::test_invalid_plugin_prefixes[] PASSED
-tests/unit/test_defaults.py::test_invalid_plugin_prefixes[a-b] PASSED
-tests/unit/test_defaults.py::test_invalid_plugin_prefixes[abc] PASSED
-tests/unit/test_defaults.py::test_valid_plugin_prefixes[ABC123] PASSED
-tests/unit/test_defaults.py::test_valid_plugin_prefixes[ABC1] PASSED
-tests/unit/test_defaults.py::test_valid_plugin_prefixes[ABC] PASSED
-tests/unit/test_defaults.py::test_valid_plugin_prefixes[E123] PASSED
-tests/unit/test_defaults.py::test_valid_plugin_prefixes[E1] PASSED
-tests/unit/test_defaults.py::test_valid_plugin_prefixes[E] PASSED
 tests/unit/test_discover_files.py::test_alternate_stdin_name_is_filtered PASSED
 tests/unit/test_discover_files.py::test_default_stdin_name_is_not_filtered PASSED
+tests/unit/test_discover_files.py::test_diff_filenames_filtered_by_patterns PASSED
 tests/unit/test_discover_files.py::test_expand_paths_defaults_to_dot PASSED
 tests/unit/test_discover_files.py::test_expand_paths_honors_exclude PASSED
 tests/unit/test_discover_files.py::test_filename_included_even_if_not_matching_include PASSED
@@ -290,6 +291,7 @@ tests/unit/test_file_processor.py::test_visited_new_blank_line PASSED
 tests/unit/test_filenameonly_formatter.py::test_caches_filenames_already_printed PASSED
 tests/unit/test_filenameonly_formatter.py::test_only_returns_a_string_once_from_format PASSED
 tests/unit/test_filenameonly_formatter.py::test_show_source_returns_nothing PASSED
+tests/unit/test_legacy_api.py::test_get_style_guide PASSED
 tests/unit/test_legacy_api.py::test_report_get_statistics PASSED
 tests/unit/test_legacy_api.py::test_report_total_errors PASSED
 tests/unit/test_legacy_api.py::test_styleguide_check_files PASSED
@@ -318,6 +320,15 @@ tests/unit/test_option_manager.py::test_jobs_argument_repr PASSED
 tests/unit/test_option_manager.py::test_jobs_argument_str PASSED
 tests/unit/test_option_manager.py::test_option_manager_creates_option_parser PASSED
 tests/unit/test_option_manager.py::test_option_manager_including_parent_options PASSED
+tests/unit/test_option_manager.py::test_optparse_normalize_callback_option_legacy PASSED
+tests/unit/test_option_manager.py::test_optparse_normalize_choice_type PASSED
+tests/unit/test_option_manager.py::test_optparse_normalize_help PASSED
+tests/unit/test_option_manager.py::test_optparse_normalize_types[complex-1+5j-(1+5j)] PASSED
+tests/unit/test_option_manager.py::test_optparse_normalize_types[float-1.5-1.5] PASSED
+tests/unit/test_option_manager.py::test_optparse_normalize_types[int-5-5] PASSED
+tests/unit/test_option_manager.py::test_optparse_normalize_types[long-6-6] PASSED
+tests/unit/test_option_manager.py::test_optparse_normalize_types[str-foo-foo] PASSED
+tests/unit/test_option_manager.py::test_optparse_normalize_types[string-foo-foo] PASSED
 tests/unit/test_option_manager.py::test_parse_args_forwarding_default_values PASSED
 tests/unit/test_option_manager.py::test_parse_args_forwarding_type_coercion PASSED
 tests/unit/test_option_manager.py::test_parse_args_handles_comma_separated_defaults PASSED
@@ -339,13 +350,10 @@ tests/unit/test_options_config.py::test_find_config_file_exists_at_path[tox.ini]
 tests/unit/test_options_config.py::test_find_config_ignores_homedir PASSED
 tests/unit/test_options_config.py::test_find_config_ignores_unknown_homedir PASSED
 tests/unit/test_options_config.py::test_find_config_searches_upwards PASSED
-tests/unit/test_options_config.py::test_invalid_extend_ignore_codes_raise_error PASSED
-tests/unit/test_options_config.py::test_invalid_ignore_codes_raise_error PASSED
 tests/unit/test_options_config.py::test_load_auto_config_utf8 PASSED
 tests/unit/test_options_config.py::test_load_config_append_config PASSED
 tests/unit/test_options_config.py::test_load_config_config_specified_skips_discovery PASSED
 tests/unit/test_options_config.py::test_load_config_isolated_ignores_configuration PASSED
-tests/unit/test_options_config.py::test_load_config_missing_append_config_raise_exception PASSED
 tests/unit/test_options_config.py::test_load_config_missing_file_raises_exception PASSED
 tests/unit/test_options_config.py::test_load_config_no_config_file_does_discovery PASSED
 tests/unit/test_options_config.py::test_load_config_no_config_found_sets_cfg_dir_to_pwd PASSED
@@ -450,6 +458,9 @@ tests/unit/test_utils.py::test_parse_files_to_codes_mapping[f.py:E:-expected15] 
 tests/unit/test_utils.py::test_parse_files_to_codes_mapping[f.py:Eg.py:F-expected17] PASSED
 tests/unit/test_utils.py::test_parse_files_to_codes_mapping[f.py:\n    E,F\ng.py:\n    G,H-expected9] PASSED
 tests/unit/test_utils.py::test_parse_files_to_codes_mapping[value18-expected18] PASSED
+tests/unit/test_utils.py::test_parse_unified_diff[diff --git a/flake8/utils.py b/flake8/utils.py\nindex f6ce384..7cd12b0 100644\n--- a/flake8/utils.py\n+++ b/flake8/utils.py\n@@ -75,8 +75,8 @@ def stdin_get_value():\n     return cached_value.getvalue()\n \n \n-def parse_unified_diff():\n-    # type: () -> List[str]\n+def parse_unified_diff(diff=None):\n+    # type: (str) -> List[str]\n     """Parse the unified diff passed on stdin.\n \n     :returns:\n@@ -84,7 +84,10 @@ def parse_unified_diff():\n     :rtype:\n         dict\n     """\n-    diff = stdin_get_value()\n+    # Allow us to not have to patch out stdin_get_value\n+    if diff is None:\n+        diff = stdin_get_value()\n+\n     number_of_rows = None\n     current_path = None\n     parsed_paths = collections.defaultdict(set)\ndiff --git a/tests/fixtures/diffs/single_file_diff b/tests/fixtures/diffs/single_file_diff\nnew file mode 100644\nindex 0000000..77ca534\n--- /dev/null\n+++ b/tests/fixtures/diffs/single_file_diff\n@@ -0,0 +1,27 @@\n+diff --git a/flake8/utils.py b/flake8/utils.py\n+index f6ce384..7cd12b0 100644\n+--- a/flake8/utils.py\n++++ b/flake8/utils.py\n+@@ -75,8 +75,8 @@ def stdin_get_value():\n+     return cached_value.getvalue()\n+\n+\n+-def parse_unified_diff():\n+-    # type: () -> List[str]\n++def parse_unified_diff(diff=None):\n++    # type: (str) -> List[str]\n+     """Parse the unified diff passed on stdin.\n+\n+     :returns:\n+@@ -84,7 +84,10 @@ def parse_unified_diff():\n+     :rtype:\n+         dict\n+     """\n+-    diff = stdin_get_value()\n++    # Allow us to not have to patch out stdin_get_value\n++    if diff is None:\n++        diff = stdin_get_value()\n++\n+     number_of_rows = None\n+     current_path = None\n+     parsed_paths = collections.defaultdict(set)\ndiff --git a/tests/fixtures/diffs/two_file_diff b/tests/fixtures/diffs/two_file_diff\nnew file mode 100644\nindex 0000000..5bd35cd\n--- /dev/null\n+++ b/tests/fixtures/diffs/two_file_diff\n@@ -0,0 +1,45 @@\n+diff --git a/flake8/utils.py b/flake8/utils.py\n+index f6ce384..7cd12b0 100644\n+--- a/flake8/utils.py\n++++ b/flake8/utils.py\n+@@ -75,8 +75,8 @@ def stdin_get_value():\n+     return cached_value.getvalue()\n+\n+\n+-def parse_unified_diff():\n+-    # type: () -> List[str]\n++def parse_unified_diff(diff=None):\n++    # type: (str) -> List[str]\n+     """Parse the unified diff passed on stdin.\n+\n+     :returns:\n+@@ -84,7 +84,10 @@ def parse_unified_diff():\n+     :rtype:\n+         dict\n+     """\n+-    diff = stdin_get_value()\n++    # Allow us to not have to patch out stdin_get_value\n++    if diff is None:\n++        diff = stdin_get_value()\n++\n+     number_of_rows = None\n+     current_path = None\n+     parsed_paths = collections.defaultdict(set)\n+diff --git a/tests/unit/test_utils.py b/tests/unit/test_utils.py\n+index d69d939..21482ce 100644\n+--- a/tests/unit/test_utils.py\n++++ b/tests/unit/test_utils.py\n+@@ -115,3 +115,13 @@ def test_parameters_for_function_plugin():\n+     plugin = plugin_manager.Plugin('plugin-name', object())\n+     plugin._plugin = fake_plugin\n+     assert utils.parameters_for(plugin) == ['physical_line', 'self', 'tree']\n++\n++\n++def read_diff_file(filename):\n++    """Read the diff file in its entirety."""\n++    with open(filename, 'r') as fd:\n++        content = fd.read()\n++    return content\n++\n++\n++SINGLE_FILE_DIFF = read_diff_file('tests/fixtures/diffs/single_file_diff')\ndiff --git a/tests/unit/test_utils.py b/tests/unit/test_utils.py\nindex d69d939..1461369 100644\n--- a/tests/unit/test_utils.py\n+++ b/tests/unit/test_utils.py\n@@ -115,3 +115,14 @@ def test_parameters_for_function_plugin():\n     plugin = plugin_manager.Plugin('plugin-name', object())\n     plugin._plugin = fake_plugin\n     assert utils.parameters_for(plugin) == ['physical_line', 'self', 'tree']\n+\n+\n+def read_diff_file(filename):\n+    """Read the diff file in its entirety."""\n+    with open(filename, 'r') as fd:\n+        content = fd.read()\n+    return content\n+\n+\n+SINGLE_FILE_DIFF = read_diff_file('tests/fixtures/diffs/single_file_diff')\n+TWO_FILE_DIFF = read_diff_file('tests/fixtures/diffs/two_file_diff')\n-parsed_diff2] PASSED
+tests/unit/test_utils.py::test_parse_unified_diff[diff --git a/flake8/utils.py b/flake8/utils.py\nindex f6ce384..7cd12b0 100644\n--- a/flake8/utils.py\n+++ b/flake8/utils.py\n@@ -75,8 +75,8 @@ def stdin_get_value():\n     return cached_value.getvalue()\n \n \n-def parse_unified_diff():\n-    # type: () -> List[str]\n+def parse_unified_diff(diff=None):\n+    # type: (str) -> List[str]\n     """Parse the unified diff passed on stdin.\n \n     :returns:\n@@ -84,7 +84,10 @@ def parse_unified_diff():\n     :rtype:\n         dict\n     """\n-    diff = stdin_get_value()\n+    # Allow us to not have to patch out stdin_get_value\n+    if diff is None:\n+        diff = stdin_get_value()\n+\n     number_of_rows = None\n     current_path = None\n     parsed_paths = collections.defaultdict(set)\ndiff --git a/tests/unit/test_utils.py b/tests/unit/test_utils.py\nindex d69d939..21482ce 100644\n--- a/tests/unit/test_utils.py\n+++ b/tests/unit/test_utils.py\n@@ -115,3 +115,13 @@ def test_parameters_for_function_plugin():\n     plugin = plugin_manager.Plugin('plugin-name', object())\n     plugin._plugin = fake_plugin\n     assert utils.parameters_for(plugin) == ['physical_line', 'self', 'tree']\n+\n+\n+def read_diff_file(filename):\n+    """Read the diff file in its entirety."""\n+    with open(filename, 'r') as fd:\n+        content = fd.read()\n+    return content\n+\n+\n+SINGLE_FILE_DIFF = read_diff_file('tests/fixtures/diffs/single_file_diff')\n-parsed_diff1] PASSED
+tests/unit/test_utils.py::test_parse_unified_diff[diff --git a/flake8/utils.py b/flake8/utils.py\nindex f6ce384..7cd12b0 100644\n--- a/flake8/utils.py\n+++ b/flake8/utils.py\n@@ -75,8 +75,8 @@ def stdin_get_value():\n     return cached_value.getvalue()\n\n\n-def parse_unified_diff():\n-    # type: () -> List[str]\n+def parse_unified_diff(diff=None):\n+    # type: (str) -> List[str]\n     """Parse the unified diff passed on stdin.\n\n     :returns:\n@@ -84,7 +84,10 @@ def parse_unified_diff():\n     :rtype:\n         dict\n     """\n-    diff = stdin_get_value()\n+    # Allow us to not have to patch out stdin_get_value\n+    if diff is None:\n+        diff = stdin_get_value()\n+\n     number_of_rows = None\n     current_path = None\n     parsed_paths = collections.defaultdict(set)\n-parsed_diff0] PASSED
 tests/unit/test_utils.py::test_stdin_get_value_crlf PASSED
 tests/unit/test_utils.py::test_stdin_unknown_coding_token PASSED
 tests/unit/test_violation.py::test_disable_is_inline_ignored PASSED
@@ -473,7 +484,12 @@ tests/unit/test_violation.py::test_is_inline_ignored[W123-a = 1  # noqa: E111, W
 tests/unit/test_violation.py::test_is_inline_ignored[W123-a = 1  # noqa: E111,W123,F821-True] PASSED
 tests/unit/test_violation.py::test_is_inline_ignored[W123-a = 1  # noqa:E111, W123,F821-True] PASSED
 tests/unit/test_violation.py::test_is_inline_ignored[W123-a = 1  # noqa:E111,W123,F821-True] PASSED
+tests/unit/test_violation.py::test_violation_is_in_diff[file.py-1-diff1-True] PASSED
+tests/unit/test_violation.py::test_violation_is_in_diff[file.py-1-diff3-False] PASSED
+tests/unit/test_violation.py::test_violation_is_in_diff[file.py-10-diff0-True] PASSED
+tests/unit/test_violation.py::test_violation_is_in_diff[file.py-10-diff2-False] PASSED
+tests/unit/test_violation.py::test_violation_is_in_diff[file.py-10-diff4-False] PASSED
 
-======== 463 passed ========
+======== 479 passed ========
   py$(PYV): OK
   congratulations :)
