@@ -357,18 +357,20 @@ USERLAND_REQUIRED_PACKAGES += library/python/tox
 USERLAND_REQUIRED_PACKAGES += library/python/tox-current-env
 
 # Generate raw lists of test dependencies per Python version
-# Please note we set PATH below thrice for $(COMPONENT_TEST_CMD) (aka tox) to
-# workaround https://github.com/tox-dev/tox/issues/2538
+# Please note we set PATH below four times for $(COMPONENT_TEST_CMD) (aka tox)
+# to workaround https://github.com/tox-dev/tox/issues/2538
 COMPONENT_POST_INSTALL_ACTION += \
 	cd $(@D) ; \
 	echo "Testing dependencies:" ; \
-	PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --print-deps-to=- $(COMPONENT_TEST_TARGETS) || exit 1 ; \
-	( PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --print-deps-to=- $(COMPONENT_TEST_TARGETS) \
+	PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(COMPONENT_TEST_TARGETS) || exit 1 ; \
+	echo "Testing extras:" ; \
+	PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(COMPONENT_TEST_TARGETS) || exit 1 ; \
+	( PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(COMPONENT_TEST_TARGETS) \
 		| $(WS_TOOLS)/python-resolve-deps \
 			PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 			$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
 		| $(PYTHON) $(WS_TOOLS)/python-requires - ; \
-	for e in $$(PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --print-extras-to=- $(COMPONENT_TEST_TARGETS)) ; do \
+	for e in $$(PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(COMPONENT_TEST_TARGETS)) ; do \
 		PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 			$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
 	done ) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' > $(@D)/.depend-test ;
