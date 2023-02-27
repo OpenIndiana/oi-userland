@@ -304,6 +304,7 @@ COMPONENT_TEST_ENV +=		PYTEST_ADDOPTS="$(PYTEST_ADDOPTS)"
 COMPONENT_TEST_ENV +=		NOSE_VERBOSE=2
 COMPONENT_TEST_CMD =		$(TOX)
 COMPONENT_TEST_ARGS =		--current-env --no-provision
+COMPONENT_TEST_ARGS +=		--recreate
 COMPONENT_TEST_TARGETS =	-e py$(shell echo $(PYTHON_VERSION) | tr -d .)
 
 # Make sure following tools are called indirectly to properly support tox-current-env
