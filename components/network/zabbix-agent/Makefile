@@ -16,33 +16,32 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zabbix-agent
-COMPONENT_VERSION=	2.2.13
+COMPONENT_VERSION=	6.2.7
+COMPONENT_SUMMARY=	Zabbix agent
+COMPONENT_PROJECT_URL=	http://www.zabbix.com/
+COMPONENT_FMRI=		application/management/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_SRC=		zabbix-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	zabbix-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0a272ad4de22368f9a77864e0a9fa566f76c872814e81845e16d4d24cd5452f4
-COMPONENT_PROJECT_URL=	http://www.zabbix.com/
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_HASH= sha256:6d423810667b948ed22052d9aa84a035e2d4b92cbe8efdb669cac529806b722d
+COMPONENT_ARCHIVE_URL=	https://cdn.zabbix.com/zabbix/sources/stable/6.2/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+# because we patched an am file
+COMPONENT_PREP_ACTION = ( cd $(@D) && aclocal -I m4 && autoconf && autoheader && automake -a && automake )
 
 # Ugly hack for fixing problems with missing files in source directory
-CONFIGURE_SCRIPT=	$(BUILD_DIR_$(BITS))/configure
+COMPONENT_POST_CONFIGURE_ACTION= $(CP) $(BUILD_DIR_$(BITS))/include/common/config.h $(SOURCE_DIR)/include/common/config.h
 
-CONFIGURE_OPTIONS +=    --sysconfdir=/etc/zabbix
-CONFIGURE_OPTIONS +=	--enable-ipv6
-CONFIGURE_OPTIONS +=	--enable-agent
+CONFIGURE_OPTIONS +=   --sysconfdir=/etc/zabbix
+CONFIGURE_OPTIONS +=   --enable-ipv6
+CONFIGURE_OPTIONS +=   --enable-agent
 
-
-build:          $(BUILD_32)
-
-install:        $(INSTALL_32)
-
-test:           $(TESTS_32)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
