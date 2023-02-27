@@ -20,17 +20,20 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wrapt
-HUMAN_VERSION =			1.14.1
+HUMAN_VERSION =			1.15.0
 COMPONENT_SUMMARY =		wrapt - Module for decorators, wrappers and monkey patching.
 COMPONENT_PROJECT_URL =		https://github.com/GrahamDumpleton/wrapt
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/11/eb/e06e77394d6cf09977d92bff310cb0392930c08a338f99af6066a5a98f92/wrapt-1.14.1.tar.gz
+	https://files.pythonhosted.org/packages/f8/7d/73e4e3cdb2c780e13f9d87dc10488d7566d8fd77f8d68f0e416bfbd144c7/wrapt-1.15.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:380a85cf89e0e69b7cfbe2ea9f765f004ff419f34194018a6827ac0e3edfed4d
+	sha256:d06730c6aed78cee4126234cf2d071e01b44b915e725a6cb439a879ec9754a3a
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# https://github.com/GrahamDumpleton/wrapt/issues/229
+PYTEST_ADDOPTS += -p no:randomly
 
 # Revert back unneeded PYV normalizations
 COMPONENT_TEST_TRANSFORMS += "-e 's/\(test_class_py\)\$$(PYV)/\1$(shell echo $(PYTHON_VERSION) | tr -d .)/'"

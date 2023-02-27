@@ -1,3 +1,4 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m coverage run --rcfile $(@D)/setup.cfg -m pytest -v $(@D)/tests
 ============================= test session starts ==============================
@@ -6,7 +7,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D), configfile: setup.cfg
 asyncio: mode=strict
-collecting ... collected 391 items
+collecting ... collected 433 items
 
 tests/test_adapter.py::TestAdapterAttributes::test_doc_string PASSED
 tests/test_adapter.py::TestAdapterAttributes::test_module_name PASSED
@@ -181,7 +182,7 @@ tests/test_monkey_patching.py::TestMonkeyPatching::test_patch_function_module PA
 tests/test_monkey_patching.py::TestMonkeyPatching::test_patch_function_module_name PASSED
 tests/test_monkey_patching.py::TestMonkeyPatching::test_transient_function_wrapper PASSED
 tests/test_monkey_patching.py::TestMonkeyPatching::test_transient_function_wrapper_instance_method PASSED
-tests/test_monkey_patching.py::TestMonkeyPatching::test_wrap_class_method_inherited SKIPPED (always fails: https://github.com/GrahamDumpleton/wrapt/issues/229)
+tests/test_monkey_patching.py::TestMonkeyPatching::test_wrap_class_method_inherited PASSED
 tests/test_monkey_patching.py::TestMonkeyPatching::test_wrap_class_method_module_name PASSED
 tests/test_monkey_patching.py::TestMonkeyPatching::test_wrap_function_module PASSED
 tests/test_monkey_patching.py::TestMonkeyPatching::test_wrap_function_module_name PASSED
@@ -211,6 +212,39 @@ tests/test_object_proxy.py::SpecialMethods::test_decimal_complex PASSED
 tests/test_object_proxy.py::SpecialMethods::test_fractions_round PASSED
 tests/test_object_proxy.py::SpecialMethods::test_list_reversed PASSED
 tests/test_object_proxy.py::SpecialMethods::test_str_format PASSED
+tests/test_object_proxy.py::TestArgumentUnpacking::test_self_keyword_argument_on_class_init_1 PASSED
+tests/test_object_proxy.py::TestArgumentUnpacking::test_self_keyword_argument_on_class_init_2 PASSED
+tests/test_object_proxy.py::TestArgumentUnpacking::test_self_keyword_argument_on_class_init_overloaded_1 PASSED
+tests/test_object_proxy.py::TestArgumentUnpacking::test_self_keyword_argument_on_class_init_overloaded_2 PASSED
+tests/test_object_proxy.py::TestArgumentUnpacking::test_self_keyword_argument_on_class_init_renamed PASSED
+tests/test_object_proxy.py::TestArgumentUnpacking::test_self_keyword_argument_on_dict PASSED
+tests/test_object_proxy.py::TestArgumentUnpacking::test_self_positional_argument_on_class_init PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingBoundFunctionWrapper::test_self_keyword_argument_on_classmethod PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingBoundFunctionWrapper::test_self_keyword_argument_on_instancemethod PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingDecorator::test_self_keyword_argument_on_classmethod PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingDecorator::test_self_keyword_argument_on_function PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingDecorator::test_self_keyword_argument_on_instancemethod PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_keyword_argument_on_class_init_1a PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_keyword_argument_on_class_init_1b PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_keyword_argument_on_class_init_2a PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_keyword_argument_on_class_init_2b PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_keyword_argument_on_class_init_overloaded_1a PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_keyword_argument_on_class_init_overloaded_1b PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_keyword_argument_on_class_init_overloaded_2a PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_keyword_argument_on_class_init_overloaded_2b PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_keyword_argument_on_class_init_renamed_1 PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_keyword_argument_on_class_init_renamed_2 PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_keyword_argument_on_dict_1 PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_keyword_argument_on_dict_2 PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_positional_argument_on_class_init_1 PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingPartial::test_self_positional_argument_on_class_init_2 PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingWrapperBase::test_self_keyword_argument_on_class_init_1 PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingWrapperBase::test_self_keyword_argument_on_class_init_2 PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingWrapperBase::test_self_keyword_argument_on_class_init_overloaded_1 PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingWrapperBase::test_self_keyword_argument_on_class_init_overloaded_2 PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingWrapperBase::test_self_keyword_argument_on_class_init_renamed PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingWrapperBase::test_self_keyword_argument_on_dict PASSED
+tests/test_object_proxy.py::TestArgumentUnpackingWrapperBase::test_self_positional_argument_on_class_init PASSED
 tests/test_object_proxy.py::TestAsMappingObjectProxy::test_contains PASSED
 tests/test_object_proxy.py::TestAsMappingObjectProxy::test_delitem PASSED
 tests/test_object_proxy.py::TestAsMappingObjectProxy::test_getitem PASSED
@@ -273,6 +307,9 @@ tests/test_object_proxy.py::TestAsSequenceObjectProxy::test_getslice PASSED
 tests/test_object_proxy.py::TestAsSequenceObjectProxy::test_length PASSED
 tests/test_object_proxy.py::TestAsSequenceObjectProxy::test_setitem PASSED
 tests/test_object_proxy.py::TestAsSequenceObjectProxy::test_setslice PASSED
+tests/test_object_proxy.py::TestAttributeAccess::test_attribute_lookup_attribute_exception PASSED
+tests/test_object_proxy.py::TestAttributeAccess::test_attribute_lookup_modified PASSED
+tests/test_object_proxy.py::TestAttributeAccess::test_attribute_lookup_value_exception PASSED
 tests/test_object_proxy.py::TestAttributeAccess::test_attributes PASSED
 tests/test_object_proxy.py::TestAttributeAccess::test_delete_wrapped PASSED
 tests/test_object_proxy.py::TestAttributeAccess::test_get_wrapped PASSED
@@ -370,6 +407,11 @@ tests/test_pickle.py::TestObjectPickle::test_pickle_proxy PASSED
 tests/test_post_import_hooks.py::TestPostImportHooks::test_after_import PASSED
 tests/test_post_import_hooks.py::TestPostImportHooks::test_before_and_after_import PASSED
 tests/test_post_import_hooks.py::TestPostImportHooks::test_before_import PASSED
+tests/test_post_import_hooks.py::TestPostImportHooks::test_import_deadlock_1 PASSED
+tests/test_post_import_hooks.py::TestPostImportHooks::test_import_deadlock_2 PASSED
+tests/test_post_import_hooks.py::TestPostImportHooks::test_import_deadlock_3 PASSED
+tests/test_post_import_hooks.py::TestPostImportHooks::test_loader PASSED
+tests/test_post_import_hooks.py::TestPostImportHooks::test_remove_from_sys_modules PASSED
 tests/test_synchronized_lock.py::TestSynchronized::test_synchronized_false_instance PASSED
 tests/test_synchronized_lock.py::TestSynchronized::test_synchronized_function PASSED
 tests/test_synchronized_lock.py::TestSynchronized::test_synchronized_inner_classmethod PASSED
@@ -389,6 +431,7 @@ tests/test_update_attributes.py::TestUpdateAttributes::test_update_name PASSED
 tests/test_update_attributes.py::TestUpdateAttributes::test_update_name_modified_on_original PASSED
 tests/test_update_attributes.py::TestUpdateAttributes::test_update_qualname PASSED
 tests/test_update_attributes.py::TestUpdateAttributes::test_update_qualname_modified_on_original PASSED
+tests/test_weak_function_proxy.py::TestArgumentUnpackingWeakFunctionProxy::test_self_keyword_argument PASSED
 tests/test_weak_function_proxy.py::TestWeakFunctionProxy::test_call_expired PASSED
 tests/test_weak_function_proxy.py::TestWeakFunctionProxy::test_classmethod PASSED
 tests/test_weak_function_proxy.py::TestWeakFunctionProxy::test_decorator_method PASSED
@@ -406,11 +449,7 @@ tests/conftest.py:16
   See https://docs.pytest.org/en/latest/deprecations.html#fspath-argument-for-node-constructors-replaced-with-pathlib-path
     item = DummyCollector.from_parent(parent, fspath=path)
 
-tests/test_adapter.py:5
-  $(@D)/tests/test_adapter.py:5: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
-    import imp
-
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 390 passed, 1 skipped, 2 warnings ========
+======== 433 passed, 1 warning ========
   py$(PYV): OK
   congratulations :)
