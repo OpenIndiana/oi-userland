@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DBD::mysql
 HUMAN_VERSION =			4.050
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DBD::mysql - MySQL driver for the Perl5 Database Interface (DBI)
 COMPONENT_CPAN_AUTHOR =		DVEEDEN
 COMPONENT_ARCHIVE_HASH =	\
@@ -42,12 +43,12 @@ LD_OPTIONS += -R$(MYSQL_LIBDIR)
 COMPONENT_CONFIGURE_ENV += LD_LIBRARY_PATH=$(MYSQL_LIBDIR)
 
 # need mysql_config at build time
-REQUIRED_PACKAGES += database/mariadb-101/client
+REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/dbi
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-checklib
 PERL_REQUIRED_PACKAGES += library/perl-5/test-deep
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += database/mariadb-101/library
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += system/library
