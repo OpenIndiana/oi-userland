@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		watchdog
-HUMAN_VERSION =			2.2.1
+HUMAN_VERSION =			2.3.1
 COMPONENT_SUMMARY =		watchdog - Filesystem events monitoring
 COMPONENT_PROJECT_URL =		https://github.com/gorakhargosh/watchdog
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/11/6f/0396d373e039b89c60e23a1a9025edc6dd203121fe0af7d1427e85d5ec98/watchdog-2.2.1.tar.gz
+	https://files.pythonhosted.org/packages/a5/17/a31fc6b90ff861a27debd0650bfbca17e074fdc3e037f392872fad76c726/watchdog-2.3.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cdcc23c9528601a8a293eb4369cbd14f6b4f34f07ae8769421252e9c22718b6f
+	sha256:d9f9ed26ed22a9d331820a8432c3680707ea8b54121ddcc9dc7d9f2ceeb36906
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
