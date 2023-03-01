@@ -3,57 +3,53 @@
 # Common Development and Distribution License ("CDDL"), version 1.0.
 # You may only use this file in accordance with the terms of version
 # 1.0 of the CDDL.
+#
 # A full copy of the text of the CDDL should have accompanied this
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
+#
 
-# Copyright 2022 <contributor>
+#
+# Copyright 2016 Alexander Pyhalov
+#
+
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+<transform file path=usr/share/pygobject/2.0/codegen/.*\.py$ -> set pkg.depend.bypass-generate .*>
+
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-file path=usr/bin/$(MACH64)/pygobject-codegen-2.0
+
+# Require pygobject-3 to get the gi modules formerly found in this package
+depend type=require fmri=library/python/pygobject-3
+
 file path=usr/bin/pygobject-codegen-2.0
 file path=usr/include/pygtk-2.0/pyglib.h
 file path=usr/include/pygtk-2.0/pygobject.h
-link path=usr/lib/$(MACH64)/libpyglib-2.0-python$(PYVER).so \
-    target=libpyglib-2.0-python$(PYVER).so.0.0.0
-link path=usr/lib/$(MACH64)/libpyglib-2.0-python$(PYVER).so.0 \
-file path=usr/lib/$(MACH64)/libpyglib-2.0-python$(PYVER).so.0.0.0
+link path=usr/lib/$(MACH64)/libpyglib-2.0-python2.7.so \
+    target=libpyglib-2.0-python2.7.so.0.0.0
+link path=usr/lib/$(MACH64)/libpyglib-2.0-python2.7.so.0 \
+    target=libpyglib-2.0-python2.7.so.0.0.0
+file path=usr/lib/$(MACH64)/libpyglib-2.0-python2.7.so.0.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/pygobject-2.0.pc
-link path=usr/lib/libpyglib-2.0-python$(PYVER).so \
-link path=usr/lib/libpyglib-2.0-python$(PYVER).so.0 \
-file path=usr/lib/libpyglib-2.0-python$(PYVER).so.0.0.0
-file path=usr/lib/pkgconfig/pygobject-2.0.pc
-file path=usr/lib/python$(PYVER)/vendor-packages/64/glib/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/64/glib/_glib.so
-file path=usr/lib/python$(PYVER)/vendor-packages/64/glib/option.py
-file path=usr/lib/python$(PYVER)/vendor-packages/64/gobject/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/64/gobject/_gobject.so
-file path=usr/lib/python$(PYVER)/vendor-packages/64/gobject/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/64/gobject/propertyhelper.py
-file path=usr/lib/python$(PYVER)/vendor-packages/64/gtk-2.0/dsextras.py
-file path=usr/lib/python$(PYVER)/vendor-packages/64/gtk-2.0/gio/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/64/gtk-2.0/gio/_gio.so
-file path=usr/lib/python$(PYVER)/vendor-packages/64/gtk-2.0/gio/unix.so
-file path=usr/lib/python$(PYVER)/vendor-packages/64/pygtk.pth
-file path=usr/lib/python$(PYVER)/vendor-packages/64/pygtk.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glib/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glib/_glib.so
-file path=usr/lib/python$(PYVER)/vendor-packages/glib/option.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gobject/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gobject/_gobject.so
-file path=usr/lib/python$(PYVER)/vendor-packages/gobject/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gobject/propertyhelper.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gtk-2.0/dsextras.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gtk-2.0/gio/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/gtk-2.0/gio/_gio.so
-file path=usr/lib/python$(PYVER)/vendor-packages/gtk-2.0/gio/unix.so
-file path=usr/lib/python$(PYVER)/vendor-packages/pygtk.pth
-file path=usr/lib/python$(PYVER)/vendor-packages/pygtk.py
+file path=usr/lib/python2.7/vendor-packages/glib/64/_glib.so
+file path=usr/lib/python2.7/vendor-packages/glib/__init__.py
+file path=usr/lib/python2.7/vendor-packages/glib/option.py
+file path=usr/lib/python2.7/vendor-packages/gobject/64/_gobject.so
+file path=usr/lib/python2.7/vendor-packages/gobject/__init__.py
+file path=usr/lib/python2.7/vendor-packages/gobject/constants.py
+file path=usr/lib/python2.7/vendor-packages/gobject/propertyhelper.py
+file path=usr/lib/python2.7/vendor-packages/gtk-2.0/dsextras.py
+file path=usr/lib/python2.7/vendor-packages/gtk-2.0/gio/64/_gio.so
+file path=usr/lib/python2.7/vendor-packages/gtk-2.0/gio/64/unix.so
+file path=usr/lib/python2.7/vendor-packages/gtk-2.0/gio/__init__.py
+file path=usr/lib/python2.7/vendor-packages/pygtk.pth
+file path=usr/lib/python2.7/vendor-packages/pygtk.py
 file path=usr/share/gtk-doc/html/pygobject/class-gioappinfo.html
 file path=usr/share/gtk-doc/html/pygobject/class-gioapplaunchcontext.html
 file path=usr/share/gtk-doc/html/pygobject/class-gioasyncresult.html
@@ -112,20 +108,15 @@ file path=usr/share/gtk-doc/html/pygobject/pygobject-introduction.html
 file path=usr/share/gtk-doc/html/pygobject/pygobject.devhelp
 file path=usr/share/gtk-doc/html/pygobject/style.css
 file path=usr/share/pygobject/2.0/codegen/__init__.py
-file path=usr/share/pygobject/2.0/codegen/__init__.pyc
 file path=usr/share/pygobject/2.0/codegen/argtypes.py
-file path=usr/share/pygobject/2.0/codegen/argtypes.pyc
 file path=usr/share/pygobject/2.0/codegen/code-coverage.py
 file path=usr/share/pygobject/2.0/codegen/codegen.py
 file path=usr/share/pygobject/2.0/codegen/createdefs.py
 file path=usr/share/pygobject/2.0/codegen/definitions.py
-file path=usr/share/pygobject/2.0/codegen/definitions.pyc
 file path=usr/share/pygobject/2.0/codegen/defsconvert.py
 file path=usr/share/pygobject/2.0/codegen/defsgen.py
 file path=usr/share/pygobject/2.0/codegen/defsparser.py
-file path=usr/share/pygobject/2.0/codegen/defsparser.pyc
 file path=usr/share/pygobject/2.0/codegen/docextract.py
-file path=usr/share/pygobject/2.0/codegen/docextract.pyc
 file path=usr/share/pygobject/2.0/codegen/docextract_to_xml.py
 file path=usr/share/pygobject/2.0/codegen/docgen.py
 file path=usr/share/pygobject/2.0/codegen/h2def.py
@@ -133,9 +124,7 @@ file path=usr/share/pygobject/2.0/codegen/mergedefs.py
 file path=usr/share/pygobject/2.0/codegen/missingdefs.py
 file path=usr/share/pygobject/2.0/codegen/mkskel.py
 file path=usr/share/pygobject/2.0/codegen/override.py
-file path=usr/share/pygobject/2.0/codegen/override.pyc
 file path=usr/share/pygobject/2.0/codegen/reversewrapper.py
-file path=usr/share/pygobject/2.0/codegen/reversewrapper.pyc
 file path=usr/share/pygobject/2.0/codegen/scanvirtuals.py
 file path=usr/share/pygobject/2.0/codegen/scmexpr.py
 file path=usr/share/pygobject/2.0/defs/gappinfo.override
@@ -175,3 +164,9 @@ file path=usr/share/pygobject/xsl/html.xsl
 file path=usr/share/pygobject/xsl/pdf-style.xsl
 file path=usr/share/pygobject/xsl/pdf.xsl
 file path=usr/share/pygobject/xsl/ref-html-style.xsl
+
+<transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
+<transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
+<transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
+<transform file path=usr/share/pygobject/2.0/codegen/.*\.py$ -> default mode 0555>
+<transform file path=.*\.so$ -> default mode 0555>
