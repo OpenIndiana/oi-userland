@@ -18,21 +18,21 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iso-codes
-COMPONENT_VERSION=	4.12.0
-COMPONENT_FMRI=		data/iso-codes
+COMPONENT_VERSION=	4.13.0
 COMPONENT_SUMMARY=	ISO code lists and translations
 COMPONENT_SRC=		$(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:84687912995042ed37eb96060fff750160441928518b2d4712d0f37f6cabfd88
+COMPONENT_ARCHIVE_HASH= sha256:99f85354b15061f5f8912d7fd70eb5eacfb31619c379d8cdeb23b5cede8e19db
 COMPONENT_PROJECT_URL=	https://salsa.debian.org/iso-codes-team/iso-codes
 COMPONENT_ARCHIVE_URL=	https://salsa.debian.org/iso-codes-team/$(COMPONENT_NAME)/-/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_FMRI=		data/iso-codes
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Localizations
+COMPONENT_LICENSE=	LGPLv2.1
 
 include $(WS_MAKE_RULES)/common.mk
 
 # GNU ln is needed as '-v' option is used, and GNU msgfmt is required
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CLEAN_PATHS	+= build
 
@@ -41,6 +41,6 @@ COMPONENT_POST_CONFIGURE_ACTION= \
   ( cd $(@D); $(GSED) -i '/^LN_S/s/s/sfvn/' */Makefile )
 
 # bin/xml_from_json.py script requires a Python 3 interpreter
-REQUIRED_PACKAGES+= $(PYTHON3_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(PYTHON3_RUNTIME_PKG)
 
 # Auto-generated dependencies
