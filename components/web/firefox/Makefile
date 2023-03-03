@@ -20,14 +20,17 @@
 
 include ../../../make-rules/shared-macros.mk
 
-# ESR = esr
+# ESR should be set to esr for esr build, or an empty string for other builds
 ESR = 
 
-CANDIDATE_BUILD=3
+# CANDIDATE_BUILD is the build number found in the candidates directory.
+# CANDIDATE_BETA is the beta version found in the candidates directory.
+# Do not define either for final release build.
+# CANDIDATE_BUILD=2
 # CANDIDATE_BETA=9
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	110.0
+COMPONENT_VERSION =	110.0.1
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -37,7 +40,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ES
 else
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
-COMPONENT_ARCHIVE_HASH= sha256:d3882492190e4fdcfa142772cf35de5403effb011d24357b315d643ed9168a39
+COMPONENT_ARCHIVE_HASH= sha256:f19bb74d684b992625abca68f5776198974cd2785eb5d02d51ba007fc998491f
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -140,7 +143,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --disable-install-strip" >> $(MOZCONFIG_DEBUG) ; \
 	echo "ac_add_options --disable-optimize" >> $(MOZCONFIG_DEBUG) ; \
 	echo "ac_add_options --disable-tests" >> $(MOZCONFIG) ; \
- 	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-debug" >> $(MOZCONFIG_DEBUG) ; \
 	echo "ac_add_options --enable-jemalloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-js-shell" >> $(MOZCONFIG) ; \
