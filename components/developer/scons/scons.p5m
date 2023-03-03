@@ -10,8 +10,7 @@
 #
 
 #
-# Copyright 2016 Jim Klimov
-# Copyright 2023 Klaus Ziegler
+# Copyright 2023 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -24,16 +23,19 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# We force a runtime dependency on setuptools which is already a build dependendy:
+set pkg.linted.pkglint.manifest005.2=true
+
 file path=usr/bin/scons
 file path=usr/bin/scons-configure-cache
 file path=usr/bin/sconsign
-file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
-file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
-file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(HUMAN_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(HUMAN_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(HUMAN_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(HUMAN_VERSION)-py$(PYVER).egg-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(HUMAN_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(HUMAN_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons-$(HUMAN_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Action.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Builder.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/CacheDir.py
@@ -71,6 +73,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Scanner/D.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Scanner/Dir.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Scanner/Fortran.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Scanner/IDL.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Scanner/Java.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Scanner/LaTeX.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Scanner/Prog.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Scanner/Python.py
@@ -89,6 +92,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/DCommon.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/FortranCommon.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/GettextCommon.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/JavaCommon.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/MSVC/Config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/MSVC/Dispatcher.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/MSVC/Exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/MSVC/Policy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/MSVC/Registry.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/MSVC/ScriptArguments.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/MSVC/SetupEnvDefault.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/MSVC/Util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/MSVC/Warnings.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/MSVC/WinSDK.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/MSVC/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/arch.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/MSCommon/common.py
@@ -256,7 +270,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/docbook/docbook-xsl-
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/docbook/docbook-xsl-1.76.1/extensions/README.LIBXSLT
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/docbook/docbook-xsl-1.76.1/extensions/README.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/docbook/docbook-xsl-1.76.1/extensions/docbook.py
-file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/docbook/docbook-xsl-1.76.1/extensions/xslt.py pkg.depend.bypass-generate=.*
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/docbook/docbook-xsl-1.76.1/extensions/xslt.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/docbook/docbook-xsl-1.76.1/fo/admon.xsl
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/docbook/docbook-xsl-1.76.1/fo/annotations.xsl
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/docbook/docbook-xsl-1.76.1/fo/autoidx-kimber.xsl
@@ -1482,6 +1496,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/ninja/Overrides.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/ninja/Rules.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/ninja/Utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/ninja/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/ninja/ninja_daemon_build.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/ninja/ninja_run_daemon.py
+file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/ninja/ninja_scons_daemon.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/packaging/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/packaging/ipk.py
 file path=usr/lib/python$(PYVER)/vendor-packages/SCons/Tool/packaging/msi.py
@@ -1547,3 +1564,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/SCons/exitfuncs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/scons-time.1
 file path=usr/lib/python$(PYVER)/vendor-packages/scons.1
 file path=usr/lib/python$(PYVER)/vendor-packages/sconsign.1
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/setuptools-$(PYV)
