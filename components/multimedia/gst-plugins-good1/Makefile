@@ -18,16 +18,17 @@
 
 BUILD_BITS= 32_and_64
 BUILD_STYLE=	meson
+USE_COMMON_TEST_MASTER= no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-good1
-COMPONENT_VERSION=      1.22.0
+COMPONENT_VERSION=      1.22.1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=		gst-plugins-good
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:582e617271e7f314d1a2211e3e3856ae2e4303c8c0d6114e9c4a5ea5719294b0
+COMPONENT_ARCHIVE_HASH= sha256:44f9104654b4fd042aebe90932ab92e7ff7d8460fbc05b23dad87dffe70974cc
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/good
@@ -57,6 +58,11 @@ CONFIGURE_OPTIONS += -Doss4=enabled
 CONFIGURE_OPTIONS += -Dqt5=disabled
 CONFIGURE_OPTIONS += -Dqt6=disabled
 CONFIGURE_OPTIONS += -Dtwolame=enabled
+# Disable Soup and Tests on 32bit, because Soup3 is only available in 64bit and the tests want to link against Soup even with the Soup option disabled, breaking the build.
+CONFIGURE_OPTIONS.32 += -Dsoup=disabled
+CONFIGURE_OPTIONS.32 += -Dtests=disabled
+CONFIGURE_OPTIONS.64 += -Dsoup=enabled
+CONFIGURE_OPTIONS.64 += -Dtests=enabled
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
@@ -84,7 +90,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
 
 
-test: $(TEST_32_and_64)
+test: $(TEST_64)
 
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
