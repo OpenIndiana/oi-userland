@@ -18,10 +18,9 @@ include ../../../make-rules/shared-macros.mk
 BITS=64
 
 COMPONENT_NAME=         libreoffice
-COMPONENT_VERSION=      7.2.7
+COMPONENT_VERSION=      7.5.1
 COMPONENT_RC_VERSION=	2
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION)
-COMPONENT_REVISION=     5
 COMPONENT_SUMMARY=      LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL=  https://www.libreoffice.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
@@ -107,11 +106,11 @@ COMPONENT_ARCHIVE_HASH_18 = sha256:e383702853236004e5b08e424b8afe9b53fe9f31aaa7a
 COMPONENT_ARCHIVE_URL_18 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_18)
 
 COMPONENT_ARCHIVE_19 = libreoffice-translations-$(COMPONENT_FULL_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_19 = sha256:2377014eea11b41e998545aae875ee32df097e869ea329f1be07a44c28595d04
+COMPONENT_ARCHIVE_HASH_19 = sha256:a3fc9e7b6a8b3cbc853d5bc52cacac773737ec33a2fb4c0a62e08faf1b29b91a
 COMPONENT_ARCHIVE_URL_19 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_19)
 
 COMPONENT_ARCHIVE_20 = libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_20 = sha256:0cbdbef3e6fb8850622f8cd3ee64baeb589d3ee658aa6cdffb788e49867efd7a
+COMPONENT_ARCHIVE_HASH_20 = sha256:0e4e3d6388f9849d91afedac6126e1583c3a809cc28d095c909bf36eb82fd93a
 COMPONENT_ARCHIVE_URL_20 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_20)
 
 #COMPONENT_ARCHIVE_21 = boost_1_69_0.tar.bz2
@@ -182,7 +181,7 @@ COMPONENT_BUILD_ENV+=  LD_LIBRARY_PATH="$(GCC_LIBDIR)"
 COMPONENT_TEST_ENV= LD_LIBRARY_PATH='$(GCC_LIBDIR):$(BUILD_DIR)/instdir/program/' GMAKE_OPTIONS=-rsk
 
 CONFIGURE_ENV = $(COMPONENT_BUILD_ENV)
-CONFIGURE_ENV += PYTHON=/usr/bin/python3.9
+CONFIGURE_ENV += PYTHON=$(PYTHON.3.9)
 CONFIGURE_ENV += GPG=/usr/bin/gpg2
 CONFIGURE_ENV += GPGCONF=/usr/bin/gpgconf
 
@@ -256,6 +255,7 @@ CONFIGURE_OPTIONS += --with-system-libpagemaker
 CONFIGURE_OPTIONS += --with-system-libqxp
 CONFIGURE_OPTIONS += --with-system-librevenge
 CONFIGURE_OPTIONS += --with-system-libstaroffice
+CONFIGURE_OPTIONS += --with-system-libtiff
 CONFIGURE_OPTIONS += --with-system-libvisio
 CONFIGURE_OPTIONS += --with-system-libwpd
 CONFIGURE_OPTIONS += --with-system-libwpg
@@ -310,7 +310,7 @@ REQUIRED_PACKAGES += developer/gperf
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/c++/mdds
-REQUIRED_PACKAGES += $(MYSQL_BASEPKG)/client
+REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -319,6 +319,7 @@ REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/c++/graphite2

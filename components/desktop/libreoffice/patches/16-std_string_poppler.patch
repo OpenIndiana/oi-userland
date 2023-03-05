@@ -1,5 +1,5 @@
---- libreoffice-7.2.5.2/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.cxx.~1~	Tue Feb  8 15:16:27 2022
-+++ libreoffice-7.2.5.2/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.cxx	Tue Feb  8 16:34:47 2022
+--- libreoffice-7.5.1.1/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.cxx.~1~	2023-02-09 06:58:55.000000000 -0500
++++ libreoffice-7.5.1.1/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.cxx	2023-02-20 20:56:49.750790207 -0500
 @@ -145,7 +145,7 @@
      bool collectBytes = false;
      int startOfScan = 0;
@@ -20,24 +20,20 @@
              outBuf.push_back(static_cast<Output_t>(b1));
  
              bytesToMarker--;
-@@ -433,9 +433,9 @@
+@@ -433,13 +433,13 @@
      int nSize = 0;
  
  #if POPPLER_CHECK_VERSION(20, 12, 0)
 -    std::string familyName = gfxFont->getNameWithoutSubsetTag();
 +    std::string familyName( gfxFont->getNameWithoutSubsetTag() );
  #else
+ #if POPPLER_CHECK_VERSION(0, 71, 0) // GooString::toStr()
 -    std::string familyName = gfxFont->getName()->toStr();
-+    std::string familyName( gfxFont->getName()->getCString() );
++    std::string familyName( gfxFont->getName()->toStr() );
+ #else
+     const GooString* gooString = gfxFont->getName();
+-    std::string familyName = std::string(gooString->getCString(), gooString->getLength());
++    std::string familyName( std::string(gooString->getCString(), gooString->getLength()) );
+ #endif
      if (familyName.length() > 7 && familyName.at(6) == '+')
-     {
-         familyName = familyName.substr(7);
-@@ -444,7 +444,7 @@
-     if( familyName != "" )
-     {
-         aNewFont.familyName.clear();
--        aNewFont.familyName.append( familyName );
-+        aNewFont.familyName.append( familyName.c_str() );
-     }
-     else
      {

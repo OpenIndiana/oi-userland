@@ -1,5 +1,5 @@
---- libreoffice-7.2.5.2/external/coinmp/ExternalProject_coinmp.mk.~1~	Wed Dec 29 08:49:22 2021
-+++ libreoffice-7.2.5.2/external/coinmp/ExternalProject_coinmp.mk	Wed Feb 23 09:20:27 2022
+--- libreoffice-7.5.1.1/external/coinmp/ExternalProject_coinmp.mk.~1~	2023-02-09 06:58:55.000000000 -0500
++++ libreoffice-7.5.1.1/external/coinmp/ExternalProject_coinmp.mk	2023-02-20 21:10:35.868449115 -0500
 @@ -12,7 +12,6 @@
  $(eval $(call gb_ExternalProject_register_targets,coinmp,\
  	build \
@@ -8,23 +8,18 @@
  ifeq ($(COM),MSC)
  $(call gb_ExternalProject_get_state_target,coinmp,build) :
  	$(call gb_Trace_StartRange,coinmp,EXTERNAL)
-@@ -27,11 +26,12 @@
- 
+@@ -28,8 +27,8 @@
  else
  $(call gb_ExternalProject_get_state_target,coinmp,build) :
  	$(call gb_Trace_StartRange,coinmp,EXTERNAL)
 -	+$(call gb_ExternalProject_run,build,\
-+	 $(call gb_ExternalProject_run,build,\
 -		$(gb_RUN_CONFIGURE) ./configure COIN_SKIP_PROJECTS="Data/Sample" \
-+		$(gb_RUN_CONFIGURE) CFLAGS="$(COINMP_CFLAGS)" CXXFLAGS="$(COINMP_CXXFLAGS)"  ./configure COIN_SKIP_PROJECTS="Data/Sample" \
++	$(call gb_ExternalProject_run,build,\
++		$(gb_RUN_CONFIGURE) CFLAGS="$(COINMP_CFLAGS)" CXXFLAGS="$(COINMP_CXXFLAGS)" ./configure COIN_SKIP_PROJECTS="Data/Sample" \
  			$(if $(verbose),--disable-silent-rules,--enable-silent-rules) \
--			$(if $(CROSS_COMPILING),--build=$(BUILD_PLATFORM) --host=$(HOST_PLATFORM)) \
-+			--build=$(BUILD_PLATFORM) \
-+			$(if $(CROSS_COMPILING), --host=$(HOST_PLATFORM)) \
+ 			$(gb_CONFIGURE_PLATFORMS) \
  			$(if $(DISABLE_DYNLOADING),--disable-shared) \
- 			--disable-bzlib \
- 			$(if $(filter MACOSX,$(OS)),--prefix=/@.__________________________________________________OOO) \
-@@ -40,7 +42,7 @@
+@@ -40,7 +39,7 @@
  			$(if $(filter LINUX,$(OS)), \
  				'LDFLAGS=-Wl$(COMMA)-z$(COMMA)origin \
  					-Wl$(COMMA)-rpath$(COMMA)\$$$$ORIGIN') \
