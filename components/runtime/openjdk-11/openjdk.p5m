@@ -11,7 +11,8 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
+# Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2023 Niklas Poslovski
 #
 
 <transform path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/.*\.so -> default pkg.linted.userland.action001.2 true>
@@ -26,7 +27,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 dir path=usr/jdk/instances/$(OPENJDK_INSTANCE)
-link path=usr/jdk/$(OPENJDK_INSTANCE) target=instances/$(OPENJDK_INSTANCE)
+link path=usr/jdk/$(COMPONENT_NAME)$(OPENJDK_VERSION) target=instances/$(OPENJDK_INSTANCE)
 
 ## as long as the two links are defined in openjdk8 they can't be used here
 # link path=usr/jdk/latest target=$(OPENJDK_INSTANCE) pkg.linted.userland.action002.0=true
@@ -239,6 +240,7 @@ link \
     path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.desktop/LICENSE \
     target=../java.base/LICENSE
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.desktop/colorimaging.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.desktop/lcms.md
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.desktop/mesa3d.md
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.desktop/xwd.md
 link \
@@ -925,7 +927,7 @@ file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libzip.so
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/modules
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/psfont.properties.ja
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/psfontj2d.properties
-file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/blacklisted.certs
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/blocked.certs
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/cacerts
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/default.policy
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/public_suffix_list.dat

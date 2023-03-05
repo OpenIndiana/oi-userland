@@ -12,28 +12,26 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
-# Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved. 
+# Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2023 Niklas Poslovski
 #
-
-BUILD_BITS=   64
-BITS= 64
 
 include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	11
-OPENJDK_UPDATE=	11
-OPENJDK_BUILD=	9.1
+OPENJDK_UPDATE=	0
+OPENJDK_BUILD=	18
+OPENJDK_PATCH=	10
 COMPONENT_NAME=		openjdk
-COMPONENT_VERSION=	$(OPENJDK_VERSION).0.$(OPENJDK_UPDATE)
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
-COMPONENT_SRC=	$(COMPONENT_NAME)-jdk$(OPENJDK_VERSION)u-jdk-$(COMPONENT_VERSION)-9-1
+COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(COMPONENT_VERSION)-$(OPENJDK_PATCH)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:46b2c680c4f35da43258bbd77dfe52210d0c6be313b733f151d3ca94e8db181d
+	sha256:04af71fc7adda41a49861870f9ec0ac0f059c2cf9393ce32995ea8ef4279a1b1
 COMPONENT_ARCHIVE_URL= \
-	https://ftp.netbsd.org/pub/pkgsrc/distfiles/$(COMPONENT_ARCHIVE)
+	https://github.com/$(COMPONENT_NAME)/jdk$(OPENJDK_VERSION)u/archive/refs/tags/jdk-$(COMPONENT_VERSION)+$(OPENJDK_PATCH).tar.gz
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_LICENSE=	GPLv2 with Classpath Exception
@@ -50,18 +48,12 @@ CACERTS_STORE=	cacerts.out
 
 include $(WS_MAKE_RULES)/common.mk
 
-PKG_MACROS  += OPENJDK_INSTANCE=$(OPENJDK_INSTANCE)
+PKG_MACROS += OPENJDK_INSTANCE=$(OPENJDK_INSTANCE)
+PKG_MACROS += OPENJDK_VERSION=$(OPENJDK_VERSION)
 
 CLEAN_PATHS += $(BUILD_DIR)
 CLEAN_PATHS += $(CACERTS_STORE)
-CLEAN_PATHS += jdk11.0.6 
-
-COMPONENT_PRE_CONFIGURE_ACTION=	($(CP) -r $(SOURCE_DIR)/* $(@D); \
-																	$(MKDIR) $(@D)/build; \
-																	cd $(@D)/build; )
-
-COMPONENT_POST_CONFIGURE_ACTION= (cd $(@D); \
-																	$(CP) -r build/* .;)
+CLEAN_PATHS += $(COMPONENT_SRC_1)
 
 # read the number of jobs from the arguments for make
 JOBS=$(patsubst -j%,%,$(filter -j%,$(MAKEFLAGS)))
@@ -75,7 +67,7 @@ CONFIGURE_OPTIONS+=        --with-boot-jdk=$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 CONFIGURE_OPTIONS+=        --with-freetype=system
 CONFIGURE_OPTIONS+=        --with-giflib=system
 CONFIGURE_OPTIONS+=        --with-harfbuzz=system
-CONFIGURE_OPTIONS+=        --with-lcms=system
+CONFIGURE_OPTIONS+=        --with-lcms=bundled
 CONFIGURE_OPTIONS+=        --with-libjpeg=system
 CONFIGURE_OPTIONS+=        --with-libpng=system
 CONFIGURE_OPTIONS+=        --with-zlib=system
@@ -86,7 +78,6 @@ CONFIGURE_OPTIONS+=        --with-debug-level=release
 CONFIGURE_OPTIONS+=        --with-toolchain-type=gcc
 CONFIGURE_OPTIONS+=        --with-extra-cxxflags="$(CXXFLAGS)"
 CONFIGURE_OPTIONS+=        --with-extra-ldflags="-m64"
-CONFIGURE_OPTIONS+=        --with-version-build=$(OPENJDK_BUILD)
 CONFIGURE_OPTIONS+=        --with-cups=$(USRDIR)
 CONFIGURE_OPTIONS+=        --with-fontconfig=$(USRDIR)
 CONFIGURE_OPTIONS+=        --enable-unlimited-crypto
@@ -97,7 +88,7 @@ CONFIGURE_OPTIONS+=        --disable-precompiled-headers
 CONFIGURE_OPTIONS+=        --disable-ccache
 CONFIGURE_OPTIONS+=        --disable-option-checking
 
-COMPONENT_POST_BUILD_ACTION=	($(LN) -s server/libjvm.so $(@D)/build/images/jdk/lib/libjvm.so)
+COMPONENT_POST_BUILD_ACTION=	($(LN) -s server/libjvm.so $(@D)/images/jdk/lib/libjvm.so)
 
 COMPONENT_BUILD_TARGETS = images
 
@@ -114,7 +105,7 @@ $(CACERTS_INSTALLED):
 $(CACERTS_STORE): $(BUILD_DIR_64)/.built $(CACERTS_INSTALLED)
 	$(RM) $@
 	for cert in $(CACERTS_PROTO_DIR)/etc/certs/CA/*.pem; do              \
-                LC_ALL=en_US.UTF-8  $(BUILD_DIR_64)/build/images/jdk/bin/keytool \
+                LC_ALL=en_US.UTF-8  $(BUILD_DIR_64)/images/jdk/bin/keytool \
                   -noprompt					                                   \
                   -importcert                                          \
                   -keystore $@                                         \
@@ -129,7 +120,7 @@ build:		$(BUILD_64)
 install: $(BUILD_DIR_64)/.built	$(CACERTS_STORE)
 	$(RM) -r $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)
 	$(MKDIR) $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)
-	$(CP) -a $(BUILD_DIR_64)/build/images/jdk/* $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)
+	$(CP) -a $(BUILD_DIR_64)/images/jdk/* $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)
 	$(CHMOD) +x $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/jspawnhelper
 	$(CP) $(CACERTS_STORE) $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/cacerts
 	$(TOUCH) $@
@@ -143,11 +134,11 @@ REQUIRED_PACKAGES += system/library/c++/sunpro
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/giflib
-REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
@@ -157,7 +148,3 @@ REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxtst
-REQUIRED_PACKAGES += image/library/libjpeg6
-REQUIRED_PACKAGES += image/library/libjpeg6-ijg
-
-

@@ -1,5 +1,5 @@
---- openjdk-jdk11u-jdk-11.0.10-9-1/make/lib/Lib-jdk.hotspot.agent.gmk.orig	Sat May  1 13:32:36 2021
-+++ openjdk-jdk11u-jdk-11.0.10-9-1/make/lib/Lib-jdk.hotspot.agent.gmk	Sat May  1 13:35:42 2021
+--- a/make/lib/Lib-jdk.hotspot.agent.gmk~	Tue Nov 26 00:55:54 2019
++++ b/make/lib/Lib-jdk.hotspot.agent.gmk	Thu Apr  9 18:24:54 2020
 @@ -32,9 +32,6 @@
  ifeq ($(OPENJDK_TARGET_OS), linux)
    SA_CFLAGS := -D_FILE_OFFSET_BITS=64
@@ -7,15 +7,6 @@
 -else ifeq ($(OPENJDK_TARGET_OS), solaris)
 -  SA_LDFLAGS := -mt
 -
- else ifeq ($(OPENJDK_TARGET_OS), bsd)
-   SA_CFLAGS := -Wno-error=format-nonliteral -Wno-sign-compare
-   ifeq ($(TOOLCHAIN_TYPE), clang)
-@@ -74,7 +71,7 @@
-     LDFLAGS := $(LDFLAGS_JDKLIB) $(SA_LDFLAGS), \
-     LIBS_linux := -lthread_db $(LIBDL), \
-     LIBS_bsd := -lutil $(LIBDL), \
--    LIBS_solaris := -ldl -ldemangle -lthread -lproc, \
-+    LIBS_solaris := -ldl -lstdc++ -lthread -lproc, \
-     LIBS_macosx := -framework Foundation -framework JavaNativeFoundation \
-         -framework JavaRuntimeSupport -framework Security -framework CoreFoundation, \
-     LIBS_windows := dbgeng.lib, \
+ else ifeq ($(OPENJDK_TARGET_OS), macosx)
+   SA_CFLAGS := -D_GNU_SOURCE -mno-omit-leaf-frame-pointer \
+       -mstack-alignment=16 -fPIC

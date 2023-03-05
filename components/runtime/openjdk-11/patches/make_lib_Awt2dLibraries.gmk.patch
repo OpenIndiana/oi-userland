@@ -2,9 +2,8 @@ $NetBSD$
 
 Support SunOS/gcc.  XXX: retain solstudio support.
 
-diff -wpruN '--exclude=*.orig' a~/make/lib/Awt2dLibraries.gmk a/make/lib/Awt2dLibraries.gmk
---- a~/make/lib/Awt2dLibraries.gmk	1970-01-01 00:00:00
-+++ a/make/lib/Awt2dLibraries.gmk	1970-01-01 00:00:00
+--- a/make/lib/Awt2dLibraries.gmk.orig	2019-01-08 09:40:28.000000000 +0000
++++ b/make/lib/Awt2dLibraries.gmk
 @@ -384,7 +384,6 @@ $(eval $(call SetupJdkLibrary, BUILD_LIB
      OPTIMIZATION := HIGHEST, \
      CFLAGS := $(LCMS_CFLAGS_JDKLIB) \
@@ -13,7 +12,7 @@ diff -wpruN '--exclude=*.orig' a~/make/lib/Awt2dLibraries.gmk a/make/lib/Awt2dLi
      CFLAGS_windows := -DCMS_IS_WINDOWS_, \
      EXTRA_HEADER_DIRS := \
          common/awt/debug \
-@@ -566,8 +565,12 @@ else
+@@ -554,7 +553,11 @@ ifneq (, $(findstring $(OPENJDK_TARGET_O
      HARFBUZZ_CFLAGS += -DHAVE_INTEL_ATOMIC_PRIMITIVES
    endif
    ifeq ($(OPENJDK_TARGET_OS), solaris)
@@ -21,8 +20,7 @@ diff -wpruN '--exclude=*.orig' a~/make/lib/Awt2dLibraries.gmk a/make/lib/Awt2dLi
 +    HARFBUZZ_CFLAGS += -DHAVE_INTEL_ATOMIC_PRIMITIVES
 +   else
      HARFBUZZ_CFLAGS += -DHAVE_SOLARIS_ATOMIC_OPS
++   endif
    endif
-+  endif
-   ifeq ($(OPENJDK_TARGET_OS), macosx)
-     HARFBUZZ_CFLAGS += -DHAVE_CORETEXT
-   endif
+   # hb-ft.cc is not presently needed, and requires freetype 2.4.2 or later.
+   LIBFONTMANAGER_EXCLUDE_FILES += libharfbuzz/hb-ft.cc
