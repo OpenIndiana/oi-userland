@@ -7,11 +7,13 @@ PASS: basic-types/float-literals.vala
 PASS: basic-types/floats.vala
 PASS: basic-types/floats-boxed-cast.vala
 PASS: basic-types/boolean.vala
+PASS: basic-types/boolean-literal.vala
 PASS: basic-types/custom-types.vala
 PASS: basic-types/default-gtype.vala
 PASS: basic-types/strings.vala
 PASS: basic-types/string-array-append.vala
 PASS: basic-types/string-concat-null.test
+PASS: basic-types/string-relation.vala
 PASS: basic-types/arrays.vala
 PASS: basic-types/arrays-generics.vala
 PASS: basic-types/arrays-fixed-assignment.vala
@@ -70,9 +72,12 @@ PASS: constants/strings.vala
 PASS: namespace/unique.vala
 PASS: arrays/cast-silent-invalid.test
 PASS: arrays/cast-struct-boxed-element-access.vala
+PASS: arrays/class-field-fixed-length-initializer.vala
 PASS: arrays/class-field-initializer.vala
 PASS: arrays/class-field-length-cname.vala
 PASS: arrays/constant-element-access.vala
+PASS: arrays/element-class-assignment.vala
+PASS: arrays/element-class-assignment-invalid.test
 PASS: arrays/element-nullable-assignment.vala
 PASS: arrays/empty-length-0.vala
 PASS: arrays/expression-bracket.test
@@ -203,6 +208,7 @@ PASS: methods/argument-array-initilizer.vala
 PASS: methods/argument-named.vala
 PASS: methods/delegate-target.vala
 PASS: methods/generics.vala
+PASS: methods/main-entry-exists.test
 PASS: methods/nowrapper-interface.vala
 PASS: methods/nowrapper-no-vfunc.test
 PASS: methods/parameter-ccode-type.vala
@@ -235,6 +241,7 @@ PASS: control-flow/conditional-as-argument.vala
 PASS: control-flow/continue-invalid.test
 PASS: control-flow/double-catch.test
 PASS: control-flow/expressions-conditional.vala
+PASS: control-flow/finally-no-return.vala
 PASS: control-flow/finally-return.test
 PASS: control-flow/for.vala
 PASS: control-flow/for-switch-continue.vala
@@ -736,10 +743,13 @@ PASS: generics/integer-member-access.vala
 PASS: generics/integer-type-cast.vala
 PASS: generics/integer-type-cast-return.vala
 PASS: generics/parameter-invalid-initializer.test
+PASS: generics/parameter-in-cast.vala
+PASS: generics/parameter-out-cast.vala
 PASS: generics/parameter-sizeof-initializer.vala
 PASS: generics/member-dup-destroy.vala
 PASS: generics/method-parameter-unknown-type-parameter.test
 PASS: generics/method-parameter-unknown-type-parameter-2.test
+PASS: generics/method-return-cast.vala
 PASS: generics/method-return-unknown-type-parameter.test
 PASS: generics/method-return-unknown-type-parameter-2.test
 PASS: generics/null-type.vala
@@ -784,40 +794,40 @@ PASS: dbus/bug783002.test
 PASS: dbus/bug792277.vala
 PASS: dbus/rawvariants.test
 PASS: dbus/interface-info.test
-PASS: gir/bug651773.test
-PASS: gir/bug667751.test
-PASS: gir/bug742012.test
-PASS: gir/bug788775.test
-PASS: gir/bug792998.test
-PASS: gir/alias.test
-PASS: gir/array-fixed-length.test
-PASS: gir/async-creation-method.test
-PASS: gir/async-result-pos.test
-PASS: gir/async-sync-out.test
-PASS: gir/class.test
-PASS: gir/class-final.test
-PASS: gir/constant.test
-PASS: gir/delegate-alias-without-target.test
-PASS: gir/delegate-anonymous.test
-PASS: gir/delegate-array-length-type.test
-PASS: gir/delegate-closure-destroy-index-conflict.test
-PASS: gir/delegate-error-pos.test
-PASS: gir/enum.test
-PASS: gir/errordomain.test
-PASS: gir/gtype-struct-name.test
-PASS: gir/instance-parameter-owned.test
-PASS: gir/method-array-length-type.test
-PASS: gir/method-class.test
-PASS: gir/method-nowrapper.test
-PASS: gir/parameter-array-length-type.test
-PASS: gir/parameter-nullable-out-simple-type.test
-PASS: gir/property-non-readable.test
-PASS: gir/signal-virtual.test
-PASS: gir/symbol-redefined.test
-PASS: gir/symbol-type-csuffix.test
-PASS: gir/symbol-without-name.test
-PASS: gir/union.test
-PASS: gir/union-transparent.test
+PASS: gir/bug651773.gir
+PASS: gir/bug667751.gir
+PASS: gir/bug742012.gir
+PASS: gir/bug788775.gir
+PASS: gir/bug792998.gir
+PASS: gir/alias.gir
+PASS: gir/array-fixed-length.gir
+PASS: gir/async-creation-method.gir
+PASS: gir/async-result-pos.gir
+PASS: gir/async-sync-out.gir
+PASS: gir/class.gir
+PASS: gir/class-final.gir
+PASS: gir/constant.gir
+PASS: gir/delegate-alias-without-target.gir
+PASS: gir/delegate-anonymous.gir
+PASS: gir/delegate-array-length-type.gir
+PASS: gir/delegate-closure-destroy-index-conflict.gir
+PASS: gir/delegate-error-pos.gir
+PASS: gir/enum.gir
+PASS: gir/errordomain.gir
+PASS: gir/gtype-struct-name.gir
+PASS: gir/instance-parameter-owned.gir
+PASS: gir/method-array-length-type.gir
+PASS: gir/method-class.gir
+PASS: gir/method-nowrapper.gir
+PASS: gir/parameter-array-length-type.gir
+PASS: gir/parameter-nullable-out-simple-type.gir
+PASS: gir/property-non-readable.gir
+PASS: gir/signal-virtual.gir
+PASS: gir/symbol-redefined.gir
+PASS: gir/symbol-type-csuffix.gir
+PASS: gir/symbol-without-name.gir
+PASS: gir/union.gir
+PASS: gir/union-transparent.gir
 PASS: girwriter/class-final.test
 PASS: girwriter/combined.test
 PASS: gtktemplate/gtkcallback-incompatible.test
@@ -868,6 +878,8 @@ PASS: parser/attribute-duplicate.test
 PASS: parser/attribute-missing-literal.test
 PASS: parser/attribute-wrong-number.test
 PASS: parser/block-delimiter-missing.test
+PASS: parser/chained-equality-type-invalid.test
+PASS: parser/chained-equality.vala
 PASS: parser/constant-owned.test
 PASS: parser/constant-local-owned.test
 PASS: parser/constructor-class-exists.test
@@ -905,6 +917,7 @@ PASS: parser/invalid-brace.test
 PASS: parser/invalid-statement-delimiter.test
 PASS: parser/local-variable.vala
 PASS: parser/local-variable-array-type-invalid.test
+PASS: parser/local-variable-multi-one-line.vala
 PASS: parser/lock-statement.vala
 PASS: parser/main-block.vala
 PASS: parser/main-block-minimal.vala
@@ -1034,6 +1047,7 @@ PASS: semantic/class-singleton-base.test
 PASS: semantic/class-singleton-non-gobject.test
 PASS: semantic/class-too-few-type-arguments.test
 PASS: semantic/class-too-many-type-arguments.test
+PASS: semantic/compare-type-check.vala
 PASS: semantic/conditional-expression-incompatible.test
 PASS: semantic/conditional-expression-no-block.test
 PASS: semantic/constant-extern.test
@@ -1195,6 +1209,9 @@ PASS: semantic/property-struct-virtual.test
 PASS: semantic/property-too-few-type-arguments.test
 PASS: semantic/property-too-many-type-arguments.test
 PASS: semantic/property-void.test
+PASS: semantic/realliteral-exponent-has-no-digits.test
+PASS: semantic/realliteral-exponent-has-no-digits2.test
+PASS: semantic/realliteral-exponent-has-no-digits3.test
 PASS: semantic/reference-transfer-not-supported.test
 PASS: semantic/reference-transfer-unavailable.test
 PASS: semantic/return-in-nonvoid.test
@@ -1256,6 +1273,8 @@ PASS: semantic/yield-call-requires-async-method-2.test
 PASS: semantic/yield-creation-requires-async-context.test
 PASS: semantic/yield-creation-requires-async-method.test
 PASS: semantic/yield-statement-requires-async-context.test
+PASS: nullability/array-element-class.vala
+PASS: nullability/array-element-string.vala
 PASS: nullability/bug611223.vala
 PASS: nullability/local-variable-invalid-convert.test
 PASS: nullability/member-access-narrowed-instance.vala
@@ -1355,6 +1374,13 @@ PASS: genie/typeof.gs
 PASS: genie/while.gs
 PASS: glib/conditional-glib-api.vala
 PASS: bindings/gio/memoryoutputstream.vala
+# TOTAL: 1376
+# PASS:  1373
+# SKIP:  0
+# XFAIL: 0
+# FAIL:  3
+# XPASS: 0
+# ERROR: 0
 PASS: libvaladoc/errorreporter.vala
 PASS: libvaladoc/markupreader.vala
 PASS: libvaladoc/gtkdoc-scanner.vala
@@ -1363,3 +1389,10 @@ PASS: libvaladoc/parser-oneofrule.vala
 PASS: libvaladoc/parser-sequencerule.vala
 PASS: libvaladoc/parser-optionalrule.vala
 PASS: libvaladoc/parser-stubrule.vala
+# TOTAL: 8
+# PASS:  8
+# SKIP:  0
+# XFAIL: 0
+# FAIL:  0
+# XPASS: 0
+# ERROR: 0
