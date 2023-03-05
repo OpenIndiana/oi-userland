@@ -1,0 +1,890 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Alexander Pyhalov
+# Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2023 Niklas Poslovski
+#
+
+<transform path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/.*\.so -> default pkg.linted.userland.action001.2 true>
+
+set name=pkg.fmri	value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="OpenJDK $(COMPONENT_VERSION) Runtime Environment"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+dir path=usr/jdk/instances/$(OPENJDK_INSTANCE)
+link path=usr/jdk/$(COMPONENT_NAME)$(OPENJDK_VERSION) target=instances/$(OPENJDK_INSTANCE)
+
+## as long as the two links are defined in openjdk8 they can't be used here
+# link path=usr/jdk/latest target=$(OPENJDK_INSTANCE) pkg.linted.userland.action002.0=true
+# link path=usr/java target=jdk/$(OPENJDK_INSTANCE)
+
+# ls ..|xargs -n1 basename|awk '{ print "link path=usr/bin/"$1" target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/"$1" mediator=java mediator-version=20" }'
+link path=usr/bin/jar target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jar mediator=java mediator-version=20
+link path=usr/bin/jarsigner target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jarsigner mediator=java mediator-version=20
+link path=usr/bin/java target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/java mediator=java mediator-version=20
+link path=usr/bin/javac target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/javac mediator=java mediator-version=20
+link path=usr/bin/javadoc target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/javadoc mediator=java mediator-version=20
+link path=usr/bin/javap target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/javap mediator=java mediator-version=20
+link path=usr/bin/jcmd target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jcmd mediator=java mediator-version=20
+link path=usr/bin/jconsole target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jconsole mediator=java mediator-version=20
+link path=usr/bin/jdb target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jdb mediator=java mediator-version=20
+link path=usr/bin/jdeprscan target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jdeprscan mediator=java mediator-version=20
+link path=usr/bin/jdeps target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jdeps mediator=java mediator-version=20
+link path=usr/bin/jfr target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jfr mediator=java mediator-version=20
+link path=usr/bin/jhsdb target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jhsdb mediator=java mediator-version=20
+link path=usr/bin/jimage target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jimage mediator=java mediator-version=20
+link path=usr/bin/jinfo target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jinfo mediator=java mediator-version=20
+link path=usr/bin/jlink target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jlink mediator=java mediator-version=20
+link path=usr/bin/jmap target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jmap mediator=java mediator-version=20
+link path=usr/bin/jmod target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jmod mediator=java mediator-version=20
+link path=usr/bin/jps target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jps mediator=java mediator-version=20
+link path=usr/bin/jrunscript target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jrunscript mediator=java mediator-version=20
+link path=usr/bin/jshell target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jshell mediator=java mediator-version=20
+link path=usr/bin/jstack target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jstack mediator=java mediator-version=20
+link path=usr/bin/jstat target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jstat mediator=java mediator-version=20
+link path=usr/bin/jstatd target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jstatd mediator=java mediator-version=20
+link path=usr/bin/jwebserver target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jwebserver mediator=java mediator-version=20
+link path=usr/bin/keytool target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/keytool mediator=java mediator-version=20
+link path=usr/bin/rmiregistry target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/rmiregistry mediator=java mediator-version=20
+link path=usr/bin/serialver target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/serialver mediator=java mediator-version=20
+
+# moved from Generated section
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/jspawnhelper mode=0555
+
+# Generated section:
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jar
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jarsigner
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/java
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/javac
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/javadoc
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/javap
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jcmd
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jconsole
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jdb
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jdeprscan
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jdeps
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jfr
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jhsdb
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jimage
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jinfo
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jlink
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jmap
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jps
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jrunscript
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jshell
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jstack
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jstat
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jstatd
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/jwebserver
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/keytool
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/rmiregistry
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/bin/serialver
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/logging.properties
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/management/jmxremote.access
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/management/jmxremote.password.template
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/management/management.properties
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/net.properties
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/sdp/sdp.conf.template
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/security/java.policy
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/security/java.security
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/security/policy/README.txt
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/security/policy/limited/default_US_export.policy
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/security/policy/limited/default_local.policy
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/security/policy/limited/exempt_local.policy
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/security/policy/unlimited/default_US_export.policy
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/security/policy/unlimited/default_local.policy
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/security/sunpkcs11-solaris.cfg
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/conf/sound.properties
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/include/classfile_constants.h
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/include/jawt.h
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/include/jdwpTransport.h
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/include/jni.h
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/include/jvmti.h
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/include/jvmticmlr.h
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/include/solaris/jawt_md.h
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/include/solaris/jni_md.h
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.base.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.compiler.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.datatransfer.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.desktop.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.instrument.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.logging.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.management.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.management.rmi.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.naming.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.net.http.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.prefs.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.rmi.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.scripting.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.se.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.security.jgss.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.security.sasl.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.smartcardio.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.sql.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.sql.rowset.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.transaction.xa.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.xml.crypto.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/java.xml.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.accessibility.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.attach.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.charsets.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.compiler.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.crypto.cryptoki.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.crypto.ec.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.dynalink.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.editpad.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.hotspot.agent.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.httpserver.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.incubator.concurrent.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.incubator.vector.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.ed.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.jvmstat.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.le.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.opt.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.vm.ci.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.vm.compiler.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.internal.vm.compiler.management.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jartool.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.javadoc.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jcmd.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jconsole.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jdeps.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jdi.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jdwp.agent.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jfr.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jlink.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jshell.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jsobject.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.jstatd.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.localedata.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.management.agent.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.management.jfr.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.management.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.naming.dns.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.naming.rmi.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.net.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.nio.mapmode.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.random.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.sctp.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.security.auth.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.security.jgss.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.unsupported.desktop.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.unsupported.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.xml.dom.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/jmods/jdk.zipfs.jmod
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.base/ADDITIONAL_LICENSE_INFO
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.base/ASSEMBLY_EXCEPTION
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.base/LICENSE
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.base/aes.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.base/asm.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.base/c-libutl.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.base/cldr.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.base/icu.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.base/public_suffix.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.base/unicode.md
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.compiler/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.compiler/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.compiler/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.datatransfer/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.datatransfer/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.datatransfer/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.desktop/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.desktop/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.desktop/LICENSE \
+    target=../java.base/LICENSE
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.desktop/colorimaging.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.desktop/lcms.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.desktop/mesa3d.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.desktop/xwd.md
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.instrument/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.instrument/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.instrument/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.logging/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.logging/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.logging/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.management.rmi/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.management.rmi/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.management.rmi/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.management/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.management/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.management/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.naming/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.naming/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.naming/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.net.http/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.net.http/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.net.http/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.prefs/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.prefs/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.prefs/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.rmi/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.rmi/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.rmi/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.scripting/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.scripting/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.scripting/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.se/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.se/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.se/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.security.jgss/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.security.jgss/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.security.jgss/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.security.sasl/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.security.sasl/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.security.sasl/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.smartcardio/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.smartcardio/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.smartcardio/LICENSE \
+    target=../java.base/LICENSE
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.smartcardio/pcsclite.md
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.sql.rowset/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.sql.rowset/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.sql.rowset/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.sql/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.sql/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.sql/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.transaction.xa/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.transaction.xa/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.transaction.xa/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.xml.crypto/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.xml.crypto/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.xml.crypto/LICENSE \
+    target=../java.base/LICENSE
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.xml.crypto/santuario.md
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.xml/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.xml/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.xml/LICENSE \
+    target=../java.base/LICENSE
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.xml/bcel.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.xml/dom.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.xml/jcup.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.xml/xalan.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/java.xml/xerces.md
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.accessibility/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.accessibility/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.accessibility/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.attach/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.attach/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.attach/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.charsets/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.charsets/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.charsets/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.compiler/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.compiler/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.compiler/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.crypto.cryptoki/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.crypto.cryptoki/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.crypto.cryptoki/LICENSE \
+    target=../java.base/LICENSE
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.crypto.cryptoki/pkcs11cryptotoken.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.crypto.cryptoki/pkcs11wrapper.md
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.crypto.ec/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.crypto.ec/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.crypto.ec/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.dynalink/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.dynalink/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.dynalink/LICENSE \
+    target=../java.base/LICENSE
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.dynalink/dynalink.md
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.editpad/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.editpad/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.editpad/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.hotspot.agent/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.hotspot.agent/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.hotspot.agent/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.httpserver/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.httpserver/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.httpserver/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.incubator.concurrent/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.incubator.concurrent/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.incubator.concurrent/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.incubator.vector/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.incubator.vector/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.incubator.vector/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.ed/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.ed/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.ed/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.jvmstat/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.jvmstat/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.jvmstat/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.le/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.le/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.le/LICENSE \
+    target=../java.base/LICENSE
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.le/jline.md
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.opt/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.opt/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.opt/LICENSE \
+    target=../java.base/LICENSE
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.opt/jopt-simple.md
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.ci/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.ci/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.ci/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.compiler.management/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.compiler.management/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.compiler.management/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.compiler/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.compiler/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.internal.vm.compiler/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jartool/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jartool/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jartool/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.javadoc/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.javadoc/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.javadoc/LICENSE \
+    target=../java.base/LICENSE
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.javadoc/jquery.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.javadoc/jqueryUI.md
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jcmd/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jcmd/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jcmd/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jconsole/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jconsole/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jconsole/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jdeps/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jdeps/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jdeps/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jdi/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jdi/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jdi/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jdwp.agent/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jdwp.agent/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jdwp.agent/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jfr/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jfr/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jfr/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jlink/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jlink/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jlink/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jshell/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jshell/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jshell/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jsobject/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jsobject/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jsobject/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jstatd/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jstatd/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.jstatd/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.localedata/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.localedata/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.localedata/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.localedata/cldr.md \
+    target=../java.base/cldr.md
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.localedata/thaidict.md
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.management.agent/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.management.agent/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.management.agent/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.management.jfr/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.management.jfr/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.management.jfr/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.management/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.management/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.management/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.naming.dns/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.naming.dns/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.naming.dns/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.naming.rmi/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.naming.rmi/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.naming.rmi/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.net/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.net/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.net/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.nio.mapmode/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.nio.mapmode/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.nio.mapmode/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.random/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.random/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.random/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.sctp/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.sctp/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.sctp/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.security.auth/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.security.auth/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.security.auth/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.security.jgss/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.security.jgss/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.security.jgss/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.unsupported.desktop/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.unsupported.desktop/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.unsupported.desktop/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.unsupported/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.unsupported/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.unsupported/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.xml.dom/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.xml.dom/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.xml.dom/LICENSE \
+    target=../java.base/LICENSE
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.zipfs/ADDITIONAL_LICENSE_INFO \
+    target=../java.base/ADDITIONAL_LICENSE_INFO
+link \
+    path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.zipfs/ASSEMBLY_EXCEPTION \
+    target=../java.base/ASSEMBLY_EXCEPTION
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/legal/jdk.zipfs/LICENSE \
+    target=../java.base/LICENSE
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/classlist
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/ct.sym
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/fontconfig.bfc
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/fontconfig.properties.src
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/jfr/default.jfc
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/jfr/profile.jfc
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/jrt-fs.jar
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/jvm.cfg
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libattach.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libawt.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libawt_headless.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libawt_xawt.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libdt_socket.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libfontmanager.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libinstrument.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libj2gss.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libj2pcsc.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libj2pkcs11.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libjaas.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libjava.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libjavajpeg.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libjawt.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libjdwp.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libjimage.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libjli.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libjsig.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libjsound.so
+link path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libjvm.so \
+    target=server/libjvm.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/liblcms.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libmanagement.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libmanagement_agent.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libmanagement_ext.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libmlib_image.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libnet.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libnio.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libprefs.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/librmi.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libsaproc.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libsctp.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libsplashscreen.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libsyslookup.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libverify.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/libzip.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/modules
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/psfont.properties.ja
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/psfontj2d.properties
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/blocked.certs
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/cacerts
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/default.policy
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/public_suffix_list.dat
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/server/classes.jsa
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/server/classes_nocoops.jsa
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/server/libjsig.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/server/libjvm.so
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/src.zip
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/tzdb.dat
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jar.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jarsigner.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/java.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/javac.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/javadoc.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/javap.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jcmd.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jconsole.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jdb.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jdeprscan.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jdeps.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jfr.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jhsdb.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jinfo.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jlink.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jmap.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jmod.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jps.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jrunscript.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jshell.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jstack.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jstat.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jstatd.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/jwebserver.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/keytool.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/rmiregistry.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/serialver.1
+file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/release
