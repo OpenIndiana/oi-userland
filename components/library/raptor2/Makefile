@@ -21,28 +21,44 @@
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
 # Copyright (c) 2019 Nona Hansel
 #
-BUILD_BITS=			32_and_64
+
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		raptor2
-COMPONENT_VERSION=	2.0.15
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://librdf.org/raptor/
+COMPONENT_VERSION=	2.0.16
+COMPONENT_SUMMARY=	RDF Parser Library - RDF parser utility
+COMPONENT_DESCRIPTION=	Raptor2 provides a set of parsers and serializers that generate Resource Description Framework (RDF)\
+						triples by parsing syntaxes or serialize the triples into a syntax
+COMPONENT_PROJECT_URL=	https://librdf.org/raptor/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:ada7f0ba54787b33485d090d3d2680533520cd4426d2f7fb4782dd4a6a1480ed
-COMPONENT_ARCHIVE_URL=	http://download.librdf.org/source/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:089db78d7ac982354bdbf39d973baf09581e6904ac4c92a98c5caadb3de44680
+COMPONENT_ARCHIVE_URL=	https://download.librdf.org/source/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			library/raptor2
+COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_LICENSE=		Apache 2.0, LGPLv2.1+, GPLv2+, Raptor RDF Syntax Library License
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS	+=		--disable-static
-CONFIGURE_OPTIONS	+=		--enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
 
 $(INSTALL_64):	COMPONENT_POST_INSTALL_ACTION = \
 	/usr/bin/elfedit -e "dyn:runpath ''" $(PROTOUSRLIBDIR64)/libraptor2.so.0.0.0
 
+COMPONENT_POST_INSTALL_ACTION += \
+	LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 --dump -nolist $(SOURCE_DIR)/LICENSE.html > $(COMPONENT_NAME).license
+
+unexport SHELLOPTS
+
+# the license file is dynamically build, thus we need to remove it:
+clean::
+	$(RM) $(COMPONENT_LICENSE_FILE)
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/libyajl2
