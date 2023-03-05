@@ -25,20 +25,26 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         librsync
-COMPONENT_VERSION=      2.3.2
-#COMPONENT_REVISION=     2
+COMPONENT_VERSION=      2.3.4
+COMPONENT_SUMMARY=      A library that implements the rsync remote-delta algorithm
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://librsync.github.io/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:ef8ce23df38d5076d25510baa2cabedffbe0af460d887d86c2413a1c2b0c676f
+COMPONENT_ARCHIVE_HASH= sha256:a0dedf9fff66d8e29e7c25d23c1f42beda2089fb4eac1b36e6acd8a29edfbd1f
 COMPONENT_ARCHIVE_URL=  https://github.com/librsync/librsync/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      LGPLv2.1
 COMPONENT_FMRI=         library/librsync
-COMPONENT_SUMMARY=      A library that implements the rsync remote-delta algorithm
 COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_TEST_TRANSFORMS += \
+	' -e "s/[0-9]*\.[0-9]* sec//g" ' \
+	' -n ' \
+	' -e "/Passed/p" ' \
+	' -e "/passed/p" '
+
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/popt
