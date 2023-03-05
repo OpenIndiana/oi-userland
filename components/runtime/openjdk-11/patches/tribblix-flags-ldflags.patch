@@ -1,52 +1,18 @@
---- openjdk-jdk11u-jdk-11.0.10-9-1/make/autoconf/flags-ldflags.m4.~1~	2021-01-20 05:45:30.000000000 +0000
-+++ openjdk-jdk11u-jdk-11.0.10-9-1/make/autoconf/flags-ldflags.m4	2021-05-03 19:12:20.177789702 +0000
-@@ -77,15 +77,22 @@
+--- a/make/autoconf/flags-ldflags.m4~	Mon Apr 13 13:55:05 2020
++++ b/make/autoconf/flags-ldflags.m4	Mon Apr 13 14:10:29 2020
+@@ -70,9 +70,12 @@
      fi
  
      # Add -z defs, to forbid undefined symbols in object files.
 -    # add -z,relro (mark relocations read only) for all libs
 -    # add -z,now ("full relro" - more of the Global Offset Table GOT is marked read only)
--    BASIC_LDFLAGS="$BASIC_LDFLAGS -Wl,-z,relro -Wl,-z,now"
+-    BASIC_LDFLAGS="$BASIC_LDFLAGS -Wl,-z,defs -Wl,-z,relro -Wl,-z,now"
 +    if test "x$OPENJDK_TARGET_OS" = xsolaris; then
 +      BASIC_LDFLAGS="$BASIC_LDFLAGS -Wl,-z,defs"
 +    else
 +      # add relro (mark relocations read only) for all libs
-+      BASIC_LDFLAGS="$BASIC_LDFLAGS -Wl,-z,relro -Wl,-z,now"
++      BASIC_LDFLAGS="$BASIC_LDFLAGS -Wl,-z,defs -Wl,-z,relro -Wl,-z,now"
 +    fi
      # s390x : remove unused code+data in link step
      if test "x$OPENJDK_TARGET_CPU" = xs390x; then
        BASIC_LDFLAGS="$BASIC_LDFLAGS -Wl,--gc-sections"
-     fi
- 
-+    if test "x$OPENJDK_TARGET_OS" = xsolaris; then
-+      BASIC_LDFLAGS_JVM_ONLY=""
-+    else
-     BASIC_LDFLAGS_JVM_ONLY="-Wl,-O1"
-+    fi
- 
-   elif test "x$TOOLCHAIN_TYPE" = xclang; then
-     BASIC_LDFLAGS_JVM_ONLY="-mno-omit-leaf-frame-pointer -mstack-alignment=16 \
-@@ -169,16 +176,18 @@
- 
-   # Setup LDFLAGS for linking executables
-   if test "x$TOOLCHAIN_TYPE" = xgcc; then
--    EXECUTABLE_LDFLAGS="$EXECUTABLE_LDFLAGS -Wl,--allow-shlib-undefined"
--  fi
-+    if test "x$OPENJDK_TARGET_OS" != xsolaris; then
-+      EXECUTABLE_LDFLAGS="$EXECUTABLE_LDFLAGS -Wl,--allow-shlib-undefined"
- 
--  if test "x$TOOLCHAIN_TYPE" = xgcc || test "x$TOOLCHAIN_TYPE" = xclang; then
-+     if test "x$TOOLCHAIN_TYPE" = xgcc || test "x$TOOLCHAIN_TYPE" = xclang; then
-     # Enabling pie on 32 bit builds prevents the JVM from allocating a continuous
-     # java heap.
--    if test "x$OPENJDK_TARGET_CPU_BITS" != "x32"; then
--      EXECUTABLE_LDFLAGS="$EXECUTABLE_LDFLAGS -pie"
-+      if test "x$OPENJDK_TARGET_CPU_BITS" != "x32"; then
-+        EXECUTABLE_LDFLAGS="$EXECUTABLE_LDFLAGS -pie"
-+      fi
-     fi
-   fi
-+  fi
- 
-   if test "x$ALLOW_ABSOLUTE_PATHS_IN_OUTPUT" = "xfalse"; then
-     if test "x$TOOLCHAIN_TYPE" = xmicrosoft; then
