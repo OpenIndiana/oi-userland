@@ -22,7 +22,7 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-ugly1
-COMPONENT_VERSION=      1.22.0
+COMPONENT_VERSION=      1.22.1
 #COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -30,7 +30,7 @@ COMPONENT_FMRI=         library/audio/gstreamer1/plugin/ugly
 COMPONENT_SRC_NAME=	gst-plugins-ugly
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:a644dc981afa2d8d3a913f763ab9523c0620ee4e65a7ec73c7721c29da3c5a0c
+COMPONENT_ARCHIVE_HASH= sha256:4ab3d9e13481bce1ca3c7c4bb1f65dce4f0bb40fb1cac4416e8c06dd648815c2
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL= 	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      LGPLv2
