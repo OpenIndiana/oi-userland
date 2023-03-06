@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test2::Suite
-HUMAN_VERSION =			0.000147
+HUMAN_VERSION =			0.000148
 COMPONENT_SUMMARY =		Test2::Suite - Distribution with a rich set of tools built upon the Test2 framework.
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:875def3a545017cc3488daea753dea17423dc28ed7765c607c865a45b7df8202
+	sha256:f34ee1a147c11ac749101437f1b1e0dfe6752026df3d0a09a638b2e73d9de6a2
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
