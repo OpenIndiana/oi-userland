@@ -202,7 +202,7 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 
 # Required by the test suite
-REQUIRED_PACKAGES += developer/test/dejagnu
-REQUIRED_PACKAGES += developer/build/autoconf-archive
-REQUIRED_PACKAGES += developer/build/autogen
-REQUIRED_PACKAGES += system/extended-system-utilities
+TEST_REQUIRED_PACKAGES += developer/test/dejagnu
+TEST_REQUIRED_PACKAGES += developer/build/autoconf-archive
+TEST_REQUIRED_PACKAGES += developer/build/autogen
+TEST_REQUIRED_PACKAGES += system/extended-system-utilities
