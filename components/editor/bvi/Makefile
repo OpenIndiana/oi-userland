@@ -12,40 +12,28 @@
 # Copyright 2017 Aurelien Larcher
 #
 
-PREFERRED_BITS=64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bvi
-COMPONENT_VERSION=      1.4.1
+COMPONENT_VERSION=      1.4.2
 COMPONENT_SUMMARY=      bvi - Binary Visual Editor  
 COMPONENT_PROJECT_URL=  http://bvi.sourceforge.net/
-COMPONENT_FMRI=         editor/bvi
-COMPONENT_CLASSIFICATION=Development/Editors
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/bvi/files/bvi/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_ARCHIVE_HASH= \
-  sha256:3035255ca79e0464567d255baa5544f7794e2b7eb791dcc60cc339cf1aa01e28
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/bvi/files/bvi/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_HASH= sha256:4bba16c2b496963a9b939336c0abcc8d488664492080ae43a86da18cf4ce94f2
+COMPONENT_FMRI=         editor/bvi
+COMPONENT_CLASSIFICATION=Development/Editors
+COMPONENT_LICENSE=      GPLv3
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS+= --with-ncurses=$(USRDIR)
-
-build:    $(BUILD_64)
-
-install:  $(INSTALL_64)
-
-test:    $(NO_TESTS)
-
-# Build dependencies
-REQUIRED_PACKAGES += library/ncurses
+CONFIGURE_OPTIONS += --with-ncurses=$(USRDIR)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
