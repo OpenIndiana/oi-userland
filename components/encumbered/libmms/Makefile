@@ -11,23 +11,22 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libmms
 COMPONENT_VERSION=      0.6.4
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      mms stream protocol library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:3c05e05aebcbfcc044d9e8c2d4646cd8359be39a3f0ba8ce4e72a9094bee704f
 COMPONENT_ARCHIVE_URL=  \
-	http://sourceforge.net/projects/libmms/files/libmms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://libmms.sourceforge.net/
+	https://sourceforge.net/projects/libmms/files/libmms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/libmms/
 COMPONENT_LICENSE=      LGPLv2
 COMPONENT_LICENSE_FILE= COPYING.LIB
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -40,4 +39,5 @@ CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
