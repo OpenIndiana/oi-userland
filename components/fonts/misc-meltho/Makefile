@@ -28,11 +28,12 @@ BUILD_STYLE=configure
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		font-misc-meltho
-COMPONENT_VERSION= 	1.0.3
+COMPONENT_VERSION= 	1.0.4
 COMPONENT_SUMMARY=      Meltho Syriac fonts
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:3721323f13855cf7ca609115a1f7b182491e9b2b9c6e01eb1a2c7f8edd480791
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:63be5ec17078898f263c24096a68b43ae5b06b88852e42549afa03d124d65219
 COMPONENT_LICENSE=      Meltho fonts license
+COMPONENT_LICENSE_FILE= COPYING
 
 FONT_TYPE = X11MISC
 
@@ -43,3 +44,5 @@ COMPONENT_FONT_PKG  = misc-meltho
 
 # Install to separate directory for easier packaging
 CONFIGURE_OPTIONS += --with-fontdir=$(USRSHARETTFFONTSDIR)/$(COMPONENT_FONT_NAME)
+
+# Auto-generated dependencies
