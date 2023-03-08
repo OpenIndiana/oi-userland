@@ -13,26 +13,26 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS=64
-X11_CATEGORY=FONT
+BUILD_BITS= 64
+X11_CATEGORY= FONT
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= font-util
-COMPONENT_VERSION= 1.3.3
+COMPONENT_VERSION= 1.4.0
 COMPONENT_FMRI= x11/font-util
 COMPONENT_SUMMARY= X.Org font package creation/installation utilities
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:e791c890779c40056ab63aaed5e031bb6e2890a98418ca09c534e6261a2eebd2
+COMPONENT_ARCHIVE_HASH= sha256:9f724bf940128c7e39f7252bd961cd38cfac2359de2100a8bed696bf40d40f7d
 COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
