@@ -129,11 +129,8 @@ CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_TRIPLET)/bin
 
 # If the compiler used to build matches the compiler being built, there is no
 # need for a 3 stage build.
-ifneq ($(shell $(CC) --version | grep $(COMPONENT_VERSION)),)
-CONFIGURE_OPTIONS +=    --disable-bootstrap
-else
-COMPONENT_BUILD_TARGETS=bootstrap
-endif
+CONFIGURE_OPTIONS += $(if $(strip $(shell $(CC) --version | grep $(COMPONENT_VERSION))),--disable-bootstrap,)
+COMPONENT_BUILD_TARGETS = $(if $(strip $(shell $(CC) --version | grep $(COMPONENT_VERSION))),,bootstrap)
 
 # On SPARC systems, use Sun Assembler
 CONFIGURE_OPTIONS.sparc+= --without-gnu-as --with-as=/usr/bin/as
