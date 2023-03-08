@@ -1,0 +1,25 @@
+--- a/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.hpp	Tue Jul 28 18:40:12 2020
++++ b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.hpp	Tue Jul 28 19:48:19 2020
+@@ -44,5 +44,7 @@
+   static void setup_fpu();
+ #endif // AMD64
++
++  static juint cpu_microcode_revision();
+ 
+   static jlong rdtsc();
+ 
+--- a/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp	Tue Jul 28 18:40:12 2020
++++ b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp	Tue Jul 28 19:50:48 2020
+@@ -294,6 +294,12 @@
+ }
+ 
+ 
++juint os::cpu_microcode_revision() {
++  juint result = 0;
++  // to implement this, look at the source for ucodeadm -v
++  return result;
++}
++
+ extern "C" JNIEXPORT int
+ JVM_handle_solaris_signal(int sig, siginfo_t* info, void* ucVoid,
+                           int abort_if_unrecognized) {

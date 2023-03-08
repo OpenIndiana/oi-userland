@@ -1,0 +1,1017 @@
+diff -ur -N /tmp/g/atomic_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/atomic_solaris_zero.hpp
+--- /tmp/g/atomic_solaris_zero.hpp	1970-01-01 01:00:00.000000000 +0000
++++ b/src/hotspot/os_cpu/solaris_zero/atomic_solaris_zero.hpp	2020-08-27 09:48:36.864797068 +0000
+@@ -0,0 +1,200 @@
++/*
++ * Copyright (c) 1999, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_X86_ATOMIC_SOLARIS_X86_HPP
++#define OS_CPU_SOLARIS_X86_ATOMIC_SOLARIS_X86_HPP
++
++// For Sun Studio - implementation is in solaris_x86_64.il.
++
++#ifdef __GNUC__
++inline int32_t _Atomic_add(int32_t add_value, volatile int32_t* dest) {
++  int32_t rv = add_value;
++  __asm__ volatile ("lock xaddl %0,(%2)"
++                    : "=r" (rv)
++                    : "0" (rv), "r" (dest)
++                    : "cc", "memory");
++  return rv + add_value;
++}
++inline int64_t _Atomic_add_long(int64_t add_value, volatile int64_t* dest) {
++  int64_t rv = add_value;
++  __asm__ volatile ("lock xaddq %0,(%2)"
++                    : "=r" (rv)
++                    : "0" (rv), "r" (dest)
++                    : "cc", "memory");
++  return rv + add_value;
++}
++inline int32_t _Atomic_xchg(int32_t exchange_value, volatile int32_t* dest) {
++  __asm__ __volatile__ ("xchgl (%2),%0"
++                        : "=r" (exchange_value)
++                        : "0" (exchange_value), "r" (dest)
++                        : "memory");
++  return exchange_value;
++}
++inline int64_t _Atomic_xchg_long(int64_t exchange_value, volatile int64_t* dest) {
++  __asm__ __volatile__ ("xchgq (%2),%0"
++                        : "=r" (exchange_value)
++                        : "0" (exchange_value), "r" (dest)
++                        : "memory");
++  return exchange_value;
++}
++inline int8_t _Atomic_cmpxchg_byte(int8_t exchange_value, volatile int8_t* dest, int8_t compare_value) {
++  __asm__ volatile ("lock cmpxchgb %1,(%3)"
++                    : "=a" (exchange_value)
++                    : "q" (exchange_value), "a" (compare_value), "r" (dest)
++                    : "cc", "memory");
++  return exchange_value;
++}
++inline int32_t _Atomic_cmpxchg(int32_t exchange_value, volatile int32_t* dest, int32_t compare_value) {
++  __asm__ volatile ("lock cmpxchgl %1,(%3)"
++                    : "=a" (exchange_value)
++                    : "q" (exchange_value), "a" (compare_value), "r" (dest)
++                    : "cc", "memory");
++  return exchange_value;
++}
++inline int64_t _Atomic_cmpxchg_long(int64_t exchange_value, volatile int64_t* dest, int64_t compare_value) {
++  __asm__ volatile ("lock cmpxchgq %1,(%3)"
++                    : "=a" (exchange_value)
++                    : "q" (exchange_value), "a" (compare_value), "r" (dest)
++                    : "cc", "memory");
++  return exchange_value;
++}
++#else
++extern "C" {
++  int32_t _Atomic_add(int32_t add_value, volatile int32_t* dest);
++  int64_t _Atomic_add_long(int64_t add_value, volatile int64_t* dest);
++
++  int32_t _Atomic_xchg(int32_t exchange_value, volatile int32_t* dest);
++  int64_t _Atomic_xchg_long(int64_t exchange_value, volatile int64_t* dest);
++  int8_t  _Atomic_cmpxchg_byte(int8_t exchange_value, volatile int8_t* dest,
++                               int8_t compare_value);
++  int32_t _Atomic_cmpxchg(int32_t exchange_value, volatile int32_t* dest,
++                          int32_t compare_value);
++  int64_t _Atomic_cmpxchg_long(int64_t exchange_value, volatile int64_t* dest,
++                               int64_t compare_value);
++}
++#endif
++
++template<size_t byte_size>
++struct Atomic::PlatformAdd {
++  template<typename D, typename I>
++  D add_and_fetch(D volatile* dest, I add_value, atomic_memory_order order) const;
++
++  template<typename D, typename I>
++  D fetch_and_add(D volatile* dest, I add_value, atomic_memory_order order) const {
++    return add_and_fetch(dest, add_value, order) - add_value;
++  }
++};
++
++// Not using add_using_helper; see comment for cmpxchg.
++template<>
++template<typename D, typename I>
++inline D Atomic::PlatformAdd<4>::add_and_fetch(D volatile* dest, I add_value,
++                                               atomic_memory_order order) const {
++  STATIC_ASSERT(4 == sizeof(I));
++  STATIC_ASSERT(4 == sizeof(D));
++  return PrimitiveConversions::cast<D>(
++    _Atomic_add(PrimitiveConversions::cast<int32_t>(add_value),
++                reinterpret_cast<int32_t volatile*>(dest)));
++}
++
++// Not using add_using_helper; see comment for cmpxchg.
++template<>
++template<typename D, typename I>
++inline D Atomic::PlatformAdd<8>::add_and_fetch(D volatile* dest, I add_value,
++                                               atomic_memory_order order) const {
++  STATIC_ASSERT(8 == sizeof(I));
++  STATIC_ASSERT(8 == sizeof(D));
++  return PrimitiveConversions::cast<D>(
++    _Atomic_add_long(PrimitiveConversions::cast<int64_t>(add_value),
++                     reinterpret_cast<int64_t volatile*>(dest)));
++}
++
++template<>
++template<typename T>
++inline T Atomic::PlatformXchg<4>::operator()(T volatile* dest,
++                                             T exchange_value,
++                                             atomic_memory_order order) const {
++  STATIC_ASSERT(4 == sizeof(T));
++  return PrimitiveConversions::cast<T>(
++    _Atomic_xchg(PrimitiveConversions::cast<int32_t>(exchange_value),
++                 reinterpret_cast<int32_t volatile*>(dest)));
++}
++
++template<>
++template<typename T>
++inline T Atomic::PlatformXchg<8>::operator()(T volatile* dest,
++                                             T exchange_value,
++                                             atomic_memory_order order) const {
++  STATIC_ASSERT(8 == sizeof(T));
++  return PrimitiveConversions::cast<T>(
++    _Atomic_xchg_long(PrimitiveConversions::cast<int64_t>(exchange_value),
++                      reinterpret_cast<int64_t volatile*>(dest)));
++}
++
++// Not using cmpxchg_using_helper here, because some configurations of
++// Solaris compiler don't deal well with passing a "defined in .il"
++// function as an argument.  We *should* switch to using gcc-style
++// inline assembly, but attempting to do so with Studio 12.4 ran into
++// segfaults.
++
++template<>
++template<typename T>
++inline T Atomic::PlatformCmpxchg<1>::operator()(T volatile* dest,
++                                                T compare_value,
++                                                T exchange_value,
++                                                atomic_memory_order order) const {
++  STATIC_ASSERT(1 == sizeof(T));
++  return PrimitiveConversions::cast<T>(
++    _Atomic_cmpxchg_byte(PrimitiveConversions::cast<int8_t>(exchange_value),
++                         reinterpret_cast<int8_t volatile*>(dest),
++                         PrimitiveConversions::cast<int8_t>(compare_value)));
++}
++
++template<>
++template<typename T>
++inline T Atomic::PlatformCmpxchg<4>::operator()(T volatile* dest,
++                                                T compare_value,
++                                                T exchange_value,
++                                                atomic_memory_order order) const {
++  STATIC_ASSERT(4 == sizeof(T));
++  return PrimitiveConversions::cast<T>(
++    _Atomic_cmpxchg(PrimitiveConversions::cast<int32_t>(exchange_value),
++                    reinterpret_cast<int32_t volatile*>(dest),
++                    PrimitiveConversions::cast<int32_t>(compare_value)));
++}
++
++template<>
++template<typename T>
++inline T Atomic::PlatformCmpxchg<8>::operator()(T volatile* dest,
++                                                T compare_value,
++                                                T exchange_value,
++                                                atomic_memory_order order) const {
++  STATIC_ASSERT(8 == sizeof(T));
++  return PrimitiveConversions::cast<T>(
++    _Atomic_cmpxchg_long(PrimitiveConversions::cast<int64_t>(exchange_value),
++                         reinterpret_cast<int64_t volatile*>(dest),
++                         PrimitiveConversions::cast<int64_t>(compare_value)));
++}
++
++#endif // OS_CPU_SOLARIS_X86_ATOMIC_SOLARIS_X86_HPP
+diff -ur -N /tmp/g/bytes_solaris_zero.inline.hpp b/src/hotspot/os_cpu/solaris_zero/bytes_solaris_zero.inline.hpp
+--- /tmp/g/bytes_solaris_zero.hpp	1970-01-01 01:00:00.000000000 +0000
++++ b/src/hotspot/os_cpu/solaris_zero/bytes_solaris_zero.hpp	2020-08-31 18:20:25.351780484 +0000
+@@ -0,0 +1,45 @@
++/*
++ * Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_ZERO_BYTES_SOLARIS_ZERO_HPP
++#define OS_CPU_SOLARIS_ZERO_BYTES_SOLARIS_ZERO_HPP
++
++// Efficient swapping of data bytes from Java byte
++// ordering to native byte ordering and vice versa.
++
++#include <sys/byteorder.h>
++
++inline u2 Bytes::swap_u2(u2 x) {
++  return BSWAP_16(x);
++}
++
++inline u4 Bytes::swap_u4(u4 x) {
++  return BSWAP_32(x);
++}
++
++inline u8 Bytes::swap_u8(u8 x) {
++  return BSWAP_64(x);
++}
++
++#endif // OS_CPU_SOLARIS_ZERO_BYTES_SOLARIS_ZERO_HPP
+diff -ur -N /tmp/g/globals_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/globals_solaris_zero.hpp
+--- /tmp/g/globals_solaris_zero.hpp	1970-01-01 01:00:00.000000000 +0000
++++ b/src/hotspot/os_cpu/solaris_zero/globals_solaris_zero.hpp	2020-08-31 18:03:16.351225683 +0000
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (c) 2000, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_ZERO_GLOBALS_SOLARIS_ZERO_HPP
++#define OS_CPU_SOLARIS_ZERO_GLOBALS_SOLARIS_ZERO_HPP
++
++// Sets the default values for platform dependent flags used by the runtime system.
++// (see globals.hpp)
++
++define_pd_global(bool, DontYieldALot,            true); // Determined in the design center
++define_pd_global(intx, CompilerThreadStackSize,  1024);
++define_pd_global(intx, ThreadStackSize,          1024); // 0 => use system default
++define_pd_global(intx, VMThreadStackSize,        1024);
++define_pd_global(size_t, JVMInvokeMethodSlack,   8*K);
++
++// Used on 64 bit platforms for UseCompressedOops base address
++define_pd_global(size_t, HeapBaseMinAddress,     2*G);
++
++#endif // OS_CPU_SOLARIS_ZERO_GLOBALS_SOLARIS_ZERO_HPP
+diff -ur -N /tmp/g/orderAccess_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/orderAccess_solaris_zero.hpp
+--- /tmp/g/orderAccess_solaris_zero.hpp	1970-01-01 01:00:00.000000000 +0000
++++ b/src/hotspot/os_cpu/solaris_zero/orderAccess_solaris_zero.hpp	2020-08-31 18:13:46.830570494 +0000
+@@ -0,0 +1,78 @@
++/*
++ * Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
++ * Copyright 2007, 2008, 2009 Red Hat, Inc.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_ZERO_ORDERACCESS_SOLARIS_ZERO_HPP
++#define OS_CPU_SOLARIS_ZERO_ORDERACCESS_SOLARIS_ZERO_HPP
++
++// Included in orderAccess.hpp header file.
++
++#ifdef ARM
++
++/*
++ * ARM Kernel helper for memory barrier.
++ * Using __asm __volatile ("":::"memory") does not work reliable on ARM
++ * and gcc __sync_synchronize(); implementation does not use the kernel
++ * helper for all gcc versions so it is unreliable to use as well.
++ */
++typedef void (__kernel_dmb_t) (void);
++#define __kernel_dmb (*(__kernel_dmb_t *) 0xffff0fa0)
++
++#define FULL_MEM_BARRIER __kernel_dmb()
++#define LIGHT_MEM_BARRIER __kernel_dmb()
++
++#else // ARM
++
++#define FULL_MEM_BARRIER __sync_synchronize()
++
++#ifdef PPC
++
++#ifdef __NO_LWSYNC__
++#define LIGHT_MEM_BARRIER __asm __volatile ("sync":::"memory")
++#else
++#define LIGHT_MEM_BARRIER __asm __volatile ("lwsync":::"memory")
++#endif
++
++#else // PPC
++
++#define LIGHT_MEM_BARRIER __asm __volatile ("":::"memory")
++
++#endif // PPC
++
++#endif // ARM
++
++// Note: What is meant by LIGHT_MEM_BARRIER is a barrier which is sufficient
++// to provide TSO semantics, i.e. StoreStore | LoadLoad | LoadStore.
++
++inline void OrderAccess::loadload()   { LIGHT_MEM_BARRIER; }
++inline void OrderAccess::storestore() { LIGHT_MEM_BARRIER; }
++inline void OrderAccess::loadstore()  { LIGHT_MEM_BARRIER; }
++inline void OrderAccess::storeload()  { FULL_MEM_BARRIER;  }
++
++inline void OrderAccess::acquire()    { LIGHT_MEM_BARRIER; }
++inline void OrderAccess::release()    { LIGHT_MEM_BARRIER; }
++inline void OrderAccess::fence()      { FULL_MEM_BARRIER;  }
++inline void OrderAccess::cross_modify_fence_impl()            { }
++
++#endif // OS_CPU_SOLARIS_ZERO_ORDERACCESS_SOLARIS_ZERO_HPP
+diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.cpp
+--- /tmp/g/os_solaris_zero.cpp	1970-01-01 01:00:00.000000000 +0000
++++ b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.cpp	2020-09-02 13:28:22.493092922 +0000
+@@ -0,0 +1,299 @@
++/*
++ * Copyright (c) 2003, 2020, Oracle and/or its affiliates. All rights reserved.
++ * Copyright 2007, 2008, 2009, 2010 Red Hat, Inc.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#include <pthread.h> /* For pthread_attr_get_np */
++
++// no precompiled headers
++#include "jvm.h"
++#include "assembler_zero.inline.hpp"
++#include "classfile/classLoader.hpp"
++#include "classfile/systemDictionary.hpp"
++#include "classfile/vmSymbols.hpp"
++#include "code/icBuffer.hpp"
++#include "code/vtableStubs.hpp"
++#include "interpreter/interpreter.hpp"
++#include "memory/allocation.inline.hpp"
++#include "os_solaris.hpp"
++#include "os_posix.hpp"
++#include "nativeInst_zero.hpp"
++#include "prims/jniFastGetField.hpp"
++#include "prims/jvm_misc.hpp"
++#include "runtime/arguments.hpp"
++#include "runtime/frame.inline.hpp"
++#include "runtime/interfaceSupport.inline.hpp"
++#include "runtime/java.hpp"
++#include "runtime/javaCalls.hpp"
++#include "runtime/mutexLocker.hpp"
++#include "runtime/osThread.hpp"
++#include "runtime/sharedRuntime.hpp"
++#include "runtime/stubRoutines.hpp"
++#include "runtime/thread.inline.hpp"
++#include "runtime/timer.hpp"
++#include "signals_posix.hpp"
++#include "utilities/events.hpp"
++#include "utilities/vmError.hpp"
++
++// See stubGenerator_zero.cpp
++#include <setjmp.h>
++extern sigjmp_buf* get_jmp_buf_for_continuation();
++
++address os::current_stack_pointer() {
++  // return the address of the current function
++  return (address)__builtin_frame_address(0);
++}
++
++frame os::get_sender_for_C_frame(frame* fr) {
++  ShouldNotCallThis();
++  return frame();
++}
++
++frame os::current_frame() {
++  // The only thing that calls this is the stack printing code in
++  // VMError::report:
++  //   - Step 110 (printing stack bounds) uses the sp in the frame
++  //     to determine the amount of free space on the stack.  We
++  //     set the sp to a close approximation of the real value in
++  //     order to allow this step to complete.
++  //   - Step 120 (printing native stack) tries to walk the stack.
++  //     The frame we create has a NULL pc, which is ignored as an
++  //     invalid frame.
++  frame dummy = frame();
++  dummy.set_sp((intptr_t *) current_stack_pointer());
++  return dummy;
++}
++
++char* os::non_memory_address_word() {
++  // Must never look like an address returned by reserve_memory,
++  // even in its subfields (as defined by the CPU immediate fields,
++  // if the CPU splits constants across multiple instructions).
++  // This is the value for x86; works pretty well for PPC too.
++  return (char *) -1;
++}
++
++address os::Posix::ucontext_get_pc(const ucontext_t* uc) {
++  ShouldNotCallThis();
++  return NULL;
++}
++
++void os::Posix::ucontext_set_pc(ucontext_t * uc, address pc) {
++  ShouldNotCallThis();
++}
++
++address os::fetch_frame_from_context(const void* ucVoid,
++                                     intptr_t** ret_sp,
++                                     intptr_t** ret_fp) {
++  ShouldNotCallThis();
++  return NULL;
++}
++
++frame os::fetch_frame_from_context(const void* ucVoid) {
++  ShouldNotCallThis();
++  return frame();
++}
++
++bool PosixSignals::pd_hotspot_signal_handler(int sig, siginfo_t* info,
++                                             ucontext_t* uc, JavaThread* thread) {
++
++  if (info != NULL && thread != NULL) {
++    // Handle ALL stack overflow variations here
++    if (sig == SIGSEGV || sig == SIGBUS) {
++      address addr = (address) info->si_addr;
++
++      // check if fault address is within thread stack
++      if (thread->is_in_full_stack(addr)) {
++        StackOverflow* overflow_state = thread->stack_overflow_state();
++        // stack overflow
++        if (overflow_state->in_stack_yellow_reserved_zone(addr)) {
++          overflow_state->disable_stack_yellow_reserved_zone();
++          ShouldNotCallThis();
++        }
++        else if (overflow_state->in_stack_red_zone(addr)) {
++          overflow_state->disable_stack_red_zone();
++          ShouldNotCallThis();
++        }
++      }
++    }
++
++    /*if (thread->thread_state() == _thread_in_Java) {
++      ShouldNotCallThis();
++    }
++    else*/ if ((thread->thread_state() == _thread_in_vm ||
++               thread->thread_state() == _thread_in_native) &&
++               sig == SIGBUS && thread->doing_unsafe_access()) {
++      ShouldNotCallThis();
++    }
++
++    // jni_fast_Get<Primitive>Field can trap at certain pc's if a GC
++    // kicks in and the heap gets shrunk before the field access.
++    /*if (sig == SIGSEGV || sig == SIGBUS) {
++      address addr = JNI_FastGetField::find_slowcase_pc(pc);
++      if (addr != (address)-1) {
++        stub = addr;
++      }
++    }*/
++  }
++
++  return false;
++}
++
++void os::Solaris::init_thread_fpu_state(void) {
++  // Nothing to do
++}
++
++// Minimum usable stack sizes required to get to user code. Space for
++// HotSpot guard pages is added later.
++#ifdef _LP64
++// The adlc generated method 'State::MachNodeGenerator(int)' used by the C2 compiler
++// threads requires a large stack with the Solaris Studio C++ compiler version 5.13
++// and product VM builds (debug builds require significantly less stack space).
++size_t os::_compiler_thread_min_stack_allowed = 325 * K;
++size_t os::_java_thread_min_stack_allowed = 48 * K;
++size_t os::_vm_internal_thread_min_stack_allowed = 224 * K;
++#else
++size_t os::_compiler_thread_min_stack_allowed = 32 * K;
++size_t os::_java_thread_min_stack_allowed = 32 * K;
++size_t os::_vm_internal_thread_min_stack_allowed = 64 * K;
++#endif // _LP64
++
++/////////////////////////////////////////////////////////////////////////////
++// helper functions for fatal error handler
++
++void os::print_context(outputStream* st, const void* context) {
++  ShouldNotCallThis();
++}
++
++void os::print_tos_pc(outputStream* st, const void* context) {
++  ShouldNotCallThis();
++}
++
++void os::print_register_info(outputStream *st, const void *context) {
++  ShouldNotCallThis();
++}
++
++// Atomically copy 64 bits of data
++static inline void atomic_copy64(const volatile void *src, volatile void *dst) {
++  *(jlong *) dst = *(const jlong *) src;
++}
++
++/////////////////////////////////////////////////////////////////////////////
++// Stubs for things that would be in bsd_zero.s if it existed.
++// You probably want to disassemble these monkeys to check they're ok.
++
++extern "C" {
++  int SpinPause() {
++    return 1;
++  }
++
++  void _Copy_conjoint_jshorts_atomic(const jshort* from, jshort* to, size_t count) {
++    if (from > to) {
++      const jshort *end = from + count;
++      while (from < end)
++        *(to++) = *(from++);
++    }
++    else if (from < to) {
++      const jshort *end = from;
++      from += count - 1;
++      to   += count - 1;
++      while (from >= end)
++        *(to--) = *(from--);
++    }
++  }
++  void _Copy_conjoint_jints_atomic(const jint* from, jint* to, size_t count) {
++    if (from > to) {
++      const jint *end = from + count;
++      while (from < end)
++        *(to++) = *(from++);
++    }
++    else if (from < to) {
++      const jint *end = from;
++      from += count - 1;
++      to   += count - 1;
++      while (from >= end)
++        *(to--) = *(from--);
++    }
++  }
++  void _Copy_conjoint_jlongs_atomic(const jlong* from, jlong* to, size_t count) {
++    if (from > to) {
++      const jlong *end = from + count;
++      while (from < end)
++        atomic_copy64(from++, to++);
++    }
++    else if (from < to) {
++      const jlong *end = from;
++      from += count - 1;
++      to   += count - 1;
++      while (from >= end)
++        atomic_copy64(from--, to--);
++    }
++  }
++
++  void _Copy_arrayof_conjoint_bytes(const HeapWord* from,
++                                    HeapWord* to,
++                                    size_t    count) {
++    memmove(to, from, count);
++  }
++  void _Copy_arrayof_conjoint_jshorts(const HeapWord* from,
++                                      HeapWord* to,
++                                      size_t    count) {
++    memmove(to, from, count * 2);
++  }
++  void _Copy_arrayof_conjoint_jints(const HeapWord* from,
++                                    HeapWord* to,
++                                    size_t    count) {
++    memmove(to, from, count * 4);
++  }
++  void _Copy_arrayof_conjoint_jlongs(const HeapWord* from,
++                                     HeapWord* to,
++                                     size_t    count) {
++    memmove(to, from, count * 8);
++  }
++};
++
++/////////////////////////////////////////////////////////////////////////////
++// Implementations of atomic operations not supported by processors.
++//  -- http://gcc.gnu.org/onlinedocs/gcc-4.2.1/gcc/Atomic-Builtins.html
++
++#ifndef _LP64
++extern "C" {
++  long long unsigned int __sync_val_compare_and_swap_8(
++    volatile void *ptr,
++    long long unsigned int oldval,
++    long long unsigned int newval) {
++    ShouldNotCallThis();
++  }
++};
++#endif // !_LP64
++
++void os::setup_fpu() {}
++
++#ifndef PRODUCT
++void os::verify_stack_alignment() {
++}
++#endif
++
++int os::extra_bang_size_in_bytes() {
++  // Zero does not require an additional stack bang.
++  return 0;
++}
+diff -ur -N /tmp/g/os_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.hpp
+--- /tmp/g/os_solaris_zero.hpp	1970-01-01 01:00:00.000000000 +0000
++++ b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.hpp	2020-09-01 22:01:25.502220121 +0000
+@@ -0,0 +1,62 @@
++/*
++ * Copyright (c) 1999, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_ZERO_OS_SOLARIS_ZERO_HPP
++#define OS_CPU_SOLARIS_ZERO_OS_SOLARIS_ZERO_HPP
++
++  //
++  // NOTE: we are back in class os here, not Solaris
++  //
++#ifdef AMD64
++  static void setup_fpu() {}
++#else
++  static int32_t  (*atomic_xchg_func)        (int32_t,  volatile int32_t*);
++  static int32_t  (*atomic_cmpxchg_func)     (int32_t,  volatile int32_t*, int32_t);
++  static int64_t  (*atomic_cmpxchg_long_func)(int64_t,  volatile int64_t*, int64_t);
++  static int32_t  (*atomic_add_func)         (int32_t,  volatile int32_t*);
++
++  static int32_t  atomic_xchg_bootstrap        (int32_t,  volatile int32_t*);
++  static int32_t  atomic_cmpxchg_bootstrap     (int32_t,  volatile int32_t*, int32_t);
++  static int64_t  atomic_cmpxchg_long_bootstrap(int64_t,  volatile int64_t*, int64_t);
++  static int32_t  atomic_add_bootstrap         (int32_t,  volatile int32_t*);
++
++  static void setup_fpu();
++#endif // AMD64
++
++  static juint cpu_microcode_revision();
++
++  static jlong rdtsc();
++
++  static bool is_allocatable(size_t bytes);
++
++  // Used to register dynamic code cache area with the OS
++  // Note: Currently only used in 64 bit Windows implementations
++  static bool register_code_area(char *low, char *high) { return true; }
++
++  // Atomically copy 64 bits of data
++  static void atomic_copy64(const volatile void *src, volatile void *dst) {
++    *(jlong *) dst = *(const jlong *) src;
++  }
++
++#endif // OS_CPU_SOLARIS_ZERO_OS_SOLARIS_ZERO_HPP
+diff -ur -N /tmp/g/prefetch_solaris_zero.inline.hpp b/src/hotspot/os_cpu/solaris_zero/prefetch_solaris_zero.inline.hpp
+--- /tmp/g/prefetch_solaris_zero.inline.hpp	1970-01-01 01:00:00.000000000 +0000
++++ b/src/hotspot/os_cpu/solaris_zero/prefetch_solaris_zero.inline.hpp	2020-09-01 21:42:41.412265130 +0000
+@@ -0,0 +1,37 @@
++/*
++ * Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
++ * Copyright 2007, 2008 Red Hat, Inc.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_ZERO_PREFETCH_SOLARIS_ZERO_INLINE_HPP
++#define OS_CPU_SOLARIS_ZERO_PREFETCH_SOLARIS_ZERO_INLINE_HPP
++
++#include "runtime/prefetch.hpp"
++
++inline void Prefetch::read(const void *loc, intx interval) {
++}
++
++inline void Prefetch::write(void *loc, intx interval) {
++}
++
++#endif // OS_CPU_SOLARIS_ZERO_PREFETCH_SOLARIS_ZERO_INLINE_HPP
+diff -ur -N /tmp/g/javaThread_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/javaThread_solaris_zero.cpp
+--- /tmp/g/javaThread_solaris_zero.cpp	1970-01-01 01:00:00.000000000 +0000
++++ b/src/hotspot/os_cpu/solaris_zero/javaThread_solaris_zero.cpp	2020-09-01 21:40:25.604734766 +0000
+@@ -0,0 +1,37 @@
++/*
++ * Copyright (c) 1997, 2018, Oracle and/or its affiliates. All rights reserved.
++ * Copyright 2009, 2010 Red Hat, Inc.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#include "precompiled.hpp"
++#include "runtime/frame.inline.hpp"
++#include "runtime/javaThread.hpp"
++
++frame JavaThread::pd_last_frame() {
++  assert(has_last_Java_frame(), "must have last_Java_sp() when suspended");
++  return frame(last_Java_fp(), last_Java_sp());
++}
++
++void JavaThread::cache_global_variables() {
++  // nothing to do
++}
+diff -ur -N /tmp/g/javaThread_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/javaThread_solaris_zero.hpp
+--- /tmp/g/javaThread_solaris_zero.hpp	1970-01-01 01:00:00.000000000 +0000
++++ b/src/hotspot/os_cpu/solaris_zero/javaThread_solaris_zero.hpp 	2020-09-01 21:39:59.895910869 +0000
+@@ -0,0 +1,104 @@
++/*
++ * Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
++ * Copyright 2007, 2008, 2009, 2010 Red Hat, Inc.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_ZERO_JAVATHREAD_SOLARIS_ZERO_HPP
++#define OS_CPU_SOLARIS_ZERO_JAVATHREAD_SOLARIS_ZERO_HPP
++
++ private:
++  ZeroStack  _zero_stack;
++  ZeroFrame* _top_zero_frame;
++
++  void pd_initialize() {
++    _top_zero_frame = NULL;
++  }
++
++ public:
++  ZeroStack *zero_stack() {
++    return &_zero_stack;
++  }
++
++ public:
++  ZeroFrame *top_zero_frame() {
++    return _top_zero_frame;
++  }
++  void push_zero_frame(ZeroFrame *frame) {
++    *(ZeroFrame **) frame = _top_zero_frame;
++    _top_zero_frame = frame;
++  }
++  void pop_zero_frame() {
++    zero_stack()->set_sp((intptr_t *) _top_zero_frame + 1);
++    _top_zero_frame = *(ZeroFrame **) _top_zero_frame;
++  }
++
++ public:
++  static ByteSize zero_stack_offset() {
++    return byte_offset_of(JavaThread, _zero_stack);
++  }
++  static ByteSize top_zero_frame_offset() {
++    return byte_offset_of(JavaThread, _top_zero_frame);
++  }
++
++ public:
++  void set_last_Java_frame() {
++    set_last_Java_frame(top_zero_frame(), zero_stack()->sp());
++  }
++  void reset_last_Java_frame() {
++    frame_anchor()->zap();
++  }
++  void set_last_Java_frame(ZeroFrame* fp, intptr_t* sp) {
++    frame_anchor()->set(sp, NULL, fp);
++  }
++
++ public:
++  ZeroFrame* last_Java_fp() {
++    return frame_anchor()->last_Java_fp();
++  }
++
++ private:
++  frame pd_last_frame();
++
++ public:
++  static ByteSize last_Java_fp_offset() {
++    return byte_offset_of(JavaThread, _anchor) +
++      JavaFrameAnchor::last_Java_fp_offset();
++  }
++
++ public:
++  // Check for pending suspend requests and pending asynchronous
++  // exceptions.  There are separate accessors for these, but
++  // _suspend_flags is volatile so using them would be unsafe.
++  bool has_special_condition_for_native_trans() {
++    return _suspend_flags != 0;
++  }
++
++ public:
++  bool pd_get_top_frame_for_signal_handler(frame* fr_addr,
++                                           void* ucontext,
++                                           bool isInJava) {
++    ShouldNotCallThis();
++    return false;
++  }
++
++#endif // OS_CPU_SOLARIS_ZERO_JAVATHREAD_SOLARIS_ZERO_HPP
+diff -ur -N /tmp/g/vmStructs_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/vmStructs_solaris_zero.hpp
+--- /tmp/g/vmStructs_solaris_zero.hpp	1970-01-01 01:00:00.000000000 +0000
++++ b/src/hotspot/os_cpu/solaris_zero/vmStructs_solaris_zero.hpp	2020-09-01 21:48:37.312847065 +0000
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
++ * Copyright 2007 Red Hat, Inc.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_ZERO_VMSTRUCTS_SOLARIS_ZERO_HPP
++#define OS_CPU_SOLARIS_ZERO_VMSTRUCTS_SOLARIS_ZERO_HPP
++
++// These are the OS and CPU-specific fields, types and integer
++// constants required by the Serviceability Agent. This file is
++// referenced by vmStructs.cpp.
++
++#define VM_STRUCTS_OS_CPU(nonstatic_field, static_field, unchecked_nonstatic_field, volatile_nonstatic_field, nonproduct_nonstatic_field, c2_nonstatic_field, unchecked_c1_static_field, unchecked_c2_static_field)
++
++
++#define VM_TYPES_OS_CPU(declare_type, declare_toplevel_type, declare_oop_type, declare_integer_type, declare_unsigned_integer_type, declare_c1_toplevel_type, declare_c2_type, declare_c2_toplevel_type)
++
++#define VM_INT_CONSTANTS_OS_CPU(declare_constant, declare_preprocessor_constant, declare_c1_constant, declare_c2_constant, declare_c2_preprocessor_constant)
++
++#define VM_LONG_CONSTANTS_OS_CPU(declare_constant, declare_preprocessor_constant, declare_c1_constant, declare_c2_constant, declare_c2_preprocessor_constant)
++
++#endif // OS_CPU_SOLARIS_ZERO_VMSTRUCTS_SOLARIS_ZERO_HPP
+--- /dev/null	2022-08-12 13:25:23.000000000 +0000
++++ b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.inline.hpp	2022-08-12 08:53:34.279529742 +0000
+@@ -0,0 +1,30 @@
++/*
++ * Copyright (c) 2022, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_ZERO_OS_SOLARIS_ZERO_INLINE_HPP
++#define OS_CPU_SOLARIS_ZERO_OS_SOLARIS_ZERO_INLINE_HPP
++
++
++
++#endif // OS_CPU_SOLARIS_ZERO_OS_SOLARIS_ZERO_INLINE_HPP

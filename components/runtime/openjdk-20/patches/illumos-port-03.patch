@@ -1,0 +1,56 @@
+--- a/src/java.base/unix/classes/sun/nio/fs/UnixNativeDispatcher.java	Thu May 28 00:44:10 2020
++++ b/src/java.base/unix/classes/sun/nio/fs/UnixNativeDispatcher.java	Wed May 20 19:29:11 2020
+@@ -123,6 +123,27 @@
+     }
+ 
+     /**
++     * FILE* fopen(const char *filename, const char* mode);
++     */
++    static long fopen(UnixPath filename, String mode) throws UnixException {
++        NativeBuffer pathBuffer = copyToNativeBuffer(filename);
++        NativeBuffer modeBuffer = NativeBuffers.asNativeBuffer(Util.toBytes(mode));
++        try {
++            return fopen0(pathBuffer.address(), modeBuffer.address());
++        } finally {
++            modeBuffer.release();
++            pathBuffer.release();
++        }
++    }
++    private static native long fopen0(long pathAddress, long modeAddress)
++        throws UnixException;
++
++    /**
++     * fclose(FILE* stream)
++     */
++    static native void fclose(long stream) throws UnixException;
++
++    /**
+      * void rewind(FILE* stream);
+      */
+     static native void rewind(long stream) throws UnixException;
+@@ -693,6 +714,25 @@
+         throws UnixException;
+ 
+     /**
++     * long int pathconf(const char *path, int name);
++     */
++    static long pathconf(UnixPath path, int name) throws UnixException {
++        NativeBuffer buffer = copyToNativeBuffer(path);
++        try {
++            return pathconf0(buffer.address(), name);
++        } finally {
++            buffer.release();
++        }
++    }
++    private static native long pathconf0(long pathAddress, int name)
++        throws UnixException;
++
++    /**
++     * long fpathconf(int fildes, int name);
++     */
++    static native long fpathconf(int filedes, int name) throws UnixException;
++
++    /**
+      * char* strerror(int errnum)
+      */
+     static native byte[] strerror(int errnum);
