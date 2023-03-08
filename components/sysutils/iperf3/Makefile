@@ -27,29 +27,26 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iperf
-COMPONENT_VERSION=	3.1.2
+COMPONENT_VERSION=	3.1.3
 COMPONENT_SUMMARY=	iperf - tool for measuring maximum TCP and UDP bandwidth performance
 COMPONENT_PROJECT_URL=	https://iperf.fr
-COMPONENT_FMRI=		benchmark/iperf3
-COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://iperf.fr/download/source/iperf-$(COMPONENT_VERSION)-source.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:48b5c783bb4a9c44f2bdcfe52c5d45b77ab1e1c82de3d0131f692457950811f9
+COMPONENT_ARCHIVE_HASH=	sha256:e34cf60cffc80aa1322d2c3a9b81e662c2576d2b03e53ddf1079615634e6f553
+COMPONENT_FMRI=		benchmark/iperf3
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	BSD-like
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-build:		$(BUILD_32)
+CONFIGURE_OPTIONS += --enable-static=no
 
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
