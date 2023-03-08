@@ -23,16 +23,17 @@
 # Copyright (c) 2008, 2018, Oracle and/or its affiliates. All rights reserved.
 # COpyright 2018, Aurelien Larcher
 #
-BUILD_STYLE=configure
 
+BUILD_STYLE=configure
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		font-isas-misc
-COMPONENT_VERSION= 	1.0.3
+COMPONENT_VERSION= 	1.0.4
 COMPONENT_SUMMARY=      Institute of Software, Academia Sinica GB2312-80 bitmap fonts
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:5824ab4b485951107dd245b8f7717d2822f1a6dbf6cea98f1ac7f49905c0a867
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:47e595bbe6da444b9f6fcaa26539abc7ba1989e23afa6cdc49e22e484cc438fc
 COMPONENT_LICENSE=      MIT
+COMPONENT_LICENSE_FILE= COPYING
 
 FONT_TYPE = X11MISC
 
@@ -44,3 +45,4 @@ COMPONENT_FONT_PKG  = isas-misc
 # Install to separate directory for easier packaging
 CONFIGURE_OPTIONS += --with-fontdir=$(COMPONENT_FONT_DEST_DIR)
 
+# Auto-generated dependencies
