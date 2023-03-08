@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Alien::Build
-HUMAN_VERSION =			2.77
+HUMAN_VERSION =			2.78
 COMPONENT_SUMMARY =		Alien::Build - Build external dependencies for use in CPAN
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fbf39ef634e364616e43e851c15a195ffa157b5cd7c9d89abfd8e31b6b11f1e9
+	sha256:9140671790a0696920b0a97acd812ab4d0b93ac69306d20679f027dd0c7caa27
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
