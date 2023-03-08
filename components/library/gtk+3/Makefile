@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         gtk+
 COMPONENT_MJR_VERSION=	3.24
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).34
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -70,6 +70,10 @@ CONFIGURE_OPTIONS += --disable-papi
 
 CONFIGURE_ENV    += PERL=$(PERL)
 CONFIGURE_ENV    += PYTHON=$(PYTHON)
+CONFIGURE_ENV    += GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas
+CONFIGURE_ENV    += GLIB_COMPILE_RESOURCES=/usr/bin/glib-compile-resources
+CONFIGURE_ENV    += GLIB_GENMARSHAL=/usr/bin/glib-genmarshal
+CONFIGURE_ENV    += GLIB_MKENUMS=/usr/bin/glib-mkenums
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
