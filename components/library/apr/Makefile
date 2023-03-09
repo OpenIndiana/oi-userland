@@ -23,12 +23,12 @@
 # Copyright 2023, Niklas Poslovski
 #
 
-BUILD_BITS= 32_and_64
 USE_COMMON_TEST_MASTER=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         apr
 COMPONENT_VERSION=      1.7.2
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://apr.apache.org/
 COMPONENT_FMRI=         library/apr
 COMPONENT_SUMMARY=      Apache Portable Runtime (APR) Shared Libraries
@@ -38,8 +38,6 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:3d8999b216f7b6235343a4e3d456ce9379aa9a380ffb308512f133f0c5eb2db9
 COMPONENT_ARCHIVE_URL=  https://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      Apache v2.0
-
-CONFIGURE_DEFAULT_DIRS=no
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -59,8 +57,8 @@ CONFIGURE_OPTIONS += --enable-nonportable-atomics
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += LTFLAGS="--tag=CC --silent"
-CONFIGURE_OPTIONS.32 +=	--enable-layout=OpenSolaris
-CONFIGURE_OPTIONS.64 +=	--enable-layout=OpenSolaris-$(MACH64)
+CONFIGURE_OPTIONS += --enable-layout=OpenSolaris-$(MACH64)
+CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_PREFIX)/bin
 
 COMPONENT_TEST_TARGETS=	test
 
@@ -75,13 +73,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 # Some patches need configure script recreation.
 COMPONENT_PRE_CONFIGURE_ACTION += (cd $(@D); autoconf);
 
-# 32 and 64 bits apr.h headers need to be merged to the final one.
-APRH=include/apr.h
-$(INSTALL_64): COMPONENT_POST_INSTALL_ACTION += \
-    diff -D __$(MACH64) $(BUILD_DIR_32)/$(APRH) \
-      $(BUILD_DIR_64)/$(APRH) > $(PROTO_DIR)$(CONFIGURE_PREFIX)/$(APRH);
-
-$(INSTALL_64): COMPONENT_POST_INSTALL_ACTION += \
+COMPONENT_POST_INSTALL_ACTION += \
     cd $(SOURCE_DIR); \
     $(GSED) 's;OUTPUT_DIRECTORY=.*;OUTPUT_DIRECTORY=$(PROTO_DIR)$(CONFIGURE_PREFIX);' \
           docs/doxygen.conf | doxygen - ;
