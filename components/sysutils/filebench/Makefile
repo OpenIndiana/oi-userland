@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= filebench
 COMPONENT_VERSION= 1.4.9.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_FMRI=	benchmark/filebench
 COMPONENT_SUMMARY= FileBench Commands, Workloads, Scripts, and Config Files
 COMPONENT_CLASSIFICATION= Development/System
@@ -31,9 +31,7 @@ COMPONENT_PROJECT_URL = https://github.com/filebench/filebench/wiki
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_LICENSE=	CDDL
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
@@ -47,10 +45,6 @@ COMPONENT_PREP_ACTION = (cd $(@D) &&\
 CONFIGURE_PREFIX=/usr/benchmarks/filebench
 
 CONFIGURE_OPTIONS+=	--datarootdir=/usr/benchmarks
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libtecla
