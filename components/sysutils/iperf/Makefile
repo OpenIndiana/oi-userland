@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iperf
 COMPONENT_VERSION=	2.0.9
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		benchmark/iperf
 COMPONENT_SUMMARY=	iperf - tool for measuring maximum TCP and UDP bandwidth performance
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -38,16 +39,12 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/iperf2/files/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS  +=	PTHREAD_CFLAGS=-pthreads
-
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
 
 # these default to unnecessary gcc options, which
 # are all that prevents us from using studio. so null them.
@@ -56,13 +53,6 @@ COMPONENT_BUILD_ARGS  +=	AM_CFLAGS=""
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
