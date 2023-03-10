@@ -33,12 +33,12 @@ USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.67.1
+COMPONENT_VERSION=	1.68.1
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_PROJECT_URL=	https://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:46483d3e5de85a3bd46f8e7a3ae1837496391067dbe713a25d3cf051b3d9ff6e
+COMPONENT_ARCHIVE_HASH=	sha256:ccb051df5701d4c588e3d0558f83e73e7eea0a9b165dab3e39dd2db8a6a25d03
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_CLASSIFICATION=	Development/Other Languages
