@@ -20,6 +20,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.1
 COMPONENT_MNR_VERSION=	16
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      PHP 8.1
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_CLASSIFICATION=Meta Packages/Group Packages
@@ -80,9 +81,9 @@ CONFIGURE_OPTIONS+=	--datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS+=	--mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS+=	--localstatedir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS+=	OPENSSL_CFLAGS=-I$(OPENSSL_PREFIX)/include
-CONFIGURE_OPTIONS+=	OPENSSL_LIBS="-L$(OPENSSL_PREFIX)/lib/amd64 -lssl -lcrypto"
+CONFIGURE_OPTIONS+=	OPENSSL_LIBS="-L$(OPENSSL_PREFIX)/lib/$(MACH64) -lssl -lcrypto"
 CONFIGURE_OPTIONS+=	KERBEROS_CFLAGS=-I/usr/include/kerberosv5
-CONFIGURE_OPTIONS+=	KERBEROS_LIBS="-L/usr/lib/amd64 -lgss -lkrb5"
+CONFIGURE_OPTIONS+=	KERBEROS_LIBS="-L/usr/lib/$(MACH64) -lgss -lkrb5"
 CONFIGURE_OPTIONS+=	PCRE2_CFLAGS="-I/usr/include/pcre"
 CONFIGURE_OPTIONS+=	ODBC_CFLAGS="-I/usr/include/odbc"
 
@@ -90,7 +91,13 @@ CONFIGURE_OPTIONS+=	ODBC_CFLAGS="-I/usr/include/odbc"
 CONFIGURE_OPTIONS+=	--with-apxs2=$(AP_PREFIX)/bin/apxs
 CONFIGURE_OPTIONS+=	--enable-fpm
 
+ifeq ($(strip $(MACH)),i386)
 CONFIGURE_OPTIONS+=	--build=x86_64-pc-solaris$(SOLARIS_VERSION)
+CONFIGURE_OPTIONS+=	--with-external-pcre
+else
+CONFIGURE_OPTIONS+=	--build=sparcv9-solaris$(SOLARIS_VERSION)
+CONFIGURE_OPTIONS+=	--with-pcre-jit=no
+endif
 
 CONFIGURE_OPTIONS+=	--with-config-file-path=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS+=	--with-config-file-scan-dir=$(PHP_SYSCONFDIR)/conf.d
@@ -177,7 +184,6 @@ CONFIGURE_OPTIONS+=	--with-jpeg
 CONFIGURE_OPTIONS+=	--with-xpm
 CONFIGURE_OPTIONS+=	--with-freetype
 CONFIGURE_OPTIONS+=	--with-gmp
-CONFIGURE_OPTIONS+=	--with-external-pcre
 CONFIGURE_OPTIONS+=	--with-enchant
 CONFIGURE_OPTIONS+=	--with-unixODBC
 CONFIGURE_OPTIONS+=	--with-openssl-dir=$(OPENSSL_PREFIX)
@@ -186,7 +192,7 @@ CONFIGURE_OPTIONS+=	--with-openssl-dir=$(OPENSSL_PREFIX)
 # now with fix to cover all EXTRA_LDFLAGS conditions
 COMPONENT_POST_CONFIGURE_ACTION= \
 	(cd $(@D) ; \
-        $(GSED) -i -e 's:^EXTRA_LDFLAGS = .*:EXTRA_LDFLAGS = -avoid-version -module:' -e 's:-L/usr/lib/amd64 ::' -e 's:-R/usr/lib/amd64 ::' Makefile )
+        $(GSED) -i -e 's:^EXTRA_LDFLAGS = .*:EXTRA_LDFLAGS = -avoid-version -module:' -e 's:-L/usr/lib/$(MACH64) ::' -e 's:-R/usr/lib/$(MACH64) ::' Makefile )
 
 # Installation Arguments
 COMPONENT_INSTALL_ARGS+=INSTALL_ROOT=$(PROTO_DIR)
@@ -205,7 +211,7 @@ COMPONENT_PRE_INSTALL_ACTION+= \
 CONFIGURE_ENV+=		EXTENSION_DIR=$(PHP_PREFIX)/extensions
 CONFIGURE_ENV+=		ICU_CONFIG=/usr/bin/icu-config
 CONFIGURE_ENV+=		PG_CONFIG=$(PG_BINDIR)/pg_config
-CONFIGURE_ENV+=		PKG_CONFIG_PATH=$(OPENSSL_PREFIX)/lib/amd64/pkgconfig
+CONFIGURE_ENV+=		PKG_CONFIG_PATH=$(OPENSSL_PREFIX)/lib/$(MACH64)/pkgconfig
 
 COMPONENT_TEST_TARGETS= test
 
