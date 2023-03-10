@@ -12,15 +12,11 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
-
-#CC=/usr/gcc/11/bin/gcc
-#CXX=/usr/gcc/11/bin/g++
 
 COMPONENT_NAME=         pan
 COMPONENT_VERSION=      0.149
-#COMPONENT_REVISION=     1
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://pan.rebelbase.com
 COMPONENT_SUMMARY=      A powerful Newsgroup Article reader
 COMPONENT_FMRI=         desktop/nntp/pan
@@ -41,6 +37,9 @@ CONFIGURE_OPTIONS += --with-gnutls
 
 TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+# SPARC needs math library, to publish.
+REQUIRED_PACKAGES += system/library/math
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
