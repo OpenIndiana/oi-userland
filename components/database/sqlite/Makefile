@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
 COMPONENT_VERSION=      3.41.0
+COMPONENT_REVISION=		1
 TARBALL_VERSION=		3410000
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
@@ -39,8 +40,6 @@ COMPONENT_CLASSIFICATION=	Development/Databases
 COMPONENT_LICENSE=      Public Domain
 
 include $(WS_MAKE_RULES)/common.mk
-
-COMPONENT_PRE_CONFIGURE_ACTION += $(CP) $(COMPONENT_DIR)/files/mapfile $(@D) ;
 
 # 'oserror' test has too low threshold for file descriptor depletion. When it's
 # bumped 32-bit is fine, however on 64-bit the whole test suite crashes.
