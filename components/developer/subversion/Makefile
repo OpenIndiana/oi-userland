@@ -21,7 +21,7 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2021 Klaus Ziegler
+# Copyright (c) 2023 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -72,24 +72,24 @@ CONFIGURE_ENV += PERL="$(PERL)"
 CONFIGURE_ENV += PLMODS="$(PLMODS)"
 CONFIGURE_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
-LIBSVNDIR.64 = $(CONFIGURE_PREFIX)/lib/$(MACH64)
+LIBSVNDIR = $(CONFIGURE_PREFIX)/lib/$(MACH64)
 
-APR-CONFIG.64 = /usr/apr/bin/$(MACH64)/apr-1-config
-APU-CONFIG.64 = /usr/apr-util/bin/$(MACH64)/apu-1-config
-APXS.64 = /usr/apache2/2.4/bin/apxs
-APR-CONFIG-RPATH.64 = /usr/apr/lib/$(MACH64)
-APU-CONFIG-RPATH.64 = /usr/apr-util/lib/$(MACH64)
-APACHE_LIBEXECDIR.64 = `$(APXS.64) -q libexecdir`
+APR-CONFIG = /usr/apr/bin/apr-1-config
+APU-CONFIG = /usr/apr-util/bin/apu-1-config
+APXS = /usr/apache2/2.4/bin/apxs
+APR-CONFIG-RPATH = /usr/apr/lib/$(MACH64)
+APU-CONFIG-RPATH = /usr/apr-util/lib/$(MACH64)
+APACHE_LIBEXECDIR = `$(APXS) -q libexecdir`
 
-LDFLAGS += -R$(LIBSVNDIR.$(BITS)) -R$(APR-CONFIG-RPATH.$(BITS)) \
-	   -R$(APU-CONFIG-RPATH.$(BITS))
+LDFLAGS += -R$(LIBSVNDIR) -R$(APR-CONFIG-RPATH) \
+	   -R$(APU-CONFIG-RPATH)
 
 CONFIGURE_ENV += RUBY="$(RUBY.1.9)"
 
 # Let's make noise just because we have to override --libdir
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS += --libdir=$(LIBSVNDIR.$(BITS))
+CONFIGURE_OPTIONS += --libdir=$(LIBSVNDIR)
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --enable-shared 
 CONFIGURE_OPTIONS += --disable-libtool-lock 
@@ -103,15 +103,13 @@ CONFIGURE_OPTIONS += --disable-mod-activation
 CONFIGURE_OPTIONS += --enable-javahl
 CONFIGURE_OPTIONS += --with-swig
 CONFIGURE_OPTIONS += --with-utf8proc=internal
-CONFIGURE_OPTIONS += --with-apr=$(APR-CONFIG.$(BITS))
-CONFIGURE_OPTIONS += --with-apr-util=$(APU-CONFIG.$(BITS))
-CONFIGURE_OPTIONS.64 += --with-apxs=$(APXS.$(BITS))
-CONFIGURE_OPTIONS.64 += --with-apache-libexecdir=$(APACHE_LIBEXECDIR.$(BITS))
+CONFIGURE_OPTIONS += --with-apr=$(APR-CONFIG)
+CONFIGURE_OPTIONS += --with-apr-util=$(APU-CONFIG)
+CONFIGURE_OPTIONS += --with-apxs=$(APXS)
+CONFIGURE_OPTIONS += --with-apache-libexecdir=$(APACHE_LIBEXECDIR)
 # libgnome-keyring was obsoleted upstream, disable support for storing svn
 # passwords in gnome-keyring until svn is updated to use libsecret instead
 CONFIGURE_OPTIONS += --without-gnome-keyring
-
-CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 # Build and install should be able to find tools like chmod, touch, or true
 COMPONENT_BUILD_ENV += PATH=$(PATH)
@@ -151,7 +149,7 @@ COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH64).master
 
 # Build dependencies
-REQUIRED_PACKAGES += library/py3c
+PYTHON_REQUIRED_PACKAGES += library/python/py3c
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
@@ -167,3 +165,4 @@ REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/magic
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
