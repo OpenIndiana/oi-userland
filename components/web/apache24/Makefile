@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
 COMPONENT_VERSION=	2.4.55
-#COMPONENT_REVISION=	1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -83,8 +83,8 @@ CONFIGURE_OPTIONS +=	--enable-exception-hook
 CONFIGURE_OPTIONS +=	LTFLAGS="--silent --tag=CC"
 CONFIGURE_OPTIONS +=	--enable-layout=Solaris-Apache2
 CONFIGURE_OPTIONS +=	CC="$(CC) -m$(BITS)"
-CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/bin/$(MACH64)/apr-1-config
-CONFIGURE_OPTIONS.64 +=	--with-apr-util=/usr/apr-util/bin/$(MACH64)/apu-1-config
+CONFIGURE_OPTIONS +=	--with-apr=/usr/apr/bin/apr-1-config
+CONFIGURE_OPTIONS +=	--with-apr-util=/usr/apr-util/bin/apu-1-config
 
 install: $(INSTALL_64)
 	# Some files installed in proto area need to be fixed.
