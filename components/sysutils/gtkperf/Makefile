@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	gtkperf
 COMPONENT_VERSION= 	0.40
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY= 	Gtk+ performance testing application
 COMPONENT_SRC= 		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)_$(COMPONENT_VERSION).tar.gz
@@ -27,10 +27,9 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/gtkperf/files/gtkperf/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_PROJECT_URL= http://gtkperf.sourceforge.net/
+COMPONENT_BUILD_ARGS= -j50
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION += \
 	( cd $(@D) && \
@@ -38,12 +37,6 @@ COMPONENT_PREP_ACTION += \
 		autoreconf -fi)
 
 CONFIGURE_OPTIONS += --disable-nls
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
