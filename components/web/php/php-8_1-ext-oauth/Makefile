@@ -12,13 +12,13 @@
 # Copyright (c) 2022 Friedrich Kink
 #
 
-BUILD_BITS=             64
 USE_OPENSSL11=		yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-8.1-ext-oauth
 COMPONENT_REAL_NAME=	oauth
 COMPONENT_VERSION=	2.0.7
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		web/php-81/extension/php-oauth
 COMPONENT_SUMMARY=	oauth consumer extension
 COMPONENT_DESCRIPTION=	OAuth is an authorization protocol built on top of HTTP which \
@@ -58,7 +58,11 @@ CONFIGURE_OPTIONS  +=   --datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS  +=   --mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS  +=   --localstatedir=$(PHP_DATADIR)
 
-CONFIGURE_OPTIONS  +=	--build=x86_64-pc-solaris2.10
+ifeq ($(strip $(MACH)),i386)
+CONFIGURE_OPTIONS  +=	--build=x86_64-pc-solaris$(SOLARIS_VERSION)
+else
+CONFIGURE_OPTIONS  +=	--build=sparcv9-sun-solaris$(SOLARIS_VERSION)
+endif
 CONFIGURE_OPTIONS  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
 
 CFLAGS             +=	-I/usr/include/pcre -I$(PHP_PREFIX)/include
