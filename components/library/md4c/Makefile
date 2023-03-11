@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=				md4c
 COMPONENT_VERSION=			0.4.8
-COMPONENT_REVISION=			1
+COMPONENT_REVISION=			2
 COMPONENT_SUMMARY=			Markdown parser library in C, and md2html converter
 COMPONENT_PROJECT_URL=		https://github.com/mity
 COMPONENT_GIT_TAG=			release-$(COMPONENT_VERSION)
@@ -33,7 +33,7 @@ COMPONENT_LICENSE_FILE=		LICENSE.md
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CMAKE_OPTIONS += -DCMAKE_INSTALL_LIBDIR=/usr/lib/amd64
+CMAKE_OPTIONS += -DCMAKE_INSTALL_LIBDIR=/usr/lib/$(MACH64)
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 
 # Auto-generated dependencies
