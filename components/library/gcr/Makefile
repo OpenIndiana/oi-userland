@@ -31,8 +31,8 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gcr
 COMPONENT_MJR_VERSION=	3.38
-COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).1
-COMPONENT_REVISION=		2
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).1
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	A GNOME library for displaying certificates and crypto UI
 COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/gcr/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -53,6 +53,7 @@ CONFIGURE_OPTIONS += --sysconfdir="$(ETCDIR)"
 
 # Assumes GNU xgettext in PATH.
 CONFIGURE_ENV += PATH=$(PATH.gnu)
+CONFIGURE_ENV += GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas
 
 # Requires a reconf due to patch to autoconf and automake-related files.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
