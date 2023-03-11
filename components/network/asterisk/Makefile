@@ -21,13 +21,13 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
-COMPONENT_VERSION=	20.1.0
+COMPONENT_VERSION=	20.2.0
 COMPONENT_FMRI=		network/asterisk
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4364dc762652e2fd4d3e7dc8428c83550ebae090b8a0e9d4820583e081778883
+COMPONENT_ARCHIVE_HASH=	sha256:eca0f7ee7e49a72bdb0c26512db45c9683ca40c8fdf63466a04705ffaba04b85
 COMPONENT_PROJECT_URL=	https://www.asterisk.org
 COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
@@ -127,10 +127,10 @@ REQUIRED_PACKAGES += $(MYSQL_BASEPKG)
 REQUIRED_PACKAGES += library/popt
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += codec/speex
-REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/freetds
 REQUIRED_PACKAGES += library/glib2
@@ -153,6 +153,7 @@ REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libupnp
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += web/curl
