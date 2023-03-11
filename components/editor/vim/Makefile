@@ -30,13 +30,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	9.0.1350
-#HUMAN_VERSION=		9.0.1350
+COMPONENT_VERSION=	9.0.1400
+#HUMAN_VERSION=		9.0.1400
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:89ad9ab3365efc55749f3e08fb88cbb5fb3abc83dfe5f2f6b53cb0a27e38bc65
+COMPONENT_ARCHIVE_HASH=	sha256:b22586082b5c9c3d31e6830f787b425d114b23d9b6a195bcbd9c2c2a4a30ac49
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -107,16 +107,12 @@ install:	$(INSTALL_64) $(BUILD_DIR)/license
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# libssp is in $(GCC_RUNTIME_PKG) since gcc-10
 # Manually added dependency on python runtime
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += library/desktop/gtk2
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += library/c++/harfbuzz
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
@@ -128,18 +124,8 @@ REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/libsodium
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/fontconfig
-REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/library/libxcomposite
-REQUIRED_PACKAGES += x11/library/libxcursor
-REQUIRED_PACKAGES += x11/library/libxdamage
-REQUIRED_PACKAGES += x11/library/libxext
-REQUIRED_PACKAGES += x11/library/libxfixes
-REQUIRED_PACKAGES += x11/library/libxinerama
-REQUIRED_PACKAGES += x11/library/libxrandr
-REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
