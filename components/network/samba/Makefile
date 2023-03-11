@@ -31,13 +31,12 @@ USE_OPENSSL11 =			yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
-COMPONENT_VERSION =		4.17.5
-COMPONENT_REVISION =		1
+COMPONENT_VERSION =		4.17.6
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:ebb7880d474ffc09d73b5fc77bcbd657f6235910337331a9c24d7f69ca11442b
+COMPONENT_ARCHIVE_HASH = 	sha256:8ae6ed6e62b3c9b3ea6be627dd40577cf3cf9a442d5237055806c62dd460b14a
 COMPONENT_ARCHIVE_URL =		https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL = 		https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI =		service/network/samba
