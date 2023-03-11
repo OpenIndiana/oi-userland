@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         double-conversion
 COMPONENT_VERSION=      3.2.1
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      binary-decimal and decimal-binary routines for IEEE doubles
 COMPONENT_PROJECT_URL=  https://github.com/google/double-conversion
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -37,6 +37,9 @@ CMAKE_OPTIONS += -DBUILD_TESTING:BOOL=ON
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/[0-9]*\.[0-9]* sec//"'
+
+# The math library is needed on SPARC and should be kept.
+REQUIRED_PACKAGES += system/library/math
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
