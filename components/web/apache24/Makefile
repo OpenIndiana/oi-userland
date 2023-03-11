@@ -29,13 +29,12 @@ USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.4.55
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.4.56
 COMPONENT_PROJECT_URL=	https://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:5276ea8bc6fff31eed5c82132ae51a0b2ee05f9e6b61a00fa877f6cadab3b638
+COMPONENT_ARCHIVE_HASH= sha256:db0d4c76007b231fd3ab41b580548dc798ae3844bb7c3d5ce1e4174ca2364698
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
 
 CONFIGURE_DEFAULT_DIRS=no
@@ -92,6 +91,7 @@ install: $(INSTALL_64)
 	$(TOUCH) $(BUILD_DIR)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/apr-util
 REQUIRED_PACKAGES += library/apr-util/apr-ldap
@@ -107,7 +107,6 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
