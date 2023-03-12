@@ -13,20 +13,20 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2023 Friedrich Kink
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS = 64_and_32
 BUILD_STYLE = meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
-COMPONENT_MJR_VERSION=	2.74
-COMPONENT_MNR_VERSION=	7
+COMPONENT_MJR_VERSION=	2.76
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY=	GNOME core libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:196ab86c27127a61b7a70c3ba6af7b97bdc01c07cd3b21abd5e778b955eccb1b
+COMPONENT_ARCHIVE_HASH=	sha256:525bb703b807142e1aee5ccf222c344e8064b21c0c45677ef594e587874c6797
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GLib/
 COMPONENT_FMRI=		library/glib2
@@ -36,8 +36,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# /usr/lib and /usr/lib/$(MACH64) needed to make dbus-daemon program available
-PATH = $(PATH.gnu):/usr/lib:/usr/lib/$(MACH64)
+# /usr/lib/$(MACH64) needed to make dbus-daemon program available
+PATH = $(PATH.gnu):/usr/lib/$(MACH64)
 
 # socketpair(3socket) requires -lsocket -lnsl
 LDFLAGS += -lsocket -lnsl
@@ -65,12 +65,10 @@ COMPONENT_POST_CONFIGURE_ACTION= \
 $(TEST_TARGET): $(INSTALL_TARGET)
 
 # Dtrace flags
-DFLAGS.64 = -64
-COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
+COMPONENT_BUILD_ENV += DFLAGS=-64
 
 # necessary otherwise make REQUIRED_PACKAGES will fail
-COMPONENT_POST_INSTALL_ACTION.32= $(GSED) -i -e "s:\#!/usr/bin/env .*$$:\#!/usr/bin/python$(PYTHON_VERSION):" $(PROTOUSRBINDIR32)/g*
-COMPONENT_POST_INSTALL_ACTION.64= $(GSED) -i -e "s:\#!/usr/bin/env .*$$:\#!/usr/bin/python$(PYTHON_VERSION):" $(PROTOUSRBINDIR)/g*
+COMPONENT_POST_INSTALL_ACTION = $(GSED) -i -e "s:\#!/usr/bin/env .*$$:\#!/usr/bin/python$(PYTHON_VERSION):" $(PROTOUSRBINDIR)/g*
 
 # Otherwise tests fail
 unexport SHELLOPTS
@@ -79,9 +77,7 @@ unexport SHELLOPTS
 $(TEST_TARGET): $(INSTALL_TARGET)
 
 # dbus-daemon is in /usr/lib
-COMPONENT_TEST_ENV.32 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib PATH=$(PATH):/usr/lib
-COMPONENT_TEST_ENV.64 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64) PATH=$(PATH):/usr/lib/$(MACH64)
-COMPONENT_TEST_ENV = $(COMPONENT_TEST_ENV.$(BITS))
+COMPONENT_TEST_ENV = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64) PATH=$(PATH):/usr/lib/$(MACH64)
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
