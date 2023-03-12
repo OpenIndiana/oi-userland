@@ -13,9 +13,8 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
 # Copyright 2023 Friedrich Kink
+# Copyright 2023 Niklas Poslovski
 #
-
-BUILD_BITS=	64_and_32
 
 include ../../../make-rules/shared-macros.mk
 
@@ -48,7 +47,7 @@ PATH=$(PATH.gnu)
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib
 
-COMPONENT_POST_INSTALL_ACTION.64= $(GSED) -i -e 's:env python3:python$(PYTHON_VERSION):' $(PROTOUSRBINDIR)/mm-common-get
+COMPONENT_POST_INSTALL_ACTION = $(GSED) -i -e 's:env python3:python$(PYTHON_VERSION):' $(PROTOUSRBINDIR)/mm-common-get
 
 # Configure checks
 REQUIRED_PACKAGES += text/gawk
