@@ -13,28 +13,24 @@
 # Copyright 2015 Aurelien Larcher
 #
 
+X11_CATEGORY= APP
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xcursor-themes
-COMPONENT_VERSION=        1.0.6
+COMPONENT_VERSION=        1.0.7
 COMPONENT_SUMMARY=        Cursor themes from X.Org
-COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_FMRI=           x11/data/xcursor-themes
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:ee1ec574741293abcf66ac14ce7e74add7ac6be7deb8b38179ef010d22354999
-COMPONENT_ARCHIVE_URL=    $(XORG_DATA_BASE_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=        MIT License
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=   sha256:95bae8f48823d894a05bf42dfbf453674ab7dbdeb11e2bc079e8525ad47378c8
+COMPONENT_LICENSE_FILE=   COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 # Build dependencies
+REQUIRED_PACKAGES += image/xcursorgen
 REQUIRED_PACKAGES += x11/library/libxcursor
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/xcursorgen
