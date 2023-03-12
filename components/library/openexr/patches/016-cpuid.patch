@@ -1,6 +1,7 @@
---- openexr-3.1.5/src/lib/OpenEXR/ImfSystemSpecific.cpp	Thu Apr  7 08:52:25 2022
-+++ openexr-3.1.5/src/lib/OpenEXR/ImfSystemSpecific_.cpp	Sat Jun  4 09:51:06 2022
-@@ -13,21 +13,17 @@
+diff -Nru openexr-3.1.6.orig/src/lib/OpenEXR/ImfSystemSpecific.cpp openexr-3.1.6/src/lib/OpenEXR/ImfSystemSpecific.cpp
+--- openexr-3.1.6.orig/src/lib/OpenEXR/ImfSystemSpecific.cpp	2023-03-05 21:23:47.000000000 +0100
++++ openexr-3.1.6/src/lib/OpenEXR/ImfSystemSpecific.cpp	2023-03-12 16:14:03.387974646 +0100
+@@ -16,15 +16,11 @@
  
  namespace {
  #if defined(IMF_HAVE_SSE2) &&  defined(__GNUC__) && !defined(__e2k__)
@@ -18,6 +19,8 @@
 +        __get_cpuid(n, &eax, &ebx, &ecx, &edx);
      }
  
+ #elif defined(_MSC_VER) && ( defined(_M_IX86) || ( defined(_M_AMD64) && !defined(_M_ARM64EC) ) )
+@@ -44,7 +40,7 @@
  #else // IMF_HAVE_SSE2 && __GNUC__ && !__e2k__
  
      // Helper functions for generic compiler - all disabled
@@ -26,7 +29,7 @@
      {
          eax = ebx = ecx = edx = 0;
      }
-@@ -37,7 +33,7 @@
+@@ -54,7 +50,7 @@
  
  #ifdef IMF_HAVE_GCC_INLINEASM_X86
  
@@ -35,7 +38,7 @@
      {
          __asm__ __volatile__ (
              "xgetbv"
-@@ -48,7 +44,7 @@
+@@ -65,7 +61,7 @@
  
  #else //  IMF_HAVE_GCC_INLINEASM_X86
  
@@ -44,7 +47,7 @@
      {
          eax = edx = 0;
      }
-@@ -91,8 +87,8 @@
+@@ -108,8 +104,8 @@
  #   endif
  #else // x86/x86_64
      bool osxsave = false;
