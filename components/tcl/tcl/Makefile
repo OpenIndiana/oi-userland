@@ -22,14 +22,15 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2023, Klaus Ziegler
 #
 
-BUILD_BITS= 32_and_64
-USE_COMMON_TEST_MASTER= no
+USE_COMMON_TEST_MASTER= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tcl
 COMPONENT_VERSION=      8.6.13
+COMPONENT_REVISION=     1
 COMPONENT_MINOR_VERSION= $(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.\([0-9]\+\)\.[0-9]\+/\1.\2/')
 COMPONENT_SUMMARY=		Tcl - portable scripting environment
 COMPONENT_DESCRIPTION=	Tcl is a dynamic programming language used in web and desktop applications, networking, administration, testing and many more applications
@@ -58,24 +59,28 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
-CONFIGURE_BINDIR.32 =  $(CONFIGURE_PREFIX)/bin/$(MACH32)
-
 CONFIGURE_OPTIONS	+= --enable-shared
 CONFIGURE_OPTIONS	+= --enable-man-symlinks
 CONFIGURE_OPTIONS	+= --enable-threads
-CONFIGURE_OPTIONS.64	+= --enable-64bit
+CONFIGURE_OPTIONS	+= --enable-64bit
+ifeq ($(strip $(MACH)),sparc)
+CONFIGURE_OPTIONS	+= --enable-64bit-vis
+endif
 
-install:	$(INSTALL_32_and_64) $(PROTOUSRLIBDIR)/tclConfig.sh
+install:	$(INSTALL_64) $(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh
 
-$(PROTOUSRLIBDIR)/tclConfig.sh:		$(INSTALL_32)
-					sed -f $(COMPONENT_DIR)/files/tclsed $(PROTOUSRLIBDIR)/tclConfig.sh > \
-						$(PROTOUSRLIBDIR)/tclConfig.sh.new
-					$(MV) $(PROTOUSRLIBDIR)/tclConfig.sh.new $(PROTOUSRLIBDIR)/tclConfig.sh
-					$(CHMOD) 555 $(PROTOUSRLIBDIR)/tclConfig.sh
+$(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh:	$(INSTALL_64)
+	sed -f $(COMPONENT_DIR)/files/tclsed $(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh > \
+		$(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh.new
+	$(MV) $(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh.new $(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh
+	$(CHMOD) 555 $(PROTOUSRLIBDIR)/$(MACH64)/tclConfig.sh
 
+# if test does not run the first, try second time, then it
+# will show no diffs - some kind of a ping pong play.
 COMPONENT_TEST_TARGETS= test
 COMPONENT_TEST_TRANSFORMS= \
 	'-n' \
+	'-e "/^LD_LIBRARY_PATH/d"' \
 	'-e "/all\.tcl/p"' \
 	'-e "/Files/p"'
 
