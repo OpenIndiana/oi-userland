@@ -24,13 +24,12 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
-BUILD_BITS= 64_and_32
-USE_COMMON_TEST_MASTER= no
+USE_COMMON_TEST_MASTER= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		expect
 COMPONENT_VERSION=	5.45.4
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	expect - Programmed dialogue with other interactive programs
 COMPONENT_DESCRIPTION=	Expect is a tool for automating interactive applications, such as telnet, ftp, passwd, fsck, rlogin, tip, etc.
 COMPONENT_PROJECT_URL=	https://core.tcl.tk/expect/index
@@ -58,8 +57,10 @@ COMPONENT_BUILD_TARGETS = all ${SCRIPTS}
 CONFIGURE_OPTIONS 	+= --enable-shared
 CONFIGURE_OPTIONS 	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))"
 CONFIGURE_OPTIONS 	+= --with-tclinclude="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))/generic"
-
-CONFIGURE_OPTIONS.64	+= LIBS=" -m64"
+CONFIGURE_OPTIONS 	+= --enable-64bit
+ifeq ($(strip $(MACH)),sparc)
+CONFIGURE_OPTIONS 	+= --enable-64bit-vis
+endif
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-ne "/\.test/p"' \
@@ -70,8 +71,6 @@ COMPONENT_TEST_TARGETS = test
 # special targets due to tcl internals dependencies
 ../tcl/build/%/.built:
 	(cd ../tcl ; $(GMAKE) build)
-
-$(CONFIGURE_32):	../tcl/build/$(MACH32)/.built
 
 $(CONFIGURE_64):	../tcl/build/$(MACH64)/.built
 
