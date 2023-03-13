@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcllib
 COMPONENT_VERSION=	1.21
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://core.tcl.tk/tcllib/doc/trunk/embedded/index.html
 COMPONENT_SUMMARY=	The standard Tcl library
 COMPONENT_FMRI=		tcl/tcllib
@@ -41,10 +41,12 @@ COMPONENT_PREP_ACTION = \
 
 APPS = dtplite nns nnsd nnslog page pt tcldocstrip
 
+# Fix invocation in scripts and rename page to tclpage because of a name clash with a file from SUNWcs:
 COMPONENT_POST_INSTALL_ACTION += \
         (for app in $(APPS); do \
           $(GSED) -i "s:/usr/bin/env tclsh:$(USRBINDIR)/tclsh:" $(PROTO_DIR)$(USRBINDIR)/$$app; \
         done); \
+		$(MV) $(PROTO_DIR)$(USRBINDIR)/{,tcl}page
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/tcl-8
