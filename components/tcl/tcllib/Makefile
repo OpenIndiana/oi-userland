@@ -11,13 +11,14 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 # Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2023, Klaus Ziegler
 #
 
-BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcllib
 COMPONENT_VERSION=	1.21
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://core.tcl.tk/tcllib/doc/trunk/embedded/index.html
 COMPONENT_SUMMARY=	The standard Tcl library
 COMPONENT_FMRI=		tcl/tcllib
@@ -38,17 +39,12 @@ COMPONENT_PREP_ACTION = \
            mv "$$i" "$${mandir}/$${manbase}.1t"; \
          done)
 
-CONFIGURE_BINDIR.32 =  $(CONFIGURE_PREFIX)/bin/$(MACH32)
-
-CONFIGURE_OPTIONS.64	+= --with-tclsh=$(USRBINDIR64)/tclsh
-
 APPS = dtplite nns nnsd nnslog page pt tcldocstrip
 
 COMPONENT_POST_INSTALL_ACTION += \
         (for app in $(APPS); do \
-          $(GSED) -i "s:/usr/bin/env tclsh:$(USRBINDIR.$(BITS))/tclsh:" $(PROTO_DIR)$(USRBINDIR)/$(MACH$(BITS))/$$app; \
+          $(GSED) -i "s:/usr/bin/env tclsh:$(USRBINDIR)/tclsh:" $(PROTO_DIR)$(USRBINDIR)/$$app; \
         done); \
-        $(MV) $(PROTO_DIR)$(USRBINDIR)/$(MACH$(BITS))/{,tcl}page
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/tcl-8
