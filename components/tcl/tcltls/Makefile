@@ -19,8 +19,9 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2023 Klaus Ziegler
 #
-BUILD_BITS= 32_and_64
+
 USE_OPENSSL11= no
 USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
@@ -28,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		tcltls
 COMPONENT_MAJOR_VERSION= 1.6
 COMPONENT_MINOR_VERSION= 7
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_SUMMARY=	TCL bindings for OpenSSL
 COMPONENT_PROJECT_URL=	https://core.tcl-lang.org/tcltls
@@ -45,18 +46,16 @@ include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
 
-CONFIGURE_ENV += $(CONFIGURE_ENV.$(BITS))
-CONFIGURE_ENV.64 +=	MACH64DIR="$(MACH64)"
-CONFIGURE_ENV.32 +=	MACH32DIR="$(MACH32)"
-
 CONFIGURE_OPTIONS += --with-tclinclude=/usr/include
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-threads
-CONFIGURE_OPTIONS += --with-tcl=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS.64 += --enable-64bit
-CONFIGURE_OPTIONS.64 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/$(MACH64)
-CONFIGURE_OPTIONS.32 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib
+CONFIGURE_OPTIONS += --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))"
+CONFIGURE_OPTIONS += --enable-64bit
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/$(MACH64)
 CONFIGURE_OPTIONS += CPPFLAGS="-I$(OPENSSL_PREFIX)/include -I/usr/include/odbc"
+ifeq ($(strip $(MACH)),sparc)
+CONFIGURE_OPTIONS += --enable-64bit-vis
+endif
 
 COMPONENT_TEST_TARGETS= test
 COMPONENT_TEST_TRANSFORMS= \
