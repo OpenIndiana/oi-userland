@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		scfdot
 COMPONENT_VERSION=	20130322
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_COMMIT_ID=	8b61bb49223b7f576d4f0eac75b74d35c99771ab
 COMPONENT_SUMMARY=	SMF Dependency Graph Generator
 COMPONENT_PROJECT_URL=	https://java.net/projects/scfdot/
@@ -34,19 +34,22 @@ include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_TARGETS= scfdot
-COMPONENT_BUILD_ENV+= CC=$(CC)
+COMPONENT_BUILD_ENV+= CC="$(CC) $(gcc_OPT)"
 
-$(INSTALL_32):	$(BUILD_32)
+$(INSTALL_64):	$(BUILD_64)
 		$(MKDIR) $(PROTOUSRBINDIR)
 
-		$(INSTALL) -m 755 $(BUILD_DIR_32)/scfdot $(PROTOUSRBINDIR)
+		$(INSTALL) -m 755 $(BUILD_DIR_64)/scfdot $(PROTOUSRBINDIR)
 
 		$(TOUCH) $@
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+REQUIRED_PACKAGES += system/library
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
