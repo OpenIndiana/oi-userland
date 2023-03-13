@@ -27,13 +27,8 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file files/libtcl.3 path=usr/share/man/man3/libtcl.3
 
-file path=usr/bin/$(MACH32)/tclsh$(COMPONENT_MINOR_VERSION)
-file path=usr/bin/$(MACH64)/tclsh$(COMPONENT_MINOR_VERSION)
-link path=usr/bin/$(MACH32)/tclsh target=tclsh$(COMPONENT_MINOR_VERSION)
-link path=usr/bin/$(MACH64)/tclsh target=tclsh$(COMPONENT_MINOR_VERSION)
 link path=usr/bin/tclsh target=tclsh$(COMPONENT_MINOR_VERSION)
-link path=usr/bin/tclsh$(COMPONENT_MINOR_VERSION) \
-    target=$(MACH64)/tclsh$(COMPONENT_MINOR_VERSION)
+file path=usr/bin/tclsh$(COMPONENT_MINOR_VERSION)
 
 file path=usr/include/tcl.h
 file path=usr/include/tclDecls.h
@@ -42,14 +37,14 @@ file path=usr/include/tclOODecls.h
 file path=usr/include/tclPlatDecls.h
 file path=usr/include/tclTomMath.h
 file path=usr/include/tclTomMathDecls.h
+# provide symlinks to ease transition.
+link path=usr/lib/tclConfig.sh target=$(MACH64)/tclConfig.sh
+link path=usr/lib/tclooConfig.s target=$(MACH64)/tclooConfig.sh
 file path=usr/lib/$(MACH64)/libtcl$(COMPONENT_MINOR_VERSION).so
 file path=usr/lib/$(MACH64)/libtclstub$(COMPONENT_MINOR_VERSION).a
 file path=usr/lib/$(MACH64)/pkgconfig/tcl.pc
 file path=usr/lib/$(MACH64)/tclConfig.sh mode=0555
 file path=usr/lib/$(MACH64)/tclooConfig.sh mode=0555
-file path=usr/lib/libtcl$(COMPONENT_MINOR_VERSION).so
-file path=usr/lib/libtclstub$(COMPONENT_MINOR_VERSION).a
-file path=usr/lib/pkgconfig/tcl.pc
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/auto.tcl
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/clock.tcl
 file path=usr/lib/tcl$(COMPONENT_MINOR_VERSION)/encoding/ascii.enc
@@ -277,8 +272,6 @@ file path=usr/lib/tcl8/8.4/platform/shell-1.1.4.tm
 file path=usr/lib/tcl8/8.5/msgcat-1.6.1.tm
 file path=usr/lib/tcl8/8.5/tcltest-2.5.5.tm
 file path=usr/lib/tcl8/8.6/http-2.9.8.tm
-file path=usr/lib/tclConfig.sh mode=0555
-file path=usr/lib/tclooConfig.sh mode=0555
 file path=usr/share/man/man1/tclsh.1
 file path=usr/share/man/man1t/Tcl.1t
 file path=usr/share/man/man1t/after.1t
