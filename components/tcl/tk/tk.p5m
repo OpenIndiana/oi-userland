@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
+# Copyright (c) 2023, Klaus Ziegler
 #
 
 set name=pkg.fmri \
@@ -33,19 +34,9 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)
-depend type=require fmri=pkg:/runtime/tcl-8@$(IPS_COMPONENT_VERSION)
 
-link path=usr/bin/$(MACH32)/wish target=wish$(COMPONENT_MAJOR_VERSION)
-# To avoid a flag-day when updating Tcl & Tk, bypass here and use a manual
-# dependency below.
-file path=usr/bin/$(MACH32)/wish$(COMPONENT_MAJOR_VERSION) \
-    pkg.depend.bypass-generate=.*libtcl.*
-link path=usr/bin/$(MACH64)/wish target=wish$(COMPONENT_MAJOR_VERSION)
-file path=usr/bin/$(MACH64)/wish$(COMPONENT_MAJOR_VERSION) \
-    pkg.depend.bypass-generate=.*libtcl.*
 link path=usr/bin/wish target=wish$(COMPONENT_MAJOR_VERSION)
-link path=usr/bin/wish$(COMPONENT_MAJOR_VERSION) \
-    target=$(MACH64)/wish$(COMPONENT_MAJOR_VERSION)
+file path=usr/bin/wish$(COMPONENT_MAJOR_VERSION)
 file path=usr/include/tk.h
 file path=usr/include/tkDecls.h
 file path=usr/include/tkPlatDecls.h
@@ -55,11 +46,8 @@ link path=usr/lib/$(MACH64)/libtk8.5.so \
 file path=usr/lib/$(MACH64)/libtkstub$(COMPONENT_MAJOR_VERSION).a
 file path=usr/lib/$(MACH64)/pkgconfig/tk.pc
 file path=usr/lib/$(MACH64)/tk8.6/pkgIndex.tcl
+link path=usr/lib/tkConfig.sh target=$(MACH64)/tkConfig.sh
 file path=usr/lib/$(MACH64)/tkConfig.sh
-file path=usr/lib/libtk$(COMPONENT_MAJOR_VERSION).so mode=0555
-link path=usr/lib/libtk8.5.so target=libtk$(COMPONENT_MAJOR_VERSION).so
-file path=usr/lib/libtkstub$(COMPONENT_MAJOR_VERSION).a
-file path=usr/lib/pkgconfig/tk.pc
 file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/bgerror.tcl
 file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/button.tcl
 file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/choosedir.tcl
@@ -196,7 +184,6 @@ file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/obsolete.tcl
 file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/optMenu.tcl
 file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/palette.tcl
 file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/panedwindow.tcl
-file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/pkgIndex.tcl
 file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/safetk.tcl
 file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/scale.tcl
 file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/scrlbar.tcl
@@ -233,7 +220,6 @@ file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/ttk/winTheme.tcl
 file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/ttk/xpTheme.tcl
 file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/unsupported.tcl
 file path=usr/lib/tk$(COMPONENT_MAJOR_VERSION)/xmfbox.tcl
-file path=usr/lib/tkConfig.sh
 file path=usr/share/man/man1/wish.1
 file path=usr/share/man/man1t/bell.1t
 file path=usr/share/man/man1t/bind.1t
