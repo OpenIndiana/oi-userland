@@ -24,11 +24,7 @@
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 #
 
-BUILD_BITS=64
-
 include ../../../make-rules/shared-macros.mk
-
-GCC_VERSION= 10
 
 COMPONENT_NAME= sg3_utils
 COMPONENT_VERSION= 1.46
@@ -59,18 +55,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
-# common targets
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(TEST_64)
-
-# build dependency
-REQUIRED_PACKAGES += developer/gcc-10
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
-
