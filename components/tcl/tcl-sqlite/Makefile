@@ -22,12 +22,11 @@
 # Copyright (c) 2020 Michal Nowak
 #
 
-BUILD_BITS=			32_and_64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME			= tcl-sqlite
 COMPONENT_VERSION		= 3.30.1
+COMPONENT_REVISIOn		= 1
 TARBALL_VERSION			= 3300100
 COMPONENT_SUMMARY		= SQL database engine library - tcl files
 COMPONENT_SRC			= sqlite-autoconf-$(TARBALL_VERSION)
@@ -58,9 +57,9 @@ CFLAGS			+= -DSQLITE_ENABLE_STAT2
 CONFIGURE_SCRIPT=       $(SOURCE_DIR)/tea/configure
 
 CONFIGURE_OPTIONS	+= --enable-shared
-CONFIGURE_OPTIONS.32	+= --with-tcl="/usr/lib"
-CONFIGURE_OPTIONS.64	+= --with-tcl="/usr/lib/$(MACH64)"
-CONFIGURE_OPTIONS.64	+= LIBS="-m64"
+CONFIGURE_OPTIONS	+= --enable-threads
+CONFIGURE_OPTIONS	+= --enable-64bit
+CONFIGURE_OPTIONS	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
