@@ -43,7 +43,8 @@ PYTHON_SCRIPTS +=	$(USRSHAREDIR)/system-config-printer/applet.py
 # Move the applet
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTOUSRLIBDIR)/system-config-printer ; \
-	$(MV) $(PROTOUSRBINDIR)/system-config-printer-applet $(PROTOUSRLIBDIR)/system-config-printer ;
+	$(MV) $(PROTOUSRBINDIR)/system-config-printer-applet $(PROTOUSRLIBDIR)/system-config-printer ; \
+	$(GSED) -i -e 's?\/usr\/bin\/python3?\/usr\/bin\/python$(PYTHON_VERSION)?' $(PROTO_DIR)/usr/share/system-config-printer/system-config-printer.py ;
 
 # Remove pyc files we do not want to distribute
 COMPONENT_POST_INSTALL_ACTION += \
