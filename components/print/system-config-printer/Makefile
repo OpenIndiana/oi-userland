@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		system-config-printer
 HUMAN_VERSION =			1.5.18
 COMPONENT_VERSION =		2.30.0
-COMPONENT_REVISION =		6
+COMPONENT_REVISION =		7
 COMPONENT_FMRI =		print/cups/system-config-printer
 COMPONENT_SUMMARY =		Print Manager for CUPS
 COMPONENT_CLASSIFICATION =	System/Administration and Configuration
