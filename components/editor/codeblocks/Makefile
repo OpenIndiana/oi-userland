@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         codeblocks
 COMPONENT_VERSION=      20.3
 HUMAN_VERSION=          20.03
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=         editor/codeblocks
 COMPONENT_SUMMARY=      A fast and lightweight C/C++ IDE
@@ -35,7 +35,6 @@ COMPONENT_LICENSE=      GPLv2
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-GCC_VERSION=10
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
