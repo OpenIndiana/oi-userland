@@ -1314,21 +1314,13 @@ COMPONENT_HOOK ?=	echo $(COMPONENT_NAME) $(COMPONENT_VERSION)
 component-hook:
 	@$(COMPONENT_HOOK)
 
-# Add default dependency to SUNWcs
-REQUIRED_PACKAGES += SUNWcs
-
-# Add default dependency to shell/ksh93 which has been separated from SUNWcs
-REQUIRED_PACKAGES += shell/ksh93
+# We need shell/ksh93 to be able to run scripts in the tools directory
+USERLAND_REQUIRED_PACKAGES += shell/ksh93
 
 #
 # Packages with tools that are required to build Userland components
 #
 USERLAND_REQUIRED_PACKAGES += metapackages/build-essential
-
-# Only a default dependency if component being built produces binaries.
-ifneq ($(strip $(BUILD_BITS)),NO_ARCH)
-REQUIRED_PACKAGES += system/library
-endif
 
 # Define substitution rules for some packages.
 # Such package names may change and would be better defined with a macro to

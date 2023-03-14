@@ -158,7 +158,7 @@ ifeq   ($(strip $(BUILD_STYLE)),meson)
 configure:	$(CONFIGURE_$(MK_BITS))
 endif
 
-REQUIRED_PACKAGES += developer/build/meson
+USERLAND_REQUIRED_PACKAGES += developer/build/meson
 
 # Meson generates build.ninja files for the ninja build tool to run,
 # so we include ninja.mk for the build/install/test rules
