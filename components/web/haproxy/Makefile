@@ -14,7 +14,6 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=			64
 BUILD_STYLE=		justmake
 USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
@@ -23,6 +22,7 @@ COMPONENT_NAME=		haproxy
 COMPONENT_FMRI=		web/loadbalancer/haproxy
 COMPONENT_VERSION_MJR=	2.7
 COMPONENT_VERSION_MNR=  4
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	$(COMPONENT_VERSION_MJR).$(COMPONENT_VERSION_MNR)
 COMPONENT_SUMMARY=	A reliable, high performance TCP/HTTP load balancer
 COMPONENT_PROJECT_URL=	https://www.haproxy.org/
@@ -59,7 +59,11 @@ COMPONENT_BUILD_ARGS +=	USE_LUA=1
 COMPONENT_BUILD_ARGS +=	LUA_LIB_NAME=lua5.3
 COMPONENT_BUILD_ARGS +=	LUA_INC="$(USRINCDIR)/lua5.3"
 COMPONENT_BUILD_ARGS +=	ARCH=64
+ifeq ($(strip $(MACH)),i386)
 COMPONENT_BUILD_ARGS +=	CPU=x86_64
+else
+COMPONENT_BUILD_ARGS +=	CPU=ultrasparc
+endif
 
 COMPONENT_INSTALL_ARGS +=	$(COMPONENT_BUILD_ARGS)
 
@@ -69,11 +73,11 @@ COMPONENT_POST_INSTALL_ACTION += ( \
 	$(CP) admin/halog/halog $(PROTOUSRSBINDIR) )
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
