@@ -13,12 +13,11 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= chmlib
 COMPONENT_VERSION= 0.40
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= A library for reading Microsoft .CHM files
 COMPONENT_PROJECT_URL = https://www.jedrea.com/chmlib/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
