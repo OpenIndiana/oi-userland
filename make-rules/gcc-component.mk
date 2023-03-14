@@ -193,11 +193,6 @@ COMPONENT_TEST_TARGETS = mail-report.log
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
-# Common dependencies
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
-
 # Required by the test suite
 TEST_REQUIRED_PACKAGES += developer/test/dejagnu
 TEST_REQUIRED_PACKAGES += developer/build/autoconf-archive

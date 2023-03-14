@@ -112,4 +112,5 @@ $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
-REQUIRED_PACKAGES += developer/build/ninja
+
+USERLAND_REQUIRED_PACKAGES += developer/build/ninja

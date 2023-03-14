@@ -195,7 +195,7 @@ $(MANIFEST_BASE)-%.font-transforms: %.p5m
 	-p $(PROTO_DIR) -m $< > $@ || ( rm $@ ; exit 1 )
 
 # Package containing fc-scan used in generate_font_metadata.pl
-REQUIRED_PACKAGES	+= system/library/fontconfig
+USERLAND_REQUIRED_PACKAGES += system/library/fontconfig
 # Package containing $(MKFONTSCALE) & $(MKFONTDIR)
-REQUIRED_PACKAGES	+= x11/font-utilities
+USERLAND_REQUIRED_PACKAGES += x11/font-utilities
 

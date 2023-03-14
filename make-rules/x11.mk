@@ -161,6 +161,6 @@ PKG_MACROS += X11PKGVERS=$(PKG_X11_VERSION)
 #
 # Default build dependencies
 #
-REQUIRED_PACKAGES += x11/header/x11-protocols
-REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
+USERLAND_REQUIRED_PACKAGES += x11/header/x11-protocols
+USERLAND_REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
 

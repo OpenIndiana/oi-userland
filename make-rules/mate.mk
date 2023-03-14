@@ -59,8 +59,8 @@ endif
 
 # Default build dependencies
 ifeq   ($(strip $(BUILD_STYLE)),configure)
-REQUIRED_PACKAGES += developer/build/autoconf
+USERLAND_REQUIRED_PACKAGES += developer/build/autoconf
 endif
-REQUIRED_PACKAGES += developer/build/pkg-config
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
-REQUIRED_PACKAGES += library/desktop/mate/mate-common
+USERLAND_REQUIRED_PACKAGES += developer/build/pkg-config
+USERLAND_REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+USERLAND_REQUIRED_PACKAGES += library/desktop/mate/mate-common
