@@ -65,10 +65,7 @@ endif
 
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/libtool-drop
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/ignore-libs
-
-ifneq ($(GCC_ROOT), /usr/gcc/4.9)
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/ignore-gcc-usr-lib
-endif
 
 LICENSE_TRANSFORMS =		$(WS_TOP)/transforms/license-changes
 
