@@ -97,6 +97,7 @@ CMAKE_ENV += FFLAGS="$(F77FLAGS)"
 CMAKE_ENV += FCFLAGS="$(FCFLAGS)"
 CMAKE_ENV += LDFLAGS="$(LDFLAGS)"
 CMAKE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
+CMAKE_ENV += PATH="$(PATH)"
 
 # Rewrite absolute source-code paths into relative for ccache, so that any
 # workspace with a shared CCACHE_DIR can benefit when compiling a component
