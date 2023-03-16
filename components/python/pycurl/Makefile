@@ -22,58 +22,38 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2023, Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
+BUILD_STYLE=setup.py
+TEST_STYLE=none
+OPENSSL_DEFAULT= 1.1
+
 COMPONENT_NAME=		pycurl
-COMPONENT_VERSION=	7.44.1
+COMPONENT_VERSION=	7.45.2
 COMPONENT_PROJECT_URL=	http://pycurl.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:5bcef4d988b74b99653602101e17d8401338d596b9234d263c728a0c3df003e8
+	sha256:5730590be0271364a5bddd9e245c9cc0fb710c4cbacbdd95264a3122d23224ca
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/pycurl
 
-PYTHON_VERSIONS=	$(PYTHON_VERSIONS_ALL)
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # to make sure that the docs get installed in the right place.
 PYTHON_DATA = /usr
 
-# pycurl can't auto-detect the backend in use
-COMPONENT_BUILD_ENV += PYCURL_SSL_LIBRARY=openssl
-COMPONENT_INSTALL_ENV += PYCURL_SSL_LIBRARY=openssl
+# force pycurl to use openssl-1.1, with above OPENSSL_DEFAULT macro.
+PYTHON_ENV += CPPFLAGS="$(CPPFLAGS) -I$(OPENSSL_PREFIX)/include"
+PYTHON_ENV += LDFLAGS="$(LDFLAGS) -L$(OPENSSL_PREFIX)/lib/$(MACH64) -R$(OPENSSL_PREFIX)/lib/$(MACH64)"
 
 ASLR_MODE=	$(ASLR_NOT_APPLICABLE)
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
-COMPONENT_TEST_CMD=	$(GMAKE) test
-COMPONENT_TEST_ARGS=
-
-# Test requires bottle and vsftpd which haven't been integrated yet.
-test:		$(TEST_32_and_64)
-
-# Test suite dependency
-REQUIRED_PACKAGES += library/python/nose
-REQUIRED_PACKAGES += library/python/nose-27
-REQUIRED_PACKAGES += library/python/nose-35
-REQUIRED_PACKAGES += library/python/nose-37
-REQUIRED_PACKAGES += library/python/nose-39
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl

@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2021 <contributor>
+# Copyright 2023 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,35 +23,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python2.7/vendor-packages/64/pycurl.so
-file path=usr/lib/python2.7/vendor-packages/curl/__init__.py
-file path=usr/lib/python2.7/vendor-packages/pycurl-$(COMPONENT_VERSION)-py2.7.egg-info/PKG-INFO
-file path=usr/lib/python2.7/vendor-packages/pycurl-$(COMPONENT_VERSION)-py2.7.egg-info/SOURCES.txt
-file path=usr/lib/python2.7/vendor-packages/pycurl-$(COMPONENT_VERSION)-py2.7.egg-info/dependency_links.txt
-file path=usr/lib/python2.7/vendor-packages/pycurl-$(COMPONENT_VERSION)-py2.7.egg-info/top_level.txt
-file path=usr/lib/python2.7/vendor-packages/pycurl-7.43.0.2-py2.7.egg-info
-file path=usr/lib/python2.7/vendor-packages/pycurl.so
-file path=usr/lib/python3.5/vendor-packages/curl/__init__.py
-file path=usr/lib/python3.5/vendor-packages/pycurl-$(COMPONENT_VERSION)-py3.5.egg-info/PKG-INFO
-file path=usr/lib/python3.5/vendor-packages/pycurl-$(COMPONENT_VERSION)-py3.5.egg-info/SOURCES.txt
-file path=usr/lib/python3.5/vendor-packages/pycurl-$(COMPONENT_VERSION)-py3.5.egg-info/dependency_links.txt
-file path=usr/lib/python3.5/vendor-packages/pycurl-$(COMPONENT_VERSION)-py3.5.egg-info/top_level.txt
-file path=usr/lib/python3.5/vendor-packages/pycurl-7.43.0.2-py3.5.egg-info
-file path=usr/lib/python3.5/vendor-packages/pycurl.cpython-35m.so
-file path=usr/lib/python3.7/vendor-packages/curl/__init__.py
-file path=usr/lib/python3.7/vendor-packages/pycurl-$(COMPONENT_VERSION)-py3.7.egg-info/PKG-INFO
-file path=usr/lib/python3.7/vendor-packages/pycurl-$(COMPONENT_VERSION)-py3.7.egg-info/SOURCES.txt
-file path=usr/lib/python3.7/vendor-packages/pycurl-$(COMPONENT_VERSION)-py3.7.egg-info/dependency_links.txt
-file path=usr/lib/python3.7/vendor-packages/pycurl-$(COMPONENT_VERSION)-py3.7.egg-info/top_level.txt
-file path=usr/lib/python3.7/vendor-packages/pycurl-7.43.0.2-py3.7.egg-info
-file path=usr/lib/python3.7/vendor-packages/pycurl.cpython-37m.so
-file path=usr/lib/python3.9/vendor-packages/curl/__init__.py
-file path=usr/lib/python3.9/vendor-packages/pycurl-$(COMPONENT_VERSION)-py3.9.egg-info/PKG-INFO
-file path=usr/lib/python3.9/vendor-packages/pycurl-$(COMPONENT_VERSION)-py3.9.egg-info/SOURCES.txt
-file path=usr/lib/python3.9/vendor-packages/pycurl-$(COMPONENT_VERSION)-py3.9.egg-info/dependency_links.txt
-file path=usr/lib/python3.9/vendor-packages/pycurl-$(COMPONENT_VERSION)-py3.9.egg-info/top_level.txt
-file path=usr/lib/python3.9/vendor-packages/pycurl-7.43.0.2-py3.9.egg-info
-file path=usr/lib/python3.9/vendor-packages/pycurl.cpython-39.so
+file path=usr/lib/python$(PYVER)/vendor-packages/curl/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycurl-$(HUMAN_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/pycurl-$(HUMAN_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/pycurl-$(HUMAN_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/pycurl-$(HUMAN_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/pycurl.so
 file path=usr/share/doc/pycurl/AUTHORS
 file path=usr/share/doc/pycurl/COPYING-LGPL
 file path=usr/share/doc/pycurl/COPYING-MIT
@@ -84,3 +62,9 @@ file path=usr/share/doc/pycurl/examples/sfquery.py
 file path=usr/share/doc/pycurl/examples/smtp.py
 file path=usr/share/doc/pycurl/examples/ssh_keyfunction.py
 file path=usr/share/doc/pycurl/examples/xmlrpc_curl.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
