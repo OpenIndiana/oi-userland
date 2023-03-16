@@ -13,9 +13,9 @@
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2020, 2021 Andreas Wacknitz
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64_and_32
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
@@ -23,6 +23,7 @@ COMPONENT_NAME=         pango
 COMPONENT_VERSION_MAJOR=	1
 COMPONENT_VERSION_MINOR=	50
 COMPONENT_VERSION_MICRO=	14
+COMPONENT_REVISION=	1
 COMPONENT_VERSION_DL=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
 COMPONENT_VERSION=      $(COMPONENT_VERSION_DL).$(COMPONENT_VERSION_MICRO)
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
@@ -40,26 +41,14 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-CONFIGURE_OPTIONS += -Dinstall-tests=true
-
-CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
-
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-COMPONENT_POST_INSTALL_ACTION.32 = ( $(RM) -fr $(PROTO_DIR)/etc/pango && $(MKDIR) $(PROTO_DIR)/etc/pango &&\
-	$(ENV) LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib \
-	$(PROTO_DIR)/usr/bin/pango-querymodules \
-	  $(PROTO_DIR)/usr/lib/pango/*/modules/*.so   | sed -e "s:$(PROTO_DIR)::" \
-	  > $(PROTO_DIR)/etc/pango/pango.modules )
-
-COMPONENT_POST_INSTALL_ACTION.64 = ( $(RM) -fr $(PROTO_DIR)/etc/$(MACH64)/pango && $(MKDIR) $(PROTO_DIR)/etc/$(MACH64)/pango &&\
+COMPONENT_POST_INSTALL_ACTION = ( $(RM) -fr $(PROTO_DIR)/etc/$(MACH64)/pango && $(MKDIR) $(PROTO_DIR)/etc/$(MACH64)/pango &&\
 	$(ENV) LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64) \
 	$(PROTO_DIR)/usr/bin/$(MACH64)/pango-querymodules \
 	  $(PROTO_DIR)/usr/lib/$(MACH64)/pango/*/modules/*.so | sed -e "s:$(PROTO_DIR)::" \
 	  > $(PROTO_DIR)/etc/$(MACH64)/pango/pango.modules )
-
-COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
 
 # For test suites to pass
 unexport SHELLOPTS
