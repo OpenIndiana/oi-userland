@@ -12,16 +12,15 @@
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2019 Michal Nowak
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64_and_32
-USE_COMMON_TEST_MASTER= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fribidi
 COMPONENT_VERSION=	1.0.12
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Free Implementation of the Unicode Bidirectional Algorithm
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -31,6 +30,7 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_V
 COMPONENT_FMRI=		library/fribidi
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 

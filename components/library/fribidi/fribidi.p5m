@@ -12,6 +12,7 @@
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2019 Michal Nowak
+# Copyright 2023 Niklas Poslovski
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -24,10 +25,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# We don't want 32-bit binaries:
-<transform file path=.*/bin/$(MACH32)/.+ -> drop>
-
-file path=usr/bin/$(MACH32)/fribidi
 file path=usr/bin/fribidi
 file path=usr/include/fribidi/fribidi-arabic.h
 file path=usr/include/fribidi/fribidi-begindecls.h
@@ -55,10 +52,6 @@ link path=usr/lib/$(MACH64)/libfribidi.so target=libfribidi.so.0.4.0
 link path=usr/lib/$(MACH64)/libfribidi.so.0 target=libfribidi.so.0.4.0
 file path=usr/lib/$(MACH64)/libfribidi.so.0.4.0
 file path=usr/lib/$(MACH64)/pkgconfig/fribidi.pc
-link path=usr/lib/libfribidi.so target=libfribidi.so.0.4.0
-link path=usr/lib/libfribidi.so.0 target=libfribidi.so.0.4.0
-file path=usr/lib/libfribidi.so.0.4.0
-file path=usr/lib/pkgconfig/fribidi.pc
 file path=usr/share/man/man3/fribidi_charset_to_unicode.3
 file path=usr/share/man/man3/fribidi_debug_status.3
 file path=usr/share/man/man3/fribidi_get_bidi_type.3
