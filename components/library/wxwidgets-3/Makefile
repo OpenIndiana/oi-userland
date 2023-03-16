@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wxwidgets-3
 COMPONENT_VERSION=      3.1.5
-COMPONENT_REVISION=     5
+COMPONENT_REVISION=     6
 COMPONENT_SUMMARY=      wxWidgets - Cross-Platform GUI Library
 COMPONENT_PROJECT_URL=  https://www.wxwidgets.org/
 COMPONENT_SRC_NAME=     wxWidgets
