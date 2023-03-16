@@ -12,25 +12,25 @@
 #
 # Copyright 2014-2017, Aurelien Larcher.  All rights reserved.
 # Copyright 2019, Michal Nowak
+# Copyright 2023, Niklas Poslovski
 #
 
-BUILD_BITS= 64_and_32
 BUILD_STYLE= cmake
-USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphite2
 COMPONENT_VERSION=	1.3.14
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		library/c++/graphite2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=	Graphite2 - Library for rendering non-roman scripts
-COMPONENT_PROJECT_URL=	http://graphite.sil.org
+COMPONENT_PROJECT_URL=	https://scripts.sil.org/cms/scripts/page.php?site_id=projects&item_id=graphite_home
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	sha256:f99d1c13aa5fa296898a181dff9b82fb25f6cc0933dbaa7a475d8109bd54209d
 COMPONENT_ARCHIVE_URL=	https://github.com/silnrsi/graphite/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
