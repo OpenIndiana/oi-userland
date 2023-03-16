@@ -10,12 +10,14 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hicolor-icon-theme
 COMPONENT_VERSION=      0.17
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://freedesktop.org/wiki/Software/icon-theme/
 COMPONENT_SUMMARY=      GNOME Hi Color Icon Theme
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,18 +30,8 @@ COMPONENT_FMRI=	gnome/theme/hicolor-icon-theme
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
