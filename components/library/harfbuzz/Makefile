@@ -23,16 +23,16 @@
 # Copyright (c) 2015-2018, Aurelien Larcher. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2021-2023, Andreas Wacknitz
+# Copyright (c) 2023, Niklas Poslovski
 #
 
-BUILD_BITS= 64_and_32
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         harfbuzz
 COMPONENT_VERSION=      7.1.0
 COMPONENT_FMRI=         library/c++/harfbuzz
-COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine. 
+COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine.
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/HarfBuzz/
@@ -47,13 +47,9 @@ include $(WS_MAKE_RULES)/common.mk
 PATH=$(PATH.gnu)
 
 # We want graphite2 support:
-CONFIGURE_OPTIONS	 += -Dgraphite=enabled
-# Creating documentation fails:
-CONFIGURE_OPTIONS	 += -Ddocs=disabled
-# We don't have gobject-introspection for 32-bit:
-CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
+CONFIGURE_OPTIONS += -Dgraphite=enabled
 # Building benchmark fails:
-CONFIGURE_OPTIONS.64 += -Dbenchmark=disabled
+CONFIGURE_OPTIONS += -Dbenchmark=disabled
 
 LDFLAGS += -lm
 
