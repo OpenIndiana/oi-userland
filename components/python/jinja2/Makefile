@@ -18,10 +18,12 @@
 
 BUILD_BITS=NO_ARCH
 BUILD_STYLE=setup.py
+TEST_STYLE=setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Jinja2
 COMPONENT_VERSION=	3.0.3
+COMPONENT_REVISION=	1
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_FMRI=		library/python/jinja2
 COMPONENT_SUMMARY=	Fast and easy to use stand-alone template engine
@@ -61,5 +63,5 @@ REQUIRED_PACKAGES += library/python/sortedcontainers-37
 REQUIRED_PACKAGES += library/python/sortedcontainers-39
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += library/python/markupsafe
+PYTHON_REQUIRED_PACKAGES += runtime/python
