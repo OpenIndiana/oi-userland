@@ -18,12 +18,13 @@
 
 BUILD_BITS=NO_ARCH
 BUILD_STYLE=setup.py
-TEST_STYLE=setup.py
+TEST_STYLE=pytest
+USE_COMMON_TEST_MASTER=yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Jinja2
 COMPONENT_VERSION=	3.0.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_FMRI=		library/python/jinja2
 COMPONENT_SUMMARY=	Fast and easy to use stand-alone template engine
@@ -44,23 +45,18 @@ COMPONENT_TEST_DIR =	$(SOURCE_DIR)/tests
 COMPONENT_TEST_CMD =	$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =
 
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/passed/ {gsub(\"in.* =*\",\"\"); print $0}'"
+
 # Manually added test dependencies
-REQUIRED_PACKAGES += library/python/flaky-37
-REQUIRED_PACKAGES += library/python/flaky-39
-REQUIRED_PACKAGES += library/python/hypothesis-37
-REQUIRED_PACKAGES += library/python/hypothesis-39
-REQUIRED_PACKAGES += library/python/pluggy-37
-REQUIRED_PACKAGES += library/python/pluggy-39
-REQUIRED_PACKAGES += library/python/py-37
-REQUIRED_PACKAGES += library/python/py-39
-REQUIRED_PACKAGES += library/python/pytest-37
-REQUIRED_PACKAGES += library/python/pytest-39
-REQUIRED_PACKAGES += library/python/pytest-benchmark-37
-REQUIRED_PACKAGES += library/python/pytest-benchmark-39
-REQUIRED_PACKAGES += library/python/pytest-reporter-37
-REQUIRED_PACKAGES += library/python/pytest-reporter-39
-REQUIRED_PACKAGES += library/python/sortedcontainers-37
-REQUIRED_PACKAGES += library/python/sortedcontainers-39
+TEST_REQUIRED_PACKAGES.python += library/python/flaky
+TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
+TEST_REQUIRED_PACKAGES.python += library/python/pluggy
+TEST_REQUIRED_PACKAGES.python += library/python/py
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-reporter
+TEST_REQUIRED_PACKAGES.python += library/python/sortedcontainers
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/markupsafe
