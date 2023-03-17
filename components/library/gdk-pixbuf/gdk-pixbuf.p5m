@@ -1,42 +1,39 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
 # Copyright 2018 Michal Nowak
+# Copyright 2023 Niklas Poslovski
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license COPYING license='LGPLv2'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 
 # Otherwise `gdk-pixbuf-csource` won't recognize file types
 depend type=require fmri=desktop/shared-mime-info
 
-file path=usr/bin/$(MACH64)/gdk-pixbuf-csource
-file path=usr/bin/$(MACH64)/gdk-pixbuf-pixdata
-file path=usr/bin/$(MACH64)/gdk-pixbuf-query-loaders
-file path=usr/bin/$(MACH64)/gdk-pixbuf-thumbnailer
 file path=usr/bin/gdk-pixbuf-csource
 file path=usr/bin/gdk-pixbuf-pixdata
 file path=usr/bin/gdk-pixbuf-query-loaders
 file path=usr/bin/gdk-pixbuf-thumbnailer
-file path=usr/include/gdk-pixbuf-2.0/gdk-pixbuf-xlib/gdk-pixbuf-xlib.h
-file path=usr/include/gdk-pixbuf-2.0/gdk-pixbuf-xlib/gdk-pixbuf-xlibrgb.h
 file path=usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-animation.h
 file path=usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-autocleanups.h
 file path=usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-core.h
@@ -56,8 +53,6 @@ file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-bmp.so
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-gif.so
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-icns.so
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-ico.so
-file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-jpeg.so
-file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-pnm.so
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-qtif.so
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-tga.so
@@ -65,43 +60,15 @@ file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-tiff.s
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xbm.so
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xpm.so
 file path=usr/lib/$(MACH64)/girepository-1.0/GdkPixbuf-2.0.typelib
-link path=usr/lib/$(MACH64)/libgdk_pixbuf-2.0.so \
-    target=libgdk_pixbuf-2.0.so.0.3612.0
+file path=usr/lib/$(MACH64)/girepository-1.0/GdkPixdata-2.0.typelib
+link path=usr/lib/$(MACH64)/libgdk_pixbuf-2.0.so target=libgdk_pixbuf-2.0.so.0
 link path=usr/lib/$(MACH64)/libgdk_pixbuf-2.0.so.0 \
-    target=libgdk_pixbuf-2.0.so.0.3612.0
-file path=usr/lib/$(MACH64)/libgdk_pixbuf-2.0.so.0.3612.0
-link path=usr/lib/$(MACH64)/libgdk_pixbuf_xlib-2.0.so \
-    target=libgdk_pixbuf_xlib-2.0.so.0.3612.0
-link path=usr/lib/$(MACH64)/libgdk_pixbuf_xlib-2.0.so.0 \
-    target=libgdk_pixbuf_xlib-2.0.so.0.3612.0
-file path=usr/lib/$(MACH64)/libgdk_pixbuf_xlib-2.0.so.0.3612.0
+    target=libgdk_pixbuf-2.0.so.0.4200.10
+file path=usr/lib/$(MACH64)/libgdk_pixbuf-2.0.so.0.4200.10
 file path=usr/lib/$(MACH64)/pkgconfig/gdk-pixbuf-2.0.pc
-file path=usr/lib/$(MACH64)/pkgconfig/gdk-pixbuf-xlib-2.0.pc
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-ani.so
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-bmp.so
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-gif.so
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-icns.so
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-ico.so
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-jpeg.so
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-pnm.so
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-qtif.so
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-tga.so
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-tiff.so
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xbm.so
-file path=usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xpm.so
-link path=usr/lib/libgdk_pixbuf-2.0.so target=libgdk_pixbuf-2.0.so.0.3612.0
-link path=usr/lib/libgdk_pixbuf-2.0.so.0 target=libgdk_pixbuf-2.0.so.0.3612.0
-file path=usr/lib/libgdk_pixbuf-2.0.so.0.3612.0
-link path=usr/lib/libgdk_pixbuf_xlib-2.0.so \
-    target=libgdk_pixbuf_xlib-2.0.so.0.3612.0
-link path=usr/lib/libgdk_pixbuf_xlib-2.0.so.0 \
-    target=libgdk_pixbuf_xlib-2.0.so.0.3612.0
-file path=usr/lib/libgdk_pixbuf_xlib-2.0.so.0.3612.0
-file path=usr/lib/pkgconfig/gdk-pixbuf-2.0.pc
-file path=usr/lib/pkgconfig/gdk-pixbuf-xlib-2.0.pc
 file path=usr/share/gir-1.0/GdkPixbuf-2.0.gir
+file path=usr/share/gir-1.0/GdkPixdata-2.0.gir
+file path=usr/share/locale/ab/LC_MESSAGES/gdk-pixbuf.mo
 file path=usr/share/locale/af/LC_MESSAGES/gdk-pixbuf.mo
 file path=usr/share/locale/ang/LC_MESSAGES/gdk-pixbuf.mo
 file path=usr/share/locale/ar/LC_MESSAGES/gdk-pixbuf.mo
