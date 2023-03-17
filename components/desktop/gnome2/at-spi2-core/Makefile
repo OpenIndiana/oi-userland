@@ -11,23 +11,22 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_STYLE = meson
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         at-spi2-core
-COMPONENT_VERSION=      2.24.1
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      2.46.0
 COMPONENT_SUMMARY=      Assistive Technology Service Provider Interface
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:1e90d064b937aacfe79a96232ac7e63d28d716e85bd9ff4333f865305a959b5b
+	sha256:aa0c86c79f7a8d67bae49a5b7a5ab08430c608cffe6e33bf47a72f41ab03c3d0
 COMPONENT_ARCHIVE_URL=  \
-	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://www.gnome.org
+	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.46/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://www.gnome.org
 COMPONENT_FMRI=         gnome/accessibility/at-spi2-core
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=      LGPLv2
@@ -40,9 +39,6 @@ PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --with-dbus_daemondir=/usr/lib
-CONFIGURE_OPTIONS += --enable-xevie=no
-CONFIGURE_OPTIONS.32 += --enable-introspection=no
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 CONFIGURE_ENV += PERL=$(PERL)
@@ -50,12 +46,11 @@ CONFIGURE_ENV += PERL=$(PERL)
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-$(INSTALL_32):	$(INSTALL_64)
-
 REQUIRED_PACKAGES += library/perl-5/xml-parser
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxtst
