@@ -18,7 +18,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 11.3.0
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
@@ -66,10 +66,20 @@ CONFIGURE_OPTIONS+= enable_frame_pointer=yes
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH64).master
 
+PKG_HARDLINKS += usr/gcc/11/bin/g++
+PKG_HARDLINKS += usr/gcc/11/bin/gcc
+PKG_HARDLINKS += usr/gcc/11/bin/gcc-ar
+PKG_HARDLINKS += usr/gcc/11/bin/gcc-nm
+PKG_HARDLINKS += usr/gcc/11/bin/gcc-ranlib
+PKG_HARDLINKS += usr/gcc/11/bin/gfortran
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += developer/gnu-binutils
+REQUIRED_PACKAGES += developer/linker
 REQUIRED_PACKAGES += library/gc
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/header
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/c-runtime
+REQUIRED_PACKAGES += system/library/math

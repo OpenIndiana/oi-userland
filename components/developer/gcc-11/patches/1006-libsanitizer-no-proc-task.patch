@@ -1,0 +1,14 @@
+Solaris (and illumos) have no /proc/%d/task/.
+https://github.com/llvm/llvm-project/issues/61320
+
+--- gcc-releases-gcc-11.3.0/libsanitizer/sanitizer_common/sanitizer_linux.cpp.orig
++++ gcc-releases-gcc-11.3.0/libsanitizer/sanitizer_common/sanitizer_linux.cpp
+@@ -899,7 +899,7 @@
+ #endif
+ #endif // !SANITIZER_SOLARIS
+ 
+-#if !SANITIZER_NETBSD
++#if !SANITIZER_NETBSD && !SANITIZER_SOLARIS
+ // ThreadLister implementation.
+ ThreadLister::ThreadLister(pid_t pid) : pid_(pid), buffer_(4096) {
+   char task_directory_path[80];
