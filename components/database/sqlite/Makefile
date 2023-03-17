@@ -23,10 +23,13 @@
 #
 
 BUILD_BITS= 64_and_32
+USE_COMMON_TEST_MASTER = no
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
 COMPONENT_VERSION=      3.41.1
+COMPONENT_REVISION=	1
 TARBALL_VERSION=		3410100
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
@@ -63,9 +66,8 @@ CFLAGS			+= -DSQLITE_ENABLE_STAT2
 CFLAGS			+= -DSQLITE_ENABLE_STMT_SCANSTATUS
 CFLAGS			+= -DSQLITE_ENABLE_COLUMN_METADATA
 
-CONFIGURE_OPTIONS.32	+= --with-tcl="$(USRLIBDIR)"
+CONFIGURE_OPTIONS.32	+= --disable-tcl
 CONFIGURE_OPTIONS.64	+= --with-tcl="$(USRLIBDIR64)"
-CONFIGURE_OPTIONS	+= $(CONFIGURE_OPTIONS.$(BITS))
 CONFIGURE_OPTIONS	+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS	+= --disable-static
 CONFIGURE_OPTIONS	+= --enable-readline
@@ -78,17 +80,24 @@ CONFIGURE_OPTIONS	+= --enable-rtree
 CONFIGURE_OPTIONS	+= --enable-threadsafe 
 CONFIGURE_OPTIONS	+= --enable-shared
 
+CONFIGURE_ENV.64 += TCLLIBDIR=$(USRLIBDIR)/tcl8.6/sqlite3/$(MACH64)
+
+# Build and install should be able to find some basic tools like cp, cat, rm, or mkdir.
+COMPONENT_BUILD_ENV += PATH=$(PATH)
+COMPONENT_INSTALL_ENV += PATH=$(PATH)
+
 # Install sqlite3(1) man page
 COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP) $(SOURCE_DIR)/sqlite3.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/
 
 COMPONENT_TEST_TARGETS = test
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 # remove clutter and timings from test results:
 COMPONENT_TEST_TRANSFORMS += \
 	' -n ' \
 	' -e "s/[0-9]* ms//" ' \
 	' -e "s/ in [0-9]*\.[0-9]* seconds//" ' \
 	' -e "s/[0-9]* microseconds per iteration//" ' \
+	' -e "/^fuzzcheck/p" ' \
+	' -e "/^sessionfuzz/p" ' \
 	' -e "/^Time/p" ' \
 	' -e "/^Query/p" ' \
 	' -e "/No /p" ' 
