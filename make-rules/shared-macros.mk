@@ -999,7 +999,7 @@ INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
 
 # OpenSSL macros
-OPENSSL_DEFAULT= 1.0
+OPENSSL_DEFAULT= 1.1
 ifeq ($(strip $(USE_OPENSSL11)),yes)
 OPENSSL_VERSION= 1.1
 PATH.prepend+=$(OPENSSL_BINDIR)
