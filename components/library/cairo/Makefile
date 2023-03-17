@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cairo
 COMPONENT_VERSION=      1.16.0
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_SUMMARY=      Vector graphics library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -35,7 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
-COMPONENT_PREP_ACTION =	( cd $(@D) && libtoolize --force --copy&&\
+COMPONENT_PREP_ACTION =	( cd $(@D) && PATH=$(PATH) libtoolize --force --copy && \
                                       aclocal  -I build && \
                                       gtkdocize &&\
                                       autoheader &&\
