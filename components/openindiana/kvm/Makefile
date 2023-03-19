@@ -61,3 +61,6 @@ install_sparc:
 install_i386:	$(INSTALL_32)
 
 install:	install_$(MACH)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
