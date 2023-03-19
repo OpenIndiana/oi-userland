@@ -10,17 +10,6 @@
  endif()
  
  # Most MPI distributions have some form of mpiexec or mpirun which gives us something we can look for.
---- cmake-3.11.3/Modules/CMakeDetermineSystem.cmake.orig	2018-06-04 19:13:02.536966653 +0000
-+++ cmake-3.11.3/Modules/CMakeDetermineSystem.cmake	2018-06-04 19:17:10.158004981 +0000
-@@ -33,7 +33,7 @@
- 
- # find out on which system cmake runs
- if(CMAKE_HOST_UNIX)
--  find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
-+  find_program(CMAKE_UNAME uname /bin /usr/bin )
-   if(CMAKE_UNAME)
-     if(CMAKE_HOST_SYSTEM_NAME STREQUAL "AIX")
-       exec_program(${CMAKE_UNAME} ARGS -v OUTPUT_VARIABLE _CMAKE_HOST_SYSTEM_MAJOR_VERSION)
 --- cmake-3.11.3/Modules/CMakeDetermineJavaCompiler.cmake.orig	2018-06-04 19:13:02.561764067 +0000
 +++ cmake-3.11.3/Modules/CMakeDetermineJavaCompiler.cmake	2018-06-04 19:16:19.645223465 +0000
 @@ -43,18 +43,9 @@
@@ -139,3 +128,14 @@
              $ENV{GTKMM_BASEPATH}/include
              $ENV{GTKMM_BASEPATH}/lib
              [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]/include
+--- cmake-3.26.0/Modules/CMakeDetermineSystem.cmake.orig	2023-03-14 15:04:14.000000000 +0100
++++ cmake-3.26.0/Modules/CMakeDetermineSystem.cmake	2023-03-19 19:28:16.553347338 +0100
+@@ -33,7 +33,7 @@
+ 
+ # find out on which system cmake runs
+ if(CMAKE_HOST_UNIX)
+-  find_program(CMAKE_UNAME NAMES uname PATHS /bin /usr/bin /usr/local/bin)
++  find_program(CMAKE_UNAME NAMES uname PATHS /bin /usr/bin)
+   if(CMAKE_UNAME)
+     if(CMAKE_HOST_SYSTEM_NAME STREQUAL "AIX")
+       execute_process(COMMAND ${CMAKE_UNAME} -v
