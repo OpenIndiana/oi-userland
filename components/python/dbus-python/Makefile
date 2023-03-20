@@ -12,21 +12,23 @@
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2022 Gary Mills
+# Copyright 2023 Klaus Ziegler
 #
 
 BUILD_BITS= 64
 BUILD_STYLE= setup.py
+TEST_STYLE= pytest
+USE_COMMON_TEST_MASTER= yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dbus-python
-COMPONENT_VERSION=      1.2.18
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      1.3.2
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/DBusBindings/
 COMPONENT_SUMMARY=      Python bindings for D-Bus
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:92bdd1e68b45596c833307a5ff4b217ee6929a1502f5341bae28fd120acf7260
+COMPONENT_ARCHIVE_HASH= sha256:ad67819308618b5069537be237f8e68ca1c7fcc95ee4a121fe6845b1418248f8
 COMPONENT_ARCHIVE_URL=  https://dbus.freedesktop.org/releases/dbus-python/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/python/python-dbus
 COMPONENT_CLASSIFICATTION= Development/Python
@@ -35,35 +37,27 @@ COMPONENT_LICENSE_FILE= COPYING
 
 PATH=$(PATH.gnu)
 
-PYTHON_VERSIONS = $(PYTHON3_VERSIONS)
-
 include $(WS_MAKE_RULES)/common.mk
 
-# Rename SO files to cpython names
-CPIA.3.5 = ( cd $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES) && \
-	$(MV) _dbus_bindings.so _dbus_bindings.cpython-35m.so && \
-	$(MV) _dbus_glib_bindings.so _dbus_glib_bindings.cpython-35m.so ) ;
-CPIA.3.7 = ( cd $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES) && \
-	$(MV) _dbus_bindings.so _dbus_bindings.cpython-37m.so && \
-	$(MV) _dbus_glib_bindings.so _dbus_glib_bindings.cpython-37m.so ) ;
-CPIA.3.9 = ( cd $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES) && \
-	$(MV) _dbus_bindings.so _dbus_bindings.cpython-39.so && \
-	$(MV) _dbus_glib_bindings.so _dbus_glib_bindings.cpython-39.so ) ;
-COMPONENT_POST_INSTALL_ACTION += $(CPIA.$(PYTHON_VERSION))
+PYTHON_ENV += DBUS_PYTHON_USE_AUTOTOOLS=true
 
-PREFIX=		     build/amd64-$(PYTHON_VERSION)/temp.solaris-2.11-i86pc.64bit-$(PYTHON_VERSION)/prefix
+# Rename SO files to cpython names
+COMPONENT_POST_INSTALL_ACTION += \
+	EXT_SUFFIX=$(shell $(PYTHON) -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))") ; \
+	$(MV) $(PROTO_DIR)$(PYTHON_LIB)/_dbus_bindings.so $(PROTO_DIR)$(PYTHON_LIB)/_dbus_bindings$$EXT_SUFFIX ; \
+	$(MV) $(PROTO_DIR)$(PYTHON_LIB)/_dbus_glib_bindings.so $(PROTO_DIR)$(PYTHON_LIB)/_dbus_glib_bindings$$EXT_SUFFIX ;
 
 # Copy some uninstalled files to make way for symlinks
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTOUSRINCDIR)/dbus-1.0/dbus; \
-	$(CP) $(PREFIX)/include/dbus-1.0/dbus/dbus-python.h \
+	$(CP) $(SOURCE_DIR)/include/dbus/dbus-python.h \
 	$(PROTOUSRINCDIR)/dbus-1.0/dbus/dbus-python.h-$(PYTHON_VERSION) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(MKDIR) $(PROTOUSRLIBDIR)/pkgconfig; \
-	$(MKDIR) $(PROTOUSRLIBDIR)/$(MACH64)/pkgconfig; \
+	$(MKDIR) $(PROTOUSRLIBDIR64)/pkgconfig; \
 	$(GSED) -e 's|^prefix=.*$$|prefix=$(USRDIR)|' \
-	$(PREFIX)/lib/pkgconfig/dbus-python.pc \
-	> $(PROTOUSRLIBDIR)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
+	$(GSED) -e 's|^Version:.*$$|Version: $(COMPONENT_VERSION)|' \
+	$(SOURCE_DIR)/dbus-python.pc.in \
+	> $(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
 
 COMPONENT_TEST_ENV=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 
@@ -76,36 +70,22 @@ COMPONENT_TEST_ARGS=	test-*.py
 COMPONENT_PRE_TEST_ACTION = \
 ( cd $(COMPONENT_TEST_DIR); \
   for F in test-unusable-main-loop.py test-client.py test-p2p.py \
-	test-signals.py test-exception-py2.py; \
+	test-signals.py test-service.py; \
   do \
     test -f $$F && $(MV) $$F $$F-not; \
     true; \
   done )
 
-# Typical results for test target:
-#============================= test session starts ===========================
-#...
-#=============================== warnings summary ============================
-#...
-#======================== 38 passed, 4 warnings in 0.27s =====================
-
-# Added run-time dependencies
-REQUIRED_PACKAGES += runtime/python-35
-REQUIRED_PACKAGES += runtime/python-37
-REQUIRED_PACKAGES += runtime/python-39
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/passed/ {gsub(\"in.* =*\",\"\"); print $0}'"
 
 # Added test dependencies for all python versions
-REQUIRED_PACKAGES += library/python/pytest-35
-REQUIRED_PACKAGES += library/python/pytest-37
-REQUIRED_PACKAGES += library/python/pytest-39
-REQUIRED_PACKAGES += library/python/pytest-benchmark-35
-REQUIRED_PACKAGES += library/python/pytest-benchmark-37
-REQUIRED_PACKAGES += library/python/pytest-benchmark-39
-REQUIRED_PACKAGES += library/python/pyparsing-35
-REQUIRED_PACKAGES += library/python/pyparsing-37
-REQUIRED_PACKAGES += library/python/pyparsing-39
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pyparsing
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
