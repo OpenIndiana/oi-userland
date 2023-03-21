@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		smf-cacert
 COMPONENT_VERSION=	fd7e03f15c6db18ff48df400331e9a3c968d6cc9
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	0.0.1.20170919
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_VERSION).zip
@@ -43,4 +44,5 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += SUNWcs
