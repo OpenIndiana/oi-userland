@@ -13,20 +13,19 @@
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2020 Marco van Wieringen
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS= 32_and_64
-USE_COMMON_TEST_MASTER= no
+BUILD_STYLE = meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gtk+
 COMPONENT_MJR_VERSION=	3.24
-COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).34
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).37
 COMPONENT_SUMMARY=      GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:dbc69f90ddc821b8d1441f00374dc1da4323a2eafa9078e61edbe5eeefa852ec
+COMPONENT_ARCHIVE_HASH= sha256:6745f0b4c053794151fd0f0e2474b077cccff5f83e9dd1bf3d39fe9fe5fb7f57
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.gtk.org/
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
@@ -40,33 +39,15 @@ PATH=$(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include
 
-# fixes possible textiter test failure
-gcc_OPT = -O2
-LD_Z_IGNORE=
-
 # Uses isinf, etc. only available in c99 and newer
 CFLAGS.gcc += -std=gnu11
 
-COMPONENT_PREP_ACTION =	(cd $(@D) && \
-				libtoolize --force && \
-				aclocal -I ./m4 && \
-				gtkdocize && \
-				autoheader && \
-				automake -a -f -c --gnu && \
-				autoconf )
+#COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
-
-CONFIGURE_SCRIPT = $(@D)/configure
-
-CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
-CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
-CONFIGURE_OPTIONS += --enable-explicit-deps=yes
-CONFIGURE_OPTIONS += --enable-cloudprint
-CONFIGURE_OPTIONS.64 += --enable-introspection
-CONFIGURE_OPTIONS += --enable-man
-CONFIGURE_OPTIONS += --disable-glibtest
-CONFIGURE_OPTIONS += --disable-papi
+CONFIGURE_OPTIONS += -Dwayland_backend=false
+CONFIGURE_OPTIONS += -Dintrospection=true
+CONFIGURE_OPTIONS += -Dman=true
+CONFIGURE_OPTIONS += -Dgtk_doc=true
 
 CONFIGURE_ENV    += PERL=$(PERL)
 CONFIGURE_ENV    += PYTHON=$(PYTHON)
@@ -92,9 +73,8 @@ REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += x11/server/xvfb
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += gnome/accessibility/at-spi2-atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/c++/harfbuzz
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/pango
@@ -103,7 +83,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
-REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libepoxy
 REQUIRED_PACKAGES += x11/library/libx11
