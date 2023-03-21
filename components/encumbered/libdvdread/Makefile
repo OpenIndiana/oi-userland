@@ -11,23 +11,22 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libdvdread
-COMPONENT_VERSION=      6.0.1
+COMPONENT_VERSION=      6.1.3
 COMPONENT_FMRI=         library/video/libdvdread
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_SUMMARY=      Library for reading DVD video disks
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-	sha256:28ce4f0063883ca4d37dfd40a2f6685503d679bca7d88d58e04ee8112382d5bd
+	sha256:ce35454997a208cbe50e91232f0e73fb1ac3471965813a13b8730a8f18a15369
 COMPONENT_ARCHIVE_URL=  \
-	http://download.videolan.org/pub/videolan/libdvdread/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	https://download.videolan.org/pub/videolan/libdvdread/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://dvdnav.mplayerhq.hu
 COMPONENT_LICENSE=      GPLv2.0
 COMPONENT_LICENSE_FILE= COPYING
@@ -41,6 +40,7 @@ PATH = $(PATH.gnu)
 COMPONENT_PREP_ACTION= ( cd $(@D); autoreconf -f -i )
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
