@@ -12,9 +12,11 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright (c) 2021 Tim Mooney.  All rights reserved.
+# Copyright 2023 Niklas Poslovski
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -37,6 +39,7 @@ file path=usr/include/libavcodec/codec_desc.h
 file path=usr/include/libavcodec/codec_id.h
 file path=usr/include/libavcodec/codec_par.h
 file path=usr/include/libavcodec/d3d11va.h
+file path=usr/include/libavcodec/defs.h
 file path=usr/include/libavcodec/dirac.h
 file path=usr/include/libavcodec/dv_profile.h
 file path=usr/include/libavcodec/dxva2.h
@@ -44,24 +47,28 @@ file path=usr/include/libavcodec/jni.h
 file path=usr/include/libavcodec/mediacodec.h
 file path=usr/include/libavcodec/packet.h
 file path=usr/include/libavcodec/qsv.h
-file path=usr/include/libavcodec/vaapi.h
 file path=usr/include/libavcodec/vdpau.h
 file path=usr/include/libavcodec/version.h
+file path=usr/include/libavcodec/version_major.h
 file path=usr/include/libavcodec/videotoolbox.h
 file path=usr/include/libavcodec/vorbis_parser.h
 file path=usr/include/libavcodec/xvmc.h
 file path=usr/include/libavdevice/avdevice.h
 file path=usr/include/libavdevice/version.h
+file path=usr/include/libavdevice/version_major.h
 file path=usr/include/libavfilter/avfilter.h
 file path=usr/include/libavfilter/buffersink.h
 file path=usr/include/libavfilter/buffersrc.h
 file path=usr/include/libavfilter/version.h
+file path=usr/include/libavfilter/version_major.h
 file path=usr/include/libavformat/avformat.h
 file path=usr/include/libavformat/avio.h
 file path=usr/include/libavformat/version.h
+file path=usr/include/libavformat/version_major.h
 file path=usr/include/libavutil/adler32.h
 file path=usr/include/libavutil/aes.h
 file path=usr/include/libavutil/aes_ctr.h
+file path=usr/include/libavutil/ambient_viewing_environment.h
 file path=usr/include/libavutil/attributes.h
 file path=usr/include/libavutil/audio_fifo.h
 file path=usr/include/libavutil/avassert.h
@@ -79,7 +86,9 @@ file path=usr/include/libavutil/channel_layout.h
 file path=usr/include/libavutil/common.h
 file path=usr/include/libavutil/cpu.h
 file path=usr/include/libavutil/crc.h
+file path=usr/include/libavutil/csp.h
 file path=usr/include/libavutil/des.h
+file path=usr/include/libavutil/detection_bbox.h
 file path=usr/include/libavutil/dict.h
 file path=usr/include/libavutil/display.h
 file path=usr/include/libavutil/dovi_meta.h
@@ -94,6 +103,7 @@ file path=usr/include/libavutil/film_grain_params.h
 file path=usr/include/libavutil/frame.h
 file path=usr/include/libavutil/hash.h
 file path=usr/include/libavutil/hdr_dynamic_metadata.h
+file path=usr/include/libavutil/hdr_dynamic_vivid_metadata.h
 file path=usr/include/libavutil/hmac.h
 file path=usr/include/libavutil/hwcontext.h
 file path=usr/include/libavutil/hwcontext_cuda.h
@@ -143,39 +153,43 @@ file path=usr/include/libavutil/timestamp.h
 file path=usr/include/libavutil/tree.h
 file path=usr/include/libavutil/twofish.h
 file path=usr/include/libavutil/tx.h
+file path=usr/include/libavutil/uuid.h
 file path=usr/include/libavutil/version.h
 file path=usr/include/libavutil/video_enc_params.h
 file path=usr/include/libavutil/xtea.h
 file path=usr/include/libpostproc/postprocess.h
 file path=usr/include/libpostproc/version.h
+file path=usr/include/libpostproc/version_major.h
 file path=usr/include/libswresample/swresample.h
 file path=usr/include/libswresample/version.h
+file path=usr/include/libswresample/version_major.h
 file path=usr/include/libswscale/swscale.h
 file path=usr/include/libswscale/version.h
-link path=usr/lib/$(MACH64)/libavcodec.so target=libavcodec.so.58.134.100
-link path=usr/lib/$(MACH64)/libavcodec.so.58 target=libavcodec.so.58.134.100
-file path=usr/lib/$(MACH64)/libavcodec.so.58.134.100
-link path=usr/lib/$(MACH64)/libavdevice.so target=libavdevice.so.58.13.100
-link path=usr/lib/$(MACH64)/libavdevice.so.58 target=libavdevice.so.58.13.100
-file path=usr/lib/$(MACH64)/libavdevice.so.58.13.100
-link path=usr/lib/$(MACH64)/libavfilter.so target=libavfilter.so.7.110.100
-link path=usr/lib/$(MACH64)/libavfilter.so.7 target=libavfilter.so.7.110.100
-file path=usr/lib/$(MACH64)/libavfilter.so.7.110.100
-link path=usr/lib/$(MACH64)/libavformat.so target=libavformat.so.58.76.100
-link path=usr/lib/$(MACH64)/libavformat.so.58 target=libavformat.so.58.76.100
-file path=usr/lib/$(MACH64)/libavformat.so.58.76.100
-link path=usr/lib/$(MACH64)/libavutil.so target=libavutil.so.56.70.100
-link path=usr/lib/$(MACH64)/libavutil.so.56 target=libavutil.so.56.70.100
-file path=usr/lib/$(MACH64)/libavutil.so.56.70.100
-link path=usr/lib/$(MACH64)/libpostproc.so target=libpostproc.so.55.9.100
-link path=usr/lib/$(MACH64)/libpostproc.so.55 target=libpostproc.so.55.9.100
-file path=usr/lib/$(MACH64)/libpostproc.so.55.9.100
-link path=usr/lib/$(MACH64)/libswresample.so target=libswresample.so.3.9.100
-link path=usr/lib/$(MACH64)/libswresample.so.3 target=libswresample.so.3.9.100
-file path=usr/lib/$(MACH64)/libswresample.so.3.9.100
-link path=usr/lib/$(MACH64)/libswscale.so target=libswscale.so.5.9.100
-link path=usr/lib/$(MACH64)/libswscale.so.5 target=libswscale.so.5.9.100
-file path=usr/lib/$(MACH64)/libswscale.so.5.9.100
+file path=usr/include/libswscale/version_major.h
+link path=usr/lib/$(MACH64)/libavcodec.so target=libavcodec.so.60.3.100
+link path=usr/lib/$(MACH64)/libavcodec.so.60 target=libavcodec.so.60.3.100
+file path=usr/lib/$(MACH64)/libavcodec.so.60.3.100
+link path=usr/lib/$(MACH64)/libavdevice.so target=libavdevice.so.60.1.100
+link path=usr/lib/$(MACH64)/libavdevice.so.60 target=libavdevice.so.60.1.100
+file path=usr/lib/$(MACH64)/libavdevice.so.60.1.100
+link path=usr/lib/$(MACH64)/libavfilter.so target=libavfilter.so.9.3.100
+link path=usr/lib/$(MACH64)/libavfilter.so.9 target=libavfilter.so.9.3.100
+file path=usr/lib/$(MACH64)/libavfilter.so.9.3.100
+link path=usr/lib/$(MACH64)/libavformat.so target=libavformat.so.60.3.100
+link path=usr/lib/$(MACH64)/libavformat.so.60 target=libavformat.so.60.3.100
+file path=usr/lib/$(MACH64)/libavformat.so.60.3.100
+link path=usr/lib/$(MACH64)/libavutil.so target=libavutil.so.58.2.100
+link path=usr/lib/$(MACH64)/libavutil.so.58 target=libavutil.so.58.2.100
+file path=usr/lib/$(MACH64)/libavutil.so.58.2.100
+link path=usr/lib/$(MACH64)/libpostproc.so target=libpostproc.so.57.1.100
+link path=usr/lib/$(MACH64)/libpostproc.so.57 target=libpostproc.so.57.1.100
+file path=usr/lib/$(MACH64)/libpostproc.so.57.1.100
+link path=usr/lib/$(MACH64)/libswresample.so target=libswresample.so.4.10.100
+link path=usr/lib/$(MACH64)/libswresample.so.4 target=libswresample.so.4.10.100
+file path=usr/lib/$(MACH64)/libswresample.so.4.10.100
+link path=usr/lib/$(MACH64)/libswscale.so target=libswscale.so.7.1.100
+link path=usr/lib/$(MACH64)/libswscale.so.7 target=libswscale.so.7.1.100
+file path=usr/lib/$(MACH64)/libswscale.so.7.1.100
 file path=usr/lib/$(MACH64)/pkgconfig/libavcodec.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libavdevice.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libavfilter.pc
@@ -184,6 +198,8 @@ file path=usr/lib/$(MACH64)/pkgconfig/libavutil.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libpostproc.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libswresample.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libswscale.pc
+file path=usr/share/doc/ffmpeg/bootstrap.min.css
+file path=usr/share/doc/ffmpeg/default.css
 file path=usr/share/doc/ffmpeg/developer.html
 file path=usr/share/doc/ffmpeg/faq.html
 file path=usr/share/doc/ffmpeg/fate.html
@@ -214,29 +230,31 @@ file path=usr/share/doc/ffmpeg/libswscale.html
 file path=usr/share/doc/ffmpeg/mailing-list-faq.html
 file path=usr/share/doc/ffmpeg/nut.html
 file path=usr/share/doc/ffmpeg/platform.html
+file path=usr/share/doc/ffmpeg/style.min.css
 file path=usr/share/ffmpeg/examples/Makefile
 file path=usr/share/ffmpeg/examples/README
+file path=usr/share/ffmpeg/examples/avio_http_serve_files.c
 file path=usr/share/ffmpeg/examples/avio_list_dir.c
-file path=usr/share/ffmpeg/examples/avio_reading.c
+file path=usr/share/ffmpeg/examples/avio_read_callback.c
 file path=usr/share/ffmpeg/examples/decode_audio.c
+file path=usr/share/ffmpeg/examples/decode_filter_audio.c
+file path=usr/share/ffmpeg/examples/decode_filter_video.c
 file path=usr/share/ffmpeg/examples/decode_video.c
-file path=usr/share/ffmpeg/examples/demuxing_decoding.c
+file path=usr/share/ffmpeg/examples/demux_decode.c
 file path=usr/share/ffmpeg/examples/encode_audio.c
 file path=usr/share/ffmpeg/examples/encode_video.c
 file path=usr/share/ffmpeg/examples/extract_mvs.c
 file path=usr/share/ffmpeg/examples/filter_audio.c
-file path=usr/share/ffmpeg/examples/filtering_audio.c
-file path=usr/share/ffmpeg/examples/filtering_video.c
-file path=usr/share/ffmpeg/examples/http_multiclient.c
 file path=usr/share/ffmpeg/examples/hw_decode.c
-file path=usr/share/ffmpeg/examples/metadata.c
-file path=usr/share/ffmpeg/examples/muxing.c
-file path=usr/share/ffmpeg/examples/qsvdec.c
-file path=usr/share/ffmpeg/examples/remuxing.c
-file path=usr/share/ffmpeg/examples/resampling_audio.c
-file path=usr/share/ffmpeg/examples/scaling_video.c
+file path=usr/share/ffmpeg/examples/mux.c
+file path=usr/share/ffmpeg/examples/qsv_decode.c
+file path=usr/share/ffmpeg/examples/qsv_transcode.c
+file path=usr/share/ffmpeg/examples/remux.c
+file path=usr/share/ffmpeg/examples/resample_audio.c
+file path=usr/share/ffmpeg/examples/scale_video.c
+file path=usr/share/ffmpeg/examples/show_metadata.c
+file path=usr/share/ffmpeg/examples/transcode.c
 file path=usr/share/ffmpeg/examples/transcode_aac.c
-file path=usr/share/ffmpeg/examples/transcoding.c
 file path=usr/share/ffmpeg/examples/vaapi_encode.c
 file path=usr/share/ffmpeg/examples/vaapi_transcode.c
 file path=usr/share/ffmpeg/ffprobe.xsd

@@ -11,19 +11,19 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
-BUILD_BITS= 64
+
 USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=      4.4.1
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      6.0
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:8fc9f20ac5ed95115a9e285647add0eedd5cc1a98a039ada14c132452f98ac42
+	sha256:57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082
 COMPONENT_ARCHIVE_URL=  \
 	https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org/
@@ -34,13 +34,6 @@ COMPONENT_FMRI=         video/ffmpeg
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-#Dropped 32-bit build
-#CFLAGS.32 += -fno-rename-registers
-#CFLAGS.32 += -fomit-frame-pointer
-#CFLAGS.32 += -fno-PIC -UPIC 
-#CFLAGS.32 += -mpreferred-stack-boundary=4
-
-CFLAGS += $(CFLAGS.$(BITS))
 CFLAGS += -I/usr/X11/include
 CFLAGS += $(CPP_LARGEFILES)
 
@@ -110,7 +103,7 @@ COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" -e "/^IGNORE/p" '
 # suite, as we use binaries and libraries from $(PROTO_DIR) for tests
 # to reduce issues with all the test binaries not being able to find
 # ffmpeg's libraries.
-test:	install $(TEST_32_and_64)
+test:	install $(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += audio/lame
