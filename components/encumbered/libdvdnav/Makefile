@@ -11,23 +11,22 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libdvdnav
-COMPONENT_VERSION=      6.0.1
+COMPONENT_VERSION=      6.1.1
 COMPONENT_FMRI=         library/video/libdvdnav
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_SUMMARY=      DVD navigation library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-	sha256:e566a396f1950017088bfd760395b0565db44234195ada5413366c9d23926733
+	sha256:c191a7475947d323ff7680cf92c0fb1be8237701885f37656c64d04e98d18d48
 COMPONENT_ARCHIVE_URL=  \
-	http://download.videolan.org/pub/videolan/libdvdnav/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	https://download.videolan.org/pub/videolan/libdvdnav/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://dvdnav.mplayerhq.hu
 COMPONENT_LICENSE=      GPLv2.0
 COMPONENT_LICENSE_FILE= COPYING
@@ -39,6 +38,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH=$(PATH.gnu)
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/video/libdvdread
