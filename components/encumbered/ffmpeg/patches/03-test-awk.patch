@@ -1,70 +1,12 @@
-
-Updated version of Alexander Pyhalov's patch from earlier builds, switches
-all instances of 'awk' to 'gawk' in the FATE test suite.
-
-diff -ur ffmpeg-4.4.1.orig/tests/fate/filter-video.mak ffmpeg-4.4.1/tests/fate/filter-video.mak
---- ffmpeg-4.4.1.orig/tests/fate/filter-video.mak	2021-10-24 15:47:07.000000000 +0000
-+++ ffmpeg-4.4.1/tests/fate/filter-video.mak	2021-10-30 03:21:58.297307078 +0000
-@@ -677,7 +677,7 @@
+diff -Nru ffmpeg-6.0.orig/tests/fate/filter-video.mak ffmpeg-6.0/tests/fate/filter-video.mak
+--- ffmpeg-6.0.orig/tests/fate/filter-video.mak	2023-02-27 21:43:45.000000000 +0100
++++ ffmpeg-6.0/tests/fate/filter-video.mak	2023-03-21 17:37:57.139581873 +0100
+@@ -523,7 +523,7 @@
  tests/pixfmts.mak: TAG = GEN
  tests/pixfmts.mak: ffmpeg$(PROGSSUF)$(EXESUF) | tests
  	$(M)printf "PIXFMTS = " > $@
--	$(Q)$(TARGET_EXEC) $(TARGET_PATH)/$< -pix_fmts list 2> /dev/null | awk 'NR > 8 && /^IO/ { printf $$2 " " }' >> $@
-+	$(Q)$(TARGET_EXEC) $(TARGET_PATH)/$< -pix_fmts list 2> /dev/null | gawk 'NR > 8 && /^IO/ { printf $$2 " " }' >> $@
+-	$(Q)$(TARGET_EXEC) $(TARGET_PATH)/$< -nostdin -pix_fmts list 2> /dev/null | awk 'NR > 8 && /^IO/ { printf $$2 " " }' >> $@
++	$(Q)$(TARGET_EXEC) $(TARGET_PATH)/$< -nostdin -pix_fmts list 2> /dev/null | gawk 'NR > 8 && /^IO/ { printf $$2 " " }' >> $@
  	$(Q)printf "\n" >> $@
  
  RUNNING_PIXFMTS_TESTS := $(filter check fate fate-list fate-filter fate-vfilter fate-filter-pixdesc%,$(MAKECMDGOALS))
-diff -ur ffmpeg-4.4.1.orig/tests/fate-run.sh ffmpeg-4.4.1/tests/fate-run.sh
---- ffmpeg-4.4.1.orig/tests/fate-run.sh	2021-10-24 15:47:07.000000000 +0000
-+++ ffmpeg-4.4.1/tests/fate-run.sh	2021-10-30 03:20:43.642561202 +0000
-@@ -41,7 +41,7 @@
- # $1=value1, $2=value2, $3=threshold
- # prints 0 if absolute difference between value1 and value2 is <= threshold
- compare(){
--    awk "BEGIN { v = $1 - $2; printf ((v < 0 ? -v : v) > $3) }"
-+    gawk "BEGIN { v = $1 - $2; printf ((v < 0 ? -v : v) > $3) }"
- }
- 
- do_tiny_psnr(){
-@@ -159,7 +159,7 @@
-     encfile="${outdir}/${test}.out"
-     cleanfiles="$cleanfiles $encfile"
-     ffmpeg -y "$@" $(target_path $encfile) || return
--    do_md5sum $encfile | awk '{print $1}'
-+    do_md5sum $encfile | gawk '{print $1}'
- }
- 
- pcm(){
-@@ -368,7 +368,7 @@
-     fuzz=${3:-0.001}
-     ffmpeg $FLAGS $ENC_OPTS \
-         -lavfi "testsrc2=size=300x200:rate=1:duration=5,format=${pixfmt},split[ref][tmp];[tmp]avgblur=4[enc];[enc][ref]${refcmp},metadata=print:file=-" \
--        -f null /dev/null | awk -v ref=${ref} -v fuzz=${fuzz} -f ${base}/refcmp-metadata.awk -
-+        -f null /dev/null | gawk -v ref=${ref} -v fuzz=${fuzz} -f ${base}/refcmp-metadata.awk -
- }
- 
- pixfmt_conversion(){
-@@ -406,11 +406,11 @@
-     in_fmts=${outfile}_in_fmts
- 
-     # exclude pixel formats which are not supported as input
--    $showfiltfmts scale | awk -F '[ \r]' '/^INPUT/{ fmt=substr($3, 5); print fmt }' | sort >$scale_in_fmts
--    $showfiltfmts scale | awk -F '[ \r]' '/^OUTPUT/{ fmt=substr($3, 5); print fmt }' | sort >$scale_out_fmts
-+    $showfiltfmts scale | gawk -F '[ \r]' '/^INPUT/{ fmt=substr($3, 5); print fmt }' | sort >$scale_in_fmts
-+    $showfiltfmts scale | gawk -F '[ \r]' '/^OUTPUT/{ fmt=substr($3, 5); print fmt }' | sort >$scale_out_fmts
-     comm -12 $scale_in_fmts $scale_out_fmts >$scale_exclude_fmts
- 
--    $showfiltfmts $filter | awk -F '[ \r]' '/^INPUT/{ fmt=substr($3, 5); print fmt }' | sort >$in_fmts
-+    $showfiltfmts $filter | gawk -F '[ \r]' '/^INPUT/{ fmt=substr($3, 5); print fmt }' | sort >$in_fmts
-     pix_fmts=$(comm -12 $scale_exclude_fmts $in_fmts)
- 
-     outertest=$test
-@@ -481,7 +481,7 @@
-     packetfile="${outdir}/${test}.ffprobe"
-     cleanfiles="$concatfile $packetfile"
- 
--    awk "{gsub(/%SRCFILE%/, \"$sample\"); print}" $template > $concatfile
-+    gawk "{gsub(/%SRCFILE%/, \"$sample\"); print}" $template > $concatfile
- 
-     if [ "$mode" = "md5" ]; then
-         run ffprobe${PROGSUF}${EXECSUF} -bitexact -show_streams -show_packets -safe 0 $extra_args $(target_path $concatfile) | tr -d '\r' > $packetfile
