@@ -12,18 +12,18 @@
 #
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2018 Michal Nowak
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS= 32_and_64
+BUILD_STYLE = meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		atkmm
-COMPONENT_VERSION=	2.28.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.28.3
 COMPONENT_SUMMARY=	atkmm - C++ Wrapper for the atk Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=  sha256:4c4cfc917fd42d3879ce997b463428d6982affa0fb660cafcc0bc2d9afcedd3a
+COMPONENT_ARCHIVE_HASH= sha256:7c2088b486a909be8da2b18304e56c5f90884d1343c8da7367ea5cd3258b9969
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/atkmm/2.28/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gtkmm.org/
 COMPONENT_FMRI=		library/desktop/c++/atkmm
@@ -37,11 +37,13 @@ CXXFLAGS += -std=c++11
 
 PATH=$(PATH.gnu)
 
+CONFIGURE_OPTIONS += -Dbuild-documentation=true
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/c++/sigcpp
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
