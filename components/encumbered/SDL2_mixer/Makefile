@@ -10,6 +10,7 @@
 
 #
 # Copyright (c) 2016 Jim Klimov
+# Copyright (c) 2023 Niklas Poslovski
 #
 
 # NOTE: This recipe supports both "encumbered" and "license-clean"
@@ -26,22 +27,20 @@
 # or inseparable run-time dependencies:
 USE_ENCUMBERED?=yes
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         SDL2_mixer
-COMPONENT_VERSION=      2.0.4
-COMPONENT_PROJECT_URL=  https://www.libsdl.org/projects/SDL_mixer/
+COMPONENT_VERSION=      2.6.3
+COMPONENT_PROJECT_URL=  https://github.com/libsdl-org/SDL_mixer
 COMPONENT_SUMMARY=      SDL_mixer is a sample multi-channel audio mixer library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:b4cf5a382c061cd75081cf246c2aa2f9df8db04bdda8dcdc6b6cca55bede2419
-COMPONENT_ARCHIVE_URL=  https://www.libsdl.org/projects/SDL_mixer/release/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:7a6ba86a478648ce617e3a5e9277181bc67f7ce9876605eea6affd4a0d6eea8f
+COMPONENT_ARCHIVE_URL=  https://github.com/libsdl-org/SDL_mixer/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/sdl2-mixer
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=      ZLIB
-COMPONENT_LICENSE_FILE= COPYING.txt
+COMPONENT_LICENSE_FILE= LICENSE.txt
 
 ifeq ($(strip $(USE_ENCUMBERED)),yes)
 COMPONENT_SUMMARY:=$(COMPONENT_SUMMARY) (encumbered version)
@@ -50,12 +49,13 @@ endif
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/gnu/bin/$(MACH64):/usr/bin/$(MACH64):/usr/bin
+PATH=$(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && ./autogen.sh )
 
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-music-cmd
 CONFIGURE_OPTIONS +=	--enable-music-wave
 CONFIGURE_OPTIONS +=	--enable-music-midi
@@ -71,6 +71,6 @@ else
 CONFIGURE_OPTIONS +=	--disable-music-mp3
 endif
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math

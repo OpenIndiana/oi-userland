@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -23,9 +24,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/include/SDL2/SDL_mixer.h
+file path=usr/lib/$(MACH64)/cmake/SDL2_mixer/sdl2_mixer-config-version.cmake
+file path=usr/lib/$(MACH64)/cmake/SDL2_mixer/sdl2_mixer-config.cmake
 link path=usr/lib/$(MACH64)/libSDL2_mixer-2.0.so.0 \
-    target=libSDL2_mixer-2.0.so.0.2.2
-file path=usr/lib/$(MACH64)/libSDL2_mixer-2.0.so.0.2.2
-file path=usr/lib/$(MACH64)/libSDL2_mixer.a
-link path=usr/lib/$(MACH64)/libSDL2_mixer.so target=libSDL2_mixer-2.0.so.0.2.2
+    target=libSDL2_mixer-2.0.so.0.600.3
+file path=usr/lib/$(MACH64)/libSDL2_mixer-2.0.so.0.600.3
+link path=usr/lib/$(MACH64)/libSDL2_mixer.so target=libSDL2_mixer-2.0.so.0.600.3
 file path=usr/lib/$(MACH64)/pkgconfig/SDL2_mixer.pc
