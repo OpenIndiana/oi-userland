@@ -5,7 +5,7 @@
 # Copyright 2016-2020 Jim Klimov
 #
 
-BASE_URL="http://mirrors.jenkins.io/war-stable/"
+BASE_URL="https://get.jenkins.io/war-stable/"
 DL_PAGE_URL="https://www.jenkins.io/download/"
 
 echo "=== Checking latest numbered release under $BASE_URL..."
