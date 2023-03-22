@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		OpenSceneGraph
 COMPONENT_VERSION=	3.6.5
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_PROJECT_URL=	https://www.openscenegraph.com
 COMPONENT_SUMMARY=	OpenSceneGraph - High performance 3D graphics toolkit.
 COMPONENT_SRC=		OpenSceneGraph-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -37,6 +37,10 @@ CMAKE_CXX_FLAGS += -std=c++11
 
 # This is to get libraries to install into /usr/lib/$(MACH64)
 CMAKE_OPTIONS += -DLIB_POSTFIX=/$(MACH64)
+
+# OpenSceneGraph doesn't yet support FFmpeg 5 or higher, we have FFmpeg 6, so disable it for now
+# https://github.com/openscenegraph/OpenSceneGraph/issues/1111
+CMAKE_OPTIONS += -DCMAKE_DISABLE_FIND_PACKAGE_FFmpeg=1
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -60,7 +64,6 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += video/ffmpeg
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxinerama
