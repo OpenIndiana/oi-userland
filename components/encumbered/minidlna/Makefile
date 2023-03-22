@@ -10,14 +10,14 @@
 
 #
 # Copyright 2020 Alexander Pyhalov
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022-2023 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= minidlna
 COMPONENT_VERSION= 1.3.2
-#COMPONENT_REVISION= 1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=  MiniDLNA DLNA/UPnP-AV media server
 COMPONENT_PROJECT_URL= https://sourceforge.net/projects/minidlna/
 COMPONENT_FMRI= media/minidlna
@@ -41,7 +41,7 @@ CFLAGS        +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS      +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS       +=    $(JPEG_LDFLAGS)
 
-CFLAGS += $(CPP_XPG5MODE) 
+CFLAGS += $(CPP_XPG5MODE)
 
 CONFIGURE_OPTIONS +=  --with-log-path=/var/log/minidlna
 
