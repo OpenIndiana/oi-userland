@@ -46,6 +46,7 @@ COMPONENT_ARCHIVE_URL=		https://get.jenkins.io/war-stable/$(COMPONENT_VERSION)/j
 COMPONENT_LICENSE=			MIT
 COMPONENT_LICENSE_FILE= 	jenkins.license
 COMPONENT_SUMMARY=			Jenkins is a Java-based CI automation server
+COMPONENT_REVISION=			1
 
 # Note: for the core, we only download a WAR - no unpacking, no building...
 include $(WS_MAKE_RULES)/prep-download.mk
