@@ -41,11 +41,12 @@ COMPONENT_ARCHIVE=			$(COMPONENT_NAME)-$(JENKINS_RELEASE)-$(COMPONENT_VERSION).w
 COMPONENT_FMRI=				developer/jenkins-core-$(JENKINS_RELEASE)
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_SRC=				$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=		https://jenkins.io/changelog/
+COMPONENT_PROJECT_URL=		https://jenkins.io/changelog-stable/
 COMPONENT_ARCHIVE_URL=		https://get.jenkins.io/war-stable/$(COMPONENT_VERSION)/jenkins.war
 COMPONENT_LICENSE=			MIT
 COMPONENT_LICENSE_FILE= 	jenkins.license
 COMPONENT_SUMMARY=			Jenkins is a Java-based CI automation server
+COMPONENT_REVISION=			1
 
 # Note: for the core, we only download a WAR - no unpacking, no building...
 include $(WS_MAKE_RULES)/prep-download.mk
