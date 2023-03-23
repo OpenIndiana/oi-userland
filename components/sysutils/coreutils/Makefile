@@ -30,15 +30,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         coreutils
-COMPONENT_VERSION=      9.1
+COMPONENT_VERSION=      9.2
 COMPONENT_FMRI=         file/gnu-coreutils	
-COMPONENT_SUMMARY=      GNU Core Utilities
-COMPONENT_DESCRIPTION=	GNU Core Utilities are the basic file, shell and text manipulation utilities
+COMPONENT_SUMMARY=		GNU Core Utilities are the basic file, shell and text manipulation utilities
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/coreutils/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:61a1f410d78ba7e7f37a5a4f50e6d1320aca33375484a3255eddf17a38580423
+COMPONENT_ARCHIVE_HASH= sha256:6885ff47b9cdb211de47d368c17853f406daaf98b148aaecdf10de29cc04b0b3
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv3, FDLv1.3
 
@@ -47,10 +46,9 @@ include $(WS_MAKE_RULES)/common.mk
 # We need the GNU grep command to configure/build.
 PATH = $(PATH.gnu)
 
-PATCH_LEVEL=		0
+PATCH_LEVEL = 0
 
-# Prevent gcc register spill error on 32-bit SPARC
-gcc_OPT.sparc.32 =	-O1
+gcc_OPT.sparc.32 = -O1
 
 # Recreate configure and Makefile to pick up changes in .../src/local.mk
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
