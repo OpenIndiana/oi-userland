@@ -61,14 +61,16 @@ component-environment-prep::
 
 component-test-environment-check:: component-environment-check
 	$(call separator-line,Required Additional Packages Needed for Testing Only)
-	@[ -z "$(strip $(TEST_REQUIRED_PACKAGES))" ] || /usr/bin/pkg list -vH $(TEST_REQUIRED_PACKAGES:%=/%)
+	@[ -z "$(strip $(USERLAND_TEST_REQUIRED_PACKAGES))$(strip $(TEST_REQUIRED_PACKAGES))" ] || \
+		/usr/bin/pkg list -vH $(USERLAND_TEST_REQUIRED_PACKAGES:%=/%) $(TEST_REQUIRED_PACKAGES:%=/%)
 	$(call separator-line)
 
 component-test-environment-prep::
-	@[ -z "$(strip $(TEST_REQUIRED_PACKAGES))" ] || /usr/bin/pkg list -vH $(TEST_REQUIRED_PACKAGES:%=/%) >/dev/null || \
+	@[ -z "$(strip $(USERLAND_TEST_REQUIRED_PACKAGES))$(strip $(TEST_REQUIRED_PACKAGES))" ] || \
+		/usr/bin/pkg list -vH $(USERLAND_TEST_REQUIRED_PACKAGES:%=/%) $(TEST_REQUIRED_PACKAGES:%=/%) >/dev/null || \
 		{ echo "Adding required packages to testing environment..."; \
 		while true ; do \
-		  $(PFEXEC) /usr/bin/pkg install --accept -v $(TEST_REQUIRED_PACKAGES:%=/%) ; \
+		  $(PFEXEC) /usr/bin/pkg install --accept -v $(USERLAND_TEST_REQUIRED_PACKAGES:%=/%) $(TEST_REQUIRED_PACKAGES:%=/%) ; \
 		  RETVAL=$$? ; \
 		  [ $$RETVAL -eq 0 ] && break; \
 		  [ $$RETVAL -eq 4 ] && break; \

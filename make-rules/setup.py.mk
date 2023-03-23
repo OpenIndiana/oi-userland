@@ -354,27 +354,29 @@ COMPONENT_TEST_TRANSFORMS += \
 	) | $(COMPONENT_TEST_TRANSFORMER)"
 
 # tox package together with the tox-current-env plugin is needed
-USERLAND_REQUIRED_PACKAGES += library/python/tox
-USERLAND_REQUIRED_PACKAGES += library/python/tox-current-env
+USERLAND_TEST_REQUIRED_PACKAGES += library/python/tox
+USERLAND_TEST_REQUIRED_PACKAGES += library/python/tox-current-env
 
 # Generate raw lists of test dependencies per Python version
 # Please note we set PATH below four times for $(COMPONENT_TEST_CMD) (aka tox)
 # to workaround https://github.com/tox-dev/tox/issues/2538
 COMPONENT_POST_INSTALL_ACTION += \
-	cd $(@D) ; \
-	echo "Testing dependencies:" ; \
-	PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(COMPONENT_TEST_TARGETS) || exit 1 ; \
-	echo "Testing extras:" ; \
-	PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(COMPONENT_TEST_TARGETS) || exit 1 ; \
-	( PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(COMPONENT_TEST_TARGETS) \
-		| $(WS_TOOLS)/python-resolve-deps \
+	if [ -x "$(COMPONENT_TEST_CMD)" ] ; then \
+		cd $(@D) ; \
+		echo "Testing dependencies:" ; \
+		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(COMPONENT_TEST_TARGETS) || exit 1 ; \
+		echo "Testing extras:" ; \
+		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(COMPONENT_TEST_TARGETS) || exit 1 ; \
+		( PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(COMPONENT_TEST_TARGETS) \
+			| $(WS_TOOLS)/python-resolve-deps \
+				PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
+			| $(PYTHON) $(WS_TOOLS)/python-requires - ; \
+		for e in $$(PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(COMPONENT_TEST_TARGETS)) ; do \
 			PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
-			$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
-		| $(PYTHON) $(WS_TOOLS)/python-requires - ; \
-	for e in $$(PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(COMPONENT_TEST_TARGETS)) ; do \
-		PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
-			$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
-	done ) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' > $(@D)/.depend-test ;
+				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
+		done ) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' > $(@D)/.depend-test ; \
+	fi ;
 else ifeq ($(strip $(TEST_STYLE)),pytest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =		$(PYTEST_ADDOPTS)
@@ -383,7 +385,7 @@ COMPONENT_TEST_TARGETS =
 # Force pytest to not use colored output so the results normalization is unaffected
 PYTEST_ADDOPTS += --color=no
 
-USERLAND_REQUIRED_PACKAGES += library/python/pytest
+USERLAND_TEST_REQUIRED_PACKAGES += library/python/pytest
 else ifeq ($(strip $(TEST_STYLE)),unittest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m unittest
 COMPONENT_TEST_ARGS =
