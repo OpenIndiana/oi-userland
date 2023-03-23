@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		tcsh
 COMPONENT_VERSION=	6.24.7
 HUMAN_VERSION=		6.24.07
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Tenex C-shell (tcsh)
 COMPONENT_DESCRIPTION=	C shell with file name completion and command line editing
 COMPONENT_PROJECT_URL=	https://github.com/tcsh-org/tcsh
