@@ -38,7 +38,8 @@ $(BUILD_DIR)/%-3.9/.installed:	COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
 # Since pyproject_installer requires Python >= 3.8 we do need to compile for
 # Python 3.9 only.  Once we obsolete Python 3.7 we should set
 # COMPONENT_POST_INSTALL_ACTION unconditionally below.
-$(BUILD_DIR)/%-3.9/.installed:	COMPONENT_POST_INSTALL_ACTION +=	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_LIB) ;
+$(BUILD_DIR)/%-3.9/.installed:	COMPONENT_POST_INSTALL_ACTION += \
+	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ;
 
 # Since pyproject_installer requires Python >= 3.8 we cannot use it to
 # bootstrap Python 3.7.  We will use 'build' and 'installer' instead.  Strictly
