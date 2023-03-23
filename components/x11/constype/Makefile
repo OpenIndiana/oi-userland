@@ -18,15 +18,15 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= constype
-COMPONENT_VERSION= 1.0.4
-COMPONENT_REVISION= 1
-COMPONENT_FMRI= diagnostic/constype
+COMPONENT_VERSION= 1.0.5
 COMPONENT_SUMMARY= constype - print type of console
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:82d61d468214aed1a087207e6a8b6c6d35a1807345a51bf12a45e68e11a9ee74
+COMPONENT_FMRI= diagnostic/constype
 COMPONENT_CLASSIFICATION= System/Hardware
-COMPONENT_ARCHIVE_HASH= \
-  sha256:c1848a3af93200a6db8a5905e1d9a3ca152cf4eeec4e1e7a50a8fcc6b4a0049a
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
