@@ -17,11 +17,11 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	postgresql-jdbc
-COMPONENT_VERSION=	42.5.4
+COMPONENT_VERSION=	42.6.0
 COMPONENT_SUMMARY=	JDBC driver for PostgreSQL
 COMPONENT_SRC=	postgresql-$(COMPONENT_VERSION)-jdbc-src
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:fd7e30ab8d243b41441640752bf5bb3c16853112b8a1ad6dd6534a9b39601f6d
+COMPONENT_ARCHIVE_HASH= sha256:f6849b3963255a724017b475309de3884b301fb3cbdcdb3ff411c2df384a5dc4
 COMPONENT_ARCHIVE_URL=	https://jdbc.postgresql.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://jdbc.postgresql.org/
 COMPONENT_FMRI=	database/postgres/connector/jdbc
