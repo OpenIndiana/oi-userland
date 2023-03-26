@@ -31,7 +31,7 @@ COMPONENT_NAME=	openssl-$(COMPONENT_VERSION_SHORT)
 # and IPS_COMPONENT_VERSION.
 COMPONENT_VERSION=	1.1.1.20
 HUMAN_VERSION=		1.1.1t
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		library/security/openssl-11
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SUMMARY=	OpenSSL - a Toolkit for Transport Layer (TLS v1+) protocols and general purpose cryptographic library
