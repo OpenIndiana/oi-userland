@@ -14,7 +14,7 @@ new daemon.
 diff -wpruN '--exclude=*.orig' a~/compat.c a/compat.c
 --- a~/compat.c	1970-01-01 00:00:00
 +++ a/compat.c	1970-01-01 00:00:00
-@@ -52,8 +52,12 @@ compat_banner(struct ssh *ssh, const cha
+@@ -51,8 +51,12 @@ compat_banner(struct ssh *ssh, const cha
  		  "OpenSSH_3.1*",	SSH_BUG_EXTEOF|SSH_OLD_FORWARD_ADDR|
  					SSH_BUG_SIGTYPE},
  		{ "OpenSSH_3.*",	SSH_OLD_FORWARD_ADDR|SSH_BUG_SIGTYPE },
@@ -29,8 +29,8 @@ diff -wpruN '--exclude=*.orig' a~/compat.c a/compat.c
  		{ "OpenSSH_2*,"
  		  "OpenSSH_3*,"
  		  "OpenSSH_4*",		SSH_BUG_SIGTYPE },
-@@ -186,6 +190,31 @@ compat_pkalg_proposal(struct ssh *ssh, c
- 	return pkalg_prop;
+@@ -137,6 +141,31 @@ compat_banner(struct ssh *ssh, const cha
+ 	debug_f("no match: %s", version);
  }
  
 +/*
@@ -60,13 +60,13 @@ diff -wpruN '--exclude=*.orig' a~/compat.c a/compat.c
 +
  /* Always returns pointer to allocated memory, caller must free. */
  char *
- compat_kex_proposal(struct ssh *ssh, char *p)
-@@ -205,6 +234,8 @@ compat_kex_proposal(struct ssh *ssh, cha
+ compat_kex_proposal(struct ssh *ssh, const char *p)
+@@ -155,6 +184,8 @@ compat_kex_proposal(struct ssh *ssh, con
  		    "diffie-hellman-group-exchange-sha256,"
  		    "diffie-hellman-group-exchange-sha1")) == NULL)
  			fatal("match_filter_denylist failed");
 +		p = append_proposal(p, "diffie-hellman-group14-sha1");
 +		p = append_proposal(p, "diffie-hellman-group1-sha1");
  		free(cp);
+ 		cp = cp2;
  	}
- 	debug2_f("compat KEX proposal: %s", p);
