@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        gdl
 COMPONENT_VERSION=      1.0.2
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://gnudatalanguage.github.io/
 COMPONENT_SUMMARY=      A free/libre/open source incremental compiler compatible with IDL and to some extent with PV-WAVE.	
 COMPONENT_SRC=	        $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -56,6 +57,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Build dependencies
 REQUIRED_PACKAGES += library/eigen3
+REQUIRED_PACKAGES += library/qhull
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -69,15 +71,10 @@ REQUIRED_PACKAGES += library/c++/hdf5
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/fftw-3
 REQUIRED_PACKAGES += library/graphics/wxwidgets-3
-REQUIRED_PACKAGES += library/mpich/gcc
-REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/netcdf-c
 REQUIRED_PACKAGES += library/proj
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += x11/library/libice
-REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/library/libxext
