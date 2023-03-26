@@ -25,8 +25,7 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=		32_and_64
-
+BUILD_BITS= 32_and_64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	openssl
@@ -34,7 +33,7 @@ COMPONENT_NAME =	openssl
 # and HUMAN_VERSION.
 COMPONENT_VERSION =	1.0.2.21
 HUMAN_VERSION = 1.0.2u
-COMPONENT_REVISION=	12
+COMPONENT_REVISION=	13
 COMPONENT_FMRI =	library/security/openssl
 COMPONENT_SUMMARY =	OpenSSL - a Toolkit for Secure Sockets Layer (SSL v2/v3) and Transport Layer (TLS v1) protocols and general purpose cryptographic library
 COMPONENT_CLASSIFICATION = System/Security
@@ -48,7 +47,7 @@ COMPONENT_LICENSE_FILE = openssl-1.0.2.license
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(GCC_ROOT)/bin:$(PATH.illumos)
+PATH= $(GCC_ROOT)/bin:$(PATH.illumos)
 
 # OpenSSL does not use autoconf but its own configure system.
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
