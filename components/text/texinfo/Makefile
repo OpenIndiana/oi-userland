@@ -25,17 +25,19 @@
 # Copyright (c) 2021, Nona Hansel
 #
 
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		texinfo
-COMPONENT_VERSION=	7.0.2
+COMPONENT_VERSION=	7.0.3
+COMPONENT_SUMMARY=	Documentation system for on-line information and printed output
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/texinfo/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:f211ec3261383e1a89e4555a93b9d017fe807b9c3992fb2dff4871dae6da54ad
+COMPONENT_ARCHIVE_HASH= sha256:74b420d09d7f528e84f97aa330f0dd69a98a6053e7a4e01767eed115038807bf
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/texinfo/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/texinfo
+COMPONENT_CLASSIFICATION=	Development/GNU
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -67,9 +69,9 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
