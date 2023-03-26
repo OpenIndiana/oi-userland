@@ -23,28 +23,30 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2019, Michal Nowak
 #
-# When using openssl-1.1 some symbols cannot be found:
-USE_OPENSSL11= no
+# Only openssl-1.0 is supported by mutt (for newer openssl version some symbols cannot be found):
+USE_OPENSSL10= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
-COMPONENT_VERSION=	2.2.9
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.2.10
 COMPONENT_SUMMARY=	Mutt is a small but very powerful text-based mail client for Unix operating systems.
 COMPONENT_PROJECT_URL=	http://www.mutt.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:fa531b231d58fe1f30ceda0ed626683ea9ebdfb76ce47ef8bb27c2f77422cffb
+COMPONENT_ARCHIVE_HASH=	sha256:4d773f22422f79096f7b94b57bee45654ad9a25165dbb36463c58295b4cd3d88
 COMPONENT_ARCHIVE_URL=	http://ftp.mutt.org/pub/mutt/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		mail/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYRIGHT
 
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -I$(USRINCDIR)/idn2
 
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/$(MACH64)
+CONFIGURE_OPTIONS += CPPFLAGS=-I$(OPENSSL_PREFIX)/include
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --sysconfdir="$(ETCDIR)/$(COMPONENT_NAME)"
 CONFIGURE_OPTIONS += --enable-pop
