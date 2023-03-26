@@ -28,28 +28,27 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xorriso
-COMPONENT_VERSION=      1.5.4
-IPS_COMPONENT_VERSION=	1.5.4.2
-HUMAN_VERSION=			$(COMPONENT_VERSION).pl02
+COMPONENT_VERSION=      1.5.5
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_SUMMARY=	command line ISO-9660 and Rock Ridge manipulation tool
+COMPONENT_SUMMARY=		command line ISO-9660 and Rock Ridge manipulation tool
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/xorriso/
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:3ec7393d4a9dcbf5f74309c28a415f55227ec62770b95ae993ac8d7a3b152972
+COMPONENT_ARCHIVE_HASH= sha256:61e5fc36e6d0f7cabe5d0d93d9b0c1911b61c070fc38396445f5a62da0f9141f
 COMPONENT_ARCHIVE_URL=  https://www.gnu.org/software/xorriso/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		media/xorriso
+COMPONENT_FMRI=			media/xorriso
 COMPONENT_CLASSIFICATION=	System/Media
 COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
 
-CPPFLAGS+=		-I./test
+CPPFLAGS += -I./test
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS  +=           --enable-shared
-CONFIGURE_OPTIONS  +=           --disable-static
-CONFIGURE_OPTIONS  +=           --sysconfdir=/etc/gnu
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --sysconfdir=/etc/gnu
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
