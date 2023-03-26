@@ -14,10 +14,11 @@
 
 BUILD_BITS= 64
 USE_OPENSSL11= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yara
-COMPONENT_VERSION=	4.2.3
+COMPONENT_VERSION=	4.3.0
 COMPONENT_SUMMARY=	YARA is a tool aimed at (but not limited to) helping malware \
 	researchers to identify and classify malware samples.
 COMPONENT_DESCRIPTION=	With YARA you can create descriptions of malware families \
@@ -26,7 +27,7 @@ COMPONENT_DESCRIPTION=	With YARA you can create descriptions of malware families
 	which determine its logic.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1cd84fc2db606e83084a648152eb35103c3e30350825cb7553448d5ccde02a0d
+COMPONENT_ARCHIVE_HASH=	sha256:67bc0a5d58d9080a0981da116d65817d27b87dad7e402c7ece25372b38401e12
 COMPONENT_PROJECT_URL=	https://virustotal.github.io/yara/
 COMPONENT_ARCHIVE_URL=	https://github.com/VirusTotal/yara/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
@@ -51,16 +52,6 @@ CONFIGURE_OPTION+=	--enable-magic
 CONFIGURE_OPTION+=	--enable-macho
 CONFIGURE_OPTION+=	--enable-dex
 CONFIGURE_OPTION+=	--enable-pb-tests
-
-COMPONENT_TEST_TRANSFORMS += \
-        ' -n ' \
-        ' -e "/^==============/p"' \
-        ' -e "/^Testsuite/p"' \
-        ' -e "/TOTAL:/p"' \
-        ' -e "/PASS:/p"' \
-        ' -e "/SKIP:/p"' \
-        ' -e "/FAIL:/p"' \
-        ' -e "/ERROR:/p"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/openssl-11
