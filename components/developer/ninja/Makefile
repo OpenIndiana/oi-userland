@@ -11,13 +11,14 @@
 #
 # Copyright 2017-2018 Aurelien Larcher
 #
-BUILD_BITS=64
+
 BUILD_STYLE=justmake
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ninja
 COMPONENT_VERSION=      1.11.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Ninja - a small build system with a focus on speed
 COMPONENT_PROJECT_URL=  https://ninja-build.org/
 COMPONENT_SRC=    		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,16 +31,8 @@ COMPONENT_LICENSE=      Apache 2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(GCC_BINDIR):$(PATH.illumos)
-
-PYTHON_VERSION=3.9
-
 COMPONENT_BUILD_ACTION = cd $(@D); \
-  CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" ./configure.py --bootstrap --with-python=$(PYTHON.64)
-
-COMPONENT_TEST_CMD = cd $(@D); \
-  CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" ./configure.py && ./ninja ninja_test && ./ninja_test
-COMPONENT_TEST_TARGETS =
+  CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PATH="$(GCC_BINDIR):$(PATH)" ./configure.py --bootstrap --with-python=$(PYTHON)
 
 COMPONENT_INSTALL_ACTION = cd $(@D); \
 	$(MKDIR) $(PROTO_DIR)/usr/bin && \
@@ -55,15 +48,15 @@ COMPONENT_INSTALL_ACTION = cd $(@D); \
       $(PROTO_DIR)/usr/share/zsh-completions/_ninja
 
 COMPONENT_PRE_TEST_ACTION = \
-    cd $(BUILD_DIR_64); \
-    ./ninja all;
+    cd $(BUILD_DIR_$(BITS)); PATH="$(GCC_BINDIR):$(PATH)" ./ninja all;
 
-COMPONENT_TEST_CMD = cd $(BUILD_DIR_64); ./ninja_test
+COMPONENT_TEST_CMD = cd $(BUILD_DIR_$(BITS)); ./ninja_test
+COMPONENT_TEST_TARGETS =
 COMPONENT_TEST_TRANSFORMS+= '-n -e "/^\[[0-9]*\/384\]/p"'
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/lexer/re2c
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += runtime/python
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
