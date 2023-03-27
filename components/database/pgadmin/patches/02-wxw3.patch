@@ -1,0 +1,250 @@
+
+this patch was sent upstream using:
+
+https://github.com/allentc/pgadmin3-lts/pull/24
+
+on: Tue Mar 28 21:05:10 CEST 2023
+
+--- pgadmin3-lts-master-20220717/pgadmin/ctl/ctlSQLGrid.cpp.orig	2022-07-17 11:06:47.000000000 +0200
++++ pgadmin3-lts-master-20220717/pgadmin/ctl/ctlSQLGrid.cpp	2023-03-25 12:28:12.397362540 +0100
+@@ -44,7 +44,7 @@
+ 	SetDefaultCellFont(fntCells);
+ 	// Set labels font
+ 	wxFont fntLabel(settings->GetSystemFont());
+-	fntLabel.SetWeight(wxBOLD);
++	fntLabel.SetWeight(wxFONTWEIGHT_BOLD);
+ 	SetLabelFont(fntLabel);
+ 	SetColLabelAlignment(wxALIGN_LEFT, wxALIGN_CENTER);
+ 	SetRowLabelSize(50);
+@@ -327,7 +327,7 @@
+ 				SaveEditControlValue();
+ 			}
+ 
+-			SetRowHeight(row, extentWant);
++			SetRowSize(row, extentWant);
+ 			EndBatch();
+ 		}
+ 	}
+@@ -367,7 +367,7 @@
+ 			extentWant += EXTRAEXTENT_WIDTH;
+ 			extentWant = wxMax(extentWant, GetColMinimalAcceptableWidth());
+ 			extentWant = wxMin(extentWant, maxWidth * 3 / 4);
+-			int currentWidth = GetColumnWidth(col);
++			int currentWidth = GetColSize(col);
+ 
+ 			if (currentWidth >= maxWidth * 3 / 4 || currentWidth == extentWant)
+ 				extentWant = GetColMinimalAcceptableWidth();
+@@ -386,7 +386,7 @@
+ 					HideCellEditControl();
+ 					SaveEditControlValue();
+ 				}
+-				SetColumnWidth(col, extentWant);
++				SetRowSize(col, extentWant);
+ 				EndBatch();
+ 				colSizes[GetColKeyValue(col)] = extentWant;
+ 			}
+--- pgadmin3-lts-master-20220717/pgadmin/db/pgSet.cpp.orig	2022-07-17 11:06:47.000000000 +0200
++++ pgadmin3-lts-master-20220717/pgadmin/db/pgSet.cpp	2023-03-25 15:43:56.650411006 +0100
+@@ -110,8 +110,6 @@
+ 	switch (StrToLong(typoid))
+ 	{
+ 		case PGOID_TYPE_BOOL:
+-			colClasses[col] = PGTYPCLASS_BOOL;
+-			break;
+ 		case PGOID_TYPE_INT8:
+ 		case PGOID_TYPE_INT2:
+ 		case PGOID_TYPE_INT4:
+@@ -124,24 +122,18 @@
+ 		case PGOID_TYPE_MONEY:
+ 		case PGOID_TYPE_BIT:
+ 		case PGOID_TYPE_NUMERIC:
+-			colClasses[col] = PGTYPCLASS_NUMERIC;
+-			break;
+ 		case PGOID_TYPE_BYTEA:
+ 		case PGOID_TYPE_CHAR:
+ 		case PGOID_TYPE_NAME:
+ 		case PGOID_TYPE_TEXT:
+ 		case PGOID_TYPE_VARCHAR:
+-			colClasses[col] = PGTYPCLASS_STRING;
+-			break;
+ 		case PGOID_TYPE_TIMESTAMP:
+ 		case PGOID_TYPE_TIMESTAMPTZ:
+ 		case PGOID_TYPE_TIME:
+ 		case PGOID_TYPE_TIMETZ:
+ 		case PGOID_TYPE_INTERVAL:
+-			colClasses[col] = PGTYPCLASS_DATE;
+-			break;
++
+ 		default:
+-			colClasses[col] = PGTYPCLASS_OTHER;
+ 			break;
+ 	}
+ 
+--- pgadmin3-lts-master-20220717/pgadmin/dd/ddmodel/ddGenerationWizard.cpp.orig	2022-07-17 11:06:47.000000000 +0200
++++ pgadmin3-lts-master-20220717/pgadmin/dd/ddmodel/ddGenerationWizard.cpp	2023-03-25 16:05:13.535286705 +0100
+@@ -100,10 +100,10 @@
+ 	wxString strChoicesAlter[4] = {_("Alter table"), _("Drop, then create"), _("Create table [conflict]"), wxT("No action")};
+ 	wxArrayString tables;
+ 	wxArrayInt options;
+-	if(page4->getGrid()->GetRows() > 0)
++	if(page4->getGrid()->GetNumberRows() > 0)
+ 	{
+ 		int i;
+-		for(i = page4->getGrid()->GetRows() - 1; i >= 0; i--)
++		for(i = page4->getGrid()->GetNumberRows() - 1; i >= 0; i--)
+ 		{
+ 			tables.Add(page4->getGrid()->GetCellValue(i, 0));
+ 			wxString value = page4->getGrid()->GetCellValue(i, 1);
+--- pgadmin3-lts-master-20220717/pgadmin/debugger/dlgDirectDbg.cpp.orig	2022-07-17 11:06:47.000000000 +0200
++++ pgadmin3-lts-master-20220717/pgadmin/debugger/dlgDirectDbg.cpp	2023-03-25 16:16:31.619757309 +0100
+@@ -95,11 +95,11 @@
+ 		grdParams->GetClientSize(&width, &height);
+ 		for (int i = 0; i < grdParams->GetNumberCols(); i++)
+ 		{
+-			totalWidth += grdParams->GetColumnWidth(i);
++			totalWidth += grdParams->GetColSize(i);
+ 		}
+ 		// Total client width - total six column widths - the first (an empty) column
+ 		// width
+-		grdParams->SetColumnWidth(COL_DEF_VAL, width - totalWidth - 100);
++		grdParams->SetColSize(COL_DEF_VAL, width - totalWidth - 100);
+ 	}
+ }
+ 
+--- pgadmin3-lts-master-20220717/pgadmin/debugger/frmDebugger.cpp.orig	2022-07-17 11:06:47.000000000 +0200
++++ pgadmin3-lts-master-20220717/pgadmin/debugger/frmDebugger.cpp	2023-03-25 16:20:30.715500914 +0100
+@@ -49,7 +49,7 @@
+ 	EVT_STC_MARGINCLICK(wxID_ANY,        frmDebugger::OnMarginClick)
+ 	EVT_STC_UPDATEUI(wxID_ANY,           frmDebugger::OnPositionStc)
+ 	EVT_LISTBOX(wxID_ANY,                frmDebugger::OnSelectFrame)
+-	EVT_GRID_CELL_CHANGE(                frmDebugger::OnVarChange)
++	EVT_GRID_CELL_CHANGED(               frmDebugger::OnVarChange)
+ 
+ 	EVT_MENU(MNU_EXIT,                   frmDebugger ::OnExit)
+ 	EVT_MENU(MENU_ID_VIEW_TOOLBAR,       frmDebugger::OnToggleToolBar)
+--- pgadmin3-lts-master-20220717/pgadmin/gqb/gqbViewPanels.cpp.orig	2022-07-17 11:06:47.000000000 +0200
++++ pgadmin3-lts-master-20220717/pgadmin/gqb/gqbViewPanels.cpp	2023-03-25 17:59:50.885155563 +0100
+@@ -532,7 +532,6 @@
+ void  gqbColsPopUp::OnPopUpOKClick(wxCommandEvent &event)
+ {
+ 	this->usedGrid->SetCellValue(_row, _col, this->getEditText());
+-	this->MakeModal(false);
+ 	this->Hide();
+ 	this->GetParent()->Refresh();
+ }
+@@ -551,7 +550,6 @@
+ 			{
+ 				this->usedGrid->SetCellValue(_row, _col, _("Set value"));
+ 			}
+-			this->MakeModal(false);
+ 			this->Hide();
+ 			this->GetParent()->Refresh();
+ 		}
+@@ -670,7 +668,6 @@
+ 	p.y += p2.y + 40;
+ 	colsPopUp->SetPosition(p);
+ 	colsPopUp->Show();
+-	colsPopUp->MakeModal(true);
+ 	colsPopUp->focus();
+ 	colsPopUp->setUsedCell(restrictionsGrid, row, col);
+ }
+@@ -1017,7 +1014,7 @@
+ 
+ void gqbOrderPanel::OnButtonRemove(wxCommandEvent &)
+ {
+-	if(usedColumns->GetRows() > 0)
++	if(usedColumns->GetNumberRows() > 0)
+ 	{
+ 		if(selRightTop != -1)
+ 		{
+@@ -1032,9 +1029,9 @@
+ 
+ void gqbOrderPanel::OnButtonRemoveAll(wxCommandEvent &)
+ {
+-	if(usedColumns->GetRows() > 0)
++	if(usedColumns->GetNumberRows() > 0)
+ 	{
+-		for(int i = usedColumns->GetRows() - 1; i >= 0; i--)
++		for(int i = usedColumns->GetNumberRows() - 1; i >= 0; i--)
+ 		{
+ 			gqbColumn *col = (gqbColumn *) tableRight->getObjectAt(i, 0);
+ 			gqbQueryObject *colParent = (gqbQueryObject *) tableRight->getObjectAt(i, 1);
+@@ -1047,14 +1044,14 @@
+ 
+ void gqbOrderPanel::OnButtonAdd(wxCommandEvent &)
+ {
+-	if(availableColumns->GetRows() > 0)
++	if(availableColumns->GetNumberRows() > 0)
+ 	{
+ 		if(selLeft != -1)
+ 		{
+ 			gqbColumn *col = (gqbColumn *) tableLeft->getObjectAt(selLeft, 0);
+ 			gqbQueryObject *colParent = (gqbQueryObject *) tableLeft->getObjectAt(selLeft, 1);
+ 			tableRight->AppendItem(col, colParent, 'A');
+-			usedColumns->SetCellRenderer((usedColumns->GetRows() - 1), 1, new wxGridCellButtonRenderer);
++			usedColumns->SetCellRenderer((usedColumns->GetNumberRows() - 1), 1, new wxGridCellButtonRenderer);
+ 			tableLeft->removeRowAt(selLeft);
+ 		}
+ 	}
+@@ -1063,14 +1060,14 @@
+ 
+ void gqbOrderPanel::OnButtonAddAll(wxCommandEvent &)
+ {
+-	if(availableColumns->GetRows() > 0)
++	if(availableColumns->GetNumberRows() > 0)
+ 	{
+-		for(int i = availableColumns->GetRows() - 1; i >= 0; i--)
++		for(int i = availableColumns->GetNumberRows() - 1; i >= 0; i--)
+ 		{
+ 			gqbColumn *col = (gqbColumn *) tableLeft->getObjectAt(i, 0);
+ 			gqbQueryObject *colParent = (gqbQueryObject *) tableLeft->getObjectAt(i, 1);
+ 			tableRight->AppendItem(col, colParent, 'A');
+-			usedColumns->SetCellRenderer((usedColumns->GetRows() - 1), 1, new wxGridCellButtonRenderer);
++			usedColumns->SetCellRenderer((usedColumns->GetNumberRows() - 1), 1, new wxGridCellButtonRenderer);
+ 			tableLeft->removeRowAt(i);
+ 		}
+ 	}
+@@ -1085,7 +1082,7 @@
+ 		{
+ 			wxObject *object = ev.GetEventObject();
+ 			wxGrid *grid = wxDynamicCast( object, wxGrid );
+-			if(grid->GetCols() == 1)              // Left Grid
++			if(grid->GetNumberCols() == 1)              // Left Grid
+ 			{
+ 				selLeft = ev.GetRow();
+ 			}
+@@ -1402,7 +1399,6 @@
+ 		updateJoin();
+ 	}
+ 
+-	this->MakeModal(false);
+ 	this->Hide();
+ 	this->GetParent()->Refresh();
+ 	this->join = NULL;
+@@ -1471,7 +1467,6 @@
+ 
+ 			updateJoin();
+ 
+-			this->MakeModal(false);
+ 			this->Hide();
+ 			this->GetParent()->Refresh();
+ 			this->join = NULL;
+@@ -1569,7 +1564,6 @@
+ 	p.y += p2.y + 40;
+ 	joinsPopUp->SetPosition(p);
+ 	joinsPopUp->Show();
+-	joinsPopUp->MakeModal(true);
+ 	joinsPopUp->focus();
+ 	joinsPopUp->setUsedCell(joinsGrid, row, col);
+ }
+--- pgadmin3-1.22.2/pgadmin/frm/frmEditGrid.cpp.orig	2016-01-07 13:47:32.000000000 +0100
++++ pgadmin3-1.22.2/pgadmin/frm/frmEditGrid.cpp	2023-03-24 18:47:35.979822880 +0100
+@@ -1276,7 +1276,7 @@
+ 
+ void frmEditGrid::OnGridSelectCells(wxGridRangeSelectEvent &event)
+ {
+-	if (sqlGrid->GetEditable())
++	if (sqlGrid->IsEditable())
+ 	{
+ 		wxArrayInt rows = sqlGrid->GetSelectedRows();
+ 

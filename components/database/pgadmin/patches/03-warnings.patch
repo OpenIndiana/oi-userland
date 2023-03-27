@@ -1,0 +1,485 @@
+
+this patch was sent upstream using:
+
+https://github.com/allentc/pgadmin3-lts/pull/24
+
+on: Wed Mar 29 09:51:14 CEST 2023
+
+--- pgadmin3-lts-master-20220717/pgadmin/ctl/explainCanvas.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/ctl/explainCanvas.cpp	2023-03-28 14:19:16.103202983 +0300
+@@ -344,7 +344,7 @@
+ 
+ 	wxFont stdFont = settings->GetSystemFont();
+ 	wxFont boldFont = stdFont;
+-	boldFont.SetWeight(wxBOLD);
++	boldFont.SetWeight(wxFONTWEIGHT_BOLD);
+ 
+ 	int x = GetCharHeight() / 2;
+ 	int y = GetCharHeight() / 2;
+--- pgadmin3-lts-master-20220717/pgadmin/dd/dditems/figures/ddTableFigure.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/dd/dditems/figures/ddTableFigure.cpp	2023-03-28 14:40:12.593212935 +0300
+@@ -72,7 +72,7 @@
+ 	fontColorAttribute->fontColor = wxColour(49, 79, 79);
+ 	//Set Value default selected Attributes
+ 	lineSelAttribute->pen().SetColour(wxColour(204, 0, 0));
+-	lineSelAttribute->pen().SetStyle(wxSOLID);
++	lineSelAttribute->pen().SetStyle(wxPENSTYLE_SOLID);
+ 	lineSelAttribute->pen().SetWidth(1);
+ 	fillSelAttribute->brush().SetColour(wxColour(255, 250, 205));
+ 	fillAttribute->brush().SetColour(wxColour(248, 248, 255));
+--- pgadmin3-lts-master-20220717/pgadmin/dlg/dlgMainConfig.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/dlg/dlgMainConfig.cpp	2023-03-28 14:42:45.879485299 +0300
+@@ -107,7 +107,7 @@
+ 	txtComment->SetValue(item->newLine->comment);
+ 
+ 	wxFont fntLabel = stName->GetFont();
+-	fntLabel.SetWeight(wxBOLD);
++	fntLabel.SetWeight(wxFONTWEIGHT_EXTRABOLD);
+ 	stName->SetFont(fntLabel);
+ 	stName->SetLabel(item->name);
+ 
+--- pgadmin3-lts-master-20220717/pgadmin/ogl/lines.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/ogl/lines.cpp	2023-03-28 17:09:33.843840628 +0300
+@@ -919,7 +919,7 @@
+ 	wxPen *old_pen = m_pen;
+ 	wxBrush *old_brush = m_brush;
+ 
+-	wxPen dottedPen(wxColour(0, 0, 0), 1, wxDOT);
++	wxPen dottedPen(wxColour(0, 0, 0), 1, wxPENSTYLE_DOT);
+ 	SetPen(& dottedPen);
+ 	SetBrush( (wxBrush *) wxTRANSPARENT_BRUSH );
+ 
+@@ -1152,10 +1152,10 @@
+ 
+ 		// Problem with pen - if not a solid pen, does strange things
+ 		// to the arrowhead. So make (get) a new pen that's solid.
+-		if (m_pen && (m_pen->GetStyle() != wxSOLID))
++		if (m_pen && (m_pen->GetStyle() != wxPENSTYLE_SOLID))
+ 		{
+ 			wxPen *solid_pen =
+-			    wxThePenList->FindOrCreatePen(m_pen->GetColour(), 1, wxSOLID);
++			    wxThePenList->FindOrCreatePen(m_pen->GetColour(), 1, wxPENSTYLE_SOLID);
+ 			if (solid_pen)
+ 				dc.SetPen(* solid_pen);
+ 		}
+@@ -2392,7 +2392,7 @@
+ {
+ 	m_lineShape = parent;
+ 	m_shapeRegion = region;
+-	SetPen(wxThePenList->FindOrCreatePen(wxColour(0, 0, 0), 1, wxDOT));
++	SetPen(wxThePenList->FindOrCreatePen(wxColour(0, 0, 0), 1, wxPENSTYLE_DOT));
+ }
+ 
+ wxLabelShape::~wxLabelShape()
+--- pgadmin3-lts-master-20220717/pgadmin/ogl/basic.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/ogl/basic.cpp	2023-03-28 17:15:53.574086705 +0300
+@@ -1240,7 +1240,7 @@
+ 
+ 	dc.SetLogicalFunction(OGLRBLF);
+ 
+-	wxPen dottedPen(wxColour(0, 0, 0), 1, wxDOT);
++	wxPen dottedPen(wxColour(0, 0, 0), 1, wxPENSTYLE_DOT);
+ 	dc.SetPen(dottedPen);
+ 	dc.SetBrush(* wxTRANSPARENT_BRUSH);
+ 
+@@ -1282,7 +1282,7 @@
+ //  m_xpos = xx; m_ypos = yy;
+ 	dc.SetLogicalFunction(OGLRBLF);
+ 
+-	wxPen dottedPen(wxColour(0, 0, 0), 1, wxDOT);
++	wxPen dottedPen(wxColour(0, 0, 0), 1, wxPENSTYLE_DOT);
+ 	dc.SetPen(dottedPen);
+ 	dc.SetBrush((* wxTRANSPARENT_BRUSH));
+ 
+@@ -3199,7 +3199,7 @@
+ 	if (GetCanvas())
+ 	{
+ 		wxColour c = GetCanvas()->GetBackgroundColour();
+-		return wxPen(c, 1, wxSOLID);
++		return wxPen(c, 1, wxPENSTYLE_SOLID);
+ 	}
+ 	return * g_oglWhiteBackgroundPen;
+ }
+@@ -3210,7 +3210,7 @@
+ 	if (GetCanvas())
+ 	{
+ 		wxColour c = GetCanvas()->GetBackgroundColour();
+-		return wxBrush(c, wxSOLID);
++		return wxBrush(c, wxBRUSHSTYLE_SOLID);
+ 	}
+ 	return * g_oglWhiteBackgroundBrush;
+ }
+--- pgadmin3-lts-master-20220717/pgadmin/ogl/composit.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/ogl/composit.cpp	2023-03-28 17:17:41.479726845 +0300
+@@ -136,7 +136,7 @@
+ 	GetCanvas()->PrepareDC(dc);
+ 
+ 	dc.SetLogicalFunction(OGLRBLF);
+-	wxPen dottedPen(wxColour(0, 0, 0), 1, wxDOT);
++	wxPen dottedPen(wxColour(0, 0, 0), 1, wxPENSTYLE_DOT);
+ 	dc.SetPen(dottedPen);
+ 	dc.SetBrush((* wxTRANSPARENT_BRUSH));
+ 
+@@ -156,7 +156,7 @@
+ 
+ 	dc.SetLogicalFunction(OGLRBLF);
+ 
+-	wxPen dottedPen(wxColour(0, 0, 0), 1, wxDOT);
++	wxPen dottedPen(wxColour(0, 0, 0), 1, wxPENSTYLE_DOT);
+ 	dc.SetPen(dottedPen);
+ 	dc.SetBrush((* wxTRANSPARENT_BRUSH));
+ 	m_canvas->CaptureMouse();
+--- pgadmin3-lts-master-20220717/pgadmin/ogl/divided.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/ogl/divided.cpp	2023-03-28 17:19:02.938577432 +0300
+@@ -583,7 +583,7 @@
+ 	GetCanvas()->PrepareDC(dc);
+ 
+ 	dc.SetLogicalFunction(OGLRBLF);
+-	wxPen dottedPen(wxColour(0, 0, 0), 1, wxDOT);
++	wxPen dottedPen(wxColour(0, 0, 0), 1, wxPENSTYLE_DOT);
+ 	dc.SetPen(dottedPen);
+ 	dc.SetBrush((* wxTRANSPARENT_BRUSH));
+ 
+@@ -602,7 +602,7 @@
+ 
+ 	wxDividedShape *dividedObject = (wxDividedShape *)m_shape;
+ 	dc.SetLogicalFunction(OGLRBLF);
+-	wxPen dottedPen(wxColour(0, 0, 0), 1, wxDOT);
++	wxPen dottedPen(wxColour(0, 0, 0), 1, wxPENSTYLE_DOT);
+ 	dc.SetPen(dottedPen);
+ 	dc.SetBrush((* wxTRANSPARENT_BRUSH));
+ 
+--- pgadmin3-lts-master-20220717/pgadmin/ogl/canvas.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/ogl/canvas.cpp	2023-03-28 17:40:42.562385632 +0300
+@@ -111,7 +111,7 @@
+ // Draws the background
+ void wxShapeCanvas::DrawBackground(wxDC &dc, bool transformed)
+ {
+-	dc.SetBackground(wxBrush(GetBackgroundColour(), wxSOLID));
++	dc.SetBackground(wxBrush(GetBackgroundColour(), wxBRUSHSTYLE_SOLID));
+ 	dc.Clear();
+ }
+ 
+--- pgadmin3-lts-master-20220717/pgadmin/ogl/drawn.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/ogl/drawn.cpp	2023-03-28 17:42:43.659142852 +0300
+@@ -446,7 +446,7 @@
+ 				// Need to construct a brush to match the outline pen's colour
+ 				if (m_image->m_outlinePen)
+ 				{
+-					wxBrush *br = wxTheBrushList->FindOrCreateBrush(m_image->m_outlinePen->GetColour(), wxSOLID);
++					wxBrush *br = wxTheBrushList->FindOrCreateBrush(m_image->m_outlinePen->GetColour(), wxBRUSHSTYLE_SOLID);
+ 					if (br)
+ 						dc.SetBrush(* br);
+ 				}
+--- pgadmin3-lts-master-20220717/pgadmin/ogl/ogldiag.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/ogl/ogldiag.cpp	2023-03-28 17:45:05.194920305 +0300
+@@ -164,7 +164,7 @@
+ 
+ void wxDiagram::DrawOutline(wxDC &dc, double x1, double y1, double x2, double y2)
+ {
+-	wxPen dottedPen(wxColour(0, 0, 0), 1, wxDOT);
++	wxPen dottedPen(wxColour(0, 0, 0), 1, wxPENSTYLE_DOT);
+ 	dc.SetPen(dottedPen);
+ 	dc.SetBrush((* wxTRANSPARENT_BRUSH));
+ 
+--- pgadmin3-lts-master-20220717/pgadmin/dd/dditems/figures/ddRelationshipFigure.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/dd/dditems/figures/ddRelationshipFigure.cpp	2023-03-28 18:04:38.296327386 +0300
+@@ -357,7 +357,7 @@
+ 			else
+ 			{
+ 				fkIdentifying = false;
+-				setLinePen(wxPen(*wxBLACK, 1, wxSHORT_DASH));
++				setLinePen(wxPen(*wxBLACK, 1, wxPENSTYLE_SHORT_DASH));
+ 				setOptionAtForeignKeys(null);
+ 			}
+ 			view->notifyChanged();
+--- pgadmin3-lts-master-20220717/pgadmin/ctl/explainShape.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/ctl/explainShape.cpp	2023-03-28 18:07:58.804747066 +0300
+@@ -524,8 +524,8 @@
+ {
+ 	if (m_lineControlPoints)
+ 	{
+-		dc.SetPen(*wxThePenList->FindOrCreatePen(*wxBLACK, 1, wxSOLID));
+-		dc.SetBrush(*wxTheBrushList->FindOrCreateBrush(*wxLIGHT_GREY, wxSOLID));
++		dc.SetPen(*wxThePenList->FindOrCreatePen(*wxBLACK, 1, wxPENSTYLE_SOLID));
++		dc.SetBrush(*wxTheBrushList->FindOrCreateBrush(*wxLIGHT_GREY, wxBRUSHSTYLE_SOLID));
+ 
+ 		wxPoint *points = new wxPoint[11];
+ 		wxRealPoint *point0 = (wxRealPoint *) m_lineControlPoints->Item(0)->GetData();
+--- pgadmin3-lts-master-20220717/pgadmin/dd/dditems/figures/ddColumnKindIcon.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/dd/dditems/figures/ddColumnKindIcon.cpp	2023-03-28 18:10:27.804742967 +0300
+@@ -119,7 +119,7 @@
+ 		//Adding a yellow circle to increase visibility of uk index
+ 		if(isUniqueKey())
+ 		{
+-			context.SetBrush(wxBrush(wxColour(wxT("YELLOW")), wxSOLID));
++			context.SetBrush(wxBrush(wxColour(wxT("YELLOW")), wxBRUSHSTYLE_SOLID));
+ 			context.SetPen(wxPen(wxColour(wxT("YELLOW"))));
+ 			context.DrawCircle(copy.x + 6, copy.y + 7, 4);
+ 		}
+--- pgadmin3-lts-master-20220717/pgadmin/gqb/gqbGraphSimple.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/gqb/gqbGraphSimple.cpp	2023-03-28 18:37:11.513099640 +0300
+@@ -29,9 +29,9 @@
+ 	normalFont = settings->GetSystemFont();
+ 	TableTitleFont = settings->GetSystemFont();
+ 	TableTitleFont.SetWeight(wxFONTWEIGHT_BOLD);
+-	BackgroundLayer1 = wxBrush(wxColour(112, 112, 112), wxSOLID);
+-	BackgroundLayer2 = wxBrush (wxColour(208, 208, 208), wxSOLID);
+-	BackgroundTitle = wxBrush (wxColour(245, 245, 245), wxSOLID);
++	BackgroundLayer1 = wxBrush(wxColour(112, 112, 112), wxBRUSHSTYLE_SOLID);
++	BackgroundLayer2 = wxBrush (wxColour(208, 208, 208), wxBRUSHSTYLE_SOLID);
++	BackgroundTitle = wxBrush (wxColour(245, 245, 245), wxBRUSHSTYLE_SOLID);
+ 	minTableWidth = 80;
+ 	minTableHeight = 54;
+ 	rowHeight = 0;                                //By default but this it's replaced by font metrics value
+@@ -39,8 +39,8 @@
+ 	rowRightMargin = 5;
+ 	rowTopMargin = 1;
+ 	lineClickThreshold = 7;
+-	selectedPen = wxPen(wxColour(0, 146, 195), 2, wxSOLID);
+-	selectedBrush = wxBrush(wxColour(0, 146, 195), wxSOLID);
++	selectedPen = wxPen(wxColour(0, 146, 195), 2, wxPENSTYLE_SOLID);
++	selectedBrush = wxBrush(wxColour(0, 146, 195), wxBRUSHSTYLE_SOLID);
+ 	imgSelBoxEmpty = *gqbColNotSel_png_bmp;
+ 	imgSelBoxSelected = *gqbColSel_png_bmp;
+ 
+--- pgadmin3-lts-master-20220717/pgadmin/gqb/gqbGridRestTable.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/gqb/gqbGridRestTable.cpp	2023-03-28 18:44:32.351953759 +0300
+@@ -223,22 +223,22 @@
+ 
+ 	// Draw 3-d button
+ 	wxColour colourBackGround = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
+-	dc.SetBrush(wxBrush(colourBackGround, wxSOLID));
+-	dc.SetPen(wxPen(colourBackGround, 1, wxSOLID));
++	dc.SetBrush(wxBrush(colourBackGround, wxBRUSHSTYLE_SOLID));
++	dc.SetPen(wxPen(colourBackGround, 1, wxPENSTYLE_SOLID));
+ 	dc.DrawRectangle(rectButton);
+-	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), 1, wxSOLID));
++	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), 1, wxPENSTYLE_SOLID));
+ 	dc.DrawLine(rectButton.GetLeft(), rectButton.GetBottom(),
+ 	            rectButton.GetRight(), rectButton.GetBottom());
+ 	dc.DrawLine(rectButton.GetRight(), rectButton.GetBottom(),
+ 	            rectButton.GetRight(), rectButton.GetTop() - 1);
+ 	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW),
+-	                1, wxSOLID));
++	                1, wxPENSTYLE_SOLID));
+ 	dc.DrawLine(rectButton.GetLeft() + 1, rectButton.GetBottom() - 1,
+ 	            rectButton.GetRight() - 1, rectButton.GetBottom() - 1);
+ 	dc.DrawLine(rectButton.GetRight() - 1, rectButton.GetBottom() - 1,
+ 	            rectButton.GetRight() - 1, rectButton.GetTop());
+ 	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNHIGHLIGHT),
+-	                1, wxSOLID));
++	                1, wxPENSTYLE_SOLID));
+ 	dc.DrawLine(rectButton.GetRight() - 2, rectButton.GetTop() + 1,
+ 	            rectButton.GetLeft() + 1, rectButton.GetTop() + 1);
+ 	dc.DrawLine(rectButton.GetLeft() + 1, rectButton.GetTop() + 1,
+@@ -252,12 +252,12 @@
+ 	                   rectButton.GetTop() + (rectButton.GetHeight() - nTriHeight) / 2);
+ 	point[1] = wxPoint(point[0].x + nTriWidth - 1, point[0].y);
+ 	point[2] = wxPoint(point[0].x + 3, point[0].y + nTriHeight - 1);
+-	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), wxSOLID));
+-	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), 1, wxSOLID));
++	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), wxBRUSHSTYLE_SOLID));
++	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), 1, wxPENSTYLE_SOLID));
+ 	dc.DrawPolygon(3, point);
+ 	if (m_border == wxLAYOUT_TOP)
+ 	{
+-		dc.SetPen(wxPen(*wxBLACK, 1, wxDOT));
++		dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
+ 		dc.DrawLine(rectCell.GetRight(), rectCell.GetTop(),
+ 		            rectCell.GetLeft(), rectCell.GetTop());
+ 	}
+@@ -300,30 +300,30 @@
+ 		return;
+ 
+ 	wxColour colourBackGround = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
+-	dc.SetBrush(wxBrush(colourBackGround, wxSOLID));
+-	dc.SetPen(wxPen(colourBackGround, 1, wxSOLID));
++	dc.SetBrush(wxBrush(colourBackGround, wxBRUSHSTYLE_SOLID));
++	dc.SetPen(wxPen(colourBackGround, 1, wxPENSTYLE_SOLID));
+ 	dc.DrawRectangle(rectButton);
+-	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), 1, wxSOLID));
++	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), 1, wxPENSTYLE_SOLID));
+ 	dc.DrawLine(rectButton.GetLeft(), rectButton.GetBottom(),
+ 	            rectButton.GetRight(), rectButton.GetBottom());
+ 	dc.DrawLine(rectButton.GetRight(), rectButton.GetBottom(),
+ 	            rectButton.GetRight(), rectButton.GetTop() - 1);
+ 	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW),
+-	                1, wxSOLID));
++	                1, wxPENSTYLE_SOLID));
+ 	dc.DrawLine(rectButton.GetLeft() + 1, rectButton.GetBottom() - 1,
+ 	            rectButton.GetRight() - 1, rectButton.GetBottom() - 1);
+ 	dc.DrawLine(rectButton.GetRight() - 1, rectButton.GetBottom() - 1,
+ 	            rectButton.GetRight() - 1, rectButton.GetTop());
+ 	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNHIGHLIGHT),
+-	                1, wxSOLID));
++	                1, wxPENSTYLE_SOLID));
+ 	dc.DrawLine(rectButton.GetRight() - 2, rectButton.GetTop() + 1,
+ 	            rectButton.GetLeft() + 1, rectButton.GetTop() + 1);
+ 	dc.DrawLine(rectButton.GetLeft() + 1, rectButton.GetTop() + 1,
+ 	            rectButton.GetLeft() + 1, rectButton.GetBottom() - 1);
+ 
+ 	// Draw little plus symbol
+-	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), wxSOLID));
+-	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), 1, wxSOLID));
++	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), wxBRUSHSTYLE_SOLID));
++	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), 1, wxPENSTYLE_SOLID));
+ 	int nPlusWidth = 7;
+ 	int nPlusHeight = 7;
+ 	wxPoint point[4];
+@@ -336,7 +336,7 @@
+ 
+ 	if (m_border == wxLAYOUT_TOP)
+ 	{
+-		dc.SetPen(wxPen(*wxBLACK, 1, wxDOT));
++		dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
+ 		dc.DrawLine(rectCell.GetRight(), rectCell.GetTop(),
+ 		            rectCell.GetLeft(), rectCell.GetTop());
+ 	}
+--- pgadmin3-lts-master-20220717/pgadmin/hotdraw/figures/hdLineTerminal.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/hotdraw/figures/hdLineTerminal.cpp	2023-03-28 18:48:11.683792823 +0300
+@@ -25,7 +25,7 @@
+ hdLineTerminal::hdLineTerminal()
+ {
+ 	middle = hdPoint(0, 0);
+-	terminalLinePen = wxPen(wxString(wxT("BLACK")), 1, wxSOLID);
++	terminalLinePen = wxPen(wxString(wxT("BLACK")), 1, wxPENSTYLE_SOLID);
+ }
+ 
+ hdLineTerminal::~hdLineTerminal()
+@@ -48,7 +48,7 @@
+ 	view->CalcScrolledPosition(copyB.x, copyB.y, &copyB.x, &copyB.y);
+ 	context.DrawLine(copyA, copyB);
+ 
+-	context.SetPen(wxPen(wxString(wxT("BLACK")), 1, wxSOLID));
++	context.SetPen(wxPen(wxString(wxT("BLACK")), 1, wxPENSTYLE_SOLID));
+ 	int x = copyA.x + g.ddabs(copyA.x - copyB.x);
+ 	int y = copyA.y + g.ddabs(copyA.y - copyB.y);
+ 	middle = hdPoint(x, y);
+--- pgadmin3-lts-master-20220717/pgadmin/hotdraw/figures/hdPolyLineFigure.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/hotdraw/figures/hdPolyLineFigure.cpp	2023-03-28 18:49:44.510861972 +0300
+@@ -42,7 +42,7 @@
+ 	startPoint = hdPoint(0, 0);
+ 	endPoint = hdPoint(0, 0);
+ 	pointAtPos = hdPoint(0, 0);
+-	linePen = wxPen(wxString(wxT("BLACK")), 1, wxSOLID);
++	linePen = wxPen(wxString(wxT("BLACK")), 1, wxPENSTYLE_SOLID);
+ }
+ 
+ hdPolyLineFigure::~hdPolyLineFigure()
+--- pgadmin3-lts-master-20220717/pgadmin/hotdraw/main/hdDrawingView.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/hotdraw/main/hdDrawingView.cpp	2023-03-28 18:53:01.147209915 +0300
+@@ -128,9 +128,9 @@
+ 	//Hack to avoid selection rectangle drawing bug
+ 	if (drawSelRect)
+ 	{
+-		wxPen *pen = wxThePenList->FindOrCreatePen(*wxRED, 1, wxDOT);
++		wxPen *pen = wxThePenList->FindOrCreatePen(*wxRED, 1, wxPENSTYLE_DOT);
+ 		dc.SetPen(*pen);
+-		wxBrush *brush = wxTheBrushList->FindOrCreateBrush(*wxRED, wxTRANSPARENT);
++		wxBrush *brush = wxTheBrushList->FindOrCreateBrush(*wxRED, wxBRUSHSTYLE_TRANSPARENT);
+ 		dc.SetBackground(*brush);
+ 		dc.SetBackgroundMode(wxTRANSPARENT);
+ 		//Adjust points before drawing
+--- pgadmin3-lts-master-20220717/pgadmin/frm/frmQuery.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/frm/frmQuery.cpp	2023-03-28 19:47:47.666220913 +0300
+@@ -2349,7 +2349,7 @@
+ 
+ 	// Clear markers and indicators
+ 	sqlQuery->MarkerDeleteAll(0);
+-	sqlQuery->StartStyling(0, wxSTC_INDICS_MASK);
++	sqlQuery->StartStyling(0);
+ 	sqlQuery->SetStyling(sqlQuery->GetText().Length(), 0);
+ 
+ 	// Menu stuff to initialize
+@@ -2504,7 +2504,7 @@
+ 
+ 	// Clear markers and indicators
+ 	sqlQuery->MarkerDeleteAll(0);
+-	sqlQuery->StartStyling(0, wxSTC_INDICS_MASK);
++	sqlQuery->StartStyling(0);
+ 	sqlQuery->SetStyling(sqlQuery->GetText().Length(), 0);
+ 
+ 	if (!sqlQuery->IsChanged())
+@@ -2880,7 +2880,7 @@
+ 
+ 				// Set an indicator on the error word (break on any kind of bracket, a space or full stop)
+ 				int sPos = errPos + selStart - 1, wEnd = 1;
+-				sqlQueryExec->StartStyling(sPos, wxSTC_INDICS_MASK);
++				sqlQueryExec->StartStyling(0);
+ 				int c = sqlQueryExec->GetCharAt(sPos + wEnd);
+ 				size_t len = sqlQueryExec->GetText().Length();
+ 				while(c != ' ' && c != '(' && c != '{' && c != '[' && c != '.' &&
+--- pgadmin3-lts-master-20220717/pgadmin/ogl/oglmisc.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/ogl/oglmisc.cpp	2023-03-28 19:56:32.427800233 +0300
+@@ -37,14 +37,14 @@
+ {
+ 	g_oglBullseyeCursor = new wxCursor(wxCURSOR_BULLSEYE);
+ 
+-	g_oglNormalFont = new wxFont(10, wxSWISS, wxNORMAL, wxNORMAL);
++	g_oglNormalFont = new wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+ 
+-	g_oglBlackPen = new wxPen(wxT("BLACK"), 1, wxSOLID);
++	g_oglBlackPen = new wxPen(wxT("BLACK"), 1, wxPENSTYLE_SOLID);
+ 
+-	g_oglWhiteBackgroundPen = new wxPen(wxT("WHITE"), 1, wxSOLID);
+-	g_oglTransparentPen = new wxPen(wxT("WHITE"), 1, wxTRANSPARENT);
+-	g_oglWhiteBackgroundBrush = new wxBrush(wxT("WHITE"), wxSOLID);
+-	g_oglBlackForegroundPen = new wxPen(wxT("BLACK"), 1, wxSOLID);
++	g_oglWhiteBackgroundPen = new wxPen(wxT("WHITE"), 1, wxPENSTYLE_SOLID);
++	g_oglTransparentPen = new wxPen(wxT("WHITE"), 1, wxPENSTYLE_TRANSPARENT);
++	g_oglWhiteBackgroundBrush = new wxBrush(wxT("WHITE"), wxBRUSHSTYLE_SOLID);
++	g_oglBlackForegroundPen = new wxPen(wxT("BLACK"), 1, wxPENSTYLE_SOLID);
+ 
+ 	OGLInitializeConstraintTypes();
+ 
+@@ -104,7 +104,8 @@
+ 
+ wxFont *oglMatchFont(int point_size)
+ {
+-	wxFont *font = wxTheFontList->FindOrCreateFont(point_size, wxSWISS, wxNORMAL, wxNORMAL);
++	wxFont *font = wxTheFontList->FindOrCreateFont(point_size, wxFONTFAMILY_SWISS,
++							wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+ #if 0
+ 	switch (point_size)
+ 	{
+--- pgadmin3-lts-master-20220717/pgadmin/hotdraw/figures/hdAbstractFigure.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/hotdraw/figures/hdAbstractFigure.cpp	2023-03-28 20:26:26.862555742 +0300
+@@ -56,7 +56,7 @@
+ 	view->CalcScrolledPosition(copy.x, copy.y, &copy.x, &copy.y);
+ 
+ 	context.SetPen(*wxGREEN_PEN);
+-	context.SetBrush(wxBrush (wxColour(208, 208, 208), wxSOLID));
++	context.SetBrush(wxBrush (wxColour(208, 208, 208), wxBRUSHSTYLE_SOLID));
+ 	context.DrawRectangle(copy);
+ }
+ 
+@@ -72,7 +72,7 @@
+ 	view->CalcScrolledPosition(copy.x, copy.y, &copy.x, &copy.y);
+ 
+ 	context.SetPen(*wxRED_PEN);
+-	context.SetBrush(wxBrush (wxColour(133, 133, 133), wxSOLID));
++	context.SetBrush(wxBrush (wxColour(133, 133, 133), wxBRUSHSTYLE_SOLID));
+ 	context.DrawRectangle(copy);
+ }
+ 
+--- pgadmin3-lts-master-20220717/pgadmin/hotdraw/figures/defaultAttributes/hdFontAttribute.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/hotdraw/figures/defaultAttributes/hdFontAttribute.cpp	2023-03-28 20:29:07.309165406 +0300
+@@ -46,5 +46,5 @@
+ 
+ void hdFontAttribute::InitFont()
+ {
+-	defaultFont = new wxFont(10, wxSWISS, wxNORMAL, wxNORMAL);
++	defaultFont = new wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+ }
+--- pgadmin3-lts-master-20220717/pgadmin/utils/sysSettings.cpp.orig	2022-07-17 12:06:47.000000000 +0300
++++ pgadmin3-lts-master-20220717/pgadmin/utils/sysSettings.cpp	2023-03-28 20:32:39.921013694 +0300
+@@ -700,7 +700,7 @@
+ 		return wxFont(9, wxTELETYPE, wxNORMAL, wxNORMAL);
+ #else
+ #ifdef __WXGTK__
+-		return wxFont(10, wxTELETYPE, wxNORMAL, wxNORMAL);
++		return wxFont(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+ #else
+ 		return wxFont(12, wxTELETYPE, wxNORMAL, wxNORMAL);
+ #endif
