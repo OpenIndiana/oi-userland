@@ -1,21 +1,41 @@
---- desktop-cache-smf-services-0.2.2/gconf-cache/gconf-cache.orig	Sat Mar 15 19:06:03 2014
-+++ desktop-cache-smf-services-0.2.2/gconf-cache/gconf-cache	Sat Mar 15 19:14:29 2014
-@@ -52,8 +52,25 @@
+This patch eliminates calls to the find_newer python script and adds
+messages to the redo_gsettings_schemas function of the method script.
+
+--- desktop-cache-smf-services-0.2.2/gconf-cache/gconf-cache-old	Wed Apr 29 05:00:07 2009
++++ desktop-cache-smf-services-0.2.2/gconf-cache/gconf-cache	Sat Mar 25 16:38:19 2023
+@@ -1,5 +1,6 @@
+ #!/bin/ksh -p
+ #
++# Copyright 2023 Gary Mills
+ # Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
+ # Use is subject to license terms.
+ #
+@@ -36,7 +37,6 @@
+ . /lib/svc/share/smf_include.sh
+ 
+ USAGE="Usage: $0 { start | refresh }"
+-FIND_NEWER=/usr/share/desktop-cache/find_newer
+ 
+ if [ $# -ne 1 ] ; then
+     echo $USAGE
+@@ -52,15 +52,32 @@
  # generate/merge schema files in the gconf cache
  #
  
 +redo_gsettings_schemas ()
 +{
 +if [ -a "/usr/share/glib-2.0/schemas/gschemas.compiled" ]; then
-+  SCHEMAS=`${FIND_NEWER} -f -m -c --name '*.xml' \
-+      --newer /usr/share/glib-2.0/schemas/gschemas.compiled \
-+      /usr/share/glib-2.0/schemas 2>/dev/null`
++  SCHEMAS=`/usr/bin/find /usr/share/glib-2.0/schemas -follow ! -type d \
++    -name '*.xml' -newer /usr/share/glib-2.0/schemas/gschemas.compiled`
 +else
 +  SCHEMAS="NEW"
 +fi
 +
 +if [ -n "$SCHEMAS" ]; then
-+  /usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas/ 2>/dev/null
++    echo "Doing rebuild of gschemas.compiled file"
++    /usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas/ 2>/dev/null
++else
++    echo "Skipping rebuild of gschemas.compiled file"
 +fi
 +}
 +
@@ -24,8 +44,39 @@
 +redo_gsettings_schemas
 +
  if [ -a "/etc/gconf/gconf.xml.defaults/%gconf-tree.xml" ]; then
-   SCHEMAS=`${FIND_NEWER} -f -m -c --name '*.schemas' \
-       --newer /etc/gconf/gconf.xml.defaults/%gconf-tree.xml \
+-  SCHEMAS=`${FIND_NEWER} -f -m -c --name '*.schemas' \
+-      --newer /etc/gconf/gconf.xml.defaults/%gconf-tree.xml \
+-      /etc/gconf/schemas 2>/dev/null`
+-  ENTRIES=`${FIND_NEWER} -f -m -c --name '*.entries' \
+-      --newer /etc/gconf/gconf.xml.defaults/%gconf-tree.xml \
+-      /etc/gconf/schemas 2>/dev/null`
++  SCHEMAS=`/usr/bin/find /etc/gconf/schemas -follow ! -type d \
++    -name '*.schemas' -newer /etc/gconf/gconf.xml.defaults/%gconf-tree.xml`
++  ENTRIES=`/usr/bin/find /etc/gconf/schemas -follow ! -type d \
++    -name '*.entries' -newer /etc/gconf/gconf.xml.defaults/%gconf-tree.xml`
+ else
+   SCHEMAS=`/usr/bin/find /etc/gconf/schemas -name '*.schemas' ! -type d`
+   ENTRIES=`/usr/bin/find /etc/gconf/schemas -name '*.entries' ! -type d`
+@@ -75,8 +92,8 @@
+   echo "$SCHEMAS" | /bin/sed -e 's/^/    /'
+   # redirect stdout to /dev/null because gconftool is too verbose
+   # errors are printed to stderr
+-  GCONF_CONFIG_SOURCE=xml:merged:/etc/gconf/gconf.xml.defaults \
+-    /usr/bin/gconftool-2 --makefile-install-rule $SCHEMAS > /dev/null
++    GCONF_CONFIG_SOURCE=xml:merged:/etc/gconf/gconf.xml.defaults \
++      /usr/bin/gconftool-2 --makefile-install-rule $SCHEMAS > /dev/null
+   if [ $? -ne 0 ]; then
+     echo "gconftool-2 exited with an error while installing schemas"
+     exit $SMF_EXIT_ERR_FATAL
+@@ -94,7 +111,7 @@
+   echo "$ENTRIES" | /bin/sed -e 's/^/    /'
+   # redirect stdout to /dev/null because gconftool is too verbose
+   # errors are printed to stderr
+-  /usr/bin/gconftool-2 --direct \
++    /usr/bin/gconftool-2 --direct \
+       --config-source=xml:merged:/etc/gconf/gconf.xml.defaults \
+       --load $ENTRIES > /dev/null
+   if [ $? -ne 0 ]; then
 @@ -108,6 +125,8 @@
  
  refresh_gconf_cache ()
@@ -35,3 +86,23 @@
  if [ -a "/etc/gconf/gconf.xml.defaults/%gconf-tree.xml" ]; then
    SCHEMAS=`/usr/bin/find /etc/gconf/schemas ! -type d -follow \
      -name '*.schemas' 2>/dev/null`
+@@ -127,8 +146,8 @@
+   echo "$SCHEMAS" | /bin/sed -e 's/^/    /'
+   # redirect stdout to /dev/null because gconftool is too verbose
+   # errors are printed to stderr
+-  GCONF_CONFIG_SOURCE=xml:merged:/etc/gconf/gconf.xml.defaults \
+-    /usr/bin/gconftool-2 --makefile-install-rule $SCHEMAS > /dev/null
++    GCONF_CONFIG_SOURCE=xml:merged:/etc/gconf/gconf.xml.defaults \
++	/usr/bin/gconftool-2 --makefile-install-rule $SCHEMAS > /dev/null
+   if [ $? -ne 0 ]; then
+     echo "gconftool-2 exited with an error while installing schemas"
+     exit $SMF_EXIT_ERR_FATAL
+@@ -146,7 +165,7 @@
+   echo "$ENTRIES" | /bin/sed -e 's/^/    /'
+   # redirect stdout to /dev/null because gconftool is too verbose
+   # errors are printed to stderr
+-  /usr/bin/gconftool-2 --direct \
++    /usr/bin/gconftool-2 --direct \
+       --config-source=xml:merged:/etc/gconf/gconf.xml.defaults \
+       --load $ENTRIES > /dev/null
+   if [ $? -ne 0 ]; then
