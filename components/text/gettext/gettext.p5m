@@ -14,8 +14,7 @@
 # Copyright (c) 2020, 2022, Andreas Wacknitz
 #
 
-set name=pkg.fmri \
-    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
@@ -25,11 +24,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-depend type=optional fmri=pkg:/developer/gnome/gettext@2.30.0,5.11-0.151.1.8.1
-
 <transform file path=.+/share/info/dir -> drop>
 # Drop all documentation:
 <transform file path=.+/share/doc/ -> drop>
+# Binaries in usr/lib should be executable
+<transform file path=usr/lib/$(MACH64)/gettext/ -> set mode 0555>
 
 # Compatibility                                                                                                                      
 link path=usr/lib/intltool/gettext-tools/lib/libgettextlib.so target=../../../libgettextlib-$(COMPONENT_VERSION).so                  
@@ -50,35 +49,8 @@ link path=usr/share/man/man1/gmsgfmt.1 \
 link path=usr/share/man/man1/gxgettext.1 \
     target=../../../gnu/share/man/man1/xgettext.1 facet.compat.gnulinks=all
 
-file path=usr/bin/$(MACH64)/autopoint
-file path=usr/bin/$(MACH64)/envsubst
-#file path=usr/bin/$(MACH64)/gettext
-file usr/bin/$(MACH64)/gettext path=usr/gnu/bin/$(MACH64)/gettext
-file path=usr/bin/$(MACH64)/gettext.sh
-file path=usr/bin/$(MACH64)/gettextize
-file path=usr/bin/$(MACH64)/msgattrib
-file path=usr/bin/$(MACH64)/msgcat
-file path=usr/bin/$(MACH64)/msgcmp
-file path=usr/bin/$(MACH64)/msgcomm
-file path=usr/bin/$(MACH64)/msgconv
-file path=usr/bin/$(MACH64)/msgen
-file path=usr/bin/$(MACH64)/msgexec
-file path=usr/bin/$(MACH64)/msgfilter
-#file path=usr/bin/$(MACH64)/msgfmt
-file usr/bin/$(MACH64)/msgfmt path=usr/gnu/bin/$(MACH64)/msgfmt
-file path=usr/bin/$(MACH64)/msggrep
-file path=usr/bin/$(MACH64)/msginit
-file path=usr/bin/$(MACH64)/msgmerge
-file path=usr/bin/$(MACH64)/msgunfmt
-file path=usr/bin/$(MACH64)/msguniq
-file path=usr/bin/$(MACH64)/ngettext
-file path=usr/bin/$(MACH64)/recode-sr-latin
-#file path=usr/bin/$(MACH64)/xgettext
-file usr/bin/$(MACH64)/xgettext path=usr/gnu/bin/$(MACH64)/xgettext
 file path=usr/bin/autopoint
 file path=usr/bin/envsubst
-#file path=usr/bin/gettext
-file usr/bin/gettext path=usr/gnu/bin/gettext
 file path=usr/bin/gettext.sh
 file path=usr/bin/gettextize
 file path=usr/bin/msgattrib
@@ -89,8 +61,6 @@ file path=usr/bin/msgconv
 file path=usr/bin/msgen
 file path=usr/bin/msgexec
 file path=usr/bin/msgfilter
-#file path=usr/bin/msgfmt
-file usr/bin/msgfmt path=usr/gnu/bin/msgfmt
 file path=usr/bin/msggrep
 file path=usr/bin/msginit
 file path=usr/bin/msgmerge
@@ -98,46 +68,44 @@ file path=usr/bin/msgunfmt
 file path=usr/bin/msguniq
 file path=usr/bin/ngettext
 file path=usr/bin/recode-sr-latin
-#file path=usr/bin/xgettext
-file usr/bin/xgettext path=usr/gnu/bin/xgettext
+file path=usr/gnu/bin/gettext
+file path=usr/gnu/bin/msgfmt
+file path=usr/gnu/bin/xgettext
+file path=usr/gnu/share/man/man1/gettext.1
+file path=usr/gnu/share/man/man1/msgfmt.1
+file path=usr/gnu/share/man/man1/xgettext.1
 file path=usr/include/gettext-po.h
 file path=usr/include/textstyle.h
 file path=usr/include/textstyle/stdbool.h
 file path=usr/include/textstyle/version.h
 file path=usr/include/textstyle/woe32dll.h
-file path=usr/lib/$(MACH64)/gettext/cldr-plurals mode=0555
-file path=usr/lib/$(MACH64)/gettext/hostname mode=0555
-file path=usr/lib/$(MACH64)/gettext/project-id mode=0555
-file path=usr/lib/$(MACH64)/gettext/urlget mode=0555
-file path=usr/lib/$(MACH64)/gettext/user-email mode=0555
-file path=usr/lib/$(MACH64)/libgettextlib-$(COMPONENT_VERSION).so
+file path=usr/lib/$(MACH64)/gettext/cldr-plurals
+file path=usr/lib/$(MACH64)/gettext/hostname
+file path=usr/lib/$(MACH64)/gettext/project-id
+file path=usr/lib/$(MACH64)/gettext/urlget
+file path=usr/lib/$(MACH64)/gettext/user-email
+file path=usr/lib/$(MACH64)/libgettextlib-$(HUMAN_VERSION).so
 link path=usr/lib/$(MACH64)/libgettextlib.so \
-    target=libgettextlib-$(COMPONENT_VERSION).so
+    target=libgettextlib-$(HUMAN_VERSION).so
 link path=usr/lib/$(MACH64)/libgettextpo.so target=libgettextpo.so.0.5.8
 link path=usr/lib/$(MACH64)/libgettextpo.so.0 target=libgettextpo.so.0.5.8
 file path=usr/lib/$(MACH64)/libgettextpo.so.0.5.8
-file path=usr/lib/$(MACH64)/libgettextsrc-$(COMPONENT_VERSION).so
+file path=usr/lib/$(MACH64)/libgettextsrc-$(HUMAN_VERSION).so
 link path=usr/lib/$(MACH64)/libgettextsrc.so \
-    target=libgettextsrc-$(COMPONENT_VERSION).so
+    target=libgettextsrc-$(HUMAN_VERSION).so
 link path=usr/lib/$(MACH64)/libtextstyle.so target=libtextstyle.so.0.1.2
 link path=usr/lib/$(MACH64)/libtextstyle.so.0 target=libtextstyle.so.0.1.2
 file path=usr/lib/$(MACH64)/libtextstyle.so.0.1.2
-file path=usr/lib/gettext/cldr-plurals mode=0555
-file path=usr/lib/gettext/hostname mode=0555
-file path=usr/lib/gettext/project-id mode=0555
-file path=usr/lib/gettext/urlget mode=0555
-file path=usr/lib/gettext/user-email mode=0555
-file path=usr/lib/libgettextlib-$(COMPONENT_VERSION).so
-link path=usr/lib/libgettextlib.so target=libgettextlib-$(COMPONENT_VERSION).so
+file path=usr/lib/libgettextlib-$(HUMAN_VERSION).so
+link path=usr/lib/libgettextlib.so target=libgettextlib-$(HUMAN_VERSION).so
 link path=usr/lib/libgettextpo.so target=libgettextpo.so.0.5.8
 link path=usr/lib/libgettextpo.so.0 target=libgettextpo.so.0.5.8
 file path=usr/lib/libgettextpo.so.0.5.8
-file path=usr/lib/libgettextsrc-$(COMPONENT_VERSION).so
-link path=usr/lib/libgettextsrc.so target=libgettextsrc-$(COMPONENT_VERSION).so
+file path=usr/lib/libgettextsrc-$(HUMAN_VERSION).so
+link path=usr/lib/libgettextsrc.so target=libgettextsrc-$(HUMAN_VERSION).so
 link path=usr/lib/libtextstyle.so target=libtextstyle.so.0.1.2
 link path=usr/lib/libtextstyle.so.0 target=libtextstyle.so.0.1.2
 file path=usr/lib/libtextstyle.so.0.1.2
-
 file path=usr/share/aclocal/gettext.m4
 file path=usr/share/aclocal/host-cpu-c-abi.m4
 file path=usr/share/aclocal/iconv.m4
@@ -1908,14 +1876,14 @@ file path=usr/share/doc/libtextstyle/libtextstyle_6.html
 file path=usr/share/doc/libtextstyle/libtextstyle_7.html
 file path=usr/share/doc/libtextstyle/libtextstyle_abt.html
 file path=usr/share/doc/libtextstyle/libtextstyle_toc.html
-file path=usr/share/gettext-$(COMPONENT_VERSION)/its/glade.loc
-file path=usr/share/gettext-$(COMPONENT_VERSION)/its/glade1.its
-file path=usr/share/gettext-$(COMPONENT_VERSION)/its/glade2.its
-file path=usr/share/gettext-$(COMPONENT_VERSION)/its/gsettings.its
-file path=usr/share/gettext-$(COMPONENT_VERSION)/its/gsettings.loc
-file path=usr/share/gettext-$(COMPONENT_VERSION)/its/gtkbuilder.its
-file path=usr/share/gettext-$(COMPONENT_VERSION)/its/metainfo.its
-file path=usr/share/gettext-$(COMPONENT_VERSION)/its/metainfo.loc
+file path=usr/share/gettext-$(HUMAN_VERSION)/its/glade.loc
+file path=usr/share/gettext-$(HUMAN_VERSION)/its/glade1.its
+file path=usr/share/gettext-$(HUMAN_VERSION)/its/glade2.its
+file path=usr/share/gettext-$(HUMAN_VERSION)/its/gsettings.its
+file path=usr/share/gettext-$(HUMAN_VERSION)/its/gsettings.loc
+file path=usr/share/gettext-$(HUMAN_VERSION)/its/gtkbuilder.its
+file path=usr/share/gettext-$(HUMAN_VERSION)/its/metainfo.its
+file path=usr/share/gettext-$(HUMAN_VERSION)/its/metainfo.loc
 file path=usr/share/gettext/ABOUT-NLS
 file path=usr/share/gettext/archive.dir.tar.xz
 file path=usr/share/gettext/config.rpath
@@ -2034,8 +2002,6 @@ file path=usr/share/locale/zh_TW/LC_MESSAGES/gettext-runtime.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/gettext-tools.mo
 file path=usr/share/man/man1/autopoint.1
 file path=usr/share/man/man1/envsubst.1
-#file path=usr/share/man/man1/gettext.1
-file usr/share/man/man1/gettext.1 path=usr/gnu/share/man/man1/gettext.1
 file path=usr/share/man/man1/gettextize.1
 file path=usr/share/man/man1/msgattrib.1
 file path=usr/share/man/man1/msgcat.1
@@ -2045,8 +2011,6 @@ file path=usr/share/man/man1/msgconv.1
 file path=usr/share/man/man1/msgen.1
 file path=usr/share/man/man1/msgexec.1
 file path=usr/share/man/man1/msgfilter.1
-#file path=usr/share/man/man1/msgfmt.1
-file usr/share/man/man1/msgfmt.1 path=usr/gnu/share/man/man1/msgfmt.1
 file path=usr/share/man/man1/msggrep.1
 file path=usr/share/man/man1/msginit.1
 file path=usr/share/man/man1/msgmerge.1
@@ -2054,8 +2018,6 @@ file path=usr/share/man/man1/msgunfmt.1
 file path=usr/share/man/man1/msguniq.1
 file path=usr/share/man/man1/ngettext.1
 file path=usr/share/man/man1/recode-sr-latin.1
-#file path=usr/share/man/man1/xgettext.1
-file usr/share/man/man1/xgettext.1 path=usr/gnu/share/man/man1/xgettext.1
 file path=usr/share/man/man3/bind_textdomain_codeset.3
 file path=usr/share/man/man3/bindtextdomain.3
 file path=usr/share/man/man3/dcgettext.3

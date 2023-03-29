@@ -24,13 +24,13 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
 COMPONENT_VERSION=	0.21.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	GNU gettext - message handling utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -50,6 +50,20 @@ CONFIGURE_OPTIONS += --disable-openmp
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --without-emacs
 
+# Drop 32-bit binaries
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRBINDIR32) $(PROTOUSRLIBDIR32)/gettext ;
+# Some files clash with those provided by illumos so move them to usr/gnu
+COMPONENT_POST_INSTALL_ACTION.32 += \
+	for f in gettext msgfmt xgettext ; do \
+		$(RM) $(PROTOUSRSHAREMAN1DIR)/$$f.1 ; \
+	done ;
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	$(MKDIR) $(PROTOGNUBIN) $(PROTOGNUSHAREMAN1) ; \
+	for f in gettext msgfmt xgettext ; do \
+		$(MV) $(PROTOUSRBINDIR)/$$f $(PROTOGNUBIN) ; \
+		$(MV) $(PROTOUSRSHAREMAN1DIR)/$$f.1 $(PROTOGNUSHAREMAN1) ; \
+	done ;
+
 # Tests should run in a clean environment
 COMPONENT_TEST_ENV= -i PATH=${PATH}
 
@@ -62,12 +76,11 @@ COMPONENT_TEST_TRANSFORMS += \
 # Manually added dependencies
 REQUIRED_PACKAGES += library/libcroco
 # for tests
-REQUIRED_PACKAGES += library/guile
-REQUIRED_PACKAGES += runtime/clisp
-REQUIRED_PACKAGES += runtime/tcl-8
+TEST_REQUIRED_PACKAGES += library/guile
+TEST_REQUIRED_PACKAGES += runtime/clisp
+TEST_REQUIRED_PACKAGES += runtime/tcl-8
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
