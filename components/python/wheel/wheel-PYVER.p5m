@@ -24,13 +24,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/wheel-$(PYVER)
-file path=usr/lib/python$(PYVER)/vendor-packages/wheel-$(HUMAN_VERSION)-py$(PYVER).egg-info/PKG-INFO
-file path=usr/lib/python$(PYVER)/vendor-packages/wheel-$(HUMAN_VERSION)-py$(PYVER).egg-info/SOURCES.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/wheel-$(HUMAN_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/wheel-$(HUMAN_VERSION)-py$(PYVER).egg-info/entry_points.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/wheel-$(HUMAN_VERSION)-py$(PYVER).egg-info/not-zip-safe
-file path=usr/lib/python$(PYVER)/vendor-packages/wheel-$(HUMAN_VERSION)-py$(PYVER).egg-info/requires.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/wheel-$(HUMAN_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel-$(HUMAN_VERSION).dist-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/__main__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/_setuptools_logging.py
@@ -38,15 +33,26 @@ file path=usr/lib/python$(PYVER)/vendor-packages/wheel/bdist_wheel.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/cli/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/cli/convert.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/cli/pack.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel/cli/tags.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/cli/unpack.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/macosx_libfile.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/metadata.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/util.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/_elffile.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/_manylinux.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/_musllinux.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/_parser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/_structures.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/_tokenizer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/markers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/requirements.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/specifiers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/tags.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/packaging/version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wheel/vendored/vendor.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/wheel/wheelfile.py
 
 # python modules are unusable without python runtime binary
@@ -54,4 +60,3 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # Automatically generated dependencies based on distribution metadata
-<transform file path=usr/bin/wheel-3\.7$ -> add pkg.depend.bypass-generate .*/importlib/(64/)?metadata.* >
