@@ -116,10 +116,14 @@ $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 	# bootstrap the pyproject_installer bootstrapper.
 	#
 	# Once we obsolete Python 3.7 we should change $(PYTHON.3.9) to $(PYTHON) here
-	$(PYTHON_ENV) $(PYTHON.3.9) -c ' \
+	cd $(SOURCE_DIR) ; $(PYTHON_ENV) $(PYTHON.3.9) -c ' \
 			from pathlib import Path; \
 			from pyproject_installer.build_cmd._build import parse_build_system_spec; \
-			[print(x) for x in parse_build_system_spec(Path("'$(SOURCE_DIR)'"))["requires"]]' \
+			from pyproject_installer.build_cmd.helper.backend_caller import call_hook,write_result; \
+			[write_result(3, x + "\n") for x in parse_build_system_spec(Path("'$(SOURCE_DIR)'"))["requires"]]; \
+			build_backend = parse_build_system_spec(Path("'$(SOURCE_DIR)'"))["build-backend"]; \
+			[write_result(3, x + "\n") for x in call_hook(build_backend, None, "get_requires_for_build_wheel", [], {})]; \
+		' 3>&1 >/dev/null \
 		| $(PYTHON_PACKAGE_NORMALIZER) \
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' \
 		> $@
