@@ -1,13 +1,11 @@
---- sbcl-2.2.1/src/runtime/Config.x86-sunos.orig	2022-01-30 12:34:53.000000000 +0000
-+++ sbcl-2.2.1/src/runtime/Config.x86-sunos	2022-02-03 09:47:34.145614023 +0000
-@@ -9,8 +9,8 @@
- # provided with absolutely no warranty. See the COPYING and CREDITS
+--- sbcl-2.3.3/src/runtime/Config.x86-sunos.orig	2023-03-28 21:42:53.000000000 +0200
++++ sbcl-2.3.3/src/runtime/Config.x86-sunos	2023-03-29 21:06:08.872366454 +0200
+@@ -10,7 +10,7 @@
  # files for more information.
  
--CC=gcc
--CFLAGS = -g -O2 -Wall -D__EXTENSIONS__ -DSVR4 -D_REENTRANT -fno-omit-frame-pointer
-+CC?=gcc
-+CFLAGS = -g -O2 -Wall -D__EXTENSIONS__ -DSVR4 -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -fno-omit-frame-pointer
+ CC=gcc
+-CFLAGS += -g -O2 -Wall -D__EXTENSIONS__ -DSVR4 -D_REENTRANT -fno-omit-frame-pointer
++CFLAGS += -g -O2 -Wall -D__EXTENSIONS__ -DSVR4 -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -fno-omit-frame-pointer
  GREP = ggrep
  
  ASSEM_SRC = x86-assem.S

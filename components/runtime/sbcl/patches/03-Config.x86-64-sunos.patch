@@ -1,11 +1,9 @@
-Add a define in order to make sigwait() POSIX conformant.
-
---- sbcl-2.2.5/src/runtime/Config.x86-64-sunos.orig	2022-05-30 15:27:23.000000000 +0000
-+++ sbcl-2.2.5/src/runtime/Config.x86-64-sunos	2022-07-09 17:24:32.295128794 +0000
+--- sbcl-2.3.3/src/runtime/Config.x86-64-sunos.orig	2023-03-28 21:42:53.000000000 +0200
++++ sbcl-2.3.3/src/runtime/Config.x86-64-sunos	2023-03-29 21:09:15.948629755 +0200
 @@ -1,5 +1,5 @@
  CC=gcc
--CFLAGS = -m64 -g -Wall -std=gnu89 -D__EXTENSIONS__ -DSVR4 -D_REENTRANT -fno-omit-frame-pointer
-+CFLAGS = -m64 -g -Wall -std=gnu89 -D__EXTENSIONS__ -DSVR4 -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -fno-omit-frame-pointer
+-CFLAGS += -m64 -g -Wall -std=gnu89 -D__EXTENSIONS__ -DSVR4 -D_REENTRANT -fno-omit-frame-pointer
++CFLAGS += -m64 -g -Wall -std=gnu89 -D__EXTENSIONS__ -DSVR4 -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -fno-omit-frame-pointer
  LINKFLAGS = -m64 -g
  ASFLAGS = -m64 -Wall
  GREP = ggrep
