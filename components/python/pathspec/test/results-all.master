@@ -1,8 +1,191 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m unittest
-..........................................................................................
+py$(PYV): commands[0]> python -m unittest --verbose
+test_01_reversed_args (tests.test_gitignore.GitIgnoreSpecTest)
+Test reversed args for `.from_lines()`. ... ok
+test_02_dir_exclusions (tests.test_gitignore.GitIgnoreSpecTest)
+Test directory exclusions. ... ok
+test_02_file_exclusions (tests.test_gitignore.GitIgnoreSpecTest)
+Test file exclusions. ... ok
+test_02_issue_41_a (tests.test_gitignore.GitIgnoreSpecTest)
+Test including a file and excluding a directory with the same name ... ok
+test_02_issue_41_b (tests.test_gitignore.GitIgnoreSpecTest)
+Test including a file and excluding a directory with the same name ... ok
+test_02_issue_41_c (tests.test_gitignore.GitIgnoreSpecTest)
+Test including a file and excluding a directory with the same name ... ok
+test_03_issue_19_a (tests.test_gitignore.GitIgnoreSpecTest)
+Test matching files in a subdirectory of an included directory, ... ok
+test_03_issue_19_b (tests.test_gitignore.GitIgnoreSpecTest)
+Test matching files in a subdirectory of an included directory, ... ok
+test_03_issue_19_c (tests.test_gitignore.GitIgnoreSpecTest)
+Test matching files in a subdirectory of an included directory, ... ok
+test_03_subdir (tests.test_gitignore.GitIgnoreSpecTest)
+Test matching files in a subdirectory of an included directory. ... ok
+test_04_issue_62 (tests.test_gitignore.GitIgnoreSpecTest)
+Test including all files and excluding a directory. ... ok
+test_05_issue_39 (tests.test_gitignore.GitIgnoreSpecTest)
+Test excluding files in a directory. ... ok
+test_06_issue_64 (tests.test_gitignore.GitIgnoreSpecTest)
+Test using a double asterisk pattern. ... ok
+test_07_issue_74 (tests.test_gitignore.GitIgnoreSpecTest)
+Test include directory should override exclude file. ... ok
+test_00_empty (tests.test_gitwildmatch.GitWildMatchTest)
+Tests an empty pattern. ... ok
+test_01_absolute (tests.test_gitwildmatch.GitWildMatchTest)
+Tests an absolute path pattern. ... ok
+test_01_absolute_ignore (tests.test_gitwildmatch.GitWildMatchTest)
+Tests an ignore absolute path pattern. ... ok
+test_01_absolute_root (tests.test_gitwildmatch.GitWildMatchTest)
+Tests a single root absolute path pattern. ... ok
+test_01_relative (tests.test_gitwildmatch.GitWildMatchTest)
+Tests a relative path pattern. ... ok
+test_01_relative_nested (tests.test_gitwildmatch.GitWildMatchTest)
+Tests a relative nested path pattern. ... ok
+test_02_comment (tests.test_gitwildmatch.GitWildMatchTest)
+Tests a comment pattern. ... ok
+test_02_ignore (tests.test_gitwildmatch.GitWildMatchTest)
+Tests an exclude pattern. ... ok
+test_03_child_double_asterisk (tests.test_gitwildmatch.GitWildMatchTest)
+Tests a directory name with a double-asterisk child ... ok
+test_03_double_asterisk_trailing_slash_edge_case (tests.test_gitwildmatch.GitWildMatchTest)
+Tests the edge-case **/ pattern. ... ok
+test_03_duplicate_leading_double_asterisk_edge_case (tests.test_gitwildmatch.GitWildMatchTest)
+Regression test for duplicate leading **/ bug. ... ok
+test_03_inner_double_asterisk (tests.test_gitwildmatch.GitWildMatchTest)
+Tests a path with an inner double-asterisk directory. ... ok
+test_03_only_double_asterisk (tests.test_gitwildmatch.GitWildMatchTest)
+Tests a double-asterisk pattern which matches everything. ... ok
+test_03_parent_double_asterisk (tests.test_gitwildmatch.GitWildMatchTest)
+Tests a file name with a double-asterisk parent directory. ... ok
+test_04_infix_wildcard (tests.test_gitwildmatch.GitWildMatchTest)
+Tests a pattern with an infix wildcard. ... ok
+test_04_postfix_wildcard (tests.test_gitwildmatch.GitWildMatchTest)
+Tests a pattern with a postfix wildcard. ... ok
+test_04_prefix_wildcard (tests.test_gitwildmatch.GitWildMatchTest)
+Tests a pattern with a prefix wildcard. ... ok
+test_05_directory (tests.test_gitwildmatch.GitWildMatchTest)
+Tests a directory pattern. ... ok
+test_06_access_deprecated (tests.test_gitwildmatch.GitWildMatchTest)
+Tests that the pattern is accessible from the root module using the ... ok
+test_06_registered (tests.test_gitwildmatch.GitWildMatchTest)
+Tests that the pattern is registered. ... ok
+test_06_registered_deprecated (tests.test_gitwildmatch.GitWildMatchTest)
+Tests that the pattern is registered under the deprecated alias. ... ok
+test_07_decode_bytes (tests.test_gitwildmatch.GitWildMatchTest)
+Test decoding bytes. ... ok
+test_07_encode_bytes (tests.test_gitwildmatch.GitWildMatchTest)
+Test encoding bytes. ... ok
+test_07_match_bytes_and_bytes (tests.test_gitwildmatch.GitWildMatchTest)
+Test byte string patterns matching byte string paths. ... ok
+test_07_match_bytes_and_bytes_complete (tests.test_gitwildmatch.GitWildMatchTest)
+Test byte string patterns matching byte string paths. ... ok
+test_07_match_bytes_and_unicode_fail (tests.test_gitwildmatch.GitWildMatchTest)
+Test byte string patterns matching byte string paths. ... ok
+test_07_match_unicode_and_bytes_fail (tests.test_gitwildmatch.GitWildMatchTest)
+Test unicode patterns with byte paths. ... ok
+test_07_match_unicode_and_unicode (tests.test_gitwildmatch.GitWildMatchTest)
+Test unicode patterns with unicode paths. ... ok
+test_08_escape (tests.test_gitwildmatch.GitWildMatchTest)
+Test escaping a string with meta-characters ... ok
+test_09_single_escape_fail (tests.test_gitwildmatch.GitWildMatchTest)
+Test an escape on a line by itself. ... ok
+test_09_single_exclamation_mark_fail (tests.test_gitwildmatch.GitWildMatchTest)
+Test an escape on a line by itself. ... ok
+test_10_escape_asterisk_end (tests.test_gitwildmatch.GitWildMatchTest)
+Test escaping an asterisk at the end of a line. ... ok
+test_10_escape_asterisk_mid (tests.test_gitwildmatch.GitWildMatchTest)
+Test escaping an asterisk in the middle of a line. ... ok
+test_10_escape_asterisk_start (tests.test_gitwildmatch.GitWildMatchTest)
+Test escaping an asterisk at the start of a line. ... ok
+test_10_escape_exclamation_mark_start (tests.test_gitwildmatch.GitWildMatchTest)
+Test escaping an exclamation mark at the start of a line. ... ok
+test_10_escape_pound_start (tests.test_gitwildmatch.GitWildMatchTest)
+Test escaping a pound sign at the start of a line. ... ok
+test_11_match_directory_1 (tests.test_gitwildmatch.GitWildMatchTest)
+Test matching a directory. ... ok
+test_11_match_directory_2 (tests.test_gitwildmatch.GitWildMatchTest)
+Test matching a directory. ... ok
+test_11_match_sub_directory_3 (tests.test_gitwildmatch.GitWildMatchTest)
+Test matching a directory. ... ok
+test_12_asterisk_1_regex (tests.test_gitwildmatch.GitWildMatchTest)
+Test a relative asterisk path pattern's regular expression. ... ok
+test_12_asterisk_2_regex_equivalent (tests.test_gitwildmatch.GitWildMatchTest)
+Test a path pattern equivalent to the relative asterisk using double ... ok
+test_12_asterisk_3_child (tests.test_gitwildmatch.GitWildMatchTest)
+Test a relative asterisk path pattern matching a direct child path. ... ok
+test_12_asterisk_4_descendant (tests.test_gitwildmatch.GitWildMatchTest)
+Test a relative asterisk path pattern matching a descendant path. ... ok
+test_01_absolute_dir_paths_1 (tests.test_pathspec.PathSpecTest)
+Tests that absolute paths will be properly normalized and matched. ... ok
+test_01_absolute_dir_paths_2 (tests.test_pathspec.PathSpecTest)
+Tests that absolute paths will be properly normalized and matched. ... ok
+test_01_current_dir_paths (tests.test_pathspec.PathSpecTest)
+Tests that paths referencing the current directory will be properly ... ok
+test_01_match_files (tests.test_pathspec.PathSpecTest)
+Tests that matching files one at a time yields the same results as ... ok
+test_01_windows_current_dir_paths (tests.test_pathspec.PathSpecTest)
+Tests that paths referencing the current directory will be properly ... ok
+test_01_windows_paths (tests.test_pathspec.PathSpecTest)
+Tests that Windows paths will be properly normalized and matched. ... ok
+test_02_eq (tests.test_pathspec.PathSpecTest)
+Tests equality. ... ok
+test_02_ne (tests.test_pathspec.PathSpecTest)
+Tests inequality. ... ok
+test_03_add (tests.test_pathspec.PathSpecTest)
+Test spec addition using :data:`+` operator. ... ok
+test_03_iadd (tests.test_pathspec.PathSpecTest)
+Test spec addition using :data:`+=` operator. ... ok
+test_04_len (tests.test_pathspec.PathSpecTest)
+Test spec length. ... ok
+test_05_match_entries (tests.test_pathspec.PathSpecTest)
+Test matching files collectively. ... ok
+test_05_match_file (tests.test_pathspec.PathSpecTest)
+Test matching files individually. ... ok
+test_05_match_files (tests.test_pathspec.PathSpecTest)
+Test matching files collectively. ... ok
+test_05_match_tree_entries (tests.test_pathspec.PathSpecTest)
+Test matching a file tree. ... ok
+test_05_match_tree_files (tests.test_pathspec.PathSpecTest)
+Test matching a file tree. ... ok
+test_06_issue_41_a (tests.test_pathspec.PathSpecTest)
+Test including a file and excluding a directory with the same name ... ok
+test_06_issue_41_b (tests.test_pathspec.PathSpecTest)
+Test including a file and excluding a directory with the same name ... ok
+test_06_issue_41_c (tests.test_pathspec.PathSpecTest)
+Test including a file and excluding a directory with the same name ... ok
+test_07_issue_62 (tests.test_pathspec.PathSpecTest)
+Test including all files and excluding a directory. ... ok
+test_08_issue_39 (tests.test_pathspec.PathSpecTest)
+Test excluding files in a directory. ... ok
+test_1_files (tests.test_util.IterTreeTest)
+Tests to make sure all files are found. ... ok
+test_2_0_check_symlink (tests.test_util.IterTreeTest)
+Tests whether links can be created. ... ok
+test_2_1_check_realpath (tests.test_util.IterTreeTest)
+Tests whether `os.path.realpath` works properly with symlinks. ... ok
+test_2_2_links (tests.test_util.IterTreeTest)
+Tests to make sure links to directories and files work. ... ok
+test_2_3_sideways_links (tests.test_util.IterTreeTest)
+Tests to make sure the same directory can be encountered multiple ... ok
+test_2_4_recursive_links (tests.test_util.IterTreeTest)
+Tests detection of recursive links. ... ok
+test_2_5_recursive_circular_links (tests.test_util.IterTreeTest)
+Tests detection of recursion through circular links. ... ok
+test_2_6_detect_broken_links (tests.test_util.IterTreeTest)
+Tests that broken links are detected. ... ok
+test_2_7_ignore_broken_links (tests.test_util.IterTreeTest)
+Tests that broken links are ignored. ... ok
+test_2_8_no_follow_links (tests.test_util.IterTreeTest)
+Tests to make sure directory links can be ignored. ... ok
+test_3_entries (tests.test_util.IterTreeTest)
+Tests to make sure all files are found. ... ok
+test_4_normalizing_pathlib_path (tests.test_util.IterTreeTest)
+Tests normalizing a :class:`pathlib.PurePath` as argument. ... ok
+test_1_match_file (tests.test_util.MatchFileTest)
+Test matching files individually. ... ok
+
 ----------------------------------------------------------------------
-Ran 90 tests
+Ran 91 tests
 
 OK
   py$(PYV): OK
