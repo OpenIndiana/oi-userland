@@ -305,7 +305,10 @@ COMPONENT_TEST_ENV +=		NOSE_VERBOSE=2
 COMPONENT_TEST_CMD =		$(TOX)
 COMPONENT_TEST_ARGS =		--current-env --no-provision
 COMPONENT_TEST_ARGS +=		--recreate
-COMPONENT_TEST_TARGETS =	-e py$(shell echo $(PYTHON_VERSION) | tr -d .)
+COMPONENT_TEST_ARGS +=		$(TOX_TESTENV)
+COMPONENT_TEST_TARGETS =
+
+TOX_TESTENV = -e py$(shell echo $(PYTHON_VERSION) | tr -d .)
 
 # Make sure following tools are called indirectly to properly support tox-current-env
 TOX_CALL_INDIRECTLY += py.test
@@ -364,15 +367,15 @@ COMPONENT_POST_INSTALL_ACTION += \
 	if [ -x "$(COMPONENT_TEST_CMD)" ] ; then \
 		cd $(@D) ; \
 		echo "Testing dependencies:" ; \
-		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(COMPONENT_TEST_TARGETS) || exit 1 ; \
+		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) || exit 1 ; \
 		echo "Testing extras:" ; \
-		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(COMPONENT_TEST_TARGETS) || exit 1 ; \
-		( PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(COMPONENT_TEST_TARGETS) \
+		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(TOX_TESTENV) || exit 1 ; \
+		( PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) \
 			| $(WS_TOOLS)/python-resolve-deps \
 				PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
 			| $(PYTHON) $(WS_TOOLS)/python-requires - ; \
-		for e in $$(PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(COMPONENT_TEST_TARGETS)) ; do \
+		for e in $$(PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(TOX_TESTENV)) ; do \
 			PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
 		done ) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' > $(@D)/.depend-test ; \
