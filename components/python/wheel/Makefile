@@ -14,36 +14,33 @@
 #   $WS_TOOLS/python-integrate-project wheel
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wheel
-HUMAN_VERSION =			0.38.4
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.40.0
 COMPONENT_SUMMARY =		wheel - A built-package format for Python
-COMPONENT_PROJECT_URL =		https://github.com/pypa/wheel
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a2/b8/6a06ff0f13a00fc3c3e7d222a995526cbca26c1ad107691b6b1badbbabf1/wheel-0.38.4.tar.gz
+	https://files.pythonhosted.org/packages/fc/ef/0335f7217dd1e8096a9e8383e1d472aa14717878ffe07c4772e68b6e8735/wheel-0.40.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:965f5259b566725405b05e7cf774052044b1ed30119b5d586b2703aafe8719ac
+	sha256:cd1196f3faee2b31968d626e1731c94f99cbdb67cf5a46e4f5656cbee7738873
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
 # - attrs (test bootstrap)
+# - cachetools (test bootstrap)
 # - distlib (test bootstrap)
-# - iniconfig (test bootstrap)
 # - pluggy (test bootstrap)
-# - tox (test bootstrap)
+# - setuptools
 # - tox-current-env (test bootstrap)
-PYTHON_TEST_BOOTSTRAP = yes
+PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
