@@ -32,6 +32,7 @@ COMPONENT_NAME=		bison
 COMPONENT_MAJOR_VERSION=	3.7
 COMPONENT_MAJOR_VERSION_=	$(subst .,,$(COMPONENT_MAJOR_VERSION))
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).6
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/bison/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	bison - A YACC Replacement
@@ -70,8 +71,7 @@ COMPONENT_BUILD_ARGS += CC_PIC="$(CC_PIC)"
 CONFIGURE_OPTIONS +=	WARN_CXXFLAGS_TEST="$(CFLAGS)"
 
 CONFIGURE_ENV += 	M4="/usr/bin/gm4"
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+CONFIGURE_ENV +=	RANLIB="/usr/bin/ranlib"
 
 # Strip compilation lines from test output
 # and strange backslash lines. and random output,
@@ -84,8 +84,11 @@ COMPONENT_TEST_TRANSFORMS += \
 
 $(INSTALL_32):	$(INSTALL_64)
 
+GENERATE_EXTRA_CMD += | \
+	$(GSED) -e 's/bison-$(shell echo $(COMPONENT_MAJOR_VERSION) | $(GSED) -e 's/\./\\./g')/bison-$$(COMPONENT_MAJOR_VERSION)/'
+
 # Two test suite cases utilitize Doxygen
-REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+TEST_REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/macro/gnu-m4
