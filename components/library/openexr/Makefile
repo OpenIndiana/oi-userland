@@ -28,13 +28,12 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openexr
-COMPONENT_VERSION=      3.1.6
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      3.1.7
 COMPONENT_SUMMARY=      OpenEXR header files and libraries used to read and write OpenEXR images
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.openexr.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:daa33d93a7b706e27368a162060df0246a7750c39a01a122d33b13f5c45d2029
+COMPONENT_ARCHIVE_HASH= sha256:78dbca39115a1c526e6728588753955ee75fa7f5bb1a6e238bed5b6d66f91fd7
 COMPONENT_ARCHIVE_URL=  https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/openexr
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -53,13 +52,9 @@ CMAKE_OPTIONS += -DCMAKE_INSTALL_BINDIR=bin/$(MACH64)
 COMPONENT_TEST_TRANSFORMS= \
 	' -e "s/[0-9]*\.[0-9]* sec/X.XX sec/" ' \
 	'-n ' \
-    '-e "/Test /p" ' \
-    '-e "/Start /p" ' \
-    '-e "/TOTAL:/p" ' \
-    '-e "/SKIP:/p" ' \
-    '-e "/PASS:/p" ' \
-    '-e "/FAIL:/p" ' \
-    '-e "/ERROR:/p" '
+    '-e "/Passed/p" ' \
+    '-e "/Failed/p" ' \
+    '-e "/Skipped/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
