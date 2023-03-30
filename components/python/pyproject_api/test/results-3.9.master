@@ -1,3 +1,4 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest --no-cov-on-fail --cov-context=test --cov=$(PYTHON_DIR)/site-packages/pyproject_api --cov=$(@D)/tests --cov-config=$(@D)/pyproject.toml --cov-report=term-missing:skip-covered --cov-report=html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report=xml:$(@D)/.tox/coverage.py$(PYV).xml --junitxml=$(@D)/.tox/junit.py$(PYV).xml tests
 ============================= test session starts ==============================
@@ -9,8 +10,8 @@ asyncio: mode=strict
 collecting ... collected 55 items
 
   self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
+$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/pyproject_api was never imported. (module-not-imported)
 ::project PASSED
-PASSED
 tests/test_backend.py::test_exception PASSED
 tests/test_backend.py::test_invalid_module PASSED
 tests/test_backend.py::test_invalid_request PASSED
@@ -22,7 +23,7 @@ tests/test_frontend.py::test_backend_build_sdist_demo_pkg_inline PASSED
 tests/test_frontend.py::test_backend_get_requires_for_build_editable PASSED
 tests/test_frontend.py::test_backend_get_requires_for_build_editable_bad PASSED
 tests/test_frontend.py::test_backend_get_requires_for_build_editable_miss PASSED
-tests/test_frontend.py::test_backend_no_prepare_wheel $(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/pyproject_api was never imported. (module-not-imported)
+tests/test_frontend.py::test_backend_no_prepare_wheel PASSED
 tests/test_frontend.py::test_backend_obj PASSED
 tests/test_frontend.py::test_backend_prepare_editable PASSED
 tests/test_frontend.py::test_backend_prepare_editable_bad PASSED
