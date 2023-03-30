@@ -1,3 +1,4 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder .tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
@@ -6,7 +7,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D), configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 150 items
+collecting ... collected 151 items
 
 ::project PASSED
 conftest.py::BLACK PASSED
@@ -126,6 +127,7 @@ tests/test_main.py::NonASCIITests::test_metadata_loads PASSED
 tests/test_main.py::NonASCIITests::test_metadata_loads_egg_info PASSED
 tests/test_main.py::PackagesDistributionsPrebuiltTest::test_packages_distributions_example PASSED
 tests/test_main.py::PackagesDistributionsPrebuiltTest::test_packages_distributions_example2 PASSED
+tests/test_main.py::PackagesDistributionsTest::test_packages_distributions_all_module_types PASSED
 tests/test_main.py::PackagesDistributionsTest::test_packages_distributions_neither_toplevel_nor_files PASSED
 tests/test_main.py::TestEntryPoints::test_attr PASSED
 tests/test_main.py::TestEntryPoints::test_entry_point_pickleable PASSED
@@ -160,8 +162,6 @@ tests/test_zip.py::mypy PASSED
 ===================================== mypy =====================================
 
 Success: no issues found in 24 source files
-======== 147 passed, 1 skipped ========
-$(PYTHON_DIR)/vendor-packages/coverage/report.py:114: CoverageWarning: Couldn't parse '/tmp/tmp8exyrip_/mod.py': No source for code: '/tmp/tmp8exyrip_/mod.py'. (couldnt-parse)
-  coverage._warn(msg, slug="couldnt-parse")
+======== 148 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)
