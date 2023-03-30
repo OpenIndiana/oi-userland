@@ -3,7 +3,8 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-collecting ... collected 107 items
+asyncio: mode=strict
+collecting ... collected 121 items
 
 ::project PASSED
 tests/test_core.py::TestInstall::test_accepts_newer_minor_wheel_versions PASSED
@@ -32,6 +33,7 @@ tests/test_records.py::TestParseRecordFile::test_accepts_all_kinds_of_iterables[
 tests/test_records.py::TestParseRecordFile::test_accepts_all_kinds_of_iterables[record_simple_iter] PASSED
 tests/test_records.py::TestParseRecordFile::test_accepts_all_kinds_of_iterables[record_simple_list] PASSED
 tests/test_records.py::TestParseRecordFile::test_accepts_empty_iterable PASSED
+tests/test_records.py::TestParseRecordFile::test_parse_record_entry_with_backslash_path PASSED
 tests/test_records.py::TestParseRecordFile::test_parse_record_entry_with_comma PASSED
 tests/test_records.py::TestParseRecordFile::test_rejects_wrong_element_count[five] PASSED
 tests/test_records.py::TestParseRecordFile::test_rejects_wrong_element_count[four] PASSED
@@ -80,13 +82,26 @@ tests/test_scripts.py::test_script_generate_launcher_error[nonexist-nonexist] PA
 tests/test_scripts.py::test_script_generate_launcher_error[nonexist-win-ia32] PASSED
 tests/test_scripts.py::test_script_generate_simple PASSED
 tests/test_scripts.py::test_script_generate_space_in_executable PASSED
+tests/test_sources.py::TestWheelFile::test_accept_wheel_with_signature_file PASSED
 tests/test_sources.py::TestWheelFile::test_correctly_reads_from_dist_info_files PASSED
+tests/test_sources.py::TestWheelFile::test_enforces_single_dist_info PASSED
+tests/test_sources.py::TestWheelFile::test_finds_dist_info PASSED
 tests/test_sources.py::TestWheelFile::test_provides_correct_contents PASSED
 tests/test_sources.py::TestWheelFile::test_provides_correct_dist_info_filenames PASSED
+tests/test_sources.py::TestWheelFile::test_reject_signature_file_in_record PASSED
+tests/test_sources.py::TestWheelFile::test_rejects_invalid_record_entry PASSED
+tests/test_sources.py::TestWheelFile::test_rejects_no_record_on_validate PASSED
 tests/test_sources.py::TestWheelFile::test_rejects_not_okay_name PASSED
+tests/test_sources.py::TestWheelFile::test_rejects_record_contain_self_hash PASSED
+tests/test_sources.py::TestWheelFile::test_rejects_record_missing_file_on_validate PASSED
+tests/test_sources.py::TestWheelFile::test_rejects_record_missing_hash PASSED
+tests/test_sources.py::TestWheelFile::test_rejects_record_validation_failed PASSED
+tests/test_sources.py::TestWheelFile::test_requires_dist_info_name_match PASSED
 tests/test_sources.py::TestWheelSource::test_correctly_computes_properties PASSED
 tests/test_sources.py::TestWheelSource::test_raises_not_implemented_error PASSED
 tests/test_sources.py::TestWheelSource::test_takes_two_arguments PASSED
+tests/test_utils.py::TestCanonicalizeDistributionName::test_valid_cases[ABC..12-abc-12] PASSED
+tests/test_utils.py::TestCanonicalizeDistributionName::test_valid_cases[package-1-package-1] PASSED
 tests/test_utils.py::TestConstructRecord::test_construct PASSED
 tests/test_utils.py::TestCopyFileObjWithHashing::test_basic_functionality PASSED
 tests/test_utils.py::TestParseEntryPoints::test_valid[cli-and-gui] PASSED
@@ -113,10 +128,4 @@ tests/test_utils.py::TestScript::test_replace_shebang[python-with-args] PASSED
 tests/test_utils.py::TestScript::test_replace_shebang[python] PASSED
 tests/test_utils.py::TestScript::test_replace_shebang[pythonw] PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: 214 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    if LooseVersion(pytest.__version__) < LooseVersion('3.6.0'):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 107 passed, 214 warnings ========
+======== 121 passed ========

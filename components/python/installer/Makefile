@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		installer
-HUMAN_VERSION =			0.6.0
+HUMAN_VERSION =			0.7.0
 COMPONENT_SUMMARY =		installer - A library for installing Python wheels.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c9/ab/a9141dc175ec7b620fffe7e0295251a7b6a0ffb4325d64aeb128dff8c698/installer-0.6.0.tar.gz
+	https://files.pythonhosted.org/packages/05/18/ceeb4e3ab3aa54495775775b38ae42b10a92f42ce42dfa44da684289b8c8/installer-0.7.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f3bd36cd261b440a88a1190b1becca0578fee90b4b62decc796932fdd5ae8839
+	sha256:a26d3e3116289bb08216e0d0f7d925fcef0b0194eedfa0c944bcaaa106c4b631
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
