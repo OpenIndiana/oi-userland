@@ -11,45 +11,44 @@
 
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2023 Klaus Ziegler
 #
-BUILD_BITS= 32
+
 USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgadmin3
-COMPONENT_VERSION= 	1.22.2
-COMPONENT_REVISION=	4
+COMPONENT_VERSION= 	1.23
 COMPONENT_SUMMARY= 	pgAdminIII administration and development GUI for PostgreSQL
-COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC= 		pgadmin3-lts-master-20220717
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9b68b0e3d3f0a261344fb8196825967d1e7acaca1d8cc82c42e12368ca5844ac
+  sha256:4237b54f98316367a2474631bfe7d60f84c5d5e0339c549e64fdf4f02706f009
 COMPONENT_ARCHIVE_URL= \
-  https://ftp.postgresql.org/pub/pgadmin/pgadmin3/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
+  https://github.com/allentc/pgadmin3-lts/archive/refs/tags/master-20220717.tar.gz
 COMPONENT_PROJECT_URL = https://www.pgadmin.org
 
-# Don't depend on host default pg_config
-PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
-
-LDFLAGS+=   -L$(PG_LIBDIR.$(BITS))   -R$(PG_LIBDIR.$(BITS))
+LDFLAGS+=   -L$(PG_LIBDIR)   -R$(PG_LIBDIR)
 LDFLAGS+=   -lsocket -lnsl
 
 CONFIGURE_OPTIONS += --with-pgsql=$(PG_HOME)
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION= (cp -a $(SOURCE_DIR)/* $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= (cd $(SOURCE_DIR); bash bootstrap)
 
 COMPONENT_BUILD_ENV+= LDFLAGS="$(LDFLAGS)"
+
+# build dependencies.
+REQUIRED_PACKAGES += library/python/sphinx
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += library/graphics/wxwidgets
+REQUIRED_PACKAGES += library/graphics/wxwidgets-3
+REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

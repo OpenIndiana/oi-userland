@@ -11,9 +11,11 @@
 
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2023 Klaus Ziegler
 #
 
 set name=pkg.fmri value=pkg:/database/postgres/pgadmin@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value=org.opensolaris.category.2008:System/Databases
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -24,17 +26,24 @@ license pgadmin.license license="BSD"
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
 
 file files/pgadmin3.desktop path=usr/share/applications/pgadmin3.desktop restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
-file files/icons/128x128/apps/pgadmin.png path=usr/share/icons/hicolor/128x128/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file files/icons/16x16/apps/pgadmin.png path=usr/share/icons/hicolor/16x16/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
-file files/icons/192x192/apps/pgadmin.png path=usr/share/icons/hicolor/192x192/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file files/icons/22x22/apps/pgadmin.png path=usr/share/icons/hicolor/22x22/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file files/icons/24x24/apps/pgadmin.png path=usr/share/icons/hicolor/24x24/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file files/icons/32x32/apps/pgadmin.png path=usr/share/icons/hicolor/32x32/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
-file files/icons/36x36/apps/pgadmin.png path=usr/share/icons/hicolor/36x36/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file files/icons/48x48/apps/pgadmin.png path=usr/share/icons/hicolor/48x48/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/256x256/apps/pgadmin.png path=usr/share/icons/hicolor/256x256/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/16x16/apps/pgadmin.png path=usr/share/icons/ContrastHigh/16x16/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/22x22/apps/pgadmin.png path=usr/share/icons/ContrastHigh/22x22/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/24x24/apps/pgadmin.png path=usr/share/icons/ContrastHigh/24x24/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/32x32/apps/pgadmin.png path=usr/share/icons/ContrastHigh/32x32/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/48x48/apps/pgadmin.png path=usr/share/icons/ContrastHigh/48x48/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/256x256/apps/pgadmin.png path=usr/share/icons/ContrastHigh/256x256/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/192x192/apps/pgadmin.png path=usr/share/icons/hicolor/192x192/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/36x36/apps/pgadmin.png path=usr/share/icons/hicolor/36x36/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file files/icons/64x64/apps/pgadmin.png path=usr/share/icons/hicolor/64x64/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file files/icons/72x72/apps/pgadmin.png path=usr/share/icons/hicolor/72x72/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file files/icons/96x96/apps/pgadmin.png path=usr/share/icons/hicolor/96x96/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/128x128/apps/pgadmin.png path=usr/share/icons/hicolor/128x128/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file files/icons/scalable/apps/pgadmin.svg path=usr/share/icons/hicolor/scalable/apps/pgadmin.svg restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file files/pgadmin3.1 path=usr/share/man/man1/pgadmin3.1  
 
@@ -78,6 +87,185 @@ file path=usr/share/pgadmin3/docs/de_DE/hints/saving-passwords.html
 file path=usr/share/pgadmin3/docs/de_DE/hints/vacuum.html
 file path=usr/share/pgadmin3/docs/de_DE/hints/view-without-pk.html
 file path=usr/share/pgadmin3/docs/de_DE/pgadmin3.css
+file path=usr/share/pgadmin3/docs/en_US/_images/backup-2.png
+file path=usr/share/pgadmin3/docs/en_US/_images/backup-3.png
+file path=usr/share/pgadmin3/docs/en_US/_images/backup-4.png
+file path=usr/share/pgadmin3/docs/en_US/_images/backup-5.png
+file path=usr/share/pgadmin3/docs/en_US/_images/backup.png
+file path=usr/share/pgadmin3/docs/en_US/_images/debugger.png
+file path=usr/share/pgadmin3/docs/en_US/_images/editgrid.png
+file path=usr/share/pgadmin3/docs/en_US/_images/export.png
+file path=usr/share/pgadmin3/docs/en_US/_images/gqb.png
+file path=usr/share/pgadmin3/docs/en_US/_images/grantwiz.png
+file path=usr/share/pgadmin3/docs/en_US/_images/gridopt-filter.png
+file path=usr/share/pgadmin3/docs/en_US/_images/gridopt-sort.png
+file path=usr/share/pgadmin3/docs/en_US/_images/guru-connect.png
+file path=usr/share/pgadmin3/docs/en_US/_images/main.png
+file path=usr/share/pgadmin3/docs/en_US/_images/maintenance.png
+file path=usr/share/pgadmin3/docs/en_US/_images/manage-macros.png
+file path=usr/share/pgadmin3/docs/en_US/_images/no-hba.png
+file path=usr/share/pgadmin3/docs/en_US/_images/not-running.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-binary_paths.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-colours.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-database_designer.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-display.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-favourites.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-guru_hints.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-help_paths.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-history_file.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-logging.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-macros.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-properties.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-query_editor.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-query_file.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-results_grid.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-server_status.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-ui_miscellaneous.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options-user_interface.png
+file path=usr/share/pgadmin3/docs/en_US/_images/options.png
+file path=usr/share/pgadmin3/docs/en_US/_images/password.png
+file path=usr/share/pgadmin3/docs/en_US/_images/pgagent-jobdetails.png
+file path=usr/share/pgadmin3/docs/en_US/_images/pgagent-jobproperties.png
+file path=usr/share/pgadmin3/docs/en_US/_images/pgagent-jobstats.png
+file path=usr/share/pgadmin3/docs/en_US/_images/pgagent-scheduledetails1.png
+file path=usr/share/pgadmin3/docs/en_US/_images/pgagent-scheduledetails2.png
+file path=usr/share/pgadmin3/docs/en_US/_images/pgagent-scheduledetails3.png
+file path=usr/share/pgadmin3/docs/en_US/_images/pgagent-scheduleproperties.png
+file path=usr/share/pgadmin3/docs/en_US/_images/pgagent-stepdetails.png
+file path=usr/share/pgadmin3/docs/en_US/_images/pgagent-stepstats.png
+file path=usr/share/pgadmin3/docs/en_US/_images/query-analyze.png
+file path=usr/share/pgadmin3/docs/en_US/_images/query-connect.png
+file path=usr/share/pgadmin3/docs/en_US/_images/query.png
+file path=usr/share/pgadmin3/docs/en_US/_images/reporttool-html.png
+file path=usr/share/pgadmin3/docs/en_US/_images/reporttool-xml.png
+file path=usr/share/pgadmin3/docs/en_US/_images/restore-2.png
+file path=usr/share/pgadmin3/docs/en_US/_images/restore-3.png
+file path=usr/share/pgadmin3/docs/en_US/_images/restore-4.png
+file path=usr/share/pgadmin3/docs/en_US/_images/restore-5.png
+file path=usr/share/pgadmin3/docs/en_US/_images/restore.png
+file path=usr/share/pgadmin3/docs/en_US/_images/search.png
+file path=usr/share/pgadmin3/docs/en_US/_images/server.png
+file path=usr/share/pgadmin3/docs/en_US/_images/slony-create.png
+file path=usr/share/pgadmin3/docs/en_US/_images/slony-execute.png
+file path=usr/share/pgadmin3/docs/en_US/_images/slony-join.png
+file path=usr/share/pgadmin3/docs/en_US/_images/slony-listen.png
+file path=usr/share/pgadmin3/docs/en_US/_images/slony-overview.png
+file path=usr/share/pgadmin3/docs/en_US/_images/slony-path.png
+file path=usr/share/pgadmin3/docs/en_US/_images/slony-sequence.png
+file path=usr/share/pgadmin3/docs/en_US/_images/slony-set.png
+file path=usr/share/pgadmin3/docs/en_US/_images/slony-subscription.png
+file path=usr/share/pgadmin3/docs/en_US/_images/slony-table.png
+file path=usr/share/pgadmin3/docs/en_US/_images/slony-upgrade.png
+file path=usr/share/pgadmin3/docs/en_US/_images/status.png
+file path=usr/share/pgadmin3/docs/en_US/_static/_sphinx_javascript_frameworks_compat.js
+file path=usr/share/pgadmin3/docs/en_US/_static/backup-2.png
+file path=usr/share/pgadmin3/docs/en_US/_static/backup-3.png
+file path=usr/share/pgadmin3/docs/en_US/_static/backup-4.png
+file path=usr/share/pgadmin3/docs/en_US/_static/backup-5.png
+file path=usr/share/pgadmin3/docs/en_US/_static/backup.png
+file path=usr/share/pgadmin3/docs/en_US/_static/basic.css
+file path=usr/share/pgadmin3/docs/en_US/_static/classic.css
+file path=usr/share/pgadmin3/docs/en_US/_static/connect.png
+file path=usr/share/pgadmin3/docs/en_US/_static/debugger.png
+file path=usr/share/pgadmin3/docs/en_US/_static/default.css
+file path=usr/share/pgadmin3/docs/en_US/_static/doctools.js
+file path=usr/share/pgadmin3/docs/en_US/_static/documentation_options.js
+file path=usr/share/pgadmin3/docs/en_US/_static/editgrid.png
+file path=usr/share/pgadmin3/docs/en_US/_static/export.png
+file path=usr/share/pgadmin3/docs/en_US/_static/file.png
+file path=usr/share/pgadmin3/docs/en_US/_static/gqb.png
+file path=usr/share/pgadmin3/docs/en_US/_static/grantwiz.png
+file path=usr/share/pgadmin3/docs/en_US/_static/gridopt-filter.png
+file path=usr/share/pgadmin3/docs/en_US/_static/gridopt-sort.png
+file path=usr/share/pgadmin3/docs/en_US/_static/guru-connect.png
+file path=usr/share/pgadmin3/docs/en_US/_static/jquery-3.6.0.js
+file path=usr/share/pgadmin3/docs/en_US/_static/jquery.js
+file path=usr/share/pgadmin3/docs/en_US/_static/language_data.js
+file path=usr/share/pgadmin3/docs/en_US/_static/locks.png
+file path=usr/share/pgadmin3/docs/en_US/_static/logfile.png
+file path=usr/share/pgadmin3/docs/en_US/_static/main.png
+file path=usr/share/pgadmin3/docs/en_US/_static/maintenance.png
+file path=usr/share/pgadmin3/docs/en_US/_static/manage-macros.png
+file path=usr/share/pgadmin3/docs/en_US/_static/minus.png
+file path=usr/share/pgadmin3/docs/en_US/_static/no-hba.png
+file path=usr/share/pgadmin3/docs/en_US/_static/not-running.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-binary_paths.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-colours.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-database_designer.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-display.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-favourites.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-guru_hints.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-help_paths.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-history_file.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-logging.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-macros.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-properties.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-query_editor.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-query_file.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-results_grid.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-server_status.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-ui_miscellaneous.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options-user_interface.png
+file path=usr/share/pgadmin3/docs/en_US/_static/options.png
+file path=usr/share/pgadmin3/docs/en_US/_static/password.png
+file path=usr/share/pgadmin3/docs/en_US/_static/pgagent-jobdetails.png
+file path=usr/share/pgadmin3/docs/en_US/_static/pgagent-jobproperties.png
+file path=usr/share/pgadmin3/docs/en_US/_static/pgagent-jobstats.png
+file path=usr/share/pgadmin3/docs/en_US/_static/pgagent-scheduledetails1.png
+file path=usr/share/pgadmin3/docs/en_US/_static/pgagent-scheduledetails2.png
+file path=usr/share/pgadmin3/docs/en_US/_static/pgagent-scheduledetails3.png
+file path=usr/share/pgadmin3/docs/en_US/_static/pgagent-scheduleproperties.png
+file path=usr/share/pgadmin3/docs/en_US/_static/pgagent-stepdetails.png
+file path=usr/share/pgadmin3/docs/en_US/_static/pgagent-stepstats.png
+file path=usr/share/pgadmin3/docs/en_US/_static/plus.png
+file path=usr/share/pgadmin3/docs/en_US/_static/pygments.css
+file path=usr/share/pgadmin3/docs/en_US/_static/query-analyze.png
+file path=usr/share/pgadmin3/docs/en_US/_static/query-connect.png
+file path=usr/share/pgadmin3/docs/en_US/_static/query.png
+file path=usr/share/pgadmin3/docs/en_US/_static/reporttool-html.png
+file path=usr/share/pgadmin3/docs/en_US/_static/reporttool-xml.png
+file path=usr/share/pgadmin3/docs/en_US/_static/restore-2.png
+file path=usr/share/pgadmin3/docs/en_US/_static/restore-3.png
+file path=usr/share/pgadmin3/docs/en_US/_static/restore-4.png
+file path=usr/share/pgadmin3/docs/en_US/_static/restore-5.png
+file path=usr/share/pgadmin3/docs/en_US/_static/restore.png
+file path=usr/share/pgadmin3/docs/en_US/_static/search.png
+file path=usr/share/pgadmin3/docs/en_US/_static/searchtools.js
+file path=usr/share/pgadmin3/docs/en_US/_static/server.png
+file path=usr/share/pgadmin3/docs/en_US/_static/sidebar.js
+file path=usr/share/pgadmin3/docs/en_US/_static/slony-create.png
+file path=usr/share/pgadmin3/docs/en_US/_static/slony-execute.png
+file path=usr/share/pgadmin3/docs/en_US/_static/slony-join.png
+file path=usr/share/pgadmin3/docs/en_US/_static/slony-listen.png
+file path=usr/share/pgadmin3/docs/en_US/_static/slony-overview.png
+file path=usr/share/pgadmin3/docs/en_US/_static/slony-path.png
+file path=usr/share/pgadmin3/docs/en_US/_static/slony-sequence.png
+file path=usr/share/pgadmin3/docs/en_US/_static/slony-set.png
+file path=usr/share/pgadmin3/docs/en_US/_static/slony-subscription.png
+file path=usr/share/pgadmin3/docs/en_US/_static/slony-table.png
+file path=usr/share/pgadmin3/docs/en_US/_static/slony-upgrade.png
+file path=usr/share/pgadmin3/docs/en_US/_static/sphinx_highlight.js
+file path=usr/share/pgadmin3/docs/en_US/_static/status.png
+file path=usr/share/pgadmin3/docs/en_US/_static/transaction.png
+file path=usr/share/pgadmin3/docs/en_US/_static/underscore-1.13.1.js
+file path=usr/share/pgadmin3/docs/en_US/_static/underscore.js
+file path=usr/share/pgadmin3/docs/en_US/appendices.html
+file path=usr/share/pgadmin3/docs/en_US/backup.html
+file path=usr/share/pgadmin3/docs/en_US/bugreport.html
+file path=usr/share/pgadmin3/docs/en_US/commandline.html
+file path=usr/share/pgadmin3/docs/en_US/connect-error.html
+file path=usr/share/pgadmin3/docs/en_US/connect.html
+file path=usr/share/pgadmin3/docs/en_US/control-server.html
+file path=usr/share/pgadmin3/docs/en_US/debugger.html
+file path=usr/share/pgadmin3/docs/en_US/default-xsl.html
+file path=usr/share/pgadmin3/docs/en_US/editgrid.html
+file path=usr/share/pgadmin3/docs/en_US/export.html
+file path=usr/share/pgadmin3/docs/en_US/extend.html
+file path=usr/share/pgadmin3/docs/en_US/genindex.html
+file path=usr/share/pgadmin3/docs/en_US/gqb.html
+file path=usr/share/pgadmin3/docs/en_US/grantwiz.html
+file path=usr/share/pgadmin3/docs/en_US/gridopts.html
+file path=usr/share/pgadmin3/docs/en_US/guruhints.html
 file path=usr/share/pgadmin3/docs/en_US/hints/autovacuum.html
 file path=usr/share/pgadmin3/docs/en_US/hints/conn-hba.html
 file path=usr/share/pgadmin3/docs/en_US/hints/conn-ident.html
@@ -95,7 +283,49 @@ file path=usr/share/pgadmin3/docs/en_US/hints/saving-passwords.html
 file path=usr/share/pgadmin3/docs/en_US/hints/vacuum-full.html
 file path=usr/share/pgadmin3/docs/en_US/hints/vacuum.html
 file path=usr/share/pgadmin3/docs/en_US/hints/view-without-pk.html
+file path=usr/share/pgadmin3/docs/en_US/index.html
+file path=usr/share/pgadmin3/docs/en_US/introduction.html
+file path=usr/share/pgadmin3/docs/en_US/kerberos.html
+file path=usr/share/pgadmin3/docs/en_US/licence.html
+file path=usr/share/pgadmin3/docs/en_US/macros.html
+file path=usr/share/pgadmin3/docs/en_US/main.html
+file path=usr/share/pgadmin3/docs/en_US/maintenance.html
+file path=usr/share/pgadmin3/docs/en_US/openssl.html
+file path=usr/share/pgadmin3/docs/en_US/options-browser.html
+file path=usr/share/pgadmin3/docs/en_US/options-database_designer.html
+file path=usr/share/pgadmin3/docs/en_US/options-miscellaneous.html
+file path=usr/share/pgadmin3/docs/en_US/options-query_tool.html
+file path=usr/share/pgadmin3/docs/en_US/options-server_status.html
+file path=usr/share/pgadmin3/docs/en_US/options.html
+file path=usr/share/pgadmin3/docs/en_US/password.html
 file path=usr/share/pgadmin3/docs/en_US/pgadmin3.css
+file path=usr/share/pgadmin3/docs/en_US/pgadmin3.hhc
+file path=usr/share/pgadmin3/docs/en_US/pgadmin3.hhk
+file path=usr/share/pgadmin3/docs/en_US/pgadmin3.hhp
+file path=usr/share/pgadmin3/docs/en_US/pgadmin3.stp
+file path=usr/share/pgadmin3/docs/en_US/pgagent-install.html
+file path=usr/share/pgadmin3/docs/en_US/pgagent-jobs.html
+file path=usr/share/pgadmin3/docs/en_US/pgagent-schedules.html
+file path=usr/share/pgadmin3/docs/en_US/pgagent-steps.html
+file path=usr/share/pgadmin3/docs/en_US/pgagent.html
+file path=usr/share/pgadmin3/docs/en_US/pgscript.html
+file path=usr/share/pgadmin3/docs/en_US/query.html
+file path=usr/share/pgadmin3/docs/en_US/reports.html
+file path=usr/share/pgadmin3/docs/en_US/restore.html
+file path=usr/share/pgadmin3/docs/en_US/sample-xml.html
+file path=usr/share/pgadmin3/docs/en_US/search_object.html
+file path=usr/share/pgadmin3/docs/en_US/slony-example.html
+file path=usr/share/pgadmin3/docs/en_US/slony-execute.html
+file path=usr/share/pgadmin3/docs/en_US/slony-functions.html
+file path=usr/share/pgadmin3/docs/en_US/slony-install.html
+file path=usr/share/pgadmin3/docs/en_US/slony-overview.html
+file path=usr/share/pgadmin3/docs/en_US/slony-path.html
+file path=usr/share/pgadmin3/docs/en_US/slony-set.html
+file path=usr/share/pgadmin3/docs/en_US/slony.html
+file path=usr/share/pgadmin3/docs/en_US/status.html
+file path=usr/share/pgadmin3/docs/en_US/team.html
+file path=usr/share/pgadmin3/docs/en_US/translation_team.html
+file path=usr/share/pgadmin3/docs/en_US/using.html
 file path=usr/share/pgadmin3/docs/es_ES/hints/autovacuum.html
 file path=usr/share/pgadmin3/docs/es_ES/hints/conn-hba.html
 file path=usr/share/pgadmin3/docs/es_ES/hints/conn-ident.html
