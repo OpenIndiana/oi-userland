@@ -24,11 +24,11 @@
 # Copyright (c) 2020-2021, Nona Hansel
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
 COMPONENT_VERSION=	3.10
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	GNU grep utilities
 COMPONENT_PROJECT_URL=	https://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -66,13 +66,11 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL/p" ' \
 	'-e "/ERROR/p" '
 
-# Since version 3.4, GNU grep is needed for build.
-REQUIRED_PACKAGES += text/gnu-grep
 # Testsuite requirements
-REQUIRED_PACKAGES += developer/versioning/cvs
-REQUIRED_PACKAGES += locale/tr
-REQUIRED_PACKAGES += locale/ru-extra
-REQUIRED_PACKAGES += locale/zh_cn-extra
+TEST_REQUIRED_PACKAGES += developer/versioning/cvs
+TEST_REQUIRED_PACKAGES += locale/tr
+TEST_REQUIRED_PACKAGES += locale/ru-extra
+TEST_REQUIRED_PACKAGES += locale/zh_cn-extra
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/pcre2
