@@ -21,17 +21,17 @@ include ../../../make-rules/shared-macros.mk
 
 # This is NVIDIA Legacy GPU driver
 
-COMPONENT_MJR_VERSION =		470
 COMPONENT_NAME =		nvidia-$(COMPONENT_MJR_VERSION)
-HUMAN_VERSION =			$(COMPONENT_MJR_VERSION).161.03
-COMPONENT_VERSION =		$(COMPONENT_MJR_VERSION).161.3
+HUMAN_VERSION =			470.182.03
+COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
+COMPONENT_MJR_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\..*//g')
 COMPONENT_FMRI =		driver/graphics/nvidia-$(COMPONENT_MJR_VERSION)
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
 COMPONENT_CLASSIFICATION =	Drivers/Display
 COMPONENT_PROJECT_URL =		https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC =			NVIDIA-Solaris-x86-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH =	sha256:527e54a9febed67a5d3a4d3eb6ad5e53c2bd18f82968da9e3036bb85345c8bb6
+COMPONENT_ARCHIVE_HASH =	sha256:b6eac7342e08fc53a237cac570d33948cdbfe63a08e2d0c45d9a2d742ac88d6b
 COMPONENT_ARCHIVE_URL =		https://us.download.nvidia.com/solaris/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		NVIDIA
 COMPONENT_LICENSE_FILE =	nvidia.license
@@ -73,13 +73,13 @@ GENERATE_EXTRA_CMD += | \
 	)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
