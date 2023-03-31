@@ -1,6 +1,6 @@
---- openal-soft-1.16.0/CMakeLists.txt.~1~	2015-07-21 14:20:26.610939157 +0300
-+++ openal-soft-1.16.0/CMakeLists.txt	2015-07-21 14:21:19.153155895 +0300
-@@ -1013,7 +1013,7 @@
+--- openal-soft-1.17.0/CMakeLists.txt.orig	2015-11-12 16:40:17.000000000 +0100
++++ openal-soft-1.17.0/CMakeLists.txt	2023-03-31 15:41:42.395268435 +0200
+@@ -1023,7 +1023,7 @@
  SET(prefix ${CMAKE_INSTALL_PREFIX})
  SET(exec_prefix "\${prefix}")
  SET(libdir "\${exec_prefix}/lib${LIB_SUFFIX}")
@@ -9,39 +9,48 @@
  SET(includedir "\${prefix}/include")
  SET(PACKAGE_VERSION "${LIB_VERSION}")
  
-@@ -1095,7 +1095,7 @@
- 
- # Add an install target here
- INSTALL(TARGETS ${LIBNAME}
--        RUNTIME DESTINATION bin
-+        RUNTIME DESTINATION "bin${LIB_SUFFIX}"
-         LIBRARY DESTINATION "lib${LIB_SUFFIX}"
-         ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
- )
-@@ -1160,7 +1160,7 @@
-     ENDIF()
- 
-     INSTALL(TARGETS openal-info makehrtf
+@@ -1113,7 +1113,7 @@
+ IF(ALSOFT_INSTALL)
+     # Add an install target here
+     INSTALL(TARGETS ${LIBNAME}
 -            RUNTIME DESTINATION bin
 +            RUNTIME DESTINATION "bin${LIB_SUFFIX}"
              LIBRARY DESTINATION "lib${LIB_SUFFIX}"
              ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
      )
-@@ -1200,7 +1200,7 @@
-                                                                            ${SDL_SOUND_INCLUDE_DIR})
+@@ -1181,7 +1181,7 @@
  
-         INSTALL(TARGETS alstream alreverb allatency alloopback
+     IF(ALSOFT_INSTALL)
+         INSTALL(TARGETS openal-info makehrtf bsincgen
 -                RUNTIME DESTINATION bin
 +                RUNTIME DESTINATION "bin${LIB_SUFFIX}"
                  LIBRARY DESTINATION "lib${LIB_SUFFIX}"
                  ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
          )
-@@ -1236,7 +1236,7 @@
-                                                                              ${FFMPEG_INCLUDE_DIRS})
+@@ -1202,7 +1202,7 @@
  
-             INSTALL(TARGETS alffplay
+         IF(ALSOFT_INSTALL)
+             INSTALL(TARGETS altonegen
 -                    RUNTIME DESTINATION bin
 +                    RUNTIME DESTINATION "bin${LIB_SUFFIX}"
                      LIBRARY DESTINATION "lib${LIB_SUFFIX}"
                      ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
              )
+@@ -1246,7 +1246,7 @@
+ 
+         IF(ALSOFT_INSTALL)
+             INSTALL(TARGETS alstream alreverb allatency alloopback
+-                    RUNTIME DESTINATION bin
++                    RUNTIME DESTINATION "bin${LIB_SUFFIX}"
+                     LIBRARY DESTINATION "lib${LIB_SUFFIX}"
+                     ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
+             )
+@@ -1284,7 +1284,7 @@
+ 
+             IF(ALSOFT_INSTALL)
+                 INSTALL(TARGETS alffplay
+-                        RUNTIME DESTINATION bin
++                        RUNTIME DESTINATION "bin${LIB_SUFFIX}"
+                         LIBRARY DESTINATION "lib${LIB_SUFFIX}"
+                         ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
+                 )
