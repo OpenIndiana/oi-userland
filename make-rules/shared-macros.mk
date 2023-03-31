@@ -1252,6 +1252,11 @@ COMPONENT_INSTALL_ENV= \
     LD_OPTIONS="$(LD_OPTIONS)" \
     LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 
+# PATH should be always set
+COMPONENT_BUILD_ENV += PATH="$(PATH)"
+COMPONENT_INSTALL_ENV += PATH="$(PATH)"
+COMPONENT_TEST_ENV += PATH="$(PATH)"
+
 # PERL options which depend on C options should be placed here
 PERL_OPTIMIZE :=	$(shell $(PERL) -e 'use Config; print $$Config{optimize}')
 
