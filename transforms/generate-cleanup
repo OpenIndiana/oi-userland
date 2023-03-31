@@ -85,7 +85,7 @@
 <transform file -> \
 	edit path "^(usr/lib/python3\.\d+/vendor-packages/(.*/)?[^/]+)\.abi3\.so$" "\1.so">
 # Replace Python version by $(PYVER)
-<transform file path=usr/bin/[^/]+-3\.\d+$ -> default tmp.fmri $(COMPONENT_FMRI)>
+<transform file path=usr/bin/[^/]+-3\.\d+$ -> default tmp.fmri "$(COMPONENT_FMRI)">
 <transform file tmp.fmri=.*runtime/python -> edit path "^(usr/bin/[^/]+-)3\.\d+$" "\1$!(PYVER)">
 <transform file tmp.fmri=.*library/python/ -> edit path "^(usr/bin/[^/]+-)3\.\d+$" "\1$!(PYVER)">
 <transform file tmp.fmri=.* -> delete tmp.fmri .*>
