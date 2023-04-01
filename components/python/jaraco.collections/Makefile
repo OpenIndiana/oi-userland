@@ -19,23 +19,26 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.collections
-HUMAN_VERSION =			3.8.0
+HUMAN_VERSION =			4.0.0
 COMPONENT_SUMMARY =		jaraco.collections - Collection objects similar to those in stdlib by jaraco
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.collections
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/24/93/a376f84808cae648d2fec5c844fc68321adaa01d612203d025df56446144/jaraco.collections-3.8.0.tar.gz
+	https://files.pythonhosted.org/packages/ff/d1/b06e9c9c3343c5bb056c84376e0cc19c3d94108454e495bda1f402f37ed8/jaraco.collections-4.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:56304fd4bd4eb8d585ce0cace0ac80418791b140851e374812541b0aa27c91d0
+	sha256:9bbe39e1a13c73cb471f6114a2b3cb21d704c2e3271ad5a60daf94a436dec939
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/tholo/pytest-flake8/issues/92
+PYTEST_ADDOPTS += -p no:flake8
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/jaraco-classes
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-text
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
