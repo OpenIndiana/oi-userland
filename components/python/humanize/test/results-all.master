@@ -1,0 +1,541 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> $(PYTHON) -m pytest --cov humanize --cov tests --cov-report xml
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D), configfile: tox.ini
+asyncio: mode=strict
+collecting ... collected 519 items
+
+::project PASSED
+src/humanize/filesize.py::humanize.filesize.naturalsize PASSED
+src/humanize/number.py::humanize.number.apnumber PASSED
+src/humanize/number.py::humanize.number.clamp PASSED
+src/humanize/number.py::humanize.number.fractional PASSED
+src/humanize/number.py::humanize.number.intcomma PASSED
+src/humanize/number.py::humanize.number.intword PASSED
+src/humanize/number.py::humanize.number.metric PASSED
+src/humanize/number.py::humanize.number.ordinal PASSED
+src/humanize/number.py::humanize.number.scientific PASSED
+src/humanize/time.py::humanize.time._carry PASSED
+src/humanize/time.py::humanize.time._quotient_and_remainder PASSED
+src/humanize/time.py::humanize.time._suitable_minimum_unit PASSED
+src/humanize/time.py::humanize.time._suppress_lower_units PASSED
+src/humanize/time.py::humanize.time.precisedelta PASSED
+tests/test_filesize.py::test_naturalsize[test_args0-300 Bytes] PASSED
+tests/test_filesize.py::test_naturalsize[test_args1-3.0 kB] PASSED
+tests/test_filesize.py::test_naturalsize[test_args10-2.9M] PASSED
+tests/test_filesize.py::test_naturalsize[test_args11-1.0K] PASSED
+tests/test_filesize.py::test_naturalsize[test_args12-2481.5Y] PASSED
+tests/test_filesize.py::test_naturalsize[test_args13-2481.5 YiB] PASSED
+tests/test_filesize.py::test_naturalsize[test_args14-3000.0 YB] PASSED
+tests/test_filesize.py::test_naturalsize[test_args15-1 Byte] PASSED
+tests/test_filesize.py::test_naturalsize[test_args16-3.14 MB] PASSED
+tests/test_filesize.py::test_naturalsize[test_args17-2.930K] PASSED
+tests/test_filesize.py::test_naturalsize[test_args18-3G] PASSED
+tests/test_filesize.py::test_naturalsize[test_args19-2481.542 YiB] PASSED
+tests/test_filesize.py::test_naturalsize[test_args2-3.0 MB] PASSED
+tests/test_filesize.py::test_naturalsize[test_args3-3.0 GB] PASSED
+tests/test_filesize.py::test_naturalsize[test_args4-3.0 TB] PASSED
+tests/test_filesize.py::test_naturalsize[test_args5-300 Bytes] PASSED
+tests/test_filesize.py::test_naturalsize[test_args6-2.9 KiB] PASSED
+tests/test_filesize.py::test_naturalsize[test_args7-2.9 MiB] PASSED
+tests/test_filesize.py::test_naturalsize[test_args8-300B] PASSED
+tests/test_filesize.py::test_naturalsize[test_args9-2.9K] PASSED
+tests/test_i18n.py::TestActivate::test_default_locale_path_null__file__ PASSED
+tests/test_i18n.py::TestActivate::test_default_locale_path_undefined__file__ PASSED
+tests/test_i18n.py::test_default_locale_path_defined__file__ PASSED
+tests/test_i18n.py::test_default_locale_path_null__file__ PASSED
+tests/test_i18n.py::test_default_locale_path_undefined__file__ PASSED
+tests/test_i18n.py::test_i18n PASSED
+tests/test_i18n.py::test_intcomma PASSED
+tests/test_i18n.py::test_intword_plurals[es_ES-1000000-1.0 mill\xf3n] PASSED
+tests/test_i18n.py::test_intword_plurals[es_ES-1000000000-1.0 bill\xf3n] PASSED
+tests/test_i18n.py::test_intword_plurals[es_ES-1000000000000-1.0 trill\xf3n] PASSED
+tests/test_i18n.py::test_intword_plurals[es_ES-1200000000-1.2 billones] PASSED
+tests/test_i18n.py::test_intword_plurals[es_ES-3500000-3.5 millones] PASSED
+tests/test_i18n.py::test_intword_plurals[es_ES-6700000000000-6.7 trillones] PASSED
+tests/test_i18n.py::test_langauge_codes[ar-5\u062e\u0627\u0645\u0633] PASSED
+tests/test_i18n.py::test_langauge_codes[ar_SA-5\u062e\u0627\u0645\u0633] PASSED
+tests/test_i18n.py::test_langauge_codes[fr-5e] PASSED
+tests/test_i18n.py::test_langauge_codes[fr_FR-5e] PASSED
+tests/test_i18n.py::test_langauge_codes[pt-5\xba] PASSED
+tests/test_i18n.py::test_langauge_codes[pt_BR-5\xba] PASSED
+tests/test_i18n.py::test_langauge_codes[pt_PT-5\xba] PASSED
+tests/test_i18n.py::test_naturaldelta PASSED
+tests/test_i18n.py::test_ordinal_genders[es_ES-1-male-1\xba] PASSED
+tests/test_i18n.py::test_ordinal_genders[es_ES-5-female-5\xaa] PASSED
+tests/test_i18n.py::test_ordinal_genders[fr_FR-1-female-1\xe8re] PASSED
+tests/test_i18n.py::test_ordinal_genders[fr_FR-1-male-1er] PASSED
+tests/test_i18n.py::test_ordinal_genders[fr_FR-2-male-2e] PASSED
+tests/test_i18n.py::test_ordinal_genders[it_IT-3-male-3\xba] PASSED
+tests/test_i18n.py::test_ordinal_genders[it_IT-8-female-8\xaa] PASSED
+tests/test_number.py::test_apnumber[-inf--Inf0] PASSED
+tests/test_number.py::test_apnumber[-inf--Inf1] PASSED
+tests/test_number.py::test_apnumber[0-zero] PASSED
+tests/test_number.py::test_apnumber[1-one] PASSED
+tests/test_number.py::test_apnumber[10-10] PASSED
+tests/test_number.py::test_apnumber[2-two] PASSED
+tests/test_number.py::test_apnumber[4-four] PASSED
+tests/test_number.py::test_apnumber[5-five] PASSED
+tests/test_number.py::test_apnumber[7-seven] PASSED
+tests/test_number.py::test_apnumber[9-nine] PASSED
+tests/test_number.py::test_apnumber[None-None] PASSED
+tests/test_number.py::test_apnumber[inf-+Inf] PASSED
+tests/test_number.py::test_apnumber[nan-NaN0] PASSED
+tests/test_number.py::test_apnumber[nan-NaN1] PASSED
+tests/test_number.py::test_clamp[test_args0-1] PASSED
+tests/test_number.py::test_clamp[test_args1-None] PASSED
+tests/test_number.py::test_clamp[test_args10--Inf] PASSED
+tests/test_number.py::test_clamp[test_args2-0%] PASSED
+tests/test_number.py::test_clamp[test_args3-<1%] PASSED
+tests/test_number.py::test_clamp[test_args4->99%] PASSED
+tests/test_number.py::test_clamp[test_args5-under 1%] PASSED
+tests/test_number.py::test_clamp[test_args6-above 99%] PASSED
+tests/test_number.py::test_clamp[test_args7-under 1.0 million] PASSED
+tests/test_number.py::test_clamp[test_args8-NaN] PASSED
+tests/test_number.py::test_clamp[test_args9-+Inf] PASSED
+tests/test_number.py::test_fractional[-inf--Inf0] PASSED
+tests/test_number.py::test_fractional[-inf--Inf1] PASSED
+tests/test_number.py::test_fractional[0.3-3/10] PASSED
+tests/test_number.py::test_fractional[0.333-333/1000] PASSED
+tests/test_number.py::test_fractional[0.3333333333333333-1/3] PASSED
+tests/test_number.py::test_fractional[0.8333333333333334-5/6] PASSED
+tests/test_number.py::test_fractional[1-1] PASSED
+tests/test_number.py::test_fractional[1.3333333333333333-1 1/3] PASSED
+tests/test_number.py::test_fractional[1.5-1 1/2] PASSED
+tests/test_number.py::test_fractional[2.0-2] PASSED
+tests/test_number.py::test_fractional[7-7] PASSED
+tests/test_number.py::test_fractional[8.9-8 9/10] PASSED
+tests/test_number.py::test_fractional[None-None] PASSED
+tests/test_number.py::test_fractional[inf-+Inf] PASSED
+tests/test_number.py::test_fractional[nan-NaN0] PASSED
+tests/test_number.py::test_fractional[nan-NaN1] PASSED
+tests/test_number.py::test_fractional[ten-ten] PASSED
+tests/test_number.py::test_intcomma[test_args0-100] PASSED
+tests/test_number.py::test_intcomma[test_args1-1,000] PASSED
+tests/test_number.py::test_intcomma[test_args10-1,000,000] PASSED
+tests/test_number.py::test_intcomma[test_args11-1,234,567.1234567] PASSED
+tests/test_number.py::test_intcomma[test_args12-1,234,567] PASSED
+tests/test_number.py::test_intcomma[test_args13-1,234,567.1] PASSED
+tests/test_number.py::test_intcomma[test_args14-1,234,567.1234567000] PASSED
+tests/test_number.py::test_intcomma[test_args15-1,234,567.0] PASSED
+tests/test_number.py::test_intcomma[test_args16-None] PASSED
+tests/test_number.py::test_intcomma[test_args17-14,308.4] PASSED
+tests/test_number.py::test_intcomma[test_args18-14,308.4] PASSED
+tests/test_number.py::test_intcomma[test_args19-14,308.4] PASSED
+tests/test_number.py::test_intcomma[test_args2-10,123] PASSED
+tests/test_number.py::test_intcomma[test_args20-14,308.40] PASSED
+tests/test_number.py::test_intcomma[test_args21-14,308.400] PASSED
+tests/test_number.py::test_intcomma[test_args22-1,234.5454545] PASSED
+tests/test_number.py::test_intcomma[test_args23-1,234.5454545] PASSED
+tests/test_number.py::test_intcomma[test_args24-1,235] PASSED
+tests/test_number.py::test_intcomma[test_args25-1,234.5] PASSED
+tests/test_number.py::test_intcomma[test_args26-1,234.55] PASSED
+tests/test_number.py::test_intcomma[test_args27-1,234.545] PASSED
+tests/test_number.py::test_intcomma[test_args28-1,234.5454545000] PASSED
+tests/test_number.py::test_intcomma[test_args29-NaN] PASSED
+tests/test_number.py::test_intcomma[test_args3-10,311] PASSED
+tests/test_number.py::test_intcomma[test_args30-+Inf] PASSED
+tests/test_number.py::test_intcomma[test_args31--Inf] PASSED
+tests/test_number.py::test_intcomma[test_args32-NaN] PASSED
+tests/test_number.py::test_intcomma[test_args33--Inf] PASSED
+tests/test_number.py::test_intcomma[test_args4-1,000,000] PASSED
+tests/test_number.py::test_intcomma[test_args5-1,234,567.25] PASSED
+tests/test_number.py::test_intcomma[test_args6-100] PASSED
+tests/test_number.py::test_intcomma[test_args7-1,000] PASSED
+tests/test_number.py::test_intcomma[test_args8-10,123] PASSED
+tests/test_number.py::test_intcomma[test_args9-10,311] PASSED
+tests/test_number.py::test_intword[test_args0-0] PASSED
+tests/test_number.py::test_intword[test_args1-100] PASSED
+tests/test_number.py::test_intword[test_args10-1.0 billion] PASSED
+tests/test_number.py::test_intword[test_args11-1.0 billion] PASSED
+tests/test_number.py::test_intword[test_args12--1.0 billion] PASSED
+tests/test_number.py::test_intword[test_args13-2.0 billion] PASSED
+tests/test_number.py::test_intword[test_args14-1.0 trillion] PASSED
+tests/test_number.py::test_intword[test_args15-1.0 trillion] PASSED
+tests/test_number.py::test_intword[test_args16-6.0 trillion] PASSED
+tests/test_number.py::test_intword[test_args17--6.0 trillion] PASSED
+tests/test_number.py::test_intword[test_args18-1.0 quadrillion] PASSED
+tests/test_number.py::test_intword[test_args19-1.0 quadrillion] PASSED
+tests/test_number.py::test_intword[test_args2--100] PASSED
+tests/test_number.py::test_intword[test_args20-1.3 quadrillion] PASSED
+tests/test_number.py::test_intword[test_args21--1.3 quadrillion] PASSED
+tests/test_number.py::test_intword[test_args22-3.5 sextillion] PASSED
+tests/test_number.py::test_intword[test_args23-8.1 decillion] PASSED
+tests/test_number.py::test_intword[test_args24--8.1 decillion] PASSED
+tests/test_number.py::test_intword[test_args25-1000.0 decillion] PASSED
+tests/test_number.py::test_intword[test_args26-1100.0 decillion] PASSED
+tests/test_number.py::test_intword[test_args27-2100.0 decillion] PASSED
+tests/test_number.py::test_intword[test_args28-None] PASSED
+tests/test_number.py::test_intword[test_args29-1.23 million] PASSED
+tests/test_number.py::test_intword[test_args3-1.0 thousand] PASSED
+tests/test_number.py::test_intword[test_args30-100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000] PASSED
+tests/test_number.py::test_intword[test_args31-NaN] PASSED
+tests/test_number.py::test_intword[test_args32-+Inf] PASSED
+tests/test_number.py::test_intword[test_args33--Inf] PASSED
+tests/test_number.py::test_intword[test_args34-NaN] PASSED
+tests/test_number.py::test_intword[test_args35--Inf] PASSED
+tests/test_number.py::test_intword[test_args4-12.4 thousand] PASSED
+tests/test_number.py::test_intword[test_args5-12.5 thousand] PASSED
+tests/test_number.py::test_intword[test_args6-1.0 million] PASSED
+tests/test_number.py::test_intword[test_args7--1.0 million] PASSED
+tests/test_number.py::test_intword[test_args8-1.2 million] PASSED
+tests/test_number.py::test_intword[test_args9-1.3 million] PASSED
+tests/test_number.py::test_intword_powers PASSED
+tests/test_number.py::test_metric[[-1500, 'V']--1.50 kV] PASSED
+tests/test_number.py::test_metric[[-inf]--Inf] PASSED
+tests/test_number.py::test_metric[[0.00012]-120 \u03bc] PASSED
+tests/test_number.py::test_metric[[0.0012]-1.20 m] PASSED
+tests/test_number.py::test_metric[[0.012]-12.0 m] PASSED
+tests/test_number.py::test_metric[[0.1, '\xb0']-100m\xb0] PASSED
+tests/test_number.py::test_metric[[0.12]-120 m] PASSED
+tests/test_number.py::test_metric[[0.1]-100 m] PASSED
+tests/test_number.py::test_metric[[0]-0.00] PASSED
+tests/test_number.py::test_metric[[1, 'Hz']-1.00 Hz] PASSED
+tests/test_number.py::test_metric[[1, '\xb0']-1.00\xb0] PASSED
+tests/test_number.py::test_metric[[1.0, 'W']-1.00 W] PASSED
+tests/test_number.py::test_metric[[1.23456]-1.23] PASSED
+tests/test_number.py::test_metric[[1.234e+28, 'A']-12.3 RA] PASSED
+tests/test_number.py::test_metric[[1.234e-28, 'A']-123 qA] PASSED
+tests/test_number.py::test_metric[[1.235e+29, 'A']-124 RA] PASSED
+tests/test_number.py::test_metric[[100]-100] PASSED
+tests/test_number.py::test_metric[[12.3456]-12.3] PASSED
+tests/test_number.py::test_metric[[123.456]-123] PASSED
+tests/test_number.py::test_metric[[1234.56]-1.23 k] PASSED
+tests/test_number.py::test_metric[[12345, '', 6]-12.3450 k] PASSED
+tests/test_number.py::test_metric[[1e+25, 'm']-10.0 Ym] PASSED
+tests/test_number.py::test_metric[[1e+26, 'm']-100 Ym] PASSED
+tests/test_number.py::test_metric[[1e+27, 'A']-1.00 RA] PASSED
+tests/test_number.py::test_metric[[1e+50]-1.00 x 10\u2075\u2070] PASSED
+tests/test_number.py::test_metric[[1e-23]-10.0 y] PASSED
+tests/test_number.py::test_metric[[1e-24]-1.00 y] PASSED
+tests/test_number.py::test_metric[[1e-25]-100 r] PASSED
+tests/test_number.py::test_metric[[1e-26]-10.0 r] PASSED
+tests/test_number.py::test_metric[[1e-50]-1.00 x 10\u207b\u2075\u2070] PASSED
+tests/test_number.py::test_metric[[2.56e-30, 'V']-2.56 qV] PASSED
+tests/test_number.py::test_metric[[2.596e+32, 'F']-260 QF] PASSED
+tests/test_number.py::test_metric[[200000]-200 k] PASSED
+tests/test_number.py::test_metric[[3, 'C']-3.00 C] PASSED
+tests/test_number.py::test_metric[[3, 'W', 5]-3.0000 W] PASSED
+tests/test_number.py::test_metric[[inf]-+Inf] PASSED
+tests/test_number.py::test_metric[[nan, 'm']-NaN] PASSED
+tests/test_number.py::test_metric[[nan]-NaN] PASSED
+tests/test_number.py::test_ordinal[-inf--Inf0] PASSED
+tests/test_number.py::test_ordinal[-inf--Inf1] PASSED
+tests/test_number.py::test_ordinal[1-1st] PASSED
+tests/test_number.py::test_ordinal[101-101st] PASSED
+tests/test_number.py::test_ordinal[102-102nd] PASSED
+tests/test_number.py::test_ordinal[103-103rd] PASSED
+tests/test_number.py::test_ordinal[11-11th] PASSED
+tests/test_number.py::test_ordinal[111-111th] PASSED
+tests/test_number.py::test_ordinal[12-12th] PASSED
+tests/test_number.py::test_ordinal[13-13th] PASSED
+tests/test_number.py::test_ordinal[2-2nd] PASSED
+tests/test_number.py::test_ordinal[3-3rd] PASSED
+tests/test_number.py::test_ordinal[4-4th] PASSED
+tests/test_number.py::test_ordinal[None-None] PASSED
+tests/test_number.py::test_ordinal[inf-+Inf] PASSED
+tests/test_number.py::test_ordinal[nan-NaN0] PASSED
+tests/test_number.py::test_ordinal[nan-NaN1] PASSED
+tests/test_number.py::test_ordinal[something else-something else] PASSED
+tests/test_number.py::test_scientific[test_args0-1.00 x 10\xb3] PASSED
+tests/test_number.py::test_scientific[test_args1--1.00 x 10\xb3] PASSED
+tests/test_number.py::test_scientific[test_args10-3.0 x 10\u207b\xb9] PASSED
+tests/test_number.py::test_scientific[test_args11-1 x 10\xb3] PASSED
+tests/test_number.py::test_scientific[test_args12-3 x 10\u207b\xb9] PASSED
+tests/test_number.py::test_scientific[test_args13-1.00 x 10\xb2\u2070] PASSED
+tests/test_number.py::test_scientific[test_args14-2.00 x 10\u207b\xb2\u2070] PASSED
+tests/test_number.py::test_scientific[test_args15--3.00 x 10\xb2\u2070] PASSED
+tests/test_number.py::test_scientific[test_args16--4.00 x 10\u207b\xb2\u2070] PASSED
+tests/test_number.py::test_scientific[test_args17-NaN] PASSED
+tests/test_number.py::test_scientific[test_args18-+Inf] PASSED
+tests/test_number.py::test_scientific[test_args19--Inf] PASSED
+tests/test_number.py::test_scientific[test_args2-5.50 x 10\u2070] PASSED
+tests/test_number.py::test_scientific[test_args20-NaN] PASSED
+tests/test_number.py::test_scientific[test_args21--Inf] PASSED
+tests/test_number.py::test_scientific[test_args3-5.78 x 10\u2079] PASSED
+tests/test_number.py::test_scientific[test_args4-1.00 x 10\xb3] PASSED
+tests/test_number.py::test_scientific[test_args5-9.90 x 10\xb9] PASSED
+tests/test_number.py::test_scientific[test_args6-3.00 x 10\u207b\xb9] PASSED
+tests/test_number.py::test_scientific[test_args7-foo] PASSED
+tests/test_number.py::test_scientific[test_args8-None] PASSED
+tests/test_number.py::test_scientific[test_args9-1.0 x 10\xb3] PASSED
+tests/test_time.py::test_date_and_delta PASSED
+tests/test_time.py::test_naturaldate[None-None] PASSED
+tests/test_time.py::test_naturaldate[Not a date at all.-Not a date at all.] PASSED
+tests/test_time.py::test_naturaldate[test_input0-today] PASSED
+tests/test_time.py::test_naturaldate[test_input1-tomorrow] PASSED
+tests/test_time.py::test_naturaldate[test_input10-Mar 02 2019] PASSED
+tests/test_time.py::test_naturaldate[test_input11-Apr 02 2019] PASSED
+tests/test_time.py::test_naturaldate[test_input12-May 02 2019] PASSED
+tests/test_time.py::test_naturaldate[test_input13-Jun 02 2019] PASSED
+tests/test_time.py::test_naturaldate[test_input14-Jul 02 2019] PASSED
+tests/test_time.py::test_naturaldate[test_input15-Aug 02 2019] PASSED
+tests/test_time.py::test_naturaldate[test_input16-Sep 02 2019] PASSED
+tests/test_time.py::test_naturaldate[test_input17-Oct 02] PASSED
+tests/test_time.py::test_naturaldate[test_input18-Nov 02] PASSED
+tests/test_time.py::test_naturaldate[test_input19-Dec 02] PASSED
+tests/test_time.py::test_naturaldate[test_input2-yesterday] PASSED
+tests/test_time.py::test_naturaldate[test_input20-Jan 02] PASSED
+tests/test_time.py::test_naturaldate[test_input21-today] PASSED
+tests/test_time.py::test_naturaldate[test_input22-Mar 02] PASSED
+tests/test_time.py::test_naturaldate[test_input23-Apr 02] PASSED
+tests/test_time.py::test_naturaldate[test_input24-May 02] PASSED
+tests/test_time.py::test_naturaldate[test_input25-Jun 02] PASSED
+tests/test_time.py::test_naturaldate[test_input26-Jul 02] PASSED
+tests/test_time.py::test_naturaldate[test_input27-Aug 02 2020] PASSED
+tests/test_time.py::test_naturaldate[test_input28-Sep 02 2020] PASSED
+tests/test_time.py::test_naturaldate[test_input29-Oct 02 2020] PASSED
+tests/test_time.py::test_naturaldate[test_input3-Mar 05] PASSED
+tests/test_time.py::test_naturaldate[test_input30-Nov 02 2020] PASSED
+tests/test_time.py::test_naturaldate[test_input31-Dec 02 2020] PASSED
+tests/test_time.py::test_naturaldate[test_input32-Jan 02 2021] PASSED
+tests/test_time.py::test_naturaldate[test_input33-Feb 02 2021] PASSED
+tests/test_time.py::test_naturaldate[test_input4-Jun 27 1982] PASSED
+tests/test_time.py::test_naturaldate[test_input7-290149024-2-2] PASSED
+tests/test_time.py::test_naturaldate[test_input8-120390192341-2-2] PASSED
+tests/test_time.py::test_naturaldate[test_input9-Feb 02 2019] PASSED
+tests/test_time.py::test_naturalday[test_args0-today] PASSED
+tests/test_time.py::test_naturalday[test_args1-tomorrow] PASSED
+tests/test_time.py::test_naturalday[test_args2-yesterday] PASSED
+tests/test_time.py::test_naturalday[test_args3-Mar 05] PASSED
+tests/test_time.py::test_naturalday[test_args4-02/26/1984] PASSED
+tests/test_time.py::test_naturalday[test_args5-1982.06.27] PASSED
+tests/test_time.py::test_naturalday[test_args6-None] PASSED
+tests/test_time.py::test_naturalday[test_args7-Not a date at all.] PASSED
+tests/test_time.py::test_naturalday[test_args8-290149024-2-2] PASSED
+tests/test_time.py::test_naturalday[test_args9-120390192341-2-2] PASSED
+tests/test_time.py::test_naturaldelta[0-a moment] PASSED
+tests/test_time.py::test_naturaldelta[1-a second] PASSED
+tests/test_time.py::test_naturaldelta[23.5-23 seconds] PASSED
+tests/test_time.py::test_naturaldelta[30-30 seconds0] PASSED
+tests/test_time.py::test_naturaldelta[30-30 seconds1] PASSED
+tests/test_time.py::test_naturaldelta[NaN-NaN] PASSED
+tests/test_time.py::test_naturaldelta[test_input10-2 years] PASSED
+tests/test_time.py::test_naturaldelta[test_input11-a second] PASSED
+tests/test_time.py::test_naturaldelta[test_input12-30 seconds] PASSED
+tests/test_time.py::test_naturaldelta[test_input13-a minute] PASSED
+tests/test_time.py::test_naturaldelta[test_input14-2 minutes] PASSED
+tests/test_time.py::test_naturaldelta[test_input15-an hour] PASSED
+tests/test_time.py::test_naturaldelta[test_input16-23 hours] PASSED
+tests/test_time.py::test_naturaldelta[test_input17-a day] PASSED
+tests/test_time.py::test_naturaldelta[test_input18-1 year, 4 months] PASSED
+tests/test_time.py::test_naturaldelta[test_input19-2 years] PASSED
+tests/test_time.py::test_naturaldelta[test_input20-27 years] PASSED
+tests/test_time.py::test_naturaldelta[test_input21-1 year, 1 month] PASSED
+tests/test_time.py::test_naturaldelta[test_input23-2 years] PASSED
+tests/test_time.py::test_naturaldelta[test_input24-1 year, 4 days] PASSED
+tests/test_time.py::test_naturaldelta[test_input25-a month] PASSED
+tests/test_time.py::test_naturaldelta[test_input26-2 months] PASSED
+tests/test_time.py::test_naturaldelta[test_input27-9 days] PASSED
+tests/test_time.py::test_naturaldelta[test_input28-a year] PASSED
+tests/test_time.py::test_naturaldelta[test_input29-1,141 years] PASSED
+tests/test_time.py::test_naturaldelta[test_input31-2,739,726 years] PASSED
+tests/test_time.py::test_naturaldelta[test_input4-a minute] PASSED
+tests/test_time.py::test_naturaldelta[test_input5-2 minutes] PASSED
+tests/test_time.py::test_naturaldelta[test_input6-an hour] PASSED
+tests/test_time.py::test_naturaldelta[test_input7-23 hours] PASSED
+tests/test_time.py::test_naturaldelta[test_input8-a day] PASSED
+tests/test_time.py::test_naturaldelta[test_input9-1 year, 4 months] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_default[0.001-a moment] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_default[0.004-a moment] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_default[1e-06-a moment] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_default[2-2 seconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_default[31557600.000004-a year] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_default[3600.004-an hour] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_default[4-4 seconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_default[4e-06-a moment] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_default[86400.004-a day] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[microseconds-0.004-4 milliseconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[microseconds-0.101943-101 milliseconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[microseconds-1.337-a second] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[microseconds-1e-06-1 microsecond] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[microseconds-2-2 seconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[microseconds-31557600.000004-a year] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[microseconds-3600.004-an hour] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[microseconds-4-4 seconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[microseconds-4e-06-4 microseconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[microseconds-86400.004-a day] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[milliseconds-0.001-1 millisecond] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[milliseconds-0.004-4 milliseconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[milliseconds-0.101943-101 milliseconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[milliseconds-1.337-a second] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[milliseconds-2-2 seconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[milliseconds-31557600.000004-a year] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[milliseconds-3600.004-an hour] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[milliseconds-4-4 seconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[milliseconds-4e-06-0 milliseconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[seconds-0.001-a moment] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[seconds-0.004-a moment] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[seconds-0.101943-a moment] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[seconds-1.337-a second] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[seconds-1e-06-a moment] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[seconds-2-2 seconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[seconds-31557600.000004-a year] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[seconds-3600.004-an hour] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[seconds-4-4 seconds] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[seconds-4e-06-a moment] PASSED
+tests/test_time.py::test_naturaldelta_minimum_unit_explicit[seconds-86400.004-a day] PASSED
+tests/test_time.py::test_naturaldelta_nomonths[test_input0-7 days] PASSED
+tests/test_time.py::test_naturaldelta_nomonths[test_input1-31 days] PASSED
+tests/test_time.py::test_naturaldelta_nomonths[test_input2-230 days] PASSED
+tests/test_time.py::test_naturaldelta_nomonths[test_input3-1 year, 35 days] PASSED
+tests/test_time.py::test_naturaltime[23.5-23 seconds ago] PASSED
+tests/test_time.py::test_naturaltime[30-30 seconds ago] PASSED
+tests/test_time.py::test_naturaltime[NaN-NaN] PASSED
+tests/test_time.py::test_naturaltime[test_input0-now] PASSED
+tests/test_time.py::test_naturaltime[test_input1-a second ago] PASSED
+tests/test_time.py::test_naturaltime[test_input10-a second from now] PASSED
+tests/test_time.py::test_naturaltime[test_input11-30 seconds from now] PASSED
+tests/test_time.py::test_naturaltime[test_input12-a minute from now] PASSED
+tests/test_time.py::test_naturaltime[test_input13-2 minutes from now] PASSED
+tests/test_time.py::test_naturaltime[test_input14-an hour from now] PASSED
+tests/test_time.py::test_naturaltime[test_input15-23 hours from now] PASSED
+tests/test_time.py::test_naturaltime[test_input16-a day from now] PASSED
+tests/test_time.py::test_naturaltime[test_input17-1 year, 4 months from now] PASSED
+tests/test_time.py::test_naturaltime[test_input18-2 years from now] PASSED
+tests/test_time.py::test_naturaltime[test_input19-27 years from now] PASSED
+tests/test_time.py::test_naturaltime[test_input2-30 seconds ago] PASSED
+tests/test_time.py::test_naturaltime[test_input20-1 year, 1 month ago] PASSED
+tests/test_time.py::test_naturaltime[test_input21-27 years from now] PASSED
+tests/test_time.py::test_naturaltime[test_input22-1 year, 1 month ago] PASSED
+tests/test_time.py::test_naturaltime[test_input25-2 years ago] PASSED
+tests/test_time.py::test_naturaltime[test_input26-1 year, 4 days ago] PASSED
+tests/test_time.py::test_naturaltime[test_input3-a minute ago] PASSED
+tests/test_time.py::test_naturaltime[test_input4-2 minutes ago] PASSED
+tests/test_time.py::test_naturaltime[test_input5-an hour ago] PASSED
+tests/test_time.py::test_naturaltime[test_input6-23 hours ago] PASSED
+tests/test_time.py::test_naturaltime[test_input7-a day ago] PASSED
+tests/test_time.py::test_naturaltime[test_input8-1 year, 4 months ago] PASSED
+tests/test_time.py::test_naturaltime[test_input9-2 years ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_default[0.001-now] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_default[0.004-now] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_default[1e-06-now] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_default[2-2 seconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_default[31557600.000004-a year ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_default[3600.004-an hour ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_default[4-4 seconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_default[4e-06-now] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_default[86400.004-a day ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[microseconds-0.004-4 milliseconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[microseconds-0.101943-101 milliseconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[microseconds-1.337-a second ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[microseconds-1e-06-1 microsecond ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[microseconds-2-2 seconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[microseconds-31557600.000004-a year ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[microseconds-3600.004-an hour ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[microseconds-4-4 seconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[microseconds-4e-06-4 microseconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[microseconds-86400.004-a day ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[milliseconds-0.001-1 millisecond ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[milliseconds-0.004-4 milliseconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[milliseconds-0.101943-101 milliseconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[milliseconds-1.337-a second ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[milliseconds-2-2 seconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[milliseconds-31557600.000004-a year ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[milliseconds-3600.004-an hour ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[milliseconds-4-4 seconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[milliseconds-4e-06-0 milliseconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[seconds-0.001-now] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[seconds-0.004-now] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[seconds-0.101943-now] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[seconds-1.337-a second ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[seconds-1e-06-now] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[seconds-2-2 seconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[seconds-31557600.000004-a year ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[seconds-3600.004-an hour ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[seconds-4-4 seconds ago] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[seconds-4e-06-now] PASSED
+tests/test_time.py::test_naturaltime_minimum_unit_explicit[seconds-86400.004-a day ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[23.5-23 seconds ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[30-30 seconds ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[NaN-NaN] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input0-now] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input1-a second ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input10-1 year, 135 days ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input11-2 years ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input12-a second from now] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input13-30 seconds from now] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input14-a minute from now] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input15-2 minutes from now] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input16-an hour from now] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input17-23 hours from now] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input18-a day from now] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input19-1 year, 135 days from now] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input2-30 seconds ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input20-2 years from now] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input21-27 years from now] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input22-1 year, 35 days ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input23-27 years from now] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input24-1 year, 35 days ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input27-2 years ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input28-1 year, 4 days ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input3-a minute ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input4-2 minutes ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input5-an hour ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input6-23 hours ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input7-a day ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input8-17 days ago] PASSED
+tests/test_time.py::test_naturaltime_nomonths[test_input9-47 days ago] PASSED
+tests/test_time.py::test_precisedelta_bogus_call PASSED
+tests/test_time.py::test_precisedelta_custom_format[val0-milliseconds-%0.4f-1.0010 milliseconds] PASSED
+tests/test_time.py::test_precisedelta_custom_format[val1-milliseconds-%0.4f-2.0020 milliseconds] PASSED
+tests/test_time.py::test_precisedelta_custom_format[val2-milliseconds-%0.2f-2.00 milliseconds] PASSED
+tests/test_time.py::test_precisedelta_custom_format[val3-seconds-%0.2f-1.23 seconds] PASSED
+tests/test_time.py::test_precisedelta_custom_format[val4-seconds-%0.2f-4 hours and 3.20 seconds] PASSED
+tests/test_time.py::test_precisedelta_custom_format[val5-seconds-%0.2f-5 days, 4 hours and 30 minutes] PASSED
+tests/test_time.py::test_precisedelta_custom_format[val6-hours-%0.2f-5 days and 4.50 hours] PASSED
+tests/test_time.py::test_precisedelta_custom_format[val7-days-%0.2f-5.19 days] PASSED
+tests/test_time.py::test_precisedelta_custom_format[val8-months-%0.2f-3.93 months] PASSED
+tests/test_time.py::test_precisedelta_custom_format[val9-years-%0.1f-0.5 years] PASSED
+tests/test_time.py::test_precisedelta_multiple_units[val0-microseconds-1 millisecond and 1 microsecond] PASSED
+tests/test_time.py::test_precisedelta_multiple_units[val1-microseconds-2 milliseconds and 2 microseconds] PASSED
+tests/test_time.py::test_precisedelta_multiple_units[val2-microseconds-1 second and 2 microseconds] PASSED
+tests/test_time.py::test_precisedelta_multiple_units[val3-microseconds-4 hours, 3 seconds and 2 microseconds] PASSED
+tests/test_time.py::test_precisedelta_multiple_units[val4-microseconds-5 days, 4 hours, 3 seconds and 2 microseconds] PASSED
+tests/test_time.py::test_precisedelta_multiple_units[val5-microseconds-1 year, 5 days, 4 hours, 3 seconds and 2 microseconds] PASSED
+tests/test_time.py::test_precisedelta_multiple_units[val6-microseconds-1 year, 5 days and 2 microseconds] PASSED
+tests/test_time.py::test_precisedelta_multiple_units[val7-microseconds-1 year, 5 days and 2 seconds] PASSED
+tests/test_time.py::test_precisedelta_multiple_units[val8-minutes-0 minutes] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[1-seconds-1 second] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[120-seconds-2 minutes] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[172800-seconds-2 days] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[2-seconds-2 seconds] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[31536000-seconds-1 year] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[3600-seconds-1 hour] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[60-seconds-1 minute] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[61905168000-seconds-1,963 years] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[63072000-seconds-2 years] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[7200-seconds-2 hours] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[86400-seconds-1 day] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[val0-microseconds-1 microsecond] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[val1-microseconds-2 microseconds] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[val2-microseconds-1 millisecond] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[val3-microseconds-2 milliseconds] PASSED
+tests/test_time.py::test_precisedelta_one_unit_enough[val4-seconds-1 second] PASSED
+tests/test_time.py::test_precisedelta_suppress_units[val0-microseconds-suppress0-1 millisecond and 200 microseconds] PASSED
+tests/test_time.py::test_precisedelta_suppress_units[val1-microseconds-suppress1-1200 microseconds] PASSED
+tests/test_time.py::test_precisedelta_suppress_units[val10-microseconds-suppress10-240.50 minutes] PASSED
+tests/test_time.py::test_precisedelta_suppress_units[val2-microseconds-suppress2-1.20 milliseconds] PASSED
+tests/test_time.py::test_precisedelta_suppress_units[val3-microseconds-suppress3-1000 milliseconds and 200 microseconds] PASSED
+tests/test_time.py::test_precisedelta_suppress_units[val4-microseconds-suppress4-1 second and 200000 microseconds] PASSED
+tests/test_time.py::test_precisedelta_suppress_units[val5-microseconds-suppress5-1.20 seconds] PASSED
+tests/test_time.py::test_precisedelta_suppress_units[val6-microseconds-suppress6-4 hours, 30 seconds and 0.20 milliseconds] PASSED
+tests/test_time.py::test_precisedelta_suppress_units[val7-microseconds-suppress7-4 hours, 30000 milliseconds and 200 microseconds] PASSED
+tests/test_time.py::test_precisedelta_suppress_units[val8-microseconds-suppress8-4 hours and 30000200 microseconds] PASSED
+tests/test_time.py::test_precisedelta_suppress_units[val9-microseconds-suppress9-240 minutes, 30 seconds and 200 microseconds] PASSED
+tests/test_time.py::test_time_unit PASSED
+
+=============================== warnings summary ===============================
+tests/test_i18n.py::test_i18n
+  $(@D)/src/humanize/i18n.py:133: DeprecationWarning: Plural value must be an integer, got float
+    return get_translation().ngettext(message, plural, num)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+======== 519 passed, 1 warning ========
+  py$(PYV): OK
+  congratulations :)
