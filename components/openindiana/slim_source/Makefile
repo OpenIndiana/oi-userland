@@ -11,6 +11,7 @@
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
+# Copyright 2023 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -137,6 +138,7 @@ PACKAGE_NAMES += system/install/text-install
 PACKAGE_NAMES += system/library/install
 
 # Build dependencies
+REQUIRED_PACKAGES += library/desktop/libglade
 REQUIRED_PACKAGES += system/install/text-install
 REQUIRED_PACKAGES += system/library/install/libinstzones
 REQUIRED_PACKAGES += system/library/storage/ima/header-ima
