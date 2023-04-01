@@ -27,6 +27,7 @@ import os
 import re
 import sys
 import json
+from collections import defaultdict
 
 
 def load_db(file_name):
@@ -94,24 +95,153 @@ def bump_component_revision(contents):
 
     return contents_new
 
+def build_plan(paths, data=None, verbose=False):
 
-def rebuild_dependent_fmris(fmri, db_path=None, workspace=None, subdir='components', verbose=False, dry_run=False):
+    # Make sure it is sorted with no duplicate
+    paths = sorted(set(paths))
+
+    # Exclude external components
+    regex = re.compile(r'https://*')
+    paths = filter(lambda i: not regex.search(i), paths)
+    # Exclude metpackages
+    regex = re.compile(r'meta-packages/*')
+    paths = filter(lambda i: not regex.search(i), paths)
+    regex = re.compile(r'encumbered/meta-packages/*')
+    paths = filter(lambda i: not regex.search(i), paths)
+    # Ignore kernel components
+    ignored = [ 'openindiana/illumos-gate' ]
+    for path in ignored:
+        if path in paths:
+            paths.remove(path)
+
+    essential = [ \
+            'openindiana/illumos-gate', \
+            'developer/gcc-7', \
+            'python/python35', \
+            'python/python37', \
+            'python/python39', \
+            ]
+    wildcards = { \
+            'desktop/gnome3/yelp-tools' : '*', \
+            'desktop/gnome3/yelp-xsl'   : '*', \
+            'developer/gtk-doc' : '*', \
+            'developer/autogen' : 'library/libxml2', \
+            'library/freetype'  : 'library/harfbuzz', \
+            'library/boost'     : '*', \
+            'library/tiff'      : '*', \
+            'library/gamin'     : 'library/glib', \
+            'python/incremental': 'python/twisted', \
+            'network/avahi'     : 'library/gtk+', \
+            'python/python27'   : '*', \
+            'python/python34'   : '*', \
+            'ruby/ruby-23'      : '*', \
+            'shell/bash'        : 'library/ncurses', \
+            'x11/libX11'        : 'x11/libXext', \
+            'x11/libXext'       : '*', \
+            'x11/x11-protocols' : 'text/asciidoc' \
+            }
+
+    graph = defaultdict(list)
+
+    for component_path in paths:
+        graph[component_path] = []
+
+    for component_path in paths:
+        for requirement in data[component_path]:
+            if requirement in graph:
+                graph[component_path].append(requirement)
+
+    # Trim essential edges
+    for v,e in graph.iteritems():
+        f = []
+        for k in e:
+            if k not in essential:
+                f.append(k)
+        graph[v] = f
+
+    # Naive DFW
+    plan = []
+    required = []
+    putbacks = []
+    while graph:
+        order = len(graph)
+
+        if putbacks:
+            for v,e in graph.iteritems():
+                reqs = list(e)
+                for requirement in reqs:
+                    if requirement in putbacks:
+                        graph[v].remove(requirement)
+            required += putbacks
+            plan.append(putbacks)
+            putbacks = []
+
+        stage = []
+        for v,e in graph.iteritems():
+            if not e:
+                stage.append(v)
+        for i in stage:
+            del graph[i] 
+        stage.sort()
+
+        for v,e in graph.iteritems():
+            reqs = list(e)
+            for requirement in reqs:
+                if requirement in stage:
+                    graph[v].remove(requirement)
+
+        if stage:
+            plan.append(stage)
+        else:
+            eremaining = set()
+            for e in graph.values():
+                eremaining.update(e)
+            for wv, we in wildcards.iteritems():
+                if we == '*':
+                    used = False
+                    for ev in eremaining:
+                        if len(graph[ev]) == 1 and graph[ev][0] == wv:
+                            used = True
+                            graph[ev].remove(wv)
+                    if used:
+                        putbacks.append(wv)
+                elif wv in eremaining:
+                    if len(graph[wv]) == 1 and graph[wv][0] == we:
+                        putbacks.append(wv)
+                        graph[wv].remove(we)
+
+            if not putbacks:
+                for v in sorted(eremaining):
+                    print("{0:32} {1}".format(v, graph[v]) )
+                raise ValueError("Cycle found.")
+                break
+
+
+    return plan, required
+
+
+def rebuild_dependent_fmris(fmris, db_path=None, workspace=None, subdir='components', verbose=False, dry_run=False):
     data = load_db(db_path)
+    dependent_paths = []
 
-    path = convert_fmri_to_path(fmri)
-    dependent_paths = locate_dependents(path=path, data=data)
+    for fmri in fmris:
+        path = convert_fmri_to_path(fmri)
+        dependent_paths += locate_dependents(path=path, data=data)
+
+    dependent_paths = sorted(set(dependent_paths))
+    
     if not dry_run:
         for component_path in dependent_paths:
             if verbose:
                 print('Processing {}'.format(component_path))
-    
+
             contents = []
             makefile = os.path.join(workspace, subdir, component_path, 'Makefile')
             with open(makefile, 'r') as f:
                 contents = f.readlines()
-    
+
             contents = bump_component_revision(contents)
-    
+
             with open(makefile, 'w') as f:
                 for line in contents:
                     f.write(line)
@@ -130,22 +260,47 @@ def main():
     parser.add_argument('--subdir', default='components', help='Directory holding components')
     parser.add_argument('--rebuild-dependents', action='store_true', default=False,
                         help='Bump COMPONENT_REVISION of dependent components')
+    parser.add_argument('--plan', action='store_true', help='Print build plan')
     parser.add_argument('-n', '--dry-run', action='store_true', default=False,
                         help='Do not execute, only print the list of resolved components')
-    parser.add_argument('--fmri', required=True, help='Component FMRI')
+    parser.add_argument('--fmri', required=True, nargs='+', help='Component FMRIs')
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Verbose output')
     args = parser.parse_args()
 
     db_path = args.db_path
     rebuild_dependents = args.rebuild_dependents
+    plan = args.plan
     dry_run = args.dry_run
-    fmri = args.fmri
+    fmris = args.fmri
     verbose = args.verbose
     workspace = args.workspace
     subdir = args.subdir
 
-    if rebuild_dependents:
-        rebuild_dependent_fmris(fmri=fmri, db_path=db_path, workspace=workspace, subdir=subdir, verbose=verbose, dry_run=dry_run)
+    # Make sure it is sorted with no duplicate
+    fmris = sorted(set(fmris))
+
+    if plan: 
+        data = load_db(db_path)
+        paths = []
+        if fmris[0] == '*':
+            for path in data.keys():
+                    paths.append(path)
+        else:
+            for fmri in fmris:
+                path = convert_fmri_to_path(fmri)
+                if not path:
+                    raise ValueError("Invalid fmri {0}".format(fmri))
+                paths.append(path)
+                if rebuild_dependents:
+                    paths += locate_dependents(path=path, data=data)
+        plan, required = build_plan(paths=paths, data=data, verbose=verbose)
+        for stage in plan:
+            for p in stage:
+                print("{0}".format(p))
+            print("--")
+        print("Required installation: {0}".format(required))
+    elif rebuild_dependents:
+        rebuild_dependent_fmris(fmris=fmris, db_path=db_path, workspace=workspace, subdir=subdir, verbose=verbose, dry_run=dry_run)
 
 
 if __name__ == '__main__':

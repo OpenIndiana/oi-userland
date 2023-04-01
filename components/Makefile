@@ -61,7 +61,16 @@ rebuild-dependents: dependencies.json
 	@$(WS_TOOLS)/userland-bump -v --rebuild-dependents --fmri $(FMRI)
 
 print-dependents: dependencies.json
-	@$(WS_TOOLS)/userland-bump -v --rebuild-dependents --dry-run --fmri $(FMRI)
+	@$(WS_TOOLS)/userland-bump -n --rebuild-dependents --fmri $(FMRI)
+
+print-dependents-plan: dependencies.json
+	@$(WS_TOOLS)/userland-bump --plan --rebuild-dependents --fmri $(FMRI)
+
+print-plan: dependencies.json
+	@$(WS_TOOLS)/userland-bump --plan --fmri $(FMRI)
+
+print-full-plan: dependencies.json
+	@$(WS_TOOLS)/userland-bump --plan --fmri '*'
 
 publish-branch:
 	@$(RM) $(WS_TOP)/components/$(ENCUMBERED)components.mk && \
