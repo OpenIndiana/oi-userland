@@ -962,6 +962,8 @@ GDIFF =		/usr/gnu/bin/diff
 GSORT =		/usr/gnu/bin/sort
 GUNZIP =	/usr/bin/gunzip
 
+SORT =		LC_ALL=C /usr/bin/sort
+
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
 ifeq   ($(strip $(PKGLINT_COMPONENT)),)

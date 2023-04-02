@@ -350,7 +350,7 @@ COMPONENT_TEST_TRANSFORMS += \
 		$(GSED) -u -e '/^Doctest summary/Q' \
 			| $(NAWK) '/^$$/{\$$0=\"\\\\n\"}1' ORS='|' \
 			| $(GNU_GREP) -v '^|$$' \
-			| LC_ALL=C $(GSORT) \
+			| $(SORT) \
 			| tr -d '\\\\n' | tr '|' '\\\\n' \
 			| $(NAWK) '{print}END{if(NR>0)printf(\"\\\\nDoctest summary\\\\n\")}' ; \
 		$(CAT) \
@@ -420,7 +420,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	"| ( \
 		$(GSED) -u -e '/^=\{1,\} test session starts /q' ; \
 		$(GSED) -u -e '/^$$/q' ; \
-		$(GSED) -u -e 's/ *\[...%\]$$//' -e '/^$$/Q' | LC_ALL=C $(GSORT) | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
+		$(GSED) -u -e 's/ *\[...%\]$$//' -e '/^$$/Q' | $(SORT) | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
 		$(CAT) \
 	) | $(COMPONENT_TEST_TRANSFORMER)"
 COMPONENT_TEST_TRANSFORMS += \
@@ -502,13 +502,13 @@ COMPONENT_POST_INSTALL_ACTION += \
 # runtime dependency list.  The dependency on META.depend-test.required here is
 # purely to get the file created as a side effect of this target.
 $(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_$(MK_BITS)) $(BUILD_DIR)/META.depend-test.required
-	$(CAT) $(INSTALL_$(MK_BITS):%.installed=%.depend-runtime) | LC_ALL=C $(GSORT) -u \
+	$(CAT) $(INSTALL_$(MK_BITS):%.installed=%.depend-runtime) | $(SORT) -u \
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' > $@
 
 # Convert raw per version lists of test dependencies to single list of
 # TEST_REQUIRED_PACKAGES entries
 $(BUILD_DIR)/META.depend-test.required:	$(INSTALL_$(MK_BITS))
-	$(CAT) $(INSTALL_$(MK_BITS):%.installed=%.depend-test) | LC_ALL=C $(GSORT) -u \
+	$(CAT) $(INSTALL_$(MK_BITS):%.installed=%.depend-test) | $(SORT) -u \
 		| $(GSED) -e 's/.*/TEST_REQUIRED_PACKAGES.python += library\/python\/&/' > $@
 
 # Add META.depend-test.required to the generated list of REQUIRED_PACKAGES

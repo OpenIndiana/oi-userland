@@ -43,7 +43,7 @@ COMPONENT_ARCHIVE_URL ?= \
 
 PATCH_EACH_ARCHIVE=1
 PATCHDIR_PATCHES = $(shell find $(PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
-                                2>/dev/null | sort)
+                                2>/dev/null | $(SORT))
 
 MPFR_NAME= mpfr
 ifeq ($(strip $(MPFR_VERSION)),)
@@ -168,7 +168,7 @@ COMPONENT_PRE_TEST_ACTION += \
 	        $(GMAKE) -k -i $(JOBS:%=-j%) check check-target RUNTESTFLAGS="--target_board=unix/-m64\{,-msave-args\}" ; \
 	 $(FIND) . -name  '*.sum' | while read f; do \
 	        gsed -e '1,/^Running target unix/p' -e  'd' $f > $f.2; \
-	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | sort -k 2 >> $f.2; \
+	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | $(SORT) -k 2 >> $f.2; \
 	        gsed -e '/Summary ===$/,$p' -e  'd' $f >> $f.2; \
 	        mv $f.2 $f; done; \
 	 $(GMAKE) mail-report.log)
@@ -180,7 +180,7 @@ COMPONENT_PRE_TEST_ACTION += \
 	        $(GMAKE) -k -i $(JOBS:%=-j%) check check-target RUNTESTFLAGS="--target_board=unix/-m64" ; \
 	 $(FIND) . -name  '*.sum' | while read f; do \
 	        gsed -e '1,/^Running target unix/p' -e  'd' $f > $f.2; \
-	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | sort -k 2 >> $f.2; \
+	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | $(SORT) -k 2 >> $f.2; \
 	        gsed -e '/Summary ===$/,$p' -e  'd' $f >> $f.2; \
 	        mv $f.2 $f; done; \
 	 $(GMAKE) mail-report.log)

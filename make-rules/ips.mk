@@ -166,14 +166,14 @@ endif
 define ips-print-depend-require-rule
 $(shell cat $(1) $(WS_TOP)/transforms/print-depend-require |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u)
+	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
 define ips-print-depend-require-versioned-rule
 $(foreach v,$($(1)V_VALUES),\
 	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u))
+	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u))
 endef
 
 define ips-print-depend-require-type-rule
@@ -183,14 +183,14 @@ endef
 define ips-print-names-rule
 $(shell cat $(1) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | LANG=C LC_ALL=C sort -u)
+	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
 define ips-print-names-versioned-rule
 $(foreach v,$($(1)V_VALUES),\
 	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | LANG=C LC_ALL=C sort -u))
+	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u))
 endef
 
 #
@@ -201,7 +201,7 @@ define ips-print-names-generic-rule
 $(shell cat $(2) $(WS_TOP)/transforms/mkgeneric $(BUILD_DIR)/mkgeneric-python \
     $(WS_TOP)/transforms/print-pkgs |\
     $(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=\#\#\# /dev/fd/0 |\
-    sed -e '/^$$/d' -e '/^#.*$$/d' | LANG=C LC_ALL=C sort -u)
+    sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
 define ips-print-names-type-rule
@@ -525,7 +525,7 @@ $(RESOLVE_DEPS):	Makefile $(BUILD_DIR) $(DEPENDED)
 	    echo $${pkg} ; \
 	done ; \
 	$(PKGMOGRIFY) $(WS_TRANSFORMS)/PRINT_COMPONENT_FMRIS $(DEPENDED) | \
-		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' ;) | sort -u >$@
+		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' ;) | $(SORT) -u >$@
 
 $(BUILD_DIR)/runtime-perl.p5m: $(WS_TOOLS)/runtime-perl.p5m
 	$(CP) $< $@
@@ -540,7 +540,7 @@ $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(BUILD_DIR)/runtime
 $(BUILD_DIR)/filter-own-pkgs: $(DEPENDED)
 	$(PKGMOGRIFY) $(WS_TRANSFORMS)/PRINT_COMPONENT_FMRIS $(DEPENDED) \
 		| $(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' -e 's/^\///g' -e 's/\//\\\//g' \
-		| sort -u \
+		| $(SORT) -u \
 		| $(GSED) -e 's/^\(.*\)$$/\/^REQUIRED_PACKAGES += \1$$\/d/g' >$@
 
 # Set REQUIRED_PACKAGES macro substitution rules
@@ -562,7 +562,7 @@ REQUIRED_PACKAGES::     $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) $(BUILD_DIR)/f
 		| $(GSED) -e 's,pkg:/,,g' -e 's/@.*$$//g' \
 			-f $(BUILD_DIR)/filter-own-pkgs \
 			$(REQUIRED_PACKAGES_TRANSFORM) \
-		| sort -u >>Makefile
+		| $(SORT) -u >>Makefile
 	@echo "*** Please edit your Makefile and verify the new or updated content at the end ***"
 
 
@@ -621,14 +621,14 @@ print-package-paths:	canonical-manifests
 	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | \
-		LANG=C LC_ALL=C sort -u
+		$(SORT) -u
 
 install-packages:	publish
 	@if [ $(IS_GLOBAL_ZONE) = 0 -o x$(ROOT) != x ]; then \
 	    cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 	    $(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
 	    sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | \
-	    LANG=C LC_ALL=C sort -u | \
+	    $(SORT) -u | \
 	    (cd $(PROTO_DIR) ; pfexec /bin/cpio -dump $(ROOT)) ; \
 	 else ; \
 	    echo "unsafe to install package(s) automatically" ; \
