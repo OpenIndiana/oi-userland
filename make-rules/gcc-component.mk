@@ -118,7 +118,6 @@ CONFIGURE_OPTIONS+= --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+= --host $(GNU_TRIPLET)
 CONFIGURE_OPTIONS+= --build $(GNU_TRIPLET)
 CONFIGURE_OPTIONS+= --target $(GNU_TRIPLET)
-#CONFIGURE_OPTIONS+= --with-boot-ldflags=-R$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS+= --with-pkgversion="OpenIndiana $(GCC_COMPONENT_STRING_VERSION)"
 CONFIGURE_OPTIONS+= --with-bugurl="https://bugs.openindiana.org"
 
@@ -165,7 +164,7 @@ COMPONENT_PRE_TEST_ACTION += \
 	(cd $(COMPONENT_TEST_DIR) ; \
 	 ulimit -Ss 16385 ; \
 	 $(ENV) $(COMPONENT_PRE_TEST_ENV) \
-	        $(GMAKE) -k -i $(JOBS:%=-j%) check check-target RUNTESTFLAGS="--target_board=unix/-m64\{,-msave-args\}" ; \
+	        $(GMAKE) -k -i $(JOBS:%=-j%) check RUNTESTFLAGS="--target_board=unix/-m64\{,-msave-args\}" ; \
 	 $(FIND) . -name  '*.sum' | while read f; do \
 	        gsed -e '1,/^Running target unix/p' -e  'd' $f > $f.2; \
 	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | $(SORT) -k 2 >> $f.2; \
@@ -177,7 +176,7 @@ COMPONENT_PRE_TEST_ACTION += \
 	(cd $(COMPONENT_TEST_DIR) ; \
 	 ulimit -Ss 16385 ; \
 	 $(ENV) $(COMPONENT_PRE_TEST_ENV) \
-	        $(GMAKE) -k -i $(JOBS:%=-j%) check check-target RUNTESTFLAGS="--target_board=unix/-m64" ; \
+	        $(GMAKE) -k -i $(JOBS:%=-j%) check RUNTESTFLAGS="--target_board=unix/-m64" ; \
 	 $(FIND) . -name  '*.sum' | while read f; do \
 	        gsed -e '1,/^Running target unix/p' -e  'd' $f > $f.2; \
 	        gsed -e '/^Running target unix/,/Summary ===$/p' -e  'd' $f | grep  '^.*: ' | $(SORT) -k 2 >> $f.2; \
