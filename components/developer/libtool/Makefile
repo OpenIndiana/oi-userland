@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libtool
 COMPONENT_VERSION=      2.4.7
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      GNU libtool
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/libtool/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -59,7 +59,7 @@ CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += PERL="$(PERL)"
 
-COMPONENT_PREP_ACTION= ( cd $(@D) ; $(TOUCH) $(SOURCE_DIR)/README-release ; ./bootstrap --force --no-git )
+COMPONENT_PREP_ACTION= ( cd $(@D) ; $(TOUCH) $(SOURCE_DIR)/README-release ; PATH="$(PATH)" ./bootstrap --force --no-git )
 
 # Remove the hard-wired compiler locations in the LTCC and two CC lines
 # in the two versions of the libtool script.
@@ -117,10 +117,10 @@ prep::	$(SOURCE_DIR_1)/.prep
 CLEAN_PATHS += $(SOURCE_DIR_1)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += developer/linker
 REQUIRED_PACKAGES += developer/object-file
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/gnu-sed
