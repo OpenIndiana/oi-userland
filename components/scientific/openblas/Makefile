@@ -25,12 +25,12 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openblas
-COMPONENT_VERSION=	0.3.22
+COMPONENT_VERSION=	0.3.23
 COMPONENT_SUMMARY=     	Optimized BLAS library based on GotoBLAS2
 COMPONENT_SRC=			OpenBLAS-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openblas.net
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:7fa9685926ba4f27cfe513adbf9af64d6b6b63f9dcabb37baefad6a65ff347a7
+COMPONENT_ARCHIVE_HASH= sha256:5d9491d07168a5d00116cdc068a40022c3455bf9293c7cb86a65b1054d7e5114
 COMPONENT_ARCHIVE_URL=	https://github.com/xianyi/OpenBLAS/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=     	library/math/openblas
 COMPONENT_CLASSIFICATION= Development/High Performance Computing
