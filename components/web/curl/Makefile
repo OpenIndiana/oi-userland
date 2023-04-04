@@ -26,11 +26,11 @@
 BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 USE_COMMON_TEST_MASTER= no
-USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
 COMPONENT_VERSION=      8.0.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -88,7 +88,7 @@ CONFIGURE_OPTIONS += --without-librtmp
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
 # Generate configuration scripts form .am-files
-COMPONENT_PREP_ACTION= (cd $(@D) ; autoreconf -fi)
+COMPONENT_PREP_ACTION= (cd $(@D) ; PATH="$(PATH)" autoreconf -fi)
 
 ENV = /usr/bin/env -i
 COMPONENT_TEST_ENV += CC="$(CC)"
