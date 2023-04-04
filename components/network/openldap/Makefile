@@ -26,11 +26,11 @@
 #
 
 BUILD_BITS= 64_and_32
-USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openldap
 COMPONENT_VERSION=      2.6.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
@@ -56,22 +56,30 @@ CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)/openldap
 CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/openldap
 CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --enable-overlays
 CONFIGURE_OPTIONS += --enable-dynamic
-CONFIGURE_OPTIONS += --enable-modules
 CONFIGURE_OPTIONS += --enable-syslog
 CONFIGURE_OPTIONS += --enable-ipv6
-CONFIGURE_OPTIONS += --enable-rlookups
-CONFIGURE_OPTIONS += --enable-dynacl
-CONFIGURE_OPTIONS += --enable-aci
-CONFIGURE_OPTIONS += --enable-wrappers
 CONFIGURE_OPTIONS += --enable-shared
+
+# SLAPD related options
+# Note: we build 64-bit slapd only
+CONFIGURE_OPTIONS.32 += --disable-slapd
+CONFIGURE_OPTIONS.32 += --disable-cleartext
+CONFIGURE_OPTIONS.32 += --disable-mdb
+CONFIGURE_OPTIONS.32 += --disable-relay
+CONFIGURE_OPTIONS.32 += --disable-syncprov
+CONFIGURE_OPTIONS.64 += --enable-modules
+CONFIGURE_OPTIONS.64 += --enable-rlookups
+CONFIGURE_OPTIONS.64 += --enable-dynacl
+CONFIGURE_OPTIONS.64 += --enable-aci
+CONFIGURE_OPTIONS.64 += --enable-wrappers
 #enable all backends but wt
-CONFIGURE_OPTIONS += --enable-backends=mod
-CONFIGURE_OPTIONS += --enable-wt=no
+CONFIGURE_OPTIONS.64 += --enable-backends=mod
+CONFIGURE_OPTIONS.64 += --enable-wt=no
 #enable all overlays
-CONFIGURE_OPTIONS += --enable-overlays=mod
-CONFIGURE_OPTIONS += --enable-argon2
+CONFIGURE_OPTIONS.64 += --enable-overlays=mod
+CONFIGURE_OPTIONS.64 += --enable-argon2
+
 #CONFIGURE_OPTIONS += --enable-balancer
 CONFIGURE_OPTIONS += --without-systemd
 CONFIGURE_OPTIONS += --with-cyrus-sasl
@@ -79,9 +87,11 @@ CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-tls=openssl
 CONFIGURE_OPTIONS += --with-mp=gmp
 CONFIGURE_OPTIONS += --with-odbc=unixodbc
-CONFIGURE_OPTIONS.32 += --disable-slapd
 CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
 CONFIGURE_OPTIONS += CPPFLAGS="-I$(OPENSSL_INCDIR) -I/usr/include/odbc"
+
+# Force known perl version
+CONFIGURE_ENV += PERLBIN=$(PERL)
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
 COMPONENT_TEST_ENV += PATH="$(PROTOUSRSBINDIR):$(PROTOUSRBINDIR):/usr/bin:$(PATH.gnu)"
@@ -101,12 +111,12 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += security/argon2
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl
