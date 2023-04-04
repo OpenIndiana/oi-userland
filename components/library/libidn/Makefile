@@ -33,7 +33,7 @@ PATH=$(dir $(CC)):$(JAVA_HOME)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=         libidn
 COMPONENT_VERSION=      1.36
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      IDN - The Internationalized Domains Library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/libidn/
@@ -59,11 +59,7 @@ CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += -std=c99
 CFLAGS += -DGNULIB_defined_stdint_types
 
-GUNZIP = /usr/bin/gunzip
-TAR = /usr/bin/tar
-FIND = /usr/bin/find
-
-COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
+COMPONENT_PREP_ACTION += (cd $(@D); PATH="$(PATH)" autoreconf -fiv);
 
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
@@ -100,7 +96,7 @@ endif
 # to force re-generation of the TLD tables after augmenting them
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	( cd $(SOURCE_DIR) ; \
-	    $(TAR) zxf $(TLD_FILE); \
+	    $(GTAR) zxf $(TLD_FILE); \
 	    $(RM) java/libidn-$(COMPONENT_VERSION)jar ; \
 	    $(RM) tld/no.tld tld/fr.tld ; \
 	    $(CP) doc/tld/fr.tld tld/ ; \
@@ -130,6 +126,8 @@ install: $(INSTALL_32_and_64)
 	    $(IDNDOCDIR)/
 	$(CP) -Rp $(PROTOUSRSHAREDIR)/locale/en@boldquot \
 	    $(PROTOUSRSHAREDIR)/locale/en
+
+COMPONENT_POST_INSTALL_ACTION += $(RM) -f $(PROTO_DIR)/usr/share/info/dir ;
 
 # Manually added dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
