@@ -123,7 +123,7 @@ ok 27 - init creates a new deep directory
 ok 28 - init creates a new deep directory (umask vs. shared)
 ok 29 - init notices EEXIST (1)
 ok 30 - init notices EEXIST (2)
-ok 31 # skip init notices EPERM (missing SANITY of POSIXPERM,SANITY)
+ok 31 - init notices EPERM
 ok 32 - init creates a new bare directory with global --bare
 ok 33 - init prefers command line to GIT_DIR
 ok 34 - init with separate gitdir
@@ -131,7 +131,7 @@ ok 35 - explicit bare & --separate-git-dir incompatible
 ok 36 - implicit bare & --separate-git-dir incompatible
 ok 37 - bare & --separate-git-dir incompatible within worktree
 ok 38 - init in long base path
-ok 39 - init in long restricted base path
+ok 39 # skip init in long restricted base path (missing GETCWD_IGNORES_PERMS)
 ok 40 - re-init on .git file
 ok 41 - re-init to update git link
 ok 42 - re-init to move gitdir
@@ -218,14 +218,14 @@ ok 40 # skip large attributes file ignored in index (missing EXPENSIVE)
 1..40
 *** t0004-unwritable.sh ***
 ok 1 - setup
-ok 2 # skip write-tree should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 3 # skip write-tree output on unwritable repository (missing WRITE_TREE_OUT)
-ok 4 # skip commit should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 5 # skip commit output on unwritable repository (missing COMMIT_OUT)
-ok 6 # skip update-index should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 7 # skip update-index output on unwritable repository (missing UPDATE_INDEX_OUT)
-ok 8 # skip add should notice unwritable repository (missing SANITY of POSIXPERM,SANITY)
-ok 9 # skip add output on unwritable repository (missing ADD_OUT)
+ok 2 - write-tree should notice unwritable repository
+ok 3 - write-tree output on unwritable repository
+ok 4 - commit should notice unwritable repository
+ok 5 - commit output on unwritable repository
+ok 6 - update-index should notice unwritable repository
+ok 7 - update-index output on unwritable repository
+ok 8 - add should notice unwritable repository
+ok 9 - add output on unwritable repository
 # passed all 9 test(s)
 1..9
 *** t0005-signals.sh ***
@@ -336,7 +336,7 @@ ok 94 - human date 621660000
 *** t0007-git-var.sh ***
 ok 1 - get GIT_AUTHOR_IDENT
 ok 2 - get GIT_COMMITTER_IDENT
-ok 3 - requested identities are strict
+ok 3 # skip requested identities are strict (missing !AUTOIDENT of !FAIL_PREREQS,!AUTOIDENT)
 ok 4 - get GIT_DEFAULT_BRANCH without configuration
 ok 5 - get GIT_DEFAULT_BRANCH with configuration
 ok 6 - get GIT_EDITOR without configuration
@@ -3077,12 +3077,12 @@ ok 1 # skip subprocess inherits only std handles (missing MINGW)
 ok 2 - start_command reports ENOENT (slash)
 ok 3 - start_command reports ENOENT (no slash)
 ok 4 - run_command can run a command
-ok 5 # skip run_command is restricted to PATH (missing !RUNS_COMMANDS_FROM_PWD)
+ok 5 - run_command is restricted to PATH
 ok 6 - run_command can run a script without a #! line
 ok 7 - run_command does not try to execute a directory
 ok 8 - run_command passes over non-executable file
 ok 9 - run_command reports EACCES
-ok 10 # skip unreadable directory in PATH (missing SANITY of POSIXPERM,SANITY)
+ok 10 - unreadable directory in PATH
 ok 11 - run_command runs in parallel with more jobs available than tasks
 ok 12 - run_command runs ungrouped in parallel with more jobs available than tasks
 ok 13 - run_command runs in parallel with as many jobs as tasks
@@ -3139,8 +3139,8 @@ ok 2 - dir-iterator should iterate through all files
 ok 3 - dir-iterator should list files in the correct order
 ok 4 - begin should fail upon inexistent paths
 ok 5 - begin should fail upon non directory paths
-ok 6 # skip advance should not fail on errors by default (missing SANITY of POSIXPERM,SANITY)
-ok 7 # skip advance should fail on errors, w/ pedantic flag (missing SANITY of POSIXPERM,SANITY)
+ok 6 - advance should not fail on errors by default
+ok 7 - advance should fail on errors, w/ pedantic flag
 ok 8 - setup dirs with symlinks
 ok 9 - dir-iterator should not follow symlinks by default
 ok 10 - dir-iterator does not resolve top-level symlinks
@@ -3170,7 +3170,7 @@ ok 2 - oidtree each
 *** t0070-fundamental.sh ***
 ok 1 - character classes (isspace, isalpha etc.)
 ok 2 - mktemp to nonexistent directory prints filename
-ok 3 # skip mktemp to unwritable directory prints filename (missing SANITY of POSIXPERM,SANITY)
+ok 3 - mktemp to unwritable directory prints filename
 ok 4 - git_mkstemps_mode does not fail if fd 0 is not open
 ok 5 - check for a bug in the regex routines
 ok 6 - incomplete sideband messages are reassembled
@@ -3509,7 +3509,7 @@ ok 40 - helper (store) can store empty username
 ok 41 - if custom xdg file exists, home and xdg files not created
 ok 42 - get: use home file if both home and xdg files have matches
 ok 43 - get: use xdg file if home file has no matches
-ok 44 # skip get: use xdg file if home file is unreadable (missing SANITY of POSIXPERM,SANITY)
+ok 44 - get: use xdg file if home file is unreadable
 ok 45 - store: if both xdg and home files exist, only store in home file
 ok 46 - erase: erase matching credentials from both xdg and home files
 ok 47 - get: ignore credentials without scheme as invalid
@@ -4446,7 +4446,7 @@ ok 9 - 3-way not overwriting local changes (setup)
 ok 10 - 3-way not overwriting local changes (our side)
 ok 11 - 3-way not overwriting local changes (their side)
 ok 12 - funny symlink in work tree
-ok 13 # skip funny symlink in work tree, un-unlink-able (missing SANITY)
+ok 13 - funny symlink in work tree, un-unlink-able
 ok 14 - D/F setup
 ok 15 - D/F
 ok 16 - D/F resolve
@@ -5564,7 +5564,7 @@ ok 20 - find value with highest priority from a configset
 ok 21 - find value_list for a key from a configset
 ok 22 - proper error on non-existent files
 ok 23 - proper error on directory "files"
-ok 24 # skip proper error on non-accessible files (missing SANITY of POSIXPERM,SANITY)
+ok 24 - proper error on non-accessible files
 ok 25 - proper error on error in default config files
 ok 26 - proper error on error in custom config files
 ok 27 - check line errors for malformed values
@@ -6996,7 +6996,7 @@ ok 21 - check splitIndex.sharedIndexExpire set to "never" and "now"
 ok 22 - same mode for index & split index
 ok 23 - split index respects core.sharedrepository 0666
 ok 24 - split index respects core.sharedrepository 0642
-ok 25 # skip graceful handling when splitting index is not allowed (missing SANITY of POSIXPERM,SANITY)
+ok 25 - graceful handling when splitting index is not allowed
 ok 26 - writing split index with null sha1 does not write cache tree
 ok 27 - do not refresh null base index
 not ok 28 - reading split index at alternate location
@@ -7911,7 +7911,7 @@ ok 1 - initialize
 ok 2 - worktree prune on normal repo
 ok 3 - prune files inside $GIT_DIR/worktrees
 ok 4 - prune directories without gitdir
-ok 5 # skip prune directories with unreadable gitdir (missing SANITY)
+ok 5 - prune directories with unreadable gitdir
 ok 6 - prune directories with invalid gitdir
 ok 7 - prune directories with gitdir pointing to nowhere
 ok 8 - not prune locked checkout
@@ -12580,7 +12580,7 @@ ok 11 - Test that "git rm bar" succeeds
 ok 12 - Post-check that bar does not exist and is not in index after "git rm -f bar"
 ok 13 - Test that "git rm -- -q" succeeds (remove a file that looks like an option)
 ok 14 - Test that "git rm -f" succeeds with embedded space, tab, or newline characters.
-ok 15 # skip Test that "git rm -f" fails if its rm fails (missing SANITY)
+ok 15 - Test that "git rm -f" fails if its rm fails
 ok 16 - When the rm in "git rm -f" fails, it should not remove the file from the index
 ok 17 - Remove nonexistent file with --ignore-unmatch
 ok 18 - "rm" command printed
@@ -12701,11 +12701,11 @@ ok 22 - git add with filemode=0, symlinks=0 prefers stage 2 over stage 1
 ok 23 - git add --refresh
 ok 24 - git add --refresh with pathspec
 ok 25 - git add --refresh correctly reports no match error
-ok 26 # skip git add should fail atomically upon an unreadable file (missing SANITY of POSIXPERM,SANITY)
-ok 27 # skip git add --ignore-errors (missing SANITY of POSIXPERM,SANITY)
-ok 28 # skip git add (add.ignore-errors) (missing SANITY of POSIXPERM,SANITY)
-ok 29 # skip git add (add.ignore-errors = false) (missing SANITY of POSIXPERM,SANITY)
-ok 30 # skip --no-ignore-errors overrides config (missing SANITY of POSIXPERM,SANITY)
+ok 26 - git add should fail atomically upon an unreadable file
+ok 27 - git add --ignore-errors
+ok 28 - git add (add.ignore-errors)
+ok 29 - git add (add.ignore-errors = false)
+ok 30 - --no-ignore-errors overrides config
 ok 31 - git add 'fo\[ou\]bar' ignores foobar
 ok 32 - git add to resolve conflicts on otherwise ignored path
 ok 33 - "add non-existent" should fail
@@ -15102,7 +15102,7 @@ ok 9 - -U0 is valid, so is diff.context=0
 ok 1 - setup
 ok 2 - no order (=tree object order)
 ok 3 - missing orderfile
-ok 4 # skip unreadable orderfile (missing SANITY of POSIXPERM,SANITY)
+ok 4 - unreadable orderfile
 ok 5 - orderfile using option from subdir with --output
 ok 6 - orderfile using option (1)
 ok 7 - orderfile is fifo (1)
@@ -17045,7 +17045,7 @@ ok 25 - Check conflicted oids and modes without messages
 ok 26 - NUL terminated conflicted file "lines"
 ok 27 - error out by default for unrelated histories
 ok 28 - can override merge of unrelated histories
-ok 29 # skip merge-ort fails gracefully in a read-only repository (missing SANITY)
+ok 29 - merge-ort fails gracefully in a read-only repository
 ok 30 - --stdin with both a successful and a conflicted merge
 ok 31 - --merge-base is incompatible with --stdin
 ok 32 - specify merge-base as parent of branch2
@@ -17919,7 +17919,7 @@ ok 60 - replace-objects invalidates commit-graph
 ok 61 - warn on improper hash version
 ok 62 - lower layers have overflow chunk
 ok 63 - git commit-graph verify
-ok 64 # skip detect permission problem (missing SANITY of POSIXPERM,SANITY)
+ok 64 - detect permission problem
 ok 65 - detect too small
 ok 66 - detect bad signature
 ok 67 - detect bad version
@@ -20670,7 +20670,7 @@ ok 10 - fetch --update-shallow
 ok 11 - fetch --update-shallow into a repo with submodules
 ok 12 - fetch --update-shallow a commit that is also a shallow point into a repo with submodules
 ok 13 - fetch --update-shallow (with fetch.writeCommitGraph)
-ok 14 # skip shallow fetch from a read-only repo (missing SANITY of POSIXPERM,SANITY)
+ok 14 - shallow fetch from a read-only repo
 ok 15 - .git/shallow is edited by repack
 # passed all 15 test(s)
 # SKIP no web server found at '/usr/sbin/apache2'
@@ -25485,11 +25485,11 @@ ok 24 - clean.requireForce
 ok 25 - clean.requireForce and -n
 ok 26 - clean.requireForce and -f
 ok 27 - core.excludesfile
-ok 28 # skip removal failure (missing SANITY)
+ok 28 - removal failure
 ok 29 - nested git work tree
 ok 30 - should clean things that almost look like git but are not
 ok 31 - should not clean submodules
-ok 32 # skip should avoid cleaning possible submodules (missing SANITY of POSIXPERM,SANITY)
+ok 32 - should avoid cleaning possible submodules
 ok 33 - nested (empty) git should be kept
 ok 34 - nested bare repositories should be cleaned
 not ok 35 - nested (empty) bare repositories should be cleaned even when in .git # TODO known breakage
@@ -25499,7 +25499,7 @@ ok 38 - giving path to nested .git will not remove it
 ok 39 - giving path to nested .git/ will NOT remove contents
 ok 40 - force removal of nested git work tree
 ok 41 - git clean -e
-ok 42 # skip git clean -d with an unreadable empty directory (missing SANITY)
+ok 42 - git clean -d with an unreadable empty directory
 ok 43 - git clean -d respects pathspecs (dir is prefix of pathspec)
 ok 44 - git clean -d respects pathspecs (pathspec is prefix of dir)
 ok 45 - git clean -d skips untracked dirs containing ignored files
@@ -26207,8 +26207,8 @@ ok 45 - cleanup commit message (whitespace option, -m)
 ok 46 - cleanup commit message (whitespace config, -m)
 ok 47 - message shows author when it is not equal to committer
 ok 48 - message shows date when it is explicitly set
-ok 49 # skip message shows committer when it is automatic (missing AUTOIDENT)
-ok 50 - do not fire editor when committer is bogus
+ok 49 - message shows committer when it is automatic
+ok 50 # skip do not fire editor when committer is bogus (missing !AUTOIDENT of !FAIL_PREREQS,!AUTOIDENT)
 ok 51 - do not fire editor if -m <msg> was given
 ok 52 - do not fire editor if -m "" was given
 ok 53 - do not fire editor in the presence of conflicts
@@ -26480,7 +26480,7 @@ ok 62 - status submodule summary (clean submodule): commit
 ok 63 - status -s submodule summary (clean submodule)
 ok 64 - status -z implies porcelain
 ok 65 - commit --dry-run submodule summary (--amend)
-ok 66 # skip status succeeds in a read-only repository (missing SANITY of POSIXPERM,SANITY)
+ok 66 - status succeeds in a read-only repository
 ok 67 - --ignore-submodules=untracked suppresses submodules with untracked content
 ok 68 - .gitmodules ignore=untracked suppresses submodules with untracked content
 ok 69 - .git/config ignore=untracked suppresses submodules with untracked content
@@ -26697,7 +26697,7 @@ ok 38 - in-place editing with basic patch
 ok 39 - in-place editing with additional trailer
 ok 40 - in-place editing on stdin disallowed
 ok 41 - in-place editing on non-existing file
-ok 42 # skip in-place editing doesn't clobber original file on error (missing SANITY of POSIXPERM,SANITY)
+ok 42 - in-place editing doesn't clobber original file on error
 ok 43 - using "where = before"
 ok 44 - overriding configuration with "--where after"
 ok 45 - using "where = before" with "--no-where"
@@ -28488,8 +28488,8 @@ ok 24 - long non-ascii self name is suppressed
 ok 25 - sanitized self name is suppressed
 ok 26 - Show all headers
 ok 27 - Prompting works
-ok 28 # skip implicit ident is allowed (missing AUTOIDENT of PERL,AUTOIDENT)
-ok 29 - broken implicit ident aborts send-email
+ok 28 - implicit ident is allowed
+ok 29 # skip broken implicit ident aborts send-email (missing !AUTOIDENT of PERL,!AUTOIDENT)
 ok 30 - setup tocmd and cccmd scripts
 ok 31 - tocmd works
 ok 32 - cccmd works
@@ -29922,11 +29922,173 @@ ok 37 - cvs commit [cvswork3]
 # passed all 37 test(s)
 1..37
 *** t9500-gitweb-standalone-no-errors.sh ***
-1..0 # SKIP skipping gitweb tests, CGI & CGI::Util & CGI::Carp modules not available
+ok 1 - no commits: projects_list (implicit)
+ok 2 - no commits: projects_index
+ok 3 - no commits: .git summary (implicit)
+ok 4 - no commits: .git commit (implicit HEAD)
+ok 5 - no commits: .git commitdiff (implicit HEAD)
+ok 6 - no commits: .git tree (implicit HEAD)
+ok 7 - no commits: .git heads
+ok 8 - no commits: .git tags
+ok 9 - Make initial commit
+ok 10 - projects_list (implicit)
+ok 11 - projects_index
+ok 12 - .git summary (implicit)
+ok 13 - .git commit (implicit HEAD)
+ok 14 - .git commitdiff (implicit HEAD, root commit)
+ok 15 - .git commitdiff_plain (implicit HEAD, root commit)
+ok 16 - .git commit (HEAD)
+ok 17 - .git tree (implicit HEAD)
+ok 18 - .git blob (file)
+ok 19 - .git blob_plain (file)
+ok 20 - .git commit (non-existent)
+ok 21 - .git commitdiff (non-existent)
+ok 22 - .git commitdiff (non-existent vs HEAD)
+ok 23 - .git tree (0000000000000000000000000000000000000000)
+ok 24 - .git tag (0000000000000000000000000000000000000000)
+ok 25 - .git blob (non-existent)
+ok 26 - .git blob_plain (non-existent)
+ok 27 - commitdiff(0): root
+ok 28 - commitdiff(0): file added
+ok 29 - commitdiff(0): mode change
+ok 30 - commitdiff(0): file renamed
+ok 31 - commitdiff(0): file to symlink
+ok 32 - commitdiff(0): file deleted
+ok 33 - commitdiff(0): file copied / new file
+ok 34 - commitdiff(0): mode change and modified
+ok 35 - commitdiff(0): renamed and modified
+ok 36 - commitdiff(0): renamed, mode change and modified
+ok 37 - setup typechange commits
+ok 38 - commitdiff(2): file renamed from foo to foo/baz
+ok 39 - commitdiff(2): file renamed from foo/baz to foo
+ok 40 - commitdiff(2): directory becomes file
+ok 41 - commitdiff(2): file becomes directory
+ok 42 - commitdiff(2): file becomes symlink
+ok 43 - commitdiff(2): symlink becomes file
+ok 44 - commitdiff(2): symlink becomes directory
+ok 45 - commitdiff(2): directory becomes symlink
+ok 46 - setup incomplete lines
+ok 47 - commitdiff(1): addition of incomplete line
+ok 48 - commitdiff(1): incomplete line as context line
+ok 49 - commitdiff(1): change incomplete line
+ok 50 - commitdiff(1): removal of incomplete line
+ok 51 - Create a merge
+ok 52 - commit(0): merge commit
+ok 53 - commitdiff(0): merge commit
+ok 54 - Prepare large commit
+ok 55 - commit(1): large commit
+ok 56 - commitdiff(1): large commit
+ok 57 - side-by-side: addition of incomplete line
+ok 58 - side-by-side: incomplete line as context line
+ok 59 - side-by-side: changed incomplete line
+ok 60 - side-by-side: removal of incomplete line
+ok 61 - side-by-side: merge commit
+ok 62 - tags: list of different types of tags
+ok 63 - tag: Tag to commit object
+ok 64 - tag: on lightweight tag (invalid)
+ok 65 - logs: log (implicit HEAD)
+ok 66 - logs: shortlog (implicit HEAD)
+ok 67 - logs: history (implicit HEAD, file)
+ok 68 - logs: history (implicit HEAD, non-existent file)
+ok 69 - logs: history (implicit HEAD, deleted file)
+ok 70 - path_info: project
+ok 71 - path_info: project/branch
+ok 72 - path_info: project/branch:file
+ok 73 - path_info: project/branch:dir/
+ok 74 - path_info: project/branch (non-existent)
+ok 75 - path_info: project/branch:filename (non-existent branch)
+ok 76 - path_info: project/branch:file (non-existent)
+ok 77 - path_info: project/branch:dir/ (non-existent)
+ok 78 - path_info: project/branch:/file
+ok 79 - path_info: project/:/file (implicit HEAD)
+ok 80 - path_info: project/:/ (implicit HEAD, top tree)
+ok 81 - feeds: OPML
+ok 82 - feed: RSS
+ok 83 - feed: Atom
+ok 84 - encode(commit): utf8
+ok 85 - encode(commit): iso-8859-1
+ok 86 - encode(log): utf-8 and iso-8859-1
+ok 87 - opt: log --no-merges
+ok 88 - opt: atom --no-merges
+ok 89 - opt: "file" history --no-merges
+ok 90 - opt: log --no-such-option (invalid option)
+ok 91 - opt: tree --no-merges (invalid option for action)
+ok 92 - URL: no project URLs, no base URL
+ok 93 - URL: project URLs via gitweb.url
+ok 94 - URL: project URLs via cloneurl file
+ok 95 - config override: projects list (implicit)
+ok 96 - config override: tree view, features not overridden in repo config
+ok 97 - config override: tree view, features disabled in repo config
+ok 98 - config override: tree view, features enabled in repo config (1)
+ok 99 - setup
+ok 100 - config override: tree view, features enabled in repo config (2)
+ok 101 - search: preparation
+ok 102 - search: commit author
+ok 103 - search: commit message
+ok 104 - search: grep
+ok 105 - search: pickaxe
+ok 106 - search: projects
+ok 107 - README.html with non-ASCII characters (utf-8)
+Skipping syntax highlighting tests: 'highlight' not found
+ok 108 # skip syntax highlighting (no highlight, unknown syntax) (missing HIGHLIGHT)
+ok 109 # skip syntax highlighting (highlighted, shell script) (missing HIGHLIGHT)
+ok 110 # skip syntax highlighting (highlighter language autodetection) (missing HIGHLIGHT)
+ok 111 - forks: prepare
+ok 112 - forks: projects list
+ok 113 - forks: forks action
+ok 114 - ctags: tag cloud in projects list
+ok 115 - ctags: search projects by existing tag
+ok 116 - ctags: search projects by non existent tag
+ok 117 - ctags: malformed tag weights
+ok 118 - categories: projects list, only default category
+ok 119 - unborn HEAD: "summary" page (with "heads" subview)
+# passed all 119 test(s)
+1..119
 *** t9501-gitweb-standalone-http-status.sh ***
-1..0 # SKIP skipping gitweb tests, CGI & CGI::Util & CGI::Carp modules not available
+ok 1 - setup
+ok 2 - snapshots: tgz only default format enabled
+ok 3 - snapshots: all enabled in default, use default disabled value
+ok 4 - snapshots: zip explicitly disabled
+ok 5 - snapshots: tgz explicitly enabled
+ok 6 - snapshots: good tree-ish id
+ok 7 - snapshots: bad tree-ish id
+ok 8 - snapshots: bad tree-ish id (tagged object)
+ok 9 - snapshots: good object id
+ok 10 - snapshots: bad object id
+ok 11 - modification: feed last-modified
+ok 12 - modification: feed if-modified-since (modified)
+ok 13 - modification: feed if-modified-since (unmodified)
+ok 14 - modification: snapshot last-modified
+ok 15 - modification: snapshot if-modified-since (modified)
+ok 16 - modification: snapshot if-modified-since (unmodified)
+ok 17 - modification: tree snapshot
+ok 18 - load checking: load too high (default action)
+ok 19 - invalid arguments: invalid regexp (in project search)
+# passed all 19 test(s)
+1..19
 *** t9502-gitweb-standalone-parse-output.sh ***
-1..0 # SKIP skipping gitweb tests, CGI & CGI::Util & CGI::Carp modules not available
+ok 1 - setup
+ok 2 - snapshot: full sha1
+ok 3 - snapshot: shortened sha1
+ok 4 - snapshot: almost full sha1
+ok 5 - snapshot: HEAD
+ok 6 - snapshot: short branch name (main)
+ok 7 - snapshot: short tag name (first)
+ok 8 - snapshot: full branch name (refs/heads/main)
+ok 9 - snapshot: full tag name (refs/tags/first)
+ok 10 - snapshot: hierarchical branch name (xx/test)
+ok 11 - forks: setup
+ok 12 - forks: not skipped unless "forks" feature enabled
+ok 13 - enable forks feature
+ok 14 - forks: forks skipped if "forks" feature enabled
+ok 15 - forks: "forks" action for forked repository
+ok 16 - forks: can access forked repository
+ok 17 - forks: project_index lists all projects (incl. forks)
+ok 18 - xss checks
+ok 19 - no http-equiv="content-type" in XHTML
+ok 20 - Proper DOCTYPE with entity declarations
+# passed all 20 test(s)
+1..20
 *** t9600-cvsimport.sh ***
 1..0 # SKIP skipping cvsimport tests, cvsps not found
 *** t9601-cvsimport-vendor-branch.sh ***
@@ -30355,13 +30517,13 @@ ok 67 - prompt - conflict indicator
 # passed all 67 test(s)
 1..67
 
-missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !REFFILES !RUNS_COMMANDS_FROM_PWD ADD_OUT AUTOIDENT BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS COMMIT_OUT EXPENSIVE FSMONITOR_DAEMON GPG GPGSM GPGSSH_VERIFYTIME JGIT LONG_REF MINGW NATIVE_CRLF PTHREAD RFC1991 RUNTIME_PREFIX SANITY SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK TTY UPDATE_INDEX_OUT UTF8_NFD_TO_NFC WINDOWS WRITE_TREE_OUT
+missing prereq: !AUTOIDENT !LONG_IS_64BIT !PCRE !PTHREADS !REFFILES BUILTIN_TXT_CHECKOUT__WORKER BUILTIN_TXT_MERGE_OURS BUILTIN_TXT_MERGE_RECURSIVE BUILTIN_TXT_MERGE_RECURSIVE_OURS BUILTIN_TXT_MERGE_RECURSIVE_THEIRS BUILTIN_TXT_MERGE_SUBTREE BUILTIN_TXT_PICKAXE BUILTIN_TXT_SUBMODULE__HELPER BUILTIN_TXT_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS EXPENSIVE FSMONITOR_DAEMON GETCWD_IGNORES_PERMS GPG GPGSM GPGSSH_VERIFYTIME HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF PTHREAD RFC1991 RUNTIME_PREFIX SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK TTY UTF8_NFD_TO_NFC WINDOWS
 
 
 failed test(s): t0211 t1700 t2501 t3200 t3404 t4150 t4202 t7609 t9210 t9902
 
 fixed   1
-success 26255
+success 26442
 failed  19
 broken  269
-total   27064
+total   27222
