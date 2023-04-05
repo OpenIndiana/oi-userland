@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
 COMPONENT_VERSION=	2.40.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	git - Fast Version Control System
 COMPONENT_DESCRIPTION=	Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 COMPONENT_PROJECT_URL=	https://git-scm.com/
@@ -82,7 +83,7 @@ PKG_HARDLINKS += usr/lib/git-core/git-cvsserver
 PKG_HARDLINKS += usr/lib/git-core/git-gui
 PKG_HARDLINKS += usr/lib/git-core/git-remote-ftps
 PKG_HARDLINKS += usr/lib/git-core/git-shell
-PKG_HARDLINKS += usr/lib/git-core/git-upload-pack
+PKG_HARDLINKS += usr/lib/git-core/scalar
 
 # We want the perl modules to install the vendor_perl directory, and their
 # manpages to install in the normal perl manpage directory, but the default
@@ -94,7 +95,6 @@ COMPONENT_INSTALL_ARGS += VENDORPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Con
 COMPONENT_INSTALL_ARGS += PERLPREFIX=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
 COMPONENT_INSTALL_ARGS += INSTALLVENDORLIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorlib}"')
 
-COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 
 # many failures; keep going; later versions of git are much cleaner
@@ -139,7 +139,7 @@ $(BUILD_DIR)/.manpages:
 
 $(BUILD_DIR_64)/.contrib: $(BUILD_DIR_64)/.contrib-subtree
 	$(MKDIR) $(PROTOUSRSHAREDIR)/bash-completion/completions
-	$(GMAKE) -C $(BUILD_DIR_64)/contrib/diff-highlight
+	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/diff-highlight
 	$(CP) -RLp $(BUILD_DIR_64)/contrib/diff-highlight/diff-highlight $(PROTOUSRBINDIR)/diff-highlight
 	$(CP) -RLp $(BUILD_DIR_64)/contrib/completion/git-completion.bash $(PROTOUSRSHAREDIR)/bash-completion/completions/git
 	(cd $(PROTOUSRSHAREDIR)/bash-completion/completions; $(LN) -sf git gitk)
@@ -147,26 +147,25 @@ $(BUILD_DIR_64)/.contrib: $(BUILD_DIR_64)/.contrib-subtree
 
 # Install steps taken from contrib/subtree/INSTALL
 $(BUILD_DIR_64)/.contrib-subtree:
-	$(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR)
-	$(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install
-	$(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install-doc
+	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR)
+	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install
+	PATH="$(PATH)" $(GMAKE) -C $(BUILD_DIR_64)/contrib/subtree DESTDIR=$(PROTO_DIR) install-doc
 	$(TOUCH) $@
-
-COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
 install:	$(INSTALL_64) $(BUILD_DIR)/.manpages $(BUILD_DIR_64)/.contrib
 
 # Test dependencies
-REQUIRED_PACKAGES += developer/fakeroot
-REQUIRED_PACKAGES += developer/versioning/cvs
-REQUIRED_PACKAGES += system/library/iconv/extra
-REQUIRED_PACKAGES += system/library/iconv/unicode
-REQUIRED_PACKAGES += system/library/iconv/utf-8
-REQUIRED_PACKAGES += library/perl-5/dbi
-REQUIRED_PACKAGES += library/perl-5/dbd-sqlite
-REQUIRED_PACKAGES += library/perl-5/subversion
-REQUIRED_PACKAGES += locale/is
-REQUIRED_PACKAGES += locale/is-extra
+TEST_REQUIRED_PACKAGES += developer/fakeroot
+TEST_REQUIRED_PACKAGES += developer/versioning/cvs
+TEST_REQUIRED_PACKAGES += system/library/iconv/extra
+TEST_REQUIRED_PACKAGES += system/library/iconv/unicode
+TEST_REQUIRED_PACKAGES += system/library/iconv/utf-8
+TEST_REQUIRED_PACKAGES += library/perl-5/cgi
+TEST_REQUIRED_PACKAGES += library/perl-5/dbi
+TEST_REQUIRED_PACKAGES += library/perl-5/dbd-sqlite
+TEST_REQUIRED_PACKAGES += library/perl-5/subversion
+TEST_REQUIRED_PACKAGES += locale/is
+TEST_REQUIRED_PACKAGES += locale/is-extra
 
 # Needed to generate git-subtree documentation
 REQUIRED_PACKAGES += text/asciidoc
