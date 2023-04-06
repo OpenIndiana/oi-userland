@@ -19,16 +19,15 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Config::Tiny
-HUMAN_VERSION =			2.28
+HUMAN_VERSION =			2.29
 COMPONENT_SUMMARY =		Config::Tiny - Read/Write .ini style files with as little code as possible
-COMPONENT_ARCHIVE_URL=		https://cpan.metacpan.org/authors/id/R/RS/RSAVAGE/Config-Tiny-2.28.tgz
+COMPONENT_ARCHIVE_URL=		https://cpan.metacpan.org/authors/id/R/RS/RSAVAGE/Config-Tiny-2.29.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:12df843a0d29d48f61bcc14c4f18f0858fd27a8dd829a00319529d654fe01500
+	sha256:3de79b0ea03a8d6a93e9d9128fe845fb556222b14699a4f6f0d5ca057ae3333b
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/test-pod
 PERL_REQUIRED_PACKAGES += runtime/perl
