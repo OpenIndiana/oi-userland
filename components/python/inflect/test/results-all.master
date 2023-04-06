@@ -1,3 +1,4 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder .tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
@@ -6,15 +7,13 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D), configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 124 items
+collecting ... collected 113 items
 
 ::project PASSED
 docs/conf.py::BLACK PASSED
-docs/conf.py::flake-8::FLAKE8 PASSED
 docs/conf.py::mypy PASSED
 docs/conf.py::mypy-status PASSED
 inflect/__init__.py::BLACK PASSED
-inflect/__init__.py::flake-8::FLAKE8 PASSED
 inflect/__init__.py::inflect.bysize PASSED
 inflect/__init__.py::inflect.engine._handle_prepositional_phrase PASSED
 inflect/__init__.py::inflect.engine.compare PASSED
@@ -22,35 +21,28 @@ inflect/__init__.py::inflect.engine.singular_noun PASSED
 inflect/__init__.py::inflect.joinstem PASSED
 inflect/__init__.py::mypy PASSED
 tests/test_an.py::BLACK PASSED
-tests/test_an.py::flake-8::FLAKE8 PASSED
 tests/test_an.py::mypy PASSED
 tests/test_an.py::test_an PASSED
+tests/test_an.py::test_an_abbreviation PASSED
 tests/test_classical_all.py::BLACK PASSED
-tests/test_classical_all.py::flake-8::FLAKE8 PASSED
 tests/test_classical_all.py::mypy PASSED
 tests/test_classical_all.py::test::test_classical PASSED
 tests/test_classical_ancient.py::BLACK PASSED
-tests/test_classical_ancient.py::flake-8::FLAKE8 PASSED
 tests/test_classical_ancient.py::mypy PASSED
 tests/test_classical_ancient.py::test_ancient_1 PASSED
 tests/test_classical_herd.py::BLACK PASSED
-tests/test_classical_herd.py::flake-8::FLAKE8 PASSED
 tests/test_classical_herd.py::mypy PASSED
 tests/test_classical_herd.py::test_ancient_1 PASSED
 tests/test_classical_names.py::BLACK PASSED
-tests/test_classical_names.py::flake-8::FLAKE8 PASSED
 tests/test_classical_names.py::mypy PASSED
 tests/test_classical_names.py::test_ancient_1 PASSED
 tests/test_classical_person.py::BLACK PASSED
-tests/test_classical_person.py::flake-8::FLAKE8 PASSED
 tests/test_classical_person.py::mypy PASSED
 tests/test_classical_person.py::test_ancient_1 PASSED
 tests/test_classical_zero.py::BLACK PASSED
-tests/test_classical_zero.py::flake-8::FLAKE8 PASSED
 tests/test_classical_zero.py::mypy PASSED
 tests/test_classical_zero.py::test_ancient_1 PASSED
 tests/test_compounds.py::BLACK PASSED
-tests/test_compounds.py::flake-8::FLAKE8 PASSED
 tests/test_compounds.py::mypy PASSED
 tests/test_compounds.py::test_compound_1 PASSED
 tests/test_compounds.py::test_compound_2 PASSED
@@ -62,9 +54,9 @@ tests/test_compounds.py::test_unit_handling_fractional PASSED
 tests/test_compounds.py::test_unit_open_compound_nouns PASSED
 tests/test_compounds.py::test_unit_open_compound_nouns_classical PASSED
 tests/test_inflections.py::BLACK PASSED
-tests/test_inflections.py::flake-8::FLAKE8 PASSED
 tests/test_inflections.py::mypy PASSED
 tests/test_inflections.py::test_NameError_in_strings PASSED
+tests/test_inflections.py::test_decimal_ordinals PASSED
 tests/test_inflections.py::test_def PASSED
 tests/test_inflections.py::test_inflect_keyword_args PASSED
 tests/test_inflections.py::test_inflect_on_builtin_constants PASSED
@@ -73,22 +65,21 @@ tests/test_inflections.py::test_many PASSED
 tests/test_inflections.py::test_ordinal PASSED
 tests/test_inflections.py::test_prespart PASSED
 tests/test_join.py::BLACK PASSED
-tests/test_join.py::flake-8::FLAKE8 PASSED
 tests/test_join.py::mypy PASSED
 tests/test_join.py::test_join PASSED
 tests/test_numwords.py::BLACK PASSED
-tests/test_numwords.py::flake-8::FLAKE8 PASSED
 tests/test_numwords.py::mypy PASSED
 tests/test_numwords.py::test_array PASSED
 tests/test_numwords.py::test_issue_131 PASSED
 tests/test_numwords.py::test_lines PASSED
 tests/test_numwords.py::test_loop PASSED
 tests/test_pl_si.py::BLACK PASSED
-tests/test_pl_si.py::flake-8::FLAKE8 PASSED
 tests/test_pl_si.py::mypy PASSED
-tests/test_pl_si.py::test_pl_si PASSED
+tests/test_pl_si.py::test_pl_si[classical off-Jones] PASSED
+tests/test_pl_si.py::test_pl_si[classical off-Times] PASSED
+tests/test_pl_si.py::test_pl_si[classical on-Jones] PASSED
+tests/test_pl_si.py::test_pl_si[classical on-Times] PASSED
 tests/test_pwd.py::BLACK PASSED
-tests/test_pwd.py::flake-8::FLAKE8 PASSED
 tests/test_pwd.py::mypy PASSED
 tests/test_pwd.py::test::test__pl_check_plurals_N PASSED
 tests/test_pwd.py::test::test__pl_check_plurals_adj PASSED
@@ -129,12 +120,11 @@ tests/test_pwd.py::test::test_user_input_fns PASSED
 tests/test_pwd.py::test::test_wordlist PASSED
 tests/test_unicode.py::BLACK PASSED
 tests/test_unicode.py::TestUnicode::test_unicode_plural PASSED
-tests/test_unicode.py::flake-8::FLAKE8 PASSED
 tests/test_unicode.py::mypy PASSED
 
 ===================================== mypy =====================================
 
 Success: no issues found in 16 source files
-======== 123 passed ========
+======== 112 passed ========
   py$(PYV): OK
   congratulations :)
