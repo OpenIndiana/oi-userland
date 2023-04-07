@@ -21,25 +21,25 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS = 32_and_64
+BUILD_BITS = 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gpgme
-COMPONENT_VERSION=	1.18.0
+COMPONENT_VERSION=	1.19.0
+COMPONENT_SUMMARY=	GnuPG Made Easy
+COMPONENT_DESCRIPTION=	A library designed to make access to GnuPG easier for applications
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/gpgme/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:361d4eae47ce925dba0ea569af40e7b52c645c4ae2e65e5621bf1b6cdd8b0e9e
+COMPONENT_ARCHIVE_HASH=	sha256:cb58494dc415fba9eeb12b826550ad3190dc92e265c5bb2ae1a21c92841cfd38
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gpgme/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	library/security/gpgme
-COMPONENT_SUMMARY=	GnuPG Made Easy
-COMPONENT_DESCRIPTION=	A library designed to make access to GnuPG easier for applications
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	GPLv2,LGPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
+COMPONENT_PREP_ACTION = ( cd $(@D) && PATH=$(PATH.gnu) autoreconf -fi )
 
 PATH = $(PATH.gnu)
 
@@ -57,13 +57,14 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS  +=		--with-libgpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--enable-largefile
 CONFIGURE_OPTIONS  +=		--with-pth=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--enable-languages="cl"
+CONFIGURE_OPTIONS  +=		--enable-languages=cl
 CONFIGURE_OPTIONS  +=		--enable-gpg-test
 CONFIGURE_OPTIONS  +=		--enable-gpgsm-test
 CONFIGURE_OPTIONS  +=		--enable-gpgconf-test
-CONFIGURE_OPTIONS  +=		--with-gpg=$(USRBINDIR)/gpg2
+CONFIGURE_OPTIONS  +=		--with-gpg=$(USRBINDIR)/gpg
 CONFIGURE_OPTIONS  +=		--with-gpgsm=$(USRBINDIR)/gpgsm
 CONFIGURE_OPTIONS  +=		--with-gpgconf=$(USRBINDIR)/gpgconf
 CONFIGURE_OPTIONS  +=		--with-pic
@@ -88,6 +89,11 @@ COMPONENT_POST_BUILD_ACTION += ( \
 );
 
 COMPONENT_BUILD_ARGS += GNUPGHOME="$$(< "$(@D)/$(GNUPG_HOME_LINK)")"
+
+# In the 'doc' directory CC_FOR_BUILD is used as a compiler. That does not
+# respect our CFLAGS and CPPFLAGS so the PIC build breaks. This is a way to
+# overcome it.
+COMPONENT_BUILD_ARGS += CC_FOR_BUILD='$(CC) $(CONFIGURE_CPPFLAGS) $(CC_PIC_ENABLE)'
 
 COMPONENT_PRE_TEST_ACTION = $(COMPONENT_PRE_BUILD_ACTION)
 COMPONENT_POST_TEST_ACTION = $(COMPONENT_POST_BUILD_ACTION)
