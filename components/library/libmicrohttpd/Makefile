@@ -18,23 +18,17 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmicrohttpd
-COMPONENT_VERSION=	0.9.75
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.9.76
 COMPONENT_SUMMARY=	GNU libmicrohttpd is a small HTTP server as a C library
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libmicrohttpd/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9278907a6f571b391aab9644fd646a5108ed97311ec66f6359cebbedb0a4e3bb
+COMPONENT_ARCHIVE_HASH= sha256:f0b1547b5a42a6c0f724e8e1c1cb5ce9c4c35fb495e7d780b9930d35011ceb4c
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE).sig
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI=		library/libmicrohttpd
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	LGPL2.1+
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-
-# Tests work properly only for curl with GnuTLS SSL backend (we use OpenSSL only),
-# see https://gnunet.org/bugs/view.php?id=5564.
-#TEST_TARGET=		$(TEST_32_and_64)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -46,6 +40,9 @@ CONFIGURE_OPTIONS += --enable-epoll=no
 CONFIGURE_OPTIONS += --enable-itc=socketpair
 CONFIGURE_OPTIONS += --disable-static
 
+# Tests work properly only for curl with GnuTLS SSL backend (we use OpenSSL only),
+# see https://gnunet.org/bugs/view.php?id=5564.
+
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
 # then all shell options get exported to child invocations of bash,
@@ -55,6 +52,7 @@ unexport SHELLOPTS
 
 COMPONENT_TEST_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
+# Manually added build dependencies
 REQUIRED_PACKAGES += system/library/security/libgcrypt
 
 # Auto-generated dependencies
