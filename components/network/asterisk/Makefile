@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
 COMPONENT_VERSION=	20.2.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -33,8 +34,9 @@ COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET= $(NO_TESTS) 
-
 include $(WS_MAKE_RULES)/common.mk
+
+PATH = $(PATH.gnu)
 
 PATCH_LEVEL = 0
 
