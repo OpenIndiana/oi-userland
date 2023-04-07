@@ -13,43 +13,47 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libical
-COMPONENT_VERSION=	1.0
-COMPONENT_FMRI=		library/libical
-COMPONENT_SUMMARY=	Libical is an Open Source implementation of the IETF's iCalendar Calendaring and Scheduling protocols
-COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/freeassociation/
+COMPONENT_VERSION=	3.0.16
+COMPONENT_SUMMARY=	libical is an Open Source implementation of the IETF's iCalendar Calendaring and Scheduling protocols
+COMPONENT_PROJECT_URL=	https://libical.github.io/libical
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:7c39b3448e4927a2de2775d853f52b3aaeb42400970a3db0b01a78987e6ec0b7
-COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/freeassociation/files/libical/libical-1.0/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	$(COMPONENT_FMRI)
+COMPONENT_ARCHIVE_URL=	https://github.com/libical/libical/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:b44705dd71ca4538c86fb16248483ab4b48978524fb1da5097bd76aa2e0f0c33
+COMPONENT_FMRI=		library/libical
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+COMPONENT_LICENSE_FILE=	LICENSE.LGPL21.txt
 
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CMAKE_OPTIONS+=		-DCMAKE_BUILD_TYPE=Release
-CMAKE_OPTIONS+=		-DBUILD_SHARED_LIBS=On
-CMAKE_OPTIONS+=		-DICAL_ERRORS_ARE_FATAL=false
-CMAKE_OPTIONS.64 +=	-DLIB_SUFFIX=/$(MACH64)
+CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
+CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=On
+CMAKE_OPTIONS += -DICAL_ERRORS_ARE_FATAL=false
+CMAKE_OPTIONS += -DLIB_SUFFIX=/$(MACH64)
+CMAKE_OPTIONS += -DGOBJECT_INTROSPECTION=true
+# Always use our own timezone data.
+CMAKE_OPTIONS += -DUSE_BUILTIN_TZDATA=false
+CMAKE_OPTIONS += -DICAL_GLIB=true
+CMAKE_OPTIONS += -DICAL_GLIB_VAPI=true
 
 COMPONENT_TEST_CMD = ctest
 COMPONENT_TEST_TARGETS =
-
-$(INSTALL_32):	$(INSTALL_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+COMPONENT_TEST_TRANSFORMS = \
+	' -e "s/[0-9]*\.[0-9]* sec//" ' \
+	' -n ' \
+	' -e "/Passed/p" ' \
+	' -e "/passed/p" '
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += database/berkeleydb-5
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library

@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,10 +23,42 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/include/ical.h
+file path=usr/include/libical-glib/i-cal-array.h
+file path=usr/include/libical-glib/i-cal-attach.h
+file path=usr/include/libical-glib/i-cal-comp-iter.h
+file path=usr/include/libical-glib/i-cal-component.h
+file path=usr/include/libical-glib/i-cal-datetimeperiod.h
+file path=usr/include/libical-glib/i-cal-derived-parameter.h
+file path=usr/include/libical-glib/i-cal-derived-property.h
+file path=usr/include/libical-glib/i-cal-derived-value.h
+file path=usr/include/libical-glib/i-cal-duration.h
+file path=usr/include/libical-glib/i-cal-enums.h
+file path=usr/include/libical-glib/i-cal-error.h
+file path=usr/include/libical-glib/i-cal-forward-declarations.h
+file path=usr/include/libical-glib/i-cal-geo.h
+file path=usr/include/libical-glib/i-cal-memory.h
+file path=usr/include/libical-glib/i-cal-mime.h
+file path=usr/include/libical-glib/i-cal-object.h
+file path=usr/include/libical-glib/i-cal-parameter.h
+file path=usr/include/libical-glib/i-cal-parser.h
+file path=usr/include/libical-glib/i-cal-period.h
+file path=usr/include/libical-glib/i-cal-property.h
+file path=usr/include/libical-glib/i-cal-recur-iterator.h
+file path=usr/include/libical-glib/i-cal-recur.h
+file path=usr/include/libical-glib/i-cal-recurrence.h
+file path=usr/include/libical-glib/i-cal-reqstat.h
+file path=usr/include/libical-glib/i-cal-restriction.h
+file path=usr/include/libical-glib/i-cal-time-span.h
+file path=usr/include/libical-glib/i-cal-time.h
+file path=usr/include/libical-glib/i-cal-timezone.h
+file path=usr/include/libical-glib/i-cal-trigger.h
+file path=usr/include/libical-glib/i-cal-unknowntokenhandling.h
+file path=usr/include/libical-glib/i-cal-value.h
+file path=usr/include/libical-glib/libical-glib.h
 file path=usr/include/libical/ical.h
 file path=usr/include/libical/icalarray.h
 file path=usr/include/libical/icalattach.h
+file path=usr/include/libical/icalbdbset_cxx.h
 file path=usr/include/libical/icalcalendar.h
 file path=usr/include/libical/icalclassify.h
 file path=usr/include/libical/icalcluster.h
@@ -47,13 +80,16 @@ file path=usr/include/libical/icalmemory.h
 file path=usr/include/libical/icalmessage.h
 file path=usr/include/libical/icalmime.h
 file path=usr/include/libical/icalparameter.h
+file path=usr/include/libical/icalparameter_cxx.h
 file path=usr/include/libical/icalparser.h
 file path=usr/include/libical/icalperiod.h
 file path=usr/include/libical/icalproperty.h
+file path=usr/include/libical/icalproperty_cxx.h
 file path=usr/include/libical/icalrecur.h
 file path=usr/include/libical/icalrestriction.h
 file path=usr/include/libical/icalset.h
 file path=usr/include/libical/icalspanlist.h
+file path=usr/include/libical/icalspanlist_cxx.h
 file path=usr/include/libical/icalss.h
 file path=usr/include/libical/icalssyacc.h
 file path=usr/include/libical/icaltime.h
@@ -61,39 +97,103 @@ file path=usr/include/libical/icaltimezone.h
 file path=usr/include/libical/icaltypes.h
 file path=usr/include/libical/icaltz-util.h
 file path=usr/include/libical/icalvalue.h
+file path=usr/include/libical/icalvalue_cxx.h
 file path=usr/include/libical/icalvcal.h
-file path=usr/include/libical/port.h
+file path=usr/include/libical/icptrholder_cxx.h
+file path=usr/include/libical/libical_ical_export.h
+file path=usr/include/libical/libical_icalss_export.h
+file path=usr/include/libical/libical_vcal_export.h
 file path=usr/include/libical/pvl.h
 file path=usr/include/libical/sspm.h
 file path=usr/include/libical/vcaltmp.h
 file path=usr/include/libical/vcc.h
+file path=usr/include/libical/vcomponent_cxx.h
 file path=usr/include/libical/vobject.h
+file path=usr/lib/$(MACH64)/cmake/LibIcal/IcalGlibSrcGenerator-release.cmake
+file path=usr/lib/$(MACH64)/cmake/LibIcal/IcalGlibSrcGenerator.cmake
+file path=usr/lib/$(MACH64)/cmake/LibIcal/LibIcalConfig.cmake
+file path=usr/lib/$(MACH64)/cmake/LibIcal/LibIcalConfigVersion.cmake
+file path=usr/lib/$(MACH64)/cmake/LibIcal/LibIcalTargets-release.cmake
+file path=usr/lib/$(MACH64)/cmake/LibIcal/LibIcalTargets.cmake
+file path=usr/lib/$(MACH64)/girepository-1.0/ICal-3.0.typelib
+file path=usr/lib/$(MACH64)/girepository-1.0/ICalGLib-3.0.typelib
+file path=usr/lib/$(MACH64)/libical-glib.a
+link path=usr/lib/$(MACH64)/libical-glib.so target=libical-glib.so.3
+file path=usr/lib/$(MACH64)/libical-glib.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libical-glib.so.3 \
+    target=libical-glib.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/libical.a
-link path=usr/lib/$(MACH64)/libical.so target=libical.so.1
-file path=usr/lib/$(MACH64)/libical.so.$(COMPONENT_VERSION).0
-link path=usr/lib/$(MACH64)/libical.so.1 \
-    target=libical.so.$(COMPONENT_VERSION).0
+link path=usr/lib/$(MACH64)/libical.so target=libical.so.3
+file path=usr/lib/$(MACH64)/libical.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libical.so.3 target=libical.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libical_cxx.a
+link path=usr/lib/$(MACH64)/libical_cxx.so target=libical_cxx.so.3
+file path=usr/lib/$(MACH64)/libical_cxx.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libical_cxx.so.3 \
+    target=libical_cxx.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/libicalss.a
-link path=usr/lib/$(MACH64)/libicalss.so target=libicalss.so.1
-file path=usr/lib/$(MACH64)/libicalss.so.$(COMPONENT_VERSION).0
-link path=usr/lib/$(MACH64)/libicalss.so.1 \
-    target=libicalss.so.$(COMPONENT_VERSION).0
+link path=usr/lib/$(MACH64)/libicalss.so target=libicalss.so.3
+file path=usr/lib/$(MACH64)/libicalss.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicalss.so.3 target=libicalss.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libicalss_cxx.a
+link path=usr/lib/$(MACH64)/libicalss_cxx.so target=libicalss_cxx.so.3
+file path=usr/lib/$(MACH64)/libicalss_cxx.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicalss_cxx.so.3 \
+    target=libicalss_cxx.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/libicalvcal.a
-link path=usr/lib/$(MACH64)/libicalvcal.so target=libicalvcal.so.1
-file path=usr/lib/$(MACH64)/libicalvcal.so.$(COMPONENT_VERSION).0
-link path=usr/lib/$(MACH64)/libicalvcal.so.1 \
-    target=libicalvcal.so.$(COMPONENT_VERSION).0
+link path=usr/lib/$(MACH64)/libicalvcal.so target=libicalvcal.so.3
+file path=usr/lib/$(MACH64)/libicalvcal.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicalvcal.so.3 \
+    target=libicalvcal.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/pkgconfig/libical-glib.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libical.pc
-file path=usr/lib/libical.a
-link path=usr/lib/libical.so target=libical.so.1
-file path=usr/lib/libical.so.$(COMPONENT_VERSION).0
-link path=usr/lib/libical.so.1 target=libical.so.$(COMPONENT_VERSION).0
-file path=usr/lib/libicalss.a
-link path=usr/lib/libicalss.so target=libicalss.so.1
-file path=usr/lib/libicalss.so.$(COMPONENT_VERSION).0
-link path=usr/lib/libicalss.so.1 target=libicalss.so.$(COMPONENT_VERSION).0
-file path=usr/lib/libicalvcal.a
-link path=usr/lib/libicalvcal.so target=libicalvcal.so.1
-file path=usr/lib/libicalvcal.so.$(COMPONENT_VERSION).0
-link path=usr/lib/libicalvcal.so.1 target=libicalvcal.so.$(COMPONENT_VERSION).0
-file path=usr/lib/pkgconfig/libical.pc
+file path=usr/libexec/libical/ical-glib-src-generator
+file path=usr/share/gir-1.0/ICal-3.0.gir
+file path=usr/share/gir-1.0/ICalGLib-3.0.gir
+file path=usr/share/gtk-doc/html/libical-glib/ICalArray.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalAttach.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalCompIter.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalComponent.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalDatetimeperiod.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalDuration.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalGeo.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalObject.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalParameter.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalParser.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalPeriod.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalProperty.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalRecurIterator.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalRecurrence.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalReqstat.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalTime.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalTimeSpan.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalTimezone.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalTrigger.html
+file path=usr/share/gtk-doc/html/libical-glib/ICalValue.html
+file path=usr/share/gtk-doc/html/libical-glib/annotation-glossary.html
+file path=usr/share/gtk-doc/html/libical-glib/api-index-1-0.html
+file path=usr/share/gtk-doc/html/libical-glib/api-index-2-0.html
+file path=usr/share/gtk-doc/html/libical-glib/api-index-3-0-5.html
+file path=usr/share/gtk-doc/html/libical-glib/api-index-3-0.html
+file path=usr/share/gtk-doc/html/libical-glib/api-index-full.html
+file path=usr/share/gtk-doc/html/libical-glib/ch01.html
+file path=usr/share/gtk-doc/html/libical-glib/home.png
+file path=usr/share/gtk-doc/html/libical-glib/index.html
+file path=usr/share/gtk-doc/html/libical-glib/left-insensitive.png
+file path=usr/share/gtk-doc/html/libical-glib/left.png
+file path=usr/share/gtk-doc/html/libical-glib/libical-glib-i-cal-derived-parameter.html
+file path=usr/share/gtk-doc/html/libical-glib/libical-glib-i-cal-derived-property.html
+file path=usr/share/gtk-doc/html/libical-glib/libical-glib-i-cal-derived-value.html
+file path=usr/share/gtk-doc/html/libical-glib/libical-glib-i-cal-enums.html
+file path=usr/share/gtk-doc/html/libical-glib/libical-glib-i-cal-error.html
+file path=usr/share/gtk-doc/html/libical-glib/libical-glib-i-cal-memory.html
+file path=usr/share/gtk-doc/html/libical-glib/libical-glib-i-cal-mime.html
+file path=usr/share/gtk-doc/html/libical-glib/libical-glib-i-cal-recur.html
+file path=usr/share/gtk-doc/html/libical-glib/libical-glib-i-cal-restriction.html
+file path=usr/share/gtk-doc/html/libical-glib/libical-glib-i-cal-unknowntokenhandling.html
+file path=usr/share/gtk-doc/html/libical-glib/right-insensitive.png
+file path=usr/share/gtk-doc/html/libical-glib/right.png
+file path=usr/share/gtk-doc/html/libical-glib/style.css
+file path=usr/share/gtk-doc/html/libical-glib/up-insensitive.png
+file path=usr/share/gtk-doc/html/libical-glib/up.png
+file path=usr/share/vala/vapi/libical-glib.vapi
