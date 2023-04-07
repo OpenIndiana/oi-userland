@@ -16,32 +16,31 @@ BUILD_BITS = 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libpcap
-COMPONENT_FMRI=         system/library/libpcap
-COMPONENT_VERSION=      1.10.1
-#COMPONENT_REVISION=     1
-COMPONENT_LICENSE=      BSD
-COMPONENT_PROJECT_URL=  https://www.tcpdump.org/
+COMPONENT_VERSION=      1.10.3
 COMPONENT_SUMMARY=      Packet Capture Library
+COMPONENT_PROJECT_URL=  https://www.tcpdump.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:ed285f4accaf05344f90975757b3dbfe772ba41d1c401c2648b7fa45b711bdd4
-COMPONENT_ARCHIVE_URL=  https://www.tcpdump.org/release/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/release/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:2a8885c403516cf7b0933ed4b14d6caa30e02052489ebd414dc75ac52e7559e6
 COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_FMRI=         system/library/libpcap
+COMPONENT_LICENSE=      BSD
+
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 DROP_STATIC_LIBRARIES= yes
 
-include $(WS_MAKE_RULES)/common.mk
+COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-COMPONENT_PRE_CONFIGURE_ACTION+=	($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_OPTIONS  +=  --disable-dbus
-
-CONFIGURE_ENV+=		ac_cv_func_getifaddrs=no
-
-LDFLAGS+=	-lnsl -lsocket
+CONFIGURE_ENV += ac_cv_func_getifaddrs=no
+CONFIGURE_OPTIONS += --disable-dbus
+LDFLAGS += -lnsl -lsocket
 
 # Build dependencies
 REQUIRED_PACKAGES += driver/network/bpf
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
