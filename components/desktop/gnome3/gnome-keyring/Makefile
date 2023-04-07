@@ -16,27 +16,26 @@
 # Copyright (c) 2023 Klaus Ziegler
 #
 BUILD_BITS= 64_and_32
+USE_COMMON_TEST_MASTER= no
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-keyring
-COMPONENT_MJR_VERSION=	3.28
-COMPONENT_MNR_VERSION=	2
+COMPONENT_MJR_VERSION=	3.36
+COMPONENT_MNR_VERSION=	0
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=	3
+COMPONENT_SUMMARY=	GNOME Keyring is a collection of components that store secrets, passwords, keys, certificates and make them available to applications
 COMPONENT_PROJECT_URL=	https://www.gnome.org
-COMPONENT_SUMMARY=	GNOME Keyring
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:81171b7d07211b216b4c9bb79bf2deb3deca18fe8d56d46dda1c4549b4a2646a
+COMPONENT_ARCHIVE_HASH= sha256:a264b57a8d1a71fdf0d66e8cd6033d013fb828be279c35766545eb9bb3734f87
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Sessions
 COMPONENT_FMRI=		gnome/gnome-keyring
 COMPONENT_LICENSE=	GPLv2,LGPLv2
-COMPONENT_LICENSE_FILE= gnome-keyring.license
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
 
@@ -58,6 +57,15 @@ CONFIGURE_OPTIONS += --with-pam-dir=$(PAM_MODULE_DIR)
 CONFIGURE_OPTIONS += --with-pic
 # Linux-specific capabilities support.
 CONFIGURE_OPTIONS += --without-libcap-ng
+
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "s|t create temporary file.*|t create temporary file|" ' \
+	'-n ' \
+	'-e "/TOTAL:/p" ' \
+	'-e "/SKIP:/p" ' \
+	'-e "/PASS:/p" ' \
+	'-e "/FAIL:/p" ' \
+	'-e "/ERROR:/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2

@@ -10,14 +10,12 @@
 #
 
 #
-# Copyright 2017 Alexander Pyhalov
-# Copyright 2018 Michal Nowak
-# Copyright 2023 Klaus Ziegler
+# Copyright 2023 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -28,6 +26,9 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 file path=etc/xdg/autostart/gnome-keyring-pkcs11.desktop
 file path=etc/xdg/autostart/gnome-keyring-secrets.desktop
 file path=etc/xdg/autostart/gnome-keyring-ssh.desktop
+link path=usr/bin/$(MACH32)/gnome-keyring target=gnome-keyring-3
+file path=usr/bin/$(MACH32)/gnome-keyring-3
+file path=usr/bin/$(MACH32)/gnome-keyring-daemon
 link path=usr/bin/gnome-keyring target=gnome-keyring-3
 file path=usr/bin/gnome-keyring-3
 file path=usr/bin/gnome-keyring-daemon
@@ -44,6 +45,7 @@ file path=usr/lib/security/$(MACH64)/pam_gnome_keyring.so
 file path=usr/lib/security/gnome-keyring-pkcs11.so
 file path=usr/lib/security/pam_gnome_keyring.so
 file path=usr/share/GConf/gsettings/org.gnome.crypto.cache.convert
+file path=usr/share/dbus-1/services/org.freedesktop.impl.portal.Secret.service
 file path=usr/share/dbus-1/services/org.freedesktop.secrets.service
 file path=usr/share/dbus-1/services/org.gnome.keyring.service
 file path=usr/share/glib-2.0/schemas/org.gnome.crypto.cache.gschema.xml
@@ -60,6 +62,7 @@ file path=usr/share/locale/bn_IN/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/locale/bs/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/locale/ca/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/locale/ca@valencia/LC_MESSAGES/gnome-keyring.mo
+file path=usr/share/locale/ckb/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/locale/cs/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/locale/cy/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/locale/da/LC_MESSAGES/gnome-keyring.mo
@@ -98,6 +101,7 @@ file path=usr/share/locale/lt/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/locale/lv/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/locale/mai/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/locale/mg/LC_MESSAGES/gnome-keyring.mo
+file path=usr/share/locale/mjw/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/locale/mk/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/locale/ml/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/locale/mn/LC_MESSAGES/gnome-keyring.mo
@@ -138,3 +142,5 @@ file path=usr/share/locale/zh_TW/LC_MESSAGES/gnome-keyring.mo
 file path=usr/share/man/man1/gnome-keyring-3.1
 file path=usr/share/man/man1/gnome-keyring-daemon.1
 file path=usr/share/man/man1/gnome-keyring.1
+file path=usr/share/p11-kit/modules/gnome-keyring.module
+file path=usr/share/xdg-desktop-portal/portals/gnome-keyring.portal
