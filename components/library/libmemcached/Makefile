@@ -23,37 +23,32 @@
 # Copyright (c) 2013  Erol Zavidic. All rights reserved.
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_BITS= 32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libmemcached
-COMPONENT_VERSION=      1.0.17
-COMPONENT_REVISION=     2
+COMPONENT_MAJOR_VERSION=	1.0
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).18
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:7bb27b2589400f918df1cf5002cb01ef7ccac6e23f818604e2386de62c80bba5
-COMPONENT_ARCHIVE_URL=  https://launchpad.net/libmemcached/1.0/1.0.17/+download/${COMPONENT_ARCHIVE}
+COMPONENT_ARCHIVE_HASH= sha256:e22c0bb032fde08f53de9ffbc5a128233041d9f33b5de022c0978a2149885f82
+COMPONENT_ARCHIVE_URL=  https://launchpad.net/libmemcached/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_VERSION)/+download/${COMPONENT_ARCHIVE}
 COMPONENT_PROJECT_URL=  http://libmemcached.org/libMemcached.html
 COMPONENT_BUGDB=	database/memcached
 
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS  += -std=c99 $(CPP_XPG6MODE)
-CXXFLAGS+= -std=c++98 $(CPP_XPG6MODE)
-LDFLAGS += $(CPP_XPG6MODE) -lsocket -lnsl
+CFLAGS   += $(CPP_XPG6MODE)
+CXXFLAGS += $(CPP_XPG6MODE)
+LDFLAGS  += $(CPP_XPG6MODE) -lsocket -lnsl
 
-CONFIGURE_ENV +=	MAKE=$(GMAKE)
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -vif )
 
-CONFIGURE_OPTIONS +=	--includedir=$(CONFIGURE_INCLUDEDIR)
+CONFIGURE_ENV += MAKE=$(GMAKE)
 
-CONFIGURE_OPTIONS +=    --disable-static
-CONFIGURE_OPTIONS +=    --without-mysql
-CONFIGURE_OPTIONS +=    --without-gearmand
-CONFIGURE_OPTIONS +=    --without-memcached
-
-COMPONENT_PREP_ACTION =  ( cd $(@D) && autoreconf -vif )
+CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)
+CONFIGURE_OPTIONS += --disable-static
 
 # need some files in $(SOURCE_DIR)/docs during build
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -61,9 +56,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 # need /usr/perl5/bin on path to access pod2man perl script, used by 
 # the build to create docs
-COMPONENT_BUILD_ENV +=	PATH=/usr/perl5/bin:$(PATH)
-
-COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"	
+#COMPONENT_BUILD_ENV += PATH=/usr/perl5/bin:$(PATH)
+COMPONENT_BUILD_ENV += MAKE="$(GMAKE)"	
 
 # Libmemcached's configure script sets an incorrect CFLAGS in the Makefiles
 # it generates.  Make sure we use the correct one by passing CFLAGS in 
@@ -79,11 +73,18 @@ COMPONENT_BUILD_ARGS +=	pkglibdir=/usr/lib
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-COMPONENT_INSTALL_ENV +=	DESTDIR=$(PROTO_DIR)
+CONFIGURE_OPTIONS += ax_cv_check_cflags__Werror__fPIE=no
+CONFIGURE_OPTIONS += ax_cv_check_cflags__Werror__pie=no
+CONFIGURE_OPTIONS += ax_cv_check_cxxflags__Werror__fPIE=no
+CONFIGURE_OPTIONS += ax_cv_check_cxxflags__Werror__pie=no
 
-COMPONENT_TEST_TARGETS =	test
+COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
 
 # Some tests fail because memcached is not running.
+unexport SHELLOPTS
+
+COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_ARGS += -k -i
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
