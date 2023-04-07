@@ -14,6 +14,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -24,17 +25,6 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=usr/share/idzebra-2.0/examples/(.+)$ -> set action.hash usr/share/idzebra-2.0-examples/%<\1> >
 
-# Drop 32-bit binaries
-<transform file path=.*/bin/$(MACH32)/.+ -> drop>
-
-file usr/share/man/man1/idzebra-config-2.0.1 path=usr/share/man/man1/idzebra-config.1
-file usr/share/man/man1/zebraidx-2.0.1 path=usr/share/man/man1/zebraidx.1
-file usr/share/man/man8/zebrasrv-2.0.8 path=usr/share/man/man8/zebrasrv.8
-
-file path=usr/bin/$(MACH32)/idzebra-abs2dom
-file path=usr/bin/$(MACH32)/idzebra-config
-file path=usr/bin/$(MACH32)/zebraidx
-file path=usr/bin/$(MACH32)/zebrasrv
 file path=usr/bin/idzebra-abs2dom
 file path=usr/bin/idzebra-config
 file path=usr/bin/zebraidx
@@ -65,17 +55,6 @@ link path=usr/lib/$(MACH64)/libidzebra-2.0.so target=libidzebra-2.0.so.0.0.2
 link path=usr/lib/$(MACH64)/libidzebra-2.0.so.0 target=libidzebra-2.0.so.0.0.2
 file path=usr/lib/$(MACH64)/libidzebra-2.0.so.0.0.2
 file path=usr/lib/$(MACH64)/pkgconfig/zebra.pc
-file path=usr/lib/idzebra-2.0/modules/mod-alvis.so
-file path=usr/lib/idzebra-2.0/modules/mod-dom.so
-file path=usr/lib/idzebra-2.0/modules/mod-grs-marc.so
-file path=usr/lib/idzebra-2.0/modules/mod-grs-regx.so
-file path=usr/lib/idzebra-2.0/modules/mod-grs-xml.so
-file path=usr/lib/idzebra-2.0/modules/mod-safari.so
-file path=usr/lib/idzebra-2.0/modules/mod-text.so
-link path=usr/lib/libidzebra-2.0.so target=libidzebra-2.0.so.0.0.2
-link path=usr/lib/libidzebra-2.0.so.0 target=libidzebra-2.0.so.0.0.2
-file path=usr/lib/libidzebra-2.0.so.0.0.2
-file path=usr/lib/pkgconfig/zebra.pc
 file path=usr/share/aclocal/idzebra-2.0.m4
 file path=usr/share/doc/idzebra-2.0/administration-extended-services.html
 file path=usr/share/doc/idzebra-2.0/administration-ranking.html
@@ -274,3 +253,9 @@ file path=usr/share/idzebra-2.0/tab/wais.abs
 file path=usr/share/idzebra-2.0/tab/words-icu-da.xml
 file path=usr/share/idzebra-2.0/tab/words-icu.xml
 file path=usr/share/man/man1/idzebra-abs2dom.1
+file path=usr/share/man/man1/idzebra-config-2.0.1
+link path=usr/share/man/man1/idzebra-config.1 target=idzebra-config-2.0.1
+file path=usr/share/man/man1/zebraidx-2.0.1
+link path=usr/share/man/man1/zebraidx.1 target=zebraidx-2.0.1
+file path=usr/share/man/man8/zebrasrv-2.0.8
+link path=usr/share/man/man8/zebrasrv.8 target=zebrasrv-2.0.8
