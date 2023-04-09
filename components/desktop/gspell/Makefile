@@ -12,27 +12,33 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gspell
-COMPONENT_VERSION=      1.9.1
-#COMPONENT_REVISION=     1
-COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/gspell
+COMPONENT_MAJOR_VERSION=      1.12
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).0
 COMPONENT_SUMMARY=      A flexible API to implement the spell checking in a GTK+ application
-COMPONENT_FMRI=         library/desktop/gspell
+COMPONENT_PROJECT_URL=  https://gitlab.gnome.org/GNOME/gspell
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:dcbb769dfdde8e3c0a8ed3102ce7e661abbf7ddf85df08b29915e92cd723abdd
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.9/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:40d2850f1bb6e8775246fa1e39438b36caafbdbada1d28a19fa1ca07e1ff82ad
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/desktop/gspell
 COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_LICENSE=      LGPLv2.1
-COMPONENT_LICENSE_FILE= gspell.license
+COMPONENT_LICENSE_FILE= COPYING
 
 CONFIGURE_OPTIONS += MAKE=gmake
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Manually added test dependencies
+# According to the test sources aspell is deprecated and superceded by hunspell.
+# One of the tests is failing with aspell which won't be fixed.
+# We might want to replace aspell (used by enchant) with hunspell later.
+#TEST_REQUIRED_PACKAGES += library/myspell/dictionary/en
+TEST_REQUIRED_PACKAGES += text/aspell/en
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gtk3
