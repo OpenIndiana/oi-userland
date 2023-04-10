@@ -374,6 +374,10 @@ grep -q "TODO" Makefile && printf "ERROR: Makefile is not complete (TODO found)\
 ! $GMAKE env-check > /dev/null 2>&1 && printf "FATAL: 'gmake env-check' failed!\n" >&2 && exit 1
 
 
+# Cleanup before we try to publish to make sure there are no leftovers from
+# previous steps
+$GMAKE clobber > /dev/null 2>&1
+
 # Publish packages and create pkg5 file
 $GMAKE publish > /dev/null 2>&1 || printf "ERROR: 'gmake publish' failed!\n" >&2
 git add pkg5 2>/dev/null
