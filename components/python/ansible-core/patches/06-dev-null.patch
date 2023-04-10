@@ -1,0 +1,10 @@
+--- ansible-core-2.14.4/test/units/parsing/vault/test_vault_editor.py.orig
++++ ansible-core-2.14.4/test/units/parsing/vault/test_vault_editor.py
+@@ -501,6 +501,7 @@
+         res = ve._real_path(filename)
+         self.assertEqual(res, '-')
+ 
++    @pytest.mark.skip(reason="always fails: https://github.com/ansible/ansible/issues/80444")
+     def test_real_path_dev_null(self):
+         filename = '/dev/null'
+         ve = self._vault_editor()

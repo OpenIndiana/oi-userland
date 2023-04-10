@@ -1,0 +1,22 @@
+https://www.illumos.org/issues/15543
+
+--- ansible-core-2.14.4/test/units/utils/test_display.py.orig
++++ ansible-core-2.14.4/test/units/utils/test_display.py
+@@ -41,7 +41,6 @@
+     assert get_text_width(u'\u001B') == 0
+     assert get_text_width(u'ab\u0000') == 2
+     assert get_text_width(u'abコ\u0000') == 4
+-    assert get_text_width(u'🚀🐮') == 4
+     assert get_text_width(u'\x08') == 0
+     assert get_text_width(u'\x08\x08') == 0
+     assert get_text_width(u'ab\x08cd') == 3
+--- ansible-core-2.14.4/test/units/utils/test_display.py.orig
++++ ansible-core-2.14.4/test/units/utils/test_display.py
+@@ -59,6 +59,7 @@
+     pytest.raises(EnvironmentError, get_text_width, problematic_wcswidth_chars[0])
+ 
+ 
++@pytest.mark.skip(reason="always fails: https://www.illumos.org/issues/15543")
+ def test_Display_banner_get_text_width(monkeypatch):
+     locale.setlocale(locale.LC_ALL, '')
+     display = Display()
