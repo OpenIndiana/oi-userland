@@ -24,6 +24,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+<transform path=.+/lib/.+\.a -> drop>
+
 file path=usr/bin/$(MACH32)/pcap-config
 file path=usr/bin/pcap-config
 file path=usr/include/pcap-bpf.h
@@ -44,10 +46,12 @@ file path=usr/include/pcap/sll.h
 file path=usr/include/pcap/socket.h
 file path=usr/include/pcap/usb.h
 file path=usr/include/pcap/vlan.h
+file path=usr/lib/$(MACH64)/libpcap.a
 link path=usr/lib/$(MACH64)/libpcap.so target=libpcap.so.1
 file path=usr/lib/$(MACH64)/libpcap.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libpcap.so.1 target=libpcap.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/libpcap.pc
+file path=usr/lib/libpcap.a
 link path=usr/lib/libpcap.so target=libpcap.so.1
 file path=usr/lib/libpcap.so.$(HUMAN_VERSION)
 link path=usr/lib/libpcap.so.1 target=libpcap.so.$(HUMAN_VERSION)
