@@ -342,16 +342,18 @@ fi
 if ! $GMAKE sample-manifest > /dev/null 2>&1 ; then
 	printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
 else
+	MANIFEST="$DISTRIBUTION-PYVER.p5m"
+	[[ "$($GMAKE print-value-SINGLE_PYTHON_VERSION)" == "yes" ]] && MANIFEST="$DISTRIBUTION.p5m"
 	cat manifests/sample-manifest.p5m \
 		| sed -e 's/^#.*Copyright.*<contributor>.*$/# This file was automatically generated using '"$THIS"'/g' \
-		> "$DISTRIBUTION-PYVER.p5m"
+		> "$MANIFEST"
 
 	# Execute hook-manifest snippet
 	gsed -e '0,/^%hook-manifest%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
 	. "./$SNIPPET"
 	rm -f "$SNIPPET"
 
-	git add manifests/sample-manifest.p5m "$DISTRIBUTION-PYVER.p5m"
+	git add manifests/sample-manifest.p5m $MANIFEST
 fi
 
 
