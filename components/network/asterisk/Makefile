@@ -17,26 +17,27 @@
 
 USE_OPENSSL11= yes
 BUILD_BITS= 64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
 COMPONENT_VERSION=	20.2.1
-COMPONENT_REVISION=	1
+COMPONENT_FMRI=		network/asterisk
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
+COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:df12e47000fbac42bb780bb06172aa8bb8ac26faf77cc9f95184695b0cec69c3
 COMPONENT_PROJECT_URL=	https://www.asterisk.org
 COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=		network/asterisk
-COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET= $(NO_TESTS) 
-include $(WS_MAKE_RULES)/common.mk
+TEST_TARGET=$(NO_TESTS) 
 
-PATH = $(PATH.gnu)
+MYSQL_VERSION= 10.6
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
 
