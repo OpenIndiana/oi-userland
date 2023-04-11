@@ -1,0 +1,857 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/py$(PYV)/tmp
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D), configfile: setup.cfg, testpaths: tests
+asyncio: mode=strict
+collecting ... collected 842 items
+
+tests/test_api.py::TestExtendedAPI::test_autoescape_autoselect PASSED
+tests/test_api.py::TestExtendedAPI::test_context_finalize PASSED
+tests/test_api.py::TestExtendedAPI::test_cycler PASSED
+tests/test_api.py::TestExtendedAPI::test_env_autoescape PASSED
+tests/test_api.py::TestExtendedAPI::test_eval_finalize PASSED
+tests/test_api.py::TestExtendedAPI::test_expressions PASSED
+tests/test_api.py::TestExtendedAPI::test_finalize PASSED
+tests/test_api.py::TestExtendedAPI::test_finalize_constant_expression PASSED
+tests/test_api.py::TestExtendedAPI::test_get_template_undefined PASSED
+tests/test_api.py::TestExtendedAPI::test_item_and_attribute PASSED
+tests/test_api.py::TestExtendedAPI::test_no_finalize_template_data PASSED
+tests/test_api.py::TestExtendedAPI::test_sandbox_max_range PASSED
+tests/test_api.py::TestExtendedAPI::test_template_passthrough PASSED
+tests/test_api.py::TestLowLevel::test_custom_code_generator PASSED
+tests/test_api.py::TestLowLevel::test_custom_context PASSED
+tests/test_api.py::TestMeta::test_find_included_templates PASSED
+tests/test_api.py::TestMeta::test_find_refererenced_templates PASSED
+tests/test_api.py::TestMeta::test_find_undeclared_variables PASSED
+tests/test_api.py::TestStreaming::test_basic_streaming PASSED
+tests/test_api.py::TestStreaming::test_buffered_streaming PASSED
+tests/test_api.py::TestStreaming::test_dump_stream PASSED
+tests/test_api.py::TestStreaming::test_streaming_behavior PASSED
+tests/test_api.py::TestUndefined::test_chainable_undefined PASSED
+tests/test_api.py::TestUndefined::test_debug_undefined PASSED
+tests/test_api.py::TestUndefined::test_default_undefined PASSED
+tests/test_api.py::TestUndefined::test_indexing_gives_undefined PASSED
+tests/test_api.py::TestUndefined::test_logging_undefined PASSED
+tests/test_api.py::TestUndefined::test_none_gives_proper_error PASSED
+tests/test_api.py::TestUndefined::test_object_repr PASSED
+tests/test_api.py::TestUndefined::test_stopiteration_is_undefined PASSED
+tests/test_api.py::TestUndefined::test_strict_undefined PASSED
+tests/test_api.py::TestUndefined::test_undefined_and_special_attributes PASSED
+tests/test_api.py::TestUndefined::test_undefined_attribute_error PASSED
+tests/test_async.py::TestAsyncForLoop::test_awaitable_property_slicing PASSED
+tests/test_async.py::TestAsyncForLoop::test_bare_async PASSED
+tests/test_async.py::TestAsyncForLoop::test_call_in_loop PASSED
+tests/test_async.py::TestAsyncForLoop::test_changed PASSED
+tests/test_async.py::TestAsyncForLoop::test_context_vars[<lambda>0] PASSED
+tests/test_async.py::TestAsyncForLoop::test_context_vars[<lambda>1] PASSED
+tests/test_async.py::TestAsyncForLoop::test_context_vars[auto_aiter] PASSED
+tests/test_async.py::TestAsyncForLoop::test_context_vars[iter] PASSED
+tests/test_async.py::TestAsyncForLoop::test_context_vars[reversed] PASSED
+tests/test_async.py::TestAsyncForLoop::test_cycling PASSED
+tests/test_async.py::TestAsyncForLoop::test_else PASSED
+tests/test_async.py::TestAsyncForLoop::test_empty_blocks PASSED
+tests/test_async.py::TestAsyncForLoop::test_lookaround PASSED
+tests/test_async.py::TestAsyncForLoop::test_loop_errors PASSED
+tests/test_async.py::TestAsyncForLoop::test_loop_filter PASSED
+tests/test_async.py::TestAsyncForLoop::test_looploop PASSED
+tests/test_async.py::TestAsyncForLoop::test_noniter PASSED
+tests/test_async.py::TestAsyncForLoop::test_nonrecursive_loop_filter PASSED
+tests/test_async.py::TestAsyncForLoop::test_recursive PASSED
+tests/test_async.py::TestAsyncForLoop::test_recursive_depth PASSED
+tests/test_async.py::TestAsyncForLoop::test_recursive_depth0 PASSED
+tests/test_async.py::TestAsyncForLoop::test_recursive_empty_loop_iter PASSED
+tests/test_async.py::TestAsyncForLoop::test_recursive_lookaround PASSED
+tests/test_async.py::TestAsyncForLoop::test_recursive_loop_filter PASSED
+tests/test_async.py::TestAsyncForLoop::test_reversed_bug PASSED
+tests/test_async.py::TestAsyncForLoop::test_scope PASSED
+tests/test_async.py::TestAsyncForLoop::test_scoped_loop_var PASSED
+tests/test_async.py::TestAsyncForLoop::test_scoped_special_var PASSED
+tests/test_async.py::TestAsyncForLoop::test_scoping_bug PASSED
+tests/test_async.py::TestAsyncForLoop::test_simple PASSED
+tests/test_async.py::TestAsyncForLoop::test_unpacking PASSED
+tests/test_async.py::TestAsyncForLoop::test_varlen PASSED
+tests/test_async.py::TestAsyncImports::test_context_imports PASSED
+tests/test_async.py::TestAsyncImports::test_exports PASSED
+tests/test_async.py::TestAsyncImports::test_from_import_with_globals PASSED
+tests/test_async.py::TestAsyncImports::test_import_with_globals PASSED
+tests/test_async.py::TestAsyncImports::test_import_with_globals_override PASSED
+tests/test_async.py::TestAsyncImports::test_trailing_comma PASSED
+tests/test_async.py::TestAsyncIncludes::test_choice_includes PASSED
+tests/test_async.py::TestAsyncIncludes::test_context_include PASSED
+tests/test_async.py::TestAsyncIncludes::test_context_include_with_overrides PASSED
+tests/test_async.py::TestAsyncIncludes::test_include_ignoring_missing PASSED
+tests/test_async.py::TestAsyncIncludes::test_unoptimized_scopes PASSED
+tests/test_async.py::TestAsyncIncludes::test_unoptimized_scopes_autoescape PASSED
+tests/test_async.py::test_async_blocks PASSED
+tests/test_async.py::test_async_generate PASSED
+tests/test_async.py::test_async_iteration_in_templates PASSED
+tests/test_async.py::test_async_iteration_in_templates_extended PASSED
+tests/test_async.py::test_await_and_macros PASSED
+tests/test_async.py::test_await_on_calls PASSED
+tests/test_async.py::test_await_on_calls_normal_render PASSED
+tests/test_async.py::test_basic_async PASSED
+tests/test_async.py::test_chainable_undefined_aiter PASSED
+tests/test_async.py::test_getitem_after_call PASSED
+tests/test_async.py::test_getitem_after_filter PASSED
+tests/test_async.py::test_namespace_awaitable PASSED
+tests/test_async.py::test_native_async PASSED
+tests/test_async.py::test_native_list_async PASSED
+tests/test_async_filters.py::test_attribute_map[<lambda>0] PASSED
+tests/test_async_filters.py::test_attribute_map[<lambda>1] PASSED
+tests/test_async_filters.py::test_bool_reject[<lambda>0] PASSED
+tests/test_async_filters.py::test_bool_reject[<lambda>1] PASSED
+tests/test_async_filters.py::test_bool_select[<lambda>0] PASSED
+tests/test_async_filters.py::test_bool_select[<lambda>1] PASSED
+tests/test_async_filters.py::test_custom_async_filter PASSED
+tests/test_async_filters.py::test_custom_async_iteratable_filter[<lambda>0] PASSED
+tests/test_async_filters.py::test_custom_async_iteratable_filter[<lambda>1] PASSED
+tests/test_async_filters.py::test_empty_map PASSED
+tests/test_async_filters.py::test_first[<lambda>0] PASSED
+tests/test_async_filters.py::test_first[<lambda>1] PASSED
+tests/test_async_filters.py::test_groupby[<lambda>0] PASSED
+tests/test_async_filters.py::test_groupby[<lambda>1] PASSED
+tests/test_async_filters.py::test_groupby_case[False-a: 1, 3\nb: 2\n] PASSED
+tests/test_async_filters.py::test_groupby_case[True-A: 3\na: 1\nb: 2\n] PASSED
+tests/test_async_filters.py::test_groupby_multidot[<lambda>0] PASSED
+tests/test_async_filters.py::test_groupby_multidot[<lambda>1] PASSED
+tests/test_async_filters.py::test_groupby_tuple_index[<lambda>0] PASSED
+tests/test_async_filters.py::test_groupby_tuple_index[<lambda>1] PASSED
+tests/test_async_filters.py::test_join_attribute[<lambda>0] PASSED
+tests/test_async_filters.py::test_join_attribute[<lambda>1] PASSED
+tests/test_async_filters.py::test_join_env_int[<lambda>0] PASSED
+tests/test_async_filters.py::test_join_env_int[<lambda>1] PASSED
+tests/test_async_filters.py::test_join_string_list[<lambda>0] PASSED
+tests/test_async_filters.py::test_join_string_list[<lambda>1] PASSED
+tests/test_async_filters.py::test_map_sum PASSED
+tests/test_async_filters.py::test_simple_map[<lambda>0] PASSED
+tests/test_async_filters.py::test_simple_map[<lambda>1] PASSED
+tests/test_async_filters.py::test_simple_reject[<lambda>0] PASSED
+tests/test_async_filters.py::test_simple_reject[<lambda>1] PASSED
+tests/test_async_filters.py::test_simple_select[<lambda>0] PASSED
+tests/test_async_filters.py::test_simple_select[<lambda>1] PASSED
+tests/test_async_filters.py::test_simple_select_attr[<lambda>0] PASSED
+tests/test_async_filters.py::test_simple_select_attr[<lambda>1] PASSED
+tests/test_async_filters.py::test_slice[<lambda>0] PASSED
+tests/test_async_filters.py::test_slice[<lambda>1] PASSED
+tests/test_async_filters.py::test_sum[<lambda>0] PASSED
+tests/test_async_filters.py::test_sum[<lambda>1] PASSED
+tests/test_async_filters.py::test_sum_attributes[<lambda>0] PASSED
+tests/test_async_filters.py::test_sum_attributes[<lambda>1] PASSED
+tests/test_async_filters.py::test_sum_attributes_nested PASSED
+tests/test_async_filters.py::test_sum_attributes_tuple PASSED
+tests/test_bytecode_cache.py::TestByteCodeCache::test_simple PASSED
+tests/test_bytecode_cache.py::TestMemcachedBytecodeCache::test_dump_load PASSED
+tests/test_bytecode_cache.py::TestMemcachedBytecodeCache::test_exception PASSED
+tests/test_compile.py::test_filters_deterministic PASSED
+tests/test_compile.py::test_import_as_with_context_deterministic PASSED
+tests/test_core_tags.py::TestForLoop::test_call_in_loop PASSED
+tests/test_core_tags.py::TestForLoop::test_changed PASSED
+tests/test_core_tags.py::TestForLoop::test_context_vars PASSED
+tests/test_core_tags.py::TestForLoop::test_cycling PASSED
+tests/test_core_tags.py::TestForLoop::test_else PASSED
+tests/test_core_tags.py::TestForLoop::test_else_scoping_item PASSED
+tests/test_core_tags.py::TestForLoop::test_empty_blocks PASSED
+tests/test_core_tags.py::TestForLoop::test_intended_scoping_with_set PASSED
+tests/test_core_tags.py::TestForLoop::test_lookaround PASSED
+tests/test_core_tags.py::TestForLoop::test_loop_errors PASSED
+tests/test_core_tags.py::TestForLoop::test_loop_filter PASSED
+tests/test_core_tags.py::TestForLoop::test_loop_unassignable PASSED
+tests/test_core_tags.py::TestForLoop::test_looploop PASSED
+tests/test_core_tags.py::TestForLoop::test_noniter PASSED
+tests/test_core_tags.py::TestForLoop::test_recursive PASSED
+tests/test_core_tags.py::TestForLoop::test_recursive_depth PASSED
+tests/test_core_tags.py::TestForLoop::test_recursive_depth0 PASSED
+tests/test_core_tags.py::TestForLoop::test_recursive_empty_loop_iter PASSED
+tests/test_core_tags.py::TestForLoop::test_recursive_lookaround PASSED
+tests/test_core_tags.py::TestForLoop::test_reversed_bug PASSED
+tests/test_core_tags.py::TestForLoop::test_scope PASSED
+tests/test_core_tags.py::TestForLoop::test_scoped_loop_var PASSED
+tests/test_core_tags.py::TestForLoop::test_scoped_special_var PASSED
+tests/test_core_tags.py::TestForLoop::test_scoping_bug PASSED
+tests/test_core_tags.py::TestForLoop::test_simple PASSED
+tests/test_core_tags.py::TestForLoop::test_unpacking PASSED
+tests/test_core_tags.py::TestForLoop::test_varlen PASSED
+tests/test_core_tags.py::TestIfCondition::test_complete PASSED
+tests/test_core_tags.py::TestIfCondition::test_elif PASSED
+tests/test_core_tags.py::TestIfCondition::test_elif_deep PASSED
+tests/test_core_tags.py::TestIfCondition::test_else PASSED
+tests/test_core_tags.py::TestIfCondition::test_empty PASSED
+tests/test_core_tags.py::TestIfCondition::test_no_scope PASSED
+tests/test_core_tags.py::TestIfCondition::test_simple PASSED
+tests/test_core_tags.py::TestMacros::test_arguments PASSED
+tests/test_core_tags.py::TestMacros::test_arguments_defaults_nonsense PASSED
+tests/test_core_tags.py::TestMacros::test_caller_defaults_nonsense PASSED
+tests/test_core_tags.py::TestMacros::test_caller_undefined PASSED
+tests/test_core_tags.py::TestMacros::test_callself PASSED
+tests/test_core_tags.py::TestMacros::test_complex_call PASSED
+tests/test_core_tags.py::TestMacros::test_include PASSED
+tests/test_core_tags.py::TestMacros::test_macro_api PASSED
+tests/test_core_tags.py::TestMacros::test_macro_defaults_self_ref PASSED
+tests/test_core_tags.py::TestMacros::test_scoping PASSED
+tests/test_core_tags.py::TestMacros::test_simple PASSED
+tests/test_core_tags.py::TestMacros::test_simple_call PASSED
+tests/test_core_tags.py::TestMacros::test_varargs PASSED
+tests/test_core_tags.py::TestSet::test_block PASSED
+tests/test_core_tags.py::TestSet::test_block_escaping PASSED
+tests/test_core_tags.py::TestSet::test_block_escaping_filtered PASSED
+tests/test_core_tags.py::TestSet::test_block_filtered PASSED
+tests/test_core_tags.py::TestSet::test_block_filtered_set PASSED
+tests/test_core_tags.py::TestSet::test_init_namespace PASSED
+tests/test_core_tags.py::TestSet::test_namespace PASSED
+tests/test_core_tags.py::TestSet::test_namespace_block PASSED
+tests/test_core_tags.py::TestSet::test_namespace_loop PASSED
+tests/test_core_tags.py::TestSet::test_namespace_macro PASSED
+tests/test_core_tags.py::TestSet::test_namespace_redefined PASSED
+tests/test_core_tags.py::TestSet::test_normal PASSED
+tests/test_core_tags.py::TestSet::test_set_invalid PASSED
+tests/test_core_tags.py::TestWith::test_with PASSED
+tests/test_core_tags.py::TestWith::test_with_argument_scoping PASSED
+tests/test_debug.py::TestDebug::test_get_corresponding_lineno_traceback PASSED
+tests/test_debug.py::TestDebug::test_include_syntax_error_source PASSED
+tests/test_debug.py::TestDebug::test_local_extraction PASSED
+tests/test_debug.py::TestDebug::test_pickleable_syntax_error PASSED
+tests/test_debug.py::TestDebug::test_regular_syntax_error PASSED
+tests/test_debug.py::TestDebug::test_runtime_error PASSED
+tests/test_debug.py::TestDebug::test_syntax_error PASSED
+tests/test_ext.py::TestAutoEscape::test_nonvolatile PASSED
+tests/test_ext.py::TestAutoEscape::test_overlay_scopes PASSED
+tests/test_ext.py::TestAutoEscape::test_scoped_setting PASSED
+tests/test_ext.py::TestAutoEscape::test_scoping PASSED
+tests/test_ext.py::TestAutoEscape::test_volatile PASSED
+tests/test_ext.py::TestAutoEscape::test_volatile_scoping PASSED
+tests/test_ext.py::TestExtensions::test_contextreference_node_can_pass_locals PASSED
+tests/test_ext.py::TestExtensions::test_contextreference_node_passes_context PASSED
+tests/test_ext.py::TestExtensions::test_debug PASSED
+tests/test_ext.py::TestExtensions::test_do PASSED
+tests/test_ext.py::TestExtensions::test_extend_late PASSED
+tests/test_ext.py::TestExtensions::test_extension_nodes PASSED
+tests/test_ext.py::TestExtensions::test_extension_ordering PASSED
+tests/test_ext.py::TestExtensions::test_identifier PASSED
+tests/test_ext.py::TestExtensions::test_loop_controls PASSED
+tests/test_ext.py::TestExtensions::test_preprocessor_extension PASSED
+tests/test_ext.py::TestExtensions::test_rebinding PASSED
+tests/test_ext.py::TestExtensions::test_streamfilter_extension PASSED
+tests/test_ext.py::TestInternationalization::test_comment_extract PASSED
+tests/test_ext.py::TestInternationalization::test_complex_plural PASSED
+tests/test_ext.py::TestInternationalization::test_extract PASSED
+tests/test_ext.py::TestInternationalization::test_extract_context PASSED
+tests/test_ext.py::TestInternationalization::test_extract_trimmed PASSED
+tests/test_ext.py::TestInternationalization::test_extract_trimmed_option PASSED
+tests/test_ext.py::TestInternationalization::test_trans PASSED
+tests/test_ext.py::TestInternationalization::test_trans_plural PASSED
+tests/test_ext.py::TestInternationalization::test_trans_plural_with_functions PASSED
+tests/test_ext.py::TestInternationalization::test_trans_stringformatting PASSED
+tests/test_ext.py::TestInternationalization::test_trimmed PASSED
+tests/test_ext.py::TestInternationalization::test_trimmed_policy PASSED
+tests/test_ext.py::TestInternationalization::test_trimmed_policy_override PASSED
+tests/test_ext.py::TestInternationalization::test_trimmed_varname_trimmed PASSED
+tests/test_ext.py::TestInternationalization::test_trimmed_vars PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_autoescape_macros PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_autoescape_support PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_complex_plural PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_context PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_context_block PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_context_plural PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_context_plural_block PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_newstyle_plural PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_novars_vars_escaping PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_num_called_num PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_num_used_twice PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_trans PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_trans_plural PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_trans_stringformatting PASSED
+tests/test_ext.py::TestNewstyleInternationalization::test_trans_vars PASSED
+tests/test_ext.py::TestScope::test_basic_scope_behavior PASSED
+tests/test_filters.py::TestFilter::test_abs PASSED
+tests/test_filters.py::TestFilter::test_attribute_map PASSED
+tests/test_filters.py::TestFilter::test_batch PASSED
+tests/test_filters.py::TestFilter::test_block PASSED
+tests/test_filters.py::TestFilter::test_bool_reject PASSED
+tests/test_filters.py::TestFilter::test_bool_select PASSED
+tests/test_filters.py::TestFilter::test_capitalize PASSED
+tests/test_filters.py::TestFilter::test_center PASSED
+tests/test_filters.py::TestFilter::test_chaining PASSED
+tests/test_filters.py::TestFilter::test_default PASSED
+tests/test_filters.py::TestFilter::test_dictsort[-[('aa', 0), ('AB', 3), ('b', 1), ('c', 2)]] PASSED
+tests/test_filters.py::TestFilter::test_dictsort[by="value"-[('aa', 0), ('b', 1), ('c', 2), ('AB', 3)]] PASSED
+tests/test_filters.py::TestFilter::test_dictsort[reverse=true-[('c', 2), ('b', 1), ('AB', 3), ('aa', 0)]] PASSED
+tests/test_filters.py::TestFilter::test_dictsort[true-[('AB', 3), ('aa', 0), ('b', 1), ('c', 2)]] PASSED
+tests/test_filters.py::TestFilter::test_empty_map PASSED
+tests/test_filters.py::TestFilter::test_escape PASSED
+tests/test_filters.py::TestFilter::test_filesizeformat PASSED
+tests/test_filters.py::TestFilter::test_filesizeformat_issue59 PASSED
+tests/test_filters.py::TestFilter::test_filter_calling PASSED
+tests/test_filters.py::TestFilter::test_filter_undefined PASSED
+tests/test_filters.py::TestFilter::test_filter_undefined_in_condexpr PASSED
+tests/test_filters.py::TestFilter::test_filter_undefined_in_elif PASSED
+tests/test_filters.py::TestFilter::test_filter_undefined_in_else PASSED
+tests/test_filters.py::TestFilter::test_filter_undefined_in_if PASSED
+tests/test_filters.py::TestFilter::test_filter_undefined_in_nested_if PASSED
+tests/test_filters.py::TestFilter::test_filtertag PASSED
+tests/test_filters.py::TestFilter::test_first PASSED
+tests/test_filters.py::TestFilter::test_float[32.32-32.32] PASSED
+tests/test_filters.py::TestFilter::test_float[42-42.0] PASSED
+tests/test_filters.py::TestFilter::test_float[abc-0.0] PASSED
+tests/test_filters.py::TestFilter::test_float_default PASSED
+tests/test_filters.py::TestFilter::test_forceescape PASSED
+tests/test_filters.py::TestFilter::test_format PASSED
+tests/test_filters.py::TestFilter::test_func_reject_attr PASSED
+tests/test_filters.py::TestFilter::test_func_select_attr PASSED
+tests/test_filters.py::TestFilter::test_groupby PASSED
+tests/test_filters.py::TestFilter::test_groupby_case[False-a: 1, 3\nb: 2\n] PASSED
+tests/test_filters.py::TestFilter::test_groupby_case[True-A: 3\na: 1\nb: 2\n] PASSED
+tests/test_filters.py::TestFilter::test_groupby_default PASSED
+tests/test_filters.py::TestFilter::test_groupby_multidot PASSED
+tests/test_filters.py::TestFilter::test_groupby_tuple_index PASSED
+tests/test_filters.py::TestFilter::test_indent PASSED
+tests/test_filters.py::TestFilter::test_indent_markup_input PASSED
+tests/test_filters.py::TestFilter::test_indent_width_string PASSED
+tests/test_filters.py::TestFilter::test_int[12345678901234567890-12345678901234567890] PASSED
+tests/test_filters.py::TestFilter::test_int[32.32-32] PASSED
+tests/test_filters.py::TestFilter::test_int[42-42] PASSED
+tests/test_filters.py::TestFilter::test_int[abc-0] PASSED
+tests/test_filters.py::TestFilter::test_int_base[011-8-9] PASSED
+tests/test_filters.py::TestFilter::test_int_base[0x33Z-16-0] PASSED
+tests/test_filters.py::TestFilter::test_int_base[0x4d32-16-19762] PASSED
+tests/test_filters.py::TestFilter::test_int_default PASSED
+tests/test_filters.py::TestFilter::test_int_special_method PASSED
+tests/test_filters.py::TestFilter::test_items PASSED
+tests/test_filters.py::TestFilter::test_items_undefined PASSED
+tests/test_filters.py::TestFilter::test_join PASSED
+tests/test_filters.py::TestFilter::test_join_attribute PASSED
+tests/test_filters.py::TestFilter::test_json_dump PASSED
+tests/test_filters.py::TestFilter::test_last PASSED
+tests/test_filters.py::TestFilter::test_length PASSED
+tests/test_filters.py::TestFilter::test_lower PASSED
+tests/test_filters.py::TestFilter::test_map_default PASSED
+tests/test_filters.py::TestFilter::test_map_sum PASSED
+tests/test_filters.py::TestFilter::test_min_max[{{ ["a", "B"]|max }}-B] PASSED
+tests/test_filters.py::TestFilter::test_min_max[{{ ["a", "B"]|max(case_sensitive=true) }}-a] PASSED
+tests/test_filters.py::TestFilter::test_min_max[{{ ["a", "B"]|min }}-a] PASSED
+tests/test_filters.py::TestFilter::test_min_max[{{ ["a", "B"]|min(case_sensitive=true) }}-B] PASSED
+tests/test_filters.py::TestFilter::test_min_max[{{ []|max }}-] PASSED
+tests/test_filters.py::TestFilter::test_min_max[{{ []|min }}-] PASSED
+tests/test_filters.py::TestFilter::test_min_max_attribute[max-9] PASSED
+tests/test_filters.py::TestFilter::test_min_max_attribute[min-1] PASSED
+tests/test_filters.py::TestFilter::test_pprint PASSED
+tests/test_filters.py::TestFilter::test_random PASSED
+tests/test_filters.py::TestFilter::test_replace PASSED
+tests/test_filters.py::TestFilter::test_reverse PASSED
+tests/test_filters.py::TestFilter::test_round_negative PASSED
+tests/test_filters.py::TestFilter::test_round_positive PASSED
+tests/test_filters.py::TestFilter::test_safe PASSED
+tests/test_filters.py::TestFilter::test_simple_map PASSED
+tests/test_filters.py::TestFilter::test_simple_reject PASSED
+tests/test_filters.py::TestFilter::test_simple_reject_attr PASSED
+tests/test_filters.py::TestFilter::test_simple_select PASSED
+tests/test_filters.py::TestFilter::test_simple_select_attr PASSED
+tests/test_filters.py::TestFilter::test_slice PASSED
+tests/test_filters.py::TestFilter::test_sort1 PASSED
+tests/test_filters.py::TestFilter::test_sort2 PASSED
+tests/test_filters.py::TestFilter::test_sort3 PASSED
+tests/test_filters.py::TestFilter::test_sort4 PASSED
+tests/test_filters.py::TestFilter::test_sort5 PASSED
+tests/test_filters.py::TestFilter::test_sort6 PASSED
+tests/test_filters.py::TestFilter::test_sort7 PASSED
+tests/test_filters.py::TestFilter::test_sort8 PASSED
+tests/test_filters.py::TestFilter::test_string PASSED
+tests/test_filters.py::TestFilter::test_striptags PASSED
+tests/test_filters.py::TestFilter::test_sum PASSED
+tests/test_filters.py::TestFilter::test_sum_attributes PASSED
+tests/test_filters.py::TestFilter::test_sum_attributes_nested PASSED
+tests/test_filters.py::TestFilter::test_sum_attributes_tuple PASSED
+tests/test_filters.py::TestFilter::test_title PASSED
+tests/test_filters.py::TestFilter::test_trim[ .-stays] PASSED
+tests/test_filters.py::TestFilter::test_trim[.-  ..stays] PASSED
+tests/test_filters.py::TestFilter::test_trim[None-..stays..] PASSED
+tests/test_filters.py::TestFilter::test_truncate PASSED
+tests/test_filters.py::TestFilter::test_truncate_end_length PASSED
+tests/test_filters.py::TestFilter::test_truncate_very_short PASSED
+tests/test_filters.py::TestFilter::test_unique PASSED
+tests/test_filters.py::TestFilter::test_unique_attribute PASSED
+tests/test_filters.py::TestFilter::test_unique_case_sensitive PASSED
+tests/test_filters.py::TestFilter::test_upper PASSED
+tests/test_filters.py::TestFilter::test_urlencode[Hello, world!-Hello%2C%20world%21] PASSED
+tests/test_filters.py::TestFilter::test_urlencode[Hello, world\u203d-Hello%2C%20world%E2%80%BD] PASSED
+tests/test_filters.py::TestFilter::test_urlencode[a b/c-a%20b/c] PASSED
+tests/test_filters.py::TestFilter::test_urlencode[value2-f=1] PASSED
+tests/test_filters.py::TestFilter::test_urlencode[value3-f=1&amp;z=2] PASSED
+tests/test_filters.py::TestFilter::test_urlencode[value4-%E2%80%BD=1] PASSED
+tests/test_filters.py::TestFilter::test_urlencode[value5-0=1] PASSED
+tests/test_filters.py::TestFilter::test_urlencode[value6-a+b%2Fc=a+b%2Fc] PASSED
+tests/test_filters.py::TestFilter::test_urlize PASSED
+tests/test_filters.py::TestFilter::test_urlize_extra_schemes_parameter PASSED
+tests/test_filters.py::TestFilter::test_urlize_rel_policy PASSED
+tests/test_filters.py::TestFilter::test_urlize_target_parameter PASSED
+tests/test_filters.py::TestFilter::test_wordcount PASSED
+tests/test_filters.py::TestFilter::test_wordwrap PASSED
+tests/test_filters.py::TestFilter::test_xmlattr PASSED
+tests/test_idtracking.py::test_basics PASSED
+tests/test_idtracking.py::test_complex PASSED
+tests/test_idtracking.py::test_if_branching_multi_scope PASSED
+tests/test_idtracking.py::test_if_branching_stores PASSED
+tests/test_idtracking.py::test_if_branching_stores_undefined PASSED
+tests/test_imports.py::TestImports::test_context_imports PASSED
+tests/test_imports.py::TestImports::test_exports PASSED
+tests/test_imports.py::TestImports::test_from_import_with_globals PASSED
+tests/test_imports.py::TestImports::test_import_needs_name PASSED
+tests/test_imports.py::TestImports::test_import_with_globals PASSED
+tests/test_imports.py::TestImports::test_import_with_globals_override PASSED
+tests/test_imports.py::TestImports::test_no_trailing_comma PASSED
+tests/test_imports.py::TestImports::test_not_exported PASSED
+tests/test_imports.py::TestImports::test_trailing_comma_with_context PASSED
+tests/test_imports.py::TestIncludes::test_choice_includes PASSED
+tests/test_imports.py::TestIncludes::test_context_include PASSED
+tests/test_imports.py::TestIncludes::test_context_include_with_overrides PASSED
+tests/test_imports.py::TestIncludes::test_import_from_with_context PASSED
+tests/test_imports.py::TestIncludes::test_include_ignoring_missing PASSED
+tests/test_imports.py::TestIncludes::test_unoptimized_scopes PASSED
+tests/test_inheritance.py::TestBugFix::test_double_extends PASSED
+tests/test_inheritance.py::TestBugFix::test_fixed_macro_scoping_bug PASSED
+tests/test_inheritance.py::TestInheritance::test_duplicate_required_or_scoped PASSED
+tests/test_inheritance.py::TestInheritance::test_dynamic_inheritance PASSED
+tests/test_inheritance.py::TestInheritance::test_invalid_required PASSED
+tests/test_inheritance.py::TestInheritance::test_layout PASSED
+tests/test_inheritance.py::TestInheritance::test_level1 PASSED
+tests/test_inheritance.py::TestInheritance::test_level1_required PASSED
+tests/test_inheritance.py::TestInheritance::test_level2 PASSED
+tests/test_inheritance.py::TestInheritance::test_level2_required PASSED
+tests/test_inheritance.py::TestInheritance::test_level3 PASSED
+tests/test_inheritance.py::TestInheritance::test_level3_required PASSED
+tests/test_inheritance.py::TestInheritance::test_level4 PASSED
+tests/test_inheritance.py::TestInheritance::test_multi_inheritance PASSED
+tests/test_inheritance.py::TestInheritance::test_preserve_blocks PASSED
+tests/test_inheritance.py::TestInheritance::test_required_with_scope PASSED
+tests/test_inheritance.py::TestInheritance::test_reuse_blocks PASSED
+tests/test_inheritance.py::TestInheritance::test_scoped_block PASSED
+tests/test_inheritance.py::TestInheritance::test_scoped_block_after_inheritance PASSED
+tests/test_inheritance.py::TestInheritance::test_super PASSED
+tests/test_inheritance.py::TestInheritance::test_super_in_scoped_block PASSED
+tests/test_inheritance.py::TestInheritance::test_working PASSED
+tests/test_lexnparse.py::TestLexer::test_balancing PASSED
+tests/test_lexnparse.py::TestLexer::test_bytefallback PASSED
+tests/test_lexnparse.py::TestLexer::test_comments PASSED
+tests/test_lexnparse.py::TestLexer::test_lineno_with_strip PASSED
+tests/test_lexnparse.py::TestLexer::test_name[1a-False] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[\U0001f40da-False] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[\u1885-True] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[\u1886-True] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[\u2118-True] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[\u212e-True] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[\u304d-True] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[\xb7-False] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[_-True] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[a--False] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[a\U0001f40d\U0001f40d-False] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[a\xb7-True] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[f\xf6\xf6-True] PASSED
+tests/test_lexnparse.py::TestLexer::test_name[foo-True] PASSED
+tests/test_lexnparse.py::TestLexer::test_normalizing PASSED
+tests/test_lexnparse.py::TestLexer::test_operators PASSED
+tests/test_lexnparse.py::TestLexer::test_raw1 PASSED
+tests/test_lexnparse.py::TestLexer::test_raw2 PASSED
+tests/test_lexnparse.py::TestLexer::test_raw3 PASSED
+tests/test_lexnparse.py::TestLexer::test_raw4 PASSED
+tests/test_lexnparse.py::TestLexer::test_string_escapes PASSED
+tests/test_lexnparse.py::TestLexer::test_trailing_newline PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_comment_syntax PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_erb_syntax PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_erb_syntax_no_lstrip PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_erb_syntax_with_manual PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_angle_bracket PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_angle_bracket_comment PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_angle_bracket_compact PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_angle_bracket_simple PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_blocks_consume_after_without_new_line PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_blocks_false_with_no_lstrip PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_blocks_inside_with_new_line PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_blocks_outside_with_new_line PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_blocks_without_new_line PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_comment PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_embeded_strings PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_endline PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_inline PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_left_chars PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_nested PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_preserve_leading_newlines PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_trim PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_trim_blocks_comment PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_trim_blocks_consume_before_without_new_line PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_trim_blocks_inside_with_new_line PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_trim_blocks_outside_with_new_line PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_trim_blocks_raw PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_lstrip_trim_blocks_without_new_line PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_no_lstrip PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_php_syntax PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_php_syntax_compact PASSED
+tests/test_lexnparse.py::TestLstripBlocks::test_php_syntax_with_manual PASSED
+tests/test_lexnparse.py::TestParser::test_balancing PASSED
+tests/test_lexnparse.py::TestParser::test_comment_syntax PASSED
+tests/test_lexnparse.py::TestParser::test_erb_syntax PASSED
+tests/test_lexnparse.py::TestParser::test_error_messages PASSED
+tests/test_lexnparse.py::TestParser::test_line_syntax PASSED
+tests/test_lexnparse.py::TestParser::test_line_syntax_priority PASSED
+tests/test_lexnparse.py::TestParser::test_php_syntax PASSED
+tests/test_lexnparse.py::TestParser::test_start_comment PASSED
+tests/test_lexnparse.py::TestSyntax::test_attr PASSED
+tests/test_lexnparse.py::TestSyntax::test_block_end_name PASSED
+tests/test_lexnparse.py::TestSyntax::test_bool PASSED
+tests/test_lexnparse.py::TestSyntax::test_call PASSED
+tests/test_lexnparse.py::TestSyntax::test_collection_literal[()] PASSED
+tests/test_lexnparse.py::TestSyntax::test_collection_literal[[]] PASSED
+tests/test_lexnparse.py::TestSyntax::test_collection_literal[{}] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare[1->-0] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare[1->=-1] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare[2-<-3] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare[3-<=-4] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare[4-!=-5] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare[4-==-4] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare_compound[{{ 4 < 2 < 3 }}-False] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare_compound[{{ 4 > 2 < 3 }}-True] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare_compound[{{ 4 > 2 > 3 }}-False] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare_compound[{{ a < b < c }}-False] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare_compound[{{ a > b < c }}-True] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare_compound[{{ a > b > c }}-False] PASSED
+tests/test_lexnparse.py::TestSyntax::test_compare_parens PASSED
+tests/test_lexnparse.py::TestSyntax::test_concat PASSED
+tests/test_lexnparse.py::TestSyntax::test_conditional_expression PASSED
+tests/test_lexnparse.py::TestSyntax::test_const PASSED
+tests/test_lexnparse.py::TestSyntax::test_const_assign PASSED
+tests/test_lexnparse.py::TestSyntax::test_constant_casing PASSED
+tests/test_lexnparse.py::TestSyntax::test_div PASSED
+tests/test_lexnparse.py::TestSyntax::test_django_attr PASSED
+tests/test_lexnparse.py::TestSyntax::test_filter_priority PASSED
+tests/test_lexnparse.py::TestSyntax::test_function_calls PASSED
+tests/test_lexnparse.py::TestSyntax::test_grouping PASSED
+tests/test_lexnparse.py::TestSyntax::test_implicit_subscribed_tuple PASSED
+tests/test_lexnparse.py::TestSyntax::test_inop PASSED
+tests/test_lexnparse.py::TestSyntax::test_localset PASSED
+tests/test_lexnparse.py::TestSyntax::test_math PASSED
+tests/test_lexnparse.py::TestSyntax::test_neg_filter_priority PASSED
+tests/test_lexnparse.py::TestSyntax::test_notin PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[0-0] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[0_00-0] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[0b1001_1111-159] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[0o123-83] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[0o1_23-83] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[0x123abc-1194684] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[0x12_3abc-1194684] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[1-1] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[1.2-1.2] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[10e1-100.0] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[123-123] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[12_34_56-123456] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[1_2.3_4e5_6-1.234e+57] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[1e0-1.0] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[2.5e+100-2.5e+100] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[2.5e100-2.5e+100] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[25.6e-10-2.56e-09] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[34.56-34.56] PASSED
+tests/test_lexnparse.py::TestSyntax::test_numeric_literal[3_4.5_6-34.56] PASSED
+tests/test_lexnparse.py::TestSyntax::test_operator_precedence PASSED
+tests/test_lexnparse.py::TestSyntax::test_parse_unary PASSED
+tests/test_lexnparse.py::TestSyntax::test_raw2 PASSED
+tests/test_lexnparse.py::TestSyntax::test_short_conditional_expression PASSED
+tests/test_lexnparse.py::TestSyntax::test_slicing PASSED
+tests/test_lexnparse.py::TestSyntax::test_string_concatenation PASSED
+tests/test_lexnparse.py::TestSyntax::test_subscript PASSED
+tests/test_lexnparse.py::TestSyntax::test_test_chaining PASSED
+tests/test_lexnparse.py::TestSyntax::test_trailing_comma PASSED
+tests/test_lexnparse.py::TestSyntax::test_tuple PASSED
+tests/test_lexnparse.py::TestSyntax::test_tuple_expr PASSED
+tests/test_lexnparse.py::TestSyntax::test_unary PASSED
+tests/test_lexnparse.py::TestTokenStream::test_iter PASSED
+tests/test_lexnparse.py::TestTokenStream::test_simple PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_comment_no_trim PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_comment_trim PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_lstrip_no_trim PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_multiple_comment_no_trim_lstrip PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_multiple_comment_trim_lstrip PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_no_trim PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_no_trim_angle_bracket PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_no_trim_nested PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_no_trim_outer PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_no_trim_php_syntax PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_raw_no_trim_lstrip PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_raw_trim_lstrip PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_trim PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_trim_blocks_false_with_no_trim PASSED
+tests/test_lexnparse.py::TestTrimBlocks::test_trim_nested PASSED
+tests/test_loader.py::TestFileSystemLoader::test_caches_template_based_on_mtime PASSED
+tests/test_loader.py::TestFileSystemLoader::test_filename_normpath PASSED
+tests/test_loader.py::TestFileSystemLoader::test_searchpath_as_list_including_pathlib PASSED
+tests/test_loader.py::TestFileSystemLoader::test_searchpath_as_pathlib PASSED
+tests/test_loader.py::TestFileSystemLoader::test_searchpath_as_str PASSED
+tests/test_loader.py::TestFileSystemLoader::test_uses_specified_encoding[iso-8859-1-\xe6\x96\x87\xe5\xad\x97\xe5\x8c\x96\xe3\x81\x91] PASSED
+tests/test_loader.py::TestFileSystemLoader::test_uses_specified_encoding[utf-8-\u6587\u5b57\u5316\u3051] PASSED
+tests/test_loader.py::TestLoaders::test_cache_loader_change PASSED
+tests/test_loader.py::TestLoaders::test_caching PASSED
+tests/test_loader.py::TestLoaders::test_choice_loader PASSED
+tests/test_loader.py::TestLoaders::test_dict_loader PASSED
+tests/test_loader.py::TestLoaders::test_dict_loader_cache_invalidates PASSED
+tests/test_loader.py::TestLoaders::test_filesystem_loader_overlapping_names PASSED
+tests/test_loader.py::TestLoaders::test_function_loader PASSED
+tests/test_loader.py::TestLoaders::test_limited_size_cache PASSED
+tests/test_loader.py::TestLoaders::test_no_cache PASSED
+tests/test_loader.py::TestLoaders::test_package_loader PASSED
+tests/test_loader.py::TestLoaders::test_prefix_loader PASSED
+tests/test_loader.py::TestLoaders::test_split_template_path PASSED
+tests/test_loader.py::TestModuleLoader::test_choice_loader PASSED
+tests/test_loader.py::TestModuleLoader::test_deflated_zip_compile PASSED
+tests/test_loader.py::TestModuleLoader::test_filesystem_compile PASSED
+tests/test_loader.py::TestModuleLoader::test_log PASSED
+tests/test_loader.py::TestModuleLoader::test_path_as_pathlib PASSED
+tests/test_loader.py::TestModuleLoader::test_prefix_loader PASSED
+tests/test_loader.py::TestModuleLoader::test_stored_zip_compile PASSED
+tests/test_loader.py::TestModuleLoader::test_supports_pathlib_in_list_of_paths PASSED
+tests/test_loader.py::TestModuleLoader::test_weak_references PASSED
+tests/test_loader.py::test_package_dir_list PASSED
+tests/test_loader.py::test_package_dir_source[foo/test.html-FOO] PASSED
+tests/test_loader.py::test_package_dir_source[test.html-BAR] PASSED
+tests/test_loader.py::test_package_file_list PASSED
+tests/test_loader.py::test_package_file_source[foo/test.html-FOO] PASSED
+tests/test_loader.py::test_package_file_source[test.html-BAR] PASSED
+tests/test_loader.py::test_package_zip_list PASSED
+tests/test_loader.py::test_package_zip_omit_curdir[./] PASSED
+tests/test_loader.py::test_package_zip_omit_curdir[.] PASSED
+tests/test_loader.py::test_package_zip_omit_curdir[] PASSED
+tests/test_loader.py::test_package_zip_source[foo/test.html-FOO] PASSED
+tests/test_loader.py::test_package_zip_source[test.html-BAR] PASSED
+tests/test_loader.py::test_pep_451_import_hook PASSED
+tests/test_nativetypes.py::test_adding_undefined_native_return PASSED
+tests/test_nativetypes.py::test_booleans[{{ '' == None }}-False] PASSED
+tests/test_nativetypes.py::test_booleans[{{ 1 == 1 }}-True] PASSED
+tests/test_nativetypes.py::test_booleans[{{ 2 + 2 == 5 }}-False] PASSED
+tests/test_nativetypes.py::test_booleans[{{ None is none }}-True] PASSED
+tests/test_nativetypes.py::test_booleans[{{ value }}-False] PASSED
+tests/test_nativetypes.py::test_booleans[{{ value }}-True] PASSED
+tests/test_nativetypes.py::test_cast_int PASSED
+tests/test_nativetypes.py::test_concat_strings_with_quotes PASSED
+tests/test_nativetypes.py::test_constant_dunder PASSED
+tests/test_nativetypes.py::test_constant_dunder_to_string PASSED
+tests/test_nativetypes.py::test_is_defined_native_return PASSED
+tests/test_nativetypes.py::test_leading_spaces PASSED
+tests/test_nativetypes.py::test_list_add PASSED
+tests/test_nativetypes.py::test_loop_look_alike PASSED
+tests/test_nativetypes.py::test_loops PASSED
+tests/test_nativetypes.py::test_loops_with_ints PASSED
+tests/test_nativetypes.py::test_macro PASSED
+tests/test_nativetypes.py::test_multi_expression_add PASSED
+tests/test_nativetypes.py::test_no_intermediate_eval PASSED
+tests/test_nativetypes.py::test_spontaneous_env PASSED
+tests/test_nativetypes.py::test_string_literal_var PASSED
+tests/test_nativetypes.py::test_string_top_level PASSED
+tests/test_nativetypes.py::test_tuple_of_variable_strings PASSED
+tests/test_nativetypes.py::test_undefined_native_return PASSED
+tests/test_nativetypes.py::test_variable_dunder PASSED
+tests/test_nodes.py::test_template_hash PASSED
+tests/test_pickle.py::test_environment PASSED
+tests/test_regression.py::TestBug::test_block_set_with_extends PASSED
+tests/test_regression.py::TestBug::test_cached_extends[extends] PASSED
+tests/test_regression.py::TestBug::test_cached_extends[include] PASSED
+tests/test_regression.py::TestBug::test_call_with_args PASSED
+tests/test_regression.py::TestBug::test_callable_defaults PASSED
+tests/test_regression.py::TestBug::test_caller_scoping PASSED
+tests/test_regression.py::TestBug::test_correct_prefix_loader_name PASSED
+tests/test_regression.py::TestBug::test_custom_context PASSED
+tests/test_regression.py::TestBug::test_double_caller PASSED
+tests/test_regression.py::TestBug::test_double_caller_no_default PASSED
+tests/test_regression.py::TestBug::test_else_loop_bug PASSED
+tests/test_regression.py::TestBug::test_empty_if PASSED
+tests/test_regression.py::TestBug::test_empty_if_condition_fails PASSED
+tests/test_regression.py::TestBug::test_extends_output_bugs PASSED
+tests/test_regression.py::TestBug::test_grouper_repr PASSED
+tests/test_regression.py::TestBug::test_keyword_folding PASSED
+tests/test_regression.py::TestBug::test_loop_call_loop PASSED
+tests/test_regression.py::TestBug::test_loop_include PASSED
+tests/test_regression.py::TestBug::test_macro_blocks PASSED
+tests/test_regression.py::TestBug::test_macro_escaping PASSED
+tests/test_regression.py::TestBug::test_macro_scoping PASSED
+tests/test_regression.py::TestBug::test_macro_var_bug PASSED
+tests/test_regression.py::TestBug::test_macro_var_bug_advanced PASSED
+tests/test_regression.py::TestBug::test_markup_and_chainable_undefined PASSED
+tests/test_regression.py::TestBug::test_nested_for_else PASSED
+tests/test_regression.py::TestBug::test_nested_loop_scoping PASSED
+tests/test_regression.py::TestBug::test_old_macro_loop_scoping_bug PASSED
+tests/test_regression.py::TestBug::test_partial_conditional_assignments PASSED
+tests/test_regression.py::TestBug::test_pass_context_block_and_loop PASSED
+tests/test_regression.py::TestBug::test_pass_context_callable_class PASSED
+tests/test_regression.py::TestBug::test_pass_context_in_blocks PASSED
+tests/test_regression.py::TestBug::test_pass_context_loop_vars PASSED
+tests/test_regression.py::TestBug::test_pass_context_scoped_loop_vars PASSED
+tests/test_regression.py::TestBug::test_recursive_loop_bug PASSED
+tests/test_regression.py::TestBug::test_recursive_loop_compile PASSED
+tests/test_regression.py::TestBug::test_recursive_loop_filter PASSED
+tests/test_regression.py::TestBug::test_scoped_block PASSED
+tests/test_regression.py::TestBug::test_scoped_block_loop_vars PASSED
+tests/test_regression.py::TestBug::test_scopes_and_blocks PASSED
+tests/test_regression.py::TestBug::test_scopes_and_include PASSED
+tests/test_regression.py::TestBug::test_set_and_include PASSED
+tests/test_regression.py::TestBug::test_stacked_locals_scoping_bug PASSED
+tests/test_regression.py::TestBug::test_stacked_locals_scoping_bug_twoframe PASSED
+tests/test_regression.py::TestBug::test_subproperty_if PASSED
+tests/test_regression.py::TestBug::test_urlize_filter_closing_punctuation PASSED
+tests/test_regression.py::TestBug::test_urlize_filter_escaping PASSED
+tests/test_regression.py::TestBug::test_variable_reuse PASSED
+tests/test_regression.py::TestBug::test_weird_inline_comment PASSED
+tests/test_regression.py::TestCorner::test_assigned_scoping PASSED
+tests/test_regression.py::TestCorner::test_closure_scoping PASSED
+tests/test_regression.py::test_unicode_whitespace[\x0c] PASSED
+tests/test_regression.py::test_unicode_whitespace[\x85] PASSED
+tests/test_runtime.py::test_iterator_not_advanced_early PASSED
+tests/test_runtime.py::test_loop_idx PASSED
+tests/test_runtime.py::test_loop_idx0 PASSED
+tests/test_runtime.py::test_loopcontext0 PASSED
+tests/test_runtime.py::test_loopcontext1 PASSED
+tests/test_runtime.py::test_loopcontext2 PASSED
+tests/test_runtime.py::test_mock_not_pass_arg_marker PASSED
+tests/test_security.py::TestSandbox::test_attr_filter PASSED
+tests/test_security.py::TestSandbox::test_binary_operator_intercepting PASSED
+tests/test_security.py::TestSandbox::test_immutable_environment PASSED
+tests/test_security.py::TestSandbox::test_restricted PASSED
+tests/test_security.py::TestSandbox::test_template_data PASSED
+tests/test_security.py::TestSandbox::test_unary_operator_intercepting PASSED
+tests/test_security.py::TestSandbox::test_unsafe PASSED
+tests/test_security.py::TestStringFormat::test_basic_format_all_okay PASSED
+tests/test_security.py::TestStringFormat::test_basic_format_safety PASSED
+tests/test_security.py::TestStringFormat::test_empty_braces_format PASSED
+tests/test_security.py::TestStringFormat::test_safe_format_all_okay PASSED
+tests/test_security.py::TestStringFormat::test_safe_format_safety PASSED
+tests/test_security.py::TestStringFormatMap::test_basic_format_all_okay PASSED
+tests/test_security.py::TestStringFormatMap::test_basic_format_safety PASSED
+tests/test_security.py::TestStringFormatMap::test_safe_format_all_okay PASSED
+tests/test_tests.py::TestTestsCase::test_compare_aliases[eq 2-True] PASSED
+tests/test_tests.py::TestTestsCase::test_compare_aliases[eq 3-False] PASSED
+tests/test_tests.py::TestTestsCase::test_compare_aliases[ge 2-True] PASSED
+tests/test_tests.py::TestTestsCase::test_compare_aliases[ge 3-False] PASSED
+tests/test_tests.py::TestTestsCase::test_compare_aliases[gt 1-True] PASSED
+tests/test_tests.py::TestTestsCase::test_compare_aliases[gt 2-False] PASSED
+tests/test_tests.py::TestTestsCase::test_compare_aliases[le 1-False] PASSED
+tests/test_tests.py::TestTestsCase::test_compare_aliases[le 2-True] PASSED
+tests/test_tests.py::TestTestsCase::test_compare_aliases[lt 2-False] PASSED
+tests/test_tests.py::TestTestsCase::test_compare_aliases[lt 3-True] PASSED
+tests/test_tests.py::TestTestsCase::test_compare_aliases[ne 2-False] PASSED
+tests/test_tests.py::TestTestsCase::test_compare_aliases[ne 3-True] PASSED
+tests/test_tests.py::TestTestsCase::test_defined PASSED
+tests/test_tests.py::TestTestsCase::test_equalto PASSED
+tests/test_tests.py::TestTestsCase::test_escaped PASSED
+tests/test_tests.py::TestTestsCase::test_even PASSED
+tests/test_tests.py::TestTestsCase::test_greaterthan PASSED
+tests/test_tests.py::TestTestsCase::test_in PASSED
+tests/test_tests.py::TestTestsCase::test_lessthan PASSED
+tests/test_tests.py::TestTestsCase::test_lower PASSED
+tests/test_tests.py::TestTestsCase::test_multiple_tests PASSED
+tests/test_tests.py::TestTestsCase::test_no_paren_for_arg1 PASSED
+tests/test_tests.py::TestTestsCase::test_odd PASSED
+tests/test_tests.py::TestTestsCase::test_sameas PASSED
+tests/test_tests.py::TestTestsCase::test_types["foo" is callable-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types["foo" is iterable-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types["foo" is mapping-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types["foo" is sequence-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types["foo" is string-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[(10 ** 100) is float-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[(10 ** 100) is integer-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[(10 ** 100) is number-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[0 is boolean-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[0 is false-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[0 is true-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[0.0 is boolean-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[1 is boolean-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[1 is false-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[1 is true-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[1.0 is boolean-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[3.14159 is boolean-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[3.14159 is integer-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[3.14159 is number-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[4.2 is float-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[42 is boolean-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[42 is callable-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[42 is false-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[42 is float-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[42 is integer-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[42 is iterable-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[42 is mapping-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[42 is none-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[42 is number-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[42 is sequence-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[42 is string-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[42 is true-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[[1, 2, 3] is sequence-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[[] is callable-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[[] is iterable-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[[] is mapping-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[[] is sequence-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[complex is number-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[false is boolean-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[false is callable-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[false is false-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[false is float-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[false is integer-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[false is iterable-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[false is mapping-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[false is none-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[false is number-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[false is sequence-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[false is string-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[false is true-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[mydict is mapping-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[none is boolean-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[none is callable-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[none is false-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[none is float-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[none is integer-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[none is iterable-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[none is mapping-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[none is none-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[none is number-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[none is sequence-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[none is string-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[none is true-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[range is callable-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[range(5) is iterable-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[true is boolean-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[true is false-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[true is float-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[true is integer-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[true is none-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[true is number-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[true is string-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[true is true-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[{} is callable-False] PASSED
+tests/test_tests.py::TestTestsCase::test_types[{} is iterable-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[{} is mapping-True] PASSED
+tests/test_tests.py::TestTestsCase::test_types[{} is sequence-True] PASSED
+tests/test_tests.py::TestTestsCase::test_upper PASSED
+tests/test_tests.py::test_is_filter PASSED
+tests/test_tests.py::test_is_test PASSED
+tests/test_tests.py::test_name_undefined PASSED
+tests/test_tests.py::test_name_undefined_in_if PASSED
+tests/test_utils.py::TestEscapeUrlizeTarget::test_escape_urlize_target PASSED
+tests/test_utils.py::TestHelpers::test_autoescape_select PASSED
+tests/test_utils.py::TestHelpers::test_object_type_repr PASSED
+tests/test_utils.py::TestLRUCache::test_clear PASSED
+tests/test_utils.py::TestLRUCache::test_copy[copy0] PASSED
+tests/test_utils.py::TestLRUCache::test_copy[copy1] PASSED
+tests/test_utils.py::TestLRUCache::test_items PASSED
+tests/test_utils.py::TestLRUCache::test_pickleable PASSED
+tests/test_utils.py::TestLRUCache::test_repr PASSED
+tests/test_utils.py::TestLRUCache::test_setdefault PASSED
+tests/test_utils.py::TestLRUCache::test_simple PASSED
+tests/test_utils.py::TestLRUCache::test_values PASSED
+tests/test_utils.py::TestLRUCache::test_values_empty PASSED
+tests/test_utils.py::TestLoremIpsum::test_lorem_ipsum_html PASSED
+tests/test_utils.py::TestLoremIpsum::test_lorem_ipsum_markup PASSED
+tests/test_utils.py::TestLoremIpsum::test_lorem_ipsum_max PASSED
+tests/test_utils.py::TestLoremIpsum::test_lorem_ipsum_min PASSED
+tests/test_utils.py::TestLoremIpsum::test_lorem_ipsum_n PASSED
+tests/test_utils.py::test_consume PASSED
+tests/test_utils.py::test_missing PASSED
+
+======== 842 passed ========
+  py$(PYV): OK
+  congratulations :)
