@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2023 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,15 +23,14 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/python3.7/vendor-packages/pkgconfig-$(COMPONENT_VERSION)-py3.7.egg-info/PKG-INFO
-file path=usr/lib/python3.7/vendor-packages/pkgconfig-$(COMPONENT_VERSION)-py3.7.egg-info/SOURCES.txt
-file path=usr/lib/python3.7/vendor-packages/pkgconfig-$(COMPONENT_VERSION)-py3.7.egg-info/dependency_links.txt
-file path=usr/lib/python3.7/vendor-packages/pkgconfig-$(COMPONENT_VERSION)-py3.7.egg-info/top_level.txt
-file path=usr/lib/python3.7/vendor-packages/pkgconfig/__init__.py
-file path=usr/lib/python3.7/vendor-packages/pkgconfig/pkgconfig.py
-file path=usr/lib/python3.9/vendor-packages/pkgconfig-$(COMPONENT_VERSION)-py3.9.egg-info/PKG-INFO
-file path=usr/lib/python3.9/vendor-packages/pkgconfig-$(COMPONENT_VERSION)-py3.9.egg-info/SOURCES.txt
-file path=usr/lib/python3.9/vendor-packages/pkgconfig-$(COMPONENT_VERSION)-py3.9.egg-info/dependency_links.txt
-file path=usr/lib/python3.9/vendor-packages/pkgconfig-$(COMPONENT_VERSION)-py3.9.egg-info/top_level.txt
-file path=usr/lib/python3.9/vendor-packages/pkgconfig/__init__.py
-file path=usr/lib/python3.9/vendor-packages/pkgconfig/pkgconfig.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pkgconfig-$(HUMAN_VERSION).dist-info/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/pkgconfig-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/pkgconfig-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/pkgconfig/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pkgconfig/pkgconfig.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
