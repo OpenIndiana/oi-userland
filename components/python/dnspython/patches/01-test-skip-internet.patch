@@ -1,0 +1,19 @@
+--- dnspython-2.3.0/tests/test_resolver_override.py.orig
++++ dnspython-2.3.0/tests/test_resolver_override.py
+@@ -10,6 +10,8 @@
+ import dns.resolver
+ import tests.util
+ 
++import pytest
++
+ 
+ @unittest.skipIf(not tests.util.is_internet_reachable(), "Internet not reachable")
+ class OverrideSystemResolverTestCase(unittest.TestCase):
+@@ -189,6 +191,7 @@
+     #        a = dns.resolver._original_getfqdn('www.dnspython.org')
+     #        self.assertEqual(dns.name.from_text(a), dns.name.from_text(b))
+ 
++    @pytest.mark.skip(reason="needs internet access")
+     def test_gethostbyaddr(self):
+         a = dns.resolver._original_gethostbyaddr("8.8.8.8")
+         b = socket.gethostbyaddr("8.8.8.8")
