@@ -18,15 +18,18 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xwininfo
-COMPONENT_VERSION=        1.1.5
-COMPONENT_REVISION=       1
+COMPONENT_VERSION=        1.1.6
 COMPONENT_SUMMARY=        xwininfo - window information utility for X
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH=   sha256:3518897c17448df9ba99ad6d9bb1ca0f17bc0ed7c0fd61281b34ceed29a9253f
 COMPONENT_FMRI=           x11/diagnostic/xwininfo
-COMPONENT_ARCHIVE_HASH= \
-  sha256:7a405441dfc476666c744f5fcd1bc8a75abf8b5b1d85db7b88b370982365080e
+COMPONENT_LICENSE_FILE=   COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+CONFIGURE_OPTIONS += --with-xcb-errors
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/xcb-util-errors
