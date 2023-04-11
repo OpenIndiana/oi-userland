@@ -15,7 +15,6 @@
 # Copyright 2020 Michal Nowak
 #
 
-BUILD_BITS=i 64
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-common
