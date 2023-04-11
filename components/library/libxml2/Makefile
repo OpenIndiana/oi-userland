@@ -79,7 +79,7 @@ COMPONENT_INSTALL_ARGS.64 += pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 COMPONENT_BUILD_ARGS.64 += pythondir=$(PYTHON_VENDOR_PACKAGES)
 COMPONENT_BUILD_ARGS.64 += pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 
-COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if )
+COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; PATH="$(PATH)" autoreconf -if )
 
 USE_COMMON_TEST_MASTER=	no
 
