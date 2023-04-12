@@ -1,0 +1,27 @@
+Workaround for Solaris bugs:
+Bug 15320009 - SUNBT6400595 x86 register defines unnecessarily pollute global namespace
+Bug 15558893 - SUNBT6834287 sys/regset.h included in too many places
+
+--- firefox-112.0/modules/freetype2/src/truetype/ttinterp.h.orig
++++ firefox-112.0/modules/freetype2/src/truetype/ttinterp.h
+@@ -176,6 +176,8 @@
+     FT_Size_Metrics    metrics;    /* !                */
+     TT_Size_Metrics    tt_metrics; /* ! size metrics   */
+ 
++#undef GS /* avoid conflict with <sys/regset.h> on Solaris x86 systems */
++#define GS FT_GS
+     TT_GraphicsState   GS;         /* !@ current graphics state */
+ 
+     FT_Int             iniRange;  /* initial code range number   */
+--- firefox-112.0/modules/freetype2/src/truetype/ttobjs.h.orig
++++ firefox-112.0/modules/freetype2/src/truetype/ttobjs.h
+@@ -301,6 +301,8 @@
+ 
+     TT_CodeRangeTable  codeRangeTable;
+ 
++#undef GS /* avoid conflict with <sys/regset.h> on Solaris x86 systems */
++#define GS FT_GS
+     TT_GraphicsState   GS;
+ 
+     FT_ULong           cvt_size;      /* the scaled control value table */
+
