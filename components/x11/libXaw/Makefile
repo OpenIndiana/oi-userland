@@ -18,21 +18,23 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXaw
-COMPONENT_VERSION= 1.0.14
+COMPONENT_VERSION= 1.0.15
+COMPONENT_SUMMARY= libXaw - X Athena Widgets library
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:ab35f70fde9fb02cc71b342f654846a74328b74cb3a0703c02d20eddb212754a
 COMPONENT_FMRI=    x11/library/toolkit/libxaw7
-COMPONENT_SUMMARY= libXaw - X Athena Widgets library 
-COMPONENT_ARCHIVE_HASH= \
-  sha256:76aef98ea3df92615faec28004b5ce4e5c6855e716fa16de40c32030722a6f8e
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
                           cd $(@D) &&  autoreconf -f  -i )
 
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --disable-xaw6
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-xaw6
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
