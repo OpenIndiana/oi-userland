@@ -30,12 +30,12 @@ BUILD_STYLE =           waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.17.5
+COMPONENT_VERSION=	4.18.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
 COMPONENT_PROJECT_URL=	https://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ebb7880d474ffc09d73b5fc77bcbd657f6235910337331a9c24d7f69ca11442b
+COMPONENT_ARCHIVE_HASH=	sha256:cedeaa2f244a0862c4f73b7b9f2ff92d181fd3ba7df80284a2f25f7713b9cc0e
 COMPONENT_ARCHIVE_URL=	https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL =     https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI=		library/samba/libsmbclient
@@ -164,6 +164,9 @@ $(BUILD_DIR)/.pc.fixed:	$(INSTALL_32)
 
 # common targets
 install:	$(INSTALL_32) $(BUILD_DIR)/.pc.fixed
+
+# manually added packages
+PERL_REQUIRED_PACKAGES +=library/perl-5/json
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/file-monitor/gamin
