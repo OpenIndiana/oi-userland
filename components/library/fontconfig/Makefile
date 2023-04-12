@@ -19,6 +19,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fontconfig
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	2.14.2
 COMPONENT_SUMMARY=	Fontconfig - Font configuration and customization library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
