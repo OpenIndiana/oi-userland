@@ -20,24 +20,25 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-base1
-COMPONENT_VERSION=      1.22.1
-#COMPONENT_REVISION=		1
+COMPONENT_VERSION=      1.22.2
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME= 	gst-plugins-base
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:59bcaeacc5646b8dbdcfa4ef20ca6e818dd234910efb4cee1bbea441a3801c69
+COMPONENT_ARCHIVE_HASH= sha256:eb65120c4ee79b7a153c3c1972d5c0158c2151877cc51ec7725bba5749679d49
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/base
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_LICENSE=      GPLv2,LGPLv2
+COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
 CFLAGS += -I/usr/X11/include -lsocket
+
 # build with the distribution preferred libjpeg implementation
 CFLAGS             +=           $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS           +=           $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
@@ -49,19 +50,12 @@ CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS += -Dalsa=disabled
 CONFIGURE_OPTIONS += -Dorc=enabled
 CONFIGURE_OPTIONS += -Dpango=enabled
-#CONFIGURE_OPTIONS += --disable-gles2
-#CONFIGURE_OPTIONS += -Dgl=disabled
 CONFIGURE_OPTIONS += -Dgl_api=opengl
 CONFIGURE_OPTIONS += -Dgl_platform=glx,egl
 CONFIGURE_OPTIONS += -Dgl_winsys=x11,egl
 CONFIGURE_OPTIONS += -Dgl-graphene=disabled
-#CONFIGURE_OPTIONS += --enable-external
-#CONFIGURE_OPTIONS += --enable-experimental
 CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
 CONFIGURE_OPTIONS.64 += -Dintrospection=enabled
-#CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
-#CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
-#CONFIGURE_OPTIONS += --with-default-videosink=autovideosink
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
@@ -71,28 +65,12 @@ COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ENV += CC="$(CC)"
 
 unexport SHELLOPTS
-# (first) delete the timing information from any line
-# delete the "exit status N", it can cause issues too
-# print lines that start with " N/NNN"
-# print everything between "^Ok:" and "^Timeout:"
-# delete the ninja log-related stuff at the end
-# elements_compositor and elements_libvisual can non-determinstically
-# fail, so leave them and the totals out
-# many of the GL tests require a DISPLAY, so filter out libs_gstgl*,
-# elements_gl*, and pipelines_gl*
+
+# As test results keep only everything between the lines containing Ok: and Timeout:
+# Note that the tests need to run in a graphical environment.
 COMPONENT_TEST_TRANSFORMS += \
     '-n ' \
-    '-e "/elements_compositor/d" ' \
-    '-e "/elements_libvisual/d" ' \
-    '-e "/libs_gstgl/d" ' \
-    '-e "/elements_gl/d" ' \
-    '-e "/pipelines_gl/d" ' \
-    '-e "s/[ 	]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
-    '-e "s/[ 	]*exit status [0-9][0-9]*//" ' \
-    '-e "/^[ 	]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
-    '-e "/^Summary of/p" ' \
-    '-e "/^Ok:/,/^Timeout:/d" ' \
-    '-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
+    '-e "/^Ok:/,/^Timeout:/p" '
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/library/mesa
