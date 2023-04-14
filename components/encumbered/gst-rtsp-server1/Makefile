@@ -14,28 +14,25 @@
 #
 
 BUILD_BITS= 64
-BUILD_STYLE=	meson
-
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-rtsp-server1
-COMPONENT_VERSION=      1.22.1
+COMPONENT_VERSION=      1.22.2
 COMPONENT_SUMMARY=      Multimedia graph framework - rtsp server
-COMPONENT_SRC_NAME=	gst-rtsp-server
+COMPONENT_SRC_NAME=		gst-rtsp-server
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:4e0b972608f67d5d8f5363c827cfcf132b0e00877be6f1905358d514249b05a3
+COMPONENT_ARCHIVE_HASH= sha256:2be4aecfb88710100ea7115ed0216403e8094344ebf146094271b8d4d73828bf
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/rtsp-server
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
-COMPONENT_LICENSE=      LGPLv2
-COMPONENT_LICENSE_FILE= gst-rtsp-server1.license
+COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
-
-#gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
 
@@ -43,24 +40,15 @@ PATH = $(PATH.gnu)
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-# delete the "exit status N", it can cause issues too
-# print lines that start with " N/NNN"
-# print everything between "^Ok:" and "^Timeout:"
-# delete the ninja log-related stuff at the end
 unexport SHELLOPTS
+
+# As test results keep only everything between the lines containing Ok: and Timeout:
 COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "s/[        ]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
-        '-e "s/[        ]*exit status [0-9][0-9]*//" ' \
-        '-e "/^[        ]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
-        '-e "/^Summary of/p" ' \
-        '-e "/^Ok:/,/^Timeout:/p" ' \
-        '-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
+    '-n ' \
+    '-e "/^Ok:/,/^Timeout:/p" '
 
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
-
-# Manually added dependencies
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/bad
 
 # Auto-generated dependencies
