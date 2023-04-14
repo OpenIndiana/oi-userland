@@ -19,21 +19,17 @@ BUILD_STYLE=	meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-devtools1
-COMPONENT_VERSION=      1.22.1
+COMPONENT_VERSION=      1.22.2
 COMPONENT_SUMMARY=      Multimedia graph framework - devtools
-COMPONENT_SRC_NAME=	gst-devtools
+COMPONENT_SRC_NAME=		gst-devtools
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:38ee5e0b35b90c976b4cfe8672fecf384db4404ea166465f2dc8bf9ba7688be5
+COMPONENT_ARCHIVE_HASH= sha256:eb62726d3e27a8782369a24fd6364a8885ed2462b3bbdab091dffc8139ee06d8
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/devtools
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2
-COMPONENT_LICENSE_FILE= gst-devtools1.license
-
-# Set python version used by this product
-PYTHON_VERSION=		3.9
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
@@ -52,20 +48,12 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(PROTOUSRBINDIR)/gst-validate-launcher;
 
 # Test fail because we are missing gst-validate
-# (first) delete the timing information from any line
-# delete the "exit status N", it can cause issues too
-# print lines that start with " N/NNN"
-# print everything between "^Ok:" and "^Timeout:"
-# delete the ninja log-related stuff at the end
 unexport SHELLOPTS
+
+# As test results keep only everything between the lines containing Ok: and Timeout:
 COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "s/[        ]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
-        '-e "s/[        ]*exit status [0-9][0-9]*//" ' \
-        '-e "/^[        ]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
-        '-e "/^Summary of/p" ' \
-        '-e "/^Ok:/,/^Timeout:/p" ' \
-        '-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
+    '-n ' \
+    '-e "/^Ok:/,/^Timeout:/p" '
 
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
