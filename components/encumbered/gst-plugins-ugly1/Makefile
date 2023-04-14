@@ -17,29 +17,25 @@
 #
 
 BUILD_BITS= 64
-BUILD_STYLE=	meson
-
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-ugly1
-COMPONENT_VERSION=      1.22.1
-#COMPONENT_REVISION=	1
+COMPONENT_VERSION=      1.22.2
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
-COMPONENT_FMRI=         library/audio/gstreamer1/plugin/ugly
 COMPONENT_SRC_NAME=	gst-plugins-ugly
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:4ab3d9e13481bce1ca3c7c4bb1f65dce4f0bb40fb1cac4416e8c06dd648815c2
+COMPONENT_ARCHIVE_HASH= sha256:8f30f44db0bd063709bf6fbe55138e3a98af0abcb61c360f35582bbe10e80691
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL= 	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      LGPLv2
+COMPONENT_FMRI=         library/audio/gstreamer1/plugin/ugly
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
-
-# In the past the optimisation level has been reduced for unknown reasons. Nowadays the test results don't differ anymore:
-#gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
 
@@ -63,19 +59,11 @@ COMPONENT_INSTALL_ENV += CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 unexport SHELLOPTS
-# (first) delete the timing information from any line
-# delete the "exit status N", it can cause issues too
-# print lines that start with " N/NNN"
-# print everything between "^Ok:" and "^Timeout:"
-# delete the ninja log-related stuff at the end
+
+# As test results keep only everything between the lines containing Ok: and Timeout:
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
-	'-e "s/[ 	]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
-	'-e "s/[ 	]*exit status [0-9][0-9]*//" ' \
-	'-e "/^[ 	]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
-	'-e "/^Summary of/p" ' \
-	'-e "/^Ok:/,/^Timeout:/p" ' \
-	'-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
+	'-e "/^Ok:/,/^Timeout:/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/opencore-amr
