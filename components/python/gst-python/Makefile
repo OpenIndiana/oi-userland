@@ -15,15 +15,16 @@
 
 BUILD_STYLE= meson
 BUILD_BITS= 64
+SINGLE_PYTHON_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-python
-COMPONENT_VERSION=	1.22.1
+COMPONENT_VERSION=	1.22.2
 COMPONENT_SUMMARY=	Python bindings for the GStreamer streaming media framework
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:96008a441d685a64275a515b893ccad0fea1d560c43acd0763533e17f3a13ebb
+COMPONENT_ARCHIVE_HASH= sha256:bef2b3d82ce4be46b775b1bb56305c1003ee01b535a53a82f9fe8924972153ad
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_CLASSIFICATION= Development/Python
@@ -31,26 +32,20 @@ COMPONENT_FMRI=	library/python/python-gst
 COMPONENT_LICENSE=	LGPL v2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-PYTHON_VERSION=		3.9
-PYTHON_VERSIONS=	3.9
-
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_ENV+=		PYTHON=$(PYTHON)
-CONFIGURE_ENV+=		CPPFLAGS="$(CFLAGS)"
-CONFIGURE_ENV+=		am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
-CONFIGURE_ENV+=		am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_ENV += PYTHON=$(PYTHON)
+CONFIGURE_ENV += CPPFLAGS="$(CFLAGS)"
+CONFIGURE_ENV += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 
 # for the tests
 unexport SHELLOPTS
+
+# As test results keep only everything between the lines containing Ok: and Timeout:
 COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "s/[        ]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
-        '-e "s/[        ]*exit status [0-9][0-9]*//" ' \
-        '-e "/^[        ]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
-        '-e "/^Summary of/p" ' \
-        '-e "/^Ok:/,/^Timeout:/p" ' \
-        '-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
+	'-n ' \
+	'-e "/^Ok:/,/^Timeout:/p" '
 
 # Build dependencies
 REQUIRED_PACKAGES += library/python/pygobject-3
