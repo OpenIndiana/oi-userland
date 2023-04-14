@@ -23,6 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# We don't want to ship bash completions for this:
+<transform file path=.+/bash-completion -> drop>
+
 file path=usr/bin/ges-launch-1.0 \
     pkg.depend.bypass-generate=libgstvalidate-1.0.so.0
 file path=usr/include/gstreamer-1.0/ges/ges-asset.h
@@ -94,8 +97,8 @@ file path=usr/lib/$(MACH64)/gst-validate-launcher/python/launcher/apps/geslaunch
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstges.so
 file path=usr/lib/$(MACH64)/gstreamer-1.0/libgstnle.so
 link path=usr/lib/$(MACH64)/libges-1.0.so target=libges-1.0.so.0
-link path=usr/lib/$(MACH64)/libges-1.0.so.0 target=libges-1.0.so.0.2201.0
-file path=usr/lib/$(MACH64)/libges-1.0.so.0.2201.0 \
+link path=usr/lib/$(MACH64)/libges-1.0.so.0 target=libges-1.0.so.0.2202.0
+file path=usr/lib/$(MACH64)/libges-1.0.so.0.2202.0 \
     pkg.depend.bypass-generate=libgstvalidate-1.0.so.0
 file path=usr/lib/$(MACH64)/pkgconfig/gst-editing-services-1.0.pc
 file path=usr/lib/python3.9/site-packages/gi/overrides/GES.py \
