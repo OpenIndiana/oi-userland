@@ -17,30 +17,26 @@
 #
 
 BUILD_BITS= 64
-BUILD_STYLE=	meson
-USE_OPENSSL11=	yes
-
+BUILD_STYLE= meson
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-plugins-bad1
-COMPONENT_VERSION=      1.22.1
-#COMPONENT_REVISION=		1
+COMPONENT_VERSION=      1.22.2
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC_NAME=	gst-plugins-bad
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:2f39b6f222d98666f9ff420a00233e336949953a846237c2bfafc8805f509f0e
+COMPONENT_ARCHIVE_HASH= sha256:3d8faf1ce3402c8535ce3a8c4e1a6c960e4b5655dbda6b55943db9ac79022d0f
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/plugin/bad
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
-COMPONENT_LICENSE=      LGPLv2
+COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
-
-# In the past optimisation has been reduced for unknown readons. The actual test results don't seem to be different nowadays:
-#gcc_OPT = -O2
 
 PATH = $(PATH.gnu)
 
@@ -76,20 +72,11 @@ COMPONENT_INSTALL_ENV += CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 unexport SHELLOPTS
-# (first) delete the timing information from any line
-# delete the "exit status N", it can cause issues too
-# print lines that start with " N/NNN"
-# print everything between "^Ok:" and "^Timeout:"
-# delete the ninja log-related stuff at the end
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "s/[ 	]*[0-9][0-9]*\.[0-9][0-9]s//" ' \
-	'-e "s/[ 	]*exit status [0-9][0-9]*//" ' \
-	'-e "/^[ 	]*[0-9][0-9]*\/[0-9][0-9]* /p" ' \
-	'-e "/^Summary of/p" ' \
-	'-e "/^Ok:/,/^Timeout:/p" ' \
-	'-e "/^Full log written.*/,/^ninja: build stopped.*/d" '
 
+# As test results keep only everything between the lines containing Ok: and Timeout:
+COMPONENT_TEST_TRANSFORMS += \
+    '-n ' \
+    '-e "/^Ok:/,/^Timeout:/p" '
 
 # Build dependencies
 # gstkcms now required libdrm >= 2.4.98, so not currently being built
