@@ -28,12 +28,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libpaper
-COMPONENT_VERSION=	2.0.10
+COMPONENT_VERSION=	2.1.0
 COMPONENT_SUMMARY=	The libpaper package enables users to indicate their preferred paper size
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://github.com/rrthomas/libpaper
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:34938c376ad9ba706dd0f1b30e3de0cb5fe54b47e528ae8a7f1fee062dc42c72
+COMPONENT_ARCHIVE_HASH= sha256:474e9575e1235a0d8e3661f072de0193bab6ea1023363772f698a2cc39d640cf
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -52,6 +52,7 @@ COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 ASLR_MODE= $(ASLR_ENABLE)
 
 CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --enable-relocatable
 
 # At the moment all tests fail because of missing paper_test. It looks like the tests are outdated.
 
