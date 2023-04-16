@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DateTime::Locale
-HUMAN_VERSION =			1.37
+HUMAN_VERSION =			1.38
 COMPONENT_SUMMARY =		DateTime::Locale - Localization support for DateTime.pm
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f70cc4e450f441767ac1a0b8655b6f1de46c43e8d1c9d05f2e0924a16be0cb6b
+	sha256:dd7f6d358279d1df0ea7d78b9127690435246cdf46867500e9888016f9d4c867
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
