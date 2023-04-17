@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 asyncio: mode=strict
-collecting ... collected 51 items
+collecting ... collected 57 items
 
 ::project PASSED
 tests/test_error.py::test_timeout_lock_file PASSED
@@ -48,6 +48,12 @@ tests/test_filelock.py::test_simple[UnixFileLock-Path] PASSED
 tests/test_filelock.py::test_simple[UnixFileLock-PurePath] PASSED
 tests/test_filelock.py::test_simple[UnixFileLock-str] PASSED
 tests/test_filelock.py::test_soft_errors PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_global_lock[SoftFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_global_lock[UnixFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_lock_recreated_in_each_thread[SoftFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_lock_recreated_in_each_thread[UnixFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_passing_lock_to_threads[SoftFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_passing_lock_to_threads[UnixFileLock] PASSED
 tests/test_filelock.py::test_threaded_lock_different_lock_obj[SoftFileLock] PASSED
 tests/test_filelock.py::test_threaded_lock_different_lock_obj[UnixFileLock] PASSED
 tests/test_filelock.py::test_threaded_shared_lock_obj[SoftFileLock] PASSED
@@ -58,4 +64,4 @@ tests/test_filelock.py::test_umask PASSED
 tests/test_filelock.py::test_umask_soft PASSED
 tests/test_filelock.py::test_wrong_platform PASSED
 
-======== 51 passed ========
+======== 57 passed ========
