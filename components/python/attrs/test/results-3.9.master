@@ -1,12 +1,15 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m pytest
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'patience' -> suppress_health_check=[HealthCheck.too_slow], database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D), configfile: pyproject.toml, testpaths: tests
-collecting ... collected 1235 items / 1 skipped
+asyncio: mode=strict
+collecting ... collected 1377 items
 
+tests/test_3rd_party.py::TestCloudpickleCompat::test_repr PASSED
 tests/test_abc.py::TestUpdateAbstractMethods::test_abc_implementation[False] SKIPPED
 tests/test_abc.py::TestUpdateAbstractMethods::test_abc_implementation[True] SKIPPED
 tests/test_abc.py::TestUpdateAbstractMethods::test_remain_abstract[False] SKIPPED
@@ -25,6 +28,7 @@ tests/test_annotations.py::TestAnnotations::test_basic_resolve PASSED
 tests/test_annotations.py::TestAnnotations::test_catches_basic_type_conflict PASSED
 tests/test_annotations.py::TestAnnotations::test_converter_annotations PASSED
 tests/test_annotations.py::TestAnnotations::test_converter_attrib_annotations PASSED
+tests/test_annotations.py::TestAnnotations::test_extra_resolve PASSED
 tests/test_annotations.py::TestAnnotations::test_forward_reference[False] PASSED
 tests/test_annotations.py::TestAnnotations::test_forward_reference[True] PASSED
 tests/test_annotations.py::TestAnnotations::test_inheritance PASSED
@@ -264,18 +268,34 @@ tests/test_filters.py::TestExclude::test_allow[excl0-42] PASSED
 tests/test_filters.py::TestExclude::test_allow[excl1-hello] PASSED
 tests/test_filters.py::TestExclude::test_allow[excl2-42] PASSED
 tests/test_filters.py::TestExclude::test_allow[excl3-hello] PASSED
+tests/test_filters.py::TestExclude::test_allow[excl4-42] PASSED
+tests/test_filters.py::TestExclude::test_allow[excl5-hello] PASSED
+tests/test_filters.py::TestExclude::test_allow[excl6-42] PASSED
+tests/test_filters.py::TestExclude::test_allow[excl7-hello] PASSED
 tests/test_filters.py::TestExclude::test_drop_class[excl0-42] PASSED
 tests/test_filters.py::TestExclude::test_drop_class[excl1-hello] PASSED
 tests/test_filters.py::TestExclude::test_drop_class[excl2-42] PASSED
 tests/test_filters.py::TestExclude::test_drop_class[excl3-hello] PASSED
+tests/test_filters.py::TestExclude::test_drop_class[excl4-42] PASSED
+tests/test_filters.py::TestExclude::test_drop_class[excl5-hello] PASSED
+tests/test_filters.py::TestExclude::test_drop_class[excl6-42] PASSED
+tests/test_filters.py::TestExclude::test_drop_class[excl7-hello] PASSED
 tests/test_filters.py::TestInclude::test_allow[incl0-42] PASSED
 tests/test_filters.py::TestInclude::test_allow[incl1-hello] PASSED
 tests/test_filters.py::TestInclude::test_allow[incl2-42] PASSED
 tests/test_filters.py::TestInclude::test_allow[incl3-hello] PASSED
+tests/test_filters.py::TestInclude::test_allow[incl4-42] PASSED
+tests/test_filters.py::TestInclude::test_allow[incl5-hello] PASSED
+tests/test_filters.py::TestInclude::test_allow[incl6-42] PASSED
+tests/test_filters.py::TestInclude::test_allow[incl7-hello] PASSED
 tests/test_filters.py::TestInclude::test_drop_class[incl0-42] PASSED
 tests/test_filters.py::TestInclude::test_drop_class[incl1-hello] PASSED
 tests/test_filters.py::TestInclude::test_drop_class[incl2-42] PASSED
 tests/test_filters.py::TestInclude::test_drop_class[incl3-hello] PASSED
+tests/test_filters.py::TestInclude::test_drop_class[incl4-42] PASSED
+tests/test_filters.py::TestInclude::test_drop_class[incl5-hello] PASSED
+tests/test_filters.py::TestInclude::test_drop_class[incl6-42] PASSED
+tests/test_filters.py::TestInclude::test_drop_class[incl7-hello] PASSED
 tests/test_filters.py::TestSplitWhat::test_splits PASSED
 tests/test_funcs.py::TestAsDict::test_asdict_preserve_order PASSED
 tests/test_funcs.py::TestAsDict::test_dicts PASSED
@@ -307,16 +327,21 @@ tests/test_funcs.py::TestAssoc::test_empty PASSED
 tests/test_funcs.py::TestAssoc::test_frozen PASSED
 tests/test_funcs.py::TestAssoc::test_no_changes PASSED
 tests/test_funcs.py::TestAssoc::test_unknown PASSED
-tests/test_funcs.py::TestAssoc::test_warning PASSED
+tests/test_funcs.py::TestEvolve::test_can_change_inst PASSED
 tests/test_funcs.py::TestEvolve::test_change PASSED
 tests/test_funcs.py::TestEvolve::test_dicts PASSED
 tests/test_funcs.py::TestEvolve::test_empty PASSED
+tests/test_funcs.py::TestEvolve::test_inst_kw PASSED
 tests/test_funcs.py::TestEvolve::test_no_changes PASSED
+tests/test_funcs.py::TestEvolve::test_no_inst PASSED
 tests/test_funcs.py::TestEvolve::test_non_init_attrs PASSED
 tests/test_funcs.py::TestEvolve::test_private PASSED
 tests/test_funcs.py::TestEvolve::test_regression_attrs_classes PASSED
+tests/test_funcs.py::TestEvolve::test_too_many_pos_args PASSED
 tests/test_funcs.py::TestEvolve::test_unknown PASSED
 tests/test_funcs.py::TestEvolve::test_validator_failure PASSED
+tests/test_funcs.py::TestHas::test_generics PASSED
+tests/test_funcs.py::TestHas::test_generics_negative PASSED
 tests/test_funcs.py::TestHas::test_negative PASSED
 tests/test_funcs.py::TestHas::test_positive PASSED
 tests/test_funcs.py::TestHas::test_positive_empty PASSED
@@ -926,7 +951,9 @@ tests/test_make.py::TestDocs::test_docs[__ne__] PASSED
 tests/test_make.py::TestDocs::test_docs[__repr__] PASSED
 tests/test_make.py::TestFields::test_fields PASSED
 tests/test_make.py::TestFields::test_fields_properties PASSED
+tests/test_make.py::TestFields::test_generics PASSED
 tests/test_make.py::TestFields::test_handler_non_attrs_class PASSED
+tests/test_make.py::TestFields::test_handler_non_attrs_generic_class PASSED
 tests/test_make.py::TestFields::test_instance PASSED
 tests/test_make.py::TestFieldsDict::test_fields_dict PASSED
 tests/test_make.py::TestFieldsDict::test_handler_non_attrs_class PASSED
@@ -987,6 +1014,89 @@ tests/test_make.py::TestValidate::test_multiple_validators PASSED
 tests/test_make.py::TestValidate::test_propagates PASSED
 tests/test_make.py::TestValidate::test_run_validators PASSED
 tests/test_make.py::TestValidate::test_success PASSED
+tests/test_mypy.yml::attr_s_with_type_annotations PASSED
+tests/test_mypy.yml::attr_s_with_type_argument[val=a = attr.ib(type=int)] PASSED
+tests/test_mypy.yml::attr_s_with_type_argument[val=a: int = attr.ib()] PASSED
+tests/test_mypy.yml::testAsDict PASSED
+tests/test_mypy.yml::testAsDictError PASSED
+tests/test_mypy.yml::testAttrsAnnotated PASSED
+tests/test_mypy.yml::testAttrsAutoAttribs PASSED
+tests/test_mypy.yml::testAttrsAutoMustBeAll PASSED
+tests/test_mypy.yml::testAttrsCallableAttributes PASSED
+tests/test_mypy.yml::testAttrsCmpEqOrderValues PASSED
+tests/test_mypy.yml::testAttrsCmpTrue PASSED
+tests/test_mypy.yml::testAttrsCmpWithSubclasses PASSED
+tests/test_mypy.yml::testAttrsComplexSuperclass PASSED
+tests/test_mypy.yml::testAttrsDataClass PASSED
+tests/test_mypy.yml::testAttrsDefaultAndInit PASSED
+tests/test_mypy.yml::testAttrsDefaultDecorator PASSED
+tests/test_mypy.yml::testAttrsDefaultDecoratorDeferred PASSED
+tests/test_mypy.yml::testAttrsDefaultErrors PASSED
+tests/test_mypy.yml::testAttrsDefaultsMroOtherFile PASSED
+tests/test_mypy.yml::testAttrsDisallowUntypedWorksForward PASSED
+tests/test_mypy.yml::testAttrsEqFalse PASSED
+tests/test_mypy.yml::testAttrsFactoryAndDefault PASSED
+tests/test_mypy.yml::testAttrsFactoryBadReturn PASSED
+tests/test_mypy.yml::testAttrsForwardReference PASSED
+tests/test_mypy.yml::testAttrsForwardReferenceInClass PASSED
+tests/test_mypy.yml::testAttrsFrozen PASSED
+tests/test_mypy.yml::testAttrsFrozenSubclass PASSED
+tests/test_mypy.yml::testAttrsGeneric PASSED
+tests/test_mypy.yml::testAttrsGenericClassmethod PASSED
+tests/test_mypy.yml::testAttrsGenericInheritance PASSED
+tests/test_mypy.yml::testAttrsImporting PASSED
+tests/test_mypy.yml::testAttrsInheritance PASSED
+tests/test_mypy.yml::testAttrsInheritanceNoAnnotation PASSED
+tests/test_mypy.yml::testAttrsInheritanceOverride PASSED
+tests/test_mypy.yml::testAttrsInitAttribFalse PASSED
+tests/test_mypy.yml::testAttrsInitFalse PASSED
+tests/test_mypy.yml::testAttrsKwOnlyAttrib PASSED
+tests/test_mypy.yml::testAttrsKwOnlyClass PASSED
+tests/test_mypy.yml::testAttrsKwOnlyClassNoInit PASSED
+tests/test_mypy.yml::testAttrsKwOnlyClassWithMixedDefaults PASSED
+tests/test_mypy.yml::testAttrsKwOnlySubclass PASSED
+tests/test_mypy.yml::testAttrsKwOnlyWithDefault PASSED
+tests/test_mypy.yml::testAttrsLocalVariablesInClassMethod PASSED
+tests/test_mypy.yml::testAttrsMultiAssign PASSED
+tests/test_mypy.yml::testAttrsMultiAssign2 PASSED
+tests/test_mypy.yml::testAttrsNestedInClasses PASSED
+tests/test_mypy.yml::testAttrsNextGenDetect PASSED
+tests/test_mypy.yml::testAttrsNextGenFrozen PASSED
+tests/test_mypy.yml::testAttrsNonKwOnlyAfterKwOnly PASSED
+tests/test_mypy.yml::testAttrsNotBooleans PASSED
+tests/test_mypy.yml::testAttrsOptionalConverter PASSED
+tests/test_mypy.yml::testAttrsOrderFalse PASSED
+tests/test_mypy.yml::testAttrsOtherMethods PASSED
+tests/test_mypy.yml::testAttrsOtherOverloads PASSED
+tests/test_mypy.yml::testAttrsPrivateInit PASSED
+tests/test_mypy.yml::testAttrsPython2Annotations PASSED
+tests/test_mypy.yml::testAttrsRepeatedName PASSED
+tests/test_mypy.yml::testAttrsSeriousNames PASSED
+tests/test_mypy.yml::testAttrsSimple PASSED
+tests/test_mypy.yml::testAttrsTypeAlias PASSED
+tests/test_mypy.yml::testAttrsTypeEquals PASSED
+tests/test_mypy.yml::testAttrsTypeVarNoCollision PASSED
+tests/test_mypy.yml::testAttrsUnionForward PASSED
+tests/test_mypy.yml::testAttrsUntypedNoUntypedDefs PASSED
+tests/test_mypy.yml::testAttrsUsingBadConverter PASSED
+tests/test_mypy.yml::testAttrsUsingBadConverterReprocess PASSED
+tests/test_mypy.yml::testAttrsUsingConverter PASSED
+tests/test_mypy.yml::testAttrsUsingConverterAndSubclass PASSED
+tests/test_mypy.yml::testAttrsUsingConverterWithTypes PASSED
+tests/test_mypy.yml::testAttrsUsingUnsupportedConverter PASSED
+tests/test_mypy.yml::testAttrsValidatorDecorator PASSED
+tests/test_mypy.yml::testAttrsValidatorDecoratorDeferred PASSED
+tests/test_mypy.yml::testAttrsWithFactory PASSED
+tests/test_mypy.yml::testAttrsWrongReturnValue PASSED
+tests/test_mypy.yml::testDefaultInAttrForward PASSED
+tests/test_mypy.yml::testDisallowUntypedWorksForwardBad PASSED
+tests/test_mypy.yml::testFields PASSED
+tests/test_mypy.yml::testFieldsError PASSED
+tests/test_mypy.yml::testHasTypeGuard PASSED
+tests/test_mypy.yml::testTypeInAttrDeferredStar PASSED
+tests/test_mypy.yml::testTypeInAttrForwardInRuntime PASSED
+tests/test_mypy.yml::testTypeInAttrUndefined PASSED
+tests/test_mypy.yml::testTypeInAttrUndefinedFrozen PASSED
 tests/test_next_gen.py::TestAsDict::test_smoke PASSED
 tests/test_next_gen.py::TestAsTuple::test_smoke PASSED
 tests/test_next_gen.py::TestImports::test_converters PASSED
@@ -1006,15 +1116,42 @@ tests/test_next_gen.py::TestNextGen::test_discard_context[decorator1] PASSED
 tests/test_next_gen.py::TestNextGen::test_discard_context[define0] PASSED
 tests/test_next_gen.py::TestNextGen::test_discard_context[define1] PASSED
 tests/test_next_gen.py::TestNextGen::test_exception PASSED
+tests/test_next_gen.py::TestNextGen::test_field_type PASSED
 tests/test_next_gen.py::TestNextGen::test_frozen PASSED
 tests/test_next_gen.py::TestNextGen::test_mro_ng PASSED
 tests/test_next_gen.py::TestNextGen::test_no_order PASSED
 tests/test_next_gen.py::TestNextGen::test_no_slots PASSED
 tests/test_next_gen.py::TestNextGen::test_override_auto_attribs_false PASSED
 tests/test_next_gen.py::TestNextGen::test_override_auto_attribs_true PASSED
+tests/test_next_gen.py::TestNextGen::test_setting_traceback_on_exception[decorator0] PASSED
+tests/test_next_gen.py::TestNextGen::test_setting_traceback_on_exception[decorator1] PASSED
+tests/test_next_gen.py::TestNextGen::test_setting_traceback_on_exception[define0] PASSED
+tests/test_next_gen.py::TestNextGen::test_setting_traceback_on_exception[define1] PASSED
 tests/test_next_gen.py::TestNextGen::test_simple PASSED
 tests/test_next_gen.py::TestNextGen::test_subclass_frozen PASSED
 tests/test_next_gen.py::TestNextGen::test_validates PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_author[attr] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_author[attrs] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_copyright[attr] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_copyright[attrs] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_description[attr] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_description[attrs] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_does_not_exist[attr] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_does_not_exist[attrs] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_email[attr] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_email[attrs] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_license[attr] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_license[attrs] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_title[attr] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_title[attrs] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_uri[attr-__uri__] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_uri[attr-__url__] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_uri[attrs-__uri__] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_uri[attrs-__url__] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_version[attr] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_version[attrs] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_version_info[attr] PASSED
+tests/test_packaging.py::TestLegacyMetadataHack::test_version_info[attrs] PASSED
 tests/test_pyright.py::test_pyright_attrsinstance_compat SKIPPED (Re...)
 tests/test_pyright.py::test_pyright_baseline SKIPPED (Requires pyright.)
 tests/test_setattr.py::TestSetAttr::test_change PASSED
@@ -1080,9 +1217,11 @@ tests/test_slots.py::test_slots_being_used PASSED
 tests/test_slots.py::test_slots_empty_cell PASSED
 tests/test_slots.py::test_slots_super_property_get PASSED
 tests/test_slots.py::test_slots_super_property_get_shortcut PASSED
-tests/test_slots.py::test_slots_unpickle_after_attr_added[False-A] PASSED
-tests/test_slots.py::test_slots_unpickle_after_attr_added[True-A] PASSED
-tests/test_slots.py::test_slots_unpickle_after_attr_removed[A] PASSED
+tests/test_slots.py::test_slots_unpickle_after_attr_added[False] PASSED
+tests/test_slots.py::test_slots_unpickle_after_attr_added[True] PASSED
+tests/test_slots.py::test_slots_unpickle_after_attr_removed PASSED
+tests/test_slots.py::test_slots_unpickle_is_backward_compatible[False] PASSED
+tests/test_slots.py::test_slots_unpickle_is_backward_compatible[True] PASSED
 tests/test_slots.py::test_weakref_does_not_add_a_field PASSED
 tests/test_slots.py::test_weakrefable PASSED
 tests/test_slots.py::tests_weakref_does_not_add_when_inheriting_with_weakref PASSED
@@ -1219,14 +1358,19 @@ tests/test_validators.py::TestNot_::test_repr PASSED
 tests/test_validators.py::TestNot_::test_success_because_fails PASSED
 tests/test_validators.py::TestOptional::test_fail[validator0] PASSED
 tests/test_validators.py::TestOptional::test_fail[validator1] PASSED
+tests/test_validators.py::TestOptional::test_fail[validator2] PASSED
 tests/test_validators.py::TestOptional::test_in_all[validator0] PASSED
 tests/test_validators.py::TestOptional::test_in_all[validator1] PASSED
+tests/test_validators.py::TestOptional::test_in_all[validator2] PASSED
 tests/test_validators.py::TestOptional::test_repr[validator0] PASSED
 tests/test_validators.py::TestOptional::test_repr[validator1] PASSED
+tests/test_validators.py::TestOptional::test_repr[validator2] PASSED
 tests/test_validators.py::TestOptional::test_success[validator0] PASSED
 tests/test_validators.py::TestOptional::test_success[validator1] PASSED
+tests/test_validators.py::TestOptional::test_success[validator2] PASSED
 tests/test_validators.py::TestOptional::test_success_with_none[validator0] PASSED
 tests/test_validators.py::TestOptional::test_success_with_none[validator1] PASSED
+tests/test_validators.py::TestOptional::test_success_with_none[validator2] PASSED
 tests/test_validators.py::TestProvides::test_fail PASSED
 tests/test_validators.py::TestProvides::test_in_all PASSED
 tests/test_validators.py::TestProvides::test_repr PASSED
@@ -1244,7 +1388,6 @@ tests/test_version_info.py::TestVersionInfo::test_wrong_len[other1] PASSED
 tests/test_version_info.py::TestVersionInfo::test_wrong_type[other0] PASSED
 
 =========================== short test summary info ============================
-======== 1215 passed, 20 skipped, 1 xfailed ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 1357 passed, 19 skipped, 1 xfailed ========
+  py$(PYV): OK
   congratulations :)
