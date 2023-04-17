@@ -20,19 +20,15 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		attrs
-HUMAN_VERSION =			22.2.0
+HUMAN_VERSION =			23.1.0
 COMPONENT_SUMMARY =		attrs - Classes Without Boilerplate
-COMPONENT_PROJECT_URL =		https://www.attrs.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/21/31/3f468da74c7de4fcf9b25591e682856389b3400b4b62f201e65f15ea3e07/attrs-22.2.0.tar.gz
+	https://files.pythonhosted.org/packages/97/90/81f95d5f705be17872843536b1868f351805acf6971251ff07c1b8334dbb/attrs-23.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c9227bfc2f01993c03f68db37d1d15c9690188323c067c641f1a35ca58185f99
+	sha256:6279836d581513a26f1bf235f9acd333bc9115683f14f7e8fae46c98fc50e015
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - pytest (test bootstrap)
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
 # run tests', and 'A ==> B' means 'A needs B for build and/or run'):
@@ -46,9 +42,17 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# By default the pytest is started with '-n auto' to use pytest-xdist (see
+# tox.ini).  It is hard to normalize pytest-xdist test results, so we need to
+# override posargs to remove '-n auto' there.
+COMPONENT_TEST_TARGETS += --
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-fancy-pypi-readme
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/zope-interface
