@@ -3,7 +3,8 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D), configfile: setup.cfg
-collecting ... collected 502 items
+asyncio: mode=strict
+collecting ... collected 509 items
 
 ::project PASSED
 mock/tests/testasync.py::AsyncArguments::test_add_return_value PASSED
@@ -136,6 +137,8 @@ mock/tests/testhelpers.py::SpecSignatureTest::test_autospec_functions_with_self_
 mock/tests/testhelpers.py::SpecSignatureTest::test_autospec_getattr_partial_function PASSED
 mock/tests/testhelpers.py::SpecSignatureTest::test_autospec_on_bound_builtin_function PASSED
 mock/tests/testhelpers.py::SpecSignatureTest::test_autospec_reset_mock PASSED
+mock/tests/testhelpers.py::SpecSignatureTest::test_autospec_signature_classmethod PASSED
+mock/tests/testhelpers.py::SpecSignatureTest::test_autospec_signature_staticmethod PASSED
 mock/tests/testhelpers.py::SpecSignatureTest::test_basic PASSED
 mock/tests/testhelpers.py::SpecSignatureTest::test_builtin_functions_types PASSED
 mock/tests/testhelpers.py::SpecSignatureTest::test_builtins PASSED
@@ -170,7 +173,9 @@ mock/tests/testhelpers.py::SpecSignatureTest::test_spec_set PASSED
 mock/tests/testhelpers.py::TestCallList::test_args_list_contains_call_list PASSED
 mock/tests/testhelpers.py::TestCallList::test_call_list_str PASSED
 mock/tests/testhelpers.py::TestCallList::test_propertymock PASSED
+mock/tests/testhelpers.py::TestCallList::test_propertymock_bare PASSED
 mock/tests/testhelpers.py::TestCallList::test_propertymock_returnvalue PASSED
+mock/tests/testhelpers.py::TestCallList::test_propertymock_side_effect PASSED
 mock/tests/testhelpers.py::TestCallablePredicate::test_call_magic_method PASSED
 mock/tests/testhelpers.py::TestCallablePredicate::test_classmethod PASSED
 mock/tests/testhelpers.py::TestCallablePredicate::test_non_callable_classmethod PASSED
@@ -310,6 +315,7 @@ mock/tests/testmock.py::MockTest::test_mock_open_using_next PASSED
 mock/tests/testmock.py::MockTest::test_mock_open_write PASSED
 mock/tests/testmock.py::MockTest::test_mock_parents PASSED
 mock/tests/testmock.py::MockTest::test_mock_raises_when_deleting_nonexistent_attribute PASSED
+mock/tests/testmock.py::MockTest::test_mock_safe_with_spec PASSED
 mock/tests/testmock.py::MockTest::test_mock_unsafe PASSED
 mock/tests/testmock.py::MockTest::test_name_attribute_of_call PASSED
 mock/tests/testmock.py::MockTest::test_only_allowed_methods_exist PASSED
@@ -348,11 +354,13 @@ mock/tests/testmock.py::MockTest::test_wraps_calls PASSED
 mock/tests/testmock.py::MockTest::test_wraps_prevents_automatic_creation_of_mocks PASSED
 mock/tests/testpatch.py::PatchTest::test_autospec PASSED
 mock/tests/testpatch.py::PatchTest::test_autospec_classmethod PASSED
+mock/tests/testpatch.py::PatchTest::test_autospec_classmethod_signature PASSED
 mock/tests/testpatch.py::PatchTest::test_autospec_function PASSED
 mock/tests/testpatch.py::PatchTest::test_autospec_inherits PASSED
 mock/tests/testpatch.py::PatchTest::test_autospec_keywords PASSED
 mock/tests/testpatch.py::PatchTest::test_autospec_name PASSED
 mock/tests/testpatch.py::PatchTest::test_autospec_staticmethod PASSED
+mock/tests/testpatch.py::PatchTest::test_autospec_staticmethod_signature PASSED
 mock/tests/testpatch.py::PatchTest::test_autospec_with_new PASSED
 mock/tests/testpatch.py::PatchTest::test_autospec_with_object PASSED
 mock/tests/testpatch.py::PatchTest::test_callable_spec_as_list PASSED
@@ -507,4 +515,4 @@ mock/tests/testwith.py::WithTest::test_with_statement_nested PASSED
 mock/tests/testwith.py::WithTest::test_with_statement_same_attribute PASSED
 mock/tests/testwith.py::WithTest::test_with_statement_specified PASSED
 
-======== 501 passed ========
+======== 508 passed ========
