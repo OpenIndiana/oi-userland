@@ -93,38 +93,19 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ; \
 	fi ;
 
-# To make the package names comparable we normalize them by following the PyPA
-# Core metadata specifications and PEP 503.
-#
-# Before we reach bootstrap checkpoint 2 we use simple normalizer for build
-# dependencies.  After that we use python-requires to get dependencies
-# evaluated too.
-ifneq ($(filter $(strip $(COMPONENT_NAME)),$(PYTHON_BOOTSTRAP_CHECKPOINT_2)),)
-PYTHON_PACKAGE_NORMALIZER = \
-	$(GSED) -e $$'s/^[ \t]*''\([a-zA-Z0-9]\([a-zA-Z0-9._-]*[a-zA-Z0-9]\)\{0,1\}\).*/\1/' \
-	| tr [A-Z] [a-z] | $(GSED) -e 's/[._-]\{1,\}/-/g'
-else
-PYTHON_PACKAGE_NORMALIZER = \
-	$(PYTHON) $(WS_TOOLS)/python-requires -
-endif
-
 # Add build dependencies from project metadata to REQUIRED_PACKAGES
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
 $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 	$(MKDIR) $(BUILD_DIR)
-	# PYTHON_ENV is needed here to have the PYTHONPATH set properly when we
-	# bootstrap the pyproject_installer bootstrapper.
+	# PYTHON_ENV is needed four times here to have the PYTHONPATH set
+	# properly when we bootstrap the pyproject_installer bootstrapper.
 	#
-	# Once we obsolete Python 3.7 we should change $(PYTHON.3.9) to $(PYTHON) here
-	cd $(SOURCE_DIR) ; $(PYTHON_ENV) $(PYTHON.3.9) -c ' \
-			from pathlib import Path; \
-			from pyproject_installer.build_cmd._build import parse_build_system_spec; \
-			from pyproject_installer.build_cmd.helper.backend_caller import call_hook,write_result; \
-			[write_result(3, x + "\n") for x in parse_build_system_spec(Path("'$(SOURCE_DIR)'"))["requires"]]; \
-			build_backend = parse_build_system_spec(Path("'$(SOURCE_DIR)'"))["build-backend"]; \
-			[write_result(3, x + "\n") for x in call_hook(build_backend, None, "get_requires_for_build_wheel", [], {})]; \
-		' 3>&1 >/dev/null \
-		| $(PYTHON_PACKAGE_NORMALIZER) \
+	# Once we obsolete Python 3.7 we should change $(PYTHON.3.9) to
+	# $(PYTHON) four times below
+	$(PYTHON_ENV) $(PYTHON.3.9) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json add build_pep517 pep517
+	$(PYTHON_ENV) $(PYTHON.3.9) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json add build_pep518 pep518
+	cd $(SOURCE_DIR) ; $(PYTHON_ENV) $(PYTHON.3.9) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json sync
+	$(PYTHON_ENV) $(PYTHON.3.9) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json eval --depformat '$$nname' \
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' \
 		> $@
 
