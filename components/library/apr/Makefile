@@ -23,19 +23,18 @@
 # Copyright 2023, Niklas Poslovski
 #
 
-USE_COMMON_TEST_MASTER=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         apr
-COMPONENT_VERSION=      1.7.3
-COMPONENT_PROJECT_URL=  https://apr.apache.org/
-COMPONENT_FMRI=         library/apr
+COMPONENT_VERSION=      1.7.4
 COMPONENT_SUMMARY=      Apache Portable Runtime (APR) Shared Libraries
-COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
+COMPONENT_PROJECT_URL=  https://apr.apache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:af9bfd5b8a04425d6b419673f3e0a7656fade226aae78180d93f8a6f2d3d1c09
+COMPONENT_ARCHIVE_HASH= sha256:a4137dd82a185076fa50ba54232d920a17c6469c30b0876569e1c2a05ff311d9
 COMPONENT_ARCHIVE_URL=  https://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/apr
+COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_LICENSE=      Apache v2.0
 COMPONENT_LICENSE_FILE= LICENSE
 
@@ -47,9 +46,12 @@ PATCH_LEVEL = 0
 
 CFLAGS += -DSSL_EXPERIMENTAL -DSSL_ENGINE
 
-CONFIGURE_SCRIPT=       $(@D)/configure
+COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) );
+COMPONENT_PRE_CONFIGURE_ACTION += ( cd $(@D); autoconf )
 
-CONFIGURE_PREFIX=		$(USRDIR)/apr
+CONFIGURE_SCRIPT = $(@D)/configure
+
+CONFIGURE_PREFIX = $(USRDIR)/apr
 
 CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --enable-other-child
@@ -60,23 +62,16 @@ CONFIGURE_OPTIONS += LTFLAGS="--tag=CC --silent"
 CONFIGURE_OPTIONS += --enable-layout=OpenSolaris-$(MACH64)
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_PREFIX)/bin
 
-COMPONENT_TEST_TARGETS=	test
-
-COMPONENT_TEST_TRANSFORMS += \
-        '-e "/microseconds: [0-9]* usec/d" '  \
-    '-e "/^Calling apr_socket_sendfile().../,/^apr_socket_sendfile()->*/d" ' \
-    '-e "/^APR Lock Performance Test/,/make\[2\]: Leaving directory/p" ' \
-    '-e "/.*/d" '
-
-COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
-
-# Some patches need configure script recreation.
-COMPONENT_PRE_CONFIGURE_ACTION += (cd $(@D); autoconf);
-
 COMPONENT_POST_INSTALL_ACTION += \
     cd $(SOURCE_DIR); \
     $(GSED) 's;OUTPUT_DIRECTORY=.*;OUTPUT_DIRECTORY=$(PROTO_DIR)$(CONFIGURE_PREFIX);' \
           docs/doxygen.conf | doxygen - ;
+
+COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TRANSFORMS += \
+	' -n ' \
+	' -e "/OK/p" ' \
+	' -e "/SUCCESS/p" '
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
