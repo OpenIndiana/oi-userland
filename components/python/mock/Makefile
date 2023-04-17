@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mock
-HUMAN_VERSION =			5.0.0
+HUMAN_VERSION =			5.0.2
 COMPONENT_SUMMARY =		mock - Rolling backport of unittest.mock for all Pythons
 COMPONENT_PROJECT_URL =		http://mock.readthedocs.org/en/latest/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/49/b0/08a3b7bb3b6c0eaae355edca4201a3d887406c03f2e4f10e5f28936bb8ac/mock-5.0.0.tar.gz
+	https://files.pythonhosted.org/packages/71/c8/84310fa618bebe51a533d8fd3a71e8ab406a10d8a388061a9e8e628da65a/mock-5.0.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fd552787228eb2ab8352f270470fa93c9ad8b9cbc565c5558ee3faed8edb3853
+	sha256:06f18d7d65b44428202b145a9a36e99c2ee00d1eb992df0caf881d4664377891
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
