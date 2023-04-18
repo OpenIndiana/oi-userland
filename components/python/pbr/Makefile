@@ -19,19 +19,25 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pbr
-COMPONENT_VERSION =		5.11.0
+HUMAN_VERSION =			5.11.1
 COMPONENT_SUMMARY =		pbr - Python Build Reasonableness
 COMPONENT_PROJECT_URL =		https://docs.openstack.org/pbr/latest/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/52/fb/630d52aaca8fc7634a0711b6ae12a0e828b6f9264bd8051225025c3ed075/pbr-5.11.0.tar.gz
+	https://files.pythonhosted.org/packages/02/d8/acee75603f31e27c51134a858e0dea28d321770c5eedb9d1d673eb7d3817/pbr-5.11.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b97bc6695b2aff02144133c2e7399d5885223d42b7912ffaec2ca3898e673bfe
+	sha256:aefc51675b0b533d56bb5fd1c8c6c0522fe31896679882e1c4c63d5e4a0fccb3
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# pbr needs fixtures to run tests, but fixtures needs pbr to build itself.
-# This is special case when we need to set PYTHON_TEST_BOOTSTRAP to make sure
-# the pbr tests are not run when there is no fixtures available yet.
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# pbr --> fixtures ==> pbr
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
@@ -41,7 +47,6 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/fixtures
 TEST_REQUIRED_PACKAGES.python += library/python/hacking
-TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
 TEST_REQUIRED_PACKAGES.python += library/python/six
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
