@@ -23,24 +23,24 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         fastcgi
-COMPONENT_VERSION=      2.4.0
-COMPONENT_REVISION=     3
+COMPONENT_VERSION=      2.4.2
 COMPONENT_SUMMARY=      the FastCGI web server interface
 COMPONENT_PROJECT_URL=  https://fastcgi-archives.github.io/
 COMPONENT_SRC_NAME=		fcgi2
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b152df7f301847b2bcf8b65672bfb212ed0cee640a5917aecaa36baa05f6f283
+COMPONENT_ARCHIVE_HASH=	sha256:1fe83501edfc3a7ec96bb1e69db3fd5ea1730135bd73ab152186fd0b437013bc
 COMPONENT_ARCHIVE_URL=	https://github.com/FastCGI-Archives/fcgi2/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/fastcgi
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_LICENSE=      FastCGI
+COMPONENT_LICENSE_FILE= LICENSE.TERMS
 
-TEST_TARGET= $(NO_TESTS)
+#TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION= ( cd $(@D) && \
