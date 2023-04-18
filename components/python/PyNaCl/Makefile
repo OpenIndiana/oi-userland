@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PyNaCl
 HUMAN_VERSION =			1.5.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PyNaCl - Python binding to the Networking and Cryptography (NaCl) library
 COMPONENT_PROJECT_URL =		https://github.com/pyca/pynacl/
 COMPONENT_ARCHIVE_URL =		\
@@ -32,14 +33,15 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# We need to make sure the libsodium's configure is able to find GNU sed.
-COMPONENT_BUILD_ENV += PATH=$(PATH.gnu)
+# Use system libsodium
+PYTHON_ENV += SODIUM_INSTALL=system
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cffi
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += library/security/libsodium
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
