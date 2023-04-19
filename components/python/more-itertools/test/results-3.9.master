@@ -1,3 +1,4 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> $(PYTHON) -m unittest -v
 test_call_once (tests.test_more.AdjacentTests)
@@ -126,6 +127,9 @@ test_default (tests.test_more.FirstTests) ... ok
 test_empty_stop_iteration (tests.test_more.FirstTests) ... ok
 test_many (tests.test_more.FirstTests) ... ok
 test_one (tests.test_more.FirstTests) ... ok
+test_basic (tests.test_more.GrayProductTests) ... ok
+test_errors (tests.test_more.GrayProductTests) ... ok
+test_vs_product (tests.test_more.GrayProductTests) ... ok
 test_default_funcs (tests.test_more.GroupByTransformTests) ... ok
 test_no_valuefunc (tests.test_more.GroupByTransformTests) ... ok
 test_reducefunc (tests.test_more.GroupByTransformTests) ... ok
@@ -586,6 +590,8 @@ filter_except (more_itertools.more)
 Doctest: more_itertools.more.filter_except ... ok
 first (more_itertools.more)
 Doctest: more_itertools.more.first ... ok
+gray_product (more_itertools.more)
+Doctest: more_itertools.more.gray_product ... ok
 groupby_transform (more_itertools.more)
 Doctest: more_itertools.more.groupby_transform ... ok
 ichunked (more_itertools.more)
@@ -747,6 +753,8 @@ test_infinite_signal (tests.test_recipes.Convolvetests) ... ok
 test_moving_average (tests.test_recipes.Convolvetests) ... ok
 test_happy_path (tests.test_recipes.DotproductTests)
 simple dotproduct example ... ok
+test_basic (tests.test_recipes.FactorTests) ... ok
+test_cross_check (tests.test_recipes.FactorTests) ... ok
 test_default (tests.test_recipes.FirstTrueTests)
 Test with a default keyword ... ok
 test_nothing_true (tests.test_recipes.FirstTrueTests)
@@ -775,6 +783,10 @@ test_multiple (tests.test_recipes.IterExceptTests)
 ensure can catch multiple exceptions ... ok
 test_uncaught_exception_is_raised (tests.test_recipes.IterExceptTests)
 ensure a non-specified exception is raised ... ok
+test_basic (tests.test_recipes.IterIndexTests) ... ok
+test_start (tests.test_recipes.IterIndexTests) ... ok
+test_m_by_n (tests.test_recipes.MatMulTests) ... ok
+test_n_by_n (tests.test_recipes.MatMulTests) ... ok
 test_happy_path (tests.test_recipes.NcyclesTests)
 cycle a sequence three times ... ok
 test_null_case (tests.test_recipes.NcyclesTests)
@@ -872,6 +884,9 @@ test_simple_take (tests.test_recipes.TakeTests)
 Test basic usage ... ok
 test_take_too_much (tests.test_recipes.TakeTests)
 Taking more than an iterator has remaining should return what the ... ok
+test_basic (tests.test_recipes.TransposeTests) ... ok
+test_empty (tests.test_recipes.TransposeTests) ... ok
+test_incompatible (tests.test_recipes.TransposeTests) ... ok
 test_basic (tests.test_recipes.TriplewiseTests) ... ok
 test_custom_key (tests.test_recipes.UniqueEverseenTests)
 ensure the custom key comparison works ... ok
@@ -899,6 +914,8 @@ convolve (more_itertools.recipes)
 Doctest: more_itertools.recipes.convolve ... ok
 dotproduct (more_itertools.recipes)
 Doctest: more_itertools.recipes.dotproduct ... ok
+factor (more_itertools.recipes)
+Doctest: more_itertools.recipes.factor ... ok
 first_true (more_itertools.recipes)
 Doctest: more_itertools.recipes.first_true ... ok
 flatten (more_itertools.recipes)
@@ -907,6 +924,10 @@ grouper (more_itertools.recipes)
 Doctest: more_itertools.recipes.grouper ... ok
 iter_except (more_itertools.recipes)
 Doctest: more_itertools.recipes.iter_except ... ok
+iter_index (more_itertools.recipes)
+Doctest: more_itertools.recipes.iter_index ... ok
+matmul (more_itertools.recipes)
+Doctest: more_itertools.recipes.matmul ... ok
 ncycles (more_itertools.recipes)
 Doctest: more_itertools.recipes.ncycles ... ok
 nth (more_itertools.recipes)
@@ -949,6 +970,8 @@ tail (more_itertools.recipes)
 Doctest: more_itertools.recipes.tail ... ok
 take (more_itertools.recipes)
 Doctest: more_itertools.recipes.take ... ok
+transpose (more_itertools.recipes)
+Doctest: more_itertools.recipes.transpose ... ok
 triplewise (more_itertools.recipes)
 Doctest: more_itertools.recipes.triplewise ... ok
 unique_everseen (more_itertools.recipes)
@@ -957,7 +980,7 @@ unique_justseen (more_itertools.recipes)
 Doctest: more_itertools.recipes.unique_justseen ... ok
 
 ----------------------------------------------------------------------
-Ran 688 tests
+Ran 705 tests
 
 OK (skipped=1)
   py$(PYV): OK
