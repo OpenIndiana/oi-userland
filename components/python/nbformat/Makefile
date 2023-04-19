@@ -19,24 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nbformat
-HUMAN_VERSION =			5.7.2
+HUMAN_VERSION =			5.8.0
 COMPONENT_SUMMARY =		nbformat - The Jupyter Notebook format
 COMPONENT_PROJECT_URL =		https://jupyter.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/dc/55/a5f62c430f1187b739f897fac0eea1cef62d805cf2a325e3587719cf3de5/nbformat-5.7.2.tar.gz
+	https://files.pythonhosted.org/packages/08/b7/8b964e977438037b57de31d312d67046e215295899107576e3708b0ea223/nbformat-5.8.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:796469290e50e1bf9c19a55ca4fbe66319d99349e47ab94780247edde4bd7618
+	sha256:46dac64c781f1c34dfd8acba16547024110348f9fc7eab0f31981c2a3dc48d1f
 COMPONENT_LICENSE =		BSD-3-Clause
-COMPONENT_LICENSE_FILE =	COPYING.md
+COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# The line number of reported warning depends on python version
-COMPONENT_TEST_TRANSFORMS +=	"-e 's/:[0-9]\{1,\}\(: UserWarning: nbformat\.current is deprecated\.\)$$/:LINE\1/'"
-# Order of detailed test results could change with every run
-COMPONENT_TEST_TRANSFORMS +=	"-e '/^  /,/^$$/d'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/fastjsonschema
