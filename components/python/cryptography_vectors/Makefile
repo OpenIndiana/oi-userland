@@ -14,23 +14,24 @@
 #   $WS_TOOLS/python-integrate-project cryptography_vectors
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cryptography_vectors
-HUMAN_VERSION =			39.0.1
+HUMAN_VERSION =			41.0.0
 COMPONENT_SUMMARY =		cryptography_vectors - Test vectors for the cryptography package.
-COMPONENT_PROJECT_URL =		https://github.com/pyca/cryptography
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f7/5d/fd9a4c571b23c4c9e0f809166b2b73c6b4293b713a51b9830e112246c6c5/cryptography_vectors-39.0.1.tar.gz
+	https://files.pythonhosted.org/packages/0c/a5/cccf35ab8501a95598c310010f03f844be2be3596d712719b46ea9ba9ded/cryptography_vectors-41.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0cbaeb50bdb7f3c9d7a93b26a0462ef6e97c768ca78d902854fe045c30b680c6
+	sha256:7c77787f6f1e3065aed0af9b0113d3736f2d0a80e0ed1ddbd296cf5ac638df00
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
