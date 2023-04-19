@@ -19,17 +19,18 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		identify
-COMPONENT_VERSION =		2.5.9
+HUMAN_VERSION =			2.5.22
 COMPONENT_SUMMARY =		identify - File identification library for Python
 COMPONENT_PROJECT_URL =		https://github.com/pre-commit/identify
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/32/c2/c7b3d6e93055f31fee10867c56e5001bd3e0aad149bc13b60c98a588115a/identify-2.5.9.tar.gz
+	https://files.pythonhosted.org/packages/9c/85/2dad5866648c6b1772d5cb9b0ca1810f214e5d5e72f231dfb6891300358a/identify-2.5.22.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:906036344ca769539610436e40a684e170c3648b552194980bb7b617a8daeb9f
+	sha256:f7a93d6cf98e29bd07663c60728e7a4057615068d7a639d132dc883b2d54d31e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+# The sdist is missing tests.  We need to switch to github tarball to get them.
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
