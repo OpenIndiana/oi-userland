@@ -19,17 +19,18 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		covdefaults
-HUMAN_VERSION =			2.2.2
+HUMAN_VERSION =			2.3.0
 COMPONENT_SUMMARY =		covdefaults - A coverage plugin to provide sensible default settings
 COMPONENT_PROJECT_URL =		https://github.com/asottile/covdefaults
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9b/24/36a45f0734a1553ccbbd92683af7369bc919dce219ff42f921323d0be7db/covdefaults-2.2.2.tar.gz
+	https://files.pythonhosted.org/packages/44/ee/9a6f2611f72e4c5657ae5542a510cf4164d2c673687c0ea73bb1cbd85b4d/covdefaults-2.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e543862ee0347769b47b27fa586d690e6b91587a3dcaaf8552fcfb1fac03d061
+	sha256:4e99f679f12d792bc62e5510fa3eb59546ed47bd569e36e4fddc4081c9c3ebf7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+# The sdist is missing tests.  We need to switch to github tarball to get them.
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
