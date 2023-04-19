@@ -2,7 +2,8 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg
+rootdir: $(@D)
+configfile: setup.cfg
 asyncio: mode=strict
 collecting ... collected 133 items
 
@@ -139,35 +140,5 @@ tests/test_utils.py::test_is_accentuated[\xf8-False] PASSED
 tests/test_utils.py::test_is_accentuated[\xfc-True] PASSED
 tests/test_utils.py::test_is_accentuated[a-False] PASSED
 
-=============================== warnings summary ===============================
-tests/test_logging.py::TestLogBehaviorClass::test_set_stream_handler_format
-  $(PYTHON_DIR)/vendor-packages/_pytest/fixtures.py:900: PytestRemovedIn8Warning: Support for nose tests is deprecated and will be removed in a future release.
-  tests/test_logging.py::TestLogBehaviorClass::test_set_stream_handler_format is using nose-specific method: `setup(self)`
-  To remove this warning, rename it to `setup_method(self)`
-  See docs: https://docs.pytest.org/en/stable/deprecations.html#support-for-tests-written-for-nose
-    fixture_result = next(generator)
 
-tests/test_logging.py::TestLogBehaviorClass::test_set_stream_handler
-  $(PYTHON_DIR)/vendor-packages/_pytest/fixtures.py:900: PytestRemovedIn8Warning: Support for nose tests is deprecated and will be removed in a future release.
-  tests/test_logging.py::TestLogBehaviorClass::test_set_stream_handler is using nose-specific method: `setup(self)`
-  To remove this warning, rename it to `setup_method(self)`
-  See docs: https://docs.pytest.org/en/stable/deprecations.html#support-for-tests-written-for-nose
-    fixture_result = next(generator)
-
-tests/test_logging.py::TestLogBehaviorClass::test_explain_true_behavior
-  $(PYTHON_DIR)/vendor-packages/_pytest/fixtures.py:900: PytestRemovedIn8Warning: Support for nose tests is deprecated and will be removed in a future release.
-  tests/test_logging.py::TestLogBehaviorClass::test_explain_true_behavior is using nose-specific method: `setup(self)`
-  To remove this warning, rename it to `setup_method(self)`
-  See docs: https://docs.pytest.org/en/stable/deprecations.html#support-for-tests-written-for-nose
-    fixture_result = next(generator)
-
-tests/test_logging.py::TestLogBehaviorClass::test_explain_false_handler_set_behavior
-  $(PYTHON_DIR)/vendor-packages/_pytest/fixtures.py:900: PytestRemovedIn8Warning: Support for nose tests is deprecated and will be removed in a future release.
-  tests/test_logging.py::TestLogBehaviorClass::test_explain_false_handler_set_behavior is using nose-specific method: `setup(self)`
-  To remove this warning, rename it to `setup_method(self)`
-  See docs: https://docs.pytest.org/en/stable/deprecations.html#support-for-tests-written-for-nose
-    fixture_result = next(generator)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 132 passed, 4 warnings ========
+======== 132 passed ========
