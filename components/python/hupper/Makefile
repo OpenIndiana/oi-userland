@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hupper
-HUMAN_VERSION =			1.11
+HUMAN_VERSION =			1.12
 COMPONENT_SUMMARY =		hupper - Integrated process monitor for developing and reloading daemons.
 COMPONENT_PROJECT_URL =		https://github.com/Pylons/hupper
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/61/c0/11cb2e672162c3ea8b2ed227299fff22ff1ca08dd3f78c9bc6f1d44a162a/hupper-1.11.tar.gz
+	https://files.pythonhosted.org/packages/42/3d/70bef845298bb4746b94418efde81bcfe0fad479169c2e9649f95630bfa7/hupper-1.12.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:15c11bd775d8f98095b745b4e658a17c25c86e3b73275cae896ac1c8d533cb18
+	sha256:18b1653d9832c9f8e7d3401986c7e7af2ae6783616be0bc406bfe0b14134a5c6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
