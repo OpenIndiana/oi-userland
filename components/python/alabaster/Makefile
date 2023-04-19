@@ -19,17 +19,18 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		alabaster
-COMPONENT_VERSION =		0.7.12
+HUMAN_VERSION =			0.7.13
 COMPONENT_SUMMARY =		alabaster - A configurable sidebar-enabled Sphinx theme
 COMPONENT_PROJECT_URL =		https://alabaster.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/cc/b4/ed8dcb0d67d5cfb7f83c4d5463a7614cb1d078ad7ae890c9143edebbf072/alabaster-0.7.12.tar.gz
+	https://files.pythonhosted.org/packages/94/71/a8ee96d1fd95ca04a0d2e2d9c4081dac4c2d2b12f7ddb899c8cb9bfd1532/alabaster-0.7.13.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a661d72d58e6ea8a57f7a86e37d86716863ee5e92788398526d58b26a4e4dc02
+	sha256:a27a4a084d5e690e16e01e03ad2b2e552c61a65469419b907243193de1a84ae2
 COMPONENT_LICENSE =		BSD-like
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+# This project does not contain tests
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
