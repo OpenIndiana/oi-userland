@@ -25,10 +25,11 @@
 #
 
 USE_OPENSSL11= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.18.13
+COMPONENT_VERSION=	9.18.14
 COMPONENT_SUMMARY=	BIND DNS name server and configuration tools.
 COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain Name System \
                         (DNS) protocols for the Internet.  This package contains the DNS \
@@ -36,7 +37,7 @@ COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain N
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://www.isc.org/software/bind/
-COMPONENT_ARCHIVE_HASH=	sha256:3b06b6390c1012dd3956b1479c73b2097c0b22207817e2e8aae352fd20e578c7
+COMPONENT_ARCHIVE_HASH=	sha256:9ae12edf6ac3c430b33ecd1a7c0c0c60875d255185eb87850fa9a5e794a64a09
 COMPONENT_ARCHIVE_URL=	https://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/dns/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -93,17 +94,9 @@ COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 COMPONENT_PRE_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh up )
 COMPONENT_POST_TEST_ACTION= ( cd $(BUILD_DIR_64)/bin/tests/system && pfexec sh ./ifconfig.sh down )
 COMPONENT_TEST_TARGETS= test
-COMPONENT_TEST_TRANSFORMS += \
-	' -n ' \
-	' -e "/TOTAL:/p"' \
-	' -e "/PASS:/p"' \
-	' -e "/SKIP:/p"' \
-	' -e "/XFAIL:/p"' \
-	' -e "/FAIL:/p"' \
-	' -e "/XPASS:/p"' \
-	' -e "/ERROR:/p"'
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libedit
@@ -115,6 +108,5 @@ REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
