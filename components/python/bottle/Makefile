@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bottle
-HUMAN_VERSION =			0.12.23
+HUMAN_VERSION =			0.12.25
 COMPONENT_SUMMARY =		bottle - Fast and simple WSGI-framework for small web-applications.
 COMPONENT_PROJECT_URL =		http://bottlepy.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/7c/58/75f3765b0a3f86ef0b6e0b23d0503920936752ca6e0fc27efce7403b01bd/bottle-0.12.23.tar.gz
+	https://files.pythonhosted.org/packages/fd/04/1c09ab851a52fe6bc063fd0df758504edede5cc741bd2e807bf434a09215/bottle-0.12.25.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:683de3aa399fb26e87b274dbcf70b1a651385d459131716387abdc3792e04167
+	sha256:e1a9c94970ae6d710b3fb4526294dfeb86f2cb4a81eff3a4b98dc40fb0e5e021
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
