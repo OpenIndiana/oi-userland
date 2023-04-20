@@ -1,11 +1,13 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | $(@D)/.tox/py$(PYV)/bin/python -m pytest --cov termcolor --cov tests --cov-report html --cov-report xml
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> $(PYTHON) -m pytest --cov termcolor --cov tests --cov-report html --cov-report xml
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-collecting ... collected 48 items
+asyncio: mode=strict
+collecting ... collected 56 items
 
 ::project PASSED
 tests/test_termcolor.py::test_all_deprecation PASSED
@@ -16,13 +18,17 @@ tests/test_termcolor.py::test_attrs[dark-\x1b[2mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_attrs[reverse-\x1b[7mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_attrs[underline-\x1b[4mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_basic PASSED
+tests/test_termcolor.py::test_color[black-\x1b[30mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_color[blue-\x1b[34mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_color[cyan-\x1b[36mtext\x1b[0m] PASSED
+tests/test_termcolor.py::test_color[dark_grey-\x1b[90mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_color[green-\x1b[32mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_color[grey-\x1b[30mtext\x1b[0m] PASSED
+tests/test_termcolor.py::test_color[light_blue-\x1b[94mtext\x1b[0m] PASSED
+tests/test_termcolor.py::test_color[light_grey-\x1b[37mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_color[magenta-\x1b[35mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_color[red-\x1b[31mtext\x1b[0m] PASSED
-tests/test_termcolor.py::test_color[white-\x1b[37mtext\x1b[0m] PASSED
+tests/test_termcolor.py::test_color[white-\x1b[97mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_color[yellow-\x1b[33mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_environment_variables[test_env_vars0-False] PASSED
 tests/test_termcolor.py::test_environment_variables[test_env_vars1-False] PASSED
@@ -44,36 +50,23 @@ tests/test_termcolor.py::test_environment_variables_force_color[1] PASSED
 tests/test_termcolor.py::test_environment_variables_force_color[] PASSED
 tests/test_termcolor.py::test_environment_variables_force_color[false] PASSED
 tests/test_termcolor.py::test_environment_variables_force_color[true] PASSED
+tests/test_termcolor.py::test_on_color[on_black-\x1b[40mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_on_color[on_blue-\x1b[44mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_on_color[on_cyan-\x1b[46mtext\x1b[0m] PASSED
+tests/test_termcolor.py::test_on_color[on_dark_grey-\x1b[100mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_on_color[on_green-\x1b[42mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_on_color[on_grey-\x1b[40mtext\x1b[0m] PASSED
+tests/test_termcolor.py::test_on_color[on_light_blue-\x1b[104mtext\x1b[0m] PASSED
+tests/test_termcolor.py::test_on_color[on_light_grey-\x1b[47mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_on_color[on_magenta-\x1b[45mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_on_color[on_red-\x1b[41mtext\x1b[0m] PASSED
-tests/test_termcolor.py::test_on_color[on_white-\x1b[47mtext\x1b[0m] PASSED
+tests/test_termcolor.py::test_on_color[on_white-\x1b[107mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_on_color[on_yellow-\x1b[43mtext\x1b[0m] PASSED
 tests/test_termcolor.py::test_sanity PASSED
 tests/test_termcolor.py::test_tty[False-text] PASSED
 tests/test_termcolor.py::test_tty[True-\x1b[36mtext\x1b[0m] PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_configure_node uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_configure_node(self, node):
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_testnodedown uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_testnodedown(self, node, error):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 48 passed, 2 warnings ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 56 passed ========
+  py$(PYV): OK
   congratulations :)
