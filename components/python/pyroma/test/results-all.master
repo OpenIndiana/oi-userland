@@ -2,7 +2,9 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg, testpaths: pyroma/tests.py
+rootdir: $(@D)
+configfile: setup.cfg
+testpaths: pyroma/tests.py
 asyncio: mode=strict
 collecting ... collected 13 items
 
@@ -11,13 +13,13 @@ pyroma/tests.py::ProjectDataTest::test_complete PASSED
 pyroma/tests.py::PyPITest::test_complete PASSED
 pyroma/tests.py::PyPITest::test_distribute PASSED
 pyroma/tests.py::RatingsTest::test_complete PASSED
-pyroma/tests.py::RatingsTest::test_custom_test SKIPPED (always fails...)
+pyroma/tests.py::RatingsTest::test_custom_test PASSED
 pyroma/tests.py::RatingsTest::test_lacking PASSED
 pyroma/tests.py::RatingsTest::test_markdown PASSED
-pyroma/tests.py::RatingsTest::test_minimal SKIPPED (always fails: ht...)
+pyroma/tests.py::RatingsTest::test_minimal PASSED
 pyroma/tests.py::RatingsTest::test_only_config PASSED
 pyroma/tests.py::RatingsTest::test_pep517 PASSED
 pyroma/tests.py::RatingsTest::test_pep621 PASSED
 pyroma/tests.py::RatingsTest::test_setup_config PASSED
 
-======== 11 passed, 2 skipped ========
+======== 13 passed ========
