@@ -1,10 +1,12 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m pytest tests
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
+asyncio: mode=strict
 collecting ... collected 26 items
 
 tests/test_subtests.py::TestCapture::test_capture_with_fixture[capfd] PASSED
@@ -35,22 +37,16 @@ tests/test_subtests.py::TestSubTest::test_xfail[pytest-xdist] XFAIL
 tests/test_subtests.py::TestSubTest::test_xfail[unittest] XFAIL (Not...)
 
 =============================== warnings summary ===============================
-tests/test_subtests.py: 20 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_travis_fold.py:186: PytestDeprecationWarning: The hookimpl pytest_configure uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(trylast=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    @pytest.mark.trylast  # to let 'terminalreporter' be registered first
-
-tests/test_subtests.py: 20 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:136: PytestDeprecationWarning: The hookimpl pytest_load_initial_conftests uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(tryfirst=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    @pytest.mark.tryfirst
+tests/test_subtests.py::TestSubTest::test_simple_terminal_verbose[pytest-xdist]
+tests/test_subtests.py::TestSubTest::test_simple_terminal_normal[pytest-xdist]
+tests/test_subtests.py::TestFixture::test_skip[xdist]
+tests/test_subtests.py::TestFixture::test_xfail[xdist]
+tests/test_subtests.py::TestFixture::test_simple_terminal_verbose[xdist]
+tests/test_subtests.py::TestFixture::test_simple_terminal_normal[xdist]
+  $(PYTHON_DIR)/vendor-packages/pytest_benchmark/logger.py:46: PytestBenchmarkWarning: Benchmarks are automatically disabled because xdist plugin is active.Benchmarks cannot be performed reliably in a parallelized environment.
+    warner(PytestBenchmarkWarning(text))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 21 passed, 5 xfailed, 40 warnings ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 21 passed, 5 xfailed, 6 warnings ========
+  py$(PYV): OK
   congratulations :)
