@@ -2,7 +2,10 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml, testpaths: jupyter_core/tests/
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: jupyter_core/tests/
+asyncio: mode=strict
 collecting ... collected 75 items
 
 jupyter_core/tests/test_application.py::test_basic PASSED
