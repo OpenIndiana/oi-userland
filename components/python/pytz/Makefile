@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytz
-HUMAN_VERSION =			2022.7.1
+HUMAN_VERSION =			2023.3
 COMPONENT_SUMMARY =		pytz - World timezone definitions, modern and historical
 COMPONENT_PROJECT_URL =		http://pythonhosted.org/pytz
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/03/3e/dc5c793b62c60d0ca0b7e58f1fdd84d5aaa9f8df23e7589b39cc9ce20a03/pytz-2022.7.1.tar.gz
+	https://files.pythonhosted.org/packages/5e/32/12032aa8c673ee16707a9b6cdda2b09c0089131f35af55d443b6a9c69c1d/pytz-2023.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:01a0681c4b9684a28304615eba55d1ab31ae00bf68ec157ec3708a8182dbbcd0
+	sha256:1d8ce29db189191fb55338ee6d0387d82ab59f3d00eac103412d64e0ebd0c588
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
