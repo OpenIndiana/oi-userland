@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pipdeptree
-HUMAN_VERSION =			2.3.3
+HUMAN_VERSION =			2.7.0
 COMPONENT_SUMMARY =		pipdeptree - Command line utility to show dependency tree of packages.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/pipdeptree
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/99/02/1f0f5e6ec82d22bb7c68b699d626f46a41d05f8e32269b2543348d345734/pipdeptree-2.3.3.tar.gz
+	https://files.pythonhosted.org/packages/86/62/309b36c833a99518d35998df58271a15756f847ed66e2e46896d7df49f53/pipdeptree-2.7.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9d666f77ff1b9528d01b3d98594096484f56de70d752abe22f13e681be239bd8
+	sha256:1c79e28267ddf90ea2293f982db4f5df7a76befca483c68da6c83c4370989e8d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
