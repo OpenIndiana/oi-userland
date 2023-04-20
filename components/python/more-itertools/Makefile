@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		more-itertools
-HUMAN_VERSION =			9.0.0
+HUMAN_VERSION =			9.1.0
 COMPONENT_SUMMARY =		more-itertools - More routines for operating on iterables, beyond itertools
 COMPONENT_PROJECT_URL =		https://github.com/more-itertools/more-itertools
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/13/b3/397aa9668da8b1f0c307bc474608653d46122ae0563d1d32f60e24fa0cbd/more-itertools-9.0.0.tar.gz
+	https://files.pythonhosted.org/packages/2e/d0/bea165535891bd1dcb5152263603e902c0ec1f4c9a2e152cc4adff6b3a38/more-itertools-9.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5a6257e40878ef0520b1803990e3e22303a41b5714006c32a3fd8304b26ea1ab
+	sha256:cabaa341ad0389ea83c17a94566a53ae4c9d07349861ecb14dc6d0345cf9ac5d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
