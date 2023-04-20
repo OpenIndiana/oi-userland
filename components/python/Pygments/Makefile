@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Pygments
-HUMAN_VERSION =			2.15.0
+HUMAN_VERSION =			2.15.1
 COMPONENT_SUMMARY =		Pygments - Pygments is a syntax highlighting package written in Python.
 COMPONENT_PROJECT_URL =		https://pygments.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/03/98/c7468f5a1b434cb15b1d240c5f3bd015962af8a822e89e7f10ee11e68928/Pygments-2.15.0.tar.gz
+	https://files.pythonhosted.org/packages/89/6b/2114e54b290824197006e41be3f9bbe1a26e9c39d1f5fa20a6d62945a0b3/Pygments-2.15.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f7e36cffc4c517fbc252861b9a6e4644ca0e5abadf9a113c72d1358ad09b9500
+	sha256:8ace4d3c1dd481894b2005f560ead0f9f19ee64fe983366be1a21e171d12775c
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
