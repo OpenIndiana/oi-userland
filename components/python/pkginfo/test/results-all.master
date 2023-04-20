@@ -1,23 +1,203 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python setup.py test -q
-running test
-WARNING: Testing via this command is deprecated and will be removed in a future version. Users looking for a generic test entry point independent of test runner are encouraged to use tox.
-running egg_info
-writing pkginfo.egg-info/PKG-INFO
-writing dependency_links to pkginfo.egg-info/dependency_links.txt
-writing entry points to pkginfo.egg-info/entry_points.txt
-writing requirements to pkginfo.egg-info/requires.txt
-writing top-level names to pkginfo.egg-info/top_level.txt
-reading manifest file 'pkginfo.egg-info/SOURCES.txt'
-reading manifest template 'MANIFEST.in'
-adding license file 'LICENSE.txt'
-writing manifest file 'pkginfo.egg-info/SOURCES.txt'
-running build_ext
-...........................................................................................................................................................................
-----------------------------------------------------------------------
-Ran 171 tests
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --cov=pkginfo --cov-append --cov-report=
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+asyncio: mode=strict
+collecting ... collected 180 items
 
-OK
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+::project PASSED
+pkginfo/tests/test_bdist.py::BDistTests::test_ctor_w_bogus_filename PASSED
+pkginfo/tests/test_bdist.py::BDistTests::test_ctor_w_egg PASSED
+pkginfo/tests/test_bdist.py::BDistTests::test_ctor_w_egg_and_metadata_version PASSED
+pkginfo/tests/test_bdist.py::BDistTests::test_ctor_w_non_egg PASSED
+pkginfo/tests/test_bdist.py::BDistTests::test_ctor_wo_PKG_INFO PASSED
+pkginfo/tests/test_commandline.py::BaseTests::test___init___defaults PASSED
+pkginfo/tests/test_commandline.py::BaseTests::test___init___w_fields PASSED
+pkginfo/tests/test_commandline.py::CSVTests::test___call__w_fields_w_list PASSED
+pkginfo/tests/test_commandline.py::CSVTests::test___call__wo_fields_wo_list PASSED
+pkginfo/tests/test_commandline.py::CSVTests::test___init___ PASSED
+pkginfo/tests/test_commandline.py::INITests::test___call___duplicate PASSED
+pkginfo/tests/test_commandline.py::INITests::test___call___w_fields_w_list PASSED
+pkginfo/tests/test_commandline.py::INITests::test___call___wo_fields_wo_list PASSED
+pkginfo/tests/test_commandline.py::JSONtests::test___call___duplicate_with_meta_and_fields PASSED
+pkginfo/tests/test_commandline.py::JSONtests::test___call___duplicate_with_meta_wo_fields PASSED
+pkginfo/tests/test_commandline.py::JSONtests::test___call___output PASSED
+pkginfo/tests/test_commandline.py::JSONtests::test___call___w_fields_w_list PASSED
+pkginfo/tests/test_commandline.py::JSONtests::test___call___wo_fields_wo_list PASSED
+pkginfo/tests/test_commandline.py::SimpleTests::test___call___w_empty_fields PASSED
+pkginfo/tests/test_commandline.py::SimpleTests::test___call___w_skip_and_value_None_no_fields PASSED
+pkginfo/tests/test_commandline.py::SimpleTests::test___call___w_skip_and_value_empty_tuple_explicit_fields PASSED
+pkginfo/tests/test_commandline.py::SimpleTests::test___call___w_skip_but_values_explicit_fields PASSED
+pkginfo/tests/test_commandline.py::SimpleTests::test___init___ PASSED
+pkginfo/tests/test_commandline.py::SingleLineTests::test___call__w_fields_w_list PASSED
+pkginfo/tests/test_commandline.py::SingleLineTests::test___call__wo_fields_wo_list PASSED
+pkginfo/tests/test_commandline.py::SingleLineTests::test___init___ PASSED
+pkginfo/tests/test_commandline.py::Test__parse_options::test_empty PASSED
+pkginfo/tests/test_commandline.py::Test__parse_options::test_nonempty PASSED
+pkginfo/tests/test_commandline.py::Test_main::test_w_dist_w_download_url PASSED
+pkginfo/tests/test_commandline.py::Test_main::test_w_dist_wo_download_url PASSED
+pkginfo/tests/test_commandline.py::Test_main::test_w_mising_dist PASSED
+pkginfo/tests/test_develop.py::DevelopTests::test_ctor_w_invalid_path PASSED
+pkginfo/tests/test_develop.py::DevelopTests::test_ctor_w_path PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_ctor_defaults PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_extractMetadata_raises_NotImplementedError PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Author PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Author_Email PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Classifier_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Classifier_single PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Description PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Description_in_payload PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Description_multiline PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Distribution_Content_Type_single PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Download_URL PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Dynamic_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Dynamic_single PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Home_page PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Keywords PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_License PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Maintainer PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Maintainer_Email PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_1_0 PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_1_1 PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_1_2 PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_2_1 PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_2_2 PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_override PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Metadata_Version_unknown PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Name PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Obsoletes_Dist_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Obsoletes_Dist_single_no_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Obsoletes_Dist_single_w_env_marker PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Obsoletes_Dist_single_w_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Obsoletes_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Obsoletes_single_no_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Obsoletes_single_w_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Platform_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Platform_single PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Project_URL_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Project_URL_single_no_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Provides_Dist_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Provides_Dist_single_w_env_marker PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Provides_Dist_single_w_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Provides_Dist_single_wo_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Provides_Extra_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Provides_Extra_single PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Provides_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Provides_single_w_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Provides_single_wo_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Requires_Dist_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Requires_Dist_single_w_env_marker PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Requires_Dist_single_w_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Requires_Dist_single_wo_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Requires_External_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Requires_External_single_w_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Requires_External_single_wo_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Requires_Python_single_spec PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Requires_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Requires_single_w_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Requires_single_wo_version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Summary PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Supported_Platform_multiple PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Supported_Platform_single PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_Version PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_parse_given_unicode PASSED
+pkginfo/tests/test_distribution.py::DistributionTests::test_read_raises_NotImplementedError PASSED
+pkginfo/tests/test_distribution.py::Test__must_decode::test_w_bytes_latin1 PASSED
+pkginfo/tests/test_distribution.py::Test__must_decode::test_w_bytes_utf8 PASSED
+pkginfo/tests/test_distribution.py::Test__must_decode::test_w_object PASSED
+pkginfo/tests/test_distribution.py::Test__must_decode::test_w_unicode PASSED
+pkginfo/tests/test_index.py::IndexTests::test___getitem___miss PASSED
+pkginfo/tests/test_index.py::IndexTests::test___setitem___bad_key PASSED
+pkginfo/tests/test_index.py::IndexTests::test___setitem___valid_key PASSED
+pkginfo/tests/test_index.py::IndexTests::test___setitem___value_not_dist PASSED
+pkginfo/tests/test_index.py::IndexTests::test_add_not_dist PASSED
+pkginfo/tests/test_index.py::IndexTests::test_add_valid_dist PASSED
+pkginfo/tests/test_index.py::IndexTests::test_empty PASSED
+pkginfo/tests/test_installed.py::InstalledTests::test_ctor_w_dist_info PASSED
+pkginfo/tests/test_installed.py::InstalledTests::test_ctor_w_egg_info_as_file PASSED
+pkginfo/tests/test_installed.py::InstalledTests::test_ctor_w_invalid_name PASSED
+pkginfo/tests/test_installed.py::InstalledTests::test_ctor_w_name PASSED
+pkginfo/tests/test_installed.py::InstalledTests::test_ctor_w_name_and_metadata_version PASSED
+pkginfo/tests/test_installed.py::InstalledTests::test_ctor_w_no___package___falls_back_to___name__ PASSED
+pkginfo/tests/test_installed.py::InstalledTests::test_ctor_w_package PASSED
+pkginfo/tests/test_installed.py::InstalledTests::test_ctor_w_package_and_metadata_version PASSED
+pkginfo/tests/test_installed.py::InstalledTests::test_ctor_w_package_no_PKG_INFO PASSED
+pkginfo/tests/test_installed.py::InstalledTests::test_ctor_w_package_no___file__ PASSED
+pkginfo/tests/test_installed.py::InstalledTests::test_namespaced_pkg_installed_via_pth PASSED
+pkginfo/tests/test_installed.py::InstalledTests::test_namespaced_pkg_installed_via_setuptools PASSED
+pkginfo/tests/test_sdist.py::SDistTests::test_ctor_w_bogus PASSED
+pkginfo/tests/test_sdist.py::SDistTests::test_ctor_w_bztar PASSED
+pkginfo/tests/test_sdist.py::SDistTests::test_ctor_w_bztar_and_metadata_version PASSED
+pkginfo/tests/test_sdist.py::SDistTests::test_ctor_w_gztar PASSED
+pkginfo/tests/test_sdist.py::SDistTests::test_ctor_w_gztar_and_metadata_version PASSED
+pkginfo/tests/test_sdist.py::SDistTests::test_ctor_w_invalid_filename PASSED
+pkginfo/tests/test_sdist.py::SDistTests::test_ctor_w_tar PASSED
+pkginfo/tests/test_sdist.py::SDistTests::test_ctor_w_zip PASSED
+pkginfo/tests/test_sdist.py::SDistTests::test_ctor_w_zip_and_metadata_version PASSED
+pkginfo/tests/test_sdist.py::SDistTests::test_ctor_wo_PKG_INFO PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenDirectoryTests::test_ctor_w_bogus PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenDirectoryTests::test_ctor_w_bztar PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenDirectoryTests::test_ctor_w_bztar_and_metadata_version PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenDirectoryTests::test_ctor_w_gztar PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenDirectoryTests::test_ctor_w_gztar_and_metadata_version PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenDirectoryTests::test_ctor_w_invalid_filename PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenDirectoryTests::test_ctor_w_tar PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenDirectoryTests::test_ctor_w_zip PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenDirectoryTests::test_ctor_w_zip_and_metadata_version PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenDirectoryTests::test_ctor_wo_PKG_INFO PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenFileSDistTests::test_ctor_w_bogus PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenFileSDistTests::test_ctor_w_bztar PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenFileSDistTests::test_ctor_w_bztar_and_metadata_version PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenFileSDistTests::test_ctor_w_gztar PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenFileSDistTests::test_ctor_w_gztar_and_metadata_version PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenFileSDistTests::test_ctor_w_invalid_filename PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenFileSDistTests::test_ctor_w_tar PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenFileSDistTests::test_ctor_w_zip PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenFileSDistTests::test_ctor_w_zip_and_metadata_version PASSED
+pkginfo/tests/test_sdist.py::UnpackedSDistGivenFileSDistTests::test_ctor_wo_PKG_INFO PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_bztar PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_bztar_and_metadata_version PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_directory PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_directory_and_metadata_version PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_directory_no_EGG_INFO PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_egg PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_egg_and_metadata_version PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_gztar PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_gztar_and_metadata_version PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_module PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_module_and_metadata_version PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_package_name PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_package_name_and_metadata_version PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_wheel PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_wheel_and_metadata_version PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_zip PASSED
+pkginfo/tests/test_utils.py::Test_get_metadata::test_w_zip_and_metadata_version PASSED
+pkginfo/tests/test_wheel.py::WheelTests::test_ctor_w_bogus_filename PASSED
+pkginfo/tests/test_wheel.py::WheelTests::test_ctor_w_installed_wheel PASSED
+pkginfo/tests/test_wheel.py::WheelTests::test_ctor_w_non_wheel PASSED
+pkginfo/tests/test_wheel.py::WheelTests::test_ctor_w_valid_installed_wheel PASSED
+pkginfo/tests/test_wheel.py::WheelTests::test_ctor_w_valid_wheel PASSED
+pkginfo/tests/test_wheel.py::WheelTests::test_ctor_w_valid_wheel_and_metadata_version PASSED
+pkginfo/tests/test_wheel.py::WheelTests::test_ctor_w_valid_wheel_w_description_body PASSED
+pkginfo/tests/test_wheel.py::WheelTests::test_ctor_w_valid_wheel_w_description_header PASSED
+pkginfo/tests/test_wheel.py::WheelTests::test_ctor_wo_dist_info PASSED
+
+=============================== warnings summary ===============================
+pkginfo/tests/test_installed.py::InstalledTests::test_namespaced_pkg_installed_via_pth
+  $(@D)/pkginfo/tests/manky/namespaced/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('namespaced')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    pkg_resources.declare_namespace(__name__)
+
+pkginfo/tests/test_installed.py::InstalledTests::test_namespaced_pkg_installed_via_setuptools
+  $(@D)/pkginfo/tests/wonky/namespaced/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('namespaced')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    pkg_resources.declare_namespace(__name__)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 176 passed, 2 warnings ========
+  py$(PYV): OK
   congratulations :)
