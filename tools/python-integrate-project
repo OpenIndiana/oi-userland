@@ -90,16 +90,6 @@ function get_PKGINFO_entry
 		| sed -e "s/^$ENTRY: //" -e 's/ *$//'
 }
 
-# Get project homepage
-HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.home_page')
-if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
-	HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.project_urls.Homepage')
-	if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
-		printf "WARNING: Failed to get homepage for project %s from pypi\n" "$PROJECT" >&2
-		HOMEPAGE=$(get_PKGINFO_entry "Home-page")
-	fi
-fi
-
 # Find the latest version if not provided by user
 if [[ -z "$VERSION" ]] ; then
 	VERSION=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.version')
@@ -107,20 +97,6 @@ if [[ -z "$VERSION" ]] ; then
 		printf "FATAL: Failed to get version for project %s from pypi\n" "$PROJECT" >&2
 		exit 1
 	fi
-fi
-
-# Get release data from pypi
-PYPI_PROJECT_RELEASE=$($CURL "$APIURL/$PROJECT/$VERSION/json")
-if (($? != 0)) || [[ -z "$PYPI_PROJECT_RELEASE" ]] ; then
-	printf "FATAL: Failed to get data for version %s from pypi\n" "$VERSION" >&2
-	exit 1
-fi
-
-# Get download url
-DOWNLOAD_URL=$(printf "%s" "$PYPI_PROJECT_RELEASE" | /usr/bin/jq -r '.urls[]|select(.packagetype=="sdist")|.url')
-if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
-	printf "WARNING: Failed to get download url for project %s, version %s from pypi\n" "$PROJECT" "$VERSION" >&2
-	DOWNLOAD_URL=
 fi
 
 
@@ -152,6 +128,32 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 
 	$GMAKE clobber > /dev/null 2>&1
 fi
+
+
+# Get project homepage
+HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.home_page')
+if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
+	HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.project_urls.Homepage')
+	if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
+		printf "WARNING: Failed to get homepage for project %s from pypi\n" "$PROJECT" >&2
+		HOMEPAGE=$(get_PKGINFO_entry "Home-page")
+	fi
+fi
+
+# Get release data from pypi
+PYPI_PROJECT_RELEASE=$($CURL "$APIURL/$PROJECT/$VERSION/json")
+if (($? != 0)) || [[ -z "$PYPI_PROJECT_RELEASE" ]] ; then
+	printf "FATAL: Failed to get data for version %s from pypi\n" "$VERSION" >&2
+	exit 1
+fi
+
+# Get download url
+DOWNLOAD_URL=$(printf "%s" "$PYPI_PROJECT_RELEASE" | /usr/bin/jq -r '.urls[]|select(.packagetype=="sdist")|.url')
+if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
+	printf "WARNING: Failed to get download url for project %s, version %s from pypi\n" "$PROJECT" "$VERSION" >&2
+	DOWNLOAD_URL=
+fi
+
 
 # Remove everything from git (except known patches, history, and $CONF)
 touch "$CONF"
