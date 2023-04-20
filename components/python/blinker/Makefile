@@ -14,30 +14,24 @@
 #   $WS_TOOLS/python-integrate-project blinker
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		blinker
-HUMAN_VERSION =			1.5
+HUMAN_VERSION =			1.6.2
 COMPONENT_SUMMARY =		blinker - Fast, simple object-to-object and broadcast signaling
 COMPONENT_PROJECT_URL =		https://blinker.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2b/12/82786486cefb68685bb1c151730f510b0f4e5d621d77f245bc0daf9a6c64/blinker-1.5.tar.gz
+	https://files.pythonhosted.org/packages/e8/f9/a05287f3d5c54d20f51a235ace01f50620984bc7ca5ceee781dc645211c5/blinker-1.6.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:923e5e2f69c155f2cc42dafbbd70e16e3fde24d2d4aa2ab72fbe386238892462
+	sha256:4afd3de66ef3a9f8067559fb7a1cbe555c17dcbe15971b05d1b625c3e7abe213
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/attrs
-TEST_REQUIRED_PACKAGES.python += library/python/iniconfig
-TEST_REQUIRED_PACKAGES.python += library/python/packaging
-TEST_REQUIRED_PACKAGES.python += library/python/pluggy
-TEST_REQUIRED_PACKAGES.python += library/python/py
-TEST_REQUIRED_PACKAGES.python += library/python/pyparsing
-TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/tomli
