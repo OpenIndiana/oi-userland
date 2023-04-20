@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pdm-pep517
-HUMAN_VERSION =			1.0.6
+HUMAN_VERSION =			1.1.4
 COMPONENT_SUMMARY =		pdm-pep517 - A PEP 517 backend for PDM that supports PEP 621 metadata
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/16/d0/b4db0af67f40ad63b42040352c1175b4af55d93500478bb7a1a29d8d5843/pdm-pep517-1.0.6.tar.gz
+	https://files.pythonhosted.org/packages/43/42/5c8818b70fc4b25c99e56aeeb3484ede076114c8a0772675b44a3b7891cc/pdm-pep517-1.1.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a4407703d50fa4d671383a354868b05a13060c1bf38264cbb5ddc9a73e4a1dc5
+	sha256:7f49121e70b42dca296fac962210dd2da07a39575fc5673137ad661633b2cf3f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
