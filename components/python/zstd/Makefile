@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zstd
-HUMAN_VERSION =			1.5.2.6
+HUMAN_VERSION =			1.5.5.1
 COMPONENT_SUMMARY =		zstd - ZSTD Bindings for Python
 COMPONENT_PROJECT_URL =		https://github.com/sergey-dryabzhinsky/python-zstd
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/94/1c/aff1c526d19d989ad4ed8dbe5b687172091ec5da3008264a4a5670c01c34/zstd-1.5.2.6.tar.gz
+	https://files.pythonhosted.org/packages/ba/b4/bf8c6a6b73c6b267a13df955f821f041fcc770b56820b135849f33e3b888/zstd-1.5.5.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f440858d198890e5ff517dff32d15e8c31bb73506a896f9baf6d014efe62f7fc
+	sha256:1ef980abf0e1e072b028d2d76ef95b476632651c96225cf30b619c6eef625672
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
