@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tqdm
-HUMAN_VERSION =			4.64.1
+HUMAN_VERSION =			4.65.0
 COMPONENT_SUMMARY =		tqdm - Fast, Extensible Progress Meter
 COMPONENT_PROJECT_URL =		https://tqdm.github.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c1/c2/d8a40e5363fb01806870e444fc1d066282743292ff32a9da54af51ce36a2/tqdm-4.64.1.tar.gz
+	https://files.pythonhosted.org/packages/3d/78/81191f56abb7d3d56963337dbdff6aa4f55805c8afd8bad64b0a34199e9b/tqdm-4.65.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5f4f682a004951c1b450bc753c710e9280c5746ce6ffedee253ddbcbf54cf1e4
+	sha256:1871fb68a86b8fb3b59ca4cdd3dcccbc7e6d613eeed31f4c332531977b89beb5
 COMPONENT_LICENSE =		MIT AND MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENCE
 
