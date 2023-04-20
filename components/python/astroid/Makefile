@@ -19,16 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		astroid
-HUMAN_VERSION =			2.13.2
+HUMAN_VERSION =			2.15.4
 COMPONENT_SUMMARY =		astroid - An abstract syntax tree for Python with inference support.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c2/49/5dd5f36b2cd2b315d45023ed4e2d6f1ba57d054ea9a1378f91f093ec57bb/astroid-2.13.2.tar.gz
+	https://files.pythonhosted.org/packages/36/50/c2bde258f4b8021ee9075932ace925245a1ad9a816a0cab269f04f480c3b/astroid-2.15.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3bc7834720e1a24ca797fd785d77efb14f7a28ee8e635ef040b6e2d80ccb3303
+	sha256:c81e1c7fbac615037744d067a9bb5f9aeb655edf59b63ee8b59585475d6f80d8
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
-
-TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -40,3 +38,19 @@ PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += library/python/wrapt
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/attrs
+TEST_REQUIRED_PACKAGES.python += library/python/contributors-txt
+TEST_REQUIRED_PACKAGES.python += library/python/nose
+TEST_REQUIRED_PACKAGES.python += library/python/numpy
+TEST_REQUIRED_PACKAGES.python += library/python/pyqt6
+TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil
+TEST_REQUIRED_PACKAGES.python += library/python/regex
+TEST_REQUIRED_PACKAGES.python += library/python/six
+TEST_REQUIRED_PACKAGES.python += library/python/tbump
+TEST_REQUIRED_PACKAGES.python += library/python/types-attrs
+TEST_REQUIRED_PACKAGES.python += library/python/types-pkg-resources
+TEST_REQUIRED_PACKAGES.python += library/python/types-python-dateutil
+TEST_REQUIRED_PACKAGES.python += library/python/types-six
+TEST_REQUIRED_PACKAGES.python += library/python/types-typed-ast
+TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
+TEST_REQUIRED_PACKAGES.python += library/python/urllib3
