@@ -2,8 +2,11 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml, testpaths: tests
-collecting ... collected 48 items
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: tests
+asyncio: mode=strict
+collecting ... collected 62 items
 
 tests/formatter/test_build_system.py::test_backend_path PASSED
 tests/formatter/test_build_system.py::test_build_backend_order PASSED
@@ -32,32 +35,40 @@ tests/formatter/test_project.py::test_project_dependencies PASSED
 tests/formatter/test_project.py::test_project_dependencies_with_double_quotes PASSED
 tests/formatter/test_project.py::test_project_dependencies_with_mixed_quotes PASSED
 tests/formatter/test_project.py::test_project_description PASSED
-tests/formatter/test_project.py::test_project_name PASSED
+tests/formatter/test_project.py::test_project_name[[project]\nname='A_B'] PASSED
+tests/formatter/test_project.py::test_project_name[[project]\nname='a-b'] PASSED
+tests/formatter/test_project.py::test_project_name[[project]\nname='a.-..-__B'] PASSED
 tests/formatter/test_project.py::test_project_optional_dependencies PASSED
 tests/formatter/test_project.py::test_project_scripts PASSED
+tests/formatter/test_tools.py::test_sub_table_newline PASSED
+tests/formatter/test_tools.py::test_sub_table_no_op PASSED
+tests/formatter/test_tools.py::test_tools_ordering PASSED
+tests/test_cli.py::test_cli_inputs_ok PASSED
 tests/test_cli.py::test_cli_pyproject_toml_not_exists PASSED
 tests/test_cli.py::test_cli_pyproject_toml_not_file PASSED
 tests/test_cli.py::test_cli_pyproject_toml_ok PASSED
 tests/test_cli.py::test_cli_pyproject_toml_permission_fail[128-read] PASSED
 tests/test_cli.py::test_cli_pyproject_toml_permission_fail[256-write] PASSED
-tests/test_cli.py::test_cli_pyproject_tomls_ok PASSED
+tests/test_cli.py::test_pyproject_toml_dir PASSED
 tests/test_cli.py::test_pyproject_toml_resolved PASSED
 tests/test_main.py::test_color_diff PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-False-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-False-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-True-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-False-True-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-False-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-False-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-True-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,4 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [\n+  "hatchling>=0.14",\n+]\n-True-True-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-False-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-False-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-True-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-True-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-False-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-False-True] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-True-False] PASSED
+tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-True-True] PASSED
 tests/test_pyproject_toml_fmt.py::test_help_invocation_as_module PASSED
 tests/test_pyproject_toml_fmt.py::test_help_invocation_as_script SKIPPED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: 96 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    if LooseVersion(pytest.__version__) < LooseVersion('3.6.0'):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 47 passed, 1 skipped, 96 warnings ========
+======== 61 passed, 1 skipped ========
