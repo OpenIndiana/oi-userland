@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ansible
 HUMAN_VERSION =			7.4.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		ansible - Radically simple IT automation
 COMPONENT_PROJECT_URL =		https://ansible.com/
 COMPONENT_ARCHIVE_URL =		\
