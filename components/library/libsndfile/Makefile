@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsndfile
 COMPONENT_VERSION=	1.0.31
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	libsndfile - a library for reading/writing sound files
 COMPONENT_DESCRIPTION=	Libsndfile is a C library for reading and writing files\
  containing sampled sound (such as MS Windows WAV and the Apple/SGI AIFF\
