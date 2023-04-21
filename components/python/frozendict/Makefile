@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		frozendict
-HUMAN_VERSION =			2.3.5
+HUMAN_VERSION =			2.3.7
 COMPONENT_SUMMARY =		frozendict - A simple immutable dictionary
 COMPONENT_PROJECT_URL =		https://github.com/Marco-Sulla/python-frozendict
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/41/44/1892c9b2a21f471ef2681559f9e57470795199330dad8eca734bce408434/frozendict-2.3.5.tar.gz
+	https://files.pythonhosted.org/packages/08/7c/a200d7dec1810f104f7bd08d12ff2fa22a1f024906c81b05856d8a12fc1e/frozendict-2.3.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:65d7e3995c9174b77d7d80514d7062381750491e112bbeb44323368baa3e636a
+	sha256:b2c7b6e2dc2e7a71145803bbd846a967e8009ce30c8ab752b3d466773a5f7cdc
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
