@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2021 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -45,16 +46,15 @@ file path=usr/bin/sndfile-salvage
 file path=usr/include/sndfile.h
 file path=usr/include/sndfile.hh
 file path=usr/lib/$(MACH64)/libsndfile.a
-link path=usr/lib/$(MACH64)/libsndfile.so \
-    target=libsndfile.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libsndfile.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libsndfile.so target=libsndfile.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libsndfile.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libsndfile.so.1 \
-    target=libsndfile.so.$(COMPONENT_VERSION)
+    target=libsndfile.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/sndfile.pc
 file path=usr/lib/libsndfile.a
-link path=usr/lib/libsndfile.so target=libsndfile.so.$(COMPONENT_VERSION)
-file path=usr/lib/libsndfile.so.$(COMPONENT_VERSION)
-link path=usr/lib/libsndfile.so.1 target=libsndfile.so.$(COMPONENT_VERSION)
+link path=usr/lib/libsndfile.so target=libsndfile.so.$(HUMAN_VERSION)
+file path=usr/lib/libsndfile.so.$(HUMAN_VERSION)
+link path=usr/lib/libsndfile.so.1 target=libsndfile.so.$(HUMAN_VERSION)
 file path=usr/lib/pkgconfig/sndfile.pc
 file path=usr/share/doc/libsndfile/FAQ.md
 file path=usr/share/doc/libsndfile/api.md
