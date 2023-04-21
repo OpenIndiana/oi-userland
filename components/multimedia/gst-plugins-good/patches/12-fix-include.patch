@@ -1,0 +1,39 @@
+This patch is needed with newer gnu-make.
+See https://bugs.gentoo.org/show_bug.cgi?id=705974
+Adapted from https://www.gentoofan.org/gentoo/misc/gst/gst-plugins-good-1.16.2-make43.patch
+
+--- gst-plugins-good-0.10.31/common/glib-gen.mak.orig	2011-12-11 20:10:47.000000000 +0100
++++ gst-plugins-good-0.10.31/common/glib-gen.mak	2023-04-21 23:17:39.432349564 +0200
+@@ -1,11 +1,13 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_enum_prefix=gst_color_balance
+ 
+-enum_headers=$(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers=$(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ 
+ # these are all the rules generating the relevant files
+ %-marshal.h: %-marshal.list
+--- gst-plugins-good-0.10.31/common/gst-glib-gen.mak.orig	2011-12-11 20:10:47.000000000 +0100
++++ gst-plugins-good-0.10.31/common/gst-glib-gen.mak	2023-04-21 23:20:13.260456997 +0200
+@@ -1,12 +1,14 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ 
+-enum_headers=$(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers=$(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ 
+ # these are all the rules generating the relevant files
+ $(glib_gen_basename)-marshal.h: $(glib_gen_basename)-marshal.list
