@@ -1,16 +1,24 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder .tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pytest.ini
+rootdir: $(@D)
+configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 16 items
+collecting ... collected 24 items
 
 ::project PASSED
+docs/conf.py::BLACK PASSED
+docs/conf.py::mypy PASSED
+docs/conf.py::mypy-status PASSED
+jaraco/path.py::BLACK PASSED
+jaraco/path.py::mypy PASSED
 jaraco/path.py::path.DirectoryStack PASSED
 jaraco/path.py::path.ExtensionReplacer PASSED
+jaraco/path.py::path.Recording PASSED
 jaraco/path.py::path.build PASSED
 jaraco/path.py::path.encode PASSED
 jaraco/path.py::path.insert_before_extension PASSED
@@ -18,12 +26,17 @@ jaraco/path.py::path.is_hidden PASSED
 jaraco/path.py::path.recursive_glob PASSED
 jaraco/path.py::path.replace_extension PASSED
 jaraco/path.py::path.save_to_file PASSED
+tests/test_path.py::BLACK PASSED
+tests/test_path.py::mypy PASSED
 tests/test_path.py::test_is_hidden PASSED
 tests/test_path.py::test_is_hidden_Darwin SKIPPED (Darwin only)
 tests/test_path.py::test_is_hidden_Windows SKIPPED (could not import...)
 tests/test_path.py::test_is_hidden_not PASSED
 tests/test_path.py::test_is_hidden_not_abspath PASSED
 
-======== 13 passed, 2 skipped ========
+===================================== mypy =====================================
+
+Success: no issues found in 3 source files
+======== 21 passed, 2 skipped ========
   py$(PYV): OK
   congratulations :)
