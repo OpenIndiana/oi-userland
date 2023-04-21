@@ -19,22 +19,28 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.path
-HUMAN_VERSION =			3.4.0
+HUMAN_VERSION =			3.5.0
 COMPONENT_SUMMARY =		jaraco.path - miscellaneous path functions
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.path
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/36/d6/a1324cc68919e85d22e45381659e9b8ea4d00f5d449487c002a3c0472c98/jaraco.path-3.4.0.tar.gz
+	https://files.pythonhosted.org/packages/b8/22/9b39c369d05886372a98c7d25868e4a47312f729db525a0d79a33d113bfd/jaraco.path-3.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1594f3fcf760485fc9d8e07ba258be995953e72b308d7c4c93586d1552536086
+	sha256:eb87aa212f6777b4efc230a6ff3cc071e148c4b9b390dd44c5041310aad39c14
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/tholo/pytest-flake8/issues/92
+PYTEST_ADDOPTS += -p no:flake8
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
