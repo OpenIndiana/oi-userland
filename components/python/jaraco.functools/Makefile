@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.functools
-COMPONENT_VERSION =		3.5.2
+HUMAN_VERSION =			3.6.0
 COMPONENT_SUMMARY =		jaraco.functools - Functools like those found in stdlib
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.functools
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b4/ea/9abca360081de9157668fcc52765989158aaf29b4826f26fcb17852d08e6/jaraco.functools-3.5.2.tar.gz
+	https://files.pythonhosted.org/packages/6d/82/e94ee23a7924ab1c3b617e42ddee24a60add7d988497d5cde8ae524b1525/jaraco.functools-3.6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:45b05c158f3ad28731075556ffd4749bd254ec67f91e1eb367dcfebff1151db4
+	sha256:2e1a3be11abaecee5f5ab8dd589638be8304cc4cb91361fe5e683f4b6d9fb7a3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,10 +42,14 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/tholo/pytest-flake8/issues/92
+PYTEST_ADDOPTS += -p no:flake8
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-classes
