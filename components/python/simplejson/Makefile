@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		simplejson
-HUMAN_VERSION =			3.18.2
+HUMAN_VERSION =			3.19.1
 COMPONENT_SUMMARY =		simplejson - Simple, fast, extensible JSON encoder/decoder for Python
 COMPONENT_PROJECT_URL =		https://github.com/simplejson/simplejson
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/0e/4d/bc45300f0c6ae36462166faec34b62827b8e0a9f71c987ee36e7e5435294/simplejson-3.18.2.tar.gz
+	https://files.pythonhosted.org/packages/c0/5c/61e2afbe62bbe2e328d4d1f426f6e39052b73eddca23b5ba524026561250/simplejson-3.19.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:663e9109d0a2f883472080b776ec4a4a66f8931efa4cfe4714021dbc8ef7d0d6
+	sha256:6277f60848a7d8319d27d2be767a7546bc965535b28070e310b3a9af90604a4c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,3 +35,4 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += system/library
