@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sox
 COMPONENT_VERSION=	14.4.1
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	Sound eXchange, the Swiss Army knife of audio manipulation
 COMPONENT_DESCRIPTION=	SoX is a cross-platform command line utility that can convert various formats of computer audio files into other formats.
 COMPONENT_PROJECT_URL=	https://sox.sourceforge.net/
