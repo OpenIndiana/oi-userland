@@ -1,3 +1,4 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PYTHON_DIR)/site-packages/pipdeptree --cov $(@D)/tests --cov-fail-under=75 --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests
 ============================= test session starts ==============================
@@ -6,7 +7,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 asyncio: mode=strict
-collecting ... collected 31 items
+collecting ... collected 39 items
 
 tests/test_pipdeptree.py::test_conflicting_deps[mpkgs0-expected_keys0-expected_output0] PASSED
 tests/test_pipdeptree.py::test_conflicting_deps[mpkgs1-expected_keys1-expected_output1] PASSED
@@ -21,15 +22,23 @@ tests/test_pipdeptree.py::test_dist_package_as_parent_of PASSED
 tests/test_pipdeptree.py::test_dist_package_render_as_branch PASSED
 tests/test_pipdeptree.py::test_dist_package_render_as_root PASSED
 tests/test_pipdeptree.py::test_guess_version_setuptools PASSED
+tests/test_pipdeptree.py::test_mermaid_reserved_ids PASSED
 tests/test_pipdeptree.py::test_package_dag_filter PASSED
+tests/test_pipdeptree.py::test_package_dag_filter_fnmatch_exclude_a PASSED
+tests/test_pipdeptree.py::test_package_dag_filter_fnmatch_exclude_c PASSED
+tests/test_pipdeptree.py::test_package_dag_filter_fnmatch_include_a PASSED
+tests/test_pipdeptree.py::test_package_dag_filter_fnmatch_include_b PASSED
 tests/test_pipdeptree.py::test_package_dag_get_node_as_parent PASSED
 tests/test_pipdeptree.py::test_package_dag_reverse PASSED
 tests/test_pipdeptree.py::test_parser_default PASSED
 tests/test_pipdeptree.py::test_parser_j PASSED
 tests/test_pipdeptree.py::test_parser_json PASSED
 tests/test_pipdeptree.py::test_parser_json_tree PASSED
+tests/test_pipdeptree.py::test_parser_mermaid PASSED
 tests/test_pipdeptree.py::test_parser_pdf PASSED
 tests/test_pipdeptree.py::test_parser_svg PASSED
+tests/test_pipdeptree.py::test_render_dot PASSED
+tests/test_pipdeptree.py::test_render_mermaid PASSED
 tests/test_pipdeptree.py::test_render_pdf PASSED
 tests/test_pipdeptree.py::test_render_svg PASSED
 tests/test_pipdeptree.py::test_render_text[False-False-expected_output2] PASSED
@@ -45,15 +54,15 @@ tests/test_pipdeptree.py::test_req_package_render_as_root PASSED
   $(PYTHON_DIR)/vendor-packages/_distutils_hack/__init__.py:33: UserWarning: Setuptools is replacing distutils.
     warnings.warn("Setuptools is replacing distutils.")
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/packaging/version.py:114: 1850 warnings
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pip/_vendor/packaging/version.py:114: 2152 warnings
   $(PYTHON_DIR)/vendor-packages/pip/_vendor/packaging/version.py:114: DeprecationWarning: Creating a LegacyVersion has been deprecated and will be removed in the next major release
     DeprecationWarning,
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
-Required test coverage of 75% reached. Total coverage: 95.97%
-======== 31 passed, 1851 warnings ========
+Required test coverage of 75% reached. Total coverage: 96.76%
+======== 39 passed, 2153 warnings ========
 $(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/pipdeptree was never imported. (module-not-imported)
   self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
   py$(PYV): OK
