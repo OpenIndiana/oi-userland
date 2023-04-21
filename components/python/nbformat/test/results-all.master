@@ -2,7 +2,9 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml, testpaths: tests/
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: tests/
 asyncio: mode=strict
 collecting ... collected 189 items
 
@@ -198,6 +200,13 @@ tests/v4/test_validate.py::test_valid_code_cell PASSED
 
 =============================== warnings summary ===============================
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/jupyter_core/application.py:21
+  $(PYTHON_DIR)/vendor-packages/jupyter_core/application.py:21: DeprecationWarning: Jupyter is migrating its paths to use standard platformdirs
+  given by the platformdirs library.  To remove this warning and
+  see the appropriate new directories, set the environment variable
+  `JUPYTER_PLATFORM_DIRS=1` and then run `jupyter --paths`.
+  The use of platformdirs will be the default in `jupyter_core` v6
+    from .paths import (
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
