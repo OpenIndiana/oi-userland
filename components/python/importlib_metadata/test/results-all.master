@@ -5,9 +5,10 @@ py$(PYV): commands[0]> python -m pytest
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pytest.ini
+rootdir: $(@D)
+configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 158 items
+collecting ... collected 161 items
 
 ::project PASSED
 conftest.py::BLACK PASSED
@@ -55,6 +56,9 @@ prepare/example2/example2/__init__.py::BLACK PASSED
 prepare/example2/example2/__init__.py::mypy PASSED
 tests/__init__.py::BLACK PASSED
 tests/__init__.py::mypy PASSED
+tests/_context.py::BLACK PASSED
+tests/_context.py::mypy PASSED
+tests/_context.py::tests._context.suppress PASSED
 tests/_path.py::BLACK PASSED
 tests/_path.py::mypy PASSED
 tests/_path.py::tests._path.Recording PASSED
@@ -168,7 +172,7 @@ tests/test_zip.py::mypy PASSED
 
 ===================================== mypy =====================================
 
-Success: no issues found in 25 source files
-======== 155 passed, 1 skipped ========
+Success: no issues found in 26 source files
+======== 158 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)
