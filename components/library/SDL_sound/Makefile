@@ -12,39 +12,38 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+BUILD_STYLE= configure
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         SDL_sound
 COMPONENT_VERSION=      1.0.3
-COMPONENT_REVISION=     1
-COMPONENT_PROJECT_URL=  http://icculus.org/SDL_sound/
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      Sound decoding library for SDL
+COMPONENT_PROJECT_URL=  https://icculus.org/SDL_sound/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:3999fd0bbb485289a52be14b2f68b571cb84e380cc43387eadf778f64c79e6df
-COMPONENT_ARCHIVE_URL=  http://icculus.org/SDL_sound/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:3999fd0bbb485289a52be14b2f68b571cb84e380cc43387eadf778f64c79e6df
+COMPONENT_ARCHIVE_URL=  https://icculus.org/SDL_sound/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/sdl-sound
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 # mpeg libraries are disabled for future 
 # in case we ever have hipster-encumbered
-CONFIGURE_OPTIONS +=	--disable-smpeg 
-CONFIGURE_OPTIONS +=	--disable-mpglib
-CONFIGURE_OPTIONS +=	--disable-mikmod
-CONFIGURE_OPTIONS +=	--disable-modplug
-CONFIGURE_OPTIONS +=	--disable-physfs
+CONFIGURE_OPTIONS += --disable-smpeg 
+CONFIGURE_OPTIONS += --disable-mpglib
+CONFIGURE_OPTIONS += --disable-mikmod
+CONFIGURE_OPTIONS += --disable-modplug
+CONFIGURE_OPTIONS += --disable-physfs
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/flac
