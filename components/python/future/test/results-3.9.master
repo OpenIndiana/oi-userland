@@ -2,8 +2,10 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pytest.ini
-collecting ... collected 1131 items
+rootdir: $(@D)
+configfile: pytest.ini
+asyncio: mode=strict
+collecting ... collected 1144 items
 
 ::project PASSED
 tests/test_future/test_backports.py::CountTest::test_count PASSED
@@ -126,7 +128,7 @@ tests/test_future/test_builtins.py::TestBuiltins::test_isinstance_str PASSED
 tests/test_future/test_builtins.py::TestBuiltins::test_isinstance_tuple_of_types PASSED
 tests/test_future/test_builtins.py::TestBuiltins::test_newnext_doc_example PASSED
 tests/test_future/test_builtins.py::TestBuiltins::test_round PASSED
-tests/test_future/test_builtins.py::TestBuiltins::test_round_negative_ndigits SKIPPED
+tests/test_future/test_builtins.py::TestBuiltins::test_round_negative_ndigits PASSED
 tests/test_future/test_builtins.py::TestBuiltins::test_super PASSED
 tests/test_future/test_builtins.py::TestBuiltins::test_super_2 PASSED
 tests/test_future/test_builtins.py::TestBuiltins::test_type PASSED
@@ -213,6 +215,8 @@ tests/test_future/test_common_iterators.py::TestIterators::test_filter PASSED
 tests/test_future/test_common_iterators.py::TestIterators::test_map PASSED
 tests/test_future/test_common_iterators.py::TestIterators::test_range PASSED
 tests/test_future/test_common_iterators.py::TestIterators::test_zip PASSED
+tests/test_future/test_count.py::CountTest::test_count PASSED
+tests/test_future/test_count.py::CountTest::test_own_count PASSED
 tests/test_future/test_decorators.py::TestDecorators::test_implements_iterator PASSED
 tests/test_future/test_decorators.py::TestDecorators::test_python_2_unicode_compatible_decorator PASSED
 tests/test_future/test_dict.py::TestDict::test_braces_create_newdict_object PASSED
@@ -229,6 +233,7 @@ tests/test_future/test_dict.py::TestDict::test_methods_do_not_produce_lists PASS
 tests/test_future/test_dict.py::TestDict::test_multiple_inheritance PASSED
 tests/test_future/test_dict.py::TestDict::test_set_like_behaviour PASSED
 tests/test_future/test_dict.py::TestDict::test_with_metaclass_and_dict PASSED
+tests/test_future/test_email_generation.py::EmailGenerationTests::test_email_custom_header_can_contain_unicode PASSED
 tests/test_future/test_email_multipart.py::EmailMultiPartTests::test_multipart_serialize_without_boundary PASSED
 tests/test_future/test_email_multipart.py::EmailMultiPartTests::test_multipart_set_boundary_does_not_change_header_type PASSED
 tests/test_future/test_explicit_imports.py::TestExplicitImports::test_py2k_disabled_builtins PASSED
@@ -528,6 +533,12 @@ tests/test_future/test_libfuturize_fixers.py::Test_print::test_spaces_before_fil
 tests/test_future/test_libfuturize_fixers.py::Test_print::test_trailing_comma_1 PASSED
 tests/test_future/test_libfuturize_fixers.py::Test_print::test_trailing_comma_2 PASSED
 tests/test_future/test_libfuturize_fixers.py::Test_print::test_trailing_comma_3 PASSED
+tests/test_future/test_libfuturize_fixers.py::Test_print::test_trailing_comma_4 PASSED
+tests/test_future/test_libfuturize_fixers.py::Test_print::test_trailing_comma_5 PASSED
+tests/test_future/test_libfuturize_fixers.py::Test_print::test_trailing_comma_6 PASSED
+tests/test_future/test_libfuturize_fixers.py::Test_print::test_trailing_comma_7 PASSED
+tests/test_future/test_libfuturize_fixers.py::Test_print::test_trailing_comma_8 PASSED
+tests/test_future/test_libfuturize_fixers.py::Test_print::test_trailing_comma_9 PASSED
 tests/test_future/test_libfuturize_fixers.py::Test_print::test_tuple PASSED
 tests/test_future/test_libfuturize_fixers.py::Test_print::test_vargs_without_trailing_comma PASSED
 tests/test_future/test_libfuturize_fixers.py::Test_print::test_with_future_print_function PASSED
@@ -548,6 +559,7 @@ tests/test_future/test_libfuturize_fixers.py::Test_raise::test_tuple_exc_1 PASSE
 tests/test_future/test_libfuturize_fixers.py::Test_raise::test_tuple_exc_2 PASSED
 tests/test_future/test_libfuturize_fixers.py::Test_raise::test_tuple_value PASSED
 tests/test_future/test_libfuturize_fixers.py::Test_raise::test_unknown_value PASSED
+tests/test_future/test_libfuturize_fixers.py::Test_raise::test_unknown_value_with_indent PASSED
 tests/test_future/test_libfuturize_fixers.py::Test_raise::test_unknown_value_with_traceback_with_comments PASSED
 tests/test_future/test_libfuturize_fixers.py::Test_raise::test_with_comments PASSED
 tests/test_future/test_list.py::TestList::test_bool PASSED
@@ -729,6 +741,7 @@ tests/test_future/test_super.py::TestSuper::test_basics_working PASSED
 tests/test_future/test_super.py::TestSuper::test_cell_as_self PASSED
 tests/test_future/test_super.py::TestSuper::test_class_getattr_working PASSED
 tests/test_future/test_super.py::TestSuper::test_class_methods_still_working PASSED
+tests/test_future/test_super.py::TestSuper::test_metaclass PASSED
 tests/test_future/test_super.py::TestSuper::test_obscure_super_errors PASSED
 tests/test_future/test_super.py::TestSuper::test_properties PASSED
 tests/test_future/test_super.py::TestSuper::test_subclass_no_override_working PASSED
@@ -1030,6 +1043,7 @@ tests/test_future/test_utils.py::TestUtils::test_raise_ PASSED
 tests/test_future/test_utils.py::TestUtils::test_raise_custom_exception PASSED
 tests/test_future/test_utils.py::TestUtils::test_raise_from_None PASSED
 tests/test_past/test_basestring.py::TestBaseString::test_isinstance PASSED
+tests/test_past/test_basestring.py::TestBaseString::test_issubclass PASSED
 tests/test_past/test_builtins.py::BuiltinTest::test_abs PASSED
 tests/test_past/test_builtins.py::BuiltinTest::test_all PASSED
 tests/test_past/test_builtins.py::BuiltinTest::test_any PASSED
@@ -1087,6 +1101,7 @@ tests/test_past/test_builtins.py::BuiltinTest::test_zip PASSED
 tests/test_past/test_builtins.py::TestSorted::test_baddecorator PASSED
 tests/test_past/test_builtins.py::TestSorted::test_basic XFAIL
 tests/test_past/test_builtins.py::TestSorted::test_inputtypes PASSED
+tests/test_past/test_misc.py::TestCmp::test_cmp PASSED
 tests/test_past/test_noniterators.py::TestNonIterators::test_noniterators_produce_lists PASSED
 tests/test_past/test_olddict.py::Py2DictTest::test_bool PASSED
 tests/test_past/test_olddict.py::Py2DictTest::test_clear PASSED
@@ -1138,19 +1153,19 @@ tests/test_past/test_translation.py::TestTranslate::test_xrange PASSED
 
 =============================== warnings summary ===============================
 ../prototype/i386$(PYTHON_DIR)/vendor-packages/future/standard_library/__init__.py:65
-  /data/builds/ul-perl-modules/components/python/future/build/prototype/i386$(PYTHON_DIR)/vendor-packages/future/standard_library/__init__.py:65: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/future/standard_library/__init__.py:65: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
     import imp
 
-tests/test_future/test_builtins.py:267
-  $(@D)/tests/test_future/test_builtins.py:267: DeprecationWarning: invalid escape sequence \u
+tests/test_future/test_builtins.py:266
+  $(@D)/tests/test_future/test_builtins.py:266: DeprecationWarning: invalid escape sequence \u
     (str(b'\u0663\u0661\u0664 ','raw-unicode-escape'), 314),
 
-tests/test_future/test_builtins.py:289
-  $(@D)/tests/test_future/test_builtins.py:289: DeprecationWarning: invalid escape sequence \u
+tests/test_future/test_builtins.py:288
+  $(@D)/tests/test_future/test_builtins.py:288: DeprecationWarning: invalid escape sequence \u
     (str(b'\u0663\u0661\u0664 ','raw-unicode-escape'), 314),
 
 ../prototype/i386$(PYTHON_DIR)/vendor-packages/libfuturize/fixer_util.py:11
-  /data/builds/ul-perl-modules/components/python/future/build/prototype/i386$(PYTHON_DIR)/vendor-packages/libfuturize/fixer_util.py:11: PendingDeprecationWarning: lib2to3 package is deprecated and may not be able to parse Python 3.10+
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/libfuturize/fixer_util.py:11: PendingDeprecationWarning: lib2to3 package is deprecated and may not be able to parse Python 3.10+
     from lib2to3.fixer_util import (FromImport, Newline, is_import,
 
 tests/test_future/test_htmlparser.py:685
@@ -1184,10 +1199,6 @@ tests/test_future/test_urllib_toplevel.py:551
 tests/test_future/test_urllib_toplevel.py:626
   $(@D)/tests/test_future/test_urllib_toplevel.py:626: DeprecationWarning: invalid escape sequence \^
     should_quote.append('<>#%"{}|\^[]`')
-
-tests/test_future/test_requests.py::TestRequests::test_remove_hooks_then_requests
-  $(PYTHON_DIR)/vendor-packages/requests/__init__.py:102: RequestsDependencyWarning: urllib3 (1.25.1) or chardet (5.0.0)/charset_normalizer (3.0.0) doesn't match a supported version!
-    warnings.warn("urllib3 ({}) or chardet ({})/charset_normalizer ({}) doesn't match a supported "
 
 tests/test_future/test_standard_library.py::TestStandardLibraryReorganization::test_reload
   $(PYTHON_DIR)/importlib/__init__.py:169: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
@@ -1243,8 +1254,8 @@ tests/test_future/test_utils.py::TestUtils::test_raise_
     self.assertRaisesRegexp(
 
 tests/test_past/test_oldstr.py::TestOldStr::test_unescape
-  /data/builds/ul-perl-modules/components/python/future/build/prototype/i386$(PYTHON_DIR)/vendor-packages/past/types/oldstr.py:37: DeprecationWarning: invalid escape sequence '\c'
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/past/types/oldstr.py:37: DeprecationWarning: invalid escape sequence '\c'
     return s.encode().decode('unicode_escape')
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1046 passed, 38 skipped, 46 xfailed, 28 warnings ========
+======== 1060 passed, 37 skipped, 46 xfailed, 27 warnings ========
