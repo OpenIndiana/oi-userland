@@ -15,19 +15,17 @@
 # Copyright 2019 Tim Mooney
 #
 
-BUILD_BITS=64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tracker
 COMPONENT_VERSION=      1.8.3
-COMPONENT_REVISION=     10
+COMPONENT_REVISION=     11
 COMPONENT_SUMMARY=      Desktop search tool
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:9bbf8c8525b3a1496716a350bc50ba06af5e880a4386506ca3e45d6779065c42
-COMPONENT_ARCHIVE_URL=  \
-	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.8/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:9bbf8c8525b3a1496716a350bc50ba06af5e880a4386506ca3e45d6779065c42
+COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/1.8/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://gitlab.gnome.org/GNOME/tracker
 COMPONENT_FMRI=         library/desktop/search/tracker
 COMPONENT_CLASSIFICATION=Applications/System Utilities
