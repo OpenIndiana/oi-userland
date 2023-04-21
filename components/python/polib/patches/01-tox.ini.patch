@@ -1,0 +1,33 @@
+https://github.com/izimobil/polib/issues/136
+
+--- polib-1.2.0.orig/tox.ini
++++ polib-1.2.0/tox.ini
+@@ -0,0 +1,28 @@
++[tox]
++envlist = py27, py36, py37, py38, py39, py310, py311, pypy, pypy3, lint
++
++[testenv]
++commands = coverage run tests/tests.py
++basepython=
++    py27: python2.7
++    py36: python3.6
++    py37: python3.7
++    py38: python3.8
++    py39: python3.9
++    py310: python3.10
++    py311: python3.11
++    pypy: pypy
++    pypy3: pypy3
++    lint: python3.9
++deps =
++    coverage
++    importlib-metadata>=6.0.0
++download = True
++setenv =
++    pypy: VIRTUALENV_PIP=20.1.1
++    pypy: VIRTUALENV_DOWNLOAD=1
++
++[testenv:lint]
++commands = pycodestyle polib.py
++deps =
++    pycodestyle>=2.6.0
