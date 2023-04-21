@@ -12,32 +12,30 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS=64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gmtp
 COMPONENT_VERSION=	1.3.11
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://gmtp.sourceforge.net/
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	A simple MP3 and Media player client for UNIX and UNIX like systems
-COMPONENT_FMRI=		system/media/gmtp
-COMPONENT_CLASSIFICATION=	Applications/Accessories
+COMPONENT_PROJECT_URL=	https://gmtp.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-  sha256:5a830c9c448aa2caf7a844aaa9ba38c2ac0239547366c1e6874e0080bd5f0613
-COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/gmtp/files/gMTP-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_HASH= sha256:5a830c9c448aa2caf7a844aaa9ba38c2ac0239547366c1e6874e0080bd5f0613
+COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/gmtp/files/gMTP-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_FMRI=		system/media/gmtp
+COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--with-gtk3
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --with-gtk3
 
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += library/audio/libid3tag
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
