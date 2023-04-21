@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.collections
-HUMAN_VERSION =			4.0.0
+HUMAN_VERSION =			4.1.0
 COMPONENT_SUMMARY =		jaraco.collections - Collection objects similar to those in stdlib by jaraco
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.collections
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ff/d1/b06e9c9c3343c5bb056c84376e0cc19c3d94108454e495bda1f402f37ed8/jaraco.collections-4.0.0.tar.gz
+	https://files.pythonhosted.org/packages/39/5f/3d235b6c12b117c7bc0d96a2bc6ab6bdac00567f8e595729a0cfe14994a7/jaraco.collections-4.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9bbe39e1a13c73cb471f6114a2b3cb21d704c2e3271ad5a60daf94a436dec939
+	sha256:4f5a36aa6aa196dc13a9d0575aa442e9fedab664b9b12e83810f2333ef6c3e57
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
