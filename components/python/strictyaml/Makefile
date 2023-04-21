@@ -14,25 +14,27 @@
 #   $WS_TOOLS/python-integrate-project strictyaml
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		strictyaml
-HUMAN_VERSION =			1.6.2
+HUMAN_VERSION =			1.7.3
 COMPONENT_SUMMARY =		strictyaml - Strict, typed YAML parser
-COMPONENT_PROJECT_URL =		http://hitchdev.com/strictyaml
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/7c/86/c9b04acef55685b3abf5d4db3a348ab1409734fdd8650c98fc63ca6a6c0a/strictyaml-1.6.2.tar.gz
+	https://files.pythonhosted.org/packages/b3/08/efd28d49162ce89c2ad61a88bd80e11fb77bc9f6c145402589112d38f8af/strictyaml-1.7.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:70cd55980fe2929dc038924ca08f68f96148223a8777810fa616e3478ebe71ca
+	sha256:22f854a5fcab42b5ddba8030a0e4be51ca89af0267961c8d6cfa86395586c407
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-TEST_STYLE = pytest
+# https://github.com/crdoconnor/strictyaml/issues/168
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
