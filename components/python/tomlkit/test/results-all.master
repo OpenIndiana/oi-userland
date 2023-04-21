@@ -3,8 +3,10 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-collecting ... collected 841 items
+asyncio: mode=strict
+collecting ... collected 849 items
 
+::project PASSED
 tests/test_api.py::test_a_raw_dict_can_be_dumped PASSED
 tests/test_api.py::test_add_dotted_key PASSED
 tests/test_api.py::test_aot PASSED
@@ -89,6 +91,7 @@ tests/test_api.py::test_parse_can_parse_valid_toml_files[sections_with_same_star
 tests/test_api.py::test_parse_can_parse_valid_toml_files[string_slash_whitespace_newline] PASSED
 tests/test_api.py::test_parse_can_parse_valid_toml_files[table_names] PASSED
 tests/test_api.py::test_parse_can_parse_valid_toml_files[test] PASSED
+tests/test_api.py::test_parse_empty_quoted_table_name PASSED
 tests/test_api.py::test_parse_raises_errors_for_invalid_toml_files[array_duplicate_comma-UnexpectedCharError] PASSED
 tests/test_api.py::test_parse_raises_errors_for_invalid_toml_files[array_leading_comma-UnexpectedCharError] PASSED
 tests/test_api.py::test_parse_raises_errors_for_invalid_toml_files[array_no_comma-UnexpectedCharError] PASSED
@@ -146,6 +149,7 @@ tests/test_build.py::test_append_table_after_multiple_indices PASSED
 tests/test_build.py::test_build_example PASSED
 tests/test_build.py::test_top_level_keys_are_put_at_the_root_of_the_document PASSED
 tests/test_items.py::test_abstract_table_unwrap PASSED
+tests/test_items.py::test_add_float_to_int PASSED
 tests/test_items.py::test_add_sum_int_with_float PASSED
 tests/test_items.py::test_aot_unwrap PASSED
 tests/test_items.py::test_append_dict_to_array PASSED
@@ -163,7 +167,8 @@ tests/test_items.py::test_date_unwrap PASSED
 tests/test_items.py::test_dates_behave_like_dates PASSED
 tests/test_items.py::test_datetime_unwrap PASSED
 tests/test_items.py::test_datetimes_behave_like_datetimes PASSED
-tests/test_items.py::test_deleting_inline_table_elemeent_does_not_leave_trailing_separator PASSED
+tests/test_items.py::test_deleting_inline_table_element_does_not_leave_trailing_separator PASSED
+tests/test_items.py::test_deleting_inline_table_element_does_not_leave_trailing_separator2 PASSED
 tests/test_items.py::test_dicts_are_converted_to_tables PASSED
 tests/test_items.py::test_dicts_are_converted_to_tables_and_are_sorted_if_requested PASSED
 tests/test_items.py::test_dicts_are_converted_to_tables_and_keep_order PASSED
@@ -188,9 +193,12 @@ tests/test_items.py::test_key_automatically_sets_proper_string_type_if_not_bare 
 tests/test_items.py::test_key_comparison PASSED
 tests/test_items.py::test_modify_array_with_comment PASSED
 tests/test_items.py::test_null_unwrap PASSED
+tests/test_items.py::test_parse_datetime_followed_by_space PASSED
 tests/test_items.py::test_string_add_preserve_escapes PASSED
 tests/test_items.py::test_string_unwrap PASSED
 tests/test_items.py::test_strings_behave_like_strs PASSED
+tests/test_items.py::test_sub_float_from_int PASSED
+tests/test_items.py::test_sub_int_from_float PASSED
 tests/test_items.py::test_table_copy PASSED
 tests/test_items.py::test_tables_behave_like_dicts PASSED
 tests/test_items.py::test_time_unwrap PASSED
@@ -847,4 +855,4 @@ tests/test_write.py::test_escape_special_characters_in_key PASSED
 tests/test_write.py::test_write_backslash PASSED
 tests/test_write.py::test_write_inline_table_in_nested_arrays PASSED
 
-======== 841 passed ========
+======== 848 passed ========
