@@ -1,18 +1,46 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PYTHON_DIR)/site-packages/filelock --cov $(@D)/tests --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 asyncio: mode=strict
-collecting ... collected 57 items
+collecting ... collected 82 items
 
-::project PASSED
 tests/test_error.py::test_timeout_lock_file PASSED
 tests/test_error.py::test_timeout_pickle PASSED
 tests/test_error.py::test_timeout_repr PASSED
 tests/test_error.py::test_timeout_str PASSED
 tests/test_filelock.py::test_acquire_release_on_exc[SoftFileLock] PASSED
 tests/test_filelock.py::test_acquire_release_on_exc[UnixFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[blank_filename-SoftFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[blank_filename-UnixFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[invalid_"-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_"-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_*-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_*-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_:-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_:-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_<-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_<-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_>-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_>-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_?-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_?-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_\x07-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_\x07-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_|-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_|-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[non_existent_directory-SoftFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[non_existent_directory-UnixFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[null_byte-SoftFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[null_byte-UnixFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[permission_/-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[permission_/-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[permission_\\-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[permission_\\-UnixFileLock] SKIPPED
 tests/test_filelock.py::test_cleanup_soft_lock PASSED
 tests/test_filelock.py::test_context_decorator[SoftFileLock] PASSED
 tests/test_filelock.py::test_context_decorator[UnixFileLock] PASSED
@@ -23,10 +51,10 @@ tests/test_filelock.py::test_default_timeout[UnixFileLock] PASSED
 tests/test_filelock.py::test_del[SoftFileLock] PASSED
 tests/test_filelock.py::test_del[UnixFileLock] PASSED
 tests/test_filelock.py::test_flock_not_implemented_unix PASSED
+tests/test_filelock.py::test_lock_can_be_non_thread_local[SoftFileLock] PASSED
+tests/test_filelock.py::test_lock_can_be_non_thread_local[UnixFileLock] PASSED
 tests/test_filelock.py::test_lock_mode PASSED
 tests/test_filelock.py::test_lock_mode_soft PASSED
-tests/test_filelock.py::test_missing_directory[SoftFileLock] PASSED
-tests/test_filelock.py::test_missing_directory[UnixFileLock] PASSED
 tests/test_filelock.py::test_nested_acquire[SoftFileLock] PASSED
 tests/test_filelock.py::test_nested_acquire[UnixFileLock] PASSED
 tests/test_filelock.py::test_nested_context_manager[SoftFileLock] PASSED
@@ -64,4 +92,15 @@ tests/test_filelock.py::test_umask PASSED
 tests/test_filelock.py::test_umask_soft PASSED
 tests/test_filelock.py::test_wrong_platform PASSED
 
-======== 57 passed ========
+- generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
+
+1 file skipped due to complete coverage.
+Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
+Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
+
+Required test coverage of 76.0% reached. Total coverage: 99.28%
+======== 62 passed, 20 skipped ========
+$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/filelock was never imported. (module-not-imported)
+  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
+  py$(PYV): OK
+  congratulations :)

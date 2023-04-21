@@ -1,0 +1,106 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PYTHON_DIR)/site-packages/filelock --cov $(@D)/tests --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+asyncio: mode=strict
+collecting ... collected 82 items
+
+  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
+$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/filelock was never imported. (module-not-imported)
+tests/test_error.py::test_timeout_lock_file PASSED
+tests/test_error.py::test_timeout_pickle PASSED
+tests/test_error.py::test_timeout_repr PASSED
+tests/test_error.py::test_timeout_str PASSED
+tests/test_filelock.py::test_acquire_release_on_exc[SoftFileLock] PASSED
+tests/test_filelock.py::test_acquire_release_on_exc[UnixFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[blank_filename-SoftFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[blank_filename-UnixFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[invalid_"-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_"-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_*-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_*-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_:-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_:-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_<-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_<-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_>-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_>-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_?-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_?-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_\x07-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_\x07-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_|-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_|-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[non_existent_directory-SoftFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[non_existent_directory-UnixFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[null_byte-SoftFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[null_byte-UnixFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[permission_/-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[permission_/-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[permission_\\-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[permission_\\-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_cleanup_soft_lock PASSED
+tests/test_filelock.py::test_context_decorator[SoftFileLock] PASSED
+tests/test_filelock.py::test_context_decorator[UnixFileLock] PASSED
+tests/test_filelock.py::test_context_release_on_exc[SoftFileLock] PASSED
+tests/test_filelock.py::test_context_release_on_exc[UnixFileLock] PASSED
+tests/test_filelock.py::test_default_timeout[SoftFileLock] PASSED
+tests/test_filelock.py::test_default_timeout[UnixFileLock] PASSED
+tests/test_filelock.py::test_del[SoftFileLock] PASSED
+tests/test_filelock.py::test_del[UnixFileLock] PASSED
+tests/test_filelock.py::test_flock_not_implemented_unix PASSED
+tests/test_filelock.py::test_lock_can_be_non_thread_local[SoftFileLock] PASSED
+tests/test_filelock.py::test_lock_can_be_non_thread_local[UnixFileLock] PASSED
+tests/test_filelock.py::test_lock_mode PASSED
+tests/test_filelock.py::test_lock_mode_soft PASSED
+tests/test_filelock.py::test_nested_acquire[SoftFileLock] PASSED
+tests/test_filelock.py::test_nested_acquire[UnixFileLock] PASSED
+tests/test_filelock.py::test_nested_context_manager[SoftFileLock] PASSED
+tests/test_filelock.py::test_nested_context_manager[UnixFileLock] PASSED
+tests/test_filelock.py::test_nested_forced_release[SoftFileLock] PASSED
+tests/test_filelock.py::test_nested_forced_release[UnixFileLock] PASSED
+tests/test_filelock.py::test_non_blocking[SoftFileLock] PASSED
+tests/test_filelock.py::test_non_blocking[UnixFileLock] PASSED
+tests/test_filelock.py::test_poll_intervall_deprecated[SoftFileLock] PASSED
+tests/test_filelock.py::test_poll_intervall_deprecated[UnixFileLock] PASSED
+tests/test_filelock.py::test_ro_file[SoftFileLock] PASSED
+tests/test_filelock.py::test_ro_file[UnixFileLock] PASSED
+tests/test_filelock.py::test_ro_folder[SoftFileLock] PASSED
+tests/test_filelock.py::test_ro_folder[UnixFileLock] PASSED
+tests/test_filelock.py::test_simple[SoftFileLock-Path] PASSED
+tests/test_filelock.py::test_simple[SoftFileLock-PurePath] PASSED
+tests/test_filelock.py::test_simple[SoftFileLock-str] PASSED
+tests/test_filelock.py::test_simple[UnixFileLock-Path] PASSED
+tests/test_filelock.py::test_simple[UnixFileLock-PurePath] PASSED
+tests/test_filelock.py::test_simple[UnixFileLock-str] PASSED
+tests/test_filelock.py::test_soft_errors PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_global_lock[SoftFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_global_lock[UnixFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_lock_recreated_in_each_thread[SoftFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_lock_recreated_in_each_thread[UnixFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_passing_lock_to_threads[SoftFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_passing_lock_to_threads[UnixFileLock] PASSED
+tests/test_filelock.py::test_threaded_lock_different_lock_obj[SoftFileLock] PASSED
+tests/test_filelock.py::test_threaded_lock_different_lock_obj[UnixFileLock] PASSED
+tests/test_filelock.py::test_threaded_shared_lock_obj[SoftFileLock] PASSED
+tests/test_filelock.py::test_threaded_shared_lock_obj[UnixFileLock] PASSED
+tests/test_filelock.py::test_timeout[SoftFileLock] PASSED
+tests/test_filelock.py::test_timeout[UnixFileLock] PASSED
+tests/test_filelock.py::test_umask PASSED
+tests/test_filelock.py::test_umask_soft PASSED
+tests/test_filelock.py::test_wrong_platform PASSED
+
+- generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
+
+1 file skipped due to complete coverage.
+Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
+Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
+
+Required test coverage of 76.0% reached. Total coverage: 99.55%
+======== 62 passed, 20 skipped ========
+  py$(PYV): OK
+  congratulations :)
