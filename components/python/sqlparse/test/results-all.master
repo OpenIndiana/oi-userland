@@ -1,12 +1,15 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m pytest --cov=sqlparse
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --cov=sqlparse
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg
-collecting ... collected 428 items
+rootdir: $(@D)
+asyncio: mode=strict
+collecting ... collected 431 items
 
+::project PASSED
 tests/test_cli.py::test_cli_main_empty PASSED
 tests/test_cli.py::test_encoding PASSED
 tests/test_cli.py::test_encoding_output_file[encoding_gbk.sql-gbk] PASSED
@@ -168,7 +171,6 @@ tests/test_grouping.py::test_identifier_consumes_ordering PASSED
 tests/test_grouping.py::test_identifier_with_op_trailing_ws PASSED
 tests/test_grouping.py::test_identifier_with_operators PASSED
 tests/test_grouping.py::test_identifier_with_string_literals PASSED
-tests/test_grouping.py::test_in_comparison PASSED
 tests/test_grouping.py::test_into_kw_ends_where_clause PASSED
 tests/test_grouping.py::test_keyword_followed_by_parenthesis PASSED
 tests/test_grouping.py::test_like_and_ilike_comparison PASSED
@@ -194,6 +196,8 @@ tests/test_parse.py::test_2d_array_index PASSED
 tests/test_parse.py::test_aliased_array_index PASSED
 tests/test_parse.py::test_array_index_function_result PASSED
 tests/test_parse.py::test_array_literal PASSED
+tests/test_parse.py::test_configurable_keywords PASSED
+tests/test_parse.py::test_configurable_regex PASSED
 tests/test_parse.py::test_dbldollar_as_literal[$$foo$$-True] PASSED
 tests/test_parse.py::test_dbldollar_as_literal[$A$ foo $B$-False] PASSED
 tests/test_parse.py::test_dbldollar_as_literal[$_$ foo $token$bar$token$ baz$_$-True] PASSED
@@ -264,6 +268,7 @@ tests/test_parse.py::test_valid_identifier_names[_foo] PASSED
 tests/test_parse.py::test_valid_identifier_names[foo] PASSED
 tests/test_parse.py::test_wildcard_multiplication PASSED
 tests/test_regressions.py::test_as_in_parentheses_indents PASSED
+tests/test_regressions.py::test_comment_between_cte_clauses_issue632 PASSED
 tests/test_regressions.py::test_comment_encoding_when_reindent PASSED
 tests/test_regressions.py::test_dont_alias_keywords PASSED
 tests/test_regressions.py::test_except_formatting PASSED
@@ -436,24 +441,7 @@ tests/test_utils.py::test_remove_quotes['foo'-foo] PASSED
 tests/test_utils.py::test_remove_quotes[None-None] PASSED
 tests/test_utils.py::test_remove_quotes[`foo`-foo] PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_configure_node uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_configure_node(self, node):
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_testnodedown uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_testnodedown(self, node, error):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 425 passed, 3 xfailed, 2 warnings ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 428 passed, 3 xfailed ========
+  py$(PYV): OK
   congratulations :)
