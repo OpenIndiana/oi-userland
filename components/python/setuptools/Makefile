@@ -19,20 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			67.6.1
+HUMAN_VERSION =			67.7.0
 COMPONENT_SUMMARY =		setuptools - Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_PROJECT_URL =		https://github.com/pypa/setuptools
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/cb/46/22ec35f286a77e6b94adf81b4f0d59f402ed981d4251df0ba7b992299146/setuptools-67.6.1.tar.gz
+	https://files.pythonhosted.org/packages/68/86/d82a2a8f3f63f0dad4cb287dbae0cac178efb6267b07e0aef8b072866032/setuptools-67.7.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:257de92a9d50a60b8e22abfcbb771571fde0dbf3ec234463212027a4eeecbe9a
+	sha256:b7e53a01c6c654d26d2999ee033d8c6125e5fa55f03b7b193f937ae7ac999f22
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
-# - attrs (test bootstrap)
 # - cachetools (test bootstrap)
+# - calver (test bootstrap)
 # - chardet (test bootstrap)
 # - distlib (test bootstrap)
 # - editables (test bootstrap)
@@ -41,7 +41,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 # - pytest (test bootstrap)
 # - setuptools_scm
 # - tox-current-env (test bootstrap)
-# - wheel (test bootstrap)
+# - trove-classifiers (test bootstrap)
 # - zipp
 PYTHON_BOOTSTRAP = yes
 
