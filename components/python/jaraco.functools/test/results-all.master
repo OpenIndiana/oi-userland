@@ -1,0 +1,54 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder .tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+configfile: pytest.ini
+asyncio: mode=strict
+collecting ... collected 38 items
+
+::project PASSED
+conftest.py::BLACK PASSED
+docs/conf.py::BLACK PASSED
+jaraco/functools.py::BLACK PASSED
+jaraco/functools.py::jaraco.functools.apply PASSED
+jaraco/functools.py::jaraco.functools.assign_params PASSED
+jaraco/functools.py::jaraco.functools.compose PASSED
+jaraco/functools.py::jaraco.functools.except_ PASSED
+jaraco/functools.py::jaraco.functools.invoke PASSED
+jaraco/functools.py::jaraco.functools.method_cache PASSED
+jaraco/functools.py::jaraco.functools.method_caller PASSED
+jaraco/functools.py::jaraco.functools.once PASSED
+jaraco/functools.py::jaraco.functools.pass_none PASSED
+jaraco/functools.py::jaraco.functools.print_yielded PASSED
+jaraco/functools.py::jaraco.functools.result_invoke PASSED
+jaraco/functools.py::jaraco.functools.retry PASSED
+jaraco/functools.py::jaraco.functools.save_method_args PASSED
+test_functools.py::BLACK PASSED
+test_functools.py::TestMethodCache::test_deepcopy PASSED
+test_functools.py::TestMethodCache::test_non_data_property XFAIL (ca...)
+test_functools.py::TestMethodCache::test_property XFAIL (can't repla...)
+test_functools.py::TestMethodCache::test_special_methods PASSED
+test_functools.py::TestRetry::test_cleanup_called_on_exception PASSED
+test_functools.py::TestRetry::test_decorator PASSED
+test_functools.py::TestRetry::test_decorator_with_arg PASSED
+test_functools.py::TestRetry::test_default_does_not_retry PASSED
+test_functools.py::TestRetry::test_default_traps_nothing PASSED
+test_functools.py::TestRetry::test_infinite_retries PASSED
+test_functools.py::TestRetry::test_retry_call_fails PASSED
+test_functools.py::TestRetry::test_retry_call_succeeds PASSED
+test_functools.py::TestRetry::test_retry_exception_superclass PASSED
+test_functools.py::TestRetry::test_retry_multiple_exceptions PASSED
+test_functools.py::TestRetry::test_set_to_fail PASSED
+test_functools.py::TestRetry::test_with_arg PASSED
+test_functools.py::TestThrottler::test_function_throttled PASSED
+test_functools.py::TestThrottler::test_reconstruct_unwraps PASSED
+test_functools.py::TestThrottler::test_throttled_method PASSED
+
+
+======== 35 passed, 2 xfailed ========
+  py$(PYV): OK
+  congratulations :)
