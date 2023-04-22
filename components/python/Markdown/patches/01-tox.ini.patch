@@ -1,0 +1,51 @@
+https://github.com/Python-Markdown/markdown/issues/1336
+
+--- Markdown-3.4.3.orig/tox.ini
++++ Markdown-3.4.3/tox.ini
+@@ -0,0 +1,46 @@
++[tox]
++envlist = py{37, 38, 39, 310, 311}, pypy{37, 38, 39}, pygments, flake8, checkspelling, pep517check, checklinks
++isolated_build = True
++
++[testenv]
++extras = testing
++deps = pytidylib
++allowlist_externals = coverage
++commands =
++    coverage run --source=markdown -m unittest discover {toxinidir}/tests
++    coverage xml
++    coverage report --show-missing
++
++[testenv:pygments]
++# Run tests with pygments installed (override deps only).
++setenv =
++    PYGMENTS_VERSION = 2.7.1
++deps =
++    pytidylib
++    pygments=={env:PYGMENTS_VERSION}
++
++[testenv:flake8]
++deps = flake8
++allowlist_externals = flake8
++commands = flake8 {toxinidir}/markdown {toxinidir}/tests
++skip_install = true
++
++[testenv:checkspelling]
++allowlist_externals = {toxinidir}/checkspelling.sh
++deps =
++    mkdocs
++    mkdocs_nature
++commands = {toxinidir}/checkspelling.sh
++
++[testenv:checklinks]
++whitelist_externals = markdown-link-check
++deps =
++commands = {toxinidir}/checklinks.sh
++
++[testenv:pep517check]
++deps = pep517
++commands = python -m pep517.check {toxinidir}
++skip_install = true
++
++[flake8]
++max-line-length = 119

@@ -11,27 +11,23 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project markdown
+#   $WS_TOOLS/python-integrate-project Markdown
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		markdown
-HUMAN_VERSION =			3.4.1
-COMPONENT_SUMMARY =		markdown - Python implementation of Markdown.
+COMPONENT_NAME =		Markdown
+HUMAN_VERSION =			3.4.3
+COMPONENT_SUMMARY =		Markdown - Python implementation of John Gruber's Markdown.
 COMPONENT_PROJECT_URL =		https://Python-Markdown.github.io/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/85/7e/133e943e97a943d2f1d8bae0c5060f8ac50e6691754eb9dbe036b047a9bb/Markdown-3.4.1.tar.gz
+	https://files.pythonhosted.org/packages/9d/80/cc67bfb7deb973d5ae662ee6454d2dafaa8f7c106feafd0d1572666ebde5/Markdown-3.4.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3b809086bb6efad416156e00a0da66fe47618a5d6918dd688f53f40c8e4cfeff
+	sha256:8bf101198e004dc93e84a12a7395e31aac6a9c9942848ae1d99b9d72cf9b3520
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
-
-COMPONENT_SRC = Markdown-$(COMPONENT_VERSION)
-TEST_STYLE = setup.py
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -40,3 +36,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/pytidylib
+TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
