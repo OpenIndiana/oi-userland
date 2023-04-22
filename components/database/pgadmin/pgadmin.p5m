@@ -14,15 +14,16 @@
 # Copyright 2023 Klaus Ziegler
 #
 
-set name=pkg.fmri value=pkg:/database/postgres/pgadmin@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value=org.opensolaris.category.2008:System/Databases
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license pgadmin.license license="BSD"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
 
 file files/pgadmin3.desktop path=usr/share/applications/pgadmin3.desktop restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
@@ -45,7 +46,7 @@ file files/icons/72x72/apps/pgadmin.png path=usr/share/icons/hicolor/72x72/apps/
 file files/icons/96x96/apps/pgadmin.png path=usr/share/icons/hicolor/96x96/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file files/icons/128x128/apps/pgadmin.png path=usr/share/icons/hicolor/128x128/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
 file files/icons/scalable/apps/pgadmin.svg path=usr/share/icons/hicolor/scalable/apps/pgadmin.svg restart_fmri=svc:/application/desktop-cache/icon-cache:default
-file files/pgadmin3.1 path=usr/share/man/man1/pgadmin3.1  
+file files/pgadmin3.1 path=usr/share/man/man1/pgadmin3.1
 
 # pgadmin earlier contained pgagent
 depend type=require fmri=database/postgres/pgagent
@@ -157,7 +158,6 @@ file path=usr/share/pgadmin3/docs/en_US/_images/slony-subscription.png
 file path=usr/share/pgadmin3/docs/en_US/_images/slony-table.png
 file path=usr/share/pgadmin3/docs/en_US/_images/slony-upgrade.png
 file path=usr/share/pgadmin3/docs/en_US/_images/status.png
-file path=usr/share/pgadmin3/docs/en_US/_static/_sphinx_javascript_frameworks_compat.js
 file path=usr/share/pgadmin3/docs/en_US/_static/backup-2.png
 file path=usr/share/pgadmin3/docs/en_US/_static/backup-3.png
 file path=usr/share/pgadmin3/docs/en_US/_static/backup-4.png
@@ -178,8 +178,6 @@ file path=usr/share/pgadmin3/docs/en_US/_static/grantwiz.png
 file path=usr/share/pgadmin3/docs/en_US/_static/gridopt-filter.png
 file path=usr/share/pgadmin3/docs/en_US/_static/gridopt-sort.png
 file path=usr/share/pgadmin3/docs/en_US/_static/guru-connect.png
-file path=usr/share/pgadmin3/docs/en_US/_static/jquery-3.6.0.js
-file path=usr/share/pgadmin3/docs/en_US/_static/jquery.js
 file path=usr/share/pgadmin3/docs/en_US/_static/language_data.js
 file path=usr/share/pgadmin3/docs/en_US/_static/locks.png
 file path=usr/share/pgadmin3/docs/en_US/_static/logfile.png
@@ -247,8 +245,6 @@ file path=usr/share/pgadmin3/docs/en_US/_static/slony-upgrade.png
 file path=usr/share/pgadmin3/docs/en_US/_static/sphinx_highlight.js
 file path=usr/share/pgadmin3/docs/en_US/_static/status.png
 file path=usr/share/pgadmin3/docs/en_US/_static/transaction.png
-file path=usr/share/pgadmin3/docs/en_US/_static/underscore-1.13.1.js
-file path=usr/share/pgadmin3/docs/en_US/_static/underscore.js
 file path=usr/share/pgadmin3/docs/en_US/appendices.html
 file path=usr/share/pgadmin3/docs/en_US/backup.html
 file path=usr/share/pgadmin3/docs/en_US/bugreport.html

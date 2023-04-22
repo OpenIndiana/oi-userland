@@ -17,30 +17,33 @@
 USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= 	pgadmin3
-COMPONENT_VERSION= 	1.23
-COMPONENT_SUMMARY= 	pgAdminIII administration and development GUI for PostgreSQL
-COMPONENT_SRC= 		pgadmin3-lts-master-20220717
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:4237b54f98316367a2474631bfe7d60f84c5d5e0339c549e64fdf4f02706f009
-COMPONENT_ARCHIVE_URL= \
-  https://github.com/allentc/pgadmin3-lts/archive/refs/tags/master-20220717.tar.gz
-COMPONENT_PROJECT_URL = https://www.pgadmin.org
+COMPONENT_NAME= 		pgadmin3
+COMPONENT_VERSION= 		1.23
+COMPONENT_REVISION=		1
+COMPONENT_SUMMARY= 		pgAdminIII administration and development GUI for PostgreSQL
+COMPONENT_SRC= 			pgadmin3-lts-master-20220717
+COMPONENT_ARCHIVE= 		$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:4237b54f98316367a2474631bfe7d60f84c5d5e0339c549e64fdf4f02706f009
+COMPONENT_ARCHIVE_URL=	https://github.com/allentc/pgadmin3-lts/archive/refs/tags/master-20220717.tar.gz
+COMPONENT_PROJECT_URL=	https://www.pgadmin.org
+COMPONENT_FMRI=			database/postgres/pgadmin
+COMPONENT_CLASSIFICATION=	System/Databases
+COMPONENT_LICENSE=		BSD
+COMPONENT_LICENSE_FILE=	LICENSE
 
-LDFLAGS+=   -L$(PG_LIBDIR)   -R$(PG_LIBDIR)
-LDFLAGS+=   -lsocket -lnsl
+LDFLAGS += -L$(PG_LIBDIR) -R$(PG_LIBDIR)
+LDFLAGS += -lsocket -lnsl
 
 CONFIGURE_OPTIONS += --with-pgsql=$(PG_HOME)
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION= (cd $(SOURCE_DIR); bash bootstrap)
+COMPONENT_PRE_CONFIGURE_ACTION = ( cd $(SOURCE_DIR); bash bootstrap )
 
-COMPONENT_BUILD_ENV+= LDFLAGS="$(LDFLAGS)"
+COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
 
-# build dependencies.
-REQUIRED_PACKAGES += library/python/sphinx
+# build dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/sphinx
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
