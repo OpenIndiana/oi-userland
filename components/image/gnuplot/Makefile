@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnuplot
 COMPONENT_VERSION=	5.4.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	gnuplot - plotting utility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://gnuplot.info/
