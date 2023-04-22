@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			67.7.0
+HUMAN_VERSION =			67.7.1
 COMPONENT_SUMMARY =		setuptools - Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_PROJECT_URL =		https://github.com/pypa/setuptools
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/68/86/d82a2a8f3f63f0dad4cb287dbae0cac178efb6267b07e0aef8b072866032/setuptools-67.7.0.tar.gz
+	https://files.pythonhosted.org/packages/01/18/73f7ca619f72b22300493451350214d3a035e7fa8f17ce31db2da24fe0c9/setuptools-67.7.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b7e53a01c6c654d26d2999ee033d8c6125e5fa55f03b7b193f937ae7ac999f22
+	sha256:bb16732e8eb928922eabaa022f881ae2b7cdcfaf9993ef1f5e841a96d32b8e0c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
