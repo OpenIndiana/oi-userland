@@ -16,18 +16,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wxwidgets-3
-COMPONENT_VERSION=      3.1.5
-COMPONENT_REVISION=     6
+COMPONENT_MAJOR_VERSION= 3.2
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).2.1
 COMPONENT_SUMMARY=      wxWidgets - Cross-Platform GUI Library
 COMPONENT_PROJECT_URL=  https://www.wxwidgets.org/
 COMPONENT_SRC_NAME=     wxWidgets
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  https://github.com/wxWidgets/wxWidgets/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:d7b3666de33aa5c10ea41bb9405c40326e1aeb74ee725bb88f90f1d50270a224
+COMPONENT_ARCHIVE_HASH= sha256:dffcb6be71296fff4b7f8840eb1b510178f57aa2eb236b20da41182009242c02
 COMPONENT_FMRI=         library/graphics/wxwidgets-3
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=      wxWindows Library license
+COMPONENT_LICENSE_FILE= docs/licence.txt
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -61,7 +62,6 @@ CONFIGURE_OPTIONS += --with-sdl
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += image/library/libjpeg6
 REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += image/library/libpng16
@@ -70,6 +70,7 @@ REQUIRED_PACKAGES += library/audio/gstreamer1
 REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gspell
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/webkitgtk2
@@ -77,6 +78,7 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += library/libsecret
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
