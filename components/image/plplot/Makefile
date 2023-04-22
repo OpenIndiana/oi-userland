@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         plplot
 COMPONENT_VERSION=      5.15.0
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=		A cross-platform software package for creating scientific plots.
 COMPONENT_PROJECT_URL=	https://plplot.sourceforge.net
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,7 +34,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ARGS= 
 
-CMAKE_OPTIONS += -DwxWidgets_CONFIG_EXECUTABLE=/usr/bin/$(MACH64)/wx-config
+CMAKE_OPTIONS += -DwxWidgets_CONFIG_EXECUTABLE=/usr/bin/wx-config
 CMAKE_OPTIONS += -DENABLE_ada=OFF
 CMAKE_OPTIONS += -DENABLE_cxx=ON
 CMAKE_OPTIONS += -DENABLE_d=ON
