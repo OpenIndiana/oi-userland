@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_metadata
-HUMAN_VERSION =			6.5.0
+HUMAN_VERSION =			6.6.0
 COMPONENT_SUMMARY =		importlib_metadata - Read metadata from Python packages
 COMPONENT_PROJECT_URL =		https://github.com/python/importlib_metadata
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9d/ce/dc7221b3044c7382d5abad27d2599e63b0e0ccabc49491244203ee1ded96/importlib_metadata-6.5.0.tar.gz
+	https://files.pythonhosted.org/packages/0b/1f/9de392c2b939384e08812ef93adf37684ec170b5b6e7ea302d9f163c2ea0/importlib_metadata-6.6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7a8bdf1bc3a726297f5cfbc999e6e7ff6b4fa41b26bba4afc580448624460045
+	sha256:92501cdf9cc66ebd3e612f1b4f0c0765dfa42f0fa38ffb319b6bd84dd675d705
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
