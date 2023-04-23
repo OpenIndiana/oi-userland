@@ -26,41 +26,38 @@
 #
 
 BUILD_BITS=64_and_32
-
+USE_COMMON_TEST_MASTER=	no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
-COMPONENT_VERSION=	2.10.3
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=		library/libxml2
-COMPONENT_SUMMARY=	The XML library
-COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=	http://xmlsoft.org/
+COMPONENT_VERSION=	2.10.4
+COMPONENT_SUMMARY=	Libxml2 is the XML C parser and toolkit developed for the Gnome project
+COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:5d2cc3d78bec3dbe212a9d7fa629ada25a7da928af432c93060ff5c17ee28a9c
+COMPONENT_ARCHIVE_HASH=	sha256:ed0c91c5845008f1936739e4eee2035531c1c94742c6541f44ee66d885948d45
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libxml2/2.10/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libxml
+COMPONENT_FMRI=		library/libxml2
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	Copyright
 
 # W3C XML Conformance Test Suites
 COMPONENT_ARCHIVE_1= xmlts20080827.tar.gz
-COMPONENT_ARCHIVE_HASH_1= \
-    sha256:96151685cec997e1f9f3387e3626d61e6284d4d6e66e0e440c209286c03e9cc7
-COMPONENT_ARCHIVE_URL_1= http://www.w3.org/XML/Test/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_HASH_1= sha256:96151685cec997e1f9f3387e3626d61e6284d4d6e66e0e440c209286c03e9cc7
+COMPONENT_ARCHIVE_URL_1= https://www.w3.org/XML/Test/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYV=		$(shell echo $(PYTHON_VERSIONS) | tr -d .)
-PKG_MACROS +=	PYVER=$(PYTHON_VERSION)
-PKG_MACROS +=	PYV=$(PYV)
+PYV= $(shell echo $(PYTHON_VERSIONS) | tr -d .)
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
+PKG_MACROS += PYV=$(PYV)
 
-CFLAGS +=	$(CPP_LARGEFILES)
+CFLAGS += $(CPP_LARGEFILES)
 
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
-        cd $(SOURCE_DIR); \
-        $(CLONEY) $(SOURCE_DIR) $(@D); \
-         );
+	cd $(SOURCE_DIR); \
+	$(CLONEY) $(SOURCE_DIR) $(@D); \
+	);
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --localstatedir="$(VARDIR)"
@@ -80,8 +77,6 @@ COMPONENT_BUILD_ARGS.64 += pythondir=$(PYTHON_VENDOR_PACKAGES)
 COMPONENT_BUILD_ARGS.64 += pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 
 COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; PATH="$(PATH)" autoreconf -if )
-
-USE_COMMON_TEST_MASTER=	no
 
 # After we have built/installed libxml2, build/install the python
 # support for python (only 64 bit is available)
