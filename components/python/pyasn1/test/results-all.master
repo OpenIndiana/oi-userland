@@ -3,7 +3,8 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-collecting ... collected 1143 items
+asyncio: mode=strict
+collecting ... collected 1153 items
 
 ::project PASSED
 tests/codec/ber/test_decoder.py::AnyDecoderTestCase::testByUntagged PASSED
@@ -15,6 +16,9 @@ tests/codec/ber/test_decoder.py::AnyDecoderTestCase::testTaggedExSubst PASSED
 tests/codec/ber/test_decoder.py::AnyDecoderTestCase::testTaggedIm PASSED
 tests/codec/ber/test_decoder.py::AnyDecoderTestCase::testTaggedImIndefMode PASSED
 tests/codec/ber/test_decoder.py::BMPStringDecoderTestCase::testDecoder PASSED
+tests/codec/ber/test_decoder.py::BinaryFileTestCase::testInvalidFileContent PASSED
+tests/codec/ber/test_decoder.py::BinaryFileTestCase::testMoreObjects PASSED
+tests/codec/ber/test_decoder.py::BinaryFileTestCase::testOneObject PASSED
 tests/codec/ber/test_decoder.py::BitStringDecoderTestCase::testDefMode PASSED
 tests/codec/ber/test_decoder.py::BitStringDecoderTestCase::testDefModeChunked PASSED
 tests/codec/ber/test_decoder.py::BitStringDecoderTestCase::testDefModeChunkedSubst PASSED
@@ -27,11 +31,15 @@ tests/codec/ber/test_decoder.py::BooleanDecoderTestCase::testFalse PASSED
 tests/codec/ber/test_decoder.py::BooleanDecoderTestCase::testTagFormat PASSED
 tests/codec/ber/test_decoder.py::BooleanDecoderTestCase::testTrue PASSED
 tests/codec/ber/test_decoder.py::BooleanDecoderTestCase::testTrueNeg PASSED
+tests/codec/ber/test_decoder.py::BytesIOTestCase::testRead PASSED
 tests/codec/ber/test_decoder.py::ChoiceDecoderTestCase::testBySpec PASSED
 tests/codec/ber/test_decoder.py::ChoiceDecoderTestCase::testExplicitTag PASSED
 tests/codec/ber/test_decoder.py::ChoiceDecoderTestCase::testExplicitTagUndefLength PASSED
 tests/codec/ber/test_decoder.py::ChoiceDecoderTestCase::testUndefLength PASSED
 tests/codec/ber/test_decoder.py::ChoiceDecoderTestCase::testWithoutSpec PASSED
+tests/codec/ber/test_decoder.py::CompressedFilesTestCase::testGzip PASSED
+tests/codec/ber/test_decoder.py::CompressedFilesTestCase::testZipfile PASSED
+tests/codec/ber/test_decoder.py::CompressedFilesTestCase::testZipfileMany PASSED
 tests/codec/ber/test_decoder.py::DecoderCacheTestCase::testCache PASSED
 tests/codec/ber/test_decoder.py::EndOfOctetsTestCase::testDefiniteNoEoo PASSED
 tests/codec/ber/test_decoder.py::EndOfOctetsTestCase::testExpectedEoo PASSED
@@ -104,6 +112,7 @@ tests/codec/ber/test_decoder.py::RealDecoderTestCase::testMinusInf PASSED
 tests/codec/ber/test_decoder.py::RealDecoderTestCase::testPlusInf PASSED
 tests/codec/ber/test_decoder.py::RealDecoderTestCase::testShortEncoding PASSED
 tests/codec/ber/test_decoder.py::RealDecoderTestCase::testTagFormat PASSED
+tests/codec/ber/test_decoder.py::RestartableDecoderTestCase::testPartialReadingFromNonBlockingStream PASSED
 tests/codec/ber/test_decoder.py::SequenceDecoderTestCase::testTagFormat PASSED
 tests/codec/ber/test_decoder.py::SequenceDecoderTestCase::testWithOptionalAndDefaultedDefMode PASSED
 tests/codec/ber/test_decoder.py::SequenceDecoderTestCase::testWithOptionalAndDefaultedDefModeChunked PASSED
@@ -203,6 +212,7 @@ tests/codec/ber/test_decoder.py::SetOfDecoderWithSchemaTestCase::testDefModeChun
 tests/codec/ber/test_decoder.py::SetOfDecoderWithSchemaTestCase::testIndefMode PASSED
 tests/codec/ber/test_decoder.py::SetOfDecoderWithSchemaTestCase::testIndefModeChunked PASSED
 tests/codec/ber/test_decoder.py::UTF8StringDecoderTestCase::testDecoder PASSED
+tests/codec/ber/test_decoder.py::UnicodeTestCase::testFail PASSED
 tests/codec/ber/test_decoder.py::UniversalStringDecoderTestCase::testDecoder PASSED
 tests/codec/ber/test_encoder.py::AnyEncoderTestCase::testTaggedEx PASSED
 tests/codec/ber/test_encoder.py::AnyEncoderTestCase::testTaggedIm PASSED
@@ -533,6 +543,7 @@ tests/codec/der/test_decoder.py::SequenceDecoderWithUntaggedOpenTypesTestCase::t
 tests/codec/der/test_decoder.py::SequenceDecoderWithUntaggedOpenTypesTestCase::testDontDecodeOpenTypesChoiceTwo PASSED
 tests/codec/der/test_encoder.py::BitStringEncoderTestCase::testDefModeLong PASSED
 tests/codec/der/test_encoder.py::BitStringEncoderTestCase::testDefModeShort PASSED
+tests/codec/der/test_encoder.py::ClassConstructorTestCase::testKeywords PASSED
 tests/codec/der/test_encoder.py::EmptyInnerFieldOfSequenceEncoderTestCase::testInitializedDefaultNullIsNotEncoded PASSED
 tests/codec/der/test_encoder.py::EmptyInnerFieldOfSequenceEncoderTestCase::testInitializedDefaultOctetStringIsNotEncoded PASSED
 tests/codec/der/test_encoder.py::EmptyInnerFieldOfSequenceEncoderTestCase::testInitializedOptionalNullIsEncoded PASSED
@@ -603,12 +614,11 @@ tests/codec/native/test_encoder.py::RealEncoderTestCase::testChar PASSED
 tests/codec/native/test_encoder.py::RealEncoderTestCase::testMinusInf PASSED
 tests/codec/native/test_encoder.py::RealEncoderTestCase::testPlusInf PASSED
 tests/codec/native/test_encoder.py::SequenceEncoderTestCase::testSimple PASSED
-tests/compat/test_binary.py::BinaryTestCase::test_bin_allones PASSED
-tests/compat/test_binary.py::BinaryTestCase::test_bin_allzeros PASSED
-tests/compat/test_binary.py::BinaryTestCase::test_bin_neg PASSED
-tests/compat/test_binary.py::BinaryTestCase::test_bin_noarg PASSED
-tests/compat/test_binary.py::BinaryTestCase::test_bin_pos PASSED
-tests/compat/test_binary.py::BinaryTestCase::test_bin_zero PASSED
+tests/codec/test_streaming.py::CachingStreamWrapperTestCase::testMarkedPositionResets PASSED
+tests/codec/test_streaming.py::CachingStreamWrapperTestCase::testPeek PASSED
+tests/codec/test_streaming.py::CachingStreamWrapperTestCase::testReadFromCacheAndStream PASSED
+tests/codec/test_streaming.py::CachingStreamWrapperTestCase::testReadJustFromCache PASSED
+tests/codec/test_streaming.py::CachingStreamWrapperTestCase::testReadJustFromStream PASSED
 tests/compat/test_integer.py::IntegerTestCase::test_from_bytes_empty PASSED
 tests/compat/test_integer.py::IntegerTestCase::test_from_bytes_signed PASSED
 tests/compat/test_integer.py::IntegerTestCase::test_from_bytes_unsigned PASSED
@@ -1148,4 +1158,4 @@ tests/type/test_useful.py::UTCTimeTestCase::testToDateTime2 PASSED
 tests/type/test_useful.py::UTCTimeTestCase::testToDateTime3 PASSED
 tests/type/test_useful.py::UTCTimeTestCase::testToDateTime4 PASSED
 
-======== 1142 passed ========
+======== 1151 passed ========

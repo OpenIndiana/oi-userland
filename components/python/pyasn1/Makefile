@@ -14,19 +14,18 @@
 #   $WS_TOOLS/python-integrate-project pyasn1
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyasn1
-HUMAN_VERSION =			0.4.8
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		pyasn1 - ASN.1 types and codecs
-COMPONENT_PROJECT_URL =		https://github.com/etingof/pyasn1
+HUMAN_VERSION =			0.5.0
+COMPONENT_SUMMARY =		pyasn1 - Pure-Python implementation of ASN.1 types and DER/BER/CER codecs (X.208)
+COMPONENT_PROJECT_URL =		https://github.com/pyasn1/pyasn1
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a4/db/fffec68299e6d7bad3d504147f9094830b704527a7fc098b721d38cc7fa7/pyasn1-0.4.8.tar.gz
+	https://files.pythonhosted.org/packages/61/ef/945a8bcda7895717c8ba4688c08a11ef6454f32b8e5cb6e352a9004ee89d/pyasn1-0.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:aef77c9fb94a3ac588e87841208bdec464471d9871bd5050a287cc9a475cd0ba
+	sha256:97b7290ca68e62a832558ec3976f15cbf911bf5d7c7039d8b861c2a0ece69fde
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
@@ -35,4 +34,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
