@@ -1,3 +1,4 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> $(PYTHON) -m pytest --cov prettytable --cov tests --cov-report xml
 ============================= test session starts ==============================
@@ -6,7 +7,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 asyncio: mode=strict
-collecting ... collected 156 items
+collecting ... collected 159 items
 
 ::project PASSED
 tests/test_colortable.py::TestColorTable::test_theme_setter PASSED
@@ -56,6 +57,8 @@ tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_HTML[row_prett
 tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_HTML[row_prettytable-mix_prettytable] PASSED
 tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_latex[row_prettytable-col_prettytable] PASSED
 tests/test_prettytable.py::TestBuildEquivalence::test_equivalence_latex[row_prettytable-mix_prettytable] PASSED
+tests/test_prettytable.py::TestClearing::test_clear PASSED
+tests/test_prettytable.py::TestClearing::test_clear_rows PASSED
 tests/test_prettytable.py::TestCsvOutput::test_csv_output PASSED
 tests/test_prettytable.py::TestCustomFormatter::test_can_set_custom_format_from_property_setter PASSED
 tests/test_prettytable.py::TestCustomFormatter::test_custom_format_multi_type PASSED
@@ -142,6 +145,7 @@ tests/test_prettytable.py::TestPreservingInternalBorders::test_internal_border_p
 tests/test_prettytable.py::TestPreservingInternalBorders::test_internal_border_preserved_latex PASSED
 tests/test_prettytable.py::TestRepr::test_default_repr PASSED
 tests/test_prettytable.py::TestRepr::test_jupyter_repr PASSED
+tests/test_prettytable.py::TestRowEndSection::test_row_end_section PASSED
 tests/test_prettytable.py::TestSlicing::test_slice_all PASSED
 tests/test_prettytable.py::TestSlicing::test_slice_first_two_rows PASSED
 tests/test_prettytable.py::TestSlicing::test_slice_last_two_rows PASSED
@@ -166,6 +170,6 @@ tests/test_prettytable.py::test_autoindex PASSED
 tests/test_prettytable.py::test_paginate PASSED
 
 
-======== 156 passed ========
+======== 159 passed ========
   py$(PYV): OK
   congratulations :)
