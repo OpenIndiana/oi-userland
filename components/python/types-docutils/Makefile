@@ -19,16 +19,18 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-docutils
-COMPONENT_VERSION =		0.19.1.1
+HUMAN_VERSION =			0.19.1.7
 COMPONENT_SUMMARY =		types-docutils - Typing stubs for docutils
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/6a/5c/b231a40dab63d06994a7cacebc1da5011b56711c1a9b25365cdb74c40efb/types-docutils-0.19.1.1.tar.gz
+	https://files.pythonhosted.org/packages/d4/d1/eb1e04486244ab59079fa586796fa790613eae89bbfe8f77313c88b6d9e1/types-docutils-0.19.1.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:be0a51ba1c7dd215d9d2df66d6845e63c1009b4bbf4c5beb87a0d9745cdba962
+	sha256:cb6e0dd1c895c723002ec4dc8334bf9df04726ef0cf13f5597501578b47eef30
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
-TEST_STYLE = setup.py
+# This project does not contain tests
+TEST_STYLE = none
+
 
 include $(WS_MAKE_RULES)/common.mk
 
