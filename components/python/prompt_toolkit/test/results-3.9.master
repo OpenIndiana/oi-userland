@@ -3,7 +3,8 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-collecting ... collected 148 items
+asyncio: mode=strict
+collecting ... collected 154 items
 
 ::project PASSED
 tests/test_async_generator.py::test_generator_to_async_generator PASSED
@@ -81,7 +82,12 @@ tests/test_document.py::test_text_before_cursor PASSED
 tests/test_document.py::test_translate_index_to_position PASSED
 tests/test_filter.py::test_always PASSED
 tests/test_filter.py::test_and PASSED
+tests/test_filter.py::test_filter_cache_regression_1 PASSED
+tests/test_filter.py::test_filter_cache_regression_2 PASSED
+tests/test_filter.py::test_filter_remove_duplicates PASSED
 tests/test_filter.py::test_invert PASSED
+tests/test_filter.py::test_nested_and PASSED
+tests/test_filter.py::test_nested_or PASSED
 tests/test_filter.py::test_never PASSED
 tests/test_filter.py::test_or PASSED
 tests/test_filter.py::test_to_filter PASSED
@@ -121,6 +127,7 @@ tests/test_key_binding.py::test_previous_key_sequence PASSED
 tests/test_key_binding.py::test_remove_bindings PASSED
 tests/test_layout.py::test_create_invalid_layout PASSED
 tests/test_layout.py::test_layout_class PASSED
+tests/test_memory_leaks.py::test_prompt_session_memory_leak XFAIL (M...)
 tests/test_print_formatted_text.py::test_formatted_text_with_style PASSED
 tests/test_print_formatted_text.py::test_html_with_style PASSED
 tests/test_print_formatted_text.py::test_print_formatted_text PASSED
@@ -152,4 +159,16 @@ tests/test_yank_nth_arg.py::test_simple_search_with_quotes PASSED
 tests/test_yank_nth_arg.py::test_yank_nth_arg PASSED
 tests/test_yank_nth_arg.py::test_yank_nth_arg_with_arg PASSED
 
-======== 146 passed ========
+=============================== warnings summary ===============================
+tests/test_key_binding.py::test_feed_several
+tests/test_key_binding.py::test_feed_simple
+tests/test_key_binding.py::test_common_prefix
+tests/test_key_binding.py::test_previous_key_sequence
+tests/test_key_binding.py::test_control_square_closed_any
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/prompt_toolkit/key_binding/key_processor.py:413: RuntimeWarning: coroutine 'KeyProcessor._start_timeout.<locals>.wait' was never awaited
+    self._flush_wait_task = app.create_background_task(wait())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 151 passed, 1 xfailed, 5 warnings ========
