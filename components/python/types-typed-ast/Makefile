@@ -19,16 +19,17 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-typed-ast
-COMPONENT_VERSION =		1.5.8.3
+HUMAN_VERSION =			1.5.8.6
 COMPONENT_SUMMARY =		types-typed-ast - Typing stubs for typed-ast
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/44/2c/80a8b7af3d95580a85b4138da1484fb52526ac27d7d92ae6fc27152bf564/types-typed-ast-1.5.8.3.tar.gz
+	https://files.pythonhosted.org/packages/42/22/98b30750373fb3e262e3858a56bbd7506244960ed5c27a9dc7321ea99ab0/types-typed-ast-1.5.8.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3a62bc25168f8b44ce74e1114f9fbc2ee87d6e96e3880cbef39aad9522555b4e
+	sha256:9543b5863db97b412a2b1d5f407c908336365a0bad304d64e8328a769f48c230
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
-TEST_STYLE = setup.py
+# This project does not contain tests
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
