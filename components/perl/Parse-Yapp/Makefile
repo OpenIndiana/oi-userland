@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Parse::Yapp
 HUMAN_VERSION =			1.21
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Parse::Yapp - Perl extension for generating and using LALR parsers.
 COMPONENT_CPAN_AUTHOR =		WBRASWELL
 COMPONENT_ARCHIVE_HASH =	\
