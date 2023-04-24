@@ -1,46 +1,32 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m pytest --doctest-modules --ignore src/validate_pyproject/_vendor src
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --doctest-modules src
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg
+rootdir: $(@D)
+configfile: setup.cfg
+asyncio: mode=strict
 collecting ... collected 1 item
 
 src/validate_pyproject/error_reporting.py::validate_pyproject.error_reporting._separate_terms PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_configure_node uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_configure_node(self, node):
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_testnodedown uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_testnodedown(self, node, error):
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17
-  $(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    if LooseVersion(pytest.__version__) < LooseVersion('3.6.0'):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 1 passed, 4 warnings ========
-py$(PYV) run-test: commands[1] | python -m pytest
+======== 1 passed ========
+py$(PYV): commands[1]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg, testpaths: tests
-collecting ... collected 315 items
+rootdir: $(@D)
+configfile: setup.cfg
+testpaths: tests
+asyncio: mode=strict
+collecting ... collected 340 items
 
-tests/pre_compile/test_cli.py::test_invalid_replacements PASSED
+tests/pre_compile/test_cli.py::test_invalid_replacements[["a", "b"]] PASSED
+tests/pre_compile/test_cli.py::test_invalid_replacements[{invalid: json}] PASSED
 tests/test_api.py::TestRegistry::test_duplicated_id PASSED
 tests/test_api.py::TestRegistry::test_incompatible_versions PASSED
 tests/test_api.py::TestRegistry::test_missing_id PASSED
@@ -79,13 +65,15 @@ tests/test_examples.py::test_examples_api[atoml/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api[flit/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api[pdm/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api[pep_text/pyproject.toml] PASSED
-tests/test_examples.py::test_examples_api[pretend-setuptools/01-pyproject.toml] PASSED
-tests/test_examples.py::test_examples_api[pretend-setuptools/02-pyproject.toml] PASSED
-tests/test_examples.py::test_examples_api[pretend-setuptools/03-pyproject.toml] PASSED
-tests/test_examples.py::test_examples_api[pretend-setuptools/04-pyproject.toml] PASSED
-tests/test_examples.py::test_examples_api[pretend-setuptools/05-pyproject.toml] PASSED
-tests/test_examples.py::test_examples_api[pretend-setuptools/06-pyproject.toml] PASSED
-tests/test_examples.py::test_examples_api[pretend-setuptools/07-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api[setuptools/01-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api[setuptools/02-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api[setuptools/03-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api[setuptools/04-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api[setuptools/05-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api[setuptools/06-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api[setuptools/07-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api[setuptools/08-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_api[setuptools/09-pyproject.toml] PASSED
 tests/test_examples.py::test_examples_api[simple/dynamic-version.toml] PASSED
 tests/test_examples.py::test_examples_api[simple/minimal.toml] PASSED
 tests/test_examples.py::test_examples_api[trampolim/pyproject.toml] PASSED
@@ -93,44 +81,54 @@ tests/test_examples.py::test_examples_cli[atoml/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_cli[flit/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_cli[pdm/pyproject.toml] PASSED
 tests/test_examples.py::test_examples_cli[pep_text/pyproject.toml] PASSED
-tests/test_examples.py::test_examples_cli[pretend-setuptools/01-pyproject.toml] PASSED
-tests/test_examples.py::test_examples_cli[pretend-setuptools/02-pyproject.toml] PASSED
-tests/test_examples.py::test_examples_cli[pretend-setuptools/03-pyproject.toml] PASSED
-tests/test_examples.py::test_examples_cli[pretend-setuptools/04-pyproject.toml] PASSED
-tests/test_examples.py::test_examples_cli[pretend-setuptools/05-pyproject.toml] PASSED
-tests/test_examples.py::test_examples_cli[pretend-setuptools/06-pyproject.toml] PASSED
-tests/test_examples.py::test_examples_cli[pretend-setuptools/07-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_cli[setuptools/01-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_cli[setuptools/02-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_cli[setuptools/03-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_cli[setuptools/04-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_cli[setuptools/05-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_cli[setuptools/06-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_cli[setuptools/07-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_cli[setuptools/08-pyproject.toml] PASSED
+tests/test_examples.py::test_examples_cli[setuptools/09-pyproject.toml] PASSED
 tests/test_examples.py::test_examples_cli[simple/dynamic-version.toml] PASSED
 tests/test_examples.py::test_examples_cli[simple/minimal.toml] PASSED
 tests/test_examples.py::test_examples_cli[trampolim/pyproject.toml] PASSED
 tests/test_examples.py::test_invalid_examples_api[pdm/invalid-version/pyproject.toml] PASSED
 tests/test_examples.py::test_invalid_examples_api[pdm/redefining-as-dynamic/pyproject.toml] PASSED
+tests/test_examples.py::test_invalid_examples_api[pep621/incorrect-subtables/author_with_extra_fields.toml] PASSED
 tests/test_examples.py::test_invalid_examples_api[pep621/missing-fields/missing-version-with-dynamic.toml] PASSED
 tests/test_examples.py::test_invalid_examples_api[pep621/missing-fields/missing-version.toml] PASSED
 tests/test_examples.py::test_invalid_examples_api[pep621/non-standardised-project-fields/author_instead_of_authors.toml] PASSED
 tests/test_examples.py::test_invalid_examples_api[pep621/non-standardised-project-fields/requires_instead_of_dependencies.toml] PASSED
-tests/test_examples.py::test_invalid_examples_api[pretend-setuptools/cmdclass/invalid-value.toml] PASSED
-tests/test_examples.py::test_invalid_examples_api[pretend-setuptools/dependencies/invalid-extra-name.toml] PASSED
-tests/test_examples.py::test_invalid_examples_api[pretend-setuptools/package-dir/invalid-name.toml] PASSED
-tests/test_examples.py::test_invalid_examples_api[pretend-setuptools/packages/missing-find-arguments.toml] PASSED
-tests/test_examples.py::test_invalid_examples_api[pretend-setuptools/pep621/license/both-text-and-file.toml] PASSED
-tests/test_examples.py::test_invalid_examples_api[pretend-setuptools/pep621/license/empty.toml] PASSED
-tests/test_examples.py::test_invalid_examples_api[pretend-setuptools/pep621/readme/readme-as-array.toml] PASSED
-tests/test_examples.py::test_invalid_examples_api[pretend-setuptools/pep621/readme/readme-without-content-type.toml] PASSED
+tests/test_examples.py::test_invalid_examples_api[setuptools/cmdclass/invalid-value.toml] PASSED
+tests/test_examples.py::test_invalid_examples_api[setuptools/dependencies/invalid-extra-name.toml] PASSED
+tests/test_examples.py::test_invalid_examples_api[setuptools/package-dir/invalid-name.toml] PASSED
+tests/test_examples.py::test_invalid_examples_api[setuptools/package-dir/invalid-stub.toml] PASSED
+tests/test_examples.py::test_invalid_examples_api[setuptools/packages/invalid-name.toml] PASSED
+tests/test_examples.py::test_invalid_examples_api[setuptools/packages/invalid-stub-name.toml] PASSED
+tests/test_examples.py::test_invalid_examples_api[setuptools/packages/missing-find-arguments.toml] PASSED
+tests/test_examples.py::test_invalid_examples_api[setuptools/pep621/license/both-text-and-file.toml] PASSED
+tests/test_examples.py::test_invalid_examples_api[setuptools/pep621/license/empty.toml] PASSED
+tests/test_examples.py::test_invalid_examples_api[setuptools/pep621/readme/readme-as-array.toml] PASSED
+tests/test_examples.py::test_invalid_examples_api[setuptools/pep621/readme/readme-without-content-type.toml] PASSED
 tests/test_examples.py::test_invalid_examples_cli[pdm/invalid-version/pyproject.toml] PASSED
 tests/test_examples.py::test_invalid_examples_cli[pdm/redefining-as-dynamic/pyproject.toml] PASSED
+tests/test_examples.py::test_invalid_examples_cli[pep621/incorrect-subtables/author_with_extra_fields.toml] PASSED
 tests/test_examples.py::test_invalid_examples_cli[pep621/missing-fields/missing-version-with-dynamic.toml] PASSED
 tests/test_examples.py::test_invalid_examples_cli[pep621/missing-fields/missing-version.toml] PASSED
 tests/test_examples.py::test_invalid_examples_cli[pep621/non-standardised-project-fields/author_instead_of_authors.toml] PASSED
 tests/test_examples.py::test_invalid_examples_cli[pep621/non-standardised-project-fields/requires_instead_of_dependencies.toml] PASSED
-tests/test_examples.py::test_invalid_examples_cli[pretend-setuptools/cmdclass/invalid-value.toml] PASSED
-tests/test_examples.py::test_invalid_examples_cli[pretend-setuptools/dependencies/invalid-extra-name.toml] PASSED
-tests/test_examples.py::test_invalid_examples_cli[pretend-setuptools/package-dir/invalid-name.toml] PASSED
-tests/test_examples.py::test_invalid_examples_cli[pretend-setuptools/packages/missing-find-arguments.toml] PASSED
-tests/test_examples.py::test_invalid_examples_cli[pretend-setuptools/pep621/license/both-text-and-file.toml] PASSED
-tests/test_examples.py::test_invalid_examples_cli[pretend-setuptools/pep621/license/empty.toml] PASSED
-tests/test_examples.py::test_invalid_examples_cli[pretend-setuptools/pep621/readme/readme-as-array.toml] PASSED
-tests/test_examples.py::test_invalid_examples_cli[pretend-setuptools/pep621/readme/readme-without-content-type.toml] PASSED
+tests/test_examples.py::test_invalid_examples_cli[setuptools/cmdclass/invalid-value.toml] PASSED
+tests/test_examples.py::test_invalid_examples_cli[setuptools/dependencies/invalid-extra-name.toml] PASSED
+tests/test_examples.py::test_invalid_examples_cli[setuptools/package-dir/invalid-name.toml] PASSED
+tests/test_examples.py::test_invalid_examples_cli[setuptools/package-dir/invalid-stub.toml] PASSED
+tests/test_examples.py::test_invalid_examples_cli[setuptools/packages/invalid-name.toml] PASSED
+tests/test_examples.py::test_invalid_examples_cli[setuptools/packages/invalid-stub-name.toml] PASSED
+tests/test_examples.py::test_invalid_examples_cli[setuptools/packages/missing-find-arguments.toml] PASSED
+tests/test_examples.py::test_invalid_examples_cli[setuptools/pep621/license/both-text-and-file.toml] PASSED
+tests/test_examples.py::test_invalid_examples_cli[setuptools/pep621/license/empty.toml] PASSED
+tests/test_examples.py::test_invalid_examples_cli[setuptools/pep621/readme/readme-as-array.toml] PASSED
+tests/test_examples.py::test_invalid_examples_cli[setuptools/pep621/readme/readme-without-content-type.toml] PASSED
 tests/test_formats.py::TestClassifiers::test_always_valid_after_download_error PASSED
 tests/test_formats.py::TestClassifiers::test_always_valid_with_no_network[NO_NETWORK] PASSED
 tests/test_formats.py::TestClassifiers::test_always_valid_with_no_network[VALIDATE_PYPROJECT_NO_NETWORK] PASSED
@@ -298,13 +296,15 @@ tests/test_pre_compile.py::test_examples_api[api_pre_compile-atoml/pyproject.tom
 tests/test_pre_compile.py::test_examples_api[api_pre_compile-flit/pyproject.toml] PASSED
 tests/test_pre_compile.py::test_examples_api[api_pre_compile-pdm/pyproject.toml] PASSED
 tests/test_pre_compile.py::test_examples_api[api_pre_compile-pep_text/pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[api_pre_compile-pretend-setuptools/01-pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[api_pre_compile-pretend-setuptools/02-pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[api_pre_compile-pretend-setuptools/03-pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[api_pre_compile-pretend-setuptools/04-pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[api_pre_compile-pretend-setuptools/05-pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[api_pre_compile-pretend-setuptools/06-pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[api_pre_compile-pretend-setuptools/07-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[api_pre_compile-setuptools/01-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[api_pre_compile-setuptools/02-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[api_pre_compile-setuptools/03-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[api_pre_compile-setuptools/04-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[api_pre_compile-setuptools/05-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[api_pre_compile-setuptools/06-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[api_pre_compile-setuptools/07-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[api_pre_compile-setuptools/08-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[api_pre_compile-setuptools/09-pyproject.toml] PASSED
 tests/test_pre_compile.py::test_examples_api[api_pre_compile-simple/dynamic-version.toml] PASSED
 tests/test_pre_compile.py::test_examples_api[api_pre_compile-simple/minimal.toml] PASSED
 tests/test_pre_compile.py::test_examples_api[api_pre_compile-trampolim/pyproject.toml] PASSED
@@ -312,72 +312,65 @@ tests/test_pre_compile.py::test_examples_api[cli_pre_compile-atoml/pyproject.tom
 tests/test_pre_compile.py::test_examples_api[cli_pre_compile-flit/pyproject.toml] PASSED
 tests/test_pre_compile.py::test_examples_api[cli_pre_compile-pdm/pyproject.toml] PASSED
 tests/test_pre_compile.py::test_examples_api[cli_pre_compile-pep_text/pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[cli_pre_compile-pretend-setuptools/01-pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[cli_pre_compile-pretend-setuptools/02-pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[cli_pre_compile-pretend-setuptools/03-pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[cli_pre_compile-pretend-setuptools/04-pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[cli_pre_compile-pretend-setuptools/05-pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[cli_pre_compile-pretend-setuptools/06-pyproject.toml] PASSED
-tests/test_pre_compile.py::test_examples_api[cli_pre_compile-pretend-setuptools/07-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[cli_pre_compile-setuptools/01-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[cli_pre_compile-setuptools/02-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[cli_pre_compile-setuptools/03-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[cli_pre_compile-setuptools/04-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[cli_pre_compile-setuptools/05-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[cli_pre_compile-setuptools/06-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[cli_pre_compile-setuptools/07-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[cli_pre_compile-setuptools/08-pyproject.toml] PASSED
+tests/test_pre_compile.py::test_examples_api[cli_pre_compile-setuptools/09-pyproject.toml] PASSED
 tests/test_pre_compile.py::test_examples_api[cli_pre_compile-simple/dynamic-version.toml] PASSED
 tests/test_pre_compile.py::test_examples_api[cli_pre_compile-simple/minimal.toml] PASSED
 tests/test_pre_compile.py::test_examples_api[cli_pre_compile-trampolim/pyproject.toml] PASSED
 tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pdm/invalid-version/pyproject.toml] PASSED
 tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pdm/redefining-as-dynamic/pyproject.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pep621/incorrect-subtables/author_with_extra_fields.toml] PASSED
 tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pep621/missing-fields/missing-version-with-dynamic.toml] PASSED
 tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pep621/missing-fields/missing-version.toml] PASSED
 tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pep621/non-standardised-project-fields/author_instead_of_authors.toml] PASSED
 tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pep621/non-standardised-project-fields/requires_instead_of_dependencies.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pretend-setuptools/cmdclass/invalid-value.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pretend-setuptools/dependencies/invalid-extra-name.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pretend-setuptools/package-dir/invalid-name.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pretend-setuptools/packages/missing-find-arguments.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pretend-setuptools/pep621/license/both-text-and-file.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pretend-setuptools/pep621/license/empty.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pretend-setuptools/pep621/readme/readme-as-array.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-pretend-setuptools/pep621/readme/readme-without-content-type.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-setuptools/cmdclass/invalid-value.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-setuptools/dependencies/invalid-extra-name.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-setuptools/package-dir/invalid-name.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-setuptools/package-dir/invalid-stub.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-setuptools/packages/invalid-name.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-setuptools/packages/invalid-stub-name.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-setuptools/packages/missing-find-arguments.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-setuptools/pep621/license/both-text-and-file.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-setuptools/pep621/license/empty.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-setuptools/pep621/readme/readme-as-array.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[api_pre_compile-setuptools/pep621/readme/readme-without-content-type.toml] PASSED
 tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pdm/invalid-version/pyproject.toml] PASSED
 tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pdm/redefining-as-dynamic/pyproject.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pep621/incorrect-subtables/author_with_extra_fields.toml] PASSED
 tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pep621/missing-fields/missing-version-with-dynamic.toml] PASSED
 tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pep621/missing-fields/missing-version.toml] PASSED
 tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pep621/non-standardised-project-fields/author_instead_of_authors.toml] PASSED
 tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pep621/non-standardised-project-fields/requires_instead_of_dependencies.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pretend-setuptools/cmdclass/invalid-value.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pretend-setuptools/dependencies/invalid-extra-name.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pretend-setuptools/package-dir/invalid-name.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pretend-setuptools/packages/missing-find-arguments.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pretend-setuptools/pep621/license/both-text-and-file.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pretend-setuptools/pep621/license/empty.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pretend-setuptools/pep621/readme/readme-as-array.toml] PASSED
-tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-pretend-setuptools/pep621/readme/readme-without-content-type.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-setuptools/cmdclass/invalid-value.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-setuptools/dependencies/invalid-extra-name.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-setuptools/package-dir/invalid-name.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-setuptools/package-dir/invalid-stub.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-setuptools/packages/invalid-name.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-setuptools/packages/invalid-stub-name.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-setuptools/packages/missing-find-arguments.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-setuptools/pep621/license/both-text-and-file.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-setuptools/pep621/license/empty.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-setuptools/pep621/readme/readme-as-array.toml] PASSED
+tests/test_pre_compile.py::test_invalid_examples_api[cli_pre_compile-setuptools/pep621/readme/readme-without-content-type.toml] PASSED
 tests/test_pre_compile.py::test_pre_compile_api PASSED
 tests/test_pre_compile.py::test_vendoring_cli PASSED
 tests/test_vendoring.py::test_api PASSED
 tests/test_vendoring.py::test_cli PASSED
 tests/test_vendoring.py::test_main PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:256: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_configure_node uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_configure_node(self, node):
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:265: PytestDeprecationWarning: The hookimpl CovPlugin.pytest_testnodedown uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(optionalhook=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_testnodedown(self, node, error):
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: 630 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    if LooseVersion(pytest.__version__) < LooseVersion('3.6.0'):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 314 passed, 1 skipped, 632 warnings ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 339 passed, 1 skipped ========
+$(PYTHON_DIR)/vendor-packages/setuptools_scm/git.py:295: UserWarning: git archive did not support describe output
+  warnings.warn("git archive did not support describe output")
+$(PYTHON_DIR)/vendor-packages/setuptools_scm/git.py:312: UserWarning: unexported git archival found
+  warnings.warn("unexported git archival found")
+  py$(PYV): OK
   congratulations :)
