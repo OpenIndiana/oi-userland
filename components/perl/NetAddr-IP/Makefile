@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		NetAddr::IP
 HUMAN_VERSION =			4.079
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		NetAddr::IP - Manages IPv4 and IPv6 addresses and subnets
 COMPONENT_CPAN_AUTHOR =		MIKER
 COMPONENT_ARCHIVE_HASH =	\
