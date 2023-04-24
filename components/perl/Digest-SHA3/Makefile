@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Digest::SHA3
 HUMAN_VERSION =			1.05
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Digest::SHA3 - Perl extension for SHA-3
 COMPONENT_CPAN_AUTHOR =		MSHELOR
 COMPONENT_ARCHIVE_HASH =	\
