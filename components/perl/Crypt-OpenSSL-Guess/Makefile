@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::OpenSSL::Guess
 HUMAN_VERSION =			0.15
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Crypt::OpenSSL::Guess - Guess OpenSSL include path
 COMPONENT_CPAN_AUTHOR =		AKIYM
 COMPONENT_ARCHIVE_HASH =	\
