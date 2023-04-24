@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.testrunner
-HUMAN_VERSION =			5.6
+HUMAN_VERSION =			6.0
 COMPONENT_SUMMARY =		zope.testrunner - Zope testrunner script.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testrunner
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f6/b3/46a3e5b2d79170e9b04944ba26cf520f1d3fd8cb122076dd730d5e173404/zope.testrunner-5.6.tar.gz
+	https://files.pythonhosted.org/packages/b3/2b/3f6879377744e7f790cac882f72dc74781ebc35fce9de5d76004cd0457d9/zope.testrunner-6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d6bd72f44ea32caa415b96cfe14152b2786317aef1cd6f48a827b62def058fd4
+	sha256:8cb6fba3af95edb0c9f2aed039de855e333824e8ccb4ef94d36929577b3351b5
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
@@ -49,7 +49,6 @@ COMPONENT_TEST_TARGETS += -- -vv
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/six
 PYTHON_REQUIRED_PACKAGES += library/python/zope-exceptions
 PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
 PYTHON_REQUIRED_PACKAGES += runtime/python
