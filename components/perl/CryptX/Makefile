@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		CryptX
 HUMAN_VERSION =			0.077
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		CryptX - Cryptographic toolkit
 COMPONENT_CPAN_AUTHOR =		MIK
 COMPONENT_ARCHIVE_HASH =	\
