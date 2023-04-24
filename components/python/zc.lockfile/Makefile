@@ -15,24 +15,28 @@
 #
 
 BUILD_STYLE = setup.py
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zc.lockfile
-HUMAN_VERSION =			2.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			3.0.post1
 COMPONENT_SUMMARY =		zc.lockfile - Basic inter-process locks
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zc.lockfile
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/11/98/f21922d501ab29d62665e7460c94f5ed485fd9d8348c126697947643a881/zc.lockfile-2.0.tar.gz
+	https://files.pythonhosted.org/packages/5b/83/a5432aa08312fc834ea594473385c005525e6a80d768a2ad246e78877afd/zc.lockfile-3.0.post1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:307ad78227e48be260e64896ec8886edc7eae22d8ec53e4d528ab5537a83203b
+	sha256:adb2ee6d9e6a2333c91178dcb2c9b96a5744c78edb7712dc784a7d75648e81ec
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Force no colors and more verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- -vv
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testing
+TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
