@@ -15,23 +15,29 @@
 #
 
 BUILD_STYLE = setup.py
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.deprecation
-HUMAN_VERSION =			4.4.0
+HUMAN_VERSION =			5.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		zope.deprecation - Zope Deprecation Infrastructure
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.deprecation
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/34/da/46e92d32d545dd067b9436279d84c339e8b16de2ca393d7b892bc1e1e9fd/zope.deprecation-4.4.0.tar.gz
+	https://files.pythonhosted.org/packages/ba/de/a47e434ed1804d82f3fd7561aee5c55914c72d87f54cac6b99c15cbe7f89/zope.deprecation-5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0d453338f04bacf91bbfba545d8bcdf529aa829e67b705eac8c1a7fdce66e2df
+	sha256:b7c32d3392036b2145c40b3103e7322db68662ab09b7267afe1532a9d93f640f
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Force no colors and more verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- -vv
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx
+TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
