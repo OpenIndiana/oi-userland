@@ -19,16 +19,17 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-mock
-COMPONENT_VERSION =		4.0.15.2
+HUMAN_VERSION =			5.0.0.6
 COMPONENT_SUMMARY =		types-mock - Typing stubs for mock
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/99/11/496de27bc0b500e38e0b273bb05eb4f0aafa0906af44f0008cba8a0bd68d/types-mock-4.0.15.2.tar.gz
+	https://files.pythonhosted.org/packages/11/73/7e32968aa0cef5ed421b0c0294e7959fcf41ac875f6436cb7dbcfddc745b/types-mock-5.0.0.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:83fe479741adb92210c3c92f006fe058297d5051e93c2cec36f1a9e0bae16e9e
+	sha256:3abdee238948c6678ef5b4fd740bd41d30289a2fe4d91aac4ae9f6869e6c9333
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
-TEST_STYLE = pytest
+# This project does not contain tests
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
