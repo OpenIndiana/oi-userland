@@ -19,9 +19,9 @@ path. normalize_path is used mainly to correctly resolve symlinks.
 
 Not for upstream contribution
 
---- pip-19.1.1/src/pip/_internal/req/req_uninstall.py
-+++ pip-19.1.1/src/pip/_internal/req/req_uninstall.py
-@@ -329,6 +329,14 @@ class UninstallPathSet(object):
+--- pip-23.1.1/src/pip/_internal/req/req_uninstall.py.orig
++++ pip-23.1.1/src/pip/_internal/req/req_uninstall.py
+@@ -324,6 +324,14 @@ class UninstallPathSet:
          remove/modify, False otherwise.
  
          """
@@ -33,6 +33,6 @@ Not for upstream contribution
 +            sys.version_info.major, sys.version_info.minor)
 +        if normalize_path(path).startswith(vendor_packages_path):
 +            return False
-         return is_local(path)
- 
-     def add(self, path):
+         # aka is_local, but caching normalized sys.prefix
+         if not running_under_virtualenv():
+             return True
