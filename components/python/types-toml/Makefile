@@ -19,16 +19,17 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-toml
-HUMAN_VERSION =			0.10.8.1
+HUMAN_VERSION =			0.10.8.6
 COMPONENT_SUMMARY =		types-toml - Typing stubs for toml
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c6/8b/a8544990966e9b475c1767f21272cbbdc2b470d4e690e04b5510b129b311/types-toml-0.10.8.1.tar.gz
+	https://files.pythonhosted.org/packages/7a/cc/935b70ca52a18ef08dc77e0a622ac6b602bea52a794fe033e78b5c9e8e7e/types-toml-0.10.8.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:171bdb3163d79a520560f24ba916a9fc9bff81659c5448a9fea89240923722be
+	sha256:6d3ac79e36c9ee593c5d4fb33a50cca0e3adceb6ef5cff8b8e5aef67b4c4aaf2
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
-TEST_STYLE = pytest
+# This project does not contain tests
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
