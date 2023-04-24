@@ -9,7 +9,7 @@ rootdir: $(@D)
 configfile: pytest.ini
 testpaths: mypy/test, mypyc/test
 asyncio: mode=strict
-collecting ... collected 10986 items
+collecting ... collected 11004 items
 
 mypy/test/test_find_sources.py::SourceFinderSuite::test_crawl_namespace PASSED
 mypy/test/test_find_sources.py::SourceFinderSuite::test_crawl_namespace_explicit_base PASSED
@@ -213,6 +213,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testAttrsGenericInherit
 mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testAttrsGenericInheritance3 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testAttrsGenericInheritanceSpecialCase1 PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testAttrsGenericInheritanceSpecialCase2 PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testAttrsGenericWithConverter PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testAttrsImporting PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testAttrsInheritance PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testAttrsInheritanceNoAnnotation PASSED
@@ -281,6 +282,9 @@ mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testDisallowUntypedWork
 mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testEvolve PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testEvolveFromAny PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testEvolveFromNonAttrs PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testEvolveTypeVarBound PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testEvolveTypeVarBoundNonAttrs PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testEvolveTypeVarConstrained PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testEvolveVariants PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testFinalInstanceAttribute PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-attr.test::testFinalInstanceAttributeInheritance PASSED
@@ -4764,6 +4768,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testProtocolAndTyp
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testProtocolAttrAccessDecoratedGetAttrDunder PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testProtocolClassObjectAttribute PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testProtocolClassObjectAttributeAndCall PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testProtocolClassObjectCallableError PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testProtocolClassObjectClassMethod PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testProtocolClassObjectClassVarRejected PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-protocols.test::testProtocolClassObjectGenericClassMethod PASSED
@@ -4951,6 +4956,7 @@ mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testDequeReturningS
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testEnumerateReturningSelfFromIter PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testMixinAllowedWithProtocol PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testMixinProtocolSuper PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testNarrowSelfType PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeBadTypeIgnoredInConstructor PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeBadTypeIgnoredInConstructorAbstract PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeBadTypeIgnoredInConstructorGeneric PASSED
@@ -4983,7 +4989,8 @@ mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeOnUnion
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeOverride PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeOverrideCompatibility PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeOverrideCompatibilityGeneric PASSED
-mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeOverrideCompatibilityTypeVar XFAIL
+mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeOverrideCompatibilitySelfTypeVar PASSED
+mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeOverrideCompatibilityTypeVar PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeProperSupertypeAttribute PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeProperSupertypeAttributeGeneric PASSED
 mypy/test/testcheck.py::TypeCheckSuite::check-selftype.test::testSelfTypeProperSupertypeAttributeMeta PASSED
@@ -6671,7 +6678,7 @@ mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-cycles.test::testRe
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-cycles.test::testReferenceToTypeThroughCycleAndDeleteType PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-cycles.test::testReferenceToTypeThroughCycleAndReplaceWithFunction PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-cycles.test::testVariableSelfReferenceThroughImportCycle PASSED
-mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-dataclass-transform.test::frozenStays PASSED
+mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-dataclass-transform.test::frozenInheritanceViaDefault PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-dataclass-transform.test::updateBaseClassToUseDataclassTransform PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-dataclass-transform.test::updateDataclassTransformParameterViaDecorator PASSED
 mypy/test/testfinegrained.py::FineGrainedSuite::fine-grained-dataclass-transform.test::updateDataclassTransformParameterViaParentClass PASSED
@@ -7388,7 +7395,7 @@ mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-cycles.te
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-cycles.test::testReferenceToTypeThroughCycleAndReplaceWithFunction_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-cycles.test::testReferenceToTypeThroughCycle_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-cycles.test::testVariableSelfReferenceThroughImportCycle_cached PASSED
-mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-dataclass-transform.test::frozenStays_cached PASSED
+mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-dataclass-transform.test::frozenInheritanceViaDefault_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-dataclass-transform.test::updateBaseClassToUseDataclassTransform_cached SKIPPED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-dataclass-transform.test::updateDataclassTransformParameterViaDecorator_cached PASSED
 mypy/test/testfinegrainedcache.py::FineGrainedCacheSuite::fine-grained-dataclass-transform.test::updateDataclassTransformParameterViaParentClass_cached PASSED
@@ -9221,6 +9228,8 @@ mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testAttrsClass_seman
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testAwaitDef PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testBadAliasNested_semanal PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testBaseClass PASSED
+mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testCachedProperty PASSED
+mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testCachedPropertyAlias PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testCallable PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testCallableAliasPreserved PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testCannotCalculateMRO_semanal PASSED
@@ -9290,6 +9299,8 @@ mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testFunctionPartiall
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testFunctionReturnNoReturnType PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testFunctionYields PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testFunctionYieldsNone PASSED
+mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testFunctoolsCachedProperty PASSED
+mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testFunctoolsCachedPropertyAlias PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testGeneratorAlreadyDefined PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testGenericClass PASSED
 mypy/test/teststubgen.py::StubgenPythonSuite::stubgen.test::testHideDunderModuleAttributes PASSED
@@ -9423,10 +9434,12 @@ mypy/test/teststubgen.py::StubgenUtilSuite::test_remove_misplaced_type_comments_
 mypy/test/teststubgen.py::StubgenUtilSuite::test_remove_misplaced_type_comments_4 PASSED
 mypy/test/teststubgen.py::StubgenUtilSuite::test_remove_misplaced_type_comments_5 PASSED
 mypy/test/teststubgen.py::StubgenUtilSuite::test_remove_misplaced_type_comments_bytes PASSED
+mypy/test/teststubgen.py::StubgencSuite::test_generate_c_function_other_module PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_generate_c_function_other_module_arg PASSED
-mypy/test/teststubgen.py::StubgencSuite::test_generate_c_function_other_module_ret PASSED
-mypy/test/teststubgen.py::StubgencSuite::test_generate_c_function_same_module_arg PASSED
-mypy/test/teststubgen.py::StubgencSuite::test_generate_c_function_same_module_ret PASSED
+mypy/test/teststubgen.py::StubgencSuite::test_generate_c_function_other_module_nested PASSED
+mypy/test/teststubgen.py::StubgencSuite::test_generate_c_function_same_module PASSED
+mypy/test/teststubgen.py::StubgencSuite::test_generate_c_function_same_module_compound PASSED
+mypy/test/teststubgen.py::StubgencSuite::test_generate_c_function_same_module_nested PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_generate_c_property_with_pybind11 PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_generate_c_property_with_rw_property PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_generate_c_type_classmethod PASSED
@@ -9445,8 +9458,11 @@ mypy/test/teststubgen.py::StubgencSuite::test_generate_c_type_with_generic_using
 mypy/test/teststubgen.py::StubgencSuite::test_generate_c_type_with_generic_using_other_module_last PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_generate_c_type_with_nested_generic PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_generate_c_type_with_overload_pybind11 PASSED
+mypy/test/teststubgen.py::StubgencSuite::test_generate_c_type_with_overload_shiboken PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_generate_c_type_with_single_arg_generic PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_infer_binary_op_sig PASSED
+mypy/test/teststubgen.py::StubgencSuite::test_infer_cast_sig PASSED
+mypy/test/teststubgen.py::StubgencSuite::test_infer_equality_op_sig PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_infer_getitem_sig PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_infer_hash_sig PASSED
 mypy/test/teststubgen.py::StubgencSuite::test_infer_setitem_sig PASSED
@@ -9492,7 +9508,7 @@ mypy/test/teststubtest.py::StubtestUnit::test_non_public_2 PASSED
 mypy/test/teststubtest.py::StubtestUnit::test_not_subclassable PASSED
 mypy/test/teststubtest.py::StubtestUnit::test_overload PASSED
 mypy/test/teststubtest.py::StubtestUnit::test_property PASSED
-mypy/test/teststubtest.py::StubtestUnit::test_protocol PASSED
+mypy/test/teststubtest.py::StubtestUnit::test_runtime_typing_objects PASSED
 mypy/test/teststubtest.py::StubtestUnit::test_special_subtype PASSED
 mypy/test/teststubtest.py::StubtestUnit::test_static_class_method PASSED
 mypy/test/teststubtest.py::StubtestUnit::test_type_alias PASSED
@@ -10626,6 +10642,7 @@ mypyc/test/test_run.py::TestRun::run-attrs.test::testRunAttrsclass PASSED
 mypyc/test/test_run.py::TestRun::run-attrs.test::testRunAttrsclassNonAuto PASSED
 mypyc/test/test_run.py::TestRun::run-bench.test::testBenchmarkTree PASSED
 mypyc/test/test_run.py::TestRun::run-bench.test::testBenchmarkVisitorTree PASSED
+mypyc/test/test_run.py::TestRun::run-bools.test::testBoolMixInt PASSED
 mypyc/test/test_run.py::TestRun::run-bools.test::testBoolOps PASSED
 mypyc/test/test_run.py::TestRun::run-bools.test::testTrueAndFalse PASSED
 mypyc/test/test_run.py::TestRun::run-bytes.test::testBytearrayBasics PASSED
@@ -10989,6 +11006,7 @@ mypyc/test/test_struct.py::TestStruct::test_struct_str PASSED
 mypyc/test/test_tuplename.py::TestTupleNames::test_names PASSED
 mypyc/test/test_typeops.py::TestRuntimeSubtype::test_bit PASSED
 mypyc/test/test_typeops.py::TestRuntimeSubtype::test_bool PASSED
+mypyc/test/test_typeops.py::TestRuntimeSubtype::test_union PASSED
 mypyc/test/test_typeops.py::TestSubtype::test_bit PASSED
 mypyc/test/test_typeops.py::TestSubtype::test_bool PASSED
 mypyc/test/test_typeops.py::TestSubtype::test_int32 PASSED
@@ -10998,6 +11016,6 @@ mypyc/test/test_typeops.py::TestUnionSimplification::test_nested PASSED
 mypyc/test/test_typeops.py::TestUnionSimplification::test_remove_duplicate PASSED
 mypyc/test/test_typeops.py::TestUnionSimplification::test_simple_type_result PASSED
 
-======== 10692 passed, 283 skipped, 11 xfailed ========
+======== 10711 passed, 283 skipped, 10 xfailed ========
   py$(PYV): OK
   congratulations :)
