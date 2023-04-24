@@ -3,7 +3,8 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-collecting ... collected 2122 items
+asyncio: mode=strict
+collecting ... collected 2145 items
 
 ::project PASSED
 pyfakefs/pytest_tests/pytest_check_failed_plugin_test.py::test_failed_testresult_stacktrace SKIPPED
@@ -32,7 +33,7 @@ pyfakefs/tests/example_test.py::TestExample::test_get_globs PASSED
 pyfakefs/tests/example_test.py::TestExample::test_os_scandir PASSED
 pyfakefs/tests/example_test.py::TestExample::test_real_file_access PASSED
 pyfakefs/tests/example_test.py::TestExample::test_rm_tree PASSED
-pyfakefs/tests/example_test.py::TestExample::test_scandir_scandir PASSED
+pyfakefs/tests/example_test.py::TestExample::test_scandir_scandir SKIPPED
 pyfakefs/tests/fake_filesystem_glob_test.py::FakeGlobUnitTest::test_glob1 PASSED
 pyfakefs/tests/fake_filesystem_glob_test.py::FakeGlobUnitTest::test_glob_empty PASSED
 pyfakefs/tests/fake_filesystem_glob_test.py::FakeGlobUnitTest::test_glob_exact PASSED
@@ -59,6 +60,7 @@ pyfakefs/tests/fake_filesystem_shutil_test.py::FakeShutilModuleTest::test_copy2 
 pyfakefs/tests/fake_filesystem_shutil_test.py::FakeShutilModuleTest::test_copy2_directory PASSED
 pyfakefs/tests/fake_filesystem_shutil_test.py::FakeShutilModuleTest::test_copy_directory PASSED
 pyfakefs/tests/fake_filesystem_shutil_test.py::FakeShutilModuleTest::test_copystat PASSED
+pyfakefs/tests/fake_filesystem_shutil_test.py::FakeShutilModuleTest::test_copystat_symlinks PASSED
 pyfakefs/tests/fake_filesystem_shutil_test.py::FakeShutilModuleTest::test_copytree PASSED
 pyfakefs/tests/fake_filesystem_shutil_test.py::FakeShutilModuleTest::test_copytree_src_is_file PASSED
 pyfakefs/tests/fake_filesystem_shutil_test.py::FakeShutilModuleTest::test_disk_usage PASSED
@@ -92,6 +94,7 @@ pyfakefs/tests/fake_filesystem_shutil_test.py::RealShutilModuleTest::test_copy2 
 pyfakefs/tests/fake_filesystem_shutil_test.py::RealShutilModuleTest::test_copy2_directory SKIPPED
 pyfakefs/tests/fake_filesystem_shutil_test.py::RealShutilModuleTest::test_copy_directory SKIPPED
 pyfakefs/tests/fake_filesystem_shutil_test.py::RealShutilModuleTest::test_copystat SKIPPED
+pyfakefs/tests/fake_filesystem_shutil_test.py::RealShutilModuleTest::test_copystat_symlinks SKIPPED
 pyfakefs/tests/fake_filesystem_shutil_test.py::RealShutilModuleTest::test_copytree SKIPPED
 pyfakefs/tests/fake_filesystem_shutil_test.py::RealShutilModuleTest::test_copytree_src_is_file SKIPPED
 pyfakefs/tests/fake_filesystem_shutil_test.py::RealShutilModuleTest::test_disk_usage SKIPPED
@@ -196,6 +199,9 @@ pyfakefs/tests/fake_filesystem_test.py::DriveLetterSupportTest::test_split_path_
 pyfakefs/tests/fake_filesystem_test.py::DriveLetterSupportTest::test_split_path_with_unc_path PASSED
 pyfakefs/tests/fake_filesystem_test.py::DriveLetterSupportTest::test_split_path_with_unc_path_alt_sep PASSED
 pyfakefs/tests/fake_filesystem_test.py::DriveLetterSupportTest::test_split_with_alt_separator PASSED
+pyfakefs/tests/fake_filesystem_test.py::DriveLetterSupportTest::test_splitroot_with_drive PASSED
+pyfakefs/tests/fake_filesystem_test.py::DriveLetterSupportTest::test_splitroot_with_empty_parts PASSED
+pyfakefs/tests/fake_filesystem_test.py::DriveLetterSupportTest::test_splitroot_with_unc_path PASSED
 pyfakefs/tests/fake_filesystem_test.py::FakeDirectoryUnitTest::test_add_entry PASSED
 pyfakefs/tests/fake_filesystem_test.py::FakeDirectoryUnitTest::test_directory_inode PASSED
 pyfakefs/tests/fake_filesystem_test.py::FakeDirectoryUnitTest::test_directory_size PASSED
@@ -304,6 +310,7 @@ pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_realpath_strict
 pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_realpath_vs_abspath PASSED
 pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_relpath PASSED
 pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_samefile PASSED
+pyfakefs/tests/fake_filesystem_test.py::FakePathModuleTest::test_splitroot_posix PASSED
 pyfakefs/tests/fake_filesystem_test.py::FileSideEffectTests::test_side_effect_called PASSED
 pyfakefs/tests/fake_filesystem_test.py::FileSideEffectTests::test_side_effect_file_object PASSED
 pyfakefs/tests/fake_filesystem_test.py::GetPathComponentsTest::test_absolute_path_with_one_component_should_return_component PASSED
@@ -419,6 +426,8 @@ pyfakefs/tests/fake_filesystem_unittest_test.py::PauseResumeTest::test_pause_res
 pyfakefs/tests/fake_filesystem_unittest_test.py::PauseResumeTest::test_pause_resume_without_patcher PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestAbsolutePathOnWindows::test_is_absolute SKIPPED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestAttributesWithFakeModuleNames::test_attributes PASSED
+pyfakefs/tests/fake_filesystem_unittest_test.py::TestClassSetup::test_using_fakefs SKIPPED
+pyfakefs/tests/fake_filesystem_unittest_test.py::TestClassSetup::test_using_fs_functions SKIPPED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestDeprecationSuppression::test_no_deprecation_warning PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestDistutilsCopyTree::test_file_copied PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestDistutilsCopyTree::test_file_copied_again PASSED
@@ -435,11 +444,14 @@ pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingDefaultArgs::test_f
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingDefaultArgs::test_path_exists_as_default_arg_in_function PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingDefaultArgs::test_path_exists_as_default_arg_in_method PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_as_other_name PASSED
+pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_exists_from_os_path PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_function_from_os PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_function_from_os_as_other_name PASSED
-pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_function_from_os_path PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_function_from_os_path_as_other_name PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_io_open_as_other_name PASSED
+pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_isdir_from_os_path PASSED
+pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_isfile_from_os_path PASSED
+pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_islink_from_os_path PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_open_as_other_name PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_path_from_os PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestPatchingImports::test_import_path_from_pathlib PASSED
@@ -455,6 +467,8 @@ pyfakefs/tests/fake_filesystem_unittest_test.py::TestPyfakefsUnittest::test_os P
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestPyfakefsUnittest::test_shutil PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestShutilWithZipfile::test_a PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestShutilWithZipfile::test_b PASSED
+pyfakefs/tests/fake_filesystem_unittest_test.py::TestTempDirCreation::testTempDirExists PASSED
+pyfakefs/tests/fake_filesystem_unittest_test.py::TestTempDirCreation::testTmpExists PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestTempFileReload::test_fakefs PASSED
 pyfakefs/tests/fake_filesystem_unittest_test.py::TestTempFileReload::test_value PASSED
 pyfakefs/tests/fake_filesystem_vs_real_test.py::FakeFilesystemVsRealTest::test_absolute_sym_link_to_folder PASSED
@@ -867,6 +881,7 @@ pyfakefs/tests/fake_os_test.py::FakeOsModuleTest::test_broken_symlink_with_trail
 pyfakefs/tests/fake_os_test.py::FakeOsModuleTest::test_broken_symlink_with_trailing_separator_linux PASSED
 pyfakefs/tests/fake_os_test.py::FakeOsModuleTest::test_broken_symlink_with_trailing_separator_macos PASSED
 pyfakefs/tests/fake_os_test.py::FakeOsModuleTest::test_broken_symlink_with_trailing_separator_windows PASSED
+pyfakefs/tests/fake_os_test.py::FakeOsModuleTest::test_capabilities PASSED
 pyfakefs/tests/fake_os_test.py::FakeOsModuleTest::test_chdir PASSED
 pyfakefs/tests/fake_os_test.py::FakeOsModuleTest::test_chdir_fails_non_directory PASSED
 pyfakefs/tests/fake_os_test.py::FakeOsModuleTest::test_chdir_fails_non_exist PASSED
@@ -1245,6 +1260,8 @@ pyfakefs/tests/fake_os_test.py::FakeOsModuleWalkTest::test_walk_raises_if_not_di
 pyfakefs/tests/fake_os_test.py::FakeOsModuleWalkTest::test_walk_skips_removed_directories PASSED
 pyfakefs/tests/fake_os_test.py::FakeOsModuleWalkTest::test_walk_top_down PASSED
 pyfakefs/tests/fake_os_test.py::FakeOsUnreadableDirTest::test_chmod_unreadable_dir PASSED
+pyfakefs/tests/fake_os_test.py::FakeOsUnreadableDirTest::test_getgid PASSED
+pyfakefs/tests/fake_os_test.py::FakeOsUnreadableDirTest::test_getuid PASSED
 pyfakefs/tests/fake_os_test.py::FakeOsUnreadableDirTest::test_listdir_group_readable_dir_from_other_group PASSED
 pyfakefs/tests/fake_os_test.py::FakeOsUnreadableDirTest::test_listdir_group_readable_dir_from_other_user PASSED
 pyfakefs/tests/fake_os_test.py::FakeOsUnreadableDirTest::test_listdir_other_readable_dir_from_other_group PASSED
@@ -1255,33 +1272,33 @@ pyfakefs/tests/fake_os_test.py::FakeOsUnreadableDirTest::test_remove_unreadable_
 pyfakefs/tests/fake_os_test.py::FakeOsUnreadableDirTest::test_remove_unreadable_dir_from_other_user PASSED
 pyfakefs/tests/fake_os_test.py::FakeOsUnreadableDirTest::test_stat_file_in_unreadable_dir PASSED
 pyfakefs/tests/fake_os_test.py::FakeOsUnreadableDirTest::test_stat_unreadable_dir PASSED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_index_access_to_stat_times_returns_int SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_inode SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_is_link SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_isdir SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_isfile SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_non_existing_dir SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_path_like SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_path_links_not_resolved SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_paths SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_scandir_stat_nlink SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_scandir_with_fd SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_stat_ino_dev SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_stat_posix SKIPPED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_index_access_to_stat_times_returns_int PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_inode PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_is_link PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_isdir PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_isfile PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_non_existing_dir PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_path_like PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_path_links_not_resolved PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_paths PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_scandir_stat_nlink PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_scandir_with_fd PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_stat_ino_dev PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_stat_posix PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirFdRelTest::test_stat_windows SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_index_access_to_stat_times_returns_int SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_inode SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_is_link SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_isdir SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_isfile SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_non_existing_dir SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_path_like SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_path_links_not_resolved SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_paths SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_scandir_stat_nlink SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_scandir_with_fd SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_stat_ino_dev SKIPPED
-pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_stat_posix SKIPPED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_index_access_to_stat_times_returns_int PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_inode PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_is_link PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_isdir PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_isfile PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_non_existing_dir PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_path_like PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_path_links_not_resolved PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_paths PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_scandir_stat_nlink PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_scandir_with_fd PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_stat_ino_dev PASSED
+pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_stat_posix PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirFdTest::test_stat_windows SKIPPED
 pyfakefs/tests/fake_os_test.py::FakeScandirRelTest::test_index_access_to_stat_times_returns_int PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirRelTest::test_inode PASSED
@@ -1289,7 +1306,7 @@ pyfakefs/tests/fake_os_test.py::FakeScandirRelTest::test_is_link PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirRelTest::test_isdir PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirRelTest::test_isfile PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirRelTest::test_non_existing_dir PASSED
-pyfakefs/tests/fake_os_test.py::FakeScandirRelTest::test_path_like SKIPPED
+pyfakefs/tests/fake_os_test.py::FakeScandirRelTest::test_path_like PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirRelTest::test_path_links_not_resolved PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirRelTest::test_paths PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirRelTest::test_scandir_stat_nlink PASSED
@@ -1303,7 +1320,7 @@ pyfakefs/tests/fake_os_test.py::FakeScandirTest::test_is_link PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirTest::test_isdir PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirTest::test_isfile PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirTest::test_non_existing_dir PASSED
-pyfakefs/tests/fake_os_test.py::FakeScandirTest::test_path_like SKIPPED
+pyfakefs/tests/fake_os_test.py::FakeScandirTest::test_path_like PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirTest::test_path_links_not_resolved PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirTest::test_paths PASSED
 pyfakefs/tests/fake_os_test.py::FakeScandirTest::test_scandir_stat_nlink PASSED
@@ -1373,6 +1390,7 @@ pyfakefs/tests/fake_os_test.py::RealOsModuleTest::test_broken_symlink_with_trail
 pyfakefs/tests/fake_os_test.py::RealOsModuleTest::test_broken_symlink_with_trailing_separator_linux SKIPPED
 pyfakefs/tests/fake_os_test.py::RealOsModuleTest::test_broken_symlink_with_trailing_separator_macos SKIPPED
 pyfakefs/tests/fake_os_test.py::RealOsModuleTest::test_broken_symlink_with_trailing_separator_windows SKIPPED
+pyfakefs/tests/fake_os_test.py::RealOsModuleTest::test_capabilities SKIPPED
 pyfakefs/tests/fake_os_test.py::RealOsModuleTest::test_chdir SKIPPED
 pyfakefs/tests/fake_os_test.py::RealOsModuleTest::test_chdir_fails_non_directory SKIPPED
 pyfakefs/tests/fake_os_test.py::RealOsModuleTest::test_chdir_fails_non_exist SKIPPED
@@ -1740,6 +1758,8 @@ pyfakefs/tests/fake_os_test.py::RealOsModuleWalkTest::test_walk_raises_if_not_di
 pyfakefs/tests/fake_os_test.py::RealOsModuleWalkTest::test_walk_skips_removed_directories SKIPPED
 pyfakefs/tests/fake_os_test.py::RealOsModuleWalkTest::test_walk_top_down SKIPPED
 pyfakefs/tests/fake_os_test.py::RealOsUnreadableDirTest::test_chmod_unreadable_dir SKIPPED
+pyfakefs/tests/fake_os_test.py::RealOsUnreadableDirTest::test_getgid SKIPPED
+pyfakefs/tests/fake_os_test.py::RealOsUnreadableDirTest::test_getuid SKIPPED
 pyfakefs/tests/fake_os_test.py::RealOsUnreadableDirTest::test_listdir_group_readable_dir_from_other_group SKIPPED
 pyfakefs/tests/fake_os_test.py::RealOsUnreadableDirTest::test_listdir_group_readable_dir_from_other_user SKIPPED
 pyfakefs/tests/fake_os_test.py::RealOsUnreadableDirTest::test_listdir_other_readable_dir_from_other_group SKIPPED
@@ -1812,6 +1832,7 @@ pyfakefs/tests/fake_os_test.py::StatPropagationTest::test_file_size_truncation P
 pyfakefs/tests/fake_os_test.py::StatPropagationTest::test_file_size_updated_via_close PASSED
 pyfakefs/tests/fake_os_test.py::StatPropagationTest::test_file_size_updated_via_flush PASSED
 pyfakefs/tests/fake_os_test.py::StatPropagationTest::test_large_file_size_after_write PASSED
+pyfakefs/tests/fake_pathlib_test.py::FakeFilesystemChmodTest::test_is_file_for_unreadable_dir_windows SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::FakeFilesystemPathLikeObjectTest::test_add_existing_real_directory_with_pathlib_path PASSED
 pyfakefs/tests/fake_pathlib_test.py::FakeFilesystemPathLikeObjectTest::test_add_existing_real_file_with_pathlib_path PASSED
 pyfakefs/tests/fake_pathlib_test.py::FakeFilesystemPathLikeObjectTest::test_create_dir_with_pathlib_path PASSED
@@ -1849,6 +1870,7 @@ pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_glob
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_glob_case_posix PASSED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_glob_case_windows SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_hardlink_to SKIPPED
+pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_is_junction SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_iterdir PASSED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_link_to SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::FakePathlibPathFileOperationTest::test_mkdir PASSED
@@ -1954,6 +1976,7 @@ pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_glob
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_glob_case_posix SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_glob_case_windows SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_hardlink_to SKIPPED
+pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_is_junction SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_iterdir SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_link_to SKIPPED
 pyfakefs/tests/fake_pathlib_test.py::RealPathlibPathFileOperationTest::test_mkdir SKIPPED
@@ -2127,4 +2150,4 @@ pyfakefs/tests/mox3_stubout_test.py::StubOutForTestingTest::test_stubout_module_
 pyfakefs/tests/mox3_stubout_test.py::StubOutForTestingTest::test_stubout_module_with_smart_set PASSED
 pyfakefs/tests/mox3_stubout_test.py::StubOutForTestingTest::test_stubout_submodule_with_smart_set PASSED
 
-======== 1233 passed, 884 skipped, 4 xfailed ========
+======== 1273 passed, 866 skipped, 4 xfailed ========

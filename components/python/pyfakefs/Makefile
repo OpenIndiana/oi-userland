@@ -14,20 +14,19 @@
 #   $WS_TOOLS/python-integrate-project pyfakefs
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyfakefs
-HUMAN_VERSION =			5.0.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			5.2.2
 COMPONENT_SUMMARY =		pyfakefs - pyfakefs implements a fake file system that mocks the Python file system modules.
-COMPONENT_PROJECT_URL =		http://pyfakefs.org
+COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pyfakefs
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/5a/50/a33e45dc6d7e12b652e32716688a509f341f75b19086141ed21938c82686/pyfakefs-5.0.0.tar.gz
+	https://files.pythonhosted.org/packages/a2/a4/c4b4337b37eef938adf66899e882a9b00b8110f00d6057655a0962b381a0/pyfakefs-5.2.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:19d1d8f1ee520891d78b6ed05c2078e0792d545f83dee33461fbaa5cc72e187d
+	sha256:0dcfb74e047e20b0755beeec3e3c0d7fc6f5029cdbb0cbf83d88431ee75b191d
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -36,4 +35,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
