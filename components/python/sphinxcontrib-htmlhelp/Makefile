@@ -14,30 +14,37 @@
 #   $WS_TOOLS/python-integrate-project sphinxcontrib-htmlhelp
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinxcontrib-htmlhelp
-COMPONENT_VERSION =		2.0.0
+HUMAN_VERSION =			2.0.1
 COMPONENT_SUMMARY =		sphinxcontrib-htmlhelp - sphinxcontrib-htmlhelp is a sphinx extension which renders HTML help files
-COMPONENT_PROJECT_URL =		http://sphinx-doc.org/
+COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/eb/85/93464ac9bd43d248e7c74573d58a791d48c475230bcf000df2b2700b9027/sphinxcontrib-htmlhelp-2.0.0.tar.gz
+	https://files.pythonhosted.org/packages/b3/47/64cff68ea3aa450c373301e5bebfbb9fce0a3e70aca245fcadd4af06cd75/sphinxcontrib-htmlhelp-2.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f5f8bb2d0d629f398bf47d0d69c07bc13b65f75a81ad9e2f71a63d4b7a2f6db2
+	sha256:0cbdd302815330058422b98a113195c9249825d681e18f11e8b1f78a2f11efff
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# sphinxcontrib-htmlhelp needs sphinx to run tests, but sphinx needs
-# sphinxcontrib-htmlhelp to build itself.  This is special case when we need to
-# set PYTHON_TEST_BOOTSTRAP to make sure the sphinxcontrib-htmlhelp tests are
-# not run when there is no sphinx available yet.
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# sphinxcontrib-htmlhelp --> Sphinx ==> sphinxcontrib-htmlhelp
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/html5lib
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
