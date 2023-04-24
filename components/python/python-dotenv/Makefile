@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python-dotenv
-HUMAN_VERSION =			0.21.1
+HUMAN_VERSION =			1.0.0
 COMPONENT_SUMMARY =		python-dotenv - Read key-value pairs from a .env file and set them as environment variables
 COMPONENT_PROJECT_URL =		https://github.com/theskumar/python-dotenv
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f5/d7/d548e0d5a68b328a8d69af833a861be415a17cb15ce3d8f0cd850073d2e1/python-dotenv-0.21.1.tar.gz
+	https://files.pythonhosted.org/packages/31/06/1ef763af20d0572c032fa22882cfbfb005fba6e7300715a37840858c919e/python-dotenv-1.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1c93de8f636cde3ce377292818d0e440b6e45a82f215c3744979151fa8151c49
+	sha256:a8df96034aae6d2d50a4ebe8216326c61c3eb64836776504fcca410e5937a3ba
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
