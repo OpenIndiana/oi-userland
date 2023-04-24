@@ -14,14 +14,13 @@
 #   $WS_TOOLS/perl-integrate-module Encode::Detect
 #
 
-BUILD_STYLE = makemaker
-# Force modulebuild build style
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Encode::Detect
 HUMAN_VERSION =			1.01
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Encode::Detect - An Encode::Encoding subclass that detects the encoding of data
 COMPONENT_CPAN_AUTHOR =		JGMYERS
 COMPONENT_ARCHIVE_HASH =	\
