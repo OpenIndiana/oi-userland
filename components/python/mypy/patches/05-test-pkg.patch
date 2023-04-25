@@ -1,0 +1,25 @@
+This test fails if there is pkg installed.  Since pkg is always installed
+(obviously) we just remove the test.
+
+--- mypy-1.2.0/mypyc/test-data/run-imports.test.orig
++++ mypy-1.2.0/mypyc/test-data/run-imports.test
+@@ -86,19 +86,6 @@
+ from native import f
+ assert f(1) == 2
+ 
+-[case testFromImportWithUntypedModule]
+-
+-# avoid including an __init__.py and use type: ignore to test what happens
+-# if mypy can't tell if mod isn't a module
+-from pkg import mod # type: ignore
+-
+-def test_import() -> None:
+-    assert mod.h(8) == 24
+-
+-[file pkg/mod.py]
+-def h(x):
+-    return x * 3
+-
+ [case testFromImportWithKnownModule]
+ from pkg import mod1
+ from pkg import mod2 as modmod
