@@ -19,30 +19,20 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Chameleon
-HUMAN_VERSION =			3.10.2
+HUMAN_VERSION =			4.0.0
 COMPONENT_SUMMARY =		Chameleon - Fast HTML/XML Template Compiler.
 COMPONENT_PROJECT_URL =		https://chameleon.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a2/7c/3e9fcc8fbea27a930835ac13d4d448bd0ce9fc29bd06d3cba95807ac0276/Chameleon-3.10.2.tar.gz
+	https://files.pythonhosted.org/packages/5b/44/d5d984e2191d4b42bd0bc1cc7ef578788ac8c57194e254f16d254a3b4570/Chameleon-4.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ad0ea57e1a7774b78d8c3e86f44a63a53adcfca1f2ba85911506550aedccd0fd
+	sha256:4cfc1ba46a6793b8ec4c72dd324dc647a916bcf588ab0df6f6b57f33ac3a4bb7
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# Chameleon --> Chameleon
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
+# https://github.com/malthe/chameleon/issues/366
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/chameleon
-TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
