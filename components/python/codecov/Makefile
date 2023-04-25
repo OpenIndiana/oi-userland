@@ -19,17 +19,18 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		codecov
-HUMAN_VERSION =			2.1.12
+HUMAN_VERSION =			2.1.13
 COMPONENT_SUMMARY =		codecov - Hosted coverage reports for GitHub, Bitbucket and Gitlab
 COMPONENT_PROJECT_URL =		https://github.com/codecov/codecov-python
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/59/fa/91b6184b1f15fe9db9c7172eb61a191dbdb4cdf89177e34f1f29a255ca70/codecov-2.1.12.tar.gz
+	https://files.pythonhosted.org/packages/2c/bb/594b26d2c85616be6195a64289c578662678afa4910cef2d3ce8417cf73e/codecov-2.1.13.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a0da46bb5025426da895af90938def8ee12d37fcbcbbbc15b6dc64cf7ebc51c1
+	sha256:2362b685633caeaf45b9951a9b76ce359cd3581dd515b430c6c3f5dfb4d92a8c
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+# https://github.com/codecov/codecov-python/issues/324
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
