@@ -1,85 +1,17 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | $(@D)/.tox/py$(PYV)/bin/python runtests.py -vv
-Python 3.7.16 (default, Dec 21 2022, 19:50:31) 
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> $(PYTHON) runtests.py -vv
+Python 3.7.16 (default, Feb 19 2023, 23:28:22) 
 [GCC 10.4.0]
 
-Running tests against Cython 0.29.33
+Running tests against Cython 0.29.34
 Using Cython language level 2.
 Backends: c,cpp
 
-test_basic (Cython.Compiler.Tests.TestBuffer.TestBufferParsing) ... ok
-test_pos_after_key (Cython.Compiler.Tests.TestBuffer.TestBufferParsing) ... ok
-test_type_keyword (Cython.Compiler.Tests.TestBuffer.TestBufferParsing) ... ok
-test_type_pos (Cython.Compiler.Tests.TestBuffer.TestBufferParsing) ... ok
-test_calculate_pickle_checksums (Cython.Compiler.Tests.TestParseTreeTransforms.TestAnalyseDeclarationsTransform) ... ok
-test_parallel_directives_cimports (Cython.Compiler.Tests.TestParseTreeTransforms.TestInterpretCompilerDirectives) ... ok
-test_parallel_directives_imports (Cython.Compiler.Tests.TestParseTreeTransforms.TestInterpretCompilerDirectives) ... ok
-test_parserbehaviour_is_what_we_coded_for (Cython.Compiler.Tests.TestParseTreeTransforms.TestNormalizeTree) ... ok
-test_pass_eliminated (Cython.Compiler.Tests.TestParseTreeTransforms.TestNormalizeTree) ... ok
-test_statinexpr (Cython.Compiler.Tests.TestParseTreeTransforms.TestNormalizeTree) ... ok
-test_wrap_multistat (Cython.Compiler.Tests.TestParseTreeTransforms.TestNormalizeTree) ... ok
-test_wrap_offagain (Cython.Compiler.Tests.TestParseTreeTransforms.TestNormalizeTree) ... ok
-test_wrap_singlestat (Cython.Compiler.Tests.TestParseTreeTransforms.TestNormalizeTree) ... ok
-test_cpp_reference_cpp_class (Cython.Compiler.Tests.TestSignatureMatching.SignatureMatcherTest) ... ok
-test_cpp_reference_cpp_class_and_int (Cython.Compiler.Tests.TestSignatureMatching.SignatureMatcherTest) ... ok
-test_cpp_reference_single_arg (Cython.Compiler.Tests.TestSignatureMatching.SignatureMatcherTest) ... ok
-test_cpp_reference_two_args (Cython.Compiler.Tests.TestSignatureMatching.SignatureMatcherTest) ... ok
-test_widest_numeric_type (Cython.Compiler.Tests.TestTypes.TestMethodDispatcherTransform) ... ok
-test_basic (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
-test_copy_is_taken (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
-test_exprstat (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
-test_pos_is_transferred (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
-test_substitution (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
-test_substitutions_are_copied (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
-test_temps (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
-test_invalid_number_literals (Cython.Compiler.Tests.TestGrammar.TestGrammar) ... ok
-test_valid_number_literals (Cython.Compiler.Tests.TestGrammar.TestGrammar) ... ok
-test_node_path (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
-test_node_path_and (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
-test_node_path_attribute (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
-test_node_path_attribute_dotted (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
-test_node_path_attribute_exists (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
-test_node_path_attribute_exists_not (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
-test_node_path_attribute_string_predicate (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
-test_node_path_child (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
-test_node_path_node_predicate (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
-test_node_path_node_predicate_step (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
-test_node_path_recursive_predicate (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
-test_node_path_star (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
-test_errors (Cython.Compiler.Tests.TestCmdLine.CmdLineParserTest) ... ok
-test_long_options (Cython.Compiler.Tests.TestCmdLine.CmdLineParserTest) ... ok
-test_module_name (Cython.Compiler.Tests.TestCmdLine.CmdLineParserTest) ... ok
-test_options_with_values (Cython.Compiler.Tests.TestCmdLine.CmdLineParserTest) ... ok
-test_short_options (Cython.Compiler.Tests.TestCmdLine.CmdLineParserTest) ... ok
-test_string_contains_lone_surrogates (Cython.Compiler.Tests.TestStringEncoding.StringEncodingTest) ... ok
-test_string_contains_surrogates (Cython.Compiler.Tests.TestStringEncoding.StringEncodingTest) ... ok
-test_deepcopy (Cython.Compiler.Tests.TestFlowControl.TestGraph) ... ok
-test_basic (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
-test_cdef_arg (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
-test_def_arg (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
-test_default_1dim (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
-test_default_ndim (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
-test_general_slice (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
-test_non_slice_memview (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
-test_zero_offset (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
-test_zero_offset_ndim (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
-test_load (Cython.Compiler.Tests.TestUtilityLoad.TestCythonUtilityLoader) ... ok
-test_load_as_string (Cython.Compiler.Tests.TestUtilityLoad.TestCythonUtilityLoader) ... ok
-test_load_tempita (Cython.Compiler.Tests.TestUtilityLoad.TestCythonUtilityLoader) ... ok
-test_load (Cython.Compiler.Tests.TestUtilityLoad.TestTempitaUtilityLoader) ... ok
-test_load_as_string (Cython.Compiler.Tests.TestUtilityLoad.TestTempitaUtilityLoader) ... ok
-test_load (Cython.Compiler.Tests.TestUtilityLoad.TestUtilityLoader) ... ok
-test_load_as_string (Cython.Compiler.Tests.TestUtilityLoad.TestUtilityLoader) ... ok
-test_binop_method (Cython.Compiler.Tests.TestVisitor.TestMethodDispatcherTransform) ... ok
-test_builtin_method (Cython.Compiler.Tests.TestVisitor.TestMethodDispatcherTransform) ... ok
-test_all (Cython.Debugger.Tests.TestLibCython.TestAll) ... gdb command file: Activating virtualenv: $(@D)/.tox/py$(PYV); path_to_activate_this_py: $(@D)/.tox/py$(PYV)/bin/activate_this.py
-Traceback (most recent call last):
-  File "<string>", line 8, in <module>
-FileNotFoundError: [Errno 2] No such file or directory: '$(@D)/.tox/py$(PYV)/bin/activate_this.py'
-ok
-test_class_ref (Cython.Build.Tests.TestInline.TestInline) ... ok
-test_compiler_directives (Cython.Build.Tests.TestInline.TestInline) ... ok
-test_def_node (Cython.Build.Tests.TestInline.TestInline) ... Excluding build.setuptools_reimport because it's listed in tests/bugs.txt
+test_cython (Cython.Build.Tests.TestIpythonMagic.TestIPythonMagic) ... ok
+test_cython2 (Cython.Build.Tests.TestIpythonMagic.TestIPythonMagic) ... ok
+test_cython3 (Cython.Build.Tests.TestIpythonMagic.TestIPythonMagic) ... ok
+Excluding build.setuptools_reimport because it's listed in tests/bugs.txt
 Excluding errors.missing_baseclass_in_predecl_T262 because it's listed in tests/bugs.txt
 Excluding run.cfunc_call_tuple_args_T408 because it's listed in tests/bugs.txt
 Excluding run.cimport_alias_subclass because it's listed in tests/bugs.txt
@@ -92,19 +24,19 @@ Excluding run.inlined_generator_expressions because it's listed in tests/bugs.tx
 Excluding run.mod__spec__ because it's listed in tests/bugs.txt
 Excluding run.temp_sideeffects_T654 because it's listed in tests/bugs.txt
 Excluding run.unsignedbehaviour_T184 because it's listed in tests/bugs.txt
+test_cython3_pgo (Cython.Build.Tests.TestIpythonMagic.TestIPythonMagic) ... ok
+test_cython_inline (Cython.Build.Tests.TestIpythonMagic.TestIPythonMagic) ... Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_0eb0c41c30a393036ae3ba8c7bb906ead685c1c1.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_0eb0c41c30a393036ae3ba8c7bb906ead685c1c1.pyx
+warning: .cython-cache-dir/inline/_cython_inline_0eb0c41c30a393036ae3ba8c7bb906ead685c1c1.pyx:6:4: Unreachable code
 ok
-test_globals (Cython.Build.Tests.TestInline.TestInline) ... warning: TEST_TMP/inline/_cython_inline_65301ac100a227f4ed57486a62009b137fe620bd.pyx:6:4: Unreachable code
+test_cython_language_level (Cython.Build.Tests.TestIpythonMagic.TestIPythonMagic) ... ok
+test_cython_name (Cython.Build.Tests.TestIpythonMagic.TestIPythonMagic) ... ok
+test_cython_pyximport (Cython.Build.Tests.TestIpythonMagic.TestIPythonMagic) ... $(@D)/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: $(@D)/_test_cython_pyximport.pyx
+  tree = Parsing.p_module(s, pxd, full_module_name)
 ok
-test_lang_version (Cython.Build.Tests.TestInline.TestInline) ... ok
-test_locals (Cython.Build.Tests.TestInline.TestInline) ... warning: TEST_TMP/inline/_cython_inline_4a013186c5bc568491d48319fab3fc405374177a.pyx:6:4: Unreachable code
-ok
-test_no_return (Cython.Build.Tests.TestInline.TestInline) ... ok
-test_pure (Cython.Build.Tests.TestInline.TestInline) ... warning: TEST_TMP/inline/_cython_inline_5fd08fe4dc552cc508c4c5f8011b10ee47467c7e.pyx:11:4: Unreachable code
-ok
-test_simple (Cython.Build.Tests.TestInline.TestInline) ... warning: TEST_TMP/inline/_cython_inline_b6430d0a0daf60d616d8bbc81032a7672fb1cd38.pyx:6:4: Unreachable code
-ok
-test_types (Cython.Build.Tests.TestInline.TestInline) ... warning: TEST_TMP/inline/_cython_inline_c80b0df987015895b3bb0ebcb729d62fdbcb9e61.pyx:8:4: Unreachable code
-ok
+test_cython_verbose (Cython.Build.Tests.TestIpythonMagic.TestIPythonMagic) ... ok
+test_cython_verbose_thresholds (Cython.Build.Tests.TestIpythonMagic.TestIPythonMagic) ... ok
+test_extlibs (Cython.Build.Tests.TestIpythonMagic.TestIPythonMagic) ... ok
 test_backslash (Cython.Build.Tests.TestStripLiterals.TestStripLiterals) ... ok
 test_comment (Cython.Build.Tests.TestStripLiterals.TestStripLiterals) ... ok
 test_comment_and_quote (Cython.Build.Tests.TestStripLiterals.TestStripLiterals) ... ok
@@ -118,36 +50,59 @@ test_raw_unicode (Cython.Build.Tests.TestStripLiterals.TestStripLiterals) ... ok
 test_single_quote (Cython.Build.Tests.TestStripLiterals.TestStripLiterals) ... ok
 test_triple_quote (Cython.Build.Tests.TestStripLiterals.TestStripLiterals) ... ok
 test_unicode (Cython.Build.Tests.TestStripLiterals.TestStripLiterals) ... ok
+test_class_ref (Cython.Build.Tests.TestInline.TestInline) ... Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_f6bee687728f231f3d03c9b67b55f9ae5ff60035.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_f6bee687728f231f3d03c9b67b55f9ae5ff60035.pyx
+ok
+test_compiler_directives (Cython.Build.Tests.TestInline.TestInline) ... Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_560826acf949b8525d0051b8a345c3a1fa166c8f.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_560826acf949b8525d0051b8a345c3a1fa166c8f.pyx
+warning: .cython-cache-dir/inline/_cython_inline_560826acf949b8525d0051b8a345c3a1fa166c8f.pyx:6:4: Unreachable code
+ok
+test_def_node (Cython.Build.Tests.TestInline.TestInline) ... ok
+test_globals (Cython.Build.Tests.TestInline.TestInline) ... warning: TEST_TMP/inline/_cython_inline_bdb399ceedf8ae07f41aa6387950ac6206e5feb3.pyx:6:4: Unreachable code
+ok
+test_lang_version (Cython.Build.Tests.TestInline.TestInline) ... Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_8220e45e786d426a5148778d0f842289db984353.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_8220e45e786d426a5148778d0f842289db984353.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_0688e8d0f66e94506afcd5a76083b6d9ec755dad.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_0688e8d0f66e94506afcd5a76083b6d9ec755dad.pyx
+ok
+test_locals (Cython.Build.Tests.TestInline.TestInline) ... ok
+test_no_return (Cython.Build.Tests.TestInline.TestInline) ... ok
+test_pure (Cython.Build.Tests.TestInline.TestInline) ... warning: TEST_TMP/inline/_cython_inline_4a3c4b61bc2314e911e9389954daf1bb9d635342.pyx:11:4: Unreachable code
+ok
+test_simple (Cython.Build.Tests.TestInline.TestInline) ... warning: TEST_TMP/inline/_cython_inline_474b0bb928fd073f6db9481b96dd52898d847db1.pyx:6:4: Unreachable code
+ok
+test_types (Cython.Build.Tests.TestInline.TestInline) ... warning: TEST_TMP/inline/_cython_inline_a3496f2c2c142964a8503afc34452d4fa5fcb66a.pyx:8:4: Unreachable code
+ok
+Compiling TEST_TMP/cycache-test/src/a.pyx because it changed.
+[1/1] Cythonizing TEST_TMP/cycache-test/src/a.pyx
 test_cycache_switch (Cython.Build.Tests.TestCyCache.TestCyCache) ... Compiling TEST_TMP/cycache-test/src/a.pyx because it changed.
 [1/1] Cythonizing TEST_TMP/cycache-test/src/a.pyx
 Compiling TEST_TMP/cycache-test/src/a.pyx because it changed.
-[1/1] Cythonizing TEST_TMP/cycache-test/src/a.pyx
-Compiling TEST_TMP/cycache-test/src/a.pyx because it changed.
 [1/1] Found compiled TEST_TMP/cycache-test/src/a.pyx in cache
 $(@D)/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: $(@D)/TEST_TMP/cycache-test/src/a.pyx
   tree = Parsing.p_module(s, pxd, full_module_name)
 $(@D)/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: $(@D)/TEST_TMP/cycache-test/src/a.pyx
   tree = Parsing.p_module(s, pxd, full_module_name)
 ok
-test_cycache_uses_cache (Cython.Build.Tests.TestCyCache.TestCyCache) ... Compiling TEST_TMP/cycache-test/src/a.pyx because it changed.
+Compiling TEST_TMP/cycache-test/src/a.pyx because it changed.
 [1/1] Cythonizing TEST_TMP/cycache-test/src/a.pyx
 Compiling TEST_TMP/cycache-test/src/a.pyx because it changed.
 [1/1] Found compiled TEST_TMP/cycache-test/src/a.pyx in cache
-$(@D)/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: $(@D)/TEST_TMP/cycache-test/src/a.pyx
+test_cycache_uses_cache (Cython.Build.Tests.TestCyCache.TestCyCache) ... $(@D)/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: $(@D)/TEST_TMP/cycache-test/src/a.pyx
   tree = Parsing.p_module(s, pxd, full_module_name)
 ok
-test_multi_file_output (Cython.Build.Tests.TestCyCache.TestCyCache) ... Compiling TEST_TMP/cycache-test/src/a.pyx because it changed.
+Compiling TEST_TMP/cycache-test/src/a.pyx because it changed.
 [1/1] Cythonizing TEST_TMP/cycache-test/src/a.pyx
 Compiling TEST_TMP/cycache-test/src/a.pyx because it changed.
 [1/1] Found compiled TEST_TMP/cycache-test/src/a.pyx in cache
-$(@D)/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: $(@D)/TEST_TMP/cycache-test/src/a.pyx
+test_multi_file_output (Cython.Build.Tests.TestCyCache.TestCyCache) ... $(@D)/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: $(@D)/TEST_TMP/cycache-test/src/a.pyx
   tree = Parsing.p_module(s, pxd, full_module_name)
 ok
+Compiling TEST_TMP/cycache-test/src/options.pyx because it changed.
+[1/1] Cythonizing TEST_TMP/cycache-test/src/options.pyx
 test_options_invalidation (Cython.Build.Tests.TestCyCache.TestCyCache) ... Compiling TEST_TMP/cycache-test/src/options.pyx because it changed.
 [1/1] Cythonizing TEST_TMP/cycache-test/src/options.pyx
 Compiling TEST_TMP/cycache-test/src/options.pyx because it changed.
-[1/1] Cythonizing TEST_TMP/cycache-test/src/options.pyx
-Compiling TEST_TMP/cycache-test/src/options.pyx because it changed.
 [1/1] Found compiled TEST_TMP/cycache-test/src/options.pyx in cache
 Compiling TEST_TMP/cycache-test/src/options.pyx because it changed.
 [1/1] Found compiled TEST_TMP/cycache-test/src/options.pyx in cache
@@ -156,6 +111,7 @@ $(@D)/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_lev
 $(@D)/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: $(@D)/TEST_TMP/cycache-test/src/options.pyx
   tree = Parsing.p_module(s, pxd, full_module_name)
 ok
+test_build_hex_version (Cython.Tests.TestCythonUtils.TestCythonUtils) ... ok
 test_attribute (Cython.Tests.TestCodeWriter.TestCodeWriter) ... ok
 test_cdef_var (Cython.Tests.TestCodeWriter.TestCodeWriter) ... ok
 test_def (Cython.Tests.TestCodeWriter.TestCodeWriter) ... ok
@@ -169,9 +125,85 @@ test_signed_short (Cython.Tests.TestCodeWriter.TestCodeWriter) ... ok
 test_typed_args (Cython.Tests.TestCodeWriter.TestCodeWriter) ... ok
 test_insertion (Cython.Tests.TestStringIOTree.TestStringIOTree) ... ok
 test_markers (Cython.Tests.TestStringIOTree.TestStringIOTree) ... ok
-test_build_hex_version (Cython.Tests.TestCythonUtils.TestCythonUtils) ... ok
+test_basic (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
+test_copy_is_taken (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
+test_exprstat (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
+test_pos_is_transferred (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
+test_substitution (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
+test_substitutions_are_copied (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
+test_temps (Cython.Compiler.Tests.TestTreeFragment.TestTreeFragments) ... ok
+test_basic (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
+test_cdef_arg (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
+test_def_arg (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
+test_default_1dim (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
+test_default_ndim (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
+test_general_slice (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
+test_non_slice_memview (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
+test_zero_offset (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
+test_zero_offset_ndim (Cython.Compiler.Tests.TestMemView.TestMemviewParsing) ... ok
+test_binop_method (Cython.Compiler.Tests.TestVisitor.TestMethodDispatcherTransform) ... ok
+test_builtin_method (Cython.Compiler.Tests.TestVisitor.TestMethodDispatcherTransform) ... ok
+test_cpp_reference_cpp_class (Cython.Compiler.Tests.TestSignatureMatching.SignatureMatcherTest) ... ok
+test_cpp_reference_cpp_class_and_int (Cython.Compiler.Tests.TestSignatureMatching.SignatureMatcherTest) ... ok
+test_cpp_reference_single_arg (Cython.Compiler.Tests.TestSignatureMatching.SignatureMatcherTest) ... ok
+test_cpp_reference_two_args (Cython.Compiler.Tests.TestSignatureMatching.SignatureMatcherTest) ... ok
+test_string_contains_lone_surrogates (Cython.Compiler.Tests.TestStringEncoding.StringEncodingTest) ... ok
+test_string_contains_surrogates (Cython.Compiler.Tests.TestStringEncoding.StringEncodingTest) ... ok
+test_invalid_number_literals (Cython.Compiler.Tests.TestGrammar.TestGrammar) ... ok
+test_valid_number_literals (Cython.Compiler.Tests.TestGrammar.TestGrammar) ... ok
+test_load (Cython.Compiler.Tests.TestUtilityLoad.TestCythonUtilityLoader) ... ok
+test_load_as_string (Cython.Compiler.Tests.TestUtilityLoad.TestCythonUtilityLoader) ... ok
+test_load_tempita (Cython.Compiler.Tests.TestUtilityLoad.TestCythonUtilityLoader) ... ok
+test_load (Cython.Compiler.Tests.TestUtilityLoad.TestTempitaUtilityLoader) ... ok
+test_load_as_string (Cython.Compiler.Tests.TestUtilityLoad.TestTempitaUtilityLoader) ... ok
+test_load (Cython.Compiler.Tests.TestUtilityLoad.TestUtilityLoader) ... ok
+test_load_as_string (Cython.Compiler.Tests.TestUtilityLoad.TestUtilityLoader) ... ok
+test_errors (Cython.Compiler.Tests.TestCmdLine.CmdLineParserTest) ... ok
+test_long_options (Cython.Compiler.Tests.TestCmdLine.CmdLineParserTest) ... ok
+test_module_name (Cython.Compiler.Tests.TestCmdLine.CmdLineParserTest) ... ok
+test_options_with_values (Cython.Compiler.Tests.TestCmdLine.CmdLineParserTest) ... ok
+test_short_options (Cython.Compiler.Tests.TestCmdLine.CmdLineParserTest) ... ok
+test_basic (Cython.Compiler.Tests.TestBuffer.TestBufferParsing) ... ok
+test_pos_after_key (Cython.Compiler.Tests.TestBuffer.TestBufferParsing) ... ok
+test_type_keyword (Cython.Compiler.Tests.TestBuffer.TestBufferParsing) ... ok
+test_type_pos (Cython.Compiler.Tests.TestBuffer.TestBufferParsing) ... ok
+test_deepcopy (Cython.Compiler.Tests.TestFlowControl.TestGraph) ... ok
+test_widest_numeric_type (Cython.Compiler.Tests.TestTypes.TestMethodDispatcherTransform) ... ok
+test_node_path (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
+test_node_path_and (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
+test_node_path_attribute (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
+test_node_path_attribute_dotted (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
+test_node_path_attribute_exists (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
+test_node_path_attribute_exists_not (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
+test_node_path_attribute_string_predicate (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
+test_node_path_child (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
+test_node_path_node_predicate (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
+test_node_path_node_predicate_step (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
+test_node_path_recursive_predicate (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
+test_node_path_star (Cython.Compiler.Tests.TestTreePath.TestTreePath) ... ok
+test_calculate_pickle_checksums (Cython.Compiler.Tests.TestParseTreeTransforms.TestAnalyseDeclarationsTransform) ... ok
+test_parallel_directives_cimports (Cython.Compiler.Tests.TestParseTreeTransforms.TestInterpretCompilerDirectives) ... ok
+test_parallel_directives_imports (Cython.Compiler.Tests.TestParseTreeTransforms.TestInterpretCompilerDirectives) ... ok
+test_parserbehaviour_is_what_we_coded_for (Cython.Compiler.Tests.TestParseTreeTransforms.TestNormalizeTree) ... ok
+test_pass_eliminated (Cython.Compiler.Tests.TestParseTreeTransforms.TestNormalizeTree) ... ok
+test_statinexpr (Cython.Compiler.Tests.TestParseTreeTransforms.TestNormalizeTree) ... ok
+test_wrap_multistat (Cython.Compiler.Tests.TestParseTreeTransforms.TestNormalizeTree) ... ok
+test_wrap_offagain (Cython.Compiler.Tests.TestParseTreeTransforms.TestNormalizeTree) ... ok
+test_wrap_singlestat (Cython.Compiler.Tests.TestParseTreeTransforms.TestNormalizeTree) ... ok
+test_all (Cython.Debugger.Tests.TestLibCython.TestAll) ... [GDB will not be able to debug user-mode threads: ld.so.1: gdb: fatal: relocation error: file /lib/64/libthread_db.so.1: symbol ps_lgetxregsize: referenced symbol not found]
+[GDB will not be able to debug user-mode threads: ld.so.1: gdb: fatal: relocation error: file /lib/64/libthread_db.so.1: symbol ps_lgetxregsize: referenced symbol not found]
+[GDB will not be able to debug user-mode threads: ld.so.1: gdb: fatal: relocation error: file /lib/64/libthread_db.so.1: symbol ps_lgetxregsize: referenced symbol not found]
+Python was not compiled with debug symbols (or it was stripped). Some functionality may not work (properly).
+warning: .cygdbinit: No such file or directory
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/Cython/Debugger/Tests/test_libcython_in_gdb.py:458: UserWarning: Unable to run tests, Python was not compiled with debugging information. Either compile python with -g or get a debug build (configure with --with-pydebug).
+  warnings.warn(msg)
+ok
 StringIOTree (Cython)
 Doctest: Cython.StringIOTree ... ok
+parse_list (Cython.Build.Dependencies)
+Doctest: Cython.Build.Dependencies.parse_list ... ok
+TreeVisitor (Cython.Compiler.Visitor)
+Doctest: Cython.Compiler.Visitor.TreeVisitor ... ok
 normalise_encoding_name (Cython.Compiler.Options)
 Doctest: Cython.Compiler.Options.normalise_encoding_name ... ok
 parse_compile_time_env (Cython.Compiler.Options)
@@ -182,10 +214,6 @@ parse_directive_value (Cython.Compiler.Options)
 Doctest: Cython.Compiler.Options.parse_directive_value ... ok
 parse_variable_value (Cython.Compiler.Options)
 Doctest: Cython.Compiler.Options.parse_variable_value ... ok
-TreeVisitor (Cython.Compiler.Visitor)
-Doctest: Cython.Compiler.Visitor.TreeVisitor ... ok
-parse_list (Cython.Build.Dependencies)
-Doctest: Cython.Build.Dependencies.parse_list ... ok
 runTest (__main__.CythonRunTestCase)
 [-1] compiling (c) and running bufaccess ... acquire_failure1 (bufaccess.__test__)
 Doctest: bufaccess.__test__.acquire_failure1 ... ok
@@ -1026,8 +1054,8 @@ LINKCC (env) =
 Encodings:
 sys maxunicode = 1114111
 LANG (env) = 
-PYTHONIOENCODING (env) = 
-sys stdout encoding = UTF-8
+PYTHONIOENCODING (env) = utf-8
+sys stdout encoding = utf-8
 sys default encoding = utf-8
 sys FS encoding = utf-8
 
@@ -1087,8 +1115,8 @@ LINKCC (env) =
 Encodings:
 sys maxunicode = 1114111
 LANG (env) = 
-PYTHONIOENCODING (env) = 
-sys stdout encoding = UTF-8
+PYTHONIOENCODING (env) = utf-8
+sys stdout encoding = utf-8
 sys default encoding = utf-8
 sys FS encoding = utf-8
 
@@ -2512,8 +2540,8 @@ runTest (__main__.CythonRunTestCase)
 [-1] compiling (c) and running memslice ... 
 === C/C++ compiler error output: ===
 memslice.c: In function '__pyx_convert__to_py_struct____pyx_t_8memslice_PackedArrayStruct':
-memslice.c:86940:38: warning: taking address of packed member of 'struct __pyx_t_8memslice_PackedArrayStruct' may result in an unaligned pointer value [-Waddress-of-packed-member]
-86940 |     member = __Pyx_carray_to_py_int(s.ints, 10); if (unlikely(!member)) goto bad;
+memslice.c:86966:38: warning: taking address of packed member of 'struct __pyx_t_8memslice_PackedArrayStruct' may result in an unaligned pointer value [-Waddress-of-packed-member]
+86966 |     member = __Pyx_carray_to_py_int(s.ints, 10); if (unlikely(!member)) goto bad;
       |                                     ~^~~~~
 ====================================
 acquire_failure1 (memslice)
@@ -2726,8 +2754,8 @@ runTest (__main__.CythonRunTestCase)
 [-1] compiling (cpp) and running memslice ... 
 === C/C++ compiler error output: ===
 memslice.cpp: In function 'PyObject* __pyx_convert__to_py_struct____pyx_t_8memslice_PackedArrayStruct(__pyx_t_8memslice_PackedArrayStruct)':
-memslice.cpp:86954:39: warning: taking address of packed member of '__pyx_t_8memslice_PackedArrayStruct' may result in an unaligned pointer value [-Waddress-of-packed-member]
-86954 |     member = __Pyx_carray_to_py_int(s.ints, 10); if (unlikely(!member)) goto bad;
+memslice.cpp:86980:39: warning: taking address of packed member of '__pyx_t_8memslice_PackedArrayStruct' may result in an unaligned pointer value [-Waddress-of-packed-member]
+86980 |     member = __Pyx_carray_to_py_int(s.ints, 10); if (unlikely(!member)) goto bad;
       |                                     ~~^~~~
 ====================================
 acquire_failure1 (memslice)
@@ -11650,11 +11678,15 @@ runTest (__main__.CythonRunTestCase)
 Doctest: for_in_break_continue_T533.for_from ... ok
 for_in (for_in_break_continue_T533)
 Doctest: for_in_break_continue_T533.for_in ... ok
+for_in_break2 (for_in_break_continue_T533)
+Doctest: for_in_break_continue_T533.for_in_break2 ... ok
 runTest (__main__.CythonRunTestCase)
 [-1] compiling (cpp) and running for_in_break_continue_T533 ... for_from (for_in_break_continue_T533)
 Doctest: for_in_break_continue_T533.for_from ... ok
 for_in (for_in_break_continue_T533)
 Doctest: for_in_break_continue_T533.for_in ... ok
+for_in_break2 (for_in_break_continue_T533)
+Doctest: for_in_break_continue_T533.for_in_break2 ... ok
 runTest (__main__.CythonRunTestCase)
 [-1] compiling (c) and running for_in_iter ... Iterable (for_in_iter)
 Doctest: for_in_iter.Iterable ... ok
@@ -16834,6 +16866,12 @@ Doctest: pyarray.test_view ... ok
 test_view_typed (pyarray)
 Doctest: pyarray.test_view_typed ... ok
 runTest (__main__.CythonRunTestCase)
+[-1] compiling (c) and running pycapsule ... test_capsule (pycapsule)
+Doctest: pycapsule.test_capsule ... ok
+runTest (__main__.CythonRunTestCase)
+[-1] compiling (cpp) and running pycapsule ... test_capsule (pycapsule)
+Doctest: pycapsule.test_capsule ... ok
+runTest (__main__.CythonRunTestCase)
 [-1] compiling (c) and running pyclass_dynamic_bases ... cond_if_bases (pyclass_dynamic_bases)
 Doctest: pyclass_dynamic_bases.cond_if_bases ... ok
 make_subclass (pyclass_dynamic_bases)
@@ -19144,116 +19182,116 @@ test_varargs2_ext (test_call.CFunctionCalls) ... ok
 test_varargs2_kw (test_call.CFunctionCalls) ... ok
 runTest (__main__.CythonUnitTestCase)
 [-1] compiling (c) tests in test_coroutines_pep492 ... test_badsyntax_1 (test_coroutines_pep492.AsyncBadSyntaxTest) ... Couldn't find 'abc'
-Compiling $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_84dad6067adeafb9e967bd60ce2fc354db1cfba5.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_84dad6067adeafb9e967bd60ce2fc354db1cfba5.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_e1c08124aa7276da03405ce183fec5a974761e45.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_e1c08124aa7276da03405ce183fec5a974761e45.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_8148711eac9f4e78c205f7b4e53ed24e0cc5530e.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_8148711eac9f4e78c205f7b4e53ed24e0cc5530e.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_0bd9a409e4bbb83ced63469023fde3eb822d8014.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_0bd9a409e4bbb83ced63469023fde3eb822d8014.pyx
 Couldn't find 'abc'
-Compiling $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_2403168860ad5bf2fce363812e7834641fbe66e3.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_2403168860ad5bf2fce363812e7834641fbe66e3.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_16c3386ae91913f59aa923ad5f4cc70db61fbe18.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_16c3386ae91913f59aa923ad5f4cc70db61fbe18.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_2aeb9f3126f94e0c3b5608581fa5977f95ec324f.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_2aeb9f3126f94e0c3b5608581fa5977f95ec324f.pyx
-Couldn't find 'abc'
-Couldn't find 'abc'
-Compiling $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_84dad6067adeafb9e967bd60ce2fc354db1cfba5.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_84dad6067adeafb9e967bd60ce2fc354db1cfba5.pyx
-Compiling $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_e1c08124aa7276da03405ce183fec5a974761e45.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_e1c08124aa7276da03405ce183fec5a974761e45.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_08ae00a6e57434a4ae7c402e7968bbe0cf5cbb7f.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_08ae00a6e57434a4ae7c402e7968bbe0cf5cbb7f.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_e46b7ead4bd5747942e744201c5cf13150790dea.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_e46b7ead4bd5747942e744201c5cf13150790dea.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_3661ef03e1cf6afe158bf67ce58c562eafdb7708.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_asyncgen/_cython_inline_3661ef03e1cf6afe158bf67ce58c562eafdb7708.pyx
 Couldn't find 'abc'
 Couldn't find 'abc'
-Compiling $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_2403168860ad5bf2fce363812e7834641fbe66e3.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_2403168860ad5bf2fce363812e7834641fbe66e3.pyx
-Compiling $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_16c3386ae91913f59aa923ad5f4cc70db61fbe18.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_16c3386ae91913f59aa923ad5f4cc70db61fbe18.pyx
-Compiling $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_2aeb9f3126f94e0c3b5608581fa5977f95ec324f.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_2aeb9f3126f94e0c3b5608581fa5977f95ec324f.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_cdf1abab70837b1755fdf3ee77eaa7dcc1246084.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_cdf1abab70837b1755fdf3ee77eaa7dcc1246084.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_8148711eac9f4e78c205f7b4e53ed24e0cc5530e.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_8148711eac9f4e78c205f7b4e53ed24e0cc5530e.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_0bd9a409e4bbb83ced63469023fde3eb822d8014.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_0bd9a409e4bbb83ced63469023fde3eb822d8014.pyx
+Couldn't find 'abc'
+Couldn't find 'abc'
+Compiling $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_08ae00a6e57434a4ae7c402e7968bbe0cf5cbb7f.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_08ae00a6e57434a4ae7c402e7968bbe0cf5cbb7f.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_e46b7ead4bd5747942e744201c5cf13150790dea.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_e46b7ead4bd5747942e744201c5cf13150790dea.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_3661ef03e1cf6afe158bf67ce58c562eafdb7708.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_asyncgen/_cython_inline_3661ef03e1cf6afe158bf67ce58c562eafdb7708.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_921fee6542845cebb746173b6782c0157fc9f93c.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_921fee6542845cebb746173b6782c0157fc9f93c.pyx
 Couldn't find 'something'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_5bf1fa79eb0e27be223ae1d08bf8f69db0ca4782.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_5bf1fa79eb0e27be223ae1d08bf8f69db0ca4782.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_a46120ec9738f809d29cec79ace324b447b66620.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_a46120ec9738f809d29cec79ace324b447b66620.pyx
 Couldn't find 'something'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_6d19acd9d78e0a054bb5c06fd368b75eae53bcdc.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_6d19acd9d78e0a054bb5c06fd368b75eae53bcdc.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_565301d85b836ec1a348642e4bea24189561e844.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_565301d85b836ec1a348642e4bea24189561e844.pyx
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_9069a2d6e937c3fc9b426197067f65ab744f5fab.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_9069a2d6e937c3fc9b426197067f65ab744f5fab.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_f56663974ce55a56c4995ad43920ca1a7dce0a4f.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_f56663974ce55a56c4995ad43920ca1a7dce0a4f.pyx
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_aebcde1ae5eb5ab21f21a0f48a0d74321f0fb74a.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_aebcde1ae5eb5ab21f21a0f48a0d74321f0fb74a.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_7df4473986fedd6b15572f3514c9380849f58f9c.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_7df4473986fedd6b15572f3514c9380849f58f9c.pyx
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_9f4d1d6ac2931a77ac3a4204a7dd35e03049df8f.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_9f4d1d6ac2931a77ac3a4204a7dd35e03049df8f.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_65de4cbad7016b72041dd9c1cf9bf1b9417ee220.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_65de4cbad7016b72041dd9c1cf9bf1b9417ee220.pyx
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_8b7dc90bb50110209d81e93c579d255b5f5c7753.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_8b7dc90bb50110209d81e93c579d255b5f5c7753.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_891b5a980ee516fde86ec0f7bfee589e83228b12.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_891b5a980ee516fde86ec0f7bfee589e83228b12.pyx
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_bba3fb94647e145a19364e524aeee47ab726b831.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_bba3fb94647e145a19364e524aeee47ab726b831.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_86c9729be696048cf00e5f93a9dff2c652ae946c.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_86c9729be696048cf00e5f93a9dff2c652ae946c.pyx
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_7edb6a4863bc541a3c743ecffdc8d1df7d9d2f34.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_7edb6a4863bc541a3c743ecffdc8d1df7d9d2f34.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_3f5b1b5cee37666feaddbc02f486a269c524367f.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_3f5b1b5cee37666feaddbc02f486a269c524367f.pyx
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_53ffcb4fdcacc163aec2a296b6ffb2f7455b5550.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_53ffcb4fdcacc163aec2a296b6ffb2f7455b5550.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_9b7f3b996c1f96febf2cd64aaba60a78aaac4761.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_9b7f3b996c1f96febf2cd64aaba60a78aaac4761.pyx
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_aa42b72aff38c5f93b5b631d91aab354f982fcfc.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_aa42b72aff38c5f93b5b631d91aab354f982fcfc.pyxok
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_68f429636eebcd271263f589f5ce3573c675e27d.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_68f429636eebcd271263f589f5ce3573c675e27d.pyxok
 test_badsyntax_10 (test_coroutines_pep492.AsyncBadSyntaxTest) ... ok
 test_badsyntax_2 (test_coroutines_pep492.AsyncBadSyntaxTest) ... 
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_cd407b5a220d320c0fbcf8c81bc2811d3d1373a5.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_cd407b5a220d320c0fbcf8c81bc2811d3d1373a5.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_ee0d91c6806c44e94649216b46eddbf00adfad7a.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_ee0d91c6806c44e94649216b46eddbf00adfad7a.pyx
 Couldn't find 'b'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_2bd2e6f1f799b8180f125847e77fc72a04c80a58.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_2bd2e6f1f799b8180f125847e77fc72a04c80a58.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_ceacbaec874e9cedf37a91007036e7357cfb1656.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_ceacbaec874e9cedf37a91007036e7357cfb1656.pyx
 Couldn't find 'b'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_fbddcd24a19d708e77e198d01822958a6663af46.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_fbddcd24a19d708e77e198d01822958a6663af46.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_0ae505cb942b7227fcce6c1612acf4c0ea501bcc.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_0ae505cb942b7227fcce6c1612acf4c0ea501bcc.pyx
 Couldn't find 'b'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_73000197b13bfef035efbbf2e394778e2a28d3d4.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_73000197b13bfef035efbbf2e394778e2a28d3d4.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_e877c3f9a4a1cd5805d0afb6bc03541c72541964.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_e877c3f9a4a1cd5805d0afb6bc03541c72541964.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_ff6f764c93c08887b82e87b1f5d1e8552427450d.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_ff6f764c93c08887b82e87b1f5d1e8552427450d.pyx
-Couldn't find 'b'
-Couldn't find 'b'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_2bd2e6f1f799b8180f125847e77fc72a04c80a58.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_2bd2e6f1f799b8180f125847e77fc72a04c80a58.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_201caaca98414a15d1cc50206f79602c0daa4a15.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_201caaca98414a15d1cc50206f79602c0daa4a15.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_a21e41174859450bcf2302178cba7fb2366865a7.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_a21e41174859450bcf2302178cba7fb2366865a7.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_5c0f1d9b4d76b6cb1cf39ecaeb1a9429e02ec25a.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_5c0f1d9b4d76b6cb1cf39ecaeb1a9429e02ec25a.pyx
 Couldn't find 'b'
 Couldn't find 'b'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_fbddcd24a19d708e77e198d01822958a6663af46.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_fbddcd24a19d708e77e198d01822958a6663af46.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_ceacbaec874e9cedf37a91007036e7357cfb1656.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_ceacbaec874e9cedf37a91007036e7357cfb1656.pyx
 Couldn't find 'b'
 Couldn't find 'b'
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_73000197b13bfef035efbbf2e394778e2a28d3d4.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_73000197b13bfef035efbbf2e394778e2a28d3d4.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_e877c3f9a4a1cd5805d0afb6bc03541c72541964.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_e877c3f9a4a1cd5805d0afb6bc03541c72541964.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_ff6f764c93c08887b82e87b1f5d1e8552427450d.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_ff6f764c93c08887b82e87b1f5d1e8552427450d.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_b25f3f80e5dab771835d94ebbdbab1fe3c01b6c8.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_b25f3f80e5dab771835d94ebbdbab1fe3c01b6c8.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_f20d4563f4ecc656940e25225e6e39d03cef3fd6.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_f20d4563f4ecc656940e25225e6e39d03cef3fd6.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_7d1f2e76832cec9c06fe83d6fd0e573db9742e26.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_7d1f2e76832cec9c06fe83d6fd0e573db9742e26.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_8411cc883731cafab2518f67bedb919e319cd140.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_8411cc883731cafab2518f67bedb919e319cd140.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_fb6c3baf09a594a7dc15814fd095e5010f38319b.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_fb6c3baf09a594a7dc15814fd095e5010f38319b.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_9bb44633b981d4d347e1ce2400769e87a266272f.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_9bb44633b981d4d347e1ce2400769e87a266272f.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_04890aec10dbc8a3fb420680f9eacebeb7f79a95.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_04890aec10dbc8a3fb420680f9eacebeb7f79a95.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_07cbed7b52e34f4a079172adc079e2728fd12b85.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_07cbed7b52e34f4a079172adc079e2728fd12b85.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_0ae505cb942b7227fcce6c1612acf4c0ea501bcc.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_0ae505cb942b7227fcce6c1612acf4c0ea501bcc.pyx
+Couldn't find 'b'
+Couldn't find 'b'
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_201caaca98414a15d1cc50206f79602c0daa4a15.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_201caaca98414a15d1cc50206f79602c0daa4a15.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_a21e41174859450bcf2302178cba7fb2366865a7.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_a21e41174859450bcf2302178cba7fb2366865a7.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_5c0f1d9b4d76b6cb1cf39ecaeb1a9429e02ec25a.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_5c0f1d9b4d76b6cb1cf39ecaeb1a9429e02ec25a.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_1d8dc510935632f4a4d55551779583a129ea40f7.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_1d8dc510935632f4a4d55551779583a129ea40f7.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_a052366f998fcbcdc087872ae21e1e0e037b4448.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_a052366f998fcbcdc087872ae21e1e0e037b4448.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_77b36b180a8d2b49b9126411ae8afeade74bb36b.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_77b36b180a8d2b49b9126411ae8afeade74bb36b.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_67ee1a945aabe84c6e9e6684c58407d2e7169500.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_67ee1a945aabe84c6e9e6684c58407d2e7169500.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_f636aac7102a67993ac7227ca935780c8602196e.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_f636aac7102a67993ac7227ca935780c8602196e.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_6d3119bcf605ef9fa66891b50b02989c430d7a86.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_6d3119bcf605ef9fa66891b50b02989c430d7a86.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_aed6173412740f20a00f94ae8f5bbcfa975227b3.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_aed6173412740f20a00f94ae8f5bbcfa975227b3.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_a6d9c2c82da0619a40a0f095d48545f5a610ce84.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_a6d9c2c82da0619a40a0f095d48545f5a610ce84.pyx
 ok
-test_badsyntax_3 (test_coroutines_pep492.AsyncBadSyntaxTest) ... Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_8c997c528b88e67085b532fbe3f80e81746c72fb.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_8c997c528b88e67085b532fbe3f80e81746c72fb.pyx
+test_badsyntax_3 (test_coroutines_pep492.AsyncBadSyntaxTest) ... Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_c10caeb9af54f971f0b922087c08bc6880267de4.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_c10caeb9af54f971f0b922087c08bc6880267de4.pyx
 ok
 test_goodsyntax_1 (test_coroutines_pep492.AsyncBadSyntaxTest) ... ok
 test_asyncio_1 (test_coroutines_pep492.CoroAsyncIOCompatTest) ... ok
@@ -19338,88 +19376,88 @@ test_with_6 (test_coroutines_pep492.CoroutineTest) ... ok
 test_with_7 (test_coroutines_pep492.CoroutineTest) ... ok
 test_with_8 (test_coroutines_pep492.CoroutineTest) ... ok
 test_with_9 (test_coroutines_pep492.CoroutineTest) ... ok
-test_oneline_defs (test_coroutines_pep492.TokenizerRegrTest) ... Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_2a9624a3b154fa7a3a9a7599f63f4d0ddcbb480f.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_2a9624a3b154fa7a3a9a7599f63f4d0ddcbb480f.pyx
-Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_3f52c2138cefc93efb9489bf924c235e1e1229eb.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_3f52c2138cefc93efb9489bf924c235e1e1229eb.pyx
+test_oneline_defs (test_coroutines_pep492.TokenizerRegrTest) ... Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_de602f0e8251f2d439bfa634554f5a61544de116.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_de602f0e8251f2d439bfa634554f5a61544de116.pyx
+Compiling $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_baef6fd2e6ffcc853c65ae62d6569f3e053e216c.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/c/test_coroutines_pep492/_cython_inline_baef6fd2e6ffcc853c65ae62d6569f3e053e216c.pyx
 $(PYTHON_DIR)/unittest/case.py:628: RuntimeWarning: coroutine '__invoke.<locals>.foo' was never awaited
   testMethod()
 ok
 runTest (__main__.CythonUnitTestCase)
 [-1] compiling (cpp) tests in test_coroutines_pep492 ... test_badsyntax_1 (test_coroutines_pep492.AsyncBadSyntaxTest) ... ok
-test_badsyntax_10 (test_coroutines_pep492.AsyncBadSyntaxTest) ... Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_cdf1abab70837b1755fdf3ee77eaa7dcc1246084.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_cdf1abab70837b1755fdf3ee77eaa7dcc1246084.pyx
+test_badsyntax_10 (test_coroutines_pep492.AsyncBadSyntaxTest) ... Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_921fee6542845cebb746173b6782c0157fc9f93c.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_921fee6542845cebb746173b6782c0157fc9f93c.pyx
 Couldn't find 'something'
 Couldn't find 'something'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_5bf1fa79eb0e27be223ae1d08bf8f69db0ca4782.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_5bf1fa79eb0e27be223ae1d08bf8f69db0ca4782.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_a46120ec9738f809d29cec79ace324b447b66620.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_a46120ec9738f809d29cec79ace324b447b66620.pyx
 Couldn't find 'something'
 Couldn't find 'something'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_6d19acd9d78e0a054bb5c06fd368b75eae53bcdc.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_6d19acd9d78e0a054bb5c06fd368b75eae53bcdc.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_565301d85b836ec1a348642e4bea24189561e844.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_565301d85b836ec1a348642e4bea24189561e844.pyx
 Couldn't find 'els'
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_9069a2d6e937c3fc9b426197067f65ab744f5fab.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_9069a2d6e937c3fc9b426197067f65ab744f5fab.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_f56663974ce55a56c4995ad43920ca1a7dce0a4f.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_f56663974ce55a56c4995ad43920ca1a7dce0a4f.pyx
 Couldn't find 'els'
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_aebcde1ae5eb5ab21f21a0f48a0d74321f0fb74a.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_aebcde1ae5eb5ab21f21a0f48a0d74321f0fb74a.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_7df4473986fedd6b15572f3514c9380849f58f9c.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_7df4473986fedd6b15572f3514c9380849f58f9c.pyx
 Couldn't find 'els'
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_9f4d1d6ac2931a77ac3a4204a7dd35e03049df8f.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_9f4d1d6ac2931a77ac3a4204a7dd35e03049df8f.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_65de4cbad7016b72041dd9c1cf9bf1b9417ee220.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_65de4cbad7016b72041dd9c1cf9bf1b9417ee220.pyx
 Couldn't find 'els'
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_8b7dc90bb50110209d81e93c579d255b5f5c7753.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_8b7dc90bb50110209d81e93c579d255b5f5c7753.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_891b5a980ee516fde86ec0f7bfee589e83228b12.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_891b5a980ee516fde86ec0f7bfee589e83228b12.pyx
 Couldn't find 'els'
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_bba3fb94647e145a19364e524aeee47ab726b831.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_bba3fb94647e145a19364e524aeee47ab726b831.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_86c9729be696048cf00e5f93a9dff2c652ae946c.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_86c9729be696048cf00e5f93a9dff2c652ae946c.pyx
 Couldn't find 'els'
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_7edb6a4863bc541a3c743ecffdc8d1df7d9d2f34.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_7edb6a4863bc541a3c743ecffdc8d1df7d9d2f34.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_3f5b1b5cee37666feaddbc02f486a269c524367f.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_3f5b1b5cee37666feaddbc02f486a269c524367f.pyx
 Couldn't find 'els'
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_53ffcb4fdcacc163aec2a296b6ffb2f7455b5550.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_53ffcb4fdcacc163aec2a296b6ffb2f7455b5550.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_9b7f3b996c1f96febf2cd64aaba60a78aaac4761.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_9b7f3b996c1f96febf2cd64aaba60a78aaac4761.pyx
 Couldn't find 'els'
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_aa42b72aff38c5f93b5b631d91aab354f982fcfc.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_aa42b72aff38c5f93b5b631d91aab354f982fcfc.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_68f429636eebcd271263f589f5ce3573c675e27d.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_68f429636eebcd271263f589f5ce3573c675e27d.pyx
 Couldn't find 'els'
 Couldn't find 'els'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_cd407b5a220d320c0fbcf8c81bc2811d3d1373a5.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_cd407b5a220d320c0fbcf8c81bc2811d3d1373a5.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_ee0d91c6806c44e94649216b46eddbf00adfad7a.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_ee0d91c6806c44e94649216b46eddbf00adfad7a.pyx
 Couldn't find 'b'
 Couldn't find 'b'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_2bd2e6f1f799b8180f125847e77fc72a04c80a58.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_2bd2e6f1f799b8180f125847e77fc72a04c80a58.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_ceacbaec874e9cedf37a91007036e7357cfb1656.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_ceacbaec874e9cedf37a91007036e7357cfb1656.pyx
 Couldn't find 'b'
 Couldn't find 'b'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_fbddcd24a19d708e77e198d01822958a6663af46.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_fbddcd24a19d708e77e198d01822958a6663af46.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_0ae505cb942b7227fcce6c1612acf4c0ea501bcc.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_0ae505cb942b7227fcce6c1612acf4c0ea501bcc.pyx
 Couldn't find 'b'
 Couldn't find 'b'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_73000197b13bfef035efbbf2e394778e2a28d3d4.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_73000197b13bfef035efbbf2e394778e2a28d3d4.pyx
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_e877c3f9a4a1cd5805d0afb6bc03541c72541964.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_e877c3f9a4a1cd5805d0afb6bc03541c72541964.pyx
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_ff6f764c93c08887b82e87b1f5d1e8552427450d.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_ff6f764c93c08887b82e87b1f5d1e8552427450d.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_201caaca98414a15d1cc50206f79602c0daa4a15.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_201caaca98414a15d1cc50206f79602c0daa4a15.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_a21e41174859450bcf2302178cba7fb2366865a7.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_a21e41174859450bcf2302178cba7fb2366865a7.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_5c0f1d9b4d76b6cb1cf39ecaeb1a9429e02ec25a.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_5c0f1d9b4d76b6cb1cf39ecaeb1a9429e02ec25a.pyx
 Couldn't find 'b'
 Couldn't find 'b'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_2bd2e6f1f799b8180f125847e77fc72a04c80a58.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_2bd2e6f1f799b8180f125847e77fc72a04c80a58.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_ceacbaec874e9cedf37a91007036e7357cfb1656.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_ceacbaec874e9cedf37a91007036e7357cfb1656.pyx
 Couldn't find 'b'
 Couldn't find 'b'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_fbddcd24a19d708e77e198d01822958a6663af46.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_fbddcd24a19d708e77e198d01822958a6663af46.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_0ae505cb942b7227fcce6c1612acf4c0ea501bcc.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_0ae505cb942b7227fcce6c1612acf4c0ea501bcc.pyx
 Couldn't find 'b'
 Couldn't find 'b'
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_73000197b13bfef035efbbf2e394778e2a28d3d4.pyx because it changed.ok
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_201caaca98414a15d1cc50206f79602c0daa4a15.pyx because it changed.ok
 test_badsyntax_2 (test_coroutines_pep492.AsyncBadSyntaxTest) ... ok
 test_badsyntax_3 (test_coroutines_pep492.AsyncBadSyntaxTest) ... ok
 test_goodsyntax_1 (test_coroutines_pep492.AsyncBadSyntaxTest) ... ok
@@ -19657,7 +19695,7 @@ def __invoke():
        ^
 ------------------------------------------------------------
 
-/home/marcel/.cython/inline/_cython_inline_bca6968116a88952732107091b26889786bc43ed.pyx:5:8: Cannot assign to or delete this
+.cython-cache-dir/inline/_cython_inline_474e851c3ad960be7566932c4caebe7eb2549705.pyx:5:8: Cannot assign to or delete this
 
 Error compiling Cython file:
 ------------------------------------------------------------
@@ -19670,11 +19708,17 @@ def __invoke():
        ^
 ------------------------------------------------------------
 
-/home/marcel/.cython/inline/_cython_inline_8166c7cf3d21b59337fd98d14c78615b827098be.pyx:5:8: Cannot assign to or delete this
+.cython-cache-dir/inline/_cython_inline_b7a24f58ba02b397f469e4a62dd3f5f2b85e8d7c.pyx:5:8: Cannot assign to or delete this
 ok
 test_dict (test_fstring.TestCase) ... ok
 test_docstring (test_fstring.TestCase) ... ok
-test_double_braces (test_fstring.TestCase) ... ok
+test_double_braces (test_fstring.TestCase) ... 
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_201caaca98414a15d1cc50206f79602c0daa4a15.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_a21e41174859450bcf2302178cba7fb2366865a7.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_a21e41174859450bcf2302178cba7fb2366865a7.pyx
+Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_5c0f1d9b4d76b6cb1cf39ecaeb1a9429e02ec25a.pyx because it changed.
+[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_5c0f1d9b4d76b6cb1cf39ecaeb1a9429e02ec25a.pyx
+ok
 test_empty_format_specifier (test_fstring.TestCase) ... ok
 test_errors (test_fstring.TestCase) ... ok
 test_expressions_with_triple_quoted_strings (test_fstring.TestCase) ... ok
@@ -19688,51 +19732,45 @@ test_leading_trailing_spaces (test_fstring.TestCase) ... ok
 test_literal (test_fstring.TestCase) ... ok
 test_locals (test_fstring.TestCase) ... ok
 test_loop (test_fstring.TestCase) ... ok
-test_many_expressions (test_fstring.TestCase) ... 
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_73000197b13bfef035efbbf2e394778e2a28d3d4.pyx
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_e877c3f9a4a1cd5805d0afb6bc03541c72541964.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_e877c3f9a4a1cd5805d0afb6bc03541c72541964.pyx
-Compiling $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_ff6f764c93c08887b82e87b1f5d1e8552427450d.pyx because it changed.
-[1/1] Cythonizing $(@D)/TEST_TMP/run/cpp/test_coroutines_pep492/_cython_inline_ff6f764c93c08887b82e87b1f5d1e8552427450d.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_944b3c380eeb14b9e6f023d11318f78a625e566e.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_944b3c380eeb14b9e6f023d11318f78a625e566e.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_f9fe3eac5c7dd601e8e64643d584db4a12ef883f.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_f9fe3eac5c7dd601e8e64643d584db4a12ef883f.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_cdf6674c4282442698836c2cb8659b4dc1c5dbe5.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_cdf6674c4282442698836c2cb8659b4dc1c5dbe5.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_d983f9d0aa3a3e5686aa1ca077c516ba0abe9632.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_d983f9d0aa3a3e5686aa1ca077c516ba0abe9632.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_1c652cfb3b2d39d82b50ffc477890bf1c47e2675.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_1c652cfb3b2d39d82b50ffc477890bf1c47e2675.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_f3892d06aa48b435b0e4df03ddacea29a78180cb.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_f3892d06aa48b435b0e4df03ddacea29a78180cb.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_fb8edab7336afd89ff785bcf0c0085ff82be2e2e.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_fb8edab7336afd89ff785bcf0c0085ff82be2e2e.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_438586f5d94b5a005174fb90fbd2014353e50a72.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_438586f5d94b5a005174fb90fbd2014353e50a72.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_825d88212fb471d043e115657d442fc109c11cf3.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_825d88212fb471d043e115657d442fc109c11cf3.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_99d89848a52d8b4b9aaaf4b00bbdb1bd7f94798a.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_99d89848a52d8b4b9aaaf4b00bbdb1bd7f94798a.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_13ceed735688f486eee70de429cabedb87edc01b.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_13ceed735688f486eee70de429cabedb87edc01b.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_8367821db3a8ba3f02038cf39f22b9424a79a59a.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_8367821db3a8ba3f02038cf39f22b9424a79a59a.pyx
-Compiling /home/marcel/.cython/inline/_cython_inline_29e660632e0a05d534a2b92b59d7541ef158a0c1.pyx because it changed.
-[1/1] Cythonizing /home/marcel/.cython/inline/_cython_inline_29e660632e0a05d534a2b92b59d7541ef158a0c1.pyx
-warning: /home/marcel/.cython/inline/_cython_inline_944b3c380eeb14b9e6f023d11318f78a625e566e.pyx:6:4: Unreachable code
-warning: /home/marcel/.cython/inline/_cython_inline_f9fe3eac5c7dd601e8e64643d584db4a12ef883f.pyx:6:4: Unreachable code
-warning: /home/marcel/.cython/inline/_cython_inline_cdf6674c4282442698836c2cb8659b4dc1c5dbe5.pyx:6:4: Unreachable code
-warning: /home/marcel/.cython/inline/_cython_inline_d983f9d0aa3a3e5686aa1ca077c516ba0abe9632.pyx:6:4: Unreachable code
-warning: /home/marcel/.cython/inline/_cython_inline_1c652cfb3b2d39d82b50ffc477890bf1c47e2675.pyx:6:4: Unreachable code
-warning: /home/marcel/.cython/inline/_cython_inline_f3892d06aa48b435b0e4df03ddacea29a78180cb.pyx:6:4: Unreachable code
-warning: /home/marcel/.cython/inline/_cython_inline_fb8edab7336afd89ff785bcf0c0085ff82be2e2e.pyx:6:4: Unreachable code
-warning: /home/marcel/.cython/inline/_cython_inline_438586f5d94b5a005174fb90fbd2014353e50a72.pyx:6:4: Unreachable code
-warning: /home/marcel/.cython/inline/_cython_inline_825d88212fb471d043e115657d442fc109c11cf3.pyx:6:4: Unreachable code
-warning: /home/marcel/.cython/inline/_cython_inline_99d89848a52d8b4b9aaaf4b00bbdb1bd7f94798a.pyx:6:4: Unreachable code
-warning: /home/marcel/.cython/inline/_cython_inline_13ceed735688f486eee70de429cabedb87edc01b.pyx:6:4: Unreachable code
-warning: /home/marcel/.cython/inline/_cython_inline_8367821db3a8ba3f02038cf39f22b9424a79a59a.pyx:6:4: Unreachable code
-warning: /home/marcel/.cython/inline/_cython_inline_29e660632e0a05d534a2b92b59d7541ef158a0c1.pyx:6:4: Unreachable code
+test_many_expressions (test_fstring.TestCase) ... Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_b47e9c6036a99d150ea84f91ce1981edcf8bc82d.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_b47e9c6036a99d150ea84f91ce1981edcf8bc82d.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_7315f3eeb8146cbca113d7957a0f8c24c6419d11.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_7315f3eeb8146cbca113d7957a0f8c24c6419d11.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_b0e36dbd56ba7739a6a70d0acb7daf641bf13417.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_b0e36dbd56ba7739a6a70d0acb7daf641bf13417.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_a41f9eeaa396ebd857de9cb4837a535df49173f1.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_a41f9eeaa396ebd857de9cb4837a535df49173f1.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_2ccb90ab9b4a1c4a1de24df088ed440d186833d8.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_2ccb90ab9b4a1c4a1de24df088ed440d186833d8.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_d23ea3f81103345ec0caa6b9313b40213ab0c1f3.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_d23ea3f81103345ec0caa6b9313b40213ab0c1f3.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_22b7b49f14780fbd7b8426ee217cc269caa5c7a9.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_22b7b49f14780fbd7b8426ee217cc269caa5c7a9.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_258f491758cdfff4960f090d208122ae6272d572.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_258f491758cdfff4960f090d208122ae6272d572.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_51ceb61bb69cca8e71a208bc61e902d72c42e96d.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_51ceb61bb69cca8e71a208bc61e902d72c42e96d.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_10d2dbf178e739971f2d9053e99cff7b88eefeff.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_10d2dbf178e739971f2d9053e99cff7b88eefeff.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_e96f799be6eb060fc30f2c92b8327aaa996ca55b.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_e96f799be6eb060fc30f2c92b8327aaa996ca55b.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_45507cff8a370a246360a6d6d453ef46b622ef5f.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_45507cff8a370a246360a6d6d453ef46b622ef5f.pyx
+Compiling $(@D)/.cython-cache-dir/inline/_cython_inline_a4e90bcfcecedbaa67dd4695eeb356a7727374c4.pyx because it changed.
+[1/1] Cythonizing $(@D)/.cython-cache-dir/inline/_cython_inline_a4e90bcfcecedbaa67dd4695eeb356a7727374c4.pyx
+warning: .cython-cache-dir/inline/_cython_inline_b47e9c6036a99d150ea84f91ce1981edcf8bc82d.pyx:6:4: Unreachable code
+warning: .cython-cache-dir/inline/_cython_inline_7315f3eeb8146cbca113d7957a0f8c24c6419d11.pyx:6:4: Unreachable code
+warning: .cython-cache-dir/inline/_cython_inline_b0e36dbd56ba7739a6a70d0acb7daf641bf13417.pyx:6:4: Unreachable code
+warning: .cython-cache-dir/inline/_cython_inline_a41f9eeaa396ebd857de9cb4837a535df49173f1.pyx:6:4: Unreachable code
+warning: .cython-cache-dir/inline/_cython_inline_2ccb90ab9b4a1c4a1de24df088ed440d186833d8.pyx:6:4: Unreachable code
+warning: .cython-cache-dir/inline/_cython_inline_d23ea3f81103345ec0caa6b9313b40213ab0c1f3.pyx:6:4: Unreachable code
+warning: .cython-cache-dir/inline/_cython_inline_22b7b49f14780fbd7b8426ee217cc269caa5c7a9.pyx:6:4: Unreachable code
+warning: .cython-cache-dir/inline/_cython_inline_258f491758cdfff4960f090d208122ae6272d572.pyx:6:4: Unreachable code
+warning: .cython-cache-dir/inline/_cython_inline_51ceb61bb69cca8e71a208bc61e902d72c42e96d.pyx:6:4: Unreachable code
+warning: .cython-cache-dir/inline/_cython_inline_10d2dbf178e739971f2d9053e99cff7b88eefeff.pyx:6:4: Unreachable code
+warning: .cython-cache-dir/inline/_cython_inline_e96f799be6eb060fc30f2c92b8327aaa996ca55b.pyx:6:4: Unreachable code
+warning: .cython-cache-dir/inline/_cython_inline_45507cff8a370a246360a6d6d453ef46b622ef5f.pyx:6:4: Unreachable code
+warning: .cython-cache-dir/inline/_cython_inline_a4e90bcfcecedbaa67dd4695eeb356a7727374c4.pyx:6:4: Unreachable code
 ok
 test_misformed_unicode_character_name (test_fstring.TestCase) ... ok
 test_mismatched_braces (test_fstring.TestCase) ... ok
@@ -19776,7 +19814,7 @@ def __invoke():
        ^
 ------------------------------------------------------------
 
-/home/marcel/.cython/inline/_cython_inline_bca6968116a88952732107091b26889786bc43ed.pyx:5:8: Cannot assign to or delete this
+.cython-cache-dir/inline/_cython_inline_474e851c3ad960be7566932c4caebe7eb2549705.pyx:5:8: Cannot assign to or delete this
 
 Error compiling Cython file:
 ------------------------------------------------------------
@@ -19789,7 +19827,7 @@ def __invoke():
        ^
 ------------------------------------------------------------
 
-/home/marcel/.cython/inline/_cython_inline_8166c7cf3d21b59337fd98d14c78615b827098be.pyx:5:8: Cannot assign to or delete this
+.cython-cache-dir/inline/_cython_inline_b7a24f58ba02b397f469e4a62dd3f5f2b85e8d7c.pyx:5:8: Cannot assign to or delete this
 ok
 test_dict (test_fstring.TestCase) ... ok
 test_docstring (test_fstring.TestCase) ... ok
@@ -22145,12 +22183,12 @@ Doctest: yield_from_pep380.test_attempted_yield_from_loop ... ok
 test_attempting_to_send_to_non_generator (yield_from_pep380)
 Doctest: yield_from_pep380.test_attempting_to_send_to_non_generator ... ok
 test_broken_getattr_handling (yield_from_pep380)
-Doctest: yield_from_pep380.test_broken_getattr_handling ... Exception ignored in: <yield_from_pep380.test_broken_getattr_handling.<locals>.Broken object at PTR>
+Doctest: yield_from_pep380.test_broken_getattr_handling ... Exception ignored in: <yield_from_pep380.test_broken_getattr_handling.<locals>.Broken object at $(POINTER)>
 Traceback (most recent call last):
   File "tests/run/yield_from_pep380.pyx", line 574, in yield_from_pep380.test_broken_getattr_handling.Broken.__getattr__ (yield_from_pep380.c:16301)
     1/0
 ZeroDivisionError: integer division or modulo by zero
-Exception ignored in: <yield_from_pep380.test_broken_getattr_handling.<locals>.Broken object at PTR>
+Exception ignored in: <yield_from_pep380.test_broken_getattr_handling.<locals>.Broken object at $(POINTER)>
 Traceback (most recent call last):
   File "tests/run/yield_from_pep380.pyx", line 574, in yield_from_pep380.test_broken_getattr_handling.Broken.__getattr__ (yield_from_pep380.c:16301)
     1/0
@@ -22228,12 +22266,12 @@ Doctest: yield_from_pep380.test_attempted_yield_from_loop ... ok
 test_attempting_to_send_to_non_generator (yield_from_pep380)
 Doctest: yield_from_pep380.test_attempting_to_send_to_non_generator ... ok
 test_broken_getattr_handling (yield_from_pep380)
-Doctest: yield_from_pep380.test_broken_getattr_handling ... Exception ignored in: <yield_from_pep380.test_broken_getattr_handling.<locals>.Broken object at PTR>
+Doctest: yield_from_pep380.test_broken_getattr_handling ... Exception ignored in: <yield_from_pep380.test_broken_getattr_handling.<locals>.Broken object at $(POINTER)>
 Traceback (most recent call last):
   File "tests/run/yield_from_pep380.pyx", line 574, in yield_from_pep380.test_broken_getattr_handling.Broken.__getattr__ (yield_from_pep380.cpp:16315)
     1/0
 ZeroDivisionError: integer division or modulo by zero
-Exception ignored in: <yield_from_pep380.test_broken_getattr_handling.<locals>.Broken object at PTR>
+Exception ignored in: <yield_from_pep380.test_broken_getattr_handling.<locals>.Broken object at $(POINTER)>
 Traceback (most recent call last):
   File "tests/run/yield_from_pep380.pyx", line 574, in yield_from_pep380.test_broken_getattr_handling.Broken.__getattr__ (yield_from_pep380.cpp:16315)
     1/0
@@ -22356,7 +22394,7 @@ Doctest: cppwrap.voidfunc ... ok
 test_embed (__main__.EmbedTest) ... make: Fatal error in reader: Makefile, line 3: Unexpected end of line seen
 Current working directory $(@D)/Demos/embed
 gmake[1]: Entering directory '$(@D)/Demos/embed'
-PYTHON='$(@D)/.tox/py$(PYV)/bin/python'
+PYTHON='$(PYTHON)'
 PYVERSION=3.7
 PYPREFIX=/usr
 INCDIR=/usr/include/python3.7m
@@ -22373,304 +22411,12 @@ Cleaning Demos/embed
 gcc -c embedded.c -I/usr/include/python3.7m -I/usr/include/python3.7m
 gcc -o embedded embedded.o -L'/usr/lib/amd64' -L$(PYTHON_DIR)/config-3.7m -lpython3.7m -lsocket -lnsl -lintl -ldl -lsendfile -lm 
 LD_LIBRARY_PATH='/usr/lib/amd64':$LD_LIBRARY_PATH ./embedded > test.output
-'$(@D)/.tox/py$(PYV)/bin/python' assert_equal.py embedded.output test.output
+'$(PYTHON)' assert_equal.py embedded.output test.output
 Files identical
 gmake[1]: Leaving directory '$(@D)/Demos/embed'
 make: Fatal error in reader: Makefile, line 3: Unexpected end of line seen
 Current working directory $(@D)/Demos/embed
 ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) matrix ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) matrix_with_buffer ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) view_count ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) rectangle ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) rectangle ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) rectangle_cdef ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) rectangle_cdef ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) rectangle_cpdef ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) rectangle_cpdef ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) dict_animal ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) dict_animal ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) extendable_animal ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) extendable_animal ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) my_module ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) my_module ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) python_access ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) python_access ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) shrubbery ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) shrubbery ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) shrubbery_2 ... 
-=== C/C++ compiler error output: ===
-shrubbery_2.c:1258:47: warning: '__pyx_f_11shrubbery_2_another_shrubbery' defined but not used [-Wunused-function]
- 1258 | static struct __pyx_obj_9my_module_Shrubbery *__pyx_f_11shrubbery_2_another_shrubbery(struct __pyx_obj_9my_module_Shrubbery *__pyx_v_sh1) {
-      |                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-====================================
-ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) shrubbery_2 ... 
-=== C/C++ compiler error output: ===
-shrubbery_2.cpp:1272:47: warning: '__pyx_obj_9my_module_Shrubbery* __pyx_f_11shrubbery_2_another_shrubbery(__pyx_obj_9my_module_Shrubbery*)' defined but not used [-Wunused-function]
- 1272 | static struct __pyx_obj_9my_module_Shrubbery *__pyx_f_11shrubbery_2_another_shrubbery(struct __pyx_obj_9my_module_Shrubbery *__pyx_v_sh1) {
-      |                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-====================================
-ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) widen_shrubbery ... 
-=== C/C++ compiler error output: ===
-widen_shrubbery.c:1210:18: warning: '__pyx_f_15widen_shrubbery_widen_shrubbery' defined but not used [-Wunused-function]
- 1210 | static PyObject *__pyx_f_15widen_shrubbery_widen_shrubbery(struct __pyx_obj_9my_module_Shrubbery *__pyx_v_sh, PyObject *__pyx_v_extra_width) {
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-====================================
-ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) widen_shrubbery ... 
-=== C/C++ compiler error output: ===
-widen_shrubbery.cpp:1224:18: warning: 'PyObject* __pyx_f_15widen_shrubbery_widen_shrubbery(__pyx_obj_9my_module_Shrubbery*, PyObject*)' defined but not used [-Wunused-function]
- 1224 | static PyObject *__pyx_f_15widen_shrubbery_widen_shrubbery(struct __pyx_obj_9my_module_Shrubbery *__pyx_v_sh, PyObject *__pyx_v_extra_width) {
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-====================================
-ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) c_code_docstring ... 
-=== C/C++ compiler error output: ===
-c_code_docstring.c:747:17: warning: 'square' defined but not used [-Wunused-function]
-  747 |     static long square(long x) {return x * x;}
-      |                 ^~~~~~
-====================================
-ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) c_code_docstring ... 
-=== C/C++ compiler error output: ===
-c_code_docstring.cpp:761:17: warning: 'long int square(long int)' defined but not used [-Wunused-function]
-  761 |     static long square(long x) {return x * x;}
-      |                 ^~~~~~
-====================================
-ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) delorean ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) delorean ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) char_or_float ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) char_or_float ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) casting_python ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) casting_python ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) cdef_block ... 
-=== C/C++ compiler error output: ===
-cdef_block.c:1215:13: warning: '__pyx_f_10cdef_block_f' defined but not used [-Wunused-function]
- 1215 | static void __pyx_f_10cdef_block_f(struct __pyx_t_10cdef_block_Spam *__pyx_v_s) {
-      |             ^~~~~~~~~~~~~~~~~~~~~~
-====================================
-ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) cdef_block ... 
-=== C/C++ compiler error output: ===
-cdef_block.cpp:1229:13: warning: 'void __pyx_f_10cdef_block_f(__pyx_t_10cdef_block_Spam*)' defined but not used [-Wunused-function]
- 1229 | static void __pyx_f_10cdef_block_f(struct __pyx_t_10cdef_block_Spam *__pyx_v_s) {
-      |             ^~~~~~~~~~~~~~~~~~~~~~
-====================================
-ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) compile_time ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) compile_time ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) kwargs_1 ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) kwargs_1 ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) kwargs_2 ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) kwargs_2 ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) open_file ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) open_file ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) optional_subclassing ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) optional_subclassing ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) override ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) override ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) struct_union_enum ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) struct_union_enum ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) add_one ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) add_one ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) copy ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) copy ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) memory_layout ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) memory_layout ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) memory_layout_2 ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) memory_layout_2 ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) memview_to_c ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) memview_to_c ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) not_none ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) not_none ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) np_flag_const ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) np_flag_const ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) quickstart ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) quickstart ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) slicing ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) slicing ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) transpose ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) transpose ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) view_string ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) view_string ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) compute_fused_types ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) compute_fused_types ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) compute_infer_types ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) compute_infer_types ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) compute_memview ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) compute_memview ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) compute_prange ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) compute_prange ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) compute_py ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) compute_py ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) compute_typed ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) compute_typed ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) breaking_loop ... 
-=== C/C++ compiler error output: ===
-breaking_loop.c:1251:12: warning: '__pyx_f_13breaking_loop_func' defined but not used [-Wunused-function]
- 1251 | static int __pyx_f_13breaking_loop_func(CYTHON_UNUSED Py_ssize_t __pyx_v_n) {
-      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-====================================
-ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) breaking_loop ... 
-=== C/C++ compiler error output: ===
-breaking_loop.cpp:1265:12: warning: 'int __pyx_f_13breaking_loop_func(Py_ssize_t)' defined but not used [-Wunused-function]
- 1265 | static int __pyx_f_13breaking_loop_func(CYTHON_UNUSED Py_ssize_t __pyx_v_n) {
-      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-====================================
-ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) cimport_openmp ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) cimport_openmp ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) setup ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) setup ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) simple_sum ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) simple_sum ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) landscaping ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) landscaping ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) lunch ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) lunch ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) restaurant ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) restaurant ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) setup ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) setup ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) shrubbing ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) shrubbing ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) spammery ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) spammery ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) volume ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) volume ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) cython_usage ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) function_templates ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) iterate ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) nested_class ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) python_to_cpp ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) rect ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) rect_ptr ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) rect_with_attributes ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (c) setup ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) setup ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) templates ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) vector_demo ... ok
-runTest (__main__.CythonCompileTestCase)
-[-1] compiling (cpp) wrapper_vector ... ok
 runTest (__main__.CythonCompileTestCase)
 [-1] compiling (c) clone ... ok
 runTest (__main__.CythonCompileTestCase)
@@ -23022,6 +22768,298 @@ runTest (__main__.CythonCompileTestCase)
 runTest (__main__.CythonCompileTestCase)
 [-1] compiling (cpp) p1 ... ok
 runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) matrix ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) matrix_with_buffer ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) view_count ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) rectangle ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) rectangle ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) rectangle_cdef ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) rectangle_cdef ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) rectangle_cpdef ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) rectangle_cpdef ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) dict_animal ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) dict_animal ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) extendable_animal ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) extendable_animal ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) my_module ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) my_module ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) python_access ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) python_access ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) shrubbery ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) shrubbery ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) shrubbery_2 ... 
+=== C/C++ compiler error output: ===
+shrubbery_2.c:1266:47: warning: '__pyx_f_11shrubbery_2_another_shrubbery' defined but not used [-Wunused-function]
+ 1266 | static struct __pyx_obj_9my_module_Shrubbery *__pyx_f_11shrubbery_2_another_shrubbery(struct __pyx_obj_9my_module_Shrubbery *__pyx_v_sh1) {
+      |                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+====================================
+ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) shrubbery_2 ... 
+=== C/C++ compiler error output: ===
+shrubbery_2.cpp:1280:47: warning: '__pyx_obj_9my_module_Shrubbery* __pyx_f_11shrubbery_2_another_shrubbery(__pyx_obj_9my_module_Shrubbery*)' defined but not used [-Wunused-function]
+ 1280 | static struct __pyx_obj_9my_module_Shrubbery *__pyx_f_11shrubbery_2_another_shrubbery(struct __pyx_obj_9my_module_Shrubbery *__pyx_v_sh1) {
+      |                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+====================================
+ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) widen_shrubbery ... 
+=== C/C++ compiler error output: ===
+widen_shrubbery.c:1218:18: warning: '__pyx_f_15widen_shrubbery_widen_shrubbery' defined but not used [-Wunused-function]
+ 1218 | static PyObject *__pyx_f_15widen_shrubbery_widen_shrubbery(struct __pyx_obj_9my_module_Shrubbery *__pyx_v_sh, PyObject *__pyx_v_extra_width) {
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+====================================
+ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) widen_shrubbery ... 
+=== C/C++ compiler error output: ===
+widen_shrubbery.cpp:1232:18: warning: 'PyObject* __pyx_f_15widen_shrubbery_widen_shrubbery(__pyx_obj_9my_module_Shrubbery*, PyObject*)' defined but not used [-Wunused-function]
+ 1232 | static PyObject *__pyx_f_15widen_shrubbery_widen_shrubbery(struct __pyx_obj_9my_module_Shrubbery *__pyx_v_sh, PyObject *__pyx_v_extra_width) {
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+====================================
+ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) c_code_docstring ... 
+=== C/C++ compiler error output: ===
+c_code_docstring.c:747:17: warning: 'square' defined but not used [-Wunused-function]
+  747 |     static long square(long x) {return x * x;}
+      |                 ^~~~~~
+====================================
+ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) c_code_docstring ... 
+=== C/C++ compiler error output: ===
+c_code_docstring.cpp:761:17: warning: 'long int square(long int)' defined but not used [-Wunused-function]
+  761 |     static long square(long x) {return x * x;}
+      |                 ^~~~~~
+====================================
+ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) delorean ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) delorean ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) char_or_float ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) char_or_float ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) casting_python ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) casting_python ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) cdef_block ... 
+=== C/C++ compiler error output: ===
+cdef_block.c:1215:13: warning: '__pyx_f_10cdef_block_f' defined but not used [-Wunused-function]
+ 1215 | static void __pyx_f_10cdef_block_f(struct __pyx_t_10cdef_block_Spam *__pyx_v_s) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+====================================
+ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) cdef_block ... 
+=== C/C++ compiler error output: ===
+cdef_block.cpp:1229:13: warning: 'void __pyx_f_10cdef_block_f(__pyx_t_10cdef_block_Spam*)' defined but not used [-Wunused-function]
+ 1229 | static void __pyx_f_10cdef_block_f(struct __pyx_t_10cdef_block_Spam *__pyx_v_s) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+====================================
+ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) compile_time ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) compile_time ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) kwargs_1 ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) kwargs_1 ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) kwargs_2 ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) kwargs_2 ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) open_file ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) open_file ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) optional_subclassing ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) optional_subclassing ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) override ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) override ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) struct_union_enum ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) struct_union_enum ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) add_one ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) add_one ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) copy ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) copy ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) memory_layout ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) memory_layout ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) memory_layout_2 ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) memory_layout_2 ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) memview_to_c ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) memview_to_c ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) not_none ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) not_none ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) np_flag_const ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) np_flag_const ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) quickstart ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) quickstart ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) slicing ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) slicing ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) transpose ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) transpose ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) view_string ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) view_string ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) compute_fused_types ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) compute_fused_types ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) compute_infer_types ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) compute_infer_types ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) compute_memview ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) compute_memview ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) compute_prange ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) compute_prange ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) compute_py ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) compute_py ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) compute_typed ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) compute_typed ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) breaking_loop ... 
+=== C/C++ compiler error output: ===
+breaking_loop.c:1251:12: warning: '__pyx_f_13breaking_loop_func' defined but not used [-Wunused-function]
+ 1251 | static int __pyx_f_13breaking_loop_func(CYTHON_UNUSED Py_ssize_t __pyx_v_n) {
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+====================================
+ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) breaking_loop ... 
+=== C/C++ compiler error output: ===
+breaking_loop.cpp:1265:12: warning: 'int __pyx_f_13breaking_loop_func(Py_ssize_t)' defined but not used [-Wunused-function]
+ 1265 | static int __pyx_f_13breaking_loop_func(CYTHON_UNUSED Py_ssize_t __pyx_v_n) {
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+====================================
+ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) cimport_openmp ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) cimport_openmp ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) setup ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) setup ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) simple_sum ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) simple_sum ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) landscaping ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) landscaping ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) lunch ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) lunch ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) restaurant ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) restaurant ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) setup ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) setup ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) shrubbing ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) shrubbing ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) spammery ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) spammery ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) volume ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) volume ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) cython_usage ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) function_templates ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) iterate ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) nested_class ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) python_to_cpp ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) rect ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) rect_ptr ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) rect_with_attributes ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (c) setup ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) setup ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) templates ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) vector_demo ... ok
+runTest (__main__.CythonCompileTestCase)
+[-1] compiling (cpp) wrapper_vector ... ok
+runTest (__main__.CythonCompileTestCase)
 [-1] compiling (c) hello ... ok
 runTest (__main__.CythonCompileTestCase)
 [-1] compiling (cpp) hello ... ok
@@ -23056,7 +23094,7 @@ runTest (__main__.CythonCompileTestCase)
 runTest (__main__.TestCodeFormat) ... ok
 
 ----------------------------------------------------------------------
-Ran 12114 tests
+Ran 12131 tests
 
 OK (skipped=72)
 Following tests excluded because of missing dependencies on your system:
@@ -23082,6 +23120,5 @@ Following tests excluded because of missing dependencies on your system:
    numpy.convolve2
 ALL DONE
 
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+  py$(PYV): OK
   congratulations :)
