@@ -15,22 +15,22 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elasticsearch
-COMPONENT_VERSION =		8.5.3
+HUMAN_VERSION =			8.7.0
 COMPONENT_SUMMARY =		elasticsearch - Python client for Elasticsearch
 COMPONENT_PROJECT_URL =		https://github.com/elastic/elasticsearch-py
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d6/57/201392282279dd652451232deda465d5a7ab20d7fb386aff26af44ae02a4/elasticsearch-8.5.3.tar.gz
+	https://files.pythonhosted.org/packages/fe/af/c3822861b6d965c2a588ce4159d870f6d906e4cc74a4f9d1ced737bd70be/elasticsearch-8.7.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4b71ad05b36243c3b13f1c89b3ede4357011eece68917e293c43d4177d565838
+	sha256:1849356db4192fbb75b2b8f3d55edb0fb07f8d855f386b318a7889222b49591f
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+# https://github.com/elastic/elasticsearch-py/issues/2205
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
