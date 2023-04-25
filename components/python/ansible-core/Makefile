@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ansible-core
-HUMAN_VERSION =			2.14.4
+HUMAN_VERSION =			2.14.5
 COMPONENT_SUMMARY =		ansible-core - Radically simple IT automation
 COMPONENT_PROJECT_URL =		https://ansible.com/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8e/8a/397f18f067d95206eac75a89b38ec9c2ad59c4915ef59aae2ecfb17cce99/ansible-core-2.14.4.tar.gz
+	https://files.pythonhosted.org/packages/9d/f1/9c5e9361c90cf838810433e4c685cf5f585bf74cb44031d6e8c0e779f567/ansible-core-2.14.5.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:90b260bc264901d35fb1f0753f2b650813f54cfe6476540afbc6b25ef541ef14
+	sha256:8c4eed76ce458b4a37334a0802df29488ecf9f8af38c3111069c96b17b205530
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -66,6 +66,7 @@ COMPONENT_TEST_TRANSFORMS = \
 		-e 's/^\[gw.\] \[...%\] //' \
 		-e 's/\([^ ]\{1,\}\) \(.*\)$$/\2 \1/' \
 		-e 's/\(test_distribution_version\[stdin\)[0-9]*/\1/' \
+		-e 's|$(@D)|\$$(@D)|g' \
 	| $(SORT) \
 	| $(COMPONENT_TEST_TRANSFORMER) -e ''"
 
