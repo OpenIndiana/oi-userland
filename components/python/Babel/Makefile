@@ -14,25 +14,25 @@
 #   $WS_TOOLS/python-integrate-project Babel
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Babel
-HUMAN_VERSION =			2.11.0
+HUMAN_VERSION =			2.12.1
 COMPONENT_SUMMARY =		Babel - Internationalization utilities
 COMPONENT_PROJECT_URL =		https://babel.pocoo.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ff/80/45b42203ecc32c8de281f52e3ec81cb5e4ef16127e9e8543089d8b1649fb/Babel-2.11.0.tar.gz
+	https://files.pythonhosted.org/packages/ba/42/54426ba5d7aeebde9f4aaba9884596eb2fe02b413ad77d62ef0b0422e205/Babel-2.12.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5ef4b3226b0180dedded4229651c8b0e1a3a6a2837d45a073272f313e4cf97f6
+	sha256:cc2d99999cd01d44420ae725a21c9e3711b3aadc7976d6147f622d8581963455
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# We need the directory where cldr-common-41.0.zip is downloaded
+# We need the directory where cldr-common-42.0.zip is downloaded
 COMPONENT_PRE_TEST_ACTION += $(MKDIR) $(@D)/cldr ;
 # Remove the directory after testing is completed
 COMPONENT_POST_TEST_ACTION += $(RM) -r $(@D)/cldr ;
@@ -43,9 +43,9 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^INFO:import_cldr:/d'"
 COMPONENT_TEST_TRANSFORMS += "-e '/^WARNING:import_cldr:/d'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/pytz
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/freezegun
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
