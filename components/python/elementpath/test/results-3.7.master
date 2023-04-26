@@ -1,9 +1,11 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/../.tox/elementpath/py$(PYV)
 py$(PYV): commands[0]> python -m unittest --verbose
 test_context_activation (tests.test_collations.CollationsTest) ... ok
 test_context_manager_init (tests.test_collations.CollationsTest) ... ok
 test_html_ascii_case_insensitive_collation (tests.test_collations.CollationsTest) ... ok
 test_deep_compare (tests.test_compare.CompareTest) ... ok
+test_deep_equal_function (tests.test_compare.CompareTest) ... ok
 test_key_function (tests.test_compare.CompareTest) ... ok
 test_invalid_type_name (tests.test_datatypes.AnyAtomicTypeTest) ... ok
 test_validation (tests.test_datatypes.AnyAtomicTypeTest) ... ok
@@ -12,47 +14,61 @@ test_comparison_operators (tests.test_datatypes.AnyUriTest) ... ok
 test_hash_value (tests.test_datatypes.AnyUriTest) ... ok
 test_in_operator (tests.test_datatypes.AnyUriTest) ... ok
 test_init (tests.test_datatypes.AnyUriTest) ... ok
+test_isinstance (tests.test_datatypes.AnyUriTest) ... ok
+test_issubclass (tests.test_datatypes.AnyUriTest) ... ok
 test_string_representation (tests.test_datatypes.AnyUriTest) ... ok
 test_validate (tests.test_datatypes.AnyUriTest) ... ok
-test_get_atomic_value (tests.test_datatypes.AtomicValuesTest) ... ok
+test_get_atomic_value (tests.test_datatypes.AtomicTypesTest) ... ok
+test_xsd_atomic_types_maps (tests.test_datatypes.AtomicTypesTest) ... ok
 test_bytes_conversion (tests.test_datatypes.BinaryTypesTest) ... ok
 test_decoder (tests.test_datatypes.BinaryTypesTest) ... ok
 test_encoder (tests.test_datatypes.BinaryTypesTest) ... ok
 test_equality (tests.test_datatypes.BinaryTypesTest) ... ok
+test_greater_or_equal (tests.test_datatypes.BinaryTypesTest) ... ok
+test_greater_than (tests.test_datatypes.BinaryTypesTest) ... ok
 test_hash_value (tests.test_datatypes.BinaryTypesTest) ... ok
 test_initialization (tests.test_datatypes.BinaryTypesTest) ... ok
+test_isinstance (tests.test_datatypes.BinaryTypesTest) ... ok
+test_issubclass (tests.test_datatypes.BinaryTypesTest) ... ok
 test_length (tests.test_datatypes.BinaryTypesTest) ... ok
+test_less_or_equal (tests.test_datatypes.BinaryTypesTest) ... ok
+test_less_than (tests.test_datatypes.BinaryTypesTest) ... ok
 test_string_representation (tests.test_datatypes.BinaryTypesTest) ... ok
 test_unicode_string_conversion (tests.test_datatypes.BinaryTypesTest) ... ok
 test_validate (tests.test_datatypes.BinaryTypesTest) ... ok
 test_24_hour_datetime (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_abstract_classes (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_add_operator (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_astimezone (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_date_fromstring (tests.test_datatypes.DateTimeTypesTest) ... ok
-test_date_repr (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_date_string_representation (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_datetime_fromstring (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_datetime_init (tests.test_datatypes.DateTimeTypesTest) ... ok
-test_datetime_repr (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_datetime_string_representation (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_eq_operator (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_fromdatetime (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_fromdelta (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_ge_operator (tests.test_datatypes.DateTimeTypesTest) ... ok
-test_gregorian_day_repr (tests.test_datatypes.DateTimeTypesTest) ... ok
-test_gregorian_month_day_repr (tests.test_datatypes.DateTimeTypesTest) ... ok
-test_gregorian_month_repr (tests.test_datatypes.DateTimeTypesTest) ... ok
-test_gregorian_year_month_repr (tests.test_datatypes.DateTimeTypesTest) ... ok
-test_gregorian_year_repr (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_gregorian_day_string_representation (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_gregorian_month_day_string_representation (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_gregorian_month_string_representation (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_gregorian_year_month_string_representation (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_gregorian_year_string_representation (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_gt_operator (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_hashing (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_isinstance (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_iso_year_property (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_isocalendar (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_issubclass (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_issue_36_fromstring_with_more_microseconds_digits (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_le_operator (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_lt_operator (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_sub_operator (tests.test_datatypes.DateTimeTypesTest) ... ok
-test_time_repr (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_time_string_representation (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_to_and_from_delta (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_to_and_from_delta_bce (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_todelta (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_tzname (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_add_operator (tests.test_datatypes.DurationTypesTest) ... ok
 test_as_string (tests.test_datatypes.DurationTypesTest) ... ok
 test_div_operator (tests.test_datatypes.DurationTypesTest) ... ok
@@ -63,6 +79,8 @@ test_hashing (tests.test_datatypes.DurationTypesTest) ... ok
 test_incomparable_values (tests.test_datatypes.DurationTypesTest) ... ok
 test_init (tests.test_datatypes.DurationTypesTest) ... ok
 test_init_fromstring (tests.test_datatypes.DurationTypesTest) ... ok
+test_isinstance (tests.test_datatypes.DurationTypesTest) ... ok
+test_issubclass (tests.test_datatypes.DurationTypesTest) ... ok
 test_le (tests.test_datatypes.DurationTypesTest) ... ok
 test_lt (tests.test_datatypes.DurationTypesTest) ... ok
 test_mul_operator (tests.test_datatypes.DurationTypesTest) ... ok
@@ -75,17 +93,25 @@ test_division (tests.test_datatypes.FloatTypesTest) ... ok
 test_equivalence (tests.test_datatypes.FloatTypesTest) ... ok
 test_hash (tests.test_datatypes.FloatTypesTest) ... ok
 test_init (tests.test_datatypes.FloatTypesTest) ... ok
+test_isinstance (tests.test_datatypes.FloatTypesTest) ... ok
+test_issubclass (tests.test_datatypes.FloatTypesTest) ... ok
 test_module (tests.test_datatypes.FloatTypesTest) ... ok
 test_multiplication (tests.test_datatypes.FloatTypesTest) ... ok
 test_nan (tests.test_datatypes.FloatTypesTest) ... ok
 test_subtraction (tests.test_datatypes.FloatTypesTest) ... ok
+test_isinstance (tests.test_datatypes.IntegerTypesTest) ... ok
+test_issubclass (tests.test_datatypes.IntegerTypesTest) ... ok
 test_validate (tests.test_datatypes.IntegerTypesTest) ... ok
 test_equivalence (tests.test_datatypes.QNameTypesTest) ... ok
 test_hash_value (tests.test_datatypes.QNameTypesTest) ... ok
 test_initialization (tests.test_datatypes.QNameTypesTest) ... ok
+test_isinstance (tests.test_datatypes.QNameTypesTest) ... ok
+test_issubclass (tests.test_datatypes.QNameTypesTest) ... ok
 test_notation (tests.test_datatypes.QNameTypesTest) ... ok
 test_string_representation (tests.test_datatypes.QNameTypesTest) ... ok
 test_is_id_function (tests.test_datatypes.StringTypesTest) ... ok
+test_isinstance (tests.test_datatypes.StringTypesTest) ... ok
+test_issubclass (tests.test_datatypes.StringTypesTest) ... ok
 test_new_instance (tests.test_datatypes.StringTypesTest) ... ok
 test_as_string (tests.test_datatypes.TimezoneTypeTest) ... ok
 test_dst_method (tests.test_datatypes.TimezoneTypeTest) ... ok
@@ -98,13 +124,12 @@ test_ne_operator (tests.test_datatypes.TimezoneTypeTest) ... ok
 test_serialization (tests.test_datatypes.TimezoneTypeTest) ... ok
 test_tzname_method (tests.test_datatypes.TimezoneTypeTest) ... ok
 test_utcoffset_method (tests.test_datatypes.TimezoneTypeTest) ... ok
+test_arithmetic_proxy (tests.test_datatypes.TypeProxiesTest) ... ok
 test_boolean_proxy (tests.test_datatypes.TypeProxiesTest) ... ok
 test_decimal_proxy (tests.test_datatypes.TypeProxiesTest) ... ok
 test_double_proxy (tests.test_datatypes.TypeProxiesTest) ... ok
-test_instance_build (tests.test_datatypes.TypeProxiesTest) ... ok
-test_instance_check (tests.test_datatypes.TypeProxiesTest) ... ok
+test_numeric_proxy (tests.test_datatypes.TypeProxiesTest) ... ok
 test_string_proxy (tests.test_datatypes.TypeProxiesTest) ... ok
-test_subclass_check (tests.test_datatypes.TypeProxiesTest) ... ok
 test_abs (tests.test_datatypes.UntypedAtomicTest) ... ok
 test_add (tests.test_datatypes.UntypedAtomicTest) ... ok
 test_conversion (tests.test_datatypes.UntypedAtomicTest) ... ok
@@ -113,12 +138,14 @@ test_ge (tests.test_datatypes.UntypedAtomicTest) ... ok
 test_gt (tests.test_datatypes.UntypedAtomicTest) ... ok
 test_hashing (tests.test_datatypes.UntypedAtomicTest) ... ok
 test_init (tests.test_datatypes.UntypedAtomicTest) ... ok
+test_isinstance (tests.test_datatypes.UntypedAtomicTest) ... ok
+test_issubclass (tests.test_datatypes.UntypedAtomicTest) ... ok
 test_le (tests.test_datatypes.UntypedAtomicTest) ... ok
 test_lt (tests.test_datatypes.UntypedAtomicTest) ... ok
 test_mod (tests.test_datatypes.UntypedAtomicTest) ... ok
 test_ne (tests.test_datatypes.UntypedAtomicTest) ... ok
 test_numerical_operators (tests.test_datatypes.UntypedAtomicTest) ... ok
-test_repr (tests.test_datatypes.UntypedAtomicTest) ... ok
+test_string_representation (tests.test_datatypes.UntypedAtomicTest) ... ok
 test_validate (tests.test_datatypes.UntypedAtomicTest) ... ok
 test_defuse_xml_entities (tests.test_etree.TestElementTree) ... ok
 test_defuse_xml_external_entities (tests.test_etree.TestElementTree) ... ok
@@ -126,19 +153,31 @@ test_defuse_xml_unparsed_entities (tests.test_etree.TestElementTree) ... ok
 test_defuse_xml_unused_external_entities (tests.test_etree.TestElementTree) ... ok
 test_defuse_xml_unused_unparsed_entities (tests.test_etree.TestElementTree) ... ok
 test_element_string_serialization (tests.test_etree.TestElementTree) ... ok
+test_etree_deep_equal_function (tests.test_etree.TestElementTree) ... ok
+test_etree_iter_paths_function (tests.test_etree.TestElementTree) ... ok
 test_imported_modules (tests.test_etree.TestElementTree) ... ok
 test_is_etree_document_function (tests.test_etree.TestElementTree) ... ok
+test_is_lxml_etree_document_function (tests.test_etree.TestElementTree) ... ok
+test_is_lxml_etree_element_function (tests.test_etree.TestElementTree) ... ok
 test_lxml_element_string_serialization (tests.test_etree.TestElementTree) ... ok
 test_py_element_string_serialization (tests.test_etree.TestElementTree) ... ok
 test_string_conversion (tests.test_exceptions.ExceptionsTest) ... ok
 test_xpath_error (tests.test_exceptions.ExceptionsTest) ... ok
 test_collapse_white_spaces_function (tests.test_helpers.HelperFunctionsTest) ... ok
 test_days_from_common_era_function (tests.test_helpers.HelperFunctionsTest) ... ok
-test_escape_to_json (tests.test_helpers.HelperFunctionsTest) ... ok
+test_equal_function (tests.test_helpers.HelperFunctionsTest) ... ok
+test_escape_json_string_function (tests.test_helpers.HelperFunctionsTest) ... ok
+test_get_double_function (tests.test_helpers.HelperFunctionsTest) ... ok
+test_iter_sequence_function (tests.test_helpers.HelperFunctionsTest) ... ok
+test_match_wildcard_function (tests.test_helpers.HelperFunctionsTest) ... ok
 test_months2days_function (tests.test_helpers.HelperFunctionsTest) ... ok
 test_node_is_idref_function (tests.test_helpers.HelperFunctionsTest) ... ok
-test_normalize_sequence_type_function (tests.test_helpers.HelperFunctionsTest) ... ok
+test_not_equal_function (tests.test_helpers.HelperFunctionsTest) ... ok
+test_numeric_equal_function (tests.test_helpers.HelperFunctionsTest) ... ok
+test_numeric_not_equal_function (tests.test_helpers.HelperFunctionsTest) ... ok
 test_round_number_function (tests.test_helpers.HelperFunctionsTest) ... ok
+test_split_function_test_function (tests.test_helpers.HelperFunctionsTest) ... ok
+test_unescape_json_string_function (tests.test_helpers.HelperFunctionsTest) ... ok
 test_get_namespace_function (tests.test_namespaces.NamespacesTest) ... ok
 test_prefixed_to_qname_function (tests.test_namespaces.NamespacesTest) ... ok
 test_qname_to_prefixed_function (tests.test_namespaces.NamespacesTest) ... ok
@@ -146,6 +185,8 @@ test_split_expanded_name_function (tests.test_namespaces.NamespacesTest) ... ok
 test_missing_debug_statements (tests.test_package.PackageTest) ... ok
 test_version_matching (tests.test_package.PackageTest) ... ok
 test_add (tests.test_regex.TestCharacterClass) ... ok
+test_char_class_contains (tests.test_regex.TestCharacterClass) ... ok
+test_char_class_copy (tests.test_regex.TestCharacterClass) ... ok
 test_char_class_init (tests.test_regex.TestCharacterClass) ... ok
 test_char_class_repr (tests.test_regex.TestCharacterClass) ... ok
 test_char_class_split (tests.test_regex.TestCharacterClass) ... ok
@@ -177,6 +218,7 @@ test_digit_shortcut (tests.test_regex.TestPatterns) ... ok
 test_dot_wildcard (tests.test_regex.TestPatterns) ... ok
 test_empty_character_class (tests.test_regex.TestPatterns) ... ok
 test_ending_newline_match (tests.test_regex.TestPatterns) ... ok
+test_extra_escapes (tests.test_regex.TestPatterns) ... ok
 test_invalid_character_class (tests.test_regex.TestPatterns) ... ok
 test_invalid_hyphen (tests.test_regex.TestPatterns) ... ok
 test_invalid_pattern_groups (tests.test_regex.TestPatterns) ... ok
@@ -247,14 +289,22 @@ test_schema_constructors (tests.test_schema_proxy.XMLSchemaProxyTest) ... ok
 test_schema_proxy_init (tests.test_schema_proxy.XMLSchemaProxyTest) ... ok
 test_xmlschema_proxy (tests.test_schema_proxy.XMLSchemaProxyTest) ... ok
 test_xsd_version_api (tests.test_schema_proxy.XMLSchemaProxyTest) ... ok
+test_issue_001 (tests.test_selectors.LxmlXPathSelectorsTest) ... ok
+test_issue_042 (tests.test_selectors.LxmlXPathSelectorsTest) ... ok
+test_issue_058 (tests.test_selectors.LxmlXPathSelectorsTest) ... ok
+test_iter_select_function (tests.test_selectors.LxmlXPathSelectorsTest) ... ok
+test_select_function (tests.test_selectors.LxmlXPathSelectorsTest) ... ok
+test_selector_class (tests.test_selectors.LxmlXPathSelectorsTest) ... ok
 test_issue_001 (tests.test_selectors.XPathSelectorsTest) ... ok
 test_issue_042 (tests.test_selectors.XPathSelectorsTest) ... ok
 test_iter_select_function (tests.test_selectors.XPathSelectorsTest) ... ok
 test_select_function (tests.test_selectors.XPathSelectorsTest) ... ok
 test_selector_class (tests.test_selectors.XPathSelectorsTest) ... ok
-test_is_instance_method (tests.test_sequence_types.SequenceTypesTest) ... ok
-test_is_sequence_type (tests.test_sequence_types.SequenceTypesTest) ... ok
+test_is_instance_function (tests.test_sequence_types.SequenceTypesTest) ... ok
+test_is_sequence_type_function (tests.test_sequence_types.SequenceTypesTest) ... ok
+test_is_sequence_type_restriction_function (tests.test_sequence_types.SequenceTypesTest) ... ok
 test_match_sequence_type_function (tests.test_sequence_types.SequenceTypesTest) ... ok
+test_normalize_sequence_type_function (tests.test_sequence_types.SequenceTypesTest) ... ok
 test_advance_until (tests.test_tdop_parser.TdopParserTest) ... ok
 test_create_tokenizer_method (tests.test_tdop_parser.TdopParserTest) ... ok
 test_expression (tests.test_tdop_parser.TdopParserTest) ... ok
@@ -273,7 +323,14 @@ test_tokenizer_items (tests.test_tdop_parser.TdopParserTest) ... ok
 test_unescape_helper (tests.test_tdop_parser.TdopParserTest) ... ok
 test_unknown_symbol (tests.test_tdop_parser.TdopParserTest) ... ok
 test_unused_token_helpers (tests.test_tdop_parser.TdopParserTest) ... ok
+test_build_lxml_node_tree_with_element (tests.test_tree_builders.TreeBuildersTest) ... ok
+test_build_lxml_node_tree_with_element_tree (tests.test_tree_builders.TreeBuildersTest) ... ok
+test_build_node_tree_with_comments (tests.test_tree_builders.TreeBuildersTest) ... skipped 'Comments not available in ElementTree'
+test_build_node_tree_with_element (tests.test_tree_builders.TreeBuildersTest) ... ok
+test_build_node_tree_with_element_tree (tests.test_tree_builders.TreeBuildersTest) ... ok
 test_selectors (tests.test_typing.TestTyping) ... skipped 'Python version is lesser than 3.8'
+test_validate_analyzed_string (tests.test_validators.ValidatorsTest) ... ok
+test_validate_json_to_xml (tests.test_validators.ValidatorsTest) ... ok
 test_addition_and_subtraction_operators (tests.test_xpath1_parser.LxmlXPath1ParserTest) ... ok
 test_ancestor_axes (tests.test_xpath1_parser.LxmlXPath1ParserTest) ... ok
 test_attribute_abbreviation_and_axis (tests.test_xpath1_parser.LxmlXPath1ParserTest) ... ok
@@ -335,6 +392,7 @@ test_self_axis (tests.test_xpath1_parser.LxmlXPath1ParserTest) ... ok
 test_starts_with_function (tests.test_xpath1_parser.LxmlXPath1ParserTest) ... ok
 test_string_function (tests.test_xpath1_parser.LxmlXPath1ParserTest) ... ok
 test_string_length_function (tests.test_xpath1_parser.LxmlXPath1ParserTest) ... ok
+test_string_representation (tests.test_xpath1_parser.LxmlXPath1ParserTest) ... ok
 test_substring_after_function (tests.test_xpath1_parser.LxmlXPath1ParserTest) ... ok
 test_substring_before_function (tests.test_xpath1_parser.LxmlXPath1ParserTest) ... ok
 test_substring_function (tests.test_xpath1_parser.LxmlXPath1ParserTest) ... ok
@@ -411,6 +469,7 @@ test_self_axis (tests.test_xpath1_parser.XPath1ParserTest) ... ok
 test_starts_with_function (tests.test_xpath1_parser.XPath1ParserTest) ... ok
 test_string_function (tests.test_xpath1_parser.XPath1ParserTest) ... ok
 test_string_length_function (tests.test_xpath1_parser.XPath1ParserTest) ... ok
+test_string_representation (tests.test_xpath1_parser.XPath1ParserTest) ... ok
 test_substring_after_function (tests.test_xpath1_parser.XPath1ParserTest) ... ok
 test_substring_before_function (tests.test_xpath1_parser.XPath1ParserTest) ... ok
 test_substring_function (tests.test_xpath1_parser.XPath1ParserTest) ... ok
@@ -719,6 +778,9 @@ test_element_accessor (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_element_decimal_cast (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_element_decimal_comparison_after_round (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_empty_sequence_type (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
+test_external_function_arguments (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
+test_external_function_arity (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
+test_external_function_registration (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_floor_function (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_following_axis (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_following_sibling_axis (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
@@ -738,6 +800,7 @@ test_logical_expressions (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_logical_expressions_ (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_logical_or_operator (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_namespace_axis (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
+test_namespace_axis_on_schema_context (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_node_and_node_accessors (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_node_comparison_operators (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_node_selection (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
@@ -772,6 +835,7 @@ test_statements_ambiguity (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_static_analysis_phase (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_string_function (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_string_length_function (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
+test_string_representation (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_substring_after_function (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_substring_before_function (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
 test_substring_function (tests.test_xpath2_parser.LxmlXPath2ParserTest) ... ok
@@ -851,6 +915,9 @@ test_element_accessor (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_element_decimal_cast (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_element_decimal_comparison_after_round (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_empty_sequence_type (tests.test_xpath2_parser.XPath2ParserTest) ... ok
+test_external_function_arguments (tests.test_xpath2_parser.XPath2ParserTest) ... ok
+test_external_function_arity (tests.test_xpath2_parser.XPath2ParserTest) ... ok
+test_external_function_registration (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_floor_function (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_following_axis (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_following_sibling_axis (tests.test_xpath2_parser.XPath2ParserTest) ... ok
@@ -870,6 +937,7 @@ test_logical_expressions (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_logical_expressions_ (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_logical_or_operator (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_namespace_axis (tests.test_xpath2_parser.XPath2ParserTest) ... ok
+test_namespace_axis_on_schema_context (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_node_and_node_accessors (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_node_comparison_operators (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_node_selection (tests.test_xpath2_parser.XPath2ParserTest) ... ok
@@ -904,6 +972,7 @@ test_statements_ambiguity (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_static_analysis_phase (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_string_function (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_string_length_function (tests.test_xpath2_parser.XPath2ParserTest) ... ok
+test_string_representation (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_substring_after_function (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_substring_before_function (tests.test_xpath2_parser.XPath2ParserTest) ... ok
 test_substring_function (tests.test_xpath2_parser.XPath2ParserTest) ... ok
@@ -1126,11 +1195,13 @@ test_context_item_expression (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_context_variables (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_count_function (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_day_time_duration_operators (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
+test_decimal_formats_argument (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_default_axis (tests.test_xpath30.LxmlXPath30ParserTest)
 Tests about when child:: default axis is applied. ... ok
 test_default_collation_argument (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_default_collection_type_argument (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_default_namespace (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
+test_defuse_xml_argument (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_descendant_axis (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_descendant_or_self_axis (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_descendant_predicate__issue_51 (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
@@ -1145,6 +1216,9 @@ test_element_accessor (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_element_decimal_cast (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_element_decimal_comparison_after_round (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_empty_sequence_type (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
+test_external_function_arguments (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
+test_external_function_arity (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
+test_external_function_registration (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_floor_function (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_following_axis (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_following_sibling_axis (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
@@ -1170,6 +1244,7 @@ test_logical_expressions (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_logical_expressions_ (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_logical_or_operator (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_namespace_axis (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
+test_namespace_axis_on_schema_context (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_node_and_node_accessors (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_node_comparison_operators (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_node_selection (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
@@ -1205,6 +1280,7 @@ test_statements_ambiguity (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_static_analysis_phase (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_string_function (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_string_length_function (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
+test_string_representation (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_substring_after_function (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_substring_before_function (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
 test_substring_function (tests.test_xpath30.LxmlXPath30ParserTest) ... ok
@@ -1427,11 +1503,13 @@ test_context_item_expression (tests.test_xpath30.XPath30ParserTest) ... ok
 test_context_variables (tests.test_xpath30.XPath30ParserTest) ... ok
 test_count_function (tests.test_xpath30.XPath30ParserTest) ... ok
 test_day_time_duration_operators (tests.test_xpath30.XPath30ParserTest) ... ok
+test_decimal_formats_argument (tests.test_xpath30.XPath30ParserTest) ... ok
 test_default_axis (tests.test_xpath30.XPath30ParserTest)
 Tests about when child:: default axis is applied. ... ok
 test_default_collation_argument (tests.test_xpath30.XPath30ParserTest) ... ok
 test_default_collection_type_argument (tests.test_xpath30.XPath30ParserTest) ... ok
 test_default_namespace (tests.test_xpath30.XPath30ParserTest) ... ok
+test_defuse_xml_argument (tests.test_xpath30.XPath30ParserTest) ... ok
 test_descendant_axis (tests.test_xpath30.XPath30ParserTest) ... ok
 test_descendant_or_self_axis (tests.test_xpath30.XPath30ParserTest) ... ok
 test_descendant_predicate__issue_51 (tests.test_xpath30.XPath30ParserTest) ... ok
@@ -1446,6 +1524,9 @@ test_element_accessor (tests.test_xpath30.XPath30ParserTest) ... ok
 test_element_decimal_cast (tests.test_xpath30.XPath30ParserTest) ... ok
 test_element_decimal_comparison_after_round (tests.test_xpath30.XPath30ParserTest) ... ok
 test_empty_sequence_type (tests.test_xpath30.XPath30ParserTest) ... ok
+test_external_function_arguments (tests.test_xpath30.XPath30ParserTest) ... ok
+test_external_function_arity (tests.test_xpath30.XPath30ParserTest) ... ok
+test_external_function_registration (tests.test_xpath30.XPath30ParserTest) ... ok
 test_floor_function (tests.test_xpath30.XPath30ParserTest) ... ok
 test_following_axis (tests.test_xpath30.XPath30ParserTest) ... ok
 test_following_sibling_axis (tests.test_xpath30.XPath30ParserTest) ... ok
@@ -1471,6 +1552,7 @@ test_logical_expressions (tests.test_xpath30.XPath30ParserTest) ... ok
 test_logical_expressions_ (tests.test_xpath30.XPath30ParserTest) ... ok
 test_logical_or_operator (tests.test_xpath30.XPath30ParserTest) ... ok
 test_namespace_axis (tests.test_xpath30.XPath30ParserTest) ... ok
+test_namespace_axis_on_schema_context (tests.test_xpath30.XPath30ParserTest) ... ok
 test_node_and_node_accessors (tests.test_xpath30.XPath30ParserTest) ... ok
 test_node_comparison_operators (tests.test_xpath30.XPath30ParserTest) ... ok
 test_node_selection (tests.test_xpath30.XPath30ParserTest) ... ok
@@ -1506,6 +1588,7 @@ test_statements_ambiguity (tests.test_xpath30.XPath30ParserTest) ... ok
 test_static_analysis_phase (tests.test_xpath30.XPath30ParserTest) ... ok
 test_string_function (tests.test_xpath30.XPath30ParserTest) ... ok
 test_string_length_function (tests.test_xpath30.XPath30ParserTest) ... ok
+test_string_representation (tests.test_xpath30.XPath30ParserTest) ... ok
 test_substring_after_function (tests.test_xpath30.XPath30ParserTest) ... ok
 test_substring_before_function (tests.test_xpath30.XPath30ParserTest) ... ok
 test_substring_function (tests.test_xpath30.XPath30ParserTest) ... ok
@@ -1752,11 +1835,13 @@ test_context_variables (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_count_function (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_curly_array_constructor (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_day_time_duration_operators (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
+test_decimal_formats_argument (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_default_axis (tests.test_xpath31.LxmlXPath31ParserTest)
 Tests about when child:: default axis is applied. ... ok
 test_default_collation_argument (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_default_collection_type_argument (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_default_namespace (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
+test_defuse_xml_argument (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_descendant_axis (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_descendant_or_self_axis (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_descendant_predicate__issue_51 (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
@@ -1771,6 +1856,9 @@ test_element_accessor (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_element_decimal_cast (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_element_decimal_comparison_after_round (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_empty_sequence_type (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
+test_external_function_arguments (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
+test_external_function_arity (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
+test_external_function_registration (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_floor_function (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_following_axis (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_following_sibling_axis (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
@@ -1813,6 +1901,7 @@ test_map_remove_function (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_map_size_function (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_map_weekdays (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_namespace_axis (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
+test_namespace_axis_on_schema_context (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_nested_map (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_node_and_node_accessors (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_node_comparison_operators (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
@@ -1854,6 +1943,7 @@ test_statements_ambiguity (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_static_analysis_phase (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_string_function (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_string_length_function (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
+test_string_representation (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_substring_after_function (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_substring_before_function (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
 test_substring_function (tests.test_xpath31.LxmlXPath31ParserTest) ... ok
@@ -2102,11 +2192,13 @@ test_context_variables (tests.test_xpath31.XPath31ParserTest) ... ok
 test_count_function (tests.test_xpath31.XPath31ParserTest) ... ok
 test_curly_array_constructor (tests.test_xpath31.XPath31ParserTest) ... ok
 test_day_time_duration_operators (tests.test_xpath31.XPath31ParserTest) ... ok
+test_decimal_formats_argument (tests.test_xpath31.XPath31ParserTest) ... ok
 test_default_axis (tests.test_xpath31.XPath31ParserTest)
 Tests about when child:: default axis is applied. ... ok
 test_default_collation_argument (tests.test_xpath31.XPath31ParserTest) ... ok
 test_default_collection_type_argument (tests.test_xpath31.XPath31ParserTest) ... ok
 test_default_namespace (tests.test_xpath31.XPath31ParserTest) ... ok
+test_defuse_xml_argument (tests.test_xpath31.XPath31ParserTest) ... ok
 test_descendant_axis (tests.test_xpath31.XPath31ParserTest) ... ok
 test_descendant_or_self_axis (tests.test_xpath31.XPath31ParserTest) ... ok
 test_descendant_predicate__issue_51 (tests.test_xpath31.XPath31ParserTest) ... ok
@@ -2121,6 +2213,9 @@ test_element_accessor (tests.test_xpath31.XPath31ParserTest) ... ok
 test_element_decimal_cast (tests.test_xpath31.XPath31ParserTest) ... ok
 test_element_decimal_comparison_after_round (tests.test_xpath31.XPath31ParserTest) ... ok
 test_empty_sequence_type (tests.test_xpath31.XPath31ParserTest) ... ok
+test_external_function_arguments (tests.test_xpath31.XPath31ParserTest) ... ok
+test_external_function_arity (tests.test_xpath31.XPath31ParserTest) ... ok
+test_external_function_registration (tests.test_xpath31.XPath31ParserTest) ... ok
 test_floor_function (tests.test_xpath31.XPath31ParserTest) ... ok
 test_following_axis (tests.test_xpath31.XPath31ParserTest) ... ok
 test_following_sibling_axis (tests.test_xpath31.XPath31ParserTest) ... ok
@@ -2163,6 +2258,7 @@ test_map_remove_function (tests.test_xpath31.XPath31ParserTest) ... ok
 test_map_size_function (tests.test_xpath31.XPath31ParserTest) ... ok
 test_map_weekdays (tests.test_xpath31.XPath31ParserTest) ... ok
 test_namespace_axis (tests.test_xpath31.XPath31ParserTest) ... ok
+test_namespace_axis_on_schema_context (tests.test_xpath31.XPath31ParserTest) ... ok
 test_nested_map (tests.test_xpath31.XPath31ParserTest) ... ok
 test_node_and_node_accessors (tests.test_xpath31.XPath31ParserTest) ... ok
 test_node_comparison_operators (tests.test_xpath31.XPath31ParserTest) ... ok
@@ -2204,6 +2300,7 @@ test_statements_ambiguity (tests.test_xpath31.XPath31ParserTest) ... ok
 test_static_analysis_phase (tests.test_xpath31.XPath31ParserTest) ... ok
 test_string_function (tests.test_xpath31.XPath31ParserTest) ... ok
 test_string_length_function (tests.test_xpath31.XPath31ParserTest) ... ok
+test_string_representation (tests.test_xpath31.XPath31ParserTest) ... ok
 test_substring_after_function (tests.test_xpath31.XPath31ParserTest) ... ok
 test_substring_before_function (tests.test_xpath31.XPath31ParserTest) ... ok
 test_substring_function (tests.test_xpath31.XPath31ParserTest) ... ok
@@ -2271,55 +2368,55 @@ test_node_nilled_property (tests.test_xpath_nodes.XPathNodesTest) ... ok
 test_path_property (tests.test_xpath_nodes.XPathNodesTest) ... ok
 test_text_nodes (tests.test_xpath_nodes.XPathNodesTest) ... ok
 test_typed_element_nodes (tests.test_xpath_nodes.XPathNodesTest) ... ok
-test_arity_property (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_atomization_function (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_boolean_value_function (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_cast_to_double (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_compare_operator (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_data_value_function (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_expected_method (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_get_argument_method (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_iter_leaf_elements_method (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_iter_method (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_number_value_function (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_ordinal_function (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_position (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_select_results (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_source_property (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_string_value_function (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_unexpected_method (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_xpath_error (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_xpath_error_shortcuts (tests.test_xpath_token.XPath1TokenTest) ... ok
-test_add_xsd_type (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_add_xsd_type_alternatives (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_arity_property (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_atomization_function (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_bind_namespace_method (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_boolean_value_function (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_cast_to_double (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_compare_operator (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_data_value_function (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_expected_method (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_get_argument_method (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_get_typed_node (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_get_xsd_type (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_iter_leaf_elements_method (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_iter_method (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_match_xsd_type (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_number_value_function (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_ordinal_function (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_position (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_select_results (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_select_xsd_nodes (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_source_property (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_string_value_function (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_unexpected_method (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_xpath_error (tests.test_xpath_token.XPath2TokenTest) ... ok
-test_xpath_error_shortcuts (tests.test_xpath_token.XPath2TokenTest) ... ok
+test_arity_property (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_atomization_function (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_boolean_value_function (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_cast_to_double (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_compare_operator (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_data_value_function (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_expected_method (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_get_argument_method (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_iter_leaf_elements_method (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_iter_method (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_number_value_function (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_ordinal_function (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_position (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_select_results (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_source_property (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_string_value_function (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_unexpected_method (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_xpath_error (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_xpath_error_shortcuts (tests.test_xpath_tokens.XPath1TokenTest) ... ok
+test_add_xsd_type (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_add_xsd_type_alternatives (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_arity_property (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_atomization_function (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_bind_namespace_method (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_boolean_value_function (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_cast_to_double (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_compare_operator (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_data_value_function (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_expected_method (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_get_argument_method (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_get_typed_node (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_get_xsd_type (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_iter_leaf_elements_method (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_iter_method (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_match_xsd_type (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_number_value_function (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_ordinal_function (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_position (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_select_results (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_select_xsd_nodes (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_source_property (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_string_value_function (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_unexpected_method (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_xpath_error (tests.test_xpath_tokens.XPath2TokenTest) ... ok
+test_xpath_error_shortcuts (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 
 ----------------------------------------------------------------------
-Ran 2308 tests
+Ran 2404 tests
 
-OK (skipped=2)
+OK (skipped=3)
   py$(PYV): OK
   congratulations :)
