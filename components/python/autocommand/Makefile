@@ -14,20 +14,19 @@
 #   $WS_TOOLS/python-integrate-project autocommand
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		autocommand
-COMPONENT_VERSION =		2.2.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.2.2
 COMPONENT_SUMMARY =		autocommand - A library to create a command-line program from a function
 COMPONENT_PROJECT_URL =		https://github.com/Lucretiel/autocommand
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c4/64/5974fa53f34f044008c6bc438cbb50709dd9a7ebb1bc49105957c07a0ab4/autocommand-2.2.1.tar.gz
+	https://files.pythonhosted.org/packages/5b/18/774bddb96bc0dc0a2b8ac2d2a0e686639744378883da0fc3b96a54192d7a/autocommand-2.2.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fed420e9d02745821a782971b583c6970259ee0b229be2a0a401e1467a4f170f
+	sha256:878de9423c5596491167225c2a455043c3130fb5b7286ac83443d45e74955f34
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,4 +35,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
