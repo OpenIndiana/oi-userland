@@ -1,14 +1,20 @@
 ============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml, testpaths: traitlets, examples
-collecting ... collected 568 items
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: traitlets, examples
+asyncio: mode=strict
+collecting ... collected 577 items
 
 traitlets/config/configurable.py::traitlets.config.configurable.SingletonConfigurable.instance PASSED
 traitlets/config/loader.py::traitlets.config.loader.ConfigLoader.__init__ PASSED
+traitlets/config/tests/test_application.py::TestApplication::test_alias_unrecognized PASSED
 traitlets/config/tests/test_application.py::TestApplication::test_aliases PASSED
 traitlets/config/tests/test_application.py::TestApplication::test_aliases_help_msg PASSED
 traitlets/config/tests/test_application.py::TestApplication::test_aliases_multiple PASSED
+traitlets/config/tests/test_application.py::TestApplication::test_app_name_set_via_constructor PASSED
 traitlets/config/tests/test_application.py::TestApplication::test_basic PASSED
 traitlets/config/tests/test_application.py::TestApplication::test_cli_allow_none PASSED
 traitlets/config/tests/test_application.py::TestApplication::test_cli_priority PASSED
@@ -49,6 +55,12 @@ traitlets/config/tests/test_application.py::test_show_config PASSED
 traitlets/config/tests/test_application.py::test_show_config_cli PASSED
 traitlets/config/tests/test_application.py::test_show_config_json PASSED
 traitlets/config/tests/test_application.py::test_show_config_json_cli PASSED
+traitlets/config/tests/test_argcomplete.py::TestArgcomplete::test_complete_custom_completers PASSED
+traitlets/config/tests/test_argcomplete.py::TestArgcomplete::test_complete_simple_app PASSED
+traitlets/config/tests/test_argcomplete.py::TestArgcomplete::test_complete_subcommands PASSED
+traitlets/config/tests/test_argcomplete.py::TestArgcomplete::test_complete_subcommands_main PASSED
+traitlets/config/tests/test_argcomplete.py::TestArgcomplete::test_complete_subcommands_subapp1 PASSED
+traitlets/config/tests/test_argcomplete.py::TestArgcomplete::test_complete_subcommands_subapp2 PASSED
 traitlets/config/tests/test_configurable.py::TestConfigContainers::test_append_extend PASSED
 traitlets/config/tests/test_configurable.py::TestConfigContainers::test_config_default PASSED
 traitlets/config/tests/test_configurable.py::TestConfigContainers::test_config_default_deprecated PASSED
@@ -390,6 +402,7 @@ traitlets/tests/test_traitlets.py::TestUnionListTrait::test_default_value PASSED
 traitlets/tests/test_traitlets.py::TestUnionListTrait::test_good_values PASSED
 traitlets/tests/test_traitlets.py::TestValidationHook::test_multiple_validate PASSED
 traitlets/tests/test_traitlets.py::TestValidationHook::test_parity_trait PASSED
+traitlets/tests/test_traitlets.py::TestValidationHook::test_validate_used PASSED
 traitlets/tests/test_traitlets.py::TraitTestBase::test_allow_none PASSED
 traitlets/tests/test_traitlets.py::TraitTestBase::test_bad_values PASSED
 traitlets/tests/test_traitlets.py::TraitTestBase::test_default_value PASSED
@@ -578,5 +591,6 @@ traitlets/tests/_warnings.py::traitlets.tests._warnings.all_warnings
   <doctest traitlets.tests._warnings.all_warnings[1]>:2: RuntimeWarning: bar
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-SKIPPED [1] ../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/doctest.py:455: all tests skipped by +SKIP option
-======== 567 passed, 1 skipped, 1 warning ========
+============================= slowest 10 durations =============================
+=========================== short test summary info ============================
+======== 576 passed, 1 skipped, 1 warning ========
