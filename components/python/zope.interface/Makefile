@@ -19,21 +19,25 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.interface
-COMPONENT_VERSION =		5.5.2
+HUMAN_VERSION =			6.0
 COMPONENT_SUMMARY =		zope.interface - Interfaces for Python
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.interface
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/38/6f/fbfb7dde38be7e5644bb342c4c7cdc444cd5e2ffbd70d091263b3858a8cb/zope.interface-5.5.2.tar.gz
+	https://files.pythonhosted.org/packages/7a/62/f0d012151af1e8cc0a6c97db74b78141143425dcdf81bc7960c498e28960/zope.interface-6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bfee1f3ff62143819499e348f5b8a7f3aa0259f9aca5e0ddae7391d059dce671
+	sha256:aab584725afd10c710b8f1e6e208dbee2d0ad009f57d674cb9d1b3964037275d
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# zope.interface needs repoze.sphinx.autointerface to run tests, but
-# repoze.sphinx.autointerface needs zope.interface to build itself.  This is
-# special case when we need to set PYTHON_TEST_BOOTSTRAP to make sure the
-# zope.interface tests are not run when there is no repoze.sphinx.autointerface
-# available yet.
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# zope.interface --> repoze.sphinx.autointerface ==> zope.interface
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
