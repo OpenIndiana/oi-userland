@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-enabler
-COMPONENT_VERSION =		2.0.0
+HUMAN_VERSION =			2.1.0
 COMPONENT_SUMMARY =		pytest-enabler - Enable installed pytest plugins
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-enabler
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e0/c9/0bfecc458e3a39263226edd85e6eee356640b78628f2500fc7c6e322f565/pytest-enabler-2.0.0.tar.gz
+	https://files.pythonhosted.org/packages/ca/d1/fae31b0db5c6798efdb9b89de4fe829233ca2ff2c03fbd46d5d5c2406760/pytest-enabler-2.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5aca0cb30cdbb62fdc2c6d175fa8e763aa6f36dcda9aeaf5ef96da097325618c
+	sha256:8b91069f94f33480a122b5878be78778d64b0346751cad310f92cb24500af554
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,12 +42,16 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/tholo/pytest-flake8/issues/92
+PYTEST_ADDOPTS += -p no:flake8
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/toml
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
