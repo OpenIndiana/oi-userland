@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-ast
-COMPONENT_VERSION= 1.1.5
-COMPONENT_REVISION= 4
-COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-ast
+COMPONENT_VERSION= 1.1.6
 COMPONENT_SUMMARY= xf86-video-ast - ASPEED AST driver for the Xorg X server
-COMPONENT_ARCHIVE_HASH= \
-  sha256:1edbbc55d47d3fd71dec99b15c2483e22738c642623a0fb86ef4a81a9067a2de
+COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-ast
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:75754fa9c7f9a94fcc706d32cc118942d16c71934d88110442443a143b930daf
 
 include $(WS_MAKE_RULES)/common.mk
 
