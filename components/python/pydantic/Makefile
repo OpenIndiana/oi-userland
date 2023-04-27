@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pydantic
-COMPONENT_VERSION =		1.10.2
+HUMAN_VERSION =			1.10.7
 COMPONENT_SUMMARY =		pydantic - Data validation and settings management using python type hints
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/pydantic
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/7d/7d/58dd62f792b002fa28cce4e83cb90f4359809e6d12db86eedf26a752895c/pydantic-1.10.2.tar.gz
+	https://files.pythonhosted.org/packages/43/5f/e53a850fd32dddefc998b6bfcbda843d4ff5b0dcac02a92e414ba6c97d46/pydantic-1.10.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:91b8e218852ef6007c2b98cd861601c6a09f1aa32bbbb74fab5b1c33d4a1e410
+	sha256:cfc83c0678b6ba51b0532bea66860617c4cd4251ecf76e9846fa5a9f3454e97e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,6 +34,10 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/pydantic/pydantic/issues/5561
+PYTEST_ADDOPTS += -p no:randomly
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += system/library
