@@ -19,21 +19,22 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pydocstyle
-COMPONENT_VERSION =		6.1.1
+HUMAN_VERSION =			6.3.0
 COMPONENT_SUMMARY =		pydocstyle - Python docstring style checker
-COMPONENT_PROJECT_URL =		https://github.com/PyCQA/pydocstyle/
+COMPONENT_PROJECT_URL =		https://www.pydocstyle.org/en/stable/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4c/30/4cdea3c8342ad343d41603afc1372167c224a04dc5dc0bf4193ccb39b370/pydocstyle-6.1.1.tar.gz
+	https://files.pythonhosted.org/packages/e9/5c/d5385ca59fd065e3c6a5fe19f9bc9d5ea7f2509fa8c9c22fb6b2031dd953/pydocstyle-6.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1d41b7c459ba0ee6c345f2eb9ae827cab14a7533a88c5c6f7e94923f72df92dc
+	sha256:7ce43f0c0ac87b07494eb9c0b462c0b73e6ff276807f204d6b53edc72b7e44e1
 COMPONENT_LICENSE =		MIT
 
-TEST_STYLE = pytest
+# https://github.com/PyCQA/pydocstyle/issues/351
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
 PYTHON_REQUIRED_PACKAGES += library/python/snowballstemmer
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
