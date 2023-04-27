@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-input-synaptics
-COMPONENT_VERSION= 1.9.1
-COMPONENT_REVISION= 3
-COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-synaptics
+COMPONENT_VERSION= 1.9.2
 COMPONENT_SUMMARY= xf86-input-synaptics - Synaptics touchpad driver for X.Org
-COMPONENT_ARCHIVE_HASH= \
-  sha256:7af83526eff1c76e8b9e1553b34245c203d029028d8044dd9dcf71eef1001576
+COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-synaptics
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:b8fa4aab913fc63754bbd6439e020658c412743a055201ddf212760593962c38
 
 include $(WS_MAKE_RULES)/common.mk
 
