@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-input-mouse
-COMPONENT_VERSION= 1.9.3
-COMPONENT_REVISION= 3
-COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-mouse
+COMPONENT_VERSION= 1.9.4
 COMPONENT_SUMMARY= xf86-input-mouse - Mouse input driver for the Xorg X server
-COMPONENT_ARCHIVE_HASH= \
-  sha256:93ecb350604d05be98b7d4e5db3b8155a44890069a7d8d6b800c0bea79c85cc5
+COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-mouse
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:7f6f8551fc238abdddcf9f38906564c1f8c7dacb0ad947cfc110487aefbd8d4c
 
 include $(WS_MAKE_RULES)/common.mk
 
