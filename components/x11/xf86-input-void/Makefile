@@ -18,13 +18,13 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-input-void
-COMPONENT_VERSION= 1.4.1
-COMPONENT_REVISION= 3
-COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-void
+COMPONENT_VERSION= 1.4.2
 COMPONENT_SUMMARY= xf86-input-void - null input driver for Xorg server
-COMPONENT_ARCHIVE_HASH= \
-  sha256:f96e4f0a622821bf43a74bd419f2a18423343996c9d243c7e1430ba2d142339c
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:a211d8e21ce0e2ed8af5b8a2e8d4409d70c9c7e5ee528f5e6002ad279bf07885
+COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-void
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
