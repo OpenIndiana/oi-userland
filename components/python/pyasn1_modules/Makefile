@@ -11,21 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pyasn1-modules
+#   $WS_TOOLS/python-integrate-project pyasn1_modules
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pyasn1-modules
-HUMAN_VERSION =			0.2.8
-COMPONENT_SUMMARY =		pyasn1-modules - A collection of ASN.1-based protocols modules.
-COMPONENT_PROJECT_URL =		https://github.com/etingof/pyasn1-modules
+COMPONENT_NAME =		pyasn1_modules
+HUMAN_VERSION =			0.3.0
+COMPONENT_SUMMARY =		pyasn1_modules - A collection of ASN.1-based protocols modules
+COMPONENT_PROJECT_URL =		https://github.com/pyasn1/pyasn1-modules
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/88/87/72eb9ccf8a58021c542de2588a867dbefc7556e14b2866d1e40e9e2b587e/pyasn1-modules-0.2.8.tar.gz
+	https://files.pythonhosted.org/packages/3b/e4/7dec823b1b5603c5b3c51e942d5d9e65efd6ff946e713a325ed4146d070f/pyasn1_modules-0.3.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:905f84c712230b2c592c19470d3ca8d552de726050d1d1716282a1f6146be65e
+	sha256:5bd01446b736eb9d31512a30d46c1ac3395d676c6f3cafa4c03eb54b9925631c
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,4 +35,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pyasn1
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
