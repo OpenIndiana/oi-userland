@@ -1,0 +1,28 @@
+From 51b2fd3b581b35b5f07b0ad58631ced7e20d0276 Mon Sep 17 00:00:00 2001
+From: Seth Morton <seth.m.morton@gmail.com>
+Date: Tue, 18 Apr 2023 21:35:31 -0700
+Subject: [PATCH] Don't bother with ISO8858-1 locale
+
+Just use UTF8.
+---
+ tests/conftest.py | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/tests/conftest.py b/tests/conftest.py
+index cda2aaf..2ae04fc 100644
+--- a/tests/conftest.py
++++ b/tests/conftest.py
+@@ -19,11 +19,8 @@
+ 
+ 
+ def load_locale(x: str) -> None:
+-    """Convenience to load a locale, trying ISO8859-1 first."""
+-    try:
+-        locale.setlocale(locale.LC_ALL, str("{}.ISO8859-1".format(x)))
+-    except locale.Error:
+-        locale.setlocale(locale.LC_ALL, str("{}.UTF-8".format(x)))
++    """Convenience to load a locale."""
++    locale.setlocale(locale.LC_ALL, str("{}.UTF-8".format(x)))
+ 
+ 
+ @pytest.fixture()
