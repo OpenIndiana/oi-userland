@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		psycopg2
-HUMAN_VERSION =			2.9.5
+HUMAN_VERSION =			2.9.6
 COMPONENT_SUMMARY =		psycopg2 - psycopg2 - Python-PostgreSQL Database Adapter
 COMPONENT_PROJECT_URL =		https://psycopg.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/89/d6/cd8c46417e0f7a16b4b0fc321f4ab676a59250d08fce5b64921897fb07cc/psycopg2-2.9.5.tar.gz
+	https://files.pythonhosted.org/packages/af/c4/5726cddb53fe52f0e839eb3da04322364f14493217ebd5818cc5e4c948a5/psycopg2-2.9.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a5246d2e683a972e2187a8714b5c2cf8156c064629f9a9b1a873c1730d9e245a
+	sha256:f15158418fd826831b28585e2ab48ed8df2d0d98f502a2b4fe619e7d5ca29011
 COMPONENT_LICENSE =		LGPL-3.0-only
 
 # see doc/src/install.rst
@@ -33,10 +33,8 @@ TEST_STYLE = custom
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Both build and install needs PATH environment variable and build should
-# not depend on host default pg_config
-COMPONENT_BUILD_ENV += PATH=$(PG_BINDIR):$(PATH)
-COMPONENT_INSTALL_ENV += PATH=$(PATH)
+# Do not depend on host default pg_config
+PATH := $(PG_BINDIR):$(PATH)
 
 # force needed rpath
 LD_OPTIONS += -R$(PG_LIBDIR)
@@ -70,7 +68,7 @@ COMPONENT_TEST_TARGETS =
 
 # Manually added build and testing dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
-TEST_REQUIRED_PACKAGES += service/$(PG_BASEPKG)
+TEST_REQUIRED_PACKAGES += $(PG_SERVICE_PKG)
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
