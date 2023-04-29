@@ -5,9 +5,10 @@ py$(PYV): commands[0]> python -m pytest
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg
+rootdir: $(@D)
+configfile: setup.cfg
 asyncio: mode=strict
-collecting ... collected 966 items / 104 deselected / 862 selected
+collecting ... collected 974 items / 104 deselected / 870 selected
 
 ::project <- . PASSED
 tests/cache/plugins/test_mako_cache.py::TestMakoPlugin::test_basic PASSED
@@ -92,6 +93,7 @@ tests/cache/test_dbm_backend.py::DBMBackendSerializerTest::test_region_set_get_v
 tests/cache/test_dbm_backend.py::DBMBackendSerializerTest::test_region_set_multiple_values <- tests/cache/_fixtures.py PASSED
 tests/cache/test_dbm_backend.py::DBMBackendSerializerTest::test_region_set_zero_multiple_values <- tests/cache/_fixtures.py PASSED
 tests/cache/test_dbm_backend.py::DBMBackendSerializerTest::test_region_set_zero_multiple_values_w_decorator <- tests/cache/_fixtures.py PASSED
+tests/cache/test_dbm_backend.py::DBMBackendSerializerTest::test_serializer_cant_deserialize <- tests/cache/_fixtures.py PASSED
 tests/cache/test_dbm_backend.py::DBMBackendSerializerTest::test_uses_deserializer <- tests/cache/_fixtures.py PASSED
 tests/cache/test_dbm_backend.py::DBMBackendSerializerTest::test_uses_serializer <- tests/cache/_fixtures.py PASSED
 tests/cache/test_dbm_backend.py::DBMBackendTest::test_backend_delete <- tests/cache/_fixtures.py PASSED
@@ -237,6 +239,7 @@ tests/cache/test_memcached_backend.py::BMemcachedSerializerTest::test_region_set
 tests/cache/test_memcached_backend.py::BMemcachedSerializerTest::test_region_set_multiple_values <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.bmemcached not installed)
 tests/cache/test_memcached_backend.py::BMemcachedSerializerTest::test_region_set_zero_multiple_values <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.bmemcached not installed)
 tests/cache/test_memcached_backend.py::BMemcachedSerializerTest::test_region_set_zero_multiple_values_w_decorator <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.bmemcached not installed)
+tests/cache/test_memcached_backend.py::BMemcachedSerializerTest::test_serializer_cant_deserialize <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.bmemcached not installed)
 tests/cache/test_memcached_backend.py::BMemcachedSerializerTest::test_uses_deserializer <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.bmemcached not installed)
 tests/cache/test_memcached_backend.py::BMemcachedSerializerTest::test_uses_serializer <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.bmemcached not installed)
 tests/cache/test_memcached_backend.py::BMemcachedTLSTest::test_backend_delete <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.bmemcached not installed)
@@ -330,6 +333,7 @@ tests/cache/test_memcached_backend.py::MemcachedSerializerTest::test_region_set_
 tests/cache/test_memcached_backend.py::MemcachedSerializerTest::test_region_set_multiple_values <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
 tests/cache/test_memcached_backend.py::MemcachedSerializerTest::test_region_set_zero_multiple_values <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
 tests/cache/test_memcached_backend.py::MemcachedSerializerTest::test_region_set_zero_multiple_values_w_decorator <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
+tests/cache/test_memcached_backend.py::MemcachedSerializerTest::test_serializer_cant_deserialize <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
 tests/cache/test_memcached_backend.py::MemcachedSerializerTest::test_uses_deserializer <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
 tests/cache/test_memcached_backend.py::MemcachedSerializerTest::test_uses_serializer <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
 tests/cache/test_memcached_backend.py::MemcachedTest::test_backend_delete <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.memcached not installed)
@@ -445,6 +449,7 @@ tests/cache/test_memcached_backend.py::PyMemcacheSerializerTest::test_region_set
 tests/cache/test_memcached_backend.py::PyMemcacheSerializerTest::test_region_set_multiple_values <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pymemcache not installed)
 tests/cache/test_memcached_backend.py::PyMemcacheSerializerTest::test_region_set_zero_multiple_values <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pymemcache not installed)
 tests/cache/test_memcached_backend.py::PyMemcacheSerializerTest::test_region_set_zero_multiple_values_w_decorator <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pymemcache not installed)
+tests/cache/test_memcached_backend.py::PyMemcacheSerializerTest::test_serializer_cant_deserialize <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pymemcache not installed)
 tests/cache/test_memcached_backend.py::PyMemcacheSerializerTest::test_uses_deserializer <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pymemcache not installed)
 tests/cache/test_memcached_backend.py::PyMemcacheSerializerTest::test_uses_serializer <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pymemcache not installed)
 tests/cache/test_memcached_backend.py::PyMemcacheTLSTest::test_backend_delete <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pymemcache not installed)
@@ -538,6 +543,7 @@ tests/cache/test_memcached_backend.py::PylibmcSerializerTest::test_region_set_ge
 tests/cache/test_memcached_backend.py::PylibmcSerializerTest::test_region_set_multiple_values <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
 tests/cache/test_memcached_backend.py::PylibmcSerializerTest::test_region_set_zero_multiple_values <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
 tests/cache/test_memcached_backend.py::PylibmcSerializerTest::test_region_set_zero_multiple_values_w_decorator <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
+tests/cache/test_memcached_backend.py::PylibmcSerializerTest::test_serializer_cant_deserialize <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
 tests/cache/test_memcached_backend.py::PylibmcSerializerTest::test_uses_deserializer <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
 tests/cache/test_memcached_backend.py::PylibmcSerializerTest::test_uses_serializer <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
 tests/cache/test_memcached_backend.py::PylibmcTest::test_backend_delete <- tests/cache/_fixtures.py SKIPPED (Backend dogpile.cache.pylibmc not installed)
@@ -580,6 +586,7 @@ tests/cache/test_memory_backend.py::MemoryBackendSerializerTest::test_region_set
 tests/cache/test_memory_backend.py::MemoryBackendSerializerTest::test_region_set_multiple_values <- tests/cache/_fixtures.py PASSED
 tests/cache/test_memory_backend.py::MemoryBackendSerializerTest::test_region_set_zero_multiple_values <- tests/cache/_fixtures.py PASSED
 tests/cache/test_memory_backend.py::MemoryBackendSerializerTest::test_region_set_zero_multiple_values_w_decorator <- tests/cache/_fixtures.py PASSED
+tests/cache/test_memory_backend.py::MemoryBackendSerializerTest::test_serializer_cant_deserialize <- tests/cache/_fixtures.py PASSED
 tests/cache/test_memory_backend.py::MemoryBackendSerializerTest::test_uses_deserializer <- tests/cache/_fixtures.py PASSED
 tests/cache/test_memory_backend.py::MemoryBackendSerializerTest::test_uses_serializer <- tests/cache/_fixtures.py PASSED
 tests/cache/test_memory_backend.py::MemoryBackendTest::test_backend_delete <- tests/cache/_fixtures.py PASSED
@@ -663,6 +670,7 @@ tests/cache/test_redis_backend.py::RedisSerializerTest::test_region_set_get_valu
 tests/cache/test_redis_backend.py::RedisSerializerTest::test_region_set_multiple_values <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
 tests/cache/test_redis_backend.py::RedisSerializerTest::test_region_set_zero_multiple_values <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
 tests/cache/test_redis_backend.py::RedisSerializerTest::test_region_set_zero_multiple_values_w_decorator <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
+tests/cache/test_redis_backend.py::RedisSerializerTest::test_serializer_cant_deserialize <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
 tests/cache/test_redis_backend.py::RedisSerializerTest::test_uses_deserializer <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
 tests/cache/test_redis_backend.py::RedisSerializerTest::test_uses_serializer <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
 tests/cache/test_redis_backend.py::RedisTest::test_backend_delete <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
@@ -730,6 +738,7 @@ tests/cache/test_redis_sentinel_backend.py::RedisSerializerTest::test_region_set
 tests/cache/test_redis_sentinel_backend.py::RedisSerializerTest::test_region_set_multiple_values <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
 tests/cache/test_redis_sentinel_backend.py::RedisSerializerTest::test_region_set_zero_multiple_values <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
 tests/cache/test_redis_sentinel_backend.py::RedisSerializerTest::test_region_set_zero_multiple_values_w_decorator <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
+tests/cache/test_redis_sentinel_backend.py::RedisSerializerTest::test_serializer_cant_deserialize <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
 tests/cache/test_redis_sentinel_backend.py::RedisSerializerTest::test_uses_deserializer <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
 tests/cache/test_redis_sentinel_backend.py::RedisSerializerTest::test_uses_serializer <- tests/cache/_fixtures.py SKIPPED (redis is not running or otherwise not functioning correctly)
 tests/cache/test_region.py::APITest::test_no_value_str PASSED
@@ -871,6 +880,6 @@ tests/test_lock.py::RaceConditionTests::test_no_double_get_on_expired PASSED
 tests/test_utils.py::UtilsTest::test_coerce_string_conf PASSED
 tests/util/test_nameregistry.py::NameRegistryTest::test_name_registry PASSED
 
-======== 395 passed, 466 skipped, 104 deselected ========
+======== 397 passed, 472 skipped, 104 deselected ========
   py$(PYV): OK
   congratulations :)
