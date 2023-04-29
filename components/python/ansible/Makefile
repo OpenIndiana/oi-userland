@@ -19,14 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ansible
-HUMAN_VERSION =			7.4.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			7.5.0
 COMPONENT_SUMMARY =		ansible - Radically simple IT automation
 COMPONENT_PROJECT_URL =		https://ansible.com/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/45/4b/2087a0fe8265828df067e57d7d156426cdc8f7cd94ad3178c6510d81e2c0/ansible-7.4.0.tar.gz
+	https://files.pythonhosted.org/packages/6b/70/16c9a3f41bcc6e046643b650f09c333128b08de3982d32dca7f67190596b/ansible-7.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0964d6ec7b363d2d559f245c39b01798c720a85b207672ec2c9d83cf61564b90
+	sha256:4f08ca25bb29005c1afc4125e837882ad7a2c67ff0cc9d1a361b89ad09cf8c44
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
