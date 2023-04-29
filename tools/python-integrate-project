@@ -491,16 +491,19 @@ else
 		[[ "$PREV_HVER" != "$VERSION" ]] && MSG="update to $VERSION" || MSG="change version format"
 	fi
 
-	NV=
-	for v in $PYTHON_VERSIONS ; do
-		PYV=${v//.}
-		pkg list -avH "$COMPONENT_FMRI-$PYV" 2>/dev/null | egrep -q -v '(o|r)$' && continue
-		[[ -n "$NV" ]] && NV="$NV and "
-		NV="$NV$v"
-	done
-
 	REBUILDMSG=
-	[[ -n "$NV" ]] && REBUILDMSG="rebuild for python $NV"
+
+	if [[ "$($GMAKE print-value-SINGLE_PYTHON_VERSION)" == "no" ]] ; then
+		NV=
+		for v in $PYTHON_VERSIONS ; do
+			PYV=${v//.}
+			pkg list -avH "$COMPONENT_FMRI-$PYV" 2>/dev/null | egrep -q -v '(o|r)$' && continue
+			[[ -n "$NV" ]] && NV="$NV and "
+			NV="$NV$v"
+		done
+		[[ -n "$NV" ]] && REBUILDMSG="rebuild for python $NV"
+	fi
+
 	if [[ -n "$OV" ]] ; then
 		[[ -n "$REBUILDMSG" ]] && REBUILDMSG="$REBUILDMSG and" || REBUILDMSG="rebuild"
 		REBUILDMSG="$REBUILDMSG to get package$OV_PLURAL for python $OV obsoleted"
