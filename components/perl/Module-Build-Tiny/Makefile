@@ -19,11 +19,11 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Build::Tiny
-HUMAN_VERSION =			0.043
+HUMAN_VERSION =			0.044
 COMPONENT_SUMMARY =		Module::Build::Tiny - A tiny replacement for Module::Build
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:68f4e4620e8a75124ce2dadee48d2ba5160b9167012924588d6fb242ff2d7206
+	sha256:cb053a3049cb717dbf4fd7f3c7ab7c0cb1015b22e2d93f38b1ffc47c078322fd
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
