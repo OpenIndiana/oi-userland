@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xinput
-COMPONENT_VERSION=      1.6.3
-COMPONENT_FMRI=         x11/xinput
+COMPONENT_VERSION=      1.6.4
 COMPONENT_SUMMARY=      xinput - input device management utility
-COMPONENT_ARCHIVE_HASH= \
-  sha256:35a281dd3b9b22ea85e39869bb7670ba78955d5fec17c6ef7165d61e5aeb66ed
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:ad04d00d656884d133110eeddc34e9c69e626ebebbbab04dc95791c2907057c8
+COMPONENT_FMRI=         x11/xinput
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
