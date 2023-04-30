@@ -21,17 +21,17 @@
 #
 # Copyright (c) 2023, Friedrich Kink
 #
-BUILD_STYLE=	cmake
 
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hyperscan
-COMPONENT_VERSION=	5.4.1
+COMPONENT_VERSION=	5.4.2
 COMPONENT_SUMMARY=	Hyperscan is a high-performance multiple regex matching library.
 COMPONENT_PROJECT_URL=  https://www.hyperscan.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:6798202350ecab5ebe5063fbbb6966c33d43197b39ce7ddfbca2e61ac5ecb54a
+COMPONENT_ARCHIVE_HASH= sha256:32b0f24b3113bbc46b6bfaa05cf7cf45840b6b59333d078cc1f624e4c40b2b99
 COMPONENT_ARCHIVE_URL=  https://github.com/intel/$(COMPONENT_NAME)/archive/refs/tags/v$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=Development/C
 COMPONENT_FMRI=		library/hyperscan
@@ -39,20 +39,19 @@ COMPONENT_CLASSIFICATION=	Development/C
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE
 
+TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH = $(PATH.gnu)
 
 # turn on largefile support
 CFLAGS += $(CPP_LARGEFILES)
 
 # to avoid to modern CPU's when build automatically on newer hardware
-CMAKE_OPTIONS+= -DCMAKE_C_FLAGS="-march=corei7"
-CMAKE_OPTIONS+= -DCMAKE_BUILD_TYPE=Release
-CMAKE_OPTIONS+= -DFAT_RUNTIME=OFF
-CMAKE_OPTIONS+= -DBUILD_SHARED_LIBS=ON
-
-TEST_TARGET=       $(NO_TESTS)
+CMAKE_OPTIONS += -DCMAKE_C_FLAGS="-march=corei7"
+CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
+CMAKE_OPTIONS += -DFAT_RUNTIME=OFF
+CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
 
 # manually added
 REQUIRED_PACKAGES += developer/ragel
