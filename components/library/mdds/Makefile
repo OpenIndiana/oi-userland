@@ -21,16 +21,17 @@
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
 
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mdds
 COMPONENT_MAJOR_VERSION=	2.1
-COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).0
+COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).1
 COMPONENT_SUMMARY=      mdds - A collection of multi-dimensional data structures and indexing algorithms
 COMPONENT_PROJECT_URL=	https://gitlab.com/mdds/mdds
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f2941304ae5dc5f315117b3604137891ea90f61ffc0eb75224df7aa2944f5e71
+COMPONENT_ARCHIVE_HASH=	sha256:4b9b4ef83826562a57d55089141c8d59789fae829fd6402cbb95d480c0737b7d
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     	library/c++/mdds
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -42,12 +43,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PREP_ACTION = ( cd ${@D} && NOCONFIGURE=1 ./autogen.sh )
 
 COMPONENT_TEST_TRANSFORMS += \
-	' -n ' \
-	' -e "/ERROR/p" ' \
-	' -e "/FAIL/p" ' \
-	' -e "/PASS/p" ' \
-	' -e "/SKIP/p" ' \
-	' -e "/TOTAL/p" ' \
 	' -e "/Testsuite/p" ' \
 	' -e "/====/p" '
 
