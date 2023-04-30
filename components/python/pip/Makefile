@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip
-HUMAN_VERSION =			23.1.1
+HUMAN_VERSION =			23.1.2
 COMPONENT_SUMMARY =		pip - The PyPA recommended tool for installing Python packages.
 COMPONENT_PROJECT_URL =		https://pip.pypa.io/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/43/7d/1f52f99a7f2eae870483b2c2a3064511487de87911bce146df8a154fbe81/pip-23.1.1.tar.gz
+	https://files.pythonhosted.org/packages/fa/ee/74ff76da0ab649eec7581233daeb43d8aa35383d8f75317b2ab3b80c922f/pip-23.1.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c95b53d309f903f33dfe5fd37e502a5c3a05ee3454d518e45df522a4f091b728
+	sha256:0e7c86f486935893c708287b30bd050a36ac827ec7fe5e43fe7cb198dd835fba
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -33,9 +33,6 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
-
-# installer is unable to overwrite files in usr/bin
-COMPONENT_PRE_INSTALL_ACTION += $(RM) $(PROTOUSRBINDIR)/pip$(PYTHON_VERSION) ;
 
 # usr/bin/pip3.x needs to be handled separately because we have no generic
 # rules covering it
