@@ -17,14 +17,14 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		MediaInfoLib
-COMPONENT_VERSION=	23.3
-HUMAN_VERSION=		23.03
+COMPONENT_VERSION=	23.4
+HUMAN_VERSION=		23.04
 COMPONENT_SUMMARY=	MediaInfo(Lib) is a convenient unified display of the most relevant technical and tag data for video and audio files.
 COMPONENT_PROJECT_URL=	https://github.com/MediaArea/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:547716cb4e77b6ba0eee73c000d661ea68bccf5b18e82c5ecb0407e0a153aa46
+COMPONENT_ARCHIVE_HASH=	sha256:afcbab2f849952d8e5ec9c4887db110b6f4d22f592ab6d8787232e9ef93c6fbb
 COMPONENT_FMRI=		library/libmediainfo
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	BSD 2-Clause
@@ -32,8 +32,6 @@ COMPONENT_LICENSE_FILE= LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-#COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) && \
-	cd $(@D)/Project/GNU/Library/ && ./autogen.sh; )
 COMPONENT_PRE_CONFIGURE_ACTION= ( cp -Rp $(SOURCE_DIR)/* $(@D) && \
 	cd $(@D)/Project/GNU/Library/ && ./autogen.sh; )
 
@@ -54,6 +52,7 @@ COMPONENT_PRE_TEST_ACTION= ( \
 	cp -Rp $(SOURCE_DIR)/Project/GNU/Library/test/* $(@D)/test/ && \
 	$(GSED) -i -e 's;PATH_SCRIPT=$$(dirname \"$$0\");PATH_SCRIPT=\"$(@D)/test\";' $(@D)/test/*.sh && \
 	chmod 755 $(@D)/test/*.sh )
+
 # clone_regression_files target clones the test data
 COMPONENT_TEST_TARGETS= clone_regression_files check
 
