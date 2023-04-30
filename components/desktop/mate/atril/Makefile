@@ -23,10 +23,9 @@ include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		atril
 COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=		2
+COMPONENT_MNR_VERSION=	1
 COMPONENT_SUMMARY=	MATE PDF document viewer
-COMPONENT_ARCHIVE_HASH= sha256:715e766eaede3fa5d8ca300fa3319fb2b63055dfdc6e971d8750c2aec624e45f
+COMPONENT_ARCHIVE_HASH= sha256:a53a613acb9701a18ad671bf590254d1ce836ba0ae1be2c0bd8948fdf6b491a4
 COMPONENT_FMRI=		desktop/pdf-viewer/atril
 COMPONENT_CLASSIFICATION=	Applications/Office
 COMPONENT_LICENSE=	GPLv3
@@ -37,13 +36,13 @@ include $(WS_MAKE_RULES)/common.mk
 # gobject-introspection
 COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=""
 
-CONFIGURE_OPTIONS+=	--enable-introspection
+CONFIGURE_OPTIONS += --enable-introspection
 # tested atril 1.26.0 with epub support and it's still poor.  It
 # uses webkitgtk2 for the epubs and can open some, but fails on
 # others.  Worse, Atril spawns webkitgtk2 processes for non-epub
 # documents too.  Leave epub disabled until that improves, maybe
 # with an updated webkitgtk?
-CONFIGURE_OPTIONS+=	--disable-epub
+CONFIGURE_OPTIONS += --disable-epub
 
 # test suite requires a python module called 'dogtail'
 # for testing GUI applications which we don't currently package.
