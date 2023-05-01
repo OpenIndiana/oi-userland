@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -217,7 +217,6 @@ file path=usr/include/mailutils/util.h
 file path=usr/include/mailutils/version.h
 file path=usr/include/mailutils/wordsplit.h
 file path=usr/include/mailutils/yyloc.h
-file path=usr/lib/$(MACH64)/charset.alias
 link path=usr/lib/$(MACH64)/libguile-mailutils-v-$(HUMAN_VERSION).so \
     target=libmu_scm.so.9
 link path=usr/lib/$(MACH64)/libmailutils.so target=libmailutils.so.9.0.0
@@ -275,10 +274,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/address.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/attribute.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/body.py
-hardlink \
-    path=usr/lib/python$(PYVER)/vendor-packages/mailutils/c_api.cpython-39.so \
-    target=c_api.so
 file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/c_api.so
+hardlink path=usr/lib/python$(PYVER)/vendor-packages/mailutils/c_api.so \
+    target=c_api.cpython-39.so
 file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/envelope.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/error.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mailutils/filter.py
