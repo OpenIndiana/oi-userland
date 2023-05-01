@@ -1,12 +1,15 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg, testpaths: tests
+rootdir: $(@D)
+configfile: setup.cfg
+testpaths: tests
 asyncio: mode=strict
-collecting ... collected 151 items
+collecting ... collected 150 items
 
 tests/test_auth/test_auth_cookie.py::test_basic PASSED
 tests/test_auth/test_auth_cookie.py::test_noop PASSED
@@ -76,7 +79,6 @@ tests/test_fixture.py::test_fixture_form PASSED
 tests/test_fixture.py::test_fixture_form_end PASSED
 tests/test_fixture.py::test_params_and_upload_files PASSED
 tests/test_fixture.py::test_unicode_path PASSED
-tests/test_grantip.py::test_make_app PASSED
 tests/test_grantip.py::test_req PASSED
 tests/test_gzipper.py::test_gzip PASSED
 tests/test_gzipper.py::test_gzip_head PASSED
@@ -101,7 +103,7 @@ tests/test_import_string.py::test_complex PASSED
 tests/test_import_string.py::test_simple PASSED
 tests/test_multidict.py::test_dict PASSED
 tests/test_multidict.py::test_unicode_dict PASSED
-tests/test_proxy.py::test_proxy_to_website PASSED
+tests/test_proxy.py::test_proxy_to_website SKIPPED (httpbin.org is t...)
 tests/test_recursive.py::test_ForwardRequestException PASSED
 tests/test_recursive.py::test_ForwardRequest_environ PASSED
 tests/test_recursive.py::test_ForwardRequest_factory PASSED
@@ -165,28 +167,24 @@ tests/test_httpserver.py:7
   $(@D)/tests/test_httpserver.py:7: DeprecationWarning: OpenSSL.tsafe is deprecated and will be removed
     from paste.httpserver import LimitedLengthFile, WSGIHandler, serve
 
-tests/test_grantip.py: 1 warning
-tests/test_cgitb_catcher.py: 1 warning
-tests/test_request.py: 1 warning
-tests/test_urlmap.py: 1 warning
-tests/test_errordocument.py: 1 warning
 tests/test_fileapp.py: 1 warning
+tests/test_cgitb_catcher.py: 1 warning
+tests/test_errordocument.py: 1 warning
+tests/test_urlmap.py: 1 warning
+tests/test_grantip.py: 1 warning
 tests/test_recursive.py: 1 warning
 tests/test_registry.py: 1 warning
 tests/test_urlparser.py: 1 warning
 tests/test_exceptions/test_error_middleware.py: 1 warning
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:786: DeprecationWarning: setup_module is deprecated
+tests/test_request.py: 1 warning
+  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:785: DeprecationWarning: setup_module is deprecated
     func(arg)
-
-tests/test_grantip.py::test_make_app
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:201: PytestReturnNotNoneWarning: Expected None, but tests/test_grantip.py::test_make_app returned <paste.fixture.TestApp object at 0x7fffa946ff50>, which will be an error in a future version of pytest.  Did you mean to use `assert` instead of `return`?
-    f"Expected None, but {pyfuncitem.nodeid} returned {result!r}, which will be an error in a "
 
 tests/test_recursive.py::test_ForwardRequestException
   $(@D)/tests/test_recursive.py:104: DeprecationWarning: ForwardRequestException(path_info=...) has been deprecated; please use ForwardRequestException(url=...)
     raise ForwardRequestException(path_info=self.url)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 151 passed, 13 warnings ========
+======== 149 passed, 1 skipped, 12 warnings ========
   py$(PYV): OK
   congratulations :)
