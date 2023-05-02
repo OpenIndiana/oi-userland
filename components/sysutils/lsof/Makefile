@@ -18,13 +18,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lsof
-COMPONENT_VERSION=	4.96.5
+COMPONENT_VERSION=	4.98.0
 COMPONENT_SUMMARY=	LSOF - lister of opened files
 COMPONENT_PROJECT_URL=	https://github.com/lsof-org/lsof
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/lsof-org/lsof/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e9030af1123ff052ab69e12ef55b8a17dc47ac4bccfba85ee1ca1f31acf29607
+COMPONENT_ARCHIVE_HASH= sha256:80308a614508814ac70eb2ae1ed2c4344dcf6076fa60afc7734d6b1a79e62b16
 COMPONENT_FMRI=		system/storage/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Administration and Configuration
 COMPONENT_LICENSE=	LSOF Copyright (no license)
