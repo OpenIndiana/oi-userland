@@ -20,27 +20,26 @@
 #
 # Copyright (c) 2015-2017, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=			32_and_64
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwpg
-COMPONENT_VERSION=	0.3.3
-COMPONENT_REVISION =	1
-COMPONENT_FMRI=     	library/c++/libwpg
-COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwpg
+COMPONENT_VERSION=	0.3.4
 COMPONENT_SUMMARY=      libwpg - library for importing and converting Corel WordPerfect(tm) Graphics images
+COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwpg
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:99b3f7f8832385748582ab8130fbb9e5607bd5179bebf9751ac1d51a53099d1c
+COMPONENT_ARCHIVE_HASH= sha256:b55fda9440d1e070630eb2487d8b8697cf412c214a27caee9df69cec7c004de3
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libwpg/files/libwpg/libwpg-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     	library/c++/libwpg
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
