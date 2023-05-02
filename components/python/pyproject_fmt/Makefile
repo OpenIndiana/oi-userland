@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_fmt
-HUMAN_VERSION =			0.9.2
+HUMAN_VERSION =			0.11.1
 COMPONENT_SUMMARY =		pyproject_fmt - Format your pyproject.toml file
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/53/81/eacf5ff8bc8ddc3b4bc20db588f8896a25c7fbef31cd7807204c1143ffeb/pyproject_fmt-0.9.2.tar.gz
+	https://files.pythonhosted.org/packages/c8/81/8ac209e08ef9603cc08bcf018dc16b78acb4517c1273d10a0ca818cf8c28/pyproject_fmt-0.11.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a0c73df74ec0d95ddc04ecc4b836d247f1666656f583157ba6f141a46448adda
+	sha256:148f5034d10927d38fc8ee7523de6481e30c900ecad294b515b7b30c01fe5aa4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,6 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += library/python/natsort
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/tomlkit
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
