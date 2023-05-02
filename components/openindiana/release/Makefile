@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           release
 COMPONENT_VERSION=        0.$(PKG_SOLARIS_VERSION)	
-COMPONENT_REVISION=       16
+COMPONENT_REVISION=       17
 COMPONENT_SUMMARY=        OpenIndiana Release Files 
 COMPONENT_PROJECT_URL=    https://www.openindiana.org/
 COMPONENT_FMRI=           release
