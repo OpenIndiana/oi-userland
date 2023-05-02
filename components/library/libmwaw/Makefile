@@ -24,25 +24,25 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmwaw
-COMPONENT_VERSION=	0.3.21
+COMPONENT_VERSION=	0.3.22
 COMPONENT_FMRI=     library/c++/libmwaw
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libmwaw
 COMPONENT_SUMMARY=      A library for reading various old mac text documents
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:e8750123a78d61b943cef78b7736c8a7f20bb0a649aa112402124fba794fc21c
+COMPONENT_ARCHIVE_HASH=	sha256:a1a39ffcea3ff2a7a7aae0c23877ddf4918b554bf82b0de5d7ce8e7f61ea8e32
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libmwaw/files/libmwaw/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=      LGPLv2, MPLv2
 
-# Fix threading detection issue introduced with boost 1.64
-CXXFLAGS+= -std=c++11 -pthread
-
-TEST_TARGET=	$(NO_TESTS)
+TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
+# Fix threading detection issue introduced with boost 1.64
+CXXFLAGS += -std=c++11 -pthread
+
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
