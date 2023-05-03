@@ -19,17 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mkdocs
-HUMAN_VERSION =			1.4.2
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.4.3
 COMPONENT_SUMMARY =		mkdocs - Project documentation with Markdown.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ff/2c/932a6df2847c0ecf0875cd00bede939225734b2815fc866c78edb46d9e5d/mkdocs-1.4.2.tar.gz
+	https://files.pythonhosted.org/packages/b0/ef/49b4427e5eec761b77a3c3c421d3fd63010e2798b7401dc0fa2b875ef6b5/mkdocs-1.4.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8947af423a6d0facf41ea1195b8e1e8c85ad94ac95ae307fe11232e0424b11c5
+	sha256:5955093bbd4dd2e9403c5afaf57324ad8b04f16886512a3ee6ef828956481c57
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -38,10 +37,8 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_POST_INSTALL_ACTION += \
 	$(FIND) $(PROTO_DIR)/$(PYTHON_LIB) -name '*.~*~' -exec rm {} \; ;
 
-# We are unable to automatically detect the babel build dependency (yet)
-PYTHON_REQUIRED_PACKAGES += library/python/babel
-
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/babel
 PYTHON_REQUIRED_PACKAGES += library/python/click
 PYTHON_REQUIRED_PACKAGES += library/python/ghp-import
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
