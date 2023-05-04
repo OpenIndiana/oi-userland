@@ -19,18 +19,22 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pre_commit
-HUMAN_VERSION =			3.3.1
+HUMAN_VERSION =			2.21.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pre_commit - A framework for managing and maintaining multi-language pre-commit hooks.
 COMPONENT_PROJECT_URL =		https://github.com/pre-commit/pre-commit
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f6/f9/fd40593d83357bb03733c0e77e71a08f2f5f523595d0a10401d7e5c22f16/pre_commit-3.3.1.tar.gz
+	https://files.pythonhosted.org/packages/6b/00/1637ae945c6e10838ef5c41965f1c864e59301811bb203e979f335608e7c/pre_commit-2.21.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:733f78c9a056cdd169baa6cd4272d51ecfda95346ef8a89bf93712706021b907
+	sha256:31ef31af7e474a8d8995027fefdfcf509b5c913ff31f2015b4ec4beb26a6f658
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
+# pre_commit-3.3.0 was mistakenly packaged for Python 3.7
+COMPONENT_VERSION =		3.3.0
+
 # pre_commit >= 3.0.0 requires Python >= 3.8
-PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
+PYTHON_VERSIONS = 3.7
 
 # https://github.com/pre-commit/pre-commit/issues/2609
 # https://github.com/pre-commit/pre-commit/issues/2872
