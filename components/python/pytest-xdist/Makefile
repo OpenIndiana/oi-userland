@@ -15,18 +15,17 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-xdist
-COMPONENT_VERSION =		3.1.0
+HUMAN_VERSION =			3.2.1
 COMPONENT_SUMMARY =		pytest-xdist - pytest xdist plugin for distributed testing, most importantly across multiple CPUs
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-xdist
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/0d/e5/f7ece02dc1b4bc24a3e37be6a78251e03fff4193126d7ce126c450644696/pytest-xdist-3.1.0.tar.gz
+	https://files.pythonhosted.org/packages/e3/f8/de2dcd2938c05270c9881cb1463dea388acd0b239ee76809160420157784/pytest-xdist-3.2.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:40fdb8f3544921c5dfcd486ac080ce22870e71d82ced6d2e78fa97c2addd480c
+	sha256:1849bd98d8b242b948e472db7478e090bf3361912a8fed87992ed94085f54727
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

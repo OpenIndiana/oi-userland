@@ -1,11 +1,15 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m pytest
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: tox.ini, testpaths: testing
-collecting ... collected 180 items
+rootdir: $(@D)
+configfile: tox.ini
+testpaths: testing
+asyncio: mode=strict
+collecting ... collected 191 items
 
 testing/acceptance_test.py::TestAPI::test_get_xdist_worker_id PASSED
 testing/acceptance_test.py::TestAPI::test_is_xdist_controller PASSED
@@ -111,6 +115,15 @@ testing/test_dsession.py::TestLoadScheduling::test_schedule_batch_size PASSED
 testing/test_dsession.py::TestLoadScheduling::test_schedule_fewer_tests_than_nodes PASSED
 testing/test_dsession.py::TestLoadScheduling::test_schedule_fewer_than_two_tests_per_node PASSED
 testing/test_dsession.py::TestLoadScheduling::test_schedule_load_simple PASSED
+testing/test_dsession.py::TestLoadScheduling::test_schedule_maxchunk_1 PASSED
+testing/test_dsession.py::TestLoadScheduling::test_schedule_maxchunk_none PASSED
+testing/test_dsession.py::TestWorkStealingScheduling::test_add_remove_node PASSED
+testing/test_dsession.py::TestWorkStealingScheduling::test_different_tests_collected PASSED
+testing/test_dsession.py::TestWorkStealingScheduling::test_ideal_case PASSED
+testing/test_dsession.py::TestWorkStealingScheduling::test_schedule_fewer_tests_than_nodes PASSED
+testing/test_dsession.py::TestWorkStealingScheduling::test_schedule_fewer_than_two_tests_per_node PASSED
+testing/test_dsession.py::TestWorkStealingScheduling::test_steal_on_add_node PASSED
+testing/test_dsession.py::TestWorkStealingScheduling::test_stealing PASSED
 testing/test_dsession.py::test_default_max_worker_restart PASSED
 testing/test_dsession.py::test_pytest_issue419 XFAIL (duplicate test...)
 testing/test_dsession.py::test_report_collection_diff_different PASSED
@@ -159,6 +172,8 @@ testing/test_remote.py::TestWorkerInteractor::test_process_from_remote_error_han
 testing/test_remote.py::TestWorkerInteractor::test_remote_collect_fail PASSED
 testing/test_remote.py::TestWorkerInteractor::test_remote_collect_skip PASSED
 testing/test_remote.py::TestWorkerInteractor::test_runtests_all PASSED
+testing/test_remote.py::TestWorkerInteractor::test_steal_empty_queue PASSED
+testing/test_remote.py::TestWorkerInteractor::test_steal_work PASSED
 testing/test_remote.py::test_remote_env_vars PASSED
 testing/test_remote.py::test_remote_inner_argv PASSED
 testing/test_remote.py::test_remote_mainargv PASSED
@@ -189,110 +204,6 @@ testing/test_workermanage.py::test_unserialize_warning_msg[UserWarning] PASSED
 testing/test_workermanage.py::test_warning_serialization_tweaked_module PASSED
 
 =============================== warnings summary ===============================
-testing/acceptance_test.py: 83 warnings
-testing/test_dsession.py: 10 warnings
-testing/test_looponfail.py: 8 warnings
-testing/test_newhooks.py: 4 warnings
-testing/test_plugin.py: 36 warnings
-testing/test_remote.py: 11 warnings
-testing/test_workermanage.py: 14 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_travis_fold.py:186: PytestDeprecationWarning: The hookimpl pytest_configure uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(trylast=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    @pytest.mark.trylast  # to let 'terminalreporter' be registered first
-
-testing/acceptance_test.py: 83 warnings
-testing/test_dsession.py: 10 warnings
-testing/test_looponfail.py: 8 warnings
-testing/test_newhooks.py: 4 warnings
-testing/test_plugin.py: 36 warnings
-testing/test_remote.py: 11 warnings
-testing/test_workermanage.py: 14 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:136: PytestDeprecationWarning: The hookimpl pytest_load_initial_conftests uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(tryfirst=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    @pytest.mark.tryfirst
-
-testing/acceptance_test.py: 83 warnings
-testing/test_dsession.py: 10 warnings
-testing/test_looponfail.py: 8 warnings
-testing/test_newhooks.py: 4 warnings
-testing/test_plugin.py: 36 warnings
-testing/test_remote.py: 11 warnings
-testing/test_workermanage.py: 14 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_benchmark/hookspec.py:48: PytestDeprecationWarning: The hookspec pytest_benchmark_generate_commit_info uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookspec(firstresult=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_benchmark_generate_commit_info(config):
-
-testing/acceptance_test.py: 83 warnings
-testing/test_dsession.py: 10 warnings
-testing/test_looponfail.py: 8 warnings
-testing/test_newhooks.py: 4 warnings
-testing/test_plugin.py: 36 warnings
-testing/test_remote.py: 11 warnings
-testing/test_workermanage.py: 14 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_benchmark/hookspec.py:93: PytestDeprecationWarning: The hookspec pytest_benchmark_generate_json uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookspec(firstresult=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_benchmark_generate_json(config, benchmarks, include_data, machine_info, commit_info):
-
-testing/acceptance_test.py: 83 warnings
-testing/test_dsession.py: 10 warnings
-testing/test_looponfail.py: 8 warnings
-testing/test_newhooks.py: 4 warnings
-testing/test_plugin.py: 36 warnings
-testing/test_remote.py: 11 warnings
-testing/test_workermanage.py: 14 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_benchmark/hookspec.py:22: PytestDeprecationWarning: The hookspec pytest_benchmark_generate_machine_info uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookspec(firstresult=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_benchmark_generate_machine_info(config):
-
-testing/acceptance_test.py: 83 warnings
-testing/test_dsession.py: 10 warnings
-testing/test_looponfail.py: 8 warnings
-testing/test_newhooks.py: 4 warnings
-testing/test_plugin.py: 36 warnings
-testing/test_remote.py: 11 warnings
-testing/test_workermanage.py: 14 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_benchmark/hookspec.py:72: PytestDeprecationWarning: The hookspec pytest_benchmark_group_stats uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookspec(firstresult=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_benchmark_group_stats(config, benchmarks, group_by):
-
-testing/acceptance_test.py: 83 warnings
-testing/test_dsession.py: 10 warnings
-testing/test_looponfail.py: 8 warnings
-testing/test_newhooks.py: 4 warnings
-testing/test_plugin.py: 36 warnings
-testing/test_remote.py: 11 warnings
-testing/test_workermanage.py: 14 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_benchmark/hookspec.py:1: PytestDeprecationWarning: The hookspec pytest_benchmark_scale_unit uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookspec(firstresult=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    def pytest_benchmark_scale_unit(config, unit, benchmarks, best, worst, sort):
-
-testing/acceptance_test.py: 83 warnings
-testing/test_dsession.py: 10 warnings
-testing/test_looponfail.py: 8 warnings
-testing/test_newhooks.py: 4 warnings
-testing/test_plugin.py: 36 warnings
-testing/test_remote.py: 11 warnings
-testing/test_workermanage.py: 14 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_benchmark/plugin.py:437: PytestDeprecationWarning: The hookimpl pytest_configure uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(trylast=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    @pytest.mark.trylast  # force the other plugins to initialise, fixes issue with capture not being properly initialised
-
 testing/acceptance_test.py: 76 warnings
 testing/test_dsession.py: 1 warning
 testing/test_newhooks.py: 4 warnings
@@ -302,7 +213,6 @@ testing/test_remote.py: 4 warnings
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 167 passed, 2 skipped, 11 xfailed, 1413 warnings ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 178 passed, 2 skipped, 11 xfailed, 85 warnings ========
+  py$(PYV): OK
   congratulations :)
