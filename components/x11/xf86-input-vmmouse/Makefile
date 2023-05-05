@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-input-vmmouse
-COMPONENT_VERSION= 13.1.0
-COMPONENT_REVISION= 4
-COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-vmmouse
+COMPONENT_VERSION= 13.2.0
 COMPONENT_SUMMARY= xf86-input-vmmouse - VMWare guest mouse input driver for the Xorg X server
-COMPONENT_ARCHIVE_HASH= \
-  sha256:0af558957ac1be1b2863712c2475de8f4d7f14921fd01ded2e2fde4921b19319
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:56f077580ab8f02e2f40358c5c46b0ae3e1828fc77744526b24adf1ceea339b8
+COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-vmmouse
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -46,3 +45,6 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libx11
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
