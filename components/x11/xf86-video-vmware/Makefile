@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-vmware
-COMPONENT_VERSION= 13.3.0
-COMPONENT_REVISION= 4
-COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-vmware
+COMPONENT_VERSION= 13.4.0
 COMPONENT_SUMMARY= xf86-video-vmware - VMWare driver for the Xorg X server
-COMPONENT_ARCHIVE_HASH= \
-  sha256:47971924659e51666a757269ad941a059ef5afe7a47b5101c174a6022ac4066c
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:aed31ee5ed5ecc6e2226705383e7ad06f7602c1376a295305f376b17af3eb81a
+COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-vmware
 
 include $(WS_MAKE_RULES)/common.mk
 
