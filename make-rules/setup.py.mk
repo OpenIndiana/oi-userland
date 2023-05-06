@@ -218,9 +218,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 	done ;
 endif
 
-# Make sure the .depend-test file exists in a case the test style below does
-# not provide its own recipe.
-COMPONENT_POST_INSTALL_ACTION +=	$(TOUCH) $(@D)/.depend-test ;
+# Remove any previous dependency files
+COMPONENT_POST_INSTALL_ACTION +=	$(RM) $(@D)/.depend-runtime $(@D)/.depend-test ;
 
 # Define Python version specific filenames for tests.
 ifeq ($(strip $(USE_COMMON_TEST_MASTER)),no)
@@ -378,7 +377,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 		for e in $$(PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(TOX_TESTENV)) ; do \
 			PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
-		done ) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' > $(@D)/.depend-test ; \
+		done ) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' >> $(@D)/.depend-test ; \
 	fi ;
 else ifeq ($(strip $(TEST_STYLE)),pytest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
@@ -496,7 +495,7 @@ REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend-runtime.res
 # Generate raw lists of runtime dependencies per Python version
 COMPONENT_POST_INSTALL_ACTION += \
 	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
-		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) > $(@D)/.depend-runtime ;
+		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) >> $(@D)/.depend-runtime ;
 
 # Convert raw per version lists of runtime dependencies to single resolved
 # runtime dependency list.  The dependency on META.depend-test.required here is
@@ -504,6 +503,16 @@ COMPONENT_POST_INSTALL_ACTION += \
 $(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_$(MK_BITS)) $(BUILD_DIR)/META.depend-test.required
 	$(CAT) $(INSTALL_$(MK_BITS):%.installed=%.depend-runtime) | $(SORT) -u \
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' > $@
+
+# Generate raw lists of test dependencies per Python version
+COMPONENT_POST_INSTALL_ACTION += \
+	cd $(@D) ; \
+	for f in $(TEST_REQUIREMENTS) ; do \
+		$(CAT) $$f ; \
+	done | $(WS_TOOLS)/python-resolve-deps \
+		PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
+	| $(PYTHON) $(WS_TOOLS)/python-requires - >> $(@D)/.depend-test ;
 
 # Convert raw per version lists of test dependencies to single list of
 # TEST_REQUIRED_PACKAGES entries
