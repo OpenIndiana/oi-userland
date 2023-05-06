@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ruamel.yaml
-HUMAN_VERSION =			0.17.22
+HUMAN_VERSION =			0.17.23
 COMPONENT_SUMMARY =		ruamel.yaml - ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order
 COMPONENT_PROJECT_URL =		https://sourceforge.net/p/ruamel-yaml/code/ci/default/tree
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/eb/a4/e056a6f778bfc01d653dd777e5ff57c1f1b48fcaa889d75bac0ef9650768/ruamel.yaml-0.17.22.tar.gz
+	https://files.pythonhosted.org/packages/c1/99/874594faa80ae4a5eb5194e57707f150ed09f511c3f625ebeca16af8a1b0/ruamel.yaml-0.17.23.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c22ec58aaca5105f771cb8f7ac45ad631b5e8b00454ebe1822d442fb696e9e62
+	sha256:40e549c264e799d8e4cd9e54e869ffa60c9436e1ef497500b08fbda3b92a1517
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
