@@ -32,7 +32,7 @@ function usage
 }
 
 
-VERSION=
+OPT_VERSION=
 OBSOLETE=
 UPGRADE_ONLY=0
 DIRECTORY=
@@ -40,7 +40,7 @@ while getopts ":hd:l:o:u" OPT ; do
 	case "$OPT" in
 	"?"|"h")	usage ;;
 	"d")		DIRECTORY="$OPTARG" ;;
-	"l")		VERSION="$OPTARG" ;;
+	"l")		OPT_VERSION="$OPTARG" ;;
 	"o")		OBSOLETE="$OBSOLETE $OPTARG" ;;
 	"u")		UPGRADE_ONLY=1 ;;
 	esac
@@ -90,15 +90,6 @@ function get_PKGINFO_entry
 		| sed -e "s/^$ENTRY: //" -e 's/ *$//'
 }
 
-# Find the latest version if not provided by user
-if [[ -z "$VERSION" ]] ; then
-	VERSION=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.version')
-	if (($? != 0)) || [[ -z "$VERSION" || "$VERSION" == "null" ]] ; then
-		printf "FATAL: Failed to get version for project %s from pypi\n" "$PROJECT" >&2
-		exit 1
-	fi
-fi
-
 
 # Prepare the directory
 [[ -z "$DIRECTORY" ]] && DIRECTORY="python/$DISTRIBUTION"
@@ -107,6 +98,31 @@ mkdir -p "$DIR"
 cd "$DIR"
 git restore --staged . > /dev/null 2>&1
 git checkout . > /dev/null 2>&1
+touch "$CONF"
+
+
+# Following variables could be set by the hook-begin snippet
+VERSION=
+HOMEPAGE=
+DOWNLOAD_URL=
+
+# Execute hook-begin snippet
+gsed -e '0,/^%hook-begin%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
+. "./$SNIPPET"
+rm -f "$SNIPPET"
+
+# Version specified as option takes precedence
+[[ -n "$OPT_VERSION" ]] && VERSION="$OPT_VERSION"
+
+# Find the latest version if not already provided
+if [[ -z "$VERSION" ]] ; then
+	VERSION=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.version')
+	if (($? != 0)) || [[ -z "$VERSION" || "$VERSION" == "null" ]] ; then
+		printf "FATAL: Failed to get version for project %s from pypi\n" "$PROJECT" >&2
+		exit 1
+	fi
+fi
+
 
 # Is this new project, or just a rebuild?
 NEW=1
@@ -130,33 +146,37 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 fi
 
 
-# Get project homepage
-HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.home_page')
-if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
-	HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.project_urls.Homepage')
+# Get project homepage if not already provided
+if [[ -z "$HOMEPAGE" ]] ; then
+	HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.home_page')
 	if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
-		printf "WARNING: Failed to get homepage for project %s from pypi\n" "$PROJECT" >&2
-		HOMEPAGE=$(get_PKGINFO_entry "Home-page")
+		HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.project_urls.Homepage')
+		if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
+			printf "WARNING: Failed to get homepage for project %s from pypi\n" "$PROJECT" >&2
+			HOMEPAGE=$(get_PKGINFO_entry "Home-page")
+		fi
 	fi
 fi
 
-# Get release data from pypi
-PYPI_PROJECT_RELEASE=$($CURL "$APIURL/$PROJECT/$VERSION/json")
-if (($? != 0)) || [[ -z "$PYPI_PROJECT_RELEASE" ]] ; then
-	printf "FATAL: Failed to get data for version %s from pypi\n" "$VERSION" >&2
-	exit 1
-fi
+# Get download url if not already provided
+if [[ -z "$DOWNLOAD_URL" ]] ; then
+	# Get release data from pypi
+	PYPI_PROJECT_RELEASE=$($CURL "$APIURL/$PROJECT/$VERSION/json")
+	if (($? != 0)) || [[ -z "$PYPI_PROJECT_RELEASE" ]] ; then
+		printf "FATAL: Failed to get data for version %s from pypi\n" "$VERSION" >&2
+		exit 1
+	fi
 
-# Get download url
-DOWNLOAD_URL=$(printf "%s" "$PYPI_PROJECT_RELEASE" | /usr/bin/jq -r '.urls[]|select(.packagetype=="sdist")|.url')
-if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
-	printf "WARNING: Failed to get download url for project %s, version %s from pypi\n" "$PROJECT" "$VERSION" >&2
-	DOWNLOAD_URL=
+	# Get download url
+	DOWNLOAD_URL=$(printf "%s" "$PYPI_PROJECT_RELEASE" | /usr/bin/jq -r '.urls[]|select(.packagetype=="sdist")|.url')
+	if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
+		printf "WARNING: Failed to get download url for project %s, version %s from pypi\n" "$PROJECT" "$VERSION" >&2
+		DOWNLOAD_URL=
+	fi
 fi
 
 
 # Remove everything from git (except known patches, history, and $CONF)
-touch "$CONF"
 grep "^%patch%" "$CONF" | while read TAG PATCH ; do rm -f "patches/$PATCH" ; done
 rm -f history "$CONF"
 find . -type f | while read f ; do git rm "$f" > /dev/null 2>&1 ; done
