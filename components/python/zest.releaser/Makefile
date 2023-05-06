@@ -15,17 +15,17 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zest.releaser
-HUMAN_VERSION =			7.3.0
+HUMAN_VERSION =			8.0.0
 COMPONENT_SUMMARY =		zest.releaser - Software releasing made easy and repeatable
-COMPONENT_PROJECT_URL =		https://zestreleaser.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/86/47/3420b2ef13b33a72c9a6f42316d41ff9ac43bb0132a5a02adba4b7c6e33c/zest.releaser-7.3.0.tar.gz
+	https://files.pythonhosted.org/packages/e9/24/35f528cbe655961c6e71cf479ce11d6acfebf74ae2f9619261800ffdc26c/zest.releaser-8.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:76ea1e569c21657f025bbc7a8157db78e165b4efc349f0cd0db9fac143292d11
+	sha256:9b6495d02e594b318862f35cec84c596bf3fe37842db0009c39201f2ebcef809
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.GPL
 
@@ -42,10 +42,17 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Force no colors and more verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- -vv
+
+# Normalize random temporary directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|\(/testtemp\)......../|\1XXXXXXXX/|'"
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/colorama
 PYTHON_REQUIRED_PACKAGES += library/python/requests
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/twine
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
