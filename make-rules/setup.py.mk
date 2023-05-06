@@ -336,7 +336,8 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^py\$$(PYV) installed:/d'"		# depends on set 
 COMPONENT_TEST_TRANSFORMS += "-e '/PYTHONHASHSEED/d'"			# this is random
 
 # Normalize zope.testrunner test results
-COMPONENT_TEST_TRANSFORMS += "-e 's/ in [0-9]\{1,\}\.[0-9]\{3\} seconds//'"	# timing
+COMPONENT_TEST_TRANSFORMS += \
+	"-e 's/ in \([0-9]\{1,\} minutes \)\{0,1\}[0-9]\{1,\}\.[0-9]\{3\} seconds//'"	# timing
 
 # Remove timing for tox 4 test results
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  py\$$(PYV): OK\) (.* seconds)$$/\1/'"
