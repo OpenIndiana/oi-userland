@@ -1,45 +1,169 @@
 rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so misc.so hooks.so blockonkeys.so blockonbackground.so scan.so datatype.so auth.so keyspace_events.so blockedclient.so getkeys.so test_lazyfree.so timer.so defragtest.so hash.so zset.so stream.so commandfilter.xo basics.xo testrdb.xo fork.xo infotest.xo propagate.xo misc.xo hooks.xo blockonkeys.xo blockonbackground.xo scan.xo datatype.xo auth.xo keyspace_events.xo blockedclient.xo getkeys.xo test_lazyfree.xo timer.xo defragtest.xo hash.xo zset.xo stream.xo
-[[0;32;49mok[0m]: DUMP / RESTORE are able to serialize / unserialize a simple key
-[[0;32;49mok[0m]: Handle an empty query
-[[0;32;49mok[0m]: RESTORE can set an arbitrary expire to the materialized key
-[[0;32;49mok[0m]: Negative multibulk length
-[[0;32;49mok[0m]: RESTORE can set an expire that overflows a 32 bit integer
-[[0;32;49mok[0m]: RESTORE can set an absolute expire
-[[0;32;49mok[0m]: Out of range multibulk length
+[[0;32;49mok[0m]: AUTH fails if there is no password configured server side
 [[0;32;49mok[0m]: DEL against a single item
-[[0;32;49mok[0m]: RESTORE with ABSTTL in the past
-[[0;32;49mok[0m]: Wrong multibulk payload header
-[[0;32;49mok[0m]: Negative multibulk payload length
 [[0;32;49mok[0m]: Vararg DEL
-[[0;32;49mok[0m]: RESTORE can set LRU
-[[0;32;49mok[0m]: Out of range multibulk payload length
 [[0;32;49mok[0m]: KEYS with pattern
-[[0;32;49mok[0m]: RESTORE can set LFU
 [[0;32;49mok[0m]: KEYS to get all keys
-[[0;32;49mok[0m]: Non-number multibulk payload length
-[[0;32;49mok[0m]: RESTORE returns an error of the key already exists
-[[0;32;49mok[0m]: RESTORE returns an error of the key already exists
-[[0;32;49mok[0m]: DBSIZE
-[[0;32;49mok[0m]: Multi bulk request not followed by bulk arguments
-[[0;32;49mok[0m]: DEL all keys
-[[0;32;49mok[0m]: RESTORE can overwrite an existing key with REPLACE
-[[0;32;49mok[0m]: RESTORE can detect a syntax error for unrecongized options
-[[0;32;49mok[0m]: RESTORE can detect a syntax error for unrecongized options
-[[0;32;49mok[0m]: Generic wrong number of args
-[[0;32;49mok[0m]: DUMP of non existing key returns nil
-[[0;32;49mok[0m]: Unbalanced number of quotes
 [[0;32;49mok[0m]: SET and GET an item
+[[0;32;49mok[0m]: DBSIZE
 [[0;32;49mok[0m]: SET and GET an empty item
+[[0;32;49mok[0m]: INCR against non existing key
+[[0;32;49mok[0m]: INCR against key created by incr itself
+[[0;32;49mok[0m]: DEL all keys
+[[0;32;49mok[0m]: INCR against key originally set with SET
+[[0;32;49mok[0m]: INCR over 32bit value
+[[0;32;49mok[0m]: INCRBY over 32bit value with over 32bit increment
+[[0;32;49mok[0m]: INCR fails against key with spaces (left)
+[[0;32;49mok[0m]: INCR fails against key with spaces (right)
+[[0;32;49mok[0m]: INCR fails against key with spaces (both)
+[[0;32;49mok[0m]: INCR fails against a key holding a list
+[[0;32;49mok[0m]: DECRBY over 32bit value with over 32bit increment, negative res
+[[0;32;49mok[0m]: INCR uses shared objects in the 0-9999 range
+[[0;32;49mok[0m]: Check encoding - ziplist
+[[0;32;49mok[0m]: INCR can modify objects in-place
+[[0;32;49mok[0m]: ZSET basic ZADD and score update - ziplist
+[[0;32;49mok[0m]: INCRBYFLOAT against non existing key
+[[0;32;49mok[0m]: ZSET element can't be set to NaN with ZADD - ziplist
+[[0;32;49mok[0m]: INCRBYFLOAT against key originally set with SET
+[[0;32;49mok[0m]: ZSET element can't be set to NaN with ZINCRBY - ziplist
+[[0;32;49mok[0m]: INCRBYFLOAT over 32bit value
+[[0;32;49mok[0m]: INCRBYFLOAT over 32bit value with over 32bit increment
+[[0;32;49mok[0m]: ZADD with options syntax error with incomplete pair - ziplist
+[[0;32;49mok[0m]: ZADD with options syntax error with incomplete pair - ziplist
+[[0;32;49mok[0m]: INCRBYFLOAT fails against key with spaces (left)
+[[0;32;49mok[0m]: ZADD XX option without key - ziplist
+[[0;32;49mok[0m]: INCRBYFLOAT fails against key with spaces (right)
+[[0;32;49mok[0m]: ZADD XX existing key - ziplist
+[[0;32;49mok[0m]: INCRBYFLOAT fails against key with spaces (both)
+[[0;32;49mok[0m]: ZADD XX returns the number of elements actually added - ziplist
+[[0;32;49mok[0m]: INCRBYFLOAT fails against a key holding a list
+[[0;32;49mok[0m]: INCRBYFLOAT does not allow NaN or Infinity
+[[0;32;49mok[0m]: INCRBYFLOAT decrement
+[[0;32;49mok[0m]: ZADD XX updates existing elements score - ziplist
+[[0;32;49mok[0m]: string to double with null terminator
+[[0;32;49mok[0m]: No negative zero
+[[0;32;49mok[0m]: ZADD GT updates existing elements when new scores are greater - ziplist
+[[0;32;49mok[0m]: ZADD LT updates existing elements when new scores are lower - ziplist
+[[0;32;49mok[0m]: ZADD GT XX updates existing elements when new scores are greater and skips new elements - ziplist
+[[0;32;49mok[0m]: ZADD LT XX updates existing elements when new scores are lower and skips new elements - ziplist
+[[0;32;49mok[0m]: ZADD XX and NX are not compatible - ziplist
+[[0;32;49mok[0m]: ZADD NX with non existing key - ziplist
+[[0;32;49mok[0m]: ZADD NX only add new elements without updating old ones - ziplist
+[[0;32;49mok[0m]: ZADD GT and NX are not compatible - ziplist
+[[0;32;49mok[0m]: ZADD LT and NX are not compatible - ziplist
+[[0;32;49mok[0m]: ZADD LT and GT are not compatible - ziplist
+[[0;32;49mok[0m]: ZADD INCR LT/GT replies with nill if score not updated - ziplist
+[[0;32;49mok[0m]: ZADD INCR LT/GT with inf - ziplist
+[[0;32;49mok[0m]: ZADD INCR works like ZINCRBY - ziplist
+[[0;32;49mok[0m]: ZADD INCR works with a single score-elemenet pair - ziplist
+[[0;32;49mok[0m]: ZADD CH option changes return value to all changed elements - ziplist
+[[0;32;49mok[0m]: ZINCRBY calls leading to NaN result in error - ziplist
+[[0;32;49mok[0m]: ZINCRBY calls leading to NaN result in error - ziplist
+[[0;32;49mok[0m]: ZADD - Variadic version base case - $encoding
+[[0;32;49mok[0m]: ZADD - Return value is the number of actually added items - $encoding
+[[0;32;49mok[0m]: ZADD - Variadic version does not add nothing on single parsing err - $encoding
+[[0;32;49mok[0m]: ZADD - Variadic version does not add nothing on single parsing err - $encoding
+[[0;32;49mok[0m]: ZADD - Variadic version will raise error on missing arg - $encoding
+[[0;32;49mok[0m]: ZADD - Variadic version will raise error on missing arg - $encoding
+[[0;32;49mok[0m]: ZINCRBY does not work variadic even if shares ZADD implementation - $encoding
+[[0;32;49mok[0m]: ZCARD basics - ziplist
+[[0;32;49mok[0m]: ZREM removes key after last element is removed - ziplist
+[[0;32;49mok[0m]: ZREM variadic version - ziplist
+[[0;32;49mok[0m]: ZREM variadic version -- remove elements after key deletion - ziplist
 [[0;32;49mok[0m]: SCAN basic
+[[0;32;49mok[0m]: ZRANGE basics - ziplist
+[[0;32;49mok[0m]: ZREVRANGE basics - ziplist
+[[0;32;49mok[0m]: ZRANK/ZREVRANK basics - ziplist
+[[0;32;49mok[0m]: ZRANK - after deletion - ziplist
+[[0;32;49mok[0m]: ZINCRBY - can create a new sorted set - ziplist
+[[0;32;49mok[0m]: ZINCRBY - increment and decrement - ziplist
+[[0;32;49mok[0m]: ZINCRBY return value - ziplist
+[[0;32;49mok[0m]: ZRANGEBYSCORE/ZREVRANGEBYSCORE/ZCOUNT basics - ziplist
+[[0;32;49mok[0m]: ZRANGEBYSCORE with WITHSCORES - ziplist
+[[0;32;49mok[0m]: ZRANGEBYSCORE with LIMIT - ziplist
+[[0;32;49mok[0m]: ZRANGEBYSCORE with LIMIT and WITHSCORES - ziplist
+[[0;32;49mok[0m]: ZRANGEBYSCORE with non-value min or max - ziplist
+[[0;32;49mok[0m]: ZRANGEBYLEX/ZREVRANGEBYLEX/ZLEXCOUNT basics - ziplist
+[[0;32;49mok[0m]: ZLEXCOUNT advanced - ziplist
+[[0;32;49mok[0m]: ZRANGEBYSLEX with LIMIT - ziplist
+[[0;32;49mok[0m]: ZRANGEBYLEX with invalid lex range specifiers - ziplist
+[[0;32;49mok[0m]: ZREMRANGEBYSCORE basics - ziplist
+[[0;32;49mok[0m]: ZREMRANGEBYSCORE with non-value min or max - ziplist
 [[0;32;49mok[0m]: SCAN COUNT
-[[0;32;49mok[0m]: Protocol desync regression test #1
+[[0;32;49mok[0m]: ZREMRANGEBYRANK basics - ziplist
+[[0;32;49mok[0m]: ZUNIONSTORE against non-existing key doesn't set destination - ziplist
+[[0;32;49mok[0m]: ZUNION/ZINTER/ZDIFF against non-existing key - ziplist
+[[0;32;49mok[0m]: ZUNIONSTORE with empty set - ziplist
+[[0;32;49mok[0m]: ZUNION/ZINTER/ZDIFF with empty set - ziplist
+[[0;32;49mok[0m]: ZUNIONSTORE basics - ziplist
+[[0;32;49mok[0m]: ZUNION/ZINTER/ZDIFF with integer members - ziplist
+[[0;32;49mok[0m]: ZUNIONSTORE with weights - ziplist
+[[0;32;49mok[0m]: ZUNION with weights - ziplist
+[[0;32;49mok[0m]: ZUNIONSTORE with a regular set and weights - ziplist
+[[0;32;49mok[0m]: ZUNIONSTORE with AGGREGATE MIN - ziplist
+[[0;32;49mok[0m]: ZUNION/ZINTER with AGGREGATE MIN - ziplist
+[[0;32;49mok[0m]: ZUNIONSTORE with AGGREGATE MAX - ziplist
+[[0;32;49mok[0m]: ZUNION/ZINTER with AGGREGATE MAX - ziplist
+[[0;32;49mok[0m]: ZINTERSTORE basics - ziplist
+[[0;32;49mok[0m]: ZINTER basics - ziplist
+[[0;32;49mok[0m]: ZINTER RESP3 - ziplist
 [[0;32;49mok[0m]: SCAN MATCH
-[[0;32;49mok[0m]: Protocol desync regression test #2
+[[0;32;49mok[0m]: ZINTERSTORE with weights - ziplist
+[[0;32;49mok[0m]: ZINTER with weights - ziplist
+[[0;32;49mok[0m]: ZINTERSTORE with a regular set and weights - ziplist
+[[0;32;49mok[0m]: ZINTERSTORE with AGGREGATE MIN - ziplist
+[[0;32;49mok[0m]: ZINTERSTORE with AGGREGATE MAX - ziplist
+[[0;32;49mok[0m]: ZUNIONSTORE with +inf/-inf scores - ziplist
+[[0;32;49mok[0m]: ZUNIONSTORE with NaN weights - ziplist
+[[0;32;49mok[0m]: ZINTERSTORE with +inf/-inf scores - ziplist
+[[0;32;49mok[0m]: ZINTERSTORE with NaN weights - ziplist
 [[0;32;49mok[0m]: Very big payload in GET/SET
+[[0;32;49mok[0m]: ZDIFFSTORE basics - ziplist
+[[0;32;49mok[0m]: ZDIFF basics - ziplist
+[[0;32;49mok[0m]: ZDIFFSTORE with a regular set - ziplist
+[[0;32;49mok[0m]: ZDIFF subtracting set from itself - ziplist
+[[0;32;49mok[0m]: ZDIFF algorithm 1 - ziplist
+[[0;32;49mok[0m]: ZDIFF algorithm 2 - ziplist
 [[0;32;49mok[0m]: SCAN TYPE
 [[0;32;49mok[0m]: SSCAN with encoding intset
 [[0;32;49mok[0m]: SSCAN with encoding hashtable
 [[0;32;49mok[0m]: HSCAN with encoding ziplist
+[[0;32;49mok[0m]: Handle an empty query
+[[0;32;49mok[0m]: DUMP / RESTORE are able to serialize / unserialize a simple key
+[[0;32;49mok[0m]: RESTORE can set an arbitrary expire to the materialized key
+[[0;32;49mok[0m]: RESTORE can set an expire that overflows a 32 bit integer
+[[0;32;49mok[0m]: HSCAN with encoding hashtable
+[[0;32;49mok[0m]: Negative multibulk length
+[[0;32;49mok[0m]: Out of range multibulk length
+[[0;32;49mok[0m]: RESTORE can set an absolute expire
+[[0;32;49mok[0m]: RESTORE with ABSTTL in the past
+[[0;32;49mok[0m]: RESTORE can set LRU
+[[0;32;49mok[0m]: Wrong multibulk payload header
+[[0;32;49mok[0m]: ZSCAN with encoding ziplist
+[[0;32;49mok[0m]: RESTORE can set LFU
+[[0;32;49mok[0m]: Negative multibulk payload length
+[[0;32;49mok[0m]: RESTORE returns an error of the key already exists
+[[0;32;49mok[0m]: RESTORE returns an error of the key already exists
+[[0;32;49mok[0m]: RESTORE can overwrite an existing key with REPLACE
+[[0;32;49mok[0m]: RESTORE can detect a syntax error for unrecongized options
+[[0;32;49mok[0m]: RESTORE can detect a syntax error for unrecongized options
+[[0;32;49mok[0m]: DUMP of non existing key returns nil
+[[0;32;49mok[0m]: Out of range multibulk payload length
+[1/66 [0;33;49mdone[0m]: unit/type/incr ()
+[[0;32;49mok[0m]: Non-number multibulk payload length
+[[0;32;49mok[0m]: Multi bulk request not followed by bulk arguments
+[[0;32;49mok[0m]: Generic wrong number of args
+[[0;32;49mok[0m]: Unbalanced number of quotes
+[[0;32;49mok[0m]: ZSCAN with encoding skiplist
+[[0;32;49mok[0m]: Protocol desync regression test #1
+[[0;32;49mok[0m]: SCAN guarantees check under write load
+[[0;32;49mok[0m]: SSCAN with integer encoded object (issue #1345)
+[[0;32;49mok[0m]: SSCAN with PATTERN
+[[0;32;49mok[0m]: HSCAN with PATTERN
+[[0;32;49mok[0m]: ZSCAN with PATTERN
+[[0;32;49mok[0m]: Protocol desync regression test #2
+[[0;32;49mok[0m]: ZSCAN scores: regression test for issue #2175
+[2/66 [0;33;49mdone[0m]: unit/printver ()
 [[0;32;49mok[0m]: Protocol desync regression test #3
 [[0;32;49mok[0m]: raw protocol response
 [[0;32;49mok[0m]: raw protocol response - deferred
@@ -50,113 +174,6 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: RESP3 attributes on RESP2
 [[0;32;49mok[0m]: test big number parsing
 [[0;32;49mok[0m]: test bool parsing
-[[0;32;49mok[0m]: HSCAN with encoding hashtable
-[[0;32;49mok[0m]: ZSCAN with encoding ziplist
-[1/66 [0;33;49mdone[0m]: unit/printver ()
-[[0;32;49mok[0m]: LPOS basic usage
-[[0;32;49mok[0m]: LPOS RANK (positive and negative rank) option
-[[0;32;49mok[0m]: ZSCAN with encoding skiplist
-[[0;32;49mok[0m]: LPOS COUNT option
-[[0;32;49mok[0m]: LPOS COUNT + RANK option
-[[0;32;49mok[0m]: LPOS non existing key
-[[0;32;49mok[0m]: LPOS no match
-[[0;32;49mok[0m]: LPOS MAXLEN
-[[0;32;49mok[0m]: LPOS when RANK is greater than matches
-[[0;32;49mok[0m]: LPUSH, RPUSH, LLENGTH, LINDEX, LPOP - ziplist
-[[0;32;49mok[0m]: LPUSH, RPUSH, LLENGTH, LINDEX, LPOP - regular list
-[[0;32;49mok[0m]: R/LPOP against empty list
-[[0;32;49mok[0m]: R/LPOP with the optional count argument
-[[0;32;49mok[0m]: LPOP/RPOP with the count 0 returns an empty array in RESP3
-[[0;32;49mok[0m]: LPOP/RPOP against non existing key in RESP3
-[[0;32;49mok[0m]: LPOP/RPOP with <count> against non existing key in RESP3
-[[0;32;49mok[0m]: LPOP/RPOP with the count 0 returns an empty array in RESP2
-[[0;32;49mok[0m]: LPOP/RPOP against non existing key in RESP2
-[[0;32;49mok[0m]: LPOP/RPOP with <count> against non existing key in RESP2
-[[0;32;49mok[0m]: Variadic RPUSH/LPUSH
-[[0;32;49mok[0m]: DEL a list
-[[0;32;49mok[0m]: BLPOP, BRPOP: single existing list - linkedlist
-[[0;32;49mok[0m]: BLPOP, BRPOP: multiple existing lists - linkedlist
-[[0;32;49mok[0m]: BLPOP, BRPOP: second list has an entry - linkedlist
-[[0;32;49mok[0m]: INCR against non existing key
-[[0;32;49mok[0m]: SCAN guarantees check under write load
-[[0;32;49mok[0m]: INCR against key created by incr itself
-[[0;32;49mok[0m]: INCR against key originally set with SET
-[[0;32;49mok[0m]: SSCAN with integer encoded object (issue #1345)
-[[0;32;49mok[0m]: INCR over 32bit value
-[[0;32;49mok[0m]: INCRBY over 32bit value with over 32bit increment
-[[0;32;49mok[0m]: SSCAN with PATTERN
-[[0;32;49mok[0m]: INCR fails against key with spaces (left)
-[[0;32;49mok[0m]: BRPOPLPUSH - linkedlist
-[[0;32;49mok[0m]: INCR fails against key with spaces (right)
-[[0;32;49mok[0m]: HSCAN with PATTERN
-[[0;32;49mok[0m]: INCR fails against key with spaces (both)
-[[0;32;49mok[0m]: ZSCAN with PATTERN
-[[0;32;49mok[0m]: INCR fails against a key holding a list
-[[0;32;49mok[0m]: DECRBY over 32bit value with over 32bit increment, negative res
-[[0;32;49mok[0m]: BLMOVE left left - linkedlist
-[[0;32;49mok[0m]: INCR uses shared objects in the 0-9999 range
-[[0;32;49mok[0m]: INCR can modify objects in-place
-[[0;32;49mok[0m]: BLMOVE left right - linkedlist
-[[0;32;49mok[0m]: INCRBYFLOAT against non existing key
-[[0;32;49mok[0m]: XADD can add entries into a stream that XRANGE can fetch
-[[0;32;49mok[0m]: INCRBYFLOAT against key originally set with SET
-[[0;32;49mok[0m]: INCRBYFLOAT over 32bit value
-[[0;32;49mok[0m]: XADD IDs are incremental
-[[0;32;49mok[0m]: INCRBYFLOAT over 32bit value with over 32bit increment
-[[0;32;49mok[0m]: BLMOVE right left - linkedlist
-[[0;32;49mok[0m]: INCRBYFLOAT fails against key with spaces (left)
-[[0;32;49mok[0m]: XADD IDs are incremental when ms is the same as well
-[[0;32;49mok[0m]: INCRBYFLOAT fails against key with spaces (right)
-[[0;32;49mok[0m]: INCRBYFLOAT fails against key with spaces (both)
-[[0;32;49mok[0m]: XADD IDs correctly report an error when overflowing
-[[0;32;49mok[0m]: XADD IDs correctly report an error when overflowing
-[[0;32;49mok[0m]: INCRBYFLOAT fails against a key holding a list
-[[0;32;49mok[0m]: BLMOVE right right - linkedlist
-[[0;32;49mok[0m]: INCRBYFLOAT does not allow NaN or Infinity
-[[0;32;49mok[0m]: INCRBYFLOAT decrement
-[[0;32;49mok[0m]: string to double with null terminator
-[[0;32;49mok[0m]: BLPOP, BRPOP: single existing list - ziplist
-[[0;32;49mok[0m]: No negative zero
-[[0;32;49mok[0m]: BLPOP, BRPOP: multiple existing lists - ziplist
-[[0;32;49mok[0m]: BLPOP, BRPOP: second list has an entry - ziplist
-[[0;32;49mok[0m]: BRPOPLPUSH - ziplist
-[[0;32;49mok[0m]: BLMOVE left left - ziplist
-[[0;32;49mok[0m]: BLMOVE left right - ziplist
-[[0;32;49mok[0m]: BLMOVE right left - ziplist
-[[0;32;49mok[0m]: BLMOVE right right - ziplist
-[[0;32;49mok[0m]: BLPOP, LPUSH + DEL should not awake blocked client
-[[0;32;49mok[0m]: ZSCAN scores: regression test for issue #2175
-[[0;32;49mok[0m]: XADD with MAXLEN option
-[[0;32;49mok[0m]: XADD with MAXLEN option and the '=' argument
-[2/66 [0;33;49mdone[0m]: unit/type/incr ()
-[[0;32;49mok[0m]: BLPOP, LPUSH + DEL + SET should not awake blocked client
-[[0;32;49mok[0m]: BLPOP with same key multiple times should work (issue #801)
-[[0;32;49mok[0m]: MULTI/EXEC is isolated from the point of view of BLPOP
-[[0;32;49mok[0m]: BLPOP with variadic LPUSH
-[[0;32;49mok[0m]: BRPOPLPUSH with zero timeout should block indefinitely
-[[0;32;49mok[0m]: BLMOVE left left with zero timeout should block indefinitely
-[[0;32;49mok[0m]: BLMOVE left right with zero timeout should block indefinitely
-[[0;32;49mok[0m]: BLMOVE right left with zero timeout should block indefinitely
-[[0;32;49mok[0m]: BLMOVE right right with zero timeout should block indefinitely
-[[0;32;49mok[0m]: BLMOVE (left, left) with a client BLPOPing the target list
-[[0;32;49mok[0m]: BLMOVE (left, right) with a client BLPOPing the target list
-[[0;32;49mok[0m]: BLMOVE (right, left) with a client BLPOPing the target list
-[[0;32;49mok[0m]: BLMOVE (right, right) with a client BLPOPing the target list
-[[0;32;49mok[0m]: BRPOPLPUSH with wrong source type
-[[0;32;49mok[0m]: BRPOPLPUSH with wrong destination type
-[[0;32;49mok[0m]: BRPOPLPUSH maintains order of elements after failure
-[[0;32;49mok[0m]: BRPOPLPUSH with multiple blocked clients
-[[0;32;49mok[0m]: Linked LMOVEs
-[[0;32;49mok[0m]: Circular BRPOPLPUSH
-[[0;32;49mok[0m]: Self-referential BRPOPLPUSH
-[[0;32;49mok[0m]: BRPOPLPUSH inside a transaction
-[[0;32;49mok[0m]: PUSH resulting from BRPOPLPUSH affect WATCH
-[[0;32;49mok[0m]: BRPOPLPUSH does not affect WATCH while still blocked
-[[0;32;49mok[0m]: XADD with MAXLEN option and the '~' argument
-[[0;32;49mok[0m]: XADD with NOMKSTREAM option
-[[0;32;49mok[0m]: XADD with MINID option
-[[0;32;49mok[0m]: XTRIM with MINID option
-[[0;32;49mok[0m]: XTRIM with MINID option, big delta from master record
 [[0;32;49mok[0m]: Very big payload random access
 [[0;32;49mok[0m]: DEL against expired key
 [[0;32;49mok[0m]: EXISTS
@@ -191,105 +208,6 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: COPY basic usage for skiplist sorted set
 [[0;32;49mok[0m]: COPY basic usage for ziplist hash
 [[0;32;49mok[0m]: COPY basic usage for hashtable hash
-[[0;32;49mok[0m]: AUTH fails if there is no password configured server side
-[[0;32;49mok[0m]: HSET/HLEN - Small hash creation
-[[0;32;49mok[0m]: Check encoding - ziplist
-[[0;32;49mok[0m]: Is the small hash encoded with a ziplist?
-[[0;32;49mok[0m]: ZSET basic ZADD and score update - ziplist
-[[0;32;49mok[0m]: ZSET element can't be set to NaN with ZADD - ziplist
-[[0;32;49mok[0m]: ZSET element can't be set to NaN with ZINCRBY - ziplist
-[[0;32;49mok[0m]: ZADD with options syntax error with incomplete pair - ziplist
-[[0;32;49mok[0m]: ZADD with options syntax error with incomplete pair - ziplist
-[[0;32;49mok[0m]: ZADD XX option without key - ziplist
-[[0;32;49mok[0m]: ZADD XX existing key - ziplist
-[[0;32;49mok[0m]: ZADD XX returns the number of elements actually added - ziplist
-[[0;32;49mok[0m]: ZADD XX updates existing elements score - ziplist
-[[0;32;49mok[0m]: ZADD GT updates existing elements when new scores are greater - ziplist
-[[0;32;49mok[0m]: ZADD LT updates existing elements when new scores are lower - ziplist
-[[0;32;49mok[0m]: ZADD GT XX updates existing elements when new scores are greater and skips new elements - ziplist
-[[0;32;49mok[0m]: ZADD LT XX updates existing elements when new scores are lower and skips new elements - ziplist
-[[0;32;49mok[0m]: ZADD XX and NX are not compatible - ziplist
-[[0;32;49mok[0m]: ZADD NX with non existing key - ziplist
-[[0;32;49mok[0m]: ZADD NX only add new elements without updating old ones - ziplist
-[[0;32;49mok[0m]: ZADD GT and NX are not compatible - ziplist
-[[0;32;49mok[0m]: ZADD LT and NX are not compatible - ziplist
-[[0;32;49mok[0m]: ZADD LT and GT are not compatible - ziplist
-[[0;32;49mok[0m]: ZADD INCR LT/GT replies with nill if score not updated - ziplist
-[[0;32;49mok[0m]: HRANDFIELD - ziplist
-[[0;32;49mok[0m]: ZADD INCR LT/GT with inf - ziplist
-[[0;32;49mok[0m]: ZADD INCR works like ZINCRBY - ziplist
-[[0;32;49mok[0m]: ZADD INCR works with a single score-elemenet pair - ziplist
-[[0;32;49mok[0m]: ZADD CH option changes return value to all changed elements - ziplist
-[[0;32;49mok[0m]: ZINCRBY calls leading to NaN result in error - ziplist
-[[0;32;49mok[0m]: ZINCRBY calls leading to NaN result in error - ziplist
-[[0;32;49mok[0m]: ZADD - Variadic version base case - $encoding
-[[0;32;49mok[0m]: ZADD - Return value is the number of actually added items - $encoding
-[[0;32;49mok[0m]: ZADD - Variadic version does not add nothing on single parsing err - $encoding
-[[0;32;49mok[0m]: ZADD - Variadic version does not add nothing on single parsing err - $encoding
-[[0;32;49mok[0m]: ZADD - Variadic version will raise error on missing arg - $encoding
-[[0;32;49mok[0m]: ZADD - Variadic version will raise error on missing arg - $encoding
-[[0;32;49mok[0m]: ZINCRBY does not work variadic even if shares ZADD implementation - $encoding
-[[0;32;49mok[0m]: ZCARD basics - ziplist
-[[0;32;49mok[0m]: ZREM removes key after last element is removed - ziplist
-[[0;32;49mok[0m]: ZREM variadic version - ziplist
-[[0;32;49mok[0m]: ZREM variadic version -- remove elements after key deletion - ziplist
-[[0;32;49mok[0m]: HRANDFIELD - hashtable
-[[0;32;49mok[0m]: ZRANGE basics - ziplist
-[[0;32;49mok[0m]: HRANDFIELD with RESP3
-[[0;32;49mok[0m]: HRANDFIELD count of 0 is handled correctly
-[[0;32;49mok[0m]: HRANDFIELD count overflow
-[[0;32;49mok[0m]: HRANDFIELD with <count> against non existing key
-[[0;32;49mok[0m]: HRANDFIELD count of 0 is handled correctly - emptyarray
-[[0;32;49mok[0m]: HRANDFIELD with <count> against non existing key - emptyarray
-[[0;32;49mok[0m]: ZREVRANGE basics - ziplist
-[[0;32;49mok[0m]: ZRANK/ZREVRANK basics - ziplist
-[[0;32;49mok[0m]: ZRANK - after deletion - ziplist
-[[0;32;49mok[0m]: ZINCRBY - can create a new sorted set - ziplist
-[[0;32;49mok[0m]: ZINCRBY - increment and decrement - ziplist
-[[0;32;49mok[0m]: ZINCRBY return value - ziplist
-[[0;32;49mok[0m]: ZRANGEBYSCORE/ZREVRANGEBYSCORE/ZCOUNT basics - ziplist
-[[0;32;49mok[0m]: ZRANGEBYSCORE with WITHSCORES - ziplist
-[[0;32;49mok[0m]: ZRANGEBYSCORE with LIMIT - ziplist
-[[0;32;49mok[0m]: ZRANGEBYSCORE with LIMIT and WITHSCORES - ziplist
-[[0;32;49mok[0m]: ZRANGEBYSCORE with non-value min or max - ziplist
-[[0;32;49mok[0m]: ZRANGEBYLEX/ZREVRANGEBYLEX/ZLEXCOUNT basics - ziplist
-[[0;32;49mok[0m]: ZLEXCOUNT advanced - ziplist
-[[0;32;49mok[0m]: ZRANGEBYSLEX with LIMIT - ziplist
-[[0;32;49mok[0m]: ZRANGEBYLEX with invalid lex range specifiers - ziplist
-[[0;32;49mok[0m]: ZREMRANGEBYSCORE basics - ziplist
-[[0;32;49mok[0m]: ZREMRANGEBYSCORE with non-value min or max - ziplist
-[[0;32;49mok[0m]: ZREMRANGEBYRANK basics - ziplist
-[[0;32;49mok[0m]: ZUNIONSTORE against non-existing key doesn't set destination - ziplist
-[[0;32;49mok[0m]: ZUNION/ZINTER/ZDIFF against non-existing key - ziplist
-[[0;32;49mok[0m]: ZUNIONSTORE with empty set - ziplist
-[[0;32;49mok[0m]: ZUNION/ZINTER/ZDIFF with empty set - ziplist
-[[0;32;49mok[0m]: ZUNIONSTORE basics - ziplist
-[[0;32;49mok[0m]: ZUNION/ZINTER/ZDIFF with integer members - ziplist
-[[0;32;49mok[0m]: ZUNIONSTORE with weights - ziplist
-[[0;32;49mok[0m]: ZUNION with weights - ziplist
-[[0;32;49mok[0m]: ZUNIONSTORE with a regular set and weights - ziplist
-[[0;32;49mok[0m]: ZUNIONSTORE with AGGREGATE MIN - ziplist
-[[0;32;49mok[0m]: ZUNION/ZINTER with AGGREGATE MIN - ziplist
-[[0;32;49mok[0m]: ZUNIONSTORE with AGGREGATE MAX - ziplist
-[[0;32;49mok[0m]: ZUNION/ZINTER with AGGREGATE MAX - ziplist
-[[0;32;49mok[0m]: ZINTERSTORE basics - ziplist
-[[0;32;49mok[0m]: ZINTER basics - ziplist
-[[0;32;49mok[0m]: ZINTER RESP3 - ziplist
-[[0;32;49mok[0m]: ZINTERSTORE with weights - ziplist
-[[0;32;49mok[0m]: ZINTER with weights - ziplist
-[[0;32;49mok[0m]: ZINTERSTORE with a regular set and weights - ziplist
-[[0;32;49mok[0m]: ZINTERSTORE with AGGREGATE MIN - ziplist
-[[0;32;49mok[0m]: ZINTERSTORE with AGGREGATE MAX - ziplist
-[[0;32;49mok[0m]: ZUNIONSTORE with +inf/-inf scores - ziplist
-[[0;32;49mok[0m]: ZUNIONSTORE with NaN weights - ziplist
-[[0;32;49mok[0m]: ZINTERSTORE with +inf/-inf scores - ziplist
-[[0;32;49mok[0m]: ZINTERSTORE with NaN weights - ziplist
-[[0;32;49mok[0m]: ZDIFFSTORE basics - ziplist
-[[0;32;49mok[0m]: ZDIFF basics - ziplist
-[[0;32;49mok[0m]: ZDIFFSTORE with a regular set - ziplist
-[[0;32;49mok[0m]: ZDIFF subtracting set from itself - ziplist
-[[0;32;49mok[0m]: ZDIFF algorithm 1 - ziplist
-[[0;32;49mok[0m]: ZDIFF algorithm 2 - ziplist
 [[0;32;49mok[0m]: COPY basic usage for stream
 [[0;32;49mok[0m]: COPY basic usage for stream-cgroups
 [[0;32;49mok[0m]: MOVE basic usage
@@ -302,51 +220,75 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: RANDOMKEY against empty DB
 [[0;32;49mok[0m]: RANDOMKEY regression 1
 [[0;32;49mok[0m]: KEYS * two times with long key, Github issue #1208
-[[0;32;49mok[0m]: SET 10000 numeric keys and access all them in reverse order
-[[0;32;49mok[0m]: DBSIZE should be 10000 now
-[[0;32;49mok[0m]: SETNX target key missing
-[[0;32;49mok[0m]: SETNX target key exists
-[[0;32;49mok[0m]: SETNX against not-expired volatile key
-[[0;32;49mok[0m]: BRPOPLPUSH timeout
-[[0;32;49mok[0m]: BLPOP when new key is moved into place
-[[0;32;49mok[0m]: BLPOP when result key is created by SORT..STORE
-[[0;32;49mok[0m]: BLPOP: with single empty list argument
-[[0;32;49mok[0m]: BLPOP: with negative timeout
-[[0;32;49mok[0m]: BLPOP: with non-integer timeout
-[[0;32;49mok[0m]: Explicit regression for a list bug
+[[0;32;49mok[0m]: Regression for pattern matching long nested loops
+[[0;32;49mok[0m]: LPOS basic usage
+[[0;32;49mok[0m]: LPOS RANK (positive and negative rank) option
+[[0;32;49mok[0m]: LPOS COUNT option
+[[0;32;49mok[0m]: LPOS COUNT + RANK option
 [[0;32;49mok[0m]: SADD, SCARD, SISMEMBER, SMISMEMBER, SMEMBERS basics - regular set
-[[0;32;49mok[0m]: Regression for quicklist #3343 bug
+[[0;32;49mok[0m]: LPOS non existing key
+[[0;32;49mok[0m]: LPOS no match
+[[0;32;49mok[0m]: Explicit regression for a list bug
+[[0;32;49mok[0m]: LPOS MAXLEN
+[[0;32;49mok[0m]: LPOS when RANK is greater than matches
 [[0;32;49mok[0m]: SADD, SCARD, SISMEMBER, SMISMEMBER, SMEMBERS basics - intset
 [[0;32;49mok[0m]: SMISMEMBER against non set
+[[0;32;49mok[0m]: Regression for quicklist #3343 bug
 [[0;32;49mok[0m]: SMISMEMBER non existing key
 [[0;32;49mok[0m]: SMISMEMBER requires one or more members
 [[0;32;49mok[0m]: SADD against non set
 [[0;32;49mok[0m]: SADD a non-integer against an intset
+[[0;32;49mok[0m]: HSET/HLEN - Small hash creation
+[[0;32;49mok[0m]: LPUSH, RPUSH, LLENGTH, LINDEX, LPOP - ziplist
+[[0;32;49mok[0m]: XADD can add entries into a stream that XRANGE can fetch
+[[0;32;49mok[0m]: XADD IDs are incremental
+[[0;32;49mok[0m]: Is the small hash encoded with a ziplist?
 [[0;32;49mok[0m]: SADD an integer larger than 64 bits
-[[0;32;49mok[0m]: errorstats: failed call authentication error
-[[0;32;49mok[0m]: errorstats: failed call authentication error
-[[0;32;49mok[0m]: errorstats: failed call within MULTI/EXEC
-[[0;32;49mok[0m]: errorstats: failed call within MULTI/EXEC
-[[0;32;49mok[0m]: errorstats: failed call within LUA
-[[0;32;49mok[0m]: errorstats: failed call within LUA
-[[0;32;49mok[0m]: errorstats: failed call NOSCRIPT error
-[[0;32;49mok[0m]: errorstats: failed call NOSCRIPT error
-[[0;32;49mok[0m]: errorstats: failed call NOGROUP error
-[[0;32;49mok[0m]: errorstats: failed call NOGROUP error
-[[0;32;49mok[0m]: errorstats: rejected call unknown command
-[[0;32;49mok[0m]: errorstats: rejected call unknown command
-[[0;32;49mok[0m]: errorstats: rejected call within MULTI/EXEC
-[[0;32;49mok[0m]: errorstats: rejected call within MULTI/EXEC
-[[0;32;49mok[0m]: errorstats: rejected call due to wrong arity
-[[0;32;49mok[0m]: errorstats: rejected call due to wrong arity
-[[0;32;49mok[0m]: errorstats: rejected call by OOM error
-[[0;32;49mok[0m]: errorstats: rejected call by OOM error
-[[0;32;49mok[0m]: errorstats: rejected call by authorization error
-[[0;32;49mok[0m]: errorstats: rejected call by authorization error
+[[0;32;49mok[0m]: XADD IDs are incremental when ms is the same as well
+[[0;32;49mok[0m]: XADD IDs correctly report an error when overflowing
+[[0;32;49mok[0m]: XADD IDs correctly report an error when overflowing
+[[0;32;49mok[0m]: LPUSH, RPUSH, LLENGTH, LINDEX, LPOP - regular list
+[[0;32;49mok[0m]: R/LPOP against empty list
+[[0;32;49mok[0m]: R/LPOP with the optional count argument
+[[0;32;49mok[0m]: LPOP/RPOP with the count 0 returns an empty array in RESP3
+[[0;32;49mok[0m]: LPOP/RPOP against non existing key in RESP3
+[[0;32;49mok[0m]: LPOP/RPOP with <count> against non existing key in RESP3
+[[0;32;49mok[0m]: LPOP/RPOP with the count 0 returns an empty array in RESP2
+[[0;32;49mok[0m]: LPOP/RPOP against non existing key in RESP2
+[[0;32;49mok[0m]: LPOP/RPOP with <count> against non existing key in RESP2
+[[0;32;49mok[0m]: Variadic RPUSH/LPUSH
+[[0;32;49mok[0m]: DEL a list
+[[0;32;49mok[0m]: BLPOP, BRPOP: single existing list - linkedlist
+[[0;32;49mok[0m]: BLPOP, BRPOP: multiple existing lists - linkedlist
+[[0;32;49mok[0m]: HRANDFIELD - ziplist
+[[0;32;49mok[0m]: BLPOP, BRPOP: second list has an entry - linkedlist
+[[0;32;49mok[0m]: BRPOPLPUSH - linkedlist
+[[0;32;49mok[0m]: BLMOVE left left - linkedlist
+[[0;32;49mok[0m]: BLMOVE left right - linkedlist
+[[0;32;49mok[0m]: BLMOVE right left - linkedlist
+[[0;32;49mok[0m]: BLMOVE right right - linkedlist
+[[0;32;49mok[0m]: HRANDFIELD - hashtable
+[[0;32;49mok[0m]: BLPOP, BRPOP: single existing list - ziplist
+[[0;32;49mok[0m]: HRANDFIELD with RESP3
+[[0;32;49mok[0m]: HRANDFIELD count of 0 is handled correctly
+[[0;32;49mok[0m]: HRANDFIELD count overflow
+[[0;32;49mok[0m]: HRANDFIELD with <count> against non existing key
+[[0;32;49mok[0m]: HRANDFIELD count of 0 is handled correctly - emptyarray
+[[0;32;49mok[0m]: HRANDFIELD with <count> against non existing key - emptyarray
+[[0;32;49mok[0m]: BLPOP, BRPOP: multiple existing lists - ziplist
+[[0;32;49mok[0m]: BLPOP, BRPOP: second list has an entry - ziplist
+[[0;32;49mok[0m]: BRPOPLPUSH - ziplist
+[[0;32;49mok[0m]: BLMOVE left left - ziplist
+[[0;32;49mok[0m]: BLMOVE left right - ziplist
 [[0;32;49mok[0m]: SADD overflows the maximum allowed integers in an intset
 [[0;32;49mok[0m]: Variadic SADD
+[[0;32;49mok[0m]: BLMOVE right left - ziplist
+[[0;32;49mok[0m]: BLMOVE right right - ziplist
+[[0;32;49mok[0m]: BLPOP, LPUSH + DEL should not awake blocked client
 [3/66 [0;33;49mdone[0m]: unit/keyspace ()
-[[0;32;49mok[0m]: HRANDFIELD with <count> - hashtable
+[[0;32;49mok[0m]: XADD with MAXLEN option
+[[0;32;49mok[0m]: EXPIRE - set timeouts multiple times
+[[0;32;49mok[0m]: EXPIRE - It should be still possible to read 'x'
 [[0;32;49mok[0m]: AUTH fails when a wrong password is given
 [[0;32;49mok[0m]: Arbitrary command gives an error when AUTH is required
 [[0;32;49mok[0m]: Arbitrary command gives an error when AUTH is required
@@ -361,54 +303,99 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: XPENDING is able to return pending items
 [[0;32;49mok[0m]: XPENDING can return single consumer items
 [[0;32;49mok[0m]: XPENDING only group
-[[0;32;49mok[0m]: EXPIRE - set timeouts multiple times
-[[0;32;49mok[0m]: EXPIRE - It should be still possible to read 'x'
-[[0;32;49mok[0m]: MIGRATE is caching connections
+[[0;32;49mok[0m]: errorstats: failed call authentication error
+[[0;32;49mok[0m]: errorstats: failed call authentication error
+[[0;32;49mok[0m]: errorstats: failed call within MULTI/EXEC
+[[0;32;49mok[0m]: errorstats: failed call within MULTI/EXEC
+[[0;32;49mok[0m]: errorstats: failed call within LUA
+[[0;32;49mok[0m]: errorstats: failed call within LUA
+[[0;32;49mok[0m]: errorstats: failed call NOSCRIPT error
+[[0;32;49mok[0m]: errorstats: failed call NOSCRIPT error
+[[0;32;49mok[0m]: errorstats: failed call NOGROUP error
+[[0;32;49mok[0m]: errorstats: failed call NOGROUP error
+[[0;32;49mok[0m]: errorstats: rejected call unknown command
+[[0;32;49mok[0m]: errorstats: rejected call unknown command
+[[0;32;49mok[0m]: errorstats: rejected call within MULTI/EXEC
+[[0;32;49mok[0m]: errorstats: rejected call within MULTI/EXEC
+[[0;32;49mok[0m]: errorstats: rejected call due to wrong arity
+[[0;32;49mok[0m]: errorstats: rejected call due to wrong arity
+[[0;32;49mok[0m]: BLPOP, LPUSH + DEL + SET should not awake blocked client
+[[0;32;49mok[0m]: errorstats: rejected call by OOM error
+[[0;32;49mok[0m]: errorstats: rejected call by OOM error
 [[0;32;49mok[0m]: XPENDING with IDLE
 [[0;32;49mok[0m]: XPENDING with exclusive range intervals works as expected
+[[0;32;49mok[0m]: BLPOP with same key multiple times should work (issue #801)
 [[0;32;49mok[0m]: XACK is able to remove items from the consumer/group PEL
+[[0;32;49mok[0m]: errorstats: rejected call by authorization error
+[[0;32;49mok[0m]: errorstats: rejected call by authorization error
 [[0;32;49mok[0m]: XACK can't remove the same item multiple times
+[[0;32;49mok[0m]: MULTI/EXEC is isolated from the point of view of BLPOP
 [[0;32;49mok[0m]: XACK is able to accept multiple arguments
+[[0;32;49mok[0m]: BLPOP with variadic LPUSH
 [[0;32;49mok[0m]: XACK should fail if got at least one invalid ID
-[[0;32;49mok[0m]: PEL NACK reassignment after XGROUP SETID event
-[[0;32;49mok[0m]: XREADGROUP will not report data on empty history. Bug #5577
-[[0;32;49mok[0m]: XREADGROUP history reporting of deleted entries. Bug #5570
-[[0;32;49mok[0m]: Blocking XREADGROUP will not reply with an empty array
-[[0;32;49mok[0m]: XGROUP DESTROY should unblock XREADGROUP with -NOGROUP
-[[0;32;49mok[0m]: RENAME can unblock XREADGROUP with data
-[[0;32;49mok[0m]: RENAME can unblock XREADGROUP with -NOGROUP
 [[0;32;49mok[0m]: Set encoding after DEBUG RELOAD
+[[0;32;49mok[0m]: PEL NACK reassignment after XGROUP SETID event
 [[0;32;49mok[0m]: SREM basics - regular set
-[[0;32;49mok[0m]: HRANDFIELD with <count> - ziplist
+[[0;32;49mok[0m]: BRPOPLPUSH with zero timeout should block indefinitely
 [[0;32;49mok[0m]: SREM basics - intset
+[[0;32;49mok[0m]: XREADGROUP will not report data on empty history. Bug #5577
 [[0;32;49mok[0m]: SREM with multiple arguments
+[[0;32;49mok[0m]: BLMOVE left left with zero timeout should block indefinitely
 [[0;32;49mok[0m]: SREM variadic version with more args needed to destroy the key
-[[0;32;49mok[0m]: Unsafe command names are sanitized in INFO output
-[[0;32;49mok[0m]: Regression for a crash with blocking ops and pipelining
+[[0;32;49mok[0m]: BLMOVE left right with zero timeout should block indefinitely
+[[0;32;49mok[0m]: XREADGROUP history reporting of deleted entries. Bug #5570
+[[0;32;49mok[0m]: BLMOVE right left with zero timeout should block indefinitely
+[[0;32;49mok[0m]: BLMOVE right right with zero timeout should block indefinitely
+[[0;32;49mok[0m]: BLMOVE (left, left) with a client BLPOPing the target list
+[[0;32;49mok[0m]: BLMOVE (left, right) with a client BLPOPing the target list
+[[0;32;49mok[0m]: BLMOVE (right, left) with a client BLPOPing the target list
+[[0;32;49mok[0m]: BLMOVE (right, right) with a client BLPOPing the target list
+[[0;32;49mok[0m]: BRPOPLPUSH with wrong source type
+[[0;32;49mok[0m]: BRPOPLPUSH with wrong destination type
+[[0;32;49mok[0m]: BRPOPLPUSH maintains order of elements after failure
+[[0;32;49mok[0m]: BRPOPLPUSH with multiple blocked clients
+[[0;32;49mok[0m]: Linked LMOVEs
+[[0;32;49mok[0m]: Circular BRPOPLPUSH
+[[0;32;49mok[0m]: Self-referential BRPOPLPUSH
+[[0;32;49mok[0m]: HRANDFIELD with <count> - hashtable
+[[0;32;49mok[0m]: BRPOPLPUSH inside a transaction
+[[0;32;49mok[0m]: PUSH resulting from BRPOPLPUSH affect WATCH
+[[0;32;49mok[0m]: BRPOPLPUSH does not affect WATCH while still blocked
 [[0;32;49mok[0m]: Generated sets must be encoded as hashtable
 [[0;32;49mok[0m]: SINTER with two sets - hashtable
 [[0;32;49mok[0m]: SINTERSTORE with two sets - hashtable
+[[0;32;49mok[0m]: XADD with MAXLEN option and the '=' argument
+[[0;32;49mok[0m]: Blocking XREADGROUP will not reply with an empty array
 [[0;32;49mok[0m]: SINTERSTORE with two sets, after a DEBUG RELOAD - hashtable
-[[0;32;49mok[0m]: Old Ziplist: SORT BY key
-[[0;32;49mok[0m]: Old Ziplist: SORT BY key with limit
-[[0;32;49mok[0m]: Old Ziplist: SORT BY hash field
+[[0;32;49mok[0m]: XGROUP DESTROY should unblock XREADGROUP with -NOGROUP
+[[0;32;49mok[0m]: RENAME can unblock XREADGROUP with data
+[[0;32;49mok[0m]: RENAME can unblock XREADGROUP with -NOGROUP
 [[0;32;49mok[0m]: SUNION with two sets - hashtable
 [[0;32;49mok[0m]: SUNIONSTORE with two sets - hashtable
 [[0;32;49mok[0m]: SINTER against three sets - hashtable
 [[0;32;49mok[0m]: SINTERSTORE with three sets - hashtable
+[[0;32;49mok[0m]: Old Ziplist: SORT BY key
+[[0;32;49mok[0m]: Old Ziplist: SORT BY key with limit
+[[0;32;49mok[0m]: Old Ziplist: SORT BY hash field
 [[0;32;49mok[0m]: SUNION with non existing keys - hashtable
 [[0;32;49mok[0m]: SDIFF with two sets - hashtable
 [[0;32;49mok[0m]: SDIFF with three sets - hashtable
+[[0;32;49mok[0m]: MIGRATE is caching connections
 [[0;32;49mok[0m]: SDIFFSTORE with three sets - hashtable
-[[0;32;49mok[0m]: HSET/HLEN - Big hash creation
-[[0;32;49mok[0m]: Is the big hash encoded with an hash table?
-[[0;32;49mok[0m]: HGET against the small hash
+[[0;32;49mok[0m]: AUTH fails when binary password is wrong
+[[0;32;49mok[0m]: AUTH succeeds when binary password is correct
+[[0;32;49mok[0m]: SET 10000 numeric keys and access all them in reverse order
+[[0;32;49mok[0m]: DBSIZE should be 10000 now
+[[0;32;49mok[0m]: SETNX target key missing
+[[0;32;49mok[0m]: SETNX target key exists
+[[0;32;49mok[0m]: SETNX against not-expired volatile key
 [[0;32;49mok[0m]: Generated sets must be encoded as intset
 [[0;32;49mok[0m]: SINTER with two sets - intset
 [[0;32;49mok[0m]: SINTERSTORE with two sets - intset
 [[0;32;49mok[0m]: SINTERSTORE with two sets, after a DEBUG RELOAD - intset
+[[0;32;49mok[0m]: XADD with MAXLEN option and the '~' argument
+[[0;32;49mok[0m]: XADD with NOMKSTREAM option
 [[0;32;49mok[0m]: SUNION with two sets - intset
-[4/66 [0;33;49mdone[0m]: unit/protocol ()
 [[0;32;49mok[0m]: SUNIONSTORE with two sets - intset
 [[0;32;49mok[0m]: SINTER against three sets - intset
 [[0;32;49mok[0m]: SINTERSTORE with three sets - intset
@@ -418,6 +405,20 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: SDIFFSTORE with three sets - intset
 [[0;32;49mok[0m]: SDIFF with first set empty
 [[0;32;49mok[0m]: SDIFF with same set two times
+[[0;32;49mok[0m]: Regression for a crash with blocking ops and pipelining
+[[0;32;49mok[0m]: HRANDFIELD with <count> - ziplist
+[[0;32;49mok[0m]: Unsafe command names are sanitized in INFO output
+[[0;32;49mok[0m]: XADD with MINID option
+[[0;32;49mok[0m]: XTRIM with MINID option
+[[0;32;49mok[0m]: XTRIM with MINID option, big delta from master record
+[4/66 [0;33;49mdone[0m]: unit/protocol ()
+[[0;32;49mok[0m]: HSET/HLEN - Big hash creation
+[[0;32;49mok[0m]: Is the big hash encoded with an hash table?
+[[0;32;49mok[0m]: HGET against the small hash
+[[0;32;49mok[0m]: Old Linked list: SORT BY key
+[[0;32;49mok[0m]: Old Linked list: SORT BY key with limit
+[[0;32;49mok[0m]: SAVE - make sure there are all the types as values
+[[0;32;49mok[0m]: Old Linked list: SORT BY hash field
 [[0;32;49mok[0m]: HGET against the big hash
 [[0;32;49mok[0m]: HGET against non existing key
 [[0;32;49mok[0m]: HSET in update and insert mode
@@ -431,15 +432,11 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: HMGET against non existing key and fields
 [[0;32;49mok[0m]: HMGET against wrong type
 [[0;32;49mok[0m]: HMGET - small hash
-[[0;32;49mok[0m]: AUTH fails when binary password is wrong
-[[0;32;49mok[0m]: AUTH succeeds when binary password is correct
 [[0;32;49mok[0m]: HMGET - big hash
 [[0;32;49mok[0m]: HKEYS - small hash
-[[0;32;49mok[0m]: XADD mass insertion and XLEN
-[[0;32;49mok[0m]: XADD with ID 0-0
 [[0;32;49mok[0m]: HKEYS - big hash
 [[0;32;49mok[0m]: HVALS - small hash
-[[0;32;49mok[0m]: SAVE - make sure there are all the types as values
+[5/66 [0;33;49mdone[0m]: unit/info ()
 [[0;32;49mok[0m]: HVALS - big hash
 [[0;32;49mok[0m]: HGETALL - small hash
 [[0;32;49mok[0m]: HGETALL - big hash
@@ -452,7 +449,6 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: HINCRBY against non existing hash key
 [[0;32;49mok[0m]: HINCRBY against hash key created by hincrby itself
 [[0;32;49mok[0m]: HINCRBY against hash key originally set with HSET
-[[0;32;49mok[0m]: XADD with LIMIT delete entries no more than limit
 [[0;32;49mok[0m]: HINCRBY over 32bit value
 [[0;32;49mok[0m]: HINCRBY over 32bit value with over 32bit increment
 [[0;32;49mok[0m]: HINCRBY fails against hash value with spaces (left)
@@ -465,20 +461,11 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: HINCRBYFLOAT over 32bit value
 [[0;32;49mok[0m]: HINCRBYFLOAT over 32bit value with over 32bit increment
 [[0;32;49mok[0m]: HINCRBYFLOAT fails against hash value with spaces (left)
+[[0;32;49mok[0m]: MUTLI / EXEC basics
 [[0;32;49mok[0m]: HINCRBYFLOAT fails against hash value with spaces (right)
 [[0;32;49mok[0m]: HINCRBYFLOAT fails against hash value that contains a null-terminator in the middle
-[[0;32;49mok[0m]: HSTRLEN against the small hash
-[[0;32;49mok[0m]: XRANGE COUNT works as expected
-[[0;32;49mok[0m]: XREVRANGE COUNT works as expected
-[5/66 [0;33;49mdone[0m]: unit/info ()
-[[0;32;49mok[0m]: HSTRLEN against the big hash
-[[0;32;49mok[0m]: HSTRLEN against non existing field
-[[0;32;49mok[0m]: HSTRLEN corner cases
-[[0;32;49mok[0m]: Hash ziplist regression test for large keys
-[[0;32;49mok[0m]: Hash fuzzing #1 - 10 fields
-[[0;32;49mok[0m]: Hash fuzzing #2 - 10 fields
-[[0;32;49mok[0m]: MUTLI / EXEC basics
 [[0;32;49mok[0m]: DISCARD
+[[0;32;49mok[0m]: HSTRLEN against the small hash
 [[0;32;49mok[0m]: Nested MULTI are not allowed
 [[0;32;49mok[0m]: MULTI where commands alter argc/argv
 [[0;32;49mok[0m]: WATCH inside MULTI is not allowed
@@ -491,6 +478,12 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: EXEC fail on WATCHed key modified (1 key of 1 watched)
 [[0;32;49mok[0m]: EXEC fail on WATCHed key modified (1 key of 5 watched)
 [[0;32;49mok[0m]: EXEC fail on WATCHed key modified by SORT with STORE even if the result is empty
+[[0;32;49mok[0m]: HSTRLEN against the big hash
+[[0;32;49mok[0m]: HSTRLEN against non existing field
+[[0;32;49mok[0m]: HSTRLEN corner cases
+[[0;32;49mok[0m]: Hash ziplist regression test for large keys
+[[0;32;49mok[0m]: Hash fuzzing #1 - 10 fields
+[[0;32;49mok[0m]: Hash fuzzing #2 - 10 fields
 [[0;32;49mok[0m]: EXEC fail on lazy expired WATCHed key
 [[0;32;49mok[0m]: After successful EXEC key is no longer watched
 [[0;32;49mok[0m]: After failed EXEC key is no longer watched
@@ -504,244 +497,60 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: SWAPDB is able to touch the watched keys that do not exist
 [[0;32;49mok[0m]: WATCH is able to remember the DB a key belongs to
 [[0;32;49mok[0m]: WATCH will consider touched keys target of EXPIRE
-[[0;32;49mok[0m]: Old Linked list: SORT BY key
 [[0;32;49mok[0m]: XCLAIM can claim PEL items from another consumer
-[[0;32;49mok[0m]: Old Linked list: SORT BY key with limit
-[[0;32;49mok[0m]: Old Linked list: SORT BY hash field
-[[0;32;49mok[0m]: XRANGE can be used to iterate the whole stream
-[[0;32;49mok[0m]: BLPOP: with zero timeout should block indefinitely
-[[0;32;49mok[0m]: BLPOP: second argument is not a list
 [[0;32;49mok[0m]: FUZZ stresser with data model binary
-[[0;32;49mok[0m]: Stress tester for #3343-alike bugs
+[[0;32;49mok[0m]: BRPOPLPUSH timeout
+[[0;32;49mok[0m]: BLPOP when new key is moved into place
+[[0;32;49mok[0m]: BLPOP when result key is created by SORT..STORE
+[[0;32;49mok[0m]: BLPOP: with single empty list argument
+[[0;32;49mok[0m]: BLPOP: with negative timeout
+[[0;32;49mok[0m]: BLPOP: with non-integer timeout
 [[0;32;49mok[0m]: XCLAIM without JUSTID increments delivery count
-[[0;32;49mok[0m]: ziplist implementation: value encoding and backlink
+[[0;32;49mok[0m]: Stress tester for #3343-alike bugs
 [[0;32;49mok[0m]: XCLAIM same consumer
 [[0;32;49mok[0m]: MASTERAUTH test with binary password
-[[0;32;49mok[0m]: FUZZ stresser with data model alpha
 [6/66 [0;33;49mdone[0m]: unit/auth ()
 [[0;32;49mok[0m]: QUIT returns OK
 [[0;32;49mok[0m]: Pipelined commands after QUIT must not be executed
 [[0;32;49mok[0m]: Pipelined commands after QUIT that exceed read buffer size
+[[0;32;49mok[0m]: FUZZ stresser with data model alpha
 [7/66 [0;33;49mdone[0m]: unit/quit ()
 [[0;32;49mok[0m]: WATCH will consider touched expired keys
 [[0;32;49mok[0m]: DISCARD should clear the WATCH dirty flag on the client
+[[0;32;49mok[0m]: ziplist implementation: value encoding and backlink
 [[0;32;49mok[0m]: DISCARD should UNWATCH all the keys
 [[0;32;49mok[0m]: MULTI / EXEC is propagated correctly (single write command)
-[[0;32;49mok[0m]: XAUTOCLAIM can claim PEL items from another consumer
-[[0;32;49mok[0m]: BLPOP: timeout
-[[0;32;49mok[0m]: BLPOP: arguments are empty
-[[0;32;49mok[0m]: BRPOP: with single empty list argument
-[[0;32;49mok[0m]: BRPOP: with negative timeout
-[[0;32;49mok[0m]: BRPOP: with non-integer timeout
-[[0;32;49mok[0m]: FUZZ stresser with data model compr
-[[0;32;49mok[0m]: Hash fuzzing #1 - 512 fields
 [[0;32;49mok[0m]: MULTI / EXEC is propagated correctly (empty transaction)
+[[0;32;49mok[0m]: XAUTOCLAIM can claim PEL items from another consumer
+[[0;32;49mok[0m]: Hash fuzzing #1 - 512 fields
 [[0;32;49mok[0m]: MULTI / EXEC is propagated correctly (read-only commands)
-[[0;32;49mok[0m]: XAUTOCLAIM as an iterator
-[[0;32;49mok[0m]: XAUTOCLAIM COUNT must be > 0
-[[0;32;49mok[0m]: XINFO FULL output
-[[0;32;49mok[0m]: XGROUP CREATECONSUMER: create consumer if does not exist
-[[0;32;49mok[0m]: XGROUP CREATECONSUMER: group must exist
+[[0;32;49mok[0m]: BLPOP: with zero timeout should block indefinitely
+[[0;32;49mok[0m]: XADD mass insertion and XLEN
+[[0;32;49mok[0m]: BLPOP: second argument is not a list
+[[0;32;49mok[0m]: XADD with ID 0-0
+[[0;32;49mok[0m]: MULTI / EXEC is propagated correctly (write command, no effect)
+[[0;32;49mok[0m]: DISCARD should not fail during OOM
+[[0;32;49mok[0m]: XADD with LIMIT delete entries no more than limit
+[[0;32;49mok[0m]: XRANGE COUNT works as expected
+[[0;32;49mok[0m]: XREVRANGE COUNT works as expected
 [[0;32;49mok[0m]: EXPIRE - After 2. the key should no longer be here
 [[0;32;49mok[0m]: EXPIRE - write on expire should work
 [[0;32;49mok[0m]: EXPIREAT - Check for EXPIRE alike behavior
 [[0;32;49mok[0m]: SETEX - Set + Expire combo operation. Check for TTL
 [[0;32;49mok[0m]: SETEX - Check value
 [[0;32;49mok[0m]: SETEX - Overwrite old key
-[[0;32;49mok[0m]: MULTI / EXEC is propagated correctly (write command, no effect)
-[[0;32;49mok[0m]: DISCARD should not fail during OOM
-[[0;32;49mok[0m]: SCAN regression test for issue #4906
+[[0;32;49mok[0m]: XAUTOCLAIM as an iterator
+[[0;32;49mok[0m]: XAUTOCLAIM COUNT must be > 0
+[[0;32;49mok[0m]: XINFO FULL output
+[[0;32;49mok[0m]: XGROUP CREATECONSUMER: create consumer if does not exist
+[[0;32;49mok[0m]: XGROUP CREATECONSUMER: group must exist
+[[0;32;49mok[0m]: FUZZ stresser with data model compr
 [[0;32;49mok[0m]: XREADGROUP with NOACK creates consumer
-[8/66 [0;33;49mdone[0m]: unit/scan ()
-[[0;32;49mok[0m]: XREVRANGE returns the reverse of XRANGE
-[[0;32;49mok[0m]: XRANGE exclusive ranges
-[[0;32;49mok[0m]: XREAD with non empty stream
-[[0;32;49mok[0m]: Non blocking XREAD with empty streams
-[[0;32;49mok[0m]: XREAD with non empty second stream
-[[0;32;49mok[0m]: Blocking XREAD waiting new data
-[[0;32;49mok[0m]: Blocking XREAD waiting old data
-[[0;32;49mok[0m]: Blocking XREAD will not reply with an empty array
-[[0;32;49mok[0m]: XREAD: XADD + DEL should not awake client
-[[0;32;49mok[0m]: XREAD: XADD + DEL + LPUSH should not awake client
-[[0;32;49mok[0m]: XREAD with same stream name multiple times should work
-[[0;32;49mok[0m]: XREAD + multiple XADD inside transaction
-[[0;32;49mok[0m]: XDEL basic test
-[[0;32;49mok[0m]: Connections start with the default user
-[[0;32;49mok[0m]: It is possible to create new users
-[[0;32;49mok[0m]: New users start disabled
-[[0;32;49mok[0m]: Enabling the user allows the login
-[[0;32;49mok[0m]: Only the set of correct passwords work
-[[0;32;49mok[0m]: It is possible to remove passwords from the set of valid ones
-[[0;32;49mok[0m]: Test password hashes can be added
-[[0;32;49mok[0m]: Test password hashes validate input
-[[0;32;49mok[0m]: ACL GETUSER returns the password hash instead of the actual password
-[[0;32;49mok[0m]: Test hashed passwords removal
-[[0;32;49mok[0m]: By default users are not able to access any command
-[[0;32;49mok[0m]: By default users are not able to access any key
-[[0;32;49mok[0m]: It's possible to allow the access of a subset of keys
-[[0;32;49mok[0m]: By default users are able to publish to any channel
-[[0;32;49mok[0m]: By default users are able to subscribe to any channel
-[[0;32;49mok[0m]: By default users are able to subscribe to any pattern
-[[0;32;49mok[0m]: It's possible to allow publishing to a subset of channels
-[[0;32;49mok[0m]: Validate subset of channels is prefixed with resetchannels flag
-[[0;32;49mok[0m]: In transaction queue publish/subscribe/psubscribe to unauthorized channel will fail
-[[0;32;49mok[0m]: It's possible to allow subscribing to a subset of channels
-[[0;32;49mok[0m]: It's possible to allow subscribing to a subset of channel patterns
-[[0;32;49mok[0m]: Subscribers are killed when revoked of channel permission
-[[0;32;49mok[0m]: Subscribers are killed when revoked of pattern permission
-[[0;32;49mok[0m]: Subscribers are pardoned if literal permissions are retained and/or gaining allchannels
-[[0;32;49mok[0m]: Subscribers are pardoned if literal permissions are retained and/or gaining allchannels
-[[0;32;49mok[0m]: Users can be configured to authenticate with any password
-[[0;32;49mok[0m]: ACLs can exclude single commands
-[[0;32;49mok[0m]: ACLs can include or exclude whole classes of commands
-[[0;32;49mok[0m]: ACLs can include single subcommands
-[[0;32;49mok[0m]: ACLs set can include subcommands, if already full command exists
-[[0;32;49mok[0m]: ACL GETUSER is able to translate back command permissions
-[[0;32;49mok[0m]: ACL GETUSER provides reasonable results
-[[0;32;49mok[0m]: ACL #5998 regression: memory leaks adding / removing subcommands
-[[0;32;49mok[0m]: ACL LOG shows failed command executions at toplevel
-[[0;32;49mok[0m]: ACL LOG is able to test similar events
-[[0;32;49mok[0m]: ACL LOG is able to log keys access violations and key name
-[[0;32;49mok[0m]: ACL LOG is able to log channel access violations and channel name
-[[0;32;49mok[0m]: ACL LOG RESET is able to flush the entries in the log
-[[0;32;49mok[0m]: ACL LOG can distinguish the transaction context (1)
-[[0;32;49mok[0m]: ACL LOG can distinguish the transaction context (2)
-[[0;32;49mok[0m]: ACL can log errors in the context of Lua scripting
-[[0;32;49mok[0m]: ACL can log errors in the context of Lua scripting
-[[0;32;49mok[0m]: SETNX against expired volatile key
-[[0;32;49mok[0m]: GETEX EX option
-[[0;32;49mok[0m]: GETEX PX option
-[[0;32;49mok[0m]: ACL LOG can accept a numerical argument to show less entries
-[[0;32;49mok[0m]: GETEX EXAT option
-[[0;32;49mok[0m]: GETEX PXAT option
-[[0;32;49mok[0m]: ACL LOG can log failed auth attempts
-[[0;32;49mok[0m]: GETEX PERSIST option
-[[0;32;49mok[0m]: GETEX no option
-[[0;32;49mok[0m]: GETEX syntax errors
-[[0;32;49mok[0m]: GETEX syntax errors
-[[0;32;49mok[0m]: GETEX no arguments
-[[0;32;49mok[0m]: GETDEL command
-[[0;32;49mok[0m]: ACL LOG entries are limited to a maximum amount
-[[0;32;49mok[0m]: When default user is off, new connections are not authenticated
-[[0;32;49mok[0m]: When default user has no command permission, hello command still works for other users
-[[0;32;49mok[0m]: ACL HELP should not have unexpected options
-[[0;32;49mok[0m]: Delete a user that the client doesn't use
-[[0;32;49mok[0m]: Delete a user that the client is using
-[[0;32;49mok[0m]: MULTI and script timeout
-[[0;32;49mok[0m]: GETDEL propagate as DEL command to replica
-[[0;32;49mok[0m]: Hash fuzzing #2 - 512 fields
-[[0;32;49mok[0m]: GETEX without argument does not propagate to replica
-[[0;32;49mok[0m]: MGET
-[[0;32;49mok[0m]: MGET against non existing key
-[[0;32;49mok[0m]: MGET against non-string key
-[[0;32;49mok[0m]: GETSET (set new value)
-[[0;32;49mok[0m]: GETSET (replace old value)
-[[0;32;49mok[0m]: MSET base case
-[[0;32;49mok[0m]: MSET wrong number of args
-[[0;32;49mok[0m]: MSETNX with already existent key
-[[0;32;49mok[0m]: MSETNX with not existing keys
-[[0;32;49mok[0m]: STRLEN against non-existing key
-[[0;32;49mok[0m]: STRLEN against integer-encoded value
-[[0;32;49mok[0m]: STRLEN against plain string
-[[0;32;49mok[0m]: SETBIT against non-existing key
-[[0;32;49mok[0m]: SETBIT against string-encoded key
-[[0;32;49mok[0m]: SETBIT against integer-encoded key
-[[0;32;49mok[0m]: SETBIT against key with wrong type
-[[0;32;49mok[0m]: SETBIT with out of range bit offset
-[[0;32;49mok[0m]: SETBIT with non-bit argument
-[[0;32;49mok[0m]: default: load from include file, can access any channels
-[[0;32;49mok[0m]: default: with config acl-pubsub-default allchannels after reset, can access any channels
-[[0;32;49mok[0m]: default: with config acl-pubsub-default resetchannels after reset, can not access any channels
-[[0;32;49mok[0m]: Alice: can execute all command
-[[0;32;49mok[0m]: Bob: just execute @set and acl command
-[[0;32;49mok[0m]: ACL load and save
-[[0;32;49mok[0m]: ACL load and save with restricted channels
-[[0;32;49mok[0m]: BRPOP: with zero timeout should block indefinitely
-[[0;32;49mok[0m]: BRPOP: second argument is not a list
-[[0;32;49mok[0m]: Default user has access to all channels irrespective of flag
-[[0;32;49mok[0m]: Update acl-pubsub-default, existing users shouldn't get affected
-[[0;32;49mok[0m]: Single channel is valid
-[[0;32;49mok[0m]: Single channel is not valid with allchannels
-[[0;32;49mok[0m]: BGSAVE
-[[0;32;49mok[0m]: EXEC and script timeout
-[[0;32;49mok[0m]: SELECT an out of range DB
-[[0;32;49mok[0m]: SDIFF fuzzing
-[[0;32;49mok[0m]: SDIFF against non-set should throw error
-[[0;32;49mok[0m]: SDIFF against non-set should throw error
-[[0;32;49mok[0m]: SDIFF should handle non existing key as empty
-[[0;32;49mok[0m]: SDIFFSTORE against non-set should throw error
-[[0;32;49mok[0m]: SDIFFSTORE against non-set should throw error
-[[0;32;49mok[0m]: SDIFFSTORE should handle non existing key as empty
-[[0;32;49mok[0m]: SINTER against non-set should throw error
-[[0;32;49mok[0m]: SINTER against non-set should throw error
-[[0;32;49mok[0m]: SINTER should handle non existing key as empty
-[[0;32;49mok[0m]: SINTER with same integer elements but different encoding
-[[0;32;49mok[0m]: SINTERSTORE against non-set should throw error
-[[0;32;49mok[0m]: SINTERSTORE against non-set should throw error
-[[0;32;49mok[0m]: SINTERSTORE against non existing keys should delete dstkey
-[[0;32;49mok[0m]: SUNION against non-set should throw error
-[[0;32;49mok[0m]: SUNION against non-set should throw error
-[[0;32;49mok[0m]: SUNION should handle non existing key as empty
-[[0;32;49mok[0m]: SUNIONSTORE against non-set should throw error
-[[0;32;49mok[0m]: SUNIONSTORE against non-set should throw error
-[[0;32;49mok[0m]: SUNIONSTORE should handle non existing key as empty
-[[0;32;49mok[0m]: SUNIONSTORE against non existing keys should delete dstkey
-[[0;32;49mok[0m]: SPOP basics - hashtable
-[[0;32;49mok[0m]: SPOP with <count>=1 - hashtable
-[[0;32;49mok[0m]: SRANDMEMBER - hashtable
-[[0;32;49mok[0m]: SPOP basics - intset
-[[0;32;49mok[0m]: SPOP with <count>=1 - intset
-[[0;32;49mok[0m]: SRANDMEMBER - intset
-[[0;32;49mok[0m]: SPOP with <count>
-[[0;32;49mok[0m]: SPOP with <count>
-[[0;32;49mok[0m]: SPOP using integers, testing Knuth's and Floyd's algorithm
-[[0;32;49mok[0m]: SPOP using integers with Knuth's algorithm
-[[0;32;49mok[0m]: SPOP new implementation: code path #1
-[[0;32;49mok[0m]: SPOP new implementation: code path #2
-[[0;32;49mok[0m]: SPOP new implementation: code path #3
-[[0;32;49mok[0m]: SRANDMEMBER count of 0 is handled correctly
-[[0;32;49mok[0m]: SRANDMEMBER with <count> against non existing key
-[[0;32;49mok[0m]: SRANDMEMBER count of 0 is handled correctly - emptyarray
-[[0;32;49mok[0m]: SRANDMEMBER with <count> against non existing key - emptyarray
-[[0;32;49mok[0m]: SRANDMEMBER with <count> - hashtable
-[[0;32;49mok[0m]: SRANDMEMBER with <count> - intset
-[[0;32;49mok[0m]: SETBIT fuzzing
-[[0;32;49mok[0m]: GETBIT against non-existing key
-[[0;32;49mok[0m]: GETBIT against string-encoded key
-[[0;32;49mok[0m]: SRANDMEMBER histogram distribution - hashtable
-[[0;32;49mok[0m]: GETBIT against integer-encoded key
-[[0;32;49mok[0m]: SETRANGE against non-existing key
-[[0;32;49mok[0m]: SETRANGE against string-encoded key
-[[0;32;49mok[0m]: SETRANGE against integer-encoded key
-[[0;32;49mok[0m]: SETRANGE against key with wrong type
-[[0;32;49mok[0m]: SETRANGE with out of range offset
-[[0;32;49mok[0m]: GETRANGE against non-existing key
-[[0;32;49mok[0m]: GETRANGE against string value
-[[0;32;49mok[0m]: GETRANGE against integer-encoded value
-[[0;32;49mok[0m]: SETEX - Wait for the key to expire
-[[0;32;49mok[0m]: SETEX - Wrong time parameter
-[[0;32;49mok[0m]: PERSIST can undo an EXPIRE
-[[0;32;49mok[0m]: PERSIST returns 0 against non existing or non volatile keys
-[[0;32;49mok[0m]: Only default user has access to all channels irrespective of flag
-[[0;32;49mok[0m]: SRANDMEMBER histogram distribution - intset
-[[0;32;49mok[0m]: SMOVE basics - from regular set to intset
-[[0;32;49mok[0m]: SMOVE basics - from intset to regular set
-[[0;32;49mok[0m]: SMOVE non existing key
-[[0;32;49mok[0m]: SMOVE non existing src set
-[[0;32;49mok[0m]: SMOVE from regular set to non existing destination set
-[[0;32;49mok[0m]: SMOVE from intset to non existing destination set
-[[0;32;49mok[0m]: SMOVE wrong src key type
-[[0;32;49mok[0m]: SMOVE wrong dst key type
-[[0;32;49mok[0m]: SMOVE with identical source and destination
-[[0;32;49mok[0m]: SMOVE only notify dstset when the addition is successful
-[[0;32;49mok[0m]: Consumer without PEL is present in AOF after AOFRW
-[[0;32;49mok[0m]: default: load from config file, can access any channels
 [[0;32;49mok[0m]: ZDIFF fuzzing - ziplist
 [[0;32;49mok[0m]: Basic ZPOP with a single key - ziplist
 [[0;32;49mok[0m]: ZPOP with count - ziplist
 [[0;32;49mok[0m]: BZPOP with a single existing sorted set - ziplist
 [[0;32;49mok[0m]: BZPOP with multiple existing sorted sets - ziplist
-[9/66 [0;33;49mdone[0m]: unit/acl ()
 [[0;32;49mok[0m]: BZPOP second sorted set has members - ziplist
 [[0;32;49mok[0m]: Basic ZPOP - ziplist RESP3
 [[0;32;49mok[0m]: ZPOP with count - ziplist RESP3
@@ -802,6 +611,7 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: ZRANGEBYLEX with invalid lex range specifiers - skiplist
 [[0;32;49mok[0m]: ZREMRANGEBYSCORE basics - skiplist
 [[0;32;49mok[0m]: ZREMRANGEBYSCORE with non-value min or max - skiplist
+[[0;32;49mok[0m]: SCAN regression test for issue #4906
 [[0;32;49mok[0m]: ZREMRANGEBYRANK basics - skiplist
 [[0;32;49mok[0m]: ZUNIONSTORE against non-existing key doesn't set destination - skiplist
 [[0;32;49mok[0m]: ZUNION/ZINTER/ZDIFF against non-existing key - skiplist
@@ -817,7 +627,6 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: ZUNIONSTORE with AGGREGATE MAX - skiplist
 [[0;32;49mok[0m]: ZUNION/ZINTER with AGGREGATE MAX - skiplist
 [[0;32;49mok[0m]: ZINTERSTORE basics - skiplist
-[[0;32;49mok[0m]: Consumer group last ID propagation to slave (NOACK=0)
 [[0;32;49mok[0m]: ZINTER basics - skiplist
 [[0;32;49mok[0m]: ZINTER RESP3 - skiplist
 [[0;32;49mok[0m]: ZINTERSTORE with weights - skiplist
@@ -835,10 +644,229 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: ZDIFF subtracting set from itself - skiplist
 [[0;32;49mok[0m]: ZDIFF algorithm 1 - skiplist
 [[0;32;49mok[0m]: ZDIFF algorithm 2 - skiplist
-[[0;32;49mok[0m]: MULTI-EXEC body and script timeout
+[8/66 [0;33;49mdone[0m]: unit/scan ()
+[[0;32;49mok[0m]: MULTI and script timeout
+[[0;32;49mok[0m]: XRANGE can be used to iterate the whole stream
+[[0;32;49mok[0m]: Connections start with the default user
+[[0;32;49mok[0m]: It is possible to create new users
+[[0;32;49mok[0m]: New users start disabled
+[[0;32;49mok[0m]: Enabling the user allows the login
+[[0;32;49mok[0m]: Only the set of correct passwords work
+[[0;32;49mok[0m]: It is possible to remove passwords from the set of valid ones
+[[0;32;49mok[0m]: Test password hashes can be added
+[[0;32;49mok[0m]: Test password hashes validate input
+[[0;32;49mok[0m]: ACL GETUSER returns the password hash instead of the actual password
+[[0;32;49mok[0m]: Test hashed passwords removal
+[[0;32;49mok[0m]: By default users are not able to access any command
+[[0;32;49mok[0m]: By default users are not able to access any key
+[[0;32;49mok[0m]: It's possible to allow the access of a subset of keys
+[[0;32;49mok[0m]: By default users are able to publish to any channel
+[[0;32;49mok[0m]: By default users are able to subscribe to any channel
+[[0;32;49mok[0m]: By default users are able to subscribe to any pattern
+[[0;32;49mok[0m]: It's possible to allow publishing to a subset of channels
+[[0;32;49mok[0m]: Validate subset of channels is prefixed with resetchannels flag
+[[0;32;49mok[0m]: In transaction queue publish/subscribe/psubscribe to unauthorized channel will fail
+[[0;32;49mok[0m]: It's possible to allow subscribing to a subset of channels
+[[0;32;49mok[0m]: It's possible to allow subscribing to a subset of channel patterns
+[[0;32;49mok[0m]: Subscribers are killed when revoked of channel permission
+[[0;32;49mok[0m]: Subscribers are killed when revoked of pattern permission
+[[0;32;49mok[0m]: Subscribers are killed when revoked of allchannels permission
+[[0;32;49mok[0m]: Subscribers are pardoned if literal permissions are retained and/or gaining allchannels
+[[0;32;49mok[0m]: Subscribers are pardoned if literal permissions are retained and/or gaining allchannels
+[[0;32;49mok[0m]: Users can be configured to authenticate with any password
+[[0;32;49mok[0m]: ACLs can exclude single commands
+[[0;32;49mok[0m]: ACLs can include or exclude whole classes of commands
+[[0;32;49mok[0m]: ACLs can include single subcommands
+[[0;32;49mok[0m]: ACLs set can include subcommands, if already full command exists
+[[0;32;49mok[0m]: ACL GETUSER is able to translate back command permissions
+[[0;32;49mok[0m]: ACL GETUSER provides reasonable results
+[[0;32;49mok[0m]: ACL #5998 regression: memory leaks adding / removing subcommands
+[[0;32;49mok[0m]: ACL LOG shows failed command executions at toplevel
+[[0;32;49mok[0m]: ACL LOG is able to test similar events
+[[0;32;49mok[0m]: ACL LOG is able to log keys access violations and key name
+[[0;32;49mok[0m]: ACL LOG is able to log channel access violations and channel name
+[[0;32;49mok[0m]: ACL LOG RESET is able to flush the entries in the log
+[[0;32;49mok[0m]: ACL LOG can distinguish the transaction context (1)
+[[0;32;49mok[0m]: ACL LOG can distinguish the transaction context (2)
+[[0;32;49mok[0m]: ACL can log errors in the context of Lua scripting
+[[0;32;49mok[0m]: ACL can log errors in the context of Lua scripting
+[[0;32;49mok[0m]: ACL LOG can accept a numerical argument to show less entries
+[[0;32;49mok[0m]: ACL LOG can log failed auth attempts
+[[0;32;49mok[0m]: ACL LOG entries are limited to a maximum amount
+[[0;32;49mok[0m]: When default user is off, new connections are not authenticated
+[[0;32;49mok[0m]: When default user has no command permission, hello command still works for other users
+[[0;32;49mok[0m]: ACL HELP should not have unexpected options
+[[0;32;49mok[0m]: Delete a user that the client doesn't use
+[[0;32;49mok[0m]: Delete a user that the client is using
+[[0;32;49mok[0m]: Hash fuzzing #2 - 512 fields
+[[0;32;49mok[0m]: default: load from include file, can access any channels
+[[0;32;49mok[0m]: default: with config acl-pubsub-default allchannels after reset, can access any channels
+[[0;32;49mok[0m]: default: with config acl-pubsub-default resetchannels after reset, can not access any channels
+[[0;32;49mok[0m]: EXEC and script timeout
+[[0;32;49mok[0m]: Alice: can execute all command
+[[0;32;49mok[0m]: Bob: just execute @set and acl command
+[[0;32;49mok[0m]: ACL load and save
+[[0;32;49mok[0m]: ACL load and save with restricted channels
+[[0;32;49mok[0m]: SETNX against expired volatile key
+[[0;32;49mok[0m]: GETEX EX option
+[[0;32;49mok[0m]: GETEX PX option
+[[0;32;49mok[0m]: GETEX EXAT option
+[[0;32;49mok[0m]: GETEX PXAT option
+[[0;32;49mok[0m]: GETEX PERSIST option
+[[0;32;49mok[0m]: GETEX no option
+[[0;32;49mok[0m]: GETEX syntax errors
+[[0;32;49mok[0m]: GETEX syntax errors
+[[0;32;49mok[0m]: GETEX no arguments
+[[0;32;49mok[0m]: GETDEL command
+[[0;32;49mok[0m]: GETDEL propagate as DEL command to replica
+[[0;32;49mok[0m]: BLPOP: timeout
+[[0;32;49mok[0m]: BLPOP: arguments are empty
+[[0;32;49mok[0m]: BRPOP: with single empty list argument
+[[0;32;49mok[0m]: BRPOP: with negative timeout
+[[0;32;49mok[0m]: BRPOP: with non-integer timeout
+[[0;32;49mok[0m]: Default user has access to all channels irrespective of flag
+[[0;32;49mok[0m]: Update acl-pubsub-default, existing users shouldn't get affected
+[[0;32;49mok[0m]: Single channel is valid
+[[0;32;49mok[0m]: Single channel is not valid with allchannels
 [[0;32;49mok[0m]: Old Big Linked list: SORT BY key
 [[0;32;49mok[0m]: Old Big Linked list: SORT BY key with limit
+[[0;32;49mok[0m]: SETEX - Wait for the key to expire
+[[0;32;49mok[0m]: SETEX - Wrong time parameter
+[[0;32;49mok[0m]: PERSIST can undo an EXPIRE
+[[0;32;49mok[0m]: PERSIST returns 0 against non existing or non volatile keys
+[[0;32;49mok[0m]: GETEX without argument does not propagate to replica
+[[0;32;49mok[0m]: MGET
+[[0;32;49mok[0m]: MGET against non existing key
+[[0;32;49mok[0m]: MGET against non-string key
+[[0;32;49mok[0m]: GETSET (set new value)
+[[0;32;49mok[0m]: GETSET (replace old value)
+[[0;32;49mok[0m]: MSET base case
+[[0;32;49mok[0m]: MSET wrong number of args
+[[0;32;49mok[0m]: MSETNX with already existent key
+[[0;32;49mok[0m]: MSETNX with not existing keys
+[[0;32;49mok[0m]: STRLEN against non-existing key
+[[0;32;49mok[0m]: STRLEN against integer-encoded value
+[[0;32;49mok[0m]: STRLEN against plain string
+[[0;32;49mok[0m]: SETBIT against non-existing key
+[[0;32;49mok[0m]: SETBIT against string-encoded key
+[[0;32;49mok[0m]: SETBIT against integer-encoded key
+[[0;32;49mok[0m]: SETBIT against key with wrong type
+[[0;32;49mok[0m]: SETBIT with out of range bit offset
+[[0;32;49mok[0m]: SETBIT with non-bit argument
+[[0;32;49mok[0m]: BGSAVE
+[[0;32;49mok[0m]: SELECT an out of range DB
+[[0;32;49mok[0m]: Consumer without PEL is present in AOF after AOFRW
+[[0;32;49mok[0m]: MULTI-EXEC body and script timeout
+[[0;32;49mok[0m]: Only default user has access to all channels irrespective of flag
+[[0;32;49mok[0m]: just EXEC and script timeout
+[[0;32;49mok[0m]: exec with write commands and state change
+[[0;32;49mok[0m]: exec with read commands and stale replica state change
+[[0;32;49mok[0m]: EXEC with only read commands should not be rejected when OOM
+[[0;32;49mok[0m]: Old Big Linked list: SORT BY hash field
+[[0;32;49mok[0m]: EXEC with at least one use-memory command should fail
+[[0;32;49mok[0m]: Blocking commands ignores the timeout
+[[0;32;49mok[0m]: Consumer group last ID propagation to slave (NOACK=0)
+[[0;32;49mok[0m]: Intset: SORT BY key
+[[0;32;49mok[0m]: Intset: SORT BY key with limit
+[[0;32;49mok[0m]: Intset: SORT BY hash field
+[[0;32;49mok[0m]: default: load from config file, can access any channels
+[[0;32;49mok[0m]: MULTI propagation of PUBLISH
 [[0;32;49mok[0m]: Consumer group last ID propagation to slave (NOACK=1)
+[[0;32;49mok[0m]: MULTI propagation of SCRIPT LOAD
+[9/66 [0;33;49mdone[0m]: unit/acl ()
+[[0;32;49mok[0m]: MULTI propagation of SCRIPT LOAD
+[[0;32;49mok[0m]: MULTI propagation of XREADGROUP
+[[0;32;49mok[0m]: BRPOP: with zero timeout should block indefinitely
+[[0;32;49mok[0m]: BRPOP: second argument is not a list
+[[0;32;49mok[0m]: Hash table: SORT BY key
+[[0;32;49mok[0m]: Hash table: SORT BY key with limit
+[[0;32;49mok[0m]: Hash table: SORT BY hash field
+[[0;32;49mok[0m]: XREVRANGE returns the reverse of XRANGE
+[[0;32;49mok[0m]: XRANGE exclusive ranges
+[[0;32;49mok[0m]: XREAD with non empty stream
+[[0;32;49mok[0m]: Non blocking XREAD with empty streams
+[[0;32;49mok[0m]: XREAD with non empty second stream
+[[0;32;49mok[0m]: Blocking XREAD waiting new data
+[[0;32;49mok[0m]: Blocking XREAD waiting old data
+[10/66 [0;33;49mdone[0m]: unit/multi ()
+[[0;32;49mok[0m]: Blocking XREAD will not reply with an empty array
+[[0;32;49mok[0m]: XREAD: XADD + DEL should not awake client
+[[0;32;49mok[0m]: XREAD: XADD + DEL + LPUSH should not awake client
+[[0;32;49mok[0m]: XREAD with same stream name multiple times should work
+[[0;32;49mok[0m]: XREAD + multiple XADD inside transaction
+[[0;32;49mok[0m]: XDEL basic test
+[[0;32;49mok[0m]: SETBIT fuzzing
+[[0;32;49mok[0m]: GETBIT against non-existing key
+[[0;32;49mok[0m]: GETBIT against string-encoded key
+[[0;32;49mok[0m]: GETBIT against integer-encoded key
+[[0;32;49mok[0m]: SETRANGE against non-existing key
+[[0;32;49mok[0m]: SETRANGE against string-encoded key
+[[0;32;49mok[0m]: SETRANGE against integer-encoded key
+[[0;32;49mok[0m]: SETRANGE against key with wrong type
+[[0;32;49mok[0m]: SETRANGE with out of range offset
+[[0;32;49mok[0m]: GETRANGE against non-existing key
+[[0;32;49mok[0m]: GETRANGE against string value
+[[0;32;49mok[0m]: GETRANGE against integer-encoded value
+[[0;32;49mok[0m]: Check consistency of different data types after a reload
+[[0;32;49mok[0m]: SDIFF fuzzing
+[[0;32;49mok[0m]: SDIFF against non-set should throw error
+[[0;32;49mok[0m]: SDIFF against non-set should throw error
+[[0;32;49mok[0m]: SDIFF should handle non existing key as empty
+[[0;32;49mok[0m]: SDIFFSTORE against non-set should throw error
+[[0;32;49mok[0m]: SDIFFSTORE against non-set should throw error
+[[0;32;49mok[0m]: SDIFFSTORE should handle non existing key as empty
+[[0;32;49mok[0m]: SINTER against non-set should throw error
+[[0;32;49mok[0m]: SINTER against non-set should throw error
+[[0;32;49mok[0m]: SINTER should handle non existing key as empty
+[[0;32;49mok[0m]: SINTER with same integer elements but different encoding
+[[0;32;49mok[0m]: SINTERSTORE against non-set should throw error
+[[0;32;49mok[0m]: SINTERSTORE against non-set should throw error
+[[0;32;49mok[0m]: SINTERSTORE against non existing keys should delete dstkey
+[[0;32;49mok[0m]: SUNION against non-set should throw error
+[[0;32;49mok[0m]: SUNION against non-set should throw error
+[[0;32;49mok[0m]: SUNION should handle non existing key as empty
+[[0;32;49mok[0m]: SUNIONSTORE against non-set should throw error
+[[0;32;49mok[0m]: SUNIONSTORE against non-set should throw error
+[[0;32;49mok[0m]: SUNIONSTORE should handle non existing key as empty
+[[0;32;49mok[0m]: SUNIONSTORE against non existing keys should delete dstkey
+[[0;32;49mok[0m]: SPOP basics - hashtable
+[[0;32;49mok[0m]: SPOP with <count>=1 - hashtable
+[[0;32;49mok[0m]: SRANDMEMBER - hashtable
+[[0;32;49mok[0m]: SPOP basics - intset
+[[0;32;49mok[0m]: SPOP with <count>=1 - intset
+[[0;32;49mok[0m]: SRANDMEMBER - intset
+[[0;32;49mok[0m]: SPOP with <count>
+[[0;32;49mok[0m]: SPOP with <count>
+[[0;32;49mok[0m]: SPOP using integers, testing Knuth's and Floyd's algorithm
+[[0;32;49mok[0m]: SPOP using integers with Knuth's algorithm
+[[0;32;49mok[0m]: SPOP new implementation: code path #1
+[[0;32;49mok[0m]: SPOP new implementation: code path #2
+[[0;32;49mok[0m]: SPOP new implementation: code path #3
+[[0;32;49mok[0m]: SRANDMEMBER count of 0 is handled correctly
+[[0;32;49mok[0m]: SRANDMEMBER with <count> against non existing key
+[[0;32;49mok[0m]: SRANDMEMBER count overflow
+[[0;32;49mok[0m]: SRANDMEMBER count of 0 is handled correctly - emptyarray
+[[0;32;49mok[0m]: SRANDMEMBER with <count> against non existing key - emptyarray
+[[0;32;49mok[0m]: SRANDMEMBER with <count> - hashtable
+[[0;32;49mok[0m]: SRANDMEMBER with <count> - intset
+[[0;32;49mok[0m]: SRANDMEMBER histogram distribution - hashtable
+[[0;32;49mok[0m]: SRANDMEMBER histogram distribution - intset
+[[0;32;49mok[0m]: SMOVE basics - from regular set to intset
+[[0;32;49mok[0m]: SMOVE basics - from intset to regular set
+[[0;32;49mok[0m]: SMOVE non existing key
+[[0;32;49mok[0m]: SMOVE non existing src set
+[[0;32;49mok[0m]: SMOVE from regular set to non existing destination set
+[[0;32;49mok[0m]: SMOVE from intset to non existing destination set
+[[0;32;49mok[0m]: SMOVE wrong src key type
+[[0;32;49mok[0m]: SMOVE wrong dst key type
+[[0;32;49mok[0m]: SMOVE with identical source and destination
+[[0;32;49mok[0m]: SMOVE only notify dstset when the addition is successful
+[[0;32;49mok[0m]: Empty stream with no lastid can be rewrite into AOF correctly
+[[0;32;49mok[0m]: EXPIRE precision is now the millisecond
+[[0;32;49mok[0m]: Stress test the hash ziplist -> hashtable encoding conversion
+[[0;32;49mok[0m]: Hash ziplist of various encodings
+[[0;32;49mok[0m]: Hash ziplist of various encodings - sanitize dump
+[[0;32;49mok[0m]: HINCRBYFLOAT does not allow NaN or Infinity
 [[0;32;49mok[0m]: BRPOP: timeout
 [[0;32;49mok[0m]: BRPOP: arguments are empty
 [[0;32;49mok[0m]: BLPOP inside a transaction
@@ -851,45 +879,51 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: LINSERT raise error on bad syntax
 [[0;32;49mok[0m]: LINDEX consistency test - quicklist
 [[0;32;49mok[0m]: LINDEX random access - quicklist
-[[0;32;49mok[0m]: just EXEC and script timeout
-[[0;32;49mok[0m]: exec with write commands and state change
+[[0;32;49mok[0m]: First server should have role slave after SLAVEOF
+[11/66 [0;33;49mdone[0m]: unit/type/hash ()
 [[0;32;49mok[0m]: Check if list is still ok after a DEBUG RELOAD - quicklist
-[[0;32;49mok[0m]: exec with read commands and stale replica state change
-[[0;32;49mok[0m]: Old Big Linked list: SORT BY hash field
-[[0;32;49mok[0m]: EXEC with only read commands should not be rejected when OOM
-[[0;32;49mok[0m]: EXEC with at least one use-memory command should fail
-[[0;32;49mok[0m]: Blocking commands ignores the timeout
-[[0;32;49mok[0m]: Intset: SORT BY key
-[[0;32;49mok[0m]: Intset: SORT BY key with limit
-[[0;32;49mok[0m]: Intset: SORT BY hash field
-[[0;32;49mok[0m]: MULTI propagation of PUBLISH
-[[0;32;49mok[0m]: MULTI propagation of SCRIPT LOAD
-[[0;32;49mok[0m]: Stress test the hash ziplist -> hashtable encoding conversion
-[[0;32;49mok[0m]: Hash ziplist of various encodings
-[[0;32;49mok[0m]: Hash ziplist of various encodings - sanitize dump
-[[0;32;49mok[0m]: MULTI propagation of SCRIPT LOAD
-[10/66 [0;33;49mdone[0m]: unit/type/hash ()
-[[0;32;49mok[0m]: LINDEX consistency test - quicklist
-[[0;32;49mok[0m]: MULTI propagation of XREADGROUP
-[[0;32;49mok[0m]: Check consistency of different data types after a reload
-[[0;32;49mok[0m]: LINDEX random access - quicklist
-[11/66 [0;33;49mdone[0m]: unit/multi ()
-[[0;32;49mok[0m]: Hash table: SORT BY key
-[[0;32;49mok[0m]: Hash table: SORT BY key with limit
-[[0;32;49mok[0m]: Hash table: SORT BY hash field
+[[0;32;49mok[0m]: Same dataset digest if saving/reloading as AOF?
 [[0;32;49mok[0m]: Slave enters handshake
+[12/66 [0;33;49mdone[0m]: unit/type/stream-cgroups ()
+[[0;32;49mok[0m]: LINDEX consistency test - quicklist
+[[0;32;49mok[0m]: LINDEX random access - quicklist
+[[0;32;49mok[0m]: GETRANGE fuzzing
+[[0;32;49mok[0m]: trim on SET with big value
+[[0;32;49mok[0m]: Extended SET can detect syntax errors
+[[0;32;49mok[0m]: Extended SET can detect syntax errors
+[[0;32;49mok[0m]: Extended SET NX option
+[[0;32;49mok[0m]: Extended SET XX option
+[[0;32;49mok[0m]: Extended SET GET option
+[[0;32;49mok[0m]: Extended SET GET option with no previous value
+[[0;32;49mok[0m]: Extended SET GET with NX option should result in syntax err
+[[0;32;49mok[0m]: Extended SET GET with NX option should result in syntax err
+[[0;32;49mok[0m]: Extended SET GET with incorrect type should result in wrong type error
+[[0;32;49mok[0m]: Extended SET GET with incorrect type should result in wrong type error
+[[0;32;49mok[0m]: Extended SET EX option
+[[0;32;49mok[0m]: Extended SET PX option
+[[0;32;49mok[0m]: Extended SET EXAT option
+[[0;32;49mok[0m]: Extended SET PXAT option
+[[0;32;49mok[0m]: Extended SET using multiple options at once
+[[0;32;49mok[0m]: GETRANGE with huge ranges, Github issue #1844
 [[0;32;49mok[0m]: Check if list is still ok after a DEBUG RELOAD - quicklist
+[[0;32;49mok[0m]: STRALGO LCS string output with STRINGS option
 [[0;32;49mok[0m]: LLEN against non-list value error
 [[0;32;49mok[0m]: LLEN against non-list value error
 [[0;32;49mok[0m]: LLEN against non existing key
+[[0;32;49mok[0m]: STRALGO LCS len
 [[0;32;49mok[0m]: LINDEX against non-list value error
 [[0;32;49mok[0m]: LINDEX against non-list value error
 [[0;32;49mok[0m]: LINDEX against non existing key
 [[0;32;49mok[0m]: LPUSH against non-list value error
 [[0;32;49mok[0m]: LPUSH against non-list value error
+[[0;32;49mok[0m]: LCS with KEYS option
 [[0;32;49mok[0m]: RPUSH against non-list value error
 [[0;32;49mok[0m]: RPUSH against non-list value error
+[[0;32;49mok[0m]: LCS indexes
 [[0;32;49mok[0m]: RPOPLPUSH base case - linkedlist
+[[0;32;49mok[0m]: LCS indexes with match len
+[[0;32;49mok[0m]: LCS indexes with match len and minimum match len
+[[0;32;49mok[0m]: SETRANGE with huge offset
 [[0;32;49mok[0m]: LMOVE left left base case - linkedlist
 [[0;32;49mok[0m]: LMOVE left right base case - linkedlist
 [[0;32;49mok[0m]: LMOVE right left base case - linkedlist
@@ -924,6 +958,11 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: LMOVE left right with ziplist source and existing target linkedlist
 [[0;32;49mok[0m]: LMOVE right left with ziplist source and existing target linkedlist
 [[0;32;49mok[0m]: LMOVE right right with ziplist source and existing target linkedlist
+[[0;32;49mok[0m]: PEXPIRE/PSETEX/PEXPIREAT can set sub-second expires
+[[0;32;49mok[0m]: TTL returns time to live in
+[[0;32;49mok[0m]: PTTL returns time to live in milliseconds
+[[0;32;49mok[0m]: TTL / PTTL return -1 if key has no expire
+[[0;32;49mok[0m]: TTL / PTTL return -2 if key does not exit
 [[0;32;49mok[0m]: RPOPLPUSH with ziplist source and existing target ziplist
 [[0;32;49mok[0m]: LMOVE left left with ziplist source and existing target ziplist
 [[0;32;49mok[0m]: LMOVE left right with ziplist source and existing target ziplist
@@ -937,44 +976,23 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: Basic LPOP/RPOP - ziplist
 [[0;32;49mok[0m]: LPOP/RPOP against non list value
 [[0;32;49mok[0m]: Mass RPOP/LPOP - quicklist
-[[0;32;49mok[0m]: GETRANGE fuzzing
-[[0;32;49mok[0m]: Extended SET can detect syntax errors
-[[0;32;49mok[0m]: Extended SET can detect syntax errors
-[[0;32;49mok[0m]: Extended SET NX option
-[[0;32;49mok[0m]: Extended SET XX option
-[[0;32;49mok[0m]: Extended SET GET option
-[[0;32;49mok[0m]: Extended SET GET option with no previous value
-[[0;32;49mok[0m]: Extended SET GET with NX option should result in syntax err
-[[0;32;49mok[0m]: Extended SET GET with NX option should result in syntax err
-[[0;32;49mok[0m]: Extended SET GET with incorrect type should result in wrong type error
-[[0;32;49mok[0m]: Extended SET GET with incorrect type should result in wrong type error
-[[0;32;49mok[0m]: Extended SET EX option
-[[0;32;49mok[0m]: Extended SET PX option
-[[0;32;49mok[0m]: Extended SET EXAT option
-[[0;32;49mok[0m]: Extended SET PXAT option
-[[0;32;49mok[0m]: Extended SET using multiple options at once
-[[0;32;49mok[0m]: GETRANGE with huge ranges, Github issue #1844
+[13/66 [0;33;49mdone[0m]: unit/type/string ()
 [[0;32;49mok[0m]: Mass RPOP/LPOP - quicklist
-[[0;32;49mok[0m]: STRALGO LCS string output with STRINGS option
-[[0;32;49mok[0m]: STRALGO LCS len
 [[0;32;49mok[0m]: LRANGE basics - linkedlist
-[[0;32;49mok[0m]: LCS with KEYS option
-[[0;32;49mok[0m]: LCS indexes
 [[0;32;49mok[0m]: LRANGE inverted indexes - linkedlist
-[[0;32;49mok[0m]: LCS indexes with match len
 [[0;32;49mok[0m]: LRANGE out of range indexes including the full list - linkedlist
-[[0;32;49mok[0m]: LCS indexes with match len and minimum match len
-[[0;32;49mok[0m]: SETRANGE with huge offset
 [[0;32;49mok[0m]: LRANGE out of range negative end index - linkedlist
 [[0;32;49mok[0m]: LRANGE basics - ziplist
 [[0;32;49mok[0m]: LRANGE inverted indexes - ziplist
+[[0;32;49mok[0m]: First server should have role slave after SLAVEOF
 [[0;32;49mok[0m]: LRANGE out of range indexes including the full list - ziplist
 [[0;32;49mok[0m]: LRANGE out of range negative end index - ziplist
 [[0;32;49mok[0m]: LRANGE against non existing key
 [[0;32;49mok[0m]: LRANGE with start > end yields an empty array for backward compatibility
+[[0;32;49mok[0m]: If min-slaves-to-write is honored, write is accepted
+[[0;32;49mok[0m]: No write if min-slaves-to-write is < attached slaves
 [[0;32;49mok[0m]: LTRIM basics - linkedlist
 [[0;32;49mok[0m]: LTRIM out of range negative end index - linkedlist
-[[0;32;49mok[0m]: XDEL fuzz test
 [[0;32;49mok[0m]: LTRIM basics - ziplist
 [[0;32;49mok[0m]: LTRIM out of range negative end index - ziplist
 [[0;32;49mok[0m]: LSET - linkedlist
@@ -995,46 +1013,50 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: LREM starting from tail with negative count - ziplist
 [[0;32;49mok[0m]: LREM starting from tail with negative count (2) - ziplist
 [[0;32;49mok[0m]: LREM deleting objects that may be int encoded - ziplist
-[12/66 [0;33;49mdone[0m]: unit/type/string ()
-[[0;32;49mok[0m]: EXPIRE precision is now the millisecond
-[[0;32;49mok[0m]: Empty stream with no lastid can be rewrite into AOF correctly
-[[0;32;49mok[0m]: First server should have role slave after SLAVEOF
-[[0;32;49mok[0m]: If min-slaves-to-write is honored, write is accepted
-[[0;32;49mok[0m]: No write if min-slaves-to-write is < attached slaves
 [[0;32;49mok[0m]: If min-slaves-to-write is honored, write is accepted (again)
-[13/66 [0;33;49mdone[0m]: unit/type/stream-cgroups ()
-[[0;32;49mok[0m]: Same dataset digest if saving/reloading as AOF?
-[[0;32;49mok[0m]: intsets implementation stress testing
 [[0;32;49mok[0m]: First server should have role slave after SLAVEOF
-[14/66 [0;33;49mdone[0m]: unit/type/set ()
-[[0;32;49mok[0m]: First server should have role slave after SLAVEOF
-[[0;32;49mok[0m]: PEXPIRE/PSETEX/PEXPIREAT can set sub-second expires
-[[0;32;49mok[0m]: TTL returns time to live in
-[[0;32;49mok[0m]: PTTL returns time to live in milliseconds
-[[0;32;49mok[0m]: TTL / PTTL return -1 if key has no expire
-[[0;32;49mok[0m]: TTL / PTTL return -2 if key does not exit
+[[0;32;49mok[0m]: EXPIRES after a reload (snapshot + append only file rewrite)
+[[0;32;49mok[0m]: Redis should actively expire keys incrementally
+[[0;32;49mok[0m]: XDEL fuzz test
 [[0;32;49mok[0m]: Regression for bug 593 - chaining BRPOPLPUSH with other blocking cmds
 [[0;32;49mok[0m]: client unblock tests
 [[0;32;49mok[0m]: List ziplist of various encodings
 [[0;32;49mok[0m]: List ziplist of various encodings - sanitize dump
-[[0;32;49mok[0m]: LTRIM stress testing - linkedlist
-[15/66 [0;33;49mdone[0m]: unit/type/list ()
-[[0;32;49mok[0m]: Slave should be able to synchronize with the master
-[[0;32;49mok[0m]: Detect write load to master
-[[0;32;49mok[0m]: Test replication partial resync: no reconnection, just sync (diskless: no, disabled, reconnect: 0)
-[[0;32;49mok[0m]: EXPIRES after a reload (snapshot + append only file rewrite)
-[[0;32;49mok[0m]: Redis should actively expire keys incrementally
-[[0;32;49mok[0m]: First server should have role slave after SLAVEOF
-[[0;32;49mok[0m]: Slave should be able to synchronize with the master
+[[0;32;49mok[0m]: intsets implementation stress testing
+[14/66 [0;33;49mdone[0m]: unit/type/list ()
+[15/66 [0;33;49mdone[0m]: unit/type/set ()
+[[0;32;49mok[0m]: Big Hash table: SORT BY key
+[[0;32;49mok[0m]: Big Hash table: SORT BY key with limit
 [[0;32;49mok[0m]: Test latency events logging
 [[0;32;49mok[0m]: LATENCY HISTORY output is ok
 [[0;32;49mok[0m]: LATENCY LATEST output is ok
 [[0;32;49mok[0m]: LATENCY HISTORY / RESET with wrong event name is fine
 [[0;32;49mok[0m]: LATENCY DOCTOR produces some output
 [[0;32;49mok[0m]: LATENCY RESET is able to reset events
-[[0;32;49mok[0m]: Big Hash table: SORT BY key
-[[0;32;49mok[0m]: Big Hash table: SORT BY key with limit
+[[0;32;49mok[0m]: Slave should be able to synchronize with the master
 [[0;32;49mok[0m]: Redis should lazy expire keys
+[[0;32;49mok[0m]: ZDIFF fuzzing - skiplist
+[[0;32;49mok[0m]: Basic ZPOP with a single key - skiplist
+[[0;32;49mok[0m]: ZPOP with count - skiplist
+[[0;32;49mok[0m]: BZPOP with a single existing sorted set - skiplist
+[[0;32;49mok[0m]: BZPOP with multiple existing sorted sets - skiplist
+[[0;32;49mok[0m]: BZPOP second sorted set has members - skiplist
+[[0;32;49mok[0m]: Basic ZPOP - skiplist RESP3
+[[0;32;49mok[0m]: ZPOP with count - skiplist RESP3
+[[0;32;49mok[0m]: BZPOP - skiplist RESP3
+[[0;32;49mok[0m]: ZINTERSTORE regression with two sets, intset+hashtable
+[[0;32;49mok[0m]: ZUNIONSTORE regression, should not create NaN in scores
+[[0;32;49mok[0m]: ZINTERSTORE #516 regression, mixed sets and ziplist zsets
+[[0;32;49mok[0m]: ZUNIONSTORE result is sorted
+[[0;32;49mok[0m]: ZUNIONSTORE/ZINTERSTORE/ZDIFFSTORE error if using WITHSCORES 
+[[0;32;49mok[0m]: ZUNIONSTORE/ZINTERSTORE/ZDIFFSTORE error if using WITHSCORES 
+[[0;32;49mok[0m]: ZMSCORE retrieve
+[[0;32;49mok[0m]: ZMSCORE retrieve from empty set
+[[0;32;49mok[0m]: ZMSCORE retrieve with missing member
+[[0;32;49mok[0m]: ZMSCORE retrieve single member
+[[0;32;49mok[0m]: ZMSCORE retrieve requires one or more members
+[[0;32;49mok[0m]: ZSET commands don't accept the empty strings as valid score
+[[0;32;49mok[0m]: ZSCORE - ziplist
 [[0;32;49mok[0m]: Big Hash table: SORT BY hash field
 [[0;32;49mok[0m]: SORT GET #
 [[0;32;49mok[0m]: SORT GET <const>
@@ -1050,28 +1072,37 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: SORT sorted set BY nosort + LIMIT
 [[0;32;49mok[0m]: SORT sorted set BY nosort works as expected from scripts
 [[0;32;49mok[0m]: SORT sorted set: +inf and -inf handling
+[[0;32;49mok[0m]: ZMSCORE - ziplist
 [[0;32;49mok[0m]: SORT regression for issue #19, sorting floats
 [[0;32;49mok[0m]: SORT with STORE returns zero if result is empty (github issue 224)
 [[0;32;49mok[0m]: SORT with STORE does not create empty lists (github issue 224)
 [[0;32;49mok[0m]: SORT with STORE removes key if result is empty (github issue 227)
+[[0;32;49mok[0m]: LTRIM stress testing - linkedlist
 [[0;32;49mok[0m]: SORT with BY <constant> and STORE should still order output
 [[0;32;49mok[0m]: SORT will complain with numerical sorting and bad doubles (1)
 [[0;32;49mok[0m]: SORT will complain with numerical sorting and bad doubles (2)
 [[0;32;49mok[0m]: SORT BY sub-sorts lexicographically if score is the same
 [[0;32;49mok[0m]: SORT GET with pattern ending with just -> does not get hash field
 [[0;32;49mok[0m]: SORT by nosort retains native order for lists
-[[0;32;49mok[0m]: Detect write load to master
 [[0;32;49mok[0m]: SORT by nosort plus store retains native order for lists
 [[0;32;49mok[0m]: SORT by nosort with limit returns based on original list order
-[[0;32;49mok[0m]: No write if min-slaves-max-lag is > of the slave lag
-[[0;32;49mok[0m]: min-slaves-to-write is ignored by slaves
+[[0;32;49mok[0m]: ZSCORE after a DEBUG RELOAD - ziplist
 [[0;32;49mok[0m]: SORT speed, 100 element list BY key, 100 times
+[[0;32;49mok[0m]: ZSET sorting stresser - ziplist
 [[0;32;49mok[0m]: SORT speed, 100 element list BY hash field, 100 times
 [[0;32;49mok[0m]: SORT speed, 100 element list directly, 100 times
 [[0;32;49mok[0m]: SORT speed, 100 element list BY <const>, 100 times
 [[0;32;49mok[0m]: SETRANGE with huge offset
+[[0;32;49mok[0m]: First server should have role slave after SLAVEOF
 [16/66 [0;33;49mdone[0m]: unit/sort ()
 [[0;32;49mok[0m]: Unfinished MULTI: Server should start if load-truncated is yes
+[[0;32;49mok[0m]: Short read: Server should start if load-truncated is yes
+[[0;32;49mok[0m]: Truncated AOF loaded: we expect foo to be equal to 5
+[[0;32;49mok[0m]: Append a new command after loading an incomplete AOF
+[[0;32;49mok[0m]: Detect write load to master
+[[0;32;49mok[0m]: Test replication partial resync: no reconnection, just sync (diskless: no, disabled, reconnect: 0)
+[[0;32;49mok[0m]: No write if min-slaves-max-lag is > of the slave lag
+[[0;32;49mok[0m]: min-slaves-to-write is ignored by slaves
 [[0;32;49mok[0m]: EXPIRE should not resurrect keys (issue #1026)
 [[0;32;49mok[0m]: 5 keys in, 5 keys out
 [[0;32;49mok[0m]: EXPIRE with empty string as TTL should report an error
@@ -1089,41 +1120,15 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: EXPIRE with big negative integer
 [[0;32;49mok[0m]: PEXPIREAT with big integer works
 [[0;32;49mok[0m]: PEXPIREAT with big negative integer works
-[[0;32;49mok[0m]: Short read: Server should start if load-truncated is yes
-[[0;32;49mok[0m]: Truncated AOF loaded: we expect foo to be equal to 5
-[[0;32;49mok[0m]: Append a new command after loading an incomplete AOF
-[[0;32;49mok[0m]: ZDIFF fuzzing - skiplist
-[[0;32;49mok[0m]: Basic ZPOP with a single key - skiplist
-[[0;32;49mok[0m]: ZPOP with count - skiplist
-[[0;32;49mok[0m]: BZPOP with a single existing sorted set - skiplist
-[[0;32;49mok[0m]: BZPOP with multiple existing sorted sets - skiplist
-[[0;32;49mok[0m]: BZPOP second sorted set has members - skiplist
-[[0;32;49mok[0m]: Basic ZPOP - skiplist RESP3
-[[0;32;49mok[0m]: ZPOP with count - skiplist RESP3
-[[0;32;49mok[0m]: BZPOP - skiplist RESP3
-[[0;32;49mok[0m]: ZINTERSTORE regression with two sets, intset+hashtable
-[[0;32;49mok[0m]: ZUNIONSTORE regression, should not create NaN in scores
-[[0;32;49mok[0m]: ZINTERSTORE #516 regression, mixed sets and ziplist zsets
-[[0;32;49mok[0m]: ZUNIONSTORE result is sorted
-[[0;32;49mok[0m]: ZUNIONSTORE/ZINTERSTORE/ZDIFFSTORE error if using WITHSCORES 
-[[0;32;49mok[0m]: ZUNIONSTORE/ZINTERSTORE/ZDIFFSTORE error if using WITHSCORES 
 [[0;32;49mok[0m]: Short read + command: Server should start
-[[0;32;49mok[0m]: ZMSCORE retrieve
-[[0;32;49mok[0m]: ZMSCORE retrieve from empty set
-[[0;32;49mok[0m]: ZMSCORE retrieve with missing member
 [[0;32;49mok[0m]: Truncated AOF loaded: we expect foo to be equal to 6 now
-[[0;32;49mok[0m]: ZMSCORE retrieve single member
-[[0;32;49mok[0m]: ZMSCORE retrieve requires one or more members
-[[0;32;49mok[0m]: ZSET commands don't accept the empty strings as valid score
-[[0;32;49mok[0m]: ZSCORE - ziplist
-[[0;32;49mok[0m]: ZMSCORE - ziplist
 [[0;32;49mok[0m]: Bad format: Server should have logged an error
 [[0;32;49mok[0m]: Bad format: Server should have logged an error
-[[0;32;49mok[0m]: ZSCORE after a DEBUG RELOAD - ziplist
+[[0;32;49mok[0m]: Unfinished MULTI: Server should have logged an error
+[[0;32;49mok[0m]: Unfinished MULTI: Server should have logged an error
 [[0;32;49mok[0m]: EXPIRES after AOF reload (without rewrite)
-[[0;32;49mok[0m]: ZSET sorting stresser - ziplist
-[[0;32;49mok[0m]: Unfinished MULTI: Server should have logged an error
-[[0;32;49mok[0m]: Unfinished MULTI: Server should have logged an error
+[[0;32;49mok[0m]: Slave should be able to synchronize with the master
+[[0;32;49mok[0m]: Detect write load to master
 [[0;32;49mok[0m]: Short read: Server should have logged an error
 [[0;32;49mok[0m]: Short read: Server should have logged an error
 [[0;32;49mok[0m]: Short read: Utility should confirm the AOF is not valid
@@ -1138,16 +1143,13 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: AOF+EXPIRE: Server should have been started
 [[0;32;49mok[0m]: AOF+EXPIRE: List should be empty
 [[0;32;49mok[0m]: Redis should not try to convert DEL into EXPIREAT for EXPIRE -1
-[[0;32;49mok[0m]: ziplist implementation: encoding stress testing
 [[0;32;49mok[0m]: EXPIRE and SET/GETEX EX/PX/EXAT/PXAT option, TTL should not be reset after loadaof
 [[0;32;49mok[0m]: EXPIRE relative and absolute propagation to replicas
 [[0;32;49mok[0m]: SET command will remove expire
 [[0;32;49mok[0m]: SET - use KEEPTTL option, TTL should not be removed
-[17/66 [0;33;49mdone[0m]: unit/type/list-3 ()
 [[0;32;49mok[0m]: PIPELINING stresser (also a regression for the old epoll bug)
 [[0;32;49mok[0m]: APPEND basics
 [[0;32;49mok[0m]: APPEND basics, integer encoded values
-[[0;32;49mok[0m]: RDB encoding loading test
 [[0;32;49mok[0m]: APPEND fuzzing
 [[0;32;49mok[0m]: FLUSHDB
 [[0;32;49mok[0m]: Perform a final SAVE to leave a clean DB on disk
@@ -1156,172 +1158,157 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: RESET clears and discards MULTI state
 [[0;32;49mok[0m]: RESET clears Pub/Sub state
 [[0;32;49mok[0m]: RESET clears authenticated state
-[[0;32;49mok[0m]: Server started empty with non-existing RDB file
-[[0;32;49mok[0m]: Server started empty with empty RDB file
-[[0;32;49mok[0m]: Test RDB stream encoding
-[[0;32;49mok[0m]: Test RDB stream encoding - sanitize dump
-[[0;32;49mok[0m]: Server should not start if RDB is corrupted
 [[0;32;49mok[0m]: Don't rehash if redis has child proecess
-[[0;32;49mok[0m]: Test replication with parallel clients writing in different DBs
+[[0;32;49mok[0m]: Process title set as expected
+[17/66 [0;33;49mdone[0m]: unit/other ()
+[[0;32;49mok[0m]: RDB encoding loading test
+[[0;32;49mok[0m]: ziplist implementation: encoding stress testing
+[[0;32;49mok[0m]: Server started empty with non-existing RDB file
 [[0;32;49mok[0m]: LATENCY of expire events are correctly collected
 [[0;32;49mok[0m]: LATENCY HELP should not have unexpected options
-[[0;32;49mok[0m]: Test FLUSHALL aborts bgsave
-[18/66 [0;33;49mdone[0m]: unit/latency-monitor ()
-[[0;32;49mok[0m]: bgsave resets the change counter
-[[0;32;49mok[0m]: Process title set as expected
-[19/66 [0;33;49mdone[0m]: unit/other ()
+[18/66 [0;33;49mdone[0m]: unit/type/list-3 ()
+[[0;32;49mok[0m]: Server started empty with empty RDB file
+[[0;32;49mok[0m]: SET - use KEEPTTL option, TTL should not be removed after loadaof
+[[0;32;49mok[0m]: GETEX use of PERSIST option should remove TTL
+[19/66 [0;33;49mdone[0m]: unit/latency-monitor ()
 [[0;32;49mok[0m]: corrupt payload: #7445 - with sanitize
+[[0;32;49mok[0m]: ZRANGEBYSCORE fuzzy test, 100 ranges in 128 element sorted set - ziplist
+[[0;32;49mok[0m]: Test RDB stream encoding
+[[0;32;49mok[0m]: Test RDB stream encoding - sanitize dump
+[[0;32;49mok[0m]: corrupt payload: #7445 - without sanitize - 1
+[[0;32;49mok[0m]: corrupt payload: #7445 - without sanitize - 2
+[[0;32;49mok[0m]: Server should not start if RDB is corrupted
+[[0;32;49mok[0m]: ZRANGEBYLEX fuzzy test, 100 ranges in 128 element sorted set - ziplist
+[[0;32;49mok[0m]: corrupt payload: hash with valid zip list header, invalid entry len
+[[0;32;49mok[0m]: Test replication with parallel clients writing in different DBs
+[[0;32;49mok[0m]: corrupt payload: invalid zlbytes header
+[[0;32;49mok[0m]: Test FLUSHALL aborts bgsave
+[[0;32;49mok[0m]: ZREMRANGEBYLEX fuzzy test, 100 ranges in 128 element sorted set - ziplist
+[[0;32;49mok[0m]: bgsave resets the change counter
+[[0;32;49mok[0m]: ZSETs skiplist implementation backlink consistency test - ziplist
+[[0;32;49mok[0m]: corrupt payload: valid zipped hash header, dup records
+[[0;32;49mok[0m]: corrupt payload: quicklist big ziplist prev len
 [[0;32;49mok[0m]: First server should have role slave after SLAVEOF
 [[0;32;49mok[0m]: With min-slaves-to-write (1,3): master should be writable
 [[0;32;49mok[0m]: With min-slaves-to-write (2,3): master should not be writable
 [[0;32;49mok[0m]: With not enough good slaves, read in Lua script is still accepted
-[[0;32;49mok[0m]: corrupt payload: #7445 - without sanitize - 1
-[[0;32;49mok[0m]: ZRANGEBYSCORE fuzzy test, 100 ranges in 128 element sorted set - ziplist
-[[0;32;49mok[0m]: corrupt payload: #7445 - without sanitize - 2
-[[0;32;49mok[0m]: corrupt payload: hash with valid zip list header, invalid entry len
-[[0;32;49mok[0m]: ZRANGEBYLEX fuzzy test, 100 ranges in 128 element sorted set - ziplist
-[[0;32;49mok[0m]: SET - use KEEPTTL option, TTL should not be removed after loadaof
-[[0;32;49mok[0m]: GETEX use of PERSIST option should remove TTL
-[[0;32;49mok[0m]: ZREMRANGEBYLEX fuzzy test, 100 ranges in 128 element sorted set - ziplist
-[[0;32;49mok[0m]: ZSETs skiplist implementation backlink consistency test - ziplist
-[[0;32;49mok[0m]: corrupt payload: invalid zlbytes header
-[[0;32;49mok[0m]: corrupt payload: valid zipped hash header, dup records
-[[0;32;49mok[0m]: corrupt payload: quicklist big ziplist prev len
 [[0;32;49mok[0m]: corrupt payload: quicklist small ziplist prev len
 [[0;32;49mok[0m]: corrupt payload: quicklist ziplist wrong count
-[[0;32;49mok[0m]: corrupt payload: #3080 - quicklist
 [[0;32;49mok[0m]: ZSETs ZRANK augmented skip list stress testing - ziplist
 [[0;32;49mok[0m]: BZPOPMIN, ZADD + DEL should not awake blocked client
 [[0;32;49mok[0m]: BZPOPMIN, ZADD + DEL + SET should not awake blocked client
 [[0;32;49mok[0m]: BZPOPMIN with same key multiple times should work
 [[0;32;49mok[0m]: MULTI/EXEC is isolated from the point of view of BZPOPMIN
 [[0;32;49mok[0m]: BZPOPMIN with variadic ZADD
+[[0;32;49mok[0m]: corrupt payload: #3080 - quicklist
 [[0;32;49mok[0m]: corrupt payload: quicklist with empty ziplist
-[[0;32;49mok[0m]: Test replication partial resync: ok psync (diskless: no, disabled, reconnect: 1)
+[[0;32;49mok[0m]: GETEX use of PERSIST option should remove TTL after loadaof
 [[0;32;49mok[0m]: corrupt payload: #3080 - ziplist
+[[0;32;49mok[0m]: GETEX propagate as to replica as PERSIST, DEL, or nothing
 [[0;32;49mok[0m]: corrupt payload: load corrupted rdb with no CRC - #3505
-[[0;32;49mok[0m]: LTRIM stress testing - ziplist
-[[0;32;49mok[0m]: corrupt payload: load corrupted rdb with empty keys
-[20/66 [0;33;49mdone[0m]: unit/type/list-2 ()
-[[0;32;49mok[0m]: Slave is able to detect timeout during handshake
-[[0;32;49mok[0m]: Slave should be able to synchronize with the master
-[[0;32;49mok[0m]: Detect write load to master
+[20/66 [0;33;49mdone[0m]: unit/expire ()
+[[0;32;49mok[0m]: MIGRATE cached connections are released after some time
 [[0;32;49mok[0m]: RDB load zipmap hash: converts to ziplist
 [[0;32;49mok[0m]: corrupt payload: load corrupted rdb with empty keys
+[[0;32;49mok[0m]: MIGRATE is able to migrate a key between two instances
+[[0;32;49mok[0m]: RDB load zipmap hash: converts to hash table when hash-max-ziplist-entries is exceeded
+[[0;32;49mok[0m]: MASTER and SLAVE consistency with expire
+[[0;32;49mok[0m]: Slave is able to detect timeout during handshake
 [[0;32;49mok[0m]: BZPOPMIN with zero timeout should block indefinitely
-[[0;32;49mok[0m]: GETEX use of PERSIST option should remove TTL after loadaof
 [[0;32;49mok[0m]: ZSCORE - skiplist
 [[0;32;49mok[0m]: ZMSCORE - skiplist
+[[0;32;49mok[0m]: corrupt payload: load corrupted rdb with empty keys
 [[0;32;49mok[0m]: ZSCORE after a DEBUG RELOAD - skiplist
 [[0;32;49mok[0m]: ZSET sorting stresser - skiplist
-[[0;32;49mok[0m]: MASTER and SLAVE dataset should be identical after complex ops
-[[0;32;49mok[0m]: MIGRATE cached connections are released after some time
-[[0;32;49mok[0m]: GETEX propagate as to replica as PERSIST, DEL, or nothing
-[[0;32;49mok[0m]: RDB load zipmap hash: converts to hash table when hash-max-ziplist-entries is exceeded
-[[0;32;49mok[0m]: corrupt payload: listpack invalid size header
-[21/66 [0;33;49mdone[0m]: unit/expire ()
-[22/66 [0;33;49mdone[0m]: integration/logging ()
-[23/66 [0;33;49mdone[0m]: integration/replication-2 ()
-[[0;32;49mok[0m]: MIGRATE is able to migrate a key between two instances
-[[0;32;49mok[0m]: corrupt payload: listpack too long entry len
-[[0;32;49mok[0m]: RDB load zipmap hash: converts to hash table when hash-max-ziplist-value is exceeded
-[[0;32;49mok[0m]: Set instance A as slave of B
-[24/66 [0;33;49mdone[0m]: integration/convert-zipmap-hash-on-load ()
-[[0;32;49mok[0m]: With min-slaves-to-write: master not writable with lagged slave
-[[0;32;49mok[0m]: corrupt payload: listpack very long entry len
 [[0;32;49mok[0m]: MIGRATE is able to copy a key between two instances
-[[0;32;49mok[0m]: corrupt payload: listpack too long entry prev len
+[[0;32;49mok[0m]: RDB load zipmap hash: converts to hash table when hash-max-ziplist-value is exceeded
+[[0;32;49mok[0m]: Test replication partial resync: ok psync (diskless: no, disabled, reconnect: 1)
+[[0;32;49mok[0m]: corrupt payload: listpack invalid size header
 [[0;32;49mok[0m]: MIGRATE will not overwrite existing keys, unless REPLACE is used
-[[0;32;49mok[0m]: PSYNC2: --- CYCLE 1 ---
-[[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #0 as master
-[[0;32;49mok[0m]: PSYNC2: Set #3 to replicate from #0
-[[0;32;49mok[0m]: PSYNC2: Set #2 to replicate from #0
-[[0;32;49mok[0m]: PSYNC2: Set #4 to replicate from #0
-[[0;32;49mok[0m]: PSYNC2: Set #1 to replicate from #2
-[[0;32;49mok[0m]: First server should have role slave after SLAVEOF
-[[0;32;49mok[0m]: corrupt payload: hash ziplist with duplicate records
-[[0;32;49mok[0m]: MASTER and SLAVE consistency with expire
+[21/66 [0;33;49mdone[0m]: integration/convert-zipmap-hash-on-load ()
+[22/66 [0;33;49mdone[0m]: integration/logging ()
+[[0;32;49mok[0m]: corrupt payload: listpack too long entry len
+[[0;32;49mok[0m]: corrupt payload: listpack very long entry len
 [[0;32;49mok[0m]: MIGRATE propagates TTL correctly
+[[0;32;49mok[0m]: Slave should be able to synchronize with the master
+[[0;32;49mok[0m]: AOF fsync always barrier issue
+[[0;32;49mok[0m]: Set instance A as slave of B
+[[0;32;49mok[0m]: corrupt payload: listpack too long entry prev len
+[[0;32;49mok[0m]: MASTER and SLAVE dataset should be identical after complex ops
+[[0;32;49mok[0m]: corrupt payload: hash ziplist with duplicate records
+[[0;32;49mok[0m]: GETEX should not append to AOF
+[[0;32;49mok[0m]: PSYNC2: --- CYCLE 1 ---
+[[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #1 as master
+[[0;32;49mok[0m]: PSYNC2: Set #0 to replicate from #1
+[23/66 [0;33;49mdone[0m]: integration/replication-2 ()
+[[0;32;49mok[0m]: PSYNC2: Set #4 to replicate from #1
+[[0;32;49mok[0m]: PSYNC2: Set #3 to replicate from #4
+[[0;32;49mok[0m]: PSYNC2: Set #2 to replicate from #3
+[24/66 [0;33;49mdone[0m]: integration/aof ()
 [[0;32;49mok[0m]: corrupt payload: hash ziplist uneven record count
-[[0;32;49mok[0m]: corrupt payload: hash dupliacte records
+[[0;32;49mok[0m]: With min-slaves-to-write: master not writable with lagged slave
+[[0;32;49mok[0m]: Detect write load to master
+[[0;32;49mok[0m]: LTRIM stress testing - ziplist
 [[0;32;49mok[0m]: INCRBYFLOAT replication, should not remove expire
 [[0;32;49mok[0m]: GETSET replication
 [[0;32;49mok[0m]: BRPOPLPUSH replication, when blocking against empty list
-[[0;32;49mok[0m]: AOF fsync always barrier issue
-[[0;32;49mok[0m]: corrupt payload: hash empty zipmap
-[[0;32;49mok[0m]: GETEX should not append to AOF
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - NPD in streamIteratorGetID
+[25/66 [0;33;49mdone[0m]: unit/type/list-2 ()
 [[0;32;49mok[0m]: ZRANGEBYSCORE fuzzy test, 100 ranges in 100 element sorted set - skiplist
-[[0;32;49mok[0m]: PSYNC2 pingoff: setup
-[[0;32;49mok[0m]: PSYNC2 pingoff: write and wait replication
-[25/66 [0;33;49mdone[0m]: integration/aof ()
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: setup
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
+[[0;32;49mok[0m]: First server should have role slave after SLAVEOF
 [[0;32;49mok[0m]: ZRANGEBYLEX fuzzy test, 100 ranges in 100 element sorted set - skiplist
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - listpack NPD on invalid stream
 [[0;32;49mok[0m]: PSYNC2: cluster is consistent after failover
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - NPD in quicklistIndex
 [[0;32;49mok[0m]: failover command fails without connected replica
 [[0;32;49mok[0m]: ZREMRANGEBYLEX fuzzy test, 100 ranges in 100 element sorted set - skiplist
 [[0;32;49mok[0m]: ZSETs skiplist implementation backlink consistency test - skiplist
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
 [[0;32;49mok[0m]: setup replication for following tests
 [[0;32;49mok[0m]: failover command fails with invalid host
 [[0;32;49mok[0m]: failover command fails with invalid port
 [[0;32;49mok[0m]: failover command fails with just force and timeout
 [[0;32;49mok[0m]: failover command fails when sent to a replica
 [[0;32;49mok[0m]: failover command fails with force without timeout
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
+[[0;32;49mok[0m]: corrupt payload: hash dupliacte records
+[[0;32;49mok[0m]: AOF rewrite during write load: RDB preamble=yes
 [[0;32;49mok[0m]: BRPOPLPUSH replication, list exists
 [[0;32;49mok[0m]: BLMOVE (left, left) replication, when blocking against empty list
+[[0;32;49mok[0m]: corrupt payload: hash empty zipmap
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - NPD in streamIteratorGetID
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - listpack NPD on invalid stream
+[[0;32;49mok[0m]: failover command to specific replica works
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - NPD in quicklistIndex
 [[0;32;49mok[0m]: corrupt payload: fuzzer findings - invalid read in ziplistFind
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - invalid ziplist encoding
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - hash crash
+[[0;32;49mok[0m]: PSYNC2 pingoff: setup
+[[0;32;49mok[0m]: PSYNC2 pingoff: write and wait replication
+[[0;32;49mok[0m]: BLMOVE (left, left) replication, list exists
+[[0;32;49mok[0m]: BLMOVE (left, right) replication, when blocking against empty list
 [[0;32;49mok[0m]: ZSETs ZRANK augmented skip list stress testing - skiplist
 [[0;32;49mok[0m]: BZPOPMIN, ZADD + DEL should not awake blocked client
 [[0;32;49mok[0m]: BZPOPMIN, ZADD + DEL + SET should not awake blocked client
 [[0;32;49mok[0m]: BZPOPMIN with same key multiple times should work
 [[0;32;49mok[0m]: MULTI/EXEC is isolated from the point of view of BZPOPMIN
 [[0;32;49mok[0m]: BZPOPMIN with variadic ZADD
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: setup
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - invalid ziplist encoding
+[[0;32;49mok[0m]: failover command to any replica works
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - hash crash
+[[0;32;49mok[0m]: failover to a replica with force works
 [[0;32;49mok[0m]: corrupt payload: fuzzer findings - uneven entry count in hash
-[[0;32;49mok[0m]: failover command to specific replica works
 [[0;32;49mok[0m]: corrupt payload: fuzzer findings - invalid read in lzf_decompress
 [[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
-[[0;32;49mok[0m]: BLMOVE (left, left) replication, list exists
-[[0;32;49mok[0m]: BLMOVE (left, right) replication, when blocking against empty list
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - leak in rdbloading due to dup entry in set
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - empty intset
-[[0;32;49mok[0m]: XRANGE fuzzing
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - valgrind ziplist - crash report prints freed memory
-[[0;32;49mok[0m]: XREVRANGE regression test for issue #5006
-[[0;32;49mok[0m]: XREAD streamID edge (no-blocking)
-[[0;32;49mok[0m]: XREAD streamID edge (blocking)
-[[0;32;49mok[0m]: XADD streamID edge
-[[0;32;49mok[0m]: failover command to any replica works
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - valgrind ziplist prevlen reaches outside the ziplist
-[[0;32;49mok[0m]: BZPOPMIN with zero timeout should block indefinitely
-[[0;32;49mok[0m]: XTRIM with MAXLEN option basic test
-[[0;32;49mok[0m]: XADD with LIMIT consecutive calls
-[[0;32;49mok[0m]: XTRIM with ~ is limited
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - valgrind - bad rdbLoadDoubleValue
-[[0;32;49mok[0m]: XTRIM without ~ is not limited
-[[0;32;49mok[0m]: XTRIM without ~ and with LIMIT
-[[0;32;49mok[0m]: XTRIM with LIMIT delete entries no more than limit
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - valgrind ziplist prev too big
 [[0;32;49mok[0m]: BLMOVE (left, right) replication, list exists
 [[0;32;49mok[0m]: BLMOVE (right, left) replication, when blocking against empty list
-[[0;32;49mok[0m]: XADD with MAXLEN > xlen can propagate correctly
-[[0;32;49mok[0m]: failover to a replica with force works
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - lzf decompression fails, avoid valgrind invalid read
-[[0;32;49mok[0m]: XADD with MINID > lastid can propagate correctly
-[[0;32;49mok[0m]: AOF rewrite during write load: RDB preamble=yes
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream bad lp_count
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
-[[0;32;49mok[0m]: XADD with ~ MAXLEN can propagate correctly
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream bad lp_count - unsanitized
-[[0;32;49mok[0m]: ZSET skiplist order consistency when elements are moved
+[[0;32;49mok[0m]: BZPOPMIN with zero timeout should block indefinitely
 [[0;32;49mok[0m]: failover with timeout aborts if replica never catches up
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - leak in rdbloading due to dup entry in set
+[[0;32;49mok[0m]: failovers can be aborted
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - empty intset
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - valgrind ziplist - crash report prints freed memory
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - valgrind ziplist prevlen reaches outside the ziplist
+[[0;32;49mok[0m]: BLMOVE (right, left) replication, list exists
+[[0;32;49mok[0m]: BLMOVE (right, right) replication, when blocking against empty list
+[[0;32;49mok[0m]: failover aborts if target rejects sync request
+[[0;32;49mok[0m]: Slave is able to evict keys created in writable slaves
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - valgrind - bad rdbLoadDoubleValue
+[[0;32;49mok[0m]: ZSET skiplist order consistency when elements are moved
 [[0;32;49mok[0m]: ZRANGESTORE basic
 [[0;32;49mok[0m]: ZRANGESTORE RESP3
 [[0;32;49mok[0m]: ZRANGESTORE range
@@ -1348,103 +1335,82 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: ZRANDMEMBER count overflow
 [[0;32;49mok[0m]: ZRANDMEMBER count of 0 is handled correctly - emptyarray
 [[0;32;49mok[0m]: ZRANDMEMBER with <count> against non existing key - emptyarray
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream integrity check issue
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - infinite loop
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - hash convert asserts on RESTORE with shallow sanitization
-[[0;32;49mok[0m]: ZRANDMEMBER with <count> - skiplist
-[[0;32;49mok[0m]: failovers can be aborted
-[[0;32;49mok[0m]: BLMOVE (right, left) replication, list exists
-[[0;32;49mok[0m]: BLMOVE (right, right) replication, when blocking against empty list
-[[0;32;49mok[0m]: XADD with ~ MAXLEN and LIMIT can propagate correctly
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
-[[0;32;49mok[0m]: corrupt payload: OOM in rdbGenericLoadStringObject
-[[0;32;49mok[0m]: ZRANDMEMBER with <count> - ziplist
-[[0;32;49mok[0m]: XADD with ~ MINID can propagate correctly
-[26/66 [0;33;49mdone[0m]: unit/type/zset ()
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - valgrind ziplist prev too big
+[26/66 [0;33;49mdone[0m]: integration/failover ()
 [[0;32;49mok[0m]: Interactive CLI: INFO response should be printed raw
 [[0;32;49mok[0m]: Interactive CLI: Status reply
 [[0;32;49mok[0m]: Interactive CLI: Integer reply
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - OOM in dictExpand
-[[0;32;49mok[0m]: XADD with ~ MINID and LIMIT can propagate correctly
+[[0;32;49mok[0m]: ZRANDMEMBER with <count> - skiplist
 [[0;32;49mok[0m]: Interactive CLI: Bulk reply
-[[0;32;49mok[0m]: Interactive CLI: Multi-bulk reply
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - invalid tail offset after removal
-[[0;32;49mok[0m]: Interactive CLI: Parsing quotes
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - lzf decompression fails, avoid valgrind invalid read
 [[0;32;49mok[0m]: BLMOVE (right, right) replication, list exists
+[[0;32;49mok[0m]: Interactive CLI: Multi-bulk reply
+[[0;32;49mok[0m]: BLPOP followed by role change, issue #2473
+[[0;32;49mok[0m]: Interactive CLI: Parsing quotes
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream bad lp_count
 [[0;32;49mok[0m]: Non-interactive TTY CLI: Status reply
+[[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
+[[0;32;49mok[0m]: First server should have role slave after SLAVEOF
 [[0;32;49mok[0m]: Non-interactive TTY CLI: Integer reply
+[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 34349)
+[[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
+[[0;32;49mok[0m]: PSYNC2: --- CYCLE 2 ---
+[[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #2 as master
+[[0;32;49mok[0m]: PSYNC2: Set #3 to replicate from #2
+[[0;32;49mok[0m]: PSYNC2: Set #0 to replicate from #2
+[[0;32;49mok[0m]: PSYNC2: Set #4 to replicate from #0
 [[0;32;49mok[0m]: Non-interactive TTY CLI: Bulk reply
+[[0;32;49mok[0m]: PSYNC2: Set #1 to replicate from #0
+[[0;32;49mok[0m]: PSYNC2: cluster is consistent after failover
 [[0;32;49mok[0m]: Non-interactive TTY CLI: Multi-bulk reply
 [[0;32;49mok[0m]: Non-interactive TTY CLI: Read last argument from pipe
 [[0;32;49mok[0m]: Non-interactive TTY CLI: Read last argument from file
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - negative reply length
 [[0;32;49mok[0m]: Non-interactive non-TTY CLI: Status reply
 [[0;32;49mok[0m]: Non-interactive non-TTY CLI: Integer reply
 [[0;32;49mok[0m]: Non-interactive non-TTY CLI: Bulk reply
 [[0;32;49mok[0m]: Non-interactive non-TTY CLI: Multi-bulk reply
-[[0;32;49mok[0m]: BLPOP followed by role change, issue #2473
 [[0;32;49mok[0m]: Non-interactive non-TTY CLI: ASK redirect test
 [[0;32;49mok[0m]: Non-interactive non-TTY CLI: Quoted input arguments
-[[0;32;49mok[0m]: PSYNC2 pingoff: pause replica and promote it
 [[0;32;49mok[0m]: Non-interactive non-TTY CLI: No accidental unquoting of input arguments
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream bad lp_count - unsanitized
+[[0;32;49mok[0m]: ZRANDMEMBER with <count> - ziplist
 [[0;32;49mok[0m]: Non-interactive non-TTY CLI: Invalid quoted input arguments
-[[0;32;49mok[0m]: XTRIM with ~ MAXLEN can propagate correctly
 [[0;32;49mok[0m]: Non-interactive non-TTY CLI: Read last argument from pipe
-[[0;32;49mok[0m]: failover aborts if target rejects sync request
 [[0;32;49mok[0m]: Non-interactive non-TTY CLI: Read last argument from file
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - valgrind negative malloc
-[[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
-[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 65410)
-[[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
-[[0;32;49mok[0m]: XADD can CREATE an empty stream
-[[0;32;49mok[0m]: XSETID can set a specific ID
-[[0;32;49mok[0m]: XSETID cannot SETID with smaller ID
-[[0;32;49mok[0m]: XSETID cannot SETID on non-existent key
-[[0;32;49mok[0m]: PSYNC2: --- CYCLE 2 ---
-[[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #1 as master
-[[0;32;49mok[0m]: PSYNC2: Set #4 to replicate from #1
-[[0;32;49mok[0m]: PSYNC2: Set #3 to replicate from #1
-[[0;32;49mok[0m]: PSYNC2: Set #2 to replicate from #4
-[[0;32;49mok[0m]: PSYNC2: Set #0 to replicate from #3
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - valgrind invalid read
-[[0;32;49mok[0m]: Slave is able to evict keys created in writable slaves
-[[0;32;49mok[0m]: Fuzzer corrupt restore payloads - sanitize_dump: no
 [[0;32;49mok[0m]: Second server should have role master at first
+[27/66 [0;33;49mdone[0m]: unit/type/zset ()
 [[0;32;49mok[0m]: SLAVEOF should start with link status "down"
 [[0;32;49mok[0m]: The role should immediately be changed to "replica"
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - empty hash ziplist
-[27/66 [0;33;49mdone[0m]: integration/failover ()
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream with no records
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream integrity check issue
+[[0;32;49mok[0m]: benchmark: set,get
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - infinite loop
+[[0;32;49mok[0m]: Fuzzer corrupt restore payloads - sanitize_dump: no
 [[0;32;49mok[0m]: Sync should have transferred keys from master
 [[0;32;49mok[0m]: Sync should have transferred keys from master
 [[0;32;49mok[0m]: The link status should be up
 [[0;32;49mok[0m]: SET on the master should immediately propagate
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
 [[0;32;49mok[0m]: FLUSHALL should replicate
 [[0;32;49mok[0m]: ROLE in master reports master with a slave
 [[0;32;49mok[0m]: ROLE in slave reports slave in connected state
-[[0;32;49mok[0m]: benchmark: set,get
-[[0;32;49mok[0m]: Test replication partial resync: no backlog (diskless: no, disabled, reconnect: 1)
-[[0;32;49mok[0m]: First server should have role slave after SLAVEOF
 [[0;32;49mok[0m]: benchmark: full test suite
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - quicklist ziplist tail followed by extra data which start with 0xff
-[[0;32;49mok[0m]: Make the old master a replica of the new one and check conditions
-[[0;32;49mok[0m]: PSYNC2: cluster is consistent after failover
-[[0;32;49mok[0m]: benchmark: multi-thread set,get
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - dict init to huge size
 [[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
-[[0;32;49mok[0m]: Empty stream can be rewrite into AOF correctly
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - huge string
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - hash convert asserts on RESTORE with shallow sanitization
+[[0;32;49mok[0m]: benchmark: multi-thread set,get
+[[0;32;49mok[0m]: PSYNC2 pingoff: pause replica and promote it
 [[0;32;49mok[0m]: benchmark: pipelined full set,get
 [[0;32;49mok[0m]: benchmark: arbitrary command
 [[0;32;49mok[0m]: benchmark: keyspace length
-[[0;32;49mok[0m]: Slave should be able to synchronize with the master
-[[0;32;49mok[0m]: Detect write load to master
 [[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream PEL without consumer
+[[0;32;49mok[0m]: corrupt payload: OOM in rdbGenericLoadStringObject
 [28/66 [0;33;49mdone[0m]: integration/redis-benchmark ()
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream listpack valgrind issue
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - OOM in dictExpand
+[[0;32;49mok[0m]: Test replication partial resync: no backlog (diskless: no, disabled, reconnect: 1)
+[[0;32;49mok[0m]: Make the old master a replica of the new one and check conditions
+[[0;32;49mok[0m]: XRANGE fuzzing
+[[0;32;49mok[0m]: XREVRANGE regression test for issue #5006
+[[0;32;49mok[0m]: XREAD streamID edge (no-blocking)
+[[0;32;49mok[0m]: XREAD streamID edge (blocking)
+[[0;32;49mok[0m]: XADD streamID edge
 [[0;32;49mok[0m]: Pub/Sub PING
 [[0;32;49mok[0m]: PUBLISH/SUBSCRIBE basics
 [[0;32;49mok[0m]: PUBLISH/SUBSCRIBE with two clients
@@ -1454,9 +1420,9 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: PUBLISH/PSUBSCRIBE basics
 [[0;32;49mok[0m]: PUBLISH/PSUBSCRIBE with two clients
 [[0;32;49mok[0m]: PUBLISH/PSUBSCRIBE after PUNSUBSCRIBE without arguments
+[[0;32;49mok[0m]: PubSub messages with CLIENT REPLY OFF
 [[0;32;49mok[0m]: PUNSUBSCRIBE from non-subscribed channels
 [[0;32;49mok[0m]: NUMSUB returns numbers, not strings (#1561)
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream with bad lpFirst
 [[0;32;49mok[0m]: NUMPATs returns the number of unique patterns
 [[0;32;49mok[0m]: Mix SUBSCRIBE and PSUBSCRIBE
 [[0;32;49mok[0m]: PUNSUBSCRIBE and UNSUBSCRIBE should always reply
@@ -1469,31 +1435,51 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: Keyspace notifications: set events test
 [[0;32;49mok[0m]: Keyspace notifications: zset events test
 [[0;32;49mok[0m]: Keyspace notifications: hash events test
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream listpack lpPrev valgrind issue
-[[0;32;49mok[0m]: Stream can be rewrite into AOF correctly after XDEL lastid
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - invalid tail offset after removal
 [[0;32;49mok[0m]: Keyspace notifications: expired events (triggered expire)
-[[0;32;49mok[0m]: MIGRATE can correctly transfer large values
+[[0;32;49mok[0m]: XTRIM with MAXLEN option basic test
 [[0;32;49mok[0m]: Keyspace notifications: expired events (background expire)
 [[0;32;49mok[0m]: Keyspace notifications: evicted events
 [[0;32;49mok[0m]: Keyspace notifications: test CONFIG GET/SET of event flags
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream with non-integer entry id
+[[0;32;49mok[0m]: XADD with LIMIT consecutive calls
+[[0;32;49mok[0m]: XTRIM with ~ is limited
+[[0;32;49mok[0m]: XTRIM without ~ is not limited
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - negative reply length
+[[0;32;49mok[0m]: XTRIM without ~ and with LIMIT
+[[0;32;49mok[0m]: XTRIM with LIMIT delete entries no more than limit
+[[0;32;49mok[0m]: Slave should be able to synchronize with the master
 [29/66 [0;33;49mdone[0m]: unit/pubsub ()
 [[0;32;49mok[0m]: SLOWLOG - check that it starts with an empty log
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - empty quicklist
-[[0;32;49mok[0m]: XGROUP HELP should not have unexpected options
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - valgrind negative malloc
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
+[[0;32;49mok[0m]: XADD with MAXLEN > xlen can propagate correctly
 [[0;32;49mok[0m]: SLOWLOG - only logs commands taking more time than specified
 [[0;32;49mok[0m]: SLOWLOG - max entries is correctly handled
 [[0;32;49mok[0m]: SLOWLOG - GET optional argument to limit output len works
 [[0;32;49mok[0m]: SLOWLOG - RESET subcommand works
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - empty zset
-[[0;32;49mok[0m]: MIGRATE can correctly transfer hashes
-[30/66 [0;33;49mdone[0m]: unit/type/stream ()
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - valgrind invalid read
 [[0;32;49mok[0m]: SLOWLOG - logged entry sanity check
 [[0;32;49mok[0m]: SLOWLOG - Certain commands are omitted that contain sensitive information
 [[0;32;49mok[0m]: SLOWLOG - Some commands can redact sensitive fields
 [[0;32;49mok[0m]: SLOWLOG - Rewritten commands are logged as their original command
 [[0;32;49mok[0m]: SLOWLOG - commands with too many arguments are trimmed
 [[0;32;49mok[0m]: SLOWLOG - too long arguments are trimmed
+[[0;32;49mok[0m]: Dumping an RDB
+[[0;32;49mok[0m]: XADD with MINID > lastid can propagate correctly
+[[0;32;49mok[0m]: SLOWLOG - EXEC is not logged, just executed commands
+[[0;32;49mok[0m]: Detect write load to master
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - empty hash ziplist
+[[0;32;49mok[0m]: Scan mode
+[[0;32;49mok[0m]: SLOWLOG - can clean older entries
+[[0;32;49mok[0m]: XADD with ~ MAXLEN can propagate correctly
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream with no records
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - quicklist ziplist tail followed by extra data which start with 0xff
+[[0;32;49mok[0m]: SLOWLOG - can be disabled
+[[0;32;49mok[0m]: XADD with ~ MAXLEN and LIMIT can propagate correctly
+[[0;32;49mok[0m]: MIGRATE can correctly transfer large values
+[30/66 [0;33;49mdone[0m]: unit/slowlog ()
+[[0;32;49mok[0m]: MIGRATE can correctly transfer hashes
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - dict init to huge size
 [[0;32;49mok[0m]: EVAL - Does Lua interpreter replies to our requests?
 [[0;32;49mok[0m]: EVAL - Return _G
 [[0;32;49mok[0m]: EVAL - Return table with a metatable that raise error
@@ -1530,7 +1516,6 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: EVAL - Scripts can't run blmove command
 [[0;32;49mok[0m]: EVAL - Scripts can't run bzpopmin command
 [[0;32;49mok[0m]: EVAL - Scripts can't run bzpopmax command
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - hash with len of 0
 [[0;32;49mok[0m]: EVAL - Scripts can't run XREAD and XREADGROUP with BLOCK option
 [[0;32;49mok[0m]: EVAL - Scripts can't run certain commands
 [[0;32;49mok[0m]: EVAL - No arguments to redis.call/pcall is considered an error
@@ -1550,9 +1535,18 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: EVAL - Verify minimal bitop functionality
 [[0;32;49mok[0m]: EVAL - Able to parse trailing comments
 [[0;32;49mok[0m]: SCRIPTING FLUSH - is able to clear the scripts cache?
+[[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
+[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 62124)
+[[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
+[[0;32;49mok[0m]: PSYNC2: --- CYCLE 3 ---
+[[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #2 as master
+[[0;32;49mok[0m]: PSYNC2: Set #4 to replicate from #2
 [[0;32;49mok[0m]: SCRIPTING FLUSH ASYNC
 [[0;32;49mok[0m]: SCRIPT EXISTS - can detect already defined scripts?
+[[0;32;49mok[0m]: PSYNC2: Set #1 to replicate from #4
 [[0;32;49mok[0m]: SCRIPT LOAD - is able to register scripts in the scripting cache
+[[0;32;49mok[0m]: PSYNC2: Set #0 to replicate from #1
+[[0;32;49mok[0m]: PSYNC2: Set #3 to replicate from #4
 [[0;32;49mok[0m]: In the context of Lua the output of random commands gets ordered
 [[0;32;49mok[0m]: SORT is normally not alpha re-ordered for the scripting engine
 [[0;32;49mok[0m]: SORT BY <constant> output gets ordered for scripting
@@ -1563,93 +1557,47 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: Test an example script DECR_IF_GT
 [[0;32;49mok[0m]: Scripting engine resets PRNG at every script execution
 [[0;32;49mok[0m]: Scripting engine PRNG can be seeded correctly
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
-[[0;32;49mok[0m]: SLOWLOG - EXEC is not logged, just executed commands
-[[0;32;49mok[0m]: Dumping an RDB
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream double free listpack when insert dup node to rax returns 0
-[[0;32;49mok[0m]: MIGRATE timeout actually works
-[[0;32;49mok[0m]: SLOWLOG - can clean older entries
+[[0;32;49mok[0m]: XADD with ~ MINID can propagate correctly
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - huge string
 [[0;32;49mok[0m]: EVAL does not leak in the Lua stack
-[[0;32;49mok[0m]: corrupt payload: fuzzer findings - invalid access in ziplist tail prevlen decoding
-[31/66 [0;33;49mdone[0m]: integration/corrupt-dump ()
+[[0;32;49mok[0m]: XADD with ~ MINID and LIMIT can propagate correctly
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
+[[0;32;49mok[0m]: Connecting as a replica
 [[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
+[[0;32;49mok[0m]: MIGRATE timeout actually works
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream PEL without consumer
+[[0;32;49mok[0m]: EVAL processes writes from AOF in read-only slaves
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
+[[0;32;49mok[0m]: XTRIM with ~ MAXLEN can propagate correctly
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream listpack valgrind issue
+[[0;32;49mok[0m]: MIGRATE can migrate multiple keys at once
+[[0;32;49mok[0m]: MIGRATE with multiple keys must have empty key arg
+[[0;32;49mok[0m]: Piping raw protocol
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
+[[0;32;49mok[0m]: XADD can CREATE an empty stream
+[[0;32;49mok[0m]: XSETID can set a specific ID
+[[0;32;49mok[0m]: XSETID cannot SETID with smaller ID
+[[0;32;49mok[0m]: XSETID cannot SETID on non-existent key
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream with bad lpFirst
+[31/66 [0;33;49mdone[0m]: integration/redis-cli ()
+[[0;32;49mok[0m]: MIGRATE with multiple keys migrate just existing ones
+[[0;32;49mok[0m]: PSYNC2: cluster is consistent after failover
 [[0;32;49mok[0m]: Without maxmemory small integers are shared
 [[0;32;49mok[0m]: With maxmemory and non-LRU policy integers are still shared
 [[0;32;49mok[0m]: With maxmemory and LRU policy integers are not shared
-[[0;32;49mok[0m]: EVAL processes writes from AOF in read-only slaves
-[[0;32;49mok[0m]: MIGRATE can migrate multiple keys at once
-[[0;32;49mok[0m]: MIGRATE with multiple keys must have empty key arg
-[[0;32;49mok[0m]: SLOWLOG - can be disabled
-[32/66 [0;33;49mdone[0m]: unit/slowlog ()
-[[0;32;49mok[0m]: Scan mode
-[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy allkeys-random)
-[[0;32;49mok[0m]: CLIENT LIST
-[[0;32;49mok[0m]: CLIENT LIST with IDs
-[[0;32;49mok[0m]: CLIENT INFO
-[[0;32;49mok[0m]: MONITOR can log executed commands
-[[0;32;49mok[0m]: MONITOR can log commands issued by the scripting engine
-[[0;32;49mok[0m]: MONITOR supports redacting command arguments
-[[0;32;49mok[0m]: MONITOR correctly handles multi-exec cases
-[[0;32;49mok[0m]: CLIENT GETNAME should return NIL if name is not assigned
-[[0;32;49mok[0m]: CLIENT LIST shows empty fields for unassigned names
-[[0;32;49mok[0m]: CLIENT SETNAME does not accept spaces
-[[0;32;49mok[0m]: CLIENT SETNAME can assign a name to this connection
-[[0;32;49mok[0m]: CLIENT SETNAME can change the name of an existing connection
-[[0;32;49mok[0m]: After CLIENT SETNAME, connection can still be closed
-[[0;32;49mok[0m]: MIGRATE with multiple keys migrate just existing ones
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream listpack lpPrev valgrind issue
 [[0;32;49mok[0m]: MIGRATE with multiple keys: stress command rewriting
-[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy allkeys-lru)
-[[0;32;49mok[0m]: MIGRATE with multiple keys: delete just ack keys
-[[0;32;49mok[0m]: CONFIG save params special case handled properly
-[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy allkeys-lfu)
-[[0;32;49mok[0m]: CONFIG sanity
-[[0;32;49mok[0m]: MIGRATE AUTH: correct and wrong password cases
-[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy volatile-lru)
-[[0;32;49mok[0m]: CONFIG REWRITE sanity
-[33/66 [0;33;49mdone[0m]: unit/dump ()
-[[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
-[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 106188)
-[[0;32;49mok[0m]: Connecting as a replica
-[[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
-[[0;32;49mok[0m]: PSYNC2: --- CYCLE 3 ---
-[[0;32;49mok[0m]: test various edge cases of repl topology changes with missing pings at the end
-[[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #3 as master
-[[0;32;49mok[0m]: PSYNC2: Set #1 to replicate from #3
-[[0;32;49mok[0m]: PSYNC2: Set #0 to replicate from #1
-[[0;32;49mok[0m]: PSYNC2: Set #4 to replicate from #0
-[[0;32;49mok[0m]: PSYNC2: Set #2 to replicate from #4
-[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy volatile-lfu)
-[[0;32;49mok[0m]: CONFIG REWRITE handles save properly
-[[0;32;49mok[0m]: Piping raw protocol
-[34/66 [0;33;49mdone[0m]: unit/introspection ()
-[35/66 [0;33;49mdone[0m]: integration/redis-cli ()
-[[0;32;49mok[0m]: Check if maxclients works refusing connections
-[[0;32;49mok[0m]: PSYNC2: cluster is consistent after failover
-[36/66 [0;33;49mdone[0m]: unit/limits ()
-[[0;32;49mok[0m]: BITCOUNT returns 0 against non existing key
-[[0;32;49mok[0m]: BITCOUNT returns 0 with out of range indexes
-[[0;32;49mok[0m]: BITCOUNT returns 0 with negative indexes where start > end
-[[0;32;49mok[0m]: BITCOUNT against test vector #1
-[[0;32;49mok[0m]: BITCOUNT against test vector #2
-[[0;32;49mok[0m]: BITCOUNT against test vector #3
-[[0;32;49mok[0m]: BITCOUNT against test vector #4
-[[0;32;49mok[0m]: BITCOUNT against test vector #5
-[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy volatile-random)
 [[0;32;49mok[0m]: Test replication with blocking lists and sorted sets operations
-[[0;32;49mok[0m]: TTL, TYPE and EXISTS do not alter the last access time of a key
-[[0;32;49mok[0m]: BITCOUNT fuzzing without start/end
-[37/66 [0;33;49mdone[0m]: integration/block-repl ()
-[[0;32;49mok[0m]: BITFIELD signed SET and GET basics
-[[0;32;49mok[0m]: BITFIELD unsigned SET and GET basics
-[[0;32;49mok[0m]: BITFIELD #<idx> form
-[[0;32;49mok[0m]: BITFIELD basic INCRBY form
-[[0;32;49mok[0m]: BITFIELD chaining of multiple commands
-[[0;32;49mok[0m]: BITFIELD unsigned overflow wrap
-[[0;32;49mok[0m]: BITFIELD unsigned overflow sat
-[[0;32;49mok[0m]: BITFIELD signed overflow wrap
-[[0;32;49mok[0m]: BITFIELD signed overflow sat
-[[0;32;49mok[0m]: BITFIELD overflow detection fuzzing
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream with non-integer entry id
+[[0;32;49mok[0m]: MIGRATE with multiple keys: delete just ack keys
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
+[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy allkeys-random)
+[[0;32;49mok[0m]: test various edge cases of repl topology changes with missing pings at the end
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
+[[0;32;49mok[0m]: Replication: commands with many arguments (issue #1221)
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
 [[0;32;49mok[0m]: EVAL timeout from AOF
 [[0;32;49mok[0m]: We can call scripts rewriting client->argv from Lua
 [[0;32;49mok[0m]: Call Redis command with many args from Lua (issue #1764)
@@ -1672,6 +1620,83 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: Test loadfile are not available
 [[0;32;49mok[0m]: Test dofile are not available
 [[0;32;49mok[0m]: Test print is available to avoid breaking change
+[[0;32;49mok[0m]: Script return recursive object
+[[0;32;49mok[0m]: Script check unpack with massive arguments
+[[0;32;49mok[0m]: Replication of SPOP command -- alsoPropagate() API
+[[0;32;49mok[0m]: Fuzzer corrupt restore payloads - sanitize_dump: yes
+[32/66 [0;33;49mdone[0m]: integration/corrupt-dump-fuzzer ()
+[[0;32;49mok[0m]: CLIENT LIST
+[[0;32;49mok[0m]: CLIENT LIST with IDs
+[[0;32;49mok[0m]: CLIENT INFO
+[[0;32;49mok[0m]: CLIENT REPLY OFF/ON: disable all commands reply
+[[0;32;49mok[0m]: CLIENT REPLY SKIP: skip the next command reply
+[[0;32;49mok[0m]: CLIENT REPLY ON: unset SKIP flag
+[[0;32;49mok[0m]: MONITOR can log executed commands
+[[0;32;49mok[0m]: MONITOR can log commands issued by the scripting engine
+[[0;32;49mok[0m]: MONITOR supports redacting command arguments
+[[0;32;49mok[0m]: MONITOR correctly handles multi-exec cases
+[[0;32;49mok[0m]: CLIENT GETNAME should return NIL if name is not assigned
+[[0;32;49mok[0m]: CLIENT LIST shows empty fields for unassigned names
+[[0;32;49mok[0m]: CLIENT SETNAME does not accept spaces
+[[0;32;49mok[0m]: CLIENT SETNAME can assign a name to this connection
+[[0;32;49mok[0m]: CLIENT SETNAME can change the name of an existing connection
+[[0;32;49mok[0m]: After CLIENT SETNAME, connection can still be closed
+[[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
+[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 108183)
+[[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
+[[0;32;49mok[0m]: PSYNC2: --- CYCLE 4 ---
+[[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #0 as master
+[[0;32;49mok[0m]: PSYNC2: Set #2 to replicate from #0
+[[0;32;49mok[0m]: PSYNC2: Set #4 to replicate from #2
+[[0;32;49mok[0m]: PSYNC2: Set #3 to replicate from #2
+[[0;32;49mok[0m]: PSYNC2: Set #1 to replicate from #0
+[[0;32;49mok[0m]: Test replication partial resync: ok after delay (diskless: no, disabled, reconnect: 1)
+[[0;32;49mok[0m]: PSYNC2: cluster is consistent after failover
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill first replica
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
+[[0;32;49mok[0m]: PSYNC2 #3899 regression: verify consistency
+[[0;32;49mok[0m]: MIGRATE AUTH: correct and wrong password cases
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - empty quicklist
+[33/66 [0;33;49mdone[0m]: integration/block-repl ()
+[34/66 [0;33;49mdone[0m]: unit/dump ()
+[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy allkeys-lru)
+[35/66 [0;33;49mdone[0m]: integration/replication-4 ()
+[36/66 [0;33;49mdone[0m]: integration/psync2-reg ()
+[[0;32;49mok[0m]: Empty stream can be rewrite into AOF correctly
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - empty zset
+[[0;32;49mok[0m]: BITCOUNT returns 0 against non existing key
+[[0;32;49mok[0m]: BITCOUNT returns 0 with out of range indexes
+[[0;32;49mok[0m]: BITCOUNT returns 0 with negative indexes where start > end
+[[0;32;49mok[0m]: BITCOUNT against test vector #1
+[[0;32;49mok[0m]: BITCOUNT against test vector #2
+[[0;32;49mok[0m]: BITCOUNT against test vector #3
+[[0;32;49mok[0m]: BITCOUNT against test vector #4
+[[0;32;49mok[0m]: BITCOUNT against test vector #5
+[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy allkeys-lfu)
+[[0;32;49mok[0m]: Timedout read-only scripts can be killed by SCRIPT KILL
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - hash with len of 0
+[[0;32;49mok[0m]: CONFIG save params special case handled properly
+[[0;32;49mok[0m]: CONFIG sanity
+[[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
+[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 173258)
+[[0;32;49mok[0m]: Slave should be able to synchronize with the master
+[[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
+[[0;32;49mok[0m]: PSYNC2: --- CYCLE 5 ---
+[[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #4 as master
+[[0;32;49mok[0m]: PSYNC2: Set #3 to replicate from #4
+[[0;32;49mok[0m]: PSYNC2: Set #1 to replicate from #3
+[[0;32;49mok[0m]: PSYNC2: Set #2 to replicate from #3
+[[0;32;49mok[0m]: PSYNC2: Set #0 to replicate from #1
+[[0;32;49mok[0m]: Timedout read-only scripts can be killed by SCRIPT KILL even when use pcall
+[[0;32;49mok[0m]: Timedout script does not cause a false dead client
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - stream double free listpack when insert dup node to rax returns 0
+[[0;32;49mok[0m]: BITCOUNT fuzzing without start/end
+[[0;32;49mok[0m]: Timedout script link is still usable after Lua returns
+[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy volatile-lru)
+[[0;32;49mok[0m]: Check if maxclients works refusing connections
+[[0;32;49mok[0m]: Timedout scripts that modified data can't be killed by SCRIPT KILL
+[[0;32;49mok[0m]: SHUTDOWN NOSAVE can kill a timedout script anyway
 [[0;32;49mok[0m]: BITCOUNT fuzzing with start/end
 [[0;32;49mok[0m]: BITCOUNT with start, end
 [[0;32;49mok[0m]: BITCOUNT syntax error #1
@@ -1685,29 +1710,21 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: BITOP AND|OR|XOR don't change the string with single input key
 [[0;32;49mok[0m]: BITOP missing key is considered a stream of zero
 [[0;32;49mok[0m]: BITOP shorter keys are zero-padded to the key with max length
-[[0;32;49mok[0m]: Script return recursive object
-[[0;32;49mok[0m]: Script check unpack with massive arguments
-[[0;32;49mok[0m]: BITFIELD overflow wrap fuzzing
-[[0;32;49mok[0m]: BITFIELD regression for #3221
-[[0;32;49mok[0m]: BITFIELD regression for #3564
-[[0;32;49mok[0m]: BITOP and fuzzing
-[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy volatile-ttl)
-[[0;32;49mok[0m]: Chained replicas disconnect when replica re-connect with the same master
-[[0;32;49mok[0m]: Timedout read-only scripts can be killed by SCRIPT KILL
-[[0;32;49mok[0m]: BITFIELD: setup slave
-[[0;32;49mok[0m]: BITFIELD: write on master, read on slave
-[[0;32;49mok[0m]: BITFIELD_RO fails when write option is used
-[[0;32;49mok[0m]: Timedout read-only scripts can be killed by SCRIPT KILL even when use pcall
-[[0;32;49mok[0m]: maxmemory - only allkeys-* should remove non-volatile keys (allkeys-random)
-[[0;32;49mok[0m]: BITOP or fuzzing
-[[0;32;49mok[0m]: Timedout script does not cause a false dead client
-[[0;32;49mok[0m]: Fuzzer corrupt restore payloads - sanitize_dump: yes
-[38/66 [0;33;49mdone[0m]: integration/corrupt-dump-fuzzer ()
-[39/66 [0;33;49mdone[0m]: integration/psync2-pingoff ()
-[[0;32;49mok[0m]: Test replication partial resync: ok after delay (diskless: no, disabled, reconnect: 1)
-[[0;32;49mok[0m]: Replication: commands with many arguments (issue #1221)
-[40/66 [0;33;49mdone[0m]: unit/bitfield ()
-[[0;32;49mok[0m]: Timedout script link is still usable after Lua returns
+[[0;32;49mok[0m]: corrupt payload: fuzzer findings - invalid access in ziplist tail prevlen decoding
+[37/66 [0;33;49mdone[0m]: integration/corrupt-dump ()
+[38/66 [0;33;49mdone[0m]: unit/limits ()
+[[0;32;49mok[0m]: Stream can be rewrite into AOF correctly after XDEL lastid
+[[0;32;49mok[0m]: CONFIG REWRITE sanity
+[[0;32;49mok[0m]: Before the replica connects we issue two EVAL commands (scripts replication)
+[[0;32;49mok[0m]: BITFIELD signed SET and GET basics
+[[0;32;49mok[0m]: BITFIELD unsigned SET and GET basics
+[[0;32;49mok[0m]: BITFIELD #<idx> form
+[[0;32;49mok[0m]: BITFIELD basic INCRBY form
+[[0;32;49mok[0m]: BITFIELD chaining of multiple commands
+[[0;32;49mok[0m]: BITFIELD unsigned overflow wrap
+[[0;32;49mok[0m]: BITFIELD unsigned overflow sat
+[[0;32;49mok[0m]: BITFIELD signed overflow wrap
+[[0;32;49mok[0m]: BITFIELD signed overflow sat
 [[0;32;49mok[0m]: GEO with wrong type src key
 [[0;32;49mok[0m]: GEO with non existing src key
 [[0;32;49mok[0m]: GEO BYLONLAT with empty search
@@ -1762,25 +1779,33 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: GEORANGE STORE option: plain usage
 [[0;32;49mok[0m]: GEORADIUSBYMEMBER STORE/STOREDIST option: plain usage
 [[0;32;49mok[0m]: GEOSEARCHSTORE STORE option: plain usage
-[[0;32;49mok[0m]: GEORANGE STOREDIST option: plain usage
-[[0;32;49mok[0m]: GEOSEARCHSTORE STOREDIST option: plain usage
-[[0;32;49mok[0m]: GEORANGE STOREDIST option: COUNT ASC and DESC
-[[0;32;49mok[0m]: GEOSEARCH the box spans -180° or 180°
-[[0;32;49mok[0m]: Timedout scripts that modified data can't be killed by SCRIPT KILL
-[[0;32;49mok[0m]: SHUTDOWN NOSAVE can kill a timedout script anyway
-[[0;32;49mok[0m]: Memory efficiency with values in range 32
-[[0;32;49mok[0m]: Before the replica connects we issue two EVAL commands (scripts replication)
-[[0;32;49mok[0m]: Client output buffer hard limit is enforced
 [[0;32;49mok[0m]: Connect a replica to the master instance (scripts replication)
+[[0;32;49mok[0m]: GEORANGE STOREDIST option: plain usage
+[[0;32;49mok[0m]: XGROUP HELP should not have unexpected options
 [[0;32;49mok[0m]: Now use EVALSHA against the master, with both SHAs (scripts replication)
+[[0;32;49mok[0m]: GEOSEARCHSTORE STOREDIST option: plain usage
 [[0;32;49mok[0m]: If EVALSHA was replicated as EVAL, 'x' should be '4' (scripts replication)
 [[0;32;49mok[0m]: Replication of script multiple pushes to list with BLPOP (scripts replication)
+[[0;32;49mok[0m]: GEORANGE STOREDIST option: COUNT ASC and DESC
+[[0;32;49mok[0m]: GEOSEARCH the box spans -180° or 180°
 [[0;32;49mok[0m]: EVALSHA replication when first call is readonly (scripts replication)
 [[0;32;49mok[0m]: Lua scripts using SELECT are replicated correctly (scripts replication)
-[[0;32;49mok[0m]: Slave should be able to synchronize with the master
+[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy volatile-lfu)
+[[0;32;49mok[0m]: Detect write load to master
+[39/66 [0;33;49mdone[0m]: unit/type/stream ()
+[[0;32;49mok[0m]: BITOP and fuzzing
+[[0;32;49mok[0m]: BITFIELD overflow detection fuzzing
+[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy volatile-random)
+[[0;32;49mok[0m]: BITOP or fuzzing
+[[0;32;49mok[0m]: Before the replica connects we issue two EVAL commands (commands replication)
+[[0;32;49mok[0m]: Connect a replica to the master instance (commands replication)
+[[0;32;49mok[0m]: Now use EVALSHA against the master, with both SHAs (commands replication)
+[[0;32;49mok[0m]: If EVALSHA was replicated as EVAL, 'x' should be '4' (commands replication)
+[[0;32;49mok[0m]: Memory efficiency with values in range 32
+[[0;32;49mok[0m]: Replication of script multiple pushes to list with BLPOP (commands replication)
+[[0;32;49mok[0m]: EVALSHA replication when first call is readonly (commands replication)
+[[0;32;49mok[0m]: Lua scripts using SELECT are replicated correctly (commands replication)
 [[0;32;49mok[0m]: BITOP xor fuzzing
-[[0;32;49mok[0m]: Replication of SPOP command -- alsoPropagate() API
-[[0;32;49mok[0m]: Memory efficiency with values in range 64
 [[0;32;49mok[0m]: BITOP NOT fuzzing
 [[0;32;49mok[0m]: BITOP with integer encoded source objects
 [[0;32;49mok[0m]: BITOP with non string source key
@@ -1791,99 +1816,78 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: BITPOS bit=1 with string less than 1 word works
 [[0;32;49mok[0m]: BITPOS bit=0 starting at unaligned address
 [[0;32;49mok[0m]: BITPOS bit=1 starting at unaligned address
+[[0;32;49mok[0m]: maxmemory - is the memory limit honoured? (policy volatile-ttl)
+[[0;32;49mok[0m]: PSYNC2: cluster is consistent after failover
 [[0;32;49mok[0m]: BITPOS bit=0 unaligned+full word+reminder
 [[0;32;49mok[0m]: BITPOS bit=1 unaligned+full word+reminder
 [[0;32;49mok[0m]: BITPOS bit=1 returns -1 if string is all 0 bits
 [[0;32;49mok[0m]: BITPOS bit=0 works with intervals
 [[0;32;49mok[0m]: BITPOS bit=1 works with intervals
 [[0;32;49mok[0m]: BITPOS bit=0 changes behavior if end is given
-[[0;32;49mok[0m]: maxmemory - only allkeys-* should remove non-volatile keys (allkeys-lru)
+[[0;32;49mok[0m]: BITFIELD overflow wrap fuzzing
+[[0;32;49mok[0m]: BITFIELD regression for #3221
+[[0;32;49mok[0m]: BITFIELD regression for #3564
+[[0;32;49mok[0m]: BITPOS bit=1 fuzzy testing using SETBIT
+[[0;32;49mok[0m]: Memory efficiency with values in range 64
+[[0;32;49mok[0m]: TTL, TYPE and EXISTS do not alter the last access time of a key
+[[0;32;49mok[0m]: BITPOS bit=0 fuzzy testing using SETBIT
+[[0;32;49mok[0m]: Memory efficiency with values in range 128
+[[0;32;49mok[0m]: BITFIELD: setup slave
+[[0;32;49mok[0m]: Connect a replica to the master instance
+[[0;32;49mok[0m]: BITFIELD: write on master, read on slave
+[[0;32;49mok[0m]: Redis.replicate_commands() must be issued before any write
+[[0;32;49mok[0m]: Redis.replicate_commands() must be issued before any write (2)
+[[0;32;49mok[0m]: BITFIELD_RO fails when write option is used
+[[0;32;49mok[0m]: Redis.set_repl() must be issued after replicate_commands()
+[[0;32;49mok[0m]: Redis.set_repl() don't accept invalid values
+[[0;32;49mok[0m]: Test selective replication of certain Redis commands from Lua
+[[0;32;49mok[0m]: PRNG is seeded randomly for command replication
+[[0;32;49mok[0m]: Using side effects is not a problem with command replication
+[[0;32;49mok[0m]: Memory efficiency with values in range 1024
+[[0;32;49mok[0m]: maxmemory - only allkeys-* should remove non-volatile keys (allkeys-random)
+[40/66 [0;33;49mdone[0m]: unit/bitfield ()
+[[0;32;49mok[0m]: BIT pos larger than UINT_MAX
+[[0;32;49mok[0m]: Test scripting debug protocol parsing
+[[0;32;49mok[0m]: Chained replicas disconnect when replica re-connect with the same master
+[[0;32;49mok[0m]: Client output buffer hard limit is enforced
+[41/66 [0;33;49mdone[0m]: unit/bitops ()
+[42/66 [0;33;49mdone[0m]: unit/scripting ()
+[[0;32;49mok[0m]: CONFIG REWRITE handles save properly
 [[0;32;49mok[0m]: HyperLogLog self test passes
 [[0;32;49mok[0m]: PFADD without arguments creates an HLL value
 [[0;32;49mok[0m]: Approximated cardinality after creation is zero
 [[0;32;49mok[0m]: PFADD returns 1 when at least 1 reg was modified
-[[0;32;49mok[0m]: TOUCH alters the last access time of a key
-[[0;32;49mok[0m]: TOUCH returns the number of existing keys specified
-[[0;32;49mok[0m]: command stats for GEOADD
-[[0;32;49mok[0m]: command stats for EXPIRE
-[[0;32;49mok[0m]: command stats for BRPOP
-[[0;32;49mok[0m]: command stats for MULTI
-[[0;32;49mok[0m]: command stats for scripts
 [[0;32;49mok[0m]: PFADD returns 0 when no reg was modified
 [[0;32;49mok[0m]: PFADD works with empty string (regression)
 [[0;32;49mok[0m]: PFCOUNT returns approximated cardinality of set
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
-[[0;32;49mok[0m]: Memory efficiency with values in range 128
-[[0;32;49mok[0m]: BITPOS bit=1 fuzzy testing using SETBIT
-[[0;32;49mok[0m]: Before the replica connects we issue two EVAL commands (commands replication)
-[41/66 [0;33;49mdone[0m]: unit/introspection-2 ()
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: kill chained replica
-[42/66 [0;33;49mdone[0m]: integration/replication-4 ()
-[[0;32;49mok[0m]: Connect a replica to the master instance (commands replication)
-[[0;32;49mok[0m]: Now use EVALSHA against the master, with both SHAs (commands replication)
-[[0;32;49mok[0m]: If EVALSHA was replicated as EVAL, 'x' should be '4' (commands replication)
-[[0;32;49mok[0m]: Replication of script multiple pushes to list with BLPOP (commands replication)
-[[0;32;49mok[0m]: EVALSHA replication when first call is readonly (commands replication)
-[[0;32;49mok[0m]: Lua scripts using SELECT are replicated correctly (commands replication)
-[[0;32;49mok[0m]: maxmemory - only allkeys-* should remove non-volatile keys (volatile-lru)
-[[0;32;49mok[0m]: Setup slave
-[[0;32;49mok[0m]: WAIT should acknowledge 1 additional copy of the data
-[[0;32;49mok[0m]: Detect write load to master
-[[0;32;49mok[0m]: Memory efficiency with values in range 1024
-[[0;32;49mok[0m]: BITPOS bit=0 fuzzy testing using SETBIT
-[[0;32;49mok[0m]: HyperLogLogs are promote from sparse to dense
-[[0;32;49mok[0m]: maxmemory - only allkeys-* should remove non-volatile keys (volatile-random)
-[[0;32;49mok[0m]: Connect a replica to the master instance
-[[0;32;49mok[0m]: UNLINK can reclaim memory in background
-[[0;32;49mok[0m]: Redis.replicate_commands() must be issued before any write
-[[0;32;49mok[0m]: Redis.replicate_commands() must be issued before any write (2)
-[[0;32;49mok[0m]: Redis.set_repl() must be issued after replicate_commands()
-[[0;32;49mok[0m]: Redis.set_repl() don't accept invalid values
-[[0;32;49mok[0m]: Test selective replication of certain Redis commands from Lua
-[[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
-[[0;32;49mok[0m]: PRNG is seeded randomly for command replication
-[[0;32;49mok[0m]: maxmemory - only allkeys-* should remove non-volatile keys (volatile-ttl)
-[[0;32;49mok[0m]: Using side effects is not a problem with command replication
-[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 160477)
-[[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
-[[0;32;49mok[0m]: PSYNC2: --- CYCLE 4 ---
-[[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #1 as master
-[[0;32;49mok[0m]: PSYNC2: Set #2 to replicate from #1
-[[0;32;49mok[0m]: PSYNC2: Set #3 to replicate from #1
-[[0;32;49mok[0m]: PSYNC2: Set #0 to replicate from #1
-[[0;32;49mok[0m]: PSYNC2: Set #4 to replicate from #1
-[[0;32;49mok[0m]: PSYNC2: cluster is consistent after failover
-[[0;32;49mok[0m]: FLUSHDB ASYNC can reclaim memory in background
-[[0;32;49mok[0m]: WAIT should not acknowledge 2 additional copies of the data
-[43/66 [0;33;49mdone[0m]: unit/lazyfree ()
-[[0;32;49mok[0m]: HyperLogLog sparse encoding stress test
-[[0;32;49mok[0m]: Corrupted sparse HyperLogLogs are detected: Additional at tail
-[[0;32;49mok[0m]: Corrupted sparse HyperLogLogs are detected: Broken magic
-[[0;32;49mok[0m]: Corrupted sparse HyperLogLogs are detected: Invalid encoding
-[[0;32;49mok[0m]: Corrupted dense HyperLogLogs are detected: Wrong length
-[[0;32;49mok[0m]: maxmemory - policy volatile-lru should only remove volatile keys.
+[43/66 [0;33;49mdone[0m]: integration/psync2-pingoff ()
+[[0;32;49mok[0m]: maxmemory - only allkeys-* should remove non-volatile keys (allkeys-lru)
 [[0;32;49mok[0m]: Test read commands are not blocked by client pause
+[[0;32;49mok[0m]: UNLINK can reclaim memory in background
+[44/66 [0;33;49mdone[0m]: unit/introspection ()
+[[0;32;49mok[0m]: Setup slave
 [[0;32;49mok[0m]: Test write commands are paused by RO
+[[0;32;49mok[0m]: Memory efficiency with values in range 16384
 [[0;32;49mok[0m]: Test special commands are paused by RO
+[[0;32;49mok[0m]: WAIT should acknowledge 1 additional copy of the data
 [[0;32;49mok[0m]: Test read/admin mutli-execs are not blocked by pause RO
 [[0;32;49mok[0m]: Test write mutli-execs are blocked by pause RO
 [[0;32;49mok[0m]: Test scripts are blocked by pause RO
 [[0;32;49mok[0m]: Test multiple clients can be queued up and unblocked
 [[0;32;49mok[0m]: Test clients with syntax errors will get responses immediately
 [[0;32;49mok[0m]: Test clients with syntax errors will get responses immediately
-[[0;32;49mok[0m]: BIT pos larger than UINT_MAX
+[[0;32;49mok[0m]: HyperLogLogs are promote from sparse to dense
 [[0;32;49mok[0m]: Test both active and passive expires are skipped during client pause
 [[0;32;49mok[0m]: Test that client pause starts at the end of a transaction
-[[0;32;49mok[0m]: Test scripting debug protocol parsing
-[44/66 [0;33;49mdone[0m]: unit/bitops ()
+[45/66 [0;33;49mdone[0m]: unit/memefficiency ()
 [[0;32;49mok[0m]: Test when replica paused, offset would not grow
 [[0;32;49mok[0m]: Test replica offset would grow after unpause
-[45/66 [0;33;49mdone[0m]: unit/scripting ()
-[[0;32;49mok[0m]: maxmemory - policy volatile-lfu should only remove volatile keys.
-[[0;32;49mok[0m]: WAIT should not acknowledge 1 additional copy if slave is blocked
-[46/66 [0;33;49mdone[0m]: unit/pause ()
+[[0;32;49mok[0m]: FLUSHDB ASYNC can reclaim memory in background
+[[0;32;49mok[0m]: maxmemory - only allkeys-* should remove non-volatile keys (volatile-lru)
+[46/66 [0;33;49mdone[0m]: unit/lazyfree ()
 [47/66 [0;33;49mdone[0m]: unit/tls ()
 [48/66 [0;33;49mdone[0m]: unit/oom-score-adj ()
+[49/66 [0;33;49mdone[0m]: unit/pause ()
 [[0;32;49mok[0m]: Clients are able to enable tracking and redirect it
 [[0;32;49mok[0m]: The other connection is able to get invalidations
 [[0;32;49mok[0m]: The client is now able to disable tracking
@@ -1893,17 +1897,29 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: Adding prefixes to BCAST mode works
 [[0;32;49mok[0m]: Tracking NOLOOP mode in standard mode works
 [[0;32;49mok[0m]: Tracking NOLOOP mode in BCAST mode works
-[[0;32;49mok[0m]: PSYNC2 #3899 regression: verify consistency
-[[0;32;49mok[0m]: Client output buffer soft limit is enforced if time is overreached
-[[0;32;49mok[0m]: Client output buffer soft limit is enforced if time is overreached
+[[0;32;49mok[0m]: TOUCH alters the last access time of a key
+[[0;32;49mok[0m]: TOUCH returns the number of existing keys specified
+[[0;32;49mok[0m]: command stats for GEOADD
+[[0;32;49mok[0m]: command stats for EXPIRE
+[[0;32;49mok[0m]: command stats for BRPOP
+[[0;32;49mok[0m]: command stats for MULTI
+[[0;32;49mok[0m]: command stats for scripts
+[[0;32;49mok[0m]: WAIT should not acknowledge 2 additional copies of the data
+[[0;32;49mok[0m]: CONFIG SET port number
+[[0;32;49mok[0m]: maxmemory - only allkeys-* should remove non-volatile keys (volatile-random)
 [[0;32;49mok[0m]: Temp rdb will be deleted if we use bg_unlink when shutdown
+[50/66 [0;33;49mdone[0m]: unit/introspection-2 ()
 [[0;32;49mok[0m]: Temp rdb will be deleted in signal handle
-[49/66 [0;33;49mdone[0m]: integration/psync2-reg ()
-[50/66 [0;33;49mdone[0m]: unit/shutdown ()
-[[0;32;49mok[0m]: Memory efficiency with values in range 16384
-[[0;32;49mok[0m]: WAIT implicitly blocks on client pause since ACKs aren't sent
+[51/66 [0;33;49mdone[0m]: unit/shutdown ()
+[[0;32;49mok[0m]: HyperLogLog sparse encoding stress test
+[[0;32;49mok[0m]: Corrupted sparse HyperLogLogs are detected: Additional at tail
+[[0;32;49mok[0m]: Corrupted sparse HyperLogLogs are detected: Broken magic
+[[0;32;49mok[0m]: Corrupted sparse HyperLogLogs are detected: Invalid encoding
+[[0;32;49mok[0m]: Corrupted dense HyperLogLogs are detected: Wrong length
+[[0;32;49mok[0m]: CONFIG SET bind address
+[52/66 [0;33;49mdone[0m]: unit/networking ()
+[[0;32;49mok[0m]: maxmemory - only allkeys-* should remove non-volatile keys (volatile-ttl)
 [[0;32;49mok[0m]: Tracking gets notification of expired keys
-[[0;32;49mok[0m]: maxmemory - policy volatile-random should only remove volatile keys.
 [[0;32;49mok[0m]: Tracking gets notification of lazy expired keys
 [[0;32;49mok[0m]: HELLO 3 reply is correct
 [[0;32;49mok[0m]: HELLO without protover
@@ -1924,19 +1940,17 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: BCAST with prefix collisions throw errors
 [[0;32;49mok[0m]: BCAST with prefix collisions throw errors
 [[0;32;49mok[0m]: hdel deliver invlidate message after response in the same connection
-[51/66 [0;33;49mdone[0m]: unit/memefficiency ()
-[52/66 [0;33;49mdone[0m]: unit/wait ()
-[[0;32;49mok[0m]: CONFIG SET port number
 [[0;32;49mok[0m]: Tracking invalidation message is not interleaved with multiple keys response
 [[0;32;49mok[0m]: Tracking invalidation message is not interleaved with transaction response
 [[0;32;49mok[0m]: Tracking invalidation message of eviction keys should be before response
 [[0;32;49mok[0m]: Unblocked BLMOVE gets notification after response
+[[0;32;49mok[0m]: WAIT should not acknowledge 1 additional copy if slave is blocked
 [[0;32;49mok[0m]: Tracking gets notification on tracking table key eviction
 [[0;32;49mok[0m]: Invalidation message received for flushall
 [[0;32;49mok[0m]: Invalidation message received for flushdb
 [[0;32;49mok[0m]: Test ASYNC flushall
-[[0;32;49mok[0m]: maxmemory - policy volatile-ttl should only remove volatile keys.
 [[0;32;49mok[0m]: flushdb tracking invalidation message is not interleaved with transaction response
+[[0;32;49mok[0m]: maxmemory - policy volatile-lru should only remove volatile keys.
 [[0;32;49mok[0m]: Server is able to evacuate enough keys when num of keys surpasses limit by more than defined initial effort
 [[0;32;49mok[0m]: Tracking info is correct
 [[0;32;49mok[0m]: CLIENT GETREDIR provides correct client id
@@ -1947,123 +1961,123 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: CLIENT TRACKINGINFO provides reasonable results when tracking optout
 [[0;32;49mok[0m]: CLIENT TRACKINGINFO provides reasonable results when tracking bcast mode
 [[0;32;49mok[0m]: CLIENT TRACKINGINFO provides reasonable results when tracking redir broken
-[[0;32;49mok[0m]: CONFIG SET bind address
-[53/66 [0;33;49mdone[0m]: unit/networking ()
-[54/66 [0;33;49mdone[0m]: unit/tracking ()
-[[0;32;49mok[0m]: MASTER and SLAVE consistency with EVALSHA replication
-[[0;32;49mok[0m]: Create 3 node cluster
-[[0;32;49mok[0m]: Run blocking command on cluster node3
-[[0;32;49mok[0m]: Perform a Resharding
-[[0;32;49mok[0m]: Verify command got unblocked after resharding
-[[0;32;49mok[0m]: Wait for cluster to be stable
-[[0;32;49mok[0m]: Sanity test push cmd after resharding
-[[0;32;49mok[0m]: Run blocking command again on cluster node1
+[[0;32;49mok[0m]: Regression test for #11715
+[[0;32;49mok[0m]: RESP3 based basic invalidation with client reply off
+[[0;32;49mok[0m]: RESP2 based basic invalidation with client reply off
+[[0;32;49mok[0m]: RESP3 based basic redirect invalidation with client reply off
+[[0;32;49mok[0m]: RESP3 based basic tracking-redir-broken with client reply off
+[53/66 [0;33;49mdone[0m]: unit/tracking ()
+[[0;32;49mok[0m]: Client output buffer soft limit is enforced if time is overreached
+[[0;32;49mok[0m]: Client output buffer soft limit is enforced if time is overreached
 [[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
-[[0;32;49mok[0m]: Kill a cluster node and wait for fail state
-[[0;32;49mok[0m]: SLAVE can reload "lua" AUX RDB fields of duplicated scripts
-[[0;32;49mok[0m]: Verify command got unblocked after cluster failure
-[55/66 [0;33;49mdone[0m]: integration/replication-3 ()
-[56/66 [0;33;49mdone[0m]: unit/cluster ()
-[[0;32;49mok[0m]: pending querybuf: check size of pending_querybuf after set a big value
-[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 219880)
-[[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
-[[0;32;49mok[0m]: PSYNC2: --- CYCLE 5 ---
-[[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #1 as master
-[[0;32;49mok[0m]: PSYNC2: Set #3 to replicate from #1
-[[0;32;49mok[0m]: PSYNC2: Set #0 to replicate from #3
-[[0;32;49mok[0m]: PSYNC2: Set #2 to replicate from #3
-[[0;32;49mok[0m]: PSYNC2: Set #4 to replicate from #0
-[57/66 [0;33;49mdone[0m]: unit/pendingquerybuf ()
-[[0;32;49mok[0m]: Client output buffer soft limit is not enforced too early and is enforced when no traffic
-[[0;32;49mok[0m]: No response for single command if client output buffer hard limit is enforced
-[[0;32;49mok[0m]: Connect multiple replicas at the same time (issue #141), master diskless=no, replica diskless=disabled
-[[0;32;49mok[0m]: PSYNC2: cluster is consistent after failover
-[[0;32;49mok[0m]: No response for multi commands in pipeline if client output buffer limit is enforced
-[[0;32;49mok[0m]: Execute transactions completely even if client output buffer limit is enforced
-[[0;32;49mok[0m]: Fuzzing dense/sparse encoding: Redis should always detect errors
-[[0;32;49mok[0m]: Fuzzing dense/sparse encoding: Redis should always detect errors
-[[0;32;49mok[0m]: PFADD, PFCOUNT, PFMERGE type checking works
-[[0;32;49mok[0m]: PFMERGE results on the cardinality of union of sets
-[[0;32;49mok[0m]: Obuf limit, HRANDFIELD with huge count stopped mid-run
-[58/66 [0;33;49mdone[0m]: unit/obuf-limits ()
-[[0;32;49mok[0m]: Test replication partial resync: backlog expired (diskless: no, disabled, reconnect: 1)
-[[0;32;49mok[0m]: Slave should be able to synchronize with the master
-[[0;32;49mok[0m]: Detect write load to master
-[[0;32;49mok[0m]: Test replication partial resync: no reconnection, just sync (diskless: no, swapdb, reconnect: 0)
-[[0;32;49mok[0m]: Slave should be able to synchronize with the master
-[[0;32;49mok[0m]: Detect write load to master
-[[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
-[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 305172)
+[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 227231)
 [[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
 [[0;32;49mok[0m]: PSYNC2: --- CYCLE 6 ---
 [[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #4 as master
 [[0;32;49mok[0m]: PSYNC2: Set #3 to replicate from #4
-[[0;32;49mok[0m]: PSYNC2: Set #0 to replicate from #3
-[[0;32;49mok[0m]: PSYNC2: Set #2 to replicate from #3
-[[0;32;49mok[0m]: PSYNC2: Set #1 to replicate from #0
-[[0;32;49mok[0m]: client freed during loading
-[59/66 [0;33;49mdone[0m]: integration/rdb ()
-[[0;32;49mok[0m]: PFCOUNT multiple-keys merge returns cardinality of union #1
+[[0;32;49mok[0m]: PSYNC2: Set #1 to replicate from #3
+[[0;32;49mok[0m]: PSYNC2: Set #2 to replicate from #1
+[[0;32;49mok[0m]: PSYNC2: Set #0 to replicate from #4
+[[0;32;49mok[0m]: maxmemory - policy volatile-lfu should only remove volatile keys.
+[[0;32;49mok[0m]: maxmemory - policy volatile-random should only remove volatile keys.
+[[0;32;49mok[0m]: WAIT implicitly blocks on client pause since ACKs aren't sent
+[[0;32;49mok[0m]: maxmemory - policy volatile-ttl should only remove volatile keys.
+[54/66 [0;33;49mdone[0m]: unit/wait ()
+[[0;32;49mok[0m]: Create 3 node cluster
+[[0;32;49mok[0m]: Run blocking command on cluster node3
+[[0;32;49mok[0m]: Perform a Resharding
 [[0;32;49mok[0m]: PSYNC2: cluster is consistent after failover
+[[0;32;49mok[0m]: Verify command got unblocked after resharding
+[[0;32;49mok[0m]: Wait for cluster to be stable
+[[0;32;49mok[0m]: Sanity test push cmd after resharding
+[[0;32;49mok[0m]: Run blocking command again on cluster node1
+[[0;32;49mok[0m]: Kill a cluster node and wait for fail state
+[[0;32;49mok[0m]: Verify command got unblocked after cluster failure
+[[0;32;49mok[0m]: client freed during loading
+[55/66 [0;33;49mdone[0m]: integration/rdb ()
+[56/66 [0;33;49mdone[0m]: unit/cluster ()
+[[0;32;49mok[0m]: MASTER and SLAVE consistency with EVALSHA replication
+[[0;32;49mok[0m]: pending querybuf: check size of pending_querybuf after set a big value
+[57/66 [0;33;49mdone[0m]: unit/pendingquerybuf ()
+[[0;32;49mok[0m]: SLAVE can reload "lua" AUX RDB fields of duplicated scripts
+[[0;32;49mok[0m]: Test replication partial resync: backlog expired (diskless: no, disabled, reconnect: 1)
+[58/66 [0;33;49mdone[0m]: integration/replication-3 ()
+[[0;32;49mok[0m]: Slave should be able to synchronize with the master
+[[0;32;49mok[0m]: Detect write load to master
+[[0;32;49mok[0m]: Test replication partial resync: no reconnection, just sync (diskless: no, swapdb, reconnect: 0)
+[[0;32;49mok[0m]: Client output buffer soft limit is not enforced too early and is enforced when no traffic
+[[0;32;49mok[0m]: No response for single command if client output buffer hard limit is enforced
+[[0;32;49mok[0m]: Slave should be able to synchronize with the master
+[[0;32;49mok[0m]: No response for multi commands in pipeline if client output buffer limit is enforced
+[[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
+[[0;32;49mok[0m]: Execute transactions completely even if client output buffer limit is enforced
+[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 299933)
+[[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
+[[0;32;49mok[0m]: Obuf limit, HRANDFIELD with huge count stopped mid-run
+[[0;32;49mok[0m]: PSYNC2: --- CYCLE 7 ---
+[[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #0 as master
+[[0;32;49mok[0m]: PSYNC2: Set #3 to replicate from #0
+[[0;32;49mok[0m]: PSYNC2: Set #2 to replicate from #3
+[[0;32;49mok[0m]: PSYNC2: Set #4 to replicate from #3
+[[0;32;49mok[0m]: PSYNC2: Set #1 to replicate from #2
+[[0;32;49mok[0m]: PSYNC2: cluster is consistent after failover
+[59/66 [0;33;49mdone[0m]: unit/obuf-limits ()
+[[0;32;49mok[0m]: Fuzzing dense/sparse encoding: Redis should always detect errors
+[[0;32;49mok[0m]: Fuzzing dense/sparse encoding: Redis should always detect errors
+[[0;32;49mok[0m]: PFADD, PFCOUNT, PFMERGE type checking works
+[[0;32;49mok[0m]: PFMERGE results on the cardinality of union of sets
+[[0;32;49mok[0m]: Detect write load to master
+[[0;32;49mok[0m]: AOF rewrite during write load: RDB preamble=no
+[[0;32;49mok[0m]: Turning off AOF kills the background writing child if any
+[[0;32;49mok[0m]: Connect multiple replicas at the same time (issue #141), master diskless=no, replica diskless=disabled
+[[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
+[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 394721)
+[[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
+[[0;32;49mok[0m]: AOF rewrite of list with quicklist encoding, string data
+[[0;32;49mok[0m]: PFCOUNT multiple-keys merge returns cardinality of union #1
+[[0;32;49mok[0m]: PSYNC2: Bring the master back again for next test
+[[0;32;49mok[0m]: PSYNC2: Partial resync after restart using RDB aux fields
+[[0;32;49mok[0m]: slave buffer are counted correctly
+[[0;32;49mok[0m]: Test replication partial resync: ok psync (diskless: no, swapdb, reconnect: 1)
+[[0;32;49mok[0m]: AOF rewrite of list with quicklist encoding, int data
 [[0;32;49mok[0m]: PFCOUNT multiple-keys merge returns cardinality of union #2
+[[0;32;49mok[0m]: Slave should be able to synchronize with the master
+[[0;32;49mok[0m]: Detect write load to master
+[[0;32;49mok[0m]: PSYNC2: Replica RDB restart with EVALSHA in backlog issue #4483
+[[0;32;49mok[0m]: AOF rewrite of set with intset encoding, string data
 [[0;32;49mok[0m]: PFDEBUG GETREG returns the HyperLogLog raw registers
 [[0;32;49mok[0m]: PFADD / PFCOUNT cache invalidation works
 [60/66 [0;33;49mdone[0m]: unit/hyperloglog ()
-[[0;32;49mok[0m]: slave buffer are counted correctly
-[[0;32;49mok[0m]: Test replication partial resync: ok psync (diskless: no, swapdb, reconnect: 1)
-[[0;32;49mok[0m]: Slave should be able to synchronize with the master
-[[0;32;49mok[0m]: Detect write load to master
-[[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
-[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 387350)
-[[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
-[[0;32;49mok[0m]: PSYNC2: --- CYCLE 7 ---
-[[0;32;49mok[0m]: PSYNC2: [NEW LAYOUT] Set #1 as master
-[[0;32;49mok[0m]: PSYNC2: Set #0 to replicate from #1
-[[0;32;49mok[0m]: PSYNC2: Set #4 to replicate from #0
-[[0;32;49mok[0m]: PSYNC2: Set #3 to replicate from #4
-[[0;32;49mok[0m]: PSYNC2: Set #2 to replicate from #0
-[[0;32;49mok[0m]: AOF rewrite during write load: RDB preamble=no
-[[0;32;49mok[0m]: PSYNC2: cluster is consistent after failover
-[[0;32;49mok[0m]: GEOSEARCH fuzzy test - byradius
-[[0;32;49mok[0m]: replica buffer don't induce eviction
-[[0;32;49mok[0m]: Don't rehash if used memory exceeds maxmemory after rehash
-[[0;32;49mok[0m]: Turning off AOF kills the background writing child if any
-[[0;32;49mok[0m]: AOF rewrite of list with quicklist encoding, string data
-[[0;32;49mok[0m]: client tracking don't cause eviction feedback loop
-[61/66 [0;33;49mdone[0m]: unit/maxmemory ()
-[[0;32;49mok[0m]: AOF rewrite of list with quicklist encoding, int data
-[[0;32;49mok[0m]: PSYNC2: generate load while killing replication links
-[[0;32;49mok[0m]: PSYNC2: cluster is consistent after load (x = 488511)
-[[0;32;49mok[0m]: PSYNC2: total sum of full synchronizations is exactly 4
-[[0;32;49mok[0m]: Test replication partial resync: no backlog (diskless: no, swapdb, reconnect: 1)
-[[0;32;49mok[0m]: AOF rewrite of set with intset encoding, string data
-[[0;32;49mok[0m]: PSYNC2: Bring the master back again for next test
-[[0;32;49mok[0m]: Slave should be able to synchronize with the master
-[[0;32;49mok[0m]: Detect write load to master
-[[0;32;49mok[0m]: PSYNC2: Partial resync after restart using RDB aux fields
+[61/66 [0;33;49mdone[0m]: integration/psync2 ()
 [[0;32;49mok[0m]: AOF rewrite of set with hashtable encoding, string data
-[[0;32;49mok[0m]: PSYNC2: Replica RDB restart with EVALSHA in backlog issue #4483
-[62/66 [0;33;49mdone[0m]: integration/psync2 ()
+[[0;32;49mok[0m]: GEOSEARCH fuzzy test - byradius
 [[0;32;49mok[0m]: AOF rewrite of set with intset encoding, int data
 [[0;32;49mok[0m]: AOF rewrite of set with hashtable encoding, int data
 [[0;32;49mok[0m]: AOF rewrite of hash with ziplist encoding, string data
-[[0;32;49mok[0m]: Connect multiple replicas at the same time (issue #141), master diskless=no, replica diskless=swapdb
+[[0;32;49mok[0m]: replica buffer don't induce eviction
+[[0;32;49mok[0m]: Don't rehash if used memory exceeds maxmemory after rehash
 [[0;32;49mok[0m]: AOF rewrite of hash with hashtable encoding, string data
 [[0;32;49mok[0m]: AOF rewrite of hash with ziplist encoding, int data
+[[0;32;49mok[0m]: client tracking don't cause eviction feedback loop
+[62/66 [0;33;49mdone[0m]: unit/maxmemory ()
+[[0;32;49mok[0m]: Test replication partial resync: no backlog (diskless: no, swapdb, reconnect: 1)
 [[0;32;49mok[0m]: AOF rewrite of hash with hashtable encoding, int data
-[[0;32;49mok[0m]: GEOSEARCH fuzzy test - bybox
-[[0;32;49mok[0m]: GEOSEARCH box edges fuzzy test
-[63/66 [0;33;49mdone[0m]: north ()
-[[0;32;49mok[0m]: AOF rewrite of zset with ziplist encoding, string data
-[[0;32;49mok[0m]: AOF rewrite of zset with skiplist encoding, string data
-[[0;32;49mok[0m]: Test replication partial resync: ok after delay (diskless: no, swapdb, reconnect: 1)
-[[0;32;49mok[0m]: AOF rewrite of zset with ziplist encoding, int data
 [[0;32;49mok[0m]: Slave should be able to synchronize with the master
+[[0;32;49mok[0m]: AOF rewrite of zset with ziplist encoding, string data
 [[0;32;49mok[0m]: Detect write load to master
+[[0;32;49mok[0m]: AOF rewrite of zset with skiplist encoding, string data
+[[0;32;49mok[0m]: AOF rewrite of zset with ziplist encoding, int data
 [[0;32;49mok[0m]: AOF rewrite of zset with skiplist encoding, int data
 [[0;32;49mok[0m]: BGREWRITEAOF is delayed if BGSAVE is in progress
 [[0;32;49mok[0m]: BGREWRITEAOF is refused if already in progress
-[64/66 [0;33;49mdone[0m]: unit/aofrw ()
+[63/66 [0;33;49mdone[0m]: unit/aofrw ()
+[[0;32;49mok[0m]: GEOSEARCH fuzzy test - bybox
+[[0;32;49mok[0m]: GEOSEARCH box edges fuzzy test
+[64/66 [0;33;49mdone[0m]: north ()
+[[0;32;49mok[0m]: Test replication partial resync: ok after delay (diskless: no, swapdb, reconnect: 1)
+[[0;32;49mok[0m]: Slave should be able to synchronize with the master
+[[0;32;49mok[0m]: Detect write load to master
+[[0;32;49mok[0m]: Connect multiple replicas at the same time (issue #141), master diskless=no, replica diskless=swapdb
 [[0;32;49mok[0m]: Test replication partial resync: backlog expired (diskless: no, swapdb, reconnect: 1)
 [[0;32;49mok[0m]: Slave should be able to synchronize with the master
 [[0;32;49mok[0m]: Detect write load to master
@@ -2074,14 +2088,29 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: Slave should be able to synchronize with the master
 [[0;32;49mok[0m]: Detect write load to master
 [[0;32;49mok[0m]: Connect multiple replicas at the same time (issue #141), master diskless=yes, replica diskless=disabled
-[[0;32;49mok[0m]: Test replication partial resync: no backlog (diskless: yes, disabled, reconnect: 1)
+[[0;32;49mok[0m]: Connect multiple replicas at the same time (issue #141), master diskless=yes, replica diskless=swapdb
+[[0;32;49mok[0m]: Master stream is correctly processed while the replica has a script in -BUSY state
+[[0;32;49mok[0m]: slave fails full sync and diskless load swapdb recovers it
+[[0;32;49mok[0m]: diskless loading short read
+[[0;31;49merr[0m]: diskless no replicas drop during rdb pipe in tests/integration/replication.tcl
+[[0;31;49merr[0m]: diskless slow replicas drop during rdb pipe in tests/integration/replication.tcl
+[[0;31;49merr[0m]: diskless fast replicas drop during rdb pipe in tests/integration/replication.tcl
+[[0;31;49merr[0m]: diskless all replicas drop during rdb pipe in tests/integration/replication.tcl
+[[0;31;49merr[0m]: diskless timeout replicas drop during rdb pipe in tests/integration/replication.tcl
+[[0;32;49mok[0m]: diskless replication child being killed is collected
+[[0;32;49mok[0m]: replication child dies when parent is killed - diskless: yes
+[[0;32;49mok[0m]: replication child dies when parent is killed - diskless: no
+[[0;32;49mok[0m]: diskless replication read pipe cleanup
+[[0;32;49mok[0m]: replicaof right after disconnection
+[[0;32;49mok[0m]: Kill rdb child process if its dumping RDB is not useful
+[65/66 [0;33;49mdone[0m]: integration/replication ()
+[[0;31;49merr[0m]: Test replication partial resync: no backlog (diskless: yes, disabled, reconnect: 1) in tests/integration/replication-psync.tcl
 [[0;32;49mok[0m]: Slave should be able to synchronize with the master
 [[0;32;49mok[0m]: Detect write load to master
 [[0;32;49mok[0m]: Test replication partial resync: ok after delay (diskless: yes, disabled, reconnect: 1)
 [[0;32;49mok[0m]: Slave should be able to synchronize with the master
 [[0;32;49mok[0m]: Detect write load to master
-[[0;32;49mok[0m]: Connect multiple replicas at the same time (issue #141), master diskless=yes, replica diskless=swapdb
-[[0;32;49mok[0m]: Test replication partial resync: backlog expired (diskless: yes, disabled, reconnect: 1)
+[[0;31;49merr[0m]: Test replication partial resync: backlog expired (diskless: yes, disabled, reconnect: 1) in tests/integration/replication-psync.tcl
 [[0;32;49mok[0m]: Slave should be able to synchronize with the master
 [[0;32;49mok[0m]: Detect write load to master
 [[0;32;49mok[0m]: Test replication partial resync: no reconnection, just sync (diskless: yes, swapdb, reconnect: 0)
@@ -2093,28 +2122,16 @@ rm -f commandfilter.so basics.so testrdb.so fork.so infotest.so propagate.so mis
 [[0;32;49mok[0m]: Test replication partial resync: no backlog (diskless: yes, swapdb, reconnect: 1)
 [[0;32;49mok[0m]: Slave should be able to synchronize with the master
 [[0;32;49mok[0m]: Detect write load to master
-[[0;32;49mok[0m]: Master stream is correctly processed while the replica has a script in -BUSY state
-[[0;32;49mok[0m]: slave fails full sync and diskless load swapdb recovers it
 [[0;32;49mok[0m]: Test replication partial resync: ok after delay (diskless: yes, swapdb, reconnect: 1)
-[[0;32;49mok[0m]: diskless loading short read
 [[0;32;49mok[0m]: Slave should be able to synchronize with the master
 [[0;32;49mok[0m]: Detect write load to master
 [[0;32;49mok[0m]: Test replication partial resync: backlog expired (diskless: yes, swapdb, reconnect: 1)
-[65/66 [0;33;49mdone[0m]: integration/replication-psync ()
-[[0;32;49mok[0m]: diskless no replicas drop during rdb pipe
-[[0;31;49merr[0m]: diskless slow replicas drop during rdb pipe in tests/integration/replication.tcl
-[[0;31;49merr[0m]: diskless fast replicas drop during rdb pipe in tests/integration/replication.tcl
-[[0;31;49merr[0m]: diskless all replicas drop during rdb pipe in tests/integration/replication.tcl
-[[0;31;49merr[0m]: diskless timeout replicas drop during rdb pipe in tests/integration/replication.tcl
-[[0;32;49mok[0m]: diskless replication child being killed is collected
-[[0;32;49mok[0m]: replication child dies when parent is killed - diskless: yes
-[[0;32;49mok[0m]: replication child dies when parent is killed - diskless: no
-[[0;32;49mok[0m]: diskless replication read pipe cleanup
-[[0;32;49mok[0m]: replicaof right after disconnection
-[[0;32;49mok[0m]: Kill rdb child process if its dumping RDB is not useful
-[66/66 [0;33;49mdone[0m]: integration/replication ()
+[66/66 [0;33;49mdone[0m]: integration/replication-psync ()
 [66/66 [0;33;49mdone[0m]: defrag ()
+*** [[0;31;49merr[0m]: diskless no replicas drop during rdb pipe in tests/integration/replication.tcl
 *** [[0;31;49merr[0m]: diskless slow replicas drop during rdb pipe in tests/integration/replication.tcl
 *** [[0;31;49merr[0m]: diskless fast replicas drop during rdb pipe in tests/integration/replication.tcl
 *** [[0;31;49merr[0m]: diskless all replicas drop during rdb pipe in tests/integration/replication.tcl
 *** [[0;31;49merr[0m]: diskless timeout replicas drop during rdb pipe in tests/integration/replication.tcl
+*** [[0;31;49merr[0m]: Test replication partial resync: no backlog (diskless: yes, disabled, reconnect: 1) in tests/integration/replication-psync.tcl
+*** [[0;31;49merr[0m]: Test replication partial resync: backlog expired (diskless: yes, disabled, reconnect: 1) in tests/integration/replication-psync.tcl
