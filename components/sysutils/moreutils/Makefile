@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		moreutils
 COMPONENT_VERSION=	0.67
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	moreutils is a collection of the unix tools that nobody thought to write long ago when unix was young
 COMPONENT_PROJECT_URL=	https://joeyh.name/code/moreutils
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,6 +46,8 @@ PATH = $(PATH.gnu)
 
 CFLAGS   += $(CPP_XPG6MODE)
 LDFLAGS  += -lsocket -lnsl
+
+COMPONENT_BUILD_ENV += DOCBOOKXSL="/usr/share/sgml/docbook/xsl-stylesheets"
 
 COMPONENT_TEST_TRANSFORMS = \
 	' -n ' \
