@@ -28,31 +28,24 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		parallel
-HUMAN_VERSION =		20201122
+HUMAN_VERSION =		20230422
 # A leading "0." is included to make it easier to upgrade the package, should
 # the maintainers decide to go to a more standard version numbering system.
-COMPONENT_VERSION =	0.2020.11.22
-COMPONENT_REVISION =	1
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/parallel/
+COMPONENT_VERSION =	2023.4.22
+COMPONENT_SUMMARY=	GNU parallel is a shell tool for executing jobs in parallel using one or more computers.
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/parallel/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:4da0bf42c466493b44dcbd8750e7bf99c31da4c701e8be272276c16ec4caff30
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_SUMMARY=	GNU parallel is a shell tool for executing jobs in parallel using one or more computers.
+COMPONENT_ARCHIVE_HASH= sha256:9106593d09dc4de0e094b7b14390a309d8fcb1d27104a53814d16937dcbae3c2
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/parallel
-COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_LICENSE=	GPLv3
 COMPONENT_CLASSIFICATION=	System/Shells
+COMPONENT_LICENSE=	GPLv3,GFDL-1.3,CC-BY-SA-4.0
 
-TEST_TARGET:	$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-# Set PATH to find /usr/perl5/bin/pod2man, so that the man pages can be
-# automatically generated
-COMPONENT_BUILD_ENV +=    PATH="$(PATH):/usr/perl5/bin"
-
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/which
-REQUIRED_PACKAGES += SUNWcs
