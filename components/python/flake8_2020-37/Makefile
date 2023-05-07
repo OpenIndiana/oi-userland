@@ -19,13 +19,14 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8_2020
-HUMAN_VERSION =			1.8.0
+HUMAN_VERSION =			1.7.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		flake8_2020 - flake8 plugin which checks for misuse of \`sys.version\` or \`sys.version_info\`
 COMPONENT_PROJECT_URL =		https://github.com/asottile/flake8-2020
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/asottile/flake8-2020/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8bbe2803464f780bf2b77a9cb76d9c0d82b6acae5b67ace58d1483ece3ab9765
+	sha256:4956bdfc5d63fb5c6e52404a6d8df877baa23631d2e00cb29b08d73669a6b0e8
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,7 +34,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 COMPONENT_SRC=flake8-2020-$(HUMAN_VERSION)
 
 # flake8_2020 >= 1.8.0 requires Python >= 3.8
-PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
+PYTHON_VERSIONS = 3.7
 
 include $(WS_MAKE_RULES)/common.mk
 
