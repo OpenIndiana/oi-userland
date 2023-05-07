@@ -18,11 +18,11 @@ USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgbouncer
-COMPONENT_VERSION= 	1.18.0
+COMPONENT_VERSION= 	1.19.0
 COMPONENT_SUMMARY= 	pgBouncer connection pooler
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9349c9e59f6f88156354f4f6af27cdb014a235b00ae184cbaa37688bd0df544c
+COMPONENT_ARCHIVE_HASH=	sha256:af0b05e97d0e1fd9ad45fe00ea6d2a934c63075f67f7e2ccef2ca59e3d8ce682
 COMPONENT_ARCHIVE_URL=	https://pgbouncer.github.io/downloads/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.pgbouncer.org/
 COMPONENT_FMRI=	database/postgres/$(COMPONENT_NAME)
@@ -45,8 +45,8 @@ CONFIGURE_ENV +=	"XMLTO=xmlto --skip-validation"
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/security/openssl-11
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
