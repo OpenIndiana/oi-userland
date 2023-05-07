@@ -14,17 +14,17 @@
 # Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gexiv2
 COMPONENT_MJR_VERSION=	0.14
-COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).0
+COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).1
 COMPONENT_SUMMARY= GObject wrapper around the Exiv2 photo metadata library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:e58279a6ff20b6f64fa499615da5e9b57cf65ba7850b72fafdf17221a9d6d69e
+COMPONENT_ARCHIVE_HASH=	sha256:ec3ee3ec3860b9c78958a55da89cf76ae2305848e12f41945b7b52124d8f6cf9
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/gexiv2/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/gexiv2
 COMPONENT_FMRI= image/library/gexiv2
@@ -36,19 +36,22 @@ include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
 
-CONFIGURE_OPTIONS.32 += -Dintrospection=false
-CONFIGURE_OPTIONS.32 += -Dvapi=false
-CONFIGURE_OPTIONS.32 += -Dpython3=false
+CONFIGURE_OPTIONS    += -Dtests=true
 
 # gobject-introspection requires this
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages; \
+	$(MV) $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/site-packages/* $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages/; \
+	$(PYTHON) -m compileall $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages;
+
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/Ok:/p" ' \
 	'-e "/Expected Fail:/p" ' \
-	'-e "/Fail:/p" ' \
+	'-e "/^Fail:/p" ' \
 	'-e "/Unexpected Pass:/p" ' \
 	'-e "/Skip:/p" ' \
 	'-e "/Timeout:/p" ' \
