@@ -1,0 +1,41 @@
+Latest LibRaw does neither have libraw_output_params_t.use_rawspeed nor LibRaw_constructor_flags.LIBRAW_OPIONS_NO_MEMERR_CALLBACK.
+
+--- gthumb-3.6.2/extensions/raw_files/main.c.orig	2018-06-17 08:24:44.000000000 +0200
++++ gthumb-3.6.2/extensions/raw_files/main.c	2023-05-07 19:14:13.769752697 +0200
+@@ -218,7 +218,7 @@
+ 	size_t         size;
+ 	GthImage      *image = NULL;
+ 
+-	raw_data = libraw_init (LIBRAW_OPIONS_NO_MEMERR_CALLBACK | LIBRAW_OPIONS_NO_DATAERR_CALLBACK);
++	raw_data = libraw_init (LIBRAW_OPIONS_NO_DATAERR_CALLBACK);
+ 	if (raw_data == NULL) {
+ 		_libraw_set_gerror (error, errno);
+ 		goto fatal_error;
+@@ -231,7 +231,6 @@
+ 
+ 	raw_data->params.output_tiff = FALSE;
+ 	raw_data->params.use_camera_wb = TRUE;
+-	raw_data->params.use_rawspeed = TRUE;
+ 	raw_data->params.highlight = FALSE;
+ 	raw_data->params.use_camera_matrix = TRUE;
+ 	raw_data->params.output_color = RAW_OUTPUT_COLOR_SRGB;
+@@ -300,7 +299,7 @@
+ 		if ((original_width != NULL) && (original_height != NULL)) {
+ 			libraw_close (raw_data);
+ 
+-			raw_data = libraw_init (LIBRAW_OPIONS_NO_MEMERR_CALLBACK | LIBRAW_OPIONS_NO_DATAERR_CALLBACK);
++			raw_data = libraw_init (LIBRAW_OPIONS_NO_DATAERR_CALLBACK);
+ 			if (raw_data == NULL)
+ 				goto fatal_error;
+ 
+--- gthumb-3.6.2/extensions/raw_files/gth-metadata-provider-raw.c.orig	2018-06-17 08:24:44.000000000 +0200
++++ gthumb-3.6.2/extensions/raw_files/gth-metadata-provider-raw.c	2023-05-07 18:42:25.878036077 +0200
+@@ -61,7 +61,7 @@
+ 	if (!_g_mime_type_is_raw (gth_file_data_get_mime_type (file_data)))
+ 		return;
+ 
+-	raw_data = libraw_init (LIBRAW_OPIONS_NO_MEMERR_CALLBACK | LIBRAW_OPIONS_NO_DATAERR_CALLBACK);
++	raw_data = libraw_init (LIBRAW_OPIONS_NO_DATAERR_CALLBACK);
+ 	if (raw_data == NULL)
+ 		goto fatal_error;
+ 
