@@ -430,6 +430,10 @@ PERL_VERSIONS=$($GMAKE print-value-PERL_VERSIONS)
 # Run tests to make sure they pass and to create result snapshots
 TESTED_VERSIONS=
 for v in $PERL_VERSIONS ; do
+	# Check the test environment
+	! $GMAKE PERL_VERSIONS=$v test-env-check > /dev/null 2>&1 && printf "ERROR: 'gmake test-env-check' failed for %s!\n" "$v" >&2 && continue
+
+	# Run the test
 	! $GMAKE PERL_VERSIONS=$v test > /dev/null 2>&1 && printf "ERROR: Testing failed for %s!\n" "$v" >&2 && continue
 
 	# If there is no snapshot produced the component likely does not support tests
