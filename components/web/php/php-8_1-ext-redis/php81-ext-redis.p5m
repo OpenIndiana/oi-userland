@@ -1,0 +1,30 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright (c) 2016 Sergey Avseyev
+# Copyright (c) 2019 Alexander Pyhalov
+# Copyright (c) 2022 Friedrich Kink
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value='$(COMPONENT_SUMMARY)'
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=info.classification value=$(COMPONENT_CLASSIFICATION)
+
+license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)
+
+<transform file path=usr/php/8.1/extensions/.*\.so -> \
+    add pkg.linted.userland.action001.2 true>
+
+file path=usr/php/8.1/extensions/redis.so
+file redis.ini path=etc/php/8.1/conf.d/redis.ini preserve=true mode=0644
