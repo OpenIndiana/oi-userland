@@ -133,6 +133,7 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 	NEW=0
 	REBUILD=1
 	PREV_VER=$($GMAKE print-value-COMPONENT_VERSION 2>/dev/null)
+	(($? != 0)) && printf "FATAL: 'gmake print-value-COMPONENT_VERSION' failed!\n" >&2 && exit 1
 	PREV_REV=$($GMAKE print-value-COMPONENT_REVISION 2>/dev/null)
 
 	# If we were asked to do version upgrade, but we do not have new
