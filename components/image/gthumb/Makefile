@@ -18,13 +18,12 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         gthumb
 # Later versions use symbolic icons
 COMPONENT_VERSION=      3.6.2
-COMPONENT_REVISION=     5
-COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/gthumb
+COMPONENT_REVISION=     6
 COMPONENT_SUMMARY=      GNOME image organizer (gthumb)
+COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/gthumb
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:c9bf6bb7502659f5e990069527584bb96193f7f5f9492f0bf5f65828f5024b66
+COMPONENT_ARCHIVE_HASH= sha256:c9bf6bb7502659f5e990069527584bb96193f7f5f9492f0bf5f65828f5024b66
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/3.6/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         image/viewer/gthumb
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
@@ -35,7 +34,7 @@ TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
 
@@ -49,16 +48,16 @@ CPPFLAGS += $(JPEG_CPPFLAGS)
 CFLAGS += $(JPEG_CFLAGS)
 LDFLAGS += $(JPEG_LDFLAGS)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--enable-exiv2
-CONFIGURE_OPTIONS+=	--enable-jpeg
-CONFIGURE_OPTIONS+=	--enable-tiff
-CONFIGURE_OPTIONS+=	--enable-gstreamer
-CONFIGURE_OPTIONS+=	--enable-libwebp
-CONFIGURE_OPTIONS+=	--enable-librsvg
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --libexecdir=/usr/lib
+CONFIGURE_OPTIONS += --enable-exiv2
+CONFIGURE_OPTIONS += --enable-jpeg
+CONFIGURE_OPTIONS += --enable-tiff
+CONFIGURE_OPTIONS += --enable-gstreamer
+CONFIGURE_OPTIONS += --enable-libwebp
+CONFIGURE_OPTIONS += --enable-librsvg
 
-CONFIGURE_ENV+= CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 # Build dependencies
 REQUIRED_PACKAGES += library/gnome/yelp-tools
