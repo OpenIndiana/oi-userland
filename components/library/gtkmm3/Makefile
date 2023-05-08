@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkmm3
 COMPONENT_VERSION=	3.24.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	gtkmm - C++ Wrapper for the Gtk+ Library
 COMPONENT_SRC=		gtkmm-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -31,7 +32,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH = $(PATH.gnu)
 
 unexport SHELLOPTS
 
