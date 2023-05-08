@@ -38,7 +38,9 @@ PATH = $(PATH.gnu)
 
 CXXFLAGS += -std=c++11
 
-CONFIGURE_OPTIONS += -Dbuild-documentation=true
+# I haven't found the reason yet why generating the documentation differs from my systems to the build server.
+# So we won't build documentation for now as it increases the package size significantely. 
+CONFIGURE_OPTIONS += -Dbuild-documentation=false
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
