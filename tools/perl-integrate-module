@@ -26,7 +26,7 @@ CURL="/usr/bin/curl -s"
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1" >&2
-	printf "Usage: %s [-l VERSION] [-o OBSOLETE].. [-u] MODULE\n" "$THIS" >&2
+	printf "Usage: %s [-d DIR] [-l VERSION] [-o OBSOLETE].. [-u] MODULE\n" "$THIS" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
@@ -35,9 +35,11 @@ function usage
 VERSION=
 OBSOLETE=
 UPGRADE_ONLY=0
-while getopts ":hl:o:u" OPT ; do
+DIRECTORY=
+while getopts ":hd:l:o:u" OPT ; do
 	case "$OPT" in
 	"?"|"h")	usage ;;
+	"d")		DIRECTORY="$OPTARG" ;;
 	"l")		VERSION="$OPTARG" ;;
 	"o")		OBSOLETE="$OBSOLETE $OPTARG" ;;
 	"u")		UPGRADE_ONLY=1 ;;
@@ -61,8 +63,8 @@ GMAKE="$GMAKE gmake"
 WS_TOP=$(git rev-parse --show-toplevel 2>/dev/null)
 [[ -z "$WS_TOP" ]] && usage "The script must be run in git repo"
 
-DIR="$WS_TOP/components/perl"
-[[ -d "$DIR" ]] || usage "Directory $DIR not found"
+BASE_DIR="$WS_TOP/components"
+[[ -d "$BASE_DIR" ]] || usage "Directory $BASE_DIR not found"
 
 
 # Get data from metacpan
@@ -117,7 +119,8 @@ fi
 
 
 # Prepare the directory
-DIR="$DIR/$DISTRIBUTION"
+[[ -z "$DIRECTORY" ]] && DIRECTORY="perl/$DISTRIBUTION"
+DIR="$BASE_DIR/$DIRECTORY"
 mkdir -p "$DIR"
 cd "$DIR"
 git restore --staged . > /dev/null 2>&1
@@ -543,7 +546,7 @@ else
 	fi
 	[[ -z "$MSG" ]] && MSG="rebuild"
 
-	MSG="perl/$DISTRIBUTION: $MSG"
+	MSG="$DIRECTORY: $MSG"
 fi
 
 # Commit the results
