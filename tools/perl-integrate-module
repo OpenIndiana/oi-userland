@@ -392,16 +392,18 @@ sed -i -e 's/license:TODO/'"$LICENSE"'/g' Makefile
 if ! $GMAKE sample-manifest > /dev/null 2>&1 ; then
 	printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
 else
+	MANIFEST="$DISTRIBUTION-PERLVER.p5m"
+	[[ "$($GMAKE print-value-SINGLE_PERL_VERSION)" == "yes" ]] && MANIFEST="$DISTRIBUTION.p5m"
 	cat manifests/sample-manifest.p5m \
 		| sed -e 's/^#.*Copyright.*<contributor>.*$/# This file was automatically generated using '"$THIS"'/g' \
-		> "$DISTRIBUTION-PERLVER.p5m"
+		> "$MANIFEST"
 
 	# Execute hook-manifest snippet
 	gsed -e '0,/^%hook-manifest%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
 	. "./$SNIPPET"
 	rm -f "$SNIPPET"
 
-	git add manifests/sample-manifest.p5m "$DISTRIBUTION-PERLVER.p5m"
+	git add manifests/sample-manifest.p5m $MANIFEST
 fi
 
 
@@ -529,16 +531,19 @@ else
 		[[ "$PREV_HVER" != "$VERSION" ]] && MSG="update to $VERSION" || MSG="change version format"
 	fi
 
-	NV=
-	for v in $PERL_VERSIONS ; do
-		PLV=${v//.}
-		pkg list -avH "$COMPONENT_FMRI-$PLV" 2>/dev/null | egrep -q -v '(o|r)$' && continue
-		[[ -n "$NV" ]] && NV="$NV and "
-		NV="$NV$v"
-	done
-
 	REBUILDMSG=
-	[[ -n "$NV" ]] && REBUILDMSG="rebuild for perl $NV"
+
+	if [[ "$($GMAKE print-value-SINGLE_PERL_VERSION)" == "no" ]] ; then
+		NV=
+		for v in $PERL_VERSIONS ; do
+			PLV=${v//.}
+			pkg list -avH "$COMPONENT_FMRI-$PLV" 2>/dev/null | egrep -q -v '(o|r)$' && continue
+			[[ -n "$NV" ]] && NV="$NV and "
+			NV="$NV$v"
+		done
+		[[ -n "$NV" ]] && REBUILDMSG="rebuild for perl $NV"
+	fi
+
 	if [[ -n "$OV" ]] ; then
 		[[ -n "$REBUILDMSG" ]] && REBUILDMSG="$REBUILDMSG and" || REBUILDMSG="rebuild"
 		REBUILDMSG="$REBUILDMSG to get package$OV_PLURAL for perl $OV obsoleted"
