@@ -32,7 +32,7 @@ function usage
 }
 
 
-VERSION=
+OPT_VERSION=
 OBSOLETE=
 UPGRADE_ONLY=0
 DIRECTORY=
@@ -40,7 +40,7 @@ while getopts ":hd:l:o:u" OPT ; do
 	case "$OPT" in
 	"?"|"h")	usage ;;
 	"d")		DIRECTORY="$OPTARG" ;;
-	"l")		VERSION="$OPTARG" ;;
+	"l")		OPT_VERSION="$OPTARG" ;;
 	"o")		OBSOLETE="$OBSOLETE $OPTARG" ;;
 	"u")		UPGRADE_ONLY=1 ;;
 	esac
@@ -92,7 +92,30 @@ if [[ "$DISTRIBUTION" != "${MODULE//::/-}" ]] then
 	fi
 fi
 
-# Find the latest version if not provided by user
+
+# Prepare the directory
+[[ -z "$DIRECTORY" ]] && DIRECTORY="perl/$DISTRIBUTION"
+DIR="$BASE_DIR/$DIRECTORY"
+mkdir -p "$DIR"
+cd "$DIR"
+git restore --staged . > /dev/null 2>&1
+git checkout . > /dev/null 2>&1
+touch "$CONF"
+
+
+# Following variables could be set by the hook-begin snippet
+VERSION=
+DOWNLOAD_URL=
+
+# Execute hook-begin snippet
+gsed -e '0,/^%hook-begin%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
+. "./$SNIPPET"
+rm -f "$SNIPPET"
+
+# Version specified as option takes precedence
+[[ -n "$OPT_VERSION" ]] && VERSION="$OPT_VERSION"
+
+# Find the latest version if not already provided
 if [[ -z "$VERSION" ]] ; then
 	VERSION=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.version')
 	if (($? != 0)) || [[ -z "$VERSION" || "$VERSION" == "null" ]] ; then
@@ -102,14 +125,6 @@ if [[ -z "$VERSION" ]] ; then
 	VERSION=${VERSION#v}
 fi
 
-
-# Prepare the directory
-[[ -z "$DIRECTORY" ]] && DIRECTORY="perl/$DISTRIBUTION"
-DIR="$BASE_DIR/$DIRECTORY"
-mkdir -p "$DIR"
-cd "$DIR"
-git restore --staged . > /dev/null 2>&1
-git checkout . > /dev/null 2>&1
 
 # Is this new module, or just a rebuild?
 NEW=1
@@ -133,24 +148,26 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 fi
 
 
-# Get module author
-# TODO: here we get author of the latest version, not the specified version
-AUTHOR=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.author')
-if (($? != 0)) || [[ -z "$AUTHOR" || "$AUTHOR" == "null" ]] ; then
-	printf "FATAL: Failed to get author for module %s from metacpan\n" "$MODULE" >&2
-	exit 1
-fi
+# Get download_url if not already provided
+if [[ -z "$DOWNLOAD_URL" ]] ; then
+	# Get module author
+	# TODO: here we get author of the latest version, not the specified version
+	AUTHOR=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.author')
+	if (($? != 0)) || [[ -z "$AUTHOR" || "$AUTHOR" == "null" ]] ; then
+		printf "FATAL: Failed to get author for module %s from metacpan\n" "$MODULE" >&2
+		exit 1
+	fi
 
-# Get download_url
-DOWNLOAD_URL=$($CURL "$APIURL/download_url/$MODULE?version===$VERSION" | /usr/bin/jq -r '.download_url')
-if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
-	printf "WARNING: Failed to get download_url for module %s, version %s from metacpan\n" "$MODULE" "$VERSION" >&2
-	DOWNLOAD_URL=
+	# Get download_url
+	DOWNLOAD_URL=$($CURL "$APIURL/download_url/$MODULE?version===$VERSION" | /usr/bin/jq -r '.download_url')
+	if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
+		printf "WARNING: Failed to get download_url for module %s, version %s from metacpan\n" "$MODULE" "$VERSION" >&2
+		DOWNLOAD_URL=
+	fi
 fi
 
 
 # Remove everything from git (except known patches, history, and $CONF)
-touch "$CONF"
 grep "^%patch%" "$CONF" | while read TAG PATCH ; do rm -f "patches/$PATCH" ; done
 rm -f history "$CONF"
 find . -type f | while read f ; do git rm "$f" > /dev/null 2>&1 ; done
