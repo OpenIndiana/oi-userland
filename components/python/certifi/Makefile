@@ -19,18 +19,22 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		certifi
-HUMAN_VERSION =			2022.12.7
+HUMAN_VERSION =			2023.5.7
 COMPONENT_SUMMARY =		certifi - Python package for providing Mozilla's CA Bundle.
 COMPONENT_PROJECT_URL =		https://github.com/certifi/python-certifi
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/37/f7/2b1b0ec44fdc30a3d31dfebe52226be9ddc40cd6c0f34ffc8923ba423b69/certifi-2022.12.7.tar.gz
+	https://github.com/certifi/python-certifi/archive/refs/tags/$(GITHUB_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:35824b4c3a97115964b408844d64aa14db1cc518f6562e8d7261699d1350a9e3
+	sha256:3ee59191c133d4c3c921c075fe4e8bec7c25a16d02143f0ee7de47f7f22cfd0f
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# setup.py test does not work
-TEST_STYLE = none
+TEST_STYLE = pytest
+
+# Versions at github are with leading zeros
+GITHUB_VERSION = $(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.\(.\.\)/.0\1/' -e 's/\.\(.\)$$/.0\1/')
+# Sources are located in non-default directory
+COMPONENT_SRC = python-certifi-$(GITHUB_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
