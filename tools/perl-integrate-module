@@ -102,21 +102,6 @@ if [[ -z "$VERSION" ]] ; then
 	VERSION=${VERSION#v}
 fi
 
-# Get module author
-# TODO: here we get author of the latest version, not the specified version
-AUTHOR=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.author')
-if (($? != 0)) || [[ -z "$AUTHOR" || "$AUTHOR" == "null" ]] ; then
-	printf "FATAL: Failed to get author for module %s from metacpan\n" "$MODULE" >&2
-	exit 1
-fi
-
-# Get download_url
-DOWNLOAD_URL=$($CURL "$APIURL/download_url/$MODULE?version===$VERSION" | /usr/bin/jq -r '.download_url')
-if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
-	printf "WARNING: Failed to get download_url for module %s, version %s from metacpan\n" "$MODULE" "$VERSION" >&2
-	DOWNLOAD_URL=
-fi
-
 
 # Prepare the directory
 [[ -z "$DIRECTORY" ]] && DIRECTORY="perl/$DISTRIBUTION"
@@ -146,6 +131,23 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 
 	$GMAKE clobber > /dev/null 2>&1
 fi
+
+
+# Get module author
+# TODO: here we get author of the latest version, not the specified version
+AUTHOR=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.author')
+if (($? != 0)) || [[ -z "$AUTHOR" || "$AUTHOR" == "null" ]] ; then
+	printf "FATAL: Failed to get author for module %s from metacpan\n" "$MODULE" >&2
+	exit 1
+fi
+
+# Get download_url
+DOWNLOAD_URL=$($CURL "$APIURL/download_url/$MODULE?version===$VERSION" | /usr/bin/jq -r '.download_url')
+if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
+	printf "WARNING: Failed to get download_url for module %s, version %s from metacpan\n" "$MODULE" "$VERSION" >&2
+	DOWNLOAD_URL=
+fi
+
 
 # Remove everything from git (except known patches, history, and $CONF)
 touch "$CONF"
