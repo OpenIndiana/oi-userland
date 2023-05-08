@@ -184,11 +184,24 @@ GENERATE_EXTRA_CMD += | \
 			| $(GSED) -e 's|^\(depend.*pkg:/runtime/perl-\$$(PLV).*\)$$|\#\1|g' \
 	)
 
-# Support for adding dependencies from META.json to REQUIRED_PACKAGES
-REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
-$(BUILD_DIR)/META.depend.res: $(BUILD_DIR)/META.json
-	$(CAT) $(BUILD_DIR)/META.json | $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) $(PERL_VERSION) > $@
+# Add build dependencies from META.json to REQUIRED_PACKAGES.  The dependency
+# on META.depend-test.required here is purely to get the file created as a side
+# effect of this target.
+REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend-build.res
+$(BUILD_DIR)/META.depend-build.res: $(BUILD_DIR)/META.json $(BUILD_DIR)/META.depend-test.required
+	$(CAT) $(BUILD_DIR)/META.json | $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) build $(PERL_VERSION) > $@
 
+# Generate list of TEST_REQUIRED_PACKAGES entries
+$(BUILD_DIR)/META.depend-test.required: $(BUILD_DIR)/META.json
+	$(CAT) $(BUILD_DIR)/META.json \
+		| $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) test $(PERL_VERSION) \
+		| $(GNU_GREP) '^depend.*pkg:/library/perl-5/.*\$$(PLV)' \
+		| $(GSED) -e 's|^depend.*pkg:/\(library/perl-5/.*\)-\$$(PLV).*$$|TEST_REQUIRED_PACKAGES.perl += \1|' > $@
+
+# Add META.depend-test.required to the generated list of REQUIRED_PACKAGES
+REQUIRED_PACKAGES_TRANSFORM += -e '$$r $(BUILD_DIR)/META.depend-test.required'
+
+# Create META.json
 $(BUILD_DIR)/META.json: $(SOURCE_DIR)/.prep
 	$(MKDIR) $(BUILD_DIR)
 	if [ -f $(SOURCE_DIR)/META.json ] ; then \
