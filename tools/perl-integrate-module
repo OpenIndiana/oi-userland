@@ -147,13 +147,7 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 	((UPGRADE_ONLY)) && [[ "$PREV_HVER" == "$VERSION" ]] && exit 0
 
 	# Pre-flight environment checks
-	if ((FORCE)) ; then
-		if ! $GMAKE env-check > /dev/null 2>&1 ; then
-			printf "WARNING: Pre-flight 'gmake env-check' failed!\n" >&2
-		else
-			! $GMAKE test-env-check > /dev/null 2>&1 && printf "WARNING: Pre-flight 'gmake test-env-check' failed!\n" >&2
-		fi
-	else
+	if ((FORCE == 0)) ; then
 		! $GMAKE env-check > /dev/null 2>&1 && printf "FATAL: Pre-flight 'gmake env-check' failed!\n" >&2 && exit 1
 		! $GMAKE test-env-check > /dev/null 2>&1 && printf "FATAL: Pre-flight 'gmake test-env-check' failed!\n" >&2 && exit 1
 	fi
