@@ -14,55 +14,51 @@
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
 
-BUILD_BITS=		64
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pluma
 COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=	1
+COMPONENT_MNR_VERSION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_SUMMARY=	MATE text editor
 COMPONENT_PROJECT_URL=	https://mate-desktop.org/
 COMPONENT_FMRI=         editor/pluma
-COMPONENT_SUMMARY=	MATE text editor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:310644dae7393cf5d47928fd4fab5d120da4e683ecf4fc248fcf778145f08a53
+COMPONENT_ARCHIVE_HASH= sha256:5959ece3d7118e106659f64d202d0ed1763ad10bbbba5d2acd8cbfba2e3994f1
 COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-PYTHON_VERSION = 3.9
-
 include $(WS_MAKE_RULES)/common.mk
 
 # tests require X11 and that pluma is already installed, but
 # as of 1.26.0 all 5 tests are passing
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET = $(NO_TESTS)
 
-PATH=$(PATH.gnu)
+PATH = $(PATH.gnu)
 
 LDFLAGS += -lnsl -lsocket
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && autoreconf -f )
+COMPONENT_PREP_ACTION = ( cd $(@D)  && autoreconf -f )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --disable-static
 
-CONFIGURE_ENV+=		PYTHON=$(PYTHON)
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 
-COMPONENT_BUILD_ENV+=	CC="$(CC)"
-COMPONENT_BUILD_ENV+=	CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
-COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # Build dependencies
 REQUIRED_PACKAGES += data/iso-codes
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
-REQUIRED_PACKAGES += runtime/python-39
+PYTHON_REQUIRED_PACKAGES += runtime/python
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/atk
