@@ -26,7 +26,7 @@ CURL="/usr/bin/curl -s"
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1" >&2
-	printf "Usage: %s [-d DIR] [-l VERSION] [-o OBSOLETE].. [-u] PROJECT\n" "$THIS" >&2
+	printf "Usage: %s [-d DIR] [-f] [-l VERSION] [-o OBSOLETE].. [-u] PROJECT\n" "$THIS" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
@@ -36,10 +36,12 @@ OPT_VERSION=
 OBSOLETE=
 UPGRADE_ONLY=0
 DIRECTORY=
-while getopts ":hd:l:o:u" OPT ; do
+FORCE=0
+while getopts ":hd:fl:o:u" OPT ; do
 	case "$OPT" in
 	"?"|"h")	usage ;;
 	"d")		DIRECTORY="$OPTARG" ;;
+	"f")		FORCE=1 ;;
 	"l")		OPT_VERSION="$OPTARG" ;;
 	"o")		OBSOLETE="$OBSOLETE $OPTARG" ;;
 	"u")		UPGRADE_ONLY=1 ;;
@@ -141,6 +143,14 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 	# version, then we are done.
 	PREV_HVER=$($GMAKE print-value-HUMAN_VERSION 2>/dev/null)
 	((UPGRADE_ONLY)) && [[ "$PREV_HVER" == "$VERSION" ]] && exit 0
+
+	# Pre-flight environment checks
+	if ((FORCE == 0)) ; then
+		! $GMAKE env-check > /dev/null 2>&1 && printf "FATAL: Pre-flight 'gmake env-check' failed!\n" >&2 && exit 1
+		if [[ "$($GMAKE print-value-PYTHON_TEST_BOOTSTRAP)" != "yes" ]] ; then
+			! $GMAKE test-env-check > /dev/null 2>&1 && printf "FATAL: Pre-flight 'gmake test-env-check' failed!\n" >&2 && exit 1
+		fi
+	fi
 
 	$GMAKE clobber > /dev/null 2>&1
 fi
