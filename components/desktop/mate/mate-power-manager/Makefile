@@ -23,18 +23,14 @@ include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-power-manager
 COMPONENT_MJR_VERSION=  1.26
-COMPONENT_MNR_VERSION=  0
-COMPONENT_REVISION=		1
+COMPONENT_MNR_VERSION=  1
 COMPONENT_SUMMARY=      MATE Power Manager utilities for desktop users
-COMPONENT_ARCHIVE_HASH= sha256:26b603ccf077366414a41e91ca6aa4c4c227a8e9fb6925a8ec5ca147c4e67b79
+COMPONENT_ARCHIVE_HASH= sha256:20cd9d22ed04babf98bb50e71a0ec5d78a8a476287723278f87da76cabfb1042
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Needs library/gnome/gnome-keyring >= 3.0.0
-#CONFIGURE_OPTIONS+=	--without-keyring
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel
