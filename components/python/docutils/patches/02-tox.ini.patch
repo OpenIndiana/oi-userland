@@ -1,95 +1,22 @@
 https://sourceforge.net/p/docutils/bugs/467/
 
---- docutils-0.19.orig/tox.ini
-+++ docutils-0.19/tox.ini
-@@ -0,0 +1,90 @@
+--- docutils-0.20.orig/tox.ini
++++ docutils-0.20/tox.ini
+@@ -0,0 +1,17 @@
 +[tox]
 +minversion = 2.0
-+envlist = py{37,38,39,310}
++envlist = py{37,38,39,310,311}
 +
 +[testenv]
-+whitelist_externals =
++allowlist_externals =
 +  find
++changedir = test
 +commands =
 +  find . -type f -name "*.pyc" -delete
-+  python test/alltests.py
++  python alltests.py
 +
 +[testenv:style]
 +deps =
 +  flake8
 +commands =
 +  flake8 {toxinidir}
-+
-+[flake8]
-+# Prolems that are either not fixed yet or allowed by PEP8:
-+ignore =
-+  E123, # closing bracket does not match indentation of opening bracket's line
-+  # PEP8 "may either line up under the first […] character of the last line …"
-+
-+  E125, # continuation line with same indent as next logical line
-+  # allowed by PEP8 cf. https://github.com/PyCQA/pycodestyle/issues/126
-+
-+  E126, # continuation line over-indented for hanging indent
-+  # some cases are mandated by PEP8 to distinguish hanging indent from nesting.
-+  # Other cases improve readability.
-+
-+  E129, # visually indented line with same indent as next logical line
-+  # allowed by PEP8
-+
-+  E226, # missing whitespace around arithmetic operator
-+  E228, # missing whitespace around modulo operator
-+  # not generally frowned on by PEP8:
-+  # "If operators with different priorities are used, consider adding
-+  # whitespace around the operators with the lowest priority(ies).
-+  # Use your own judgment; …"
-+
-+  W503, # line break before binary operator
-+  # this is the recommended style (changed on April 16th, 2016)
-+
-+
-+# Allow exceptions for specific files (requires flake8 >= 3.7.0)
-+per-file-ignores =
-+  # class definitions with "…: pass" on one line
-+  docutils/__init__.py:E701
-+  docutils/nodes.py:E701
-+  docutils/io.py:E701
-+  docutils/statemachine.py:E701
-+  docutils/utils/__init__.py:E701
-+  # start of error message should be visible in traceback
-+  docutils/parsers/rst/directives/tables.py:E128
-+  # complex regexp definitions
-+  docutils/parsers/rst/states.py:E121,E128,E701
-+  # deprecated module, will be removed
-+  docutils/utils/error_reporting.py:E261
-+  # module with 3rd-party origin
-+  docutils/utils/math/math2html.py:E111,E114,E123,E241,E261,E501,E731
-+  # generated auxiliary files
-+  docutils/utils/math/unichar2tex.py:E122
-+  docutils/utils/math/tex2unichar.py:E123,E261,E501
-+  # allow aligning values in data-collections
-+  docutils/utils/smartquotes.py:E241
-+  docutils/utils/roman.py:E241,E701
-+  docutils/utils/math/latex2mathml.py:E241,E261,E501,E701
-+  docutils/writers/xetex/__init__.py:E241
-+  # also allow '##' to mark deactivated code:
-+  docutils/writers/latex2e/__init__.py:E241,E266
-+
-+  # included configuration files referencing externally defined variables
-+  test/functional/tests/*:F821
-+  # deprecated module, will be removed
-+  test/test_error_reporting.py:E261
-+  # test output samples contain long lines
-+  # don't indent list delimiters in lists of test samples (multi-line strings)
-+  test/test_readers/test_pep/*:E122,E128,E501
-+  test/test_parsers/*:E122,E124,E128,E501
-+  test/test_writers/*:E122,E124,E128,E501
-+  test/test_transforms/*:E122,E124,E128,E501
-+  test/test_publisher.py:E501
-+  # raw string test samples with trailing whitespace
-+  test/test_writers/test_manpage.py:E121,E128,E501,W291
-+  test/test_writers/test_latex2e.py:E122,E128,E501,W291,W293
-+
-+  # ignore all errors when setting locale
-+  tools/*.py:E722
-+
-+exclude = .venv,.tox,dist,*egg,build
