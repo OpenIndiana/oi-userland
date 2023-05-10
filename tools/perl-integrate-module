@@ -102,7 +102,6 @@ mkdir -p "$DIR"
 cd "$DIR"
 git restore --staged . > /dev/null 2>&1
 git checkout . > /dev/null 2>&1
-touch "$CONF"
 
 
 # Following variables could be set by the hook-begin snippet
@@ -110,9 +109,11 @@ VERSION=
 DOWNLOAD_URL=
 
 # Execute hook-begin snippet
-gsed -e '0,/^%hook-begin%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
-. "./$SNIPPET"
-rm -f "$SNIPPET"
+if [[ -f "$CONF" ]] ; then
+	gsed -e '0,/^%hook-begin%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
+	. "./$SNIPPET"
+	rm -f "$SNIPPET"
+fi
 
 # Version specified as option takes precedence
 [[ -n "$OPT_VERSION" ]] && VERSION="$OPT_VERSION"
@@ -176,14 +177,13 @@ fi
 
 
 # Remove everything from git (except known patches, history, and $CONF)
-grep "^%patch%" "$CONF" | while read TAG PATCH ; do rm -f "patches/$PATCH" ; done
+[[ -f "$CONF" ]] && grep "^%patch%" "$CONF" | while read TAG PATCH ; do rm -f "patches/$PATCH" ; done
 rm -f history "$CONF"
 find . -type f | while read f ; do git rm "$f" > /dev/null 2>&1 ; done
 rm -rf "$DIR" 2>/dev/null
 git checkout history > /dev/null 2>&1
 git checkout "$CONF" > /dev/null 2>&1
-touch "$CONF"
-grep "^%patch%" "$CONF" | while read TAG PATCH ; do
+[[ -f "$CONF" ]] && grep "^%patch%" "$CONF" | while read TAG PATCH ; do
 	git checkout "patches/$PATCH" > /dev/null 2>&1
 	[[ -f "patches/$PATCH" ]] || printf "WARNING: Patch %s not found\n" "$PATCH" >&2
 done
@@ -202,7 +202,7 @@ cat <<EOF
 BUILD_STYLE = modulebuild
 USE_COMMON_TEST_MASTER = no
 EOF
-gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < "$CONF"
+[[ -f "$CONF" ]] && gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < "$CONF"
 cat <<EOF
 
 include ../../../make-rules/shared-macros.mk
@@ -220,9 +220,9 @@ COMPONENT_ARCHIVE_HASH =	\\
 COMPONENT_LICENSE =		license:TODO
 COMPONENT_LICENSE_FILE =	licfile:TODO
 EOF
-cat "$CONF" | gsed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
+[[ -f "$CONF" ]] && cat "$CONF" | gsed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\ninclude \$(WS_MAKE_RULES)/common.mk\n"
-cat "$CONF" | gsed -e '0,/^%include-3%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
+[[ -f "$CONF" ]] && cat "$CONF" | gsed -e '0,/^%include-3%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\n"
 ) > Makefile
 
@@ -384,9 +384,11 @@ if [[ -z "$LICENSE" ]] ; then
 	USE_DEFAULT_PERL_LICENSE=1
 
 	# Execute hook-no-license snippet
-	gsed -e '0,/^%hook-no-license%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
-	. "./$SNIPPET"
-	rm -f "$SNIPPET"
+	if [[ -f "$CONF" ]] ; then
+		gsed -e '0,/^%hook-no-license%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
+		. "./$SNIPPET"
+		rm -f "$SNIPPET"
+	fi
 
 
 	if ((USE_DEFAULT_PERL_LICENSE)) ; then
@@ -426,17 +428,14 @@ else
 		> "$MANIFEST"
 
 	# Execute hook-manifest snippet
-	gsed -e '0,/^%hook-manifest%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
-	. "./$SNIPPET"
-	rm -f "$SNIPPET"
+	if [[ -f "$CONF" ]] ; then
+		gsed -e '0,/^%hook-manifest%/d' -e '/^%/,$d' < "$CONF" > "$SNIPPET"
+		. "./$SNIPPET"
+		rm -f "$SNIPPET"
+	fi
 
 	git add manifests/sample-manifest.p5m $MANIFEST
 fi
-
-
-# $CONF is no longer needed
-rm -f "$CONF"
-git checkout "$CONF" > /dev/null 2>&1
 
 
 # Generate REQUIRED_PACKAGES
