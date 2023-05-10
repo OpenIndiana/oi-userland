@@ -1,11 +1,11 @@
---- docutils-0.19/test/package_unittest.py.orig
-+++ docutils-0.19/test/package_unittest.py
-@@ -21,7 +21,7 @@
- # `package_unittest` acts as an intermediary for the following
- # variables:
- debug = False
--verbosity = 1
-+verbosity = 2
- 
- USAGE = """\
- Usage: test_whatever [options]
+--- docutils-0.20/test/alltests.py.orig
++++ docutils-0.20/test/alltests.py
+@@ -89,7 +89,7 @@
+     print(f'Working directory: {os.getcwd()}')
+     print(f'Docutils package: {os.path.dirname(docutils.__file__)}')
+     sys.stdout.flush()
+-    result = unittest.TextTestRunner(resultclass=NumbersTestResult).run(suite)
++    result = unittest.TextTestRunner(resultclass=NumbersTestResult,verbosity=2).run(suite)
+     finish = time.time()
+     print(f'Elapsed time: {finish - start:.3f} seconds')
+     sys.exit(not result.wasSuccessful())
