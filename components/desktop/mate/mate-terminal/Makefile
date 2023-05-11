@@ -22,15 +22,13 @@ include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-terminal
 COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=		1
+COMPONENT_MNR_VERSION=	1
 COMPONENT_SUMMARY=	MATE terminal emulator
-COMPONENT_ARCHIVE_HASH= \
-	sha256:7727e714c191c3c55e535e30931974e229ca5128e052b62ce74dcc18f7eaaf22
-COMPONENT_LICENSE=	GPLv3
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_ARCHIVE_HASH= sha256:7c130206f0b47887e8c9274e73f8c19fae511134572869a7c23111b789e1e1d0
 COMPONENT_FMRI=		terminal/mate-terminal
 COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -41,7 +39,6 @@ REQUIRED_PACKAGES += library/gnome/yelp-tools
 REQUIRED_PACKAGES += text/itstool
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -50,6 +47,7 @@ REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/vte-291
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
