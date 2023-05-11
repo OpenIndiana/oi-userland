@@ -20,25 +20,31 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Cython
-HUMAN_VERSION =			0.29.33
+HUMAN_VERSION =			0.29.34
 COMPONENT_SUMMARY =		Cython - The Cython compiler for writing C extensions for the Python language.
 COMPONENT_PROJECT_URL =		http://cython.org/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/dc/f6/e8e302f9942cbebede88b1a0c33d0be3a738c3ac37abae87254d58ffc51c/Cython-0.29.33.tar.gz
+	https://files.pythonhosted.org/packages/0a/70/1500f05bddb16d795b29fac42954b3c8764c82367b8326c10f038471ae7f/Cython-0.29.34.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5040764c4a4d2ce964a395da24f0d1ae58144995dab92c6b96f44c3f4d72286a
+	sha256:1909688f5d7b521a60c396d20bba9e47a1b2d2784bfb085401e1e1e7d29a29a8
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
-# setup.py needs PATH
-PYTHON_ENV += PATH=$(PATH)
+# Our Python 3.7 and Python 3.9 are compiled with removed full path for
+# compiler from Python configuration so testing is unable to find proper
+# compiler without explicit PATH
+COMPONENT_TEST_ENV += PATH="$(GCC_BINDIR):$(PATH)"
+# Use well known path for Cython cache directory
+COMPONENT_TEST_ENV += CYTHON_CACHE_DIR=$(@D)/.cython-cache-dir
 
 # Normalize tmp dir name
 COMPONENT_TEST_TRANSFORMS += "-e 's|\(TEST_TMP/cycache-test\).\{8\}\(/src\).\{8\}/|\1\2/|g'"
 # Normalize pointer
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(Broken object at\) 0x[a-f0-9]*>/\1 PTR>/g'"
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(Broken object at \)0x[a-f0-9]\{1,\}>/\1\$$(POINTER)>/g'"
+# Remove line with private path
+COMPONENT_TEST_TRANSFORMS += "-e '/^libgcov profiling error:/d'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
