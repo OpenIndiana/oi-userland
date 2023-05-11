@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		findpython
-HUMAN_VERSION =			0.2.4
+HUMAN_VERSION =			0.2.5
 COMPONENT_SUMMARY =		findpython - A utility to find python versions on your system
 COMPONENT_PROJECT_URL =		https://github.com/frostming/findpython
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/21/1a/fa0e5e87180e15a417c6102c4f557398ce5edbfa4416d6ed981c2bdef6e6/findpython-0.2.4.tar.gz
+	https://files.pythonhosted.org/packages/80/89/93e51011f6279c82ec1386bab15c675f1a82ebf04de0c8193313fcd1895b/findpython-0.2.5.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:61f1768cdd843dc2f8a45971272c58c25641a50b19da91302e2492e32a667362
+	sha256:e0fd473b4265e7e0e7843ec76feac8c0c441b869571f465befe9e695949069fe
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
