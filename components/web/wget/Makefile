@@ -23,17 +23,16 @@
 # Copyright (c) 2021, Nona Hansel
 #
 
-BUILD_BITS=64
-USE_OPENSSL11=yes
+BUILD_BITS= 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wget
-COMPONENT_VERSION=      1.21.3
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      1.21.4
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/wget/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.lz
-COMPONENT_ARCHIVE_HASH= sha256:dbd2fb5e47149d4752d0eaa0dac68cc49cf20d46df4f8e326ffc8f18b2af4ea5
+COMPONENT_ARCHIVE_HASH= sha256:3683619a5f50edcbccb1720a79006fa37bf9b9a255a8c5b48048bc3c7a874bd9
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -43,10 +42,10 @@ CPPFLAGS +=	-I/usr/include/idn2
 
 # Enforce openssl (--with-ssl=openssl) instead of default gnutls
 # (--with-ssl) as wget doesn't work for secure connections with gnutls. 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--with-ssl=openssl
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS +=	--enable-iri
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --with-ssl=openssl
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --enable-iri
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -60,8 +59,8 @@ COMPONENT_TEST_TRANSFORMS += '-ne "/^See/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^Please/p" '
 
 # For the test suite
-REQUIRED_PACKAGES += library/perl-5/http-daemon
-REQUIRED_PACKAGES += library/perl-5/http-message
+TEST_REQUIRED_PACKAGES += library/perl-5/http-daemon
+TEST_REQUIRED_PACKAGES += library/perl-5/http-message
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libidn2
