@@ -1,0 +1,49 @@
+https://github.com/zeromq/pyzmq/issues/1858
+
+--- pyzmq-25.0.2/examples/mongodb/controller.py.orig
++++ pyzmq-25.0.2/examples/mongodb/controller.py
+@@ -9,7 +9,7 @@
+ from typing import Any, Dict, Optional, Union
+ 
+ import pymongo
+-import pymongo.json_util
++from bson import json_util
+ 
+ import zmq
+ 
+@@ -32,12 +32,12 @@ def __init__(
+         self._bind_addr = bind_addr
+         self._db_name = db_name
+         self._table_name = table_name
+-        self._conn = pymongo.Connection()
++        self._conn: pymongo.MongoClient = pymongo.MongoClient()
+         self._db = self._conn[self._db_name]
+         self._table = self._db[self._table_name]
+ 
+     def _doc_to_json(self, doc: Any) -> str:
+-        return json.dumps(doc, default=pymongo.json_util.default)
++        return json.dumps(doc, default=json_util.default)
+ 
+     def add_document(self, doc: Dict) -> Optional[str]:
+         """
+@@ -50,7 +50,7 @@ def add_document(self, doc: Dict) -> Optional[str]:
+             return 'Error: %s' % e
+         return None
+ 
+-    def get_document_by_keys(self, keys: Dict[str, Any]) -> Union[Dict, str]:
++    def get_document_by_keys(self, keys: Dict[str, Any]) -> Union[Dict, str, None]:
+         """
+         Attempts to return a single document from database table that matches
+         each key/value in keys dictionary.
+diff --git a/test-requirements.txt b/test-requirements.txt
+index d94ab21ee..fc1eab93c 100644
+--- a/test-requirements.txt
++++ b/test-requirements.txt
+@@ -6,6 +6,7 @@ coverage<5
+ flake8
+ gevent; platform_python_implementation != "PyPy" and sys_platform != "win32" and sys_platform != "darwin" and python_version < "3.11"
+ mypy; platform_python_implementation != "PyPy"
++pymongo
+ pytest
+ pytest-asyncio>=0.16; python_version < "3.7"
+ pytest-asyncio>=0.17; python_version >= "3.7"
