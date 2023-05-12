@@ -1,12 +1,14 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PYTHON_DIR)/site-packages/platformdirs --cov $(@D)/tests --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 asyncio: mode=strict
-collecting ... collected 394 items
+collecting ... collected 393 items
 
-::project PASSED
 tests/test_android.py::test_android[site_cache_dir-app_name] PASSED
 tests/test_android.py::test_android[site_cache_dir-app_name_author_version] PASSED
 tests/test_android.py::test_android[site_cache_dir-app_name_author_version_false_opinion] PASSED
@@ -348,7 +350,7 @@ tests/test_main.py::test_props_same_as_test PASSED
 tests/test_main.py::test_run_as_module PASSED
 tests/test_unix.py::test_ensure_exists_creates_folder PASSED
 tests/test_unix.py::test_folder_not_created_without_ensure_exists PASSED
-tests/test_unix.py::test_platform_non_linux PASSED
+tests/test_unix.py::test_platform_on_win32 PASSED
 tests/test_unix.py::test_user_media_dir[user_documents_dir] PASSED
 tests/test_unix.py::test_user_media_dir[user_music_dir] PASSED
 tests/test_unix.py::test_user_media_dir[user_pictures_dir] PASSED
@@ -401,4 +403,15 @@ tests/test_unix.py::test_xdg_variable_not_set[user_runtime_dir] PASSED
 tests/test_unix.py::test_xdg_variable_not_set[user_state_dir] PASSED
 tests/test_unix.py::test_xdg_variable_not_set[user_videos_dir] PASSED
 
-======== 366 passed, 28 skipped ========
+- generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
+
+7 files skipped due to complete coverage.
+Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
+Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
+
+Required test coverage of 76.0% reached. Total coverage: 100.00%
+======== 365 passed, 28 skipped ========
+$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/platformdirs was never imported. (module-not-imported)
+  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
+  py$(PYV): OK
+  congratulations :)

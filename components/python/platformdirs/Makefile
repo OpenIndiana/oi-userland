@@ -15,21 +15,20 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		platformdirs
-HUMAN_VERSION =			3.5.0
+HUMAN_VERSION =			3.5.1
 COMPONENT_SUMMARY =		platformdirs - A small Python package for determining appropriate platform-specific dirs, e.g. a \\\\\\\"user data dir\\\\\\\".
 COMPONENT_PROJECT_URL =		https://github.com/platformdirs/platformdirs
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/91/17/3836ffe140abb245726d0e21c5b9b984e2569e7027c20d12e969ec69bd8a/platformdirs-3.5.0.tar.gz
+	https://files.pythonhosted.org/packages/9c/0e/ae9ef1049d4b5697e79250c4b2e72796e4152228e67733389868229c92bb/platformdirs-3.5.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7954a68d0ba23558d753f73437c55f89027cf8f5108c19844d4b82e5af396335
+	sha256:412dae91f52a6f84830f39a8078cecd0e866cb72294a5c66808e74d5e88d251f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-TEST_STYLE = pytest
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
@@ -39,8 +38,16 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/platformdirs/platformdirs/issues/184
+PYTEST_ADDOPTS += -p no:randomly
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/appdirs
+TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
