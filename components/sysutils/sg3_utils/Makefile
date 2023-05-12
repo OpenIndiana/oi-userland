@@ -27,23 +27,23 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sg3_utils
-COMPONENT_VERSION= 1.46
-COMPONENT_FMRI= system/storage/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION= Applications/System Utilities
-COMPONENT_PROJECT_URL= http://sg.danny.cz/sg/sg3_utils.html
+COMPONENT_VERSION= 1.47
+COMPONENT_SUMMARY= Utilities for devices that use SCSI command sets
+COMPONENT_PROJECT_URL= https://sg.danny.cz/sg/sg3_utils.html
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= sha256:701dfa3c828867f97e904d25f280346d46da9e582a66e6afebe2b294ae4a6176
-COMPONENT_ARCHIVE_URL= http://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:8673c7faca849b6b34764332d2aa91f72db05bff7382bb836d0688795199c3e1
+COMPONENT_ARCHIVE_URL= https://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI= system/storage/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE= GPLv2+ and BSD 
-COMPONENT_SUMMARY= Utilities for devices that use SCSI command sets
 
 include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
 CFLAGS += -std=c99 $(CPP_XPG6MODE)
 
-CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
@@ -53,7 +53,7 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	$(GSED) -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool ; \
 	$(GSED) -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool)
 
-PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
+PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/bash
