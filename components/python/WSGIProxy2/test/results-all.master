@@ -1,0 +1,54 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+configfile: pytest.ini
+asyncio: mode=strict
+collecting ... collected 29 items
+
+::project PASSED
+wsgiproxy/test_wsgiproxy.py::TestExtractUri::test_proxy PASSED
+wsgiproxy/test_wsgiproxy.py::TestExtractUri::test_transparent_proxy PASSED
+wsgiproxy/test_wsgiproxy.py::TestHttplib::test_chunked PASSED
+wsgiproxy/test_wsgiproxy.py::TestHttplib::test_form PASSED
+wsgiproxy/test_wsgiproxy.py::TestHttplib::test_head PASSED
+wsgiproxy/test_wsgiproxy.py::TestHttplib::test_quoted_utf8_url PASSED
+wsgiproxy/test_wsgiproxy.py::TestHttplib::test_redirect PASSED
+wsgiproxy/test_wsgiproxy.py::TestHttplib::test_status PASSED
+wsgiproxy/test_wsgiproxy.py::TestHttplib::test_webob_error PASSED
+wsgiproxy/test_wsgiproxy.py::TestMisc::test_exception PASSED
+wsgiproxy/test_wsgiproxy.py::TestMisc::test_rewrite_location PASSED
+wsgiproxy/test_wsgiproxy.py::TestMisc::test_socket_gaierror PASSED
+wsgiproxy/test_wsgiproxy.py::TestMisc::test_socket_timeout PASSED
+wsgiproxy/test_wsgiproxy.py::TestRequests::test_chunked PASSED
+wsgiproxy/test_wsgiproxy.py::TestRequests::test_form PASSED
+wsgiproxy/test_wsgiproxy.py::TestRequests::test_head PASSED
+wsgiproxy/test_wsgiproxy.py::TestRequests::test_quoted_utf8_url PASSED
+wsgiproxy/test_wsgiproxy.py::TestRequests::test_redirect PASSED
+wsgiproxy/test_wsgiproxy.py::TestRequests::test_status PASSED
+wsgiproxy/test_wsgiproxy.py::TestRequests::test_webob_error PASSED
+wsgiproxy/test_wsgiproxy.py::TestUrllib3::test_chunked PASSED
+wsgiproxy/test_wsgiproxy.py::TestUrllib3::test_form PASSED
+wsgiproxy/test_wsgiproxy.py::TestUrllib3::test_head PASSED
+wsgiproxy/test_wsgiproxy.py::TestUrllib3::test_quoted_utf8_url PASSED
+wsgiproxy/test_wsgiproxy.py::TestUrllib3::test_redirect PASSED
+wsgiproxy/test_wsgiproxy.py::TestUrllib3::test_status PASSED
+wsgiproxy/test_wsgiproxy.py::TestUrllib3::test_webob_error PASSED
+
+=============================== warnings summary ===============================
+wsgiproxy/test_wsgiproxy.py: 10 warnings
+  $(@D)/wsgiproxy/urllib3_client.py:27: DeprecationWarning: HTTPResponse.getheaders() is deprecated and will be removed in urllib3 v2.1.0. Instead access HTTPResponse.headers directly.
+    headers = [(k.title(), v) for k, v in response.getheaders().items()]
+
+wsgiproxy/test_wsgiproxy.py: 10 warnings
+  $(@D)/wsgiproxy/urllib3_client.py:28: DeprecationWarning: HTTPResponse.getheader() is deprecated and will be removed in urllib3 v2.1.0. Instead use HTTPResponse.headers.get(name, default).
+    return (status, response.getheader('location', None),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 28 passed, 20 warnings ========
+  py$(PYV): OK
+  congratulations :)
