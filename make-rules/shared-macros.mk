@@ -1349,6 +1349,9 @@ TEST_REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(TEST_REQUIRED_PACKA
 REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(PERL_REQUIRED_PACKAGES:%=%-$(shell echo $(ver) | tr -d .)))
 TEST_REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(TEST_REQUIRED_PACKAGES.perl:%=%-$(shell echo $(ver) | tr -d .)))
 
+# Generate conflicting packages for all built python version variants for given package
+TEST_CONFLICTING_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(TEST_CONFLICTING_PACKAGES.python:%=%-$(shell echo $(ver) | tr -d .)))
+
 include $(WS_MAKE_RULES)/environment.mk
 include $(WS_MAKE_RULES)/depend.mk
 include $(WS_MAKE_RULES)/component.mk 
