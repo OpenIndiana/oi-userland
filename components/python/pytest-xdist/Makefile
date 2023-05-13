@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-xdist
-HUMAN_VERSION =			3.2.1
+HUMAN_VERSION =			3.4.0
 COMPONENT_SUMMARY =		pytest-xdist - pytest xdist plugin for distributed testing, most importantly across multiple CPUs
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-xdist
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e3/f8/de2dcd2938c05270c9881cb1463dea388acd0b239ee76809160420157784/pytest-xdist-3.2.1.tar.gz
+	https://files.pythonhosted.org/packages/07/61/3eb25e71d2368d59ce4ecdfb7197d7767772f81e00a57fe95280defcdf6d/pytest-xdist-3.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1849bd98d8b242b948e472db7478e090bf3361912a8fed87992ed94085f54727
+	sha256:3a94a931dd9e268e0b871a877d09fe2efb6175c2c23d60d56a6001359002b832
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,12 +34,29 @@ include $(WS_MAKE_RULES)/common.mk
 # There is an incompatibility between execnet and teamcity-messages causing
 # some tests to fail if teamcity-messages is installed while pytest-xdist tests
 # are run.  See https://github.com/pytest-dev/execnet/issues/161 for details.
-#
-# Testing of pytest-xdist fails if there is pytest-randomly installed.  See
-# https://github.com/pytest-dev/pytest-xdist/issues/742 for details.
-#
-# To see pytest-xdist tests to pass the teamcity-messages and pytest-randomly
-# packages should NOT be installed during testing.
+TEST_CONFLICTING_PACKAGES.python += library/python/teamcity-messages
+
+# https://github.com/okken/pytest-check/issues/146
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-check
+
+# https://github.com/pytest-dev/pytest-xdist/issues/968
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
+TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
+
+# https://github.com/bitprophet/pytest-relaxed/issues/31
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-relaxed
+
+# https://github.com/pytest-dev/pytest-rerunfailures/issues/242
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-rerunfailures
+
+# https://github.com/pytest-dev/pluggy/issues/457
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-shell-utilities
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-xprocess
+
+# https://github.com/jaraco/pytest-enabler/issues/10#issuecomment-1809078866
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/execnet

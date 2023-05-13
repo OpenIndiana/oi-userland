@@ -1,15 +1,12 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: tox.ini
 testpaths: testing
-asyncio: mode=strict
-collecting ... collected 191 items
+collecting ... collected 203 items
 
 testing/acceptance_test.py::TestAPI::test_get_xdist_worker_id PASSED
 testing/acceptance_test.py::TestAPI::test_is_xdist_controller PASSED
@@ -22,12 +19,12 @@ testing/acceptance_test.py::TestDistribution::test_dist_ini_specified PASSED
 testing/acceptance_test.py::TestDistribution::test_dist_tests_with_crash PASSED
 testing/acceptance_test.py::TestDistribution::test_dist_with_collectonly PASSED
 testing/acceptance_test.py::TestDistribution::test_distribution_rsyncdirs_example PASSED
+testing/acceptance_test.py::TestDistribution::test_exitfail_waits_for_workers_to_finish PASSED
 testing/acceptance_test.py::TestDistribution::test_keyboard_interrupt_dist PASSED
 testing/acceptance_test.py::TestDistribution::test_keyboardinterrupt_hooks_issue79 PASSED
 testing/acceptance_test.py::TestDistribution::test_manytests_to_one_import_error PASSED
 testing/acceptance_test.py::TestDistribution::test_manytests_to_one_popen PASSED
 testing/acceptance_test.py::TestDistribution::test_n1_fail PASSED
-testing/acceptance_test.py::TestDistribution::test_n1_fail_minus_x PASSED
 testing/acceptance_test.py::TestDistribution::test_n1_import_error PASSED
 testing/acceptance_test.py::TestDistribution::test_n1_pass PASSED
 testing/acceptance_test.py::TestDistribution::test_n1_skip PASSED
@@ -125,6 +122,18 @@ testing/test_dsession.py::TestWorkStealingScheduling::test_schedule_fewer_than_t
 testing/test_dsession.py::TestWorkStealingScheduling::test_steal_on_add_node PASSED
 testing/test_dsession.py::TestWorkStealingScheduling::test_stealing PASSED
 testing/test_dsession.py::test_default_max_worker_restart PASSED
+testing/test_dsession.py::test_get_workers_status_line[status_and_items0-] PASSED
+testing/test_dsession.py::test_get_workers_status_line[status_and_items1-created: 1/1 worker] PASSED
+testing/test_dsession.py::test_get_workers_status_line[status_and_items10-1 worker [1 item]] PASSED
+testing/test_dsession.py::test_get_workers_status_line[status_and_items11-2 workers [1 item]] PASSED
+testing/test_dsession.py::test_get_workers_status_line[status_and_items2-created: 2/2 workers] PASSED
+testing/test_dsession.py::test_get_workers_status_line[status_and_items3-initialized: 1/2 workers] PASSED
+testing/test_dsession.py::test_get_workers_status_line[status_and_items4-initialized: 2/2 workers] PASSED
+testing/test_dsession.py::test_get_workers_status_line[status_and_items5-ready: 1/2 workers] PASSED
+testing/test_dsession.py::test_get_workers_status_line[status_and_items6-ready: 2/2 workers] PASSED
+testing/test_dsession.py::test_get_workers_status_line[status_and_items7-collecting: 1/2 workers] PASSED
+testing/test_dsession.py::test_get_workers_status_line[status_and_items8-2 workers [12 items]] PASSED
+testing/test_dsession.py::test_get_workers_status_line[status_and_items9-2 workers [1 item]] PASSED
 testing/test_dsession.py::test_pytest_issue419 XFAIL (duplicate test...)
 testing/test_dsession.py::test_report_collection_diff_different PASSED
 testing/test_dsession.py::test_report_collection_diff_equal PASSED
@@ -204,6 +213,104 @@ testing/test_workermanage.py::test_unserialize_warning_msg[UserWarning] PASSED
 testing/test_workermanage.py::test_warning_serialization_tweaked_module PASSED
 
 =============================== warnings summary ===============================
+testing/acceptance_test.py: 83 warnings
+testing/test_dsession.py: 19 warnings
+testing/test_looponfail.py: 8 warnings
+testing/test_newhooks.py: 4 warnings
+testing/test_plugin.py: 21 warnings
+testing/test_remote.py: 12 warnings
+testing/test_workermanage.py: 13 warnings
+  $(PYTHON_DIR)/vendor-packages/pytest_reporter/__init__.py:1: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    from pkg_resources import get_distribution, DistributionNotFound
+
+testing/acceptance_test.py: 166 warnings
+testing/test_dsession.py: 38 warnings
+testing/test_looponfail.py: 16 warnings
+testing/test_newhooks.py: 8 warnings
+testing/test_plugin.py: 42 warnings
+testing/test_remote.py: 24 warnings
+testing/test_workermanage.py: 26 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+testing/acceptance_test.py: 83 warnings
+testing/test_dsession.py: 19 warnings
+testing/test_looponfail.py: 8 warnings
+testing/test_newhooks.py: 4 warnings
+testing/test_plugin.py: 21 warnings
+testing/test_remote.py: 12 warnings
+testing/test_workermanage.py: 13 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('flufl')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+testing/acceptance_test.py: 166 warnings
+testing/test_dsession.py: 38 warnings
+testing/test_looponfail.py: 16 warnings
+testing/test_newhooks.py: 8 warnings
+testing/test_plugin.py: 42 warnings
+testing/test_remote.py: 24 warnings
+testing/test_workermanage.py: 26 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+testing/acceptance_test.py: 83 warnings
+testing/test_dsession.py: 19 warnings
+testing/test_looponfail.py: 8 warnings
+testing/test_newhooks.py: 4 warnings
+testing/test_plugin.py: 21 warnings
+testing/test_remote.py: 12 warnings
+testing/test_workermanage.py: 13 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+testing/acceptance_test.py: 83 warnings
+testing/test_dsession.py: 19 warnings
+testing/test_looponfail.py: 8 warnings
+testing/test_newhooks.py: 4 warnings
+testing/test_plugin.py: 21 warnings
+testing/test_remote.py: 12 warnings
+testing/test_workermanage.py: 13 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2350: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+testing/acceptance_test.py: 83 warnings
+testing/test_dsession.py: 19 warnings
+testing/test_looponfail.py: 8 warnings
+testing/test_newhooks.py: 4 warnings
+testing/test_plugin.py: 21 warnings
+testing/test_remote.py: 12 warnings
+testing/test_workermanage.py: 13 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+testing/acceptance_test.py: 83 warnings
+testing/test_dsession.py: 19 warnings
+testing/test_looponfail.py: 8 warnings
+testing/test_newhooks.py: 4 warnings
+testing/test_plugin.py: 21 warnings
+testing/test_remote.py: 12 warnings
+testing/test_workermanage.py: 13 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zc')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+testing/acceptance_test.py: 1245 warnings
+testing/test_dsession.py: 285 warnings
+testing/test_looponfail.py: 120 warnings
+testing/test_newhooks.py: 60 warnings
+testing/test_plugin.py: 315 warnings
+testing/test_remote.py: 180 warnings
+testing/test_workermanage.py: 195 warnings
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2871: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('zope')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
 testing/acceptance_test.py: 76 warnings
 testing/test_dsession.py: 1 warning
 testing/test_newhooks.py: 4 warnings
@@ -213,6 +320,6 @@ testing/test_remote.py: 4 warnings
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 178 passed, 2 skipped, 11 xfailed, 85 warnings ========
+======== 190 passed, 2 skipped, 11 xfailed, 4085 warnings ========
   py$(PYV): OK
   congratulations :)
