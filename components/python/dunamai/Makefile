@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dunamai
-HUMAN_VERSION =			1.16.0
+HUMAN_VERSION =			1.16.1
 COMPONENT_SUMMARY =		dunamai - Dynamic version generation
 COMPONENT_PROJECT_URL =		https://github.com/mtkennerly/dunamai
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/mtkennerly/dunamai/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/57/f8/5d45804589d3ebeaa259ac8a5d623afcd5d411b7909edf3f03bb0f7c43dd/dunamai-1.16.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b8d1acd8f003a28eb2ec3b4de643412b2c55d92481ff2eb71de1b656ed5eec12
+	sha256:4f3bc2c5b0f9d83fa9c90b943100273bb087167c90a0519ac66e9e2e0d2a8210
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
