@@ -5,9 +5,11 @@ py$(PYV): commands[0]> python -m pytest
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml, testpaths: tests
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: tests
 asyncio: mode=strict
-collecting ... collected 296 items / 1 skipped
+collecting ... collected 336 items / 1 skipped
 
 tests/mypy/test_type_annotations.py::test_negative PASSED
 tests/mypy/test_type_annotations.py::test_positive PASSED
@@ -29,6 +31,7 @@ tests/test_checkers.py::TestCallable::test_bad_type PASSED
 tests/test_checkers.py::TestCallable::test_bound_method PASSED
 tests/test_checkers.py::TestCallable::test_builtin PASSED
 tests/test_checkers.py::TestCallable::test_class PASSED
+tests/test_checkers.py::TestCallable::test_concatenate PASSED
 tests/test_checkers.py::TestCallable::test_defaults PASSED
 tests/test_checkers.py::TestCallable::test_exact_arg_count PASSED
 tests/test_checkers.py::TestCallable::test_mandatory_kwonlyargs PASSED
@@ -82,8 +85,10 @@ tests/test_checkers.py::TestMutableMapping::test_bad_value_type PASSED
 tests/test_checkers.py::TestNamedTuple::test_type_mismatch PASSED
 tests/test_checkers.py::TestNamedTuple::test_valid PASSED
 tests/test_checkers.py::TestNamedTuple::test_wrong_field_type PASSED
-tests/test_checkers.py::TestNewType::test_bad_value PASSED
-tests/test_checkers.py::TestNewType::test_valid PASSED
+tests/test_checkers.py::TestNewType::test_generic_bad_value PASSED
+tests/test_checkers.py::TestNewType::test_generic_valid PASSED
+tests/test_checkers.py::TestNewType::test_simple_bad_value PASSED
+tests/test_checkers.py::TestNewType::test_simple_valid PASSED
 tests/test_checkers.py::TestProtocol::test_fail PASSED
 tests/test_checkers.py::TestProtocol::test_fail_non_method_members PASSED
 tests/test_checkers.py::TestProtocol::test_protocol PASSED
@@ -143,6 +148,7 @@ tests/test_checkers.py::TestTypedDict::test_typed_dict[correct] PASSED
 tests/test_checkers.py::TestTypedDict::test_typed_dict[missing_x] PASSED
 tests/test_checkers.py::TestTypedDict::test_typed_dict[missing_y_error] PASSED
 tests/test_checkers.py::TestTypedDict::test_typed_dict[missing_y_ok] PASSED
+tests/test_checkers.py::TestTypedDict::test_typed_dict[not_dict] PASSED
 tests/test_checkers.py::TestTypedDict::test_typed_dict[unknown_key] PASSED
 tests/test_checkers.py::TestTypedDict::test_typed_dict[wrong_x] PASSED
 tests/test_checkers.py::TestTypedDict::test_typed_dict[wrong_y] PASSED
@@ -164,11 +170,36 @@ tests/test_checkers.py::test_any_subclass PASSED
 tests/test_checkers.py::test_forward_reference_policy[error] PASSED
 tests/test_checkers.py::test_forward_reference_policy[ignore] PASSED
 tests/test_checkers.py::test_forward_reference_policy[warn] PASSED
+tests/test_checkers.py::test_imported_str_forward_ref PASSED
 tests/test_checkers.py::test_none PASSED
 tests/test_checkers.py::test_return_checked_value PASSED
+tests/test_checkers.py::test_suppressed_checking PASSED
+tests/test_checkers.py::test_suppressed_checking_exception PASSED
 tests/test_importhook.py::test_blanket_import PASSED
 tests/test_importhook.py::test_debug_instrumentation SKIPPED (Requir...)
 tests/test_importhook.py::test_package_name_matching PASSED
+tests/test_instrumentation.py::TestGuardedType::test_plain[importhook] PASSED
+tests/test_instrumentation.py::TestGuardedType::test_plain[typechecked] PASSED
+tests/test_instrumentation.py::TestGuardedType::test_subscript_nested[importhook] PASSED
+tests/test_instrumentation.py::TestGuardedType::test_subscript_nested[typechecked] PASSED
+tests/test_instrumentation.py::TestGuardedType::test_subscript_toplevel[importhook] PASSED
+tests/test_instrumentation.py::TestGuardedType::test_subscript_toplevel[typechecked] PASSED
+tests/test_instrumentation.py::TestOptionsOverride::test_forward_ref_policy[importhook] PASSED
+tests/test_instrumentation.py::TestOptionsOverride::test_forward_ref_policy[typechecked] PASSED
+tests/test_instrumentation.py::TestOptionsOverride::test_inner_class_no_overrides[importhook] PASSED
+tests/test_instrumentation.py::TestOptionsOverride::test_inner_class_no_overrides[typechecked] PASSED
+tests/test_instrumentation.py::TestOptionsOverride::test_outer_class_typecheck_fail_callback[importhook] PASSED
+tests/test_instrumentation.py::TestOptionsOverride::test_outer_class_typecheck_fail_callback[typechecked] PASSED
+tests/test_instrumentation.py::TestOptionsOverride::test_override_collection_check_strategy[importhook] PASSED
+tests/test_instrumentation.py::TestOptionsOverride::test_override_collection_check_strategy[typechecked] PASSED
+tests/test_instrumentation.py::TestOptionsOverride::test_typecheck_fail_callback[importhook] PASSED
+tests/test_instrumentation.py::TestOptionsOverride::test_typecheck_fail_callback[typechecked] PASSED
+tests/test_instrumentation.py::TestVariableArguments::test_args_fail[importhook] PASSED
+tests/test_instrumentation.py::TestVariableArguments::test_args_fail[typechecked] PASSED
+tests/test_instrumentation.py::TestVariableArguments::test_kwargs_fail[importhook] PASSED
+tests/test_instrumentation.py::TestVariableArguments::test_kwargs_fail[typechecked] PASSED
+tests/test_instrumentation.py::TestVariableArguments::test_success[importhook] PASSED
+tests/test_instrumentation.py::TestVariableArguments::test_success[typechecked] PASSED
 tests/test_instrumentation.py::test_async_func[importhook] PASSED
 tests/test_instrumentation.py::test_async_func[typechecked] PASSED
 tests/test_instrumentation.py::test_asyncgen_bad_yield_type[importhook] PASSED
@@ -177,14 +208,10 @@ tests/test_instrumentation.py::test_asyncgen_valid[importhook] PASSED
 tests/test_instrumentation.py::test_asyncgen_valid[typechecked] PASSED
 tests/test_instrumentation.py::test_augmented_assign[importhook] PASSED
 tests/test_instrumentation.py::test_augmented_assign[typechecked] PASSED
+tests/test_instrumentation.py::test_builtin_generic_collections[importhook] PASSED
+tests/test_instrumentation.py::test_builtin_generic_collections[typechecked] PASSED
 tests/test_instrumentation.py::test_contextmanager[importhook] PASSED
 tests/test_instrumentation.py::test_contextmanager[typechecked] PASSED
-tests/test_instrumentation.py::test_dynamic_type_checking_func[importhook-bad_argtype] PASSED
-tests/test_instrumentation.py::test_dynamic_type_checking_func[importhook-bad_returntype] PASSED
-tests/test_instrumentation.py::test_dynamic_type_checking_func[importhook-correct] PASSED
-tests/test_instrumentation.py::test_dynamic_type_checking_func[typechecked-bad_argtype] PASSED
-tests/test_instrumentation.py::test_dynamic_type_checking_func[typechecked-bad_returntype] PASSED
-tests/test_instrumentation.py::test_dynamic_type_checking_func[typechecked-correct] PASSED
 tests/test_instrumentation.py::test_generator_bad_return_type[importhook] PASSED
 tests/test_instrumentation.py::test_generator_bad_return_type[typechecked] PASSED
 tests/test_instrumentation.py::test_generator_bad_yield_type[importhook] PASSED
@@ -197,6 +224,10 @@ tests/test_instrumentation.py::test_inner_class_method[importhook] XFAIL
 tests/test_instrumentation.py::test_inner_class_method[typechecked] XFAIL
 tests/test_instrumentation.py::test_inner_class_staticmethod[importhook] XFAIL
 tests/test_instrumentation.py::test_inner_class_staticmethod[typechecked] XFAIL
+tests/test_instrumentation.py::test_literal[importhook] PASSED
+tests/test_instrumentation.py::test_literal[typechecked] PASSED
+tests/test_instrumentation.py::test_local_class_instance[importhook] PASSED
+tests/test_instrumentation.py::test_local_class_instance[typechecked] PASSED
 tests/test_instrumentation.py::test_missing_return[importhook] PASSED
 tests/test_instrumentation.py::test_missing_return[typechecked] PASSED
 tests/test_instrumentation.py::test_multi_assign_iterable[importhook] PASSED
@@ -227,6 +258,8 @@ tests/test_instrumentation.py::test_type_checked_staticmethod[importhook] PASSED
 tests/test_instrumentation.py::test_type_checked_staticmethod[typechecked] PASSED
 tests/test_instrumentation.py::test_typeguard_ignored_func[importhook] PASSED
 tests/test_instrumentation.py::test_typeguard_ignored_func[typechecked] PASSED
+tests/test_instrumentation.py::test_typevar_forwardref[importhook] PASSED
+tests/test_instrumentation.py::test_typevar_forwardref[typechecked] PASSED
 tests/test_instrumentation.py::test_unpacking_assign[importhook] PASSED
 tests/test_instrumentation.py::test_unpacking_assign[typechecked] PASSED
 tests/test_instrumentation.py::test_unpacking_assign_from_generator[importhook] PASSED
@@ -238,6 +271,13 @@ tests/test_instrumentation.py::test_unpacking_assign_star_no_annotation_success[
 tests/test_instrumentation.py::test_unpacking_assign_star_with_annotation[importhook] PASSED
 tests/test_instrumentation.py::test_unpacking_assign_star_with_annotation[typechecked] PASSED
 tests/test_plugins.py::test_custom_type_checker PASSED
+tests/test_suppression.py::test_contextmanager_check_type PASSED
+tests/test_suppression.py::test_contextmanager_exception PASSED
+tests/test_suppression.py::test_contextmanager_nesting PASSED
+tests/test_suppression.py::test_contextmanager_typechecked PASSED
+tests/test_suppression.py::test_decorator_check_type PASSED
+tests/test_suppression.py::test_decorator_exception PASSED
+tests/test_suppression.py::test_decorator_typechecked PASSED
 tests/test_typechecked.py::TestAsyncGenerator::test_async_bad_yield_as_generator PASSED
 tests/test_typechecked.py::TestAsyncGenerator::test_async_bad_yield_as_iterable PASSED
 tests/test_typechecked.py::TestAsyncGenerator::test_async_bad_yield_as_iterator PASSED
@@ -285,7 +325,9 @@ tests/test_typechecked.py::test_keyword_argument_default PASSED
 tests/test_typechecked.py::test_retain_dunder_attributes PASSED
 tests/test_typechecked.py::test_return_type_annotation_refers_to_nonlocal PASSED
 tests/test_typechecked.py::test_staticmethod PASSED
-tests/test_typechecked.py::test_suppressed_checking PASSED
+tests/test_typechecked.py::test_typechecked_disabled_in_optimized_mode[OO] PASSED
+tests/test_typechecked.py::test_typechecked_disabled_in_optimized_mode[O] PASSED
+tests/test_typechecked.py::test_typechecked_disabled_in_optimized_mode[debug] PASSED
 tests/test_union_transformer.py::test_union_transformer[str | Union[int | bytes, set]-Union[str, int, bytes, Set]] PASSED
 tests/test_union_transformer.py::test_union_transformer[str | int | Callable[..., bytes]-Union[str, int, Callable[..., bytes]]] PASSED
 tests/test_union_transformer.py::test_union_transformer[str | int | Callable[[], bytes | set]-Union[str, int, Callable[[], Union[bytes, Set]]]] PASSED
@@ -307,6 +349,6 @@ tests/test_warn_on_error.py::test_check_type PASSED
 tests/test_warn_on_error.py::test_typechecked PASSED
 
 =========================== short test summary info ============================
-======== 275 passed, 16 skipped, 6 xfailed ========
+======== 315 passed, 16 skipped, 6 xfailed ========
   py$(PYV): OK
   congratulations :)

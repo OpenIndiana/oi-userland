@@ -20,12 +20,12 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typeguard
-HUMAN_VERSION =			3.0.2
+HUMAN_VERSION =			4.0.0
 COMPONENT_SUMMARY =		typeguard - Run-time type checker for Python
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/af/40/3398497c6e6951c92abaf933492d6633e7ac4df0bfc9d81f304b3f977f15/typeguard-3.0.2.tar.gz
+	https://files.pythonhosted.org/packages/81/1f/38b3c89109c3efefd5d02073aa75e765ed5392288a1181cb6e82ee775c06/typeguard-4.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fee5297fdb28f8e9efcb8142b5ee219e02375509cd77ea9d270b5af826358d5a
+	sha256:194fb3dbcb06ea9caf7088f3befee014de57961689f9c859ac5239b1ef61d987
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
