@@ -44,6 +44,7 @@ PASS: filename-lineno.pl
 PASS: fillbuf-long-line
 SKIP: fmbtest
 PASS: foad1
+SKIP: glibc-infloop
 PASS: grep-dev-null
 PASS: grep-dev-null-out
 PASS: grep-dir
@@ -75,7 +76,7 @@ PASS: null-byte
 PASS: options
 PASS: pcre
 PASS: pcre-abort
-PASS: pcre-ascii-digits
+SKIP: pcre-ascii-digits
 PASS: pcre-context
 PASS: pcre-count
 PASS: pcre-infloop
@@ -84,7 +85,8 @@ PASS: pcre-invalid-utf8-input
 PASS: pcre-jitstack
 PASS: pcre-o
 PASS: pcre-utf8
-PASS: pcre-utf8-w
+PASS: pcre-utf8-bug224
+SKIP: pcre-utf8-w
 PASS: pcre-w
 PASS: pcre-wx-backref
 PASS: pcre-z
@@ -114,16 +116,18 @@ PASS: unibyte-binary
 PASS: unibyte-bracket-expr
 PASS: unibyte-negated-circumflex
 PASS: utf8-bracket
+PASS: version-pcre
 PASS: warn-char-classes
 PASS: word-delim-multibyte
 PASS: word-multi-file
 PASS: word-multibyte
 PASS: write-error-msg
+SKIP: y2038-vs-32-bit
 PASS: yesno
 PASS: z-anchor-newline
-# TOTAL: 123
+# TOTAL: 127
 # PASS:  107
-# SKIP:  14
+# SKIP:  18
 # XFAIL: 2
 # FAIL:  0
 # XPASS: 0
@@ -140,6 +144,7 @@ PASS: test-bind
 PASS: test-bitrotate
 PASS: test-btowc1.sh
 PASS: test-btowc2.sh
+PASS: test-btowc3.sh
 PASS: test-c-ctype
 PASS: test-c-stack.sh
 PASS: test-c-stack2.sh
@@ -212,6 +217,7 @@ PASS: test-iswblank
 PASS: test-iswdigit.sh
 PASS: test-iswxdigit.sh
 PASS: test-langinfo
+PASS: test-largefile
 PASS: test-limits-h
 PASS: test-listen
 PASS: test-locale
@@ -221,12 +227,25 @@ PASS: test-lseek.sh
 PASS: test-lstat
 PASS: test-malloc-gnu
 PASS: test-malloca
+PASS: test-mbrlen1.sh
+PASS: test-mbrlen2.sh
+SKIP: test-mbrlen3.sh
+PASS: test-mbrlen4.sh
+PASS: test-mbrlen5.sh
+SKIP: test-mbrlen-w32-1.sh
+SKIP: test-mbrlen-w32-2.sh
+SKIP: test-mbrlen-w32-3.sh
+SKIP: test-mbrlen-w32-4.sh
+SKIP: test-mbrlen-w32-5.sh
+SKIP: test-mbrlen-w32-6.sh
+SKIP: test-mbrlen-w32-7.sh
 SKIP: test-mbscasecmp.sh
 PASS: test-mbsinit.sh
 PASS: test-mbsrtowcs1.sh
 PASS: test-mbsrtowcs2.sh
 SKIP: test-mbsrtowcs3.sh
 PASS: test-mbsrtowcs4.sh
+PASS: test-mbsrtowcs5.sh
 PASS: test-mbsstr1
 PASS: test-mbsstr2.sh
 PASS: test-mbsstr3.sh
@@ -308,6 +327,9 @@ PASS: test-thread_self
 PASS: test-thread_create
 PASS: test-time-h
 PASS: test-time
+PASS: test-trim1.sh
+PASS: test-trim2.sh
+PASS: test-trim3.sh
 PASS: test-dup-safer
 PASS: test-unistd
 PASS: test-u8-mbtoucr
@@ -335,9 +357,10 @@ PASS: test-wcwidth
 PASS: test-xalloc-die.sh
 PASS: test-xstrtoimax.sh
 PASS: test-xstrtol.sh
-# TOTAL: 207
-# PASS:  198
-# SKIP:  9
+PASS: test-year2038
+# TOTAL: 226
+# PASS:  209
+# SKIP:  17
 # XFAIL: 0
 # FAIL:  0
 # XPASS: 0
