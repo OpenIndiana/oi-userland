@@ -63,6 +63,11 @@ component-test-environment-check:: component-environment-check
 	$(call separator-line,Required Additional Packages Needed for Testing Only)
 	@[ -z "$(strip $(USERLAND_TEST_REQUIRED_PACKAGES))$(strip $(TEST_REQUIRED_PACKAGES))" ] || \
 		/usr/bin/pkg list -vH $(USERLAND_TEST_REQUIRED_PACKAGES:%=/%) $(TEST_REQUIRED_PACKAGES:%=/%)
+	@C=0 ; \
+		for p in $(TEST_CONFLICTING_PACKAGES) ; do \
+			/usr/bin/pkg list -q /$$p && echo "Conflicting package $$p found" && C=1 ; \
+		done ; \
+		exit $$C
 	$(call separator-line)
 
 component-test-environment-prep::
