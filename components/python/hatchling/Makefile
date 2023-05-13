@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatchling
-HUMAN_VERSION =			1.16.1
+HUMAN_VERSION =			1.17.0
 COMPONENT_SUMMARY =		hatchling - Modern, extensible Python build backend
 COMPONENT_PROJECT_URL =		https://hatch.pypa.io/latest/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/de/a6/aea15316c8dc1ec0fc8a0fe622ddc81feb162677005847e7f7db30d36364/hatchling-1.16.1.tar.gz
+	https://files.pythonhosted.org/packages/d4/de/983fb0275c7361345b0b4916f88048cae9ce38aa8e6099af2e990d61e304/hatchling-1.17.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b42140c799da7bc43d89b7ced4d31ea1c375b34595cec52a11c8a245839d9af4
+	sha256:b1244db3f45b4ef5a00106a46612da107cdfaf85f1580b8e1c059fefc98b0930
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
