@@ -1,0 +1,20 @@
+--- hypothesis-hypothesis-python-6.75.3/hypothesis-python/tests/nocover/test_baseexception.py.orig
++++ hypothesis-hypothesis-python-6.75.3/hypothesis-python/tests/nocover/test_baseexception.py
+@@ -120,6 +120,7 @@
+ 
+ @pytest.mark.parametrize("exc_name", ["SystemExit", "GeneratorExit"])
+ @pytest.mark.parametrize("use_composite", [True, False])
++@pytest.mark.skip(reason="always fails: https://github.com/HypothesisWorks/hypothesis/issues/3642")
+ def test_explanations(testdir, exc_name, use_composite):
+     code = TEMPLATE.format(
+         exception=exc_name, strategy="things()" if use_composite else "st.none()"
+--- hypothesis-hypothesis-python-6.75.3/hypothesis-python/tests/nocover/test_scrutineer.py.orig
++++ hypothesis-hypothesis-python-6.75.3/hypothesis-python/tests/nocover/test_scrutineer.py
+@@ -67,6 +67,7 @@
+ 
+ 
+ @pytest.mark.parametrize("code", FRAGMENTS)
++@pytest.mark.skip(reason="always fails: https://github.com/HypothesisWorks/hypothesis/issues/3642")
+ def test_explanations(code, testdir):
+     pytest_stdout, expected = get_reports(PRELUDE + code, testdir=testdir)
+     assert len(expected) == code.count(BUG_MARKER)

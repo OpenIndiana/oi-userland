@@ -15,25 +15,30 @@
 #
 
 BUILD_STYLE = setup.py
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hypothesis
-HUMAN_VERSION =			6.75.2
+HUMAN_VERSION =			6.75.3
 COMPONENT_SUMMARY =		hypothesis - A library for property-based testing
 COMPONENT_PROJECT_URL =		https://hypothesis.works
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a8/8b/e4dc05c9c6b10b02c1e7693a61886a5eb0328cd302c1025a150ced413f1a/hypothesis-6.75.2.tar.gz
+	https://github.com/HypothesisWorks/hypothesis/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:50c270b38d724ce0fefa71b8e3511d123f7a31a9af9ea003447d4e1489292fbc
+	sha256:1b5355bbafefde16c127f2d925f17a88844130c615d3e80b3ad89770503fd027
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# https://github.com/HypothesisWorks/hypothesis/issues/3588
+COMPONENT_ARCHIVE =		hypothesis-python-$(HUMAN_VERSION).tar.gz
+COMPONENT_SRC =			hypothesis-hypothesis-python-$(HUMAN_VERSION)
 # https://github.com/HypothesisWorks/hypothesis/issues/3637
-TEST_STYLE = none
+COMPONENT_SUBDIR =		hypothesis-python
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Random temporary directory name
+COMPONENT_TEST_TRANSFORMS +=	"-e 's|\(/tmp\).\{8\}/|\1XXXXXXXX/|g'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
@@ -42,3 +47,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/sortedcontainers
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pexpect
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
