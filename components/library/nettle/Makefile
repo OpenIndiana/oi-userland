@@ -14,48 +14,42 @@
 # Copyright 2019 Michal Nowak
 # Copyright 2022 Andreas Wacknitz
 #
+
 BUILD_BITS= 64_and_32
-# Alas it's not yet possible to convince nettle to use newer OpeenSSL.
-#USE_OPENSSL11= yes
+USE_OPENSSL11= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nettle
-COMPONENT_VERSION=	3.8.1
+COMPONENT_VERSION=	3.9
 COMPONENT_SUMMARY=	A low-level cryptographic library
+COMPONENT_PROJECT_URL=	https://www.lysator.liu.se/~nisse/nettle/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:364f3e2b77cd7dcde83fd7c45219c834e54b0c75e428b6f894a23d12dd41cbfe
+COMPONENT_ARCHIVE_HASH=	sha256:0ee7adf5a7201610bb7fe0acbb7c9b3be83be44904dd35ebbcd965cd896bfeaa
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/nettle/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://www.lysator.liu.se/~nisse/nettle/
 COMPONENT_FMRI=		library/nettle
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	LGPLv3, GPLv3, GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH = $(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
-#CONFIGURE_OPTIONS += --with-include-path=$(OPENSSL_INCDIR)
-#CONFIGURE_OPTIONS += --with-libs-path=$(OPENSSL_LIBDIR).$(BITS)
+LDFLAGS += -L$(OPENSSL_LIBDIR)
+
+CONFIGURE_OPTIONS += --with-include-path=$(OPENSSL_INCDIR)
+CONFIGURE_OPTIONS += --with-libs-path=$(OPENSSL_LIBDIR)
+CONFIGURE_OPTIONS += --disable-static
 
 COMPONENT_TEST_TRANSFORMS += \
-    '-n ' \
-    '-e "/=========/p" ' \
-    '-e "/tests passed/p" ' \
-    '-e "/TOTAL/p" ' \
-    '-e "/PASS/p" ' \
-    '-e "/SKIP/p" ' \
-    '-e "/XFAIL/p" ' \
-    '-e "/FAIL/p" ' \
-    '-e "/XPASS/p" ' \
-    '-e "/ERROR/p" '
-
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+    '-e "/=====/p" ' \
+    '-e "/tests passed/p" '
 
 # Manually added build dependencyies
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
