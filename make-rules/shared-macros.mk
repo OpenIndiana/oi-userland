@@ -134,6 +134,11 @@ LINKER =		gcc
 # Possible values are: '32', '64', '32_and_64', '64_and_32', and 'NO_ARCH' (the
 # orderings specify build preference).
 BUILD_BITS ?= 64
+ifeq ($(strip $(BUILD_BITS)),64)
+BITS ?=         64
+else
+BITS ?=         32
+endif
 
 # Based on BUILD_BITS, determine which binaries are preferred for a build.
 # This macro is for the convenience of other make-rules files and should not be
