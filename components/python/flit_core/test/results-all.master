@@ -3,7 +3,8 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-collecting ... collected 100 items
+asyncio: mode=strict
+collecting ... collected 101 items
 
 ::project PASSED
 flit_core/tests/test_build_thyself.py::test_prepare_metadata PASSED
@@ -89,6 +90,7 @@ flit_core/tests/test_sdist.py::test_include_exclude PASSED
 flit_core/tests/test_sdist.py::test_make_sdist PASSED
 flit_core/tests/test_sdist.py::test_make_sdist_pep621 PASSED
 flit_core/tests/test_sdist.py::test_make_sdist_pep621_nodynamic PASSED
+flit_core/tests/test_sdist.py::test_pep625 PASSED
 flit_core/tests/test_versionno.py::test_normalise_version PASSED
 flit_core/tests/test_wheel.py::test_data_dir PASSED
 flit_core/tests/test_wheel.py::test_licenses_dir PASSED
@@ -96,10 +98,4 @@ flit_core/tests/test_wheel.py::test_main PASSED
 flit_core/tests/test_wheel.py::test_source_date_epoch PASSED
 flit_core/tests/test_wheel.py::test_zero_timestamp PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: 180 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    if LooseVersion(pytest.__version__) < LooseVersion('3.6.0'):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 90 passed, 180 warnings ========
+======== 91 passed ========
