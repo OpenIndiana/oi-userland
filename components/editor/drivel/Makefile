@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         drivel
 COMPONENT_VERSION=      3.0.5
-COMPONENT_REVISION=     4
+COMPONENT_REVISION=     5
 COMPONENT_PROJECT_URL=  http://drivel.sourceforge.net/
 COMPONENT_SUMMARY=      Drivel is a GNOME client for editing blog
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,6 +40,9 @@ CFLAGS+= -std=gnu89 -D__EXTENSIONS__
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV += 	LIBS=-lm
+
+# SPARC needs math library.
+REQUIRED_PACKAGES += system/library/math
 
 COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
