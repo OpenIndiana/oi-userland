@@ -29,8 +29,8 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         p7zip
 COMPONENT_VERSION=      16.2
-HUMAN_VERSION=			16.02
-COMPONENT_REVISION=     4
+HUMAN_VERSION=		16.02
+COMPONENT_REVISION=     5
 COMPONENT_SUMMARY=      The p7zip compression and archiving utility
 COMPONENT_PROJECT_URL=  https://p7zip.sourceforge.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)_$(HUMAN_VERSION)
@@ -55,7 +55,8 @@ COMPONENT_BUILD_TARGETS = all3
 COMPONENT_INSTALL_ARGS += DEST_HOME=/usr DEST_DIR=$(PROTO_DIR)
 
 COMPONENT_BUILD_ARGS += BUILD_CC="$(CC)"
-COMPONENT_BUILD_ARGS += BUILD_CXX="$(CXX)"
+# Note: the -std=c++11 setting below is probably not needed for a newer version.
+COMPONENT_BUILD_ARGS += BUILD_CXX="$(CXX) -std=c++11"
 COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ARGS += BUILD_FLAGS="$(CPP_LARGEFILES) $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS)"
 
