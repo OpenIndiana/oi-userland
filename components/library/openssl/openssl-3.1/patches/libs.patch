@@ -1,0 +1,83 @@
+# This patch combines multiple patches from patches used in Omnios and OpenIndiana Sparc
+# Omnios changes:
+#---
+#On illumos, several libraries have had their functionality moved into libc
+#but the old libraries persist as stubs for compatibility reasons. Two such
+#libraries are libdl.so & libpthread.so
+#
+#There's no specific problem with an application or library linking with these
+#(just a slight overhead) but when a library is used by a component within
+#illumos-gate, a check is made which generates a warning if an
+#unecessary library is linked.
+#
+#Openssl is one of the libraries used by illumos-gate and therefore we
+#patch the configuration script to stop linking against these two libraries.
+#
+#We also patch out the desire to omit the frame pointer and add in dwarf-2
+#debug information which can be converted to CTF.
+#---
+# Sparc changes:
+# Tunig Vis and mfsbuild gcc flags on sparc
+--- openssl-3.1.0/Configurations/10-main.conf.~1~	2023-03-14 14:59:07.000000000 +0200
++++ openssl-3.1.0/Configurations/10-main.conf	2023-05-16 19:12:57.747597253 +0300
+@@ -210,7 +210,7 @@
+         inherit_from     => [ "BASE_unix" ],
+         template         => 1,
+         lib_cppflags     => "-DFILIO_H",
+-        ex_libs          => add("-lsocket -lnsl -ldl"),
++        ex_libs          => add("-lsocket -lnsl"),
+         dso_scheme       => "dlfcn",
+         thread_scheme    => "pthreads",
+     },
+@@ -238,10 +238,8 @@
+         CC               => "gcc",
+         CFLAGS           => add_before(picker(default => "-Wall",
+                                               debug   => "-O0 -g",
+-                                              release => "-O3 -fomit-frame-pointer")),
+-        cflags           => add(threads("-pthread")),
++                                              release => "-O3 -gdwarf-2 -gstrict-dwarf")),
+         lib_cppflags     => add("-DL_ENDIAN"),
+-        ex_libs          => add(threads("-pthread")),
+         bn_ops           => "BN_LLONG",
+         shared_cflag     => "-fPIC",
+         shared_ldflag    => add_before("-shared -static-libgcc"),
+@@ -261,10 +259,9 @@
+         CC               => "gcc",
+         CFLAGS           => add_before(picker(default => "-Wall",
+                                               debug   => "-O0 -g",
+-                                              release => "-O3")),
+-        cflags           => add_before("-m64", threads("-pthread")),
++                                              release => "-O3 -gdwarf-2 -gstrict-dwarf")),
++        cflags           => add_before("-m64"),
+         lib_cppflags     => add("-DL_ENDIAN"),
+-        ex_libs          => add(threads("-pthread")),
+         bn_ops           => "SIXTY_FOUR_BIT_LONG",
+         asm_arch         => 'x86_64',
+         perlasm_scheme   => "elf",
+@@ -296,7 +293,6 @@
+         lib_cppflags     => add("-DL_ENDIAN"),
+         thread_scheme    => "pthreads",
+         lflags           => add(threads("-mt")),
+-        ex_libs          => add(threads("-lpthread")),
+         bn_ops           => "SIXTY_FOUR_BIT_LONG",
+         asm_arch         => 'x86_64',
+         perlasm_scheme   => "elf",
+@@ -312,9 +308,7 @@
+         CFLAGS           => add_before(picker(default => "-Wall",
+                                               debug   => "-O0 -g",
+                                               release => "-O3")),
+-        cflags           => add(threads("-pthread")),
+         lib_cppflags     => add("-DB_ENDIAN -DBN_DIV2W"),
+-        ex_libs          => add(threads("-pthread")),
+         bn_ops           => "BN_LLONG RC4_CHAR",
+         shared_cflag     => "-fPIC",
+         shared_ldflag    => add_before("-shared -static-libgcc"),
+@@ -329,7 +323,7 @@
+         # -m32 should be safe to add as long as driver recognizes
+         # -mcpu=ultrasparc
+         inherit_from     => [ "solaris-sparcv7-gcc" ],
+-        cflags           => add_before("-m32 -mcpu=ultrasparc"),
++        cflags           => add_before("-m32 -mcpu=ultrasparc -mvis -mfsmuld"),
+         asm_arch         => 'sparcv9',
+         perlasm_scheme   => 'void',
+     },

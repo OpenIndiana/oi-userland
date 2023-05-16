@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2021, Oracle and/or its affiliates.
+#
+# patch Makefile so that libssl is built with -znodelete
+#
+# This fixes:
+#   15663991 SUNBT6978791 6974208 needs an interim solution
+#
+# Basically, it short circuits unloading of libssl.so. This is necessary
+# because libcrypto.so builds the error strings tables and points to
+# static memory from libssl.  If libssl is dlclosed and libcrypto is not, the
+# pointers are no longer valid.
+#
+--- orig/Makefile
++++ new/Makefile
+@@ -12660,7 +12660,7 @@
+              ssl/statem/libssl-shlib-statem_dtls.o \
+              ssl/statem/libssl-shlib-statem_lib.o \
+              ssl/statem/libssl-shlib-statem_srvr.o libssl.ld libcrypto.so
+-	$(CC) $(LIB_CFLAGS) -L. $(LIB_LDFLAGS) -Wl,-h,libssl.so.3 \
++	$(CC) $(LIB_CFLAGS) -L. $(LIB_LDFLAGS) -Wl,-h,libssl.so.3 -znodelete \
+ 		-o libssl.so.3 -Wl,-M,libssl.ld \
+ 		crypto/libssl-shlib-packet.o ssl/libssl-shlib-bio_ssl.o \
+ 		ssl/libssl-shlib-d1_lib.o ssl/libssl-shlib-d1_msg.o \

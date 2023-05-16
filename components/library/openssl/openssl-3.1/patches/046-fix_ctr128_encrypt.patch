@@ -1,0 +1,16 @@
+This is temporary workaround for gcc-11 miscompilation.
+
+This patch could be removed after fixing bug 33860923 (or updating the compiler
+to gcc-11.3 + or gcc-12 +) in Userland CBE.
+
+--- openssl-3.0.1.orig/crypto/modes/ctr128.c
++++ openssl-3.0.1/crypto/modes/ctr128.c
+@@ -24,7 +24,7 @@
+  */
+ 
+ /* increment counter (128-bit int) by 1 */
+-static void ctr128_inc(unsigned char *counter)
++static void __attribute__ ((noinline)) ctr128_inc(unsigned char *counter)
+ {
+     u32 n = 16, c = 1;
+ 
