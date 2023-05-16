@@ -83,9 +83,9 @@ function get_PKGINFO_entry
 {
 	typeset ENTRY="$1"
 
-	[[ -f "$SOURCE_DIR/PKG-INFO" ]] || return
+	[[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/PKG-INFO" ]] || return
 
-	cat "$SOURCE_DIR/PKG-INFO" \
+	cat "$SOURCE_DIR$COMPONENT_SUBDIR/PKG-INFO" \
 		| sed -e '/^$/,$d' \
 		| awk 'END{printf("\n")}/^[^:]+: /{$0="\n"$0}1' ORS=' ' \
 		| grep "^$ENTRY: " \
@@ -256,9 +256,11 @@ git add Makefile
 # Unpack sources
 ! $GMAKE prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
 SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
+COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
+[[ -n "$COMPONENT_SUBDIR" ]] && COMPONENT_SUBDIR="/$COMPONENT_SUBDIR"
 
-if [[ ! -f "$SOURCE_DIR/pyproject.toml" ]] ; then
-	[[ ! -f "$SOURCE_DIR/setup.py" ]] && printf "FATAL: Neither pyproject.toml nor setup.py found!\n" >&2 && exit 1
+if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/pyproject.toml" ]] ; then
+	[[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/setup.py" ]] && printf "FATAL: Neither pyproject.toml nor setup.py found!\n" >&2 && exit 1
 	sed -i -e 's/^\(BUILD_STYLE = \).*$/\1setup.py/' Makefile
 fi
 
@@ -292,10 +294,10 @@ function detect_license
 LICENSE=
 LICFILE=
 for f in $(get_PKGINFO_entry "License-File") LICENSE LICENSE.rst LICENSE.txt ; do
-	[[ -f "$SOURCE_DIR/$f" ]] || continue
+	[[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/$f" ]] || continue
 	LICFILE="$f"
 
-	detect_license LICENSE "$SOURCE_DIR/$LICFILE"
+	detect_license LICENSE "$SOURCE_DIR$COMPONENT_SUBDIR/$LICFILE"
 	[[ -n "$LICENSE" ]] && break
 
 	printf "WARNING: Failed to detect license type in %s file\n" "$f" >&2
@@ -328,7 +330,7 @@ sed -i -e 's/license:TODO/'"$LICENSE"'/g' Makefile
 
 # detect TEST_STYLE
 TEST_STYLE=
-cd "$SOURCE_DIR"
+cd "$SOURCE_DIR$COMPONENT_SUBDIR"
 while true ; do
 	TOX_OUT=$(tox -l)
 	TOX_RET=$?
@@ -361,10 +363,10 @@ else
 fi
 
 # Warn if a testing tool is called directly by tox
-if [[ "$($GMAKE print-value-TEST_STYLE)" == "tox" && -f "$SOURCE_DIR/tox.ini" ]] ; then
+if [[ "$($GMAKE print-value-TEST_STYLE)" == "tox" && -f "$SOURCE_DIR$COMPONENT_SUBDIR/tox.ini" ]] ; then
 	TOX_CALL_INDIRECTLY=$($GMAKE print-value-TOX_CALL_INDIRECTLY)
 	for p in $TOX_CALL_INDIRECTLY ; do
-		sed -n -e '/^commands *=/,/^$/p' "$SOURCE_DIR/tox.ini" \
+		sed -n -e '/^commands *=/,/^$/p' "$SOURCE_DIR$COMPONENT_SUBDIR/tox.ini" \
 			| tr '\t' ' ' \
 			| grep -q '^\(commands *=\)\{0,1\} *'"$p"'\( \{1,\}.*\)\{0,1\}$' \
 		&& printf "WARNING: %s is called directly in tox.ini\n" "$p" >&2
