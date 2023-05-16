@@ -1,0 +1,20 @@
+--- hypothesis-hypothesis-python-6.75.3/hypothesis-python/tox.ini.orig
++++ hypothesis-hypothesis-python-6.75.3/hypothesis-python/tox.ini
+@@ -4,7 +4,7 @@
+ 
+ [testenv]
+ deps =
+-    -r../requirements/test.txt
++    -r../requirements/test.in
+ allowlist_externals =
+     bash
+ passenv=
+@@ -21,7 +21,7 @@
+     full: bash scripts/basic-test.sh
+     brief: python -bb -X dev -m pytest -n auto tests/cover/test_testdecorators.py {posargs}
+     cover: python -bb -X dev -m pytest -n auto tests/cover/ tests/pytest/ tests/conjecture/test_inquisitor.py {posargs}
+-    nocover: python -bb -X dev -m pytest -n auto tests/nocover/ {posargs}
++    python -bb -X dev -m pytest tests/nocover/ {posargs}
+     niche: bash scripts/other-tests.sh
+     custom: python -bb -X dev -m pytest {posargs}
+ 
