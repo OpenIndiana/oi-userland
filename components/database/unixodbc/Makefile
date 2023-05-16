@@ -30,7 +30,7 @@ PATH=$(PATH.illumos)
 
 COMPONENT_NAME=		unixODBC
 COMPONENT_VERSION=	2.3.9
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The UnixODBC Subsystem and SDK
 COMPONENT_DESCRIPTION= An Open Source implementation of the ODBC Standard providing a Library Framework for Software Development
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -90,6 +90,10 @@ CONFIGURE_OPTIONS += --with-pic
 
 CONFIGURE_ENV += LD="$(CC) $(CFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
+
+COMPONENT_POST_BUILD_ACTION.64 += \
+	(cd $(BUILD_DIR_$(BITS)) && \
+	 $(GPATCH) -p2 < $(COMPONENT_DIR)/files/fix-unixodbc_conf-h.patch)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libtool/libltdl
