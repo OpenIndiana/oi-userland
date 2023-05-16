@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
 COMPONENT_VERSION=	2.4.2
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://openprinting.github.io/cups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
@@ -63,7 +63,9 @@ CONFIGURE_OPTIONS += --mandir=/usr/share/man
 CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
-CONFIGURE_OPTIONS += --with-rundir=/system/volatile/cups
+# Unlike Solaris 11 which has combined and renamed /var/run and /etc/volatile into /system/volatile
+# we still use the traditional state folder:
+CONFIGURE_OPTIONS += --with-rundir=/var/run/cups
 CONFIGURE_OPTIONS += --with-smfmanifestdir=/lib/svc/manifest/application
 CONFIGURE_OPTIONS += --with-printcap=/etc/printers.conf
 CONFIGURE_OPTIONS += --with-cups-user=lp
@@ -85,13 +87,13 @@ REQUIRED_PACKAGES += service/network/slp
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/ca-certificates
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
