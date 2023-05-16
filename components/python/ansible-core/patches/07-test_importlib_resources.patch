@@ -1,0 +1,10 @@
+--- ansible-core-2.15.0/test/units/utils/collection_loader/test_collection_loader.py.orig
++++ ansible-core-2.15.0/test/units/utils/collection_loader/test_collection_loader.py
+@@ -829,6 +829,7 @@
+ 
+ 
+ @pytest.mark.skipif(not PY3, reason='importlib.resources only supported for py3')
++@pytest.mark.skip(reason="could fail: https://github.com/ansible/ansible/issues/80808")
+ def test_importlib_resources():
+     if sys.version_info < (3, 10):
+         from importlib_resources import files

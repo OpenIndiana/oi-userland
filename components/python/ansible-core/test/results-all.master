@@ -3,9 +3,38 @@ test/units/_vendor/test_vendor.py::test_package_path_masking  PASSED
 test/units/_vendor/test_vendor.py::test_vendored  PASSED
 test/units/_vendor/test_vendor.py::test_vendored_conflict  PASSED
 test/units/ansible_test/ci/test_azp.py::test_auth  PASSED
+test/units/ansible_test/test_diff.py::test_add_binary_file  PASSED
+test/units/ansible_test/test_diff.py::test_add_text_file  PASSED
+test/units/ansible_test/test_diff.py::test_add_trailing_newline  PASSED
+test/units/ansible_test/test_diff.py::test_add_two_text_files  PASSED
+test/units/ansible_test/test_diff.py::test_context_no_trailing_newline  PASSED
+test/units/ansible_test/test_diff.py::test_multiple_context_lines  PASSED
+test/units/ansible_test/test_diff.py::test_parse_delete  PASSED
+test/units/ansible_test/test_diff.py::test_parse_rename  PASSED
+test/units/ansible_test/test_diff.py::test_remove_trailing_newline  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[error = err.message + ' ' + str(err) + ' - ' + str(type(err))-False]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if Bar != type(foo)-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if Bar == type(foo)-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if Bar is not type(foo)-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if Bar is type(foo)-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if Bar!=type(foo)-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if Bar==type(foo)-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if foo or type(bar) != Bar-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if get_interface_type(interface) == 'svi':-False]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if self.current_value is not None and not isinstance(self.current_value, type(self.value)):-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if type(foo) != Bar-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if type(foo) == Bar-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if type(foo) is Bar-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if type(foo) is not Bar-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if type(foo)!=Bar-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[if type(foo)==Bar-True]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[module.fail_json(msg='Invalid rule parameter type [%s].' % type(rule))-False]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[p = type('Params', (), module.params)-False]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[raise OSXDefaultsException("Type mismatch. Type in defaults: " + type(self.current_value).__name__)-False]  PASSED
+test/units/ansible_test/test_validate_modules.py::test_type_regex[x = type(foo)-False]  PASSED
 test/units/cli/arguments/test_optparse_helpers.py::test_option_helper_version[ansible collection location = /tmp/.ansible/collections:/usr/share/ansible/collections]  PASSED
 test/units/cli/arguments/test_optparse_helpers.py::test_option_helper_version[ansible python module location = $(@D)/lib/ansible]  PASSED
-test/units/cli/arguments/test_optparse_helpers.py::test_option_helper_version[ansible-cli-test [core 2.14.5]]  PASSED
+test/units/cli/arguments/test_optparse_helpers.py::test_option_helper_version[ansible-cli-test [core 2.15.0]]  PASSED
 test/units/cli/arguments/test_optparse_helpers.py::test_option_helper_version[config file = $(@D)/test/lib/ansible_test/_data/ansible.cfg]  PASSED
 test/units/cli/arguments/test_optparse_helpers.py::test_option_helper_version[configured module search path = ['/dev/null']]  PASSED
 test/units/cli/arguments/test_optparse_helpers.py::test_option_helper_version[executable location = ]  PASSED
@@ -278,6 +307,12 @@ test/units/config/test_manager.py::TestConfigManager::test_ensure_type[true-stri
 test/units/config/test_manager.py::TestConfigManager::test_ensure_type[value1-list-list]  PASSED
 test/units/config/test_manager.py::TestConfigManager::test_ensure_type[y-bool-bool]  PASSED
 test/units/config/test_manager.py::TestConfigManager::test_ensure_type[yes-bool-bool]  PASSED
+test/units/config/test_manager.py::TestConfigManager::test_ensure_type_unquoting[""value""-"value"-str-ini]  PASSED
+test/units/config/test_manager.py::TestConfigManager::test_ensure_type_unquoting["value"-"value"-str-env]  PASSED
+test/units/config/test_manager.py::TestConfigManager::test_ensure_type_unquoting["value"-"value"-str-yaml]  PASSED
+test/units/config/test_manager.py::TestConfigManager::test_ensure_type_unquoting["value"-value-str-ini]  PASSED
+test/units/config/test_manager.py::TestConfigManager::test_ensure_type_unquoting[''value''-'value'-str-ini]  PASSED
+test/units/config/test_manager.py::TestConfigManager::test_ensure_type_unquoting['value'-value-str-ini]  PASSED
 test/units/config/test_manager.py::TestConfigManager::test_ensure_type_with_vaulted_str[None]  PASSED
 test/units/config/test_manager.py::TestConfigManager::test_ensure_type_with_vaulted_str[str]  PASSED
 test/units/config/test_manager.py::TestConfigManager::test_ensure_type_with_vaulted_str[string]  PASSED
@@ -474,7 +509,6 @@ test/units/galaxy/test_collection.py::test_extract_tar_file_invalid_hash  PASSED
 test/units/galaxy/test_collection.py::test_extract_tar_file_missing_member  PASSED
 test/units/galaxy/test_collection.py::test_extract_tar_file_missing_parent_dir  PASSED
 test/units/galaxy/test_collection.py::test_extract_tar_file_outside_dir  PASSED
-test/units/galaxy/test_collection.py::test_find_existing_collections  PASSED
 test/units/galaxy/test_collection.py::test_galaxy_yaml_no_mandatory_keys[namespace: test_namespace]  PASSED
 test/units/galaxy/test_collection.py::test_galaxy_yaml_no_mandatory_keys_bad_yaml[My life story is so very interesting]  PASSED
 test/units/galaxy/test_collection.py::test_galaxy_yml_list_value[\nnamespace: namespace\nname: collection\nauthors: Jordan\nversion: 0.1.0\nreadme: README.md\nlicense: MIT]  PASSED
@@ -547,10 +581,8 @@ test/units/galaxy/test_collection_install.py::test_install_collection_with_circu
 test/units/galaxy/test_collection_install.py::test_install_collection_with_download  PASSED
 test/units/galaxy/test_collection_install.py::test_install_collection_with_no_dependency[None]  PASSED
 test/units/galaxy/test_collection_install.py::test_install_collection_with_no_dependency[collection_artifact1]  PASSED
-test/units/galaxy/test_collection_install.py::test_install_collections_existing_without_force  PASSED
 test/units/galaxy/test_collection_install.py::test_install_collections_from_tar  PASSED
 test/units/galaxy/test_collection_install.py::test_install_installed_collection  PASSED
-test/units/galaxy/test_collection_install.py::test_install_missing_metadata_warning  PASSED
 test/units/galaxy/test_collection_install.py::test_verify_file_signatures[signatures0-all-ignore_errors0-True]  PASSED
 test/units/galaxy/test_collection_install.py::test_verify_file_signatures[signatures1-all-ignore_errors1-True]  PASSED
 test/units/galaxy/test_collection_install.py::test_verify_file_signatures[signatures10-2-ignore_errors10-False]  PASSED
@@ -781,6 +813,9 @@ test/units/module_utils/basic/test_filesystem.py::TestOtherFilesystem::test_modu
 test/units/module_utils/basic/test_filesystem.py::TestOtherFilesystem::test_module_utils_basic_ansible_module_set_group_if_different  PASSED
 test/units/module_utils/basic/test_filesystem.py::TestOtherFilesystem::test_module_utils_basic_ansible_module_set_owner_if_different  PASSED
 test/units/module_utils/basic/test_filesystem.py::TestOtherFilesystem::test_module_utils_basic_ansible_module_user_and_group  PASSED
+test/units/module_utils/basic/test_get_available_hash_algorithms.py::test_fips_mode  PASSED
+test/units/module_utils/basic/test_get_available_hash_algorithms.py::test_legacy_python  SKIPPED
+test/units/module_utils/basic/test_get_available_hash_algorithms.py::test_unavailable_algorithm  PASSED
 test/units/module_utils/basic/test_get_file_attributes.py::test_get_file_attributes[stdin0-data0]  PASSED
 test/units/module_utils/basic/test_get_file_attributes.py::test_get_file_attributes[stdin1-data1]  PASSED
 test/units/module_utils/basic/test_get_file_attributes.py::test_get_file_attributes[stdin2-data2]  PASSED
@@ -1806,6 +1841,7 @@ test/units/module_utils/facts/network/test_generic_bsd.py::TestGenericBsdNetwork
 test/units/module_utils/facts/network/test_generic_bsd.py::TestGenericBsdNetworkNetBSD::test_ifconfig_post_7_1  PASSED
 test/units/module_utils/facts/network/test_generic_bsd.py::TestGenericBsdNetworkNetBSD::test_netbsd_ifconfig_old_and_new  PASSED
 test/units/module_utils/facts/network/test_iscsi_get_initiator.py::test_get_iscsi_info  PASSED
+test/units/module_utils/facts/network/test_locally_reachable_ips.py::TestLocalRoutesLinux::test  PASSED
 test/units/module_utils/facts/other/test_facter.py::TestFacterCollector::test_bogus_json  PASSED
 test/units/module_utils/facts/other/test_facter.py::TestFacterCollector::test_collect  PASSED
 test/units/module_utils/facts/other/test_facter.py::TestFacterCollector::test_collect_with_namespace  PASSED
@@ -1906,6 +1942,13 @@ test/units/module_utils/facts/system/test_lsb.py::TestLSBFacts::test_collect_wit
 test/units/module_utils/facts/system/test_lsb.py::TestLSBFacts::test_etc_lsb_release  PASSED
 test/units/module_utils/facts/system/test_lsb.py::TestLSBFacts::test_etc_lsb_release_no_decimal_release  PASSED
 test/units/module_utils/facts/system/test_lsb.py::TestLSBFacts::test_lsb_release_bin  PASSED
+test/units/module_utils/facts/system/test_pkg_mgr.py::test_default_dnf_version_detection_fedora_dnf4  PASSED
+test/units/module_utils/facts/system/test_pkg_mgr.py::test_default_dnf_version_detection_fedora_dnf4_both_installed  PASSED
+test/units/module_utils/facts/system/test_pkg_mgr.py::test_default_dnf_version_detection_fedora_dnf4_microdnf  PASSED
+test/units/module_utils/facts/system/test_pkg_mgr.py::test_default_dnf_version_detection_fedora_dnf4_microdnf5_installed  PASSED
+test/units/module_utils/facts/system/test_pkg_mgr.py::test_default_dnf_version_detection_fedora_dnf5  PASSED
+test/units/module_utils/facts/system/test_pkg_mgr.py::test_default_dnf_version_detection_fedora_dnf5_microdnf  PASSED
+test/units/module_utils/facts/system/test_pkg_mgr.py::test_default_dnf_version_detection_fedora_no_default  PASSED
 test/units/module_utils/facts/system/test_user.py::test_logname  PASSED
 test/units/module_utils/facts/test_ansible_collector.py::TestCollectedFacts::test_basics  PASSED
 test/units/module_utils/facts/test_ansible_collector.py::TestCollectedFacts::test_expected_facts  PASSED
@@ -3036,11 +3079,6 @@ test/units/plugins/action/test_action.py::TestActionBaseParseReturnedData::test_
 test/units/plugins/action/test_action.py::TestActionBaseParseReturnedData::test_json_facts_add_host  PASSED
 test/units/plugins/action/test_gather_facts.py::TestNetworkFacts::test_network_gather_facts_smart_facts_module  PASSED
 test/units/plugins/action/test_gather_facts.py::TestNetworkFacts::test_network_gather_facts_smart_facts_module_fqcn  PASSED
-test/units/plugins/action/test_pause.py::test_pause_curses_setupterm_error[TypeError]  PASSED
-test/units/plugins/action/test_pause.py::test_pause_curses_setupterm_error[UnsupportedOperation]  PASSED
-test/units/plugins/action/test_pause.py::test_pause_curses_setupterm_error[error]  PASSED
-test/units/plugins/action/test_pause.py::test_pause_curses_tigetstr_none  PASSED
-test/units/plugins/action/test_pause.py::test_pause_missing_curses  PASSED
 test/units/plugins/action/test_raw.py::TestCopyResultExclude::test_raw_check_mode_is_True  PASSED
 test/units/plugins/action/test_raw.py::TestCopyResultExclude::test_raw_executable_is_not_empty_string  PASSED
 test/units/plugins/action/test_raw.py::TestCopyResultExclude::test_raw_task_vars_is_not_None  PASSED
@@ -3126,8 +3164,8 @@ test/units/plugins/connection/test_connection.py::TestConnectionBaseClass::test_
 test/units/plugins/connection/test_connection.py::TestConnectionBaseClass::test_subclass_error  PASSED
 test/units/plugins/connection/test_connection.py::TestConnectionBaseClass::test_subclass_success  PASSED
 test/units/plugins/connection/test_local.py::TestLocalConnectionClass::test_local_connection_module  PASSED
-test/units/plugins/connection/test_paramiko.py::test_paramiko_connect  PASSED
-test/units/plugins/connection/test_paramiko.py::test_paramiko_connection_module  PASSED
+test/units/plugins/connection/test_paramiko_ssh.py::test_paramiko_connect  PASSED
+test/units/plugins/connection/test_paramiko_ssh.py::test_paramiko_connection_module  PASSED
 test/units/plugins/connection/test_psrp.py::TestConnectionPSRP::test_set_invalid_extras_options  PASSED
 test/units/plugins/connection/test_psrp.py::TestConnectionPSRP::test_set_options[options0-expected0]  PASSED
 test/units/plugins/connection/test_psrp.py::TestConnectionPSRP::test_set_options[options1-expected1]  PASSED
@@ -3360,8 +3398,8 @@ test/units/template/test_template_utilities.py::TestCountNewlines::test_one_newl
 test/units/template/test_template_utilities.py::TestCountNewlines::test_short_string  PASSED
 test/units/template/test_template_utilities.py::TestCountNewlines::test_zero_length_string  PASSED
 test/units/template/test_template_utilities.py::TestCountNewlines::test_zero_newlines  PASSED
-test/units/template/test_vars.py::TestVars::test_globals  PASSED
-test/units/template/test_vars.py::TestVars::test_globals_empty  PASSED
+test/units/template/test_vars.py::test_globals  PASSED
+test/units/template/test_vars.py::test_globals_empty  PASSED
 test/units/test_context.py::test_set_global_context  PASSED
 test/units/test_no_tty.py::test_no_tty  PASSED
 test/units/utils/collection_loader/test_collection_loader.py::test_bogus_imports  PASSED
@@ -3413,6 +3451,7 @@ test/units/utils/collection_loader/test_collection_loader.py::test_fqcr_parsing_
 test/units/utils/collection_loader/test_collection_loader.py::test_fqcr_parsing_valid[ns.coll.subdir1.subdir2.myaction-action-ns.coll-subdir1.subdir2-myaction-ansible_collections.ns.coll.plugins.action.subdir1.subdir2]  PASSED
 test/units/utils/collection_loader/test_collection_loader.py::test_fqcr_parsing_valid[ns.coll.subdir1.subdir2.myrole-role-ns.coll-subdir1.subdir2-myrole-ansible_collections.ns.coll.roles.subdir1.subdir2.myrole]  PASSED
 test/units/utils/collection_loader/test_collection_loader.py::test_import_from_collection  PASSED
+test/units/utils/collection_loader/test_collection_loader.py::test_importlib_resources  SKIPPED
 test/units/utils/collection_loader/test_collection_loader.py::test_iter_modules_impl  PASSED
 test/units/utils/collection_loader/test_collection_loader.py::test_iter_modules_namespaces  PASSED
 test/units/utils/collection_loader/test_collection_loader.py::test_legacy_plugin_dir_to_plugin_type[None-ValueError]  PASSED
@@ -3434,6 +3473,11 @@ test/units/utils/collection_loader/test_collection_loader.py::test_root_loader  
 test/units/utils/collection_loader/test_collection_loader.py::test_root_loader_not_interested  PASSED
 test/units/utils/collection_loader/test_collection_loader.py::test_toplevel_iter_modules  PASSED
 test/units/utils/display/test_broken_cowsay.py::test_display_with_fake_cowsay_binary  PASSED
+test/units/utils/display/test_curses.py::test_pause_curses_setupterm_error[TypeError]  PASSED
+test/units/utils/display/test_curses.py::test_pause_curses_setupterm_error[UnsupportedOperation]  PASSED
+test/units/utils/display/test_curses.py::test_pause_curses_setupterm_error[error]  PASSED
+test/units/utils/display/test_curses.py::test_pause_curses_tigetstr_none  PASSED
+test/units/utils/display/test_curses.py::test_pause_missing_curses  PASSED
 test/units/utils/display/test_display.py::test_display_basic_message  PASSED
 test/units/utils/display/test_logger.py::test_logger  PASSED
 test/units/utils/display/test_warning.py::test_warning  PASSED
