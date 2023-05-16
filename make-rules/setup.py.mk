@@ -184,7 +184,7 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
 	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
-	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
+	(cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(COMPONENT_BUILD_ENV) \
 		$(COMPONENT_BUILD_CMD) $(COMPONENT_BUILD_ARGS))
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
@@ -201,7 +201,7 @@ COMPONENT_INSTALL_ARGS +=	--force
 # install the built source into a prototype area
 $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
+	(cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
 		$(COMPONENT_INSTALL_CMD) $(COMPONENT_INSTALL_ARGS))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
@@ -365,7 +365,7 @@ USERLAND_TEST_REQUIRED_PACKAGES += library/python/tox-current-env
 # to workaround https://github.com/tox-dev/tox/issues/2538
 COMPONENT_POST_INSTALL_ACTION += \
 	if [ -x "$(COMPONENT_TEST_CMD)" ] ; then \
-		cd $(@D) ; \
+		cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 		echo "Testing dependencies:" ; \
 		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) || exit 1 ; \
 		echo "Testing extras:" ; \
@@ -435,6 +435,8 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^=\{1,\} short test summary info =\{1,\}$$/,/
 # unconditionally.
 COMPONENT_TEST_TRANSFORMS += "-e '/SetuptoolsDeprecationWarning:/,+1d'"		# depends on Python version and is useless
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(Ran [0-9]\{1,\} tests\{0,1\}\) in .*$$/\1/'"	# delete timing from test results
+
+COMPONENT_TEST_DIR = $(@D)$(COMPONENT_SUBDIR:%=/%)
 
 # test the built source
 $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
@@ -507,7 +509,7 @@ $(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_$(MK_BITS)) $(BUILD_DIR)/META.de
 
 # Generate raw lists of test dependencies per Python version
 COMPONENT_POST_INSTALL_ACTION += \
-	cd $(@D) ; \
+	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 	for f in $(TEST_REQUIREMENTS) ; do \
 		$(CAT) $$f ; \
 	done | $(WS_TOOLS)/python-resolve-deps \
