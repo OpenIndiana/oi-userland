@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		botan
 COMPONENT_VERSION=	2.19.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY= 	Crypto and TLS for C++11
 COMPONENT_PROJECT_URL=	https://botan.randombit.net/
 COMPONENT_SRC=		Botan-$(COMPONENT_VERSION)
@@ -49,7 +49,11 @@ CONFIGURE_SCRIPT= $(SOURCE_DIR)/configure.py
 # ERROR:root:Unhandled option(s): CC= CXX= F77= FC= CFLAGS= CXXFLAGS= FFLAGS= FCFLAGS= LDFLAGS= PKG_CONFIG_PATH=
 CONFIGURE_OPTIONS= 
 CONFIGURE_OPTIONS+= --prefix=/usr
+ifeq ($(strip $(MACH)),i386)
 CONFIGURE_OPTIONS+= --cpu=x86_64
+else
+CONFIGURE_OPTIONS+= --cpu=sparc64
+endif
 CONFIGURE_OPTIONS+= --docdir=/usr/share/doc
 CONFIGURE_OPTIONS+= --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+= --includedir=/usr/include
