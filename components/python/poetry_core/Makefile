@@ -19,17 +19,36 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		poetry_core
-HUMAN_VERSION =			1.5.2
+HUMAN_VERSION =			1.6.0
 COMPONENT_SUMMARY =		poetry_core - Poetry PEP 517 Build Backend
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/poetry-core
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/01/10/dec07a2308b68c5b89432dcc80b0dd8882e45e4c90b5851552bb22247ca7/poetry_core-1.5.2.tar.gz
+	https://github.com/python-poetry/poetry-core/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c6556c3b1ec5b8668e6ef5a4494726bc41d31907339425e194e78a6178436c14
+	sha256:9e2304113e48e3dc91c206fcd5c3ab9a8ad7c94cee2c86d1b4cd826aef53cbb7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
+# Github tarball use different source directory than sdist
+COMPONENT_SRC=poetry-core-$(HUMAN_VERSION)
+
+# Force pytest.  It is not needed for sdist since there is no tox.ini
+TEST_STYLE = pytest
+
 include $(WS_MAKE_RULES)/common.mk
+
+# Testing dependencies for this project are maintained using poetry.  We
+# neither do have poetry packaged yet, nor support listing poetry dependencies
+# without poetry.  For now we just hope all required testing dependencies are
+# installed.
+
+# https://github.com/python-poetry/poetry/issues/7824
+# https://github.com/python-poetry/poetry/issues/7826
+
+# We need to set GIT_DIR to workaround the nasty poetry bug:
+# https://github.com/python-poetry/poetry/issues/5547.
+# Without this some tests (like test_includes_with_inline_table) fails.
+COMPONENT_TEST_ENV += GIT_DIR=$(BUILD_DIR)
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
