@@ -13,11 +13,12 @@
 # Copyright (c) 2013, Igor Kozhukhov <ikozhukhov@gmail.com>.  All rights reserved.
 # Copyright (c) 2020, Andreas Wacknitz
 #
-BUILD_BITS=				32_and_64
+BUILD_BITS=				64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			cppunit
 COMPONENT_VERSION=		1.15.1
+COMPONENT_REVISION=		1
 COMPONENT_FMRI=			developer/cppunit
 COMPONENT_SUMMARY=		Unit Testing Library for C++
 COMPONENT_CLASSIFICATION=Development/C++
