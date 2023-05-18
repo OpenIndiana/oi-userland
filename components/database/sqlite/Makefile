@@ -24,16 +24,15 @@
 
 BUILD_BITS= 64_and_32
 USE_COMMON_TEST_MASTER = no
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
-COMPONENT_VERSION=      3.41.2
-TARBALL_VERSION=		3410200
+COMPONENT_VERSION=      3.42.0
+TARBALL_VERSION=		3420000
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:87191fcecb8b707d9a10edb13607686317d7169c080b9bdc5d39d06358376ccc
+COMPONENT_ARCHIVE_HASH= sha256:38ca56a317be37fb00bd92bc280d9b9209bd4008b297d483c41ec1f6079bfb6d
 COMPONENT_PROJECT_URL=  https://www.sqlite.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/2023/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         database/sqlite-3
@@ -78,6 +77,7 @@ CONFIGURE_OPTIONS	+= --enable-update-limit
 CONFIGURE_OPTIONS	+= --enable-rtree
 CONFIGURE_OPTIONS	+= --enable-threadsafe 
 CONFIGURE_OPTIONS	+= --enable-shared
+CONFIGURE_OPTIONS	+= --enable-dynamic-extensions
 
 CONFIGURE_ENV.64 += TCLLIBDIR=$(USRLIBDIR)/tcl8.6/sqlite3/$(MACH64)
 
@@ -89,17 +89,17 @@ COMPONENT_INSTALL_ENV += PATH=$(PATH)
 COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP) $(SOURCE_DIR)/sqlite3.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/
 
 COMPONENT_TEST_TARGETS = test
+
 # remove clutter and timings from test results:
-COMPONENT_TEST_TRANSFORMS += \
-	' -n ' \
+COMPONENT_TEST_TRANSFORMS = \
 	' -e "s/[0-9]* ms//" ' \
 	' -e "s/ in [0-9]*\.[0-9]* seconds//" ' \
 	' -e "s/[0-9]* microseconds per iteration//" ' \
+	' -n ' \
 	' -e "/^fuzzcheck/p" ' \
 	' -e "/^sessionfuzz/p" ' \
 	' -e "/^Time/p" ' \
-	' -e "/^Query/p" ' \
-	' -e "/No /p" ' 
+	' -e "/^Query/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libedit
