@@ -17,17 +17,17 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         double-conversion
-COMPONENT_VERSION=      3.2.1
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=      3.3.0
 COMPONENT_SUMMARY=      binary-decimal and decimal-binary routines for IEEE doubles
 COMPONENT_PROJECT_URL=  https://github.com/google/double-conversion
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:e40d236343cad807e83d192265f139481c51fc83a1c49e406ac6ce0a0ba7cd35
+COMPONENT_ARCHIVE_HASH=	sha256:04ec44461850abbf33824da84978043b22554896b552c5fd11a9c5ae4b4d296e
 COMPONENT_ARCHIVE_URL=	https://github.com/google/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=			library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=		BSD 3-Clause
+COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
