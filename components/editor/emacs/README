@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2008, 2022, Oracle and/or its affiliates.
+# Copyright (c) 2008, 2023, Oracle and/or its affiliates.
 #
 
 NAME:             emacs
@@ -37,8 +37,23 @@ information needed to understand how this component is put together.
 - We patch the following changes into the emacs sources. Additional
   details are found in the comment at the top of each patch.
 
+        emacsclient1.patch
+        emacsclient2.patch
+        emacsclient3.patch
+
+            Versions of Emacs through 28.2 are vulnerable to CVE-2023-27985,
+            and CVE-2023-27986. These three patches cumulatively apply the
+            fixes from the Emacs 29.1 repository to emacsclient-mail.desktop
+            emacsclient.desktop. These patches come from the upstream git
+            repository, and can be removed when we move to Emacs 29 or newer.
+
         etags.patch
             Versions of Emacs through 28.2 are vulnerable to CVE-2022-45939.
+            This patch comes from the upstream git repository, and can
+            be removed when we move to Emacs 29 or newer.
+
+        etags2.patch
+            Versions of Emacs through 28.2 are vulnerable to CVE-2022-48337.
             This patch comes from the upstream git repository, and can
             be removed when we move to Emacs 29 or newer.
 
@@ -53,6 +68,11 @@ information needed to understand how this component is put together.
             The safest policy is to do a brute force search of the entire
             source tree for defvar of find-program, and to fix them all.
 
+        htmlfontify.patch
+            Versions of Emacs through 28.2 are vulnerable to CVE-2022-48339.
+            This patch comes from the upstream git repository, and can
+            be removed when we move to Emacs 29 or newer.
+
         mediator.patch
             Modify the way emacs searches for its dump files in the PATH_EXEC
             directory so that it works correctly when emacs is run via the
@@ -60,6 +80,11 @@ information needed to understand how this component is put together.
             background behind this change.
 
             https://lists.gnu.org/archive/html/emacs-devel/2021-04/msg00875.html
+
+        ruby-mode.patch
+            Versions of Emacs through 28.2 are vulnerable to CVE-2022-48338.
+            This patch comes from the upstream git repository, and can
+            be removed when we move to Emacs 29 or newer.
 
 - If you patch configure.ac, as we did with emacs 24.5 for jpeg6b_config.patch,
   then you need a COMPONENT_PREP_ACTION definition in the Makefile in order
