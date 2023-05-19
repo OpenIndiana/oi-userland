@@ -28,11 +28,9 @@
 
 include ../../../make-rules/shared-macros.mk
 
-# unfortunatly I see -m32 in CFLAGS despite that BUILD_BITS = 64 is set
-BITS = 64
-
 COMPONENT_NAME =	thunderbird
 COMPONENT_VERSION =	102.11.0
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -133,9 +131,6 @@ LD_Z_IGNORE=
 # missing symbols from gtk3 during Firefox start
 LD_B_DIRECT=
 
-# SPARC build seems to require more open files for "Reticulating splines" phase
-ENV := ulimit -n 16384; $(ENV)
-
 LANG_FILES=$(addsuffix .xpi,$(LANG_LIST))
 
 CLEAN_PATHS += $(LANG_FILES)
@@ -147,16 +142,12 @@ download prep:: $(LANG_FILES)
 
 CONFIGURE_OPTIONS = CC=$(CC) CXX=$(CXX)
 
-ENV +=  CFLAGS="$(CFLAGS)"
-ENV +=  CXXFLAGS="$(CXXFLAGS)"
-ENV += PKG_CONFIG=/usr/bin/amd64/pkg-config
-ENV += RUSTUP_HOME=$(RUSTUP_HOME)
-ENV += CARGO_HOME=$(CARGO_HOME)
+CONFIGURE_ENV += RUSTUP_HOME=$(RUSTUP_HOME)
+CONFIGURE_ENV += CARGO_HOME=$(CARGO_HOME)
+COMPONENT_BUILD_ENV += RUSTUP_HOME=$(RUSTUP_HOME)
+COMPONENT_BUILD_ENV += CARGO_HOME=$(CARGO_HOME)
 
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
-
-CONFIGURE_ENV = $(ENV)
-COMPONENT_BUILD_ENV =   $(ENV)
 
 # because we touched old-configure.in and js/src/old-configure.in
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
@@ -172,7 +163,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
         rustup install $(RUST_VERSION); \
         rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
         rustup show; \
-        cargo install --root=$(CARGO_HOME) --vers 0.24.2 cbindgen; \
+	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.24.2 cbindgen; \
 	);
 
 # COMPONENT_POST_BUILD_ACTION = \
