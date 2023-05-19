@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= avahi
 COMPONENT_VERSION= 0.7
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= Avahi client and bridge to pkg://service/network/dns/mdns
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -29,8 +29,6 @@ COMPONENT_ARCHIVE_URL= \
   https://github.com/lathiat/avahi/releases/download/v0.7/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://avahi.org
 COMPONENT_CLASSIFICATION = Applications/Internet
-
-PYTHON_VERSION = 3.5
 
 TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -45,26 +43,27 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( cp -r $(SOURCE_DIR)/* $(@D) )
 
 LDFLAGS += -ldns_sd
 
-CONFIGURE_OPTIONS+= --with-avahi-user=daemon
-CONFIGURE_OPTIONS+= --with-avahi-group=other
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --localstatedir=/var
-CONFIGURE_OPTIONS+= --with-distro=none
-CONFIGURE_OPTIONS+= --disable-gtk3
-CONFIGURE_OPTIONS+= --disable-qt3
-CONFIGURE_OPTIONS+= --disable-qt4
-CONFIGURE_OPTIONS+= --disable-mono
-CONFIGURE_OPTIONS+= --disable-monodoc
-CONFIGURE_OPTIONS+= --enable-tests
-CONFIGURE_OPTIONS+= --disable-compat-howl
-CONFIGURE_OPTIONS+= --disable-compat-libdns_sd
-CONFIGURE_OPTIONS+= --disable-autoipd
-CONFIGURE_OPTIONS+= --disable-gdbm
-CONFIGURE_OPTIONS+= --enable-dbm
-CONFIGURE_OPTIONS.32+= --disable-pygobject
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --with-avahi-user=daemon
+CONFIGURE_OPTIONS += --with-avahi-group=other
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --with-distro=none
+CONFIGURE_OPTIONS += --disable-gtk3
+CONFIGURE_OPTIONS += --disable-qt3
+CONFIGURE_OPTIONS += --disable-qt4
+CONFIGURE_OPTIONS += --disable-mono
+CONFIGURE_OPTIONS += --disable-monodoc
+CONFIGURE_OPTIONS += --enable-tests
+CONFIGURE_OPTIONS += --disable-compat-howl
+CONFIGURE_OPTIONS += --disable-compat-libdns_sd
+CONFIGURE_OPTIONS += --disable-autoipd
+CONFIGURE_OPTIONS += --disable-gdbm
+CONFIGURE_OPTIONS += --enable-dbm
+CONFIGURE_OPTIONS.32 += --disable-pygobject
 
-CONFIGURE_ENV	+= XGETTEXT=/usr/gnu/bin/xgettext
-CONFIGURE_ENV	+= MSGFMT=/usr/gnu/bin/msgfmt
+CONFIGURE_ENV += XGETTEXT=/usr/gnu/bin/xgettext
+CONFIGURE_ENV += MSGFMT=/usr/gnu/bin/msgfmt
 
 CONFIGURE_ENV += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
@@ -78,18 +77,17 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 REQUIRED_PACKAGES += text/xmltoman
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += library/python/python-dbus
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libdaemon
-REQUIRED_PACKAGES += library/python/pygobject-3-35
-REQUIRED_PACKAGES += library/python/python-dbus-35
-REQUIRED_PACKAGES += runtime/python-35
 REQUIRED_PACKAGES += service/network/dns/mdns
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/dbus
 REQUIRED_PACKAGES += system/library/libdbus
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
