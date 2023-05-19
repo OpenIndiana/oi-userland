@@ -15,12 +15,10 @@
 
 BUILD_BITS= 64
 BUILD_STYLE= cmake
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		remmina
-COMPONENT_VERSION=	1.4.29
-#COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.4.30
 COMPONENT_SUMMARY=	Remmina remote desktop client
 COMPONENT_PROJECT_URL=	https://remmina.org
 COMPONENT_FMRI=		desktop/remote-desktop/remmina
@@ -28,8 +26,7 @@ COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SRC_NAME=	Remmina
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:cdaa1cf400a4b2c18c6a524288bc3a93eb3ec90535577541ffd6b018962edba5
+COMPONENT_ARCHIVE_HASH= sha256:df212a4243663328588093fd4936ba771d080bf373ea82c3bea7de5fd56d119c
 COMPONENT_ARCHIVE_URL=  https://github.com/FreeRDP/Remmina/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -47,6 +44,7 @@ CMAKE_OPTIONS += -DGETTEXT_MSGMERGE_EXECUTABLE=/usr/bin/gmsgmerge
 CMAKE_OPTIONS += -DGETTEXT_MSGFMT_EXECUTABLE=/usr/bin/gmsgfmt
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += desktop/library/libayatana-appindicator
 REQUIRED_PACKAGES += desktop/remote-desktop/freerdp
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -59,6 +57,5 @@ REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/libsodium
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt
