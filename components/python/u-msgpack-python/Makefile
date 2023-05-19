@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		u-msgpack-python
-HUMAN_VERSION =			2.7.2
+HUMAN_VERSION =			2.8.0
 COMPONENT_SUMMARY =		u-msgpack-python - A portable, lightweight MessagePack serializer and deserializer written in pure Python.
 COMPONENT_PROJECT_URL =		https://github.com/vsergeev/u-msgpack-python
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/44/a7/1cb4f059bbf72ea24364f9ba3ef682725af09969e29df988aa5437f0044e/u-msgpack-python-2.7.2.tar.gz
+	https://files.pythonhosted.org/packages/36/9d/a40411a475e7d4838994b7f6bcc6bfca9acc5b119ce3a7503608c4428b49/u-msgpack-python-2.8.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e86f7ac6aa0ef4c6c49f004b4fd435bce99c23e2dd5d73003f3f9816024c2bd8
+	sha256:b801a83d6ed75e6df41e44518b4f2a9c221dc2da4bcd5380e3a0feda520bc61a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
