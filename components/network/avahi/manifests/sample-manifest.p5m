@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2020 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -94,28 +95,22 @@ file path=usr/lib/$(MACH64)/avahi/service-types.db.dir
 file path=usr/lib/$(MACH64)/avahi/service-types.db.pag
 file path=usr/lib/$(MACH64)/girepository-1.0/Avahi-0.6.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/AvahiCore-0.6.typelib
-file path=usr/lib/$(MACH64)/libavahi-client.a
 link path=usr/lib/$(MACH64)/libavahi-client.so target=libavahi-client.so.3.2.9
 link path=usr/lib/$(MACH64)/libavahi-client.so.3 target=libavahi-client.so.3.2.9
 file path=usr/lib/$(MACH64)/libavahi-client.so.3.2.9
-file path=usr/lib/$(MACH64)/libavahi-common.a
 link path=usr/lib/$(MACH64)/libavahi-common.so target=libavahi-common.so.3.5.3
 link path=usr/lib/$(MACH64)/libavahi-common.so.3 target=libavahi-common.so.3.5.3
 file path=usr/lib/$(MACH64)/libavahi-common.so.3.5.3
-file path=usr/lib/$(MACH64)/libavahi-core.a
 link path=usr/lib/$(MACH64)/libavahi-core.so target=libavahi-core.so.7.0.2
 link path=usr/lib/$(MACH64)/libavahi-core.so.7 target=libavahi-core.so.7.0.2
 file path=usr/lib/$(MACH64)/libavahi-core.so.7.0.2
-file path=usr/lib/$(MACH64)/libavahi-glib.a
 link path=usr/lib/$(MACH64)/libavahi-glib.so target=libavahi-glib.so.1.0.2
 link path=usr/lib/$(MACH64)/libavahi-glib.so.1 target=libavahi-glib.so.1.0.2
 file path=usr/lib/$(MACH64)/libavahi-glib.so.1.0.2
-file path=usr/lib/$(MACH64)/libavahi-gobject.a
 link path=usr/lib/$(MACH64)/libavahi-gobject.so target=libavahi-gobject.so.0.0.5
 link path=usr/lib/$(MACH64)/libavahi-gobject.so.0 \
     target=libavahi-gobject.so.0.0.5
 file path=usr/lib/$(MACH64)/libavahi-gobject.so.0.0.5
-file path=usr/lib/$(MACH64)/libavahi-ui.a
 link path=usr/lib/$(MACH64)/libavahi-ui.so target=libavahi-ui.so.0.1.4
 link path=usr/lib/$(MACH64)/libavahi-ui.so.0 target=libavahi-ui.so.0.1.4
 file path=usr/lib/$(MACH64)/libavahi-ui.so.0.1.4
@@ -126,27 +121,23 @@ file path=usr/lib/$(MACH64)/pkgconfig/avahi-gobject.pc
 file path=usr/lib/$(MACH64)/pkgconfig/avahi-ui.pc
 file path=usr/lib/avahi/service-types.db.dir
 file path=usr/lib/avahi/service-types.db.pag
-file path=usr/lib/libavahi-client.a
+file path=usr/lib/girepository-1.0/Avahi-0.6.typelib
+file path=usr/lib/girepository-1.0/AvahiCore-0.6.typelib
 link path=usr/lib/libavahi-client.so target=libavahi-client.so.3.2.9
 link path=usr/lib/libavahi-client.so.3 target=libavahi-client.so.3.2.9
 file path=usr/lib/libavahi-client.so.3.2.9
-file path=usr/lib/libavahi-common.a
 link path=usr/lib/libavahi-common.so target=libavahi-common.so.3.5.3
 link path=usr/lib/libavahi-common.so.3 target=libavahi-common.so.3.5.3
 file path=usr/lib/libavahi-common.so.3.5.3
-file path=usr/lib/libavahi-core.a
 link path=usr/lib/libavahi-core.so target=libavahi-core.so.7.0.2
 link path=usr/lib/libavahi-core.so.7 target=libavahi-core.so.7.0.2
 file path=usr/lib/libavahi-core.so.7.0.2
-file path=usr/lib/libavahi-glib.a
 link path=usr/lib/libavahi-glib.so target=libavahi-glib.so.1.0.2
 link path=usr/lib/libavahi-glib.so.1 target=libavahi-glib.so.1.0.2
 file path=usr/lib/libavahi-glib.so.1.0.2
-file path=usr/lib/libavahi-gobject.a
 link path=usr/lib/libavahi-gobject.so target=libavahi-gobject.so.0.0.5
 link path=usr/lib/libavahi-gobject.so.0 target=libavahi-gobject.so.0.0.5
 file path=usr/lib/libavahi-gobject.so.0.0.5
-file path=usr/lib/libavahi-ui.a
 link path=usr/lib/libavahi-ui.so target=libavahi-ui.so.0.1.4
 link path=usr/lib/libavahi-ui.so.0 target=libavahi-ui.so.0.1.4
 file path=usr/lib/libavahi-ui.so.0.1.4
@@ -155,8 +146,8 @@ file path=usr/lib/pkgconfig/avahi-core.pc
 file path=usr/lib/pkgconfig/avahi-glib.pc
 file path=usr/lib/pkgconfig/avahi-gobject.pc
 file path=usr/lib/pkgconfig/avahi-ui.pc
-file path=usr/lib/python3.5/vendor-packages/avahi/ServiceTypeDatabase.py
-file path=usr/lib/python3.5/vendor-packages/avahi/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/avahi/ServiceTypeDatabase.py
+file path=usr/lib/python$(PYVER)/vendor-packages/avahi/__init__.py
 file path=usr/sbin/$(MACH64)/avahi-daemon
 file path=usr/sbin/$(MACH64)/avahi-dnsconfd
 file path=usr/sbin/avahi-daemon
