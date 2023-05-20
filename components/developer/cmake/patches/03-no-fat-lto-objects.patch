@@ -1,0 +1,24 @@
+Our gcc does not support -fno-fat-lto-objects:
+
+$ /usr/gcc/10/bin/gcc -flto=auto -fno-fat-lto-objects SOURCE.c
+cc1plus: error: '-fno-fat-lto-objects' are supported only with linker plugin
+$
+
+See also: https://gitlab.kitware.com/cmake/cmake/-/issues/23136
+
+--- cmake-3.26.4/Modules/Compiler/GNU.cmake.orig
++++ cmake-3.26.4/Modules/Compiler/GNU.cmake
+@@ -92,13 +92,6 @@
+       list(APPEND __lto_flags -flto)
+     endif()
+ 
+-    if(NOT CMAKE_${lang}_COMPILER_VERSION VERSION_LESS 4.7)
+-      # '-ffat-lto-objects' introduced since GCC 4.7:
+-      # * https://gcc.gnu.org/onlinedocs/gcc-4.6.4/gcc/Option-Summary.html (no)
+-      # * https://gcc.gnu.org/onlinedocs/gcc-4.7.4/gcc/Option-Summary.html (yes)
+-      list(APPEND __lto_flags -fno-fat-lto-objects)
+-    endif()
+-
+     set(CMAKE_${lang}_COMPILE_OPTIONS_IPO ${__lto_flags})
+ 
+     # Need to use version of 'ar'/'ranlib' with plugin support.

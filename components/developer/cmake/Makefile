@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         cmake
 COMPONENT_MAJOR_VERSION=3.26
 COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_DESCRIPTION= \
 CMake is a family of tools designed to build, test and package software. \
