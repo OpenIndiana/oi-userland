@@ -15,18 +15,17 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		scikit_build
-HUMAN_VERSION =			0.17.5
+HUMAN_VERSION =			0.17.6
 COMPONENT_SUMMARY =		scikit_build - Improved build system generator for Python C/C++/Fortran/Cython extensions
 COMPONENT_PROJECT_URL =		https://github.com/scikit-build/scikit-build
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f8/23/a07369d9095648b61a302cd45c9661ef2d92fe546e0eb28a467c66c7c1d3/scikit_build-0.17.5.tar.gz
+	https://files.pythonhosted.org/packages/85/05/dc8f28b19f3f06b8a157a47f01f395444f0bae234c4d44674453fa7eeae3/scikit_build-0.17.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:76856e7631d9e8887a7aa71913d5f184a6177246225391af96ce4801d89fa254
+	sha256:b51a51a36b37c42650994b5047912f59b22e3210b23e321f287611f9ef6e5c9d
 COMPONENT_LICENSE =		BSD-2-Clause OR MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,14 +41,17 @@ PYTEST_ADDOPTS += -m 'not nosetuptoolsscm'
 # pep518 tests are trying to install numpy using pip, but that fails during
 # numpy compilation.
 PYTEST_ADDOPTS += -k 'not pep518'
+# Testing fails to start with black plugin
+PYTEST_ADDOPTS += -p no:black
+# Testing fails with cov plugin
+PYTEST_ADDOPTS += -p no:cov
+# https://github.com/scikit-build/scikit-build/issues/1006
+PYTEST_ADDOPTS += -p no:mypy
 
 # Testing needs to compile some C++ sources
 COMPONENT_TEST_ENV += CXX="$(CXX)"
 # and it also needs fortran
-COMPONENT_TEST_ENV += FC="$(FC.gcc.$(BITS))"
-
-# Python 3.7 test results contains process pids
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(subprocess \)[0-9]\{1,\}\( is still running\)/\1\$$(PID)\2/'"
+COMPONENT_TEST_ENV += FC="$(FC)"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/distro
@@ -59,6 +61,5 @@ PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
