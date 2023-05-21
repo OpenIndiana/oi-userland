@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         fmt
 COMPONENT_VERSION=      9.1.0
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      fmt is an open-source formatting library providing a fast and safe alternative to C stdio and C++ iostreams.
 COMPONENT_PROJECT_URL=  https://github.com/fmtlib/$(COMPONENT_NAME)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -39,6 +39,9 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "s/Passed.*$$/Passed/" ' \
 	'-e "/^Test project/d" ' \
 	'-e "/^Total Test/d" '
+
+# SPARC needs math library.
+REQUIRED_PACKAGES += system/library/math
 
 CMAKE_OPTIONS += -DFMT_MASTER_PROJECT=ON
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
