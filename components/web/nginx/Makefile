@@ -12,22 +12,22 @@
 # Copyright 2012-2013, EveryCity Ltd. All rights reserved.
 #
 
-BUILD_BITS = 64
-#USE_OPENSSL11= yes
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nginx
-COMPONENT_VERSION=	1.22.1
+COMPONENT_VERSION=	1.24.0
 COMPONENT_SUMMARY=	Nginx Webserver
 COMPONENT_PROJECT_URL=	https://nginx.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9ebb333a9e82b952acd3e2b4aeb1d4ff6406f72491bab6cd9fe69f0dea737f31
+COMPONENT_ARCHIVE_HASH=	sha256:77a2541637b92a621e3ee76776c8b7b40cf6d707e69ba53a940283e30ff2f55d
 COMPONENT_ARCHIVE_URL=	https://nginx.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=	web/server/nginx
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	LICENSE
 
 TEST_TARGET= $(NO_TESTS)
 
@@ -35,10 +35,11 @@ NGX_FANCYINDEX_VERSION= 0.5.2
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS =  --prefix=/etc/nginx
+CONFIGURE_OPTIONS = --prefix=/etc/nginx
 CONFIGURE_OPTIONS += --sbin-path=/usr/sbin/nginx
 CONFIGURE_OPTIONS += --with-ld-opt=$(LD_BITS)
 CONFIGURE_OPTIONS += --with-cc="$(CC) $(CC_BITS)"
+#CONFIGURE_OPTIONS += --with-openssl=$(OPENSSL_LIBDIR)
 CONFIGURE_OPTIONS += --conf-path=/etc/nginx/nginx.conf
 CONFIGURE_OPTIONS += --http-log-path=/var/nginx/logs/access_log
 CONFIGURE_OPTIONS += --error-log-path=/var/nginx/logs/error_log
