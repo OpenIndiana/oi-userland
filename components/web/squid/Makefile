@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
-# Copyright (c) 2022, Friedrich Kink
+# Copyright (c) 2023, Friedrich Kink
 #
 
 BUILD_BITS=             64
@@ -30,7 +30,7 @@ USE_OPENSSL11=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      5.7
+COMPONENT_VERSION=      5.9
 COMPONENT_SUMMARY=      Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
 #No https connection available at all
@@ -38,7 +38,10 @@ COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v5/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:6b0753aaba4c9c4efd333e67124caecf7ad6cc2d38581f19d2f0321f5b7ecd81
+COMPONENT_ARCHIVE_HASH= sha256:3fe5c2007da2757446af91b6ef974f154b208120a9a39396ea681e5c4abb04b5
+COMPONENT_ARCHIVE_1=    $(COMPONENT_NAME)-langpack-20230225.tar.gz
+COMPONENT_ARCHIVE_URL_1=$(COMPONENT_PROJECT_URL)Versions/langpack/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_HASH_1= sha256:1532b796f20a65b9f4e7040306172477f7bbaacfce3c5f402fe1a5f9464b92be
 COMPONENT_FMRI=         web/proxy/squid
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_LICENSE=      GPLv2
@@ -48,7 +51,11 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH   = $(PATH.gnu)
 CFLAGS += $(CPP_LARGEFILES)
-CXXFLAGS += -Wno-unknown-pragmas
+# otherwise esi/Libxml2Parser.cc will fail with 'void htmlDefaultSAXHandlerInit()' is deprecated
+CXXFLAGS += -Wno-error=deprecated-declarations -std=c++11
+
+#incorporate official translations
+COMPONENT_PREP_ACTION=	( cd $(COMPONENT_SRC)/errors; $(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1))
 
 # Squid has own prefix
 CONFIGURE_PREFIX =	/usr/squid
@@ -56,7 +63,7 @@ CONFIGURE_PREFIX =	/usr/squid
 CONFIGURE_BINDIR = $(CONFIGURE_PREFIX)/bin
 CONFIGURE_SBINDIR = $(CONFIGURE_PREFIX)/sbin
 
-CONFIGURE_OPTIONS += LDFLAGS="-lldap_r"
+CONFIGURE_OPTIONS += LDFLAGS="-lldap-2.6"
 CONFIGURE_OPTIONS += CPPFLAGS="-I/usr/include/openldap"
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/libexec
 CONFIGURE_OPTIONS += --localstatedir=/var/squid
@@ -105,6 +112,10 @@ CONFIGURE_OPTIONS += --enable-useragent-log
 CONFIGURE_OPTIONS += --enable-log-daemon-helpers='DB,file'
 CONFIGURE_OPTIONS += --enable-x-accelerator-vary
 CONFIGURE_OPTIONS += --enable-translation
+#CONFIGURE_OPTIONS += --enable-gnuregex
+CONFIGURE_OPTIONS += --enable-htpc
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/squid
+
 CONFIGURE_OPTIONS += --with-aio
 CONFIGURE_OPTIONS += --with-tbd
 CONFIGURE_OPTIONS += --with-aufs-threads=8
@@ -114,6 +125,7 @@ CONFIGURE_OPTIONS += --with-pthreads
 # the following option is not documented but without kerberos does not work
 CONFIGURE_OPTIONS += --with-solaris-krb5
 CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --without-libcap
 CONFIGURE_OPTIONS += --without-heimdal-krb5
 CONFIGURE_OPTIONS += --without-mit-krb5
 CONFIGURE_OPTIONS += --without-gnugss
@@ -127,15 +139,16 @@ CONFIGURE_OPTIONS += --enable-wccpv2
 #   http://wiki.squid-cache.org/KnowledgeBase/IllegalInstructionError
 CONFIGURE_OPTIONS += --disable-arch-native
 
+COMPONENT_TEST_TARGETS = -k check
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/=====/p" ' \
 	'-e "/squidconf/d" ' \
-	'-e "/TOTAL/p" ' \
+	'-e "/^\# TOTAL/p" ' \
 	'-e "/SKIP/p" ' \
 	'-e "/PASS/p" ' \
 	'-e "/FAIL/p" ' \
-	'-e "/^\# ERROR/p" '
+	'-e "/ERROR/p" '
 
 # Build dependencies (manually added)
 REQUIRED_PACKAGES += developer/cppunit
