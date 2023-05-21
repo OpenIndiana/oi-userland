@@ -1,0 +1,124 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, 2020, Oracle and/or its affiliates. All rights reserved.
+#
+<include manifests/sample-manifest.p5m>
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability "pass-through uncommitted">
+<transform link mediator=openssl -> default mediator-implementation openssl>
+<transform link mediator=openssl -> default mediator-version 3.1>
+
+set name=pkg.depend.runpath value=$PKGDEPEND_RUNPATH:/usr/openssl/3.1/lib:/usr/openssl/3.1/lib/$(MACH64)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Fix Dependency detection not working for zlib for whatever reason
+# probalb pkgdepend being a princess again
+<transform file path=usr/openssl/3.1/lib/$(MACH64)/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/lib/64/libz.so.1">
+<transform file path=usr/openssl/3.1/lib/$(MACH64)/libcrypto.so.* -> add pkg.depend.bypass-generate "lib/64/libz.so.1">
+<transform file path=usr/openssl/3.1/lib/$(MACH64)/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/openssl/3.1/lib/amd64/libz.so.1">
+<transform file path=usr/openssl/3.1/lib/$(MACH64)/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/openssl/3.1/lib/libz.so.1">
+<transform file path=usr/openssl/3.1/lib/$(MACH64)/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/gcc/10/lib/amd64/libz.so.1">
+<transform file path=usr/openssl/3.1/lib/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/lib/libz.so.1">
+<transform file path=usr/openssl/3.1/lib/libcrypto.so.* -> add pkg.depend.bypass-generate "lib/libz.so.1">
+<transform file path=usr/openssl/3.1/lib/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/openssl/3.1/lib/libz.so.1">
+<transform file path=usr/openssl/3.1/lib/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/openssl/3.1/lib/amd64/libz.so.1">
+<transform file path=usr/openssl/3.1/lib/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/gcc/10/lib/libz.so.1">
+
+depend fmri=library/zlib type=require
+
+### Basic directories, links, and a configuration file.
+link path=etc/openssl/3.1/certs target=../certs pkg.linted.userland.action002.0=true
+<transform path=etc/openssl/3.1/openssl.cnf -> add group sys>
+<transform path=etc/openssl/3.1/openssl.cnf -> add mode 0644>
+<transform path=etc/openssl/3.1/openssl.cnf -> add preserve true>
+dir  path=etc/openssl/3.1/private group=sys mode=0700
+# Mediated link
+link path=etc/openssl/default target=3.1 mediator=openssl
+
+### Libraries
+# Links
+link path=lib/$(MACH64)/libcrypto.so.3 target=../../usr/openssl/3.1/lib/$(MACH64)/libcrypto.so.3
+link path=lib/$(MACH64)/libssl.so.3 target=../../usr/openssl/3.1/lib/$(MACH64)/libssl.so.3
+link path=lib/libcrypto.so.3 target=../usr/openssl/3.1/lib/libcrypto.so.3
+link path=lib/libssl.so.3 target=../usr/openssl/3.1/lib/libssl.so.3
+link path=usr/lib/$(MACH64)/libcrypto.so.3 target=../../openssl/3.1/lib/$(MACH64)/libcrypto.so.3
+link path=usr/lib/$(MACH64)/libssl.so.3 target=../../openssl/3.1/lib/$(MACH64)/libssl.so.3
+link path=usr/lib/libcrypto.so.3 target=../openssl/3.1/lib/libcrypto.so.3
+link path=usr/lib/libssl.so.3 target=../openssl/3.1/lib/libssl.so.3
+# Mediated links in /lib
+link path=lib/$(MACH64)/libcrypto.so target=libcrypto.so.3 mediator=openssl
+link path=lib/$(MACH64)/libssl.so target=libssl.so.3 mediator=openssl
+link path=lib/libcrypto.so target=libcrypto.so.3 mediator=openssl
+link path=lib/libssl.so target=libssl.so.3 mediator=openssl
+# Mediated links in /usr/lib
+link path=usr/lib/$(MACH64)/libcrypto.so target=libcrypto.so.3 mediator=openssl
+link path=usr/lib/$(MACH64)/libssl.so target=libssl.so.3 mediator=openssl
+link path=usr/lib/libcrypto.so target=libcrypto.so.3 mediator=openssl
+link path=usr/lib/libssl.so target=libssl.so.3 mediator=openssl
+
+# OpenSSL binaries
+<transform file path=usr/openssl/3.1/bin/.* -> default mode 0555>
+<transform file path=usr/openssl/3.1/bin/.* -> default group bin>
+<transform file path=usr/openssl/3.1/bin/.* -> default owner root>
+file $(MACH32)/apps/openssl path=usr/openssl/3.1/bin/$(MACH32)/openssl
+file etc/openssl/3.1/misc/CA.pl path=usr/openssl/3.1/bin/CA.pl
+# Compatiblity link
+link path=usr/openssl/3.1/lib/CA.pl target=../bin/CA.pl
+
+# Mediator links for the tools 
+link path=usr/bin/$(MACH32)/openssl \
+    target=../../openssl/3.1/bin/$(MACH32)/openssl mediator=openssl
+link path=usr/bin/openssl target=../openssl/3.1/bin/openssl \
+    mediator=openssl
+link path=usr/bin/c_rehash target=../openssl/3.1/bin/c_rehash \
+    mediator=openssl
+link path=usr/bin/CA.pl target=../openssl/3.1/bin/CA.pl \
+    mediator=openssl
+
+# Drop static libraries
+<transform file path=.+/lib/.+\.a$ -> drop>
+
+# Header files
+link path=usr/include/openssl target=../openssl/3.1/include/openssl mediator=openssl
+
+# Add symlink to subdirectories for compatibilty
+link path=usr/openssl/3.1/lib/32 target=.
+link path=usr/openssl/3.1/lib/64 target=$(MACH64)
+
+# Mediated pkg-config files links
+link path=usr/lib/$(MACH64)/pkgconfig/libcrypto.pc \
+	target=../../../openssl/3.1/lib/$(MACH64)/pkgconfig/libcrypto.pc mediator=openssl
+link path=usr/lib/$(MACH64)/pkgconfig/libssl.pc \
+	target=../../../openssl/3.1/lib/$(MACH64)/pkgconfig/libssl.pc mediator=openssl
+link path=usr/lib/$(MACH64)/pkgconfig/openssl.pc \
+	target=../../../openssl/3.1/lib/$(MACH64)/pkgconfig/openssl.pc mediator=openssl
+link path=usr/lib/pkgconfig/libcrypto.pc \
+	target=../../openssl/3.1/lib/pkgconfig/libcrypto.pc mediator=openssl
+link path=usr/lib/pkgconfig/libssl.pc \
+	target=../../openssl/3.1/lib/pkgconfig/libssl.pc mediator=openssl
+link path=usr/lib/pkgconfig/openssl.pc \
+	target=../../openssl/3.1/lib/pkgconfig/openssl.pc mediator=openssl
+
+# Force a dependency on the Perl runtime. This is needed because of the CA.pl
+# and c_rehash scripts.
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/bin
