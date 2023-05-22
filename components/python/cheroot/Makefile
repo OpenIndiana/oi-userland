@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cheroot
-HUMAN_VERSION =			9.0.0
+HUMAN_VERSION =			10.0.0
 COMPONENT_SUMMARY =		cheroot - Highly-optimized, pure-python HTTP server
 COMPONENT_PROJECT_URL =		https://cheroot.cherrypy.dev
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8c/e7/8e6387d59a352c5799e917a23e7b76771a8bb97322c1ce7e42934d0066c3/cheroot-9.0.0.tar.gz
+	https://files.pythonhosted.org/packages/08/7c/95c154177b16077de0fec1b821b0d8b3df2b59c5c7b3575a9c1bf52a437e/cheroot-10.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3d47ad9ee19ecbec144b4758399036692fdbf67a40b96eef1fb1454367b3d338
+	sha256:59c4a1877fef9969b3c3c080caaaf377e2780919437853fc0d32a9df40b311f0
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
@@ -38,7 +38,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm-git-archive
-PYTHON_REQUIRED_PACKAGES += library/python/six
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-context
@@ -47,6 +47,7 @@ TEST_REQUIRED_PACKAGES.python += library/python/portend
 TEST_REQUIRED_PACKAGES.python += library/python/pyopenssl
 TEST_REQUIRED_PACKAGES.python += library/python/pypytools
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-clarity
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-forked
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
@@ -58,4 +59,3 @@ TEST_REQUIRED_PACKAGES.python += library/python/requests
 TEST_REQUIRED_PACKAGES.python += library/python/requests-toolbelt
 TEST_REQUIRED_PACKAGES.python += library/python/requests-unixsocket
 TEST_REQUIRED_PACKAGES.python += library/python/trustme
-TEST_REQUIRED_PACKAGES.python += library/python/urllib3
