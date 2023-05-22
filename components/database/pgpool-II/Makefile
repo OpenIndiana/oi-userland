@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgpool-II
 COMPONENT_VERSION= 	4.4.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	A connection pooling/replication server for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -35,11 +36,11 @@ PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS += -D__EXTENSIONS__
-#LDFLAGS += -lldap-2.6
+CFLAGS += -D__EXTENSIONS__ -I/usr/include/openldap
 
 COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && autoreconf -fi )
 COMPONENT_PRE_CONFIGURE_ACTION = ( cp -a $(SOURCE_DIR)/* $(@D) )
+COMPONENT_POST_CONFIGURE_ACTION = ( find $(@D) -name Makefile -exec $(GSED) -i -e 's/lldap /lldap-2.6 /' {} \; )
 
 CONFIGURE_BINDIR = $(CONFIGURE_PREFIX)/bin
 
@@ -50,7 +51,7 @@ CONFIGURE_SBINDIR = $(CONFIGURE_PREFIX)/bin
 CONFIGURE_SCRIPT = $(@D)/configure
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc/pgpool-II
-#CONFIGURE_OPTIONS += --with-ldap
+CONFIGURE_OPTIONS += --with-ldap
 CONFIGURE_OPTIONS += --with-pam
 CONFIGURE_OPTIONS += --with-openssl
 CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/$(MACH64)
@@ -70,7 +71,8 @@ REQUIRED_PACKAGES += developer/documentation-tool/openjade
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
