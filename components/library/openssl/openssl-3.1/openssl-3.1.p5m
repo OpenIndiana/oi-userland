@@ -26,24 +26,9 @@
 <transform link mediator=openssl -> default mediator-implementation openssl>
 <transform link mediator=openssl -> default mediator-version 3.1>
 
-set name=pkg.depend.runpath value=$PKGDEPEND_RUNPATH:/usr/openssl/3.1/lib:/usr/openssl/3.1/lib/$(MACH64)
+set name=pkg.depend.runpath value=$PKGDEPEND_RUNPATH:/usr/openssl/3.1/lib:/usr/lib:/usr/openssl/3.1/lib/$(MACH64):/usr/lib/64
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-# Fix Dependency detection not working for zlib for whatever reason
-# probalb pkgdepend being a princess again
-<transform file path=usr/openssl/3.1/lib/$(MACH64)/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/lib/64/libz.so.1">
-<transform file path=usr/openssl/3.1/lib/$(MACH64)/libcrypto.so.* -> add pkg.depend.bypass-generate "lib/64/libz.so.1">
-<transform file path=usr/openssl/3.1/lib/$(MACH64)/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/openssl/3.1/lib/amd64/libz.so.1">
-<transform file path=usr/openssl/3.1/lib/$(MACH64)/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/openssl/3.1/lib/libz.so.1">
-<transform file path=usr/openssl/3.1/lib/$(MACH64)/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/gcc/10/lib/amd64/libz.so.1">
-<transform file path=usr/openssl/3.1/lib/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/lib/libz.so.1">
-<transform file path=usr/openssl/3.1/lib/libcrypto.so.* -> add pkg.depend.bypass-generate "lib/libz.so.1">
-<transform file path=usr/openssl/3.1/lib/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/openssl/3.1/lib/libz.so.1">
-<transform file path=usr/openssl/3.1/lib/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/openssl/3.1/lib/amd64/libz.so.1">
-<transform file path=usr/openssl/3.1/lib/libcrypto.so.* -> add pkg.depend.bypass-generate "usr/gcc/10/lib/libz.so.1">
-
-depend fmri=library/zlib type=require
 
 ### Basic directories, links, and a configuration file.
 link path=etc/openssl/3.1/certs target=../certs pkg.linted.userland.action002.0=true
