@@ -19,17 +19,20 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dogpile.cache
-HUMAN_VERSION =			1.2.0
+HUMAN_VERSION =			1.2.1
 COMPONENT_SUMMARY =		dogpile.cache - A caching front-end based on the Dogpile lock.
 COMPONENT_PROJECT_URL =		https://github.com/sqlalchemy/dogpile.cache
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/01/bc/c6ff56c73fb4d9859a0f3080ed5d454646d6849e8a9aede1f95cb2771de4/dogpile.cache-1.2.0.tar.gz
+	https://files.pythonhosted.org/packages/21/fa/2fec52e38feb6ce89930be010314aa99ff616d6f6dc068cfaa7491ce5f3e/dogpile.cache-1.2.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:47554c860ceb484dd5aef9ff1f88fecb3d4aef6bb92119450f5bcbaa026bbfb1
+	sha256:1d0be0cef90505c9f24e9f00aedab8dce9356d28a4153d5660ab13eeb6a0cfd4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Testing fails with the randomly plugin installed
+PYTEST_ADDOPTS += -p no:randomly
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/decorator
