@@ -20,12 +20,12 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typing_extensions
-HUMAN_VERSION =			4.5.0
+HUMAN_VERSION =			4.6.0
 COMPONENT_SUMMARY =		typing_extensions - Backported and Experimental Type Hints for Python 3.7+
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d3/20/06270dac7316220643c32ae61694e451c98f8caf4c8eab3aa80a2bedf0df/typing_extensions-4.5.0.tar.gz
+	https://files.pythonhosted.org/packages/e4/03/4670b4c206e1dc869f2f0120c3d0a2b17d42526ab2b5a8f66d4cd8642ef3/typing_extensions-4.6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5cb5f4a79139d699607b3ef622a1dedafa84e115ab0024e0d9c044a9479ca7cb
+	sha256:ff6b238610c747e44c268aa4bb23c8c735d665a63726df3f9431ce707f2aa768
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
