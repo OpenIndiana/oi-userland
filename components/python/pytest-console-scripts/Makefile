@@ -20,19 +20,21 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-console-scripts
-HUMAN_VERSION =			1.3.1
+HUMAN_VERSION =			1.4.0
 COMPONENT_SUMMARY =		pytest-console-scripts - Pytest plugin for testing console scripts
 COMPONENT_PROJECT_URL =		https://github.com/kvas-it/pytest-console-scripts
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/5a/2f/47afcacbe804735fef894d94e0a2e7848a1f488a8da74ac9ded81e7ac371/pytest-console-scripts-1.3.1.tar.gz
+	https://files.pythonhosted.org/packages/32/f4/b4061f4bce9c6d855962c141f245eeaca38b3ed7954f5d5cb379163a3aa0/pytest-console-scripts-1.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5c6c3daae9cf9fbed0e655072128938600193dc002a5cf1b187248644ba02857
+	sha256:6335679ef013fa20402dfd5b07219877d874bd3f0a198b84b23f17897ccbe50a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
