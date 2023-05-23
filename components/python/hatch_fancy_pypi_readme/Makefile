@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatch_fancy_pypi_readme
-COMPONENT_VERSION =		22.8.0
+HUMAN_VERSION =			23.1.0
 COMPONENT_SUMMARY =		hatch_fancy_pypi_readme - Fancy PyPI READMEs with Hatch
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4e/ab/9b48589d6e3a2f72cc1e8f5221c28ff28fcdf116dbbd6e9beb946054212d/hatch_fancy_pypi_readme-22.8.0.tar.gz
+	https://files.pythonhosted.org/packages/85/a6/58d585eba4321bf2e7a4d1ed2af141c99d88c1afa4b751926be160f09325/hatch_fancy_pypi_readme-23.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:da91282ca09601c18aded8e378daf8b578c70214866f0971156ee9bb9ce6c26a
+	sha256:b1df44063094af1e8248ceacd47a92c9cf313d6b9823bf66af8a927c3960287d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,3 +35,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/wheel

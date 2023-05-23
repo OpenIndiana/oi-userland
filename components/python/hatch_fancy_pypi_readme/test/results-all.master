@@ -1,11 +1,15 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m pytest
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml, testpaths: tests
-collecting ... collected 42 items
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: tests
+asyncio: mode=strict
+collecting ... collected 48 items
 
 tests/test_builder.py::TestBuildText::test_multiple_text_fragment PASSED
 tests/test_builder.py::TestBuildText::test_single_text_fragment PASSED
@@ -13,9 +17,15 @@ tests/test_cli.py::TestCLI::test_cli_run_config_error PASSED
 tests/test_cli.py::TestCLI::test_cli_run_missing_config PASSED
 tests/test_cli.py::TestCLI::test_cli_run_missing_dynamic PASSED
 tests/test_cli.py::TestCLI::test_cli_run_ok PASSED
+tests/test_cli.py::TestCLI::test_cli_run_two_configs PASSED
+tests/test_cli.py::TestCLIEndToEnd::test_config_in_hatch_toml PASSED
+tests/test_cli.py::TestCLIEndToEnd::test_empty_explicit_hatch_toml PASSED
 tests/test_cli.py::TestCLIEndToEnd::test_missing_config PASSED
 tests/test_cli.py::TestCLIEndToEnd::test_ok PASSED
 tests/test_cli.py::TestCLIEndToEnd::test_ok_redirect PASSED
+tests/test_cli.py::TestMaybeLoadHatchToml::test_explicit PASSED
+tests/test_cli.py::TestMaybeLoadHatchToml::test_implicit PASSED
+tests/test_cli.py::TestMaybeLoadHatchToml::test_none PASSED
 tests/test_config.py::TestValidateConfig::test_missing_content_type PASSED
 tests/test_config.py::TestValidateConfig::test_valid[cfg0] PASSED
 tests/test_config.py::TestValidateConfig::test_wrong_content_type PASSED
@@ -50,7 +60,6 @@ tests/test_substitutions.py::TestSubstituter::test_pydantic[#(\\d+)-[#\\1](https
 tests/test_substitutions.py::TestSubstituter::test_pydantic[( +)@([\\w\\-]+)-\\1[@\\2](https://github.com/\\2)-foo @github-user bar-foo [@github-user](https://github.com/github-user) bar] PASSED
 tests/test_substitutions.py::TestSubstituter::test_twisted PASSED
 
-======== 42 passed ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 48 passed ========
+  py$(PYV): OK
   congratulations :)
