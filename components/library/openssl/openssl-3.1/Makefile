@@ -28,6 +28,7 @@ COMPONENT_VERSION_SHORT= 3.1
 COMPONENT_NAME=	openssl-$(COMPONENT_VERSION_SHORT)
 
 COMPONENT_VERSION=	3.1.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/security/openssl-31
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SUMMARY=	OpenSSL - a Toolkit for Transport Layer (TLS v1+) protocols and general purpose cryptographic library
@@ -58,10 +59,8 @@ CONFIGURE_OPTIONS += --libdir=lib/$(ARCHLIBSUBDIR)
 # comply with API 1.0 for now
 CONFIGURE_OPTIONS += --api=1.1.1
 CONFIGURE_OPTIONS += shared threads zlib
-# explicitly enabled
-ifeq ($(strip $(MACH)),i386)
+
 CONFIGURE_OPTIONS.64 += enable-ec_nistp_64_gcc_128
-endif
 
 # We define our own compiler and linker option sets for Solaris. See Configure
 # for more information.
