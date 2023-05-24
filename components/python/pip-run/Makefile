@@ -19,20 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip-run
-HUMAN_VERSION =			10.0.7
+HUMAN_VERSION =			12.1.0
 COMPONENT_SUMMARY =		pip-run - install packages and run Python with them
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pip-run
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b0/30/52302b9f7e1c3f35900db765c8b45d5d911a6dfa2b8b5dcbe8751abe4e2b/pip-run-10.0.7.tar.gz
+	https://files.pythonhosted.org/packages/fc/8f/03b3374e7adb09129be9dca512b7d3ab54b4e96628b1e579d3bfd2900f76/pip-run-12.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:73273a6d267580449fc426f79beef1573ea97b51d44c9a05b74f635103243b1a
+	sha256:2e0f57fdbd8492fcd8eeed6cd87d19b7e30d0adaf7b4ddc3153fd8067ac5f209
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/tholo/pytest-flake8/issues/92
-PYTEST_ADDOPTS += -p no:flake8
 
 # Revert back unneeded PYV normalizations
 COMPONENT_TEST_TRANSFORMS += "-e 's/py\$$(PYV)compat/py$(shell echo $(PYTHON_VERSION) | tr -d .)compat/'"
@@ -42,6 +39,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/autocommand
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-resources
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
+PYTHON_REQUIRED_PACKAGES += library/python/jaraco-env
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-text
 PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
@@ -53,7 +51,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-path
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-test
 TEST_REQUIRED_PACKAGES.python += library/python/nbformat
@@ -63,5 +60,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/wheel
