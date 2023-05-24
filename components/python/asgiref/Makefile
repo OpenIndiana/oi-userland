@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		asgiref
-HUMAN_VERSION =			3.6.0
+HUMAN_VERSION =			3.7.1
 COMPONENT_SUMMARY =		asgiref - ASGI specs, helper code, and adapters
 COMPONENT_PROJECT_URL =		https://github.com/django/asgiref/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/78/2d/797c0537426266d6c9377a2ed6a4ac61e50c2d5b1ab4da101a4b9bfe26e2/asgiref-3.6.0.tar.gz
+	https://files.pythonhosted.org/packages/29/ef/bd9cd6ac55b7e7595c6fe097ea6c318b6a487f43762f15abe98c58b101e9/asgiref-3.7.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9567dfe7bd8d3c8c892227827c41cce860b368104c3431da67a0c5a65a949506
+	sha256:8de379fcc383bcfe4507e229fc31209ea23d4831c850f74063b2c11639474dd2
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
