@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= minidlna
 COMPONENT_VERSION= 1.3.2
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY=  MiniDLNA DLNA/UPnP-AV media server
 COMPONENT_PROJECT_URL= https://sourceforge.net/projects/minidlna/
 COMPONENT_FMRI= media/minidlna
