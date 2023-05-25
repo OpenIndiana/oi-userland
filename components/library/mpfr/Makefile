@@ -29,7 +29,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mpfr
-COMPONENT_VERSION=      4.2.0
+COMPONENT_VERSION=		4.2.0
 COMPONENT_SUMMARY=      The GNU Multiple Precision with IEEE Rounding Floating-Point Library
 COMPONENT_PROJECT_URL=	https://www.mpfr.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,7 +42,11 @@ COMPONENT_LICENSE=      LGPLv2.1,GPLv2,FDLv1.2
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(dir $(CC)):$(PATH.illumos)
+MPFR_PATCHLEVEL=9
+IPS_COMPONENT_VERSION= $(COMPONENT_VERSION).$(MPFR_PATCHLEVEL)
+HUMAN_VERSION= $(COMPONENT_VERSION)-p$(MPFR_PATCHLEVEL)
+
+PATH = $(dir $(CC)):$(PATH.illumos)
 
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += -std=c99 $(CPP_XPG6MODE)
