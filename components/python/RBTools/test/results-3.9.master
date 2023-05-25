@@ -2,9 +2,11 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pytest.ini, testpaths: rbtools
+rootdir: $(@D)
+configfile: pytest.ini
+testpaths: rbtools
 asyncio: mode=strict
-collecting ... collected 772 items
+collecting ... collected 786 items
 
 rbtools/api/tests/test_capabilities.py::CapabilitiesTests::test_has_capability PASSED
 rbtools/api/tests/test_capabilities.py::CapabilitiesTests::test_has_capability_with_partial_path PASSED
@@ -26,6 +28,13 @@ rbtools/api/tests/test_errors.py::BadRequestErrorTests::test_str_with_error_code
 rbtools/api/tests/test_errors.py::BadRequestErrorTests::test_str_with_message PASSED
 rbtools/api/tests/test_errors.py::BadRequestErrorTests::test_str_with_message_with_fields PASSED
 rbtools/api/tests/test_errors.py::BadRequestErrorTests::test_str_with_rsp_error_message PASSED
+rbtools/api/tests/test_errors.py::ServerInterfaceSSLErrorTests::test_with_expired_or_revoked_cert PASSED
+rbtools/api/tests/test_errors.py::ServerInterfaceSSLErrorTests::test_with_generic_ssl_error PASSED
+rbtools/api/tests/test_errors.py::ServerInterfaceSSLErrorTests::test_with_handshake_failure PASSED
+rbtools/api/tests/test_errors.py::ServerInterfaceSSLErrorTests::test_with_hostname_mismatch PASSED
+rbtools/api/tests/test_errors.py::ServerInterfaceSSLErrorTests::test_with_no_local_issue_cert PASSED
+rbtools/api/tests/test_errors.py::ServerInterfaceSSLErrorTests::test_with_self_signed_cert PASSED
+rbtools/api/tests/test_errors.py::ServerInterfaceSSLErrorTests::test_with_untrusted_root_cert PASSED
 rbtools/api/tests/test_factory.py::ResourceFactoryTests::test_count_construction PASSED
 rbtools/api/tests/test_factory.py::ResourceFactoryTests::test_item_construction PASSED
 rbtools/api/tests/test_factory.py::ResourceFactoryTests::test_list_construction PASSED
@@ -309,6 +318,12 @@ rbtools/clients/tests/test_p4.py::PerforceClientTests::test_parse_revision_spec_
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_parse_revision_spec_shelved_cln PASSED
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_parse_revision_spec_submitted_cln PASSED
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_parse_revision_spec_two_args PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_replace_changeset_description PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_replace_changeset_description_with_empty PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_replace_changeset_description_with_indents PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_replace_changeset_description_with_single PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_replace_changeset_description_with_spaces PASSED
+rbtools/clients/tests/test_p4.py::PerforceClientTests::test_replace_changeset_description_with_summary PASSED
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_scan_for_server_with_reviewboard_url PASSED
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_scan_for_server_with_reviewboard_url_encoded PASSED
 rbtools/clients/tests/test_plastic.py::PlasticClientTests::test_check_dependencies_with_found PASSED
@@ -613,6 +628,7 @@ rbtools/diffs/tests/test_diff_tools_registry.py::DiffToolsRegistryTests::test_re
 rbtools/diffs/tests/test_diff_tools_registry.py::DiffToolsRegistryTests::test_register_with_missing_id PASSED
 rbtools/diffs/tests/test_gnu_diff_tool.py::GNUDiffToolTests::test_check_available_with_found PASSED
 rbtools/diffs/tests/test_gnu_diff_tool.py::GNUDiffToolTests::test_check_available_with_not_found PASSED
+rbtools/diffs/tests/test_gnu_diff_tool.py::GNUDiffToolTests::test_check_available_with_not_found_on_windows PASSED
 rbtools/diffs/tests/test_gnu_diff_tool.py::GNUDiffToolTests::test_get_install_instructions_on_linux PASSED
 rbtools/diffs/tests/test_gnu_diff_tool.py::GNUDiffToolTests::test_get_install_instructions_on_macos PASSED
 rbtools/diffs/tests/test_gnu_diff_tool.py::GNUDiffToolTests::test_get_install_instructions_on_windows PASSED
@@ -788,19 +804,19 @@ rbtools/utils/appdirs.py:206
   $(@D)/rbtools/utils/appdirs.py:206: DeprecationWarning: invalid escape sequence \P
     """Return full path to the user-shared data dir for this application.
 
+rbtools/api/tests/test_resource.py::ListResourceTests::test_create_with_extra_data
+rbtools/api/tests/test_resource.py::ListResourceTests::test_create_with_extra_data
+  $(@D)/rbtools/api/resource.py:180: RemovedInRBTools50Warning: A value of type %s was passed to HttpRequest.add_field. In RBTools 5.0, only values of bytes or str types will be accepted.
+    request.add_field(name, value)
+
+rbtools/api/tests/test_resource.py::ItemResourceTests::test_update_with_extra_data
+rbtools/api/tests/test_resource.py::ItemResourceTests::test_update_with_extra_data
+  $(@D)/rbtools/api/resource.py:244: RemovedInRBTools50Warning: A value of type %s was passed to HttpRequest.add_field. In RBTools 5.0, only values of bytes or str types will be accepted.
+    request.add_field(name, value)
+
 rbtools/api/tests/test_http_request.py::HttpRequestTests::test_encode_multipart_formdata
-  $(@D)/rbtools/api/tests/test_http_request.py:67: RemovedInRBTools50Warning: A value of type %s was passed to HttpRequest.add_field. In RBTools 5.0, only values of bytes or str types will be accepted.
+  $(@D)/rbtools/api/tests/test_http_request.py:64: RemovedInRBTools50Warning: A value of type %s was passed to HttpRequest.add_field. In RBTools 5.0, only values of bytes or str types will be accepted.
     request.add_field('bar', 42)
 
-rbtools/api/tests/test_resource.py::ItemResourceTests::test_update_with_extra_data
-rbtools/api/tests/test_resource.py::ItemResourceTests::test_update_with_extra_data
-  $(@D)/rbtools/api/resource.py:252: RemovedInRBTools50Warning: A value of type %s was passed to HttpRequest.add_field. In RBTools 5.0, only values of bytes or str types will be accepted.
-    request.add_field(name, value)
-
-rbtools/api/tests/test_resource.py::ListResourceTests::test_create_with_extra_data
-rbtools/api/tests/test_resource.py::ListResourceTests::test_create_with_extra_data
-  $(@D)/rbtools/api/resource.py:188: RemovedInRBTools50Warning: A value of type %s was passed to HttpRequest.add_field. In RBTools 5.0, only values of bytes or str types will be accepted.
-    request.add_field(name, value)
-
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 736 passed, 36 skipped, 7 warnings ========
+======== 750 passed, 36 skipped, 7 warnings ========
