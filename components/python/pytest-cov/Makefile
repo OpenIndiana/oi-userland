@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-cov
-HUMAN_VERSION =			4.0.0
+HUMAN_VERSION =			4.1.0
 COMPONENT_SUMMARY =		pytest-cov - Pytest plugin for measuring coverage.
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-cov
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ea/70/da97fd5f6270c7d2ce07559a19e5bf36a76f0af21500256f005a69d9beba/pytest-cov-4.0.0.tar.gz
+	https://files.pythonhosted.org/packages/7a/15/da3df99fd551507694a9b01f512a2f6cf1254f33601605843c3775f39460/pytest-cov-4.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:996b79efde6433cdbd0088872dbc5fb3ed7fe1578b68cdbba634f14bb8dd0470
+	sha256:3904b13dfbfec47f003b8e77fd5b589cd11904a21ddf1ab38a64f204d6a10ef6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
