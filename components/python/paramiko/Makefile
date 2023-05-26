@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		paramiko
-HUMAN_VERSION =			3.1.0
+HUMAN_VERSION =			3.2.0
 COMPONENT_SUMMARY =		paramiko - SSH2 protocol library
 COMPONENT_PROJECT_URL =		https://paramiko.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e8/53/e614a5b7bcc658d20e6eff6ae068863becb06bf362c2f135f5c290d8e6a2/paramiko-3.1.0.tar.gz
+	https://github.com/paramiko/paramiko/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6950faca6819acd3219d4ae694a23c7a87ee38d084f70c1724b0c0dbb8b75769
+	sha256:1ca73a3308eab9d724d54f9e0b4acaeef88e7242a2efa853eac1d6d7a96946ef
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,8 +33,24 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += dev-requirements.txt
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/bcrypt
 PYTHON_REQUIRED_PACKAGES += library/python/cryptography
 PYTHON_REQUIRED_PACKAGES += library/python/pynacl
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/alabaster
+TEST_REQUIRED_PACKAGES.python += library/python/black
+TEST_REQUIRED_PACKAGES.python += library/python/codespell
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/icecream
+TEST_REQUIRED_PACKAGES.python += library/python/invocations
+TEST_REQUIRED_PACKAGES.python += library/python/invoke
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-relaxed
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/releases
+TEST_REQUIRED_PACKAGES.python += library/python/watchdog
