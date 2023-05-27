@@ -15,17 +15,18 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		fixtures
-COMPONENT_VERSION =		4.0.1
+HUMAN_VERSION =			4.1.0
 COMPONENT_SUMMARY =		fixtures - Fixtures, reusable state for writing clean tests and more.
 COMPONENT_PROJECT_URL =		https://github.com/testing-cabal/fixtures
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3c/3d/f106b3278ba50067e9cd397f836d33d141aa790853152dbb3512aaee19f3/fixtures-4.0.1.tar.gz
+	https://files.pythonhosted.org/packages/5e/4c/3c3faee9f554d753ee428bef3a5e8176995cffbf0b5ad3f1d6c272ab2148/fixtures-4.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d2758826400d095b79666cf93a32a84f50ff8cd179831927efb48cd1e3ca7466
+	sha256:82b1c5e69f615526ef6c067188a1e6c6067df7f88332509c99f8b8fdbb9776f3
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 
 #
