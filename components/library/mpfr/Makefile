@@ -29,7 +29,8 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mpfr
-COMPONENT_VERSION=		4.2.0
+COMPONENT_VERSION=	4.2.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      The GNU Multiple Precision with IEEE Rounding Floating-Point Library
 COMPONENT_PROJECT_URL=	https://www.mpfr.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
