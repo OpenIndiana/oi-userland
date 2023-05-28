@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyzmq
-HUMAN_VERSION =			25.0.2
+HUMAN_VERSION =			25.1.0
 COMPONENT_SUMMARY =		pyzmq - Python bindings for 0MQ
 COMPONENT_PROJECT_URL =		https://pyzmq.readthedocs.org
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/zeromq/pyzmq/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/64/9c/2b2614b0b86ff703b3a33ea5e044923bd7d100adc8c829d579a9b71ea9e7/pyzmq-25.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d65c3f08137542bcc476a96433417bc8215862e05bad6efb7dcec36d9fd4f64f
+	sha256:80c41023465d36280e801564a69cbfce8ae85ff79b080e1913f6e90481fb8957
 COMPONENT_LICENSE =		BSD-3-Clause AND GPL-3.0-only
 
 TEST_STYLE = pytest
@@ -68,17 +68,15 @@ PYTEST_ADDOPTS += -p no:checkdocs
 # Testing fails with the randomly plugin installed
 PYTEST_ADDOPTS += -p no:randomly
 
-#
 # Testing of pyzmq fails if there is flaky installed.  See
 # https://github.com/zeromq/pyzmq/issues/1802 for details.
-#
-# To see pyzmq tests to pass the flaky package should NOT be installed during
-# testing.
-#
+TEST_CONFLICTING_PACKAGES.python += library/python/flaky
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/cython
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/c++/zeromq
@@ -86,6 +84,7 @@ REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/codecov
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/cython
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/gevent
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
@@ -94,4 +93,5 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-rerunfailures
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/tornado

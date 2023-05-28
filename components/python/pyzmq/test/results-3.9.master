@@ -6,7 +6,7 @@ rootdir: $(@D)
 configfile: pytest.ini
 testpaths: zmq/tests
 asyncio: mode=auto
-collecting ... collected 441 items
+collecting ... collected 443 items
 
 zmq/tests/test_asyncio.py::test_custom_serialize PASSED
 zmq/tests/test_asyncio.py::test_custom_serialize_error PASSED
@@ -362,6 +362,7 @@ zmq/tests/test_security.py::TestSecurity::test_plain PASSED
 zmq/tests/test_socket.py::TestSocket::test_attr PASSED
 zmq/tests/test_socket.py::TestSocket::test_bad_attr PASSED
 zmq/tests/test_socket.py::TestSocket::test_bad_sockopts PASSED
+zmq/tests/test_socket.py::TestSocket::test_bind_connect_addr_error PASSED
 zmq/tests/test_socket.py::TestSocket::test_bind_to_random_port PASSED
 zmq/tests/test_socket.py::TestSocket::test_bind_unicode PASSED
 zmq/tests/test_socket.py::TestSocket::test_close PASSED
@@ -397,6 +398,7 @@ zmq/tests/test_socket.py::TestSocket::test_unicode_sockopts PASSED
 zmq/tests/test_socket.py::TestSocketGreen::test_attr PASSED
 zmq/tests/test_socket.py::TestSocketGreen::test_bad_attr SKIPPED (Sk...)
 zmq/tests/test_socket.py::TestSocketGreen::test_bad_sockopts PASSED
+zmq/tests/test_socket.py::TestSocketGreen::test_bind_connect_addr_error PASSED
 zmq/tests/test_socket.py::TestSocketGreen::test_bind_to_random_port PASSED
 zmq/tests/test_socket.py::TestSocketGreen::test_bind_unicode PASSED
 zmq/tests/test_socket.py::TestSocketGreen::test_close PASSED
@@ -469,13 +471,9 @@ zmq/tests/test_proxy_steerable.py: 3 warnings
 zmq/tests/test_pubsub.py: 4 warnings
 zmq/tests/test_reqrep.py: 12 warnings
 zmq/tests/test_retry_eintr.py: 6 warnings
-zmq/tests/test_socket.py: 73 warnings
+zmq/tests/test_socket.py: 75 warnings
   $(PYTHON_DIR)/unittest/case.py:588: DeprecationWarning: zmq.tests.BaseZMQTestCase is deprecated in pyzmq 25, we recommend managing your own contexts and sockets.
     self._callSetUp()
-
-zmq/tests/test_cython.py::test_cython[3]
-  $(PYTHON_DIR)/vendor-packages/pyximport/pyximport.py:51: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
-    import imp
 
 zmq/tests/test_future.py: 20 warnings
 zmq/tests/test_security.py: 5 warnings
@@ -492,7 +490,7 @@ zmq/tests/test_socket.py::TestSocket::test_mockable
 zmq/tests/test_socket.py::TestSocketGreen::test_int_sockopts
 zmq/tests/test_socket.py::TestSocketGreen::test_int_sockopts
 zmq/tests/test_socket.py::TestSocketGreen::test_mockable
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/zmq/sugar/socket.py:332: DeprecationWarning: Socket.socket_type is deprecated, use Socket.type
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/zmq/sugar/socket.py:340: DeprecationWarning: Socket.socket_type is deprecated, use Socket.type
     warn("Socket.socket_type is deprecated, use Socket.type", DeprecationWarning)
 
 zmq/tests/test_socket.py::TestSocketGreen::test_mockable
@@ -500,4 +498,5 @@ zmq/tests/test_socket.py::TestSocketGreen::test_mockable
     warnings.warn(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 413 passed, 28 skipped, 240 warnings ========
+============================= slowest 10 durations =============================
+======== 415 passed, 28 skipped, 241 warnings ========
