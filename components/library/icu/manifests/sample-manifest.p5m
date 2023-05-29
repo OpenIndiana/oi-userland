@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -30,6 +30,7 @@ file path=usr/bin/$(MACH32)/gencnval
 file path=usr/bin/$(MACH32)/gendict
 file path=usr/bin/$(MACH32)/genrb
 file path=usr/bin/$(MACH32)/icu-config
+file path=usr/bin/$(MACH32)/icuexportdata
 file path=usr/bin/$(MACH32)/icuinfo
 file path=usr/bin/$(MACH32)/makeconv
 file path=usr/bin/$(MACH32)/pkgdata
@@ -41,6 +42,7 @@ file path=usr/bin/gencnval
 file path=usr/bin/gendict
 file path=usr/bin/genrb
 file path=usr/bin/icu-config
+file path=usr/bin/icuexportdata
 file path=usr/bin/icuinfo
 file path=usr/bin/makeconv
 file path=usr/bin/pkgdata
@@ -68,6 +70,7 @@ file path=usr/include/unicode/datefmt.h
 file path=usr/include/unicode/dbbi.h
 file path=usr/include/unicode/dcfmtsym.h
 file path=usr/include/unicode/decimfmt.h
+file path=usr/include/unicode/displayoptions.h
 file path=usr/include/unicode/docmain.h
 file path=usr/include/unicode/dtfmtsym.h
 file path=usr/include/unicode/dtintrv.h
@@ -174,6 +177,7 @@ file path=usr/include/unicode/udata.h
 file path=usr/include/unicode/udateintervalformat.h
 file path=usr/include/unicode/udatpg.h
 file path=usr/include/unicode/udisplaycontext.h
+file path=usr/include/unicode/udisplayoptions.h
 file path=usr/include/unicode/uenum.h
 file path=usr/include/unicode/ufieldpositer.h
 file path=usr/include/unicode/uformattable.h
@@ -233,76 +237,58 @@ file path=usr/include/unicode/utypes.h
 file path=usr/include/unicode/uvernum.h
 file path=usr/include/unicode/uversion.h
 file path=usr/include/unicode/vtzone.h
-file path=usr/lib/$(MACH64)/icu/$(COMPONENT_VERSION)/Makefile.inc
-file path=usr/lib/$(MACH64)/icu/$(COMPONENT_VERSION)/pkgdata.inc
+file path=usr/lib/$(MACH64)/icu/$(HUMAN_VERSION)/Makefile.inc
+file path=usr/lib/$(MACH64)/icu/$(HUMAN_VERSION)/pkgdata.inc
 link path=usr/lib/$(MACH64)/icu/Makefile.inc target=current/Makefile.inc
-link path=usr/lib/$(MACH64)/icu/current target=$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icu/current target=$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/icu/pkgdata.inc target=current/pkgdata.inc
-file path=usr/lib/$(MACH64)/libicudata.a
-link path=usr/lib/$(MACH64)/libicudata.so \
-    target=libicudata.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libicudata.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicudata.so.68 \
-    target=libicudata.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libicui18n.a
-link path=usr/lib/$(MACH64)/libicui18n.so \
-    target=libicui18n.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libicui18n.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicui18n.so.68 \
-    target=libicui18n.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libicuio.a
-link path=usr/lib/$(MACH64)/libicuio.so target=libicuio.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libicuio.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicuio.so.68 \
-    target=libicuio.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libicutest.a
-link path=usr/lib/$(MACH64)/libicutest.so \
-    target=libicutest.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libicutest.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicutest.so.68 \
-    target=libicutest.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libicutu.a
-link path=usr/lib/$(MACH64)/libicutu.so target=libicutu.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libicutu.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicutu.so.68 \
-    target=libicutu.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libicuuc.a
-link path=usr/lib/$(MACH64)/libicuuc.so target=libicuuc.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libicuuc.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libicuuc.so.68 \
-    target=libicuuc.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libicudata.so target=libicudata.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libicudata.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicudata.so.72 \
+    target=libicudata.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicui18n.so target=libicui18n.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libicui18n.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicui18n.so.72 \
+    target=libicui18n.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicuio.so target=libicuio.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libicuio.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicuio.so.72 target=libicuio.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicutest.so target=libicutest.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libicutest.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicutest.so.72 \
+    target=libicutest.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicutu.so target=libicutu.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libicutu.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicutu.so.72 target=libicutu.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicuuc.so target=libicuuc.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libicuuc.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libicuuc.so.72 target=libicuuc.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/icu-i18n.pc
 file path=usr/lib/$(MACH64)/pkgconfig/icu-io.pc
 file path=usr/lib/$(MACH64)/pkgconfig/icu-uc.pc
-file path=usr/lib/icu/$(COMPONENT_VERSION)/Makefile.inc
-file path=usr/lib/icu/$(COMPONENT_VERSION)/pkgdata.inc
+file path=usr/lib/icu/$(HUMAN_VERSION)/Makefile.inc
+file path=usr/lib/icu/$(HUMAN_VERSION)/pkgdata.inc
 link path=usr/lib/icu/Makefile.inc target=current/Makefile.inc
-link path=usr/lib/icu/current target=$(COMPONENT_VERSION)
+link path=usr/lib/icu/current target=$(HUMAN_VERSION)
 link path=usr/lib/icu/pkgdata.inc target=current/pkgdata.inc
-file path=usr/lib/libicudata.a
-link path=usr/lib/libicudata.so target=libicudata.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicudata.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicudata.so.68 target=libicudata.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicui18n.a
-link path=usr/lib/libicui18n.so target=libicui18n.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicui18n.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicui18n.so.68 target=libicui18n.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicuio.a
-link path=usr/lib/libicuio.so target=libicuio.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicuio.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicuio.so.68 target=libicuio.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicutest.a
-link path=usr/lib/libicutest.so target=libicutest.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicutest.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicutest.so.68 target=libicutest.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicutu.a
-link path=usr/lib/libicutu.so target=libicutu.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicutu.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicutu.so.68 target=libicutu.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicuuc.a
-link path=usr/lib/libicuuc.so target=libicuuc.so.$(COMPONENT_VERSION)
-file path=usr/lib/libicuuc.so.$(COMPONENT_VERSION)
-link path=usr/lib/libicuuc.so.68 target=libicuuc.so.$(COMPONENT_VERSION)
+link path=usr/lib/libicudata.so target=libicudata.so.$(HUMAN_VERSION)
+file path=usr/lib/libicudata.so.$(HUMAN_VERSION)
+link path=usr/lib/libicudata.so.72 target=libicudata.so.$(HUMAN_VERSION)
+link path=usr/lib/libicui18n.so target=libicui18n.so.$(HUMAN_VERSION)
+file path=usr/lib/libicui18n.so.$(HUMAN_VERSION)
+link path=usr/lib/libicui18n.so.72 target=libicui18n.so.$(HUMAN_VERSION)
+link path=usr/lib/libicuio.so target=libicuio.so.$(HUMAN_VERSION)
+file path=usr/lib/libicuio.so.$(HUMAN_VERSION)
+link path=usr/lib/libicuio.so.72 target=libicuio.so.$(HUMAN_VERSION)
+link path=usr/lib/libicutest.so target=libicutest.so.$(HUMAN_VERSION)
+file path=usr/lib/libicutest.so.$(HUMAN_VERSION)
+link path=usr/lib/libicutest.so.72 target=libicutest.so.$(HUMAN_VERSION)
+link path=usr/lib/libicutu.so target=libicutu.so.$(HUMAN_VERSION)
+file path=usr/lib/libicutu.so.$(HUMAN_VERSION)
+link path=usr/lib/libicutu.so.72 target=libicutu.so.$(HUMAN_VERSION)
+link path=usr/lib/libicuuc.so target=libicuuc.so.$(HUMAN_VERSION)
+file path=usr/lib/libicuuc.so.$(HUMAN_VERSION)
+link path=usr/lib/libicuuc.so.72 target=libicuuc.so.$(HUMAN_VERSION)
 file path=usr/lib/pkgconfig/icu-i18n.pc
 file path=usr/lib/pkgconfig/icu-io.pc
 file path=usr/lib/pkgconfig/icu-uc.pc
@@ -312,10 +298,10 @@ file path=usr/sbin/gencmn
 file path=usr/sbin/gennorm2
 file path=usr/sbin/gensprep
 file path=usr/sbin/icupkg
-file path=usr/share/icu/$(COMPONENT_VERSION)/LICENSE
-file path=usr/share/icu/$(COMPONENT_VERSION)/config/mh-solaris-gcc
-file path=usr/share/icu/$(COMPONENT_VERSION)/install-sh
-file path=usr/share/icu/$(COMPONENT_VERSION)/mkinstalldirs
+file path=usr/share/icu/$(HUMAN_VERSION)/LICENSE
+file path=usr/share/icu/$(HUMAN_VERSION)/config/mh-solaris-gcc
+file path=usr/share/icu/$(HUMAN_VERSION)/install-sh
+file path=usr/share/icu/$(HUMAN_VERSION)/mkinstalldirs
 file path=usr/share/man/man1/derb.1
 file path=usr/share/man/man1/genbrk.1
 file path=usr/share/man/man1/gencfu.1
@@ -323,6 +309,7 @@ file path=usr/share/man/man1/gencnval.1
 file path=usr/share/man/man1/gendict.1
 file path=usr/share/man/man1/genrb.1
 file path=usr/share/man/man1/icu-config.1
+file path=usr/share/man/man1/icuexportdata.1
 file path=usr/share/man/man1/icuinfo.1
 file path=usr/share/man/man1/makeconv.1
 file path=usr/share/man/man1/pkgdata.1

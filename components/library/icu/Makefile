@@ -11,28 +11,29 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
-# Copyright 2021 Andreas Wacknitz
+# Copyright 2021, 2023 Andreas Wacknitz
 #
 
 BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= icu
-COMPONENT_VERSION= 68.2
-COMPONENT_UVERSION= 68_2
-COMPONENT_DVERSION= 68-2
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 72.1
+COMPONENT_UVERSION= 72_1
+COMPONENT_DVERSION= 72-1
 COMPONENT_SUMMARY= International Components for Unicode
 COMPONENT_SRC= $(COMPONENT_NAME)
 COMPONENT_ARCHIVE= icu4c-$(COMPONENT_UVERSION)-src.tgz
-COMPONENT_ARCHIVE_HASH=	sha256:c79193dee3907a2199b8296a93b52c5cb74332c26f3d167269487680d479d625
+COMPONENT_ARCHIVE_HASH=	sha256:a2d2d38217092a7ed56635e34467f92f976b370e20182ad325edea6681a71d68
 COMPONENT_PROJECT_URL = https://icu-project.org
 COMPONENT_ARCHIVE_URL = https://github.com/unicode-org/icu/releases/download/release-$(COMPONENT_DVERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=		icu
+COMPONENT_LICENSE_FILE=	icu/LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # The build system does not honor the environment variables
-PATH=$(GCC_BINDIR):$(PATH.gnu)
+PATH = $(GCC_BINDIR):$(PATH.gnu)
 
 # set relocate_to option while unpacking the tar ball
 UNPACK_ARGS= -r $(COMPONENT_SRC)
@@ -45,7 +46,7 @@ CONFIGURE_OPTIONS = Solaris/GCC
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --with-data-packaging=library
 CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS += --enable-static
+CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-samples
 CONFIGURE_OPTIONS += --disable-renaming
 CONFIGURE_OPTIONS += --prefix=$(CONFIGURE_PREFIX)
