@@ -11,6 +11,7 @@
 #
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 # Copyright 2019 Michal Nowak
+# Copyright 2023 Karlson2k (Evgeny Grin) <k2k@narod.ru>
 #
 
 BUILD_BITS= 64_and_32
@@ -19,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmicrohttpd
 COMPONENT_VERSION=	0.9.77
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU libmicrohttpd is a small HTTP server as a C library
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libmicrohttpd/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,16 +34,9 @@ COMPONENT_LICENSE=	LGPL2.1+
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -fi)
-
-CONFIGURE_ENV += LIBS="-lnsl -lsocket"
-
-CONFIGURE_OPTIONS += --enable-epoll=no
-CONFIGURE_OPTIONS += --enable-itc=socketpair
 CONFIGURE_OPTIONS += --disable-static
-
-# Tests work properly only for curl with GnuTLS SSL backend (we use OpenSSL only),
-# see https://gnunet.org/bugs/view.php?id=5564.
+# Make sure that HTTPS is enabled
+CONFIGURE_OPTIONS += --enable-https
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -51,9 +46,6 @@ CONFIGURE_OPTIONS += --disable-static
 unexport SHELLOPTS
 
 COMPONENT_TEST_ENV += LD_OPTIONS="$(LD_OPTIONS)"
-
-# Manually added build dependencies
-REQUIRED_PACKAGES += system/library/security/libgcrypt
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gnutls-3
