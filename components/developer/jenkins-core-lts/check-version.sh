@@ -26,5 +26,5 @@ if [ "$MAKEFILE_CHECKSUM" = "$UPSTREAM_CHECKSUM" ] ; then
     echo "=== MAKEFILE_CHECKSUM matches the UPSTREAM_CHECKSUM currently"
 fi
 
-echo "=== Please edit the Makefile and commit like this:"
+echo "=== Please edit the Makefile and commit like this (if needed):"
 echo "    git add -p Makefile; git commit -m 'Bump jenkins-core-lts to v${UPSTREAM_VERSION}'"
