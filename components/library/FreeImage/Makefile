@@ -21,7 +21,7 @@ COMPONENT_VERSION_MAJOR=3
 COMPONENT_VERSION_MINOR=18
 COMPONENT_VERSION_PATCH=0
 COMPONENT_VERSION=	$(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR).$(COMPONENT_VERSION_PATCH)
-COMPONENT_REVISION=	8
+COMPONENT_REVISION=	9
 COMPONENT_SUMMARY=	A library project for developers to support popular graphics image formats
 COMPONENT_PROJECT_URL=	https://freeimage.sourceforge.io
 COMPONENT_SRC=		$(COMPONENT_NAME)
@@ -41,7 +41,7 @@ CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
 CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
-LDFLAGS += -L/usr/lib/amd64 -ljpegxr
+LDFLAGS += -L/usr/lib/$(MACH64) -ljpegxr
 COMPONENT_POST_UNPACK_ACTION= \
 	cp $(SOURCE_DIR)/../libfreeimage.pc $(SOURCE_DIR)/ ;\
 	dos2unix $(SOURCE_DIR)/FreeImage.2013.vcxproj $(SOURCE_DIR)/FreeImage.2013.vcxproj_bak ;\
@@ -54,7 +54,8 @@ COMPONENT_PRE_BUILD_ACTION = \
 	chmod +x $(@D)/gensrclist.sh;\
 	chmod +x $(@D)/genfipsrclist.sh;\
 	cd $(@D) && ./gensrclist.sh ;\
-	cd $(@D) && ./genfipsrclist.sh
+	cd $(@D) && ./genfipsrclist.sh ;\
+	$(GSED) -i -e "s@MACH64@$(MACH64)@" $(@D)/Makefile.gnu
 COMPONENT_BUILD_GMAKE_ARGS="file=Makefile.gnu"
 
 FIFLAGS= -fPIC
