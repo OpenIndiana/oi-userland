@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= qpdf
 COMPONENT_VERSION= 11.4.0
+COMPONENT_REVISIOn= 1
 COMPONENT_SUMMARY= QPDF is a command-line program that does structural, content-preserving transformations on PDF files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -45,6 +46,10 @@ CMAKE_OPTIONS += -DBUILD_STATIC_LIBS=OFF
 
 COMPONENT_TEST_TRANSFORMS += \
 	' -e "s/ [0-9]*\.[0-9]* sec//" '
+
+# Manually added dependencies
+# qpdf on SPARC needs math library
+REQUIRED_PACKAGES += system/library/math
 
 # Manually added dependencies
 # libqpdf.so seems to depend on them but they are not properly detected (why?):
