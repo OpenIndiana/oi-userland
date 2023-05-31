@@ -1,0 +1,591 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> openssl version
+OpenSSL 1.0.2u  20 Dec 2019
+py$(PYV): commands[1]> python -m coverage run --parallel -m OpenSSL.debug
+pyOpenSSL: 23.2.0
+cryptography: 38.0.4
+cffi: 1.15.1
+cryptography's compiled against OpenSSL: OpenSSL 1.1.1u  30 May 2023
+cryptography's linked OpenSSL: OpenSSL 1.1.1u  30 May 2023
+Python's OpenSSL: OpenSSL 1.1.1u  30 May 2023
+Python executable: $(@D)/.tox/py$(PYV)/bin/python
+Python version: 3.7.16 (default, Feb 19 2023, 23:28:22) 
+[GCC 10.4.0]
+Platform: sunos5
+sys.path: ['$(@D)', '$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages', '$(PYTHON_DIR)', '$(PYTHON_DIR)/lib-dynload', '$(PYTHON_DIR)/site-packages', '$(PYTHON_DIR)/vendor-packages']
+py$(PYV): commands[2]> python -m coverage run --parallel -m pytest -v
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+OpenSSL: b'OpenSSL 1.1.1u  30 May 2023'
+cryptography: 38.0.4
+rootdir: $(@D)
+configfile: setup.cfg
+testpaths: tests
+asyncio: mode=strict
+collecting ... collected 542 items
+
+fails: https://github.com/fedora-python/tox-current-env/issues/68)
+fails: https://github.com/pyca/pyopenssl/issues/1192)
+tests/test_crypto.py::TestCRL::test_add_revoked_keyword PASSED
+tests/test_crypto.py::TestCRL::test_construction PASSED
+tests/test_crypto.py::TestCRL::test_convert_from_cryptography PASSED
+tests/test_crypto.py::TestCRL::test_convert_from_cryptography_unsupported_type PASSED
+tests/test_crypto.py::TestCRL::test_convert_to_cryptography_key PASSED
+tests/test_crypto.py::TestCRL::test_dump_crl PASSED
+tests/test_crypto.py::TestCRL::test_export_custom_digest PASSED
+tests/test_crypto.py::TestCRL::test_export_default_digest PASSED
+tests/test_crypto.py::TestCRL::test_export_der PASSED
+tests/test_crypto.py::TestCRL::test_export_invalid PASSED
+tests/test_crypto.py::TestCRL::test_export_md5_digest PASSED
+tests/test_crypto.py::TestCRL::test_export_pem PASSED
+tests/test_crypto.py::TestCRL::test_export_text PASSED
+tests/test_crypto.py::TestCRL::test_export_unknown_digest PASSED
+tests/test_crypto.py::TestCRL::test_export_unknown_filetype PASSED
+tests/test_crypto.py::TestCRL::test_export_wrong_args PASSED
+tests/test_crypto.py::TestCRL::test_get_issuer PASSED
+tests/test_crypto.py::TestCRL::test_get_revoked PASSED
+tests/test_crypto.py::TestCRL::test_load_crl PASSED
+tests/test_crypto.py::TestCRL::test_load_crl_bad_data PASSED
+tests/test_crypto.py::TestCRL::test_load_crl_bad_filetype PASSED
+tests/test_crypto.py::TestCRL::test_verify_with_missing_crl PASSED
+tests/test_crypto.py::TestCRL::test_verify_with_revoked PASSED
+tests/test_crypto.py::TestEllipticCurve::test_a_curve PASSED
+tests/test_crypto.py::TestEllipticCurve::test_not_a_curve PASSED
+tests/test_crypto.py::TestEllipticCurve::test_repr PASSED
+tests/test_crypto.py::TestEllipticCurve::test_set PASSED
+tests/test_crypto.py::TestEllipticCurve::test_to_EC_KEY PASSED
+tests/test_crypto.py::TestEllipticCurveEquality::test_anotherTypeEq <- tests/util.py PASSED
+tests/test_crypto.py::TestEllipticCurveEquality::test_anotherTypeNe <- tests/util.py PASSED
+tests/test_crypto.py::TestEllipticCurveEquality::test_delegateNe <- tests/util.py PASSED
+tests/test_crypto.py::TestEllipticCurveEquality::test_delegatedEq <- tests/util.py PASSED
+tests/test_crypto.py::TestEllipticCurveEquality::test_differentEq <- tests/util.py PASSED
+tests/test_crypto.py::TestEllipticCurveEquality::test_differentNe <- tests/util.py PASSED
+tests/test_crypto.py::TestEllipticCurveEquality::test_identicalEq <- tests/util.py PASSED
+tests/test_crypto.py::TestEllipticCurveEquality::test_identicalNe <- tests/util.py PASSED
+tests/test_crypto.py::TestEllipticCurveEquality::test_sameEq <- tests/util.py PASSED
+tests/test_crypto.py::TestEllipticCurveEquality::test_sameNe <- tests/util.py PASSED
+tests/test_crypto.py::TestEllipticCurveHash::test_contains PASSED
+tests/test_crypto.py::TestEllipticCurveHash::test_does_not_contain PASSED
+tests/test_crypto.py::TestFunction::test_dump_certificate PASSED
+tests/test_crypto.py::TestFunction::test_dump_certificate_bad_type PASSED
+tests/test_crypto.py::TestFunction::test_dump_certificate_request PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_asn1 PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_invalid_filetype PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_invalid_passphrase_type PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_invalid_pkey PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_not_rsa_key PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_passphrase PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_passphraseCallbackLength PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_passphrase_callback PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_passphrase_exception PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_passphrase_wrong_type PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_pem PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_text PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_truncated PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_unknown_cipher PASSED
+tests/test_crypto.py::TestFunction::test_dump_privatekey_wrong_args PASSED
+tests/test_crypto.py::TestFunction::test_dump_publickey_asn1 PASSED
+tests/test_crypto.py::TestFunction::test_dump_publickey_invalid_type PASSED
+tests/test_crypto.py::TestFunction::test_dump_publickey_pem PASSED
+tests/test_crypto.py::TestFunction::test_load_pkcs7_data_asn1 PASSED
+tests/test_crypto.py::TestFunction::test_load_pkcs7_data_invalid PASSED
+tests/test_crypto.py::TestFunction::test_load_pkcs7_data_pem PASSED
+tests/test_crypto.py::TestFunction::test_load_pkcs7_type_invalid PASSED
+tests/test_crypto.py::TestFunction::test_load_privatekey_asn1 PASSED
+tests/test_crypto.py::TestFunction::test_load_privatekey_invalid_format PASSED
+tests/test_crypto.py::TestFunction::test_load_privatekey_invalid_passphrase_type PASSED
+tests/test_crypto.py::TestFunction::test_load_privatekey_passphrase PASSED
+tests/test_crypto.py::TestFunction::test_load_privatekey_passphraseCallback PASSED
+tests/test_crypto.py::TestFunction::test_load_privatekey_passphraseWrongType PASSED
+tests/test_crypto.py::TestFunction::test_load_privatekey_passphrase_callback_length PASSED
+tests/test_crypto.py::TestFunction::test_load_privatekey_passphrase_exception PASSED
+tests/test_crypto.py::TestFunction::test_load_privatekey_passphrase_wrong_return_type PASSED
+tests/test_crypto.py::TestFunction::test_load_privatekey_truncated PASSED
+tests/test_crypto.py::TestFunction::test_load_privatekey_wrongPassphrase PASSED
+tests/test_crypto.py::TestFunction::test_load_privatekey_wrongPassphraseCallback PASSED
+tests/test_crypto.py::TestLoadCertificate::test_bad_certificate PASSED
+tests/test_crypto.py::TestLoadCertificate::test_bad_file_type PASSED
+tests/test_crypto.py::TestLoadPublicKey::test_invalid_key_format PASSED
+tests/test_crypto.py::TestLoadPublicKey::test_invalid_type PASSED
+tests/test_crypto.py::TestLoadPublicKey::test_loading_works PASSED
+tests/test_crypto.py::TestLoadPublicKey::test_tolerates_unicode_strings PASSED
+tests/test_crypto.py::TestNetscapeSPKI::test_b64_encode PASSED
+tests/test_crypto.py::TestNetscapeSPKI::test_construction PASSED
+tests/test_crypto.py::TestNetscapeSPKI::test_invalid_attribute PASSED
+tests/test_crypto.py::TestNetscapeSPKI::test_sign PASSED
+tests/test_crypto.py::TestNetscapeSPKI::test_sign_with_public_key PASSED
+tests/test_crypto.py::TestNetscapeSPKI::test_sign_with_ungenerated PASSED
+tests/test_crypto.py::TestNetscapeSPKI::test_sign_with_unknown_digest PASSED
+tests/test_crypto.py::TestNetscapeSPKI::test_type PASSED
+tests/test_crypto.py::TestPKCS12::test_cert_only PASSED
+tests/test_crypto.py::TestPKCS12::test_empty_construction PASSED
+tests/test_crypto.py::TestPKCS12::test_export_without_args PASSED
+tests/test_crypto.py::TestPKCS12::test_export_without_bytes PASSED
+tests/test_crypto.py::TestPKCS12::test_export_without_mac PASSED
+tests/test_crypto.py::TestPKCS12::test_friendly_name PASSED
+tests/test_crypto.py::TestPKCS12::test_key_cert_mismatch PASSED
+tests/test_crypto.py::TestPKCS12::test_key_only PASSED
+tests/test_crypto.py::TestPKCS12::test_load_pkcs12 SKIPPED (always
+tests/test_crypto.py::TestPKCS12::test_load_pkcs12_empty_passphrase_load_empty PASSED
+tests/test_crypto.py::TestPKCS12::test_load_pkcs12_empty_passphrase_load_null PASSED
+tests/test_crypto.py::TestPKCS12::test_load_pkcs12_garbage PASSED
+tests/test_crypto.py::TestPKCS12::test_load_pkcs12_no_passphrase SKIPPED/68)
+tests/test_crypto.py::TestPKCS12::test_load_pkcs12_null_passphrase_load_empty PASSED
+tests/test_crypto.py::TestPKCS12::test_load_pkcs12_null_passphrase_load_null PASSED
+tests/test_crypto.py::TestPKCS12::test_load_pkcs12_text_passphrase SKIPPED/68)
+tests/test_crypto.py::TestPKCS12::test_load_without_mac PASSED
+tests/test_crypto.py::TestPKCS12::test_removing_ca_cert PASSED
+tests/test_crypto.py::TestPKCS12::test_replace PASSED
+tests/test_crypto.py::TestPKCS12::test_type PASSED
+tests/test_crypto.py::TestPKCS12::test_type_errors PASSED
+tests/test_crypto.py::TestPKCS12::test_various_empty_passphrases PASSED
+tests/test_crypto.py::TestPKCS12::test_zero_len_list_for_ca PASSED
+tests/test_crypto.py::TestPKCS7::test_attribute PASSED
+tests/test_crypto.py::TestPKCS7::test_get_type_name PASSED
+tests/test_crypto.py::TestPKCS7::test_type_is_data PASSED
+tests/test_crypto.py::TestPKCS7::test_type_is_enveloped PASSED
+tests/test_crypto.py::TestPKCS7::test_type_is_signed PASSED
+tests/test_crypto.py::TestPKCS7::test_type_is_signed_and_enveloped PASSED
+tests/test_crypto.py::TestPKey::test_check_pr_897 PASSED
+tests/test_crypto.py::TestPKey::test_check_public_key PASSED
+tests/test_crypto.py::TestPKey::test_construction PASSED
+tests/test_crypto.py::TestPKey::test_convert_from_cryptography_public_key PASSED
+tests/test_crypto.py::TestPKey::test_convert_from_cryptography_unsupported_type PASSED
+tests/test_crypto.py::TestPKey::test_convert_public_pkey_to_cryptography_key PASSED
+tests/test_crypto.py::TestPKey::test_convert_roundtrip_cryptography_private_key[-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEIKlxBbhVsSURoLTmsu9uTqYH6oF7zpxmp1ZQCAPhDmI2\n-----END PRIVATE KEY-----\n-Ed25519PrivateKey] PASSED
+tests/test_crypto.py::TestPKey::test_convert_roundtrip_cryptography_private_key[-----BEGIN PRIVATE KEY-----\nMEcCAQAwBQYDK2VxBDsEOcqZ7a3k6JwrJbYO8CNTPT/d7dlWCo5vCf0EYDj79ZvA\nhD8u9EPHlYJw5Y8ZQdH4WmVEfpKA23xkdQ==\n-----END PRIVATE KEY-----\n-Ed448PrivateKey] PASSED
+tests/test_crypto.py::TestPKey::test_convert_roundtrip_cryptography_private_key[-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgYirTZSx+5O8Y6tlG\ncka6W6btJiocdrdolfcukSoTEk+hRANCAAQkvPNu7Pa1GcsWU4v7ptNfqCJVq8Cx\nzo0MUVPQgwJ3aJtNM1QMOQUayCrRwfklg+D/rFSUwEUqtZh7fJDiFqz3\n-----END PRIVATE KEY-----\n-EllipticCurvePrivateKey] PASSED
+tests/test_crypto.py::TestPKey::test_convert_roundtrip_cryptography_private_key[-----BEGIN RSA PRIVATE KEY-----\n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\n-----END RSA PRIVATE KEY-----\n-RSAPrivateKey] PASSED
+tests/test_crypto.py::TestPKey::test_dsa_generation PASSED
+tests/test_crypto.py::TestPKey::test_failed_generation PASSED
+tests/test_crypto.py::TestPKey::test_inconsistent_key PASSED
+tests/test_crypto.py::TestPKey::test_pregeneration PASSED
+tests/test_crypto.py::TestPKey::test_regeneration PASSED
+tests/test_crypto.py::TestPKey::test_rsa_generation PASSED
+tests/test_crypto.py::TestPKey::test_type PASSED
+tests/test_crypto.py::TestRevoked::test_construction PASSED
+tests/test_crypto.py::TestRevoked::test_date PASSED
+tests/test_crypto.py::TestRevoked::test_ignores_unsupported_revoked_cert_extension_get_reason PASSED
+tests/test_crypto.py::TestRevoked::test_ignores_unsupported_revoked_cert_extension_set_new_reason PASSED
+tests/test_crypto.py::TestRevoked::test_reason PASSED
+tests/test_crypto.py::TestRevoked::test_serial PASSED
+tests/test_crypto.py::TestRevoked::test_set_reason_invalid_reason PASSED
+tests/test_crypto.py::TestRevoked::test_set_reason_wrong_args[1.0] PASSED
+tests/test_crypto.py::TestRevoked::test_set_reason_wrong_args[foo] PASSED
+tests/test_crypto.py::TestRevoked::test_set_reason_wrong_args[reason0] PASSED
+tests/test_crypto.py::TestSignVerify::test_sign_nulls PASSED
+tests/test_crypto.py::TestSignVerify::test_sign_verify PASSED
+tests/test_crypto.py::TestSignVerify::test_sign_verify_ecdsa PASSED
+tests/test_crypto.py::TestSignVerify::test_sign_verify_with_text PASSED
+tests/test_crypto.py::TestSignVerify::test_sign_with_large_key PASSED
+tests/test_crypto.py::TestX509::test_construction PASSED
+tests/test_crypto.py::TestX509::test_convert_from_cryptography PASSED
+tests/test_crypto.py::TestX509::test_convert_from_cryptography_unsupported_type PASSED
+tests/test_crypto.py::TestX509::test_convert_to_cryptography_key PASSED
+tests/test_crypto.py::TestX509::test_digest PASSED
+tests/test_crypto.py::TestX509::test_extension_count PASSED
+tests/test_crypto.py::TestX509::test_get_extension PASSED
+tests/test_crypto.py::TestX509::test_get_issuer PASSED
+tests/test_crypto.py::TestX509::test_get_notAfter PASSED
+tests/test_crypto.py::TestX509::test_get_notBefore PASSED
+tests/test_crypto.py::TestX509::test_get_pubkey_uninitialized PASSED
+tests/test_crypto.py::TestX509::test_get_signature_algorithm PASSED
+tests/test_crypto.py::TestX509::test_get_subject PASSED
+tests/test_crypto.py::TestX509::test_get_undefined_signature_algorithm PASSED
+tests/test_crypto.py::TestX509::test_gmtime_adj_notAfter PASSED
+tests/test_crypto.py::TestX509::test_gmtime_adj_notAfter_wrong_args PASSED
+tests/test_crypto.py::TestX509::test_gmtime_adj_notBefore PASSED
+tests/test_crypto.py::TestX509::test_gmtime_adj_notBefore_wrong_args PASSED
+tests/test_crypto.py::TestX509::test_has_expired PASSED
+tests/test_crypto.py::TestX509::test_has_expired_exception PASSED
+tests/test_crypto.py::TestX509::test_has_not_expired PASSED
+tests/test_crypto.py::TestX509::test_invalid_digest_algorithm PASSED
+tests/test_crypto.py::TestX509::test_nullbyte_subjectAltName PASSED
+tests/test_crypto.py::TestX509::test_root_has_not_expired PASSED
+tests/test_crypto.py::TestX509::test_serial_number PASSED
+tests/test_crypto.py::TestX509::test_set_issuer PASSED
+tests/test_crypto.py::TestX509::test_set_issuer_wrong_args PASSED
+tests/test_crypto.py::TestX509::test_set_notAfter PASSED
+tests/test_crypto.py::TestX509::test_set_notBefore PASSED
+tests/test_crypto.py::TestX509::test_set_pubkey_wrong_type PASSED
+tests/test_crypto.py::TestX509::test_set_subject PASSED
+tests/test_crypto.py::TestX509::test_set_subject_wrong_args PASSED
+tests/test_crypto.py::TestX509::test_set_version_wrong_args PASSED
+tests/test_crypto.py::TestX509::test_sign PASSED
+tests/test_crypto.py::TestX509::test_sign_bad_pubkey_type PASSED
+tests/test_crypto.py::TestX509::test_sign_with_public_key PASSED
+tests/test_crypto.py::TestX509::test_sign_with_ungenerated PASSED
+tests/test_crypto.py::TestX509::test_sign_with_unknown_digest PASSED
+tests/test_crypto.py::TestX509::test_subject_name_hash PASSED
+tests/test_crypto.py::TestX509::test_type PASSED
+tests/test_crypto.py::TestX509::test_version PASSED
+tests/test_crypto.py::TestX509Ext::test_construction PASSED
+tests/test_crypto.py::TestX509Ext::test_get_critical[False] PASSED
+tests/test_crypto.py::TestX509Ext::test_get_critical[True] PASSED
+tests/test_crypto.py::TestX509Ext::test_get_data PASSED
+tests/test_crypto.py::TestX509Ext::test_get_short_name[basicConstraints-CA:true] PASSED
+tests/test_crypto.py::TestX509Ext::test_get_short_name[nsComment-foo bar] PASSED
+tests/test_crypto.py::TestX509Ext::test_invalid_extension[basicConstraints-False-blah blah] PASSED
+tests/test_crypto.py::TestX509Ext::test_invalid_extension[proxyCertInfo-True-language:id-ppl-anyLanguage,pathlen:1,policy:text:AB] PASSED
+tests/test_crypto.py::TestX509Ext::test_invalid_extension[thisIsMadeUp-False-hi] PASSED
+tests/test_crypto.py::TestX509Ext::test_invalid_issuer[True] PASSED
+tests/test_crypto.py::TestX509Ext::test_invalid_issuer[bad_obj1] PASSED
+tests/test_crypto.py::TestX509Ext::test_invalid_issuer[bad_obj3] PASSED
+tests/test_crypto.py::TestX509Ext::test_invalid_issuer[hello] PASSED
+tests/test_crypto.py::TestX509Ext::test_invalid_subject[True] PASSED
+tests/test_crypto.py::TestX509Ext::test_invalid_subject[bad_obj1] PASSED
+tests/test_crypto.py::TestX509Ext::test_invalid_subject[bad_obj3] PASSED
+tests/test_crypto.py::TestX509Ext::test_invalid_subject[hello] PASSED
+tests/test_crypto.py::TestX509Ext::test_issuer PASSED
+tests/test_crypto.py::TestX509Ext::test_missing_issuer PASSED
+tests/test_crypto.py::TestX509Ext::test_missing_subject PASSED
+tests/test_crypto.py::TestX509Ext::test_str PASSED
+tests/test_crypto.py::TestX509Ext::test_subject PASSED
+tests/test_crypto.py::TestX509Ext::test_type PASSED
+tests/test_crypto.py::TestX509Ext::test_unused_issuer PASSED
+tests/test_crypto.py::TestX509Ext::test_unused_subject PASSED
+tests/test_crypto.py::TestX509Name::test_attributes PASSED
+tests/test_crypto.py::TestX509Name::test_comparison PASSED
+tests/test_crypto.py::TestX509Name::test_copy PASSED
+tests/test_crypto.py::TestX509Name::test_der PASSED
+tests/test_crypto.py::TestX509Name::test_get_components PASSED
+tests/test_crypto.py::TestX509Name::test_hash PASSED
+tests/test_crypto.py::TestX509Name::test_load_nul_byte_attribute PASSED
+tests/test_crypto.py::TestX509Name::test_load_nul_byte_components PASSED
+tests/test_crypto.py::TestX509Name::test_only_string_attributes PASSED
+tests/test_crypto.py::TestX509Name::test_repr PASSED
+tests/test_crypto.py::TestX509Name::test_set_attribute_failure PASSED
+tests/test_crypto.py::TestX509Name::test_set_invalid_attribute PASSED
+tests/test_crypto.py::TestX509Name::test_type PASSED
+tests/test_crypto.py::TestX509Req::test_add_extensions PASSED
+tests/test_crypto.py::TestX509Req::test_add_extensions_wrong_args PASSED
+tests/test_crypto.py::TestX509Req::test_construction PASSED
+tests/test_crypto.py::TestX509Req::test_convert_from_cryptography PASSED
+tests/test_crypto.py::TestX509Req::test_convert_from_cryptography_unsupported_type PASSED
+tests/test_crypto.py::TestX509Req::test_convert_to_cryptography_key PASSED
+tests/test_crypto.py::TestX509Req::test_get_extensions PASSED
+tests/test_crypto.py::TestX509Req::test_get_subject PASSED
+tests/test_crypto.py::TestX509Req::test_sign PASSED
+tests/test_crypto.py::TestX509Req::test_sign_with_public_key PASSED
+tests/test_crypto.py::TestX509Req::test_sign_with_ungenerated PASSED
+tests/test_crypto.py::TestX509Req::test_sign_with_unknown_digest PASSED
+tests/test_crypto.py::TestX509Req::test_type PASSED
+tests/test_crypto.py::TestX509Req::test_undef_oid PASSED
+tests/test_crypto.py::TestX509Req::test_verify_success PASSED
+tests/test_crypto.py::TestX509Req::test_verify_uninitialized_key PASSED
+tests/test_crypto.py::TestX509Req::test_verify_wrong_args PASSED
+tests/test_crypto.py::TestX509Req::test_verify_wrong_key PASSED
+tests/test_crypto.py::TestX509Req::test_version PASSED
+tests/test_crypto.py::TestX509Req::test_version_wrong_args PASSED
+tests/test_crypto.py::TestX509Store::test_add_cert PASSED
+tests/test_crypto.py::TestX509Store::test_add_cert_accepts_duplicate PASSED
+tests/test_crypto.py::TestX509Store::test_add_cert_wrong_args[1.0] PASSED
+tests/test_crypto.py::TestX509Store::test_add_cert_wrong_args[None] PASSED
+tests/test_crypto.py::TestX509Store::test_add_cert_wrong_args[cert3] PASSED
+tests/test_crypto.py::TestX509Store::test_add_cert_wrong_args[cert] PASSED
+tests/test_crypto.py::TestX509Store::test_load_locations_fails_when_all_args_are_none PASSED
+tests/test_crypto.py::TestX509Store::test_load_locations_parameters[/cafile\u2603-None-/cafile\xe2\x98\x83-<cdata>] PASSED
+tests/test_crypto.py::TestX509Store::test_load_locations_parameters[/cafile\xe2\x98\x83-None-/cafile\xe2\x98\x83-<cdata>] PASSED
+tests/test_crypto.py::TestX509Store::test_load_locations_parameters[None-/capath\u2603-<cdata>-/capath\xe2\x98\x83] PASSED
+tests/test_crypto.py::TestX509Store::test_load_locations_parameters[None-/capath\xe2\x98\x83-<cdata>-/capath\xe2\x98\x83] PASSED
+tests/test_crypto.py::TestX509Store::test_load_locations_raises_error_on_failure PASSED
+tests/test_crypto.py::TestX509Store::test_type PASSED
+tests/test_crypto.py::TestX509StoreContext::test_chain_reference PASSED
+tests/test_crypto.py::TestX509StoreContext::test_failure_building_untrusted_chain_raises PASSED
+tests/test_crypto.py::TestX509StoreContext::test_get_verified_chain PASSED
+tests/test_crypto.py::TestX509StoreContext::test_get_verified_chain_invalid_chain_no_root PASSED
+tests/test_crypto.py::TestX509StoreContext::test_invalid_chain_no_intermediate PASSED
+tests/test_crypto.py::TestX509StoreContext::test_invalid_chain_no_root PASSED
+tests/test_crypto.py::TestX509StoreContext::test_modification_pre_verify PASSED
+tests/test_crypto.py::TestX509StoreContext::test_reuse PASSED
+tests/test_crypto.py::TestX509StoreContext::test_trusted_self_signed PASSED
+tests/test_crypto.py::TestX509StoreContext::test_untrusted_chain_wrong_args[non-certificate in chain] PASSED
+tests/test_crypto.py::TestX509StoreContext::test_untrusted_chain_wrong_args[non-list chain] PASSED
+tests/test_crypto.py::TestX509StoreContext::test_untrusted_self_signed PASSED
+tests/test_crypto.py::TestX509StoreContext::test_valid PASSED
+tests/test_crypto.py::TestX509StoreContext::test_valid_untrusted_chain_reuse PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_fail_with_chain[intermediate missing] PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_fail_with_chain[no trusted root] PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_fail_with_chain[untrusted root, full chain is available] PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_fail_with_chain[untrusted root, intermediate is trusted and in chain] PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_failure_with_empty_ca_directory PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_success_with_chain[empty chain] PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_success_with_chain[extra certs in chain] PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_success_with_chain[intermediate in chain] PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_with_ca_file_location PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_with_ca_path_location PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_with_cafile_and_capath PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_with_multiple_ca_files PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_with_partial_chain PASSED
+tests/test_crypto.py::TestX509StoreContext::test_verify_with_time PASSED
+tests/test_debug.py::test_debug_info PASSED
+tests/test_rand.py::TestRand::test_add PASSED
+tests/test_rand.py::TestRand::test_add_wrong_args[args0] PASSED
+tests/test_rand.py::TestRand::test_add_wrong_args[args1] PASSED
+tests/test_rand.py::TestRand::test_status PASSED
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_call_failure PASSED
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_callback_exception PASSED
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_no_server PASSED
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_no_server_overlap PASSED
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_select_cb_returns_invalid_value PASSED
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_server_fail PASSED
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_set_on_connection PASSED
+tests/test_ssl.py::TestApplicationLayerProtoNegotiation::test_alpn_success PASSED
+tests/test_ssl.py::TestConnection::test_accept PASSED
+tests/test_ssl.py::TestConnection::test_app_data PASSED
+tests/test_ssl.py::TestConnection::test_bio_read_wrong_args[1.0] PASSED
+tests/test_ssl.py::TestConnection::test_bio_read_wrong_args[None] PASSED
+tests/test_ssl.py::TestConnection::test_bio_read_wrong_args[bufsize2] PASSED
+tests/test_ssl.py::TestConnection::test_bio_read_wrong_args[bufsize] PASSED
+tests/test_ssl.py::TestConnection::test_bio_write PASSED
+tests/test_ssl.py::TestConnection::test_bio_write_wrong_args[1] PASSED
+tests/test_ssl.py::TestConnection::test_bio_write_wrong_args[None] PASSED
+tests/test_ssl.py::TestConnection::test_bio_write_wrong_args[bad_bio0] PASSED
+tests/test_ssl.py::TestConnection::test_bio_write_wrong_args[bad_bio3] PASSED
+tests/test_ssl.py::TestConnection::test_buffer_size PASSED
+tests/test_ssl.py::TestConnection::test_client_get_session PASSED
+tests/test_ssl.py::TestConnection::test_client_set_session PASSED
+tests/test_ssl.py::TestConnection::test_connect PASSED
+tests/test_ssl.py::TestConnection::test_connect_ex SKIPPED (usually
+tests/test_ssl.py::TestConnection::test_connect_refused PASSED
+tests/test_ssl.py::TestConnection::test_connect_wrong_args PASSED
+tests/test_ssl.py::TestConnection::test_get_certificate PASSED
+tests/test_ssl.py::TestConnection::test_get_certificate_none PASSED
+tests/test_ssl.py::TestConnection::test_get_cipher_bits PASSED
+tests/test_ssl.py::TestConnection::test_get_cipher_bits_before_connect PASSED
+tests/test_ssl.py::TestConnection::test_get_cipher_name PASSED
+tests/test_ssl.py::TestConnection::test_get_cipher_name_before_connect PASSED
+tests/test_ssl.py::TestConnection::test_get_cipher_version PASSED
+tests/test_ssl.py::TestConnection::test_get_cipher_version_before_connect PASSED
+tests/test_ssl.py::TestConnection::test_get_context PASSED
+tests/test_ssl.py::TestConnection::test_get_finished PASSED
+tests/test_ssl.py::TestConnection::test_get_finished_before_connect PASSED
+tests/test_ssl.py::TestConnection::test_get_peer_cert_chain PASSED
+tests/test_ssl.py::TestConnection::test_get_peer_cert_chain_none PASSED
+tests/test_ssl.py::TestConnection::test_get_peer_finished PASSED
+tests/test_ssl.py::TestConnection::test_get_peer_finished_before_connect PASSED
+tests/test_ssl.py::TestConnection::test_get_protocol_version PASSED
+tests/test_ssl.py::TestConnection::test_get_protocol_version_name PASSED
+tests/test_ssl.py::TestConnection::test_get_session_unconnected PASSED
+tests/test_ssl.py::TestConnection::test_get_verified_chain PASSED
+tests/test_ssl.py::TestConnection::test_get_verified_chain_none PASSED
+tests/test_ssl.py::TestConnection::test_get_verified_chain_unconnected PASSED
+tests/test_ssl.py::TestConnection::test_makefile PASSED
+tests/test_ssl.py::TestConnection::test_peek PASSED
+tests/test_ssl.py::TestConnection::test_pending PASSED
+tests/test_ssl.py::TestConnection::test_server_get_session PASSED
+tests/test_ssl.py::TestConnection::test_set_context PASSED
+tests/test_ssl.py::TestConnection::test_set_context_wrong_args PASSED
+tests/test_ssl.py::TestConnection::test_set_session_wrong_args PASSED
+tests/test_ssl.py::TestConnection::test_set_session_wrong_method PASSED
+tests/test_ssl.py::TestConnection::test_set_shutdown PASSED
+tests/test_ssl.py::TestConnection::test_set_tlsext_host_name_wrong_args PASSED
+tests/test_ssl.py::TestConnection::test_set_verify_callback_reference PASSED
+tests/test_ssl.py::TestConnection::test_set_verify_overrides_context PASSED
+tests/test_ssl.py::TestConnection::test_shutdown PASSED
+tests/test_ssl.py::TestConnection::test_shutdown_closed PASSED
+tests/test_ssl.py::TestConnection::test_shutdown_truncated PASSED
+tests/test_ssl.py::TestConnection::test_shutdown_wrong_args PASSED
+tests/test_ssl.py::TestConnection::test_state_string PASSED
+tests/test_ssl.py::TestConnection::test_tls_finished_message_symmetry PASSED
+tests/test_ssl.py::TestConnection::test_type PASSED
+tests/test_ssl.py::TestConnection::test_wantReadError PASSED
+tests/test_ssl.py::TestConnection::test_wantWriteError PASSED
+tests/test_ssl.py::TestConnection::test_wrong_args[1] PASSED
+tests/test_ssl.py::TestConnection::test_wrong_args[None] PASSED
+tests/test_ssl.py::TestConnection::test_wrong_args[bad_context0] PASSED
+tests/test_ssl.py::TestConnection::test_wrong_args[context] PASSED
+tests/test_ssl.py::TestConnectionGetCipherList::test_result PASSED
+tests/test_ssl.py::TestConnectionRecvInto::test_bytearray_doesnt_overfill PASSED
+tests/test_ssl.py::TestConnectionRecvInto::test_bytearray_no_length PASSED
+tests/test_ssl.py::TestConnectionRecvInto::test_bytearray_really_doesnt_overfill PASSED
+tests/test_ssl.py::TestConnectionRecvInto::test_bytearray_respects_length PASSED
+tests/test_ssl.py::TestConnectionRecvInto::test_memoryview_doesnt_overfill PASSED
+tests/test_ssl.py::TestConnectionRecvInto::test_memoryview_no_length PASSED
+tests/test_ssl.py::TestConnectionRecvInto::test_memoryview_really_doesnt_overfill PASSED
+tests/test_ssl.py::TestConnectionRecvInto::test_memoryview_respects_length PASSED
+tests/test_ssl.py::TestConnectionRecvInto::test_peek PASSED
+tests/test_ssl.py::TestConnectionRenegotiate::test_renegotiate PASSED
+tests/test_ssl.py::TestConnectionRenegotiate::test_total_renegotiations PASSED
+tests/test_ssl.py::TestConnectionSend::test_buf_too_large PASSED
+tests/test_ssl.py::TestConnectionSend::test_short_bytearray PASSED
+tests/test_ssl.py::TestConnectionSend::test_short_bytes PASSED
+tests/test_ssl.py::TestConnectionSend::test_short_memoryview PASSED
+tests/test_ssl.py::TestConnectionSend::test_text PASSED
+tests/test_ssl.py::TestConnectionSend::test_wrong_args PASSED
+tests/test_ssl.py::TestConnectionSendall::test_closed PASSED
+tests/test_ssl.py::TestConnectionSendall::test_long PASSED
+tests/test_ssl.py::TestConnectionSendall::test_short PASSED
+tests/test_ssl.py::TestConnectionSendall::test_short_memoryview PASSED
+tests/test_ssl.py::TestConnectionSendall::test_text PASSED
+tests/test_ssl.py::TestConnectionSendall::test_wrong_args PASSED
+tests/test_ssl.py::TestConstants::test_op_cookie_exchange PASSED
+tests/test_ssl.py::TestConstants::test_op_no_compression PASSED
+tests/test_ssl.py::TestConstants::test_op_no_query_mtu PASSED
+tests/test_ssl.py::TestConstants::test_op_no_ticket PASSED
+tests/test_ssl.py::TestConstants::test_sess_cache_both PASSED
+tests/test_ssl.py::TestConstants::test_sess_cache_client PASSED
+tests/test_ssl.py::TestConstants::test_sess_cache_no_auto_clear PASSED
+tests/test_ssl.py::TestConstants::test_sess_cache_no_internal PASSED
+tests/test_ssl.py::TestConstants::test_sess_cache_no_internal_lookup PASSED
+tests/test_ssl.py::TestConstants::test_sess_cache_no_internal_store PASSED
+tests/test_ssl.py::TestConstants::test_sess_cache_off PASSED
+tests/test_ssl.py::TestConstants::test_sess_cache_server PASSED
+tests/test_ssl.py::TestContext::test_add_extra_chain_cert PASSED
+tests/test_ssl.py::TestContext::test_add_extra_chain_cert_invalid_cert PASSED
+tests/test_ssl.py::TestContext::test_app_data PASSED
+tests/test_ssl.py::TestContext::test_check_env_vars PASSED
+tests/test_ssl.py::TestContext::test_check_privatekey_invalid PASSED
+tests/test_ssl.py::TestContext::test_check_privatekey_valid PASSED
+tests/test_ssl.py::TestContext::test_fallback_default_verify_paths SKIPPEDa/cryptography manylinux1 wheels)
+tests/test_ssl.py::TestContext::test_fallback_path_is_not_file_or_dir PASSED
+tests/test_ssl.py::TestContext::test_get_cert_store PASSED
+tests/test_ssl.py::TestContext::test_load_client_ca PASSED
+tests/test_ssl.py::TestContext::test_load_client_ca_invalid PASSED
+tests/test_ssl.py::TestContext::test_load_client_ca_unicode PASSED
+tests/test_ssl.py::TestContext::test_load_tmp_dh_bytes PASSED
+tests/test_ssl.py::TestContext::test_load_tmp_dh_missing_file PASSED
+tests/test_ssl.py::TestContext::test_load_tmp_dh_unicode PASSED
+tests/test_ssl.py::TestContext::test_load_tmp_dh_wrong_args PASSED
+tests/test_ssl.py::TestContext::test_load_verify_bytes_cafile PASSED
+tests/test_ssl.py::TestContext::test_load_verify_directory_capath[bytes_arg-ascii_path] PASSED
+tests/test_ssl.py::TestContext::test_load_verify_directory_capath[bytes_arg-unicode_path] PASSED
+tests/test_ssl.py::TestContext::test_load_verify_directory_capath[unicode_arg-ascii_path] PASSED
+tests/test_ssl.py::TestContext::test_load_verify_directory_capath[unicode_arg-unicode_path] PASSED
+tests/test_ssl.py::TestContext::test_load_verify_invalid_file PASSED
+tests/test_ssl.py::TestContext::test_load_verify_locations_wrong_args PASSED
+tests/test_ssl.py::TestContext::test_load_verify_unicode_cafile PASSED
+tests/test_ssl.py::TestContext::test_method PASSED
+tests/test_ssl.py::TestContext::test_passwd_callback_exception PASSED
+tests/test_ssl.py::TestContext::test_passwd_callback_false PASSED
+tests/test_ssl.py::TestContext::test_passwd_callback_non_string PASSED
+tests/test_ssl.py::TestContext::test_passwd_callback_too_long PASSED
+tests/test_ssl.py::TestContext::test_session_cache_mode PASSED
+tests/test_ssl.py::TestContext::test_set_cipher_list[hello world:AES128-SHA0] PASSED
+tests/test_ssl.py::TestContext::test_set_cipher_list[hello world:AES128-SHA1] PASSED
+tests/test_ssl.py::TestContext::test_set_cipher_list_no_cipher_match PASSED
+tests/test_ssl.py::TestContext::test_set_cipher_list_wrong_type PASSED
+tests/test_ssl.py::TestContext::test_set_default_verify_paths PASSED
+tests/test_ssl.py::TestContext::test_set_info_callback PASSED
+tests/test_ssl.py::TestContext::test_set_keylog_callback PASSED
+tests/test_ssl.py::TestContext::test_set_mode PASSED
+tests/test_ssl.py::TestContext::test_set_mode_wrong_args PASSED
+tests/test_ssl.py::TestContext::test_set_options PASSED
+tests/test_ssl.py::TestContext::test_set_options_wrong_args PASSED
+tests/test_ssl.py::TestContext::test_set_passwd_cb PASSED
+tests/test_ssl.py::TestContext::test_set_passwd_cb_wrong_args PASSED
+tests/test_ssl.py::TestContext::test_set_proto_version PASSED
+tests/test_ssl.py::TestContext::test_set_session_cache_mode_wrong_args PASSED
+tests/test_ssl.py::TestContext::test_set_session_id PASSED
+tests/test_ssl.py::TestContext::test_set_session_id_fail PASSED
+tests/test_ssl.py::TestContext::test_set_session_id_unicode PASSED
+tests/test_ssl.py::TestContext::test_set_timeout_wrong_args PASSED
+tests/test_ssl.py::TestContext::test_set_tlsext_use_srtp_invalid_profile PASSED
+tests/test_ssl.py::TestContext::test_set_tlsext_use_srtp_not_bytes PASSED
+tests/test_ssl.py::TestContext::test_set_tlsext_use_srtp_valid PASSED
+tests/test_ssl.py::TestContext::test_set_tmp_ecdh PASSED
+tests/test_ssl.py::TestContext::test_set_verify_callback_connection_argument PASSED
+tests/test_ssl.py::TestContext::test_set_verify_callback_exception PASSED
+tests/test_ssl.py::TestContext::test_set_verify_callback_reference PASSED
+tests/test_ssl.py::TestContext::test_set_verify_default_callback[0] PASSED
+tests/test_ssl.py::TestContext::test_set_verify_default_callback[1] PASSED
+tests/test_ssl.py::TestContext::test_set_verify_depth_wrong_args PASSED
+tests/test_ssl.py::TestContext::test_set_verify_mode PASSED
+tests/test_ssl.py::TestContext::test_set_verify_wrong_callable_arg[1.0] PASSED
+tests/test_ssl.py::TestContext::test_set_verify_wrong_callable_arg[callback2] PASSED
+tests/test_ssl.py::TestContext::test_set_verify_wrong_callable_arg[mode] PASSED
+tests/test_ssl.py::TestContext::test_set_verify_wrong_mode_arg[1.0] PASSED
+tests/test_ssl.py::TestContext::test_set_verify_wrong_mode_arg[None] PASSED
+tests/test_ssl.py::TestContext::test_set_verify_wrong_mode_arg[mode2] PASSED
+tests/test_ssl.py::TestContext::test_set_verify_wrong_mode_arg[mode] PASSED
+tests/test_ssl.py::TestContext::test_timeout PASSED
+tests/test_ssl.py::TestContext::test_type PASSED
+tests/test_ssl.py::TestContext::test_use_certificate_chain_file_bytes PASSED
+tests/test_ssl.py::TestContext::test_use_certificate_chain_file_missing_file PASSED
+tests/test_ssl.py::TestContext::test_use_certificate_chain_file_unicode PASSED
+tests/test_ssl.py::TestContext::test_use_certificate_chain_file_wrong_args PASSED
+tests/test_ssl.py::TestContext::test_use_certificate_file_bytes PASSED
+tests/test_ssl.py::TestContext::test_use_certificate_file_missing PASSED
+tests/test_ssl.py::TestContext::test_use_certificate_file_unicode PASSED
+tests/test_ssl.py::TestContext::test_use_certificate_file_wrong_args PASSED
+tests/test_ssl.py::TestContext::test_use_privatekey_file_bytes PASSED
+tests/test_ssl.py::TestContext::test_use_privatekey_file_missing PASSED
+tests/test_ssl.py::TestContext::test_use_privatekey_file_unicode PASSED
+tests/test_ssl.py::TestContext::test_verify_depth PASSED
+tests/test_ssl.py::TestContext::test_verify_no_fallback_if_env_vars_set PASSED
+tests/test_ssl.py::TestContext::test_wrong_privatekey_file_wrong_args[1.0] PASSED
+tests/test_ssl.py::TestContext::test_wrong_privatekey_file_wrong_args[None] PASSED
+tests/test_ssl.py::TestContext::test_wrong_privatekey_file_wrong_args[] PASSED
+tests/test_ssl.py::TestContext::test_wrong_privatekey_file_wrong_args[filetype0] PASSED
+tests/test_ssl.py::TestContext::test_x509_in_verify_works PASSED
+tests/test_ssl.py::TestContextConnection::test_use_certificate[connection] PASSED
+tests/test_ssl.py::TestContextConnection::test_use_certificate[context] PASSED
+tests/test_ssl.py::TestContextConnection::test_use_certificate_uninitialized[connection] PASSED
+tests/test_ssl.py::TestContextConnection::test_use_certificate_uninitialized[context] PASSED
+tests/test_ssl.py::TestContextConnection::test_use_certificate_wrong_args[connection] PASSED
+tests/test_ssl.py::TestContextConnection::test_use_certificate_wrong_args[context] PASSED
+tests/test_ssl.py::TestContextConnection::test_use_privatekey[connection] PASSED
+tests/test_ssl.py::TestContextConnection::test_use_privatekey[context] PASSED
+tests/test_ssl.py::TestContextConnection::test_use_privatekey_wrong_key[connection] PASSED
+tests/test_ssl.py::TestContextConnection::test_use_privatekey_wrong_key[context] PASSED
+tests/test_ssl.py::TestDTLS::test_it_works_at_all PASSED
+tests/test_ssl.py::TestDTLS::test_timeout PASSED
+tests/test_ssl.py::TestError::test_type PASSED
+tests/test_ssl.py::TestInfoConstants::test_integers PASSED
+tests/test_ssl.py::TestMemoryBIO::test_add_client_ca_wrong_args PASSED
+tests/test_ssl.py::TestMemoryBIO::test_memory_connect PASSED
+tests/test_ssl.py::TestMemoryBIO::test_multiple_add_client_ca PASSED
+tests/test_ssl.py::TestMemoryBIO::test_mutated_ca_list PASSED
+tests/test_ssl.py::TestMemoryBIO::test_one_add_client_ca PASSED
+tests/test_ssl.py::TestMemoryBIO::test_outgoing_overflow PASSED
+tests/test_ssl.py::TestMemoryBIO::test_reset_ca_list PASSED
+tests/test_ssl.py::TestMemoryBIO::test_set_after_add_client_ca PASSED
+tests/test_ssl.py::TestMemoryBIO::test_set_and_add_client_ca PASSED
+tests/test_ssl.py::TestMemoryBIO::test_set_client_ca_list_errors PASSED
+tests/test_ssl.py::TestMemoryBIO::test_set_empty_ca_list PASSED
+tests/test_ssl.py::TestMemoryBIO::test_set_multiple_ca_list PASSED
+tests/test_ssl.py::TestMemoryBIO::test_set_one_ca_list PASSED
+tests/test_ssl.py::TestMemoryBIO::test_shutdown PASSED
+tests/test_ssl.py::TestMemoryBIO::test_socket_connect PASSED
+tests/test_ssl.py::TestMemoryBIO::test_socket_overrides_memory PASSED
+tests/test_ssl.py::TestMemoryBIO::test_unexpected_EOF PASSED
+tests/test_ssl.py::TestOCSP::test_callbacks_are_invoked_with_connections PASSED
+tests/test_ssl.py::TestOCSP::test_callbacks_arent_called_by_default PASSED
+tests/test_ssl.py::TestOCSP::test_client_negotiates_without_server PASSED
+tests/test_ssl.py::TestOCSP::test_client_receives_servers_data PASSED
+tests/test_ssl.py::TestOCSP::test_client_returns_false_terminates_handshake PASSED
+tests/test_ssl.py::TestOCSP::test_exceptions_in_client_bubble_up PASSED
+tests/test_ssl.py::TestOCSP::test_exceptions_in_server_bubble_up PASSED
+tests/test_ssl.py::TestOCSP::test_opaque_data_is_passed_through PASSED
+tests/test_ssl.py::TestOCSP::test_server_must_return_bytes PASSED
+tests/test_ssl.py::TestOCSP::test_server_returns_empty_string PASSED
+tests/test_ssl.py::TestRequires::test_available PASSED
+tests/test_ssl.py::TestRequires::test_unavailable PASSED
+tests/test_ssl.py::TestServerNameCallback::test_no_servername PASSED
+tests/test_ssl.py::TestServerNameCallback::test_old_callback_forgotten PASSED
+tests/test_ssl.py::TestServerNameCallback::test_servername PASSED
+tests/test_ssl.py::TestSession::test_construction PASSED
+tests/test_ssl.py::TestVersion::test_OPENSSL_VERSION_NUMBER PASSED
+tests/test_ssl.py::TestVersion::test_SSLeay_version PASSED
+tests/test_util.py::TestErrors::test_exception_from_error_queue_nonexistent_reason PASSED
+
+=============================== warnings summary ===============================
+tests/test_ssl.py::TestContext::test_set_cipher_list[hello world:AES128-SHA1]
+  $(@D)/tests/test_ssl.py:502: DeprecationWarning: str for cipher_list is no longer accepted, use bytes
+    context.set_cipher_list(cipher_string)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+===Flaky Test Report===
+
+test_gmtime_adj_notBefore passed 1 out of the required 1 times. Success!
+test_gmtime_adj_notAfter passed 1 out of the required 1 times. Success!
+test_set_cipher_list_no_cipher_match passed 1 out of the required 1 times. Success!
+
+===End Flaky Test Report===
+=========================== short test summary info ============================
+======== 537 passed, 5 skipped, 1 warning ========
+  py$(PYV): OK
+  congratulations :)

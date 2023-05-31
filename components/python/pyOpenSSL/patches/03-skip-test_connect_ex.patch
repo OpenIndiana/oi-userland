@@ -1,0 +1,10 @@
+--- pyOpenSSL-23.2.0/tests/test_ssl.py.orig
++++ pyOpenSSL-23.2.0/tests/test_ssl.py
+@@ -2391,6 +2391,7 @@
+         platform == "darwin",
+         reason="connect_ex sometimes causes a kernel panic on OS X 10.6.4",
+     )
++    @pytest.mark.skip(reason="usually fails: https://github.com/pyca/pyopenssl/issues/1192")
+     def test_connect_ex(self):
+         """
+         If there is a connection error, `Connection.connect_ex` returns the
