@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ruamel.yaml
-HUMAN_VERSION =			0.17.28
+HUMAN_VERSION =			0.17.31
 COMPONENT_SUMMARY =		ruamel.yaml - ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order
 COMPONENT_PROJECT_URL =		https://sourceforge.net/p/ruamel-yaml/code/ci/default/tree
 COMPONENT_ARCHIVE_URL =		\
 	https://sourceforge.net/projects/ruamel-dl-tagged-releases/files/$(COMPONENT_ARCHIVE)/download
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3cf223283118b6375f956060adf0ce01ea70c9eddcee9f5ba2213b5e63760b40
+	sha256:0dabc9ae0ea2255c6ece18e4413b5fb78bc8e69162dc3b57c094ec02637e97a2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
