@@ -27,15 +27,14 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_VERSION_SHORT= 3.1
 COMPONENT_NAME=	openssl-$(COMPONENT_VERSION_SHORT)
 
-COMPONENT_VERSION=	3.1.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.1.1
 COMPONENT_FMRI=		library/security/openssl-31
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SUMMARY=	OpenSSL - a Toolkit for Transport Layer (TLS v1+) protocols and general purpose cryptographic library
 COMPONENT_PROJECT_URL=	https://www.openssl.org/
 COMPONENT_SRC=		openssl-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:aaa925ad9828745c4cad9d9efeb273deca820f2cdcf2c3ac7d7c1212b7c497b4
+COMPONENT_ARCHIVE_HASH=	sha256:b3aa61334233b852b63ddb048df181177c2c659eb9d4376008118f9c08d07674
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	OpenSSL, SSLeay
 
@@ -130,7 +129,7 @@ COMPONENT_TEST_TRANSFORMS = \
 REQUIRED_PACKAGES += developer/build/makedepend
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += system/library
