@@ -12,23 +12,24 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS=64
-BUILD_STYLE=justmake
+BUILD_BITS= 64
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= opensearch
-COMPONENT_VERSION= 2.3.0
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.7.0
 COMPONENT_SUMMARY= Open source distributed and RESTful search engine
 COMPONENT_PROJECT_URL= https://opensearch.org
 COMPONENT_SRC=          OpenSearch-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_URL=  https://github.com/opensearch-project/OpenSearch/archive/refs/tags/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:a69d819f83420b5c0473548310051e7a79a0ef54603ab5544e3b9bd9dc2bae87
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=  https://github.com/opensearch-project/OpenSearch/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:b002039009dce94fc25a1cbeade4f35a725b517f717b6bbab95b42dfbb59f20b
 COMPONENT_FMRI= database/opensearch
 COMPONENT_CLASSIFICATION= System/Databases
-COMPONENT_LICENSE= APACHE
+COMPONENT_LICENSE= APACHE 2.0
+COMPONENT_LICENSE_FILE= LICENSE.txt
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ACTION = cd $(@D); env JAVA_HOME="/usr/jdk/openjdk18" ./gradlew localDistro
