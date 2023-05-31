@@ -19,20 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		poetry_core
-HUMAN_VERSION =			1.6.0
+HUMAN_VERSION =			1.6.1
 COMPONENT_SUMMARY =		poetry_core - Poetry PEP 517 Build Backend
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/poetry-core
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/python-poetry/poetry-core/archive/refs/tags/$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/20/e8/e0a80cc355bc207fb1760160344e978f39d683c35e1230f71b8916bf3a50/poetry_core-1.6.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9e2304113e48e3dc91c206fcd5c3ab9a8ad7c94cee2c86d1b4cd826aef53cbb7
+	sha256:0f9b0de39665f36d6594657e7d57b6f463cc10f30c28e6d1c3b9ff54c26c9ac3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Github tarball use different source directory than sdist
-COMPONENT_SRC=poetry-core-$(HUMAN_VERSION)
-
-# Force pytest.  It is not needed for sdist since there is no tox.ini
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
