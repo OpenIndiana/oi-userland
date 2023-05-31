@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		coverage
-HUMAN_VERSION =			7.2.6
+HUMAN_VERSION =			7.2.7
 COMPONENT_SUMMARY =		coverage - Code coverage measurement for Python
 COMPONENT_PROJECT_URL =		https://github.com/nedbat/coveragepy
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/fc/6d/e8658433ce675a34ac82167ce8b890b1c020dcb6bacc7a0e4505af82bfaa/coverage-7.2.6.tar.gz
+	https://files.pythonhosted.org/packages/45/8b/421f30467e69ac0e414214856798d4bc32da1336df745e49e49ae5c1e2a8/coverage-7.2.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2025f913f2edb0272ef15d00b1f335ff8908c921c8eb2013536fcaf61f5a683d
+	sha256:924d94291ca674905fe9481f12294eb11f2d3d3fd1adb20314ba89e94f44ed59
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
