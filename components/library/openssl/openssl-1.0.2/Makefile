@@ -33,7 +33,7 @@ COMPONENT_NAME =	openssl
 # and HUMAN_VERSION.
 COMPONENT_VERSION =	1.0.2.21
 HUMAN_VERSION = 1.0.2u
-COMPONENT_REVISION=	13
+COMPONENT_REVISION=	14
 COMPONENT_FMRI =	library/security/openssl
 COMPONENT_SUMMARY =	OpenSSL - a Toolkit for Secure Sockets Layer (SSL v2/v3) and Transport Layer (TLS v1) protocols and general purpose cryptographic library
 COMPONENT_CLASSIFICATION = System/Security
