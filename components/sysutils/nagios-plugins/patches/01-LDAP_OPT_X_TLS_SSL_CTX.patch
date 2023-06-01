@@ -1,0 +1,31 @@
+LDAP_OPT_X_TLS_SSL_CTX is OpenLDAP specific.
+See https://github.com/nagios-plugins/nagios-plugins/issues/516
+
+--- nagios-plugins-2.4.0/plugins/check_ldap.c.orig
++++ nagios-plugins-2.4.0/plugins/check_ldap.c
+@@ -576,24 +576,6 @@
+ 			);
+ }
+ 
+-#ifdef HAVE_SSL
+-
+-int ldap_check_cert (LDAP *ld)
+-{
+-	SSL *ssl;
+-	int rc;
+-
+-	rc = ldap_get_option(ld, LDAP_OPT_X_TLS_SSL_CTX, &ssl);
+-	if (rc == LDAP_OPT_ERROR || ssl == NULL) {
+-		printf ("%s\n",_("CRITICAL - Cannot retrieve ssl session from connection."));
+-		return STATE_CRITICAL;
+-	}
+-	return np_net_ssl_check_cert_real(ssl, days_till_exp_warn, days_till_exp_crit);
+-}
+-
+-#else
+ int ldap_check_cert (LDAP *ld) {
+     return TRUE;
+ }
+-
+-#endif
+\ No newline at end of file
