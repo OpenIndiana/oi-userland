@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		readline
 COMPONENT_VERSION=	6.3
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	GNU readline provides interactive line-editing and history
 COMPONENT_DESCRIPTION= The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in
 COMPONENT_PROJECT_URL=	https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
