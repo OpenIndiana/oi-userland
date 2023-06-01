@@ -15,24 +15,26 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CacheControl
-COMPONENT_VERSION =		0.12.11
+HUMAN_VERSION =			0.13.0
 COMPONENT_SUMMARY =		CacheControl - httplib2 caching for requests
 COMPONENT_PROJECT_URL =		https://github.com/ionrock/cachecontrol
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/46/9b/34215200b0c2b2229d7be45c1436ca0e8cad3b10de42cfea96983bd70248/CacheControl-0.12.11.tar.gz
+	https://files.pythonhosted.org/packages/9d/47/9bdf134012537324bbdebe84c144cc8fab08f148fc6c9ce89b8eefff1cb0/CacheControl-0.13.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a5b9fcc986b184db101aa280b42ecdcdfc524892596f606858e0b7a8b4d9e144
+	sha256:fd3fd2cb0ca66b9a6c1d56cc9709e7e49c63dbd19b1b1bcbd8d3f94cedfe8ce5
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-TEST_STYLE = setup.py
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Remove timestamp and random port number
+COMPONENT_TEST_TRANSFORMS += "-e 's/ \[.*ENGINE HTTP Server.*//'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
