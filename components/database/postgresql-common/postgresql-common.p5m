@@ -15,6 +15,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
@@ -24,8 +25,4 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 group gid=90 groupname=postgres
 user ftpuser=false gcos-field="PostgreSQL Reserved UID" group=postgres login-shell=/usr/bin/pfksh password=NP uid=90 username=postgres home-dir="/var/postgres"
 
-depend type=require-any \
-  fmri=pkg:/database/postgres-96/library \
-  fmri=pkg:/database/postgres-10/library \
-  fmri=pkg:/database/postgres-11/library \
-  fmri=pkg:/database/postgres-12/library
+dir group=postgres mode=0755 owner=postgres path=var/postgres

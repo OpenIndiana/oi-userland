@@ -16,10 +16,10 @@
 include ../../../make-rules/shared-macros.mk
 
 # Beside the p5m file, there is really nothing to this component which just
-# delivers a user and group actions as a common ground for PostGreSQL database servers.
-# Originally this has been deployed by the oldest PostGreSQL version we provide.
+# delivers a user and group actions as a common ground for PostgreSQL database servers.
+# Version number of this component is not related to PostgreSQL version.
 COMPONENT_NAME=				postgres-common
-COMPONENT_VERSION=			9.6
+COMPONENT_VERSION=			10
 COMPONENT_SUMMARY=			PostgreSQL common version independent files
 COMPONENT_FMRI=				database/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Databases
