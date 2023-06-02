@@ -27,13 +27,13 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
-COMPONENT_VERSION=	2.4.2
-COMPONENT_REVISION= 2
+COMPONENT_VERSION=	2.4.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://openprinting.github.io/cups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7095b2977bb728ded5566a5c802866062840d6541fd027836865949a407c3682
+COMPONENT_ARCHIVE_HASH=	sha256:252081577253bcfa03a4a0a59b66a2e5b4feaed6f572d3c44ffdab16ece9bd72
 COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+COMPONENT_LICENSE=	Apache 2.0 with an exception to allow linking against GNU GPL2-only software
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -48,7 +48,7 @@ COMPONENT_PREP_ACTION= ( cd $(@D) ; autoconf -f )
 # we want to remove debugging data but not the symbols.
 COMPONENT_INSTALL_ENV += STRIPPROG="strip -x"
 
-CFLAGS += -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
+CFLAGS += $(CPP_XPG6MODE)
 LDFLAGS += -lsocket
 
 # Ensure dynamic shared objects are linked using same LDFLAGS as executables.
@@ -78,10 +78,13 @@ CONFIGURE_OPTIONS += --enable-dbus
 CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --with-archflags="$(CC_BITS)"
 
-# Build dependencies
+# Dynamically create the license file from its sources:
+cups.license: $(SOURCE_DIR)/LICENSE $(SOURCE_DIR)/NOTICE
+	cat $? > $@
+
+# Manually added build dependencies
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += service/network/slp
 
 # Auto-generated dependencies
