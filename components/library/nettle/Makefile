@@ -21,12 +21,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nettle
-COMPONENT_VERSION=	3.9
+COMPONENT_VERSION=	3.9.1
 COMPONENT_SUMMARY=	A low-level cryptographic library
 COMPONENT_PROJECT_URL=	https://www.lysator.liu.se/~nisse/nettle/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:0ee7adf5a7201610bb7fe0acbb7c9b3be83be44904dd35ebbcd965cd896bfeaa
+COMPONENT_ARCHIVE_HASH=	sha256:ccfeff981b0ca71bbd6fbcb054f407c60ffb644389a5be80d6716d5b550c6ce3
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/nettle/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/nettle
 COMPONENT_CLASSIFICATION= System/Libraries
