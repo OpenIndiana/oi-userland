@@ -16,23 +16,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= minidlna
-COMPONENT_VERSION= 1.3.2
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 1.3.3
 COMPONENT_SUMMARY=  MiniDLNA DLNA/UPnP-AV media server
 COMPONENT_PROJECT_URL= https://sourceforge.net/projects/minidlna/
 COMPONENT_FMRI= media/minidlna
 COMPONENT_CLASSIFICATION= System/Media
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL= \
-	https://sourceforge.net/projects/minidlna/files/minidlna/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-	sha256:222ce45a1a60c3ce3de17527955d38e5ff7a4592d61db39577e6bf88e0ae1cb0
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/minidlna/files/minidlna/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:39026c6d4a139b9180192d1c37225aa3376fdf4f1a74d7debbdbb693d996afa4
 COMPONENT_LICENSE= BSD
 COMPONENT_LICENSE_FILE= LICENCE.miniupnpd
 
-TEST_TARGET=$(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
@@ -43,7 +39,7 @@ LDFLAGS       +=    $(JPEG_LDFLAGS)
 
 CFLAGS += $(CPP_XPG5MODE)
 
-CONFIGURE_OPTIONS +=  --with-log-path=/var/log/minidlna
+CONFIGURE_OPTIONS += --with-log-path=/var/log/minidlna
 
 LDFLAGS += -lsocket -lnsl -lsendfile
 
