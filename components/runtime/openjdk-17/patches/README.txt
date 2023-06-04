@@ -7,6 +7,10 @@ Most patches -p0
 
 JDK17:
 
+17.0.7
+
+Minor patch noise. Removed an STLPORT patch.
+
 17.0.6
 
 Minor patch noise.
