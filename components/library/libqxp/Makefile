@@ -20,30 +20,31 @@
 #
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=32_and_64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libqxp
 COMPONENT_VERSION=	0.0.2
-COMPONENT_REVISION=	2
-COMPONENT_FMRI=     	library/c++/libqxp
-COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libqxp
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=      libqxp - library for reading QuarkXPress documents
+COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libqxp
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:e137b6b110120a52c98edd02ebdc4095ee08d0d5295a94316a981750095a945c
 COMPONENT_ARCHIVE_URL=  https://dev-www.libreoffice.org/src/libqxp/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     	library/c++/libqxp
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-# Fix threading detection issue introduced with boost 1.64
-CXXFLAGS+= -std=c++11 -pthread
-
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
+# Fix threading detection issue introduced with boost 1.64
+CXXFLAGS += -std=c++11 -pthread
+
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

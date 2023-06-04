@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2020 Aurelien Larcher
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,41 +23,50 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file usr/bin/$(MACH64)/qxp2raw path=usr/bin/qxp2raw
-file usr/bin/$(MACH64)/qxp2svg path=usr/bin/qxp2svg
-file usr/bin/$(MACH64)/qxp2text path=usr/bin/qxp2text
+# We don't deliver 32 bit apps anymore:
+<transform file path=.*/bin/$(MACH32)/.+ -> drop>
+
+file path=usr/bin/$(MACH32)/qxp2raw
+file path=usr/bin/$(MACH32)/qxp2svg
+file path=usr/bin/$(MACH32)/qxp2text
+file path=usr/bin/qxp2raw
+file path=usr/bin/qxp2svg
+file path=usr/bin/qxp2text
 file path=usr/include/libqxp-0.0/libqxp/QXPDocument.h
 file path=usr/include/libqxp-0.0/libqxp/QXPPathResolver.h
 file path=usr/include/libqxp-0.0/libqxp/libqxp.h
 file path=usr/include/libqxp-0.0/libqxp/libqxp_api.h
-link path=usr/lib/$(MACH64)/libqxp-0.0.so \
-    target=libqxp-0.0.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libqxp-0.0.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libqxp-0.0.so target=libqxp-0.0.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libqxp-0.0.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libqxp-0.0.so.0 \
-    target=libqxp-0.0.so.$(COMPONENT_VERSION)
+    target=libqxp-0.0.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/libqxp-0.0.pc
-link path=usr/lib/libqxp-0.0.so target=libqxp-0.0.so.$(COMPONENT_VERSION)
-file path=usr/lib/libqxp-0.0.so.$(COMPONENT_VERSION)
-link path=usr/lib/libqxp-0.0.so.0 target=libqxp-0.0.so.$(COMPONENT_VERSION)
+link path=usr/lib/libqxp-0.0.so target=libqxp-0.0.so.$(HUMAN_VERSION)
+file path=usr/lib/libqxp-0.0.so.$(HUMAN_VERSION)
+link path=usr/lib/libqxp-0.0.so.0 target=libqxp-0.0.so.$(HUMAN_VERSION)
 file path=usr/lib/pkgconfig/libqxp-0.0.pc
 file path=usr/share/doc/libqxp/html/bc_s.png
-file path=usr/share/doc/libqxp/html/bdwn.png
+file path=usr/share/doc/libqxp/html/bc_sd.png
 file path=usr/share/doc/libqxp/html/closed.png
-file path=usr/share/doc/libqxp/html/doc.png
 file path=usr/share/doc/libqxp/html/doxygen.css
-file path=usr/share/doc/libqxp/html/folderclosed.png
-file path=usr/share/doc/libqxp/html/folderopen.png
 file path=usr/share/doc/libqxp/html/index.html
 file path=usr/share/doc/libqxp/html/nav_f.png
+file path=usr/share/doc/libqxp/html/nav_fd.png
 file path=usr/share/doc/libqxp/html/nav_g.png
 file path=usr/share/doc/libqxp/html/nav_h.png
+file path=usr/share/doc/libqxp/html/nav_hd.png
 file path=usr/share/doc/libqxp/html/navtree.css
 file path=usr/share/doc/libqxp/html/open.png
 file path=usr/share/doc/libqxp/html/splitbar.png
+file path=usr/share/doc/libqxp/html/splitbard.png
 file path=usr/share/doc/libqxp/html/sync_off.png
 file path=usr/share/doc/libqxp/html/sync_on.png
 file path=usr/share/doc/libqxp/html/tab_a.png
+file path=usr/share/doc/libqxp/html/tab_ad.png
 file path=usr/share/doc/libqxp/html/tab_b.png
+file path=usr/share/doc/libqxp/html/tab_bd.png
 file path=usr/share/doc/libqxp/html/tab_h.png
+file path=usr/share/doc/libqxp/html/tab_hd.png
 file path=usr/share/doc/libqxp/html/tab_s.png
+file path=usr/share/doc/libqxp/html/tab_sd.png
 file path=usr/share/doc/libqxp/html/tabs.css
