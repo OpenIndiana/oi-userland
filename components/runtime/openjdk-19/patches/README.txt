@@ -92,7 +92,7 @@ This includes Project Loom aka virtual threads.
 
 New DefaultPollerProvider; create a DevPollPoller stub that throws 
 UnsupportedOperationException similar to the way that the AIX
-implementation does. This is enought to make the code compile, and
+implementation does. This is enough to make the code compile, and
 things like jkstat work, but jshell doesn't present a prompt (it was
 fine in 19+21). So this will need a working implementation to fix
 jshell and Loom.
@@ -110,7 +110,7 @@ Remove local os::pause() is it's centralized
 
 SafeFetch handling completely reworked. Remove it from
 src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp, and copy
-the assember from the linux x86_64 implementation (as we are the same
+the assembler from the linux x86_64 implementation (as we are the same
 toolchain and cpu that seems the obvious choice)
 Removed illumos-port-13.patch as it's now irrelevant
 
@@ -161,7 +161,7 @@ Removed the INCLUDE_NMT patch for init.cpp
 Needed to restore src/hotspot/share/services/dtraceAttacher.hpp
 See illumos-port-17.patch.
 This file should have been removed in the original solaris
-deprecation along with the corresponding cpp file, but was forgoteen
+deprecation along with the corresponding cpp file, but was forgotten
 about, and has recently been cleaned up. As we still #include it, we
 need to put it back. As we disable DTrace in any case, it would be
 cleaner to simply remove all of it.
