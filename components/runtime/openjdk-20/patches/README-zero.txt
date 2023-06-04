@@ -20,17 +20,18 @@ Fixes src/hotspot/cpu/zero/stubGenerator_zero.cpp
 illumos-zero-2.patch
 Adds the src/hotspot/os_cpu/solaris_zero directory and contents
 
-These are current and tested for jdk 20+15. They don't provide a
-proper zero port, as they still have x86 assembler that needs to be
-removed. But this provides a starting point.
+These are current and tested for a successful build (not necessarily
+fully working) as of jdk20u 20.0.1. They don't provide a proper zero
+port, as they still have x86 assembler that needs to be removed. But
+this provides a starting point.
 
 The two patches above are now applied by default, so we at least catch
-any incompatibilities early.
+any source incompatibilities early.
 
 Configure:
 
 env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin bash ./configure \
---enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk18 \
+--enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk19 \
 --with-native-debug-symbols=none \
 --with-toolchain-type=gcc \
 --disable-dtrace \
@@ -39,8 +40,8 @@ env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin bash ./configure \
 --enable-jvm-feature-zero --with-jvm-variants=zero \
 --with-source-date=current \
 --with-jobs=3 \
-DATE=/usr/gnu/bin/date
-
+DATE=/usr/gnu/bin/date \
+STRIP=/usr/gnu/bin/strip
 
 build:
 
