@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
 COMPONENT_VERSION=	2.10.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Libxml2 is the XML C parser and toolkit developed for the Gnome project
 COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -63,7 +64,6 @@ CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --localstatedir="$(VARDIR)"
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
-CONFIGURE_OPTIONS += --with-icu
 CONFIGURE_OPTIONS += --with-ftp
 CONFIGURE_OPTIONS += --with-xptr-locs
 CONFIGURE_OPTIONS += --with-history
@@ -71,10 +71,8 @@ CONFIGURE_OPTIONS += --with-legacy
 CONFIGURE_OPTIONS.32 += --with-python=no
 
 CONFIGURE_ENV.64     += PYTHON=$(PYTHON.$(PYTHON_VERSION))
-COMPONENT_INSTALL_ARGS.64 += pythondir=$(PYTHON_VENDOR_PACKAGES)
-COMPONENT_INSTALL_ARGS.64 += pyexecdir=$(PYTHON_VENDOR_PACKAGES)
-COMPONENT_BUILD_ARGS.64 += pythondir=$(PYTHON_VENDOR_PACKAGES)
-COMPONENT_BUILD_ARGS.64 += pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_ENV.64     += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_ENV.64     += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 
 COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; PATH="$(PATH)" autoreconf -if )
 
