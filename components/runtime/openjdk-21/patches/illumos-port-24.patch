@@ -1,0 +1,33 @@
+While we do have stafs(2) it has a different signature, is deprecated and
+undocumented, while statvfs() gives the behaviour we actually want.
+
+--- a/test/jdk/java/io/File/libGetXSpace.c	Wed Apr  5 22:54:38 2023
++++ b/test/jdk/java/io/File/libGetXSpace.c	Thu Apr  6 14:28:43 2023
+@@ -34,9 +34,13 @@
+ #include <sys/param.h>
+ #include <sys/mount.h>
+ #else
++#ifdef __sun__
++#include <sys/statvfs.h>
++#else
+ #include <sys/statfs.h>
+ #endif
+ #endif
++#endif
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -124,8 +128,13 @@
+         array[3] = (jlong)freeBytesAvailable.QuadPart;
+     }
+ #else
++#ifdef __sun__
++    struct statvfs buf;
++    int result = statvfs((const char*)chars, &buf);
++#else
+     struct statfs buf;
+     int result = statfs((const char*)chars, &buf);
++#endif
+     (*env)->ReleaseStringChars(env, root, chars);
+     if (result < 0) {
+         JNU_ThrowByNameWithLastError(env, "java/lang/RuntimeException",
