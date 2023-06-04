@@ -15,7 +15,7 @@ Support SunOS/gcc.  XXX: retain solstudio support.
 @@ -554,7 +553,11 @@ ifneq (, $(findstring $(OPENJDK_TARGET_O
      HARFBUZZ_CFLAGS += -DHAVE_INTEL_ATOMIC_PRIMITIVES
    endif
-   ifeq ($(OPENJDK_TARGET_OS), solaris)
+   ifeq ($(call isTargetOs, solaris), true)
 +   ifeq ($(TOOLCHAIN_TYPE), gcc)
 +    HARFBUZZ_CFLAGS += -DHAVE_INTEL_ATOMIC_PRIMITIVES
 +   else

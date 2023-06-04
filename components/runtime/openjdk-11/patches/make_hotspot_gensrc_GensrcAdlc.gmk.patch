@@ -5,7 +5,7 @@ Support SunOS/gcc.
 --- a/make/hotspot/gensrc/GensrcAdlc.gmk.orig	2019-01-08 12:44:55.000000000 +0000
 +++ b/make/hotspot/gensrc/GensrcAdlc.gmk
 @@ -39,7 +39,11 @@ ifeq ($(call check-jvm-feature, compiler
-   else ifeq ($(OPENJDK_BUILD_OS), solaris)
+   else ifeq ($(call isBuildOs, solaris), true)
      ADLC_LDFLAGS := -m64
      ADLC_CFLAGS := -m64
 +   ifeq ($(TOOLCHAIN_TYPE), solstudio)
@@ -13,18 +13,18 @@ Support SunOS/gcc.
 +   else
 +    ADLC_CFLAGS += -fpermissive
 +   endif
-   else ifeq ($(OPENJDK_BUILD_OS), aix)
+   else ifeq ($(call isBuildOs, aix), true)
      ADLC_LDFLAGS := -q64
      ADLC_CFLAGS := -qnortti -qeh -q64 -DAIX
 @@ -94,7 +98,10 @@ ifeq ($(call check-jvm-feature, compiler
-   ifeq ($(OPENJDK_TARGET_OS), linux)
+   ifeq ($(call isTargetOs, linux), true)
      ADLCFLAGS += -DLINUX=1 -D_GNU_SOURCE=1
-   else ifeq ($(OPENJDK_TARGET_OS), solaris)
+   else ifeq ($(call isTargetOs, solaris), true)
 -    ADLCFLAGS += -DSOLARIS=1 -DSPARC_WORKS=1
 +    ADLCFLAGS += -DSOLARIS=1
 +    ifeq ($(TOOLCHAIN_TYPE), solstudio)
 +      ADLCFLAGS += -DSPARC_WORKS=1
 +    endif
-   else ifeq ($(OPENJDK_TARGET_OS), aix)
+   else ifeq ($(call isTargetOs, aix), true)
      ADLCFLAGS += -DAIX=1
-   else ifeq ($(OPENJDK_TARGET_OS), macosx)
+   else ifeq ($(call isTargetOs, macosx), true)

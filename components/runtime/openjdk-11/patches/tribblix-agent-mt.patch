@@ -1,12 +1,12 @@
 --- a/make/lib/Lib-jdk.hotspot.agent.gmk~	Tue Nov 26 00:55:54 2019
 +++ b/make/lib/Lib-jdk.hotspot.agent.gmk	Thu Apr  9 18:24:54 2020
 @@ -32,9 +32,6 @@
- ifeq ($(OPENJDK_TARGET_OS), linux)
+ ifeq ($(call isTargetOs, linux), true)
    SA_CFLAGS := -D_FILE_OFFSET_BITS=64
  
--else ifeq ($(OPENJDK_TARGET_OS), solaris)
+-else ifeq ($(call isTargetOs, solaris), true)
 -  SA_LDFLAGS := -mt
 -
- else ifeq ($(OPENJDK_TARGET_OS), macosx)
+ else ifeq ($(call isTargetOs, macosx), true)
    SA_CFLAGS := -D_GNU_SOURCE -mno-omit-leaf-frame-pointer \
        -mstack-alignment=16 -fPIC
