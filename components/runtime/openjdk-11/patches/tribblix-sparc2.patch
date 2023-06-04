@@ -1,0 +1,47 @@
+--- a/src/hotspot/os_cpu/solaris_sparc/orderAccess_solaris_sparc.hpp	Tue Jan 10 08:32:35 2023
++++ b/src/hotspot/os_cpu/solaris_sparc/orderAccess_solaris_sparc.hpp	Tue Apr 11 11:00:37 2023
+@@ -35,7 +35,7 @@
+ // Assume TSO.
+ 
+ // A compiler barrier, forcing the C++ compiler to invalidate all memory assumptions
+-inline void compiler_barrier() {
++static inline void compiler_barrier() {
+   __asm__ volatile ("" : : : "memory");
+ }
+ 
+--- a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp	Tue Jan 10 08:32:35 2023
++++ b/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp	Wed Apr 12 08:58:43 2023
+@@ -297,9 +297,8 @@
+ // point into the calling threads stack, and be no lower than the current stack
+ // pointer.
+ address os::current_stack_pointer() {
+-  volatile int dummy;
+-  address sp = (address)&dummy + 8;     // %%%% need to confirm if this is right
+-  return sp;
++  register void *sp __asm__ ("sp");
++  return (address)sp;
+ }
+ 
+ frame os::current_frame() {
+--- a/src/hotspot/os_cpu/solaris_sparc/prefetch_solaris_sparc.inline.hpp	Tue Jan 10 08:32:35 2023
++++ b/src/hotspot/os_cpu/solaris_sparc/prefetch_solaris_sparc.inline.hpp	Fri Apr  7 13:13:45 2023
+@@ -33,11 +33,19 @@
+ extern "C" void _Prefetch_write(void *loc, intx interval);
+ 
+ inline void Prefetch::read(void *loc, intx interval) {
++#  ifdef SPARC_WORKS
+   _Prefetch_read(loc, interval);
++#  else
++  __asm__ volatile("prefetch [%0+%1], 0" : : "r" (loc), "r" (interval) : "memory" );
++#  endif
+ }
+ 
+ inline void Prefetch::write(void *loc, intx interval) {
++#  ifdef SPARC_WORKS
+   _Prefetch_write(loc, interval);
++#  else
++  __asm__ volatile("prefetch [%0+%1], 2" : : "r" (loc), "r" (interval) : "memory" );
++#  endif
+ }
+ 
+ #endif // OS_CPU_SOLARIS_SPARC_VM_PREFETCH_SOLARIS_SPARC_INLINE_HPP

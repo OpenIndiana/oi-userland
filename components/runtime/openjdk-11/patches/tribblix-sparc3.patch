@@ -1,0 +1,49 @@
+This is very much a hack that ought to only mask out a gcc build.
+
+--- a/make/lib/Awt2dLibraries.gmk	Wed Apr 12 13:26:01 2023
++++ b/make/lib/Awt2dLibraries.gmk	Thu Apr  6 08:06:02 2023
+@@ -68,7 +68,7 @@
+ 
+ ################################################################################
+ 
+-ifeq ($(call And, $(call isTargetOs, solaris) $(call isTargetCpuArch, sparc)), true)
++ifeq ($(call And, $(call isTargetOs, not-solaris) $(call isTargetCpuArch, sparc)), true)
+ 
+   # libmlib_image_v is basically built from mlib_image sources, with some additions
+   # and some exclusions.
+@@ -127,7 +127,7 @@
+     $(TOPDIR)/src/$(MODULE)/$(OPENJDK_TARGET_OS_TYPE)/native/common/awt \
+     #
+ 
+-ifeq ($(call And, $(call isTargetOs, solaris) $(call isTargetCpuArch, sparc)), true)
++ifeq ($(call And, $(call isTargetOs, not-really-solaris) $(call isTargetCpuArch, sparc)), true)
+   LIBAWT_EXTRA_SRC += $(TOPDIR)/src/$(MODULE)/share/native/common/awt/medialib
+ endif
+ 
+@@ -155,7 +155,7 @@
+       #
+ endif
+ 
+-ifeq ($(call And, $(call isTargetOs, solaris) $(call isTargetCpu, sparcv9)), true)
++ifeq ($(call And, $(call isTargetOs, not-really-solaris) $(call isTargetCpu, sparcv9)), true)
+   LIBAWT_EXFILES += java2d/loops/MapAccelFunc.c
+ else
+   LIBAWT_EXCLUDES += \
+@@ -182,7 +182,7 @@
+ 
+ LIBAWT_CFLAGS += -D__MEDIALIB_OLD_NAMES -D__USE_J2D_NAMES $(X_CFLAGS)
+ 
+-ifeq ($(call And, $(call isTargetOs, solaris) $(call isTargetCpu, sparcv9)), true)
++ifeq ($(call And, $(call isTargetOs, not-really-solaris) $(call isTargetCpu, sparcv9)), true)
+   LIBAWT_CFLAGS += -xarch=sparcvis -DMLIB_ADD_SUFF \
+       $(TOPDIR)/src/$(MODULE)/unix/native/libmlib_image/vis_$(OPENJDK_TARGET_CPU_BITS).il
+ 
+@@ -189,7 +189,7 @@
+   LIBAWT_ASFLAGS = -P -xarch=v9a
+ endif
+ 
+-ifeq ($(call isTargetOs, solaris), false)
++ifeq ($(call isTargetOs, not-really-solaris), false)
+   LIBAWT_CFLAGS += -DMLIB_NO_LIBSUNMATH
+ endif
+ 

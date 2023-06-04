@@ -8,8 +8,8 @@ Support SunOS/gcc.
  
  ################################################################################
  
--ifeq ($(OPENJDK_TARGET_OS), solaris)
-+ifeq ($(OPENJDK_TARGET_OS), notsolaris)
+-ifeq ($(call isTargetOs, solaris), true)
++ifeq ($(call isTargetOs, notsolaris), true)
 + ifeq ($(TOOLCHAIN_TYPE), solstudio)
  
    $(eval $(call SetupJdkLibrary, BUILD_LIBJ2UCRYPTO, \

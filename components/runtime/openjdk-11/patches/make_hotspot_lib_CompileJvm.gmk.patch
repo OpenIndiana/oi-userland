@@ -8,8 +8,8 @@ Support SunOS/gcc.
  endif
  
  # Inline assembly for solaris
--ifeq ($(OPENJDK_TARGET_OS), solaris)
+-ifeq ($(call isTargetOs, solaris), true)
 +ifeq ($(TOOLCHAIN_TYPE), solstudio)
-   ifeq ($(OPENJDK_TARGET_CPU), x86_64)
+   ifeq ($(call isTargetCpu, x86_64), true)
      JVM_CFLAGS += $(TOPDIR)/src/hotspot/os_cpu/solaris_x86/solaris_x86_64.il
-   else ifeq ($(OPENJDK_TARGET_CPU), sparcv9)
+   else ifeq ($(call isTargetCpu, sparcv9), true)

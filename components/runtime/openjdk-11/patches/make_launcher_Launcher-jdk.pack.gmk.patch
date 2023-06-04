@@ -8,9 +8,9 @@ Support for SunOS/gcc.
  # Also provide an override for non-conformant libraries.
  ifeq ($(TOOLCHAIN_TYPE), gcc)
    CXXFLAGS_JDKEXE += -fvisibility=hidden
-+ ifneq ($(OPENJDK_TARGET_OS), solaris)
++ ifeq ($(call isTargetOs, solaris), false)
    LDFLAGS_JDKEXE += -Wl,--exclude-libs,ALL
 + endif
  else ifeq ($(TOOLCHAIN_TYPE), clang)
-   ifneq ($(OPENJDK_TARGET_OS), macosx)
+   ifeq ($(call isTargetOs, macosx), false)
      CXXFLAGS_JDKEXE += -fvisibility=hidden

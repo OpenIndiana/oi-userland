@@ -8,7 +8,7 @@ Support SunOS/gcc.
      $(foreach s, $(NONPIC_SRC), $(eval BUILD_LIBJVM_$(notdir $s)_CXXFLAGS := -fno-PIC))
    endif
  
--else ifeq ($(OPENJDK_TARGET_OS), solaris)
+-else ifeq ($(call isTargetOs, solaris), true)
 +# All of the following are SunStudio flags.  XXX: verify none are needed for GCC
 +else ifeq ($(TOOLCHAIN_TYPE), solstudio)
    ifneq ($(DEBUG_LEVEL), slowdebug)

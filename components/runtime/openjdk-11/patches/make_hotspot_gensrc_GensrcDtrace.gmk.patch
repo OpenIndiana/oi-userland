@@ -5,12 +5,12 @@ Support SunOS/gcc.
 --- a/make/hotspot/gensrc/GensrcDtrace.gmk.orig	2019-01-08 12:44:55.000000000 +0000
 +++ b/make/hotspot/gensrc/GensrcDtrace.gmk
 @@ -31,6 +31,9 @@ ifeq ($(call check-jvm-feature, dtrace),
-   ifeq ($(OPENJDK_TARGET_OS), solaris)
+   ifeq ($(call isTargetOs, solaris), true)
      DTRACE_FLAGS := -64
      DTRACE_CPP_FLAGS := -D_LP64
 +    ifeq ($(TOOLCHAIN_TYPE), gcc)
 +      DTRACE_CPP_FLAGS += -x c
 +    endif
-   else ifeq ($(OPENJDK_TARGET_OS), macosx)
+   else ifeq ($(call isTargetOs, macosx), true)
      DTRACE_CPP_FLAGS := -D_LP64 -x c
-   else ifeq ($(OPENJDK_TARGET_OS), linux)
+   else ifeq ($(call isTargetOs, linux), true)
