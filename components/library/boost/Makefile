@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		boost
 COMPONENT_VERSION=	1.78.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC_VERSION=	$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	boost - free peer-reviewed portable C++ source libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_SRC_VERSION)
@@ -30,6 +30,7 @@ COMPONENT_PROJECT_URL=	http://www.boost.org
 COMPONENT_FMRI=		system/library/boost
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	Boost Software license
+COMPONENT_LICENSE_FILE=	LICENSE_1_0.txt
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
