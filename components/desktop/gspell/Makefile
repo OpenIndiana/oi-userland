@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         gspell
 COMPONENT_MAJOR_VERSION=      1.12
 COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).1
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      A flexible API to implement the spell checking in a GTK+ application
 COMPONENT_PROJECT_URL=  https://gitlab.gnome.org/GNOME/gspell
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,9 +30,9 @@ COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_LICENSE=      LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
-CONFIGURE_OPTIONS += MAKE=gmake
-
 include $(WS_MAKE_RULES)/common.mk
+
+CONFIGURE_OPTIONS += MAKE=gmake
 
 # Manually added test dependencies
 # According to the test sources aspell is deprecated and superceded by hunspell.
