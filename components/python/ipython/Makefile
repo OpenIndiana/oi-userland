@@ -19,19 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ipython
-HUMAN_VERSION =			8.13.2
+HUMAN_VERSION =			8.14.0
 COMPONENT_SUMMARY =		ipython - IPython: Productive Interactive Computing
 COMPONENT_PROJECT_URL =		https://ipython.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ee/ad/d908d8aac3e8ac8aec2b89103b6c10f289544623879be0e249de3e508123/ipython-8.13.2.tar.gz
+	https://files.pythonhosted.org/packages/fa/cb/2b777f625cca49b4a747b0dfe9986c21f5b46e5b548176903a914cdbec55/ipython-8.14.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7dff3fad32b97f6488e02f87b970f309d082f758d7b7fc252e3b19ee0e432dbb
+	sha256:1d197b907b6ba441b692c48cf2a3a2de280dc0ac91a3405b39349a50272ca0a1
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# ipython >= 8.0.0 requires Python >= 3.8
+# ipython >= 8.13.1 requires Python >= 3.9
 PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
@@ -50,6 +50,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 PYTEST_ADDOPTS += -p no:checkdocs
 # Testing fails with the randomly plugin installed
 PYTEST_ADDOPTS += -p no:randomly
+
+# Random temporary file name
+COMPONENT_TEST_TRANSFORMS += "-e 's|\(/tmp/tmp\).\{8\}\.py|\1XXXXXXXX.py|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/backcall
