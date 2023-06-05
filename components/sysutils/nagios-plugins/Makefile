@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nagios-plugins
-COMPONENT_VERSION =		2.4.4
+COMPONENT_VERSION =		2.4.5
 COMPONENT_SUMMARY =		Nagios Plugins
 COMPONENT_PROJECT_URL =		https://github.com/nagios-plugins/nagios-plugins
 COMPONENT_FMRI =		system/management/nagios/plugins
@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL =		\
 	$(COMPONENT_PROJECT_URL)/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9eb151c0665b4a9b8fbe0baf95656312e1c830fb1de7fa58aed358972b51c25d
+	sha256:fb9e500c81f633136e0a7f9fefbaba9b08eb09e7eeaf30af7d24b0a2c6e05906
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -49,7 +49,8 @@ CONFIGURE_OPTIONS +=	--without-smtpctl-command
 COMPONENT_TEST_TARGETS = test
 
 # Manually added dependencies
-TEST_REQUIRED_PACKAGES += diagnostic/fping
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
+REQUIRED_PACKAGES += diagnostic/fping
 TEST_REQUIRED_PACKAGES += library/perl-5/crypt-x509
 TEST_REQUIRED_PACKAGES += library/perl-5/libwww-perl
 TEST_REQUIRED_PACKAGES += library/perl-5/text-glob
