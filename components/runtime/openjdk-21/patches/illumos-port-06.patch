@@ -1,0 +1,26 @@
+See http://hg.openjdk.java.net/jdk/jdk/rev/1096ad4dbf62
+
+The problem is that we want a guard based on platform, but
+_GNU_SOURCE is a per-toolchain define for the gcc toolchain.
+It "fixes" AIX because that's using the xlc toolchain.
+
+--- a/src/hotspot/share/runtime/os.cpp	Wed Aug 12 16:38:30 2020
++++ b/src/hotspot/share/runtime/os.cpp	Thu Aug 13 19:44:36 2020
+@@ -162,7 +162,7 @@
+   // No offset when dealing with UTC
+   time_t UTC_to_local = 0;
+   if (!utc) {
+-#if defined(_ALLBSD_SOURCE) || defined(_GNU_SOURCE)
++#if defined(_ALLBSD_SOURCE) || defined(_BSD_SOURCE)
+     UTC_to_local = -(time_struct.tm_gmtoff);
+ #elif defined(_WINDOWS)
+     long zone;
+@@ -173,7 +173,7 @@
+ #endif
+ 
+     // tm_gmtoff already includes adjustment for daylight saving
+-#if !defined(_ALLBSD_SOURCE) && !defined(_GNU_SOURCE)
++#if !defined(_ALLBSD_SOURCE) && !defined(_BSD_SOURCE)
+     // If daylight savings time is in effect,
+     // we are 1 hour East of our time zone
+     if (time_struct.tm_isdst > 0) {
