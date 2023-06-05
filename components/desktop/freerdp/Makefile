@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freerdp
 COMPONENT_VERSION=	2.10.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Remote Desktop Viewer Client
 COMPONENT_PROJECT_URL=	https://www.freerdp.com
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
