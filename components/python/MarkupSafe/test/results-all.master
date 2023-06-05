@@ -1,12 +1,15 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/py$(PYV)/tmp
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg, testpaths: tests
+rootdir: $(@D)
+configfile: setup.cfg
+testpaths: tests
 asyncio: mode=strict
-collecting ... collected 52 items
+collecting ... collected 53 items
 
 tests/test_escape.py::test_escape[markupsafe._native-&><'"\U0001f37a xyz-&amp;&gt;&lt;&#39;&#34;\U0001f37a xyz] PASSED
 tests/test_escape.py::test_escape[markupsafe._native-&><'"\u3053\u3093\u3070\u3093\u306f-&amp;&gt;&lt;&#39;&#34;\u3053\u3093\u3070\u3093\u306f] PASSED
@@ -43,6 +46,7 @@ tests/test_markupsafe.py::test_escape_silent[markupsafe._speedups] PASSED
 tests/test_markupsafe.py::test_escaping[markupsafe._native] PASSED
 tests/test_markupsafe.py::test_escaping[markupsafe._speedups] PASSED
 tests/test_markupsafe.py::test_format PASSED
+tests/test_markupsafe.py::test_format_map PASSED
 tests/test_markupsafe.py::test_formatting_empty PASSED
 tests/test_markupsafe.py::test_formatting_with_objects PASSED
 tests/test_markupsafe.py::test_html_interop PASSED
@@ -61,6 +65,6 @@ tests/test_markupsafe.py::test_tuple_interpol PASSED
 tests/test_markupsafe.py::test_type_behavior PASSED
 tests/test_markupsafe.py::test_unescape PASSED
 
-======== 52 passed ========
+======== 53 passed ========
   py$(PYV): OK
   congratulations :)
