@@ -3,6 +3,12 @@ considerably modified. Cut from the jdk15 patches as of jdk15+32.
 
 See also README-zero.txt for note on a project zero variant.
 
+20.0.1
+
+Needed to include <limits.h> in
+jdk20u-jdk-20.0.1-ga/src/java.base/share/native/libjava/jni_util.c
+to make sure that INT_MAX is defined. See illumos-port-22.patch
+
 20+29, 20+30, 20+31, 20+32, 20+33
 
 No changes; now in rampdown phase 2
@@ -183,7 +189,7 @@ pthread_mutex_t. Second, assign directly rather than setting the
 symbols dynamically, which used to be done as a way of switching
 between thread-based and lwp-based synchronization.
 
-And with that, in fact, we could use the central posix verions of the
+And with that, in fact, we could use the central posix versions of the
 Platform pieces.
 
 And do the same for the cond_ functions as well as the mutex_ functions.
