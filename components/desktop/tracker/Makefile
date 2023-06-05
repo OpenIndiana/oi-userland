@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tracker
 COMPONENT_VERSION=      1.8.3
-COMPONENT_REVISION=     11
+COMPONENT_REVISION=     12
 COMPONENT_SUMMARY=      Desktop search tool
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -45,7 +45,7 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -fi)
 
-COMPONENT_PRE_CONFIGURE_ACTION =        ( $(CLONEY) $(SOURCE_DIR) $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=/usr/bin
