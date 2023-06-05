@@ -19,18 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		markdown-it-py
-HUMAN_VERSION =			3.0.0
+HUMAN_VERSION =			2.2.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		markdown-it-py - Python port of markdown-it. Markdown parsing, done right!
 COMPONENT_PROJECT_URL =		https://github.com/executablebooks/markdown-it-py
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/executablebooks/markdown-it-py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:60dffc950e61a2b4ec980087d79352293f138f7b41bf3d7f8e1907160986c886
+	sha256:a201c93c023d0c810023b38f3e9ad48be433095c5437d5410af04a73665c8ff1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # markdown-it-py >= 3.0.0 requires Python >= 3.8
-PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
+PYTHON_VERSIONS = 3.7
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -40,6 +41,7 @@ TEST_CONFLICTING_PACKAGES.python += library/python/pytest-mypy-plugins
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += library/python/mdurl
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/linkify-it-py
