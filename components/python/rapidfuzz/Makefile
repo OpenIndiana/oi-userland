@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		rapidfuzz
-HUMAN_VERSION =			3.0.0
+HUMAN_VERSION =			3.1.0
 COMPONENT_SUMMARY =		rapidfuzz - rapid fuzzy string matching
 COMPONENT_PROJECT_URL =		https://github.com/maxbachmann/RapidFuzz
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/70/05/4030a8a7aa42d3e40ba7abf902de8e7e94ddcb61abda23f6a3ec5daf36df/rapidfuzz-3.0.0.tar.gz
+	https://files.pythonhosted.org/packages/4c/a4/2d161abdb4a50240078568fdab68e45031f07928cfef364e08f535334c77/rapidfuzz-3.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4c1d895d16f62e9ac88d303eb918d90a390bd712055c849e01c558b7ae0fa908
+	sha256:5571e38ef9452cc89203c9f30fabf23b1fc59dcc2063762d0b037ebeb7c40a58
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
