@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8-bugbear
-HUMAN_VERSION =			23.5.9
+HUMAN_VERSION =			23.6.5
 COMPONENT_SUMMARY =		flake8-bugbear - A plugin for flake8 finding likely bugs and design problems in your program. Contains warnings that don't belong in pyflakes and pycodestyle.
 COMPONENT_PROJECT_URL =		https://github.com/PyCQA/flake8-bugbear
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/PyCQA/flake8-bugbear/archive/refs/tags/$(HUMAN_VERSION).tar.gz
+	https://files.pythonhosted.org/packages/00/c5/e95dcb8f8a882858481e324d33853cc83701d581b51034079881b391c715/flake8-bugbear-23.6.5.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:411ebc01c205975c69059f8046bdd3e56a4cc388d68041a7a0a511537d1898ed
+	sha256:8631e1071c9d85d24a615f235565c16c9a2ac57add4a14636d331bf9f4ef14fa
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
