@@ -1,10 +1,10 @@
 Solaris/Illumos does not have sysfs support for pci bus
---- gecko-dev-master/toolkit/xre/glxtest.cpp.old	2022-08-08 12:41:23.767919809 +0000
-+++ gecko-dev-master/toolkit/xre/glxtest.cpp	2022-08-08 12:43:43.585115149 +0000
-@@ -262,11 +262,13 @@
- #define PCI_BASE_CLASS_DISPLAY 0x03
- 
+--- gecko-dev-master/toolkit/xre/glxtest/glxtest.cpp.~1~        2023-04-16 20:47:54.878612537 -0400
++++ gecko-dev-master/toolkit/xre/glxtest/glxtest.cpp    2023-04-16 20:50:01.983196670 -0400
+@@ -264,11 +264,13 @@
  static void get_pci_status() {
+   log("GLX_TEST: get_pci_status start\n");
+ 
 +#if !defined(__sun)
    if (access("/sys/bus/pci/", F_OK) != 0 &&
        access("/sys/bus/pci_express/", F_OK) != 0) {

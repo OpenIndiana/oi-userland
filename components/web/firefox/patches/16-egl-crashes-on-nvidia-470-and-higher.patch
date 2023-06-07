@@ -4,8 +4,8 @@ have working EGL support on OI, even though the nVidia driver claims support.
 Make sure EGL is not used for now.  Revisit patch when xorg and mesa are
 updated on OI.
 
---- firefox-110.0/toolkit/xre/glxtest.cpp.old	2023-01-25 16:57:32.381884245 +0000
-+++ firefox-110.0/toolkit/xre/glxtest.cpp	2023-01-25 17:01:49.335385472 +0000
+--- firefox-114.0/toolkit/xre/glxtest/glxtest.cpp.old   2023-01-25 16:57:32.381884245 +0000
++++ firefox-114.0/toolkit/xre/glxtest/glxtest.cpp       2023-01-25 17:01:49.335385472 +0000
 @@ -478,6 +478,9 @@
  
  static bool get_egl_gl_status(EGLDisplay dpy,
@@ -23,26 +23,26 @@ updated on OI.
 +
 +  return false;
 +
-   void* libegl = dlopen(LIBEGL_FILENAME, RTLD_LAZY);
-   if (!libegl) {
-     record_warning("libEGL missing");
+   log("GLX_TEST: get_egl_status start\n");
+ 
+   EGLDisplay dpy = nullptr;
 @@ -917,6 +923,9 @@
  }
  
- static bool x11_egltest() {
+ bool x11_egltest() {
 +
 +  return false;
 +
+   log("GLX_TEST: x11_egltest start\n");
+ 
    Display* dpy = XOpenDisplay(nullptr);
-   if (!dpy) {
-     return false;
 @@ -1223,9 +1232,7 @@
-   {
  #ifdef MOZ_X11
+   if (!aWayland) {
      // TODO: --display command line argument is not properly handled
 -    if (!x11_egltest()) {
        glxtest();
 -    }
- #endif
    }
- 
+ #endif
+   // Finally write buffered data to the pipe.
