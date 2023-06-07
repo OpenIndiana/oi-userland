@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nagios-plugins
 COMPONENT_VERSION =		2.4.5
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Nagios Plugins
 COMPONENT_PROJECT_URL =		https://github.com/nagios-plugins/nagios-plugins
 COMPONENT_FMRI =		system/management/nagios/plugins
@@ -49,6 +50,7 @@ CONFIGURE_OPTIONS +=	--without-smtpctl-command
 COMPONENT_TEST_TARGETS = test
 
 # Manually added dependencies
+REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += diagnostic/fping
 TEST_REQUIRED_PACKAGES += library/perl-5/crypt-x509
@@ -60,5 +62,7 @@ TEST_REQUIRED_PACKAGES += library/perl-5/timedate
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
