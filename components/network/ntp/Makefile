@@ -25,18 +25,19 @@
 # Copyright (c) 2021, Andreas Wacknitz
 #
 
+USE_OPENSSL11=		yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
-COMPONENT_VERSION=	4.2.8p15
-COMPONENT_REVISION =	1
+COMPONENT_VERSION=	4.2.8p17
 IPS_COMPONENT_VERSION=	$(subst p,.,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
 COMPONENT_PROJECT_URL=	https://www.ntp.org/
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:f65840deab68614d5d7ceb2d0bb9304ff70dcdedd09abb79754a87536b849c19
+COMPONENT_ARCHIVE_HASH= sha256:103dd272e6a66c5b8df07dce5e9a02555fcd6f1397bdfb782237328e89d3a866
 COMPONENT_ARCHIVE_URL=	https://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	service/network/ntp
 COMPONENT_CLASSIFICATION=	System/Services
@@ -62,6 +63,7 @@ CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR)/inet
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/inet
 CONFIGURE_OPTIONS +=	--enable-getifaddrs
 CONFIGURE_OPTIONS +=	--enable-all-clocks
+CONFIGURE_OPTIONS +=	--enable-solarisprivs
 # debugging is enabled by default, causes 9705
 #CONFIGURE_OPTIONS +=   --disable-debugging
 CONFIGURE_OPTIONS +=	--enable-debugging
@@ -73,8 +75,8 @@ CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
 #CONFIGURE_OPTIONS +=   --without-sntp
 CONFIGURE_OPTIONS +=	--without-ntpsnmpd
 CONFIGURE_OPTIONS +=	--with-crypto=openssl
-CONFIGURE_OPTIONS +=	--with-openssl-incdir=$(USRINCDIR)
-CONFIGURE_OPTIONS +=	--with-openssl-libdir=$(LIBDIR)/$(MACH64)
+CONFIGURE_OPTIONS +=	--with-openssl-incdir=$(OPENSSL_INCDIR)
+CONFIGURE_OPTIONS +=	--with-openssl-libdir=$(OPENSSL_LIBDIR.64)
 CONFIGURE_OPTIONS +=	--disable-problem-tests
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
@@ -131,12 +133,12 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 	fi
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
