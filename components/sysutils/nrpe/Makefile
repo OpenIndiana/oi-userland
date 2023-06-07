@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nrpe
 COMPONENT_VERSION =		4.1.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Nagios Remote Plugin Executor
 COMPONENT_PROJECT_URL =		https://github.com/NagiosEnterprises/nrpe
 COMPONENT_FMRI =		system/management/nagios/nrpe
@@ -35,7 +36,9 @@ TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --enable-install-method=os
+CONFIGURE_OPTIONS += --enable-command-args
 CONFIGURE_OPTIONS += --with-piddir=$(VARDIR)/run
+CONFIGURE_OPTIONS += --with-ssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS += --with-nrpe-user=nrpe
 CONFIGURE_OPTIONS += --with-nrpe-group=nrpe
 
@@ -51,6 +54,6 @@ COMPONENT_INSTALL_TARGETS += install-config
 COMPONENT_INSTALL_TARGETS += install-init
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
