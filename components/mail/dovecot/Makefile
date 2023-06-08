@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dovecot
 COMPONENT_VERSION=      2.3.20
-#COMPONENT_REVISION=	1
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      DOVECOT - The Secure IMAP server
 COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for \
 		Linux/UNIX-like systems, written with security primarily in mind. \
@@ -38,52 +38,53 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_ENV+=		PANDOC=false
-CONFIGURE_ENV+=		CPPFLAGS=-I/usr/include/openldap
+CONFIGURE_ENV += PANDOC=false
+CONFIGURE_ENV += CPPFLAGS=-I/usr/include/openldap
 
-PATH=$(PATH.gnu):$(MYSQL_BINDIR)
+PATH = $(PATH.gnu):$(MYSQL_BINDIR)
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc \
-		    --localstatedir=/var \
-		    --libexecdir=/usr/lib \
-                    --with-gssapi=plugin \
-                    --with-ldap=plugin \
-                    --with-sql=plugin \
-                    --with-lua=plugin \
-                    --with-ssl=openssl \
-		    --with-ioloop=poll \
-		    --with-notify=none \
-                    --with-sodium \
-                    --with-mysql \
-                    --with-pgsql \
-		    --enable-static=no \
-		    --without-systemd \
-		    SSL_CFLAGS=-I$(OPENSSL_INCDIR) \
-		    SSL_LIBS="-L$(OPENSSL_LIBDIR) -lssl -lcrypto" \
-		    LDFLAGS="-lldap_r"
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --libexecdir=/usr/lib
+CONFIGURE_OPTIONS += --with-gssapi=plugin
+CONFIGURE_OPTIONS += --with-ldap=plugin
+CONFIGURE_OPTIONS += --with-sql=plugin
+CONFIGURE_OPTIONS += --with-lua=plugin
+CONFIGURE_OPTIONS += --with-ssl=openssl
+CONFIGURE_OPTIONS += --with-ioloop=poll
+CONFIGURE_OPTIONS += --with-notify=none
+CONFIGURE_OPTIONS += --with-sodium
+CONFIGURE_OPTIONS += --with-mysql
+CONFIGURE_OPTIONS += --with-pgsql
+CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --without-systemd
+CONFIGURE_OPTIONS += SSL_CFLAGS=-I$(OPENSSL_INCDIR)
+CONFIGURE_OPTIONS += SSL_LIBS="-L$(OPENSSL_LIBDIR) -lssl -lcrypto"
+CONFIGURE_OPTIONS += LDFLAGS="-lldap_r"
 
 # RPATH needed to make 'make REQUIRED_PACKAGES' happy
 COMPONENT_POST_CONFIGURE_ACTION= \
-	(cd $(@D) ; $(GSED) -i -e 's:^LDFLAGS = .*:LDFLAGS = $(NOPLUGIN_LDFLAGS) -Wl,-rpath=$(MYSQL_LIBDIR) -Wl,-rpath=$(PG_LIBDIR):' -e 's:mariadb/10.1:mariadb/10.6:g' src/lib-sql/Makefile )
+	( cd $(@D) ; $(GSED) -i -e 's:^LDFLAGS = .*:LDFLAGS = $(NOPLUGIN_LDFLAGS) -Wl,-rpath=$(MYSQL_LIBDIR) -Wl,-rpath=$(PG_LIBDIR):' -e 's:mariadb/10.1:mariadb/10.6:g' src/lib-sql/Makefile  )
 
 COMPONENT_TEST_ARGS+=   -k
 COMPONENT_TEST_TRANSFORMS = \
 	'-n ' \
-        '-e "/: ok$$/p" ' \
-        '-e "/tests failed$$/p" ' \
-        '-e "/: FAILED$$/p" '
+	'-e "/: ok$$/p" ' \
+	'-e "/tests failed$$/p" ' \
+	'-e "/: FAILED$$/p" '
 
 # manually added dependencies
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += database/mariadb-106
-REQUIRED_PACKAGES += database/mariadb-106/client
+REQUIRED_PACKAGES += $(MYSQL_BASEPKG)
+REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += database/mariadb-106/library
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/openldap
@@ -92,7 +93,6 @@ REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
