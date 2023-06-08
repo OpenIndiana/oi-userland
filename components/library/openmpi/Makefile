@@ -18,19 +18,16 @@ MPI_IMPLEMENTATION  = openmpi
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =            openmpi/$(COMPILER)
-OPENMPI_VERSION_MAJOR =     4.0
-COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).1
-COMPONENT_REVISION =        4
+OPENMPI_VERSION_MAJOR =     4.1
+COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).5
 COMPONENT_FMRI =            library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION =  Development/High Performance Computing
-COMPONENT_PROJECT_URL =     http://www.open-mpi.org
+COMPONENT_PROJECT_URL =     https://www.open-mpi.org
 COMPONENT_SRC_NAME =        openmpi
 COMPONENT_SRC =             $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =         $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = \
-  sha256:e55e213fe09a214ab9f2c722acfd8bf7b39bbc1800e4b7a464d38df15e707f59
-COMPONENT_ARCHIVE_URL = \
-  http://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH =    sha256:c018b127619d2a2a30c1931f316fc8a245926d0f5b4ebed4711f9695e7f70925
+COMPONENT_ARCHIVE_URL =     https://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 
 COMPONENT_SUMMARY =         OpenMPI - High Performance Message Passing Library
 COMPONENT_LICENSE_FILE =    $(COMPONENT_SRC_NAME).license
@@ -60,6 +57,7 @@ CONFIGURE_OPTIONS+= --enable-mpi-fortran=usempi
 CONFIGURE_OPTIONS+= --enable-mpi-cxx
 CONFIGURE_OPTIONS+= --enable-mpi-cxx-seek
 CONFIGURE_OPTIONS+= --disable-event-epoll
+CONFIGURE_OPTIONS+= --with-package-string=Openindiana
 CONFIGURE_OPTIONS+= --with-wrapper-cflags="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+= --with-wrapper-cxxflags="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+= --with-wrapper-fcflags="$(CC_BITS) -L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
