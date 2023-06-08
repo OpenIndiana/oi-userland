@@ -30,11 +30,9 @@ COMPONENT_ARCHIVE=			$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=		https://archive.apache.org/dist/$(COMPONENT_NAME)/source/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=			Apache CouchDB is a document-oriented database.
 COMPONENT_LICENSE=			Apache 2.0
+COMPONENT_LICENSE_FILE=		LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-GCC_VERSION= 10
-PYTHON_VERSION= 3.7
 
 PATH= $(PATH.gnu)
 
@@ -88,15 +86,10 @@ COMPONENT_TEST_TRANSFORMS = /OK/
 # Build dependencies
 REQUIRED_PACKAGES += developer/icu
 
-# only required for target test
-# this modules are in the repository
-REQUIRED_PACKAGES += library/python/nose-37
-REQUIRED_PACKAGES += library/python/requests-37
-# and install this via pip
-# pip install hypothesis
-
-# manually added build time
-REQUIRED_PACKAGES += developer/gcc-10
+# only required for tests
+TEST_REQUIRED_PACKAGES += library/python/nose
+TEST_REQUIRED_PACKAGES += library/python/requests
+TEST_REQUIRED_PACKAGES += library/python/hypothesis
 
 # manually added not found by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += runtime/erlang
