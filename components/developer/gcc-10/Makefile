@@ -17,7 +17,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 10.4.0
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
@@ -57,7 +57,7 @@ CONFIGURE_OPTIONS+= --with-diagnostics-urls=auto-if-env
 CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-objc-gc
 CONFIGURE_OPTIONS.i386+= --enable-initfini-array
-CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
+CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,go,lto,objc
 CONFIGURE_OPTIONS+= --disable-libitm
 CONFIGURE_OPTIONS+= enable_frame_pointer=yes
 
@@ -68,6 +68,7 @@ PKG_HARDLINKS += usr/gcc/10/bin/gcc
 PKG_HARDLINKS += usr/gcc/10/bin/gcc-ar
 PKG_HARDLINKS += usr/gcc/10/bin/gcc-nm
 PKG_HARDLINKS += usr/gcc/10/bin/gcc-ranlib
+PKG_HARDLINKS += usr/gcc/10/bin/gccgo
 PKG_HARDLINKS += usr/gcc/10/bin/gfortran
 
 # Auto-generated dependencies
