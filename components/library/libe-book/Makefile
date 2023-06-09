@@ -20,12 +20,12 @@
 #
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=32_and_64
+BUILD_BITS=64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libe-book
 COMPONENT_VERSION=	0.1.3
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_FMRI=     	library/c++/libe-book
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libebook
@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:7e8d8ff34f27831aca3bc6f9cc532c2f90d2057c778963b884ff3d1e34dfe1f9
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libebook/files/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_LICENSE=      MPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 # Fix threading detection issue introduced with boost 1.64
 CXXFLAGS+= -std=c++11 -pthread

@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libcdr
 COMPONENT_VERSION=	0.1.7
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      libcdr - library for reading CorelDRAW documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libcdr
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE_URL=	https://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(C
 COMPONENT_FMRI=     	library/c++/libcdr
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      MPLv2
+COMPONENT_LICENSE_FILE= COPYING.MPL
 
 # Fix threading detection issue introduced with boost 1.64
 CXXFLAGS+= -std=c++11 -pthread
