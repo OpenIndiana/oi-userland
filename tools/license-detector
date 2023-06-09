@@ -101,7 +101,7 @@ for l in "$WS_TOOLS"/licenses/* ; do
 			| sed -E -e 's/[[:space:]]+/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d' \\
 	EOF
 	# Apply filter if any
-	[[ -x "$l.filter" ]] && printf "\t| %s \\\n" "$l.filter" >> "$TMPFILE"
+	[[ -x "$l.filter" ]] && printf '\t| %s \\\n' "$l.filter" >> "$TMPFILE"
 	cat <<#EOF >> "$TMPFILE"
 			| tr ' ' '\\n' | fmt
 	EOF
