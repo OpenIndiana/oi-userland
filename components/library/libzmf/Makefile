@@ -20,31 +20,33 @@
 #
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=32_and_64
+
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libzmf
 COMPONENT_VERSION=	0.0.2
-COMPONENT_REVISION=	2
-COMPONENT_FMRI=     library/c++/libzmf
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libzmf
 COMPONENT_SUMMARY=      libzmf - library for reading Zoner Callisto/Draw documents
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:27051a30cb057fdb5d5de65a1f165c7153dc76e27fe62251cbb86639eb2caf22
 COMPONENT_ARCHIVE_URL=  https://dev-www.libreoffice.org/src/libzmf/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     library/c++/libzmf
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
-# Fix threading detection issue introduced with boost 1.64
-CXXFLAGS+= -std=c++11 -pthread
-
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--disable-werror
+# Fix threading detection issue introduced with boost 1.64
+CXXFLAGS += -std=c++11 -pthread
+
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --disable-werror
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

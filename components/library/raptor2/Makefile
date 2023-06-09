@@ -22,12 +22,13 @@
 # Copyright (c) 2019 Nona Hansel
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		raptor2
 COMPONENT_VERSION=	2.0.16
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	RDF Parser Library - RDF parser utility
 COMPONENT_DESCRIPTION=	Raptor2 provides a set of parsers and serializers that generate Resource Description Framework (RDF)\
 						triples by parsing syntaxes or serialize the triples into a syntax

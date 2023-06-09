@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libical
 COMPONENT_VERSION=	3.0.16
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	libical is an Open Source implementation of the IETF's iCalendar Calendaring and Scheduling protocols
 COMPONENT_PROJECT_URL=	https://libical.github.io/libical
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
