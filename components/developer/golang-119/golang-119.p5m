@@ -13,10 +13,9 @@
 # Copyright 2022 Till Wegmueller
 #
 
-set name=pkg.fmri \
-    value=pkg:/$(COMPONENT_FMRI)-119@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-119@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -29,13 +28,6 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=usr/lib/golang/1.19/src/.+ -> default pkg.depend.bypass-generate .* >
 
 <transform file path=usr/lib/golang/1.19/src/.+ -> default pkg.linted.userland.action001.2 true >
-
-# Till: Note the the next person updating this package, probably myself. Only the following two files in the gocache folder are deliverable
-# file path=usr/lib/golang/1.19/gocache/README
-# file path=usr/lib/golang/1.19/gocache/trim.txt
-#
-# All files with a Hash as name must be removed from the manifest, as they are named different between building machines. Additionally they are not needed
-<transform file path=usr/lib/golang/1.19/gocache/.+ -> drop >
 
 link path=usr/bin/go target=../lib/golang/1.19/bin/illumos_amd64/go mediator=golang mediator-version=1.19
 link path=usr/bin/gofmt target=../lib/golang/1.19/bin/illumos_amd64/gofmt mediator=golang mediator-version=1.19
@@ -77,15 +69,6 @@ file path=usr/lib/golang/1.19/doc/asm.html
 file path=usr/lib/golang/1.19/doc/go1.17_spec.html
 file path=usr/lib/golang/1.19/doc/go_mem.html
 file path=usr/lib/golang/1.19/doc/go_spec.html
-file path=usr/lib/golang/1.19/gocache/02/02ce29472fc7b0890690112311fc834c0ea256b119754c9cf109c7b20480800e-a
-file path=usr/lib/golang/1.19/gocache/24/241464e5e91c75567339aca406d1cd11cbc67016cb7613806e585e7f876f487a-a
-file path=usr/lib/golang/1.19/gocache/2e/2ef35836bca99fb3e22bed710290fc2328bf8b2cd857417b50082440aff9e3db-a
-file path=usr/lib/golang/1.19/gocache/65/65c1989a97f2e8acdf3f438737e22d44908f015df195f07bb176e2a03fae9394-d
-file path=usr/lib/golang/1.19/gocache/README
-file path=usr/lib/golang/1.19/gocache/a6/a6b7454e5591a4ddb50e5cdd11cebb67f6d71331807d71b06ace0db3fa680252-a
-file path=usr/lib/golang/1.19/gocache/e3/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855-d
-file path=usr/lib/golang/1.19/gocache/e3/e3ce9c593e1935f7a4cf56715fe71accd5682d181b96b62b85420456d848e04e-d
-file path=usr/lib/golang/1.19/gocache/trim.txt
 file path=usr/lib/golang/1.19/lib/time/README
 file path=usr/lib/golang/1.19/lib/time/update.bash
 file path=usr/lib/golang/1.19/lib/time/zoneinfo.zip
@@ -2729,6 +2712,7 @@ file path=usr/lib/golang/1.19/src/cmd/go/testdata/mod/example.com_downgrade_v2.0
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/mod/example.com_downgrade_v2_v2.0.1.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/mod/example.com_fuzzfail_v0.1.0.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/mod/example.com_fuzzfail_v0.2.0.txt
+file path=usr/lib/golang/1.19/src/cmd/go/testdata/mod/example.com_generics_v1.0.0.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/mod/example.com_incompatiblewithsub_v1.0.0.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/mod/example.com_incompatiblewithsub_v2.0.0+incompatible.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/mod/example.com_invalidpath_v1_v1.0.0.txt
@@ -2903,6 +2887,7 @@ file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/build_cache_trimpath.tx
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/build_cd_gopath_different.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/build_cgo_consistent_results.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/build_concurrent_backend.txt
+file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/build_cwd_newline.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/build_darwin_cc_arch.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/build_dash_n_cgo.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/build_dash_o_dev_null.txt
@@ -2994,6 +2979,7 @@ file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/fileline.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/fmt_load_errors.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/fsys_walk.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/gccgo_link_c.txt
+file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/gccgo_link_ldflags.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/gccgo_m.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/gccgo_mangle.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/gcflags_patterns.txt
@@ -3344,6 +3330,7 @@ file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/mod_skip_write.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/mod_std_vendor.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/mod_string_alias.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/mod_sum_ambiguous.txt
+file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/mod_sum_issue56222.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/mod_sum_lookup.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/mod_sum_readonly.txt
 file path=usr/lib/golang/1.19/src/cmd/go/testdata/script/mod_sum_replaced.txt
@@ -7617,7 +7604,6 @@ file path=usr/lib/golang/1.19/src/runtime/export_linux_test.go
 file path=usr/lib/golang/1.19/src/runtime/export_mmap_test.go
 file path=usr/lib/golang/1.19/src/runtime/export_pipe2_test.go
 file path=usr/lib/golang/1.19/src/runtime/export_pipe_test.go
-file path=usr/lib/golang/1.19/src/runtime/export_solaris_test.go
 file path=usr/lib/golang/1.19/src/runtime/export_test.go
 file path=usr/lib/golang/1.19/src/runtime/export_unix_test.go
 file path=usr/lib/golang/1.19/src/runtime/export_windows_test.go
@@ -7690,6 +7676,16 @@ file path=usr/lib/golang/1.19/src/runtime/internal/syscall/asm_linux_mipsx.s
 file path=usr/lib/golang/1.19/src/runtime/internal/syscall/asm_linux_ppc64x.s
 file path=usr/lib/golang/1.19/src/runtime/internal/syscall/asm_linux_riscv64.s
 file path=usr/lib/golang/1.19/src/runtime/internal/syscall/asm_linux_s390x.s
+file path=usr/lib/golang/1.19/src/runtime/internal/syscall/defs_linux_386.go
+file path=usr/lib/golang/1.19/src/runtime/internal/syscall/defs_linux_amd64.go
+file path=usr/lib/golang/1.19/src/runtime/internal/syscall/defs_linux_arm.go
+file path=usr/lib/golang/1.19/src/runtime/internal/syscall/defs_linux_arm64.go
+file path=usr/lib/golang/1.19/src/runtime/internal/syscall/defs_linux_loong64.go
+file path=usr/lib/golang/1.19/src/runtime/internal/syscall/defs_linux_mips64x.go
+file path=usr/lib/golang/1.19/src/runtime/internal/syscall/defs_linux_mipsx.go
+file path=usr/lib/golang/1.19/src/runtime/internal/syscall/defs_linux_ppc64x.go
+file path=usr/lib/golang/1.19/src/runtime/internal/syscall/defs_linux_riscv64.go
+file path=usr/lib/golang/1.19/src/runtime/internal/syscall/defs_linux_s390x.go
 file path=usr/lib/golang/1.19/src/runtime/internal/syscall/syscall_linux.go
 file path=usr/lib/golang/1.19/src/runtime/lfstack.go
 file path=usr/lib/golang/1.19/src/runtime/lfstack_32bit.go
@@ -7803,8 +7799,6 @@ file path=usr/lib/golang/1.19/src/runtime/msize.go
 file path=usr/lib/golang/1.19/src/runtime/mspanset.go
 file path=usr/lib/golang/1.19/src/runtime/mstats.go
 file path=usr/lib/golang/1.19/src/runtime/mwbbuf.go
-file path=usr/lib/golang/1.19/src/runtime/nbpipe_fcntl_libc_test.go
-file path=usr/lib/golang/1.19/src/runtime/nbpipe_fcntl_unix_test.go
 file path=usr/lib/golang/1.19/src/runtime/nbpipe_pipe.go
 file path=usr/lib/golang/1.19/src/runtime/nbpipe_pipe2.go
 file path=usr/lib/golang/1.19/src/runtime/nbpipe_pipe_test.go
@@ -8031,6 +8025,12 @@ file path=usr/lib/golang/1.19/src/runtime/runtime_test.go
 file path=usr/lib/golang/1.19/src/runtime/runtime_unix_test.go
 file path=usr/lib/golang/1.19/src/runtime/rwmutex.go
 file path=usr/lib/golang/1.19/src/runtime/rwmutex_test.go
+file path=usr/lib/golang/1.19/src/runtime/security_aix.go
+file path=usr/lib/golang/1.19/src/runtime/security_issetugid.go
+file path=usr/lib/golang/1.19/src/runtime/security_linux.go
+file path=usr/lib/golang/1.19/src/runtime/security_nonunix.go
+file path=usr/lib/golang/1.19/src/runtime/security_test.go
+file path=usr/lib/golang/1.19/src/runtime/security_unix.go
 file path=usr/lib/golang/1.19/src/runtime/select.go
 file path=usr/lib/golang/1.19/src/runtime/sema.go
 file path=usr/lib/golang/1.19/src/runtime/sema_test.go
@@ -8250,6 +8250,7 @@ file path=usr/lib/golang/1.19/src/runtime/testdata/testprognet/main.go
 file path=usr/lib/golang/1.19/src/runtime/testdata/testprognet/net.go
 file path=usr/lib/golang/1.19/src/runtime/testdata/testprognet/signal.go
 file path=usr/lib/golang/1.19/src/runtime/testdata/testprognet/signalexec.go
+file path=usr/lib/golang/1.19/src/runtime/testdata/testsuid/main.go
 file path=usr/lib/golang/1.19/src/runtime/testdata/testwinlib/main.c
 file path=usr/lib/golang/1.19/src/runtime/testdata/testwinlib/main.go
 file path=usr/lib/golang/1.19/src/runtime/testdata/testwinlibsignal/dummy.go
@@ -10102,11 +10103,6 @@ file path=usr/lib/golang/1.19/test/fixedbugs/issue15439.go
 file path=usr/lib/golang/1.19/test/fixedbugs/issue15470.dir/a.go
 file path=usr/lib/golang/1.19/test/fixedbugs/issue15470.dir/b.go
 file path=usr/lib/golang/1.19/test/fixedbugs/issue15470.go
-file path=usr/lib/golang/1.19/test/fixedbugs/issue54911.go
-file path=usr/lib/golang/1.19/test/fixedbugs/issue5493.go
-file path=usr/lib/golang/1.19/test/fixedbugs/issue54991.go                                                                                                                  
-file path=usr/lib/golang/1.19/test/fixedbugs/issue55122.go                                                                           
-file path=usr/lib/golang/1.19/test/fixedbugs/issue55122b.go                                                                          
 file path=usr/lib/golang/1.19/test/fixedbugs/issue15514.dir/a.go
 file path=usr/lib/golang/1.19/test/fixedbugs/issue15514.dir/b.go
 file path=usr/lib/golang/1.19/test/fixedbugs/issue15514.dir/c.go
@@ -11183,6 +11179,11 @@ file path=usr/lib/golang/1.19/test/fixedbugs/issue54638.go
 file path=usr/lib/golang/1.19/test/fixedbugs/issue5470.dir/a.go
 file path=usr/lib/golang/1.19/test/fixedbugs/issue5470.dir/b.go
 file path=usr/lib/golang/1.19/test/fixedbugs/issue5470.go
+file path=usr/lib/golang/1.19/test/fixedbugs/issue54911.go
+file path=usr/lib/golang/1.19/test/fixedbugs/issue5493.go
+file path=usr/lib/golang/1.19/test/fixedbugs/issue54991.go
+file path=usr/lib/golang/1.19/test/fixedbugs/issue55122.go
+file path=usr/lib/golang/1.19/test/fixedbugs/issue55122b.go
 file path=usr/lib/golang/1.19/test/fixedbugs/issue5515.go
 file path=usr/lib/golang/1.19/test/fixedbugs/issue5581.go
 file path=usr/lib/golang/1.19/test/fixedbugs/issue55889.go
