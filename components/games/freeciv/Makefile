@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freeciv
 COMPONENT_VERSION=	3.0.7
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	Free and Open Source empire-building strategy game inspired by the history of human civilization.
 COMPONENT_PROJECT_URL=	https://www.freeciv.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
