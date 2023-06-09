@@ -25,7 +25,6 @@
 #
 
 USE_OPENSSL11=		yes
-
 BUILD_STYLE=		justmake
 # despite everything now is built as 64-bit the 32-bit build is needed for 
 # libmilter to not break older applications dependend on 32-bit libraries.
@@ -34,7 +33,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sendmail
 COMPONENT_VERSION=      8.17.1
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  ftp://ftp.sendmail.org/pub/sendmail/
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME).$(COMPONENT_VERSION).tar.gz
@@ -193,11 +192,10 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/^XXX_CC_XXX\\$$/d" '
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/icu
-#chicken egg problem
-#REQUIRED_PACKAGES += library/libmilter
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += runtime/perl-534

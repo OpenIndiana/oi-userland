@@ -14,11 +14,12 @@
 # Copyright 2018 Michal Nowak
 #
 
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
 COMPONENT_VERSION=	3.3.2
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	Postfix is a free and open-source mail transfer agent (MTA) that routes and delivers electronic mail, intended as an alternative to Sendmail MTA.
 COMPONENT_PROJECT_URL=	http://www.postfix.org/
 COMPONENT_FMRI=		service/network/smtp/postfix
@@ -30,9 +31,8 @@ COMPONENT_ARCHIVE_HASH=	sha256:3c93f31eee49a58e592c31e62a058701cadde11e8e066ea44
 COMPONENT_LICENSE=	IBM PUBLIC LICENSE, Eclipse Public License 2.0
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CCARGS=		-DDEF_DAEMON_DIR=\\\"/usr/lib/postfix\\\"
 CCARGS+=	-DDEF_MANPAGE_DIR=\\\"/usr/share/man\\\"
@@ -60,12 +60,6 @@ COMPONENT_INSTALL_TARGETS = non-interactive-package install_root="$(PROTO_DIR)"
 
 PKG_HARDLINKS += usr/lib/postfix/qmgr
 PKG_HARDLINKS += usr/lib/postfix/lmtp
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs

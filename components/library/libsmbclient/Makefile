@@ -24,16 +24,16 @@
 # Copyright 2023 Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS =            64_and_32
-BUILD_STYLE =           waf
-
+BUILD_BITS = 64_and_32
+BUILD_STYLE = waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
 COMPONENT_VERSION=	4.18.3
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
 COMPONENT_PROJECT_URL=	https://www.samba.org/
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:c67e1453165a3918ffffad600236ca3966b47bde4798e89ae600ae3903ccc32c
 COMPONENT_ARCHIVE_URL=	https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
@@ -43,8 +43,7 @@ COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET =           $(NO_TESTS)
-
+TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # waf
