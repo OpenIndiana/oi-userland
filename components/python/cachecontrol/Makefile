@@ -11,21 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project CacheControl
+#   $WS_TOOLS/python-integrate-project cachecontrol
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		CacheControl
-HUMAN_VERSION =			0.13.0
-COMPONENT_SUMMARY =		CacheControl - httplib2 caching for requests
-COMPONENT_PROJECT_URL =		https://github.com/ionrock/cachecontrol
+COMPONENT_NAME =		cachecontrol
+HUMAN_VERSION =			0.13.1
+COMPONENT_SUMMARY =		cachecontrol - httplib2 caching for requests
+COMPONENT_PROJECT_URL =		https://pypi.org/project/CacheControl/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9d/47/9bdf134012537324bbdebe84c144cc8fab08f148fc6c9ce89b8eefff1cb0/CacheControl-0.13.0.tar.gz
+	https://files.pythonhosted.org/packages/9e/65/3356cfc87bdee0cdf62d941235e936a26c205e4f1e1f2c85dbd952d7533a/cachecontrol-0.13.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fd3fd2cb0ca66b9a6c1d56cc9709e7e49c63dbd19b1b1bcbd8d3f94cedfe8ce5
+	sha256:f012366b79d2243a6118309ce73151bf52a38d4a5dac8ea57f09bd29087e506b
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -34,11 +34,10 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Remove timestamp and random port number
-COMPONENT_TEST_TRANSFORMS += "-e 's/ \[.*ENGINE HTTP Server.*//'"
+COMPONENT_TEST_TRANSFORMS += "-e 's/ \{1,\}\[.*ENGINE HTTP Server.*//'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += library/python/msgpack
 PYTHON_REQUIRED_PACKAGES += library/python/requests
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
