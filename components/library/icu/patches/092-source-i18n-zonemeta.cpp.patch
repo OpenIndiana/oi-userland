@@ -3,43 +3,43 @@
 #
 Add NULL checks for TimeZone::createTimeZoneIDEnumeration calls
 http://bugs.icu-project.org/trac/ticket/12377
-diff --git a/icu/source/i18n/dtfmtsym.cpp b/icu/source/i18n/dtfmtsym.cpp
-index 690f6a4..864ae63 100644
---- a/icu/source/i18n/dtfmtsym.cpp
+diff --git a/icu/source/i18n/dtfmtsym.cpp.original b/icu/source/i18n/dtfmtsym.cpp
+index 4c44976..46cb93e 100644
+--- a/icu/source/i18n/dtfmtsym.cpp.original
 +++ b/icu/source/i18n/dtfmtsym.cpp
-@@ -1290,6 +1290,10 @@ DateFormatSymbols::initZoneStringsArray(void) {
+@@ -1295,6 +1295,10 @@ DateFormatSymbols::initZoneStringsArray(void) {
      do { // dummy do-while
  
          tzids = TimeZone::createTimeZoneIDEnumeration(ZONE_SET, NULL, NULL, status);
-+	if (tzids == NULL) {
-+		status = U_MEMORY_ALLOCATION_ERROR;
-+		break;
-+	}
++       if (tzids == NULL) {
++               status = U_MEMORY_ALLOCATION_ERROR;
++               break;
++       }
          rows = tzids->count(status);
          if (U_FAILURE(status)) {
              break;
-diff --git a/icu/source/i18n/zonemeta.cpp b/icu/source/i18n/zonemeta.cpp
-index 72c590f..ea0a83c 100644
---- a/icu/source/i18n/zonemeta.cpp
+diff --git a/icu/source/i18n/zonemeta.cpp.original b/icu/source/i18n/zonemeta.cpp
+index 7cf3a5e..9fc342c 100644
+--- a/icu/source/i18n/zonemeta.cpp.original
 +++ b/icu/source/i18n/zonemeta.cpp
-@@ -464,12 +464,14 @@ ZoneMeta::getCanonicalCountry(const UnicodeString &tzid, UnicodeString &country,
+@@ -456,12 +456,14 @@ ZoneMeta::getCanonicalCountry(const UnicodeString &tzid, UnicodeString &country,
              u_UCharsToChars(region, regionBuf, 2);
  
              StringEnumeration *ids = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL_LOCATION, regionBuf, NULL, status);
 -            int32_t idsLen = ids->count(status);
 -            if (U_SUCCESS(status) && idsLen == 1) {
 -                // only the single zone is available for the region
--                singleZone = TRUE;
+-                singleZone = true;
 -            }
 -            delete ids;
-+	    if (ids != NULL) {
-+            	int32_t idsLen = ids->count(status);
-+            	if (U_SUCCESS(status) && idsLen == 1) {
-+                	// only the single zone is available for the region
-+                	singleZone = TRUE;
-+            	}
-+            	delete ids;
-+	    }
++           if (ids != NULL) {
++               int32_t idsLen = ids->count(status);
++               if (U_SUCCESS(status) && idsLen == 1) {
++                       // only the single zone is available for the region
++                       singleZone = true;
++               }
++               delete ids;
++           }
  
              // Cache the result
              umtx_lock(&gZoneMetaLock);

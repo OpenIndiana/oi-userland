@@ -3,23 +3,14 @@
 #
 Add NULL checks to getBuffer calls
 http://bugs.icu-project.org/trac/ticket/12378
-diff --git a/icu/source/common/uts46.cpp b/icu/source/common/uts46.cpp
-index f25b4e1..80cb02e 100644
---- a/icu/source/common/uts46.cpp
+diff --git a/icu/source/common/uts46.cpp.original b/icu/source/common/uts46.cpp
+index c709aa5..7718b62 100644
+--- a/icu/source/common/uts46.cpp.original
 +++ b/icu/source/common/uts46.cpp
-@@ -50,6 +50,8 @@ const uint32_t severeErrors=
- static inline UBool
- isASCIIString(const UnicodeString &dest) {
-     const UChar *s=dest.getBuffer();
-+    if(s==NULL)
-+	return FALSE;
-     const UChar *limit=s+dest.length();
-     while(s<limit) {
-         if(*s++>0x7f) {
-@@ -934,7 +936,12 @@ UTS46::markBadACELabel(UnicodeString &dest,
+@@ -936,7 +936,12 @@ UTS46::markBadACELabel(UnicodeString &dest,
      UBool disallowNonLDHDot=(options&UIDNA_USE_STD3_RULES)!=0;
-     UBool isASCII=TRUE;
-     UBool onlyLDH=TRUE;
+     UBool isASCII=true;
+     UBool onlyLDH=true;
 -    const UChar *label=dest.getBuffer()+labelStart;
 +    const UChar *l=dest.getBuffer();
 +    if(l==NULL) {
