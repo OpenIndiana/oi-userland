@@ -20,6 +20,7 @@ include $(WS_MAKE_RULES)/mpi-macros.mk
 COMPONENT_NAME =            openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR =     4.1
 COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).5
+COMPONENT_REVISION =        1
 COMPONENT_FMRI =            library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION =  Development/High Performance Computing
 COMPONENT_PROJECT_URL =     https://www.open-mpi.org
