@@ -21,30 +21,28 @@
 # Copyright (c) 2013 David Hoeppner. All rights reserved.
 #
 
-# pull the manpages out of the component dir
-<transform file path=usr/share/man/(man3/.+$) -> set action.hash %<\1> >
-
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/library/libev@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="libev - high-performance event loop"
 set name=pkg.description \
     value="A full-featured and high-performance event loop that is loosely modelled after libevent, but without its limitations and bugs."
-set name=pkg.summary value="libev - high-performance event loop"
-set name=com.oracle.info.description value="high-performance event loop"
-set name=info.classification \
-    value=org.opensolaris.category.2008:System/Libraries
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# pull the manpages out of the component dir
+<transform file path=usr/share/man/(man3/.+$) -> set action.hash %<\1> >
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
 file path=usr/lib/libev.so.4.0.0
 file path=usr/lib/$(MACH64)/libev.so.4.0.0
-#file path=usr/include/event.h
+# Prohibit name collision with event.h from libevent package:
+file usr/include/event.h path=usr/include/libev-event.h
 file path=usr/include/ev.h
 file path=usr/include/ev++.h
-
-license libev.license license="BSD, GPLv2"
-
 link path=usr/lib/$(MACH64)/libev.so target=./libev.so.4.0.0
 link path=usr/lib/$(MACH64)/libev.so.4 target=./libev.so.4.0.0
 link path=usr/lib/libev.so target=./libev.so.4.0.0
