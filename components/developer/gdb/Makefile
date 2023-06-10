@@ -26,8 +26,7 @@
 # Copyright 2023 Carsten Grzemba
 #
 
-BUILD_BITS= 64
-# There are a large number of macros in the GCB code written
+# There are a large number of macros in the GDB code written
 # specifically for GCC's preprocessor. Studio does not expand
 # these macros the same way GCC does, and the resulting gdb is
 # not usable. Building gdb with a GCC >= 4.7.2 produces very
@@ -35,14 +34,13 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdb
-COMPONENT_VERSION=      12.1
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      13.2
 COMPONENT_SUMMARY=      GDB: The GNU Project Debugger
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:87296a3a9727356b56712c793704082d5df0ff36a34ca9ec9734fc9a8bdfdaab
+	sha256:7ead13d9e19fa0c57bb19104e1a5f67eefa9fc79f2e6360de491e8fddeda1e30
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/gdb/
 COMPONENT_FMRI= developer/debug/gdb
@@ -125,11 +123,6 @@ CONFIGURE_OPTIONS += --without-guile
 
 COMPONENT_BUILD_ENV += $(CONFIGURE_ENV)
 
-# Ensure PATH is set during build;
-# need /usr/perl5/$(PERL_VERSION)/bin from PATH to access 
-# pod2man perl script, used to create manpages
-COMPONENT_BUILD_ENV += PATH=$(PATH)
-
 # Generate illumos data files describing system calls and structures
 # found in core files.
 COMPONENT_POST_UNPACK_ACTION = \
@@ -199,6 +192,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 # altering the results of the debugging experiment.
 ASLR_MODE=$(ASLR_DISABLE)
 
+# Testing needs to find C/C++ compiler
+COMPONENT_TEST_ENV += PATH="$(GCC_BINDIR):$(PATH)"
+
 GENERATE_EXTRA_CMD += | $(GNU_GREP) -v -E '/.*\.pyc$$'
 
 # Auto-generated dependencies
@@ -206,6 +202,7 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += developer/babeltrace
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/gmp
