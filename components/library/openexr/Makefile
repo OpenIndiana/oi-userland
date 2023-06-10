@@ -28,13 +28,12 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openexr
-COMPONENT_VERSION=      3.1.7
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      3.1.8
 COMPONENT_SUMMARY=      OpenEXR header files and libraries used to read and write OpenEXR images
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.openexr.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:78dbca39115a1c526e6728588753955ee75fa7f5bb1a6e238bed5b6d66f91fd7
+COMPONENT_ARCHIVE_HASH= sha256:3ff47111ef7e5da6f69330e66e1e90ae620b79df1cedf2512bb9bffe86c2c617
 COMPONENT_ARCHIVE_URL=  https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/openexr
 COMPONENT_CLASSIFICATION=System/Libraries
