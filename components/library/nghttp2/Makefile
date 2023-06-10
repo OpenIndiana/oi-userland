@@ -19,12 +19,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nghttp2
-COMPONENT_VERSION=	1.53.0
+COMPONENT_VERSION=	1.54.0
 COMPONENT_SUMMARY=	HTTP/2 C Library
 COMPONENT_PROJECT_URL=	https://nghttp2.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b867184254e5a29b0ba68413aa14f8b0ce1142a371761374598dec092dabb809
+COMPONENT_ARCHIVE_HASH= sha256:20533c9354fbb6aa689b6aa0ddb77f91da1d242587444502832e1864308152df
 COMPONENT_ARCHIVE_URL=	https://github.com/nghttp2/nghttp2/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/nghttp2
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -38,8 +38,9 @@ CONFIGURE_OPTIONS += --enable-examples
 CONFIGURE_OPTIONS += --disable-python-bindings
 CONFIGURE_OPTIONS += --disable-app
 
-# Build dependencies
-REQUIRED_PACKAGES += developer/cunit
+# Manually added dependencies
+TEST_REQUIRED_PACKAGES += developer/cunit
+REQUIRED_PACKAGES += library/libev
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
