@@ -15,19 +15,17 @@
 # Copyright 2020 Andreas Wacknitz
 #
 
-BUILD_BITS=			32_and_64
-
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dbus
-COMPONENT_VERSION=	1.12.24
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.12.26
 COMPONENT_SUMMARY=	Simple IPC library based on messages
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/dbus/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://dbus.freedesktop.org/releases/dbus/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:bc42d196c1756ac520d61bf3ccd6f42013617def45dd1e591a6091abf51dca38
+COMPONENT_ARCHIVE_HASH= sha256:8fb4917f5a253d7f9dd928419f5d85726616f92327c6ccc78ec07fb8a0a39f44
 COMPONENT_FMRI=		system/library/dbus
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	GPLv2,AFLv2.1
@@ -35,7 +33,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION =	( cd $(@D) && autoreconf --force --install )
 
