@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		platformdirs
-HUMAN_VERSION =			3.5.1
+HUMAN_VERSION =			3.5.2
 COMPONENT_SUMMARY =		platformdirs - A small Python package for determining appropriate platform-specific dirs, e.g. a \\\\\\\"user data dir\\\\\\\".
 COMPONENT_PROJECT_URL =		https://github.com/platformdirs/platformdirs
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9c/0e/ae9ef1049d4b5697e79250c4b2e72796e4152228e67733389868229c92bb/platformdirs-3.5.1.tar.gz
+	https://files.pythonhosted.org/packages/0e/e4/69bff18235f446e5c7ad4139321a60f3f5b5a5edd5a41d2364b4278a6f38/platformdirs-3.5.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:412dae91f52a6f84830f39a8078cecd0e866cb72294a5c66808e74d5e88d251f
+	sha256:f56f8067f85988d619f174a3c9dbb2c3c730c03edfd9dc10cb55a7de3498dd81
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
