@@ -33,7 +33,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sendmail
 COMPONENT_VERSION=      8.17.1
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  ftp://ftp.sendmail.org/pub/sendmail/
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME).$(COMPONENT_VERSION).tar.gz
