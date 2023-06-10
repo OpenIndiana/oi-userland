@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		iso8601
-COMPONENT_VERSION =		1.1.0
+HUMAN_VERSION =			2.0.0
 COMPONENT_SUMMARY =		iso8601 - Simple module to parse ISO 8601 dates
 COMPONENT_PROJECT_URL =		https://github.com/micktwomey/pyiso8601
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/31/8c/1c342fdd2f4af0857684d16af766201393ef53318c15fa785fcb6c3b7c32/iso8601-1.1.0.tar.gz
+	https://files.pythonhosted.org/packages/27/23/97cd1cb5792ece594ec5cf16cc4921f91838c689c82c8078ee442751f8dc/iso8601-2.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:32811e7b81deee2063ea6d2e94f8819a86d1f3811e49d23623a41fa832bef03f
+	sha256:739960d37c74c77bd9bd546a76562ccb581fe3d4820ff5c3141eb49c839fda8f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
