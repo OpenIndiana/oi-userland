@@ -35,6 +35,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdb
 COMPONENT_VERSION=      13.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      GDB: The GNU Project Debugger
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
