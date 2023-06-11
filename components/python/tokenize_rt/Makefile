@@ -15,21 +15,23 @@
 #
 
 BUILD_STYLE = setup.py
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tokenize_rt
-HUMAN_VERSION =			5.0.0
+HUMAN_VERSION =			5.1.0
 COMPONENT_SUMMARY =		tokenize_rt - A wrapper around the stdlib \`tokenize\` which roundtrips.
 COMPONENT_PROJECT_URL =		https://github.com/asottile/tokenize-rt
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/40/01/fb40ea8c465f680bf7aa3f5bee39c62ba8b7f52c38048c27aa95aff4f779/tokenize_rt-5.0.0.tar.gz
+	https://github.com/asottile/tokenize-rt/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3160bc0c3e8491312d0485171dea861fc160a240f5f5766b72a1165408d10740
+	sha256:1c761a430d2450c0bb78ab0b75d3d6975bba44a7a2c8883976df6e9c3901a4f6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+# Github tarball use different source directory than sdist
+COMPONENT_SRC=tokenize-rt-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -37,3 +39,6 @@ include $(WS_MAKE_RULES)/common.mk
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/pytest

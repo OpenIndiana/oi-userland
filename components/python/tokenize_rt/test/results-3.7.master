@@ -1,0 +1,59 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m coverage erase
+py$(PYV): commands[1]> python -m coverage run -m pytest tests
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+asyncio: mode=strict
+collecting ... collected 37 items
+
+tests/tokenize_rt_test.py::test_main PASSED
+tests/tokenize_rt_test.py::test_offset_default_values PASSED
+tests/tokenize_rt_test.py::test_parse_string_literal[""-expected0] PASSED
+tests/tokenize_rt_test.py::test_parse_string_literal[F"hi"-expected2] PASSED
+tests/tokenize_rt_test.py::test_parse_string_literal[r"""x"""-expected3] PASSED
+tests/tokenize_rt_test.py::test_parse_string_literal[u"foo"-expected1] PASSED
+tests/tokenize_rt_test.py::test_re_partition_match PASSED
+tests/tokenize_rt_test.py::test_re_partition_no_match PASSED
+tests/tokenize_rt_test.py::test_reversed_enumerate PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_end_of_call_looks_like_string[x ("foo")-4] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_end_of_call_looks_like_string[x(0)("foo")-6] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_end_of_call_looks_like_string[x(1, "foo")-6] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_end_of_call_looks_like_string[x[0]("foo")-6] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_multiple_tokens["""foo""" "bar"-2-expected1] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_multiple_tokens["foo" "bar"-2-expected0] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_multiple_tokens[(\n    "foo"\n    "bar"\n)-8-expected2] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_multiple_tokens[print(\n    "foo"\n    "bar"\n)-7-expected3] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_not_a_string PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_only_literal[""] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_only_literal[b''] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_only_literal[f''] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_only_literal[r'''.'''] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_parenthesized[("foo")-2-1] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_parenthesized[((("foo")))-6-3] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_parenthesized[a + ("foo")-6-5] PASSED
+tests/tokenize_rt_test.py::test_rfind_string_parts_parenthesized[a or ("foo")-6-5] PASSED
+tests/tokenize_rt_test.py::test_roundtrip_tokenize[testing/resources/backslash_continuation.py] PASSED
+tests/tokenize_rt_test.py::test_roundtrip_tokenize[testing/resources/empty.py] PASSED
+tests/tokenize_rt_test.py::test_roundtrip_tokenize[testing/resources/unicode_snowman.py] PASSED
+tests/tokenize_rt_test.py::test_src_to_tokens_escaped_nl PASSED
+tests/tokenize_rt_test.py::test_src_to_tokens_escaped_nl_no_left_ws PASSED
+tests/tokenize_rt_test.py::test_src_to_tokens_escaped_nl_windows PASSED
+tests/tokenize_rt_test.py::test_src_to_tokens_implicit_continue PASSED
+tests/tokenize_rt_test.py::test_src_to_tokens_multiline_string PASSED
+tests/tokenize_rt_test.py::test_src_to_tokens_no_eol_eof PASSED
+tests/tokenize_rt_test.py::test_src_to_tokens_simple PASSED
+tests/tokenize_rt_test.py::test_token_offset PASSED
+
+======== 37 passed ========
+py$(PYV): commands[2]> python -m coverage report
+Name    Stmts   Miss Branch BrPart  Cover   Missing
+---------------------------------------------------
+TOTAL     205      0     48      0   100%
+
+3 files skipped due to complete coverage.
+  py$(PYV): OK
+  congratulations :)
