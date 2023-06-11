@@ -19,20 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tempora
-HUMAN_VERSION =			5.2.2
+HUMAN_VERSION =			5.5.0
 COMPONENT_SUMMARY =		tempora - Objects and routines pertaining to date and time (tempora)
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/tempora
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/1c/32/963e37d9ad64582b822b8bf3288ac135ede936e5c8fe1c71da74164f0974/tempora-5.2.2.tar.gz
+	https://files.pythonhosted.org/packages/c9/dc/97d90b9f64dbe4f599023e19602b33a2cced68462db67a3d4805a77cf784/tempora-5.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:98ee27bc528c91a236f9a5d612ede4ef391b01f7862bf11b483ce549053651c1
+	sha256:13e4fcc997d0509c3306d6841f03e9381b7e5e46b2bebfae9151af90085f0c26
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/tholo/pytest-flake8/issues/92
-PYTEST_ADDOPTS += -p no:flake8
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
@@ -42,15 +39,11 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/backports-unittest-mock
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
-TEST_REQUIRED_PACKAGES.python += library/python/freezegun
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-freezegun
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-freezer
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
-TEST_REQUIRED_PACKAGES.python += library/python/types-freezegun
 TEST_REQUIRED_PACKAGES.python += library/python/types-pytz
