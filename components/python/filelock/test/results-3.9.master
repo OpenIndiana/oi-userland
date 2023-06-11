@@ -7,7 +7,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 asyncio: mode=strict
-collecting ... collected 82 items
+collecting ... collected 84 items
 
   self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
 $(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/filelock was never imported. (module-not-imported)
@@ -19,6 +19,8 @@ tests/test_filelock.py::test_acquire_release_on_exc[SoftFileLock] PASSED
 tests/test_filelock.py::test_acquire_release_on_exc[UnixFileLock] PASSED
 tests/test_filelock.py::test_bad_lock_file[blank_filename-SoftFileLock] PASSED
 tests/test_filelock.py::test_bad_lock_file[blank_filename-UnixFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[current_directory-SoftFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[current_directory-UnixFileLock] PASSED
 tests/test_filelock.py::test_bad_lock_file[invalid_"-SoftFileLock] SKIPPED
 tests/test_filelock.py::test_bad_lock_file[invalid_"-UnixFileLock] SKIPPED
 tests/test_filelock.py::test_bad_lock_file[invalid_*-SoftFileLock] SKIPPED
@@ -101,6 +103,6 @@ Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
 Required test coverage of 76.0% reached. Total coverage: 99.55%
-======== 62 passed, 20 skipped ========
+======== 64 passed, 20 skipped ========
   py$(PYV): OK
   congratulations :)
