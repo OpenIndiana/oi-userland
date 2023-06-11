@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest
-HUMAN_VERSION =			7.3.1
+HUMAN_VERSION =			7.3.2
 COMPONENT_SUMMARY =		pytest - pytest: simple powerful testing with Python
 COMPONENT_PROJECT_URL =		https://docs.pytest.org/en/latest/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ec/d9/36b65598f3d19d0a14d13dc87ad5fa42869ae53bb7471f619a30eaabc4bf/pytest-7.3.1.tar.gz
+	https://files.pythonhosted.org/packages/58/2a/07c65fdc40846ecb8a9dcda2c38fcb5a06a3e39d08d4a4960916431951cb/pytest-7.3.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:434afafd78b1d78ed0addf160ad2b77a30d35d4bdf8af234fe621919d9ed15e3
+	sha256:ee990a3cc55ba808b80795a79944756f315c67c12b56abd3ac993a7b8c17030b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -54,4 +54,5 @@ TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/nose
 TEST_REQUIRED_PACKAGES.python += library/python/pygments
 TEST_REQUIRED_PACKAGES.python += library/python/requests
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/xmlschema
