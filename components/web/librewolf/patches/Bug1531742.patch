@@ -1,0 +1,23 @@
+Sparc DEBUG build only issue:
+
+[GFX2-]: Failed to lock WindowSurface, falling back to XPutImage backend.
+Crash Annotation GraphicsCriticalError: |[0][GFX1]: RGBX corner pixel at (0,0) in 921x691 surface, bounded by (0,0,921,691) is not opaque: 255,162,162,162 (t=7.19982) [GFX1]: RGBX corner pixel at (0,0) in 921x691 surface, bounded by (0,0,921,691) is not opaque: 255,162,162,162
+Assertion failure: [GFX1]: RGBX corner pixel at (0,0) in 921x691 surface, bounded by (0,0,921,691) is not opaque: 255,162,162,162, at /scratch/firefox/gfx/2d/Logging.h:727
+
+https://bugzilla.mozilla.org/show_bug.cgi?id=1325259
+
+--- a/gfx/2d/DrawTargetSkia.cpp
++++ b/gfx/2d/DrawTargetSkia.cpp
+@@ -145,8 +145,12 @@
+   return surfaceBounds.Intersect(bounds);
+ }
+ 
++#if __sparc
++static const int kARGBAlphaOffset = 0;
++#else
+ static const int kARGBAlphaOffset =
+     SurfaceFormat::A8R8G8B8_UINT32 == SurfaceFormat::B8G8R8A8 ? 3 : 0;
++#endif
+ 
+ static bool VerifyRGBXFormat(uint8_t* aData, const IntSize& aSize,
+                              const int32_t aStride, SurfaceFormat aFormat) {
