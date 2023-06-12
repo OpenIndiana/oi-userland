@@ -16,8 +16,8 @@ PREFERRED_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hwloc
-COMPONENT_VERSION_MAJOR=2.0
-COMPONENT_VERSION=      $(COMPONENT_VERSION_MAJOR).1
+COMPONENT_VERSION_MAJOR=2.8
+COMPONENT_VERSION=      $(COMPONENT_VERSION_MAJOR).0
 COMPONENT_SUMMARY=      hwloc - Portable Hardware Locality
 COMPONENT_PROJECT_URL=  https://www.open-mpi.org/projects/hwloc/
 COMPONENT_FMRI=         developer/hwloc
@@ -26,16 +26,13 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL= \
   https://www.open-mpi.org/software/hwloc/v$(COMPONENT_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= \
-  sha256:b97575cc26751f252b5c9f5c00be94cab66977da2e127456a5ae2418649ec049
+COMPONENT_ARCHIVE_HASH= sha256:348a72fcd48c32a823ee1da149ae992203e7ad033549e64aed6ea6eeb01f42c1
 COMPONENT_LICENSE=      BSD-2
 
 # When CONFIGURE_FIX_LIBTOOL_RPATH is integrated, we can remove local fix and enable it
 CONFIGURE_FIX_LIBTOOL_RPATH = no
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS+= --enable-cairo
 CONFIGURE_OPTIONS+= --enable-cpuid
@@ -53,21 +50,15 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 # Build dependencies
 REQUIRED_PACKAGES += system/header/header-picl
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += service/picl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
