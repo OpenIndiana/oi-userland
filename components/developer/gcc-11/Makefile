@@ -18,7 +18,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 11.3.0
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
@@ -58,7 +58,7 @@ CONFIGURE_OPTIONS.sparc+= --with-cpu=ultrasparc3
 CONFIGURE_OPTIONS.sparc+= --enable-float128
 CONFIGURE_OPTIONS.sparc+= --enable-link-mutex
 CONFIGURE_OPTIONS+= --enable-initfini-array
-CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
+CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,go,lto,objc
 CONFIGURE_OPTIONS+= --disable-libitm
 CONFIGURE_OPTIONS+= enable_frame_pointer=yes
 
@@ -71,6 +71,7 @@ PKG_HARDLINKS += usr/gcc/11/bin/gcc
 PKG_HARDLINKS += usr/gcc/11/bin/gcc-ar
 PKG_HARDLINKS += usr/gcc/11/bin/gcc-nm
 PKG_HARDLINKS += usr/gcc/11/bin/gcc-ranlib
+PKG_HARDLINKS += usr/gcc/11/bin/gccgo
 PKG_HARDLINKS += usr/gcc/11/bin/gfortran
 
 # Auto-generated dependencies
