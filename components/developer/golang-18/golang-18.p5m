@@ -15,6 +15,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-18@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -29,10 +30,6 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=usr/lib/golang/1.8/src/.+ -> default pkg.depend.bypass-generate .* >
 
 <transform file path=usr/lib/golang/1.8/src/.+ -> default pkg.linted.userland.action001.2 true >
-
-link path=usr/share/man/man1/go.1 target=../../golang/1.8/man/man1/go.1 mediator=golang mediator-version=1.8
-link path=usr/bin/go target=../lib/golang/1.8/bin/go mediator=golang mediator-version=1.8
-link path=usr/bin/gofmt target=../lib/golang/1.8/bin/gofmt mediator=golang mediator-version=1.8
 
 file path=usr/lib/golang/1.8/AUTHORS
 file path=usr/lib/golang/1.8/CONTRIBUTING.md

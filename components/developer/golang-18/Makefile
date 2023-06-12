@@ -27,8 +27,14 @@ include ../../../make-rules/shared-macros.mk
 
 PATCH_EACH_ARCHIVE= 1
 
+#
+# WARNING:
+# This component is needed for bootstrapping golang 1.19 so it cannot be obsoleted yet.
+#
+
 COMPONENT_NAME=			golang
 COMPONENT_VERSION=		1.8.7
+COMPONENT_REVISION=		1
 COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | gsed -e 's/\([0-9]\+\.[0-9]\+\).*/\1/')
 COMPONENT_FMRI=			developer/golang
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -114,12 +120,15 @@ COMPONENT_PREP_ACTION= \
 COMPONENT_PRE_BUILD_ACTION= \
 	cd $(@D)/$(COMPONENT_SRC_NAME_1)/src; \
 	$(ENV) $(COMPONENT_BUILD_ENV) \
+	PATH="$(GCC_BINDIR):$(PATH)" \
 	GOEXPERIMENT= GOROOT_BOOTSTRAP= GOROOT_FINAL= ./make.bash
 
 # Go doesn't have a standard Makefile-based build process, so override the
 # default.
 COMPONENT_BUILD_ACTION=	\
-	cd $(@D)/src; $(ENV) $(COMPONENT_BUILD_ENV) ./make.bash
+	cd $(@D)/src; $(ENV) $(COMPONENT_BUILD_ENV) \
+	PATH="$(GCC_BINDIR):$(PATH)" \
+	./make.bash
 
 COMPONENT_TARGET_DIR= \
 	$(PROTOUSRLIBDIR)/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)
@@ -128,7 +137,7 @@ COMPONENT_TARGET_DIR= \
 # -z aslr=... option. So just override where needed in the .p5m files.
 ASLR_MODE = $(ASLR_DISABLE)
 
-COMPONENT_TEST_ENV +=	PATH="$(@D)/bin:$(PATH)"
+COMPONENT_TEST_ENV +=	PATH="$(@D)/bin:$(GCC_BINDIR):$(PATH)"
 COMPONENT_TEST_ENV +=	GOROOT="$(@D)"
 COMPONENT_TEST_DIR=	$(@D)/src
 COMPONENT_TEST_CMD=	./run.bash
