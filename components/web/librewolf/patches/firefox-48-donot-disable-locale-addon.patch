@@ -1,0 +1,19 @@
+By default, Firefox disables the installation of 3rd party add-ons, including
+language packs. We want to enable language packs by default, so set 
+this to enable add-ons that are bundled with Firefox but will still disable 
+third-party add-ons for security.
+Solaris specific patch, will not send upstream.
+
+diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
+index 5ef66c9..7dcd0f5 100644
+--- a/browser/app/profile/firefox.js
++++ b/browser/app/profile/firefox.js
+@@ -57,7 +57,7 @@
+ 
+ // Disable add-ons that are not installed by the user in all scopes by default.
+ // See the SCOPE constants in AddonManager.jsm for values to use here.
+-pref("extensions.autoDisableScopes", 15);
++pref("extensions.autoDisableScopes", 11);
+ // Scopes to scan for changes at startup.
+ pref("extensions.startupScanScopes", 0);
+ 

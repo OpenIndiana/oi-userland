@@ -1,0 +1,30 @@
+--- gecko-dev-master/browser/components/extensions/jar.mn.~1~	2022-07-16 15:05:03.000000000 +0000
++++ gecko-dev-master/browser/components/extensions/jar.mn	2022-07-20 12:08:54.006139716 +0000
+@@ -4,7 +4,7 @@
+ 
+ browser.jar:
+     content/browser/extension.css
+-#ifdef XP_LINUX
++#ifdef MOZ_WIDGET_GTK
+     content/browser/extension-linux-panel.css
+ #endif
+ #ifdef XP_MACOSX
+--- gecko-dev-master/browser/components/extensions/ExtensionPopups.jsm.~1~	2022-07-16 15:05:03.000000000 +0000
++++ gecko-dev-master/browser/components/extensions/ExtensionPopups.jsm	2022-07-17 03:45:53.080806609 +0000
+@@ -67,12 +67,16 @@
+ XPCOMUtils.defineLazyGetter(lazy, "standaloneStylesheets", () => {
+   let stylesheets = [];
+ 
++/* Solaris and Illumos are "other" platform */
++
+   if (AppConstants.platform === "macosx") {
+     stylesheets.push("chrome://browser/content/extension-mac-panel.css");
+   } else if (AppConstants.platform === "win") {
+     stylesheets.push("chrome://browser/content/extension-win-panel.css");
+   } else if (AppConstants.platform === "linux") {
+     stylesheets.push("chrome://browser/content/extension-linux-panel.css");
++  } else if (AppConstants.platform === "other") {
++    stylesheets.push("chrome://browser/content/extension-linux-panel.css");
+   }
+   return stylesheets;
+ });

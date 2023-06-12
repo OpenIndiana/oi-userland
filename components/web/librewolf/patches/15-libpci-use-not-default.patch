@@ -1,0 +1,13 @@
+--- firefox-114.0/toolkit/xre/glxtest/glxtest.cpp.old   2023-03-24 11:53:38.508040103 -0400
++++ firefox-114.0/toolkit/xre/glxtest/glxtest.cpp       2023-03-24 11:55:04.631899710 -0400
+@@ -1242,7 +1242,9 @@
+   log("GLX_TEST: childgltest start\n");
+ 
+   // Get a list of all GPUs from the PCI bus.
+-  get_pci_status();
++  if (getenv("MOZ_USE_LIBPCI")) {
++    get_pci_status();
++  }
+ 
+ #ifdef MOZ_WAYLAND
+   if (aWayland) {

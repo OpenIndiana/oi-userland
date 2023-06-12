@@ -1,0 +1,41 @@
+about:support does not show any dynamically generated data.  Backout change.
+--- gecko-dev-master/toolkit/modules/Troubleshoot.sys.mjs.old	2023-04-27 17:32:25.267841619 -0400
++++ gecko-dev-master/toolkit/modules/Troubleshoot.sys.mjs	2023-04-27 17:35:26.559513763 -0400
+@@ -6,6 +6,7 @@
+   "resource://gre/modules/AddonManager.jsm"
+ );
+ import { AppConstants } from "resource://gre/modules/AppConstants.sys.mjs";
++import { E10SUtils } from "resource://gre/modules/E10SUtils.sys.mjs";
+ 
+ import { FeatureGate } from "resource://featuregates/FeatureGate.sys.mjs";
+ 
+@@ -392,16 +393,13 @@
+     );
+   },
+ 
+-  processes: async function processes(done) {
++  processes: function processes(done) {
+     let remoteTypes = {};
+-    const processInfo = await ChromeUtils.requestProcInfo();
+-    for (let i = 0; i < processInfo.children.length; i++) {
++
++    for (let i = 0; i < Services.ppmm.childCount; i++) {
+       let remoteType;
+       try {
+-        remoteType = processInfo.children[i].type;
+-        // Workaround for bug 1790070, since requestProcInfo refers to the preallocated content
+-        // process as "preallocated", and the localization string mapping expects "prealloc".
+-        remoteType = remoteType === "preallocated" ? "prealloc" : remoteType;
++        remoteType = Services.ppmm.getChildAt(i).remoteType;
+       } catch (e) {}
+ 
+       // The parent process is also managed by the ppmm (because
+@@ -410,6 +408,8 @@
+         continue;
+       }
+ 
++      remoteType = E10SUtils.remoteTypePrefix(remoteType);
++
+       if (remoteTypes[remoteType]) {
+         remoteTypes[remoteType]++;
+       } else {
