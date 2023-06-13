@@ -53,7 +53,7 @@ download:: $(SOURCE_DIR)/.downloaded
 $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded 
 	$(MKDIR) $(@D) && \
 	cd $(SOURCE_DIR)/src && \
-	$(MAKE) && $(MAKE) install && \
+	PATH=$(PATH) $(MAKE) && PATH=$(PATH) $(MAKE) install && \
 	cd pkg && \
 	$(MAKE) BUILD_VERSION=$(BUILD_VERSION) && \
 	$(MAKE) publish-pkgs BUILD_VERSION=$(BUILD_VERSION) && \
