@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		golang
 COMPONENT_VERSION =		1.20.4
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		The Go Programming Language
 COMPONENT_PROJECT_URL =		https://go.dev/
 COMPONENT_FMRI =		developer/golang
