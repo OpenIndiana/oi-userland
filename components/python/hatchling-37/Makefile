@@ -19,20 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatchling
-HUMAN_VERSION =			1.18.0
+HUMAN_VERSION =			1.17.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		hatchling - Modern, extensible Python build backend
 COMPONENT_PROJECT_URL =		https://hatch.pypa.io/latest/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e3/57/87da2c5adc173950ebe9f1acce4d5f2cd0a960783992fd4879a899a0b637/hatchling-1.18.0.tar.gz
+	https://files.pythonhosted.org/packages/8b/3a/81707297cb23b1d1f3117ee7545cfb9cbd87bc7707808e91799b8badabe1/hatchling-1.17.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:50e99c3110ce0afc3f7bdbadff1c71c17758e476731c27607940cfa6686489ca
+	sha256:76dee5108f929b7eb9102df0a1bf88fa3247d68a44ff1f395e1cf32eaab0c6fa
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 TEST_STYLE = none
 
 # hatchling >= 1.18.0 requires Python >= 3.8
-PYTHON_VERSIONS := $(filter-out 3.7, $(PYTHON_VERSIONS))
+PYTHON_VERSIONS = 3.7
 
 # This project is missing tests
 # See https://github.com/pypa/hatch/issues/329
@@ -53,6 +54,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/editables
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/pathspec
 PYTHON_REQUIRED_PACKAGES += library/python/pluggy
