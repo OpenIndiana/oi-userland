@@ -15,18 +15,23 @@
 #
 
 <transform file path=usr/gcc/11/bin/+ -> default mode 0555>
+<transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/buildid$ -> default mode 0555>
 <transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/cc1$ -> default mode 0555>
 <transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/cc1obj$ -> default mode 0555>
 <transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/cc1plus$ -> default mode 0555>
+<transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/cgo$ -> default mode 0555>
 <transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/collect2$ -> default mode 0555>
 <transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/f951$ -> default mode 0555>
-<transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/lto-wrapper$ -> default mode 0555>
-<transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/lto1$ -> default mode 0555>
-<transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/gengtype$ -> default mode 0555>
+<transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/go1$ -> default mode 0555>
 <transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/install-tools/fixinc.sh$ -> default mode 0555>
 <transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/install-tools/fixincl$ -> default mode 0555>
 <transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/install-tools/mkheaders$ -> default mode 0555>
 <transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/install-tools/mkinstalldirs$ -> default mode 0555>
+<transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/lto-wrapper$ -> default mode 0555>
+<transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/lto1$ -> default mode 0555>
+<transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/gengtype$ -> default mode 0555>
+<transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/test2json$ -> default mode 0555>
+<transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/vet$ -> default mode 0555>
 
 <transform file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/.*\.o -> \
     add pkg.linted.userland.action001.2 true>
@@ -65,6 +70,7 @@ link path=usr/bin/c++ target=../gcc/11/bin/c++ mediator=gcc mediator-version=11
 link path=usr/bin/cpp target=../gcc/11/bin/cpp mediator=gcc mediator-version=11
 link path=usr/bin/g++ target=../gcc/11/bin/g++ mediator=gcc mediator-version=11
 link path=usr/bin/gcc target=../gcc/11/bin/gcc mediator=gcc mediator-version=11
+link path=usr/bin/gccgo target=../gcc/11/bin/gccgo mediator=gcc mediator-version=11
 link path=usr/bin/gcov target=../gcc/11/bin/gcov mediator=gcc mediator-version=11
 link path=usr/bin/gcov-dump target=../gcc/11/bin/gcov-dump mediator=gcc mediator-version=11
 link path=usr/bin/gcov-tool target=../gcc/11/bin/gcov-tool mediator=gcc mediator-version=11
@@ -74,6 +80,7 @@ link path=usr/bin/gfortran target=../gcc/11/bin/gfortran mediator=gcc mediator-v
 link path=usr/share/man/man1/cpp.1 target=../../../gcc/11/share/man/man1/cpp.1 mediator=gcc mediator-version=11
 link path=usr/share/man/man1/g++.1 target=../../../gcc/11/share/man/man1/g++.1 mediator=gcc mediator-version=11
 link path=usr/share/man/man1/gcc.1 target=../../../gcc/11/share/man/man1/gcc.1 mediator=gcc mediator-version=11
+link path=usr/share/man/man1/gccgo.1 target=../../../gcc/11/share/man/man1/gccgo.1 mediator=gcc mediator-version=11
 link path=usr/share/man/man1/gcov.1 target=../../../gcc/11/share/man/man1/gcov.1 mediator=gcc mediator-version=11
 link path=usr/share/man/man1/gcov-dump.1 target=../../../gcc/11/share/man/man1/gcov-dump.1 mediator=gcc mediator-version=11
 link path=usr/share/man/man1/gcov-tool.1 target=../../../gcc/11/share/man/man1/gcov-tool.1 mediator=gcc mediator-version=11
@@ -84,6 +91,7 @@ link path=usr/bin/c++-11 target=../gcc/11/bin/c++
 link path=usr/bin/cpp-11 target=../gcc/11/bin/cpp
 link path=usr/bin/g++-11 target=../gcc/11/bin/g++
 link path=usr/bin/gcc-11 target=../gcc/11/bin/gcc
+link path=usr/bin/gccgo-11 target=../gcc/11/bin/gccgo
 link path=usr/bin/gcov-11 target=../gcc/11/bin/gcov
 link path=usr/bin/gcpp-11 target=../gcc/11/bin/cpp
 link path=usr/bin/gfortran-11 target=../gcc/11/bin/gfortran
@@ -100,10 +108,13 @@ file path=usr/gcc/11/bin/gcc
 file path=usr/gcc/11/bin/gcc-ar
 file path=usr/gcc/11/bin/gcc-nm
 file path=usr/gcc/11/bin/gcc-ranlib
+file path=usr/gcc/11/bin/gccgo
 file path=usr/gcc/11/bin/gcov
 file path=usr/gcc/11/bin/gcov-dump
 file path=usr/gcc/11/bin/gcov-tool
 file path=usr/gcc/11/bin/gfortran
+file path=usr/gcc/11/bin/go
+file path=usr/gcc/11/bin/gofmt
 file path=usr/gcc/11/bin/lto-dump
 hardlink path=usr/gcc/11/bin/$(GNU_TRIPLET)-c++ target=g++
 hardlink path=usr/gcc/11/bin/$(GNU_TRIPLET)-g++ target=g++
@@ -113,6 +124,7 @@ hardlink path=usr/gcc/11/bin/$(GNU_TRIPLET)-gcc-$(HUMAN_VERSION) \
 hardlink path=usr/gcc/11/bin/$(GNU_TRIPLET)-gcc-ar target=gcc-ar
 hardlink path=usr/gcc/11/bin/$(GNU_TRIPLET)-gcc-nm target=gcc-nm
 hardlink path=usr/gcc/11/bin/$(GNU_TRIPLET)-gcc-ranlib target=gcc-ranlib
+hardlink path=usr/gcc/11/bin/$(GNU_TRIPLET)-gccgo target=gccgo
 hardlink path=usr/gcc/11/bin/$(GNU_TRIPLET)-gfortran target=gfortran
 
 # Headers
@@ -937,6 +949,156 @@ file path=usr/gcc/11/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bits/time_membe
 file path=usr/gcc/11/include/c++/$(HUMAN_VERSION)/$(GNU_TRIPLET)/ext/opt_random.h
 
 # Libraries
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/archive/tar.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/archive/zip.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bufio.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bytes.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/bzip2.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/flate.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/gzip.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/lzw.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/zlib.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/container/heap.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/container/list.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/container/ring.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/context.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/aes.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/cipher.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/des.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/dsa.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/ecdsa.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/ed25519.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/elliptic.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/hmac.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/md5.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/rand.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/rc4.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/rsa.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/sha1.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/sha256.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/sha512.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/subtle.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/tls.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/x509.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/x509/pkix.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/database/sql.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/database/sql/driver.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/dwarf.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/elf.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/gosym.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/macho.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/pe.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/plan9obj.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/embed.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/ascii85.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/asn1.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/base32.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/base64.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/binary.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/csv.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/gob.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/hex.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/json.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/pem.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/xml.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/errors.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/expvar.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/flag.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/fmt.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/ast.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/build.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/build/constraint.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/constant.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/doc.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/format.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/importer.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/parser.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/printer.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/scanner.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/token.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/types.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/adler32.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/crc32.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/crc64.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/fnv.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/maphash.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/html.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/html/template.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/color.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/color/palette.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/draw.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/gif.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/jpeg.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/png.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/index/suffixarray.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/internal/reflectlite.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/internal/unsafeheader.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/io.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/io/fs.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/io/ioutil.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/log.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/log/syslog.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/big.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/bits.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/cmplx.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/rand.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/mime.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/mime/multipart.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/mime/quotedprintable.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/cgi.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/cookiejar.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/fcgi.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/httptest.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/httptrace.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/httputil.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/pprof.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/mail.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/rpc.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/rpc/jsonrpc.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/smtp.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/textproto.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/url.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os/exec.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os/signal.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os/user.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/path.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/path/filepath.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/reflect.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/regexp.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/regexp/syntax.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/debug.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/metrics.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/pprof.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/trace.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/sort.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/strconv.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/strings.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/sync.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/sync/atomic.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/syscall.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/fstest.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/internal/testdeps.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/iotest.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/quick.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/scanner.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/tabwriter.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/template.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/template/parse.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/time.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/time/tzdata.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/unicode.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/unicode/utf16.gox
+file path=usr/gcc/11/lib/$(MACH64)/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/unicode/utf8.gox
 file path=usr/gcc/11/lib/$(MACH64)/libasan.a
 link path=usr/gcc/11/lib/$(MACH64)/libasan.so target=libasan.so.6.0.0
 link path=usr/gcc/11/lib/$(MACH64)/libasan.so.6 target=libasan.so.6.0.0
@@ -956,6 +1118,12 @@ file path=usr/gcc/11/lib/$(MACH64)/libgfortran.a
 #link path=usr/gcc/11/lib/$(MACH64)/libgfortran.so.5 target=libgfortran.so.5.0.0
 #file path=usr/gcc/11/lib/$(MACH64)/libgfortran.so.5.0.0
 file path=usr/gcc/11/lib/$(MACH64)/libgfortran.spec
+file path=usr/gcc/11/lib/$(MACH64)/libgo.a
+#link path=usr/gcc/11/lib/$(MACH64)/libgo.so target=libgo.so.19.0.0
+#link path=usr/gcc/11/lib/$(MACH64)/libgo.so.19 target=libgo.so.19.0.0
+#file path=usr/gcc/11/lib/$(MACH64)/libgo.so.19.0.0
+file path=usr/gcc/11/lib/$(MACH64)/libgobegin.a
+file path=usr/gcc/11/lib/$(MACH64)/libgolibbegin.a
 file path=usr/gcc/11/lib/$(MACH64)/libgomp.a
 #link path=usr/gcc/11/lib/$(MACH64)/libgomp.so target=libgomp.so.1.0.0
 #link path=usr/gcc/11/lib/$(MACH64)/libgomp.so.1 target=libgomp.so.1.0.0
@@ -1017,9 +1185,11 @@ file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/libcaf_single.a
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/libgcc.a
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/libgcc_eh.a
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/32/libgcov.a
+file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/buildid
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/cc1
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/cc1obj
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/cc1plus
+file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/cgo
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/collect2
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtbegin.o
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/crtbeginS.o
@@ -1045,6 +1215,7 @@ file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/openacc_ki
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/finclude/openacc_lib.h
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/g++-mapper-server
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/gmon.o
+file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/go1
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/ISO_Fortran_binding.h
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/acc_prof.h
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/include/adxintrin.h variant.arch=i386
@@ -1669,6 +1840,158 @@ link \
     path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/libcp1plugin.so.0 \
     target=libcp1plugin.so.0.0.0
 file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/plugin/libcp1plugin.so.0.0.0
+file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/test2json
+file path=usr/gcc/11/lib/gcc/$(GNU_TRIPLET)/$(HUMAN_VERSION)/vet
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/archive/tar.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/archive/zip.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bufio.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/bytes.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/bzip2.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/flate.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/gzip.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/lzw.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/compress/zlib.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/container/heap.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/container/list.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/container/ring.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/context.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/aes.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/cipher.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/des.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/dsa.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/ecdsa.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/ed25519.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/elliptic.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/hmac.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/md5.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/rand.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/rc4.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/rsa.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/sha1.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/sha256.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/sha512.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/subtle.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/tls.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/x509.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/crypto/x509/pkix.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/database/sql.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/database/sql/driver.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/dwarf.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/elf.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/gosym.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/macho.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/pe.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/debug/plan9obj.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/embed.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/ascii85.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/asn1.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/base32.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/base64.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/binary.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/csv.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/gob.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/hex.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/json.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/pem.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/encoding/xml.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/errors.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/expvar.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/flag.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/fmt.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/ast.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/build.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/build/constraint.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/constant.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/doc.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/format.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/importer.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/parser.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/printer.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/scanner.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/token.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/go/types.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/adler32.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/crc32.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/crc64.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/fnv.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/hash/maphash.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/html.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/html/template.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/color.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/color/palette.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/draw.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/gif.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/jpeg.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/image/png.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/index/suffixarray.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/internal/reflectlite.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/internal/unsafeheader.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/io.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/io/fs.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/io/ioutil.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/log.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/log/syslog.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/big.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/bits.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/cmplx.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/math/rand.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/mime.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/mime/multipart.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/mime/quotedprintable.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/cgi.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/cookiejar.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/fcgi.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/httptest.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/httptrace.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/httputil.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/http/pprof.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/mail.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/rpc.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/rpc/jsonrpc.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/smtp.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/textproto.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/net/url.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os/exec.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os/signal.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/os/user.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/path.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/path/filepath.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/reflect.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/regexp.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/regexp/syntax.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/debug.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/metrics.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/pprof.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/runtime/trace.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/sort.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/strconv.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/strings.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/sync.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/sync/atomic.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/syscall.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/fstest.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/internal/testdeps.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/iotest.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/testing/quick.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/scanner.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/tabwriter.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/template.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/text/template/parse.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/time.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/time/tzdata.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/unicode.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/unicode/utf16.gox
+file path=usr/gcc/11/lib/go/$(HUMAN_VERSION)/$(GNU_TRIPLET)/unicode/utf8.gox
 file path=usr/gcc/11/lib/libasan.a
 link path=usr/gcc/11/lib/libasan.so target=libasan.so.6.0.0
 link path=usr/gcc/11/lib/libasan.so.6 target=libasan.so.6.0.0
@@ -1686,6 +2009,12 @@ file path=usr/gcc/11/lib/libgfortran.a
 #link path=usr/gcc/11/lib/libgfortran.so.5 target=libgfortran.so.5.0.0
 #file path=usr/gcc/11/lib/libgfortran.so.5.0.0
 file path=usr/gcc/11/lib/libgfortran.spec
+file path=usr/gcc/11/lib/libgo.a
+#link path=usr/gcc/11/lib/libgo.so target=libgo.so.19.0.0
+#link path=usr/gcc/11/lib/libgo.so.19 target=libgo.so.19.0.0
+#file path=usr/gcc/11/lib/libgo.so.19.0.0
+file path=usr/gcc/11/lib/libgobegin.a
+file path=usr/gcc/11/lib/libgolibbegin.a
 file path=usr/gcc/11/lib/libgomp.a
 #link path=usr/gcc/11/lib/libgomp.so target=libgomp.so.1.0.0
 #link path=usr/gcc/11/lib/libgomp.so.1 target=libgomp.so.1.0.0
@@ -1728,6 +2057,7 @@ file path=usr/gcc/11/share/info/cpp.info
 file path=usr/gcc/11/share/info/cppinternals.info
 #file path=usr/gcc/11/share/info/dir
 file path=usr/gcc/11/share/info/gcc.info
+file path=usr/gcc/11/share/info/gccgo.info
 file path=usr/gcc/11/share/info/gccinstall.info
 file path=usr/gcc/11/share/info/gccint.info
 file path=usr/gcc/11/share/info/gfortran.info
@@ -1776,10 +2106,13 @@ file path=usr/gcc/11/share/locale/zh_TW/LC_MESSAGES/gcc.mo
 file path=usr/gcc/11/share/man/man1/cpp.1
 file path=usr/gcc/11/share/man/man1/g++.1
 file path=usr/gcc/11/share/man/man1/gcc.1
+file path=usr/gcc/11/share/man/man1/gccgo.1
 file path=usr/gcc/11/share/man/man1/gcov-dump.1
 file path=usr/gcc/11/share/man/man1/gcov-tool.1
 file path=usr/gcc/11/share/man/man1/gcov.1
 file path=usr/gcc/11/share/man/man1/gfortran.1
+file path=usr/gcc/11/share/man/man1/go.1
+file path=usr/gcc/11/share/man/man1/gofmt.1
 file path=usr/gcc/11/share/man/man1/lto-dump.1
 file path=usr/gcc/11/share/man/man7/fsf-funding.7
 file path=usr/gcc/11/share/man/man7/gfdl.7
