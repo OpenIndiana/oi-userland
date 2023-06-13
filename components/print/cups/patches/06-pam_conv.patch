@@ -1,0 +1,24 @@
+see: https://www.illumos.org/issues/15657
+struct pam_message in struct pam_conv is not const in illumos
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/tools/ippeveprinter.c a/tools/ippeveprinter.c
+--- a~/tools/ippeveprinter.c	1970-01-01 00:00:00
++++ a/tools/ippeveprinter.c	1970-01-01 00:00:00
+@@ -324,7 +324,7 @@ static ipp_t		*load_legacy_attributes(co
+ static ipp_t		*load_ppd_attributes(const char *ppdfile, cups_array_t *docformats);
+ #endif /* !CUPS_LITE */
+ #if HAVE_LIBPAM
+-static int		pam_func(int, const struct pam_message **, struct pam_response **, void *);
++static int		pam_func(int, struct pam_message **, struct pam_response **, void *);
+ #endif /* HAVE_LIBPAM */
+ static int		parse_options(ippeve_client_t *client, cups_option_t **options);
+ static void		process_attr_message(ippeve_job_t *job, char *message);
+@@ -5635,7 +5635,7 @@ load_ppd_attributes(
+ static int				/* O - Success or failure */
+ pam_func(
+     int                      num_msg,	/* I - Number of messages */
+-    const struct pam_message **msg,	/* I - Messages */
++    struct pam_message **msg,	/* I - Messages */
+     struct pam_response      **resp,	/* O - Responses */
+     void                     *appdata_ptr)
+ 					/* I - Pointer to connection */
