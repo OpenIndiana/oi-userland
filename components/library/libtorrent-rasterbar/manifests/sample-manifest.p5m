@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -55,14 +56,15 @@ file path=usr/include/libtorrent/aux_/disable_deprecation_warnings_push.hpp
 file path=usr/include/libtorrent/aux_/disable_warnings_pop.hpp
 file path=usr/include/libtorrent/aux_/disable_warnings_push.hpp
 file path=usr/include/libtorrent/aux_/disk_buffer_pool.hpp
-file path=usr/include/libtorrent/aux_/disk_io_job.hpp
 file path=usr/include/libtorrent/aux_/disk_io_thread_pool.hpp
 file path=usr/include/libtorrent/aux_/disk_job_fence.hpp
 file path=usr/include/libtorrent/aux_/disk_job_pool.hpp
+file path=usr/include/libtorrent/aux_/drive_info.hpp
 file path=usr/include/libtorrent/aux_/ed25519.hpp
 file path=usr/include/libtorrent/aux_/escape_string.hpp
 file path=usr/include/libtorrent/aux_/export.hpp
 file path=usr/include/libtorrent/aux_/ffs.hpp
+file path=usr/include/libtorrent/aux_/file_descriptor.hpp
 file path=usr/include/libtorrent/aux_/file_pointer.hpp
 file path=usr/include/libtorrent/aux_/file_progress.hpp
 file path=usr/include/libtorrent/aux_/file_view_pool.hpp
@@ -81,6 +83,8 @@ file path=usr/include/libtorrent/aux_/lsd.hpp
 file path=usr/include/libtorrent/aux_/merkle.hpp
 file path=usr/include/libtorrent/aux_/merkle_tree.hpp
 file path=usr/include/libtorrent/aux_/mmap.hpp
+file path=usr/include/libtorrent/aux_/mmap_disk_job.hpp
+file path=usr/include/libtorrent/aux_/netlink_utils.hpp
 file path=usr/include/libtorrent/aux_/noexcept_movable.hpp
 file path=usr/include/libtorrent/aux_/numeric_cast.hpp
 file path=usr/include/libtorrent/aux_/open_mode.hpp
@@ -105,6 +109,7 @@ file path=usr/include/libtorrent/aux_/session_interface.hpp
 file path=usr/include/libtorrent/aux_/session_settings.hpp
 file path=usr/include/libtorrent/aux_/session_udp_sockets.hpp
 file path=usr/include/libtorrent/aux_/set_socket_buffer.hpp
+file path=usr/include/libtorrent/aux_/set_traffic_class.hpp
 file path=usr/include/libtorrent/aux_/sha512.hpp
 file path=usr/include/libtorrent/aux_/socket_type.hpp
 file path=usr/include/libtorrent/aux_/storage_free_list.hpp
@@ -124,6 +129,7 @@ file path=usr/include/libtorrent/aux_/utp_stream.hpp
 file path=usr/include/libtorrent/aux_/vector.hpp
 file path=usr/include/libtorrent/aux_/win_cng.hpp
 file path=usr/include/libtorrent/aux_/win_crypto_provider.hpp
+file path=usr/include/libtorrent/aux_/win_file_handle.hpp
 file path=usr/include/libtorrent/aux_/win_util.hpp
 file path=usr/include/libtorrent/aux_/windows.hpp
 file path=usr/include/libtorrent/bdecode.hpp
@@ -154,6 +160,7 @@ file path=usr/include/libtorrent/extensions/smart_ban.hpp
 file path=usr/include/libtorrent/extensions/ut_metadata.hpp
 file path=usr/include/libtorrent/extensions/ut_pex.hpp
 file path=usr/include/libtorrent/file.hpp
+file path=usr/include/libtorrent/file_layout.hpp
 file path=usr/include/libtorrent/file_storage.hpp
 file path=usr/include/libtorrent/fingerprint.hpp
 file path=usr/include/libtorrent/flags.hpp
@@ -204,6 +211,7 @@ file path=usr/include/libtorrent/kademlia/traversal_algorithm.hpp
 file path=usr/include/libtorrent/kademlia/types.hpp
 file path=usr/include/libtorrent/libtorrent.hpp
 file path=usr/include/libtorrent/link.hpp
+file path=usr/include/libtorrent/load_torrent.hpp
 file path=usr/include/libtorrent/lsd.hpp
 file path=usr/include/libtorrent/magnet_uri.hpp
 file path=usr/include/libtorrent/mmap_disk_io.hpp
@@ -276,6 +284,7 @@ file path=usr/include/libtorrent/torrent_peer.hpp
 file path=usr/include/libtorrent/torrent_peer_allocator.hpp
 file path=usr/include/libtorrent/torrent_status.hpp
 file path=usr/include/libtorrent/tracker_manager.hpp
+file path=usr/include/libtorrent/truncate.hpp
 file path=usr/include/libtorrent/udp_socket.hpp
 file path=usr/include/libtorrent/udp_tracker_connection.hpp
 file path=usr/include/libtorrent/union_endpoint.hpp
@@ -294,8 +303,8 @@ file path=usr/lib/$(MACH64)/cmake/LibtorrentRasterbar/LibtorrentRasterbarTargets
 file path=usr/lib/$(MACH64)/cmake/LibtorrentRasterbar/LibtorrentRasterbarTargets.cmake
 link path=usr/lib/$(MACH64)/libtorrent-rasterbar.so \
     target=libtorrent-rasterbar.so.2.0
-file path=usr/lib/$(MACH64)/libtorrent-rasterbar.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libtorrent-rasterbar.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libtorrent-rasterbar.so.2.0 \
-    target=libtorrent-rasterbar.so.$(COMPONENT_VERSION)
+    target=libtorrent-rasterbar.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/libtorrent-rasterbar.pc
 file path=usr/share/cmake/Modules/FindLibtorrentRasterbar.cmake
