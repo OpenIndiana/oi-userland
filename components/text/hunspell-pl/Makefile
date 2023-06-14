@@ -10,13 +10,14 @@
 
 #
 # Copyright (c) 2016 Alexander Pyhalov
+# Copyright (c) 2023 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hunspell-pl
-COMPONENT_VERSION=	2023.2.1
-HUMAN_VERSION=		20230201
+COMPONENT_VERSION=	2023.6.1
+HUMAN_VERSION=		20230601
 COMPONENT_PROJECT_URL=	https://sjp.pl/slownik/en/
 COMPONENT_SUMMARY=	Myspell and Hunspell spell dictionary files for Polish
 COMPONENT_LICENSE=	MPL1.1
@@ -24,7 +25,7 @@ COMPONENT_FMRI=		library/myspell/dictionary/pl
 COMPONENT_CLASSIFICATION= System/Localizations
 COMPONENT_SRC=			sjp-myspell-pl-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH=	sha256:29afd786a71f9015d3aabbf99255ae086421d5d0a3290908f6470eb37406210d
+COMPONENT_ARCHIVE_HASH=	sha256:5c1a4422622fb594754423dc9dbd8c413f1657780720a7564c94b5f6345d9807
 COMPONENT_ARCHIVE_URL=	https://sjp.pl/slownik/ort/$(COMPONENT_ARCHIVE)
 UNPACK_ARGS+=	-r $(COMPONENT_SRC)
 
