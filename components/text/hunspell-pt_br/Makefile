@@ -10,25 +10,25 @@
 
 #
 # Copyright (c) 2016 Alexander Pyhalov
+# Copyright (c) 2023 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hunspell-pt_br
-COMPONENT_VERSION=	2013-10-30
-IPS_COMPONENT_VERSION=	2013.10.30
-COMPONENT_PROJECT_URL=	http://pt-br.libreoffice.org/projetos/vero
+COMPONENT_VERSION=	3.2.15
+COMPONENT_PROJECT_URL=	https://pt-br.libreoffice.org/projetos/vero
 COMPONENT_SUMMARY=	Myspell and Hunspell spell dictionary files for Portugese Brazilian
 COMPONENT_LICENSE=	MPL1.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_FMRI=	library/myspell/dictionary/pt_br
 COMPONENT_CLASSIFICATION	= System/Localizations
 
-COMPONENT_SRC=            ptBR-$(COMPONENT_VERSION)AOC-2
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).zip
+COMPONENT_SRC=            VeroptBR3215AOC
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).oxt
 COMPONENT_ARCHIVE_HASH=        \
-    sha256:ff20a997e4296b8b0bef2e6c19be437fa99442e7d7b3ea55cf9e0e1a6ab52a56
-COMPONENT_ARCHIVE_URL=   http://pt-br.libreoffice.org/assets/Uploads/PT-BR-Documents/VERO/$(COMPONENT_ARCHIVE)
+    sha256:7571a3d8aaa0d5699f8b572d2fc613189876fa4fa87dcbda9a99bd63500210ee
+COMPONENT_ARCHIVE_URL=   https://pt-br.libreoffice.org/assets/Uploads/PT-BR-Documents/VERO/$(COMPONENT_ARCHIVE)
 UNPACK_ARGS+=-r $(COMPONENT_SRC)
 
 include $(WS_TOP)/make-rules/prep.mk
