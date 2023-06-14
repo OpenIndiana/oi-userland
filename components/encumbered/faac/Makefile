@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         faac
 COMPONENT_VERSION=      1.30
-#COMPONENT_REVISION=     3
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Reference encoder and encoding library for MPEG2/4 AAC
 COMPONENT_SRC=          $(COMPONENT_NAME)-1_30
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -46,8 +46,6 @@ CONFIGURE_SCRIPT = $(@D)/configure
 CFLAGS += $(CPP_LARGEFILES)
 
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --enable-drm
-CONFIGURE_OPTIONS += --with-mp4v2
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
