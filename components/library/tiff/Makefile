@@ -16,15 +16,14 @@
 BUILD_BITS= 64_and_32
 USE_COMMON_TEST_MASTER= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tiff
-COMPONENT_VERSION= 4.5.0
+COMPONENT_VERSION= 4.5.1
 COMPONENT_SUMMARY= libtiff - library for reading and writing TIFF
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:c7a1d9296649233979fa3eacffef3fa024d73d05d589cb622727b5b08c423464
+COMPONENT_ARCHIVE_HASH= sha256:d7f38b6788e4a8f5da7940c5ac9424f494d8a79eba53d555f4a507167dca5e2b
 COMPONENT_ARCHIVE_URL=	https://download.osgeo.org/libtiff/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.simplesystems.org/libtiff/
 COMPONENT_FMRI=	image/library/libtiff
@@ -58,9 +57,9 @@ unexport SHELLOPTS
 COMPONENT_TEST_ENV+= PATH=$(PATH.gnu)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
