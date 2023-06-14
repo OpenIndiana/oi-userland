@@ -1,23 +1,12 @@
---- IcedTea-Web-icedtea-web-1.8.3/configure.ac.orig	2020-01-31 01:37:32.303103663 +0000
-+++ IcedTea-Web-icedtea-web-1.8.3/configure.ac	2020-01-31 01:37:52.988750211 +0000
-@@ -68,19 +68,7 @@
- fi
- AM_CONDITIONAL([ENABLE_NATIVE_LAUNCHERS], [test ! x"$RUSTC" = x -a ! x"$CARGO" = x])
- 
--build_linux=no
--build_windows=no
--case "${host_os}" in
--    linux*)
--        build_linux=yes
--        ;;
--    cygwin*)
--        build_windows=yes
--        ;;
--    *)
--        AC_MSG_ERROR(["OS $host_os is not supported"])
--        ;;
--esac
-+build_linux=yes
- AM_CONDITIONAL([LINUX], [test "$build_linux" = "yes"])
- AM_CONDITIONAL([WINDOWS], [test "$build_windows" = "yes"])
- 
+diff -Nru IcedTea-Web-icedtea-web-1.8.8.orig/configure.ac IcedTea-Web-icedtea-web-1.8.8/configure.ac
+--- IcedTea-Web-icedtea-web-1.8.8.orig/configure.ac	2021-10-27 22:13:18.000000000 +0200
++++ IcedTea-Web-icedtea-web-1.8.8/configure.ac	2023-06-14 12:22:07.249396534 +0200
+@@ -72,7 +72,7 @@
+ build_windows=no
+ build_macos=no
+ case "${host_os}" in
+-    linux*|freebsd*)
++    linux*|freebsd*|solaris*)
+         build_linux=yes
+         ;;
+     cygwin*)
