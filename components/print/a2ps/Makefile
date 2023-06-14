@@ -21,20 +21,20 @@
 
 #
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		a2ps
-COMPONENT_VERSION=	4.14
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	4.15.4
+#COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	GNU a2ps - 'Anything to PostScript' converter and pretty printer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/a2ps/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:f3ae8d3d4564a41b6e2a21f237d2f2b104f48108591e8b83497500182a3ab3a4
+COMPONENT_ARCHIVE_HASH= sha256:4a063f84ba89d86be14a6704ca35fd130083b572f1376b439a1b79b67b206dd7
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/a2ps/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		print/filter/a2ps
 COMPONENT_CLASSIFICATION= System/Printing
@@ -70,10 +70,13 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 ASLR_MODE= $(ASLR_ENABLE)
 
 # Build dependency manually added
-REQUIRED_PACKAGES += developer/gperf 
+REQUIRED_PACKAGES += developer/gperf
 REQUIRED_PACKAGES += editor/gnu-emacs
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/gc
+REQUIRED_PACKAGES += library/libpaper
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
