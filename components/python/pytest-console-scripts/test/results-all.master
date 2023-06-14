@@ -7,7 +7,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 asyncio: mode=strict
-collecting ... collected 52 items
+collecting ... collected 58 items
 
 tests/test_console_scripts.py::test_command_line_option[None] PASSED
 tests/test_console_scripts.py::test_command_line_option[both] PASSED
@@ -45,10 +45,14 @@ tests/test_run_scripts.py::test_logging[inprocess] PASSED
 tests/test_run_scripts.py::test_mocking[inprocess] PASSED
 tests/test_run_scripts.py::test_not_installed[inprocess] PASSED
 tests/test_run_scripts.py::test_not_installed[subprocess] PASSED
-tests/test_run_scripts.py::test_print_stdio_on_error[inprocess-inprocess-False] PASSED
-tests/test_run_scripts.py::test_print_stdio_on_error[inprocess-inprocess-True] PASSED
-tests/test_run_scripts.py::test_print_stdio_on_error[subprocess-inprocess-False] PASSED
-tests/test_run_scripts.py::test_print_stdio_on_error[subprocess-inprocess-True] PASSED
+tests/test_run_scripts.py::test_print_stdio_on_error[inprocess-inprocess-False-False] PASSED
+tests/test_run_scripts.py::test_print_stdio_on_error[inprocess-inprocess-False-True] PASSED
+tests/test_run_scripts.py::test_print_stdio_on_error[inprocess-inprocess-True-False] PASSED
+tests/test_run_scripts.py::test_print_stdio_on_error[inprocess-inprocess-True-True] PASSED
+tests/test_run_scripts.py::test_print_stdio_on_error[subprocess-inprocess-False-False] PASSED
+tests/test_run_scripts.py::test_print_stdio_on_error[subprocess-inprocess-False-True] PASSED
+tests/test_run_scripts.py::test_print_stdio_on_error[subprocess-inprocess-True-False] PASSED
+tests/test_run_scripts.py::test_print_stdio_on_error[subprocess-inprocess-True-True] PASSED
 tests/test_run_scripts.py::test_return_None[inprocess] PASSED
 tests/test_run_scripts.py::test_return_code_uncommon[inprocess] PASSED
 tests/test_run_scripts.py::test_run_path[inprocess] PASSED
@@ -57,24 +61,14 @@ tests/test_run_scripts.py::test_run_pytest[inprocess-inprocess] PASSED
 tests/test_run_scripts.py::test_run_pytest[inprocess-subprocess] PASSED
 tests/test_run_scripts.py::test_run_pytest[subprocess-inprocess] PASSED
 tests/test_run_scripts.py::test_run_pytest[subprocess-subprocess] PASSED
+tests/test_run_scripts.py::test_run_script_codecs[inprocess] PASSED
+tests/test_run_scripts.py::test_run_script_codecs[subprocess] PASSED
 tests/test_run_scripts.py::test_shell[inprocess] PASSED
 tests/test_run_scripts.py::test_shell[subprocess] PASSED
 tests/test_run_scripts.py::test_stdin[inprocess] PASSED
 tests/test_run_scripts.py::test_stdin[subprocess] PASSED
 
-=============================== warnings summary ===============================
-tests/test_run_scripts.py: 18 warnings
-  $(@D)/pytest_console_scripts/__init__.py:155: DeprecationWarning: script_runner commands should be passed as a single sequence, not as multiple arguments.
-  Replace `script_runner.run(a, b, c)` calls with `script_runner.run([a, b, c])`
-    warnings.warn(
 
-tests/test_run_scripts.py::test_ignore_universal_newlines[inprocess]
-  $(@D)/pytest_console_scripts/__init__.py:332: UserWarning: Keyword argument 'universal_newlines' was ignored.
-  Consider using subprocess mode or raising an issue.
-    warnings.warn(
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 52 passed, 19 warnings ========
+======== 58 passed ========
   py$(PYV): OK
   congratulations :)
