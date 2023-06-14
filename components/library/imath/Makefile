@@ -10,20 +10,20 @@
 
 #
 # Copyright 2022 Daniel Chan
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS= 32_and_64
 BUILD_STYLE= cmake
 USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Imath
-COMPONENT_VERSION=	3.1.8
+COMPONENT_VERSION=	3.1.9
 COMPONENT_SUMMARY=	C++ representation of 2D and 3D vectors
 COMPONENT_PROJECT_URL=	https://github.com/AcademySoftwareFoundation/$(COMPONENT_NAME)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:a23a4e2160ca8ff68607a4e129e484edd1d0d13f707394d32af7aed659020803
+COMPONENT_ARCHIVE_HASH=	sha256:f1d8aacd46afed958babfced3190d2d3c8209b66da451f556abd6da94c165cf3
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=			library/imath
 COMPONENT_CLASSIFICATION=System/Libraries
