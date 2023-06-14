@@ -2,7 +2,7 @@ teststatus=0; \
 progfailed=""; \
 for prog in  dbd testall; do \
         if test "$prog" = 'dbd'; then \
-		for driver in none  pgsql sqlite3; do \
+		for driver in none  pgsql mysql sqlite3; do \
 			if test "$driver" != 'none'; then \
 				LD_LIBRARY_PATH="`echo "../crypto/.libs:../dbm/.libs:../dbd/.libs:../ldap/.libs:$LD_LIBRARY_PATH" | sed -e 's/::*$//'`" \
 				./$prog $driver; \
@@ -29,6 +29,7 @@ fi; \
 exit $teststatus
 Loaded pgsql driver OK.
 Failed to open pgsql[]
+Failed to load driver file apr_dbd_mysql.so
 Loaded sqlite3 driver OK.
 Opened sqlite3[] OK
 ======== create table ========
@@ -127,5 +128,4 @@ testqueue           :  SUCCESS
 testreslist         :  SUCCESS
 testsiphash         :  SUCCESS
 All tests passed.
-make[2]: Verzeichnis „$(@D)/test“ wird verlassen
-make[1]: Verzeichnis „$(@D)“ wird verlassen
+make[2]: Leaving directory '$(@D)/test'

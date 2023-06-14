@@ -23,12 +23,11 @@
 # Copyright (c) 2023, Niklas Poslovski
 #
 
-USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr-util
 COMPONENT_VERSION=	1.6.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -39,6 +38,9 @@ COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 CONFIGURE_DEFAULT_DIRS=no
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Without this the build is unable to find right C preprocessor
+PATH = $(GCC_BINDIR):$(PATH.illumos)
 
 PATCH_LEVEL=0
 
@@ -70,11 +72,14 @@ COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# Documentation is generated in and directly packaged from build
-# directory using doxygen.
-PKG_PROTO_DIRS += $(BUILD_DIR_64)/docs/dox/manual
+# We need to list (the default) 'all' build target explicitly because we need
+# to add one more (non-default) target
+COMPONENT_BUILD_TARGETS += all
+# The 'dox' target is used to build documentation
+COMPONENT_BUILD_TARGETS += dox
 
-COMPONENT_POST_INSTALL_ACTION= (cd $(BUILD_DIR_64); doxygen docs/doxygen.conf)
+# Install documentation
+COMPONENT_POST_INSTALL_ACTION += $(CP) -a $(@D)/docs/dox/manual $(PROTO_DIR)/usr/apr-util/manual ;
 
 # Build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
