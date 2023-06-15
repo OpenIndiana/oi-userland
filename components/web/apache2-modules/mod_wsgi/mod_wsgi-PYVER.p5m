@@ -24,27 +24,21 @@
 # Copyright (c) 2022 Niklas Poslovski
 #
 
-set name=pkg.fmri \
-    value=pkg:/web/server/apache-24/module/apache-wsgi-39@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
-set name=pkg.summary \
-    value="Python 3.9 mod_wsgi plugin for Apache Web Server v2.4"
-set name=com.oracle.info.description value="the Python 3.9 mod_wsgi plugin for Apache Web Server v2.4"
-set name=com.oracle.info.tpno value=7687
-set name=info.classification \
-    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2012/162
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license mod_wsgi.license license=Apache2.0
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # prevents "64bit file in 32bit path" errors
 <transform file path=usr/apache2/2.4/libexec/.*\.so -> \
     add pkg.linted.userland.action001.2 true>
 
-file path=usr/apache2/2.4/libexec/mod_wsgi-3.9.so mode=0555
+file path=usr/apache2/2.4/libexec/mod_wsgi-$(PYVER).so mode=0555
 link path=usr/apache2/2.4/libexec/mod_wsgi.so \
-    target=mod_wsgi-3.9.so mediator=python \
-    mediator-version=3.9
+    target=mod_wsgi-$(PYVER).so mediator=python \
+    mediator-version=$(PYVER)
