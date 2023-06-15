@@ -1,15 +1,18 @@
-py$(PYV) create: $(@D)/.tox/py$(PYV)
-py$(PYV) run-test: commands[0] | python -m coverage run -m pytest
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m coverage run -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 OpenSSL: OpenSSL 1.0.2u  20 Dec 2019
 pyOpenSSL: 19.0.0
-cryptography: 2.6.1
-rootdir: $(@D), configfile: tox.ini, testpaths: tests
+cryptography: 3.2.1
+rootdir: $(@D)
+configfile: tox.ini
+testpaths: tests
 asyncio: mode=strict
-collecting ... collected 124 items
+collecting ... collected 120 items
 
 tests/test_common.py::TestContainsInstance::test_negative PASSED
 tests/test_common.py::TestContainsInstance::test_positive PASSED
@@ -87,25 +90,21 @@ tests/test_common.py::TestVerificationError::test_pickle[exc0-1] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc0-2] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc0-3] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc0-4] PASSED
-tests/test_common.py::TestVerificationError::test_pickle[exc0-5] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc1-0] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc1-1] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc1-2] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc1-3] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc1-4] PASSED
-tests/test_common.py::TestVerificationError::test_pickle[exc1-5] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc2-0] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc2-1] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc2-2] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc2-3] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc2-4] PASSED
-tests/test_common.py::TestVerificationError::test_pickle[exc2-5] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc3-0] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc3-1] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc3-2] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc3-3] PASSED
 tests/test_common.py::TestVerificationError::test_pickle[exc3-4] PASSED
-tests/test_common.py::TestVerificationError::test_pickle[exc3-5] PASSED
 tests/test_common.py::TestVerificationError::test_repr_str PASSED
 tests/test_common.py::TestVerifyServiceIdentity::test_contains_optional_and_matches PASSED
 tests/test_common.py::TestVerifyServiceIdentity::test_dns_id_success PASSED
@@ -136,7 +135,6 @@ tests/test_pyopenssl.py::TestPublicAPI::test_verify_ip_address_fail[::2] PASSED
 tests/test_pyopenssl.py::TestPublicAPI::test_verify_ip_address_ok[1.1.1.1] PASSED
 tests/test_pyopenssl.py::TestPublicAPI::test_verify_ip_address_ok[::1] PASSED
 
-======== 124 passed ========
-___________________________________ summary ____________________________________
-  py$(PYV): commands succeeded
+======== 120 passed ========
+  py$(PYV): OK
   congratulations :)
