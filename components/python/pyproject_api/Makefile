@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_api
-HUMAN_VERSION =			1.5.1
+HUMAN_VERSION =			1.5.2
 COMPONENT_SUMMARY =		pyproject_api - API to interact with the python pyproject.toml based projects
 COMPONENT_PROJECT_URL =		http://pyproject_api.readthedocs.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/23/6f/d02d1cab4a30998806687036e03ffecbf66e35df6bfab5a29f22ec61a075/pyproject_api-1.5.1.tar.gz
+	https://files.pythonhosted.org/packages/6f/26/82a2773463e1b739b62e432cff62d39daf21b3172e5ace6213b7f2bbfad7/pyproject_api-1.5.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:435f46547a9ff22cf4208ee274fca3e2869aeb062a4834adfc99a4dd64af3cf9
+	sha256:999f58fa3c92b23ebd31a6bad5d1f87d456744d75e05391be7f5c729015d3d91
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -48,5 +48,5 @@ TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
-TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/wheel
