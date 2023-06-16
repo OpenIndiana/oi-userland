@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nagios-plugins
 COMPONENT_VERSION =		2.4.5
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Nagios Plugins
 COMPONENT_PROJECT_URL =		https://github.com/nagios-plugins/nagios-plugins
 COMPONENT_FMRI =		system/management/nagios/plugins
