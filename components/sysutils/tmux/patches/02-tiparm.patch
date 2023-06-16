@@ -1,0 +1,95 @@
+Patches taken from 
+https://github.com/tmux/tmux/commit/39d41d0810d4e8ae6ce8d27776dfbb96722d9319
+and 
+https://github.com/tmux/tmux/commit/168eab11a7cef7ecd8a42ffec160fe2314442b73
+and modified to apply to tmux version 3.3a as the upstream community 
+has made significant code changes to these files since the release of
+tmux 3.3a.
+
+diff -ur tmux-3.3a.orig/configure.ac tmux-3.3a/configure.ac
+--- tmux-3.3a.orig/configure.ac	2023-06-09 03:54:58.100201422 -0700
++++ tmux-3.3a/configure.ac	2023-06-09 03:56:00.392294945 -0700
+@@ -344,6 +344,10 @@
+ 		AC_MSG_ERROR("curses not found")
+ 	fi
+ fi
++AC_CHECK_FUNCS([ \
++	tiparm \
++	tiparm_s \
++])
+ 
+ # Look for utempter.
+ AC_ARG_ENABLE(
+diff -ur tmux-3.3a.orig/tty-term.c tmux-3.3a/tty-term.c
+--- tmux-3.3a.orig/tty-term.c	2023-06-09 03:54:58.107634927 -0700
++++ tmux-3.3a/tty-term.c	2023-06-09 04:20:40.212504121 -0700
+@@ -762,13 +762,25 @@
+ const char *
+ tty_term_string1(struct tty_term *term, enum tty_code_code code, int a)
+ {
++#if defined(HAVE_TIPARM_S)
++	return (tiparm_s(1, 0, tty_term_string(term, code), a));
++#elif defined(HAVE_TIPARM)
++	return (tiparm(tty_term_string(term, code), a));
++#else
+ 	return (tparm((char *) tty_term_string(term, code), a, 0, 0, 0, 0, 0, 0, 0, 0));
++#endif
+ }
+ 
+ const char *
+ tty_term_string2(struct tty_term *term, enum tty_code_code code, int a, int b)
+ {
+-	return (tparm((char *) tty_term_string(term, code), a, b, 0, 0, 0, 0, 0, 0, 0));
++#if defined(HAVE_TIPARM_S)
++        return (tiparm_s(2, 0, tty_term_string(term, code), a, b));
++#elif defined(HAVE_TIPARM)
++        return (tiparm(tty_term_string(term, code), a, b));
++#else
++        return (tparm((char *) tty_term_string(term, code), a, b, 0, 0, 0, 0, 0, 0, 0));
++#endif
+ }
+ 
+ const char *
+@@ -775,13 +787,25 @@
+ tty_term_string3(struct tty_term *term, enum tty_code_code code, int a, int b,
+     int c)
+ {
+-	return (tparm((char *) tty_term_string(term, code), a, b, c, 0, 0, 0, 0, 0, 0));
++#if defined(HAVE_TIPARM_S)
++        return (tiparm_s(3, 0, tty_term_string(term, code), a, b, c));
++#elif defined(HAVE_TIPARM)
++        return (tiparm(tty_term_string(term, code), a, b, c));
++#else
++        return (tparm((char *) tty_term_string(term, code), a, b, c, 0, 0, 0, 0, 0, 0));
++#endif
+ }
+ 
+ const char *
+ tty_term_ptr1(struct tty_term *term, enum tty_code_code code, const void *a)
+ {
+-	return (tparm((char *) tty_term_string(term, code), (long)a, 0, 0, 0, 0, 0, 0, 0, 0));
++#if defined(HAVE_TIPARM_S)
++        return (tiparm_s(1, 1, tty_term_string(term, code), a));
++#elif defined(HAVE_TIPARM)
++        return (tiparm(tty_term_string(term, code), a));
++#else
++        return (tparm((char *) tty_term_string(term, code), (long)a, 0, 0, 0, 0, 0, 0, 0, 0));
++#endif
+ }
+ 
+ const char *
+@@ -788,7 +812,13 @@
+ tty_term_ptr2(struct tty_term *term, enum tty_code_code code, const void *a,
+     const void *b)
+ {
+-	return (tparm((char *) tty_term_string(term, code), (long)a, (long)b, 0, 0, 0, 0, 0, 0, 0));
++#if defined(HAVE_TIPARM_S)
++        return (tiparm_s(2, 3, tty_term_string(term, code), a, b));
++#elif defined(HAVE_TIPARM)
++        return (tiparm(tty_term_string(term, code), a, b));
++#else
++        return (tparm((char *) tty_term_string(term, code), (long)a, (long)b, 0, 0, 0, 0, 0, 0, 0));
++#endif
+ }
+ 
+ int
