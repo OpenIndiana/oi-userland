@@ -1,0 +1,20 @@
+--- libreoffice-7.5.3.1/vcl/unx/generic/app/geninst.cxx.old	2023-04-22 20:44:29.692052052 -0400
++++ libreoffice-7.5.3.1/vcl/unx/generic/app/geninst.cxx	2023-04-22 20:45:58.686866426 -0400
+@@ -22,7 +22,7 @@
+ #if defined(LINUX)
+ #  include <stdio.h>
+ #endif
+-#if defined(__FreeBSD__)
++#if defined(__FreeBSD__) || defined(__illumos__)
+ #  include <sys/utsname.h>
+ #endif
+ 
+@@ -72,7 +72,7 @@
+         }
+         fclose( pVersion );
+     }
+-#elif defined(__FreeBSD__)
++#elif defined(__FreeBSD__) || defined(__illumos__)
+     struct utsname stName;
+     if ( uname( &stName ) != 0 )
+         return aKernelVer;

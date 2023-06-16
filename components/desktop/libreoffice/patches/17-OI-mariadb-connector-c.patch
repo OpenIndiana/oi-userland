@@ -1,0 +1,54 @@
+diff -Naur libreoffice-7.1.8.1/external/mariadb-connector-c.old/01-fix-size_socket.patch libreoffice-7.1.8.1/external/mariadb-connector-c/01-fix-size_socket.patch
+--- libreoffice-7.1.8.1/external/mariadb-connector-c.old/01-fix-size_socket.patch	1969-12-31 19:00:00.000000000 +0000
++++ libreoffice-7.1.8.1/external/mariadb-connector-c/01-fix-size_socket.patch	2022-03-01 15:08:54.663929944 +0000
+@@ -0,0 +1,14 @@
++--- include/ma_global.h.old	2022-01-13 11:29:56.408961936 +0000
+++++ include/ma_global.h	2022-01-13 11:31:03.461998277 +0000
++@@ -353,7 +353,11 @@
++ #ifdef HAVE_SYS_SOCKET_H
++ #include <sys/socket.h>
++ #endif
+++#ifdef _SOCKLEN_T
+++#define size_socket socklen_t   /* Type of last arg to accept */
+++#else
++ typedef SOCKET_SIZE_TYPE size_socket;
+++#endif
++ 
++ #ifndef SOCKOPT_OPTLEN_TYPE
++ #define SOCKOPT_OPTLEN_TYPE size_socket
+diff -Naur libreoffice-7.1.8.1/external/mariadb-connector-c.old/02-cfi-issue.patch libreoffice-7.1.8.1/external/mariadb-connector-c/02-cfi-issue.patch
+--- libreoffice-7.1.8.1/external/mariadb-connector-c.old/02-cfi-issue.patch	1969-12-31 19:00:00.000000000 +0000
++++ libreoffice-7.1.8.1/external/mariadb-connector-c/02-cfi-issue.patch	2022-03-01 15:09:07.718708982 +0000
+@@ -0,0 +1,20 @@
++--- libmariadb/ma_context.c.old	2022-01-13 11:40:47.480970827 +0000
+++++ libmariadb/ma_context.c	2022-01-13 11:41:19.570077161 +0000
++@@ -202,7 +202,7 @@
++     (
++      "movq %%rsp, (%[save])\n\t"
++      "movq %[stack], %%rsp\n\t"
++-#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 4 && !defined(__INTEL_COMPILER)
+++#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 4 && !defined(__INTEL_COMPILER) && !defined(__sun)
++      /*
++        This emits a DWARF DW_CFA_undefined directive to make the return address
++        undefined. This indicates that this is the top of the stack frame, and
++@@ -441,7 +441,7 @@
++     (
++      "movl %%esp, (%[save])\n\t"
++      "movl %[stack], %%esp\n\t"
++-#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 4 && !defined(__INTEL_COMPILER)
+++#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 4 && !defined(__INTEL_COMPILER) && !defined(__sun)
++      /*
++        This emits a DWARF DW_CFA_undefined directive to make the return address
++        undefined. This indicates that this is the top of the stack frame, and
+diff -Naur libreoffice-7.1.8.1/external/mariadb-connector-c.old/UnpackedTarball_mariadb-connector-c.mk libreoffice-7.1.8.1/external/mariadb-connector-c/UnpackedTarball_mariadb-connector-c.mk
+--- libreoffice-7.1.8.1/external/mariadb-connector-c.old/UnpackedTarball_mariadb-connector-c.mk	2021-12-03 16:40:28.000000000 +0000
++++ libreoffice-7.1.8.1/external/mariadb-connector-c/UnpackedTarball_mariadb-connector-c.mk	2022-03-01 15:11:50.027548105 +0000
+@@ -27,6 +27,8 @@
+ 
+ $(eval $(call gb_UnpackedTarball_add_patches,mariadb-connector-c,\
+     external/mariadb-connector-c/clang-cl.patch.0 \
++    external/mariadb-connector-c/01-fix-size_socket.patch \
++    external/mariadb-connector-c/02-cfi-issue.patch \
+ ))
+ 
+ # TODO are any "plugins" needed?
