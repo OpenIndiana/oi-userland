@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-mock
-HUMAN_VERSION =			3.10.0
+HUMAN_VERSION =			3.11.1
 COMPONENT_SUMMARY =		pytest-mock - Thin-wrapper around the mock package for easier use with pytest
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-mock/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f6/2b/137a7db414aeaf3d753d415a2bc3b90aba8c5f61dff7a7a736d84b2ec60d/pytest-mock-3.10.0.tar.gz
+	https://files.pythonhosted.org/packages/d8/2d/b3a811ec4fa24190a9ec5013e23c89421a7916167c6240c31fdc445f850c/pytest-mock-3.11.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fbbdb085ef7c252a326fd8cdcac0aa3b1333d8811f131bdcc701002e1be7ed4f
+	sha256:7f6b125602ac6d743e523ae0bfa71e1a697a2f5534064528c6ff84c2f7c2fc7f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
