@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nagios-plugins
 COMPONENT_VERSION =		2.4.5
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Nagios Plugins
 COMPONENT_PROJECT_URL =		https://github.com/nagios-plugins/nagios-plugins
 COMPONENT_FMRI =		system/management/nagios/plugins
@@ -37,6 +37,7 @@ include $(WS_MAKE_RULES)/common.mk
 LD_OPTIONS += -R$(PG_LIBDIR)
 LD_OPTIONS += -R$(MYSQL_LIBDIR)
 
+CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/libexec/nagios-plugins
 CONFIGURE_OPTIONS +=	--enable-libtap
 CONFIGURE_OPTIONS +=	--with-pgsql=$(PG_HOME)
 CONFIGURE_OPTIONS +=	--with-mysql=$(MYSQL_HOME)
@@ -45,6 +46,9 @@ CONFIGURE_OPTIONS +=	--without-radius
 CONFIGURE_OPTIONS +=	--without-smbclient-command
 CONFIGURE_OPTIONS +=	--without-qmail-qstat-command
 CONFIGURE_OPTIONS +=	--without-smtpctl-command
+
+# pst3 needs to be manually installed
+COMPONENT_POST_INSTALL_ACTION += $(CP) $(@D)/plugins-root/pst3 $(PROTOUSRDIR)/libexec/nagios-plugins ;
 
 # Testing needs internet access and site specific setup
 COMPONENT_TEST_TARGETS = test
