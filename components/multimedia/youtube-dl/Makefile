@@ -10,6 +10,7 @@
 
 #
 # Copyright 2020-2021 Nona Hansel
+# Copyright 2023 Niklas Poslovski
 #
 
 BUILD_BITS=		NO_ARCH
@@ -18,9 +19,8 @@ BUILD_STYLE=		setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		youtube-dl
-COMPONENT_VERSION=	2021.1.8
-HUMAN_VERSION=		2021.01.08
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2021.12.17
+#COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Command-line program to download videos from YouTube.com and other video sites
 COMPONENT_PROJECT_URL=	https://youtube-dl.org/
 COMPONENT_FMRI=		multimedia/youtube-dl	
@@ -29,7 +29,7 @@ COMPONENT_SRC=          $(COMPONENT_NAME)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/downloads/latest/$(COMPONENT_ARCHIVE)	
 COMPONENT_ARCHIVE_HASH= \
-	sha256:7340448a90ac82dfb2b1b6569f08bd87552b9b1647a81eb735e11dd6d30607cd
+	sha256:9f3b99c8b778455165b4525f21505e86c7ff565f3ac319e19733d810194135df
 COMPONENT_LICENSE=	Unlicense
 COMPONENT_LICENSE_FILE=	LICENSE
 
