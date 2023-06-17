@@ -24,34 +24,36 @@
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=		32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		antlr
 # This is an ancient version, but a dependency of the ant package
 COMPONENT_VERSION=	2.7.7
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	https://www.antlr.org/
-COMPONENT_FMRI=		developer/parser/antlr
-COMPONENT_CLASSIFICATION=	Development/Other Languages
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	ANother Tool for Language Recognition
+COMPONENT_DESCRIPTION=	ANTLR, ANother Tool for Language Recognition, (formerly PCCTS) is a language tool that provides a framework \
+						for constructing recognizers, compilers, and translators from grammatical descriptions containing C++ or \
+						Java actions [You can use PCCTS 1.xx to generate C-based parsers].
+COMPONENT_PROJECT_URL=	https://www.antlr.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:853aeb021aef7586bda29e74a6b03006bcb565a755c86b66032d8ec31b67dbb9
+COMPONENT_ARCHIVE_HASH= sha256:853aeb021aef7586bda29e74a6b03006bcb565a755c86b66032d8ec31b67dbb9
 COMPONENT_ARCHIVE_URL=	https://www.antlr2.org/download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	java-class/antlr
+COMPONENT_FMRI=			developer/parser/antlr-2
+COMPONENT_CLASSIFICATION=	Development/Other Languages
+COMPONENT_LICENSE=		Public Domain
+COMPONENT_LICENSE_FILE=	LICENSE.txt
 
 # Use version of Java defined in ../../make-rules/shared-macros.mk
 PATH=$(JAVA_HOME)/bin:/usr/bin
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATCH_LEVEL =		0
+PATCH_LEVEL = 0
 
-CONFIGURE_OPTIONS +=	--without-examples
+CONFIGURE_OPTIONS += --without-examples
 # Omit python 2.7 from this build
-CONFIGURE_OPTIONS +=	--disable-python
+CONFIGURE_OPTIONS += --disable-python
 
 COMPONENT_INSTALL_ARGS += prefix=$(PROTOUSRDIR)
 COMPONENT_INSTALL_ARGS += libdir=$(PROTOUSRLIBDIR)
@@ -59,7 +61,7 @@ COMPONENT_INSTALL_ARGS += bindir=$(PROTOUSRBINDIR)
 COMPONENT_INSTALL_ARGS += sbindir=$(PROTOUSRSBINDIR)
 
 # Needed to find the antlr man page.
-PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
+PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
 COMPONENT_TEST_TARGETS = test
 
