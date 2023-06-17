@@ -27,14 +27,15 @@ BUILD_STYLE = archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=  	intel-one-mono
-COMPONENT_VERSION=	1.2.0
+COMPONENT_VERSION=	1.2.1
 COMPONENT_SUMMARY=	An expressive monospaced font family that’s built with clarity, legibility, and the needs of developers in mind
 COMPONENT_SRC=  	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(HUMAN_VERSION).zip
 COMPONENT_PROJECT_URL=	https://github.com/intel/intel-one-mono
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/V$(COMPONENT_VERSION)/ttf.zip
-COMPONENT_ARCHIVE_HASH=	sha256:91acf40de3de3bc9ef295a2760986ce5fdbea6cff95e8e69b23835868c736a25
+COMPONENT_ARCHIVE_HASH=	sha256:0d5fcf4fe3fe186abf7a34b9731e4436e0b2fa2884df600c3a2af0b9308fdef6
 COMPONENT_LICENSE=      SIL OPEN FONT LICENSE Version 1.1
+COMPONENT_LICENSE_FILE=	ttf/license
 
 FONT_TYPE = TTF
 
