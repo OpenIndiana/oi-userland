@@ -9,15 +9,14 @@
 #
 
 #
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS=64
 BUILD_STYLE=cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         msgpack
-COMPONENT_VERSION=      4.0.0
+COMPONENT_VERSION=      6.0.0
 #COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://msgpack.org
 COMPONENT_SUMMARY=      An efficient object serialization library
@@ -25,14 +24,17 @@ COMPONENT_FMRI=         library/msgpack
 COMPONENT_SRC=          $(COMPONENT_NAME)-c-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:420fe35e7572f2a168d17e660ef981a589c9cbe77faa25eb34a520e1fcc032c8
+    sha256:3654f5e2c652dc52e0a993e270bb57d5702b262703f03771c152bba51602aeba
 COMPONENT_ARCHIVE_URL=	https://github.com/msgpack/msgpack-c/releases/download/c-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=       System/Libraries
 COMPONENT_LICENSE=      Boost
-COMPONENT_LICENSE_FILE= msgpack.license
+COMPONENT_LICENSE_FILE= LICENSE_1_0.txt
 
 TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+CMAKE_OPTIONS += -DMSGPACK_BUILD_TESTS=Off
+CMAKE_OPTIONS += -DMSGPACK_ENABLE_STATIC=Off
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
