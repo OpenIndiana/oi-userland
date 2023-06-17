@@ -12,6 +12,7 @@
 #
 # Copyright 2016 phorcys@126.com.  All rights reserved.
 # Copyright 2021 Andreas Wacknitz
+# Copyright 2023 Niklas Poslovski
 #
 
 BUILD_BITS=	32_and_64
@@ -19,14 +20,14 @@ BUILD_STYLE=	cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= taglib
-COMPONENT_VERSION= 1.12
+COMPONENT_VERSION= 1.13
 COMPONENT_FMRI=	library/audio/taglib
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_PROJECT_URL=	https://taglib.github.io/
 COMPONENT_SUMMARY=	taglib - a library for reading and editing the meta-data of several popular audio formats.
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:7fccd07669a523b07a15bd24c8da1bbb92206cb19e9366c3692af3d79253b703
+COMPONENT_ARCHIVE_HASH= sha256:58f08b4db3dc31ed152c04896ee9172d22052bc7ef12888028c01d8b1d60ade0
 COMPONENT_ARCHIVE_URL=	https://taglib.github.io/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= LGPL
 
