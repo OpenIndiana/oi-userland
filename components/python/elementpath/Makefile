@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elementpath
-HUMAN_VERSION =			4.1.2
+HUMAN_VERSION =			4.1.3
 COMPONENT_SUMMARY =		elementpath - XPath 1.0/2.0/3.0/3.1 parsers and selectors for ElementTree and lxml
 COMPONENT_PROJECT_URL =		https://github.com/sissaschool/elementpath
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/6d/ce/5d72a8ab69f44485b63cc396524aec8b9486755be8979befe11685d1397e/elementpath-4.1.2.tar.gz
+	https://files.pythonhosted.org/packages/53/fb/a3452a247387680d030ce9aa26deeb65d086a14fc0ff1773f95b4f1b76e0/elementpath-4.1.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0bd0ef5bad559b677ba499e9c7342ca1f2ae2bace90808ee52528ec8d9f6e12b
+	sha256:1ce703e1380ef12efe1b6aeb1927c0f3add0e4f77950d89d9d44136d6676794b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
