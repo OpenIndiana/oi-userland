@@ -1,0 +1,26 @@
+illumos support is in not yet available in platform-info 2.0.1 but in recent
+git only.
+
+--- maturin-1.1.0/Cargo.toml.orig
++++ maturin-1.1.0/Cargo.toml
+@@ -29,7 +29,7 @@
+ cbindgen = { version = "0.24.2", default-features = false }
+ flate2 = "1.0.18"
+ goblin = "0.6.1"
+-platform-info = "2.0.1"
++platform-info = { git = "https://github.com/uutils/platform-info.git", rev = "5599af7e" }
+ regex = "1.7.0"
+ serde = { version = "1.0.141", features = ["derive"] }
+ serde_json = "1.0.80"
+--- maturin-1.1.0/Cargo.lock.orig
++++ maturin-1.1.0/Cargo.lock
+@@ -1421,8 +1421,7 @@
+ [[package]]
+ name = "platform-info"
+ version = "2.0.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "827dc4f7a81331d48c8abf11b5ac18673b390d33e9632327e286d940289aefab"
++source = "git+https://github.com/uutils/platform-info.git?rev=5599af7e#5599af7eff3ada67556dcec0f681c2009497bcc9"
+ dependencies = [
+  "libc",
+  "winapi",
