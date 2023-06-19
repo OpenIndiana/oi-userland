@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_freezer
-HUMAN_VERSION =			0.4.6
+HUMAN_VERSION =			0.4.7
 COMPONENT_SUMMARY =		pytest_freezer - Pytest plugin providing a fixture interface for spulec/freezegun
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-freezer
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8e/1c/b2fc7216e8185f9185e46a6f7293d131641c7781353c37e1e2f05c232500/pytest_freezer-0.4.6.tar.gz
+	https://files.pythonhosted.org/packages/1a/06/a28ba59bad74f0f5b9146524c81acbc99599a4ac7c8b118f2b8773df26c5/pytest_freezer-0.4.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8e88cd571d3ba10dd9e0cc09897eb01c32a37bef5ca4ff7c4ea8598c91aa6d96
+	sha256:f9241ae5547110558f90394d8a51e216d1247a31f3c2518b1a70082f355f4864
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
