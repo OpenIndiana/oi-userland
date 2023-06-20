@@ -21,13 +21,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycairo
-HUMAN_VERSION =			1.23.0
+HUMAN_VERSION =			1.24.0
 COMPONENT_SUMMARY =		pycairo - Python interface for cairo
 COMPONENT_PROJECT_URL =		https://pycairo.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/69/ca/9e9fa2e8be0876a9bbf046a1be7ee33e61d4fdfbd1fd25c76c1bdfddf8c4/pycairo-1.23.0.tar.gz
+	https://files.pythonhosted.org/packages/a2/dd/bc2c9ee9485308a29c18b1241329e677917af25c60b127857f0fb23d0c6e/pycairo-1.24.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9b61ac818723adc04367301317eb2e814a83522f07bbd1f409af0dada463c44c
+	sha256:1444d52f1bb4cc79a4a0c0fe2ccec4bd78ff885ab01ebe1c0f637d8392bcafb6
 COMPONENT_LICENSE =		LGPL-2.1-only OR MPL-1.1
 
 TEST_STYLE = pytest
