@@ -19,20 +19,24 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Chameleon
-HUMAN_VERSION =			4.0.0
+HUMAN_VERSION =			4.0.1
 COMPONENT_SUMMARY =		Chameleon - Fast HTML/XML Template Compiler.
 COMPONENT_PROJECT_URL =		https://chameleon.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/5b/44/d5d984e2191d4b42bd0bc1cc7ef578788ac8c57194e254f16d254a3b4570/Chameleon-4.0.0.tar.gz
+	https://github.com/malthe/chameleon/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4cfc1ba46a6793b8ec4c72dd324dc647a916bcf588ab0df6f6b57f33ac3a4bb7
+	sha256:1c34d936eadf785701d49d1a4b4cb23c3f563fe3a9f27ac70dacd47ba72d1a30
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# https://github.com/malthe/chameleon/issues/366
-TEST_STYLE = none
+# Github tarball use different source directory than sdist
+COMPONENT_SRC=chameleon-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Force no colors and more verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- -vv
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
