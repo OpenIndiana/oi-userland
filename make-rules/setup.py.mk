@@ -164,6 +164,10 @@ COMPONENT_BUILD_ENV += GIT_DIR=$(BUILD_DIR)
 COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 COMPONENT_TEST_ENV += $(PYTHON_ENV)
 
+# Set CARGO_HOME to make sure projects built using rust (for example via
+# setuptools-rust) do not pollute user's home directory with cargo bits.
+COMPONENT_BUILD_ENV += CARGO_HOME=$(@D)/.cargo
+
 # Make sure the default Python version is installed last and so is the
 # canonical version.  This is needed for components that keep PYTHON_VERSIONS
 # set to more than single value, but deliver unversioned binaries in usr/bin or
