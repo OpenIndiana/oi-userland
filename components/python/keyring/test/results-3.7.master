@@ -1,12 +1,14 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder .tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pytest.ini
+rootdir: $(@D)
+configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 195 items
+collecting ... collected 193 items
 
 ::project PASSED
 conftest.py::BLACK PASSED
@@ -27,8 +29,6 @@ keyring/_properties_compat.py::mypy PASSED
 keyring/backend.py::BLACK PASSED
 keyring/backend.py::keyring.backend.SchemeSelectable PASSED
 keyring/backend.py::mypy PASSED
-keyring/backends/OS_X.py::BLACK PASSED
-keyring/backends/OS_X.py::mypy PASSED
 keyring/backends/SecretService.py::BLACK PASSED
 keyring/backends/SecretService.py::mypy PASSED
 keyring/backends/Windows.py::BLACK PASSED
@@ -80,8 +80,6 @@ keyring/util/__init__.py::keyring.util.once PASSED
 keyring/util/__init__.py::mypy PASSED
 keyring/util/platform_.py::BLACK PASSED
 keyring/util/platform_.py::mypy PASSED
-keyring/util/properties.py::BLACK PASSED
-keyring/util/properties.py::mypy PASSED
 tests/backends/test_SecretService.py::BLACK PASSED
 tests/backends/test_SecretService.py::TestSecretServiceKeyring::test_credential SKIPPED
 tests/backends/test_SecretService.py::TestSecretServiceKeyring::test_delete_not_present SKIPPED
@@ -182,6 +180,8 @@ tests/backends/test_macOS.py::mypy PASSED
 tests/test_core.py::BLACK PASSED
 tests/test_core.py::mypy PASSED
 tests/test_core.py::test_init_recommended PASSED
+tests/test_core.py::test_load_config_exists PASSED
+tests/test_core.py::test_load_config_missing PASSED
 tests/test_errors.py::BLACK PASSED
 tests/test_errors.py::TestExceptionInfo::test_traceback_not_referenced PASSED
 tests/test_errors.py::mypy PASSED
@@ -203,9 +203,26 @@ tests/util/test_platform.py::mypy PASSED
 tests/util/test_platform.py::test_platform_Linux SKIPPED (condition:...)
 tests/util/test_platform.py::test_platform_Windows SKIPPED (conditio...)
 
-===================================== mypy =====================================
+=============================== warnings summary ===============================
+tests/test_core.py::test_init_recommended
+  $(PYTHON_DIR)/vendor-packages/fs/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
 
-Success: no issues found in 43 source files
-======== 110 passed, 84 skipped ========
+tests/test_core.py::test_init_recommended
+  $(PYTHON_DIR)/vendor-packages/fs/opener/__init__.py:6: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs.opener')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)  # type: ignore
+
+tests/test_core.py::test_init_recommended
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2350: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('fs')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+===================================== mypy =====================================
+Success: no issues found in 41 source files
+======== 108 passed, 84 skipped, 3 warnings ========
   py$(PYV): OK
   congratulations :)
