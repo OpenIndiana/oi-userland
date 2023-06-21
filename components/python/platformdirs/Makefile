@@ -15,18 +15,17 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		platformdirs
-HUMAN_VERSION =			3.6.0
+HUMAN_VERSION =			3.7.0
 COMPONENT_SUMMARY =		platformdirs - A small Python package for determining appropriate platform-specific dirs, e.g. a \\\\\\\"user data dir\\\\\\\".
 COMPONENT_PROJECT_URL =		https://github.com/platformdirs/platformdirs
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/05/31/793923615e85deef0c25abf5d044b3f99f1348b620122ab184b7d3f70f21/platformdirs-3.6.0.tar.gz
+	https://files.pythonhosted.org/packages/a1/45/ff5224bbf1a9f23d95f70890659a7c2639a25d594adfe4a5ca9221f6cae5/platformdirs-3.7.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:57e28820ca8094678b807ff529196506d7a21e17156cb1cddb3e74cebce54640
+	sha256:87fbf6473e87c078d536980ba970a472422e94f17b752cfad17024c18876d481
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,6 +36,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# This is to make sure we do not get coverage report because it could differ
+# with every test run
+COMPONENT_TEST_TARGETS += -- tests
 
 # https://github.com/platformdirs/platformdirs/issues/184
 PYTEST_ADDOPTS += -p no:randomly
