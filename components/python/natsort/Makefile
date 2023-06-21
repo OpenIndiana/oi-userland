@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		natsort
-HUMAN_VERSION =			8.3.1
+HUMAN_VERSION =			8.4.0
 COMPONENT_SUMMARY =		natsort - Simple yet flexible natural sorting in Python.
 COMPONENT_PROJECT_URL =		https://github.com/SethMMorton/natsort
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/47/2a/bf13bfc1a51b6df2f823909c6d4f674a256e3f29401825e1d56ca2a95dc9/natsort-8.3.1.tar.gz
+	https://files.pythonhosted.org/packages/e2/a9/a0c57aee75f77794adaf35322f8b6404cbd0f89ad45c87197a937764b7d0/natsort-8.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:517595492dde570a4fd6b6a76f644440c1ba51e2338c8a671d7f0475fda8f9fd
+	sha256:45312c4a0e5507593da193dedd04abb1469253b601ecaf63445ad80f0a1ea581
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
