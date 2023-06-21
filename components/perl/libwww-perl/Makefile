@@ -20,12 +20,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		LWP
 COMPONENT_PERL_DISTRIBUTION =	libwww-perl
-HUMAN_VERSION =			6.70
+HUMAN_VERSION =			6.71
 COMPONENT_SUMMARY =		LWP - The World-Wide Web library for Perl
-COMPONENT_CPAN_AUTHOR =		SIMBABQUE
+COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:34f00d2344757b9c0b55ad35808d53e93d7d92f7a464ec837fe6a73c51fb5969
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:9d852d92c1f087d838adcb4107c4ff69887e7e5bdb742f984639c4c18dddb6e7
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
@@ -36,16 +36,16 @@ PERL_REQUIRED_PACKAGES += library/perl-5/file-listing
 PERL_REQUIRED_PACKAGES += library/perl-5/html-parser
 PERL_REQUIRED_PACKAGES += library/perl-5/http-cookiejar
 PERL_REQUIRED_PACKAGES += library/perl-5/http-cookies
-PERL_REQUIRED_PACKAGES += library/perl-5/http-daemon
 PERL_REQUIRED_PACKAGES += library/perl-5/http-date
 PERL_REQUIRED_PACKAGES += library/perl-5/http-message
 PERL_REQUIRED_PACKAGES += library/perl-5/http-negotiate
 PERL_REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes
 PERL_REQUIRED_PACKAGES += library/perl-5/net-http
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-needs
-PERL_REQUIRED_PACKAGES += library/perl-5/test-requiresinternet
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += library/perl-5/www-robotrules
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/http-daemon
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requiresinternet
