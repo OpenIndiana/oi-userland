@@ -1,16 +1,14 @@
 ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PYTHON_DIR)/site-packages/platformdirs --cov $(@D)/tests --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests
+py$(PYV): commands[0]> python -m pytest tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 asyncio: mode=strict
-collecting ... collected 416 items
+collecting ... collected 417 items
 
-  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
-$(PYTHON_DIR)/vendor-packages/coverage/inorout.py:507: CoverageWarning: Module $(PYTHON_DIR)/site-packages/platformdirs was never imported. (module-not-imported)
 tests/test_android.py::test_android[site_cache_dir-app_name] PASSED
 tests/test_android.py::test_android[site_cache_dir-app_name_author_version] PASSED
 tests/test_android.py::test_android[site_cache_dir-app_name_author_version_false_opinion] PASSED
@@ -369,6 +367,7 @@ tests/test_main.py::test_props_same_as_test PASSED
 tests/test_main.py::test_run_as_module PASSED
 tests/test_unix.py::test_ensure_exists_creates_folder PASSED
 tests/test_unix.py::test_folder_not_created_without_ensure_exists PASSED
+tests/test_unix.py::test_platform_on_bsd PASSED
 tests/test_unix.py::test_platform_on_win32 PASSED
 tests/test_unix.py::test_user_media_dir[user_documents_dir] PASSED
 tests/test_unix.py::test_user_media_dir[user_downloads_dir] PASSED
@@ -428,13 +427,6 @@ tests/test_unix.py::test_xdg_variable_not_set[user_runtime_dir] PASSED
 tests/test_unix.py::test_xdg_variable_not_set[user_state_dir] PASSED
 tests/test_unix.py::test_xdg_variable_not_set[user_videos_dir] PASSED
 
-- generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-
-6 files skipped due to complete coverage.
-Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
-Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
-
-Required test coverage of 76.0% reached. Total coverage: 98.96%
-======== 384 passed, 32 skipped ========
+======== 385 passed, 32 skipped ========
   py$(PYV): OK
   congratulations :)
