@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8-noqa
-HUMAN_VERSION =			1.3.1
+HUMAN_VERSION =			1.3.2
 COMPONENT_SUMMARY =		flake8-noqa - Flake8 noqa comment validation
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4f/ac/5d1cd77a8b115e0d97c3ae2b3f2c21174b9feb6740ba43b99e1f11c93e92/flake8-noqa-1.3.1.tar.gz
+	https://files.pythonhosted.org/packages/af/e0/170cb34197bf682355500960fcaf1761629a3b744c776c006cec3618410b/flake8-noqa-1.3.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:284972bd197ad43d9714a0e579925950c946f1816e65ee87f9fbb4b212a128cb
+	sha256:b12ddf7b02dedabaca0f807cb436ea7992cc0106cb6fa41e997ad45a0a3bf754
 COMPONENT_LICENSE =		LGPL-3.0-only
 
 TEST_STYLE = none
