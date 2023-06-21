@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_freezer
 HUMAN_VERSION =			0.4.7
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pytest_freezer - Pytest plugin providing a fixture interface for spulec/freezegun
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-freezer
 COMPONENT_ARCHIVE_URL =		\
