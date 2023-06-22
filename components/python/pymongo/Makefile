@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			4.3.3
+HUMAN_VERSION =			4.4.0
 COMPONENT_SUMMARY =		pymongo - Python driver for MongoDB <http://www.mongodb.org>
 COMPONENT_PROJECT_URL =		http://github.com/mongodb/mongo-python-driver
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9a/31/482f7401e7bbbeb66ab6b4ac263e2b50435f4329cce1e72378972d48f6b5/pymongo-4.3.3.tar.gz
+	https://files.pythonhosted.org/packages/ee/49/f2487573da7a2ee0e19ca488a235a23338b076e670368d447095b634c605/pymongo-4.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:34e95ffb0a68bffbc3b437f2d1f25fc916fef3df5cdeed0992da5f42fae9b807
+	sha256:a1b5d286fee4b9b5a0312faede02f2ce2f56ac695685af1d25f428abdac9a22c
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
