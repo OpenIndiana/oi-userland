@@ -20,23 +20,27 @@ PYTHON3_SOABI = abi3
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bcrypt
-HUMAN_VERSION =			3.2.2
+HUMAN_VERSION =			4.0.1
 COMPONENT_SUMMARY =		bcrypt - Modern password hashing for your software and your servers
 COMPONENT_PROJECT_URL =		https://github.com/pyca/bcrypt/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e8/36/edc85ab295ceff724506252b774155eff8a238f13730c8b13badd33ef866/bcrypt-3.2.2.tar.gz
+	https://files.pythonhosted.org/packages/8c/ae/3af7d006aacf513975fd1948a6b4d6f8b4a307f8a244e1a3d3774b297aad/bcrypt-4.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:433c410c2177057705da2a9f2cd01dd157493b2a7ac14c8593a16b3dab6b6bfb
+	sha256:27d375903ac8261cfe4047f6709d16f7d18d39b1ec92aaf72af989552a650ebd
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://www.illumos.org/issues/15767
+LD_Z_IGNORE=
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cffi
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-rust
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
