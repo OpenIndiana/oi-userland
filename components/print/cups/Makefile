@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
 COMPONENT_VERSION=	2.4.5
+COMPONENT_REVSION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://openprinting.github.io/cups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
@@ -72,10 +73,8 @@ CONFIGURE_OPTIONS += --with-cups-user=lp
 CONFIGURE_OPTIONS += --with-cups-group=lp
 CONFIGURE_OPTIONS += --with-tls=gnutls
 CONFIGURE_OPTIONS += --without-rcdir
-CONFIGURE_OPTIONS += --disable-systemd
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-dbus
-CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --with-archflags="$(CC_BITS)"
 
 # Dynamically create the license file from its sources:
