@@ -1,3 +1,4 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m coverage run -m pytest --strict-markers
 ============================= test session starts ==============================
@@ -6,11 +7,10 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 asyncio: mode=strict
-collecting ... collected 148 items
+collecting ... collected 153 items
 
 ::project PASSED
 tests/test_bcrypt.py::test_2a_wraparound_bug PASSED
-tests/test_bcrypt.py::test_bcrypt_assert PASSED
 tests/test_bcrypt.py::test_checkpw[0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789chars after 72 are ignored-$2a$05$abcdefghijklmnopqrstuu-$2a$05$abcdefghijklmnopqrstuu5s2v8.iXieOjg/.AySBTTZIIVFJeBui] PASSED
 tests/test_bcrypt.py::test_checkpw[59je8h5Gj71tg-$2b$04$cvXudZ5ugTg95W.rOjMITu-$2b$04$cvXudZ5ugTg95W.rOjMITuM1jC0piCl3zF5cmGhzCibHZrNHkmckG] PASSED
 tests/test_bcrypt.py::test_checkpw[5auCCY9by0Ruf-$2b$04$vVYgSTfB8KVbmhbZE/k3R.-$2b$04$vVYgSTfB8KVbmhbZE/k3R.ux9A0lJUM4CZwCkHI9fifke2.rTF7MG] PASSED
@@ -30,6 +30,7 @@ tests/test_bcrypt.py::test_checkpw[\xa3-$2a$05$/OK.fbVrR/bpIqNJ5ianF.-$2a$05$/OK
 tests/test_bcrypt.py::test_checkpw[\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaachars after 72 are ignored as usual-$2a$05$/OK.fbVrR/bpIqNJ5ianF.-$2a$05$/OK.fbVrR/bpIqNJ5ianF.swQOIzjOiJ9GHEPuhEkvqrUyvWhEMx6] PASSED
 tests/test_bcrypt.py::test_checkpw[cTT0EAFdwJiLn-$2b$04$7/Qj7Kd8BcSahPO4khB8me-$2b$04$7/Qj7Kd8BcSahPO4khB8me4ssDJCW3r4OGYqPF87jxtrSyPj5cS5m] PASSED
 tests/test_bcrypt.py::test_checkpw[dEe6XfVGrrfSH-$2b$04$2Siw3Nv3Q/gTOIPetAyPr.-$2b$04$2Siw3Nv3Q/gTOIPetAyPr.GNj3aO0lb1E5E9UumYGKjP9BYqlNWJe] PASSED
+tests/test_bcrypt.py::test_checkpw[g7\r\x01\xf3\xd4\xd0\xa9JB^\x18\x007P\xb2N\xc7\x1c\xee\x87&\x83C\x8b\xe8\x18\xc5>\x86\x14/\xd6\xcc\x1cJ\xde\xd7ix\xeb\xdeO\xef\xe1i\xac\xcb\x03\x96v1' \xd6@.m\xa5!\xa0\xef\xc0(-$2a$04$tecY.9ylRInW/rAAzXCXPO-$2a$04$tecY.9ylRInW/rAAzXCXPOOlyYeCNzmNTzPDNSIFztFMKbvs/s5XG] PASSED
 tests/test_bcrypt.py::test_checkpw[tEPtJZXur16Vg-$2b$04$2moPs/x/wnCfeQ5pCheMcu-$2b$04$2moPs/x/wnCfeQ5pCheMcuSJQ/KYjOZG780UjA/SiR.KsYWNrC7SG] PASSED
 tests/test_bcrypt.py::test_checkpw[uSgFRnQdOgm4S-$2b$04$WLTjgY/pZSyqX/fbMbJzf.-$2b$04$WLTjgY/pZSyqX/fbMbJzf.qxCeTMQOzgL.CimRjMHtMxd/VGKojMu] PASSED
 tests/test_bcrypt.py::test_checkpw[vvho8C6nlVf9K-$2b$04$HrEYC/AQ2HS77G78cQDZQ.-$2b$04$HrEYC/AQ2HS77G78cQDZQ.r44WGcruKw03KHlnp71yVQEwpsi3xl2] PASSED
@@ -37,6 +38,7 @@ tests/test_bcrypt.py::test_checkpw[wT4fHJa2N9WSW-$2b$04$YYjtiq4Uh88yUsExO0RNTu-$
 tests/test_bcrypt.py::test_checkpw[xVQVbwa1S0M8r-$2b$04$SQe9knOzepOVKoYXo9xTte-$2b$04$SQe9knOzepOVKoYXo9xTteNYr6MBwVz4tpriJVe3PNgYufGIsgKcW] PASSED
 tests/test_bcrypt.py::test_checkpw[xhQPMmwh5ALzW-$2b$04$nQn78dV0hGHf5wUBe0zOFu-$2b$04$nQn78dV0hGHf5wUBe0zOFu8n07ZbWWOKoGasZKRspZxtt.vBRNMIy] PASSED
 tests/test_bcrypt.py::test_checkpw[zKo8vdFSnjX0f-$2b$04$HP3I0PUs7KBEzMBNFw7o3O-$2b$04$HP3I0PUs7KBEzMBNFw7o3O7f/uxaZU7aaDot1quHMgB2yrwBXsgyy] PASSED
+tests/test_bcrypt.py::test_checkpw[}>\xb3\xfe\xf1\x8b\xa0\xe6(\xa2Lzq\xc3P\x7f\xcc\xc8b{\xf9\x14\xf6\xf6`\x81G5\xec\x1d\x87\x10\xbf\xa7\xe1}I7 \x96\xdfc\xf2\xbf\xb3Vh\xdfM\x88q\xf7\xff\x1b\x82~z\x13\xdd\xe9\x84\x00\xdd4-$2b$10$keO.ZZs22YtygVF6BLfhGO-$2b$10$keO.ZZs22YtygVF6BLfhGOI/JjshJYPp8DZsUtym6mJV2Eha2Hdd.] PASSED
 tests/test_bcrypt.py::test_checkpw_2y_prefix[\xa3-$2y$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq-$2y$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq] PASSED
 tests/test_bcrypt.py::test_checkpw_2y_prefix[\xff\xff\xa3-$2y$05$/OK.fbVrR/bpIqNJ5ianF.CE5elHaaO4EbggVDjb8P19RukzXSM3e-$2y$05$/OK.fbVrR/bpIqNJ5ianF.CE5elHaaO4EbggVDjb8P19RukzXSM3e] PASSED
 tests/test_bcrypt.py::test_checkpw_bad_salt PASSED
@@ -93,6 +95,7 @@ tests/test_bcrypt.py::test_hashpw_existing[\xa3-$2a$05$/OK.fbVrR/bpIqNJ5ianF.-$2
 tests/test_bcrypt.py::test_hashpw_existing[\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaachars after 72 are ignored as usual-$2a$05$/OK.fbVrR/bpIqNJ5ianF.-$2a$05$/OK.fbVrR/bpIqNJ5ianF.swQOIzjOiJ9GHEPuhEkvqrUyvWhEMx6] PASSED
 tests/test_bcrypt.py::test_hashpw_existing[cTT0EAFdwJiLn-$2b$04$7/Qj7Kd8BcSahPO4khB8me-$2b$04$7/Qj7Kd8BcSahPO4khB8me4ssDJCW3r4OGYqPF87jxtrSyPj5cS5m] PASSED
 tests/test_bcrypt.py::test_hashpw_existing[dEe6XfVGrrfSH-$2b$04$2Siw3Nv3Q/gTOIPetAyPr.-$2b$04$2Siw3Nv3Q/gTOIPetAyPr.GNj3aO0lb1E5E9UumYGKjP9BYqlNWJe] PASSED
+tests/test_bcrypt.py::test_hashpw_existing[g7\r\x01\xf3\xd4\xd0\xa9JB^\x18\x007P\xb2N\xc7\x1c\xee\x87&\x83C\x8b\xe8\x18\xc5>\x86\x14/\xd6\xcc\x1cJ\xde\xd7ix\xeb\xdeO\xef\xe1i\xac\xcb\x03\x96v1' \xd6@.m\xa5!\xa0\xef\xc0(-$2a$04$tecY.9ylRInW/rAAzXCXPO-$2a$04$tecY.9ylRInW/rAAzXCXPOOlyYeCNzmNTzPDNSIFztFMKbvs/s5XG] PASSED
 tests/test_bcrypt.py::test_hashpw_existing[tEPtJZXur16Vg-$2b$04$2moPs/x/wnCfeQ5pCheMcu-$2b$04$2moPs/x/wnCfeQ5pCheMcuSJQ/KYjOZG780UjA/SiR.KsYWNrC7SG] PASSED
 tests/test_bcrypt.py::test_hashpw_existing[uSgFRnQdOgm4S-$2b$04$WLTjgY/pZSyqX/fbMbJzf.-$2b$04$WLTjgY/pZSyqX/fbMbJzf.qxCeTMQOzgL.CimRjMHtMxd/VGKojMu] PASSED
 tests/test_bcrypt.py::test_hashpw_existing[vvho8C6nlVf9K-$2b$04$HrEYC/AQ2HS77G78cQDZQ.-$2b$04$HrEYC/AQ2HS77G78cQDZQ.r44WGcruKw03KHlnp71yVQEwpsi3xl2] PASSED
@@ -100,6 +103,7 @@ tests/test_bcrypt.py::test_hashpw_existing[wT4fHJa2N9WSW-$2b$04$YYjtiq4Uh88yUsEx
 tests/test_bcrypt.py::test_hashpw_existing[xVQVbwa1S0M8r-$2b$04$SQe9knOzepOVKoYXo9xTte-$2b$04$SQe9knOzepOVKoYXo9xTteNYr6MBwVz4tpriJVe3PNgYufGIsgKcW] PASSED
 tests/test_bcrypt.py::test_hashpw_existing[xhQPMmwh5ALzW-$2b$04$nQn78dV0hGHf5wUBe0zOFu-$2b$04$nQn78dV0hGHf5wUBe0zOFu8n07ZbWWOKoGasZKRspZxtt.vBRNMIy] PASSED
 tests/test_bcrypt.py::test_hashpw_existing[zKo8vdFSnjX0f-$2b$04$HP3I0PUs7KBEzMBNFw7o3O-$2b$04$HP3I0PUs7KBEzMBNFw7o3O7f/uxaZU7aaDot1quHMgB2yrwBXsgyy] PASSED
+tests/test_bcrypt.py::test_hashpw_existing[}>\xb3\xfe\xf1\x8b\xa0\xe6(\xa2Lzq\xc3P\x7f\xcc\xc8b{\xf9\x14\xf6\xf6`\x81G5\xec\x1d\x87\x10\xbf\xa7\xe1}I7 \x96\xdfc\xf2\xbf\xb3Vh\xdfM\x88q\xf7\xff\x1b\x82~z\x13\xdd\xe9\x84\x00\xdd4-$2b$10$keO.ZZs22YtygVF6BLfhGO-$2b$10$keO.ZZs22YtygVF6BLfhGOI/JjshJYPp8DZsUtym6mJV2Eha2Hdd.] PASSED
 tests/test_bcrypt.py::test_hashpw_invalid PASSED
 tests/test_bcrypt.py::test_hashpw_new[0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789chars after 72 are ignored-$2a$05$abcdefghijklmnopqrstuu-$2a$05$abcdefghijklmnopqrstuu5s2v8.iXieOjg/.AySBTTZIIVFJeBui] PASSED
 tests/test_bcrypt.py::test_hashpw_new[59je8h5Gj71tg-$2b$04$cvXudZ5ugTg95W.rOjMITu-$2b$04$cvXudZ5ugTg95W.rOjMITuM1jC0piCl3zF5cmGhzCibHZrNHkmckG] PASSED
@@ -120,6 +124,7 @@ tests/test_bcrypt.py::test_hashpw_new[\xa3-$2a$05$/OK.fbVrR/bpIqNJ5ianF.-$2a$05$
 tests/test_bcrypt.py::test_hashpw_new[\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaachars after 72 are ignored as usual-$2a$05$/OK.fbVrR/bpIqNJ5ianF.-$2a$05$/OK.fbVrR/bpIqNJ5ianF.swQOIzjOiJ9GHEPuhEkvqrUyvWhEMx6] PASSED
 tests/test_bcrypt.py::test_hashpw_new[cTT0EAFdwJiLn-$2b$04$7/Qj7Kd8BcSahPO4khB8me-$2b$04$7/Qj7Kd8BcSahPO4khB8me4ssDJCW3r4OGYqPF87jxtrSyPj5cS5m] PASSED
 tests/test_bcrypt.py::test_hashpw_new[dEe6XfVGrrfSH-$2b$04$2Siw3Nv3Q/gTOIPetAyPr.-$2b$04$2Siw3Nv3Q/gTOIPetAyPr.GNj3aO0lb1E5E9UumYGKjP9BYqlNWJe] PASSED
+tests/test_bcrypt.py::test_hashpw_new[g7\r\x01\xf3\xd4\xd0\xa9JB^\x18\x007P\xb2N\xc7\x1c\xee\x87&\x83C\x8b\xe8\x18\xc5>\x86\x14/\xd6\xcc\x1cJ\xde\xd7ix\xeb\xdeO\xef\xe1i\xac\xcb\x03\x96v1' \xd6@.m\xa5!\xa0\xef\xc0(-$2a$04$tecY.9ylRInW/rAAzXCXPO-$2a$04$tecY.9ylRInW/rAAzXCXPOOlyYeCNzmNTzPDNSIFztFMKbvs/s5XG] PASSED
 tests/test_bcrypt.py::test_hashpw_new[tEPtJZXur16Vg-$2b$04$2moPs/x/wnCfeQ5pCheMcu-$2b$04$2moPs/x/wnCfeQ5pCheMcuSJQ/KYjOZG780UjA/SiR.KsYWNrC7SG] PASSED
 tests/test_bcrypt.py::test_hashpw_new[uSgFRnQdOgm4S-$2b$04$WLTjgY/pZSyqX/fbMbJzf.-$2b$04$WLTjgY/pZSyqX/fbMbJzf.qxCeTMQOzgL.CimRjMHtMxd/VGKojMu] PASSED
 tests/test_bcrypt.py::test_hashpw_new[vvho8C6nlVf9K-$2b$04$HrEYC/AQ2HS77G78cQDZQ.-$2b$04$HrEYC/AQ2HS77G78cQDZQ.r44WGcruKw03KHlnp71yVQEwpsi3xl2] PASSED
@@ -127,6 +132,7 @@ tests/test_bcrypt.py::test_hashpw_new[wT4fHJa2N9WSW-$2b$04$YYjtiq4Uh88yUsExO0RNT
 tests/test_bcrypt.py::test_hashpw_new[xVQVbwa1S0M8r-$2b$04$SQe9knOzepOVKoYXo9xTte-$2b$04$SQe9knOzepOVKoYXo9xTteNYr6MBwVz4tpriJVe3PNgYufGIsgKcW] PASSED
 tests/test_bcrypt.py::test_hashpw_new[xhQPMmwh5ALzW-$2b$04$nQn78dV0hGHf5wUBe0zOFu-$2b$04$nQn78dV0hGHf5wUBe0zOFu8n07ZbWWOKoGasZKRspZxtt.vBRNMIy] PASSED
 tests/test_bcrypt.py::test_hashpw_new[zKo8vdFSnjX0f-$2b$04$HP3I0PUs7KBEzMBNFw7o3O-$2b$04$HP3I0PUs7KBEzMBNFw7o3O7f/uxaZU7aaDot1quHMgB2yrwBXsgyy] PASSED
+tests/test_bcrypt.py::test_hashpw_new[}>\xb3\xfe\xf1\x8b\xa0\xe6(\xa2Lzq\xc3P\x7f\xcc\xc8b{\xf9\x14\xf6\xf6`\x81G5\xec\x1d\x87\x10\xbf\xa7\xe1}I7 \x96\xdfc\xf2\xbf\xb3Vh\xdfM\x88q\xf7\xff\x1b\x82~z\x13\xdd\xe9\x84\x00\xdd4-$2b$10$keO.ZZs22YtygVF6BLfhGO-$2b$10$keO.ZZs22YtygVF6BLfhGOI/JjshJYPp8DZsUtym6mJV2Eha2Hdd.] PASSED
 tests/test_bcrypt.py::test_hashpw_nul_byte PASSED
 tests/test_bcrypt.py::test_hashpw_str_password PASSED
 tests/test_bcrypt.py::test_hashpw_str_salt PASSED
@@ -155,6 +161,6 @@ tests/test_bcrypt.py::test_kdf_str_password PASSED
 tests/test_bcrypt.py::test_kdf_str_salt PASSED
 tests/test_bcrypt.py::test_kdf_warn_rounds PASSED
 
-======== 146 passed ========
+======== 151 passed ========
   py$(PYV): OK
   congratulations :)
