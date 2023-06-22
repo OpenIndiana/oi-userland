@@ -1,0 +1,29 @@
+--- xtrans-1.5.0/Xtranssock.c.orig	2023-06-03 02:34:28.000000000 +0200
++++ xtrans-1.5.0/Xtranssock.c	2023-06-22 07:00:27.362261937 +0200
+@@ -1636,7 +1636,7 @@
+ 	 * only affect one of a set of addresses.
+ 	 */
+ 
+-	if (olderrno == ECONNREFUSED || olderrno == EINTR
++	if (olderrno == ECONNREFUSED 
+ #if defined(IPv6) && defined(AF_INET6)
+ 	  || (((addrlist->addr->ai_next != NULL) ||
+ 	        (addrlist->addr != addrlist->firstaddr)) &&
+@@ -1649,7 +1649,7 @@
+ #endif
+ 	    )
+ 	    res = TRANS_TRY_CONNECT_AGAIN;
+-	else if (olderrno == EWOULDBLOCK || olderrno == EINPROGRESS)
++	else if (olderrno == EWOULDBLOCK || olderrno == EINPROGRESS || olderrno == EINTR)
+ 	    res = TRANS_IN_PROGRESS;
+ 	else
+ 	{
+@@ -1922,7 +1922,7 @@
+ 	    if (olderrno == EWOULDBLOCK || olderrno == EINPROGRESS)
+ 		return TRANS_IN_PROGRESS;
+ 	    else if (olderrno == EINTR)
+-		return TRANS_TRY_CONNECT_AGAIN;
++		return TRANS_IN_PROGRESS;
+ 	    else {
+ 		prmsg (2,"SocketUNIXConnect: Can't connect: errno = %d\n",
+ 		       EGET());
