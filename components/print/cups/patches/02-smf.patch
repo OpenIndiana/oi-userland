@@ -18,7 +18,7 @@ Probably our ca-certificates service is an equivalent.
              exec='@sbindir@/cupsd'
              timeout_seconds='60' >
 -            <method_context>
-+            <method_context security_flags="aslr">
++            <method_context security_flags="current">
                  <method_credential user='root' group='@CUPS_GROUP@' />
              </method_context>
          </exec_method>
@@ -27,7 +27,7 @@ Probably our ca-certificates service is an equivalent.
              exec='@CUPS_SERVERBIN@/daemon/cups-lpd -o document-format=application/octet-stream'
              timeout_seconds='0'>
 -            <method_context>
-+            <method_context security_flags="aslr">
++            <method_context security_flags="current">
                  <method_credential user='@CUPS_USER@' group='@CUPS_GROUP@' />
              </method_context>
          </exec_method>
