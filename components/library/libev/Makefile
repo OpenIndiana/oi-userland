@@ -25,7 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libev
 COMPONENT_VERSION=	4.33
-COMPONENT_REVISION= 1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	libev - high-performance event loop
 COMPONENT_PROJECT_URL=	https://software.schmorp.de/pkg/libev.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,6 +38,9 @@ COMPONENT_LICENSE=	BSD, GPLv2+
 COMPONENT_LICENSE_FILE= LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# SPARC needs math library.
+REQUIRED_PACKAGES += system/library/math
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
