@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         hwloc
 COMPONENT_VERSION_MAJOR=2.8
 COMPONENT_VERSION=      $(COMPONENT_VERSION_MAJOR).0
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      hwloc - Portable Hardware Locality
 COMPONENT_PROJECT_URL=  https://www.open-mpi.org/projects/hwloc/
 COMPONENT_FMRI=         developer/hwloc
