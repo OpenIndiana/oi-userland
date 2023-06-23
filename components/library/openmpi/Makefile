@@ -11,6 +11,7 @@
 
 #
 # Copyright 2013-2018 Aurelien Larcher.  All rights reserved.
+# Copyright 2023 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -20,7 +21,7 @@ include $(WS_MAKE_RULES)/mpi-macros.mk
 COMPONENT_NAME =            openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR =     4.1
 COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).5
-COMPONENT_REVISION =        1
+COMPONENT_REVISION =        2
 COMPONENT_FMRI =            library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION =  Development/High Performance Computing
 COMPONENT_PROJECT_URL =     https://www.open-mpi.org
@@ -33,6 +34,7 @@ COMPONENT_ARCHIVE_URL =     https://www.open-mpi.org/software/ompi/v$(OPENMPI_VE
 COMPONENT_SUMMARY =         OpenMPI - High Performance Message Passing Library
 COMPONENT_LICENSE_FILE =    $(COMPONENT_SRC_NAME).license
 COMPONENT_LICENSE      =    BSD 2-Clause
+COMPONENT_BUILD_ARGS      =    -j20
 
 USE_DEFAULT_TEST_TRANSFORMS = yes
 
