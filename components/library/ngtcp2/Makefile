@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ngtcp2
 COMPONENT_VERSION=	0.16.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	ngtcp2 project is an effort to implement RFC9000 QUIC protocol.
 COMPONENT_PROJECT_URL=	https://ngtcp2.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,6 +30,11 @@ COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+# for some reason SPARC needs libsocket, to compile the examples directory.
+ifeq ($(strip $(MACH)),sparc)
+CONFIGURE_ENV += LIBS="-lsocket"
+endif
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-gnutls
