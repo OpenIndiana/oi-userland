@@ -20,25 +20,34 @@ PYTHON3_SOABI = abi3
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cryptography
-HUMAN_VERSION =			3.2.1
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			37.0.4
 COMPONENT_SUMMARY =		cryptography - cryptography is a package which provides cryptographic recipes and primitives to Python developers.
-COMPONENT_PROJECT_URL =		https://github.com/pyca/cryptography
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/94/5c/42de91c7fbdb817b2d9a4e64b067946eb38a4eb36c1a09c96c87a0f86a82/cryptography-3.2.1.tar.gz
+	https://files.pythonhosted.org/packages/89/d9/5fcd312d5cce0b4d7ee8b551a0ea99e4ea9db0fdbf6dd455a19042e3370b/cryptography-37.0.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d3d5e10be0cf2a12214ddee45c6bd203dab435e3d83b4560c03066eda600bfe3
+	sha256:63f9c17c0e2474ccbebc9302ce2f07b55b3b3fcb211ded18a42d5764f5c10a82
 COMPONENT_LICENSE =		(Apache-2.0 OR BSD-3-Clause) AND PSF-2.0
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Make sure we compile and link with proper openssl version
+CFLAGS += -I$(OPENSSL_INCDIR)
+CFLAGS += -L$(OPENSSL_LIBDIR)
+
+# https://www.illumos.org/issues/15767
+LD_Z_IGNORE=
+
+# https://github.com/pyca/cryptography/issues/9111
+TEST_CONFLICTING_PACKAGES.python += library/python/coverage-enable-subprocess
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cffi
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/six
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-rust
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += system/library
