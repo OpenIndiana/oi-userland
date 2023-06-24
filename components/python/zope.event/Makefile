@@ -15,17 +15,18 @@
 #
 
 BUILD_STYLE = setup.py
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.event
-HUMAN_VERSION =			4.6
+HUMAN_VERSION =			5.0
 COMPONENT_SUMMARY =		zope.event - Very basic event publishing system
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.event
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/42/49/ba8610674cad200da2f9c87b5f52fdcf18b02dd743a8a1e90726803cc42f/zope.event-4.6.tar.gz
+	https://files.pythonhosted.org/packages/46/c2/427f1867bb96555d1d34342f1dd97f8c420966ab564d58d18469a1db8736/zope.event-5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:81d98813046fc86cc4136e3698fee628a3282f9c320db18658c21749235fce80
+	sha256:bac440d8d9891b4068e2b5a2c5e2c9765a9df762944bda6955f96bb9b91e67cd
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
