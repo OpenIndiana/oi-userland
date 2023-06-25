@@ -1,0 +1,28 @@
+Wrong openssl is used.
+
+--- pyOpenSSL-23.2.0/tests/test_crypto.py.orig
++++ pyOpenSSL-23.2.0/tests/test_crypto.py
+@@ -2570,6 +2570,7 @@
+             p12.get_ca_certificates(),
+         )
+ 
++    @pytest.mark.skip(reason="always fails: https://github.com/fedora-python/tox-current-env/issues/68")
+     def test_load_pkcs12(self):
+         """
+         A PKCS12 string generated using the openssl command line can be loaded
+@@ -2588,6 +2589,7 @@
+         p12 = load_pkcs12(p12_str, passphrase=passwd)
+         self.verify_pkcs12_container(p12)
+ 
++    @pytest.mark.skip(reason="always fails: https://github.com/fedora-python/tox-current-env/issues/68")
+     def test_load_pkcs12_text_passphrase(self):
+         """
+         A PKCS12 string generated using the openssl command line can be loaded
+@@ -2614,6 +2616,7 @@
+ 
+         self.verify_pkcs12_container(p12)
+ 
++    @pytest.mark.skip(reason="always fails: https://github.com/fedora-python/tox-current-env/issues/68")
+     def test_load_pkcs12_no_passphrase(self):
+         """
+         A PKCS12 string generated using openssl command line can be loaded with
