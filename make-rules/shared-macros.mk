@@ -794,10 +794,11 @@ QT6_BINDIR = $(QT6_BASEDIR)/bin/$(MACH64)
 QT6_LIBDIR = $(QT6_BASEDIR)/lib/$(MACH64)
 QT6_PKG_CONFIG_PATH = $(QT6_LIBDIR)/pkgconfig
 
-# This is the default BUILD version of perl
-# Not necessarily the system's default version, i.e. /usr/bin/perl
+# This is the default version of Perl
 PERL_VERSION =  5.36
 
+# The PERL_VERSIONS list should always be in ascending order (newest version
+# last)
 PERL_VERSIONS = 5.34 5.36
 # Perl up to 5.22 was built 32-bit only.  Starting with 5.24 the perl package
 # is built 64-bit only.  So now all PERL_VERSIONS are 64-bit only.
