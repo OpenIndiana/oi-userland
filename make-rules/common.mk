@@ -161,6 +161,9 @@ $(BUILD_DIR)/.installed:
 	$(RM) -r $(BUILD_DIR)
 	$(MKDIR) $(BUILD_DIR)
 	$(TOUCH) $@
+
+clean::
+	$(RM) -r $(BUILD_DIR)
 endif
 
 # If TEST_TARGET is NO_TESTS, assume no system tests by default.
