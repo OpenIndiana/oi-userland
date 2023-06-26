@@ -390,8 +390,8 @@ $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
 # perl module specific to a particular version of the perl runtime.
 define perl-manifest-rule
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PERLVER.p5m
-	$(PKGMOGRIFY) -D PERLVER=$(1) -D PLV=$(shell echo $(1) | tr -d .) \
-		-D PERL_ARCH=$(call PERL_ARCH_FUNC,$(PERL.$(1))) $$< > $$@
+	$(PKGMOGRIFY) -D PERLVER=$(1) -D PLV=$$(shell echo $(1) | tr -d .) \
+		-D PERL_ARCH=$$(call PERL_ARCH_FUNC,$$(PERL.$(1))) $$< > $$@
 endef
 $(foreach ver,$(PERL_VERSIONS),$(eval $(call perl-manifest-rule,$(ver))))
 
