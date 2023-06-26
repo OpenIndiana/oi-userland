@@ -21,3 +21,9 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 depend fmri=runtime/perl-$(PLV) type=require
+
+# These are temporary fake dir and vendor mediated symlinks used during
+# transition between Perl versions
+$(VENDOR_MEDIATOR)dir path=usr/perl5/$(PERLVER)
+$(VENDOR_MEDIATOR)link path=usr/perl5/transition-perl target=$(PERLVER) mediator=perl mediator-version=$(PERLVER) mediator-priority=vendor
+$(VENDOR_MEDIATOR)link path=usr/perl5/transition-system-perl target=$(PERLVER) mediator=system-perl mediator-version=$(PERLVER) mediator-priority=vendor
