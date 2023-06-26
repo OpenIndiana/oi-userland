@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
 COMPONENT_VERSION =		5.36.1
+COMPONENT_REVISION =		1
 COMPONENT_VERSION_MAJOR =	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\(5\.[0-9]\{1,\}\)\..*/\1/g')
 COMPONENT_SUMMARY =		Perl $(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.perl.org/
