@@ -1,6 +1,6 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
+# Common Development and Distribution License ("CDDL"). You may
 # only use this file in accordance with the terms of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
@@ -13,26 +13,16 @@
 # Copyright 2021 Andreas Wacknitz. All rights reserved.
 #
 
+BUILD_STYLE = pkg
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		build-essential
-COMPONENT_VERSION =	4
+COMPONENT_VERSION =	5
 COMPONENT_SUMMARY=	A meta-package that installs common development tools such as gcc
 COMPONENT_CLASSIFICATION=	Meta Packages/Group Packages
 COMPONENT_FMRI=	metapackages/build-essential
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PKGLINT=/bin/true
-
-download:
-
-prep:
-
-build:
-
-install:
-	[ -d $(PROTO_DIR) ] || mkdir -p $(PROTO_DIR)
-
-clean:
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+# Auto-generated dependencies
