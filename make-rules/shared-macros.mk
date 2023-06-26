@@ -418,6 +418,16 @@ CONFIGURE_NO_ARCH =	$(BUILD_DIR_NO_ARCH)/.configured
 CONFIGURE_32 =		$(BUILD_DIR_32)/.configured
 CONFIGURE_64 =		$(BUILD_DIR_64)/.configured
 
+# In ideal world all components should support parallel build but it is often
+# not the case.  So by default we do not run parallel build and allow
+# components to opt-in for parallel build by setting USE_PARALLEL_BUILD = yes
+# before the shared-macros.mk file is included.
+PARALLEL_JOBS ?= 8
+ifeq ($(strip $(USE_PARALLEL_BUILD)),yes)
+COMPONENT_BUILD_GMAKE_ARGS += -j$(PARALLEL_JOBS)
+COMPONENT_BUILD_SETUP_PY_ARGS += -j$(PARALLEL_JOBS)
+endif
+
 BUILD_DIR_NO_ARCH =	$(BUILD_DIR)/$(MACH)
 BUILD_DIR_32 =		$(BUILD_DIR)/$(MACH32)
 BUILD_DIR_64 =		$(BUILD_DIR)/$(MACH64)
