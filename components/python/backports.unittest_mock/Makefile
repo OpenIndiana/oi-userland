@@ -15,18 +15,17 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		backports.unittest_mock
-HUMAN_VERSION =			1.5
+HUMAN_VERSION =			1.5.1
 COMPONENT_SUMMARY =		backports.unittest_mock - Make unittest.mock available on older Pythons
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/backports.unittest_mock
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b7/64/35da9f4e24f7840de1ac7b06578047e5e43e3769a3ba016f89fed84ae709/backports.unittest_mock-1.5.tar.gz
+	https://files.pythonhosted.org/packages/7d/c4/78da0aa8fecbb44fdbee54483b33520ed8ed558ae1b8f011136062800da2/backports.unittest_mock-1.5.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eff58e53de8fdeb27a1c87a9d57e7b91d15d1bc3854e85344b1a2e69f31ecda7
+	sha256:b693b7dee5db7e13d0b31ddc84768cc672ac9a2b03aad3c83b0f28d32ef53e6f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,7 +37,8 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black-multipy
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
-TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
