@@ -23,25 +23,17 @@
 # Copyright (c) 2014, 2020, Oracle and/or its affiliates. All rights reserved.
 #
 
-# Python 2's ABI for .so files is to simply append ".so".  But for Python
-# 3, it appends ".cpython-3#[d][m][u].so", where # is the minor version,
-# "d" is added if built --with-pydebug (we don't), "m" is added if built
-# --with-pymalloc (we do) and "u" is added if built --with-wide-unicode
-# (we don't).  See http://legacy.python.org/dev/peps/pep-3149/ for details.
+# Python ABI for .so files is to append ".cpython-3#.so".
+# See http://legacy.python.org/dev/peps/pep-3149/ and
+# https://github.com/python/cpython/issues/80888 for details.
 $(PY3_CPYTHON_NAMING)<transform file -> edit path \
-$(PY3_CPYTHON_NAMING)      (usr/lib/python3.)([4-7])(/vendor-packages/(.*/)?(64/)?.*)\.so$ \
-$(PY3_CPYTHON_NAMING)      \\1\\2\\3.cpython-3\\2m.so >
-
-$(PY3_CPYTHON_NAMING)<transform file -> edit path \
-$(PY3_CPYTHON_NAMING)      (usr/lib/python3.)([8-9])(/vendor-packages/(.*/)?(64/)?.*)\.so$ \
+$(PY3_CPYTHON_NAMING)      (usr/lib/python3\.)(\d+)(/vendor-packages/(.*/)?(64/)?.*)\.so$ \
 $(PY3_CPYTHON_NAMING)      \\1\\2\\3.cpython-3\\2.so >
 
-# A newer version of python setup tools enables to create ABI3 compliant
-# extensions that should support all python3.X versions where X >= 2.
-# The compiled shared libraries have ".abi3.so" suffix to indicate the
-# usage of the limited API. Currently, only the components that depend on
-# library/python/cffi are forced to generate ABI3 compliant extensions.
+# It is also possible to create ABI3 compliant extensions that should support
+# all Python versions.  The compiled shared libraries have ".abi3.so" suffix to
+# indicate the usage of the limited API.
 # See https://www.python.org/dev/peps/pep-0384/ for more information.
 $(PY3_ABI3_NAMING)<transform file -> edit path \
-$(PY3_ABI3_NAMING)      (usr/lib/python3.)([4-9])(/vendor-packages/(.*/)?(64/)?.*)\.so$ \
-$(PY3_ABI3_NAMING)      \\1\\2\\3.abi3.so >
+$(PY3_ABI3_NAMING)      (usr/lib/python3\.\d+/vendor-packages/(.*/)?(64/)?.*)\.so$ \
+$(PY3_ABI3_NAMING)      \\1.abi3.so >
