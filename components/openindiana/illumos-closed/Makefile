@@ -10,13 +10,14 @@
 
 #
 # Copyright 2016 Adam Stevko 
+# Copyright 2023 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-closed
 COMPONENT_VERSION=	5.11
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	illumos-closed - illumos closed binaries
 COMPONENT_PROJECT_URL=	https://www.openindiana.org/
 COMPONENT_FMRI=		developer/illumos-closed
@@ -24,21 +25,27 @@ COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_LICENSE= 	binary
 
 COMPONENT_ARCHIVE_1=            on-closed-bins-nd.$(MACH).tar.bz2
+COMPONENT_ARCHIVE_2=            on-closed-bins.$(MACH).tar.bz2
+ifeq ($(strip $(MACH)),i386)
 COMPONENT_ARCHIVE_URL_1= \
     http://dlc.openindiana.org/dlc.sun.com/osol/on/downloads/20100817/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1.i386= \
     sha256:da3ca1ea24972ba6a01169265d8d38a45789ed7cc45334bfe026c108b1d2ff56
-COMPONENT_ARCHIVE_HASH_1.sparc= \
-    sha256:88b8c4032c1d759abec98e346085e0ba350fa485f28a12ff63f247e4125916e3
-COMPONENT_ARCHIVE_HASH_1=       $(COMPONENT_ARCHIVE_HASH_1.$(MACH))
-
-COMPONENT_ARCHIVE_2=            on-closed-bins.$(MACH).tar.bz2
 COMPONENT_ARCHIVE_URL_2= \
     http://dlc.openindiana.org/dlc.sun.com/osol/on/downloads/20100817/$(COMPONENT_ARCHIVE_2)
 COMPONENT_ARCHIVE_HASH_2.i386= \
     sha256:18e82bace8481dca62586e4bdff7f6b44fc63b41443799929e4d4b2187e98535
+else
+COMPONENT_ARCHIVE_URL_1= \
+    https://dlc.openindiana.aurora-opencloud.org/SPARC/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_HASH_1.sparc= \
+    sha256:1e7cd1b5b8b68386a33f9ac3e1c8b79bf5ef1ba4ea20342de3265b2850542bed
+COMPONENT_ARCHIVE_URL_2= \
+    https://dlc.openindiana.aurora-opencloud.org/SPARC/$(COMPONENT_ARCHIVE_2)
 COMPONENT_ARCHIVE_HASH_2.sparc= \
-    sha256:ce5425387a61dbf6842f8278771f244d2b860786a9d296b72b61e6721f8b7398
+    sha256:6dfa3569dd1ca2e6168e02b9b1e7c224ea7ae4d868955a1b5deb1927e20077c0
+endif
+COMPONENT_ARCHIVE_HASH_1=       $(COMPONENT_ARCHIVE_HASH_1.$(MACH))
 COMPONENT_ARCHIVE_HASH_2=       $(COMPONENT_ARCHIVE_HASH_2.$(MACH))
 
 include $(WS_MAKE_RULES)/prep.mk
