@@ -5,9 +5,10 @@ py$(PYV): commands[0]> python -m pytest
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pytest.ini
+rootdir: $(@D)
+configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 76 items
+collecting ... collected 80 items
 
 ::project PASSED
 conftest.py::BLACK PASSED
@@ -29,6 +30,7 @@ pip_run/commands.py::BLACK PASSED
 pip_run/commands.py::mypy PASSED
 pip_run/commands.py::pip_run.commands._separate_dash PASSED
 pip_run/commands.py::pip_run.commands._separate_script PASSED
+pip_run/commands.py::pip_run.commands.infer_ipython PASSED
 pip_run/commands.py::pip_run.commands.separate PASSED
 pip_run/deps.py::BLACK PASSED
 pip_run/deps.py::mypy PASSED
@@ -36,6 +38,9 @@ pip_run/deps.py::pip_run.deps.Install.__bool__ PASSED
 pip_run/deps.py::pip_run.deps.empty PASSED
 pip_run/launch.py::BLACK PASSED
 pip_run/launch.py::mypy PASSED
+pip_run/launch.py::pip_run.launch._build_env PASSED
+pip_run/launch.py::pip_run.launch._path_insert PASSED
+pip_run/launch.py::pip_run.launch.infer_cmd PASSED
 pip_run/launch.py::pip_run.launch.inject_sitecustomize PASSED
 pip_run/mode/__init__.py::BLACK PASSED
 pip_run/mode/__init__.py::mypy PASSED
@@ -88,6 +93,6 @@ tests/test_scripts.py::test_pkg_loaded_from_url PASSED
 ===================================== mypy =====================================
 
 Success: no issues found in 18 source files
-======== 75 passed ========
+======== 79 passed ========
   py$(PYV): OK
   congratulations :)
