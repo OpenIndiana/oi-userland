@@ -33,7 +33,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sendmail
 COMPONENT_VERSION=      8.17.1
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  ftp://ftp.sendmail.org/pub/sendmail/
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME).$(COMPONENT_VERSION).tar.gz
@@ -123,7 +123,7 @@ APPENDDEF(`confENVDEF', `-D_FFR_MTA_STS')
 APPENDDEF(`confENVDEF', `-D_FFR_TLSA_DANE')
 APPENDDEF(`confENVDEF', `-D_FFR_TLS_ALTNAMES')
 APPENDDEF(`confENVDEF', `-D_FFR_TLS_USE_CERTIFICATE_CHAIN_FILE')
-APPENDDEF(`confLIBS', `-L$(OPENSSL_PREFIX)/lib/amd64 -lssl -lcrypto -lldap_r -llber -lsasl -licuuc')
+APPENDDEF(`confLIBS', `-L$(OPENSSL_PREFIX)/lib/$(MACH64) -lssl -lcrypto -lldap_r -llber -lsasl -licuuc')
 APPENDDEF(`conf_sendmail_LIBS', `-lsldap')
 APPENDDEF(`conf_sendmail_LIBS', `-lwrap')
 APPENDDEF(`conf_sendmail_LIBS', `-lumem')
