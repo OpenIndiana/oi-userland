@@ -1,0 +1,14 @@
+https://github.com/python/mypy/pull/15501#issuecomment-1606259499
+
+--- mypy-1.4.1/mypy/test/data.py.orig
++++ mypy-1.4.1/mypy/test/data.py
+@@ -389,8 +389,7 @@
+         elif isinstance(excinfo.value, pytest.fail.Exception) and not excinfo.value.pytrace:
+             excrepr = excinfo.exconly()
+         else:
+-            self.parent._prunetraceback(excinfo)
+-            excrepr = excinfo.getrepr(style="short")
++            excrepr = super().repr_failure(excinfo, style)
+ 
+         return f"data: {self.file}:{self.line}:\n{excrepr}"
+ 
