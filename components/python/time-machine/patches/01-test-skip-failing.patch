@@ -1,0 +1,34 @@
+--- time-machine-2.10.0/tests/test_time_machine.py.orig
++++ time-machine-2.10.0/tests/test_time_machine.py
+@@ -334,6 +334,7 @@
+     assert time.time() == EPOCH + 21600.0
+ 
+ 
++@pytest.mark.skip(reason="always fails: https://github.com/adamchainz/time-machine/issues/361")
+ def test_destination_datetime_tzinfo_zoneinfo():
+     orig_timezone = time.timezone
+     orig_altzone = time.altzone
+@@ -367,6 +368,7 @@
+     assert time.daylight == orig_daylight
+ 
+ 
++@pytest.mark.skip(reason="always fails: https://github.com/adamchainz/time-machine/issues/361")
+ def test_destination_datetime_tzinfo_zoneinfo_nested():
+     orig_tzname = time.tzname
+ 
+@@ -383,6 +385,7 @@
+     assert time.tzname == orig_tzname
+ 
+ 
++@pytest.mark.skip(reason="always fails: https://github.com/adamchainz/time-machine/issues/361")
+ def test_destination_datetime_tzinfo_zoneinfo_no_orig_tz():
+     orig_tz = os.environ["TZ"]
+     del os.environ["TZ"]
+@@ -599,6 +602,7 @@
+         assert time.time() == EPOCH
+ 
+ 
++@pytest.mark.skip(reason="always fails: https://github.com/adamchainz/time-machine/issues/361")
+ def test_move_to_datetime_with_tzinfo_zoneinfo():
+     orig_timezone = time.timezone
+     orig_altzone = time.altzone
