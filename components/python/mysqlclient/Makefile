@@ -14,18 +14,17 @@
 #   $WS_TOOLS/python-integrate-project mysqlclient
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mysqlclient
-HUMAN_VERSION =			2.1.1
+HUMAN_VERSION =			2.2.0
 COMPONENT_SUMMARY =		mysqlclient - Python interface to MySQL
-COMPONENT_PROJECT_URL =		https://github.com/PyMySQL/mysqlclient
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/50/5f/eac919b88b9df39bbe4a855f136d58f80d191cfea34a3dcf96bf5d8ace0a/mysqlclient-2.1.1.tar.gz
+	https://files.pythonhosted.org/packages/de/9c/b176826e8994551ce826404dab97e305a4bb76c8b0a4e016fabda2901c71/mysqlclient-2.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:828757e419fb11dd6c5ed2576ec92c3efaa93a0f7c39e263586d1ee779c3d782
+	sha256:04368445f9c487d8abb7a878e3d23e923e6072c04a6c320f9e0dc8a82efba14e
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,16 +32,15 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Do not depend on host default MySQL
-COMPONENT_BUILD_ENV += PATH=$(MYSQL_BINDIR):$(PATH)
-COMPONENT_INSTALL_ENV += PATH=$(MYSQL_BINDIR):$(PATH)
-
 # Force needed rpath
 LD_OPTIONS += -R$(MYSQL_LIBDIR)
 
 # We need to make sure Python will not found modules distributed with source
 # package because there is missing compiled library.
 COMPONENT_TEST_DIR = $(@D)/tests
+
+# https://github.com/PyMySQL/mysqlclient/issues/628
+PYTEST_ADDOPTS += -p no:mypy
 
 #
 # Note:
@@ -64,6 +62,8 @@ REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 TEST_REQUIRED_PACKAGES += $(MYSQL_BASEPKG)
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += system/library
