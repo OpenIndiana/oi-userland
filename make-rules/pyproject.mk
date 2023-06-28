@@ -68,6 +68,8 @@ $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 	$(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json eval --depformat '$$nname' \
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' \
 		> $@
+# PYTHON_ENV (see above) needs BITS
+$(BUILD_DIR)/META.depend.res: BITS = $(PREFERRED_BITS)
 
 # We need pyproject_installer for two purposes:
 # - to detect build dependencies for all Python projects, and
