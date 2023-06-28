@@ -1,20 +1,28 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder .tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pytest.ini
+rootdir: $(@D)
+configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 23 items
+collecting ... collected 29 items
 
 ::project PASSED
+docs/conf.py::BLACK PASSED
+docs/conf.py::mypy PASSED
+portend.py::BLACK PASSED
+portend.py::mypy PASSED
+portend.py::mypy-status PASSED
 portend.py::portend.Checker.assert_free PASSED
 portend.py::portend.HostPort PASSED
 portend.py::portend.client_host PASSED
 portend.py::portend.find_available_local_port PASSED
 portend.py::portend.free PASSED
 portend.py::portend.occupied PASSED
+test_portend.py::BLACK PASSED
 test_portend.py::TestChecker::test_check_port_listening[AddressFamily.AF_INET6] PASSED
 test_portend.py::TestChecker::test_check_port_listening[AddressFamily.AF_INET] PASSED
 test_portend.py::TestChecker::test_check_port_nonlistening[AddressFamily.AF_INET6] PASSED
@@ -25,11 +33,15 @@ test_portend.py::TestChecker::test_free_with_timeout[AddressFamily.AF_INET6] PAS
 test_portend.py::TestChecker::test_free_with_timeout[AddressFamily.AF_INET] PASSED
 test_portend.py::TestChecker::test_occupied_with_immediate_timeout[AddressFamily.AF_INET6] PASSED
 test_portend.py::TestChecker::test_occupied_with_immediate_timeout[AddressFamily.AF_INET] PASSED
+test_portend.py::mypy PASSED
 test_portend.py::test_main[AddressFamily.AF_INET6] PASSED
 test_portend.py::test_main[AddressFamily.AF_INET] PASSED
 test_portend.py::test_main_timeout[AddressFamily.AF_INET6] PASSED
 test_portend.py::test_main_timeout[AddressFamily.AF_INET] PASSED
 
-======== 21 passed ========
+===================================== mypy =====================================
+
+Success: no issues found in 3 source files
+======== 28 passed ========
   py$(PYV): OK
   congratulations :)
