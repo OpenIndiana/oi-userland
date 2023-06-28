@@ -24,11 +24,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/cryptest.exe 
-file path=usr/lib/$(MACH64)/libcryptopp.a 
-link path=usr/lib/$(MACH64)/libcryptopp.so target=libcryptopp.so.8.7 
-link path=usr/lib/$(MACH64)/libcryptopp.so.8 target=libcryptopp.so.8.7 
-file path=usr/lib/$(MACH64)/libcryptopp.so.8.7 
+<transform file path=.+/lib/.+\.a$ -> drop>
+
+file usr/bin/cryptest.exe path=usr/bin/cryptest 
+file path=usr/lib/$(MACH64)/libcryptopp.a
+link path=usr/lib/$(MACH64)/libcryptopp.so target=libcryptopp.so.8.8
+link path=usr/lib/$(MACH64)/libcryptopp.so.8 target=libcryptopp.so.8.8
+file path=usr/lib/$(MACH64)/libcryptopp.so.8.8
 file path=usr/lib/$(MACH64)/pkgconfig/libcryptopp.pc 
 file path=usr/share/cryptopp/TestVectors/gcm.txt 
 file path=usr/share/cryptopp/TestVectors/sha3_fips_202.txt 
