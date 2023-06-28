@@ -21,54 +21,17 @@ ifeq ($(strip $(COMPONENT_NAME)),pyproject_installer)
 PYTHON_ENV += PYTHONPATH=$(@D)/src
 endif
 
-# Since pyproject_installer requires Python >= 3.8 we will use it for Python
-# 3.9 only.  Once we obsolete Python 3.7 we should set COMPONENT_BUILD_CMD,
-# COMPONENT_BUILD_ARGS, COMPONENT_INSTALL_CMD, and COMPONENT_INSTALL_ARGS
-# unconditionally below.
-$(BUILD_DIR)/%-3.9/.built:	COMPONENT_BUILD_CMD =		$(PYTHON) -m pyproject_installer build
-$(BUILD_DIR)/%-3.9/.built:	COMPONENT_BUILD_ARGS =
+COMPONENT_BUILD_CMD =		$(PYTHON) -m pyproject_installer build
+COMPONENT_BUILD_ARGS =
 
-$(BUILD_DIR)/%-3.9/.installed:	COMPONENT_INSTALL_CMD =		$(PYTHON) -m pyproject_installer install
-$(BUILD_DIR)/%-3.9/.installed:	COMPONENT_INSTALL_ARGS =
-$(BUILD_DIR)/%-3.9/.installed:	COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
+COMPONENT_INSTALL_CMD =		$(PYTHON) -m pyproject_installer install
+COMPONENT_INSTALL_ARGS =
+COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
 
 # pyproject_installer does not bytecompile after the install.  Since we need
 # pyc files we need to force that.
-#
-# Since pyproject_installer requires Python >= 3.8 we do need to compile for
-# Python 3.9 only.  Once we obsolete Python 3.7 we should set
-# COMPONENT_POST_INSTALL_ACTION unconditionally below.
-$(BUILD_DIR)/%-3.9/.installed:	COMPONENT_POST_INSTALL_ACTION += \
+COMPONENT_POST_INSTALL_ACTION += \
 	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ;
-
-# Since pyproject_installer requires Python >= 3.8 we cannot use it to
-# bootstrap Python 3.7.  We will use 'build' and 'installer' instead.  Strictly
-# speaking this is not true bootstrap, but since we do not need to bootstrap
-# Python 3.7 from scratch we can afford this fake bootstrap keeping in mind
-# that Python 3.7 should be EOLed in June 2023.
-$(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_CMD =		$(PYTHON) -m build
-$(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_ARGS =
-$(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_ARGS +=		--wheel
-$(BUILD_DIR)/%-3.7/.built:	COMPONENT_BUILD_ARGS +=		--no-isolation
-
-$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_CMD =		$(PYTHON) -m installer
-$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_ARGS =
-$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
-$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_INSTALL_ARGS +=	$(@D)/dist/*.whl
-
-USERLAND_REQUIRED_PACKAGES += library/python/build-37
-USERLAND_REQUIRED_PACKAGES += library/python/installer-37
-
-# Remove all files from dist-info directory except METADATA and
-# entry_points.txt to get similar layout as with pyproject_installer
-$(BUILD_DIR)/%-3.7/.installed:	COMPONENT_POST_INSTALL_ACTION += \
-	( cd $(PROTO_DIR)/$(PYTHON_LIB)/$(COMPONENT_NAME)-$(COMPONENT_VERSION).dist-info ; \
-	for f in * ; do \
-		[[ "$$f" == "METADATA" ]] && continue ; \
-		[[ "$$f" == "entry_points.txt" ]] && continue ; \
-		[[ -f "$$f" ]] || continue ; \
-		$(RM) $$f ; \
-	done ) ;
 else
 COMPONENT_BUILD_CMD =		$(PYTHON) -m build
 COMPONENT_BUILD_ARGS =
@@ -99,13 +62,10 @@ $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 	$(MKDIR) $(BUILD_DIR)
 	# PYTHON_ENV is needed four times here to have the PYTHONPATH set
 	# properly when we bootstrap the pyproject_installer bootstrapper.
-	#
-	# Once we obsolete Python 3.7 we should change $(PYTHON.3.9) to
-	# $(PYTHON) four times below
-	$(PYTHON_ENV) $(PYTHON.3.9) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json add build_pep517 pep517
-	$(PYTHON_ENV) $(PYTHON.3.9) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json add build_pep518 pep518
-	cd $(SOURCE_DIR) ; $(PYTHON_ENV) $(PYTHON.3.9) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json sync
-	$(PYTHON_ENV) $(PYTHON.3.9) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json eval --depformat '$$nname' \
+	$(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json add build_pep517 pep517
+	$(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json add build_pep518 pep518
+	cd $(SOURCE_DIR) ; $(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json sync
+	$(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json eval --depformat '$$nname' \
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' \
 		> $@
 
@@ -115,7 +75,5 @@ $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 # The pyproject_installer is not needed (and cannot be needed) for its own
 # build.
 ifneq ($(strip $(COMPONENT_NAME)),pyproject_installer)
-# Once we obsolete Python 3.7 this should be changed to
-# PYTHON_USERLAND_REQUIRED_PACKAGES and '-39' suffix should be removed
-USERLAND_REQUIRED_PACKAGES += library/python/pyproject-installer-39
+PYTHON_USERLAND_REQUIRED_PACKAGES += library/python/pyproject-installer
 endif

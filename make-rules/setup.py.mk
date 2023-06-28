@@ -530,11 +530,6 @@ $(BUILD_DIR)/META.depend-test.required:	$(INSTALL_$(MK_BITS))
 # Add META.depend-test.required to the generated list of REQUIRED_PACKAGES
 REQUIRED_PACKAGES_TRANSFORM += -e '$$r $(BUILD_DIR)/META.depend-test.required'
 
-# The python-requires script requires importlib_metadata for Python 3.7 to
-# provide useful output.  Since we do fake bootstrap for Python 3.7 we require
-# the package here unconditionally.
-USERLAND_REQUIRED_PACKAGES += library/python/importlib-metadata-37
-
 # The python-requires script requires packaging to provide useful output but
 # packaging might be unavailable during bootstrap until we reach bootstrap
 # checkpoint 2.  So require it conditionally.
