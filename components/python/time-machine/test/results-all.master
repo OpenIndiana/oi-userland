@@ -1,11 +1,98 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -W error::ResourceWarning -W error::DeprecationWarning -W error::PendingDeprecationWarning -W ignore:datetime.utcfromtimestamp:DeprecationWarning -W ignore:datetime.utcnow:DeprecationWarning -m coverage run -m pytest tests
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml
+rootdir: $(@D)
+configfile: pyproject.toml
 asyncio: mode=strict
-collecting ... collected 3 items
+collecting ... collected 81 items
 
-::project PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_datetime_now PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_datetime_now_tz PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_datetime_utcnow PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_is_travelling_false PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_is_travelling_true PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_time_clock_gettime PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_time_clock_gettime_ns PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_time_gmtime PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_time_localtime PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_time_strftime_arg PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_time_strftime_no_arg PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_time_time PASSED
+tests/test_time_machine.py::TestEscapeHatch::test_time_time_ns PASSED
+tests/test_time_machine.py::TestMethodDecorator::test_method_decorator PASSED
+tests/test_time_machine.py::UnitTestClassCustomSetUpClassTests::test_class_decorator PASSED
+tests/test_time_machine.py::UnitTestClassSetUpClassSkipTests::test_thats_always_skipped SKIPPED
+tests/test_time_machine.py::UnitTestClassTests::test_class_decorator PASSED
+tests/test_time_machine.py::UnitTestClassTests::test_stacked_method_decorator PASSED
+tests/test_time_machine.py::UnitTestMethodTests::test_method_decorator PASSED
+tests/test_time_machine.py::test_class_decorator_fails_non_testcase PASSED
+tests/test_time_machine.py::test_coroutine_decorator PASSED
+tests/test_time_machine.py::test_date_today PASSED
+tests/test_time_machine.py::test_datetime_now_arg PASSED
+tests/test_time_machine.py::test_datetime_now_no_args PASSED
+tests/test_time_machine.py::test_datetime_now_no_args_no_tick PASSED
+tests/test_time_machine.py::test_datetime_utcnow PASSED
+tests/test_time_machine.py::test_datetime_utcnow_no_tick PASSED
+tests/test_time_machine.py::test_destination_callable_lambda_float PASSED
+tests/test_time_machine.py::test_destination_callable_lambda_string PASSED
+tests/test_time_machine.py::test_destination_date PASSED
+tests/test_time_machine.py::test_destination_datetime PASSED
+tests/test_time_machine.py::test_destination_datetime_naive PASSED
+tests/test_time_machine.py::test_destination_datetime_tzinfo_non_zoneinfo PASSED
+tests/test_time_machine.py::test_destination_datetime_tzinfo_zoneinfo SKIPPED
+tests/test_time_machine.py::test_destination_datetime_tzinfo_zoneinfo_nested SKIPPED
+tests/test_time_machine.py::test_destination_datetime_tzinfo_zoneinfo_no_orig_tz SKIPPED
+tests/test_time_machine.py::test_destination_datetime_tzinfo_zoneinfo_windows PASSED
+tests/test_time_machine.py::test_destination_generator PASSED
+tests/test_time_machine.py::test_destination_int PASSED
+tests/test_time_machine.py::test_destination_string PASSED
+tests/test_time_machine.py::test_exceptions_dont_break_it PASSED
+tests/test_time_machine.py::test_fixture_unused PASSED
+tests/test_time_machine.py::test_fixture_used PASSED
+tests/test_time_machine.py::test_fixture_used_tick_false PASSED
+tests/test_time_machine.py::test_fixture_used_tick_true PASSED
+tests/test_time_machine.py::test_fixture_used_twice PASSED
+tests/test_time_machine.py::test_function_decorator PASSED
+tests/test_time_machine.py::test_import_without_clock_realtime PASSED
+tests/test_time_machine.py::test_move_to_datetime PASSED
+tests/test_time_machine.py::test_move_to_datetime_change_tick_off PASSED
+tests/test_time_machine.py::test_move_to_datetime_change_tick_on PASSED
+tests/test_time_machine.py::test_move_to_datetime_no_tick PASSED
+tests/test_time_machine.py::test_move_to_datetime_with_tzinfo_zoneinfo SKIPPED
+tests/test_time_machine.py::test_move_to_past_datetime PASSED
+tests/test_time_machine.py::test_nestable PASSED
+tests/test_time_machine.py::test_shift_integer_delta PASSED
+tests/test_time_machine.py::test_shift_negative_delta PASSED
+tests/test_time_machine.py::test_shift_when_tick PASSED
+tests/test_time_machine.py::test_shift_with_timedelta PASSED
+tests/test_time_machine.py::test_shift_wrong_delta PASSED
+tests/test_time_machine.py::test_time_clock_gettime_monotonic_unaffected PASSED
+tests/test_time_machine.py::test_time_clock_gettime_ns_monotonic_unaffected PASSED
+tests/test_time_machine.py::test_time_clock_gettime_ns_realtime PASSED
+tests/test_time_machine.py::test_time_clock_gettime_realtime PASSED
+tests/test_time_machine.py::test_time_gmtime_arg PASSED
+tests/test_time_machine.py::test_time_gmtime_no_args PASSED
+tests/test_time_machine.py::test_time_gmtime_no_args_no_tick PASSED
+tests/test_time_machine.py::test_time_localtime PASSED
+tests/test_time_machine.py::test_time_localtime_arg PASSED
+tests/test_time_machine.py::test_time_localtime_no_tick PASSED
+tests/test_time_machine.py::test_time_strftime_format PASSED
+tests/test_time_machine.py::test_time_strftime_format_no_tick PASSED
+tests/test_time_machine.py::test_time_strftime_format_t PASSED
+tests/test_time_machine.py::test_time_time PASSED
+tests/test_time_machine.py::test_time_time_no_tick PASSED
+tests/test_time_machine.py::test_time_time_ns PASSED
+tests/test_time_machine.py::test_time_time_ns_no_tick PASSED
+tests/test_time_machine.py::test_time_time_windows PASSED
+tests/test_time_machine.py::test_traveller_object PASSED
+tests/test_time_machine.py::test_unsupported_type PASSED
+tests/test_time_machine.py::test_uuid1 PASSED
 
-======== 1 passed ========
+
+======== 76 passed, 5 skipped ========
+  py$(PYV): OK
+  congratulations :)

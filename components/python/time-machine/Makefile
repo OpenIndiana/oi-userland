@@ -19,22 +19,30 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		time-machine
-HUMAN_VERSION =			2.9.0
+HUMAN_VERSION =			2.10.0
 COMPONENT_SUMMARY =		time-machine - Travel through time in your tests.
 COMPONENT_PROJECT_URL =		https://github.com/adamchainz/time-machine
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/68/e9/5629ec57af510e73e7016db727dc96b3827088ec3a593d18754cf407d1b4/time-machine-2.9.0.tar.gz
+	https://github.com/adamchainz/time-machine/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:60222d43f6e93a926adc36ed37a54bc8e4d0d8d1c4d449096afcfe85086129c2
+	sha256:bfd7fcaa8e8888a8af423aa4a76d0930ac51ffa05e8e75590d9828d5d8e25623
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
-
 include $(WS_MAKE_RULES)/common.mk
+
+# https://github.com/adamchainz/time-machine/issues/360
+PYTEST_ADDOPTS += -p no:mypy
+
+# https://github.com/christiansandberg/pytest-reporter/issues/8
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-reporter
+
+# Testing unable to start with pytest-black installed
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-black
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
