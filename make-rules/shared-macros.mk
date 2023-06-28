@@ -156,8 +156,21 @@ else
 MK_BITS=$(strip $(BUILD_BITS))
 endif
 
+#
+# Upstream support for Python is by default 5 years after the first release.
+# We will start to obsolete Python versions according the following table:
+#
+# +----------------+----------------+
+# | Python version | Obsolete after |
+# +----------------+----------------+
+# |      3.9       |   2025-10      |
+# +----------------+----------------+
+#
+# See https://devguide.python.org/versions/
+#
+
 PYTHON_VERSION = 3.9
-PYTHON_VERSIONS = 3.7 3.9
+PYTHON_VERSIONS = 3.9
 
 # These variables are for backward compatibility only.  Components should stop
 # to use them.  Once they do so these vars should be removed.
@@ -180,7 +193,7 @@ PYTHON_64_ONLY_VERSIONS = $(PYTHON_VERSIONS)
 #
 # This list should be usually empty.  Intersection of
 # PYTHON_VERSIONS_OBSOLETING and PYTHON_VERSIONS lists MUST be always empty.
-PYTHON_VERSIONS_OBSOLETING = 2.7 3.5
+PYTHON_VERSIONS_OBSOLETING = 2.7 3.5 3.7
 
 # PYTHON3_SOABI variable defines the naming scheme
 # of python3 extension libraries: cpython or abi3.
