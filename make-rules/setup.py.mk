@@ -389,9 +389,6 @@ COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =		$(PYTEST_ADDOPTS)
 COMPONENT_TEST_TARGETS =
 
-# Force pytest to not use colored output so the results normalization is unaffected
-PYTEST_ADDOPTS += --color=no
-
 USERLAND_TEST_REQUIRED_PACKAGES += library/python/pytest
 else ifeq ($(strip $(TEST_STYLE)),unittest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m unittest
@@ -409,6 +406,9 @@ endif
 
 # Run pytest verbose to get separate line per test in results output
 PYTEST_ADDOPTS += --verbose
+
+# Force pytest to not use colored output so the results normalization is unaffected
+PYTEST_ADDOPTS += --color=no
 
 # Normalize pytest test results.  The pytest framework could be used either
 # directly or via tox or setup.py so add these transforms for all test styles
