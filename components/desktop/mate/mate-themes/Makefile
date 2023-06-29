@@ -24,6 +24,7 @@ include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-themes
 COMPONENT_VERSION=	3.22.24
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	MATE Themes
 COMPONENT_ARCHIVE_URL= https://pub.mate-desktop.org/releases/themes/3.22/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= sha256:3d8b3a2a285331de24c4cf5d8c9dd846daa11695f206765d8f1693ebcacf6e4a
@@ -33,10 +34,10 @@ COMPONENT_CLASSIFICATION= System/Libraries
 include $(WS_MAKE_RULES)/common.mk
 
 # build dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
+PERL_REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += library/desktop/xdg/icon-naming-utils
 REQUIRED_PACKAGES += text/intltool
 REQUIRED_PACKAGES += text/gnu-gettext
-REQUIRED_PACKAGES += runtime/perl-534
-REQUIRED_PACKAGES += library/perl-5/xml-parser
 
 # Auto-generated dependencies
