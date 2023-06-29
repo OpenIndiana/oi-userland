@@ -2,6 +2,7 @@ ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0] $(@D)/src> python -m unittest discover --verbose
 test_all_names_in___all__ (test_typing_extensions.AllTests) ... ok
+test_drop_in_for_typing (test_typing_extensions.AllTests) ... ok
 test_typing_extensions_compiles_with_opt (test_typing_extensions.AllTests) ... ok
 test_typing_extensions_defers_when_possible (test_typing_extensions.AllTests) ... ok
 test_typing_extensions_includes_standard (test_typing_extensions.AllTests) ... ok
@@ -198,20 +199,30 @@ test_variance (test_typing_extensions.ParamSpecTests) ... ok
 test_basic_protocol (test_typing_extensions.ProtocolTests) ... ok
 test_builtin_protocol_allowlist (test_typing_extensions.ProtocolTests) ... ok
 test_cannot_instantiate_abstract (test_typing_extensions.ProtocolTests) ... ok
+test_collections_abc_buffer_protocol_allowed (test_typing_extensions.ProtocolTests) ... skipped 'needs collections.abc.Buffer to exist'
 test_collections_protocols_allowed (test_typing_extensions.ProtocolTests) ... ok
 test_concrete_class_inheriting_init_from_protocol (test_typing_extensions.ProtocolTests) ... ok
 test_custom_subclasshook (test_typing_extensions.ProtocolTests) ... ok
+test_custom_subclasshook_2 (test_typing_extensions.ProtocolTests) ... ok
 test_defining_generic_protocols (test_typing_extensions.ProtocolTests) ... ok
 test_defining_generic_protocols_old_style (test_typing_extensions.ProtocolTests) ... ok
+test_empty_protocol_decorated_with_final (test_typing_extensions.ProtocolTests) ... ok
 test_everything_implements_empty_protocol (test_typing_extensions.ProtocolTests) ... ok
 test_function_implements_protocol (test_typing_extensions.ProtocolTests) ... ok
 test_generic_protocols_eq (test_typing_extensions.ProtocolTests) ... ok
 test_generic_protocols_repr (test_typing_extensions.ProtocolTests) ... ok
 test_generic_protocols_special_from_generic (test_typing_extensions.ProtocolTests) ... ok
 test_generic_protocols_special_from_protocol (test_typing_extensions.ProtocolTests) ... ok
+test_get_protocol_members (test_typing_extensions.ProtocolTests) ... ok
+test_get_protocol_members_typing (test_typing_extensions.ProtocolTests) ... ok
+test_implicit_issubclass_between_two_protocols (test_typing_extensions.ProtocolTests) ... ok
 test_init_called (test_typing_extensions.ProtocolTests) ... ok
 test_interaction_with_isinstance_checks_on_superclasses_with_ABCMeta (test_typing_extensions.ProtocolTests) ... ok
 test_interaction_with_isinstance_checks_on_superclasses_with_ABCMeta_2 (test_typing_extensions.ProtocolTests) ... ok
+test_is_protocol (test_typing_extensions.ProtocolTests) ... ok
+test_is_protocol_with_typing (test_typing_extensions.ProtocolTests) ... ok
+test_isinstance_checks_not_at_whim_of_gc (test_typing_extensions.ProtocolTests) ... ok
+test_issubclass_and_isinstance_on_Protocol_itself (test_typing_extensions.ProtocolTests) ... ok
 test_issubclass_fails_correctly (test_typing_extensions.ProtocolTests) ... ok
 test_no_inheritance_from_nominal (test_typing_extensions.ProtocolTests) ... ok
 test_no_init_same_for_different_protocol_implementations (test_typing_extensions.ProtocolTests) ... ok
@@ -225,6 +236,9 @@ test_non_runtime_protocol_isinstance_check (test_typing_extensions.ProtocolTests
 test_none_on_callable_blocks_implementation (test_typing_extensions.ProtocolTests) ... ok
 test_none_on_non_callable_doesnt_block_implementation (test_typing_extensions.ProtocolTests) ... ok
 test_none_treated_correctly (test_typing_extensions.ProtocolTests) ... ok
+test_protocol_decorated_with_final_callable_members (test_typing_extensions.ProtocolTests) ... ok
+test_protocol_decorated_with_final_mixed_members (test_typing_extensions.ProtocolTests) ... ok
+test_protocol_decorated_with_final_noncallable_members (test_typing_extensions.ProtocolTests) ... ok
 test_protocol_defining_init_does_not_get_overridden (test_typing_extensions.ProtocolTests) ... ok
 test_protocol_generic_over_paramspec (test_typing_extensions.ProtocolTests) ... ok
 test_protocol_generic_over_typevartuple (test_typing_extensions.ProtocolTests) ... ok
@@ -249,6 +263,9 @@ test_runtime_checkable_generic_non_protocol (test_typing_extensions.ProtocolTest
 test_runtimecheckable_on_typing_dot_Protocol (test_typing_extensions.ProtocolTests) ... ok
 test_subprotocols_extending (test_typing_extensions.ProtocolTests) ... ok
 test_subprotocols_merging (test_typing_extensions.ProtocolTests) ... ok
+test_typing_Protocol_and_extensions_Protocol_can_mix (test_typing_extensions.ProtocolTests) ... ok
+test_typing_dot_runtimecheckable_on_Protocol (test_typing_extensions.ProtocolTests) ... ok
+test_typing_extensions_protocol_allowlist (test_typing_extensions.ProtocolTests) ... ok
 test_basics (test_typing_extensions.RequiredTests) ... ok
 test_cannot_init (test_typing_extensions.RequiredTests) ... ok
 test_cannot_subclass (test_typing_extensions.RequiredTests) ... ok
@@ -317,7 +334,7 @@ test_no_redefinition (test_typing_extensions.TypeVarTupleTests) ... ok
 test_pickle (test_typing_extensions.TypeVarTupleTests) ... ok
 test_repr (test_typing_extensions.TypeVarTupleTests) ... ok
 test_tuple (test_typing_extensions.TypeVarTupleTests) ... ok
-test_basics_iterable_syntax (test_typing_extensions.TypedDictTests) ... ok
+test_basics_functional_syntax (test_typing_extensions.TypedDictTests) ... ok
 test_basics_keywords_syntax (test_typing_extensions.TypedDictTests) ... ok
 test_generic_inheritance (test_typing_extensions.TypedDictTests) ... ok
 test_get_type_hints_cross_module_subclass (test_typing_extensions.TypedDictTests) ... ok
@@ -326,15 +343,22 @@ test_implicit_any_inheritance (test_typing_extensions.TypedDictTests) ... ok
 test_is_typeddict (test_typing_extensions.TypedDictTests) ... ok
 test_is_typeddict_against_typeddict_from_typing (test_typing_extensions.TypedDictTests) ... ok
 test_keys_inheritance (test_typing_extensions.TypedDictTests) ... ok
+test_keywords_syntax_raises_on_3_13 (test_typing_extensions.TypedDictTests) ... skipped 'Change in behavior in 3.13'
+test_multiple_inheritance (test_typing_extensions.TypedDictTests) ... ok
+test_non_generic_subscript (test_typing_extensions.TypedDictTests) ... ok
 test_optional (test_typing_extensions.TypedDictTests) ... ok
 test_optional_keys (test_typing_extensions.TypedDictTests) ... ok
+test_orig_bases (test_typing_extensions.TypedDictTests) ... ok
+test_pep695_generic_typeddict (test_typing_extensions.TypedDictTests) ... skipped 'PEP 695 required'
 test_pickle (test_typing_extensions.TypedDictTests) ... ok
+test_pickle_generic (test_typing_extensions.TypedDictTests) ... ok
 test_py36_class_syntax_usage (test_typing_extensions.TypedDictTests) ... ok
 test_required_notrequired_keys (test_typing_extensions.TypedDictTests) ... ok
 test_total (test_typing_extensions.TypedDictTests) ... ok
-test_typeddict_create_errors (test_typing_extensions.TypedDictTests) ... skipped 'Should be tested by upstream'
+test_typeddict_create_errors (test_typing_extensions.TypedDictTests) ... ok
 test_typeddict_errors (test_typing_extensions.TypedDictTests) ... ok
 test_typeddict_special_keyword_names (test_typing_extensions.TypedDictTests) ... ok
+test_zero_fields_typeddicts (test_typing_extensions.TypedDictTests) ... ok
 test_basic_plain (test_typing_extensions.UnpackTests) ... ok
 test_cannot_subclass_vars (test_typing_extensions.UnpackTests) ... ok
 test_class (test_typing_extensions.UnpackTests) ... ok
@@ -344,8 +368,8 @@ test_tuple (test_typing_extensions.UnpackTests) ... ok
 test_union (test_typing_extensions.UnpackTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 341 tests
+Ran 365 tests
 
-OK (skipped=7)
+OK (skipped=9)
   py$(PYV): OK
   congratulations :)
