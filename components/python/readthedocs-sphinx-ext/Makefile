@@ -19,22 +19,26 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		readthedocs-sphinx-ext
-HUMAN_VERSION =			2.2.1
+HUMAN_VERSION =			2.2.2
 COMPONENT_SUMMARY =		readthedocs-sphinx-ext - Sphinx extension for Read the Docs overrides
 COMPONENT_PROJECT_URL =		http://github.com/readthedocs/readthedocs-sphinx-ext
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/7b/61/a2e006133cfbded65225641ac332da6fb44123fbc6ed40e7b50e85b3150e/readthedocs-sphinx-ext-2.2.1.tar.gz
+	https://github.com/readthedocs/readthedocs-sphinx-ext/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e35ddacb52af972751926d01bcc082014751762d9ba68cb0c249df9edb216bbd
+	sha256:7b968f7d03a84bafabd25c9ba06973541a199c62cea2585cf4559edef120e7dd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
-
 include $(WS_MAKE_RULES)/common.mk
+
+# Testing fails with black and mypy
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/jinja2
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/requests
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/jinja2
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
