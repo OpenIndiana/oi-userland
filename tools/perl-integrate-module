@@ -251,9 +251,11 @@ git add Makefile
 # Unpack sources
 ! $GMAKE prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
 SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
+COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
+[[ -n "$COMPONENT_SUBDIR" ]] && COMPONENT_SUBDIR="/$COMPONENT_SUBDIR"
 
 # Switch to makemaker if needed
-[[ ! -f "$SOURCE_DIR/Build.PL" && -f "$SOURCE_DIR/Makefile.PL" ]] && sed -i -e 's/modulebuild/makemaker/g' Makefile
+[[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/Build.PL" && -f "$SOURCE_DIR$COMPONENT_SUBDIR/Makefile.PL" ]] && sed -i -e 's/modulebuild/makemaker/g' Makefile
 
 # Get abstract.  Either from metacpan, or directly from sources.
 ABSTRACT=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.abstract')
@@ -262,10 +264,10 @@ if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
 	ABSTRACT="TODO"
 fi
 if [[ "$ABSTRACT" == "TODO" ]] ; then
-	if [[ ! -f "$SOURCE_DIR/META.json" ]] ; then
+	if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" ]] ; then
 		printf "WARNING: META.json missing\n" >&2
 	else
-		ABSTRACT=$(cat "$SOURCE_DIR/META.json" | /usr/bin/jq -r '.abstract')
+		ABSTRACT=$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" | /usr/bin/jq -r '.abstract')
 		if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
 			printf "WARNING: Failed to get abstract from META.json\n" >&2
 			ABSTRACT="TODO"
@@ -273,10 +275,10 @@ if [[ "$ABSTRACT" == "TODO" ]] ; then
 	fi
 fi
 if [[ "$ABSTRACT" == "TODO" ]] ; then
-	if [[ ! -f "$SOURCE_DIR/META.yml" ]] ; then
+	if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" ]] ; then
 		printf "WARNING: META.yml missing\n" >&2
 	else
-		ABSTRACT=$(cat "$SOURCE_DIR/META.yml" | python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | /usr/bin/jq -r '.abstract')
+		ABSTRACT=$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" | python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | /usr/bin/jq -r '.abstract')
 		if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
 			printf "WARNING: Failed to get abstract from META.yml\n" >&2
 			ABSTRACT="TODO"
@@ -307,8 +309,8 @@ LICENSE=
 LICFILE=
 COPYRIGHT=
 for f in LICENSE LICENCE COPYING COPYRIGHT ; do
-	[[ -f "$SOURCE_DIR/$f" ]] || continue
-	LICFILE="$SOURCE_DIR/$f"
+	[[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/$f" ]] || continue
+	LICFILE="$SOURCE_DIR$COMPONENT_SUBDIR/$f"
 
 	detect_license LICENSE "$LICFILE"
 
@@ -336,7 +338,7 @@ if [[ -z "$LICENSE" ]] ; then
 
 	# Try to find Copyright notice if we do not have one yet
 	[[ -z "$COPYRIGHT" ]] && for f in README README.md ; do
-		f="$SOURCE_DIR/$f"
+		f="$SOURCE_DIR$COMPONENT_SUBDIR/$f"
 		[[ -f "$f" ]] || continue
 
 		COPYRIGHT=$(gsed -e '0,/^# LICENSE/d' -e '/^#/,$d' -e '/./,$!d' "$f" 2>/dev/null)
@@ -354,7 +356,7 @@ if [[ -z "$LICENSE" ]] ; then
 	done
 	if [[ -z "$COPYRIGHT" ]] ; then
 		printf "WARNING: No copyright notice found at standard locations\n" >&2
-		for f in $(find "$SOURCE_DIR" -type f -name "*.pm" | LC_ALL=C sort | while read f ; do egrep -q "^=head1 (LICENSE|LICENCE|COPYRIGHT)" "$f" && echo "$f" ; done) ; do
+		for f in $(find "$SOURCE_DIR$COMPONENT_SUBDIR" -type f -name "*.pm" | LC_ALL=C sort | while read f ; do egrep -q "^=head1 (LICENSE|LICENCE|COPYRIGHT)" "$f" && echo "$f" ; done) ; do
 			COPYRIGHT=$(sed -e '1,/^=head1 LICENSE/d' -e '/^=/,$d' "$f" 2>/dev/null)
 			if [[ -n "$COPYRIGHT" ]] ; then
 				printf "WARNING: Using copyright notice from %s\n" "$f" >&2
@@ -395,10 +397,10 @@ if [[ -z "$LICENSE" ]] ; then
 		# Confirm the package is distributed under the same terms as Perl itself
 		D=1
 		((D)) && (printf "%s\n" "$COPYRIGHT" | grep -q -i "under the same terms as Perl itself") && D=0
-		((D)) && grep -q "license *=> *'http://dev\.perl\.org/licenses/'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
-		((D)) && grep -q "LICENSE *=> *'perl'" "$SOURCE_DIR/Makefile.PL" 2>/dev/null && D=0
-		((D)) && [[ -f "$SOURCE_DIR/META.json" && "$(/usr/bin/jq -r '.license[]' < "$SOURCE_DIR/META.json" 2>/dev/null)" == "perl_5" ]] && D=0
-		((D)) && [[ -f "$SOURCE_DIR/META.yml" && "$(cat "$SOURCE_DIR/META.yml" \
+		((D)) && grep -q "license *=> *'http://dev\.perl\.org/licenses/'" "$SOURCE_DIR$COMPONENT_SUBDIR/Makefile.PL" 2>/dev/null && D=0
+		((D)) && grep -q "LICENSE *=> *'perl'" "$SOURCE_DIR$COMPONENT_SUBDIR/Makefile.PL" 2>/dev/null && D=0
+		((D)) && [[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" && "$(/usr/bin/jq -r '.license[]' < "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" 2>/dev/null)" == "perl_5" ]] && D=0
+		((D)) && [[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" && "$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" \
 			| python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
 			| /usr/bin/jq -r '.license[]' 2>/dev/null)" == "perl_5" ]] && D=0
 
