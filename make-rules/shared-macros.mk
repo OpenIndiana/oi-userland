@@ -1015,6 +1015,7 @@ GAS =		/usr/gnu/bin/as
 GTAR =		/usr/gnu/bin/tar
 STRIP =	/usr/bin/strip
 IPS2TGZ = 	$(WS_TOOLS)/ips2tgz
+JQ =		/usr/bin/jq
 
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
