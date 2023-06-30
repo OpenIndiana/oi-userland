@@ -208,8 +208,8 @@ $(BUILD_DIR)/META.json: $(SOURCE_DIR)/.prep
 		$(CAT) $(SOURCE_DIR)/META.json ; \
 	elif [ -f $(SOURCE_DIR)/META.yml ] ; then \
 		$(CAT) $(SOURCE_DIR)/META.yml \
-			| python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
-			| jq '{prereqs:{configure:{requires:.configure_requires},build:{requires:.build_requires},runtime:{requires}}}' ; \
+			| $(PYTHON) -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
+			| $(JQ) '{prereqs:{configure:{requires:.configure_requires},build:{requires:.build_requires},runtime:{requires}}}' ; \
 	fi > $@
 
 # perl-meta-deps requires jq
