@@ -516,7 +516,7 @@ fi
 # Construct the commit message
 MSG=
 if ((NEW)) ; then
-	MSG="Add $PROJECT python project"
+	MSG="Add $PROJECT Python project"
 else
 	if ((REBUILD == 0)) ; then
 		[[ "$PREV_HVER" != "$VERSION" ]] && MSG="update to $VERSION" || MSG="change version format"
@@ -532,12 +532,12 @@ else
 			[[ -n "$NV" ]] && NV="$NV and "
 			NV="$NV$v"
 		done
-		[[ -n "$NV" ]] && REBUILDMSG="rebuild for python $NV"
+		[[ -n "$NV" ]] && REBUILDMSG="rebuild for Python $NV"
 	fi
 
 	if [[ -n "$OV" ]] ; then
-		[[ -n "$REBUILDMSG" ]] && REBUILDMSG="$REBUILDMSG and" || REBUILDMSG="rebuild"
-		REBUILDMSG="$REBUILDMSG to get package$OV_PLURAL for python $OV obsoleted"
+		[[ -n "$REBUILDMSG" ]] && REBUILDMSG="$REBUILDMSG and "
+		REBUILDMSG="${REBUILDMSG}obsolete package$OV_PLURAL for Python $OV"
 	fi
 
 	if [[ -n "$REBUILDMSG" ]] ; then
