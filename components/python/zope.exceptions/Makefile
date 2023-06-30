@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.exceptions
-COMPONENT_VERSION =		4.6
+HUMAN_VERSION =			5.0
 COMPONENT_SUMMARY =		zope.exceptions - Zope Exceptions
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.exceptions
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/07/d7/01ae11fb9b4422f8c05fca69e9cc4be57282f6a93becabf8002e82ec0c24/zope.exceptions-4.6.tar.gz
+	https://files.pythonhosted.org/packages/21/4e/2ab1b98874c5457fd500127675634dacb1586ab8c78fa14fac6f6c9c2dc4/zope.exceptions-5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:619d24a4c65bed97b3dd0515e732e82b69f155d42cc94955d1be8c28288683cd
+	sha256:112131fc4b94265159f27478afaeaa9b7707fedb18779217162535686e2a4b08
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -41,6 +41,9 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Force no colors and more verbose output via tox posargs
+COMPONENT_TEST_TARGETS += -- -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
