@@ -13,29 +13,24 @@
 # Copyright 2020 Alexander Pyhalov
 #
 
-PREFERRED_BITS=64
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         GConf
 COMPONENT_VERSION=      2.32.4
-COMPONENT_REVISION=     9
+COMPONENT_REVISION=     10
 COMPONENT_SUMMARY=      GNOME Configuration Framework
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-	sha256:46030c09422603dbb72f13b5dd592dcc01fbc13562b9e94dafb2b58982bc6b3a
-COMPONENT_ARCHIVE_URL=  \
-	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:46030c09422603dbb72f13b5dd592dcc01fbc13562b9e94dafb2b58982bc6b3a
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://projects.gnome.org/gconf/
 
 TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
-
-PYTHON_VERSION=3.9
+PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf --install --force)
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -63,11 +58,11 @@ REQUIRED_PACKAGES += text/gnu-gettext
 REQUIRED_PACKAGES += text/intltool
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/lxml
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/orbit2
-REQUIRED_PACKAGES += library/python/lxml-39
-REQUIRED_PACKAGES += runtime/python-39
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib

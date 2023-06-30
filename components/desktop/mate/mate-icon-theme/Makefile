@@ -24,20 +24,19 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-icon-theme
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=	Collection of icons for the MATE desktop
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:41f50436d57f425e54fd9557541be77fb291e03aacd55f7991c042e84a290a5a
+COMPONENT_ARCHIVE_HASH= sha256:41f50436d57f425e54fd9557541be77fb291e03aacd55f7991c042e84a290a5a
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_CLASSIFICATION= System/Libraries
 
 include $(WS_MAKE_RULES)/common.mk
 
 # build requirements
+PERL_REQUIRED_PACKAGES += runtime/perl
+PERL_REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += library/desktop/xdg/icon-naming-utils
-REQUIRED_PACKAGES += text/intltool
 REQUIRED_PACKAGES += text/gnu-gettext
-REQUIRED_PACKAGES += runtime/perl-534
-REQUIRED_PACKAGES += library/perl-5/xml-parser
+REQUIRED_PACKAGES += text/intltool
 
 # Auto-generated dependencies

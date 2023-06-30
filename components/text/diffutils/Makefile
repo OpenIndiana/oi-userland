@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffutils
 COMPONENT_VERSION=	3.10
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU Diffutils is a package of several programs related to finding differences between files
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/diffutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
