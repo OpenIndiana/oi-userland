@@ -1,18 +1,31 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 39 items
+collecting ... collected 57 items
 
 ::project PASSED
+pytest_mypy_plugins/__init__.py::BLACK PASSED
+pytest_mypy_plugins/__init__.py::mypy PASSED
+pytest_mypy_plugins/collect.py::BLACK PASSED
+pytest_mypy_plugins/collect.py::mypy PASSED
+pytest_mypy_plugins/item.py::BLACK PASSED
+pytest_mypy_plugins/item.py::mypy PASSED
+pytest_mypy_plugins/tests/reveal_type_hook.py::BLACK PASSED
+pytest_mypy_plugins/tests/reveal_type_hook.py::mypy PASSED
 pytest_mypy_plugins/tests/test-extension.yml::reveal_type_extension_is_loaded PASSED
 pytest_mypy_plugins/tests/test-parametrized.yml::only_main[a=1,revealed_type=builtins.int] PASSED
 pytest_mypy_plugins/tests/test-parametrized.yml::only_main[a=1.0,revealed_type=builtins.float] PASSED
 pytest_mypy_plugins/tests/test-parametrized.yml::with_extra[a=2,b=None,rt=Any] PASSED
 pytest_mypy_plugins/tests/test-parametrized.yml::with_extra[a=3,b=3,rt=Any] PASSED
+pytest_mypy_plugins/tests/test-parametrized.yml::with_mypy_config[allow_any=false] PASSED
+pytest_mypy_plugins/tests/test-parametrized.yml::with_mypy_config[allow_any=true] PASSED
 pytest_mypy_plugins/tests/test-parametrized.yml::with_out[what=cat,rt=builtins.str] PASSED
 pytest_mypy_plugins/tests/test-parametrized.yml::with_out[what=dog,rt=builtins.str] PASSED
 pytest_mypy_plugins/tests/test-paths-from-env.yml::add_mypypath_env_var_to_package_search PASSED
@@ -34,6 +47,8 @@ pytest_mypy_plugins/tests/test-simple-cases.yml::revealed_type_with_disabled_cac
 pytest_mypy_plugins/tests/test-simple-cases.yml::revealed_type_with_environment PASSED
 pytest_mypy_plugins/tests/test-simple-cases.yml::simplest_case PASSED
 pytest_mypy_plugins/tests/test-simple-cases.yml::skip_if_false PASSED
+pytest_mypy_plugins/tests/test_utils.py::BLACK PASSED
+pytest_mypy_plugins/tests/test_utils.py::mypy PASSED
 pytest_mypy_plugins/tests/test_utils.py::test_assert_expected_matched_actual_failures[source_lines0-actual_lines0-expected_message_lines0] PASSED
 pytest_mypy_plugins/tests/test_utils.py::test_assert_expected_matched_actual_failures[source_lines1-actual_lines1-expected_message_lines1] PASSED
 pytest_mypy_plugins/tests/test_utils.py::test_assert_expected_matched_actual_failures[source_lines2-actual_lines2-expected_message_lines2] PASSED
@@ -45,5 +60,46 @@ pytest_mypy_plugins/tests/test_utils.py::test_assert_expected_matched_actual_fai
 pytest_mypy_plugins/tests/test_utils.py::test_render_template_with_None_value PASSED
 pytest_mypy_plugins/tests/test_utils.py::test_sorted_by_file_and_line_is_stable[input_lines0] PASSED
 pytest_mypy_plugins/tests/test_utils.py::test_sorted_by_file_and_line_is_stable[input_lines1] PASSED
+pytest_mypy_plugins/utils.py::BLACK PASSED
+pytest_mypy_plugins/utils.py::mypy PASSED
+setup.py::BLACK PASSED
+setup.py::mypy PASSED
+setup.py::mypy-status PASSED
 
-======== 38 passed ========
+=============================== warnings summary ===============================
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+  $(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147: PytestDeprecationWarning: <class 'pytest_black.BlackItem'> is not using a cooperative constructor and only takes {'fspath', 'parent'}.
+  See https://docs.pytest.org/en/stable/deprecations.html#constructors-of-custom-pytest-node-subclasses-should-take-kwargs for more details.
+    warnings.warn(
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+  $(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263: PytestRemovedIn8Warning: The (fspath: py.path.local) argument to BlackItem is deprecated. Please use the (path: pathlib.Path) argument instead.
+  See https://docs.pytest.org/en/latest/deprecations.html#fspath-argument-for-node-constructors-replaced-with-pathlib-path
+    return cls._create(parent=parent, **kw)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:719
+  $(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:719: PytestWarning: BlackItem is an Item subclass and should not be a collector, however its bases File are collectors.
+  Please split the Collectors and the Item into separate node types.
+  Pytest Doc example: https://docs.pytest.org/en/latest/example/nonpython.html
+  example pull request on a plugin: https://github.com/asmeurer/pytest-flakes/pull/40/
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+===================================== mypy =====================================
+Success: no issues found in 7 source files
+======== 55 passed, 15 warnings ========
+  py$(PYV): OK
+  congratulations :)
