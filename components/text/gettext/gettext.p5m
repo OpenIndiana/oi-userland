@@ -9,9 +9,10 @@
 # http://www.illumos.org/license/CDDL.
 #
 
+#
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
-# Copyright (c) 2020, 2022, Andreas Wacknitz
+# Copyright (c) 2020, 2023, Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -30,14 +31,14 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 # Binaries in usr/lib should be executable
 <transform file path=usr/lib/$(MACH64)/gettext/ -> set mode 0555>
 
-# Compatibility                                                                                                                      
-link path=usr/lib/intltool/gettext-tools/lib/libgettextlib.so target=../../../libgettextlib-$(COMPONENT_VERSION).so                  
+# Compatibility
+link path=usr/lib/intltool/gettext-tools/lib/libgettextlib.so target=../../../libgettextlib-$(COMPONENT_VERSION).so
 link path=usr/lib/intltool/gettext-tools/lib/libgettextlib-$(COMPONENT_VERSION).so target=../../../libgettextlib-$(COMPONENT_VERSION).so
-link path=usr/lib/intltool/gettext-tools/lib/libgettextsrc.so target=../../../libgettextsrc-$(COMPONENT_VERSION).so                  
+link path=usr/lib/intltool/gettext-tools/lib/libgettextsrc.so target=../../../libgettextsrc-$(COMPONENT_VERSION).so
 link path=usr/lib/intltool/gettext-tools/lib/libgettextsrc-$(COMPONENT_VERSION).so target=../../../libgettextsrc-$(COMPONENT_VERSION).so
-link path=usr/lib/intltool/gettext-tools/msgmerge target=../../../bin/msgmerge                                                       
-link path=usr/lib/intltool/gettext-tools/recode-sr-latin target=../../../bin/recode-sr-latin                                         
-link path=usr/lib/intltool/gettext-tools/xgettext target=../../../gnu/bin/xgettext                                                   
+link path=usr/lib/intltool/gettext-tools/msgmerge target=../../../bin/msgmerge
+link path=usr/lib/intltool/gettext-tools/recode-sr-latin target=../../../bin/recode-sr-latin
+link path=usr/lib/intltool/gettext-tools/xgettext target=../../../gnu/bin/xgettext
 
 link path=usr/bin/ggettext target=../gnu/bin/gettext facet.compat.gnulinks=true
 link path=usr/bin/gmsgfmt target=../gnu/bin/msgfmt facet.compat.gnulinks=true
@@ -87,25 +88,26 @@ file path=usr/lib/$(MACH64)/gettext/user-email
 file path=usr/lib/$(MACH64)/libgettextlib-$(HUMAN_VERSION).so
 link path=usr/lib/$(MACH64)/libgettextlib.so \
     target=libgettextlib-$(HUMAN_VERSION).so
-link path=usr/lib/$(MACH64)/libgettextpo.so target=libgettextpo.so.0.5.8
-link path=usr/lib/$(MACH64)/libgettextpo.so.0 target=libgettextpo.so.0.5.8
-file path=usr/lib/$(MACH64)/libgettextpo.so.0.5.8
+link path=usr/lib/$(MACH64)/libgettextpo.so target=libgettextpo.so.0.5.9
+link path=usr/lib/$(MACH64)/libgettextpo.so.0 target=libgettextpo.so.0.5.9
+file path=usr/lib/$(MACH64)/libgettextpo.so.0.5.9
 file path=usr/lib/$(MACH64)/libgettextsrc-$(HUMAN_VERSION).so
 link path=usr/lib/$(MACH64)/libgettextsrc.so \
     target=libgettextsrc-$(HUMAN_VERSION).so
-link path=usr/lib/$(MACH64)/libtextstyle.so target=libtextstyle.so.0.1.2
-link path=usr/lib/$(MACH64)/libtextstyle.so.0 target=libtextstyle.so.0.1.2
-file path=usr/lib/$(MACH64)/libtextstyle.so.0.1.2
+link path=usr/lib/$(MACH64)/libtextstyle.so target=libtextstyle.so.0.2.0
+link path=usr/lib/$(MACH64)/libtextstyle.so.0 target=libtextstyle.so.0.2.0
+file path=usr/lib/$(MACH64)/libtextstyle.so.0.2.0
 file path=usr/lib/libgettextlib-$(HUMAN_VERSION).so
 link path=usr/lib/libgettextlib.so target=libgettextlib-$(HUMAN_VERSION).so
-link path=usr/lib/libgettextpo.so target=libgettextpo.so.0.5.8
-link path=usr/lib/libgettextpo.so.0 target=libgettextpo.so.0.5.8
-file path=usr/lib/libgettextpo.so.0.5.8
+link path=usr/lib/libgettextpo.so target=libgettextpo.so.0.5.9
+link path=usr/lib/libgettextpo.so.0 target=libgettextpo.so.0.5.9
+file path=usr/lib/libgettextpo.so.0.5.9
 file path=usr/lib/libgettextsrc-$(HUMAN_VERSION).so
 link path=usr/lib/libgettextsrc.so target=libgettextsrc-$(HUMAN_VERSION).so
-link path=usr/lib/libtextstyle.so target=libtextstyle.so.0.1.2
-link path=usr/lib/libtextstyle.so.0 target=libtextstyle.so.0.1.2
-file path=usr/lib/libtextstyle.so.0.1.2
+link path=usr/lib/libtextstyle.so target=libtextstyle.so.0.2.0
+link path=usr/lib/libtextstyle.so.0 target=libtextstyle.so.0.2.0
+file path=usr/lib/libtextstyle.so.0.2.0
+file path=usr/share/aclocal/build-to-host.m4
 file path=usr/share/aclocal/gettext.m4
 file path=usr/share/aclocal/host-cpu-c-abi.m4
 file path=usr/share/aclocal/iconv.m4
@@ -440,6 +442,60 @@ file path=usr/share/doc/gettext/examples/hello-c++/po/vi.po
 file path=usr/share/doc/gettext/examples/hello-c++/po/zh_CN.po
 file path=usr/share/doc/gettext/examples/hello-c++/po/zh_HK.po
 file path=usr/share/doc/gettext/examples/hello-c++/po/zh_TW.po
+file path=usr/share/doc/gettext/examples/hello-c++20/INSTALL
+file path=usr/share/doc/gettext/examples/hello-c++20/Makefile.am
+file path=usr/share/doc/gettext/examples/hello-c++20/autoclean.sh
+file path=usr/share/doc/gettext/examples/hello-c++20/autogen.sh
+file path=usr/share/doc/gettext/examples/hello-c++20/configure.ac
+file path=usr/share/doc/gettext/examples/hello-c++20/hello.cc
+file path=usr/share/doc/gettext/examples/hello-c++20/m4/Makefile.am
+file path=usr/share/doc/gettext/examples/hello-c++20/po/LINGUAS
+file path=usr/share/doc/gettext/examples/hello-c++20/po/Makevars
+file path=usr/share/doc/gettext/examples/hello-c++20/po/POTFILES.in
+file path=usr/share/doc/gettext/examples/hello-c++20/po/af.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/ast.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/bg.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/ca.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/cs.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/da.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/de.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/el.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/eo.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/es.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/fi.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/fr.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/ga.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/gl.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/hr.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/hu.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/id.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/it.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/ja.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/ka.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/ky.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/lv.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/ms.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/mt.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/nb.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/nl.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/nn.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/pl.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/pt.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/pt_BR.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/ro.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/ru.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/sk.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/sl.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/sq.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/sr.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/sv.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/ta.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/tr.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/uk.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/vi.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/zh_CN.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/zh_HK.po
+file path=usr/share/doc/gettext/examples/hello-c++20/po/zh_TW.po
 file path=usr/share/doc/gettext/examples/hello-c-gnome/INSTALL
 file path=usr/share/doc/gettext/examples/hello-c-gnome/Makefile.am
 file path=usr/share/doc/gettext/examples/hello-c-gnome/autoclean.sh
@@ -1955,6 +2011,7 @@ file path=usr/share/locale/ga/LC_MESSAGES/gettext-runtime.mo
 file path=usr/share/locale/gl/LC_MESSAGES/gettext-runtime.mo
 file path=usr/share/locale/gl/LC_MESSAGES/gettext-tools.mo
 file path=usr/share/locale/hr/LC_MESSAGES/gettext-runtime.mo
+file path=usr/share/locale/hr/LC_MESSAGES/gettext-tools.mo
 file path=usr/share/locale/hu/LC_MESSAGES/gettext-runtime.mo
 file path=usr/share/locale/id/LC_MESSAGES/gettext-runtime.mo
 file path=usr/share/locale/id/LC_MESSAGES/gettext-tools.mo
@@ -1962,6 +2019,7 @@ file path=usr/share/locale/it/LC_MESSAGES/gettext-runtime.mo
 file path=usr/share/locale/it/LC_MESSAGES/gettext-tools.mo
 file path=usr/share/locale/ja/LC_MESSAGES/gettext-runtime.mo
 file path=usr/share/locale/ja/LC_MESSAGES/gettext-tools.mo
+file path=usr/share/locale/ka/LC_MESSAGES/gettext-runtime.mo
 file path=usr/share/locale/ko/LC_MESSAGES/gettext-runtime.mo
 file path=usr/share/locale/ko/LC_MESSAGES/gettext-tools.mo
 file path=usr/share/locale/nb/LC_MESSAGES/gettext-runtime.mo
