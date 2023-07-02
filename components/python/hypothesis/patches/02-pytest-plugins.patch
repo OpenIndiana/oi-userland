@@ -1,0 +1,15 @@
+--- hypothesis-hypothesis-python-6.82.0/hypothesis-python/tests/nocover/test_scrutineer.py.orig
++++ hypothesis-hypothesis-python-6.82.0/hypothesis-python/tests/nocover/test_scrutineer.py
+@@ -52,7 +52,11 @@
+     # multi-line report strings which we expect to see in explain-mode output.
+     # The list length is the number of explainable bugs, usually one.
+     test_file = str(testdir.makepyfile(file_contents))
+-    pytest_stdout = str(testdir.runpytest_inprocess(test_file, "--tb=native").stdout)
++    pytest_stdout = str(
++        testdir.runpytest_inprocess(
++            test_file, "--tb=native", "-p", "no:black", "-p", "no:cov", "-p", "no:mypy"
++        ).stdout
++    )
+ 
+     explanations = {
+         i: {(test_file, i)}
