@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project Pillow
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Pillow
-HUMAN_VERSION =			9.5.0
+HUMAN_VERSION =			10.0.0
 COMPONENT_SUMMARY =		Pillow - Python Imaging Library (Fork)
 COMPONENT_PROJECT_URL =		https://python-pillow.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/00/d5/4903f310765e0ff2b8e91ffe55031ac6af77d982f0156061e20a4d1a8b2d/Pillow-9.5.0.tar.gz
+	https://files.pythonhosted.org/packages/0f/8b/2ebaf9adcf4260c00f842154865f8730cf745906aa5dd499141fb6063e26/Pillow-10.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bf548479d336726d7a0eceb6e767e179fbde37833ae42794602631a070d630f1
+	sha256:9c82b5b3e043c7af0d95792d0d20ccf68f61a1fec6b3530e718b688422727396
 COMPONENT_LICENSE =		HPND
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,6 +37,8 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libtiff
