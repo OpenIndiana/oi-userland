@@ -16,30 +16,29 @@
 # Copyright 2021 omnios.org wrt the ctx patches
 # Copyright 2022 Daniel Bell
 
-BUILD_STYLE=configure
-BUILD_BITS=64
-USE_OPENSSL11=          yes
+BUILD_STYLE= configure
+BUILD_BITS= 64
+USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
 COMPONENT_VERSION=      6.1.40
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
-COMPONENT_FMRI=         system/virtualbox
-COMPONENT_CLASSIFICATION=System/Virtualization
-
 COMPONENT_DOWNLOAD_URL= https://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         system/virtualbox
+COMPONENT_CLASSIFICATION=System/Virtualization
 COMPONENT_LICENSE=      GPLv2
 
-HASH_DIR=$(COMPONENT_DIR)/hashes
+HASH_DIR= $(COMPONENT_DIR)/hashes
 export HASH_DIR
 
-FETCH_KEEP=-n --keep
-DEFAULT_HASH_FILES=SHA256SUMS
+FETCH_KEEP= -n --keep
+DEFAULT_HASH_FILES= SHA256SUMS
 export DEFAULT_HASH_FILES
 
 # We need the hashfile before even parsing the Makefile since we need the build number from it.
@@ -61,7 +60,7 @@ UNPACK_ARGS_1=		-r $(COMPONENT_SRC_1)
 COMPONENT_POST_UNPACK_ACTION_1 = \
 	cd $(COMPONENT_SRC); $(LN) -s ../$(COMPONENT_SRC_1)/sdk .;
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
