@@ -809,12 +809,37 @@ QT6_BINDIR = $(QT6_BASEDIR)/bin/$(MACH64)
 QT6_LIBDIR = $(QT6_BASEDIR)/lib/$(MACH64)
 QT6_PKG_CONFIG_PATH = $(QT6_LIBDIR)/pkgconfig
 
+#
+# Upstream officially supports two recent major Perl versions.  They also aim
+# to provide critical security fixes for major Perl versions whose 5.x.0
+# release was within the past three years.
+#
+# We support union of both sets.  IOW, we will start to obsolete a major Perl
+# version if its 5.x.0 was released longer than three years ago AND there are
+# already released two newer major Perl versions.
+#
+# See https://perldoc.perl.org/perlpolicy
+#
+#
+# We will start to obsolete major Perl versions according the following table:
+#
+# +--------------+----------------+
+# | Perl version | Obsolete after |
+# +--------------+----------------+
+# |     5.34     |   2024-05-20   |
+# |     5.36     |   2025-05-28   |
+# |     5.38     |   2026-07-02   |
+# +--------------+----------------+
+#
+# See https://www.cpan.org/src/README.html
+#
+
 # This is the default version of Perl
 PERL_VERSION =  5.36
 
 # The PERL_VERSIONS list should always be in ascending order (newest version
 # last)
-PERL_VERSIONS = 5.34 5.36
+PERL_VERSIONS = 5.34 5.36 5.38
 # Perl up to 5.22 was built 32-bit only.  Starting with 5.24 the perl package
 # is built 64-bit only.  So now all PERL_VERSIONS are 64-bit only.
 PERL_64_ONLY_VERSIONS = $(PERL_VERSIONS)

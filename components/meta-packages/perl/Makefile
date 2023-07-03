@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
 COMPONENT_VERSION =		$(PERL_VERSION)
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Perl - Highly capable, feature-rich programming language
 COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_FMRI =		runtime/perl
