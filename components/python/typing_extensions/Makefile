@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typing_extensions
-HUMAN_VERSION =			4.7.0
+HUMAN_VERSION =			4.7.1
 COMPONENT_SUMMARY =		typing_extensions - Backported and Experimental Type Hints for Python 3.7+
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/57/e3/b37a6b1ce6c1b2b75d05997ec24f73c794bc05a587e0f30a532d0ab13cb2/typing_extensions-4.7.0.tar.gz
+	https://files.pythonhosted.org/packages/3c/8b/0111dd7d6c1478bf83baa1cab85c686426c7a6274119aceb2bd9d35395ad/typing_extensions-4.7.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:935ccf31549830cda708b42289d44b6f74084d616a00be651601a4f968e77c82
+	sha256:b75ddc264f0ba5615db7ba217daeb99701ad295353c45f9e95963337ceeeffb2
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
