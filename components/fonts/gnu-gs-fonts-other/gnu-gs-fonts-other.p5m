@@ -20,18 +20,21 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri \
-    value=pkg:/print/filter/ghostscript/fonts/gnu-gs-fonts-other@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="GNU Ghostscript Fonts (Other)"
-set name=com.oracle.info.description value="GNU Ghostscript Fonts (Other)"
-set name=com.oracle.info.tpno value=8517
-set name=info.classification \
-    value=org.opensolaris.category.2008:System/Printing
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2010/010
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+legacy pkg=SUNWgsfot \
+    desc="GNU Ghostscript Fonts (Other)" \
+    name="GNU Ghostscript Fonts (Other)"
+
 file path=usr/share/ghostscript/fonts/bchb.afm
 file path=usr/share/ghostscript/fonts/bchb.pfa
 file path=usr/share/ghostscript/fonts/bchbi.afm
@@ -93,7 +96,3 @@ file path=usr/share/ghostscript/fonts/u003043t.pfm
 file path=usr/share/ghostscript/fonts/u004006t.afm
 file path=usr/share/ghostscript/fonts/u004006t.gsf
 file path=usr/share/ghostscript/fonts/u004006t.pfm
-legacy pkg=SUNWgsfot \
-    desc="GNU Ghostscript Fonts (Other)" \
-    name="GNU Ghostscript Fonts (Other)"
-license gnu-gs-fonts-other.license license=GPLv2
