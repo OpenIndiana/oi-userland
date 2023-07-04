@@ -20,12 +20,13 @@
 #
 # Copyright (c) 2015-2017, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwpg
 COMPONENT_VERSION=	0.3.4
-COMPONENT_SUMMARY=      libwpg - library for importing and converting Corel WordPerfect(tm) Graphics images
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=   libwpg - library for importing and converting Corel WordPerfect(tm) Graphics images
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwpg
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
