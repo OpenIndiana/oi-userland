@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Class::Tiny
 HUMAN_VERSION =			1.008
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Class::Tiny - Minimalist class construction
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
