@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Config::Tiny
 HUMAN_VERSION =			2.29
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Config::Tiny - Read/Write .ini style files with as little code as possible
 COMPONENT_ARCHIVE_URL=		https://cpan.metacpan.org/authors/id/R/RS/RSAVAGE/Config-Tiny-2.29.tgz
 COMPONENT_ARCHIVE_HASH =	\
