@@ -1,0 +1,86 @@
+We are unable to switch to github tarball because the wheel build fails there.
+https://github.com/tox-dev/pyproject-fmt/issues/107
+
+--- pyproject_fmt-0.13.0.orig/tox.ini
++++ pyproject_fmt-0.13.0/tox.ini
+@@ -0,0 +1,80 @@
++[tox]
++requires =
++    tox>=4.2
++env_list =
++    fix
++    py312
++    py311
++    py310
++    py39
++    py38
++    py37
++    type
++    readme
++    docs
++skip_missing_interpreters = true
++
++[testenv]
++description = run the unit tests with pytest under {basepython}
++package = wheel
++wheel_build_env = .pkg
++extras =
++    test
++set_env =
++    COVERAGE_FILE = {toxworkdir}/.coverage.{envname}
++    COVERAGE_PROCESS_START = {toxinidir}/setup.cfg
++    _COVERAGE_SRC = {envsitepackagesdir}/sphinx_argparse_cli
++commands =
++    python -m pytest {tty:--color=yes} {posargs: \
++      --junitxml {toxworkdir}{/}junit.{envname}.xml --cov {envsitepackagesdir}{/}pyproject_fmt \
++      --cov {toxinidir}{/}tests --cov-fail-under=100 \
++      --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test \
++      --cov-report html:{envtmpdir}{/}htmlcov --cov-report xml:{toxworkdir}{/}coverage.{envname}.xml \
++      tests}
++
++[testenv:fix]
++description = run static analysis and style check using flake8
++skip_install = true
++deps =
++    pre-commit>=3.3.3
++commands =
++    pre-commit run --all-files --show-diff-on-failure
++    python -c 'print("hint: run {envdir}/bin/pre-commit install to add checks as pre-commit hook")'
++
++[testenv:type]
++description = run type check on code base
++deps =
++    mypy==1.3
++set_env =
++    {tty:MYPY_FORCE_COLOR = 1}
++commands =
++    mypy src
++    mypy tests
++
++[testenv:readme]
++description = check that the long description is valid
++skip_install = true
++deps =
++    build[virtualenv]>=0.10
++    twine>=4.0.2
++commands =
++    python -m build --sdist --wheel -o {envtmpdir} .
++    twine check {envtmpdir}/*
++
++[testenv:docs]
++description = build documentation
++extras =
++    docs
++commands =
++    sphinx-build -d "{envtmpdir}{/}doctree" docs "{toxworkdir}{/}docs_out" --color -b html {posargs}
++    python -c 'print(r"documentation available under file://{toxworkdir}{/}docs_out{/}index.html")'
++
++[testenv:dev]
++description = generate a DEV environment
++package = editable
++extras =
++    docs
++    test
++commands =
++    python -m pip list --format=columns
++    python -c 'import sys; print(sys.executable)'
