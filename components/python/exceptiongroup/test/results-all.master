@@ -5,12 +5,133 @@ py$(PYV): commands[0]> python -m pytest
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: tests
 asyncio: mode=strict
-collecting ... collected 1 item
+collecting ... collected 89 items
 
-::project PASSED
+tests/__init__.py::BLACK PASSED
+tests/conftest.py::BLACK PASSED
+tests/test_catch.py::BLACK PASSED
+tests/test_catch.py::test_bad_arg PASSED
+tests/test_catch.py::test_bad_handler PASSED
+tests/test_catch.py::test_catch_exceptiongroup[iterable_basegroup] PASSED
+tests/test_catch.py::test_catch_exceptiongroup[iterable_group] PASSED
+tests/test_catch.py::test_catch_exceptiongroup[naked_basegroup] PASSED
+tests/test_catch.py::test_catch_exceptiongroup[naked_group] PASSED
+tests/test_catch.py::test_catch_full_match PASSED
+tests/test_catch.py::test_catch_group PASSED
+tests/test_catch.py::test_catch_handler_raises PASSED
+tests/test_catch.py::test_catch_nested_group PASSED
+tests/test_catch.py::test_catch_no_match PASSED
+tests/test_catch.py::test_catch_single_no_match PASSED
+tests/test_catch.py::test_catch_subclass PASSED
+tests/test_catch.py::test_catch_ungrouped PASSED
+tests/test_exceptions.py::BLACK PASSED
+tests/test_exceptions.py::BadConstructorArgs::test_bad_EG_construction__bad_excs_sequence PASSED
+tests/test_exceptions.py::BadConstructorArgs::test_bad_EG_construction__bad_message PASSED
+tests/test_exceptions.py::BadConstructorArgs::test_bad_EG_construction__nested_non_exceptions PASSED
+tests/test_exceptions.py::BadConstructorArgs::test_bad_EG_construction__too_few_args PASSED
+tests/test_exceptions.py::BadConstructorArgs::test_bad_EG_construction__too_many_args PASSED
+tests/test_exceptions.py::DeepRecursionInSplitAndSubgroup::test_deep_split PASSED
+tests/test_exceptions.py::DeepRecursionInSplitAndSubgroup::test_deep_subgroup PASSED
+tests/test_exceptions.py::ExceptionGroupFields::test_basics_ExceptionGroup_fields PASSED
+tests/test_exceptions.py::ExceptionGroupFields::test_fields_are_readonly PASSED
+tests/test_exceptions.py::ExceptionGroupFields::test_notes_is_list_of_strings_if_it_exists PASSED
+tests/test_exceptions.py::ExceptionGroupSplitTests::test_basics_split_by_predicate__match PASSED
+tests/test_exceptions.py::ExceptionGroupSplitTests::test_basics_split_by_predicate__no_match PASSED
+tests/test_exceptions.py::ExceptionGroupSplitTests::test_basics_split_by_predicate__passthrough PASSED
+tests/test_exceptions.py::ExceptionGroupSplitTests::test_basics_split_by_type__match PASSED
+tests/test_exceptions.py::ExceptionGroupSplitTests::test_basics_split_by_type__no_match PASSED
+tests/test_exceptions.py::ExceptionGroupSplitTests::test_basics_split_by_type__passthrough PASSED
+tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_predicate__match PASSED
+tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_predicate__no_match PASSED
+tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_predicate__passthrough PASSED
+tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_type__match PASSED
+tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_type__no_match PASSED
+tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_type__passthrough PASSED
+tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_split__bad_arg_type PASSED
+tests/test_exceptions.py::InstanceCreation::test_BEG_and_E_subclass_does_not_wrap_base_exceptions PASSED
+tests/test_exceptions.py::InstanceCreation::test_BEG_wraps_BaseException__creates_BEG PASSED
+tests/test_exceptions.py::InstanceCreation::test_BEG_wraps_Exceptions__creates_EG PASSED
+tests/test_exceptions.py::InstanceCreation::test_EG_subclass_does_not_wrap_base_exceptions PASSED
+tests/test_exceptions.py::InstanceCreation::test_EG_subclass_wraps_non_base_exceptions PASSED
+tests/test_exceptions.py::InstanceCreation::test_EG_wraps_BaseException__raises_TypeError PASSED
+tests/test_exceptions.py::InstanceCreation::test_EG_wraps_Exceptions__creates_EG PASSED
+tests/test_exceptions.py::LeafGeneratorTest::test_leaf_generator PASSED
+tests/test_exceptions.py::NestedExceptionGroupBasicsTest::test_iteration_full_tracebacks PASSED
+tests/test_exceptions.py::NestedExceptionGroupBasicsTest::test_nested_exception_group_tracebacks PASSED
+tests/test_exceptions.py::NestedExceptionGroupBasicsTest::test_nested_group_chaining PASSED
+tests/test_exceptions.py::NestedExceptionGroupBasicsTest::test_nested_group_matches_template PASSED
+tests/test_exceptions.py::NestedExceptionGroupSplitTest::test_split_BaseExceptionGroup PASSED
+tests/test_exceptions.py::NestedExceptionGroupSplitTest::test_split_by_type PASSED
+tests/test_exceptions.py::NestedExceptionGroupSubclassSplitTest::test_split_BaseExceptionGroup_subclass_no_derive_new_override PASSED
+tests/test_exceptions.py::NestedExceptionGroupSubclassSplitTest::test_split_ExceptionGroup_subclass_derive_and_new_overrides PASSED
+tests/test_exceptions.py::NestedExceptionGroupSubclassSplitTest::test_split_ExceptionGroup_subclass_no_derive_no_new_override PASSED
+tests/test_exceptions.py::TestExceptionGroupTypeHierarchy::test_exception_group_is_generic_type PASSED
+tests/test_exceptions.py::TestExceptionGroupTypeHierarchy::test_exception_group_types PASSED
+tests/test_exceptions.py::test_repr PASSED
+tests/test_formatting.py::BLACK PASSED
+tests/test_formatting.py::test_bug_suggestions_attributeerror_no_obj[patched] PASSED
+tests/test_formatting.py::test_bug_suggestions_attributeerror_no_obj[unpatched] PASSED
+tests/test_formatting.py::test_exceptiongroup_as_cause PASSED
+tests/test_formatting.py::test_exceptiongroup_loop PASSED
+tests/test_formatting.py::test_exceptionhook PASSED
+tests/test_formatting.py::test_exceptionhook_format_exception_only PASSED
+tests/test_formatting.py::test_format_exception[patched-newstyle] PASSED
+tests/test_formatting.py::test_format_exception[patched-oldstyle] PASSED
+tests/test_formatting.py::test_format_exception[unpatched-newstyle] PASSED
+tests/test_formatting.py::test_format_exception[unpatched-oldstyle] PASSED
+tests/test_formatting.py::test_format_exception_only[patched-newstyle] PASSED
+tests/test_formatting.py::test_format_exception_only[patched-oldstyle] PASSED
+tests/test_formatting.py::test_format_exception_only[unpatched-newstyle] PASSED
+tests/test_formatting.py::test_format_exception_only[unpatched-oldstyle] PASSED
+tests/test_formatting.py::test_format_nested PASSED
+tests/test_formatting.py::test_formatting_syntax_error PASSED
+tests/test_formatting.py::test_nameerror_suggestions[patched] SKIPPED
+tests/test_formatting.py::test_nameerror_suggestions[unpatched] SKIPPED
+tests/test_formatting.py::test_nameerror_suggestions_in_group[patched] SKIPPED
+tests/test_formatting.py::test_nameerror_suggestions_in_group[unpatched] SKIPPED
+tests/test_formatting.py::test_print_exc[patched] PASSED
+tests/test_formatting.py::test_print_exc[unpatched] PASSED
+tests/test_formatting.py::test_print_exception[patched-newstyle] PASSED
+tests/test_formatting.py::test_print_exception[patched-oldstyle] PASSED
+tests/test_formatting.py::test_print_exception[unpatched-newstyle] PASSED
+tests/test_formatting.py::test_print_exception[unpatched-oldstyle] PASSED
+tests/test_formatting.py::test_works_around_httperror_bug PASSED
 
-======== 1 passed ========
+=============================== warnings summary ===============================
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
+  $(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147: PytestDeprecationWarning: <class 'pytest_black.BlackItem'> is not using a cooperative constructor and only takes {'parent', 'fspath'}.
+  See https://docs.pytest.org/en/stable/deprecations.html#constructors-of-custom-pytest-node-subclasses-should-take-kwargs for more details.
+    warnings.warn(
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
+  $(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263: PytestRemovedIn8Warning: The (fspath: py.path.local) argument to BlackItem is deprecated. Please use the (path: pathlib.Path) argument instead.
+  See https://docs.pytest.org/en/latest/deprecations.html#fspath-argument-for-node-constructors-replaced-with-pathlib-path
+    return cls._create(parent=parent, **kw)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:719
+  $(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:719: PytestWarning: BlackItem is an Item subclass and should not be a collector, however its bases File are collectors.
+  Please split the Collectors and the Item into separate node types.
+  Pytest Doc example: https://docs.pytest.org/en/latest/example/nonpython.html
+  example pull request on a plugin: https://github.com/asmeurer/pytest-flakes/pull/40/
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+=========================== short test summary info ============================
+======== 85 passed, 4 skipped, 13 warnings ========
   py$(PYV): OK
   congratulations :)
