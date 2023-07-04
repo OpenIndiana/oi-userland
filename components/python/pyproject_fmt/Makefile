@@ -19,18 +19,23 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_fmt
-HUMAN_VERSION =			0.12.1
+HUMAN_VERSION =			0.13.0
 COMPONENT_SUMMARY =		pyproject_fmt - Format your pyproject.toml file
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/7d/60/1e8e442a5ee6964b2685a562cd2b2e8b5203580cb4c815f1feccab2535a8/pyproject_fmt-0.12.1.tar.gz
+	https://files.pythonhosted.org/packages/ac/e3/687c38cda9efe4b7ab4b92975274ba2c33e0b33a6f5eff54548c96d26e4c/pyproject_fmt-0.13.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:01cd68477e87640944ece982d7bd1e14d006576041c8a8a65d4392660693bec2
+	sha256:aaad7398fe810c9087b33c1cc74d49b51a746bb05e9999371719b577139d0c49
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-TEST_STYLE = pytest
-
 include $(WS_MAKE_RULES)/common.mk
+
+# Turn off coverage because we are not interested in it and it could cause
+# problems
+COMPONENT_TEST_TARGETS += -- tests
+
+# black makes test results not reproducible
+PYTEST_ADDOPTS += -p no:black
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
@@ -38,5 +43,8 @@ PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/natsort
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/tomlkit
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
