@@ -1,52 +1,46 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+
 #
 # Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
+# Copyright (c) 2023, Andreas Wacknitz
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="GnuPG IPC implementation library"
-set name=pkg.description value="A small library implementing the so-called Assuan protocol, used for interprocess communication between most GnuPG components."
-set name=com.oracle.info.description value="the GnuPG IPC implementation library"
-set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license libassuan.license license="GPLv3, LGPLv2"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=.+/share/info/dir -> drop>
 
 file path=usr/bin/$(MACH64)/libassuan-config
 file path=usr/bin/libassuan-config
 file path=usr/include/assuan.h
-link path=usr/lib/$(MACH64)/libassuan.so target=libassuan.so.0.8.5
-link path=usr/lib/$(MACH64)/libassuan.so.0 target=libassuan.so.0.8.5
-file path=usr/lib/$(MACH64)/libassuan.so.0.8.5
+link path=usr/lib/$(MACH64)/libassuan.so target=libassuan.so.0.8.6
+link path=usr/lib/$(MACH64)/libassuan.so.0 target=libassuan.so.0.8.6
+file path=usr/lib/$(MACH64)/libassuan.so.0.8.6
 file path=usr/lib/$(MACH64)/pkgconfig/libassuan.pc
-link path=usr/lib/libassuan.so target=libassuan.so.0.8.5
-link path=usr/lib/libassuan.so.0 target=libassuan.so.0.8.5
-file path=usr/lib/libassuan.so.0.8.5
+link path=usr/lib/libassuan.so target=libassuan.so.0.8.6
+link path=usr/lib/libassuan.so.0 target=libassuan.so.0.8.6
+file path=usr/lib/libassuan.so.0.8.6
 file path=usr/lib/pkgconfig/libassuan.pc
 file path=usr/share/aclocal/libassuan.m4
 file path=usr/share/info/assuan.info
-#file path=usr/share/info/dir
+file path=usr/share/info/dir
