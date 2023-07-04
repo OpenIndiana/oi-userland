@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		inflect
-HUMAN_VERSION =			6.1.0
+HUMAN_VERSION =			6.2.0
 COMPONENT_SUMMARY =		inflect - Correctly generate plurals, singular nouns, ordinals, indefinite articles; convert numbers to words
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/inflect
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/39/5b/5c3c6974b7cc646f4a181591c1d28c2db7bca47641b8e02409683e742b5f/inflect-6.1.0.tar.gz
+	https://files.pythonhosted.org/packages/76/2e/a7c1fd746c09d5d0498d6d00fa14afebdf26d44c3e64a630616489ece1a3/inflect-6.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5857af173e3cb986e7a83762ec808908e4b4164fa7f2b9484c0524f786c7bf82
+	sha256:518088ef414a4e15df70e6bcb40d021da4d423cc6c2fd4c0cad5500d39f86627
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,6 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 PYTHON_REQUIRED_PACKAGES += library/python/pydantic
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pygments
