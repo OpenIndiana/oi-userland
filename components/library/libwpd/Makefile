@@ -20,33 +20,30 @@
 #
 # Copyright (c) 2015-2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=32_and_64
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libwpd
 COMPONENT_VERSION=      0.10.3
-COMPONENT_REVISION=     1
-COMPONENT_FMRI=         library/c++/libwpd
-COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/libwpd
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      libwpd - library for reading Corel WordPerfect(tm) documents 
+COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/libwpd
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:2465b0b662fdc5d4e3bebcdc9a79027713fb629ca2bff04a3c9251fdec42dd09
-COMPONENT_ARCHIVE_URL=  \
-	http://sourceforge.net/projects/libwpd/files/libwpd/libwpd-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:2465b0b662fdc5d4e3bebcdc9a79027713fb629ca2bff04a3c9251fdec42dd09
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/libwpd/libwpd-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/c++/libwpd
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/librevenge
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += system/library/math
