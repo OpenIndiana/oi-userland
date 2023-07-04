@@ -18,6 +18,7 @@
 # Copyright 2021 Carsten Grzemba
 #
 
+USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 # ESR should be set to esr for esr build, or an empty string for other builds
@@ -26,11 +27,11 @@ ESR =
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # CANDIDATE_BETA is the beta version found in the candidates directory.
 # Do not define either for final release build.
-# CANDIDATE_BUILD=1
+# CANDIDATE_BUILD=2
 # CANDIDATE_BETA=9
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	114.0.2
+COMPONENT_VERSION =	115.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,7 +41,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ES
 else
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
-COMPONENT_ARCHIVE_HASH= sha256:aa602032f0b7065b743ba7fabf96714398aba538bcc017a4b0fff556dc69f8fe
+COMPONENT_ARCHIVE_HASH= sha256:7cdb23fe5ccb54334c8fe14c1e5dd89d5788f8e7b79a2bd9cc4eabdc7e54e898
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
