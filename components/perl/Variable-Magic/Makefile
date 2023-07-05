@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Variable::Magic
 HUMAN_VERSION =			0.63
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Variable::Magic - Associate user-defined magic to variables from Perl.
 COMPONENT_CPAN_AUTHOR =		VPIT
 COMPONENT_ARCHIVE_HASH =	\
