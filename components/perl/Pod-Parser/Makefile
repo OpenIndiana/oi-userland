@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Pod::Parser
 HUMAN_VERSION =			1.66
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pod::Parser - base class for creating POD filters and translators
 COMPONENT_CPAN_AUTHOR =		MAREKR
 COMPONENT_ARCHIVE_HASH =	\
