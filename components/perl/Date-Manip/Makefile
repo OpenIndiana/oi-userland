@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Date::Manip
 HUMAN_VERSION =			6.92
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Date::Manip - Date manipulation routines
 COMPONENT_CPAN_AUTHOR =		SBECK
 COMPONENT_ARCHIVE_HASH =	\
