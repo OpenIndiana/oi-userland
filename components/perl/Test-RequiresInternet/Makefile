@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::RequiresInternet
 HUMAN_VERSION =			0.05
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Test::RequiresInternet - Easily test network connectivity
 COMPONENT_CPAN_AUTHOR =		MALLEN
 COMPONENT_ARCHIVE_HASH =	\
