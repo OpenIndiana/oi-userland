@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Convert::ASN1
 HUMAN_VERSION =			0.33
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Convert::ASN1 - Convert between perl data structures and ASN.1 encoded packets
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
