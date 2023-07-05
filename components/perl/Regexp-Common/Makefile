@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Regexp::Common
 HUMAN_VERSION =			2017060201
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Regexp::Common - Provide commonly requested regular expressions
 COMPONENT_CPAN_AUTHOR =		ABIGAIL
 COMPONENT_ARCHIVE_HASH =	\
