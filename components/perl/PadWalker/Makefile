@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		PadWalker
 HUMAN_VERSION =			2.5
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		PadWalker - play with other peoples' lexical variables
 COMPONENT_CPAN_AUTHOR =		ROBIN
 COMPONENT_ARCHIVE_HASH =	\
