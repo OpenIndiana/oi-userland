@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		YAML::Tiny
 HUMAN_VERSION =			1.74
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		YAML::Tiny - Read/Write YAML files with as little code as possible
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
