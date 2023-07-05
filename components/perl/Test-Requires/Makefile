@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Requires
 HUMAN_VERSION =			0.11
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Test::Requires - Checks to see if the module can be loaded
 COMPONENT_CPAN_AUTHOR =		TOKUHIROM
 COMPONENT_ARCHIVE_HASH =	\
