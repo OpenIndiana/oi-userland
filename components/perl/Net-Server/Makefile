@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::Server
 HUMAN_VERSION =			2.014
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Net::Server - Extensible Perl internet server
 COMPONENT_CPAN_AUTHOR =		RHANDOM
 COMPONENT_ARCHIVE_HASH =	\
