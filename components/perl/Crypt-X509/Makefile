@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::X509
 HUMAN_VERSION =			0.55
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::X509 - Parse a X.509 certificate
 COMPONENT_CPAN_AUTHOR =		MRSCOTTY
 COMPONENT_ARCHIVE_HASH =	\
