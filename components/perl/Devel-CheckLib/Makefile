@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Devel::CheckLib
 HUMAN_VERSION =			1.16
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Devel::CheckLib - check that a library is available
 COMPONENT_CPAN_AUTHOR =		MATTN
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,5 +30,5 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/capture-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/capture-tiny
