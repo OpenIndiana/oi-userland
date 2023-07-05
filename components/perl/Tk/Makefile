@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Tk
 HUMAN_VERSION =			804.036
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Tk - a Graphical User Interface Toolkit
 COMPONENT_CPAN_AUTHOR =		SREZIC
 COMPONENT_ARCHIVE_HASH =	\
