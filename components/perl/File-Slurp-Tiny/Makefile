@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::Slurp::Tiny
 HUMAN_VERSION =			0.004
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		File::Slurp::Tiny - A simple, sane and efficient file slurper [DISCOURAGED]
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
