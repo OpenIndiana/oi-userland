@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Sub::Install
 HUMAN_VERSION =			0.929
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Sub::Install - install subroutines into packages easily
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
