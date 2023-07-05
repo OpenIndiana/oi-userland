@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::MIME::Encodings
 HUMAN_VERSION =			1.317
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::MIME::Encodings - A unified interface to MIME encoding and decoding
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
