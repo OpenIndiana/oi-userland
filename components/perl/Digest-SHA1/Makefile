@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Digest::SHA1
 HUMAN_VERSION =			2.13
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Digest::SHA1 - Perl interface to the SHA-1 algorithm
 COMPONENT_CPAN_AUTHOR =		GAAS
 COMPONENT_ARCHIVE_HASH =	\
