@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Simple
 HUMAN_VERSION =			2.218
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::Simple - simple parsing of RFC2822 message format and headers
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
