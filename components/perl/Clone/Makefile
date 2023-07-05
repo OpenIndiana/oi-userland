@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Clone
 HUMAN_VERSION =			0.46
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Clone - recursively copy Perl datatypes
 COMPONENT_CPAN_AUTHOR =		GARU
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,6 +34,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{1,\}/POINTER/g'"
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/b-cow
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/b-cow
