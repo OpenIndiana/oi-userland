@@ -15,16 +15,15 @@
 #
 
 BUILD_STYLE = makemaker
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::ScanDeps
-HUMAN_VERSION =			1.31
+HUMAN_VERSION =			1.32
 COMPONENT_SUMMARY =		Module::ScanDeps - Recursively scan Perl code for dependencies
 COMPONENT_CPAN_AUTHOR =		RSCHUPP
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fc4d98d2b0015745f3b55b51ddf4445a73b069ad0cb7ec36d8ea781d61074d9d
+	sha256:7ab3556ccaa812298da33f0a0515037cd513b9e72c42a76d2c2e4d28832215f0
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,5 +33,5 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e '/syntax OK$$/d'"
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/test-requires
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requires
