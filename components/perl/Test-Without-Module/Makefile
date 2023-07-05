@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Without::Module
 HUMAN_VERSION =			0.21
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Without::Module - Test fallback behaviour in absence of modules
 COMPONENT_CPAN_AUTHOR =		CORION
 COMPONENT_ARCHIVE_HASH =	\
