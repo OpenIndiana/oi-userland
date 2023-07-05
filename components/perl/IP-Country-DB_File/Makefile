@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IP::Country::DB_File
 HUMAN_VERSION =			3.03
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		IP::Country::DB_File - IPv4 and IPv6 to country translation using DB_File
 COMPONENT_CPAN_AUTHOR =		NWELLNHOF
 COMPONENT_ARCHIVE_HASH =	\
