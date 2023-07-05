@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Devel::Symdump
 HUMAN_VERSION =			2.18
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Devel::Symdump - dump symbol names or the symbol table
 COMPONENT_CPAN_AUTHOR =		ANDK
 COMPONENT_ARCHIVE_HASH =	\
