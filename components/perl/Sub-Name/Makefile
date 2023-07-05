@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Sub::Name
 HUMAN_VERSION =			0.27
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Sub::Name - (Re)name a sub
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
