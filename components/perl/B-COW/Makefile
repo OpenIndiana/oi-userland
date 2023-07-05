@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		B::COW
 HUMAN_VERSION =			0.007
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		B::COW - B::COW additional B helpers to check COW status
 COMPONENT_CPAN_AUTHOR =		ATOOMIC
 COMPONENT_ARCHIVE_HASH =	\
