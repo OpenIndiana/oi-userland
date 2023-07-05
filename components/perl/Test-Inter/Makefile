@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Inter
 HUMAN_VERSION =			1.10
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Inter - framework for more readable interactive test scripts
 COMPONENT_CPAN_AUTHOR =		SBECK
 COMPONENT_ARCHIVE_HASH =	\
