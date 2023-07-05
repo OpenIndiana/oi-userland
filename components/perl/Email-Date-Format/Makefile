@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Date::Format
 HUMAN_VERSION =			1.008
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::Date::Format - produce RFC 2822 date strings
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
