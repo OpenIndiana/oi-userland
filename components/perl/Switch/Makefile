@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Switch
 HUMAN_VERSION =			2.17
-COMPONENT_REVISION =		3
+COMPONENT_REVISION =		4
 COMPONENT_SUMMARY =		Switch - A switch statement for Perl, do not use if you can use given/when
 COMPONENT_CPAN_AUTHOR =		CHORNY
 COMPONENT_ARCHIVE_HASH =	\
