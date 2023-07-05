@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_PERL_MODULE =		Term::ReadKey
 COMPONENT_PERL_DISTRIBUTION =	TermReadKey
 HUMAN_VERSION =			2.38
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Term::ReadKey - A perl module for simple terminal control
 COMPONENT_CPAN_AUTHOR =		JSTOWE
 COMPONENT_ARCHIVE_HASH =	\
