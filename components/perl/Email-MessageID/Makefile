@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::MessageID
 HUMAN_VERSION =			1.408
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::MessageID - Generate world unique message-ids.
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
