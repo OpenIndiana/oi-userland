@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::ShareDir::Install
 HUMAN_VERSION =			0.14
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		File::ShareDir::Install - Install shared files
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
