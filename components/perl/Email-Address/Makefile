@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Address
 HUMAN_VERSION =			1.913
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::Address - RFC 2822 Address Parsing and Creation
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
