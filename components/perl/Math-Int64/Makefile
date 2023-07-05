@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Math::Int64
 HUMAN_VERSION =			0.54
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Math::Int64 - Manipulate 64 bits integers in Perl
 COMPONENT_CPAN_AUTHOR =		SALVA
 COMPONENT_ARCHIVE_HASH =	\
