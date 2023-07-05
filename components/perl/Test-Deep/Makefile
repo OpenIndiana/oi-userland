@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Deep
 HUMAN_VERSION =			1.204
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Deep - Extremely flexible deep comparison
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
