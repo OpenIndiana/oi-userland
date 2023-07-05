@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::MIME::ContentType
 HUMAN_VERSION =			1.028
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::MIME::ContentType - Parse and build a MIME Content-Type or Content-Disposition Header
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
