@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Path::Tiny
 HUMAN_VERSION =			0.144
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Path::Tiny - File path utility
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
