@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IO::Pipely
 HUMAN_VERSION =			0.006
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		IO::Pipely - Portably create pipe() or pipe-like handles, one way or another.
 COMPONENT_CPAN_AUTHOR =		RCAPUTO
 COMPONENT_ARCHIVE_HASH =	\
