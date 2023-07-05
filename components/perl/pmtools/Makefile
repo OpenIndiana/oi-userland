@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		pmtools
 HUMAN_VERSION =			2.2.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pmtools - Perl Module Tools
 COMPONENT_CPAN_AUTHOR =		MLFISHER
 COMPONENT_ARCHIVE_HASH =	\
