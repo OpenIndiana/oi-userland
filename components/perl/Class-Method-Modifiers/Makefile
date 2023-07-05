@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Class::Method::Modifiers
 HUMAN_VERSION =			2.15
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Class::Method::Modifiers - Provides Moose-like method modifiers
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
