@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Needs
 HUMAN_VERSION =			0.002010
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Needs - Skip tests when modules not available
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
