@@ -15,12 +15,12 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mypy
 HUMAN_VERSION =			1.4.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		mypy - Optional static typing for Python
 COMPONENT_PROJECT_URL =		https://www.mypy-lang.org/
 COMPONENT_ARCHIVE_URL =		\
@@ -35,14 +35,15 @@ include $(WS_MAKE_RULES)/common.mk
 # Testing needs to compile some C++ sources
 COMPONENT_TEST_ENV += CXX="$(CXX)"
 
+# https://github.com/python/mypy/issues/15617
+PYTEST_ADDOPTS += -p no:mypy
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/mypy-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/typed-ast
 PYTHON_REQUIRED_PACKAGES += library/python/types-psutil
 PYTHON_REQUIRED_PACKAGES += library/python/types-setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/types-typed-ast
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
@@ -65,8 +66,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/six
 TEST_REQUIRED_PACKAGES.python += library/python/tomli
-TEST_REQUIRED_PACKAGES.python += library/python/typed-ast
 TEST_REQUIRED_PACKAGES.python += library/python/types-psutil
 TEST_REQUIRED_PACKAGES.python += library/python/types-setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/types-typed-ast
 TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
