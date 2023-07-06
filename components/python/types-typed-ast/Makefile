@@ -19,19 +19,23 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-typed-ast
-HUMAN_VERSION =			1.5.8.6
+HUMAN_VERSION =			1.5.8.7
 COMPONENT_SUMMARY =		types-typed-ast - Typing stubs for typed-ast
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/42/22/98b30750373fb3e262e3858a56bbd7506244960ed5c27a9dc7321ea99ab0/types-typed-ast-1.5.8.6.tar.gz
+	https://files.pythonhosted.org/packages/dc/44/2b4c6b15bf901533966f63ca5b073e4f9b7a9532bb4a64d9ceb83432db9b/types-typed-ast-1.5.8.7.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9543b5863db97b412a2b1d5f407c908336365a0bad304d64e8328a769f48c230
+	sha256:f7795f6f9d597b35212314040b993f6613b51d81738edce3c1e3a3e9ef655124
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
-# This project does not contain tests
-TEST_STYLE = none
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# We are not interested in coverage reports
+PYTEST_ADDOPTS += -p no:cov
+# https://github.com/python/typeshed/issues/10386
+PYTEST_ADDOPTS += -p no:black
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
