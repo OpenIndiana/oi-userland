@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		inflect
-HUMAN_VERSION =			6.2.0
+HUMAN_VERSION =			7.0.0
 COMPONENT_SUMMARY =		inflect - Correctly generate plurals, singular nouns, ordinals, indefinite articles; convert numbers to words
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/inflect
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/76/2e/a7c1fd746c09d5d0498d6d00fa14afebdf26d44c3e64a630616489ece1a3/inflect-6.2.0.tar.gz
+	https://files.pythonhosted.org/packages/9f/90/1d0a889847fdce963ebe9684de24a749e4fad627bf595e9f0d32730f85a8/inflect-7.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:518088ef414a4e15df70e6bcb40d021da4d423cc6c2fd4c0cad5500d39f86627
+	sha256:63da9325ad29da81ec23e055b41225795ab793b4ecb483be5dc1fa363fd4717e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
