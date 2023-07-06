@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Warn
 HUMAN_VERSION =			0.37
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Test::Warn - Perl extension to test methods for warnings
 COMPONENT_CPAN_AUTHOR =		BIGJ
 COMPONENT_ARCHIVE_HASH =	\
