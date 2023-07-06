@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Data::OptList
 HUMAN_VERSION =			0.114
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Data::OptList - parse and validate simple name/value option pairs
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
