@@ -22,20 +22,30 @@
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2018, Michal Nowak
+# Copyright (c) 2023, Andreas Wacknitz
 #
-
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/groff-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="GNU troff Text Formatting (core system components)"
-set name=com.oracle.info.description value="GNU troff"
-set name=com.oracle.info.tpno value=7898
 set name=info.classification \
     value="org.opensolaris.category.2008:System/Text Tools"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+# Used by /usr/bin/grog
+depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/awk type=require
+
+# groff-core was previously in the 'desktop' consolidation. This optional
+# dependency is here to facilitate the safe transfer of the package 
+# to the 'userland' consolidation.
+depend type=optional fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.14.0
 
 link path=usr/bin/gdiffmk target=../gnu/bin/diffmk facet.compat.gnulinks=true
 link path=usr/bin/geqn target=../gnu/bin/eqn facet.compat.gnulinks=true
@@ -55,115 +65,114 @@ file usr/bin/gneqn path=usr/gnu/bin/neqn
 file usr/bin/gnroff path=usr/gnu/bin/nroff
 file usr/bin/gpic path=usr/gnu/bin/pic
 file usr/bin/gsoelim path=usr/gnu/bin/soelim
-file path=usr/share/groff/$(COMPONENT_VERSION)/eign
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devascii/B
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devascii/BI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devascii/DESC
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devascii/I
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devascii/R
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devlatin1/B
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devlatin1/BI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devlatin1/DESC
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devlatin1/I
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devlatin1/R
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/AB
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/ABI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/AI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/AR
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/BMB
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/BMBI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/BMI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/BMR
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/CB
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/CBI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/CI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/CR
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/DESC
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/EURO
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/HB
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/HBI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/HI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/HNB
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/HNBI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/HNI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/HNR
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/HR
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/NB
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/NBI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/NI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/NR
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/PB
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/PBI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/PI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/PR
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/S
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/SS
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/TB
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/TBI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/TI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/TR
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/ZCMI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/ZD
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/ZDR
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/download
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/freeeuro.pfa
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/generate/Makefile
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/generate/afmname
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/generate/dingbats.map
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/generate/dingbats.rmap
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/generate/lgreekmap
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/generate/symbol.sed
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/generate/symbolchars
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/generate/symbolsl.afm
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/generate/textmap
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/prologue
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/symbolsl.pfa
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/text.enc
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devps/zapfdr.pfa
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devutf8/B
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devutf8/BI
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devutf8/DESC
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devutf8/I
-file path=usr/share/groff/$(COMPONENT_VERSION)/font/devutf8/R
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/an-old.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/andoc.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/composite.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/devtag.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/doc-old.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/doc.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/eqnrc
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/europs.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/gan.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/gm.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/gmm.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/gmmse.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/gmse.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/gs.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/hyphen.us
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/hyphenex.us
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/latin1.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/latin2.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/latin9.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/man.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/mandoc.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/mdoc.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/mdoc/doc-common
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/mdoc/doc-ditroff
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/mdoc/doc-nroff
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/mdoc/doc-syms
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/papersize.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/pic.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/ps.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/psatk.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/psold.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/pspic.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/safer.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/troffrc
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/troffrc-end
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/tty-char.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/tty.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/unicode.tmac
-file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/www.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/eign
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devascii/B
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devascii/BI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devascii/DESC
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devascii/I
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devascii/R
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devlatin1/B
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devlatin1/BI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devlatin1/DESC
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devlatin1/I
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devlatin1/R
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/AB
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/ABI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/AI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/AR
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/BMB
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/BMBI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/BMI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/BMR
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/CB
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/CBI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/CI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/CR
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/DESC
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/EURO
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/HB
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/HBI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/HI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/HNB
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/HNBI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/HNI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/HNR
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/HR
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/NB
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/NBI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/NI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/NR
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/PB
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/PBI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/PI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/PR
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/S
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/SS
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/TB
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/TBI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/TI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/TR
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/ZCMI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/ZD
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/ZDR
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/download
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/freeeuro.pfa
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/generate/Makefile
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/generate/afmname
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/generate/dingbats-reversed.map
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/generate/dingbats.map
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/generate/slanted-symbol.map
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/generate/symbol.map
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/generate/symbol.sed
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/generate/symbolchars
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/generate/text.map
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/prologue
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/symbolsl.afm
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/symbolsl.pfa
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/text.enc
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/zapfdr.afm
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devps/zapfdr.pfa
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devutf8/B
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devutf8/BI
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devutf8/DESC
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devutf8/I
+file path=usr/share/groff/$(HUMAN_VERSION)/font/devutf8/R
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/andoc.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/composite.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/devtag.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/doc-old.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/doc.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/en.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/eqnrc
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/europs.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/gan.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/gm.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/gmm.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/gmmse.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/gmse.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/gs.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/latin1.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/latin2.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/latin9.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/man.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/mandoc.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/mdoc.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/mdoc/doc-common
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/mdoc/doc-ditroff
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/mdoc/doc-nroff
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/mdoc/doc-syms
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/papersize.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/pic.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/ps.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/psatk.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/psold.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/pspic.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/ptx.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/troffrc
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/troffrc-end
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/tty-char.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/tty.tmac
+file path=usr/share/groff/$(HUMAN_VERSION)/tmac/www.tmac
 file path=usr/share/groff/site-tmac/man.local
 file path=usr/share/groff/site-tmac/mdoc.local
 file path=usr/share/man/man1/gdiffmk.1
@@ -178,11 +187,3 @@ file path=usr/share/man/man1/grotty.1
 file path=usr/share/man/man1/gsoelim.1
 file path=usr/share/man/man1/gtbl.1
 file path=usr/share/man/man1/gtroff.1
-license groff.license license=GPLv2
-# Used by /usr/bin/grog
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/awk type=require
-
-# groff-core was previously in the 'desktop' consolidation. This optional
-# dependency is here to facilitate the safe transfer of the package 
-# to the 'userland' consolidation.
-depend type=optional fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.14.0
