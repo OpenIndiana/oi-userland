@@ -1144,8 +1144,8 @@ XPG5MODE =		$(CPP_XPG5MODE)
 #
 
 # Control the GCC optimization level.
-gcc_OPT.sparc.32 =	-O3 -mcpu=ultrasparc -mvis
-gcc_OPT.sparc.64 =	-O3 -mcpu=ultrasparc -mvis
+gcc_OPT.sparc.32 =	-O3 -mcpu=ultrasparc -mvis -mfsmuld
+gcc_OPT.sparc.64 =	-O3 -mcpu=ultrasparc -mvis -mfsmuld
 gcc_OPT.i386.32 =	-O3
 gcc_OPT.i386.64 =	-O3
 gcc_OPT =		$(gcc_OPT.$(MACH).$(BITS))
