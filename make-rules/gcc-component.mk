@@ -131,10 +131,8 @@ CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_TRIPLET)/bin
 CONFIGURE_OPTIONS += $(if $(strip $(shell $(CC) --version | grep $(COMPONENT_VERSION))),--disable-bootstrap,)
 COMPONENT_BUILD_TARGETS = $(if $(strip $(shell $(CC) --version | grep $(COMPONENT_VERSION))),,bootstrap)
 
-# On SPARC systems, use Sun Assembler
-CONFIGURE_OPTIONS.sparc+= --without-gnu-as --with-as=/usr/bin/as
-CONFIGURE_OPTIONS.i386+= --with-gnu-as --with-as=/usr/bin/gas
-CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(MACH))
+# The Sun Assembler is only used on SPARC gates.
+CONFIGURE_OPTIONS+= --with-gnu-as --with-as=/usr/bin/gas
 
 # Set path to library install prefix
 CONFIGURE_OPTIONS+= LDFLAGS="-R$(CONFIGURE_PREFIX)/lib"
