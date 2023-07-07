@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Sub::Exporter
 HUMAN_VERSION =			0.989
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Sub::Exporter - a sophisticated exporter for custom-built routines
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
