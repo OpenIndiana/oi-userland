@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox
-HUMAN_VERSION =			4.6.3
+HUMAN_VERSION =			4.6.4
 COMPONENT_SUMMARY =		tox - tox is a generic virtualenv management and test command line tool
 COMPONENT_PROJECT_URL =		http://tox.readthedocs.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b2/7b/6cb14ae53aa80e57e9ac07431624a83d8f5b09af1284b5a3850fb09b8d4e/tox-4.6.3.tar.gz
+	https://files.pythonhosted.org/packages/d7/58/cd83a435d18a56f1a53a3f0025483a128fd92f30c68269a1c97c9cb2d880/tox-4.6.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9e2c5091a117d03b583c57c4c40aecd068099c17d40520e7b165e85c19334534
+	sha256:5e2ad8845764706170d3dcaac171704513cc8a725655219acb62fe4380bdadda
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -44,13 +44,11 @@ PYTHON_REQUIRED_PACKAGES += library/python/colorama
 PYTHON_REQUIRED_PACKAGES += library/python/filelock
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
 PYTHON_REQUIRED_PACKAGES += library/python/pluggy
 PYTHON_REQUIRED_PACKAGES += library/python/pyproject-api
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
