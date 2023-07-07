@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		astroid
 HUMAN_VERSION =			2.15.5
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		astroid - An abstract syntax tree for Python with inference support.
 COMPONENT_ARCHIVE_URL =		\
 	https://files.pythonhosted.org/packages/e9/8d/338debdfc65383c2e1a0eaf336810ced0e8bc58a3f64d8f957cfb7b19e84/astroid-2.15.5.tar.gz
@@ -33,7 +34,6 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/lazy-object-proxy
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/typed-ast
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += library/python/wrapt
@@ -51,6 +51,5 @@ TEST_REQUIRED_PACKAGES.python += library/python/types-attrs
 TEST_REQUIRED_PACKAGES.python += library/python/types-pkg-resources
 TEST_REQUIRED_PACKAGES.python += library/python/types-python-dateutil
 TEST_REQUIRED_PACKAGES.python += library/python/types-six
-TEST_REQUIRED_PACKAGES.python += library/python/types-typed-ast
 TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
 TEST_REQUIRED_PACKAGES.python += library/python/urllib3
