@@ -15,22 +15,31 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pipdeptree
-HUMAN_VERSION =			2.9.3
+HUMAN_VERSION =			2.9.4
 COMPONENT_SUMMARY =		pipdeptree - Command line utility to show dependency tree of packages.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/pipdeptree
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/de/96/fd5b083d1517d68721865092b0d86eaeee33150bca4c0ee1bf4d931b8f9f/pipdeptree-2.9.3.tar.gz
+	https://files.pythonhosted.org/packages/97/db/2eb166d9861d26142d021b6a7f4cc85722e15cb022de1ac4914206cb90eb/pipdeptree-2.9.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d0049795a78c600bce97663a4d0ae3ebc212f7ccc2f1bd3efef910b7e8bf4591
+	sha256:e2ee93944e7cdf7107a461fb71738042aed8fd7950a254c7ee6bf6ec3f97aae9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# This is to make sure we do not get coverage report because it could differ
+# with every test run
+COMPONENT_TEST_TARGETS += -- tests
+
+# https://github.com/tox-dev/pipdeptree/issues/256
+PYTEST_ADDOPTS += -p no:randomly
+
+# https://github.com/jaraco/pytest-enabler/issues/8
+TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
