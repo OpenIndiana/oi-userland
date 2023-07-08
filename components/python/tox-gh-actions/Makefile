@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox-gh-actions
-HUMAN_VERSION =			3.1.1
+HUMAN_VERSION =			3.1.3
 COMPONENT_SUMMARY =		tox-gh-actions - Seamless integration of tox into GitHub Actions
 COMPONENT_PROJECT_URL =		https://github.com/ymyzk/tox-gh-actions
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3e/00/17c8f2518292a5723d42712522538bdd02d1d531a2cbb8bc8fbddebdb8a3/tox-gh-actions-3.1.1.tar.gz
+	https://files.pythonhosted.org/packages/b1/9e/3433f72030662ac92b022683fcc5ac836d1fc09153e5d87dc876f43b8c54/tox-gh-actions-3.1.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8092fbedef53d29ca4f5ee35e15b4324b2edcd5c9dc17db56777cddac23ac3c1
+	sha256:ffd4151fe8b62c6f401a2fc5a01317835d7ab380923f6e0d063c300750308328
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
