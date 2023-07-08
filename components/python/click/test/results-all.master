@@ -1,8 +1,22 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/py$(PYV)/tmp
 ============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg, testpaths: tests
-collecting ... collected 598 items
+rootdir: $(@D)
+configfile: setup.cfg
+testpaths: tests
+asyncio: mode=strict
+collecting ... collected 611 items
 
+input using the msvcrt module.)
+input using the msvcrt module.)
+input using the msvcrt module.)
+input using the msvcrt module.)
+input using the msvcrt module.)
+input using the msvcrt module.)
 tests/test_arguments.py::test_argument_unbounded_nargs_cant_have_default PASSED
 tests/test_arguments.py::test_bytes_args PASSED
 tests/test_arguments.py::test_defaults_for_nargs PASSED
@@ -38,6 +52,7 @@ tests/test_arguments.py::test_nested_subcommand_help PASSED
 tests/test_arguments.py::test_path_allow_dash PASSED
 tests/test_arguments.py::test_stdout_default PASSED
 tests/test_arguments.py::test_subcommand_help PASSED
+tests/test_arguments.py::test_when_argument_decorator_is_used_multiple_times_cls_is_preserved PASSED
 tests/test_basic.py::test_basic_functionality PASSED
 tests/test_basic.py::test_basic_group PASSED
 tests/test_basic.py::test_boolean_conversion[0-False] PASSED
@@ -89,7 +104,7 @@ tests/test_basic.py::test_string_option[args0-S:[no value]] PASSED
 tests/test_basic.py::test_string_option[args1-S:[42]] PASSED
 tests/test_basic.py::test_string_option[args2-Error: Option '--s' requires an argument.] PASSED
 tests/test_basic.py::test_string_option[args3-S:[]] PASSED
-tests/test_basic.py::test_string_option[args4-S:[u2603]] PASSED
+tests/test_basic.py::test_string_option[args4-S:[\u2603]] PASSED
 tests/test_basic.py::test_summary_line PASSED
 tests/test_basic.py::test_uuid_option[args0-U:[ba122011-349f-423b-873b-9d6a79c688ab]] PASSED
 tests/test_basic.py::test_uuid_option[args1-U:[821592c1-c50e-4971-9cd6-e89dc6832f86]] PASSED
@@ -107,12 +122,15 @@ tests/test_chain.py::test_multicommand_arg_behavior PASSED
 tests/test_chain.py::test_multicommand_chaining XFAIL
 tests/test_chain.py::test_no_command_result_callback[False-1] PASSED
 tests/test_chain.py::test_no_command_result_callback[True-[]] PASSED
-tests/test_chain.py::test_pipeline[args0-foonbar-expect0] PASSED
-tests/test_chain.py::test_pipeline[args1-foo n bar-expect1] PASSED
-tests/test_chain.py::test_pipeline[args2-foo n bar-expect2] PASSED
+tests/test_chain.py::test_pipeline[args0-foo\nbar-expect0] PASSED
+tests/test_chain.py::test_pipeline[args1-foo \n bar-expect1] PASSED
+tests/test_chain.py::test_pipeline[args2-foo \n bar-expect2] PASSED
 tests/test_command_decorators.py::test_command_no_parens PASSED
+tests/test_command_decorators.py::test_custom_command_no_parens PASSED
 tests/test_command_decorators.py::test_group_no_parens PASSED
 tests/test_command_decorators.py::test_params_argument PASSED
+tests/test_commands.py::test_abort_exceptions_with_disabled_standalone_mode[EOFError] PASSED
+tests/test_commands.py::test_abort_exceptions_with_disabled_standalone_mode[KeyboardInterrupt] PASSED
 tests/test_commands.py::test_aliased_command_canonical_name PASSED
 tests/test_commands.py::test_auto_shorthelp PASSED
 tests/test_commands.py::test_base_command PASSED
@@ -127,9 +145,8 @@ tests/test_commands.py::test_group_invoke_collects_used_option_prefixes PASSED
 tests/test_commands.py::test_group_parse_args_collects_base_option_prefixes PASSED
 tests/test_commands.py::test_group_with_args[args0-2-Error: Missing command.] PASSED
 tests/test_commands.py::test_group_with_args[args1-0-Show this message and exit.] PASSED
-tests/test_commands.py::test_group_with_args[args2-0-obj=obj1nmoven] PASSED
+tests/test_commands.py::test_group_with_args[args2-0-obj=obj1\nmove\n] PASSED
 tests/test_commands.py::test_group_with_args[args3-0-Show this message and exit.] PASSED
-tests/test_commands.py::test_help_truncation PASSED
 tests/test_commands.py::test_invoked_subcommand PASSED
 tests/test_commands.py::test_no_args_is_help PASSED
 tests/test_commands.py::test_object_propagation PASSED
@@ -169,6 +186,7 @@ tests/test_custom_classes.py::test_group_group_class PASSED
 tests/test_custom_classes.py::test_group_group_class_self PASSED
 tests/test_defaults.py::test_basic_defaults PASSED
 tests/test_defaults.py::test_multiple_defaults PASSED
+tests/test_defaults.py::test_multiple_flag_default PASSED
 tests/test_defaults.py::test_nargs_plus_multiple PASSED
 tests/test_formatting.py::test_basic_functionality PASSED
 tests/test_formatting.py::test_formatting_custom_type_metavar PASSED
@@ -184,6 +202,7 @@ tests/test_formatting.py::test_global_show_default PASSED
 tests/test_formatting.py::test_help_formatter_write_text PASSED
 tests/test_formatting.py::test_removing_multiline_marker PASSED
 tests/test_formatting.py::test_truncating_docstring PASSED
+tests/test_formatting.py::test_truncating_docstring_no_help PASSED
 tests/test_formatting.py::test_wrapping_long_command_name PASSED
 tests/test_formatting.py::test_wrapping_long_options_strings PASSED
 tests/test_imports.py::test_light_imports PASSED
@@ -246,7 +265,6 @@ tests/test_options.py::test_intrange_default_help_text[type2-x>=1] PASSED
 tests/test_options.py::test_intrange_default_help_text[type3-x<=32] PASSED
 tests/test_options.py::test_invalid_flag_combinations[kwargs0-'count' is not valid with 'multiple'.] PASSED
 tests/test_options.py::test_invalid_flag_combinations[kwargs1-'count' is not valid with 'is_flag'.] PASSED
-tests/test_options.py::test_invalid_flag_combinations[kwargs2-'multiple' is not valid with 'is_flag', use 'count'.] PASSED
 tests/test_options.py::test_invalid_nargs PASSED
 tests/test_options.py::test_invalid_option PASSED
 tests/test_options.py::test_is_bool_flag_is_correctly_set[bool flag_value] PASSED
@@ -330,9 +348,12 @@ tests/test_parser.py::test_parser_default_prefixes PASSED
 tests/test_parser.py::test_split_arg_string[cli 'my file'-expect2] PASSED
 tests/test_parser.py::test_split_arg_string[cli 'my file-expect1] PASSED
 tests/test_parser.py::test_split_arg_string[cli a b c-expect0] PASSED
-tests/test_parser.py::test_split_arg_string[cli my\ file-expect4] PASSED
-tests/test_parser.py::test_split_arg_string[cli my\-expect3] PASSED
+tests/test_parser.py::test_split_arg_string[cli my\\ file-expect4] PASSED
+tests/test_parser.py::test_split_arg_string[cli my\\-expect3] PASSED
 tests/test_shell_completion.py::test_absolute_path PASSED
+tests/test_shell_completion.py::test_add_completion_class PASSED
+tests/test_shell_completion.py::test_add_completion_class_decorator PASSED
+tests/test_shell_completion.py::test_add_completion_class_with_name PASSED
 tests/test_shell_completion.py::test_add_different_name PASSED
 tests/test_shell_completion.py::test_argument_default PASSED
 tests/test_shell_completion.py::test_argument_nargs PASSED
@@ -346,12 +367,12 @@ tests/test_shell_completion.py::test_command PASSED
 tests/test_shell_completion.py::test_completion_item_data PASSED
 tests/test_shell_completion.py::test_context_settings PASSED
 tests/test_shell_completion.py::test_double_dash PASSED
-tests/test_shell_completion.py::test_full_complete[bash-env0-plain,anplain,bn] PASSED
-tests/test_shell_completion.py::test_full_complete[bash-env1-plain,bn] PASSED
-tests/test_shell_completion.py::test_full_complete[fish-env4-plain,anplain,btbeen] PASSED
-tests/test_shell_completion.py::test_full_complete[fish-env5-plain,btbeen] PASSED
-tests/test_shell_completion.py::test_full_complete[zsh-env2-plainnan_nplainnbnbeen] PASSED
-tests/test_shell_completion.py::test_full_complete[zsh-env3-plainnbnbeen] PASSED
+tests/test_shell_completion.py::test_full_complete[bash-env0-plain,a\nplain,b\n] PASSED
+tests/test_shell_completion.py::test_full_complete[bash-env1-plain,b\n] PASSED
+tests/test_shell_completion.py::test_full_complete[fish-env4-plain,a\nplain,b\tbee\n] PASSED
+tests/test_shell_completion.py::test_full_complete[fish-env5-plain,b\tbee\n] PASSED
+tests/test_shell_completion.py::test_full_complete[zsh-env2-plain\na\n_\nplain\nb\nbee\n] PASSED
+tests/test_shell_completion.py::test_full_complete[zsh-env3-plain\nb\nbee\n] PASSED
 tests/test_shell_completion.py::test_full_source[bash] PASSED
 tests/test_shell_completion.py::test_full_source[fish] PASSED
 tests/test_shell_completion.py::test_full_source[zsh] PASSED
@@ -370,35 +391,35 @@ tests/test_shell_completion.py::test_path_types[type1-file] PASSED
 tests/test_shell_completion.py::test_path_types[type2-dir] PASSED
 tests/test_shell_completion.py::test_type_choice PASSED
 tests/test_termui.py::test_choices_list_in_prompt PASSED
-tests/test_termui.py::test_confirmation_prompt[Confirm Password-passwordnpasswordn-None-password] PASSED
+tests/test_termui.py::test_confirmation_prompt[Confirm Password-password\npassword\n-None-password] PASSED
 tests/test_termui.py::test_confirmation_prompt[False-None-None-None] PASSED
 tests/test_termui.py::test_confirmation_prompt[True---] PASSED
-tests/test_termui.py::test_confirmation_prompt[True-passwordnpassword-None-password] PASSED
+tests/test_termui.py::test_confirmation_prompt[True-password\npassword-None-password] PASSED
 tests/test_termui.py::test_fast_edit PASSED
 tests/test_termui.py::test_file_prompt_default_format[file_kwargs0] PASSED
 tests/test_termui.py::test_file_prompt_default_format[file_kwargs1] PASSED
 tests/test_termui.py::test_file_prompt_default_format[file_kwargs2] PASSED
-tests/test_termui.py::test_getchar_special_key_windows[x00-a] SKIPPED
-tests/test_termui.py::test_getchar_special_key_windows[x00-b] SKIPPED
-tests/test_termui.py::test_getchar_special_key_windows[xe0-c] SKIPPED
-tests/test_termui.py::test_getchar_windows[False- ] SKIPPED (Tests u...)
-tests/test_termui.py::test_getchar_windows[False-H] SKIPPED (Tests u...)
-tests/test_termui.py::test_getchar_windows[False-u5b57] SKIPPED (Te...)
-tests/test_termui.py::test_getchar_windows[False-xc0] SKIPPED (Test...)
-tests/test_termui.py::test_getchar_windows[False-xe0H] SKIPPED (Tes...)
-tests/test_termui.py::test_getchar_windows[False-xe0R] SKIPPED (Tes...)
-tests/test_termui.py::test_getchar_windows[False-xe9] SKIPPED (Test...)
-tests/test_termui.py::test_getchar_windows[False-h] SKIPPED (Tests u...)
-tests/test_termui.py::test_getchar_windows[True- ] SKIPPED (Tests us...)
-tests/test_termui.py::test_getchar_windows[True-H] SKIPPED (Tests us...)
-tests/test_termui.py::test_getchar_windows[True-u5b57] SKIPPED (Tes...)
-tests/test_termui.py::test_getchar_windows[True-xc0] SKIPPED (Tests...)
-tests/test_termui.py::test_getchar_windows[True-xe0H] SKIPPED (Test...)
-tests/test_termui.py::test_getchar_windows[True-xe0R] SKIPPED (Test...)
-tests/test_termui.py::test_getchar_windows[True-xe9] SKIPPED (Tests...)
-tests/test_termui.py::test_getchar_windows[True-h] SKIPPED (Tests us...)
-tests/test_termui.py::test_getchar_windows_exceptions[x03-KeyboardInterrupt] SKIPPED
-tests/test_termui.py::test_getchar_windows_exceptions[x1a-EOFError] SKIPPED
+tests/test_termui.py::test_getchar_special_key_windows[\x00-a] SKIPPED
+tests/test_termui.py::test_getchar_special_key_windows[\x00-b] SKIPPED
+tests/test_termui.py::test_getchar_special_key_windows[\xe0-c] SKIPPED
+tests/test_termui.py::test_getchar_windows[False- ] SKIPPED (Tests user-
+tests/test_termui.py::test_getchar_windows[False-H] SKIPPED (Tests user-
+tests/test_termui.py::test_getchar_windows[False-\u5b57] SKIPPED (Tests
+tests/test_termui.py::test_getchar_windows[False-\xc0] SKIPPED (Tests
+tests/test_termui.py::test_getchar_windows[False-\xe0H] SKIPPED (Tests
+tests/test_termui.py::test_getchar_windows[False-\xe0R] SKIPPED (Tests
+tests/test_termui.py::test_getchar_windows[False-\xe9] SKIPPED (Tests
+tests/test_termui.py::test_getchar_windows[False-h] SKIPPED (Tests user-
+tests/test_termui.py::test_getchar_windows[True- ] SKIPPED (Tests user-
+tests/test_termui.py::test_getchar_windows[True-H] SKIPPED (Tests user-
+tests/test_termui.py::test_getchar_windows[True-\u5b57] SKIPPED (Tests
+tests/test_termui.py::test_getchar_windows[True-\xc0] SKIPPED (Tests
+tests/test_termui.py::test_getchar_windows[True-\xe0H] SKIPPED (Tests
+tests/test_termui.py::test_getchar_windows[True-\xe0R] SKIPPED (Tests
+tests/test_termui.py::test_getchar_windows[True-\xe9] SKIPPED (Tests
+tests/test_termui.py::test_getchar_windows[True-h] SKIPPED (Tests user-
+tests/test_termui.py::test_getchar_windows_exceptions[\x03-KeyboardInterrupt] SKIPPED
+tests/test_termui.py::test_getchar_windows_exceptions[\x1a-EOFError] SKIPPED
 tests/test_termui.py::test_progress_bar_update_min_steps PASSED
 tests/test_termui.py::test_progressbar_eta[False-5] PASSED
 tests/test_termui.py::test_progressbar_eta[True-0] PASSED
@@ -416,11 +437,11 @@ tests/test_termui.py::test_progressbar_format_pos[0-5] PASSED
 tests/test_termui.py::test_progressbar_format_pos[4-0] PASSED
 tests/test_termui.py::test_progressbar_format_pos[5-5] PASSED
 tests/test_termui.py::test_progressbar_format_pos[6-5] PASSED
-tests/test_termui.py::test_progressbar_format_progress_line[0-False-False-0- [--------]0] PASSED
-tests/test_termui.py::test_progressbar_format_progress_line[0-False-False-0- [--------]1] PASSED
-tests/test_termui.py::test_progressbar_format_progress_line[0-False-True-0- [--------] 0/0] PASSED
-tests/test_termui.py::test_progressbar_format_progress_line[0-True-True-0- [--------] 0/0 0%] PASSED
-tests/test_termui.py::test_progressbar_format_progress_line[8-True-True-8- [########] 8/8 100%] PASSED
+tests/test_termui.py::test_progressbar_format_progress_line[0-False-False-0-  [--------]0] PASSED
+tests/test_termui.py::test_progressbar_format_progress_line[0-False-False-0-  [--------]1] PASSED
+tests/test_termui.py::test_progressbar_format_progress_line[0-False-True-0-  [--------]  0/0] PASSED
+tests/test_termui.py::test_progressbar_format_progress_line[0-True-True-0-  [--------]  0/0    0%] PASSED
+tests/test_termui.py::test_progressbar_format_progress_line[8-True-True-8-  [########]  8/8  100%] PASSED
 tests/test_termui.py::test_progressbar_format_progress_line_with_show_func[None] PASSED
 tests/test_termui.py::test_progressbar_format_progress_line_with_show_func[test] PASSED
 tests/test_termui.py::test_progressbar_hidden PASSED
@@ -448,13 +469,13 @@ tests/test_termui.py::test_prompt_required_with_required[False-True-args3-prompt
 tests/test_termui.py::test_prompt_required_with_required[True-False-None-prompt] PASSED
 tests/test_termui.py::test_prompt_required_with_required[True-False-args1-Option '-v' requires an argument.] PASSED
 tests/test_termui.py::test_secho PASSED
-tests/test_termui.py::test_secho_non_text[123-x1b[45m123x1b[0m] PASSED
+tests/test_termui.py::test_secho_non_text[123-\x1b[45m123\x1b[0m] PASSED
 tests/test_termui.py::test_secho_non_text[test-test] PASSED
-tests/test_testing.py::test_args[--foo "one two"-one twon] PASSED
-tests/test_testing.py::test_args[-barn] PASSED
-tests/test_testing.py::test_args[None-barn] PASSED
-tests/test_testing.py::test_args[args1-barn] PASSED
-tests/test_testing.py::test_args[args3-one twon] PASSED
+tests/test_testing.py::test_args[--foo "one two"-one two\n] PASSED
+tests/test_testing.py::test_args[-bar\n] PASSED
+tests/test_testing.py::test_args[None-bar\n] PASSED
+tests/test_testing.py::test_args[args1-bar\n] PASSED
+tests/test_testing.py::test_args[args3-one two\n] PASSED
 tests/test_testing.py::test_catch_exceptions PASSED
 tests/test_testing.py::test_command_standalone_mode_returns_value PASSED
 tests/test_testing.py::test_echo_stdin_prompts PASSED
@@ -480,8 +501,12 @@ tests/test_types.py::test_cast_multi_default[2-True-None-expect4] PASSED
 tests/test_types.py::test_cast_multi_default[2-True-default5-expect5] PASSED
 tests/test_types.py::test_cast_multi_default[None-True-None-expect2] PASSED
 tests/test_types.py::test_cast_multi_default[None-True-default3-expect3] PASSED
+tests/test_types.py::test_file_error_surrogates PASSED
+tests/test_types.py::test_file_surrogates[type0] PASSED
+tests/test_types.py::test_file_surrogates[type1] PASSED
 tests/test_types.py::test_float_range_no_clamp_open PASSED
 tests/test_types.py::test_path_resolve_symlink PASSED
+tests/test_types.py::test_path_surrogates PASSED
 tests/test_types.py::test_path_type[None-a/b/c.txt] PASSED
 tests/test_types.py::test_path_type[Path-expect3] PASSED
 tests/test_types.py::test_path_type[bytes-a/b/c.txt] PASSED
@@ -509,6 +534,7 @@ tests/test_types.py::test_range_fail[type5-0.5-x>0.5] PASSED
 tests/test_types.py::test_range_fail[type6-1.5-x<1.5] PASSED
 tests/test_utils.py::test_confirm_repeat PASSED
 tests/test_utils.py::test_detect_program_name[/foo/bar/example.py-None-example.py] PASSED
+tests/test_utils.py::test_detect_program_name[example--example] PASSED
 tests/test_utils.py::test_detect_program_name[example-None-example] PASSED
 tests/test_utils.py::test_detect_program_name[example.py-None-example.py] PASSED
 tests/test_utils.py::test_detect_program_name[example/__main__.py-example-python -m example] PASSED
@@ -516,6 +542,7 @@ tests/test_utils.py::test_detect_program_name[example/cli.py-example-python -m e
 tests/test_utils.py::test_echo PASSED
 tests/test_utils.py::test_echo_color_flag PASSED
 tests/test_utils.py::test_echo_custom_file PASSED
+tests/test_utils.py::test_echo_no_streams PASSED
 tests/test_utils.py::test_echo_via_pager[test0-cat 0] PASSED
 tests/test_utils.py::test_echo_via_pager[test0-cat 1] PASSED
 tests/test_utils.py::test_echo_via_pager[test0-cat] PASSED
@@ -565,43 +592,54 @@ tests/test_utils.py::test_open_file_respects_ignore PASSED
 tests/test_utils.py::test_prompt_cast_default PASSED
 tests/test_utils.py::test_prompts PASSED
 tests/test_utils.py::test_prompts_abort PASSED
-tests/test_utils.py::test_styling[styles0-x1b[30mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles1-x1b[31mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles10-x1b[42mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles11-x1b[43mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles12-x1b[44mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles13-x1b[45mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles14-x1b[46mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles15-x1b[47mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles16-x1b[48;5;91mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles17-x1b[48;2;135;0;175mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles18-x1b[1mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles19-x1b[2mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles2-x1b[32mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles20-x1b[4mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles21-x1b[53mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles22-x1b[3mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles23-x1b[5mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles24-x1b[7mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles25-x1b[9mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles26-x1b[22mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles27-x1b[22mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles28-x1b[24mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles29-x1b[55mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles3-x1b[33mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles30-x1b[23mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles31-x1b[25mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles32-x1b[27mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles33-x1b[29mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles34-x1b[30mx y] PASSED
-tests/test_utils.py::test_styling[styles4-x1b[34mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles5-x1b[35mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles6-x1b[36mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles7-x1b[37mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles8-x1b[40mx yx1b[0m] PASSED
-tests/test_utils.py::test_styling[styles9-x1b[41mx yx1b[0m] PASSED
-tests/test_utils.py::test_unstyle_other_ansi[x1b[?25lx yx1b[?25h-x y] PASSED
+tests/test_utils.py::test_styling[styles0-\x1b[30mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles1-\x1b[31mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles10-\x1b[42mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles11-\x1b[43mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles12-\x1b[44mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles13-\x1b[45mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles14-\x1b[46mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles15-\x1b[47mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles16-\x1b[48;5;91mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles17-\x1b[48;2;135;0;175mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles18-\x1b[1mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles19-\x1b[2mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles2-\x1b[32mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles20-\x1b[4mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles21-\x1b[53mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles22-\x1b[3mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles23-\x1b[5mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles24-\x1b[7mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles25-\x1b[9mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles26-\x1b[22mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles27-\x1b[22mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles28-\x1b[24mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles29-\x1b[55mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles3-\x1b[33mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles30-\x1b[23mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles31-\x1b[25mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles32-\x1b[27mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles33-\x1b[29mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles34-\x1b[30mx y] PASSED
+tests/test_utils.py::test_styling[styles4-\x1b[34mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles5-\x1b[35mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles6-\x1b[36mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles7-\x1b[37mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles8-\x1b[40mx y\x1b[0m] PASSED
+tests/test_utils.py::test_styling[styles9-\x1b[41mx y\x1b[0m] PASSED
+tests/test_utils.py::test_unstyle_other_ansi[\x1b[?25lx y\x1b[?25h-x y] PASSED
+user-input using the msvcrt module.)
+user-input using the msvcrt module.)
+user-input using the msvcrt module.)
+user-input using the msvcrt module.)
+user-input using the msvcrt module.)
+user-input using the msvcrt module.)
+user-input using the msvcrt module.)
+user-input using the msvcrt module.)
+user-input using the msvcrt module.)
+user-input using the msvcrt module.)
 
-======== 576 passed, 21 skipped, 1 xfailed ========
-___________________________________ summary ____________________________________
+
+======== 589 passed, 21 skipped, 1 xfailed ========
+  py$(PYV): OK
   congratulations :)
