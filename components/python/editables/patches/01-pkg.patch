@@ -1,0 +1,33 @@
+This is to avoid clash with ips pkg module.
+
+--- editables-0.4/tests/test_redirects.py.orig
++++ editables-0.4/tests/test_redirects.py
+@@ -60,7 +60,7 @@
+     project = tmp_path / "project"
+     project_files = {
+         "mod.py": "val = 42",
+-        "pkg": {
++        "pkg1": {
+             "__init__.py": "val = 42",
+             "sub.py": "val = 42",
+         },
+@@ -70,14 +70,14 @@
+     with save_import_state():
+         F.install()
+         F.map_module("mod", project / "mod.py")
+-        F.map_module("pkg", project / "pkg/__init__.py")
++        F.map_module("pkg1", project / "pkg1/__init__.py")
+ 
+         import mod
+ 
+         assert mod.val == 42
+-        import pkg
++        import pkg1
+ 
+-        assert pkg.val == 42
+-        import pkg.sub
++        assert pkg1.val == 42
++        import pkg1.sub
+ 
+-        assert pkg.sub.val == 42
++        assert pkg1.sub.val == 42

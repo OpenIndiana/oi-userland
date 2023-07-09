@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		editables
-COMPONENT_VERSION =		0.3
+HUMAN_VERSION =			0.4
 COMPONENT_SUMMARY =		editables - Editable installations
-COMPONENT_PROJECT_URL =		https://github.com/pfmoore/editables
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/01/b0/a2a87db4b6cb8e7d57004b6836faa634e0747e3e39ded126cdbe5a33ba36/editables-0.3.tar.gz
+	https://files.pythonhosted.org/packages/43/8a/a060ff3e75328015150f680b4b4bc4617644aaef199ece380342a334d78f/editables-0.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:167524e377358ed1f1374e61c268f0d7a4bf7dbd046c656f7b410cde16161b1a
+	sha256:dc322c42e7ccaf19600874035a4573898d88aadd07e177c239298135b75da772
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+TEST_STYLE = pytest
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
@@ -36,6 +37,10 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:mypy
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += runtime/python
