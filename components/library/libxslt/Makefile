@@ -29,13 +29,12 @@ USEOPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxslt
-COMPONENT_VERSION=	1.1.37
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	1.1.38
 COMPONENT_SUMMARY=      XSLT support for libxml2 (XML toolkit from the GNOME project)
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/XSLT/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:3a4b27dc8027ccd6146725950336f1ec520928f320f144eb5fa7990ae6123ab4
+COMPONENT_ARCHIVE_HASH=	sha256:1f32450425819a09acaff2ab7a5a7f8a2ec7956e505d7beeb45e843d0e1ecab1
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libxslt/1.1/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/libxslt
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -44,14 +43,14 @@ COMPONENT_LICENSE_FILE= Copyright
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYV=		$(shell echo $(PYTHON_VERSIONS) | tr -d .)
-PKG_MACROS +=	PYVER=$(PYTHON_VERSION)
-PKG_MACROS +=	PYV=$(PYV)
+PYV= $(shell echo $(PYTHON_VERSIONS) | tr -d .)
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
+PKG_MACROS += PYV=$(PYV)
 
-LINT_FLAGS +=	-I/usr/include/libxml2 
+LINT_FLAGS += -I/usr/include/libxml2 
 
-CFLAGS +=	$(CPP_LARGEFILES)
-LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
+CFLAGS  += $(CPP_LARGEFILES)
+LDFLAGS += $(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
@@ -76,8 +75,6 @@ COMPONENT_PREP_ACTION = \
 		    libtoolize --force --copy ; aclocal ; \
 		    automake -f -a --copy ; autoconf)
 
-USE_COMMON_TEST_MASTER= no
-
 # After we have built/installed libxml2, build/install the python
 # support for python (only 64 bit is available)
 COMPONENT_POST_INSTALL_ACTION.64 = ( \
@@ -98,21 +95,15 @@ COMPONENT_POST_TEST_ACTION.64 = \
     cd $(@D)/python; \
     LC_ALL=en_US.UTF-8 $(GMAKE) $(COMPONENT_TEST_ARGS) check
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
-
 COMPONENT_TEST_TRANSFORMS = \
         '-e "/^-- /p" ' \
         '-e "/^OK /p" ' \
         '-e "/^\#\# Running .* tests/p" ' \
         '-e "/^\#\# running Python regression tests/p" ' \
         '-e "/ result /p" ' \
+        '-e "/failed/p" ' \
         '-e "/.*/d" '
 
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/libxslt
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/security/libgpg-error
