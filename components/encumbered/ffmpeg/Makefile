@@ -1,4 +1,4 @@
-#
+
 # This file and its contents are supplied under the terms of the
 # Common Development and Distribution License ("CDDL"), version 1.0.
 # You may only use this file in accordance with the terms of version
@@ -19,13 +19,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
 COMPONENT_VERSION=      6.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082
-COMPONENT_ARCHIVE_URL=  \
-	https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082
+COMPONENT_ARCHIVE_URL= https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org/
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
