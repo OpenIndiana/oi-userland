@@ -19,44 +19,44 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
 COMPONENT_VERSION= 3.0.18
-COMPONENT_REVISION= 2
-COMPONENT_FMRI = media/vlc
-COMPONENT_CLASSIFICATION = Applications/Sound and Video
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:57094439c365d8aa8b9b41fa3080cc0eef2befe6025bb5cef722accc625aedec
 COMPONENT_ARCHIVE_URL=	https://download.videolan.org/pub/videolan/vlc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://www.videolan.org/vlc
-COMPONENT_LICENSE = GPLv2.0,LGPLv2.1
+COMPONENT_PROJECT_URL=	https://www.videolan.org/vlc
+COMPONENT_FMRI= media/vlc
+COMPONENT_CLASSIFICATION= Applications/Sound and Video
+COMPONENT_LICENSE= GPLv2.0,LGPLv2.1
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH = $(PATH.gnu)
 
 # Required for POSIX recvmsg/sendmsg
-LDFLAGS+= -lnsl -lsocket
+LDFLAGS += -lnsl -lsocket
 
 # Required for stack protector
-LDFLAGS+= -lssp
+LDFLAGS += -lssp
 
 # Required OpenGL extensions
-CFLAGS+= -I/usr/include/mesa -DGLEXT_PROTOTYPES 
+CFLAGS += -I/usr/include/mesa -DGLEXT_PROTOTYPES 
 
 # Define to ensure consistency
-CFLAGS+= -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-CXXFLAGS+= -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+CFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+CXXFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 
 # Use Qt5
-PKG_CONFIG_PATH+=:/usr/lib/qt/5.15/lib/$(MACH64)/pkgconfig
+PKG_CONFIG_PATH +=:/usr/lib/qt/5.15/lib/$(MACH64)/pkgconfig
 
 # build with the distribution preferred libjpeg implementation
-CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS           +=    $(JPEG_LDFLAGS)
+CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
+CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
+LDFLAGS  += $(JPEG_LDFLAGS)
 
-COMPONENT_PREP_ACTION= ( cd $(@D); autoreconf )
+COMPONENT_PREP_ACTION = ( cd $(@D); autoreconf )
 
 CONFIGURE_ENV += LUAC=$(USRBINDIR64)/luac
 
@@ -179,16 +179,14 @@ CONFIGURE_OPTIONS += --enable-upnp
 
 # Misc
 CONFIGURE_OPTIONS += --enable-libxml2
-CONFIGURE_OPTIONS += --disable-libgcrypt
-CONFIGURE_OPTIONS += --disable-gnutls # Requested 'gnutls >= 3.0.20' but version of GnuTLS is 2.8.6
+CONFIGURE_OPTIONS += --enable-libgcrypt
+CONFIGURE_OPTIONS += --enable-gnutls
 CONFIGURE_OPTIONS += --enable-taglib
 CONFIGURE_OPTIONS += --enable-notify
 
 
-QT5_ROOT = /usr/lib/qt/5.15
-
-QT5_RPATH = $(GCC_LIBDIR):$(QT5_ROOT)/lib/$(MACH64)
-
+QT5_ROOT = $(QT5_BASEDIR)
+QT5_RPATH = $(GCC_LIBDIR):$(QT5_LIBDIR)
 QT5_PLUGIN = /usr/lib/$(MACH64)/vlc/plugins/gui/libqt_plugin.so
 
 COMPONENT_POST_INSTALL_ACTION = \
@@ -201,6 +199,7 @@ unexport SHELLOPTS
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += audio/mpg123
 REQUIRED_PACKAGES += audio/twolame
@@ -224,6 +223,7 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/fribidi
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/libebml
 REQUIRED_PACKAGES += library/libidn
@@ -238,6 +238,7 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/opus
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/sdl
+REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libbluray
@@ -253,13 +254,13 @@ REQUIRED_PACKAGES += library/video/x265
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libupnp
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/libgcrypt
 REQUIRED_PACKAGES += system/network/avahi
 REQUIRED_PACKAGES += video/ffmpeg
 REQUIRED_PACKAGES += x11/library/libx11
