@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-checkdocs
-COMPONENT_VERSION =		2.9.0
+HUMAN_VERSION =			2.10.0
 COMPONENT_SUMMARY =		pytest-checkdocs - check the README when running tests
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-checkdocs
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ad/ab/dad19dd5014ff948dd4d1905b6d6e5beb8a9728e60a156723182abe75286/pytest-checkdocs-2.9.0.tar.gz
+	https://files.pythonhosted.org/packages/8c/a4/8e69b11d196c852c220387089e2be07a15bad7526b7964a09680b139b810/pytest-checkdocs-2.10.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:54b3d1357a289e3f6336d31d4ceb72e99afe0fa4f552990f1b1f015f1925543b
+	sha256:0c1320dc88549a95b7482fba6dae37ef5e9bfb42fd7babcc1f8f1be3ae15994f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -48,13 +48,12 @@ PYTHON_REQUIRED_PACKAGES += library/python/docutils
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
 TEST_REQUIRED_PACKAGES.python += library/python/types-docutils
