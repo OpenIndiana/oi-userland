@@ -473,25 +473,25 @@ $(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
 		cat $< - >$@
 
 # mogrify non-parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	%.generated
+$(MANIFEST_BASE)-%.mogrified:	%.generated $(MAKEFILE_PREREQ)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
 # mogrify parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.generated
+$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.generated $(MAKEFILE_PREREQ)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 else
 # mogrify non-parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR)
+$(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR) $(MAKEFILE_PREREQ)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
 # mogrify parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR)
+$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR) $(MAKEFILE_PREREQ)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
