@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		backports.functools_lru_cache
-HUMAN_VERSION =			1.6.5
+HUMAN_VERSION =			1.6.6
 COMPONENT_SUMMARY =		backports.functools_lru_cache - Backport of functools.lru_cache
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/backports.functools_lru_cache
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d7/e9/2585a2b3de3b246ad90370a3a3d19b82b857784975559b44122a4cb5ceb7/backports.functools_lru_cache-1.6.5.tar.gz
+	https://files.pythonhosted.org/packages/97/ea/a7519e2ea83afe9e7fd845c0279dfe7052be8f3277a259d8a35eae8ce461/backports.functools_lru_cache-1.6.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e7efcdd8cf92279bcb09fdb9b31e984ffdc96fc9f21e22ff20538884cb99b97d
+	sha256:7b70e701ba4db58c0ed8671a9d3391b0abb9bd1bc24d4e90c3480f4baafcc2dc
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
