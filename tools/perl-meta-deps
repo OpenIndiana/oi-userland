@@ -59,7 +59,7 @@ find "$CACHEDIR" -type f -mtime +7 -exec rm -f {} \;
 
 printf "\n# Automatically generated dependencies based on distribution metadata\n"
 
-/usr/bin/jq -r '.prereqs|'"$PHASES"'|.requires|to_entries?|.[]|.key+" "+(.value|tostring)' | while read PREREQ VERSION ; do
+/usr/bin/jq -r '.prereqs|'"$PHASES"'|.requires,.recommends|to_entries?|.[]|.key+" "+(.value|tostring)' | while read PREREQ VERSION ; do
 	# Convert perl version number to pkg(5) compatible form
 	VER=$("$PERL_VERSION_CONVERT" "$PREREQ" "$VERSION")
 	[[ "$VER" != "0" ]] && VER="@$VER" || VER=
