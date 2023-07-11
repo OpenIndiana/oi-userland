@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		PAR::Dist
 HUMAN_VERSION =			0.52
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PAR::Dist - Create and manipulate PAR distributions
 COMPONENT_CPAN_AUTHOR =		RSCHUPP
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,10 @@ COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/archive-zip
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/yaml-libyaml
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
