@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DBI
 HUMAN_VERSION =			1.643
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DBI - Database independent interface for Perl
 COMPONENT_CPAN_AUTHOR =		TIMB
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,6 +32,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 # remove lines that changes with every test run
 COMPONENT_TEST_TRANSFORMS += '-e "/^SV =/,/^[^ ]/d"'
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
