@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTML::Tagset
 HUMAN_VERSION =			3.20
-COMPONENT_REVISION =		3
+COMPONENT_REVISION =		4
 COMPONENT_SUMMARY =		HTML::Tagset - data tables useful in parsing HTML
 COMPONENT_CPAN_AUTHOR =		PETDANCE
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +28,9 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
