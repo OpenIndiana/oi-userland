@@ -12,7 +12,6 @@
 #
 # This file was automatically generated using the following command:
 #   $WS_TOOLS/perl-integrate-module TimeDate
-# and then slightly manually modified.
 #
 
 BUILD_STYLE = makemaker
@@ -21,13 +20,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		TimeDate
 HUMAN_VERSION =			2.33
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		TimeDate - Parse date strings into time values
-COMPONENT_PROJECT_URL =		https://metacpan.org/dist/TimeDate
 COMPONENT_CPAN_AUTHOR =		ATOOMIC
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:c0b69c4b039de6f501b0d9f13ec58c86b040c1f7e9b27ef249651c143d605eb2
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
+
+COMPONENT_PROJECT_URL =		https://metacpan.org/dist/TimeDate
 
 include $(WS_MAKE_RULES)/common.mk
 
