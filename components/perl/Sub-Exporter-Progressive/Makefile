@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Sub::Exporter::Progressive
 HUMAN_VERSION =			0.001013
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Sub::Exporter::Progressive - Only use Sub::Exporter if you need it
 COMPONENT_CPAN_AUTHOR =		FREW
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,6 +29,9 @@ COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/sub-exporter
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
