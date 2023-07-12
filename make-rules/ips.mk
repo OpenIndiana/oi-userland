@@ -324,8 +324,9 @@ $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' \
 		-e '/\.la$$/d' | \
-		$(PKGFMT) | \
+		$(PKGFMT) -u | \
 		uniq | \
+		$(PKGFMT) | \
 		cat $(METADATA_TEMPLATE) - $(GENERATE_EXTRA_CMD) | \
 		$(TEE) $@ $(SAMPLE_MANIFEST_FILE) >/dev/null
 	if [ "$(GENERATE_GENERIC_TRANSFORMS)X" != "X" ]; \
