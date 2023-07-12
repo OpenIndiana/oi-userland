@@ -552,7 +552,7 @@ REQUIRED_PACKAGES_TRANSFORM += $(foreach p,$(REQUIRED_PACKAGES_SUBST), -e 's|$($
 # truly lazy among us.  This is only a piece of the REQUIRED_PACKAGES puzzle.
 # You must still include packages for tools you build and test with.
 #
-REQUIRED_PACKAGES::     $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) $(BUILD_DIR)/filter-own-pkgs
+REQUIRED_PACKAGES::     $(RESOLVED) $(REQUIRED_PACKAGES_RESOLVED) $(BUILD_DIR)/filter-own-pkgs $(REQUIRED_PACKAGES_EXTRA_DEPS)
 	$(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
 	@$(GSED) -i -e '/^# Auto-generated dependencies$$/,$$d' Makefile
 	@echo "# Auto-generated dependencies" >>Makefile

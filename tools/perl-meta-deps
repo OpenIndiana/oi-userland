@@ -57,17 +57,17 @@ mkdir -p "$CACHEDIR"
 find "$CACHEDIR" -type f -mtime +7 -exec rm -f {} \;
 
 
-printf "\n# Automatically generated dependencies based on distribution metadata\n"
-
 /usr/bin/jq -r '.prereqs|'"$PHASES"'|.requires,.recommends|to_entries?|.[]|.key+" "+(.value|tostring)' | while read PREREQ VERSION ; do
 	# Convert perl version number to pkg(5) compatible form
 	VER=$("$PERL_VERSION_CONVERT" "$PREREQ" "$VERSION")
 	[[ "$VER" != "0" ]] && VER="@$VER" || VER=
 
+	CACHEFILE="$CACHEDIR/$PREREQ-$PERLVER"
+
 	# Resolve the dependency if not in cache already
-	if [[ ! -s "$CACHEDIR/$PREREQ" ]] ; then
+	if [[ ! -s "$CACHEFILE" ]] ; then
 		# We must replace '::' by '-' otherwise 'pkgdepend resolve' fails
-		MANIFEST="$BUILD_DIR/META-${PREREQ//::/-}"
+		MANIFEST="$BUILD_DIR/META-${PREREQ//::/-}-$PERLVER"
 
 		# Prepare manifest
 		if [[ "$PREREQ" == "perl" ]] ; then
@@ -89,15 +89,15 @@ printf "\n# Automatically generated dependencies based on distribution metadata\
 		# Resolve dependency
 		if /usr/bin/pkgdepend resolve "$MANIFEST" ; then
 			# Remove version number and cache the result
-			cat "$MANIFEST.res" | sed -e 's/@[^ ]*//g' -e 's/-'$PLV'/-$(PLV)/g' > "$CACHEDIR/$PREREQ"
+			cat "$MANIFEST.res" | sed -e 's/@[^ ]*//g' -e 's/-'$PLV'/-$(PLV)/g' > "$CACHEFILE"
 		else
 			printf "ERROR: Prerequisite %s not found\n" "$PREREQ" >&2
 			cat "$MANIFEST"
 		fi
 	fi
 
-	# Use cached result (if any) and add required version number
-	[[ -f "$CACHEDIR/$PREREQ" ]] && cat "$CACHEDIR/$PREREQ" | sed  -e 's/\(fmri=[^ ]*\)/\1'$VER'/g'
+	# Use cached result (if any), add required version number and drop runtime/perl
+	[[ -f "$CACHEFILE" ]] && cat "$CACHEFILE" | sed -e 's/\(fmri=[^ ]*\)/\1'$VER'/g' -e '/fmri=pkg:\/runtime\/perl-\$(PLV)/d'
 done | /usr/bin/pkgfmt -u | uniq | (
 	PREV_LINE_H=
 	PREV_FMRI=
@@ -117,10 +117,6 @@ done | /usr/bin/pkgfmt -u | uniq | (
 		[[ "$FMRI" == "$VER" ]] && VER=
 		[[ -n "$VER" ]] && VER="@$VER"
 		FMRI="fmri=$FMRI"
-
-		# There is no connection between module version and
-		# runtime/perl version for modules bundled with runtime/perl
-		[[ "$FMRI" == 'fmri=pkg:/runtime/perl-$(PLV)' ]] && VER=
 
 		if [[ "$PREV_LINE_H" != "$LINE_H" || "$PREV_FMRI" != "$FMRI" || "$PREV_LINE_T" != "$LINE_T" ]] ; then
 			[[ -n "$PREV_LINE_H$PREV_FMRI$PREV_VER$PREV_LINE_T" ]] && printf "%s%s%s%s\n" "$PREV_LINE_H" "$PREV_FMRI" "$PREV_VER" "$PREV_LINE_T"
@@ -149,4 +145,6 @@ done | /usr/bin/pkgfmt -u | uniq | (
 		done
 	done
 	[[ -n "$PREV_LINE_H$PREV_FMRI$PREV_VER$PREV_LINE_T" ]] && printf "%s%s%s%s\n" "$PREV_LINE_H" "$PREV_FMRI" "$PREV_VER" "$PREV_LINE_T"
-)| /usr/bin/pkgfmt
+)
+
+exit 0
