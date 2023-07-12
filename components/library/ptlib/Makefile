@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ptlib
 COMPONENT_VERSION= 2.10.11
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= PTLib Class Library
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI=library/desktop/ptlib
