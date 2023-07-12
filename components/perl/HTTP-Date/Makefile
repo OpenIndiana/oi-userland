@@ -19,12 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTTP::Date
-HUMAN_VERSION =			6.05
+HUMAN_VERSION =			6.06
 COMPONENT_SUMMARY =		HTTP::Date - HTTP::Date - date conversion routines
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:365d6294dfbd37ebc51def8b65b81eb79b3934ecbc95a2ec2d4d827efe6a922b
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:7b685191c6acc3e773d1fc02c95ee1f9fae94f77783175f5e78c181cc92d2b52
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
