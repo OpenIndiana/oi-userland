@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Devel::GlobalDestruction
 HUMAN_VERSION =			0.14
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Devel::GlobalDestruction - Provides function returning the equivalent of \$${^GLOBAL_PHASE} eq 'DESTRUCT' for older perls.
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
