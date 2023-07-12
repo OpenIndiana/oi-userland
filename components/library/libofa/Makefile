@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		libofa
 COMPONENT_VERSION=	222128881c792c99055fa0b9cf05e07ae9b5d818
 IPS_COMPONENT_VERSION=	0.9.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 # Project was initially at http://code.google.com/p/musicip-libofa/,
 # but as Google Code is closing we refer to more up-to-date mirror
 COMPONENT_PROJECT_URL=	https://github.com/tanob/libofa
