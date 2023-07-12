@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		JSON
 HUMAN_VERSION =			4.10
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		JSON - JSON (JavaScript Object Notation) encoder/decoder
 COMPONENT_CPAN_AUTHOR =		ISHIGAKI
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,4 +30,5 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/json-xs
 PERL_REQUIRED_PACKAGES += runtime/perl
