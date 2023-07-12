@@ -534,7 +534,7 @@ REQUIRED_PACKAGES_TRANSFORM += -e '$$r $(BUILD_DIR)/META.depend-test.required'
 # packaging might be unavailable during bootstrap until we reach bootstrap
 # checkpoint 2.  So require it conditionally.
 ifeq ($(filter $(strip $(COMPONENT_NAME)),$(PYTHON_BOOTSTRAP_CHECKPOINT_2)),)
-PYTHON_USERLAND_REQUIRED_PACKAGES += library/python/packaging
+USERLAND_REQUIRED_PACKAGES.python += library/python/packaging
 endif
 
 

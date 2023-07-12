@@ -1384,7 +1384,7 @@ REQUIRED_PACKAGES_SUBST+= GFORTRAN_RUNTIME_PKG
 REQUIRED_PACKAGES_SUBST+= GOBJC_RUNTIME_PKG
 
 # Generate requirements on all built python version variants for given packages
-USERLAND_REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(PYTHON_USERLAND_REQUIRED_PACKAGES:%=%-$(shell echo $(ver) | tr -d .)))
+USERLAND_REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(USERLAND_REQUIRED_PACKAGES.python:%=%-$(shell echo $(ver) | tr -d .)))
 REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(PYTHON_REQUIRED_PACKAGES:%=%-$(shell echo $(ver) | tr -d .)))
 TEST_REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(TEST_REQUIRED_PACKAGES.python:%=%-$(shell echo $(ver) | tr -d .)))
 
