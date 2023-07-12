@@ -43,8 +43,8 @@ COMPONENT_INSTALL_ARGS =
 COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
 COMPONENT_INSTALL_ARGS +=	$(@D)/dist/*.whl
 
-PYTHON_USERLAND_REQUIRED_PACKAGES += library/python/build
-PYTHON_USERLAND_REQUIRED_PACKAGES += library/python/installer
+USERLAND_REQUIRED_PACKAGES.python += library/python/build
+USERLAND_REQUIRED_PACKAGES.python += library/python/installer
 endif
 
 # Move all modules from default site-packages directory to vendor-packages
@@ -77,5 +77,5 @@ $(BUILD_DIR)/META.depend.res: BITS = $(PREFERRED_BITS)
 # The pyproject_installer is not needed (and cannot be needed) for its own
 # build.
 ifneq ($(strip $(COMPONENT_NAME)),pyproject_installer)
-PYTHON_USERLAND_REQUIRED_PACKAGES += library/python/pyproject-installer
+USERLAND_REQUIRED_PACKAGES.python += library/python/pyproject-installer
 endif
