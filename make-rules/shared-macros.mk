@@ -1389,6 +1389,7 @@ REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(PYTHON_REQUIRED_PACKAGES
 TEST_REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(TEST_REQUIRED_PACKAGES.python:%=%-$(shell echo $(ver) | tr -d .)))
 
 # Generate requirements on all built perl version variants for given packages
+USERLAND_REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(USERLAND_REQUIRED_PACKAGES.perl:%=%-$(shell echo $(ver) | tr -d .)))
 REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(PERL_REQUIRED_PACKAGES:%=%-$(shell echo $(ver) | tr -d .)))
 TEST_REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(TEST_REQUIRED_PACKAGES.perl:%=%-$(shell echo $(ver) | tr -d .)))
 

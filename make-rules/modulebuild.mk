@@ -84,3 +84,6 @@ $(BUILD_DIR)/%/.tested:	$(BUILD_DIR)/%/.built
 		$(COMPONENT_TEST_PERFORM_TRANSFORM)
 		$(COMPONENT_TEST_CLEANUP)
 		$(TOUCH) $@
+
+# Build.PL needs Module::Build
+USERLAND_REQUIRED_PACKAGES.perl += library/perl-5/module-build
