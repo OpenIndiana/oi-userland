@@ -336,7 +336,9 @@ while true ; do
 	TOX_RET=$?
 	((TOX_RET == 0)) && ! printf "%s" "$TOX_OUT" | grep -q 'assuming empty tox\.ini' && TEST_STYLE="tox" && break
 
-	pytest -p no:checkdocs --setup-plan
+	# Disable some pytest plugins that almost always collects tests to run
+	# even there are no pytest tests available otherwise
+	pytest -p no:black -p no:checkdocs -p no:cov -p no:mypy --setup-plan
 	(($? != 5)) && TEST_STYLE="pytest" && break
 
 	[[ -f setup.py ]] && python setup.py test --help && TEST_STYLE="setup.py" && break
