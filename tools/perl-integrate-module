@@ -199,7 +199,7 @@ cat <<EOF
 #   \$WS_TOOLS/$THIS $MODULE
 #
 
-BUILD_STYLE = modulebuild
+BUILD_STYLE = makemaker
 USE_COMMON_TEST_MASTER = no
 EOF
 [[ -f "$CONF" ]] && gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < "$CONF"
@@ -254,8 +254,8 @@ SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
 COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
 [[ -n "$COMPONENT_SUBDIR" ]] && COMPONENT_SUBDIR="/$COMPONENT_SUBDIR"
 
-# Switch to makemaker if needed
-[[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/Build.PL" && -f "$SOURCE_DIR$COMPONENT_SUBDIR/Makefile.PL" ]] && sed -i -e 's/modulebuild/makemaker/g' Makefile
+# Switch to modulebuild if possible
+[[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/Build.PL" ]] && sed -i -e 's/makemaker/modulebuild/g' Makefile
 
 # Get abstract.  Either from metacpan, or directly from sources.
 ABSTRACT=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.abstract')
