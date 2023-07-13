@@ -1,15 +1,66 @@
-py$(PYV): remove tox env folder .tox/py$(PYV)
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pytest.ini
+rootdir: $(@D)
+configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 2 items
+collecting ... collected 48 items
 
 ::project PASSED
+conftest.py::BLACK PASSED
+conftest.py::mypy PASSED
+conftest.py::mypy-status PASSED
+docs/conf.py::BLACK PASSED
+docs/conf.py::mypy PASSED
+jaraco/itertools.py::BLACK PASSED
+jaraco/itertools.py::jaraco.itertools.Count PASSED
+jaraco/itertools.py::jaraco.itertools.Counter PASSED
+jaraco/itertools.py::jaraco.itertools.FetchingQueue PASSED
+jaraco/itertools.py::jaraco.itertools.GroupbySaved PASSED
+jaraco/itertools.py::jaraco.itertools.LessThanNBlanks PASSED
+jaraco/itertools.py::jaraco.itertools.LessThanNConsecutiveBlanks PASSED
+jaraco/itertools.py::jaraco.itertools.Peekable PASSED
+jaraco/itertools.py::jaraco.itertools.Reusable PASSED
+jaraco/itertools.py::jaraco.itertools._mutable_iter PASSED
+jaraco/itertools.py::jaraco.itertools.accumulate PASSED
+jaraco/itertools.py::jaraco.itertools.always_iterable PASSED
+jaraco/itertools.py::jaraco.itertools.apply PASSED
+jaraco/itertools.py::jaraco.itertools.assert_ordered PASSED
+jaraco/itertools.py::jaraco.itertools.bisect PASSED
+jaraco/itertools.py::jaraco.itertools.collate_revs PASSED
+jaraco/itertools.py::jaraco.itertools.duplicates PASSED
+jaraco/itertools.py::jaraco.itertools.ensure_unique PASSED
+jaraco/itertools.py::jaraco.itertools.every_other PASSED
+jaraco/itertools.py::jaraco.itertools.find_subseq PASSED
+jaraco/itertools.py::jaraco.itertools.first PASSED
+jaraco/itertools.py::jaraco.itertools.grouper_nofill_str PASSED
+jaraco/itertools.py::jaraco.itertools.is_empty PASSED
+jaraco/itertools.py::jaraco.itertools.islice PASSED
+jaraco/itertools.py::jaraco.itertools.last PASSED
+jaraco/itertools.py::jaraco.itertools.make_rows PASSED
+jaraco/itertools.py::jaraco.itertools.maybe_single PASSED
+jaraco/itertools.py::jaraco.itertools.one PASSED
+jaraco/itertools.py::jaraco.itertools.partition_dict PASSED
+jaraco/itertools.py::jaraco.itertools.partition_items PASSED
+jaraco/itertools.py::jaraco.itertools.peek PASSED
+jaraco/itertools.py::jaraco.itertools.remove_duplicates PASSED
+jaraco/itertools.py::jaraco.itertools.reverse_lists PASSED
+jaraco/itertools.py::jaraco.itertools.self_product PASSED
+jaraco/itertools.py::jaraco.itertools.skip_first PASSED
+jaraco/itertools.py::jaraco.itertools.splitter PASSED
+jaraco/itertools.py::jaraco.itertools.summarize PASSED
+jaraco/itertools.py::jaraco.itertools.suppress_exceptions PASSED
+jaraco/itertools.py::jaraco.itertools.takewhile_peek PASSED
+jaraco/itertools.py::jaraco.itertools.window PASSED
+jaraco/itertools.py::mypy PASSED
 
-======== 1 passed ========
+===================================== mypy =====================================
+
+Success: no issues found in 3 source files
+======== 47 passed ========
   py$(PYV): OK
   congratulations :)

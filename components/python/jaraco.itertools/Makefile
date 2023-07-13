@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.itertools
-HUMAN_VERSION =			6.2.1
+HUMAN_VERSION =			6.4.1
 COMPONENT_SUMMARY =		jaraco.itertools - jaraco.itertools
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.itertools
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/08/ed/032d93520266f19a490874f3e12ddbe1cc1de2d59096193eefa9d3d607fe/jaraco.itertools-6.2.1.tar.gz
+	https://files.pythonhosted.org/packages/ab/c8/60ae0b93e588e561a47795831f0a4fad5f22f28565897c3c30fc66845a76/jaraco.itertools-6.4.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6098edb37c6b8023f3794d42588a13bf75b2ca02b40ff9795c846bcbe0c1b46c
+	sha256:314fce562ebb45ea4822a98bbd7b22e5feac7d5118dbc1a4f1eb2cd046bffa47
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,11 +36,11 @@ PYTHON_REQUIRED_PACKAGES += library/python/inflect
 PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
