@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libidn2
 COMPONENT_VERSION=	2.3.4
+COMPONENT_REVISION= 	1
 COMPONENT_SUMMARY=	An implementation of IDNA2008 internationalized domain names
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz

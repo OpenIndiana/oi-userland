@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libssh2
 COMPONENT_VERSION=	1.10.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.libssh2.org/
 COMPONENT_SUMMARY=	libssh2 - client-side C library implementing the SSH2 protocol
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
