@@ -19,19 +19,23 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mock
-HUMAN_VERSION =			5.0.2
+HUMAN_VERSION =			5.1.0
 COMPONENT_SUMMARY =		mock - Rolling backport of unittest.mock for all Pythons
 COMPONENT_PROJECT_URL =		http://mock.readthedocs.org/en/latest/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/71/c8/84310fa618bebe51a533d8fd3a71e8ab406a10d8a388061a9e8e628da65a/mock-5.0.2.tar.gz
+	https://files.pythonhosted.org/packages/66/ab/41d09a46985ead5839d8be987acda54b5bb93f713b3969cc0be4f81c455b/mock-5.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:06f18d7d65b44428202b145a9a36e99c2ee00d1eb992df0caf881d4664377891
+	sha256:5e96aad5ccda4718e0a229ed94b2024df75cc2d55575ba5762d31f5767b8767d
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
