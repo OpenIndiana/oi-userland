@@ -85,5 +85,11 @@ $(BUILD_DIR)/%/.tested:	$(BUILD_DIR)/%/.built
 		$(COMPONENT_TEST_CLEANUP)
 		$(TOUCH) $@
 
-# Build.PL needs Module::Build
+# Workaround for https://github.com/Perl-Toolchain-Gang/Module-Build/issues/91.
+# Without the workaround we would need to add library/perl-5/module-build as a
+# required package manually to all Perl components with the modulebuild build
+# style.  We do not need the library/perl-5/module-build package to bootstrap
+# the Module::Build module itself.
+ifneq ($(strip $(COMPONENT_PERL_MODULE)),Module::Build)
 USERLAND_REQUIRED_PACKAGES.perl += library/perl-5/module-build
+endif
