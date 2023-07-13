@@ -2,9 +2,10 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: setup.cfg
+rootdir: $(@D)
+configfile: setup.cfg
 asyncio: mode=strict
-collecting ... collected 509 items
+collecting ... collected 532 items
 
 ::project PASSED
 mock/tests/testasync.py::AsyncArguments::test_add_return_value PASSED
@@ -20,6 +21,7 @@ mock/tests/testasync.py::AsyncArguments::test_side_effect_awaitable_values PASSE
 mock/tests/testasync.py::AsyncArguments::test_side_effect_is_AsyncMock PASSED
 mock/tests/testasync.py::AsyncArguments::test_wraps_coroutine PASSED
 mock/tests/testasync.py::AsyncArguments::test_wraps_normal_function PASSED
+mock/tests/testasync.py::AsyncAutospecTest::test_autospec_checks_signature PASSED
 mock/tests/testasync.py::AsyncAutospecTest::test_create_autospec PASSED
 mock/tests/testasync.py::AsyncAutospecTest::test_create_autospec_instance PASSED
 mock/tests/testasync.py::AsyncAutospecTest::test_is_AsyncMock_patch PASSED
@@ -279,10 +281,12 @@ mock/tests/testmock.py::MockTest::test_customize_wrapped_object_with_side_effect
 mock/tests/testmock.py::MockTest::test_customize_wrapped_object_with_side_effect_function PASSED
 mock/tests/testmock.py::MockTest::test_customize_wrapped_object_with_side_effect_iterable PASSED
 mock/tests/testmock.py::MockTest::test_customize_wrapped_object_with_side_effect_iterable_with_default PASSED
+mock/tests/testmock.py::MockTest::test_decorated_async_methods_with_spec_mock PASSED
 mock/tests/testmock.py::MockTest::test_dir PASSED
 mock/tests/testmock.py::MockTest::test_dir_does_not_include_deleted_attributes PASSED
 mock/tests/testmock.py::MockTest::test_dir_from_spec PASSED
 mock/tests/testmock.py::MockTest::test_exceptional_side_effect PASSED
+mock/tests/testmock.py::MockTest::test_explicit_parent PASSED
 mock/tests/testmock.py::MockTest::test_filter_dir PASSED
 mock/tests/testmock.py::MockTest::test_from_spec PASSED
 mock/tests/testmock.py::MockTest::test_isinstance_under_settrace PASSED
@@ -324,6 +328,7 @@ mock/tests/testmock.py::MockTest::test_override_tuple_methods PASSED
 mock/tests/testmock.py::MockTest::test_parent_attribute_of_call PASSED
 mock/tests/testmock.py::MockTest::test_parent_propagation_with_autospec_attach_mock PASSED
 mock/tests/testmock.py::MockTest::test_parent_propagation_with_create_autospec PASSED
+mock/tests/testmock.py::MockTest::test_property_not_called_with_spec_mock PASSED
 mock/tests/testmock.py::MockTest::test_repr PASSED
 mock/tests/testmock.py::MockTest::test_repr_with_spec PASSED
 mock/tests/testmock.py::MockTest::test_reset_mock PASSED
@@ -487,6 +492,25 @@ mock/tests/testsentinel.py::SentinelTest::testDEFAULT PASSED
 mock/tests/testsentinel.py::SentinelTest::testPickle PASSED
 mock/tests/testsentinel.py::SentinelTest::testSentinelName PASSED
 mock/tests/testsentinel.py::SentinelTest::testSentinels PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_dynamic_child_mocks_are_threading_mocks PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_dynamic_child_mocks_inherit_timeout PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_instance_check PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_no_name_clash PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_reset_mock_resets_wait PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_side_effect PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_spec PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_wait_failed_with_instance_timeout PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_wait_failed_with_timeout_override PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_wait_magic_method PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_wait_success PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_wait_success_called_before PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_wait_success_with_instance_timeout PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_wait_success_with_timeout_override PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_wait_until_any_call_with_change_global_and_override PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_wait_until_any_call_with_global_default PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_wait_until_any_call_with_keywords PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_wait_until_any_call_with_no_argument_fails_when_called_with_arg PASSED
+mock/tests/testthreadingmock.py::TestThreadingMock::test_wait_until_any_call_with_positional PASSED
 mock/tests/testwith.py::TestMockOpen::test_dunder_iter_data PASSED
 mock/tests/testwith.py::TestMockOpen::test_explicit_mock PASSED
 mock/tests/testwith.py::TestMockOpen::test_interleaved_reads PASSED
@@ -515,4 +539,5 @@ mock/tests/testwith.py::WithTest::test_with_statement_nested PASSED
 mock/tests/testwith.py::WithTest::test_with_statement_same_attribute PASSED
 mock/tests/testwith.py::WithTest::test_with_statement_specified PASSED
 
-======== 508 passed ========
+
+======== 531 passed ========
