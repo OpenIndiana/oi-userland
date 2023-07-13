@@ -25,18 +25,20 @@
 # Copyright (c) 2021, Andreas Wacknitz
 #
 
-BUILD_BITS=		32_and_64
+BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p11-kit
-COMPONENT_VERSION=	0.24.1
+COMPONENT_VERSION=	0.25.0
 COMPONENT_FMRI=		library/desktop/p11-kit
 COMPONENT_SUMMARY=	p11-kit provides a way to load and enumerate PKCS\#11 modules
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_PROJECT_URL=	https://p11-glue.github.io/p11-glue/p11-kit.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:d8be783efd5cd4ae534cee4132338e3f40f182c3205d23b200094ec85faaaef8
+COMPONENT_ARCHIVE_HASH= sha256:d55583bcdde83d86579cabe3a8f7f2638675fef01d23cace733ff748fc354706
 COMPONENT_ARCHIVE_URL=	https://github.com/p11-glue/p11-kit/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-like
 COMPONENT_LICENSE_FILE= p11-kit.license
@@ -62,20 +64,13 @@ CONFIGURE_OPTIONS	+= --with-trust-paths=/etc/certs/ca-certificates.crt
 # To prevent "libtool_install_magic: unbound variable"
 unexport SHELLOPTS
 
-COMPONENT_TEST_MASTER = results-all.master
 COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
 	'-e "/^ *CC/d" ' \
 	'-e "/is up to date/d" ' \
-	'-e "/TOTAL:/p" ' \
-	'-e "/SKIP:/p" ' \
-	'-e "/PASS:/p" ' \
-	'-e "/FAIL:/p" ' \
-	'-e "/ok/p" ' \
-	'-e "/ERROR:/p" '
+	'-e "/ok/p" ' 
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libtasn1
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
