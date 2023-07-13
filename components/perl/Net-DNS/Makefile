@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::DNS
 HUMAN_VERSION =			1.39
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Net::DNS - Perl Interface to the Domain Name System
 COMPONENT_CPAN_AUTHOR =		NLNETLABS
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,11 @@ COMPONENT_LICENSE =		MIT
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-bubblebabble
 PERL_REQUIRED_PACKAGES += library/perl-5/digest-hmac
+PERL_REQUIRED_PACKAGES += library/perl-5/net-libidn2
 PERL_REQUIRED_PACKAGES += runtime/perl
