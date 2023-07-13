@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::OpenSSL::Random
 HUMAN_VERSION =			0.15
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Crypt::OpenSSL::Random - OpenSSL/LibreSSL pseudo-random number generator access
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,9 @@ COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-guess
