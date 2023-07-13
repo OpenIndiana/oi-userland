@@ -49,14 +49,14 @@ F="$LICENSE_FILE"
 
 if grep -q -i "Artistic License" "$F" ; then
 	if ! grep -q -i "Artistic License.*2" "$F" ; then
-		D="Artistic-1.0-TODO"
+		D=
 		grep -q "7\. C subroutines" "$F" && grep -q "10\. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0-Perl"
 		grep -q "7\. C or perl subroutines" "$F" && grep -q "10\. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0-cl8"
 		grep -q "7\. C or perl subroutines" "$F" && grep -q "9\. THIS PACKAGE IS PROVIDED" "$F" && D="Artistic-1.0"
 	else
 		D="Artistic-2.0"
 	fi
-	[[ -n "$L" ]] && L="$L OR " ; L="$L$D"
+	[[ -n "$L" && -n "$D" ]] && L="$L OR " ; L="$L$D"
 fi
 
 if grep -A 1 "GNU GENERAL PUBLIC LICENSE" "$F" | grep -q "Version 1, February 1989" ; then
