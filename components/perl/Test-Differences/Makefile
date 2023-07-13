@@ -19,15 +19,17 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Differences
-HUMAN_VERSION =			0.69
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.70
 COMPONENT_SUMMARY =		Test::Differences - Test strings and data structures and show differences if not ok
 COMPONENT_CPAN_AUTHOR =		DCANTRELL
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:18f644fdd4a1fef93ef3f7f67df8e95b593d811899f34bcbbaba4d717222f58f
+	sha256:bee1b5186aa9ba27fed2bf1b0674520d0bd0cd051d913387f9086c1f94a56854
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/capture-tiny
