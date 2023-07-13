@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = modulebuild
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Build::Tiny
 HUMAN_VERSION =			0.046
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Module::Build::Tiny - A tiny replacement for Module::Build
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
