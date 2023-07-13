@@ -41,6 +41,10 @@ $(BUILD_DIR)/%-$(1)/.built:			PERL_VERSION=$(1)
 $(BUILD_DIR)/%-$(1)/.installed:			PERL_VERSION=$(1)
 $(BUILD_DIR)/%-$(1)/.tested:			PERL_VERSION=$(1)
 $(BUILD_DIR)/%-$(1)/.tested-and-compared:	PERL_VERSION=$(1)
+
+$(BUILD_DIR)/%-$(1)/.depend-build:		PERL_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.depend-runtime:		PERL_VERSION=$(1)
+$(BUILD_DIR)/%-$(1)/.depend-test:		PERL_VERSION=$(1)
 endef
 $(foreach perlver,$(PERL_VERSIONS),$(eval $(call perl-version-rule,$(perlver))))
 
@@ -170,8 +174,8 @@ $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 	$(TOUCH) $@
 
 
-# We need to add -$(PLV) to package fmri and generate runtime dependencies based on META.json
-GENERATE_EXTRA_DEPS += $(BUILD_DIR)/META.json
+# We need to add -$(PLV) to package fmri and add runtime dependencies from metadata to generated manifest
+GENERATE_EXTRA_DEPS += $(BUILD_DIR)/META.depend-runtime.res
 GENERATE_EXTRA_CMD += | \
 	$(GSED) -e 's/^\(set name=pkg.fmri [^@]*\)\(.*\)$$/\1-$$(PLV)\2/' | \
 	$(CAT) - <( \
@@ -179,42 +183,56 @@ GENERATE_EXTRA_CMD += | \
 		echo "\# perl modules are unusable without perl runtime binary" ; \
 		echo "depend type=require fmri=__TBD pkg.debug.depend.file=perl \\" ; \
 		echo "    pkg.debug.depend.path=usr/perl5/\$$(PERLVER)/bin" ; \
-		$(CAT) $(BUILD_DIR)/META.json \
-			| $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) runtime $(PERL_VERSION) \
-			| $(GSED) -e 's|^\(depend.*pkg:/runtime/perl-\$$(PLV).*\)$$|\#\1|g' \
+		echo "" ; \
+		echo "\# Automatically generated dependencies based on distribution metadata" ; \
+		$(CAT) $(BUILD_DIR)/META.depend-runtime.res | $(PKGFMT) \
 	)
 
-# Add build dependencies from META.json to REQUIRED_PACKAGES.  The dependency
-# on META.depend-test.required here is purely to get the file created as a side
-# effect of this target.
+# Add build dependencies from metadata to REQUIRED_PACKAGES.
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend-build.res
-$(BUILD_DIR)/META.depend-build.res: $(BUILD_DIR)/META.json $(BUILD_DIR)/META.depend-test.required
-	$(CAT) $(BUILD_DIR)/META.json | $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) build $(PERL_VERSION) > $@
 
 # Generate list of TEST_REQUIRED_PACKAGES entries
-$(BUILD_DIR)/META.depend-test.required: $(BUILD_DIR)/META.json
-	$(CAT) $(BUILD_DIR)/META.json \
-		| $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) test $(PERL_VERSION) \
-		| $(GNU_GREP) '^depend.*pkg:/library/perl-5/.*\$$(PLV)' \
-		| $(GSED) -e 's|^depend.*pkg:/\(library/perl-5/.*\)-\$$(PLV).*$$|TEST_REQUIRED_PACKAGES.perl += \1|' > $@
+REQUIRED_PACKAGES_EXTRA_DEPS += $(BUILD_DIR)/META.depend-test.required
+$(BUILD_DIR)/META.depend-test.required: $(BUILD_DIR)/META.depend-test.res
+	$(GSED) -e 's|^depend.*pkg:/\(library/perl-5/.*\)-\$$(PLV).*$$|TEST_REQUIRED_PACKAGES.perl += \1|' < $< > $@
 
 # Add META.depend-test.required to the generated list of REQUIRED_PACKAGES
 REQUIRED_PACKAGES_TRANSFORM += -e '$$r $(BUILD_DIR)/META.depend-test.required'
 
-# Create META.json
-$(BUILD_DIR)/META.json: $(SOURCE_DIR)/.prep
-	$(MKDIR) $(BUILD_DIR)
-	if [ -f $(SOURCE_DIR)/META.json ] ; then \
-		$(CAT) $(SOURCE_DIR)/META.json ; \
-	elif [ -f $(SOURCE_DIR)/META.yml ] ; then \
-		$(CAT) $(SOURCE_DIR)/META.yml \
-			| $(PYTHON) -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
-			| $(JQ) '{prereqs:{configure:{requires:.configure_requires},build:{requires:.build_requires},runtime:{requires}}}' ; \
-	fi > $@
 
-# perl-meta-deps requires jq
+# The configure target should create the MYMETA.json file.  If it does not we
+# need a fallback to use either META.json or META.yml.  We probably (and
+# hopefully) currently have no component requiring such fallback.
+$(BUILD_DIR)/%/MYMETA.json:	$(BUILD_DIR)/%/.configured
+	if [ ! -f $@ ] ; then \
+		if [ -e $(@D)/META.json ] ; then \
+			$(CAT) $(@D)/META.json ; \
+		elif [ -e $(@D)/META.yml ] ; then \
+			$(CAT) $(@D)/META.yml \
+				| $(PYTHON) -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
+				| $(JQ) '{prereqs:{configure:{requires:.configure_requires},build:{requires:.build_requires},runtime:{requires}}}' ; \
+		fi > $@ ; \
+	else \
+		$(TOUCH) $@ ; \
+	fi
+
+$(BUILD_DIR)/%/.depend-build:	$(BUILD_DIR)/%/MYMETA.json
+	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) build $(PERL_VERSION) < $< > $@
+$(BUILD_DIR)/%/.depend-runtime:	$(BUILD_DIR)/%/MYMETA.json
+	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) runtime $(PERL_VERSION) < $< > $@
+$(BUILD_DIR)/%/.depend-test:	$(BUILD_DIR)/%/MYMETA.json
+	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) test $(PERL_VERSION) < $< > $@
+
+$(BUILD_DIR)/META.depend-build.res:	$(BUILD_$(MK_BITS):%.built=%.depend-build)
+	$(CAT) $^ | $(SORT) -u > $@
+$(BUILD_DIR)/META.depend-runtime.res:	$(BUILD_$(MK_BITS):%.built=%.depend-runtime)
+	$(CAT) $^ | $(SORT) -u > $@
+$(BUILD_DIR)/META.depend-test.res:	$(BUILD_$(MK_BITS):%.built=%.depend-test)
+	$(CAT) $^ | $(SORT) -u > $@
+
+# jq is needed for perl-meta-deps and to convert META.yml to MYMETA.json
 USERLAND_REQUIRED_PACKAGES += text/jq
-# pyyaml is needed to convert META.yml to META.json
+# pyyaml is needed to convert META.yml to MYMETA.json
 USERLAND_REQUIRED_PACKAGES += library/python/pyyaml
 
 
