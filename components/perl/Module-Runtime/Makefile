@@ -14,13 +14,13 @@
 #   $WS_TOOLS/perl-integrate-module Module::Runtime
 #
 
-BUILD_STYLE = makemaker
+BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Runtime
 HUMAN_VERSION =			0.016
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Module::Runtime - runtime module handling
 COMPONENT_CPAN_AUTHOR =		ZEFRAM
 COMPONENT_ARCHIVE_HASH =	\
