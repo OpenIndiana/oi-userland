@@ -14,12 +14,13 @@
 #   $WS_TOOLS/perl-integrate-module Error
 #
 
-BUILD_STYLE = makemaker
+BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Error
 HUMAN_VERSION =			0.17029
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Error - Error/exception handling in an OO-ish way
 COMPONENT_CPAN_AUTHOR =		SHLOMIF
 COMPONENT_ARCHIVE_HASH =	\
