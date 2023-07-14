@@ -14,18 +14,18 @@
 #   $WS_TOOLS/perl-integrate-module IO::Socket::INET6
 #
 
-BUILD_STYLE = makemaker
+BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		IO::Socket::INET6
 HUMAN_VERSION =			2.73
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		IO::Socket::INET6 - [ DEPRECATED!! ] Object interface for AF_INET/AF_INET6 domain sockets
 COMPONENT_CPAN_AUTHOR =		SHLOMIF
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b6da746853253d5b4ac43191b4f69a4719595ee13a7ca676a8054cf36e6d16bb
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
