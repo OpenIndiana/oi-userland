@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Parse::RecDescent
 HUMAN_VERSION =			1.967015
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Parse::RecDescent - Generate Recursive-Descent Parsers
 COMPONENT_CPAN_AUTHOR =		JTBRAUN
 COMPONENT_ARCHIVE_HASH =	\
