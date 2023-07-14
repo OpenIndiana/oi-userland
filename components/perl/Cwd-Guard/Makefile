@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Cwd::Guard
 HUMAN_VERSION =			0.05
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Cwd::Guard - Temporary changing working directory (chdir)
 COMPONENT_CPAN_AUTHOR =		KAZEBURO
 COMPONENT_ARCHIVE_HASH =	\
