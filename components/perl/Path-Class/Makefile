@@ -14,7 +14,7 @@
 #   $WS_TOOLS/perl-integrate-module Path::Class
 #
 
-BUILD_STYLE = makemaker
+BUILD_STYLE = modulebuild
 # With default "symlink" cloney mode tests fails
 CLONEY_ARGS = CLONEY_MODE="hardlink"
 
@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Path::Class
 HUMAN_VERSION =			0.37
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Path::Class - Cross-platform path specification manipulation
 COMPONENT_CPAN_AUTHOR =		KWILLIAMS
 COMPONENT_ARCHIVE_HASH =	\
