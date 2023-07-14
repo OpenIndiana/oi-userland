@@ -29,13 +29,12 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openldap
-COMPONENT_VERSION=      2.6.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      2.6.5
 COMPONENT_SUMMARY=      OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
 COMPONENT_PROJECT_URL=  https://www.openldap.org/
-COMPONENT_ARCHIVE_HASH= sha256:d51704e50178430c06cf3d8aa174da66badf559747a47d920bb54b2d4aa40991
+COMPONENT_ARCHIVE_HASH= sha256:2e27a8d4f4c2af8fe840b573271c20aa163e24987f9765214644290f5beb38d9
 COMPONENT_ARCHIVE_URL=  https://openldap.org/software/download/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/openldap
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -45,7 +44,7 @@ COMPONENT_LICENSE_FILE= LICENSE
 TEST_TARGET = $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
