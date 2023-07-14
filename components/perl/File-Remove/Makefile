@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::Remove
 HUMAN_VERSION =			1.61
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		File::Remove - Remove files and directories
 COMPONENT_CPAN_AUTHOR =		SHLOMIF
 COMPONENT_ARCHIVE_HASH =	\
