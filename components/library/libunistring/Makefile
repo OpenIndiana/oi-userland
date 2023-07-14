@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libunistring
 COMPONENT_VERSION=	1.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		library/libunistring
 COMPONENT_SUMMARY=	libunistring - library for manipulating Unicode strings
 COMPONENT_CLASSIFICATION= System/Libraries
