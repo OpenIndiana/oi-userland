@@ -19,33 +19,53 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+
+# Copyright (c) 2011, 2023, Oracle and/or its affiliates.
 # Copyright (c) 2018, Michal Nowak
 # Copyright (c) 2022, Friedrich Kink
+# Copyright (c) 2023, Andreas Wacknitz
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
-COMPONENT_VERSION=      10.0.0
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      10.1.2
+HUMAN_VERSION=			10.01.2
+NUMERICAL_VERSION=		$(subst .,,$(HUMAN_VERSION))
 COMPONENT_SUMMARY=		Ghostscript is an interpreter for the PostScript language and PDF files
 COMPONENT_PROJECT_URL=	https://ghostscript.com
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a57764d70caf85e2fc0b0f59b83b92e25775631714dcdb97cc6e0cea414bb5a3
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:48d079242a2ca02a2e47a76a52cdfa818b2ad769c2bab00ad0497dd13560e7e7
 COMPONENT_DOWNLOAD_URL= https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/gs1000/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI= print/filter/ghostscript
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/gs$(NUMERICAL_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI= 		print/filter/ghostscript
 COMPONENT_CLASSIFICATION= System/Printing
-COMPONENT_LICENSE=      GPLv3
+COMPONENT_LICENSE=      AGPLv3, GPL, BSD, MIT, IJG, Apache 2.0
+
+COMPONENT_NAME_1= tessdata_best
+COMPONENT_VERSION_1= 4.1.0
+COMPONENT_SRC_1= $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
+COMPONENT_ARCHIVE_1= $(COMPONENT_SRC_1).tar.gz
+COMPONENT_ARCHIVE_URL_1= https://github.com/tesseract-ocr/$(COMPONENT_NAME_1)/archive/refs/tags/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_HASH_1= sha256:bb05b738298ae73e7130e2913ed002b49d94cd1cea508e63be1928fe47770b32
 
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_POST_UNPACK_ACTION= ( \
+	$(RM) $(COMPONENT_LICENSE_FILE) && \
+	$(TOUCH) $(COMPONENT_LICENSE_FILE) && \
+	for l in $(SOURCE_DIR)/LICENSE $(SOURCE_DIR)/jbig2dec/LICENSE $(SOURCE_DIR)/openjpeg/LICENSE \
+	 $(SOURCE_DIR)/libpng/LICENSE $(SOURCE_DIR)/libpng/contrib/gregbook/LICENSE  $(SOURCE_DIR)/zlib/LICENSE \
+	 $(SOURCE_DIR)/doc/COPYING $(SOURCE_DIR)/extract/COPYING $(SOURCE_DIR)/lcms2mt/COPYING \
+	 $(SOURCE_DIR)/contrib/lxm3200-tweaked/LICENSE  $(SOURCE_DIR)/tesseract/LICENSE ; do \
+		$(CAT) $$l >> $(COMPONENT_LICENSE_FILE) ; \
+		echo "------------------------------------------------------------" >> $(COMPONENT_LICENSE_FILE) ; \
+	done ; )
+
 PATH= $(PATH.gnu)
 
-# Enforce C standard
-CFLAGS += -std=c11 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
+CFLAGS += $(CPP_XPG6MODE)
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
@@ -53,16 +73,17 @@ CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
 LDFLAGS  += $(JPEG_LDFLAGS)
 
 # configure(1) options to use
-CONFIGURE_OPTIONS +=	--with-drivers=ALL
-CONFIGURE_OPTIONS +=	--with-system-libtiff
-CONFIGURE_OPTIONS +=	--with-ijs
-CONFIGURE_OPTIONS +=	--with-jbig2dec
-CONFIGURE_OPTIONS +=	--enable-cups
-CONFIGURE_OPTIONS +=	--with-libiconv=native
-CONFIGURE_OPTIONS +=	--enable-dynamic
-CONFIGURE_OPTIONS +=	--disable-compile-inits
-CONFIGURE_OPTIONS +=	--enable-freetype
-CONFIGURE_OPTIONS +=	--with-fontpath=/usr/share/ghostscript/$(COMPONENT_VERSION)/Resource:/usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/Font:/usr/share/ghostscript/fonts:/usr/openwin/lib/X11/fonts/Type1:/usr/openwin/lib/X11/fonts/TrueType:/usr/openwin/lib/X11/fonts/Type3:/usr/X11/lib/X11/fonts/Type1:/usr/X11/lib/fonts/TrueType:/usr/X11/lib/X11/fonts/Type3:/usr/X11/lib/X11/fonts/Resource:/usr/X11/lib/X11/Resource/Font:/usr/share/fonts/TrueType
+CONFIGURE_OPTIONS += --with-drivers=ALL
+CONFIGURE_OPTIONS += --with-system-libtiff
+CONFIGURE_OPTIONS += --with-ijs
+CONFIGURE_OPTIONS += --with-jbig2dec
+CONFIGURE_OPTIONS += --enable-cups
+CONFIGURE_OPTIONS += --with-libiconv=native
+CONFIGURE_OPTIONS += --enable-dynamic
+CONFIGURE_OPTIONS += --disable-compile-inits
+CONFIGURE_OPTIONS += --disable-hidden-visibility
+CONFIGURE_OPTIONS += --enable-freetype
+CONFIGURE_OPTIONS += --with-fontpath=/usr/share/ghostscript/$(HUMAN_VERSION)/Resource:/usr/share/ghostscript/$(HUMAN_VERSION)/Resource/Font:/usr/share/ghostscript/fonts:/usr/openwin/lib/X11/fonts/Type1:/usr/openwin/lib/X11/fonts/TrueType:/usr/openwin/lib/X11/fonts/Type3:/usr/X11/lib/X11/fonts/Type1:/usr/X11/lib/fonts/TrueType:/usr/X11/lib/X11/fonts/Type3:/usr/X11/lib/X11/fonts/Resource:/usr/X11/lib/X11/Resource/Font:/usr/share/fonts/TrueType
 
 # config env
 CONFIGURE_ENV += LDFLAGS_SO="-shared "
@@ -109,7 +130,14 @@ build: $(VARIANTS:%=%/.built)
 # install gs and ijs
 install: $(VARIANTS:%=%/.installed)
 
-test: $(NO_TESTS)
+# the license file is dynamically build, thus we need to remove it:
+clean::
+	$(RM) $(COMPONENT_LICENSE_FILE)
+
+COMPONENT_TEST_CMD = sh $(COMPONENT_DIR)/tests/run
+COMPONENT_TEST_ENV += TESSDATA_PREFIX="$(SOURCE_DIR_1)"
+COMPONENT_TEST_TRANSFORMS += "-e '/^Using/d'"
+COMPONENT_TEST_TRANSFORMS += "-e '/extract.c:.*:extract_subpage_free/d'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -122,6 +150,7 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/libpaper
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
