@@ -25,17 +25,16 @@
 # Copyright (c) 2021, Andreas Wacknitz
 #
 
-USE_OPENSSL11=		yes
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
-COMPONENT_VERSION=	4.2.8p17
-IPS_COMPONENT_VERSION=	$(subst p,.,$(COMPONENT_VERSION))
+HUMAN_VERSION=		4.2.8p17
+COMPONENT_REVISION=	1
+COMPONENT_VERSION=	$(subst p,.,$(HUMAN_VERSION))
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
 COMPONENT_PROJECT_URL=	https://www.ntp.org/
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:103dd272e6a66c5b8df07dce5e9a02555fcd6f1397bdfb782237328e89d3a866
 COMPONENT_ARCHIVE_URL=	https://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
@@ -51,7 +50,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ARGS=
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf --force --install )
+COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" autoreconf --force --install )
 
 CFLAGS += -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
@@ -64,8 +63,6 @@ CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/inet
 CONFIGURE_OPTIONS +=	--enable-getifaddrs
 CONFIGURE_OPTIONS +=	--enable-all-clocks
 CONFIGURE_OPTIONS +=	--enable-solarisprivs
-# debugging is enabled by default, causes 9705
-#CONFIGURE_OPTIONS +=   --disable-debugging
 CONFIGURE_OPTIONS +=	--enable-debugging
 CONFIGURE_OPTIONS +=	--enable-debugg-timing
 CONFIGURE_OPTIONS +=	--disable-optional-args
@@ -78,6 +75,8 @@ CONFIGURE_OPTIONS +=	--with-crypto=openssl
 CONFIGURE_OPTIONS +=	--with-openssl-incdir=$(OPENSSL_INCDIR)
 CONFIGURE_OPTIONS +=	--with-openssl-libdir=$(OPENSSL_LIBDIR.64)
 CONFIGURE_OPTIONS +=	--disable-problem-tests
+# workaround for https://bugs.ntp.org/show_bug.cgi?id=3552
+CONFIGURE_OPTIONS +=	--disable-signalled-io
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
