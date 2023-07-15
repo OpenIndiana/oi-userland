@@ -21,3 +21,12 @@ index 8a90b1fea0d..34b2b4d86ea 100644
  
  if (-f $elfdump) {
      open ELFDUMP,$elfdump.' -s '.(join ' ',@OBJECTS).'|' or die $!;
+@@ -213,7 +213,7 @@
+     if (/^[ \t]*$/) { print; next; }
+ 
+     # Lines of the form '{'
+-    if (/^([ \t]*){$/) {
++    if (/^([ \t]*)\{$/) {
+ 	if ($in_extern) {
+ 	    print "$1##{\n";
+ 	} else {
