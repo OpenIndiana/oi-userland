@@ -15,7 +15,7 @@ pipeline {
         }
         stage('Gmake Setup') {
             steps {
-                withPublisher('hipster-encumbered', 'full') {
+                withPublisher('hipster-encumbered', 'incremental') {
                     ignoreEncumberedComponents(['audacity', 'gsm', 'gst-plugins-bad', 'rtmpdump'])
                     sh 'rm -f components/encumbered/components.mk'
                     sh 'rm -f components/encumbered/depends.mk'

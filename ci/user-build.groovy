@@ -17,7 +17,7 @@ pipeline {
             steps {
                 sh 'rm -f components/components.mk'
                 sh 'rm -f components/depends.mk'
-                withPublisher('openindiana.org', 'full') {
+                withPublisher('openindiana.org', 'incremental') {
                     sh 'gmake setup'
                 }
             }
