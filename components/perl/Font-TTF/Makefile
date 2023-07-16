@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Font::TTF
 HUMAN_VERSION =			1.06
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Font::TTF - Perl module for TrueType Font hacking
 COMPONENT_CPAN_AUTHOR =		BHALLISSY
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,4 +31,5 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/io-string
 PERL_REQUIRED_PACKAGES += runtime/perl
