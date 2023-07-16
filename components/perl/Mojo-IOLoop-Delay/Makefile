@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mojo::IOLoop::Delay
 HUMAN_VERSION =			8.76
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mojo::IOLoop::Delay - (DISCOURAGED) Promises/A+ and flow-control helpers
 COMPONENT_CPAN_AUTHOR =		JBERGER
 COMPONENT_ARCHIVE_HASH =	\
