@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Import::Into
 HUMAN_VERSION =			1.002005
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Import::Into - Import packages into other packages
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
