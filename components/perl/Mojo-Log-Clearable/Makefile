@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Mojo::Log::Clearable
 HUMAN_VERSION =			1.001
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Mojo::Log::Clearable - Mojo::Log with clearable log handle
 COMPONENT_CPAN_AUTHOR =		DBOOK
 COMPONENT_ARCHIVE_HASH =	\
