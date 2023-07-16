@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Throwable
 HUMAN_VERSION =			1.001
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Throwable - a role for classes that can be thrown
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
@@ -35,3 +36,4 @@ PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
 PERL_REQUIRED_PACKAGES += library/perl-5/moo
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-quote
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/devel-stacktrace
