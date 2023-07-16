@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DBD::SQLite
 HUMAN_VERSION =			1.72
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DBD::SQLite - Self-contained RDBMS in a DBI Driver
 COMPONENT_CPAN_AUTHOR =		ISHIGAKI
 COMPONENT_ARCHIVE_HASH =	\
