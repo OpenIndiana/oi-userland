@@ -18,6 +18,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 11.4.0
+COMPONENT_REVISION= 1
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
@@ -52,13 +53,12 @@ CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS+= --with-diagnostics-urls=auto-if-env
 CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-objc-gc
+CONFIGURE_OPTIONS.i386+= --disable-libitm
 CONFIGURE_OPTIONS.sparc+= --with-mulhigh-size=2048
-CONFIGURE_OPTIONS.sparc+= --with-cpu=ultrasparc3
-CONFIGURE_OPTIONS.sparc+= --enable-float128
+CONFIGURE_OPTIONS.sparc+= --with-cpu=ultrasparc
 CONFIGURE_OPTIONS.sparc+= --enable-link-mutex
 CONFIGURE_OPTIONS+= --enable-initfini-array
 CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,go,lto,objc
-CONFIGURE_OPTIONS+= --disable-libitm
 CONFIGURE_OPTIONS+= enable_frame_pointer=yes
 
 # Master test results are different between amd64 and SPARCV9.
