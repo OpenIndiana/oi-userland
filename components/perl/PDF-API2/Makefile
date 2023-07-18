@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		PDF::API2
 HUMAN_VERSION =			2.044
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PDF::API2 - Create, modify, and examine PDF files
 COMPONENT_CPAN_AUTHOR =		SSIMMS
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,6 +31,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/font-ttf
-PERL_REQUIRED_PACKAGES += library/perl-5/test-exception
-PERL_REQUIRED_PACKAGES += library/perl-5/test-memory-cycle
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-memory-cycle
