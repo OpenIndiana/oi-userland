@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::IDN::Encode
 HUMAN_VERSION =			2.500
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Net::IDN::Encode - Internationalizing Domain Names in Applications (IDNA)
 COMPONENT_CPAN_AUTHOR =		CFAERBER
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,7 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/module-build
-PERL_REQUIRED_PACKAGES += library/perl-5/test-nowarnings
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-nowarnings
