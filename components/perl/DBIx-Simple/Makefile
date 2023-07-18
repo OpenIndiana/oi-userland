@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		DBIx::Simple
 HUMAN_VERSION =			1.37
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DBIx::Simple - Very complete easy-to-use OO interface to DBI
 COMPONENT_CPAN_AUTHOR =		JUERD
 COMPONENT_ARCHIVE_HASH =	\
