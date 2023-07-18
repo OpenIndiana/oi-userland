@@ -18,12 +18,13 @@ set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.description \
     value="Tar is a program for packaging a set of files as a single archive in tar format."
-set name=pkg.summary value="GNU version of the tar archiving utility"
-set name=com.oracle.info.description value="GNU tar"
-set name=info.classification value=org.opensolaris.category.2008:Development/GNU
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/bzip2 type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/compress type=require
@@ -34,7 +35,6 @@ legacy pkg=SUNWgtar \
     desc="GNU tar - A utility used to store, backup, and transport files (gtar)" \
     name="gtar - GNU tar"
 
-license gtar.license license="GPLv3, FDLv1.3"
 link path=usr/bin/gtar target=../gnu/bin/tar facet.compat.gnulinks=true
 link path=usr/share/man/man1/gtar.1 target=../../../gnu/share/man/man1/tar.1 facet.compat.gnulinks=all
 link path=usr/sfw/bin/gtar target=../../gnu/bin/tar
@@ -43,6 +43,7 @@ file usr/bin/tar path=usr/gnu/bin/tar
 file path=usr/share/info/tar.info
 file path=usr/share/info/tar.info-1
 file path=usr/share/info/tar.info-2
+file path=usr/share/info/tar.info-3
 file path=usr/share/locale/bg/LC_MESSAGES/tar.mo
 file path=usr/share/locale/ca/LC_MESSAGES/tar.mo
 file path=usr/share/locale/cs/LC_MESSAGES/tar.mo
@@ -62,6 +63,7 @@ file path=usr/share/locale/hu/LC_MESSAGES/tar.mo
 file path=usr/share/locale/id/LC_MESSAGES/tar.mo
 file path=usr/share/locale/it/LC_MESSAGES/tar.mo
 file path=usr/share/locale/ja/LC_MESSAGES/tar.mo
+file path=usr/share/locale/ka/LC_MESSAGES/tar.mo
 file path=usr/share/locale/ko/LC_MESSAGES/tar.mo
 file path=usr/share/locale/ky/LC_MESSAGES/tar.mo
 file path=usr/share/locale/ms/LC_MESSAGES/tar.mo
