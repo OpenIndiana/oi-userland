@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Alien::Build
 HUMAN_VERSION =			2.80
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Alien::Build - Build external dependencies for use in CPAN
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
@@ -35,5 +36,6 @@ PERL_REQUIRED_PACKAGES += library/perl-5/ffi-checklib
 PERL_REQUIRED_PACKAGES += library/perl-5/file-chdir
 PERL_REQUIRED_PACKAGES += library/perl-5/file-which
 PERL_REQUIRED_PACKAGES += library/perl-5/path-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/pkgconfig
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-suite
