@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Module::Build::XSUtil
 HUMAN_VERSION =			0.19
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Module::Build::XSUtil - A Module::Build class for building XS modules
 COMPONENT_CPAN_AUTHOR =		HIDEAKIO
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,9 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/capture-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/cwd-guard
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-checkcompiler
-PERL_REQUIRED_PACKAGES += library/perl-5/file-copy-recursive-reduced
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/capture-tiny
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cwd-guard
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-copy-recursive-reduced
