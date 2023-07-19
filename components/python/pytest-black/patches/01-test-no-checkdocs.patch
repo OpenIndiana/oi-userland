@@ -2,12 +2,51 @@ https://github.com/shopkeep/pytest-black/issues/66
 
 --- pytest-black-0.3.12/tests/test_black.py.orig
 +++ pytest-black-0.3.12/tests/test_black.py
+@@ -20,7 +20,7 @@
+             print('Hello, world')
+     """
+     )
+-    result = testdir.runpytest("--black")
++    result = testdir.runpytest("--black", "-p", "no:cov", "-p", "no:mypy")
+     result.assert_outcomes(failed=1)
+ 
+ 
+@@ -36,7 +36,7 @@
+     # replace trailing newline (stripped by testdir.makepyfile)
+     p = p.write(p.read() + "\n")
+ 
+-    result = testdir.runpytest("--black")
++    result = testdir.runpytest("--black", "-p", "no:cov", "-p", "no:mypy")
+     result.assert_outcomes(passed=1)
+ 
+ 
+@@ -54,17 +54,17 @@
+     p.write(contents)
+ 
+     # Test once to populate the cache
+-    result = testdir.runpytest("--black")
++    result = testdir.runpytest("--black", "-p", "no:cov", "-p", "no:mypy")
+     result.assert_outcomes(passed=1)
+ 
+     # Run it again, it should be skipped
+-    result = testdir.runpytest("--black", "-rs")
++    result = testdir.runpytest("--black", "-rs", "-p", "no:cov", "-p", "no:mypy")
+     result.assert_outcomes(skipped=1)
+     result.stdout.fnmatch_lines(["SKIP*previously passed black format checks"])
+ 
+     # Update the file and test again.
+     p.write(contents)
+-    result = testdir.runpytest("--black")
++    result = testdir.runpytest("--black", "-p", "no:cov", "-p", "no:mypy")
+     result.assert_outcomes(passed=1)
+ 
+ 
 @@ -92,7 +92,7 @@
      # Rename pyproject.toml ¯\_(ツ)_/¯
      testdir.run("mv", "test_exclude.pyproject.toml", "pyproject.toml")
  
 -    result = testdir.runpytest("--black")
-+    result = testdir.runpytest("--black", "-p", "no:checkdocs")
++    result = testdir.runpytest("--black", "-p", "no:checkdocs", "-p", "no:cov", "-p", "no:mypy")
      result.assert_outcomes(skipped=1, passed=0)
  
  
@@ -16,7 +55,7 @@ https://github.com/shopkeep/pytest-black/issues/66
      testdir.run("mv", "test_exclude_folder.pyproject.toml", "pyproject.toml")
  
 -    result = testdir.runpytest("--black")
-+    result = testdir.runpytest("--black", "-p", "no:checkdocs")
++    result = testdir.runpytest("--black", "-p", "no:checkdocs", "-p", "no:cov", "-p", "no:mypy")
      result.assert_outcomes(skipped=1, passed=0)
  
  
@@ -25,7 +64,16 @@ https://github.com/shopkeep/pytest-black/issues/66
      testdir.run("mv", "test_include.pyproject.toml", "pyproject.toml")
  
 -    result = testdir.runpytest("--black")
-+    result = testdir.runpytest("--black", "-p", "no:checkdocs")
++    result = testdir.runpytest("--black", "-p", "no:checkdocs", "-p", "no:cov", "-p", "no:mypy")
      result.assert_outcomes(skipped=0, passed=1)
  
  
+@@ -171,7 +171,7 @@
+     # replace trailing newline (stripped by testdir.makepyfile)
+     p = p.write(p.read() + "\n")
+ 
+-    result = testdir.runpytest("--black")
++    result = testdir.runpytest("--black", "-p", "no:cov", "-p", "no:mypy")
+     result.assert_outcomes(passed=1)
+ 
+     out = "\n".join(result.stdout.lines)

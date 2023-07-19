@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-black
 HUMAN_VERSION =			0.3.12
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pytest-black - A pytest plugin to enable format checking with black
 COMPONENT_PROJECT_URL =		https://github.com/shopkeep/pytest-black
 COMPONENT_ARCHIVE_URL =		\
@@ -30,6 +31,11 @@ COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:cov
+PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/black
