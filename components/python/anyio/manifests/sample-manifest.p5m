@@ -1,0 +1,77 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2023 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio-$(HUMAN_VERSION).dist-info/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio-$(HUMAN_VERSION).dist-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio-$(HUMAN_VERSION).dist-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_backends/_asyncio.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_backends/_trio.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_compat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_eventloop.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_fileio.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_resources.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_signals.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_sockets.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_streams.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_subprocesses.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_synchronization.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_tasks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_testing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/_core/_typedattr.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/abc/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/abc/_resources.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/abc/_sockets.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/abc/_streams.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/abc/_subprocesses.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/abc/_tasks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/abc/_testing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/from_thread.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/lowlevel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/pytest_plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/streams/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/streams/buffered.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/streams/file.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/streams/memory.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/streams/stapled.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/streams/text.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/streams/tls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/to_process.py
+file path=usr/lib/python$(PYVER)/vendor-packages/anyio/to_thread.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/python/exceptiongroup-$(PYV)
+depend type=require fmri=pkg:/library/python/idna-$(PYV)
+depend type=require fmri=pkg:/library/python/sniffio-$(PYV)
