@@ -1,0 +1,174 @@
+https://github.com/shopkeep/pytest-black/pull/61
+
+diff --git a/.travis.yml b/.travis.yml
+index d9891e3..178b5f6 100644
+--- a/.travis.yml
++++ b/.travis.yml
+@@ -1,6 +1,10 @@
+ language: python
+ matrix:
+   include:
++  - python: 3.10
++    env: TOX_ENV=py310,flake8
++  - python: 3.9
++    env: TOX_ENV=py39
+   - python: 3.8
+     env: TOX_ENV=py38
+   - python: 3.7
+@@ -9,8 +13,6 @@ matrix:
+     env: TOX_ENV=py36
+   - python: 3.5
+     env: TOX_ENV=py35
+-  - python: 2.7
+-    env: TOX_ENV=py27
+ install:
+ - pip install tox
+ script:
+diff --git a/pytest_black.py b/pytest_black.py
+index 04c80cb..23b461f 100644
+--- a/pytest_black.py
++++ b/pytest_black.py
+@@ -20,13 +20,10 @@ def pytest_addoption(parser):
+     )
+ 
+ 
+-def pytest_collect_file(path, parent):
++def pytest_collect_file(file_path, path, parent):
+     config = parent.config
+     if config.option.black and path.ext == ".py":
+-        if hasattr(BlackItem, "from_parent"):
+-            return BlackItem.from_parent(parent, fspath=path)
+-        else:
+-            return BlackItem(path, parent)
++        return BlackFile.from_parent(parent, path=file_path)
+ 
+ 
+ def pytest_configure(config):
+@@ -42,10 +39,17 @@ def pytest_unconfigure(config):
+         config.cache.set(HISTKEY, config._blackmtimes)
+ 
+ 
+-class BlackItem(pytest.Item, pytest.File):
+-    def __init__(self, fspath, parent):
+-        super(BlackItem, self).__init__(fspath, parent)
+-        self._nodeid += "::BLACK"
++class BlackFile(pytest.File):
++    def collect(self):
++        """ returns a list of children (items and collectors)
++            for this collection node.
++        """
++        yield BlackItem.from_parent(self, name="black")
++
++
++class BlackItem(pytest.Item):
++    def __init__(self, **kwargs):
++        super(BlackItem, self).__init__(**kwargs)
+         self.add_marker("black")
+         try:
+             with open("pyproject.toml") as toml_file:
+@@ -61,8 +65,8 @@ def __init__(self, fspath, parent):
+     def setup(self):
+         pytest.importorskip("black")
+         mtimes = getattr(self.config, "_blackmtimes", {})
+-        self._blackmtime = self.fspath.mtime()
+-        old = mtimes.get(str(self.fspath), 0)
++        self._blackmtime = self.path.stat().st_mtime
++        old = mtimes.get(str(self.path), 0)
+         if self._blackmtime == old:
+             pytest.skip("file(s) previously passed black format checks")
+ 
+@@ -70,7 +74,7 @@ def setup(self):
+             pytest.skip("file(s) excluded by pyproject.toml")
+ 
+     def runtest(self):
+-        cmd = [sys.executable, "-m", "black", "--check", "--diff", "--quiet", str(self.fspath)]
++        cmd = [sys.executable, "-m", "black", "--check", "--diff", "--quiet", str(self.path)]
+         try:
+             subprocess.run(
+                 cmd, check=True, stdout=subprocess.PIPE, universal_newlines=True
+@@ -79,7 +83,7 @@ def runtest(self):
+             raise BlackError(e)
+ 
+         mtimes = getattr(self.config, "_blackmtimes", {})
+-        mtimes[str(self.fspath)] = self._blackmtime
++        mtimes[str(self.path)] = self._blackmtime
+ 
+     def repr_failure(self, excinfo):
+         if excinfo.errisinstance(BlackError):
+@@ -87,7 +91,7 @@ def repr_failure(self, excinfo):
+         return super(BlackItem, self).repr_failure(excinfo)
+ 
+     def reportinfo(self):
+-        return (self.fspath, -1, "Black format check")
++        return (self.path, -1, "Black format check")
+ 
+     def _skip_test(self):
+         return self._excluded() or (not self._included())
+@@ -95,24 +99,18 @@ def _skip_test(self):
+     def _included(self):
+         if "include" not in self.pyproject:
+             return True
+-        return re.search(self.pyproject["include"], str(self.fspath))
++        return re.search(self.pyproject["include"], str(self.path))
+ 
+     def _excluded(self):
+         if "exclude" not in self.pyproject:
+             return False
+-        return re.search(self.pyproject["exclude"], str(self.fspath))
++        return re.search(self.pyproject["exclude"], str(self.path))
+ 
+     def _re_fix_verbose(self, regex):
+         if "\n" in regex:
+             regex = "(?x)" + regex
+         return re.compile(regex)
+ 
+-    def collect(self):
+-        """ returns a list of children (items and collectors)
+-            for this collection node.
+-        """
+-        return (self,)
+-
+ 
+ class BlackError(Exception):
+     pass
+diff --git a/setup.py b/setup.py
+index 88784dd..576a9f7 100644
+--- a/setup.py
++++ b/setup.py
+@@ -23,9 +23,9 @@ def read(fname):
+     long_description=read("README.md"),
+     long_description_content_type="text/markdown",
+     py_modules=["pytest_black"],
+-    python_requires=">=2.7",
++    python_requires=">=3.5",
+     install_requires=[
+-        "pytest>=3.5.0",
++        "pytest>=7.0.0",
+         # Minimum requirement on black 19.3b0 or later is not declared here as
+         # workaround for https://github.com/pypa/pipenv/issues/3928
+         'black; python_version >= "3.6"',
+@@ -38,7 +38,6 @@ def read(fname):
+         "Framework :: Pytest",
+         "Intended Audience :: Developers",
+         "Topic :: Software Development :: Testing",
+-        "Programming Language :: Python :: 2.7",
+         "Programming Language :: Python :: 3",
+         "Operating System :: OS Independent",
+         "License :: OSI Approved :: MIT License",
+diff --git a/tox.ini b/tox.ini
+index 06711c2..0134ae4 100644
+--- a/tox.ini
++++ b/tox.ini
+@@ -3,10 +3,10 @@
+ ignore = E501
+ 
+ [tox]
+-envlist = py27,py35,py36,py37,py38,flake8
++envlist = py35,py36,py37,py38,py39,py310,flake8
+ 
+ [testenv]
+-deps = pytest>=3.0
++deps = pytest>=7.0
+ commands = pytest {posargs:tests}
+ 
+ [testenv:flake8]

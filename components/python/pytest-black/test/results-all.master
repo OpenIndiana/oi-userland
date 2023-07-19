@@ -1,3 +1,4 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest tests
 ============================= test session starts ==============================
@@ -18,15 +19,6 @@ tests/test_black.py::test_pass PASSED
 tests/test_black.py::test_pytest_deprecation_warning PASSED
 tests/test_no_black.py::test_skipped_when_black_unavailable SKIPPED
 
-=============================== warnings summary ===============================
-tests/test_black.py: 10 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_travis_fold.py:185: PytestDeprecationWarning: The hookimpl pytest_configure uses old-style configuration options (marks or attributes).
-  Please use the pytest.hookimpl(trylast=True) decorator instead
-   to configure the hooks.
-   See https://docs.pytest.org/en/latest/deprecations.html#configuring-hook-specs-impls-using-markers
-    @pytest.mark.trylast  # to let 'terminalreporter' be registered first
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 8 passed, 1 skipped, 10 warnings ========
+======== 8 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)
