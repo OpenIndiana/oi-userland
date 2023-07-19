@@ -27,9 +27,8 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
-COMPONENT_MAJOR_VERSION=3.26
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).4
-COMPONENT_REVISION=	1
+COMPONENT_MAJOR_VERSION=3.27
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).0
 COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_DESCRIPTION= \
 CMake is a family of tools designed to build, test and package software. \
@@ -40,17 +39,13 @@ workspaces that can be used in the compiler environment of your choice.
 COMPONENT_PROJECT_URL=  https://www.cmake.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:313b6880c291bd4fe31c0aa51d6e62659282a521e695f30d5cc0d25abbd5c208
+COMPONENT_ARCHIVE_HASH=	sha256:aaeddb6b28b993d0a6e32c88123d728a17561336ab90e0bf45032383564d3cb8
 COMPONENT_ARCHIVE_URL=	https://www.cmake.org/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_LICENSE=      BSD, MIT, GPLv2, Curl, PD
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Pass cmake "major" version number to the publish phase to hopefully reduce
-# the amount of change needed between each update.
-PKG_MACROS += CMAKE_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
 
 # Need to remove this option from LD_OPTIONS (only affects sparc build);
 # it causes a SegFault failure in kwsys/testSystemInformation
@@ -105,7 +100,7 @@ COMPONENT_BUILD_ENV +=	LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"
 COMPONENT_BUILD_TARGETS =	all
 
-#ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE = $(ASLR_ENABLE)
 
 # Need C and C++ compiler locations for cmake tests
 COMPONENT_TEST_ENV += LANG=C
