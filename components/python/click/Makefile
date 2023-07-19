@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		click
-HUMAN_VERSION =			8.1.5
+HUMAN_VERSION =			8.1.6
 COMPONENT_SUMMARY =		click - Composable command line interface toolkit
 COMPONENT_PROJECT_URL =		https://palletsprojects.com/p/click/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/7e/ad/7a6a96fab480fb2fbf52f782b2deb3abe1d2c81eca3ef68a575b5a6a4f2e/click-8.1.5.tar.gz
+	https://files.pythonhosted.org/packages/72/bd/fedc277e7351917b6c4e0ac751853a97af261278a4c7808babafa8ef2120/click-8.1.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4be4b1af8d665c6d942909916d31a213a106800c47d0eeba73d34da3cbc11367
+	sha256:48ee849951919527a045bfe3bf7baa8a959c423134e1a5b98c05c20ba75a1cbd
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
