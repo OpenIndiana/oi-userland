@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		diff_cover
-HUMAN_VERSION =			7.6.1
+HUMAN_VERSION =			7.7.0
 COMPONENT_SUMMARY =		diff_cover - Run coverage and linting reports on diffs
 COMPONENT_PROJECT_URL =		https://github.com/Bachmann1234/diff-cover
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2d/6c/41c8d3f0780b5de55cea25453a5f2a1160f4ba2d8760c01bbf6cf2669d66/diff_cover-7.6.1.tar.gz
+	https://files.pythonhosted.org/packages/37/c2/f1919023fea5079b479d97793c368db8dd337170a7dbc4b5e76c1fc29d12/diff_cover-7.7.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:78dd8368789fff3bf5f5f3f696826da9cf1f54f364e4a3748026722fc5ec514f
+	sha256:60614cf7e722cf7fb1bde497afac0b514294e1e26534449622dac4da296123fb
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
