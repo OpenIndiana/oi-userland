@@ -19,14 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dnspython
-HUMAN_VERSION =			2.3.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.4.0
 COMPONENT_SUMMARY =		dnspython - DNS toolkit
 COMPONENT_PROJECT_URL =		https://www.dnspython.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/91/8b/522301c50ca1f78b09c2ca116ffb0fd797eadf6a76085d376c01f9dd3429/dnspython-2.3.0.tar.gz
+	https://files.pythonhosted.org/packages/bd/5f/45f60fd7b03a1bef883a0eb4f9b6465628c1977393be45802eef1962571d/dnspython-2.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:224e32b03eb46be70e12ef6d64e0be123a64e621ab4c0822ff6d450d52a540b9
+	sha256:758e691dbb454d5ccf4e1b154a19e52847f79e21a42fef17b969144af29a4e6c
 COMPONENT_LICENSE =		ISC
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,6 +33,11 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:mypy
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/httpcore
 PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
+PYTHON_REQUIRED_PACKAGES += library/python/sniffio
 PYTHON_REQUIRED_PACKAGES += runtime/python
