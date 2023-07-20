@@ -1,0 +1,33 @@
+We have no pytest-trio.
+
+--- httpcore-0.17.3/tests/test_models.py.orig
++++ httpcore-0.17.3/tests/test_models.py
+@@ -136,28 +136,3 @@
+     async def __aiter__(self) -> typing.AsyncIterator[bytes]:
+         for chunk in self._chunks:
+             yield chunk
+-
+-
+-@pytest.mark.trio
+-async def test_response_async_read():
+-    stream = AsyncByteIterator([b"Hello, ", b"world!"])
+-    response = httpcore.Response(200, content=stream)
+-    assert await response.aread() == b"Hello, world!"
+-    assert response.content == b"Hello, world!"
+-
+-
+-@pytest.mark.trio
+-async def test_response_async_streaming():
+-    stream = AsyncByteIterator([b"Hello, ", b"world!"])
+-    response = httpcore.Response(200, content=stream)
+-    content = b"".join([chunk async for chunk in response.aiter_stream()])
+-    assert content == b"Hello, world!"
+-
+-    # We streamed the response rather than reading it, so .content is not available.
+-    with pytest.raises(RuntimeError):
+-        response.content
+-
+-    # Once we've streamed the response, we can't access the stream again.
+-    with pytest.raises(RuntimeError):
+-        async for chunk in response.aiter_stream():
+-            pass  # pragma: nocover
