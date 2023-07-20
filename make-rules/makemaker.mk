@@ -212,12 +212,20 @@ $(BUILD_DIR)/%/MYMETA.json:	$(BUILD_DIR)/%/.configured
 				| $(PYTHON) -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
 				| $(JQ) '{prereqs:{configure:{requires:.configure_requires},build:{requires:.build_requires},runtime:{requires}}}' ; \
 		fi > $@ ; \
-	else \
-		$(TOUCH) $@ ; \
-	fi
+	fi ; \
+	$(TOUCH) $@
 
 $(BUILD_DIR)/%/.depend-build:	$(BUILD_DIR)/%/MYMETA.json
-	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) build $(PERL_VERSION) < $< > $@
+	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) configure build $(PERL_VERSION) < $< > $@
+	# Get configure requirements from META.json/META.yml too
+	if [ -e $(@D)/META.json ] ; then \
+		$(CAT) $(@D)/META.json ; \
+	elif [ -e $(@D)/META.yml ] ; then \
+		$(CAT) $(@D)/META.yml \
+			| $(PYTHON) -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
+			| $(JQ) '{prereqs:{configure:{requires:.configure_requires},build:{requires:.build_requires},runtime:{requires}}}' ; \
+	fi | $(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) configure $(PERL_VERSION) >> $@ ; \
+	$(TOUCH) $@
 $(BUILD_DIR)/%/.depend-runtime:	$(BUILD_DIR)/%/MYMETA.json
 	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) runtime $(PERL_VERSION) < $< > $@
 $(BUILD_DIR)/%/.depend-test:	$(BUILD_DIR)/%/MYMETA.json
@@ -230,7 +238,7 @@ $(BUILD_DIR)/META.depend-runtime.res:	$(BUILD_$(MK_BITS):%.built=%.depend-runtim
 $(BUILD_DIR)/META.depend-test.res:	$(BUILD_$(MK_BITS):%.built=%.depend-test)
 	$(CAT) $^ | $(SORT) -u > $@
 
-# jq is needed for perl-meta-deps and to convert META.yml to MYMETA.json
+# jq is needed for perl-meta-deps and to convert META.yml to JSON format
 USERLAND_REQUIRED_PACKAGES += text/jq
 # pyyaml is needed to convert META.yml to MYMETA.json
 USERLAND_REQUIRED_PACKAGES += library/python/pyyaml
