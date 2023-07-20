@@ -1,0 +1,31 @@
+To break dependency loop.
+Math::Prime::Util requires Math::Prime::Util::GMP
+
+--- Math-Prime-Util-GMP-0.52/Makefile.PL.orig
++++ Math-Prime-Util-GMP-0.52/Makefile.PL
+@@ -55,13 +55,6 @@
+                     url  => 'https://github.com/danaj/Math-Prime-Util-GMP',
+                   },
+                },
+-               prereqs => {
+-                 runtime => {
+-                   recommends => {
+-                     'Math::Prime::Util' => 0.68,
+-                   },
+-                 },
+-               },
+                provides => {
+                  'Math::Prime::Util::GMP' => {
+                     version => '0.52',
+--- Math-Prime-Util-GMP-0.52/META.json.orig
++++ Math-Prime-Util-GMP-0.52/META.json
+@@ -31,9 +31,6 @@
+          }
+       },
+       "runtime" : {
+-         "recommends" : {
+-            "Math::Prime::Util" : "0.68"
+-         },
+          "requires" : {
+             "Carp" : "0",
+             "Exporter" : "5.57",
