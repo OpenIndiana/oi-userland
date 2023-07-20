@@ -1,0 +1,135 @@
+ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --cov-report=xml --cov-report=term --cov=hyperframe
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+rootdir: $(@D)
+configfile: setup.cfg
+testpaths: test
+asyncio: mode=strict
+collecting ... collected 114 items
+
+test/__init__.py::mypy PASSED
+test/__init__.py::mypy-status PASSED
+test/test_external_collection.py::TestExternalCollection::test[tc_filepath0] SKIPPED
+test/test_external_collection.py::mypy PASSED
+test/test_flags.py::TestFlags::test_add PASSED
+test/test_flags.py::TestFlags::test_remove PASSED
+test/test_flags.py::TestFlags::test_repr PASSED
+test/test_flags.py::TestFlags::test_validation PASSED
+test/test_flags.py::mypy PASSED
+test/test_frames.py::TestAltSvcFrame::test_altsvc_frame_flags PASSED
+test/test_frames.py::TestAltSvcFrame::test_altsvc_frame_with_origin_and_stream_serializes_properly PASSED
+test/test_frames.py::TestAltSvcFrame::test_altsvc_frame_with_origin_parses_properly PASSED
+test/test_frames.py::TestAltSvcFrame::test_altsvc_frame_with_origin_serializes_properly PASSED
+test/test_frames.py::TestAltSvcFrame::test_altsvc_frame_without_origin_parses_properly PASSED
+test/test_frames.py::TestAltSvcFrame::test_altsvc_frame_without_origin_serializes_properly PASSED
+test/test_frames.py::TestAltSvcFrame::test_altsvc_with_unicode_field_fails PASSED
+test/test_frames.py::TestAltSvcFrame::test_altsvc_with_unicode_origin_fails PASSED
+test/test_frames.py::TestAltSvcFrame::test_repr PASSED
+test/test_frames.py::TestAltSvcFrame::test_short_altsvc_frame_errors PASSED
+test/test_frames.py::TestContinuationFrame::test_continuation_frame_flags PASSED
+test/test_frames.py::TestContinuationFrame::test_continuation_frame_parses_properly PASSED
+test/test_frames.py::TestContinuationFrame::test_continuation_frame_serializes PASSED
+test/test_frames.py::TestContinuationFrame::test_repr PASSED
+test/test_frames.py::TestDataFrame::test_body_length_behaves_correctly PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_comes_on_a_stream PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_has_correct_flags PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_parses_properly PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_serializes_properly[data1] PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_serializes_properly[testdata] PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_with_invalid_padding_errors PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_with_invalid_padding_fails_to_parse PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_with_no_length_parses PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_with_padding_calculates_flow_control_len PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_with_padding_parses_properly PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_with_padding_serializes_properly PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_without_padding_calculates_flow_control_len PASSED
+test/test_frames.py::TestDataFrame::test_data_frame_zero_length_padding_calculates_flow_control_len PASSED
+test/test_frames.py::TestDataFrame::test_long_data_frame PASSED
+test/test_frames.py::TestDataFrame::test_repr PASSED
+test/test_frames.py::TestExtensionFrame::test_repr PASSED
+test/test_frames.py::TestGeneralFrameBehaviour::test_base_frame_cant_parse_body PASSED
+test/test_frames.py::TestGeneralFrameBehaviour::test_base_frame_cant_serialize PASSED
+test/test_frames.py::TestGeneralFrameBehaviour::test_base_frame_ignores_flags PASSED
+test/test_frames.py::TestGeneralFrameBehaviour::test_can_round_trip_unknown_frames PASSED
+test/test_frames.py::TestGeneralFrameBehaviour::test_cannot_parse_invalid_frame_header PASSED
+test/test_frames.py::TestGeneralFrameBehaviour::test_flags_are_persisted PASSED
+test/test_frames.py::TestGeneralFrameBehaviour::test_frame_explain PASSED
+test/test_frames.py::TestGeneralFrameBehaviour::test_parse_body_unknown_type PASSED
+test/test_frames.py::TestGeneralFrameBehaviour::test_parse_frame_header_ignore_first_bit_of_stream_id PASSED
+test/test_frames.py::TestGeneralFrameBehaviour::test_parse_frame_header_unknown_type PASSED
+test/test_frames.py::TestGeneralFrameBehaviour::test_parse_frame_header_unknown_type_strict PASSED
+test/test_frames.py::TestGeneralFrameBehaviour::test_repr PASSED
+test/test_frames.py::TestGoAwayFrame::test_go_away_has_no_flags PASSED
+test/test_frames.py::TestGoAwayFrame::test_goaway_frame_never_has_a_stream PASSED
+test/test_frames.py::TestGoAwayFrame::test_goaway_frame_parses_properly PASSED
+test/test_frames.py::TestGoAwayFrame::test_goaway_serializes_properly PASSED
+test/test_frames.py::TestGoAwayFrame::test_repr PASSED
+test/test_frames.py::TestGoAwayFrame::test_short_goaway_frame_errors PASSED
+test/test_frames.py::TestHeadersFrame::test_headers_frame_flags PASSED
+test/test_frames.py::TestHeadersFrame::test_headers_frame_parses_properly PASSED
+test/test_frames.py::TestHeadersFrame::test_headers_frame_serializes_properly PASSED
+test/test_frames.py::TestHeadersFrame::test_headers_frame_with_invalid_padding_fails_to_parse PASSED
+test/test_frames.py::TestHeadersFrame::test_headers_frame_with_no_length_parses PASSED
+test/test_frames.py::TestHeadersFrame::test_headers_frame_with_priority_parses_properly PASSED
+test/test_frames.py::TestHeadersFrame::test_headers_frame_with_priority_serializes_properly PASSED
+test/test_frames.py::TestHeadersFrame::test_repr PASSED
+test/test_frames.py::TestPingFrame::test_no_more_than_8_octets PASSED
+test/test_frames.py::TestPingFrame::test_ping_frame_has_no_less_than_body_length_8 PASSED
+test/test_frames.py::TestPingFrame::test_ping_frame_has_no_more_than_body_length_8 PASSED
+test/test_frames.py::TestPingFrame::test_ping_frame_has_only_one_flag PASSED
+test/test_frames.py::TestPingFrame::test_ping_frame_never_has_a_stream PASSED
+test/test_frames.py::TestPingFrame::test_ping_frame_parses_properly PASSED
+test/test_frames.py::TestPingFrame::test_ping_frame_serializes_properly PASSED
+test/test_frames.py::TestPingFrame::test_repr PASSED
+test/test_frames.py::TestPriorityFrame::test_priority_frame_comes_on_a_stream PASSED
+test/test_frames.py::TestPriorityFrame::test_priority_frame_default_serializes_properly PASSED
+test/test_frames.py::TestPriorityFrame::test_priority_frame_has_no_flags PASSED
+test/test_frames.py::TestPriorityFrame::test_priority_frame_invalid PASSED
+test/test_frames.py::TestPriorityFrame::test_priority_frame_with_all_data_parses_properly PASSED
+test/test_frames.py::TestPriorityFrame::test_priority_frame_with_all_data_serializes_properly PASSED
+test/test_frames.py::TestPriorityFrame::test_repr PASSED
+test/test_frames.py::TestPriorityFrame::test_short_priority_frame_errors PASSED
+test/test_frames.py::TestPushPromiseFrame::test_push_promise_frame_flags PASSED
+test/test_frames.py::TestPushPromiseFrame::test_push_promise_frame_invalid PASSED
+test/test_frames.py::TestPushPromiseFrame::test_push_promise_frame_parses_properly PASSED
+test/test_frames.py::TestPushPromiseFrame::test_push_promise_frame_serializes_properly PASSED
+test/test_frames.py::TestPushPromiseFrame::test_push_promise_frame_with_invalid_padding_fails_to_parse PASSED
+test/test_frames.py::TestPushPromiseFrame::test_push_promise_frame_with_no_length_parses PASSED
+test/test_frames.py::TestPushPromiseFrame::test_push_promise_frame_with_padding PASSED
+test/test_frames.py::TestPushPromiseFrame::test_repr PASSED
+test/test_frames.py::TestPushPromiseFrame::test_short_push_promise_errors PASSED
+test/test_frames.py::TestRstStreamFrame::test_repr PASSED
+test/test_frames.py::TestRstStreamFrame::test_rst_stream_frame_comes_on_a_stream PASSED
+test/test_frames.py::TestRstStreamFrame::test_rst_stream_frame_has_no_flags PASSED
+test/test_frames.py::TestRstStreamFrame::test_rst_stream_frame_must_have_body_length_four PASSED
+test/test_frames.py::TestRstStreamFrame::test_rst_stream_frame_parses_properly PASSED
+test/test_frames.py::TestRstStreamFrame::test_rst_stream_frame_serializes_properly PASSED
+test/test_frames.py::TestSettingsFrame::test_repr PASSED
+test/test_frames.py::TestSettingsFrame::test_settings_frame_ack_and_settings PASSED
+test/test_frames.py::TestSettingsFrame::test_settings_frame_has_only_one_flag PASSED
+test/test_frames.py::TestSettingsFrame::test_settings_frame_invalid_body_length PASSED
+test/test_frames.py::TestSettingsFrame::test_settings_frame_parses_properly PASSED
+test/test_frames.py::TestSettingsFrame::test_settings_frame_serializes_properly PASSED
+test/test_frames.py::TestSettingsFrame::test_settings_frame_with_ack PASSED
+test/test_frames.py::TestSettingsFrame::test_settings_frame_with_settings PASSED
+test/test_frames.py::TestSettingsFrame::test_settings_frame_without_settings PASSED
+test/test_frames.py::TestSettingsFrame::test_settings_frames_never_have_streams PASSED
+test/test_frames.py::TestSettingsFrame::test_short_settings_frame_errors PASSED
+test/test_frames.py::TestWindowUpdateFrame::test_repr PASSED
+test/test_frames.py::TestWindowUpdateFrame::test_short_windowupdate_frame_errors PASSED
+test/test_frames.py::TestWindowUpdateFrame::test_window_update_has_no_flags PASSED
+test/test_frames.py::TestWindowUpdateFrame::test_window_update_serializes_properly PASSED
+test/test_frames.py::TestWindowUpdateFrame::test_windowupdate_frame_parses_properly PASSED
+test/test_frames.py::mypy PASSED
+
+Required test coverage of 100.0% reached. Total coverage: 100.00%
+===================================== mypy =====================================
+
+Success: no issues found in 4 source files
+======== 113 passed, 1 skipped ========
+  py$(PYV): OK
+  congratulations :)
