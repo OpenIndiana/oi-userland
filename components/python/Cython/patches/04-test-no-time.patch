@@ -1,8 +1,8 @@
 Remove timing from test output
 
---- Cython-0.29.33/runtests.py.orig
-+++ Cython-0.29.33/runtests.py
-@@ -601,7 +601,6 @@
+--- Cython-3.0.0/runtests.py.orig
++++ Cython-3.0.0/runtests.py
+@@ -706,7 +706,6 @@
              lines.append("%-12s: %8.2f sec  (%4d, %6.3f / run) - slowest: %s\n" % (
                  metric, t, count, t / count,
                  ', '.join("'{2}:{1}' ({0:.2f}s)".format(*item) for item in heapq.nlargest(self.top_n, top))))
@@ -10,11 +10,11 @@ Remove timing from test output
  
  
  class TestBuilder(object):
-@@ -2231,7 +2230,6 @@
+@@ -2588,7 +2587,6 @@
                  if stop:
                      return
                  sleep(1./4)
 -            write('\n#### %s\n' % now())
  
      thread = threading.Thread(target=time_stamper, name='time_stamper')
-     thread.setDaemon(True)  # Py2.6 ...
+     thread.daemon = True

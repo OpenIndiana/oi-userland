@@ -1,11 +1,26 @@
---- Cython-0.29.33/runtests.py.orig
-+++ Cython-0.29.33/runtests.py
-@@ -1811,7 +1811,7 @@
+--- Cython-3.0.0/runtests.py.orig
++++ Cython-3.0.0/runtests.py
+@@ -2054,12 +2054,12 @@
+         self.old_dir = os.getcwd()
+         os.chdir(self.working_dir)
+         os.system(
+-            "make PYTHON='%s' clean > /dev/null" % sys.executable)
++            "gmake PYTHON='%s' clean > /dev/null" % sys.executable)
+ 
+     def tearDown(self):
+         try:
+             os.system(
+-                "make PYTHON='%s' clean > /dev/null" % sys.executable)
++                "gmake PYTHON='%s' clean > /dev/null" % sys.executable)
+         except:
+             pass
+         os.chdir(self.old_dir)
+@@ -2078,7 +2078,7 @@
  
          try:
-             subprocess.check_call([
--                "make",
-+                "gmake",
-                 "PYTHON='%s'" % sys.executable,
-                 "CYTHON='%s'" % cython,
-                 "LIBDIR1='%s'" % libdir,
+             subprocess.check_output([
+-                    "make",
++                    "gmake",
+                     "PYTHON='%s'" % sys.executable,
+                     "CYTHON='%s'" % cython,
+                     "LIBDIR1='%s'" % libdir,
