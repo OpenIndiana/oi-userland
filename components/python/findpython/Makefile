@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		findpython
-HUMAN_VERSION =			0.2.5
+HUMAN_VERSION =			0.3.1
 COMPONENT_SUMMARY =		findpython - A utility to find python versions on your system
 COMPONENT_PROJECT_URL =		https://github.com/frostming/findpython
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/80/89/93e51011f6279c82ec1386bab15c675f1a82ebf04de0c8193313fcd1895b/findpython-0.2.5.tar.gz
+	https://files.pythonhosted.org/packages/5f/f1/e41623e7952500b0b0a259dcc3c3383800eb97da74772fb8b023464855ca/findpython-0.3.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e0fd473b4265e7e0e7843ec76feac8c0c441b869571f465befe9e695949069fe
+	sha256:7621f8a9c199a70d219831cddaeb84ca7e83e20b8358172bff47871a18a5eda4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,7 +33,11 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:mypy
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/pdm-pep517
+PYTHON_REQUIRED_PACKAGES += library/python/pdm-backend
 PYTHON_REQUIRED_PACKAGES += runtime/python
