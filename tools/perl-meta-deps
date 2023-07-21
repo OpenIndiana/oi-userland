@@ -18,7 +18,7 @@
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1"
-	printf "Usage: perl-meta-deps WS_MACH BUILD_DIR [configure|build|test|runtime]... PERL_VERSION\n" >&2
+	printf "Usage: perl-meta-deps WS_MACH BUILD_DIR [configure|build|test|runtime]... [suggests] PERL_VERSION\n" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
@@ -43,6 +43,9 @@ done
 PHASES=${PHASES/#,}
 [[ -z "$PHASES" ]] && PHASES=".configure,.build,.test,.runtime"
 
+RELATION=".requires,.recommends"
+[[ "$1" == "suggests" ]] && RELATION=".$1" && shift
+
 (($# == 0)) && usage "PERL_VERSION missing"
 PERLVER=$1 && shift
 PLV=${PERLVER//.}
@@ -61,7 +64,7 @@ mkdir -p "$CACHEDIR"
 find "$CACHEDIR" -type f -mtime +7 -exec rm -f {} \;
 
 
-/usr/bin/jq -r '.prereqs|'"$PHASES"'|.requires,.recommends|to_entries?|.[]|.key+" "+(.value|tostring)' | while read PREREQ VERSION ; do
+/usr/bin/jq -r '.prereqs|'"$PHASES"'|'"$RELATION"'|to_entries?|.[]|.key+" "+(.value|tostring)' | while read PREREQ VERSION ; do
 	# Convert perl version number to pkg(5) compatible form
 	VER=$("$PERL_VERSION_CONVERT" "$PREREQ" "$VERSION")
 	[[ "$VER" != "0" ]] && VER="@$VER" || VER=
@@ -69,7 +72,7 @@ find "$CACHEDIR" -type f -mtime +7 -exec rm -f {} \;
 	CACHEFILE="$CACHEDIR/$PREREQ-$PERLVER"
 
 	# Resolve the dependency if not in cache already
-	if [[ ! -s "$CACHEFILE" ]] ; then
+	if [[ ! -e "$CACHEFILE" || ("$RELATION" != ".suggests" && ! -s "$CACHEFILE") ]] ; then
 		# We must replace '::' by '-' otherwise 'pkgdepend resolve' fails
 		MANIFEST="$BUILD_DIR/META-${PREREQ//::/-}-$PERLVER"
 
@@ -95,13 +98,17 @@ find "$CACHEDIR" -type f -mtime +7 -exec rm -f {} \;
 			# Remove version number and cache the result
 			cat "$MANIFEST.res" | sed -e 's/@[^ ]*//g' -e 's/-'$PLV'/-$(PLV)/g' > "$CACHEFILE"
 		else
-			printf "ERROR: Prerequisite %s not found\n" "$PREREQ" >&2
-			cat "$MANIFEST"
+			if [[ "$RELATION" != ".suggests" ]] ; then
+				printf "ERROR: Prerequisite %s not found\n" "$PREREQ" >&2
+				cat "$MANIFEST"
+			fi
+			# Cache negative result
+			[[ ! -e "$CACHEFILE" ]] && > "$CACHEFILE"
 		fi
 	fi
 
-	# Use cached result (if any), add required version number and drop runtime/perl
-	[[ -f "$CACHEFILE" ]] && cat "$CACHEFILE" | sed -e 's/\(fmri=[^ ]*\)/\1'$VER'/g' -e '/fmri=pkg:\/runtime\/perl-\$(PLV)/d'
+	# Use cached result, add required version number and drop runtime/perl
+	cat "$CACHEFILE" | sed -e 's/\(fmri=[^ ]*\)/\1'$VER'/g' -e '/fmri=pkg:\/runtime\/perl-\$(PLV)/d'
 done | /usr/bin/pkgfmt -u | uniq | (
 	PREV_LINE_H=
 	PREV_FMRI=
