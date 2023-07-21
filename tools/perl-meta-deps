@@ -18,7 +18,7 @@
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1"
-	printf "Usage: perl-meta-deps WS_MACH BUILD_DIR [build|test|runtime] PERL_VERSION\n" >&2
+	printf "Usage: perl-meta-deps WS_MACH BUILD_DIR [configure|build|test|runtime]... PERL_VERSION\n" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
@@ -32,18 +32,22 @@ WS_MACH="$1"
 BUILD_DIR="$1"
 [[ -d "$BUILD_DIR" ]] && shift || usage "BUILD_DIR does not exist"
 
-PHASES=".configure,.build,.test,.runtime"
-case "$1" in
-	"build")	PHASES=".configure,.build" && shift ;;
-	"test")		PHASES=".test" && shift ;;
-	"runtime")	PHASES=".runtime" && shift ;;
-esac
+PHASES=
+while true ; do
+	case "$1" in
+		configure|build|test|runtime)
+			PHASES="$PHASES,.$1" && shift ;;
+		*)	break ;;
+	esac
+done
+PHASES=${PHASES/#,}
+[[ -z "$PHASES" ]] && PHASES=".configure,.build,.test,.runtime"
 
 (($# == 0)) && usage "PERL_VERSION missing"
 PERLVER=$1 && shift
 PLV=${PERLVER//.}
 PERL=/usr/perl5/$PERLVER/bin/perl
-[[ -x "$PERL" ]] || usage "perl $PERLVER not found"
+[[ -x "$PERL" ]] || usage "Perl $PERLVER not found"
 PERL_ARCH=$($PERL -e 'use Config; print $Config{archname}')
 
 (($# != 0)) && usage "Too many arguments"
