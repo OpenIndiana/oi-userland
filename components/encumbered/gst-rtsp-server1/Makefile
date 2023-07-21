@@ -18,12 +18,12 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-rtsp-server1
-COMPONENT_VERSION=      1.22.4
+COMPONENT_VERSION=      1.22.5
 COMPONENT_SUMMARY=      Multimedia graph framework - rtsp server
 COMPONENT_SRC_NAME=		gst-rtsp-server
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:4666612d7a99c60dcd6f0bdba1b7a74d2562a0501b2a3e0576f0916bf1d8811b
+COMPONENT_ARCHIVE_HASH= sha256:f343eb54964ebd4d8c071be5eecad586f28feb0156e036e06b148d0e7febb1c0
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer1/rtsp-server
