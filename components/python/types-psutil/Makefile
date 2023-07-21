@@ -19,17 +19,16 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-psutil
-HUMAN_VERSION =			5.9.5.15
+HUMAN_VERSION =			5.9.5.16
 COMPONENT_SUMMARY =		types-psutil - Typing stubs for psutil
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a6/26/eb2236866bf708a8b35663396295e5c8bf019d14fba5522b4b4cf0ecb474/types-psutil-5.9.5.15.tar.gz
+	https://files.pythonhosted.org/packages/f0/82/faffe83ad8bf945797ed7c1176f7539d2ae5e7b16a4fd6ce634282158746/types-psutil-5.9.5.16.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:943a5f9556c1995097c89f50274330dd8d71d17bd73cbc6b09c61dbf4e114cc6
+	sha256:4e9b219efb625d3d04f6bf106934f87cab49aa41a94b0a3b3089403f47a79228
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
-# This project does not contain tests
-TEST_STYLE = none
+TEST_STYLE = setup.py
 
 include $(WS_MAKE_RULES)/common.mk
 
