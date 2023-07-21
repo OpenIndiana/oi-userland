@@ -230,6 +230,7 @@ $(BUILD_DIR)/%/.depend-runtime:	$(BUILD_DIR)/%/MYMETA.json
 	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) runtime $(PERL_VERSION) < $< > $@
 $(BUILD_DIR)/%/.depend-test:	$(BUILD_DIR)/%/MYMETA.json
 	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) test $(PERL_VERSION) < $< > $@
+	$(WS_TOOLS)/perl-meta-deps $(WS_MACH) $(BUILD_DIR) test runtime suggests $(PERL_VERSION) < $< >> $@
 
 $(BUILD_DIR)/META.depend-build.res:	$(BUILD_$(MK_BITS):%.built=%.depend-build)
 	$(CAT) $^ | $(SORT) -u > $@
