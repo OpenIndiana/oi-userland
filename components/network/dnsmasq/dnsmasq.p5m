@@ -1,42 +1,30 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/service/network/dnsmasq@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="A DNS forwarder for NAT firewalls"
-set name=pkg.description \
-    value="dnsmasq(8) is a lightweight DNS, TFTP, PXE, router advertisement and DHCP server. It is intended to provide coupled DNS and DHCP service to a LAN."
-set name=com.oracle.info.description \
-    value="dnsmasq, a DNS forwarder for NAT firewalls"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Applications/Internet
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2014/035
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 file dnsmasq.conf.example path=etc/dnsmasq.conf.example
 file files/dnsmasq.auth_attr \
@@ -44,6 +32,8 @@ file files/dnsmasq.auth_attr \
 file files/dnsmasq.prof_attr \
     path=etc/security/prof_attr.d/service:network:dnsmasq group=sys
 file files/dnsmasq.xml path=lib/svc/manifest/network/dnsmasq.xml
+
+file path=usr/lib/inet/dhcp_release
 file path=usr/lib/inet/dnsmasq
 file path=usr/share/locale/de/LC_MESSAGES/dnsmasq.mo
 file path=usr/share/locale/es/LC_MESSAGES/dnsmasq.mo
@@ -51,6 +41,7 @@ file path=usr/share/locale/fi/LC_MESSAGES/dnsmasq.mo
 file path=usr/share/locale/fr/LC_MESSAGES/dnsmasq.mo
 file path=usr/share/locale/id/LC_MESSAGES/dnsmasq.mo
 file path=usr/share/locale/it/LC_MESSAGES/dnsmasq.mo
+file path=usr/share/locale/ka/LC_MESSAGES/dnsmasq.mo
 file path=usr/share/locale/no/LC_MESSAGES/dnsmasq.mo
 file path=usr/share/locale/pl/LC_MESSAGES/dnsmasq.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/dnsmasq.mo
@@ -58,5 +49,3 @@ file path=usr/share/locale/ro/LC_MESSAGES/dnsmasq.mo
 file path=usr/share/man/es/man8/dnsmasq.8
 file path=usr/share/man/fr/man8/dnsmasq.8
 file path=usr/share/man/man8/dnsmasq.8
-
-license dnsmasq.license license=GPLv2
