@@ -1,0 +1,15 @@
+I haven't found a better solution yet. Is there a canonical way of finding the executable path and name on illumos?
+
+--- inkscape-1.2.2_2022-12-01_b0a8486541/src/path-prefix.cpp.orig	2022-11-26 18:31:03.000000000 +0100
++++ inkscape-1.2.2_2022-12-01_b0a8486541/src/path-prefix.cpp	2023-07-22 18:07:30.833252759 +0200
+@@ -151,7 +151,9 @@
+            program_name = realpath(buf, nullptr);
+        } else {
+            g_warning("get_program_name() - sysctl failed");
+-       }      
++       }
++#elif defined(__sun)
++       program_name = "\/usr\/bin\/inkscape";
+ #else
+ #warning get_program_name() - no known way to obtain executable name on this platform
+         g_info("get_program_name() - no known way to obtain executable name on this platform");
