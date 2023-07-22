@@ -1,19 +1,17 @@
 g++: error: -pie is not supported in this configuration
 make[4]: *** [/ws/grzemba/oi-userland/components/web/firefox/firefox-68.12.0/config/rules.mk:540: ../../../dist/bin/js] Error 1
 make[4]: Leaving directory '/ws/grzemba/oi-userland/components/web/firefox/build/amd64/js/src/shell'
-
-diff --git a/build/autoconf/compiler-opts.m4 b/build/autoconf/compiler-opts.m4
-index 6e73e20..cff81b0 100644
---- a/build/autoconf/compiler-opts.m4
-+++ b/build/autoconf/compiler-opts.m4
-@@ -175,10 +175,6 @@ if test "$GNU_CC" -a "$GCC_USE_GNU_LD" -a -z "$DEVELOPER_OPTIONS"; then
-     fi
- fi
+--- gecko-dev-master/build/autoconf/compiler-opts.m4.old	2023-06-10 13:54:09.501319246 -0400
++++ gecko-dev-master/build/autoconf/compiler-opts.m4	2023-06-10 13:57:28.109237589 -0400
+@@ -147,9 +147,10 @@
  
--if test "$GNU_CC$CLANG_CC"; then
--    MOZ_PROGRAM_LDFLAGS="$MOZ_PROGRAM_LDFLAGS -pie"
--fi
--
- AC_SUBST(MOZ_PROGRAM_LDFLAGS)
- 
- dnl ASan assumes no symbols are being interposed, and when that happens,
+ if test "$GNU_CC$CLANG_CC"; then
+     case "${OS_TARGET}" in
+-    Darwin|WASI)
++    Darwin|WASI|SunOS)
+         # It's the default on those targets, and clang complains about -pie
+         # being unused if passed.
++        # On Illumos, there was an error using -pie with g++ for Firefox 68
+         ;;
+     *)
+         MOZ_PROGRAM_LDFLAGS="$MOZ_PROGRAM_LDFLAGS -pie"
