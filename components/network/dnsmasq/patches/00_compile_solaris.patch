@@ -1,35 +1,27 @@
-Patches to successfully compile dnsmasq-2.76 on Solaris.
+Patches to successfully compile dnsmasq on Solaris.
 
 This patch was developed in-house. Since it is Solaris-specific it is not
 suitable for upstream.
 
---- dnsmasq-2.76/src/dnsmasq.h.orig	2016-07-20 15:15:52.633336049 -0700
-+++ dnsmasq-2.76/src/dnsmasq.h	2016-07-20 15:17:28.118001495 -0700
-@@ -1265,7 +1265,7 @@
- #ifdef HAVE_DHCP6
- void join_multicast(int dienow);
- #endif
--#if defined(HAVE_LINUX_NETWORK) || defined(HAVE_BSD_NETWORK)
-+#if defined(HAVE_LINUX_NETWORK) || defined(HAVE_BSD_NETWORK) || defined(HAVE_SOLARIS_NETWORK)
- void newaddress(time_t now);
- #endif
-
---- dnsmasq-2.82/src/bpf.c.orig	2020-07-19 22:54:44.000000000 +0000
-+++ dnsmasq-2.82/src/bpf.c	2020-12-18 22:33:48.319966559 +0000
+diff --git a/src/bpf.c b/src/bpf.c
+index 82d215a..ed06772 100644
+--- a/src/bpf.c
++++ b/src/bpf.c
 @@ -31,7 +31,9 @@
- #  include <net/if_var.h>
+ #  include <net/if_var.h> 
  #endif
  #include <netinet/in_var.h>
 +#ifndef HAVE_SOLARIS_NETWORK
  #include <netinet6/in6_var.h>
 +#endif
-
+ 
  #ifndef SA_SIZE
  #define SA_SIZE(sa)                                             \
- 
---- dnsmasq-2.76/src/config.h.orig	2016-07-22 16:41:00.629870757 -0700
-+++ dnsmasq-2.76/src/config.h	2016-07-22 16:41:37.890924646 -0700
-@@ -293,7 +293,8 @@
+diff --git a/src/config.h b/src/config.h
+index 9f69ce3..17bf7f1 100644
+--- a/src/config.h
++++ b/src/config.h
+@@ -302,7 +302,8 @@ HAVE_SOCKADDR_SA_LEN
  #define HAVE_GETOPT_LONG
  #undef HAVE_SOCKADDR_SA_LEN
  #define ETHER_ADDR_LEN 6 
@@ -38,9 +30,22 @@ suitable for upstream.
 +
  #endif
  
- /* Decide if we're going to support IPv6 */
---- dnsmasq-2.76/src/ip6addr.h.orig	2016-07-27 18:32:53.817400897 -0700
-+++ dnsmasq-2.76/src/ip6addr.h	2016-07-27 18:40:54.445231062 -0700
+ /* rules to implement compile-time option dependencies and 
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index e770454..2a22bdd 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -1384,7 +1384,7 @@ int set_ipv6pktinfo(int fd);
+ #ifdef HAVE_DHCP6
+ void join_multicast(int dienow);
+ #endif
+-#if defined(HAVE_LINUX_NETWORK) || defined(HAVE_BSD_NETWORK)
++#if defined(HAVE_LINUX_NETWORK) || defined(HAVE_BSD_NETWORK) || defined(HAVE_SOLARIS_NETWORK)
+ void newaddress(time_t now);
+ #endif
+ 
+--- a/src/ip6addr.h	2021-09-08 22:21:22.000000000 +0000
++++ b/src/ip6addr.h	2021-11-30 07:27:25.197780519 +0000
 @@ -14,8 +14,41 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -83,9 +88,28 @@ suitable for upstream.
  #define IN6_IS_ADDR_ULA(a) \
          ((((__const uint32_t *) (a))[0] & htonl (0xff000000))                 \
           == htonl (0xfd000000))
-@@ -31,4 +64,4 @@
+@@ -31,3 +64,5 @@
           && ((__const uint32_t *) (a))[1] == 0                                \
           && ((__const uint32_t *) (a))[2] == 0                                \
           && ((__const uint32_t *) (a))[3] == 0)
--
++
 +#endif /* HAVE_SOLARIS_NETWORK */
+--- a/bld/pkg-wrapper	2021-09-08 22:21:22.000000000 +0000
++++ b/bld/pkg-wrapper	2021-12-03 04:27:45.325925557 +0000
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ in=`cat`
+ 
+--- a/src/dump.c	2023-05-11 17:40:27.341715910 +0200
++++ b/src/dump.c	2023-05-11 17:44:17.810574531 +0200
+@@ -20,6 +20,8 @@
+ 
+ #include <netinet/icmp6.h>
+ 
++#define IPDEFTTL 64	/* default ttl, RFC 1122, RFC 1340 */
++
+ static u32 packet_count;
+ static void do_dump_packet(int mask, void *packet, size_t len,
+ 			   union mysockaddr *src, union mysockaddr *dst, int port, int proto);

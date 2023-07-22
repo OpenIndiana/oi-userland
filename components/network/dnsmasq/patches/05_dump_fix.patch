@@ -1,13 +1,16 @@
---- dnsmasq-2.82/src/dump.c.orig	2020-07-19 22:54:44.000000000 +0000
-+++ dnsmasq-2.82/src/dump.c	2020-12-21 12:39:10.771636459 +0000
-@@ -148,6 +148,10 @@
-       ip.ip_v = IPVERSION;
-       ip.ip_hl = sizeof(struct ip) / 4;
-       ip.ip_len = htons(sizeof(struct ip) + sizeof(struct udphdr) + len); 
+--- dnsmasq-2.89/src/dump.c.orig	2023-02-02 21:24:24.000000000 +0100
++++ dnsmasq-2.89/src/dump.c	2023-07-22 14:27:10.140391206 +0200
+@@ -20,6 +20,13 @@
+ 
+ #include <netinet/icmp6.h>
+ 
 +#ifdef __sun
-+    /* Linux uses 64; in order to find out the value for OpenIndiana use "pfexec ndd /dev/icmp icmp_ipv4_ttl" */
++    /* To find out th correct value for OpenIndiana use "pfexec ndd /dev/icmp icmp_ipv4_ttl" */
 +    #define IPDEFTTL 255
++#else
++#define IPDEFTTL 64	/* default ttl, RFC 1122, RFC 1340 */
 +#endif
-       ip.ip_ttl = IPDEFTTL;
-       ip.ip_p = IPPROTO_UDP;
-       
++
+ static u32 packet_count;
+ static void do_dump_packet(int mask, void *packet, size_t len,
+ 			   union mysockaddr *src, union mysockaddr *dst, int port, int proto);

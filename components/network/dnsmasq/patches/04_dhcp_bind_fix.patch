@@ -4,9 +4,11 @@ that causes DHCP to be extremely slow.
 This patch was developed in-house. Since it is Solaris-specific, it is not
 suitable for upstream.
 
---- dnsmasq-2.82/src/dhcp-common.c.orig	2020-07-19 22:54:44.000000000 +0000
-+++ dnsmasq-2.82/src/dhcp-common.c	2020-12-21 11:52:58.531501359 +0000
-@@ -550,6 +550,58 @@
+diff --git a/src/dhcp-common.c b/src/dhcp-common.c
+index befd8a0..4573730 100644
+--- a/src/dhcp-common.c
++++ b/src/dhcp-common.c
+@@ -550,6 +550,58 @@ void  bindtodevice(char *device, int fd)
        errno != EPERM)
      die(_("failed to set SO_BINDTODEVICE on DHCP socket: %s"), NULL, EC_BADNET);
  }
@@ -22,29 +24,29 @@ suitable for upstream.
 +   * entire DHCP process.
 +   */
 +
-+  struct irec *iface, *found;
-+  struct iname *if_tmp;
++   struct irec *iface, *found;
++   struct iname *if_tmp;
 +
-+  if (!daemon->if_names)
-+    return -1;
++   if (!daemon->if_names)
++     return -1;
 +
-+  for (if_tmp = daemon->if_names; if_tmp; if_tmp = if_tmp->next)
-+    if (if_tmp->name && (!if_tmp->used || strchr(if_tmp->name, '*')))
-+      return -1;
++   for (if_tmp = daemon->if_names; if_tmp; if_tmp = if_tmp->next)
++     if (if_tmp->name && (!if_tmp->used || strchr(if_tmp->name, '*')))
++       return -1;
++ 
++   for (found = NULL, iface = daemon->interfaces; iface; iface = iface->next)
++     if (iface->dhcp_ok)
++       {
++	 if (!found)
++	   found = iface;
++	 else if (strcmp(found->name, iface->name) != 0)
++	   return -1; /* more than one. */
++       }
 +
-+  for (found = NULL, iface = daemon->interfaces; iface; iface = iface->next)
-+    if (iface->dhcp_ok)
-+      {
-+        if (!found)
-+          found = iface;
-+        else if (strcmp(found->name, iface->name) != 0)
-+	        return -1; /* more than one. */
-+      }
++   if (found)
++     return found->index;
 +
-+  if (found)
-+    return found->index;
-+
-+  return -1;
++   return -1;
 +}
 +
 +void bindtoif(int ifindex, int fd, int is_dhcp6)
@@ -65,26 +67,12 @@ suitable for upstream.
  #endif
  
  static const struct opttab_t {
---- dnsmasq-2.82/src/dnsmasq.h.orig	2020-07-19 22:54:44.000000000 +0000
-+++ dnsmasq-2.82/src/dnsmasq.h	2020-12-21 11:55:30.930905825 +0000
-@@ -1577,6 +1577,9 @@
- #ifdef HAVE_LINUX_NETWORK
- char *whichdevice(void);
- void bindtodevice(char *device, int fd);
-+#elif defined(HAVE_SOLARIS_NETWORK)
-+int which_ifindex(void);
-+void bindtoif(int ifindex, int fd, int is_dhcp6);
- #endif
- #  ifdef HAVE_DHCP6
- void display_opts6(void);
---- dnsmasq-2.82/src/dnsmasq.c.orig	2020-07-19 22:54:44.000000000 +0000
-+++ dnsmasq-2.82/src/dnsmasq.c	2020-12-21 12:06:31.510121604 +0000
-@@ -59,7 +59,11 @@
-   int did_bind = 0;
-   struct server *serv;
-   char *netlink_warn;
--#endif 
-+#endif
+--- a/src/dnsmasq.c	2023-02-02 21:24:24.000000000 +0100
++++ dnsmasq-2.89/src/dnsmasq.c	2023-05-12 10:54:02.094077940 +0200
+@@ -66,6 +66,10 @@
+ #else
+   int bind_fallback = 0;
+ #endif 
 +#if defined(HAVE_SOLARIS_NETWORK)
 +  int bound_ifindex = -1;
 +  int did_bind = 0;
@@ -92,9 +80,20 @@ suitable for upstream.
  #if defined(HAVE_DHCP) || defined(HAVE_DHCP6)
    struct dhcp_context *context;
    struct dhcp_relay *relay;
-@@ -365,6 +369,23 @@
- 	      did_bind = 1;
- 	    }
+@@ -985,6 +989,10 @@
+   if (netlink_warn)
+     my_syslog(LOG_WARNING, netlink_warn);
+ #  endif
++#  ifdef HAVE_SOLARIS_NETWORK
++  if (did_bind)
++    my_syslog(MS_DHCP | LOG_INFO, _("DHCP, sockets bound exclusively to interface index %d"), bound_ifindex);
++#  endif
+ 
+   /* after dhcp_construct_contexts */
+   if (daemon->dhcp || daemon->doing_dhcp6)
+@@ -1103,6 +1111,23 @@
+ 	  if (daemon->pxefd != -1)
+ 	    poll_listen(daemon->pxefd, POLLIN);
  	}
 +#elif defined(HAVE_SOLARIS_NETWORK) && defined(HAVE_DHCP)
 +      bound_ifindex = which_ifindex();
@@ -109,33 +108,21 @@ suitable for upstream.
 +
 +	  if (daemon->enable_pxe && bound_ifindex >= 0)
 +	    {
-+        bindtoif(bound_ifindex, daemon->pxefd, 0);
++              bindtoif(bound_ifindex, daemon->pxefd, 0);
 +	      did_bind = 1;
 +	    }
 +	}
  #endif
  
- #if defined(HAVE_LINUX_NETWORK) && defined(HAVE_DHCP6)
-@@ -373,6 +394,12 @@
- 	  bindtodevice(bound_device, daemon->dhcp6fd);
- 	  did_bind = 1;
- 	}
-+#elif defined(HAVE_SOLARIS_NETWORK) && defined(HAVE_DHCP6)
-+      if (daemon->doing_dhcp6 && !daemon->relay6 && bound_ifindex >= 0)
-+	{
-+    bindtoif(bound_ifindex, daemon->dhcp6fd, 1);
-+	  did_bind = 1;
-+	}
+ #ifdef HAVE_DHCP6
+--- a/src/dnsmasq.h	2023-02-02 21:24:24.000000000 +0100
++++ dnsmasq-2.89/src/dnsmasq.h	2023-05-12 11:04:20.988219658 +0200
+@@ -153,6 +153,8 @@
+ #include <sys/prctl.h>
+ #elif defined(HAVE_SOLARIS_NETWORK)
+ #include <priv.h>
++int which_ifindex(void);
++void bindtoif(int ifindex, int fd, int is_dhcp6);
  #endif
-     }
-   else 
-@@ -950,6 +977,9 @@
  
-   if (netlink_warn)
-     my_syslog(LOG_WARNING, netlink_warn);
-+#  elif defined(HAVE_SOLARIS_NETWORK)
-+  if (did_bind)
-+    my_syslog(MS_DHCP | LOG_INFO, _("DHCP, sockets bound exclusively to interface index %d"), bound_ifindex);
- #  endif
- 
-   /* after dhcp_construct_contexts */
+ /* Backwards compat with 2.83 */
