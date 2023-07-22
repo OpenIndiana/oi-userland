@@ -15,12 +15,13 @@
 #
 
 BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Try::Tiny
 HUMAN_VERSION =			0.31
-COMPONENT_REVISION =		3
+COMPONENT_REVISION =		4
 COMPONENT_SUMMARY =		Try::Tiny - Minimal try/catch with proper preservation of \$$@
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,3 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/capture-tiny
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-check
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/sub-name
