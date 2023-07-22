@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Test::Fatal
 HUMAN_VERSION =			0.017
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test::Fatal - incredibly simple helpers for testing code with exceptions
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
