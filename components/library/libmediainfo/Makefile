@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		MediaInfoLib
 COMPONENT_VERSION=	23.7
 HUMAN_VERSION=		23.07
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	MediaInfo(Lib) is a convenient unified display of the most relevant technical and tag data for video and audio files.
 COMPONENT_PROJECT_URL=	https://github.com/MediaArea/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
@@ -44,7 +45,7 @@ CONFIGURE_OPTIONS += --with-libmms
 CONFIGURE_OPTIONS += --with-graphviz
 CONFIGURE_OPTIONS += "builddir=$(SOURCE_DIR)/../build/amd64"
 CONFIGURE_ENV += CPPFLAGS="$(CXXFLAGS) -DUNICODE -I/usr/include -DMEDIAINFO_GRAPHVIZ_NO -DMEDIAINFO_LIBCURL_NO -DMEDIAINFO_LIBMMS_NO -I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -I$(SOURCE_DIR)/Source/ThirdParty/tinyxml2 -I$(SOURCE_DIR)/Source/ThirdParty/base64 -DUNICODE -fPIC -O2"
-CFLAGSi += -I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -fPIC -O2
+CFLAGS += -I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -fPIC -O2
 CXXFLAGS += -DUNICODE -DSIZE_T_IS_LONG -I$(SOURCE_DIR)/Source/ThirdParty/aes-gladman -I$(SOURCE_DIR)/Source/ThirdParty/md5 -I$(SOURCE_DIR)/Source/ThirdParty/sha1-gladman -I$(SOURCE_DIR)/Source/ThirdParty/sha2-gladman -I$(SOURCE_DIR)/Source/ThirdParty/hmac-gladman -I$(SOURCE_DIR)/Source/ThirdParty/tinyxml2 -I$(SOURCE_DIR)/Source/ThirdParty/base64 -DUNICODE -fPIC -O2
 
 # Copy test scripts into test folder and change PATH_SCRIPT=$(dirname $0) to PATH_SCRIPT="../build/amd64/test/"
