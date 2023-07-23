@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		MooX::Types::MooseLike
 HUMAN_VERSION =			0.29
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		MooX::Types::MooseLike - some Moosish types and a type builder
 COMPONENT_CPAN_AUTHOR =		MATEU
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,6 +31,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
-PERL_REQUIRED_PACKAGES += library/perl-5/moo
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
+PERL_REQUIRED_PACKAGES += library/perl-5/strictures
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/moo
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
