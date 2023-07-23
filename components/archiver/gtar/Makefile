@@ -28,23 +28,26 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tar
-COMPONENT_VERSION=	1.34
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.35
+COMPONENT_SUMMARY=	GNU version of the tar archiving utility
+COMPONENT_DESCRIPTION=	Tar is a program for packaging a set of files as a single archive in tar format
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/tar/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:63bebd26879c5e1eea4352f0d03c991f966aeb3ddeb3c7445c902568d5411d28
+COMPONENT_ARCHIVE_HASH= sha256:4d62ff37342ec7aed748535323930c7cf94acf71c3591882b26a7ea50f3edc16
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/tar/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		archiver/gnu-tar
+COMPONENT_CLASSIFICATION=	Development/GNU
+COMPONENT_LICENSE=	GPLv3, FDLv1.3
+COMPONENT_LICENSE_FILE=	gtar.license
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Use ssh (rather than rsh) for remote commands.
 CONFIGURE_ENV += "RSH=/usr/bin/ssh"
 
-CONFIGURE_OPTIONS +=	--with-rmt=/usr/sbin/rmt
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
+CONFIGURE_OPTIONS += --with-rmt=/usr/sbin/rmt
+CONFIGURE_OPTIONS += --libexecdir=/usr/sbin
 
 # rmt(1M)
 REQUIRED_PACKAGES += service/network/network-clients
