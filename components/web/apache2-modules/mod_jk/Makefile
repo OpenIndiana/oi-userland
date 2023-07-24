@@ -19,24 +19,26 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2023 Niklas Poslovski
 #
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_jk
-COMPONENT_VERSION=	1.2.42
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://tomcat.apache.org/connectors-doc/
+COMPONENT_VERSION=	1.2.48
+COMPONENT_FMRI=		web/server/apache-24/module/apache-jk
+COMPONENT_SUMMARY=	Tomcat Connector plugin for Apache Web Server V2.4
+COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
+COMPONENT_PROJECT_URL=	https://tomcat.apache.org/connectors-doc/
 COMPONENT_SRC_NAME=	tomcat-connectors
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ea119f234c716649d4e7d4abd428852185b6b23a9205655e45554b88f01f3e31
-COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/apache
+    sha256:cb1b360ba0a12b2dbec119b60f561e9f657ed75df8188e5d902534b56b908e97
+COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/tomcat/tomcat-connectors/jk/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	Apache 2.0
+COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 APXS = /usr/apache2/2.4/bin/apxs
 
@@ -53,11 +55,11 @@ COMPONENT_PREP_ACTION += (cd $(SOURCE_DIR)/native && autoreconf -fi);
 # Header files are missing during build without cloning.
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR)/native $(@D));
 
-build: $(BUILD_64)
+# The Makefile install target tries to write into system directories without root rights, so skip that.
+COMPONENT_INSTALL_TARGETS =
 
-install: $(BUILD_64)
-
-test: $(NO_TESTS)
-
-REQUIRED_PACKAGES += system/library
+# Manually added dependencies
 REQUIRED_PACKAGES += web/server/apache-24
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
