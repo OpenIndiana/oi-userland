@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		B::Hooks::EndOfScope
 HUMAN_VERSION =			0.26
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		B::Hooks::EndOfScope - Execute code after a scope finished compilation
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
@@ -33,4 +33,5 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/module-implementation
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-exporter-progressive
+PERL_REQUIRED_PACKAGES += library/perl-5/variable-magic
 PERL_REQUIRED_PACKAGES += runtime/perl
