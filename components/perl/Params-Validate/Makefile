@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Params::Validate
 HUMAN_VERSION =			1.31
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Params::Validate - Validate method/function parameters
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,7 +33,7 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
 PERL_REQUIRED_PACKAGES += library/perl-5/module-implementation
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-requires
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requires
