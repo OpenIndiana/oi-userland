@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::Copy::Recursive
 HUMAN_VERSION =			0.45
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		File::Copy::Recursive - Perl extension for recursively copying files and directories
 COMPONENT_CPAN_AUTHOR =		DMUEY
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,9 +30,9 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/path-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/test-deep
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-file
-PERL_REQUIRED_PACKAGES += library/perl-5/test-warnings
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/path-tiny
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-deep
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-file
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings
