@@ -13,19 +13,18 @@
 # Copyright 2017 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2021 Andreas Wacknitz
-# Copyright 2022 Niklas Poslovski
+# Copyright 2022-2023 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         brltty
-COMPONENT_VERSION=      6.5
-COMPONENT_REVISION=     4
+COMPONENT_VERSION=      6.6
 COMPONENT_SUMMARY=      Braille support
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:2f173535291ba39b5a9fc8d80c349234333d92042d95d6dd88796c98a02f316b
-COMPONENT_PROJECT_URL=  http://www.mielke.cc/brltty/
+COMPONENT_ARCHIVE_HASH= sha256:ab11cfc5fbd7ef0ec876ffea7e131e424b2fd004b6158064e1a2e46412825529
+COMPONENT_PROJECT_URL=  https://brltty.app/
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/accessibility/brltty
 COMPONENT_CLASSIFICATION=Applications/Universal Access
@@ -44,7 +43,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += (cd $(@D) ; ./autogen) ;
 
 CC +=		$(CC_BITS)
 CFLAGS +=	$(CC_PIC)
-CFLAGS +=	-I /usr/include/pcre -I /usr/include/liblouis
+CFLAGS +=	-I/usr/include/pcre -I/usr/include/liblouis -I/usr/include/ncurses
 CPPFLAGS +=	-D_SYS_UCONTEXT_H # Workaround Bug Id 15558893
 
 # Disable python bindings for now.
@@ -63,6 +62,7 @@ CONFIGURE_OPTIONS +=    --disable-polkit # requires SO_PEERCRED support
 CONFIGURE_OPTIONS +=    --without-midi-package
 CONFIGURE_OPTIONS +=    --without-writable-directory
 CONFIGURE_OPTIONS +=    --with-gui-toolkit=Xaw
+CONFIGURE_OPTIONS +=    --with-curses=ncurses
 CONFIGURE_OPTIONS +=    --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)
 
@@ -94,10 +94,12 @@ COMPONENT_INSTALL_ARGS += INSTALL_ROOT=$(PROTO_DIR)
 REQUIRED_PACKAGES += system/header/header-ugen
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/liblouis
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
