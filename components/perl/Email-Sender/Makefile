@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Sender
 HUMAN_VERSION =			2.600
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::Sender - a library for sending email
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,7 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/capture-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/email-abstract
 PERL_REQUIRED_PACKAGES += library/perl-5/email-address-xs
 PERL_REQUIRED_PACKAGES += library/perl-5/email-simple
@@ -41,3 +41,4 @@ PERL_REQUIRED_PACKAGES += library/perl-5/sub-exporter
 PERL_REQUIRED_PACKAGES += library/perl-5/throwable
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/capture-tiny
