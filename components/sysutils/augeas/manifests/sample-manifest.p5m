@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2018 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,34 +23,20 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/augmatch
-file path=usr/bin/$(MACH64)/augparse
-file path=usr/bin/$(MACH64)/augtool
-file path=usr/bin/$(MACH64)/fadot
 file path=usr/bin/augmatch
 file path=usr/bin/augparse
+file path=usr/bin/augprint
 file path=usr/bin/augtool
 file path=usr/bin/fadot
 file path=usr/include/augeas.h
 file path=usr/include/fa.h
-file path=usr/lib/$(MACH64)/libaugeas.a
-link path=usr/lib/$(MACH64)/libaugeas.so target=libaugeas.so.0.24.2
-link path=usr/lib/$(MACH64)/libaugeas.so.0 target=libaugeas.so.0.24.2
-file path=usr/lib/$(MACH64)/libaugeas.so.0.24.2
-file path=usr/lib/$(MACH64)/libfa.a
+link path=usr/lib/$(MACH64)/libaugeas.so target=libaugeas.so.0.25.0
+link path=usr/lib/$(MACH64)/libaugeas.so.0 target=libaugeas.so.0.25.0
+file path=usr/lib/$(MACH64)/libaugeas.so.0.25.0
 link path=usr/lib/$(MACH64)/libfa.so target=libfa.so.1.5.3
 link path=usr/lib/$(MACH64)/libfa.so.1 target=libfa.so.1.5.3
 file path=usr/lib/$(MACH64)/libfa.so.1.5.3
 file path=usr/lib/$(MACH64)/pkgconfig/augeas.pc
-file path=usr/lib/libaugeas.a
-link path=usr/lib/libaugeas.so target=libaugeas.so.0.24.2
-link path=usr/lib/libaugeas.so.0 target=libaugeas.so.0.24.2
-file path=usr/lib/libaugeas.so.0.24.2
-file path=usr/lib/libfa.a
-link path=usr/lib/libfa.so target=libfa.so.1.5.3
-link path=usr/lib/libfa.so.1 target=libfa.so.1.5.3
-file path=usr/lib/libfa.so.1.5.3
-file path=usr/lib/pkgconfig/augeas.pc
 file path=usr/share/augeas/lenses/dist/access.aug
 file path=usr/share/augeas/lenses/dist/activemq_conf.aug
 file path=usr/share/augeas/lenses/dist/activemq_xml.aug
@@ -63,7 +50,9 @@ file path=usr/share/augeas/lenses/dist/aptcacherngsecurity.aug
 file path=usr/share/augeas/lenses/dist/aptconf.aug
 file path=usr/share/augeas/lenses/dist/aptpreferences.aug
 file path=usr/share/augeas/lenses/dist/aptsources.aug
+file path=usr/share/augeas/lenses/dist/authinfo2.aug
 file path=usr/share/augeas/lenses/dist/authorized_keys.aug
+file path=usr/share/augeas/lenses/dist/authselectpam.aug
 file path=usr/share/augeas/lenses/dist/automaster.aug
 file path=usr/share/augeas/lenses/dist/automounter.aug
 file path=usr/share/augeas/lenses/dist/avahi.aug
@@ -79,8 +68,10 @@ file path=usr/share/augeas/lenses/dist/cgrules.aug
 file path=usr/share/augeas/lenses/dist/channels.aug
 file path=usr/share/augeas/lenses/dist/chrony.aug
 file path=usr/share/augeas/lenses/dist/clamav.aug
+file path=usr/share/augeas/lenses/dist/cmdline.aug
 file path=usr/share/augeas/lenses/dist/cobblermodules.aug
 file path=usr/share/augeas/lenses/dist/cobblersettings.aug
+file path=usr/share/augeas/lenses/dist/cockpit.aug
 file path=usr/share/augeas/lenses/dist/collectd.aug
 file path=usr/share/augeas/lenses/dist/cpanel.aug
 file path=usr/share/augeas/lenses/dist/cron.aug
@@ -105,6 +96,7 @@ file path=usr/share/augeas/lenses/dist/erlang.aug
 file path=usr/share/augeas/lenses/dist/ethers.aug
 file path=usr/share/augeas/lenses/dist/exports.aug
 file path=usr/share/augeas/lenses/dist/fai_diskconfig.aug
+file path=usr/share/augeas/lenses/dist/fail2ban.aug
 file path=usr/share/augeas/lenses/dist/fonts.aug
 file path=usr/share/augeas/lenses/dist/fstab.aug
 file path=usr/share/augeas/lenses/dist/fuse.aug
@@ -236,6 +228,7 @@ file path=usr/share/augeas/lenses/dist/slapd.aug
 file path=usr/share/augeas/lenses/dist/smbusers.aug
 file path=usr/share/augeas/lenses/dist/solaris_system.aug
 file path=usr/share/augeas/lenses/dist/soma.aug
+file path=usr/share/augeas/lenses/dist/sos.aug
 file path=usr/share/augeas/lenses/dist/spacevars.aug
 file path=usr/share/augeas/lenses/dist/splunk.aug
 file path=usr/share/augeas/lenses/dist/squid.aug
@@ -266,7 +259,9 @@ file path=usr/share/augeas/lenses/dist/tests/test_aptcacherngsecurity.aug
 file path=usr/share/augeas/lenses/dist/tests/test_aptconf.aug
 file path=usr/share/augeas/lenses/dist/tests/test_aptpreferences.aug
 file path=usr/share/augeas/lenses/dist/tests/test_aptsources.aug
+file path=usr/share/augeas/lenses/dist/tests/test_authinfo2.aug
 file path=usr/share/augeas/lenses/dist/tests/test_authorized_keys.aug
+file path=usr/share/augeas/lenses/dist/tests/test_authselectpam.aug
 file path=usr/share/augeas/lenses/dist/tests/test_automaster.aug
 file path=usr/share/augeas/lenses/dist/tests/test_automounter.aug
 file path=usr/share/augeas/lenses/dist/tests/test_avahi.aug
@@ -282,8 +277,10 @@ file path=usr/share/augeas/lenses/dist/tests/test_cgrules.aug
 file path=usr/share/augeas/lenses/dist/tests/test_channels.aug
 file path=usr/share/augeas/lenses/dist/tests/test_chrony.aug
 file path=usr/share/augeas/lenses/dist/tests/test_clamav.aug
+file path=usr/share/augeas/lenses/dist/tests/test_cmdline.aug
 file path=usr/share/augeas/lenses/dist/tests/test_cobblermodules.aug
 file path=usr/share/augeas/lenses/dist/tests/test_cobblersettings.aug
+file path=usr/share/augeas/lenses/dist/tests/test_cockpit.aug
 file path=usr/share/augeas/lenses/dist/tests/test_collectd.aug
 file path=usr/share/augeas/lenses/dist/tests/test_cpanel.aug
 file path=usr/share/augeas/lenses/dist/tests/test_cron.aug
@@ -308,6 +305,7 @@ file path=usr/share/augeas/lenses/dist/tests/test_erlang.aug
 file path=usr/share/augeas/lenses/dist/tests/test_ethers.aug
 file path=usr/share/augeas/lenses/dist/tests/test_exports.aug
 file path=usr/share/augeas/lenses/dist/tests/test_fai_diskconfig.aug
+file path=usr/share/augeas/lenses/dist/tests/test_fail2ban.aug
 file path=usr/share/augeas/lenses/dist/tests/test_fonts.aug
 file path=usr/share/augeas/lenses/dist/tests/test_fstab.aug
 file path=usr/share/augeas/lenses/dist/tests/test_fuse.aug
@@ -439,6 +437,7 @@ file path=usr/share/augeas/lenses/dist/tests/test_slapd.aug
 file path=usr/share/augeas/lenses/dist/tests/test_smbusers.aug
 file path=usr/share/augeas/lenses/dist/tests/test_solaris_system.aug
 file path=usr/share/augeas/lenses/dist/tests/test_soma.aug
+file path=usr/share/augeas/lenses/dist/tests/test_sos.aug
 file path=usr/share/augeas/lenses/dist/tests/test_spacevars.aug
 file path=usr/share/augeas/lenses/dist/tests/test_splunk.aug
 file path=usr/share/augeas/lenses/dist/tests/test_squid.aug
@@ -457,6 +456,7 @@ file path=usr/share/augeas/lenses/dist/tests/test_syslog.aug
 file path=usr/share/augeas/lenses/dist/tests/test_systemd.aug
 file path=usr/share/augeas/lenses/dist/tests/test_termcap.aug
 file path=usr/share/augeas/lenses/dist/tests/test_thttpd.aug
+file path=usr/share/augeas/lenses/dist/tests/test_tinc.aug
 file path=usr/share/augeas/lenses/dist/tests/test_tmpfiles.aug
 file path=usr/share/augeas/lenses/dist/tests/test_toml.aug
 file path=usr/share/augeas/lenses/dist/tests/test_trapperkeeper.aug
@@ -478,6 +478,7 @@ file path=usr/share/augeas/lenses/dist/tests/test_xymon_alerting.aug
 file path=usr/share/augeas/lenses/dist/tests/test_yaml.aug
 file path=usr/share/augeas/lenses/dist/tests/test_yum.aug
 file path=usr/share/augeas/lenses/dist/thttpd.aug
+file path=usr/share/augeas/lenses/dist/tinc.aug
 file path=usr/share/augeas/lenses/dist/tmpfiles.aug
 file path=usr/share/augeas/lenses/dist/toml.aug
 file path=usr/share/augeas/lenses/dist/trapperkeeper.aug
@@ -498,8 +499,12 @@ file path=usr/share/augeas/lenses/dist/xymon.aug
 file path=usr/share/augeas/lenses/dist/xymon_alerting.aug
 file path=usr/share/augeas/lenses/dist/yaml.aug
 file path=usr/share/augeas/lenses/dist/yum.aug
+file path=usr/share/bash-completion/completions/augmatch
+file path=usr/share/bash-completion/completions/augprint
+file path=usr/share/bash-completion/completions/augtool
 file path=usr/share/man/man1/augmatch.1
 file path=usr/share/man/man1/augparse.1
+file path=usr/share/man/man1/augprint.1
 file path=usr/share/man/man1/augtool.1
 file path=usr/share/vim/vimfiles/ftdetect/augeas.vim
 file path=usr/share/vim/vimfiles/syntax/augeas.vim
