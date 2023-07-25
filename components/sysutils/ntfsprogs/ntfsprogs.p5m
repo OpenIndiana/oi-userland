@@ -13,11 +13,13 @@
 # Copyright 2016 Adam Stevko. All rights reserved.
 # Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 # Copyright 2021-2022 Jean-Pierre André. All rights reserved.
+# Copyright 2023 Niklas Poslovski
 #
 
 <transform file path=usr/lib/fs/ntfs-3g/(.*) -> default mode 0555>
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -78,10 +80,10 @@ file path=usr/include/ntfs-3g/types.h
 file path=usr/include/ntfs-3g/unistr.h
 file path=usr/include/ntfs-3g/volume.h
 file path=usr/include/ntfs-3g/xattrs.h
-link path=usr/lib/libntfs-3g.so target=libntfs-3g.so.89.0.0
-link path=usr/lib/libntfs-3g.so.89 target=libntfs-3g.so.89.0.0
-file path=usr/lib/libntfs-3g.so.89.0.0
-file path=usr/lib/pkgconfig/libntfs-3g.pc
+link path=usr/lib/$(MACH64)/libntfs-3g.so target=libntfs-3g.so.89.0.0
+link path=usr/lib/$(MACH64)/libntfs-3g.so.89 target=libntfs-3g.so.89.0.0
+file path=usr/lib/$(MACH64)/libntfs-3g.so.89.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/libntfs-3g.pc
 file path=usr/sbin/mkntfs
 file path=usr/sbin/ntfsclone
 file path=usr/sbin/ntfscp
