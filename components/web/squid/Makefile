@@ -26,19 +26,19 @@
 #
 
 BUILD_BITS=             64
-USE_OPENSSL11=		yes
+OPENSSL_VERSION=	3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      5.9
+COMPONENT_VERSION=      6.3
 COMPONENT_SUMMARY=      Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
 #No https connection available at all
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v5/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:3fe5c2007da2757446af91b6ef974f154b208120a9a39396ea681e5c4abb04b5
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v6/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:74a0f5586a7a5d89573d502708d5e1d66ddf0430cf4802cc7261b765653248fa
 COMPONENT_ARCHIVE_1=    $(COMPONENT_NAME)-langpack-20230225.tar.gz
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_PROJECT_URL)Versions/langpack/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1= sha256:1532b796f20a65b9f4e7040306172477f7bbaacfce3c5f402fe1a5f9464b92be
@@ -51,8 +51,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH   = $(PATH.gnu)
 CFLAGS += $(CPP_LARGEFILES)
-# otherwise esi/Libxml2Parser.cc will fail with 'void htmlDefaultSAXHandlerInit()' is deprecated
-CXXFLAGS += -Wno-error=deprecated-declarations -std=c++11
 
 #incorporate official translations
 COMPONENT_PREP_ACTION=	( cd $(COMPONENT_SRC)/errors; $(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1))
@@ -112,7 +110,7 @@ CONFIGURE_OPTIONS += --enable-useragent-log
 CONFIGURE_OPTIONS += --enable-log-daemon-helpers='DB,file'
 CONFIGURE_OPTIONS += --enable-x-accelerator-vary
 CONFIGURE_OPTIONS += --enable-translation
-#CONFIGURE_OPTIONS += --enable-gnuregex
+CONFIGURE_OPTIONS += --enable-gnuregex
 CONFIGURE_OPTIONS += --enable-htpc
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/squid
 
@@ -124,8 +122,9 @@ CONFIGURE_OPTIONS += --with-build-environment=POSIX_V6_LP64_OFF64
 CONFIGURE_OPTIONS += --with-pthreads
 # the following option is not documented but without kerberos does not work
 CONFIGURE_OPTIONS += --with-solaris-krb5
+CONFIGURE_OPTIONS += --with-xml2
 CONFIGURE_OPTIONS += --enable-static=no
-CONFIGURE_OPTIONS += --without-libcap
+CONFIGURE_OPTIONS += --without-cap
 CONFIGURE_OPTIONS += --without-heimdal-krb5
 CONFIGURE_OPTIONS += --without-mit-krb5
 CONFIGURE_OPTIONS += --without-gnugss
@@ -157,12 +156,10 @@ REQUIRED_PACKAGES += developer/cppunit
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libtool/libltdl
-REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-11
+REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/tdb
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += service/security/kerberos-5
