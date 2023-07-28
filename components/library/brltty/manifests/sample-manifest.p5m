@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -37,6 +37,7 @@ file path=etc/brltty/Contraction/de-g1.ctb
 file path=etc/brltty/Contraction/de-g2.ctb
 file path=etc/brltty/Contraction/de-wort.cti
 file path=etc/brltty/Contraction/de.ctb
+file path=etc/brltty/Contraction/en-ueb-g1.ctb
 file path=etc/brltty/Contraction/en-ueb-g2.ctb
 file path=etc/brltty/Contraction/en-us-g2.ctb
 file path=etc/brltty/Contraction/en.ctb
@@ -142,6 +143,14 @@ file path=etc/brltty/Input/ce/all.ktb
 file path=etc/brltty/Input/ce/novem.ktb
 file path=etc/brltty/Input/chords.kti
 file path=etc/brltty/Input/cn/all.ktb
+file path=etc/brltty/Input/dp/all.ktb
+file path=etc/brltty/Input/dp/function.kti
+file path=etc/brltty/Input/dp/keyboard.kti
+file path=etc/brltty/Input/dp/navigation.kti
+file path=etc/brltty/Input/dp/panfn4.ktb
+file path=etc/brltty/Input/dp/panning.kti
+file path=etc/brltty/Input/dp/routing.kti
+file path=etc/brltty/Input/dp/scroll.kti
 file path=etc/brltty/Input/ec/all.txt
 file path=etc/brltty/Input/ec/spanish.txt
 file path=etc/brltty/Input/eu/all.txt
@@ -483,6 +492,7 @@ file path=usr/bin/brltty-prologue.lua
 file path=usr/bin/brltty-prologue.sh
 file path=usr/bin/brltty-prologue.tcl
 file path=usr/bin/brltty-setcaps
+file path=usr/bin/brltty-term
 file path=usr/bin/brltty-trtxt
 file path=usr/bin/brltty-ttb
 file path=usr/bin/brltty-ttysize
@@ -533,6 +543,7 @@ file path=usr/include/brltty/brldefs-bn.h
 file path=usr/include/brltty/brldefs-cb.h
 file path=usr/include/brltty/brldefs-ce.h
 file path=usr/include/brltty/brldefs-cn.h
+file path=usr/include/brltty/brldefs-dp.h
 file path=usr/include/brltty/brldefs-eu.h
 file path=usr/include/brltty/brldefs-fa.h
 file path=usr/include/brltty/brldefs-fs.h
@@ -559,6 +570,8 @@ file path=usr/include/brltty/clipboard.h
 file path=usr/include/brltty/cmd.h
 file path=usr/include/brltty/cmd_enqueue.h
 file path=usr/include/brltty/cmd_types.h
+file path=usr/include/brltty/cmdline.h
+file path=usr/include/brltty/cmdline_types.h
 file path=usr/include/brltty/common_java.h
 file path=usr/include/brltty/config.h
 file path=usr/include/brltty/crc.h
@@ -616,9 +629,9 @@ file path=usr/include/brltty/midi.h
 file path=usr/include/brltty/mntfs.h
 file path=usr/include/brltty/mntpt.h
 file path=usr/include/brltty/morse.h
+file path=usr/include/brltty/msg_queue.h
 file path=usr/include/brltty/note_types.h
 file path=usr/include/brltty/notes.h
-file path=usr/include/brltty/options.h
 file path=usr/include/brltty/params.h
 file path=usr/include/brltty/parse.h
 file path=usr/include/brltty/pcm.h
@@ -629,14 +642,19 @@ file path=usr/include/brltty/ports.h
 file path=usr/include/brltty/prefs.h
 file path=usr/include/brltty/program.h
 file path=usr/include/brltty/prologue.h
+file path=usr/include/brltty/pty_object.h
+file path=usr/include/brltty/pty_screen.h
+file path=usr/include/brltty/pty_terminal.h
 file path=usr/include/brltty/queue.h
 file path=usr/include/brltty/revision.h
 file path=usr/include/brltty/rgx.h
 file path=usr/include/brltty/scr_base.h
 file path=usr/include/brltty/scr_driver.h
+file path=usr/include/brltty/scr_emulator.h
 file path=usr/include/brltty/scr_gpm.h
 file path=usr/include/brltty/scr_main.h
 file path=usr/include/brltty/scr_real.h
+file path=usr/include/brltty/scr_terminal.h
 file path=usr/include/brltty/scr_types.h
 file path=usr/include/brltty/scr_utils.h
 file path=usr/include/brltty/serial_types.h
@@ -660,7 +678,7 @@ file path=usr/include/brltty/timing.h
 file path=usr/include/brltty/timing_types.h
 file path=usr/include/brltty/ttb.h
 file path=usr/include/brltty/tune.h
-file path=usr/include/brltty/tune_build.h
+file path=usr/include/brltty/tune_builder.h
 file path=usr/include/brltty/tune_types.h
 file path=usr/include/brltty/tune_utils.h
 file path=usr/include/brltty/unicode.h
@@ -683,6 +701,7 @@ file path=usr/lib/$(MACH64)/brltty/libbrlttybbn.so
 file path=usr/lib/$(MACH64)/brltty/libbrlttybcb.so
 file path=usr/lib/$(MACH64)/brltty/libbrlttybce.so
 file path=usr/lib/$(MACH64)/brltty/libbrlttybcn.so
+file path=usr/lib/$(MACH64)/brltty/libbrlttybdp.so
 file path=usr/lib/$(MACH64)/brltty/libbrlttybec.so
 file path=usr/lib/$(MACH64)/brltty/libbrlttybeu.so
 file path=usr/lib/$(MACH64)/brltty/libbrlttybfa.so
@@ -712,12 +731,15 @@ file path=usr/lib/$(MACH64)/brltty/libbrlttybvr.so
 file path=usr/lib/$(MACH64)/brltty/libbrlttybvs.so
 file path=usr/lib/$(MACH64)/brltty/libbrlttybxw.so
 file path=usr/lib/$(MACH64)/brltty/libbrlttyxa2.so
+file path=usr/lib/$(MACH64)/brltty/libbrlttyxem.so
+file path=usr/lib/$(MACH64)/brltty/libbrlttyxfv.so
 file path=usr/lib/$(MACH64)/brltty/libbrlttyxsc.so
 file path=usr/lib/$(MACH64)/libbrlapi.a
-link path=usr/lib/$(MACH64)/libbrlapi.so target=libbrlapi.so.0.8.4
-link path=usr/lib/$(MACH64)/libbrlapi.so.0.8 target=libbrlapi.so.0.8.4
-file path=usr/lib/$(MACH64)/libbrlapi.so.0.8.4
+link path=usr/lib/$(MACH64)/libbrlapi.so target=libbrlapi.so.0.8.5
+link path=usr/lib/$(MACH64)/libbrlapi.so.0.8 target=libbrlapi.so.0.8.5
+file path=usr/lib/$(MACH64)/libbrlapi.so.0.8.5
 file path=usr/lib/$(MACH64)/pkgconfig/brltty.pc
+file path=usr/libexec/brltty/brltty-pty
 file path=usr/share/gdm/greeter/autostart/xbrlapi.desktop
 file path=usr/share/locale/ar/LC_MESSAGES/brltty.mo
 file path=usr/share/locale/de/LC_MESSAGES/brltty.mo
