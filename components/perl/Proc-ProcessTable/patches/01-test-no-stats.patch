@@ -1,0 +1,28 @@
+Do not print system stats.  They change with every test run.
+
+--- Proc-ProcessTable-0.636/t/process.t.orig
++++ Proc-ProcessTable-0.636/t/process.t
+@@ -15,23 +15,6 @@
+ 
+ my $t = Proc::ProcessTable->new;
+ 
+-# Is there a process called cron
+-foreach $got ( @{$t->table} )
+-{
+-  next unless $got->pid == $$;
+-#  print STDERR $got->pid, "  ", $got->fname, "\n";
+-  print STDERR "--------------------------------\n";
+-  foreach $field ($t->fields){
+-    my $v = $got->{$field};
+-    if (ref($v) eq "ARRAY")
+-    {
+-      $v = "\"" . join ("\",\"", @$v) . "\"";
+-    }
+-    print STDERR $field, ":  ", (defined $v ? $v : "<undef>"), "\n";
+-  }
+-
+-}
+-
+ plan skip_all => 'This test needs real fork() implementation' if $Config{d_pseudofork} || !$Config{d_fork};
+ plan tests => 3;
+ 
