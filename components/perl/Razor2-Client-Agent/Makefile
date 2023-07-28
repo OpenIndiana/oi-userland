@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Razor2::Client::Agent
 HUMAN_VERSION =			2.86
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Razor2::Client::Agent - Collaborative, content-based spam filtering network agent.
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
