@@ -11,22 +11,23 @@
 #
 # Copyright 2016 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 # Copyright 2023 Klaus Ziegler
+# Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS=64
 USE_OPENSSL11=yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdns-recursor
-COMPONENT_VERSION=	4.8.1
+COMPONENT_VERSION=	4.9.0
 COMPONENT_PROJECT_URL=	https://www.powerdns.com/downloads.html
 COMPONENT_FMRI=		service/network/dns/powerdns-recursor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:d7b03447009257e512f01fcc46cbdb9c859b672a1c9b23faf382e870765b0f0d
-COMPONENT_ARCHIVE_URL=	http://downloads.powerdns.com/releases/$(COMPONENT_ARCHIVE)
+	sha256:d36f162843e367646a661a785ca0becde9b68552855bf40532aebafa103966f3
+COMPONENT_ARCHIVE_URL=	https://downloads.powerdns.com/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_SUMMARY=	a DNS server
 COMPONENT_CLASSIFICATION=System/Services
 
@@ -50,17 +51,13 @@ CONFIGURE_OPTIONS += --enable-unit-tests
 
 COMPONENT_TEST_TRANSFORMS = $(CONFIGURE_TEST_TRANSFORMS)
 
-# Test dependencies
-REQUIRED_PACKAGES += system/library/boost
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/security/libsodium
 REQUIRED_PACKAGES += library/security/openssl-11
-REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += system/library/math
