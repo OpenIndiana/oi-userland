@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany-plugins
 COMPONENT_VERSION=      1.38
-COMPONENT_REVISION=     5
+COMPONENT_REVISION=     6
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=         editor/geany/plugins
 COMPONENT_SUMMARY=      Plugins for Geany editor
