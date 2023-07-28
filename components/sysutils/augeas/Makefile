@@ -13,32 +13,25 @@
 # Copyright 2016 Jim Klimov
 # Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2023 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		augeas
-COMPONENT_VERSION=	1.12.0
-COMPONENT_SUMMARY=	Augeas is a utility for editing configuration files	
+COMPONENT_VERSION=	1.14.1
+COMPONENT_SUMMARY=	Augeas is a utility for editing configuration files
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:321942c9cc32185e2e9cb72d0a70eea106635b50269075aca6714e3ec282cb87
-COMPONENT_ARCHIVE_URL=	http://download.augeas.net/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://augeas.net/index.html
+COMPONENT_ARCHIVE_HASH=	sha256:368bfdd782e4b9c7163baadd621359c82b162734864b667051ff6bcb57b9edff
+COMPONENT_ARCHIVE_URL=	https://github.com/hercules-team/$(COMPONENT_NAME)/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://augeas.net/index.html
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CXXFLAGS.32=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
-CFLAGS.32=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
-
-CXXFLAGS+=	$(CXXFLAGS.$(BITS))
-CFLAGS+=	$(CFLAGS.$(BITS))
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -46,6 +39,7 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --disable-dependency-tracking
+CONFIGURE_OPTIONS += --disable-static
 
 # Needed for "gmake test" to work.
 # SHELLOPTS is exported via make-rules/shared-macros.mk,
@@ -60,13 +54,8 @@ COMPONENT_TEST_ARGS		= -k
 COMPONENT_TEST_TRANSFORMER	= $(NAWK)
 COMPONENT_TEST_TRANSFORMS	= "'/TOTAL|FAIL/'"
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
