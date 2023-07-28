@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Email::Stuffer
 HUMAN_VERSION =			0.020
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Email::Stuffer - A more casual approach to creating and sending Email:: emails
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
@@ -33,7 +34,8 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_REQUIRED_PACKAGES += library/perl-5/email-mime
 PERL_REQUIRED_PACKAGES += library/perl-5/email-sender
 PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
-PERL_REQUIRED_PACKAGES += library/perl-5/moo
 PERL_REQUIRED_PACKAGES += library/perl-5/params-util
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/email-sender
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/moo
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
