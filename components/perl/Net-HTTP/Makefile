@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Net::HTTP
 HUMAN_VERSION =			6.23
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Net::HTTP - Low-level HTTP connection (client)
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,3 +33,5 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-socket-inet6
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ssl
