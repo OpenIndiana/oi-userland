@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2021 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,6 +23,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file path=usr/bin/git2
 file path=usr/include/git2.h
 file path=usr/include/git2/annotated_commit.h
 file path=usr/include/git2/apply.h
@@ -45,6 +47,7 @@ file path=usr/include/git2/describe.h
 file path=usr/include/git2/diff.h
 file path=usr/include/git2/email.h
 file path=usr/include/git2/errors.h
+file path=usr/include/git2/experimental.h
 file path=usr/include/git2/filter.h
 file path=usr/include/git2/global.h
 file path=usr/include/git2/graph.h
@@ -102,6 +105,7 @@ file path=usr/include/git2/sys/path.h
 file path=usr/include/git2/sys/refdb_backend.h
 file path=usr/include/git2/sys/reflog.h
 file path=usr/include/git2/sys/refs.h
+file path=usr/include/git2/sys/remote.h
 file path=usr/include/git2/sys/repository.h
 file path=usr/include/git2/sys/stream.h
 file path=usr/include/git2/sys/transport.h
@@ -113,12 +117,7 @@ file path=usr/include/git2/tree.h
 file path=usr/include/git2/types.h
 file path=usr/include/git2/version.h
 file path=usr/include/git2/worktree.h
-link path=usr/lib/$(MACH64)/libgit2.so target=libgit2.so.1.3
-file path=usr/lib/$(MACH64)/libgit2.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libgit2.so.1.3 \
-    target=libgit2.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libgit2.so target=libgit2.so.1.7
+file path=usr/lib/$(MACH64)/libgit2.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libgit2.so.1.7 target=libgit2.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/libgit2.pc
-link path=usr/lib/libgit2.so target=libgit2.so.1.3
-file path=usr/lib/libgit2.so.$(COMPONENT_VERSION)
-link path=usr/lib/libgit2.so.1.3 target=libgit2.so.$(COMPONENT_VERSION)
-file path=usr/lib/pkgconfig/libgit2.pc
