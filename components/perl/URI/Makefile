@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		URI
 HUMAN_VERSION =			5.19
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		URI - Uniform Resource Identifiers (absolute and relative)
 COMPONENT_CPAN_AUTHOR =		SIMBABQUE
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,7 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-needs
-PERL_REQUIRED_PACKAGES += library/perl-5/test-warnings
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings
