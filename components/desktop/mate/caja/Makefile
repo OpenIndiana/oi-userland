@@ -14,22 +14,23 @@
 # Copyright 2020 Michal Nowak
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
 # Copyright 2022 Andreas Wacknitz
+# Copyright 2023 Niklas Poslovski
 #
 
 MATE_CATEGORY= APP
 BUILD_STYLE= configure
-USE_COMMON_TEST_MASTER= no
 include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		caja
 COMPONENT_MJR_VERSION=	1.26
-COMPONENT_MNR_VERSION=	1
-COMPONENT_REVISION=	2
+COMPONENT_MNR_VERSION=	2
 COMPONENT_SUMMARY=	File manager for the MATE desktop
-COMPONENT_ARCHIVE_HASH= sha256:30fd6e6f00a38200f6e2e898ad7fa797876bb060f1d0341dd2f7393279e14c07
+COMPONENT_ARCHIVE_HASH= sha256:d5dd708d2325a3bb5e9e93e902ba8989602549ccf75bfaa36e8c70d3f7bed99b
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_CLASSIFICATION= System/Libraries
+# 1.26.2 has a non-standard file name, the line below can likely be removed again with the next update
+COMPONENT_SRC=		caja-glib-2.50-1.26.2
 
 TEST_TARGET= $(TEST_$(MK_BITS))
 include $(WS_MAKE_RULES)/common.mk
