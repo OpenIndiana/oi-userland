@@ -10,25 +10,25 @@
 #
 #
 # Copyright 2022 Stephan Althaus
+# Copyright 2023 Niklas Poslovski
 #
-
-BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		e2fsprogs
-COMPONENT_VERSION=	1.46.5
+COMPONENT_VERSION=	1.47.0
 COMPONENT_SUMMARY=	Second extended file system (ext2fs) management programs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:2f16c9176704cf645dc69d5b15ff704ae722d665df38b2ed3cfc249757d8d81e
+	sha256:144af53f2bbd921cef6f8bea88bb9faddca865da3fbc657cc9b4d2001097d5db
 COMPONENT_ARCHIVE_URL= \
 	https://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://e2fsprogs.sourceforge.net/
+COMPONENT_PROJECT_URL=	https://e2fsprogs.sourceforge.net/
 COMPONENT_FMRI=		sysutils/e2fsprogs
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	NOTICE
 
 LIBUUID =  -luuid
 STATIC_LIBUUID = -luuid

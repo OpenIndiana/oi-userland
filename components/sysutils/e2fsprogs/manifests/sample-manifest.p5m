@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2023 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -78,24 +79,24 @@ file path=usr/sbin/blkid
 file path=usr/sbin/debugfs
 file path=usr/sbin/dumpe2fs
 file path=usr/sbin/e2freefrag
-hardlink path=usr/sbin/e2fsck target=fsck.ext3
+hardlink path=usr/sbin/e2fsck target=fsck.ext2
 file path=usr/sbin/e2image
-file path=usr/sbin/e2label
+hardlink path=usr/sbin/e2label target=findfs
 hardlink path=usr/sbin/e2mmpstatus target=dumpe2fs
 file path=usr/sbin/e2undo
 file path=usr/sbin/filefrag
-hardlink path=usr/sbin/findfs target=e2label
-hardlink path=usr/sbin/fsck.ext2 target=fsck.ext3
-file path=usr/sbin/fsck.ext3
-hardlink path=usr/sbin/fsck.ext4 target=fsck.ext3
+file path=usr/sbin/findfs
+file path=usr/sbin/fsck.ext2
+hardlink path=usr/sbin/fsck.ext3 target=fsck.ext2
+hardlink path=usr/sbin/fsck.ext4 target=fsck.ext2
 file path=usr/sbin/logsave
-file path=usr/sbin/mke2fs
-hardlink path=usr/sbin/mkfs.ext2 target=mke2fs
-hardlink path=usr/sbin/mkfs.ext3 target=mke2fs
-hardlink path=usr/sbin/mkfs.ext4 target=mke2fs
+hardlink path=usr/sbin/mke2fs target=mkfs.ext2
+file path=usr/sbin/mkfs.ext2
+hardlink path=usr/sbin/mkfs.ext3 target=mkfs.ext2
+hardlink path=usr/sbin/mkfs.ext4 target=mkfs.ext2
 file path=usr/sbin/mklost+found
 file path=usr/sbin/resize2fs
-hardlink path=usr/sbin/tune2fs target=e2label
+hardlink path=usr/sbin/tune2fs target=findfs
 file path=usr/share/et/et_c.awk
 file path=usr/share/et/et_h.awk
 file path=usr/share/info/libext2fs.info.gz
@@ -107,6 +108,7 @@ file path=usr/share/locale/eo/LC_MESSAGES/e2fsprogs.mo
 file path=usr/share/locale/es/LC_MESSAGES/e2fsprogs.mo
 file path=usr/share/locale/fi/LC_MESSAGES/e2fsprogs.mo
 file path=usr/share/locale/fr/LC_MESSAGES/e2fsprogs.mo
+file path=usr/share/locale/fur/LC_MESSAGES/e2fsprogs.mo
 file path=usr/share/locale/hu/LC_MESSAGES/e2fsprogs.mo
 file path=usr/share/locale/id/LC_MESSAGES/e2fsprogs.mo
 file path=usr/share/locale/it/LC_MESSAGES/e2fsprogs.mo
@@ -136,21 +138,21 @@ file path=usr/share/man/man8/blkid.8
 file path=usr/share/man/man8/debugfs.8
 file path=usr/share/man/man8/dumpe2fs.8
 file path=usr/share/man/man8/e2freefrag.8
-hardlink path=usr/share/man/man8/e2fsck.8 target=fsck.ext4.8
+hardlink path=usr/share/man/man8/e2fsck.8 target=fsck.ext2.8
 file path=usr/share/man/man8/e2image.8
 file path=usr/share/man/man8/e2label.8
 file path=usr/share/man/man8/e2mmpstatus.8
 file path=usr/share/man/man8/e2undo.8
 file path=usr/share/man/man8/filefrag.8
 file path=usr/share/man/man8/findfs.8
-hardlink path=usr/share/man/man8/fsck.ext2.8 target=fsck.ext4.8
-hardlink path=usr/share/man/man8/fsck.ext3.8 target=fsck.ext4.8
-file path=usr/share/man/man8/fsck.ext4.8
+file path=usr/share/man/man8/fsck.ext2.8
+hardlink path=usr/share/man/man8/fsck.ext3.8 target=fsck.ext2.8
+hardlink path=usr/share/man/man8/fsck.ext4.8 target=fsck.ext2.8
 file path=usr/share/man/man8/logsave.8
-file path=usr/share/man/man8/mke2fs.8
-hardlink path=usr/share/man/man8/mkfs.ext2.8 target=mke2fs.8
-hardlink path=usr/share/man/man8/mkfs.ext3.8 target=mke2fs.8
-hardlink path=usr/share/man/man8/mkfs.ext4.8 target=mke2fs.8
+hardlink path=usr/share/man/man8/mke2fs.8 target=mkfs.ext3.8
+hardlink path=usr/share/man/man8/mkfs.ext2.8 target=mkfs.ext3.8
+file path=usr/share/man/man8/mkfs.ext3.8
+hardlink path=usr/share/man/man8/mkfs.ext4.8 target=mkfs.ext3.8
 file path=usr/share/man/man8/mklost+found.8
 file path=usr/share/man/man8/resize2fs.8
 file path=usr/share/man/man8/tune2fs.8
