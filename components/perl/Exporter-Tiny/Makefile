@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Exporter::Tiny
 HUMAN_VERSION =			1.006002
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Exporter::Tiny - an exporter with the features of Sub::Exporter but only core dependencies
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,3 +33,5 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings
