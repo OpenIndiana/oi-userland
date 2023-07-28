@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTTP::CookieJar
 HUMAN_VERSION =			0.014
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		HTTP::CookieJar - A minimalist HTTP user agent cookie jar
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,9 +30,13 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/http-message
+
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/http-date
-PERL_REQUIRED_PACKAGES += library/perl-5/test-deep
-PERL_REQUIRED_PACKAGES += library/perl-5/test-requires
-PERL_REQUIRED_PACKAGES += library/perl-5/uri
+PERL_REQUIRED_PACKAGES += library/perl-5/mozilla-publicsuffix
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-deep
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requires
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/uri
