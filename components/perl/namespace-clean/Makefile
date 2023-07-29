@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		namespace::clean
 HUMAN_VERSION =			0.27
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		namespace::clean - Keep imports and functions out of your namespace
 COMPONENT_CPAN_AUTHOR =		RIBASUSHI
 COMPONENT_ARCHIVE_HASH =	\
