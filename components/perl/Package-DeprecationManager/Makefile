@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Package::DeprecationManager
 HUMAN_VERSION =			0.18
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Package::DeprecationManager - Manage deprecation warnings for your distribution
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
@@ -33,6 +34,6 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_REQUIRED_PACKAGES += library/perl-5/package-stash
 PERL_REQUIRED_PACKAGES += library/perl-5/params-util
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-install
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/test-warnings
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings
