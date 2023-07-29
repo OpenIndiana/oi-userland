@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		File::ShareDir
 HUMAN_VERSION =			1.118
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		File::ShareDir - Locate per-dist and per-module shared files
 COMPONENT_CPAN_AUTHOR =		REHSACK
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,4 +33,7 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/class-inspector
 PERL_REQUIRED_PACKAGES += library/perl-5/file-sharedir-install
+PERL_REQUIRED_PACKAGES += library/perl-5/inc-latest
+PERL_REQUIRED_PACKAGES += library/perl-5/list-moreutils
+PERL_REQUIRED_PACKAGES += library/perl-5/params-util
 PERL_REQUIRED_PACKAGES += runtime/perl
