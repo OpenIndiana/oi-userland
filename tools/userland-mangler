@@ -33,6 +33,7 @@ import sys
 import re
 import subprocess
 import shutil
+import stat
 
 
 import pkg.fmri
@@ -271,6 +272,9 @@ def mangle_elf(manifest, action, src, dest):
                                 # which may be ABI incompatible would then be republished in the new
                                 # package instead of the new version.
                                 shutil.copy2(src, dest)
+
+                                # Make sure we do have write permission before we try to modify the file
+                                os.chmod(dest, os.stat(dest).st_mode | stat.S_IWUSR)
 
                                 # Mangle the copy by deleting the tag if there is nothing left to keep
                                 # or replacing the value if there is something left.
