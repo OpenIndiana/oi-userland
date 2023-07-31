@@ -15,18 +15,17 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		xmlschema
-HUMAN_VERSION =			2.3.1
+HUMAN_VERSION =			2.4.0
 COMPONENT_SUMMARY =		xmlschema - An XML Schema validator and decoder
 COMPONENT_PROJECT_URL =		https://github.com/sissaschool/xmlschema
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d9/ed/135f08d89431805a82806d22d2331eaff833c1157756a5752f54b6ffabfb/xmlschema-2.3.1.tar.gz
+	https://files.pythonhosted.org/packages/ad/67/3c978288628c14696b66a8aef9341909ce0c3ba74be858234eb6a359b6a5/xmlschema-2.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2eb426c5710833a05610c22c8766713a1b87e9405e3eca0b7c658375bf7ec810
+	sha256:d74cd0c10866ac609e1ef94a5a69b018ad16e39077bc6393408b40c6babee793
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
