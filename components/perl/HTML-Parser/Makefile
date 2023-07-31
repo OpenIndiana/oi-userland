@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTML::Parser
 HUMAN_VERSION =			3.81
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		HTML::Parser - HTML parser class
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
@@ -35,3 +36,4 @@ PERL_REQUIRED_PACKAGES += library/perl-5/http-message
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/uri
