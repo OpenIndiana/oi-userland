@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-checkdocs
-HUMAN_VERSION =			2.10.0
+HUMAN_VERSION =			2.10.1
 COMPONENT_SUMMARY =		pytest-checkdocs - check the README when running tests
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-checkdocs
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8c/a4/8e69b11d196c852c220387089e2be07a15bad7526b7964a09680b139b810/pytest-checkdocs-2.10.0.tar.gz
+	https://files.pythonhosted.org/packages/85/d1/cc399ee395c1b18a3e99cc827aba364399c6d8aaa65a6b9d90508bb35053/pytest-checkdocs-2.10.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0c1320dc88549a95b7482fba6dae37ef5e9bfb42fd7babcc1f8f1be3ae15994f
+	sha256:393868583f2d0314f8c5828fd94f7d28699543f6a0a925356d7e274e2952297e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
