@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		CPAN::Meta::Check
-HUMAN_VERSION =			0.017
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.018
 COMPONENT_SUMMARY =		CPAN::Meta::Check - Verify requirements in a CPAN::Meta object
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0454ab93f12780b1d579df15b5f939e09702e954be82028fadd40e8bc9b0f091
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:f619d2df5ea0fd91c8cf83eb54acccb5e43d9e6ec1a3f727b3d0ac15d0cf378a
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
