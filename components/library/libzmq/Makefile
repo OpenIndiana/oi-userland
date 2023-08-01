@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libzmq
 COMPONENT_VERSION= 4.3.4
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Open source message queue optimised for performance
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -72,7 +72,6 @@ unexport SHELLOPTS
 REQUIRED_PACKAGES +=text/asciidoc
 REQUIRED_PACKAGES +=text/xmlto
 
-# Auto-generated dependencies
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

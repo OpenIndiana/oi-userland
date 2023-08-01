@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xmlrpc-c
 COMPONENT_VERSION=      1.39.12
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_FMRI=         library/xmlrpc-c
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=  http://xmlrpc-c.sourceforge.net/

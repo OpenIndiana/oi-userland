@@ -25,7 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libfreehand
 COMPONENT_VERSION=      0.1.2
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_FMRI=         library/c++/libfreehand
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libfreehand

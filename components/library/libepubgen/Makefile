@@ -25,7 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libepubgen
 COMPONENT_VERSION=      0.1.1
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_FMRI=         library/c++/libepubgen
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/libepubgen/
