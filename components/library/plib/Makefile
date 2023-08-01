@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		plib
 COMPONENT_VERSION=	1.8.5
+COMPONENT_REVISION= 1
 COMPONENT_PROJECT_URL=	http://plib.sourceforge.net
 COMPONENT_SUMMARY=	PLIB - A Suite of Portable Game Libraries.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
