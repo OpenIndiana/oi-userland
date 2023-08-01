@@ -23,7 +23,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         VirtualBox
 COMPONENT_VERSION=      6.1.40
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
 COMPONENT_DOWNLOAD_URL= https://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
@@ -252,6 +252,7 @@ REQUIRED_PACKAGES += developer/object-file
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/gsoap
 REQUIRED_PACKAGES += library/libvncserver
@@ -260,7 +261,6 @@ REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
