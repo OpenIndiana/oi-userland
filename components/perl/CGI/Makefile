@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		CGI
 HUMAN_VERSION =			4.57
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		CGI - Handle Common Gateway Interface requests and responses
 COMPONENT_CPAN_AUTHOR =		LEEJO
 COMPONENT_ARCHIVE_HASH =	\
@@ -34,6 +35,6 @@ COMPONENT_TEST_TRANSFORMS += '-e "s/\[[^]]*\] *//g"'
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/html-parser
-PERL_REQUIRED_PACKAGES += library/perl-5/test-nowarnings
-PERL_REQUIRED_PACKAGES += library/perl-5/test-warn
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-nowarnings
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warn
