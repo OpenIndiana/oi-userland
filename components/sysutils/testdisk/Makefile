@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		testdisk
 COMPONENT_VERSION=	7.1
+COMPONENT_REVISION= 1
 COMPONENT_PROJECT_URL=	https://www.cgsecurity.org/wiki/TestDisk
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -48,9 +49,10 @@ CONFIGURE_OPTIONS += --enable-qt
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/file-system/ntfsprogs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += sysutils/e2fsprogs
