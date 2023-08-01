@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		HTTP::Daemon
 HUMAN_VERSION =			6.16
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		HTTP::Daemon - A simple http server class
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
@@ -34,5 +35,6 @@ PERL_REQUIRED_PACKAGES += library/perl-5/http-date
 PERL_REQUIRED_PACKAGES += library/perl-5/http-message
 PERL_REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/test-needs
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/libwww-perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
