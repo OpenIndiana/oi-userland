@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		namespace::autoclean
 HUMAN_VERSION =			0.29
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		namespace::autoclean - Keep imports out of your namespace
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,9 +30,12 @@ COMPONENT_LICENSE_FILE =	LICENCE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/mouse
+
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/b-hooks-endofscope
 PERL_REQUIRED_PACKAGES += library/perl-5/namespace-clean
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-identify
-PERL_REQUIRED_PACKAGES += library/perl-5/test-needs
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
