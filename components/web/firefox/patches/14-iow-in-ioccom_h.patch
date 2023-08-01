@@ -1,0 +1,16 @@
+/userland/components/web/firefox-nightly/gecko-dev-master/widget/gtk/DMABufSurface.cpp:782:28: error: '_IOW' was not declared in this scope
+  782 | #define DMA_BUF_IOCTL_SYNC _IOW(DMA_BUF_BASE, 0, struct dma_buf_sync)
+      |                            ^~~~
+_IOW is in sys/ioccom.h on Solaris/Illumos
+--- gecko-dev-master/widget/gtk/DMABufSurface.cpp.old	2023-06-26 19:20:47.398914430 -0400
++++ gecko-dev-master/widget/gtk/DMABufSurface.cpp	2023-06-26 19:24:51.487187117 -0400
+@@ -26,6 +26,9 @@
+ #include <sys/eventfd.h>
+ #include <poll.h>
+ #include <sys/ioctl.h>
++#if defined(__illumos__)
++#include <sys/ioccom.h>
++#endif
+ 
+ #include "mozilla/widget/gbm.h"
+ #include "mozilla/widget/va_drmcommon.h"
