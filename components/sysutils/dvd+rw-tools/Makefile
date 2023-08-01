@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           dvd+rw-tools
 COMPONENT_VERSION=        7.1
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=       2
 COMPONENT_PROJECT_URL=    http://fy.chalmers.se/~appro/linux/DVD+RW/
 COMPONENT_SUMMARY=        DVD creation utilities
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -54,6 +54,6 @@ install:        $(INSTALL_64)
 test:                $(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
