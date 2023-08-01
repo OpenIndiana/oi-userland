@@ -208,9 +208,9 @@ ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
 # Rename binaries in /usr/bin to contain version number
 COMPONENT_POST_INSTALL_ACTION += \
 	for f in $(PROTOUSRBINDIR)/* ; do \
-		[[ -f $$f ]] || continue ; \
+		[ -f $$f ] || continue ; \
 		for v in $(PYTHON_VERSIONS) ; do \
-			[[ "$$f" == "$${f%%$$v}" ]] || continue 2 ; \
+			[ "$$f" == "$${f%%$$v}" ] || continue 2 ; \
 		done ; \
 		$(MV) $$f $$f-$(PYTHON_VERSION) ; \
 	done ;
@@ -239,6 +239,8 @@ COMPONENT_TEST_DEP +=	component-test-environment-prep
 COMPONENT_TEST_DEP +=	$(BUILD_DIR)/%/.installed
 # Point Python to the proto area so it is able to find installed modules there
 COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
+# Make sure testing is able to find own installed executables (if any)
+COMPONENT_TEST_ENV +=	PATH=$(PROTOUSRBINDIR):$(PATH)
 
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
@@ -296,7 +298,8 @@ endif
 
 TEST_STYLE ?= tox
 ifeq ($(strip $(TEST_STYLE)),tox)
-COMPONENT_TEST_ENV +=		PATH=$(PATH)	# https://github.com/tox-dev/tox/issues/2538
+# tox needs PATH environment variable - see https://github.com/tox-dev/tox/issues/2538
+# We already added it to the test environment - see above
 COMPONENT_TEST_ENV +=		PYTEST_ADDOPTS="$(PYTEST_ADDOPTS)"
 COMPONENT_TEST_ENV +=		NOSE_VERBOSE=2
 COMPONENT_TEST_CMD =		$(TOX)
@@ -502,6 +505,23 @@ $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
 	$(COMPONENT_TEST_PERFORM_TRANSFORM)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
+
+ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
+# Temporarily create symlinks for renamed binaries
+COMPONENT_PRE_TEST_ACTION += \
+	for f in $(PROTOUSRBINDIR)/*-$(PYTHON_VERSION) ; do \
+		[ -f $$f ] || continue ; \
+		[ -e $${f%%-$(PYTHON_VERSION)} ] && continue ; \
+		$(SYMLINK) $$(basename $$f) $${f%%-$(PYTHON_VERSION)} ; \
+	done ;
+
+# Cleanup of temporary symlinks
+COMPONENT_POST_TEST_ACTION += \
+	for f in $(PROTOUSRBINDIR)/*-$(PYTHON_VERSION) ; do \
+		[ -f $$f ] || continue ; \
+		[ ! -L $${f%%-$(PYTHON_VERSION)} ] || $(RM) $${f%%-$(PYTHON_VERSION)} ; \
+	done ;
+endif
 
 
 ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
