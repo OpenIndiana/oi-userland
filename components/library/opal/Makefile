@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= opal
 COMPONENT_VERSION= 3.10.10
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= OPAL - Open Phone Abstraction Library
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI= library/libopal
@@ -74,11 +74,12 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += library/desktop/ptlib
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math

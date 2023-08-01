@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libebml
 COMPONENT_VERSION=      1.4.4
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      Extensible Binary Markup Language
 COMPONENT_PROJECT_URL=  https://matroska-org.github.io/libebml/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)

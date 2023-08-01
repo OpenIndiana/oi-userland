@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tinyxml
 COMPONENT_VERSION=      2.6.2
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_FMRI=         library/tinyxml
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=  http://sourceforge.net/projects/tinyxml/
@@ -48,6 +48,7 @@ COMPONENT_POST_INSTALL_ACTION= \
               -e "s:%VERSION%:$(COMPONENT_VERSION):g" \
               $(SOURCE_DIR)/tinyxml.pc > $(BUILD_DIR)/tinyxml.pc.$(BITS) )
 
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
