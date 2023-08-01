@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         git-crypt
 COMPONENT_VERSION=      0.7.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=      git-crypt - transparent file encryption in git
 COMPONENT_DESCRIPTION=	\
 	git-crypt enables transparent encryption and decryption of files in a git repository. \
