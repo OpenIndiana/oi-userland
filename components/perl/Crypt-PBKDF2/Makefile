@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::PBKDF2
 HUMAN_VERSION =			0.161520
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Crypt::PBKDF2 - The PBKDF2 password hashing algorithm.
 COMPONENT_CPAN_AUTHOR =		ARODLAND
 COMPONENT_ARCHIVE_HASH =	\
@@ -37,7 +37,7 @@ PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
 PERL_REQUIRED_PACKAGES += library/perl-5/moo
 PERL_REQUIRED_PACKAGES += library/perl-5/namespace-autoclean
 PERL_REQUIRED_PACKAGES += library/perl-5/strictures
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/type-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
