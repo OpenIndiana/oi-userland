@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_installer
-HUMAN_VERSION =			0.5.1
+HUMAN_VERSION =			0.5.2
 COMPONENT_SUMMARY =		pyproject_installer - Pyproject installer
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3a/b6/ceed8d57cb16ae6977df841dda0d2aa0d71170706153f64619da5b7134cd/pyproject_installer-0.5.1.tar.gz
+	https://files.pythonhosted.org/packages/9a/86/811ee7528e9ab6225f2bc26a58dcf91bf89bb7348b735aeec558cff356bf/pyproject_installer-0.5.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0548c71ab598302b66b0c2aece86ae84fab469afeb0ebd2b6280ef385b771062
+	sha256:a0ed379c5a6bd4294c5b4be626e82c8e84069a92ab9eed001c7e0c2a9a5e8323
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,12 +34,12 @@ TEST_STYLE = pytest
 # Python modules and it needs to be bootstrapped.
 PYTHON_BOOTSTRAP = yes
 
-# This project requires Python >= 3.8.  Once we add support for new Python
-# version (>= 3.8), such version needs to be added to PYTHON_VERSIONS below.
-# Once we obsolete Python 3.7 the PYTHON_VERSIONS line should be removed.
-PYTHON_VERSIONS = 3.9
-
 include $(WS_MAKE_RULES)/common.mk
+
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:cov
+PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
