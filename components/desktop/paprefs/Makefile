@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		paprefs
 COMPONENT_VERSION=	1.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	PulseAudio Preferences
 COMPONENT_PROJECT_URL=	https://freedesktop.org/software/pulseaudio/paprefs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

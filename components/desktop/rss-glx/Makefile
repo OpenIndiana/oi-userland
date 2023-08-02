@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         rss-glx
 COMPONENT_VERSION=      0.91
 HUMAN_VERSION=		0.9.1
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_SUMMARY=      XScreenSaver - Really Slick ScreenSaver OpenGL display modules
 COMPONENT_PROJECT_URL=  http://sourceforge.net/projects/rss-glx/
 COMPONENT_CLASSIFICATION=System/X11

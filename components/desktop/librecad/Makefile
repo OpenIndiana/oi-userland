@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	LibreCAD
 COMPONENT_VERSION =     2.2.0-rc1
-COMPONENT_REVISION =     2
+COMPONENT_REVISION=     3
 IPS_COMPONENT_VERSION = 2.2.0.1
 COMPONENT_PROJECT_URL =	https://github.com/LibreCAD
 COMPONENT_FMRI =	desktop/librecad
@@ -63,9 +63,9 @@ COMPONENT_PRE_BUILD_ACTION = \
 REQUIRED_PACKAGES += system/library/boost
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
