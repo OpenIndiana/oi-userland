@@ -5,9 +5,10 @@ py$(PYV): commands[0]> $(PYTHON) -b -m pytest
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml
+rootdir: $(@D)
+configfile: pyproject.toml
 asyncio: mode=strict
-collecting ... collected 92 items / 1 skipped
+collecting ... collected 95 items / 1 skipped
 
 ::project PASSED
 tests/cli/test_convert.py::test_convert_egg PASSED
@@ -17,7 +18,9 @@ tests/cli/test_pack.py::test_pack[newbuildarg] PASSED
 tests/cli/test_pack.py::test_pack[nobuildnum] PASSED
 tests/cli/test_pack.py::test_pack[oldbuildnum] PASSED
 tests/cli/test_tags.py::test_abi_tags PASSED
-tests/cli/test_tags.py::test_build_number PASSED
+tests/cli/test_tags.py::test_build_tag PASSED
+tests/cli/test_tags.py::test_invalid_build_tag[digitstart] PASSED
+tests/cli/test_tags.py::test_invalid_build_tag[hyphen] PASSED
 tests/cli/test_tags.py::test_multi_tags PASSED
 tests/cli/test_tags.py::test_permission_bits PASSED
 tests/cli/test_tags.py::test_plat_tags PASSED
@@ -43,6 +46,7 @@ tests/test_bdist_wheel.py::test_limited_abi PASSED
 tests/test_bdist_wheel.py::test_no_scripts PASSED
 tests/test_bdist_wheel.py::test_platform_with_space PASSED
 tests/test_bdist_wheel.py::test_preserve_unicode_metadata PASSED
+tests/test_bdist_wheel.py::test_rmtree_readonly PASSED
 tests/test_bdist_wheel.py::test_unicode_record PASSED
 tests/test_bdist_wheel.py::test_unix_epoch_timestamps PASSED
 tests/test_bdist_wheel.py::test_wheelfile_line_endings PASSED
@@ -92,7 +96,8 @@ tests/test_wheelfile.py::test_wheelfile_re[foo-2-py2.py3-none-manylinux_2_17_x86
 tests/test_wheelfile.py::test_wheelfile_re[foo-2-py3-none-any.whl] PASSED
 tests/test_wheelfile.py::test_write_str PASSED
 
+
 =========================== short test summary info ============================
-======== 81 passed, 2 skipped ========
+======== 84 passed, 2 skipped ========
   py$(PYV): OK
   congratulations :)
