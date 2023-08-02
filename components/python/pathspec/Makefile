@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pathspec
-HUMAN_VERSION =			0.11.1
+HUMAN_VERSION =			0.11.2
 COMPONENT_SUMMARY =		pathspec - Utility library for gitignore style pattern matching of file paths.
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/95/60/d93628975242cc515ab2b8f5b2fc831d8be2eff32f5a1be4776d49305d13/pathspec-0.11.1.tar.gz
+	https://files.pythonhosted.org/packages/a0/2a/bd167cdf116d4f3539caaa4c332752aac0b3a0cc0174cdb302ee68933e81/pathspec-0.11.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2798de800fa92780e33acca925945e9a19a133b715067cf165b8866c15a31687
+	sha256:e0d8d0ac2f12da61956eb2306b69f9469b42f4deb0f3cb6ed47b9cce9996ced3
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
