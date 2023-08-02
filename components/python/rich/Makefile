@@ -15,26 +15,28 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		rich
-HUMAN_VERSION =			13.4.2
+HUMAN_VERSION =			13.5.2
 COMPONENT_SUMMARY =		rich - Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal
 COMPONENT_PROJECT_URL =		https://github.com/Textualize/rich
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/Textualize/rich/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:12840a1eb0400792d2d12a57c7ede779b6eacf8f27718618127adbc1749c1a91
+	sha256:5e44b23cf1232a1d25ae8fee3017bbeae800225cd2de898762d084acdca74063
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:mypy
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/markdown-it-py
 PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
 PYTHON_REQUIRED_PACKAGES += library/python/pygments
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
