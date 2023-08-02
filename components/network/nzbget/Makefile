@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nzbget
 COMPONENT_VERSION=	21.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	Binary newsreader supporting NZB files
 COMPONENT_PROJECT_URL=	https://nzbget.net
 COMPONENT_FMRI=		network/nzbget
