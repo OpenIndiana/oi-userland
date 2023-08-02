@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Params::ValidationCompiler
 HUMAN_VERSION =			0.31
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Params::ValidationCompiler - Build an optimized subroutine parameter validator once, use it forever
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,11 +30,15 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/type-tiny
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/class-xsaccessor
 PERL_REQUIRED_PACKAGES += library/perl-5/eval-closure
 PERL_REQUIRED_PACKAGES += library/perl-5/exception-class
-PERL_REQUIRED_PACKAGES += library/perl-5/specio
-PERL_REQUIRED_PACKAGES += library/perl-5/test-without-module
-PERL_REQUIRED_PACKAGES += library/perl-5/test2-plugin-nowarnings
-PERL_REQUIRED_PACKAGES += library/perl-5/test2-suite
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/specio
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-without-module
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-plugin-nowarnings
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-suite
