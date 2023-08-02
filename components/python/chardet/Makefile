@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		chardet
-HUMAN_VERSION =			5.1.0
+HUMAN_VERSION =			5.2.0
 COMPONENT_SUMMARY =		chardet - Universal encoding detector for Python 3
 COMPONENT_PROJECT_URL =		https://github.com/chardet/chardet
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/41/32/cdc91dcf83849c7385bf8e2a5693d87376536ed000807fa07f5eab33430d/chardet-5.1.0.tar.gz
+	https://files.pythonhosted.org/packages/f3/0d/f7b6ab21ec75897ed80c17d79b15951a719226b9fababf1e40ea74d69079/chardet-5.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0d62712b956bc154f85fb0a266e2a3c5913c2967e00348701b32411d6def31e5
+	sha256:1b3b6ff479a8c414bc3fa2c0852995695c4a026dcd6d0633b2dd092ca39c1cf7
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,6 +37,9 @@ TEST_STYLE = pytest
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
