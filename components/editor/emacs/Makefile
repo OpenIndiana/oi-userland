@@ -27,12 +27,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
-COMPONENT_VERSION=      28.2
-COMPONENT_REVISION=	6
+COMPONENT_VERSION=      29.1
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ee21182233ef3232dc97b486af2d86e14042dbb65bbc535df562c3a858232488
+COMPONENT_ARCHIVE_HASH= sha256:d2f881a5cc231e2f5a03e86f4584b0438f83edd7598a09d24a21bd8d003e2e01
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			editor/gnu-emacs
 COMPONENT_CLASSIFICATION=	Development/Editors
@@ -219,6 +218,7 @@ REQUIRED_PACKAGES += mail/mailutils
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
@@ -234,6 +234,7 @@ REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
@@ -247,8 +248,10 @@ REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/libxcomposite
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/libxpm
@@ -256,3 +259,4 @@ REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
+REQUIRED_PACKAGES += x11/library/xcb-util
