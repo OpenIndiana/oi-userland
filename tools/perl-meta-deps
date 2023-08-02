@@ -115,8 +115,8 @@ done | /usr/bin/pkgfmt -u | uniq | (
 	PREV_VER=
 	PREV_LINE_T=
 	while read LINE ; do
-		# Copy verbatim lines without "fmri="
-		[[ "${LINE//*fmri=*/FMRI}" != "FMRI" ]] && printf "%s\n" "$LINE" && continue
+		# Copy verbatim lines without "fmri=pkg:" (e.g. unresolved lines)
+		[[ "${LINE//*fmri=pkg:*/FMRI}" != "FMRI" ]] && printf "%s\n" "$LINE" && continue
 
 		LINE_H=${LINE%%fmri=*}
 		LINE_T=${LINE#*fmri=}
