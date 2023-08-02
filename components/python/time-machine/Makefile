@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		time-machine
-HUMAN_VERSION =			2.10.0
+HUMAN_VERSION =			2.11.0
 COMPONENT_SUMMARY =		time-machine - Travel through time in your tests.
 COMPONENT_PROJECT_URL =		https://github.com/adamchainz/time-machine
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/adamchainz/time-machine/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bfd7fcaa8e8888a8af423aa4a76d0930ac51ffa05e8e75590d9828d5d8e25623
+	sha256:a146ca10dde910a158f3607f3e45d3f9ec5034263967f5b55b1c40ebcf3fa487
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
