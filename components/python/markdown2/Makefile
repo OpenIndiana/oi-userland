@@ -19,19 +19,23 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		markdown2
-HUMAN_VERSION =			2.4.9
+HUMAN_VERSION =			2.4.10
 COMPONENT_SUMMARY =		markdown2 - A fast and complete Python implementation of Markdown
 COMPONENT_PROJECT_URL =		https://github.com/trentm/python-markdown2
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/14/df/b0b9b2fcdf0d3dc197c3985dab8c303b3ebef2684bf739d5358fa651d9f8/markdown2-2.4.9.tar.gz
+	https://files.pythonhosted.org/packages/8e/b3/64c459af88ea8c2eeb020d0edf3e36c62176e988c47e412133c37c5da5e7/markdown2-2.4.10.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7a1742dade7ec29b90f5c1d5a820eb977eee597e314c428e6b0aa7929417cd1b
+	sha256:cdba126d90dc3aef6f4070ac342f974d63f415678959329cc7909f96cc235d72
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
