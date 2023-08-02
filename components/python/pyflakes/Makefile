@@ -15,24 +15,27 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyflakes
-HUMAN_VERSION =			3.0.1
+HUMAN_VERSION =			3.1.0
 COMPONENT_SUMMARY =		pyflakes - passive checker of Python programs
 COMPONENT_PROJECT_URL =		https://github.com/PyCQA/pyflakes
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f2/51/506ddcfab10d708e8460554cc1cf37c727a6a2cccbad8dfe57766cfce33c/pyflakes-3.0.1.tar.gz
+	https://files.pythonhosted.org/packages/8b/fb/7251eaec19a055ec6aafb3d1395db7622348130d1b9b763f78567b2aab32/pyflakes-3.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ec8b276a6b60bd80defed25add7e439881c19e64850afd9b346283d4165fd0fd
+	sha256:a0aae034c444db0071aa077972ba4768d40c830d9539fd45bf4cd3f8f6992efc
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Disable some plugins to get tests passed
+PYTEST_ADDOPTS += -p no:black
+PYTEST_ADDOPTS += -p no:mypy
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata

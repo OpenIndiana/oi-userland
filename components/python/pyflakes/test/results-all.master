@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 asyncio: mode=strict
-collecting ... collected 723 items
+collecting ... collected 730 items
 
 ::project PASSED
 pyflakes/test/test_api.py::CheckTests::test_CRLFLineEndings PASSED
@@ -211,7 +211,6 @@ pyflakes/test/test_doctests.py::TestOther::test_classWithYield PASSED
 pyflakes/test/test_doctests.py::TestOther::test_classWithYieldFrom PASSED
 pyflakes/test/test_doctests.py::TestOther::test_comparison PASSED
 pyflakes/test/test_doctests.py::TestOther::test_containment PASSED
-pyflakes/test/test_doctests.py::TestOther::test_continueInFinally PASSED
 pyflakes/test/test_doctests.py::TestOther::test_continueInsideLoop PASSED
 pyflakes/test/test_doctests.py::TestOther::test_continueOutsideLoop PASSED
 pyflakes/test/test_doctests.py::TestOther::test_defaultExceptLast PASSED
@@ -246,6 +245,7 @@ pyflakes/test/test_doctests.py::TestOther::test_redefinedTryExceptFunction PASSE
 pyflakes/test/test_doctests.py::TestOther::test_redefinedTryFunction PASSED
 pyflakes/test/test_doctests.py::TestOther::test_redefinedUnderscoreFunction PASSED
 pyflakes/test/test_doctests.py::TestOther::test_redefinedUnderscoreImportation PASSED
+pyflakes/test/test_doctests.py::TestOther::test_redefined_function_shadows_variable PASSED
 pyflakes/test/test_doctests.py::TestOther::test_starredAssignmentErrors PASSED
 pyflakes/test/test_doctests.py::TestOther::test_starredAssignmentNoError PASSED
 pyflakes/test/test_doctests.py::TestOther::test_unaryPlus PASSED
@@ -481,6 +481,7 @@ pyflakes/test/test_is_literal.py::Test::test_left_is_not_unicode PASSED
 pyflakes/test/test_is_literal.py::Test::test_left_is_str PASSED
 pyflakes/test/test_is_literal.py::Test::test_left_is_true PASSED
 pyflakes/test/test_is_literal.py::Test::test_left_is_unicode PASSED
+pyflakes/test/test_match.py::TestMatch::test_defined_in_different_branches SKIPPED
 pyflakes/test/test_match.py::TestMatch::test_match_bindings SKIPPED
 pyflakes/test/test_match.py::TestMatch::test_match_double_star SKIPPED
 pyflakes/test/test_match.py::TestMatch::test_match_or_pattern SKIPPED
@@ -501,7 +502,6 @@ pyflakes/test/test_other.py::Test::test_classWithYield PASSED
 pyflakes/test/test_other.py::Test::test_classWithYieldFrom PASSED
 pyflakes/test/test_other.py::Test::test_comparison PASSED
 pyflakes/test/test_other.py::Test::test_containment PASSED
-pyflakes/test/test_other.py::Test::test_continueInFinally PASSED
 pyflakes/test/test_other.py::Test::test_continueInsideLoop PASSED
 pyflakes/test/test_other.py::Test::test_continueOutsideLoop PASSED
 pyflakes/test/test_other.py::Test::test_defaultExceptLast PASSED
@@ -536,6 +536,7 @@ pyflakes/test/test_other.py::Test::test_redefinedTryExceptFunction PASSED
 pyflakes/test/test_other.py::Test::test_redefinedTryFunction PASSED
 pyflakes/test/test_other.py::Test::test_redefinedUnderscoreFunction PASSED
 pyflakes/test/test_other.py::Test::test_redefinedUnderscoreImportation PASSED
+pyflakes/test/test_other.py::Test::test_redefined_function_shadows_variable PASSED
 pyflakes/test/test_other.py::Test::test_starredAssignmentErrors PASSED
 pyflakes/test/test_other.py::Test::test_starredAssignmentNoError PASSED
 pyflakes/test/test_other.py::Test::test_unaryPlus PASSED
@@ -548,7 +549,6 @@ pyflakes/test/test_other.py::TestAsyncStatements::test_asyncFor PASSED
 pyflakes/test/test_other.py::TestAsyncStatements::test_asyncForUnderscoreLoopVar PASSED
 pyflakes/test/test_other.py::TestAsyncStatements::test_asyncWith PASSED
 pyflakes/test/test_other.py::TestAsyncStatements::test_asyncWithItem PASSED
-pyflakes/test/test_other.py::TestAsyncStatements::test_continueInAsyncForFinally PASSED
 pyflakes/test/test_other.py::TestAsyncStatements::test_formatstring PASSED
 pyflakes/test/test_other.py::TestAsyncStatements::test_loopControlInAsyncFor PASSED
 pyflakes/test/test_other.py::TestAsyncStatements::test_loopControlInAsyncForElse PASSED
@@ -575,9 +575,9 @@ pyflakes/test/test_other.py::TestUnusedAssignment::test_assignInListComprehensio
 pyflakes/test/test_other.py::TestUnusedAssignment::test_assignToGlobal PASSED
 pyflakes/test/test_other.py::TestUnusedAssignment::test_assignToMember PASSED
 pyflakes/test/test_other.py::TestUnusedAssignment::test_assignToNonlocal PASSED
-pyflakes/test/test_other.py::TestUnusedAssignment::test_assign_expr SKIPPED
-pyflakes/test/test_other.py::TestUnusedAssignment::test_assign_expr_generator_scope SKIPPED
-pyflakes/test/test_other.py::TestUnusedAssignment::test_assign_expr_nested SKIPPED
+pyflakes/test/test_other.py::TestUnusedAssignment::test_assign_expr PASSED
+pyflakes/test/test_other.py::TestUnusedAssignment::test_assign_expr_generator_scope PASSED
+pyflakes/test/test_other.py::TestUnusedAssignment::test_assign_expr_nested PASSED
 pyflakes/test/test_other.py::TestUnusedAssignment::test_assignmentInsideLoop PASSED
 pyflakes/test/test_other.py::TestUnusedAssignment::test_augmentedAssignmentImportedFunctionCall PASSED
 pyflakes/test/test_other.py::TestUnusedAssignment::test_closedOver PASSED
@@ -628,6 +628,7 @@ pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_annotated_type
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_annotated_type_typing_with_string_args_in_union PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_annotating_an_import PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_deferred_twice_annotation PASSED
+pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_forward_annotations_for_classes_in_scope PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_idomiatic_typing_guards PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_literal_type_some_other_module PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_literal_type_typing PASSED
@@ -641,7 +642,7 @@ pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_overload_with_
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_partial_string_annotations_with_future_annotations PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_partially_quoted_type_annotation PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_partially_quoted_type_assignment PASSED
-pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_positional_only_argument_annotations SKIPPED
+pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_positional_only_argument_annotations PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_postponed_annotations PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_quoted_TypeVar_bound PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_quoted_TypeVar_constraints PASSED
@@ -651,6 +652,11 @@ pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_return_annotat
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_return_annotation_is_function_body_variable PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_type_annotation_clobbers_all PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_type_cast_literal_str_to_str PASSED
+pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_type_parameters_classes SKIPPED
+pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_type_parameters_do_not_escape_class_scopes SKIPPED
+pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_type_parameters_do_not_escape_function_scopes SKIPPED
+pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_type_parameters_functions SKIPPED
+pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_type_statements SKIPPED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typednames_correct_forward_ref PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typingExtensionsOverload PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typingOverload PASSED
@@ -658,6 +664,7 @@ pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typingOverload
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_typing_guard_for_protocol PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_unassigned_annotation_is_undefined PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_unused_annotation PASSED
+pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_unused_annotation_in_outer_scope_reassigned_in_local_scope PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_variable_annotation_references_self_name_undefined PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_variable_annotations PASSED
 pyflakes/test/test_type_annotations.py::TestTypeAnnotations::test_variadic_generics SKIPPED
@@ -729,4 +736,5 @@ pyflakes/test/test_undefined_names.py::Test::test_unusedAsStarUnpack PASSED
 pyflakes/test/test_undefined_names.py::Test::test_unused_global SKIPPED
 pyflakes/test/test_undefined_names.py::Test::test_usedAsStarUnpack PASSED
 
-======== 695 passed, 27 skipped ========
+
+======== 700 passed, 29 skipped ========
