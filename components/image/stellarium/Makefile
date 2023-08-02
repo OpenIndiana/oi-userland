@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		stellarium
 COMPONENT_MAJOR_VERSION=	1.1
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	Planetarium with realistic 3D sky just like seeing with naked eye, binoculars or telescope.
 COMPONENT_PROJECT_URL=	https://stellarium.org
 COMPONENT_FMRI=		image/stellarium
