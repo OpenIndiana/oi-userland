@@ -8,7 +8,7 @@ hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.h
 rootdir: $(@D)/tests
 configfile: pytest.ini
 asyncio: mode=strict
-collecting ... collected 798 items
+collecting ... collected 816 items
 
 tests/test_align.py::test_align_bottom PASSED
 tests/test_align.py::test_align_center PASSED
@@ -245,13 +245,16 @@ tests/test_highlighter.py::test_highlight_regex[ 1j -spans16] PASSED
 tests/test_highlighter.py::test_highlight_regex[ 3.14j -spans17] PASSED
 tests/test_highlighter.py::test_highlight_regex[ http:/example.org -spans35] PASSED
 tests/test_highlighter.py::test_highlight_regex[ http:/example.org/index.html -spans36] PASSED
+tests/test_highlighter.py::test_highlight_regex[ http:/example.org/index.html#anchor -spans37] PASSED
+tests/test_highlighter.py::test_highlight_regex[ http:/example.org/index.html?param1=value1 -spans38] PASSED
+tests/test_highlighter.py::test_highlight_regex[ http:/example.org/~folder -spans39] PASSED
 tests/test_highlighter.py::test_highlight_regex[ https:/example.org -spans34] PASSED
-tests/test_highlighter.py::test_highlight_regex["""hello"""-spans43] PASSED
-tests/test_highlighter.py::test_highlight_regex[""-spans41] PASSED
-tests/test_highlighter.py::test_highlight_regex["hello"-spans42] PASSED
-tests/test_highlighter.py::test_highlight_regex['''hello'''-spans40] PASSED
-tests/test_highlighter.py::test_highlight_regex[''-spans38] PASSED
-tests/test_highlighter.py::test_highlight_regex['hello'-spans39] PASSED
+tests/test_highlighter.py::test_highlight_regex["""hello"""-spans46] PASSED
+tests/test_highlighter.py::test_highlight_regex[""-spans44] PASSED
+tests/test_highlighter.py::test_highlight_regex["hello"-spans45] PASSED
+tests/test_highlighter.py::test_highlight_regex['''hello'''-spans43] PASSED
+tests/test_highlighter.py::test_highlight_regex[''-spans41] PASSED
+tests/test_highlighter.py::test_highlight_regex['hello'-spans42] PASSED
 tests/test_highlighter.py::test_highlight_regex[( )-spans9] PASSED
 tests/test_highlighter.py::test_highlight_regex[-spans0] PASSED
 tests/test_highlighter.py::test_highlight_regex[0-00-1-01-2-02-spans33] PASSED
@@ -261,7 +264,7 @@ tests/test_highlighter.py::test_highlight_regex[0123.4567.89AB-spans28] PASSED
 tests/test_highlighter.py::test_highlight_regex[0123.45FF.FE67.89AB-spans29] PASSED
 tests/test_highlighter.py::test_highlight_regex[01:23:45:67:89:AB-spans26] PASSED
 tests/test_highlighter.py::test_highlight_regex[01:23:45:FF:FE:67:89:AB-spans27] PASSED
-tests/test_highlighter.py::test_highlight_regex[78351748-9b32-4e08-ad3e-7e9ff124d541-spans46] PASSED
+tests/test_highlighter.py::test_highlight_regex[78351748-9b32-4e08-ad3e-7e9ff124d541-spans49] PASSED
 tests/test_highlighter.py::test_highlight_regex[<Permission.WRITE|READ: 3>-spans8] PASSED
 tests/test_highlighter.py::test_highlight_regex[<foo: 23>-spans3] PASSED
 tests/test_highlighter.py::test_highlight_regex[<foo: <bar: 23>>-spans4] PASSED
@@ -269,13 +272,13 @@ tests/test_highlighter.py::test_highlight_regex[<foo>-spans2] PASSED
 tests/test_highlighter.py::test_highlight_regex[ED-ED-ED-ED-ED-ED-spans31] PASSED
 tests/test_highlighter.py::test_highlight_regex[Ed-Ed-Ed-Ed-Ed-Ed-spans32] PASSED
 tests/test_highlighter.py::test_highlight_regex[False True None-spans5] PASSED
-tests/test_highlighter.py::test_highlight_regex[No place like 127.0.0.1-spans37] PASSED
+tests/test_highlighter.py::test_highlight_regex[No place like 127.0.0.1-spans40] PASSED
 tests/test_highlighter.py::test_highlight_regex[[ ]-spans10] PASSED
-tests/test_highlighter.py::test_highlight_regex[\\'foo'-spans44] PASSED
+tests/test_highlighter.py::test_highlight_regex[\\'foo'-spans47] PASSED
 tests/test_highlighter.py::test_highlight_regex[ed-ed-ed-ed-ed-ed-spans30] PASSED
 tests/test_highlighter.py::test_highlight_regex[foo="bar"-spans7] PASSED
 tests/test_highlighter.py::test_highlight_regex[foo=bar-spans6] PASSED
-tests/test_highlighter.py::test_highlight_regex[it's no 'string'-spans45] PASSED
+tests/test_highlighter.py::test_highlight_regex[it's no 'string'-spans48] PASSED
 tests/test_highlighter.py::test_highlight_regex[{ }-spans11] PASSED
 tests/test_highlighter.py::test_wrong_type PASSED
 tests/test_inspect.py::test_broken_call_attr PASSED
@@ -357,9 +360,11 @@ tests/test_logging.py::test_stderr_and_stdout_are_none PASSED
 tests/test_markdown.py::test_inline_code PASSED
 tests/test_markdown.py::test_markdown_render PASSED
 tests/test_markdown.py::test_markdown_table PASSED
+tests/test_markdown.py::test_partial_table PASSED
 tests/test_markdown_no_hyperlinks.py::test_markdown_render PASSED
 tests/test_markup.py::test_adjoint PASSED
 tests/test_markup.py::test_escape PASSED
+tests/test_markup.py::test_escape_backslash_end PASSED
 tests/test_markup.py::test_escape_escape PASSED
 tests/test_markup.py::test_events PASSED
 tests/test_markup.py::test_events_broken PASSED
@@ -685,6 +690,7 @@ tests/test_text.py::test_emoji PASSED
 tests/test_text.py::test_emoji_switch PASSED
 tests/test_text.py::test_end PASSED
 tests/test_text.py::test_eq PASSED
+tests/test_text.py::test_extend_style PASSED
 tests/test_text.py::test_fit PASSED
 tests/test_text.py::test_from_ansi PASSED
 tests/test_text.py::test_from_markup PASSED
@@ -731,6 +737,18 @@ tests/test_text.py::test_stylize PASSED
 tests/test_text.py::test_stylize_before PASSED
 tests/test_text.py::test_stylize_negative_index PASSED
 tests/test_text.py::test_tabs_to_spaces PASSED
+tests/test_text.py::test_tabs_to_spaces_spans[-4--expected_spans0] PASSED
+tests/test_text.py::test_tabs_to_spaces_spans[[bold]X\tY-8-X       Y-expected_spans9] PASSED
+tests/test_text.py::test_tabs_to_spaces_spans[[bold]\U0001f4a9\U0001f4a9\U0001f4a9\U0001f4a9\t\U0001f4a9-8-\U0001f4a9\U0001f4a9\U0001f4a9\U0001f4a9        \U0001f4a9-expected_spans11] PASSED
+tests/test_text.py::test_tabs_to_spaces_spans[[bold]\U0001f4a9\t\U0001f4a9-8-\U0001f4a9      \U0001f4a9-expected_spans10] PASSED
+tests/test_text.py::test_tabs_to_spaces_spans[[bold]\tbar-4-    bar-expected_spans6] PASSED
+tests/test_text.py::test_tabs_to_spaces_spans[[bold]foo\tbar-4-foo bar-expected_spans5] PASSED
+tests/test_text.py::test_tabs_to_spaces_spans[[red]foo\tbar\n[green]egg\tbaz-8-foo     bar\negg     baz-expected_spans8] PASSED
+tests/test_text.py::test_tabs_to_spaces_spans[\t-4-    -expected_spans1] PASSED
+tests/test_text.py::test_tabs_to_spaces_spans[\t[bold]bar-4-    bar-expected_spans7] PASSED
+tests/test_text.py::test_tabs_to_spaces_spans[\tbar-4-    bar-expected_spans2] PASSED
+tests/test_text.py::test_tabs_to_spaces_spans[foo\nbar\nbaz-4-foo\nbar\nbaz-expected_spans4] PASSED
+tests/test_text.py::test_tabs_to_spaces_spans[foo\tbar-4-foo bar-expected_spans3] PASSED
 tests/test_text.py::test_trim_spans PASSED
 tests/test_text.py::test_truncate_ellipsis[Hello-1-\u2026] PASSED
 tests/test_text.py::test_truncate_ellipsis[Hello-10-Hello] PASSED
@@ -810,6 +828,6 @@ tests/test_windows_renderer.py::test_text_only SKIPPED (windows only)
 tests/test_windows_renderer.py::test_text_with_style SKIPPED (window...)
 
 
-======== 775 passed, 23 skipped ========
+======== 793 passed, 23 skipped ========
   py$(PYV): OK
   congratulations :)
