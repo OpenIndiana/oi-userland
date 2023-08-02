@@ -6,20 +6,23 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
-configfile: pytest.ini
+configfile: pyproject.toml
 asyncio: mode=strict
-collecting ... collected 57 items
+collecting ... collected 75 items
 
 ::project PASSED
-pytest_mypy_plugins/__init__.py::BLACK PASSED
+pytest_mypy_plugins/__init__.py::black PASSED
 pytest_mypy_plugins/__init__.py::mypy PASSED
-pytest_mypy_plugins/collect.py::BLACK PASSED
+pytest_mypy_plugins/collect.py::black PASSED
 pytest_mypy_plugins/collect.py::mypy PASSED
-pytest_mypy_plugins/item.py::BLACK PASSED
+pytest_mypy_plugins/configs.py::black PASSED
+pytest_mypy_plugins/configs.py::mypy PASSED
+pytest_mypy_plugins/item.py::black PASSED
 pytest_mypy_plugins/item.py::mypy PASSED
-pytest_mypy_plugins/tests/reveal_type_hook.py::BLACK PASSED
+pytest_mypy_plugins/tests/reveal_type_hook.py::black PASSED
 pytest_mypy_plugins/tests/reveal_type_hook.py::mypy PASSED
 pytest_mypy_plugins/tests/test-extension.yml::reveal_type_extension_is_loaded PASSED
+pytest_mypy_plugins/tests/test-mypy-config.yml::custom_mypy_config_strict_optional_true_set PASSED
 pytest_mypy_plugins/tests/test-parametrized.yml::only_main[a=1,revealed_type=builtins.int] PASSED
 pytest_mypy_plugins/tests/test-parametrized.yml::only_main[a=1.0,revealed_type=builtins.float] PASSED
 pytest_mypy_plugins/tests/test-parametrized.yml::with_extra[a=2,b=None,rt=Any] PASSED
@@ -38,7 +41,6 @@ pytest_mypy_plugins/tests/test-regex_assertions.yml::regex_with_out_does_not_han
 pytest_mypy_plugins/tests/test-regex_assertions.yml::rexex_but_not_turned_on PASSED
 pytest_mypy_plugins/tests/test-regex_assertions.yml::rexex_but_turned_off PASSED
 pytest_mypy_plugins/tests/test-simple-cases.yml::create_files PASSED
-pytest_mypy_plugins/tests/test-simple-cases.yml::custom_mypy_config_strict_optional_true_set PASSED
 pytest_mypy_plugins/tests/test-simple-cases.yml::error_case PASSED
 pytest_mypy_plugins/tests/test-simple-cases.yml::external_output_lines PASSED
 pytest_mypy_plugins/tests/test-simple-cases.yml::fail_if_message_does_not_match PASSED
@@ -47,7 +49,23 @@ pytest_mypy_plugins/tests/test-simple-cases.yml::revealed_type_with_disabled_cac
 pytest_mypy_plugins/tests/test-simple-cases.yml::revealed_type_with_environment PASSED
 pytest_mypy_plugins/tests/test-simple-cases.yml::simplest_case PASSED
 pytest_mypy_plugins/tests/test-simple-cases.yml::skip_if_false PASSED
-pytest_mypy_plugins/tests/test_utils.py::BLACK PASSED
+pytest_mypy_plugins/tests/test_configs/test_join_toml_configs.py::black PASSED
+pytest_mypy_plugins/tests/test_configs/test_join_toml_configs.py::mypy PASSED
+pytest_mypy_plugins/tests/test_configs/test_join_toml_configs.py::test_join_existing_config[\n[tool.mypy]\npretty = true\nshow_error_codes = false\nshow_traceback = true\n] PASSED
+pytest_mypy_plugins/tests/test_configs/test_join_toml_configs.py::test_join_existing_config[\npretty = true\nshow_error_codes = false\nshow_traceback = true\n] PASSED
+pytest_mypy_plugins/tests/test_configs/test_join_toml_configs.py::test_join_missing_config1 PASSED
+pytest_mypy_plugins/tests/test_configs/test_join_toml_configs.py::test_join_missing_config2 PASSED
+pytest_mypy_plugins/tests/test_configs/test_join_toml_configs.py::test_join_missing_config[\n[tool.mypy]\npretty = true\nshow_error_codes = false\nshow_traceback = true\n] PASSED
+pytest_mypy_plugins/tests/test_configs/test_join_toml_configs.py::test_join_missing_config[\npretty = true\nshow_error_codes = false\nshow_traceback = true\n] PASSED
+pytest_mypy_plugins/tests/test_explicit_configs.py::black PASSED
+pytest_mypy_plugins/tests/test_explicit_configs.py::mypy PASSED
+pytest_mypy_plugins/tests/test_explicit_configs.py::test_ini_files[$(@D)/pytest_mypy_plugins/tests/test_configs/mypy1.ini] PASSED
+pytest_mypy_plugins/tests/test_explicit_configs.py::test_ini_files[$(@D)/pytest_mypy_plugins/tests/test_configs/mypy2.ini] PASSED
+pytest_mypy_plugins/tests/test_explicit_configs.py::test_ini_files[$(@D)/pytest_mypy_plugins/tests/test_configs/setup1.cfg] PASSED
+pytest_mypy_plugins/tests/test_explicit_configs.py::test_ini_files[$(@D)/pytest_mypy_plugins/tests/test_configs/setup2.cfg] PASSED
+pytest_mypy_plugins/tests/test_explicit_configs.py::test_pyproject_toml[$(@D)/pytest_mypy_plugins/tests/test_configs/pyproject1.toml] PASSED
+pytest_mypy_plugins/tests/test_explicit_configs.py::test_pyproject_toml[$(@D)/pytest_mypy_plugins/tests/test_configs/pyproject2.toml] PASSED
+pytest_mypy_plugins/tests/test_utils.py::black PASSED
 pytest_mypy_plugins/tests/test_utils.py::mypy PASSED
 pytest_mypy_plugins/tests/test_utils.py::test_assert_expected_matched_actual_failures[source_lines0-actual_lines0-expected_message_lines0] PASSED
 pytest_mypy_plugins/tests/test_utils.py::test_assert_expected_matched_actual_failures[source_lines1-actual_lines1-expected_message_lines1] PASSED
@@ -60,46 +78,15 @@ pytest_mypy_plugins/tests/test_utils.py::test_assert_expected_matched_actual_fai
 pytest_mypy_plugins/tests/test_utils.py::test_render_template_with_None_value PASSED
 pytest_mypy_plugins/tests/test_utils.py::test_sorted_by_file_and_line_is_stable[input_lines0] PASSED
 pytest_mypy_plugins/tests/test_utils.py::test_sorted_by_file_and_line_is_stable[input_lines1] PASSED
-pytest_mypy_plugins/utils.py::BLACK PASSED
+pytest_mypy_plugins/utils.py::black PASSED
 pytest_mypy_plugins/utils.py::mypy PASSED
-setup.py::BLACK PASSED
+setup.py::black PASSED
 setup.py::mypy PASSED
 setup.py::mypy-status PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147
-  $(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:147: PytestDeprecationWarning: <class 'pytest_black.BlackItem'> is not using a cooperative constructor and only takes {'fspath', 'parent'}.
-  See https://docs.pytest.org/en/stable/deprecations.html#constructors-of-custom-pytest-node-subclasses-should-take-kwargs for more details.
-    warnings.warn(
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263
-  $(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:263: PytestRemovedIn8Warning: The (fspath: py.path.local) argument to BlackItem is deprecated. Please use the (path: pathlib.Path) argument instead.
-  See https://docs.pytest.org/en/latest/deprecations.html#fspath-argument-for-node-constructors-replaced-with-pathlib-path
-    return cls._create(parent=parent, **kw)
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:719
-  $(PYTHON_DIR)/vendor-packages/_pytest/nodes.py:719: PytestWarning: BlackItem is an Item subclass and should not be a collector, however its bases File are collectors.
-  Please split the Collectors and the Item into separate node types.
-  Pytest Doc example: https://docs.pytest.org/en/latest/example/nonpython.html
-  example pull request on a plugin: https://github.com/asmeurer/pytest-flakes/pull/40/
-    warnings.warn(
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
 ===================================== mypy =====================================
-Success: no issues found in 7 source files
-======== 55 passed, 15 warnings ========
+
+Success: no issues found in 10 source files
+======== 73 passed ========
   py$(PYV): OK
   congratulations :)

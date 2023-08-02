@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-mypy-plugins
-HUMAN_VERSION =			2.0.0
+HUMAN_VERSION =			3.0.0
 COMPONENT_SUMMARY =		pytest-mypy-plugins - pytest plugin for writing tests for mypy plugins
 COMPONENT_PROJECT_URL =		https://github.com/TypedDjango/pytest-mypy-plugins
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c3/dd/a0bb311ae8a72b9bd877be7d24a85b9333ba051a147b2a9cd8c3cd8421cb/pytest-mypy-plugins-2.0.0.tar.gz
+	https://files.pythonhosted.org/packages/82/31/554d273f99538df58e87a97d93853af5556000a229f9022782153fa2a829/pytest-mypy-plugins-3.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:98e57cbfe87a3667ca3f3808dda86cbe9ee9d76fed5ed50d1946ea6125d09eda
+	sha256:05a728c7cbc4f33610f97fe9266b2c3eb209e41c28935011b4fc9531662625f6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -40,6 +40,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
 PYTHON_REQUIRED_PACKAGES += library/python/regex
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/tomlkit
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/black
