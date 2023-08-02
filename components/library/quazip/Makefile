@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		quazip
 HUMAN_VERSION=		1.3
 COMPONENT_VERSION=	1.3.0
+COMPONENT_REVISION= 1
 COMPONENT_FMRI=		library/quazip
 COMPONENT_PROJECT_URL=	https://github.com/stachenov/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	C++ wrapper for Gilles Vollant's ZIP/UNZIP package using Trolltech's Qt library
@@ -41,5 +42,6 @@ REQUIRED_PACKAGES += library/qt5
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

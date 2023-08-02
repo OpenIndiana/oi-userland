@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtorrent-rasterbar
 COMPONENT_VERSION=	2.0.5
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	An open source C++ library implementing the BitTorrent protocol
 COMPONENT_GIT_URL= https://github.com/arvidn
 COMPONENT_PROJECT_URL=	$(COMPONENT_GIT_URL)/libtorrent

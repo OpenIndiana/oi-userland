@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libcrossguid
 COMPONENT_VERSION=      1.0.2
+COMPONENT_REVISION= 1
 COMPONENT_FMRI=         library/libcrossguid
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=  https://github.com/graeme-hill/crossguid/
@@ -48,6 +49,7 @@ COMPONENT_POST_INSTALL_ACTION= \
               -e "s:%VERSION%:$(COMPONENT_VERSION):g" \
               $(SOURCE_DIR)/crossguid.pc > $(BUILD_DIR)/crossguid.pc.$(BITS)  )
 
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+# Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library

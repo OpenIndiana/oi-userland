@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		OpenColorIO
 COMPONENT_VERSION=	2.1.1
+COMPONENT_REVISION= 1
 COMPONENT_FMRI=		library/opencolorio
 COMPONENT_PROJECT_URL=	https://github.com/AcademySoftwareFoundation/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	A color management framework for visual effects and animation
@@ -55,5 +56,7 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/imath
 REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/pystring
+REQUIRED_PACKAGES += library/yaml-cpp
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libxml++
 COMPONENT_VERSION= 2.40.1
+COMPONENT_REVISION= 1
 COMPONENT_CLASSIFICATION=Development/C++
 COMPONENT_FMRI=library/c++/libxml++
 COMPONENT_SUMMARY= Library for HTML support in GNOME
@@ -47,8 +48,8 @@ install: $(INSTALL_32_and_64)
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

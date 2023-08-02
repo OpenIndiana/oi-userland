@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libconfig
 COMPONENT_VERSION=	1.7.3
+COMPONENT_REVISION= 1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://hyperrealm.github.io/libconfig
 COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz

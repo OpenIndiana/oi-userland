@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME		= indri
 COMPONENT_VERSION	= 5.11
+COMPONENT_REVISION= 1
 COMPONENT_FMRI		= library/indri
 COMPONENT_SUMMARY	= indri - Text search engine
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -68,8 +69,8 @@ install:        $(INSTALL_32_and_64)
 test:           $(NO_TESTS)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
