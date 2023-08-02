@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		FCGI::Client
 HUMAN_VERSION =			0.09
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		FCGI::Client - client library for fastcgi protocol
 COMPONENT_CPAN_AUTHOR =		TOKUHIROM
 COMPONENT_ARCHIVE_HASH =	\
